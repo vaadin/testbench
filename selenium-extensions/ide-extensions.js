@@ -26,15 +26,6 @@ LocatorBuilders.add('itmilltoolkit', function(e) {
 	return null;
 });
 
-// Add itmilltoolkit as the first locator
-{
-	var order = ["itmilltoolkit"];
-	for (var i=0; i < LocatorBuilders.order.length; i++) {
-		if (LocatorBuilders.order[i] != "itmilltoolkit") {
-			order.push(LocatorBuilders.order[i]);
-		}
-	}
-	
-	LocatorBuilders.order = order;
-}
 
+LocatorBuilders.order.splice(LocatorBuilders.order.indexOf("itmilltoolkit"), 1);
+LocatorBuilders.order.unshift("itmilltoolkit");
