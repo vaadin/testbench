@@ -16,7 +16,7 @@ PageBot.prototype.locateElementByITMillToolkit = function(tkString, inDocument) 
 		var element = wnd.itmill.clients[appId].getElementByPath(parts[1]);
 		return element;
 	} catch (exception) {
-		alert('an error occured: ' + exception);
+		LOG.error('an error occured when locating element for '+tkString+': ' + exception);
 	}
 	return null;
 }
