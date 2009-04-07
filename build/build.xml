@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+
+<project name="Testing Tools build" basedir="." default="package">
+
+	<target name="package">
+		<delete dir="result">
+		</delete>
+		<mkdir dir="result" />
+		<jar jarfile="result/testingtools-runner.jar" compress="true">
+			<manifest>
+				<attribute name="Class-Path" value="junit-4.5.jar selenium-java-client-driver.jar js.jar" />
+			</manifest>
+			<fileset dir="../bin">
+				<patternset>
+					<!--					<exclude name="com/itmill/toolkit/**" />-->
+				</patternset>
+			</fileset>
+			<!--
+			<fileset dir="../lib">
+				<patternset>
+					<exclude name="*-src.jar" />
+					<exclude name="*-sources.jar" />
+				</patternset>
+			</fileset>
+			-->
+		</jar>
+	</target>
+
+</project>

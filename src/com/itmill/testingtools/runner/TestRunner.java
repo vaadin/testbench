@@ -1,52 +1,39 @@
 package com.itmill.testingtools.runner;
 
-public class TestRunner extends ITMillToolkitTestCase {
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.util.List;
 
-    private static final String TEST_HOST_PROPERTY = "testingtools.tester.host";
-    private static final String BROWSER_PROPERTY = "testingtools.tester.browser";
-    private static final String DEPLOYMENT_HOST_PROPERTY = "testingtools.deployment.url";
+import org.apache.commons.io.IOUtils;
 
-    public void setUp() throws Exception {
-        String testHosts = System.getProperty(TEST_HOST_PROPERTY);
-        String deploymentHost = System.getProperty(DEPLOYMENT_HOST_PROPERTY);
-        String browser = System.getProperty(BROWSER_PROPERTY);
+import com.itmill.testingtools.runner.SeleniumHTMLTestCaseParser.Command;
 
-        if (testHosts == null || testHosts.length() == 0) {
+public class TestRunner extends AbstractTestCase {
+
+    private static final String TESTCASE_FILENAME = "testcase";
+
+    public void testHtml() throws Exception {
+        String file = System.getProperty(TESTCASE_FILENAME);
+        if (file == null || file.equals("")) {
             throw new IllegalArgumentException(
-                    "Missing test hosts definition. Use -D"
-                            + TEST_HOST_PROPERTY + "=testhost1,testhost2");
+                    "Missing test case file name. Use -D" + TESTCASE_FILENAME
+                            + "=testcase");
         }
 
-        if (deploymentHost == null || deploymentHost.length() == 0) {
-            throw new IllegalArgumentException(
-                    "Missing deployment host definition. Use -D"
-                            + DEPLOYMENT_HOST_PROPERTY
-                            + "=http://www.deployment.com:8080/. "
-                            + "DO NOT include the context path, this is stored in the test case.");
-        }
-        if (browser == null || browser.length() == 0) {
-            browser = Browser.CHROME.getBrowserId();
+        File f = new File(file);
+        if (!f.exists()) {
+            throw new FileNotFoundException("Test case " + file + " not found");
         }
 
-        setTestHosts(testHosts.split(","));
+        String testCase = IOUtils.toString(new FileInputStream(f));
 
-        setUp(deploymentHost, browser);
-    }
+        List<Command> commands = SeleniumHTMLTestCaseParser
+                .parseTestCase(testCase);
+        for (Command command : commands) {
+            testBase.getSelenium().doCommand(command.getCmd(),
+                    command.getParams());
+        }
 
-    // public void testNew() throws Exception {
-    // selenium.open("/TT/sampler?restartApplication");
-    // waitForITMillToolkit();
-    // selenium
-    // .click("itmilltoolkit=TTsampler::/IVerticalLayout[0]/ChildComponentContainer[1]/ISplitPanelHorizontal[0]/IPanel[0]/IGridLayout[0]/AbsolutePanel[0]/ChildComponentContainer[1]/IButton[0]");
-    // waitForITMillToolkit();
-    // selenium
-    // .click("itmilltoolkit=TTsampler::/IVerticalLayout[0]/ChildComponentContainer[0]/IHorizontalLayout[0]/ChildComponentContainer[6]/IHorizontalLayout[0]/ChildComponentContainer[1]/IButton[0]");
-    // // waitForITMillToolkit();
-    // }
-
-    @Override
-    public void tearDown() throws Exception {
-        selenium.stop();
-        super.tearDown();
     }
 }

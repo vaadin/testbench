@@ -13,4 +13,8 @@ public class SeleniumImplementation extends DefaultSelenium {
         commandProcessor.doCommand("waitForITMillToolkit", new String[] {});
     }
 
+    public void doCommand(String cmd, String[] params) {
+        commandProcessor.doCommand(cmd, params);
+    }
+
 }

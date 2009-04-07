@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Random;
 
 import com.thoughtworks.selenium.SeleneseTestBase;
-import com.thoughtworks.selenium.Selenium;
 
 public class TestBase extends SeleneseTestBase {
 
@@ -14,7 +13,7 @@ public class TestBase extends SeleneseTestBase {
     private static final int DEFAULT_SELENIUM_RC_PORT = 4444;
     private List<TestHost> testHosts = new ArrayList<TestHost>();
 
-    public Selenium getSelenium() {
+    public SeleniumImplementation getSelenium() {
         return selenium;
     }
 
