@@ -34,13 +34,36 @@
 		</javac>
 	</target>
 
-	<target name="run-tests" depends="compile-tests">
+
+	<target name="run-tests" depends="run-firefox-tests,run-ie-tests">
+	</target>
+
+	<target name="run-firefox-tests" depends="compile-tests">
 		<junit fork="yes">
 			<classpath>
 				<path refid="classpath" />
 			</classpath>
 			<jvmarg value="-Dtestingtools.tester.host=192.168.1.122" />
 			<jvmarg value="-Dtestingtools.deployment.url=http://192.168.1.235:8080/" />
+			<jvmarg value="-Dtestingtools.tester.browser=*chrome" />
+
+			<batchtest>
+				<fileset dir="${test-output-dir}">
+					<include name="**/**.java" />
+				</fileset>
+			</batchtest>
+		</junit>
+
+	</target>
+
+	<target name="run-ie-tests" depends="compile-tests">
+		<junit fork="yes">
+			<classpath>
+				<path refid="classpath" />
+			</classpath>
+			<jvmarg value="-Dtestingtools.tester.host=192.168.1.122" />
+			<jvmarg value="-Dtestingtools.deployment.url=http://192.168.1.235:8080/" />
+			<jvmarg value="-Dtestingtools.tester.browser=*iexplore" />
 
 			<batchtest>
 				<fileset dir="${test-output-dir}">
@@ -52,12 +75,11 @@
 	</target>
 	<target name="remove-temp-files">
 		<!-- test java files -->
-<!--		<delete>
+		<delete>
 			<fileset dir="${test-output-dir}">
 				<include name="**/**.java" />
 			</fileset>
 		</delete>
--->
 	</target>
 
 	<target name="run-and-clean-up" depends="run-tests,remove-temp-files">

@@ -119,7 +119,7 @@ public class TestConverter {
 
         File file = new File(htmlFilename);
         String filename = removeExtension(file.getName());
-
+        filename = filename.replaceAll("[^a-zA-Z0-9]", "_");
         File outputFile = new File(outputDirectory + File.separator
                 + getPackageDir() + File.separator + filename + ".java");
 
