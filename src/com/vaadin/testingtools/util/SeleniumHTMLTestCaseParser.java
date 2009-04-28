@@ -1,4 +1,4 @@
-package com.itmill.testingtools.runner;
+package com.vaadin.testingtools.util;
 
 import java.util.ArrayList;
 import java.util.List;

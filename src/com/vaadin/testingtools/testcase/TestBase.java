@@ -1,4 +1,4 @@
-package com.itmill.testingtools.runner;
+package com.vaadin.testingtools.testcase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,13 +8,13 @@ import com.thoughtworks.selenium.SeleneseTestBase;
 
 public class TestBase extends SeleneseTestBase {
 
-    private SeleniumImplementation selenium;
+    private VaadinSeleniumImplementation vaadinSelenium;
 
     private static final int DEFAULT_SELENIUM_RC_PORT = 4444;
     private List<TestHost> testHosts = new ArrayList<TestHost>();
 
-    public SeleniumImplementation getSelenium() {
-        return selenium;
+    VaadinSeleniumImplementation getVaadinSelenium() {
+        return vaadinSelenium;
     }
 
     @Override
@@ -24,12 +24,16 @@ public class TestBase extends SeleneseTestBase {
         if (url == null) {
             throw new IllegalArgumentException("No url specified");
         }
+        if (browserString == null) {
+            throw new IllegalArgumentException("No browser specified");
+        }
+        vaadinSelenium = new VaadinSeleniumImplementation(seleniumRcHost
+                .getHost(), seleniumRcHost.getPort(), browserString, url);
 
-        selenium = new SeleniumImplementation(seleniumRcHost.getHost(),
-                seleniumRcHost.getPort(), browserString, url);
-        System.out.println("Starting test of " + url + " in " + browserString
-                + " on " + seleniumRcHost.getHost());
-        selenium.start();
+        // System.out.println("Starting test of " + url + " in " + browserString
+        // + " on " + seleniumRcHost.getHost());
+
+        vaadinSelenium.start();
     }
 
     private TestHost getRandomTestHost() {
@@ -59,8 +63,11 @@ public class TestBase extends SeleneseTestBase {
         }
     }
 
-    public void waitForITMillToolkit() {
-        selenium.waitForITMillToolkit();
+    /**
+     * Wait for Vaadin to complete processing the current request.
+     */
+    public void waitForVaadin() {
+        vaadinSelenium.waitForVaadin();
     }
 
     private class TestHost {

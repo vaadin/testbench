@@ -1,16 +1,16 @@
-package com.itmill.testingtools.runner;
+package com.vaadin.testingtools.testcase;
 
 import com.thoughtworks.selenium.DefaultSelenium;
 
-public class SeleniumImplementation extends DefaultSelenium {
+public class VaadinSeleniumImplementation extends DefaultSelenium {
 
-    public SeleniumImplementation(String serverHost, int serverPort,
+    public VaadinSeleniumImplementation(String serverHost, int serverPort,
             String browserStartCommand, String browserURL) {
         super(serverHost, serverPort, browserStartCommand, browserURL);
     }
 
-    public void waitForITMillToolkit() {
-        commandProcessor.doCommand("waitForITMillToolkit", new String[] {});
+    public void waitForVaadin() {
+        commandProcessor.doCommand("waitForVaadin", new String[] {});
     }
 
     public void doCommand(String cmd, String[] params) {

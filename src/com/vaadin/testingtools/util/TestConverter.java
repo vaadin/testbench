@@ -1,4 +1,4 @@
-package com.itmill.testingtools;
+package com.vaadin.testingtools.util;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -16,7 +16,7 @@ import org.mozilla.javascript.NativeArray;
 import org.mozilla.javascript.NativeObject;
 import org.mozilla.javascript.Scriptable;
 
-import com.itmill.testingtools.runner.SeleniumHTMLTestCaseParser.Command;
+import com.vaadin.testingtools.util.SeleniumHTMLTestCaseParser.Command;
 
 public class TestConverter {
 
@@ -128,23 +128,6 @@ public class TestConverter {
 
     private static String convertTestCaseToJava(List<Command> commands)
             throws IOException {
-        // cx.evaluateString(scope, "function load(a){}", "dummy-load", 1,
-        // null);
-
-        // loadScript("tools.js", scope, cx);
-        // loadScript("formatCommandOnlyAdapter.js", scope, cx);
-        // loadScript("remoteControl.js", scope, cx);
-        // loadScript("itmill-java-rc.js", scope, cx);
-        // loadScript("testCase.js", scope, cx);
-
-        // cx.evaluateString(scope, "var result = format(testCase);",
-        // "javaFormat", 1, null);
-
-        // cx.evaluateString(scope,
-        // "var testCase =  new TestCase();parse(testCase,src);",
-        // "testCaseDef", 1, null);
-        // Object javaSource = scope.get("result", scope);
-
         StringBuilder javaSource = new StringBuilder();
 
         for (Command command : commands) {
@@ -165,7 +148,6 @@ public class TestConverter {
                 javaSource.append("\"");
             }
             javaSource.append("});\n");
-            // javaSource.append("\n");
         }
 
         return javaSource.toString();
