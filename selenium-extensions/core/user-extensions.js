@@ -1,4 +1,4 @@
-PageBot.prototype.locateElementByITMillToolkit = function(tkString, inDocument) {
+PageBot.prototype.locateElementByVaadin = function(tkString, inDocument) {
 
 	var wnd = this.currentWindow;
 	if (wnd.wrappedJSObject) {
@@ -22,7 +22,7 @@ PageBot.prototype.locateElementByITMillToolkit = function(tkString, inDocument) 
 }
 
 /*
- PageBot.prototype.locateElementByITMillToolkit.is_fuzzy_match = function(
+ PageBot.prototype.locateElementByVaadin.is_fuzzy_match = function(
  source, target) {
 
  if (source.wrappedJSObject) {
@@ -40,7 +40,7 @@ PageBot.prototype.locateElementByITMillToolkit = function(tkString, inDocument) 
  }
 
  */
-Selenium.prototype.doWaitForITMillToolkit = function(locator, value) {
+Selenium.prototype.doWaitForVaadin = function(locator, value) {
 
 	// max time to wait for toolkit to settle
 	var timeout = 20000;
@@ -59,10 +59,10 @@ Selenium.prototype.doWaitForITMillToolkit = function(locator, value) {
 			}
 			return true;
 		} else {
-			if (!this.ITMILLWarnedNoAppFound) {
+			if (!this.VaadinWarnedNoAppFound) {
 				// TODO explain what this means & what to do
 			LOG.warn("No testable toolkit applications found!");
-			this.ITMILLWarnedNoAppFound = true;
+			this.VaadinWarnedNoAppFound = true;
 		}
 		return true;
 	}
