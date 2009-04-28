@@ -20,19 +20,20 @@ import com.vaadin.testingtools.util.SeleniumHTMLTestCaseParser.Command;
 
 public class TestConverter {
 
-    private static final String JAVA_HEADER = "package {package};\n" + "\n"
-            + "import com.itmill.testingtools.runner.AbstractTestCase;\n"
-            + "\n" + "public class {class} extends AbstractTestCase {\n" + "\n"
-            + "public void test{class}() throws Exception {\n" + "\n";
+    private static final String JAVA_HEADER = "package {package};\n"
+            + "\n"
+            + "import com.vaadin.testingtools.testcase.AbstractVaadinTestCase;\n"
+            + "\n" + "public class {class} extends AbstractVaadinTestCase {\n"
+            + "\n" + "public void test{class}() throws Exception {\n" + "\n";
 
     private static final String JAVA_FOOTER = "}\n" + "}\n";
 
-    private static final String PACKAGE_DIR = "itmill/tests";
+    private static final String PACKAGE_DIR = "vaadin/automatictests";
 
     public static void main(String[] args) {
         if (args.length < 2) {
             System.err.println("Usage: " + TestConverter.class.getName()
-                    + " <output directory> <java source files>");
+                    + " <output directory> <html test files>");
             System.exit(1);
         }
 
@@ -131,7 +132,7 @@ public class TestConverter {
         StringBuilder javaSource = new StringBuilder();
 
         for (Command command : commands) {
-            javaSource.append("testBase.getSelenium().doCommand(\"");
+            javaSource.append("doCommand(\"");
             javaSource.append(command.getCmd());
             javaSource.append("\",new String[] {");
 

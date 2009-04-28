@@ -12,13 +12,17 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
 
     private static final String DEFAULT_BROWSER = "*chrome";
 
-    protected TestBase testBase = new TestBase();
+    protected VaadinTestBase testBase = new VaadinTestBase();
 
     /**
      * Wait for Vaadin to complete processing the current request.
      */
     public void waitForVaadin() {
         testBase.waitForVaadin();
+    }
+
+    public void doCommand(String cmd, String[] params) {
+        testBase.doCommand(cmd, params);
     }
 
     /*

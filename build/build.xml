@@ -3,10 +3,11 @@
 <project name="Testing Tools build" basedir="." default="package">
 
 	<target name="package">
-		<delete dir="result">
+<!--		<delete dir="result">
 		</delete>
+-->
 		<mkdir dir="result" />
-		<jar jarfile="result/testingtools-runner.jar" compress="true">
+		<jar jarfile="result/testingtools-2.0-preview.jar" compress="true">
 			<manifest>
 				<attribute name="Class-Path" value="junit-4.5.jar selenium-java-client-driver.jar js.jar" />
 			</manifest>

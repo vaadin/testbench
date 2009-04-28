@@ -6,7 +6,7 @@ import java.util.Random;
 
 import com.thoughtworks.selenium.SeleneseTestBase;
 
-public class TestBase extends SeleneseTestBase {
+public class VaadinTestBase extends SeleneseTestBase {
 
     private VaadinSeleniumImplementation vaadinSelenium;
 
@@ -89,4 +89,7 @@ public class TestBase extends SeleneseTestBase {
 
     }
 
+    public void doCommand(String cmd, String[] params) {
+        getVaadinSelenium().doCommand(cmd, params);
+    }
 }
