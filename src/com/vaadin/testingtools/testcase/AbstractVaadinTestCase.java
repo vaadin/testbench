@@ -14,6 +14,8 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
 
     protected VaadinTestBase testBase = new VaadinTestBase();
 
+    private String browserOverride = null;
+
     /**
      * Wait for Vaadin to complete processing the current request.
      */
@@ -38,12 +40,21 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
 
     @Override
     public void setUp(String url) throws Exception {
-        testBase.setUp(url);
+        if (browserOverride != null) {
+            testBase.setUp(url, browserOverride);
+        } else {
+            testBase.setUp(url);
+        }
+
         selenium = testBase.getVaadinSelenium();
     }
 
     protected void setTestHosts(String... testHosts) {
         testBase.setTestHosts(testHosts);
+    }
+
+    protected void setBrowser(String browser) {
+        browserOverride = browser;
     }
 
     private static final String TEST_HOST_PROPERTY = "testingtools.tester.host";
@@ -73,7 +84,9 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
                             + "DO NOT include the context path, this is stored in the test case.");
         }
 
-        if (browser == null || browser.length() == 0) {
+        if (browserOverride != null) {
+            browser = browserOverride;
+        } else if (browser == null || browser.length() == 0) {
             browser = DEFAULT_BROWSER;
         }
 

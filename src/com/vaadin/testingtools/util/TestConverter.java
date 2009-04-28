@@ -8,7 +8,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.mozilla.javascript.Context;
@@ -20,37 +22,64 @@ import com.vaadin.testingtools.util.SeleniumHTMLTestCaseParser.Command;
 
 public class TestConverter {
 
+    private static Map<String, String> knownBrowsers = new HashMap<String, String>();
+    static {
+        /*
+         * Self mappings are to avoid unnecessary unknown browser warnings if
+         * user wants to use selenium id strings.
+         */
+        knownBrowsers.put("firefox", "*chrome");
+        knownBrowsers.put("*chrome", "*chrome");
+        knownBrowsers.put("ie", "*iexplore");
+        knownBrowsers.put("*iexplore", "*iexplore");
+
+        // knownBrowsers.put("opera", "*opera");
+        // knownBrowsers.put("*opera", "*opera");
+    }
     private static final String JAVA_HEADER = "package {package};\n"
             + "\n"
             + "import com.vaadin.testingtools.testcase.AbstractVaadinTestCase;\n"
             + "\n" + "public class {class} extends AbstractVaadinTestCase {\n"
-            + "\n" + "public void test{class}() throws Exception {\n" + "\n";
+            + "\n" + "public void setUp() throws Exception {\n"
+            + "        setBrowser({browser});\n super.setUp();\n" + "}" + "\n"
+            + "\n" + "public void test{testName}() throws Exception {\n" + "\n";
 
     private static final String JAVA_FOOTER = "}\n" + "}\n";
 
-    private static final String PACKAGE_DIR = "vaadin/automatictests";
+    private static final String PACKAGE_DIR = "vaadin/automatedtests";
 
     public static void main(String[] args) {
-        if (args.length < 2) {
+        if (args.length < 3) {
             System.err.println("Usage: " + TestConverter.class.getName()
-                    + " <output directory> <html test files>");
+                    + " <output directory> <browsers> <html test files>");
             System.exit(1);
         }
 
         String outputDirectory = args[0];
+        String browserString = args[1];
+        String browsers[] = browserString.split(",");
+
         System.out.println("Using output directory: " + outputDirectory);
         createIfNotExists(outputDirectory);
         createIfNotExists(outputDirectory + File.separator + PACKAGE_DIR);
 
-        for (int i = 1; i < args.length; i++) {
-            String filename = args[i];
-            try {
-                convertFile(filename, outputDirectory);
-            } catch (Exception e) {
-                e.printStackTrace();
+        for (String browser : browsers) {
+            System.out.println("Generating tests for " + browser);
+
+            String browserId = knownBrowsers.get(browser.toLowerCase());
+            if (browserId == null) {
+                System.err.println("Warning: Unknown browser: " + browser);
+            }
+
+            for (int i = 2; i < args.length; i++) {
+                String filename = args[i];
+                try {
+                    convertFile(filename, browser, outputDirectory);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
-
     }
 
     private static void createIfNotExists(String directory) {
@@ -66,9 +95,9 @@ public class TestConverter {
 
     }
 
-    private static void convertFile(String htmlFile, String outputDirectory)
-            throws FileNotFoundException, IOException {
-        File outputFile = getJavaFile(htmlFile, outputDirectory);
+    private static void convertFile(String htmlFile, String browser,
+            String outputDirectory) throws FileNotFoundException, IOException {
+        File outputFile = getJavaFile(htmlFile, browser, outputDirectory);
         System.out.println("Converting " + htmlFile + " into "
                 + outputFile.getAbsolutePath());
         String className = removeExtension(outputFile.getName());
@@ -87,7 +116,7 @@ public class TestConverter {
 
             FileOutputStream outputStream = new FileOutputStream(outputFile);
 
-            outputStream.write(getJavaHeader(className));
+            outputStream.write(getJavaHeader(className, browser));
             outputStream.write(javaFile.getBytes());
             outputStream.write(getJavaFooter());
 
@@ -104,10 +133,18 @@ public class TestConverter {
         return name.replaceAll("\\.[^\\.]*$", "");
     }
 
-    private static byte[] getJavaHeader(String className) {
+    private static byte[] getJavaHeader(String className, String browser) {
         String header = JAVA_HEADER;
         header = header.replace("{class}", className);
+        header = header.replace("{testName}", className);
         header = header.replace("{package}", getPackageName());
+
+        String browserId = knownBrowsers.get(browser.toLowerCase());
+        if (browserId == null) {
+            browserId = browser;
+        }
+
+        header = header.replace("{browser}", "\"" + browserId + "\"");
 
         return header.getBytes();
     }
@@ -116,11 +153,14 @@ public class TestConverter {
         return JAVA_FOOTER.getBytes();
     }
 
-    private static File getJavaFile(String htmlFilename, String outputDirectory) {
+    private static File getJavaFile(String htmlFilename, String browser,
+            String outputDirectory) {
 
         File file = new File(htmlFilename);
         String filename = removeExtension(file.getName());
         filename = filename.replaceAll("[^a-zA-Z0-9]", "_");
+        filename += "_" + browser.replaceAll("[^a-zA-Z0-9]", "_");
+
         File outputFile = new File(outputDirectory + File.separator
                 + getPackageDir() + File.separator + filename + ".java");
 
