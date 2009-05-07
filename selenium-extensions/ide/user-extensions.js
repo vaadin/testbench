@@ -46,3 +46,19 @@ Recorder.prototype.record = function(command, target, value, insertBeforeLastCom
 	this.record_orig("waitForVaadin");
 }
 
+Recorder.addEventHandler('contextmenu', 'contextmenu', function(event) {
+	var hasContextMenuListener = false;
+	var elem  = event.target.wrappedJSObject;
+	while(!hasContextMenuListener && elem != null) {
+		if(elem.oncontextmenu) {
+			hasContextMenuListener = true;
+			break;
+		} else {
+			elem = elem.parentNode;
+		}
+	}
+	if(hasContextMenuListener) {
+		this.record("contextmenu", this.findLocators(event.target));
+	}
+}, { capture: true });
+
