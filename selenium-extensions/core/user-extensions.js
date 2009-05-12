@@ -1,11 +1,27 @@
-PageBot.prototype.locateElementByVaadin = function(tkString, inDocument) {
+/* Selenium core extensions for Vaadin */
 
-	var wnd = this.currentWindow;
+/* Also in IDE extensions */
+function getVaadinConnector(wnd) {
 	if (wnd.wrappedJSObject) {
 		wnd = wnd.wrappedJSObject;
 	}
 
-	if (!wnd.itmill || !wnd.itmill.clients) {
+	var connector = null;
+	if (wnd.itmill) {
+		connector = wnd.itmill;
+	} else if (wnd.vaadin) {
+		connector = wnd.vaadin;
+	}
+
+	return connector;
+}
+
+PageBot.prototype.locateElementByVaadin = function(tkString, inDocument) {
+
+	var connector = getVaadinConnector(this.currentWindow);
+
+	if (!connector) {
+		// Not a toolkit application
 		return null;
 	}
 
@@ -13,7 +29,7 @@ PageBot.prototype.locateElementByVaadin = function(tkString, inDocument) {
 	var appId = parts[0];
 
 	try {
-		var element = wnd.itmill.clients[appId].getElementByPath(parts[1]);
+		var element = connector.clients[appId].getElementByPath(parts[1]);
 		return element;
 	} catch (exception) {
 		LOG.error('an error occured when locating element for '+tkString+': ' + exception);
@@ -47,10 +63,12 @@ Selenium.prototype.doWaitForVaadin = function(locator, value) {
 
 	return Selenium.decorateFunctionWithTimeout( function() {
 		var wnd = selenium.browserbot.getCurrentWindow();
-		if (wnd.wrappedJSObject) {
-			wnd = wnd.wrappedJSObject;
+		var connector = getVaadinConnector(wnd);
+		if (!connector) {
+			return;
 		}
-		var clients = wnd.itmill.clients;
+		
+		var clients = connector.clients;
 		if (clients) {
 			for ( var client in clients) {
 				if (clients[client].isActive()) {
