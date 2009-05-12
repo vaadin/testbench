@@ -1,0 +1,22 @@
+Setting up Firefox for recording a test case
+============================================
+1. Install Selenium IDE (http://seleniumhq.org/download/) 1.0 beta 2 has been tested.
+2. Open Selenium IDE in Firefox (Tools -> Selenium IDE).
+2. Install Vaadin Selenium Extensions (selenium-extensions) into Selenium IDE. This is done through Options -> Options... in Selenium IDE. Both Core and IDE extensions must be installed.
+3. (Optional) Install Vaadin Java Format for Selenium through Options -> Options... -> Formats -> Add and paste the contents of selenium-extensions/vaadin-format.js into the textarea.
+4. Restart Selenium IDE by closing the window and opening it again (Tools -> Selenium IDE).
+
+
+Setting up a test host
+======================
+1. Install Selenium RC (http://seleniumhq.org/download/) 1.0 beta 2 has been tested.
+2. Extract Vaadin Selenium Core Extensions (selenium-extensions/core/user-extensions.js)
+3. Start the Selenium Server using the "-userExtensions path-to-extensionsjs/user-extensions.js" parameter, e.g.
+"C:\Program Files\Java\jre6\bin\java.exe" -jar c:\selenium\selenium-remote-control-1.0-beta-2\selenium-server-1.0-beta-2\selenium-server.jar -userExtensions C:\selenium\user-extensions.js"
+ 
+
+Executing tests on the test host from Ant 
+=========================================
+See examples/test.xml
+ 
+

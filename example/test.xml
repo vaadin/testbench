@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+
+<project name="Example Testing Script" basedir="." default="run-and-clean-up">
+	<!-- Temporary output directory, created and removed by this script -->
+	<property name="test-output-dir" value="../test-output" />
+	<!-- Browsers to use for testing -->
+	<property name="test-browsers" value="firefox,ie" />
+	<!-- Host running Selenium RC -->
+	<property name="test-host" value="192.168.1.122" />
+	<!-- Base url where the testable application is deployed -->
+	<property name="test-deployment-url" value="http://192.168.1.235:8080/" />
+
+	<!-- classpath must include testingtools jar and its dependencies -->
+	<path id="classpath">
+		<fileset dir="lib" includes="**/*.jar" />
+	</path>
+
+	<!-- fileset containing all tests to run -->
+	<fileset dir="tests" id="html-test-files">
+		<include name="*.html" />
+	</fileset>
+
+	<!-- This target converts HTML tests files to java junit tests. One test file for each browser is created. -->
+	<target name="create-tests">
+		<fileset id="tests">
+			<include />
+		</fileset>
+		<pathconvert pathsep=" " property="testfiles" refid="html-test-files" />
+
+		<java classname="com.vaadin.testingtools.util.TestConverter" classpathref="classpath">
+			<arg value="${test-output-dir}/src" />
+			<arg value="${test-browsers}" />
+			<arg line="${testfiles}" />
+		</java>
+	</target>
+
+	<!-- This target complies the generated java junit tests. -->
+	<target name="compile-tests" depends="create-tests">
+		<mkdir dir="${test-output-dir}/classes" />
+		<javac srcdir="${test-output-dir}/src" destdir="${test-output-dir}/classes" debug="on">
+			<classpath>
+				<path refid="classpath" />
+			</classpath>
+		</javac>
+	</target>
+
+
+	<!-- This target runs the generated and compiled junit tests -->
+	<target name="run-tests" depends="compile-tests">
+		<junit fork="yes" printsummary="yes">
+			<classpath>
+				<path refid="classpath" />
+				<pathelement path="${test-output-dir}/classes" />
+			</classpath>
+
+			<jvmarg value="-Dcom.vaadin.testingtools.tester.host=${test-host}" />
+			<jvmarg value="-Dcom.vaadin.testingtools.deployment.url=${test-deployment-url}" />
+
+			<batchtest>
+				<fileset dir="${test-output-dir}/src">
+					<include name="**/**.java" />
+				</fileset>
+			</batchtest>
+		</junit>
+
+	</target>
+
+	<!-- Remove temporary source and compiled java files -->
+	<target name="remove-temp-files">
+		<delete>
+			<fileset dir="${test-output-dir}">
+				<include name="**/**.java" />
+			</fileset>
+		</delete>
+	</target>
+
+	<target name="run-and-clean-up" depends="run-tests, remove-temp-files">
+	</target>
+</project>

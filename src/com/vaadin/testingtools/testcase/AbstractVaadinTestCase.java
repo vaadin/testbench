@@ -57,9 +57,9 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
         browserOverride = browser;
     }
 
-    private static final String TEST_HOST_PROPERTY = "testingtools.tester.host";
-    private static final String BROWSER_PROPERTY = "testingtools.tester.browser";
-    private static final String DEPLOYMENT_URL_PROPERTY = "testingtools.deployment.url";
+    private static final String TEST_HOST_PROPERTY = "com.vaadin.testingtools.tester.host";
+    private static final String BROWSER_PROPERTY = "com.vaadin.testingtools.tester.browser";
+    private static final String DEPLOYMENT_URL_PROPERTY = "com.vaadin.testingtools.deployment.url";
 
     /*
      * Sets up the test case. Uses system properties to determine test hosts,

@@ -49,7 +49,7 @@ public class TestConverter {
 
     private static final String JAVA_FOOTER = "}\n";
 
-    private static final String PACKAGE_DIR = "vaadin/automatedtests";
+    private static final String PACKAGE_DIR = "com/vaadin/automatedtests";
 
     public static void main(String[] args) {
         if (args.length < 3) {
