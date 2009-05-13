@@ -63,7 +63,6 @@ Recorder.prototype.record = function(command, target, value,
 /*
  * Override the default findClickableElement so we can decide what is clickable in a GWT compatible fashion.
  */
-var defaultFindClickableElement = Recorder.prototype.findClickableElement;
 
 Recorder.prototype.findClickableElement = function(e) {
 	if (!e)
@@ -98,6 +97,27 @@ Recorder.prototype.findClickableElement = function(e) {
 	/* End of original Recorder.prototype.findClickableElement */
 
 };
+
+Recorder.addEventHandler('scroll', 'scroll', function(event) {
+	if(event.target && event.target.wrappedJSObject) {
+		var elem  = event.target.wrappedJSObject;
+		if(elem.onscroll) {
+			this.log.warn(this);
+			var loc = this.findLocators(event.target);
+			var top = "" + elem.scrollTop;
+			if(this._scrollTimeout) {
+				clearTimeout(this._scrollTimeout);
+			}
+			var s = this;
+			this._scrollTimeout = setTimeout(function(){
+				s.record_orig("scroll", loc , top);
+				// wait for lazy scroller to start possible server visit
+				s.record("pause", "300");
+				s._scrollTimeout = null;
+			},260);
+		}
+	}
+}, { capture: true });
 
 Recorder.addEventHandler('contextmenu', 'contextmenu', function(event) {
 	var hasContextMenuListener = false;

@@ -88,6 +88,11 @@ Selenium.prototype.doWaitForVaadin = function(locator, value) {
 
 }
 
+Selenium.prototype.doScroll = function(locator, scrollString) {
+	var element = this.page().findElement(locator);
+	element.scrollTop = scrollString;
+};
+
 Selenium.prototype.doContextmenu = function(locator) { 
      var element = this.page().findElement(locator); 
      this.page()._fireEventOnElement("contextmenu", element, 0, 0); 
