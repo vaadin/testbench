@@ -65,7 +65,8 @@ Selenium.prototype.doWaitForVaadin = function(locator, value) {
 		var wnd = selenium.browserbot.getCurrentWindow();
 		var connector = getVaadinConnector(wnd);
 		if (!connector) {
-			return;
+			// No connector found == Not a Vaadin application so we don't need to wait
+			return true;
 		}
 		
 		var clients = connector.clients;

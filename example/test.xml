@@ -10,7 +10,7 @@
 	<!-- Base url where the testable application is deployed -->
 	<property name="test-deployment-url" value="http://192.168.1.235:8080/" />
 
-	<!-- classpath must include testingtools jar and its dependencies -->
+	<!-- classpath must include test bench jar and its dependencies -->
 	<path id="classpath">
 		<fileset dir="lib" includes="**/*.jar" />
 	</path>
@@ -27,7 +27,7 @@
 		</fileset>
 		<pathconvert pathsep=" " property="testfiles" refid="html-test-files" />
 
-		<java classname="com.vaadin.testingtools.util.TestConverter" classpathref="classpath">
+		<java classname="com.vaadin.testbench.util.TestConverter" classpathref="classpath">
 			<arg value="${test-output-dir}/src" />
 			<arg value="${test-browsers}" />
 			<arg line="${testfiles}" />
@@ -53,8 +53,8 @@
 				<pathelement path="${test-output-dir}/classes" />
 			</classpath>
 
-			<jvmarg value="-Dcom.vaadin.testingtools.tester.host=${test-host}" />
-			<jvmarg value="-Dcom.vaadin.testingtools.deployment.url=${test-deployment-url}" />
+			<jvmarg value="-Dcom.vaadin.testbench.tester.host=${test-host}" />
+			<jvmarg value="-Dcom.vaadin.testbench.deployment.url=${test-deployment-url}" />
 
 			<batchtest>
 				<fileset dir="${test-output-dir}/src">

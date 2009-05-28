@@ -1,4 +1,4 @@
-package com.vaadin.testingtools.testcase;
+package com.vaadin.testbench.testcase;
 
 import com.thoughtworks.selenium.SeleneseTestCase;
 
@@ -57,9 +57,9 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
         browserOverride = browser;
     }
 
-    private static final String TEST_HOST_PROPERTY = "com.vaadin.testingtools.tester.host";
-    private static final String BROWSER_PROPERTY = "com.vaadin.testingtools.tester.browser";
-    private static final String DEPLOYMENT_URL_PROPERTY = "com.vaadin.testingtools.deployment.url";
+    private static final String TEST_HOST_PROPERTY = "com.vaadin.testbench.tester.host";
+    private static final String BROWSER_PROPERTY = "com.vaadin.testbench.tester.browser";
+    private static final String DEPLOYMENT_URL_PROPERTY = "com.vaadin.testbench.deployment.url";
 
     /*
      * Sets up the test case. Uses system properties to determine test hosts,

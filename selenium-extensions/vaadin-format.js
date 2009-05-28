@@ -244,8 +244,7 @@ options.header =
 	"\n" +
 	"import com.thoughtworks.selenium.*;\n" +
 	"import java.util.regex.Pattern;\n" +
-	"import com.itmill.testingtools.runner.*;\n" +
-	"import com.vaadin.testingtools.testcase.*;\n" +
+	"import com.vaadin.testbench.testcase.*;\n" +
 	"\n" +
     "public class ${className} extends ${superClass} {\n" + 
     "\tpublic void ${methodName}() throws Exception {\n";

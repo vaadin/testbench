@@ -1,4 +1,4 @@
-package com.vaadin.testingtools.util;
+package com.vaadin.testbench.util;
 
 import java.util.ArrayList;
 import java.util.List;

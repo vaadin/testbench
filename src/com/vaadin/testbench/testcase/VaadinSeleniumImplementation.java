@@ -1,4 +1,4 @@
-package com.vaadin.testingtools.testcase;
+package com.vaadin.testbench.testcase;
 
 import com.thoughtworks.selenium.DefaultSelenium;
 

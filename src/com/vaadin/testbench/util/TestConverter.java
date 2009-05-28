@@ -1,4 +1,4 @@
-package com.vaadin.testingtools.util;
+package com.vaadin.testbench.util;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -19,7 +19,7 @@ import org.mozilla.javascript.NativeArray;
 import org.mozilla.javascript.NativeObject;
 import org.mozilla.javascript.Scriptable;
 
-import com.vaadin.testingtools.util.SeleniumHTMLTestCaseParser.Command;
+import com.vaadin.testbench.util.SeleniumHTMLTestCaseParser.Command;
 
 public class TestConverter {
 
@@ -37,9 +37,8 @@ public class TestConverter {
         // knownBrowsers.put("opera", "*opera");
         // knownBrowsers.put("*opera", "*opera");
     }
-    private static final String JAVA_HEADER = "package {package};\n"
-            + "\n"
-            + "import com.vaadin.testingtools.testcase.AbstractVaadinTestCase;\n"
+    private static final String JAVA_HEADER = "package {package};\n" + "\n"
+            + "import com.vaadin.testbench.testcase.AbstractVaadinTestCase;\n"
             + "\n" + "public class {class} extends AbstractVaadinTestCase {\n"
             + "\n" + "public void setUp() throws Exception {\n"
             + "        setBrowser({browser});\n super.setUp();\n" + "}" + "\n";
