@@ -160,7 +160,8 @@ public class TestConverter {
 
         String htmlSource = IOUtils.toString(new FileInputStream(htmlFile));
         htmlSource = htmlSource.replace("\"", "\\\"")
-                .replaceAll("\\n", "\\\\n");
+                .replaceAll("\\n", "\\\\n").replace("'", "\\'").replaceAll(
+                        "\\r", "");
 
         Context cx = Context.enter();
         try {
