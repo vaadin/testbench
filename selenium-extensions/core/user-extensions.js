@@ -60,7 +60,8 @@ Selenium.prototype.doWaitForVaadin = function(locator, value) {
 
 	// max time to wait for toolkit to settle
 	var timeout = 20000;
-
+	var foundClientOnce = false;
+	
 	return Selenium.decorateFunctionWithTimeout( function() {
 		var wnd = selenium.browserbot.getCurrentWindow();
 		var connector = getVaadinConnector(wnd);
@@ -71,6 +72,7 @@ Selenium.prototype.doWaitForVaadin = function(locator, value) {
 		
 		var clients = connector.clients;
 		if (clients) {
+			foundClientOnce = true;
 			for ( var client in clients) {
 				if (clients[client].isActive()) {
 					return false;
@@ -78,12 +80,18 @@ Selenium.prototype.doWaitForVaadin = function(locator, value) {
 			}
 			return true;
 		} else {
+			if (foundClientOnce) {
+				// There was a client, so probably there will be again once something has refreshed
+				// This happens for instance when the theme is changed on the fly
+				return false;
+			}
 			if (!this.VaadinWarnedNoAppFound) {
 				// TODO explain what this means & what to do
-			LOG.warn("No testable toolkit applications found!");
-			this.VaadinWarnedNoAppFound = true;
-		}
-		return true;
+					LOG.warn("No testable Vaadin applications found!");
+				this.VaadinWarnedNoAppFound = true;
+			}
+			
+			return true;
 	}
 }, timeout);
 
