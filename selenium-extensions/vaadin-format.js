@@ -225,7 +225,22 @@ function formatComment(comment) {
 	if (comment.comment.match(/^selenium\.waitForVaadin\(\)/) ) {
 		return "waitForVaadin();"
 	}
-		
+	
+	// Catch command selenium.screenCapture
+	if (comment.comment.match(/^selenium\.screenCapture/) ) {
+		// Check if screenCapture has a value but not a target
+		if(comment.comment.match(/^selenium\.screenCapture\(\"\"/)){
+			// Get value for screenCapture
+			var str = comment.comment.substring(27, comment.comment.length-2);
+			// Replace all \\ with File.separator
+			var file = str.replace(/\\\\/gi, "\" + File.separator + \"");
+			return "assertTrue(validateScreenshot(" + file  + ", 0.001));";
+		}else{
+			// if no value or if has target. make place holder.
+			return "assertTrue(validateScreenshot(\"Edit this field\", 0.001);";
+		}
+	}
+	
 	return comment.comment.replace(/.+/mg, function(str) {
 			return "// " + str;
 		});
@@ -245,10 +260,13 @@ options.header =
 	"import com.thoughtworks.selenium.*;\n" +
 	"import java.util.regex.Pattern;\n" +
 	"import com.vaadin.testbench.testcase.*;\n" +
+	"import java.io.File;\n" +
 	"\n" +
     "public class ${className} extends ${superClass} {\n" + 
-    "\tpublic void ${methodName}() throws Exception {\n";
-
+    "\tpublic void ${methodName}() throws Exception {\n" +
+    "\t\tselenium.windowMaximize();\n";
+// in options.header import ..File is for screenshot (no need for manual import add).
+// and .windowMaximize() is so that all screenshots are of the same size.
 
 options.footer =
 	"\t}\n" +

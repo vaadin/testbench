@@ -33,9 +33,8 @@ public class TestConverter {
         knownBrowsers.put("*chrome", "*chrome");
         knownBrowsers.put("ie", "*iexplore");
         knownBrowsers.put("*iexplore", "*iexplore");
-
-        // knownBrowsers.put("opera", "*opera");
-        // knownBrowsers.put("*opera", "*opera");
+        knownBrowsers.put("opera", "*opera");
+        knownBrowsers.put("*opera", "*opera");
     }
     private static final String JAVA_HEADER = "package {package};\n" + "\n"
             + "import com.vaadin.testbench.testcase.AbstractVaadinTestCase;\n"
@@ -182,8 +181,11 @@ public class TestConverter {
         String testCaseHeader = getTestCaseHeader(testName);
         String testCaseBody = convertTestCaseToJava(commands);
         String testCaseFooter = getTestCaseFooter(testName);
+        // Add these inthe case a screenshot is wanted
+        String windowFunctions = "doCommand(\"windowMaximize\", new String[] { \"\" });\n"
+                + "selenium.windowFocus();\n";// "doCommand(\"windowFocus\", new String[] { \"\" });\n";
 
-        return testCaseHeader + testCaseBody + testCaseFooter;
+        return testCaseHeader + windowFunctions + testCaseBody + testCaseFooter;
     }
 
     private static String removeExtension(String name) {
@@ -239,23 +241,37 @@ public class TestConverter {
         StringBuilder javaSource = new StringBuilder();
 
         for (Command command : commands) {
-            javaSource.append("doCommand(\"");
-            javaSource.append(command.getCmd());
-            javaSource.append("\",new String[] {");
+            if (command.getCmd().equals("screenCapture")) {
 
-            boolean first = true;
-            for (String param : command.getParams()) {
-                if (!first) {
-                    javaSource.append(",");
+                String file = "";
+                boolean first = true;
+                for (String param : command.getParams()) {
+                    if (!first) {
+                        file = param;
+                    }
+                    first = false;
                 }
-                first = false;
+                javaSource.append("assertTrue(validateScreenshot(\"" + file
+                        + "\", 0.001));\n");
+            } else {
+                javaSource.append("doCommand(\"");
+                javaSource.append(command.getCmd());
+                javaSource.append("\",new String[] {");
 
-                javaSource.append("\"");
-                javaSource.append(param.replace("\"", "\\\"").replaceAll("\\n",
-                        "\\\\n"));
-                javaSource.append("\"");
+                boolean first = true;
+                for (String param : command.getParams()) {
+                    if (!first) {
+                        javaSource.append(",");
+                    }
+                    first = false;
+
+                    javaSource.append("\"");
+                    javaSource.append(param.replace("\"", "\\\"").replaceAll(
+                            "\\n", "\\\\n"));
+                    javaSource.append("\"");
+                }
+                javaSource.append("});\n");
             }
-            javaSource.append("});\n");
         }
 
         return javaSource.toString();

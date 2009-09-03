@@ -115,3 +115,17 @@ Selenium.prototype.doContextmenuAt = function(locator, coordString) {
       var clientXY = getClientXY(element, coordString);
       this.page()._fireEventOnElement("contextmenu", element, clientXY[0], clientXY[1]); 
 };
+
+/* Add the screenCapture as an action to SeleniumIDE command overlay */
+CommandBuilders.add("action", function(window){
+
+	var result = { action: "ScreenCapture" };
+	
+	return{
+		command: "screenCapture"
+	};
+});
+
+/* Empty screenCapture command for use with export test case Vaadin */
+Selenium.prototype.doScreenCapture = function(locator, value){
+};
