@@ -35,6 +35,8 @@ public class TestConverter {
         knownBrowsers.put("*iexplore", "*iexplore");
         knownBrowsers.put("opera", "*opera");
         knownBrowsers.put("*opera", "*opera");
+        knownBrowsers.put("safari", "*safari");
+        knownBrowsers.put("*safari", "*safari");
     }
     private static final String JAVA_HEADER = "package {package};\n" + "\n"
             + "import com.vaadin.testbench.testcase.AbstractVaadinTestCase;\n"
@@ -179,11 +181,11 @@ public class TestConverter {
     private static String createTestCaseMethod(String testName,
             List<Command> commands) {
         String testCaseHeader = getTestCaseHeader(testName);
-        String testCaseBody = convertTestCaseToJava(commands);
+        String testCaseBody = convertTestCaseToJava(commands, testName);
         String testCaseFooter = getTestCaseFooter(testName);
         // Add these inthe case a screenshot is wanted
         String windowFunctions = "doCommand(\"windowMaximize\", new String[] { \"\" });\n"
-                + "selenium.windowFocus();\n";// "doCommand(\"windowFocus\", new String[] { \"\" });\n";
+                + "doCommand(\"windowFocus\", new String[] { \"\" });\n";
 
         return testCaseHeader + windowFunctions + testCaseBody + testCaseFooter;
     }
@@ -237,22 +239,23 @@ public class TestConverter {
         return outputFile;
     }
 
-    private static String convertTestCaseToJava(List<Command> commands) {
+    private static String convertTestCaseToJava(List<Command> commands,
+            String testName) {
         StringBuilder javaSource = new StringBuilder();
 
         for (Command command : commands) {
             if (command.getCmd().equals("screenCapture")) {
 
-                String file = "";
+                String identifier = "";
                 boolean first = true;
                 for (String param : command.getParams()) {
                     if (!first) {
-                        file = param;
+                        identifier = param;
                     }
                     first = false;
                 }
-                javaSource.append("assertTrue(validateScreenshot(\"" + file
-                        + "\", 0.001));\n");
+                javaSource.append("assertTrue(validateScreenshot(\"" + testName
+                        + "\", 0.001, \"" + identifier + "\"));\n");
             } else {
                 javaSource.append("doCommand(\"");
                 javaSource.append(command.getCmd());

@@ -9,12 +9,14 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
 import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
 
 /**
  * Class with features for comparing 2 images.
@@ -40,11 +42,11 @@ public class ImageComparison {
      * @param fileId
      *            File name for this image
      * @param dimensions
-     *            Browser window dimensions outer & inner [w, h, w, h]
+     *            Browser window dimensions
      * @return true if images are the same
      */
     public boolean compareStringImage(String image, String fileId, double d,
-            int[] dimensions) throws Exception {
+            BrowserDimensions dimensions) throws Exception {
         // Check that d value inside allowed range. if false set d to default
         // value.
         if (d < 0 || d > 1) {
@@ -55,6 +57,12 @@ public class ImageComparison {
 
         String directory = System.getProperty(TEST_REFERENCE_DIRECTORY);
 
+        // Write error blocks to file only if debug is defined as true
+        boolean debug = false;
+        if ("true".equals(System
+                .getProperty("com.vaadin.testbench.tester.debug")))
+            debug = true;
+
         if (directory == null || directory.length() == 0) {
             throw new IllegalArgumentException(
                     "Missing reference directory definition. Use -D"
@@ -63,7 +71,9 @@ public class ImageComparison {
 
         // collect errors that are then written to a .log file
         StringBuilder imageErrors = new StringBuilder();
-        BufferedImage test = stringToImage(image);
+        BufferedImage test = (stringToImage(image)).getSubimage(dimensions
+                .getCanvasXPosition(), dimensions.getCanvasYPosition(),
+                dimensions.getCanvasWidth(), dimensions.getCanvasHeight());
 
         try {
             // Load images
@@ -76,19 +86,14 @@ public class ImageComparison {
                 // Flag result as true until proven false
                 result = true;
 
-                int browserSides = 0;
-                int startPosition = 0;
-
-                if (dimensions[1] != dimensions[3])
-                    startPosition = 32;
-                if (dimensions[0] != dimensions[2])
-                    browserSides = 4; // start half a block in.
+                int xBlocks = target.getWidth() / 16;
+                int yBlocks = target.getHeight() / 16;
+                boolean[][] falseBlocks = new boolean[xBlocks][yBlocks];
 
                 // iterate picture in macroblocks of 16x16 (x,y) (0-> m-16, 0->
                 // n-16)
-                for (int y = startPosition; y < dimensions[1] - 16; y += 16) {
-                    for (int x = browserSides; x < target.getWidth() - 16
-                            - browserSides; x += 16) {
+                for (int y = 0; y < target.getHeight() - 16; y += 16) {
+                    for (int x = 0; x < target.getWidth() - 16; x += 16) {
                         int[] targetBlock = new int[16 * 16], testBlock = new int[16 * 16];
 
                         // Get 16x16 blocks from picture
@@ -103,15 +108,19 @@ public class ImageComparison {
                             double fullSum = 0.0;
 
                             for (int i = 0; i < targetBlock.length; i++) {
-                                fullSum += (new Color(targetBlock[i])).getRed();
-                                if (targetBlock[i] > testBlock[i]) {
-                                    sum += (new Color(targetBlock[i])).getRed()
-                                            - (new Color(testBlock[i]))
-                                                    .getRed();
-                                } else if (targetBlock[i] < testBlock[i]) {
-                                    sum += (new Color(testBlock[i])).getRed()
-                                            - (new Color(targetBlock[i]))
-                                                    .getRed();
+                                Color targetPixel = new Color(targetBlock[i]);
+                                Color testPixel = new Color(testBlock[i]);
+                                int targetColor = (targetPixel.getRed()
+                                        + targetPixel.getGreen() + targetPixel
+                                        .getBlue());
+                                int testColor = (testPixel.getRed()
+                                        + testPixel.getGreen() + testPixel
+                                        .getBlue());
+                                fullSum += targetColor;
+                                if (targetColor > testColor) {
+                                    sum += targetColor - testColor;
+                                } else if (testColor > targetColor) {
+                                    sum += testColor - targetColor;
                                 }
                             }
 
@@ -126,10 +135,13 @@ public class ImageComparison {
                                         .append("RGB error for block:\t\t"
                                                 + roundTwoDecimals((sum / fullSum) * 100)
                                                 + "%" + NEW_LINE + NEW_LINE);
-                                Graphics2D drawToPicture = test
-                                        .createGraphics();
-                                drawToPicture.setColor(Color.MAGENTA);
-                                drawToPicture.drawRect(x, y, 15, 15);
+                                falseBlocks[x / 16][y / 16] = true;
+                                // Graphics2D drawToPicture = test
+                                // .createGraphics();
+                                // drawToPicture.setColor(Color.MAGENTA);
+                                // drawToPicture.drawRect(x, y, 15, 15);
+                                // // release resources
+                                // drawToPicture.dispose();
                                 result = false;
                             }
                         }
@@ -146,10 +158,105 @@ public class ImageComparison {
                     if (!compareFolder.exists())
                         compareFolder.mkdir();
 
+                    // Draw lines around false blocks. before saving _diff file.
+                    Graphics2D drawToPicture = test.createGraphics();
+                    drawToPicture.setColor(Color.MAGENTA);
+
+                    for (int y = 0; y < yBlocks; y++) {
+                        for (int x = 0; x < xBlocks; x++) {
+                            if (falseBlocks[x][y]) {
+
+                                if (x > 0 && y > 0) {
+                                    if (falseBlocks[x - 1][y] == false) {
+                                        drawToPicture.drawLine(x * 16, y * 16,
+                                                x * 16, y * 16 + 16);
+                                    }
+                                    if (falseBlocks[x][y - 1] == false) {
+                                        drawToPicture.drawLine(x * 16, y * 16,
+                                                x * 16 + 16, y * 16);
+                                    }
+                                    if (x == xBlocks
+                                            || falseBlocks[x + 1][y] == false) {
+                                        drawToPicture.drawLine(x * 16 + 16,
+                                                y * 16, x * 16 + 16,
+                                                y * 16 + 16);
+                                    }
+
+                                    if (y == yBlocks
+                                            || falseBlocks[x][y + 1] == false) {
+                                        drawToPicture.drawLine(x * 16,
+                                                y * 16 + 16, x * 16 + 16,
+                                                y * 16 + 16);
+                                    }
+
+                                } else {
+                                    drawToPicture.drawLine(0, 0, 0, 16);
+                                    drawToPicture.drawLine(0, 0, 16, 0);
+                                    if (falseBlocks[x + 1][y] == false) {
+                                        drawToPicture.drawLine(16, 0, 16, 16);
+                                    }
+                                    if (falseBlocks[x][y + 1] == false) {
+                                        drawToPicture.drawLine(0, 16, 16, 16);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    // Release resources
+                    drawToPicture.dispose();
+
+                    // collect big error blocks for css viewing of differences
+                    List<ErrorBlock> errorAreas = new LinkedList<ErrorBlock>();
+
+                    for (int y = 0; y < yBlocks; y++) {
+                        for (int x = 0; x < xBlocks; x++) {
+                            if (falseBlocks[x][y]) {
+                                ErrorBlock newBlock = new ErrorBlock();
+                                newBlock.setX(x * 16);
+                                newBlock.setY(y * 16);
+                                int x1 = x, y1 = y;
+                                falseBlocks[x][y] = false;
+                                while (true) {
+                                    x1++;
+                                    if ((x1 + 1) > xBlocks) {
+                                        x1 = x;
+                                    }
+
+                                    if (falseBlocks[x1][y1]) {
+                                        newBlock.addXBlock();
+                                        falseBlocks[x1][y1] = false;
+                                    } else {
+                                        x1 = x;
+
+                                        if (falseBlocks[x1][y1 + 1]) {
+                                            y1++;
+                                            newBlock.addYBlock();
+                                            for (int z = 0; z < newBlock
+                                                    .getXBlocks(); z++) {
+                                                falseBlocks[x1++][y1] = false;
+                                            }
+                                        } else {
+                                            break;
+                                        }
+                                    }
+                                }
+                                errorAreas.add(newBlock);
+                            }
+                        }
+                    }
+
                     ImageIO.write(test, "png", new File(compareFolder
                             + File.separator + fileId + "_diff.png"));
-                    ImageIO.write(stringToImage(image), "png", new File(
+                    ImageIO.write((stringToImage(image)).getSubimage(dimensions
+                            .getCanvasXPosition(), dimensions
+                            .getCanvasYPosition(), dimensions.getCanvasWidth(),
+                            dimensions.getCanvasHeight()), "png", new File(
                             compareFolder + File.separator + fileId + ".png"));
+
+                    createDiffHtml(errorAreas, fileId + "_diff.png", ".."
+                            + File.separator + REFERENCE_DIRECTORY
+                            + File.separator + fileId + ".png", fileId, target
+                            .getHeight(), target.getWidth());
                 }
             } else {
                 System.err.println("Image sizes differ.");
@@ -163,8 +270,16 @@ public class ImageComparison {
                 File compareFolder = new File(directory + REFERENCE_DIRECTORY);
                 if (!compareFolder.exists())
                     compareFolder.mkdir();
+                BufferedImage referenceImage = new BufferedImage(dimensions
+                        .getCanvasWidth(), dimensions.getCanvasHeight(),
+                        BufferedImage.TYPE_INT_RGB);
 
-                ImageIO.write(test, "png", new File(compareFolder
+                Graphics2D g = (Graphics2D) referenceImage.getGraphics();
+                g.drawImage(test, 0, 0, dimensions.getCanvasWidth(), dimensions
+                        .getCanvasHeight(), null);
+                g.dispose();
+
+                ImageIO.write(referenceImage, "png", new File(compareFolder
                         + File.separator + fileId + ".png"));
                 result = true;
             } catch (FileNotFoundException fnfe) {
@@ -172,7 +287,7 @@ public class ImageComparison {
             }
         }
 
-        if (imageErrors.length() > 0) {
+        if (imageErrors.length() > 0 && debug) {
             // Write error macroblocks data to log file
             BufferedWriter out;
             try {
@@ -190,6 +305,76 @@ public class ImageComparison {
         }
 
         return result;
+    }
+
+    private void createDiffHtml(List<ErrorBlock> blocks, String diff,
+            String reference, String fileId, int h, int w) {
+        try {
+            PrintWriter writer = new PrintWriter(new File(System
+                    .getProperty(TEST_REFERENCE_DIRECTORY)
+                    + ERROR_DIRECTORY + File.separator + fileId + ".html"));
+            // Write head
+            writer.println("<html>");
+            writer.println("<head>");
+            writer.println("</head>");
+            writer.println("<body>");
+
+            writer
+                    .println("<div onclick=\"document.getElementById('reference').style.display='block'\" style=\"position: absolute; top: 0px; left: 0px; \"><img src=\""
+                            + diff
+                            + "\" height=\""
+                            + h
+                            + "\" width=\""
+                            + w
+                            + "\"/></div>");
+            writer
+                    .println("<div id=\"reference\" onclick=\"this.style.display='none'\" style=\"display: none; position: absolute; top: 0px; left: 0px; z-index: 999;\"><img src=\""
+                            + reference
+                            + "\" height=\""
+                            + h
+                            + "\" width=\""
+                            + w + "\"/></div>");
+
+            for (ErrorBlock error : blocks) {
+                String id = "popUpDiv_" + error.getX() + "_" + error.getY();
+                // position stars so that it's not out of screen.
+                writer
+                        .println("<div  onmouseover=\"document.getElementById('"
+                                + id
+                                + "').style.display='block'\"  style=\"z-index: 66;position: absolute; top: 0px; left: 0px; clip: rect("
+                                + error.getY()
+                                + "px,"
+                                + (error.getX() + (error.getXBlocks() * 16) + 1)
+                                + "px,"
+                                + (error.getY() + (error.getYBlocks() * 16) + 1)
+                                + "px,"
+                                + error.getX()
+                                + "px);\"><img src=\""
+                                + diff + "\"/></div>");
+                // Start "popup" div
+                writer
+                        .println("<div class=\"popUpDiv\" onmouseout=\"this.style.display='none'\" id=\""
+                                + id
+                                + "\"  style=\"display: none; position: absolute; top: 0px; left: 0px; clip: rect("
+                                + error.getY()
+                                + "px,"
+                                + (error.getX() + (error.getXBlocks() * 16) + 1)
+                                + "px,"
+                                + (error.getY() + (error.getYBlocks() * 16) + 1)
+                                + "px," + error.getX() + "px); z-index: 99;\">");
+                writer.println("<img src=\"" + reference + "\" height=\"" + h
+                        + "\" width=\"" + w + "\" />");
+                // End popup div
+                writer.println("</div>");
+            }
+
+            // End file
+            writer.println("</body></html>");
+            writer.flush();
+            writer.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -210,51 +395,6 @@ public class ImageComparison {
         }
 
         return bImage;
-    }
-
-    private String encodeArray(byte[] array) {
-        BASE64Encoder enc = new BASE64Encoder();
-        return enc.encode(array);
-    }
-
-    private int[] decodeArray(String block) {
-        BASE64Decoder dec = new BASE64Decoder();
-
-        try {
-            byte[] byteBlock = dec.decodeBuffer(block);
-
-            int length = byteBlock.length / 4;
-            int[] intBlock = new int[length];
-            for (int i = 0; i < byteBlock.length - 4; i += 4) {
-                intBlock[i % 4] = (byteBlock[i] << 24)
-                        + ((byteBlock[i + 1] & 0xFF) << 16)
-                        + ((byteBlock[i + 2] & 0xFF) << 8)
-                        + (byteBlock[i + 3] & 0xFF);
-            }
-            return intBlock;
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        return new int[0];
-    }
-
-    private int byteArrayToInt(byte[] b) {
-        return (b[0] << 24) + ((b[1] & 0xFF) << 16) + ((b[2] & 0xFF) << 8)
-                + (b[3] & 0xFF);
-    }
-
-    private byte[] intToByteArray(int[] value) {
-        int length = value.length * 4;
-        byte[] b = new byte[length];
-        int i = 0;
-        for (int pixel : value) {
-            b[i++] = (byte) (pixel >>> 24);
-            b[i++] = (byte) (pixel >>> 16);
-            b[i++] = (byte) (pixel >>> 8);
-            b[i++] = (byte) pixel;
-        }
-        return b;
     }
 
     /**
