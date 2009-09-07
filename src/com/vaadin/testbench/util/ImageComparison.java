@@ -16,7 +16,7 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
-import sun.misc.BASE64Decoder;
+import org.apache.commons.codec.binary.Base64;
 
 /**
  * Class with features for comparing 2 images.
@@ -385,9 +385,9 @@ public class ImageComparison {
     private BufferedImage stringToImage(String imageString) {
         // string to ByteArrayInputStream
         BufferedImage bImage = null;
-        BASE64Decoder b64dec = new BASE64Decoder();
+        Base64 b64dec = new Base64();
         try {
-            byte[] output = b64dec.decodeBuffer(imageString);
+            byte[] output = b64dec.decode(imageString.getBytes());
             ByteArrayInputStream bais = new ByteArrayInputStream(output);
             bImage = ImageIO.read(bais);
         } catch (IOException e) {
