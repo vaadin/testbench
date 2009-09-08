@@ -26,7 +26,7 @@
 			<fileset dir="../doc" includes="INSTALL.TXT"/>
 			<fileset dir="output" includes="vaadin-testbench-2.0.development-${version}.jar"/>
 			<fileset dir=".." includes="selenium-extensions/**" />
-			<fileset dir=".." includes="lib/commons-io-* lib/js.jar lib/junit*.jar lib/selenium-java-client*" excludes="lib/**-source* lib/**-src*"/>
+			<fileset dir=".." includes="lib/commons-io-* lib/commons-codec-* lib/js.jar lib/junit*.jar lib/selenium-java-client*" excludes="lib/**-source* lib/**-src*"/>
 			<fileset dir=".." includes="example/test.xml example/tests/**"/>
 				
 		</zip>
