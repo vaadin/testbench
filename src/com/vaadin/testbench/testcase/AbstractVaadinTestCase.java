@@ -43,49 +43,56 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
      *            Place to save screenshot + name
      * @return true, if equals reference image
      */
-    public boolean validateScreenshot(String fileId, double d, String identifier)
-            throws Exception {
-        // Set testCaseName so that we can have unified numbering on testCases
-        // 1-> per test case instead of 1-> per browser.
-        if (!testCaseName.equals(fileId)) {
-            testCaseName = fileId;
-            imageNumber = 0;
+    public boolean validateScreenshot(String fileId, double d, String identifier) {
+        try {
+            // Set testCaseName so that we can have unified numbering on
+            // testCases
+            // 1-> per test case instead of 1-> per browser.
+            if (!testCaseName.equals(fileId)) {
+                testCaseName = fileId;
+                imageNumber = 0;
+            }
+
+            boolean result = false;
+
+            // Pause so that we don't get the loading marker for vaadin
+            // applications (and wait long enough for labels to show)
+            pause(1000);
+
+            String navigator = browserUtils.browserVersion(selenium);
+
+            // setup filename
+            String fileName = "";
+            if (identifier == null || identifier.length() < 1) {
+                fileName = fileId + "_" + navigator + "_" + ++imageNumber;
+            } else {
+                fileName = fileId + "_" + navigator + "_" + identifier;
+            }
+
+            String image = selenium.captureScreenshotToString();
+            if (image == null)
+                return false;
+
+            // Get sizes for canvas cropping.
+            int width = Integer
+                    .parseInt(selenium.getEval("screen.availWidth;"));
+            int height = Integer.parseInt(selenium
+                    .getEval("screen.availHeight;"));
+            int canvasWidth = browserUtils.getCanvasWidth(selenium);
+            int canvasHeight = browserUtils.getCanvasHeight(selenium);
+            int canvasXPosition = browserUtils.canvasXPosition(selenium);
+            int canvasYPosition = browserUtils.canvasYPosition(selenium);
+
+            BrowserDimensions dimensions = new BrowserDimensions(width, height,
+                    canvasWidth, canvasHeight, canvasXPosition, canvasYPosition);
+
+            // Compare screenshot with saved reference screen
+            result = compare.compareStringImage(image, fileName, d, dimensions);
+
+            return result;
+        } catch (Exception e) {
+            return false;
         }
-
-        boolean result = false;
-
-        // Pause so that we don't get the loading marker for vaadin applications
-        pause(500);
-
-        String image = "";
-
-        String navigator = browserUtils.browserVersion(selenium);
-
-        // setup filename
-        String fileName = "";
-        if (identifier == null || identifier.length() < 1) {
-            fileName = fileId + "_" + navigator + "_" + ++imageNumber;
-        } else {
-            fileName = fileId + "_" + navigator + "_" + identifier;
-        }
-
-        image = selenium.captureScreenshotToString();
-
-        // Get sizes for canvas cropping.
-        int width = Integer.parseInt(selenium.getEval("screen.availWidth;"));
-        int height = Integer.parseInt(selenium.getEval("screen.availHeight;"));
-        int canvasWidth = browserUtils.getCanvasWidth(selenium);
-        int canvasHeight = browserUtils.getCanvasHeight(selenium);
-        int canvasXPosition = browserUtils.canvasXPosition(selenium);
-        int canvasYPosition = browserUtils.canvasYPosition(selenium);
-
-        BrowserDimensions dimensions = new BrowserDimensions(width, height,
-                canvasWidth, canvasHeight, canvasXPosition, canvasYPosition);
-
-        // Compare screenshot with saved reference screen
-        result = compare.compareStringImage(image, fileName, d, dimensions);
-
-        return result;
     }
 
     /*

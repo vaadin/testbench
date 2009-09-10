@@ -46,7 +46,7 @@ public class ImageComparison {
      * @return true if images are the same
      */
     public boolean compareStringImage(String image, String fileId, double d,
-            BrowserDimensions dimensions) throws Exception {
+            BrowserDimensions dimensions) {
         // Check that d value inside allowed range. if false set d to default
         // value.
         if (d < 0 || d > 1) {
@@ -107,6 +107,8 @@ public class ImageComparison {
                             int sum = 0;
                             double fullSum = 0.0;
 
+                            // build sums from all available colors Red, Green
+                            // and Blue
                             for (int i = 0; i < targetBlock.length; i++) {
                                 Color targetPixel = new Color(targetBlock[i]);
                                 Color testPixel = new Color(testBlock[i]);
@@ -124,9 +126,9 @@ public class ImageComparison {
                                 }
                             }
 
-                            // Check if total Red error in block exceeds 0.1%
-                            // if true mark block with a rectangle, append block
-                            // info to imageErrors
+                            // Check if total RGB error in a macroblock exceeds
+                            // 0.1% if true mark block with a rectangle, append
+                            // block info to imageErrors
                             if ((sum / fullSum) > d) {
                                 imageErrors
                                         .append("Error in block at position:\tx="
@@ -136,12 +138,7 @@ public class ImageComparison {
                                                 + roundTwoDecimals((sum / fullSum) * 100)
                                                 + "%" + NEW_LINE + NEW_LINE);
                                 falseBlocks[x / 16][y / 16] = true;
-                                // Graphics2D drawToPicture = test
-                                // .createGraphics();
-                                // drawToPicture.setColor(Color.MAGENTA);
-                                // drawToPicture.drawRect(x, y, 15, 15);
-                                // // release resources
-                                // drawToPicture.dispose();
+
                                 result = false;
                             }
                         }
@@ -158,85 +155,97 @@ public class ImageComparison {
                     if (!compareFolder.exists())
                         compareFolder.mkdir();
 
-                    // Draw lines around false blocks. before saving _diff file.
-                    Graphics2D drawToPicture = test.createGraphics();
-                    drawToPicture.setColor(Color.MAGENTA);
-
-                    for (int y = 0; y < yBlocks; y++) {
-                        for (int x = 0; x < xBlocks; x++) {
-                            if (falseBlocks[x][y]) {
-
-                                if (x > 0 && y > 0) {
-                                    if (falseBlocks[x - 1][y] == false) {
-                                        drawToPicture.drawLine(x * 16, y * 16,
-                                                x * 16, y * 16 + 16);
-                                    }
-                                    if (falseBlocks[x][y - 1] == false) {
-                                        drawToPicture.drawLine(x * 16, y * 16,
-                                                x * 16 + 16, y * 16);
-                                    }
-                                    if (x == xBlocks
-                                            || falseBlocks[x + 1][y] == false) {
-                                        drawToPicture.drawLine(x * 16 + 16,
-                                                y * 16, x * 16 + 16,
-                                                y * 16 + 16);
-                                    }
-
-                                    if (y == yBlocks
-                                            || falseBlocks[x][y + 1] == false) {
-                                        drawToPicture.drawLine(x * 16,
-                                                y * 16 + 16, x * 16 + 16,
-                                                y * 16 + 16);
-                                    }
-
-                                } else {
-                                    drawToPicture.drawLine(0, 0, 0, 16);
-                                    drawToPicture.drawLine(0, 0, 16, 0);
-                                    if (falseBlocks[x + 1][y] == false) {
-                                        drawToPicture.drawLine(16, 0, 16, 16);
-                                    }
-                                    if (falseBlocks[x][y + 1] == false) {
-                                        drawToPicture.drawLine(0, 16, 16, 16);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    // Release resources
-                    drawToPicture.dispose();
-
                     // collect big error blocks for css viewing of differences
                     List<ErrorBlock> errorAreas = new LinkedList<ErrorBlock>();
 
+                    // run through blocks for marked errors for macroblocks.
                     for (int y = 0; y < yBlocks; y++) {
                         for (int x = 0; x < xBlocks; x++) {
+                            // if found error make new ErrorBlock and collect
+                            // connected error blocks and mark them false so
+                            // that they won't trigger new errors
                             if (falseBlocks[x][y]) {
                                 ErrorBlock newBlock = new ErrorBlock();
                                 newBlock.setX(x * 16);
                                 newBlock.setY(y * 16);
-                                int x1 = x, y1 = y;
+                                int x1 = x, xmin = x, y1 = y;
                                 falseBlocks[x][y] = false;
+
                                 while (true) {
                                     x1++;
-                                    if ((x1 + 1) > xBlocks) {
-                                        x1 = x;
+
+                                    // if x1 out of bounds set x1 to xmin where
+                                    // xmin == smallest error block found for
+                                    // this error
+                                    if (x1 == xBlocks) {
+                                        x1 = xmin;
                                     }
+
+                                    if (x1 < 0 || x1 >= xBlocks || y1 < 0
+                                            || y1 >= yBlocks)
+                                        break;
 
                                     if (falseBlocks[x1][y1]) {
                                         newBlock.addXBlock();
                                         falseBlocks[x1][y1] = false;
-                                    } else {
-                                        x1 = x;
+                                    } else if (y1 != yBlocks) {
+                                        x1 = xmin;
 
-                                        if (falseBlocks[x1][y1 + 1]) {
+                                        // If next row has a false block
+                                        // connected to our block
+                                        boolean foundConnectedBlock = false;
+                                        for (int foundX = x1; foundX < x1
+                                                + newBlock.getXBlocks(); foundX++) {
+                                            if (foundX == xBlocks
+                                                    || y1 + 1 == yBlocks)
+                                                break;
+
+                                            if (falseBlocks[foundX][y1 + 1])
+                                                foundConnectedBlock = true;
+                                        }
+
+                                        if (foundConnectedBlock) {
                                             y1++;
                                             newBlock.addYBlock();
-                                            for (int z = 0; z < newBlock
-                                                    .getXBlocks(); z++) {
-                                                falseBlocks[x1++][y1] = false;
+
+                                            // while stepping back on this
+                                            // row
+                                            // is false change block x
+                                            // position
+                                            if (x1 - 1 >= 0) {
+                                                while (falseBlocks[x1 - 1][y1]) {
+                                                    falseBlocks[x1 - 1][y1] = false;
+                                                    newBlock.addXBlock();
+                                                    x1 = x1 - 1;
+                                                    newBlock.setX(newBlock
+                                                            .getX() - 16);
+                                                    if (x1 == 0)
+                                                        break;
+                                                }
+                                                xmin = x1;
                                             }
+
+                                            // Skip blocks inside main error
+                                            // block for this error
+                                            x1 = x1 + newBlock.getXBlocks() - 1;
                                         } else {
+                                            x1 = newBlock.getX() / 16;
+                                            y1 = newBlock.getY() / 16;
+                                            // Set all blocks to false
+                                            // inside found box
+                                            for (int j = 0; j < newBlock
+                                                    .getYBlocks(); j++) {
+                                                for (int i = 0; i < newBlock
+                                                        .getXBlocks(); i++) {
+                                                    if (x1 + i < xBlocks
+                                                            && y1 + j < yBlocks) {
+                                                        falseBlocks[x1 + i][y1
+                                                                + j] = false;
+                                                    }
+                                                }
+                                            }
                                             break;
+
                                         }
                                     }
                                 }
@@ -245,8 +254,23 @@ public class ImageComparison {
                         }
                     }
 
+                    // Draw lines around false ErrorBlocks before saving _diff
+                    // file.
+                    Graphics2D drawToPicture = test.createGraphics();
+                    drawToPicture.setColor(Color.MAGENTA);
+
+                    for (ErrorBlock error : errorAreas) {
+                        drawToPicture.drawRect(error.getX(), error.getY(),
+                                error.getXBlocks() * 16,
+                                error.getYBlocks() * 16);
+                    }
+                    // release resources
+                    drawToPicture.dispose();
+
+                    // Write image with differences marked to file
                     ImageIO.write(test, "png", new File(compareFolder
                             + File.separator + fileId + "_diff.png"));
+                    // Write clean image to file
                     ImageIO.write((stringToImage(image)).getSubimage(dimensions
                             .getCanvasXPosition(), dimensions
                             .getCanvasYPosition(), dimensions.getCanvasWidth(),
@@ -284,6 +308,8 @@ public class ImageComparison {
                 result = true;
             } catch (FileNotFoundException fnfe) {
                 System.err.println("Couldn't open file");
+            } catch (IOException ioe) {
+                e.printStackTrace();
             }
         }
 
@@ -307,6 +333,24 @@ public class ImageComparison {
         return result;
     }
 
+    /**
+     * Build a small html file that has mouse over picture change for fast
+     * checking of errors and click on picture to switch between reference and
+     * diff pictures.
+     * 
+     * @param blocks
+     *            List of ErrorBlock
+     * @param diff
+     *            diff file
+     * @param reference
+     *            reference image file
+     * @param fileId
+     *            fileName for html file
+     * @param h
+     *            picture height
+     * @param w
+     *            picture width
+     */
     private void createDiffHtml(List<ErrorBlock> blocks, String diff,
             String reference, String fileId, int h, int w) {
         try {

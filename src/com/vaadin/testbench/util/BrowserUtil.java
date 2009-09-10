@@ -4,6 +4,13 @@ import com.thoughtworks.selenium.Selenium;
 
 public class BrowserUtil {
 
+    /**
+     * Gets or calculates the x position of the canvas in the upper left corner
+     * on screen
+     * 
+     * @param selenium
+     * @return
+     */
     public int canvasXPosition(Selenium selenium) {
         try {
             int result = (Integer.parseInt(selenium
@@ -16,6 +23,13 @@ public class BrowserUtil {
         }
     }
 
+    /**
+     * Gets or calculates the y position of the canvas in the upper left corner
+     * on screen
+     * 
+     * @param selenium
+     * @return
+     */
     public int canvasYPosition(Selenium selenium) {
         try {
             int result = (Integer.parseInt(selenium
@@ -50,6 +64,7 @@ public class BrowserUtil {
                             .parseInt(selenium
                                     .getEval("this.browserbot.getUserWindow().document.documentElement.clientHeight;"));
                 } catch (NumberFormatException nfe3) {
+                    return 0;
                 }
             }
         }
@@ -77,12 +92,19 @@ public class BrowserUtil {
                             .parseInt(selenium
                                     .getEval("this.browserbot.getUserWindow().document.documentElement.clientWidth;"));
                 } catch (NumberFormatException nfe3) {
+                    return 0;
                 }
             }
         }
         return canvasWidth;
     }
 
+    /**
+     * Parses browser name and major version from user agent information
+     * 
+     * @param selenium
+     * @return browserName_majorNumber
+     */
     public String browserVersion(Selenium selenium) {
         String result = "";
         String fullVersion = "";
@@ -123,36 +145,6 @@ public class BrowserUtil {
             result = result + fullVersion;
         }
 
-        // + "var fullVersion = ''+parseFloat(navigator.appVersion);"
-        // + "var nameOffset, verOffset, ix;"
-        // + "if((verOffset=nAgt.indexOf(\"MSIE\")) != -1){"
-        // + "browserName = \"Internet_Explorer\";"
-        // + "fullVersion = nAgt.substring(verOffset+5);"
-        // + "}else if((verOffset=nAgt.indexOf(\"Opera\")) !=1){"
-        // + "browserName = \"Opera\";"
-        // + "fullVersion = nAgt.substring(verOffset+6);"
-        // + "}else if((verOffset=nAgt.indexOf(\"Chrome\")) != 1){"
-        // + "browserName = \"Chrome\";"
-        // + "fullVersion = nAgt.substring(verOffset+7);"
-        // + "}else if((verOffset=nAgt.indexOf(\"Safari\")) != 1){"
-        // + "browserName = \"Safari\";"
-        // + "fullVersion = nAgt.substring(verOffset+7);"
-        // + "}else if((verOffset=nAgt.indexOf(\"Firefox\")) != 1){"
-        // + "browserName = \"Firefox\";"
-        // + "fullVersion = nAgt.substring(verOffset+8);"
-        // +
-        // "}else if((nameOffset=nAgt.lastIndexOf(' ')+1) < (verOffset=nAgt.lastIndexOf('/')){"
-        // + "browserName = nAgt.substring(nameOffset,verOffset);"
-        // + "fullVersion = nAgt.substring(verOffset+1);"
-        // + "if(browserName.toLowerCase() == browserName.toUpperCase()){"
-        // + "browserName = navigator.appName;"
-        // + "}"
-        // + "}"
-        // +
-        // "if((ix=fullVersion.indexOf(\";\") != -1) fullVersion = fullVersion.substring(0,ix);"
-        // +
-        // "if((ix=fullVersion.indexOf(\" \") != -1) fullVersion = fullVersion.substring(0,ix);"
-        // + "return browserName+\"_\"+fullVersion" + "}");
         return result;
     }
 }
