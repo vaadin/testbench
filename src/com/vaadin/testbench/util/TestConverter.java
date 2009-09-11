@@ -254,8 +254,22 @@ public class TestConverter {
                     }
                     first = false;
                 }
-                javaSource.append("assertTrue(validateScreenshot(\"" + testName
-                        + "\", 0.001, \"" + identifier + "\"));\n");
+                javaSource
+                        .append("assertTrue(\"Screenshot differs from reference image.\", validateScreenshot(\""
+                                + testName
+                                + "\", 0.001, \""
+                                + identifier
+                                + "\"));\n");
+            } else if (command.getCmd().equalsIgnoreCase("pause")) {
+                String identifier = "";
+                boolean first = true;
+                for (String param : command.getParams()) {
+                    if (first) {
+                        identifier = param;
+                    }
+                    first = false;
+                }
+                javaSource.append("pause(" + identifier + ");\n");
             } else {
                 javaSource.append("doCommand(\"");
                 javaSource.append(command.getCmd());

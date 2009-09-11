@@ -69,6 +69,12 @@ public class ImageComparison {
                             + TEST_REFERENCE_DIRECTORY + "=c:\\screenshot\\. ");
         }
 
+        if (!File.separator.equals(directory.charAt(directory.length() - 1))) {
+            directory = directory + File.separator;
+        }
+
+        checkAndCreateDirectories(directory);
+
         // collect errors that are then written to a .log file
         StringBuilder imageErrors = new StringBuilder();
         BufferedImage test = (stringToImage(image)).getSubimage(dimensions
@@ -177,18 +183,25 @@ public class ImageComparison {
                                     // if x1 out of bounds set x1 to xmin where
                                     // xmin == smallest error block found for
                                     // this error
-                                    if (x1 == xBlocks) {
+                                    if (x1 >= xBlocks) {
                                         x1 = xmin;
                                     }
 
-                                    if (x1 < 0 || x1 >= xBlocks || y1 < 0
-                                            || y1 >= yBlocks)
-                                        break;
+                                    // // If we are out of bounds drop to start.
+                                    // // This should set the finishing touches
+                                    // on
+                                    // // this block
+                                    // if (x1 < 0 || x1 >= xBlocks || y1 < 0
+                                    // || y1 >= yBlocks) {
+                                    // x1 = xmin;
+                                    // y1 = y;
+                                    // falseBlocks[x1][y1] = false;
+                                    // }
 
                                     if (falseBlocks[x1][y1]) {
                                         newBlock.addXBlock();
                                         falseBlocks[x1][y1] = false;
-                                    } else if (y1 != yBlocks) {
+                                    } else if (y1 < yBlocks) {
                                         x1 = xmin;
 
                                         // If next row has a false block
@@ -209,8 +222,7 @@ public class ImageComparison {
                                             newBlock.addYBlock();
 
                                             // while stepping back on this
-                                            // row
-                                            // is false change block x
+                                            // row is false change block x
                                             // position
                                             if (x1 - 1 >= 0) {
                                                 while (falseBlocks[x1 - 1][y1]) {
@@ -354,8 +366,13 @@ public class ImageComparison {
     private void createDiffHtml(List<ErrorBlock> blocks, String diff,
             String reference, String fileId, int h, int w) {
         try {
-            PrintWriter writer = new PrintWriter(new File(System
-                    .getProperty(TEST_REFERENCE_DIRECTORY)
+            String directory = System.getProperty(TEST_REFERENCE_DIRECTORY);
+            if (!File.separator
+                    .equals(directory.charAt(directory.length() - 1))) {
+                directory = directory + File.separator;
+            }
+
+            PrintWriter writer = new PrintWriter(new File(directory
                     + ERROR_DIRECTORY + File.separator + fileId + ".html"));
             // Write head
             writer.println("<html>");
@@ -439,6 +456,26 @@ public class ImageComparison {
         }
 
         return bImage;
+    }
+
+    /**
+     * Checks that all required directories can be found and creates them if
+     * necessary
+     * 
+     * @param directory
+     */
+    private void checkAndCreateDirectories(String directory) {
+        // Check directories and create if needed
+        File imageDir = new File(directory);
+        if (!imageDir.exists())
+            imageDir.mkdir();
+        imageDir = new File(directory + REFERENCE_DIRECTORY);
+        if (!imageDir.exists())
+            imageDir.mkdir();
+        imageDir = new File(directory + ERROR_DIRECTORY);
+        if (!imageDir.exists())
+            imageDir.mkdir();
+        imageDir = null;
     }
 
     /**
