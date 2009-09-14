@@ -23,7 +23,9 @@ import org.apache.commons.codec.binary.Base64;
  */
 public class ImageComparison {
 
-    private static final String TEST_REFERENCE_DIRECTORY = "com.vaadin.testbench.tester.reference";
+    private static final String TEST_SCREENS_DIRECTORY = "com.vaadin.testbench.screenshot.directory";
+    private static final String ERROR_ON_MISSING_REFERENCE = "com.vaadin.testbench.screenshot.reference.error_if_missing";
+    private static final String DEBUG = "com.vaadin.testbench.screenshot.reference.debug";
     // referenceDirectory is the name of the directory with the reference
     // pictures of the same name as the one to be compared
     private static final String REFERENCE_DIRECTORY = "reference";
@@ -55,18 +57,17 @@ public class ImageComparison {
 
         boolean result = false;
 
-        String directory = System.getProperty(TEST_REFERENCE_DIRECTORY);
+        String directory = System.getProperty(TEST_SCREENS_DIRECTORY);
 
         // Write error blocks to file only if debug is defined as true
         boolean debug = false;
-        if ("true".equals(System
-                .getProperty("com.vaadin.testbench.tester.debug")))
+        if ("true".equalsIgnoreCase(System.getProperty(DEBUG)))
             debug = true;
 
         if (directory == null || directory.length() == 0) {
             throw new IllegalArgumentException(
                     "Missing reference directory definition. Use -D"
-                            + TEST_REFERENCE_DIRECTORY + "=c:\\screenshot\\. ");
+                            + TEST_SCREENS_DIRECTORY + "=c:\\screenshot\\. ");
         }
 
         if (!File.separator.equals(directory.charAt(directory.length() - 1))) {
@@ -187,17 +188,6 @@ public class ImageComparison {
                                         x1 = xmin;
                                     }
 
-                                    // // If we are out of bounds drop to start.
-                                    // // This should set the finishing touches
-                                    // on
-                                    // // this block
-                                    // if (x1 < 0 || x1 >= xBlocks || y1 < 0
-                                    // || y1 >= yBlocks) {
-                                    // x1 = xmin;
-                                    // y1 = y;
-                                    // falseBlocks[x1][y1] = false;
-                                    // }
-
                                     if (falseBlocks[x1][y1]) {
                                         newBlock.addXBlock();
                                         falseBlocks[x1][y1] = false;
@@ -299,29 +289,44 @@ public class ImageComparison {
                 return false;
             }
         } catch (IOException e) {
-            System.err.println("No comparison image." + NEW_LINE
-                    + "Creating reference.");
+            System.err.println("No comparison image.");
+
+            // Create an RGB image without alpha channel for reference
+            BufferedImage referenceImage = new BufferedImage(dimensions
+                    .getCanvasWidth(), dimensions.getCanvasHeight(),
+                    BufferedImage.TYPE_INT_RGB);
+
+            Graphics2D g = (Graphics2D) referenceImage.getGraphics();
+            g.drawImage(test, 0, 0, dimensions.getCanvasWidth(), dimensions
+                    .getCanvasHeight(), null);
+            g.dispose();
+
             try {
-                // Check that the comparison folder exists and create if false
-                File compareFolder = new File(directory + REFERENCE_DIRECTORY);
-                if (!compareFolder.exists())
-                    compareFolder.mkdir();
-                BufferedImage referenceImage = new BufferedImage(dimensions
-                        .getCanvasWidth(), dimensions.getCanvasHeight(),
-                        BufferedImage.TYPE_INT_RGB);
+                // if CREATE_REFERENCES set as true don't fail on missing images
+                if (!"true".equalsIgnoreCase(System
+                        .getProperty(ERROR_ON_MISSING_REFERENCE))) {
+                    System.err.println("Creating reference to "
+                            + REFERENCE_DIRECTORY + ".");
 
-                Graphics2D g = (Graphics2D) referenceImage.getGraphics();
-                g.drawImage(test, 0, 0, dimensions.getCanvasWidth(), dimensions
-                        .getCanvasHeight(), null);
-                g.dispose();
-
-                ImageIO.write(referenceImage, "png", new File(compareFolder
-                        + File.separator + fileId + ".png"));
-                result = true;
+                    ImageIO.write(referenceImage, "png", new File(directory
+                            + REFERENCE_DIRECTORY + File.separator + fileId
+                            + ".png"));
+                    result = true;
+                } else {
+                    System.err.println("Creating reference to "
+                            + ERROR_DIRECTORY + ".");
+                    // Write clean image to error folder.
+                    ImageIO.write(referenceImage, "png", new File(directory
+                            + ERROR_DIRECTORY + File.separator + fileId
+                            + ".png"));
+                    result = false;
+                }
             } catch (FileNotFoundException fnfe) {
                 System.err.println("Couldn't open file");
+                return false;
             } catch (IOException ioe) {
                 e.printStackTrace();
+                return false;
             }
         }
 
@@ -366,7 +371,7 @@ public class ImageComparison {
     private void createDiffHtml(List<ErrorBlock> blocks, String diff,
             String reference, String fileId, int h, int w) {
         try {
-            String directory = System.getProperty(TEST_REFERENCE_DIRECTORY);
+            String directory = System.getProperty(TEST_SCREENS_DIRECTORY);
             if (!File.separator
                     .equals(directory.charAt(directory.length() - 1))) {
                 directory = directory + File.separator;
