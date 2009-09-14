@@ -69,8 +69,9 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
         }
 
         String image = selenium.captureScreenshotToString();
-        if (image == null)
+        if (image == null) {
             return false;
+        }
 
         // Get sizes for canvas cropping.
         int width = Integer.parseInt(selenium.getEval("screen.availWidth;"));

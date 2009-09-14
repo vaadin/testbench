@@ -61,8 +61,9 @@ public class ImageComparison {
 
         // Write error blocks to file only if debug is defined as true
         boolean debug = false;
-        if ("true".equalsIgnoreCase(System.getProperty(DEBUG)))
+        if ("true".equalsIgnoreCase(System.getProperty(DEBUG))) {
             debug = true;
+        }
 
         if (directory == null || directory.length() == 0) {
             throw new IllegalArgumentException(
@@ -159,8 +160,9 @@ public class ImageComparison {
                     // Check that the comparison folder exists and create if
                     // false
                     File compareFolder = new File(directory + ERROR_DIRECTORY);
-                    if (!compareFolder.exists())
+                    if (!compareFolder.exists()) {
                         compareFolder.mkdir();
+                    }
 
                     // collect big error blocks for css viewing of differences
                     List<ErrorBlock> errorAreas = new LinkedList<ErrorBlock>();
@@ -200,11 +202,13 @@ public class ImageComparison {
                                         for (int foundX = x1; foundX < x1
                                                 + newBlock.getXBlocks(); foundX++) {
                                             if (foundX == xBlocks
-                                                    || y1 + 1 == yBlocks)
+                                                    || y1 + 1 == yBlocks) {
                                                 break;
+                                            }
 
-                                            if (falseBlocks[foundX][y1 + 1])
+                                            if (falseBlocks[foundX][y1 + 1]) {
                                                 foundConnectedBlock = true;
+                                            }
                                         }
 
                                         if (foundConnectedBlock) {
@@ -221,8 +225,9 @@ public class ImageComparison {
                                                     x1 = x1 - 1;
                                                     newBlock.setX(newBlock
                                                             .getX() - 16);
-                                                    if (x1 == 0)
+                                                    if (x1 == 0) {
                                                         break;
+                                                    }
                                                 }
                                                 xmin = x1;
                                             }
@@ -472,14 +477,17 @@ public class ImageComparison {
     private void checkAndCreateDirectories(String directory) {
         // Check directories and create if needed
         File imageDir = new File(directory);
-        if (!imageDir.exists())
+        if (!imageDir.exists()) {
             imageDir.mkdir();
+        }
         imageDir = new File(directory + REFERENCE_DIRECTORY);
-        if (!imageDir.exists())
+        if (!imageDir.exists()) {
             imageDir.mkdir();
+        }
         imageDir = new File(directory + ERROR_DIRECTORY);
-        if (!imageDir.exists())
+        if (!imageDir.exists()) {
             imageDir.mkdir();
+        }
         imageDir = null;
     }
 
