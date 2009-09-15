@@ -254,12 +254,8 @@ public class TestConverter {
                     }
                     first = false;
                 }
-                javaSource
-                        .append("assertTrue(\"Screenshot differs from reference image.\", validateScreenshot(\""
-                                + testName
-                                + "\", 0.001, \""
-                                + identifier
-                                + "\"));\n");
+                javaSource.append("validateScreenshot(\"" + testName
+                        + "\", 0.001, \"" + identifier + "\");\n");
             } else if (command.getCmd().equalsIgnoreCase("pause")) {
                 String identifier = "";
                 boolean first = true;

@@ -5,6 +5,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -15,6 +16,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
+
+import junit.framework.Assert;
 
 import org.apache.commons.codec.binary.Base64;
 
@@ -275,8 +278,8 @@ public class ImageComparison {
                     drawToPicture.dispose();
 
                     // Write image with differences marked to file
-                    ImageIO.write(test, "png", new File(compareFolder
-                            + File.separator + fileId + "_diff.png"));
+                    // ImageIO.write(test, "png", new File(compareFolder
+                    // + File.separator + fileId + "_diff.png"));
                     // Write clean image to file
                     ImageIO.write((stringToImage(image)).getSubimage(dimensions
                             .getCanvasXPosition(), dimensions
@@ -284,18 +287,25 @@ public class ImageComparison {
                             dimensions.getCanvasHeight()), "png", new File(
                             compareFolder + File.separator + fileId + ".png"));
 
-                    createDiffHtml(errorAreas, fileId + "_diff.png", ".."
-                            + File.separator + REFERENCE_DIRECTORY
-                            + File.separator + fileId + ".png", fileId, target
-                            .getHeight(), target.getWidth());
+                    // ImageIO.write(target, "png", new File(compareFolder
+                    // + File.separator + fileId + "_reference.png"));
+
+                    createDiffHtml(errorAreas, fileId, target.getHeight(),
+                            target.getWidth(), encodeImageToBase64(test),
+                            encodeImageToBase64(target));
+
+                    System.err
+                            .println("Created clean image, image with marked differences and difference html.");
+                    // Throw assert fail here if no debug requested
+                    if (debug == false) {
+                        Assert.fail("Screenshot (" + fileId
+                                + ") differs from reference image.");
+                    }
                 }
             } else {
-                System.err.println("Image sizes differ.");
-                return false;
+                Assert.fail("Images are of different size (" + fileId + ").");
             }
         } catch (IOException e) {
-            System.err.println("No comparison image.");
-
             // Create an RGB image without alpha channel for reference
             BufferedImage referenceImage = new BufferedImage(dimensions
                     .getCanvasWidth(), dimensions.getCanvasHeight(),
@@ -310,6 +320,8 @@ public class ImageComparison {
                 // if CREATE_REFERENCES set as true don't fail on missing images
                 if (!"true".equalsIgnoreCase(System
                         .getProperty(ERROR_ON_MISSING_REFERENCE))) {
+                    System.err.println("No reference found for " + fileId
+                            + " in " + directory + REFERENCE_DIRECTORY);
                     System.err.println("Creating reference to "
                             + REFERENCE_DIRECTORY + ".");
 
@@ -327,11 +339,14 @@ public class ImageComparison {
                     result = false;
                 }
             } catch (FileNotFoundException fnfe) {
-                System.err.println("Couldn't open file");
-                return false;
+                Assert.fail("Failed to open file to write reference image.");
             } catch (IOException ioe) {
                 e.printStackTrace();
                 return false;
+            }
+            if (result == false) {
+                Assert.fail("No reference found for " + fileId + " in "
+                        + directory + REFERENCE_DIRECTORY);
             }
         }
 
@@ -346,6 +361,9 @@ public class ImageComparison {
                 out.write(imageErrors.toString());
                 out.flush();
                 out.close();
+
+                Assert.fail("Screenshot (" + fileId
+                        + ") differs from reference image.");
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -373,8 +391,8 @@ public class ImageComparison {
      * @param w
      *            picture width
      */
-    private void createDiffHtml(List<ErrorBlock> blocks, String diff,
-            String reference, String fileId, int h, int w) {
+    private void createDiffHtml(List<ErrorBlock> blocks, String fileId, int h,
+            int w, String image, String ref_image) {
         try {
             String directory = System.getProperty(TEST_SCREENS_DIRECTORY);
             if (!File.separator
@@ -391,20 +409,11 @@ public class ImageComparison {
             writer.println("<body>");
 
             writer
-                    .println("<div onclick=\"document.getElementById('reference').style.display='block'\" style=\"position: absolute; top: 0px; left: 0px; \"><img src=\""
-                            + diff
-                            + "\" height=\""
-                            + h
-                            + "\" width=\""
-                            + w
-                            + "\"/></div>");
+                    .println("<div onclick=\"document.getElementById('reference').style.display='block'\" style=\"position: absolute; top: 0px; left: 0px; \"><img src=\"data:image/png;base64,"
+                            + image + "\"/></div>");
             writer
-                    .println("<div id=\"reference\" onclick=\"this.style.display='none'\" style=\"display: none; position: absolute; top: 0px; left: 0px; z-index: 999;\"><img src=\""
-                            + reference
-                            + "\" height=\""
-                            + h
-                            + "\" width=\""
-                            + w + "\"/></div>");
+                    .println("<div id=\"reference\" onclick=\"this.style.display='none'\" style=\"display: none; position: absolute; top: 0px; left: 0px; z-index: 999;\"><img src=\"data:image/png;base64,"
+                            + ref_image + "\"/></div>");
 
             for (ErrorBlock error : blocks) {
                 String id = "popUpDiv_" + error.getX() + "_" + error.getY();
@@ -420,8 +429,8 @@ public class ImageComparison {
                                 + (error.getY() + (error.getYBlocks() * 16) + 1)
                                 + "px,"
                                 + error.getX()
-                                + "px);\"><img src=\""
-                                + diff + "\"/></div>");
+                                + "px);\"><img src=\"data:image/png;base64,"
+                                + image + "\"/></div>");
                 // Start "popup" div
                 writer
                         .println("<div class=\"popUpDiv\" onmouseout=\"this.style.display='none'\" id=\""
@@ -433,8 +442,8 @@ public class ImageComparison {
                                 + "px,"
                                 + (error.getY() + (error.getYBlocks() * 16) + 1)
                                 + "px," + error.getX() + "px); z-index: 99;\">");
-                writer.println("<img src=\"" + reference + "\" height=\"" + h
-                        + "\" width=\"" + w + "\" />");
+                writer.println("<img src=\"data:image/png;base64," + ref_image
+                        + "\" />");
                 // End popup div
                 writer.println("</div>");
             }
@@ -462,10 +471,26 @@ public class ImageComparison {
             ByteArrayInputStream bais = new ByteArrayInputStream(output);
             bImage = ImageIO.read(bais);
         } catch (IOException e) {
-            System.err.println("Error");
+            e.printStackTrace();
         }
 
         return bImage;
+    }
+
+    private String encodeImageToBase64(BufferedImage image) {
+        String encodedImage = "";
+        Base64 encoder = new Base64();
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ImageIO.write(image, "png", baos);
+            baos.flush();
+            byte[] encodedBytes = encoder.encode(baos.toByteArray());
+            encodedImage = new String(encodedBytes);
+            baos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return encodedImage;
     }
 
     /**
