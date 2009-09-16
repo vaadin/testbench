@@ -202,10 +202,15 @@ public class TestConverter {
     }
 
     private static String getTestCaseFooter(String testName) {
+        // adding the softAssert so creating reference images throws a assert
+        // failure at end of test
+        String softAsserts = "if(!getSoftErrors().isEmpty()){\n"
+                + "junit.framework.Assert.fail(\"Test was missing reference images.\");\n"
+                + "}\n";
         String footer = TEST_METHOD_FOOTER;
         footer = footer.replace("{testName}", testName);
 
-        return footer;
+        return softAsserts + footer;
     }
 
     private static byte[] getJavaHeader(String className, String browser) {
@@ -266,6 +271,21 @@ public class TestConverter {
                     first = false;
                 }
                 javaSource.append("pause(" + identifier + ");\n");
+            } else if (command.getCmd().equalsIgnoreCase("verifyTextPresent")) {
+                String identifier = "";
+                boolean first = true;
+                for (String param : command.getParams()) {
+                    if (first) {
+                        identifier = param;
+                    }
+                    first = false;
+                }
+                identifier = identifier.replace("\"", "\\\"").replaceAll("\\n",
+                        "\\\\n");
+
+                javaSource.append("assertTrue(\"Could not find: " + identifier
+                        + "\", selenium.isTextPresent(\"" + identifier
+                        + "\"));\n");
             } else {
                 javaSource.append("doCommand(\"");
                 javaSource.append(command.getCmd());

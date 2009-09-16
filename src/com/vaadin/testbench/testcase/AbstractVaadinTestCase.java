@@ -1,5 +1,8 @@
 package com.vaadin.testbench.testcase;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import com.thoughtworks.selenium.SeleneseTestCase;
 import com.vaadin.testbench.util.BrowserDimensions;
 import com.vaadin.testbench.util.BrowserUtil;
@@ -17,6 +20,7 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
 
     private static int imageNumber = 0;
     private static String testCaseName = "";
+    private static List<junit.framework.AssertionFailedError> softAssert = new LinkedList<junit.framework.AssertionFailedError>();
 
     protected VaadinTestBase testBase = new VaadinTestBase();
     protected ImageComparison compare = new ImageComparison();
@@ -50,6 +54,7 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
         if (!testCaseName.equals(fileId)) {
             testCaseName = fileId;
             imageNumber = 0;
+            softAssert = new LinkedList<junit.framework.AssertionFailedError>();
         }
 
         boolean result = false;
@@ -84,10 +89,27 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
         BrowserDimensions dimensions = new BrowserDimensions(width, height,
                 canvasWidth, canvasHeight, canvasXPosition, canvasYPosition);
 
-        // Compare screenshot with saved reference screen
-        result = compare.compareStringImage(image, fileName, d, dimensions);
-
+        try {
+            // Compare screenshot with saved reference screen
+            result = compare.compareStringImage(image, fileName, d, dimensions);
+        } catch (junit.framework.AssertionFailedError e) {
+            if (e.getMessage().contains("No reference found")) {
+                softAssert.add(e);
+            } else {
+                throw e;
+            }
+        }
         return result;
+    }
+
+    /**
+     * Give collection of AssertionFailedErrors with "No reference found" in
+     * message.
+     * 
+     * @return List of AssertionFailedErrors for missing references
+     */
+    public List<junit.framework.AssertionFailedError> getSoftErrors() {
+        return softAssert;
     }
 
     /*

@@ -9,6 +9,17 @@ public class ErrorBlock {
     private int x, y;
     private int xBlocks = 1, yBlocks = 1;
 
+    public ErrorBlock() {
+        //
+    }
+
+    public ErrorBlock(int x, int y, int xBlocks, int yBlocks) {
+        this.x = x;
+        this.y = y;
+        this.xBlocks = xBlocks;
+        this.yBlocks = yBlocks;
+    }
+
     public int getX() {
         return x;
     }

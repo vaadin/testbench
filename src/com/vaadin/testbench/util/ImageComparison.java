@@ -91,219 +91,164 @@ public class ImageComparison {
             BufferedImage target = ImageIO.read(new File(directory
                     + REFERENCE_DIRECTORY + File.separator + fileId + ".png"));
 
-            // If images are same size, check for differences.
-            if (target.getHeight() == test.getHeight()
-                    && target.getWidth() == test.getWidth()) {
-                // Flag result as true until proven false
-                result = true;
-
-                int xBlocks = target.getWidth() / 16;
-                int yBlocks = target.getHeight() / 16;
-                boolean[][] falseBlocks = new boolean[xBlocks][yBlocks];
-
-                // iterate picture in macroblocks of 16x16 (x,y) (0-> m-16, 0->
-                // n-16)
-                for (int y = 0; y < target.getHeight() - 16; y += 16) {
-                    for (int x = 0; x < target.getWidth() - 16; x += 16) {
-                        int[] targetBlock = new int[16 * 16], testBlock = new int[16 * 16];
-
-                        // Get 16x16 blocks from picture
-                        targetBlock = target.getRGB(x, y, 16, 16, targetBlock,
-                                0, 16);
-                        testBlock = test.getRGB(x, y, 16, 16, testBlock, 0, 16);
-
-                        // If arrays aren't equal then
-                        if (!Arrays.equals(targetBlock, testBlock)) {
-
-                            int sum = 0;
-                            double fullSum = 0.0;
-
-                            // build sums from all available colors Red, Green
-                            // and Blue
-                            for (int i = 0; i < targetBlock.length; i++) {
-                                Color targetPixel = new Color(targetBlock[i]);
-                                Color testPixel = new Color(testBlock[i]);
-                                int targetColor = (targetPixel.getRed()
-                                        + targetPixel.getGreen() + targetPixel
-                                        .getBlue());
-                                int testColor = (testPixel.getRed()
-                                        + testPixel.getGreen() + testPixel
-                                        .getBlue());
-                                fullSum += targetColor;
-                                if (targetColor > testColor) {
-                                    sum += targetColor - testColor;
-                                } else if (testColor > targetColor) {
-                                    sum += testColor - targetColor;
-                                }
-                            }
-
-                            // Check if total RGB error in a macroblock exceeds
-                            // 0.1% if true mark block with a rectangle, append
-                            // block info to imageErrors
-                            if ((sum / fullSum) > d) {
-                                imageErrors
-                                        .append("Error in block at position:\tx="
-                                                + x + " y=" + y + NEW_LINE);
-                                imageErrors
-                                        .append("RGB error for block:\t\t"
-                                                + roundTwoDecimals((sum / fullSum) * 100)
-                                                + "%" + NEW_LINE + NEW_LINE);
-                                falseBlocks[x / 16][y / 16] = true;
-
-                                result = false;
-                            }
-                        }
-                        targetBlock = testBlock = null;
-                    }
-                }
-
-                // if errors found in file save diff file with marked
-                // macroblocks
-                if (result == false) {
-                    // Check that the comparison folder exists and create if
-                    // false
-                    File compareFolder = new File(directory + ERROR_DIRECTORY);
-                    if (!compareFolder.exists()) {
-                        compareFolder.mkdir();
-                    }
-
-                    // collect big error blocks for css viewing of differences
-                    List<ErrorBlock> errorAreas = new LinkedList<ErrorBlock>();
-
-                    // run through blocks for marked errors for macroblocks.
-                    for (int y = 0; y < yBlocks; y++) {
-                        for (int x = 0; x < xBlocks; x++) {
-                            // if found error make new ErrorBlock and collect
-                            // connected error blocks and mark them false so
-                            // that they won't trigger new errors
-                            if (falseBlocks[x][y]) {
-                                ErrorBlock newBlock = new ErrorBlock();
-                                newBlock.setX(x * 16);
-                                newBlock.setY(y * 16);
-                                int x1 = x, xmin = x, y1 = y;
-                                falseBlocks[x][y] = false;
-
-                                while (true) {
-                                    x1++;
-
-                                    // if x1 out of bounds set x1 to xmin where
-                                    // xmin == smallest error block found for
-                                    // this error
-                                    if (x1 >= xBlocks) {
-                                        x1 = xmin;
-                                    }
-
-                                    if (falseBlocks[x1][y1]) {
-                                        newBlock.addXBlock();
-                                        falseBlocks[x1][y1] = false;
-                                    } else if (y1 < yBlocks) {
-                                        x1 = xmin;
-
-                                        // If next row has a false block
-                                        // connected to our block
-                                        boolean foundConnectedBlock = false;
-                                        for (int foundX = x1; foundX < x1
-                                                + newBlock.getXBlocks(); foundX++) {
-                                            if (foundX == xBlocks
-                                                    || y1 + 1 == yBlocks) {
-                                                break;
-                                            }
-
-                                            if (falseBlocks[foundX][y1 + 1]) {
-                                                foundConnectedBlock = true;
-                                            }
-                                        }
-
-                                        if (foundConnectedBlock) {
-                                            y1++;
-                                            newBlock.addYBlock();
-
-                                            // while stepping back on this
-                                            // row is false change block x
-                                            // position
-                                            if (x1 - 1 >= 0) {
-                                                while (falseBlocks[x1 - 1][y1]) {
-                                                    falseBlocks[x1 - 1][y1] = false;
-                                                    newBlock.addXBlock();
-                                                    x1 = x1 - 1;
-                                                    newBlock.setX(newBlock
-                                                            .getX() - 16);
-                                                    if (x1 == 0) {
-                                                        break;
-                                                    }
-                                                }
-                                                xmin = x1;
-                                            }
-
-                                            // Skip blocks inside main error
-                                            // block for this error
-                                            x1 = x1 + newBlock.getXBlocks() - 1;
-                                        } else {
-                                            x1 = newBlock.getX() / 16;
-                                            y1 = newBlock.getY() / 16;
-                                            // Set all blocks to false
-                                            // inside found box
-                                            for (int j = 0; j < newBlock
-                                                    .getYBlocks(); j++) {
-                                                for (int i = 0; i < newBlock
-                                                        .getXBlocks(); i++) {
-                                                    if (x1 + i < xBlocks
-                                                            && y1 + j < yBlocks) {
-                                                        falseBlocks[x1 + i][y1
-                                                                + j] = false;
-                                                    }
-                                                }
-                                            }
-                                            break;
-
-                                        }
-                                    }
-                                }
-                                errorAreas.add(newBlock);
-                            }
-                        }
-                    }
-
-                    // Draw lines around false ErrorBlocks before saving _diff
-                    // file.
-                    Graphics2D drawToPicture = test.createGraphics();
-                    drawToPicture.setColor(Color.MAGENTA);
-
-                    for (ErrorBlock error : errorAreas) {
-                        drawToPicture.drawRect(error.getX(), error.getY(),
-                                error.getXBlocks() * 16,
-                                error.getYBlocks() * 16);
-                    }
-                    // release resources
-                    drawToPicture.dispose();
-
-                    // Write image with differences marked to file
-                    // ImageIO.write(test, "png", new File(compareFolder
-                    // + File.separator + fileId + "_diff.png"));
-                    // Write clean image to file
-                    ImageIO.write((stringToImage(image)).getSubimage(dimensions
-                            .getCanvasXPosition(), dimensions
-                            .getCanvasYPosition(), dimensions.getCanvasWidth(),
-                            dimensions.getCanvasHeight()), "png", new File(
-                            compareFolder + File.separator + fileId + ".png"));
-
-                    // ImageIO.write(target, "png", new File(compareFolder
-                    // + File.separator + fileId + "_reference.png"));
-
-                    createDiffHtml(errorAreas, fileId, target.getHeight(),
-                            target.getWidth(), encodeImageToBase64(test),
-                            encodeImageToBase64(target));
-
+            // if images are of different size crop both images to same size
+            // before checking for differences
+            boolean sizesDiffer = false;
+            if (target.getHeight() != test.getHeight()
+                    || target.getWidth() != test.getWidth()) {
+                sizesDiffer = true;
+                // smallest height and width of images
+                int minHeight, minWidth;
+                if (target.getHeight() > test.getHeight()) {
+                    minHeight = test.getHeight();
                     System.err
-                            .println("Created clean image, image with marked differences and difference html.");
-                    // Throw assert fail here if no debug requested
-                    if (debug == false) {
-                        Assert.fail("Screenshot (" + fileId
-                                + ") differs from reference image.");
-                    }
+                            .println("Screenshot height less than reference image.");
+                } else {
+                    minHeight = target.getHeight();
+                    System.err
+                            .println("Reference image height less than screenshot.");
                 }
-            } else {
-                Assert.fail("Images are of different size (" + fileId + ").");
+                if (target.getWidth() > test.getWidth()) {
+                    minWidth = test.getWidth();
+                    System.err
+                            .println("Screenshot width less than reference image.");
+                } else {
+                    minWidth = target.getWidth();
+                    System.err
+                            .println("Reference image width less than screenshot.");
+                }
+
+                // Crop both images to same size
+                target = target.getSubimage(0, 0, minWidth, minHeight);
+                test = test.getSubimage(0, 0, minWidth, minHeight);
+            }
+
+            // Flag result as true until proven false
+            result = true;
+
+            int xBlocks = target.getWidth() / 16;
+            int yBlocks = target.getHeight() / 16;
+            boolean[][] falseBlocks = new boolean[xBlocks][yBlocks];
+
+            // iterate picture in macroblocks of 16x16 (x,y) (0-> m-16, 0->
+            // n-16)
+            for (int y = 0; y < target.getHeight() - 16; y += 16) {
+                for (int x = 0; x < target.getWidth() - 16; x += 16) {
+                    int[] targetBlock = new int[16 * 16], testBlock = new int[16 * 16];
+
+                    // Get 16x16 blocks from picture
+                    targetBlock = target.getRGB(x, y, 16, 16, targetBlock, 0,
+                            16);
+                    testBlock = test.getRGB(x, y, 16, 16, testBlock, 0, 16);
+
+                    // If arrays aren't equal then
+                    if (!Arrays.equals(targetBlock, testBlock)) {
+
+                        int sum = 0;
+                        double fullSum = 0.0;
+
+                        // build sums from all available colors Red, Green
+                        // and Blue
+                        for (int i = 0; i < targetBlock.length; i++) {
+                            Color targetPixel = new Color(targetBlock[i]);
+                            Color testPixel = new Color(testBlock[i]);
+                            int targetColor = (targetPixel.getRed()
+                                    + targetPixel.getGreen() + targetPixel
+                                    .getBlue());
+                            int testColor = (testPixel.getRed()
+                                    + testPixel.getGreen() + testPixel
+                                    .getBlue());
+                            fullSum += targetColor;
+                            if (targetColor > testColor) {
+                                sum += targetColor - testColor;
+                            } else if (testColor > targetColor) {
+                                sum += testColor - targetColor;
+                            }
+                        }
+
+                        // Check if total RGB error in a macroblock exceeds
+                        // 0.1% if true mark block with a rectangle, append
+                        // block info to imageErrors
+                        if ((sum / fullSum) > d) {
+                            imageErrors
+                                    .append("Error in block at position:\tx="
+                                            + x + " y=" + y + NEW_LINE);
+                            imageErrors.append("RGB error for block:\t\t"
+                                    + roundTwoDecimals((sum / fullSum) * 100)
+                                    + "%" + NEW_LINE + NEW_LINE);
+                            falseBlocks[x / 16][y / 16] = true;
+
+                            result = false;
+                        }
+                    }
+                    targetBlock = testBlock = null;
+                }
+            }
+
+            // if errors found in file save diff file with marked
+            // macroblocks and create html file for visuall confirmation of
+            // differences
+            if (result == false) {
+                // Check that the comparison folder exists and create if
+                // false
+                File compareFolder = new File(directory + ERROR_DIRECTORY);
+                if (!compareFolder.exists()) {
+                    compareFolder.mkdir();
+                }
+
+                // collect big error blocks of differences
+                List<ErrorBlock> errorAreas = collectErrorsToList(xBlocks,
+                        yBlocks, falseBlocks);
+
+                // Draw lines around false ErrorBlocks before saving _diff
+                // file.
+                Graphics2D drawToPicture = test.createGraphics();
+                drawToPicture.setColor(Color.MAGENTA);
+
+                for (ErrorBlock error : errorAreas) {
+                    drawToPicture.drawRect(error.getX(), error.getY(), error
+                            .getXBlocks() * 16, error.getYBlocks() * 16);
+                }
+                // release resources
+                drawToPicture.dispose();
+
+                // Write image with differences marked to file
+                // ImageIO.write(test, "png", new File(compareFolder
+                // + File.separator + fileId + "_diff.png"));
+                // Write clean image to file
+                ImageIO.write((stringToImage(image)).getSubimage(dimensions
+                        .getCanvasXPosition(), dimensions.getCanvasYPosition(),
+                        dimensions.getCanvasWidth(), dimensions
+                                .getCanvasHeight()), "png", new File(
+                        compareFolder + File.separator + fileId + ".png"));
+
+                // ImageIO.write(target, "png", new File(compareFolder
+                // + File.separator + fileId + "_reference.png"));
+
+                createDiffHtml(errorAreas, fileId, target.getHeight(), target
+                        .getWidth(), encodeImageToBase64(test),
+                        encodeImageToBase64(target));
+
+                System.err
+                        .println("Created clean image, image with marked differences and difference html.");
+                // Throw assert fail here if no debug requested
+                if (debug == false && sizesDiffer == false) {
+                    Assert.fail("Screenshot (" + fileId
+                            + ") differs from reference image.");
+                }
+            }
+            // } else {
+            if (sizesDiffer) {
+                // Throws an assertion error with message depending on result
+                // (images only differ in size or images differ in size and
+                // contain errors)
+                if (result) {
+                    Assert.fail("Images are of different size (" + fileId
+                            + ").");
+                } else {
+                    Assert.fail("Images differ and are of different size ("
+                            + fileId + ").");
+                }
             }
         } catch (IOException e) {
             // Create an RGB image without alpha channel for reference
@@ -374,6 +319,122 @@ public class ImageComparison {
     }
 
     /**
+     * Runs through the marked false macroblocks and collects them to bigger
+     * blocks
+     * 
+     * @param xBlocks
+     *            Amount of macroblocks in x direction
+     * @param yBlocks
+     *            Amount of macroblocks in y direction
+     * @param falseBlocks
+     *            Map of false blocks
+     * @return List of ErrorBlocks
+     */
+    private List<ErrorBlock> collectErrorsToList(int xBlocks, int yBlocks,
+            boolean[][] falseBlocks) {
+        List<ErrorBlock> errorAreas = new LinkedList<ErrorBlock>();
+
+        // run through blocks for marked errors for macroblocks.
+        for (int y = 0; y < yBlocks; y++) {
+            for (int x = 0; x < xBlocks; x++) {
+                // if found error make new ErrorBlock and collect
+                // connected error blocks and mark them false so
+                // that they won't trigger new errors
+                if (falseBlocks[x][y]) {
+                    ErrorBlock newBlock = new ErrorBlock();
+                    newBlock.setX(x * 16);
+                    newBlock.setY(y * 16);
+                    int x1 = x, xmin = x, y1 = y, maxSteps = xBlocks * yBlocks, steps = 0;
+                    falseBlocks[x][y] = false;
+
+                    // This'll confirm logic errors.
+                    while (true) {
+                        x1++;
+
+                        // if x1 out of bounds set x1 to xmin where
+                        // xmin == smallest error block found for
+                        // this error
+                        if (x1 >= xBlocks) {
+                            x1 = xmin;
+                        }
+
+                        // if x1,y1 marked true add width to ErrorBlock
+                        if (falseBlocks[x1][y1]) {
+                            newBlock.addXBlock();
+                            falseBlocks[x1][y1] = false;
+                        } else if (y1 < yBlocks) {
+                            x1 = xmin;
+
+                            // If next row has a false block
+                            // connected to our block
+                            boolean foundConnectedBlock = false;
+                            for (int foundX = x1; foundX < x1
+                                    + newBlock.getXBlocks(); foundX++) {
+                                if (foundX == xBlocks || y1 + 1 == yBlocks) {
+                                    break;
+                                }
+
+                                if (falseBlocks[foundX][y1 + 1]) {
+                                    foundConnectedBlock = true;
+                                }
+                            }
+
+                            // If connected error to ErrorBlock add
+                            // height to error block
+                            if (foundConnectedBlock) {
+                                y1++;
+                                newBlock.addYBlock();
+
+                                // while stepping back on this
+                                // row is false change block x
+                                // position
+                                if (x1 - 1 >= 0) {
+                                    while (falseBlocks[x1 - 1][y1]) {
+                                        falseBlocks[x1 - 1][y1] = false;
+                                        newBlock.addXBlock();
+                                        x1 = x1 - 1;
+                                        newBlock.setX(newBlock.getX() - 16);
+                                        if (x1 == 0) {
+                                            break;
+                                        }
+                                    }
+                                    xmin = x1;
+                                }
+
+                                // Skip blocks inside main error
+                                // block for this error
+                                x1 = x1 + newBlock.getXBlocks() - 1;
+                            } else {
+                                x1 = newBlock.getX() / 16;
+                                y1 = newBlock.getY() / 16;
+                                // Set all blocks to false
+                                // inside found box
+                                for (int j = 0; j < newBlock.getYBlocks(); j++) {
+                                    for (int i = 0; i < newBlock.getXBlocks(); i++) {
+                                        if (x1 + i < xBlocks
+                                                && y1 + j < yBlocks) {
+                                            falseBlocks[x1 + i][y1 + j] = false;
+                                        }
+                                    }
+                                }
+                                break;
+
+                            }
+                        }
+                        // In case something goes wrong we won't get stuck in
+                        // the loop forever
+                        if (++steps == maxSteps) {
+                            break;
+                        }
+                    }
+                    errorAreas.add(newBlock);
+                }
+            }
+        }
+        return errorAreas;
+    }
+
+    /**
      * Build a small html file that has mouse over picture change for fast
      * checking of errors and click on picture to switch between reference and
      * diff pictures.
@@ -409,10 +470,10 @@ public class ImageComparison {
             writer.println("<body>");
 
             writer
-                    .println("<div onclick=\"document.getElementById('reference').style.display='block'\" style=\"position: absolute; top: 0px; left: 0px; \"><img src=\"data:image/png;base64,"
+                    .println("<div id=\"diff\" onclick=\"document.getElementById('reference').style.display='block'; this.style.display='none';\" style=\"display: block; position: absolute; top: 0px; left: 0px; \"><img src=\"data:image/png;base64,"
                             + image + "\"/></div>");
             writer
-                    .println("<div id=\"reference\" onclick=\"this.style.display='none'\" style=\"display: none; position: absolute; top: 0px; left: 0px; z-index: 999;\"><img src=\"data:image/png;base64,"
+                    .println("<div id=\"reference\" onclick=\"this.style.display='none'; document.getElementById('diff').style.display='block';\" style=\"display: none; position: absolute; top: 0px; left: 0px; z-index: 999;\"><img src=\"data:image/png;base64,"
                             + ref_image + "\"/></div>");
 
             for (ErrorBlock error : blocks) {
@@ -433,7 +494,7 @@ public class ImageComparison {
                                 + image + "\"/></div>");
                 // Start "popup" div
                 writer
-                        .println("<div class=\"popUpDiv\" onmouseout=\"this.style.display='none'\" id=\""
+                        .println("<div class=\"popUpDiv\" onclick=\"document.getElementById('reference').style.display='block'; document.getElementById('diff').style.display='none';\" onmouseout=\"this.style.display='none'\" id=\""
                                 + id
                                 + "\"  style=\"display: none; position: absolute; top: 0px; left: 0px; clip: rect("
                                 + error.getY()
@@ -458,9 +519,12 @@ public class ImageComparison {
     }
 
     /**
+     * Decodes target string from base64 to byteArray that is converted to an
+     * image
      * 
      * @param imageString
-     * @return
+     *            Base64 encoded image
+     * @return BufferedImage
      */
     private BufferedImage stringToImage(String imageString) {
         // string to ByteArrayInputStream
@@ -477,6 +541,13 @@ public class ImageComparison {
         return bImage;
     }
 
+    /**
+     * Encodes target image to a Base64 string
+     * 
+     * @param image
+     *            BufferedImage to encode to String
+     * @return Base64 encoded String of image
+     */
     private String encodeImageToBase64(BufferedImage image) {
         String encodedImage = "";
         Base64 encoder = new Base64();
