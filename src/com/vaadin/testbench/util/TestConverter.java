@@ -260,7 +260,7 @@ public class TestConverter {
                     first = false;
                 }
                 javaSource.append("validateScreenshot(\"" + testName
-                        + "\", 0.001, \"" + identifier + "\");\n");
+                        + "\", 0.02, \"" + identifier + "\");\n");
             } else if (command.getCmd().equalsIgnoreCase("pause")) {
                 String identifier = "";
                 boolean first = true;

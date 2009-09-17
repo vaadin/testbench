@@ -93,6 +93,8 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
             // Compare screenshot with saved reference screen
             result = compare.compareStringImage(image, fileName, d, dimensions);
         } catch (junit.framework.AssertionFailedError e) {
+            // If a Assert.fail("") is caught check if it's a missing reference.
+            // If other throw the AssertionFailedError.
             if (e.getMessage().contains("No reference found")) {
                 softAssert.add(e);
             } else {
