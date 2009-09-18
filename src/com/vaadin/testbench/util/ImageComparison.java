@@ -55,7 +55,7 @@ public class ImageComparison {
         // Check that d value inside allowed range. if false set d to default
         // value.
         if (d < 0 || d > 1) {
-            d = 0.001;
+            d = 0.025;
         }
 
         boolean result = false;
@@ -167,8 +167,8 @@ public class ImageComparison {
                         }
 
                         // Check if total RGB error in a macroblock exceeds
-                        // 0.1% if true mark block with a rectangle, append
-                        // block info to imageErrors
+                        // allowed error % if true mark block with a rectangle,
+                        // append block info to imageErrors
                         if ((sum / fullSum) > d) {
                             imageErrors
                                     .append("Error in block at position:\tx="
@@ -225,8 +225,7 @@ public class ImageComparison {
                 // ImageIO.write(target, "png", new File(compareFolder
                 // + File.separator + fileId + "_reference.png"));
 
-                createDiffHtml(errorAreas, fileId, target.getHeight(), target
-                        .getWidth(), encodeImageToBase64(test),
+                createDiffHtml(errorAreas, fileId, encodeImageToBase64(test),
                         encodeImageToBase64(target));
 
                 System.err
@@ -237,7 +236,7 @@ public class ImageComparison {
                             + ") differs from reference image.");
                 }
             }
-            // } else {
+
             if (sizesDiffer) {
                 // Throws an assertion error with message depending on result
                 // (images only differ in size or images differ in size and
@@ -447,13 +446,9 @@ public class ImageComparison {
      *            reference image file
      * @param fileId
      *            fileName for html file
-     * @param h
-     *            picture height
-     * @param w
-     *            picture width
      */
-    private void createDiffHtml(List<ErrorBlock> blocks, String fileId, int h,
-            int w, String image, String ref_image) {
+    private void createDiffHtml(List<ErrorBlock> blocks, String fileId,
+            String image, String ref_image) {
         try {
             String directory = System.getProperty(TEST_SCREENS_DIRECTORY);
             if (!File.separator

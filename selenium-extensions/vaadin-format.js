@@ -239,7 +239,49 @@ function formatComment(comment) {
 		}else{
 			return "validateScreenshot(\"testFileNameHere\", 0.001, \"" + "\");";
 		}
-	}
+	} else if (comment.comment.match(/^selenium\.enterCharacter/)) {
+
+		var parameters = comment.comment.substring(comment.comment.indexOf("\"")+1);
+		var locator = parameters.substring(0, parameters.indexOf("\""));
+		parameters = parameters.substring(parameters.indexOf("\"")+1);
+		var value = parameters.substring(parameters.indexOf("\"")+1, parameters.lastIndexOf("\""));
+		
+		var result = "selenium.type(\"" + locator + "\", \"" + value + "\");\n";
+		
+
+		if(value.length > 1){
+			for(i = 0; i < value.length;i++){
+				result = result + "selenium.keyDown(\"" + locator + "\", \"" + value.charAt(i) + "\");\n";
+				result = result + "selenium.keyUp(\"" + locator + "\", \"" + value.charAt(i) + "\");\n";
+			}
+		}else{
+			result = result + "selenium.keyDown(\"" + locator + "\", \"" + value + "\");\n";
+			result = result + "selenium.keyUp(\"" + locator + "\", \"" + value + "\");\n";
+		}
+		
+        return result;
+        
+    } else if (comment.comment.match(/^selenium\.pressArrowKey/)) {
+    	
+		var parameters = comment.comment.substring(comment.comment.indexOf("\"")+1);
+		var locator = parameters.substring(0, parameters.indexOf("\""));
+		parameters = parameters.substring(parameters.indexOf("\"")+1);
+		var value = parameters.substring(parameters.indexOf("\"")+1, parameters.lastIndexOf("\""));
+		
+    	if(value.toLowerCase() == "left"){
+    		value="\\\\37";
+    	}else if(value.toLowerCase() == "right"){
+    		value="\\\\39";
+    	}else if(value.toLowerCase() == "up"){
+    		value="\\\\38";
+    	}else if(value.toLowerCase() == "down"){
+    		value="\\\\40";
+    	}
+		var result = "selenium.keyDown(\"" + locator + "\", \"" + value + "\");\n";
+		result = result + "selenium.keyUp(\"" + locator + "\", \"" + value + "\");\n";
+		
+		return result;
+    }
 	
 	return comment.comment.replace(/.+/mg, function(str) {
 			return "// " + str;

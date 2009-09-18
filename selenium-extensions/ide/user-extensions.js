@@ -136,3 +136,13 @@ Recorder.addEventHandler('contextmenu', 'contextmenu', function(event) {
 }, {
 	capture : true
 });
+
+/* Add the screenCapture as an action to SeleniumIDE command overlay */
+CommandBuilders.add("action", function(window){
+
+	var result = { action: "ScreenCapture" };
+	
+	return{
+		command: "screenCapture"
+	};
+});

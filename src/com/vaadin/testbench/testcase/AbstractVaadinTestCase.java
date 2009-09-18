@@ -54,7 +54,7 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
         if (!testCaseName.equals(fileId)) {
             testCaseName = fileId;
             imageNumber = 0;
-            softAssert = new LinkedList<junit.framework.AssertionFailedError>();
+            softAssert.clear();
         }
 
         boolean result = false;

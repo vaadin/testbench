@@ -260,7 +260,7 @@ public class TestConverter {
                     first = false;
                 }
                 javaSource.append("validateScreenshot(\"" + testName
-                        + "\", 0.02, \"" + identifier + "\");\n");
+                        + "\", 0.025, \"" + identifier + "\");\n");
             } else if (command.getCmd().equalsIgnoreCase("pause")) {
                 String identifier = "";
                 boolean first = true;
@@ -271,7 +271,61 @@ public class TestConverter {
                     first = false;
                 }
                 javaSource.append("pause(" + identifier + ");\n");
+            } else if (command.getCmd().equalsIgnoreCase("enterCharacter")) {
+                String locator = "";
+                String characters = "";
+                boolean first = true;
+                for (String param : command.getParams()) {
+                    if (first) {
+                        locator = param.replace("\\", "\\\\");
+                    } else {
+                        characters = param;
+                    }
+
+                    first = false;
+                }
+                javaSource.append("selenium.type(\"" + locator + "\", \""
+                        + characters + "\");\n");
+                if (characters.length() > 1) {
+                    for (int i = 0; i < characters.length(); i++) {
+                        javaSource.append("selenium.keyDown(\"" + locator
+                                + "\", \"" + characters.charAt(i) + "\");\n");
+                        javaSource.append("selenium.keyUp(\"" + locator
+                                + "\", \"" + characters.charAt(i) + "\");\n");
+                    }
+                } else {
+                    javaSource.append("selenium.keyDown(\"" + locator
+                            + "\", \"" + characters + "\");\n");
+                    javaSource.append("selenium.keyUp(\"" + locator + "\", \""
+                            + characters + "\");\n");
+                }
+            } else if (command.getCmd().equalsIgnoreCase("pressArrowKey")) {
+                StringBuilder values = new StringBuilder();
+                boolean first = true;
+                for (String param : command.getParams()) {
+                    if (first) {
+                        values.append("\"" + param.replace("\\", "\\\\")
+                                + "\", \"");
+                    } else {
+                        if (param.contains("\\")) {
+                            values.append(param.replace("\\", "\\\\") + "\"");
+                        } else if ("UP".equalsIgnoreCase(param)) {
+                            values.append("\\\\38\"");
+                        } else if ("DOWN".equalsIgnoreCase(param)) {
+                            values.append("\\\\40\"");
+                        } else if ("LEFT".equalsIgnoreCase(param)) {
+                            values.append("\\\\37\"");
+                        } else if ("RIGHT".equalsIgnoreCase(param)) {
+                            values.append("\\\\39\"");
+                        }
+                    }
+
+                    first = false;
+                }
+                javaSource.append("selenium.keyDown(" + values + ");\n");
+                javaSource.append("selenium.keyUp(" + values + ");\n");
             } else if (command.getCmd().equalsIgnoreCase("verifyTextPresent")) {
+
                 String identifier = "";
                 boolean first = true;
                 for (String param : command.getParams()) {

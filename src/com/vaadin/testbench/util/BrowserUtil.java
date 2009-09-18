@@ -13,9 +13,10 @@ public class BrowserUtil {
      */
     public int canvasXPosition(Selenium selenium) {
         try {
-            int result = (Integer.parseInt(selenium
+            int result = ((Integer.parseInt(selenium
                     .getEval("screen.availWidth;")) - Integer.parseInt(selenium
-                    .getEval("window.innerWidth;"))) / 2;
+                    .getEval("window.innerWidth;"))) / 2)
+                    + Integer.parseInt(selenium.getEval("window.pageXOffset;"));
             return result;
         } catch (NumberFormatException nfe) {
             return Integer.parseInt(selenium
@@ -34,7 +35,8 @@ public class BrowserUtil {
         try {
             int result = (Integer.parseInt(selenium
                     .getEval("screen.availHeight"))
-                    - getCanvasHeight(selenium) - 30);
+                    - getCanvasHeight(selenium)
+                    + Integer.parseInt(selenium.getEval("window.pageYOffset")) - 30);
             return result;
 
         } catch (NumberFormatException nfe) {

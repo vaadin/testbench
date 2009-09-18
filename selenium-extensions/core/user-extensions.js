@@ -116,16 +116,35 @@ Selenium.prototype.doContextmenuAt = function(locator, coordString) {
       this.page()._fireEventOnElement("contextmenu", element, clientXY[0], clientXY[1]); 
 };
 
-/* Add the screenCapture as an action to SeleniumIDE command overlay */
-CommandBuilders.add("action", function(window){
-
-	var result = { action: "ScreenCapture" };
-	
-	return{
-		command: "screenCapture"
-	};
-});
-
 /* Empty screenCapture command for use with export test case Vaadin */
 Selenium.prototype.doScreenCapture = function(locator, value){
+};
+
+/*Enters a characte so that it gets recognized in comboboxes etc.*/
+Selenium.prototype.doEnterCharacter = function(locator, value){
+	this.doType(locator, value);
+	if(value.length > 1){
+		for(i = 0; i < value.length;i++){
+			this.doKeyDown(locator, value.charAt(i));
+			this.doKeyUp(locator, value.charAt(i));
+		}
+	}else{
+		this.doKeyDown(locator, value);
+		this.doKeyUp(locator, value);
+	}
+};
+
+/*Sends an arrow press recognized by browsers.*/
+Selenium.prototype.doPressArrowKey = function(locator, value){
+	if(value.toLowerCase() == "left"){
+		value="\\37";
+	}else if(value.toLowerCase() == "right"){
+		value="\\39";
+	}else if(value.toLowerCase() == "up"){
+		value="\\38";
+	}else if(value.toLowerCase() == "down"){
+		value="\\40";
+	}
+	this.doKeyDown(locator, value);
+	this.doKeyUp(locator, value);
 };
