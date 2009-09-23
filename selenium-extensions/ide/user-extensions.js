@@ -146,3 +146,189 @@ CommandBuilders.add("action", function(window){
 		command: "screenCapture"
 	};
 });
+
+var charBuffer = "";
+var typeString = "true";
+
+/* Checks keyCodes on keyup event and adds a pressArrowKey if confirmed. */
+Recorder.addEventHandler('pressSpecialKey', 'keyup', function(event){
+		
+		if(event.keyCode >= 37 && event.keyCode <= 40){
+			if(event.shiftKey){//16
+				this.record_orig("shiftKeyDown", this.findLocators(event.target), '');
+			}
+			if(event.ctrlKey){//17
+				this.record_orig("controlKeyDown", this.findLocators(event.target), '');
+			}
+			if(event.altKey){//18
+				this.record_orig("altKeyDown", this.findLocators(event.target), '');
+			}
+			if(charBuffer.length > 0){
+				this.record("enterCharacter", this.findLocators(event.target), charBuffer);
+				charBuffer = "";
+				typeString = "false";
+			}
+		}
+		
+		switch(event.keyCode){
+		case 13:
+			charBuffer = "";
+			typeString = "false";
+			this.record("pressSpecialKey", this.findLocators(event.target), "enter");
+			break;
+		case 37: 
+			if(event.shiftKey || event.ctrlKey || event.altKey){
+				this.record_orig("pressSpecialKey", this.findLocators(event.target), "left");
+			}else{
+				this.record("pressSpecialKey", this.findLocators(event.target), "left");
+			}
+			break;
+		case 39: 
+			if(event.shiftKey || event.ctrlKey || event.altKey){
+				this.record_orig("pressSpecialKey", this.findLocators(event.target), "right");
+			}else{
+				this.record("pressSpecialKey", this.findLocators(event.target), "right");
+			}
+			break;
+		case 38: 
+			if(event.shiftKey || event.ctrlKey || event.altKey){
+				this.record_orig("pressSpecialKey", this.findLocators(event.target), "up");
+			}else{
+				this.record("pressSpecialKey", this.findLocators(event.target), "up");
+			}
+			break;
+		case 40:
+			if(event.shiftKey || event.ctrlKey || event.altKey){
+				this.record_orig("pressSpecialKey", this.findLocators(event.target), "down");
+			}else{
+				this.record("pressSpecialKey", this.findLocators(event.target), "down");
+			}
+		}
+		
+		if(event.keyCode >= 37 && event.keyCode <= 40){
+			if(event.shiftKey){
+				this.record("shiftKeyUp", this.findLocators(event.target), '');
+			}
+			if(event.ctrlKey){
+				this.record("controlKeyUp", this.findLocators(event.target), '');
+			}
+			if(event.altKey){
+				this.record("altKeyUp", this.findLocators(event.target), '');
+			}
+		}
+	});
+
+/* record all keypresses to character buffer */
+Recorder.addEventHandler('keyPressedDown', 'keypress', function(event){
+		if(event.charCode >= 48){
+			charBuffer = charBuffer + String.fromCharCode(event.charCode);
+		}else if(event.keyCode >= 48){
+			charBuffer = charBuffer + fromKeyCode(event.keyCode);
+		}else if(event.which >= 48){
+			charBuffer = charBuffer + String.fromCharCode(event.which);
+		}
+
+		if(event.keyCode == 8 || event.charCode == 8){
+			if(charBuffer.length == 1){
+				charBuffer = "";
+			}else{
+				charBuffer = charBuffer.substring(0, charBuffer.length-1); 
+			}
+		}
+	});
+
+/* Override default type */
+Recorder.removeEventHandler('type');
+
+Recorder.addEventHandler('type', 'change', function(event) {
+	var tagName = event.target.tagName.toLowerCase();
+	var type = event.target.type;
+	var target = this.findLocators(event.target);
+	if (('input' == tagName && ('text' == type || 'password' == type || 'file' == type)) ||
+		'textarea' == tagName) {
+		if(typeString == "true"){
+
+			if(charBuffer.length > 0){
+				charBuffer = "";
+				this.record("enterCharacter", target, event.target.value);
+			}else{
+				this.record("type", target, event.target.value);
+			}
+		}else{
+			typeString = "true";
+			if(charBuffer.length > 0){
+				charBuffer = "";
+				this.record("enterCharacter", target, event.target.value);
+			}
+		}
+	}
+});
+
+var noSelection = "true";
+
+/* override default click event recorder */
+Recorder.removeEventHandler('clickLocator');
+
+Recorder.addEventHandler('clickLocator', 'click', function(event){
+		if (event.button == 0 && noSelection == "true") {
+            var x = event.clientX - editor.seleniumAPI.Selenium.prototype.getElementPositionLeft(event.target);
+            var y = event.clientY - editor.seleniumAPI.Selenium.prototype.getElementPositionTop(event.target);
+
+			var clickable = this.findClickableElement(event.target);
+			if (clickable) {
+	            if (this.mouseoverLocator) {
+	                this.record('mouseOver', this.mouseoverLocator, '');
+	                delete this.mouseoverLocator;
+	            }
+
+	            // A class="v-button" requires a click without mouseDown+mouseUp
+	            var target = this.findLocators(event.target);
+	            if((new RegExp("VButton")).test(target) || (new RegExp("VTwinColSelect")).test(target)){
+	            	this.record("click", target, '');
+	            }else{
+	            	this.record("mouseClick", target, x + ',' + y);
+	            }
+	        } else {
+	            var target = event.target;
+//	            this.callIfMeaningfulEvent(function() {
+	                    this.record("mouseClick", this.findLocators(target), x + ',' + y);
+//	                });
+	        }
+		}else{
+			noSelection = "true";
+		}
+	}, { capture: true });
+
+/* Expand select/addSelection/removeSelection functionality*/
+Recorder.removeEventHandler('select');
+
+Recorder.addEventHandler('select', 'change', function(event) {
+	var tagName = event.target.tagName.toLowerCase();
+	if ('select' == tagName) {
+		if (!event.target.multiple) {
+            var option = event.target.options[event.target.selectedIndex];
+			this.log.debug('selectedIndex=' + event.target.selectedIndex);
+			this.record("select", this.findLocators(event.target), this.getOptionLocator(option));
+		} else {
+			this.log.debug('change selection on select-multiple');
+			var options = event.target.options;
+			for (var i = 0; i < options.length; i++) {
+				this.log.debug('option=' + i + ', ' + options[i].selected);
+				if (options[i]._wasSelected == null) {
+					this.log.warn('_wasSelected was not recorded');
+				}
+				if (options[i]._wasSelected != options[i].selected) {
+                    var value = this.getOptionLocator(options[i]);
+					if (options[i].selected) {
+						this.record("addSelection", this.findLocators(event.target), value);
+					} else {
+						this.record("removeSelection", this.findLocators(event.target), value);
+					}
+					options[i]._wasSelected = options[i].selected;
+				}
+			}
+		}
+		noSelection = "false";
+	}
+});
+

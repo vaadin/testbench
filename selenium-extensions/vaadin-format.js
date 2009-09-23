@@ -261,7 +261,7 @@ function formatComment(comment) {
 		
         return result;
         
-    } else if (comment.comment.match(/^selenium\.pressArrowKey/)) {
+    } else if (comment.comment.match(/^selenium\.pressSpecialKey/)) {
     	
 		var parameters = comment.comment.substring(comment.comment.indexOf("\"")+1);
 		var locator = parameters.substring(0, parameters.indexOf("\""));
@@ -276,6 +276,8 @@ function formatComment(comment) {
     		value="\\\\38";
     	}else if(value.toLowerCase() == "down"){
     		value="\\\\40";
+    	}else if(value.toLowerCase() == "backspace"){
+    		value="\\\\8";
     	}
 		var result = "selenium.keyDown(\"" + locator + "\", \"" + value + "\");\n";
 		result = result + "selenium.keyUp(\"" + locator + "\", \"" + value + "\");\n";

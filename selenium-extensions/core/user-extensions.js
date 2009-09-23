@@ -135,7 +135,7 @@ Selenium.prototype.doEnterCharacter = function(locator, value){
 };
 
 /*Sends an arrow press recognized by browsers.*/
-Selenium.prototype.doPressArrowKey = function(locator, value){
+Selenium.prototype.doPressSpecialKey = function(locator, value){
 	if(value.toLowerCase() == "left"){
 		value="\\37";
 	}else if(value.toLowerCase() == "right"){
@@ -144,7 +144,16 @@ Selenium.prototype.doPressArrowKey = function(locator, value){
 		value="\\38";
 	}else if(value.toLowerCase() == "down"){
 		value="\\40";
+	}else if(value.toLowerCase() == "enter"){
+		value="\\13";
 	}
 	this.doKeyDown(locator, value);
 	this.doKeyUp(locator, value);
+};
+
+Selenium.prototype.doMouseClick = function(locator, value){
+	this.doMouseDownAt(locator, value);
+	this.doClick(locator, '');
+	this.doMouseUpAt(locator, value);
+	
 };

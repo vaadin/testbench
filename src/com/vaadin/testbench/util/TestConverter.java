@@ -299,7 +299,7 @@ public class TestConverter {
                     javaSource.append("selenium.keyUp(\"" + locator + "\", \""
                             + characters + "\");\n");
                 }
-            } else if (command.getCmd().equalsIgnoreCase("pressArrowKey")) {
+            } else if (command.getCmd().equalsIgnoreCase("pressSpecialKey")) {
                 StringBuilder values = new StringBuilder();
                 boolean first = true;
                 for (String param : command.getParams()) {
@@ -317,13 +317,32 @@ public class TestConverter {
                             values.append("\\\\37\"");
                         } else if ("RIGHT".equalsIgnoreCase(param)) {
                             values.append("\\\\39\"");
+                            // } else if ("BACKSPACE".equalsIgnoreCase(param)) {
+                            // values.append("\\\\8\"");
                         }
                     }
 
                     first = false;
                 }
                 javaSource.append("selenium.keyDown(" + values + ");\n");
+                javaSource.append("selenium.keyPress(" + values + ");\n");
                 javaSource.append("selenium.keyUp(" + values + ");\n");
+            } else if (command.getCmd().equalsIgnoreCase("mouseClick")) {
+                StringBuilder values = new StringBuilder();
+                boolean first = true;
+                for (String param : command.getParams()) {
+                    if (first) {
+                        values.append(param + "\", \"");
+                    } else {
+                        values.append(param);
+                    }
+
+                    first = false;
+                }
+                javaSource
+                        .append("selenium.mouseDownAt(\"" + values + "\");\n");
+                javaSource.append("selenium.click(\"" + values + "\");\n");
+                javaSource.append("selenium.mouseUpAt(\"" + values + "\");\n");
             } else if (command.getCmd().equalsIgnoreCase("verifyTextPresent")) {
 
                 String identifier = "";
