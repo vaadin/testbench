@@ -270,6 +270,7 @@ var noSelection = "true";
 Recorder.removeEventHandler('clickLocator');
 
 Recorder.addEventHandler('clickLocator', 'click', function(event){
+		charBuffer = "";
 		if (event.button == 0 && noSelection == "true") {
             var x = event.clientX - editor.seleniumAPI.Selenium.prototype.getElementPositionLeft(event.target);
             var y = event.clientY - editor.seleniumAPI.Selenium.prototype.getElementPositionTop(event.target);
