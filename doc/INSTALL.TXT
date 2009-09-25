@@ -9,9 +9,28 @@ Setting up Firefox for recording a test case
 
 Setting up a test host
 ======================
-1. Install Selenium RC (http://seleniumhq.org/download/) 1.0 beta 2 has been tested.
+1. Install Selenium RC 1.0.1 (http://seleniumhq.org/download/).
 2. Extract Vaadin Selenium Core Extensions (selenium-extensions/core/user-extensions.js)
 3. Start the Selenium Server using the "-userExtensions path-to-extensionsjs/user-extensions.js" parameter, e.g.
+"C:\Program Files\Java\jre6\bin\java.exe" -jar c:\selenium\selenium-remote-control-1.0-beta-2\selenium-server-1.0-beta-2\selenium-server.jar -userExtensions C:\selenium\user-extensions.js"
+
+Disable error reporting in case Internet Explorer decides to crash:
+1. Open control panel -> System
+2. Select the "Advanced" tab
+3. Select "Error reporting"
+4. Make sure "Disable error reporting" is selected
+5. Make sure the "But notify me when critical errors occur" is not checked
+
+Turn off automatic updates:
+1. 
+2. 
+
+Start all browsers at least once to make sure no "Do you want to set this browser as the default" appears.
+For Safari, remove the popup blocker or the test will not start.
+
+
+Set Selenium Server to start up automatically (Windows)
+1. Create a shortcut in the startup folder to the selenium server, e.g. 
 "C:\Program Files\Java\jre6\bin\java.exe" -jar c:\selenium\selenium-remote-control-1.0-beta-2\selenium-server-1.0-beta-2\selenium-server.jar -userExtensions C:\selenium\user-extensions.js"
  
 
