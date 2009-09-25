@@ -338,8 +338,10 @@ public class TestConverter {
             } else if (command.getCmd().equalsIgnoreCase("mouseClick")) {
                 StringBuilder values = new StringBuilder();
                 boolean first = true;
+                String firstParam = "";
                 for (String param : command.getParams()) {
                     if (first) {
+                        firstParam = param;
                         values.append(param + "\", \"");
                     } else {
                         values.append(param);
@@ -349,8 +351,8 @@ public class TestConverter {
                 }
                 javaSource
                         .append("selenium.mouseDownAt(\"" + values + "\");\n");
-                javaSource.append("selenium.click(\"" + values + "\");\n");
                 javaSource.append("selenium.mouseUpAt(\"" + values + "\");\n");
+                javaSource.append("selenium.click(\"" + firstParam + "\");\n");
             } else if (command.getCmd().equalsIgnoreCase("verifyTextPresent")) {
 
                 String identifier = "";
