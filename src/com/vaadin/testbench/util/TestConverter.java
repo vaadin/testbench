@@ -37,6 +37,8 @@ public class TestConverter {
         knownBrowsers.put("*opera", "*opera");
         knownBrowsers.put("safari", "*safari");
         knownBrowsers.put("*safari", "*safari");
+        knownBrowsers.put("googlechrome", "*googlechrome");
+        knownBrowsers.put("*googlechrome", "*googlechrome");
     }
     private static final String JAVA_HEADER = "package {package};\n" + "\n"
             + "import com.vaadin.testbench.testcase.AbstractVaadinTestCase;\n"
@@ -317,6 +319,12 @@ public class TestConverter {
                             values.append("\\\\37\"");
                         } else if ("RIGHT".equalsIgnoreCase(param)) {
                             values.append("\\\\39\"");
+                        } else if ("ENTER".equalsIgnoreCase(param)) {
+                            values.append("\\\\13\"");
+
+                            // FIXME: Need an else or the generated test case
+                            // won't compile
+
                             // } else if ("BACKSPACE".equalsIgnoreCase(param)) {
                             // values.append("\\\\8\"");
                         }
