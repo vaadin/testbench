@@ -27,7 +27,6 @@ import org.apache.commons.codec.binary.Base64;
 public class ImageComparison {
 
     private static final String TEST_SCREENS_DIRECTORY = "com.vaadin.testbench.screenshot.directory";
-    private static final String ERROR_ON_MISSING_REFERENCE = "com.vaadin.testbench.screenshot.reference.error_if_missing";
     private static final String DEBUG = "com.vaadin.testbench.screenshot.reference.debug";
     // referenceDirectory is the name of the directory with the reference
     // pictures of the same name as the one to be compared
@@ -261,27 +260,12 @@ public class ImageComparison {
             g.dispose();
 
             try {
-                // if CREATE_REFERENCES set as true don't fail on missing images
-                if (!"true".equalsIgnoreCase(System
-                        .getProperty(ERROR_ON_MISSING_REFERENCE))) {
-                    System.err.println("No reference found for " + fileId
-                            + " in " + directory + REFERENCE_DIRECTORY);
-                    System.err.println("Creating reference to "
-                            + REFERENCE_DIRECTORY + ".");
-
-                    ImageIO.write(referenceImage, "png", new File(directory
-                            + REFERENCE_DIRECTORY + File.separator + fileId
-                            + ".png"));
-                    result = true;
-                } else {
-                    System.err.println("Creating reference to "
-                            + ERROR_DIRECTORY + ".");
-                    // Write clean image to error folder.
-                    ImageIO.write(referenceImage, "png", new File(directory
-                            + ERROR_DIRECTORY + File.separator + fileId
-                            + ".png"));
-                    result = false;
-                }
+                System.err.println("Creating reference to " + ERROR_DIRECTORY
+                        + ".");
+                // Write clean image to error folder.
+                ImageIO.write(referenceImage, "png", new File(directory
+                        + ERROR_DIRECTORY + File.separator + fileId + ".png"));
+                result = false;
             } catch (FileNotFoundException fnfe) {
                 Assert.fail("Failed to open file to write reference image.");
             } catch (IOException ioe) {

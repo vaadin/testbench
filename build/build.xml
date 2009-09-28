@@ -30,7 +30,6 @@
 			<fileset dir=".." includes="example/test.xml example/tests/**" />
 
 		</zip>
-		<delete file="output/vaadin-testbench-2.0.development-${version}.jar" />
 
 	</target>
 
