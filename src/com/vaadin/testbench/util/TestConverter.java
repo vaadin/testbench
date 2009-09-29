@@ -53,6 +53,8 @@ public class TestConverter {
 
     private static final String PACKAGE_DIR = "com/vaadin/automatedtests";
 
+    private static boolean screenshot = false;
+
     public static void main(String[] args) {
         if (args.length < 3) {
             System.err.println("Usage: " + TestConverter.class.getName()
@@ -187,14 +189,21 @@ public class TestConverter {
 
     private static String createTestCaseMethod(String testName,
             List<Command> commands) {
+        screenshot = false;
         String testCaseHeader = getTestCaseHeader(testName);
         String testCaseBody = convertTestCaseToJava(commands, testName);
         String testCaseFooter = getTestCaseFooter(testName);
-        // Add these inthe case a screenshot is wanted
+        // Add these in the case a screenshot is wanted
         String windowFunctions = "doCommand(\"windowMaximize\", new String[] { \"\" });\n"
-                + "doCommand(\"windowFocus\", new String[] { \"\" });\n";
+                + "doCommand(\"windowFocus\", new String[] { \"\" });\n"
+                + "getCanvasPosition();\n";
 
-        return testCaseHeader + windowFunctions + testCaseBody + testCaseFooter;
+        if (screenshot) {
+            return testCaseHeader + windowFunctions + testCaseBody
+                    + testCaseFooter;
+        }
+
+        return testCaseHeader + testCaseBody + testCaseFooter;
     }
 
     private static String removeExtension(String name) {
@@ -217,7 +226,10 @@ public class TestConverter {
         String footer = TEST_METHOD_FOOTER;
         footer = footer.replace("{testName}", testName);
 
-        return softAsserts + footer;
+        if (screenshot) {
+            return softAsserts + footer;
+        }
+        return footer;
     }
 
     private static byte[] getJavaHeader(String className, String browser) {
@@ -268,6 +280,7 @@ public class TestConverter {
                 }
                 javaSource.append("validateScreenshot(\"" + testName
                         + "\", 0.025, \"" + identifier + "\");\n");
+                screenshot = true;
             } else if (command.getCmd().equalsIgnoreCase("pause")) {
                 String identifier = "";
                 boolean first = true;
@@ -340,7 +353,8 @@ public class TestConverter {
                 javaSource.append("selenium.keyDown(" + values + ");\n");
                 javaSource.append("selenium.keyPress(" + values + ");\n");
                 javaSource.append("selenium.keyUp(" + values + ");\n");
-            } else if (command.getCmd().equalsIgnoreCase("mouseClick")) {
+            } else if (command.getCmd().equalsIgnoreCase("mouseClick")
+                    || command.getCmd().equalsIgnoreCase("closeNotification")) {
                 StringBuilder values = new StringBuilder();
                 boolean first = true;
                 String firstParam = "";

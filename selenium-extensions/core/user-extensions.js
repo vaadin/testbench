@@ -153,7 +153,10 @@ Selenium.prototype.doPressSpecialKey = function(locator, value){
 
 Selenium.prototype.doMouseClick = function(locator, value){
 	this.doMouseDownAt(locator, value);
-	this.doClick(locator, '');
 	this.doMouseUpAt(locator, value);
-	
+	this.doClick(locator, '');
+};
+
+Selenium.prototype.doCloseNotification = function(locator, value){
+	this.doMouseClick(locator, value);
 };

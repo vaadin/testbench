@@ -28,14 +28,21 @@ LocatorBuilders.add('vaadin', function(e) {
 	if (e.wrappedJSObject) {
 		e = e.wrappedJSObject;
 	}
-
+	
+	/* Catches a java.lang.ClassCastException for popupView
+	 * that stops the whole Locator search.
+	 */
 	for ( var windowname in connector.clients) {
-		var path = connector.clients[windowname].getPathForElement(e);
+		try{
+			var path = connector.clients[windowname].getPathForElement(e);
+		}catch(err){
+			this.log.debug(err);
+		}
 		if (path != null) {
 			return "vaadin=" + windowname + "::" + path;
 		}
 	}
-
+	
 	return null;
 });
 
@@ -172,11 +179,12 @@ Recorder.addEventHandler('pressSpecialKey', 'keyup', function(event){
 		
 		switch(event.keyCode){
 		case 13:
-			charBuffer = "";
+			this.log.debug('pressed ENTER!');
 			typeString = "false";
 			this.record("pressSpecialKey", this.findLocators(event.target), "enter");
 			break;
 		case 37: 
+			this.log.debug('pressed LEFT!');
 			if(event.shiftKey || event.ctrlKey || event.altKey){
 				this.record_orig("pressSpecialKey", this.findLocators(event.target), "left");
 			}else{
@@ -184,6 +192,7 @@ Recorder.addEventHandler('pressSpecialKey', 'keyup', function(event){
 			}
 			break;
 		case 39: 
+			this.log.debug('pressed RIGHT!');
 			if(event.shiftKey || event.ctrlKey || event.altKey){
 				this.record_orig("pressSpecialKey", this.findLocators(event.target), "right");
 			}else{
@@ -191,6 +200,7 @@ Recorder.addEventHandler('pressSpecialKey', 'keyup', function(event){
 			}
 			break;
 		case 38: 
+			this.log.debug('pressed UP!');
 			if(event.shiftKey || event.ctrlKey || event.altKey){
 				this.record_orig("pressSpecialKey", this.findLocators(event.target), "up");
 			}else{
@@ -198,6 +208,7 @@ Recorder.addEventHandler('pressSpecialKey', 'keyup', function(event){
 			}
 			break;
 		case 40:
+			this.log.debug('pressed DOWN!');
 			if(event.shiftKey || event.ctrlKey || event.altKey){
 				this.record_orig("pressSpecialKey", this.findLocators(event.target), "down");
 			}else{
@@ -221,14 +232,18 @@ Recorder.addEventHandler('pressSpecialKey', 'keyup', function(event){
 /* record all keypresses to character buffer */
 Recorder.addEventHandler('keyPressedDown', 'keypress', function(event){
 		if(event.charCode >= 48){
+			this.log.debug('Typed key ' + String.fromCharCode(event.charCode));
 			charBuffer = charBuffer + String.fromCharCode(event.charCode);
 		}else if(event.keyCode >= 48){
+			this.log.debug('Typed key ' + String.fromCharCode(event.keyCode));
 			charBuffer = charBuffer + fromKeyCode(event.keyCode);
 		}else if(event.which >= 48){
+			this.log.debug('Typed key ' + String.fromCharCode(event.which));
 			charBuffer = charBuffer + String.fromCharCode(event.which);
 		}
 
 		if(event.keyCode == 8 || event.charCode == 8){
+			this.log.debug('Recieved BACKSPACE');
 			if(charBuffer.length == 1){
 				charBuffer = "";
 			}else{
@@ -265,12 +280,14 @@ Recorder.addEventHandler('type', 'change', function(event) {
 });
 
 var noSelection = "true";
+var clicked = "false";
 
 /* override default click event recorder */
 Recorder.removeEventHandler('clickLocator');
 
 Recorder.addEventHandler('clickLocator', 'click', function(event){
 		charBuffer = "";
+		
 		if (event.button == 0 && noSelection == "true") {
             var x = event.clientX - editor.seleniumAPI.Selenium.prototype.getElementPositionLeft(event.target);
             var y = event.clientY - editor.seleniumAPI.Selenium.prototype.getElementPositionTop(event.target);
@@ -282,13 +299,14 @@ Recorder.addEventHandler('clickLocator', 'click', function(event){
 	                delete this.mouseoverLocator;
 	            }
 
-	            // A class="v-button" requires a click without mouseDown+mouseUp
+	            /* A class="v-button" requires a click without mouseDown+mouseUp */
 	            var target = this.findLocators(event.target);
-	            if((new RegExp("VButton")).test(target) || (new RegExp("VTwinColSelect")).test(target)){
+	            if((new RegExp("Button")).test(target) || (new RegExp("TwinColSelect")).test(target)){
 	            	this.record("click", target, '');
 	            }else{
 	            	this.record("mouseClick", target, x + ',' + y);
 	            }
+				clicked = "true";
 	        } else {
 	            var target = event.target;
 //	            this.callIfMeaningfulEvent(function() {
@@ -333,3 +351,22 @@ Recorder.addEventHandler('select', 'change', function(event) {
 	}
 });
 
+var counter = 0;
+var closeNotificationRecorded = "false";
+
+Recorder.addEventHandler('append', 'DOMNodeInserted', function(event){
+		if(clicked == "true" && event.target.nodeName.toLowerCase() == "div"){
+			var target = this.findLocators(event.target);
+			if((new RegExp("body")).test(target) && (new RegExp("Notification")).test(event.target.className)){
+				this.record("closeNotification", target, '0,0');
+				clicked = "false";
+				closeNotificationRecorded = "true";
+			}
+			/*
+			 * Stop checking inserted DOM nodes after 5 inserts 
+			 */
+			if(++counter > 5){
+				clicked = "false";
+			}
+		}
+	});

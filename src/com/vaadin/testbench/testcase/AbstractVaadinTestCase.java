@@ -1,5 +1,7 @@
 package com.vaadin.testbench.testcase;
 
+import java.awt.image.BufferedImage;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -22,6 +24,7 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
     private static int imageNumber = 0;
     private static String testCaseName = "";
     private static List<junit.framework.AssertionFailedError> softAssert = new LinkedList<junit.framework.AssertionFailedError>();
+    private static BrowserDimensions dimensions = null;
 
     protected VaadinTestBase testBase = new VaadinTestBase();
     protected ImageComparison compare = new ImageComparison();
@@ -80,17 +83,6 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
             return false;
         }
 
-        // Get sizes for canvas cropping.
-        int width = Integer.parseInt(selenium.getEval("screen.availWidth;"));
-        int height = Integer.parseInt(selenium.getEval("screen.availHeight;"));
-        int canvasWidth = browserUtils.getCanvasWidth(selenium);
-        int canvasHeight = browserUtils.getCanvasHeight(selenium);
-        int canvasXPosition = browserUtils.canvasXPosition(selenium, browser);
-        int canvasYPosition = browserUtils.canvasYPosition(selenium, browser);
-
-        BrowserDimensions dimensions = new BrowserDimensions(width, height,
-                canvasWidth, canvasHeight, canvasXPosition, canvasYPosition);
-
         try {
             // Compare screenshot with saved reference screen
             result = compare.compareStringImage(image, fileName, d, dimensions);
@@ -104,6 +96,47 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
             }
         }
         return result;
+    }
+
+    public void getCanvasPosition() {
+        BrowserVersion browser = browserUtils.getBrowserVersion(selenium);
+
+        // Get sizes for canvas cropping.
+        int width = Integer.parseInt(selenium.getEval("screen.availWidth;"));
+        int height = Integer.parseInt(selenium.getEval("screen.availHeight;"));
+        int canvasWidth = browserUtils.getCanvasWidth(selenium);
+        int canvasHeight = browserUtils.getCanvasHeight(selenium);
+        int canvasXPosition = browserUtils.canvasXPosition(selenium, browser);
+        int canvasYPosition = browserUtils.canvasYPosition(selenium, browser);
+
+        dimensions = new BrowserDimensions(width, height, canvasWidth,
+                canvasHeight, canvasXPosition, canvasYPosition);
+
+        if (browser.isIE()) {
+            // get canvas width so that it includes mainview scrollbar.
+            dimensions.setCanvasWidth(width - (canvasXPosition * 2));
+            return;
+        }
+
+        pause(200);
+        String image = selenium.captureScreenshotToString();
+
+        BufferedImage screenshot = compare.stringToImage(image);
+
+        int[] startBlock = new int[10];
+        startBlock = screenshot.getRGB(dimensions.getCanvasXPosition(),
+                dimensions.getCanvasYPosition(), 1, 10, startBlock, 0, 1);
+
+        for (int y = dimensions.getCanvasYPosition(); y > 0; y--) {
+            int[] testBlock = new int[10];
+            testBlock = screenshot.getRGB(dimensions.getCanvasXPosition(), y,
+                    1, 10, testBlock, 0, 1);
+            if (!Arrays.equals(startBlock, testBlock)) {
+                System.out.println(dimensions.getCanvasYPosition() + " : " + y);
+                dimensions.setCanvasYPosition(y + 1);
+                break;
+            }
+        }
     }
 
     /**

@@ -81,6 +81,7 @@ public class ImageComparison {
 
         // collect errors that are then written to a .log file
         StringBuilder imageErrors = new StringBuilder();
+
         BufferedImage test = (stringToImage(image)).getSubimage(dimensions
                 .getCanvasXPosition(), dimensions.getCanvasYPosition(),
                 dimensions.getCanvasWidth(), dimensions.getCanvasHeight());
@@ -505,7 +506,7 @@ public class ImageComparison {
      *            Base64 encoded image
      * @return BufferedImage
      */
-    private BufferedImage stringToImage(String imageString) {
+    public BufferedImage stringToImage(String imageString) {
         // string to ByteArrayInputStream
         BufferedImage bImage = null;
         Base64 b64dec = new Base64();

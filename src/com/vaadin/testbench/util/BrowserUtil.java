@@ -61,12 +61,10 @@ public class BrowserUtil {
             int screenHeight = Integer.parseInt(selenium
                     .getEval("screen.availHeight"));
             int canvasHeight = getCanvasHeight(selenium);
-            int statusbarGuess = getBrowserVersion(selenium)
-                    .getStatusbarEstimate();
             int pageYOffset = Integer.parseInt(selenium
                     .getEval("window.pageYOffset"));
 
-            return screenHeight - canvasHeight + pageYOffset - statusbarGuess;
+            return screenHeight - canvasHeight + pageYOffset;
         } catch (Exception e) {
             // Really bad guess but this should never be reached
             return 0;
