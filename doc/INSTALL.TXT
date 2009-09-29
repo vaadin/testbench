@@ -25,8 +25,11 @@ Turn off automatic updates:
 1. 
 2. 
 
+Turn off popup blockers in all browsers
+- Internet Explorer: Tools -> Pop-up blocker -> Turn Off Pop-up Blocker
+- Safari: Settings -> Block Pop-up Windows 
+
 Start all browsers at least once to make sure no "Do you want to set this browser as the default" appears.
-For Safari, remove the popup blocker or the test will not start.
 
 
 Set Selenium Server to start up automatically (Windows)
