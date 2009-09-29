@@ -126,7 +126,12 @@ public class TestConverter {
 
     private static String getTestName(String filename) {
         File f = new File(filename);
-        return removeExtension(f.getName());
+        String testName = removeExtension(f.getName());
+
+        // Sanitize so it is a valid method name
+        testName = testName.replaceAll("[^0-9a-zA-Z_]", "_");
+
+        return testName;
     }
 
     private static OutputStream createJavaFileForBrowser(String browser,
