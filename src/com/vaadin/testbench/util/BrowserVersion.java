@@ -78,4 +78,8 @@ public class BrowserVersion {
     public String getIdentifier() {
         return browserName + "_" + majorVersion;
     }
+
+    public boolean isIE() {
+        return browserName.equals("InternetExplorer");
+    }
 }

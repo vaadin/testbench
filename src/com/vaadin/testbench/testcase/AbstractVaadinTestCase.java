@@ -6,6 +6,7 @@ import java.util.List;
 import com.thoughtworks.selenium.SeleneseTestCase;
 import com.vaadin.testbench.util.BrowserDimensions;
 import com.vaadin.testbench.util.BrowserUtil;
+import com.vaadin.testbench.util.BrowserVersion;
 import com.vaadin.testbench.util.ImageComparison;
 
 /**
@@ -63,8 +64,8 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
         // applications (and wait long enough for labels to show)
         pause(500);
 
-        String navigatorId = browserUtils.getBrowserVersion(selenium)
-                .getIdentifier();
+        BrowserVersion browser = browserUtils.getBrowserVersion(selenium);
+        String navigatorId = browser.getIdentifier();
 
         // setup filename
         String fileName = "";
@@ -84,8 +85,8 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
         int height = Integer.parseInt(selenium.getEval("screen.availHeight;"));
         int canvasWidth = browserUtils.getCanvasWidth(selenium);
         int canvasHeight = browserUtils.getCanvasHeight(selenium);
-        int canvasXPosition = browserUtils.canvasXPosition(selenium);
-        int canvasYPosition = browserUtils.canvasYPosition(selenium);
+        int canvasXPosition = browserUtils.canvasXPosition(selenium, browser);
+        int canvasYPosition = browserUtils.canvasYPosition(selenium, browser);
 
         BrowserDimensions dimensions = new BrowserDimensions(width, height,
                 canvasWidth, canvasHeight, canvasXPosition, canvasYPosition);

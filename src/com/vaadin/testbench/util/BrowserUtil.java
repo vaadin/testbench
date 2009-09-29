@@ -9,17 +9,20 @@ public class BrowserUtil {
      * on screen
      * 
      * @param selenium
+     * @param browser
      * @return
      */
-    public int canvasXPosition(Selenium selenium) {
-        try {
-            // IE
-            return Integer.parseInt(selenium
-                    .getEval("this.browserbot.getUserWindow().screenLeft;"));
-        } catch (Exception e) {
+    public int canvasXPosition(Selenium selenium, BrowserVersion browser) {
+        if (browser.isIE()) {
+            try {
+                // IE
+                return Integer
+                        .parseInt(selenium
+                                .getEval("this.browserbot.getUserWindow().screenLeft;"));
+            } catch (Exception e) {
 
+            }
         }
-
         try {
 
             int screenWidth = Integer.parseInt(selenium
@@ -42,16 +45,18 @@ public class BrowserUtil {
      * on screen
      * 
      * @param selenium
+     * @param browser
      * @return
      */
-    public int canvasYPosition(Selenium selenium) {
-        try {
-            // IE
-            return Integer.parseInt(selenium
-                    .getEval("this.browserbot.getUserWindow().screenTop;"));
-        } catch (Exception e) {
-
+    public int canvasYPosition(Selenium selenium, BrowserVersion browser) {
+        if (browser.isIE()) {
+            try {
+                return Integer.parseInt(selenium
+                        .getEval("this.browserbot.getUserWindow().screenTop;"));
+            } catch (Exception e) {
+            }
         }
+
         try {
             int screenHeight = Integer.parseInt(selenium
                     .getEval("screen.availHeight"));
