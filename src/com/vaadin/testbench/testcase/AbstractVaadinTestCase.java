@@ -63,14 +63,15 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
         // applications (and wait long enough for labels to show)
         pause(500);
 
-        String navigator = browserUtils.browserVersion(selenium);
+        String navigatorId = browserUtils.getBrowserVersion(selenium)
+                .getIdentifier();
 
         // setup filename
         String fileName = "";
         if (identifier == null || identifier.length() < 1) {
-            fileName = fileId + "_" + navigator + "_" + ++imageNumber;
+            fileName = fileId + "_" + navigatorId + "_" + ++imageNumber;
         } else {
-            fileName = fileId + "_" + navigator + "_" + identifier;
+            fileName = fileId + "_" + navigatorId + "_" + identifier;
         }
 
         String image = selenium.captureScreenshotToString();

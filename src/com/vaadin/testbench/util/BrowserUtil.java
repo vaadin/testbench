@@ -13,14 +13,27 @@ public class BrowserUtil {
      */
     public int canvasXPosition(Selenium selenium) {
         try {
-            int result = ((Integer.parseInt(selenium
-                    .getEval("screen.availWidth;")) - Integer.parseInt(selenium
-                    .getEval("window.innerWidth;"))) / 2)
-                    + Integer.parseInt(selenium.getEval("window.pageXOffset;"));
-            return result;
-        } catch (NumberFormatException nfe) {
+            // IE
             return Integer.parseInt(selenium
                     .getEval("this.browserbot.getUserWindow().screenLeft;"));
+        } catch (Exception e) {
+
+        }
+
+        try {
+
+            int screenWidth = Integer.parseInt(selenium
+                    .getEval("screen.availWidth;"));
+            int innerWidth = Integer.parseInt(selenium
+                    .getEval("window.innerWidth;"));
+            int pageXOffset = Integer.parseInt(selenium
+                    .getEval("window.pageXOffset;"));
+            int screenLeftOffset = (screenWidth - innerWidth) / 2;
+
+            return screenLeftOffset + pageXOffset;
+        } catch (Exception e) {
+            // Probably bad guess but this should never be reached
+            return 0;
         }
     }
 
@@ -33,15 +46,25 @@ public class BrowserUtil {
      */
     public int canvasYPosition(Selenium selenium) {
         try {
-            int result = (Integer.parseInt(selenium
-                    .getEval("screen.availHeight"))
-                    - getCanvasHeight(selenium)
-                    + Integer.parseInt(selenium.getEval("window.pageYOffset")) - 30);
-            return result;
-
-        } catch (NumberFormatException nfe) {
+            // IE
             return Integer.parseInt(selenium
                     .getEval("this.browserbot.getUserWindow().screenTop;"));
+        } catch (Exception e) {
+
+        }
+        try {
+            int screenHeight = Integer.parseInt(selenium
+                    .getEval("screen.availHeight"));
+            int canvasHeight = getCanvasHeight(selenium);
+            int statusbarGuess = getBrowserVersion(selenium)
+                    .getStatusbarEstimate();
+            int pageYOffset = Integer.parseInt(selenium
+                    .getEval("window.pageYOffset"));
+
+            return screenHeight - canvasHeight + pageYOffset - statusbarGuess;
+        } catch (Exception e) {
+            // Really bad guess but this should never be reached
+            return 0;
         }
     }
 
@@ -107,46 +130,9 @@ public class BrowserUtil {
      * @param selenium
      * @return browserName_majorNumber
      */
-    public String browserVersion(Selenium selenium) {
-        String result = "";
-        String fullVersion = "";
+    public BrowserVersion getBrowserVersion(Selenium selenium) {
         String userAgent = selenium.getEval("navigator.userAgent;");
-        if (userAgent.contains("MSIE")) {
-            result = "InternetExplorer_";
-            fullVersion = userAgent.substring(userAgent.indexOf("MSIE") + 5);
-        } else if (userAgent.contains("Opera")) {
-            result = "Opera_";
-            fullVersion = userAgent.substring(userAgent.indexOf("Opera") + 6);
-        } else if (userAgent.contains("Chrome")) {
-            result = "Chrome_";
-            fullVersion = userAgent.substring(userAgent.indexOf("Chrome") + 7);
-        } else if (userAgent.contains("Safari")) {
-            result = "Safari_";
-            fullVersion = userAgent.substring(userAgent.indexOf("Safari") + 7);
-        } else if (userAgent.contains("Firefox")) {
-            result = "Firefox_";
-            fullVersion = userAgent.substring(userAgent.indexOf("Firefox") + 8);
-        } else if (userAgent.lastIndexOf(' ') + 1 < userAgent.lastIndexOf('/')) {
-            result = userAgent.substring(userAgent.lastIndexOf(' ') + 1,
-                    userAgent.lastIndexOf('/'))
-                    + "_";
-            fullVersion = userAgent.substring(userAgent.lastIndexOf('/') + 1);
-        }
-
-        if (fullVersion.indexOf(";") != -1) {
-            fullVersion = fullVersion.substring(0, fullVersion.indexOf(";"));
-        }
-        if (fullVersion.indexOf(" ") != -1) {
-            fullVersion = fullVersion.substring(0, fullVersion.indexOf(" "));
-        }
-
-        if (fullVersion.indexOf(".") != -1) {
-            result = result
-                    + fullVersion.substring(0, fullVersion.indexOf("."));
-        } else {
-            result = result + fullVersion;
-        }
-
-        return result;
+        BrowserVersion bv = new BrowserVersion(userAgent);
+        return bv;
     }
 }
