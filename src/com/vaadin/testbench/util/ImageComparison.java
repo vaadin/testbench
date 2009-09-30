@@ -242,6 +242,20 @@ public class ImageComparison {
                 // (images only differ in size or images differ in size and
                 // contain errors)
                 if (result) {
+                    // Check that the comparison folder exists and create if
+                    // false
+                    File compareFolder = new File(directory + ERROR_DIRECTORY);
+                    if (!compareFolder.exists()) {
+                        compareFolder.mkdir();
+                    }
+
+                    // Write clean image to file
+                    ImageIO.write((stringToImage(image)).getSubimage(dimensions
+                            .getCanvasXPosition(), dimensions
+                            .getCanvasYPosition(), dimensions.getCanvasWidth(),
+                            dimensions.getCanvasHeight()), "png", new File(
+                            compareFolder + File.separator + fileId + ".png"));
+
                     Assert.fail("Images are of different size (" + fileId
                             + ").");
                 } else {

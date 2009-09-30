@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import junit.framework.Assert;
+
 import com.thoughtworks.selenium.SeleneseTestCase;
 import com.vaadin.testbench.util.BrowserDimensions;
 import com.vaadin.testbench.util.BrowserUtil;
@@ -79,8 +81,22 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
         }
 
         String image = selenium.captureScreenshotToString();
+
+        // check that we didn't get null for out image
+        // and that it has length > 0
         if (image == null) {
-            return false;
+            Assert.fail("Didn't get an image from selenium.");
+        } else if (image.length() == 0) {
+            Assert.fail("Got a screenshot String with length 0.");
+        }
+
+        // check that we have browserDimensions
+        // if this fails do Assert.fail
+        if (dimensions == null) {
+            getCanvasPosition();
+            if (dimensions == null) {
+                Assert.fail("Couldn't get browser dimensions.");
+            }
         }
 
         try {
@@ -113,8 +129,11 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
                 canvasHeight, canvasXPosition, canvasYPosition);
 
         if (browser.isIE()) {
+            dimensions.setCanvasXPosition(canvasXPosition + 2);
+            dimensions.setCanvasYPosition(canvasYPosition + 2);
             // get canvas width so that it includes mainview scrollbar.
-            dimensions.setCanvasWidth(width - (canvasXPosition * 2));
+            dimensions.setCanvasWidth(width
+                    - (dimensions.getCanvasXPosition() * 2));
             return;
         }
 
@@ -132,7 +151,6 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
             testBlock = screenshot.getRGB(dimensions.getCanvasXPosition(), y,
                     1, 10, testBlock, 0, 1);
             if (!Arrays.equals(startBlock, testBlock)) {
-                System.out.println(dimensions.getCanvasYPosition() + " : " + y);
                 dimensions.setCanvasYPosition(y + 1);
                 break;
             }
