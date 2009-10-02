@@ -33,11 +33,7 @@ LocatorBuilders.add('vaadin', function(e) {
 	 * that stops the whole Locator search.
 	 */
 	for ( var windowname in connector.clients) {
-		try{
-			var path = connector.clients[windowname].getPathForElement(e);
-		}catch(err){
-			this.log.debug(err);
-		}
+		var path = connector.clients[windowname].getPathForElement(e);
 		if (path != null) {
 			return "vaadin=" + windowname + "::" + path;
 		}
@@ -105,19 +101,30 @@ Recorder.prototype.findClickableElement = function(e) {
 
 };
 
+var previousTop = 0;
+var previousLeft = 0;
+
 Recorder.addEventHandler('scroll', 'scroll', function(event) {
 	if(event.target && event.target.wrappedJSObject) {
 		var elem  = event.target.wrappedJSObject;
-		if(elem.onscroll) {
+		if(elem.onscroll || elem.scrollIntoView) {
 			this.log.warn(this);
 			var loc = this.findLocators(event.target);
 			var top = "" + elem.scrollTop;
+			var left  = "" + elem.scrollLeft;
 			if(this._scrollTimeout) {
 				clearTimeout(this._scrollTimeout);
 			}
 			var s = this;
 			this._scrollTimeout = setTimeout(function(){
-				s.record_orig("scroll", loc , top);
+				if(previousLeft != left){
+					s.record_orig("scrollLeft", loc, left);
+					previousLeft = left;
+				}
+				if(previousTop != top){
+					s.record_orig("scroll", loc , top);
+					previousTop = top;
+				}
 				// wait for lazy scroller to start possible server visit
 				s.record("pause", "300");
 				s._scrollTimeout = null;
@@ -181,7 +188,6 @@ Recorder.addEventHandler('pressSpecialKey', 'keyup', function(event){
 		case 13:
 			this.log.debug('pressed ENTER!');
 			typeString = "false";
-			this.record("pressSpecialKey", this.findLocators(event.target), "enter");
 			break;
 		case 37: 
 			this.log.debug('pressed LEFT!');
@@ -292,6 +298,31 @@ Recorder.addEventHandler('clickLocator', 'click', function(event){
             var x = event.clientX - editor.seleniumAPI.Selenium.prototype.getElementPositionLeft(event.target);
             var y = event.clientY - editor.seleniumAPI.Selenium.prototype.getElementPositionTop(event.target);
 
+            /* Check that cordinates are inside an actual element. 
+             * (RichTextField buttons record a negative and positive placement 
+             * this will drop the negative one)
+             */
+            if( x < 0 || y < 0){
+            	return;
+            }
+            
+            /* Stop checking mouseOver events */
+            if(checkForMouseOver == "true"){
+            	checkForMouseOver = "false";
+            }
+            
+            /*
+             * Check that a mouse click doesn't add a new close for a notification.
+             */
+            if(closeNotificationRecorded == "true"){
+            	if((new RegExp("Notification")).test(event.target.className) || (new RegExp("gwt-HTML")).test(event.target.parentNode.className)){
+            		closeNotificationRecorded = "false";
+            		return;
+            	}else{
+            		closeNotificationRecorded = "false";
+            	}
+            }
+            
 			var clickable = this.findClickableElement(event.target);
 			if (clickable) {
 	            if (this.mouseoverLocator) {
@@ -310,7 +341,9 @@ Recorder.addEventHandler('clickLocator', 'click', function(event){
 	        } else {
 	            var target = event.target;
 //	            this.callIfMeaningfulEvent(function() {
-	                    this.record("mouseClick", this.findLocators(target), x + ',' + y);
+	            if(event.target.nodeName.toLowerCase() == "div"){
+	            	this.record("mouseClick", this.findLocators(target), x + ',' + y);
+	            }
 //	                });
 	        }
 		}else{
@@ -353,6 +386,7 @@ Recorder.addEventHandler('select', 'change', function(event) {
 
 var counter = 0;
 var closeNotificationRecorded = "false";
+var checkForMouseOver = "false";
 
 Recorder.addEventHandler('append', 'DOMNodeInserted', function(event){
 		if(clicked == "true" && event.target.nodeName.toLowerCase() == "div"){
@@ -361,12 +395,23 @@ Recorder.addEventHandler('append', 'DOMNodeInserted', function(event){
 				this.record("closeNotification", target, '0,0');
 				clicked = "false";
 				closeNotificationRecorded = "true";
+			}else if((new RegExp("body")).test(target) && (new RegExp("gwt-PopupPanel")).test(event.target.className)){
+				checkForMouseOver = "true";
 			}
 			/*
 			 * Stop checking inserted DOM nodes after 5 inserts 
 			 */
 			if(++counter > 5){
 				clicked = "false";
+			}
+		}
+	});
+
+Recorder.addEventHandler('mouseOverEvent', 'mouseover', function(event){
+		if(checkForMouseOver == "true"){
+			var target = this.findLocators(event.target);
+			if((new RegExp("menuitem menuitem-selected")).test(event.target.className)){
+				this.record("mouseOver", target, '0,0');
 			}
 		}
 	});

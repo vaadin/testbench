@@ -102,6 +102,11 @@ Selenium.prototype.doScroll = function(locator, scrollString) {
 	element.scrollTop = scrollString;
 };
 
+Selenium.prototype.doScrollLeft = function(locator, scrollString){
+	var element = this.page().findElement(locator);
+	element.scrollLeft = scrollString;
+};
+
 Selenium.prototype.doContextmenu = function(locator) { 
      var element = this.page().findElement(locator); 
      this.page()._fireEventOnElement("contextmenu", element, 0, 0); 
