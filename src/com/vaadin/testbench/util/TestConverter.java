@@ -167,8 +167,10 @@ public class TestConverter {
 
     private static String createTestMethod(String htmlFile, String testName)
             throws FileNotFoundException, IOException {
+        FileInputStream fis = new FileInputStream(htmlFile);
+        String htmlSource = IOUtils.toString(fis);
+        fis.close();
 
-        String htmlSource = IOUtils.toString(new FileInputStream(htmlFile));
         htmlSource = htmlSource.replace("\"", "\\\"")
                 .replaceAll("\\n", "\\\\n").replace("'", "\\'").replaceAll(
                         "\\r", "");
