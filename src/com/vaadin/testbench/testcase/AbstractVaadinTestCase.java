@@ -1,6 +1,7 @@
 package com.vaadin.testbench.testcase;
 
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -27,6 +28,7 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
     private static String testCaseName = "";
     private static List<junit.framework.AssertionFailedError> softAssert = new LinkedList<junit.framework.AssertionFailedError>();
     private static BrowserDimensions dimensions = null;
+    private static final int maxAmountOfTests = 10;
 
     protected VaadinTestBase testBase = new VaadinTestBase();
     protected ImageComparison compare = new ImageComparison();
@@ -67,7 +69,8 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
 
         // Pause so that we don't get the loading marker for vaadin
         // applications (and wait long enough for labels to show)
-        pause(500);
+        // pause(350);
+        pause(10);
 
         BrowserVersion browser = browserUtils.getBrowserVersion(selenium);
         String navigatorId = browser.getIdentifier();
@@ -107,6 +110,69 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
             // If other throw the AssertionFailedError.
             if (e.getMessage().contains("No reference found")) {
                 softAssert.add(e);
+            } else if (e.getMessage().contains("differs from reference image")) {
+
+                // Build error screenshot directory.
+                String directory = System
+                        .getProperty("com.vaadin.testbench.screenshot.directory");
+
+                if (!File.separator.equals(directory
+                        .charAt(directory.length() - 1))) {
+                    directory = directory + File.separator;
+                }
+                directory = directory + File.separator + "errors"
+                        + File.separator;
+
+                // If we find errors in the image take new references x times or
+                // until functional image is found.
+                for (int i = 0; i < maxAmountOfTests; i++) {
+                    pause(10);
+
+                    image = selenium.captureScreenshotToString();
+
+                    // check that we didn't get null for out image
+                    // and that it has length > 0
+                    if (image == null) {
+                        Assert.fail("Didn't get an image from selenium on run "
+                                + (i + 1));
+                    } else if (image.length() == 0) {
+                        Assert
+                                .fail("Got a screenshot String with length 0 on run "
+                                        + (i + 1));
+                    }
+
+                    try {
+                        result = compare.compareStringImage(image, fileName, d,
+                                dimensions);
+                        if (result == true) {
+                            boolean success = (new File(directory + fileName
+                                    + ".html")).delete();
+                            if (success) {
+                                success = (new File(directory + fileName
+                                        + ".png")).delete();
+                                if (success) {
+                                    System.err
+                                            .println("Removed created clean image and difference html.\n"
+                                                    + "Comparison successful");
+                                } else {
+                                    System.err
+                                            .println("Removed created difference html.\n"
+                                                    + "Comparison successful");
+                                }
+                            } else {
+                                System.err
+                                        .println("Failed to remove created error files.\n"
+                                                + "Comparison successful.");
+                            }
+                        }
+                        return result;
+                    } catch (junit.framework.AssertionFailedError afe) {
+                        // Do nothing, should be 'differs from reference'
+                        // exception
+                        // System.out.println("Image comparison failed.");
+                    }
+                }
+                throw e;
             } else {
                 throw e;
             }

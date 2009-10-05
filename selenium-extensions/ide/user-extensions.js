@@ -316,9 +316,11 @@ Recorder.addEventHandler('clickLocator', 'click', function(event){
              */
             if(closeNotificationRecorded == "true"){
             	if((new RegExp("Notification")).test(event.target.className) || (new RegExp("gwt-HTML")).test(event.target.parentNode.className)){
+            		/* clicked on notification or it's inner element mark clicked as false and return without further handling of event */
             		closeNotificationRecorded = "false";
             		return;
             	}else{
+            		/* clicked on something else than the notification mark clicked false and handle event */
             		closeNotificationRecorded = "false";
             	}
             }
@@ -329,15 +331,30 @@ Recorder.addEventHandler('clickLocator', 'click', function(event){
 	                this.record('mouseOver', this.mouseoverLocator, '');
 	                delete this.mouseoverLocator;
 	            }
-
-	            /* A class="v-button" requires a click without mouseDown+mouseUp */
+	            
+	            /* mark that a clickable element has been clicked so that DOMNodeInserted will be evaluated */
+				clicked = "true";
+				
 	            var target = this.findLocators(event.target);
-	            if((new RegExp("Button")).test(target) || (new RegExp("TwinColSelect")).test(target)){
+	            
+	            if((new RegExp("link")).test(target)){
+	            	if((new RegExp("_blank")).test(event.target.target)){
+		            	/* Open link in same page as selenium has trouble with windowSelect */
+		            	/* "open" command waits for the page to load before proceeding */
+		            	this.record_orig("open", event.target.href, '');
+	            	}else if(event.target.parentNode.nodeName.toLowerCase() == "a"){
+	            		/* catches a click on a v-links <img/> and </span> */
+	            		this.record_orig("open", event.target.parentNode.href, '');
+	            	}else{
+	            		this.record_orig("mouseClick", target, x + ',' + y);
+	            	}
+	            	clicked = "false";
+	            }else if((new RegExp("Button")).test(target) || (new RegExp("TwinColSelect")).test(target)){
+	            	/* A class="v-button" requires a click without mouseDown+mouseUp */
 	            	this.record("click", target, '');
 	            }else{
 	            	this.record("mouseClick", target, x + ',' + y);
 	            }
-				clicked = "true";
 	        } else {
 	            var target = event.target;
 //	            this.callIfMeaningfulEvent(function() {
@@ -387,16 +404,18 @@ Recorder.addEventHandler('select', 'change', function(event) {
 var counter = 0;
 var closeNotificationRecorded = "false";
 var checkForMouseOver = "false";
+var getTooltip = "false";
 
 Recorder.addEventHandler('append', 'DOMNodeInserted', function(event){
 		if(clicked == "true" && event.target.nodeName.toLowerCase() == "div"){
 			var target = this.findLocators(event.target);
-			if((new RegExp("body")).test(target) && (new RegExp("Notification")).test(event.target.className)){
+			if((new RegExp("Notification")).test(event.target.className)){
 				this.record("closeNotification", target, '0,0');
 				clicked = "false";
 				closeNotificationRecorded = "true";
-			}else if((new RegExp("body")).test(target) && (new RegExp("gwt-PopupPanel")).test(event.target.className)){
+			}else if((new RegExp("gwt-PopupPanel")).test(event.target.className)){
 				checkForMouseOver = "true";
+				clicked = "false";
 			}
 			/*
 			 * Stop checking inserted DOM nodes after 5 inserts 
@@ -404,6 +423,8 @@ Recorder.addEventHandler('append', 'DOMNodeInserted', function(event){
 			if(++counter > 5){
 				clicked = "false";
 			}
+		}else if(event.target.nodeName.toLowerCase() == "div" && (new RegExp("v-tooltip")).test(event.target.className)){
+			getTooltip = "true";
 		}
 	});
 
@@ -413,5 +434,15 @@ Recorder.addEventHandler('mouseOverEvent', 'mouseover', function(event){
 			if((new RegExp("menuitem menuitem-selected")).test(event.target.className)){
 				this.record("mouseOver", target, '0,0');
 			}
+		}
+	});
+
+Recorder.addEventHandler('mouseOutEvent', 'mouseout', function(event){
+		/* If tooltip has been shown record tooltip event */
+		if(getTooltip == "true"){
+			getTooltip = "false";
+			var target = this.findLocators(event.target);
+			this.record_orig("mouseOver", target, '');
+			this.record("pause", "600", '');
 		}
 	});
