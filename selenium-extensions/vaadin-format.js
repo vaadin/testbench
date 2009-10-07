@@ -235,9 +235,9 @@ function formatComment(comment) {
 			var str = comment.comment.substring(27, comment.comment.length-2);
 			// Replace all \\ with File.separator
 			var fileId = str.replace(/\\\\/gi, "\" + File.separator + \"");
-			return "validateScreenshot(\"testFileNameHere\", 0.001, " + fileId + ");";
+			return "validateScreenshot(\"testFileNameHere\", 0.025, " + fileId + ");";
 		}else{
-			return "validateScreenshot(\"testFileNameHere\", 0.001, \"" + "\");";
+			return "validateScreenshot(\"testFileNameHere\", 0.025, \"" + "\");";
 		}
 	} else if (comment.comment.match(/^selenium\.enterCharacter/)) {
 
@@ -283,6 +283,18 @@ function formatComment(comment) {
 		result = result + "selenium.keyUp(\"" + locator + "\", \"" + value + "\");\n";
 		
 		return result;
+    }else if (comment.comment.match(/^selenium\.mouseClick/)
+            || comment.comment.match(/^closeNotification/)) {
+    	var parameters = comment.comment.substring(comment.comment.indexOf("\"")+1);
+		var locator = parameters.substring(0, parameters.indexOf("\""));
+		parameters = parameters.substring(parameters.indexOf("\"")+1);
+		var value = parameters.substring(parameters.indexOf("\"")+1, parameters.lastIndexOf("\""));
+
+		var result = "selenium.mouseDownAt(\"" + locator + "\", \"" + value + "\");\n";
+		result = result + "selenium.mouseUpAt(\"" + locator + "\", \"" + value + "\");\n";
+		result = result + "//Remove this for Opera\nselenium.click(\"" + locator + "\", \"" + value + "\");\n";
+		
+		return result;
     }
 	
 	return comment.comment.replace(/.+/mg, function(str) {
@@ -309,11 +321,15 @@ options.header =
     "public class ${className} extends ${superClass} {\n" + 
     "\tpublic void ${methodName}() throws Exception {\n" +
     "\t\tselenium.windowMaximize();\n" + 
-    "\t\tselenium.windowFocus();\n";
+    "\t\tselenium.windowFocus();\n" +
+    "\t\tgetCanvasPosition();\n";
 // in options.header import ..File is for screenshot (no need for manual import add).
 // and .windowMaximize() is so that all screenshots are of the same size.
 
 options.footer =
+	"\t\tif(!getSoftErrors().isEmpty()){\n"+ 
+    "\t\t\tjunit.framework.Assert.fail(\"Test was missing reference images.\");\n" + 
+    "\t\t}\n" +
 	"\t}\n" +
 	"}\n";
 

@@ -160,7 +160,7 @@ CommandBuilders.add("action", function(window){
 		command: "screenCapture"
 	};
 });
-
+	
 var charBuffer = "";
 var typeString = "true";
 
@@ -333,23 +333,29 @@ Recorder.addEventHandler('clickLocator', 'click', function(event){
 	            }
 	            
 	            /* mark that a clickable element has been clicked so that DOMNodeInserted will be evaluated */
+	            /* for possible Notification and MenuBar events that might result.*/
 				clicked = "true";
 				
 	            var target = this.findLocators(event.target);
-	            
-	            if((new RegExp("link")).test(target)){
+	            var parent = this.findLocators(event.target.parentNode);
+	            if((new RegExp("link")).test(target) || (new RegExp("@href")).test(target) || (new RegExp("onclick=\"window.location")).test(target) || (new RegExp("onclick=\"window.location")).test(parent)){
+	            	/* If clicked a link */
 	            	if((new RegExp("_blank")).test(event.target.target)){
-		            	/* Open link in same page as selenium has trouble with windowSelect */
+		            	/* Open link in same page as selenium has trouble with selecting tabs */
 		            	/* "open" command waits for the page to load before proceeding */
 		            	this.record_orig("open", event.target.href, '');
 	            	}else if(event.target.parentNode.nodeName.toLowerCase() == "a"){
 	            		/* catches a click on a v-links <img/> and </span> */
-	            		this.record_orig("open", event.target.parentNode.href, '');
+	            		if((new RegExp("_blank")).test(event.target.parentNode.target)){
+	            			this.record_orig("open", event.target.parentNode.href, '');
+	            		}else{
+	            			this.record_orig("mouseClick", parent, '0,0');
+	            		}
 	            	}else{
 	            		this.record_orig("mouseClick", target, x + ',' + y);
 	            	}
 	            	clicked = "false";
-	            }else if((new RegExp("Button")).test(target) || (new RegExp("TwinColSelect")).test(target)){
+	            }else if((new RegExp("button")).test(event.target.className)){
 	            	/* A class="v-button" requires a click without mouseDown+mouseUp */
 	            	this.record("click", target, '');
 	            }else{
@@ -446,3 +452,55 @@ Recorder.addEventHandler('mouseOutEvent', 'mouseout', function(event){
 			this.record("pause", "600", '');
 		}
 	});
+
+/* Overrides the reattachWindowMethods so that when doing openWindow we don't record waitForPopup */
+Recorder.prototype.reattachWindowMethods = function() {
+    var window = this.getWrappedWindow();
+	//this.log.debug("reattach");
+	if (!this.windowMethods) {
+		this.originalOpen = window.open;
+	}
+	this.windowMethods = {};
+	['alert', 'confirm', 'prompt', 'open'].forEach(function(method) {
+			this.windowMethods[method] = window[method];
+		}, this);
+	var self = this;
+	window.alert = function(alert) {
+		self.windowMethods['alert'].call(self.window, alert);
+        self.record('assertAlert', alert);
+	}
+	window.confirm = function(message) {
+		var result = self.windowMethods['confirm'].call(self.window, message);
+		if (!result) {
+			self.record('chooseCancelOnNextConfirmation', null, null, true);
+		}
+        self.record('assertConfirmation', message);
+		return result;
+	}
+	window.prompt = function(message) {
+		var result = self.windowMethods['prompt'].call(self.window, message);
+		self.record('answerOnNextPrompt', result, null, true);
+        self.record('assertPrompt', message);
+		return result;
+	}
+	window.open = function(url, windowName, windowFeatures, replaceFlag) {
+		if (self.openCalled) {
+			// stop the recursion called by modifyWindowToRecordPopUpDialogs
+			return self.originalOpen.call(window, url, windowName, windowFeatures, replaceFlag);
+		} else {
+			self.openCalled = true;
+			var result = self.windowMethods['open'].call(window, url, windowName, windowFeatures, replaceFlag);
+			self.openCalled = false;
+            if (result.wrappedJSObject) {
+                result = result.wrappedJSObject;
+            }
+			//setTimeout(Recorder.record, 0, self, 'waitForPopUp', windowName, "30000");
+            for (var i = 0; i < self.observers.length; i++) {
+                if (self.observers[i].isSidebar) {
+                    self.observers[i].getUserLog().warn("Actions in popup window cannot be recorded with Selenium IDE in sidebar. Please open Selenium IDE as standalone window instead to record them.");
+                }
+            }
+			return result;
+		}
+	}
+}

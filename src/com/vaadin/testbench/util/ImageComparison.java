@@ -50,7 +50,7 @@ public class ImageComparison {
      * @return true if images are the same
      */
     public boolean compareStringImage(String image, String fileId, double d,
-            BrowserDimensions dimensions) {
+            BrowserDimensions dimensions, boolean testEdges) {
         // Check that d value inside allowed range. if false set d to default
         // value.
         if (d < 0 || d > 1) {
@@ -87,9 +87,22 @@ public class ImageComparison {
                 dimensions.getCanvasWidth(), dimensions.getCanvasHeight());
 
         try {
-            // Load images
+            // Load images if reference not given
             BufferedImage target = ImageIO.read(new File(directory
                     + REFERENCE_DIRECTORY + File.separator + fileId + ".png"));
+            if (testEdges) {
+                target = detectEdges(target);
+                test = detectEdges(test);
+                BufferedImage referenceImage = new BufferedImage(dimensions
+                        .getCanvasWidth(), dimensions.getCanvasHeight(),
+                        BufferedImage.TYPE_INT_RGB);
+
+                Graphics2D g = (Graphics2D) referenceImage.getGraphics();
+                g.drawImage(test, 0, 0, dimensions.getCanvasWidth(), dimensions
+                        .getCanvasHeight(), null);
+                g.dispose();
+                test = referenceImage;
+            }
 
             // if images are of different size crop both images to same size
             // before checking for differences
@@ -189,54 +202,66 @@ public class ImageComparison {
             // macroblocks and create html file for visuall confirmation of
             // differences
             if (result == false) {
-                // Check that the comparison folder exists and create if
-                // false
-                File compareFolder = new File(directory + ERROR_DIRECTORY);
-                if (!compareFolder.exists()) {
-                    compareFolder.mkdir();
+                if (!testEdges) {
+                    // Check that the comparison folder exists and create if
+                    // false
+                    File compareFolder = new File(directory + ERROR_DIRECTORY);
+                    if (!compareFolder.exists()) {
+                        compareFolder.mkdir();
+                    }
+
+                    // collect big error blocks of differences
+                    List<ErrorBlock> errorAreas = collectErrorsToList(xBlocks,
+                            yBlocks, falseBlocks);
+
+                    // Draw lines around false ErrorBlocks before saving _diff
+                    // file.
+                    Graphics2D drawToPicture = test.createGraphics();
+                    drawToPicture.setColor(Color.MAGENTA);
+
+                    for (ErrorBlock error : errorAreas) {
+                        drawToPicture.drawRect(error.getX(), error.getY(),
+                                error.getXBlocks() * 16,
+                                error.getYBlocks() * 16);
+                    }
+                    // release resources
+                    drawToPicture.dispose();
+
+                    // Write image with differences marked to file
+                    // ImageIO.write(test, "png", new File(compareFolder
+                    // + File.separator + fileId + "_diff.png"));
+                    // Write clean image to file
+                    ImageIO.write((stringToImage(image)).getSubimage(dimensions
+                            .getCanvasXPosition(), dimensions
+                            .getCanvasYPosition(), dimensions.getCanvasWidth(),
+                            dimensions.getCanvasHeight()), "png", new File(
+                            compareFolder + File.separator + fileId + ".png"));
+
+                    // ImageIO.write(target, "png", new File(compareFolder
+                    // + File.separator + fileId + "_reference.png"));
+
+                    createDiffHtml(errorAreas, fileId,
+                            encodeImageToBase64(test),
+                            encodeImageToBase64(target));
+
+                    System.err
+                            .println("Created clean image, image with marked differences and difference html.");
+                } else {
+                    File compareFolder = new File(directory + ERROR_DIRECTORY);
+                    if (!compareFolder.exists()) {
+                        compareFolder.mkdir();
+                    }
+                    ImageIO.write(test, "png", new File(compareFolder
+                            + File.separator + fileId + "_edges.png"));
+                    ImageIO.write(target, "png", new File(compareFolder
+                            + File.separator + fileId + "_target.png"));
                 }
-
-                // collect big error blocks of differences
-                List<ErrorBlock> errorAreas = collectErrorsToList(xBlocks,
-                        yBlocks, falseBlocks);
-
-                // Draw lines around false ErrorBlocks before saving _diff
-                // file.
-                Graphics2D drawToPicture = test.createGraphics();
-                drawToPicture.setColor(Color.MAGENTA);
-
-                for (ErrorBlock error : errorAreas) {
-                    drawToPicture.drawRect(error.getX(), error.getY(), error
-                            .getXBlocks() * 16, error.getYBlocks() * 16);
-                }
-                // release resources
-                drawToPicture.dispose();
-
-                // Write image with differences marked to file
-                // ImageIO.write(test, "png", new File(compareFolder
-                // + File.separator + fileId + "_diff.png"));
-                // Write clean image to file
-                ImageIO.write((stringToImage(image)).getSubimage(dimensions
-                        .getCanvasXPosition(), dimensions.getCanvasYPosition(),
-                        dimensions.getCanvasWidth(), dimensions
-                                .getCanvasHeight()), "png", new File(
-                        compareFolder + File.separator + fileId + ".png"));
-
-                // ImageIO.write(target, "png", new File(compareFolder
-                // + File.separator + fileId + "_reference.png"));
-
-                createDiffHtml(errorAreas, fileId, encodeImageToBase64(test),
-                        encodeImageToBase64(target));
-
-                System.err
-                        .println("Created clean image, image with marked differences and difference html.");
                 // Throw assert fail here if no debug requested
                 if (debug == false && sizesDiffer == false) {
                     Assert.fail("Screenshot (" + fileId
                             + ") differs from reference image.");
                 }
             }
-
             if (sizesDiffer) {
                 // Throws an assertion error with message depending on result
                 // (images only differ in size or images differ in size and
@@ -275,11 +300,14 @@ public class ImageComparison {
             g.dispose();
 
             try {
-                System.err.println("Creating reference to " + ERROR_DIRECTORY
-                        + ".");
-                // Write clean image to error folder.
-                ImageIO.write(referenceImage, "png", new File(directory
-                        + ERROR_DIRECTORY + File.separator + fileId + ".png"));
+                File referenceFile = new File(directory + ERROR_DIRECTORY
+                        + File.separator + fileId + ".png");
+                if (!referenceFile.exists()) {
+                    System.err.println("Creating reference to "
+                            + ERROR_DIRECTORY + ".");
+                    // Write clean image to error folder.
+                    ImageIO.write(referenceImage, "png", referenceFile);
+                }
                 result = false;
             } catch (FileNotFoundException fnfe) {
                 Assert.fail("Failed to open file to write reference image.");
@@ -591,5 +619,142 @@ public class ImageComparison {
     private double roundTwoDecimals(double d) {
         int ix = (int) (d * 100.0); // scale it
         return (ix) / 100.0;
+    }
+
+    public String detectEdges(String image) {
+        return encodeImageToBase64(robertsCrossEdges(stringToImage(image)));
+    }
+
+    public BufferedImage detectEdges(BufferedImage image) {
+        return robertsCrossEdges(image);
+    }
+
+    private int[] convolvePixel(float[] kernel, int kernWidth, int kernHeight,
+            BufferedImage src, int x, int y, int[] rgb) {
+        if (rgb == null) {
+            rgb = new int[3];
+        }
+
+        int halfWidth = kernWidth / 2;
+        int halfHeight = kernHeight / 2;
+
+        /*
+         * This algorithm pretends as though the kernel is indexed from
+         * -halfWidth to halfWidth horizontally and -halfHeight to halfHeight
+         * vertically. This makes the center pixel indexed at row 0, column 0.
+         */
+
+        for (int component = 0; component < 3; component++) {
+            float sum = 0;
+            for (int i = 0; i < kernel.length; i++) {
+                int row = (i / kernWidth) - halfWidth;
+                int column = (i - (kernWidth * row)) - halfHeight;
+
+                // Check range
+                if (x - row < 0 || x - row > src.getWidth()) {
+                    continue;
+                }
+                if (y - column < 0 || y - column > src.getHeight()) {
+                    continue;
+                }
+                int srcRGB = src.getRGB(x - row, y - column);
+                sum = sum + kernel[i]
+                        * ((srcRGB >> (16 - 8 * component)) & 0xff);
+            }
+            rgb[component] = (int) sum;
+        }
+
+        return rgb;
+    }
+
+    private BufferedImage robertsCrossEdges(BufferedImage image) {
+        BufferedImage edges = new BufferedImage(image.getWidth(), image
+                .getHeight(), BufferedImage.TYPE_BYTE_GRAY);
+
+        float[] hx = new float[] { 1, 0, 0, -1 };
+        float[] hy = new float[] { 0, 1, -1, 0 };
+
+        int[] rgbX = new int[3];
+        int[] rgbY = new int[3];
+
+        for (int x = 1; x < image.getWidth() - 1; x++) {
+            for (int y = 1; y < image.getHeight() - 1; y++) {
+                convolvePixel(hx, 2, 2, image, x, y, rgbX);
+                convolvePixel(hy, 2, 2, image, x, y, rgbY);
+
+                int r = Math.abs(rgbX[0]) + Math.abs(rgbY[0]);
+                int g = Math.abs(rgbX[1]) + Math.abs(rgbY[1]);
+                int b = Math.abs(rgbX[2]) + Math.abs(rgbY[2]);
+
+                if (r > 255) {
+                    r = 255;
+                }
+                if (g > 255) {
+                    g = 255;
+                }
+                if (b > 255) {
+                    b = 255;
+                }
+
+                edges.setRGB(x, y, (r << 16) | (g << 8) | b);
+            }
+        }
+        threshold(edges);
+        return edges;
+    }
+
+    private void threshold(BufferedImage image) {
+        for (int x = 0; x < image.getWidth(); x++) {
+            for (int y = 0; y < image.getHeight(); y++) {
+                Color color = new Color(image.getRGB(x, y));
+                double lum = lum(color);
+                if (lum >= 150) {
+                    image.setRGB(x, y, Color.WHITE.getRGB());
+                } else {
+                    image.setRGB(x, y, Color.BLACK.getRGB());
+                }
+            }
+        }
+    }
+
+    private double lum(Color color) {
+        // return the monochrome luminance of given color
+        int r = color.getRed();
+        int g = color.getGreen();
+        int b = color.getBlue();
+        return .299 * r + .587 * g + .114 * b;
+    }
+
+    private void blurr(BufferedImage image) {
+
+        float[] matrix = { 0.111f, 0.111f, 0.111f, 0.111f, 0.111f, 0.111f,
+                0.111f, 0.111f, 0.111f, };
+
+        int[] rgb = new int[3];
+
+        for (int x = 1; x < image.getWidth() - 1; x++) {
+            for (int y = 1; y < image.getHeight() - 1; y++) {
+                convolvePixel(matrix, 3, 3, image, x, y, rgb);
+                image.setRGB(x, y, getRGB(rgb));
+            }
+        }
+    }
+
+    private int getRGB(int[] rgb) {
+        int r = Math.abs(rgb[0]);
+        int g = Math.abs(rgb[1]);
+        int b = Math.abs(rgb[2]);
+
+        if (r > 255) {
+            r = 255;
+        }
+        if (g > 255) {
+            g = 255;
+        }
+        if (b > 255) {
+            b = 255;
+        }
+
+        return ((r << 16) | (g << 8) | b);
     }
 }

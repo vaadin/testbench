@@ -28,7 +28,7 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
     private static String testCaseName = "";
     private static List<junit.framework.AssertionFailedError> softAssert = new LinkedList<junit.framework.AssertionFailedError>();
     private static BrowserDimensions dimensions = null;
-    private static final int maxAmountOfTests = 10;
+    private static final int maxAmountOfTests = 5;
 
     protected VaadinTestBase testBase = new VaadinTestBase();
     protected ImageComparison compare = new ImageComparison();
@@ -104,7 +104,8 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
 
         try {
             // Compare screenshot with saved reference screen
-            result = compare.compareStringImage(image, fileName, d, dimensions);
+            result = compare.compareStringImage(image, fileName, d, dimensions,
+                    false);
         } catch (junit.framework.AssertionFailedError e) {
             // If a Assert.fail("") is caught check if it's a missing reference.
             // If other throw the AssertionFailedError.
@@ -143,7 +144,7 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
 
                     try {
                         result = compare.compareStringImage(image, fileName, d,
-                                dimensions);
+                                dimensions, false);
                         if (result == true) {
                             boolean success = (new File(directory + fileName
                                     + ".html")).delete();
@@ -172,7 +173,10 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
                         // System.out.println("Image comparison failed.");
                     }
                 }
-                throw e;
+                // Do a Roberts Cross edge detection on images and compare for
+                // diff. Should remove some small faults.
+                // result = compare.compareStringImage(image, fileName, d,
+                // dimensions, true);
             } else {
                 throw e;
             }

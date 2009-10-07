@@ -1,5 +1,6 @@
 package com.vaadin.testbench.util;
 
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -54,6 +55,10 @@ public class TestConverter {
     private static final String PACKAGE_DIR = "com/vaadin/automatedtests";
 
     private static boolean screenshot = false;
+    private static boolean firstScreenshot = true;
+    private static boolean focusSet = false;
+    private static boolean isOpera = false;
+    private static String lastLocation = "";
 
     public static void main(String[] args) {
         if (args.length < 3) {
@@ -72,12 +77,19 @@ public class TestConverter {
 
         for (String browser : browsers) {
             System.out.println("Generating tests for " + browser);
+            lastLocation = "";
 
             OutputStream out = null;
             try {
                 String browserId = knownBrowsers.get(browser.toLowerCase());
                 if (browserId == null) {
                     System.err.println("Warning: Unknown browser: " + browser);
+                } else {
+                    if (browserId.equals("*opera")) {
+                        isOpera = true;
+                    } else {
+                        isOpera = false;
+                    }
                 }
 
                 // Create a java file for holding all tests for this browser
@@ -192,6 +204,7 @@ public class TestConverter {
     private static String createTestCaseMethod(String testName,
             List<Command> commands) {
         screenshot = false;
+        firstScreenshot = true;
         String testCaseHeader = getTestCaseHeader(testName);
         String testCaseBody = convertTestCaseToJava(commands, testName);
         String testCaseFooter = getTestCaseFooter(testName);
@@ -280,6 +293,11 @@ public class TestConverter {
                     }
                     first = false;
                 }
+                if (firstScreenshot) {
+                    javaSource.append("pause(500);\n");
+                    firstScreenshot = false;
+                }
+
                 javaSource.append("validateScreenshot(\"" + testName
                         + "\", 0.025, \"" + identifier + "\");\n");
                 screenshot = true;
@@ -322,29 +340,39 @@ public class TestConverter {
                             + characters + "\");\n");
                 }
             } else if (command.getCmd().equalsIgnoreCase("pressSpecialKey")) {
-                StringBuilder values = new StringBuilder();
+                String value = "";
+                String location = "";
                 boolean first = true;
                 for (String param : command.getParams()) {
                     if (first) {
-                        values.append("\"" + param.replace("\\", "\\\\")
-                                + "\", \"");
+                        location = param.replace("\\", "\\\\");
                     } else {
                         if (param.contains("\\")) {
-                            values.append(param.replace("\\", "\\\\") + "\"");
+                            switch (Integer.parseInt(param.substring(param
+                                    .lastIndexOf("\\")))) {
+                            case 37:
+                                value = "" + KeyEvent.VK_LEFT;
+                                break;
+                            case 38:
+                                value = "" + KeyEvent.VK_UP;
+                                break;
+                            case 39:
+                                value = "" + KeyEvent.VK_RIGHT;
+                                break;
+                            case 40:
+                                value = "" + KeyEvent.VK_DOWN;
+                                break;
+                            }
                         } else if ("UP".equalsIgnoreCase(param)) {
-                            values.append("\\\\38\"");
+                            value = "" + KeyEvent.VK_UP;
                         } else if ("DOWN".equalsIgnoreCase(param)) {
-                            values.append("\\\\40\"");
+                            value = "" + KeyEvent.VK_DOWN;
                         } else if ("LEFT".equalsIgnoreCase(param)) {
-                            values.append("\\\\37\"");
+                            value = "" + KeyEvent.VK_LEFT;
                         } else if ("RIGHT".equalsIgnoreCase(param)) {
-                            values.append("\\\\39\"");
+                            value = "" + KeyEvent.VK_RIGHT;
                         } else if ("ENTER".equalsIgnoreCase(param)) {
-                            values.append("\\\\13\"");
-
-                            // FIXME: Need an else or the generated test case
-                            // won't compile
-
+                            value = "" + KeyEvent.VK_ENTER;
                             // } else if ("BACKSPACE".equalsIgnoreCase(param)) {
                             // values.append("\\\\8\"");
                         }
@@ -352,9 +380,20 @@ public class TestConverter {
 
                     first = false;
                 }
-                javaSource.append("selenium.keyDown(" + values + ");\n");
-                javaSource.append("selenium.keyPress(" + values + ");\n");
-                javaSource.append("selenium.keyUp(" + values + ");\n");
+                if (focusSet) {
+                    if (!lastLocation.equals(location)) {
+                        lastLocation = location;
+                        focusSet = false;
+                    }
+                }
+
+                if (!focusSet) {
+                    javaSource
+                            .append("selenium.focus(\"" + location + "\");\n");
+                    focusSet = true;
+                }
+                javaSource.append("selenium.keyPressNative(\"" + value
+                        + "\");\n");
             } else if (command.getCmd().equalsIgnoreCase("mouseClick")
                     || command.getCmd().equalsIgnoreCase("closeNotification")) {
                 StringBuilder values = new StringBuilder();
@@ -373,7 +412,10 @@ public class TestConverter {
                 javaSource
                         .append("selenium.mouseDownAt(\"" + values + "\");\n");
                 javaSource.append("selenium.mouseUpAt(\"" + values + "\");\n");
-                javaSource.append("selenium.click(\"" + firstParam + "\");\n");
+                if (!isOpera) {
+                    javaSource.append("selenium.click(\"" + firstParam
+                            + "\");\n");
+                }
             } else if (command.getCmd().equalsIgnoreCase("verifyTextPresent")) {
 
                 String identifier = "";
