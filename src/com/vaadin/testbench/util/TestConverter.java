@@ -56,9 +56,7 @@ public class TestConverter {
 
     private static boolean screenshot = false;
     private static boolean firstScreenshot = true;
-    private static boolean focusSet = false;
-    private static boolean isOpera = false;
-    private static String lastLocation = "";
+    private static boolean isOpera = false, isSafari = false, isChrome = false;
 
     public static void main(String[] args) {
         if (args.length < 3) {
@@ -77,7 +75,7 @@ public class TestConverter {
 
         for (String browser : browsers) {
             System.out.println("Generating tests for " + browser);
-            lastLocation = "";
+            isOpera = isSafari = isChrome = false;
 
             OutputStream out = null;
             try {
@@ -87,8 +85,10 @@ public class TestConverter {
                 } else {
                     if (browserId.equals("*opera")) {
                         isOpera = true;
-                    } else {
-                        isOpera = false;
+                    } else if (browserId.equals("*safari")) {
+                        isSafari = true;
+                    } else if (browserId.equals("*googlechrome")) {
+                        isChrome = true;
                     }
                 }
 
@@ -380,20 +380,21 @@ public class TestConverter {
 
                     first = false;
                 }
-                if (focusSet) {
-                    if (!lastLocation.equals(location)) {
-                        lastLocation = location;
-                        focusSet = false;
-                    }
-                }
 
-                if (!focusSet) {
+                if (isOpera || isSafari || isChrome) {
                     javaSource
                             .append("selenium.focus(\"" + location + "\");\n");
-                    focusSet = true;
+                    javaSource.append("selenium.keyPressNative(\"" + value
+                            + "\");\n");
+                } else {
+                    javaSource.append("selenium.keyDown(\"" + location
+                            + "\", \"\\\\" + value + "\");\n");
+                    javaSource.append("selenium.keyPress(\"" + location
+                            + "\", \"\\\\" + value + "\");\n");
+                    javaSource.append("selenium.keyUp(\"" + location
+                            + "\", \"\\\\" + value + "\");\n");
                 }
-                javaSource.append("selenium.keyPressNative(\"" + value
-                        + "\");\n");
+
             } else if (command.getCmd().equalsIgnoreCase("mouseClick")
                     || command.getCmd().equalsIgnoreCase("closeNotification")) {
                 StringBuilder values = new StringBuilder();

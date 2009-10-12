@@ -29,6 +29,7 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
     private static List<junit.framework.AssertionFailedError> softAssert = new LinkedList<junit.framework.AssertionFailedError>();
     private static BrowserDimensions dimensions = null;
     private static final int maxAmountOfTests = 5;
+    private static final String DEBUG = "com.vaadin.testbench.debug";
 
     protected VaadinTestBase testBase = new VaadinTestBase();
     protected ImageComparison compare = new ImageComparison();
@@ -65,11 +66,14 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
             softAssert.clear();
         }
 
+        boolean debug = false;
+        if ("true".equalsIgnoreCase(System.getProperty(DEBUG))) {
+            debug = true;
+        }
+
         boolean result = false;
 
-        // Pause so that we don't get the loading marker for vaadin
-        // applications (and wait long enough for labels to show)
-        // pause(350);
+        // Small pause to give components a bit of render time
         pause(10);
 
         BrowserVersion browser = browserUtils.getBrowserVersion(selenium);
@@ -151,32 +155,35 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
                             if (success) {
                                 success = (new File(directory + fileName
                                         + ".png")).delete();
-                                if (success) {
-                                    System.err
-                                            .println("Removed created clean image and difference html.\n"
-                                                    + "Comparison successful");
-                                } else {
-                                    System.err
-                                            .println("Removed created difference html.\n"
-                                                    + "Comparison successful");
+                                if (debug) {
+                                    if (success) {
+                                        System.err
+                                                .println("Removed created clean image and difference html.\n"
+                                                        + "Comparison successful");
+                                    } else {
+                                        System.err
+                                                .println("Removed created difference html.\n"
+                                                        + "Comparison successful");
+                                    }
                                 }
                             } else {
                                 System.err
                                         .println("Failed to remove created error files.\n"
                                                 + "Comparison successful.");
                             }
+                            return result;
                         }
-                        return result;
                     } catch (junit.framework.AssertionFailedError afe) {
-                        // Do nothing, should be 'differs from reference'
-                        // exception
-                        // System.out.println("Image comparison failed.");
+                        result = false;
                     }
                 }
                 // Do a Roberts Cross edge detection on images and compare for
                 // diff. Should remove some small faults.
                 // result = compare.compareStringImage(image, fileName, d,
                 // dimensions, true);
+                if (!result) {
+                    throw e;
+                }
             } else {
                 throw e;
             }

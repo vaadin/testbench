@@ -166,7 +166,7 @@ var typeString = "true";
 
 /* Checks keyCodes on keyup event and adds a pressArrowKey if confirmed. */
 Recorder.addEventHandler('pressSpecialKey', 'keyup', function(event){
-		
+		/* only record modifiers if arrow keys pressed */
 		if(event.keyCode >= 37 && event.keyCode <= 40){
 			if(event.shiftKey){//16
 				this.record_orig("shiftKeyDown", this.findLocators(event.target), '');
@@ -222,6 +222,7 @@ Recorder.addEventHandler('pressSpecialKey', 'keyup', function(event){
 			}
 		}
 		
+		/* only record modifiers if arrow keys pressed */
 		if(event.keyCode >= 37 && event.keyCode <= 40){
 			if(event.shiftKey){
 				this.record("shiftKeyUp", this.findLocators(event.target), '');
@@ -237,6 +238,7 @@ Recorder.addEventHandler('pressSpecialKey', 'keyup', function(event){
 
 /* record all keypresses to character buffer */
 Recorder.addEventHandler('keyPressedDown', 'keypress', function(event){
+		/* only record character keys and skip special keys */
 		if(event.charCode >= 48){
 			this.log.debug('Typed key ' + String.fromCharCode(event.charCode));
 			charBuffer = charBuffer + String.fromCharCode(event.charCode);
@@ -294,25 +296,19 @@ Recorder.removeEventHandler('clickLocator');
 Recorder.addEventHandler('clickLocator', 'click', function(event){
 		charBuffer = "";
 		
+		/* record mouse click if left button clicked and so select has been made */
 		if (event.button == 0 && noSelection == "true") {
             var x = event.clientX - editor.seleniumAPI.Selenium.prototype.getElementPositionLeft(event.target);
             var y = event.clientY - editor.seleniumAPI.Selenium.prototype.getElementPositionTop(event.target);
 
-            /* Check that cordinates are inside an actual element. 
-             * (RichTextField buttons record a negative and positive placement 
-             * this will drop the negative one)
-             */
-            if( x < 0 || y < 0){
-            	return;
-            }
-            
             /* Stop checking mouseOver events */
             if(checkForMouseOver == "true"){
             	checkForMouseOver = "false";
+            	this.record_orig("mouseClick", this.findLocators(event.target), x + ',' + y);
+            	return;
             }
             
-            /*
-             * Check that a mouse click doesn't add a new close for a notification.
+            /* Check that a mouse click doesn't add a new close for a notification.
              */
             if(closeNotificationRecorded == "true"){
             	if((new RegExp("Notification")).test(event.target.className) || (new RegExp("gwt-HTML")).test(event.target.parentNode.className)){
@@ -338,38 +334,54 @@ Recorder.addEventHandler('clickLocator', 'click', function(event){
 				
 	            var target = this.findLocators(event.target);
 	            var parent = this.findLocators(event.target.parentNode);
-	            if((new RegExp("link")).test(target) || (new RegExp("@href")).test(target) || (new RegExp("onclick=\"window.location")).test(target) || (new RegExp("onclick=\"window.location")).test(parent)){
-	            	/* If clicked a link */
-	            	if((new RegExp("_blank")).test(event.target.target)){
-		            	/* Open link in same page as selenium has trouble with selecting tabs */
-		            	/* "open" command waits for the page to load before proceeding */
-		            	this.record_orig("open", event.target.href, '');
-	            	}else if(event.target.parentNode.nodeName.toLowerCase() == "a"){
-	            		/* catches a click on a v-links <img/> and </span> */
-	            		if((new RegExp("_blank")).test(event.target.parentNode.target)){
+	            
+	            /* Catch links for separate handling */
+	            if((new RegExp("link")).test(target) || (new RegExp("@href")).test(target)  
+	            		|| (new RegExp("onclick=\"window.location")).test(target) || (new RegExp("onclick=\"window.location")).test(parent) 
+	            		|| (event.target.nodeName.toLowerCase() == "a") || (event.target.parentNode.nodeName.toLowerCase() == "a")){
+	            	
+	            	/* if target is clearly a vaadin component handle links */
+	            	if((new RegExp("vaadin=")).test(target)){
+	            		/* if link is only a hash record with waitForVaadin */
+	            		if ((new RegExp("#")).test(event.target.href) || (new RegExp("#")).test(event.target.parentNode.href)){
+							this.record("mouseClick", target, x + ',' + y);
+						/* if either target or target parent (click recorded for img,span, etc inside <a></a>)
+						 * is a link <a/> record open instead of mouseClick as it fails in many cases */
+	            		} else if (event.target.nodeName.toLowerCase() == "a" && event.target.target != "_blank"){
+	            			this.record_orig("open", event.target.href, '');
+	            		} else if (event.target.parentNode.nodeName.toLowerCase() == "a" && event.target.parentNode.target != "_blank"){
 	            			this.record_orig("open", event.target.parentNode.href, '');
-	            		}else{
-	            			this.record_orig("mouseClick", parent, '0,0');
+	            		/* else record mouseClick with possible AndWait added by seleniums editor */
+	            		} else {
+	            			this.record_orig("mouseClick", target, x + ',' + y);
 	            		}
-	            	}else{
+	            	/* else record mouseClick with record_orig so that AndWait comes to right place */
+					} else {
 	            		this.record_orig("mouseClick", target, x + ',' + y);
-	            	}
+					}
 	            	clicked = "false";
-	            }else if((new RegExp("button")).test(event.target.className)){
+	            } else if ((new RegExp("button")).test(event.target.className)){
 	            	/* A class="v-button" requires a click without mouseDown+mouseUp */
 	            	this.record("click", target, '');
-	            }else{
+	            } else if ( x < 0 || y < 0){
+	            	/* Check that cordinates are inside an actual element. 
+	                 * (RichTextField buttons record a negative and positive placement 
+	                 * this will drop the negative one)
+	                 */
+	            } else {
+	            	/* record mouseClick with waitForVaadin(s) added */
 	            	this.record("mouseClick", target, x + ',' + y);
 	            }
 	        } else {
 	            var target = event.target;
 //	            this.callIfMeaningfulEvent(function() {
+	            /* Record all clicks inside div elements */
 	            if(event.target.nodeName.toLowerCase() == "div"){
 	            	this.record("mouseClick", this.findLocators(target), x + ',' + y);
 	            }
 //	                });
 	        }
-		}else{
+		} else {
 			noSelection = "true";
 		}
 	}, { capture: true });
@@ -413,27 +425,37 @@ var checkForMouseOver = "false";
 var getTooltip = "false";
 
 Recorder.addEventHandler('append', 'DOMNodeInserted', function(event){
-		if(clicked == "true" && event.target.nodeName.toLowerCase() == "div"){
-			var target = this.findLocators(event.target);
-			if((new RegExp("Notification")).test(event.target.className)){
-				this.record("closeNotification", target, '0,0');
-				clicked = "false";
-				closeNotificationRecorded = "true";
-			}else if((new RegExp("gwt-PopupPanel")).test(event.target.className)){
-				checkForMouseOver = "true";
-				clicked = "false";
+		/* Check inserted node if it's a div */
+		if(event.target.nodeName.toLowerCase() == "div"){
+			/* if we have clicked on something we expect to get a PopupPanel or a notification */
+			if(clicked == "true"){
+				var target = this.findLocators(event.target);
+				/* if we found a notification record a closeNotification event */
+				if((new RegExp("Notification")).test(event.target.className)){
+					this.record("closeNotification", target, '0,0');
+					clicked = "false";
+					closeNotificationRecorded = "true";
+				/* if we found a popupPanel enable checking for mouse overs for
+				 * recording MenuBar navigation
+				 */
+				}else if((new RegExp("gwt-PopupPanel")).test(event.target.className)){
+					checkForMouseOver = "true";
+					clicked = "false";
+				}
+				/*
+				 * Stop checking inserted DOM nodes after 5 inserts 
+				 */
+				if(++counter > 5){
+					clicked = "false";
+				}
+			}else if((new RegExp("v-tooltip")).test(event.target.className)){
+				/* If we found a v-tooltip enable checking of next mouse out */
+				getTooltip = "true";
 			}
-			/*
-			 * Stop checking inserted DOM nodes after 5 inserts 
-			 */
-			if(++counter > 5){
-				clicked = "false";
-			}
-		}else if(event.target.nodeName.toLowerCase() == "div" && (new RegExp("v-tooltip")).test(event.target.className)){
-			getTooltip = "true";
 		}
 	});
 
+/* Use mouse over events to record MenuBar navigation */
 Recorder.addEventHandler('mouseOverEvent', 'mouseover', function(event){
 		if(checkForMouseOver == "true"){
 			var target = this.findLocators(event.target);
@@ -443,6 +465,7 @@ Recorder.addEventHandler('mouseOverEvent', 'mouseover', function(event){
 		}
 	});
 
+/* use mouse out to record a mouseOver to show tooltip */
 Recorder.addEventHandler('mouseOutEvent', 'mouseout', function(event){
 		/* If tooltip has been shown record tooltip event */
 		if(getTooltip == "true"){

@@ -269,18 +269,18 @@ function formatComment(comment) {
 		var value = parameters.substring(parameters.indexOf("\"")+1, parameters.lastIndexOf("\""));
 		
     	if(value.toLowerCase() == "left"){
-    		value="\\\\37";
+    		value="37";
     	}else if(value.toLowerCase() == "right"){
-    		value="\\\\39";
+    		value="39";
     	}else if(value.toLowerCase() == "up"){
-    		value="\\\\38";
+    		value="38";
     	}else if(value.toLowerCase() == "down"){
-    		value="\\\\40";
+    		value="40";
     	}else if(value.toLowerCase() == "backspace"){
-    		value="\\\\8";
+    		value="8";
     	}
-		var result = "selenium.keyDown(\"" + locator + "\", \"" + value + "\");\n";
-		result = result + "selenium.keyUp(\"" + locator + "\", \"" + value + "\");\n";
+		var result = "selenium.focus(\"" + locator + "\");\n"
+				+ "selenium.keyPressNative(\"" + value + "\");\n";
 		
 		return result;
     }else if (comment.comment.match(/^selenium\.mouseClick/)
@@ -290,9 +290,9 @@ function formatComment(comment) {
 		parameters = parameters.substring(parameters.indexOf("\"")+1);
 		var value = parameters.substring(parameters.indexOf("\"")+1, parameters.lastIndexOf("\""));
 
-		var result = "selenium.mouseDownAt(\"" + locator + "\", \"" + value + "\");\n";
-		result = result + "selenium.mouseUpAt(\"" + locator + "\", \"" + value + "\");\n";
-		result = result + "//Remove this for Opera\nselenium.click(\"" + locator + "\", \"" + value + "\");\n";
+		var result = "selenium.mouseDownAt(\"" + locator + "\", \"" + value + "\");\n"
+				+ "selenium.mouseUpAt(\"" + locator + "\", \"" + value + "\");\n"
+				+ "//Remove this for Opera\nselenium.click(\"" + locator + "\", \"" + value + "\");\n";
 		
 		return result;
     }

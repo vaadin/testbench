@@ -27,7 +27,7 @@ import org.apache.commons.codec.binary.Base64;
 public class ImageComparison {
 
     private static final String TEST_SCREENS_DIRECTORY = "com.vaadin.testbench.screenshot.directory";
-    private static final String DEBUG = "com.vaadin.testbench.screenshot.reference.debug";
+    private static final String DEBUG = "com.vaadin.testbench.debug";
     // referenceDirectory is the name of the directory with the reference
     // pictures of the same name as the one to be compared
     private static final String REFERENCE_DIRECTORY = "reference";
@@ -61,7 +61,7 @@ public class ImageComparison {
 
         String directory = System.getProperty(TEST_SCREENS_DIRECTORY);
 
-        // Write error blocks to file only if debug is defined as true
+        // Write error blocks to file && syserr only if debug is defined as true
         boolean debug = false;
         if ("true".equalsIgnoreCase(System.getProperty(DEBUG))) {
             debug = true;
@@ -114,21 +114,29 @@ public class ImageComparison {
                 int minHeight, minWidth;
                 if (target.getHeight() > test.getHeight()) {
                     minHeight = test.getHeight();
-                    System.err
-                            .println("Screenshot height less than reference image.");
+                    if (debug) {
+                        System.err
+                                .println("Screenshot height less than reference image.");
+                    }
                 } else {
                     minHeight = target.getHeight();
-                    System.err
-                            .println("Reference image height less than screenshot.");
+                    if (debug) {
+                        System.err
+                                .println("Reference image height less than screenshot.");
+                    }
                 }
                 if (target.getWidth() > test.getWidth()) {
                     minWidth = test.getWidth();
-                    System.err
-                            .println("Screenshot width less than reference image.");
+                    if (debug) {
+                        System.err
+                                .println("Screenshot width less than reference image.");
+                    }
                 } else {
                     minWidth = target.getWidth();
-                    System.err
-                            .println("Reference image width less than screenshot.");
+                    if (debug) {
+                        System.err
+                                .println("Reference image width less than screenshot.");
+                    }
                 }
 
                 // Crop both images to same size
@@ -139,8 +147,8 @@ public class ImageComparison {
             // Flag result as true until proven false
             result = true;
 
-            int xBlocks = target.getWidth() / 16;
-            int yBlocks = target.getHeight() / 16;
+            int xBlocks = (int) Math.floor(target.getWidth() / 16) + 1;
+            int yBlocks = (int) Math.floor(target.getHeight() / 16) + 1;
             boolean[][] falseBlocks = new boolean[xBlocks][yBlocks];
 
             // iterate picture in macroblocks of 16x16 (x,y) (0-> m-16, 0->
@@ -157,38 +165,18 @@ public class ImageComparison {
                     // If arrays aren't equal then
                     if (!Arrays.equals(targetBlock, testBlock)) {
 
-                        int sum = 0;
-                        double fullSum = 0.0;
-
-                        // build sums from all available colors Red, Green
-                        // and Blue
-                        for (int i = 0; i < targetBlock.length; i++) {
-                            Color targetPixel = new Color(targetBlock[i]);
-                            Color testPixel = new Color(testBlock[i]);
-                            int targetColor = (targetPixel.getRed()
-                                    + targetPixel.getGreen() + targetPixel
-                                    .getBlue());
-                            int testColor = (testPixel.getRed()
-                                    + testPixel.getGreen() + testPixel
-                                    .getBlue());
-                            fullSum += targetColor;
-                            if (targetColor > testColor) {
-                                sum += targetColor - testColor;
-                            } else if (testColor > targetColor) {
-                                sum += testColor - targetColor;
-                            }
-                        }
+                        double sums = rgbCompare(targetBlock, testBlock);
 
                         // Check if total RGB error in a macroblock exceeds
                         // allowed error % if true mark block with a rectangle,
                         // append block info to imageErrors
-                        if ((sum / fullSum) > d) {
+                        if (sums > d) {
                             imageErrors
                                     .append("Error in block at position:\tx="
                                             + x + " y=" + y + NEW_LINE);
                             imageErrors.append("RGB error for block:\t\t"
-                                    + roundTwoDecimals((sum / fullSum) * 100)
-                                    + "%" + NEW_LINE + NEW_LINE);
+                                    + roundTwoDecimals(sums * 100) + "%"
+                                    + NEW_LINE + NEW_LINE);
                             falseBlocks[x / 16][y / 16] = true;
 
                             result = false;
@@ -196,6 +184,112 @@ public class ImageComparison {
                     }
                     targetBlock = testBlock = null;
                 }
+            }
+
+            if (target.getWidth() % 16 != 0) {
+                // check the bottom of image
+                for (int x = 0; x < target.getWidth() - 16; x += 16) {
+                    int[] targetBlock = new int[16 * 16], testBlock = new int[16 * 16];
+
+                    // Get 16x16 blocks from picture
+                    targetBlock = target.getRGB(x, target.getHeight() - 16, 16,
+                            16, targetBlock, 0, 16);
+                    testBlock = test.getRGB(x, target.getHeight() - 16, 16, 16,
+                            testBlock, 0, 16);
+
+                    // If arrays aren't equal then
+                    if (!Arrays.equals(targetBlock, testBlock)) {
+
+                        double sums = rgbCompare(targetBlock, testBlock);
+
+                        // Check if total RGB error in a macroblock exceeds
+                        // allowed error % if true mark block with a rectangle,
+                        // append block info to imageErrors
+                        if (sums > d) {
+                            imageErrors
+                                    .append("Error in block at position:\tx="
+                                            + x + " y="
+                                            + (target.getHeight() - 16)
+                                            + NEW_LINE);
+                            imageErrors.append("RGB error for block:\t\t"
+                                    + roundTwoDecimals(sums * 100) + "%"
+                                    + NEW_LINE + NEW_LINE);
+                            falseBlocks[x / 16][yBlocks - 1] = true;
+
+                            result = false;
+                        }
+                    }
+                    targetBlock = testBlock = null;
+                }
+            }
+
+            if (target.getHeight() % 16 != 0) {
+                // checkthe right side of the image
+                for (int y = 0; y < target.getHeight() - 16; y += 16) {
+                    int[] targetBlock = new int[16 * 16], testBlock = new int[16 * 16];
+
+                    // Get 16x16 blocks from picture
+                    targetBlock = target.getRGB(target.getWidth() - 16, y, 16,
+                            16, targetBlock, 0, 16);
+                    testBlock = test.getRGB(target.getWidth() - 16, y, 16, 16,
+                            testBlock, 0, 16);
+
+                    // If arrays aren't equal then
+                    if (!Arrays.equals(targetBlock, testBlock)) {
+
+                        double sums = rgbCompare(targetBlock, testBlock);
+
+                        // Check if total RGB error in a macroblock exceeds
+                        // allowed error % if true mark block with a rectangle,
+                        // append block info to imageErrors
+                        if (sums > d) {
+                            imageErrors
+                                    .append("Error in block at position:\tx="
+                                            + (target.getWidth() - 16) + " y="
+                                            + y + NEW_LINE);
+                            imageErrors.append("RGB error for block:\t\t"
+                                    + roundTwoDecimals(sums * 100) + "%"
+                                    + NEW_LINE + NEW_LINE);
+                            falseBlocks[xBlocks - 1][y / 16] = true;
+
+                            result = false;
+                        }
+                    }
+                    targetBlock = testBlock = null;
+                }
+            }
+
+            if (target.getWidth() % 16 != 0 && target.getHeight() % 16 != 0) {
+                // Check bottom right corner.
+                int[] targetBlock = new int[16 * 16], testBlock = new int[16 * 16];
+
+                // Get 16x16 blocks from picture
+                targetBlock = target.getRGB(target.getWidth() - 16, target
+                        .getHeight() - 16, 16, 16, targetBlock, 0, 16);
+                testBlock = test.getRGB(target.getWidth() - 16, target
+                        .getHeight() - 16, 16, 16, testBlock, 0, 16);
+
+                // If arrays aren't equal then
+                if (!Arrays.equals(targetBlock, testBlock)) {
+
+                    double sums = rgbCompare(targetBlock, testBlock);
+
+                    // Check if total RGB error in a macroblock exceeds
+                    // allowed error % if true mark block with a rectangle,
+                    // append block info to imageErrors
+                    if (sums > d) {
+                        imageErrors.append("Error in block at position:\tx="
+                                + (target.getWidth() - 16) + " y="
+                                + (target.getHeight() - 16) + NEW_LINE);
+                        imageErrors.append("RGB error for block:\t\t"
+                                + roundTwoDecimals(sums * 100) + "%" + NEW_LINE
+                                + NEW_LINE);
+                        falseBlocks[xBlocks - 1][yBlocks - 1] = true;
+
+                        result = false;
+                    }
+                }
+                targetBlock = testBlock = null;
             }
 
             // if errors found in file save diff file with marked
@@ -227,9 +321,6 @@ public class ImageComparison {
                     // release resources
                     drawToPicture.dispose();
 
-                    // Write image with differences marked to file
-                    // ImageIO.write(test, "png", new File(compareFolder
-                    // + File.separator + fileId + "_diff.png"));
                     // Write clean image to file
                     ImageIO.write((stringToImage(image)).getSubimage(dimensions
                             .getCanvasXPosition(), dimensions
@@ -237,15 +328,14 @@ public class ImageComparison {
                             dimensions.getCanvasHeight()), "png", new File(
                             compareFolder + File.separator + fileId + ".png"));
 
-                    // ImageIO.write(target, "png", new File(compareFolder
-                    // + File.separator + fileId + "_reference.png"));
-
                     createDiffHtml(errorAreas, fileId,
                             encodeImageToBase64(test),
                             encodeImageToBase64(target));
 
-                    System.err
-                            .println("Created clean image, image with marked differences and difference html.");
+                    if (debug) {
+                        System.err
+                                .println("Created clean image, image with marked differences and difference html.");
+                    }
                 } else {
                     File compareFolder = new File(directory + ERROR_DIRECTORY);
                     if (!compareFolder.exists()) {
@@ -274,12 +364,25 @@ public class ImageComparison {
                         compareFolder.mkdir();
                     }
 
-                    // Write clean image to file
-                    ImageIO.write((stringToImage(image)).getSubimage(dimensions
+                    test = (stringToImage(image)).getSubimage(dimensions
                             .getCanvasXPosition(), dimensions
                             .getCanvasYPosition(), dimensions.getCanvasWidth(),
-                            dimensions.getCanvasHeight()), "png", new File(
-                            compareFolder + File.separator + fileId + ".png"));
+                            dimensions.getCanvasHeight());
+
+                    // Write clean image to file
+                    ImageIO.write(test, "png", new File(compareFolder
+                            + File.separator + fileId + ".png"));
+
+                    // collect big error blocks of differences
+                    List<ErrorBlock> errorAreas = new LinkedList<ErrorBlock>();
+
+                    target = ImageIO.read(new File(directory
+                            + REFERENCE_DIRECTORY + File.separator + fileId
+                            + ".png"));
+
+                    createDiffHtml(errorAreas, fileId,
+                            encodeImageToBase64(test),
+                            encodeImageToBase64(target));
 
                     Assert.fail("Images are of different size (" + fileId
                             + ").");
@@ -303,8 +406,10 @@ public class ImageComparison {
                 File referenceFile = new File(directory + ERROR_DIRECTORY
                         + File.separator + fileId + ".png");
                 if (!referenceFile.exists()) {
-                    System.err.println("Creating reference to "
-                            + ERROR_DIRECTORY + ".");
+                    if (debug) {
+                        System.err.println("Creating reference to "
+                                + ERROR_DIRECTORY + ".");
+                    }
                     // Write clean image to error folder.
                     ImageIO.write(referenceImage, "png", referenceFile);
                 }
@@ -342,6 +447,36 @@ public class ImageComparison {
         }
 
         return result;
+    }
+
+    /**
+     * Calculates the difference between pixels in the block.
+     * 
+     * @param targetBlock
+     * @param testBlock
+     * @return Difference %
+     */
+    private double rgbCompare(int[] targetBlock, int[] testBlock) {
+        int sum = 0;
+        double fullSum = 0.0;
+
+        // build sums from all available colors Red, Green
+        // and Blue
+        for (int i = 0; i < targetBlock.length; i++) {
+            Color targetPixel = new Color(targetBlock[i]);
+            Color testPixel = new Color(testBlock[i]);
+            int targetColor = (targetPixel.getRed() + targetPixel.getGreen() + targetPixel
+                    .getBlue());
+            int testColor = (testPixel.getRed() + testPixel.getGreen() + testPixel
+                    .getBlue());
+            fullSum += targetColor;
+            if (targetColor > testColor) {
+                sum += targetColor - testColor;
+            } else if (testColor > targetColor) {
+                sum += testColor - targetColor;
+            }
+        }
+        return (sum / fullSum);
     }
 
     /**
@@ -493,7 +628,8 @@ public class ImageComparison {
 
             writer
                     .println("<div id=\"diff\" onclick=\"document.getElementById('reference').style.display='block'; this.style.display='none';\" style=\"display: block; position: absolute; top: 0px; left: 0px; \"><img src=\"data:image/png;base64,"
-                            + image + "\"/></div>");
+                            + image
+                            + "\"/><span style=\"position: absolute; top: 0px; left: 0px; opacity:0.4; filter: alpha(opacity=40); font-weight: bold;\">Image for this run</span></div>");
             writer
                     .println("<div id=\"reference\" onclick=\"this.style.display='none'; document.getElementById('diff').style.display='block';\" style=\"display: none; position: absolute; top: 0px; left: 0px; z-index: 999;\"><img src=\"data:image/png;base64,"
                             + ref_image + "\"/></div>");
@@ -570,7 +706,7 @@ public class ImageComparison {
      *            BufferedImage to encode to String
      * @return Base64 encoded String of image
      */
-    private String encodeImageToBase64(BufferedImage image) {
+    public String encodeImageToBase64(BufferedImage image) {
         String encodedImage = "";
         Base64 encoder = new Base64();
         try {
@@ -621,14 +757,45 @@ public class ImageComparison {
         return (ix) / 100.0;
     }
 
+    /**
+     * Runs edge detection on image and returns a grayscale image with edges.
+     * 
+     * @param image
+     *            Base64 encoded String of image.
+     * @return Base64 encoded String of image. [TYPE_BYTE_GRAY]
+     */
     public String detectEdges(String image) {
         return encodeImageToBase64(robertsCrossEdges(stringToImage(image)));
     }
 
+    /**
+     * Runs edge detection on image and returns a grayscale image with edges.
+     * 
+     * @param image
+     *            BufferedImage
+     * @return BufferedImage [TYPE_BYTE_GRAY]
+     */
     public BufferedImage detectEdges(BufferedImage image) {
         return robertsCrossEdges(image);
     }
 
+    /**
+     * Makes a matrix convolution on pixel. Used to find edges.
+     * 
+     * @param kernel
+     *            convolution kernel
+     * @param kernWidth
+     * @param kernHeight
+     * @param src
+     *            Source image
+     * @param x
+     *            X position of pixel
+     * @param y
+     *            Y position of pixel
+     * @param rgb
+     *            int[] to save new r, g and b values
+     * @return new rgb values
+     */
     private int[] convolvePixel(float[] kernel, int kernWidth, int kernHeight,
             BufferedImage src, int x, int y, int[] rgb) {
         if (rgb == null) {
@@ -667,6 +834,13 @@ public class ImageComparison {
         return rgb;
     }
 
+    /**
+     * Runns a Roberts Cross edge detection on image.
+     * 
+     * @param image
+     *            BufferedImage
+     * @return BufferedImage [TYPE_BYTE_GRAY] with found edges.
+     */
     private BufferedImage robertsCrossEdges(BufferedImage image) {
         BufferedImage edges = new BufferedImage(image.getWidth(), image
                 .getHeight(), BufferedImage.TYPE_BYTE_GRAY);
@@ -703,6 +877,11 @@ public class ImageComparison {
         return edges;
     }
 
+    /**
+     * Creates a b&w image of grayscale image.
+     * 
+     * @param image
+     */
     private void threshold(BufferedImage image) {
         for (int x = 0; x < image.getWidth(); x++) {
             for (int y = 0; y < image.getHeight(); y++) {
@@ -717,6 +896,12 @@ public class ImageComparison {
         }
     }
 
+    /**
+     * Gets the luminance value for given color
+     * 
+     * @param color
+     * @return Luminance value
+     */
     private double lum(Color color) {
         // return the monochrome luminance of given color
         int r = color.getRed();
@@ -725,7 +910,12 @@ public class ImageComparison {
         return .299 * r + .587 * g + .114 * b;
     }
 
-    private void blurr(BufferedImage image) {
+    /**
+     * Does a mild blur on the given image
+     * 
+     * @param image
+     */
+    private void blur(BufferedImage image) {
 
         float[] matrix = { 0.111f, 0.111f, 0.111f, 0.111f, 0.111f, 0.111f,
                 0.111f, 0.111f, 0.111f, };
@@ -740,6 +930,13 @@ public class ImageComparison {
         }
     }
 
+    /**
+     * Creates a single int representation of r, g & b
+     * 
+     * @param rgb
+     *            int[] rgb
+     * @return int rgb
+     */
     private int getRGB(int[] rgb) {
         int r = Math.abs(rgb[0]);
         int g = Math.abs(rgb[1]);
