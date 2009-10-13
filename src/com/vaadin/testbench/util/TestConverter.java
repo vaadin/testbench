@@ -317,8 +317,10 @@ public class TestConverter {
                 boolean first = true;
                 for (String param : command.getParams()) {
                     if (first) {
+                        /* get locator */
                         locator = param.replace("\\", "\\\\");
                     } else {
+                        /* get characters */
                         characters = param;
                     }
 
@@ -327,6 +329,7 @@ public class TestConverter {
                 javaSource.append("selenium.type(\"" + locator + "\", \""
                         + characters + "\");\n");
                 if (characters.length() > 1) {
+                    /* Add a keyDown keyUp for each character */
                     for (int i = 0; i < characters.length(); i++) {
                         javaSource.append("selenium.keyDown(\"" + locator
                                 + "\", \"" + characters.charAt(i) + "\");\n");
@@ -345,11 +348,16 @@ public class TestConverter {
                 boolean first = true;
                 for (String param : command.getParams()) {
                     if (first) {
+                        /* Get the location target */
                         location = param.replace("\\", "\\\\");
                     } else {
+                        /* get pressed key from keyCode or name */
                         if (param.contains("\\")) {
                             switch (Integer.parseInt(param.substring(param
                                     .lastIndexOf("\\")))) {
+                            case 13:
+                                value = "" + KeyEvent.VK_ENTER;
+                                break;
                             case 37:
                                 value = "" + KeyEvent.VK_LEFT;
                                 break;
@@ -381,12 +389,17 @@ public class TestConverter {
                     first = false;
                 }
 
+                /* Opera, Safari and GoogleChrome need the java native keypress */
                 if (isOpera || isSafari || isChrome) {
                     javaSource
                             .append("selenium.focus(\"" + location + "\");\n");
                     javaSource.append("selenium.keyPressNative(\"" + value
                             + "\");\n");
                 } else {
+                    /* if enter VK_ENTER will give 10 instead of 13 */
+                    if (Integer.parseInt(value) == 10) {
+                        value = "13";
+                    }
                     javaSource.append("selenium.keyDown(\"" + location
                             + "\", \"\\\\" + value + "\");\n");
                     javaSource.append("selenium.keyPress(\"" + location
@@ -402,6 +415,7 @@ public class TestConverter {
                 String firstParam = "";
                 for (String param : command.getParams()) {
                     if (first) {
+                        /* get location */
                         firstParam = param;
                         values.append(param + "\", \"");
                     } else {
