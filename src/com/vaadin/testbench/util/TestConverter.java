@@ -82,6 +82,13 @@ public class TestConverter {
                 String browserId = knownBrowsers.get(browser.toLowerCase());
                 if (browserId == null) {
                     System.err.println("Warning: Unknown browser: " + browser);
+                    if (browser.contains("Opera")) {
+                        isOpera = true;
+                    } else if (browser.contains("Safari")) {
+                        isSafari = true;
+                    } else if (browser.contains("Google")) {
+                        isChrome = true;
+                    }
                 } else {
                     if (browserId.equals("*opera")) {
                         isOpera = true;
@@ -236,8 +243,20 @@ public class TestConverter {
         // adding the softAssert so creating reference images throws a assert
         // failure at end of test
         String softAsserts = "if(!getSoftErrors().isEmpty()){\n"
+                + "byte[] errors = new byte[2];\n"
+                + "for(junit.framework.AssertionFailedError afe:getSoftErrors()){\n"
+                + "if(afe.getMessage().contains(\"No reference found\")){\n"
+                + "errors[0] = 1;\n"
+                + "}else if(afe.getMessage().contains(\"differs from reference image\")){\n"
+                + "errors[1] = 1;\n"
+                + "}\n}\n"
+                + "if(errors[0] == 1 && errors[1] == 1){\n"
+                + "junit.framework.Assert.fail(\"Test was missing reference images and contained images with differences.\");\n"
+                + "}else if(errors[0] == 1){\n"
                 + "junit.framework.Assert.fail(\"Test was missing reference images.\");\n"
-                + "}\n";
+                + "}else if(errors[1] == 1){\n"
+                + "junit.framework.Assert.fail(\"Test contained differences.\");\n"
+                + "}\n}\n";
         String footer = TEST_METHOD_FOOTER;
         footer = footer.replace("{testName}", testName);
 

@@ -30,6 +30,7 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
     private static BrowserDimensions dimensions = null;
     private static final int maxAmountOfTests = 5;
     private static final String DEBUG = "com.vaadin.testbench.debug";
+    private static final String SOFT_FAIL = "com.vaadin.testbench.screenshot.softfail";
 
     protected VaadinTestBase testBase = new VaadinTestBase();
     protected ImageComparison compare = new ImageComparison();
@@ -57,14 +58,6 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
      * @return true, if equals reference image
      */
     public boolean validateScreenshot(String fileId, double d, String identifier) {
-        // Set testCaseName so that we can have unified numbering on
-        // testCases
-        // 1-> per test case instead of 1-> per browser.
-        if (!testCaseName.equals(fileId)) {
-            testCaseName = fileId;
-            imageNumber = 0;
-            softAssert.clear();
-        }
 
         boolean debug = false;
         if ("true".equalsIgnoreCase(System.getProperty(DEBUG))) {
@@ -131,7 +124,7 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
                 // If we find errors in the image take new references x times or
                 // until functional image is found.
                 for (int i = 0; i < maxAmountOfTests; i++) {
-                    pause(10);
+                    pause(5);
 
                     image = selenium.captureScreenshotToString();
 
@@ -181,6 +174,10 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
                 // diff. Should remove some small faults.
                 // result = compare.compareStringImage(image, fileName, d,
                 // dimensions, true);
+                if ("true".equals(System.getProperty(SOFT_FAIL))) {
+                    softAssert.add(e);
+                    result = true;
+                }
                 if (!result) {
                     throw e;
                 }
@@ -192,6 +189,10 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
     }
 
     public void getCanvasPosition() {
+        // clear for new test.
+        imageNumber = 0;
+        softAssert.clear();
+
         BrowserVersion browser = browserUtils.getBrowserVersion(selenium);
 
         // Get sizes for canvas cropping.
@@ -211,6 +212,17 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
             // get canvas width so that it includes mainview scrollbar.
             dimensions.setCanvasWidth(width
                     - (dimensions.getCanvasXPosition() * 2));
+
+            // Print dimensions if debug
+            if ("true".equalsIgnoreCase(System.getProperty(DEBUG))) {
+                System.out.println("availWidth: " + dimensions.getWidth()
+                        + "\navailHeight: " + dimensions.getHeight()
+                        + "\ncanvasWidth: " + dimensions.getCanvasWidth()
+                        + "\ncanvasHeight: " + dimensions.getCanvasHeight()
+                        + "\ncanvasX: " + dimensions.getCanvasXPosition()
+                        + "\ncanvasY: " + dimensions.getCanvasYPosition());
+            }
+
             return;
         }
 
@@ -231,6 +243,16 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
                 dimensions.setCanvasYPosition(y + 1);
                 break;
             }
+        }
+
+        // Print dimensions if debug
+        if ("true".equalsIgnoreCase(System.getProperty(DEBUG))) {
+            System.out.println("availWidth: " + dimensions.getWidth()
+                    + "\navailHeight: " + dimensions.getHeight()
+                    + "\ncanvasWidth: " + dimensions.getCanvasWidth()
+                    + "\ncanvasHeight: " + dimensions.getCanvasHeight()
+                    + "\ncanvasX: " + dimensions.getCanvasXPosition()
+                    + "\ncanvasY: " + dimensions.getCanvasYPosition());
         }
     }
 

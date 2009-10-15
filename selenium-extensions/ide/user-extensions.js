@@ -188,6 +188,9 @@ Recorder.addEventHandler('pressSpecialKey', 'keyup', function(event){
 		case 13:
 			this.log.debug('pressed ENTER!');
 			typeString = "false";
+			if(event.target.nodeName.toLowerCase() == "input"){
+				this.record("pressSpecialKey", this.findLocators(event.target), "enter");
+			}
 			break;
 		case 37: 
 			this.log.debug('pressed LEFT!');
@@ -423,6 +426,8 @@ var counter = 0;
 var closeNotificationRecorded = "false";
 var checkForMouseOver = "false";
 var getTooltip = "false";
+var openNotifications = 0;
+var recordClose = 0;
 
 Recorder.addEventHandler('append', 'DOMNodeInserted', function(event){
 		/* Check inserted node if it's a div */
@@ -432,9 +437,15 @@ Recorder.addEventHandler('append', 'DOMNodeInserted', function(event){
 				var target = this.findLocators(event.target);
 				/* if we found a notification record a closeNotification event */
 				if((new RegExp("Notification")).test(event.target.className)){
-					this.record("closeNotification", target, '0,0');
+					openNotifications++;
+					if(openNotifications > 1){
+						recordClose++;
+					}else{
+						this.record("closeNotification", target, '0,0');
+					}
 					clicked = "false";
 					closeNotificationRecorded = "true";
+					
 				/* if we found a popupPanel enable checking for mouse overs for
 				 * recording MenuBar navigation
 				 */
@@ -451,6 +462,18 @@ Recorder.addEventHandler('append', 'DOMNodeInserted', function(event){
 			}else if((new RegExp("v-tooltip")).test(event.target.className)){
 				/* If we found a v-tooltip enable checking of next mouse out */
 				getTooltip = "true";
+			}
+		}
+	});
+
+Recorder.addEventHandler('remove', 'DOMNodeRemoved', function(event){
+		if(event.target.nodeName.toLowerCase() == "div"){
+			if((new RegExp("Notification")).test(event.target.className)){
+				openNotifications--;
+				if(recordClose > 0){
+					recordClose--;
+					this.record("closeNotification", this.findLocators(event.target), '0,0');
+				}
 			}
 		}
 	});
