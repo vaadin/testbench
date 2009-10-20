@@ -312,14 +312,14 @@ public class TestConverter {
                     }
                     first = false;
                 }
-                // if (firstScreenshot) {
-                // javaSource.append("pause(500);\n");
-                // firstScreenshot = false;
-                // }
-                //
-                // javaSource.append("validateScreenshot(\"" + testName
-                // + "\", 0.025, \"" + identifier + "\");\n");
-                // screenshot = true;
+                if (firstScreenshot) {
+                    javaSource.append("pause(500);\n");
+                    firstScreenshot = false;
+                }
+
+                javaSource.append("validateScreenshot(\"" + testName
+                        + "\", 0.025, \"" + identifier + "\");\n");
+                screenshot = true;
             } else if (command.getCmd().equalsIgnoreCase("pause")) {
                 String identifier = "";
                 boolean first = true;
