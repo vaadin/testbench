@@ -182,7 +182,12 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
                     throw e;
                 }
             } else {
-                throw e;
+                if ("true".equals(System.getProperty(SOFT_FAIL))) {
+                    softAssert.add(e);
+                    result = true;
+                } else {
+                    throw e;
+                }
             }
         }
         return result;

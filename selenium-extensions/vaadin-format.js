@@ -328,8 +328,20 @@ options.header =
 
 options.footer =
 	"\t\tif(!getSoftErrors().isEmpty()){\n"+ 
-    "\t\t\tjunit.framework.Assert.fail(\"Test was missing reference images.\");\n" + 
-    "\t\t}\n" +
+    "\t\t\tbyte[] errors = new byte[2];\n"+
+    "\t\t\tfor(junit.framework.AssertionFailedError afe:getSoftErrors()){\n"+
+    "\t\t\t\tif(afe.getMessage().contains(\"No reference found\")){\n"+
+    "\t\t\t\t\terrors[0] = 1;\n"+
+    "\t\t\t\t}else if(afe.getMessage().contains(\"differs from reference image\")){\n"+
+    "\t\t\t\t\terrors[1] = 1;\n"+
+    "\t\t\t\t}\n\t\t\t}\n"+
+    "\t\t\tif(errors[0] == 1 && errors[1] == 1){\n"+
+    "\t\t\t\tjunit.framework.Assert.fail(\"Test was missing reference images and contained images with differences.\");\n"+
+    "\t\t\t}else if(errors[0] == 1){\n"+
+    "\t\t\t\tjunit.framework.Assert.fail(\"Test was missing reference images.\");\n"+
+    "\t\t\t}else if(errors[1] == 1){\n"+
+    "\t\t\t\tjunit.framework.Assert.fail(\"Test contained differences.\");\n"+
+    "\t\t\t}\n\t\t}\n" +
 	"\t}\n" +
 	"}\n";
 

@@ -1,11 +1,7 @@
 Setting up Firefox for recording a test case
 ============================================
-1. Install Selenium IDE (http://seleniumhq.org/download/) 1.0 beta 2 has been tested.
-2. Open Selenium IDE in Firefox (Tools -> Selenium IDE).
-2. Install Vaadin Selenium Extensions (selenium-extensions) into Selenium IDE. This is done through Options -> Options... in Selenium IDE. Both Core and IDE extensions must be installed.
-3. (Optional) Install Vaadin Java Format for Selenium through Options -> Options... -> Formats -> Add and paste the contents of selenium-extensions/vaadin-format.js into the textarea.
-4. Restart Selenium IDE by closing the window and opening it again (Tools -> Selenium IDE).
-
+1. Install Testbench IDE (inside .zip package)
+2. Open Testbench IDE in FireFox (Tools -> Testbench IDE) and record.
 
 Setting up a test host
 ======================

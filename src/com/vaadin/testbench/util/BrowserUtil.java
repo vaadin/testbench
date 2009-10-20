@@ -59,10 +59,10 @@ public class BrowserUtil {
 
         try {
             int screenHeight = Integer.parseInt(selenium
-                    .getEval("screen.availHeight"));
+                    .getEval("screen.availHeight;"));
             int canvasHeight = getCanvasHeight(selenium);
             int pageYOffset = Integer.parseInt(selenium
-                    .getEval("window.pageYOffset"));
+                    .getEval("window.pageYOffset;"));
 
             return screenHeight - canvasHeight + pageYOffset;
         } catch (Exception e) {

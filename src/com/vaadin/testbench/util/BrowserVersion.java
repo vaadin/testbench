@@ -34,18 +34,34 @@ public class BrowserVersion {
 
         if (userAgent.contains("MSIE")) {
             browserName = "InternetExplorer";
-            versionString = userAgent.substring(userAgent.indexOf("MSIE") + 5);
+            if (userAgent.contains("Trident")) {
+                versionString = "8";
+            } else {
+                versionString = userAgent
+                        .substring(userAgent.indexOf("MSIE") + 5);
+            }
         } else if (userAgent.contains("Opera")) {
             browserName = "Opera";
-            versionString = userAgent.substring(userAgent.indexOf("Opera") + 6);
+            if (userAgent.contains("Version")) {
+                versionString = userAgent.substring(userAgent
+                        .indexOf("Version") + 8);
+            } else {
+                versionString = userAgent
+                        .substring(userAgent.indexOf("Opera") + 6);
+            }
         } else if (userAgent.contains("Chrome")) {
             browserName = "Chrome";
             versionString = userAgent
                     .substring(userAgent.indexOf("Chrome") + 7);
         } else if (userAgent.contains("Safari")) {
             browserName = "Safari";
-            versionString = userAgent
-                    .substring(userAgent.indexOf("Safari") + 7);
+            if (userAgent.contains("Version")) {
+                versionString = userAgent.substring(userAgent
+                        .indexOf("Version") + 8, userAgent.indexOf("Safari"));
+            } else {
+                versionString = userAgent
+                        .substring(userAgent.indexOf("Safari") + 7);
+            }
         } else if (userAgent.contains("Firefox")) {
             browserName = "Firefox";
             versionString = userAgent

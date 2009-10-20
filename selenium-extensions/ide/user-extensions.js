@@ -363,7 +363,7 @@ Recorder.addEventHandler('clickLocator', 'click', function(event){
 	            		this.record_orig("mouseClick", target, x + ',' + y);
 					}
 	            	clicked = "false";
-	            } else if ((new RegExp("button")).test(event.target.className)){
+	            } else if ((new RegExp("v-button")).test(event.target.className)){
 	            	/* A class="v-button" requires a click without mouseDown+mouseUp */
 	            	this.record("click", target, '');
 	            } else if ( x < 0 || y < 0){
