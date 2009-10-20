@@ -2,16 +2,15 @@
 
 <project name="Testbench build" basedir="." default="package">
 	<tstamp />
-	<property name="version" value="${DSTAMP}${TSTAMP}" />
+	<property name="timestamp" value="${DSTAMP}${TSTAMP}" />
+	<property name="version" value="2.0.0.development.${timestamp}" />
 
 	<target name="package">
 		<mkdir dir="output" />
-		<jar jarfile="output/vaadin-testbench-2.0.development-${version}.jar" compress="true">
+		<jar jarfile="output/vaadin-testbench-${version}.jar" compress="true">
 			<manifest>
 				<attribute name="Class-Path" value="junit-4.5.jar selenium-java-client-driver.jar js.jar" />
 			</manifest>
-			<fileset dir="../bin">
-			</fileset>
 			<!--
 			<fileset dir="../lib">
 				<patternset>
@@ -27,7 +26,7 @@
 			<fileset dir="../testbench-ide" includes="build.xml"/>
 		</subant>
 				
-		<zip destfile="output/vaadin-testbench-2.0.development-${version}.zip">
+		<zip destfile="output/vaadin-testbench-${version}.zip">
 			<fileset dir="../doc" includes="INSTALL.TXT" />
 			<fileset dir="output" includes="vaadin-testbench-2.0.development-${version}.jar" />
 			<fileset dir=".." includes="selenium-extensions/**" />
