@@ -3,7 +3,7 @@
 <project name="Example Testing Script" basedir="." default="run-and-clean-up">
 
 	<!-- Host running Testbench RC or Testbench Hub -->
-	<property name="com.vaadin.testbench.tester.host" value="192.168.1.43" />
+	<property name="com.vaadin.testbench.tester.host" value="127.0.0.1" />
 
 	<!-- Base url where the testable application is deployed -->
 	<property name="com.vaadin.testbench.deployment.url" value="http://demo.vaadin.com/" />
@@ -39,7 +39,7 @@
 		</fileset>
 		<pathconvert pathsep=" " property="testfiles" refid="html-test-files" />
 
-		<echo>files: ${testfiles}</echo>
+		<echo>Using test scripts: ${testfiles}</echo>
 		<java classname="com.vaadin.testbench.util.TestConverter" classpathref="classpath">
 			<arg value="${temp-dir}/src" />
 			<arg value="${browsers}" />
@@ -88,11 +88,7 @@
 
 	<!-- Remove temporary source and compiled java files -->
 	<target name="remove-temp-files">
-		<delete>
-			<fileset dir="${temp-dir}">
-				<include name="**/**.java" />
-			</fileset>
-		</delete>
+		<delete dir="${temp-dir}"/>
 	</target>
 
 	<target name="run-and-clean-up" depends="run-tests, remove-temp-files">
