@@ -1,22 +1,34 @@
 <?xml version="1.0"?>
 
 <project name="Example Testing Script" basedir="." default="run-and-clean-up">
-	<!-- Temporary output directory, created and removed by this script -->
-	<property name="test-output-dir" value="../test-output" />
-	<!-- Browsers to use for testing -->
-	<property name="test-browsers" value="firefox,ie" />
-	<!-- Host running Selenium RC -->
-	<property name="test-host" value="192.168.1.122" />
+
+	<!-- Host running Testbench RC or Testbench Hub -->
+	<property name="com.vaadin.testbench.tester.host" value="192.168.1.43" />
+
 	<!-- Base url where the testable application is deployed -->
-	<property name="test-deployment-url" value="http://192.168.1.235:8080/" />
+	<property name="com.vaadin.testbench.deployment.url" value="http://demo.vaadin.com/" />
+
+	<!-- Browsers to use for testing -->
+	<!--<property name="browsers" value="ie,firefox,safari,opera,googlechrome" />-->
+	<property name="browsers" value="ie,firefox" />
+
+	<!-- Temporary output directory, created and removed by this script -->
+	<property name="temp-dir" value="temp-dir" />
+
+	<!-- Base directory for screenshots. References are stored in reference/, errors in error/ -->
+	<property name="com.vaadin.testbench.screenshot.directory" value="screenshots" />
 
 	<!-- classpath must include test bench jar and its dependencies -->
 	<path id="classpath">
-		<fileset dir="lib" includes="**/*.jar" />
+		<fileset dir="../lib" includes="**/*.jar" />
+		<fileset dir=".." includes="vaadin-testbench-*.jar" />
+
+		<!-- For development environment compatibility only -->
+		<path location="../bin" />
 	</path>
 
 	<!-- fileset containing all tests to run -->
-	<fileset dir="tests" id="html-test-files">
+	<fileset dir="testscripts" id="html-test-files">
 		<include name="*.html" />
 	</fileset>
 
@@ -27,17 +39,25 @@
 		</fileset>
 		<pathconvert pathsep=" " property="testfiles" refid="html-test-files" />
 
+		<echo>files: ${testfiles}</echo>
 		<java classname="com.vaadin.testbench.util.TestConverter" classpathref="classpath">
-			<arg value="${test-output-dir}/src" />
-			<arg value="${test-browsers}" />
+			<arg value="${temp-dir}/src" />
+			<arg value="${browsers}" />
 			<arg line="${testfiles}" />
 		</java>
 	</target>
 
+	<!-- Remove old error screenshots. -->
+	<target name="remove-error-screens">
+		<delete dir="${com.vaadin.testbench.screenshot.directory}/errors" failonerror="false"/>
+		<mkdir dir="${com.vaadin.testbench.screenshot.directory}/errors" />
+	</target>
+
+
 	<!-- This target complies the generated java junit tests. -->
 	<target name="compile-tests" depends="create-tests">
-		<mkdir dir="${test-output-dir}/classes" />
-		<javac srcdir="${test-output-dir}/src" destdir="${test-output-dir}/classes" debug="on">
+		<mkdir dir="${temp-dir}/classes" />
+		<javac srcdir="${temp-dir}/src" destdir="${temp-dir}/classes" debug="on">
 			<classpath>
 				<path refid="classpath" />
 			</classpath>
@@ -46,18 +66,19 @@
 
 
 	<!-- This target runs the generated and compiled junit tests -->
-	<target name="run-tests" depends="compile-tests">
+	<target name="run-tests" depends="compile-tests, remove-error-screens">
 		<junit fork="yes" printsummary="yes">
 			<classpath>
 				<path refid="classpath" />
-				<pathelement path="${test-output-dir}/classes" />
+				<pathelement path="${temp-dir}/classes" />
 			</classpath>
 
-			<jvmarg value="-Dcom.vaadin.testbench.tester.host=${test-host}" />
-			<jvmarg value="-Dcom.vaadin.testbench.deployment.url=${test-deployment-url}" />
+			<jvmarg value="-Dcom.vaadin.testbench.tester.host=${com.vaadin.testbench.tester.host}" />
+			<jvmarg value="-Dcom.vaadin.testbench.deployment.url=${com.vaadin.testbench.deployment.url}" />
+			<jvmarg value="-Dcom.vaadin.testbench.screenshot.directory=${com.vaadin.testbench.screenshot.directory}" />
 
 			<batchtest>
-				<fileset dir="${test-output-dir}/src">
+				<fileset dir="${temp-dir}/src">
 					<include name="**/**.java" />
 				</fileset>
 			</batchtest>
@@ -68,7 +89,7 @@
 	<!-- Remove temporary source and compiled java files -->
 	<target name="remove-temp-files">
 		<delete>
-			<fileset dir="${test-output-dir}">
+			<fileset dir="${temp-dir}">
 				<include name="**/**.java" />
 			</fileset>
 		</delete>

@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head profile="http://selenium-ide.openqa.org/profiles/test-case">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="selenium.base" href="http://demo.vaadin.com/" />
+<title>demo.vaadin.com</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">demo.vaadin.com</td></tr>
+</thead><tbody>
+<!--A test case that clicks through the demos at http://demo.vaadin.com/6.1.2. -->
+<!--Note that the reference images created during the first run might be incomplete if the browsers did not have enough time to load all CSS files. -->
+<!--Subsequent runs will produce correct images. -->
+<!--First we open http://demo.vaadin.com/6.1.2 -->
+<tr>
+	<td>openAndWait</td>
+	<td>/6.1.2/</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForVaadin</td>
+	<td></td>
+	<td></td>
+</tr>
+<!--Click the VaadinTunes link, wait for it to load and grab a screenshot-->
+<tr>
+	<td>mouseClickAndWait</td>
+	<td>link=VaadinTunes – advanced layout &amp; theme</td>
+	<td>134,11</td>
+</tr>
+<tr>
+	<td>waitForVaadin</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>screenCapture</td>
+	<td></td>
+	<td></td>
+</tr>
+<!--Go back to /6.1.2, click the Reindeer theme demo link and grab a screenshot-->
+<tr>
+	<td>openAndWait</td>
+	<td>/6.1.2/</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForVaadin</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>mouseClickAndWait</td>
+	<td>link=Reindeer theme – see available styles</td>
+	<td>88,9</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForVaadin</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>screenCapture</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForVaadin</td>
+	<td></td>
+	<td></td>
+</tr>
+<!--Go back to /6.1.2 and open the Calculator demo-->
+<tr>
+	<td>openAndWait</td>
+	<td>/6.1.2/</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForVaadin</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>mouseClickAndWait</td>
+	<td>link=Calculator</td>
+	<td>49,2</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForVaadin</td>
+	<td></td>
+	<td></td>
+</tr>
+<!--Click 1 + 1-->
+<tr>
+	<td>click</td>
+	<td>vaadin=612Calc::/VGridLayout[0]/AbsolutePanel[0]/ChildComponentContainer[8]/VButton[0]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForVaadin</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>vaadin=612Calc::/VGridLayout[0]/AbsolutePanel[0]/ChildComponentContainer[15]/VButton[0]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForVaadin</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>vaadin=612Calc::/VGridLayout[0]/AbsolutePanel[0]/ChildComponentContainer[8]/VButton[0]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForVaadin</td>
+	<td></td>
+	<td></td>
+</tr>
+<!--Click = to get the result-->
+<tr>
+	<td>click</td>
+	<td>vaadin=612Calc::/VGridLayout[0]/AbsolutePanel[0]/ChildComponentContainer[13]/VButton[0]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForVaadin</td>
+	<td></td>
+	<td></td>
+</tr>
+<!--Make sure the result of 1+1 is 2.0-->
+<tr>
+	<td>assertText</td>
+	<td>vaadin=612Calc::/VGridLayout[0]/AbsolutePanel[0]/ChildComponentContainer[16]/VLabel[0]</td>
+	<td>2.0</td>
+</tr>
+
+</tbody></table>
+</body>
+</html>
