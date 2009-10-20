@@ -1,0 +1,28 @@
+./chrome/content/
+
+recorder-handlers.js
+[contains Recorder.addEventHandlers from IDE extensions]
+
+locatorBuilders.js
+[contains getVaadinConnector, LocatorBuilders('vaadin') and LocatorBuilders.order from IDE]
+
+commandBuilder.js
+[contains screenCapture 'action' from IDE]
+
+recorder.js
+[contains protoypes for {record_orig, record} from IDE]
+
+selenium-ide.xul
+selenium-ide-sidebar.xul
+[define selenium ide window (Select button)]
+
+editor.js
+[DEFAULT_TITLE is the title shown after something is recorded]
+
+./chrome/content/selenium/scripts/
+
+selenium-api.js
+[contains Selenium.prototype.doXYZ from core extensions]
+
+selenium-browserbot.js
+[contains locateElementByVaadin from core extensions]

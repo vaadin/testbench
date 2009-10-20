@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+
+<project name="Testbench IDE extension" basedir="." default="extension">
+	<tstamp />
+	<property name="version" value="${DSTAMP}${TSTAMP}" />
+
+	<target name="selenium-ide-package">
+		<jar jarfile="chrome/selenium-ide.jar" compress="true">
+			<manifest>
+				<attribute name="Class-Path" value="" />
+			</manifest>
+			<fileset dir="chrome" excludes="selenium-ide.jar">
+			</fileset>
+			<!--
+			<fileset dir="../lib">
+				<patternset>
+					<exclude name="*-src.jar" />
+					<exclude name="*-sources.jar" />
+				</patternset>
+			</fileset>
+			-->
+		</jar>
+	</target>
+
+	<target name="extension" depends="selenium-ide-package">
+		<mkdir dir="extension" />
+		<zip destfile="extension/Testbench-ide.xpi">
+			<fileset dir="." includes="chrome/selenium-ide.jar" />
+			<fileset dir="." includes="components/**/**" />
+			<fileset dir="." includes="content-files/**/**" />
+			<fileset dir="." includes="chrome.manifest"/>
+			<fileset dir="." includes="install.rdf"/>
+		</zip>
+	</target>
+
+</project>
