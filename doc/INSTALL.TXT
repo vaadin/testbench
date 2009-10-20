@@ -10,16 +10,19 @@ Setting up a test host
 3. Start the Selenium Server using the "-userExtensions path-to-extensionsjs/user-extensions.js" parameter, e.g.
 "C:\Program Files\Java\jre6\bin\java.exe" -jar c:\selenium\selenium-remote-control-1.0-beta-2\selenium-server-1.0-beta-2\selenium-server.jar -userExtensions C:\selenium\user-extensions.js"
 
-Disable error reporting in case Internet Explorer decides to crash:
+Make sure the size of a maximized window will always be the same.
+- In windows: Do not use the auto-hide function of the toolbar. It will popup up and down when least expected. 
+  Note that locking the toolbar will change the resolution of the browser so either lock it or keep it unlocked 
+  but changing it will require regeneration of screenshots.
+
+Disable error reporting in case Internet Explorer (or another browser) crashes:
 1. Open control panel -> System
 2. Select the "Advanced" tab
 3. Select "Error reporting"
 4. Make sure "Disable error reporting" is selected
 5. Make sure the "But notify me when critical errors occur" is not checked
 
-Turn off automatic updates:
-1. 
-2. 
+Turn off all software that may unexpectedly pop up new windows.
 
 Turn off popup blockers in all browsers
 - Internet Explorer: Tools -> Pop-up blocker -> Turn Off Pop-up Blocker
