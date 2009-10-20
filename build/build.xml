@@ -23,6 +23,9 @@
 			<manifest>
 				<attribute name="Class-Path" value="junit-4.5.jar selenium-java-client-driver.jar js.jar" />
 			</manifest>
+			<fileset dir="../src">
+				<include name="**/**.js" />
+			</fileset>
 			<fileset dir="result/classes">
 				<include name="**/**" />
 			</fileset>
