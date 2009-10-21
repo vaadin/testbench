@@ -420,6 +420,14 @@ var clicked = "false";
 Recorder.addEventHandler('clickLocator', 'click', function(event){
 		charBuffer = "";
 		
+		if(Recorder.changeSelection=="true"){
+			var target = this.findLocator(event.target);
+			window.editor.treeView.updateCurrentCommand('target', target);
+			document.getElementById('commandTarget').value=target;
+			Recorder.changeSelection="false";
+			return;
+		}
+		
 		/* record mouse click if left button clicked and so select has been made */
 		if (event.button == 0 && noSelection == "true") {
             var x = event.clientX - editor.seleniumAPI.Selenium.prototype.getElementPositionLeft(event.target);
@@ -484,7 +492,7 @@ Recorder.addEventHandler('clickLocator', 'click', function(event){
 	            		this.record_orig("mouseClick", target, x + ',' + y);
 					}
 	            	clicked = "false";
-	            } else if ((new RegExp("v-button")).test(event.target.className)){
+	            } else if ((new RegExp("v-button")).test(event.target.className) && event.target.type != "button"){
 	            	/* A class="v-button" requires a click without mouseDown+mouseUp */
 	            	this.record("click", target, '');
 	            } else if ( x < 0 || y < 0){

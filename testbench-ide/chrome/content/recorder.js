@@ -22,6 +22,8 @@ function Recorder(window) {
     this.registerUnloadListener();
 }
 
+Recorder.changeSelection = "false";
+
 Recorder.WINDOW_RECORDER_PROPERTY = "_Selenium_IDE_Recorder";
 
 Recorder.log = new Log("Recorder");

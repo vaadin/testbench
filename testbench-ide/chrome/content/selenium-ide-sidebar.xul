@@ -114,7 +114,7 @@ limitations under the License.
 		    <hbox flex="1">
 		      <textbox flex="1" disabled="true" id="commandTarget" oninput="window.editor.treeView.updateCurrentCommand('target', window.editor.treeView.decodeText(this.value))" autocompletesearch="selenium-ide-generic" enablehistory="true" forcecomplete="true" tabscrolling="true" type="autocomplete" showcommentcolumn="true" />
 		      <button label="&findTarget.label;" oncommand="window.editor.selDebugger.showElement(document.getElementById('commandTarget').value)"/>
-			      <button label="&selectTarget.label;" oncommand="window.editor.treeView.updateCurrentCommand('target', 'hello'); document.getElementById('commandTarget').value='hello';"/>
+			  <button label="&selectTarget.label;" oncommand="Recorder.changeSelection='true'"/><!--window.editor.treeView.updateCurrentCommand('target', 'hello'); document.getElementById('commandTarget').value='hello';"/>-->
 		    </hbox>
 		  </row>
 		  <row align="center">
