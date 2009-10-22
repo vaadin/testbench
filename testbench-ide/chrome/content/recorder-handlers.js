@@ -422,9 +422,12 @@ Recorder.addEventHandler('clickLocator', 'click', function(event){
 		
 		if(Recorder.changeSelection=="true"){
 			var target = this.findLocator(event.target);
+			// Update target for current command
 			window.editor.treeView.updateCurrentCommand('target', target);
+			// Update new target value to textfield
 			document.getElementById('commandTarget').value=target;
-			Recorder.changeSelection="false";
+			// Set changeSelection to false
+			Recorder.reSelectTarget();
 			return;
 		}
 		

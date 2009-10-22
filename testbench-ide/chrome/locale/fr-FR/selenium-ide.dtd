@@ -20,6 +20,7 @@
 <!ENTITY recordButton.tooltip "Enregistrer">
 <!ENTITY baseURL.label "Base URL">
 <!ENTITY baseURLTextbox.tooltip "Saisissez l'URL du site que vous testez. Utilis&#233;e pour ex&#233;cuter la commande &quot;open&quot;.">
+<!ENTITY selectButton.tooltip "Sélectionnez nouvelle cible pour la commande sélectionnée.">
 
 <!ENTITY selenium-ide.sidebar.title "Testbench IDE">
 

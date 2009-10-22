@@ -24,6 +24,22 @@ function Recorder(window) {
 
 Recorder.changeSelection = "false";
 
+/* Function for enabling selecting new target to a command */
+Recorder.reSelectTarget = function(){
+	if(this.changeSelection == "false"){
+		this.changeSelection = "true";
+		document.getElementById('selectButton').style.color="green";
+		document.getElementById('selectButton').style.fontWeight="bold";
+		if(!document.getElementById('record-button').checked){
+			document.getElementById('record-button').click();
+		}
+	}else{
+		this.changeSelection = "false";
+		document.getElementById('selectButton').style.color="black";
+		document.getElementById('selectButton').style.fontWeight="normal";
+	}
+}
+
 Recorder.WINDOW_RECORDER_PROPERTY = "_Selenium_IDE_Recorder";
 
 Recorder.log = new Log("Recorder");

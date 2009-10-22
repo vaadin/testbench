@@ -20,6 +20,7 @@
 <!ENTITY recordButton.tooltip "テストの記録">
 <!ENTITY baseURL.label "Base URL">
 <!ENTITY baseURLTextbox.tooltip "テストを実施するWebサイトの URL を入力してください。&quot;open&quot; コマンドの実行に使われます。">
+<!ENTITY selectButton.tooltip "新しいターゲットを選ぶ。">
 
 <!ENTITY selenium-ide.sidebar.title "Testbench IDE">
 

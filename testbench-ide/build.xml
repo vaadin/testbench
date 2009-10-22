@@ -5,6 +5,7 @@
 	<property name="version" value="${DSTAMP}${TSTAMP}" />
 
 	<target name="selenium-ide-package">
+		<copy file="../selenium-extensions/vaadin-format.js" tofile="chrome/content/formats/vaadin-format.js"/>
 		<jar jarfile="chrome/selenium-ide.jar" compress="true">
 			<manifest>
 				<attribute name="Class-Path" value="" />
