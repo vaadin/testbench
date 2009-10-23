@@ -456,7 +456,12 @@ Recorder.addEventHandler('clickLocator', 'click', function(event){
             	}
             }
             
-			var clickable = this.findClickableElement(event.target);
+             /* Check if label has a for attribute and skip click as it will call on another element that will create a click */
+            if(event.target.hasAttribute("for")){
+            	return;
+            }
+
+            var clickable = this.findClickableElement(event.target);
 			if (clickable) {
 	            if (this.mouseoverLocator) {
 	                this.record('mouseOver', this.mouseoverLocator, '');

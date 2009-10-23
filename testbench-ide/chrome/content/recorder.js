@@ -23,6 +23,7 @@ function Recorder(window) {
 }
 
 Recorder.changeSelection = "false";
+var enabledRecording = "false";
 
 /* Function for enabling selecting new target to a command */
 Recorder.reSelectTarget = function(){
@@ -32,11 +33,16 @@ Recorder.reSelectTarget = function(){
 		document.getElementById('selectButton').style.fontWeight="bold";
 		if(!document.getElementById('record-button').checked){
 			document.getElementById('record-button').click();
+			enabledRecording = "true";
 		}
 	}else{
 		this.changeSelection = "false";
 		document.getElementById('selectButton').style.color="black";
 		document.getElementById('selectButton').style.fontWeight="normal";
+		if(enabledRecording == "true"){
+			document.getElementById('record-button').click();
+			enabledRecording = "false";
+		}
 	}
 }
 

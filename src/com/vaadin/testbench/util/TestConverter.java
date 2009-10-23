@@ -81,12 +81,15 @@ public class TestConverter {
             try {
                 String browserId = knownBrowsers.get(browser.toLowerCase());
                 if (browserId == null) {
-                    System.err.println("Warning: Unknown browser: " + browser);
-                    if (browser.contains("Opera")) {
+                    // System.err.println("Warning: Unknown browser: " +
+                    // browser);
+                    if (browser.contains("Opera") || browser.contains("opera")) {
                         isOpera = true;
-                    } else if (browser.contains("Safari")) {
+                    } else if (browser.contains("Safari")
+                            || browser.contains("safari")) {
                         isSafari = true;
-                    } else if (browser.contains("Google")) {
+                    } else if (browser.contains("Google")
+                            || browser.contains("google")) {
                         isChrome = true;
                     }
                 } else {

@@ -11,6 +11,7 @@ commandBuilder.js
 
 recorder.js
 [contains protoypes for {record_orig, record} from IDE]
+[Linking functions for Select button]
 
 selenium-ide.xul
 selenium-ide-sidebar.xul
