@@ -469,6 +469,25 @@ public class TestConverter {
                 javaSource.append("assertTrue(\"Could not find: " + identifier
                         + "\", selenium.isTextPresent(\"" + identifier
                         + "\"));\n");
+            } else if (command.getCmd().equalsIgnoreCase("showTooltip")) {
+                String locator = "";
+                String value = "";
+                boolean first = true;
+                for (String param : command.getParams()) {
+                    if (first) {
+                        /* get locator */
+                        locator = param.replace("\\", "\\\\");
+                    } else {
+                        /* get characters */
+                        value = param;
+                    }
+
+                    first = false;
+                }
+
+                javaSource.append("doCommand(\"showTooltip\",new String[] {\""
+                        + locator + "\", \"" + value + "\"});\n");
+                javaSource.append("pause(700);\n");
             } else {
                 javaSource.append("doCommand(\"");
                 javaSource.append(command.getCmd());

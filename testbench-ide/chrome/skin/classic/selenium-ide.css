@@ -183,6 +183,12 @@ toolbarbutton.icon label {
 #rollup-button[disabled="true"] {
     list-style-image: url("spiral_disabled.png");
 }
+#tooltip-button:not([checked="true"]) {
+	list-style-image: url("tooltip_disabled.png");
+}
+#tooltip-button[checked="true"] {
+	list-style-image: url("tooltip.png");
+}
 
 tab label { 
   font-size: 8.5pt;

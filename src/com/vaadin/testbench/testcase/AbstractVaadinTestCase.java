@@ -75,9 +75,11 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
         // setup filename
         String fileName = "";
         if (identifier == null || identifier.length() < 1) {
-            fileName = fileId + "_" + navigatorId + "_" + ++imageNumber;
+            fileName = fileId + "_" + browser.getPlatform() + "_" + navigatorId
+                    + "_" + ++imageNumber;
         } else {
-            fileName = fileId + "_" + navigatorId + "_" + identifier;
+            fileName = fileId + "_" + browser.getPlatform() + "_" + navigatorId
+                    + "_" + identifier;
         }
 
         String image = selenium.captureScreenshotToString();
@@ -124,7 +126,7 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
                 // If we find errors in the image take new references x times or
                 // until functional image is found.
                 for (int i = 0; i < maxAmountOfTests; i++) {
-                    pause(5);
+                    pause(10);
 
                     image = selenium.captureScreenshotToString();
 

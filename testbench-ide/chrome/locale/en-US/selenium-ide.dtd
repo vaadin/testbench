@@ -17,6 +17,7 @@
 <!ENTITY pauseButton.tooltip "Pause / Resume">
 <!ENTITY stepButton.tooltip "Step">
 <!ENTITY testrunnerButton.tooltip "Play with Selenium TestRunner">
+<!ENTITY tooltipButton.tooltip "Record a tooltip">
 <!ENTITY recordButton.tooltip "Record">
 <!ENTITY baseURL.label "Base URL">
 <!ENTITY baseURLTextbox.tooltip "Enter the URL of the website you are testing. Used for playing &quot;open&quot; command.">

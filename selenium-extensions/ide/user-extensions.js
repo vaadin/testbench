@@ -443,7 +443,7 @@ Recorder.addEventHandler('append', 'DOMNodeInserted', function(event){
 				/* if we found a notification record a closeNotification event */
 				if((new RegExp("Notification")).test(event.target.className)){
 					openNotifications++;
-					if(openNotifications > 1){
+					if(openNotifications > 1 || getTooltip == "true"){
 						recordClose++;
 					}else{
 						this.record("closeNotification", target, '0,0');
@@ -498,9 +498,11 @@ Recorder.addEventHandler('mouseOutEvent', 'mouseout', function(event){
 		/* If tooltip has been shown record tooltip event */
 		if(getTooltip == "true"){
 			getTooltip = "false";
-			var target = this.findLocators(event.target);
-			this.record_orig("mouseOver", target, '');
-			this.record("pause", "600", '');
+			if(Recorder.recordTooltip == "true"){
+				var target = this.findLocators(event.target);
+				this.record("showTooltip", target, '0,0');
+				document.getElementById('tooltip-button').click();
+			}
 		}
 	});
 

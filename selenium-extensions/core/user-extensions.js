@@ -165,3 +165,10 @@ Selenium.prototype.doMouseClick = function(locator, value){
 Selenium.prototype.doCloseNotification = function(locator, value){
 	this.doMouseClick(locator, value);
 };
+
+Selenium.prototype.doShowTooltip = function(locator, value){
+	var element = this.browserbot.findElement(locator);
+	var clientXY = getClientXY(element, value);
+
+	this.browserbot.triggerMouseEvent(element, 'mouseover', true, clientXY[0], clientXY[1]);
+}

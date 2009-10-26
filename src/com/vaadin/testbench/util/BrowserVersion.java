@@ -7,6 +7,7 @@ public class BrowserVersion {
     private String browserName = "";
     private String fullVersion;
     private String majorVersion;
+    private String platform = "Other";
 
     public BrowserVersion(String userAgent) {
         setFromUserAgent(userAgent);
@@ -89,6 +90,15 @@ public class BrowserVersion {
         } else {
             majorVersion = fullVersion;
         }
+
+        if (userAgent.contains("Windows")) {
+            platform = "Windows";
+        } else if (userAgent.contains("Macintosh")) {
+            platform = "Mac";
+        } else if (userAgent.contains("Linux")) {
+            platform = "Linux";
+        }
+
     }
 
     public String getIdentifier() {
@@ -97,5 +107,9 @@ public class BrowserVersion {
 
     public boolean isIE() {
         return browserName.equals("InternetExplorer");
+    }
+
+    public String getPlatform() {
+        return platform;
     }
 }
