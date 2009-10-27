@@ -67,15 +67,14 @@
 			<fileset dir=".." includes="example/test.xml" />
 <!--			<fileset dir=".." includes="example/tests/**" />-->
 		</zip>
-		<zip destfile="${output.dir}/vaadin-testbench-grid-hub.zip">
-			<fileset dir="../testbench-grid/hub" includes="hub hub.bat grid_configuration.yml" />
-			<fileset dir="../testbench-grid/hub/target/dist/lib" includes="**standalone*.jar" />
-		</zip>
-		<zip destfile="${output.dir}/vaadin-testbench-grid-remote-control.zip">
-			<fileset dir="../testbench-grid/remote-control" includes="rc rc.bat" />
-			<fileset dir="../testbench-grid/remote-control/target/dist/lib" includes="**standalone*.jar" />
-			<fileset dir="../testbench-grid/vendor" includes="selenium-server*.jar" />
-			<fileset dir="../selenium-extensions/core" includes="user-extensions.js" />
+		<zip destfile="${output.dir}/vaadin-testbench-grid.zip">
+			<zipfileset dir="../testbench-grid/hub" includes="hub hub.bat grid_configuration.yml" prefix="hub" />
+			<zipfileset dir="../testbench-grid/hub/target/dist/lib" includes="**standalone*.jar" prefix="hub/lib" />
+			
+			<zipfileset dir="../testbench-grid/remote-control" includes="rc rc.bat" prefix="remote-control" />
+			<zipfileset dir="../testbench-grid/remote-control/target/dist/lib" includes="**standalone*.jar" prefix="remote-control/lib" />
+			<zipfileset dir="../testbench-grid/vendor" includes="selenium-server*.jar" prefix="remote-control/lib" />
+			<zipfileset dir="../selenium-extensions/core" includes="user-extensions.js" prefix="remote-control" />
 		</zip>
 	</target>
 

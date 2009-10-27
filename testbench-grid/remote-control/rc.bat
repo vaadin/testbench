@@ -1,7 +1,7 @@
 @echo off
 setlocal enableextensions enabledelayedexpansion
 
-set cpVars=selenium-server-1.0.1.jar;selenium-grid-remote-control-standalone-ITMill_TestBench.jar
+set cpVars=lib\selenium-server-1.0.1.jar;lib\selenium-grid-remote-control-standalone-ITMill_TestBench.jar
 
 set HOST=192.168.56.1
 set HUBURL=http://192.168.56.1:4444
