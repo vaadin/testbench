@@ -40,7 +40,24 @@
 		<copy file="../testbench-ide/extension/Testbench-ide.xpi" todir="${output.dir}/testbench-ide" />
 	</target>
 
-	<target name="testbench-distribution-package" depends="testbench.jar,testbench-ide">
+	<target name="testbench-grid">
+		<subant target="dist">
+			<fileset dir="../testbench-grid/infrastructure/core" includes="build.xml" />
+		</subant>
+		<subant target="package-standalone">
+			<fileset dir="../testbench-grid/infrastructure/webserver" includes="build.xml" />
+		</subant>
+		<parallel>
+			<subant target="package-standalone">
+				<fileset dir="../testbench-grid/hub" includes="build.xml" />
+			</subant>
+			<subant target="package-standalone">
+				<fileset dir="../testbench-grid/remote-control" includes="build.xml" />
+			</subant>
+		</parallel>
+	</target>
+	
+	<target name="testbench-distribution-package" depends="testbench.jar,testbench-ide,testbench-grid">
 		<zip destfile="${output.dir}/vaadin-testbench-${version}.zip">
 			<fileset dir="../doc" includes="INSTALL.TXT" />
 			<fileset dir="${output.dir}" includes="vaadin-testbench-${version}.jar" />
@@ -49,6 +66,16 @@
 			<fileset dir=".." includes="lib/commons-io-* lib/commons-codec-* lib/js.jar lib/junit*.jar lib/selenium-java-client*" excludes="lib/**-source* lib/**-src*" />
 			<fileset dir=".." includes="example/test.xml" />
 <!--			<fileset dir=".." includes="example/tests/**" />-->
+		</zip>
+		<zip destfile="${output.dir}/vaadin-testbench-grid-hub.zip">
+			<fileset dir="../testbench-grid/hub" includes="hub hub.bat grid_configuration.yml" />
+			<fileset dir="../testbench-grid/hub/target/dist/lib" includes="**standalone*.jar" />
+		</zip>
+		<zip destfile="${output.dir}/vaadin-testbench-grid-remote-control.zip">
+			<fileset dir="../testbench-grid/remote-control" includes="rc rc.bat" />
+			<fileset dir="../testbench-grid/remote-control/target/dist/lib" includes="**standalone*.jar" />
+			<fileset dir="../testbench-grid/vendor" includes="selenium-server*.jar" />
+			<fileset dir="../selenium-extensions/core" includes="user-extensions.js" />
 		</zip>
 	</target>
 

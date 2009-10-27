@@ -295,6 +295,16 @@ function formatComment(comment) {
 				+ "//Remove this for Opera\nselenium.click(\"" + locator + "\", \"" + value + "\");\n";
 		
 		return result;
+    }else if (comment.comment.match(/^selenium\.showTooltip/)){
+    	var parameters = comment.comment.substring(comment.comment.indexOf("\"")+1);
+		var locator = parameters.substring(0, parameters.indexOf("\""));
+		parameters = parameters.substring(parameters.indexOf("\"")+1);
+		var value = parameters.substring(parameters.indexOf("\"")+1, parameters.lastIndexOf("\""));
+
+		var result = "doCommand(\"showTooltip\",new String[] {\""
+                + locator + "\", \"" + value + "\"});\n"
+				+ "pause(700);\n";
+		return result;
     }
 	
 	return comment.comment.replace(/.+/mg, function(str) {

@@ -1,0 +1,251 @@
+package com.thoughtworks.selenium.grid.hub.remotecontrol;
+
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import com.thoughtworks.selenium.grid.hub.Environment;
+import com.thoughtworks.selenium.grid.hub.NoSuchEnvironmentException;
+
+/**
+ * Monolithic Remote Control Pool keeping track of all environment and all
+ * sessions.
+ */
+public class GlobalRemoteControlPool implements DynamicRemoteControlPool {
+
+    private static final Log LOGGER = LogFactory
+            .getLog(GlobalRemoteControlPool.class);
+    private final Map<String, RemoteControlProxy> remoteControlsBySessionIds;
+    private final Map<String, RemoteControlProvisioner> provisionersByEnvironment;
+    private final Map<String, RemoteControlProvisioner> provisionersByHash;
+    private final List<Integer> remoteControlInUse;
+    private Random rnd;
+
+    public GlobalRemoteControlPool() {
+        remoteControlsBySessionIds = new HashMap<String, RemoteControlProxy>();
+        provisionersByEnvironment = new HashMap<String, RemoteControlProvisioner>();
+        provisionersByHash = new HashMap<String, RemoteControlProvisioner>();
+        remoteControlInUse = new LinkedList<Integer>();
+        rnd = new Random(System.currentTimeMillis());
+    }
+
+    public void register(List<RemoteControlProxy> newRemoteControl) {
+        for (RemoteControlProxy RCProxy : newRemoteControl) {
+            register(RCProxy);
+        }
+    }
+
+    public void register(RemoteControlProxy newRemoteControl) {
+        final RemoteControlProvisioner provisioner;
+
+        // synchronized(provisionersByEnvironment) {
+        // if (null == getProvisioner(newRemoteControl.environment())) {
+        // createNewProvisionerForEnvironment(newRemoteControl.environment());
+        // }
+        // provisioner = getProvisioner(newRemoteControl.environment());
+        // provisioner.add(newRemoteControl);
+        // }
+        synchronized (provisionersByHash) {
+            if (null == getProvisioner(newRemoteControl.hashCode())) {
+                createNewProvisionerForHash(newRemoteControl.hashCode());
+            }
+            provisioner = getProvisioner(newRemoteControl.hashCode());
+            provisioner.add(newRemoteControl);
+        }
+    }
+
+    public boolean unregister(List<RemoteControlProxy> remoteControlList) {
+        boolean status = false;
+
+        for (RemoteControlProxy RCP : remoteControlList) {
+            status = unregister(RCP);
+        }
+
+        return status;
+    }
+
+    public boolean unregister(RemoteControlProxy remoteControl) {
+
+        boolean status = false;
+
+        // synchronized(provisionersByEnvironment) {
+        // synchronized (remoteControlsBySessionIds) {
+        // status =
+        // getProvisioner(remoteControl.environment()).remove(remoteControl);
+        // if (remoteControlsBySessionIds.containsValue(remoteControl)) {
+        // removeFromSessionMap(remoteControl);
+        // }
+        // for(List<RemoteControlProxy> RCList: remoteControls){
+        // if(RCList.contains(remoteControl)){
+        // remoteControls.remove(RCList);
+        // break;
+        // }
+        // }
+        // }
+        // }
+        try {
+            synchronized (provisionersByHash) {
+                synchronized (remoteControlsBySessionIds) {
+                    status = getProvisioner(remoteControl.hashCode()).remove(
+                            remoteControl);
+                    if (remoteControlsBySessionIds.containsValue(remoteControl)) {
+                        removeFromSessionMap(remoteControl);
+                    }
+                }
+            }
+        } catch (NullPointerException npe) {
+            LOGGER.debug("RemoteController not registered for hub");
+        }
+
+        return status;
+    }
+
+    public RemoteControlProxy reserve(Environment environment) {
+        final RemoteControlProvisioner provisioner;
+
+        provisioner = getProvisioner(environment.name());
+        if (null == provisioner) {
+            throw new NoSuchEnvironmentException(environment.name());
+        }
+
+        RemoteControlProxy reserved = provisioner.reserve(environment.name());
+        return reserved;
+    }
+
+    public void associateWithSession(RemoteControlProxy remoteControl,
+            String sessionId) {
+        LOGGER.info("Associating session id='" + sessionId + "' =>"
+                + remoteControl + " for environment "
+                + remoteControl.environment());
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Asssociating " + sessionId + " => " + remoteControl);
+        }
+        synchronized (remoteControlsBySessionIds) {
+            if (remoteControlsBySessionIds.containsKey(sessionId)) {
+                throw new IllegalStateException("Session '" + sessionId
+                        + "' is already asssociated with "
+                        + remoteControlsBySessionIds.get(sessionId));
+            }
+            synchronized (remoteControlsBySessionIds) {
+                remoteControlsBySessionIds.put(sessionId, remoteControl);
+            }
+        }
+        if (LOGGER.isDebugEnabled()) {
+            logSessionMap();
+        }
+    }
+
+    public RemoteControlProxy retrieve(String sessionId) {
+        return getRemoteControlForSession(sessionId);
+    }
+
+    public void release(RemoteControlProxy remoteControl) {
+        getProvisioner(remoteControl.hashCode()).release(remoteControl);
+    }
+
+    public void releaseForSession(String sessionId) {
+        LOGGER.info("Releasing pool for session id='" + sessionId + "'");
+
+        final RemoteControlProxy remoteControl;
+        remoteControl = getRemoteControlForSession(sessionId);
+
+        synchronized (remoteControlsBySessionIds) {
+            remoteControlsBySessionIds.remove(sessionId);
+        }
+        getProvisioner(remoteControl.environment()).release(remoteControl);
+    }
+
+    public List<RemoteControlProxy> availableRemoteControls() {
+        final List<RemoteControlProxy> availableRemoteControls;
+
+        availableRemoteControls = new LinkedList<RemoteControlProxy>();
+        synchronized (provisionersByHash) {
+            for (RemoteControlProvisioner provisioner : provisionersByHash
+                    .values()) {
+                availableRemoteControls.addAll(provisioner
+                        .availableRemoteControls());
+            }
+        }
+        return availableRemoteControls;
+    }
+
+    public List<RemoteControlProxy> reservedRemoteControls() {
+        final List<RemoteControlProxy> reservedRemoteControls;
+
+        reservedRemoteControls = new LinkedList<RemoteControlProxy>();
+        synchronized (provisionersByHash) {
+            for (RemoteControlProvisioner provisioner : provisionersByHash
+                    .values()) {
+                reservedRemoteControls.addAll(provisioner
+                        .reservedRemoteControls());
+            }
+        }
+        return reservedRemoteControls;
+    }
+
+    protected RemoteControlProvisioner getProvisioner(String environment) {
+        // return provisionersByEnvironment.get(environment);
+        List<RemoteControlProvisioner> haveEnvironment = new LinkedList<RemoteControlProvisioner>();
+        // get provisioners with wanted environment
+        for (RemoteControlProvisioner provisioner : provisionersByHash.values()) {
+            if (provisioner.hasEnvironment(environment)) {
+                haveEnvironment.add(provisioner);
+            }
+        }
+        // check for provisioner with possible free environment
+        for (RemoteControlProvisioner provisioner : haveEnvironment) {
+            if (provisioner.rcFree()) {
+                return provisioner;
+            }
+        }
+
+        if (haveEnvironment.isEmpty()) {
+            return null;
+        }
+
+        // If no free provisioners with environment grab random provisioner
+        return haveEnvironment.get(rnd.nextInt(haveEnvironment.size())
+                % haveEnvironment.size());
+    }
+
+    protected RemoteControlProvisioner getProvisioner(int hash) {
+        synchronized (provisionersByHash) {
+            return provisionersByHash.get(Integer.toString(hash));
+        }
+    }
+
+    protected RemoteControlProxy getRemoteControlForSession(String sessionId) {
+        return remoteControlsBySessionIds.get(sessionId);
+    }
+
+    protected void removeFromSessionMap(RemoteControlProxy remoteControl) {
+        for (Map.Entry<String, RemoteControlProxy> entry : remoteControlsBySessionIds
+                .entrySet()) {
+            if (entry.getValue().equals(remoteControl)) {
+                remoteControlsBySessionIds.remove(entry.getKey());
+            }
+        }
+    }
+
+    protected void logSessionMap() {
+        for (Map.Entry<String, RemoteControlProxy> entry : remoteControlsBySessionIds
+                .entrySet()) {
+            LOGGER.debug(entry.getKey() + " => " + entry.getValue());
+        }
+    }
+
+    protected void createNewProvisionerForEnvironment(String environemntName) {
+        provisionersByEnvironment.put(environemntName,
+                new RemoteControlProvisioner());
+    }
+
+    protected void createNewProvisionerForHash(int hash) {
+        provisionersByHash.put(Integer.toString(hash),
+                new RemoteControlProvisioner());
+    }
+}
