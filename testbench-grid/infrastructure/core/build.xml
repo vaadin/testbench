@@ -1,12 +1,12 @@
 <project name="Selenium Grid Core" default="package" basedir=".">
-
+	<tstamp />
   	<description>Selenium Grid Core</description>
 
   	<property name="rootdir" value="${basedir}/../.."/>
   	<property file="${rootdir}/project.properties"/>
   	<property name="name" value="Selenium Grid Core"/>
   	<property name="artifact" value="selenium-grid-core"/>
-  	<property name="version" value="ITMill_TestBench"/>
+  	<property name="version" value="ITMill_TestBench-${DSTAMP}${TSTAMP}"/>
 	<property name="dist" value="target/dist"/>
 
   	<property name="build.src" location="src/main"/>
@@ -53,6 +53,12 @@
     	<pathelement path="${java.class.path}/"/>
   	</path>
 
-  	<target name="dist" depends="package"/>
+  	<target name="dist" depends="clean,package"/>
 
+	<target name="clean">
+		<delete failonerror="false" includeEmptyDirs="true">
+			<fileset dir="target"/>
+		</delete>
+	</target>
+	
 </project>

@@ -1,12 +1,12 @@
 <project name="Selenium Grid Remote Control" default="package-standalone" basedir=".">
-
+	<tstamp />
 	<description>Selenium Grid Remote Control</description>
 	
   	<property name="rootdir" value="${basedir}/.."/>
   	<property file="${rootdir}/project.properties"/>
   	<property name="name" value="Selenium Grid Remote Control"/>
   	<property name="artifact" value="selenium-grid-remote-control"/>
-  	<property name="version" value="ITMill_TestBench"/>
+  	<property name="version" value="ITMill_TestBench-${DSTAMP}${TSTAMP}"/>
   	<property name="selenium.version" value="Set Me"/>
 	<property name="dist" value="target/dist"/>
 	
@@ -80,7 +80,7 @@
 	    </sequential>
 	</macrodef>
 	
-  	<target name="package-standalone" depends="package" description="Package as a jar including all dependencies">
+  	<target name="package-standalone" depends="clean,package" description="Package as a jar including all dependencies">
     	<package-standalone-jar main-class="com.thoughtworks.selenium.grid.remotecontrol.SelfRegisteringRemoteControlLauncher">
       		<dependencies>
 	        	<zipfileset src="${rootdir}/vendor/jetty-6.0.2.jar"/>
@@ -92,5 +92,11 @@
       		</dependencies>
     	</package-standalone-jar>
   	</target>
+
+	<target name="clean">
+		<delete failonerror="false" includeEmptyDirs="true">
+			<fileset dir="target"/>
+		</delete>
+	</target>
 	
 </project>

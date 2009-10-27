@@ -37,7 +37,7 @@
 		<subant target="extension">
 			<fileset dir="../testbench-ide" includes="build.xml" />
 		</subant>
-		<copy file="../testbench-ide/extension/Testbench-ide.xpi" todir="${output.dir}/testbench-ide" />
+		<copy file="../testbench-ide/extension/Testbench-ide-${timestamp}.xpi" todir="${output.dir}/testbench-ide" />
 	</target>
 
 	<target name="testbench-grid">
@@ -67,7 +67,7 @@
 			<fileset dir=".." includes="example/test.xml" />
 <!--			<fileset dir=".." includes="example/tests/**" />-->
 		</zip>
-		<zip destfile="${output.dir}/vaadin-testbench-grid.zip">
+		<zip destfile="${output.dir}/vaadin-testbench-grid-${timestamp}.zip">
 			<zipfileset dir="../testbench-grid/hub" includes="hub hub.bat grid_configuration.yml" prefix="hub" />
 			<zipfileset dir="../testbench-grid/hub/target/dist/lib" includes="**standalone*.jar" prefix="hub/lib" />
 			
@@ -77,7 +77,5 @@
 			<zipfileset dir="../selenium-extensions/core" includes="user-extensions.js" prefix="remote-control" />
 		</zip>
 	</target>
-
-
 
 </project>

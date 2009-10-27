@@ -23,9 +23,16 @@
 		</jar>
 	</target>
 
-	<target name="extension" depends="selenium-ide-package">
+	<target name="extension" depends="clean,selenium-ide-package">
 		<mkdir dir="extension" />
-		<zip destfile="extension/Testbench-ide.xpi">
+		<copy file="install.rdf_tpl" tofile="install.rdf" overwrite="true">
+			<filterchain>
+				<replacetokens>
+					<token key="build" value="${version}" />
+				</replacetokens>
+			</filterchain>
+		</copy>
+		<zip destfile="extension/Testbench-ide-${version}.xpi">
 			<fileset dir="." includes="chrome/selenium-ide.jar" />
 			<fileset dir="." includes="components/**/**" />
 			<fileset dir="." includes="content-files/**/**" />
@@ -34,4 +41,10 @@
 		</zip>
 	</target>
 
+	<target name="clean">
+		<delete failonerror="false" includeEmptyDirs="true">
+			<fileset dir="extension"/>
+		</delete>
+	</target>
+	
 </project>
