@@ -67,6 +67,9 @@
 			<fileset dir=".." includes="example/test.xml" />
 <!--			<fileset dir=".." includes="example/tests/**" />-->
 		</zip>
+
+		<antcall target="update-run-scripts"/>
+			
 		<zip destfile="${output.dir}/vaadin-testbench-grid-${timestamp}.zip">
 			<zipfileset dir="../testbench-grid/hub" includes="hub hub.bat grid_configuration.yml" prefix="hub" />
 			<zipfileset dir="../testbench-grid/hub/target/dist/lib" includes="**standalone*.jar" prefix="hub/lib" />
@@ -78,4 +81,35 @@
 		</zip>
 	</target>
 
+	<target name="update-run-scripts">
+		<copy file="../testbench-grid/hub/hub.tpl" tofile="../testbench-grid/hub/hub" overwrite="true">
+					<filterchain>
+						<replacetokens>
+							<token key="build" value="${timestamp}" />
+						</replacetokens>
+					</filterchain>
+		</copy>
+		<copy file="../testbench-grid/hub/hub.bat_tpl" tofile="../testbench-grid/hub/hub.bat" overwrite="true">
+					<filterchain>
+						<replacetokens>
+							<token key="build" value="${timestamp}" />
+						</replacetokens>
+					</filterchain>
+		</copy>
+		<copy file="../testbench-grid/remote-control/rc.tpl" tofile="../testbench-grid/remote-control/rc" overwrite="true">
+					<filterchain>
+						<replacetokens>
+							<token key="build" value="${timestamp}" />
+						</replacetokens>
+					</filterchain>
+		</copy>
+		<copy file="../testbench-grid/remote-control/rc.bat_tpl" tofile="../testbench-grid/remote-control/rc.bat" overwrite="true">
+					<filterchain>
+						<replacetokens>
+							<token key="build" value="${timestamp}" />
+						</replacetokens>
+					</filterchain>
+		</copy>
+	</target>
+		
 </project>

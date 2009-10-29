@@ -126,7 +126,7 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
                 // If we find errors in the image take new references x times or
                 // until functional image is found.
                 for (int i = 0; i < maxAmountOfTests; i++) {
-                    pause(10);
+                    pause(200);
 
                     image = selenium.captureScreenshotToString();
 

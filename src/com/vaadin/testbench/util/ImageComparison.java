@@ -114,26 +114,22 @@ public class ImageComparison {
                 int minHeight, minWidth;
                 if (target.getHeight() > test.getHeight()) {
                     minHeight = test.getHeight();
-                    if (debug) {
-                        System.err
-                                .println("Screenshot height less than reference image.");
-                    }
+                    System.err
+                            .println("Screenshot height less than reference image.");
                 } else {
                     minHeight = target.getHeight();
-                    if (debug) {
+                    if (target.getHeight() != test.getHeight()) {
                         System.err
                                 .println("Reference image height less than screenshot.");
                     }
                 }
                 if (target.getWidth() > test.getWidth()) {
                     minWidth = test.getWidth();
-                    if (debug) {
-                        System.err
-                                .println("Screenshot width less than reference image.");
-                    }
+                    System.err
+                            .println("Screenshot width less than reference image.");
                 } else {
                     minWidth = target.getWidth();
-                    if (debug) {
+                    if (target.getWidth() != test.getWidth()) {
                         System.err
                                 .println("Reference image width less than screenshot.");
                     }
@@ -307,6 +303,18 @@ public class ImageComparison {
                     // collect big error blocks of differences
                     List<ErrorBlock> errorAreas = collectErrorsToList(xBlocks,
                             yBlocks, falseBlocks);
+
+                    // get both images again if different size
+                    if (sizesDiffer) {
+                        test = (stringToImage(image))
+                                .getSubimage(dimensions.getCanvasXPosition(),
+                                        dimensions.getCanvasYPosition(),
+                                        dimensions.getCanvasWidth(), dimensions
+                                                .getCanvasHeight());
+                        target = ImageIO.read(new File(directory
+                                + REFERENCE_DIRECTORY + File.separator + fileId
+                                + ".png"));
+                    }
 
                     // Draw lines around false ErrorBlocks before saving _diff
                     // file.
