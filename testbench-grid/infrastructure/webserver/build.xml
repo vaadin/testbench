@@ -6,7 +6,7 @@
   	<property file="${rootdir}/project.properties"/>
   	<property name="name" value="Selenium Grid Webserver"/>
   	<property name="artifact" value="selenium-grid-webserver"/>
-  	<property name="version" value="ITMill_TestBench-${DSTAMP}${TSTAMP}"/>
+  	<property name="version" value="TestBench-${DSTAMP}${TSTAMP}"/>
   	<property name="selenium.version" value="Set Me"/>
 	<property name="dist" value="target/dist"/>
 

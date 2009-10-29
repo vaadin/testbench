@@ -259,7 +259,7 @@ public class TestConverter {
                 + "junit.framework.Assert.fail(\"Test was missing reference images.\");\n"
                 + "}else if(errors[1] == 1){\n"
                 + "junit.framework.Assert.fail(\"Test contained differences.\");\n"
-                + "}else{\njunit.framework.Assert.fail(\"Image sizes differ.\");"
+                + "}else{\njunit.framework.Assert.fail(\"Image sizes differ.\");\n"
                 + "}\n}\n";
         String footer = TEST_METHOD_FOOTER;
         footer = footer.replace("{testName}", testName);

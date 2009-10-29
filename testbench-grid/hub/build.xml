@@ -6,7 +6,7 @@
   	<property file="${rootdir}/project.properties"/>
   	<property name="name" value="Selenium Grid Hub"/>
   	<property name="artifact" value="selenium-grid-hub"/>
-  	<property name="version" value="ITMill_TestBench-${DSTAMP}${TSTAMP}"/>
+  	<property name="version" value="TestBench-${DSTAMP}${TSTAMP}"/>
 	<property name="dist" value="target/dist"/>
 
 	<property name="build.src" location="src/main/java"/>

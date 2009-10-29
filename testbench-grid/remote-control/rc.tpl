@@ -1,4 +1,4 @@
-cpvars=lib/selenium-server-1.0.1.jar:lib/selenium-grid-remote-control-standalone-ITMill_TestBench-@build@.jar
+cpvars=lib/selenium-server-1.0.1.jar:lib/selenium-grid-remote-control-standalone-TestBench-@build@.jar
 host=192.168.56.101
 huburl=http://192.168.56.101:4444
 environment=*firefox
