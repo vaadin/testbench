@@ -249,11 +249,11 @@ Recorder.addEventHandler('scroll', 'scroll', function(event) {
 			var s = this;
 			this._scrollTimeout = setTimeout(function(){
 				if(previousLeft != left){
-					s.record_orig("scrollLeft", loc, left);
+					s.record("scrollLeft", loc, left);
 					previousLeft = left;
 				}
 				if(previousTop != top){
-					s.record_orig("scroll", loc , top);
+					s.record("scroll", loc , top);
 					previousTop = top;
 				}
 				// wait for lazy scroller to start possible server visit
@@ -458,7 +458,7 @@ Recorder.addEventHandler('clickLocator', 'click', function(event){
             	}
             }
             
-             /* Check if label has a for attribute and skip click as it will call on another element that will create a click */
+            /* Check if label has a for attribute and skip click as it will call on another element that will create a click */
             if(event.target.hasAttribute("for")){
             	return;
             }
@@ -505,11 +505,12 @@ Recorder.addEventHandler('clickLocator', 'click', function(event){
 	            } else if ((new RegExp("v-button")).test(event.target.className) && event.target.type != "button"){
 	            	/* A class="v-button" requires a click without mouseDown+mouseUp */
 	            	this.record("click", target, '');
-	            } else if ( x < 0 || y < 0){
+	          //  } else if ( x < 0 || y < 0){ // removed because it negated clicks after scroll.
 	            	/* Check that cordinates are inside an actual element. 
 	                 * (RichTextField buttons record a negative and positive placement 
 	                 * this will drop the negative one)
 	                 */
+			   //         alert("clicked with negative");
 	            } else {
 	            	/* record mouseClick with waitForVaadin(s) added */
 	            	this.record("mouseClick", target, x + ',' + y);
