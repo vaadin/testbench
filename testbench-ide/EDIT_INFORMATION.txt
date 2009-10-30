@@ -20,6 +20,12 @@ selenium-ide-sidebar.xul
 editor.js
 [DEFAULT_TITLE is the title shown after something is recorded]
 
+./chrome/content/selenium/
+iedoc.xml
+iedoc-core.xml
+reference.html
+[Reference pages for commands]
+
 ./chrome/content/selenium/scripts/
 
 selenium-api.js

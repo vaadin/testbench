@@ -3,9 +3,9 @@ setlocal enableextensions enabledelayedexpansion
 
 set cpVars=lib\selenium-server-1.0.1.jar;lib\selenium-grid-remote-control-standalone-TestBench-@build@.jar
 
-set HOST=192.168.56.1
-set HUBURL=http://192.168.56.1:4444
-set ENVIRONMENT=*iexplore,*opera,*safari,*firefox,*googlechrome,*chrome
+set HOST=127.0.0.1
+set HUBURL=http://127.0.0.1:4444
+set ENVIRONMENT=winxp-ie8,winxp-firefox35,winxp-safari4,winxp-opera10,winxp-googlechrome3
 set PORT=5555
 set USEREXTENSIONS=user-extensions.js
 

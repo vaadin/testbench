@@ -1,17 +1,17 @@
 package com.thoughtworks.selenium.grid;
 
+import java.io.IOException;
+
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.params.HttpConnectionParams;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.io.IOException;
-
-
 /**
- * Invoke HTTP GET requests and gather status code and text body for the response.
- * <br/>
+ * Invoke HTTP GET requests and gather status code and text body for the
+ * response. <br/>
  * Implementation is simplistic but should cover Selenium RC limited vocabulary.
  */
 public class HttpClient {
@@ -31,7 +31,8 @@ public class HttpClient {
         return request(new GetMethod(url));
     }
 
-    public Response post(String url, HttpParameters parameters) throws IOException {
+    public Response post(String url, HttpParameters parameters)
+            throws IOException {
         return request(buildPostMethod(url, parameters));
     }
 
@@ -39,7 +40,8 @@ public class HttpClient {
         final PostMethod postMethod;
 
         postMethod = new PostMethod(url);
-        postMethod.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; ; charset=UTF-8");
+        postMethod.setRequestHeader("Content-Type",
+                "application/x-www-form-urlencoded; ; charset=UTF-8");
         for (String name : parameters.names()) {
             postMethod.setParameter(name, parameters.get(name));
         }
@@ -51,10 +53,16 @@ public class HttpClient {
         final String body;
 
         try {
+            HttpConnectionParams parameters = client.getHttpConnectionManager()
+                    .getParams();
+            parameters.setSoTimeout(60000);
             statusCode = client.executeMethod(method);
             body = new String(method.getResponseBody(), "utf-8");
-            logger.info("Remote Control replied with '" + statusCode + " / '" + body + "'");
+            logger.info("Remote Control replied with '" + statusCode + " / '"
+                    + body + "'");
             return new Response(statusCode, body);
+        } catch (java.net.SocketTimeoutException e) {
+            return new Response("Socket response timedout.");
         } finally {
             method.releaseConnection();
         }

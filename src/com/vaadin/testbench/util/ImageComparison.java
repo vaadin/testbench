@@ -322,9 +322,18 @@ public class ImageComparison {
                     drawToPicture.setColor(Color.MAGENTA);
 
                     for (ErrorBlock error : errorAreas) {
-                        drawToPicture.drawRect(error.getX(), error.getY(),
-                                error.getXBlocks() * 16,
-                                error.getYBlocks() * 16);
+                        int offsetX = 0, offsetY = 0;
+                        if (error.getX() > 0) {
+                            offsetX = 1;
+                        }
+                        if (error.getY() > 0) {
+                            offsetY = 1;
+                        }
+                        drawToPicture.drawRect(error.getX() - offsetX, error
+                                .getY()
+                                - offsetY, error.getXBlocks() * 16 + offsetX,
+                                error.getYBlocks() * 16 + offsetY);
+
                     }
                     // release resources
                     drawToPicture.dispose();
@@ -643,19 +652,26 @@ public class ImageComparison {
                             + ref_image + "\"/></div>");
 
             for (ErrorBlock error : blocks) {
+                int offsetX = 0, offsetY = 0;
+                if (error.getX() > 0) {
+                    offsetX = 1;
+                }
+                if (error.getY() > 0) {
+                    offsetY = 1;
+                }
                 String id = "popUpDiv_" + error.getX() + "_" + error.getY();
                 // position stars so that it's not out of screen.
                 writer
                         .println("<div  onmouseover=\"document.getElementById('"
                                 + id
                                 + "').style.display='block'\"  style=\"z-index: 66;position: absolute; top: 0px; left: 0px; clip: rect("
-                                + error.getY()
+                                + (error.getY() - offsetY)
                                 + "px,"
                                 + (error.getX() + (error.getXBlocks() * 16) + 1)
                                 + "px,"
                                 + (error.getY() + (error.getYBlocks() * 16) + 1)
                                 + "px,"
-                                + error.getX()
+                                + (error.getX() - offsetX)
                                 + "px);\"><img src=\"data:image/png;base64,"
                                 + image + "\"/></div>");
                 // Start "popup" div
@@ -663,12 +679,14 @@ public class ImageComparison {
                         .println("<div class=\"popUpDiv\" onclick=\"document.getElementById('reference').style.display='block'; document.getElementById('diff').style.display='none';\" onmouseout=\"this.style.display='none'\" id=\""
                                 + id
                                 + "\"  style=\"display: none; position: absolute; top: 0px; left: 0px; clip: rect("
-                                + error.getY()
+                                + (error.getY() - offsetY)
                                 + "px,"
                                 + (error.getX() + (error.getXBlocks() * 16) + 1)
                                 + "px,"
                                 + (error.getY() + (error.getYBlocks() * 16) + 1)
-                                + "px," + error.getX() + "px); z-index: 99;\">");
+                                + "px,"
+                                + (error.getX() - offsetX)
+                                + "px); z-index: 99;\">");
                 writer.println("<img src=\"data:image/png;base64," + ref_image
                         + "\" />");
                 // End popup div
