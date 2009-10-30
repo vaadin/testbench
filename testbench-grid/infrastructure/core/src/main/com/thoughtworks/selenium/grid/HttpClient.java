@@ -63,6 +63,8 @@ public class HttpClient {
             return new Response(statusCode, body);
         } catch (java.net.SocketTimeoutException e) {
             return new Response("Socket response timedout.");
+        } catch (java.net.SocketException e) {
+            return new Response("Socket exception." + e.getMessage());
         } finally {
             method.releaseConnection();
         }
