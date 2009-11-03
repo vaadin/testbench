@@ -24,14 +24,12 @@ public class GlobalRemoteControlPool implements DynamicRemoteControlPool {
     private final Map<String, RemoteControlProvisioner> provisionersByEnvironment;
     private final Map<String, RemoteControlProvisioner> provisionersByHash;
     private final List<Integer> remoteControlInUse;
-    private Random rnd;
-
+    
     public GlobalRemoteControlPool() {
         remoteControlsBySessionIds = new HashMap<String, RemoteControlProxy>();
         provisionersByEnvironment = new HashMap<String, RemoteControlProvisioner>();
         provisionersByHash = new HashMap<String, RemoteControlProvisioner>();
         remoteControlInUse = new LinkedList<Integer>();
-        rnd = new Random(System.currentTimeMillis());
     }
 
     public void register(List<RemoteControlProxy> newRemoteControl) {
@@ -106,14 +104,18 @@ public class GlobalRemoteControlPool implements DynamicRemoteControlPool {
     }
 
     public RemoteControlProxy reserve(Environment environment) {
-        final RemoteControlProvisioner provisioner;
-
-        provisioner = getProvisioner(environment.name());
-        if (null == provisioner) {
-            throw new NoSuchEnvironmentException(environment.name());
-        }
-
-        RemoteControlProxy reserved = provisioner.reserve(environment.name());
+        RemoteControlProvisioner provisioner;
+        RemoteControlProxy reserved = null;
+        // check provisioners if reservation returns as null.
+        do{
+            provisioner = getProvisioner(environment.name());
+            if (null == provisioner) {
+                throw new NoSuchEnvironmentException(environment.name());
+            }
+    
+            reserved = provisioner.reserve(environment.name());
+        }while(reserved == null);
+        
         return reserved;
     }
 
@@ -144,6 +146,7 @@ public class GlobalRemoteControlPool implements DynamicRemoteControlPool {
         return getRemoteControlForSession(sessionId);
     }
 
+    // Get remote control provisioner by RC hash and release RC.
     public void release(RemoteControlProxy remoteControl) {
         getProvisioner(remoteControl.hashCode()).release(remoteControl);
     }
@@ -190,27 +193,41 @@ public class GlobalRemoteControlPool implements DynamicRemoteControlPool {
 
     protected RemoteControlProvisioner getProvisioner(String environment) {
         // return provisionersByEnvironment.get(environment);
+        
         List<RemoteControlProvisioner> haveEnvironment = new LinkedList<RemoteControlProvisioner>();
+        
         // get provisioners with wanted environment
         for (RemoteControlProvisioner provisioner : provisionersByHash.values()) {
             if (provisioner.hasEnvironment(environment)) {
                 haveEnvironment.add(provisioner);
             }
         }
+
+        // Return if no matching environment was found
+        if (haveEnvironment.isEmpty()) {
+            return null;
+        }
+        
         // check for provisioner with possible free environment
         for (RemoteControlProvisioner provisioner : haveEnvironment) {
             if (provisioner.rcFree()) {
                 return provisioner;
             }
         }
-
-        if (haveEnvironment.isEmpty()) {
-            return null;
+        
+        // check for provisioner with the least waiting reservations.
+        RemoteControlProvisioner leastWaits = haveEnvironment.get(0);
+        if(haveEnvironment.size() > 1){
+            leastWaits = haveEnvironment.get(new Random().nextInt(haveEnvironment.size()));
+        
+            for(RemoteControlProvisioner provisioner : haveEnvironment) {
+                if(provisioner.amountWaiting() < leastWaits.amountWaiting()){
+                    leastWaits = provisioner;
+                }
+            }
         }
-
-        // If no free provisioners with environment grab random provisioner
-        return haveEnvironment.get(rnd.nextInt(haveEnvironment.size())
-                % haveEnvironment.size());
+        
+        return leastWaits;
     }
 
     protected RemoteControlProvisioner getProvisioner(int hash) {

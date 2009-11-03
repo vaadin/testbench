@@ -25,11 +25,13 @@ public class RemoteControlProvisioner {
     private final List<RemoteControlProxy> remoteControls;
     private final Lock remoteControlListLock;
     private final Condition remoteControlAvailable;
+    private static int waiting;
 
     public RemoteControlProvisioner() {
         remoteControls = new LinkedList<RemoteControlProxy>();
         remoteControlListLock = new ReentrantLock();
         remoteControlAvailable = remoteControlListLock.newCondition();
+        waiting = 0;
     }
 
     public RemoteControlProxy reserve() {
@@ -56,14 +58,17 @@ public class RemoteControlProvisioner {
 
         try {
             remoteControlListLock.lock();
-
+            waiting++;
             if (remoteControls.isEmpty()) {
                 return null;
             }
 
             remoteControl = blockUntilARemoteControlIsAvailable(environment);
-            remoteControl.registerNewSession();
-            LOGGER.info("Reserved remote control" + remoteControl);
+            if(remoteControl != null){
+                remoteControl.registerNewSession();
+                LOGGER.info("Reserved remote control" + remoteControl);
+            }
+            waiting--;
             return remoteControl;
         } finally {
             remoteControlListLock.unlock();
@@ -124,6 +129,10 @@ public class RemoteControlProvisioner {
         return reservedRemoteControls().isEmpty();
     }
 
+    public int amountWaiting(){
+        return waiting;
+    }
+    
     /**
      * Not thread safe.
      * 
@@ -181,11 +190,18 @@ public class RemoteControlProvisioner {
     protected RemoteControlProxy blockUntilARemoteControlIsAvailable(
             String environment) {
         RemoteControlProxy availableRemoteControl;
+        int triesToReserve = 0;
 
         while (true) {
             try {
                 availableRemoteControl = findNextAvailableRemoteControl(environment);
                 while (null == availableRemoteControl) {
+                    // if we tried 2 times to get this RC return to global pool
+                    // and check provisioners again for possible free RCs
+                    if (triesToReserve == 2) {
+                        return null;
+                    }
+                    triesToReserve++;
                     LOGGER.info("Waiting for an remote control...");
                     waitForARemoteControlToBeAvailable();
                     availableRemoteControl = findNextAvailableRemoteControl(environment);
