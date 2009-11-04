@@ -156,16 +156,19 @@ Selenium.prototype.doPressSpecialKey = function(locator, value){
 	this.doKeyUp(locator, value);
 };
 
+/*Simulates the correct mouse click events.*/
 Selenium.prototype.doMouseClick = function(locator, value){
 	this.doMouseDownAt(locator, value);
 	this.doMouseUpAt(locator, value);
 	this.doClick(locator, '');
 };
 
+/*Does a mouseClick on the target element. Used descriptive purposes.*/
 Selenium.prototype.doCloseNotification = function(locator, value){
 	this.doMouseClick(locator, value);
 };
 
+/*Does a mouse over on target element at point x,y so tooltip shows up over element and not mouse cursor position*/
 Selenium.prototype.doShowTooltip = function(locator, value){
 	var element = this.browserbot.findElement(locator);
 	var clientXY = getClientXY(element, value);

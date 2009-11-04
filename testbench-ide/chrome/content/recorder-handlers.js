@@ -247,6 +247,7 @@ Recorder.addEventHandler('scroll', 'scroll', function(event) {
 				clearTimeout(this._scrollTimeout);
 			}
 			var s = this;
+			var tree = window.editor.treeView;
 			this._scrollTimeout = setTimeout(function(){
 				if(previousLeft != left){
 					s.record("scrollLeft", loc, left);
@@ -256,8 +257,11 @@ Recorder.addEventHandler('scroll', 'scroll', function(event) {
 					s.record("scroll", loc , top);
 					previousTop = top;
 				}
+				// Move index one back so that we get the pause before waitForVaadin
+				var index = tree.getRecordIndex() - 1;
+				tree.selection.select(index);
 				// wait for lazy scroller to start possible server visit
-				s.record("pause", "300");
+				s.record_orig("pause", "300");
 				s._scrollTimeout = null;
 			},260);
 		}
@@ -502,7 +506,7 @@ Recorder.addEventHandler('clickLocator', 'click', function(event){
 	            		this.record_orig("mouseClick", target, x + ',' + y);
 					}
 	            	clicked = "false";
-	            } else if ((new RegExp("v-button")).test(event.target.className) && event.target.type != "button"){
+	            } else if (((new RegExp("v-button")).test(event.target.className) || (new RegExp("v-button")).test(event.target.parentNode.className)) && event.target.type != "button"){
 	            	/* A class="v-button" requires a click without mouseDown+mouseUp */
 	            	this.record("click", target, '');
 	          //  } else if ( x < 0 || y < 0){ // removed because it negated clicks after scroll.

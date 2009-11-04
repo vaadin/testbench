@@ -368,7 +368,7 @@ Recorder.addEventHandler('clickLocator', 'click', function(event){
 	            		this.record_orig("mouseClick", target, x + ',' + y);
 					}
 	            	clicked = "false";
-	            } else if ((new RegExp("v-button")).test(event.target.className) && event.target.type != "button"){
+	            } else if (((new RegExp("v-button")).test(event.target.className) || (new RegExp("v-button")).test(event.target.parentNode.className)) && event.target.type != "button"){
 	            	/* A class="v-button" requires a click without mouseDown+mouseUp */
 	            	this.record("click", target, '');
 	         //   } else if ( x < 0 || y < 0){ // removed because it negated clicks after scroll.
