@@ -334,37 +334,38 @@ public class TestConverter {
                     first = false;
                 }
                 javaSource.append("pause(" + identifier + ");\n");
-            } else if (command.getCmd().equalsIgnoreCase("enterCharacter")) {
-                String locator = "";
-                String characters = "";
-                boolean first = true;
-                for (String param : command.getParams()) {
-                    if (first) {
-                        /* get locator */
-                        locator = param.replace("\\", "\\\\");
-                    } else {
-                        /* get characters */
-                        characters = param;
-                    }
-
-                    first = false;
-                }
-                javaSource.append("selenium.type(\"" + locator + "\", \""
-                        + characters + "\");\n");
-                if (characters.length() > 1) {
-                    /* Add a keyDown keyUp for each character */
-                    for (int i = 0; i < characters.length(); i++) {
-                        javaSource.append("selenium.keyDown(\"" + locator
-                                + "\", \"" + characters.charAt(i) + "\");\n");
-                        javaSource.append("selenium.keyUp(\"" + locator
-                                + "\", \"" + characters.charAt(i) + "\");\n");
-                    }
-                } else {
-                    javaSource.append("selenium.keyDown(\"" + locator
-                            + "\", \"" + characters + "\");\n");
-                    javaSource.append("selenium.keyUp(\"" + locator + "\", \""
-                            + characters + "\");\n");
-                }
+                // } else if
+                // (command.getCmd().equalsIgnoreCase("enterCharacter")) {
+                // String locator = "";
+                // String characters = "";
+                // boolean first = true;
+                // for (String param : command.getParams()) {
+                // if (first) {
+                // /* get locator */
+                // locator = param.replace("\\", "\\\\");
+                // } else {
+                // /* get characters */
+                // characters = param;
+                // }
+                //
+                // first = false;
+                // }
+                // javaSource.append("selenium.type(\"" + locator + "\", \""
+                // + characters + "\");\n");
+                // if (characters.length() > 1) {
+                // /* Add a keyDown keyUp for each character */
+                // for (int i = 0; i < characters.length(); i++) {
+                // javaSource.append("selenium.keyDown(\"" + locator
+                // + "\", \"" + characters.charAt(i) + "\");\n");
+                // javaSource.append("selenium.keyUp(\"" + locator
+                // + "\", \"" + characters.charAt(i) + "\");\n");
+                // }
+                // } else {
+                // javaSource.append("selenium.keyDown(\"" + locator
+                // + "\", \"" + characters + "\");\n");
+                // javaSource.append("selenium.keyUp(\"" + locator + "\", \""
+                // + characters + "\");\n");
+                // }
             } else if (command.getCmd().equalsIgnoreCase("pressSpecialKey")) {
                 String value = "";
                 String location = "";
@@ -489,6 +490,55 @@ public class TestConverter {
                 javaSource.append("doCommand(\"showTooltip\",new String[] {\""
                         + locator + "\", \"" + value + "\"});\n");
                 javaSource.append("pause(700);\n");
+            } else if (command.getCmd().equalsIgnoreCase("appendToTest")) {
+                // Loads another test, parses the commands, converts tests and
+                // adds result to this TestCase
+                String locator = "";
+                String value = "";
+                boolean first = true;
+                for (String param : command.getParams()) {
+                    if (first) {
+                        /* get locator */
+                        locator = param.replace("\\", "\\\\");
+                    } else {
+                        /* get characters */
+                        value = param;
+                    }
+
+                    first = false;
+                }
+
+                try {
+                    // open and read target file
+                    FileInputStream fis = new FileInputStream(value);
+                    String htmlSource = IOUtils.toString(fis);
+                    fis.close();
+
+                    // sanitize source
+                    htmlSource = htmlSource.replace("\"", "\\\"").replaceAll(
+                            "\\n", "\\\\n").replace("'", "\\'").replaceAll(
+                            "\\r", "");
+
+                    Context cx = Context.enter();
+                    try {
+                        Scriptable scope = cx.initStandardObjects();
+
+                        // Parse commands to a List
+                        List<Command> newCommands = parseTestCase(cx, scope,
+                                htmlSource);
+                        // Convert tests to Java
+                        String tests = convertTestCaseToJava(newCommands,
+                                testName);
+                        javaSource.append(tests);
+
+                    } finally {
+                        Context.exit();
+                    }
+                } catch (Exception e) {
+                    System.err.println("Failed in appending test. "
+                            + e.getMessage());
+                }
+
             } else {
                 javaSource.append("doCommand(\"");
                 javaSource.append(command.getCmd());

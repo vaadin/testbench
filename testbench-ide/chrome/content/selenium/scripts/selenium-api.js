@@ -3220,7 +3220,11 @@ Selenium.prototype.doShowTooltip = function(locator, value){
 
 	this.browserbot.triggerMouseEvent(element, 'mouseover', true, clientXY[0], clientXY[1]);
 	this.doPause('700', '');
-}
+};
+
+/* For adding test to be run before this test */
+Selenium.prototype.doAppendToTest = function(locator, path){
+	};
 
 /**
  *  Factory for creating "Option Locators".

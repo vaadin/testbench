@@ -1921,4 +1921,12 @@ image marking found differences. The browser canvas is cropped out of the taken 
 <comment>Makes a mouseOver event over given element so that a possible tooltip becomes visible.</comment>
 
 </function>
+
+<function name="appendToTest">
+
+<param name="path">Path to target test.</param>
+
+<comment>Creates the test so that test given as path is put before this testcase. (connects a test before this test)</comment>
+
+</function>
 </apidoc>

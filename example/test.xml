@@ -67,12 +67,14 @@
 
 	<!-- This target runs the generated and compiled junit tests -->
 	<target name="run-tests" depends="compile-tests, remove-error-screens">
-		<junit fork="yes" printsummary="yes">
+		<junit fork="yes">
 			<classpath>
 				<path refid="classpath" />
 				<pathelement path="${temp-dir}/classes" />
 			</classpath>
 
+			<formatter type="brief" usefile="false" />
+				
 			<jvmarg value="-Dcom.vaadin.testbench.tester.host=${com.vaadin.testbench.tester.host}" />
 			<jvmarg value="-Dcom.vaadin.testbench.deployment.url=${com.vaadin.testbench.deployment.url}" />
 			<jvmarg value="-Dcom.vaadin.testbench.screenshot.directory=${com.vaadin.testbench.screenshot.directory}" />

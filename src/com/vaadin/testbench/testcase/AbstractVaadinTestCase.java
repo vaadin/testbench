@@ -22,7 +22,7 @@ import com.vaadin.testbench.util.ImageComparison;
  */
 public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
 
-    private static final String DEFAULT_BROWSER = "*chrome";
+    private static final String DEFAULT_BROWSER = "winxp-firefox35";// "*chrome";
 
     private static int imageNumber = 0;
     private static String testCaseName = "";

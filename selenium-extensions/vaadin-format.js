@@ -351,6 +351,8 @@ options.footer =
     "\t\t\t\tjunit.framework.Assert.fail(\"Test was missing reference images.\");\n"+
     "\t\t\t}else if(errors[1] == 1){\n"+
     "\t\t\t\tjunit.framework.Assert.fail(\"Test contained differences.\");\n"+
+    "\t\t\t}else{\n" +
+    "\t\t\t\tjunit.framework.Assert.fail(\"Image sizes differ.\");\n"+
     "\t\t\t}\n\t\t}\n" +
 	"\t}\n" +
 	"}\n";
