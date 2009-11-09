@@ -20,7 +20,6 @@
 
 	<!-- classpath must include test bench jar and its dependencies -->
 	<path id="classpath">
-		<fileset dir="../lib" includes="**/*.jar" />
 		<fileset dir=".." includes="vaadin-testbench-*.jar" />
 
 		<!-- For development environment compatibility only -->

@@ -58,8 +58,8 @@ public class HttpClient {
             parameters.setSoTimeout(60000);
             statusCode = client.executeMethod(method);
             body = new String(method.getResponseBody(), "utf-8");
-            logger.info("Remote Control replied with '" + statusCode + " / '"
-                    + body + "'");
+            // logger.info("Remote Control replied with '" + statusCode + " / '"
+            // + body + "'");
             return new Response(statusCode, body);
         } catch (java.net.SocketTimeoutException e) {
             return new Response("Socket response timedout.");

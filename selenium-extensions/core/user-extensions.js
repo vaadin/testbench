@@ -163,6 +163,12 @@ Selenium.prototype.doMouseClick = function(locator, value){
 	this.doClick(locator, '');
 };
 
+/*Opera requires a special mouseClick as it else clicks twice*/
+Selenium.prototype.doMouseClickOpera = function(locator, value){
+	this.doMouseDownAt(locator, value);
+	this.doMouseUpAt(locator, value);
+}
+
 /*Does a mouseClick on the target element. Used descriptive purposes.*/
 Selenium.prototype.doCloseNotification = function(locator, value){
 	this.doMouseClick(locator, value);
@@ -177,5 +183,5 @@ Selenium.prototype.doShowTooltip = function(locator, value){
 };
 
 /* For adding test to be run before this test */
-Selenium.prototype.doAppendToTest = function(locator, path){
+Selenium.prototype.doIncludeTest = function(locator, path){
 };

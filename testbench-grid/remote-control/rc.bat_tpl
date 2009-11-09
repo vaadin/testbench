@@ -1,5 +1,6 @@
 @echo off
-setlocal enableextensions enabledelayedexpansion
+setlocal
+@echo Running version: @build@
 
 set cpVars=lib\selenium-server-1.0.1.jar;lib\selenium-grid-remote-control-standalone-TestBench-@build@.jar
 

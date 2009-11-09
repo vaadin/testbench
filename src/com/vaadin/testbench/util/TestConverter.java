@@ -432,8 +432,9 @@ public class TestConverter {
                             + "\", \"\\\\" + value + "\");\n");
                 }
 
-            } else if (command.getCmd().equalsIgnoreCase("mouseClick")
-                    || command.getCmd().equalsIgnoreCase("closeNotification")) {
+            } else if ((command.getCmd().equalsIgnoreCase("mouseClick") || command
+                    .getCmd().equalsIgnoreCase("closeNotification"))
+                    && isOpera) {
                 StringBuilder values = new StringBuilder();
                 boolean first = true;
                 String firstParam = "";
@@ -449,12 +450,8 @@ public class TestConverter {
                     first = false;
                 }
                 javaSource
-                        .append("selenium.mouseDownAt(\"" + values + "\");\n");
-                javaSource.append("selenium.mouseUpAt(\"" + values + "\");\n");
-                if (!isOpera) {
-                    javaSource.append("selenium.click(\"" + firstParam
-                            + "\");\n");
-                }
+                        .append("doCommand(\"mouseClickOpera\", new String[] {\""
+                                + values + "\"});\n");
             } else if (command.getCmd().equalsIgnoreCase("verifyTextPresent")) {
 
                 String identifier = "";
@@ -490,7 +487,7 @@ public class TestConverter {
                 javaSource.append("doCommand(\"showTooltip\",new String[] {\""
                         + locator + "\", \"" + value + "\"});\n");
                 javaSource.append("pause(700);\n");
-            } else if (command.getCmd().equalsIgnoreCase("appendToTest")) {
+            } else if (command.getCmd().equalsIgnoreCase("includeTest")) {
                 // Loads another test, parses the commands, converts tests and
                 // adds result to this TestCase
                 String locator = "";
@@ -535,8 +532,16 @@ public class TestConverter {
                         Context.exit();
                     }
                 } catch (Exception e) {
+                    // if exception was caught put a assert fail to inform user
+                    // of error.
                     System.err.println("Failed in appending test. "
                             + e.getMessage());
+                    javaSource
+                            .append("junit.framework.Assert.fail(\"Insertion of test "
+                                    + value
+                                    + " failed with "
+                                    + e.getMessage()
+                                    + "\");");
                 }
 
             } else {

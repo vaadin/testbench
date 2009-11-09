@@ -1882,7 +1882,7 @@ image marking found differences. The browser canvas is cropped out of the taken 
 
 </function>
 
-<function name="appendToTest">
+<function name="includeTest">
 
 <param name="path">Path to target test.</param>
 

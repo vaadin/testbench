@@ -3223,7 +3223,7 @@ Selenium.prototype.doShowTooltip = function(locator, value){
 };
 
 /* For adding test to be run before this test */
-Selenium.prototype.doAppendToTest = function(locator, path){
+Selenium.prototype.doIncludeTest = function(locator, path){
 	};
 
 /**

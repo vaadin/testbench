@@ -23,15 +23,20 @@
 			<manifest>
 				<attribute name="Class-Path" value="junit-4.5.jar selenium-java-client-driver.jar js.jar" />
 			</manifest>
-			<fileset dir="../src">
+			<zipfileset dir="../src">
 				<include name="**/**.js" />
-			</fileset>
-			<fileset dir="result/classes">
+			</zipfileset>
+			<zipfileset dir="result/classes">
 				<include name="**/**" />
-			</fileset>
+			</zipfileset>
+			<zipfileset src="../lib/commons-io-1.1.jar" />
+			<zipfileset src="../lib/commons-codec-1.4.jar" />
+			<zipfileset src="../lib/js.jar" />
+			<zipfileset src="../lib/junit-4.5.jar" />
+			<zipfileset src="../lib/selenium-java-client-driver.jar" />
 		</jar>
 	</target>
-
+	
 	<target name="testbench-ide">
 		<!-- Create the Testbench IDE FireFox plugin -->
 		<subant target="extension">
@@ -57,18 +62,27 @@
 		</parallel>
 	</target>
 	
-	<target name="testbench-distribution-package" depends="testbench.jar,testbench-ide,testbench-grid">
+	<target name="testbench-distribution-package" depends="testbench.jar,testbench-ide,testbench-grid,update-run-scripts">
 		<zip destfile="${output.dir}/vaadin-testbench-${version}.zip">
-			<fileset dir="../doc" includes="INSTALL.TXT" />
-			<fileset dir="${output.dir}" includes="vaadin-testbench-${version}.jar" />
-			<fileset dir="${output.dir}" includes="testbench-ide/Testbench-ide.xpi"  />
-			<fileset dir=".." includes="selenium-extensions/**" />
-			<fileset dir=".." includes="lib/commons-io-* lib/commons-codec-* lib/js.jar lib/junit*.jar lib/selenium-java-client*" excludes="lib/**-source* lib/**-src*" />
-			<fileset dir=".." includes="example/test.xml" />
+			<zipfileset dir="${output.dir}" includes="vaadin-testbench-${version}.jar" />
+			<zipfileset dir="${output.dir}" includes="testbench-ide/Testbench-ide-${timestamp}.xpi"  />
+<!--			<zipfileset dir=".." includes="selenium-extensions/**" />-->
+			<!-- Not certain about MPL/GPL or CPL licenses -->
+			<fileset dir=".." includes="lib/js.jar lib/junit*.jar" excludes="lib/**-source* lib/**-src*" />
+			<zipfileset dir=".." includes="example/test.xml" />
+			<zipfileset dir=".." includes="example/testscripts/*.html" />
+			<!-- Add documentation -->
+			<zipfileset dir="../doc" includes="INSTALL.TXT" prefix="documentation" />
 <!--			<fileset dir=".." includes="example/tests/**" />-->
+			<!-- Add hub and remote-control to zip -->
+			<zipfileset dir="../testbench-grid/hub" includes="hub hub.bat grid_configuration.yml" prefix="grid/hub" />
+			<zipfileset dir="../testbench-grid/hub/target/dist/lib" includes="**standalone*.jar" prefix="grid/hub/lib" />
+			
+			<zipfileset dir="../testbench-grid/remote-control" includes="rc rc.bat" prefix="grid/remote-control" />
+			<zipfileset dir="../testbench-grid/remote-control/target/dist/lib" includes="**standalone*.jar" prefix="grid/remote-control/lib" />
+			<zipfileset dir="../testbench-grid/vendor" includes="selenium-server*.jar" prefix="grid/remote-control/lib" />
+			<zipfileset dir="../selenium-extensions/core" includes="user-extensions.js" prefix="grid/remote-control" />
 		</zip>
-
-		<antcall target="update-run-scripts"/>
 			
 		<zip destfile="${output.dir}/vaadin-testbench-grid-${timestamp}.zip">
 			<zipfileset dir="../testbench-grid/hub" includes="hub hub.bat grid_configuration.yml" prefix="hub" />
@@ -81,6 +95,7 @@
 		</zip>
 	</target>
 
+	<!-- Creates script files for starting hub and remote-control -->
 	<target name="update-run-scripts">
 		<copy file="../testbench-grid/hub/hub.tpl" tofile="../testbench-grid/hub/hub" overwrite="true">
 					<filterchain>

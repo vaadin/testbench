@@ -54,7 +54,7 @@ public class HubServlet extends HttpServlet {
         final SeleneseCommand command;
         final Response response;
 
-        logger.info("Processing '" + parameters.toString() + "'");
+//        logger.info("Processing '" + parameters.toString() + "'");
         try {
             command = new HttpCommandParser(parameters)
                     .parse(environmentManager);
@@ -70,8 +70,8 @@ public class HubServlet extends HttpServlet {
                             + "' environment. Please make sure you started some remote controls which registered as offering this environment.");
             return new Response(e.getMessage());
         }
-        logger.info("Responding with " + response.statusCode() + "/ '"
-                + response.body() + "'");
+//        logger.info("Responding with " + response.statusCode() + "/ '"
+//                + response.body() + "'");
 
         return response;
     }

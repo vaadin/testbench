@@ -101,6 +101,19 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
             }
         }
 
+        // If browser is IE we can check that no top bars have been shown.
+        // If one has been we can correct the cropping dimensions.
+        if (browser.isIE()) {
+            int yPosition = browserUtils.canvasYPosition(selenium, browser);
+            if ((yPosition + 2) != dimensions.getCanvasYPosition()) {
+                // Add difference in height to canvasHeight
+                dimensions.setCanvasHeight(browserUtils
+                        .getCanvasHeight(selenium));
+                // Set new y position
+                dimensions.setCanvasYPosition(yPosition + 2);
+            }
+        }
+
         try {
             // Compare screenshot with saved reference screen
             result = compare.compareStringImage(image, fileName, d, dimensions,

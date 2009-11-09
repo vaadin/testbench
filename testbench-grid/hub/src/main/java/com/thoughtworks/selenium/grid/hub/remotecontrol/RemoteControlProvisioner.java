@@ -202,7 +202,7 @@ public class RemoteControlProvisioner {
                         return null;
                     }
                     triesToReserve++;
-                    LOGGER.info("Waiting for an remote control...");
+//                    LOGGER.info("Waiting for an remote control...");
                     waitForARemoteControlToBeAvailable();
                     availableRemoteControl = findNextAvailableRemoteControl(environment);
                 }
