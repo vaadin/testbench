@@ -114,6 +114,7 @@
 		<copy todir="target/build/">
 			<fileset dir="src/main/java">
 				<include name="**/*.java"/>
+				<include name="**/*.html"/>
 			</fileset>
 			<filterchain>
 				<replacetokens>
