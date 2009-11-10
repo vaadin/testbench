@@ -75,7 +75,7 @@
 			<zipfileset dir="${output.dir}" includes="vaadin-testbench-${version}.jar" />
 			<zipfileset dir="${output.dir}" includes="testbench-ide/Testbench-ide-${timestamp}.xpi"  />
 <!--			<zipfileset dir=".." includes="selenium-extensions/**" />-->
-			<!-- Not certain about MPL/GPL or CPL licenses -->
+			<!-- Not certain about MPL or CPL licenses -->
 <!--			<fileset dir=".." includes="lib/js.jar lib/junit*.jar" excludes="lib/**-source* lib/**-src*" />-->
 			<zipfileset dir=".." includes="example/test.xml" />
 			<zipfileset dir=".." includes="example/testscripts/*.html" />

@@ -3111,37 +3111,26 @@ Selenium.prototype.doWaitForVaadin = function(locator, value) {
 	var foundClientOnce = false;
 	
 	return Selenium.decorateFunctionWithTimeout( function() {
-		var wnd = selenium.browserbot.getCurrentWindow();
-		var connector = getVaadinConnector(wnd);
-		if (!connector) {
-			// No connector found == Not a Vaadin application so we don't need to wait
-			return true;
-		}
-		
-		var clients = connector.clients;
-		if (clients) {
-			foundClientOnce = true;
-			for ( var client in clients) {
-				if (clients[client].isActive()) {
-					return false;
-				}
-			}
-			return true;
-		} else {
-			if (foundClientOnce) {
-				// There was a client, so probably there will be again once something has refreshed
-				// This happens for instance when the theme is changed on the fly
-				return false;
-			}
-			if (!this.VaadinWarnedNoAppFound) {
-				// TODO explain what this means & what to do
-					LOG.warn("No testable Vaadin applications found!");
-				this.VaadinWarnedNoAppFound = true;
-			}
-			
-			return true;
-	}
-}, timeout);
+		  var wnd = selenium.browserbot.getCurrentWindow();
+		  var connector = getVaadinConnector(wnd);
+		  if (!connector) {
+			  // No connector found == Not a Vaadin application so we don't need to wait
+			  return true;
+		  }
+		  
+		  var clients = connector.clients;
+		  if (clients) {
+			  for ( var client in clients) {
+				  if (clients[client].isActive()) {
+					  return false;
+				  }
+			  }
+			  return true;
+		  } else {
+		  	//A Vaadin connector was found so this is most likely a Vaadin application. Keep waiting.
+		  	return false;
+		  }
+	}, timeout);
 
 }
 
