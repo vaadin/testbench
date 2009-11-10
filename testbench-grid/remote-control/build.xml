@@ -6,11 +6,12 @@
   	<property file="${rootdir}/project.properties"/>
   	<property name="name" value="Selenium Grid Remote Control"/>
   	<property name="artifact" value="selenium-grid-remote-control"/>
-  	<property name="version" value="TestBench-${DSTAMP}${TSTAMP}"/>
+	<property name="timestamp" value="${DSTAMP}${TSTAMP}"/>
+  	<property name="version" value="TestBench-${timestamp}"/>
   	<property name="selenium.version" value="Set Me"/>
 	<property name="dist" value="target/dist"/>
 	
-	<property name="build.src" location="src/main/java"/>
+	<property name="build.src" location="target/build"/>
 	<property name="build.output" location="target/classes"/>
 
   	<path id="compile.classpath">
@@ -47,7 +48,7 @@
 	      	<manifest>
 	        	<attribute name="Main-Class" value="com.thoughtworks.selenium.grid.hub.HubServer"/>
 	        	<attribute name="Built-By" value="OpenQA.org"/>
-	        	<attribute name="Build-Time" value="${DSTAMP}${TSTAMP}"/>
+	        	<attribute name="Build-Time" value="${timestamp}"/>
 	        	<section name="common">
 		          	<attribute name="Specification-Title" value="${name}"/>
 		          	<attribute name="Specification-Version" value="${version}"/>
@@ -67,7 +68,7 @@
 	        	<manifest>
 		          	<attribute name="Main-Class" value="@{main-class}"/>
 		          	<attribute name="Built-By" value="OpenQA.org"/>
-		          	<attribute name="Build-Time" value="${DSTAMP}${TSTAMP}"/>
+		          	<attribute name="Build-Time" value="${timestamp}"/>
 		          	<section name="common">
 		            	<attribute name="Specification-Title" value="${name}"/>
 		            	<attribute name="Specification-Version" value="${version}"/>
@@ -80,7 +81,7 @@
 	    </sequential>
 	</macrodef>
 	
-  	<target name="package-standalone" depends="clean,package" description="Package as a jar including all dependencies">
+  	<target name="package-standalone" depends="clean-and-copy-source,package" description="Package as a jar including all dependencies">
     	<package-standalone-jar main-class="com.thoughtworks.selenium.grid.remotecontrol.SelfRegisteringRemoteControlLauncher">
       		<dependencies>
 	        	<zipfileset src="${rootdir}/vendor/jetty-6.0.2.jar"/>
@@ -91,11 +92,31 @@
 	        	<zipfileset src="${rootdir}/vendor/commons-logging-1.0.4.jar"/>
       		</dependencies>
     	</package-standalone-jar>
+  		<antcall target="clean"/>
   	</target>
 
-	<target name="clean">
+	<target name="clean-and-copy-source">
 		<delete failonerror="false" includeEmptyDirs="true">
 			<fileset dir="target"/>
+		</delete>
+		<mkdir dir="target"/>
+		<mkdir dir="target/build"/>
+		<copy todir="target/build/">
+			<fileset dir="src/main/java">
+				<include name="**/*.java"/>
+			</fileset>
+			<filterchain>
+				<replacetokens>
+					<token key="build" value="${timestamp}" />
+				</replacetokens>
+			</filterchain>
+		</copy>
+	</target>
+	
+	<target name="clean">
+		<delete failonerror="false" includeEmptyDirs="true">
+			<fileset dir="target/build"/>
+			<fileset dir="target/classes"/>
 		</delete>
 	</target>
 	

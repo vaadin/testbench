@@ -53,7 +53,7 @@ public class HubRegistry {
             final String definition = new ResourceLocator(getClass()).retrieveContent("/grid_configuration.yml");
             gridConfiguration = GridConfiguration.parse(definition);
             LOGGER.info("Loaded grid configuration:\n" + gridConfiguration.toYAML());
-
+            LOGGER.info("Running Build @build@");
         }
         return gridConfiguration;
     }

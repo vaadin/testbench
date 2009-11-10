@@ -20,8 +20,9 @@ public class Response {
     public void write(BufferedWriter writer) throws IOException {
         writer.write("HTTP/1.0 200 OK" + CRLF);
         writer.write("Server: Selenium Grid Echo Remote Control" + CRLF);
-        writer.write("Content-type: text/html" + CRLF);
-
+        writer.write("Content-type: text/html; charset=utf-8" + CRLF);
+        writer.write("Content-Length: " + body.length() + CRLF);
+        
 // Send a blank line to indicate the end of the header lines.
         writer.write(CRLF);
 

@@ -103,4 +103,9 @@
 		</delete>
 	</target>
 	
+	<target name="clean-classes">
+		<delete failonerror="false" includeEmptyDirs="true">
+			<fileset dir="target/classes"/>
+		</delete>
+	</target>
 </project>

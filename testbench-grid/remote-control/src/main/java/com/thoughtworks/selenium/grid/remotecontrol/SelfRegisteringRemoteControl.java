@@ -57,6 +57,7 @@ public class SelfRegisteringRemoteControl {
         for (String arg : args) {
             logger.info(arg);
         }
+        logger.info("Running Build @build@");
         SeleniumServer.main(args);
     }
 

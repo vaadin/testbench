@@ -60,6 +60,14 @@
 				<fileset dir="../testbench-grid/remote-control" includes="build.xml" />
 			</subant>
 		</parallel>
+		<parallel>
+			<subant target="clean-classes">
+				<fileset dir="../testbench-grid/infrastructure/core" includes="build.xml" />
+			</subant>
+			<subant target="clean-classes">
+				<fileset dir="../testbench-grid/infrastructure/webserver" includes="build.xml" />
+			</subant>
+		</parallel>
 	</target>
 	
 	<target name="testbench-distribution-package" depends="testbench.jar,testbench-ide,testbench-grid,update-run-scripts">
@@ -68,11 +76,11 @@
 			<zipfileset dir="${output.dir}" includes="testbench-ide/Testbench-ide-${timestamp}.xpi"  />
 <!--			<zipfileset dir=".." includes="selenium-extensions/**" />-->
 			<!-- Not certain about MPL/GPL or CPL licenses -->
-			<fileset dir=".." includes="lib/js.jar lib/junit*.jar" excludes="lib/**-source* lib/**-src*" />
+<!--			<fileset dir=".." includes="lib/js.jar lib/junit*.jar" excludes="lib/**-source* lib/**-src*" />-->
 			<zipfileset dir=".." includes="example/test.xml" />
 			<zipfileset dir=".." includes="example/testscripts/*.html" />
 			<!-- Add documentation -->
-			<zipfileset dir="../doc" includes="INSTALL.TXT" prefix="documentation" />
+			<zipfileset dir="../doc" includes="INSTALL.TXT *.pdf" prefix="documentation" />
 <!--			<fileset dir=".." includes="example/tests/**" />-->
 			<!-- Add hub and remote-control to zip -->
 			<zipfileset dir="../testbench-grid/hub" includes="hub hub.bat grid_configuration.yml" prefix="grid/hub" />
