@@ -252,16 +252,21 @@ Recorder.addEventHandler('scroll', 'scroll', function(event) {
 				if(previousLeft != left){
 					s.record("scrollLeft", loc, left);
 					previousLeft = left;
+					// Move index one back so that we get the pause before waitForVaadin
+					var index = tree.getRecordIndex() - 1;
+					tree.selection.select(index);
+					// wait for lazy scroller to start possible server visit
+					s.record_orig("pause", "300");
 				}
 				if(previousTop != top){
 					s.record("scroll", loc , top);
 					previousTop = top;
+					// Move index one back so that we get the pause before waitForVaadin
+					var index = tree.getRecordIndex() - 1;
+					tree.selection.select(index);
+					// wait for lazy scroller to start possible server visit
+					s.record_orig("pause", "300");
 				}
-				// Move index one back so that we get the pause before waitForVaadin
-				var index = tree.getRecordIndex() - 1;
-				tree.selection.select(index);
-				// wait for lazy scroller to start possible server visit
-				s.record_orig("pause", "300");
 				s._scrollTimeout = null;
 			},260);
 		}

@@ -120,13 +120,15 @@ Recorder.addEventHandler('scroll', 'scroll', function(event) {
 				if(previousLeft != left){
 					s.record("scrollLeft", loc, left);
 					previousLeft = left;
+					// wait for lazy scroller to start possible server visit
+					s.record("pause", "300");
 				}
 				if(previousTop != top){
 					s.record("scroll", loc , top);
 					previousTop = top;
+					// wait for lazy scroller to start possible server visit
+					s.record("pause", "300");
 				}
-				// wait for lazy scroller to start possible server visit
-				s.record("pause", "300");
 				s._scrollTimeout = null;
 			},260);
 		}

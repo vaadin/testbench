@@ -66,7 +66,7 @@ public class HttpClient {
         } catch (java.net.SocketException e) {
             return new Response("Socket exception. " + e.getMessage());
         } catch (IOException e) {
-            return new Response("Transport problem occured. " + e.getMessage());
+            return new Response("Problem occured. " + e.getMessage());
         } finally {
             method.releaseConnection();
         }
