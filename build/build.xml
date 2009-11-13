@@ -85,7 +85,7 @@
 			<zipfileset dir=".." includes="example/test.xml" />
 			<zipfileset dir=".." includes="example/testscripts/*.html" />
 			<!-- Add documentation -->
-			<zipfileset dir="../doc" includes="INSTALL.TXT *.pdf" prefix="documentation" />
+			<zipfileset dir="../doc" includes="*.pdf" prefix="documentation" />
 <!--			<fileset dir=".." includes="example/tests/**" />-->
 			<!-- Add hub and remote-control to zip -->
 			<zipfileset dir="../testbench-grid/hub" includes="hub hub.bat grid_configuration.yml" prefix="grid/hub" />
