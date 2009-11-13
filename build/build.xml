@@ -40,6 +40,7 @@
 	<target name="testbench-ide">
 		<!-- Create the Testbench IDE FireFox plugin -->
 		<subant target="extension">
+			<property name="version" value="${timestamp}"/>
 			<fileset dir="../testbench-ide" includes="build.xml" />
 		</subant>
 		<copy file="../testbench-ide/extension/Testbench-ide-${timestamp}.xpi" todir="${output.dir}/testbench-ide" />
@@ -47,16 +48,20 @@
 
 	<target name="testbench-grid">
 		<subant target="dist">
+			<property name="timestamp" value="${timestamp}"/>
 			<fileset dir="../testbench-grid/infrastructure/core" includes="build.xml" />
 		</subant>
 		<subant target="package-standalone">
+			<property name="timestamp" value="${timestamp}"/>
 			<fileset dir="../testbench-grid/infrastructure/webserver" includes="build.xml" />
 		</subant>
 		<parallel>
 			<subant target="package-standalone">
+				<property name="timestamp" value="${timestamp}"/>
 				<fileset dir="../testbench-grid/hub" includes="build.xml" />
 			</subant>
 			<subant target="package-standalone">
+				<property name="timestamp" value="${timestamp}"/>
 				<fileset dir="../testbench-grid/remote-control" includes="build.xml" />
 			</subant>
 		</parallel>

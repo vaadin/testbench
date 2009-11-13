@@ -2,7 +2,7 @@
 
 <project name="Testbench IDE extension" basedir="." default="extension">
 	<tstamp />
-	<property name="version" value="${DSTAMP}${TSTAMP}" />
+	<!--<property name="version" value="${DSTAMP}${TSTAMP}" />-->
 
 	<target name="selenium-ide-package">
 		<copy file="../selenium-extensions/vaadin-format.js" tofile="chrome/content/formats/vaadin-format.js"/>

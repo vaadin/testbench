@@ -6,8 +6,8 @@
   	<property file="${rootdir}/project.properties"/>
   	<property name="name" value="Selenium Grid Hub"/>
   	<property name="artifact" value="selenium-grid-hub"/>
-	<property name="timestamp" value="${DSTAMP}${TSTAMP}"/>
-  	<property name="version" value="TestBench-${timestamp}"/>
+<!--	<property name="timestamp" value="${DSTAMP}${TSTAMP}"/>-->
+  	<property name="version" value="Testbench-${timestamp}"/>
 	<property name="dist" value="target/dist"/>
 
 	<property name="build.src" location="target/build"/>

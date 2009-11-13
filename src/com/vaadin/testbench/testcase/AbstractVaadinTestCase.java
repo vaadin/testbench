@@ -28,6 +28,7 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
     private static String testCaseName = "";
     private static List<junit.framework.AssertionFailedError> softAssert = new LinkedList<junit.framework.AssertionFailedError>();
     private static BrowserDimensions dimensions = null;
+    private static BrowserVersion browser = null;
     private static final int maxAmountOfTests = 5;
     private static final String DEBUG = "com.vaadin.testbench.debug";
     private static final String SOFT_FAIL = "com.vaadin.testbench.screenshot.softfail";
@@ -69,7 +70,10 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
         // Small pause to give components a bit of render time
         pause(10);
 
-        BrowserVersion browser = browserUtils.getBrowserVersion(selenium);
+        // If browser is not set get browser info.
+        if (browser == null) {
+            browser = browserUtils.getBrowserVersion(selenium);
+        }
         String navigatorId = browser.getIdentifier();
 
         // setup filename
@@ -213,7 +217,7 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
         imageNumber = 0;
         softAssert.clear();
 
-        BrowserVersion browser = browserUtils.getBrowserVersion(selenium);
+        browser = browserUtils.getBrowserVersion(selenium);
 
         // Get sizes for canvas cropping.
         int width = Integer.parseInt(selenium.getEval("screen.availWidth;"));
