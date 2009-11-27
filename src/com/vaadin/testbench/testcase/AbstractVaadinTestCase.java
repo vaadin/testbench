@@ -1,7 +1,6 @@
 package com.vaadin.testbench.testcase;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -29,7 +28,7 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
     private static List<junit.framework.AssertionFailedError> softAssert = new LinkedList<junit.framework.AssertionFailedError>();
     private static BrowserDimensions dimensions = null;
     private static BrowserVersion browser = null;
-    private static final int maxAmountOfTests = 5;
+    private static final int maxAmountOfTests = 0;
     private static final String DEBUG = "com.vaadin.testbench.debug";
     private static final String SOFT_FAIL = "com.vaadin.testbench.screenshot.softfail";
 
@@ -129,66 +128,43 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
                 softAssert.add(e);
             } else if (e.getMessage().contains("differs from reference image")) {
 
-                // Build error screenshot directory.
-                String directory = System
-                        .getProperty("com.vaadin.testbench.screenshot.directory");
-
-                if (!File.separator.equals(directory
-                        .charAt(directory.length() - 1))) {
-                    directory = directory + File.separator;
-                }
-                directory = directory + File.separator + "errors"
-                        + File.separator;
-
-                // If we find errors in the image take new references x times or
-                // until functional image is found.
-                for (int i = 0; i < maxAmountOfTests; i++) {
-                    pause(200);
-
-                    image = selenium.captureScreenshotToString();
-
-                    // check that we didn't get null for out image
-                    // and that it has length > 0
-                    if (image == null) {
-                        Assert.fail("Didn't get an image from selenium on run "
-                                + (i + 1));
-                    } else if (image.length() == 0) {
-                        Assert
-                                .fail("Got a screenshot String with length 0 on run "
-                                        + (i + 1));
-                    }
-
-                    try {
-                        result = compare.compareStringImage(image, fileName, d,
-                                dimensions, false);
-                        if (result == true) {
-                            boolean success = (new File(directory + fileName
-                                    + ".html")).delete();
-                            if (success) {
-                                success = (new File(directory + fileName
-                                        + ".png")).delete();
-                                if (debug) {
-                                    if (success) {
-                                        System.err
-                                                .println("Removed created clean image and difference html.\n"
-                                                        + "Comparison successful");
-                                    } else {
-                                        System.err
-                                                .println("Removed created difference html.\n"
-                                                        + "Comparison successful");
-                                    }
-                                }
-                            } else {
-                                System.err
-                                        .println("Failed to remove created error files.\n"
-                                                + "Comparison successful.");
-                            }
-                            return result;
-                        }
-                    } catch (junit.framework.AssertionFailedError afe) {
-                        result = false;
-                    }
-                }
+                /*
+                 * // Build error screenshot directory. String directory =
+                 * System
+                 * .getProperty("com.vaadin.testbench.screenshot.directory");
+                 * 
+                 * if (!File.separator.equals(directory
+                 * .charAt(directory.length() - 1))) { directory = directory +
+                 * File.separator; } directory = directory + File.separator +
+                 * "errors" + File.separator;
+                 * 
+                 * // If we find errors in the image take new references x times
+                 * or // until functional image is found. for (int i = 0; i <
+                 * maxAmountOfTests; i++) { pause(200);
+                 * 
+                 * image = selenium.captureScreenshotToString();
+                 * 
+                 * // check that we didn't get null for out image // and that it
+                 * has length > 0 if (image == null) {
+                 * Assert.fail("Didn't get an image from selenium on run " + (i
+                 * + 1)); } else if (image.length() == 0) { Assert
+                 * .fail("Got a screenshot String with length 0 on run " + (i +
+                 * 1)); }
+                 * 
+                 * try { result = compare.compareStringImage(image, fileName, d,
+                 * dimensions, false); if (result == true) { boolean success =
+                 * (new File(directory + fileName + ".html")).delete(); if
+                 * (success) { success = (new File(directory + fileName +
+                 * ".png")).delete(); if (debug) { if (success) { System.err
+                 * .println("Removed created clean image and difference html.\n"
+                 * + "Comparison successful"); } else { System.err
+                 * .println("Removed created difference html.\n" +
+                 * "Comparison successful"); } } } else { System.err
+                 * .println("Failed to remove created error files.\n" +
+                 * "Comparison successful."); } return result; } } catch
+                 * (junit.framework.AssertionFailedError afe) { result = false;
+                 * } }
+                 */
                 // Do a Roberts Cross edge detection on images and compare for
                 // diff. Should remove some small faults.
                 // result = compare.compareStringImage(image, fileName, d,
