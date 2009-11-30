@@ -49,27 +49,33 @@
 	<target name="testbench-grid">
 		<subant target="dist">
 			<property name="timestamp" value="${timestamp}"/>
+		  	<property name="version" value="Testbench-${timestamp}"/>
 			<fileset dir="../testbench-grid/infrastructure/core" includes="build.xml" />
 		</subant>
 		<subant target="package-standalone">
 			<property name="timestamp" value="${timestamp}"/>
+		  	<property name="version" value="Testbench-${timestamp}"/>
 			<fileset dir="../testbench-grid/infrastructure/webserver" includes="build.xml" />
 		</subant>
 		<parallel>
 			<subant target="package-standalone">
 				<property name="timestamp" value="${timestamp}"/>
+			  	<property name="version" value="Testbench-${timestamp}"/>
 				<fileset dir="../testbench-grid/hub" includes="build.xml" />
 			</subant>
 			<subant target="package-standalone">
 				<property name="timestamp" value="${timestamp}"/>
+			  	<property name="version" value="Testbench-${timestamp}"/>
 				<fileset dir="../testbench-grid/remote-control" includes="build.xml" />
 			</subant>
 		</parallel>
 		<parallel>
 			<subant target="clean-classes">
+			  	<property name="version" value="Testbench-${timestamp}"/>
 				<fileset dir="../testbench-grid/infrastructure/core" includes="build.xml" />
 			</subant>
 			<subant target="clean-classes">
+			  	<property name="version" value="Testbench-${timestamp}"/>
 				<fileset dir="../testbench-grid/infrastructure/webserver" includes="build.xml" />
 			</subant>
 		</parallel>

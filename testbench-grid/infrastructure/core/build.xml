@@ -6,7 +6,6 @@
   	<property file="${rootdir}/project.properties"/>
   	<property name="name" value="Selenium Grid Core"/>
   	<property name="artifact" value="selenium-grid-core"/>
-  	<property name="version" value="TestBench-${timestamp}"/>
 	<property name="dist" value="target/dist"/>
 
   	<property name="build.src" location="src/main"/>
