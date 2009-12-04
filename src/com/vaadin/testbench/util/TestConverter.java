@@ -54,9 +54,13 @@ public class TestConverter {
 
     private static final String PACKAGE_DIR = "com/vaadin/automatedtests";
 
+    // Flags to determine what to do during conversion.
     private static boolean screenshot = false;
     private static boolean firstScreenshot = true;
     private static boolean isOpera = false, isSafari = false, isChrome = false;
+
+    // Path to file being converted.
+    private static String filePath = "";
 
     public static void main(String[] args) {
         if (args.length < 3) {
@@ -81,8 +85,6 @@ public class TestConverter {
             try {
                 String browserId = knownBrowsers.get(browser.toLowerCase());
                 if (browserId == null) {
-                    // System.err.println("Warning: Unknown browser: " +
-                    // browser);
                     if (browser.contains("Opera") || browser.contains("opera")) {
                         isOpera = true;
                     } else if (browser.contains("Safari")
@@ -152,6 +154,15 @@ public class TestConverter {
         File f = new File(filename);
         String testName = removeExtension(f.getName());
 
+        // Set path to file under conversion
+        filePath = f.getParent();
+        if (filePath == null) {
+            filePath = "";
+        } else if (!File.separator.equals(filePath
+                .charAt(filePath.length() - 1))) {
+            filePath = filePath + File.separator;
+        }
+
         // Sanitize so it is a valid method name
         testName = testName.replaceAll("[^0-9a-zA-Z_]", "_");
 
@@ -170,6 +181,18 @@ public class TestConverter {
         return outputStream;
     }
 
+    private static OutputStream createJavaFile(String testName, String browser,
+            String outputDirectory) throws IOException {
+        File outputFile = getJavaFile(testName, outputDirectory);
+        System.out.println("Creating " + outputFile + " for " + browser
+                + " tests");
+        FileOutputStream outputStream = new FileOutputStream(outputFile);
+
+        outputStream.write(getJavaHeader(testName, browser));
+
+        return outputStream;
+    }
+
     private static String getSafeName(String name) {
         return name.replaceAll("[^a-zA-Z0-9]", "_");
     }
@@ -184,7 +207,6 @@ public class TestConverter {
                 System.err.println("Created directory: " + directory);
             }
         }
-
     }
 
     private static String createTestMethod(String htmlFile, String testName)
@@ -307,9 +329,9 @@ public class TestConverter {
 
         for (Command command : commands) {
             if (command.getCmd().equals("screenCapture")) {
-
                 String identifier = "";
                 boolean first = true;
+                // Get Value field for image name identifier
                 for (String param : command.getParams()) {
                     if (!first) {
                         identifier = param;
@@ -327,6 +349,7 @@ public class TestConverter {
             } else if (command.getCmd().equalsIgnoreCase("pause")) {
                 String identifier = "";
                 boolean first = true;
+                // Get Target field for pause time
                 for (String param : command.getParams()) {
                     if (first) {
                         identifier = param;
@@ -334,38 +357,6 @@ public class TestConverter {
                     first = false;
                 }
                 javaSource.append("pause(" + identifier + ");\n");
-                // } else if
-                // (command.getCmd().equalsIgnoreCase("enterCharacter")) {
-                // String locator = "";
-                // String characters = "";
-                // boolean first = true;
-                // for (String param : command.getParams()) {
-                // if (first) {
-                // /* get locator */
-                // locator = param.replace("\\", "\\\\");
-                // } else {
-                // /* get characters */
-                // characters = param;
-                // }
-                //
-                // first = false;
-                // }
-                // javaSource.append("selenium.type(\"" + locator + "\", \""
-                // + characters + "\");\n");
-                // if (characters.length() > 1) {
-                // /* Add a keyDown keyUp for each character */
-                // for (int i = 0; i < characters.length(); i++) {
-                // javaSource.append("selenium.keyDown(\"" + locator
-                // + "\", \"" + characters.charAt(i) + "\");\n");
-                // javaSource.append("selenium.keyUp(\"" + locator
-                // + "\", \"" + characters.charAt(i) + "\");\n");
-                // }
-                // } else {
-                // javaSource.append("selenium.keyDown(\"" + locator
-                // + "\", \"" + characters + "\");\n");
-                // javaSource.append("selenium.keyUp(\"" + locator + "\", \""
-                // + characters + "\");\n");
-                // }
             } else if (command.getCmd().equalsIgnoreCase("pressSpecialKey")) {
                 String value = "";
                 String location = "";
@@ -424,12 +415,12 @@ public class TestConverter {
                     if (Integer.parseInt(value) == 10) {
                         value = "13";
                     }
-                    javaSource.append("selenium.keyDown(\"" + location
-                            + "\", \"\\\\" + value + "\");\n");
-                    javaSource.append("selenium.keyPress(\"" + location
-                            + "\", \"\\\\" + value + "\");\n");
-                    javaSource.append("selenium.keyUp(\"" + location
-                            + "\", \"\\\\" + value + "\");\n");
+                    javaSource
+                            .append("doCommand(\"pressSpecialKey\", new String[] { \""
+                                    + location
+                                    + "\", \"\\\\"
+                                    + value
+                                    + "\"});\n");
                 }
 
             } else if ((command.getCmd().equalsIgnoreCase("mouseClick") || command
@@ -493,43 +484,84 @@ public class TestConverter {
                 String locator = "";
                 String value = "";
                 boolean first = true;
+
                 for (String param : command.getParams()) {
                     if (first) {
                         /* get locator */
                         locator = param.replace("\\", "\\\\");
                     } else {
-                        /* get characters */
+                        /* get target */
                         value = param;
                     }
 
                     first = false;
                 }
 
+                // Try to load and parse test
                 try {
-                    // open and read target file
-                    FileInputStream fis = new FileInputStream(value);
-                    String htmlSource = IOUtils.toString(fis);
-                    fis.close();
+                    // Get file absolutePath/relativeToIncludingFile/search from
+                    // including file directory
+                    File target = new File(value);
+                    if (!target.exists()) {
+                        target = new File(filePath + value);
+                        if (!target.exists()) {
+                            System.out
+                                    .println("File not found resorting to search.");
+                            target = getFile(target.getName(), new File(
+                                    filePath));
+                            if (target != null) {
+                                System.out.println("Match found. Using "
+                                        + target.getPath());
+                            }
+                        }
+                    }
+                    // If file not found add Assert.fail and print to System.err
+                    if (target == null) {
+                        target = new File(value);
+                        javaSource
+                                .append("junit.framework.Assert.fail(\"Couldn't find file "
+                                        + target.getName() + "\");\n");
+                        System.err.println("Failed to append test "
+                                + target.getName());
+                    } else {
+                        // Save path to including file
+                        String parentPath = filePath;
+                        // Set path to this file
+                        filePath = target.getParent();
+                        if (filePath == null) {
+                            filePath = "";
+                        } else if (!File.separator.equals(filePath
+                                .charAt(filePath.length() - 1))) {
+                            filePath = filePath + File.separator;
+                        }
 
-                    // sanitize source
-                    htmlSource = htmlSource.replace("\"", "\\\"").replaceAll(
-                            "\\n", "\\\\n").replace("'", "\\'").replaceAll(
-                            "\\r", "");
+                        // open and read target file
+                        FileInputStream fis = new FileInputStream(target);
+                        String htmlSource = IOUtils.toString(fis);
+                        fis.close();
 
-                    Context cx = Context.enter();
-                    try {
-                        Scriptable scope = cx.initStandardObjects();
+                        // sanitize source
+                        htmlSource = htmlSource.replace("\"", "\\\"")
+                                .replaceAll("\\n", "\\\\n").replace("'", "\\'")
+                                .replaceAll("\\r", "");
 
-                        // Parse commands to a List
-                        List<Command> newCommands = parseTestCase(cx, scope,
-                                htmlSource);
-                        // Convert tests to Java
-                        String tests = convertTestCaseToJava(newCommands,
-                                testName);
-                        javaSource.append(tests);
+                        Context cx = Context.enter();
+                        try {
+                            Scriptable scope = cx.initStandardObjects();
 
-                    } finally {
-                        Context.exit();
+                            // Parse commands to a List
+                            List<Command> newCommands = parseTestCase(cx,
+                                    scope, htmlSource);
+                            // Convert tests to Java
+                            String tests = convertTestCaseToJava(newCommands,
+                                    testName);
+                            javaSource.append(tests);
+
+                        } finally {
+                            Context.exit();
+                            // Set path back to calling file
+                            filePath = parentPath;
+                        }
                     }
                 } catch (Exception e) {
                     // if exception was caught put a assert fail to inform user
@@ -543,7 +575,6 @@ public class TestConverter {
                                     + e.getMessage()
                                     + "\");");
                 }
-
             } else {
                 javaSource.append("doCommand(\"");
                 javaSource.append(command.getCmd());
@@ -566,6 +597,23 @@ public class TestConverter {
         }
 
         return javaSource.toString();
+    }
+
+    private static File getFile(String test, File buildPath) {
+        File found = null;
+        for (File file : buildPath.listFiles()) {
+            if (file.isDirectory()) {
+                found = getFile(test, file);
+                if (found != null) {
+                    return found;
+                }
+            } else if (file.isFile()) {
+                if (file.getName().equals(test)) {
+                    return file;
+                }
+            }
+        }
+        return found;
     }
 
     private static List<Command> parseTestCase(Context cx, Scriptable scope,

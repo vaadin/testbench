@@ -141,12 +141,15 @@ Selenium.prototype.doPressSpecialKey = function(locator, value){
 		value="\\13";
 	}
 	this.doKeyDown(locator, value);
+	this.doKeyPress(locator, value);
 	this.doKeyUp(locator, value);
 };
 
 /*Simulates the correct mouse click events.*/
 Selenium.prototype.doMouseClick = function(locator, value){
 	this.doMouseDownAt(locator, value);
+//	var element = this.browserbot.findElement(locator);
+//	element.focus();
 	this.doMouseUpAt(locator, value);
 	this.doClick(locator, '');
 };
@@ -154,6 +157,8 @@ Selenium.prototype.doMouseClick = function(locator, value){
 /*Opera requires a special mouseClick as it else clicks twice*/
 Selenium.prototype.doMouseClickOpera = function(locator, value){
 	this.doMouseDownAt(locator, value);
+//	var element = this.browserbot.findElement(locator);
+//	element.focus();
 	this.doMouseUpAt(locator, value);
 }
 
