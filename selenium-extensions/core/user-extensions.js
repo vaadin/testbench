@@ -147,20 +147,24 @@ Selenium.prototype.doPressSpecialKey = function(locator, value){
 
 /*Simulates the correct mouse click events.*/
 Selenium.prototype.doMouseClick = function(locator, value){
-	this.doMouseDownAt(locator, value);
-//	var element = this.browserbot.findElement(locator);
+	var element = this.browserbot.findElement(locator);
+	var clientXY = getClientXY(element, value);
+
+	this.browserbot.triggerMouseEvent(element, 'mousedown', true, clientXY[0], clientXY[1]);
 //	element.focus();
-	this.doMouseUpAt(locator, value);
-	this.doClick(locator, '');
+	this.browserbot.triggerMouseEvent(element, 'mouseup', true, clientXY[0], clientXY[1]);
+	this.browserbot.clickElement(element);
 };
 
 /*Opera requires a special mouseClick as it else clicks twice*/
 Selenium.prototype.doMouseClickOpera = function(locator, value){
-	this.doMouseDownAt(locator, value);
-//	var element = this.browserbot.findElement(locator);
+	var element = this.browserbot.findElement(locator);
+	var clientXY = getClientXY(element, value);
+
+	this.browserbot.triggerMouseEvent(element, 'mousedown', true, clientXY[0], clientXY[1]);
 //	element.focus();
-	this.doMouseUpAt(locator, value);
-}
+	this.browserbot.triggerMouseEvent(element, 'mouseup', true, clientXY[0], clientXY[1]);
+};
 
 /*Does a mouseClick on the target element. Used descriptive purposes.*/
 Selenium.prototype.doCloseNotification = function(locator, value){
