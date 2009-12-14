@@ -43,8 +43,11 @@ public class TestConverter {
     }
     private static final String JAVA_HEADER = "package {package};\n" + "\n"
             + "import com.vaadin.testbench.testcase.AbstractVaadinTestCase;\n"
-            + "\n" + "public class {class} extends AbstractVaadinTestCase {\n"
-            + "\n" + "public void setUp() throws Exception {\n"
+            + "import java.io.IOException;\n" + "import java.io.File;\n"
+            + "import javax.imageio.ImageIO;\n"
+            + "import com.vaadin.testbench.util.ImageComparison;\n" + "\n"
+            + "public class {class} extends AbstractVaadinTestCase {\n" + "\n"
+            + "public void setUp() throws Exception {\n"
             + "        setBrowser({browser});\n super.setUp();\n" + "}" + "\n";
 
     private static final String TEST_METHOD_HEADER = "public void test{testName}() throws Exception {\n";
@@ -61,6 +64,8 @@ public class TestConverter {
 
     // Path to file being converted.
     private static String filePath = "";
+    private static String absoluteFilePath = "";
+    private static String browserUnderConversion = "";
 
     public static void main(String[] args) {
         if (args.length < 3) {
@@ -79,6 +84,7 @@ public class TestConverter {
 
         for (String browser : browsers) {
             System.out.println("Generating tests for " + browser);
+            browserUnderConversion = browser;
             isOpera = isSafari = isChrome = false;
 
             OutputStream out = null;
@@ -144,6 +150,106 @@ public class TestConverter {
         }
     }
 
+    /**
+     * Test converter for use with TestBenchRunner, gives less output.
+     * 
+     * @param args
+     *            (output directory) (browsers) (html test files)
+     */
+    public static void runnerConvert(String[] args) {
+        if (args.length < 3) {
+            System.err.println("Usage: " + TestConverter.class.getName()
+                    + " <output directory> <browsers> <html test files>");
+            System.exit(1);
+        }
+
+        String outputDirectory = args[0];
+        String browserString = args[1];
+        String browsers[] = browserString.split(",");
+
+        File outputPath = new File(outputDirectory);
+        if (!outputPath.exists()) {
+            if (!outputPath.mkdirs()) {
+                System.err.println("Could not create directory: "
+                        + outputDirectory);
+                System.exit(1);
+            }
+        }
+        outputPath = new File(outputDirectory + File.separator + PACKAGE_DIR);
+        if (!outputPath.exists()) {
+            if (!outputPath.mkdirs()) {
+                System.err.println("Could not create directory: "
+                        + outputPath.getAbsolutePath());
+            }
+        }
+
+        for (String browser : browsers) {
+            browserUnderConversion = browser;
+            isOpera = isSafari = isChrome = false;
+
+            OutputStream out = null;
+            try {
+                String browserId = knownBrowsers.get(browser.toLowerCase());
+                if (browserId == null) {
+                    if (browser.contains("Opera") || browser.contains("opera")) {
+                        isOpera = true;
+                    } else if (browser.contains("Safari")
+                            || browser.contains("safari")) {
+                        isSafari = true;
+                    } else if (browser.contains("Google")
+                            || browser.contains("google")) {
+                        isChrome = true;
+                    }
+                } else {
+                    if (browserId.equals("*opera")) {
+                        isOpera = true;
+                    } else if (browserId.equals("*safari")) {
+                        isSafari = true;
+                    } else if (browserId.equals("*googlechrome")) {
+                        isChrome = true;
+                    }
+                }
+
+                String filename = args[2];
+                // Create a java file for holding all tests for this browser
+                out = createJavaFile(getTestName(filename) + "_"
+                        + browser.replaceAll("[^a-zA-Z0-9]", "_"), browser,
+                        outputDirectory);
+
+                try {
+                    String testMethod = createTestMethod(filename,
+                            getTestName(filename) + "_"
+                                    + browser.replaceAll("[^a-zA-Z0-9]", "_"));
+                    out.write(testMethod.getBytes());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                // Write the footer to the browser test class.
+                writeJavaFooter(out);
+
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } finally {
+                try {
+                    if (out != null) {
+                        out.flush();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                try {
+                    if (out != null) {
+                        out.close();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
     private static void writeJavaFooter(OutputStream out) throws IOException {
         String footer = getJavaFooter();
         out.write(footer.getBytes());
@@ -162,6 +268,7 @@ public class TestConverter {
                 .charAt(filePath.length() - 1))) {
             filePath = filePath + File.separator;
         }
+        absoluteFilePath = f.getAbsolutePath();
 
         // Sanitize so it is a valid method name
         testName = testName.replaceAll("[^0-9a-zA-Z_]", "_");
@@ -244,6 +351,12 @@ public class TestConverter {
         String windowFunctions = "doCommand(\"windowMaximize\", new String[] { \"\" });\n"
                 + "doCommand(\"windowFocus\", new String[] { \"\" });\n"
                 + "getCanvasPosition();\n";
+        // If screenshot.onfail defined, add try{ }catch( ){ }
+        if ("true".equals(System
+                .getProperty("com.vaadin.testbench.screenshot.onfail"))) {
+            screenshot = true;
+            windowFunctions = windowFunctions + "try{\n";
+        }
 
         if (screenshot) {
             return testCaseHeader + windowFunctions + testCaseBody
@@ -283,6 +396,27 @@ public class TestConverter {
                 + "junit.framework.Assert.fail(\"Test contained differences.\");\n"
                 + "}else{\njunit.framework.Assert.fail(\"Image sizes differ.\");\n"
                 + "}\n}\n";
+        // if screenshot.onfail defined add try{ }catch( ){ }
+        if ("true".equals(System
+                .getProperty("com.vaadin.testbench.screenshot.onfail"))) {
+            screenshot = true;
+            softAsserts = softAsserts
+                    + "}catch(Exception e){\n"
+                    + "String statusScreen = selenium.captureScreenshotToString();\n"
+                    + "String directory = System.getProperty(\"com.vaadin.testbench.screenshot.directory\");\n"
+                    + "if (!File.separator.equals(directory.charAt(directory.length() - 1))) {\n"
+                    + "directory = directory + File.separator;\n}\n"
+                    + "File target = new File(directory + \"errors\");\n"
+                    + "if(!target.exists()){\n"
+                    + "target.mkdir();\n}\n"
+                    + "try{\n"
+                    + "ImageComparison ic = new ImageComparison();\n"
+                    + "ImageIO.write(ic.stringToImage(statusScreen), \"png\", new File(directory + \"errors/"
+                    + testName + "_failure_"
+                    + getSafeName(browserUnderConversion)
+                    + ".png\"));\n}catch(IOException ioe){\n"
+                    + "ioe.printStackTrace();\n}\n" + "throw e;\n}\n";
+        }
         String footer = TEST_METHOD_FOOTER;
         footer = footer.replace("{testName}", testName);
 
@@ -443,22 +577,28 @@ public class TestConverter {
                 javaSource
                         .append("doCommand(\"mouseClickOpera\", new String[] {\""
                                 + values + "\"});\n");
-            } else if (command.getCmd().equalsIgnoreCase("verifyTextPresent")) {
-
-                String identifier = "";
-                boolean first = true;
-                for (String param : command.getParams()) {
-                    if (first) {
-                        identifier = param;
-                    }
-                    first = false;
-                }
-                identifier = identifier.replace("\"", "\\\"").replaceAll("\\n",
-                        "\\\\n");
-
-                javaSource.append("assertTrue(\"Could not find: " + identifier
-                        + "\", selenium.isTextPresent(\"" + identifier
-                        + "\"));\n");
+                // } else if
+                // (command.getCmd().equalsIgnoreCase("verifyTextPresent")) {
+                //
+                // String identifier = "";
+                // boolean first = true;
+                // for (String param : command.getParams()) {
+                // if (first) {
+                // identifier = param;
+                // }
+                // first = false;
+                // }
+                // identifier = identifier.replace("\"",
+                // "\\\"").replaceAll("\\n",
+                // "\\\\n");
+                //
+                // javaSource.append("try{\n");
+                // javaSource
+                // .append("doCommand(\"verifyTextPresent\", new String[] {\""
+                // + identifier + "\"});\n");
+                // javaSource
+                // .append("}catch(Exception e){\njunit.framework.Assert.fail(\"Couldn't find string: "
+                // + identifier + "\");\n}\n");
             } else if (command.getCmd().equalsIgnoreCase("showTooltip")) {
                 String locator = "";
                 String value = "";
@@ -491,14 +631,20 @@ public class TestConverter {
                         locator = param.replace("\\", "\\\\");
                     } else {
                         /* get target */
-                        value = param;
+                        value = param.replace("\\", "\\\\");
                     }
 
                     first = false;
                 }
 
-                // Try to load and parse test
-                try {
+                if (value.length() == 0) {
+                    System.err.println("No file defined in Value field.");
+                    System.err.println("Check includeTest command in "
+                            + absoluteFilePath);
+                    javaSource
+                            .append("junit.framework.Assert.fail(\"No file defined in Value field.\");\n");
+                } else {
+                    // Try to load and parse test
                     // Get file absolutePath/relativeToIncludingFile/search from
                     // including file directory
                     File target = new File(value);
@@ -526,6 +672,7 @@ public class TestConverter {
                     } else {
                         // Save path to including file
                         String parentPath = filePath;
+                        String absoluteParent = absoluteFilePath;
                         // Set path to this file
                         filePath = target.getParent();
                         if (filePath == null) {
@@ -534,19 +681,21 @@ public class TestConverter {
                                 .charAt(filePath.length() - 1))) {
                             filePath = filePath + File.separator;
                         }
+                        absoluteFilePath = target.getAbsolutePath();
 
-                        // open and read target file
-                        FileInputStream fis = new FileInputStream(target);
-                        String htmlSource = IOUtils.toString(fis);
-                        fis.close();
-
-                        // sanitize source
-                        htmlSource = htmlSource.replace("\"", "\\\"")
-                                .replaceAll("\\n", "\\\\n").replace("'", "\\'")
-                                .replaceAll("\\r", "");
-
-                        Context cx = Context.enter();
                         try {
+                            // open and read target file
+                            FileInputStream fis = new FileInputStream(target);
+                            String htmlSource = IOUtils.toString(fis);
+                            fis.close();
+
+                            // sanitize source
+                            htmlSource = htmlSource.replace("\"", "\\\"")
+                                    .replaceAll("\\n", "\\\\n").replace("'",
+                                            "\\'").replaceAll("\\r", "");
+
+                            Context cx = Context.enter();
+
                             Scriptable scope = cx.initStandardObjects();
 
                             // Parse commands to a List
@@ -557,23 +706,27 @@ public class TestConverter {
                                     testName);
                             javaSource.append(tests);
 
+                        } catch (Exception e) {
+                            // if exception was caught put a assert fail to
+                            // inform user of error.
+                            System.err.println("Failed in appending test. "
+                                    + e.getMessage());
+                            if ("true".equalsIgnoreCase(System
+                                    .getProperty("com.vaadin.testbench.debug"))) {
+                                e.printStackTrace();
+                            }
+                            javaSource
+                                    .append("junit.framework.Assert.fail(\"Insertion of test "
+                                            + value
+                                            + " failed with "
+                                            + e.getMessage() + "\");");
                         } finally {
                             Context.exit();
                             // Set path back to calling file
                             filePath = parentPath;
+                            absoluteFilePath = absoluteParent;
                         }
                     }
-                } catch (Exception e) {
-                    // if exception was caught put a assert fail to inform user
-                    // of error.
-                    System.err.println("Failed in appending test. "
-                            + e.getMessage());
-                    javaSource
-                            .append("junit.framework.Assert.fail(\"Insertion of test "
-                                    + value
-                                    + " failed with "
-                                    + e.getMessage()
-                                    + "\");");
                 }
             } else {
                 javaSource.append("doCommand(\"");

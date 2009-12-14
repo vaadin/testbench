@@ -40,6 +40,7 @@
 
 		<echo>Using test scripts: ${testfiles}</echo>
 		<java classname="com.vaadin.testbench.util.TestConverter" classpathref="classpath">
+			<sysproperty key="com.vaadin.testbench.screenshot.onfail" value="false"/>
 			<arg value="${temp-dir}/src" />
 			<arg value="${browsers}" />
 			<arg line="${testfiles}" />

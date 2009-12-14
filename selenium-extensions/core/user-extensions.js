@@ -83,7 +83,7 @@ Selenium.prototype.doWaitForVaadin = function(locator, value) {
 		  		return false;
 		  	}
 	 }, timeout);
-}
+};
 
 Selenium.prototype.doScroll = function(locator, scrollString) {
 	var element = this.page().findElement(locator);
