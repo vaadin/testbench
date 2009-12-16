@@ -4,10 +4,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -32,10 +30,11 @@ public class ParserFunctions {
      * @throws FileNotFoundException
      *             the target file was not found
      */
-    public static Map<String, Object> readXmlFile(String file, String path)
+    public static ParsedSuite readXmlFile(String file, String path)
             throws FileNotFoundException {
 
-        Map<String, Object> result = new HashMap<String, Object>();
+        // Map<String, Object> result = new HashMap<String, Object>();
+        ParsedSuite result = new ParsedSuite();
 
         if (path == null) {
             path = System.getProperty("user.dir");
@@ -68,16 +67,14 @@ public class ParserFunctions {
             NodeList nodeList = doc.getElementsByTagName("title");
             for (int i = 0; i < nodeList.getLength(); i++) {
                 Node node = nodeList.item(i);
-                result
-                        .put("title", node.getChildNodes().item(0)
-                                .getNodeValue());
+                result.setTestName(node.getChildNodes().item(0).getNodeValue());
             }
 
             // Get <path> node and set path if exists
             nodeList = doc.getElementsByTagName("path");
             for (int i = 0; i < nodeList.getLength(); i++) {
                 Node node = nodeList.item(i);
-                result.put("path", node.getChildNodes().item(0).getNodeValue());
+                result.setPath(node.getChildNodes().item(0).getNodeValue());
             }
 
             List<String> tests = new LinkedList<String>();
@@ -87,7 +84,7 @@ public class ParserFunctions {
                 Node node = nodeList.item(i);
                 tests.add(node.getChildNodes().item(0).getNodeValue());
             }
-            result.put("tests", tests);
+            result.setSuiteTests(tests);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -109,9 +106,10 @@ public class ParserFunctions {
      * @throws FileNotFoundException
      *             the target file was not found
      */
-    public static Map<String, Object> readHtmlFile(String file, String path)
+    public static ParsedSuite readHtmlFile(String file, String path)
             throws FileNotFoundException {
-        Map<String, Object> result = new HashMap<String, Object>();
+        // Map<String, Object> result = new HashMap<String, Object>();
+        ParsedSuite result = new ParsedSuite();
 
         if (path == null) {
             path = System.getProperty("user.dir");
@@ -149,15 +147,14 @@ public class ParserFunctions {
                 } else if (line.contains("<b>")) {
                     line = line.substring(line.indexOf("<b>") + 3, line
                             .lastIndexOf("</b>"));
-                    result.put("title", line);
+                    result.setTestName(line);
                 }
             }
-            result.put("tests", tests);
+            result.setSuiteTests(tests);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         return result;
     }
-
 }

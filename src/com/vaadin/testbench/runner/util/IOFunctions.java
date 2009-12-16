@@ -9,8 +9,10 @@ import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.util.Enumeration;
 
+import junit.framework.Test;
 import junit.framework.TestFailure;
 import junit.framework.TestResult;
+import junit.framework.TestSuite;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -22,29 +24,42 @@ public class IOFunctions {
      * Prints the result information for given TestResult.
      * 
      * @param seconds
-     *            Time for run in seconds
+     *            Time for run
      * @param result
      *            Result for JUnit tests
      */
-    public static void printResult(int seconds, TestResult result) {
-        if (seconds > 60) {
-            System.out.println("Tests run: " + result.runCount()
-                    + ", Failures: " + result.failureCount() + ", Errors: "
-                    + result.errorCount() + ", Time elapsed: " + (seconds / 60)
-                    + " min " + (seconds % 60) + " sec");
-        } else {
-            System.out.println("Tests run: " + result.runCount()
-                    + ", Failures: " + result.failureCount() + ", Errors: "
-                    + result.errorCount() + ", Time elapsed: " + seconds
-                    + " sec");
-        }
+    public static void printResult(long milliseconds, TestResult result) {
+        System.out.print("Tests run: " + result.runCount());
+        System.out.print(", Failures: " + result.failureCount());
+        System.out.print(", Errors: " + result.errorCount());
+        System.out.println(", Time elapsed: "
+                + (Double) (milliseconds / 1000.000) + " sec");
+
         Enumeration<TestFailure> r = result.failures();
         while (r.hasMoreElements()) {
-            System.out.println(r.nextElement().toString());
+            TestFailure failure = r.nextElement();
+            System.out.println(failure.toString());
+            // System.out.println(failure.trace());
+
         }
         r = result.errors();
         while (r.hasMoreElements()) {
-            System.out.println(r.nextElement().toString());
+            TestFailure failure = r.nextElement();
+            System.out.println(failure.toString());
+            // System.out.println(failure.trace());
+        }
+    }
+
+    /**
+     * Prints the tests inside given TestSuite
+     * 
+     * @param suite
+     *            TestSuite to print tests for.
+     */
+    public static void printSuiteTests(TestSuite suite) {
+        Enumeration<Test> e = suite.tests();
+        while (e.hasMoreElements()) {
+            System.out.println(e.nextElement().toString());
         }
     }
 
@@ -129,7 +144,8 @@ public class IOFunctions {
                     .write("<jvmarg value=\"-Dcom.vaadin.testbench.screenshot.softfail=${com.vaadin.testbench.screenshot.softfail}\" />\n");
             out
                     .write("<jvmarg value=\"-Dcom.vaadin.testbench.screenshot.reference.debug=${com.vaadin.testbench.screenshot.reference.debug}\" />\n");
-            out.write("<batchtest fork=\"yes\">\n");
+            out
+                    .write("<batchtest fork=\"yes\" haltonerror=\"yes\" haltonfailure=\"yes\">\n");
             out
                     .write("<fileset dir=\"${class-dir}\" includes=\"**/*_Suite.class\"/>\n");
             out.write("</batchtest>\n");
@@ -174,9 +190,9 @@ public class IOFunctions {
                 }
             }
         } catch (NullPointerException npe) {
-            System.err.println("Not nullpointer exception with message "
+            System.err.println("Got nullpointer exception with message: "
                     + npe.getMessage());
-            System.err.println("Trying to continue search.");
+            System.err.println("Continuing search.");
             return null;
         }
         return found;
@@ -195,18 +211,19 @@ public class IOFunctions {
      */
     public static void copyFile(File in, File out) throws IOException {
         FileChannel inChannel = new FileInputStream(in).getChannel();
-        FileChannel outChannel = new FileOutputStream(out).getChannel();
         try {
-            inChannel.transferTo(0, inChannel.size(), outChannel);
+            FileChannel outChannel = new FileOutputStream(out).getChannel();
+            try {
+                inChannel.transferTo(0, inChannel.size(), outChannel);
+            } catch (IOException e) {
+                throw e;
+            } finally {
+                outChannel.close();
+            }
         } catch (IOException e) {
             throw e;
         } finally {
-            if (inChannel != null) {
-                inChannel.close();
-            }
-            if (outChannel != null) {
-                outChannel.close();
-            }
+            inChannel.close();
         }
     }
 }

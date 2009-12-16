@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<testsuite>
+	<title>MixedTests</title>
+	<path>does/not/exist</path>
+	<testfile>Money_tst.java</testfile>
+	<testfile>tst3.html</testfile>
+</testsuite>

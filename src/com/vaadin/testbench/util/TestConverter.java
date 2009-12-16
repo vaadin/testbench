@@ -291,8 +291,8 @@ public class TestConverter {
     private static OutputStream createJavaFile(String testName, String browser,
             String outputDirectory) throws IOException {
         File outputFile = getJavaFile(testName, outputDirectory);
-        System.out.println("Creating " + outputFile + " for " + browser
-                + " tests");
+        // System.out.println("Creating " + outputFile + " for " + browser
+        // + " tests");
         FileOutputStream outputStream = new FileOutputStream(outputFile);
 
         outputStream.write(getJavaHeader(testName, browser));

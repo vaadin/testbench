@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<testsuite>
+	<title>MixedTests</title>
+	<testfile>Money_tst.java</testfile>
+	<testfile>tst3.html</testfile>
+</testsuite>

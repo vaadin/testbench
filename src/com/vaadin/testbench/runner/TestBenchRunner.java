@@ -12,30 +12,53 @@ import java.net.URLClassLoader;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import junit.framework.Test;
 import junit.framework.TestResult;
 import junit.framework.TestSuite;
 
 import com.vaadin.testbench.runner.util.IOFunctions;
+import com.vaadin.testbench.runner.util.ParsedSuite;
 import com.vaadin.testbench.runner.util.ParserFunctions;
+import com.vaadin.testbench.runner.util.TestBenchSuite;
 
+/**
+ * TestBenchRunner.
+ */
 public class TestBenchRunner {
 
+    /** The Constant PACKAGE_DIR. */
     private static final String PACKAGE_DIR = "com/vaadin/automatedtests";
 
     /** The test suites. */
-    private List<TestSuite> testSuites;
+    // private List<TestSuite> testSuites;
     private List<TestResult> testResults;
+
+    /** The test result. */
     private TestResult testResult;
+
+    /** The javac. */
     private com.sun.tools.javac.Main javac;
+
+    /** The result. */
     private TestResult result;
+
+    /** The browsers. */
     private String[] browsers;
+
+    /** The make tests. */
     private static boolean makeTests = false;
 
+    /** The test bench suites. */
+    private List<TestBenchSuite> testBenchSuites;
+
+    /**
+     * Instantiates a new test bench runner.
+     */
     public TestBenchRunner() {
-        testSuites = new LinkedList<TestSuite>();
+        testBenchSuites = new LinkedList<TestBenchSuite>();
+
+        // testSuites = new LinkedList<TestSuite>();
         testResults = new LinkedList<TestResult>();
         javac = new com.sun.tools.javac.Main();
         browsers = new String[] { "winxp-firefox35" };
@@ -66,9 +89,6 @@ public class TestBenchRunner {
             } else if (args[i].equals("-help")) {
                 printHelp();
                 System.exit(0);
-            } else if (args[i].equals("-singleSuite")) {
-                // TODO: create single suite of mixed files (tests and
-                // testSuites)
             } else {
                 tests = args[i].split(",");
             }
@@ -99,7 +119,8 @@ public class TestBenchRunner {
     private static void printHelp() {
         System.err.println("Usage: " + TestBenchRunner.class.getName()
                 + " [-options] <test files>");
-        System.err.println("\t<test suites>\t - ',' separated files\n");
+        System.err
+                .println("\t<test suites>\t - ',' separated files, note files will create one test suite\n");
         System.err.println("Options include:\t\t");
         System.err.println("\t-p\tBase path for files");
         System.err.println("\t-make\tCreates test suite java and build.xml");
@@ -116,15 +137,22 @@ public class TestBenchRunner {
      *            Basepath for tests in list
      * @param testName
      *            Name for test suite
+     * 
+     * @return created TestBenchSuite
+     * 
+     * @throws Exception
+     *             the exception
      */
-    @SuppressWarnings( { "unchecked" })
-    public void createTestSuite(List<String> tests, String path, String testName)
-            throws Exception {
+    @SuppressWarnings( { "unchecked", "static-access" })
+    public TestBenchSuite createTestSuite(List<String> tests, String path,
+            String testName) throws Exception {
+        // Get defined browsers if any.
         if (System.getProperty("com.vaadin.testbench.browsers") != null) {
             browsers = System.getProperty("com.vaadin.testbench.browsers")
                     .split(",");
         }
 
+        // Set path to the current working directory if given path == null
         if (path == null) {
             path = System.getProperty("user.dir");
         }
@@ -133,6 +161,8 @@ public class TestBenchRunner {
             path = path + File.separator;
         }
 
+        // define build as ${path}/build and change if
+        // com.vaadin.testbench.build defined
         String build = path + "build";
         if (System.getProperty("com.vaadin.testbench.build") != null) {
             build = System.getProperty("com.vaadin.testbench.build");
@@ -145,6 +175,9 @@ public class TestBenchRunner {
             dir.mkdir();
         }
 
+        // Create TestBenchSuite for these tests and browsers
+        TestBenchSuite tbs = new TestBenchSuite();
+        // Create a TestSuite for each browser
         for (int j = 0; j < browsers.length; j++) {
             List<Class> classes = new LinkedList<Class>();
 
@@ -190,27 +223,15 @@ public class TestBenchRunner {
                     // // Compile
                     int status = javac.compile(options);
 
-                    // If compilation successfull, load class dynamically and
+                    // If compilation successful, load class dynamically and
                     // add to testSuite
                     if (status == 0) {
                         // Get path to class file
                         File classFile = IOFunctions.getFile(classname
                                 + ".class", dir, 0);
                         if (classFile != null) {
-                            ClassLoader loader = new URLClassLoader(
-                                    new URL[] { dir.toURL() });
-                            try {
-                                String pkg = classFile.getParent().substring(
-                                        dir.getPath().length() + 1,
-                                        classFile.getParent().length());
-                                pkg = pkg.replace("\\", ".").replace("/", ".");
-                                Class c = loader.loadClass(pkg + "."
-                                        + classname);
-                                classes.add(c);
-                            } catch (IndexOutOfBoundsException e) {
-                                Class c = loader.loadClass(classname);
-                                classes.add(c);
-                            }
+                            classes.add(loadClassDynamically(dir, classFile,
+                                    classname));
                         }
                     } else {
                         throw new RuntimeException(
@@ -242,25 +263,15 @@ public class TestBenchRunner {
                             dir.getAbsolutePath(), file.getAbsolutePath() };
                     int status = javac.compile(options);
 
+                    // If compilation successful, load class dynamically and
+                    // add to testSuite
                     if (status == 0) {
                         File classFile = IOFunctions.getFile(classname
                                 + ".class", new File(dir + File.separator
                                 + PACKAGE_DIR), 0);
                         if (classFile != null) {
-                            ClassLoader loader = new URLClassLoader(
-                                    new URL[] { dir.toURL() });
-                            try {
-                                String pkg = classFile.getParent().substring(
-                                        dir.getPath().length() + 1,
-                                        classFile.getParent().length());
-                                pkg = pkg.replace("\\", ".").replace("/", ".");
-                                Class c = loader.loadClass(pkg + "."
-                                        + classname);
-                                classes.add(c);
-                            } catch (IndexOutOfBoundsException e) {
-                                Class c = loader.loadClass(classname);
-                                classes.add(c);
-                            }
+                            classes.add(loadClassDynamically(dir, classFile,
+                                    classname));
                         }
                     } else {
                         throw new RuntimeException(
@@ -274,11 +285,53 @@ public class TestBenchRunner {
             Class[] testClasses = new Class[classes.size()];
             for (int i = 0; i < classes.size(); i++) {
                 testClasses[i] = classes.get(i);
+                classes.get(i).getName();
             }
             TestSuite suite = new TestSuite(testClasses);
-            suite.setName(testName + "_" + browsers[j]);
+            suite.setName(testName);
+
+            // Test TestBenchSuite
+            tbs.addTestSuite(browsers[j], suite);
+
             // Add created test suite to List
-            testSuites.add(suite);
+            // testSuites.add(suite);
+        }
+        testBenchSuites.add(tbs);
+        return tbs;
+    }
+
+    /**
+     * Load class dynamically.
+     * 
+     * @param dir
+     *            Build directory
+     * @param classFile
+     *            target class file
+     * @param classname
+     *            classname
+     * 
+     * @return Class
+     * 
+     * @throws Exception
+     *             ClassNotFoundException - If the class was not found
+     */
+    @SuppressWarnings("unchecked")
+    private Class loadClassDynamically(File dir, File classFile,
+            String classname) throws Exception {
+        // Create custom class loader
+        ClassLoader loader = new URLClassLoader(new URL[] { dir.toURL() });
+        try {
+            // Get file package if any
+            String pkg = classFile.getParent().substring(
+                    dir.getPath().length() + 1, classFile.getParent().length());
+            pkg = pkg.replace("\\", ".").replace("/", ".");
+            Class c = loader.loadClass(pkg + "." + classname);
+            return c;
+        } catch (IndexOutOfBoundsException e) {
+            // If caught index out of bounds no package is
+            // defined for file
+            Class c = loader.loadClass(classname);
+            return c;
         }
     }
 
@@ -292,6 +345,9 @@ public class TestBenchRunner {
      *            Base path to use (for files and where to create /testName/)
      * @param testName
      *            Name of testSuite
+     * 
+     * @throws Exception
+     *             exception
      */
     public void makeTestSuiteFiles(List<String> tests, String path,
             String testName) throws Exception {
@@ -422,7 +478,7 @@ public class TestBenchRunner {
                             e.printStackTrace();
                         }
                     } else if ("html".equals(fileType)) {
-
+                        // If .html file convert to .java file
                         com.vaadin.testbench.util.TestConverter
                                 .runnerConvert(new String[] {
                                         dir.getAbsolutePath(), browsers[j],
@@ -432,6 +488,7 @@ public class TestBenchRunner {
                                 + PACKAGE_DIR.replace("\\", ".").replace("/",
                                         ".") + "." + classname + ".class);\n");
                     } else {
+                        // Else close file and throw exception
                         System.err.println("Found unsupported file "
                                 + file.getName());
                         System.err
@@ -447,6 +504,7 @@ public class TestBenchRunner {
                     }
                     file = null;
                 }
+                // Write end of file and close.
                 out.write("return suite;\n");
                 out.write("}\n");
                 out.write("}\n");
@@ -457,6 +515,7 @@ public class TestBenchRunner {
                 e.printStackTrace();
             }
         }
+        // Build ant file to run test suite with
         IOFunctions.buildAntFile(dir, testName);
         dir = null;
     }
@@ -468,9 +527,14 @@ public class TestBenchRunner {
      *            Suite file (.xml/.html)
      * @param path
      *            Base path to suite file/path to create suite files + build.xml
+     * 
+     * @return created TestBenchSuite
+     * 
+     * @throws Exception
+     *             the exception
      */
-    @SuppressWarnings("unchecked")
-    public void parseTestSuite(String file, String path) throws Exception {
+    public TestBenchSuite parseTestSuite(String file, String path)
+            throws Exception {
         if (path == null) {
             path = System.getProperty("user.dir");
         }
@@ -491,7 +555,7 @@ public class TestBenchRunner {
 
         if (testSuite == null) {
             System.err.println("Couldn't find given file.");
-            return;
+            return null;
         }
 
         // Set initial path and test name from file name and path
@@ -504,52 +568,72 @@ public class TestBenchRunner {
                 .length());
         if ("xml".equals(fileType)) {
             try {
-                Map<String, Object> result = ParserFunctions.readXmlFile(file,
-                        path);
-                if (result.get("title") != null) {
-                    title = (String) result.get("title");
+                // Map<String, Object> result =
+                // ParserFunctions.readXmlFile(file,
+                // path);
+                ParsedSuite result = ParserFunctions.readXmlFile(file, path);
+
+                if (result.getTestName() != null) {
+                    title = result.getTestName();
                 }
 
                 path = testSuite.getParentFile().getAbsolutePath();
+                // Add path component defined in Suite file.
+                if (result.getPath() != null) {
+                    if (!File.separator.equals(path.charAt(path.length() - 1))) {
+                        path = path + File.separator;
+                    }
+                    // Check if test file can be found from path
+                    String testpath = path + result.getPath();
+                    if (IOFunctions.getFile(result.getSuiteTests().get(0),
+                            new File(testpath), 0) == null) {
+                        System.err.println("Path definition in " + file
+                                + " seems to be faulty.");
+                        System.err.println("Ignoring given path.");
+                    } else {
+                        path = testpath;
+                    }
+                }
 
                 if (makeTests) {
-                    makeTestSuiteFiles((List<String>) result.get("tests"),
-                            path, title);
+                    makeTestSuiteFiles(result.getSuiteTests(), path, title);
                 } else {
-                    createTestSuite((List<String>) result.get("tests"), path,
-                            title);
+                    return createTestSuite(result.getSuiteTests(), path, title);
                 }
             } catch (FileNotFoundException e) {
                 throw e;
             }
         } else if ("html".equals(fileType)) {
             try {
-                Map<String, Object> result = ParserFunctions.readHtmlFile(file,
-                        path);
+                ParsedSuite result = ParserFunctions.readHtmlFile(file, path);
                 path = testSuite.getParentFile().getAbsolutePath();
                 if (makeTests) {
-                    makeTestSuiteFiles((List<String>) result.get("tests"),
-                            path, title);
+                    makeTestSuiteFiles(result.getSuiteTests(), path, title);
                 } else {
-                    createTestSuite((List<String>) result.get("tests"), path,
-                            title);
+                    return createTestSuite(result.getSuiteTests(), path, title);
                 }
             } catch (FileNotFoundException e) {
                 throw e;
             }
         }
+        return null;
     }
 
     /**
-     * Parse a list of test files/suites
+     * Parse a list of test files/suites.
      * 
      * @param files
      *            List of test files/suites.
      * @param path
      *            Base path to use
+     * 
+     * @return created TestBenchSuite
+     * 
+     * @throws Exception
+     *             FileNotFoundException - if a file can't be found
      */
-    @SuppressWarnings("unchecked")
-    public void parseFiles(String[] files, String path) throws Exception {
+    public TestBenchSuite parseFiles(String[] files, String path)
+            throws Exception {
         List<String> tests = new LinkedList<String>();
 
         for (String file : files) {
@@ -586,84 +670,149 @@ public class TestBenchRunner {
                         tests.add(file);
                         break;
                     } else if (line.contains("a href=")) {
-                        parseTestSuite(file, path);
+                        // If more than 1 file add tests defined in testSuite to
+                        // list of tests, else create suite from testSuite file
+                        if (files.length > 1) {
+                            try {
+                                ParsedSuite result = ParserFunctions
+                                        .readHtmlFile(file, path);
+                                tests.addAll(result.getSuiteTests());
+                            } catch (FileNotFoundException e) {
+                                throw e;
+                            }
+                        } else {
+                            return parseTestSuite(file, path);
+                        }
                         break;
                     }
                 }
 
             } else if (file.contains(".xml")) {
-                parseTestSuite(file, path);
+                // If more than 1 file add tests defined in testSuite to
+                // list of tests, else create suite from testSuite file
+                if (files.length > 1) {
+                    try {
+                        ParsedSuite result = ParserFunctions.readXmlFile(file,
+                                path);
+
+                        tests.addAll(result.getSuiteTests());
+                    } catch (FileNotFoundException e) {
+                        throw e;
+                    }
+                } else {
+                    return parseTestSuite(file, path);
+                }
             }
         }
         if (tests.size() > 0) {
             if (makeTests) {
                 makeTestSuiteFiles(tests, path, "test_collection");
             } else {
-                createTestSuite(tests, path, "test_collection");
+                return createTestSuite(tests, path, "test_collection");
             }
         }
+        return null;
     }
 
     /**
-     * Run all testSuites
-     */
-    public void runTestSuites() {
-        testResults.clear();
-        for (int i = 0; i < testSuites.size(); i++) {
-            testResults.add(runTestSuite(i));
-        }
-    }
-
-    /**
-     * Run specified test suite in list
+     * Run all testSuites in all TestBenchSuites.
      * 
-     * @param testsuite
-     *            Position of test suite to run
+     * @return True if all tests successful, false if any test failed.
      */
-    public TestResult runTestSuite(int testsuite) {
+    public boolean runTestSuites() {
         testResults.clear();
-        try {
-            TestSuite suite = testSuites.get(testsuite);
-            System.out.println("Running: " + suite.getName());
-
-            result = new TestResult();
-
-            Enumeration<Test> e = suite.tests();
-            long startTime = System.currentTimeMillis();
-            while (e.hasMoreElements()) {
-                Test test = e.nextElement();
-                suite.runTest(test, result);
-                if (result.errorCount() > 0 || result.failureCount() > 0) {
-                    break;
+        for (TestBenchSuite tbs : testBenchSuites) {
+            for (String key : tbs.getBrowsers()) {
+                tbs.setResult(key, runTestSuite(tbs.getTestSuite(key)));
+                if (tbs.getResult(key).failureCount() > 0
+                        || tbs.getResult(key).errorCount() > 0) {
+                    return false;
                 }
             }
-            long stopTime = System.currentTimeMillis();
-            int seconds = (int) (stopTime - startTime) / 1000;
+        }
+        return true;
+    }
 
-            IOFunctions.printResult(seconds, result);
-
-            testResult = result;
-        } catch (IndexOutOfBoundsException ioobe) {
-            System.err.println("No test suite on index " + testsuite);
-            System.err.println("Only " + testSuites.size()
-                    + " test suites available.");
-            for (int i = 0; i < testSuites.size(); i++) {
-                System.err.println("\t" + i + "\t"
-                        + testSuites.get(i).getName());
+    /**
+     * Run all testSuites in TestBenchSuite.
+     * 
+     * @param tbs
+     *            TestBenchSuite from which to run all testSuites
+     * 
+     * @return True if all tests successful, false if any test failed.
+     */
+    public boolean runTestSuites(TestBenchSuite tbs) {
+        testResults.clear();
+        for (String key : tbs.getBrowsers()) {
+            System.out.println("Browser  : " + key);
+            tbs.setResult(key, runTestSuite(tbs.getTestSuite(key)));
+            if (tbs.getResult(key).failureCount() > 0
+                    || tbs.getResult(key).errorCount() > 0) {
+                return false;
             }
         }
+        return true;
+    }
+
+    /**
+     * Run test suite in given position.
+     * 
+     * @param testsuite
+     *            Test suite position in list
+     * 
+     * @return the test result
+     */
+    // public void runTestSuite(int testsuite) {
+    // try {
+    // TestSuite suite = testSuites.get(testsuite);
+    // runTestSuite(suite);
+    // } catch (IndexOutOfBoundsException ioobe) {
+    // System.err.println("No test suite on index " + testsuite);
+    // System.err.println("Only " + testSuites.size()
+    // + " test suites available.");
+    // for (int i = 0; i < testSuites.size(); i++) {
+    // System.err.println("\t" + i + "\t"
+    // + testSuites.get(i).getName());
+    // }
+    // }
+    // }
+    /**
+     * Run given test suite
+     * 
+     * @param testsuite
+     *            Test suite to run
+     */
+    public TestResult runTestSuite(TestSuite testsuite) {
+        System.out.println("Testsuite: " + testsuite.getName());
+
+        result = new TestResult();
+
+        Enumeration<Test> e = testsuite.tests();
+        long startTime = System.currentTimeMillis();
+        while (e.hasMoreElements()) {
+            Test test = e.nextElement();
+            testsuite.runTest(test, result);
+            if (result.errorCount() > 0 || result.failureCount() > 0) {
+                break;
+            }
+        }
+        long stopTime = System.currentTimeMillis();
+        long seconds = stopTime - startTime;
+
+        IOFunctions.printResult(seconds, result);
+
+        testResult = result;
         return result;
     }
 
     /**
-     * Get list of all defined test suites
+     * Get list of all defined test suites.
      * 
      * @return List<TestSuite>
      */
-    public List<TestSuite> getTestSuites() {
-        return testSuites;
-    }
-
+    // public List<TestSuite> getTestSuites() {
+    // return testSuites;
+    // }
     /**
      * Get results for run test suites
      * 
@@ -674,7 +823,7 @@ public class TestBenchRunner {
     }
 
     /**
-     * Get test result for last runTestSuite
+     * Get test result for last runTestSuite.
      * 
      * @return testResult
      */
@@ -683,10 +832,34 @@ public class TestBenchRunner {
     }
 
     /**
-     * Clear lists (TestSuites and corresponding TestResults)
+     * Get all TestBenchSuite objects for this TestBenchRunner.
+     * 
+     * @return testBenchSuites
+     */
+    public List<TestBenchSuite> getTestBenchSuites() {
+        return testBenchSuites;
+    }
+
+    /**
+     * Get TestBenchSuite number suite
+     * 
+     * @param suite
+     *            Number of suite to get
+     * @return testBenchSuite
+     */
+    public TestBenchSuite getTestBenchSuite(int suite) {
+        if (suite >= testBenchSuites.size()) {
+            return null;
+        }
+        return testBenchSuites.get(suite);
+    }
+
+    /**
+     * Clear lists (TestSuites and corresponding TestResults).
      */
     public void clearTestSuites() {
-        testSuites.clear();
+        // testSuites.clear();
+        testBenchSuites.clear();
         testResults.clear();
     }
 }
