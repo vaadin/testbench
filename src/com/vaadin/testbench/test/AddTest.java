@@ -26,10 +26,10 @@ public class AddTest extends TestCase {
         tests.add("Money_tst.java");
         tests.add("tst3.html");
 
-        tbr.createTestSuite(tests, "test", "add_2_files");
+        TestBenchSuite tbs = tbr.createTestSuite(tests, "test", "add_2_files");
         Assert.assertEquals(1, tbr.getTestBenchSuites().size());
-        Assert.assertEquals(2, tbr.getTestBenchSuites().get(0)
-                .getTestsInSuite());
+        Assert.assertEquals(2, tbr.getTestBenchSuite(0).getTestsInSuite());
+        Assert.assertEquals(tbs, tbr.getTestBenchSuite(0));
     }
 
     /**
@@ -41,10 +41,11 @@ public class AddTest extends TestCase {
         tests.add("test/Money_tst.java");
         tests.add("test/tst3.html");
 
-        tbr.createTestSuite(tests, null, "add_2_files_null_path");
+        TestBenchSuite tbs = tbr.createTestSuite(tests, null,
+                "add_2_files_null_path");
         Assert.assertEquals(1, tbr.getTestBenchSuites().size());
-        Assert.assertEquals(2, tbr.getTestBenchSuites().get(0)
-                .getTestsInSuite());
+        Assert.assertEquals(2, tbr.getTestBenchSuite(0).getTestsInSuite());
+        Assert.assertEquals(tbs, tbr.getTestBenchSuite(0));
     }
 
     /**
@@ -55,10 +56,11 @@ public class AddTest extends TestCase {
         List<String> tests = new LinkedList<String>();
         tests.add("test/Money_tst.java");
 
-        tbr.createTestSuite(tests, ".", "add_2_files_relative");
+        TestBenchSuite tbs = tbr.createTestSuite(tests, ".",
+                "add_1_file_relative");
         Assert.assertEquals(1, tbr.getTestBenchSuites().size());
-        Assert.assertEquals(1, tbr.getTestBenchSuites().get(0)
-                .getTestsInSuite());
+        Assert.assertEquals(1, tbr.getTestBenchSuite(0).getTestsInSuite());
+        Assert.assertEquals(tbs, tbr.getTestBenchSuite(0));
     }
 
     /**
@@ -80,11 +82,57 @@ public class AddTest extends TestCase {
      */
     public void testadd_from_html_file() throws Exception {
         TestBenchRunner tbr = new TestBenchRunner();
-        tbr.parseTestSuite("testSuite.html", ".");
+        TestBenchSuite tbs = tbr.parseTestSuite("testSuite.html", ".");
 
         Assert.assertEquals(1, tbr.getTestBenchSuites().size());
-        Assert.assertEquals(2, tbr.getTestBenchSuites().get(0)
-                .getTestsInSuite());
+        Assert.assertEquals(1, tbr.getTestBenchSuite(0).getTestsInSuite());
+        Assert.assertEquals(tbs, tbr.getTestBenchSuite(0));
+    }
+
+    /**
+     * Test creating tests by parsing a testSuite file (.html) with .java files
+     * in it (only supports .html files)
+     */
+    public void testadd_from_faulty_html_file() throws Exception {
+        TestBenchRunner tbr = new TestBenchRunner();
+        try {
+            tbr.parseTestSuite("testSuiteFaulty.html", "test");
+            Assert.fail("Parser accepted .html test suite with .java files.");
+        } catch (UnsupportedOperationException e) {
+            Assert.assertTrue(tbr.getTestBenchSuites().isEmpty());
+        }
+    }
+
+    /**
+     * Test giving a testSuite file (.html) to createTestSuite that only
+     * supports test files (.java, .html)
+     */
+    public void testsend_html_suite_to_create_test_suite() throws Exception {
+        TestBenchRunner tbr = new TestBenchRunner();
+        List<String> tests = new LinkedList<String>();
+        tests.add("testSuite.html");
+        try {
+            tbr.createTestSuite(tests, "test", "Wrong test files");
+            Assert.fail("Suite file not recognized.");
+        } catch (UnsupportedOperationException e) {
+            Assert.assertTrue(tbr.getTestBenchSuites().isEmpty());
+        }
+    }
+
+    /**
+     * Test giving a testSuite file (.xml) to createTestSuite that only supports
+     * test files (.java, .html)
+     */
+    public void testsend_XML_suite_to_create_test_suite() throws Exception {
+        TestBenchRunner tbr = new TestBenchRunner();
+        List<String> tests = new LinkedList<String>();
+        tests.add("testSuite.xml");
+        try {
+            tbr.createTestSuite(tests, "test", "Wrong test files");
+            Assert.fail("Suite file not recognized.");
+        } catch (UnsupportedOperationException e) {
+            Assert.assertTrue(tbr.getTestBenchSuites().isEmpty());
+        }
     }
 
     /**
@@ -93,11 +141,11 @@ public class AddTest extends TestCase {
      */
     public void testadd_from_xml_file() throws Exception {
         TestBenchRunner tbr = new TestBenchRunner();
-        tbr.parseTestSuite("testSuite.xml", "test");
+        TestBenchSuite tbs = tbr.parseTestSuite("testSuite.xml", "test");
 
         Assert.assertEquals(1, tbr.getTestBenchSuites().size());
-        Assert.assertEquals(2, tbr.getTestBenchSuites().get(0)
-                .getTestsInSuite());
+        Assert.assertEquals(2, tbr.getTestBenchSuite(0).getTestsInSuite());
+        Assert.assertEquals(tbs, tbr.getTestBenchSuite(0));
     }
 
     // 
@@ -126,16 +174,62 @@ public class AddTest extends TestCase {
     public void testcreate_one_test_suite_from_multple_files() throws Exception {
         TestBenchRunner tbr = new TestBenchRunner();
         TestBenchSuite tbs = tbr.parseFiles(new String[] { "Money_tst.java",
-                "testSuite.xml", "Money_tst2.java" }, "test");
+                "testSuite.xml", "tst.html", "Money_tst2.java" }, "test");
+
+        Assert.assertEquals(1, tbr.getTestBenchSuites().size());
+        Assert.assertEquals(5, tbs.getTestsInSuite());
+
+        String[] tests = tbs.getTests();
+        Assert.assertEquals("Money_tst", tests[0]);
+        Assert.assertEquals("Money_tst", tests[1]);
+        Assert.assertEquals("com.vaadin.automatedtests.tst3", tests[2]);
+        Assert.assertEquals("com.vaadin.automatedtests.tst", tests[3]);
+        Assert.assertEquals("Money_tst2", tests[4]);
+    }
+
+    /**
+     * Create one test suite from multple files.
+     */
+    public void testcreate_one_test_suite_from_multple_files_html()
+            throws Exception {
+        TestBenchRunner tbr = new TestBenchRunner();
+        TestBenchSuite tbs = tbr.parseFiles(new String[] { "Money_tst.java",
+                "testSuite.html", "tst.html", "Money_tst2.java" }, "test");
 
         Assert.assertEquals(1, tbr.getTestBenchSuites().size());
         Assert.assertEquals(4, tbs.getTestsInSuite());
 
         String[] tests = tbs.getTests();
         Assert.assertEquals("Money_tst", tests[0]);
-        Assert.assertEquals("Money_tst", tests[1]);
-        Assert.assertEquals("com.vaadin.automatedtests.tst3", tests[2]);
+        Assert
+                .assertEquals("com.vaadin.automatedtests.Money_Sampler",
+                        tests[1]);
+        Assert.assertEquals("com.vaadin.automatedtests.tst", tests[2]);
         Assert.assertEquals("Money_tst2", tests[3]);
+    }
+
+    /**
+     * Create one test suite from multple files.
+     */
+    public void testone_test_suite_from_multple_files_html_and_xml()
+            throws Exception {
+        TestBenchRunner tbr = new TestBenchRunner();
+        TestBenchSuite tbs = tbr.parseFiles(new String[] { "Money_tst.java",
+                "testSuite.html", "tst.html", "testSuite.xml",
+                "Money_tst2.java" }, "test");
+
+        Assert.assertEquals(1, tbr.getTestBenchSuites().size());
+        Assert.assertEquals(6, tbs.getTestsInSuite());
+
+        String[] tests = tbs.getTests();
+        Assert.assertEquals("Money_tst", tests[0]);
+        Assert
+                .assertEquals("com.vaadin.automatedtests.Money_Sampler",
+                        tests[1]);
+        Assert.assertEquals("com.vaadin.automatedtests.tst", tests[2]);
+        Assert.assertEquals("Money_tst", tests[3]);
+        Assert.assertEquals("com.vaadin.automatedtests.tst3", tests[4]);
+        Assert.assertEquals("Money_tst2", tests[5]);
     }
 
     /**
@@ -243,7 +337,7 @@ public class AddTest extends TestCase {
     public void testMain_with_html_Suite() throws Exception {
         TestBenchRunner.main(new String[] { "-make", "-p", "test",
                 "testSuite.html" });
-        File file = new File("test/build/testSuite/build.xml");
+        File file = new File("test/build/Money_Sampler/build.xml");
         Assert.assertTrue(file.exists());
     }
 }

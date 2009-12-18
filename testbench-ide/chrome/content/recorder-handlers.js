@@ -581,24 +581,13 @@ var recordClose = 0;
 Recorder.addEventHandler('append', 'DOMNodeInserted', function(event){
 		/* Check inserted node if it's a div */
 		if(event.target.nodeName.toLowerCase() == "div"){
-			/* if we have clicked on something we expect to get a PopupPanel or a notification */
+			/* if we have clicked on something we expect to get a PopupPanel */
 			if(clicked == "true"){
 				var target = this.findLocators(event.target);
-				/* if we found a notification record a closeNotification event */
-				if((new RegExp("Notification")).test(event.target.className)){
-					openNotifications++;
-					if(openNotifications > 1 || getTooltip == "true"){
-						recordClose++;
-					}else{
-						this.record("closeNotification", target, '0,0');
-					}
-					clicked = "false";
-					closeNotificationRecorded = "true";
-					
 				/* if we found a popupPanel enable checking for mouse overs for
 				 * recording MenuBar navigation
 				 */
-				}else if((new RegExp("gwt-PopupPanel")).test(event.target.className)){
+				if((new RegExp("gwt-PopupPanel")).test(event.target.className)){
 					checkForMouseOver = "true";
 					clicked = "false";
 				}
@@ -617,12 +606,9 @@ Recorder.addEventHandler('append', 'DOMNodeInserted', function(event){
 
 Recorder.addEventHandler('remove', 'DOMNodeRemoved', function(event){
 		if(event.target.nodeName.toLowerCase() == "div"){
+			/* If a Notification was removed. Record closeNotification event for closing notification */
 			if((new RegExp("Notification")).test(event.target.className)){
-				openNotifications--;
-				if(recordClose > 0){
-					recordClose--;
-					this.record("closeNotification", this.findLocators(event.target), '0,0');
-				}
+				this.record("closeNotification", this.findLocators(event.target), '0,0');
 			}
 		}
 	});

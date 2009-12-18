@@ -12,6 +12,7 @@ import java.net.URLClassLoader;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import junit.framework.Test;
 import junit.framework.TestResult;
@@ -32,8 +33,7 @@ public class TestBenchRunner {
 
     /** The test suites. */
     // private List<TestSuite> testSuites;
-    private List<TestResult> testResults;
-
+    // private List<TestResult> testResults;
     /** The test result. */
     private TestResult testResult;
 
@@ -59,7 +59,7 @@ public class TestBenchRunner {
         testBenchSuites = new LinkedList<TestBenchSuite>();
 
         // testSuites = new LinkedList<TestSuite>();
-        testResults = new LinkedList<TestResult>();
+        // testResults = new LinkedList<TestResult>();
         javac = new com.sun.tools.javac.Main();
         browsers = new String[] { "winxp-firefox35" };
     }
@@ -68,7 +68,7 @@ public class TestBenchRunner {
      * Main method.
      * 
      * @param args
-     *            [-options] (test suites)
+     *            [-options] (test files)
      */
     public static void main(String[] args) {
         if (args.length < 1) {
@@ -120,7 +120,7 @@ public class TestBenchRunner {
         System.err.println("Usage: " + TestBenchRunner.class.getName()
                 + " [-options] <test files>");
         System.err
-                .println("\t<test suites>\t - ',' separated files, note files will create one test suite\n");
+                .println("\t<test files>\t - ',' separated files, note files will create one test suite\n");
         System.err.println("Options include:\t\t");
         System.err.println("\t-p\tBase path for files");
         System.err.println("\t-make\tCreates test suite java and build.xml");
@@ -139,9 +139,6 @@ public class TestBenchRunner {
      *            Name for test suite
      * 
      * @return created TestBenchSuite
-     * 
-     * @throws Exception
-     *             the exception
      */
     @SuppressWarnings( { "unchecked", "static-access" })
     public TestBenchSuite createTestSuite(List<String> tests, String path,
@@ -238,6 +235,23 @@ public class TestBenchRunner {
                                 "Compilation failed with status " + status);
                     }
                 } else if ("html".equals(fileType)) {
+                    // Check that html file is a test and not a suite
+                    BufferedReader in = new BufferedReader(new FileReader(file));
+                    try {
+                        String line = "";
+                        while ((line = in.readLine()) != null) {
+                            if (line.contains("<thead>")) {
+                                break;
+                            } else if (line.contains("a href=")) {
+                                System.err
+                                        .println("For html suites use parseTestSuite(String, String) or parseFiles(String[], String)");
+                                throw new UnsupportedOperationException(
+                                        "Html suite file is not supported in this method.");
+                            }
+                        }
+                    } finally {
+                        in.close();
+                    }
                     // Parse and compile TestBench test saved as .html
                     // File temp = new File(path + "temp");
                     // temp.deleteOnExit();
@@ -278,6 +292,11 @@ public class TestBenchRunner {
                                 "Compilation failed with status " + status);
                     }
                     temp = null;
+                } else if ("xml".equals(fileType)) {
+                    System.err
+                            .println("For XML suites use parseTestSuite(String, String) or parseFiles(String[], String)");
+                    throw new UnsupportedOperationException(
+                            "XML suite file is not supported in this method.");
                 }
 
             }
@@ -345,9 +364,6 @@ public class TestBenchRunner {
      *            Base path to use (for files and where to create /testName/)
      * @param testName
      *            Name of testSuite
-     * 
-     * @throws Exception
-     *             exception
      */
     public void makeTestSuiteFiles(List<String> tests, String path,
             String testName) throws Exception {
@@ -531,7 +547,7 @@ public class TestBenchRunner {
      * @return created TestBenchSuite
      * 
      * @throws Exception
-     *             the exception
+     *             FileNotFoundException
      */
     public TestBenchSuite parseTestSuite(String file, String path)
             throws Exception {
@@ -567,53 +583,50 @@ public class TestBenchRunner {
         String fileType = file.substring(file.lastIndexOf('.') + 1, file
                 .length());
         if ("xml".equals(fileType)) {
-            try {
-                // Map<String, Object> result =
-                // ParserFunctions.readXmlFile(file,
-                // path);
-                ParsedSuite result = ParserFunctions.readXmlFile(file, path);
+            ParsedSuite result = ParserFunctions.readXmlFile(file, path);
 
-                if (result.getTestName() != null) {
-                    title = result.getTestName();
+            if (result.getTestName() != null) {
+                title = result.getTestName();
+            }
+
+            path = testSuite.getParentFile().getAbsolutePath();
+            // Add path component defined in Suite file.
+            if (result.getPath() != null) {
+                if (!File.separator.equals(path.charAt(path.length() - 1))) {
+                    path = path + File.separator;
                 }
-
-                path = testSuite.getParentFile().getAbsolutePath();
-                // Add path component defined in Suite file.
-                if (result.getPath() != null) {
-                    if (!File.separator.equals(path.charAt(path.length() - 1))) {
-                        path = path + File.separator;
-                    }
-                    // Check if test file can be found from path
-                    String testpath = path + result.getPath();
-                    if (IOFunctions.getFile(result.getSuiteTests().get(0),
-                            new File(testpath), 0) == null) {
-                        System.err.println("Path definition in " + file
-                                + " seems to be faulty.");
-                        System.err.println("Ignoring given path.");
-                    } else {
-                        path = testpath;
-                    }
-                }
-
-                if (makeTests) {
-                    makeTestSuiteFiles(result.getSuiteTests(), path, title);
+                // Check if test file can be found from path
+                String testpath = path + result.getPath();
+                if (IOFunctions.getFile(result.getSuiteTests().get(0),
+                        new File(testpath), 0) == null) {
+                    System.err.println("Path definition in " + file
+                            + " seems to be faulty.");
+                    System.err.println("Ignoring given path.");
                 } else {
-                    return createTestSuite(result.getSuiteTests(), path, title);
+                    path = testpath;
                 }
-            } catch (FileNotFoundException e) {
-                throw e;
+            }
+
+            if (makeTests) {
+                makeTestSuiteFiles(result.getSuiteTests(), path, title);
+            } else {
+                return createTestSuite(result.getSuiteTests(), path, title);
             }
         } else if ("html".equals(fileType)) {
-            try {
-                ParsedSuite result = ParserFunctions.readHtmlFile(file, path);
-                path = testSuite.getParentFile().getAbsolutePath();
-                if (makeTests) {
-                    makeTestSuiteFiles(result.getSuiteTests(), path, title);
-                } else {
-                    return createTestSuite(result.getSuiteTests(), path, title);
-                }
-            } catch (FileNotFoundException e) {
-                throw e;
+            ParsedSuite result = ParserFunctions.readHtmlFile(file, path);
+            path = testSuite.getParentFile().getAbsolutePath();
+            if (!File.separator.equals(path.charAt(path.length() - 1))) {
+                path = path + File.separator;
+            }
+            if (result.getTestName() != null) {
+                title = result.getTestName();
+            }
+            result.setSuiteTests(ParserFunctions.combineTests(result
+                    .getSuiteTests(), title, path));
+            if (makeTests) {
+                makeTestSuiteFiles(result.getSuiteTests(), path, title);
+            } else {
+                return createTestSuite(result.getSuiteTests(), path, title);
             }
         }
         return null;
@@ -664,27 +677,40 @@ public class TestBenchRunner {
                 }
 
                 BufferedReader in = new BufferedReader(new FileReader(testFile));
-                String line = "";
-                while ((line = in.readLine()) != null) {
-                    if (line.contains("<thead>")) {
-                        tests.add(file);
-                        break;
-                    } else if (line.contains("a href=")) {
-                        // If more than 1 file add tests defined in testSuite to
-                        // list of tests, else create suite from testSuite file
-                        if (files.length > 1) {
-                            try {
-                                ParsedSuite result = ParserFunctions
-                                        .readHtmlFile(file, path);
-                                tests.addAll(result.getSuiteTests());
-                            } catch (FileNotFoundException e) {
-                                throw e;
+                try {
+                    String line = "";
+                    while ((line = in.readLine()) != null) {
+                        if (line.contains("<thead>")) {
+                            tests.add(file);
+                            break;
+                        } else if (line.contains("a href=")) {
+                            // If more than 1 file add tests defined in
+                            // testSuite to
+                            // list of tests, else create suite from testSuite
+                            // file
+                            if (files.length > 1) {
+                                try {
+                                    String title = "Suite";
+                                    ParsedSuite result = ParserFunctions
+                                            .readHtmlFile(file, path);
+                                    if (result.getTestName() != null) {
+                                        title = result.getTestName();
+                                    }
+                                    tests.addAll(ParserFunctions
+                                            .combineTests(result
+                                                    .getSuiteTests(), title,
+                                                    path));
+                                } catch (FileNotFoundException e) {
+                                    throw e;
+                                }
+                            } else {
+                                return parseTestSuite(file, path);
                             }
-                        } else {
-                            return parseTestSuite(file, path);
+                            break;
                         }
-                        break;
                     }
+                } finally {
+                    in.close();
                 }
 
             } else if (file.contains(".xml")) {
@@ -720,14 +746,11 @@ public class TestBenchRunner {
      * @return True if all tests successful, false if any test failed.
      */
     public boolean runTestSuites() {
-        testResults.clear();
+        // testResults.clear();
         for (TestBenchSuite tbs : testBenchSuites) {
             for (String key : tbs.getBrowsers()) {
+                System.out.println("Browser  : " + key);
                 tbs.setResult(key, runTestSuite(tbs.getTestSuite(key)));
-                if (tbs.getResult(key).failureCount() > 0
-                        || tbs.getResult(key).errorCount() > 0) {
-                    return false;
-                }
             }
         }
         return true;
@@ -742,14 +765,10 @@ public class TestBenchRunner {
      * @return True if all tests successful, false if any test failed.
      */
     public boolean runTestSuites(TestBenchSuite tbs) {
-        testResults.clear();
+        // testResults.clear();
         for (String key : tbs.getBrowsers()) {
             System.out.println("Browser  : " + key);
             tbs.setResult(key, runTestSuite(tbs.getTestSuite(key)));
-            if (tbs.getResult(key).failureCount() > 0
-                    || tbs.getResult(key).errorCount() > 0) {
-                return false;
-            }
         }
         return true;
     }
@@ -818,17 +837,17 @@ public class TestBenchRunner {
      * 
      * @return List<TestResult>
      */
-    public List<TestResult> getTestResults() {
-        return testResults;
+    public Map<String, TestResult> getTestResults(TestBenchSuite suite) {
+        return suite.getResults();
     }
 
     /**
-     * Get test result for last runTestSuite.
+     * Get test result for last run TestSuite for browser.
      * 
      * @return testResult
      */
-    public TestResult getTestResult() {
-        return testResult;
+    public TestResult getTestResult(String browser, TestBenchSuite suite) {
+        return suite.getResult(browser);
     }
 
     /**
@@ -855,11 +874,11 @@ public class TestBenchRunner {
     }
 
     /**
-     * Clear lists (TestSuites and corresponding TestResults).
+     * Clear lists.
      */
     public void clearTestSuites() {
         // testSuites.clear();
         testBenchSuites.clear();
-        testResults.clear();
+        // testResults.clear();
     }
 }

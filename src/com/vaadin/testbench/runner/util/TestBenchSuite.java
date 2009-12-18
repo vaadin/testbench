@@ -10,9 +10,10 @@ import junit.framework.Test;
 import junit.framework.TestResult;
 import junit.framework.TestSuite;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class TestBenchSuite.
+ * TestBenchSuite holds TestSuites of a specific kind for multiple browsers.
+ * TestBenchSuite also holds TestResults for all browsers for the latest run.
+ * Adding a new Browser-TestSuite to
  */
 public class TestBenchSuite {
 
@@ -142,6 +143,9 @@ public class TestBenchSuite {
      * @return the test suite
      */
     public TestSuite getTestSuite(String browser) {
+        if (testSuites.get(browser) == null) {
+            System.err.println("No suite available for browser " + browser);
+        }
         return testSuites.get(browser);
     }
 
@@ -155,6 +159,18 @@ public class TestBenchSuite {
      */
     public TestResult getResult(String browser) {
         return testResults.get(browser);
+    }
+
+    /**
+     * Gets the result for all browser.
+     * 
+     * @param browser
+     *            the browser
+     * 
+     * @return the result
+     */
+    public Map<String, TestResult> getResults() {
+        return testResults;
     }
 
     /**
@@ -179,6 +195,13 @@ public class TestBenchSuite {
      */
     public String getSuiteName() {
         return suiteName;
+    }
+
+    /**
+     * Sets the suite name.
+     */
+    public void setSuiteName(String name) {
+        suiteName = name;
     }
 
     /**
