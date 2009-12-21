@@ -599,6 +599,23 @@ public class TestConverter {
                 // javaSource
                 // .append("}catch(Exception e){\njunit.framework.Assert.fail(\"Couldn't find string: "
                 // + identifier + "\");\n}\n");
+            } else if (command.getCmd().equalsIgnoreCase("htmlTest")) {
+                String locator = "";
+                String value = "";
+                boolean first = true;
+                for (String param : command.getParams()) {
+                    if (first) {
+                        /* get locator */
+                        locator = param.replace("\\", "\\\\");
+                    } else {
+                        /* get characters */
+                        value = param;
+                    }
+
+                    first = false;
+                }
+                javaSource.append("System.out.println(\"End test for " + value
+                        + "\");");
             } else if (command.getCmd().equalsIgnoreCase("showTooltip")) {
                 String locator = "";
                 String value = "";

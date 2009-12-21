@@ -941,6 +941,7 @@ public class ImageComparison {
      * 
      * @param image
      */
+    @SuppressWarnings("unused")
     private void blur(BufferedImage image) {
 
         float[] matrix = { 0.111f, 0.111f, 0.111f, 0.111f, 0.111f, 0.111f,

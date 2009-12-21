@@ -31,13 +31,10 @@ public class TestBenchRunner {
     /** The Constant PACKAGE_DIR. */
     private static final String PACKAGE_DIR = "com/vaadin/automatedtests";
 
-    /** The test suites. */
-    // private List<TestSuite> testSuites;
-    // private List<TestResult> testResults;
-    /** The test result. */
+    /** test result. */
     private TestResult testResult;
 
-    /** The javac. */
+    /** javac. */
     private com.sun.tools.javac.Main javac;
 
     /** The result. */
@@ -46,8 +43,9 @@ public class TestBenchRunner {
     /** The browsers. */
     private String[] browsers;
 
-    /** The make tests. */
-    private static boolean makeTests = false;
+    /** Flags */
+    private boolean makeTests = false;
+    private boolean connectTests = false;
 
     /** The test bench suites. */
     private List<TestBenchSuite> testBenchSuites;
@@ -58,8 +56,6 @@ public class TestBenchRunner {
     public TestBenchRunner() {
         testBenchSuites = new LinkedList<TestBenchSuite>();
 
-        // testSuites = new LinkedList<TestSuite>();
-        // testResults = new LinkedList<TestResult>();
         javac = new com.sun.tools.javac.Main();
         browsers = new String[] { "winxp-firefox35" };
     }
@@ -70,25 +66,30 @@ public class TestBenchRunner {
      * @param args
      *            [-options] (test files)
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         if (args.length < 1) {
             printHelp();
             System.exit(1);
         }
+
+        // Create new TestBenchRunner
+        TestBenchRunner tbr = new TestBenchRunner();
 
         String[] tests = null;
         String path = null;
 
         // Check given arguments
         for (int i = 0; i < args.length; i++) {
-            if (args[i].equals("-p")) {
+            if (args[i].equals("-path") || args[i].equals("-p")) {
                 path = args[i + 1];
                 i++;
-            } else if (args[i].equals("-make")) {
-                makeTests = true;
-            } else if (args[i].equals("-help")) {
+            } else if (args[i].equals("-make") || args[i].equals("-m")) {
+                tbr.setMakeTests(true);
+            } else if (args[i].equals("-help") || args[i].equals("-h")) {
                 printHelp();
                 System.exit(0);
+            } else if (args[i].equals("-connect") || args[i].equals("-c")) {
+                tbr.setConnectTests(true);
             } else {
                 tests = args[i].split(",");
             }
@@ -99,16 +100,9 @@ public class TestBenchRunner {
             System.exit(1);
         }
 
-        // Create new TestBenchRunner
-        TestBenchRunner tbr = new TestBenchRunner();
-        try {
-            tbr.parseFiles(tests, path);
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
+        tbr.parseFiles(tests, path);
         // If not makeTests == true run tests
-        if (!makeTests) {
+        if (!tbr.makeTests) {
             tbr.runTestSuites();
         }
     }
@@ -122,9 +116,32 @@ public class TestBenchRunner {
         System.err
                 .println("\t<test files>\t - ',' separated files, note files will create one test suite\n");
         System.err.println("Options include:\t\t");
-        System.err.println("\t-p\tBase path for files");
-        System.err.println("\t-make\tCreates test suite java and build.xml");
-        System.err.println("\t-help\tThis help");
+        System.err.println("\t-path [-p]\tBase path for files");
+        System.err
+                .println("\t-make [-m]\tCreates test suite java and build.xml");
+        System.err
+                .println("\t-connect [-c]\tConnect html tests that come after one another.");
+        System.err.println("\t-help [-h]\tThis help");
+    }
+
+    /**
+     * Define if a test suite should be made.
+     * 
+     * @param value
+     *            boolean true/false
+     */
+    public void setMakeTests(boolean value) {
+        makeTests = value;
+    }
+
+    /**
+     * Define if html files after each other should be connected.
+     * 
+     * @param value
+     *            boolean true/false
+     */
+    public void setConnectTests(boolean value) {
+        connectTests = value;
     }
 
     /**
@@ -621,6 +638,7 @@ public class TestBenchRunner {
             if (result.getTestName() != null) {
                 title = result.getTestName();
             }
+            // Combine tests to one and set new list to result
             result.setSuiteTests(ParserFunctions.combineTests(result
                     .getSuiteTests(), title, path));
             if (makeTests) {
@@ -685,9 +703,8 @@ public class TestBenchRunner {
                             break;
                         } else if (line.contains("a href=")) {
                             // If more than 1 file add tests defined in
-                            // testSuite to
-                            // list of tests, else create suite from testSuite
-                            // file
+                            // testSuite to list of tests, else create suite
+                            // from testSuite file
                             if (files.length > 1) {
                                 try {
                                     String title = "Suite";
@@ -696,10 +713,14 @@ public class TestBenchRunner {
                                     if (result.getTestName() != null) {
                                         title = result.getTestName();
                                     }
-                                    tests.addAll(ParserFunctions
-                                            .combineTests(result
-                                                    .getSuiteTests(), title,
-                                                    path));
+                                    if (!connectTests) {
+                                        tests.addAll(ParserFunctions
+                                                .combineTests(result
+                                                        .getSuiteTests(),
+                                                        title, path));
+                                    } else {
+                                        tests.addAll(result.getSuiteTests());
+                                    }
                                 } catch (FileNotFoundException e) {
                                     throw e;
                                 }
@@ -731,6 +752,9 @@ public class TestBenchRunner {
             }
         }
         if (tests.size() > 0) {
+            if (connectTests) {
+                tests = ParserFunctions.combineTests(tests, null, path);
+            }
             if (makeTests) {
                 makeTestSuiteFiles(tests, path, "test_collection");
             } else {
@@ -774,28 +798,6 @@ public class TestBenchRunner {
     }
 
     /**
-     * Run test suite in given position.
-     * 
-     * @param testsuite
-     *            Test suite position in list
-     * 
-     * @return the test result
-     */
-    // public void runTestSuite(int testsuite) {
-    // try {
-    // TestSuite suite = testSuites.get(testsuite);
-    // runTestSuite(suite);
-    // } catch (IndexOutOfBoundsException ioobe) {
-    // System.err.println("No test suite on index " + testsuite);
-    // System.err.println("Only " + testSuites.size()
-    // + " test suites available.");
-    // for (int i = 0; i < testSuites.size(); i++) {
-    // System.err.println("\t" + i + "\t"
-    // + testSuites.get(i).getName());
-    // }
-    // }
-    // }
-    /**
      * Run given test suite
      * 
      * @param testsuite
@@ -824,14 +826,6 @@ public class TestBenchRunner {
         return result;
     }
 
-    /**
-     * Get list of all defined test suites.
-     * 
-     * @return List<TestSuite>
-     */
-    // public List<TestSuite> getTestSuites() {
-    // return testSuites;
-    // }
     /**
      * Get results for run test suites
      * 
@@ -877,8 +871,6 @@ public class TestBenchRunner {
      * Clear lists.
      */
     public void clearTestSuites() {
-        // testSuites.clear();
         testBenchSuites.clear();
-        // testResults.clear();
     }
 }

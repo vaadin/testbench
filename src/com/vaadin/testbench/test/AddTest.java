@@ -49,6 +49,31 @@ public class AddTest extends TestCase {
     }
 
     /**
+     * Test that html test connecting functions.
+     */
+    public void testtest_connecting() throws Exception {
+        TestBenchRunner tbr = new TestBenchRunner();
+        tbr.setConnectTests(true);
+        String[] tests = new String[] { "tst.html", "tst3.html",
+                "Money_tst.java", "tst.html", "Money_tst2.java", "tst3.html",
+                "tst.html", "tst3.html" };
+
+        TestBenchSuite tbs = tbr.parseFiles(tests, "test");
+        // Assert that the 8 tests become 5 tests
+        Assert.assertEquals(5, tbs.getTestsInSuite());
+        String[] testList = tbs.getTests();
+        // Assert all tests and their order
+        Assert.assertTrue("com.vaadin.automatedtests.test__692038016"
+                .equals(testList[0]));
+        Assert.assertTrue("Money_tst".equals(testList[1]));
+        // Assert that a single file doesn't get combined to a test_{hash}.html
+        Assert.assertTrue("com.vaadin.automatedtests.tst".equals(testList[2]));
+        Assert.assertTrue("Money_tst2".equals(testList[3]));
+        Assert.assertTrue("com.vaadin.automatedtests.test__1609445583"
+                .equals(testList[4]));
+    }
+
+    /**
      * Test creating 1 testSuite with 2 tests using relative path to test files
      */
     public void testadd_file_relative_path() throws Exception {
@@ -82,6 +107,20 @@ public class AddTest extends TestCase {
      */
     public void testadd_from_html_file() throws Exception {
         TestBenchRunner tbr = new TestBenchRunner();
+        TestBenchSuite tbs = tbr.parseTestSuite("testSuite.html", ".");
+
+        Assert.assertEquals(1, tbr.getTestBenchSuites().size());
+        Assert.assertEquals(1, tbr.getTestBenchSuite(0).getTestsInSuite());
+        Assert.assertEquals(tbs, tbr.getTestBenchSuite(0));
+    }
+
+    /**
+     * Test creating 1 testSuite with 2 tests by parsing a testSuite file
+     * (.html) with connectTests = true
+     */
+    public void testadd_from_html_file_with_connect_flag() throws Exception {
+        TestBenchRunner tbr = new TestBenchRunner();
+        tbr.setConnectTests(true);
         TestBenchSuite tbs = tbr.parseTestSuite("testSuite.html", ".");
 
         Assert.assertEquals(1, tbr.getTestBenchSuites().size());

@@ -178,12 +178,32 @@ public class ParserFunctions {
         return result;
     }
 
+    /**
+     * Combine html tests to for one test (only one browser will be opened)
+     * 
+     * @param testsToCombine
+     *            List of tests to combine (Can handle mixed filetypes)
+     * @param name
+     *            Name of test file (if null filename will be generated)
+     * @param path
+     *            Path to test files
+     * @return List with combined tests
+     * @throws Exception
+     */
     public static List<String> combineTests(List<String> testsToCombine,
             String name, String path) throws Exception {
-        List<String> combinedFile = new LinkedList<String>();
+
+        List<String> combinedFiles = new LinkedList<String>();
+        List<String> combineThese = new LinkedList<String>();
+        Boolean combineNew = false;
+
+        if (name == null) {
+            name = "test_" + testsToCombine.hashCode();
+        }
 
         StringBuilder str = new StringBuilder();
-        for (String test : testsToCombine) {
+        for (int i = 0; i < testsToCombine.size(); i++) {
+            String test = testsToCombine.get(i);
             // Get file
             File file = new File(test);
             if (!file.exists()) {
@@ -196,40 +216,66 @@ public class ParserFunctions {
                 throw new FileNotFoundException("Couldn't locate file " + test);
             }
 
-            BufferedReader in = new BufferedReader(new FileReader(file));
-            try {
-                String line = "";
-                do {
-                    if (line.equals("</thead><tbody>")) {
-                        line = in.readLine();
-                        break;
+            if (!file.getName().endsWith(".html")) {
+                if (combineNew && !combineThese.isEmpty()) {
+                    if (combinedFiles.size() > 1) {
+                        combinedFiles.addAll(combineTests(combineThese, null,
+                                path));
+                    } else {
+                        combinedFiles.addAll(combineThese);
                     }
-                } while ((line = in.readLine()) != null);
-                if (line != null) {
+                    combineThese.clear();
+                }
+                combinedFiles.add(test);
+                combineNew = true;
+            } else if (!combineNew) {
+                BufferedReader in = new BufferedReader(new FileReader(file));
+                try {
+                    String line = "";
                     do {
-                        if (line.equals("</tbody></table>")) {
+                        if (line.equals("</thead><tbody>")) {
+                            line = in.readLine();
                             break;
                         }
-                        str.append(line + "\n");
                     } while ((line = in.readLine()) != null);
-                }
+                    if (line != null) {
+                        do {
+                            if (line.equals("</tbody></table>")) {
+                                str.append("<tr>\n<td>htmlTest</td>\n");
+                                str.append("<td></td>\n");
+                                str.append("<td>" + file.getName()
+                                        + "</td>\n</tr>\n");
+                                break;
+                            }
+                            str.append(line + "\n");
+                        } while ((line = in.readLine()) != null);
+                    }
 
-            } finally {
-                in.close();
+                } finally {
+                    in.close();
+                }
+            } else {
+                combineThese.add(test);
             }
         }
+        if (!combineThese.isEmpty()) {
+            combinedFiles.addAll(combineTests(combineThese, null, path));
+            combineThese.clear();
+        }
+
         BufferedWriter out = new BufferedWriter(new FileWriter(new File(path
                 + name + ".html")));
         try {
             writeHeader(out, name);
             out.write(str.toString());
-            combinedFile.add(name + ".html");
+            // Add combined file in front
+            combinedFiles.add(0, name + ".html");
             writeFooter(out);
         } finally {
             out.flush();
             out.close();
         }
-        return combinedFile;
+        return combinedFiles;
     }
 
     private static void writeHeader(Writer out, String name) throws Exception {
