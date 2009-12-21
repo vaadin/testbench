@@ -116,6 +116,20 @@ public class AddTest extends TestCase {
 
     /**
      * Test creating 1 testSuite with 2 tests by parsing a testSuite file
+     * (.html)
+     */
+    public void testadd_from_html_file_with_undefined_title() throws Exception {
+        TestBenchRunner tbr = new TestBenchRunner();
+        TestBenchSuite tbs = tbr.parseTestSuite("undefinedSuiteName.html",
+                "test");
+
+        Assert.assertEquals(1, tbr.getTestBenchSuites().size());
+        Assert.assertEquals(1, tbr.getTestBenchSuite(0).getTestsInSuite());
+        Assert.assertEquals(tbs, tbr.getTestBenchSuite(0));
+    }
+
+    /**
+     * Test creating 1 testSuite with 2 tests by parsing a testSuite file
      * (.html) with connectTests = true
      */
     public void testadd_from_html_file_with_connect_flag() throws Exception {

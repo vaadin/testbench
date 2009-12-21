@@ -630,6 +630,7 @@ public class TestBenchRunner {
                 return createTestSuite(result.getSuiteTests(), path, title);
             }
         } else if ("html".equals(fileType)) {
+            title = "Suite";
             ParsedSuite result = ParserFunctions.readHtmlFile(file, path);
             path = testSuite.getParentFile().getAbsolutePath();
             if (!File.separator.equals(path.charAt(path.length() - 1))) {

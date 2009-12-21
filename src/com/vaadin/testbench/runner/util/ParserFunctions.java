@@ -262,9 +262,15 @@ public class ParserFunctions {
             combinedFiles.addAll(combineTests(combineThese, null, path));
             combineThese.clear();
         }
+        File targetFile = new File(path + name + ".html");
+        if (targetFile.exists()
+                && !name.equals("test_" + testsToCombine.hashCode())
+                && !name.equals("Suite")) {
+            targetFile = new File(path + name + testsToCombine.hashCode()
+                    + ".html");
+        }
 
-        BufferedWriter out = new BufferedWriter(new FileWriter(new File(path
-                + name + ".html")));
+        BufferedWriter out = new BufferedWriter(new FileWriter(targetFile));
         try {
             writeHeader(out, name);
             out.write(str.toString());
