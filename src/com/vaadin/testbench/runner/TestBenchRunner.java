@@ -218,8 +218,8 @@ public class TestBenchRunner {
                     String[] options = new String[] {
                             "-cp",
                             System.getProperty("java.class.path", ".") + ";"
-                                    + file.getParent(), "-d",
-                            dir.getAbsolutePath(), file.getAbsolutePath() };
+                                    + file.getParentFile().getAbsolutePath(),
+                            "-d", dir.getAbsolutePath(), file.getAbsolutePath() };
                     // Compile
                     int status = javac.compile(options);
 
