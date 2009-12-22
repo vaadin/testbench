@@ -214,14 +214,11 @@ public class TestBenchRunner {
                 }
 
                 if ("java".equals(fileType)) {
-                    String divide = ":";
-                    if (System.getProperty("os.name").startsWith("Windows")) {
-                        divide = ";";
-                    }
                     // Set compilation options
                     String[] options = new String[] {
                             "-cp",
-                            System.getProperty("java.class.path", ".") + divide
+                            System.getProperty("java.class.path", ".")
+                                    + File.pathSeparator
                                     + file.getParentFile().getAbsolutePath(),
                             "-d", dir.getAbsolutePath(), file.getAbsolutePath() };
                     // Compile
