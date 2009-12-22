@@ -329,10 +329,19 @@ public class ImageComparison {
                         if (error.getY() > 0) {
                             offsetY = 1;
                         }
-                        drawToPicture.drawRect(error.getX() - offsetX, error
-                                .getY()
-                                - offsetY, error.getXBlocks() * 16 + offsetX,
-                                error.getYBlocks() * 16 + offsetY);
+                        // Draw lines inside canvas
+                        if (error.getXBlocks() * 16 + offsetX > test.getWidth()
+                                || error.getYBlocks() * 16 + offsetY > test
+                                        .getHeight()) {
+                            drawToPicture.drawRect(error.getX() - offsetX,
+                                    error.getY() - offsetY, test.getWidth(),
+                                    test.getHeight());
+                        } else {
+                            drawToPicture.drawRect(error.getX() - offsetX,
+                                    error.getY() - offsetY, error.getXBlocks()
+                                            * 16 + offsetX, error.getYBlocks()
+                                            * 16 + offsetY);
+                        }
 
                     }
                     // release resources
@@ -651,6 +660,7 @@ public class ImageComparison {
                     .println("<div id=\"reference\" onclick=\"this.style.display='none'; document.getElementById('diff').style.display='block';\" style=\"display: none; position: absolute; top: 0px; left: 0px; z-index: 999;\"><img src=\"data:image/png;base64,"
                             + ref_image + "\"/></div>");
 
+            int add = 0;
             for (ErrorBlock error : blocks) {
                 int offsetX = 0, offsetY = 0;
                 if (error.getX() > 0) {
@@ -659,7 +669,8 @@ public class ImageComparison {
                 if (error.getY() > 0) {
                     offsetY = 1;
                 }
-                String id = "popUpDiv_" + error.getX() + "_" + error.getY();
+                String id = "popUpDiv_" + (error.getX() + add) + "_"
+                        + (error.getY() + add);
                 // position stars so that it's not out of screen.
                 writer
                         .println("<div  onmouseover=\"document.getElementById('"
@@ -686,11 +697,12 @@ public class ImageComparison {
                                 + (error.getY() + (error.getYBlocks() * 16) + 1)
                                 + "px,"
                                 + (error.getX() - offsetX)
-                                + "px); z-index: 99;\">");
+                                + "px); z-index: " + (99 + add) + ";\">");
                 writer.println("<img src=\"data:image/png;base64," + ref_image
                         + "\" />");
                 // End popup div
                 writer.println("</div>");
+                add++;
             }
 
             // End file
