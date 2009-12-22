@@ -733,6 +733,32 @@ public class TestBenchRunner {
     }
 
     /**
+     * Parse a list of test files/suites.
+     * 
+     * @param files
+     *            List of test files/suites.
+     * @param path
+     *            Base path to use
+     * 
+     * @return created TestBenchSuite
+     * 
+     * @throws Exception
+     *             FileNotFoundException - if a file can't be found
+     */
+    public TestBenchSuite parseFiles(List<String> files, String path)
+            throws Exception {
+
+        path = normalizePath(path);
+
+        String[] tests = new String[files.size()];
+        for (int i = 0; i < files.size(); i++) {
+            tests[i] = files.get(i);
+        }
+
+        return parseFiles(tests, path);
+    }
+
+    /**
      * Run all testSuites in all TestBenchSuites.
      * 
      * @return True if all tests successful, false if any test failed.
@@ -841,11 +867,19 @@ public class TestBenchRunner {
         testBenchSuites.clear();
     }
 
+    /**
+     * Add ${user.dir} to path for absolute path.
+     * 
+     * @param path
+     *            path to normalize
+     * @return full path
+     */
     private String normalizePath(String path) {
         // Set path to the current working directory if given path == null
         if (path == null || path.equals(".")) {
             path = System.getProperty("user.dir");
-        } else if (!path.startsWith(System.getProperty("user.dir"))) {
+        } else if (!path.startsWith(System.getProperty("user.dir"))
+                && (!path.startsWith("/") || !path.contains(":\\"))) {
             path = System.getProperty("user.dir") + File.separator + path;
         }
         // Check that path ends with fileseparator token for later use.
@@ -856,6 +890,13 @@ public class TestBenchRunner {
         return path;
     }
 
+    /**
+     * Add ${user.dir} to path for absolute path.
+     * 
+     * @param build
+     *            path to normalize
+     * @return full path
+     */
     private String normalizeBuild(String build) {
         if (!build.startsWith("/") || !build.contains(":\\")) {
             build = System.getProperty("user.dir") + File.separator + build;

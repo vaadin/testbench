@@ -150,6 +150,17 @@ public class TestBenchSuite {
     }
 
     /**
+     * Returns one testSuite. Intended for when only one browser is used.
+     * 
+     * @return a test suite
+     */
+    public TestSuite getTestSuite() {
+        String key = testSuites.keySet().iterator().next();
+
+        return testSuites.get(key);
+    }
+
+    /**
      * Gets the result for browser.
      * 
      * @param browser

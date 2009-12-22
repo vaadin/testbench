@@ -263,6 +263,32 @@ public class AddTest extends TestCase {
     }
 
     /**
+     * Test creating 1 testSuite with 2 tests by parsing a testSuite file
+     * (.html)
+     */
+    public void testparseFiles_with_list_of_files() throws Exception {
+        TestBenchRunner tbr = new TestBenchRunner();
+        List<String> tests = new LinkedList<String>();
+        tests.add("Money_tst.java");
+        tests.add("testSuite.html");
+        tests.add("tst.html");
+
+        TestBenchSuite tbs = tbr.parseFiles(tests, "test");
+
+        Assert.assertEquals(1, tbr.getTestBenchSuites().size());
+        Assert.assertEquals(3, tbr.getTestBenchSuite(0).getTestsInSuite());
+        Assert.assertEquals(tbs, tbr.getTestBenchSuite(0));
+
+        String[] tbsTests = tbs.getTests();
+
+        Assert.assertEquals("Money_tst", tbsTests[0]);
+        Assert.assertEquals("com.vaadin.automatedtests.Money_Sampler",
+                tbsTests[1]);
+        Assert.assertEquals("com.vaadin.automatedtests.tst", tbsTests[2]);
+
+    }
+
+    /**
      * Create one test suite from multple files.
      */
     public void testone_test_suite_from_multple_files_html_and_xml()
@@ -284,6 +310,18 @@ public class AddTest extends TestCase {
         Assert.assertEquals("Money_tst", tests[3]);
         Assert.assertEquals("com.vaadin.automatedtests.tst3", tests[4]);
         Assert.assertEquals("Money_tst2", tests[5]);
+    }
+
+    /**
+     * Test creating 1 testSuite with 2 tests by parsing a testSuite file
+     * (.html)
+     */
+    public void testget_suite_for_one_browser() throws Exception {
+        TestBenchRunner tbr = new TestBenchRunner();
+        TestBenchSuite tbs = tbr.parseTestSuite("testSuite.html", ".");
+
+        Assert.assertEquals(tbs.getTestSuite("winxp-firefox35"), tbs
+                .getTestSuite());
     }
 
     /**
