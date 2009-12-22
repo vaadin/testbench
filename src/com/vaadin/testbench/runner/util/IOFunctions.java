@@ -172,6 +172,10 @@ public class IOFunctions {
      */
     public static File getFile(String test, File buildPath, int depth) {
         File found = null;
+        if (buildPath == null) {
+            System.err.println("Path was null.");
+            return null;
+        }
         if (!buildPath.isDirectory() || depth == 10) {
             return found;
         }

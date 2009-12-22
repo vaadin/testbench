@@ -28,19 +28,10 @@ import com.vaadin.testbench.runner.util.TestBenchSuite;
  */
 public class TestBenchRunner {
 
-    /** The Constant PACKAGE_DIR. */
     private static final String PACKAGE_DIR = "com/vaadin/automatedtests";
 
-    /** test result. */
-    private TestResult testResult;
-
-    /** javac. */
     private com.sun.tools.javac.Main javac;
-
-    /** The result. */
     private TestResult result;
-
-    /** The browsers. */
     private String[] browsers;
 
     /** Flags */
@@ -166,20 +157,14 @@ public class TestBenchRunner {
                     .split(",");
         }
 
-        // Set path to the current working directory if given path == null
-        if (path == null) {
-            path = System.getProperty("user.dir");
-        }
-        // Check that path ends with fileseparator token for later use.
-        if (!File.separator.equals(path.charAt(path.length() - 1))) {
-            path = path + File.separator;
-        }
+        path = normalizePath(path);
 
         // define build as ${path}/build and change if
         // com.vaadin.testbench.build defined
         String build = path + "build";
         if (System.getProperty("com.vaadin.testbench.build") != null) {
-            build = System.getProperty("com.vaadin.testbench.build");
+            build = normalizeBuild(System
+                    .getProperty("com.vaadin.testbench.build"));
         }
 
         // Set build path
@@ -202,7 +187,8 @@ public class TestBenchRunner {
                 if (!file.exists()) {
                     file = new File(path + test);
                     if (!file.exists()) {
-                        file = IOFunctions.getFile(test, new File(path), 0);
+                        file = IOFunctions.getFile(test, file.getParentFile(),
+                                0);
                     }
                 }
                 if (file == null) {
@@ -234,7 +220,7 @@ public class TestBenchRunner {
                             System.getProperty("java.class.path", ".") + ";"
                                     + file.getParent(), "-d",
                             dir.getAbsolutePath(), file.getAbsolutePath() };
-                    // // Compile
+                    // Compile
                     int status = javac.compile(options);
 
                     // If compilation successful, load class dynamically and
@@ -269,9 +255,7 @@ public class TestBenchRunner {
                     } finally {
                         in.close();
                     }
-                    // Parse and compile TestBench test saved as .html
-                    // File temp = new File(path + "temp");
-                    // temp.deleteOnExit();
+
                     File temp = new File(System.getProperty("java.io.tmpdir"));
                     if (System.getProperty("com.vaadin.testbench.temp") != null) {
                         build = System.getProperty("com.vaadin.testbench.temp");
@@ -329,8 +313,6 @@ public class TestBenchRunner {
             // Test TestBenchSuite
             tbs.addTestSuite(browsers[j], suite);
 
-            // Add created test suite to List
-            // testSuites.add(suite);
         }
         testBenchSuites.add(tbs);
         return tbs;
@@ -389,21 +371,16 @@ public class TestBenchRunner {
                     .split(",");
         }
 
-        if (path == null) {
-            path = System.getProperty("user.dir");
-        }
-        // Check that path ends with fileseparator token for later use.
-        if (!File.separator.equals(path.charAt(path.length() - 1))) {
-            path = path + File.separator;
-        }
+        path = normalizePath(path);
 
         String build = path
                 + testName.replaceAll("[^a-zA-Z0-9]", "_").replace(" ", "_");
         if (System.getProperty("com.vaadin.testbench.build") != null) {
-            build = System.getProperty("com.vaadin.testbench.build")
+            build = normalizeBuild(System
+                    .getProperty("com.vaadin.testbench.build")
                     + File.separator
                     + testName.replaceAll("[^a-zA-Z0-9]", "_")
-                            .replace(" ", "_");
+                            .replace(" ", "_"));
         }
 
         // Set build path
@@ -568,13 +545,8 @@ public class TestBenchRunner {
      */
     public TestBenchSuite parseTestSuite(String file, String path)
             throws Exception {
-        if (path == null) {
-            path = System.getProperty("user.dir");
-        }
-        // Check that path ends with fileseparator token for later use.
-        if (!File.separator.equals(path.charAt(path.length() - 1))) {
-            path = path + File.separator;
-        }
+
+        path = normalizePath(path);
 
         File testSuite = new File(file);
         if (!testSuite.exists()) {
@@ -587,7 +559,7 @@ public class TestBenchRunner {
         }
 
         if (testSuite == null) {
-            System.err.println("Couldn't find given file.");
+            System.err.println("Couldn't find given file. " + path + file);
             return null;
         }
 
@@ -606,7 +578,7 @@ public class TestBenchRunner {
                 title = result.getTestName();
             }
 
-            path = testSuite.getParentFile().getAbsolutePath();
+            path = testSuite.getParent();
             // Add path component defined in Suite file.
             if (result.getPath() != null) {
                 if (!File.separator.equals(path.charAt(path.length() - 1))) {
@@ -632,10 +604,9 @@ public class TestBenchRunner {
         } else if ("html".equals(fileType)) {
             title = "Suite";
             ParsedSuite result = ParserFunctions.readHtmlFile(file, path);
-            path = testSuite.getParentFile().getAbsolutePath();
-            if (!File.separator.equals(path.charAt(path.length() - 1))) {
-                path = path + File.separator;
-            }
+
+            path = normalizePath(testSuite.getParent());
+
             if (result.getTestName() != null) {
                 title = result.getTestName();
             }
@@ -668,17 +639,12 @@ public class TestBenchRunner {
             throws Exception {
         List<String> tests = new LinkedList<String>();
 
+        path = normalizePath(path);
+
         for (String file : files) {
             if (file.contains(".java")) {
                 tests.add(file);
             } else if (file.contains(".html")) {
-                if (path == null) {
-                    path = System.getProperty("user.dir");
-                }
-                // Check that path ends with fileseparator token for later use.
-                if (!File.separator.equals(path.charAt(path.length() - 1))) {
-                    path = path + File.separator;
-                }
 
                 File testFile = new File(file);
                 if (!testFile.exists()) {
@@ -823,7 +789,6 @@ public class TestBenchRunner {
 
         IOFunctions.printResult(seconds, result);
 
-        testResult = result;
         return result;
     }
 
@@ -873,5 +838,27 @@ public class TestBenchRunner {
      */
     public void clearTestSuites() {
         testBenchSuites.clear();
+    }
+
+    private String normalizePath(String path) {
+        // Set path to the current working directory if given path == null
+        if (path == null || path.equals(".")) {
+            path = System.getProperty("user.dir");
+        } else if (!path.startsWith(System.getProperty("user.dir"))) {
+            path = System.getProperty("user.dir") + File.separator + path;
+        }
+        // Check that path ends with fileseparator token for later use.
+        if (!path.endsWith(File.separator)) {
+            path = path + File.separator;
+        }
+
+        return path;
+    }
+
+    private String normalizeBuild(String build) {
+        if (!build.startsWith("/") || !build.contains(":\\")) {
+            build = System.getProperty("user.dir") + File.separator + build;
+        }
+        return build;
     }
 }

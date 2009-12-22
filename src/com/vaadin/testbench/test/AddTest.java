@@ -246,6 +246,7 @@ public class AddTest extends TestCase {
     public void testcreate_one_test_suite_from_multple_files_html()
             throws Exception {
         TestBenchRunner tbr = new TestBenchRunner();
+
         TestBenchSuite tbs = tbr.parseFiles(new String[] { "Money_tst.java",
                 "testSuite.html", "tst.html", "Money_tst2.java" }, "test");
 
@@ -321,12 +322,16 @@ public class AddTest extends TestCase {
         tbr.makeTestSuiteFiles(list, ".", "Make_test_suite");
 
         // Confirm that necessary files have been created
-        File file = new File("test/build/Make_test_suite/build.xml");
+        File file = new File(System.getProperty("user.dir") + File.separator
+                + "test/build/Make_test_suite/build.xml");
         Assert.assertTrue(file.exists());
-        file = new File("test/build/Make_test_suite/Money_tst.java");
+        file = new File(System.getProperty("user.dir") + File.separator
+                + "test/build/Make_test_suite/Money_tst.java");
         Assert.assertTrue(file.exists());
         file = new File(
-                "test/build/Make_test_suite/Make_test_suite_winxp_firefox35_Suite.java");
+                System.getProperty("user.dir")
+                        + File.separator
+                        + "test/build/Make_test_suite/Make_test_suite_winxp_firefox35_Suite.java");
         Assert.assertTrue(file.exists());
     }
 
@@ -348,27 +353,41 @@ public class AddTest extends TestCase {
         tbr.makeTestSuiteFiles(list, ".", "Make_test_suite_multiple");
 
         // Confirm that necessary files have been created
-        File file = new File("test/build/Make_test_suite_multiple/build.xml");
+        File file = new File(System.getProperty("user.dir") + File.separator
+                + "test/build/Make_test_suite_multiple/build.xml");
         Assert.assertTrue(file.exists());
-        file = new File("test/build/Make_test_suite_multiple/Money_tst.java");
-        Assert.assertTrue(file.exists());
-        file = new File(
-                "test/build/Make_test_suite_multiple/Make_test_suite_multiple_winxp_firefox35_Suite.java");
-        Assert.assertTrue(file.exists());
-        file = new File(
-                "test/build/Make_test_suite_multiple/Make_test_suite_multiple_winxp_ie7_Suite.java");
+        file = new File(System.getProperty("user.dir") + File.separator
+                + "test/build/Make_test_suite_multiple/Money_tst.java");
         Assert.assertTrue(file.exists());
         file = new File(
-                "test/build/Make_test_suite_multiple/Make_test_suite_multiple_winxp_safari4_Suite.java");
+                System.getProperty("user.dir")
+                        + File.separator
+                        + "test/build/Make_test_suite_multiple/Make_test_suite_multiple_winxp_firefox35_Suite.java");
         Assert.assertTrue(file.exists());
         file = new File(
-                "test/build/Make_test_suite_multiple/com/vaadin/automatedtests/tst3_winxp_firefox35.java");
+                System.getProperty("user.dir")
+                        + File.separator
+                        + "test/build/Make_test_suite_multiple/Make_test_suite_multiple_winxp_ie7_Suite.java");
         Assert.assertTrue(file.exists());
         file = new File(
-                "test/build/Make_test_suite_multiple/com/vaadin/automatedtests/tst3_winxp_ie7.java");
+                System.getProperty("user.dir")
+                        + File.separator
+                        + "test/build/Make_test_suite_multiple/Make_test_suite_multiple_winxp_safari4_Suite.java");
         Assert.assertTrue(file.exists());
         file = new File(
-                "test/build/Make_test_suite_multiple/com/vaadin/automatedtests/tst3_winxp_safari4.java");
+                System.getProperty("user.dir")
+                        + File.separator
+                        + "test/build/Make_test_suite_multiple/com/vaadin/automatedtests/tst3_winxp_firefox35.java");
+        Assert.assertTrue(file.exists());
+        file = new File(
+                System.getProperty("user.dir")
+                        + File.separator
+                        + "test/build/Make_test_suite_multiple/com/vaadin/automatedtests/tst3_winxp_ie7.java");
+        Assert.assertTrue(file.exists());
+        file = new File(
+                System.getProperty("user.dir")
+                        + File.separator
+                        + "test/build/Make_test_suite_multiple/com/vaadin/automatedtests/tst3_winxp_safari4.java");
         Assert.assertTrue(file.exists());
 
         System.setProperties(original);
@@ -380,7 +399,8 @@ public class AddTest extends TestCase {
     public void testMain_with_xml_Suite() throws Exception {
         TestBenchRunner.main(new String[] { "-make", "-p", "test",
                 "testSuite.xml" });
-        File file = new File("test/build/MixedTests/build.xml");
+        File file = new File(System.getProperty("user.dir") + File.separator
+                + "test/build/MixedTests/build.xml");
         Assert.assertTrue(file.exists());
     }
 
@@ -390,7 +410,8 @@ public class AddTest extends TestCase {
     public void testMain_with_html_Suite() throws Exception {
         TestBenchRunner.main(new String[] { "-make", "-p", "test",
                 "testSuite.html" });
-        File file = new File("test/build/Money_Sampler/build.xml");
+        File file = new File(System.getProperty("user.dir") + File.separator
+                + "test/build/Money_Sampler/build.xml");
         Assert.assertTrue(file.exists());
     }
 }

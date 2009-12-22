@@ -53,14 +53,6 @@ public class ParserFunctions {
         // Map<String, Object> result = new HashMap<String, Object>();
         ParsedSuite result = new ParsedSuite();
 
-        if (path == null) {
-            path = System.getProperty("user.dir");
-        }
-        // Check that path ends with fileseparator token for later use.
-        if (!File.separator.equals(path.charAt(path.length() - 1))) {
-            path = path + File.separator;
-        }
-
         File testSuite = new File(file);
         if (!testSuite.exists()) {
             testSuite = new File(path + file);
@@ -125,14 +117,6 @@ public class ParserFunctions {
         // Map<String, Object> result = new HashMap<String, Object>();
         ParsedSuite result = new ParsedSuite();
 
-        if (path == null) {
-            path = System.getProperty("user.dir");
-        }
-        // Check that path ends with fileseparator token for later use.
-        if (!File.separator.equals(path.charAt(path.length() - 1))) {
-            path = path + File.separator;
-        }
-
         File testSuite = new File(file);
         if (!testSuite.exists()) {
             testSuite = new File(path + file);
@@ -155,14 +139,17 @@ public class ParserFunctions {
         try {
             while ((line = in.readLine()) != null) {
                 if (line.contains("a href=\"")) {
+                    // Get file name and path
                     line = line.substring(line.indexOf("\"") + 1, line
                             .lastIndexOf("\""));
+                    // check that .html file
                     if (!line.contains(".html")) {
                         System.err
                                 .println("Suite should only consist of TestBench tests.");
                         throw new UnsupportedOperationException(
                                 "Only TestBench tests supported in a .html suite file.");
                     }
+                    // add test to list
                     tests.add(line);
                 } else if (line.contains("<b>")) {
                     line = line.substring(line.indexOf("<b>") + 3, line
@@ -216,6 +203,8 @@ public class ParserFunctions {
                 throw new FileNotFoundException("Couldn't locate file " + test);
             }
 
+            // if not .html file add to list and combine html tests in
+            // combineThese
             if (!file.getName().endsWith(".html")) {
                 if (combineNew && !combineThese.isEmpty()) {
                     if (combinedFiles.size() > 1) {
@@ -229,15 +218,18 @@ public class ParserFunctions {
                 combinedFiles.add(test);
                 combineNew = true;
             } else if (!combineNew) {
+                // Combine html tests
                 BufferedReader in = new BufferedReader(new FileReader(file));
                 try {
                     String line = "";
+                    // Search file till start
                     do {
                         if (line.equals("</thead><tbody>")) {
                             line = in.readLine();
                             break;
                         }
                     } while ((line = in.readLine()) != null);
+                    // Get lines until condition met.
                     if (line != null) {
                         do {
                             if (line.equals("</tbody></table>")) {
@@ -255,13 +247,16 @@ public class ParserFunctions {
                     in.close();
                 }
             } else {
+                // if collecting tests add test to combineThese
                 combineThese.add(test);
             }
         }
+        // If combineThese has files combine to file
         if (!combineThese.isEmpty()) {
             combinedFiles.addAll(combineTests(combineThese, null, path));
             combineThese.clear();
         }
+        // Check that file !exist
         File targetFile = new File(path + name + ".html");
         if (targetFile.exists()
                 && !name.equals("test_" + testsToCombine.hashCode())

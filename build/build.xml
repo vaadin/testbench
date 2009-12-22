@@ -16,7 +16,6 @@
 				<fileset dir="../lib" id="libs">
 					<include name="*.jar" />
 				</fileset>
-
 			</classpath>
 		</javac>
 		<jar jarfile="${output.dir}/vaadin-testbench-${version}.jar" compress="true">
@@ -28,6 +27,7 @@
 			</zipfileset>
 			<zipfileset dir="result/classes">
 				<include name="**/**" />
+				<exclude name="**/test/**" />
 			</zipfileset>
 			<zipfileset src="../lib/commons-io-1.1.jar" />
 			<zipfileset src="../lib/commons-codec-1.4.jar" />
@@ -35,6 +35,19 @@
 			<zipfileset src="../lib/junit-4.5.jar" />
 			<zipfileset src="../lib/selenium-java-client-driver.jar" />
 		</jar>
+	</target>
+	
+	<target name="javadoc">
+		<javadoc sourcepath="../src" destdir="result/doc" excludepackagenames="com.vaadin.testbench.test,com.vaadin.testbench.testcase,com.vaadin.testbench.util">
+			<classpath>
+				<fileset dir="../lib" id="libs">
+					<include name="*.jar" />
+				</fileset>
+			</classpath>
+		</javadoc>
+		<zip destfile="${output.dir}/testbench-javadoc-${version}.jar" compress="true">
+			<zipfileset dir="result/doc"/>
+		</zip>
 	</target>
 	
 	<target name="testbench-ide">
@@ -81,7 +94,7 @@
 		</parallel>
 	</target>
 	
-	<target name="testbench-distribution-package" depends="testbench.jar,testbench-ide,testbench-grid,update-run-scripts">
+	<target name="testbench-distribution-package" depends="testbench.jar,javadoc,testbench-ide,testbench-grid,update-run-scripts,run-tests">
 		<zip destfile="${output.dir}/vaadin-testbench-${version}.zip">
 			<zipfileset dir="${output.dir}" includes="vaadin-testbench-${version}.jar" />
 			<zipfileset dir="${output.dir}" includes="testbench-ide/Testbench-ide-${timestamp}.xpi"  />
@@ -145,5 +158,12 @@
 					</filterchain>
 		</copy>
 	</target>
-		
+	
+	<target name="run-tests">
+		<property name="class.path" value="${java.class.path}"/>
+		<subant target="all-tests" buildpath="../test">
+			<property name="class.path" value="${class.path}"/>
+		</subant>
+	</target>
+	
 </project>
