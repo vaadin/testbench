@@ -45,7 +45,7 @@
 				</fileset>
 			</classpath>
 		</javadoc>
-		<zip destfile="${output.dir}/testbench-javadoc-${version}.jar" compress="true">
+		<zip destfile="${output.dir}/testbench-javadoc-${version}.zip" compress="true">
 			<zipfileset dir="result/doc"/>
 		</zip>
 	</target>
