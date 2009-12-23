@@ -60,7 +60,7 @@
 		            	<attribute name="Specification-Vendor" value="OpenQA.org"/>
 			          </section>
 	    	    </manifest>
-	        	<!--<zipfileset src="${dist}/lib/${artifact}-${version}.jar"/>-->
+	        	<zipfileset src="${dist}/lib/${artifact}-${version}.jar"/>
 	        	<dependencies/>
 	      	</jar>
 	    </sequential>
