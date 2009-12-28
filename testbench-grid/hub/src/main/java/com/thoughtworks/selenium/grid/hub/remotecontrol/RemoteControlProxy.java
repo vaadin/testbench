@@ -5,6 +5,9 @@ import com.thoughtworks.selenium.grid.Response;
 import com.thoughtworks.selenium.grid.HttpClient;
 
 import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
+
 
 /**
  * Local interface to a real remote control running somewhere in the grid.
@@ -17,6 +20,13 @@ public class RemoteControlProxy {
     private final String environment;
     private final String host;
     private final int port;
+    
+    // Timer for stuck RemoteControls
+    private Timer wdt;
+    private String session;
+    private int waitTime;
+    private GlobalRemoteControlPool pool;
+    private final RemoteControlProxy RC;
 
 
     public RemoteControlProxy(String host, int port, String environment, int concurrentSessionMax, HttpClient httpClient) {
@@ -32,6 +42,10 @@ public class RemoteControlProxy {
         this.concurrentSessionMax = concurrentSessionMax;
         this.concurrentSessionCount = 0;
         this.httpClient = httpClient;
+        // Set timer properties
+        RC = this;
+        wdt = new Timer();
+        waitTime = 1000*60*3;
     }
 
     public String host() {
@@ -51,6 +65,10 @@ public class RemoteControlProxy {
     }
 
     public Response forward(HttpParameters parameters) throws IOException {
+        if(concurrentSessionCount == 0){
+            return new Response("Test failed due to timeout.");
+        }
+        resetTimer();
         return httpClient.post(remoteControlURL(), parameters);
     }
 
@@ -90,6 +108,8 @@ public class RemoteControlProxy {
             throw new IllegalStateException("Exceeded concurrent session max for " + toString());
         }
         concurrentSessionCount += 1;
+        // Schedule watch dog to 3 minutes
+        wdt.schedule(new WatchDog(), waitTime);
     }
 
     public void unregisterSession() {
@@ -97,9 +117,47 @@ public class RemoteControlProxy {
             throw new IllegalStateException("Unregistering session on an idle remote control : " + toString());
         }
         concurrentSessionCount -= 1;
+        clearTimer();
     }
 
     public boolean canHandleNewSession() {
         return concurrentSessionCount < concurrentSessionMax;
+    }
+    
+    public void resetTimer(){
+        wdt.cancel();
+        wdt = new Timer();
+        wdt.schedule(new WatchDog(), waitTime);
+    }
+    
+    public void clearTimer(){
+        // Terminate timer and create a new one
+        wdt.cancel();
+        wdt = new Timer();
+    }
+    
+    public void setSession(String sessionId){
+        session = sessionId;
+    }
+    
+    public void setPool(GlobalRemoteControlPool pool){
+        this.pool = pool;
+    }
+    
+    private class WatchDog extends TimerTask{
+        public void run(){
+            try{
+                System.out.println("Sending finish to RC and releasing session " + session);
+                HttpParameters parameters = new HttpParameters();
+                parameters.put("cmd", "testComplete");
+                parameters.put("sessionId", session);
+                while(httpClient.isInUse()){
+                    Thread.sleep(100);
+                }
+                httpClient.post(remoteControlURL(), parameters);
+                pool.releaseForSession(session);
+            }catch(Exception e){
+            }
+        }
     }
 }

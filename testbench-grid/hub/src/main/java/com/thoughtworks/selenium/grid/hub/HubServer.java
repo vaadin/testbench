@@ -2,6 +2,7 @@ package com.thoughtworks.selenium.grid.hub;
 
 import com.thoughtworks.selenium.grid.configuration.HubConfiguration;
 import com.thoughtworks.selenium.grid.hub.management.RegistrationServlet;
+import com.thoughtworks.selenium.grid.hub.management.RegistrationConfirmationServlet;
 import com.thoughtworks.selenium.grid.hub.management.UnregistrationServlet;
 import com.thoughtworks.selenium.grid.hub.management.LifecycleManagerServlet;
 import com.thoughtworks.selenium.grid.hub.management.console.ConsoleServlet;
@@ -33,6 +34,7 @@ public class HubServer {
         root.addServlet(new ServletHolder(new HubServlet()), "/selenium-server/driver/*");
         root.addServlet(new ServletHolder(new ConsoleServlet()), "/console");
         root.addServlet(new ServletHolder(new RegistrationServlet()), "/registration-manager/register");
+        root.addServlet(new ServletHolder(new RegistrationConfirmationServlet()), "/registration-manager/remotecontrolstatus");
         root.addServlet(new ServletHolder(new UnregistrationServlet()), "/registration-manager/unregister");
         root.addServlet(new ServletHolder(new LifecycleManagerServlet()), "/lifecycle-manager");
 

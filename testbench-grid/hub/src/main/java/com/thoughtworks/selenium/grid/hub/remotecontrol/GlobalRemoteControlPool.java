@@ -57,6 +57,23 @@ public class GlobalRemoteControlPool implements DynamicRemoteControlPool {
         }
     }
 
+    public void status(List<RemoteControlProxy> checkRemoteControls){
+        for(RemoteControlProxy RCProxy: checkRemoteControls){
+            checkRegistration(RCProxy);
+        }
+    }
+    
+    public void checkRegistration(RemoteControlProxy checkRemoteControls){
+        final RemoteControlProvisioner provisioner;
+        synchronized (provisionersByHash){
+            if(null == getProvisioner(checkRemoteControls.hashCode())){
+                createNewProvisionerForHash(checkRemoteControls.hashCode());
+            }
+            provisioner = getProvisioner(checkRemoteControls.hashCode());
+            provisioner.confirm(checkRemoteControls);
+        }
+    }
+    
     public boolean unregister(List<RemoteControlProxy> remoteControlList) {
         boolean status = false;
 
@@ -70,22 +87,7 @@ public class GlobalRemoteControlPool implements DynamicRemoteControlPool {
     public boolean unregister(RemoteControlProxy remoteControl) {
 
         boolean status = false;
-
-        // synchronized(provisionersByEnvironment) {
-        // synchronized (remoteControlsBySessionIds) {
-        // status =
-        // getProvisioner(remoteControl.environment()).remove(remoteControl);
-        // if (remoteControlsBySessionIds.containsValue(remoteControl)) {
-        // removeFromSessionMap(remoteControl);
-        // }
-        // for(List<RemoteControlProxy> RCList: remoteControls){
-        // if(RCList.contains(remoteControl)){
-        // remoteControls.remove(RCList);
-        // break;
-        // }
-        // }
-        // }
-        // }
+        
         try {
             synchronized (provisionersByHash) {
                 synchronized (remoteControlsBySessionIds) {
@@ -124,6 +126,9 @@ public class GlobalRemoteControlPool implements DynamicRemoteControlPool {
         LOGGER.info("Associating session id='" + sessionId + "' =>"
                 + remoteControl + " for environment "
                 + remoteControl.environment());
+        
+        remoteControl.setSession(sessionId);
+        
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Asssociating " + sessionId + " => " + remoteControl);
         }

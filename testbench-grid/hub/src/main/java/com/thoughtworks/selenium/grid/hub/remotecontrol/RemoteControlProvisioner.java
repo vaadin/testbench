@@ -107,6 +107,20 @@ public class RemoteControlProvisioner {
         }
     }
 
+    public void confirm(RemoteControlProxy checkRemoteControl){
+        try {
+            remoteControlListLock.lock();
+            if (remoteControls.contains(checkRemoteControl)) {
+                return;
+            }
+            LOGGER.info("Registering RemoteControl " + checkRemoteControl.toString() + " to hub as it seems to have been lost.");
+            remoteControls.add(checkRemoteControl);
+            signalThatARemoteControlHasBeenMadeAvailable();
+        } finally {
+            remoteControlListLock.unlock();
+        }
+    }
+    
     public boolean remove(RemoteControlProxy remoteControl) {
         try {
             remoteControlListLock.lock();

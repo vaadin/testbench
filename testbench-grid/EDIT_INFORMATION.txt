@@ -14,15 +14,34 @@ Testbench also adds some load balancing by checking which remote control has the
 Changed files.
 
 infrastructure:
-	com.thoughtworks.selenium.grid.HttpClient [socket timeout]
+	com.thoughtworks.selenium.grid.HttpClient									[socket timeout]
 hub:
-	com.thoughtworks.selenium.grid.hub.management.RegistrationServlet [multiple environments]
-	com.thoughtworks.selenium.grid.hub.management.RemoteControlParser [Support environment string parsing]
-	com.thoughtworks.selenium.grid.hub.management.UnregistrationServlet [multiple environments]
+	com.thoughtworks.selenium.grid.hub.management.RegistrationServlet			[multiple environments]
+	com.thoughtworks.selenium.grid.hub.management.RemoteControlParser			[Support environment string parsing]
+	com.thoughtworks.selenium.grid.hub.management.UnregistrationServlet			[multiple environments]
 
-	com.thoughtworks.selenium.grid.hub.management.console.index.html [names]
+	com.thoughtworks.selenium.grid.hub.management.console.index.html			[names]
 
 	com.thoughtworks.selenium.grid.hub.remotecontrol.DynamicRemoteControlPool	[]
 	com.thoughtworks.selenium.grid.hub.remotecontrol.GlobalRemoteControlPool	[multiple environments, grouping, load balancing]
 	com.thoughtworks.selenium.grid.hub.remotecontrol.RemoteControlProvsioner	[group handling, load balancing]
-	com.thoughtworks.selenium.grid.hub.remotecontrol.RemoteControlProxy		[equals(Object), toString()]
+	com.thoughtworks.selenium.grid.hub.remotecontrol.RemoteControlProxy			[equals(Object), toString()]
+
+	
+Changed files for RemoteControl reregistration #3685
+rc:
+	com.thoughtworks.selenium.grid.remotecontrol.SelfRegisteringRemoteControl	[Timer]
+hub:
+	com.thoughtworks.selenium.grid.hub.management.RegistrationConfirmationServlet [new file for confirming that RC is registered]
+	com.thoughtworks.selenium.grid.hub.remotecontrol.DynamicRemoteControlPool	[]
+	com.thoughtworks.selenium.grid.hub.remotecontrol.GlobalRemoteControlPool	[status and checkRegistartion methods]
+	com.thoughtworks.selenium.grid.hub.remotecontrol.RemoteControlProvsioner	[confirm method]
+	
+Changed files for timeout watchdog #3610
+
+infrastructure:
+	com.thoughtworks.selenium.grid.HttpClient [inUse flag]
+hub:
+	com.thoughtworks.selenium.grid.hub.remotecontrol.RemoteControlProxy			[WatchDog timer]
+	com.thoughtworks.selenium.grid.hub.remotecontrol.GlobalRemoteControlPool	[Givee session to RC]
+	
