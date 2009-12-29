@@ -16,10 +16,12 @@ public class RemoteControlParser {
         final String host;
         final int port;
 
-        host = request.getParameter("host");
-        if (null == host || "".equals(host.trim())) {
-            throw new IllegalStateException("You must specify a 'host' parameter");
-        }
+        host  = request.getRemoteAddr();
+
+//        host = request.getParameter("host");
+//        if (null == host || "".equals(host.trim())) {
+//            throw new IllegalStateException("You must specify a 'host' parameter");
+//        }
         portParameter = request.getParameter("port");
         if (null == portParameter || "".equals(portParameter.trim())) {
             throw new IllegalStateException("You must specify a 'port' parameter");

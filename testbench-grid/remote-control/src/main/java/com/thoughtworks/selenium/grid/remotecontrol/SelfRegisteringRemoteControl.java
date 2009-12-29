@@ -35,7 +35,15 @@ public class SelfRegisteringRemoteControl {
     }
 
     public void register() throws IOException {
-        new RegistrationRequest(seleniumHubURL, host, port, environment).execute();
+        int status = 0;
+        do{
+            try{
+                status = new RegistrationRequest(seleniumHubURL, host, port, environment).execute();
+            }catch(Exception e){
+                status = 0;
+                logger.info("Hub seems to be down. Retrying connection.");
+            }
+        }while(status != 200);
     }
 
     public void unregister() throws IOException {
