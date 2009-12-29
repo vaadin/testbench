@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<configuration>
+	<port>5555</port>
+	<environment>winxp-ie8</environment>
+	<environment>winxp-safari4</environment>
+	<environment>winxp-opera10</environment>
+	<environment>winxp-firefox35</environment>
+	<environment>winxp-googlechrome3</environment>
+	<hubURL>http://127.0.0.1:4444</hubURL>
+</configuration>

@@ -4,11 +4,9 @@ setlocal
 
 set cpVars=lib\selenium-server-1.0.1.jar;lib\selenium-grid-remote-control-standalone-TestBench-@build@.jar
 
-set HUBURL=http://127.0.0.1:4444
-set ENVIRONMENT=winxp-ie8,winxp-firefox35,winxp-safari4,winxp-opera10,winxp-googlechrome3
-set PORT=5555
+set ENVIRONMENT=winxp-firefox35
 set USEREXTENSIONS=user-extensions.js
 
-java -cp "%cpVars%" com.thoughtworks.selenium.grid.remotecontrol.SelfRegisteringRemoteControlLauncher -port %PORT% -hubUrl %HUBURL% -env %ENVIRONMENT% -userExtensions %USEREXTENSIONS%
+java -cp "%cpVars%" com.thoughtworks.selenium.grid.remotecontrol.SelfRegisteringRemoteControlLauncher -env %ENVIRONMENT% -userExtensions %USEREXTENSIONS%
 
 endlocal

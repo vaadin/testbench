@@ -20,6 +20,7 @@ public class SelfRegisteringRemoteControlLauncher {
         final OptionParser.Options options;
 
         options = new OptionParser().parseOptions(args);
+        ConfigurationParser.parseConfigurationFile(options);
         server = new SelfRegisteringRemoteControl(
                 options.hubURL(), options.environment(), options.host(), options.port());
         try {
