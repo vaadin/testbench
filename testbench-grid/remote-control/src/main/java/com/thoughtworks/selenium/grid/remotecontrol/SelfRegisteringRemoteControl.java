@@ -40,6 +40,10 @@ public class SelfRegisteringRemoteControl {
             try{
                 status = new RegistrationRequest(seleniumHubURL, host, port, environment).execute();
             }catch(Exception e){
+                try{
+                    Thread.sleep(500);
+                }catch(InterruptedException ie){
+                }
                 status = 0;
                 logger.info("Hub seems to be down. Retrying connection.");
             }

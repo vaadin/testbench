@@ -31,6 +31,23 @@ public class ConfigurationParser {
                 Node node = nodeList.item(i);
                 options.setHost(node.getChildNodes().item(0).getNodeValue());
             }
+            
+            // Get <hubURL> node and set hubURL if exists
+            nodeList = doc.getElementsByTagName("hubURL");
+            for (int i = 0; i < nodeList.getLength(); i++) {
+                Node node = nodeList.item(i);
+                String hubURL = node.getChildNodes().item(0).getNodeValue();
+                // Add http:// if hubURL doesn't start with it
+                if(!hubURL.startsWith("http://")){
+                    hubURL = "http://" + hubURL;
+                }
+                // Add port if not available
+                if(hubURL.split(":").length != 3){
+                    System.err.println("Host missing port.\nAdding default port 4444");
+                    hubURL = hubURL + ":4444";
+                }
+                options.setHubURL(hubURL);
+            }
     
             // Get <port> node and set port if exists
             nodeList = doc.getElementsByTagName("port");
@@ -51,23 +68,6 @@ public class ConfigurationParser {
                 sb.deleteCharAt(sb.lastIndexOf(","));
                 // Set enviroments
                 options.setEnvironment(sb.toString());
-            }
-            
-            // Get <hubURL> node and set hubURL if exists
-            nodeList = doc.getElementsByTagName("hubURL");
-            for (int i = 0; i < nodeList.getLength(); i++) {
-                Node node = nodeList.item(i);
-                String hubURL = node.getChildNodes().item(0).getNodeValue();
-                // Add http:// if hubURL doesn't start with it
-                if(!hubURL.startsWith("http://")){
-                    hubURL = "http://" + hubURL;
-                }
-                // Add port if not available
-                if(hubURL.split(":").length != 3){
-                    System.err.println("Host missing port.\nAdding default port 4444");
-                    hubURL = hubURL + ":4444";
-                }
-                options.setHubURL(hubURL);
             }
             
         }catch(javax.xml.parsers.ParserConfigurationException pce){
