@@ -99,6 +99,7 @@
 	        	<zipfileset src="${rootdir}/vendor/commons-httpclient-3.0.1.jar"/>
 	        	<zipfileset src="${rootdir}/vendor/commons-codec-1.3.jar"/>
 	        	<zipfileset src="${rootdir}/vendor/commons-logging-1.0.4.jar"/>
+	      		<zipfileset src="${rootdir}/../lib/commons-io-1.1.jar"/>
 	      	</dependencies>
     	</package-standalone-jar>
   		<antcall target="clean"/>

@@ -14,7 +14,7 @@ Testbench also adds some load balancing by checking which remote control has the
 Changed files.
 
 infrastructure:
-	com.thoughtworks.selenium.grid.HttpClient									[socket timeout]
+	com.thoughtworks.selenium.grid.HttpClient									[socket timeout, getResponseBodyAsStream instead of getResponseBody]
 hub:
 	com.thoughtworks.selenium.grid.hub.management.RegistrationServlet			[multiple environments]
 	com.thoughtworks.selenium.grid.hub.management.RemoteControlParser			[Support environment string parsing]

@@ -6,6 +6,7 @@ import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.params.HttpConnectionParams;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -74,9 +75,9 @@ public class HttpClient {
                     .getParams();
             parameters.setSoTimeout(60000);
             statusCode = client.executeMethod(method);
-            body = new String(method.getResponseBody(), "utf-8");
-            // logger.info("Remote Control replied with '" + statusCode + " / '"
-            // + body + "'");
+            byte[] response = IOUtils.toByteArray(method
+                    .getResponseBodyAsStream());
+            body = new String(response, "utf-8");
             return new Response(statusCode, body);
         } catch (java.net.SocketTimeoutException e) {
             return new Response("Socket response timedout.");
