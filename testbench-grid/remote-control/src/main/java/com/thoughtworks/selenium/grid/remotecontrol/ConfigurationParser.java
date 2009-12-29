@@ -57,7 +57,17 @@ public class ConfigurationParser {
             nodeList = doc.getElementsByTagName("hubURL");
             for (int i = 0; i < nodeList.getLength(); i++) {
                 Node node = nodeList.item(i);
-                options.setHubURL(node.getChildNodes().item(0).getNodeValue());
+                String hubURL = node.getChildNodes().item(0).getNodeValue();
+                // Add http:// if hubURL doesn't start with it
+                if(!hubURL.startsWith("http://")){
+                    hubURL = "http://" + hubURL;
+                }
+                // Add port if not available
+                if(hubURL.split(":").length != 3){
+                    System.err.println("Host missing port.\nAdding default port 4444");
+                    hubURL = hubURL + ":4444";
+                }
+                options.setHubURL(hubURL);
             }
             
         }catch(javax.xml.parsers.ParserConfigurationException pce){
