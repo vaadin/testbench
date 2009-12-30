@@ -30,10 +30,12 @@ public class HttpClient {
     }
 
     public Response get(String url) throws IOException {
+        // Wait for ConnectionManager to be free
         while (inUse) {
             try {
                 Thread.sleep(100);
             } catch (InterruptedException ie) {
+                logger.debug("Thread interrupted. " + ie.getMessage());
             }
         }
         return request(new GetMethod(url));
@@ -41,10 +43,12 @@ public class HttpClient {
 
     public Response post(String url, HttpParameters parameters)
             throws IOException {
+        // Wait for ConnectionManager to be free
         while (inUse) {
             try {
                 Thread.sleep(100);
             } catch (InterruptedException ie) {
+                logger.debug("Thread interrupted. " + ie.getMessage());
             }
         }
         return request(buildPostMethod(url, parameters));
@@ -75,10 +79,12 @@ public class HttpClient {
                     .getParams();
             parameters.setSoTimeout(60000);
             statusCode = client.executeMethod(method);
+            // Get response body as a byte[] from InputStream
             byte[] response = IOUtils.toByteArray(method
                     .getResponseBodyAsStream());
             body = new String(response, "utf-8");
             return new Response(statusCode, body);
+            // Catch exceptions and end test by creating a Response(String);
         } catch (java.net.SocketTimeoutException e) {
             return new Response("Socket response timedout.");
         } catch (java.net.SocketException e) {

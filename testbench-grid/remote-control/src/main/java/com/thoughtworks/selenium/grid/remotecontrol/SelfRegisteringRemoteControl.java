@@ -30,6 +30,7 @@ public class SelfRegisteringRemoteControl {
         this.environment = environment;
         this.host = host;
         this.port = port;
+        // Create timer and schedule it to run ConnectionTest each minute
         timer = new Timer();
         timer.schedule(new ConnectionTest(), 1000*60, 1000*60);
     }
@@ -39,10 +40,12 @@ public class SelfRegisteringRemoteControl {
         do{
             try{
                 status = new RegistrationRequest(seleniumHubURL, host, port, environment).execute();
-            }catch(Exception e){
+            }catch(Throwable e){
+                // Sleep for a while before trying connection again
                 try{
                     Thread.sleep(500);
                 }catch(InterruptedException ie){
+                    logger.debug("Thread interrupted. " + ie.getMessage());
                 }
                 status = 0;
                 logger.info("Hub seems to be down. Retrying connection.");
@@ -92,6 +95,7 @@ public class SelfRegisteringRemoteControl {
         });
     }
     
+    // Function to reconnect Remote Control to Hub
     private class ConnectionTest extends TimerTask{
         public void run(){
             try{

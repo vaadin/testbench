@@ -62,7 +62,8 @@ public class GlobalRemoteControlPool implements DynamicRemoteControlPool {
             checkRegistration(RCProxy);
         }
     }
-    
+
+    // Check that remote conrol is registered on hub and register if not.
     public void checkRegistration(RemoteControlProxy checkRemoteControls){
         final RemoteControlProvisioner provisioner;
         synchronized (provisionersByHash){

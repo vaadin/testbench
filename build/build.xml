@@ -110,14 +110,14 @@
 			<zipfileset dir="../testbench-grid/hub" includes="hub hub.bat grid_configuration.yml" prefix="grid/hub" />
 			<zipfileset dir="../testbench-grid/hub/target/dist/lib" includes="**standalone*.jar" prefix="grid/hub/lib" />
 			
-			<zipfileset dir="../testbench-grid/remote-control" includes="rc rc.bat" prefix="grid/remote-control" />
+			<zipfileset dir="../testbench-grid/remote-control" includes="rc.sh rc.bat" prefix="grid/remote-control" />
 			<zipfileset dir="../testbench-grid/remote-control/target/dist/lib" includes="**standalone*.jar" prefix="grid/remote-control/lib" />
 			<zipfileset dir="../testbench-grid/vendor" includes="selenium-server*.jar" prefix="grid/remote-control/lib" />
 			<zipfileset dir="../selenium-extensions/core" includes="user-extensions.js" prefix="grid/remote-control" />
 		</zip>
 			
 		<zip destfile="${output.dir}/vaadin-testbench-grid-${timestamp}.zip">
-			<zipfileset dir="../testbench-grid/hub" includes="hub hub.bat grid_configuration.yml" prefix="hub" />
+			<zipfileset dir="../testbench-grid/hub" includes="hub.sh hub.bat grid_configuration.yml" prefix="hub" />
 			<zipfileset dir="../testbench-grid/hub/target/dist/lib" includes="**standalone*.jar" prefix="hub/lib" />
 			
 			<zipfileset dir="../testbench-grid/remote-control" includes="rc rc.bat rc_configuration.xml" prefix="remote-control" />
@@ -129,7 +129,7 @@
 
 	<!-- Creates script files for starting hub and remote-control -->
 	<target name="update-run-scripts">
-		<copy file="../testbench-grid/hub/hub.tpl" tofile="../testbench-grid/hub/hub" overwrite="true">
+		<copy file="../testbench-grid/hub/hub.tpl" tofile="../testbench-grid/hub/hub.sh" overwrite="true">
 					<filterchain>
 						<replacetokens>
 							<token key="build" value="${timestamp}" />
@@ -143,7 +143,7 @@
 						</replacetokens>
 					</filterchain>
 		</copy>
-		<copy file="../testbench-grid/remote-control/rc.tpl" tofile="../testbench-grid/remote-control/rc" overwrite="true">
+		<copy file="../testbench-grid/remote-control/rc.tpl" tofile="../testbench-grid/remote-control/rc.sh" overwrite="true">
 					<filterchain>
 						<replacetokens>
 							<token key="build" value="${timestamp}" />

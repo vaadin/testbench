@@ -53,6 +53,7 @@ public class RemoteControlProvisioner {
         }
     }
 
+    // Reserve Remote Control with environment
     public RemoteControlProxy reserve(String environment) {
         final RemoteControlProxy remoteControl;
 
@@ -107,6 +108,7 @@ public class RemoteControlProvisioner {
         }
     }
 
+    // If remoteControl exists do nothing else add remote control
     public void confirm(RemoteControlProxy checkRemoteControl){
         try {
             remoteControlListLock.lock();
@@ -130,6 +132,7 @@ public class RemoteControlProvisioner {
         }
     }
 
+    // Check if remote control has environment
     public boolean hasEnvironment(String environment) {
         for (RemoteControlProxy rc : remoteControls) {
             if (rc.environment().equals(environment)) {
@@ -242,6 +245,11 @@ public class RemoteControlProvisioner {
         return null;
     }
 
+    /**
+     * Non-blocking, not thread-safe
+     * 
+     * @return Next Available remote control with environment. Null if none is available.
+     */
     protected RemoteControlProxy findNextAvailableRemoteControl(
             String environment) {
         for (RemoteControlProxy remoteControl : remoteControls) {

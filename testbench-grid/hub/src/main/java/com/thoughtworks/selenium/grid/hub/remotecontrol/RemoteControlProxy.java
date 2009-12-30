@@ -65,10 +65,14 @@ public class RemoteControlProxy {
     }
 
     public Response forward(HttpParameters parameters) throws IOException {
+        // If no session return failure Response for timeout.
         if(concurrentSessionCount == 0){
             return new Response("Test failed due to timeout.");
         }
-        resetTimer();
+        // Reset timer only if we have a session
+        if(session != null){
+            resetTimer();
+        }
         return httpClient.post(remoteControlURL(), parameters);
     }
 
@@ -126,11 +130,13 @@ public class RemoteControlProxy {
     
     public void resetTimer(){
         wdt.cancel();
+        wdt.purge();
         wdt = new Timer();
         wdt.schedule(new WatchDog(), waitTime);
     }
     
     public void clearTimer(){
+        session = null;
         // Terminate timer and create a new one
         wdt.cancel();
         wdt = new Timer();
@@ -144,6 +150,7 @@ public class RemoteControlProxy {
         this.pool = pool;
     }
     
+    // If timer is not reset or cleared before time runs out release this session
     private class WatchDog extends TimerTask{
         public void run(){
             try{
@@ -154,7 +161,9 @@ public class RemoteControlProxy {
                 while(httpClient.isInUse()){
                     Thread.sleep(100);
                 }
+                // Send testComplete to Remote Control
                 httpClient.post(remoteControlURL(), parameters);
+                // Release session and free Remote Control
                 pool.releaseForSession(session);
             }catch(Exception e){
             }
