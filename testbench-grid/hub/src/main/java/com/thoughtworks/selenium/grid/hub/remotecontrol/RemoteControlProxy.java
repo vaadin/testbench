@@ -13,7 +13,7 @@ import java.util.TimerTask;
  * Local interface to a real remote control running somewhere in the grid.
  */
 public class RemoteControlProxy {
-
+    
     private final int concurrentSessionMax;
     private int concurrentSessionCount;
     private final HttpClient httpClient;
@@ -22,13 +22,11 @@ public class RemoteControlProxy {
     private final int port;
     
     // Timer for stuck RemoteControls
-    private Timer wdt;
     private String session;
     private int waitTime;
     private GlobalRemoteControlPool pool;
     private final RemoteControlProxy RC;
-
-
+    
     public RemoteControlProxy(String host, int port, String environment, int concurrentSessionMax, HttpClient httpClient) {
         if (null == host) {
             throw new IllegalArgumentException("host cannot be null");
@@ -44,7 +42,6 @@ public class RemoteControlProxy {
         this.httpClient = httpClient;
         // Set timer properties
         RC = this;
-        wdt = new Timer();
         waitTime = 1000*60*3;
     }
 
@@ -71,7 +68,7 @@ public class RemoteControlProxy {
         }
         // Reset timer only if we have a session
         if(session != null){
-            resetTimer();
+            reset();
         }
         return httpClient.post(remoteControlURL(), parameters);
     }
@@ -112,36 +109,24 @@ public class RemoteControlProxy {
             throw new IllegalStateException("Exceeded concurrent session max for " + toString());
         }
         concurrentSessionCount += 1;
-        // Schedule watch dog to 3 minutes
-        wdt.schedule(new WatchDog(), waitTime);
+        // Set watchdog timer values and create new Watchdog thread
+        startWatchDog();
+        new Thread(WatchDog).start();
     }
-
+    
     public void unregisterSession() {
         if (0 == concurrentSessionCount) {
             throw new IllegalStateException("Unregistering session on an idle remote control : " + toString());
         }
         concurrentSessionCount -= 1;
-        clearTimer();
+        stopWatchDog();
     }
 
     public boolean canHandleNewSession() {
         return concurrentSessionCount < concurrentSessionMax;
     }
     
-    public void resetTimer(){
-        wdt.cancel();
-        wdt.purge();
-        wdt = new Timer();
-        wdt.schedule(new WatchDog(), waitTime);
-    }
-    
-    public void clearTimer(){
-        session = null;
-        // Terminate timer and create a new one
-        wdt.cancel();
-        wdt = new Timer();
-    }
-    
+    // Watchdog Timer funcitions
     public void setSession(String sessionId){
         session = sessionId;
     }
@@ -150,23 +135,73 @@ public class RemoteControlProxy {
         this.pool = pool;
     }
     
+    private enum Status {
+        RUN, RESET, TIMEOUT, IDLE, RELEASED
+    }
+    
+    private int sleepTime = waitTime;
+    private int timeSpent = 0;
+    private Status statusFlag = Status.IDLE;
+    
+    public void startWatchDog(){
+        timeSpent = 0;
+        statusFlag = Status.RUN;
+    }
+    
+    public void stopWatchDog(){
+        session = null;
+        timeSpent = 0;
+        statusFlag = Status.IDLE;
+    }
+    
+    public void reset(){
+        statusFlag = Status.RESET;
+    }
+    
     // If timer is not reset or cleared before time runs out release this session
-    private class WatchDog extends TimerTask{
+    Runnable WatchDog = new Runnable(){       
+        
         public void run(){
             try{
-                System.out.println("Sending finish to RC and releasing session " + session);
-                HttpParameters parameters = new HttpParameters();
-                parameters.put("cmd", "testComplete");
-                parameters.put("sessionId", session);
-                while(httpClient.isInUse()){
-                    Thread.sleep(100);
+                while(statusFlag != Status.IDLE){
+                    switch(statusFlag){
+                    case RUN:
+                        try{
+                            Thread.sleep(100);
+                            timeSpent += 100;
+                            if(timeSpent >= waitTime){
+                                statusFlag = Status.TIMEOUT;
+                            }
+                        }catch(InterruptedException ie){}
+                        break;
+                    case RESET:
+                        timeSpent = 0;
+                        statusFlag = Status.RUN;
+                        break;
+                    case IDLE:
+                        break;
+                    case TIMEOUT:
+                        System.out.println("Sending finish to RC and releasing session " + session);
+                        HttpParameters parameters = new HttpParameters();
+                        parameters.put("cmd", "testComplete");
+                        parameters.put("sessionId", session);
+                        while(httpClient.isInUse()){
+                            Thread.sleep(100);
+                        }
+                        // Send testComplete to Remote Control
+                        httpClient.post(remoteControlURL(), parameters);
+                        // Release session and free Remote Control
+                        pool.releaseForSession(session);
+                        statusFlag = Status.RELEASED;
+                        break;
+                    case RELEASED:
+                        try{
+                            Thread.sleep(100);
+                        }catch(InterruptedException ie){}
+                    }
                 }
-                // Send testComplete to Remote Control
-                httpClient.post(remoteControlURL(), parameters);
-                // Release session and free Remote Control
-                pool.releaseForSession(session);
             }catch(Exception e){
             }
         }
-    }
+    };
 }

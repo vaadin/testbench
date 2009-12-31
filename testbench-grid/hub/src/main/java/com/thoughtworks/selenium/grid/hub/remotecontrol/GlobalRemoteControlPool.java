@@ -57,21 +57,17 @@ public class GlobalRemoteControlPool implements DynamicRemoteControlPool {
         }
     }
 
-    public void status(List<RemoteControlProxy> checkRemoteControls){
-        for(RemoteControlProxy RCProxy: checkRemoteControls){
-            checkRegistration(RCProxy);
-        }
-    }
-
     // Check that remote conrol is registered on hub and register if not.
-    public void checkRegistration(RemoteControlProxy checkRemoteControls){
+    public void status(List<RemoteControlProxy> checkRemoteControls){
         final RemoteControlProvisioner provisioner;
         synchronized (provisionersByHash){
-            if(null == getProvisioner(checkRemoteControls.hashCode())){
-                createNewProvisionerForHash(checkRemoteControls.hashCode());
+            if(null == getProvisioner(checkRemoteControls.get(0).hashCode())){
+                createNewProvisionerForHash(checkRemoteControls.get(0).hashCode());
+                provisioner = getProvisioner(checkRemoteControls.get(0).hashCode());
+                for(RemoteControlProxy RCProxy: checkRemoteControls){
+                    provisioner.confirm(RCProxy);
+                }
             }
-            provisioner = getProvisioner(checkRemoteControls.hashCode());
-            provisioner.confirm(checkRemoteControls);
         }
     }
     
