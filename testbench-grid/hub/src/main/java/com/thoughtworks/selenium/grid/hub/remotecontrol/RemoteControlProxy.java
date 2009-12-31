@@ -181,6 +181,7 @@ public class RemoteControlProxy {
                     case IDLE:
                         break;
                     case TIMEOUT:
+                        statusFlag = Status.RELEASED;
                         System.out.println("Sending finish to RC and releasing session " + session);
                         HttpParameters parameters = new HttpParameters();
                         parameters.put("cmd", "testComplete");
@@ -188,14 +189,20 @@ public class RemoteControlProxy {
                         while(httpClient.isInUse()){
                             Thread.sleep(100);
                         }
-                        // Send testComplete to Remote Control
-                        httpClient.post(remoteControlURL(), parameters);
-                        // Release session and free Remote Control
-                        pool.releaseForSession(session);
-                        statusFlag = Status.RELEASED;
+                        if(statusFlag == Status.RELEASED){
+                            // Send testComplete to Remote Control
+                            httpClient.post(remoteControlURL(), parameters);
+                            // Release session and free Remote Control
+                            pool.releaseForSession(session);
+                        }
                         break;
                     case RELEASED:
                         try{
+                            if(session == null){
+                                statusFlag = Status.IDLE;
+                            }else{
+                                statusFlag = Status.TIMEOUT;
+                            }
                             Thread.sleep(100);
                         }catch(InterruptedException ie){}
                     }
