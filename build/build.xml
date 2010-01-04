@@ -120,7 +120,7 @@
 			<zipfileset dir="../testbench-grid/hub" includes="hub.sh hub.bat grid_configuration.yml" prefix="hub" />
 			<zipfileset dir="../testbench-grid/hub/target/dist/lib" includes="**standalone*.jar" prefix="hub/lib" />
 			
-			<zipfileset dir="../testbench-grid/remote-control" includes="rc rc.bat rc_configuration.xml" prefix="remote-control" />
+			<zipfileset dir="../testbench-grid/remote-control" includes="rc.sh rc.bat rc_configuration.xml" prefix="remote-control" />
 			<zipfileset dir="../testbench-grid/remote-control/target/dist/lib" includes="**standalone*.jar" prefix="remote-control/lib" />
 			<zipfileset dir="../testbench-grid/vendor" includes="selenium-server*.jar" prefix="remote-control/lib" />
 			<zipfileset dir="../selenium-extensions/core" includes="user-extensions.js" prefix="remote-control" />

@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import org.apache.commons.httpclient.methods.PostMethod;
+
 
 /**
  * Local interface to a real remote control running somewhere in the grid.
@@ -186,12 +188,14 @@ public class RemoteControlProxy {
                         HttpParameters parameters = new HttpParameters();
                         parameters.put("cmd", "testComplete");
                         parameters.put("sessionId", session);
-                        while(httpClient.isInUse()){
-                            Thread.sleep(100);
-                        }
+                        
                         if(statusFlag == Status.RELEASED){
                             // Send testComplete to Remote Control
-                            httpClient.post(remoteControlURL(), parameters);
+//                            httpClient.post(remoteControlURL(), parameters);
+                            final PostMethod postMethod = new PostMethod(remoteControlURL());
+                            postMethod.addParameter("cmd", "testComplete");
+                            postMethod.addParameter("sessionId", session);
+                            int status = new org.apache.commons.httpclient.HttpClient().executeMethod(postMethod);
                             // Release session and free Remote Control
                             pool.releaseForSession(session);
                         }

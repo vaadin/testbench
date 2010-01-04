@@ -18,7 +18,6 @@ import org.apache.commons.logging.LogFactory;
 public class HttpClient {
 
     private static final Log logger = LogFactory.getLog(HttpClient.class);
-    private static boolean inUse = false;
     private final org.apache.commons.httpclient.HttpClient client;
 
     public HttpClient(org.apache.commons.httpclient.HttpClient client) {
@@ -30,32 +29,22 @@ public class HttpClient {
     }
 
     public Response get(String url) throws IOException {
-        // Wait for ConnectionManager to be free
-        while (inUse) {
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException ie) {
-                logger.debug("Thread interrupted. " + ie.getMessage());
-            }
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException ie) {
+            logger.debug("Thread interrupted. " + ie.getMessage());
         }
         return request(new GetMethod(url));
     }
 
     public Response post(String url, HttpParameters parameters)
             throws IOException {
-        // Wait for ConnectionManager to be free
-        while (inUse) {
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException ie) {
-                logger.debug("Thread interrupted. " + ie.getMessage());
-            }
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException ie) {
+            logger.debug("Thread interrupted. " + ie.getMessage());
         }
         return request(buildPostMethod(url, parameters));
-    }
-
-    public boolean isInUse() {
-        return inUse;
     }
 
     protected PostMethod buildPostMethod(String url, HttpParameters parameters) {
@@ -73,7 +62,6 @@ public class HttpClient {
     protected Response request(HttpMethod method) throws IOException {
         final int statusCode;
         final String body;
-        inUse = true;
         try {
             HttpConnectionParams parameters = client.getHttpConnectionManager()
                     .getParams();
@@ -93,7 +81,6 @@ public class HttpClient {
             return new Response("Problem occured. " + e.getMessage());
         } finally {
             method.releaseConnection();
-            inUse = false;
         }
     }
 }
