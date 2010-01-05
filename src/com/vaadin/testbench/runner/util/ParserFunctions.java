@@ -257,13 +257,16 @@ public class ParserFunctions {
             combineThese.clear();
         }
         // Check that file !exist
-        File targetFile = new File(path + name + ".html");
-        if (targetFile.exists()
-                && !name.equals("test_" + testsToCombine.hashCode())
-                && !name.equals("Suite")) {
-            targetFile = new File(path + name + testsToCombine.hashCode()
-                    + ".html");
+        if (!name.endsWith("" + testsToCombine.hashCode())) {
+            name = name + "_" + testsToCombine.hashCode();
         }
+        File targetFile = new File(path + name + ".html");
+        // if (targetFile.exists()
+        // && !name.equals("test_" + testsToCombine.hashCode())
+        // && !name.equals("Suite")) {
+        // targetFile = new File(path + name + testsToCombine.hashCode()
+        // + ".html");
+        // }
 
         BufferedWriter out = new BufferedWriter(new FileWriter(targetFile));
         try {

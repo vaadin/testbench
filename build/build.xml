@@ -62,33 +62,33 @@
 	<target name="testbench-grid">
 		<subant target="dist">
 			<property name="timestamp" value="${timestamp}"/>
-		  	<property name="version" value="Testbench-${timestamp}"/>
+		  	<property name="version" value="TestBench-${timestamp}"/>
 			<fileset dir="../testbench-grid/infrastructure/core" includes="build.xml" />
 		</subant>
 		<subant target="package-standalone">
 			<property name="timestamp" value="${timestamp}"/>
-		  	<property name="version" value="Testbench-${timestamp}"/>
+		  	<property name="version" value="TestBench-${timestamp}"/>
 			<fileset dir="../testbench-grid/infrastructure/webserver" includes="build.xml" />
 		</subant>
 		<parallel>
 			<subant target="package-standalone">
 				<property name="timestamp" value="${timestamp}"/>
-			  	<property name="version" value="Testbench-${timestamp}"/>
+			  	<property name="version" value="TestBench-${timestamp}"/>
 				<fileset dir="../testbench-grid/hub" includes="build.xml" />
 			</subant>
 			<subant target="package-standalone">
 				<property name="timestamp" value="${timestamp}"/>
-			  	<property name="version" value="Testbench-${timestamp}"/>
+			  	<property name="version" value="TestBench-${timestamp}"/>
 				<fileset dir="../testbench-grid/remote-control" includes="build.xml" />
 			</subant>
 		</parallel>
 		<parallel>
 			<subant target="clean-classes">
-			  	<property name="version" value="Testbench-${timestamp}"/>
+			  	<property name="version" value="TestBench-${timestamp}"/>
 				<fileset dir="../testbench-grid/infrastructure/core" includes="build.xml" />
 			</subant>
 			<subant target="clean-classes">
-			  	<property name="version" value="Testbench-${timestamp}"/>
+			  	<property name="version" value="TestBench-${timestamp}"/>
 				<fileset dir="../testbench-grid/infrastructure/webserver" includes="build.xml" />
 			</subant>
 		</parallel>
@@ -107,10 +107,10 @@
 			<zipfileset dir="../doc" includes="*.pdf" prefix="documentation" />
 <!--			<fileset dir=".." includes="example/tests/**" />-->
 			<!-- Add hub and remote-control to zip -->
-			<zipfileset dir="../testbench-grid/hub" includes="hub hub.bat grid_configuration.yml" prefix="grid/hub" />
+			<zipfileset dir="../testbench-grid/hub" includes="hub.sh hub.bat grid_configuration.yml" prefix="grid/hub" />
 			<zipfileset dir="../testbench-grid/hub/target/dist/lib" includes="**standalone*.jar" prefix="grid/hub/lib" />
 			
-			<zipfileset dir="../testbench-grid/remote-control" includes="rc.sh rc.bat" prefix="grid/remote-control" />
+			<zipfileset dir="../testbench-grid/remote-control" includes="rc.sh rc.bat rc_configuration.xml" prefix="grid/remote-control" />
 			<zipfileset dir="../testbench-grid/remote-control/target/dist/lib" includes="**standalone*.jar" prefix="grid/remote-control/lib" />
 			<zipfileset dir="../testbench-grid/vendor" includes="selenium-server*.jar" prefix="grid/remote-control/lib" />
 			<zipfileset dir="../selenium-extensions/core" includes="user-extensions.js" prefix="grid/remote-control" />

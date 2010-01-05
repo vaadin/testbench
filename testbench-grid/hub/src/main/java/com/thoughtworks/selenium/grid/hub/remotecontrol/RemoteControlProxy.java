@@ -3,6 +3,7 @@ package com.thoughtworks.selenium.grid.hub.remotecontrol;
 import com.thoughtworks.selenium.grid.HttpParameters;
 import com.thoughtworks.selenium.grid.Response;
 import com.thoughtworks.selenium.grid.HttpClient;
+import com.thoughtworks.selenium.grid.hub.HubRegistry;
 
 import java.io.IOException;
 import java.util.Timer;
@@ -26,8 +27,9 @@ public class RemoteControlProxy {
     // Timer for stuck RemoteControls
     private String session;
     private int waitTime;
-    private GlobalRemoteControlPool pool;
+//    private GlobalRemoteControlPool pool;
     private final RemoteControlProxy RC;
+    private Thread wdt = null;
     
     public RemoteControlProxy(String host, int port, String environment, int concurrentSessionMax, HttpClient httpClient) {
         if (null == host) {
@@ -111,9 +113,18 @@ public class RemoteControlProxy {
             throw new IllegalStateException("Exceeded concurrent session max for " + toString());
         }
         concurrentSessionCount += 1;
+        if(wdt != null){
+            try{
+                while(wdt.isAlive()){
+                    Thread.sleep(50);
+                }
+            }catch(InterruptedException ie){
+            }
+        }
         // Set watchdog timer values and create new Watchdog thread
         startWatchDog();
-        new Thread(WatchDog).start();
+        wdt = new Thread(WatchDog);
+        wdt.start();
     }
     
     public void unregisterSession() {
@@ -131,10 +142,6 @@ public class RemoteControlProxy {
     // Watchdog Timer funcitions
     public void setSession(String sessionId){
         session = sessionId;
-    }
-    
-    public void setPool(GlobalRemoteControlPool pool){
-        this.pool = pool;
     }
     
     private enum Status {
@@ -189,25 +196,20 @@ public class RemoteControlProxy {
                         parameters.put("cmd", "testComplete");
                         parameters.put("sessionId", session);
                         
-                        if(statusFlag == Status.RELEASED){
-                            // Send testComplete to Remote Control
-//                            httpClient.post(remoteControlURL(), parameters);
-                            final PostMethod postMethod = new PostMethod(remoteControlURL());
-                            postMethod.addParameter("cmd", "testComplete");
-                            postMethod.addParameter("sessionId", session);
-                            int status = new org.apache.commons.httpclient.HttpClient().executeMethod(postMethod);
-                            // Release session and free Remote Control
-                            pool.releaseForSession(session);
-                        }
-                        break;
+                        // Send testComplete to Remote Control
+                        final PostMethod postMethod = new PostMethod(remoteControlURL());
+                        postMethod.addParameter("cmd", "testComplete");
+                        postMethod.addParameter("sessionId", session);
+                        int status = new org.apache.commons.httpclient.HttpClient().executeMethod(postMethod);
+                        // Release session and free Remote Control
+                        DynamicRemoteControlPool pool = HubRegistry.registry().remoteControlPool();
+                        pool.releaseForSession(session);
                     case RELEASED:
                         try{
                             if(session == null){
                                 statusFlag = Status.IDLE;
-                            }else{
-                                statusFlag = Status.TIMEOUT;
                             }
-                            Thread.sleep(100);
+                            Thread.sleep(50);
                         }catch(InterruptedException ie){}
                     }
                 }

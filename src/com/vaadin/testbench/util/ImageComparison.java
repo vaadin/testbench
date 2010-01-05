@@ -4,8 +4,6 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -19,14 +17,13 @@ import javax.imageio.ImageIO;
 
 import junit.framework.Assert;
 
-import org.apache.commons.codec.binary.Base64;
-
 /**
  * Class with features for comparing 2 images.
  */
 public class ImageComparison {
 
     private static final String TEST_SCREENS_DIRECTORY = "com.vaadin.testbench.screenshot.directory";
+    private static final String CURSOR_DETECT = "com.vaadin.testbench.screenshot.cursor";
     private static final String DEBUG = "com.vaadin.testbench.debug";
     // referenceDirectory is the name of the directory with the reference
     // pictures of the same name as the one to be compared
@@ -82,17 +79,18 @@ public class ImageComparison {
         // collect errors that are then written to a .log file
         StringBuilder imageErrors = new StringBuilder();
 
-        BufferedImage test = (stringToImage(image)).getSubimage(dimensions
-                .getCanvasXPosition(), dimensions.getCanvasYPosition(),
-                dimensions.getCanvasWidth(), dimensions.getCanvasHeight());
+        BufferedImage test = (ImageUtil.stringToImage(image)).getSubimage(
+                dimensions.getCanvasXPosition(), dimensions
+                        .getCanvasYPosition(), dimensions.getCanvasWidth(),
+                dimensions.getCanvasHeight());
 
         try {
             // Load images if reference not given
             BufferedImage target = ImageIO.read(new File(directory
                     + REFERENCE_DIRECTORY + File.separator + fileId + ".png"));
             if (testEdges) {
-                target = detectEdges(target);
-                test = detectEdges(test);
+                target = ImageUtil.detectEdges(target);
+                test = ImageUtil.detectEdges(test);
                 BufferedImage referenceImage = new BufferedImage(dimensions
                         .getCanvasWidth(), dimensions.getCanvasHeight(),
                         BufferedImage.TYPE_INT_RGB);
@@ -289,9 +287,83 @@ public class ImageComparison {
             }
 
             // if errors found in file save diff file with marked
-            // macroblocks and create html file for visuall confirmation of
+            // macroblocks and create html file for visual confirmation of
             // differences
             if (result == false) {
+                // check amount of error blocks
+                int errorAmount = 0, x = 0, y = 0, firstBlockX = 0, firstBlockY = 0;
+                for (int j = 0; j < yBlocks; j++) {
+                    for (int i = 0; i < xBlocks; i++) {
+                        if (falseBlocks[i][j] && errorAmount == 0) {
+                            // save first error block position
+                            errorAmount++;
+                            x = i * 16;
+                            y = j * 16;
+                            firstBlockX = i;
+                            firstBlockY = j;
+                        } else if (falseBlocks[i][j] && errorAmount == 1) {
+                            if (falseBlocks[i][j - 1] && i == firstBlockX
+                                    && j == (firstBlockY + 1)) {
+                                // Don't add block if under firstBlock
+                            } else {
+                                // stop checking no cursor detection will be
+                                // made
+                                errorAmount++;
+                                i = xBlocks;
+                                j = yBlocks;
+                            }
+                        }
+                    }
+                }
+                if (errorAmount == 1
+                        && "true".equalsIgnoreCase(System
+                                .getProperty(CURSOR_DETECT))) {
+                    boolean cursor = false;
+                    if (x == 0) {
+                        x++;
+                    }
+                    int i = x, j = y;
+                    for (; j < y + 16; j++) {
+                        for (; i < x + 16; i++) {
+                            if (test.getRGB(i, j) != target.getRGB(i, j)) {
+                                int z = j;
+                                do {
+                                    if (test.getRGB(i - 1, z) == target.getRGB(
+                                            i - 1, z)
+                                            && test.getRGB(i + 1, z) == target
+                                                    .getRGB(i + 1, z)) {
+                                        if ((z + 1) < target.getHeight()
+                                                && test.getRGB(i, z + 1) != target
+                                                        .getRGB(i, z + 1)) {
+                                            z++;
+                                        } else {
+                                            break;
+                                        }
+                                    }
+                                } while (z < j + 5);
+                                if ((z - j) >= 3) {
+                                    System.out.println("Found cursor in test "
+                                            + fileId.substring(0, fileId
+                                                    .indexOf("_")));
+                                    cursor = true;
+                                }
+                            }
+                            if (cursor) {
+                                break;
+                            }
+                        }
+                        i = x;
+                        if (cursor) {
+                            break;
+                        }
+                    }
+
+                    // if cursor is false mark error
+                    if (cursor) {
+                        return true;
+                    }
+                }
+
                 if (!testEdges) {
                     // Check that the comparison folder exists and create if
                     // false
@@ -306,11 +378,11 @@ public class ImageComparison {
 
                     // get both images again if different size
                     if (sizesDiffer) {
-                        test = (stringToImage(image))
-                                .getSubimage(dimensions.getCanvasXPosition(),
-                                        dimensions.getCanvasYPosition(),
-                                        dimensions.getCanvasWidth(), dimensions
-                                                .getCanvasHeight());
+                        test = (ImageUtil.stringToImage(image)).getSubimage(
+                                dimensions.getCanvasXPosition(), dimensions
+                                        .getCanvasYPosition(), dimensions
+                                        .getCanvasWidth(), dimensions
+                                        .getCanvasHeight());
                         target = ImageIO.read(new File(directory
                                 + REFERENCE_DIRECTORY + File.separator + fileId
                                 + ".png"));
@@ -348,15 +420,16 @@ public class ImageComparison {
                     drawToPicture.dispose();
 
                     // Write clean image to file
-                    ImageIO.write((stringToImage(image)).getSubimage(dimensions
-                            .getCanvasXPosition(), dimensions
-                            .getCanvasYPosition(), dimensions.getCanvasWidth(),
-                            dimensions.getCanvasHeight()), "png", new File(
+                    ImageIO.write((ImageUtil.stringToImage(image)).getSubimage(
+                            dimensions.getCanvasXPosition(), dimensions
+                                    .getCanvasYPosition(), dimensions
+                                    .getCanvasWidth(), dimensions
+                                    .getCanvasHeight()), "png", new File(
                             compareFolder + File.separator + fileId + ".png"));
 
-                    createDiffHtml(errorAreas, fileId,
-                            encodeImageToBase64(test),
-                            encodeImageToBase64(target));
+                    createDiffHtml(errorAreas, fileId, ImageUtil
+                            .encodeImageToBase64(test), ImageUtil
+                            .encodeImageToBase64(target));
 
                     if (debug) {
                         System.err
@@ -390,10 +463,11 @@ public class ImageComparison {
                         compareFolder.mkdir();
                     }
 
-                    test = (stringToImage(image)).getSubimage(dimensions
-                            .getCanvasXPosition(), dimensions
-                            .getCanvasYPosition(), dimensions.getCanvasWidth(),
-                            dimensions.getCanvasHeight());
+                    test = (ImageUtil.stringToImage(image)).getSubimage(
+                            dimensions.getCanvasXPosition(), dimensions
+                                    .getCanvasYPosition(), dimensions
+                                    .getCanvasWidth(), dimensions
+                                    .getCanvasHeight());
 
                     // Write clean image to file
                     ImageIO.write(test, "png", new File(compareFolder
@@ -406,9 +480,9 @@ public class ImageComparison {
                             + REFERENCE_DIRECTORY + File.separator + fileId
                             + ".png"));
 
-                    createDiffHtml(errorAreas, fileId,
-                            encodeImageToBase64(test),
-                            encodeImageToBase64(target));
+                    createDiffHtml(errorAreas, fileId, ImageUtil
+                            .encodeImageToBase64(test), ImageUtil
+                            .encodeImageToBase64(target));
 
                     Assert.fail("Images are of different size (" + fileId
                             + ").");
@@ -715,52 +789,6 @@ public class ImageComparison {
     }
 
     /**
-     * Decodes target string from base64 to byteArray that is converted to an
-     * image
-     * 
-     * @param imageString
-     *            Base64 encoded image
-     * @return BufferedImage
-     */
-    public BufferedImage stringToImage(String imageString) {
-        // string to ByteArrayInputStream
-        BufferedImage bImage = null;
-        Base64 b64dec = new Base64();
-        try {
-            byte[] output = b64dec.decode(imageString.getBytes());
-            ByteArrayInputStream bais = new ByteArrayInputStream(output);
-            bImage = ImageIO.read(bais);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return bImage;
-    }
-
-    /**
-     * Encodes target image to a Base64 string
-     * 
-     * @param image
-     *            BufferedImage to encode to String
-     * @return Base64 encoded String of image
-     */
-    public String encodeImageToBase64(BufferedImage image) {
-        String encodedImage = "";
-        Base64 encoder = new Base64();
-        try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ImageIO.write(image, "png", baos);
-            baos.flush();
-            byte[] encodedBytes = encoder.encode(baos.toByteArray());
-            encodedImage = new String(encodedBytes);
-            baos.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return encodedImage;
-    }
-
-    /**
      * Checks that all required directories can be found and creates them if
      * necessary
      * 
@@ -795,202 +823,4 @@ public class ImageComparison {
         return (ix) / 100.0;
     }
 
-    /**
-     * Runs edge detection on image and returns a grayscale image with edges.
-     * 
-     * @param image
-     *            Base64 encoded String of image.
-     * @return Base64 encoded String of image. [TYPE_BYTE_GRAY]
-     */
-    public String detectEdges(String image) {
-        return encodeImageToBase64(robertsCrossEdges(stringToImage(image)));
-    }
-
-    /**
-     * Runs edge detection on image and returns a grayscale image with edges.
-     * 
-     * @param image
-     *            BufferedImage
-     * @return BufferedImage [TYPE_BYTE_GRAY]
-     */
-    public BufferedImage detectEdges(BufferedImage image) {
-        return robertsCrossEdges(image);
-    }
-
-    /**
-     * Makes a matrix convolution on pixel. Used to find edges.
-     * 
-     * @param kernel
-     *            convolution kernel
-     * @param kernWidth
-     * @param kernHeight
-     * @param src
-     *            Source image
-     * @param x
-     *            X position of pixel
-     * @param y
-     *            Y position of pixel
-     * @param rgb
-     *            int[] to save new r, g and b values
-     * @return new rgb values
-     */
-    private int[] convolvePixel(float[] kernel, int kernWidth, int kernHeight,
-            BufferedImage src, int x, int y, int[] rgb) {
-        if (rgb == null) {
-            rgb = new int[3];
-        }
-
-        int halfWidth = kernWidth / 2;
-        int halfHeight = kernHeight / 2;
-
-        /*
-         * This algorithm pretends as though the kernel is indexed from
-         * -halfWidth to halfWidth horizontally and -halfHeight to halfHeight
-         * vertically. This makes the center pixel indexed at row 0, column 0.
-         */
-
-        for (int component = 0; component < 3; component++) {
-            float sum = 0;
-            for (int i = 0; i < kernel.length; i++) {
-                int row = (i / kernWidth) - halfWidth;
-                int column = (i - (kernWidth * row)) - halfHeight;
-
-                // Check range
-                if (x - row < 0 || x - row > src.getWidth()) {
-                    continue;
-                }
-                if (y - column < 0 || y - column > src.getHeight()) {
-                    continue;
-                }
-                int srcRGB = src.getRGB(x - row, y - column);
-                sum = sum + kernel[i]
-                        * ((srcRGB >> (16 - 8 * component)) & 0xff);
-            }
-            rgb[component] = (int) sum;
-        }
-
-        return rgb;
-    }
-
-    /**
-     * Runns a Roberts Cross edge detection on image.
-     * 
-     * @param image
-     *            BufferedImage
-     * @return BufferedImage [TYPE_BYTE_GRAY] with found edges.
-     */
-    private BufferedImage robertsCrossEdges(BufferedImage image) {
-        BufferedImage edges = new BufferedImage(image.getWidth(), image
-                .getHeight(), BufferedImage.TYPE_BYTE_GRAY);
-
-        float[] hx = new float[] { 1, 0, 0, -1 };
-        float[] hy = new float[] { 0, 1, -1, 0 };
-
-        int[] rgbX = new int[3];
-        int[] rgbY = new int[3];
-
-        for (int x = 1; x < image.getWidth() - 1; x++) {
-            for (int y = 1; y < image.getHeight() - 1; y++) {
-                convolvePixel(hx, 2, 2, image, x, y, rgbX);
-                convolvePixel(hy, 2, 2, image, x, y, rgbY);
-
-                int r = Math.abs(rgbX[0]) + Math.abs(rgbY[0]);
-                int g = Math.abs(rgbX[1]) + Math.abs(rgbY[1]);
-                int b = Math.abs(rgbX[2]) + Math.abs(rgbY[2]);
-
-                if (r > 255) {
-                    r = 255;
-                }
-                if (g > 255) {
-                    g = 255;
-                }
-                if (b > 255) {
-                    b = 255;
-                }
-
-                edges.setRGB(x, y, (r << 16) | (g << 8) | b);
-            }
-        }
-        threshold(edges);
-        return edges;
-    }
-
-    /**
-     * Creates a b&w image of grayscale image.
-     * 
-     * @param image
-     */
-    private void threshold(BufferedImage image) {
-        for (int x = 0; x < image.getWidth(); x++) {
-            for (int y = 0; y < image.getHeight(); y++) {
-                Color color = new Color(image.getRGB(x, y));
-                double lum = lum(color);
-                if (lum >= 150) {
-                    image.setRGB(x, y, Color.WHITE.getRGB());
-                } else {
-                    image.setRGB(x, y, Color.BLACK.getRGB());
-                }
-            }
-        }
-    }
-
-    /**
-     * Gets the luminance value for given color
-     * 
-     * @param color
-     * @return Luminance value
-     */
-    private double lum(Color color) {
-        // return the monochrome luminance of given color
-        int r = color.getRed();
-        int g = color.getGreen();
-        int b = color.getBlue();
-        return .299 * r + .587 * g + .114 * b;
-    }
-
-    /**
-     * Does a mild blur on the given image
-     * 
-     * @param image
-     */
-    @SuppressWarnings("unused")
-    private void blur(BufferedImage image) {
-
-        float[] matrix = { 0.111f, 0.111f, 0.111f, 0.111f, 0.111f, 0.111f,
-                0.111f, 0.111f, 0.111f, };
-
-        int[] rgb = new int[3];
-
-        for (int x = 1; x < image.getWidth() - 1; x++) {
-            for (int y = 1; y < image.getHeight() - 1; y++) {
-                convolvePixel(matrix, 3, 3, image, x, y, rgb);
-                image.setRGB(x, y, getRGB(rgb));
-            }
-        }
-    }
-
-    /**
-     * Creates a single int representation of r, g & b
-     * 
-     * @param rgb
-     *            int[] rgb
-     * @return int rgb
-     */
-    private int getRGB(int[] rgb) {
-        int r = Math.abs(rgb[0]);
-        int g = Math.abs(rgb[1]);
-        int b = Math.abs(rgb[2]);
-
-        if (r > 255) {
-            r = 255;
-        }
-        if (g > 255) {
-            g = 255;
-        }
-        if (b > 255) {
-            b = 255;
-        }
-
-        return ((r << 16) | (g << 8) | b);
-    }
 }

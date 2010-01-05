@@ -13,6 +13,7 @@ import com.vaadin.testbench.util.BrowserDimensions;
 import com.vaadin.testbench.util.BrowserUtil;
 import com.vaadin.testbench.util.BrowserVersion;
 import com.vaadin.testbench.util.ImageComparison;
+import com.vaadin.testbench.util.ImageUtil;
 
 /**
  * An abstract Vaadin TestCase implementation. This can be extended to create
@@ -261,7 +262,7 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
         pause(200);
         String image = selenium.captureScreenshotToString();
 
-        BufferedImage screenshot = compare.stringToImage(image);
+        BufferedImage screenshot = ImageUtil.stringToImage(image);
 
         int[] startBlock = new int[10];
         startBlock = screenshot.getRGB(dimensions.getCanvasXPosition(),

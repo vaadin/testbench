@@ -255,9 +255,8 @@ public class AddTest extends TestCase {
 
         String[] tests = tbs.getTests();
         Assert.assertEquals("Money_tst", tests[0]);
-        Assert
-                .assertEquals("com.vaadin.automatedtests.Money_Sampler",
-                        tests[1]);
+        Assert.assertEquals(
+                "com.vaadin.automatedtests.Money_Sampler_1361568440", tests[1]);
         Assert.assertEquals("com.vaadin.automatedtests.tst", tests[2]);
         Assert.assertEquals("Money_tst2", tests[3]);
     }
@@ -282,7 +281,8 @@ public class AddTest extends TestCase {
         String[] tbsTests = tbs.getTests();
 
         Assert.assertEquals("Money_tst", tbsTests[0]);
-        Assert.assertEquals("com.vaadin.automatedtests.Money_Sampler",
+        Assert.assertEquals(
+                "com.vaadin.automatedtests.Money_Sampler_1361568440",
                 tbsTests[1]);
         Assert.assertEquals("com.vaadin.automatedtests.tst", tbsTests[2]);
 
@@ -303,9 +303,8 @@ public class AddTest extends TestCase {
 
         String[] tests = tbs.getTests();
         Assert.assertEquals("Money_tst", tests[0]);
-        Assert
-                .assertEquals("com.vaadin.automatedtests.Money_Sampler",
-                        tests[1]);
+        Assert.assertEquals(
+                "com.vaadin.automatedtests.Money_Sampler_1361568440", tests[1]);
         Assert.assertEquals("com.vaadin.automatedtests.tst", tests[2]);
         Assert.assertEquals("Money_tst", tests[3]);
         Assert.assertEquals("com.vaadin.automatedtests.tst3", tests[4]);
