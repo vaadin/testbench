@@ -33,6 +33,7 @@ public class TestBenchRunner {
     private com.sun.tools.javac.Main javac;
     private TestResult result;
     private String[] browsers;
+    String encoding;
 
     /** Flags */
     private boolean makeTests = false;
@@ -49,6 +50,11 @@ public class TestBenchRunner {
 
         javac = new com.sun.tools.javac.Main();
         browsers = new String[] { "winxp-firefox35" };
+        encoding = "utf8";
+
+        if (System.getProperty("com.vaadin.testbench.encoding") != null) {
+            encoding = System.getProperty("com.vaadin.testbench.encoding");
+        }
     }
 
     /**
@@ -136,6 +142,15 @@ public class TestBenchRunner {
     }
 
     /**
+     * Sets the source file encoding to use during compilation
+     * 
+     * @param encode
+     */
+    public void setEncoding(String encode) {
+        encoding = encode;
+    }
+
+    /**
      * Create test suite from given list. Creates one suite per browser. If
      * com.vaadin.testbench.browsers is not defined winxp-firefox35 is used.
      * 
@@ -216,6 +231,8 @@ public class TestBenchRunner {
                 if ("java".equals(fileType)) {
                     // Set compilation options
                     String[] options = new String[] {
+                            "-encoding",
+                            encoding,
                             "-cp",
                             System.getProperty("java.class.path", ".")
                                     + File.pathSeparator
@@ -274,9 +291,9 @@ public class TestBenchRunner {
                             temp.getAbsolutePath() + file.separator
                                     + PACKAGE_DIR), 0);
 
-                    String[] options = new String[] { "-cp",
-                            System.getProperty("java.class.path", "."), "-d",
-                            dir.getAbsolutePath(), file.getAbsolutePath() };
+                    String[] options = new String[] { "-encoding", encoding,
+                            "-cp", System.getProperty("java.class.path", "."),
+                            "-d", dir.getAbsolutePath(), file.getAbsolutePath() };
                     int status = javac.compile(options);
 
                     // If compilation successful, load class dynamically and

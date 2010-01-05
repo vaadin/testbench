@@ -45,7 +45,7 @@ public class TestConverter {
             + "import com.vaadin.testbench.testcase.AbstractVaadinTestCase;\n"
             + "import java.io.IOException;\n" + "import java.io.File;\n"
             + "import javax.imageio.ImageIO;\n"
-            + "import com.vaadin.testbench.util.ImageComparison;\n" + "\n"
+            + "import com.vaadin.testbench.util.ImageUtil;\n" + "\n"
             + "public class {class} extends AbstractVaadinTestCase {\n" + "\n"
             + "public void setUp() throws Exception {\n"
             + "        setBrowser({browser});\n super.setUp();\n" + "}" + "\n";
@@ -410,8 +410,7 @@ public class TestConverter {
                     + "if(!target.exists()){\n"
                     + "target.mkdir();\n}\n"
                     + "try{\n"
-                    + "ImageComparison ic = new ImageComparison();\n"
-                    + "ImageIO.write(ic.stringToImage(statusScreen), \"png\", new File(directory + \"errors/"
+                    + "ImageIO.write(ImageUtil.stringToImage(statusScreen), \"png\", new File(directory + \"errors/"
                     + testName + "_failure_"
                     + getSafeName(browserUnderConversion)
                     + ".png\"));\n}catch(IOException ioe){\n"
