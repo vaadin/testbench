@@ -290,80 +290,46 @@ public class ImageComparison {
             // macroblocks and create html file for visual confirmation of
             // differences
             if (result == false) {
-                // check amount of error blocks
-                int errorAmount = 0, x = 0, y = 0, firstBlockX = 0, firstBlockY = 0;
-                for (int j = 0; j < yBlocks; j++) {
-                    for (int i = 0; i < xBlocks; i++) {
-                        if (falseBlocks[i][j] && errorAmount == 0) {
-                            // save first error block position
-                            errorAmount++;
-                            x = i * 16;
-                            y = j * 16;
-                            firstBlockX = i;
-                            firstBlockY = j;
-                        } else if (falseBlocks[i][j] && errorAmount == 1) {
-                            if (falseBlocks[i][j - 1] && i == firstBlockX
-                                    && j == (firstBlockY + 1)) {
-                                // Don't add block if under firstBlock
-                            } else {
-                                // stop checking no cursor detection will be
-                                // made
+                if ("true".equalsIgnoreCase(System.getProperty(CURSOR_DETECT))
+                        && !sizesDiffer) {
+                    // check amount of error blocks
+                    int errorAmount = 0, x = 0, y = 0, firstBlockX = 0, firstBlockY = 0;
+                    for (int j = 0; j < yBlocks; j++) {
+                        for (int i = 0; i < xBlocks; i++) {
+                            if (falseBlocks[i][j] && errorAmount == 0) {
+                                // save first error block position
                                 errorAmount++;
-                                i = xBlocks;
-                                j = yBlocks;
-                            }
-                        }
-                    }
-                }
-                if (errorAmount == 1
-                        && "true".equalsIgnoreCase(System
-                                .getProperty(CURSOR_DETECT))) {
-                    boolean cursor = false;
-                    if (x == 0) {
-                        x++;
-                    }
-                    int i = x, j = y;
-                    for (; j < y + 16; j++) {
-                        for (; i < x + 16; i++) {
-                            if (test.getRGB(i, j) != target.getRGB(i, j)) {
-                                int z = j;
-                                do {
-                                    if (test.getRGB(i - 1, z) == target.getRGB(
-                                            i - 1, z)
-                                            && test.getRGB(i + 1, z) == target
-                                                    .getRGB(i + 1, z)) {
-                                        if ((z + 1) < target.getHeight()
-                                                && test.getRGB(i, z + 1) != target
-                                                        .getRGB(i, z + 1)) {
-                                            z++;
-                                        } else {
-                                            break;
-                                        }
-                                    }
-                                } while (z < j + 5);
-                                if ((z - j) >= 3) {
-                                    System.out.println("Found cursor in test "
-                                            + fileId.substring(0, fileId
-                                                    .indexOf("_")));
-                                    cursor = true;
+                                x = i * 16;
+                                y = j * 16;
+                                firstBlockX = i;
+                                firstBlockY = j;
+                            } else if (falseBlocks[i][j] && errorAmount == 1) {
+                                if (j == 0) {
+                                    // stop checking no cursor detection will be
+                                    // done
+                                    errorAmount++;
+                                    i = xBlocks;
+                                    j = yBlocks;
+                                } else if (!falseBlocks[i][j - 1]
+                                        && i != firstBlockX
+                                        && j != (firstBlockY + 1)) {
+                                    // stop checking no cursor detection will be
+                                    // done
+                                    errorAmount++;
+                                    i = xBlocks;
+                                    j = yBlocks;
                                 }
                             }
-                            if (cursor) {
-                                break;
-                            }
-                        }
-                        i = x;
-                        if (cursor) {
-                            break;
                         }
                     }
-
-                    // if cursor is false mark error
-                    if (cursor) {
-                        return true;
+                    if (errorAmount == 1) {
+                        boolean cursor = checkForCursor(test, target, x, y,
+                                fileId);
+                        if (cursor) {
+                            return true;
+                        }
                     }
                 }
-
                 if (!testEdges) {
                     // Check that the comparison folder exists and create if
                     // false
@@ -577,6 +543,57 @@ public class ImageComparison {
             }
         }
         return (sum / fullSum);
+    }
+
+    private boolean checkForCursor(BufferedImage test, BufferedImage target,
+            int x, int y, String fileId) {
+        boolean cursor = false;
+        if (x == 0) {
+            x = 1;
+        }
+        if ((x + 16) >= target.getWidth()) {
+            x = target.getWidth() - 18;
+        }
+        if ((y + 16) >= target.getHeight()) {
+            y = target.getHeight() - 17;
+        }
+        for (int j = y; j < y + 16; j++) {
+            for (int i = x; i < x + 16; i++) {
+                if (test.getRGB(i, j) != target.getRGB(i, j)) {
+                    int z = j;
+                    do {
+                        if ((z + 1) >= target.getHeight()) {
+                            break;
+                        }
+                        if (test.getRGB(i - 1, z) == target.getRGB(i - 1, z)
+                                && test.getRGB(i + 1, z) == target.getRGB(
+                                        i + 1, z)) {
+                            if ((z + 1) < target.getHeight()
+                                    && test.getRGB(i, z + 1) != target.getRGB(
+                                            i, z + 1)) {
+                                z++;
+                            } else {
+                                break;
+                            }
+                        }
+                    } while (z < j + 15);
+                    if ((z - j) >= 3
+                            && test.getRGB(i, z + 1) == target.getRGB(i, z + 1)) {
+                        System.out.println("Found cursor in test "
+                                + fileId.substring(0, fileId.indexOf("_")));
+                        cursor = true;
+                    }
+                }
+                if (cursor) {
+                    break;
+                }
+            }
+            if (cursor) {
+                break;
+            }
+        }
+
+        return cursor;
     }
 
     /**
