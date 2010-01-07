@@ -161,6 +161,18 @@ TestSuite.TestCase.prototype = {
         var file = FileUtils.getFile(this.testSuite.file.parent.path);
         //alert(file + " " + this.filename);
         var filename = this.filename;
+        //http://jira.openqa.org/browse/SIDE-281
+        //http://jira.openqa.org/secure/attachment/12040/relativePath.patch
+              var relativeCountParentNodes = filename.split("../");
+              if (relativeCountParentNodes.length > 1)
+              {
+                for (var i = 0; i < relativeCountParentNodes.length - 1; i++)
+                {
+                  file = FileUtils.getFile(file.parent.path);
+                }
+                filename = relativeCountParentNodes[relativeCountParentNodes.length - 1];
+              }
+
         if (Components.interfaces.nsILocalFileWin &&
             file instanceof Components.interfaces.nsILocalFileWin) {
             filename = filename.replace(/\//g, '\\');

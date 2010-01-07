@@ -707,23 +707,19 @@ public class TestBenchRunner {
                             // testSuite to list of tests, else create suite
                             // from testSuite file
                             if (files.length > 1) {
-                                try {
-                                    String title = "Suite";
-                                    ParsedSuite result = ParserFunctions
-                                            .readHtmlFile(file, path);
-                                    if (result.getTestName() != null) {
-                                        title = result.getTestName();
-                                    }
-                                    if (!connectTests) {
-                                        tests.addAll(ParserFunctions
-                                                .combineTests(result
-                                                        .getSuiteTests(),
-                                                        title, path));
-                                    } else {
-                                        tests.addAll(result.getSuiteTests());
-                                    }
-                                } catch (FileNotFoundException e) {
-                                    throw e;
+                                String title = "Suite";
+                                ParsedSuite result = ParserFunctions
+                                        .readHtmlFile(file, path);
+                                if (result.getTestName() != null) {
+                                    title = result.getTestName();
+                                }
+                                if (!connectTests) {
+                                    tests.addAll(ParserFunctions
+                                            .combineTests(result
+                                                    .getSuiteTests(), title,
+                                                    path));
+                                } else {
+                                    tests.addAll(result.getSuiteTests());
                                 }
                             } else {
                                 return parseTestSuite(file, path);
@@ -739,14 +735,10 @@ public class TestBenchRunner {
                 // If more than 1 file add tests defined in testSuite to
                 // list of tests, else create suite from testSuite file
                 if (files.length > 1) {
-                    try {
-                        ParsedSuite result = ParserFunctions.readXmlFile(file,
-                                path);
+                    ParsedSuite result = ParserFunctions
+                            .readXmlFile(file, path);
 
-                        tests.addAll(result.getSuiteTests());
-                    } catch (FileNotFoundException e) {
-                        throw e;
-                    }
+                    tests.addAll(result.getSuiteTests());
                 } else {
                     return parseTestSuite(file, path);
                 }

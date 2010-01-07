@@ -1,4 +1,4 @@
-Differences between Testbench and Selenium Grid
+Differences between Testbench and Selenium Grid 1.0.4
 
 The differences between Testbench and Selenium version of the grid are in the handling of remote-controls.
 

@@ -1,3 +1,4 @@
+IDE based on Version 1.0.2
 ./chrome/content/
 
 recorder-handlers.js

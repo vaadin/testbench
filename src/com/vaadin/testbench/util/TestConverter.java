@@ -576,28 +576,46 @@ public class TestConverter {
                 javaSource
                         .append("doCommand(\"mouseClickOpera\", new String[] {\""
                                 + values + "\"});\n");
-                // } else if
-                // (command.getCmd().equalsIgnoreCase("verifyTextPresent")) {
-                //
-                // String identifier = "";
-                // boolean first = true;
-                // for (String param : command.getParams()) {
-                // if (first) {
-                // identifier = param;
-                // }
-                // first = false;
-                // }
-                // identifier = identifier.replace("\"",
-                // "\\\"").replaceAll("\\n",
-                // "\\\\n");
-                //
-                // javaSource.append("try{\n");
-                // javaSource
-                // .append("doCommand(\"verifyTextPresent\", new String[] {\""
-                // + identifier + "\"});\n");
-                // javaSource
-                // .append("}catch(Exception e){\njunit.framework.Assert.fail(\"Couldn't find string: "
-                // + identifier + "\");\n}\n");
+            } else if (command.getCmd().equalsIgnoreCase("verifyTextPresent")) {
+
+                String identifier = "";
+                boolean first = true;
+                for (String param : command.getParams()) {
+                    if (first) {
+                        identifier = param;
+                    }
+                    first = false;
+                }
+                identifier = identifier.replace("\"", "\\\"").replaceAll("\\n",
+                        "\\\\n");
+
+                javaSource.append("try{\n");
+                javaSource
+                        .append("doCommand(\"verifyTextPresent\", new String[] {\""
+                                + identifier + "\"});\n");
+                javaSource
+                        .append("}catch(Throwable e){\njunit.framework.Assert.fail(\"Couldn't find string: "
+                                + identifier + "\");\n}\n");
+            } else if (command.getCmd().equalsIgnoreCase("assertTextPresent")) {
+
+                String identifier = "";
+                boolean first = true;
+                for (String param : command.getParams()) {
+                    if (first) {
+                        identifier = param;
+                    }
+                    first = false;
+                }
+                identifier = identifier.replace("\"", "\\\"").replaceAll("\\n",
+                        "\\\\n");
+
+                javaSource.append("try{\n");
+                javaSource
+                        .append("doCommand(\"assertTextPresent\", new String[] {\""
+                                + identifier + "\"});\n");
+                javaSource
+                        .append("}catch(Throwable e){\njunit.framework.Assert.fail(\"Couldn't find string: "
+                                + identifier + "\");\n}\n");
             } else if (command.getCmd().equalsIgnoreCase("htmlTest")) {
                 String locator = "";
                 String value = "";
