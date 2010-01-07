@@ -24,6 +24,7 @@ public class ImageComparison {
 
     private static final String TEST_SCREENS_DIRECTORY = "com.vaadin.testbench.screenshot.directory";
     private static final String CURSOR_DETECT = "com.vaadin.testbench.screenshot.cursor";
+    private static final String BLOCK_ERROR = "com.vaadin.testbench.screenshot.block.error";
     private static final String DEBUG = "com.vaadin.testbench.debug";
     // referenceDirectory is the name of the directory with the reference
     // pictures of the same name as the one to be compared
@@ -39,7 +40,7 @@ public class ImageComparison {
      *            Image as BASE64 encoded String
      * @param d
      *            Allowed RGB error for a macroblock (value range 0-1 default
-     *            0.001 == 0.1%)
+     *            0.025 == 2.5%)
      * @param fileId
      *            File name for this image
      * @param dimensions
@@ -48,6 +49,9 @@ public class ImageComparison {
      */
     public boolean compareStringImage(String image, String fileId, double d,
             BrowserDimensions dimensions, boolean testEdges) {
+        if (System.getProperty(BLOCK_ERROR) != null) {
+            d = Double.parseDouble(System.getProperty(BLOCK_ERROR));
+        }
         // Check that d value inside allowed range. if false set d to default
         // value.
         if (d < 0 || d > 1) {

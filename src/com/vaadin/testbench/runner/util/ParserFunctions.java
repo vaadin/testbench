@@ -92,14 +92,19 @@ public class ParserFunctions {
             Node node = nodeList.item(i);
             tests.add(node.getChildNodes().item(0).getNodeValue());
         }
+
+        // Check given path if found in xml file
         if (result.getPath() != null
                 && IOFunctions.getFile(tests.get(0), new File(testSuite
                         .getParentFile().getAbsolutePath()
                         + File.separator + result.getPath()), 0) == null) {
             System.err.println("Path definition in " + file
-                    + " seems to be faulty.\nIgnoring given path.");
+                    + " seems to be faulty.\nIgnoring given path "
+                    + result.getPath());
             result.setPath(null);
         }
+
+        // Check that all test files are found
         List<String> confirmedTests = new LinkedList<String>();
         for (String test : tests) {
             File testFile = new File(test);
@@ -129,6 +134,7 @@ public class ParserFunctions {
                 throw new FileNotFoundException("Could not find file " + test);
             }
 
+            // add full path to test file to Suite tests
             confirmedTests.add(testFile.getAbsolutePath());
         }
         result.setSuiteTests(confirmedTests);
