@@ -63,14 +63,14 @@ public class AddTest extends TestCase {
         Assert.assertEquals(5, tbs.getTestsInSuite());
         String[] testList = tbs.getTests();
         // Assert all tests and their order
-        Assert.assertEquals("com.vaadin.automatedtests.test_1497355140",
-                (testList[0]));
+        Assert.assertEquals("com.vaadin.automatedtests.test", testList[0]
+                .substring(0, testList[0].indexOf("_")));
         Assert.assertTrue("Money_tst".equals(testList[1]));
         // Assert that a single file doesn't get combined to a test_{hash}.html
         Assert.assertTrue("com.vaadin.automatedtests.tst".equals(testList[2]));
         Assert.assertTrue("Money_tst2".equals(testList[3]));
-        Assert.assertEquals("com.vaadin.automatedtests.test_56364756",
-                (testList[4]));
+        Assert.assertEquals("com.vaadin.automatedtests.test", testList[4]
+                .substring(0, testList[0].indexOf("_")));
     }
 
     /**
@@ -272,8 +272,8 @@ public class AddTest extends TestCase {
 
         String[] tests = tbs.getTests();
         Assert.assertEquals("Money_tst", tests[0]);
-        Assert.assertEquals(
-                "com.vaadin.automatedtests.Money_Sampler__936325126", tests[1]);
+        Assert.assertEquals("com.vaadin.automatedtests.Money_Sampler_",
+                tests[1].substring(0, tests[1].lastIndexOf("_")));
         Assert.assertEquals("com.vaadin.automatedtests.tst", tests[2]);
         Assert.assertEquals("Money_tst2", tests[3]);
     }
@@ -298,9 +298,8 @@ public class AddTest extends TestCase {
         String[] tbsTests = tbs.getTests();
 
         Assert.assertEquals("Money_tst", tbsTests[0]);
-        Assert.assertEquals(
-                "com.vaadin.automatedtests.Money_Sampler__936325126",
-                tbsTests[1]);
+        Assert.assertEquals("com.vaadin.automatedtests.Money_Sampler_",
+                tbsTests[1].substring(0, tbsTests[1].lastIndexOf("_")));
         Assert.assertEquals("com.vaadin.automatedtests.tst", tbsTests[2]);
 
     }
@@ -320,8 +319,8 @@ public class AddTest extends TestCase {
 
         String[] tests = tbs.getTests();
         Assert.assertEquals("Money_tst", tests[0]);
-        Assert.assertEquals(
-                "com.vaadin.automatedtests.Money_Sampler__936325126", tests[1]);
+        Assert.assertEquals("com.vaadin.automatedtests.Money_Sampler_",
+                tests[1].substring(0, tests[1].lastIndexOf("_")));
         Assert.assertEquals("com.vaadin.automatedtests.tst", tests[2]);
         Assert.assertEquals("Money_tst", tests[3]);
         Assert.assertEquals("com.vaadin.automatedtests.tst3", tests[4]);
