@@ -575,9 +575,11 @@ public class ImageComparison {
                             } else {
                                 break;
                             }
+                        } else {
+                            break;
                         }
-                    } while (z < j + 15);
-                    if ((z - j) >= 3
+                    } while (z < j + 30);
+                    if ((z - j) >= 5
                             && test.getRGB(i, z + 1) == target.getRGB(i, z + 1)) {
                         System.out.println("Found cursor in test "
                                 + fileId.substring(0, fileId.indexOf("_")));

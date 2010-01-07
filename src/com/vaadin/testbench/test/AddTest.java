@@ -63,14 +63,14 @@ public class AddTest extends TestCase {
         Assert.assertEquals(5, tbs.getTestsInSuite());
         String[] testList = tbs.getTests();
         // Assert all tests and their order
-        Assert.assertTrue("com.vaadin.automatedtests.test__692038016"
-                .equals(testList[0]));
+        Assert.assertEquals("com.vaadin.automatedtests.test_1497355140",
+                (testList[0]));
         Assert.assertTrue("Money_tst".equals(testList[1]));
         // Assert that a single file doesn't get combined to a test_{hash}.html
         Assert.assertTrue("com.vaadin.automatedtests.tst".equals(testList[2]));
         Assert.assertTrue("Money_tst2".equals(testList[3]));
-        Assert.assertTrue("com.vaadin.automatedtests.test__1609445583"
-                .equals(testList[4]));
+        Assert.assertEquals("com.vaadin.automatedtests.test_56364756",
+                (testList[4]));
     }
 
     /**
@@ -101,13 +101,22 @@ public class AddTest extends TestCase {
         Assert.assertEquals(2, tbs.getTestsInSuite());
     }
 
+    public void testadd_from_relative_xml_file_relative_path() throws Exception {
+        TestBenchRunner tbr = new TestBenchRunner();
+        TestBenchSuite tbs = tbr.parseTestSuite(
+                "relative/testSuiteRelativePath.xml", ".");
+
+        Assert.assertEquals(1, tbr.getTestBenchSuites().size());
+        Assert.assertEquals(2, tbs.getTestsInSuite());
+    }
+
     /**
      * Test creating 1 testSuite with 2 tests by parsing a testSuite file
      * (.html)
      */
     public void testadd_from_html_file() throws Exception {
         TestBenchRunner tbr = new TestBenchRunner();
-        TestBenchSuite tbs = tbr.parseTestSuite("testSuite.html", ".");
+        TestBenchSuite tbs = tbr.parseTestSuite("testSuite.html", "test");
 
         Assert.assertEquals(1, tbr.getTestBenchSuites().size());
         Assert.assertEquals(1, tbr.getTestBenchSuite(0).getTestsInSuite());
@@ -135,7 +144,7 @@ public class AddTest extends TestCase {
     public void testadd_from_html_file_with_connect_flag() throws Exception {
         TestBenchRunner tbr = new TestBenchRunner();
         tbr.setConnectTests(true);
-        TestBenchSuite tbs = tbr.parseTestSuite("testSuite.html", ".");
+        TestBenchSuite tbs = tbr.parseTestSuite("testSuite.html", "test");
 
         Assert.assertEquals(1, tbr.getTestBenchSuites().size());
         Assert.assertEquals(1, tbr.getTestBenchSuite(0).getTestsInSuite());
@@ -170,6 +179,14 @@ public class AddTest extends TestCase {
         } catch (UnsupportedOperationException e) {
             Assert.assertTrue(tbr.getTestBenchSuites().isEmpty());
         }
+    }
+
+    public void testsend_html_suite_with_path() throws Exception {
+        TestBenchRunner tbr = new TestBenchRunner();
+        List<String> tests = new LinkedList<String>();
+        tests.add("test/testSuite.html");
+
+        tbr.parseFiles(tests, ".");
     }
 
     /**
@@ -256,7 +273,7 @@ public class AddTest extends TestCase {
         String[] tests = tbs.getTests();
         Assert.assertEquals("Money_tst", tests[0]);
         Assert.assertEquals(
-                "com.vaadin.automatedtests.Money_Sampler_1361568440", tests[1]);
+                "com.vaadin.automatedtests.Money_Sampler__936325126", tests[1]);
         Assert.assertEquals("com.vaadin.automatedtests.tst", tests[2]);
         Assert.assertEquals("Money_tst2", tests[3]);
     }
@@ -282,7 +299,7 @@ public class AddTest extends TestCase {
 
         Assert.assertEquals("Money_tst", tbsTests[0]);
         Assert.assertEquals(
-                "com.vaadin.automatedtests.Money_Sampler_1361568440",
+                "com.vaadin.automatedtests.Money_Sampler__936325126",
                 tbsTests[1]);
         Assert.assertEquals("com.vaadin.automatedtests.tst", tbsTests[2]);
 
@@ -304,7 +321,7 @@ public class AddTest extends TestCase {
         String[] tests = tbs.getTests();
         Assert.assertEquals("Money_tst", tests[0]);
         Assert.assertEquals(
-                "com.vaadin.automatedtests.Money_Sampler_1361568440", tests[1]);
+                "com.vaadin.automatedtests.Money_Sampler__936325126", tests[1]);
         Assert.assertEquals("com.vaadin.automatedtests.tst", tests[2]);
         Assert.assertEquals("Money_tst", tests[3]);
         Assert.assertEquals("com.vaadin.automatedtests.tst3", tests[4]);
@@ -317,7 +334,7 @@ public class AddTest extends TestCase {
      */
     public void testget_suite_for_one_browser() throws Exception {
         TestBenchRunner tbr = new TestBenchRunner();
-        TestBenchSuite tbs = tbr.parseTestSuite("testSuite.html", ".");
+        TestBenchSuite tbs = tbr.parseTestSuite("test/testSuite.html", ".");
 
         Assert.assertEquals(tbs.getTestSuite("winxp-firefox35"), tbs
                 .getTestSuite());
@@ -356,7 +373,7 @@ public class AddTest extends TestCase {
         List<String> list = new LinkedList<String>();
         list.add("Money_tst.java");
 
-        tbr.makeTestSuiteFiles(list, ".", "Make_test_suite");
+        tbr.makeTestSuiteFiles(list, "test", "Make_test_suite");
 
         // Confirm that necessary files have been created
         File file = new File(System.getProperty("user.dir") + File.separator
@@ -387,7 +404,7 @@ public class AddTest extends TestCase {
         list.add("Money_tst.java");
         list.add("tst3.html");
 
-        tbr.makeTestSuiteFiles(list, ".", "Make_test_suite_multiple");
+        tbr.makeTestSuiteFiles(list, "test", "Make_test_suite_multiple");
 
         // Confirm that necessary files have been created
         File file = new File(System.getProperty("user.dir") + File.separator

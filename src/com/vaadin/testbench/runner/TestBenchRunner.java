@@ -202,6 +202,8 @@ public class TestBenchRunner {
                 if (!file.exists()) {
                     file = new File(path + test);
                     if (!file.exists()) {
+                        System.out.println("Searching for file " + test
+                                + " for compilation.");
                         file = IOFunctions.getFile(test, file.getParentFile(),
                                 0);
                     }
@@ -435,6 +437,8 @@ public class TestBenchRunner {
                     if (!file.exists()) {
                         file = new File(path + test);
                         if (!file.exists()) {
+                            System.out.println("Searching for file " + test
+                                    + " for making test Suite files.");
                             file = IOFunctions.getFile(test, new File(path), 0);
                         }
                     }
@@ -570,6 +574,8 @@ public class TestBenchRunner {
         if (!testSuite.exists()) {
             testSuite = new File(path + file);
             if (!testSuite.exists()) {
+                System.out.println("Searching for file " + testSuite.getName()
+                        + " to parse.");
                 // If not found do a small search for file
                 testSuite = IOFunctions.getFile(testSuite.getName(), testSuite
                         .getParentFile(), 0);
@@ -602,16 +608,8 @@ public class TestBenchRunner {
                 if (!File.separator.equals(path.charAt(path.length() - 1))) {
                     path = path + File.separator;
                 }
-                // Check if test file can be found from path
-                String testpath = path + result.getPath();
-                if (IOFunctions.getFile(result.getSuiteTests().get(0),
-                        new File(testpath), 0) == null) {
-                    System.err.println("Path definition in " + file
-                            + " seems to be faulty.");
-                    System.err.println("Ignoring given path.");
-                } else {
-                    path = testpath;
-                }
+                // path has been checked in XML parser
+                path = path + result.getPath();
             }
 
             if (makeTests) {
@@ -661,13 +659,31 @@ public class TestBenchRunner {
 
         for (String file : files) {
             if (file.contains(".java")) {
-                tests.add(file);
+                File testFile = new File(file);
+                if (!testFile.exists()) {
+                    testFile = new File(path + file);
+                    if (!testFile.exists()) {
+                        System.out.println("Searching for file "
+                                + testFile.getName() + " to add to tests.");
+                        // If not found do a small search for file
+                        testFile = IOFunctions.getFile(testFile.getName(),
+                                testFile.getParentFile(), 0);
+                    }
+                }
+
+                if (testFile == null) {
+                    throw new FileNotFoundException("Could not find file "
+                            + file);
+                }
+                tests.add(testFile.getAbsolutePath());
             } else if (file.contains(".html")) {
 
                 File testFile = new File(file);
                 if (!testFile.exists()) {
                     testFile = new File(path + file);
                     if (!testFile.exists()) {
+                        System.out.println("Searching for file "
+                                + testFile.getName() + " to parse.");
                         // If not found do a small search for file
                         testFile = IOFunctions.getFile(testFile.getName(),
                                 testFile.getParentFile(), 0);
@@ -684,7 +700,7 @@ public class TestBenchRunner {
                     String line = "";
                     while ((line = in.readLine()) != null) {
                         if (line.contains("<thead>")) {
-                            tests.add(file);
+                            tests.add(testFile.getAbsolutePath());
                             break;
                         } else if (line.contains("a href=")) {
                             // If more than 1 file add tests defined in

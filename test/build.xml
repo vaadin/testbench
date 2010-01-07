@@ -46,11 +46,10 @@
 		<delete dir="test/build" />
 		<delete dir="test/classes" />
 		<delete>
-			<fileset dir="test" includes="Money+Sampler_1361568440.html" />
+			<fileset dir="test" includes="Money+Sampler_-936325126.html" />
 			<fileset dir="test" includes="test_-1609445583.html" />
 			<fileset dir="test" includes="test_-692038016.html" />
-			<fileset dir="test" includes="Suite_1361568440.html" />
-			<fileset dir="test" includes="Money+Sampler_1361568440.html" />
+			<fileset dir="test" includes="Suite_-936325126.html" />
 		</delete>
 	</target>
 	

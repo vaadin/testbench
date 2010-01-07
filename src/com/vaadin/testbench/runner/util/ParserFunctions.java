@@ -92,7 +92,46 @@ public class ParserFunctions {
             Node node = nodeList.item(i);
             tests.add(node.getChildNodes().item(0).getNodeValue());
         }
-        result.setSuiteTests(tests);
+        if (result.getPath() != null
+                && IOFunctions.getFile(tests.get(0), new File(testSuite
+                        .getParentFile().getAbsolutePath()
+                        + File.separator + result.getPath()), 0) == null) {
+            System.err.println("Path definition in " + file
+                    + " seems to be faulty.\nIgnoring given path.");
+            result.setPath(null);
+        }
+        List<String> confirmedTests = new LinkedList<String>();
+        for (String test : tests) {
+            File testFile = new File(test);
+            if (!testFile.exists()) {
+                if (result.getPath() != null) {
+                    testFile = new File(testSuite.getParentFile()
+                            .getAbsolutePath()
+                            + File.separator
+                            + result.getPath()
+                            + File.separator + test);
+                } else {
+                    testFile = new File(testSuite.getParentFile()
+                            .getAbsolutePath()
+                            + File.separator + test);
+                }
+                if (!testFile.exists()) {
+                    System.out.println("Resorting to search in suite "
+                            + testSuite.getName() + " for "
+                            + testFile.getName());
+                    // If not found do a small search for file
+                    testFile = IOFunctions.getFile(testFile.getName(), testFile
+                            .getParentFile(), 0);
+                }
+            }
+
+            if (testFile == null) {
+                throw new FileNotFoundException("Could not find file " + test);
+            }
+
+            confirmedTests.add(testFile.getAbsolutePath());
+        }
+        result.setSuiteTests(confirmedTests);
 
         return result;
     }
@@ -149,8 +188,28 @@ public class ParserFunctions {
                         throw new UnsupportedOperationException(
                                 "Only TestBench tests supported in a .html suite file.");
                     }
+                    File testFile = new File(line);
+                    if (!testFile.exists()) {
+                        testFile = new File(testSuite.getParentFile()
+                                .getAbsolutePath()
+                                + File.separator + line);
+                        if (!testFile.exists()) {
+                            System.out.println("Resorting to search in suite "
+                                    + testSuite.getName() + " for "
+                                    + testFile.getName());
+                            // If not found do a small search for file
+                            testFile = IOFunctions.getFile(testFile.getName(),
+                                    testFile.getParentFile(), 0);
+                        }
+                    }
+
+                    if (testFile == null) {
+                        throw new FileNotFoundException("Could not find file "
+                                + line);
+                    }
+
                     // add test to list
-                    tests.add(line);
+                    tests.add(testFile.getAbsolutePath());
                 } else if (line.contains("<b>")) {
                     line = line.substring(line.indexOf("<b>") + 3, line
                             .lastIndexOf("</b>"));
