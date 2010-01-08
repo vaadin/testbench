@@ -493,18 +493,18 @@ Recorder.addEventHandler('clickLocator', 'click', function(event){
 	            	
 	            	/* if target is clearly a vaadin component handle links */
 	            	if((new RegExp("vaadin=")).test(target)){
-	            		/* if link is only a hash record with waitForVaadin */
-	            		if ((new RegExp("#")).test(event.target.href) || (new RegExp("#")).test(event.target.parentNode.href)){
-							this.record("mouseClick", target, x + ',' + y);
+	            		/* if link is only a uri fragment record with waitForVaadin */
+//	            		if ((new RegExp("#")).test(event.target.href) || (new RegExp("#")).test(event.target.parentNode.href)){
+//							this.record("mouseClick", target, x + ',' + y);
 						/* if either target or target parent (click recorded for img,span, etc inside <a></a>)
 						 * is a link <a/> record open instead of mouseClick as it fails in many cases */
-	            		} else if (event.target.nodeName.toLowerCase() == "a" && event.target.target != "_blank"){
+	            		if (event.target.nodeName.toLowerCase() == "a" && !(new RegExp(document.getElementById("baseURL").value)).test(event.target.href) && event.target.target != "_blank"){
 	            			this.record_orig("open", event.target.href, '');
-	            		} else if (event.target.parentNode.nodeName.toLowerCase() == "a" && event.target.parentNode.target != "_blank"){
+	            		} else if (event.target.parentNode.nodeName.toLowerCase() == "a" && !(new RegExp(document.getElementById("baseURL").value)).test(event.target.parentNode.href) && event.target.parentNode.target != "_blank"){
 	            			this.record_orig("open", event.target.parentNode.href, '');
 	            		/* else record mouseClick with possible AndWait added by seleniums editor */
 	            		} else {
-	            			this.record_orig("mouseClick", target, x + ',' + y);
+	            			this.record("mouseClick", target, x + ',' + y);
 	            		}
 	            	/* else record mouseClick with record_orig so that AndWait comes to right place */
 					} else {
