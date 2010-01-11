@@ -265,7 +265,8 @@ public class ParserFunctions {
                 }
             }
             if (file == null) {
-                throw new FileNotFoundException("Couldn't locate file " + test);
+                throw new FileNotFoundException(
+                        "Combine test couldn't locate file " + test);
             }
 
             // if not .html file add to list and combine html tests in
@@ -325,7 +326,9 @@ public class ParserFunctions {
         if (!name.endsWith("" + testsToCombine.hashCode())) {
             name = name + "_" + testsToCombine.hashCode();
         }
-        File targetFile = new File(path + name + ".html");
+        // File targetFile = new File(path + name + ".html");
+        File targetFile = new File(System.getProperty("java.io.tmpdir")
+                + File.separator + name + ".html");
         // if (targetFile.exists()
         // && !name.equals("test_" + testsToCombine.hashCode())
         // && !name.equals("Suite")) {
@@ -338,7 +341,8 @@ public class ParserFunctions {
             writeHeader(out, name);
             out.write(str.toString());
             // Add combined file in front
-            combinedFiles.add(0, name + ".html");
+            combinedFiles.add(0, targetFile.getAbsolutePath());// name +
+            // ".html");
             writeFooter(out);
         } finally {
             out.flush();

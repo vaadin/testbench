@@ -310,7 +310,7 @@ public class ImageComparison {
                             } else if (falseBlocks[i][j] && errorAmount == 1) {
                                 if (j == 0) {
                                     // stop checking no cursor detection will be
-                                    // done
+                                    // done. Same line as the first block.
                                     errorAmount++;
                                     i = xBlocks;
                                     j = yBlocks;
@@ -371,19 +371,22 @@ public class ImageComparison {
                         if (error.getY() > 0) {
                             offsetY = 1;
                         }
+                        int toX = error.getXBlocks() * 16 + offsetX;
+                        int toY = error.getYBlocks() * 16 + offsetY;
                         // Draw lines inside canvas
-                        if (error.getXBlocks() * 16 + offsetX > test.getWidth()
-                                || error.getYBlocks() * 16 + offsetY > test
-                                        .getHeight()) {
-                            drawToPicture.drawRect(error.getX() - offsetX,
-                                    error.getY() - offsetY, test.getWidth(),
-                                    test.getHeight());
-                        } else {
-                            drawToPicture.drawRect(error.getX() - offsetX,
-                                    error.getY() - offsetY, error.getXBlocks()
-                                            * 16 + offsetX, error.getYBlocks()
-                                            * 16 + offsetY);
+                        if ((error.getX() + (error.getXBlocks() * 16) + offsetX) > test
+                                .getWidth()) {
+                            toX = test.getWidth() - error.getX();
                         }
+                        if ((error.getY() + (error.getYBlocks() * 16) + offsetY) > test
+                                .getHeight()) {
+                            toY = test.getHeight() - error.getY();
+                        }
+
+                        // draw error to image
+                        drawToPicture.drawRect(error.getX() - offsetX, error
+                                .getY()
+                                - offsetY, toX, toY);
 
                     }
                     // release resources
@@ -549,29 +552,52 @@ public class ImageComparison {
         return (sum / fullSum);
     }
 
+    /**
+     * Try to check if failure is due to blicking text cursor
+     * 
+     * @param test
+     *            Image for this run
+     * @param target
+     *            Reference image
+     * @param x
+     *            x position of error block
+     * @param y
+     *            y position of error block
+     * @param fileId
+     *            Image file name
+     * @return true if found cursor else false
+     */
     private boolean checkForCursor(BufferedImage test, BufferedImage target,
             int x, int y, String fileId) {
         boolean cursor = false;
+        // If at the outer edge move in one step.
         if (x == 0) {
             x = 1;
         }
+        // If we would step over the edge move start point
         if ((x + 16) >= target.getWidth()) {
-            x = target.getWidth() - 18;
+            x = target.getWidth() - 17;
         }
+        // If at bottom move start point up.
         if ((y + 16) >= target.getHeight()) {
             y = target.getHeight() - 17;
         }
+        // 
         for (int j = y; j < y + 16; j++) {
             for (int i = x; i < x + 16; i++) {
+                // if found differing pixel
                 if (test.getRGB(i, j) != target.getRGB(i, j)) {
                     int z = j;
+                    // do while length < 30 && inside picture
                     do {
                         if ((z + 1) >= target.getHeight()) {
                             break;
                         }
+                        // if pixels to left and right equal on both pictures
                         if (test.getRGB(i - 1, z) == target.getRGB(i - 1, z)
                                 && test.getRGB(i + 1, z) == target.getRGB(
                                         i + 1, z)) {
+                            // Continue if next pixel down still differs
                             if ((z + 1) < target.getHeight()
                                     && test.getRGB(i, z + 1) != target.getRGB(
                                             i, z + 1)) {
@@ -583,19 +609,18 @@ public class ImageComparison {
                             break;
                         }
                     } while (z < j + 30);
+                    // if found length more than 3 and last pixel equals
                     if ((z - j) >= 5
                             && test.getRGB(i, z + 1) == target.getRGB(i, z + 1)) {
                         System.out.println("Found cursor in test "
                                 + fileId.substring(0, fileId.indexOf("_")));
                         cursor = true;
+                    } else {
+                        // end search if failed to find cursor from one error
+                        j = y + 20;
+                        i = x + 20;
                     }
                 }
-                if (cursor) {
-                    break;
-                }
-            }
-            if (cursor) {
-                break;
             }
         }
 
