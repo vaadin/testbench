@@ -872,6 +872,28 @@ public class TestBenchRunner {
     }
 
     /**
+     * Combine test suites for all browsers to one big test suite that can be
+     * run in ant
+     * 
+     * @param suite
+     *            TestBenchSuite whose suites to combine
+     * @return combined suites for all browsers
+     */
+    public TestSuite getCombinedSuite(TestBenchSuite suite) {
+        TestSuite combined = new TestSuite();
+        String[] browsers = suite.getBrowsers();
+
+        for (String browser : browsers) {
+            Enumeration<Test> e = suite.getTestSuite(browser).tests();
+            while (e.hasMoreElements()) {
+                combined.addTest(e.nextElement());
+            }
+        }
+
+        return combined;
+    }
+
+    /**
      * Get TestBenchSuite number suite
      * 
      * @param suite

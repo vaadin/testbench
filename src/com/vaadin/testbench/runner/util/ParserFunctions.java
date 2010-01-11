@@ -295,14 +295,15 @@ public class ParserFunctions {
                             break;
                         }
                     } while ((line = in.readLine()) != null);
+
+                    // add name at start of file
+                    str.append("<tr>\n<td>htmlTest</td>\n");
+                    str.append("<td></td>\n");
+                    str.append("<td>" + file.getName() + "</td>\n</tr>\n");
                     // Get lines until condition met.
                     if (line != null) {
                         do {
                             if (line.equals("</tbody></table>")) {
-                                str.append("<tr>\n<td>htmlTest</td>\n");
-                                str.append("<td></td>\n");
-                                str.append("<td>" + file.getName()
-                                        + "</td>\n</tr>\n");
                                 break;
                             }
                             str.append(line + "\n");

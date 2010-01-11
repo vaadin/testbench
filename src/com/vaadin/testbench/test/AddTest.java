@@ -2,12 +2,14 @@ package com.vaadin.testbench.test;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 import com.vaadin.testbench.runner.TestBenchRunner;
 import com.vaadin.testbench.runner.util.TestBenchSuite;
@@ -360,6 +362,43 @@ public class AddTest extends TestCase {
         // Check that suite has 2 tests for each TestSuite
         Assert.assertEquals(2, tbs.getTestsInSuite());
 
+        // Set back starting System properties
+        System.setProperties(original);
+    }
+
+    /**
+     * Test creating Suites for multiple browsers
+     */
+    public void testmultiple_browsers_using_combined() throws Exception {
+        Properties original = new Properties(System.getProperties());
+        Properties p = new Properties(System.getProperties());
+        // Add property com.vaadin.testbench.browsers to System properties
+        p.setProperty("com.vaadin.testbench.browsers",
+                "winxp-firefox35,winxp-ie7");
+        System.setProperties(p);
+
+        TestBenchRunner tbr = new TestBenchRunner();
+        TestBenchSuite tbs = tbr.parseTestSuite("testSuite.xml", "test");
+
+        // Check that only one suite has been created for 2 browsers
+        Assert.assertEquals(1, tbr.getTestBenchSuites().size());
+        // Check that suite has TestSuites for 2 browsers
+        Assert.assertEquals(2, tbs.getBrowsers().length);
+        // Check that suite has 2 tests for each TestSuite
+        Assert.assertEquals(2, tbs.getTestsInSuite());
+
+        TestSuite suite = tbr.getCombinedSuite(tbs);
+        List<TestSuite> tbrss = tbs.getSuites();
+        Enumeration<junit.framework.Test> e = suite.tests();
+
+        // Assert that tests are in the correct order
+        for (TestSuite testSuite : tbrss) {
+            Enumeration<junit.framework.Test> tests = testSuite.tests();
+            while (tests.hasMoreElements()) {
+                Assert.assertEquals(tests.nextElement().toString(), e
+                        .nextElement().toString());
+            }
+        }
         // Set back starting System properties
         System.setProperties(original);
     }

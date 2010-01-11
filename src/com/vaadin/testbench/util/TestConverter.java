@@ -45,12 +45,13 @@ public class TestConverter {
             + "import com.vaadin.testbench.testcase.AbstractVaadinTestCase;\n"
             + "import java.io.IOException;\n" + "import java.io.File;\n"
             + "import javax.imageio.ImageIO;\n"
-            + "import com.vaadin.testbench.util.ImageUtil;\n" + "\n"
+            + "import com.vaadin.testbench.util.ImageUtil;\n"
+            + "import com.vaadin.testbench.util.CurrentCommand;\n" + "\n"
             + "public class {class} extends AbstractVaadinTestCase {\n" + "\n"
             + "public void setUp() throws Exception {\n"
             + "        setBrowser({browser});\n super.setUp();\n" + "}" + "\n";
 
-    private static final String TEST_METHOD_HEADER = "public void test{testName}() throws Exception {\n";
+    private static final String TEST_METHOD_HEADER = "public void test{testName}() throws Throwable {\n";
     private static final String TEST_METHOD_FOOTER = "}\n";
 
     private static final String JAVA_FOOTER = "}\n";
@@ -66,6 +67,7 @@ public class TestConverter {
     private static String filePath = "";
     private static String absoluteFilePath = "";
     private static String browserUnderConversion = "";
+    private static String fileName = "";
 
     public static void main(String[] args) {
         if (args.length < 3) {
@@ -347,23 +349,20 @@ public class TestConverter {
         String testCaseHeader = getTestCaseHeader(testName);
         String testCaseBody = convertTestCaseToJava(commands, testName);
         String testCaseFooter = getTestCaseFooter(testName);
+        String currentCommand = "CurrentCommand cmd = new CurrentCommand(\""
+                + testName + "\");\n";
         // Add these in the case a screenshot is wanted
         String windowFunctions = "doCommand(\"windowMaximize\", new String[] { \"\" });\n"
                 + "doCommand(\"windowFocus\", new String[] { \"\" });\n"
                 + "getCanvasPosition();\n";
-        // If screenshot.onfail defined, add try{ }catch( ){ }
-        if ("true".equals(System
-                .getProperty("com.vaadin.testbench.screenshot.onfail"))) {
-            screenshot = true;
-            windowFunctions = windowFunctions + "try{\n";
-        }
 
         if (screenshot) {
-            return testCaseHeader + windowFunctions + testCaseBody
-                    + testCaseFooter;
+            return testCaseHeader + currentCommand + windowFunctions + "try{\n"
+                    + testCaseBody + testCaseFooter;
         }
 
-        return testCaseHeader + testCaseBody + testCaseFooter;
+        return testCaseHeader + currentCommand + "try{\n" + testCaseBody
+                + testCaseFooter;
     }
 
     private static String removeExtension(String name) {
@@ -400,8 +399,7 @@ public class TestConverter {
         if ("true".equals(System
                 .getProperty("com.vaadin.testbench.screenshot.onfail"))) {
             screenshot = true;
-            softAsserts = softAsserts
-                    + "}catch(Exception e){\n"
+            softAsserts = "}catch(Throwable e){\n"
                     + "String statusScreen = selenium.captureScreenshotToString();\n"
                     + "String directory = System.getProperty(\"com.vaadin.testbench.screenshot.directory\");\n"
                     + "if (!File.separator.equals(directory.charAt(directory.length() - 1))) {\n"
@@ -414,7 +412,12 @@ public class TestConverter {
                     + testName + "_failure_"
                     + getSafeName(browserUnderConversion)
                     + ".png\"));\n}catch(IOException ioe){\n"
-                    + "ioe.printStackTrace();\n}\n" + "throw e;\n}\n";
+                    + "ioe.printStackTrace();\n}\n"
+                    + "throw new java.lang.AssertionError(cmd.getInfo());\n}\n"
+                    + softAsserts;
+        } else {
+            softAsserts = "}catch(Throwable e){\nthrow new java.lang.AssertionError(cmd.getInfo());\n}\n"
+                    + softAsserts;
         }
         String footer = TEST_METHOD_FOOTER;
         footer = footer.replace("{testName}", testName);
@@ -422,7 +425,8 @@ public class TestConverter {
         if (screenshot) {
             return softAsserts + footer;
         }
-        return footer;
+        return "}catch(Throwable e){\nthrow new java.lang.AssertionError(cmd.getInfo());\n}\n"
+                + footer;
     }
 
     private static byte[] getJavaHeader(String className, String browser) {
@@ -476,6 +480,8 @@ public class TestConverter {
                     firstScreenshot = false;
                 }
 
+                javaSource.append("cmd.setCommand(\"screenCapture\", \""
+                        + identifier + "\");\n");
                 javaSource.append("validateScreenshot(\"" + testName
                         + "\", 0.025, \"" + identifier + "\");\n");
                 screenshot = true;
@@ -489,6 +495,8 @@ public class TestConverter {
                     }
                     first = false;
                 }
+                javaSource.append("cmd.setCommand(\"pause\", \"" + identifier
+                        + "\");\n");
                 javaSource.append("pause(" + identifier + ");\n");
             } else if (command.getCmd().equalsIgnoreCase("pressSpecialKey")) {
                 String value = "";
@@ -539,6 +547,8 @@ public class TestConverter {
 
                 /* Opera, Safari and GoogleChrome need the java native keypress */
                 if (isOpera || isSafari || isChrome) {
+                    javaSource.append("cmd.setCommand(\"pressSpecialKey\", \""
+                            + value + "\");\n");
                     javaSource
                             .append("selenium.focus(\"" + location + "\");\n");
                     javaSource.append("selenium.keyPressNative(\"" + value
@@ -548,6 +558,8 @@ public class TestConverter {
                     if (Integer.parseInt(value) == 10) {
                         value = "13";
                     }
+                    javaSource.append("cmd.setCommand(\"pressSpecialKey\", \""
+                            + value + "\");\n");
                     javaSource
                             .append("doCommand(\"pressSpecialKey\", new String[] { \""
                                     + location
@@ -573,6 +585,7 @@ public class TestConverter {
 
                     first = false;
                 }
+                javaSource.append("cmd.setCommand(\"mouseClick\", \"\");\n");
                 javaSource
                         .append("doCommand(\"mouseClickOpera\", new String[] {\""
                                 + values + "\"});\n");
@@ -589,13 +602,11 @@ public class TestConverter {
                 identifier = identifier.replace("\"", "\\\"").replaceAll("\\n",
                         "\\\\n");
 
-                javaSource.append("try{\n");
+                javaSource.append("cmd.setCommand(\"verifyTextPresent\", \""
+                        + identifier + "\");\n");
                 javaSource
                         .append("doCommand(\"verifyTextPresent\", new String[] {\""
                                 + identifier + "\"});\n");
-                javaSource
-                        .append("}catch(Throwable e){\njunit.framework.Assert.fail(\"Couldn't find string: "
-                                + identifier + "\");\n}\n");
             } else if (command.getCmd().equalsIgnoreCase("assertTextPresent")) {
 
                 String identifier = "";
@@ -609,13 +620,11 @@ public class TestConverter {
                 identifier = identifier.replace("\"", "\\\"").replaceAll("\\n",
                         "\\\\n");
 
-                javaSource.append("try{\n");
+                javaSource.append("cmd.setCommand(\"assertTextPresent\", \""
+                        + identifier + "\");\n");
                 javaSource
                         .append("doCommand(\"assertTextPresent\", new String[] {\""
                                 + identifier + "\"});\n");
-                javaSource
-                        .append("}catch(Throwable e){\njunit.framework.Assert.fail(\"Couldn't find string: "
-                                + identifier + "\");\n}\n");
             } else if (command.getCmd().equalsIgnoreCase("htmlTest")) {
                 String locator = "";
                 String value = "";
@@ -631,7 +640,9 @@ public class TestConverter {
 
                     first = false;
                 }
-                javaSource.append("System.out.println(\"End test for " + value
+                javaSource.append("cmd.resetCmdNr();\n");
+                javaSource.append("cmd.setFile(\"" + value + "\");\n");
+                javaSource.append("System.out.println(\"Start test " + value
                         + "\");");
             } else if (command.getCmd().equalsIgnoreCase("showTooltip")) {
                 String locator = "";
@@ -649,6 +660,7 @@ public class TestConverter {
                     first = false;
                 }
 
+                javaSource.append("cmd.setCommand(\"showTooltip\", \"\");\n");
                 javaSource.append("doCommand(\"showTooltip\",new String[] {\""
                         + locator + "\", \"" + value + "\"});\n");
                 javaSource.append("pause(700);\n");
@@ -763,6 +775,9 @@ public class TestConverter {
                     }
                 }
             } else {
+
+                javaSource.append("cmd.setCommand(\"" + command.getCmd()
+                        + "\", \"\");\n");
                 javaSource.append("doCommand(\"");
                 javaSource.append(command.getCmd());
                 javaSource.append("\",new String[] {");
