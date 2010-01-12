@@ -24,6 +24,7 @@ selenium-ide-common.xul
 
 editor.js
 [DEFAULT_TITLE is the title shown after something is recorded]
+[Editor.prototype.appendWaitForPageToLoad doesn't add AndWait to WaitForVaadin]
 
 testSuite.js
 [Patch http://jira.openqa.org/secure/attachment/12040/relativePath.patch] 

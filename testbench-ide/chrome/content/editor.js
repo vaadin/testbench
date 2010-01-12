@@ -556,6 +556,9 @@ Editor.prototype.appendWaitForPageToLoad = function(window) {
 	}
 	this.lastCommandIndex = null;
 	var lastCommand = this.getTestCase().commands[lastCommandIndex];
+	if(lastCommand.command.match(/^waitForVaadin/)){
+		lastCommand = this.getTestCase().commands[lastCommandIndex-1];
+	}
 	if (lastCommand.type == 'command' && 
 		!lastCommand.command.match(/^(assert|verify|store)/)) {
 		if (this.app.getCurrentFormat().getFormatter().remoteControl) {
