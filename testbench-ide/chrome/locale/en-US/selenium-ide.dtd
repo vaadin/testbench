@@ -18,12 +18,13 @@
 <!ENTITY stepButton.tooltip "Step">
 <!ENTITY testrunnerButton.tooltip "Play with Selenium TestRunner">
 <!ENTITY tooltipButton.tooltip "Record a tooltip">
+<!ENTITY assertButton.tooltip "Assert element text">
 <!ENTITY recordButton.tooltip "Record">
 <!ENTITY baseURL.label "Base URL">
 <!ENTITY baseURLTextbox.tooltip "Enter the URL of the website you are testing. Used for playing &quot;open&quot; command.">
 <!ENTITY selectButton.tooltip "Select new target for selected command.">
 
-<!ENTITY selenium-ide.sidebar.title "Testbench IDE">
+<!ENTITY selenium-ide.sidebar.title "Vaadin TestBench IDE">
 
 <!ENTITY fileMenu.label "File">
 <!ENTITY optionsMenu.label "Options">

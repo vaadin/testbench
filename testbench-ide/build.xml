@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<project name="Testbench IDE extension" basedir="." default="extension">
+<project name="TestBench IDE extension" basedir="." default="extension">
 	<tstamp />
 	<!--<property name="version" value="${DSTAMP}${TSTAMP}" />-->
 
@@ -32,7 +32,7 @@
 				</replacetokens>
 			</filterchain>
 		</copy>
-		<zip destfile="extension/Testbench-ide-${version}.xpi">
+		<zip destfile="extension/Vaadin-TestBench-ide-${version}.xpi">
 			<fileset dir="." includes="chrome/selenium-ide.jar" />
 			<fileset dir="." includes="components/**/**" />
 			<fileset dir="." includes="content-files/**/**" />

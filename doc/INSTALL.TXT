@@ -1,7 +1,7 @@
 Setting up Firefox for recording a test case
 ============================================
-1. Install Testbench IDE (inside .zip package)
-2. Open Testbench IDE in FireFox (Tools -> Testbench IDE) and record.
+1. Install Vaadin TestBench IDE (inside .zip package)
+2. Open Vaadin TestBench IDE in FireFox (Tools -> Vaadin TestBench IDE) and record.
 
 Setting up a test host
 ======================

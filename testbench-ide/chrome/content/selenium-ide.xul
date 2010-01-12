@@ -30,7 +30,7 @@ limitations under the License.
 %seleniumIdeDTD;
 ]>
 
-<window title="Testbench IDE"
+<window title="Vaadin TestBench IDE"
   id="selenium-ide"
   windowtype="global:selenium-ide"
   xmlns:html="http://www.w3.org/1999/xhtml"
@@ -83,6 +83,7 @@ limitations under the License.
       <toolbarbutton id="rollup-button" label="Rollup" class="icon" tooltiptext="&rollupButton.tooltip;" command="cmd_selenium_rollup"/>
       <toolbarseparator/>
       <toolbarbutton id="tooltip-button" label="Tooltip" class="icon" tooltiptext="&tooltipButton.tooltip;" oncommand="Recorder.expectTooltip();" type="checkbox"/>
+      <toolbarbutton id="assert-button" label="AssertText" class="icon" tooltiptext="&assertButton.tooltip;" oncommand="Recorder.assertTarget();" type="checkbox"/>
       <toolbarspacer flex="1"/>
       <toolbarbutton id="record-button" label="Record" class="icon" tooltiptext="&recordButton.tooltip;" checked="true" onclick="this.checked = !this.checked" oncommand="window.editor.toggleRecordingEnabled(this.checked)"/>
     </toolbar>

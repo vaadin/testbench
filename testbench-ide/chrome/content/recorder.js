@@ -52,6 +52,30 @@ Recorder.reSelectTarget = function(){
 	}
 }
 
+Recorder.recordAssertText = "false";
+/* Function for recording assert text from click */
+Recorder.assertTarget = function(){
+	if(document.getElementById('assert-button').checked){
+		// Set flag
+		this.recordAssertText = "true";
+		// Enable recording if not enabled
+		if(!document.getElementById('record-button').checked){
+			document.getElementById('record-button').click();
+			enabledRecording = "true";
+		}
+	}else{
+		// Remove flag
+		this.recordAssertText = "false";
+		// Disable recoring if enabled by button and still enabled
+		if(enabledRecording == "true" && document.getElementById('record-button').checked){
+			document.getElementById('record-button').click();
+			enabledRecording = "false";
+		}else{
+			enabledRecording = "false";
+		}
+	}
+}
+
 Recorder.recordTooltip = "false";
 /* Expect and record a tooltip */
 Recorder.expectTooltip = function(){

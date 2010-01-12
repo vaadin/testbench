@@ -2,7 +2,7 @@
 
 <project name="Example Testing Script" basedir="." default="run-and-clean-up">
 
-	<!-- Host running Testbench RC or Testbench Hub -->
+	<!-- Host running TestBench RC or TestBench Hub -->
 	<property name="com.vaadin.testbench.tester.host" value="127.0.0.1" />
 
 	<!-- Base url where the testable application is deployed -->

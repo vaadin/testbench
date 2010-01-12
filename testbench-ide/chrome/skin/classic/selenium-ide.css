@@ -189,6 +189,12 @@ toolbarbutton.icon label {
 #tooltip-button[checked="true"] {
 	list-style-image: url("tooltip.png");
 }
+#assert-button:not([checked="true"]) {
+	list-style-image: url("assert_disabled.png");
+}
+#assert-button[checked="true"] {
+	list-style-image: url("assert.png");
+}
 
 tab label { 
   font-size: 8.5pt;

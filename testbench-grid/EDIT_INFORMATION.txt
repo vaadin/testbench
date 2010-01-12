@@ -1,14 +1,14 @@
-Differences between Testbench and Selenium Grid 1.0.4
+Differences between TestBench and Selenium Grid 1.0.4
 
-The differences between Testbench and Selenium version of the grid are in the handling of remote-controls.
+The differences between TestBench and Selenium version of the grid are in the handling of remote-controls.
 
-Testbench Grid group the remote controls by their hash value (consists of ip+port) where the original Selenium implementation groups them by their environment.
+TestBench Grid group the remote controls by their hash value (consists of ip+port) where the original Selenium implementation groups them by their environment.
 
-Testbench also restricts the remote controls so that they may only run one test at a time.
+TestBench also restricts the remote controls so that they may only run one test at a time.
 
-Testbench enables remote controls to register multiple environments when they are started where as the original implementation only allows one environment/remote control.
+TestBench enables remote controls to register multiple environments when they are started where as the original implementation only allows one environment/remote control.
 
-Testbench also adds some load balancing by checking which remote control has the least waiting reservations and by allowing tests to search for another remote controller in the case they fail to reserve the remote controller they are waiting for after a number of tries (another test is faster and gets the remote control).
+TestBench also adds some load balancing by checking which remote control has the least waiting reservations and by allowing tests to search for another remote controller in the case they fail to reserve the remote controller they are waiting for after a number of tries (another test is faster and gets the remote control).
 
 
 Changed files.

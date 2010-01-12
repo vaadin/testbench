@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<project name="Testbench build" basedir="." default="testbench-distribution-package">
+<project name="TestBench build" basedir="." default="testbench-distribution-package">
 	<tstamp />
 	<property name="timestamp" value="${DSTAMP}${TSTAMP}" />
 	<property name="version" value="2.0.0.development.${timestamp}" />
@@ -18,7 +18,7 @@
 				</fileset>
 			</classpath>
 		</javac>
-		<jar jarfile="${output.dir}/vaadin-testbench-${version}.jar" compress="true">
+		<jar jarfile="${output.dir}/Vaadin-TestBench-${version}.jar" compress="true">
 			<manifest>
 				<attribute name="Class-Path" value="junit-4.5.jar selenium-java-client-driver.jar js.jar" />
 			</manifest>
@@ -45,59 +45,59 @@
 				</fileset>
 			</classpath>
 		</javadoc>
-		<zip destfile="${output.dir}/testbench-javadoc-${version}.zip" compress="true">
+		<zip destfile="${output.dir}/TestBenchRunner-javadoc-${version}.zip" compress="true">
 			<zipfileset dir="result/doc"/>
 		</zip>
 	</target>
 	
 	<target name="testbench-ide">
-		<!-- Create the Testbench IDE FireFox plugin -->
+		<!-- Create the TestBench IDE FireFox plugin -->
 		<subant target="extension">
 			<property name="version" value="${timestamp}"/>
 			<fileset dir="../testbench-ide" includes="build.xml" />
 		</subant>
-		<copy file="../testbench-ide/extension/Testbench-ide-${timestamp}.xpi" todir="${output.dir}/testbench-ide" />
+		<copy file="../testbench-ide/extension/Vaadin-TestBench-ide-${timestamp}.xpi" todir="${output.dir}/testbench-ide" />
 	</target>
 
 	<target name="testbench-grid">
 		<subant target="dist">
 			<property name="timestamp" value="${timestamp}"/>
-		  	<property name="version" value="TestBench-${timestamp}"/>
+		  	<property name="version" value="Vaadin-TestBench-${timestamp}"/>
 			<fileset dir="../testbench-grid/infrastructure/core" includes="build.xml" />
 		</subant>
 		<subant target="package-standalone">
 			<property name="timestamp" value="${timestamp}"/>
-		  	<property name="version" value="TestBench-${timestamp}"/>
+		  	<property name="version" value="Vaadin-TestBench-${timestamp}"/>
 			<fileset dir="../testbench-grid/infrastructure/webserver" includes="build.xml" />
 		</subant>
 		<parallel>
 			<subant target="package-standalone">
 				<property name="timestamp" value="${timestamp}"/>
-			  	<property name="version" value="TestBench-${timestamp}"/>
+			  	<property name="version" value="Vaadin-TestBench-${timestamp}"/>
 				<fileset dir="../testbench-grid/hub" includes="build.xml" />
 			</subant>
 			<subant target="package-standalone">
 				<property name="timestamp" value="${timestamp}"/>
-			  	<property name="version" value="TestBench-${timestamp}"/>
+			  	<property name="version" value="Vaadin-TestBench-${timestamp}"/>
 				<fileset dir="../testbench-grid/remote-control" includes="build.xml" />
 			</subant>
 		</parallel>
 		<parallel>
 			<subant target="clean-classes">
-			  	<property name="version" value="TestBench-${timestamp}"/>
+			  	<property name="version" value="Vaadin-TestBench-${timestamp}"/>
 				<fileset dir="../testbench-grid/infrastructure/core" includes="build.xml" />
 			</subant>
 			<subant target="clean-classes">
-			  	<property name="version" value="TestBench-${timestamp}"/>
+			  	<property name="version" value="Vaadin-TestBench-${timestamp}"/>
 				<fileset dir="../testbench-grid/infrastructure/webserver" includes="build.xml" />
 			</subant>
 		</parallel>
 	</target>
 	
 	<target name="testbench-distribution-package" depends="testbench.jar,javadoc,testbench-ide,testbench-grid,update-run-scripts,run-tests">
-		<zip destfile="${output.dir}/vaadin-testbench-${version}.zip">
-			<zipfileset dir="${output.dir}" includes="vaadin-testbench-${version}.jar" />
-			<zipfileset dir="${output.dir}" includes="testbench-ide/Testbench-ide-${timestamp}.xpi"  />
+		<zip destfile="${output.dir}/Vaadin-TestBench-${version}.zip">
+			<zipfileset dir="${output.dir}" includes="Vaadin-TestBench-${version}.jar" />
+			<zipfileset dir="${output.dir}" includes="testbench-ide/Vaadin-TestBench-ide-${timestamp}.xpi"  />
 <!--			<zipfileset dir=".." includes="selenium-extensions/**" />-->
 			<!-- Not certain about MPL or CPL licenses -->
 <!--			<fileset dir=".." includes="lib/js.jar lib/junit*.jar" excludes="lib/**-source* lib/**-src*" />-->
@@ -116,7 +116,7 @@
 			<zipfileset dir="../selenium-extensions/core" includes="user-extensions.js" prefix="grid/remote-control" />
 		</zip>
 			
-		<zip destfile="${output.dir}/vaadin-testbench-grid-${timestamp}.zip">
+		<zip destfile="${output.dir}/Vaadin-TestBench-grid-${timestamp}.zip">
 			<zipfileset dir="../testbench-grid/hub" includes="hub.sh hub.bat grid_configuration.yml" prefix="hub" />
 			<zipfileset dir="../testbench-grid/hub/target/dist/lib" includes="**standalone*.jar" prefix="hub/lib" />
 			

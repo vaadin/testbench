@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<project name="Testbench build tests" basedir="." default="all-tests">
+<project name="TestBench build tests" basedir="." default="all-tests">
 	
 	<property name="class.path" value="${java.class.path}" />
 	
@@ -12,7 +12,7 @@
 		<mkdir dir="test/classes" />
 		<javac srcdir="../src/com/vaadin/testbench/test" destdir="test/classes">
 			<classpath>
-				<fileset dir="../build/result/package" includes="vaadin-testbench-*.jar" />
+				<fileset dir="../build/result/package" includes="Vaadin-TestBench-*.jar" />
 				<fileset dir="../lib" id="libs">
 					<include name="*.jar" />
 				</fileset>
@@ -24,7 +24,7 @@
 		<junit>
 			<classpath>
 				<pathelement path="../src/" />
-				<fileset dir="../build/result/package" includes="vaadin-testbench-*.jar" />
+				<fileset dir="../build/result/package" includes="Vaadin-TestBench-*.jar" />
 				<path path="${class.path}" />
 				<pathelement path="test/classes" />
 			</classpath>

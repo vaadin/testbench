@@ -3,7 +3,7 @@
          xmlns:NC="http://home.netscape.com/NC-rdf#"
          xmlns:RDF="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
   <RDF:Description RDF:about="urn:mozilla:install-manifest"
-                   em:name="Testbench IDE"
+                   em:name="Vaadin TestBench IDE"
                    em:id="{a6fd85ed-e919-4a43-a5af-8da18bda539f}"
                    em:version="2.0.0.@build@"
                    em:description="Record, edit and play Selenium tests"

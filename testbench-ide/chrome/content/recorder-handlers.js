@@ -441,6 +441,14 @@ Recorder.addEventHandler('clickLocator', 'click', function(event){
 			event.cancelBubble="true";
 			return;
 		}
+		if(Recorder.recordAssertText == "true"){
+			var target = this.findLocators(event.target);
+			this.record("assertText", target, getText(event.target));
+			document.getElementById('assert-button').click();
+			// Stops bubbling of event to browser (click is not made in browser element)
+			event.cancelBubble="true";
+			return;
+		}
 		
 		/* record mouse click if left button clicked and so select has been made */
 		if (event.button == 0 && noSelection == "true") {
