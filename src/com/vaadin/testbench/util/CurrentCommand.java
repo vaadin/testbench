@@ -30,7 +30,6 @@ public class CurrentCommand {
     }
 
     public String getInfo() {
-        return new String("In Test = " + file + " at CommandNr = " + cmdNr
-                + " with Cmd = " + cmd);
+        return file + " failed at CommandNr = " + cmdNr + " with Cmd = " + cmd;
     }
 }

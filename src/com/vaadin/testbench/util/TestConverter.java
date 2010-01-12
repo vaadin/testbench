@@ -409,14 +409,15 @@ public class TestConverter {
                     + "target.mkdir();\n}\n"
                     + "try{\n"
                     + "ImageIO.write(ImageUtil.stringToImage(statusScreen), \"png\", new File(directory + \"errors/"
-                    + testName + "_failure_"
+                    + testName
+                    + "_failure_"
                     + getSafeName(browserUnderConversion)
                     + ".png\"));\n}catch(IOException ioe){\n"
                     + "ioe.printStackTrace();\n}\n"
-                    + "throw new java.lang.AssertionError(cmd.getInfo());\n}\n"
+                    + "throw new java.lang.AssertionError(cmd.getInfo() + \". Failure message = \" + e.getMessage());\n}\n"
                     + softAsserts;
         } else {
-            softAsserts = "}catch(Throwable e){\nthrow new java.lang.AssertionError(cmd.getInfo());\n}\n"
+            softAsserts = "}catch(Throwable e){\nthrow new java.lang.AssertionError(cmd.getInfo() + \". Failure message = \" + e.getMessage());\n}\n"
                     + softAsserts;
         }
         String footer = TEST_METHOD_FOOTER;
@@ -425,7 +426,7 @@ public class TestConverter {
         if (screenshot) {
             return softAsserts + footer;
         }
-        return "}catch(Throwable e){\nthrow new java.lang.AssertionError(cmd.getInfo());\n}\n"
+        return "}catch(Throwable e){\nthrow new java.lang.AssertionError(cmd.getInfo() + \". Failure message = \" + e.getMessage());\n}\n"
                 + footer;
     }
 
