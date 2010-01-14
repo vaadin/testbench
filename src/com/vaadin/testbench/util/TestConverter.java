@@ -1,10 +1,12 @@
 package com.vaadin.testbench.util;
 
 import java.awt.event.KeyEvent;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -20,6 +22,7 @@ import org.mozilla.javascript.NativeArray;
 import org.mozilla.javascript.NativeObject;
 import org.mozilla.javascript.Scriptable;
 
+import com.vaadin.testbench.runner.util.IOFunctions;
 import com.vaadin.testbench.util.SeleniumHTMLTestCaseParser.Command;
 
 public class TestConverter {
@@ -117,7 +120,7 @@ public class TestConverter {
 
                 // Write the tests to the java file
                 for (int i = 2; i < args.length; i++) {
-                    String filename = args[i];
+                    String filename = checkIfSuite(args[i]);
                     try {
                         String testMethod = createTestMethod(filename,
                                 getTestName(filename));
@@ -250,6 +253,50 @@ public class TestConverter {
                 }
             }
         }
+    }
+
+    private static String checkIfSuite(String filename)
+            throws FileNotFoundException, IOException {
+        File testFile = new File(filename);
+        if (!testFile.exists()) {
+            System.out.println("Searching for file " + testFile.getName()
+                    + " to parse.");
+            // If not found do a small search for file
+            testFile = IOFunctions.getFile(testFile.getName(), testFile
+                    .getParentFile(), 0);
+        }
+
+        if (testFile == null) {
+            throw new FileNotFoundException("Could not find file " + filename);
+        }
+
+        BufferedReader in = new BufferedReader(new FileReader(testFile));
+        try {
+            String line = "";
+            while ((line = in.readLine()) != null) {
+                if (line.contains("<thead>")) {
+                    return testFile.getAbsolutePath();
+                } else if (line.contains("a href=")) {
+                    ParsedSuite result = ParserFunctions.readHtmlFile(filename,
+                            testFile.getParentFile().getAbsolutePath());
+
+                    List<String> combined = ParserFunctions.combineTests(result
+                            .getSuiteTests(), testFile.getName(), testFile
+                            .getAbsolutePath());
+                    if (combined.size() == 1) {
+                        return combined.get(0);
+                    }
+
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Parsing failed. Check stacktrace.");
+            e.printStackTrace();
+            System.exit(1);
+        } finally {
+            in.close();
+        }
+        return testFile.getAbsolutePath();
     }
 
     private static void writeJavaFooter(OutputStream out) throws IOException {

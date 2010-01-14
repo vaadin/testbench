@@ -1,4 +1,4 @@
-package com.vaadin.testbench.runner.util;
+package com.vaadin.testbench.util;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -20,6 +20,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
+import com.vaadin.testbench.runner.util.IOFunctions;
 
 public class ParserFunctions {
 

@@ -19,9 +19,9 @@ import junit.framework.TestResult;
 import junit.framework.TestSuite;
 
 import com.vaadin.testbench.runner.util.IOFunctions;
-import com.vaadin.testbench.runner.util.ParsedSuite;
-import com.vaadin.testbench.runner.util.ParserFunctions;
 import com.vaadin.testbench.runner.util.TestBenchSuite;
+import com.vaadin.testbench.util.ParsedSuite;
+import com.vaadin.testbench.util.ParserFunctions;
 
 /**
  * TestBenchRunner.
