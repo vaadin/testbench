@@ -29,8 +29,11 @@ public class ConfigurationParser {
             NodeList nodeList = doc.getElementsByTagName("host");
             for (int i = 0; i < nodeList.getLength(); i++) {
                 Node node = nodeList.item(i);
-                if(node.getChildNodes().item(0).getNodeValue() != null){
-                    options.setHost(node.getChildNodes().item(0).getNodeValue());
+                try{
+                options.setHost(node.getChildNodes().item(0).getNodeValue());
+                }catch(NullPointerException npe){
+                    System.err.println("Check configuration file <host>. Should not be left empty.");
+                    System.err.println("Comment it out or remove it from the configuration file.");
                 }
             }
             
