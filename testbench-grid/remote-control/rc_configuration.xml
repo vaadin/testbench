@@ -6,5 +6,18 @@
 	<environment>winxp-opera10</environment>
 	<environment>winxp-firefox35</environment>
 	<environment>winxp-googlechrome3</environment>
+
+<!--
+	<environment>linux-opera10</environment>
+	<environment>winxp-firefox3</environment>
+-->
+<!--
+	<environment>osx-safari4</environment>
+	<environment>osx-opera10</environment>
+	<environment>osx-firefox35</environment>
+-->
+<!--
+	<host>127.0.0.1</host>
+-->
 	<hubURL>http://127.0.0.1:4444</hubURL>
 </configuration>

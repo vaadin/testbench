@@ -19,7 +19,7 @@ public class OptionParser {
         private final List<String> seleniumServerOptions;
 
         protected Options() {
-            this.host = "localhost";
+            this.host = "";
             this.port = "5555";
             this.environment = "*firefox";
             this.hubURL = "http://localhost:4444";

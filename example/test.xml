@@ -20,7 +20,7 @@
 
 	<!-- classpath must include test bench jar and its dependencies -->
 	<path id="classpath">
-		<fileset dir=".." includes="vaadin-testbench-*.jar" />
+		<fileset dir=".." includes="Vaadin-TestBench-*.jar" />
 
 		<!-- For development environment compatibility only -->
 		<path location="../bin" />
@@ -56,6 +56,8 @@
 
 	<!-- This target complies the generated java junit tests. -->
 	<target name="compile-tests" depends="create-tests">
+		<mkdir dir="${temp-dir}" />
+		<mkdir dir="${temp-dir}/src" />
 		<mkdir dir="${temp-dir}/classes" />
 		<javac srcdir="${temp-dir}/src" destdir="${temp-dir}/classes" debug="on">
 			<classpath>

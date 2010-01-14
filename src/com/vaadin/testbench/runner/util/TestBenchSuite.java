@@ -17,16 +17,16 @@ import junit.framework.TestSuite;
  */
 public class TestBenchSuite {
 
-    /** The test suites. */
+    /** The test suites for each browser. */
     private Map<String, TestSuite> testSuites;
 
-    /** The test results. */
+    /** The test results for last run for each browser. */
     private Map<String, TestResult> testResults;
 
-    /** The suite tests. */
+    /** Tests and order of them in suites. */
     private String[] suiteTests;
 
-    /** The tests in suite. */
+    /** Amount of tests in suite. */
     private int testsInSuite;
 
     /** The suite name. */

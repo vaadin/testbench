@@ -3194,9 +3194,13 @@ Selenium.prototype.doPressSpecialKey = function(locator, value){
 };
 
 Selenium.prototype.doMouseClick = function(locator, value){
-	this.doMouseDownAt(locator, value);
-	this.doMouseUpAt(locator, value);
-	this.doClick(locator, '');
+	var element = this.browserbot.findElement(locator);
+	var clientXY = getClientXY(element, value);
+
+	this.browserbot.triggerMouseEvent(element, 'mousedown', true, clientXY[0], clientXY[1]);
+//	element.focus();
+	this.browserbot.triggerMouseEvent(element, 'mouseup', true, clientXY[0], clientXY[1]);
+	this.browserbot.clickElement(element);
 };
 
 Selenium.prototype.doCloseNotification = function(locator, value){

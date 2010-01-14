@@ -13,15 +13,18 @@ public class RemoteControlParser {
         final List<RemoteControlProxy> remoteControl = new LinkedList<RemoteControlProxy>();
         final String portParameter;
         final String environment;
-        final String host;
+        String host;
         final int port;
 
-        host  = request.getRemoteAddr();
-
-//        host = request.getParameter("host");
-//        if (null == host || "".equals(host.trim())) {
-//            throw new IllegalStateException("You must specify a 'host' parameter");
-//        }
+        if(request.getParameter("host") != null && request.getParameter("host").length() > 0){
+            host = request.getParameter("host");
+            if (null == host || "".equals(host.trim())) {
+                throw new IllegalStateException("You must specify a 'host' parameter");
+            }
+        }else{
+            host = request.getRemoteAddr();
+        }
+        
         portParameter = request.getParameter("port");
         if (null == portParameter || "".equals(portParameter.trim())) {
             throw new IllegalStateException("You must specify a 'port' parameter");

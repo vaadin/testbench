@@ -29,7 +29,9 @@ public class ConfigurationParser {
             NodeList nodeList = doc.getElementsByTagName("host");
             for (int i = 0; i < nodeList.getLength(); i++) {
                 Node node = nodeList.item(i);
-                options.setHost(node.getChildNodes().item(0).getNodeValue());
+                if(node.getChildNodes().item(0).getNodeValue() != null){
+                    options.setHost(node.getChildNodes().item(0).getNodeValue());
+                }
             }
             
             // Get <hubURL> node and set hubURL if exists
