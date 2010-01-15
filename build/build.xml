@@ -59,7 +59,7 @@
 			<property name="version" value="${version}"/>
 			<fileset dir="../testbench-ide" includes="build.xml" />
 		</subant>
-		<copy file="../testbench-ide/extension/Vaadin-TestBench-ide-${timestamp}.xpi" todir="${output.dir}/Vaadin-TestBench-ide" />
+		<copy file="../testbench-ide/extension/Vaadin-TestBench-ide-${version}.xpi" todir="${output.dir}/Vaadin-TestBench-ide" />
 	</target>
 
 	<target name="testbench-grid">
