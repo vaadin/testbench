@@ -100,7 +100,7 @@
 	<target name="testbench-distribution-package" depends="testbench.jar,javadoc,testbench-ide,testbench-grid,update-run-scripts,run-tests">
 		<zip destfile="${output.dir}/Vaadin-TestBench-${version}.zip">
 			<zipfileset dir="${output.dir}" includes="Vaadin-TestBench-${version}.jar" />
-			<zipfileset dir="${output.dir}" includes="testbench-ide/Vaadin-TestBench-ide-${timestamp}.xpi"  />
+			<zipfileset dir="${output.dir}" includes="testbench-ide/Vaadin-TestBench-ide-${version}.xpi"  />
 <!--			<zipfileset dir=".." includes="selenium-extensions/**" />-->
 			<!-- Not certain about MPL or CPL licenses -->
 <!--			<fileset dir=".." includes="lib/js.jar lib/junit*.jar" excludes="lib/**-source* lib/**-src*" />-->
