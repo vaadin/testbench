@@ -610,12 +610,12 @@ Editor.prototype.showInBrowser = function(url, newWindow) {
 Editor.prototype.playCurrentTestCase = function(next, index, total) {
     var self = this;
     this.selDebugger.start(function(failed) {
-            self.log.debug("finished execution of test case: failed=" + failed);
+            self.log.debug("finished execution of test: failed=" + failed);
             var testCase = self.suiteTreeView.getCurrentTestCase();
             if (testCase) {
                 testCase.testResult = failed ? "failed" : "passed";
             } else {
-                self.log.error("current test case not found");
+                self.log.error("current test not found");
             }
             self.suiteTreeView.currentRowUpdated();
             self.testSuiteProgress.update(index + 1, total, failed);

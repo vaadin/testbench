@@ -3158,7 +3158,7 @@ Selenium.prototype.doContextmenuAt = function(locator, coordString) {
       this.page()._fireEventOnElement("contextmenu", element, clientXY[0], clientXY[1]); 
 };
 
-/* Empty screenCapture command for use with export test case Vaadin */
+/* Empty screenCapture command for use with export test Vaadin */
 Selenium.prototype.doScreenCapture = function(locator, value){
 };
 

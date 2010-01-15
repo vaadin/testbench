@@ -5,6 +5,8 @@
 	<property name="timestamp" value="${DSTAMP}${TSTAMP}" />
 	<property name="version" value="2.0.0.development.${timestamp}" />
 	<property name="output.dir" value="result/package" />
+	<!-- Add this property to exlude TestBenchRunner from build -->
+	<!-- <property name="exclude.runner" value="true" /> -->
 
 	<target name="testbench.jar">
 		<delete dir="result" failonerror="false" />
@@ -28,6 +30,7 @@
 			<zipfileset dir="result/classes">
 				<include name="**/**" />
 				<exclude name="**/test/**" />
+				<exclude name="**/runner/**" if="exclude.runner"/>
 			</zipfileset>
 			<zipfileset src="../lib/commons-io-1.1.jar" />
 			<zipfileset src="../lib/commons-codec-1.4.jar" />
@@ -37,7 +40,7 @@
 		</jar>
 	</target>
 	
-	<target name="javadoc">
+	<target name="javadoc" unless="exclude.runner">
 		<javadoc sourcepath="../src" destdir="result/doc" excludepackagenames="com.vaadin.testbench.test,com.vaadin.testbench.testcase,com.vaadin.testbench.util">
 			<classpath>
 				<fileset dir="../lib" id="libs">
@@ -159,7 +162,7 @@
 		</copy>
 	</target>
 	
-	<target name="run-tests">
+	<target name="run-tests" unless="exclude.runner">
 		<property name="class.path" value="${java.class.path}"/>
 		<subant target="all-tests" buildpath="../test">
 			<property name="class.path" value="${class.path}"/>

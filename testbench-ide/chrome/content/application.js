@@ -217,7 +217,7 @@ Application.prototype = {
             }
             return false;
         } catch (error) {
-            alert("error loading test case: " + error);
+            alert("error loading test: " + error);
             return false;
         }
     },
@@ -258,7 +258,7 @@ Application.prototype = {
         this.getTestSuite().tests.forEach(function(test) {
                 if (cancelled) return;
                 if (test.content && test.content.modified) {
-                    if (confirm("The test case is modified. Do you want to save this test case?")) {
+                    if (confirm("The test is modified. Do you want to save this test?")) {
                         if (!this.getCurrentFormat().save(test.content)) {
                             cancelled = true;
                         }

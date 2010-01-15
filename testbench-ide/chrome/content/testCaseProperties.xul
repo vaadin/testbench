@@ -24,7 +24,7 @@ limitations under the License.
 	id="selenium-ide-testCaseProperty"
 	ondialogaccept="save()"
 	onload="load()"
-	title="Test Case Property"
+	title="Test Property"
 	width="520"
 	height="200"
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">

@@ -37,7 +37,7 @@ function Debugger(editor) {
         }
         this.editor.app.addObserver({
                 testCaseChanged: function(testCase) {
-                    self.runner.LOG.info("Changed test case");
+                    self.runner.LOG.info("Changed test");
                     self.runner.testCase = testCase;
                 }
             });
@@ -118,7 +118,7 @@ Debugger.prototype.start = function(complete, useLastWindow) {
                     try {
                         complete(failed);
                     } catch (error) {
-                        self.log.error("error at the end of test case: " + error);
+                        self.log.error("error at the end of test: " + error);
                     }
                 }
             }
