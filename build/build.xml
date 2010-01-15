@@ -119,7 +119,7 @@
 			<zipfileset dir="../selenium-extensions/core" includes="user-extensions.js" prefix="grid/remote-control" />
 		</zip>
 			
-		<zip destfile="${output.dir}/Vaadin-TestBench-grid-${timestamp}.zip">
+		<zip destfile="${output.dir}/Vaadin-TestBench-grid-${version}.zip">
 			<zipfileset dir="../testbench-grid/hub" includes="hub.sh hub.bat grid_configuration.yml" prefix="hub" />
 			<zipfileset dir="../testbench-grid/hub/target/dist/lib" includes="**standalone*.jar" prefix="hub/lib" />
 			
@@ -135,28 +135,28 @@
 		<copy file="../testbench-grid/hub/hub.tpl" tofile="../testbench-grid/hub/hub.sh" overwrite="true">
 					<filterchain>
 						<replacetokens>
-							<token key="build" value="${timestamp}" />
+							<token key="build" value="${version}" />
 						</replacetokens>
 					</filterchain>
 		</copy>
 		<copy file="../testbench-grid/hub/hub.bat_tpl" tofile="../testbench-grid/hub/hub.bat" overwrite="true">
 					<filterchain>
 						<replacetokens>
-							<token key="build" value="${timestamp}" />
+							<token key="build" value="${version}" />
 						</replacetokens>
 					</filterchain>
 		</copy>
 		<copy file="../testbench-grid/remote-control/rc.tpl" tofile="../testbench-grid/remote-control/rc.sh" overwrite="true">
 					<filterchain>
 						<replacetokens>
-							<token key="build" value="${timestamp}" />
+							<token key="build" value="${version}" />
 						</replacetokens>
 					</filterchain>
 		</copy>
 		<copy file="../testbench-grid/remote-control/rc.bat_tpl" tofile="../testbench-grid/remote-control/rc.bat" overwrite="true">
 					<filterchain>
 						<replacetokens>
-							<token key="build" value="${timestamp}" />
+							<token key="build" value="${version}" />
 						</replacetokens>
 					</filterchain>
 		</copy>
