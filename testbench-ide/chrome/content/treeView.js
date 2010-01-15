@@ -280,9 +280,10 @@ objectExtend(TreeView.prototype, {
             this.treebox.rowCountChanged(index, 1);
             this.rowCount++;
             //this.treebox.scrollToRow(this.testCase.commands.length - 1);
-            //if (index >= this.recordIndex) {
-            this.recordIndex++;
-            //}
+            // This was commented out and it broke editing
+            if (index >= this.recordIndex) {
+            	this.recordIndex++;
+            }
             this.treebox.ensureRowIsVisible(index);
         },
 

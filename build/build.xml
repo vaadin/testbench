@@ -6,7 +6,7 @@
 	<property name="version" value="2.0.0.development.${timestamp}" />
 	<property name="output.dir" value="result/package" />
 	<!-- Add this property to exlude TestBenchRunner from build -->
-	<!-- <property name="exclude.runner" value="true" /> -->
+	<property name="exclude.runner" value="true" />
 
 	<target name="testbench.jar">
 		<delete dir="result" failonerror="false" />
