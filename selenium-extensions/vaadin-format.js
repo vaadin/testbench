@@ -139,7 +139,7 @@ CallSelenium.prototype.toString = function() {
 			result += ', ';
 		}
 	}
-	result += ')';
+	result += ') hi';
 	return result;
 }
 
@@ -222,94 +222,29 @@ this.configForm =
 this.name = "vaadin-java-rc";
 this.testName = "${methodName}";
 
-function formatComment(comment) {
-	if (comment.comment.match(/^selenium\.waitForVaadin\(\)/) ) {
-		return "waitForVaadin();"
+CallSelenium.prototype.toString = function() {
+	var result = '';
+	if (this.negative) {
+		result += '!';
 	}
 	
-	// Catch command selenium.screenCapture
-	if (comment.comment.match(/^selenium\.screenCapture/) ) {
-		// Check if screenCapture has a value but not a target
-		if(comment.comment.match(/^selenium\.screenCapture\(\"\"/)){
-			// Get value for screenCapture
-			var str = comment.comment.substring(27, comment.comment.length-2);
-			// Replace all \\ with File.separator
-			var fileId = str.replace(/\\\\/gi, "\" + File.separator + \"");
-			return "validateScreenshot(\"testFileNameHere\", 0.025, " + fileId + ");";
-		}else{
-			return "validateScreenshot(\"testFileNameHere\", 0.025, \"" + "\");";
-		}
-	} else if (comment.comment.match(/^selenium\.enterCharacter/)) {
-
-		var parameters = comment.comment.substring(comment.comment.indexOf("\"")+1);
-		var locator = parameters.substring(0, parameters.indexOf("\""));
-		parameters = parameters.substring(parameters.indexOf("\"")+1);
-		var value = parameters.substring(parameters.indexOf("\"")+1, parameters.lastIndexOf("\""));
-		
-		var result = "selenium.type(\"" + locator + "\", \"" + value + "\");\n";
-		
-
-		if(value.length > 1){
-			for(i = 0; i < value.length;i++){
-				result = result + "selenium.keyDown(\"" + locator + "\", \"" + value.charAt(i) + "\");\n";
-				result = result + "selenium.keyUp(\"" + locator + "\", \"" + value.charAt(i) + "\");\n";
-			}
-		}else{
-			result = result + "selenium.keyDown(\"" + locator + "\", \"" + value + "\");\n";
-			result = result + "selenium.keyUp(\"" + locator + "\", \"" + value + "\");\n";
-		}
-		
-        return result;
-        
-    } else if (comment.comment.match(/^selenium\.pressSpecialKey/)) {
-    	
-		var parameters = comment.comment.substring(comment.comment.indexOf("\"")+1);
-		var locator = parameters.substring(0, parameters.indexOf("\""));
-		parameters = parameters.substring(parameters.indexOf("\"")+1);
-		var value = parameters.substring(parameters.indexOf("\"")+1, parameters.lastIndexOf("\""));
-		
-    	if(value.toLowerCase() == "left"){
-    		value="37";
-    	}else if(value.toLowerCase() == "right"){
-    		value="39";
-    	}else if(value.toLowerCase() == "up"){
-    		value="38";
-    	}else if(value.toLowerCase() == "down"){
-    		value="40";
-    	}else if(value.toLowerCase() == "backspace"){
-    		value="8";
-    	}
-		var result = "selenium.focus(\"" + locator + "\");\n"
-				+ "selenium.keyPressNative(\"" + value + "\");\n";
-		
-		return result;
-    }else if (comment.comment.match(/^selenium\.mouseClick/)
-            || comment.comment.match(/^closeNotification/)) {
-    	var parameters = comment.comment.substring(comment.comment.indexOf("\"")+1);
-		var locator = parameters.substring(0, parameters.indexOf("\""));
-		parameters = parameters.substring(parameters.indexOf("\"")+1);
-		var value = parameters.substring(parameters.indexOf("\"")+1, parameters.lastIndexOf("\""));
-
-		var result = "selenium.mouseDownAt(\"" + locator + "\", \"" + value + "\");\n"
-				+ "selenium.mouseUpAt(\"" + locator + "\", \"" + value + "\");\n"
-				+ "//Remove this for Opera\nselenium.click(\"" + locator + "\", \"" + value + "\");\n";
-		
-		return result;
-    }else if (comment.comment.match(/^selenium\.showTooltip/)){
-    	var parameters = comment.comment.substring(comment.comment.indexOf("\"")+1);
-		var locator = parameters.substring(0, parameters.indexOf("\""));
-		parameters = parameters.substring(parameters.indexOf("\"")+1);
-		var value = parameters.substring(parameters.indexOf("\"")+1, parameters.lastIndexOf("\""));
-
-		var result = "doCommand(\"showTooltip\",new String[] {\""
-                + locator + "\", \"" + value + "\"});\n"
-				+ "pause(700);\n";
-		return result;
-    }
+	if(this.message == 'waitForVaadin'){
+		return 'waitForVaadin()';
+	}else if(this.message == 'screenCapture'){
+		return "validateScreenshot(\"testFileNameHere\", 0.025, \"" + "\");";
+	}
 	
-	return comment.comment.replace(/.+/mg, function(str) {
-			return "// " + str;
-		});
+	result += 'doCommand(\"';
+	result += this.message;
+	result += '\", new String[] {'
+	for (var i = 0; i < this.args.length; i++) {
+		result += this.args[i];
+		if (i < this.args.length - 1) {
+			result += ', ';
+		}
+	}
+	result += '})';
+	return result;
 }
 
 this.options = {
