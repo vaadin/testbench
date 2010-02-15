@@ -132,10 +132,12 @@ limitations under the License.
       <menuitem label="&openCmd.label;" command="cmd_open" key="open-key" accesskey="O"/>
       <menuitem label="&saveTestCmd.label;" command="cmd_save" key="save-key" accesskey="S"/>
       <menuitem label="&saveTestAsCmd.label;" oncommand="window.editor.saveNewTestCase();" accesskey="A"/>
-      <menu label="&exportCmd.label;" accesskey="E">
-	<menupopup id="popup_export_formats" onpopupshowing="window.editor.populateFormatsPopup(this)" oncommand="window.editor.exportTestCaseWithFormat(window.editor.app.getFormats().selectFormat(event.target.getAttribute('value')))">
-	</menupopup>
+      <!-- Export formats for test case (presetFormats in format.js)
+      <menu label="&exportCmd.label;" accesskey="E"> 
+	    <menupopup id="popup_export_formats" onpopupshowing="window.editor.populateFormatsPopup(this)" oncommand="window.editor.exportTestCaseWithFormat(window.editor.app.getFormats().selectFormat(event.target.getAttribute('value')))">
+	    </menupopup>	
       </menu>
+      -->
       <menu label="&recentTestCmd.label;">
         <menupopup id="popup_recent_tests" onpopupshowing="window.editor.app.recentTestCases.populateMenu(this)" oncommand="window.editor.app.loadTestCaseWithNewSuite(event.target.getAttribute('value'))" />
       </menu>
@@ -146,9 +148,11 @@ limitations under the License.
       <menuitem label="&openSuiteCmd.label;" command="cmd_open_suite" key="open-suite-key" />
       <menuitem label="&saveSuiteCmd.label;" command="cmd_save_suite" key="save-suite-key" />
       <menuitem label="&saveSuiteAsCmd.label;" command="cmd_save_suite_as" />
+      <!-- Export formats for Suites
       <menu label="&exportSuiteCmd.label;" accesskey="X">
         <menupopup id="popup_export_formats" onpopupshowing="window.editor.populateFormatsPopup(this)" oncommand="window.editor.exportTestSuiteWithFormat(window.editor.app.getFormats().selectFormat(event.target.getAttribute('value')))" />
       </menu>
+      -->
       <menu label="&recentSuiteCmd.label;">
         <menupopup id="popup_recent_suites" onpopupshowing="window.editor.app.recentTestSuites.populateMenu(this)" oncommand="window.editor.app.loadTestSuite(event.target.getAttribute('value'))" />
       </menu>
@@ -172,16 +176,19 @@ limitations under the License.
   <menu id="optionsMenu" label="&optionsMenu.label;" accesskey="O">
     <menupopup id="options-popup" onpopupshowing="window.editor.onPopupOptions()">
       <menuitem label="&optionsCmd.label;" oncommand="window.editor.openSeleniumIDEPreferences();" accesskey="O"/>
+      <!-- IDE view Formats
       <menu label="&formatCmd.label;" accesskey="F">
-	<menupopup id="popup_formats" onpopupshowing="window.editor.populateFormatsPopup(this, window.editor.app.getCurrentFormat())" oncommand="window.editor.app.setCurrentFormat(window.editor.app.formats.selectFormat(event.target.getAttribute('value')))">
-	</menupopup>
+	    <menupopup id="popup_formats" onpopupshowing="window.editor.populateFormatsPopup(this, window.editor.app.getCurrentFormat())" oncommand="window.editor.app.setCurrentFormat(window.editor.app.formats.selectFormat(event.target.getAttribute('value')))">
+	    </menupopup>
       </menu>
       <menu id="clipboardFormatMenu" label="&clipboardFormatCmd.label;">
-	<menupopup id="popup_clipboard_formats" onpopupshowing="window.editor.populateFormatsPopup(this, window.editor.clipboardFormat)" oncommand="window.editor.app.setClipboardFormat(window.editor.app.formats.selectFormat(event.target.getAttribute('value')))">
-	</menupopup>
+	    <menupopup id="popup_clipboard_formats" onpopupshowing="window.editor.populateFormatsPopup(this, window.editor.clipboardFormat)" oncommand="window.editor.app.setClipboardFormat(window.editor.app.formats.selectFormat(event.target.getAttribute('value')))">
+	    </menupopup>
       </menu>
       <menuitem id="internalTestsMenu" label="Test Selenium IDE" oncommand="window.editor.showInBrowser('chrome://selenium-ide/content/tests/index.html');" />
+      -->
     </menupopup>
+    
   </menu>
   
   <stack id="speedSliderBox">

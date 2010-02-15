@@ -257,6 +257,7 @@ Recorder.addEventHandler('scroll', 'scroll', function(event) {
 					tree.selection.select(index);
 					// wait for lazy scroller to start possible server visit
 					s.record_orig("pause", "300");
+					tree.selection.select(index+2);
 				}
 				if(previousTop != top){
 					s.record("scroll", loc , top);
@@ -266,6 +267,7 @@ Recorder.addEventHandler('scroll', 'scroll', function(event) {
 					tree.selection.select(index);
 					// wait for lazy scroller to start possible server visit
 					s.record_orig("pause", "300");
+					tree.selection.select(index+2);
 				}
 				s._scrollTimeout = null;
 			},260);
