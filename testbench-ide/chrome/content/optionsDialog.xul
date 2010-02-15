@@ -44,35 +44,35 @@ limitations under the License.
 <tabbox flex="1">
   <tabs orient="horizontal">
     <tab label="&options.general.label;"/>
-    <tab label="&options.formats.label;"/>
+    <!--<tab label="&options.formats.label;"/>-->
   </tabs>
   <tabpanels flex="1">
     <tabpanel orient="vertical">
       <description>&options.encoding.description;</description>
       <hbox align="center">
-	<textbox id="encoding" multiline="false" oninput="validate()"/>
-	<label id="encodingError" value="" class="error"/>
+	    <textbox id="encoding" multiline="false" oninput="validate()"/>
+	    <label id="encodingError" value="" class="error"/>
       </hbox>
       
       <separator class="thin"/>
       <description>&options.timeout.description;</description>
       <hbox align="center">
-	<textbox id="timeout" multiline="false" oninput="validate()"/>
-	<label id="timeoutError" value="" class="error"/>
+	    <textbox id="timeout" multiline="false" oninput="validate()"/>
+	    <label id="timeoutError" value="" class="error"/>
       </hbox>
 
       <separator class="thin"/>
       <description>&options.userExtensionsPaths.description;</description>
       <hbox align="center">
-	<textbox id="userExtensionsURL" multiline="false" flex="1"/>
-	<button label="&options.browse;" oncommand="chooseFile('userExtensionsURL')"/>
+	    <textbox id="userExtensionsURL" multiline="false" flex="1"/>
+	    <button label="&options.browse;" oncommand="chooseFile('userExtensionsURL')"/>
       </hbox>
 
       <separator class="thin"/>
       <description>&options.ideExtensionsPaths.description;</description>
       <hbox align="center">
-	<textbox id="ideExtensionsPaths" multiline="false" flex="1"/>
-	<button label="&options.browse;" oncommand="chooseFile('ideExtensionsPaths')"/>
+	    <textbox id="ideExtensionsPaths" multiline="false" flex="1"/>
+	    <button label="&options.browse;" oncommand="chooseFile('ideExtensionsPaths')"/>
       </hbox>
       <description class="tip">&options.extensions.tip;</description>
 
@@ -81,6 +81,7 @@ limitations under the License.
       <checkbox id="recordAssertTitle" label="&options.recordAssertTitle.description;"/>
       <checkbox id="recordAbsoluteURL" label="&options.recordAbsoluteURL.description;"/>
     </tabpanel>
+    <!-- Export options
     <tabpanel orient="vertical">
       <hbox flex="1">
 	<listbox id="format-list" onselect="updateFormatSelection()" width="100"/>
@@ -96,6 +97,7 @@ limitations under the License.
 	<button label="&options.formats.source-button.label;" oncommand="openFormatSource()"/>
       </hbox>
     </tabpanel>
+    -->
   </tabpanels>
 </tabbox>
 </dialog>
