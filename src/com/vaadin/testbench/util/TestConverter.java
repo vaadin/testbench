@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import org.apache.commons.io.IOUtils;
 import org.mozilla.javascript.Context;
@@ -44,33 +45,37 @@ public class TestConverter {
         knownBrowsers.put("googlechrome", "*googlechrome");
         knownBrowsers.put("*googlechrome", "*googlechrome");
     }
-    private static final String JAVA_HEADER = "package {package};\n" + "\n"
-            + "import com.vaadin.testbench.testcase.AbstractVaadinTestCase;\n"
-            + "import java.io.IOException;\n" + "import java.io.File;\n"
+    // "package {package};\n" + "\n"
+    private static final String JAVA_HEADER = "import com.vaadin.testbench.testcase.AbstractVaadinTestCase;\n"
+            + "import java.io.IOException;\n"
+            + "import java.io.File;\n"
             + "import javax.imageio.ImageIO;\n"
             + "import com.vaadin.testbench.util.ImageUtil;\n"
-            + "import com.vaadin.testbench.util.CurrentCommand;\n" + "\n"
-            + "public class {class} extends AbstractVaadinTestCase {\n" + "\n"
-            + "public void setUp() throws Exception {\n"
-            + "        setBrowser({browser});\n super.setUp();\n" + "}" + "\n";
+            + "import com.vaadin.testbench.util.CurrentCommand;\n"
+            + "import com.vaadin.testbench.util.BrowserUtil;\n"
+            + "import com.vaadin.testbench.util.BrowserVersion;\n"
+            + "\n"
+            + "public class {class} extends AbstractVaadinTestCase {\n"
+            + "\n"
+            + "public void setUp(){\n}\n\n";
 
-    private static final String TEST_METHOD_HEADER = "public void test{testName}() throws Throwable {\n";
+    private static final String TEST_METHOD_HEADER = "public void {testName}() throws Throwable {\n";
     private static final String TEST_METHOD_FOOTER = "}\n";
 
     private static final String JAVA_FOOTER = "}\n";
 
-    private static final String PACKAGE_DIR = "com/vaadin/automatedtests";
+    // private static final String PACKAGE_DIR = "com/vaadin/automatedtests";
 
     // Flags to determine what to do during conversion.
     private static boolean screenshot = false;
     private static boolean firstScreenshot = true;
     private static boolean isOpera = false, isSafari = false, isChrome = false;
+    private static boolean runner = false;
 
     // Path to file being converted.
     private static String filePath = "";
     private static String absoluteFilePath = "";
     private static String browserUnderConversion = "";
-    private static String fileName = "";
 
     public static void main(String[] args) {
         if (args.length < 3) {
@@ -83,74 +88,75 @@ public class TestConverter {
         String browserString = args[1];
         String browsers[] = browserString.split(",");
 
+        List<String> browserList = new ArrayList<String>();
+        for (String browser : browsers) {
+            browserList.add(browser);
+        }
+
         System.out.println("Using output directory: " + outputDirectory);
         createIfNotExists(outputDirectory);
-        createIfNotExists(outputDirectory + File.separator + PACKAGE_DIR);
+        // createIfNotExists(outputDirectory + File.separator + PACKAGE_DIR);
 
-        for (String browser : browsers) {
-            System.out.println("Generating tests for " + browser);
-            browserUnderConversion = browser;
-            isOpera = isSafari = isChrome = false;
-
-            OutputStream out = null;
-            try {
-                String browserId = knownBrowsers.get(browser.toLowerCase());
-                if (browserId == null) {
-                    if (browser.contains("Opera") || browser.contains("opera")) {
-                        isOpera = true;
-                    } else if (browser.contains("Safari")
-                            || browser.contains("safari")) {
-                        isSafari = true;
-                    } else if (browser.contains("Google")
-                            || browser.contains("google")) {
-                        isChrome = true;
-                    }
-                } else {
-                    if (browserId.equals("*opera")) {
-                        isOpera = true;
-                    } else if (browserId.equals("*safari")) {
-                        isSafari = true;
-                    } else if (browserId.equals("*googlechrome")) {
-                        isChrome = true;
+        // Write the tests to the java file
+        for (int i = 2; i < args.length; i++) {
+            if (browsers.length > 1) {
+                List<String> pick = new ArrayList<String>();
+                for (String browser : browsers) {
+                    pick.add(browser);
+                }
+                browserList.clear();
+                Random rnd = new Random(System.currentTimeMillis());
+                while (!pick.isEmpty()) {
+                    int position = Math.abs(rnd.nextInt() % pick.size());
+                    String picked = pick.get(position);
+                    if (picked != null) {
+                        browserList.add(picked);
+                        pick.remove(position);
                     }
                 }
+            }
+            OutputStream out = null;
+
+            String filename;
+            try {
+                filename = checkIfSuite(args[i]);
+                System.out.println("Generating test " + getTestName(filename));
+                // browserUnderConversion = browser;
 
                 // Create a java file for holding all tests for this browser
-                out = createJavaFileForBrowser(browser, outputDirectory);
+                out = createJavaFileForTest(getTestName(filename),
+                        outputDirectory);
 
-                // Write the tests to the java file
-                for (int i = 2; i < args.length; i++) {
-                    String filename = checkIfSuite(args[i]);
-                    try {
-                        String testMethod = createTestMethod(filename,
-                                getTestName(filename));
-                        out.write(testMethod.getBytes());
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                // Create tests for each requested browser
+                for (String browser : browserList) {
+                    StringBuilder browserInit = new StringBuilder();
+                    browserInit.append("public void test"
+                            + getSafeName(browser) + "() throws Throwable{\n");
+
+                    browserInit.append("setBrowser(\"" + browser + "\");\n");
+                    browserInit.append("super.setUp();\n");
+
+                    browserInit.append(getTestName(filename) + "();");
+                    browserInit.append("\n}\n\n");
+                    out.write(browserInit.toString().getBytes());
+                }
+
+                try {
+                    String testMethod = createTestMethod(filename,
+                            getTestName(filename));
+                    out.write(testMethod.getBytes());
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
 
                 // Write the footer to the browser test class.
                 writeJavaFooter(out);
-
-            } catch (IOException e) {
+            } catch (FileNotFoundException e1) {
                 // TODO Auto-generated catch block
-                e.printStackTrace();
-            } finally {
-                try {
-                    if (out != null) {
-                        out.flush();
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                try {
-                    if (out != null) {
-                        out.close();
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                e1.printStackTrace();
+            } catch (IOException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
             }
         }
     }
@@ -168,6 +174,8 @@ public class TestConverter {
             System.exit(1);
         }
 
+        runner = true;
+
         String outputDirectory = args[0];
         String browserString = args[1];
         String browsers[] = browserString.split(",");
@@ -180,7 +188,8 @@ public class TestConverter {
                 System.exit(1);
             }
         }
-        outputPath = new File(outputDirectory + File.separator + PACKAGE_DIR);
+        outputPath = new File(outputDirectory);// + File.separator +
+        // PACKAGE_DIR);
         if (!outputPath.exists()) {
             if (!outputPath.mkdirs()) {
                 System.err.println("Could not create directory: "
@@ -337,6 +346,17 @@ public class TestConverter {
         return outputStream;
     }
 
+    private static OutputStream createJavaFileForTest(String testName,
+            String outputDirectory) throws IOException {
+        File outputFile = getJavaFile(testName, outputDirectory);
+        System.out.println("Creating " + outputFile + " for " + testName);
+        FileOutputStream outputStream = new FileOutputStream(outputFile);
+
+        outputStream.write(getJavaHeader(getSafeName(testName), testName));
+
+        return outputStream;
+    }
+
     private static OutputStream createJavaFile(String testName, String browser,
             String outputDirectory) throws IOException {
         File outputFile = getJavaFile(testName, outputDirectory);
@@ -397,7 +417,9 @@ public class TestConverter {
         String testCaseBody = convertTestCaseToJava(commands, testName);
         String testCaseFooter = getTestCaseFooter(testName);
         String currentCommand = "CurrentCommand cmd = new CurrentCommand(\""
-                + testName + "\");\n";
+                + testName
+                + "\");\n"
+                + "BrowserVersion browser = browserUtils.getBrowserVersion(selenium);\n";
         // Add these in the case a screenshot is wanted
         String windowFunctions = "doCommand(\"windowMaximize\", new String[] { \"\" });\n"
                 + "doCommand(\"windowFocus\", new String[] { \"\" });\n"
@@ -480,7 +502,7 @@ public class TestConverter {
     private static byte[] getJavaHeader(String className, String browser) {
         String header = JAVA_HEADER;
         header = header.replace("{class}", className);
-        header = header.replace("{package}", getPackageName());
+        // header = header.replace("{package}", getPackageName());
 
         String browserId = knownBrowsers.get(browser.toLowerCase());
         if (browserId == null) {
@@ -502,8 +524,8 @@ public class TestConverter {
         File file = new File(filenameSafeBrowser);
         String filename = removeExtension(file.getName());
 
-        File outputFile = new File(outputDirectory + File.separator
-                + getPackageDir() + File.separator + filename + ".java");
+        File outputFile = new File(outputDirectory + File.separator + filename
+                + ".java"); // + getPackageDir() + File.separator
 
         return outputFile;
     }
@@ -593,32 +615,63 @@ public class TestConverter {
                     first = false;
                 }
 
-                /* Opera, Safari and GoogleChrome need the java native keypress */
-                if (isOpera || isSafari || isChrome) {
+                // If converting with runner result differs a little
+                if (runner) {
+                    /*
+                     * Opera, Safari and GoogleChrome need the java native
+                     * keypress
+                     */
+                    if (isOpera || isSafari || isChrome) {
+                        javaSource
+                                .append("cmd.setCommand(\"pressSpecialKey\", \""
+                                        + value + "\");\n");
+                        javaSource.append("selenium.focus(\"" + location
+                                + "\");\n");
+                        javaSource.append("selenium.keyPressNative(\"" + value
+                                + "\");\n");
+                    } else {
+
+                        /* if enter VK_ENTER will give 10 instead of 13 */
+                        if (Integer.parseInt(value) == 10) {
+                            value = "13";
+                        }
+
+                        javaSource
+                                .append("doCommand(\"pressSpecialKey\", new String[] { \""
+                                        + location
+                                        + "\", \"\\\\"
+                                        + value
+                                        + "\"});\n");
+                    }
+                } else {
+                    // We don't know if opera/safari/chrome will be used
                     javaSource.append("cmd.setCommand(\"pressSpecialKey\", \""
                             + value + "\");\n");
+                    javaSource
+                            .append("if(browser.isSafari() || browser.isOpera() || browser.isChrome()){\n");
                     javaSource
                             .append("selenium.focus(\"" + location + "\");\n");
                     javaSource.append("selenium.keyPressNative(\"" + value
                             + "\");\n");
-                } else {
+                    javaSource
+                            .append("doCommand(\"changeEvent\", new String[]{});\n");
+                    javaSource.append("} else {\n");
+
                     /* if enter VK_ENTER will give 10 instead of 13 */
                     if (Integer.parseInt(value) == 10) {
                         value = "13";
                     }
-                    javaSource.append("cmd.setCommand(\"pressSpecialKey\", \""
-                            + value + "\");\n");
+
                     javaSource
                             .append("doCommand(\"pressSpecialKey\", new String[] { \""
                                     + location
                                     + "\", \"\\\\"
                                     + value
                                     + "\"});\n");
+                    javaSource.append("}\n");
                 }
 
-            } else if ((command.getCmd().equalsIgnoreCase("mouseClick") || command
-                    .getCmd().equalsIgnoreCase("closeNotification"))
-                    && isOpera) {
+            } else if (command.getCmd().equalsIgnoreCase("mouseClick")) {
                 StringBuilder values = new StringBuilder();
                 boolean first = true;
                 String firstParam = "";
@@ -630,13 +683,32 @@ public class TestConverter {
                     } else {
                         values.append(param);
                     }
-
                     first = false;
                 }
-                javaSource.append("cmd.setCommand(\"mouseClick\", \"\");\n");
-                javaSource
-                        .append("doCommand(\"mouseClickOpera\", new String[] {\""
-                                + values + "\"});\n");
+
+                if (runner) {
+                    if (isOpera) {
+                        javaSource
+                                .append("doCommand(\"mouseClickOpera\", new String[] {\""
+                                        + values + "\"});\n");
+                    } else {
+                        javaSource
+                                .append("doCommand(\"mouseClick\", new String[] {\""
+                                        + values + "\"});\n}\n");
+                    }
+                } else {
+                    // We don't know if opera will be used
+                    javaSource
+                            .append("cmd.setCommand(\"mouseClick\", \"\");\n");
+                    javaSource.append("if(browser.isOpera()){\n");
+                    javaSource
+                            .append("doCommand(\"mouseClickOpera\", new String[] {\""
+                                    + values + "\"});\n");
+                    javaSource.append("} else {\n");
+                    javaSource
+                            .append("doCommand(\"mouseClick\", new String[] {\""
+                                    + values + "\"});\n}\n");
+                }
             } else if (command.getCmd().equalsIgnoreCase("verifyTextPresent")) {
 
                 String identifier = "";
@@ -919,11 +991,11 @@ public class TestConverter {
 
     }
 
-    private static String getPackageName() {
-        return PACKAGE_DIR.replaceAll("/", ".");
-    }
-
-    private static String getPackageDir() {
-        return PACKAGE_DIR.replace("/", File.separator);
-    }
+    // private static String getPackageName() {
+    // return PACKAGE_DIR.replaceAll("/", ".");
+    // }
+    //
+    // private static String getPackageDir() {
+    // return PACKAGE_DIR.replace("/", File.separator);
+    // }
 }

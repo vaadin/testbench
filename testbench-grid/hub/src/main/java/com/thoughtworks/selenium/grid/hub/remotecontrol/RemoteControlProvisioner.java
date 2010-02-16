@@ -264,7 +264,7 @@ public class RemoteControlProvisioner {
 
     protected void waitForARemoteControlToBeAvailable()
             throws InterruptedException {
-        remoteControlAvailable.await(30, TimeUnit.SECONDS);
+        remoteControlAvailable.await(5, TimeUnit.SECONDS);
     }
 
     protected void signalThatARemoteControlHasBeenMadeAvailable() {

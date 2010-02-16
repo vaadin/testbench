@@ -3164,7 +3164,34 @@ Selenium.prototype.doScreenCapture = function(locator, value){
 
 /*Enters a characte so that it gets recognized in comboboxes etc.*/
 Selenium.prototype.doEnterCharacter = function(locator, value){
-	this.doType(locator, value);
+	var element = this.browserbot.findElement(locator);
+    if (this.browserbot.shiftKeyDown) {
+        value = new String(value).toUpperCase();
+    }
+    
+    triggerEvent(element, 'focus', false);
+    triggerEvent(element, 'select', true);
+    var maxLengthAttr = element.getAttribute("maxLength");
+    var actualValue = value;
+    if (maxLengthAttr != null) {
+        var maxLength = parseInt(maxLengthAttr);
+        if (value.length > maxLength) {
+            actualValue = value.substr(0, maxLength);
+        }
+    }
+
+    if (getTagName(element) == "body") {
+        if (element.ownerDocument && element.ownerDocument.designMode) {
+            var designMode = new String(element.ownerDocument.designMode).toLowerCase();
+            if (designMode = "on") {
+                // this must be a rich text control!
+                element.innerHTML = actualValue;
+            }
+        }
+    } else {
+        element.value = actualValue;
+    }
+    
 	if(value.length > 1){
 		for(i = 0; i < value.length;i++){
 			this.doKeyDown(locator, value.charAt(i));
@@ -3174,6 +3201,9 @@ Selenium.prototype.doEnterCharacter = function(locator, value){
 		this.doKeyDown(locator, value);
 		this.doKeyUp(locator, value);
 	}
+	try {
+		triggerEvent(element, 'change', true);
+	} catch (e) {}
 };
 
 /*Sends an arrow press recognized by browsers.*/

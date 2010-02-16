@@ -109,6 +109,18 @@ public class BrowserVersion {
         return browserName.equals("InternetExplorer");
     }
 
+    public boolean isSafari() {
+        return browserName.equals("Safari");
+    }
+
+    public boolean isChrome() {
+        return browserName.equals("Chrome");
+    }
+
+    public boolean isOpera() {
+        return browserName.equals("Opera");
+    }
+
     public String getPlatform() {
         return platform;
     }

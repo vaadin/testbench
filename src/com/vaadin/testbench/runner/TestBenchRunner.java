@@ -28,7 +28,7 @@ import com.vaadin.testbench.util.ParserFunctions;
  */
 public class TestBenchRunner {
 
-    private static final String PACKAGE_DIR = "com/vaadin/automatedtests";
+    // private static final String PACKAGE_DIR = "com/vaadin/automatedtests";
 
     private com.sun.tools.javac.Main javac;
     private TestResult result;
@@ -290,8 +290,7 @@ public class TestBenchRunner {
                             "[^a-zA-Z0-9]", "_");
 
                     file = IOFunctions.getFile(classname + ".java", new File(
-                            temp.getAbsolutePath() + file.separator
-                                    + PACKAGE_DIR), 0);
+                            temp.getAbsolutePath()), 0);
 
                     String[] options = new String[] { "-encoding", encoding,
                             "-cp", System.getProperty("java.class.path", "."),
@@ -302,8 +301,7 @@ public class TestBenchRunner {
                     // add to testSuite
                     if (status == 0) {
                         File classFile = IOFunctions.getFile(classname
-                                + ".class", new File(dir + File.separator
-                                + PACKAGE_DIR), 0);
+                                + ".class", dir, 0);
                         if (classFile != null) {
                             classes.add(loadClassDynamically(dir, classFile,
                                     classname));
@@ -516,9 +514,8 @@ public class TestBenchRunner {
                                         dir.getAbsolutePath(), browsers[j],
                                         file.getAbsolutePath() });
 
-                        out.write("suite.addTestSuite("
-                                + PACKAGE_DIR.replace("\\", ".").replace("/",
-                                        ".") + "." + classname + ".class);\n");
+                        out.write("suite.addTestSuite(" + classname
+                                + ".class);\n");
                     } else {
                         // Else close file and throw exception
                         System.err.println("Found unsupported file "
