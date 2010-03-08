@@ -59,7 +59,7 @@ public class TestConverter {
             + "\n"
             + "public void setUp(){\n}\n\n";
 
-    private static final String TEST_METHOD_HEADER = "public void {testName}() throws Throwable {\n";
+    private static final String TEST_METHOD_HEADER = "private void {testName}() throws Throwable {\n";
     private static final String TEST_METHOD_FOOTER = "}\n";
 
     private static final String JAVA_FOOTER = "}\n";
