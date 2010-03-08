@@ -7,6 +7,8 @@ public class BrowserVersion {
     private String browserName = "";
     private String fullVersion;
     private String majorVersion;
+    private int majorVersionInt;
+    private int minorVersionInt;
     private String platform = "Other";
 
     public BrowserVersion(String userAgent) {
@@ -84,9 +86,20 @@ public class BrowserVersion {
 
         fullVersion = versionString;
 
-        if (versionString.indexOf(".") != -1) {
-            majorVersion = versionString.substring(0, versionString
-                    .indexOf("."));
+        int dotPos = versionString.indexOf(".");
+        if (dotPos != -1) {
+            majorVersion = versionString.substring(0, dotPos);
+            try {
+                majorVersionInt = Integer.parseInt(majorVersion);
+            } catch (Exception e) {
+                majorVersionInt = -1;
+            }
+            try {
+                minorVersionInt = Integer.parseInt(versionString
+                        .substring(dotPos + 1));
+            } catch (Exception e) {
+                minorVersionInt = -1;
+            }
         } else {
             majorVersion = fullVersion;
         }
@@ -123,5 +136,28 @@ public class BrowserVersion {
 
     public String getPlatform() {
         return platform;
+    }
+
+    /**
+     * Checks if the major/minor version of the browser is older than the given
+     * version (exclusive). Returns true if the current browser version is older
+     * than the given.
+     * 
+     * @param oldMajorVersion
+     * @param oldMinorVersion
+     * @return true if the current browser version is older than the given,
+     *         false otherwise
+     */
+    public boolean isOlderVersion(int oldMajorVersion, int oldMinorVersion) {
+        if (majorVersionInt < oldMajorVersion) {
+            return true;
+        }
+
+        if (majorVersionInt == oldMajorVersion
+                && minorVersionInt < oldMinorVersion) {
+            return true;
+        }
+
+        return false;
     }
 }

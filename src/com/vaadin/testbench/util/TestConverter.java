@@ -59,7 +59,7 @@ public class TestConverter {
             + "\n"
             + "public void setUp(){\n}\n\n";
 
-    private static final String TEST_METHOD_HEADER = "private void {testName}() throws Throwable {\n";
+    private static final String TEST_METHOD_HEADER = "private void {testMethodName}() throws Throwable {\n";
     private static final String TEST_METHOD_FOOTER = "}\n";
 
     private static final String JAVA_FOOTER = "}\n";
@@ -121,13 +121,14 @@ public class TestConverter {
             try {
                 filename = checkIfSuite(args[i]);
                 System.out.println("Generating test " + getTestName(filename));
-                // browserUnderConversion = browser;
 
-                // Create a java file for holding all tests for this browser
-                out = createJavaFileForTest(getTestName(filename),
-                        outputDirectory);
+                String testName = getTestName(filename);
+                // Create a java file for the tests
+                out = createJavaFileForTest(testName, outputDirectory);
 
-                // Create tests for each requested browser
+                // Create a test method for each requested browser
+                // Only wrappers which set the browser and call the real test
+                // method
                 for (String browser : browserList) {
                     StringBuilder browserInit = new StringBuilder();
                     browserInit.append("public void test"
@@ -136,14 +137,13 @@ public class TestConverter {
                     browserInit.append("setBrowser(\"" + browser + "\");\n");
                     browserInit.append("super.setUp();\n");
 
-                    browserInit.append(getTestName(filename) + "();");
+                    browserInit.append(getTestMethodName(testName) + "();");
                     browserInit.append("\n}\n\n");
                     out.write(browserInit.toString().getBytes());
                 }
 
                 try {
-                    String testMethod = createTestMethod(filename,
-                            getTestName(filename));
+                    String testMethod = createTestMethod(filename, testName);
                     out.write(testMethod.getBytes());
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -159,6 +159,10 @@ public class TestConverter {
                 e1.printStackTrace();
             }
         }
+    }
+
+    private static String getTestMethodName(String testName) {
+        return "internal_" + testName;
     }
 
     /**
@@ -314,10 +318,19 @@ public class TestConverter {
 
     }
 
+    /**
+     * Returns a sanitized name of the test. The test name is specified by its
+     * filename, not by the test name inside the file.
+     * 
+     * @param filename
+     *            Filename of the test
+     * @return Sanitized name safe for use as a java method name
+     */
     private static String getTestName(String filename) {
         File f = new File(filename);
         String testName = removeExtension(f.getName());
 
+        // FIXME: Move to another location
         // Set path to file under conversion
         filePath = f.getParent();
         if (filePath == null) {
@@ -334,25 +347,13 @@ public class TestConverter {
         return testName;
     }
 
-    private static OutputStream createJavaFileForBrowser(String browser,
-            String outputDirectory) throws IOException {
-        File outputFile = getJavaFile(browser, outputDirectory);
-        System.out.println("Creating " + outputFile + " for " + browser
-                + " tests");
-        FileOutputStream outputStream = new FileOutputStream(outputFile);
-
-        outputStream.write(getJavaHeader(getSafeName(browser), browser));
-
-        return outputStream;
-    }
-
     private static OutputStream createJavaFileForTest(String testName,
             String outputDirectory) throws IOException {
         File outputFile = getJavaFile(testName, outputDirectory);
         System.out.println("Creating " + outputFile + " for " + testName);
         FileOutputStream outputStream = new FileOutputStream(outputFile);
 
-        outputStream.write(getJavaHeader(getSafeName(testName), testName));
+        outputStream.write(getJavaHeader(getSafeName(testName)));
 
         return outputStream;
     }
@@ -364,7 +365,8 @@ public class TestConverter {
         // + " tests");
         FileOutputStream outputStream = new FileOutputStream(outputFile);
 
-        outputStream.write(getJavaHeader(testName, browser));
+        // FIXME This does no longer write a browser dependent header
+        outputStream.write(getJavaHeader(testName));
 
         return outputStream;
     }
@@ -417,21 +419,25 @@ public class TestConverter {
         String testCaseBody = convertTestCaseToJava(commands, testName);
         String testCaseFooter = getTestCaseFooter(testName);
         String currentCommand = "CurrentCommand cmd = new CurrentCommand(\""
-                + testName
-                + "\");\n"
-                + "BrowserVersion browser = browserUtils.getBrowserVersion(selenium);\n";
+                + testName + "\");\n";
+        String versionDetector = "BrowserVersion browser = browserUtils.getBrowserVersion(selenium);\n"
+                + "String mouseClickCommand = \"mouseClick\";\n"
+                + "if (browser.isOpera() && browser.isOlderVersion(10,50)) {"
+                + "     mouseClickCommand = \"mouseClickOpera\";\n" + "}\n";
+
         // Add these in the case a screenshot is wanted
         String windowFunctions = "doCommand(\"windowMaximize\", new String[] { \"\" });\n"
                 + "doCommand(\"windowFocus\", new String[] { \"\" });\n"
                 + "getCanvasPosition();\n";
 
         if (screenshot) {
-            return testCaseHeader + currentCommand + windowFunctions + "try{\n"
-                    + testCaseBody + testCaseFooter;
+            return testCaseHeader + currentCommand + versionDetector
+                    + windowFunctions + "try{\n" + testCaseBody
+                    + testCaseFooter;
         }
 
-        return testCaseHeader + currentCommand + "try{\n" + testCaseBody
-                + testCaseFooter;
+        return testCaseHeader + currentCommand + versionDetector + "try{\n"
+                + testCaseBody + testCaseFooter;
     }
 
     private static String removeExtension(String name) {
@@ -440,7 +446,8 @@ public class TestConverter {
 
     private static String getTestCaseHeader(String testName) {
         String header = TEST_METHOD_HEADER;
-        header = header.replace("{testName}", testName);
+        header = header
+                .replace("{testMethodName}", getTestMethodName(testName));
 
         return header;
     }
@@ -499,17 +506,10 @@ public class TestConverter {
                 + footer;
     }
 
-    private static byte[] getJavaHeader(String className, String browser) {
+    private static byte[] getJavaHeader(String className) {
         String header = JAVA_HEADER;
         header = header.replace("{class}", className);
         // header = header.replace("{package}", getPackageName());
-
-        String browserId = knownBrowsers.get(browser.toLowerCase());
-        if (browserId == null) {
-            browserId = browser;
-        }
-
-        header = header.replace("{browser}", "\"" + browserId + "\"");
 
         return header.getBytes();
     }
@@ -700,14 +700,9 @@ public class TestConverter {
                     // We don't know if opera will be used
                     javaSource
                             .append("cmd.setCommand(\"mouseClick\", \"\");\n");
-                    javaSource.append("if(browser.isOpera()){\n");
                     javaSource
-                            .append("doCommand(\"mouseClickOpera\", new String[] {\""
+                            .append("doCommand(mouseClickCommand, new String[] {\""
                                     + values + "\"});\n");
-                    javaSource.append("} else {\n");
-                    javaSource
-                            .append("doCommand(\"mouseClick\", new String[] {\""
-                                    + values + "\"});\n}\n");
                 }
             } else if (command.getCmd().equalsIgnoreCase("verifyTextPresent")) {
 
