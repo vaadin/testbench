@@ -41,7 +41,7 @@
 		</pathconvert>
 
 		<echo>Using test scripts: ${testfiles}</echo>
-		<java classname="com.vaadin.testbench.util.TestConverter" classpathref="classpath">
+		<java classname="com.vaadin.testbench.util.TestConverter" classpathref="classpath" failonerror="true">
 			<sysproperty key="com.vaadin.testbench.screenshot.onfail" value="false"/>
 			<arg value="${temp-dir}/src" />
 			<arg value="${browsers}" />
