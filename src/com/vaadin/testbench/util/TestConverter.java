@@ -647,8 +647,6 @@ public class TestConverter {
                             .append("selenium.focus(\"" + location + "\");\n");
                     javaSource.append("selenium.keyPressNative(\"" + value
                             + "\");\n");
-                    javaSource
-                            .append("doCommand(\"changeEvent\", new String[]{});\n");
                     javaSource.append("} else {\n");
 
                     /* if enter VK_ENTER will give 10 instead of 13 */
