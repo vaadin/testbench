@@ -71,7 +71,7 @@ public class TestConverter {
     private static String filePath = "";
     private static String absoluteFilePath = "";
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         if (args.length < 3) {
             System.err.println("Usage: " + TestConverter.class.getName()
                     + " <output directory> <browsers> <html test files>");
@@ -145,12 +145,10 @@ public class TestConverter {
 
                 // Write the footer to the browser test class.
                 writeJavaFooter(out);
-            } catch (FileNotFoundException e1) {
-                // TODO Auto-generated catch block
-                e1.printStackTrace();
-            } catch (IOException e1) {
-                // TODO Auto-generated catch block
-                e1.printStackTrace();
+            } catch (Exception e1) {
+                // Rethrow all exceptions. The conversion succeeds only if all
+                // tests are found and can be converted.
+                throw e1;
             }
         }
     }
