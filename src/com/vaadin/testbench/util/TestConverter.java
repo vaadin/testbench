@@ -23,7 +23,6 @@ import org.mozilla.javascript.NativeArray;
 import org.mozilla.javascript.NativeObject;
 import org.mozilla.javascript.Scriptable;
 
-import com.vaadin.testbench.runner.util.IOFunctions;
 import com.vaadin.testbench.util.SeleniumHTMLTestCaseParser.Command;
 
 public class TestConverter {
@@ -71,7 +70,6 @@ public class TestConverter {
     // Path to file being converted.
     private static String filePath = "";
     private static String absoluteFilePath = "";
-    private static String browserUnderConversion = "";
 
     public static void main(String[] args) {
         if (args.length < 3) {
@@ -129,7 +127,8 @@ public class TestConverter {
                     browserInit.append("public void test"
                             + getSafeName(browser) + "() throws Throwable{\n");
 
-                    browserInit.append("setBrowser(\"" + browser + "\");\n");
+                    browserInit.append("setBrowserIdentifier(\"" + browser
+                            + "\");\n");
                     browserInit.append("super.setUp();\n");
 
                     browserInit.append(getTestMethodName(testName) + "();");
@@ -196,7 +195,7 @@ public class TestConverter {
         }
 
         for (String browser : browsers) {
-            browserUnderConversion = browser;
+            // browserUnderConversion = browser;
             isOpera = isSafari = isChrome = false;
 
             OutputStream out = null;
@@ -265,13 +264,13 @@ public class TestConverter {
     private static String checkIfSuite(String filename)
             throws FileNotFoundException, IOException {
         File testFile = new File(filename);
-        if (!testFile.exists()) {
-            System.out.println("Searching for file " + testFile.getName()
-                    + " to parse.");
-            // If not found do a small search for file
-            testFile = IOFunctions.getFile(testFile.getName(), testFile
-                    .getParentFile(), 0);
-        }
+        // if (!testFile.exists()) {
+        // System.out.println("Searching for file " + testFile.getName()
+        // + " to parse.");
+        // // If not found do a small search for file
+        // testFile = IOFunctions.getFile(testFile.getName(), testFile
+        // .getParentFile(), 0);
+        // }
 
         if (testFile == null) {
             throw new FileNotFoundException("Could not find file " + filename);
@@ -481,7 +480,7 @@ public class TestConverter {
                     + "ImageIO.write(ImageUtil.stringToImage(statusScreen), \"png\", new File(directory + \"errors/"
                     + testName
                     + "_failure_"
-                    + getSafeName(browserUnderConversion)
+                    + "\"+ getBrowserIdentifier().replaceAll(\"[^a-zA-Z0-9]\", \"_\")+\""
                     + ".png\"));\n}catch(IOException ioe){\n"
                     + "ioe.printStackTrace();\n}\n"
                     + "throw new java.lang.AssertionError(cmd.getInfo() + \". Failure message = \" + e.getMessage());\n}\n"
