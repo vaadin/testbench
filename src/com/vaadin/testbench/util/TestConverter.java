@@ -126,11 +126,11 @@ public class TestConverter {
                 // method
                 for (String browser : browserList) {
                     StringBuilder browserInit = new StringBuilder();
-                    browserInit.append("public void "
+                    browserInit.append("public void test"
                             + getSafeName(browser) + "() throws Throwable{\n");
 
                     browserInit.append("setBrowser(\"" + browser + "\");\n");
-                    browserInit.append("super.init();\n");
+                    browserInit.append("super.setUp();\n");
 
                     browserInit.append(getTestMethodName(testName) + "();");
                     browserInit.append("\n}\n\n");
