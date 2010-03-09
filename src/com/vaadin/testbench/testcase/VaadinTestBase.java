@@ -1,9 +1,5 @@
 package com.vaadin.testbench.testcase;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
 import com.thoughtworks.selenium.SeleneseTestBase;
 
 public class VaadinTestBase extends SeleneseTestBase {
@@ -11,7 +7,8 @@ public class VaadinTestBase extends SeleneseTestBase {
     private VaadinSeleniumImplementation vaadinSelenium;
 
     private static final int DEFAULT_SELENIUM_RC_PORT = 4444;
-    private List<TestHost> testHosts = new ArrayList<TestHost>();
+    private String seleniumRcHubHost;
+    private int seleniumRcHubPort = DEFAULT_SELENIUM_RC_PORT;
 
     VaadinSeleniumImplementation getVaadinSelenium() {
         return vaadinSelenium;
@@ -19,7 +16,6 @@ public class VaadinTestBase extends SeleneseTestBase {
 
     @Override
     public void setUp(String url, String browserString) throws Exception {
-        TestHost seleniumRcHost = getRandomTestHost();
 
         if (url == null) {
             throw new IllegalArgumentException("No url specified");
@@ -27,8 +23,8 @@ public class VaadinTestBase extends SeleneseTestBase {
         if (browserString == null) {
             throw new IllegalArgumentException("No browser specified");
         }
-        vaadinSelenium = new VaadinSeleniumImplementation(seleniumRcHost
-                .getHost(), seleniumRcHost.getPort(), browserString, url);
+        vaadinSelenium = new VaadinSeleniumImplementation(seleniumRcHubHost,
+                seleniumRcHubPort, browserString, url);
 
         // System.out.println("Starting test of " + url + " in " + browserString
         // + " on " + seleniumRcHost.getHost());
@@ -36,30 +32,18 @@ public class VaadinTestBase extends SeleneseTestBase {
         vaadinSelenium.start();
     }
 
-    private TestHost getRandomTestHost() {
-        if (testHosts.isEmpty()) {
-            return new TestHost("localhost", DEFAULT_SELENIUM_RC_PORT);
-        }
-
-        Random r = new Random();
-        int id = r.nextInt(testHosts.size());
-        return testHosts.get(id);
-    }
-
-    protected void setTestHosts(String[] testHosts) {
-        if (testHosts == null) {
-            this.testHosts.clear();
-            return;
-        }
-
-        for (String testHost : testHosts) {
-            String[] parts = testHost.split(":", 2);
-            int port = DEFAULT_SELENIUM_RC_PORT;
-            if (parts.length == 2) {
-                port = Integer.parseInt(parts[1]);
-            }
-
-            this.testHosts.add(new TestHost(parts[0], port));
+    /**
+     * Sets the RC/HUB machine to use to the given testHost
+     * 
+     * @param testHost
+     *            Test host as dns name "host.name" or ip address "127.0.0.1".
+     *            May contain an additional ":port" part at the end.
+     */
+    protected void setHubAddress(String testHost) {
+        String[] parts = testHost.split(":", 2);
+        seleniumRcHubHost = parts[0];
+        if (parts.length == 2) {
+            seleniumRcHubPort = Integer.parseInt(parts[1]);
         }
     }
 

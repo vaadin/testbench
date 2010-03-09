@@ -55,16 +55,12 @@ public class TestConverter {
             + "import com.vaadin.testbench.util.BrowserUtil;\n"
             + "import com.vaadin.testbench.util.BrowserVersion;\n"
             + "\n"
-            + "public class {class} extends AbstractVaadinTestCase {\n"
-            + "\n"
-            + "public void setUp(){\n}\n\n";
+            + "public class {class} extends AbstractVaadinTestCase {\n" + "\n";
 
     private static final String TEST_METHOD_HEADER = "private void {testMethodName}() throws Throwable {\n";
     private static final String TEST_METHOD_FOOTER = "}\n";
 
     private static final String JAVA_FOOTER = "}\n";
-
-    // private static final String PACKAGE_DIR = "com/vaadin/automatedtests";
 
     // Flags to determine what to do during conversion.
     private static boolean screenshot = false;
@@ -95,7 +91,6 @@ public class TestConverter {
 
         System.out.println("Using output directory: " + outputDirectory);
         createIfNotExists(outputDirectory);
-        // createIfNotExists(outputDirectory + File.separator + PACKAGE_DIR);
 
         // Write the tests to the java file
         for (int i = 2; i < args.length; i++) {
@@ -131,11 +126,11 @@ public class TestConverter {
                 // method
                 for (String browser : browserList) {
                     StringBuilder browserInit = new StringBuilder();
-                    browserInit.append("public void test"
+                    browserInit.append("public void "
                             + getSafeName(browser) + "() throws Throwable{\n");
 
                     browserInit.append("setBrowser(\"" + browser + "\");\n");
-                    browserInit.append("super.setUp();\n");
+                    browserInit.append("super.init();\n");
 
                     browserInit.append(getTestMethodName(testName) + "();");
                     browserInit.append("\n}\n\n");
@@ -192,8 +187,7 @@ public class TestConverter {
                 System.exit(1);
             }
         }
-        outputPath = new File(outputDirectory);// + File.separator +
-        // PACKAGE_DIR);
+        outputPath = new File(outputDirectory);
         if (!outputPath.exists()) {
             if (!outputPath.mkdirs()) {
                 System.err.println("Could not create directory: "
@@ -986,11 +980,4 @@ public class TestConverter {
 
     }
 
-    // private static String getPackageName() {
-    // return PACKAGE_DIR.replaceAll("/", ".");
-    // }
-    //
-    // private static String getPackageDir() {
-    // return PACKAGE_DIR.replace("/", File.separator);
-    // }
 }
