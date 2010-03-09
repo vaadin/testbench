@@ -31,12 +31,14 @@
 		<include name="*.html" />
 	</fileset>
 
-	<!-- This target converts HTML tests files to java junit tests. One test file for each browser is created. -->
+	<!-- This target converts HTML tests files to java junit tests. One java file for each test is created. -->
 	<target name="create-tests">
 		<fileset id="tests">
 			<include />
 		</fileset>
-		<pathconvert pathsep=" " property="testfiles" refid="html-test-files" />
+		<pathconvert pathsep=" " property="testfiles" refid="html-test-files">
+			<regexpmapper from="^(.*)$$" to="'\1'" />
+		</pathconvert>
 
 		<echo>Using test scripts: ${testfiles}</echo>
 		<java classname="com.vaadin.testbench.util.TestConverter" classpathref="classpath">
