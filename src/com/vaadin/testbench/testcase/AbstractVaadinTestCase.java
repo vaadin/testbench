@@ -23,8 +23,6 @@ import com.vaadin.testbench.util.ImageUtil;
  */
 public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
 
-    private static final String DEFAULT_BROWSER = "winxp-firefox35";// "*chrome";
-
     private static int imageNumber = 0;
     private static String testCaseName = "";
     private static List<junit.framework.AssertionFailedError> softAssert = new LinkedList<junit.framework.AssertionFailedError>();
@@ -322,7 +320,6 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
     }
 
     private static final String TEST_HOST_PROPERTY = "com.vaadin.testbench.tester.host";
-    private static final String BROWSER_PROPERTY = "com.vaadin.testbench.tester.browser";
     private static final String DEPLOYMENT_URL_PROPERTY = "com.vaadin.testbench.deployment.url";
 
     // Init methods
@@ -335,7 +332,6 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
     public void setUp() throws Exception {
         String testHost = System.getProperty(TEST_HOST_PROPERTY);
         String deploymentUrl = System.getProperty(DEPLOYMENT_URL_PROPERTY);
-        String browser = System.getProperty(BROWSER_PROPERTY);
 
         if (testHost == null || testHost.length() == 0) {
             throw new IllegalArgumentException(
@@ -352,14 +348,13 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
                             + "DO NOT include the context path, this is stored in the test case.");
         }
 
-        if (browserIdentifier != null) {
-            browser = browserIdentifier;
-        } else if (browser == null || browser.length() == 0) {
-            browser = DEFAULT_BROWSER;
+        if (browserIdentifier == null) {
+            throw new IllegalArgumentException(
+                    "Missing browser definition. Define using setBrowserIdentifier().");
         }
 
         testBase.setHubAddress(testHost);
-        testBase.setUp(deploymentUrl, browser);
+        testBase.setUp(deploymentUrl, browserIdentifier);
         selenium = testBase.getVaadinSelenium();
     }
 
