@@ -37,7 +37,7 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
     protected ImageComparison compare = new ImageComparison();
     protected BrowserUtil browserUtils = new BrowserUtil();
 
-    private String browserOverride = null;
+    private String browserIdentifier = null;
     private static int screenshotPause = 50;
 
     protected VaadinTestBase testBase = new VaadinTestBase();
@@ -313,8 +313,12 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
         return softAssert;
     }
 
-    protected void setBrowser(String browser) {
-        browserOverride = browser;
+    protected void setBrowserIdentifier(String browserIdentifier) {
+        this.browserIdentifier = browserIdentifier;
+    }
+
+    protected String getBrowserIdentifier() {
+        return browserIdentifier;
     }
 
     private static final String TEST_HOST_PROPERTY = "com.vaadin.testbench.tester.host";
@@ -348,8 +352,8 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
                             + "DO NOT include the context path, this is stored in the test case.");
         }
 
-        if (browserOverride != null) {
-            browser = browserOverride;
+        if (browserIdentifier != null) {
+            browser = browserIdentifier;
         } else if (browser == null || browser.length() == 0) {
             browser = DEFAULT_BROWSER;
         }
