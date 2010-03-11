@@ -45,6 +45,9 @@ public class TestConverter {
         knownBrowsers.put("*googlechrome", "*googlechrome");
     }
     // "package {package};\n" + "\n"
+
+    // Empty setUp() is needed to prevent super.setUp from being executed in the
+    // setup phase
     private static final String JAVA_HEADER = "import com.vaadin.testbench.testcase.AbstractVaadinTestCase;\n"
             + "import java.io.IOException;\n"
             + "import java.io.File;\n"
@@ -54,7 +57,9 @@ public class TestConverter {
             + "import com.vaadin.testbench.util.BrowserUtil;\n"
             + "import com.vaadin.testbench.util.BrowserVersion;\n"
             + "\n"
-            + "public class {class} extends AbstractVaadinTestCase {\n" + "\n";
+            + "public class {class} extends AbstractVaadinTestCase {\n"
+            + "\n"
+            + "public void setUp(){\n}\n\n";;
 
     private static final String TEST_METHOD_HEADER = "private void {testMethodName}() throws Throwable {\n";
     private static final String TEST_METHOD_FOOTER = "}\n";
