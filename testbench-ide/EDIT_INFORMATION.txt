@@ -47,3 +47,6 @@ selenium-browserbot.js
 
 selenium-ide.css
 [tooltip and assert button image definitions]
+
+install.rdf
+[firefox 3.6 compatibility]
