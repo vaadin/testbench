@@ -2,7 +2,7 @@
 setlocal
 @echo Running version: @build@
 
-set cpVars=lib\selenium-server-1.0.1.jar;lib\selenium-grid-remote-control-standalone-Vaadin-TestBench-@build@.jar
+set cpVars=lib\selenium-server-1.0.3.jar;lib\selenium-grid-remote-control-standalone-Vaadin-TestBench-@build@.jar
 
 set ENVIRONMENT=winxp-firefox35
 set USEREXTENSIONS=user-extensions.js
