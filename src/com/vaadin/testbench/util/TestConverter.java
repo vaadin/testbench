@@ -96,17 +96,18 @@ public class TestConverter {
                     filename = getTestInputFilename(args[i]);
 
                     String testName = getTestName(filename);
+                    String packageName = getJavaPackageName(testName, browser);
                     System.out.println("Generating test " + testName + " for "
-                            + browser);
+                            + browser + " in " + packageName);
 
                     // Create a java file for the test
-                    out = createJavaFileForTest(testName, browser,
-                            getJavaPackageName(browser), outputDirectory);
+                    out = createJavaFileForTest(testName, packageName, browser,
+                            outputDirectory);
 
                     /* Create a test method for the browser. */
                     StringBuilder browserInit = new StringBuilder();
-                    browserInit
-                            .append("public void test() throws Throwable{\n");
+                    browserInit.append("public void test"
+                            + getSafeName(browser) + "() throws Throwable{\n");
 
                     browserInit.append("setBrowserIdentifier(\"" + browser
                             + "\");\n");
@@ -210,7 +211,8 @@ public class TestConverter {
                         + safeBrowserIdentifier;
 
                 out = createJavaFile(testName, browserIdentifier,
-                        getJavaPackageName(browserIdentifier), outputDirectory);
+                        getJavaPackageName(testName, browserIdentifier),
+                        outputDirectory);
 
                 try {
                     String testMethod = createTestMethod(filename, testName);
@@ -326,15 +328,14 @@ public class TestConverter {
     }
 
     private static OutputStream createJavaFileForTest(String testName,
-            String browserIdentifier, String packageName, String outputDirectory)
+            String packageName, String browserIdentifier, String outputDirectory)
             throws IOException {
         File outputFile = getJavaFile(testName, packageName, outputDirectory);
         System.out.println("Creating " + outputFile + " for " + testName);
         createIfNotExists(outputFile.getParent());
         FileOutputStream outputStream = new FileOutputStream(outputFile);
 
-        outputStream.write(getJavaHeader(getSafeName(testName),
-                browserIdentifier));
+        outputStream.write(getJavaHeader(getSafeName(testName), packageName));
 
         return outputStream;
     }
@@ -349,7 +350,7 @@ public class TestConverter {
         FileOutputStream outputStream = new FileOutputStream(outputFile);
 
         // FIXME This does no longer write a browser dependent header
-        outputStream.write(getJavaHeader(testName, browserIdentifier));
+        outputStream.write(getJavaHeader(testName, packageName));
 
         return outputStream;
     }
@@ -489,18 +490,16 @@ public class TestConverter {
                 + footer;
     }
 
-    private static byte[] getJavaHeader(String className,
-            String browserIdentifier) {
+    private static byte[] getJavaHeader(String className, String packageName) {
         String header = JAVA_HEADER;
         header = header.replace("{class}", className);
-        header = header.replace("{package}",
-                getJavaPackageName(browserIdentifier));
+        header = header.replace("{package}", packageName);
 
         return header.getBytes();
     }
 
-    private static String getJavaPackageName(String browserName) {
-        return getSafeName(browserName);
+    private static String getJavaPackageName(String testName, String browserName) {
+        return testName + "." + getSafeName(browserName);
     }
 
     private static String getJavaFooter() {
