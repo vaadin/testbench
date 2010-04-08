@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 import org.apache.commons.io.IOUtils;
 import org.mozilla.javascript.Context;
@@ -48,17 +47,15 @@ public class TestConverter {
 
     // Empty setUp() is needed to prevent super.setUp from being executed in the
     // setup phase
-    private static final String JAVA_HEADER = "import com.vaadin.testbench.testcase.AbstractVaadinTestCase;\n"
-            + "import java.io.IOException;\n"
-            + "import java.io.File;\n"
+    private static final String JAVA_HEADER = "package {package};\n\n"
+            + "import com.vaadin.testbench.testcase.AbstractVaadinTestCase;\n"
+            + "import java.io.IOException;\n" + "import java.io.File;\n"
             + "import javax.imageio.ImageIO;\n"
             + "import com.vaadin.testbench.util.ImageUtil;\n"
             + "import com.vaadin.testbench.util.CurrentCommand;\n"
             + "import com.vaadin.testbench.util.BrowserUtil;\n"
-            + "import com.vaadin.testbench.util.BrowserVersion;\n"
-            + "\n"
-            + "public class {class} extends AbstractVaadinTestCase {\n"
-            + "\n"
+            + "import com.vaadin.testbench.util.BrowserVersion;\n" + "\n"
+            + "public class {class} extends AbstractVaadinTestCase {\n" + "\n"
             + "public void setUp(){\n}\n\n";;
 
     private static final String TEST_METHOD_HEADER = "private void {testMethodName}() throws Throwable {\n";
@@ -84,53 +81,32 @@ public class TestConverter {
         }
 
         String outputDirectory = args[0];
-        String browserString = args[1];
-        String browsers[] = browserString.split(",");
-
-        List<String> browserList = new ArrayList<String>();
-        for (String browser : browsers) {
-            browserList.add(browser);
-        }
+        String browsers[] = args[1].split(",");
 
         System.out.println("Using output directory: " + outputDirectory);
         createIfNotExists(outputDirectory);
 
         // Write the tests to the java file
         for (int i = 2; i < args.length; i++) {
-            if (browsers.length > 1) {
-                List<String> pick = new ArrayList<String>();
-                for (String browser : browsers) {
-                    pick.add(browser);
-                }
-                browserList.clear();
-                Random rnd = new Random(System.currentTimeMillis());
-                while (!pick.isEmpty()) {
-                    int position = Math.abs(rnd.nextInt() % pick.size());
-                    String picked = pick.get(position);
-                    if (picked != null) {
-                        browserList.add(picked);
-                        pick.remove(position);
-                    }
-                }
-            }
             OutputStream out = null;
 
             String filename;
             try {
-                filename = checkIfSuite(args[i]);
-                System.out.println("Generating test " + getTestName(filename));
+                for (String browser : browsers) {
+                    filename = getTestInputFilename(args[i]);
 
-                String testName = getTestName(filename);
-                // Create a java file for the tests
-                out = createJavaFileForTest(testName, outputDirectory);
+                    String testName = getTestName(filename);
+                    System.out.println("Generating test " + testName + " for "
+                            + browser);
 
-                // Create a test method for each requested browser
-                // Only wrappers which set the browser and call the real test
-                // method
-                for (String browser : browserList) {
+                    // Create a java file for the test
+                    out = createJavaFileForTest(testName, browser,
+                            getJavaPackageName(browser), outputDirectory);
+
+                    /* Create a test method for the browser. */
                     StringBuilder browserInit = new StringBuilder();
-                    browserInit.append("public void test"
-                            + getSafeName(browser) + "() throws Throwable{\n");
+                    browserInit
+                            .append("public void test() throws Throwable{\n");
 
                     browserInit.append("setBrowserIdentifier(\"" + browser
                             + "\");\n");
@@ -139,17 +115,17 @@ public class TestConverter {
                     browserInit.append(getTestMethodName(testName) + "();");
                     browserInit.append("\n}\n\n");
                     out.write(browserInit.toString().getBytes());
-                }
 
-                try {
-                    String testMethod = createTestMethod(filename, testName);
-                    out.write(testMethod.getBytes());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                    try {
+                        String testMethod = createTestMethod(filename, testName);
+                        out.write(testMethod.getBytes());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
 
-                // Write the footer to the browser test class.
-                writeJavaFooter(out);
+                    // Write the footer to the browser test class.
+                    writeJavaFooter(out);
+                }
             } catch (Exception e1) {
                 // Rethrow all exceptions. The conversion succeeds only if all
                 // tests are found and can be converted.
@@ -179,7 +155,7 @@ public class TestConverter {
 
         String outputDirectory = args[0];
         String browserString = args[1];
-        String browsers[] = browserString.split(",");
+        String browserIdentifiers[] = browserString.split(",");
 
         File outputPath = new File(outputDirectory);
         if (!outputPath.exists()) {
@@ -197,21 +173,23 @@ public class TestConverter {
             }
         }
 
-        for (String browser : browsers) {
+        for (String browserIdentifier : browserIdentifiers) {
             // browserUnderConversion = browser;
             isOpera = isSafari = isChrome = false;
 
             OutputStream out = null;
             try {
-                String browserId = knownBrowsers.get(browser.toLowerCase());
+                String browserId = knownBrowsers.get(browserIdentifier
+                        .toLowerCase());
                 if (browserId == null) {
-                    if (browser.contains("Opera") || browser.contains("opera")) {
+                    if (browserIdentifier.contains("Opera")
+                            || browserIdentifier.contains("opera")) {
                         isOpera = true;
-                    } else if (browser.contains("Safari")
-                            || browser.contains("safari")) {
+                    } else if (browserIdentifier.contains("Safari")
+                            || browserIdentifier.contains("safari")) {
                         isSafari = true;
-                    } else if (browser.contains("Google")
-                            || browser.contains("google")) {
+                    } else if (browserIdentifier.contains("Google")
+                            || browserIdentifier.contains("google")) {
                         isChrome = true;
                     }
                 } else {
@@ -225,15 +203,17 @@ public class TestConverter {
                 }
 
                 String filename = args[2];
+
                 // Create a java file for holding all tests for this browser
-                out = createJavaFile(getTestName(filename) + "_"
-                        + browser.replaceAll("[^a-zA-Z0-9]", "_"), browser,
-                        outputDirectory);
+                String safeBrowserIdentifier = getSafeName(browserIdentifier);
+                String testName = getTestName(filename) + "_"
+                        + safeBrowserIdentifier;
+
+                out = createJavaFile(testName, browserIdentifier,
+                        getJavaPackageName(browserIdentifier), outputDirectory);
 
                 try {
-                    String testMethod = createTestMethod(filename,
-                            getTestName(filename) + "_"
-                                    + browser.replaceAll("[^a-zA-Z0-9]", "_"));
+                    String testMethod = createTestMethod(filename, testName);
                     out.write(testMethod.getBytes());
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -264,9 +244,9 @@ public class TestConverter {
         }
     }
 
-    private static String checkIfSuite(String filename)
+    private static String getTestInputFilename(String TestBenchHTMLFile)
             throws FileNotFoundException, IOException {
-        File testFile = new File(filename);
+        File testFile = new File(TestBenchHTMLFile);
         // if (!testFile.exists()) {
         // System.out.println("Searching for file " + testFile.getName()
         // + " to parse.");
@@ -276,7 +256,8 @@ public class TestConverter {
         // }
 
         if (testFile == null) {
-            throw new FileNotFoundException("Could not find file " + filename);
+            throw new FileNotFoundException("Could not find file "
+                    + TestBenchHTMLFile);
         }
 
         BufferedReader in = new BufferedReader(new FileReader(testFile));
@@ -286,8 +267,9 @@ public class TestConverter {
                 if (line.contains("<thead>")) {
                     return testFile.getAbsolutePath();
                 } else if (line.contains("a href=")) {
-                    ParsedSuite result = ParserFunctions.readHtmlFile(filename,
-                            testFile.getParentFile().getAbsolutePath());
+                    ParsedSuite result = ParserFunctions.readHtmlFile(
+                            TestBenchHTMLFile, testFile.getParentFile()
+                                    .getAbsolutePath());
 
                     List<String> combined = ParserFunctions.combineTests(result
                             .getSuiteTests(), testFile.getName(), testFile
@@ -344,25 +326,30 @@ public class TestConverter {
     }
 
     private static OutputStream createJavaFileForTest(String testName,
-            String outputDirectory) throws IOException {
-        File outputFile = getJavaFile(testName, outputDirectory);
+            String browserIdentifier, String packageName, String outputDirectory)
+            throws IOException {
+        File outputFile = getJavaFile(testName, packageName, outputDirectory);
         System.out.println("Creating " + outputFile + " for " + testName);
+        createIfNotExists(outputFile.getParent());
         FileOutputStream outputStream = new FileOutputStream(outputFile);
 
-        outputStream.write(getJavaHeader(getSafeName(testName)));
+        outputStream.write(getJavaHeader(getSafeName(testName),
+                browserIdentifier));
 
         return outputStream;
     }
 
-    private static OutputStream createJavaFile(String testName, String browser,
-            String outputDirectory) throws IOException {
-        File outputFile = getJavaFile(testName, outputDirectory);
+    private static OutputStream createJavaFile(String testName,
+            String browserIdentifier, String packageName, String outputDirectory)
+            throws IOException {
+        File outputFile = getJavaFile(testName, packageName, outputDirectory);
         // System.out.println("Creating " + outputFile + " for " + browser
         // + " tests");
+        createIfNotExists(outputFile.getParent());
         FileOutputStream outputStream = new FileOutputStream(outputFile);
 
         // FIXME This does no longer write a browser dependent header
-        outputStream.write(getJavaHeader(testName));
+        outputStream.write(getJavaHeader(testName, browserIdentifier));
 
         return outputStream;
     }
@@ -502,24 +489,36 @@ public class TestConverter {
                 + footer;
     }
 
-    private static byte[] getJavaHeader(String className) {
+    private static byte[] getJavaHeader(String className,
+            String browserIdentifier) {
         String header = JAVA_HEADER;
         header = header.replace("{class}", className);
-        // header = header.replace("{package}", getPackageName());
+        header = header.replace("{package}",
+                getJavaPackageName(browserIdentifier));
 
         return header.getBytes();
+    }
+
+    private static String getJavaPackageName(String browserName) {
+        return getSafeName(browserName);
     }
 
     private static String getJavaFooter() {
         return JAVA_FOOTER;
     }
 
-    private static File getJavaFile(String browser, String outputDirectory) {
-        String filenameSafeBrowser = getSafeName(browser);
+    private static File getJavaFile(String testName, String packageName,
+            String outputDirectory) {
+        String safeFilename = getSafeName(testName);
 
-        File file = new File(filenameSafeBrowser);
+        File file = new File(safeFilename);
         String filename = removeExtension(file.getName());
 
+        if (packageName.length() > 0) {
+            // Add packagename to the filename
+            filename = packageName.replace('.', File.separatorChar)
+                    + File.separatorChar + filename;
+        }
         File outputFile = new File(outputDirectory + File.separator + filename
                 + ".java"); // + getPackageDir() + File.separator
 
