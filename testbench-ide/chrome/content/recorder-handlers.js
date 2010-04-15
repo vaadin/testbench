@@ -452,6 +452,13 @@ Recorder.addEventHandler('clickLocator', 'click', function(event){
 			return;
 		}
 		
+		/*
+		 * Do not record clicks on select components. Select event will be enough.
+		 */
+        if(event.target.tagName.toLowerCase() == "select") {
+        	return;
+        }
+		
 		/* record mouse click if left button clicked and so select has been made */
 		if (event.button == 0 && noSelection == "true") {
             var x = event.clientX - editor.seleniumAPI.Selenium.prototype.getElementPositionLeft(event.target);
