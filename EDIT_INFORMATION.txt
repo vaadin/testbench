@@ -1,0 +1,3 @@
+Classes in org.openqa.selenium.server.browserlaunchers copied from selenium-server 1.0.1 and modified:
+killProcess() does not throw an exception even if it thinks the process did not die quickly enough
+  - this avoids interrupting the killing of other processes and cleanup in *Launcher.close()
