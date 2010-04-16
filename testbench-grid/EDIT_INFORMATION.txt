@@ -48,6 +48,14 @@ hub:
 Using selenium-server-1.0.1.jar
 
 
-Classes in org.openqa.selenium.server.browserlaunchers copied from selenium-server 1.0.1 and modified:
-killProcess() does not throw an exception even if it thinks the process did not die quickly enough
-  - this avoids interrupting the killing of other processes and cleanup in *Launcher.close()
+Changed files for proper process killing and cleanup #4277 and #4111
+
+infrastructure:
+    com.thoughtworks.selenium.grid.webserver.WebServer                          [updated to use Jetty 6.1.9, not 6.0.2]
+rc:
+    org.openqa.selenium.server.browserlaunchers.AsyncExecute                    [copied from selenium-server-1.0.1 and modified killProcess()]
+    build.xml                                                                   [do not include in JAR external libraries that are in selenium-server-1.0.1.jar]
+rc:
+    com.thoughtworks.selenium.grid.hub.HubServer                                [updated to use Jetty 6.1.9, not 6.0.2]
+    build.xml                                                                   [do not include in JAR external libraries that are in selenium-server-1.0.1.jar]
+

@@ -1,9 +1,7 @@
 package com.thoughtworks.selenium.grid.webserver;
 
 import org.mortbay.jetty.Server;
-import org.mortbay.jetty.handler.ContextHandlerCollection;
-import org.mortbay.jetty.servlet.Context;
-import org.mortbay.jetty.servlet.ServletHolder;
+import org.mortbay.jetty.servlet.ServletHttpContext;
 
 /**
  * Self contained Selenium Grid Hub. Uses Jetty to as a standalone web application.
@@ -38,19 +36,15 @@ public class WebServer {
         httpServer().join();
     }
 
-    protected void createHttpServer() {
-        final ContextHandlerCollection contexts;
-        final ServletHolder servletHolder;
-        final Context root;
+    protected void createHttpServer() throws Exception {
+        final ServletHttpContext root;
 
-        httpServer = new Server(port);
-        contexts = new ContextHandlerCollection();
-        httpServer.setHandler(contexts);
+        httpServer = new Server();
+        httpServer.addListener(":" + port);
 
-        root = new Context(contexts, "/", Context.SESSIONS);
-        servletHolder = new ServletHolder(new MainServlet());
-        servletHolder.setInitParameter("route_resolver", routeResolverClass().getName());
-        root.addServlet(servletHolder, "/*");
+        root = (ServletHttpContext) httpServer.getContext("/");
+        root.setInitParameter("route_resolver", routeResolverClass().getName());
+        root.addServlet("/*", MainServlet.class.getName());
     }
 
 

@@ -1,15 +1,14 @@
 package com.thoughtworks.selenium.grid.hub;
 
-import com.thoughtworks.selenium.grid.configuration.HubConfiguration;
-import com.thoughtworks.selenium.grid.hub.management.RegistrationServlet;
-import com.thoughtworks.selenium.grid.hub.management.RegistrationConfirmationServlet;
-import com.thoughtworks.selenium.grid.hub.management.UnregistrationServlet;
-import com.thoughtworks.selenium.grid.hub.management.LifecycleManagerServlet;
-import com.thoughtworks.selenium.grid.hub.management.console.ConsoleServlet;
 import org.mortbay.jetty.Server;
-import org.mortbay.jetty.handler.ContextHandlerCollection;
-import org.mortbay.jetty.servlet.Context;
-import org.mortbay.jetty.servlet.ServletHolder;
+import org.mortbay.jetty.servlet.ServletHttpContext;
+
+import com.thoughtworks.selenium.grid.configuration.HubConfiguration;
+import com.thoughtworks.selenium.grid.hub.management.LifecycleManagerServlet;
+import com.thoughtworks.selenium.grid.hub.management.RegistrationConfirmationServlet;
+import com.thoughtworks.selenium.grid.hub.management.RegistrationServlet;
+import com.thoughtworks.selenium.grid.hub.management.UnregistrationServlet;
+import com.thoughtworks.selenium.grid.hub.management.console.ConsoleServlet;
 
 /**
  * Self contained Selenium Grid Hub. Uses Jetty to as a standalone web application.
@@ -17,26 +16,29 @@ import org.mortbay.jetty.servlet.ServletHolder;
 public class HubServer {
 
     public static void main(String[] args) throws Exception {
-        final ContextHandlerCollection contexts;
         final HubConfiguration configuration;
         final Server server;
-        final Context root;
+        final ServletHttpContext root;
 
         configuration = HubRegistry.registry().gridConfiguration().getHub();
-        server = new Server(configuration.getPort());
+        server = new Server();
+        server.addListener(":" + configuration.getPort());
 
-        contexts = new ContextHandlerCollection();
-        server.setHandler(contexts);
-
-        root = new Context(contexts, "/", Context.SESSIONS);
+        root = (ServletHttpContext) server.getContext("/");
 //        root.setResourceBase("./");
 //        root.addHandler(new ResourceHandler());
-        root.addServlet(new ServletHolder(new HubServlet()), "/selenium-server/driver/*");
-        root.addServlet(new ServletHolder(new ConsoleServlet()), "/console");
-        root.addServlet(new ServletHolder(new RegistrationServlet()), "/registration-manager/register");
-        root.addServlet(new ServletHolder(new RegistrationConfirmationServlet()), "/registration-manager/remotecontrolstatus");
-        root.addServlet(new ServletHolder(new UnregistrationServlet()), "/registration-manager/unregister");
-        root.addServlet(new ServletHolder(new LifecycleManagerServlet()), "/lifecycle-manager");
+        root
+                .addServlet("/selenium-server/driver/*", HubServlet.class
+                        .getName());
+        root.addServlet("/console", ConsoleServlet.class.getName());
+        root.addServlet("/registration-manager/register",
+                RegistrationServlet.class.getName());
+        root.addServlet("/registration-manager/remotecontrolstatus",
+                RegistrationConfirmationServlet.class.getName());
+        root.addServlet("/registration-manager/unregister",
+                UnregistrationServlet.class.getName());
+        root.addServlet("/lifecycle-manager", LifecycleManagerServlet.class
+                .getName());
 
         server.start();
         server.join();
