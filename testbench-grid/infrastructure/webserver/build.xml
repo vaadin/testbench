@@ -44,10 +44,14 @@
 	</target>
 
   	<path id="compile.classpath">
-    	<fileset dir="${rootdir}/vendor">                       
+    	<fileset dir="${rootdir}/vendor">
+  			<!-- Use Jetty 6.1.9 and other JARs from selenium-server-1.0.1.jar instead -->
+	      	<include name="selenium-server-1.0.1.jar"/>
+    		<!--
 	      	<include name="servlet-api-2.5-6.1.5.jar"/>
 	      	<include name="jetty-6.0.2.jar"/>
 	      	<include name="jetty-util-6.0.2.jar"/>
+	      	-->
 	      	<include name="commons-httpclient-3.0.1.jar"/>
 	      	<include name="commons-codec-1.3.jar"/>
 	      	<include name="commons-logging-1.0.4.jar"/>
@@ -86,9 +90,12 @@
   	<target name="package-standalone" depends="clean,package" description="Package as a jar including all dependencies">
     	<package-standalone-jar main-class="com.thoughtworks.selenium.grid.remotecontrol.SelfRegisteringRemoteControlLauncher">
       	<dependencies>
+  			<!-- Use Jetty 6.1.9 and other JARs from selenium-server-1.0.1.jar instead -->
+      		<!--
         	<zipfileset src="${rootdir}/vendor/jetty-6.0.2.jar"/>
         	<zipfileset src="${rootdir}/vendor/jetty-util-6.0.2.jar"/>
         	<zipfileset src="${rootdir}/vendor/servlet-api-2.5-6.1.5.jar"/>
+        	-->
         	<zipfileset src="${rootdir}/vendor/commons-httpclient-3.0.1.jar"/>
         	<zipfileset src="${rootdir}/vendor/commons-codec-1.3.jar"/>
         	<zipfileset src="${rootdir}/vendor/commons-logging-1.0.4.jar"/>
