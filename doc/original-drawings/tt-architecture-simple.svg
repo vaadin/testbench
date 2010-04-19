@@ -1,0 +1,576 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://web.resource.org/cc/"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="210mm"
+   height="297mm"
+   id="svg1901"
+   sodipodi:version="0.32"
+   inkscape:version="0.45.1"
+   sodipodi:docname="tt-architecture-simple.svg"
+   sodipodi:docbase="/home/magi/.encfs/plain/itmill/workspace/toolkit5/doc/testingtools/original-drawings"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape"
+   inkscape:export-filename="/home/magi/itmill/toolkit5/doc/manual/original-drawings/intro/architecture.png"
+   inkscape:export-xdpi="300"
+   inkscape:export-ydpi="300">
+  <defs
+     id="defs1903">
+    <marker
+       inkscape:stockid="TriangleOutL"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="TriangleOutL"
+       style="overflow:visible">
+      <path
+         id="path3520"
+         d="M 5.77,0.0 L -2.88,5.0 L -2.88,-5.0 L 5.77,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt;marker-start:none"
+         transform="scale(0.8)" />
+    </marker>
+    <linearGradient
+       id="linearGradient3503">
+      <stop
+         style="stop-color:#37ff40;stop-opacity:0.53608245;"
+         offset="0"
+         id="stop3505" />
+      <stop
+         style="stop-color:#ffe0e0;stop-opacity:1;"
+         offset="1"
+         id="stop3507" />
+    </linearGradient>
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient11516"
+       id="radialGradient2550"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1.3208501,2.3843471e-3,-3.1056446e-3,0.596383,334.93437,78.721097)"
+       cx="-147.5"
+       cy="97.300964"
+       fx="-147.5"
+       fy="97.300964"
+       r="109.42857" />
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient2279">
+      <stop
+         style="stop-color:#ffffff;stop-opacity:1;"
+         offset="0"
+         id="stop2281" />
+      <stop
+         style="stop-color:#ffffff;stop-opacity:0;"
+         offset="1"
+         id="stop2283" />
+    </linearGradient>
+    <marker
+       inkscape:stockid="Arrow2Lstart"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow2Lstart"
+       style="overflow:visible">
+      <path
+         id="path6743"
+         style="font-size:12px;fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round"
+         d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.97309,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z "
+         transform="matrix(1.1,0,0,1.1,1.1,0)" />
+    </marker>
+    <linearGradient
+       id="linearGradient19816">
+      <stop
+         id="stop19818"
+         offset="0"
+         style="stop-color:#ffffff;stop-opacity:1;" />
+      <stop
+         id="stop19820"
+         offset="1"
+         style="stop-color:#e7e790;stop-opacity:1;" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient11516">
+      <stop
+         id="stop11518"
+         offset="0"
+         style="stop-color:#ffffff;stop-opacity:1" />
+      <stop
+         id="stop11520"
+         offset="1"
+         style="stop-color:#a090e7;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient11508">
+      <stop
+         id="stop11510"
+         offset="0"
+         style="stop-color:#ffffff;stop-opacity:1;" />
+      <stop
+         id="stop11512"
+         offset="1"
+         style="stop-color:#e27979;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient3286">
+      <stop
+         style="stop-color:#ffffff;stop-opacity:1;"
+         offset="0"
+         id="stop3288" />
+      <stop
+         style="stop-color:#79e291;stop-opacity:1;"
+         offset="1"
+         id="stop3290" />
+    </linearGradient>
+    <filter
+       inkscape:collect="always"
+       x="-0.14729276"
+       width="1.2945855"
+       y="-0.24504527"
+       height="1.4900905"
+       id="filter12627">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="9.7515538"
+         id="feGaussianBlur12629" />
+    </filter>
+    <marker
+       inkscape:stockid="Arrow2Lend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow2Lend"
+       style="overflow:visible">
+      <path
+         id="path16811"
+         style="font-size:12px;fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round"
+         d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.97309,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z "
+         transform="matrix(-1.1,0,0,-1.1,-1.1,0)" />
+    </marker>
+    <filter
+       inkscape:collect="always"
+       x="-0.040142104"
+       width="1.0802842"
+       y="-0.11421826"
+       height="1.2284365"
+       id="filter7800">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="3.6816958"
+         id="feGaussianBlur7802" />
+    </filter>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient19816"
+       id="linearGradient2259"
+       gradientUnits="userSpaceOnUse"
+       x1="174.35712"
+       y1="96.654701"
+       x2="220.02124"
+       y2="192.93446" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient2279"
+       id="linearGradient2289"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(144.88939,49.307233)"
+       x1="169.4906"
+       y1="95.933613"
+       x2="179.08082"
+       y2="95.933613" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3503"
+       id="linearGradient3624"
+       gradientUnits="userSpaceOnUse"
+       x1="100.00886"
+       y1="427.01562"
+       x2="175.99114"
+       y2="427.01562"
+       gradientTransform="matrix(1.4703878,0,0,1.4703878,-57.580225,-472.01816)" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient2279"
+       id="linearGradient3628"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(382.74653,269.02152)"
+       x1="310.11063"
+       y1="131.62636"
+       x2="152.25346"
+       y2="71.626366" />
+    <filter
+       inkscape:collect="always"
+       id="filter3752">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="4.0793112"
+         id="feGaussianBlur3754" />
+    </filter>
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient11508"
+       id="radialGradient2366"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1.3208501,2.3843471e-3,-3.1056446e-3,0.596383,334.93437,78.721097)"
+       cx="-147.5"
+       cy="97.300964"
+       fx="-147.5"
+       fy="97.300964"
+       r="109.42857" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient2279"
+       id="linearGradient2380"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(-123.95012,18.086735)"
+       x1="169.4906"
+       y1="95.933613"
+       x2="179.08082"
+       y2="95.933613" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.4"
+     inkscape:cx="331.50158"
+     inkscape:cy="776.69279"
+     inkscape:document-units="px"
+     inkscape:current-layer="g2328"
+     gridtolerance="10000"
+     inkscape:window-width="1213"
+     inkscape:window-height="1021"
+     inkscape:window-x="1280"
+     inkscape:window-y="2"
+     inkscape:showpageshadow="false"
+     borderlayer="false"
+     showgrid="true" />
+  <metadata
+     id="metadata1906">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Taso 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     style="opacity:1">
+    <rect
+       style="opacity:1;color:#000000;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect3641"
+       width="430"
+       height="355"
+       x="130"
+       y="52.362183" />
+    <path
+       style="opacity:1;fill:url(#linearGradient2380);fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker-start:none;marker-mid:none;marker-end:url(#Arrow2Lend);stroke-opacity:1;display:inline"
+       d="M 309.89016,113.65434 L 230.65508,217.98032"
+       id="path2378"
+       inkscape:connector-type="polyline"
+       inkscape:export-filename="/home/magi/itmill/toolkit5/doc/manual/img/intro/architecture.png"
+       inkscape:export-xdpi="149.99998"
+       inkscape:export-ydpi="149.99998"
+       inkscape:connection-start="#g2245"
+       inkscape:connection-end="#g2328" />
+    <path
+       style="opacity:1;fill:url(#linearGradient2289);fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker-start:none;marker-mid:none;marker-end:url(#Arrow2Lend);stroke-opacity:1;display:inline"
+       d="M 355.89448,113.65434 L 437.26002,217.83744"
+       id="path2287"
+       inkscape:connector-type="polyline"
+       inkscape:export-filename="/home/magi/itmill/toolkit5/doc/manual/img/intro/architecture.png"
+       inkscape:export-xdpi="149.99998"
+       inkscape:export-ydpi="149.99998"
+       inkscape:connection-start="#g2245"
+       inkscape:connection-end="#g2534" />
+    <g
+       style="opacity:1"
+       id="g7816"
+       transform="matrix(0.9396696,0,0,0.9396696,187.32956,-286.70883)"
+       inkscape:export-filename="/home/magi/itmill/toolkit5/doc/manual/img/intro/architecture.png"
+       inkscape:export-xdpi="149.99998"
+       inkscape:export-ydpi="149.99998">
+      <path
+         id="path6783"
+         d="M 147.97167,456.22201 C 125.5378,456.22201 107.17983,461.28412 105.73702,467.66611 C 93.15695,469.78968 84.69134,473.71673 84.69134,478.22989 C 84.69134,480.23193 86.36775,482.12928 89.31812,483.79839 C 75.681263,485.83295 66.327559,489.92908 66.327559,494.66926 C 66.327559,501.42817 85.29002,506.93226 108.66458,506.93226 C 112.22089,506.93226 115.66109,506.78241 118.96222,506.54328 C 118.82186,506.94869 118.73702,507.35558 118.73702,507.77163 C 118.73702,514.53054 137.69948,520.03462 161.07404,520.03462 C 184.4486,520.03462 203.43153,514.53054 203.43153,507.77163 C 203.43153,507.1019 203.23712,506.44689 202.87877,505.80627 C 204.15791,505.83996 205.4592,505.86769 206.76854,505.86769 C 230.1431,505.86769 249.10556,500.38408 249.10556,493.62517 C 249.10556,488.38467 237.67119,483.90675 221.65201,482.1606 C 226.66565,480.1488 229.63626,477.68303 229.63626,475.01571 C 229.63626,468.25681 210.65333,462.7732 187.27877,462.77319 C 186.68335,462.77319 186.1076,462.78662 185.51814,462.79366 C 178.44301,458.88506 164.27662,456.22202 147.97167,456.22201 z "
+         style="opacity:0.64851487;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.65511829;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter7800)" />
+      <path
+         id="path6768"
+         d="M 141.97167,452.68974 C 119.5378,452.68974 101.17983,457.75185 99.737018,464.13384 C 87.156952,466.25741 78.691343,470.18446 78.691343,474.69762 C 78.691343,476.69966 80.367752,478.59701 83.318116,480.26612 C 69.681263,482.30068 60.327559,486.39681 60.327559,491.13699 C 60.327559,497.8959 79.290018,503.39999 102.66458,503.39999 C 106.22089,503.39999 109.66109,503.25014 112.96222,503.01101 C 112.82186,503.41642 112.73702,503.82331 112.73702,504.23936 C 112.73702,510.99827 131.69948,516.50235 155.07404,516.50235 C 178.4486,516.50235 197.43153,510.99827 197.43153,504.23936 C 197.43153,503.56963 197.23712,502.91462 196.87877,502.274 C 198.15791,502.30769 199.4592,502.33542 200.76854,502.33542 C 224.1431,502.33542 243.10556,496.85181 243.10556,490.0929 C 243.10556,484.8524 231.67119,480.37448 215.65201,478.62833 C 220.66565,476.61653 223.63626,474.15076 223.63626,471.48344 C 223.63626,464.72454 204.65333,459.24093 181.27877,459.24092 C 180.68335,459.24092 180.1076,459.25435 179.51814,459.26139 C 172.44301,455.35279 158.27662,452.68975 141.97167,452.68974 z "
+         style="fill:#e6e6e6;fill-opacity:1;stroke:#000000;stroke-width:0.65511829;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <flowRoot
+         transform="matrix(0.6800927,0,0,0.6800927,-19.740479,424.39173)"
+         style="font-size:20px;text-align:center;text-anchor:middle;opacity:1"
+         id="flowRoot7804"
+         xml:space="preserve"><flowRegion
+           id="flowRegion7806"><rect
+             style="font-size:20px;text-align:center;text-anchor:middle"
+             y="73.790756"
+             x="192.85715"
+             height="52.857143"
+             width="127.85715"
+             id="rect7808" /></flowRegion><flowPara
+           id="flowPara7810">Network</flowPara></flowRoot>    </g>
+    <g
+       style="opacity:1"
+       id="g2245"
+       transform="matrix(0.6800927,0,0,0.6800927,210.15474,-22.100365)"
+       inkscape:export-filename="/home/magi/itmill/toolkit5/doc/manual/img/intro/architecture.png"
+       inkscape:export-xdpi="149.99998"
+       inkscape:export-ydpi="149.99998">
+      <rect
+         transform="matrix(1.4381664,0,0,0.916598,-117.60506,-13.97116)"
+         ry="4.2643418"
+         rx="7.9527607"
+         y="152.36218"
+         x="160"
+         height="80"
+         width="100"
+         id="rect2247"
+         style="opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.04604626;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter12627)" />
+      <rect
+         y="112.36218"
+         x="100"
+         height="80"
+         width="160"
+         id="rect2249"
+         style="opacity:1;fill:url(#linearGradient2259);fill-opacity:1;stroke:#000000;stroke-width:1.14454818;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         ry="16.031216" />
+      <flowRoot
+         xml:space="preserve"
+         id="flowRoot2251"
+         style="font-size:20.58542824px;text-align:center;text-anchor:middle"
+         transform="translate(-114.78753,66.153405)"><flowRegion
+           id="flowRegion2253"><rect
+             id="rect2255"
+             width="207.14285"
+             height="28.571426"
+             x="192.85715"
+             y="73.790756"
+             style="font-size:20.58542824px;text-align:center;text-anchor:middle" /></flowRegion><flowPara
+           id="flowPara2257">Web Browser</flowPara></flowRoot>    </g>
+    <g
+       style="opacity:1"
+       id="g2534"
+       transform="matrix(0.6800927,0,0,0.6800927,330.5675,145.2104)"
+       inkscape:export-filename="/home/magi/itmill/toolkit5/doc/manual/img/intro/architecture.png"
+       inkscape:export-xdpi="149.99998"
+       inkscape:export-ydpi="149.99998">
+      <rect
+         transform="matrix(1.3641168,0,0,0.9169701,-96.115129,-14.042082)"
+         ry="4.2643418"
+         rx="7.9527607"
+         y="147.36218"
+         x="145"
+         height="80"
+         width="140"
+         id="rect2536"
+         style="opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.04604626;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter12627)" />
+      <rect
+         y="107.36218"
+         x="90"
+         height="80"
+         width="200"
+         id="rect2538"
+         style="opacity:1;fill:url(#radialGradient2550);fill-opacity:1;stroke:#000000;stroke-width:1.14454818;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         ry="13.741042" />
+      <flowRoot
+         xml:space="preserve"
+         id="flowRoot2540"
+         style="font-size:20.58542824px;text-align:center;text-anchor:middle"
+         transform="translate(-103.02439,51.449525)"><flowRegion
+           id="flowRegion2542"><rect
+             id="rect2544"
+             width="197.14285"
+             height="58.571426"
+             x="192.85715"
+             y="73.790756"
+             style="font-size:20.58542824px;text-align:center;text-anchor:middle" /></flowRegion><flowPara
+           id="flowPara2548">IT Mill Testing</flowPara><flowPara
+           id="flowPara2251">Tools Server</flowPara></flowRoot>    </g>
+    <g
+       style="opacity:1"
+       id="g2505"
+       transform="matrix(0.6800927,0,0,0.6800927,329.15989,248.87322)"
+       inkscape:export-filename="/home/magi/itmill/toolkit5/doc/manual/img/intro/architecture.png"
+       inkscape:export-xdpi="149.99998"
+       inkscape:export-ydpi="149.99998">
+      <g
+         id="g3615"
+         transform="translate(44.111634,-5.4419337)">
+        <path
+           id="path3511"
+           d="M 92.963751,107.74737 L 92.963751,213.10471 L 93.652995,213.10471 C 93.19988,213.87198 92.963751,214.69266 92.963751,215.49409 C 92.963751,223.71928 117.74141,230.38176 148.28708,230.38177 C 178.83276,230.38177 203.61043,223.71928 203.61043,215.49409 C 203.61043,214.69266 203.3743,213.87198 202.92118,213.10471 L 202.96713,213.10471 L 202.96713,109.23269 L 92.963751,107.74737 z "
+           style="opacity:0.64356432;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:1.07672668;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;filter:url(#filter3752);enable-background:accumulate"
+           sodipodi:nodetypes="cccssscccc"
+           transform="matrix(1.0264508,0,0,0.9998851,-2.4519272,1.9417089e-2)" />
+        <path
+           id="path2521"
+           d="M 90.00995,106.05441 L 90.00995,204.72783 L 90.699195,204.72783 C 90.24608,205.49509 90.00995,206.31577 90.00995,207.11721 C 90.00995,215.3424 114.78762,222.00487 145.33329,222.00489 C 175.87897,222.00489 200.65663,215.3424 200.65663,207.11721 C 200.65663,206.31577 200.4205,205.49509 199.96739,204.72783 L 200.01334,204.72783 L 200.01334,105.68308 L 90.00995,106.05441 z "
+           style="opacity:1;color:#000000;fill:url(#linearGradient3624);fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:1.07672668;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+           sodipodi:nodetypes="cccssscccc" />
+        <flowRoot
+           transform="translate(-144.91398,66.784378)"
+           style="font-size:20.58542824px;text-align:center;text-anchor:middle"
+           id="flowRoot2511"
+           xml:space="preserve"><flowRegion
+             id="flowRegion2513"><rect
+               style="font-size:20.58542824px;text-align:center;text-anchor:middle"
+               y="73.790756"
+               x="192.85715"
+               height="58.571426"
+               width="197.14285"
+               id="rect2515" /></flowRegion><flowPara
+             id="flowPara2517">Test</flowPara><flowPara
+             id="flowPara2253">Database</flowPara></flowRoot>        <path
+           transform="matrix(1.1392784,0,0,1.0176094,-22.303376,-373.20476)"
+           d="M 195.71428 472.00504 A 48.57143 14.642858 0 1 1  98.571423,472.00504 A 48.57143 14.642858 0 1 1  195.71428 472.00504 z"
+           sodipodi:ry="14.642858"
+           sodipodi:rx="48.57143"
+           sodipodi:cy="472.00504"
+           sodipodi:cx="147.14285"
+           id="path3497"
+           style="opacity:1;color:#000000;fill:#b4ffb5;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+           sodipodi:type="arc" />
+      </g>
+    </g>
+    <path
+       style="opacity:1;fill:url(#linearGradient3628);fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker-start:url(#Arrow2Lstart);marker-mid:none;marker-end:url(#Arrow2Lend);stroke-opacity:1;display:inline"
+       d="M 460.49895,277.84697 L 460.30674,307.51829"
+       id="path3626"
+       inkscape:connector-type="polyline"
+       inkscape:export-filename="/home/magi/itmill/toolkit5/doc/manual/img/intro/architecture.png"
+       inkscape:export-xdpi="149.99998"
+       inkscape:export-ydpi="149.99998"
+       inkscape:connection-end="#g2505"
+       inkscape:connection-start="#g2534" />
+    <g
+       style="opacity:1"
+       id="g2328"
+       transform="matrix(0.6800927,0,0,0.6800927,77.74078,145.35328)"
+       inkscape:export-filename="/home/magi/itmill/toolkit5/doc/manual/img/intro/architecture.png"
+       inkscape:export-xdpi="149.99998"
+       inkscape:export-ydpi="149.99998">
+      <rect
+         transform="matrix(1.3641168,0,0,0.9169701,-96.115129,-14.042082)"
+         ry="4.2643418"
+         rx="7.9527607"
+         y="147.36218"
+         x="145"
+         height="80"
+         width="140"
+         id="rect2330"
+         style="opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.04604626;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter12627)" />
+      <rect
+         y="107.36218"
+         x="90"
+         height="80"
+         width="200"
+         id="rect2332"
+         style="opacity:1;fill:url(#radialGradient2366);fill-opacity:1;stroke:#000000;stroke-width:1.14454818;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         ry="13.741042" />
+      <flowRoot
+         xml:space="preserve"
+         id="flowRoot2334"
+         style="font-size:20.58542824px;text-align:center;text-anchor:middle"
+         transform="translate(-103.02439,48.508749)"><flowRegion
+           id="flowRegion2336"><rect
+             id="rect2338"
+             width="197.14285"
+             height="58.571426"
+             x="192.85715"
+             y="73.790756"
+             style="font-size:20.58542824px;text-align:center;text-anchor:middle" /></flowRegion><flowPara
+           id="flowPara2342">Application</flowPara><flowPara
+           id="flowPara4021">Under Testing</flowPara></flowRoot>    </g>
+    <path
+       style="opacity:1;fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker-end:url(#Arrow2Lend);stroke-opacity:1;display:inline"
+       d="M 276.45899,235.08878 C 342.88757,190.08878 388.5295,237.16708 388.5295,237.16708"
+       id="path3409"
+       inkscape:connector-type="polyline"
+       inkscape:export-filename="/home/magi/itmill/toolkit5/doc/manual/img/intro/architecture.png"
+       inkscape:export-xdpi="149.99998"
+       inkscape:export-ydpi="149.99998"
+       sodipodi:nodetypes="cc"
+       inkscape:connection-start="#g2328"
+       inkscape:connection-end="#g2534" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#TriangleOutL)"
+       d="M 530.04333,247.27552 L 551.42857,247.36218 L 551.42857,73.076469 L 390,72.362183"
+       id="path3417"
+       sodipodi:nodetypes="cccc" />
+    <flowRoot
+       transform="matrix(0.6800927,0,0,0.6800927,291.70154,5.5119096)"
+       style="font-size:17.64465332px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;writing-mode:lr-tb;text-anchor:middle;opacity:1;font-family:Bitstream Vera Sans"
+       id="flowRoot3625"
+       xml:space="preserve"><flowRegion
+         id="flowRegion3627"><rect
+           style="font-size:17.64465332px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;writing-mode:lr-tb;text-anchor:middle;font-family:Bitstream Vera Sans"
+           y="73.790756"
+           x="192.85715"
+           height="52.857143"
+           width="127.85715"
+           id="rect3629" /></flowRegion><flowPara
+         id="flowPara3631">Run Tests</flowPara></flowRoot>    <g
+       id="g3663"
+       transform="translate(0,-24)">
+      <rect
+         y="230.36218"
+         x="301"
+         height="30"
+         width="65"
+         id="rect3643"
+         style="opacity:1;color:#000000;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+      <flowRoot
+         xml:space="preserve"
+         id="flowRoot3617"
+         style="font-size:17.64465332px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;writing-mode:lr-tb;text-anchor:middle;opacity:1;font-family:Bitstream Vera Sans"
+         transform="matrix(0.6800927,0,0,0.6800927,157.03877,181.05318)"><flowRegion
+           id="flowRegion3619"><rect
+             id="rect3621"
+             width="127.85715"
+             height="52.857143"
+             x="192.85715"
+             y="73.790756"
+             style="font-size:17.64465332px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;writing-mode:lr-tb;text-anchor:middle;font-family:Bitstream Vera Sans" /></flowRegion><flowPara
+           id="flowPara3623">Save Test Cases</flowPara></flowRoot>    </g>
+    <flowRoot
+       transform="matrix(0.6800927,0,0,0.6800927,69.472368,55.053181)"
+       style="font-size:17.64465332px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;writing-mode:lr-tb;text-anchor:middle;opacity:1;font-family:Bitstream Vera Sans"
+       id="flowRoot3670"
+       xml:space="preserve"><flowRegion
+         id="flowRegion3672"><rect
+           style="font-size:17.64465332px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;writing-mode:lr-tb;text-anchor:middle;font-family:Bitstream Vera Sans"
+           y="73.790756"
+           x="192.85715"
+           height="52.857143"
+           width="127.85715"
+           id="rect3674" /></flowRegion><flowPara
+         id="flowPara3676">Record/Play</flowPara><flowPara
+         id="flowPara3678">Tests</flowPara></flowRoot>    <flowRoot
+       transform="matrix(0.6800927,0,0,0.6800927,243.38336,56.053879)"
+       style="font-size:17.64465332px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;writing-mode:lr-tb;text-anchor:middle;opacity:1;font-family:Bitstream Vera Sans"
+       id="flowRoot3680"
+       xml:space="preserve"><flowRegion
+         id="flowRegion3682"><rect
+           style="font-size:17.64465332px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;writing-mode:lr-tb;text-anchor:middle;font-family:Bitstream Vera Sans"
+           y="73.790756"
+           x="192.85715"
+           height="48.571426"
+           width="147.14285"
+           id="rect3684" /></flowRegion><flowPara
+         id="flowPara3686">Manage</flowPara><flowPara
+         id="flowPara3688">Tests &amp; Results</flowPara></flowRoot>  </g>
+</svg>
