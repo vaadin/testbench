@@ -54,8 +54,6 @@ infrastructure:
     com.thoughtworks.selenium.grid.webserver.WebServer                          [updated to use Jetty 6.1.9, not 6.0.2]
 rc:
     org.openqa.selenium.server.browserlaunchers.AsyncExecute                    [copied from selenium-server-1.0.1 and modified killProcess()]
-    build.xml                                                                   [do not include in JAR external libraries that are in selenium-server-1.0.1.jar]
-rc:
-    com.thoughtworks.selenium.grid.hub.HubServer                                [updated to use Jetty 6.1.9, not 6.0.2]
+    org.openqa.selenium.server.browserlaunchers.SafariCustomProfileLauncher     [copied from selenium-server-1.0.1, added profile cleanup in close()]
     build.xml                                                                   [do not include in JAR external libraries that are in selenium-server-1.0.1.jar]
 
