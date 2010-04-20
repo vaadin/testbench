@@ -83,7 +83,7 @@
     	<package-standalone-jar main-class="com.thoughtworks.selenium.grid.remotecontrol.SelfRegisteringRemoteControlLauncher">
       		<dependencies>
 	        	<zipfileset src="${dist}/lib/${artifact}-${version}.jar"/>
-          		<zipfileset src="selenium-grid-remote-control-1.0.6.jar"/>
+          		<zipfileset src="${rootdir}/vendor/selenium-grid-remote-control-1.0.6.jar"/>
 
       			<!-- Use Jetty 6.1.9 and other libraries from selenium-server-1.0.1.jar instead -->
       			<!--
