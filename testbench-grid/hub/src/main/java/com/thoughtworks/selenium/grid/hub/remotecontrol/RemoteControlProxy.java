@@ -2,14 +2,12 @@ package com.thoughtworks.selenium.grid.hub.remotecontrol;
 
 import java.io.IOException;
 
-import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.thoughtworks.selenium.grid.HttpClient;
 import com.thoughtworks.selenium.grid.HttpParameters;
 import com.thoughtworks.selenium.grid.Response;
-import com.thoughtworks.selenium.grid.hub.HubRegistry;
 import com.thoughtworks.selenium.grid.hub.HubServer;
 
 
@@ -20,27 +18,15 @@ public class RemoteControlProxy {
 
     private static final Log LOGGER = LogFactory.getLog(HubServer.class);
 
-    private final int concurrentSessionMax;
-    private int concurrentSessionCount;
+    private boolean sessionInProgress;
     private final HttpClient httpClient;
     private final String environment;
     private final String host;
     private final int port;
     
-    // Timer for stuck RemoteControls
-    private String session;
-    private int waitTime;
-//    private GlobalRemoteControlPool pool;
-    private final RemoteControlProxy RC;
-    private Thread wdt = null;
     
-    // this is for HeartbeatServlet
     public RemoteControlProxy(String host, int port, String environment,
             HttpClient httpClient) {
-        this(host, port, environment, 1, httpClient);
-    }
-
-    public RemoteControlProxy(String host, int port, String environment, int concurrentSessionMax, HttpClient httpClient) {
         if (null == host) {
             throw new IllegalArgumentException("host cannot be null");
         }
@@ -50,12 +36,8 @@ public class RemoteControlProxy {
         this.host = host;
         this.port = port;
         this.environment = environment;
-        this.concurrentSessionMax = concurrentSessionMax;
-        concurrentSessionCount = 0;
+        sessionInProgress = false;
         this.httpClient = httpClient;
-        // Set timer properties
-        RC = this;
-        waitTime = 1000*60*3;
     }
 
     public String host() {
@@ -84,20 +66,16 @@ public class RemoteControlProxy {
 
     public Response forward(HttpParameters parameters) throws IOException {
         // If no session return failure Response for timeout.
-        if(concurrentSessionCount == 0){
+        if (!sessionInProgress) {
             return new Response("Test failed due to timeout.");
-        }
-        // Reset timer only if we have a session
-        if(session != null){
-            reset();
         }
         return httpClient.post(remoteControlDriverURL(), parameters);
     }
 
     @Override
     public String toString() {
-        return "[RemoteControlProxy " + host + ":" + port + " " + environment + " "
-                                      + concurrentSessionCount  + "/" + concurrentSessionMax + "]";
+        return "[RemoteControlProxy " + host + ":" + port + "#" + environment
+                + "/" + sessionInProgress + "]";
     }
 
     // Added environment to equals so same RC can register multiple environments
@@ -120,122 +98,43 @@ public class RemoteControlProxy {
         return (host + port).hashCode();
     }
 
-    public int concurrentSessionsMax() {
-        return concurrentSessionMax;
-    }
-
-    public int concurrentSesssionCount() {
-        return concurrentSessionCount;
+    public boolean sesssionInProgress() {
+        return sessionInProgress;
     }
 
     public void registerNewSession() {
-        if (concurrentSessionCount == concurrentSessionMax) {
+        if (sessionInProgress) {
             throw new IllegalStateException("Exceeded concurrent session max for " + toString());
         }
-        concurrentSessionCount += 1;
-        if(wdt != null){
-            try{
-                while(wdt.isAlive()){
-                    Thread.sleep(50);
-                }
-            }catch(InterruptedException ie){
-            }
-        }
-        // Set watchdog timer values and create new Watchdog thread
-        startWatchDog();
-        wdt = new Thread(WatchDog);
-        wdt.start();
+        sessionInProgress = true;
     }
     
     public void unregisterSession() {
-        if (0 == concurrentSessionCount) {
+        if (!sessionInProgress) {
             throw new IllegalStateException("Unregistering session on an idle remote control : " + toString());
         }
-        concurrentSessionCount -= 1;
-        stopWatchDog();
+        sessionInProgress = false;
     }
 
     public boolean canHandleNewSession() {
-        return concurrentSessionCount < concurrentSessionMax;
+        return !sesssionInProgress();
     }
     
-    // Watchdog Timer funcitions
-    public void setSession(String sessionId){
-        session = sessionId;
-    }
-    
-    private enum Status {
-        RUN, RESET, TIMEOUT, IDLE, RELEASED
-    }
-    
-    private int sleepTime = waitTime;
-    private int timeSpent = 0;
-    private Status statusFlag = Status.IDLE;
-    
-    public void startWatchDog(){
-        timeSpent = 0;
-        statusFlag = Status.RUN;
-    }
-    
-    public void stopWatchDog(){
-        session = null;
-        timeSpent = 0;
-        statusFlag = Status.IDLE;
-    }
-    
-    public void reset(){
-        statusFlag = Status.RESET;
-    }
-    
-    // If timer is not reset or cleared before time runs out release this session
-    Runnable WatchDog = new Runnable(){       
-        
-        public void run(){
-            try{
-                while(statusFlag != Status.IDLE){
-                    switch(statusFlag){
-                    case RUN:
-                        try{
-                            Thread.sleep(100);
-                            timeSpent += 100;
-                            if(timeSpent >= waitTime){
-                                statusFlag = Status.TIMEOUT;
-                            }
-                        }catch(InterruptedException ie){}
-                        break;
-                    case RESET:
-                        timeSpent = 0;
-                        statusFlag = Status.RUN;
-                        break;
-                    case IDLE:
-                        break;
-                    case TIMEOUT:
-                        statusFlag = Status.RELEASED;
-                        System.out.println("Sending finish to RC and releasing session " + session);
-                        HttpParameters parameters = new HttpParameters();
-                        parameters.put("cmd", "testComplete");
-                        parameters.put("sessionId", session);
-                        
-                        // Send testComplete to Remote Control
-                        final PostMethod postMethod = new PostMethod(
-                                remoteControlDriverURL());
-                        postMethod.addParameter("cmd", "testComplete");
-                        postMethod.addParameter("sessionId", session);
-                        int status = new org.apache.commons.httpclient.HttpClient().executeMethod(postMethod);
-                        // Release session and free Remote Control
-                        DynamicRemoteControlPool pool = HubRegistry.registry().remoteControlPool();
-                        pool.releaseForSession(session);
-                    case RELEASED:
-                        try{
-                            if(session == null){
-                                statusFlag = Status.IDLE;
-                            }
-                            Thread.sleep(50);
-                        }catch(InterruptedException ie){}
-                    }
-                }
-            }catch(Exception e){
-            }
+	public boolean unreliable() {
+        final Response response;
+
+        try {
+            LOGGER.debug("Polling Remote Control at " + host + ":" + port);
+            response = httpClient.get(remoteControlPingURL());
+        } catch (Exception e) {
+            LOGGER.warn("Remote Control at " + host + ":" + port + " is unresponsive");
+            return true;
         }
-    };
+        if (response.statusCode() != 200) {
+            LOGGER.warn("Remote Control at " + host + ":" + port + " did not respond correctly");
+            return true;
+        }
+        return false;
+    }
+
 }

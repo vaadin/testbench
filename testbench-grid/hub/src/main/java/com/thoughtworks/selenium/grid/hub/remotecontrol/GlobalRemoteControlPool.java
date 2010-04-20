@@ -1,14 +1,21 @@
 package com.thoughtworks.selenium.grid.hub.remotecontrol;
 
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpException;
+import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.thoughtworks.selenium.grid.HttpParameters;
 import com.thoughtworks.selenium.grid.hub.Environment;
 import com.thoughtworks.selenium.grid.hub.NoSuchEnvironmentException;
 
@@ -21,25 +28,16 @@ public class GlobalRemoteControlPool implements DynamicRemoteControlPool {
     private static final Log LOGGER = LogFactory
             .getLog(GlobalRemoteControlPool.class);
     private final Map<String, RemoteControlSession> remoteControlsBySessionIds;
-    private final Map<String, RemoteControlProvisioner> provisionersByEnvironment;
     private final Map<String, RemoteControlProvisioner> provisionersByHash;
     
     public GlobalRemoteControlPool() {
         remoteControlsBySessionIds = new HashMap<String, RemoteControlSession>();
-        provisionersByEnvironment = new HashMap<String, RemoteControlProvisioner>();
         provisionersByHash = new HashMap<String, RemoteControlProvisioner>();
     }
 
     public void register(RemoteControlProxy newRemoteControl) {
         final RemoteControlProvisioner provisioner;
 
-        // synchronized(provisionersByEnvironment) {
-        // if (null == getProvisioner(newRemoteControl.environment())) {
-        // createNewProvisionerForEnvironment(newRemoteControl.environment());
-        // }
-        // provisioner = getProvisioner(newRemoteControl.environment());
-        // provisioner.add(newRemoteControl);
-        // }
         synchronized (provisionersByHash) {
             if (null == getProvisioner(newRemoteControl.hashCode())) {
                 createNewProvisionerForHash(newRemoteControl.hashCode());
@@ -49,20 +47,6 @@ public class GlobalRemoteControlPool implements DynamicRemoteControlPool {
         }
     }
 
-    // Check that remote control is registered on hub and register if not.
-    public void status(List<RemoteControlProxy> checkRemoteControls){
-        final RemoteControlProvisioner provisioner;
-        synchronized (provisionersByHash){
-            if(null == getProvisioner(checkRemoteControls.get(0).hashCode())){
-                createNewProvisionerForHash(checkRemoteControls.get(0).hashCode());
-                provisioner = getProvisioner(checkRemoteControls.get(0).hashCode());
-                for(RemoteControlProxy RCProxy: checkRemoteControls){
-                    provisioner.confirm(RCProxy);
-                }
-            }
-        }
-    }
-    
     public boolean unregister(RemoteControlProxy remoteControl) {
 
         boolean status = false;
@@ -108,8 +92,6 @@ public class GlobalRemoteControlPool implements DynamicRemoteControlPool {
         LOGGER.info("Associating session id='" + sessionId + "' =>"
                 + remoteControl + " for environment "
                 + remoteControl.environment());
-        
-        remoteControl.setSession(sessionId);
         
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Asssociating " + sessionId + " => " + remoteControl);
@@ -181,9 +163,29 @@ public class GlobalRemoteControlPool implements DynamicRemoteControlPool {
         return reservedRemoteControls;
     }
 
+    public List<RemoteControlProxy> allRegisteredRemoteControls() {
+        final List<RemoteControlProxy> allRemoteControls;
+
+        allRemoteControls = new LinkedList<RemoteControlProxy>();
+        synchronized(provisionersByHash) {
+            for (RemoteControlProvisioner provisioner : provisionersByHash.values()) {
+                allRemoteControls.addAll(provisioner.allRemoteControls());
+            }
+        }
+
+        return allRemoteControls;
+    }
+
+    public boolean isRegistered(RemoteControlProxy remoteControl) {
+        for (RemoteControlProvisioner provisioner : provisionersByHash.values()) {
+            if (provisioner.contains(remoteControl)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     protected RemoteControlProvisioner getProvisioner(String environment) {
-        // return provisionersByEnvironment.get(environment);
-        
         List<RemoteControlProvisioner> haveEnvironment = new LinkedList<RemoteControlProvisioner>();
         
         // get provisioners with wanted environment
@@ -253,18 +255,88 @@ public class GlobalRemoteControlPool implements DynamicRemoteControlPool {
         }
     }
 
-    protected void createNewProvisionerForEnvironment(String environemntName) {
-        provisionersByEnvironment.put(environemntName,
-                new RemoteControlProvisioner());
-    }
-
     protected void createNewProvisionerForHash(int hash) {
         provisionersByHash.put(Integer.toString(hash),
                 new RemoteControlProvisioner());
     }
 
+    public void unregisterAllUnresponsiveRemoteControls() {
+        for (RemoteControlProxy rc : allRegisteredRemoteControls()) {
+            unregisterRemoteControlIfUnreliable(rc);
+        }
+    }
+
+    protected void unregisterRemoteControlIfUnreliable(RemoteControlProxy rc) {
+        if (rc.unreliable()) {
+            LOGGER.warn("Unregistering unreliable RC " + rc);
+            // TODO cannot really stop the test in progress, may "get stuck" on
+            // the RC
+            unregister(rc);
+        }
+    }
+
     public void updateSessionLastActiveAt(String sessionId) {
         getRemoteControlSession(sessionId).updateLastActiveAt();
+    }
+
+    public void recycleAllSessionsIdleForTooLong(double maxIdleTimeInSeconds) {
+        for (RemoteControlSession session : iteratorSafeRemoteControlSessions()) {
+            recycleSessionIfIdleForTooLong(session, maxIdleTimeInSeconds);
+        }
+    }
+
+    public Set<RemoteControlSession> iteratorSafeRemoteControlSessions() {
+        final Set<RemoteControlSession> iteratorSafeCopy;
+
+        iteratorSafeCopy = new HashSet<RemoteControlSession>();
+        synchronized (remoteControlsBySessionIds) {
+            for (Map.Entry<String, RemoteControlSession> entry : remoteControlsBySessionIds
+                    .entrySet()) {
+                iteratorSafeCopy.add(entry.getValue());
+            }
+        }
+        return iteratorSafeCopy;
+    }
+
+    public void recycleSessionIfIdleForTooLong(RemoteControlSession session,
+            double maxIdleTimeInSeconds) {
+        final int maxIdleTImeInMilliseconds;
+
+        maxIdleTImeInMilliseconds = (int) (maxIdleTimeInSeconds * 1000);
+        if (session.innactiveForMoreThan(maxIdleTImeInMilliseconds)) {
+            LOGGER.warn("Releasing session IDLE for more than "
+                    + maxIdleTimeInSeconds + " seconds: " + session);
+
+            try {
+                // send testComplete to end the test currently in progress
+                sendTestComplete(session);
+            } catch (Exception e) {
+                LOGGER
+                        .warn("Failed to send testComplete command for timed out session "
+                                + session.sessionId());
+            }
+
+            // Release session and free Remote Control
+            releaseForSession(session.sessionId());
+        }
+    }
+
+    private int sendTestComplete(RemoteControlSession session)
+            throws IOException,
+            HttpException {
+        LOGGER.warn("Sending finish to RC and releasing session "
+                + session);
+        HttpParameters parameters = new HttpParameters();
+        parameters.put("cmd", "testComplete");
+        parameters.put("sessionId", session.sessionId());
+
+        // Send testComplete to Remote Control
+        final PostMethod postMethod = new PostMethod(session
+                .remoteControl().remoteControlDriverURL());
+        postMethod.addParameter("cmd", "testComplete");
+        postMethod.addParameter("sessionId", session.sessionId());
+        int status = new HttpClient().executeMethod(postMethod);
+        return status;
     }
 
 }

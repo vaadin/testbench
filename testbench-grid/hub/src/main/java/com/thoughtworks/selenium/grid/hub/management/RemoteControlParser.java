@@ -35,7 +35,8 @@ public class RemoteControlParser {
         }
         String[] environments = environment.split(",");
         for(String env: environments){
-            remoteControl.add(new RemoteControlProxy(host, port, env, 1, new HttpClient()));
+            remoteControl.add(new RemoteControlProxy(host, port, env,
+                    new HttpClient()));
         }
         
         return remoteControl;

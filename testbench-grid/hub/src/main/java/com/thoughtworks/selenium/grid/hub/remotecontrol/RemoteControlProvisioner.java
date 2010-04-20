@@ -1,5 +1,6 @@
 package com.thoughtworks.selenium.grid.hub.remotecontrol;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -92,20 +93,28 @@ public class RemoteControlProvisioner {
             remoteControlListLock.lock();
             if (remoteControls.contains(newRemoteControl)) {
                 LOGGER.info("RemoteControl exists " + newRemoteControl);
-                RemoteControlProxy existingRemoteControl = remoteControls
-                        .get(remoteControls.indexOf(newRemoteControl));
-                int concurrentSesssionCount = existingRemoteControl
-                        .concurrentSesssionCount();
-                for (int i = 0; i < concurrentSesssionCount; i++) {
-                    existingRemoteControl.unregisterSession();
-                }
-                remoteControls.remove(existingRemoteControl);
+                tearDownExistingRemoteControl(newRemoteControl);
             }
             remoteControls.add(newRemoteControl);
             signalThatARemoteControlHasBeenMadeAvailable();
         } finally {
             remoteControlListLock.unlock();
         }
+    }
+
+    /** Not Thread-safe */
+    public boolean contains(RemoteControlProxy remoteControl) {
+        return remoteControls.contains(remoteControl);
+    }
+
+    public void tearDownExistingRemoteControl(RemoteControlProxy newRemoteControl) {
+        final RemoteControlProxy oldRemoteControl;
+
+        oldRemoteControl = remoteControls.get(remoteControls.indexOf(newRemoteControl));
+        if (oldRemoteControl.sesssionInProgress()) {
+            oldRemoteControl.unregisterSession();
+        }
+        remoteControls.remove(oldRemoteControl);
     }
 
     // If remoteControl exists do nothing else add remote control
@@ -166,7 +175,7 @@ public class RemoteControlProvisioner {
                 }
             }
         }
-        return availableremoteControls;
+        return Arrays.asList(availableremoteControls.toArray(new RemoteControlProxy[availableremoteControls.size()]));
     }
 
     /**
@@ -175,15 +184,15 @@ public class RemoteControlProvisioner {
      * @return All reserved remote controls. Never null.
      */
     public List<RemoteControlProxy> reservedRemoteControls() {
-        LinkedList<RemoteControlProxy> reservedRemoteControls;
+        final LinkedList<RemoteControlProxy> reservedRemoteControls;
 
         reservedRemoteControls = new LinkedList<RemoteControlProxy>();
         for (RemoteControlProxy remoteControl : remoteControls) {
-            if (remoteControl.concurrentSesssionCount() >= 1) {
+            if (remoteControl.sesssionInProgress()) {
                 reservedRemoteControls.add(remoteControl);
             }
         }
-        return reservedRemoteControls;
+        return Arrays.asList(reservedRemoteControls.toArray(new RemoteControlProxy[reservedRemoteControls.size()]));
     }
 
     protected RemoteControlProxy blockUntilARemoteControlIsAvailable() {
@@ -271,4 +280,15 @@ public class RemoteControlProvisioner {
         remoteControlAvailable.signalAll();
     }
 
+
+    public List<RemoteControlProxy> allRemoteControls() {
+        final LinkedList<RemoteControlProxy> allRemoteControls;
+
+        allRemoteControls = new LinkedList<RemoteControlProxy>();
+        for (RemoteControlProxy remoteControl : remoteControls) {
+            allRemoteControls.add(remoteControl);
+        }
+
+        return allRemoteControls;
+    }
 }
