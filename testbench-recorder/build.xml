@@ -4,13 +4,13 @@
 	<tstamp />
 	<!--<property name="version" value="${DSTAMP}${TSTAMP}" />-->
 
-	<target name="selenium-ide-package">
+	<target name="testbench-recorder-package">
 		<!--<copy file="../selenium-extensions/vaadin-format.js" tofile="chrome/content/formats/vaadin-format.js"/>-->
-		<jar jarfile="chrome/selenium-ide.jar" compress="true">
+		<jar jarfile="chrome/testbench-recorder.jar" compress="true">
 			<manifest>
 				<attribute name="Class-Path" value="" />
 			</manifest>
-			<fileset dir="chrome" excludes="selenium-ide.jar">
+			<fileset dir="chrome" excludes="testbench-recorder.jar">
 			</fileset>
 			<!--
 			<fileset dir="../lib">
@@ -23,7 +23,7 @@
 		</jar>
 	</target>
 
-	<target name="extension" depends="clean,selenium-ide-package">
+	<target name="extension" depends="clean,testbench-recorder-package">
 		<mkdir dir="extension" />
 		<copy file="install.rdf_tpl" tofile="install.rdf" overwrite="true">
 			<filterchain>
@@ -32,8 +32,8 @@
 				</replacetokens>
 			</filterchain>
 		</copy>
-		<zip destfile="extension/Vaadin-TestBench-ide-${version}.xpi">
-			<fileset dir="." includes="chrome/selenium-ide.jar" />
+		<zip destfile="extension/Vaadin-TestBench-Recorder-${version}.xpi">
+			<fileset dir="." includes="chrome/testbench-recorder.jar" />
 			<fileset dir="." includes="components/**/**" />
 			<fileset dir="." includes="content-files/**/**" />
 			<fileset dir="." includes="chrome.manifest"/>

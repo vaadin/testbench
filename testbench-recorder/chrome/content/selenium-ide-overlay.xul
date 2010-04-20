@@ -15,15 +15,15 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 
-<!DOCTYPE overlay SYSTEM "chrome://selenium-ide/locale/selenium-ide.dtd"> 
+<!DOCTYPE overlay SYSTEM "chrome://testbench-recorder/locale/selenium-ide.dtd"> 
 
 <overlay id="selenium-ide-overlay" 
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-  <script type="application/x-javascript" src="chrome://selenium-ide/content/preferences.js"/>
-  <script type="application/x-javascript" src="chrome://selenium-ide/content/selenium-ide-loader.js"/>
-  <script type="application/x-javascript" src="chrome://selenium-ide/content/selenium-ide-overlay.js"/>
+  <script type="application/x-javascript" src="chrome://testbench-recorder/content/preferences.js"/>
+  <script type="application/x-javascript" src="chrome://testbench-recorder/content/selenium-ide-loader.js"/>
+  <script type="application/x-javascript" src="chrome://testbench-recorder/content/selenium-ide-overlay.js"/>
   <stringbundleset id="stringbundleset">
-    <stringbundle id="selenium-ide-strings" src="chrome://selenium-ide/locale/selenium-ide.properties" />
+    <stringbundle id="selenium-ide-strings" src="chrome://testbench-recorder/locale/selenium-ide.properties" />
   </stringbundleset>
 
   <menupopup id="viewSidebarMenu">
@@ -43,7 +43,7 @@ limitations under the License.
 		 autoCheck="false"
 		 type="checkbox"
 		 group="sidebar"
-		 sidebarurl="chrome://selenium-ide/content/selenium-ide-sidebar.xul"
+		 sidebarurl="chrome://testbench-recorder/content/selenium-ide-sidebar.xul"
 		 sidebartitle="&selenium-ide.sidebar.title;"
 		 oncommand="toggleSidebar('viewSeleniumIDESidebar');" />
   </broadcasterset>

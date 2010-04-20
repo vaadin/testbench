@@ -105,7 +105,7 @@ FormatCollection.loadFormatter = function(url) {
 	format.playable = true;
 	format.remoteControl = false;
 	format.load = function(file) {
-		subScriptLoader.loadSubScript('chrome://selenium-ide/content/formats/' + file, format);
+		subScriptLoader.loadSubScript('chrome://testbench-recorder/content/formats/' + file, format);
 	}
 	for (prop in StringUtils) {
 		// copy functions from StringUtils
@@ -373,7 +373,7 @@ function InternalFormat(options, id, name, file) {
 	this.options = options;
 	this.id = id;
 	this.name = name;
-	this.url = 'chrome://selenium-ide/content/formats/' + file;
+	this.url = 'chrome://testbench-recorder/content/formats/' + file;
 }
 
 InternalFormat.prototype = new Format;
@@ -452,7 +452,7 @@ UserFormat.prototype.getSource = function() {
 	if (this.id) {
 		return FileUtils.readFile(this.getFormatFile());
 	} else {
-		return FileUtils.readURL('chrome://selenium-ide/content/formats/blank.js');
+		return FileUtils.readURL('chrome://testbench-recorder/content/formats/blank.js');
 	}
 }
 

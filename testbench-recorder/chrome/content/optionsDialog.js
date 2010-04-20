@@ -186,7 +186,7 @@ function showFormatDialog() {
 
 function openFormatSource() {
 	this.formatInfo.saved = false;
-	window.openDialog('chrome://selenium-ide/content/format-source-dialog.xul', 'options-format-source', 'chrome', this.formatInfo);
+	window.openDialog('chrome://testbench-recorder/content/format-source-dialog.xul', 'options-format-source', 'chrome', this.formatInfo);
 	if (this.formatInfo.saved) {
 		updateFormatSelection();
 	}
@@ -194,7 +194,7 @@ function openFormatSource() {
 
 function createNewFormat() {
 	var formatInfo = new UserFormat();
-	window.openDialog('chrome://selenium-ide/content/format-source-dialog.xul', 'options-format-source', 'chrome', formatInfo);
+	window.openDialog('chrome://testbench-recorder/content/format-source-dialog.xul', 'options-format-source', 'chrome', formatInfo);
 	if (formatInfo.saved) {
 		this.formats.reloadFormats();
 		loadFormatList();

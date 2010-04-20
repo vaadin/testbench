@@ -18,51 +18,51 @@ limitations under the License.
 <!DOCTYPE window [
 <!ENTITY % browserDTD SYSTEM "chrome://browser/locale/browser.dtd">
 %browserDTD;
-<!ENTITY % seleniumIdeDTD SYSTEM "chrome://selenium-ide/locale/selenium-ide.dtd">
+<!ENTITY % seleniumIdeDTD SYSTEM "chrome://testbench-recorder/locale/selenium-ide.dtd">
 %seleniumIdeDTD;
 ]>
 <overlay id="selenium-ide-common" 
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
   <script type="application/x-javascript" src="chrome://global/content/globalOverlay.js"/>
-  <script type="application/x-javascript" src="chrome://selenium-ide/content/preferences.js"/>
+  <script type="application/x-javascript" src="chrome://testbench-recorder/content/preferences.js"/>
   <!-- import misc.js before tools.js, because both declare a Log object -->
-  <script type="application/x-javascript" src="chrome://selenium-ide/content/selenium/xpath/misc.js"/>
-  <script type="application/x-javascript" src="chrome://selenium-ide/content/selenium/xpath/util.js"/>
-  <script type="application/x-javascript" src="chrome://selenium-ide/content/selenium/xpath/xmltoken.js"/>
-  <script type="application/x-javascript" src="chrome://selenium-ide/content/selenium/xpath/dom.js"/>
-  <script type="application/x-javascript" src="chrome://selenium-ide/content/selenium/xpath/xpath.js"/>
-  <script type="application/x-javascript" src="chrome://selenium-ide/content/tools.js"/>
-  <script type="application/x-javascript" src="chrome://selenium-ide/content/xhtml-entities.js"/>
-  <script type="application/x-javascript" src="chrome://selenium-ide/content/selenium/scripts/selenium-browserdetect.js"/>
-  <script type="application/x-javascript" src="chrome://selenium-ide/content/selenium/lib/prototype.js"/>
-  <script type="application/x-javascript" src="chrome://selenium-ide/content/selenium/lib/cssQuery/cssQuery-p.js"/> 
-  <script type="application/x-javascript" src="chrome://selenium-ide/content/selenium/scripts/htmlutils.js"/>
-  <script type="application/x-javascript" src="chrome://selenium-ide/content/selenium/scripts/ui-element.js"/>
-  <script type="application/x-javascript" src="chrome://selenium-ide/content/selenium/scripts/find_matching_child.js"/>
-  <script type="application/x-javascript" src="chrome://selenium-ide/content/selenium/scripts/selenium-browserbot.js"/>
-  <script type="application/x-javascript" src="chrome://selenium-ide/content/selenium/scripts/selenium-logging.js"/>
-<!--  <script type="application/x-javascript" src="chrome://selenium-ide/content/eventManager.js"/>-->
-  <script type="application/x-javascript" src="chrome://selenium-ide/content/recorder.js"/>
-  <script type="application/x-javascript" src="chrome://selenium-ide/content/recorder-handlers.js"/>
-  <script type="application/x-javascript" src="chrome://selenium-ide/content/locatorBuilders.js"/>
-  <script type="application/x-javascript" src="chrome://selenium-ide/content/application.js"/>
-  <script type="application/x-javascript" src="chrome://selenium-ide/content/storedHistory.js"/>
-  <script type="application/x-javascript" src="chrome://selenium-ide/content/editor.js"/>
-  <script type="application/x-javascript" src="chrome://selenium-ide/content/sidebar-editor.js"/>
-  <script type="application/x-javascript" src="chrome://selenium-ide/content/standalone-editor.js"/>
-  <script type="application/x-javascript" src="chrome://selenium-ide/content/commandBuilders.js"/>
-  <script type="application/x-javascript" src="chrome://selenium-ide/content/file-utils.js"/>
-  <script type="application/x-javascript" src="chrome://selenium-ide/content/xul-utils.js"/>
-  <script type="application/x-javascript" src="chrome://selenium-ide/content/format.js"/>
-  <script type="application/x-javascript" src="chrome://selenium-ide/content/testCase.js"/>
-  <script type="application/x-javascript" src="chrome://selenium-ide/content/testSuite.js"/>
-  <script type="application/x-javascript" src="chrome://selenium-ide/content/treeView.js"/>
-  <script type="application/x-javascript" src="chrome://selenium-ide/content/sourceView.js"/>
-  <script type="application/x-javascript" src="chrome://selenium-ide/content/suiteTreeView.js"/>
-  <script type="application/x-javascript" src="chrome://selenium-ide/content/testSuiteProgress.js"/>
-  <script type="application/x-javascript" src="chrome://selenium-ide/content/debugger.js"/>
+  <script type="application/x-javascript" src="chrome://testbench-recorder/content/selenium/xpath/misc.js"/>
+  <script type="application/x-javascript" src="chrome://testbench-recorder/content/selenium/xpath/util.js"/>
+  <script type="application/x-javascript" src="chrome://testbench-recorder/content/selenium/xpath/xmltoken.js"/>
+  <script type="application/x-javascript" src="chrome://testbench-recorder/content/selenium/xpath/dom.js"/>
+  <script type="application/x-javascript" src="chrome://testbench-recorder/content/selenium/xpath/xpath.js"/>
+  <script type="application/x-javascript" src="chrome://testbench-recorder/content/tools.js"/>
+  <script type="application/x-javascript" src="chrome://testbench-recorder/content/xhtml-entities.js"/>
+  <script type="application/x-javascript" src="chrome://testbench-recorder/content/selenium/scripts/selenium-browserdetect.js"/>
+  <script type="application/x-javascript" src="chrome://testbench-recorder/content/selenium/lib/prototype.js"/>
+  <script type="application/x-javascript" src="chrome://testbench-recorder/content/selenium/lib/cssQuery/cssQuery-p.js"/> 
+  <script type="application/x-javascript" src="chrome://testbench-recorder/content/selenium/scripts/htmlutils.js"/>
+  <script type="application/x-javascript" src="chrome://testbench-recorder/content/selenium/scripts/ui-element.js"/>
+  <script type="application/x-javascript" src="chrome://testbench-recorder/content/selenium/scripts/find_matching_child.js"/>
+  <script type="application/x-javascript" src="chrome://testbench-recorder/content/selenium/scripts/selenium-browserbot.js"/>
+  <script type="application/x-javascript" src="chrome://testbench-recorder/content/selenium/scripts/selenium-logging.js"/>
+<!--  <script type="application/x-javascript" src="chrome://testbench-recorder/content/eventManager.js"/>-->
+  <script type="application/x-javascript" src="chrome://testbench-recorder/content/recorder.js"/>
+  <script type="application/x-javascript" src="chrome://testbench-recorder/content/recorder-handlers.js"/>
+  <script type="application/x-javascript" src="chrome://testbench-recorder/content/locatorBuilders.js"/>
+  <script type="application/x-javascript" src="chrome://testbench-recorder/content/application.js"/>
+  <script type="application/x-javascript" src="chrome://testbench-recorder/content/storedHistory.js"/>
+  <script type="application/x-javascript" src="chrome://testbench-recorder/content/editor.js"/>
+  <script type="application/x-javascript" src="chrome://testbench-recorder/content/sidebar-editor.js"/>
+  <script type="application/x-javascript" src="chrome://testbench-recorder/content/standalone-editor.js"/>
+  <script type="application/x-javascript" src="chrome://testbench-recorder/content/commandBuilders.js"/>
+  <script type="application/x-javascript" src="chrome://testbench-recorder/content/file-utils.js"/>
+  <script type="application/x-javascript" src="chrome://testbench-recorder/content/xul-utils.js"/>
+  <script type="application/x-javascript" src="chrome://testbench-recorder/content/format.js"/>
+  <script type="application/x-javascript" src="chrome://testbench-recorder/content/testCase.js"/>
+  <script type="application/x-javascript" src="chrome://testbench-recorder/content/testSuite.js"/>
+  <script type="application/x-javascript" src="chrome://testbench-recorder/content/treeView.js"/>
+  <script type="application/x-javascript" src="chrome://testbench-recorder/content/sourceView.js"/>
+  <script type="application/x-javascript" src="chrome://testbench-recorder/content/suiteTreeView.js"/>
+  <script type="application/x-javascript" src="chrome://testbench-recorder/content/testSuiteProgress.js"/>
+  <script type="application/x-javascript" src="chrome://testbench-recorder/content/debugger.js"/>
   
-  <stringbundle id="strings" src="chrome://selenium-ide/locale/selenium-ide.properties" />
+  <stringbundle id="strings" src="chrome://testbench-recorder/locale/selenium-ide.properties" />
 
   <commandset id="seleniumIDECommands">
     <command id="cmd_save" oncommand="goDoCommand('cmd_save')"/>
@@ -185,7 +185,7 @@ limitations under the License.
 	    <menupopup id="popup_clipboard_formats" onpopupshowing="window.editor.populateFormatsPopup(this, window.editor.clipboardFormat)" oncommand="window.editor.app.setClipboardFormat(window.editor.app.formats.selectFormat(event.target.getAttribute('value')))">
 	    </menupopup>
       </menu>
-      <menuitem id="internalTestsMenu" label="Test Selenium IDE" oncommand="window.editor.showInBrowser('chrome://selenium-ide/content/tests/index.html');" />
+      <menuitem id="internalTestsMenu" label="Test Selenium IDE" oncommand="window.editor.showInBrowser('chrome://testbench-recorder/content/tests/index.html');" />
       -->
     </menupopup>
     

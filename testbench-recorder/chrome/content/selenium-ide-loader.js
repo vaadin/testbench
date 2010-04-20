@@ -23,7 +23,7 @@ if (!this.SeleniumIDE) this.SeleniumIDE = {};
 SeleniumIDE.Loader = {};
 
 SeleniumIDE.Loader.openRecorder = function() {
-	toOpenWindowByType('global:selenium-ide','chrome://selenium-ide/content/selenium-ide.xul');
+	toOpenWindowByType('global:selenium-ide','chrome://testbench-recorder/content/selenium-ide.xul');
 }
 
 SeleniumIDE.Loader.getTopEditor = function() {
@@ -43,7 +43,7 @@ SeleniumIDE.Loader.getEditors = function() {
 			var sidebar = document.getElementById('sidebar');
 			try {
 				if (sidebar && sidebar.contentDocument) {
-					if ("chrome://selenium-ide/content/selenium-ide-sidebar.xul" == sidebar.contentDocument.documentURI) {
+					if ("chrome://testbench-recorder/content/selenium-ide-sidebar.xul" == sidebar.contentDocument.documentURI) {
 						var sidebarView = sidebar.contentDocument.defaultView;
 						if (sidebarView && sidebarView.editor) {
 							editors.push(sidebarView.editor);

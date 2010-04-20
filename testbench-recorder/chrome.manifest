@@ -1,0 +1,11 @@
+# chrome.manifest to be used when packaged into xpi archive
+content	testbench-recorder	jar:chrome/testbench-recorder.jar!/content/ xpcnativewrappers=yes
+content testbench-recorder-platform jar:chrome/testbench-recorder.jar!/content/ platform
+content	testbench-recorder-testrunner	jar:chrome/testbench-recorder.jar!/content/ xpcnativewrappers=no contentaccessible=yes
+overlay	chrome://browser/content/browser.xul	chrome://testbench-recorder/content/selenium-ide-overlay.xul
+locale testbench-recorder en-US jar:chrome/testbench-recorder.jar!/locale/en-US/
+locale testbench-recorder fr-FR jar:chrome/testbench-recorder.jar!/locale/fr-FR/
+locale testbench-recorder ja-JP jar:chrome/testbench-recorder.jar!/locale/ja-JP/
+locale testbench-recorder pt-BR jar:chrome/testbench-recorder.jar!/locale/pt-BR/
+skin testbench-recorder classic/1.0 jar:chrome/testbench-recorder.jar!/skin/classic/
+skin testbench-recorder-platform classic/1.0 jar:chrome/testbench-recorder.jar!/skin/classic/platforms/ appversion>=3.0

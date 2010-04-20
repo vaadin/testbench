@@ -53,13 +53,13 @@
 		</zip>
 	</target>
 	
-	<target name="testbench-ide">
+	<target name="testbench-recorder">
 		<!-- Create the TestBench IDE FireFox plugin -->
 		<subant target="extension">
 			<property name="version" value="${version}"/>
-			<fileset dir="../testbench-ide" includes="build.xml" />
+			<fileset dir="../testbench-recorder" includes="build.xml" />
 		</subant>
-		<copy file="../testbench-ide/extension/Vaadin-TestBench-ide-${version}.xpi" todir="${output.dir}/Vaadin-TestBench-ide" />
+		<copy file="../testbench-recorder/extension/Vaadin-TestBench-Recorder-${version}.xpi" todir="${output.dir}/Vaadin-TestBench-Recorder" />
 	</target>
 
 	<target name="testbench-grid">
@@ -77,10 +77,10 @@
 		</parallel>
 	</target>
 	
-	<target name="testbench-distribution-package" depends="testbench.jar,javadoc,testbench-ide,testbench-grid,update-run-scripts,run-tests">
+	<target name="testbench-distribution-package" depends="testbench.jar,javadoc,testbench-recorder,testbench-grid,update-run-scripts,run-tests">
 		<zip destfile="${output.dir}/Vaadin-TestBench-${version}.zip">
 			<zipfileset dir="${output.dir}" includes="Vaadin-TestBench-${version}.jar" />
-			<zipfileset dir="${output.dir}" includes="Vaadin-TestBench-ide/Vaadin-TestBench-ide-${version}.xpi"  />
+			<zipfileset dir="${output.dir}" includes="Vaadin-TestBench-Recorder/Vaadin-TestBench-Recorder-${version}.xpi"  />
 <!--			<zipfileset dir=".." includes="selenium-extensions/**" />-->
 			<!-- Not certain about MPL or CPL licenses -->
 <!--			<fileset dir=".." includes="lib/js.jar lib/junit*.jar" excludes="lib/**-source* lib/**-src*" />-->

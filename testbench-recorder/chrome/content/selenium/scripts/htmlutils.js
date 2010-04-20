@@ -979,7 +979,7 @@ function getTimeoutTime(timeout) {
 function is_IDE() {
     var locstr = window.location.href;
     
-    if (locstr.indexOf('chrome://selenium-ide-testrunner') == 0) {
+    if (locstr.indexOf('chrome://testbench-recorder-testrunner') == 0) {
          return false;
     }
     

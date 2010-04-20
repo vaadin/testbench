@@ -45,13 +45,13 @@ function Debugger(editor) {
 		
 		const subScriptLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
 	    .getService(Components.interfaces.mozIJSSubScriptLoader);
-		//subScriptLoader.loadSubScript('chrome://selenium-ide/content/selenium/selenium-logging.js', this.runner);
+		//subScriptLoader.loadSubScript('chrome://testbench-recorder/content/selenium/selenium-logging.js', this.runner);
 
-		subScriptLoader.loadSubScript('chrome://selenium-ide/content/selenium/scripts/selenium-api.js', this.runner);
-		subScriptLoader.loadSubScript('chrome://selenium-ide/content/selenium/scripts/selenium-commandhandlers.js', this.runner);
-		subScriptLoader.loadSubScript('chrome://selenium-ide/content/selenium/scripts/selenium-executionloop.js', this.runner);
-		subScriptLoader.loadSubScript('chrome://selenium-ide/content/selenium/scripts/selenium-browserbot.js', this.runner);
-		subScriptLoader.loadSubScript('chrome://selenium-ide/content/selenium/scripts/selenium-testrunner-original.js', this.runner);
+		subScriptLoader.loadSubScript('chrome://testbench-recorder/content/selenium/scripts/selenium-api.js', this.runner);
+		subScriptLoader.loadSubScript('chrome://testbench-recorder/content/selenium/scripts/selenium-commandhandlers.js', this.runner);
+		subScriptLoader.loadSubScript('chrome://testbench-recorder/content/selenium/scripts/selenium-executionloop.js', this.runner);
+		subScriptLoader.loadSubScript('chrome://testbench-recorder/content/selenium/scripts/selenium-browserbot.js', this.runner);
+		subScriptLoader.loadSubScript('chrome://testbench-recorder/content/selenium/scripts/selenium-testrunner-original.js', this.runner);
 		if (this.editor.getOptions().userExtensionsURL) {
 			try {
 				ExtensionsLoader.loadSubScript(subScriptLoader, this.editor.getOptions().userExtensionsURL, this.runner);
@@ -59,7 +59,7 @@ function Debugger(editor) {
 				this.log.error("error loading user-extensions.js: " + error);
 			}
 		}
-		subScriptLoader.loadSubScript('chrome://selenium-ide/content/selenium-runner.js', this.runner);
+		subScriptLoader.loadSubScript('chrome://testbench-recorder/content/selenium-runner.js', this.runner);
 
         this.editor.infoPanel.logView.setLog(this.runner.LOG);
         
