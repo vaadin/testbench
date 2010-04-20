@@ -3309,7 +3309,7 @@ OptionLocatorFactory.prototype.OptionLocatorByLabel = function(label) {
         for (var i = 0; i < element.options.length; i++) {
         	// IE does not trimp the text property like other browsers
 			var text = element.options[i].text.replace(/^\s+|\s+$/g,"");
-            if (this.labelMatcher.matches()) {
+            if (this.labelMatcher.matches(text)) {
                 return element.options[i];
             }
         }
