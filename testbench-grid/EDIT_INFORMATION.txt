@@ -62,6 +62,7 @@ infrastructure/core (changes embedded in grid/hub):
 	com.thoughtworks.selenium.grid.HttpClient									[socket timeout, getResponseBodyAsStream instead of getResponseBody]
 
 hub:
+	com.thoughtworks.selenium.grid.hub.HeartbeatServlet                         [get host from remote address if not given]
 	com.thoughtworks.selenium.grid.hub.management.RegistrationServlet			[multiple environments]
 	com.thoughtworks.selenium.grid.hub.management.RemoteControlParser			[Support environment string parsing]
 	com.thoughtworks.selenium.grid.hub.management.UnregistrationServlet			[multiple environments]
@@ -70,8 +71,6 @@ hub:
 
     build.xml
 
-To check/clean up in hub:
-	com.thoughtworks.selenium.grid.hub.remotecontrol.DynamicRemoteControlPool	[]
 	com.thoughtworks.selenium.grid.hub.remotecontrol.GlobalRemoteControlPool	[multiple environments, grouping, load balancing]
 	com.thoughtworks.selenium.grid.hub.remotecontrol.RemoteControlProvsioner	[group handling, load balancing]
 	com.thoughtworks.selenium.grid.hub.remotecontrol.RemoteControlProxy			[equals(Object), toString()]
