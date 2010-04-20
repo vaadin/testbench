@@ -1,11 +1,12 @@
 package com.thoughtworks.selenium.grid.hub.management;
 
-import com.thoughtworks.selenium.grid.HttpClient;
-import com.thoughtworks.selenium.grid.hub.remotecontrol.RemoteControlProxy;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
-import java.util.LinkedList;
+
+import com.thoughtworks.selenium.grid.HttpClient;
+import com.thoughtworks.selenium.grid.hub.remotecontrol.RemoteControlProxy;
 
 public class RemoteControlParser {
 
@@ -18,10 +19,10 @@ public class RemoteControlParser {
 
         host = request.getParameter("host");
         if (null == host || "".equals(host.trim())) {
-            throw new IllegalStateException("You must specify a 'host' parameter");
-        } else if (request.getParameter("host").length() > 0) {
-            // TODO an this happen?
             host = request.getRemoteAddr();
+        }
+        if (null == host || "".equals(host.trim())) {
+            throw new IllegalStateException("You must specify a 'host' parameter");
         }
         portParameter = request.getParameter("port");
         if (null == portParameter || "".equals(portParameter.trim())) {
