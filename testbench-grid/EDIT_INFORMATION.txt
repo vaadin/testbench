@@ -63,6 +63,7 @@ infrastructure/core (changes embedded in grid/hub):
 
 hub:
 	com.thoughtworks.selenium.grid.hub.HeartbeatServlet                         [get host from remote address if not given]
+	com.thoughtworks.selenium.grid.hub.HubServlet                               [reduced excessive logging]
 	com.thoughtworks.selenium.grid.hub.management.RegistrationServlet			[multiple environments]
 	com.thoughtworks.selenium.grid.hub.management.RemoteControlParser			[Support environment string parsing]
 	com.thoughtworks.selenium.grid.hub.management.UnregistrationServlet			[multiple environments]
