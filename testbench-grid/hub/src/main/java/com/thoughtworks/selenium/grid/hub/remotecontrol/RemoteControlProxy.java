@@ -34,6 +34,12 @@ public class RemoteControlProxy {
     private final RemoteControlProxy RC;
     private Thread wdt = null;
     
+    // this is for HeartbeatServlet
+    public RemoteControlProxy(String host, int port, String environment,
+            HttpClient httpClient) {
+        this(host, port, environment, 1, httpClient);
+    }
+
     public RemoteControlProxy(String host, int port, String environment, int concurrentSessionMax, HttpClient httpClient) {
         if (null == host) {
             throw new IllegalArgumentException("host cannot be null");
