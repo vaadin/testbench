@@ -211,3 +211,30 @@ Selenium.prototype.doShowTooltip = function(locator, value){
 /* For adding test to be run before this test */
 Selenium.prototype.doIncludeTest = function(locator, path){
 };
+
+/**
+ * Overridden the default selenium strategy because of IE trim bug
+ * 
+ *  OptionLocator for options identified by their labels.
+ */
+OptionLocatorFactory.prototype.OptionLocatorByLabel = function(label) {
+    this.label = label;
+    this.labelMatcher = new PatternMatcher(this.label);
+    this.findOption = function(element) {
+        for (var i = 0; i < element.options.length; i++) {
+        	// IE does not trim the text property like other browsers
+			var text = element.options[i].text.replace(/^\s+|\s+$/g,"");
+            if (this.labelMatcher.matches(text)) {
+                return element.options[i];
+            }
+        }
+        throw new SeleniumError("Option with label '" + this.label + "' not found");
+    };
+
+    this.assertSelected = function(element) {
+       	// IE does not trim the text property like other browsers
+        var selectedLabel = element.options[element.selectedIndex].text.replace(/^\s+|\s+$/g,"");
+        Assert.matches(this.label, selectedLabel)
+    };
+};
+

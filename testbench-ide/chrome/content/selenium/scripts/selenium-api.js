@@ -3307,7 +3307,9 @@ OptionLocatorFactory.prototype.OptionLocatorByLabel = function(label) {
     this.labelMatcher = new PatternMatcher(this.label);
     this.findOption = function(element) {
         for (var i = 0; i < element.options.length; i++) {
-            if (this.labelMatcher.matches(element.options[i].text)) {
+        	// IE does not trimp the text property like other browsers
+			var text = element.options[i].text.replace(/^\s+|\s+$/g,"");
+            if (this.labelMatcher.matches()) {
                 return element.options[i];
             }
         }
@@ -3315,7 +3317,8 @@ OptionLocatorFactory.prototype.OptionLocatorByLabel = function(label) {
     };
 
     this.assertSelected = function(element) {
-        var selectedLabel = element.options[element.selectedIndex].text;
+       	// IE does not trimp the text property like other browsers
+        var selectedLabel = element.options[element.selectedIndex].text.replace(/^\s+|\s+$/g,"");
         Assert.matches(this.label, selectedLabel)
     };
 };
