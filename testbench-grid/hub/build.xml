@@ -123,6 +123,9 @@
 				<include name="**/*.java"/>
 				<include name="**/*.html"/>
 			</fileset>
+			<fileset dir="${rootdir}/infrastructure/src/main/java">
+				<include name="**/*.java"/>
+			</fileset>
 			<filterchain>
 				<replacetokens>
 					<token key="build" value="${timestamp}" />
