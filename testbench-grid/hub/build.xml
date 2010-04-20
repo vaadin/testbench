@@ -68,6 +68,7 @@
   
   	<path id="compile.classpath">
     	<fileset dir="${rootdir}/vendor">
+      		<include name="selenium-grid-core-1.0.5.jar"/>
 	      	<include name="jetty-6.0.2.jar"/>
 	      	<include name="jetty-util-6.0.2.jar"/>
 	      	<include name="jyaml-1.3.jar"/>
@@ -78,7 +79,9 @@
     	<fileset dir="${basedir}/lib">
       		<include name="freemarker-2.3.10.jar"/>
     	</fileset>
-    	<pathelement location="${rootdir}/infrastructure/core/target/classes"/>
+    	<fileset dir="${rootdir}/../lib">
+      		<include name="commons-io-1.1.jar"/>
+    	</fileset>
     	<pathelement path="${java.class.path}/"/>
   	</path>
 
@@ -91,7 +94,7 @@
   	<target name="package-standalone" depends="clean-and-copy-source,package" description="Package as a jar including all dependencies">
     	<package-standalone-jar main-class="com.thoughtworks.selenium.grid.hub.HubServer">
 	      	<dependencies>
-	        	<zipfileset src="${rootdir}/infrastructure/core/target/dist/lib/selenium-grid-core-${version}.jar"/>
+	        	<zipfileset src="${rootdir}/vendor/selenium-grid-core-1.0.5.jar"/>
 	        	<zipfileset src="${basedir}/lib/freemarker-2.3.10.jar"/>
 	        	<zipfileset src="${rootdir}/vendor/jetty-6.0.2.jar"/>
 	        	<zipfileset src="${rootdir}/vendor/jetty-util-6.0.2.jar"/>

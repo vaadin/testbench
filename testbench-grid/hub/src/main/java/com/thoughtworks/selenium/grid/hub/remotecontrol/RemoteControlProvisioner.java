@@ -13,7 +13,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * Central authority to track registered remote controls and grant exclusive
  * access to a remote control for a while.
- * 
+ * <p/>
  * A client will block if it attempts to reserve a remote control and none is
  * available. The call will return as soon as a remote control becomes available
  * again.
@@ -35,7 +35,7 @@ public class RemoteControlProvisioner {
     }
 
     public RemoteControlProxy reserve() {
-        final RemoteControlProxy remoteControl;
+        RemoteControlProxy remoteControl;
 
         try {
             remoteControlListLock.lock();
@@ -156,7 +156,7 @@ public class RemoteControlProvisioner {
      * @return All available remote controls. Never null.
      */
     public List<RemoteControlProxy> availableRemoteControls() {
-        LinkedList<RemoteControlProxy> availableremoteControls;
+        final LinkedList<RemoteControlProxy> availableremoteControls;
 
         availableremoteControls = new LinkedList<RemoteControlProxy>();
         if (reservedRemoteControls().isEmpty()) {

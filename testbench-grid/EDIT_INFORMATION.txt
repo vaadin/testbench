@@ -13,15 +13,7 @@ TestBench also adds some load balancing by checking which remote control has the
 
 Changed files.
 
-infrastructure:
-	com.thoughtworks.selenium.grid.HttpClient									[socket timeout, getResponseBodyAsStream instead of getResponseBody]
 hub:
-	com.thoughtworks.selenium.grid.hub.management.RegistrationServlet			[multiple environments]
-	com.thoughtworks.selenium.grid.hub.management.RemoteControlParser			[Support environment string parsing]
-	com.thoughtworks.selenium.grid.hub.management.UnregistrationServlet			[multiple environments]
-
-	com.thoughtworks.selenium.grid.hub.management.console.index.html			[names]
-
 	com.thoughtworks.selenium.grid.hub.remotecontrol.DynamicRemoteControlPool	[]
 	com.thoughtworks.selenium.grid.hub.remotecontrol.GlobalRemoteControlPool	[multiple environments, grouping, load balancing]
 	com.thoughtworks.selenium.grid.hub.remotecontrol.RemoteControlProvsioner	[group handling, load balancing]
@@ -37,7 +29,7 @@ hub:
 	com.thoughtworks.selenium.grid.hub.remotecontrol.GlobalRemoteControlPool	[status and checkRegistartion methods]
 	com.thoughtworks.selenium.grid.hub.remotecontrol.RemoteControlProvsioner	[confirm method]
 	
-Changed files for timeout watchdog #3610
+Changed files for timeout watchdog #3610(?)
 
 infrastructure:
 	com.thoughtworks.selenium.grid.HttpClient [inUse flag]
@@ -48,12 +40,44 @@ hub:
 Using selenium-server-1.0.1.jar
 
 
-Changed files for proper process killing and cleanup #4277 and #4111
+======================
 
-infrastructure:
-    com.thoughtworks.selenium.grid.webserver.WebServer                          [updated to use Jetty 6.1.9, not 6.0.2]
+Updates when eliminating duplicated selenium-grid code:
+
+Use as much as possible the latest (1.0.6 at the time of writing) Selenium Grid project, only override when necessary.
+When overriding, copy only the required classes.
+The original source code can be obtained at git://github.com/ph7/selenium-grid.git .
+
+Note that the infrastructure (core) JAR was built from the standard Selenium grid sources as it is not in the distribution as a separate JAR.
+
+rc:
+    com.thoughtworks.selenium.grid.remotecontrol.OptionParser                   [changed defaults to no host, 60s polling interval, use ConfigurationParser]
+    com.thoughtworks.selenium.grid.remotecontrol.ConfigurationParser            [new class for parsing rc_configuration.xml]
+    com.thoughtworks.selenium.grid.remotecontrol.instrumentation.Response       [added Content-Length to response]
+
+    build.xml
+
+infrastructure/core (changes embedded in grid/hub):
+    grid_configuration.yml
+	com.thoughtworks.selenium.grid.HttpClient									[socket timeout, getResponseBodyAsStream instead of getResponseBody]
+
+hub:
+	com.thoughtworks.selenium.grid.hub.management.RegistrationServlet			[multiple environments]
+	com.thoughtworks.selenium.grid.hub.management.RemoteControlParser			[Support environment string parsing]
+	com.thoughtworks.selenium.grid.hub.management.UnregistrationServlet			[multiple environments]
+
+	com.thoughtworks.selenium.grid.hub.management.console.index.html			[names]
+
+    build.xml
+
+To check/clean up in hub:
+	com.thoughtworks.selenium.grid.hub.remotecontrol.DynamicRemoteControlPool	[]
+	com.thoughtworks.selenium.grid.hub.remotecontrol.GlobalRemoteControlPool	[multiple environments, grouping, load balancing]
+	com.thoughtworks.selenium.grid.hub.remotecontrol.RemoteControlProvsioner	[group handling, load balancing]
+	com.thoughtworks.selenium.grid.hub.remotecontrol.RemoteControlProxy			[equals(Object), toString()]
+
+
+Changed files for proper process killing and cleanup #4277 and #4111
 rc:
     org.openqa.selenium.server.browserlaunchers.AsyncExecute                    [copied from selenium-server-1.0.1 and modified killProcess()]
     org.openqa.selenium.server.browserlaunchers.SafariCustomProfileLauncher     [copied from selenium-server-1.0.1, added profile cleanup in close()]
-    build.xml                                                                   [do not include in JAR external libraries that are in selenium-server-1.0.1.jar]
-

@@ -1,22 +1,25 @@
 package com.thoughtworks.selenium.grid.hub.remotecontrol;
 
-import com.thoughtworks.selenium.grid.HttpParameters;
-import com.thoughtworks.selenium.grid.Response;
-import com.thoughtworks.selenium.grid.HttpClient;
-import com.thoughtworks.selenium.grid.hub.HubRegistry;
-
 import java.io.IOException;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import com.thoughtworks.selenium.grid.HttpClient;
+import com.thoughtworks.selenium.grid.HttpParameters;
+import com.thoughtworks.selenium.grid.Response;
+import com.thoughtworks.selenium.grid.hub.HubRegistry;
+import com.thoughtworks.selenium.grid.hub.HubServer;
 
 
 /**
  * Local interface to a real remote control running somewhere in the grid.
  */
 public class RemoteControlProxy {
-    
+
+    private static final Log LOGGER = LogFactory.getLog(HubServer.class);
+
     private final int concurrentSessionMax;
     private int concurrentSessionCount;
     private final HttpClient httpClient;
@@ -42,7 +45,7 @@ public class RemoteControlProxy {
         this.port = port;
         this.environment = environment;
         this.concurrentSessionMax = concurrentSessionMax;
-        this.concurrentSessionCount = 0;
+        concurrentSessionCount = 0;
         this.httpClient = httpClient;
         // Set timer properties
         RC = this;
@@ -61,8 +64,16 @@ public class RemoteControlProxy {
         return environment;
     }
 
-    public String remoteControlURL() {
-        return "http://" + host + ":" + port + "/selenium-server/driver/";
+    public String remoteControlPingURL() {
+        return remoteControlURLFor("heartbeat");
+    }
+
+    public String remoteControlDriverURL() {
+        return remoteControlURLFor("driver/");
+    }
+
+    public String remoteControlURLFor(String path) {
+        return "http://" + host + ":" + port + "/selenium-server/" + path;
     }
 
     public Response forward(HttpParameters parameters) throws IOException {
@@ -74,15 +85,17 @@ public class RemoteControlProxy {
         if(session != null){
             reset();
         }
-        return httpClient.post(remoteControlURL(), parameters);
+        return httpClient.post(remoteControlDriverURL(), parameters);
     }
 
+    @Override
     public String toString() {
         return "[RemoteControlProxy " + host + ":" + port + " " + environment + " "
                                       + concurrentSessionCount  + "/" + concurrentSessionMax + "]";
     }
 
     // Added environment to equals so same RC can register multiple environments
+    @Override
     public boolean equals(Object other) {
         if (this == other) {
             return true;
@@ -96,6 +109,7 @@ public class RemoteControlProxy {
                 && port == otherRemoteControl.port && environment.equals(otherRemoteControl.environment);
     }
 
+    @Override
     public int hashCode() {
         return (host + port).hashCode();
     }
@@ -197,7 +211,8 @@ public class RemoteControlProxy {
                         parameters.put("sessionId", session);
                         
                         // Send testComplete to Remote Control
-                        final PostMethod postMethod = new PostMethod(remoteControlURL());
+                        final PostMethod postMethod = new PostMethod(
+                                remoteControlDriverURL());
                         postMethod.addParameter("cmd", "testComplete");
                         postMethod.addParameter("sessionId", session);
                         int status = new org.apache.commons.httpclient.HttpClient().executeMethod(postMethod);
