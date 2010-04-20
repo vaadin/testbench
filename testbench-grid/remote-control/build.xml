@@ -14,6 +14,7 @@
 	<property name="build.output" location="target/classes"/>
 
   	<path id="compile.classpath">
+    	<pathelement path="${java.class.path}/"/>
 	    <fileset dir="${rootdir}/vendor">
       		<include name="selenium-server-1.0.1.jar"/>
       		<include name="selenium-grid-remote-control-1.0.6.jar"/>
@@ -23,7 +24,6 @@
 	      	<include name="commons-codec-1.3.jar"/>
 	      	<include name="commons-logging-1.0.4.jar"/>
     	</fileset>
-    	<pathelement path="${java.class.path}/"/>
   	</path>
 	
 	<target name="compile" description="compile the source ">
