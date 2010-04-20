@@ -32,12 +32,12 @@
 	    <jar jarfile="${dist}/lib/${artifact}-${version}.jar" basedir="${build.output}">
 	      	<manifest>
 	        	<attribute name="Main-Class" value="com.thoughtworks.selenium.grid.hub.HubServer"/>
-	        	<attribute name="Built-By" value="OpenQA.org"/>
+	        	<attribute name="Built-By" value="vaadin.com"/>
 	        	<attribute name="Build-Time" value="${timestamp}"/>
 	        	<section name="common">
 		          	<attribute name="Specification-Title" value="${name}"/>
 		          	<attribute name="Specification-Version" value="${version}"/>
-		          	<attribute name="Specification-Vendor" value="OpenQA.org"/>
+		          	<attribute name="Specification-Vendor" value="vaadin.com"/>
 	        	</section>
 	      	</manifest>
 	    </jar>
@@ -52,15 +52,14 @@
 	      	<jar jarfile="${dist}/lib/${artifact}-standalone-${version}.jar" duplicate="preserve">
 	        	<manifest>
 		          	<attribute name="Main-Class" value="@{main-class}"/>
-		          	<attribute name="Built-By" value="OpenQA.org"/>
+		          	<attribute name="Built-By" value="vaadin.com"/>
 		          	<attribute name="Build-Time" value="${timestamp}"/>
 		          	<section name="common">
 		            	<attribute name="Specification-Title" value="${name}"/>
 		            	<attribute name="Specification-Version" value="${version}"/>
-		            	<attribute name="Specification-Vendor" value="OpenQA.org"/>
+		            	<attribute name="Specification-Vendor" value="vaadin.com"/>
 			          </section>
 	    	    </manifest>
-	        	<zipfileset src="${dist}/lib/${artifact}-${version}.jar"/>
 	        	<dependencies/>
 	      	</jar>
 	    </sequential>
@@ -95,7 +94,9 @@
   	<target name="package-standalone" depends="clean-and-copy-source,package" description="Package as a jar including all dependencies">
     	<package-standalone-jar main-class="com.thoughtworks.selenium.grid.hub.HubServer">
 	      	<dependencies>
-	        	<zipfileset src="${rootdir}/vendor/selenium-grid-core-1.0.5.jar"/>
+	        	<zipfileset src="${dist}/lib/${artifact}-${version}.jar"/>
+
+	      		<zipfileset src="${rootdir}/vendor/selenium-grid-core-1.0.5.jar"/>
 	        	<zipfileset src="${rootdir}/vendor/selenium-grid-hub-1.0.6.jar"/>
 	        	<zipfileset src="${basedir}/lib/freemarker-2.3.10.jar"/>
 	        	<zipfileset src="${rootdir}/vendor/jetty-6.0.2.jar"/>
