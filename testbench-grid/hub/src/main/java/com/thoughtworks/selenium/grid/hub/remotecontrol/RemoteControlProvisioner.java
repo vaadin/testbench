@@ -103,8 +103,14 @@ public class RemoteControlProvisioner {
     }
 
     /** Not Thread-safe */
-    public boolean contains(RemoteControlProxy remoteControl) {
-        return remoteControls.contains(remoteControl);
+    public boolean contains(String host, int port) {
+        for (RemoteControlProxy proxy : remoteControls) {
+            if (proxy != null && host != null && host.equals(proxy.host())
+                    && port == proxy.port()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void tearDownExistingRemoteControl(RemoteControlProxy newRemoteControl) {

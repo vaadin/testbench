@@ -176,9 +176,11 @@ public class GlobalRemoteControlPool implements DynamicRemoteControlPool {
         return allRemoteControls;
     }
 
+    // used by heartbeat only
     public boolean isRegistered(RemoteControlProxy remoteControl) {
         for (RemoteControlProvisioner provisioner : provisionersByHash.values()) {
-            if (provisioner.contains(remoteControl)) {
+            if (provisioner
+                    .contains(remoteControl.host(), remoteControl.port())) {
                 return true;
             }
         }
