@@ -1,4 +1,7 @@
-/* Selenium core extensions for Vaadin */
+/* Selenium core extensions for Vaadin
+ * 
+ * Note, thi is used only be RC. IDE/recorder has same additions merged into it.
+ */
 
 /* Also in IDE extensions */
 function getVaadinConnector(wnd) {
