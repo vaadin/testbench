@@ -49,7 +49,7 @@
 	    <sequential>
 			<tstamp/>
 	      	<mkdir dir="${dist}/lib"/>
-	      	<jar jarfile="${dist}/lib/${artifact}-standalone-${version}.jar">
+	      	<jar jarfile="${dist}/lib/${artifact}-standalone-${version}.jar" duplicate="preserve">
 	        	<manifest>
 		          	<attribute name="Main-Class" value="@{main-class}"/>
 		          	<attribute name="Built-By" value="OpenQA.org"/>
