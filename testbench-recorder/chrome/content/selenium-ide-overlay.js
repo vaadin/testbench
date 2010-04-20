@@ -230,7 +230,8 @@ SeleniumIDE.Overlay.onLoad = function(event) {
                 if (doc.wrappedJSObject) {
                     doc = doc.wrappedJSObject;
                 }
-                doc.readyState = "complete";
+                
+                // doc.readyState = "complete"; // commented out as causes errors, don't know what should do
             }, 0);
     }
 }
