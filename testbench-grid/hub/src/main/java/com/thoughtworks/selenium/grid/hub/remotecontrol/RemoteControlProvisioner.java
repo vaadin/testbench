@@ -11,6 +11,8 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.thoughtworks.selenium.grid.hub.HubRegistry;
+
 /**
  * Central authority to track registered remote controls and grant exclusive
  * access to a remote control for a while.
@@ -45,7 +47,24 @@ public class RemoteControlProvisioner {
                 return null;
             }
 
-            remoteControl = blockUntilARemoteControlIsAvailable();
+            remoteControl = blockUntilARemoteControlIsAvailableOrRequestTimesOut();
+            if (null == remoteControl) {
+                LOGGER.info("Timed out waiting for a remote control for environment.");
+                return null;
+            }
+
+            while (remoteControl.unreliable()) {
+                LOGGER.warn("Reserved RC " + remoteControl + " is detected as unreliable, unregistering it and reserving a new one...");
+                tearDownExistingRemoteControl(remoteControl);
+                if (remoteControls.isEmpty()) {
+                    return null;
+                }
+                remoteControl = blockUntilARemoteControlIsAvailableOrRequestTimesOut();
+                if (null == remoteControl) {
+                    LOGGER.info("Timed out waiting for a remote control for environment.");
+                    return null;
+                }
+            }
             remoteControl.registerNewSession();
             LOGGER.info("Reserved remote control" + remoteControl);
             return remoteControl;
@@ -117,7 +136,7 @@ public class RemoteControlProvisioner {
         final RemoteControlProxy oldRemoteControl;
 
         oldRemoteControl = remoteControls.get(remoteControls.indexOf(newRemoteControl));
-        if (oldRemoteControl.sesssionInProgress()) {
+        if (oldRemoteControl.sessionInProgress()) {
             oldRemoteControl.unregisterSession();
         }
         remoteControls.remove(oldRemoteControl);
@@ -194,22 +213,23 @@ public class RemoteControlProvisioner {
 
         reservedRemoteControls = new LinkedList<RemoteControlProxy>();
         for (RemoteControlProxy remoteControl : remoteControls) {
-            if (remoteControl.sesssionInProgress()) {
+            if (remoteControl.sessionInProgress()) {
                 reservedRemoteControls.add(remoteControl);
             }
         }
         return Arrays.asList(reservedRemoteControls.toArray(new RemoteControlProxy[reservedRemoteControls.size()]));
     }
 
-    protected RemoteControlProxy blockUntilARemoteControlIsAvailable() {
+    protected RemoteControlProxy blockUntilARemoteControlIsAvailableOrRequestTimesOut() {
         RemoteControlProxy availableRemoteControl;
 
         while (true) {
             try {
                 availableRemoteControl = findNextAvailableRemoteControl();
-                while (null == availableRemoteControl) {
-                    LOGGER.info("Waiting for an remote control...");
-                    waitForARemoteControlToBeAvailable();
+                boolean timedOut = false;
+                while ((null == availableRemoteControl) && !timedOut) {
+                    LOGGER.info("Waiting for a remote control...");
+                    timedOut = waitForARemoteControlToBeAvailable();
                     availableRemoteControl = findNextAvailableRemoteControl();
                 }
                 return availableRemoteControl;
@@ -234,7 +254,7 @@ public class RemoteControlProvisioner {
                         return null;
                     }
                     triesToReserve++;
-//                    LOGGER.info("Waiting for an remote control...");
+                    // LOGGER.info("Waiting for an remote control...");
                     waitForARemoteControlToBeAvailable();
                     availableRemoteControl = findNextAvailableRemoteControl(environment);
                 }
@@ -277,9 +297,26 @@ public class RemoteControlProvisioner {
         return null;
     }
 
-    protected void waitForARemoteControlToBeAvailable()
+    /**
+     * Wait for a remote control to be available or timeout while waiting.
+     * 
+     * @return Indicates whether the request timed out.
+     * 
+     * @throws InterruptedException
+     */
+    protected boolean waitForARemoteControlToBeAvailable()
             throws InterruptedException {
-        remoteControlAvailable.await(5, TimeUnit.SECONDS);
+        final Double maxWaitTime = HubRegistry.registry().gridConfiguration()
+                .getHub().getNewSessionMaxWaitTimeInSeconds();
+
+          if (maxWaitTime.isInfinite()) {
+            remoteControlAvailable.await();
+            return false;
+        } else {
+            // TODO return !remoteControlAvailable.await(5, TimeUnit.SECONDS);
+            return !remoteControlAvailable.await(maxWaitTime.longValue(),
+                    TimeUnit.SECONDS);
+        }
     }
 
     protected void signalThatARemoteControlHasBeenMadeAvailable() {

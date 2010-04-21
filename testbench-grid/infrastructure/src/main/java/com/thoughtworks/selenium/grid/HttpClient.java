@@ -28,7 +28,7 @@ public class HttpClient {
         this(new org.apache.commons.httpclient.HttpClient());
     }
 
-    public Response get(String url) throws IOException {
+    public synchronized Response get(String url) throws IOException {
         try {
             Thread.sleep(100);
         } catch (InterruptedException ie) {
@@ -37,7 +37,7 @@ public class HttpClient {
         return request(new GetMethod(url));
     }
 
-    public Response post(String url, HttpParameters parameters)
+    public synchronized Response post(String url, HttpParameters parameters)
             throws IOException {
         try {
             Thread.sleep(100);

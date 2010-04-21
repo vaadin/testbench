@@ -64,8 +64,9 @@ infrastructure/core (changes embedded in grid/hub):
 hub:
 	com.thoughtworks.selenium.grid.hub.HeartbeatServlet                         [get host from remote address if not given]
 	com.thoughtworks.selenium.grid.hub.HubServlet                               [reduced excessive logging]
+
 	com.thoughtworks.selenium.grid.hub.management.RegistrationServlet			[multiple environments]
-	com.thoughtworks.selenium.grid.hub.management.RemoteControlParser			[Support environment string parsing]
+	com.thoughtworks.selenium.grid.hub.management.RemoteControlParser			[Support environment string parsing, get host from remote address if not given]
 	com.thoughtworks.selenium.grid.hub.management.UnregistrationServlet			[multiple environments]
 
 	com.thoughtworks.selenium.grid.hub.management.console.index.html			[names]
@@ -73,7 +74,7 @@ hub:
     build.xml
 
 	com.thoughtworks.selenium.grid.hub.remotecontrol.GlobalRemoteControlPool	[multiple environments, grouping, load balancing]
-	com.thoughtworks.selenium.grid.hub.remotecontrol.RemoteControlProvsioner	[group handling, load balancing]
+	com.thoughtworks.selenium.grid.hub.remotecontrol.RemoteControlProvisioner	[group handling, load balancing]
 	com.thoughtworks.selenium.grid.hub.remotecontrol.RemoteControlProxy			[equals(Object), toString()]
 
 
@@ -85,6 +86,6 @@ rc:
     org.openqa.selenium.server.browserlaunchers.SafariCustomProfileLauncher     [copied from selenium-server-1.0.1, added profile cleanup in close()]
 
 Changed files for additional reliability enhancements:
-	com.thoughtworks.selenium.grid.hub.remotecontrol.RemoteControlProxy			[compatibility with latest selenium-grid (1.0.6), sendTestComplete(), poll 3 times before marking as unreliable]
-	com.thoughtworks.selenium.grid.hub.remotecontrol.GlobalRemoteControlPool    [compatibility with latest selenium-grid (1.0.6), send test complete message on timeout, selenium-grid NPE fix]
+	com.thoughtworks.selenium.grid.hub.remotecontrol.RemoteControlProxy			[compatibility with latest selenium-grid (1.0.7-SNAPSHOT)]
+	com.thoughtworks.selenium.grid.hub.remotecontrol.GlobalRemoteControlPool    [compatibility with latest selenium-grid (1.0.7-SNAPSHOT), selenium-grid NPE fix]
 	

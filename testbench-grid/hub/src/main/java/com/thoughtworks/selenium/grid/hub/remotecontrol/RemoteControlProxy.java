@@ -1,6 +1,8 @@
 package com.thoughtworks.selenium.grid.hub.remotecontrol;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -74,15 +76,6 @@ public class RemoteControlProxy {
         return httpClient.post(remoteControlDriverURL(), parameters);
     }
 
-    public Response sendTestComplete(String session) throws IOException {
-        LOGGER.warn("Sending hub-initiated testComplete to RC for session "
-                + session);
-        HttpParameters parameters = new HttpParameters();
-        parameters.put("cmd", "testComplete");
-        parameters.put("sessionId", session);
-        return httpClient.post(remoteControlDriverURL(), parameters);
-    }
-
     @Override
     public String toString() {
         return "[RemoteControlProxy " + host + ":" + port + "#" + environment
@@ -109,7 +102,7 @@ public class RemoteControlProxy {
         return (host + port).hashCode();
     }
 
-    public boolean sesssionInProgress() {
+    public boolean sessionInProgress() {
         return sessionInProgress;
     }
 
@@ -127,35 +120,38 @@ public class RemoteControlProxy {
         sessionInProgress = false;
     }
 
+    public void terminateSession(String sessionId) {
+        try {
+            Map<String, String[]> params = new HashMap<String, String[]>();
+            params.put("cmd", new String[] { "testComplete" });
+            params.put("sessionId", new String[] { sessionId });
+
+            forward(new HttpParameters(params));
+        }
+        catch (IOException e) {
+            LOGGER.warn("Exception telling remote control to kill its session:" + e.getMessage());
+        }
+    }
+
     public boolean canHandleNewSession() {
-        return !sesssionInProgress();
+        return !sessionInProgress();
     }
     
     public boolean unreliable() {
-        Response response;
+        final Response response;
 
-        // do not mark as unreliable if a single poll request fails
-        for (int i = 0; i < NUM_POLL_RETRIES; ++i) {
-            try {
-                LOGGER.debug("Polling Remote Control at " + host + ":" + port);
-                response = httpClient.get(remoteControlPingURL());
-                if (response.statusCode() == 200) {
-                    return false;
-                } else {
-                    LOGGER.warn("Remote Control at " + host + ":" + port
-                            + " did not respond correctly");
-                }
-            } catch (Exception e) {
-                LOGGER.warn("Remote Control at " + host + ":" + port
-                        + " is unresponsive");
-            }
-            // wait a moment before next retry
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException ie) {
-            }
+        try {
+            LOGGER.debug("Polling Remote Control at " + host + ":" + port);
+            response = httpClient.get(remoteControlPingURL());
+        } catch (Exception e) {
+            LOGGER.warn("Remote Control at " + host + ":" + port + " is unresponsive");
+            return true;
         }
-        return true;
+        if (response.statusCode() != 200) {
+            LOGGER.warn("Remote Control at " + host + ":" + port + " did not respond correctly");
+            return true;
+        }
+        return false;
     }
 
 }

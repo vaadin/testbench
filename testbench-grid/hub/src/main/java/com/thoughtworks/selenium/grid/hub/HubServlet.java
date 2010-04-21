@@ -61,9 +61,12 @@ public class HubServlet extends HttpServlet {
             LOGGER.error("Could not find any remote control providing the '" + e.environment() +
                          "' environment. Please make sure you started some remote controls which registered as offering this environment.");
             return new Response(e.getMessage());
+        } catch (NoSuchSessionException e) {
+            LOGGER.error(e.getMessage());
+            return new Response(e.getMessage());
         }
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.info("Responding with " + response.statusCode() + "/ '"
+            LOGGER.debug("Responding with " + response.statusCode() + "/ '"
                     + response.body() + "'");
         }
 

@@ -1,21 +1,20 @@
 package com.thoughtworks.selenium.grid.hub.remotecontrol;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.thoughtworks.selenium.grid.Response;
 import com.thoughtworks.selenium.grid.hub.Environment;
 import com.thoughtworks.selenium.grid.hub.NoSuchEnvironmentException;
+import com.thoughtworks.selenium.grid.hub.NoSuchSessionException;
 
 /**
  * Monolithic Remote Control Pool keeping track of all environment and all
@@ -52,13 +51,20 @@ public class GlobalRemoteControlPool implements DynamicRemoteControlPool {
         try {
             synchronized (provisionersByHash) {
                 synchronized (remoteControlsBySessionIds) {
+                    Set<RemoteControlSession> sessionsToRemove = new HashSet<RemoteControlSession>();
+
                     status = getProvisioner(remoteControl.hashCode()).remove(
                             remoteControl);
                     for (RemoteControlSession session : remoteControlsBySessionIds
                             .values()) {
                         if (session.remoteControl().equals(remoteControl)) {
-                            removeFromSessionMap(session);
+                            sessionsToRemove.add(session);
                         }
+                    }
+
+                    // Remove the session separately from the loop where we found it to avoid issues with concurrent modification.
+                    for (RemoteControlSession session : sessionsToRemove) {
+                        removeFromSessionMap(session);
                     }
                 }
             }
@@ -131,6 +137,7 @@ public class GlobalRemoteControlPool implements DynamicRemoteControlPool {
             remoteControlsBySessionIds.remove(sessionId);
         }
         getProvisioner(remoteControl.environment()).release(remoteControl);
+        remoteControl.terminateSession(sessionId);
     }
 
     public List<RemoteControlProxy> availableRemoteControls() {
@@ -232,7 +239,11 @@ public class GlobalRemoteControlPool implements DynamicRemoteControlPool {
         final RemoteControlSession session;
 
         session = getRemoteControlSession(sessionId);
-        return (null == session) ? null : session.remoteControl();
+        if (null == session) {
+            throw new NoSuchSessionException(sessionId);
+        }
+
+        return session.remoteControl();
     }
 
     protected RemoteControlSession getRemoteControlSession(String sessionId) {
@@ -240,10 +251,12 @@ public class GlobalRemoteControlPool implements DynamicRemoteControlPool {
     }
 
     protected void removeFromSessionMap(RemoteControlSession session) {
-        for (Map.Entry<String, RemoteControlSession> entry : remoteControlsBySessionIds
-                .entrySet()) {
+        // Use a real iterator to avoid issues with concurrent modification.
+        for (final Iterator<Map.Entry<String, RemoteControlSession>> it = remoteControlsBySessionIds.entrySet().iterator(); it.hasNext();) {
+            final Map.Entry<String, RemoteControlSession> entry = it.next();
+
             if (entry.getValue().equals(session)) {
-                remoteControlsBySessionIds.remove(entry.getKey());
+                it.remove();
             }
         }
     }
@@ -314,27 +327,8 @@ public class GlobalRemoteControlPool implements DynamicRemoteControlPool {
         if (session.innactiveForMoreThan(maxIdleTImeInMilliseconds)) {
             LOGGER.warn("Releasing session IDLE for more than "
                     + maxIdleTimeInSeconds + " seconds: " + session);
-
-            try {
-                // send testComplete to end the test currently in progress
-                sendTestComplete(session);
-            } catch (Exception e) {
-                LOGGER
-                        .warn("Failed to send testComplete command for timed out session "
-                                + session.sessionId());
-            }
-
-            // Release session and free Remote Control
             releaseForSession(session.sessionId());
         }
-    }
-
-    private Response sendTestComplete(RemoteControlSession session)
-            throws IOException,
-            HttpException {
-        LOGGER.warn("Sending finish to RC and releasing session "
-                + session);
-        return session.remoteControl().sendTestComplete(session.sessionId());
     }
 
 }
