@@ -68,8 +68,8 @@
   	<path id="compile.classpath">
     	<pathelement path="${java.class.path}/"/>
     	<fileset dir="${rootdir}/vendor">
-      		<include name="selenium-grid-core-1.0.5.jar"/>
-      		<include name="selenium-grid-hub-1.0.6.jar"/>
+      		<include name="selenium-grid-core-1.0.7-SNAPSHOT.jar"/>
+      		<include name="selenium-grid-hub-1.0.7-SNAPSHOT.jar"/>
 	      	<include name="jetty-6.0.2.jar"/>
 	      	<include name="jetty-util-6.0.2.jar"/>
 	      	<include name="jyaml-1.3.jar"/>
@@ -96,8 +96,8 @@
 	      	<dependencies>
 	        	<zipfileset src="${dist}/lib/${artifact}-${version}.jar"/>
 
-	      		<zipfileset src="${rootdir}/vendor/selenium-grid-core-1.0.5.jar"/>
-	        	<zipfileset src="${rootdir}/vendor/selenium-grid-hub-1.0.6.jar"/>
+	      		<zipfileset src="${rootdir}/vendor/selenium-grid-core-1.0.7-SNAPSHOT.jar"/>
+	        	<zipfileset src="${rootdir}/vendor/selenium-grid-hub-1.0.7-SNAPSHOT.jar"/>
 	        	<zipfileset src="${basedir}/lib/freemarker-2.3.10.jar"/>
 	        	<zipfileset src="${rootdir}/vendor/jetty-6.0.2.jar"/>
 	        	<zipfileset src="${rootdir}/vendor/jetty-util-6.0.2.jar"/>
