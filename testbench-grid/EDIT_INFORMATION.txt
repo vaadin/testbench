@@ -83,3 +83,8 @@ rc:
     org.openqa.selenium.server.SeleniumServer                                   [copied from selenium-server-1.0.1, added stopAllBrowsers()]
     org.openqa.selenium.server.browserlaunchers.AsyncExecute                    [copied from selenium-server-1.0.1 and modified killProcess()]
     org.openqa.selenium.server.browserlaunchers.SafariCustomProfileLauncher     [copied from selenium-server-1.0.1, added profile cleanup in close()]
+
+Changed files for additional reliability enhancements:
+	com.thoughtworks.selenium.grid.hub.remotecontrol.RemoteControlProxy			[compatibility with latest selenium-grid (1.0.6), sendTestComplete(), poll 3 times before marking as unreliable]
+	com.thoughtworks.selenium.grid.hub.remotecontrol.GlobalRemoteControlPool    [compatibility with latest selenium-grid (1.0.6), send test complete message on timeout]
+	

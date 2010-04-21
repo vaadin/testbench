@@ -9,13 +9,11 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
-import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.thoughtworks.selenium.grid.HttpParameters;
+import com.thoughtworks.selenium.grid.Response;
 import com.thoughtworks.selenium.grid.hub.Environment;
 import com.thoughtworks.selenium.grid.hub.NoSuchEnvironmentException;
 
@@ -270,10 +268,15 @@ public class GlobalRemoteControlPool implements DynamicRemoteControlPool {
 
     protected void unregisterRemoteControlIfUnreliable(RemoteControlProxy rc) {
         if (rc.unreliable()) {
-            LOGGER.warn("Unregistering unreliable RC " + rc);
+            LOGGER.error("RC detected as unreliable: " + rc);
+            // LOGGER.warn("Unregistering unreliable RC " + rc);
             // TODO cannot really stop the test in progress, may "get stuck" on
             // the RC
-            unregister(rc);
+            // TODO this would leave other RCPs on the RC active
+            // unregister(rc);
+            // not unregistering but releasing; could alternatively unregister
+            // all RCPs on the RC
+            // release(rc);
         }
     }
 
@@ -323,22 +326,12 @@ public class GlobalRemoteControlPool implements DynamicRemoteControlPool {
         }
     }
 
-    private int sendTestComplete(RemoteControlSession session)
+    private Response sendTestComplete(RemoteControlSession session)
             throws IOException,
             HttpException {
         LOGGER.warn("Sending finish to RC and releasing session "
                 + session);
-        HttpParameters parameters = new HttpParameters();
-        parameters.put("cmd", "testComplete");
-        parameters.put("sessionId", session.sessionId());
-
-        // Send testComplete to Remote Control
-        final PostMethod postMethod = new PostMethod(session
-                .remoteControl().remoteControlDriverURL());
-        postMethod.addParameter("cmd", "testComplete");
-        postMethod.addParameter("sessionId", session.sessionId());
-        int status = new HttpClient().executeMethod(postMethod);
-        return status;
+        return session.remoteControl().sendTestComplete(session.sessionId());
     }
 
 }

@@ -18,6 +18,8 @@ public class RemoteControlProxy {
 
     private static final Log LOGGER = LogFactory.getLog(HubServer.class);
 
+    private static final int NUM_POLL_RETRIES = 3;
+
     private boolean sessionInProgress;
     private final HttpClient httpClient;
     private final String environment;
@@ -72,6 +74,15 @@ public class RemoteControlProxy {
         return httpClient.post(remoteControlDriverURL(), parameters);
     }
 
+    public Response sendTestComplete(String session) throws IOException {
+        LOGGER.warn("Sending hub-initiated testComplete to RC for session "
+                + session);
+        HttpParameters parameters = new HttpParameters();
+        parameters.put("cmd", "testComplete");
+        parameters.put("sessionId", session);
+        return httpClient.post(remoteControlDriverURL(), parameters);
+    }
+
     @Override
     public String toString() {
         return "[RemoteControlProxy " + host + ":" + port + "#" + environment
@@ -120,21 +131,31 @@ public class RemoteControlProxy {
         return !sesssionInProgress();
     }
     
-	public boolean unreliable() {
-        final Response response;
+    public boolean unreliable() {
+        Response response;
 
-        try {
-            LOGGER.debug("Polling Remote Control at " + host + ":" + port);
-            response = httpClient.get(remoteControlPingURL());
-        } catch (Exception e) {
-            LOGGER.warn("Remote Control at " + host + ":" + port + " is unresponsive");
-            return true;
+        // do not mark as unreliable if a single poll request fails
+        for (int i = 0; i < NUM_POLL_RETRIES; ++i) {
+            try {
+                LOGGER.debug("Polling Remote Control at " + host + ":" + port);
+                response = httpClient.get(remoteControlPingURL());
+                if (response.statusCode() == 200) {
+                    return false;
+                } else {
+                    LOGGER.warn("Remote Control at " + host + ":" + port
+                            + " did not respond correctly");
+                }
+            } catch (Exception e) {
+                LOGGER.warn("Remote Control at " + host + ":" + port
+                        + " is unresponsive");
+            }
+            // wait a moment before next retry
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException ie) {
+            }
         }
-        if (response.statusCode() != 200) {
-            LOGGER.warn("Remote Control at " + host + ":" + port + " did not respond correctly");
-            return true;
-        }
-        return false;
+        return true;
     }
 
 }
