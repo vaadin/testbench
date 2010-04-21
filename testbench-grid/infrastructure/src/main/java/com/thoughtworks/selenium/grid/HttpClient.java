@@ -74,10 +74,14 @@ public class HttpClient {
             return new Response(statusCode, body);
             // Catch exceptions and end test by creating a Response(String);
         } catch (java.net.SocketTimeoutException e) {
+            logger.warn("Socket response timedout while sending request "
+                    + method, e);
             return new Response("Socket response timedout.");
         } catch (java.net.SocketException e) {
+            logger.warn("Socket exception while sending request " + method, e);
             return new Response("Socket exception. " + e.getMessage());
         } catch (IOException e) {
+            logger.warn("Problem occurred while sending request " + method, e);
             return new Response("Problem occured. " + e.getMessage());
         } finally {
             method.releaseConnection();

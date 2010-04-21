@@ -86,5 +86,5 @@ rc:
 
 Changed files for additional reliability enhancements:
 	com.thoughtworks.selenium.grid.hub.remotecontrol.RemoteControlProxy			[compatibility with latest selenium-grid (1.0.6), sendTestComplete(), poll 3 times before marking as unreliable]
-	com.thoughtworks.selenium.grid.hub.remotecontrol.GlobalRemoteControlPool    [compatibility with latest selenium-grid (1.0.6), send test complete message on timeout]
+	com.thoughtworks.selenium.grid.hub.remotecontrol.GlobalRemoteControlPool    [compatibility with latest selenium-grid (1.0.6), send test complete message on timeout, selenium-grid NPE fix]
 	

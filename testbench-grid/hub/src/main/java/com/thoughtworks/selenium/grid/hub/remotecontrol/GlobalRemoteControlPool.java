@@ -281,7 +281,10 @@ public class GlobalRemoteControlPool implements DynamicRemoteControlPool {
     }
 
     public void updateSessionLastActiveAt(String sessionId) {
-        getRemoteControlSession(sessionId).updateLastActiveAt();
+        RemoteControlSession session = getRemoteControlSession(sessionId);
+        if (session != null) {
+            session.updateLastActiveAt();
+        }
     }
 
     public void recycleAllSessionsIdleForTooLong(double maxIdleTimeInSeconds) {
