@@ -251,7 +251,7 @@ Editor.prototype.showLoadErrors = function() {
 	}
 }
 
-Editor.DEFAULT_TITLE = "Vaadin TestBench IDE";
+Editor.DEFAULT_TITLE = "Vaadin TestBench Recorder";
 
 Editor.prototype.confirmClose = function() {
 	if (this.getTestCase() && this.getTestCase().modified) {

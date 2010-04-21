@@ -24,7 +24,7 @@
 <!ENTITY baseURLTextbox.tooltip "テストを実施するWebサイトの URL を入力してください。&quot;open&quot; コマンドの実行に使われます。">
 <!ENTITY selectButton.tooltip "新しいターゲットを選ぶ。">
 
-<!ENTITY selenium-ide.sidebar.title "Vaadin TestBench IDE">
+<!ENTITY selenium-ide.sidebar.title "Vaadin TestBench Recorder">
 
 <!ENTITY fileMenu.label "ファイル">
 <!ENTITY optionsMenu.label "オプション">

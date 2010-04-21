@@ -24,7 +24,7 @@
 <!ENTITY baseURLTextbox.tooltip "Informe a URL do website a ser testado. Este valor é usado para executar o comando &quot;open.&quot;">
 <!ENTITY selectButton.tooltip "Selecione o novo alvo para o comando selecionado.">
 
-<!ENTITY selenium-ide.sidebar.title "Vaadin TestBench IDE">
+<!ENTITY selenium-ide.sidebar.title "Vaadin TestBench Recorder">
 
 <!ENTITY fileMenu.label "Arquivo">
 <!ENTITY optionsMenu.label "Opções">
