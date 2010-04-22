@@ -200,7 +200,12 @@ Selenium.prototype.doMouseClickOpera = function(locator, value){
 
 /*Does a mouseClick on the target element. Used descriptive purposes.*/
 Selenium.prototype.doCloseNotification = function(locator, value){
+	var element = this.browserbot.findElement(locator);
 	this.doMouseClick(locator, value);
+	var notificationHidden = function() {
+		return element.parentNode == null;
+	}
+	return Selenium.decorateFunctionWithTimeout(notificationHidden, 5000);
 };
 
 /*Does a mouse over on target element at point x,y so tooltip shows up over element and not mouse cursor position*/
