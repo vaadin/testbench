@@ -1,5 +1,6 @@
 package com.thoughtworks.selenium.grid.remotecontrol;
 
+import java.awt.Robot;
 import java.io.IOException;
 
 import org.apache.commons.logging.Log;
@@ -13,12 +14,13 @@ import org.openqa.selenium.server.cli.RemoteControlLauncher;
  */
 public class SelfRegisteringRemoteControl {
 
-
-    private static final Log logger = LogFactory.getLog(SelfRegisteringRemoteControlLauncher.class);
+    private static final Log logger = LogFactory
+            .getLog(SelfRegisteringRemoteControlLauncher.class);
     private final RegistrationInfo registrationInfo;
     private final HubPoller hubPoller;
 
-    public SelfRegisteringRemoteControl(RegistrationInfo registrationInfo, int hubPollerIntervalInSeconds) {
+    public SelfRegisteringRemoteControl(RegistrationInfo registrationInfo,
+            int hubPollerIntervalInSeconds) {
         this.registrationInfo = registrationInfo;
         hubPoller = new HubPoller(this, hubPollerIntervalInSeconds);
     }
@@ -57,6 +59,13 @@ public class SelfRegisteringRemoteControl {
 
         hubPoller.setSeleniumServer(seleniumProxy);
         startHubPoller();
+
+        // hack needed for mac, forces the java app to become visible in window
+        // manager, so that Robot can work properly later (java app popping up
+        // later will focus it and events fired with Robot will fail for first
+        // test)
+        Robot robot = new Robot();
+        robot.waitForIdle();
     }
 
     protected HubPoller hubPoller() {
@@ -67,10 +76,12 @@ public class SelfRegisteringRemoteControl {
         new Thread(hubPoller).start();
     }
 
-
     protected void logStartingMessages(String[] args) {
-        logger.info("Starting selenium server with options:" + registrationInfo);
-        logger.info("hubPollerInterval: " + hubPoller.pollingIntervalInMilliseconds() + " ms");
+        logger
+                .info("Starting selenium server with options:"
+                        + registrationInfo);
+        logger.info("hubPollerInterval: "
+                + hubPoller.pollingIntervalInMilliseconds() + " ms");
         for (String arg : args) {
             logger.info(arg);
         }
