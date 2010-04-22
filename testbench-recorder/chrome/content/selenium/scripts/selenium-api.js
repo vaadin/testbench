@@ -3234,7 +3234,12 @@ Selenium.prototype.doMouseClick = function(locator, value){
 };
 
 Selenium.prototype.doCloseNotification = function(locator, value){
+	var element = this.browserbot.findElement(locator);
 	this.doMouseClick(locator, value);
+	var notificationHidden = function() {
+		return element.parentNode == null;
+	}
+	return Selenium.decorateFunctionWithTimeout(notificationHidden, 5000);
 };
 
 Selenium.prototype.doShowTooltip = function(locator, value){
