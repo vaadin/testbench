@@ -154,7 +154,7 @@
      inkscape:cx="164.08223"
      inkscape:cy="888.11576"
      inkscape:document-units="px"
-     inkscape:current-layer="layer1"
+     inkscape:current-layer="g6365"
      gridtolerance="10000"
      inkscape:window-width="1524"
      inkscape:window-height="1021"
@@ -230,9 +230,9 @@
            id="flowRoot6369"
            transform="translate(18.098034,255.23409)"><flowRegion
              id="flowRegion6371" /><flowPara
-             id="flowPara8415">Build</flowPara><flowPara
-             id="flowPara8421">a Test</flowPara><flowPara
-             id="flowPara8423">Suite</flowPara></flowRoot>        <g
+             id="flowPara8415">Compile</flowPara><flowPara
+             id="flowPara8423">JUnit</flowPara><flowPara
+             id="flowPara10199">Tests</flowPara></flowRoot>        <g
            style="opacity:1"
            id="g5925"
            transform="matrix(7.5796194e-2,0,0,7.5796194e-2,10.175765,302.35996)">
