@@ -36,7 +36,7 @@ public class HubPoller implements Runnable {
     public void checkConnectionToHub() {
         final Status status;
 
-        LOGGER.info("Checking connection to hub...");
+        LOGGER.debug("Checking connection to hub...");
         status = rc.canReachHub();
         if (status.equals(Status.UNREGISTERED)) {
             if (seleniumServer != null) {
