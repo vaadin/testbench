@@ -1,7 +1,7 @@
 all: images
 
 # List of images to be converted from SVG to PNG
-IMAGES = tt-workflow tt-architecture-simple
+IMAGES = tt-workflow tt-architecture-simple tt-junit-workflow
 
 ################################################################################
 # Image conversions
