@@ -32,7 +32,7 @@
 				</replacetokens>
 			</filterchain>
 		</copy>
-		<zip destfile="extension/Vaadin-TestBench-Recorder-${version}.xpi">
+		<zip destfile="extension/vaadin-testbench-recorder-${version}.xpi">
 			<fileset dir="." includes="chrome/testbench-recorder.jar" />
 			<fileset dir="." includes="components/**/**" />
 			<fileset dir="." includes="content-files/**/**" />
