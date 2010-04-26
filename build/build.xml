@@ -9,7 +9,7 @@
 	<property name="exclude.runner" value="true" />
 
 	<target name="testbench.jar">
-		<delete dir="result" failonerror="false" />
+		<delete dir="result" failonerror="true" />
 
 		<mkdir dir="${output.dir}" />
 		<mkdir dir="result/classes" />
@@ -20,7 +20,7 @@
 				</fileset>
 			</classpath>
 		</javac>
-		<jar jarfile="${output.dir}/Vaadin-TestBench-${version}.jar" compress="true">
+		<jar jarfile="${output.dir}/vaadin-testbench-${version}.jar" compress="true">
 			<manifest>
 				<attribute name="Class-Path" value="junit-4.5.jar selenium-java-client-driver.jar js.jar" />
 			</manifest>
@@ -59,19 +59,19 @@
 			<property name="version" value="${version}"/>
 			<fileset dir="../testbench-recorder" includes="build.xml" />
 		</subant>
-		<copy file="../testbench-recorder/extension/Vaadin-TestBench-Recorder-${version}.xpi" todir="${output.dir}/Vaadin-TestBench-Recorder" />
+		<copy file="../testbench-recorder/extension/vaadin-testbench-recorder-${version}.xpi" todir="${output.dir}/vaadin-testbench-recorder" />
 	</target>
 
 	<target name="testbench-grid">
 		<parallel>
 			<subant target="package-standalone">
 				<property name="timestamp" value="${timestamp}"/>
-			  	<property name="version" value="Vaadin-TestBench-${version}"/>
+			  	<property name="version" value="vaadin-testbench-${version}"/>
 				<fileset dir="../testbench-grid/hub" includes="build.xml" />
 			</subant>
 			<subant target="package-standalone">
 				<property name="timestamp" value="${timestamp}"/>
-			  	<property name="version" value="Vaadin-TestBench-${version}"/>
+			  	<property name="version" value="vaadin-testbench-${version}"/>
 				<fileset dir="../testbench-grid/remote-control" includes="build.xml" />
 			</subant>
 		</parallel>
@@ -81,9 +81,9 @@
 		<property name="package.root" value="vaadin-testbench-${version}"/>
 		<property name="package.grid.root" value="vaadin-testbench-grid-${version}"/>
 
-		<zip destfile="${output.dir}/Vaadin-TestBench-${version}.zip">
-			<zipfileset dir="${output.dir}" includes="Vaadin-TestBench-${version}.jar" prefix="${package.root}"/>
-			<zipfileset dir="${output.dir}" includes="Vaadin-TestBench-Recorder/Vaadin-TestBench-Recorder-${version}.xpi" prefix="${package.root}" />
+		<zip destfile="${output.dir}/vaadin-testbench-${version}.zip">
+			<zipfileset dir="${output.dir}" includes="vaadin-testbench-${version}.jar" prefix="${package.root}"/>
+			<zipfileset dir="${output.dir}" includes="vaadin-testbench-recorder/vaadin-testbench-recorder-${version}.xpi" prefix="${package.root}" />
 <!--			<zipfileset dir=".." includes="selenium-extensions/**" />-->
 			<!-- Not certain about MPL or CPL licenses -->
 <!--			<fileset dir=".." includes="lib/js.jar lib/junit*.jar" excludes="lib/**-source* lib/**-src*" />-->
@@ -105,7 +105,7 @@
 			<zipfileset dir="../selenium-extensions/core" includes="user-extensions.js" prefix="${package.root}/grid/remote-control" />
 		</zip>
 			
-		<zip destfile="${output.dir}/Vaadin-TestBench-grid-${version}.zip">
+		<zip destfile="${output.dir}/vaadin-testbench-grid-${version}.zip">
 			<zipfileset dir="../testbench-grid/hub" includes="hub.sh hub.bat grid_configuration.yml" prefix="${package.grid.root}/hub" />
 			<zipfileset dir="../testbench-grid/hub/target/dist/lib" includes="**standalone*.jar" prefix="${package.grid.root}/hub/lib" />
 			
