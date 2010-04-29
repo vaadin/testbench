@@ -1,21 +1,30 @@
 <?xml version="1.0"?>
 <configuration>
 	<port>5555</port>
+	
+<!--    Windows Target Environments -->
 	<environment>winxp-ie8</environment>
 	<environment>winxp-safari4</environment>
 	<environment>winxp-opera10</environment>
-	<environment>winxp-firefox35</environment>
-	<environment>winxp-googlechrome3</environment>
+	<environment>winxp-firefox3</environment>
+	<environment>winxp-firefox36</environment>
+	<environment>winxp-googlechrome4</environment>
 
-<!--
-	<environment>linux-opera10</environment>
+<!--    Linux Target Environments (uncomment to enable)
+
 	<environment>linux-firefox3</environment>
+	<environment>linux-firefox36</environment>
+	<environment>linux-opera10</environment>
+	<environment>linux-googlechrome4</environment>
 -->
-<!--
+
+<!--    OS X Target Environments (uncomment to enable)
+
 	<environment>osx-safari4</environment>
 	<environment>osx-opera10</environment>
 	<environment>osx-firefox35</environment>
 -->
+
 <!--
 	<host>127.0.0.1</host>
 -->

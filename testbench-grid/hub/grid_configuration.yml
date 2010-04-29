@@ -1,13 +1,15 @@
 hub:
    port: 4444
    environments:
+   
+# Windows targets
       - name:     "winxp-ie6"
         browser:  "*iexplore"
       - name:	  "winxp-ie7"
         browser:  "*iexplore"
       - name:     "winxp-ie8"
         browser:  "*iexplore"
-      - name:     "winxp-firefox35"
+      - name:     "winxp-firefox3"
         browser:  "*firefox"
       - name:     "winxp-firefox36"
         browser:  "*firefox"
@@ -15,22 +17,28 @@ hub:
         browser:  "*safari"
       - name:     "winxp-opera10"
         browser:  "*opera"
-      - name:     "winxp-opera1010"
-        browser:  "*opera"
-      - name:     "winxp-opera1050"
-        browser:  "*opera"
       - name:     "winxp-googlechrome4"
         browser:  "*googlechrome"
-      - name:     "winxp-googlechrome41"
-        browser:  "*googlechrome"
 
+# Linux targets
+# Notice that Firefox must be named explicitly
+# as "firefox-bin" to be able to close the browser.
+# The exact installation directory of Firefox varies.
+# Typical locations are:
+#  /opt/firefox/firefox-bin
+#  /usr/lib/firefox/firefox-bin
+#  /usr/local/firefox/firefox-bin
+#  /usr/local/lib/firefox/firefox-bin
       - name:     "linux-firefox3"
-        browser:  "*firefox"
-      - name:     "linux-firefox2"
-        browser:  "*firefox"
+        browser:  "*firefox /usr/lib/firefox/firefox-bin"
+      - name:     "linux-firefox36"
+        browser:  "*firefox /usr/lib/firefox/firefox-bin"
       - name:     "linux-opera10"
         browser:  "*opera"
+      - name:     "linux-googlechrome4"
+        browser:  "*googlechrome"
 
+# Mac OS X targets
       - name:     "osx-firefox35"
         browser:  "*firefox"
       - name:     "osx-safari4"
