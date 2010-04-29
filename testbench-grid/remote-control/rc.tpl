@@ -1,4 +1,4 @@
-cpvars=lib/selenium-grid-remote-control-standalone-Vaadin-TestBench-@build@.jar:lib/selenium-server-1.0.1.jar
+cpvars=lib/selenium-grid-remote-control-standalone-vaadin-testbench-@build@.jar:lib/selenium-server-1.0.1.jar
 
 # by default, obtained from rc_configuration.xml
 #environment=linux-firefox3

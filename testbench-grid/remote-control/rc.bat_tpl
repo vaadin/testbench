@@ -2,7 +2,7 @@
 setlocal
 @echo Running version: @build@
 
-set cpVars=lib\selenium-grid-remote-control-standalone-Vaadin-TestBench-@build@.jar;lib\selenium-server-1.0.1.jar
+set cpVars=lib\selenium-grid-remote-control-standalone-vaadin-testbench-@build@.jar;lib\selenium-server-1.0.1.jar
 
 rem by default, obtained from rc_configuration.xml
 rem set ENVIRONMENT=winxp-firefox35
