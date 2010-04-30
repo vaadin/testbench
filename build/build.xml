@@ -80,8 +80,20 @@
 	<target name="testbench-distribution-package" depends="testbench.jar,javadoc,testbench-recorder,testbench-grid,update-run-scripts,run-tests">
 		<property name="package.root" value="vaadin-testbench-${version}"/>
 		<property name="package.grid.root" value="vaadin-testbench-grid-${version}"/>
-
+        <copy todir="${output.dir}">
+            <filterchain>
+                <expandproperties />
+                <replacetokens begintoken="@" endtoken="@">
+                    <token key="version" value="${version}" />
+                </replacetokens>
+            </filterchain>
+            <fileset dir=".">
+                <include name="MANIFEST.MF" />
+            </fileset>
+        </copy>
 		<zip destfile="${output.dir}/vaadin-testbench-${version}.zip">
+			
+			<zipfileset dir="${output.dir}" includes="MANIFEST.MF" prefix="META-INF"/>
 			<zipfileset dir="${output.dir}" includes="vaadin-testbench-${version}.jar" prefix="${package.root}"/>
 			<zipfileset dir="${output.dir}" includes="vaadin-testbench-recorder/vaadin-testbench-recorder-${version}.xpi" prefix="${package.root}" />
 <!--			<zipfileset dir=".." includes="selenium-extensions/**" />-->

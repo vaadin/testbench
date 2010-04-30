@@ -1,0 +1,4 @@
+Vaadin-Package-Version: 1
+Implementation-Title: Vaadin TestBench
+Implementation-Version: @version@
+
