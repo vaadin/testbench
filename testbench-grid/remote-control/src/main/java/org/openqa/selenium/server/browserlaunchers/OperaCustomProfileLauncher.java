@@ -248,6 +248,10 @@ public class OperaCustomProfileLauncher extends AbstractBrowserLauncher {
         out.println("HELLO=NO");
         out.println("Newest Used Version=2000");
 
+        // Start new browser windows maximized
+        out.println("[Windows]");
+        out.println("Browser Window=0,0,100,100,2");
+        
         // TODO Disable security warnings
 
         out.close();
