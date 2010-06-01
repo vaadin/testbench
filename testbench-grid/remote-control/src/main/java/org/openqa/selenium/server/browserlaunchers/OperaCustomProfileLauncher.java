@@ -17,11 +17,13 @@
 package org.openqa.selenium.server.browserlaunchers;
 
 import org.apache.commons.logging.Log;
+import org.apache.commons.io.IOUtils;
 import org.mortbay.log.LogFactory;
 import org.openqa.selenium.server.BrowserConfigurationOptions;
 import org.openqa.selenium.server.RemoteControlConfiguration;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -253,6 +255,13 @@ public class OperaCustomProfileLauncher extends AbstractBrowserLauncher {
         out.println("Browser Window=0,0,100,100,2");
         
         // TODO Disable security warnings
+
+        // Load custom settings if file is present
+
+        File f = new File("profile-opera.txt");
+        if (f.exists()) {
+            out.println(IOUtils.toString(new FileInputStream(f)));
+        }
 
         out.close();
         return opera6ini;
