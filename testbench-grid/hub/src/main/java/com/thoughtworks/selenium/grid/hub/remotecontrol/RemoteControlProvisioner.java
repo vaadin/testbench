@@ -49,19 +49,24 @@ public class RemoteControlProvisioner {
 
             remoteControl = blockUntilARemoteControlIsAvailableOrRequestTimesOut();
             if (null == remoteControl) {
-                LOGGER.info("Timed out waiting for a remote control for environment.");
+                LOGGER
+                        .info("Timed out waiting for a remote control for environment.");
                 return null;
             }
 
-            while (remoteControl.unreliable()) {
-                LOGGER.warn("Reserved RC " + remoteControl + " is detected as unreliable, unregistering it and reserving a new one...");
+            while (remoteControl.unreliable() != 200) {
+                LOGGER
+                        .warn("Reserved RC "
+                                + remoteControl
+                                + " is detected as unreliable, unregistering it and reserving a new one...");
                 tearDownExistingRemoteControl(remoteControl);
                 if (remoteControls.isEmpty()) {
                     return null;
                 }
                 remoteControl = blockUntilARemoteControlIsAvailableOrRequestTimesOut();
                 if (null == remoteControl) {
-                    LOGGER.info("Timed out waiting for a remote control for environment.");
+                    LOGGER
+                            .info("Timed out waiting for a remote control for environment.");
                     return null;
                 }
             }
@@ -81,11 +86,12 @@ public class RemoteControlProvisioner {
             remoteControlListLock.lock();
             waiting++;
             if (remoteControls.isEmpty()) {
+                waiting--;
                 return null;
             }
 
             remoteControl = blockUntilARemoteControlIsAvailable(environment);
-            if(remoteControl != null){
+            if (remoteControl != null) {
                 remoteControl.registerNewSession();
                 LOGGER.info("Reserved remote control" + remoteControl);
             }
@@ -132,10 +138,12 @@ public class RemoteControlProvisioner {
         return false;
     }
 
-    public void tearDownExistingRemoteControl(RemoteControlProxy newRemoteControl) {
+    public void tearDownExistingRemoteControl(
+            RemoteControlProxy newRemoteControl) {
         final RemoteControlProxy oldRemoteControl;
 
-        oldRemoteControl = remoteControls.get(remoteControls.indexOf(newRemoteControl));
+        oldRemoteControl = remoteControls.get(remoteControls
+                .indexOf(newRemoteControl));
         if (oldRemoteControl.sessionInProgress()) {
             oldRemoteControl.unregisterSession();
         }
@@ -143,20 +151,22 @@ public class RemoteControlProvisioner {
     }
 
     // If remoteControl exists do nothing else add remote control
-    public void confirm(RemoteControlProxy checkRemoteControl){
+    public void confirm(RemoteControlProxy checkRemoteControl) {
         try {
             remoteControlListLock.lock();
             if (remoteControls.contains(checkRemoteControl)) {
                 return;
             }
-            LOGGER.info("Registering RemoteControl " + checkRemoteControl.toString() + " to hub as it seems to have been lost.");
+            LOGGER.info("Registering RemoteControl "
+                    + checkRemoteControl.toString()
+                    + " to hub as it seems to have been lost.");
             remoteControls.add(checkRemoteControl);
             signalThatARemoteControlHasBeenMadeAvailable();
         } finally {
             remoteControlListLock.unlock();
         }
     }
-    
+
     public boolean remove(RemoteControlProxy remoteControl) {
         try {
             remoteControlListLock.lock();
@@ -180,10 +190,10 @@ public class RemoteControlProvisioner {
         return reservedRemoteControls().isEmpty();
     }
 
-    public int amountWaiting(){
+    public int amountWaiting() {
         return waiting;
     }
-    
+
     /**
      * Not thread safe.
      * 
@@ -200,7 +210,10 @@ public class RemoteControlProvisioner {
                 }
             }
         }
-        return Arrays.asList(availableremoteControls.toArray(new RemoteControlProxy[availableremoteControls.size()]));
+        return Arrays
+                .asList(availableremoteControls
+                        .toArray(new RemoteControlProxy[availableremoteControls
+                                .size()]));
     }
 
     /**
@@ -217,7 +230,10 @@ public class RemoteControlProvisioner {
                 reservedRemoteControls.add(remoteControl);
             }
         }
-        return Arrays.asList(reservedRemoteControls.toArray(new RemoteControlProxy[reservedRemoteControls.size()]));
+        return Arrays
+                .asList(reservedRemoteControls
+                        .toArray(new RemoteControlProxy[reservedRemoteControls
+                                .size()]));
     }
 
     protected RemoteControlProxy blockUntilARemoteControlIsAvailableOrRequestTimesOut() {
@@ -227,7 +243,8 @@ public class RemoteControlProvisioner {
             try {
                 availableRemoteControl = findNextAvailableRemoteControl();
                 boolean timedOut = false;
-                while ((null == availableRemoteControl) && !timedOut) {
+                while ((null == availableRemoteControl) && !timedOut
+                        && !availableRemoteControls().isEmpty()) {
                     LOGGER.info("Waiting for a remote control...");
                     timedOut = waitForARemoteControlToBeAvailable();
                     availableRemoteControl = findNextAvailableRemoteControl();
@@ -247,7 +264,8 @@ public class RemoteControlProvisioner {
         while (true) {
             try {
                 availableRemoteControl = findNextAvailableRemoteControl(environment);
-                while (null == availableRemoteControl) {
+                while (null == availableRemoteControl
+                        && !availableRemoteControls().isEmpty()) {
                     // if we tried 2 times to get this RC return to global pool
                     // and check provisioners again for possible free RCs
                     if (triesToReserve == 2) {
@@ -283,7 +301,8 @@ public class RemoteControlProvisioner {
     /**
      * Non-blocking, not thread-safe
      * 
-     * @return Next Available remote control with environment. Null if none is available.
+     * @return Next Available remote control with environment. Null if none is
+     *         available.
      */
     protected RemoteControlProxy findNextAvailableRemoteControl(
             String environment) {
@@ -291,7 +310,9 @@ public class RemoteControlProvisioner {
             if (remoteControl.environment().equals(environment)
                     && remoteControl.canHandleNewSession()
                     && reservedRemoteControls().isEmpty()) {
-                return remoteControl;
+                if (remoteControl.unreliable() == 200) {
+                    return remoteControl;
+                }
             }
         }
         return null;
@@ -309,7 +330,7 @@ public class RemoteControlProvisioner {
         final Double maxWaitTime = HubRegistry.registry().gridConfiguration()
                 .getHub().getNewSessionMaxWaitTimeInSeconds();
 
-          if (maxWaitTime.isInfinite()) {
+        if (maxWaitTime.isInfinite()) {
             remoteControlAvailable.await();
             return false;
         } else {
@@ -323,15 +344,19 @@ public class RemoteControlProvisioner {
         remoteControlAvailable.signalAll();
     }
 
-
     public List<RemoteControlProxy> allRemoteControls() {
         final LinkedList<RemoteControlProxy> allRemoteControls;
 
-        allRemoteControls = new LinkedList<RemoteControlProxy>();
-        for (RemoteControlProxy remoteControl : remoteControls) {
-            allRemoteControls.add(remoteControl);
-        }
+        try {
+            remoteControlListLock.lock();
+            allRemoteControls = new LinkedList<RemoteControlProxy>();
+            for (RemoteControlProxy remoteControl : remoteControls) {
+                allRemoteControls.add(remoteControl);
+            }
 
+        } finally {
+            remoteControlListLock.unlock();
+        }
         return allRemoteControls;
     }
 }

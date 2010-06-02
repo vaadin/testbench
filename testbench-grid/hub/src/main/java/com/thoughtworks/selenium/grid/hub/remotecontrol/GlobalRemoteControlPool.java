@@ -26,7 +26,7 @@ public class GlobalRemoteControlPool implements DynamicRemoteControlPool {
             .getLog(GlobalRemoteControlPool.class);
     private final Map<String, RemoteControlSession> remoteControlsBySessionIds;
     private final Map<String, RemoteControlProvisioner> provisionersByHash;
-    
+
     public GlobalRemoteControlPool() {
         remoteControlsBySessionIds = new HashMap<String, RemoteControlSession>();
         provisionersByHash = new HashMap<String, RemoteControlProvisioner>();
@@ -47,7 +47,7 @@ public class GlobalRemoteControlPool implements DynamicRemoteControlPool {
     public boolean unregister(RemoteControlProxy remoteControl) {
 
         boolean status = false;
-        
+
         try {
             synchronized (provisionersByHash) {
                 synchronized (remoteControlsBySessionIds) {
@@ -55,6 +55,7 @@ public class GlobalRemoteControlPool implements DynamicRemoteControlPool {
 
                     status = getProvisioner(remoteControl.hashCode()).remove(
                             remoteControl);
+
                     for (RemoteControlSession session : remoteControlsBySessionIds
                             .values()) {
                         if (session.remoteControl().equals(remoteControl)) {
@@ -62,7 +63,8 @@ public class GlobalRemoteControlPool implements DynamicRemoteControlPool {
                         }
                     }
 
-                    // Remove the session separately from the loop where we found it to avoid issues with concurrent modification.
+                    // Remove the session separately from the loop where we
+                    // found it to avoid issues with concurrent modification.
                     for (RemoteControlSession session : sessionsToRemove) {
                         removeFromSessionMap(session);
                     }
@@ -79,15 +81,15 @@ public class GlobalRemoteControlPool implements DynamicRemoteControlPool {
         RemoteControlProvisioner provisioner;
         RemoteControlProxy reserved = null;
         // check provisioners if reservation returns as null.
-        do{
+        do {
             provisioner = getProvisioner(environment.name());
             if (null == provisioner) {
                 throw new NoSuchEnvironmentException(environment.name());
             }
-    
+
             reserved = provisioner.reserve(environment.name());
-        }while(reserved == null);
-        
+        } while (reserved == null);
+
         return reserved;
     }
 
@@ -96,7 +98,7 @@ public class GlobalRemoteControlPool implements DynamicRemoteControlPool {
         LOGGER.info("Associating session id='" + sessionId + "' =>"
                 + remoteControl + " for environment "
                 + remoteControl.environment());
-        
+
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Asssociating " + sessionId + " => " + remoteControl);
         }
@@ -108,7 +110,7 @@ public class GlobalRemoteControlPool implements DynamicRemoteControlPool {
             }
             synchronized (remoteControlsBySessionIds) {
                 final RemoteControlSession newSession;
-  
+
                 newSession = new RemoteControlSession(sessionId, remoteControl);
                 remoteControlsBySessionIds.put(sessionId, newSession);
             }
@@ -138,6 +140,18 @@ public class GlobalRemoteControlPool implements DynamicRemoteControlPool {
         }
         getProvisioner(remoteControl.environment()).release(remoteControl);
         remoteControl.terminateSession(sessionId);
+    }
+
+    public void releaseForSessionWithoutTerminate(String sessionId) {
+        LOGGER.info("Releasing pool for session id='" + sessionId + "'");
+
+        final RemoteControlProxy remoteControl;
+        remoteControl = getRemoteControlForSession(sessionId);
+
+        synchronized (remoteControlsBySessionIds) {
+            remoteControlsBySessionIds.remove(sessionId);
+        }
+        getProvisioner(remoteControl.environment()).release(remoteControl);
     }
 
     public List<RemoteControlProxy> availableRemoteControls() {
@@ -172,8 +186,9 @@ public class GlobalRemoteControlPool implements DynamicRemoteControlPool {
         final List<RemoteControlProxy> allRemoteControls;
 
         allRemoteControls = new LinkedList<RemoteControlProxy>();
-        synchronized(provisionersByHash) {
-            for (RemoteControlProvisioner provisioner : provisionersByHash.values()) {
+        synchronized (provisionersByHash) {
+            for (RemoteControlProvisioner provisioner : provisionersByHash
+                    .values()) {
                 allRemoteControls.addAll(provisioner.allRemoteControls());
             }
         }
@@ -194,7 +209,7 @@ public class GlobalRemoteControlPool implements DynamicRemoteControlPool {
 
     protected RemoteControlProvisioner getProvisioner(String environment) {
         List<RemoteControlProvisioner> haveEnvironment = new LinkedList<RemoteControlProvisioner>();
-        
+
         // get provisioners with wanted environment
         for (RemoteControlProvisioner provisioner : provisionersByHash.values()) {
             if (provisioner.hasEnvironment(environment)) {
@@ -206,26 +221,26 @@ public class GlobalRemoteControlPool implements DynamicRemoteControlPool {
         if (haveEnvironment.isEmpty()) {
             return null;
         }
-        
+
         // check for provisioner with possible free environment
         for (RemoteControlProvisioner provisioner : haveEnvironment) {
             if (provisioner.rcFree()) {
                 return provisioner;
             }
         }
-        
+
         // check for provisioner with the least waiting reservations.
         RemoteControlProvisioner leastWaits = haveEnvironment.get(0);
-        if(haveEnvironment.size() > 1){
-            leastWaits = haveEnvironment.get(new Random().nextInt(haveEnvironment.size()));
-        
-            for(RemoteControlProvisioner provisioner : haveEnvironment) {
-                if(provisioner.amountWaiting() < leastWaits.amountWaiting()){
+        if (haveEnvironment.size() > 1) {
+            leastWaits = haveEnvironment.get(new Random()
+                    .nextInt(haveEnvironment.size()));
+
+            for (RemoteControlProvisioner provisioner : haveEnvironment) {
+                if (provisioner.amountWaiting() < leastWaits.amountWaiting()) {
                     leastWaits = provisioner;
                 }
             }
         }
-        
         return leastWaits;
     }
 
@@ -252,7 +267,8 @@ public class GlobalRemoteControlPool implements DynamicRemoteControlPool {
 
     protected void removeFromSessionMap(RemoteControlSession session) {
         // Use a real iterator to avoid issues with concurrent modification.
-        for (final Iterator<Map.Entry<String, RemoteControlSession>> it = remoteControlsBySessionIds.entrySet().iterator(); it.hasNext();) {
+        for (final Iterator<Map.Entry<String, RemoteControlSession>> it = remoteControlsBySessionIds
+                .entrySet().iterator(); it.hasNext();) {
             final Map.Entry<String, RemoteControlSession> entry = it.next();
 
             if (entry.getValue().equals(session)) {
@@ -273,6 +289,10 @@ public class GlobalRemoteControlPool implements DynamicRemoteControlPool {
                 new RemoteControlProvisioner());
     }
 
+    protected void removeProvisionerForHash(int hash) {
+        provisionersByHash.remove(Integer.toString(hash));
+    }
+
     public void unregisterAllUnresponsiveRemoteControls() {
         for (RemoteControlProxy rc : allRegisteredRemoteControls()) {
             unregisterRemoteControlIfUnreliable(rc);
@@ -280,16 +300,32 @@ public class GlobalRemoteControlPool implements DynamicRemoteControlPool {
     }
 
     protected void unregisterRemoteControlIfUnreliable(RemoteControlProxy rc) {
-        if (rc.unreliable()) {
+        int response = rc.unreliable();
+        if (response != 200) {
             LOGGER.error("RC detected as unreliable: " + rc);
             // LOGGER.warn("Unregistering unreliable RC " + rc);
-            // TODO cannot really stop the test in progress, may "get stuck" on
-            // the RC
+            // TODO cannot really stop the test in progress, may "get stuck"
+            // on the RC
             // TODO this would leave other RCPs on the RC active
             // unregister(rc);
-            // not unregistering but releasing; could alternatively unregister
-            // all RCPs on the RC
+            // not unregistering but releasing; could alternatively
+            // unregister all RCPs on the RC
             // release(rc);
+            for (RemoteControlSession session : iteratorSafeRemoteControlSessions()) {
+                if (session.remoteControl().equals(rc)) {
+                    if (response == 503 || response == 408) {
+                        // If connection timed out or we don't have route to
+                        // host don't try to send RC end session command.
+                        releaseForSessionWithoutTerminate(session.sessionId());
+                    } else {
+                        releaseForSession(session.sessionId());
+                    }
+                    break;
+                }
+            }
+            // After possible session released unregister
+            // unresponsive rc.
+            unregister(rc);
         }
     }
 

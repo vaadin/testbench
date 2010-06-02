@@ -456,8 +456,11 @@ public class TestConverter {
                 + "}else{\njunit.framework.Assert.fail(\"Image sizes differ.\");\n"
                 + "}\n}\n";
         // if screenshot.onfail defined add try{ }catch( ){ }
-        if ("true".equals(System
+        if ("false".equals(System
                 .getProperty("com.vaadin.testbench.screenshot.onfail"))) {
+            softAsserts = "}catch(Throwable e){\nthrow new java.lang.AssertionError(cmd.getInfo() + \". Failure message = \" + e.getMessage());\n}\n"
+                    + softAsserts;
+        } else {
             screenshot = true;
             softAsserts = "}catch(Throwable e){\n"
                     + "String statusScreen = selenium.captureScreenshotToString();\n"
@@ -475,9 +478,6 @@ public class TestConverter {
                     + ".png\"));\n}catch(IOException ioe){\n"
                     + "ioe.printStackTrace();\n}\n"
                     + "throw new java.lang.AssertionError(cmd.getInfo() + \". Failure message = \" + e.getMessage());\n}\n"
-                    + softAsserts;
-        } else {
-            softAsserts = "}catch(Throwable e){\nthrow new java.lang.AssertionError(cmd.getInfo() + \". Failure message = \" + e.getMessage());\n}\n"
                     + softAsserts;
         }
         String footer = TEST_METHOD_FOOTER;

@@ -3,9 +3,11 @@ package com.thoughtworks.selenium.grid;
 import java.io.IOException;
 
 import org.apache.commons.httpclient.HttpMethod;
+import org.apache.commons.httpclient.HttpMethodRetryHandler;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.params.HttpConnectionParams;
+import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -61,11 +63,13 @@ public class HttpClient {
 
     protected Response request(HttpMethod method) throws IOException {
         final int statusCode;
+        method.getParams().setParameter(HttpMethodParams.RETRY_HANDLER,
+                retryhandler);
         final String body;
         try {
             HttpConnectionParams parameters = client.getHttpConnectionManager()
                     .getParams();
-            parameters.setSoTimeout(60000);
+            parameters.setSoTimeout(30000);
             statusCode = client.executeMethod(method);
             // Get response body as a byte[] from InputStream
             byte[] response = IOUtils.toByteArray(method
@@ -73,18 +77,31 @@ public class HttpClient {
             body = new String(response, "utf-8");
             return new Response(statusCode, body);
             // Catch exceptions and end test by creating a Response(String);
+        } catch (java.net.NoRouteToHostException e) {
+            logger.warn("No route to host: " + method.getURI());
+            return new Response(503, "No route to host");
+        } catch (java.net.ConnectException e) {
+            logger.warn("Connection timed out");
+            return new Response(408, "Connection timed out");
         } catch (java.net.SocketTimeoutException e) {
-            logger.warn("Socket response timedout while sending request "
-                    + method, e);
-            return new Response("Socket response timedout.");
+            logger.warn("Socket response timed out while sending request");
+            return new Response(408, "Socket response timedout."
+                    + e.getMessage());
         } catch (java.net.SocketException e) {
-            logger.warn("Socket exception while sending request " + method, e);
-            return new Response("Socket exception. " + e.getMessage());
+            logger.warn("Socket exception while sending request");
+            return new Response(400, "Socket exception. " + e.getMessage());
         } catch (IOException e) {
-            logger.warn("Problem occurred while sending request " + method, e);
-            return new Response("Problem occured. " + e.getMessage());
+            logger.warn("Problem occurred while sending request");
+            return new Response(500, "Problem occured. " + e.getMessage());
         } finally {
             method.releaseConnection();
         }
     }
+
+    HttpMethodRetryHandler retryhandler = new HttpMethodRetryHandler() {
+        public boolean retryMethod(final HttpMethod method,
+                final IOException exception, int executionCount) {
+            return false;
+        }
+    };
 }

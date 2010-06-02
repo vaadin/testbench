@@ -12,7 +12,6 @@ import com.thoughtworks.selenium.grid.HttpParameters;
 import com.thoughtworks.selenium.grid.Response;
 import com.thoughtworks.selenium.grid.hub.HubServer;
 
-
 /**
  * Local interface to a real remote control running somewhere in the grid.
  */
@@ -27,8 +26,7 @@ public class RemoteControlProxy {
     private final String environment;
     private final String host;
     private final int port;
-    
-    
+
     public RemoteControlProxy(String host, int port, String environment,
             HttpClient httpClient) {
         if (null == host) {
@@ -94,7 +92,8 @@ public class RemoteControlProxy {
 
         final RemoteControlProxy otherRemoteControl = (RemoteControlProxy) other;
         return host.equals(otherRemoteControl.host)
-                && port == otherRemoteControl.port && environment.equals(otherRemoteControl.environment);
+                && port == otherRemoteControl.port
+                && environment.equals(otherRemoteControl.environment);
     }
 
     @Override
@@ -108,14 +107,17 @@ public class RemoteControlProxy {
 
     public void registerNewSession() {
         if (sessionInProgress) {
-            throw new IllegalStateException("Exceeded concurrent session max for " + toString());
+            throw new IllegalStateException(
+                    "Exceeded concurrent session max for " + toString());
         }
         sessionInProgress = true;
     }
-    
+
     public void unregisterSession() {
         if (!sessionInProgress) {
-            throw new IllegalStateException("Unregistering session on an idle remote control : " + toString());
+            throw new IllegalStateException(
+                    "Unregistering session on an idle remote control : "
+                            + toString());
         }
         sessionInProgress = false;
     }
@@ -127,31 +129,36 @@ public class RemoteControlProxy {
             params.put("sessionId", new String[] { sessionId });
 
             forward(new HttpParameters(params));
-        }
-        catch (IOException e) {
-            LOGGER.warn("Exception telling remote control to kill its session:" + e.getMessage());
+        } catch (IOException e) {
+            LOGGER.warn("Exception telling remote control to kill its session:"
+                    + e.getMessage());
         }
     }
 
     public boolean canHandleNewSession() {
-        return !sessionInProgress();
+        if (sessionInProgress() || unreliable() != 200) {
+            return false;
+        }
+        return true;
     }
-    
-    public boolean unreliable() {
+
+    public int unreliable() {
         final Response response;
 
         try {
             LOGGER.debug("Polling Remote Control at " + host + ":" + port);
             response = httpClient.get(remoteControlPingURL());
         } catch (Exception e) {
-            LOGGER.warn("Remote Control at " + host + ":" + port + " is unresponsive");
-            return true;
+            LOGGER.warn("Remote Control at " + host + ":" + port
+                    + " is unresponsive");
+            return 500;
         }
         if (response.statusCode() != 200) {
-            LOGGER.warn("Remote Control at " + host + ":" + port + " did not respond correctly");
-            return true;
+            LOGGER.warn("Remote Control at " + host + ":" + port
+                    + " did not respond correctly");
+            return response.statusCode();
         }
-        return false;
+        return 200;
     }
 
 }

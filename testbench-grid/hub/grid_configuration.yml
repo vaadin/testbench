@@ -1,5 +1,8 @@
 hub:
    port: 4444
+   remoteControlPollingIntervalInSeconds: 120
+   sessionMaxIdleTimeInSeconds: 90
+   newSessionMaxWaitTimeInSeconds: 5
    environments:
    
 # Windows targets
