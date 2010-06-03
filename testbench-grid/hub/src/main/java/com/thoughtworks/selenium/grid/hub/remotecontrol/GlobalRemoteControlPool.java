@@ -138,8 +138,10 @@ public class GlobalRemoteControlPool implements DynamicRemoteControlPool {
         synchronized (remoteControlsBySessionIds) {
             remoteControlsBySessionIds.remove(sessionId);
         }
-        getProvisioner(remoteControl.environment()).release(remoteControl);
+        // End session before releasing RC on the provisioner else
+        // 'testComplete' won't be sent
         remoteControl.terminateSession(sessionId);
+        getProvisioner(remoteControl.environment()).release(remoteControl);
     }
 
     public void releaseForSessionWithoutTerminate(String sessionId) {
