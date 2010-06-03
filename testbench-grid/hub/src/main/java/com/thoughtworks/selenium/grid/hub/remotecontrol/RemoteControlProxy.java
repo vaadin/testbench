@@ -136,7 +136,7 @@ public class RemoteControlProxy {
     }
 
     public boolean canHandleNewSession() {
-        if (sessionInProgress() || unreliable() != 200) {
+        if (sessionInProgress()) {
             return false;
         }
         return true;
