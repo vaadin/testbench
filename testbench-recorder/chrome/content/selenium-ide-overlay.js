@@ -231,7 +231,7 @@ SeleniumIDE.Overlay.onLoad = function(event) {
                     doc = doc.wrappedJSObject;
                 }
                 
-                // doc.readyState = "complete"; // commented out as causes errors, don't know what should do
+                doc.readyState = "complete"; // Removed comments as on load didn't validate
             }, 0);
     }
 }
