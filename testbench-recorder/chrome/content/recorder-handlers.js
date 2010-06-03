@@ -535,15 +535,13 @@ Recorder.addEventHandler('clickLocator', 'click', function(event){
 	            		this.record_orig("mouseClick", target, x + ',' + y);
 					}
 	            	clicked = "false";
-	            } else if (((new RegExp("v-button")).test(event.target.className) || (new RegExp("v-button")).test(event.target.parentNode.className)) && event.target.type != "button"){
+	            } else if ((new RegExp("@id=\'loginf\'")).test(target) && !(new RegExp("input")).test(target)) {
+	            	// if login form we need to add a small pause manually (IE can't handle AndWait).
+            		this.record_orig("click", target, '');
+	            	this.record("pause", "1000", '');
+            	} else if (((new RegExp("v-button")).test(event.target.className) || (new RegExp("v-button")).test(event.target.parentNode.className)) && event.target.type != "button") {
 	            	/* A class="v-button" requires a click without mouseDown+mouseUp */
 	            	this.record("click", target, '');
-	          //  } else if ( x < 0 || y < 0){ // removed because it negated clicks after scroll.
-	            	/* Check that cordinates are inside an actual element. 
-	                 * (RichTextField buttons record a negative and positive placement 
-	                 * this will drop the negative one)
-	                 */
-			   //         alert("clicked with negative");
 	            } else {
 	            	/* record mouseClick with waitForVaadin(s) added */
 	            	this.record("mouseClick", target, x + ',' + y);
