@@ -39,8 +39,11 @@ public class HubRequest {
         postMethod.addParameter("host", host);
         postMethod.addParameter("port", port);
         postMethod.addParameter("environment", environment);
-        postMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER,
-                retryhandler);
+        // only retry forever when registering RemoteControl to hub
+        if (!targetURL.endsWith("unregister")) {
+            postMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER,
+                    retryhandler);
+        }
 
         return postMethod;
     }
