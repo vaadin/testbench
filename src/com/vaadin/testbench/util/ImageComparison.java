@@ -87,7 +87,7 @@ public class ImageComparison {
                 dimensions.getCanvasXPosition(), dimensions
                         .getCanvasYPosition(), dimensions.getCanvasWidth(),
                 dimensions.getCanvasHeight());
-
+        BufferedImage cleanTest = test;
         try {
             // Load images if reference not given
             BufferedImage target = ImageIO.read(new File(directory
@@ -348,11 +348,8 @@ public class ImageComparison {
 
                     // get both images again if different size
                     if (sizesDiffer) {
-                        test = (ImageUtil.stringToImage(image)).getSubimage(
-                                dimensions.getCanvasXPosition(), dimensions
-                                        .getCanvasYPosition(), dimensions
-                                        .getCanvasWidth(), dimensions
-                                        .getCanvasHeight());
+                        test = cleanTest;
+
                         target = ImageIO.read(new File(directory
                                 + REFERENCE_DIRECTORY + File.separator + fileId
                                 + ".png"));
@@ -393,12 +390,8 @@ public class ImageComparison {
                     drawToPicture.dispose();
 
                     // Write clean image to file
-                    ImageIO.write((ImageUtil.stringToImage(image)).getSubimage(
-                            dimensions.getCanvasXPosition(), dimensions
-                                    .getCanvasYPosition(), dimensions
-                                    .getCanvasWidth(), dimensions
-                                    .getCanvasHeight()), "png", new File(
-                            compareFolder + File.separator + fileId + ".png"));
+                    ImageIO.write(cleanTest, "png", new File(compareFolder
+                            + File.separator + fileId + ".png"));
 
                     createDiffHtml(errorAreas, fileId, ImageUtil
                             .encodeImageToBase64(test), ImageUtil
@@ -615,11 +608,11 @@ public class ImageComparison {
                         System.out.println("Found cursor in test "
                                 + fileId.substring(0, fileId.indexOf("_")));
                         cursor = true;
-                    } else {
-                        // end search if failed to find cursor from one error
-                        j = y + 20;
-                        i = x + 20;
+                        return cursor;
                     }
+                    // end search if failed to find cursor from one error
+                    j = y + 20;
+                    i = x + 20;
                 }
             }
         }
