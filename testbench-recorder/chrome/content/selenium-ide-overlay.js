@@ -225,13 +225,12 @@ SeleniumIDE.Overlay.onContentLoaded = function(event) {
 SeleniumIDE.Overlay.onLoad = function(event) {
     //this.debug("onLoad: target=" + event.target);
     var doc = event.originalTarget;
-    if (doc.defaultView) {
+    if (doc.defaultView && !doc.readyState) {
         doc.defaultView.setTimeout(function() {
                 if (doc.wrappedJSObject) {
                     doc = doc.wrappedJSObject;
                 }
-                
-                doc.readyState = "complete"; // Removed comments as on load didn't validate
+                doc.readyState = "complete";
             }, 0);
     }
 }
