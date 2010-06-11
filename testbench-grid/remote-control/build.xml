@@ -17,8 +17,8 @@
     	<pathelement path="${java.class.path}/"/>
 	    <fileset dir="${rootdir}/vendor">
       		<include name="selenium-server-1.0.1.jar"/>
-      		<include name="selenium-grid-core-1.0.7-SNAPSHOT.jar"/>
-      		<include name="selenium-grid-remote-control-1.0.7-SNAPSHOT.jar"/>
+      		<include name="selenium-grid-core-1.0.8.jar"/>
+      		<include name="selenium-grid-remote-control-1.0.8.jar"/>
     	</fileset>
     	<fileset dir="${rootdir}/vendor">
 	      	<include name="commons-httpclient-3.0.1.jar"/>
@@ -88,8 +88,8 @@
       		<dependencies>
 	        	<zipfileset src="${dist}/lib/${artifact}-${version}.jar"/>
       			
-          		<zipfileset src="${rootdir}/vendor/selenium-grid-remote-control-1.0.7-SNAPSHOT.jar"/>
-	      		<zipfileset src="${rootdir}/vendor/selenium-grid-core-1.0.7-SNAPSHOT.jar"/>
+          		<zipfileset src="${rootdir}/vendor/selenium-grid-remote-control-1.0.8.jar"/>
+	      		<zipfileset src="${rootdir}/vendor/selenium-grid-core-1.0.8.jar"/>
 
       			<!-- Use Jetty 6.1.9 and other libraries from selenium-server-1.0.1.jar instead -->
 	        	<zipfileset src="${rootdir}/vendor/commons-httpclient-3.0.1.jar"/>

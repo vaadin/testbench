@@ -315,6 +315,7 @@ public class RemoteControlProvisioner {
                 }
             }
         }
+
         return null;
     }
 
@@ -333,11 +334,10 @@ public class RemoteControlProvisioner {
         if (maxWaitTime.isInfinite()) {
             remoteControlAvailable.await();
             return false;
-        } else {
-            // TODO return !remoteControlAvailable.await(5, TimeUnit.SECONDS);
-            return !remoteControlAvailable.await(maxWaitTime.longValue(),
-                    TimeUnit.SECONDS);
         }
+        // TODO return !remoteControlAvailable.await(5, TimeUnit.SECONDS);
+        return !remoteControlAvailable.await(maxWaitTime.longValue(),
+                TimeUnit.SECONDS);
     }
 
     protected void signalThatARemoteControlHasBeenMadeAvailable() {
@@ -358,5 +358,25 @@ public class RemoteControlProvisioner {
             remoteControlListLock.unlock();
         }
         return allRemoteControls;
+    }
+
+    /**
+     * Return one remote control for this provisioner (as all RC:s are the same
+     * with different environment)
+     * 
+     * @return List with one RemoteControlProvisioner
+     */
+    public List<RemoteControlProxy> getRemoteControl() {
+        final LinkedList<RemoteControlProxy> remoteController = new LinkedList<RemoteControlProxy>();
+
+        try {
+            remoteControlListLock.lock();
+            if (!remoteControls.isEmpty()) {
+                remoteController.add(remoteControls.get(0));
+            }
+        } finally {
+            remoteControlListLock.unlock();
+        }
+        return remoteController;
     }
 }

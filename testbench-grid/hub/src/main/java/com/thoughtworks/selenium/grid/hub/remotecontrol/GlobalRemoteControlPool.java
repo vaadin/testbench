@@ -198,6 +198,20 @@ public class GlobalRemoteControlPool implements DynamicRemoteControlPool {
         return allRemoteControls;
     }
 
+    // Differs from Registered due to remotes registering for each environment
+    public List<RemoteControlProxy> allRemoteControls() {
+        final List<RemoteControlProxy> allRemoteControls;
+
+        allRemoteControls = new LinkedList<RemoteControlProxy>();
+        synchronized (provisionersByHash) {
+            for (RemoteControlProvisioner provisioner : provisionersByHash
+                    .values()) {
+                allRemoteControls.addAll(provisioner.getRemoteControl());
+            }
+        }
+        return allRemoteControls;
+    }
+
     // used by heartbeat only
     public boolean isRegistered(RemoteControlProxy remoteControl) {
         for (RemoteControlProvisioner provisioner : provisionersByHash.values()) {
@@ -296,7 +310,7 @@ public class GlobalRemoteControlPool implements DynamicRemoteControlPool {
     }
 
     public void unregisterAllUnresponsiveRemoteControls() {
-        for (RemoteControlProxy rc : allRegisteredRemoteControls()) {
+        for (RemoteControlProxy rc : allRemoteControls()) {
             unregisterRemoteControlIfUnreliable(rc);
         }
     }
@@ -313,6 +327,8 @@ public class GlobalRemoteControlPool implements DynamicRemoteControlPool {
             // not unregistering but releasing; could alternatively
             // unregister all RCPs on the RC
             // release(rc);
+            // Check if this remote has a session and end it. This will also end
+            // the test.
             for (RemoteControlSession session : iteratorSafeRemoteControlSessions()) {
                 if (session.remoteControl().equals(rc)) {
                     if (response == 503 || response == 408) {
@@ -326,8 +342,11 @@ public class GlobalRemoteControlPool implements DynamicRemoteControlPool {
                 }
             }
             // After possible session released unregister
-            // unresponsive rc.
-            unregister(rc);
+            // unresponsive rc. (all of its environments)
+            for (RemoteControlProxy remote : getProvisioner(rc.hashCode())
+                    .allRemoteControls()) {
+                unregister(remote);
+            }
         }
     }
 
