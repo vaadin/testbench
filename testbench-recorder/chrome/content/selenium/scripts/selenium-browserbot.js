@@ -1338,6 +1338,15 @@ BrowserBot.prototype.locateElementByVaadin = function(tkString, inDocument) {
 	return null;
 }
 
+BrowserBot.prototype.locateElementByVaadin.is_fuzzy_match = function(node, target) {
+	try {
+        var isMatch = (node == target) || is_ancestor(node, target);
+        return isMatch;
+    }
+    catch (e) {
+        return false;
+    }
+}
 /**
  * In non-IE browsers, getElementById() does not search by name.  Instead, we
  * we search separately by id and name.
