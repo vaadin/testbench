@@ -3220,6 +3220,7 @@ Selenium.prototype.doPressSpecialKey = function(locator, value){
 		value="\\13";
 	}
 	this.doKeyDown(locator, value);
+	this.doKeyPress(locator, value);
 	this.doKeyUp(locator, value);
 };
 
