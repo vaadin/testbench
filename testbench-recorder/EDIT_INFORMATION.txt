@@ -43,6 +43,9 @@ selenium-api.js
 selenium-browserbot.js
 [contains locateElementByVaadin from core extensions]
 
+htmlutils.js
+[added triggerSpecialKeyEvent function]
+
 ./chrome/skin/classic/
 
 selenium-ide.css

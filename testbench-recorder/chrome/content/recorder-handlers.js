@@ -296,8 +296,8 @@ Recorder.addEventHandler('contextmenu', 'contextmenu', function(event) {
 var charBuffer = "";
 var typeString = "true";
 
-/* Checks keyCodes on keyup event and adds a pressArrowKey if confirmed. */
-Recorder.addEventHandler('pressSpecialKey', 'keyup', function(event){
+/* Checks keyCodes on keydown event and adds a pressSpecialKey if confirmed. */
+Recorder.addEventHandler('pressSpecialKey', 'keydown', function(event){
 		/* only record modifiers if arrow keys pressed */
 		if(event.keyCode >= 37 && event.keyCode <= 40){
 			if(event.shiftKey){//16
@@ -325,9 +325,9 @@ Recorder.addEventHandler('pressSpecialKey', 'keyup', function(event){
 		case 13:
 			this.log.debug('pressed ENTER!');
 			typeString = "false";
-			if(event.target.nodeName.toLowerCase() == "input"){
+//			if(event.target.nodeName.toLowerCase() == "input"){
 				this.record("pressSpecialKey", this.findLocators(event.target), "enter");
-			}
+//			}
 			break;
 		case 37: 
 			this.log.debug('pressed LEFT!');
