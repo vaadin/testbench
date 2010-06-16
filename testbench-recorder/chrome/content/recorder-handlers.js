@@ -300,80 +300,46 @@ var typeString = "true";
 Recorder.addEventHandler('pressSpecialKey', 'keydown', function(event){
 		/* only record modifiers if arrow keys pressed */
 		if(event.keyCode >= 37 && event.keyCode <= 40){
-			if(event.shiftKey){//16
-				this.record_orig("shiftKeyDown", this.findLocators(event.target), '');
+			var target = "";
+			if(event.ctrlKey){
+				target = target + "ctrl ";
 			}
-			if(event.ctrlKey){//17
-				this.record_orig("controlKeyDown", this.findLocators(event.target), '');
+			if(event.shiftKey){
+				target = target + "shift ";
 			}
-			if(event.altKey){//18
-				this.record_orig("altKeyDown", this.findLocators(event.target), '');
-			}
-			if(charBuffer.length > 0){
-				this.record("enterCharacter", this.findLocators(event.target), charBuffer);
-				charBuffer = "";
-				typeString = "false";
+			if (event.altKey){
+				target = target + "alt ";
 			}
 		}
-		
+	
 		switch(event.keyCode){
 		case 9:
 			this.log.debug('pressed TAB');
 			typeString = "false";
-			this.record("pressSpecialKey", this.findLocators(event.target), "tab");
+			this.record("pressSpecialKey", this.findLocators(event.target),  target + "tab");
 			break;
 		case 13:
 			this.log.debug('pressed ENTER!');
 			typeString = "false";
-//			if(event.target.nodeName.toLowerCase() == "input"){
-				this.record("pressSpecialKey", this.findLocators(event.target), "enter");
-//			}
+			this.record("pressSpecialKey", this.findLocators(event.target),  target + "enter");
 			break;
 		case 37: 
 			this.log.debug('pressed LEFT!');
-			if(event.shiftKey || event.ctrlKey || event.altKey){
-				this.record_orig("pressSpecialKey", this.findLocators(event.target), "left");
-			}else{
-				this.record("pressSpecialKey", this.findLocators(event.target), "left");
-			}
+			this.record("pressSpecialKey", this.findLocators(event.target),  target + "left");
 			break;
 		case 39: 
 			this.log.debug('pressed RIGHT!');
-			if(event.shiftKey || event.ctrlKey || event.altKey){
-				this.record_orig("pressSpecialKey", this.findLocators(event.target), "right");
-			}else{
-				this.record("pressSpecialKey", this.findLocators(event.target), "right");
-			}
+			this.record("pressSpecialKey", this.findLocators(event.target),  target + "right");
 			break;
 		case 38: 
 			this.log.debug('pressed UP!');
-			if(event.shiftKey || event.ctrlKey || event.altKey){
-				this.record_orig("pressSpecialKey", this.findLocators(event.target), "up");
-			}else{
-				this.record("pressSpecialKey", this.findLocators(event.target), "up");
-			}
+			this.record("pressSpecialKey", this.findLocators(event.target),  target + "up");
 			break;
 		case 40:
 			this.log.debug('pressed DOWN!');
-			if(event.shiftKey || event.ctrlKey || event.altKey){
-				this.record_orig("pressSpecialKey", this.findLocators(event.target), "down");
-			}else{
-				this.record("pressSpecialKey", this.findLocators(event.target), "down");
-			}
+			this.record("pressSpecialKey", this.findLocators(event.target), target + "down");
 		}
 		
-		/* only record modifiers if arrow keys pressed */
-		if(event.keyCode >= 37 && event.keyCode <= 40){
-			if(event.shiftKey){
-				this.record("shiftKeyUp", this.findLocators(event.target), '');
-			}
-			if(event.ctrlKey){
-				this.record("controlKeyUp", this.findLocators(event.target), '');
-			}
-			if(event.altKey){
-				this.record("altKeyUp", this.findLocators(event.target), '');
-			}
-		}
 	});
 
 /* record all keypresses to character buffer */

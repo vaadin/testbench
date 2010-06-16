@@ -48,13 +48,7 @@
 	</target>
 	
 	<target name="create-scripts">
-		<loadfile property="dofunction" srcFile="../selenium-extensions/core/doFunction.js">
-			<filterchain>
-				<replacetokens>
-					<token key="triggerkey" value="triggerSpecialKeyEvent" />
-				</replacetokens>
-			</filterchain>
-		</loadfile>
+		<loadfile property="dofunction" srcFile="../selenium-extensions/core/doFunction.js" />
 		<copy file="selenium-api.js_tpl" tofile="chrome/content/selenium/scripts/selenium-api.js" overwrite="true">
 			<filterchain>
 				<replacetokens>

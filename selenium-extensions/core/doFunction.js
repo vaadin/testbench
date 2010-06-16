@@ -100,23 +100,26 @@ Selenium.prototype.doEnterCharacter = function(locator, value){
 
 /*Sends an arrow press recognized by browsers.*/
 Selenium.prototype.doPressSpecialKey = function(locator, value){
-	if(value.toLowerCase() == "left"){
+	var shift = (new RegExp("shift")).test(value);
+	var ctrl = (new RegExp("ctrl")).test(value);
+	var alt = (new RegExp("alt")).test(value);
+	if((new RegExp("left")).test(value.toLowerCase())){
 		value="\\37";
-	}else if(value.toLowerCase() == "right"){
+	}else if((new RegExp("right")).test(value.toLowerCase())){
 		value="\\39";
-	}else if(value.toLowerCase() == "up"){
+	}else if((new RegExp("up")).test(value.toLowerCase())){
 		value="\\38";
-	}else if(value.toLowerCase() == "down"){
+	}else if((new RegExp("down")).test(value.toLowerCase())){
 		value="\\40";
-	}else if(value.toLowerCase() == "enter"){
+	}else if((new RegExp("enter")).test(value.toLowerCase())){
 		value="\\13";
-	}else if(value.toLowerCase() == "tab"){
+	}else if((new RegExp("tab")).test(value.toLowerCase())){
 		value="\\9";
 	}
 	var element = this.browserbot.findElement(locator);
-	@triggerkey@(element, 'keydown', value, true, this.browserbot.controlKeyDown, this.browserbot.altKeyDown, this.browserbot.shiftKeyDown, this.browserbot.metaKeyDown)
-	@triggerkey@(element, 'keypress', value, true, this.browserbot.controlKeyDown, this.browserbot.altKeyDown, this.browserbot.shiftKeyDown, this.browserbot.metaKeyDown)
-	@triggerkey@(element, 'keyup', value, true, this.browserbot.controlKeyDown, this.browserbot.altKeyDown, this.browserbot.shiftKeyDown, this.browserbot.metaKeyDown)
+	triggerSpecialKeyEvent(element, 'keydown', value, true, ctrl, alt, shift, this.browserbot.metaKeyDown);
+	triggerSpecialKeyEvent(element, 'keypress', value, true,ctrl, alt, shift, this.browserbot.metaKeyDown);
+	triggerSpecialKeyEvent(element, 'keyup', value, true, ctrl, alt, shift, this.browserbot.metaKeyDown);
 };
 
 /*Simulates the correct mouse click events.*/
@@ -187,3 +190,36 @@ OptionLocatorFactory.prototype.OptionLocatorByLabel = function(label) {
         Assert.matches(this.label, selectedLabel)
     };
 };
+
+/**
+ * Copies triggerKeyEvent from htmlutils.js and removes keycode for charCodeArg on firefox keyEvent
+ */
+function triggerSpecialKeyEvent(element, eventType, keySequence, canBubble, controlKeyDown, altKeyDown, shiftKeyDown, metaKeyDown) {
+    var keycode = getKeyCodeFromKeySequence(keySequence);
+    canBubble = (typeof(canBubble) == undefined) ? true : canBubble;
+    if (element.fireEvent && element.ownerDocument && element.ownerDocument.createEventObject) { // IE
+        var keyEvent = createEventObject(element, controlKeyDown, altKeyDown, shiftKeyDown, metaKeyDown);
+        keyEvent.keyCode = keycode;
+        element.fireEvent('on' + eventType, keyEvent);
+    }
+    else {
+        var evt;
+        if (window.KeyEvent) {
+            evt = document.createEvent('KeyEvents');
+            evt.initKeyEvent(eventType, true, true, window, controlKeyDown, altKeyDown, shiftKeyDown, metaKeyDown, keycode, "");
+        } else {
+            evt = document.createEvent('UIEvents');
+            
+            evt.shiftKey = shiftKeyDown;
+            evt.metaKey = metaKeyDown;
+            evt.altKey = altKeyDown;
+            evt.ctrlKey = controlKeyDown;
+
+            evt.initUIEvent(eventType, true, true, window, 1);
+            evt.keyCode = keycode;
+            evt.which = keycode;
+        }
+
+        element.dispatchEvent(evt);
+    }
+}

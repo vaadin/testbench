@@ -175,13 +175,7 @@
 				</replacetokens>
 			</filterchain>
 		</loadfile>
-		<loadfile property="dofunction" srcFile="../selenium-extensions/core/doFunction.js">
-			<filterchain>
-				<replacetokens>
-					<token key="triggerkey" value="triggerKeyEvent" />
-				</replacetokens>
-			</filterchain>
-		</loadfile>
+		<loadfile property="dofunction" srcFile="../selenium-extensions/core/doFunction.js" />
 		<echo message="${locator}${line.separator}${dofunction}" file="../selenium-extensions/core/user-extensions.js"/>
 	</target>
 </project>
