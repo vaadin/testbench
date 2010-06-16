@@ -317,6 +317,11 @@ Recorder.addEventHandler('pressSpecialKey', 'keyup', function(event){
 		}
 		
 		switch(event.keyCode){
+		case 9:
+			this.log.debug('pressed TAB');
+			typeString = "false";
+			this.record("pressSpecialKey", this.findLocators(event.target), "tab");
+			break;
 		case 13:
 			this.log.debug('pressed ENTER!');
 			typeString = "false";

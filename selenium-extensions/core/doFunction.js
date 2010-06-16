@@ -1,64 +1,3 @@
-/* Selenium core extensions for Vaadin
- * 
- * Note, thi is used only be RC. IDE/recorder has same additions merged into it.
- */
-
-/* Also in IDE extensions */
-function getVaadinConnector(wnd) {
-	if (wnd.wrappedJSObject) {
-		wnd = wnd.wrappedJSObject;
-	}
-
-	var connector = null;
-	if (wnd.itmill) {
-		connector = wnd.itmill;
-	} else if (wnd.vaadin) {
-		connector = wnd.vaadin;
-	}
-
-	return connector;
-}
-
-PageBot.prototype.locateElementByVaadin = function(tkString, inDocument) {
-
-	var connector = getVaadinConnector(this.currentWindow);
-
-	if (!connector) {
-		// Not a toolkit application
-		return null;
-	}
-
-	var parts = tkString.split("::");
-	var appId = parts[0];
-
-	try {
-		var element = connector.clients[appId].getElementByPath(parts[1]);
-		return element;
-	} catch (exception) {
-		LOG.error('an error occured when locating element for '+tkString+': ' + exception);
-	}
-	return null;
-}
-
-/*
- PageBot.prototype.locateElementByVaadin.is_fuzzy_match = function(
- source, target) {
-
- if (source.wrappedJSObject) {
- source = source.wrappedJSObject;
- }
- if (target.wrappedJSObject) {
- target = target.wrappedJSObject;
- }
- if (target == source) {
- return true;
- }
-
- return true;
-
- }
-
- */
 Selenium.prototype.doWaitForVaadin = function(locator, value) {
 
 	// max time to wait for toolkit to settle
@@ -171,10 +110,13 @@ Selenium.prototype.doPressSpecialKey = function(locator, value){
 		value="\\40";
 	}else if(value.toLowerCase() == "enter"){
 		value="\\13";
+	}else if(value.toLowerCase() == "tab"){
+		value="\\9";
 	}
-	this.doKeyDown(locator, value);
-	this.doKeyPress(locator, value);
-	this.doKeyUp(locator, value);
+	var element = this.browserbot.findElement(locator);
+	@triggerkey@(element, 'keydown', value, true, this.browserbot.controlKeyDown, this.browserbot.altKeyDown, this.browserbot.shiftKeyDown, this.browserbot.metaKeyDown)
+	@triggerkey@(element, 'keypress', value, true, this.browserbot.controlKeyDown, this.browserbot.altKeyDown, this.browserbot.shiftKeyDown, this.browserbot.metaKeyDown)
+	@triggerkey@(element, 'keyup', value, true, this.browserbot.controlKeyDown, this.browserbot.altKeyDown, this.browserbot.shiftKeyDown, this.browserbot.metaKeyDown)
 };
 
 /*Simulates the correct mouse click events.*/
@@ -245,4 +187,3 @@ OptionLocatorFactory.prototype.OptionLocatorByLabel = function(label) {
         Assert.matches(this.label, selectedLabel)
     };
 };
-

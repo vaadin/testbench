@@ -4,7 +4,7 @@
 	<tstamp />
 	<!--<property name="version" value="${DSTAMP}${TSTAMP}" />-->
 
-	<target name="testbench-recorder-package">
+	<target name="testbench-recorder-package" depends="create-scripts">
 		<!--<copy file="../selenium-extensions/vaadin-format.js" tofile="chrome/content/formats/vaadin-format.js"/>-->
 		<jar jarfile="chrome/testbench-recorder.jar" compress="true">
 			<manifest>
@@ -45,6 +45,37 @@
 		<delete failonerror="false" includeEmptyDirs="true">
 			<fileset dir="extension"/>
 		</delete>
+	</target>
+	
+	<target name="create-scripts">
+		<loadfile property="dofunction" srcFile="../selenium-extensions/core/doFunction.js">
+			<filterchain>
+				<replacetokens>
+					<token key="triggerkey" value="triggerSpecialKeyEvent" />
+				</replacetokens>
+			</filterchain>
+		</loadfile>
+		<copy file="selenium-api.js_tpl" tofile="chrome/content/selenium/scripts/selenium-api.js" overwrite="true">
+			<filterchain>
+				<replacetokens>
+					<token key="doFunction" value="${dofunction}" />
+				</replacetokens>
+			</filterchain>
+		</copy>
+		<loadfile property="locator" srcFile="../selenium-extensions/core/locator.js">
+			<filterchain>
+				<replacetokens>
+					<token key="bot" value="BrowserBot" />
+				</replacetokens>
+			</filterchain>
+		</loadfile>
+		<copy file="selenium-browserbot.js_tpl" tofile="chrome/content/selenium/scripts/selenium-browserbot.js" overwrite="true">
+			<filterchain>
+				<replacetokens>
+					<token key="locator" value="${locator}" />
+				</replacetokens>
+			</filterchain>
+		</copy>
 	</target>
 	
 </project>

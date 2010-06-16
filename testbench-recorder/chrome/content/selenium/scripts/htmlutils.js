@@ -367,6 +367,36 @@ function triggerKeyEvent(element, eventType, keySequence, canBubble, controlKeyD
     }
 }
 
+function triggerSpecialKeyEvent(element, eventType, keySequence, canBubble, controlKeyDown, altKeyDown, shiftKeyDown, metaKeyDown) {
+    var keycode = getKeyCodeFromKeySequence(keySequence);
+    canBubble = (typeof(canBubble) == undefined) ? true : canBubble;
+    if (element.fireEvent && element.ownerDocument && element.ownerDocument.createEventObject) { // IE
+        var keyEvent = createEventObject(element, controlKeyDown, altKeyDown, shiftKeyDown, metaKeyDown);
+        keyEvent.keyCode = keycode;
+        element.fireEvent('on' + eventType, keyEvent);
+    }
+    else {
+        var evt;
+        if (window.KeyEvent) {
+            evt = document.createEvent('KeyEvents');
+            evt.initKeyEvent(eventType, true, true, window, controlKeyDown, altKeyDown, shiftKeyDown, metaKeyDown, keycode, "");
+        } else {
+            evt = document.createEvent('UIEvents');
+            
+            evt.shiftKey = shiftKeyDown;
+            evt.metaKey = metaKeyDown;
+            evt.altKey = altKeyDown;
+            evt.ctrlKey = controlKeyDown;
+
+            evt.initUIEvent(eventType, true, true, window, 1);
+            evt.keyCode = keycode;
+            evt.which = keycode;
+        }
+
+        element.dispatchEvent(evt);
+    }
+}
+
 function removeLoadListener(element, command) {
     LOG.debug('Removing loadListenter for ' + element + ', ' + command);
     if (window.removeEventListener)

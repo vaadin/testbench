@@ -77,7 +77,7 @@
 		</parallel>
 	</target>
 	
-	<target name="testbench-distribution-package" depends="testbench.jar,javadoc,testbench-recorder,testbench-grid,update-run-scripts,run-tests">
+	<target name="testbench-distribution-package" depends="testbench.jar,javadoc,testbench-recorder,testbench-grid,update-run-scripts,run-tests,create-extension">
 		<property name="package.root" value="vaadin-testbench-${version}"/>
 		<property name="package.grid.root" value="vaadin-testbench-grid-${version}"/>
         <copy todir="${output.dir}">
@@ -167,4 +167,21 @@
 		</subant>
 	</target>
 	
+	<target name="create-extension">
+		<loadfile property="locator" srcFile="../selenium-extensions/core/locator.js">
+			<filterchain>
+				<replacetokens>
+					<token key="bot" value="PageBot" />
+				</replacetokens>
+			</filterchain>
+		</loadfile>
+		<loadfile property="dofunction" srcFile="../selenium-extensions/core/doFunction.js">
+			<filterchain>
+				<replacetokens>
+					<token key="triggerkey" value="triggerKeyEvent" />
+				</replacetokens>
+			</filterchain>
+		</loadfile>
+		<echo message="${locator}${line.separator}${dofunction}" file="../selenium-extensions/core/user-extensions.js"/>
+	</target>
 </project>
