@@ -143,7 +143,7 @@ TestLoop.prototype = {
         selenium.browserbot.runScheduledPollers();
         try {
             if (this.waitForCondition == null) {
-            	if(this.waitForVaadinCondition()){LOG.info("waitForVaadin true");
+            	if(this.waitForVaadinCondition()){
 	                LOG.debug("null condition; let's continueTest()");
 	                LOG.debug("Command complete");
 	                this.commandComplete(this.result);
@@ -151,14 +151,14 @@ TestLoop.prototype = {
             	}else{
             		window.setTimeout(fnBind(this.continueTestWhenConditionIsTrue, this), 10);
             	}
-            } else if (this.waitForCondition()) {LOG.info("waitFor true");
-            	if(this.waitForVaadinCondition()){LOG.info("waitForVaadin true");
+            } else if (this.waitForCondition()) {
+            	if(this.waitForVaadinCondition()){
 	                LOG.debug("condition satisfied; let's continueTest()");
 	                this.waitForCondition = null;
 	                LOG.debug("Command complete");
 	                this.commandComplete(this.result);
 	                this.continueTest();
-	            }else{LOG.info("waitForVaadin false");
+	            }else{
 	            	this.waitForCondition = null;
 	            	window.setTimeout(fnBind(this.continueTestWhenConditionIsTrue, this), 10);
 	            }
