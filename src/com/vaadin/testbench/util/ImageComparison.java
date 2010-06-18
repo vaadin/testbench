@@ -32,6 +32,8 @@ public class ImageComparison {
     private static final String ERROR_DIRECTORY = "errors";
     private static final String NEW_LINE = System.getProperty("line.separator");
 
+    private boolean debug = false;
+
     /**
      * Compare image [name] to image under /reference/. Images may differ in RGB
      * hues 0.1% (default) per macroblock of 16x16
@@ -63,7 +65,7 @@ public class ImageComparison {
         String directory = System.getProperty(TEST_SCREENS_DIRECTORY);
 
         // Write error blocks to file && syserr only if debug is defined as true
-        boolean debug = false;
+        debug = false;
         if ("true".equalsIgnoreCase(System.getProperty(DEBUG))) {
             debug = true;
         }
@@ -116,22 +118,26 @@ public class ImageComparison {
                 int minHeight, minWidth;
                 if (target.getHeight() > test.getHeight()) {
                     minHeight = test.getHeight();
-                    System.err
-                            .println("Screenshot height less than reference image.");
+                    if (debug) {
+                        System.err
+                                .println("Screenshot height less than reference image.");
+                    }
                 } else {
                     minHeight = target.getHeight();
-                    if (target.getHeight() != test.getHeight()) {
+                    if (target.getHeight() != test.getHeight() && debug) {
                         System.err
                                 .println("Reference image height less than screenshot.");
                     }
                 }
                 if (target.getWidth() > test.getWidth()) {
                     minWidth = test.getWidth();
-                    System.err
-                            .println("Screenshot width less than reference image.");
+                    if (debug) {
+                        System.err
+                                .println("Screenshot width less than reference image.");
+                    }
                 } else {
                     minWidth = target.getWidth();
-                    if (target.getWidth() != test.getWidth()) {
+                    if (target.getWidth() != test.getWidth() && debug) {
                         System.err
                                 .println("Reference image width less than screenshot.");
                     }
@@ -613,8 +619,10 @@ public class ImageComparison {
                     // if found length more than 3 and last pixel equals
                     if ((z - j) >= 5
                             && test.getRGB(i, z + 1) == target.getRGB(i, z + 1)) {
-                        System.out.println("Found cursor in test "
-                                + fileId.substring(0, fileId.indexOf("_")));
+                        if (debug) {
+                            System.out.println("Found cursor in test "
+                                    + fileId.substring(0, fileId.indexOf("_")));
+                        }
                         cursor = true;
                         return cursor;
                     }

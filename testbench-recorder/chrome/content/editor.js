@@ -477,7 +477,7 @@ Editor.prototype.addCommand = function(command,target,value,window,insertBeforeL
             this.log.debug("top=" + top);
             var path = this.getPathAndUpdateBaseURL(top)[0];
             this.addCommand("open", path, '', top);
-            this.addCommand("waitForVaadin",'', '', top);
+//            this.addCommand("waitForVaadin",'', '', top);
             this.recordTitle(top);
         }
         if (this.lastWindow != null &&

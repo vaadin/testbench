@@ -313,15 +313,15 @@ Recorder.addEventHandler('pressSpecialKey', 'keydown', function(event){
 		}
 	
 		switch(event.keyCode){
-		case 9:
-			this.log.debug('pressed TAB');
-			typeString = "false";
-			this.record("pressSpecialKey", this.findLocators(event.target),  target + "tab");
-			break;
+//		case 9:
+//			this.log.debug('pressed TAB');
+//			typeString = "false";
+//			this.record("pressSpecialKey", this.findLocators(event.target),  "tab");
+//			break;
 		case 13:
 			this.log.debug('pressed ENTER!');
 			typeString = "false";
-			this.record("pressSpecialKey", this.findLocators(event.target),  target + "enter");
+			this.record("pressSpecialKey", this.findLocators(event.target),  "enter");
 			break;
 		case 37: 
 			this.log.debug('pressed LEFT!');
@@ -434,7 +434,7 @@ Recorder.addEventHandler('clickLocator', 'click', function(event){
 		if (event.button == 0 && noSelection == "true") {
             var x = event.clientX - editor.seleniumAPI.Selenium.prototype.getElementPositionLeft(event.target);
             var y = event.clientY - editor.seleniumAPI.Selenium.prototype.getElementPositionTop(event.target);
-
+            
             /* Stop checking mouseOver events */
             if(checkForMouseOver == "true"){
             	checkForMouseOver = "false";
