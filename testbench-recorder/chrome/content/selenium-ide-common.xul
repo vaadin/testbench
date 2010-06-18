@@ -24,6 +24,8 @@ limitations under the License.
 <overlay id="selenium-ide-common" 
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
   <script type="application/x-javascript" src="chrome://global/content/globalOverlay.js"/>
+  <script type="application/x-javascript" src="chrome://global/content/nsDragAndDrop.js"/>
+  <script type="application/x-javascript" src="chrome://testbench-recorder/content/dnd-observers.js"/>
   <script type="application/x-javascript" src="chrome://testbench-recorder/content/preferences.js"/>
   <!-- import misc.js before tools.js, because both declare a Log object -->
   <script type="application/x-javascript" src="chrome://testbench-recorder/content/selenium/xpath/misc.js"/>
@@ -37,6 +39,7 @@ limitations under the License.
   <script type="application/x-javascript" src="chrome://testbench-recorder/content/selenium/lib/prototype.js"/>
   <script type="application/x-javascript" src="chrome://testbench-recorder/content/selenium/lib/cssQuery/cssQuery-p.js"/> 
   <script type="application/x-javascript" src="chrome://testbench-recorder/content/selenium/scripts/htmlutils.js"/>
+  <script type="application/x-javascript" src="chrome://testbench-recorder/content/selenium/scripts/xmlextras.js"/>
   <script type="application/x-javascript" src="chrome://testbench-recorder/content/selenium/scripts/ui-element.js"/>
   <script type="application/x-javascript" src="chrome://testbench-recorder/content/selenium/scripts/find_matching_child.js"/>
   <script type="application/x-javascript" src="chrome://testbench-recorder/content/selenium/scripts/selenium-browserbot.js"/>
@@ -61,6 +64,7 @@ limitations under the License.
   <script type="application/x-javascript" src="chrome://testbench-recorder/content/suiteTreeView.js"/>
   <script type="application/x-javascript" src="chrome://testbench-recorder/content/testSuiteProgress.js"/>
   <script type="application/x-javascript" src="chrome://testbench-recorder/content/debugger.js"/>
+  <script type="application/x-javascript" src="chrome://testbench-recorder/content/plugin.js"/>
   
   <stringbundle id="strings" src="chrome://testbench-recorder/locale/selenium-ide.properties" />
 
@@ -82,6 +86,7 @@ limitations under the License.
     <command id="cmd_selenium_startpoint" oncommand="goDoCommand('cmd_selenium_startpoint')"/>
     <command id="cmd_selenium_exec_command" oncommand="goDoCommand('cmd_selenium_exec_command')"/>
     <command id="cmd_selenium_rollup" oncommand="goDoCommand('cmd_selenium_rollup')"/>
+    <command id="cmd_selenium_reload" oncommand="goDoCommand('cmd_selenium_reload')"/>
   </commandset>
 <!--  <commandset id="stateUpdater" commandupdater="true" events="focus,selenium-ide-state" oncommandupdate="alert('commandupdate: window.editor=' + window.editor);if (window.editor) { editor.updateSeleniumCommands() }"/>-->
   <commandset id="seleniumIDEUpdater" commandupdater="true" events="focus,selenium-ide-state" oncommandupdate="if (window.editor) { window.editor.updateSeleniumCommands() }"/>
@@ -133,9 +138,9 @@ limitations under the License.
       <menuitem label="&saveTestCmd.label;" command="cmd_save" key="save-key" accesskey="S"/>
       <menuitem label="&saveTestAsCmd.label;" oncommand="window.editor.saveNewTestCase();" accesskey="A"/>
       <!-- Export formats for test case (presetFormats in format.js)
-      <menu label="&exportCmd.label;" accesskey="E"> 
-	    <menupopup id="popup_export_formats" onpopupshowing="window.editor.populateFormatsPopup(this)" oncommand="window.editor.exportTestCaseWithFormat(window.editor.app.getFormats().selectFormat(event.target.getAttribute('value')))">
-	    </menupopup>	
+      <menu label="&exportCmd.label;" accesskey="E">
+        <menupopup id="popup_export_formats" onpopupshowing="window.editor.populateFormatsPopup(this)" oncommand="window.editor.exportTestCaseWithFormat(window.editor.app.getFormats().selectFormat(event.target.getAttribute('value')))">
+        </menupopup>
       </menu>
       -->
       <menu label="&recentTestCmd.label;">
@@ -176,19 +181,18 @@ limitations under the License.
   <menu id="optionsMenu" label="&optionsMenu.label;" accesskey="O">
     <menupopup id="options-popup" onpopupshowing="window.editor.onPopupOptions()">
       <menuitem label="&optionsCmd.label;" oncommand="window.editor.openSeleniumIDEPreferences();" accesskey="O"/>
-      <!-- IDE view Formats
-      <menu label="&formatCmd.label;" accesskey="F">
-	    <menupopup id="popup_formats" onpopupshowing="window.editor.populateFormatsPopup(this, window.editor.app.getCurrentFormat())" oncommand="window.editor.app.setCurrentFormat(window.editor.app.formats.selectFormat(event.target.getAttribute('value')))">
-	    </menupopup>
+     <!-- IDE view Formats
+       <menu label="&formatCmd.label;" accesskey="F">
+        <menupopup id="popup_formats" onpopupshowing="window.editor.populateFormatsPopup(this, window.editor.app.getCurrentFormat())" oncommand="window.editor.app.setCurrentFormat(window.editor.app.formats.selectFormat(event.target.getAttribute('value')))">
+        </menupopup>
       </menu>
       <menu id="clipboardFormatMenu" label="&clipboardFormatCmd.label;">
-	    <menupopup id="popup_clipboard_formats" onpopupshowing="window.editor.populateFormatsPopup(this, window.editor.clipboardFormat)" oncommand="window.editor.app.setClipboardFormat(window.editor.app.formats.selectFormat(event.target.getAttribute('value')))">
-	    </menupopup>
+        <menupopup id="popup_clipboard_formats" onpopupshowing="window.editor.populateFormatsPopup(this, window.editor.clipboardFormat)" oncommand="window.editor.app.setClipboardFormat(window.editor.app.formats.selectFormat(event.target.getAttribute('value')))">
+        </menupopup>
       </menu>
       <menuitem id="internalTestsMenu" label="Test Selenium IDE" oncommand="window.editor.showInBrowser('chrome://testbench-recorder/content/tests/index.html');" />
       -->
     </menupopup>
-    
   </menu>
   
   <stack id="speedSliderBox">
@@ -200,14 +204,14 @@ limitations under the License.
     <vbox>
       <vbox class="spacer" />
       <stack class="slider-box" flex="1" >
-	<hbox class="slider-background">
-	  <hbox class="slider-left" />
-	  <hbox class="slider-middle" flex="1" />
-	  <hbox class="slider-right" />
-	</hbox>
-	<slider id="speedSlider" width="80" curpos="0" maxpos="1000">
-	  <thumb />
-	</slider>
+          <hbox class="slider-background">
+            <hbox class="slider-left" />
+            <hbox class="slider-middle" flex="1" />
+            <hbox class="slider-right" />
+          </hbox>
+          <slider id="speedSlider" width="80" curpos="0" maxpos="1000">
+            <thumb />
+          </slider>
       </stack>
     </vbox>
   </stack>
@@ -216,9 +220,9 @@ limitations under the License.
     <tree id="suiteTree" flex="1" enableColumnDrag="false" hidecolumnpicker="true" width="80"
           context="suiteContextMenu">
       <treecols>
-	<treecol label="&suiteTree.testCase.label;" flex="1" />
+        <treecol label="&suiteTree.testCase.label;" flex="1" />
       </treecols>
-      <treechildren />
+      <treechildren ondraggesture="nsDragAndDrop.startDrag(event, suiteTreeDragObserver);"/>
     </tree>
     <hbox id="suiteProgressBar">
       <box id="suiteProgressIndicator" height="16" class="success" />
@@ -248,24 +252,24 @@ limitations under the License.
       <toolbarbutton id="rollupTab" label="&rollupReference.label;" onclick="window.editor.infoPanel.switchView(window.editor.infoPanel.rollupView)" class="console-tab"/>
       <spacer flex="1"/>
       <hbox align="center" id="logButtons">
-	<toolbarbutton id="logFilter" label="Debug" type="menu" class="console-button">
-	  <menupopup id="logFilterPopup" oncommand="window.editor.infoPanel.logView.changeLogLevel(event.target.value, true)">
-	    <menuitem label="&logFilter.debug.label;" value="0"/>
-	    <menuitem label="&logFilter.info.label;" value="1" selected="true"/>
-	    <menuitem label="&logFilter.warn.label;" value="2"/>
-	    <menuitem label="&logFilter.error.label;" value="3"/>
-	  </menupopup>
+        <toolbarbutton id="logFilter" label="Debug" type="menu" class="console-button">
+          <menupopup id="logFilterPopup" oncommand="window.editor.infoPanel.logView.changeLogLevel(event.target.value, true)">
+            <menuitem label="&logFilter.debug.label;" value="0"/>
+            <menuitem label="&logFilter.info.label;" value="1" selected="true"/>
+            <menuitem label="&logFilter.warn.label;" value="2"/>
+            <menuitem label="&logFilter.error.label;" value="3"/>
+          </menupopup>
         </toolbarbutton>
-	<toolbarbutton id="logClear" label="&logClear.label;" oncommand="window.editor.infoPanel.logView.clear()" class="console-button"/>
+        <toolbarbutton id="logClear" label="&logClear.label;" oncommand="window.editor.infoPanel.logView.clear()" class="console-button"/>
       </hbox>
     </hbox>
-    <iframe flex="1" id="logView" src="LogFrame.html">
+    <iframe flex="1" id="logView" src="LogFrame.html" type="content">
     </iframe>
-    <iframe flex="1" id="helpView" src="HelpView.html" hidden="true">
+    <iframe flex="1" id="helpView" src="HelpView.html" hidden="true" type="content">
     </iframe>
-    <iframe flex="1" id="uiView" src="ui-view.html" hidden="true">
+    <iframe flex="1" id="uiView" src="ui-view.html" hidden="true" type="content">
     </iframe>
-    <iframe flex="1" id="rollupView" src="rollup-view.html" hidden="true">
+    <iframe flex="1" id="rollupView" src="rollup-view.html" hidden="true" type="content">
     </iframe>
   </vbox>
 </overlay>
