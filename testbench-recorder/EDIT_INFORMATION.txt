@@ -18,9 +18,11 @@ recorder.js
 selenium-ide.xul
 selenium-ide-sidebar.xul
 [define selenium ide window (Select button, tooltip button、assert button)]
+[drag and drop functionality for Test]
 
 selenium-ide-common.xul
 [shortcut keys for open and save Test Suite]
+[drag and drop functionality for Test Suite]
 
 editor.js
 [DEFAULT_TITLE is the title shown after something is recorded]

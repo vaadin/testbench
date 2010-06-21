@@ -100,6 +100,12 @@ public class TestConverter {
             String filename;
             try {
                 for (String browser : browsers) {
+                    // browserUnderConversion = browser;
+                    isOpera = isSafari = isChrome = false;
+
+                    // Check if browser is opera, safari or chrome
+                    checkBrowser(browser);
+
                     filename = getTestInputFilename(args[i]);
 
                     String testName = getTestName(filename);
@@ -138,6 +144,27 @@ public class TestConverter {
                 // Rethrow all exceptions. The conversion succeeds only if all
                 // tests are found and can be converted.
                 throw e1;
+            }
+        }
+    }
+
+    private static void checkBrowser(String browser) {
+        String browserId = knownBrowsers.get(browser.toLowerCase());
+        if (browserId == null) {
+            if (browser.contains("Opera") || browser.contains("opera")) {
+                isOpera = true;
+            } else if (browser.contains("Safari") || browser.contains("safari")) {
+                isSafari = true;
+            } else if (browser.contains("Google") || browser.contains("google")) {
+                isChrome = true;
+            }
+        } else {
+            if (browserId.equals("*opera")) {
+                isOpera = true;
+            } else if (browserId.equals("*safari")) {
+                isSafari = true;
+            } else if (browserId.equals("*googlechrome")) {
+                isChrome = true;
             }
         }
     }
@@ -187,28 +214,8 @@ public class TestConverter {
 
             OutputStream out = null;
             try {
-                String browserId = knownBrowsers.get(browserIdentifier
-                        .toLowerCase());
-                if (browserId == null) {
-                    if (browserIdentifier.contains("Opera")
-                            || browserIdentifier.contains("opera")) {
-                        isOpera = true;
-                    } else if (browserIdentifier.contains("Safari")
-                            || browserIdentifier.contains("safari")) {
-                        isSafari = true;
-                    } else if (browserIdentifier.contains("Google")
-                            || browserIdentifier.contains("google")) {
-                        isChrome = true;
-                    }
-                } else {
-                    if (browserId.equals("*opera")) {
-                        isOpera = true;
-                    } else if (browserId.equals("*safari")) {
-                        isSafari = true;
-                    } else if (browserId.equals("*googlechrome")) {
-                        isChrome = true;
-                    }
-                }
+                // Check if browser is opera, safari or chrome
+                checkBrowser(browserIdentifier);
 
                 String filename = args[2];
 
@@ -413,8 +420,8 @@ public class TestConverter {
                 + testName + "\");\n";
         String versionDetector = "BrowserVersion browser = browserUtils.getBrowserVersion(selenium);\n"
                 + "String mouseClickCommand = \"mouseClick\";\n"
-                + "if (browser.isOpera() && browser.isOlderVersion(10,50)) {"
-                + "     mouseClickCommand = \"mouseClickOpera\";\n" + "}\n";
+                + "if (browser.isOpera() && browser.isOlderVersion(10,50)) {\n"
+                + "\tmouseClickCommand = \"mouseClickOpera\";\n" + "}\n";
 
         // Add these in the case a screenshot is wanted
         if (screenshot) {
@@ -577,6 +584,8 @@ public class TestConverter {
                 String value = "";
                 String location = "";
                 boolean first = true;
+                boolean ctrl, alt, shift;
+                ctrl = alt = shift = false;
                 for (String param : command.getParams()) {
                     if (first) {
                         /* Get the location target */
@@ -602,78 +611,64 @@ public class TestConverter {
                                 value = "" + KeyEvent.VK_DOWN;
                                 break;
                             }
-                        } else if ("UP".equalsIgnoreCase(param)) {
+                        } else if (param.contains("up")) {
                             value = "" + KeyEvent.VK_UP;
-                        } else if ("DOWN".equalsIgnoreCase(param)) {
+                        } else if (param.contains("down")) {
                             value = "" + KeyEvent.VK_DOWN;
-                        } else if ("LEFT".equalsIgnoreCase(param)) {
+                        } else if (param.contains("left")) {
                             value = "" + KeyEvent.VK_LEFT;
-                        } else if ("RIGHT".equalsIgnoreCase(param)) {
+                        } else if (param.contains("right")) {
                             value = "" + KeyEvent.VK_RIGHT;
-                        } else if ("ENTER".equalsIgnoreCase(param)) {
+                        } else if (param.contains("enter")) {
                             value = "" + KeyEvent.VK_ENTER;
                             // } else if ("BACKSPACE".equalsIgnoreCase(param)) {
                             // values.append("\\\\8\"");
+                        } else if (param.contains("tab")) {
+                            value = "" + KeyEvent.VK_TAB;
+                        }
+                        if (param.contains("shift")) {
+                            shift = true;
+                        }
+                        if (param.contains("alt")) {
+                            alt = true;
+                        }
+                        if (param.contains("ctrl")) {
+                            ctrl = true;
+                        }
+
+                        // if native keypress is not used give text string to
+                        // doCommand
+                        if (!isOpera && !isSafari && !isChrome) {
+                            value = param;
                         }
                     }
 
                     first = false;
                 }
 
-                // If converting with runner result differs a little
-                if (runner) {
-                    /*
-                     * Opera, Safari and GoogleChrome need the java native
-                     * keypress
-                     */
-                    if (isOpera || isSafari || isChrome) {
-                        javaSource
-                                .append("cmd.setCommand(\"pressSpecialKey\", \""
-                                        + value + "\");\n");
-                        javaSource.append("selenium.focus(\"" + location
-                                + "\");\n");
-                        javaSource.append("selenium.keyPressNative(\"" + value
-                                + "\");\n");
-                    } else {
-
-                        /* if enter VK_ENTER will give 10 instead of 13 */
-                        if (Integer.parseInt(value) == 10) {
-                            value = "13";
-                        }
-
-                        javaSource
-                                .append("doCommand(\"pressSpecialKey\", new String[] { \""
-                                        + location
-                                        + "\", \"\\\\"
-                                        + value
-                                        + "\"});\n");
-                    }
-                } else {
-                    // We don't know if opera/safari/chrome will be used
-                    javaSource.append("cmd.setCommand(\"pressSpecialKey\", \""
-                            + value + "\");\n");
-                    javaSource
-                            .append("if(browser.isSafari() || browser.isOpera() || browser.isChrome()){\n");
+                javaSource.append("cmd.setCommand(\"pressSpecialKey\", \""
+                        + value + "\");\n");
+                /*
+                 * Opera, Safari and GoogleChrome need the java native keypress
+                 */
+                if (isOpera || isSafari || isChrome) {
                     javaSource
                             .append("selenium.focus(\"" + location + "\");\n");
+
+                    appendKeyModifierDown(javaSource, ctrl, alt, shift);
+
                     javaSource.append("selenium.keyPressNative(\"" + value
                             + "\");\n");
-                    javaSource.append("} else {\n");
 
-                    /* if enter VK_ENTER will give 10 instead of 13 */
-                    if (Integer.parseInt(value) == 10) {
-                        value = "13";
-                    }
-
+                    appendKeyModifierUp(javaSource, ctrl, alt, shift);
+                } else {
                     javaSource
                             .append("doCommand(\"pressSpecialKey\", new String[] { \""
                                     + location
                                     + "\", \"\\\\"
                                     + value
                                     + "\"});\n");
-                    javaSource.append("}\n");
                 }
-
             } else if (command.getCmd().equalsIgnoreCase("mouseClick")) {
                 StringBuilder values = new StringBuilder();
                 boolean first = true;
@@ -1005,4 +1000,35 @@ public class TestConverter {
 
     }
 
+    private static void appendKeyModifierDown(StringBuilder javaSource,
+            boolean ctrl, boolean alt, boolean shift) {
+        if (ctrl) {
+            javaSource.append("selenium.keyDownNative(\"" + KeyEvent.VK_CONTROL
+                    + "\");\n");
+        }
+        if (alt) {
+            javaSource.append("selenium.keyDownNative(\"" + KeyEvent.VK_ALT
+                    + "\");\n");
+        }
+        if (shift) {
+            javaSource.append("selenium.keyDownNative(\"" + KeyEvent.VK_SHIFT
+                    + "\");\n");
+        }
+    }
+
+    private static void appendKeyModifierUp(StringBuilder javaSource,
+            boolean ctrl, boolean alt, boolean shift) {
+        if (ctrl) {
+            javaSource.append("selenium.keyUpNative(\"" + KeyEvent.VK_CONTROL
+                    + "\");\n");
+        }
+        if (alt) {
+            javaSource.append("selenium.keyUpNative(\"" + KeyEvent.VK_ALT
+                    + "\");\n");
+        }
+        if (shift) {
+            javaSource.append("selenium.keyUpNative(\"" + KeyEvent.VK_SHIFT
+                    + "\");\n");
+        }
+    }
 }
