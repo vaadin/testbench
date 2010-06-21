@@ -76,6 +76,10 @@ public class TestConverter {
     private static String filePath = "";
     private static String absoluteFilePath = "";
 
+    private static String windowInitFunctions = "doCommand(\"windowMaximize\", new String[] { \"\" });\n"
+            + "doCommand(\"windowFocus\", new String[] { \"\" });\n"
+            + "getCanvasPosition();\n";;
+
     public static void main(String[] args) throws Exception {
         if (args.length < 3) {
             System.err.println("Usage: " + TestConverter.class.getName()
@@ -413,13 +417,9 @@ public class TestConverter {
                 + "     mouseClickCommand = \"mouseClickOpera\";\n" + "}\n";
 
         // Add these in the case a screenshot is wanted
-        String windowFunctions = "doCommand(\"windowMaximize\", new String[] { \"\" });\n"
-                + "doCommand(\"windowFocus\", new String[] { \"\" });\n"
-                + "getCanvasPosition();\n";
-
         if (screenshot) {
             return testCaseHeader + currentCommand + versionDetector
-                    + windowFunctions + "try{\n" + testCaseBody
+                    + windowInitFunctions + "try{\n" + testCaseBody
                     + testCaseFooter;
         }
 
@@ -892,31 +892,47 @@ public class TestConverter {
                         }
                     }
                 }
+            } else if (command.getCmd().equals("open")) {
+                javaSource.append("try {");
+                writeDoCommand(command, javaSource);
+                javaSource.append("} catch (Exception e) {");
+                javaSource
+                        .append("System.out.println(\"Open failed, retrying\");");
+                javaSource.append("selenium.stop(); selenium.start(); ");
+
+                javaSource.append(windowInitFunctions);
+
+                writeDoCommand(command, javaSource);
+                javaSource.append("}");
             } else {
-
-                javaSource.append("cmd.setCommand(\"" + command.getCmd()
-                        + "\", \"\");\n");
-                javaSource.append("doCommand(\"");
-                javaSource.append(command.getCmd());
-                javaSource.append("\",new String[] {");
-
-                boolean first = true;
-                for (String param : command.getParams()) {
-                    if (!first) {
-                        javaSource.append(",");
-                    }
-                    first = false;
-
-                    javaSource.append("\"");
-                    javaSource.append(param.replace("\"", "\\\"").replaceAll(
-                            "\\n", "\\\\n"));
-                    javaSource.append("\"");
-                }
-                javaSource.append("});\n");
+                writeDoCommand(command, javaSource);
             }
+
         }
 
         return javaSource.toString();
+    }
+
+    private static void writeDoCommand(Command command, StringBuilder javaSource) {
+        javaSource.append("cmd.setCommand(\"" + command.getCmd()
+                + "\", \"\");\n");
+        javaSource.append("doCommand(\"");
+        javaSource.append(command.getCmd());
+        javaSource.append("\",new String[] {");
+
+        boolean first = true;
+        for (String param : command.getParams()) {
+            if (!first) {
+                javaSource.append(",");
+            }
+            first = false;
+
+            javaSource.append("\"");
+            javaSource.append(param.replace("\"", "\\\"").replaceAll("\\n",
+                    "\\\\n"));
+            javaSource.append("\"");
+        }
+        javaSource.append("});\n");
     }
 
     private static File getFile(String test, File buildPath) {
