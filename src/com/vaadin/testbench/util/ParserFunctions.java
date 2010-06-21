@@ -260,12 +260,14 @@ public class ParserFunctions {
             String test = testsToCombine.get(i);
             // Get file
             File file = new File(test);
+
             if (!file.exists()) {
                 file = new File(path + test);
                 if (!file.exists()) {
                     file = IOFunctions.getFile(test, new File(path), 0);
                 }
             }
+
             if (file == null) {
                 throw new FileNotFoundException(
                         "Combine test couldn't locate file " + test);
@@ -286,35 +288,7 @@ public class ParserFunctions {
                 combinedFiles.add(test);
                 combineNew = true;
             } else if (!combineNew) {
-                // Combine html tests
-                BufferedReader in = new BufferedReader(new FileReader(file));
-                try {
-                    String line = "";
-                    // Search file till start
-                    do {
-                        if (line.equals("</thead><tbody>")) {
-                            line = in.readLine();
-                            break;
-                        }
-                    } while ((line = in.readLine()) != null);
-
-                    // add name at start of file
-                    str.append("<tr>\n<td>htmlTest</td>\n");
-                    str.append("<td></td>\n");
-                    str.append("<td>" + file.getName() + "</td>\n</tr>\n");
-                    // Get lines until condition met.
-                    if (line != null) {
-                        do {
-                            if (line.equals("</tbody></table>")) {
-                                break;
-                            }
-                            str.append(line + "\n");
-                        } while ((line = in.readLine()) != null);
-                    }
-
-                } finally {
-                    in.close();
-                }
+                combineHTMLTests(str, file);
             } else {
                 // if collecting tests add test to combineThese
                 combineThese.add(test);
@@ -379,5 +353,38 @@ public class ParserFunctions {
         out.write("</tbody></table>\n");
         out.write("</body>\n");
         out.write("</html>\n");
+    }
+
+    private static void combineHTMLTests(StringBuilder str, File file)
+            throws Exception {
+
+        // Combine html tests
+        BufferedReader in = new BufferedReader(new FileReader(file));
+        try {
+            String line = "";
+            // Search file till start
+            do {
+                if (line.equals("</thead><tbody>")) {
+                    line = in.readLine();
+                    break;
+                }
+            } while ((line = in.readLine()) != null);
+
+            // add name at start of file
+            str.append("<tr>\n<td>htmlTest</td>\n");
+            str.append("<td></td>\n");
+            str.append("<td>" + file.getName() + "</td>\n</tr>\n");
+            // Get lines until condition met.
+            if (line != null) {
+                do {
+                    if (line.equals("</tbody></table>")) {
+                        break;
+                    }
+                    str.append(line + "\n");
+                } while ((line = in.readLine()) != null);
+            }
+        } finally {
+            in.close();
+        }
     }
 }

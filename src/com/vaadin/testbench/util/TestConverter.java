@@ -262,14 +262,8 @@ public class TestConverter {
 
     private static String getTestInputFilename(String TestBenchHTMLFile)
             throws FileNotFoundException, IOException {
+
         File testFile = new File(TestBenchHTMLFile);
-        // if (!testFile.exists()) {
-        // System.out.println("Searching for file " + testFile.getName()
-        // + " to parse.");
-        // // If not found do a small search for file
-        // testFile = IOFunctions.getFile(testFile.getName(), testFile
-        // .getParentFile(), 0);
-        // }
 
         if (testFile == null) {
             throw new FileNotFoundException("Could not find file "
@@ -358,8 +352,7 @@ public class TestConverter {
             String browserIdentifier, String packageName, String outputDirectory)
             throws IOException {
         File outputFile = getJavaFile(testName, packageName, outputDirectory);
-        // System.out.println("Creating " + outputFile + " for " + browser
-        // + " tests");
+
         createIfNotExists(outputFile.getParent());
         FileOutputStream outputStream = new FileOutputStream(outputFile);
 
@@ -402,7 +395,6 @@ public class TestConverter {
             List<Command> commands = parseTestCase(cx, scope, htmlSource);
             String testCaseMethod = createTestCaseMethod(testName, commands);
             return testCaseMethod;
-            // System.out.println("Done");
         } finally {
             Context.exit();
         }
@@ -684,6 +676,8 @@ public class TestConverter {
                     first = false;
                 }
 
+                javaSource.append("cmd.setCommand(\"mouseClick\", \"\");\n");
+
                 if (runner) {
                     if (isOpera) {
                         javaSource
@@ -696,8 +690,6 @@ public class TestConverter {
                     }
                 } else {
                     // We don't know if opera will be used
-                    javaSource
-                            .append("cmd.setCommand(\"mouseClick\", \"\");\n");
                     javaSource
                             .append("doCommand(mouseClickCommand, new String[] {\""
                                     + values + "\"});\n");
@@ -803,89 +795,7 @@ public class TestConverter {
                     javaSource
                             .append("junit.framework.Assert.fail(\"No file defined in Value field.\");\n");
                 } else {
-                    // Try to load and parse test
-                    // Get file absolutePath/relativeToIncludingFile/search from
-                    // including file directory
-                    File target = new File(value);
-                    if (!target.exists()) {
-                        target = new File(filePath + value);
-                        if (!target.exists()) {
-                            System.out
-                                    .println("File not found resorting to search.");
-                            target = getFile(target.getName(), new File(
-                                    filePath));
-                            if (target != null) {
-                                System.out.println("Match found. Using "
-                                        + target.getPath());
-                            }
-                        }
-                    }
-                    // If file not found add Assert.fail and print to System.err
-                    if (target == null) {
-                        target = new File(value);
-                        javaSource
-                                .append("junit.framework.Assert.fail(\"Couldn't find file "
-                                        + target.getName() + "\");\n");
-                        System.err.println("Failed to append test "
-                                + target.getName());
-                    } else {
-                        // Save path to including file
-                        String parentPath = filePath;
-                        String absoluteParent = absoluteFilePath;
-                        // Set path to this file
-                        filePath = target.getParent();
-                        if (filePath == null) {
-                            filePath = "";
-                        } else if (!File.separator.equals(filePath
-                                .charAt(filePath.length() - 1))) {
-                            filePath = filePath + File.separator;
-                        }
-                        absoluteFilePath = target.getAbsolutePath();
-
-                        try {
-                            // open and read target file
-                            FileInputStream fis = new FileInputStream(target);
-                            String htmlSource = IOUtils.toString(fis);
-                            fis.close();
-
-                            // sanitize source
-                            htmlSource = htmlSource.replace("\"", "\\\"")
-                                    .replaceAll("\\n", "\\\\n").replace("'",
-                                            "\\'").replaceAll("\\r", "");
-
-                            Context cx = Context.enter();
-
-                            Scriptable scope = cx.initStandardObjects();
-
-                            // Parse commands to a List
-                            List<Command> newCommands = parseTestCase(cx,
-                                    scope, htmlSource);
-                            // Convert tests to Java
-                            String tests = convertTestCaseToJava(newCommands,
-                                    testName);
-                            javaSource.append(tests);
-
-                        } catch (Exception e) {
-                            // if exception was caught put a assert fail to
-                            // inform user of error.
-                            System.err.println("Failed in appending test. "
-                                    + e.getMessage());
-                            if ("true".equalsIgnoreCase(System
-                                    .getProperty("com.vaadin.testbench.debug"))) {
-                                e.printStackTrace();
-                            }
-                            javaSource
-                                    .append("junit.framework.Assert.fail(\"Insertion of test "
-                                            + value
-                                            + " failed with "
-                                            + e.getMessage() + "\");");
-                        } finally {
-                            Context.exit();
-                            // Set path back to calling file
-                            filePath = parentPath;
-                            absoluteFilePath = absoluteParent;
-                        }
-                    }
+                    includeTest(javaSource, value, testName);
                 }
             } else if (command.getCmd().equals("open")) {
                 javaSource.append("try {");
@@ -998,6 +908,89 @@ public class TestConverter {
         cx.evaluateReader(scope, new InputStreamReader(res.openStream()),
                 scriptName, 1, null);
 
+    }
+
+    private static void includeTest(StringBuilder javaSource, String value,
+            String testName) {
+
+        // Try to load and parse test
+        // Get file absolutePath/relativeToIncludingFile/search from
+        // including file directory
+        File target = new File(value);
+        if (!target.exists()) {
+            target = new File(filePath + value);
+            if (!target.exists()) {
+                System.out.println("File not found resorting to search.");
+                target = getFile(target.getName(), new File(filePath));
+                if (target != null) {
+                    System.out
+                            .println("Match found. Using " + target.getPath());
+                }
+            }
+        }
+        // If file not found add Assert.fail and print to System.err
+        if (target == null) {
+            target = new File(value);
+            javaSource
+                    .append("junit.framework.Assert.fail(\"Couldn't find file "
+                            + target.getName() + "\");\n");
+            System.err.println("Failed to append test " + target.getName());
+        } else {
+            // Save path to including file
+            String parentPath = filePath;
+            String absoluteParent = absoluteFilePath;
+            // Set path to this file
+            filePath = target.getParent();
+            if (filePath == null) {
+                filePath = "";
+            } else if (!File.separator.equals(filePath
+                    .charAt(filePath.length() - 1))) {
+                filePath = filePath + File.separator;
+            }
+            absoluteFilePath = target.getAbsolutePath();
+
+            try {
+                // open and read target file
+                FileInputStream fis = new FileInputStream(target);
+                String htmlSource = IOUtils.toString(fis);
+                fis.close();
+
+                // sanitize source
+                htmlSource = htmlSource.replace("\"", "\\\"").replaceAll("\\n",
+                        "\\\\n").replace("'", "\\'").replaceAll("\\r", "");
+
+                Context cx = Context.enter();
+
+                Scriptable scope = cx.initStandardObjects();
+
+                // Parse commands to a List
+                List<Command> newCommands = parseTestCase(cx, scope, htmlSource);
+                // Convert tests to Java
+                String tests = convertTestCaseToJava(newCommands, testName);
+                javaSource.append(tests);
+
+            } catch (Exception e) {
+                // if exception was caught put a assert fail to
+                // inform user of error.
+                System.err.println("Failed in appending test. "
+                        + e.getMessage());
+                if ("true".equalsIgnoreCase(System
+                        .getProperty("com.vaadin.testbench.debug"))) {
+                    e.printStackTrace();
+                }
+                javaSource
+                        .append("junit.framework.Assert.fail(\"Insertion of test "
+                                + value
+                                + " failed with "
+                                + e.getMessage()
+                                + "\");");
+            } finally {
+                Context.exit();
+                // Set path back to calling file
+                filePath = parentPath;
+                absoluteFilePath = absoluteParent;
+            }
+        }
     }
 
     private static void appendKeyModifierDown(StringBuilder javaSource,
