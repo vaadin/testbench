@@ -446,7 +446,7 @@ public class TestConverter {
                 + "byte[] errors = new byte[5];\n"
 
                 + "for(junit.framework.AssertionFailedError afe:getSoftErrors()){\n"
-                + "if(afe.getMessage().contains(\"No reference found\") && errors[0] != 1){\n"
+                + "if(afe.getMessage().contains(\"No reference found\")){\n"
                 + "errors[0] = 1;\n"
                 + "}else if(afe.getMessage().contains(\"differs from reference image\")){\n"
                 + "errors[1] = 1;\n"

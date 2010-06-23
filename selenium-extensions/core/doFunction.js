@@ -223,3 +223,45 @@ function triggerSpecialKeyEvent(element, eventType, keySequence, canBubble, cont
         element.dispatchEvent(evt);
     }
 }
+
+Selenium.prototype.getElementPositionTop = function(locator) {
+   /**
+   * Retrieves the vertical position of an element
+   *
+   * @param locator an <a href="#locators">element locator</a> pointing to an element OR an element itself
+   * @return number of pixels from the edge of the frame.
+   */
+    var element;
+	if ("string"==typeof locator) {
+		element = this.browserbot.findElement(locator);
+	} else {
+		element = locator;
+	}
+
+	var y = 0;
+	while (element != null) {
+        if(document.all) {
+            if( (element.tagName != "TABLE") && (element.tagName != "BODY") ) {
+				y += element.clientTop;
+            }
+        } else {
+			// Netscape/DOM
+            if(element.tagName == "TABLE") {
+				var parentBorder = parseInt(element.border);
+				if(isNaN(parentBorder)) {
+					var parentFrame = element.getAttribute('frame');
+					if(parentFrame != null) {
+						y += 1;
+					}
+				} else if(parentBorder > 0) {
+					y += parentBorder;
+				}
+            } else if (!/Opera[\/\s](\d+\.\d+)/.test(navigator.userAgent)) {
+				y += element.clientTop;
+			}
+        }
+        y += element.offsetTop;
+		element = element.offsetParent;
+    }
+    return y;
+};
