@@ -651,7 +651,6 @@ Recorder.addEventHandler('mouseDownEvent', 'mousedown', function(event){
 	}, { capture: true });
 
 Recorder.addEventHandler('mouseUpEvent', 'mouseup', function(event){
-		alert(mousedown);
 		if (mousedown) {
         	var target =  help.ownerDocument.elementFromPoint(event.clientX, event.clientY);
         	if (target != null && target.nodeType == 3) {
