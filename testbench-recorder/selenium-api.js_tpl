@@ -657,7 +657,7 @@ Selenium.prototype.doMouseMoveAt = function(locator, coordString) {
    */
 
     var element = this.browserbot.findElement(locator);
-    var clientXY = getClientXY(element, coordString)
+    var clientXY = getClientXY(element, coordString);
 
     this.browserbot.triggerMouseEvent(element, 'mousemove', true, clientXY[0], clientXY[1]);
 };
@@ -1900,7 +1900,7 @@ Selenium.prototype.doDragAndDrop = function(locator, movementsString) {
     * @param movementsString offset in pixels from the current location to which the element should be moved, e.g., "+70,-300"
     */
     var element = this.browserbot.findElement(locator);
-    var clientStartXY = getClientXY(element)
+    var clientStartXY = getClientXY(element);
     var clientStartX = clientStartXY[0];
     var clientStartY = clientStartXY[1];
     

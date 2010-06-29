@@ -265,3 +265,21 @@ Selenium.prototype.getElementPositionTop = function(locator) {
     }
     return y;
 };
+
+Selenium.prototype.doDrag = function(locator, value){
+	var element = this.browserbot.findElement(locator);
+	var clientXY = getClientXY(element, value);
+
+	this.browserbot.triggerMouseEvent(element, 'mousedown', true);
+	this.browserbot.triggerMouseEvent(element, 'mousemove', true);
+};
+
+Selenium.prototype.doDrop = function(locator, value){
+	var element = this.browserbot.findElement(locator);
+	var clientXY = getClientXY(element, value);
+
+	this.browserbot.triggerMouseEvent(element, 'mouseover', true, clientXY[0], clientXY[1]);
+	this.browserbot.triggerMouseEvent(element, 'mousemove', true, clientXY[0], clientXY[1]);
+	this.browserbot.triggerMouseEvent(element, 'mousemove', true, clientXY[0], clientXY[1]);
+	this.browserbot.triggerMouseEvent(element, 'mouseup', true, clientXY[0], clientXY[1]);
+};

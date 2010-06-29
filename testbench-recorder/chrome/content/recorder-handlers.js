@@ -253,21 +253,21 @@ Recorder.addEventHandler('scroll', 'scroll', function(event) {
 					s.record("scrollLeft", loc, left);
 					previousLeft = left;
 					// Move index one back so that we get the pause before waitForVaadin
-					var index = tree.getRecordIndex() - 1;
-					tree.selection.select(index);
+//					var index = tree.getRecordIndex() - 1;
+//					tree.selection.select(index);
 					// wait for lazy scroller to start possible server visit
 					s.record_orig("pause", "300");
-					tree.selection.select(index+2);
+//					tree.selection.select(index+2);
 				}
 				if(previousTop != top){
 					s.record("scroll", loc , top);
 					previousTop = top;
 					// Move index one back so that we get the pause before waitForVaadin
-					var index = tree.getRecordIndex() - 1;
-					tree.selection.select(index);
+//					var index = tree.getRecordIndex() - 1;
+//					tree.selection.select(index);
 					// wait for lazy scroller to start possible server visit
 					s.record_orig("pause", "300");
-					tree.selection.select(index+2);
+//					tree.selection.select(index+2);
 				}
 				s._scrollTimeout = null;
 			},260);
@@ -393,8 +393,8 @@ Recorder.addEventHandler('type', 'change', function(event) {
 	}
 });
 
-var noSelection = "true";
-var clicked = "false";
+var noSelection = true;
+var clicked = false;
 
 /* override default click event recorder */
 //Recorder.removeEventHandler('clickLocator');
@@ -411,7 +411,7 @@ Recorder.addEventHandler('clickLocator', 'click', function(event){
 			// Set changeSelection to false
 			Recorder.reSelectTarget();
 			// Stops bubbling of event to browser (click is not made in browser element)
-			event.cancelBubble="true";
+			event.cancelBubble = true;
 			return;
 		}
 		if(Recorder.recordAssertText == "true"){
@@ -419,7 +419,7 @@ Recorder.addEventHandler('clickLocator', 'click', function(event){
 			this.record("assertText", target, getText(event.target));
 			document.getElementById('assert-button').click();
 			// Stops bubbling of event to browser (click is not made in browser element)
-			event.cancelBubble="true";
+			event.cancelBubble = true;
 			return;
 		}
 		
@@ -431,7 +431,7 @@ Recorder.addEventHandler('clickLocator', 'click', function(event){
         }
 		
 		/* record mouse click if left button clicked and so select has been made */
-		if (event.button == 0 && noSelection == "true") {
+		if (event.button == 0 && noSelection) {
             var x = event.clientX - editor.seleniumAPI.Selenium.prototype.getElementPositionLeft(event.target);
             var y = event.clientY - editor.seleniumAPI.Selenium.prototype.getElementPositionTop(event.target);
             
@@ -444,14 +444,14 @@ Recorder.addEventHandler('clickLocator', 'click', function(event){
             
             /* Check that a mouse click doesn't add a new close for a notification.
              */
-            if(closeNotificationRecorded == "true"){
+            if(closeNotificationRecorded){
             	if((new RegExp("Notification")).test(event.target.className) || (new RegExp("gwt-HTML")).test(event.target.parentNode.className)){
             		/* clicked on notification or it's inner element mark clicked as false and return without further handling of event */
-            		closeNotificationRecorded = "false";
+            		closeNotificationRecorded = false;
             		return;
             	}else{
             		/* clicked on something else than the notification mark clicked false and handle event */
-            		closeNotificationRecorded = "false";
+            		closeNotificationRecorded = false;
             	}
             }
             
@@ -469,7 +469,7 @@ Recorder.addEventHandler('clickLocator', 'click', function(event){
 	            
 	            /* mark that a clickable element has been clicked so that DOMNodeInserted will be evaluated */
 	            /* for possible Notification and MenuBar events that might result.*/
-				clicked = "true";
+				clicked = true;
 				
 	            var target = this.findLocators(event.target);
 	            var parent = this.findLocators(event.target.parentNode);
@@ -505,7 +505,7 @@ Recorder.addEventHandler('clickLocator', 'click', function(event){
 					} else {
 	            		this.record_orig("mouseClick", target, x + ',' + y);
 					}
-	            	clicked = "false";
+	            	clicked = false;
 	            } else if ((new RegExp("@id=\'loginf\'")).test(target) && !(new RegExp("input")).test(target)) {
 	            	// if login form we need to add a small pause manually (IE can't handle AndWait).
             		this.record_orig("click", target, '');
@@ -527,7 +527,7 @@ Recorder.addEventHandler('clickLocator', 'click', function(event){
 //	                });
 	        }
 		} else {
-			noSelection = "true";
+			noSelection = true;
 		}
 	}, { capture: true });
 
@@ -560,14 +560,14 @@ Recorder.addEventHandler('select', 'change', function(event) {
 				}
 			}
 		}
-		noSelection = "false";
+		noSelection = false;
 	}
 });
 
 var counter = 0;
-var closeNotificationRecorded = "false";
-var checkForMouseOver = "false";
-var getTooltip = "false";
+var closeNotificationRecorded = false;
+var checkForMouseOver = false;
+var getTooltip = false;
 var openNotifications = 0;
 var recordClose = 0;
 
@@ -575,24 +575,24 @@ Recorder.addEventHandler('append', 'DOMNodeInserted', function(event){
 		/* Check inserted node if it's a div */
 		if(event.target.nodeName.toLowerCase() == "div"){
 			/* if we have clicked on something we expect to get a PopupPanel */
-			if(clicked == "true"){
+			if(clicked){
 				var target = this.findLocators(event.target);
 				/* if we found a popupPanel enable checking for mouse overs for
 				 * recording MenuBar navigation
 				 */
 				if((new RegExp("gwt-PopupPanel")).test(event.target.className)){
-					checkForMouseOver = "true";
-					clicked = "false";
+					checkForMouseOver = true;
+					clicked = false;
 				}
 				/*
 				 * Stop checking inserted DOM nodes after 5 inserts 
 				 */
 				if(++counter > 5){
-					clicked = "false";
+					clicked = false;
 				}
 			}else if((new RegExp("v-tooltip")).test(event.target.className)){
 				/* If we found a v-tooltip enable checking of next mouse out */
-				getTooltip = "true";
+				getTooltip = true;
 			}
 		}
 	});
@@ -608,7 +608,7 @@ Recorder.addEventHandler('remove', 'DOMNodeRemoved', function(event){
 
 /* Use mouse over events to record MenuBar navigation */
 Recorder.addEventHandler('mouseOverEvent', 'mouseover', function(event){
-		if(checkForMouseOver == "true"){
+		if(checkForMouseOver){
 			var target = this.findLocators(event.target);
 			if((new RegExp("menuitem menuitem-selected")).test(event.target.className)){
 				this.record("mouseOver", target, '0,0');
@@ -619,8 +619,8 @@ Recorder.addEventHandler('mouseOverEvent', 'mouseover', function(event){
 /* use mouse out to record a mouseOver to show tooltip */
 Recorder.addEventHandler('mouseOutEvent', 'mouseout', function(event){
 		/* If tooltip has been shown record tooltip event */
-		if(getTooltip == "true"){
-			getTooltip = "false";
+		if(getTooltip){
+			getTooltip = false;
 			if(Recorder.recordTooltip == "true"){
 				var target = this.findLocators(event.target);
 				this.record("showTooltip", target, '0,0');
@@ -628,3 +628,58 @@ Recorder.addEventHandler('mouseOutEvent', 'mouseout', function(event){
 			}
 		}
 	});
+
+var mousedownX = 0;
+var mousedownY = 0;
+var clX = 0;
+var clY = 0;
+var mousedown = false;
+var slider = false;
+var dragTarget = null;
+var help = null;
+
+Recorder.addEventHandler('mouseDownEvent', 'mousedown', function(event){
+		if(Recorder.changeSelection=="false"){
+			help = event.target;
+		    mousedown = true;
+			dragTarget = this.findLocators(event.target);
+		    mousedownX = editor.seleniumAPI.Selenium.prototype.getElementPositionLeft(event.target);
+		    mousedownY = editor.seleniumAPI.Selenium.prototype.getElementPositionTop(event.target);
+		    clX = event.clientX;
+		    clY = event.clientY;
+		}
+	}, { capture: true });
+
+Recorder.addEventHandler('mouseUpEvent', 'mouseup', function(event){
+		alert(mousedown);
+		if (mousedown) {
+        	var target =  help.ownerDocument.elementFromPoint(event.clientX, event.clientY);
+        	if (target != null && target.nodeType == 3) {
+        		target = target.parentNode;
+        	}
+        	
+        	var record = false;
+        	
+            if (Math.abs(editor.seleniumAPI.Selenium.prototype.getElementPositionLeft(target)-mousedownX) >= 10 || Math.abs(editor.seleniumAPI.Selenium.prototype.getElementPositionTop(target)-mousedownY) >= 10){
+            	record = true;
+            } else if(Math.abs(clX-event.clientX) >= 10 || Math.abs(clY-event.clientY) >= 10){
+            	record = true;
+            	target = help;
+            }
+            
+            if(record){
+   			 	var x = event.clientX - editor.seleniumAPI.Selenium.prototype.getElementPositionLeft(target);
+                var y = event.clientY - editor.seleniumAPI.Selenium.prototype.getElementPositionTop(target);
+
+             	this.record("drag", dragTarget, '');
+             	this.record("drop", this.findLocators(target), x + ',' + y);
+             	mousedrag = false;
+
+            }
+		}
+		dragTarget = null;
+		mousedownX = 0;
+		mousedownY = 0;
+		help = null;
+		mousedown = false;
+	}, { capture: true });
