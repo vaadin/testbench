@@ -224,6 +224,9 @@ function triggerSpecialKeyEvent(element, eventType, keySequence, canBubble, cont
     }
 }
 
+/**
+* Copies triggerKeyEvent from htmlutils.js and removes keycode for charCodeArg on firefox keyEvent
+*/
 Selenium.prototype.getElementPositionTop = function(locator) {
    /**
    * Retrieves the vertical position of an element
@@ -266,6 +269,7 @@ Selenium.prototype.getElementPositionTop = function(locator) {
     return y;
 };
 
+// Starts dragging of taget element
 Selenium.prototype.doDrag = function(locator, value){
 	var element = this.browserbot.findElement(locator);
 	var clientXY = getClientXY(element, value);
@@ -274,6 +278,7 @@ Selenium.prototype.doDrag = function(locator, value){
 	this.browserbot.triggerMouseEvent(element, 'mousemove', true);
 };
 
+// Drops target element from drag on this target element
 Selenium.prototype.doDrop = function(locator, value){
 	var element = this.browserbot.findElement(locator);
 	var clientXY = getClientXY(element, value);
@@ -283,3 +288,16 @@ Selenium.prototype.doDrop = function(locator, value){
 	this.browserbot.triggerMouseEvent(element, 'mousemove', true, clientXY[0], clientXY[1]);
 	this.browserbot.triggerMouseEvent(element, 'mouseup', true, clientXY[0], clientXY[1]);
 };
+
+// Expect dialog will do a normal mouse click, but the following waitForVaadin will be skipped
+// as dialog is expected and the next command needs to be 'assertConfirmation'
+Selenium.prototype.doExpectDialog = function(locator, value){
+	var element = this.browserbot.findElement(locator);
+	var clientXY = getClientXY(element, value);
+	
+	this.browserbot.triggerMouseEvent(element, 'mousedown', true, clientXY[0], clientXY[1]);
+	//	element.focus();
+	this.browserbot.triggerMouseEvent(element, 'mouseup', true, clientXY[0], clientXY[1]);
+	this.browserbot.clickElement(element);
+};
+

@@ -98,6 +98,7 @@ TestLoop.prototype = {
          * @return a function which will be used to determine when
          * execution can continue, or null if we can continue immediately
          */
+         
         var command = this.currentCommand;
         LOG.info("Executing: |" + command.command + " | " + command.target + " | " + command.value + " |");
 
@@ -113,12 +114,13 @@ TestLoop.prototype = {
         
 
         this.waitForCondition = this.result.terminationCondition;
-
-	    command = new Command("waitForVaadin", "", "");
-	    handler = this.commandFactory.getCommandHandler(command.command);
-	    this.vaadinresult = handler.execute(selenium, command);
-	    this.waitForVaadinCondition = this.vaadinresult.terminationCondition;
 	    
+        if(!(new RegExp("expectDialog")).test(command.command)) {
+	 	    command = new Command("waitForVaadin", "", "");
+	 	    handler = this.commandFactory.getCommandHandler(command.command);
+	 	    this.vaadinresult = handler.execute(selenium, command);
+	 	    this.waitForVaadinCondition = this.vaadinresult.terminationCondition;
+        }
     },
 
     _handleCommandError : function(e) {
