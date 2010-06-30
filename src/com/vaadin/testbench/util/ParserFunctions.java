@@ -300,9 +300,9 @@ public class ParserFunctions {
             combineThese.clear();
         }
         // Check that file !exist
-        if (!name.endsWith("" + testsToCombine.hashCode())) {
-            name = name + "_" + testsToCombine.hashCode();
-        }
+        // if (!name.endsWith("" + testsToCombine.hashCode())) {
+        // name = name + "_" + testsToCombine.hashCode();
+        // }
         // File targetFile = new File(path + name + ".html");
         File targetFile = new File(System.getProperty("java.io.tmpdir")
                 + File.separator + name + ".html");

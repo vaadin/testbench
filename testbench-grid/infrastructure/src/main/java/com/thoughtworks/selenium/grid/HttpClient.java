@@ -71,7 +71,7 @@ public class HttpClient {
         try {
             HttpConnectionParams parameters = client.getHttpConnectionManager()
                     .getParams();
-            parameters.setSoTimeout(30000);
+            parameters.setSoTimeout(60000);
             statusCode = client.executeMethod(method);
             // Get response body as a byte[] from InputStream
             byte[] response = IOUtils.toByteArray(method

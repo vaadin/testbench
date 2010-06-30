@@ -282,8 +282,8 @@ public class TestConverter {
                                     .getAbsolutePath());
 
                     List<String> combined = ParserFunctions.combineTests(result
-                            .getSuiteTests(), testFile.getName(), testFile
-                            .getAbsolutePath());
+                            .getSuiteTests(), getTestName(testFile.getName()),
+                            testFile.getAbsolutePath());
                     if (combined.size() == 1) {
                         return combined.get(0);
                     }

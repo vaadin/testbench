@@ -396,10 +396,34 @@ Recorder.addEventHandler('type', 'change', function(event) {
 var noSelection = true;
 var clicked = false;
 
+
+
 /* override default click event recorder */
 //Recorder.removeEventHandler('clickLocator');
 
 Recorder.addEventHandler('clickLocator', 'click', function(event){
+	
+		if (mousedown && (new RegExp("v-slider")).test(dragElement.className) && 
+				(Math.abs(event.clientX - clX) >= 10 || Math.abs(event.clientY - clY) >= 10)) {
+			
+			var x = editor.seleniumAPI.Selenium.prototype.getElementPositionLeft(dragElement) - mousedownX;
+		    var y = editor.seleniumAPI.Selenium.prototype.getElementPositionTop(dragElement) - mousedownY;
+		    
+			this.record("dragAndDrop", dragTarget, x + ',' + y );
+			
+			mousedown = false;
+			dragTarget = null;
+			mousedownX = 0;
+			mousedownY = 0;
+			dragElement = null;
+			clX = 0;
+			clY = 0;
+			
+			return;
+		} else if (mousedown) {
+			mousedown = false;
+		}
+
 		charBuffer = "";
 		
 		if(Recorder.changeSelection=="true"){
@@ -636,49 +660,50 @@ var clY = 0;
 var mousedown = false;
 var slider = false;
 var dragTarget = null;
-var help = null;
+var dragElement = null;
 
+// save element, it's locator and mouse targets for checking if we have a drag event
 Recorder.addEventHandler('mouseDownEvent', 'mousedown', function(event){
 		if(Recorder.changeSelection=="false"){
-			help = event.target;
+			dragElement = event.target;
+			
 		    mousedown = true;
-			dragTarget = this.findLocators(event.target);
-		    mousedownX = editor.seleniumAPI.Selenium.prototype.getElementPositionLeft(event.target);
-		    mousedownY = editor.seleniumAPI.Selenium.prototype.getElementPositionTop(event.target);
+			dragTarget = this.findLocators(dragElement);
+		    mousedownX = editor.seleniumAPI.Selenium.prototype.getElementPositionLeft(dragElement);
+		    mousedownY = editor.seleniumAPI.Selenium.prototype.getElementPositionTop(dragElement);
 		    clX = event.clientX;
 		    clY = event.clientY;
 		}
 	}, { capture: true });
 
+// if we have a mouse down and have moved the mouse more than 10px horizontally or vertically then do a drag and drop event
 Recorder.addEventHandler('mouseUpEvent', 'mouseup', function(event){
-		if (mousedown) {
-        	var target =  help.ownerDocument.elementFromPoint(event.clientX, event.clientY);
+		if (mousedown && (Math.abs(clX-event.clientX) >= 10 || Math.abs(clY-event.clientY))) {
+			
+        	var target =  dragElement.ownerDocument.elementFromPoint(event.clientX, event.clientY);
         	if (target != null && target.nodeType == 3) {
         		target = target.parentNode;
         	}
-        	
-        	var record = false;
-        	
-            if (Math.abs(editor.seleniumAPI.Selenium.prototype.getElementPositionLeft(target)-mousedownX) >= 10 || Math.abs(editor.seleniumAPI.Selenium.prototype.getElementPositionTop(target)-mousedownY) >= 10){
-            	record = true;
-            } else if(Math.abs(clX-event.clientX) >= 10 || Math.abs(clY-event.clientY) >= 10){
-            	record = true;
-            	target = help;
-            }
-            
-            if(record){
+
+//        	if (Math.abs(editor.seleniumAPI.Selenium.prototype.getElementPositionLeft(target)-mousedownX) >= 10 || 
+//        			Math.abs(editor.seleniumAPI.Selenium.prototype.getElementPositionTop(target)-mousedownY) >= 10){
+            	
    			 	var x = event.clientX - editor.seleniumAPI.Selenium.prototype.getElementPositionLeft(target);
                 var y = event.clientY - editor.seleniumAPI.Selenium.prototype.getElementPositionTop(target);
 
              	this.record("drag", dragTarget, '');
              	this.record("drop", this.findLocators(target), x + ',' + y);
              	mousedrag = false;
-
-            }
+//            }
 		}
+		// Clear all mouse down targets.
+		dragElement = null;
 		dragTarget = null;
+		mousedown = false;
 		mousedownX = 0;
 		mousedownY = 0;
-		help = null;
-		mousedown = false;
 	}, { capture: true });
+
+
+//alert((new RegExp("v-splitpanel-hsplitter")).test(help.className) || 
+//				(new RegExp("v-splitpanel-vsplitter")).test(help.className));
