@@ -13,7 +13,7 @@
 
 		<mkdir dir="${output.dir}" />
 		<mkdir dir="result/classes" />
-		<javac srcdir="../src" destdir="result/classes">
+		<javac srcdir="../src" destdir="result/classes" debug="true">
 			<classpath>
 				<fileset dir="../lib" id="libs">
 					<include name="*.jar" />
