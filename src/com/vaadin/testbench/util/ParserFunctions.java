@@ -21,8 +21,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import com.vaadin.testbench.runner.util.IOFunctions;
-
 public class ParserFunctions {
 
     /**
@@ -60,7 +58,7 @@ public class ParserFunctions {
             testSuite = new File(path + file);
             if (!testSuite.exists()) {
                 // If not found do a small search for file
-                testSuite = IOFunctions.getFile(testSuite.getName(), testSuite
+                testSuite = getFile(testSuite.getName(), testSuite
                         .getParentFile(), 0);
             }
         }
@@ -97,8 +95,8 @@ public class ParserFunctions {
 
         // Check given path if found in xml file
         if (result.getPath() != null
-                && IOFunctions.getFile(tests.get(0), new File(testSuite
-                        .getParentFile().getAbsolutePath()
+                && getFile(tests.get(0), new File(testSuite.getParentFile()
+                        .getAbsolutePath()
                         + File.separator + result.getPath()), 0) == null) {
             System.err.println("Path definition in " + file
                     + " seems to be faulty.\nIgnoring given path "
@@ -127,7 +125,7 @@ public class ParserFunctions {
                             + testSuite.getName() + " for "
                             + testFile.getName());
                     // If not found do a small search for file
-                    testFile = IOFunctions.getFile(testFile.getName(), testFile
+                    testFile = getFile(testFile.getName(), testFile
                             .getParentFile(), 0);
                 }
             }
@@ -169,7 +167,7 @@ public class ParserFunctions {
             testSuite = new File(path + file);
             if (!testSuite.exists()) {
                 // If not found do a small search for file
-                testSuite = IOFunctions.getFile(testSuite.getName(), testSuite
+                testSuite = getFile(testSuite.getName(), testSuite
                         .getParentFile(), 0);
             }
         }
@@ -206,8 +204,8 @@ public class ParserFunctions {
                                     + testSuite.getName() + " for "
                                     + testFile.getName());
                             // If not found do a small search for file
-                            testFile = IOFunctions.getFile(testFile.getName(),
-                                    testFile.getParentFile(), 0);
+                            testFile = getFile(testFile.getName(), testFile
+                                    .getParentFile(), 0);
                         }
                     }
 
@@ -264,7 +262,7 @@ public class ParserFunctions {
             if (!file.exists()) {
                 file = new File(path + test);
                 if (!file.exists()) {
-                    file = IOFunctions.getFile(test, new File(path), 0);
+                    file = getFile(test, new File(path), 0);
                 }
             }
 
@@ -387,4 +385,46 @@ public class ParserFunctions {
             in.close();
         }
     }
+
+    /**
+     * Does a small search for file test from directory buildPath
+     * 
+     * @param test
+     *            Name of file to be found
+     * @param buildPath
+     *            Path from where to search
+     * @return File if found, null if not found
+     */
+    public static File getFile(String test, File buildPath, int depth) {
+        File found = null;
+        if (buildPath == null) {
+            System.err.println("Path was null.");
+            return null;
+        }
+        if (!buildPath.isDirectory() || depth == 10) {
+            return found;
+        }
+
+        try {
+            for (File file : buildPath.listFiles()) {
+                if (file.isDirectory()) {
+                    found = getFile(test, file, depth++);
+                    if (found != null) {
+                        return found;
+                    }
+                } else if (file.isFile()) {
+                    if (file.getName().equals(test)) {
+                        return file;
+                    }
+                }
+            }
+        } catch (NullPointerException npe) {
+            System.err.println("Got nullpointer exception with message: "
+                    + npe.getMessage());
+            System.err.println("Continuing search.");
+            return null;
+        }
+        return found;
+    }
+
 }
