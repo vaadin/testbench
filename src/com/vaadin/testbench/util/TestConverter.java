@@ -809,6 +809,9 @@ public class TestConverter {
 
                 writeDoCommand(command, javaSource);
                 javaSource.append("}");
+                
+                // Workaround for #5295
+                javaSource.append("pause(200);");
             } else {
                 writeDoCommand(command, javaSource);
             }
