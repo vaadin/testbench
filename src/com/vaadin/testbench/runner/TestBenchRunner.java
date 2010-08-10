@@ -18,6 +18,7 @@ import junit.framework.Test;
 import junit.framework.TestResult;
 import junit.framework.TestSuite;
 
+import com.vaadin.testbench.Parameters;
 import com.vaadin.testbench.runner.util.IOFunctions;
 import com.vaadin.testbench.runner.util.TestBenchSuite;
 import com.vaadin.testbench.util.ParsedSuite;
@@ -52,8 +53,8 @@ public class TestBenchRunner {
         browsers = new String[] { "winxp-firefox35" };
         encoding = "utf8";
 
-        if (System.getProperty("com.vaadin.testbench.encoding") != null) {
-            encoding = System.getProperty("com.vaadin.testbench.encoding");
+        if (Parameters.getFileEncoding() != null) {
+            encoding = Parameters.getFileEncoding();
         }
     }
 
@@ -163,13 +164,12 @@ public class TestBenchRunner {
      * 
      * @return created TestBenchSuite
      */
-    @SuppressWarnings( { "unchecked", "static-access" })
+    @SuppressWarnings({ "unchecked", "static-access" })
     public TestBenchSuite createTestSuite(List<String> tests, String path,
             String testName) throws Exception {
         // Get defined browsers if any.
-        if (System.getProperty("com.vaadin.testbench.browsers") != null) {
-            browsers = System.getProperty("com.vaadin.testbench.browsers")
-                    .split(",");
+        if (Parameters.getBrowsers() != null) {
+            browsers = Parameters.getBrowsers();
         }
 
         path = normalizePath(path);
@@ -384,9 +384,8 @@ public class TestBenchRunner {
      */
     public void makeTestSuiteFiles(List<String> tests, String path,
             String testName) throws Exception {
-        if (System.getProperty("com.vaadin.testbench.browsers") != null) {
-            browsers = System.getProperty("com.vaadin.testbench.browsers")
-                    .split(",");
+        if (Parameters.getBrowsers() != null) {
+            browsers = Parameters.getBrowsers();
         }
 
         path = normalizePath(path);
@@ -473,11 +472,11 @@ public class TestBenchRunner {
                             while ((line = in.readLine()) != null) {
                                 if (line.contains("package")) {
                                     String[] pkg = line.split(" ");
-                                    classname = pkg[1].substring(0, pkg[1]
-                                            .length() - 1)
+                                    classname = pkg[1].substring(0,
+                                            pkg[1].length() - 1)
                                             + "." + classname + ".class";
-                                    filePackage = pkg[1].substring(0, pkg[1]
-                                            .length() - 1);
+                                    filePackage = pkg[1].substring(0,
+                                            pkg[1].length() - 1);
                                     filePackage = filePackage.replace(".", "/");
                                     break;
                                 } else if (line.contains("public class")) {
@@ -574,8 +573,8 @@ public class TestBenchRunner {
                 System.out.println("Searching for file " + testSuite.getName()
                         + " to parse.");
                 // If not found do a small search for file
-                testSuite = IOFunctions.getFile(testSuite.getName(), testSuite
-                        .getParentFile(), 0);
+                testSuite = IOFunctions.getFile(testSuite.getName(),
+                        testSuite.getParentFile(), 0);
             }
         }
 
@@ -590,8 +589,8 @@ public class TestBenchRunner {
                 testSuite.getName().lastIndexOf('.'));
 
         // Get file type of test (.html, .java)
-        String fileType = file.substring(file.lastIndexOf('.') + 1, file
-                .length());
+        String fileType = file.substring(file.lastIndexOf('.') + 1,
+                file.length());
         if ("xml".equals(fileType)) {
             ParsedSuite result = ParserFunctions.readXmlFile(file, path);
 
@@ -624,8 +623,8 @@ public class TestBenchRunner {
                 title = result.getTestName();
             }
             // Combine tests to one and set new list to result
-            result.setSuiteTests(ParserFunctions.combineTests(result
-                    .getSuiteTests(), title, path));
+            result.setSuiteTests(ParserFunctions.combineTests(
+                    result.getSuiteTests(), title, path));
             if (makeTests) {
                 makeTestSuiteFiles(result.getSuiteTests(), path, title);
             } else {
@@ -711,10 +710,8 @@ public class TestBenchRunner {
                                     title = result.getTestName();
                                 }
                                 if (!connectTests) {
-                                    tests.addAll(ParserFunctions
-                                            .combineTests(result
-                                                    .getSuiteTests(), title,
-                                                    path));
+                                    tests.addAll(ParserFunctions.combineTests(
+                                            result.getSuiteTests(), title, path));
                                 } else {
                                     tests.addAll(result.getSuiteTests());
                                 }

@@ -22,6 +22,7 @@ import org.mozilla.javascript.NativeArray;
 import org.mozilla.javascript.NativeObject;
 import org.mozilla.javascript.Scriptable;
 
+import com.vaadin.testbench.Parameters;
 import com.vaadin.testbench.util.SeleniumHTMLTestCaseParser.Command;
 
 public class TestConverter {
@@ -281,8 +282,9 @@ public class TestConverter {
                             TestBenchHTMLFile, testFile.getParentFile()
                                     .getAbsolutePath());
 
-                    List<String> combined = ParserFunctions.combineTests(result
-                            .getSuiteTests(), getTestName(testFile.getName()),
+                    List<String> combined = ParserFunctions.combineTests(
+                            result.getSuiteTests(),
+                            getTestName(testFile.getName()),
                             testFile.getAbsolutePath());
                     if (combined.size() == 1) {
                         return combined.get(0);
@@ -323,8 +325,8 @@ public class TestConverter {
         filePath = f.getParent();
         if (filePath == null) {
             filePath = "";
-        } else if (!File.separator.equals(filePath
-                .charAt(filePath.length() - 1))) {
+        } else if (!File.separator
+                .equals(filePath.charAt(filePath.length() - 1))) {
             filePath = filePath + File.separator;
         }
         absoluteFilePath = f.getAbsolutePath();
@@ -385,8 +387,8 @@ public class TestConverter {
         fis.close();
 
         htmlSource = htmlSource.replace("\"", "\\\"")
-                .replaceAll("\\n", "\\\\n").replace("'", "\\'").replaceAll(
-                        "\\r", "");
+                .replaceAll("\\n", "\\\\n").replace("'", "\\'")
+                .replaceAll("\\r", "");
 
         Context cx = Context.enter();
         try {
@@ -466,15 +468,14 @@ public class TestConverter {
 
                 + "junit.framework.Assert.fail(message.toString());\n" + "}\n";
         // if screenshot.onfail defined add try{ }catch( ){ }
-        if ("false".equals(System
-                .getProperty("com.vaadin.testbench.screenshot.onfail"))) {
+        if (!Parameters.isCaptureScreenshotOnFailure()) {
             softAsserts = "}catch(Throwable e){\nthrow new java.lang.AssertionError(cmd.getInfo() + \". Failure message = \" + e.getMessage());\n}\n"
                     + softAsserts;
         } else {
             screenshot = true;
             softAsserts = "}catch(Throwable e){\n"
                     + "String statusScreen = selenium.captureScreenshotToString();\n"
-                    + "String directory = System.getProperty(\"com.vaadin.testbench.screenshot.directory\");\n"
+                    + "String directory = Properties.getScreenshotDirectory();\n"
                     + "if (!File.separator.equals(directory.charAt(directory.length() - 1))) {\n"
                     + "directory = directory + File.separator;\n}\n"
                     + "File target = new File(directory + \"errors\");\n"
@@ -809,7 +810,7 @@ public class TestConverter {
 
                 writeDoCommand(command, javaSource);
                 javaSource.append("}");
-                
+
                 // Workaround for #5295
                 javaSource.append("pause(200);");
             } else {
@@ -865,11 +866,10 @@ public class TestConverter {
         List<Command> commands = new ArrayList<Command>();
 
         cx.evaluateString(scope, "function load(a){}", "dummy-load", 1, null);
-        cx
-                .evaluateString(
-                        scope,
-                        "this.log = [];this.log.info = function log() {}; var log = this.log;",
-                        "dummy-log", 1, null);
+        cx.evaluateString(
+                scope,
+                "this.log = [];this.log.info = function log() {}; var log = this.log;",
+                "dummy-log", 1, null);
 
         loadScript("tools.js", scope, cx);
         loadScript("xhtml-entities.js", scope, cx);
@@ -946,8 +946,8 @@ public class TestConverter {
             filePath = target.getParent();
             if (filePath == null) {
                 filePath = "";
-            } else if (!File.separator.equals(filePath
-                    .charAt(filePath.length() - 1))) {
+            } else if (!File.separator
+                    .equals(filePath.charAt(filePath.length() - 1))) {
                 filePath = filePath + File.separator;
             }
             absoluteFilePath = target.getAbsolutePath();
@@ -959,8 +959,9 @@ public class TestConverter {
                 fis.close();
 
                 // sanitize source
-                htmlSource = htmlSource.replace("\"", "\\\"").replaceAll("\\n",
-                        "\\\\n").replace("'", "\\'").replaceAll("\\r", "");
+                htmlSource = htmlSource.replace("\"", "\\\"")
+                        .replaceAll("\\n", "\\\\n").replace("'", "\\'")
+                        .replaceAll("\\r", "");
 
                 Context cx = Context.enter();
 
@@ -977,8 +978,7 @@ public class TestConverter {
                 // inform user of error.
                 System.err.println("Failed in appending test. "
                         + e.getMessage());
-                if ("true".equalsIgnoreCase(System
-                        .getProperty("com.vaadin.testbench.debug"))) {
+                if (Parameters.isDebug()) {
                     e.printStackTrace();
                 }
                 javaSource

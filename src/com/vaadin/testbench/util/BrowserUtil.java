@@ -12,26 +12,27 @@ public class BrowserUtil {
      * @param browser
      * @return
      */
-    public int canvasXPosition(Selenium selenium, BrowserVersion browser) {
+    public static int canvasXPosition(Selenium selenium, BrowserVersion browser) {
+        String window = "this.browserbot.getUserWindow()";
+
         if (browser.isIE()) {
             try {
                 // IE
-                return Integer
-                        .parseInt(selenium
-                                .getEval("this.browserbot.getUserWindow().screenLeft;"));
+                return Integer.parseInt(selenium.getEval(window
+                        + ".screenLeft;"));
             } catch (Exception e) {
 
             }
         }
         try {
 
-            int screenWidth = Integer.parseInt(selenium
-                    .getEval("screen.availWidth;"));
+            int outerWidth = Integer.parseInt(selenium.getEval(window
+                    + ".outerWidth"));
             int innerWidth = Integer.parseInt(selenium
                     .getEval("window.innerWidth;"));
             int pageXOffset = Integer.parseInt(selenium
                     .getEval("window.pageXOffset;"));
-            int screenLeftOffset = (screenWidth - innerWidth) / 2;
+            int screenLeftOffset = (outerWidth - innerWidth) / 2;
 
             return screenLeftOffset + pageXOffset;
         } catch (Exception e) {
@@ -48,7 +49,7 @@ public class BrowserUtil {
      * @param browser
      * @return
      */
-    public int canvasYPosition(Selenium selenium, BrowserVersion browser) {
+    public static int canvasYPosition(Selenium selenium, BrowserVersion browser) {
         if (browser.isIE()) {
             try {
                 return Integer.parseInt(selenium
@@ -76,7 +77,7 @@ public class BrowserUtil {
      * 
      * @return Canvas height
      */
-    public int getCanvasHeight(Selenium selenium) {
+    public static int getCanvasHeight(Selenium selenium) {
         int canvasHeight = 0;
         try {
             canvasHeight = Integer.parseInt(selenium
@@ -104,7 +105,7 @@ public class BrowserUtil {
      * 
      * @return Canvas width
      */
-    public int getCanvasWidth(Selenium selenium) {
+    public static int getCanvasWidth(Selenium selenium) {
         int canvasWidth = 0;
         try {
             canvasWidth = Integer.parseInt(selenium
@@ -133,7 +134,7 @@ public class BrowserUtil {
      * @param selenium
      * @return browserName_majorNumber
      */
-    public BrowserVersion getBrowserVersion(Selenium selenium) {
+    public static BrowserVersion getBrowserVersion(Selenium selenium) {
         String userAgent = selenium.getEval("navigator.userAgent;");
         BrowserVersion bv = new BrowserVersion(userAgent);
         return bv;

@@ -14,6 +14,8 @@ import junit.framework.TestFailure;
 import junit.framework.TestResult;
 import junit.framework.TestSuite;
 
+import com.vaadin.testbench.Parameters;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Class IOFunctions.
@@ -88,29 +90,22 @@ public class IOFunctions {
             out.write("<project name=\"" + testName
                     + "\" basedir=\".\" default=\"testsuite\">\n\n");
             out.write("<property name=\"class-dir\" value=\"build\" />\n");
-            if (System.getProperty("com.vaadin.testbench.tester.host") != null) {
-                out
-                        .write("<property name=\"com.vaadin.testbench.tester.host\" value=\""
-                                + System
-                                        .getProperty("com.vaadin.testbench.tester.host")
-                                + "\" />\n");
+            if (Parameters.getRemoteControlHostName() != null) {
+                out.write("<property name=\""
+                        + Parameters.REMOTE_CONTROL_HOST_NAME + "\" value=\""
+                        + Parameters.getRemoteControlHostName() + "\" />\n");
             }
-            if (System.getProperty("com.vaadin.testbench.deployment.url") != null) {
-                out
-                        .write("<property name=\"com.vaadin.testbench.deployment.url\" value=\""
-                                + System
-                                        .getProperty("com.vaadin.testbench.deployment.url")
-                                + "\" />\n");
+            if (Parameters.getDeploymentURL() != null) {
+                out.write("<property name=\"" + Parameters.DEPLOYMENT_URL
+                        + "\" value=\"" + Parameters.getDeploymentURL()
+                        + "\" />\n");
             }
-            if (System.getProperty("com.vaadin.testbench.screenshot.directory") != null) {
-                out
-                        .write("<property name=\"com.vaadin.testbench.screenshot.directory\" value=\""
-                                + System
-                                        .getProperty("com.vaadin.testbench.screenshot.directory")
-                                + "\" />\n");
+            if (Parameters.getScreenshotDirectory() != null) {
+                out.write("<property name=\"" + Parameters.SCREENSHOT_DIRECTORY
+                        + "\" value=\"" + Parameters.getScreenshotDirectory()
+                        + "\" />\n");
             }
-            out
-                    .write("<property name=\"lib.dir\" value=\"${com.vaadin.testbench.lib.dir}\" />\n\n");
+            out.write("<property name=\"lib.dir\" value=\"${com.vaadin.testbench.lib.dir}\" />\n\n");
 
             out.write("<target name=\"compile\">\n");
             out.write("<mkdir dir=\"${class-dir}\" />\n");
@@ -133,21 +128,21 @@ public class IOFunctions {
             out.write("<junit haltonfailure=\"true\" fork=\"yes\">\n");
             out.write("<classpath refid=\"classpath.test\" />\n");
             out.write("<formatter type=\"brief\" usefile=\"false\" />\n");
-            out
-                    .write("<jvmarg value=\"-Dcom.vaadin.testbench.tester.host=${com.vaadin.testbench.tester.host}\" />\n");
-            out
-                    .write("<jvmarg value=\"-Dcom.vaadin.testbench.deployment.url=${com.vaadin.testbench.deployment.url}\" />\n");
-            out
-                    .write("<jvmarg value=\"-Dcom.vaadin.testbench.screenshot.directory=${com.vaadin.testbench.screenshot.directory}\" />\n");
+            out.write("<jvmarg value=\"-D"
+                    + Parameters.REMOTE_CONTROL_HOST_NAME + "=${"
+                    + Parameters.REMOTE_CONTROL_HOST_NAME + "}\" />\n");
+            out.write("<jvmarg value=\"-D" + Parameters.DEPLOYMENT_URL + "=${"
+                    + Parameters.DEPLOYMENT_URL + "}\" />\n");
+            out.write("<jvmarg value=\"-D" + Parameters.SCREENSHOT_DIRECTORY
+                    + "=${" + Parameters.SCREENSHOT_DIRECTORY + "}\" />\n");
             out.write("<jvmarg value=\"-Djava.awt.headless=true\" />\n");
-            out
-                    .write("<jvmarg value=\"-Dcom.vaadin.testbench.screenshot.softfail=${com.vaadin.testbench.screenshot.softfail}\" />\n");
-            out
-                    .write("<jvmarg value=\"-Dcom.vaadin.testbench.screenshot.reference.debug=${com.vaadin.testbench.screenshot.reference.debug}\" />\n");
-            out
-                    .write("<batchtest fork=\"yes\" haltonerror=\"yes\" haltonfailure=\"yes\">\n");
-            out
-                    .write("<fileset dir=\"${class-dir}\" includes=\"**/*_Suite.class\"/>\n");
+            out.write("<jvmarg value=\"-D" + Parameters.SCREENSHOT_SOFT_FAIL
+                    + "=${" + Parameters.SCREENSHOT_SOFT_FAIL + "}\" />\n");
+            out.write("<jvmarg value=\"-D"
+                    + Parameters.SCREENSHOT_REFERENCE_DEBUG + "=${"
+                    + Parameters.SCREENSHOT_REFERENCE_DEBUG + "}\" />\n");
+            out.write("<batchtest fork=\"yes\" haltonerror=\"yes\" haltonfailure=\"yes\">\n");
+            out.write("<fileset dir=\"${class-dir}\" includes=\"**/*_Suite.class\"/>\n");
             out.write("</batchtest>\n");
             out.write("</junit>\n");
             out.write("</target>\n");

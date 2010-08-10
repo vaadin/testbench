@@ -10,6 +10,10 @@ public class VaadinTestBase extends SeleneseTestBase {
     private String seleniumRcHubHost;
     private int seleniumRcHubPort = DEFAULT_SELENIUM_RC_PORT;
 
+    private int canvasWidth;
+
+    private int canvasHeight;
+
     VaadinSeleniumImplementation getVaadinSelenium() {
         return vaadinSelenium;
     }
@@ -29,7 +33,16 @@ public class VaadinTestBase extends SeleneseTestBase {
         // System.out.println("Starting test of " + url + " in " + browserString
         // + " on " + seleniumRcHost.getHost());
 
-        vaadinSelenium.start();
+        vaadinSelenium.start(getOptions());
+    }
+
+    public void setCanvasSize(int canvasWidth, int canvasHeight) {
+        this.canvasWidth = canvasWidth;
+        this.canvasHeight = canvasHeight;
+    }
+
+    protected String getOptions() {
+        return "canvasWidth=" + canvasWidth + ";canvasHeight=" + canvasHeight;
     }
 
     /**
@@ -52,25 +65,6 @@ public class VaadinTestBase extends SeleneseTestBase {
      */
     public void waitForVaadin() {
         vaadinSelenium.waitForVaadin();
-    }
-
-    private class TestHost {
-        private String host;
-        private int port;
-
-        public TestHost(String host, int port) {
-            this.host = host;
-            this.port = port;
-        }
-
-        public String getHost() {
-            return host;
-        }
-
-        public int getPort() {
-            return port;
-        }
-
     }
 
     public void doCommand(String cmd, String[] params) {

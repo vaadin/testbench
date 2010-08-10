@@ -11,6 +11,7 @@ import junit.framework.Assert;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import com.vaadin.testbench.Parameters;
 import com.vaadin.testbench.runner.TestBenchRunner;
 import com.vaadin.testbench.runner.util.TestBenchSuite;
 
@@ -65,14 +66,14 @@ public class AddTest extends TestCase {
         Assert.assertEquals(5, tbs.getTestsInSuite());
         String[] testList = tbs.getTests();
         // Assert all tests and their order
-        Assert.assertEquals("com.vaadin.automatedtests.test", testList[0]
-                .substring(0, testList[0].indexOf("_")));
+        Assert.assertEquals("com.vaadin.automatedtests.test",
+                testList[0].substring(0, testList[0].indexOf("_")));
         Assert.assertTrue("Money_tst".equals(testList[1]));
         // Assert that a single file doesn't get combined to a test_{hash}.html
         Assert.assertTrue("com.vaadin.automatedtests.tst".equals(testList[2]));
         Assert.assertTrue("Money_tst2".equals(testList[3]));
-        Assert.assertEquals("com.vaadin.automatedtests.test", testList[4]
-                .substring(0, testList[0].indexOf("_")));
+        Assert.assertEquals("com.vaadin.automatedtests.test",
+                testList[4].substring(0, testList[0].indexOf("_")));
     }
 
     /**
@@ -220,7 +221,7 @@ public class AddTest extends TestCase {
         Assert.assertEquals(tbs, tbr.getTestBenchSuite(0));
     }
 
-    // 
+    //
     /**
      * Test that having a faulty path return to SuiteFile path and find test
      * files
@@ -234,8 +235,7 @@ public class AddTest extends TestCase {
             Assert.assertEquals(1, tbr.getTestBenchSuites().size());
             Assert.assertEquals(2, tbs.getTestsInSuite());
         } catch (FileNotFoundException fnfe) {
-            Assert
-                    .fail("Faulty path definition is supposed to return to Suite path");
+            Assert.fail("Faulty path definition is supposed to return to Suite path");
         }
 
     }
@@ -337,8 +337,8 @@ public class AddTest extends TestCase {
         TestBenchRunner tbr = new TestBenchRunner();
         TestBenchSuite tbs = tbr.parseTestSuite("test/testSuite.html", ".");
 
-        Assert.assertEquals(tbs.getTestSuite("winxp-firefox35"), tbs
-                .getTestSuite());
+        Assert.assertEquals(tbs.getTestSuite("winxp-firefox35"),
+                tbs.getTestSuite());
     }
 
     /**
@@ -348,8 +348,7 @@ public class AddTest extends TestCase {
         Properties original = new Properties(System.getProperties());
         Properties p = new Properties(System.getProperties());
         // Add property com.vaadin.testbench.browsers to System properties
-        p.setProperty("com.vaadin.testbench.browsers",
-                "winxp-firefox35,winxp-ie7");
+        p.setProperty(Parameters.BROWSER_STRING, "winxp-firefox35,winxp-ie7");
         System.setProperties(p);
 
         TestBenchRunner tbr = new TestBenchRunner();
@@ -373,8 +372,7 @@ public class AddTest extends TestCase {
         Properties original = new Properties(System.getProperties());
         Properties p = new Properties(System.getProperties());
         // Add property com.vaadin.testbench.browsers to System properties
-        p.setProperty("com.vaadin.testbench.browsers",
-                "winxp-firefox35,winxp-ie7");
+        p.setProperty(Parameters.BROWSER_STRING, "winxp-firefox35,winxp-ie7");
         System.setProperties(p);
 
         TestBenchRunner tbr = new TestBenchRunner();
@@ -433,7 +431,7 @@ public class AddTest extends TestCase {
     public void testmake_test_suite_multiple_browsers() throws Exception {
         Properties original = new Properties(System.getProperties());
         Properties p = new Properties(System.getProperties());
-        p.setProperty("com.vaadin.testbench.browsers",
+        p.setProperty(Parameters.BROWSER_STRING,
                 "winxp-firefox35,winxp-ie7,winxp-safari4");
         System.setProperties(p);
 
