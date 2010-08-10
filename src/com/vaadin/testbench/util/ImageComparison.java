@@ -82,7 +82,7 @@ public class ImageComparison {
         if (directory == null || directory.length() == 0) {
             throw new IllegalArgumentException(
                     "Missing reference directory definition. Use -D"
-                            + Parameters.getScreenshotDirectory()
+                            + Parameters.SCREENSHOT_DIRECTORY
                             + "=c:\\screenshot\\. ");
         }
 
