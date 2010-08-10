@@ -146,9 +146,12 @@ Selenium.prototype.doMouseClickOpera = function(locator, value){
 /*Does a mouseClick on the target element. Used descriptive purposes.*/
 Selenium.prototype.doCloseNotification = function(locator, value){
 	var element = this.browserbot.findElement(locator);
+	var doc = element.document;
 	this.doMouseClick(locator, value);
 	var notificationHidden = function() {
-		return element.parentNode == null;
+		// IE does not set parentNode to null but attaches the element to a document-fragment
+		var hidden = (element.parentNode == null) || element.document != doc;
+		return hidden;
 	}
 	return Selenium.decorateFunctionWithTimeout(notificationHidden, 5000);
 };
