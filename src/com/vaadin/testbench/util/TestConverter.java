@@ -412,7 +412,7 @@ public class TestConverter {
         String testCaseFooter = getTestCaseFooter(testName);
         String currentCommand = "CurrentCommand cmd = new CurrentCommand(\""
                 + testName + "\");\n";
-        String versionDetector = "BrowserVersion browser = browserUtils.getBrowserVersion(selenium);\n"
+        String versionDetector = "BrowserVersion browser = getBrowserVersion();\n"
                 + "String mouseClickCommand = \"mouseClick\";\n"
                 + "if (browser.isOpera() && browser.isOlderVersion(10,50)) {\n"
                 + "\tmouseClickCommand = \"mouseClickOpera\";\n" + "}\n";
@@ -475,7 +475,7 @@ public class TestConverter {
             screenshot = true;
             softAsserts = "}catch(Throwable e){\n"
                     + "String statusScreen = selenium.captureScreenshotToString();\n"
-                    + "String directory = Properties.getScreenshotDirectory();\n"
+                    + "String directory = getScreenshotDirectory();\n"
                     + "if (!File.separator.equals(directory.charAt(directory.length() - 1))) {\n"
                     + "directory = directory + File.separator;\n}\n"
                     + "File target = new File(directory + \"errors\");\n"

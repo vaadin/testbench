@@ -24,8 +24,10 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
     private static int imageNumber = 0;
     private static String testCaseName = "";
     private static List<junit.framework.AssertionFailedError> softAssert = new LinkedList<junit.framework.AssertionFailedError>();
-    private static BrowserDimensions dimensions = null;
-    private static BrowserVersion browser = null;
+
+    private BrowserDimensions browserDimensions = null;
+    private BrowserVersion browserVersion = null;
+
     private static final int maxAmountOfTests = 2;
 
     protected ImageComparison compare = new ImageComparison();
@@ -64,9 +66,8 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
     public boolean validateScreenshot(String fileId, double d, String identifier) {
 
         // If browser is not set get browser info.
-        if (browser == null) {
-            browser = BrowserUtil.getBrowserVersion(selenium);
-        }
+        BrowserVersion browser = getBrowserVersion();
+
         String navigatorId = browser.getIdentifier();
 
         // setup filename
@@ -86,10 +87,10 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
         long startScreenshot = System.currentTimeMillis();
 
         boolean result = false;
-        
+
         // Small pause to give components a bit of render time
         pause(screenshotPause);
-        
+
         // Actually capture the screen
         String image = selenium.captureScreenshotToString();
 
@@ -101,19 +102,14 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
             Assert.fail("Got a screenshot String with length 0.");
         }
 
-        // check that we have browserDimensions
-        // if this fails do Assert.fail
-        if (dimensions == null) {
-            getCanvasPosition();
-            if (dimensions == null) {
-                Assert.fail("Couldn't get browser dimensions.");
-            }
-        }
+        // Get the dimensions of the browser window and canvas
+        BrowserDimensions dimensions = getBrowserDimensions();
 
         // If browser is IE we can check that no top bars have been shown.
         // If one has been we can correct the cropping dimensions.
-        if (browser.isIE()) {
-            int yPosition = BrowserUtil.canvasYPosition(selenium, browser);
+        if (getBrowserVersion().isIE()) {
+            int yPosition = BrowserUtil.canvasYPosition(selenium,
+                    getBrowserVersion());
             if ((yPosition + 2) != dimensions.getCanvasYPosition()) {
                 // Add difference in height to canvasHeight
                 dimensions.setCanvasHeight(BrowserUtil
@@ -235,14 +231,18 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
                 requestedCanvasHeight);
     }
 
-    public void getCanvasPosition() {
-        // clear for new test.
-        imageNumber = 0;
-        softAssert.clear();
-
-        browser = BrowserUtil.getBrowserVersion(selenium);
-
-        dimensions = BrowserDimensions.getBrowserDimensions(browser, selenium);
+    public BrowserDimensions getBrowserDimensions() {
+        if (browserDimensions == null) {
+            browserDimensions = BrowserDimensions.getBrowserDimensions(
+                    getBrowserVersion(), selenium);
+            if (Parameters.isDebug()) {
+                System.err.println("Calculating browser dimensions..");
+            }
+            if (browserDimensions == null) {
+                Assert.fail("Couldn't get browser dimensions.");
+            }
+        }
+        return browserDimensions;
     }
 
     /**
@@ -323,5 +323,19 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
             selenium = null;
         }
         super.tearDown();
+    }
+
+    protected BrowserVersion getBrowserVersion() {
+        if (browserVersion == null) {
+            if (Parameters.isDebug()) {
+                System.err.println("Fetching browser version...");
+            }
+            browserVersion = BrowserUtil.getBrowserVersion(selenium);
+        }
+        return browserVersion;
+    }
+
+    protected String getScreenshotDirectory() {
+        return Parameters.getScreenshotDirectory();
     }
 }
