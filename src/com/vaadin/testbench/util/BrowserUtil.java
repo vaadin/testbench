@@ -25,16 +25,19 @@ public class BrowserUtil {
             }
         }
         try {
-
             int outerWidth = Integer.parseInt(selenium.getEval(window
                     + ".outerWidth"));
             int innerWidth = Integer.parseInt(selenium
                     .getEval("window.innerWidth;"));
-            int pageXOffset = Integer.parseInt(selenium
-                    .getEval("window.pageXOffset;"));
-            int screenLeftOffset = (outerWidth - innerWidth) / 2;
 
-            return screenLeftOffset + pageXOffset;
+            int horizontalDecorations = outerWidth - innerWidth;
+
+            int screenXOffset = Integer.parseInt(selenium
+                    .getEval("window.screenX;"));
+
+            int screenLeftOffset = horizontalDecorations / 2 + screenXOffset;
+
+            return screenLeftOffset;
         } catch (Exception e) {
             // Probably bad guess but this should never be reached
             return 0;
@@ -62,10 +65,8 @@ public class BrowserUtil {
             int screenHeight = Integer.parseInt(selenium
                     .getEval("screen.availHeight;"));
             int canvasHeight = getCanvasHeight(selenium);
-            int pageYOffset = Integer.parseInt(selenium
-                    .getEval("window.pageYOffset;"));
 
-            return screenHeight - canvasHeight + pageYOffset;
+            return screenHeight - canvasHeight;
         } catch (Exception e) {
             // Really bad guess but this should never be reached
             return 0;
