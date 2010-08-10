@@ -103,7 +103,7 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
         }
 
         // Get the dimensions of the browser window and canvas
-        BrowserDimensions dimensions = getBrowserDimensions();
+        BrowserDimensions dimensions = getBrowserAndCanvasDimensions();
 
         // If browser is IE we can check that no top bars have been shown.
         // If one has been we can correct the cropping dimensions.
@@ -231,7 +231,7 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
                 requestedCanvasHeight);
     }
 
-    public BrowserDimensions getBrowserDimensions() {
+    public BrowserDimensions getBrowserAndCanvasDimensions() {
         if (browserDimensions == null) {
             browserDimensions = BrowserDimensions.getBrowserDimensions(
                     getBrowserVersion(), selenium);

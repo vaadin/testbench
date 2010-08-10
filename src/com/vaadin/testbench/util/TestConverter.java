@@ -79,7 +79,7 @@ public class TestConverter {
 
     private static String windowInitFunctions = "doCommand(\"windowMaximize\", new String[] { \"\" });\n"
             + "doCommand(\"windowFocus\", new String[] { \"\" });\n"
-            + "getCanvasPosition();\n";;
+            + "getBrowserAndCanvasDimensions();\n";;
 
     public static void main(String[] args) throws Exception {
         if (args.length < 3) {
