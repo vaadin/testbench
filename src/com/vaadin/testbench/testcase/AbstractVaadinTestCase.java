@@ -311,7 +311,6 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
         }
 
         testBase.setHubAddress(remoteControlHostName);
-        testBase.setCanvasSize(requestedCanvasWidth, requestedCanvasHeight);
         testBase.setUp(deploymentUrl, browserIdentifier);
         selenium = testBase.getVaadinSelenium();
     }
@@ -335,7 +334,14 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
         return browserVersion;
     }
 
-    protected String getScreenshotDirectory() {
-        return Parameters.getScreenshotDirectory();
+    protected String getScreenshotDirectory() throws IllegalArgumentException {
+        String dir = Parameters.getScreenshotDirectory();
+        if (dir == null) {
+            throw new IllegalArgumentException(
+                    "Missing reference directory definition. Use -D"
+                            + Parameters.SCREENSHOT_DIRECTORY + "=<directory> ");
+        }
+
+        return dir;
     }
 }
