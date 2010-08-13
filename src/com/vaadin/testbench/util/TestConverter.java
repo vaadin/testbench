@@ -812,6 +812,8 @@ public class TestConverter {
 
                 // Workaround for #5295
                 // javaSource.append("pause(200);");
+                javaSource
+                        .append("doCommand(\"waitForVaadin\",new String[] {\"\",\"\"});\n");
             } else {
                 writeDoCommand(command, javaSource);
             }

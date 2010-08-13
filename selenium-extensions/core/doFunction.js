@@ -57,6 +57,7 @@ Selenium.prototype.doScreenCapture = function(locator, value){
 
 /*Enters a characte so that it gets recognized in comboboxes etc.*/
 Selenium.prototype.doEnterCharacter = function(locator, value){
+	var start =  new Date().getTime();
 	var element = this.browserbot.findElement(locator);
     if (this.browserbot.shiftKeyDown) {
         value = new String(value).toUpperCase();
@@ -91,6 +92,13 @@ Selenium.prototype.doEnterCharacter = function(locator, value){
 		for(i = 0; i < value.length;i++){
 			this.doKeyDown(locator, value.charAt(i));
 			this.doKeyUp(locator, value.charAt(i));
+			
+			var end = new Date().getTime();
+			var time = end - start;
+			// If typing takes over 24000ms, break and continue test.
+			if(time > 24000){
+				break;
+			}
 		}
 	}else{
 		this.doKeyDown(locator, value);
