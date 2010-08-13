@@ -84,6 +84,9 @@ Selenium.prototype.doEnterCharacter = function(locator, value){
     } else {
         element.value = actualValue;
     }
+
+    value = value.replace(/\n/g, "");
+
 	if(value.length > 1){
 		for(i = 0; i < value.length;i++){
 			this.doKeyDown(locator, value.charAt(i));
@@ -286,9 +289,9 @@ Selenium.prototype.doDrop = function(locator, value){
 	var element = this.browserbot.findElement(locator);
 	var clientXY = getClientXY(element, value);
 
+	this.browserbot.triggerMouseEvent(element, 'mousemove', true, clientXY[0]-1, clientXY[1]-1);
+	this.browserbot.triggerMouseEvent(element, 'mousemove', true, clientXY[0], clientXY[1]);
 	this.browserbot.triggerMouseEvent(element, 'mouseover', true, clientXY[0], clientXY[1]);
-	this.browserbot.triggerMouseEvent(element, 'mousemove', true, clientXY[0], clientXY[1]);
-	this.browserbot.triggerMouseEvent(element, 'mousemove', true, clientXY[0], clientXY[1]);
 	this.browserbot.triggerMouseEvent(element, 'mouseup', true, clientXY[0], clientXY[1]);
 };
 

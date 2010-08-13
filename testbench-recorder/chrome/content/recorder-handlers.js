@@ -402,9 +402,8 @@ var clicked = false;
 //Recorder.removeEventHandler('clickLocator');
 
 Recorder.addEventHandler('clickLocator', 'click', function(event){
-	
-		if (mousedown && (new RegExp("v-slider")).test(dragElement.className) && 
-				(Math.abs(event.clientX - clX) >= 10 || Math.abs(event.clientY - clY) >= 10)) {
+
+		if (slider) {
 			
 			var x = editor.seleniumAPI.Selenium.prototype.getElementPositionLeft(dragElement) - mousedownX;
 		    var y = editor.seleniumAPI.Selenium.prototype.getElementPositionTop(dragElement) - mousedownY;
@@ -412,6 +411,7 @@ Recorder.addEventHandler('clickLocator', 'click', function(event){
 			this.record("dragAndDrop", dragTarget, x + ',' + y );
 			
 			mousedown = false;
+			slider = false;
 			dragTarget = null;
 			mousedownX = 0;
 			mousedownY = 0;
@@ -666,7 +666,8 @@ var dragElement = null;
 Recorder.addEventHandler('mouseDownEvent', 'mousedown', function(event){
 		if(Recorder.changeSelection=="false"){
 			dragElement = event.target;
-			
+		    slider = (new RegExp("v-slider")).test(dragElement.className);
+		    
 		    mousedown = true;
 			dragTarget = this.findLocators(dragElement);
 		    mousedownX = editor.seleniumAPI.Selenium.prototype.getElementPositionLeft(dragElement);
@@ -684,17 +685,13 @@ Recorder.addEventHandler('mouseUpEvent', 'mouseup', function(event){
         	if (target != null && target.nodeType == 3) {
         		target = target.parentNode;
         	}
+	
+   			var x = event.clientX - editor.seleniumAPI.Selenium.prototype.getElementPositionLeft(target);
+            var y = event.clientY - editor.seleniumAPI.Selenium.prototype.getElementPositionTop(target);
 
-//        	if (Math.abs(editor.seleniumAPI.Selenium.prototype.getElementPositionLeft(target)-mousedownX) >= 10 || 
-//        			Math.abs(editor.seleniumAPI.Selenium.prototype.getElementPositionTop(target)-mousedownY) >= 10){
-            	
-   			 	var x = event.clientX - editor.seleniumAPI.Selenium.prototype.getElementPositionLeft(target);
-                var y = event.clientY - editor.seleniumAPI.Selenium.prototype.getElementPositionTop(target);
-
-             	this.record("drag", dragTarget, '');
-             	this.record("drop", this.findLocators(target), x + ',' + y);
-             	mousedrag = false;
-//            }
+            this.record("drag", dragTarget, '');
+            this.record("drop", this.findLocators(target), x + ',' + y);
+            mousedrag = false;
 		}
 		// Clear all mouse down targets.
 		dragElement = null;
