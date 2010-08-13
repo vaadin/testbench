@@ -294,7 +294,8 @@ Recorder.addEventHandler('contextmenu', 'contextmenu', function(event) {
 });
 
 var charBuffer = "";
-var typeString = "true";
+var typeString = true;
+var recordEnter = false;
 
 /* Checks keyCodes on keydown event and adds a pressSpecialKey if confirmed. */
 Recorder.addEventHandler('pressSpecialKey', 'keydown', function(event){
@@ -320,8 +321,12 @@ Recorder.addEventHandler('pressSpecialKey', 'keydown', function(event){
 //			break;
 		case 13:
 			this.log.debug('pressed ENTER!');
-			typeString = "false";
-			this.record("pressSpecialKey", this.findLocators(event.target),  "enter");
+			typeString = false;
+			if(charBuffer.length == 0){
+				this.record("pressSpecialKey", this.findLocators(event.target),  "enter");
+			} else {
+				recordEnter = true;
+			}
 			break;
 		case 37: 
 			this.log.debug('pressed LEFT!');
@@ -375,7 +380,7 @@ Recorder.addEventHandler('type', 'change', function(event) {
 	var target = this.findLocators(event.target);
 	if (('input' == tagName && ('text' == type || 'password' == type || 'file' == type)) ||
 		'textarea' == tagName) {
-		if(typeString == "true"){
+		if(typeString){
 
 			if(charBuffer.length > 0){
 				charBuffer = "";
@@ -384,10 +389,14 @@ Recorder.addEventHandler('type', 'change', function(event) {
 				this.record("type", target, event.target.value);
 			}
 		}else{
-			typeString = "true";
+			typeString = true;
 			if(charBuffer.length > 0){
 				charBuffer = "";
 				this.record("enterCharacter", target, event.target.value);
+				if(recordEnter){
+					recordEnter = false;
+					this.record("pressSpecialKey", this.findLocators(event.target),  "enter");
+				}
 			}
 		}
 	}
