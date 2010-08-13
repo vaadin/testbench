@@ -32,6 +32,8 @@ public class Parameters {
             + "tester.host";
     public static final String DEPLOYMENT_URL = BASE_PACKAGE + "deployment.url";
     private static final String TEST_FILE_ENCODING = BASE_PACKAGE + "encoding";
+    private static final String PARAMETER_FILE = BASE_PACKAGE
+            + "converter.parameterFile";
 
     public static boolean isDebug() {
         return ("true".equalsIgnoreCase(System.getProperty(DEBUG)));
@@ -92,5 +94,14 @@ public class Parameters {
         }
 
         return browserString.split(",");
+    }
+
+    public static boolean hasParameterFile() {
+        return System.getProperty(PARAMETER_FILE) != null
+                && System.getProperty(PARAMETER_FILE).length() > 0;
+    }
+
+    public static String getParameterFile() {
+        return System.getProperty(PARAMETER_FILE);
     }
 }

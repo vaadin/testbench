@@ -282,9 +282,8 @@ public class TestConverter {
                             TestBenchHTMLFile, testFile.getParentFile()
                                     .getAbsolutePath());
 
-                    List<String> combined = ParserFunctions.combineTests(
-                            result.getSuiteTests(),
-                            getTestName(testFile.getName()),
+                    List<String> combined = ParserFunctions.combineTests(result
+                            .getSuiteTests(), getTestName(testFile.getName()),
                             testFile.getAbsolutePath());
                     if (combined.size() == 1) {
                         return combined.get(0);
@@ -325,8 +324,8 @@ public class TestConverter {
         filePath = f.getParent();
         if (filePath == null) {
             filePath = "";
-        } else if (!File.separator
-                .equals(filePath.charAt(filePath.length() - 1))) {
+        } else if (!File.separator.equals(filePath
+                .charAt(filePath.length() - 1))) {
             filePath = filePath + File.separator;
         }
         absoluteFilePath = f.getAbsolutePath();
@@ -387,8 +386,8 @@ public class TestConverter {
         fis.close();
 
         htmlSource = htmlSource.replace("\"", "\\\"")
-                .replaceAll("\\n", "\\\\n").replace("'", "\\'")
-                .replaceAll("\\r", "");
+                .replaceAll("\\n", "\\\\n").replace("'", "\\'").replaceAll(
+                        "\\r", "");
 
         Context cx = Context.enter();
         try {
@@ -812,7 +811,7 @@ public class TestConverter {
                 javaSource.append("}");
 
                 // Workaround for #5295
-                javaSource.append("pause(200);");
+                // javaSource.append("pause(200);");
             } else {
                 writeDoCommand(command, javaSource);
             }
@@ -829,19 +828,25 @@ public class TestConverter {
         javaSource.append(command.getCmd());
         javaSource.append("\",new String[] {");
 
+        String locator = "";
+        String value = "";
+
         boolean first = true;
         for (String param : command.getParams()) {
-            if (!first) {
-                javaSource.append(",");
+            if (first) {
+                /* get locator */
+                locator = param.replace("\\", "\\\\");
+            } else {
+                /* get target */
+                value = param.replace("\\", "\\\\");
             }
-            first = false;
 
-            javaSource.append("\"");
-            javaSource.append(param.replace("\"", "\\\"").replaceAll("\\n",
-                    "\\\\n"));
-            javaSource.append("\"");
+            first = false;
         }
-        javaSource.append("});\n");
+
+        javaSource.append("\"" + locator);
+        javaSource.append("\",\"" + ParameterUtil.getInstance().get(value));
+        javaSource.append("\"});\n");
     }
 
     private static File getFile(String test, File buildPath) {
@@ -866,10 +871,11 @@ public class TestConverter {
         List<Command> commands = new ArrayList<Command>();
 
         cx.evaluateString(scope, "function load(a){}", "dummy-load", 1, null);
-        cx.evaluateString(
-                scope,
-                "this.log = [];this.log.info = function log() {}; var log = this.log;",
-                "dummy-log", 1, null);
+        cx
+                .evaluateString(
+                        scope,
+                        "this.log = [];this.log.info = function log() {}; var log = this.log;",
+                        "dummy-log", 1, null);
 
         loadScript("tools.js", scope, cx);
         loadScript("xhtml-entities.js", scope, cx);
@@ -946,8 +952,8 @@ public class TestConverter {
             filePath = target.getParent();
             if (filePath == null) {
                 filePath = "";
-            } else if (!File.separator
-                    .equals(filePath.charAt(filePath.length() - 1))) {
+            } else if (!File.separator.equals(filePath
+                    .charAt(filePath.length() - 1))) {
                 filePath = filePath + File.separator;
             }
             absoluteFilePath = target.getAbsolutePath();
@@ -959,9 +965,8 @@ public class TestConverter {
                 fis.close();
 
                 // sanitize source
-                htmlSource = htmlSource.replace("\"", "\\\"")
-                        .replaceAll("\\n", "\\\\n").replace("'", "\\'")
-                        .replaceAll("\\r", "");
+                htmlSource = htmlSource.replace("\"", "\\\"").replaceAll("\\n",
+                        "\\\\n").replace("'", "\\'").replaceAll("\\r", "");
 
                 Context cx = Context.enter();
 
