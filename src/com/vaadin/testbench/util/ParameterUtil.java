@@ -1,6 +1,7 @@
 package com.vaadin.testbench.util;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
 
@@ -19,7 +20,7 @@ public class ParameterUtil {
         // Exists so class can't be instantiated.
     }
 
-    public static ParameterUtil getInstance() {
+    public static ParameterUtil getInstance() throws FileNotFoundException {
         if (_parameter == null) {
             _parameter = new ParameterUtil();
             _parameter.initParameter();
@@ -30,8 +31,10 @@ public class ParameterUtil {
 
     /**
      * Initialize properties and load properties file if available
+     * 
+     * @throws FileNotFoundException
      */
-    private void initParameter() {
+    private void initParameter() throws FileNotFoundException {
         properties = new Properties();
 
         if (Parameters.hasParameterFile()) {
@@ -41,7 +44,7 @@ public class ParameterUtil {
                 properties.load(in);
                 in.close();
             } catch (IOException ioe) {
-                System.err.println("Properties file "
+                throw new FileNotFoundException("Properties file "
                         + Parameters.getParameterFile() + " was not found");
             }
         }

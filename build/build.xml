@@ -101,6 +101,7 @@
 <!--			<fileset dir=".." includes="lib/js.jar lib/junit*.jar" excludes="lib/**-source* lib/**-src*" />-->
 			<zipfileset dir=".." includes="example/test.xml" prefix="${package.root}" />
 			<zipfileset dir=".." includes="example/testscripts/*.html" prefix="${package.root}" />
+			<zipfileset dir=".." includes="example/parameters/*.properties" prefix="${package.root}" />
 			<!-- Add documentation -->
 			<zipfileset dir="../doc" prefix="${package.root}/documentation">
 				<include name="*.pdf" />

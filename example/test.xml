@@ -17,6 +17,9 @@
 
 	<!-- Base directory for screenshots. References are stored in reference/, errors in error/ -->
 	<property name="com.vaadin.testbench.screenshot.directory" value="screenshots" />
+	
+	<!-- If softfail is true the test will not brak due to a screenshot being fault and will fail only at end of test. -->
+	<property name="com.vaadin.testbench.screenshot.softfail" value="true" />
 
 	<!-- classpath must include test bench jar and its dependencies -->
 	<path id="classpath">
@@ -43,7 +46,9 @@
 		<echo>Using test scripts: ${testfiles}</echo>
 		<java classname="com.vaadin.testbench.util.TestConverter" classpathref="classpath" failonerror="true">
 			<sysproperty key="com.vaadin.testbench.screenshot.onfail" value="false"/>
-			<sysproperty key="com.vaadin.testbench.converter.parameterFile" value="" />
+			<!-- Uncomment below sysproperty to run test with different value parameter.	-->
+			<!-- Wanted parameters for each test should be in the same file.				-->
+			<!-- <sysproperty key="com.vaadin.testbench.converter.parameterFile" value="parameters/NewParameters.properties" /> -->
 			<arg value="${temp-dir}/src" />
 			<arg value="${browsers}" />
 			<arg line="${testfiles}" />
@@ -83,6 +88,8 @@
 			<jvmarg value="-Dcom.vaadin.testbench.tester.host=${com.vaadin.testbench.tester.host}" />
 			<jvmarg value="-Dcom.vaadin.testbench.deployment.url=${com.vaadin.testbench.deployment.url}" />
 			<jvmarg value="-Dcom.vaadin.testbench.screenshot.directory=${com.vaadin.testbench.screenshot.directory}" />
+			
+			<jvmarg value="-Dcom.vaadin.testbench.screenshot.softfail=${com.vaadin.testbench.screenshot.softfail}" />
 
 			<batchtest>
 				<fileset dir="${temp-dir}/src">

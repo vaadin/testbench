@@ -87,6 +87,13 @@ public class TestConverter {
                     + " <output directory> <browsers> <html test files>");
             System.exit(1);
         }
+        try {
+            // init ParameterUtil
+            ParameterUtil.getInstance();
+        } catch (FileNotFoundException fnfe) {
+            fnfe.printStackTrace();
+            System.exit(1);
+        }
 
         String outputDirectory = args[0];
         String browsers[] = args[1].split(",");
@@ -403,7 +410,7 @@ public class TestConverter {
     }
 
     private static String createTestCaseMethod(String testName,
-            List<Command> commands) {
+            List<Command> commands) throws FileNotFoundException {
         screenshot = false;
         firstScreenshot = true;
         String testCaseHeader = getTestCaseHeader(testName);
@@ -535,7 +542,7 @@ public class TestConverter {
     }
 
     private static String convertTestCaseToJava(List<Command> commands,
-            String testName) {
+            String testName) throws FileNotFoundException {
         StringBuilder javaSource = new StringBuilder();
 
         for (Command command : commands) {
@@ -823,7 +830,8 @@ public class TestConverter {
         return javaSource.toString();
     }
 
-    private static void writeDoCommand(Command command, StringBuilder javaSource) {
+    private static void writeDoCommand(Command command, StringBuilder javaSource)
+            throws FileNotFoundException {
         javaSource.append("cmd.setCommand(\"" + command.getCmd()
                 + "\", \"\");\n");
         javaSource.append("doCommand(\"");
