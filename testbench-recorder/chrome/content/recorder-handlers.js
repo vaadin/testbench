@@ -345,7 +345,7 @@ Recorder.addEventHandler('pressSpecialKey', 'keydown', function(event){
 			this.record("pressSpecialKey", this.findLocators(event.target), target + "down");
 		}
 		
-	});
+	}, { capture: true });
 
 /* record all keypresses to character buffer */
 Recorder.addEventHandler('keyPressedDown', 'keypress', function(event){
