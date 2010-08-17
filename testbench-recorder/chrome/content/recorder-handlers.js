@@ -145,6 +145,7 @@ var previousTop = 0;
 var previousLeft = 0;
 
 Recorder.addEventHandler('scroll', 'scroll', function(event) {
+	noDnd = true;
 	if(event.target && event.target.wrappedJSObject) {
 		var elem  = event.target.wrappedJSObject;
 		if(elem.onscroll || elem.scrollIntoView) {
@@ -585,6 +586,7 @@ var slider = false;
 var split = false;
 var dragTarget = null;
 var dragElement = null;
+var noDnd = false;
 
 // save element, it's locator and mouse targets for checking if we have a drag event
 Recorder.addEventHandler('mouseDownEvent', 'mousedown', function(event){
@@ -617,7 +619,9 @@ Recorder.addEventHandler('mouseDownEvent', 'mousedown', function(event){
 
 // if we have a mouse down and have moved the mouse more than 10px horizontally or vertically then do a drag and drop event
 Recorder.addEventHandler('mouseUpEvent', 'mouseup', function(event){
-		if (mousedown && (Math.abs(clX-event.clientX) >= 10 || Math.abs(clY-event.clientY))) {
+		if(noDnd){
+			noDnd = false;
+		} else if (mousedown && (Math.abs(clX-event.clientX) >= 10 || Math.abs(clY-event.clientY))) {
 			
         	var target =  dragElement.ownerDocument.elementFromPoint(event.clientX, event.clientY);
         	if (target != null && target.nodeType == 3) {
