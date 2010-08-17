@@ -215,8 +215,8 @@ BrowserBot.prototype.triggerMouseEvent = function(element, eventType, canBubble,
     var screenY = 0;
 
     canBubble = (typeof(canBubble) == undefined) ? true : canBubble;
-    if (element.fireEvent && element.ownerDocument && element.ownerDocument.createEventObject) { //IE
-        var evt = createEventObject(element, this.controlKeyDown, this.altKeyDown, this.shiftKeyDown, this.metaKeyDown);
+    if (element.fireEvent && element.ownerDocument && element.ownerDocument.createEventObject && document.createEventObject) { //IE
+        var evt = document.createEventObject(element, this.controlKeyDown, this.altKeyDown, this.shiftKeyDown, this.metaKeyDown);
         evt.detail = 0;
         evt.button = button ? button : 1; // default will be the left mouse click ( http://www.javascriptkit.com/jsref/event.shtml )
         evt.relatedTarget = null;
@@ -235,6 +235,9 @@ BrowserBot.prototype.triggerMouseEvent = function(element, eventType, canBubble,
             // set attributes on the event (e.g., clientX).
             try {
                 window.event = evt;
+           		window.event.shiftKey = this.shiftKeyDown;
+            	window.event.ctrlKey = this.controlKeyDown;
+            	window.event.altKey = this.altKeyDown;
             }
             catch(e) {
                 // getting an "Object does not support this action or property" error.  Save the event away
@@ -245,6 +248,7 @@ BrowserBot.prototype.triggerMouseEvent = function(element, eventType, canBubble,
                 selenium.browserbot.getCurrentWindow().selenium_event = evt;
             }
             element.fireEvent('on' + eventType, evt);
+            
         }
     }
     else {
