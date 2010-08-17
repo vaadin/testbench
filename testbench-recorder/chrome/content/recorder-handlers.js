@@ -15,18 +15,6 @@
  */
 
 /*
- * type
- */
-//Recorder.addEventHandler('type', 'change', function(event) {
-//		var tagName = event.target.tagName.toLowerCase();
-//		var type = event.target.type;
-//		if (('input' == tagName && ('text' == type || 'password' == type || 'file' == type)) ||
-//			'textarea' == tagName) {
-//			this.record("type", this.findLocators(event.target), event.target.value);
-//		}
-//	});
-
-/*
  * select / addSelection / removeSelection
  */
 Recorder.addEventHandler('selectFocus', 'focus', function(event) {
@@ -76,85 +64,6 @@ Recorder.prototype.getOptionLocator = function(option) {
         return "label=" + label;
     }
 }
-
-//Recorder.addEventHandler('select', 'change', function(event) {
-//		var tagName = event.target.tagName.toLowerCase();
-//		if ('select' == tagName) {
-//			if (!event.target.multiple) {
-//                var option = event.target.options[event.target.selectedIndex];
-//				this.log.debug('selectedIndex=' + event.target.selectedIndex);
-//				this.record("select", this.findLocators(event.target), this.getOptionLocator(option));
-//			} else {
-//				this.log.debug('change selection on select-multiple');
-//				var options = event.target.options;
-//				for (var i = 0; i < options.length; i++) {
-//					this.log.debug('option=' + i + ', ' + options[i].selected);
-//					if (options[i]._wasSelected == null) {
-//						this.log.warn('_wasSelected was not recorded');
-//					}
-//					if (options[i]._wasSelected != options[i].selected) {
-//                        var value = this.getOptionLocator(options[i]);
-//						if (options[i].selected) {
-//							this.record("addSelection", this.findLocators(event.target), value);
-//						} else {
-//							this.record("removeSelection", this.findLocators(event.target), value);
-//						}
-//						options[i]._wasSelected = options[i].selected;
-//					}
-//				}
-//			}
-//		}
-//	});
-//
-//Recorder.addEventHandler('clickLocator', 'click', function(event) {
-//		if (event.button == 0) {
-//			var clickable = this.findClickableElement(event.target);
-//			if (clickable) {
-//                // prepend any required mouseovers. These are defined as
-//                // handlers that set the "mouseoverLocator" attribute of the
-//                // interacted element to the locator that is to be used for the
-//                // mouseover command. For example:
-//                //
-//                // Recorder.addEventHandler('mouseoverLocator', 'mouseover', function(event) {
-//                //     var target = event.target;
-//                //     if (target.id == 'mmlink0') {
-//                //         this.mouseoverLocator = 'img' + target._itemRef;
-//                //     }
-//                //     else if (target.id.match(/^mmlink\d+$/)) {
-//                //         this.mouseoverLocator = 'lnk' + target._itemRef;
-//                //     }
-//                // }, { alwaysRecord: true, capture: true });
-//                //
-//                if (this.mouseoverLocator) {
-//                    this.record('mouseOver', this.mouseoverLocator, '');
-//                    delete this.mouseoverLocator;
-//                }
-//                this.record("click", this.findLocators(event.target), '');
-//            } else {
-//                var target = event.target;
-//                this.callIfMeaningfulEvent(function() {
-//                        this.record("click", this.findLocators(target), '');
-//                    });
-//            }
-//		}
-//	}, { capture: true });
-//
-//Recorder.prototype.findClickableElement = function(e) {
-//	if (!e.tagName) return null;
-//	var tagName = e.tagName.toLowerCase();
-//	var type = e.type;
-//	if (e.hasAttribute("onclick") || e.hasAttribute("href") || tagName == "button" ||
-//		(tagName == "input" && 
-//		 (type == "submit" || type == "button" || type == "image" || type == "radio" || type == "checkbox" || type == "reset"))) {
-//		return e;
-//	} else {
-//		if (e.parentNode != null) {
-//			return this.findClickableElement(e.parentNode);
-//		} else {
-//			return null;
-//		}
-//	}
-//}
 
 // remember clicked element to be used in CommandBuilders
 Recorder.addEventHandler('rememberClickedElement', 'mousedown', function(event) {
@@ -252,22 +161,12 @@ Recorder.addEventHandler('scroll', 'scroll', function(event) {
 				if(previousLeft != left){
 					s.record("scrollLeft", loc, left);
 					previousLeft = left;
-					// Move index one back so that we get the pause before waitForVaadin
-//					var index = tree.getRecordIndex() - 1;
-//					tree.selection.select(index);
-					// wait for lazy scroller to start possible server visit
 					s.record_orig("pause", "300");
-//					tree.selection.select(index+2);
 				}
 				if(previousTop != top){
 					s.record("scroll", loc , top);
 					previousTop = top;
-					// Move index one back so that we get the pause before waitForVaadin
-//					var index = tree.getRecordIndex() - 1;
-//					tree.selection.select(index);
-					// wait for lazy scroller to start possible server visit
 					s.record_orig("pause", "300");
-//					tree.selection.select(index+2);
 				}
 				s._scrollTimeout = null;
 			},260);
@@ -404,14 +303,13 @@ Recorder.addEventHandler('type', 'change', function(event) {
 
 var noSelection = true;
 var clicked = false;
-
-
-
-/* override default click event recorder */
-//Recorder.removeEventHandler('clickLocator');
+var cancelClick = false;
 
 Recorder.addEventHandler('clickLocator', 'click', function(event){
-
+		if(cancelClick){
+			cancelClick = false;
+			return;
+		}
 		if (slider) {
 			
 			var x = editor.seleniumAPI.Selenium.prototype.getElementPositionLeft(dragElement) - mousedownX;
@@ -419,14 +317,10 @@ Recorder.addEventHandler('clickLocator', 'click', function(event){
 		    
 			this.record("dragAndDrop", dragTarget, x + ',' + y );
 			
-			mousedown = false;
-			slider = false;
-			dragTarget = null;
-			mousedownX = 0;
-			mousedownY = 0;
-			dragElement = null;
-			clX = 0;
-			clY = 0;
+			mousedown = slider = split = false;
+			mousedownX = mousedownY = 0;
+			dragTarget = dragElement = null;
+			clX = clY = 0;
 			
 			return;
 		} else if (mousedown) {
@@ -688,14 +582,29 @@ var clX = 0;
 var clY = 0;
 var mousedown = false;
 var slider = false;
+var split = false;
 var dragTarget = null;
 var dragElement = null;
 
 // save element, it's locator and mouse targets for checking if we have a drag event
 Recorder.addEventHandler('mouseDownEvent', 'mousedown', function(event){
-		if(Recorder.changeSelection=="false"){
+		if(split){
+			var x = editor.seleniumAPI.Selenium.prototype.getElementPositionLeft(dragElement) - mousedownX;
+		    var y = editor.seleniumAPI.Selenium.prototype.getElementPositionTop(dragElement) - mousedownY;
+		    
+			this.record("dragAndDrop", dragTarget, x + ',' + y );
+			
+			mousedown = slider = split = false;
+			mousedownX = mousedownY = 0;
+			dragTarget = dragElement = null;
+			clX = clY = 0;
+			cancelClick = true;
+			
+			return;
+		} else if(Recorder.changeSelection=="false"){
 			dragElement = event.target;
 		    slider = (new RegExp("v-slider")).test(dragElement.className);
+		    split = (new RegExp("splitter")).test(dragElement.parentNode.className) && (new RegExp("v-splitpanel")).test(dragElement.parentNode.className);
 		    
 		    mousedown = true;
 			dragTarget = this.findLocators(dragElement);
@@ -723,11 +632,9 @@ Recorder.addEventHandler('mouseUpEvent', 'mouseup', function(event){
             mousedrag = false;
 		}
 		// Clear all mouse down targets.
-		dragElement = null;
-		dragTarget = null;
+		dragElement = dragTarget = null;
 		mousedown = false;
-		mousedownX = 0;
-		mousedownY = 0;
+		mousedownX = mousedownY = 0;
 	}, { capture: true });
 
 
