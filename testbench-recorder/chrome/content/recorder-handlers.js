@@ -575,7 +575,7 @@ Recorder.addEventHandler('clickLocator', 'click', function(event){
 	        } else {
 	            var target = event.target;
 	            /* Record all clicks inside div elements */
-	            if(event.target.nodeName.toLowerCase() == "div"){
+	            if(event.target.nodeName.toLowerCase() == "div" || event.target.nodeName.toLowerCase() == "span"){
        				this.record("mouseClick", this.findLocators(target), x + ',' + y + specials);
 	            }
 	        }
