@@ -307,24 +307,7 @@ var clicked = false;
 var cancelClick = false;
 
 Recorder.addEventHandler('clickLocator', 'click', function(event){
-		if(cancelClick){
-			cancelClick = false;
-			return;
-		}
-		if (slider) {
-			
-			var x = editor.seleniumAPI.Selenium.prototype.getElementPositionLeft(dragElement) - mousedownX;
-		    var y = editor.seleniumAPI.Selenium.prototype.getElementPositionTop(dragElement) - mousedownY;
-		    
-			this.record("dragAndDrop", dragTarget, x + ',' + y );
-			
-			mousedown = slider = split = false;
-			mousedownX = mousedownY = 0;
-			dragTarget = dragElement = null;
-			clX = clY = 0;
-			
-			return;
-		} else if (mousedown) {
+		if (mousedown) {
 			mousedown = false;
 		}
 
@@ -590,20 +573,7 @@ var noDnd = false;
 
 // save element, it's locator and mouse targets for checking if we have a drag event
 Recorder.addEventHandler('mouseDownEvent', 'mousedown', function(event){
-		if(split){
-			var x = editor.seleniumAPI.Selenium.prototype.getElementPositionLeft(dragElement) - mousedownX;
-		    var y = editor.seleniumAPI.Selenium.prototype.getElementPositionTop(dragElement) - mousedownY;
-		    
-			this.record("dragAndDrop", dragTarget, x + ',' + y );
-			
-			mousedown = slider = split = false;
-			mousedownX = mousedownY = 0;
-			dragTarget = dragElement = null;
-			clX = clY = 0;
-			cancelClick = true;
-			
-			return;
-		} else if(Recorder.changeSelection=="false"){
+		if(Recorder.changeSelection=="false"){
 			dragElement = event.target;
 		    slider = (new RegExp("v-slider")).test(dragElement.className);
 		    split = (new RegExp("splitter")).test(dragElement.parentNode.className) && (new RegExp("v-splitpanel")).test(dragElement.parentNode.className);
@@ -621,6 +591,14 @@ Recorder.addEventHandler('mouseDownEvent', 'mousedown', function(event){
 Recorder.addEventHandler('mouseUpEvent', 'mouseup', function(event){
 		if(noDnd){
 			noDnd = false;
+		} else if (slider || split) {
+			
+			var x = editor.seleniumAPI.Selenium.prototype.getElementPositionLeft(dragElement) - mousedownX;
+		    var y = editor.seleniumAPI.Selenium.prototype.getElementPositionTop(dragElement) - mousedownY;
+		    
+			this.record("dragAndDrop", dragTarget, x + ',' + y );
+			
+			return;
 		} else if (mousedown && (Math.abs(clX-event.clientX) >= 10 || Math.abs(clY-event.clientY))) {
 			
         	var target =  dragElement.ownerDocument.elementFromPoint(event.clientX, event.clientY);
@@ -636,8 +614,10 @@ Recorder.addEventHandler('mouseUpEvent', 'mouseup', function(event){
             mousedrag = false;
 		}
 		// Clear all mouse down targets.
-		dragElement = dragTarget = null;
-		mousedown = false;
+		mousedown = slider = split = false;
+		mousedownX = mousedownY = 0;
+		dragTarget = dragElement = null;
+		clX = clY = 0;
 		mousedownX = mousedownY = 0;
 	}, { capture: true });
 

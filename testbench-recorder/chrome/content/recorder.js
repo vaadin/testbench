@@ -207,7 +207,7 @@ Recorder.prototype.attach = function() {
 					}
 				}
 			}
-			this.window.document.addEventListener(eventName, listener, capture);
+			this.window.addEventListener(eventName, listener, capture);
 			this.eventListeners[eventKey] = listener;
 		}
 		register.call(this);
