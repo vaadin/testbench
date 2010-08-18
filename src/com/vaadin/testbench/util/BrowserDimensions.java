@@ -108,7 +108,7 @@ public class BrowserDimensions {
         int canvasYPosition = BrowserUtil.canvasYPosition(selenium, browser);
 
         if (browser.isIE()) {
-            // FIXME: Why is this needed?
+            // FIXME: Canvas position given by IE is 2px off
             canvasXPosition += 2;
             canvasYPosition += 2;
         }
