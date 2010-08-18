@@ -307,8 +307,9 @@ var clicked = false;
 var cancelClick = false;
 
 Recorder.addEventHandler('clickLocator', 'click', function(event){
-		if (mousedown) {
-			mousedown = false;
+		if(cancelClick){
+			cancelClick = false;
+			return;
 		}
 
 		charBuffer = "";
@@ -597,26 +598,26 @@ Recorder.addEventHandler('mouseUpEvent', 'mouseup', function(event){
 		    var y = editor.seleniumAPI.Selenium.prototype.getElementPositionTop(dragElement) - mousedownY;
 		    
 			this.record("dragAndDrop", dragTarget, x + ',' + y );
+
 			
-			return;
+			cancelClick = true;
 		} else if (mousedown && (Math.abs(clX-event.clientX) >= 10 || Math.abs(clY-event.clientY) >= 10)) {
 			
-        	var target =  dragElement.ownerDocument.elementFromPoint(event.clientX, event.clientY);
-        	if (target != null && target.nodeType == 3) {
-        		target = target.parentNode;
-        	}
+	    	var target =  dragElement.ownerDocument.elementFromPoint(event.clientX, event.clientY);
+	    	if (target != null && target.nodeType == 3) {
+	    		target = target.parentNode;
+	    	}
 	
-   			var x = event.clientX - editor.seleniumAPI.Selenium.prototype.getElementPositionLeft(target);
-            var y = event.clientY - editor.seleniumAPI.Selenium.prototype.getElementPositionTop(target);
-
-            this.record("drag", dragTarget, '');
-            this.record("drop", this.findLocators(target), x + ',' + y);
-            mousedrag = false;
+			var x = event.clientX - editor.seleniumAPI.Selenium.prototype.getElementPositionLeft(target);
+	        var y = event.clientY - editor.seleniumAPI.Selenium.prototype.getElementPositionTop(target);
+	
+	        this.record("drag", dragTarget, '');
+	        this.record("drop", this.findLocators(target), x + ',' + y);
 		}
+
 		// Clear all mouse down targets.
 		mousedown = slider = split = false;
 		mousedownX = mousedownY = 0;
 		dragTarget = dragElement = null;
 		clX = clY = 0;
-		mousedownX = mousedownY = 0;
 	}, { capture: true });
