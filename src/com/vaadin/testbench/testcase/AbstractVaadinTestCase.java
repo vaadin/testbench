@@ -88,8 +88,20 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
 
         boolean result = false;
 
+        // Add longer pause for reference screenshot!
+        if (!compare.checkIfReferenceExists(fileName)) {
+            result = true;
+            screenshotPause = 1000;
+        }
+
         // Small pause to give components a bit of render time
         pause(screenshotPause);
+
+        // Set screenshotPause back to 50 after reference image
+        if (result) {
+            result = false;
+            screenshotPause = 50;
+        }
 
         // Actually capture the screen
         String image = selenium.captureScreenshotToString();
@@ -133,8 +145,8 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
                 // Build error screenshot directory.
                 String directory = Parameters.getScreenshotDirectory();
 
-                if (!File.separator
-                        .equals(directory.charAt(directory.length() - 1))) {
+                if (!File.separator.equals(directory
+                        .charAt(directory.length() - 1))) {
                     directory = directory + File.separator;
                 }
                 directory = directory + File.separator + "errors"
@@ -153,8 +165,9 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
                         Assert.fail("Didn't get an image from selenium on run "
                                 + (i + 1));
                     } else if (image.length() == 0) {
-                        Assert.fail("Got a screenshot String with length 0 on run "
-                                + (i + 1));
+                        Assert
+                                .fail("Got a screenshot String with length 0 on run "
+                                        + (i + 1));
                     }
 
                     try {

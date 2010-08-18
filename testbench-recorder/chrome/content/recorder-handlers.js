@@ -599,7 +599,7 @@ Recorder.addEventHandler('mouseUpEvent', 'mouseup', function(event){
 			this.record("dragAndDrop", dragTarget, x + ',' + y );
 			
 			return;
-		} else if (mousedown && (Math.abs(clX-event.clientX) >= 10 || Math.abs(clY-event.clientY))) {
+		} else if (mousedown && (Math.abs(clX-event.clientX) >= 10 || Math.abs(clY-event.clientY) >= 10)) {
 			
         	var target =  dragElement.ownerDocument.elementFromPoint(event.clientX, event.clientY);
         	if (target != null && target.nodeType == 3) {
@@ -620,7 +620,3 @@ Recorder.addEventHandler('mouseUpEvent', 'mouseup', function(event){
 		clX = clY = 0;
 		mousedownX = mousedownY = 0;
 	}, { capture: true });
-
-
-//alert((new RegExp("v-splitpanel-hsplitter")).test(help.className) || 
-//				(new RegExp("v-splitpanel-vsplitter")).test(help.className));
