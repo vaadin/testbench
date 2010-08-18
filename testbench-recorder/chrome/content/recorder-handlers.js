@@ -620,4 +620,4 @@ Recorder.addEventHandler('mouseUpEvent', 'mouseup', function(event){
 		mousedownX = mousedownY = 0;
 		dragTarget = dragElement = null;
 		clX = clY = 0;
-	}, { capture: true });
+	}, { capture: false });
