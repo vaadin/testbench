@@ -857,6 +857,10 @@ public class TestConverter {
         javaSource.append("\"" + locator);
         javaSource.append("\",\"" + ParameterUtil.getInstance().get(value));
         javaSource.append("\"});\n");
+        if (command.getCmd().endsWith("AndWait")) {
+            javaSource
+                    .append("doCommand(\"waitForVaadin\", new String[]{\"\", \"\"});\n");
+        }
     }
 
     private static File getFile(String test, File buildPath) {
