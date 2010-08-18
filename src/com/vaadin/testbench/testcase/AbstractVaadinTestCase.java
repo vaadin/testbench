@@ -245,8 +245,8 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
     }
 
     public BrowserDimensions getBrowserAndCanvasDimensions() {
-        setCanvasSize();
         if (browserDimensions == null) {
+            setCanvasSize();
             browserDimensions = BrowserDimensions.getBrowserDimensions(
                     getBrowserVersion(), selenium);
             if (Parameters.isDebug()) {
