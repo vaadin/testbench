@@ -138,6 +138,7 @@
 						</replacetokens>
 					</filterchain>
 		</copy>
+		<chmod file="../testbench-grid/hub/hub.sh" perm="555" />
 		<copy file="../testbench-grid/hub/hub.bat_tpl" tofile="../testbench-grid/hub/hub.bat" overwrite="true">
 					<filterchain>
 						<replacetokens>
@@ -152,6 +153,7 @@
 						</replacetokens>
 					</filterchain>
 		</copy>
+		<chmod file="../testbench-grid/remote-control/rc.sh" perm="555" />
 		<copy file="../testbench-grid/remote-control/rc.bat_tpl" tofile="../testbench-grid/remote-control/rc.bat" overwrite="true">
 					<filterchain>
 						<replacetokens>
