@@ -66,7 +66,7 @@ public class BrowserUtil {
                     .getEval("screen.availHeight;"));
             int canvasHeight = getCanvasHeight(selenium);
 
-            return screenHeight - canvasHeight;
+            return screenHeight % canvasHeight;
         } catch (Exception e) {
             // Really bad guess but this should never be reached
             return 0;

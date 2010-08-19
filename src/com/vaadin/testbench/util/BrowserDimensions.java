@@ -190,8 +190,8 @@ public class BrowserDimensions {
         String heightChange = requestedCanvasHeight + "-innerHeight";
         String resizeBy = USER_WINDOW_JS + ".resizeBy(" + widthChange + ","
                 + heightChange + ");";
-        String moveTo = USER_WINDOW_JS + ".moveTo(0,0);";
-        selenium.getEval(getInnerWidthHeight + moveTo + resizeBy);
+
+        selenium.getEval(getInnerWidthHeight + resizeBy);
 
         return true;
     }
