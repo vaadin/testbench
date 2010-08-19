@@ -330,3 +330,12 @@ Selenium.prototype.doExpectDialog = function(locator, value){
 	this.browserbot.clickElement(element);
 };
 
+// Assert that an element has the specified css class.
+Selenium.prototype.doAssertCSSClass = function(locator, value){
+	var element = this.browserbot.findElement(locator);
+	var css = element.className;
+
+    if (!(new RegExp(value)).test(css)) {
+        Assert.fail("Element doesn't have the " + value + " class.");
+    }
+};

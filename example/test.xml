@@ -20,7 +20,7 @@
 	
 	<!-- If softfail is true the test will not brak due to a screenshot being fault and will fail only at end of test. -->
 	<property name="com.vaadin.testbench.screenshot.softfail" value="true" />
-
+	
 	<!-- classpath must include test bench jar and its dependencies -->
 	<path id="classpath">
 		<fileset dir=".." includes="vaadin-testbench-*.jar" />
@@ -90,7 +90,9 @@
 			<jvmarg value="-Dcom.vaadin.testbench.screenshot.directory=${com.vaadin.testbench.screenshot.directory}" />
 			
 			<jvmarg value="-Dcom.vaadin.testbench.screenshot.softfail=${com.vaadin.testbench.screenshot.softfail}" />
-
+			<!-- To request screenshots of a predefined size uncomment the jvmarg and set the wanted resolution -->
+			<!-- <jvmarg value="-Dcom.vaadin.testbench.screenshot.resolution=600x400" /> -->
+			
 			<batchtest>
 				<fileset dir="${temp-dir}/src">
 					<include name="**/**.java" />
