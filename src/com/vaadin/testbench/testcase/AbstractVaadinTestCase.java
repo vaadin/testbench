@@ -248,7 +248,8 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
         if (browserDimensions == null) {
             // FIXME: Resizing GoogleChrome will give a canvas size that's 8px
             // too small.
-            if (browserVersion.isChrome()) {
+            if (browserVersion.isChrome() && requestedCanvasWidth != -1
+                    && requestedCanvasHeight != -1) {
                 requestedCanvasWidth += 8;
                 requestedCanvasHeight += 8;
             }
