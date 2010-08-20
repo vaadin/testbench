@@ -28,11 +28,9 @@ import com.vaadin.testbench.Parameters;
  */
 public class ImageComparison {
 
-    // referenceDirectory is the name of the directory with the reference
-    // pictures of the same name as the one to be compared
-    private static final String REFERENCE_DIRECTORY = "reference";
-    private static final String ERROR_DIRECTORY = "errors";
     private static final String NEW_LINE = System.getProperty("line.separator");
+
+    private ImageData imageData = null;
 
     public static void main(String[] args) throws FileNotFoundException,
             IOException {
@@ -64,288 +62,58 @@ public class ImageComparison {
      */
     public boolean compareStringImage(String image, String fileId, double d,
             BrowserDimensions dimensions, boolean testEdges) {
-        if (Parameters.getScreenshotComparisonTolerance() != null) {
-            d = Parameters.getScreenshotComparisonTolerance();
-        }
-        // Check that d value inside allowed range. if false set d to default
-        // value.
-        if (d < 0 || d > 1) {
-            d = 0.025;
-        }
 
-        debug("Using block error tolerance: " + d);
+        imageData = new ImageData(image, fileId, dimensions, d, testEdges);
+
+        imageData.debug("Using block error tolerance: " + d);
 
         boolean result = false;
 
-        String directory = Parameters.getScreenshotDirectory();
+        imageData.generateBaseDirectory();
 
-        if (directory == null || directory.length() == 0) {
-            throw new IllegalArgumentException(
-                    "Missing reference directory definition. Use -D"
-                            + Parameters.SCREENSHOT_DIRECTORY
-                            + "=c:\\screenshot\\. ");
-        }
-
-        if (!File.separator.equals(directory.charAt(directory.length() - 1))) {
-            directory = directory + File.separator;
-        }
-
-        checkAndCreateDirectories(directory);
-
-        // collect errors that are then written to a .log file
-        StringBuilder imageErrors = new StringBuilder();
-
-        BufferedImage test = (ImageUtil.stringToImage(image)).getSubimage(
-                dimensions.getCanvasXPosition(), dimensions
-                        .getCanvasYPosition(), dimensions.getCanvasWidth(),
-                dimensions.getCanvasHeight());
+        checkAndCreateDirectories(imageData.getBaseDirectory());
 
         try {
-            // Load images if reference not given
-            BufferedImage target = ImageIO.read(new File(directory
-                    + REFERENCE_DIRECTORY + File.separator + fileId + ".png"));
-            if (testEdges) {
-                target = ImageUtil.detectEdges(target);
-                test = ImageUtil.detectEdges(test);
-                BufferedImage referenceImage = new BufferedImage(dimensions
-                        .getCanvasWidth(), dimensions.getCanvasHeight(),
-                        BufferedImage.TYPE_INT_RGB);
+            imageData.generateComparisonImage();
+            imageData.generateReferenceImage();
 
-                Graphics2D g = (Graphics2D) referenceImage.getGraphics();
-                g.drawImage(test, 0, 0, dimensions.getCanvasWidth(), dimensions
-                        .getCanvasHeight(), null);
-                g.dispose();
-                test = referenceImage;
+            if (testEdges) {
+                imageData.getEdges();
             }
 
             // if images are of different size crop both images to same size
             // before checking for differences
-            boolean sizesDiffer = false;
-            if (target.getHeight() != test.getHeight()
-                    || target.getWidth() != test.getWidth()) {
-                sizesDiffer = true;
-                // smallest height and width of images
-                int minHeight, minWidth;
-                if (target.getHeight() > test.getHeight()) {
-                    minHeight = test.getHeight();
-                    debug("Screenshot height less than reference image.");
-                } else {
-                    minHeight = target.getHeight();
-                    if (target.getHeight() != test.getHeight()) {
-                        debug("Reference image height less than screenshot.");
-                    }
-                }
-                if (target.getWidth() > test.getWidth()) {
-                    minWidth = test.getWidth();
-                    debug("Screenshot width less than reference image.");
-                } else {
-                    minWidth = target.getWidth();
-                    if (target.getWidth() != test.getWidth()) {
-                        debug("Reference image width less than screenshot.");
-                    }
-                }
+            boolean sizesDiffer = imageData.checkIfCanvasSizesDiffer();
 
-                // Crop both images to same size
-                target = target.getSubimage(0, 0, minWidth, minHeight);
-                test = test.getSubimage(0, 0, minWidth, minHeight);
-            }
+            int imageWidth = imageData.getReferenceImage().getWidth();
+            int imageHeight = imageData.getReferenceImage().getHeight();
 
-            // Flag result as true until proven false
-            result = true;
-
-            int xBlocks = (int) Math.floor(target.getWidth() / 16) + 1;
-            int yBlocks = (int) Math.floor(target.getHeight() / 16) + 1;
+            int xBlocks = (int) Math.floor(imageWidth / 16) + 1;
+            int yBlocks = (int) Math.floor(imageHeight / 16) + 1;
             boolean[][] falseBlocks = new boolean[xBlocks][yBlocks];
 
-            // iterate picture in macroblocks of 16x16 (x,y) (0-> m-16, 0->
-            // n-16)
-            for (int y = 0; y < target.getHeight() - 16; y += 16) {
-                for (int x = 0; x < target.getWidth() - 16; x += 16) {
-                    int[] targetBlock = new int[16 * 16], testBlock = new int[16 * 16];
-
-                    // Get 16x16 blocks from picture
-                    targetBlock = target.getRGB(x, y, 16, 16, targetBlock, 0,
-                            16);
-                    testBlock = test.getRGB(x, y, 16, 16, testBlock, 0, 16);
-
-                    // If arrays aren't equal then
-                    if (!Arrays.equals(targetBlock, testBlock)) {
-
-                        double sums = rgbCompare(targetBlock, testBlock);
-
-                        // Check if total RGB error in a macroblock exceeds
-                        // allowed error % if true mark block with a rectangle,
-                        // append block info to imageErrors
-                        if (sums > d) {
-                            imageErrors
-                                    .append("Error in block at position:\tx="
-                                            + x + " y=" + y + NEW_LINE);
-                            imageErrors.append("RGB error for block:\t\t"
-                                    + roundTwoDecimals(sums * 100) + "%"
-                                    + NEW_LINE + NEW_LINE);
-                            falseBlocks[x / 16][y / 16] = true;
-
-                            result = false;
-                        }
-                    }
-                    targetBlock = testBlock = null;
-                }
-            }
-
-            if (target.getWidth() % 16 != 0) {
-                // check the bottom of image
-                for (int x = 0; x < target.getWidth() - 16; x += 16) {
-                    int[] targetBlock = new int[16 * 16], testBlock = new int[16 * 16];
-
-                    // Get 16x16 blocks from picture
-                    targetBlock = target.getRGB(x, target.getHeight() - 16, 16,
-                            16, targetBlock, 0, 16);
-                    testBlock = test.getRGB(x, target.getHeight() - 16, 16, 16,
-                            testBlock, 0, 16);
-
-                    // If arrays aren't equal then
-                    if (!Arrays.equals(targetBlock, testBlock)) {
-
-                        double sums = rgbCompare(targetBlock, testBlock);
-
-                        // Check if total RGB error in a macroblock exceeds
-                        // allowed error % if true mark block with a rectangle,
-                        // append block info to imageErrors
-                        if (sums > d) {
-                            imageErrors
-                                    .append("Error in block at position:\tx="
-                                            + x + " y="
-                                            + (target.getHeight() - 16)
-                                            + NEW_LINE);
-                            imageErrors.append("RGB error for block:\t\t"
-                                    + roundTwoDecimals(sums * 100) + "%"
-                                    + NEW_LINE + NEW_LINE);
-                            falseBlocks[x / 16][yBlocks - 1] = true;
-
-                            result = false;
-                        }
-                    }
-                    targetBlock = testBlock = null;
-                }
-            }
-
-            if (target.getHeight() % 16 != 0) {
-                // checkthe right side of the image
-                for (int y = 0; y < target.getHeight() - 16; y += 16) {
-                    int[] targetBlock = new int[16 * 16], testBlock = new int[16 * 16];
-
-                    // Get 16x16 blocks from picture
-                    targetBlock = target.getRGB(target.getWidth() - 16, y, 16,
-                            16, targetBlock, 0, 16);
-                    testBlock = test.getRGB(target.getWidth() - 16, y, 16, 16,
-                            testBlock, 0, 16);
-
-                    // If arrays aren't equal then
-                    if (!Arrays.equals(targetBlock, testBlock)) {
-
-                        double sums = rgbCompare(targetBlock, testBlock);
-
-                        // Check if total RGB error in a macroblock exceeds
-                        // allowed error % if true mark block with a rectangle,
-                        // append block info to imageErrors
-                        if (sums > d) {
-                            imageErrors
-                                    .append("Error in block at position:\tx="
-                                            + (target.getWidth() - 16) + " y="
-                                            + y + NEW_LINE);
-                            imageErrors.append("RGB error for block:\t\t"
-                                    + roundTwoDecimals(sums * 100) + "%"
-                                    + NEW_LINE + NEW_LINE);
-                            falseBlocks[xBlocks - 1][y / 16] = true;
-
-                            result = false;
-                        }
-                    }
-                    targetBlock = testBlock = null;
-                }
-            }
-
-            if (target.getWidth() % 16 != 0 && target.getHeight() % 16 != 0) {
-                // Check bottom right corner.
-                int[] targetBlock = new int[16 * 16], testBlock = new int[16 * 16];
-
-                // Get 16x16 blocks from picture
-                targetBlock = target.getRGB(target.getWidth() - 16, target
-                        .getHeight() - 16, 16, 16, targetBlock, 0, 16);
-                testBlock = test.getRGB(target.getWidth() - 16, target
-                        .getHeight() - 16, 16, 16, testBlock, 0, 16);
-
-                // If arrays aren't equal then
-                if (!Arrays.equals(targetBlock, testBlock)) {
-
-                    double sums = rgbCompare(targetBlock, testBlock);
-
-                    // Check if total RGB error in a macroblock exceeds
-                    // allowed error % if true mark block with a rectangle,
-                    // append block info to imageErrors
-                    if (sums > d) {
-                        imageErrors.append("Error in block at position:\tx="
-                                + (target.getWidth() - 16) + " y="
-                                + (target.getHeight() - 16) + NEW_LINE);
-                        imageErrors.append("RGB error for block:\t\t"
-                                + roundTwoDecimals(sums * 100) + "%" + NEW_LINE
-                                + NEW_LINE);
-                        falseBlocks[xBlocks - 1][yBlocks - 1] = true;
-
-                        result = false;
-                    }
-                }
-                targetBlock = testBlock = null;
-            }
+            result = compareImage(falseBlocks);
 
             // if errors found in file save diff file with marked
             // macroblocks and create html file for visual confirmation of
             // differences
             if (result == false) {
+
+                // Check for cursor.
                 if (Parameters.isScreenshotComparisonCursorDetection()
                         && !sizesDiffer) {
-                    // check amount of error blocks
-                    int errorAmount = 0, x = 0, y = 0, firstBlockX = 0, firstBlockY = 0;
-                    for (int j = 0; j < yBlocks; j++) {
-                        for (int i = 0; i < xBlocks; i++) {
-                            if (falseBlocks[i][j] && errorAmount == 0) {
-                                // save first error block position
-                                errorAmount++;
-                                x = i * 16;
-                                y = j * 16;
-                                firstBlockX = i;
-                                firstBlockY = j;
-                            } else if (falseBlocks[i][j] && errorAmount == 1) {
-                                if (j == 0) {
-                                    // stop checking no cursor detection will be
-                                    // done. Same line as the first block.
-                                    errorAmount++;
-                                    i = xBlocks;
-                                    j = yBlocks;
-                                } else if (!falseBlocks[i][j - 1]
-                                        && i != firstBlockX
-                                        && j != (firstBlockY + 1)) {
-                                    // stop checking no cursor detection will be
-                                    // done
-                                    errorAmount++;
-                                    i = xBlocks;
-                                    j = yBlocks;
-                                }
-                            }
-                        }
-                    }
-                    if (errorAmount == 1) {
-                        boolean cursor = checkForCursor(test, target, x, y,
-                                fileId);
+                    if (isCursorCheckNeeded(xBlocks, yBlocks, falseBlocks)) {
+                        boolean cursor = checkForCursor();
                         if (cursor) {
                             return true;
                         }
                     }
                 }
+
                 if (!testEdges) {
                     // Check that the comparison folder exists and create if
                     // false
-                    File compareFolder = new File(directory + ERROR_DIRECTORY);
+                    File compareFolder = new File(imageData.getErrorDirectory());
                     if (!compareFolder.exists()) {
                         compareFolder.mkdir();
                     }
@@ -356,73 +124,34 @@ public class ImageComparison {
 
                     // get both images again if different size
                     if (sizesDiffer) {
-                        test = (ImageUtil.stringToImage(image)).getSubimage(
-                                dimensions.getCanvasXPosition(), dimensions
-                                        .getCanvasYPosition(), dimensions
-                                        .getCanvasWidth(), dimensions
-                                        .getCanvasHeight());
-
-                        target = ImageIO.read(new File(directory
-                                + REFERENCE_DIRECTORY + File.separator + fileId
-                                + ".png"));
+                        imageData.generateComparisonImage();
+                        imageData.generateReferenceImage();
                     }
 
-                    // Draw lines around false ErrorBlocks before saving _diff
-                    // file.
-                    Graphics2D drawToPicture = test.createGraphics();
-                    drawToPicture.setColor(Color.MAGENTA);
-
-                    for (ErrorBlock error : errorAreas) {
-                        int offsetX = 0, offsetY = 0;
-                        if (error.getX() > 0) {
-                            offsetX = 1;
-                        }
-                        if (error.getY() > 0) {
-                            offsetY = 1;
-                        }
-                        int toX = error.getXBlocks() * 16 + offsetX;
-                        int toY = error.getYBlocks() * 16 + offsetY;
-                        // Draw lines inside canvas
-                        if ((error.getX() + (error.getXBlocks() * 16) + offsetX) > test
-                                .getWidth()) {
-                            toX = test.getWidth() - error.getX();
-                        }
-                        if ((error.getY() + (error.getYBlocks() * 16) + offsetY) > test
-                                .getHeight()) {
-                            toY = test.getHeight() - error.getY();
-                        }
-
-                        // draw error to image
-                        drawToPicture.drawRect(error.getX() - offsetX, error
-                                .getY()
-                                - offsetY, toX, toY);
-
-                    }
-                    // release resources
-                    drawToPicture.dispose();
+                    drawErrorsToImage(errorAreas);
 
                     // Write clean image to file
-                    ImageIO.write((ImageUtil.stringToImage(image)).getSubimage(
-                            dimensions.getCanvasXPosition(), dimensions
-                                    .getCanvasYPosition(), dimensions
-                                    .getCanvasWidth(), dimensions
-                                    .getCanvasHeight()), "png", new File(
-                            compareFolder + File.separator + fileId + ".png"));
+                    ImageIO.write(imageData.getComparisonImage(), "png",
+                            new File(compareFolder + File.separator
+                                    + imageData.getFileName()));
 
-                    createDiffHtml(errorAreas, fileId, ImageUtil
-                            .encodeImageToBase64(test), ImageUtil
-                            .encodeImageToBase64(target));
+                    createDiffHtml(errorAreas, fileId,
+                            ImageUtil.encodeImageToBase64(imageData
+                                    .getComparisonImage()), ImageUtil
+                                    .encodeImageToBase64(imageData
+                                            .getReferenceImage()));
 
-                    debug("Created clean image, image with marked differences and difference html.");
+                    imageData
+                            .debug("Created clean image, image with marked differences and difference html.");
                 } else {
-                    File compareFolder = new File(directory + ERROR_DIRECTORY);
+                    File compareFolder = new File(imageData.getErrorDirectory());
                     if (!compareFolder.exists()) {
                         compareFolder.mkdir();
                     }
-                    ImageIO.write(test, "png", new File(compareFolder
-                            + File.separator + fileId + "_edges.png"));
-                    ImageIO.write(target, "png", new File(compareFolder
-                            + File.separator + fileId + "_target.png"));
+                    ImageIO.write(imageData.getComparisonImage(), "png",
+                            new File(compareFolder + fileId + "_edges.png"));
+                    ImageIO.write(imageData.getReferenceImage(), "png",
+                            new File(compareFolder + fileId + "_target.png"));
                 }
                 // Throw assert fail here if no debug requested
                 if (!Parameters.isDebug() && sizesDiffer == false) {
@@ -437,31 +166,27 @@ public class ImageComparison {
                 if (result) {
                     // Check that the comparison folder exists and create if
                     // false
-                    File compareFolder = new File(directory + ERROR_DIRECTORY);
+                    File compareFolder = new File(imageData.getErrorDirectory());
                     if (!compareFolder.exists()) {
                         compareFolder.mkdir();
                     }
 
-                    test = (ImageUtil.stringToImage(image)).getSubimage(
-                            dimensions.getCanvasXPosition(), dimensions
-                                    .getCanvasYPosition(), dimensions
-                                    .getCanvasWidth(), dimensions
-                                    .getCanvasHeight());
+                    imageData.generateComparisonImage();
 
                     // Write clean image to file
-                    ImageIO.write(test, "png", new File(compareFolder
-                            + File.separator + fileId + ".png"));
+                    ImageIO.write(imageData.getComparisonImage(), "png",
+                            new File(compareFolder + fileId + ".png"));
 
                     // collect big error blocks of differences
                     List<ErrorBlock> errorAreas = new LinkedList<ErrorBlock>();
 
-                    target = ImageIO.read(new File(directory
-                            + REFERENCE_DIRECTORY + File.separator + fileId
-                            + ".png"));
+                    imageData.generateReferenceImage();
 
-                    createDiffHtml(errorAreas, fileId, ImageUtil
-                            .encodeImageToBase64(test), ImageUtil
-                            .encodeImageToBase64(target));
+                    createDiffHtml(errorAreas, fileId,
+                            ImageUtil.encodeImageToBase64(imageData
+                                    .getComparisonImage()), ImageUtil
+                                    .encodeImageToBase64(imageData
+                                            .getReferenceImage()));
 
                     Assert.fail("Images are of different size (" + fileId
                             + ").");
@@ -477,15 +202,16 @@ public class ImageComparison {
                     BufferedImage.TYPE_INT_RGB);
 
             Graphics2D g = (Graphics2D) referenceImage.getGraphics();
-            g.drawImage(test, 0, 0, dimensions.getCanvasWidth(), dimensions
-                    .getCanvasHeight(), null);
+            g.drawImage(imageData.getComparisonImage(), 0, 0, dimensions
+                    .getCanvasWidth(), dimensions.getCanvasHeight(), null);
             g.dispose();
 
             try {
-                File referenceFile = new File(directory + ERROR_DIRECTORY
-                        + File.separator + fileId + ".png");
+                File referenceFile = new File(imageData.getErrorDirectory()
+                        + fileId + ".png");
                 if (!referenceFile.exists()) {
-                    debug("Creating reference to " + ERROR_DIRECTORY + ".");
+                    imageData.debug("Creating reference to "
+                            + ImageData.ERROR_DIRECTORY + ".");
                     // Write clean image to error folder.
                     ImageIO.write(referenceImage, "png", referenceFile);
                 }
@@ -498,20 +224,37 @@ public class ImageComparison {
             }
             if (result == false) {
                 Assert.fail("No reference found for " + fileId + " in "
-                        + directory + REFERENCE_DIRECTORY);
+                        + imageData.getReferenceDirectory());
             }
         }
 
         // Write error blocks to file && syserr only if debug mode is used
-        if (imageErrors.length() > 0 && Parameters.isDebug()) {
+        if (Parameters.isDebug()) {
+            debug();
+        }
+
+        return result;
+    }
+
+    public boolean compareImages(ImageData imageData) {
+        this.imageData = imageData;
+
+        return compareImage(null);
+    }
+
+    private void debug() {
+        if (imageData.getImageErrors().length() >= 0) {
+            String fileId = imageData.getFileName().substring(0,
+                    imageData.getFileName().lastIndexOf('.'));
             // Write error macroblocks data to log file
             BufferedWriter out;
             try {
-                out = new BufferedWriter(new FileWriter(directory
-                        + ERROR_DIRECTORY + File.separator + fileId + ".log"));
+                out = new BufferedWriter(new FileWriter(imageData
+                        .getErrorDirectory()
+                        + fileId + ".log"));
 
                 out.write("Exceptions for " + fileId + NEW_LINE + NEW_LINE);
-                out.write(imageErrors.toString());
+                out.write(imageData.getImageErrors().toString());
                 out.flush();
                 out.close();
 
@@ -522,14 +265,97 @@ public class ImageComparison {
                 e.printStackTrace();
             }
         }
+    }
+
+    private boolean compareImage(boolean[][] falseBlocks) {
+        boolean result = true;
+
+        int imageWidth = imageData.getReferenceImage().getWidth();
+        int imageHeight = imageData.getReferenceImage().getHeight();
+
+        int xBlocks = (int) Math.floor(imageWidth / 16) + 1;
+        int yBlocks = (int) Math.floor(imageHeight / 16) + 1;
+
+        // iterate picture in macroblocks of 16x16 (x,y) (0-> m-16, 0->
+        // n-16)
+        for (int y = 0; y < imageHeight - 16; y += 16) {
+            for (int x = 0; x < imageWidth - 16; x += 16) {
+                if (blocksDiffer(x, y)) {
+                    if (falseBlocks != null) {
+                        falseBlocks[x / 16][y / 16] = true;
+                    }
+                    result = false;
+                }
+            }
+        }
+
+        // Check image bottom
+        if (imageHeight % 16 != 0) {
+            for (int x = 0; x < imageWidth - 16; x += 16) {
+                if (blocksDiffer(x, imageHeight - 16)) {
+                    if (falseBlocks != null) {
+                        falseBlocks[x / 16][yBlocks - 1] = true;
+                    }
+                    result = false;
+                }
+            }
+        }
+
+        // Check right side of image
+        if (imageWidth % 16 != 0) {
+            for (int y = 0; y < imageHeight - 16; y += 16) {
+                if (blocksDiffer(imageWidth - 16, y)) {
+                    if (falseBlocks != null) {
+                        falseBlocks[xBlocks - 1][y / 16] = true;
+                    }
+                    result = false;
+                }
+            }
+        }
+
+        // Check lower right corner if necessary
+        if (imageWidth % 16 != 0 && imageHeight % 16 != 0) {
+            if (blocksDiffer(imageWidth - 16, imageHeight - 16)) {
+                if (falseBlocks != null) {
+                    falseBlocks[xBlocks - 1][yBlocks - 1] = true;
+                }
+                result = false;
+            }
+        }
 
         return result;
     }
 
-    private void debug(String string) {
-        if (Parameters.isDebug()) {
-            System.out.println(string);
+    private boolean blocksDiffer(int x, int y) {
+        boolean result = false;
+
+        int[] targetBlock = new int[16 * 16], testBlock = new int[16 * 16];
+
+        // Get 16x16 blocks from picture
+        targetBlock = imageData.getReferenceBlock(x, y);
+        testBlock = imageData.getComparisonBlock(x, y);
+
+        // If arrays aren't equal then
+        if (!Arrays.equals(targetBlock, testBlock)) {
+
+            double sums = rgbCompare(targetBlock, testBlock);
+
+            // Check if total RGB error in a macroblock exceeds
+            // allowed error % if true mark block with a rectangle,
+            // append block info to imageErrors
+            if (sums > imageData.getDifference()) {
+                imageData.debug("Error in block at position:\tx=" + x + " y="
+                        + y + NEW_LINE);
+                imageData.debug("RGB error for block:\t\t"
+                        + roundTwoDecimals(sums * 100) + "%" + NEW_LINE
+                        + NEW_LINE);
+
+                result = true;
+            }
         }
+        targetBlock = testBlock = null;
+
+        return result;
     }
 
     /**
@@ -562,6 +388,48 @@ public class ImageComparison {
         return (sum / fullSum);
     }
 
+    private boolean isCursorCheckNeeded(int xBlocks, int yBlocks,
+            boolean[][] falseBlocks) {
+
+        // check amount of error blocks
+        int errorAmount = 0, x = 0, y = 0, firstBlockX = 0, firstBlockY = 0;
+
+        for (int j = 0; j < yBlocks; j++) {
+            for (int i = 0; i < xBlocks; i++) {
+                if (falseBlocks[i][j] && errorAmount == 0) {
+                    // save first error block position
+                    errorAmount++;
+                    x = i * 16;
+                    y = j * 16;
+                    firstBlockX = i;
+                    firstBlockY = j;
+                } else if (falseBlocks[i][j] && errorAmount == 1) {
+                    if (j == 0) {
+                        // stop checking no cursor detection will be
+                        // done. Same line as the first block.
+                        errorAmount++;
+                        i = xBlocks;
+                        j = yBlocks;
+                    } else if (!falseBlocks[i][j - 1] && i != firstBlockX
+                            && j != (firstBlockY + 1)) {
+                        // stop checking no cursor detection will be
+                        // done
+                        errorAmount++;
+                        i = xBlocks;
+                        j = yBlocks;
+                    }
+                }
+            }
+        }
+
+        if (errorAmount == 1) {
+            imageData.setCursorError(x, y);
+            return true;
+        }
+
+        return false;
+    }
+
     /**
      * Try to check if failure is due to blicking text cursor
      * 
@@ -577,40 +445,51 @@ public class ImageComparison {
      *            Image file name
      * @return true if found cursor else false
      */
-    private boolean checkForCursor(BufferedImage test, BufferedImage target,
-            int x, int y, String fileId) {
+    private boolean checkForCursor() {
         boolean cursor = false;
+
+        int x = imageData.getCursorX();
+        int y = imageData.getCursorY();
+
+        int width = imageData.getReferenceImage().getWidth();
+        int height = imageData.getReferenceImage().getHeight();
+
         // If at the outer edge move in one step.
         if (x == 0) {
             x = 1;
         }
         // If we would step over the edge move start point
-        if ((x + 16) >= target.getWidth()) {
-            x = target.getWidth() - 17;
+        if ((x + 16) >= width) {
+            x = width - 17;
         }
         // If at bottom move start point up.
-        if ((y + 16) >= target.getHeight()) {
-            y = target.getHeight() - 17;
+        if ((y + 16) >= height) {
+            y = height - 17;
         }
         //
         for (int j = y; j < y + 16; j++) {
             for (int i = x; i < x + 16; i++) {
                 // if found differing pixel
-                if (test.getRGB(i, j) != target.getRGB(i, j)) {
+                if (imageData.getComparisonImage().getRGB(i, j) != imageData
+                        .getReferenceImage().getRGB(i, j)) {
                     int z = j;
                     // do while length < 30 && inside picture
                     do {
-                        if ((z + 1) >= target.getHeight()) {
+                        if ((z + 1) >= height) {
                             break;
                         }
                         // if pixels to left and right equal on both pictures
-                        if (test.getRGB(i - 1, z) == target.getRGB(i - 1, z)
-                                && test.getRGB(i + 1, z) == target.getRGB(
-                                        i + 1, z)) {
+                        if (imageData.getComparisonImage().getRGB(i - 1, z) == imageData
+                                .getReferenceImage().getRGB(i - 1, z)
+                                && imageData.getComparisonImage().getRGB(i + 1,
+                                        z) == imageData.getReferenceImage()
+                                        .getRGB(i + 1, z)) {
                             // Continue if next pixel down still differs
-                            if ((z + 1) < target.getHeight()
-                                    && test.getRGB(i, z + 1) != target.getRGB(
-                                            i, z + 1)) {
+                            if ((z + 1) < height
+                                    && imageData.getComparisonImage().getRGB(i,
+                                            z + 1) != imageData
+                                            .getReferenceImage().getRGB(i,
+                                                    z + 1)) {
                                 z++;
                             } else {
                                 break;
@@ -621,9 +500,11 @@ public class ImageComparison {
                     } while (z < j + 30);
                     // if found length more than 3 and last pixel equals
                     if ((z - j) >= 5
-                            && test.getRGB(i, z + 1) == target.getRGB(i, z + 1)) {
-                        debug("Found cursor in test "
-                                + fileId.substring(0, fileId.indexOf("_")));
+                            && imageData.getComparisonImage().getRGB(i, z + 1) == imageData
+                                    .getReferenceImage().getRGB(i, z + 1)) {
+                        imageData.debug("Found cursor in test "
+                                + imageData.getFileName().substring(0,
+                                        imageData.getFileName().indexOf("_")));
                         cursor = true;
                         return cursor;
                     }
@@ -753,6 +634,43 @@ public class ImageComparison {
         return errorAreas;
     }
 
+    private void drawErrorsToImage(List<ErrorBlock> errorAreas) {
+        // Draw lines around false ErrorBlocks before saving _diff
+        // file.
+        Graphics2D drawToPicture = imageData.getComparisonImage()
+                .createGraphics();
+        drawToPicture.setColor(Color.MAGENTA);
+
+        int width = imageData.getComparisonImage().getWidth();
+        int height = imageData.getComparisonImage().getHeight();
+
+        for (ErrorBlock error : errorAreas) {
+            int offsetX = 0, offsetY = 0;
+            if (error.getX() > 0) {
+                offsetX = 1;
+            }
+            if (error.getY() > 0) {
+                offsetY = 1;
+            }
+            int toX = error.getXBlocks() * 16 + offsetX;
+            int toY = error.getYBlocks() * 16 + offsetY;
+            // Draw lines inside canvas
+            if ((error.getX() + (error.getXBlocks() * 16) + offsetX) > width) {
+                toX = width - error.getX();
+            }
+            if ((error.getY() + (error.getYBlocks() * 16) + offsetY) > height) {
+                toY = height - error.getY();
+            }
+
+            // draw error to image
+            drawToPicture.drawRect(error.getX() - offsetX, error.getY()
+                    - offsetY, toX, toY);
+
+        }
+        // release resources
+        drawToPicture.dispose();
+    }
+
     /**
      * Build a small html file that has mouse over picture change for fast
      * checking of errors and click on picture to switch between reference and
@@ -777,7 +695,8 @@ public class ImageComparison {
             }
 
             PrintWriter writer = new PrintWriter(new File(directory
-                    + ERROR_DIRECTORY + File.separator + fileId + ".html"));
+                    + ImageData.ERROR_DIRECTORY + File.separator + fileId
+                    + ".html"));
             // Write head
             writer.println("<html>");
             writer.println("<head>");
@@ -858,11 +777,11 @@ public class ImageComparison {
         if (!imageDir.exists()) {
             imageDir.mkdir();
         }
-        imageDir = new File(directory + REFERENCE_DIRECTORY);
+        imageDir = new File(directory + ImageData.REFERENCE_DIRECTORY);
         if (!imageDir.exists()) {
             imageDir.mkdir();
         }
-        imageDir = new File(directory + ERROR_DIRECTORY);
+        imageDir = new File(directory + ImageData.ERROR_DIRECTORY);
         if (!imageDir.exists()) {
             imageDir.mkdir();
         }
@@ -902,8 +821,9 @@ public class ImageComparison {
             directory = directory + File.separator;
         }
 
-        File referenceImage = new File(directory + REFERENCE_DIRECTORY
-                + File.separator + fileId + ".png");
+        File referenceImage = new File(directory
+                + ImageData.REFERENCE_DIRECTORY + File.separator + fileId
+                + ".png");
 
         return referenceImage.exists();
     }

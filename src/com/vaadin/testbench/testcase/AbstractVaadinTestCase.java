@@ -1,8 +1,11 @@
 package com.vaadin.testbench.testcase;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+
+import javax.imageio.ImageIO;
 
 import junit.framework.Assert;
 
@@ -12,6 +15,7 @@ import com.vaadin.testbench.util.BrowserDimensions;
 import com.vaadin.testbench.util.BrowserUtil;
 import com.vaadin.testbench.util.BrowserVersion;
 import com.vaadin.testbench.util.ImageComparison;
+import com.vaadin.testbench.util.ImageData;
 
 /**
  * An abstract Vaadin TestCase implementation. This can be extended to create
@@ -90,29 +94,16 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
 
         // Add longer pause for reference screenshot!
         if (!compare.checkIfReferenceExists(fileName)) {
-            result = true;
-            screenshotPause = 1000;
+            getReferenceImage(fileName);
+
+            return true;
         }
 
         // Small pause to give components a bit of render time
         pause(screenshotPause);
 
-        // Set screenshotPause back to 50 after reference image
-        if (result) {
-            result = false;
-            screenshotPause = 50;
-        }
-
         // Actually capture the screen
-        String image = selenium.captureScreenshotToString();
-
-        // check that we didn't get null for out image
-        // and that it has length > 0
-        if (image == null) {
-            Assert.fail("Didn't get an image from selenium.");
-        } else if (image.length() == 0) {
-            Assert.fail("Got a screenshot String with length 0.");
-        }
+        String image = getImage();
 
         // Get the dimensions of the browser window and canvas
         BrowserDimensions dimensions = getBrowserAndCanvasDimensions();
@@ -228,6 +219,57 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
             }
         }
         return result;
+    }
+
+    protected void getReferenceImage(String fileName) {
+        ImageData data = new ImageData(fileName,
+                getBrowserAndCanvasDimensions());
+
+        data.generateBaseDirectory();
+
+        pause(screenshotPause);
+
+        data.setOriginalImage(getImage());
+
+        data.generateComparisonImage();
+        do {
+            data.copyComparison();
+
+            pause(screenshotPause);
+
+            data.setOriginalImage(getImage());
+
+            data.generateComparisonImage();
+        } while (!compare.compareImages(data));
+
+        // Check that the comparison folder exists and create if
+        // false
+        File compareFolder = new File(data.getErrorDirectory());
+        if (!compareFolder.exists()) {
+            compareFolder.mkdir();
+        }
+
+        try {
+            ImageIO.write(data.getComparisonImage(), "png", new File(
+                    compareFolder + File.separator + data.getFileName()));
+            softAssert.add(new junit.framework.AssertionFailedError(
+                    "No reference found for " + fileName));
+        } catch (IOException ioe) {
+        }
+    }
+
+    private String getImage() {
+        String image = selenium.captureScreenshotToString();
+
+        // check that we didn't get null for out image
+        // and that it has length > 0
+        if (image == null) {
+            Assert.fail("Didn't get an image from selenium.");
+        } else if (image.length() == 0) {
+            Assert.fail("Got a screenshot String with length 0.");
+        }
+
+        return image;
     }
 
     /** Sleeps for the specified number of milliseconds */

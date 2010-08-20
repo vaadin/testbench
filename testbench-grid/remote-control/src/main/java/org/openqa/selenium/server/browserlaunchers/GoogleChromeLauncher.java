@@ -17,6 +17,13 @@
 
 package org.openqa.selenium.server.browserlaunchers;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.mortbay.log.LogFactory;
 import org.openqa.selenium.server.ApplicationRegistry;
@@ -24,27 +31,21 @@ import org.openqa.selenium.server.BrowserConfigurationOptions;
 import org.openqa.selenium.server.RemoteControlConfiguration;
 import org.openqa.selenium.server.browserlaunchers.locators.GoogleChromeLocator;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.PrintStream;
-import java.io.IOException;
-import java.util.Map;
-import java.util.HashMap;
-
 /**
  * Browser launcher for Google Chrome.
- *
- * <p>Known issues:
- *
+ * 
+ * <p>
+ * Known issues:
+ * 
  * <ul>
  * <li>Does not support the avoidProxy command-line option.</li>
- * <li>Does not fall back to a direct connection if the proxy fails to
- * respond.</li>
+ * <li>Does not fall back to a direct connection if the proxy fails to respond.</li>
  * </ul>
  */
 public class GoogleChromeLauncher extends AbstractBrowserLauncher {
 
-    private static final Log LOGGER = LogFactory.getLog(GoogleChromeLauncher.class);
+    private static final Log LOGGER = LogFactory
+            .getLog(GoogleChromeLauncher.class);
 
     private BrowserInstallation browserInstallation;
 
@@ -52,14 +53,18 @@ public class GoogleChromeLauncher extends AbstractBrowserLauncher {
 
     private Process process;
 
-    public GoogleChromeLauncher(BrowserConfigurationOptions browserOptions, RemoteControlConfiguration configuration,
-                                String sessionId, String browserLaunchLocation) {
-        this(browserOptions, configuration, sessionId, ApplicationRegistry.instance().browserInstallationCache().
-             locateBrowserInstallation("googlechrome", browserLaunchLocation, new GoogleChromeLocator()));
+    public GoogleChromeLauncher(BrowserConfigurationOptions browserOptions,
+            RemoteControlConfiguration configuration, String sessionId,
+            String browserLaunchLocation) {
+        this(browserOptions, configuration, sessionId, ApplicationRegistry
+                .instance().browserInstallationCache()
+                .locateBrowserInstallation("googlechrome",
+                        browserLaunchLocation, new GoogleChromeLocator()));
     }
 
-    public GoogleChromeLauncher(BrowserConfigurationOptions browserOptions, RemoteControlConfiguration configuration,
-                                String sessionId, BrowserInstallation browserInstallation) {
+    public GoogleChromeLauncher(BrowserConfigurationOptions browserOptions,
+            RemoteControlConfiguration configuration, String sessionId,
+            BrowserInstallation browserInstallation) {
         super(sessionId, configuration, browserOptions);
         this.browserInstallation = browserInstallation;
     }
@@ -116,7 +121,8 @@ public class GoogleChromeLauncher extends AbstractBrowserLauncher {
         try {
             // Creating this file prevents the first run UI from being shown.
             // This only matters the first time Google Chrome is run.
-            File exeDir = new File(browserInstallation.launcherFilePath()).getParentFile();
+            File exeDir = new File(browserInstallation.launcherFilePath())
+                    .getParentFile();
             File firstRun = new File(exeDir, "First Run");
             firstRun.createNewFile();
         } catch (IOException e) {
@@ -148,11 +154,13 @@ public class GoogleChromeLauncher extends AbstractBrowserLauncher {
         prefs.setPref("security.mixed_content_filtering", "0");
         // Allow JavaScript to open new windows (e.g. window.open and
         // window.showModalDialog).
-        prefs.setPref("webkit.webprefs.javascript_can_open_windows_automatically", "true");
+        prefs.setPref(
+                "webkit.webprefs.javascript_can_open_windows_automatically",
+                "true");
         // Make sure JavaScript is enabled.
         prefs.setPref("webkit.webprefs.javascript_enabled", "true");
         // Make sure no translation toolbar appears
-        prefs.setPref("translate.enabled","false");
+        prefs.setPref("translate.enabled", "false");
 
         try {
             File prefsFile = new File(defaultDir, "Preferences");
@@ -167,9 +175,8 @@ public class GoogleChromeLauncher extends AbstractBrowserLauncher {
     }
 
     private String[] createCommandArray(String url) {
-        return new String[] {
-                browserInstallation.launcherFilePath(),
-                // Disable hang monitor dialogs in renderer process.
+        return new String[] { browserInstallation.launcherFilePath(),
+        // Disable hang monitor dialogs in renderer process.
                 "--disable-hang-monitor",
                 // Disable metrics reporting system.
                 "--disable-metrics",
@@ -180,48 +187,54 @@ public class GoogleChromeLauncher extends AbstractBrowserLauncher {
                 "--disable-prompt-on-repost",
                 // Set the proxy server.
                 "--proxy-server=\"localhost:" + getPort() + "\"",
-                // Always start the window maximized.  This is a poor man's
+                // Always start the window maximized. This is a poor man's
                 // replacement for windowMaximize (which does not work).
                 "--start-maximized",
                 // Set the user data (i.e. profile) directory.
-                "--user-data-dir=\"" + customProfileDir.getAbsolutePath() + "\"",
-                url
-        };
+                "--user-data-dir=\"" + customProfileDir.getAbsolutePath()
+                        + "\"",
+                // Disable security
+                "--disable-web-security", url };
     }
 
     /**
      * A helper class to generate Google Chrome preferences.
-     *
-     * <p>The structure of a preferences file is as follows:
-     *
+     * 
+     * <p>
+     * The structure of a preferences file is as follows:
+     * 
      * <pre>
      * {
-     *    "preference_group_1": {
-     *       "preference_a": <value>,
-     *       "preference_b": <value>
+     *    &quot;preference_group_1&quot;: {
+     *       &quot;preference_a&quot;: &lt;value&gt;,
+     *       &quot;preference_b&quot;: &lt;value&gt;
      *    },
-     *    "preference_group_2": {
-     *       "preference_c": <value>,
-     *       "preference_d": <value>
+     *    &quot;preference_group_2&quot;: {
+     *       &quot;preference_c&quot;: &lt;value&gt;,
+     *       &quot;preference_d&quot;: &lt;value&gt;
      *    }
      * }
      * </pre>
-     *
-     * <p>The format of the file is in JSON.
-     *
-     * <p>As is shown, preferences are divided into groupings.  These groupings
-     * are logical: similar preferences are grouped together.  Groupings may
-     * be nested.
-     *
-     * <p>Preference names are delimited with a "." between groups.  For
-     * instance, in the above example the name of the first preference would
-     * be: <code>preference_group_1.preference_a</code>.
-     *
-     * <p>A user of this class should create one <code>PrefNode</code> object
-     * as the root and call the <code>setPref</code> method to add preferences.
+     * 
+     * <p>
+     * The format of the file is in JSON.
+     * 
+     * <p>
+     * As is shown, preferences are divided into groupings. These groupings are
+     * logical: similar preferences are grouped together. Groupings may be
+     * nested.
+     * 
+     * <p>
+     * Preference names are delimited with a "." between groups. For instance,
+     * in the above example the name of the first preference would be:
+     * <code>preference_group_1.preference_a</code>.
+     * 
+     * <p>
+     * A user of this class should create one <code>PrefNode</code> object as
+     * the root and call the <code>setPref</code> method to add preferences.
      * Once all preferences have been added, simply call <code>toString</code>
-     * to generate a serialized string of the preferences.  This string can
-     * then be parsed by Google Chrome.
+     * to generate a serialized string of the preferences. This string can then
+     * be parsed by Google Chrome.
      */
     private class PrefNode {
 
