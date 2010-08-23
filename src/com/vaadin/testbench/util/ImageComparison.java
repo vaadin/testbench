@@ -238,6 +238,7 @@ public class ImageComparison {
 
     public boolean compareImages(ImageData imageData) {
         this.imageData = imageData;
+        checkAndCreateDirectories(imageData.getBaseDirectory());
 
         return compareImage(null);
     }
