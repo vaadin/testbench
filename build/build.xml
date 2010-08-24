@@ -40,6 +40,44 @@
 		</jar>
 	</target>
 	
+    <!-- ================================================================== -->
+    <!-- Documentation                                                      -->
+    <!-- ================================================================== -->
+
+    <!-- Manual -->
+    <target name="manual" unless="run.no-manual">
+        <property name="manual.version" value="2.1"/>
+        <property name="manual.basename" value="vaadin-testbench-manual-${manual.version}"/>
+
+        <!-- Source and target files of the manual -->
+        <property name="manual.odt.filename" value="${manual.basename}.odt"/>
+        <property name="manual.pdf.filename" value="${manual.basename}.pdf"/>
+
+        <property name="manual.odt" value="../doc/${manual.odt.filename}"/>
+        <property name="manual.pdf" value="result/${manual.pdf.filename}"/>
+
+        <!-- Must delete the old version or conversion fails -->
+        <delete file="${manual.pdf}"/>
+
+        <!-- Start OpenOffice service -->
+        <exec executable="python" searchpath="true" failonerror="true" >
+            <arg value="odf-converter.py"/>
+            <arg value="start"/>
+        </exec>
+
+        <!-- Convert the ODF text document to PDF -->
+        <java jar="lib/jodconverter/jodconverter-cli-2.2.2.jar" fork="true">
+            <arg value="${manual.odt}"/>
+            <arg value="${manual.pdf}"/>
+        </java>
+
+        <!-- Stop OpenOffice service -->
+        <exec executable="python" searchpath="true" failonerror="true" >
+            <arg value="odf-converter.py"/>
+            <arg value="stop"/>
+        </exec>
+    </target>
+
 	<target name="javadoc" unless="exclude.runner">
 		<javadoc sourcepath="../src" destdir="result/doc" excludepackagenames="com.vaadin.testbench.test,com.vaadin.testbench.testcase,com.vaadin.testbench.util">
 			<classpath>
@@ -53,6 +91,10 @@
 		</zip>
 	</target>
 	
+    <!-- ================================================================== -->
+    <!--                                                                    -->
+    <!-- ================================================================== -->
+
 	<target name="testbench-recorder">
 		<!-- Create the TestBench IDE FireFox plugin -->
 		<subant target="extension">
@@ -77,7 +119,7 @@
 		</parallel>
 	</target>
 	
-	<target name="testbench-distribution-package" depends="testbench.jar,javadoc,testbench-recorder,testbench-grid,update-run-scripts,run-tests,create-extension">
+	<target name="testbench-distribution-package" depends="testbench.jar,manual,javadoc,testbench-recorder,testbench-grid,update-run-scripts,run-tests,create-extension">
 		<property name="package.root" value="vaadin-testbench-${version}"/>
 		<property name="package.grid.root" value="vaadin-testbench-grid-${version}"/>
         <copy todir="${output.dir}">
@@ -91,8 +133,8 @@
                 <include name="MANIFEST.MF" />
             </fileset>
         </copy>
+
 		<zip destfile="${output.dir}/vaadin-testbench-${version}.zip">
-			
 			<zipfileset dir="${output.dir}" includes="MANIFEST.MF" prefix="META-INF"/>
 			<zipfileset dir="${output.dir}" includes="vaadin-testbench-${version}.jar" prefix="${package.root}"/>
 			<zipfileset dir="${output.dir}" includes="vaadin-testbench-recorder/vaadin-testbench-recorder-${version}.xpi" prefix="${package.root}" />
@@ -102,11 +144,16 @@
 			<zipfileset dir=".." includes="example/test.xml" prefix="${package.root}" />
 			<zipfileset dir=".." includes="example/testscripts/*.html" prefix="${package.root}" />
 			<zipfileset dir=".." includes="example/parameters/*.properties" prefix="${package.root}" />
+
 			<!-- Add documentation -->
 			<zipfileset dir="../doc" prefix="${package.root}/documentation">
 				<include name="*.pdf" />
 				<exclude name="TestBenchRunner*.pdf" if="exclude.runner" />
 			</zipfileset>
+			<zipfileset dir="result" prefix="${package.root}/documentation">
+				<include name="${manual.pdf.filename}" />
+			</zipfileset>
+
 <!--			<fileset dir=".." includes="example/tests/**" />-->
 			<!-- Add hub and remote-control to zip -->
 			<zipfileset dir="../testbench-grid/hub" includes="hub.sh hub.bat grid_configuration.yml" prefix="${package.root}/grid/hub" />
