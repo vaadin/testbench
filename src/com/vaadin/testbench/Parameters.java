@@ -25,6 +25,8 @@ public class Parameters {
             + "block.error";
     public static final String SCREENSHOT_COMPARISON_CURSOR_DETECTION = SCREENSHOT_PACKAGE
             + "cursor";
+    public static final String SCREENSHOT_MAX_RETRIES = SCREENSHOT_PACKAGE
+            + "max.retries";
 
     // Other parameters
     public static final String BROWSER_STRING = BASE_PACKAGE + "browsers";
@@ -78,9 +80,17 @@ public class Parameters {
         if ("false".equalsIgnoreCase(System
                 .getProperty(CAPTURE_SCREENSHOT_ON_FAILURE))) {
             return false;
-        } else {
-            return true;
         }
+        return true;
+    }
+
+    public static int getMaxRetries() {
+        String p = System.getProperty(SCREENSHOT_MAX_RETRIES);
+        int retries = 2;
+        if (p != null && p.length() > 0) {
+            retries = Integer.parseInt(p);
+        }
+        return retries;
     }
 
     public static String getFileEncoding() {
@@ -104,4 +114,5 @@ public class Parameters {
     public static String getParameterFile() {
         return System.getProperty(PARAMETER_FILE);
     }
+
 }

@@ -32,7 +32,7 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
     private BrowserDimensions browserDimensions = null;
     private BrowserVersion browserVersion = null;
 
-    private static final int maxAmountOfTests = 2;
+    private static int maxAmountOfTests = 2;
 
     protected ImageComparison compare = new ImageComparison();
 
@@ -88,6 +88,7 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
     }
 
     public boolean validateScreenshot(String fileName, double errorTolerance) {
+        maxAmountOfTests = Parameters.getMaxRetries();
         long startScreenshot = System.currentTimeMillis();
 
         boolean result = false;
@@ -101,6 +102,7 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
 
         // Small pause to give components a bit of render time
         pause(screenshotPause);
+        doCommand("waitForVaadin", new String[] { "", "" });
 
         // Actually capture the screen
         String image = getImage();
@@ -142,11 +144,12 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
                 }
                 directory = directory + File.separator + "errors"
                         + File.separator;
+                screenshotPause += 200;
 
                 // If we find errors in the image take new references x times or
                 // until functional image is found.
                 for (int i = 0; i < maxAmountOfTests; i++) {
-                    pause(200);
+                    pause(screenshotPause);
 
                     image = selenium.captureScreenshotToString();
 

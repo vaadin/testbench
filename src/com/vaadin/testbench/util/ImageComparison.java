@@ -154,7 +154,10 @@ public class ImageComparison {
                             new File(compareFolder + fileId + "_target.png"));
                 }
                 // Throw assert fail here if no debug requested
-                if (!Parameters.isDebug() && sizesDiffer == false) {
+                if (sizesDiffer == false) {
+                    imageData.debug("Screenshot (" + fileId
+                            + ") differs from reference image.");
+                    debug();
                     Assert.fail("Screenshot (" + fileId
                             + ") differs from reference image.");
                 }
@@ -188,9 +191,13 @@ public class ImageComparison {
                                     .encodeImageToBase64(imageData
                                             .getReferenceImage()));
 
+                    imageData.debug("Images are of different size");
+                    debug();
                     Assert.fail("Images are of different size (" + fileId
                             + ").");
                 } else {
+                    imageData.debug("Images differ and are of different size");
+                    debug();
                     Assert.fail("Images differ and are of different size ("
                             + fileId + ").");
                 }
@@ -217,20 +224,20 @@ public class ImageComparison {
                 }
                 result = false;
             } catch (FileNotFoundException fnfe) {
+                imageData
+                        .debug("Failed to open file to write reference image.");
+                debug();
                 Assert.fail("Failed to open file to write reference image.");
             } catch (IOException ioe) {
                 e.printStackTrace();
                 return false;
             }
             if (result == false) {
+                imageData.debug("No reference found for " + fileId);
+                debug();
                 Assert.fail("No reference found for " + fileId + " in "
                         + imageData.getReferenceDirectory());
             }
-        }
-
-        // Write error blocks to file && syserr only if debug mode is used
-        if (Parameters.isDebug()) {
-            debug();
         }
 
         return result;
@@ -244,7 +251,7 @@ public class ImageComparison {
     }
 
     private void debug() {
-        if (imageData.getImageErrors().length() >= 0) {
+        if (Parameters.isDebug() && imageData.getImageErrors().length() >= 0) {
             String fileId = imageData.getFileName().substring(0,
                     imageData.getFileName().lastIndexOf('.'));
             // Write error macroblocks data to log file
@@ -258,9 +265,6 @@ public class ImageComparison {
                 out.write(imageData.getImageErrors().toString());
                 out.flush();
                 out.close();
-
-                Assert.fail("Screenshot (" + fileId
-                        + ") differs from reference image.");
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();

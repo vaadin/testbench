@@ -1,6 +1,7 @@
 package com.vaadin.testbench.util;
 
 import com.thoughtworks.selenium.Selenium;
+import com.vaadin.testbench.Parameters;
 
 public class BrowserUtil {
 
@@ -39,6 +40,10 @@ public class BrowserUtil {
 
             return screenLeftOffset;
         } catch (Exception e) {
+            if (Parameters.isDebug()) {
+                System.out
+                        .println("Canvas X position got 0. " + e.getMessage());
+            }
             // Probably bad guess but this should never be reached
             return 0;
         }
@@ -68,6 +73,10 @@ public class BrowserUtil {
 
             return screenHeight % canvasHeight;
         } catch (Exception e) {
+            if (Parameters.isDebug()) {
+                System.out
+                        .println("Canvas Y position got 0. " + e.getMessage());
+            }
             // Really bad guess but this should never be reached
             return 0;
         }

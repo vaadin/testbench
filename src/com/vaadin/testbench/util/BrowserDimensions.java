@@ -134,15 +134,28 @@ public class BrowserDimensions {
         BufferedImage screenshot = ImageUtil.stringToImage(image);
 
         int[] startBlock = new int[10];
-        startBlock = screenshot.getRGB(dimensions.getCanvasXPosition(),
-                dimensions.getCanvasYPosition(), 1, 10, startBlock, 0, 1);
+        int xPosition = dimensions.getCanvasXPosition() + 10;
+        startBlock = screenshot.getRGB(xPosition, dimensions
+                .getCanvasYPosition(), 1, 10, startBlock, 0, 1);
 
         for (int y = dimensions.getCanvasYPosition(); y > 0; y--) {
             int[] testBlock = new int[10];
-            testBlock = screenshot.getRGB(dimensions.getCanvasXPosition(), y,
-                    1, 10, testBlock, 0, 1);
+            testBlock = screenshot.getRGB(xPosition, y, 1, 10, testBlock, 0, 1);
             if (!Arrays.equals(startBlock, testBlock)) {
                 dimensions.setCanvasYPosition(y + 1);
+                break;
+            }
+        }
+
+        int yPosition = dimensions.getCanvasYPosition() + 10;
+        startBlock = screenshot.getRGB(xPosition, yPosition, 10, 1, startBlock,
+                0, 1);
+
+        for (int x = xPosition; x > 0; x--) {
+            int[] testBlock = new int[10];
+            testBlock = screenshot.getRGB(x, yPosition, 10, 1, testBlock, 0, 1);
+            if (!Arrays.equals(startBlock, testBlock)) {
+                dimensions.setCanvasXPosition(x + 1);
                 break;
             }
         }
