@@ -832,7 +832,7 @@ BrowserBot.prototype._isSamePage = function(windowObject, originalDocument, orig
     LOG.debug("_isSamePage: sameHref: " + sameHref);
     LOG.debug("_isSamePage: markedLoc: " + markedLoc);
 
-    return sameDoc && sameLoc && sameHref && markedLoc
+    return sameDoc && sameLoc && sameHref && markedLoc;
 };
 
 BrowserBot.prototype._isSameDocument = function(originalDocument, currentDocument) {
