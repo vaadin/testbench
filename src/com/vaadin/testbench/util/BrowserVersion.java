@@ -134,6 +134,10 @@ public class BrowserVersion {
         return browserName.equals("Opera");
     }
 
+    public boolean isFirefox() {
+        return browserName.equals("Firefox");
+    }
+
     public String getPlatform() {
         return platform;
     }

@@ -94,6 +94,10 @@ public class BrowserDimensions {
      */
     public static BrowserDimensions getBrowserDimensions(
             BrowserVersion browser, Selenium selenium) {
+        // Firefox on OSX has a problem with moveTo(0,0)
+        if (browser.getPlatform().equals("Mac") && browser.isFirefox()) {
+            selenium.getEval("window.moveTo(0,1);");
+        }
         // Get sizes for canvas cropping.
 
         // Hide scrollbar to get correct measurements in IE
@@ -136,9 +140,9 @@ public class BrowserDimensions {
         int[] startBlock = new int[10];
         int xPosition = dimensions.getCanvasXPosition() + 10;
         startBlock = screenshot.getRGB(xPosition, dimensions
-                .getCanvasYPosition(), 1, 10, startBlock, 0, 1);
+                .getCanvasYPosition() + 10, 1, 10, startBlock, 0, 1);
 
-        for (int y = dimensions.getCanvasYPosition(); y > 0; y--) {
+        for (int y = dimensions.getCanvasYPosition() + 10; y > 0; y--) {
             int[] testBlock = new int[10];
             testBlock = screenshot.getRGB(xPosition, y, 1, 10, testBlock, 0, 1);
             if (!Arrays.equals(startBlock, testBlock)) {
