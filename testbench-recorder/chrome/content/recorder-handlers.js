@@ -314,7 +314,7 @@ Recorder.addEventHandler('clickLocator', 'click', function(event){
 
 		charBuffer = "";
 		
-		if(Recorder.changeSelection=="true"){
+		if(Recorder.changeSelection){
 			var target = this.findLocator(event.target);
 			// Update target for current command
 			window.editor.treeView.updateCurrentCommand('target', target);
@@ -574,7 +574,7 @@ var noDnd = false;
 
 // save element, it's locator and mouse targets for checking if we have a drag event
 Recorder.addEventHandler('mouseDownEvent', 'mousedown', function(event){
-		if(Recorder.changeSelection=="false"){
+		if(!Recorder.changeSelection){
 			dragElement = event.target;
 		    slider = (new RegExp("v-slider")).test(dragElement.className);
 		    split = (new RegExp("splitter")).test(dragElement.parentNode.className) && (new RegExp("v-splitpanel")).test(dragElement.parentNode.className);
@@ -607,12 +607,13 @@ Recorder.addEventHandler('mouseUpEvent', 'mouseup', function(event){
 	    	if (target != null && target.nodeType == 3) {
 	    		target = target.parentNode;
 	    	}
-	
-			var x = event.clientX - editor.seleniumAPI.Selenium.prototype.getElementPositionLeft(target);
-	        var y = event.clientY - editor.seleniumAPI.Selenium.prototype.getElementPositionTop(target);
-	
-	        this.record("drag", dragTarget, '');
-	        this.record("drop", this.findLocators(target), x + ',' + y);
+	    	if(target != dragElement){
+				var x = event.clientX - editor.seleniumAPI.Selenium.prototype.getElementPositionLeft(target);
+		        var y = event.clientY - editor.seleniumAPI.Selenium.prototype.getElementPositionTop(target);
+		
+		        this.record("drag", dragTarget, '');
+		        this.record("drop", this.findLocators(target), x + ',' + y);
+	    	}
 		}
 
 		// Clear all mouse down targets.

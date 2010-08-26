@@ -22,83 +22,84 @@ function Recorder(window) {
     this.registerUnloadListener();
 }
 
-Recorder.changeSelection = "false";
-var enabledRecording = "false";
+Recorder.changeSelection = false;
+var enabledRecording = false;
 
 /* Function for enabling selecting new target to a command */
 Recorder.reSelectTarget = function(){
-	if(this.changeSelection == "false"){
+	if(!this.changeSelection){
 		// set flag for click recorder and highlight Select button
-		this.changeSelection = "true";
+		this.changeSelection = true;
 		document.getElementById('selectButton').style.color="green";
 		document.getElementById('selectButton').style.fontWeight="bold";
 		// Enable recording if not enabled
 		if(!document.getElementById('record-button').checked){
 			document.getElementById('record-button').click();
-			enabledRecording = "true";
+			enabledRecording = true;
 		}
 	}else{
 		// remove flag and highlights from Select button
-		this.changeSelection = "false";
+		this.changeSelection = false;
 		document.getElementById('selectButton').style.color="black";
 		document.getElementById('selectButton').style.fontWeight="normal";
 		// Disable recoring if enabled by button and still enabled
-		if(enabledRecording == "true" && document.getElementById('record-button').checked){
+		if(enabledRecording && document.getElementById('record-button').checked){
 			document.getElementById('record-button').click();
-			enabledRecording = "false";
+			enabledRecording = false;
 		}else{
-			enabledRecording = "false";
+			enabledRecording = false;
 		}
 	}
 }
 
-Recorder.recordAssertText = "false";
+Recorder.recordAssertText = false;
 /* Function for recording assert text from click */
 Recorder.assertTarget = function(){
 	if(document.getElementById('assert-button').checked){
 		// Set flag
-		this.recordAssertText = "true";
+		this.recordAssertText = true;
 		// Enable recording if not enabled
 		if(!document.getElementById('record-button').checked){
 			document.getElementById('record-button').click();
-			enabledRecording = "true";
+			enabledRecording = true;
 		}
 	}else{
 		// Remove flag
-		this.recordAssertText = "false";
+		this.recordAssertText = false;
 		// Disable recoring if enabled by button and still enabled
-		if(enabledRecording == "true" && document.getElementById('record-button').checked){
+		if(enabledRecording && document.getElementById('record-button').checked){
 			document.getElementById('record-button').click();
-			enabledRecording = "false";
+			enabledRecording = false;
 		}else{
-			enabledRecording = "false";
+			enabledRecording = false;
 		}
 	}
 }
 
-Recorder.recordTooltip = "false";
+Recorder.recordTooltip = false;
 /* Expect and record a tooltip */
 Recorder.expectTooltip = function(){
 	if(document.getElementById('tooltip-button').checked){
 		// Set flag
-		this.recordTooltip = "true";
+		this.recordTooltip = true;
 		// Enable recording if not enabled
 		if(!document.getElementById('record-button').checked){
 			document.getElementById('record-button').click();
-			enabledRecording = "true";
+			enabledRecording = true;
 		}
 	}else{
 		// Remove flag
-		this.recordTooltip = "false";
+		this.recordTooltip = false;
 		// Disable recoring if enabled by button and still enabled
-		if(enabledRecording == "true" && document.getElementById('record-button').checked){
+		if(enabledRecording && document.getElementById('record-button').checked){
 			document.getElementById('record-button').click();
-			enabledRecording = "false";
+			enabledRecording = false;
 		}else{
-			enabledRecording = "false";
+			enabledRecording = false;
 		}
 	}
 }
+
 
 Recorder.WINDOW_RECORDER_PROPERTY = "_Selenium_IDE_Recorder";
 
