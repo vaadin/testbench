@@ -16,12 +16,6 @@
  */
 package org.openqa.selenium.server.browserlaunchers;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.io.IOUtils;
-import org.mortbay.log.LogFactory;
-import org.openqa.selenium.server.BrowserConfigurationOptions;
-import org.openqa.selenium.server.RemoteControlConfiguration;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -29,11 +23,17 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.regex.Pattern;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.logging.Log;
+import org.mortbay.log.LogFactory;
+import org.openqa.selenium.server.BrowserConfigurationOptions;
+import org.openqa.selenium.server.RemoteControlConfiguration;
+
 public class OperaCustomProfileLauncher extends AbstractBrowserLauncher {
 
     static Log log = LogFactory.getLog(OperaCustomProfileLauncher.class);
     // TODO What is this really?
-    private static final String DEFAULT_NONWINDOWS_LOCATION = "/Applications/Opera.app/Contents/MacOS/opera";
+    private static final String DEFAULT_NONWINDOWS_LOCATION = "/Applications/Opera.app/Contents/MacOS/Opera";
 
     private static boolean simple = false;
 
@@ -72,8 +72,9 @@ public class OperaCustomProfileLauncher extends AbstractBrowserLauncher {
             File operaBin = locateBinaryInPath(commandPath);
             if (operaBin == null) {
                 File execDirect = new File(commandPath);
-                if (execDirect.isAbsolute() && execDirect.exists())
+                if (execDirect.isAbsolute() && execDirect.exists()) {
                     operaBin = execDirect;
+                }
             }
             if (operaBin != null) {
                 String libPathKey = SystemUtils
@@ -109,8 +110,9 @@ public class OperaCustomProfileLauncher extends AbstractBrowserLauncher {
         }
         if (WindowsUtils.thisIsWindows()) {
             File operaEXE = AsyncExecute.whichExec("opera.exe");
-            if (operaEXE != null)
+            if (operaEXE != null) {
                 return operaEXE.getAbsolutePath();
+            }
             throw new RuntimeException(
                     "Opera could not be found in the path!\n"
                             + "Please add the directory containing opera.exe to your PATH environment\n"
@@ -134,6 +136,7 @@ public class OperaCustomProfileLauncher extends AbstractBrowserLauncher {
     static final Pattern JAVA_STYLE_LOCAL_URL = Pattern
             .compile("^file:/([A-Z]:/.*)$");
 
+    @Override
     protected void launch(String url) {
         try {
             File opera6ini = makeCustomProfile();
@@ -161,8 +164,9 @@ public class OperaCustomProfileLauncher extends AbstractBrowserLauncher {
         ResourceExtractor.extractResourcePath(getClass(), "/opera",
                 customProfileDir);
 
-        if (simple)
+        if (simple) {
             return customProfileDir;
+        }
 
         File proxyPAC = LauncherUtils.makeProxyPAC(customProfileDir, getPort(),
                 browserConfigurationOptions.is("avoidProxy"));
@@ -180,7 +184,7 @@ public class OperaCustomProfileLauncher extends AbstractBrowserLauncher {
         out.println("Enable HTTP 1.1 for proxy=1");
         out.println("Use Proxy On Local Names Check=1");
         out.println("Use HTTP=1"); // TODO This forces the proxy to be used all
-                                   // the time!
+        // the time!
         out.println("Use HTTPS=1");
         out.println("Use FTP=0");
         out.println("Use GOPHER=0");
@@ -253,7 +257,7 @@ public class OperaCustomProfileLauncher extends AbstractBrowserLauncher {
         // Start new browser windows maximized
         out.println("[Windows]");
         out.println("Browser Window=0,0,100,100,2");
-        
+
         // TODO Disable security warnings
 
         // Load custom settings if file is present
@@ -268,10 +272,12 @@ public class OperaCustomProfileLauncher extends AbstractBrowserLauncher {
     }
 
     public void close() {
-        if (closed)
+        if (closed) {
             return;
-        if (process == null)
+        }
+        if (process == null) {
             return;
+        }
         log.info("Killing Opera...");
         Exception taskKillException = null;
         Exception fileLockException = null;
@@ -300,12 +306,14 @@ public class OperaCustomProfileLauncher extends AbstractBrowserLauncher {
             if (taskKillException != null || fileLockException != null) {
                 log.error("Couldn't delete custom Opera profile directory", e);
                 log.error("Perhaps caused by this exception:");
-                if (taskKillException != null)
+                if (taskKillException != null) {
                     log.error("Perhaps caused by this exception:",
                             taskKillException);
-                if (fileLockException != null)
+                }
+                if (fileLockException != null) {
                     log.error("Perhaps caused by this exception:",
                             fileLockException);
+                }
                 throw new RuntimeException(
                         "Couldn't delete custom Opera "
                                 + "profile directory, presumably because task kill failed; "
@@ -336,12 +344,14 @@ public class OperaCustomProfileLauncher extends AbstractBrowserLauncher {
         for (long start = System.currentTimeMillis(); System
                 .currentTimeMillis() < start + timeout;) {
             AsyncExecute.sleepTight(500);
-            if (!lock.exists() && makeSureFileLockRemainsGone(lock, timeToWait))
+            if (!lock.exists() && makeSureFileLockRemainsGone(lock, timeToWait)) {
                 return;
+            }
         }
-        if (lock.exists())
+        if (lock.exists()) {
             throw new FileLockRemainedException("Lock file still present! "
                     + lock.getAbsolutePath());
+        }
     }
 
     /**
@@ -362,8 +372,9 @@ public class OperaCustomProfileLauncher extends AbstractBrowserLauncher {
         for (long start = System.currentTimeMillis(); System
                 .currentTimeMillis() < start + timeToWait;) {
             AsyncExecute.sleepTight(500);
-            if (lock.exists())
+            if (lock.exists()) {
                 return false;
+            }
         }
         return !lock.exists();
     }
