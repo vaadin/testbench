@@ -128,12 +128,12 @@ public class ImageComparison {
                         imageData.generateReferenceImage();
                     }
 
-                    drawErrorsToImage(errorAreas);
-
                     // Write clean image to file
                     ImageIO.write(imageData.getComparisonImage(), "png",
                             new File(compareFolder + File.separator
                                     + imageData.getFileName()));
+
+                    drawErrorsToImage(errorAreas);
 
                     createDiffHtml(errorAreas, fileId,
                             ImageUtil.encodeImageToBase64(imageData
@@ -181,7 +181,10 @@ public class ImageComparison {
                             new File(compareFolder + fileId + ".png"));
 
                     // collect big error blocks of differences
-                    List<ErrorBlock> errorAreas = new LinkedList<ErrorBlock>();
+                    List<ErrorBlock> errorAreas = collectErrorsToList(xBlocks,
+                            yBlocks, falseBlocks);
+
+                    drawErrorsToImage(errorAreas);
 
                     imageData.generateReferenceImage();
 
