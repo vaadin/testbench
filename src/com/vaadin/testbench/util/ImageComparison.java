@@ -708,15 +708,21 @@ public class ImageComparison {
             // Write head
             writer.println("<html>");
             writer.println("<head>");
+            writer
+                    .println("<script type=\"text/javascript\">var difference = true;function switchImage(){"
+                            + "if(difference){difference = false;document.getElementById('reference').style.display='block';"
+                            + "document.getElementById('diff').style.display='none';}else{difference = true;"
+                            + "document.getElementById('reference').style.display='none';document.getElementById('diff').style.display='block';"
+                            + "}}</script>");
             writer.println("</head>");
-            writer.println("<body>");
+            writer.println("<body onclick=\"switchImage()\">");
 
             writer
-                    .println("<div id=\"diff\" onclick=\"document.getElementById('reference').style.display='block'; this.style.display='none';\" style=\"display: block; position: absolute; top: 0px; left: 0px; \"><img src=\"data:image/png;base64,"
+                    .println("<div id=\"diff\" style=\"display: block; position: absolute; top: 0px; left: 0px; \"><img src=\"data:image/png;base64,"
                             + image
                             + "\"/><span style=\"position: absolute; top: 0px; left: 0px; opacity:0.4; filter: alpha(opacity=40); font-weight: bold;\">Image for this run</span></div>");
             writer
-                    .println("<div id=\"reference\" onclick=\"this.style.display='none'; document.getElementById('diff').style.display='block';\" style=\"display: none; position: absolute; top: 0px; left: 0px; z-index: 999;\"><img src=\"data:image/png;base64,"
+                    .println("<div id=\"reference\" style=\"display: none; position: absolute; top: 0px; left: 0px; z-index: 999;\"><img src=\"data:image/png;base64,"
                             + ref_image + "\"/></div>");
 
             int add = 0;
