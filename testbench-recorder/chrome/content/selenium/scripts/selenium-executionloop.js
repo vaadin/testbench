@@ -115,12 +115,14 @@ TestLoop.prototype = {
 
         this.waitForCondition = this.result.terminationCondition;
 	    
-
         if(!(new RegExp("expectDialog")).test(command.command)) {
-        	this.waitForVaadinCondition = null;
+	 	    command = new Command("waitForVaadin", "", "");
+	 	    handler = this.commandFactory.getCommandHandler(command.command);
+	 	    this.vaadinresult = handler.execute(selenium, command);
+	 	    this.waitForVaadinCondition = this.vaadinresult.terminationCondition;
         }
     },
-    
+
     _handleCommandError : function(e) {
         if (!e.isSeleniumError) {
             LOG.exception(e);
@@ -143,13 +145,7 @@ TestLoop.prototype = {
         selenium.browserbot.runScheduledPollers();
         try {
             if (this.waitForCondition == null) {
-            	if(this.waitForVaadinCondition == null){
-                	var command = new Command("waitForVaadin", "", "");
-                	var handler = this.commandFactory.getCommandHandler(command.command);
-                	this.vaadinresult = handler.execute(selenium, command);
-                	this.waitForVaadinCondition = this.vaadinresult.terminationCondition;
-            		window.setTimeout(fnBind(this.continueTestWhenConditionIsTrue, this), 10);
-            	} else if(this.waitForVaadinCondition()){
+            	if(this.waitForVaadinCondition()){
 	                LOG.debug("null condition; let's continueTest()");
 	                LOG.debug("Command complete");
 	                this.commandComplete(this.result);
@@ -158,19 +154,14 @@ TestLoop.prototype = {
             		window.setTimeout(fnBind(this.continueTestWhenConditionIsTrue, this), 10);
             	}
             } else if (this.waitForCondition()) {
-            	if(this.waitForVaadinCondition == null){
-                	var command = new Command("waitForVaadin", "", "");
-                	var handler = this.commandFactory.getCommandHandler(command.command);
-                	this.vaadinresult = handler.execute(selenium, command);
-                	this.waitForVaadinCondition = this.vaadinresult.terminationCondition;
-            		window.setTimeout(fnBind(this.continueTestWhenConditionIsTrue, this), 10);
-            	} else if(this.waitForVaadinCondition()){
+            	if(this.waitForVaadinCondition()){
 	                LOG.debug("condition satisfied; let's continueTest()");
 	                this.waitForCondition = null;
 	                LOG.debug("Command complete");
 	                this.commandComplete(this.result);
 	                this.continueTest();
 	            }else{
+	            	this.waitForCondition = null;
 	            	window.setTimeout(fnBind(this.continueTestWhenConditionIsTrue, this), 10);
 	            }
             } else {
