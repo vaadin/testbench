@@ -907,6 +907,10 @@ Selenium.prototype.doOpen = function(url) {
    *
    * @param url the URL to open; may be relative or absolute
    */
+   
+	if(browserVersion.isFirefox && browserVersion.firefoxVersion.indexOf("3.6") === 0) {
+		this.browserbot.getCurrentWindow().focus();
+	}
     this.browserbot.openLocation(url);
     if (window["proxyInjectionMode"] == null || !window["proxyInjectionMode"]) {
         return this.makePageLoadCondition();
