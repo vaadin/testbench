@@ -18,6 +18,8 @@ hub:
         browser:  "*firefox"
       - name:     "winxp-safari4"
         browser:  "*safari"
+      - name:     "winxp-safari5"
+        browser:  "*safariproxy"
       - name:     "winxp-opera10"
         browser:  "*opera"
       - name:     "winxp-googlechrome4"

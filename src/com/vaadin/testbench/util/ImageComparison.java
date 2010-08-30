@@ -162,7 +162,9 @@ public class ImageComparison {
                             + ") differs from reference image.");
                 }
             }
+
             if (sizesDiffer) {
+
                 // Throws an assertion error with message depending on result
                 // (images only differ in size or images differ in size and
                 // contain errors)
@@ -178,7 +180,8 @@ public class ImageComparison {
 
                     // Write clean image to file
                     ImageIO.write(imageData.getComparisonImage(), "png",
-                            new File(compareFolder + fileId + ".png"));
+                            new File(compareFolder + File.separator + fileId
+                                    + ".png"));
 
                     // collect big error blocks of differences
                     List<ErrorBlock> errorAreas = collectErrorsToList(xBlocks,
