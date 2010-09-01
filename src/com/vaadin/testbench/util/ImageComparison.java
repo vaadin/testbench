@@ -253,7 +253,24 @@ public class ImageComparison {
         this.imageData = imageData;
         checkAndCreateDirectories(imageData.getBaseDirectory());
 
-        return compareImage(null);
+        int xBlocks = (int) Math
+                .floor(imageData.getReferenceImage().getWidth() / 16) + 1;
+        int yBlocks = (int) Math.floor(imageData.getReferenceImage()
+                .getHeight() / 16) + 1;
+        boolean[][] falseBlocks = new boolean[xBlocks][yBlocks];
+
+        boolean result = compareImage(falseBlocks);
+
+        // Check for cursor.
+        if (Parameters.isScreenshotComparisonCursorDetection()) {
+            if (isCursorCheckNeeded(xBlocks, yBlocks, falseBlocks)) {
+                boolean cursor = checkForCursor();
+                if (cursor) {
+                    return true;
+                }
+            }
+        }
+        return result;
     }
 
     private void debug() {
@@ -265,7 +282,11 @@ public class ImageComparison {
             try {
                 out = new BufferedWriter(new FileWriter(imageData
                         .getErrorDirectory()
-                        + fileId + ".log"));
+                        + File.separator
+                        + "logs"
+                        + File.separator
+                        + fileId
+                        + ".log"));
 
                 out.write("Exceptions for " + fileId + NEW_LINE + NEW_LINE);
                 out.write(imageData.getImageErrors().toString());
@@ -465,6 +486,9 @@ public class ImageComparison {
         int width = imageData.getReferenceImage().getWidth();
         int height = imageData.getReferenceImage().getHeight();
 
+        BufferedImage diff = ImageUtil.getDifference(imageData
+                .getComparisonImage(), imageData.getReferenceImage());
+
         // If at the outer edge move in one step.
         if (x == 0) {
             x = 1;
@@ -481,47 +505,70 @@ public class ImageComparison {
         for (int j = y; j < y + 16; j++) {
             for (int i = x; i < x + 16; i++) {
                 // if found differing pixel
-                if (imageData.getComparisonImage().getRGB(i, j) != imageData
-                        .getReferenceImage().getRGB(i, j)) {
-                    int z = j;
-                    // do while length < 30 && inside picture
+                if (diff.getRGB(i, j) == Color.BLACK.getRGB()) {
+                    int black = Color.BLACK.getRGB();
+                    int white = Color.WHITE.getRGB();
+
                     do {
-                        if ((z + 1) >= height) {
-                            break;
-                        }
-                        // if pixels to left and right equal on both pictures
-                        if (imageData.getComparisonImage().getRGB(i - 1, z) == imageData
-                                .getReferenceImage().getRGB(i - 1, z)
-                                && imageData.getComparisonImage().getRGB(i + 1,
-                                        z) == imageData.getReferenceImage()
-                                        .getRGB(i + 1, z)) {
-                            // Continue if next pixel down still differs
-                            if ((z + 1) < height
-                                    && imageData.getComparisonImage().getRGB(i,
-                                            z + 1) != imageData
-                                            .getReferenceImage().getRGB(i,
-                                                    z + 1)) {
-                                z++;
-                            } else {
-                                break;
+                        if (diff.getRGB(i - 1, j) != white
+                                || diff.getRGB(i + 1, j) != white) {
+                            if (Parameters.isDebug()) {
+                                imageData.debug("Returning cursor false for "
+                                        + imageData.getFileName());
+                                try {
+                                    ImageIO.write(diff, "png", new File(
+                                            imageData.getErrorDirectory()
+                                                    + File.separator + "diff"
+                                                    + File.separator
+                                                    + imageData.getFileName()
+                                                    + "_false.png"));
+                                } catch (IOException e) {
+                                    imageData.debug("Couldn't write file.\n"
+                                            + e.getMessage());
+                                }
                             }
-                        } else {
-                            break;
+                            return false;
                         }
-                    } while (z < j + 30);
-                    // if found length more than 3 and last pixel equals
-                    if ((z - j) >= 5
-                            && imageData.getComparisonImage().getRGB(i, z + 1) == imageData
-                                    .getReferenceImage().getRGB(i, z + 1)) {
-                        imageData.debug("Found cursor in test "
-                                + imageData.getFileName().substring(0,
-                                        imageData.getFileName().indexOf("_")));
-                        cursor = true;
-                        return cursor;
-                    }
-                    // end search if failed to find cursor from one error
-                    j = y + 20;
-                    i = x + 20;
+                        j++;
+                        if (diff.getRGB(i, j) != black) {
+                            if (Parameters.isDebug()) {
+                                imageData.debug("Returning cursor true for "
+                                        + imageData.getFileName());
+
+                                try {
+                                    ImageIO.write(
+                                            imageData.getReferenceImage(),
+                                            "png", new File(imageData
+                                                    .getErrorDirectory()
+                                                    + File.separator
+                                                    + "diff"
+                                                    + File.separator
+                                                    + imageData.getFileName()
+                                                    + "_ref.png"));
+
+                                    ImageIO.write(imageData
+                                            .getComparisonImage(), "png",
+                                            new File(imageData
+                                                    .getErrorDirectory()
+                                                    + File.separator
+                                                    + "diff"
+                                                    + File.separator
+                                                    + imageData.getFileName()
+                                                    + "_comp.png"));
+
+                                    ImageIO.write(diff, "png", new File(
+                                            imageData.getErrorDirectory()
+                                                    + File.separator + "diff"
+                                                    + File.separator
+                                                    + imageData.getFileName()));
+                                } catch (IOException e) {
+                                    imageData.debug("Couldn't write file.\n"
+                                            + e.getMessage());
+                                }
+                            }
+                            return true;
+                        }
+                    } while (true);
                 }
             }
         }
@@ -801,6 +848,19 @@ public class ImageComparison {
         imageDir = new File(directory + ImageData.ERROR_DIRECTORY);
         if (!imageDir.exists()) {
             imageDir.mkdir();
+        }
+
+        if (Parameters.isDebug()) {
+            imageDir = new File(directory + ImageData.ERROR_DIRECTORY
+                    + File.separator + "diff");
+            if (!imageDir.exists()) {
+                imageDir.mkdir();
+            }
+            imageDir = new File(directory + ImageData.ERROR_DIRECTORY
+                    + File.separator + "logs");
+            if (!imageDir.exists()) {
+                imageDir.mkdir();
+            }
         }
         imageDir = null;
     }

@@ -1,6 +1,7 @@
 package com.vaadin.testbench.util;
 
 import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -78,6 +79,72 @@ public class ImageUtil {
      */
     public static BufferedImage detectEdges(BufferedImage image) {
         return robertsCrossEdges(image);
+    }
+
+    /**
+     * Generates a grayscale image of give image.
+     * 
+     * @param image
+     *            Image to turn to grayscale
+     * @return BufferedImage [TYPE_BYTE_GRAY]
+     */
+    public static BufferedImage grayscaleImage(BufferedImage image) {
+        BufferedImage gray = new BufferedImage(image.getWidth(), image
+                .getHeight(), BufferedImage.TYPE_BYTE_GRAY);
+
+        Graphics2D g = (Graphics2D) gray.getGraphics();
+        g.drawImage(image, 0, 0, image.getWidth(), image.getHeight(), null);
+        g.dispose();
+
+        return gray;
+    }
+
+    /**
+     * Generate a black and white image.
+     * 
+     * @param image
+     *            Image to turn to a b&w image
+     * @return BufferedImage in B&W
+     */
+    public static BufferedImage getBlackAndWhiteImage(BufferedImage image) {
+        BufferedImage bw = grayscaleImage(image);
+        threshold(bw);
+        return bw;
+    }
+
+    /**
+     * Generates a white image with the image differences in black. Image sizes
+     * are expected to be the same.
+     * 
+     * @param image1
+     *            First image
+     * @param image2
+     *            Second image
+     * @return B&W image
+     */
+    public static BufferedImage getDifference(BufferedImage image1,
+            BufferedImage image2) {
+        // Get black and white images for both images
+        BufferedImage bw1 = getBlackAndWhiteImage(image1);
+        BufferedImage bw2 = getBlackAndWhiteImage(image2);
+
+        // Create empty image
+        BufferedImage diff = new BufferedImage(image1.getWidth(), image1
+                .getHeight(), BufferedImage.TYPE_BYTE_GRAY);
+
+        // For each pixel, if pixel in both images equal "draw" white pixel.
+        for (int x = 0; x < bw1.getWidth(); x++) {
+            for (int y = 0; y < bw1.getHeight(); y++) {
+                int color1 = bw1.getRGB(x, y);
+                int color2 = bw2.getRGB(x, y);
+                if (color1 == color2) {
+                    diff.setRGB(x, y, Color.WHITE.getRGB());
+                } else {
+                    diff.setRGB(x, y, Color.BLACK.getRGB());
+                }
+            }
+        }
+        return diff;
     }
 
     /**
