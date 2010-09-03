@@ -810,7 +810,8 @@ public class TestConverter {
                 javaSource.append("} catch (Exception e) {");
                 javaSource
                         .append("System.out.println(\"Open failed, retrying\");");
-                javaSource.append("selenium.stop(); selenium.start(); ");
+                javaSource
+                        .append("selenium.stop(); selenium.start(); clearDimensions();");
 
                 javaSource.append(windowInitFunctions);
 

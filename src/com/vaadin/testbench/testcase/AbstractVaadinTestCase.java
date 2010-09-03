@@ -289,6 +289,10 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
                 requestedCanvasHeight);
     }
 
+    public void clearDimensions() {
+        browserDimensions = null;
+    }
+
     public BrowserDimensions getBrowserAndCanvasDimensions() {
         if (browserDimensions == null) {
             setCanvasSize();
