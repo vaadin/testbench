@@ -9,8 +9,13 @@
 	</path>
 	
 	<target name="compile-tests">
+		<antcall target="compile-runner-tests" />
+		<antcall target="compile-testbench-tests" />
+	</target>
+	
+	<target name="compile-runner-tests" unless="exclude.runner">
 		<mkdir dir="test/classes" />
-		<javac srcdir="../src/com/vaadin/testbench/test" destdir="test/classes">
+		<javac srcdir="src/com/vaadin/testbench/runner/tests" destdir="test/classes">
 			<classpath>
 				<fileset dir="../build/result/package" includes="vaadin-testbench-*.jar" />
 				<fileset dir="../lib" id="libs">
@@ -20,10 +25,26 @@
 		</javac>
 	</target>
 	
+	<target name="compile-testbench-tests" depends="test-conversion">
+		<mkdir dir="test/classes" />
+		<javac srcdir="src/com/vaadin/testbench/tests" destdir="test/classes">
+			<classpath>
+				<fileset dir="../build/result/package" includes="vaadin-testbench-*.jar" />
+				<fileset dir="../lib" id="libs">
+					<include name="*.jar" />
+				</fileset>
+			</classpath>
+		</javac>
+	</target>
+	
+	<target name="run-all-tests" depends="compile-tests">
+		<antcall target="run-tests" />
+	</target>
+	
 	<target name="run-tests">
 		<junit>
 			<classpath>
-				<pathelement path="../src/" />
+				<pathelement path="src/" />
 				<fileset dir="../build/result/package" includes="vaadin-testbench-*.jar" />
 				<path path="${class.path}" />
 				<pathelement path="test/classes" />
@@ -35,18 +56,48 @@
 			<jvmarg value="-Duser.dir=${basedir}" />
 
 			<batchtest fork="yes" haltonerror="yes" haltonfailure="yes">
-				<fileset dir="../src">
-					<include name="**/test/*.java" />
+				<fileset dir="test/classes">
+					<include name="**/*.class" />
 				</fileset>
 			</batchtest>
 		</junit>
 	</target>
 	
+	<target name="test-conversion">
+		<path id="classpath">
+			<fileset dir="../build/result/package" includes="vaadin-testbench-*.jar" />
+		</path>
+		
+		<!-- Convert example test normally -->
+		<java classname="com.vaadin.testbench.util.TestConverter" classpathref="classpath" failonerror="true">
+			<sysproperty key="com.vaadin.testbench.screenshot.onfail" value="false"/>
+			<arg value="../test/temp/src" />
+			<arg value="winxp-firefox3" />
+			<arg line="../example/testscripts/parameter.demo.html" />
+		</java>
+		
+		<!-- Convert example test using parameter substitution -->
+		<java classname="com.vaadin.testbench.util.TestConverter" classpathref="classpath" failonerror="true">
+			<sysproperty key="com.vaadin.testbench.screenshot.onfail" value="false"/>
+			<sysproperty key="com.vaadin.testbench.converter.parameterFile" value="../example/parameters/NewParameters.properties" />
+			<arg value="../test/temp/src" />
+			<arg value="winxp-firefox36" />
+			<arg line="../example/testscripts/parameter.demo.html" />
+		</java>
+	</target>
+	
 	<target name="clean">
 		<delete dir="test/build" />
 		<delete dir="test/classes" />
+		<delete dir="../test/temp" />
 	</target>
 	
-	<target name="all-tests" depends="compile-tests, run-tests, clean"/>
+	<target name="testbench-tests" depends="clean, compile-testbench-tests, run-tests">
+		<antcall target="clean"/>
+	</target>
+	
+	<target name="all-tests" depends="clean, run-all-tests">
+		<antcall target="clean"/>
+	</target>
 	
 </project>

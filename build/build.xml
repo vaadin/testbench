@@ -119,7 +119,7 @@
 		</parallel>
 	</target>
 	
-	<target name="testbench-distribution-package" depends="testbench.jar,manual,javadoc,testbench-recorder,testbench-grid,update-run-scripts,run-tests,create-extension">
+	<target name="testbench-distribution-package" depends="testbench.jar,manual,javadoc,testbench-recorder,testbench-grid,update-run-scripts,run-tests,run-all-tests,create-extension">
 		<property name="package.root" value="vaadin-testbench-${version}"/>
 		<property name="package.grid.root" value="vaadin-testbench-grid-${version}"/>
         <copy todir="${output.dir}">
@@ -210,13 +210,21 @@
 		</copy>
 	</target>
 	
-	<target name="run-tests" unless="exclude.runner">
+	<target name="run-tests" if="exclude.runner">
+		<property name="class.path" value="${java.class.path}"/>
+		<subant target="all-tests" buildpath="../test">
+			<property name="class.path" value="${class.path}"/>
+			<property name="exclude.runner" value="${exclude.runner}" />
+		</subant>
+	</target>
+	
+	<target name="run-all-tests" unless="exclude.runner">
 		<property name="class.path" value="${java.class.path}"/>
 		<subant target="all-tests" buildpath="../test">
 			<property name="class.path" value="${class.path}"/>
 		</subant>
 	</target>
-	
+				
 	<target name="create-extension">
 		<loadfile property="locator" srcFile="../selenium-extensions/core/locator.js">
 			<filterchain>

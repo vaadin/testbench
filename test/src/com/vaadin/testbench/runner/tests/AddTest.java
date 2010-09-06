@@ -1,4 +1,4 @@
-package com.vaadin.testbench.test;
+package com.vaadin.testbench.runner.tests;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -66,14 +66,14 @@ public class AddTest extends TestCase {
         Assert.assertEquals(5, tbs.getTestsInSuite());
         String[] testList = tbs.getTests();
         // Assert all tests and their order
-        Assert.assertEquals("com.vaadin.automatedtests.test",
-                testList[0].substring(0, testList[0].indexOf("_")));
+        Assert.assertEquals("com.vaadin.automatedtests.test", testList[0]
+                .substring(0, testList[0].indexOf("_")));
         Assert.assertTrue("Money_tst".equals(testList[1]));
         // Assert that a single file doesn't get combined to a test_{hash}.html
         Assert.assertTrue("com.vaadin.automatedtests.tst".equals(testList[2]));
         Assert.assertTrue("Money_tst2".equals(testList[3]));
-        Assert.assertEquals("com.vaadin.automatedtests.test",
-                testList[4].substring(0, testList[0].indexOf("_")));
+        Assert.assertEquals("com.vaadin.automatedtests.test", testList[4]
+                .substring(0, testList[0].indexOf("_")));
     }
 
     /**
@@ -235,7 +235,8 @@ public class AddTest extends TestCase {
             Assert.assertEquals(1, tbr.getTestBenchSuites().size());
             Assert.assertEquals(2, tbs.getTestsInSuite());
         } catch (FileNotFoundException fnfe) {
-            Assert.fail("Faulty path definition is supposed to return to Suite path");
+            Assert
+                    .fail("Faulty path definition is supposed to return to Suite path");
         }
 
     }
@@ -337,8 +338,8 @@ public class AddTest extends TestCase {
         TestBenchRunner tbr = new TestBenchRunner();
         TestBenchSuite tbs = tbr.parseTestSuite("test/testSuite.html", ".");
 
-        Assert.assertEquals(tbs.getTestSuite("winxp-firefox35"),
-                tbs.getTestSuite());
+        Assert.assertEquals(tbs.getTestSuite("winxp-firefox35"), tbs
+                .getTestSuite());
     }
 
     /**

@@ -1,4 +1,4 @@
-package com.vaadin.testbench.test;
+package com.vaadin.testbench.runner.tests;
 
 import java.util.LinkedList;
 import java.util.List;
