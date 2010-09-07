@@ -67,29 +67,29 @@
 		<path id="classpath">
 			<fileset dir="../build/result/package" includes="vaadin-testbench-*.jar" />
 		</path>
-		
+
 		<!-- Convert example test normally -->
 		<java classname="com.vaadin.testbench.util.TestConverter" classpathref="classpath" failonerror="true">
 			<sysproperty key="com.vaadin.testbench.screenshot.onfail" value="false"/>
-			<arg value="../test/temp/src" />
+			<arg value="${basedir}/../test/temp/src" />
 			<arg value="winxp-firefox3" />
-			<arg line="../example/testscripts/parameter.demo.html" />
+			<arg line="${basedir}/../example/testscripts/parameter.demo.html" />
 		</java>
 		
 		<!-- Convert example test using parameter substitution -->
 		<java classname="com.vaadin.testbench.util.TestConverter" classpathref="classpath" failonerror="true">
 			<sysproperty key="com.vaadin.testbench.screenshot.onfail" value="false"/>
-			<sysproperty key="com.vaadin.testbench.converter.parameterFile" value="../example/parameters/NewParameters.properties" />
-			<arg value="../test/temp/src" />
+			<sysproperty key="com.vaadin.testbench.converter.parameterFile" value="${basedir}/../example/parameters/NewParameters.properties" />
+			<arg value="${basedir}/../test/temp/src" />
 			<arg value="winxp-firefox36" />
-			<arg line="../example/testscripts/parameter.demo.html" />
+			<arg line="${basedir}/../example/testscripts/parameter.demo.html" />
 		</java>
 	</target>
 	
 	<target name="clean">
 		<delete dir="test/build" />
 		<delete dir="test/classes" />
-		<delete dir="../test/temp" />
+		<delete dir="${basedir}/../test/temp" />
 	</target>
 	
 	<target name="testbench-tests" depends="clean, compile-testbench-tests, run-tests">
