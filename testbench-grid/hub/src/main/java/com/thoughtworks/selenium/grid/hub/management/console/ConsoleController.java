@@ -30,19 +30,20 @@ public class ConsoleController extends Controller {
 
         List<Environment> environments = registry().environmentManager()
                 .environments();
-        Collections.sort(environments, new Comparator<Environment>() {
 
-            public int compare(Environment arg0, Environment arg1) {
-                return arg0.name().compareTo(arg1.name());
+        // Sort configured environments according to environment name()
+        Collections.sort(environments, new Comparator<Environment>() {
+            public int compare(Environment env0, Environment env1) {
+                return env0.name().compareTo(env1.name());
             }
         });
 
+        // Collect all remotecontrol "environments" under one remotecontrol
         List<RemoteControlProxy> allRemoteControls = registry()
                 .remoteControlPool().availableRemoteControls();
         List<RemoteControlProxy> remoteControls = new ArrayList<RemoteControlProxy>();
 
-        RemoteControlProxy rc = null;// String host, int port, String
-        // environment,HttpClient httpClient
+        RemoteControlProxy rc = null;
         StringBuilder environment = new StringBuilder();
         for (RemoteControlProxy rcp : allRemoteControls) {
             if (rc == null) {
@@ -63,11 +64,26 @@ public class ConsoleController extends Controller {
                     environment.toString(), null));
         }
 
+        // Sort RemoteControls according to host()
+        Collections.sort(remoteControls, new Comparator<RemoteControlProxy>() {
+            public int compare(RemoteControlProxy rcp0, RemoteControlProxy rcp1) {
+                return rcp0.host().compareTo(rcp1.host());
+            }
+        });
+
+        List<RemoteControlProxy> reservedRemotes = registry()
+                .remoteControlPool().reservedRemoteControls();
+
+        Collections.sort(reservedRemotes, new Comparator<RemoteControlProxy>() {
+            public int compare(RemoteControlProxy rcp0, RemoteControlProxy rcp1) {
+                return rcp0.host().compareTo(rcp1.host());
+            }
+        });
+
         page = new Page("index.html");
         page.set("environments", environments);
         page.set("availableRemoteControls", remoteControls);
-        page.set("reservedRemoteControls", registry().remoteControlPool()
-                .reservedRemoteControls());
+        page.set("reservedRemoteControls", reservedRemotes);
 
         return page;
     }
