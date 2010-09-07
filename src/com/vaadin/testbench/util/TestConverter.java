@@ -849,7 +849,7 @@ public class TestConverter {
                 locator = param.replace("\\", "\\\\");
             } else {
                 /* get target */
-                value = param.replace("\\", "\\\\");
+                value = param.replace("\\", "\\\\").replace("\n", "\\n");
             }
 
             first = false;
