@@ -494,7 +494,7 @@ Recorder.addEventHandler('select', 'change', function(event) {
 		}
 		noSelection = false;
 	}
-});
+}, { capture: true });
 
 var counter = 0;
 var closeNotificationRecorded = false;
