@@ -59,7 +59,6 @@
 		left: 20px;
 		top:20px;
 		padding: 10px;
-		width: 400px;
 		z-index: 9002;
 		-moz-border-radius: 5px;
 		-webkit-border-radius: 5px;
@@ -113,12 +112,18 @@
 						<div class="section">
 							<h2>Active Remote Controls</h2>
 							<table class="wb">
-							  <tr><th>Host</th> <th>Port</th> <th>Environment</th></tr>
+							  <tr>
+							  	<th>Host</th>
+							  	<th>Environment</th>
+							  	<th>Execution time</th>
+							  </tr>
 								<#list reservedRemoteControls as remoteControl>
 								  <tr>
 									  <td>${remoteControl.host()}</td>
-									  <td>#{remoteControl.port()}</td>
 									  <td>${remoteControl.environment()}</td>
+									  <td style="text-align: right;">
+									  	${remoteControl.runtime()}
+									  </td>
 								  </tr>
 								</#list>
 							</table>

@@ -1,6 +1,8 @@
 package com.thoughtworks.selenium.grid.hub.remotecontrol;
 
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,6 +28,7 @@ public class RemoteControlProxy {
     private final String environment;
     private final String host;
     private final int port;
+    private long startTime;
 
     public RemoteControlProxy(String host, int port, String environment,
             HttpClient httpClient) {
@@ -43,11 +46,22 @@ public class RemoteControlProxy {
     }
 
     public String host() {
+        try {
+            InetAddress addr = InetAddress.getByName(host);
+            return addr.getHostName();
+        } catch (UnknownHostException e) {
+            // return host ip
+        }
         return host;
     }
 
     public int port() {
         return port;
+    }
+
+    public String runtime() {
+        long time = System.currentTimeMillis() - startTime;
+        return (time / 1000) + "," + (time % 1000) / 10 + " sec";
     }
 
     public String environment() {
@@ -111,6 +125,7 @@ public class RemoteControlProxy {
                     "Exceeded concurrent session max for " + toString());
         }
         sessionInProgress = true;
+        startTime = System.currentTimeMillis();
     }
 
     public void unregisterSession() {
