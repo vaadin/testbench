@@ -285,6 +285,9 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
     }
 
     public boolean setCanvasSize() {
+        if (browserVersion.isChrome()) {
+            pause(50);
+        }
         return BrowserDimensions.setCanvasSize(selenium, requestedCanvasWidth,
                 requestedCanvasHeight);
     }
@@ -408,4 +411,5 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
 
         return dir;
     }
+
 }
