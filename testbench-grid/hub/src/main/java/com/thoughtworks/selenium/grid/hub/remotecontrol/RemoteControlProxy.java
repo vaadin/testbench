@@ -28,6 +28,7 @@ public class RemoteControlProxy {
     private final String environment;
     private final String host;
     private final int port;
+    private String hostName;
     private long startTime;
 
     public RemoteControlProxy(String host, int port, String environment,
@@ -46,13 +47,19 @@ public class RemoteControlProxy {
     }
 
     public String host() {
-        try {
-            InetAddress addr = InetAddress.getByName(host);
-            return addr.getHostName();
-        } catch (UnknownHostException e) {
-            // return host ip
-        }
         return host;
+    }
+
+    public String hostName() {
+        if (hostName == null) {
+            try {
+                InetAddress addr = InetAddress.getByName(host);
+                hostName = addr.getHostName();
+            } catch (UnknownHostException e) {
+                // return host ip
+            }
+        }
+        return hostName;
     }
 
     public int port() {
@@ -61,7 +68,7 @@ public class RemoteControlProxy {
 
     public String runtime() {
         long time = System.currentTimeMillis() - startTime;
-        return (time / 1000) + "," + (time % 1000) / 10 + " sec";
+        return (time / 1000) + " sec";
     }
 
     public String environment() {

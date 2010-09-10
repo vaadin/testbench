@@ -56,6 +56,7 @@
 	div.popupDiv {
 		position: absolute;
 		background-color: #F6F6F6;
+		width: 550px;
 		left: 20px;
 		top:20px;
 		padding: 10px;
@@ -121,7 +122,7 @@
 							  </tr>
 								<#list reservedRemoteControls as remoteControl>
 								  <tr>
-									  <td>${remoteControl.host()}</td>
+									  <td>${remoteControl.hostName()}</td>
 									  <td>${remoteControl.environment()}</td>
 									  <td style="text-align: right;">
 									  	${remoteControl.runtime()}
@@ -146,7 +147,7 @@
 						<div onclick="javascript:popup('environments');" style="float: right;">
 							<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAYAAAAfSC3RAAAAAXNSR0IArs4c6QAAAAZiS0dEAP8A/wD/oL2nkwAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB9kIFQsVIdnbEoAAAAAZdEVYdENvbW1lbnQAQ3JlYXRlZCB3aXRoIEdJTVBXgQ4XAAABw0lEQVQoz42SwUuTcRjHP+9vvw0MNGhhZsZ8i1nQIliH2IheI4ZdOnmqq15Kqb+kQ0yLOqgn/QOC6LCow1QkCCwjFyyJ1NyWI9xLY+33e94OWyPCw57j9/l++PJ9eJy9T+vBzqs8269X6GaGrqc5deMqzttsNoh++4472N8VuLVbZv/0SfTXXJ7L6SRBo9EVOBw9yrtcHm0lQOp1ANb3q2wd1Bg40oPb19tKOKix96uO29fLpegxAKwEKCsG8X3E9ylWKowvzOFOTlAslSmWyriTE4wvzFGsVDo+KwbdNIL1fQBiSrGxuETizm2qmQwAg8kkG4tLxJTq+JpG0E1rKCwvA6CAzfcfqFWrpKanAFidmWXn6TOGnYBCu2fzRAxlrekUrwGHnajR3v0daw3aWMFRCoDdANLZR7iex+rMLACp6SkGLiZYuf+AqNMCjRW0EYMOhwH4aQXX81h7/ITS/DwAa0px5d5dXoRC6FArwIjBeZgaDW45vwEoGGFbhCGlOKNbpi//aOfa2vMggrZiCfdEAEhEIPFfv8M0W7foeOYalc9FLvQf7+pzPpZ/EB85i46PeWyKkHv5pitw5OYo58c8/gAr58XFLM/SlQAAAABJRU5ErkJggg==" />
 						</div>
-						<table class="wb" style="width: 100%;">
+						<table class="wb">
 						  <tr><th>Target</th><th>Browser</th>
 						  <#list environments as environment>
 						  </tr>
