@@ -8,14 +8,14 @@
 	<environment>winxp-opera10</environment>
 	<environment>winxp-firefox3</environment>
 	<environment>winxp-firefox36</environment>
-	<environment>winxp-googlechrome4</environment>
+	<environment>winxp-googlechrome6</environment>
 
 <!--    Linux Target Environments (uncomment to enable)
 
 	<environment>linux-firefox3</environment>
 	<environment>linux-firefox36</environment>
 	<environment>linux-opera10</environment>
-	<environment>linux-googlechrome4</environment>
+	<environment>linux-googlechrome6</environment>
 -->
 
 <!--    OS X Target Environments (uncomment to enable)
