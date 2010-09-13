@@ -138,8 +138,8 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
                 // Build error screenshot directory.
                 String directory = Parameters.getScreenshotDirectory();
 
-                if (!File.separator.equals(directory
-                        .charAt(directory.length() - 1))) {
+                if (!File.separator
+                        .equals(directory.charAt(directory.length() - 1))) {
                     directory = directory + File.separator;
                 }
                 directory = directory + File.separator + "errors"
@@ -159,9 +159,8 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
                         Assert.fail("Didn't get an image from selenium on run "
                                 + (i + 1));
                     } else if (image.length() == 0) {
-                        Assert
-                                .fail("Got a screenshot String with length 0 on run "
-                                        + (i + 1));
+                        Assert.fail("Got a screenshot String with length 0 on run "
+                                + (i + 1));
                     }
 
                     try {
@@ -285,8 +284,10 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
     }
 
     public boolean setCanvasSize() {
-        if (browserVersion.isChrome()) {
-            pause(50);
+        if (requestedCanvasWidth > 0 && browserVersion.isChrome()) {
+            // Chrome has issues with returning the correct innerWidth
+            // immediately after a resize operation (#5588).
+            pause(250);
         }
         return BrowserDimensions.setCanvasSize(selenium, requestedCanvasWidth,
                 requestedCanvasHeight);
