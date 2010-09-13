@@ -139,8 +139,8 @@ public class BrowserDimensions {
 
         int[] startBlock = new int[10];
         int xPosition = dimensions.getCanvasXPosition() + 10;
-        startBlock = screenshot.getRGB(xPosition, dimensions
-                .getCanvasYPosition() + 10, 1, 10, startBlock, 0, 1);
+        startBlock = screenshot.getRGB(xPosition,
+                dimensions.getCanvasYPosition() + 10, 1, 10, startBlock, 0, 1);
 
         for (int y = dimensions.getCanvasYPosition() + 10; y > 0; y--) {
             int[] testBlock = new int[10];
@@ -191,9 +191,8 @@ public class BrowserDimensions {
      * Resizes the browser window size so the canvas has the given width and
      * height.
      * <p>
-     * Note: Does not work in Chrome and Opera as they do not allow
-     * window.resize(w,h). Chrome and Opera are resized during startup using
-     * custom profiles.
+     * Note: Does not work in Opera as Opera does not allow window.resize(w,h).
+     * Opera is resized during startup using custom profiles.
      * </p>
      */
     public static boolean setCanvasSize(Selenium selenium,
@@ -208,6 +207,7 @@ public class BrowserDimensions {
         String resizeBy = USER_WINDOW_JS + ".resizeBy(" + widthChange + ","
                 + heightChange + ");";
 
+        // TODO Return canvas width and verify it matches requestedCanvasWidth
         selenium.getEval(getInnerWidthHeight + resizeBy);
 
         return true;
@@ -233,4 +233,9 @@ public class BrowserDimensions {
 
     }
 
+    @Override
+    public String toString() {
+        return "[BrowserDimensions, canvas: " + getCanvasWidth() + ","
+                + getCanvasHeight() + "]";
+    }
 }
