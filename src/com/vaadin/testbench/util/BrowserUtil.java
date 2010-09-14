@@ -26,6 +26,7 @@ public class BrowserUtil {
             }
         }
         try {
+            // TODO Combine into one getEval
             int outerWidth = Integer.parseInt(selenium.getEval(window
                     + ".outerWidth"));
             int innerWidth = Integer.parseInt(selenium
@@ -67,6 +68,7 @@ public class BrowserUtil {
         }
 
         try {
+            // TODO Combine into one getEval
             int screenHeight = Integer.parseInt(selenium
                     .getEval("screen.availHeight;"));
             int canvasHeight = getCanvasHeight(selenium);
@@ -88,6 +90,7 @@ public class BrowserUtil {
      * @return Canvas height
      */
     public static int getCanvasHeight(Selenium selenium) {
+        // TODO Combine into one getEval
         int canvasHeight = 0;
         try {
             canvasHeight = Integer.parseInt(selenium
@@ -116,6 +119,7 @@ public class BrowserUtil {
      * @return Canvas width
      */
     public static int getCanvasWidth(Selenium selenium) {
+        // TODO Combine into one getEval
         int canvasWidth = 0;
         try {
             canvasWidth = Integer.parseInt(selenium
