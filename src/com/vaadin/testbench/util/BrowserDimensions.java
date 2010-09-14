@@ -198,17 +198,23 @@ public class BrowserDimensions {
     public static boolean setCanvasSize(Selenium selenium,
             int requestedCanvasWidth, int requestedCanvasHeight) {
         if (requestedCanvasHeight == -1 || requestedCanvasWidth == -1) {
+            // No canvas size specified. Nothing to do.
             return false;
         }
 
+        // Get the canvas size into variables innerWidth/innerHeight
         String getInnerWidthHeight = getInnerWidthHeightJS();
+
+        // Update the window size so that the canvas size matches the requested
         String widthChange = requestedCanvasWidth + "-innerWidth";
         String heightChange = requestedCanvasHeight + "-innerHeight";
         String resizeBy = USER_WINDOW_JS + ".resizeBy(" + widthChange + ","
                 + heightChange + ");";
 
-        // TODO Return canvas width and verify it matches requestedCanvasWidth
-        selenium.getEval(getInnerWidthHeight + resizeBy);
+        // Need to move browser to top left before resize to avoid the
+        // possibility that it goes below or to the right of the screen.
+        String moveTo = USER_WINDOW_JS + ".moveTo(1,1);";
+        selenium.getEval(getInnerWidthHeight + moveTo + resizeBy);
 
         return true;
     }

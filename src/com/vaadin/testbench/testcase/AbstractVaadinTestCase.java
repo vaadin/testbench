@@ -283,12 +283,7 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
         }
     }
 
-    public boolean setCanvasSize() {
-        if (requestedCanvasWidth > 0 && browserVersion.isChrome()) {
-            // Chrome has issues with returning the correct innerWidth
-            // immediately after a resize operation (#5588).
-            pause(250);
-        }
+    protected boolean setRequestedCanvasSize() {
         return BrowserDimensions.setCanvasSize(selenium, requestedCanvasWidth,
                 requestedCanvasHeight);
     }
@@ -297,10 +292,12 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
         browserDimensions = null;
     }
 
-    public BrowserDimensions getBrowserAndCanvasDimensions() {
-        if (browserDimensions == null) {
-            setCanvasSize();
+    protected BrowserDimensions getBrowserAndCanvasDimensions() {
+        return getBrowserDimensions(false);
+    }
 
+    public BrowserDimensions getBrowserDimensions(boolean force) {
+        if (force || browserDimensions == null) {
             browserDimensions = BrowserDimensions.getBrowserDimensions(
                     getBrowserVersion(), selenium);
             if (Parameters.isDebug()) {
@@ -413,4 +410,37 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
         return dir;
     }
 
+    protected void setupWindow(boolean mightUseScreenshots) {
+        // Focus the window to ensure it is on top of the control window
+        selenium.windowFocus();
+
+        if (getBrowserVersion().isOpera()) {
+            /*
+             * Opera (10.62 and older at least) does not support window.resizeTo
+             * or window.moveTo so we cannot move/resize the window but have to
+             * accept whatever the browser uses (overrideable in
+             * opera-profile.txt).
+             */
+        } else if (hasRequestedCanvasSize()) {
+            // The user has specified a canvas size to use so we should
+            // initialize to that size
+            setRequestedCanvasSize();
+        } else if (mightUseScreenshots) {
+            // It is possible that sometimes during the script we want to take a
+            // screenshot. No canvas size is specified so we maximize the
+            // browser window.
+            selenium.windowMaximize();
+        } else {
+            // Just go with whatever the default happens to be. Should not
+            // matter as we are not actually capturing the screen.
+        }
+
+        // Fetch the size of the browser. Overwrite any previous info.
+        getBrowserDimensions(true);
+
+    }
+
+    protected boolean hasRequestedCanvasSize() {
+        return requestedCanvasWidth > 0;
+    }
 }

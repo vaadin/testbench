@@ -77,10 +77,6 @@ public class TestConverter {
     private static String filePath = "";
     private static String absoluteFilePath = "";
 
-    private static String windowInitFunctions = "doCommand(\"windowMaximize\", new String[] { \"\" });\n"
-            + "doCommand(\"windowFocus\", new String[] { \"\" });\n"
-            + "getBrowserAndCanvasDimensions();\n";;
-
     public static void main(String[] args) throws Exception {
         if (args.length < 3) {
             System.err.println("Usage: " + TestConverter.class.getName()
@@ -424,15 +420,23 @@ public class TestConverter {
                 + "if (browser.isOpera() && browser.isOlderVersion(10,50)) {\n"
                 + "\tmouseClickCommand = \"mouseClickOpera\";\n" + "}\n";
 
-        // Add these in the case a screenshot is wanted
+        String methodHeader = testCaseHeader + currentCommand + versionDetector;
+
+        // Add canvas size initialization in the case a screenshot is wanted
         if (screenshot) {
-            return testCaseHeader + currentCommand + versionDetector
-                    + windowInitFunctions + "try{\n" + testCaseBody
-                    + testCaseFooter;
+            methodHeader += getWindowInitFunctions(screenshot);
         }
 
-        return testCaseHeader + currentCommand + versionDetector + "try{\n"
-                + testCaseBody + testCaseFooter;
+        methodHeader += "try{\n" + testCaseBody + testCaseFooter;
+
+        return methodHeader;
+    }
+
+    private static String getWindowInitFunctions(boolean hasScreenshots) {
+        final String windowInitFunctions = "setupWindow(#hasScreenshots#);\n";
+
+        return windowInitFunctions.replaceAll("#hasScreenshots#",
+                hasScreenshots ? "true" : "false");
     }
 
     private static String removeExtension(String name) {
@@ -814,13 +818,13 @@ public class TestConverter {
                 javaSource
                         .append("selenium.stop(); selenium.start(); clearDimensions();");
 
-                javaSource.append(windowInitFunctions);
+                // Use true here as screenshot is not correctly set before this.
+                // Tests could probably always be run in maximized mode anyway.
+                javaSource.append(getWindowInitFunctions(true));
 
                 writeDoCommand(command, javaSource);
                 javaSource.append("}");
 
-                // Workaround for #5295
-                // javaSource.append("pause(200);");
                 javaSource
                         .append("doCommand(\"waitForVaadin\",new String[] {\"\",\"\"});\n");
             } else {
