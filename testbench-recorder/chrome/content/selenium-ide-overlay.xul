@@ -34,8 +34,8 @@ limitations under the License.
     <menuitem label="Vaadin TestBench Recorder" oncommand="SeleniumIDE.Loader.openRecorder();" insertbefore="sanitizeSeparator,prefSep" accesskey="N" />
   </menupopup>
 
-  <popup id="contentAreaContextMenu">
-  </popup>
+  <menupopup id="contentAreaContextMenu">
+  </menupopup>
 
   <broadcasterset id="mainBroadcasterSet">
     <broadcaster id="viewSeleniumIDESidebar"

@@ -3,6 +3,9 @@ function SeleniumIDEGenericAutoCompleteSearch() {
 }
 
 SeleniumIDEGenericAutoCompleteSearch.prototype = {
+	// this must match whatever is in chrome.manifest!
+	classID: Components.ID("{E5226A0D-4698-4E15-9D6D-86771AE172C9}"),
+
 	startSearch: function(searchString, searchParam, prevResult, listener) {
 		var result = new AutoCompleteResult(searchString, this.candidates[searchParam] || []);
 		listener.onSearchResult(this, result);
@@ -90,9 +93,11 @@ AutoCompleteResult.prototype = {
 }
 
 //const COMPONENT_ID = Components.ID("{4791AF5F-AFBA-45A1-8204-47A135DF9591}");
+// Used by Gecko 1.9.x (Firefox 3.x)
 const COMPONENT_ID = Components.ID("{E5226A0D-4698-4E15-9D6D-86771AE172C9}");
 
 var SeleniumIDEGenericAutoCompleteModule = {
+// Used by Gecko 1.9.x (Firefox 3.x)
     registerSelf: function (compMgr, fileSpec, location, type) {
         compMgr = compMgr.QueryInterface(Components.interfaces.nsIComponentRegistrar);
         compMgr.registerFactoryLocation(COMPONENT_ID,
@@ -128,3 +133,8 @@ function NSGetModule(compMgr, fileSpec) {
     return SeleniumIDEGenericAutoCompleteModule;
 }
 
+// Used by Gecko 2 (Firefox 4)
+function NSGetFactory(cid) {
+	if (cid.toString().toUpperCase() != COMPONENT_ID.toString().toUpperCase()) throw Components.results.NS_ERROR_FACTORY_NOT_REGISTERED;
+	return SeleniumIDEGenericAutoCompleteFactory;
+}

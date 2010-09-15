@@ -9,3 +9,8 @@ locale testbench-recorder ja-JP jar:chrome/testbench-recorder.jar!/locale/ja-JP/
 locale testbench-recorder pt-BR jar:chrome/testbench-recorder.jar!/locale/pt-BR/
 skin testbench-recorder classic/1.0 jar:chrome/testbench-recorder.jar!/skin/classic/
 skin testbench-recorder-platform classic/1.0 jar:chrome/testbench-recorder.jar!/skin/classic/platforms/ appversion>=3.0
+
+# For Firefox 4 / Gecko 2
+interfaces components/SeleniumIDEGenericAutoCompleteSearch.xpt
+component {E5226A0D-4698-4E15-9D6D-86771AE172C9} components/SeleniumIDEGenericAutoCompleteSearch.js
+contract @mozilla.org/autocomplete/search;1?name=selenium-ide-generic {E5226A0D-4698-4E15-9D6D-86771AE172C9}
