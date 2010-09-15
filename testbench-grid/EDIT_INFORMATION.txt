@@ -89,3 +89,10 @@ Changed files for additional reliability enhancements:
 	com.thoughtworks.selenium.grid.hub.remotecontrol.RemoteControlProxy			[compatibility with latest selenium-grid (1.0.7-SNAPSHOT)]
 	com.thoughtworks.selenium.grid.hub.remotecontrol.GlobalRemoteControlPool    [compatibility with latest selenium-grid (1.0.7-SNAPSHOT), selenium-grid NPE fix]
 	
+Change files (in selenium-server-1.0.1.jar) for Firefox 4 support:
+	customProfileDirCUSTFF/extensions/readystate@openqa.org/install.rdf
+	customProfileDirCUSTFF/extensions/{538F0036-F358-4f84-A764-89FB437166B4}/install.rdf
+	customProfileDirCUSTFFCHROME/extensions/readystate@openqa.org/install.rdf
+	customProfileDirCUSTFFCHROME/extensions/{503A0CD4-EDC8-489b-853B-19E0BAA8F0A4}/install.rdf
+	customProfileDirCUSTFFCHROME/extensions/{538F0036-F358-4f84-A764-89FB437166B4}/install.rdf
+	
