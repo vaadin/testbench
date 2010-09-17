@@ -59,8 +59,9 @@ public class BrowserVersion {
         } else if (userAgent.contains("Safari")) {
             browserName = "Safari";
             if (userAgent.contains("Version")) {
-                versionString = userAgent.substring(userAgent
-                        .indexOf("Version") + 8, userAgent.indexOf("Safari"));
+                versionString = userAgent.substring(
+                        userAgent.indexOf("Version") + 8,
+                        userAgent.indexOf("Safari"));
             } else {
                 versionString = userAgent
                         .substring(userAgent.indexOf("Safari") + 7);
@@ -76,12 +77,12 @@ public class BrowserVersion {
         }
 
         if (versionString.indexOf(";") != -1) {
-            versionString = versionString.substring(0, versionString
-                    .indexOf(";"));
+            versionString = versionString.substring(0,
+                    versionString.indexOf(";"));
         }
         if (versionString.indexOf(" ") != -1) {
-            versionString = versionString.substring(0, versionString
-                    .indexOf(" "));
+            versionString = versionString.substring(0,
+                    versionString.indexOf(" "));
         }
 
         fullVersion = versionString;
@@ -163,5 +164,17 @@ public class BrowserVersion {
         }
 
         return false;
+    }
+
+    public boolean isLinux() {
+        return platform.equals("Linux");
+    }
+
+    public boolean isWindows() {
+        return platform.equals("Windows");
+    }
+
+    public boolean isMac() {
+        return platform.equals("Mac");
     }
 }
