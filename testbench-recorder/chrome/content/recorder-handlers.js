@@ -326,7 +326,7 @@ Recorder.addEventHandler('clickLocator', 'click', function(event){
 			event.cancelBubble = true;
 			return;
 		}
-		if(Recorder.recordAssertText == "true"){
+		if(Recorder.recordAssertText){
 			var target = this.findLocators(event.target);
 			this.record("assertText", target, getText(event.target));
 			document.getElementById('assert-button').click();
@@ -348,8 +348,8 @@ Recorder.addEventHandler('clickLocator', 'click', function(event){
             var y = event.clientY - editor.seleniumAPI.Selenium.prototype.getElementPositionTop(event.target);
             
             /* Stop checking mouseOver events */
-            if(checkForMouseOver == "true"){
-            	checkForMouseOver = "false";
+            if(checkForMouseOver){
+            	checkForMouseOver = false;
             	this.record_orig("mouseClick", this.findLocators(event.target), x + ',' + y);
             	return;
             }
@@ -553,7 +553,7 @@ Recorder.addEventHandler('mouseOutEvent', 'mouseout', function(event){
 		/* If tooltip has been shown record tooltip event */
 		if(getTooltip){
 			getTooltip = false;
-			if(Recorder.recordTooltip == "true"){
+			if(Recorder.recordTooltip){
 				var target = this.findLocators(event.target);
 				this.record("showTooltip", target, '0,0');
 				document.getElementById('tooltip-button').click();
