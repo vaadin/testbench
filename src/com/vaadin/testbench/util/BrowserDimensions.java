@@ -196,7 +196,8 @@ public class BrowserDimensions {
      * </p>
      */
     public static boolean setCanvasSize(Selenium selenium,
-            int requestedCanvasWidth, int requestedCanvasHeight) {
+            BrowserVersion browserVersion, int requestedCanvasWidth,
+            int requestedCanvasHeight) {
         if (requestedCanvasHeight == -1 || requestedCanvasWidth == -1) {
             // No canvas size specified. Nothing to do.
             return false;
@@ -215,6 +216,34 @@ public class BrowserDimensions {
         // possibility that it goes below or to the right of the screen.
         String moveTo = USER_WINDOW_JS + ".moveTo(1,1);";
         selenium.getEval(getInnerWidthHeight + moveTo + resizeBy);
+
+        if (browserVersion.isLinux() && browserVersion.isChrome()) {
+            // window.resizeTo() is pretty badly broken in Linux Chrome...
+
+            // Need to wait for innerWidth to stabilize (Chrome issue #55409)
+            pause(500);
+
+            String getSize = getInnerWidthHeight
+                    + "; innerWidth+','+innerHeight;";
+            String[] newSizes = selenium.getEval(getSize).split(",");
+            int newWidth = Integer.parseInt(newSizes[0]);
+            int newHeight = Integer.parseInt(newSizes[1]);
+
+            int widthError = requestedCanvasWidth - newWidth;
+            int heightError = requestedCanvasHeight - newHeight;
+
+            // Correct the window size
+            // Need to resize by error*2 as
+            String correctedWidth = USER_WINDOW_JS + ".outerWidth-"
+                    + USER_WINDOW_JS + ".innerWidth+"
+                    + (requestedCanvasWidth + widthError);
+            String correctedHeight = USER_WINDOW_JS + ".outerHeight-"
+                    + USER_WINDOW_JS + ".innerHeight+"
+                    + (requestedCanvasHeight + heightError);
+            String secondResize = USER_WINDOW_JS + ".resizeTo("
+                    + correctedWidth + "," + correctedHeight + ");";
+            selenium.getEval(secondResize);
+        }
 
         return true;
     }
