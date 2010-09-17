@@ -95,15 +95,15 @@ public class BrowserDimensions {
     public static BrowserDimensions getBrowserDimensions(
             BrowserVersion browser, Selenium selenium) {
         // Firefox on OSX has a problem with moveTo(0,0)
-        if (browser.getPlatform().equals("Mac") && browser.isFirefox()) {
+        if (browser.isMac() && browser.isFirefox()) {
             selenium.getEval("window.moveTo(0,1);");
         }
         // Get sizes for canvas cropping.
 
         // Hide scrollbar to get correct measurements in IE
-        selenium.getEval(hideScrollbarJS());
-        int width = Integer.parseInt(selenium.getEval("screen.availWidth;"));
-        int height = Integer.parseInt(selenium.getEval("screen.availHeight;"));
+        if (browser.isIE()) {
+            selenium.getEval(hideScrollbarJS());
+        }
         // int browserWindowWidth = Integer.parseInt(selenium
         // .getEval(getOuterWidthHeightJS() + "return outerWidth;"));
         int canvasWidth = BrowserUtil.getCanvasWidth(selenium);
@@ -117,8 +117,14 @@ public class BrowserDimensions {
             canvasYPosition += 2;
         }
 
-        BrowserDimensions dimensions = new BrowserDimensions(width, height,
-                canvasWidth, canvasHeight, canvasXPosition, canvasYPosition);
+        int screenWidth = Integer.parseInt(selenium
+                .getEval("screen.availWidth;"));
+        int screenHeight = Integer.parseInt(selenium
+                .getEval("screen.availHeight;"));
+
+        BrowserDimensions dimensions = new BrowserDimensions(screenWidth,
+                screenHeight, canvasWidth, canvasHeight, canvasXPosition,
+                canvasYPosition);
 
         if (!browser.isIE()) {
             // Only IE provides canvas position. For the other browsers we
