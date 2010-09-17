@@ -405,7 +405,7 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
              * Opera (10.62 and older at least) does not support window.resizeTo
              * or window.moveTo so we cannot move/resize the window but have to
              * accept whatever the browser uses (overrideable in
-             * opera-profile.txt).
+             * profile-opera.txt).
              */
         } else if (hasRequestedCanvasSize()) {
             // The user has specified a canvas size to use so we should
