@@ -69,22 +69,13 @@ public class BrowserUtil {
             }
         }
 
-        try {
-            // We need to guess a location that is within the canvas. The window
-            // is positioned at (0,0) or (1,1) at this point.
+        // We need to guess a location that is within the canvas. The window
+        // is positioned at (0,0) or (1,1) at this point.
 
-            // Using 0.95*canvasHeight we should always be inside the canvas.
-            // 0.95 is used because the detection routine used later on also
-            // checks some pixels below this position (for some weird reason).
-            return (int) (canvasHeight * 0.95);
-        } catch (Exception e) {
-            if (Parameters.isDebug()) {
-                System.out
-                        .println("Canvas Y position got 0. " + e.getMessage());
-            }
-            // Really bad guess but this should never be reached
-            return 0;
-        }
+        // Using 0.95*canvasHeight we should always be inside the canvas.
+        // 0.95 is used because the detection routine used later on also
+        // checks some pixels below this position (for some weird reason).
+        return (int) (canvasHeight * 0.95);
     }
 
     /**
