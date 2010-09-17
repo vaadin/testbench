@@ -29,6 +29,8 @@ import org.mortbay.log.LogFactory;
 import org.openqa.selenium.server.BrowserConfigurationOptions;
 import org.openqa.selenium.server.RemoteControlConfiguration;
 
+import com.thoughtworks.selenium.grid.configuration.ResourceLocator;
+
 public class OperaCustomProfileLauncher extends AbstractBrowserLauncher {
 
     static Log log = LogFactory.getLog(OperaCustomProfileLauncher.class);
@@ -261,10 +263,12 @@ public class OperaCustomProfileLauncher extends AbstractBrowserLauncher {
         // TODO Disable security warnings
 
         // Load custom settings if file is present
-
-        File f = new File("profile-opera.txt");
-        if (f.exists()) {
-            out.println(IOUtils.toString(new FileInputStream(f)));
+        try {
+            String customProfile = new ResourceLocator(getClass())
+                    .retrieveContent("/profile-opera.txt");
+            out.println(customProfile);
+        } catch (Throwable e) {
+            // Custom profile not found. No error.
         }
 
         out.close();
