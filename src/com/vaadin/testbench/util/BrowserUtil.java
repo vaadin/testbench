@@ -56,9 +56,11 @@ public class BrowserUtil {
      * 
      * @param selenium
      * @param browser
+     * @param canvasHeight
      * @return
      */
-    public static int canvasYPosition(Selenium selenium, BrowserVersion browser) {
+    public static int canvasYPosition(Selenium selenium,
+            BrowserVersion browser, int canvasHeight) {
         if (browser.isIE()) {
             try {
                 return Integer.parseInt(selenium
@@ -68,12 +70,13 @@ public class BrowserUtil {
         }
 
         try {
-            // TODO Combine into one getEval
-            int screenHeight = Integer.parseInt(selenium
-                    .getEval("screen.availHeight;"));
-            int canvasHeight = getCanvasHeight(selenium);
+            // We need to guess a location that is within the canvas. The window
+            // is positioned at (0,0) or (1,1) at this point.
 
-            return screenHeight % canvasHeight;
+            // Using 0.95*canvasHeight we should always be inside the canvas.
+            // 0.95 is used because the detection routine used later on also
+            // checks some pixels below this position (for some weird reason).
+            return (int) (canvasHeight * 0.95);
         } catch (Exception e) {
             if (Parameters.isDebug()) {
                 System.out
