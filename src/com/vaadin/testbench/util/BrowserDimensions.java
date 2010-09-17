@@ -144,7 +144,8 @@ public class BrowserDimensions {
         BufferedImage screenshot = ImageUtil.stringToImage(image);
 
         int[] startBlock = new int[10];
-        int xPosition = dimensions.getCanvasXPosition() + 10;
+        int xPosition = dimensions.getCanvasXPosition()
+                + dimensions.getCanvasWidth() / 2;
         startBlock = screenshot.getRGB(xPosition,
                 dimensions.getCanvasYPosition() + 10, 1, 10, startBlock, 0, 1);
 
