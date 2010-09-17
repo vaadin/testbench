@@ -284,7 +284,7 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
     }
 
     protected boolean setRequestedCanvasSize() {
-        return BrowserDimensions.setCanvasSize(selenium, browserVersion,
+        return BrowserDimensions.setCanvasSize(selenium, getBrowserVersion(),
                 requestedCanvasWidth, requestedCanvasHeight);
     }
 
