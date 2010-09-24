@@ -223,7 +223,7 @@ public class BrowserDimensions {
         // Need to move browser to top left before resize to avoid the
         // possibility that it goes below or to the right of the screen.
         String moveTo = USER_WINDOW_JS + ".moveTo(1,1);";
-        selenium.getEval(getInnerWidthHeight + moveTo + resizeBy);
+        selenium.getEval(getInnerWidthHeight + resizeBy + moveTo);
 
         if (browserVersion.isLinux() && browserVersion.isChrome()) {
             // window.resizeTo() is pretty badly broken in Linux Chrome...
