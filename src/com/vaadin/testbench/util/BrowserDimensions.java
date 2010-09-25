@@ -223,8 +223,15 @@ public class BrowserDimensions {
         // Need to move browser to top left before resize to avoid the
         // possibility that it goes below or to the right of the screen.
         String moveTo = USER_WINDOW_JS + ".moveTo(1,1);";
-        selenium.getEval(moveTo);
-        selenium.getEval(getInnerWidthHeight + resizeBy);
+        if (browserVersion.isChrome()) {
+            // Window resize functions are pretty broken in Chrome 6..
+            selenium.getEval(moveTo);
+            pause(200);
+            selenium.getEval(getInnerWidthHeight + resizeBy);
+        } else {
+            selenium.getEval(getInnerWidthHeight + moveTo + resizeBy);
+
+        }
 
         if (browserVersion.isLinux() && browserVersion.isChrome()) {
             // window.resizeTo() is pretty badly broken in Linux Chrome...
@@ -242,7 +249,6 @@ public class BrowserDimensions {
             int heightError = requestedCanvasHeight - newHeight;
 
             // Correct the window size
-            // Need to resize by error*2 as
             String correctedWidth = USER_WINDOW_JS + ".outerWidth-"
                     + USER_WINDOW_JS + ".innerWidth+"
                     + (requestedCanvasWidth + widthError);
