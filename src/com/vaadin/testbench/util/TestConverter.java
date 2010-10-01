@@ -85,7 +85,7 @@ public class TestConverter {
         }
         try {
             // init ParameterUtil
-            ParameterUtil.getInstance();
+            ParameterUtil.init();
         } catch (FileNotFoundException fnfe) {
             fnfe.printStackTrace();
             System.exit(1);
@@ -384,7 +384,7 @@ public class TestConverter {
     }
 
     private static String createTestMethod(String htmlFile, String testName)
-            throws FileNotFoundException, IOException {
+            throws IOException {
         FileInputStream fis = new FileInputStream(htmlFile);
         String htmlSource = IOUtils.toString(fis);
         fis.close();
@@ -407,7 +407,7 @@ public class TestConverter {
     }
 
     private static String createTestCaseMethod(String testName,
-            List<Command> commands) throws FileNotFoundException {
+            List<Command> commands) {
         screenshot = false;
         firstScreenshot = true;
         String testCaseHeader = getTestCaseHeader(testName);
@@ -547,7 +547,7 @@ public class TestConverter {
     }
 
     private static String convertTestCaseToJava(List<Command> commands,
-            String testName) throws FileNotFoundException {
+            String testName) {
         StringBuilder javaSource = new StringBuilder();
 
         for (Command command : commands) {
@@ -836,8 +836,7 @@ public class TestConverter {
         return javaSource.toString();
     }
 
-    private static void writeDoCommand(Command command, StringBuilder javaSource)
-            throws FileNotFoundException {
+    private static void writeDoCommand(Command command, StringBuilder javaSource) {
         javaSource.append("cmd.setCommand(\"" + command.getCmd()
                 + "\", \"\");\n");
         javaSource.append("doCommand(\"");
@@ -861,7 +860,7 @@ public class TestConverter {
         }
 
         javaSource.append("\"" + locator);
-        javaSource.append("\",\"" + ParameterUtil.getInstance().get(value));
+        javaSource.append("\",\"" + ParameterUtil.translate(value));
         javaSource.append("\"});\n");
         // if (command.getCmd().endsWith("AndWait")) {
         javaSource.append("waitForVaadin();\n");

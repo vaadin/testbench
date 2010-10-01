@@ -16,31 +16,37 @@ public class ParameterUtil {
     private static ParameterUtil _parameter = null;
     private Properties properties = null;
 
-    protected ParameterUtil() {
+    private ParameterUtil() {
         // Exists so class can't be instantiated.
     }
 
-    public static ParameterUtil getInstance() throws FileNotFoundException {
+    public static ParameterUtil getInstance() {
+        return _parameter;
+    }
+
+    public static void init() throws FileNotFoundException {
         if (_parameter == null) {
             _parameter = new ParameterUtil();
             _parameter.initParameter();
         }
 
-        return _parameter;
     }
 
     /**
      * Initialize properties and load properties file if available
      * 
      * @throws FileNotFoundException
+     * 
+     * @throws RuntimeException
+     *             If the properties file was defined but not found
      */
     private void initParameter() throws FileNotFoundException {
         properties = new Properties();
 
         if (Parameters.hasParameterFile()) {
             try {
-                FileInputStream in = new FileInputStream(Parameters
-                        .getParameterFile());
+                FileInputStream in = new FileInputStream(
+                        Parameters.getParameterFile());
                 properties.load(in);
                 in.close();
             } catch (IOException ioe) {
@@ -57,8 +63,8 @@ public class ParameterUtil {
      *            Key to search for
      * @return Property for key. If key not found return key.
      */
-    public String get(String key) {
-        return properties.getProperty(key, key);
+    private String get(String key) {
+        return get(key, key);
     }
 
     /**
@@ -68,7 +74,12 @@ public class ParameterUtil {
      *            Key to search for
      * @return Property for key. If key not found return default value.
      */
-    public String get(String key, String defaultValue) {
+    private String get(String key, String defaultValue) {
         return properties.getProperty(key, defaultValue);
     }
+
+    public static String translate(String value) {
+        return getInstance().get(value);
+    }
+
 }
