@@ -28,6 +28,10 @@ public class DateUtil {
      */
     public static String replaceDateFunctions(String value, Date referenceDate)
             throws IllegalArgumentException {
+        if (value == null) {
+            return null;
+        }
+
         String pattern = "DATE\\(([^\\)]*)\\)";
 
         Matcher m = Pattern.compile(pattern).matcher(value);
