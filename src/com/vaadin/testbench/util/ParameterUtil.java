@@ -75,6 +75,11 @@ public class ParameterUtil {
      * @return Property for key. If key not found return default value.
      */
     private String get(String key, String defaultValue) {
+        // Properties is based on a HashTable that can't handle null values
+        if (key == null) {
+            return defaultValue;
+        }
+
         return properties.getProperty(key, defaultValue);
     }
 
