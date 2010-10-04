@@ -216,8 +216,6 @@ public class JavaFileBuilder {
         javaSource.append(",");
         javaSource.append(quotedSafeParameterString(value));
         javaSource.append(");\n");
-
-        javaSource.append("});\n");
     }
 
     public byte[] getBrowserTestMethod(String browser) {
