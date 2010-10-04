@@ -33,11 +33,11 @@ public class JavaFileBuilder {
             value = "";
         }
 
-        javaSource.append("cmd.setCommand(\"");
-        javaSource.append(command);
-        javaSource.append("\", \"");
-        javaSource.append(makeJavaStringSafe(value));
-        javaSource.append("\");\n");
+        javaSource.append("cmd.setCommand(");
+        javaSource.append(quotedSafeParameterString(command));
+        javaSource.append(", ");
+        javaSource.append(quotedSafeParameterString(value));
+        javaSource.append(");\n");
 
     }
 
@@ -49,24 +49,23 @@ public class JavaFileBuilder {
      * @param parameters
      */
     public void appendCommand(String command, String locator, String value) {
-        javaSource.append("doCommand(\"");
-        javaSource.append(makeJavaStringSafe(command));
-        javaSource.append("\",new String[] {");
+        javaSource.append("doCommand(");
+        javaSource.append(quotedSafeParameterString(command));
+        javaSource.append(",new String[] {");
 
         if (locator != null) {
-            javaSource.append("\"");
-            javaSource.append(makeJavaStringSafe(replaceParameters(locator)));
-            javaSource.append("\"");
+            javaSource
+                    .append(quotedSafeParameterString(replaceParameters(locator)));
         }
         // TODO: Can locator be null and value != null. What should even happen
         // then?
         if (value != null) {
             if (locator != null) {
-                javaSource.append(",\"");
+                javaSource.append(",");
             }
 
-            javaSource.append(makeJavaStringSafe(replaceParameters(value)));
-            javaSource.append("\"");
+            javaSource
+                    .append(quotedSafeParameterString(replaceParameters(value)));
         }
         javaSource.append("});\n");
 
@@ -81,6 +80,11 @@ public class JavaFileBuilder {
         return value;
     }
 
+    /**
+     * @param string
+     *            String to make safe. Must not be null.
+     * @return
+     */
     private static String makeJavaStringSafe(String string) {
         // The string must not contain quotes or newlines as this will cause
         // compilation errors
@@ -92,10 +96,28 @@ public class JavaFileBuilder {
 
     public void appendScreenshot(String testName, double errorTolerance,
             String imageIdentifier) {
-        javaSource.append("validateScreenshot(\""
-                + makeJavaStringSafe(testName) + "\", " + errorTolerance
-                + ", \"" + makeJavaStringSafe(imageIdentifier) + "\");\n");
+        javaSource.append("validateScreenshot(");
+        javaSource.append(quotedSafeParameterString(testName));
+        javaSource.append(", " + errorTolerance + ", ");
+        javaSource.append(quotedSafeParameterString(imageIdentifier));
+        javaSource.append(");\n");
+    }
 
+    /**
+     * Makes the string safe to be added as a parameter to a java function. The
+     * return value is quoted if not null and any quotes in the supplied string
+     * are escaped.
+     * 
+     * @param parameter
+     *            The parameter to quote and make safe.
+     * @return Parameter safe to be added as a parameter to a java function.
+     */
+    private String quotedSafeParameterString(String parameter) {
+        if (parameter == null) {
+            return "null";
+        } else {
+            return "\"" + makeJavaStringSafe(parameter) + "\"";
+        }
     }
 
     public void appendCode(String string) {
@@ -133,9 +155,15 @@ public class JavaFileBuilder {
         }
     }
 
+    /**
+     * Add native keypress command.
+     * 
+     * @param value
+     *            ???. Must not be null.
+     */
     public void appendKeyPressNative(String value) {
-        javaSource.append("selenium.keyPressNative(\""
-                + makeJavaStringSafe(value) + "\");\n");
+        javaSource.append("selenium.keyPressNative("
+                + quotedSafeParameterString(value) + ");\n");
 
     }
 
@@ -183,16 +211,10 @@ public class JavaFileBuilder {
     }
 
     public void appendMouseClick(String locator, String value) {
-        javaSource.append("doMouseClick(\"");
-        javaSource.append(makeJavaStringSafe(locator));
-        javaSource.append("\",");
-        if (value != null) {
-            javaSource.append("\"");
-            javaSource.append(makeJavaStringSafe(value));
-            javaSource.append("\"");
-        } else {
-            javaSource.append("null");
-        }
+        javaSource.append("doMouseClick(");
+        javaSource.append(quotedSafeParameterString(locator));
+        javaSource.append(",");
+        javaSource.append(quotedSafeParameterString(value));
         javaSource.append(");\n");
 
         javaSource.append("});\n");
