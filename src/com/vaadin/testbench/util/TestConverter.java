@@ -550,8 +550,11 @@ public class TestConverter {
                 screenshot = true;
             } else if (command.getCmd().equalsIgnoreCase("pause")) {
                 // Special case to ensure pause value is an integer
-                int delay = command.getIntValue();
-                builder.appendCommandInfo("pause", String.valueOf(delay));
+
+                // For some weird Selenium compatible reason the value is stored
+                // as a locator...
+                int delay = Integer.parseInt(command.getLocator());
+                builder.appendCommandInfo("pause", command.getLocator());
                 builder.appendPause(delay);
             } else if (command.getCmd().equalsIgnoreCase("pressSpecialKey")) {
                 // Special case because keys are played back differently in
