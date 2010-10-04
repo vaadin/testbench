@@ -27,11 +27,16 @@ public class JavaFileBuilder {
         javaSource.append(");\n");
     }
 
-    public void appendCommandInfo(String command, String identifier) {
+    public void appendCommandInfo(String command, String value) {
+        // setCommand assumes second parameter is not null
+        if (value == null) {
+            value = "";
+        }
+
         javaSource.append("cmd.setCommand(\"");
         javaSource.append(command);
         javaSource.append("\", \"");
-        javaSource.append(makeJavaStringSafe(identifier));
+        javaSource.append(makeJavaStringSafe(value));
         javaSource.append("\");\n");
 
     }
