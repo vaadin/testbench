@@ -37,6 +37,8 @@ public class DateUtilTest extends TestCase {
             referenceDate.getMonth(), referenceDate.getDate());
 
     public void testDateReplacement() {
+        assertNull(DateUtil.replaceDateFunctions(null, new Date()));
+
         test(new Date(referenceDate.getTime()), null);
         test(new Date(referenceDate.getTime()), "-10D+10D");
 

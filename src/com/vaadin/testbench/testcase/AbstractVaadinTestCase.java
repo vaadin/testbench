@@ -429,4 +429,18 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
     protected boolean hasRequestedCanvasSize() {
         return requestedCanvasWidth > 0;
     }
+
+    private String mouseClickCommand = null;
+
+    protected void doMouseClick(String locator, String value) {
+        if (mouseClickCommand == null) {
+            if (getBrowserVersion().isOpera()
+                    && getBrowserVersion().isOlderVersion(10, 50)) {
+                mouseClickCommand = "mouseClickOpera";
+            } else {
+                mouseClickCommand = "mouseClick";
+            }
+        }
+        doCommand(mouseClickCommand, new String[] { locator, value });
+    }
 }

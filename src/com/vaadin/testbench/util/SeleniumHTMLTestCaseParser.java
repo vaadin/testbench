@@ -48,36 +48,44 @@ public class SeleniumHTMLTestCaseParser {
 
     public static class Command {
 
-        private void init(String cmd, String[] params) {
+        private String cmd;
+        private String locator;
+        private String value;
+
+        private void init(String cmd, String locator, String value) {
             this.cmd = cmd;
-            this.params = params;
+            this.locator = locator;
+            this.value = value;
         }
 
         public Command(String command, String target, String value) {
             if (value == null || value.equals("")) {
-                init(command, new String[] { target });
+                init(command, target, null);
             } else {
-                init(command, new String[] { target, value });
+                init(command, target, value);
             }
         }
 
-        private String cmd;
-        private String[] params;
+        public String getLocator() {
+            return locator;
+        }
 
         public String getCmd() {
             return cmd;
         }
 
-        public void setCmd(String cmd) {
-            this.cmd = cmd;
+        public String getValue() {
+            return value;
         }
 
-        public String[] getParams() {
-            return params;
-        }
-
-        public void setParams(String[] params) {
-            this.params = params;
+        public int getIntValue() {
+            String value = getValue();
+            try {
+                return Integer.parseInt(value);
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("Value for command " + cmd
+                        + " is \"" + value + "\" and is not an integer.");
+            }
         }
 
     }

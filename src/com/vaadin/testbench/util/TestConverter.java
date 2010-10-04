@@ -113,7 +113,9 @@ public class TestConverter {
                     filename = getTestInputFilename(args[i]);
 
                     String testName = getTestName(filename);
-                    String packageName = getJavaPackageName(testName, browser);
+                    JavaFileBuilder builder = new JavaFileBuilder(testName);
+                    String packageName = builder.getPackageName(browser);
+
                     System.out.println("Generating test " + testName + " for "
                             + browser + " in " + packageName);
 
@@ -121,18 +123,8 @@ public class TestConverter {
                     out = createJavaFileForTest(testName, packageName, browser,
                             outputDirectory);
 
-                    /* Create a test method for the browser. */
-                    StringBuilder browserInit = new StringBuilder();
-                    browserInit.append("public void test"
-                            + getSafeName(browser) + "() throws Throwable{\n");
-
-                    browserInit.append("setBrowserIdentifier(\"" + browser
-                            + "\");\n");
-                    browserInit.append("super.setUp();\n");
-
-                    browserInit.append(getTestMethodName(testName) + "();");
-                    browserInit.append("\n}\n\n");
-                    out.write(browserInit.toString().getBytes());
+                    out.write(builder.getJavaHeader(browser));
+                    out.write(builder.getBrowserTestMethod(browser));
 
                     try {
                         String testMethod = createTestMethod(filename, testName);
@@ -173,7 +165,7 @@ public class TestConverter {
         }
     }
 
-    private static String getTestMethodName(String testName) {
+    static String getTestMethodName(String testName) {
         return "internal_" + testName;
     }
 
@@ -348,8 +340,6 @@ public class TestConverter {
         createIfNotExists(outputFile.getParent());
         FileOutputStream outputStream = new FileOutputStream(outputFile);
 
-        outputStream.write(getJavaHeader(getSafeName(testName), packageName));
-
         return outputStream;
     }
 
@@ -367,7 +357,7 @@ public class TestConverter {
         return outputStream;
     }
 
-    private static String getSafeName(String name) {
+    public static String getSafeName(String name) {
         return name.replaceAll("[^a-zA-Z0-9]", "_");
     }
 
@@ -415,12 +405,8 @@ public class TestConverter {
         String testCaseFooter = getTestCaseFooter(testName);
         String currentCommand = "CurrentCommand cmd = new CurrentCommand(\""
                 + testName + "\");\n";
-        String versionDetector = "BrowserVersion browser = getBrowserVersion();\n"
-                + "String mouseClickCommand = \"mouseClick\";\n"
-                + "if (browser.isOpera() && browser.isOlderVersion(10,50)) {\n"
-                + "\tmouseClickCommand = \"mouseClickOpera\";\n" + "}\n";
 
-        String methodHeader = testCaseHeader + currentCommand + versionDetector;
+        String methodHeader = testCaseHeader + currentCommand;
 
         // Add canvas size initialization in the case a screenshot is wanted
         if (screenshot) {
@@ -432,7 +418,7 @@ public class TestConverter {
         return methodHeader;
     }
 
-    private static String getWindowInitFunctions(boolean hasScreenshots) {
+    static String getWindowInitFunctions(boolean hasScreenshots) {
         final String windowInitFunctions = "setupWindow(#hasScreenshots#);\n";
 
         return windowInitFunctions.replaceAll("#hasScreenshots#",
@@ -512,7 +498,7 @@ public class TestConverter {
                 + footer;
     }
 
-    private static byte[] getJavaHeader(String className, String packageName) {
+    static byte[] getJavaHeader(String className, String packageName) {
         String header = JAVA_HEADER;
         header = header.replace("{class}", className);
         header = header.replace("{package}", packageName);
@@ -520,7 +506,7 @@ public class TestConverter {
         return header.getBytes();
     }
 
-    private static String getJavaPackageName(String testName, String browserName) {
+    public static String getJavaPackageName(String testName, String browserName) {
         return testName + "." + getSafeName(browserName);
     }
 
@@ -548,323 +534,155 @@ public class TestConverter {
 
     private static String convertTestCaseToJava(List<Command> commands,
             String testName) {
-        StringBuilder javaSource = new StringBuilder();
+        JavaFileBuilder builder = new JavaFileBuilder(testName);
 
         for (Command command : commands) {
             if (command.getCmd().equals("screenCapture")) {
-                String identifier = "";
-                boolean first = true;
-                // Get Value field for image name identifier
-                for (String param : command.getParams()) {
-                    if (!first) {
-                        identifier = param;
-                    }
-                    first = false;
-                }
+                String imageId = command.getValue();
+
                 if (firstScreenshot) {
-                    javaSource.append("pause(500);\n");
+                    builder.appendPause(500);
                     firstScreenshot = false;
                 }
 
-                javaSource.append("cmd.setCommand(\"screenCapture\", \""
-                        + identifier + "\");\n");
-                javaSource.append("validateScreenshot(\"" + testName
-                        + "\", 0.025, \"" + identifier + "\");\n");
+                builder.appendCommandInfo("screenCapture", imageId);
+                builder.appendScreenshot(testName, 0.025, imageId);
                 screenshot = true;
             } else if (command.getCmd().equalsIgnoreCase("pause")) {
-                String identifier = "";
-                boolean first = true;
-                // Get Target field for pause time
-                for (String param : command.getParams()) {
-                    if (first) {
-                        identifier = param;
-                    }
-                    first = false;
-                }
-                javaSource.append("cmd.setCommand(\"pause\", \"" + identifier
-                        + "\");\n");
-                javaSource.append("pause(" + identifier + ");\n");
+                // Special case to ensure pause value is an integer
+                int delay = command.getIntValue();
+                builder.appendCommandInfo("pause", String.valueOf(delay));
+                builder.appendPause(delay);
             } else if (command.getCmd().equalsIgnoreCase("pressSpecialKey")) {
-                String value = "";
-                String location = "";
-                boolean first = true;
-                boolean ctrl, alt, shift;
-                ctrl = alt = shift = false;
-                for (String param : command.getParams()) {
-                    if (first) {
-                        /* Get the location target */
-                        location = param.replace("\\", "\\\\");
-                    } else {
-                        /* get pressed key from keyCode or name */
-                        if (param.contains("\\")) {
-                            switch (Integer.parseInt(param.substring(param
-                                    .lastIndexOf("\\")))) {
-                            case 13:
-                                value = "" + KeyEvent.VK_ENTER;
-                                break;
-                            case 37:
-                                value = "" + KeyEvent.VK_LEFT;
-                                break;
-                            case 38:
-                                value = "" + KeyEvent.VK_UP;
-                                break;
-                            case 39:
-                                value = "" + KeyEvent.VK_RIGHT;
-                                break;
-                            case 40:
-                                value = "" + KeyEvent.VK_DOWN;
-                                break;
-                            }
-                        } else if (param.contains("up")) {
-                            value = "" + KeyEvent.VK_UP;
-                        } else if (param.contains("down")) {
-                            value = "" + KeyEvent.VK_DOWN;
-                        } else if (param.contains("left")) {
-                            value = "" + KeyEvent.VK_LEFT;
-                        } else if (param.contains("right")) {
-                            value = "" + KeyEvent.VK_RIGHT;
-                        } else if (param.contains("enter")) {
-                            value = "" + KeyEvent.VK_ENTER;
-                            // } else if ("BACKSPACE".equalsIgnoreCase(param)) {
-                            // values.append("\\\\8\"");
-                        } else if (param.contains("tab")) {
-                            value = "" + KeyEvent.VK_TAB;
-                        }
-                        if (param.contains("shift")) {
-                            shift = true;
-                        }
-                        if (param.contains("alt")) {
-                            alt = true;
-                        }
-                        if (param.contains("ctrl")) {
-                            ctrl = true;
-                        }
+                // Special case because keys are played back differently in
+                // different browsers.
+                String locator = command.getLocator();
+                String value = command.getValue();
 
-                        // if native keypress is not used give text string to
-                        // doCommand
-                        if (!isOpera && !isSafari && !isChrome) {
-                            value = param;
-                        }
-                    }
+                String convertedValue = convertKeyCodeOrName(value);
+                boolean shift = (value.contains("shift"));
+                boolean alt = (value.contains("alt"));
+                boolean ctrl = (value.contains("ctrl"));
 
-                    first = false;
+                // if native keypress is not used give text string to
+                // doCommand
+                if (convertedValue == null && !isOpera && !isSafari
+                        && !isChrome) {
+                    // FIXME: What does this mean? Why is behavior different for
+                    // undefined keycodes in certain browsers?
+                    convertedValue = value;
                 }
 
-                javaSource.append("cmd.setCommand(\"pressSpecialKey\", \""
-                        + value + "\");\n");
+                builder.appendCommandInfo("pressSpecialKey", value);
+
                 /*
                  * Opera, Safari and GoogleChrome need the java native keypress
                  */
                 if (isOpera || isSafari || isChrome) {
-                    javaSource
-                            .append("selenium.focus(\"" + location + "\");\n");
+                    builder.appendCode("selenium.focus(\"" + locator + "\");\n");
 
-                    appendKeyModifierDown(javaSource, ctrl, alt, shift);
-
-                    javaSource.append("selenium.keyPressNative(\"" + value
-                            + "\");\n");
-
-                    appendKeyModifierUp(javaSource, ctrl, alt, shift);
+                    builder.appendKeyModifierDown(ctrl, alt, shift);
+                    builder.appendKeyPressNative(convertedValue);
+                    builder.appendKeyModifierUp(ctrl, alt, shift);
                 } else {
-                    javaSource
-                            .append("doCommand(\"pressSpecialKey\", new String[] { \""
-                                    + location
-                                    + "\", \"\\\\"
-                                    + value
-                                    + "\"});\n");
+                    builder.appendCommand("pressSpecialKey", locator,
+                            convertedValue);
+
                 }
             } else if (command.getCmd().equalsIgnoreCase("mouseClick")) {
-                StringBuilder values = new StringBuilder();
-                boolean first = true;
-                String firstParam = "";
-                for (String param : command.getParams()) {
-                    if (first) {
-                        /* get location */
-                        firstParam = param;
-                        values.append(param + "\", \"");
-                    } else {
-                        values.append(param);
-                    }
-                    first = false;
-                }
+                // Special case because the actual command we execute vary
 
-                javaSource.append("cmd.setCommand(\"mouseClick\", \"\");\n");
+                builder.appendCommandInfo("mouseClick", "");
+                builder.appendMouseClick(command.getLocator(),
+                        command.getValue());
 
-                if (runner) {
-                    if (isOpera) {
-                        javaSource
-                                .append("doCommand(\"mouseClickOpera\", new String[] {\""
-                                        + values + "\"});\n");
-                    } else {
-                        javaSource
-                                .append("doCommand(\"mouseClick\", new String[] {\""
-                                        + values + "\"});\n}\n");
-                    }
-                } else {
-                    // We don't know if opera will be used
-                    javaSource
-                            .append("doCommand(mouseClickCommand, new String[] {\""
-                                    + values + "\"});\n");
-                }
-            } else if (command.getCmd().equalsIgnoreCase("verifyTextPresent")) {
-
-                String identifier = "";
-                boolean first = true;
-                for (String param : command.getParams()) {
-                    if (first) {
-                        identifier = param;
-                    }
-                    first = false;
-                }
-                identifier = identifier.replace("\"", "\\\"").replaceAll("\\n",
-                        "\\\\n");
-
-                javaSource.append("cmd.setCommand(\"verifyTextPresent\", \""
-                        + identifier + "\");\n");
-                javaSource
-                        .append("doCommand(\"verifyTextPresent\", new String[] {\""
-                                + identifier + "\"});\n");
-            } else if (command.getCmd().equalsIgnoreCase("assertTextPresent")) {
-
-                String identifier = "";
-                boolean first = true;
-                for (String param : command.getParams()) {
-                    if (first) {
-                        identifier = param;
-                    }
-                    first = false;
-                }
-                identifier = identifier.replace("\"", "\\\"").replaceAll("\\n",
-                        "\\\\n");
-
-                javaSource.append("cmd.setCommand(\"assertTextPresent\", \""
-                        + identifier + "\");\n");
-                javaSource
-                        .append("doCommand(\"assertTextPresent\", new String[] {\""
-                                + identifier + "\"});\n");
+            } else if (command.getCmd().equalsIgnoreCase("verifyTextPresent")
+                    || command.getCmd().equalsIgnoreCase("assertTextPresent")) {
+                // Special case because value is in locator and not in value
+                // (stupid...)
+                String text = command.getLocator();
+                builder.appendCommandInfo(command.getCmd(), text);
+                builder.appendCommand(command.getCmd(), text, null);
             } else if (command.getCmd().equalsIgnoreCase("htmlTest")) {
-                String locator = "";
-                String value = "";
-                boolean first = true;
-                for (String param : command.getParams()) {
-                    if (first) {
-                        /* get locator */
-                        locator = param.replace("\\", "\\\\");
-                    } else {
-                        /* get characters */
-                        value = param;
-                    }
+                // FIXME is this even a command? "locator" is not used for
+                // anything and no command is appended
+                String locator = command.getLocator().replace("\\", "\\\\");
+                String value = command.getValue();
 
-                    first = false;
-                }
-                javaSource.append("cmd.resetCmdNr();\n");
-                javaSource.append("cmd.setFile(\"" + value + "\");\n");
-                javaSource.append("System.out.println(\"Start test " + value
+                builder.appendCode("cmd.resetCmdNr();\n");
+                builder.appendCode("cmd.setFile(\"" + value + "\");\n");
+                builder.appendCode("System.out.println(\"Start test " + value
                         + "\");");
             } else if (command.getCmd().equalsIgnoreCase("showTooltip")) {
-                String locator = "";
-                String value = "";
-                boolean first = true;
-                for (String param : command.getParams()) {
-                    if (first) {
-                        /* get locator */
-                        locator = param.replace("\\", "\\\\");
-                    } else {
-                        /* get characters */
-                        value = param;
-                    }
+                // Special case only because of pause afterwards..
+                // TODO Change to default command and add pause later on
+                String locator = command.getLocator();
+                String value = command.getValue();
 
-                    first = false;
-                }
-
-                javaSource.append("cmd.setCommand(\"showTooltip\", \"\");\n");
-                javaSource.append("doCommand(\"showTooltip\",new String[] {\""
-                        + locator + "\", \"" + value + "\"});\n");
-                javaSource.append("pause(700);\n");
+                builder.appendCommandInfo(command.getCmd(), "");
+                builder.appendCommand(command.getCmd(), locator, value);
+                builder.appendPause(700);
             } else if (command.getCmd().equalsIgnoreCase("includeTest")) {
                 // Loads another test, parses the commands, converts tests and
                 // adds result to this TestCase
-                String locator = "";
-                String value = "";
-                boolean first = true;
-
-                for (String param : command.getParams()) {
-                    if (first) {
-                        /* get locator */
-                        locator = param.replace("\\", "\\\\");
-                    } else {
-                        /* get target */
-                        value = param.replace("\\", "\\\\");
-                    }
-
-                    first = false;
-                }
+                String value = command.getValue().replace("\\", "\\\\");
 
                 if (value.length() == 0) {
                     System.err.println("No file defined in Value field.");
                     System.err.println("Check includeTest command in "
                             + absoluteFilePath);
-                    javaSource
-                            .append("junit.framework.Assert.fail(\"No file defined in Value field.\");\n");
+                    builder.appendCode("junit.framework.Assert.fail(\"No file defined in Value field.\");\n");
                 } else {
-                    includeTest(javaSource, value, testName);
+                    includeTest(builder, value, testName);
                 }
             } else if (command.getCmd().equals("open")) {
-                javaSource.append("try {");
-                writeDoCommand(command, javaSource);
-                javaSource.append("} catch (Exception e) {");
-                javaSource
-                        .append("System.out.println(\"Open failed, retrying\");");
-                javaSource
-                        .append("selenium.stop(); selenium.start(); clearDimensions();");
-
-                // Use true here as screenshot is not correctly set before this.
-                // Tests could probably always be run in maximized mode anyway.
-                javaSource.append(getWindowInitFunctions(true));
-
-                writeDoCommand(command, javaSource);
-                javaSource.append("}");
-
-                javaSource
-                        .append("doCommand(\"waitForVaadin\",new String[] {\"\",\"\"});\n");
+                // Special case because we need to try open several times in IE6
+                // sometimes..
+                builder.appendOpen(command);
+                builder.appendCode("waitForVaadin();\n");
             } else {
-                writeDoCommand(command, javaSource);
+                // Default way to handle commands
+                builder.appendCommand(command);
             }
 
         }
 
-        return javaSource.toString();
+        return builder.getJavaSource();
     }
 
-    private static void writeDoCommand(Command command, StringBuilder javaSource) {
-        javaSource.append("cmd.setCommand(\"" + command.getCmd()
-                + "\", \"\");\n");
-        javaSource.append("doCommand(\"");
-        javaSource.append(command.getCmd());
-        javaSource.append("\",new String[] {");
+    private static String convertKeyCodeOrName(String value) {
 
-        String locator = "";
-        String value = "";
-
-        boolean first = true;
-        for (String param : command.getParams()) {
-            if (first) {
-                /* get locator */
-                locator = param.replace("\\", "\\\\");
-            } else {
-                /* get target */
-                value = param.replace("\\", "\\\\").replace("\n", "\\n");
+        /* get pressed key from keyCode or name */
+        if (value.contains("\\")) {
+            switch (Integer.parseInt(value.substring(value.lastIndexOf("\\")))) {
+            case 13:
+                return "" + KeyEvent.VK_ENTER;
+            case 37:
+                return "" + KeyEvent.VK_LEFT;
+            case 38:
+                return "" + KeyEvent.VK_UP;
+            case 39:
+                return "" + KeyEvent.VK_RIGHT;
+            case 40:
+                return "" + KeyEvent.VK_DOWN;
             }
-
-            first = false;
+        } else if (value.contains("up")) {
+            return "" + KeyEvent.VK_UP;
+        } else if (value.contains("down")) {
+            return "" + KeyEvent.VK_DOWN;
+        } else if (value.contains("left")) {
+            return "" + KeyEvent.VK_LEFT;
+        } else if (value.contains("right")) {
+            return "" + KeyEvent.VK_RIGHT;
+        } else if (value.contains("enter")) {
+            return "" + KeyEvent.VK_ENTER;
+            // } else if ("BACKSPACE".equalsIgnoreCase(value)) {
+            // values.append("\\\\8\"");
+        } else if (value.contains("tab")) {
+            return "" + KeyEvent.VK_TAB;
         }
 
-        javaSource.append("\"" + locator);
-        javaSource.append("\",\"" + ParameterUtil.translate(value));
-        javaSource.append("\"});\n");
-        // if (command.getCmd().endsWith("AndWait")) {
-        javaSource.append("waitForVaadin();\n");
-        // }
+        return null;
     }
 
     private static File getFile(String test, File buildPath) {
@@ -936,7 +754,7 @@ public class TestConverter {
 
     }
 
-    private static void includeTest(StringBuilder javaSource, String value,
+    private static void includeTest(JavaFileBuilder builder, String value,
             String testName) {
 
         // Try to load and parse test
@@ -957,9 +775,8 @@ public class TestConverter {
         // If file not found add Assert.fail and print to System.err
         if (target == null) {
             target = new File(value);
-            javaSource
-                    .append("junit.framework.Assert.fail(\"Couldn't find file "
-                            + target.getName() + "\");\n");
+            builder.appendCode("junit.framework.Assert.fail(\"Couldn't find file "
+                    + target.getName() + "\");\n");
             System.err.println("Failed to append test " + target.getName());
         } else {
             // Save path to including file
@@ -994,7 +811,7 @@ public class TestConverter {
                 List<Command> newCommands = parseTestCase(cx, scope, htmlSource);
                 // Convert tests to Java
                 String tests = convertTestCaseToJava(newCommands, testName);
-                javaSource.append(tests);
+                builder.appendCode(tests);
 
             } catch (Exception e) {
                 // if exception was caught put a assert fail to
@@ -1004,12 +821,8 @@ public class TestConverter {
                 if (Parameters.isDebug()) {
                     e.printStackTrace();
                 }
-                javaSource
-                        .append("junit.framework.Assert.fail(\"Insertion of test "
-                                + value
-                                + " failed with "
-                                + e.getMessage()
-                                + "\");");
+                builder.appendCode("junit.framework.Assert.fail(\"Insertion of test "
+                        + value + " failed with " + e.getMessage() + "\");");
             } finally {
                 Context.exit();
                 // Set path back to calling file
@@ -1019,35 +832,4 @@ public class TestConverter {
         }
     }
 
-    private static void appendKeyModifierDown(StringBuilder javaSource,
-            boolean ctrl, boolean alt, boolean shift) {
-        if (ctrl) {
-            javaSource.append("selenium.keyDownNative(\"" + KeyEvent.VK_CONTROL
-                    + "\");\n");
-        }
-        if (alt) {
-            javaSource.append("selenium.keyDownNative(\"" + KeyEvent.VK_ALT
-                    + "\");\n");
-        }
-        if (shift) {
-            javaSource.append("selenium.keyDownNative(\"" + KeyEvent.VK_SHIFT
-                    + "\");\n");
-        }
-    }
-
-    private static void appendKeyModifierUp(StringBuilder javaSource,
-            boolean ctrl, boolean alt, boolean shift) {
-        if (ctrl) {
-            javaSource.append("selenium.keyUpNative(\"" + KeyEvent.VK_CONTROL
-                    + "\");\n");
-        }
-        if (alt) {
-            javaSource.append("selenium.keyUpNative(\"" + KeyEvent.VK_ALT
-                    + "\");\n");
-        }
-        if (shift) {
-            javaSource.append("selenium.keyUpNative(\"" + KeyEvent.VK_SHIFT
-                    + "\");\n");
-        }
-    }
 }
