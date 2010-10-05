@@ -21,9 +21,9 @@ public class JavaFileBuilder {
 
     }
 
-    public void appendPause(int i) {
+    public void appendPause(String delay) {
         javaSource.append("pause(");
-        javaSource.append(i);
+        javaSource.append(replaceParameters(delay));
         javaSource.append(");\n");
     }
 
@@ -54,8 +54,7 @@ public class JavaFileBuilder {
         javaSource.append(",new String[] {");
 
         if (locator != null) {
-            javaSource
-                    .append(quotedSafeParameterString(replaceParameters(locator)));
+            javaSource.append(quotedSafeParameterString(locator));
         }
         // TODO: Can locator be null and value != null. What should even happen
         // then?
@@ -69,6 +68,8 @@ public class JavaFileBuilder {
         }
         javaSource.append("});\n");
 
+        // if (command.endsWith("AndWait"))
+        appendCode("waitForVaadin();\n");
     }
 
     private String replaceParameters(String value) {
@@ -99,7 +100,8 @@ public class JavaFileBuilder {
         javaSource.append("validateScreenshot(");
         javaSource.append(quotedSafeParameterString(testName));
         javaSource.append(", " + errorTolerance + ", ");
-        javaSource.append(quotedSafeParameterString(imageIdentifier));
+        javaSource
+                .append(quotedSafeParameterString(replaceParameters(imageIdentifier)));
         javaSource.append(");\n");
     }
 
@@ -184,17 +186,8 @@ public class JavaFileBuilder {
     }
 
     public void appendCommand(Command command) {
-
-        String locator = command.getLocator();
-        locator = locator.replace("\\", "\\\\"); // What is this for ?
-
-        String value = command.getValue();
-
-        appendCommand(command.getCmd(), locator, value);
-
-        // if (command.getCmd().endsWith("AndWait")) {
-        appendCode("waitForVaadin();\n");
-        // }
+        appendCommand(command.getCmd(), command.getLocator(),
+                command.getValue());
     }
 
     public String getJavaSource() {
@@ -214,7 +207,7 @@ public class JavaFileBuilder {
         javaSource.append("doMouseClick(");
         javaSource.append(quotedSafeParameterString(locator));
         javaSource.append(",");
-        javaSource.append(quotedSafeParameterString(value));
+        javaSource.append(quotedSafeParameterString(replaceParameters(value)));
         javaSource.append(");\n");
     }
 

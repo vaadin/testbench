@@ -541,7 +541,7 @@ public class TestConverter {
                 String imageId = command.getValue();
 
                 if (firstScreenshot) {
-                    builder.appendPause(500);
+                    builder.appendPause("500");
                     firstScreenshot = false;
                 }
 
@@ -553,9 +553,8 @@ public class TestConverter {
 
                 // For some weird Selenium compatible reason the value is stored
                 // as a locator...
-                int delay = Integer.parseInt(command.getLocator());
                 builder.appendCommandInfo("pause", command.getLocator());
-                builder.appendPause(delay);
+                builder.appendPause(command.getLocator());
             } else if (command.getCmd().equalsIgnoreCase("pressSpecialKey")) {
                 // Special case because keys are played back differently in
                 // different browsers.
@@ -615,7 +614,7 @@ public class TestConverter {
 
                 builder.appendCommandInfo(command.getCmd(), "");
                 builder.appendCommand(command.getCmd(), locator, value);
-                builder.appendPause(700);
+                builder.appendPause("700");
             } else if (command.getCmd().equalsIgnoreCase("includeTest")) {
                 // Loads another test, parses the commands, converts tests and
                 // adds result to this TestCase
