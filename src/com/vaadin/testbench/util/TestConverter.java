@@ -113,21 +113,21 @@ public class TestConverter {
                     filename = getTestInputFilename(args[i]);
 
                     String testName = getTestName(filename);
-                    JavaFileBuilder builder = new JavaFileBuilder(testName);
-                    String packageName = builder.getPackageName(browser);
+                    JavaFileBuilder builder = new JavaFileBuilder(testName,
+                            browser);
 
                     System.out.println("Generating test " + testName + " for "
-                            + browser + " in " + packageName);
+                            + browser + " in " + builder.getPackageName());
 
                     // Create a java file for the test
-                    out = createJavaFileForTest(testName, packageName, browser,
-                            outputDirectory);
+                    out = createJavaFileForTest(testName,
+                            builder.getPackageName(), browser, outputDirectory);
 
-                    out.write(builder.getJavaHeader(browser));
-                    out.write(builder.getBrowserTestMethod(browser));
+                    out.write(builder.getJavaHeader());
+                    out.write(builder.getBrowserTestMethod());
 
                     try {
-                        String testMethod = createTestMethod(filename, testName);
+                        String testMethod = createTestMethod(builder, filename);
                         out.write(testMethod.getBytes());
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -220,12 +220,14 @@ public class TestConverter {
                 String testName = getTestName(filename) + "_"
                         + safeBrowserIdentifier;
 
+                JavaFileBuilder builder = new JavaFileBuilder(testName,
+                        browserIdentifier);
+
                 out = createJavaFile(testName, browserIdentifier,
                         getJavaPackageName(testName, browserIdentifier),
                         outputDirectory);
-
                 try {
-                    String testMethod = createTestMethod(filename, testName);
+                    String testMethod = createTestMethod(builder, filename);
                     out.write(testMethod.getBytes());
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -373,8 +375,8 @@ public class TestConverter {
         }
     }
 
-    private static String createTestMethod(String htmlFile, String testName)
-            throws IOException {
+    private static String createTestMethod(JavaFileBuilder builder,
+            String htmlFile) throws IOException {
         FileInputStream fis = new FileInputStream(htmlFile);
         String htmlSource = IOUtils.toString(fis);
         fis.close();
@@ -388,7 +390,7 @@ public class TestConverter {
             Scriptable scope = cx.initStandardObjects();
 
             List<Command> commands = parseTestCase(cx, scope, htmlSource);
-            String testCaseMethod = createTestCaseMethod(testName, commands);
+            String testCaseMethod = createTestCaseMethod(builder, commands);
             return testCaseMethod;
         } finally {
             Context.exit();
@@ -396,15 +398,15 @@ public class TestConverter {
 
     }
 
-    private static String createTestCaseMethod(String testName,
+    private static String createTestCaseMethod(JavaFileBuilder builder,
             List<Command> commands) {
         screenshot = false;
         firstScreenshot = true;
-        String testCaseHeader = getTestCaseHeader(testName);
-        String testCaseBody = convertTestCaseToJava(commands, testName);
-        String testCaseFooter = getTestCaseFooter(testName);
+        String testCaseHeader = getTestCaseHeader(builder.getTestName());
+        String testCaseBody = convertTestCaseToJava(builder, commands);
+        String testCaseFooter = getTestCaseFooter(builder.getTestName());
         String currentCommand = "CurrentCommand cmd = new CurrentCommand(\""
-                + testName + "\");\n";
+                + builder.getTestName() + "\");\n";
 
         String methodHeader = testCaseHeader + currentCommand;
 
@@ -532,9 +534,8 @@ public class TestConverter {
         return outputFile;
     }
 
-    private static String convertTestCaseToJava(List<Command> commands,
-            String testName) {
-        JavaFileBuilder builder = new JavaFileBuilder(testName);
+    private static String convertTestCaseToJava(JavaFileBuilder builder,
+            List<Command> commands) {
 
         for (Command command : commands) {
             if (command.getCmd().equals("screenCapture")) {
@@ -546,7 +547,7 @@ public class TestConverter {
                 }
 
                 builder.appendCommandInfo("screenCapture", imageId);
-                builder.appendScreenshot(testName, 0.025, imageId);
+                builder.appendScreenshot(0.025, imageId);
                 screenshot = true;
             } else if (command.getCmd().equalsIgnoreCase("pause")) {
                 // Special case to ensure pause value is an integer
@@ -626,7 +627,7 @@ public class TestConverter {
                             + absoluteFilePath);
                     builder.appendCode("junit.framework.Assert.fail(\"No file defined in Value field.\");\n");
                 } else {
-                    includeTest(builder, value, testName);
+                    includeTest(builder, value);
                 }
             } else if (command.getCmd().equals("open")) {
                 // Special case because we need to try open several times in IE6
@@ -758,8 +759,7 @@ public class TestConverter {
 
     }
 
-    private static void includeTest(JavaFileBuilder builder, String value,
-            String testName) {
+    private static void includeTest(JavaFileBuilder builder, String value) {
 
         // Try to load and parse test
         // Get file absolutePath/relativeToIncludingFile/search from
@@ -814,7 +814,7 @@ public class TestConverter {
                 // Parse commands to a List
                 List<Command> newCommands = parseTestCase(cx, scope, htmlSource);
                 // Convert tests to Java
-                String tests = convertTestCaseToJava(newCommands, testName);
+                String tests = convertTestCaseToJava(builder, newCommands);
                 builder.appendCode(tests);
 
             } catch (Exception e) {

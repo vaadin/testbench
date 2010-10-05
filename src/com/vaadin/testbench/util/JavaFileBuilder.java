@@ -10,14 +10,12 @@ public class JavaFileBuilder {
     private StringBuilder javaSource;
     private String testName;
 
-    // private String browser;
+    private String browserIdentifier;
 
-    public JavaFileBuilder(String testName) {
-        // String testName, String browser) {
-        // }
+    public JavaFileBuilder(String testName, String browser) {
         javaSource = new StringBuilder();
         this.testName = testName;
-        // this.browser = browser;
+        this.browserIdentifier = browser;
 
     }
 
@@ -95,8 +93,7 @@ public class JavaFileBuilder {
         return string;
     }
 
-    public void appendScreenshot(String testName, double errorTolerance,
-            String imageIdentifier) {
+    public void appendScreenshot(double errorTolerance, String imageIdentifier) {
         javaSource.append("validateScreenshot(");
         javaSource.append(quotedSafeParameterString(testName));
         javaSource.append(", " + errorTolerance + ", ");
@@ -194,13 +191,13 @@ public class JavaFileBuilder {
         return javaSource.toString();
     }
 
-    public String getPackageName(String browser) {
-        return TestConverter.getJavaPackageName(testName, browser);
+    public String getPackageName() {
+        return TestConverter.getJavaPackageName(testName, browserIdentifier);
     }
 
-    public byte[] getJavaHeader(String browser) {
+    public byte[] getJavaHeader() {
         return TestConverter.getJavaHeader(TestConverter.getSafeName(testName),
-                getPackageName(browser));
+                getPackageName());
     }
 
     public void appendMouseClick(String locator, String value) {
@@ -211,20 +208,24 @@ public class JavaFileBuilder {
         javaSource.append(");\n");
     }
 
-    public byte[] getBrowserTestMethod(String browser) {
+    public byte[] getBrowserTestMethod() {
         /* Create a test method for the browser. */
         StringBuilder browserInit = new StringBuilder();
         browserInit
-                .append("public void test" + TestConverter.getSafeName(browser)
+                .append("public void test" + TestConverter.getSafeName(browserIdentifier)
                         + "() throws Throwable{\n");
 
-        browserInit.append("setBrowserIdentifier(\"" + browser + "\");\n");
+        browserInit.append("setBrowserIdentifier(\"" + browserIdentifier + "\");\n");
         browserInit.append("super.setUp();\n");
 
         browserInit.append(TestConverter.getTestMethodName(testName) + "();");
         browserInit.append("\n}\n\n");
 
         return browserInit.toString().getBytes();
+    }
+
+    public String getTestName() {
+        return testName;
     }
 
 }
