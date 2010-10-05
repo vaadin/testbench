@@ -433,6 +433,10 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
     private String mouseClickCommand = null;
 
     protected void doMouseClick(String locator, String value) {
+        if (value == null) {
+            value = "";
+        }
+
         if (mouseClickCommand == null) {
             if (getBrowserVersion().isOpera()
                     && getBrowserVersion().isOlderVersion(10, 50)) {
@@ -441,6 +445,6 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
                 mouseClickCommand = "mouseClick";
             }
         }
-        doCommand(mouseClickCommand, new String[] { locator, value + "" });
+        doCommand(mouseClickCommand, new String[] { locator, value });
     }
 }
