@@ -11,8 +11,8 @@ public class JavaFileBuilder {
     private StringBuilder testMethodSource;
     private String testName;
 
-    private static final String TEST_METHOD_HEADER = "private void {testMethodName}() throws Throwable {\n";
-    private static final String TEST_METHOD_FOOTER = "}\n";
+    private static final String TEST_METHOD_DEFINITION = "private void {testMethodName}() throws Throwable {\n";
+    private static final String TEST_METHOD_DEFINITION_END = "}\n";
 
     // Empty setUp() is needed to prevent super.setUp from being executed in the
     // setup phase
@@ -244,30 +244,8 @@ public class JavaFileBuilder {
         return testName;
     }
 
-    public void startTestMethod() {
-        String testCaseHeader = getTestMethodHeader();
-        String currentCommand = "CurrentCommand cmd = new CurrentCommand(\""
-                + getTestName() + "\");\n";
-
-        String methodHeader = testCaseHeader + currentCommand;
-
-        // Add canvas size initialization in the case a screenshot is wanted
-        if (hasScreenshots) {
-            methodHeader += getWindowInitFunctions(true);
-        }
-
-        methodHeader += "try{\n";
-
-        testMethodSource.append(methodHeader);
-    }
-
-    public void endTestMethod() {
-        String testMethodFooter = getTestMethodFooter();
-        testMethodSource.append(testMethodFooter);
-    }
-
-    private String getTestMethodHeader() {
-        String header = TEST_METHOD_HEADER;
+    private String getTestMethodDefinition() {
+        String header = TEST_METHOD_DEFINITION;
         header = header.replace("{testMethodName}",
                 getTestMethodJavaName(getTestName()));
 
@@ -278,7 +256,7 @@ public class JavaFileBuilder {
         return "internal_" + testName;
     }
 
-    private String getTestMethodFooter() {
+    private String getTestMethodDefinitionEnd() {
 
         // adding the softAssert so creating reference images throws a assert
         // failure at end of test
@@ -330,7 +308,7 @@ public class JavaFileBuilder {
                     + "throw new java.lang.AssertionError(cmd.getInfo() + \". Failure message = \" + e.getMessage());\n}\n"
                     + softAsserts;
         }
-        String footer = TEST_METHOD_FOOTER;
+        String footer = TEST_METHOD_DEFINITION_END;
         footer = footer.replace("{testName}", testName);
 
         if (hasScreenshots) {
@@ -340,8 +318,28 @@ public class JavaFileBuilder {
                 + footer;
     }
 
+    /**
+     * Returns the java source for the test method, including method definition.
+     * 
+     * @return
+     */
     public String getTestMethodSource() {
-        return testMethodSource.toString();
+        String testCaseHeader = getTestMethodDefinition();
+        String currentCommand = "CurrentCommand cmd = new CurrentCommand(\""
+                + getTestName() + "\");\n";
+
+        String methodHeader = testCaseHeader + currentCommand;
+
+        // Add canvas size initialization in the case a screenshot is wanted
+        if (hasScreenshots) {
+            methodHeader += getWindowInitFunctions(true);
+        }
+
+        methodHeader += "try{\n";
+
+        String methodFooter = getTestMethodDefinitionEnd();
+
+        return methodHeader + testMethodSource.toString() + methodFooter;
     }
 
     public String getPackageName() {

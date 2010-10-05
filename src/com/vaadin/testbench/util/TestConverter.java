@@ -105,10 +105,8 @@ public class TestConverter {
                     out.write(builder.getTestMethodWrapper());
 
                     try {
-                        builder.startTestMethod();
                         addCommandsToTestMethod(builder,
                                 getCommandsFromFile(filename));
-                        builder.endTestMethod();
                         out.write(builder.getTestMethodSource().getBytes());
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -205,10 +203,8 @@ public class TestConverter {
                         getJavaPackageName(testName, browserIdentifier),
                         outputDirectory);
                 try {
-                    builder.startTestMethod();
                     addCommandsToTestMethod(builder,
                             getCommandsFromFile(filename));
-                    builder.endTestMethod();
 
                     out.write(builder.getTestMethodSource().getBytes());
                 } catch (Exception e) {
