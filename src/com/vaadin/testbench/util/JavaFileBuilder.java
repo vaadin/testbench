@@ -7,22 +7,22 @@ import com.vaadin.testbench.util.SeleniumHTMLTestCaseParser.Command;
 
 public class JavaFileBuilder {
 
-    private StringBuilder javaSource;
+    private StringBuilder testMethodSource;
     private String testName;
 
     private String browserIdentifier;
 
     public JavaFileBuilder(String testName, String browser) {
-        javaSource = new StringBuilder();
+        testMethodSource = new StringBuilder();
         this.testName = testName;
         this.browserIdentifier = browser;
 
     }
 
     public void appendPause(String delay) {
-        javaSource.append("pause(");
-        javaSource.append(replaceParameters(delay));
-        javaSource.append(");\n");
+        testMethodSource.append("pause(");
+        testMethodSource.append(replaceParameters(delay));
+        testMethodSource.append(");\n");
     }
 
     public void appendCommandInfo(String command, String value) {
@@ -31,11 +31,11 @@ public class JavaFileBuilder {
             value = "";
         }
 
-        javaSource.append("cmd.setCommand(");
-        javaSource.append(quotedSafeParameterString(command));
-        javaSource.append(", ");
-        javaSource.append(quotedSafeParameterString(value));
-        javaSource.append(");\n");
+        testMethodSource.append("cmd.setCommand(");
+        testMethodSource.append(quotedSafeParameterString(command));
+        testMethodSource.append(", ");
+        testMethodSource.append(quotedSafeParameterString(value));
+        testMethodSource.append(");\n");
 
     }
 
@@ -47,24 +47,24 @@ public class JavaFileBuilder {
      * @param parameters
      */
     public void appendCommand(String command, String locator, String value) {
-        javaSource.append("doCommand(");
-        javaSource.append(quotedSafeParameterString(command));
-        javaSource.append(",new String[] {");
+        testMethodSource.append("doCommand(");
+        testMethodSource.append(quotedSafeParameterString(command));
+        testMethodSource.append(",new String[] {");
 
         if (locator != null) {
-            javaSource.append(quotedSafeParameterString(locator));
+            testMethodSource.append(quotedSafeParameterString(locator));
         }
         // TODO: Can locator be null and value != null. What should even happen
         // then?
         if (value != null) {
             if (locator != null) {
-                javaSource.append(",");
+                testMethodSource.append(",");
             }
 
-            javaSource
+            testMethodSource
                     .append(quotedSafeParameterString(replaceParameters(value)));
         }
-        javaSource.append("});\n");
+        testMethodSource.append("});\n");
 
         // if (command.endsWith("AndWait"))
         appendCode("waitForVaadin();\n");
@@ -94,12 +94,12 @@ public class JavaFileBuilder {
     }
 
     public void appendScreenshot(double errorTolerance, String imageIdentifier) {
-        javaSource.append("validateScreenshot(");
-        javaSource.append(quotedSafeParameterString(testName));
-        javaSource.append(", " + errorTolerance + ", ");
-        javaSource
+        testMethodSource.append("validateScreenshot(");
+        testMethodSource.append(quotedSafeParameterString(testName));
+        testMethodSource.append(", " + errorTolerance + ", ");
+        testMethodSource
                 .append(quotedSafeParameterString(replaceParameters(imageIdentifier)));
-        javaSource.append(");\n");
+        testMethodSource.append(");\n");
     }
 
     /**
@@ -120,36 +120,36 @@ public class JavaFileBuilder {
     }
 
     public void appendCode(String string) {
-        javaSource.append(string);
+        testMethodSource.append(string);
 
     }
 
     public void appendKeyModifierDown(boolean ctrl, boolean alt, boolean shift) {
         if (ctrl) {
-            javaSource.append("selenium.keyDownNative(\"" + KeyEvent.VK_CONTROL
+            testMethodSource.append("selenium.keyDownNative(\"" + KeyEvent.VK_CONTROL
                     + "\");\n");
         }
         if (alt) {
-            javaSource.append("selenium.keyDownNative(\"" + KeyEvent.VK_ALT
+            testMethodSource.append("selenium.keyDownNative(\"" + KeyEvent.VK_ALT
                     + "\");\n");
         }
         if (shift) {
-            javaSource.append("selenium.keyDownNative(\"" + KeyEvent.VK_SHIFT
+            testMethodSource.append("selenium.keyDownNative(\"" + KeyEvent.VK_SHIFT
                     + "\");\n");
         }
     }
 
     public void appendKeyModifierUp(boolean ctrl, boolean alt, boolean shift) {
         if (ctrl) {
-            javaSource.append("selenium.keyUpNative(\"" + KeyEvent.VK_CONTROL
+            testMethodSource.append("selenium.keyUpNative(\"" + KeyEvent.VK_CONTROL
                     + "\");\n");
         }
         if (alt) {
-            javaSource.append("selenium.keyUpNative(\"" + KeyEvent.VK_ALT
+            testMethodSource.append("selenium.keyUpNative(\"" + KeyEvent.VK_ALT
                     + "\");\n");
         }
         if (shift) {
-            javaSource.append("selenium.keyUpNative(\"" + KeyEvent.VK_SHIFT
+            testMethodSource.append("selenium.keyUpNative(\"" + KeyEvent.VK_SHIFT
                     + "\");\n");
         }
     }
@@ -161,25 +161,25 @@ public class JavaFileBuilder {
      *            ???. Must not be null.
      */
     public void appendKeyPressNative(String value) {
-        javaSource.append("selenium.keyPressNative("
+        testMethodSource.append("selenium.keyPressNative("
                 + quotedSafeParameterString(value) + ");\n");
 
     }
 
     public void appendOpen(Command command) {
-        javaSource.append("try {");
+        testMethodSource.append("try {");
         appendCommand(command);
-        javaSource.append("} catch (Exception e) {\n");
-        javaSource.append("System.out.println(\"Open failed, retrying\");\n");
-        javaSource.append("selenium.stop();\n");
-        javaSource.append("selenium.start();\n");
-        javaSource.append("clearDimensions();\n");
+        testMethodSource.append("} catch (Exception e) {\n");
+        testMethodSource.append("System.out.println(\"Open failed, retrying\");\n");
+        testMethodSource.append("selenium.stop();\n");
+        testMethodSource.append("selenium.start();\n");
+        testMethodSource.append("clearDimensions();\n");
 
         // Use true here as screenshot is not correctly set before this.
         // Tests could probably always be run in maximized mode anyway.
-        javaSource.append(TestConverter.getWindowInitFunctions(true));
+        testMethodSource.append(TestConverter.getWindowInitFunctions(true));
         appendCommand(command);
-        javaSource.append("}\n");
+        testMethodSource.append("}\n");
     }
 
     public void appendCommand(Command command) {
@@ -187,8 +187,8 @@ public class JavaFileBuilder {
                 command.getValue());
     }
 
-    public String getJavaSource() {
-        return javaSource.toString();
+    public String getTestMethodSource() {
+        return testMethodSource.toString();
     }
 
     public String getPackageName() {
@@ -201,11 +201,11 @@ public class JavaFileBuilder {
     }
 
     public void appendMouseClick(String locator, String value) {
-        javaSource.append("doMouseClick(");
-        javaSource.append(quotedSafeParameterString(locator));
-        javaSource.append(",");
-        javaSource.append(quotedSafeParameterString(replaceParameters(value)));
-        javaSource.append(");\n");
+        testMethodSource.append("doMouseClick(");
+        testMethodSource.append(quotedSafeParameterString(locator));
+        testMethodSource.append(",");
+        testMethodSource.append(quotedSafeParameterString(replaceParameters(value)));
+        testMethodSource.append(");\n");
     }
 
     public byte[] getBrowserTestMethod() {
