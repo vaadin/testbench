@@ -441,6 +441,6 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
                 mouseClickCommand = "mouseClick";
             }
         }
-        doCommand(mouseClickCommand, new String[] { locator, value });
+        doCommand(mouseClickCommand, new String[] { locator, value + "" });
     }
 }
