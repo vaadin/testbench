@@ -55,6 +55,17 @@ public class DateUtilTest extends TestCase {
         test(new Date(nextYear.getTime()), "+1Y");
     }
 
+    public void testMultipleDateFunctions() {
+        Date d = new Date();
+        String input = "07/DATE(MM)/DATE(YYYY)";
+        String expected = "07/" + new SimpleDateFormat("MM").format(d) + "/"
+                + new SimpleDateFormat("yyyy").format(d);
+        String returned = DateUtil.replaceDateFunctions(input, d);
+
+        assertEquals("Multiple dates in one string failed", expected, returned);
+
+    }
+
     private void test(Date date, String offsetString) {
         for (String pattern : patterns) {
             SimpleDateFormat sdf = new SimpleDateFormat(pattern);
