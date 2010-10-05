@@ -46,30 +46,7 @@ public class TestConverter {
     }
     // "package {package};\n" + "\n"
 
-    // Empty setUp() is needed to prevent super.setUp from being executed in the
-    // setup phase
-    private static final String JAVA_HEADER = "package {package};\n\n"
-            + "import com.vaadin.testbench.testcase.AbstractVaadinTestCase;\n"
-            + "import java.io.IOException;\n"
-            + "import java.io.File;\n"
-            + "import javax.imageio.ImageIO;\n"
-            + "import com.vaadin.testbench.util.ImageUtil;\n"
-            + "import com.vaadin.testbench.util.CurrentCommand;\n"
-            + "import com.vaadin.testbench.util.BrowserUtil;\n"
-            + "import com.vaadin.testbench.util.BrowserVersion;\n\n"
-            + "public class {class} extends AbstractVaadinTestCase {\n\n"
-            + "private static final String[] error_messages = { \"was missing reference images\","
-            + "\"contained differences\", \"contained images with differing sizes containing differences\", \"contained images with differing sizes\", \"\" "
-            + "};\n\n" + "public void setUp(){\n}\n\n";;
-
-    private static final String TEST_METHOD_HEADER = "private void {testMethodName}() throws Throwable {\n";
-    private static final String TEST_METHOD_FOOTER = "}\n";
-
-    private static final String JAVA_FOOTER = "}\n";
-
     // Flags to determine what to do during conversion.
-    private static boolean screenshot = false;
-    private static boolean firstScreenshot = true;
     private static boolean isOpera = false, isSafari = false, isChrome = false;
     private static boolean runner = false;
 
@@ -113,8 +90,9 @@ public class TestConverter {
                     filename = getTestInputFilename(args[i]);
 
                     String testName = getTestName(filename);
+                    String className = getSafeName(testName);
                     JavaFileBuilder builder = new JavaFileBuilder(testName,
-                            browser);
+                            className, browser);
 
                     System.out.println("Generating test " + testName + " for "
                             + browser + " in " + builder.getPackageName());
@@ -124,17 +102,20 @@ public class TestConverter {
                             builder.getPackageName(), browser, outputDirectory);
 
                     out.write(builder.getJavaHeader());
-                    out.write(builder.getBrowserTestMethod());
+                    out.write(builder.getTestMethodWrapper());
 
                     try {
-                        String testMethod = createTestMethod(builder, filename);
-                        out.write(testMethod.getBytes());
+                        builder.startTestMethod();
+                        addCommandsToTestMethod(builder,
+                                getCommandsFromFile(filename));
+                        builder.endTestMethod();
+                        out.write(builder.getTestMethodSource().getBytes());
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
 
                     // Write the footer to the browser test class.
-                    writeJavaFooter(out);
+                    out.write(builder.getJavaFooter().getBytes());
                 }
             } catch (Exception e1) {
                 // Rethrow all exceptions. The conversion succeeds only if all
@@ -163,10 +144,6 @@ public class TestConverter {
                 isChrome = true;
             }
         }
-    }
-
-    static String getTestMethodName(String testName) {
-        return "internal_" + testName;
     }
 
     /**
@@ -220,21 +197,26 @@ public class TestConverter {
                 String testName = getTestName(filename) + "_"
                         + safeBrowserIdentifier;
 
+                String className = getSafeName(testName);
                 JavaFileBuilder builder = new JavaFileBuilder(testName,
-                        browserIdentifier);
+                        className, browserIdentifier);
 
                 out = createJavaFile(testName, browserIdentifier,
                         getJavaPackageName(testName, browserIdentifier),
                         outputDirectory);
                 try {
-                    String testMethod = createTestMethod(builder, filename);
-                    out.write(testMethod.getBytes());
+                    builder.startTestMethod();
+                    addCommandsToTestMethod(builder,
+                            getCommandsFromFile(filename));
+                    builder.endTestMethod();
+
+                    out.write(builder.getTestMethodSource().getBytes());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
 
                 // Write the footer to the browser test class.
-                writeJavaFooter(out);
+                out.write(builder.getJavaFooter().getBytes());
 
             } catch (IOException e) {
                 // TODO Auto-generated catch block
@@ -299,12 +281,6 @@ public class TestConverter {
         return testFile.getAbsolutePath();
     }
 
-    private static void writeJavaFooter(OutputStream out) throws IOException {
-        String footer = getJavaFooter();
-        out.write(footer.getBytes());
-
-    }
-
     /**
      * Returns a sanitized name of the test. The test name is specified by its
      * filename, not by the test name inside the file.
@@ -353,8 +329,11 @@ public class TestConverter {
         createIfNotExists(outputFile.getParent());
         FileOutputStream outputStream = new FileOutputStream(outputFile);
 
+        JavaFileBuilder b = new JavaFileBuilder(testName,
+                getSafeName(testName), browserIdentifier);
+
         // FIXME This does no longer write a browser dependent header
-        outputStream.write(getJavaHeader(testName, packageName));
+        outputStream.write(b.getJavaHeader());
 
         return outputStream;
     }
@@ -375,8 +354,8 @@ public class TestConverter {
         }
     }
 
-    private static String createTestMethod(JavaFileBuilder builder,
-            String htmlFile) throws IOException {
+    private static List<Command> getCommandsFromFile(String htmlFile)
+            throws IOException {
         FileInputStream fis = new FileInputStream(htmlFile);
         String htmlSource = IOUtils.toString(fis);
         fis.close();
@@ -390,130 +369,19 @@ public class TestConverter {
             Scriptable scope = cx.initStandardObjects();
 
             List<Command> commands = parseTestCase(cx, scope, htmlSource);
-            String testCaseMethod = createTestCaseMethod(builder, commands);
-            return testCaseMethod;
+            return commands;
         } finally {
             Context.exit();
         }
 
     }
 
-    private static String createTestCaseMethod(JavaFileBuilder builder,
-            List<Command> commands) {
-        screenshot = false;
-        firstScreenshot = true;
-        String testCaseHeader = getTestCaseHeader(builder.getTestName());
-        String testCaseBody = convertTestCaseToJava(builder, commands);
-        String testCaseFooter = getTestCaseFooter(builder.getTestName());
-        String currentCommand = "CurrentCommand cmd = new CurrentCommand(\""
-                + builder.getTestName() + "\");\n";
-
-        String methodHeader = testCaseHeader + currentCommand;
-
-        // Add canvas size initialization in the case a screenshot is wanted
-        if (screenshot) {
-            methodHeader += getWindowInitFunctions(screenshot);
-        }
-
-        methodHeader += "try{\n" + testCaseBody + testCaseFooter;
-
-        return methodHeader;
-    }
-
-    static String getWindowInitFunctions(boolean hasScreenshots) {
-        final String windowInitFunctions = "setupWindow(#hasScreenshots#);\n";
-
-        return windowInitFunctions.replaceAll("#hasScreenshots#",
-                hasScreenshots ? "true" : "false");
-    }
-
     private static String removeExtension(String name) {
         return name.replaceAll("\\.[^\\.]*$", "");
     }
 
-    private static String getTestCaseHeader(String testName) {
-        String header = TEST_METHOD_HEADER;
-        header = header
-                .replace("{testMethodName}", getTestMethodName(testName));
-
-        return header;
-    }
-
-    private static String getTestCaseFooter(String testName) {
-        // adding the softAssert so creating reference images throws a assert
-        // failure at end of test
-        String softAsserts = "if(!getSoftErrors().isEmpty()){\n"
-                + "StringBuilder message = new StringBuilder();\n"
-                + "byte[] errors = new byte[5];\n"
-
-                + "for(junit.framework.AssertionFailedError afe:getSoftErrors()){\n"
-                + "if(afe.getMessage().contains(\"No reference found\")){\n"
-                + "errors[0] = 1;\n"
-                + "}else if(afe.getMessage().contains(\"differs from reference image\")){\n"
-                + "errors[1] = 1;\n"
-                + "}else if(afe.getMessage().contains(\"Images differ and\")){\n"
-                + "errors[2] = 1;\n"
-                + "}else if(afe.getMessage().contains(\"Images are of different size\")){\n"
-                + "errors[3] = 1;\n" + "} else {\n" + "errors[4] = 1;\n"
-                + "error_messages[4] = afe.getMessage();\n}\n}\n\n"
-
-                + "boolean add_and = false;\n"
-                + "message.append(\"Test \");\n\n"
-
-                + "for(int i = 0; i < 5; i++){\n" + "if(errors[i] == 1){\n"
-                + "if(add_and){\n" + "message.append(\" and \");\n" + "}\n"
-                + "message.append(error_messages[i]);\n" + "add_and = true;\n"
-                + "}\n" + "}\n\n"
-
-                + "junit.framework.Assert.fail(message.toString());\n" + "}\n";
-        // if screenshot.onfail defined add try{ }catch( ){ }
-        if (!Parameters.isCaptureScreenshotOnFailure()) {
-            softAsserts = "}catch(Throwable e){\nthrow new java.lang.AssertionError(cmd.getInfo() + \". Failure message = \" + e.getMessage());\n}\n"
-                    + softAsserts;
-        } else {
-            screenshot = true;
-            softAsserts = "}catch(Throwable e){\n"
-                    + "String statusScreen = selenium.captureScreenshotToString();\n"
-                    + "String directory = getScreenshotDirectory();\n"
-                    + "if (!File.separator.equals(directory.charAt(directory.length() - 1))) {\n"
-                    + "directory = directory + File.separator;\n}\n"
-                    + "File target = new File(directory + \"errors\");\n"
-                    + "if(!target.exists()){\n"
-                    + "target.mkdir();\n}\n"
-                    + "try{\n"
-                    + "ImageIO.write(ImageUtil.stringToImage(statusScreen), \"png\", new File(directory + \"errors/"
-                    + testName
-                    + "_failure_"
-                    + "\"+ getBrowserIdentifier().replaceAll(\"[^a-zA-Z0-9]\", \"_\")+\""
-                    + ".png\"));\n}catch(IOException ioe){\n"
-                    + "ioe.printStackTrace();\n}\n"
-                    + "throw new java.lang.AssertionError(cmd.getInfo() + \". Failure message = \" + e.getMessage());\n}\n"
-                    + softAsserts;
-        }
-        String footer = TEST_METHOD_FOOTER;
-        footer = footer.replace("{testName}", testName);
-
-        if (screenshot) {
-            return softAsserts + footer;
-        }
-        return "}catch(Throwable e){\nthrow new java.lang.AssertionError(cmd.getInfo() + \". Failure message = \" + e.getMessage());\n}\n"
-                + footer;
-    }
-
-    static byte[] getJavaHeader(String className, String packageName) {
-        String header = JAVA_HEADER;
-        header = header.replace("{class}", className);
-        header = header.replace("{package}", packageName);
-
-        return header.getBytes();
-    }
-
     public static String getJavaPackageName(String testName, String browserName) {
         return testName + "." + getSafeName(browserName);
-    }
-
-    private static String getJavaFooter() {
-        return JAVA_FOOTER;
     }
 
     private static File getJavaFile(String testName, String packageName,
@@ -534,8 +402,9 @@ public class TestConverter {
         return outputFile;
     }
 
-    private static String convertTestCaseToJava(JavaFileBuilder builder,
+    private static void addCommandsToTestMethod(JavaFileBuilder builder,
             List<Command> commands) {
+        boolean firstScreenshot = true;
 
         for (Command command : commands) {
             if (command.getCmd().equals("screenCapture")) {
@@ -548,7 +417,6 @@ public class TestConverter {
 
                 builder.appendCommandInfo("screenCapture", imageId);
                 builder.appendScreenshot(0.025, imageId);
-                screenshot = true;
             } else if (command.getCmd().equalsIgnoreCase("pause")) {
                 // Special case to ensure pause value is an integer
 
@@ -641,7 +509,6 @@ public class TestConverter {
 
         }
 
-        return builder.getJavaSource();
     }
 
     private static String convertKeyCodeOrName(String value) {
@@ -814,8 +681,7 @@ public class TestConverter {
                 // Parse commands to a List
                 List<Command> newCommands = parseTestCase(cx, scope, htmlSource);
                 // Convert tests to Java
-                String tests = convertTestCaseToJava(builder, newCommands);
-                builder.appendCode(tests);
+                addCommandsToTestMethod(builder, newCommands);
 
             } catch (Exception e) {
                 // if exception was caught put a assert fail to

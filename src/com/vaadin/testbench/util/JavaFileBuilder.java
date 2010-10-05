@@ -3,6 +3,7 @@ package com.vaadin.testbench.util;
 import java.awt.event.KeyEvent;
 import java.util.Date;
 
+import com.vaadin.testbench.Parameters;
 import com.vaadin.testbench.util.SeleniumHTMLTestCaseParser.Command;
 
 public class JavaFileBuilder {
@@ -10,12 +11,36 @@ public class JavaFileBuilder {
     private StringBuilder testMethodSource;
     private String testName;
 
-    private String browserIdentifier;
+    private static final String TEST_METHOD_HEADER = "private void {testMethodName}() throws Throwable {\n";
+    private static final String TEST_METHOD_FOOTER = "}\n";
 
-    public JavaFileBuilder(String testName, String browser) {
+    // Empty setUp() is needed to prevent super.setUp from being executed in the
+    // setup phase
+    private static final String JAVA_HEADER = "package {package};\n\n"
+            + "import com.vaadin.testbench.testcase.AbstractVaadinTestCase;\n"
+            + "import java.io.IOException;\n"
+            + "import java.io.File;\n"
+            + "import javax.imageio.ImageIO;\n"
+            + "import com.vaadin.testbench.util.ImageUtil;\n"
+            + "import com.vaadin.testbench.util.CurrentCommand;\n"
+            + "import com.vaadin.testbench.util.BrowserUtil;\n"
+            + "import com.vaadin.testbench.util.BrowserVersion;\n\n"
+            + "public class {class} extends AbstractVaadinTestCase {\n\n"
+            + "private static final String[] error_messages = { \"was missing reference images\","
+            + "\"contained differences\", \"contained images with differing sizes containing differences\", \"contained images with differing sizes\", \"\" "
+            + "};\n\n" + "public void setUp(){\n}\n\n";;
+
+    private static final String JAVA_FOOTER = "}\n";
+
+    private String browserIdentifier;
+    private boolean hasScreenshots = false;
+    private String className;
+
+    public JavaFileBuilder(String testName, String className, String browser) {
         testMethodSource = new StringBuilder();
         this.testName = testName;
-        this.browserIdentifier = browser;
+        this.className = className;
+        browserIdentifier = browser;
 
     }
 
@@ -100,6 +125,7 @@ public class JavaFileBuilder {
         testMethodSource
                 .append(quotedSafeParameterString(replaceParameters(imageIdentifier)));
         testMethodSource.append(");\n");
+        hasScreenshots = true;
     }
 
     /**
@@ -126,31 +152,31 @@ public class JavaFileBuilder {
 
     public void appendKeyModifierDown(boolean ctrl, boolean alt, boolean shift) {
         if (ctrl) {
-            testMethodSource.append("selenium.keyDownNative(\"" + KeyEvent.VK_CONTROL
-                    + "\");\n");
+            testMethodSource.append("selenium.keyDownNative(\""
+                    + KeyEvent.VK_CONTROL + "\");\n");
         }
         if (alt) {
-            testMethodSource.append("selenium.keyDownNative(\"" + KeyEvent.VK_ALT
-                    + "\");\n");
+            testMethodSource.append("selenium.keyDownNative(\""
+                    + KeyEvent.VK_ALT + "\");\n");
         }
         if (shift) {
-            testMethodSource.append("selenium.keyDownNative(\"" + KeyEvent.VK_SHIFT
-                    + "\");\n");
+            testMethodSource.append("selenium.keyDownNative(\""
+                    + KeyEvent.VK_SHIFT + "\");\n");
         }
     }
 
     public void appendKeyModifierUp(boolean ctrl, boolean alt, boolean shift) {
         if (ctrl) {
-            testMethodSource.append("selenium.keyUpNative(\"" + KeyEvent.VK_CONTROL
-                    + "\");\n");
+            testMethodSource.append("selenium.keyUpNative(\""
+                    + KeyEvent.VK_CONTROL + "\");\n");
         }
         if (alt) {
             testMethodSource.append("selenium.keyUpNative(\"" + KeyEvent.VK_ALT
                     + "\");\n");
         }
         if (shift) {
-            testMethodSource.append("selenium.keyUpNative(\"" + KeyEvent.VK_SHIFT
-                    + "\");\n");
+            testMethodSource.append("selenium.keyUpNative(\""
+                    + KeyEvent.VK_SHIFT + "\");\n");
         }
     }
 
@@ -170,14 +196,15 @@ public class JavaFileBuilder {
         testMethodSource.append("try {");
         appendCommand(command);
         testMethodSource.append("} catch (Exception e) {\n");
-        testMethodSource.append("System.out.println(\"Open failed, retrying\");\n");
+        testMethodSource
+                .append("System.out.println(\"Open failed, retrying\");\n");
         testMethodSource.append("selenium.stop();\n");
         testMethodSource.append("selenium.start();\n");
         testMethodSource.append("clearDimensions();\n");
 
         // Use true here as screenshot is not correctly set before this.
         // Tests could probably always be run in maximized mode anyway.
-        testMethodSource.append(TestConverter.getWindowInitFunctions(true));
+        testMethodSource.append(getWindowInitFunctions(true));
         appendCommand(command);
         testMethodSource.append("}\n");
     }
@@ -185,6 +212,132 @@ public class JavaFileBuilder {
     public void appendCommand(Command command) {
         appendCommand(command.getCmd(), command.getLocator(),
                 command.getValue());
+    }
+
+    public void appendMouseClick(String locator, String value) {
+        testMethodSource.append("doMouseClick(");
+        testMethodSource.append(quotedSafeParameterString(locator));
+        testMethodSource.append(",");
+        testMethodSource
+                .append(quotedSafeParameterString(replaceParameters(value)));
+        testMethodSource.append(");\n");
+    }
+
+    public byte[] getTestMethodWrapper() {
+        /* Create a test method for the browser. */
+        StringBuilder browserInit = new StringBuilder();
+        browserInit.append("public void test"
+                + TestConverter.getSafeName(browserIdentifier)
+                + "() throws Throwable{\n");
+
+        browserInit.append("setBrowserIdentifier(\"" + browserIdentifier
+                + "\");\n");
+        browserInit.append("super.setUp();\n");
+
+        browserInit.append(getTestMethodJavaName(testName) + "();");
+        browserInit.append("\n}\n\n");
+
+        return browserInit.toString().getBytes();
+    }
+
+    public String getTestName() {
+        return testName;
+    }
+
+    public void startTestMethod() {
+        String testCaseHeader = getTestMethodHeader();
+        String currentCommand = "CurrentCommand cmd = new CurrentCommand(\""
+                + getTestName() + "\");\n";
+
+        String methodHeader = testCaseHeader + currentCommand;
+
+        // Add canvas size initialization in the case a screenshot is wanted
+        if (hasScreenshots) {
+            methodHeader += getWindowInitFunctions(true);
+        }
+
+        methodHeader += "try{\n";
+
+        testMethodSource.append(methodHeader);
+    }
+
+    public void endTestMethod() {
+        String testMethodFooter = getTestMethodFooter();
+        testMethodSource.append(testMethodFooter);
+    }
+
+    private String getTestMethodHeader() {
+        String header = TEST_METHOD_HEADER;
+        header = header.replace("{testMethodName}",
+                getTestMethodJavaName(getTestName()));
+
+        return header;
+    }
+
+    private static String getTestMethodJavaName(String testName) {
+        return "internal_" + testName;
+    }
+
+    private String getTestMethodFooter() {
+
+        // adding the softAssert so creating reference images throws a assert
+        // failure at end of test
+        String softAsserts = "if(!getSoftErrors().isEmpty()){\n"
+                + "StringBuilder message = new StringBuilder();\n"
+                + "byte[] errors = new byte[5];\n"
+
+                + "for(junit.framework.AssertionFailedError afe:getSoftErrors()){\n"
+                + "if(afe.getMessage().contains(\"No reference found\")){\n"
+                + "errors[0] = 1;\n"
+                + "}else if(afe.getMessage().contains(\"differs from reference image\")){\n"
+                + "errors[1] = 1;\n"
+                + "}else if(afe.getMessage().contains(\"Images differ and\")){\n"
+                + "errors[2] = 1;\n"
+                + "}else if(afe.getMessage().contains(\"Images are of different size\")){\n"
+                + "errors[3] = 1;\n" + "} else {\n" + "errors[4] = 1;\n"
+                + "error_messages[4] = afe.getMessage();\n}\n}\n\n"
+
+                + "boolean add_and = false;\n"
+                + "message.append(\"Test \");\n\n"
+
+                + "for(int i = 0; i < 5; i++){\n" + "if(errors[i] == 1){\n"
+                + "if(add_and){\n" + "message.append(\" and \");\n" + "}\n"
+                + "message.append(error_messages[i]);\n" + "add_and = true;\n"
+                + "}\n" + "}\n\n"
+
+                + "junit.framework.Assert.fail(message.toString());\n" + "}\n";
+        // if screenshot.onfail defined add try{ }catch( ){ }
+        if (!Parameters.isCaptureScreenshotOnFailure()) {
+            softAsserts = "}catch(Throwable e){\nthrow new java.lang.AssertionError(cmd.getInfo() + \". Failure message = \" + e.getMessage());\n}\n"
+                    + softAsserts;
+        } else {
+            hasScreenshots = true;
+            softAsserts = "}catch(Throwable e){\n"
+                    + "String statusScreen = selenium.captureScreenshotToString();\n"
+                    + "String directory = getScreenshotDirectory();\n"
+                    + "if (!File.separator.equals(directory.charAt(directory.length() - 1))) {\n"
+                    + "directory = directory + File.separator;\n}\n"
+                    + "File target = new File(directory + \"errors\");\n"
+                    + "if(!target.exists()){\n"
+                    + "target.mkdir();\n}\n"
+                    + "try{\n"
+                    + "ImageIO.write(ImageUtil.stringToImage(statusScreen), \"png\", new File(directory + \"errors/"
+                    + testName
+                    + "_failure_"
+                    + "\"+ getBrowserIdentifier().replaceAll(\"[^a-zA-Z0-9]\", \"_\")+\""
+                    + ".png\"));\n}catch(IOException ioe){\n"
+                    + "ioe.printStackTrace();\n}\n"
+                    + "throw new java.lang.AssertionError(cmd.getInfo() + \". Failure message = \" + e.getMessage());\n}\n"
+                    + softAsserts;
+        }
+        String footer = TEST_METHOD_FOOTER;
+        footer = footer.replace("{testName}", testName);
+
+        if (hasScreenshots) {
+            return softAsserts + footer;
+        }
+        return "}catch(Throwable e){\nthrow new java.lang.AssertionError(cmd.getInfo() + \". Failure message = \" + e.getMessage());\n}\n"
+                + footer;
     }
 
     public String getTestMethodSource() {
@@ -196,36 +349,22 @@ public class JavaFileBuilder {
     }
 
     public byte[] getJavaHeader() {
-        return TestConverter.getJavaHeader(TestConverter.getSafeName(testName),
-                getPackageName());
+        String header = JAVA_HEADER;
+        header = header.replace("{class}", className);
+        header = header.replace("{package}", getPackageName());
+
+        return header.getBytes();
     }
 
-    public void appendMouseClick(String locator, String value) {
-        testMethodSource.append("doMouseClick(");
-        testMethodSource.append(quotedSafeParameterString(locator));
-        testMethodSource.append(",");
-        testMethodSource.append(quotedSafeParameterString(replaceParameters(value)));
-        testMethodSource.append(");\n");
+    public String getJavaFooter() {
+        return JAVA_FOOTER;
     }
 
-    public byte[] getBrowserTestMethod() {
-        /* Create a test method for the browser. */
-        StringBuilder browserInit = new StringBuilder();
-        browserInit
-                .append("public void test" + TestConverter.getSafeName(browserIdentifier)
-                        + "() throws Throwable{\n");
+    public static String getWindowInitFunctions(boolean hasScreenshots) {
+        final String windowInitFunctions = "setupWindow(#hasScreenshots#);\n";
 
-        browserInit.append("setBrowserIdentifier(\"" + browserIdentifier + "\");\n");
-        browserInit.append("super.setUp();\n");
-
-        browserInit.append(TestConverter.getTestMethodName(testName) + "();");
-        browserInit.append("\n}\n\n");
-
-        return browserInit.toString().getBytes();
-    }
-
-    public String getTestName() {
-        return testName;
+        return windowInitFunctions.replaceAll("#hasScreenshots#",
+                hasScreenshots ? "true" : "false");
     }
 
 }
