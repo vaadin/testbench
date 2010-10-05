@@ -14,7 +14,7 @@ public class DateUtil {
      * DATE(format, offset)
      * </p>
      * <p>
-     * In format "d"/"dd"/"M"/"MM"/"yy"/"yyyy" are replaced with the day of
+     * In format "D"/"DD"/"M"/"MM"/"YY"/"YYYY" are replaced with the day of
      * month, month, year respectively. The date used is current date offset
      * according to the offset string.
      * </p>
@@ -70,6 +70,12 @@ public class DateUtil {
     }
 
     private static String formatDateReplacement(String pattern, Date d) {
+        // Parameters are given using captial letters.
+        // Month is upper case M in SimpleDateFormat, other are lower case.
+
+        pattern = pattern.replace('D', 'd');
+        pattern = pattern.replace('y', 'y');
+
         return new SimpleDateFormat(pattern).format(d);
     }
 
