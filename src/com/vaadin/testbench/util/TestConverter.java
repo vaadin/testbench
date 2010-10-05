@@ -567,15 +567,6 @@ public class TestConverter {
                 boolean alt = (value.contains("alt"));
                 boolean ctrl = (value.contains("ctrl"));
 
-                // if native keypress is not used give text string to
-                // doCommand
-                if (convertedValue == null && !isOpera && !isSafari
-                        && !isChrome) {
-                    // FIXME: What does this mean? Why is behavior different for
-                    // undefined keycodes in certain browsers?
-                    convertedValue = value;
-                }
-
                 builder.appendCommandInfo("pressSpecialKey", value);
 
                 /*
@@ -654,6 +645,17 @@ public class TestConverter {
     }
 
     private static String convertKeyCodeOrName(String value) {
+
+        if (!isOpera && !isSafari && !isChrome) {
+            // FIXME: What does this mean? Why is behavior different for
+            // keycodes in certain browsers?
+
+            // FIXME: isOpera/isSafari/isChrome does not really reflect what
+            // browser is used. This should be moved to AbstractVaadinTestCase
+            // with proper checks.
+
+            return value;
+        }
 
         /* get pressed key from keyCode or name */
         if (value.contains("\\")) {
