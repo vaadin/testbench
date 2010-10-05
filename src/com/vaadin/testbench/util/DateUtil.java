@@ -39,7 +39,7 @@ public class DateUtil {
             String replacement = createDateReplacementString(m.group(1),
                     referenceDate);
             if (replacement != null) {
-                value = m.replaceAll(replacement);
+                value = m.replaceFirst(replacement);
                 m = Pattern.compile(pattern).matcher(value);
             }
         }
@@ -74,7 +74,7 @@ public class DateUtil {
         // Month is upper case M in SimpleDateFormat, other are lower case.
 
         pattern = pattern.replace('D', 'd');
-        pattern = pattern.replace('y', 'y');
+        pattern = pattern.replace('Y', 'y');
 
         return new SimpleDateFormat(pattern).format(d);
     }
