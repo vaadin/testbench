@@ -226,7 +226,7 @@ public class BrowserDimensions {
         if (browserVersion.isChrome()) {
             // Window resize functions are pretty broken in Chrome 6..
             selenium.getEval(moveTo);
-            pause(200);
+            pause(500);
             selenium.getEval(getInnerWidthHeight + resizeBy);
         } else {
             selenium.getEval(getInnerWidthHeight + moveTo + resizeBy);
