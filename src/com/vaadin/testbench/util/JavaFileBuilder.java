@@ -92,7 +92,9 @@ public class JavaFileBuilder {
         testMethodSource.append("});\n");
 
         // if (command.endsWith("AndWait"))
-        appendCode("waitForVaadin();\n");
+        if (!command.equals("close")) {
+            appendCode("waitForVaadin();\n");
+        }
     }
 
     private String replaceParameters(String value) {
