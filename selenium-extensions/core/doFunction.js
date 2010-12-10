@@ -124,6 +124,8 @@ Selenium.prototype.doPressSpecialKey = function(locator, value){
 		value="\\40";
 	}else if((new RegExp("enter")).test(value.toLowerCase())){
 		value="\\13";
+	}else if((new RegExp("space")).test(value.toLowerCase())){
+		value="\\32";
 	}else if((new RegExp("tab")).test(value.toLowerCase())){
 		value="\\9";
 	}
