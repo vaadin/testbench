@@ -211,52 +211,42 @@ Recorder.addEventHandler('pressSpecialKey', 'keydown', function(event){
 				target = target + "alt ";
 			}
 		}
+		
+		var value=null;
 	
 		switch(event.keyCode){
 //		case 9:
 //			this.log.debug('pressed TAB');
-//			this.record("pressSpecialKey", this.findLocators(event.target),  "tab");
+//			value =  "tab";
 //			break;
 		case 13:
 			this.log.debug('pressed ENTER!');
-			if(charBuffer.length > 0){
-				this.record("enterCharacter", this.findLocators(event.target), charBuffer);
-				charBuffer = "";
-			}
 			enterPressed = true;
-			this.record("pressSpecialKey", this.findLocators(event.target),  "enter");
+			value = "enter";
 			break;
 		case 37: 
 			this.log.debug('pressed LEFT!');
-			if(charBuffer.length > 0){
-				this.record("enterCharacter", this.findLocators(event.target), charBuffer);
-				charBuffer = "";				
-			}
-			this.record("pressSpecialKey", this.findLocators(event.target),  target + "left");
+			value = target + "left";
 			break;
 		case 39: 
 			this.log.debug('pressed RIGHT!');
-			if(charBuffer.length > 0){
-				this.record("enterCharacter", this.findLocators(event.target), charBuffer);
-				charBuffer = "";				
-			}
-			this.record("pressSpecialKey", this.findLocators(event.target),  target + "right");
+			value = target + "right";
 			break;
 		case 38: 
 			this.log.debug('pressed UP!');
-			if(charBuffer.length > 0){
-				this.record("enterCharacter", this.findLocators(event.target), charBuffer);
-				charBuffer = "";				
-			}
-			this.record("pressSpecialKey", this.findLocators(event.target),  target + "up");
+			value = target + "up";
 			break;
 		case 40:
 			this.log.debug('pressed DOWN!');
+			value = target + "down";
+		}
+		
+		if(value != null){
 			if(charBuffer.length > 0){
 				this.record("enterCharacter", this.findLocators(event.target), charBuffer);
 				charBuffer = "";				
 			}
-			this.record("pressSpecialKey", this.findLocators(event.target), target + "down");
+			this.record("pressSpecialKey", this.findLocators(event.target), value);
 		}
 		
 	}, { capture: true });
@@ -613,7 +603,7 @@ Recorder.addEventHandler('mouseUpEvent', 'mouseup', function(event){
 				var x = event.clientX - editor.seleniumAPI.Selenium.prototype.getElementPositionLeft(target);
 		        var y = event.clientY - editor.seleniumAPI.Selenium.prototype.getElementPositionTop(target);
 		
-		        this.record("drag", dragTarget, '');
+		        this.record("drag", dragTarget, (clX-mousedownX) + ',' + (clY-mousedownY));
 		        this.record("drop", this.findLocators(target), x + ',' + y);
 	    	}
 

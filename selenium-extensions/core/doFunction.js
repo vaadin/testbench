@@ -155,6 +155,27 @@ Selenium.prototype.doMouseClick = function(locator, value){
 	this.browserbot.shiftKeyDown = this.browserbot.controlKeyDown = this.browserbot.altKeyDown = false;
 };
 
+//Expect dialog will do a normal mouse click, but the following waitForVaadin will be skipped
+//as dialog is expected and the next command needs to be 'assertConfirmation'
+Selenium.prototype.doExpectDialog = function(locator, value){
+	var element = this.browserbot.findElement(locator);
+	value = value.split(":");
+	var clientXY = getClientXY(element, value[0]);
+
+	if(value.length > 1){
+		this.browserbot.shiftKeyDown = (new RegExp("shift")).test(value[1]);
+		this.browserbot.controlKeyDown = (new RegExp("ctrl")).test(value[1]);
+		this.browserbot.altKeyDown = (new RegExp("alt")).test(value[1]);
+	}
+	
+	this.browserbot.triggerMouseEvent(element, 'mousedown', true, clientXY[0], clientXY[1]);
+//	element.focus();
+	this.browserbot.triggerMouseEvent(element, 'mouseup', true, clientXY[0], clientXY[1]);
+	this.browserbot.clickElement(element);
+
+	this.browserbot.shiftKeyDown = this.browserbot.controlKeyDown = this.browserbot.altKeyDown = false;
+};
+
 /*Opera requires a special mouseClick as it else clicks twice*/
 Selenium.prototype.doMouseClickOpera = function(locator, value){
 	var element = this.browserbot.findElement(locator);
@@ -305,8 +326,9 @@ Selenium.prototype.doDrag = function(locator, value){
 	var element = this.browserbot.findElement(locator);
 	var clientXY = getClientXY(element, value);
 
-	this.browserbot.triggerMouseEvent(element, 'mousedown', true, 5, 5);
-	this.browserbot.triggerMouseEvent(element, 'mousemove', true, 5, 5);
+	this.browserbot.triggerMouseEvent(element, 'mouseover', true, clientXY[0], clientXY[1]);
+	this.browserbot.triggerMouseEvent(element, 'mousedown', true, clientXY[0], clientXY[1]);
+	this.browserbot.triggerMouseEvent(element, 'mousemove', true, clientXY[0], clientXY[1]);
 };
 
 // Drops target element from drag on this target element
@@ -318,18 +340,6 @@ Selenium.prototype.doDrop = function(locator, value){
 	this.browserbot.triggerMouseEvent(element, 'mousemove', true, clientXY[0]-1, clientXY[1]-1);
 	this.browserbot.triggerMouseEvent(element, 'mousemove', true, clientXY[0], clientXY[1]);
 	this.browserbot.triggerMouseEvent(element, 'mouseup', true, clientXY[0], clientXY[1]);
-};
-
-// Expect dialog will do a normal mouse click, but the following waitForVaadin will be skipped
-// as dialog is expected and the next command needs to be 'assertConfirmation'
-Selenium.prototype.doExpectDialog = function(locator, value){
-	var element = this.browserbot.findElement(locator);
-	var clientXY = getClientXY(element, value);
-	
-	this.browserbot.triggerMouseEvent(element, 'mousedown', true, clientXY[0], clientXY[1]);
-	//	element.focus();
-	this.browserbot.triggerMouseEvent(element, 'mouseup', true, clientXY[0], clientXY[1]);
-	this.browserbot.clickElement(element);
 };
 
 // Assert that an element has the specified css class.
