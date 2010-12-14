@@ -463,6 +463,13 @@ Recorder.addEventHandler('clickLocator', 'click', function(event){
 		}
 	}, { capture: true });
 
+Recorder.addEventHandler('dblClickLocator', 'dblclick', function(event) {
+		var x = event.clientX - editor.seleniumAPI.Selenium.prototype.getElementPositionLeft(event.target);
+	    var y = event.clientY - editor.seleniumAPI.Selenium.prototype.getElementPositionTop(event.target);
+	    
+	    this.record("doubleClickAt", this.findLocators(event.target), x + ',' + y);
+	}, { capture: true });
+	
 /* Expand select/addSelection/removeSelection functionality*/
 //Recorder.removeEventHandler('select');
 
