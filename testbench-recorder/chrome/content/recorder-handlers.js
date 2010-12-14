@@ -194,8 +194,7 @@ Recorder.addEventHandler('contextmenu', 'contextmenu', function(event) {
 });
 
 var charBuffer = "";
-var typeString = true;
-var recordEnter = false;
+var enterPressed = false;
 
 /* Checks keyCodes on keydown event and adds a pressSpecialKey if confirmed. */
 Recorder.addEventHandler('pressSpecialKey', 'keydown', function(event){
@@ -216,32 +215,47 @@ Recorder.addEventHandler('pressSpecialKey', 'keydown', function(event){
 		switch(event.keyCode){
 //		case 9:
 //			this.log.debug('pressed TAB');
-//			typeString = "false";
 //			this.record("pressSpecialKey", this.findLocators(event.target),  "tab");
 //			break;
 		case 13:
 			this.log.debug('pressed ENTER!');
-			typeString = false;
-			if(charBuffer.length == 0){
-				this.record("pressSpecialKey", this.findLocators(event.target),  "enter");
-			} else {
-				recordEnter = true;
+			if(charBuffer.length > 0){
+				this.record("enterCharacter", this.findLocators(event.target), charBuffer);
+				charBuffer = "";
 			}
+			enterPressed = true;
+			this.record("pressSpecialKey", this.findLocators(event.target),  "enter");
 			break;
 		case 37: 
 			this.log.debug('pressed LEFT!');
+			if(charBuffer.length > 0){
+				this.record("enterCharacter", this.findLocators(event.target), charBuffer);
+				charBuffer = "";				
+			}
 			this.record("pressSpecialKey", this.findLocators(event.target),  target + "left");
 			break;
 		case 39: 
 			this.log.debug('pressed RIGHT!');
+			if(charBuffer.length > 0){
+				this.record("enterCharacter", this.findLocators(event.target), charBuffer);
+				charBuffer = "";				
+			}
 			this.record("pressSpecialKey", this.findLocators(event.target),  target + "right");
 			break;
 		case 38: 
 			this.log.debug('pressed UP!');
+			if(charBuffer.length > 0){
+				this.record("enterCharacter", this.findLocators(event.target), charBuffer);
+				charBuffer = "";				
+			}
 			this.record("pressSpecialKey", this.findLocators(event.target),  target + "up");
 			break;
 		case 40:
 			this.log.debug('pressed DOWN!');
+			if(charBuffer.length > 0){
+				this.record("enterCharacter", this.findLocators(event.target), charBuffer);
+				charBuffer = "";				
+			}
 			this.record("pressSpecialKey", this.findLocators(event.target), target + "down");
 		}
 		
@@ -250,13 +264,13 @@ Recorder.addEventHandler('pressSpecialKey', 'keydown', function(event){
 /* record all keypresses to character buffer */
 Recorder.addEventHandler('keyPressedDown', 'keypress', function(event){
 		/* only record character keys and skip special keys */
-		if(event.charCode >= 48){
+		if(event.charCode >= 32){
 			this.log.debug('Typed key ' + String.fromCharCode(event.charCode));
 			charBuffer = charBuffer + String.fromCharCode(event.charCode);
-		}else if(event.keyCode >= 48){
+		}else if(event.keyCode >= 32){
 			this.log.debug('Typed key ' + String.fromCharCode(event.keyCode));
 			charBuffer = charBuffer + fromKeyCode(event.keyCode);
-		}else if(event.which >= 48){
+		}else if(event.which >= 32){
 			this.log.debug('Typed key ' + String.fromCharCode(event.which));
 			charBuffer = charBuffer + String.fromCharCode(event.which);
 		}
@@ -280,24 +294,14 @@ Recorder.addEventHandler('type', 'change', function(event) {
 	var target = this.findLocators(event.target);
 	if (('input' == tagName && ('text' == type || 'password' == type || 'file' == type)) ||
 		'textarea' == tagName) {
-		if(typeString){
-
-			if(charBuffer.length > 0){
-				charBuffer = "";
-				this.record("enterCharacter", target, event.target.value);
-			}else{
-				this.record("type", target, event.target.value);
-			}
-		}else{
-			typeString = true;
-			if(charBuffer.length > 0){
-				charBuffer = "";
-				this.record("enterCharacter", target, event.target.value);
-				if(recordEnter){
-					recordEnter = false;
-					this.record("pressSpecialKey", this.findLocators(event.target),  "enter");
-				}
-			}
+		if(enterPressed){
+			enterPressed = false;
+			charBuffer = "";
+		} else if (charBuffer.length > 0){
+			charBuffer = "";
+			this.record("enterCharacter", target, event.target.value);
+		} else {
+			this.record("type", target, event.target.value);
 		}
 	}
 });
