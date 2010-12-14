@@ -98,8 +98,8 @@ public class TestConverter {
                             + browser + " in " + builder.getPackageName());
 
                     // Create a java file for the test
-                    out = createJavaFileForTest(testName,
-                            builder.getPackageName(), browser, outputDirectory);
+                    out = createJavaFileForTest(testName, builder
+                            .getPackageName(), browser, outputDirectory);
 
                     out.write(builder.getJavaHeader());
                     out.write(builder.getTestMethodWrapper());
@@ -257,9 +257,8 @@ public class TestConverter {
                             TestBenchHTMLFile, testFile.getParentFile()
                                     .getAbsolutePath());
 
-                    List<String> combined = ParserFunctions.combineTests(
-                            result.getSuiteTests(),
-                            getTestName(testFile.getName()),
+                    List<String> combined = ParserFunctions.combineTests(result
+                            .getSuiteTests(), getTestName(testFile.getName()),
                             testFile.getAbsolutePath());
                     if (combined.size() == 1) {
                         return combined.get(0);
@@ -294,8 +293,8 @@ public class TestConverter {
         filePath = f.getParent();
         if (filePath == null) {
             filePath = "";
-        } else if (!File.separator
-                .equals(filePath.charAt(filePath.length() - 1))) {
+        } else if (!File.separator.equals(filePath
+                .charAt(filePath.length() - 1))) {
             filePath = filePath + File.separator;
         }
         absoluteFilePath = f.getAbsolutePath();
@@ -357,8 +356,8 @@ public class TestConverter {
         fis.close();
 
         htmlSource = htmlSource.replace("\"", "\\\"")
-                .replaceAll("\\n", "\\\\n").replace("'", "\\'")
-                .replaceAll("\\r", "");
+                .replaceAll("\\n", "\\\\n").replace("'", "\\'").replaceAll(
+                        "\\r", "");
 
         Context cx = Context.enter();
         try {
@@ -411,14 +410,12 @@ public class TestConverter {
                     firstScreenshot = false;
                 }
 
-                builder.appendCommandInfo("screenCapture", imageId);
                 builder.appendScreenshot(0.025, imageId);
             } else if (command.getCmd().equalsIgnoreCase("pause")) {
                 // Special case to ensure pause value is an integer
 
                 // For some weird Selenium compatible reason the value is stored
                 // as a locator...
-                builder.appendCommandInfo("pause", command.getLocator());
                 builder.appendPause(command.getLocator());
             } else if (command.getCmd().equalsIgnoreCase("pressSpecialKey")) {
                 // Special case because keys are played back differently in
@@ -431,13 +428,14 @@ public class TestConverter {
                 boolean alt = (value.contains("alt"));
                 boolean ctrl = (value.contains("ctrl"));
 
-                builder.appendCommandInfo("pressSpecialKey", value);
-
                 /*
                  * Opera, Safari and GoogleChrome need the java native keypress
                  */
                 if (isOpera || isSafari || isChrome) {
-                    builder.appendCode("selenium.focus(\"" + locator + "\");\n");
+                    builder.appendCommandInfo("pressSpecialKey", value);
+                    builder
+                            .appendCode("selenium.focus(\"" + locator
+                                    + "\");\n");
 
                     builder.appendKeyModifierDown(ctrl, alt, shift);
                     builder.appendKeyPressNative(convertedValue);
@@ -450,16 +448,14 @@ public class TestConverter {
             } else if (command.getCmd().equalsIgnoreCase("mouseClick")) {
                 // Special case because the actual command we execute vary
 
-                builder.appendCommandInfo("mouseClick", "");
-                builder.appendMouseClick(command.getLocator(),
-                        command.getValue());
+                builder.appendMouseClick(command.getLocator(), command
+                        .getValue());
 
             } else if (command.getCmd().equalsIgnoreCase("verifyTextPresent")
                     || command.getCmd().equalsIgnoreCase("assertTextPresent")) {
                 // Special case because value is in locator and not in value
                 // (stupid...)
                 String text = command.getLocator();
-                builder.appendCommandInfo(command.getCmd(), text);
                 builder.appendCommand(command.getCmd(), text, null);
             } else if (command.getCmd().equalsIgnoreCase("htmlTest")) {
                 // FIXME is this even a command? "locator" is not used for
@@ -477,7 +473,6 @@ public class TestConverter {
                 String locator = command.getLocator();
                 String value = command.getValue();
 
-                builder.appendCommandInfo(command.getCmd(), "");
                 builder.appendCommand(command.getCmd(), locator, value);
                 builder.appendPause("700");
             } else if (command.getCmd().equalsIgnoreCase("includeTest")) {
@@ -489,7 +484,8 @@ public class TestConverter {
                     System.err.println("No file defined in Value field.");
                     System.err.println("Check includeTest command in "
                             + absoluteFilePath);
-                    builder.appendCode("junit.framework.Assert.fail(\"No file defined in Value field.\");\n");
+                    builder
+                            .appendCode("junit.framework.Assert.fail(\"No file defined in Value field.\");\n");
                 } else {
                     includeTest(builder, value);
                 }
@@ -510,8 +506,9 @@ public class TestConverter {
     private static String convertKeyCodeOrName(String value) {
 
         if (!isOpera && !isSafari && !isChrome) {
-            // FIXME: What does this mean? Why is behavior different for
-            // keycodes in certain browsers?
+            // Key codes are checked for opera,safari and chrome because they
+            // use the JavaRobot on keypresses and not javascript so keys need
+            // to be the correct Java KeyEvent
 
             // FIXME: isOpera/isSafari/isChrome does not really reflect what
             // browser is used. This should be moved to AbstractVaadinTestCase
@@ -575,10 +572,11 @@ public class TestConverter {
         List<Command> commands = new ArrayList<Command>();
 
         cx.evaluateString(scope, "function load(a){}", "dummy-load", 1, null);
-        cx.evaluateString(
-                scope,
-                "this.log = [];this.log.info = function log() {}; var log = this.log;",
-                "dummy-log", 1, null);
+        cx
+                .evaluateString(
+                        scope,
+                        "this.log = [];this.log.info = function log() {}; var log = this.log;",
+                        "dummy-log", 1, null);
 
         loadScript("tools.js", scope, cx);
         loadScript("xhtml-entities.js", scope, cx);
@@ -642,8 +640,9 @@ public class TestConverter {
         // If file not found add Assert.fail and print to System.err
         if (target == null) {
             target = new File(value);
-            builder.appendCode("junit.framework.Assert.fail(\"Couldn't find file "
-                    + target.getName() + "\");\n");
+            builder
+                    .appendCode("junit.framework.Assert.fail(\"Couldn't find file "
+                            + target.getName() + "\");\n");
             System.err.println("Failed to append test " + target.getName());
         } else {
             // Save path to including file
@@ -653,8 +652,8 @@ public class TestConverter {
             filePath = target.getParent();
             if (filePath == null) {
                 filePath = "";
-            } else if (!File.separator
-                    .equals(filePath.charAt(filePath.length() - 1))) {
+            } else if (!File.separator.equals(filePath
+                    .charAt(filePath.length() - 1))) {
                 filePath = filePath + File.separator;
             }
             absoluteFilePath = target.getAbsolutePath();
@@ -666,9 +665,8 @@ public class TestConverter {
                 fis.close();
 
                 // sanitize source
-                htmlSource = htmlSource.replace("\"", "\\\"")
-                        .replaceAll("\\n", "\\\\n").replace("'", "\\'")
-                        .replaceAll("\\r", "");
+                htmlSource = htmlSource.replace("\"", "\\\"").replaceAll("\\n",
+                        "\\\\n").replace("'", "\\'").replaceAll("\\r", "");
 
                 Context cx = Context.enter();
 
@@ -687,8 +685,12 @@ public class TestConverter {
                 if (Parameters.isDebug()) {
                     e.printStackTrace();
                 }
-                builder.appendCode("junit.framework.Assert.fail(\"Insertion of test "
-                        + value + " failed with " + e.getMessage() + "\");");
+                builder
+                        .appendCode("junit.framework.Assert.fail(\"Insertion of test "
+                                + value
+                                + " failed with "
+                                + e.getMessage()
+                                + "\");");
             } finally {
                 Context.exit();
                 // Set path back to calling file

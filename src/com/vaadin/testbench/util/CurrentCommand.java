@@ -16,6 +16,10 @@ public class CurrentCommand {
         cmdNr = 0;
     }
 
+    public void reduceCommandNumber() {
+        cmdNr--;
+    }
+
     public void setCommand(String command, String value) {
         cmdNr++;
         if (value.length() > 0) {

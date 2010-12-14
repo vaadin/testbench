@@ -19,12 +19,13 @@ public class ConversionTest extends TestCase {
         String[] shouldExist = new String[] {
                 "public class parameter_demo extends AbstractVaadinTestCase {",
                 "public void setUp(){",
-                "public void testwinxp_firefox3() throws Throwable{",
+                "public void testwinxp_firefox35() throws Throwable{",
                 "private void internal_parameter_demo() throws Throwable {",
                 "doCommand(\"assertText\",new String[] {\"//body/div[2]\",\"original text\"});" };
 
-        File target = new File(System.getProperty("user.dir")
-                + "/temp/src/parameter_demo/winxp_firefox3/parameter_demo.java");
+        File target = new File(
+                System.getProperty("user.dir")
+                        + "/temp/src/parameter_demo/winxp_firefox35/parameter_demo.java");
 
         Assert.assertTrue("File doesn't exists. Check conversion.", target
                 .exists());
@@ -60,6 +61,72 @@ public class ConversionTest extends TestCase {
                 "public void testwinxp_firefox36() throws Throwable{",
                 "private void internal_parameter_demo() throws Throwable {",
                 "doCommand(\"assertText\",new String[] {\"//body/div[2]\",\"Text has been replaced\"});" };
+
+        File target = new File(
+                System.getProperty("user.dir")
+                        + "/temp/src/parameter_demo/winxp_firefox36/parameter_demo.java");
+
+        Assert.assertTrue("File doesn't exists. Check conversion.", target
+                .exists());
+
+        BufferedReader in = new BufferedReader(new FileReader(target));
+        String line = in.readLine();
+        int need = 0;
+        String lineNotFound = shouldExist[need];
+        while (line != null) {
+            if (need < shouldExist.length && line.equals(shouldExist[need])) {
+                need++;
+                if (need < shouldExist.length) {
+                    lineNotFound = shouldExist[need];
+                }
+            }
+            line = in.readLine();
+        }
+
+        Assert.assertEquals("Didn't find expected line " + lineNotFound,
+                shouldExist.length, need);
+    }
+
+    public void testsuite_conversion_result() throws Exception {
+        String[] shouldExist = new String[] {
+                "cmd.setFile(\"OpenSampler.html\");",
+                "Start test OpenSampler.html",
+                "cmd.setFile(\"GoToCheckBox.html\");",
+                "Start test GoToCheckBox.html" };
+
+        File target = new File(System.getProperty("user.dir")
+                + "/temp/src/TestSuite/winxp_firefox36/TestSuite.java");
+
+        Assert.assertTrue("File doesn't exists. Check conversion.", target
+                .exists());
+
+        BufferedReader in = new BufferedReader(new FileReader(target));
+        String line = in.readLine();
+        int need = 0;
+        String lineNotFound = shouldExist[need];
+        while (line != null) {
+            if (need < shouldExist.length && line.contains(shouldExist[need])) {
+                need++;
+                if (need < shouldExist.length) {
+                    lineNotFound = shouldExist[need];
+                }
+            }
+            line = in.readLine();
+        }
+
+        Assert.assertEquals("Didn't find expected line " + lineNotFound,
+                shouldExist.length, need);
+    }
+
+    public void testset_current_command() throws Exception {
+        String[] shouldExist = new String[] {
+                "cmd.setCommand(\"open\", \"\");",
+                "cmd.setCommand(\"open\", \"\");",
+                "cmd.setCommand(\"mouseClick\", \"58,8\");",
+                "cmd.setCommand(\"enterCharacter\", \"Text has been replaced\");",
+                "cmd.setCommand(\"waitForVaadin\", \"\");",
+                "cmd.setCommand(\"assertText\", \"Text has been replaced\");",
+                "cmd.setCommand(\"closeNotification\", \"0,0\");" };
 
         File target = new File(
                 System.getProperty("user.dir")

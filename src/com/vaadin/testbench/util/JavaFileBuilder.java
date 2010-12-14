@@ -45,9 +45,11 @@ public class JavaFileBuilder {
     }
 
     public void appendPause(String delay) {
+        appendCommandInfo("pause", delay);
         testMethodSource.append("pause(");
         testMethodSource.append(replaceParameters(delay));
         testMethodSource.append(");\n");
+        appendCode("waitForVaadin();\n");
     }
 
     public void appendCommandInfo(String command, String value) {
@@ -72,6 +74,7 @@ public class JavaFileBuilder {
      * @param parameters
      */
     public void appendCommand(String command, String locator, String value) {
+        appendCommandInfo(command, replaceParameters(value));
         testMethodSource.append("doCommand(");
         testMethodSource.append(quotedSafeParameterString(command));
         testMethodSource.append(",new String[] {");
@@ -121,6 +124,7 @@ public class JavaFileBuilder {
     }
 
     public void appendScreenshot(double errorTolerance, String imageIdentifier) {
+        appendCommandInfo("screenCapture", imageIdentifier);
         testMethodSource.append("validateScreenshot(");
         testMethodSource.append(quotedSafeParameterString(testName));
         testMethodSource.append(", " + errorTolerance + ", ");
@@ -149,7 +153,6 @@ public class JavaFileBuilder {
 
     public void appendCode(String string) {
         testMethodSource.append(string);
-
     }
 
     public void appendKeyModifierDown(boolean ctrl, boolean alt, boolean shift) {
@@ -195,7 +198,7 @@ public class JavaFileBuilder {
     }
 
     public void appendOpen(Command command) {
-        testMethodSource.append("try {");
+        testMethodSource.append("try {\n");
         appendCommand(command);
         testMethodSource.append("} catch (Exception e) {\n");
         testMethodSource
@@ -207,22 +210,25 @@ public class JavaFileBuilder {
         // Use true here as screenshot is not correctly set before this.
         // Tests could probably always be run in maximized mode anyway.
         testMethodSource.append(getWindowInitFunctions(true));
+        testMethodSource.append("cmd.reduceCommandNumber();\n");
         appendCommand(command);
         testMethodSource.append("}\n");
     }
 
     public void appendCommand(Command command) {
-        appendCommand(command.getCmd(), command.getLocator(),
-                command.getValue());
+        appendCommand(command.getCmd(), command.getLocator(), command
+                .getValue());
     }
 
     public void appendMouseClick(String locator, String value) {
+        appendCommandInfo("mouseClick", value);
         testMethodSource.append("doMouseClick(");
         testMethodSource.append(quotedSafeParameterString(locator));
         testMethodSource.append(",");
         testMethodSource
                 .append(quotedSafeParameterString(replaceParameters(value)));
         testMethodSource.append(");\n");
+        appendCode("waitForVaadin();\n");
     }
 
     public byte[] getTestMethodWrapper() {
