@@ -18,7 +18,7 @@
 	
 	<target name="compile-runner-tests" unless="exclude.runner">
 		<mkdir dir="${basedir}/../test/classes" />
-		<javac srcdir="src/com/vaadin/testbench/runner/tests" destdir="${basedir}/../test/temp/classes">
+		<javac srcdir="src/com/vaadin/testbench/runner/tests" destdir="${temp-dir}/classes" encoding="utf-8">
 			<classpath>
 				<fileset dir="../build/result/package" includes="vaadin-testbench-*.jar" />
 				<fileset dir="../lib" id="libs">
@@ -30,7 +30,7 @@
 	
 	<target name="compile-testbench-tests" depends="test-conversion">
 		<mkdir dir="${temp-dir}/classes" />
-		<javac srcdir="src/com/vaadin/testbench/tests" destdir="${temp-dir}/classes">
+		<javac srcdir="src/com/vaadin/testbench/tests" destdir="${temp-dir}/classes" encoding="utf-8">
 			<classpath>
 				<fileset dir="../build/result/package" includes="vaadin-testbench-*.jar" />
 				<fileset dir="../lib" id="libs">

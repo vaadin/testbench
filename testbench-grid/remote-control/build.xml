@@ -36,7 +36,7 @@
 	           destdir="${build.output}"
 	           debug="true"
 	           source="1.5"
-	           target="1.5">
+	           target="1.5" encoding="utf-8">
 	   		<classpath refid="compile.classpath"/>
 	   	</javac>
 	   	<copy todir="${build.output}" verbose="true">

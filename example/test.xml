@@ -67,7 +67,7 @@
 		<mkdir dir="${temp-dir}" />
 		<mkdir dir="${temp-dir}/src" />
 		<mkdir dir="${temp-dir}/classes" />
-		<javac srcdir="${temp-dir}/src" destdir="${temp-dir}/classes" debug="on">
+		<javac srcdir="${temp-dir}/src" destdir="${temp-dir}/classes" debug="on" encoding="utf-8">
 			<classpath>
 				<path refid="classpath" />
 			</classpath>
