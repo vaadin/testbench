@@ -96,3 +96,8 @@ Change files (in selenium-server-1.0.1.jar) for Firefox 4 support:
 	customProfileDirCUSTFFCHROME/extensions/{503A0CD4-EDC8-489b-853B-19E0BAA8F0A4}/install.rdf
 	customProfileDirCUSTFFCHROME/extensions/{538F0036-F358-4f84-A764-89FB437166B4}/install.rdf
 	
+Changes for #6029:
+
+remove grid_configuration.yml from selenium-grid-core-1.0.8.jar
+Added try{}catch(){} to HubRegistry.
+	
