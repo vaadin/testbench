@@ -329,6 +329,7 @@ Selenium.prototype.doDrag = function(locator, value){
 	this.browserbot.triggerMouseEvent(element, 'mouseover', true, clientXY[0], clientXY[1]);
 	this.browserbot.triggerMouseEvent(element, 'mousedown', true, clientXY[0], clientXY[1]);
 	this.browserbot.triggerMouseEvent(element, 'mousemove', true, clientXY[0], clientXY[1]);
+	this.browserbot.triggerMouseEvent(element, 'mousemove', true, clientXY[0]+1, clientXY[1]+1);
 };
 
 // Drops target element from drag on this target element
