@@ -70,7 +70,9 @@ CommandBuilders.add('accessor', function(window) {
 			result.target = selection;
 		} else {
 			var element = this.getRecorder(window).clickedElement;
-			if (element) {
+			if (element &&
+			     'input' != element.tagName.toLowerCase() &&
+				 'textarea' != element.tagName.toLowerCase()) {
 				result.target = exactMatchPattern(getText(element));
 			} else {
 				result.disabled = true;
@@ -113,7 +115,9 @@ CommandBuilders.add('accessor', function(window) {
 CommandBuilders.add('accessor', function(window) {
 		var result = { accessor: "text" };
 		var element = this.getRecorder(window).clickedElement;
-		if (element) {
+		if (element  &&
+			 'input' != element.tagName.toLowerCase() &&
+			 'textarea' != element.tagName.toLowerCase()) {
 			result.target = this.getRecorder(window).clickedElementLocators;
 			result.value = exactMatchPattern(getText(element));
 		} else {
