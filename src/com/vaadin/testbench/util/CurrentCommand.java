@@ -20,13 +20,9 @@ public class CurrentCommand {
         cmdNr--;
     }
 
-    public void setCommand(String command, String value) {
+    public void setCommand(String command, String locator, String value) {
         cmdNr++;
-        if (value.length() > 0) {
-            cmd = command + " and value = " + value;
-        } else {
-            cmd = command;
-        }
+        cmd = command + "\n Locator:" + locator + "\n Value: " + value;
     }
 
     public void setFile(String file) {
@@ -34,6 +30,6 @@ public class CurrentCommand {
     }
 
     public String getInfo() {
-        return file + " failed at CommandNr = " + cmdNr + " with Cmd = " + cmd;
+        return file + " failed\n Command Number: " + cmdNr + "\n Cmd: " + cmd;
     }
 }
