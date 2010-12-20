@@ -94,6 +94,15 @@
 			<arg line="${basedir}/../example/testscripts/parameter.demo.html" />
 		</java>
 		
+		<!-- Convert example test using parameter substitution with automatic environment file -->
+		<java classname="com.vaadin.testbench.util.TestConverter" classpathref="classpath" failonerror="true">
+			<sysproperty key="com.vaadin.testbench.screenshot.onfail" value="false"/>
+			<sysproperty key="com.vaadin.testbench.converter.parameterFile" value="${basedir}/../example/parameters/NewParameters.properties" />
+			<arg value="${temp-dir}/src" />
+			<arg value="winxp-firefox4" />
+			<arg line="${basedir}/../example/testscripts/parameter.demo.html" />
+		</java>
+		
 		<!-- Convert TestSuite -->
 		<java classname="com.vaadin.testbench.util.TestConverter" classpathref="classpath" failonerror="true">
 			<sysproperty key="com.vaadin.testbench.screenshot.onfail" value="false"/>

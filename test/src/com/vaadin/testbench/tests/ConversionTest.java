@@ -16,15 +16,19 @@ public class ConversionTest extends TestCase {
      * @throws Exception
      */
     public void testverify_conversion_result() throws Exception {
-        String[] shouldExist = new String[] { "public class parameter_demo extends AbstractVaadinTestCase {",
-                "public void setUp(){", "public void testwinxp_firefox35() throws Throwable{",
+        String[] shouldExist = new String[] {
+                "public class parameter_demo extends AbstractVaadinTestCase {",
+                "public void setUp(){",
+                "public void testwinxp_firefox35() throws Throwable{",
                 "private void internal_parameter_demo() throws Throwable {",
                 "doCommand(\"assertText\",new String[] {\"//body/div[2]\",\"original text\"});" };
 
-        File target = new File(System.getProperty("user.dir")
-                + "/temp/src/parameter_demo/winxp_firefox35/parameter_demo.java");
+        File target = new File(
+                System.getProperty("user.dir")
+                        + "/temp/src/parameter_demo/winxp_firefox35/parameter_demo.java");
 
-        Assert.assertTrue("File doesn't exists. Check conversion.", target.exists());
+        Assert.assertTrue("File doesn't exists. Check conversion.",
+                target.exists());
 
         BufferedReader in = new BufferedReader(new FileReader(target));
         String line = in.readLine();
@@ -40,7 +44,8 @@ public class ConversionTest extends TestCase {
             line = in.readLine();
         }
 
-        Assert.assertEquals("Didn't find expected line " + lineNotFound, shouldExist.length, need);
+        Assert.assertEquals("Didn't find expected line " + lineNotFound,
+                shouldExist.length, need);
     }
 
     /**
@@ -50,15 +55,19 @@ public class ConversionTest extends TestCase {
      * @throws Exception
      */
     public void testverify_parameter_conversion_result() throws Exception {
-        String[] shouldExist = new String[] { "public class parameter_demo extends AbstractVaadinTestCase {",
-                "public void setUp(){", "public void testwinxp_firefox36() throws Throwable{",
+        String[] shouldExist = new String[] {
+                "public class parameter_demo extends AbstractVaadinTestCase {",
+                "public void setUp(){",
+                "public void testwinxp_firefox36() throws Throwable{",
                 "private void internal_parameter_demo() throws Throwable {",
                 "doCommand(\"assertText\",new String[] {\"//body/div[2]\",\"Text has been replaced\"});" };
 
-        File target = new File(System.getProperty("user.dir")
-                + "/temp/src/parameter_demo/winxp_firefox36/parameter_demo.java");
+        File target = new File(
+                System.getProperty("user.dir")
+                        + "/temp/src/parameter_demo/winxp_firefox36/parameter_demo.java");
 
-        Assert.assertTrue("File doesn't exists. Check conversion.", target.exists());
+        Assert.assertTrue("File doesn't exists. Check conversion.",
+                target.exists());
 
         BufferedReader in = new BufferedReader(new FileReader(target));
         String line = in.readLine();
@@ -74,16 +83,55 @@ public class ConversionTest extends TestCase {
             line = in.readLine();
         }
 
-        Assert.assertEquals("Didn't find expected line " + lineNotFound, shouldExist.length, need);
+        Assert.assertEquals("Didn't find expected line " + lineNotFound,
+                shouldExist.length, need);
+    }
+
+    public void testverify_environment_parameter_conversion_result()
+            throws Exception {
+        String[] shouldExist = new String[] {
+                "public class parameter_demo extends AbstractVaadinTestCase {",
+                "public void setUp(){",
+                "public void testwinxp_firefox4() throws Throwable{",
+                "private void internal_parameter_demo() throws Throwable {",
+                "doCommand(\"assertText\",new String[] {\"//body/div[2]\",\"Text has been replaced from ff36.properties\"});" };
+
+        File target = new File(System.getProperty("user.dir")
+                + "/temp/src/parameter_demo/winxp_firefox4/parameter_demo.java");
+
+        Assert.assertTrue("File doesn't exists. Check conversion.",
+                target.exists());
+
+        BufferedReader in = new BufferedReader(new FileReader(target));
+        String line = in.readLine();
+        int need = 0;
+        String lineNotFound = shouldExist[need];
+        while (line != null) {
+            if (need < shouldExist.length && line.equals(shouldExist[need])) {
+                need++;
+                if (need < shouldExist.length) {
+                    lineNotFound = shouldExist[need];
+                }
+            }
+            line = in.readLine();
+        }
+
+        Assert.assertEquals("Didn't find expected line " + lineNotFound,
+                shouldExist.length, need);
     }
 
     public void testsuite_conversion_result() throws Exception {
-        String[] shouldExist = new String[] { "cmd.setFile(\"OpenSampler.html\");", "Start test OpenSampler.html",
-                "cmd.setFile(\"GoToCheckBox.html\");", "Start test GoToCheckBox.html" };
+        String[] shouldExist = new String[] {
+                "cmd.setFile(\"OpenSampler.html\");",
+                "Start test OpenSampler.html",
+                "cmd.setFile(\"GoToCheckBox.html\");",
+                "Start test GoToCheckBox.html" };
 
-        File target = new File(System.getProperty("user.dir") + "/temp/src/TestSuite/winxp_firefox36/TestSuite.java");
+        File target = new File(System.getProperty("user.dir")
+                + "/temp/src/TestSuite/winxp_firefox36/TestSuite.java");
 
-        Assert.assertTrue("File doesn't exists. Check conversion.", target.exists());
+        Assert.assertTrue("File doesn't exists. Check conversion.",
+                target.exists());
 
         BufferedReader in = new BufferedReader(new FileReader(target));
         String line = in.readLine();
@@ -99,7 +147,8 @@ public class ConversionTest extends TestCase {
             line = in.readLine();
         }
 
-        Assert.assertEquals("Didn't find expected line " + lineNotFound, shouldExist.length, need);
+        Assert.assertEquals("Didn't find expected line " + lineNotFound,
+                shouldExist.length, need);
     }
 
     public void testset_current_command() throws Exception {
@@ -112,10 +161,12 @@ public class ConversionTest extends TestCase {
                 "cmd.setCommand(\"assertText\", \"//body/div[2]\", \"Text has been replaced\");",
                 "cmd.setCommand(\"closeNotification\", \"//body/div[2]\", \"0,0\");" };
 
-        File target = new File(System.getProperty("user.dir")
-                + "/temp/src/parameter_demo/winxp_firefox36/parameter_demo.java");
+        File target = new File(
+                System.getProperty("user.dir")
+                        + "/temp/src/parameter_demo/winxp_firefox36/parameter_demo.java");
 
-        Assert.assertTrue("File doesn't exists. Check conversion.", target.exists());
+        Assert.assertTrue("File doesn't exists. Check conversion.",
+                target.exists());
 
         BufferedReader in = new BufferedReader(new FileReader(target));
         String line = in.readLine();
@@ -131,6 +182,7 @@ public class ConversionTest extends TestCase {
             line = in.readLine();
         }
 
-        Assert.assertEquals("Didn't find expected line " + lineNotFound, shouldExist.length, need);
+        Assert.assertEquals("Didn't find expected line " + lineNotFound,
+                shouldExist.length, need);
     }
 }

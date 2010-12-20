@@ -569,6 +569,7 @@ var clY = 0;
 var mousedown = false;
 var slider = false;
 var split = false;
+var calendar_event = false;
 var dragTarget = null;
 var dragElement = null;
 var noDnd = false;
@@ -579,7 +580,8 @@ Recorder.addEventHandler('mouseDownEvent', 'mousedown', function(event){
 			dragElement = event.target;
 		    slider = (new RegExp("v-slider")).test(dragElement.className);
 		    split = (new RegExp("splitter")).test(dragElement.parentNode.className) && (new RegExp("v-splitpanel")).test(dragElement.parentNode.className);
-
+		    calendar_event = (new RegExp("v-calendar-event")).test(dragElement.className);
+		    
 		    mousedown = true;
 			dragTarget = this.findLocators(dragElement);
 		    mousedownX = editor.seleniumAPI.Selenium.prototype.getElementPositionLeft(dragElement);
@@ -594,7 +596,6 @@ Recorder.addEventHandler('mouseUpEvent', 'mouseup', function(event){
 		if(noDnd){
 			noDnd = false;
 		} else if (mousedown && (Math.abs(clX-event.clientX) >= 10 || Math.abs(clY-event.clientY) >= 10) && !split && !slider) {
-			
 	    	var target =  dragElement.ownerDocument.elementFromPoint(event.clientX, event.clientY);
 	    	if (target != null && target.nodeType == 3) {
 	    		target = target.parentNode;
@@ -608,7 +609,7 @@ Recorder.addEventHandler('mouseUpEvent', 'mouseup', function(event){
 	    	}
 
 			// Clear all mouse down targets.
-			mousedown = slider = split = false;
+			mousedown = slider = split = calendar_event = false;
 			mousedownX = mousedownY = 0;
 			dragTarget = dragElement = null;
 			clX = clY = 0;
@@ -618,18 +619,37 @@ Recorder.addEventHandler('mouseUpEvent', 'mouseup', function(event){
 
 Recorder.addEventHandler('slideSplitEvent', 'mouseup', function(event){
 		if (slider || split) {
-			alert(slider + "::" + split);
+//			alert(slider + "::" + split);
 			var x = editor.seleniumAPI.Selenium.prototype.getElementPositionLeft(dragElement) - mousedownX;
 		    var y = editor.seleniumAPI.Selenium.prototype.getElementPositionTop(dragElement) - mousedownY;
 		    
 			this.record("dragAndDrop", dragTarget, x + ',' + y );
 	
 			// Clear all mouse down targets.
-			mousedown = slider = split = false;
+			mousedown = slider = split = calendar_event = false;
 			mousedownX = mousedownY = 0;
 			dragTarget = dragElement = null;
 			clX = clY = 0;
 			
 			cancelClick = true;
+		} else if (calendar_event){
+			var target =  dragElement.ownerDocument.elementFromPoint(event.clientX, event.clientY);
+	    	if (target != null && target.nodeType == 3) {
+	    		target = target.parentNode;
+	    	}
+	    	if(target != dragElement){
+				var x = event.clientX - editor.seleniumAPI.Selenium.prototype.getElementPositionLeft(target);
+		        var y = event.clientY - editor.seleniumAPI.Selenium.prototype.getElementPositionTop(target);
+		
+		        this.record("drag", dragTarget, (clX-mousedownX) + ',' + (clY-mousedownY));
+		        this.record("mouseMoveAt", this.findLocators(target), x + ',' + y);
+		        this.record("drop", this.findLocators(target), x + ',' + y);
+	    	}
+
+			// Clear all mouse down targets.
+			mousedown = slider = split = calendar_event = false;
+			mousedownX = mousedownY = 0;
+			dragTarget = dragElement = null;
+			clX = clY = 0;
 		}
 	}, {capture: true});
