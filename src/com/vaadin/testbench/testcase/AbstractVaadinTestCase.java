@@ -16,6 +16,7 @@ import com.vaadin.testbench.util.BrowserUtil;
 import com.vaadin.testbench.util.BrowserVersion;
 import com.vaadin.testbench.util.ImageComparison;
 import com.vaadin.testbench.util.ImageData;
+import com.vaadin.testbench.util.ImageUtil;
 
 /**
  * An abstract Vaadin TestCase implementation. This can be extended to create
@@ -26,8 +27,12 @@ import com.vaadin.testbench.util.ImageData;
 public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
 
     private static int imageNumber = 0;
-    private static String testCaseName = "";
     private static List<junit.framework.AssertionFailedError> softAssert = new LinkedList<junit.framework.AssertionFailedError>();
+
+    private static final String[] error_messages = {
+            "was missing reference images", "contained differences",
+            "contained images with differing sizes containing differences",
+            "contained images with differing sizes", "" };
 
     private BrowserDimensions browserDimensions = null;
     private BrowserVersion browserVersion = null;
@@ -57,6 +62,10 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
 
     public void doCommand(String cmd, String[] params) {
         testBase.doCommand(cmd, params);
+
+        if (!cmd.equals("close") && !cmd.equals("expectDialog")) {
+            waitForVaadin();
+        }
     }
 
     /**
@@ -315,13 +324,9 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
     }
 
     // Init methods
+    public void startBrowser(String browserIdentifier) throws Exception {
+        this.browserIdentifier = browserIdentifier;
 
-    /*
-     * Sets up the test case. Uses system properties to determine test hosts,
-     * deployment host and browser. Must be called before each test.
-     */
-    @Override
-    public void setUp() throws Exception {
         String remoteControlHostName = Parameters.getRemoteControlHostName();
         String deploymentUrl = Parameters.getDeploymentURL();
 
@@ -339,11 +344,6 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
                             + Parameters.DEPLOYMENT_URL
                             + "=http://www.deployment.com:8080/. "
                             + "DO NOT include the context path, this is stored in the test case.");
-        }
-
-        if (browserIdentifier == null) {
-            throw new IllegalArgumentException(
-                    "Missing browser definition. Define using setBrowserIdentifier().");
         }
 
         // Check if a given canvas size was requested
@@ -364,6 +364,24 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
         testBase.setHubAddress(remoteControlHostName);
         testBase.setUp(deploymentUrl, browserIdentifier);
         selenium = testBase.getVaadinSelenium();
+    }
+
+    /**
+     * Sets up the test case. Uses system properties to determine test hosts,
+     * deployment host and browser. Must be called before each test.
+     * 
+     * @deprecated Use startBrowser(String) instead
+     */
+    @Override
+    @Deprecated
+    public void setUp() throws Exception {
+
+        if (browserIdentifier == null) {
+            throw new IllegalArgumentException(
+                    "Missing browser definition. Define using setBrowserIdentifier().");
+        }
+
+        startBrowser(browserIdentifier);
     }
 
     @Override
@@ -446,5 +464,81 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
             }
         }
         doCommand(mouseClickCommand, new String[] { locator, value });
+    }
+
+    public void open(String url) {
+        try {
+            doCommand("open", new String[] { url });
+        } catch (Exception e) {
+            System.out.println("Open failed, retrying");
+            selenium.stop();
+            selenium.start();
+            clearDimensions();
+            setupWindow(true);
+            doCommand("open", new String[] { url });
+        }
+        waitForVaadin();
+    }
+
+    public void createFailureScreenshot(String testName) {
+        String statusScreen = selenium.captureScreenshotToString();
+        String directory = getScreenshotDirectory();
+        if (!File.separator.equals(directory.charAt(directory.length() - 1))) {
+            directory = directory + File.separator;
+        }
+        File target = new File(directory + "errors");
+        if (!target.exists()) {
+            target.mkdir();
+        }
+        try {
+            ImageIO.write(
+                    ImageUtil.stringToImage(statusScreen),
+                    "png",
+                    new File(directory
+                            + "errors/"
+                            + testName
+                            + "_failure_"
+                            + getBrowserIdentifier().replaceAll("[^a-zA-Z0-9]",
+                                    "_") + ".png"));
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        }
+    }
+
+    public void handleSoftErrors() {
+
+        StringBuilder message = new StringBuilder();
+        byte[] errors = new byte[5];
+
+        for (junit.framework.AssertionFailedError afe : getSoftErrors()) {
+            if (afe.getMessage().contains("No reference found")) {
+                errors[0] = 1;
+            } else if (afe.getMessage()
+                    .contains("differs from reference image")) {
+                errors[1] = 1;
+            } else if (afe.getMessage().contains("Images differ and")) {
+                errors[2] = 1;
+            } else if (afe.getMessage()
+                    .contains("Images are of different size")) {
+                errors[3] = 1;
+            } else {
+                errors[4] = 1;
+                error_messages[4] = afe.getMessage();
+            }
+        }
+
+        boolean add_and = false;
+        message.append("Test ");
+
+        for (int i = 0; i < 5; i++) {
+            if (errors[i] == 1) {
+                if (add_and) {
+                    message.append(" and ");
+                }
+                message.append(error_messages[i]);
+                add_and = true;
+            }
+        }
+        junit.framework.Assert.fail(message.toString());
     }
 }

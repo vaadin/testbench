@@ -18,17 +18,14 @@ public class JavaFileBuilder {
     // setup phase
     private static final String JAVA_HEADER = "package {package};\n\n"
             + "import com.vaadin.testbench.testcase.AbstractVaadinTestCase;\n"
-            + "import java.io.IOException;\n"
-            + "import java.io.File;\n"
+            + "import java.io.IOException;\n" + "import java.io.File;\n"
             + "import javax.imageio.ImageIO;\n"
             + "import com.vaadin.testbench.util.ImageUtil;\n"
             + "import com.vaadin.testbench.util.CurrentCommand;\n"
             + "import com.vaadin.testbench.util.BrowserUtil;\n"
             + "import com.vaadin.testbench.util.BrowserVersion;\n\n"
             + "public class {class} extends AbstractVaadinTestCase {\n\n"
-            + "private static final String[] error_messages = { \"was missing reference images\","
-            + "\"contained differences\", \"contained images with differing sizes containing differences\", \"contained images with differing sizes\", \"\" "
-            + "};\n\n" + "public void setUp(){\n}\n\n";;
+            + "public void setUp(){\n}\n\n";;
 
     private static final String JAVA_FOOTER = "}\n";
 
@@ -48,8 +45,7 @@ public class JavaFileBuilder {
         appendCommandInfo("pause", "", delay);
         testMethodSource.append("pause(");
         testMethodSource.append(replaceParameters(delay));
-        testMethodSource.append(");\n");
-        appendCode("waitForVaadin();\n");
+        testMethodSource.append(");\n\n");
     }
 
     public void appendCommandInfo(String command, String locator, String value) {
@@ -91,14 +87,11 @@ public class JavaFileBuilder {
                 testMethodSource.append(",");
             }
 
-            testMethodSource.append(quotedSafeParameterString(replaceParameters(value)));
+            testMethodSource
+                    .append(quotedSafeParameterString(replaceParameters(value)));
         }
-        testMethodSource.append("});\n");
+        testMethodSource.append("});\n\n");
 
-        // if (command.endsWith("AndWait"))
-        if (!command.equals("close") && !command.equals("expectDialog")) {
-            appendCode("waitForVaadin();\n");
-        }
     }
 
     private String replaceParameters(String value) {
@@ -129,8 +122,9 @@ public class JavaFileBuilder {
         testMethodSource.append("validateScreenshot(");
         testMethodSource.append(quotedSafeParameterString(testName));
         testMethodSource.append(", " + errorTolerance + ", ");
-        testMethodSource.append(quotedSafeParameterString(replaceParameters(imageIdentifier)));
-        testMethodSource.append(");\n");
+        testMethodSource
+                .append(quotedSafeParameterString(replaceParameters(imageIdentifier)));
+        testMethodSource.append(");\n\n");
         hasScreenshots = true;
     }
 
@@ -157,25 +151,31 @@ public class JavaFileBuilder {
 
     public void appendKeyModifierDown(boolean ctrl, boolean alt, boolean shift) {
         if (ctrl) {
-            testMethodSource.append("selenium.keyDownNative(\"" + KeyEvent.VK_CONTROL + "\");\n");
+            testMethodSource.append("selenium.keyDownNative(\""
+                    + KeyEvent.VK_CONTROL + "\");\n");
         }
         if (alt) {
-            testMethodSource.append("selenium.keyDownNative(\"" + KeyEvent.VK_ALT + "\");\n");
+            testMethodSource.append("selenium.keyDownNative(\""
+                    + KeyEvent.VK_ALT + "\");\n");
         }
         if (shift) {
-            testMethodSource.append("selenium.keyDownNative(\"" + KeyEvent.VK_SHIFT + "\");\n");
+            testMethodSource.append("selenium.keyDownNative(\""
+                    + KeyEvent.VK_SHIFT + "\");\n");
         }
     }
 
     public void appendKeyModifierUp(boolean ctrl, boolean alt, boolean shift) {
         if (ctrl) {
-            testMethodSource.append("selenium.keyUpNative(\"" + KeyEvent.VK_CONTROL + "\");\n");
+            testMethodSource.append("selenium.keyUpNative(\""
+                    + KeyEvent.VK_CONTROL + "\");\n");
         }
         if (alt) {
-            testMethodSource.append("selenium.keyUpNative(\"" + KeyEvent.VK_ALT + "\");\n");
+            testMethodSource.append("selenium.keyUpNative(\"" + KeyEvent.VK_ALT
+                    + "\");\n");
         }
         if (shift) {
-            testMethodSource.append("selenium.keyUpNative(\"" + KeyEvent.VK_SHIFT + "\");\n");
+            testMethodSource.append("selenium.keyUpNative(\""
+                    + KeyEvent.VK_SHIFT + "\");\n");
         }
     }
 
@@ -186,29 +186,20 @@ public class JavaFileBuilder {
      *            ???. Must not be null.
      */
     public void appendKeyPressNative(String value) {
-        testMethodSource.append("selenium.keyPressNative(" + quotedSafeParameterString(value) + ");\n");
+        testMethodSource.append("selenium.keyPressNative("
+                + quotedSafeParameterString(value) + ");\n");
 
     }
 
     public void appendOpen(Command command) {
-        testMethodSource.append("try {\n");
-        appendCommand(command);
-        testMethodSource.append("} catch (Exception e) {\n");
-        testMethodSource.append("System.out.println(\"Open failed, retrying\");\n");
-        testMethodSource.append("selenium.stop();\n");
-        testMethodSource.append("selenium.start();\n");
-        testMethodSource.append("clearDimensions();\n");
-
-        // Use true here as screenshot is not correctly set before this.
-        // Tests could probably always be run in maximized mode anyway.
-        testMethodSource.append(getWindowInitFunctions(true));
-        testMethodSource.append("cmd.reduceCommandNumber();\n");
-        appendCommand(command);
-        testMethodSource.append("}\n");
+        appendCommandInfo(command.getCmd(), command.getLocator(),
+                replaceParameters(command.getValue()));
+        testMethodSource.append("open(\"" + command.getLocator() + "\");\n\n");
     }
 
     public void appendCommand(Command command) {
-        appendCommand(command.getCmd(), command.getLocator(), command.getValue());
+        appendCommand(command.getCmd(), command.getLocator(),
+                command.getValue());
     }
 
     public void appendMouseClick(String locator, String value) {
@@ -216,19 +207,19 @@ public class JavaFileBuilder {
         testMethodSource.append("doMouseClick(");
         testMethodSource.append(quotedSafeParameterString(locator));
         testMethodSource.append(",");
-        testMethodSource.append(quotedSafeParameterString(replaceParameters(value)));
-        testMethodSource.append(");\n");
-        appendCode("waitForVaadin();\n");
+        testMethodSource
+                .append(quotedSafeParameterString(replaceParameters(value)));
+        testMethodSource.append(");\n\n");
     }
 
     public byte[] getTestMethodWrapper() {
         /* Create a test method for the browser. */
         StringBuilder browserInit = new StringBuilder();
-        browserInit
-                .append("public void test" + TestConverter.getSafeName(browserIdentifier) + "() throws Throwable{\n");
+        browserInit.append("public void test"
+                + TestConverter.getSafeName(browserIdentifier)
+                + "() throws Throwable{\n");
 
-        browserInit.append("setBrowserIdentifier(\"" + browserIdentifier + "\");\n");
-        browserInit.append("super.setUp();\n");
+        browserInit.append("startBrowser(\"" + browserIdentifier + "\");\n");
 
         browserInit.append(getTestMethodJavaName(testName) + "();");
         browserInit.append("\n}\n\n");
@@ -242,7 +233,8 @@ public class JavaFileBuilder {
 
     private String getTestMethodDefinition() {
         String header = TEST_METHOD_DEFINITION;
-        header = header.replace("{testMethodName}", getTestMethodJavaName(getTestName()));
+        header = header.replace("{testMethodName}",
+                getTestMethodJavaName(getTestName()));
 
         return header;
     }
@@ -255,38 +247,18 @@ public class JavaFileBuilder {
 
         // adding the softAssert so creating reference images throws a assert
         // failure at end of test
-        String softAsserts = "if(!getSoftErrors().isEmpty()){\n" + "StringBuilder message = new StringBuilder();\n"
-                + "byte[] errors = new byte[5];\n"
-
-                + "for(junit.framework.AssertionFailedError afe:getSoftErrors()){\n"
-                + "if(afe.getMessage().contains(\"No reference found\")){\n" + "errors[0] = 1;\n"
-                + "}else if(afe.getMessage().contains(\"differs from reference image\")){\n" + "errors[1] = 1;\n"
-                + "}else if(afe.getMessage().contains(\"Images differ and\")){\n" + "errors[2] = 1;\n"
-                + "}else if(afe.getMessage().contains(\"Images are of different size\")){\n" + "errors[3] = 1;\n"
-                + "} else {\n" + "errors[4] = 1;\n" + "error_messages[4] = afe.getMessage();\n}\n}\n\n"
-
-                + "boolean add_and = false;\n" + "message.append(\"Test \");\n\n"
-
-                + "for(int i = 0; i < 5; i++){\n" + "if(errors[i] == 1){\n" + "if(add_and){\n"
-                + "message.append(\" and \");\n" + "}\n" + "message.append(error_messages[i]);\n" + "add_and = true;\n"
-                + "}\n" + "}\n\n"
-
-                + "junit.framework.Assert.fail(message.toString());\n" + "}\n";
+        String softAsserts = "if(!getSoftErrors().isEmpty()){\n"
+                + "handleSoftErrors();\n" + "}\n";
         // if screenshot.onfail defined add try{ }catch( ){ }
         if (!Parameters.isCaptureScreenshotOnFailure()) {
             softAsserts = "}catch(Throwable e){\nthrow new java.lang.AssertionError(cmd.getInfo() + \"\\n Message: \" + e.getMessage());\n}\n"
                     + softAsserts;
         } else {
             hasScreenshots = true;
-            softAsserts = "}catch(Throwable e){\n" + "String statusScreen = selenium.captureScreenshotToString();\n"
-                    + "String directory = getScreenshotDirectory();\n"
-                    + "if (!File.separator.equals(directory.charAt(directory.length() - 1))) {\n"
-                    + "directory = directory + File.separator;\n}\n"
-                    + "File target = new File(directory + \"errors\");\n" + "if(!target.exists()){\n"
-                    + "target.mkdir();\n}\n" + "try{\n"
-                    + "ImageIO.write(ImageUtil.stringToImage(statusScreen), \"png\", new File(directory + \"errors/"
-                    + testName + "_failure_" + "\"+ getBrowserIdentifier().replaceAll(\"[^a-zA-Z0-9]\", \"_\")+\""
-                    + ".png\"));\n}catch(IOException ioe){\n" + "ioe.printStackTrace();\n}\n"
+            softAsserts = "}catch(Throwable e){\n"
+                    + "createFailureScreenshot(\""
+                    + testName
+                    + "\");\n"
                     + "throw new java.lang.AssertionError(cmd.getInfo() + \"\\n Message: \" + e.getMessage());\n}\n"
                     + softAsserts;
         }
@@ -307,7 +279,8 @@ public class JavaFileBuilder {
      */
     public String getTestMethodSource() {
         String testCaseHeader = getTestMethodDefinition();
-        String currentCommand = "CurrentCommand cmd = new CurrentCommand(\"" + getTestName() + "\");\n";
+        String currentCommand = "CurrentCommand cmd = new CurrentCommand(\""
+                + getTestName() + "\");\n";
 
         String methodHeader = testCaseHeader + currentCommand;
 
@@ -342,7 +315,8 @@ public class JavaFileBuilder {
     public static String getWindowInitFunctions(boolean hasScreenshots) {
         final String windowInitFunctions = "setupWindow(#hasScreenshots#);\n";
 
-        return windowInitFunctions.replaceAll("#hasScreenshots#", hasScreenshots ? "true" : "false");
+        return windowInitFunctions.replaceAll("#hasScreenshots#",
+                hasScreenshots ? "true" : "false");
     }
 
 }

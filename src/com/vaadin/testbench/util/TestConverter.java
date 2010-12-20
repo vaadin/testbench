@@ -91,19 +91,22 @@ public class TestConverter {
 
                     String testName = getTestName(filename);
                     String className = getSafeName(testName);
-                    JavaFileBuilder builder = new JavaFileBuilder(testName, className, browser);
+                    JavaFileBuilder builder = new JavaFileBuilder(testName,
+                            className, browser);
 
-                    System.out.println("Generating test " + testName + " for " + browser + " in "
-                            + builder.getPackageName());
+                    System.out.println("Generating test " + testName + " for "
+                            + browser + " in " + builder.getPackageName());
 
                     // Create a java file for the test
-                    out = createJavaFileForTest(testName, builder.getPackageName(), browser, outputDirectory);
+                    out = createJavaFileForTest(testName,
+                            builder.getPackageName(), browser, outputDirectory);
 
                     out.write(builder.getJavaHeader());
                     out.write(builder.getTestMethodWrapper());
 
                     try {
-                        addCommandsToTestMethod(builder, getCommandsFromFile(filename));
+                        addCommandsToTestMethod(builder,
+                                getCommandsFromFile(filename));
                         out.write(builder.getTestMethodSource().getBytes());
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -163,14 +166,16 @@ public class TestConverter {
         File outputPath = new File(outputDirectory);
         if (!outputPath.exists()) {
             if (!outputPath.mkdirs()) {
-                System.err.println("Could not create directory: " + outputDirectory);
+                System.err.println("Could not create directory: "
+                        + outputDirectory);
                 System.exit(1);
             }
         }
         outputPath = new File(outputDirectory);
         if (!outputPath.exists()) {
             if (!outputPath.mkdirs()) {
-                System.err.println("Could not create directory: " + outputPath.getAbsolutePath());
+                System.err.println("Could not create directory: "
+                        + outputPath.getAbsolutePath());
             }
         }
 
@@ -187,15 +192,19 @@ public class TestConverter {
 
                 // Create a java file for holding all tests for this browser
                 String safeBrowserIdentifier = getSafeName(browserIdentifier);
-                String testName = getTestName(filename) + "_" + safeBrowserIdentifier;
+                String testName = getTestName(filename) + "_"
+                        + safeBrowserIdentifier;
 
                 String className = getSafeName(testName);
-                JavaFileBuilder builder = new JavaFileBuilder(testName, className, browserIdentifier);
+                JavaFileBuilder builder = new JavaFileBuilder(testName,
+                        className, browserIdentifier);
 
-                out = createJavaFile(testName, browserIdentifier, getJavaPackageName(testName, browserIdentifier),
+                out = createJavaFile(testName, browserIdentifier,
+                        getJavaPackageName(testName, browserIdentifier),
                         outputDirectory);
                 try {
-                    addCommandsToTestMethod(builder, getCommandsFromFile(filename));
+                    addCommandsToTestMethod(builder,
+                            getCommandsFromFile(filename));
 
                     out.write(builder.getTestMethodSource().getBytes());
                 } catch (Exception e) {
@@ -227,12 +236,14 @@ public class TestConverter {
         }
     }
 
-    private static String getTestInputFilename(String TestBenchHTMLFile) throws FileNotFoundException, IOException {
+    private static String getTestInputFilename(String TestBenchHTMLFile)
+            throws FileNotFoundException, IOException {
 
         File testFile = new File(TestBenchHTMLFile);
 
         if (testFile == null) {
-            throw new FileNotFoundException("Could not find file " + TestBenchHTMLFile);
+            throw new FileNotFoundException("Could not find file "
+                    + TestBenchHTMLFile);
         }
 
         BufferedReader in = new BufferedReader(new FileReader(testFile));
@@ -242,11 +253,14 @@ public class TestConverter {
                 if (line.contains("<thead>")) {
                     return testFile.getAbsolutePath();
                 } else if (line.contains("a href=")) {
-                    ParsedSuite result = ParserFunctions.readHtmlFile(TestBenchHTMLFile, testFile.getParentFile()
-                            .getAbsolutePath());
+                    ParsedSuite result = ParserFunctions.readHtmlFile(
+                            TestBenchHTMLFile, testFile.getParentFile()
+                                    .getAbsolutePath());
 
-                    List<String> combined = ParserFunctions.combineTests(result.getSuiteTests(), getTestName(testFile
-                            .getName()), testFile.getAbsolutePath());
+                    List<String> combined = ParserFunctions.combineTests(
+                            result.getSuiteTests(),
+                            getTestName(testFile.getName()),
+                            testFile.getAbsolutePath());
                     if (combined.size() == 1) {
                         return combined.get(0);
                     }
@@ -280,7 +294,8 @@ public class TestConverter {
         filePath = f.getParent();
         if (filePath == null) {
             filePath = "";
-        } else if (!File.separator.equals(filePath.charAt(filePath.length() - 1))) {
+        } else if (!File.separator
+                .equals(filePath.charAt(filePath.length() - 1))) {
             filePath = filePath + File.separator;
         }
         absoluteFilePath = f.getAbsolutePath();
@@ -291,8 +306,9 @@ public class TestConverter {
         return testName;
     }
 
-    private static OutputStream createJavaFileForTest(String testName, String packageName, String browserIdentifier,
-            String outputDirectory) throws IOException {
+    private static OutputStream createJavaFileForTest(String testName,
+            String packageName, String browserIdentifier, String outputDirectory)
+            throws IOException {
         File outputFile = getJavaFile(testName, packageName, outputDirectory);
         System.out.println("Creating " + outputFile + " for " + testName);
         createIfNotExists(outputFile.getParent());
@@ -301,14 +317,16 @@ public class TestConverter {
         return outputStream;
     }
 
-    private static OutputStream createJavaFile(String testName, String browserIdentifier, String packageName,
-            String outputDirectory) throws IOException {
+    private static OutputStream createJavaFile(String testName,
+            String browserIdentifier, String packageName, String outputDirectory)
+            throws IOException {
         File outputFile = getJavaFile(testName, packageName, outputDirectory);
 
         createIfNotExists(outputFile.getParent());
         FileOutputStream outputStream = new FileOutputStream(outputFile);
 
-        JavaFileBuilder b = new JavaFileBuilder(testName, getSafeName(testName), browserIdentifier);
+        JavaFileBuilder b = new JavaFileBuilder(testName,
+                getSafeName(testName), browserIdentifier);
 
         // FIXME This does no longer write a browser dependent header
         outputStream.write(b.getJavaHeader());
@@ -332,13 +350,15 @@ public class TestConverter {
         }
     }
 
-    private static List<Command> getCommandsFromFile(String htmlFile) throws IOException {
+    private static List<Command> getCommandsFromFile(String htmlFile)
+            throws IOException {
         FileInputStream fis = new FileInputStream(htmlFile);
         String htmlSource = IOUtils.toString(fis);
         fis.close();
 
-        htmlSource = htmlSource.replace("\"", "\\\"").replaceAll("\\n", "\\\\n").replace("'", "\\'").replaceAll("\\r",
-                "");
+        htmlSource = htmlSource.replace("\"", "\\\"")
+                .replaceAll("\\n", "\\\\n").replace("'", "\\'")
+                .replaceAll("\\r", "");
 
         Context cx = Context.enter();
         try {
@@ -360,7 +380,8 @@ public class TestConverter {
         return testName + "." + getSafeName(browserName);
     }
 
-    private static File getJavaFile(String testName, String packageName, String outputDirectory) {
+    private static File getJavaFile(String testName, String packageName,
+            String outputDirectory) {
         String safeFilename = getSafeName(testName);
 
         File file = new File(safeFilename);
@@ -368,17 +389,20 @@ public class TestConverter {
 
         if (packageName.length() > 0) {
             // Add packagename to the filename
-            filename = packageName.replace('.', File.separatorChar) + File.separatorChar + filename;
+            filename = packageName.replace('.', File.separatorChar)
+                    + File.separatorChar + filename;
         }
-        File outputFile = new File(outputDirectory + File.separator + filename + ".java"); // +
-                                                                                           // getPackageDir()
-                                                                                           // +
-                                                                                           // File.separator
+        File outputFile = new File(outputDirectory + File.separator + filename
+                + ".java"); // +
+                            // getPackageDir()
+                            // +
+                            // File.separator
 
         return outputFile;
     }
 
-    private static void addCommandsToTestMethod(JavaFileBuilder builder, List<Command> commands) {
+    private static void addCommandsToTestMethod(JavaFileBuilder builder,
+            List<Command> commands) {
         boolean firstScreenshot = true;
 
         for (Command command : commands) {
@@ -419,13 +443,15 @@ public class TestConverter {
                     builder.appendKeyPressNative(convertedValue);
                     builder.appendKeyModifierUp(ctrl, alt, shift);
                 } else {
-                    builder.appendCommand("pressSpecialKey", locator, convertedValue);
+                    builder.appendCommand("pressSpecialKey", locator,
+                            convertedValue);
 
                 }
             } else if (command.getCmd().equalsIgnoreCase("mouseClick")) {
                 // Special case because the actual command we execute vary
 
-                builder.appendMouseClick(command.getLocator(), command.getValue());
+                builder.appendMouseClick(command.getLocator(),
+                        command.getValue());
 
             } else if (command.getCmd().equalsIgnoreCase("verifyTextPresent")
                     || command.getCmd().equalsIgnoreCase("assertTextPresent")) {
@@ -441,7 +467,8 @@ public class TestConverter {
 
                 builder.appendCode("cmd.resetCmdNr();\n");
                 builder.appendCode("cmd.setFile(\"" + value + "\");\n");
-                builder.appendCode("System.out.println(\"Start test " + value + "\");");
+                builder.appendCode("System.out.println(\"Start test " + value
+                        + "\");");
             } else if (command.getCmd().equalsIgnoreCase("showTooltip")) {
                 // Special case only because of pause afterwards..
                 // TODO Change to default command and add pause later on
@@ -457,7 +484,8 @@ public class TestConverter {
 
                 if (value.length() == 0) {
                     System.err.println("No file defined in Value field.");
-                    System.err.println("Check includeTest command in " + absoluteFilePath);
+                    System.err.println("Check includeTest command in "
+                            + absoluteFilePath);
                     builder.appendCode("junit.framework.Assert.fail(\"No file defined in Value field.\");\n");
                 } else {
                     includeTest(builder, value);
@@ -466,7 +494,6 @@ public class TestConverter {
                 // Special case because we need to try open several times in IE6
                 // sometimes..
                 builder.appendOpen(command);
-                builder.appendCode("waitForVaadin();\n");
             } else {
                 // Default way to handle commands
                 builder.appendCommand(command);
@@ -540,12 +567,15 @@ public class TestConverter {
         return found;
     }
 
-    private static List<Command> parseTestCase(Context cx, Scriptable scope, String htmlSource) throws IOException {
+    private static List<Command> parseTestCase(Context cx, Scriptable scope,
+            String htmlSource) throws IOException {
         List<Command> commands = new ArrayList<Command>();
 
         cx.evaluateString(scope, "function load(a){}", "dummy-load", 1, null);
-        cx.evaluateString(scope, "this.log = [];this.log.info = function log() {}; var log = this.log;", "dummy-log",
-                1, null);
+        cx.evaluateString(
+                scope,
+                "this.log = [];this.log.info = function log() {}; var log = this.log;",
+                "dummy-log", 1, null);
 
         loadScript("tools.js", scope, cx);
         loadScript("xhtml-entities.js", scope, cx);
@@ -553,11 +583,17 @@ public class TestConverter {
         loadScript("testCase.js", scope, cx);
 
         // htmlSource = htmlSource.replace("\\\n", "\\\\\n");
-        cx.evaluateString(scope, "var src='" + htmlSource + "';", "htmlSourceDef", 1, null);
-        cx.evaluateString(scope, "var testCase =  new TestCase();parse(testCase,src); ", "testCaseDef", 1, null);
-        cx.evaluateString(scope, "var cmds = [];" + "var cmdList = testCase.commands;"
-                + "for (var i=0; i < cmdList.length; i++) {" + "       var cmd = testCase.commands[i];"
-                + "      if (cmd.type == 'command') {" + "              cmds.push(cmd);" + "      }" + "}" + "",
+        cx.evaluateString(scope, "var src='" + htmlSource + "';",
+                "htmlSourceDef", 1, null);
+        cx.evaluateString(scope,
+                "var testCase =  new TestCase();parse(testCase,src); ",
+                "testCaseDef", 1, null);
+        cx.evaluateString(scope, "var cmds = [];"
+                + "var cmdList = testCase.commands;"
+                + "for (var i=0; i < cmdList.length; i++) {"
+                + "       var cmd = testCase.commands[i];"
+                + "      if (cmd.type == 'command') {"
+                + "              cmds.push(cmd);" + "      }" + "}" + "",
                 "testCaseDef", 1, null);
 
         Object testCase = scope.get("cmds", scope);
@@ -568,15 +604,18 @@ public class TestConverter {
                 Object target = o.get("target", scope);
                 Object command = o.get("command", scope);
                 Object value = o.get("value", scope);
-                commands.add(new Command((String) command, (String) target, (String) value));
+                commands.add(new Command((String) command, (String) target,
+                        (String) value));
             }
         }
         return commands;
     }
 
-    private static void loadScript(String scriptName, Scriptable scope, Context cx) throws IOException {
+    private static void loadScript(String scriptName, Scriptable scope,
+            Context cx) throws IOException {
         URL res = TestConverter.class.getResource(scriptName);
-        cx.evaluateReader(scope, new InputStreamReader(res.openStream()), scriptName, 1, null);
+        cx.evaluateReader(scope, new InputStreamReader(res.openStream()),
+                scriptName, 1, null);
 
     }
 
@@ -592,14 +631,16 @@ public class TestConverter {
                 System.out.println("File not found resorting to search.");
                 target = getFile(target.getName(), new File(filePath));
                 if (target != null) {
-                    System.out.println("Match found. Using " + target.getPath());
+                    System.out
+                            .println("Match found. Using " + target.getPath());
                 }
             }
         }
         // If file not found add Assert.fail and print to System.err
         if (target == null) {
             target = new File(value);
-            builder.appendCode("junit.framework.Assert.fail(\"Couldn't find file " + target.getName() + "\");\n");
+            builder.appendCode("junit.framework.Assert.fail(\"Couldn't find file "
+                    + target.getName() + "\");\n");
             System.err.println("Failed to append test " + target.getName());
         } else {
             // Save path to including file
@@ -609,7 +650,8 @@ public class TestConverter {
             filePath = target.getParent();
             if (filePath == null) {
                 filePath = "";
-            } else if (!File.separator.equals(filePath.charAt(filePath.length() - 1))) {
+            } else if (!File.separator
+                    .equals(filePath.charAt(filePath.length() - 1))) {
                 filePath = filePath + File.separator;
             }
             absoluteFilePath = target.getAbsolutePath();
@@ -621,7 +663,8 @@ public class TestConverter {
                 fis.close();
 
                 // sanitize source
-                htmlSource = htmlSource.replace("\"", "\\\"").replaceAll("\\n", "\\\\n").replace("'", "\\'")
+                htmlSource = htmlSource.replace("\"", "\\\"")
+                        .replaceAll("\\n", "\\\\n").replace("'", "\\'")
                         .replaceAll("\\r", "");
 
                 Context cx = Context.enter();
@@ -636,12 +679,13 @@ public class TestConverter {
             } catch (Exception e) {
                 // if exception was caught put a assert fail to
                 // inform user of error.
-                System.err.println("Failed in appending test. " + e.getMessage());
+                System.err.println("Failed in appending test. "
+                        + e.getMessage());
                 if (Parameters.isDebug()) {
                     e.printStackTrace();
                 }
-                builder.appendCode("junit.framework.Assert.fail(\"Insertion of test " + value + " failed with "
-                        + e.getMessage() + "\");");
+                builder.appendCode("junit.framework.Assert.fail(\"Insertion of test "
+                        + value + " failed with " + e.getMessage() + "\");");
             } finally {
                 Context.exit();
                 // Set path back to calling file

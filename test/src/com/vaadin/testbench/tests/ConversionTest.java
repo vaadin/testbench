@@ -154,7 +154,6 @@ public class ConversionTest extends TestCase {
     public void testset_current_command() throws Exception {
         String[] shouldExist = new String[] {
                 "cmd.setCommand(\"open\", \"/6.3.0/sampler/#TextFieldSingle\", \"\");",
-                "cmd.setCommand(\"open\", \"/6.3.0/sampler/#TextFieldSingle\", \"\");",
                 "cmd.setCommand(\"mouseClick\", \"vaadin=630sampler::/VVerticalLayout[0]/ChildComponentContainer[1]/VSplitPanelHorizontal[0]/VHorizontalLayout[0]/ChildComponentContainer[0]/VVerticalLayout[0]/ChildComponentContainer[1]/VVerticalLayout[0]/ChildComponentContainer[0]/VTextField[0]\", \"58,8\");",
                 "cmd.setCommand(\"enterCharacter\", \"vaadin=630sampler::/VVerticalLayout[0]/ChildComponentContainer[1]/VSplitPanelHorizontal[0]/VHorizontalLayout[0]/ChildComponentContainer[0]/VVerticalLayout[0]/ChildComponentContainer[1]/VVerticalLayout[0]/ChildComponentContainer[0]/VTextField[0]\", \"Text has been replaced\");",
                 "cmd.setCommand(\"waitForVaadin\", \"\", \"\");",
