@@ -251,6 +251,8 @@ public class JavaFileBuilder {
         browserInit.append("selenium.stop();\n");
         browserInit.append("selenium.start();\n");
         browserInit.append("}else{\n");
+        browserInit
+                .append("System.out.println(\"Retried: \" + i + \" times\");\n");
         browserInit.append("throw t;\n");
         browserInit.append("}\n}\n}\n");
     }
