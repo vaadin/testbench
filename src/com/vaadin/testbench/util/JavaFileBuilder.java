@@ -221,10 +221,38 @@ public class JavaFileBuilder {
 
         browserInit.append("startBrowser(\"" + browserIdentifier + "\");\n");
 
-        browserInit.append(getTestMethodJavaName(testName) + "();");
-        browserInit.append("\n}\n\n");
+        if (Parameters.gerMaxTestRetries() > 0) {
+            retryHeader(browserInit);
+        }
+
+        browserInit.append(getTestMethodJavaName(testName) + "();\n");
+
+        if (Parameters.gerMaxTestRetries() > 0) {
+            retryFooter(browserInit);
+        }
+        browserInit.append("}\n\n");
 
         return browserInit.toString().getBytes();
+    }
+
+    private void retryHeader(StringBuilder browserInit) {
+        browserInit.append("for (int i = 0; i < "
+                + Parameters.gerMaxTestRetries() + "; i++) {\n");
+        browserInit.append("try {\n");
+    }
+
+    private void retryFooter(StringBuilder browserInit) {
+        browserInit
+                .append("System.out.println(\"Retried: \" + i + \" times\");\n");
+        browserInit.append("break;\n");
+        browserInit.append("} catch (Throwable t) {\n");
+        browserInit.append("if (i < " + (Parameters.gerMaxTestRetries() - 1)
+                + ") {\n");
+        browserInit.append("selenium.stop();\n");
+        browserInit.append("selenium.start();\n");
+        browserInit.append("}else{\n");
+        browserInit.append("throw t;\n");
+        browserInit.append("}\n}\n}\n");
     }
 
     public String getTestName() {

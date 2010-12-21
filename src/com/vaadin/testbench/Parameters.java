@@ -1,5 +1,6 @@
 package com.vaadin.testbench;
 
+
 public class Parameters {
 
     private static final String BASE_PACKAGE = "com.vaadin.testbench.";
@@ -36,6 +37,7 @@ public class Parameters {
     private static final String TEST_FILE_ENCODING = BASE_PACKAGE + "encoding";
     private static final String PARAMETER_FILE = BASE_PACKAGE
             + "converter.parameterFile";
+    public static final String TEST_MAX_RETRIES = BASE_PACKAGE + "test.retries";
 
     public static boolean isDebug() {
         return ("true".equalsIgnoreCase(System.getProperty(DEBUG)));
@@ -93,6 +95,17 @@ public class Parameters {
         return retries;
     }
 
+    // Retry test
+    public static int gerMaxTestRetries() {
+        String p = System.getProperty(TEST_MAX_RETRIES);
+        int retries = 0;
+        if (p != null && p.length() > 0) {
+            retries = Integer.parseInt(p);
+        }
+        return retries;
+    }
+
+    // --- end retry test ---
     public static String getFileEncoding() {
         return System.getProperty(TEST_FILE_ENCODING);
     }
