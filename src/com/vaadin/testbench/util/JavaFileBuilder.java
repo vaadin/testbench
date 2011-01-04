@@ -113,6 +113,7 @@ public class JavaFileBuilder {
         // compilation errors
         string = string.replace("\\", "\\\\");
         string = string.replace("\n", "\\n");
+        string = string.replace("\"", "\\\"");
 
         return string;
     }
