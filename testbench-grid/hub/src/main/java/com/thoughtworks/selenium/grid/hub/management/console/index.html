@@ -89,6 +89,8 @@
 					<h1>
 						TestBench Grid Hub
 					</h1>
+					<h2>
+					</h2>
 				</div>
 			</th></tr>
 			
@@ -102,12 +104,7 @@
 									<th>Host</th>
 									<th>Environment</th>
 								</tr>
-								  <#list availableRemoteControls as remoteControl>
-									<tr>
-									  <td>${remoteControl.host()}</td>
-									  <td>${remoteControl.environment()}</td>
-									</tr>
-								  </#list>
+								${availableRcs}
 							</table>
 						</div>
 					</td>
@@ -120,15 +117,15 @@
 							  	<th>Environment</th>
 							  	<th>Execution time</th>
 							  </tr>
-								<#list reservedRemoteControls as remoteControl>
-								  <tr>
-									  <td>${remoteControl.hostName()}</td>
-									  <td>${remoteControl.environment()}</td>
+								  <#list reservedRemoteControls as remoteControl>
+									<tr>
+									  <td>${remoteControl.getHost()}</td>
+									  <td>${remoteControl.getActiveEnvironment()}</td>
 									  <td style="text-align: right;">
 									  	${remoteControl.runtime()}
 									  </td>
-								  </tr>
-								</#list>
+									</tr>
+								  </#list>
 							</table>
 						</div>
 					</td></tr>

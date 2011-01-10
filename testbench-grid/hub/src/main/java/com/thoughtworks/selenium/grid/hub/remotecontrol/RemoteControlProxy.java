@@ -1,8 +1,6 @@
 package com.thoughtworks.selenium.grid.hub.remotecontrol;
 
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,14 +19,11 @@ public class RemoteControlProxy {
 
     private static final Log LOGGER = LogFactory.getLog(HubServer.class);
 
-    private static final int NUM_POLL_RETRIES = 3;
-
     private boolean sessionInProgress;
     private final HttpClient httpClient;
     private final String environment;
     private final String host;
     private final int port;
-    private String hostName;
     private long startTime;
 
     public RemoteControlProxy(String host, int port, String environment,
@@ -51,24 +46,17 @@ public class RemoteControlProxy {
     }
 
     public String hostName() {
-        if (hostName == null) {
-            try {
-                InetAddress addr = InetAddress.getByName(host);
-                hostName = addr.getHostName();
-            } catch (UnknownHostException e) {
-                // return host ip
-            }
-        }
-        return hostName;
+        return host();
+        // return Resolver.getHostname(host);
     }
 
     public int port() {
         return port;
     }
 
-    public String runtime() {
+    public long runtime() {
         long time = System.currentTimeMillis() - startTime;
-        return (time / 1000) + " sec";
+        return time;
     }
 
     public String environment() {
