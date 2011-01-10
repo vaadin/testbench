@@ -87,6 +87,13 @@ public class GlobalRemoteControlPool implements DynamicRemoteControlPool {
                 throw new NoSuchEnvironmentException(environment.name());
             }
 
+            // Wait 1 second between each attempt to avoid over-high CPU usage
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                
+            }
+            
             reserved = provisioner.reserve(environment.name());
         } while (reserved == null);
 
