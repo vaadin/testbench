@@ -312,8 +312,9 @@ public class JavaFileBuilder {
         String testCaseHeader = getTestMethodDefinition();
         String currentCommand = "CurrentCommand cmd = new CurrentCommand(\""
                 + getTestName() + "\");\n";
-
-        String methodHeader = testCaseHeader + currentCommand;
+        String setTestName = "setTestName(\""
+                + quotedSafeParameterString(getTestName()) + "\");\n";
+        String methodHeader = testCaseHeader + currentCommand + setTestName;
 
         // Add canvas size initialization in the case a screenshot is wanted
         if (hasScreenshots) {
