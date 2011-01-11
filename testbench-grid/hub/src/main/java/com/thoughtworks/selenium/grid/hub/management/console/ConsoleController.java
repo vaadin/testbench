@@ -90,6 +90,7 @@ public class ConsoleController extends Controller {
             if (reserved.contains(proxy)) {
                 info.setActiveEnvironment(proxy.environment());
                 info.setExecutionTime(proxy.runtime());
+                info.setCurrentTestName(proxy.getCurrentTestName());
             }
         }
 
@@ -109,6 +110,8 @@ public class ConsoleController extends Controller {
 
         private List<String> environments = new ArrayList<String>();
         private String activeEnvironment;
+        private String currentTestName;
+
         private long executionTime;
 
         public RemoteControlInfo(String host) {
@@ -140,8 +143,20 @@ public class ConsoleController extends Controller {
             return executionTime;
         }
 
+        public int getExecutionTimeSeconds() {
+            return (int) (executionTime / 1000);
+        }
+
         public void setExecutionTime(long executionTime) {
             this.executionTime = executionTime;
+        }
+
+        public String getCurrentTestName() {
+            return currentTestName;
+        }
+
+        public void setCurrentTestName(String currentTestName) {
+            this.currentTestName = currentTestName;
         }
 
         public int compareTo(RemoteControlInfo o) {

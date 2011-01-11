@@ -541,4 +541,9 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
         }
         junit.framework.Assert.fail(message.toString());
     }
+
+    protected void setTestName(String testName) {
+        testBase.doCommand("setTestName", new String[] { testName });
+    }
+
 }

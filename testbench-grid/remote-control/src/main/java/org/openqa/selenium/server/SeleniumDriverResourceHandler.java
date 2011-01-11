@@ -429,6 +429,11 @@ public class SeleniumDriverResourceHandler extends ResourceHandler {
                 + " on session " + sessionId);
         String results = null;
         // handle special commands
+        if ("setTestName".equals(cmd)) {
+            LOGGER.info("Test name: " + values.get(0));
+            results = "OK";
+            return results;
+        }
         switch (SpecialCommand.getValue(cmd)) {
         case getNewBrowserSession:
             String browserString = values.get(0);
@@ -477,8 +482,8 @@ public class SeleniumDriverResourceHandler extends ResourceHandler {
             results = new RetrieveLastRemoteControlLogsCommand().execute();
             break;
         case captureEntirePageScreenshotToString:
-            results = new CaptureEntirePageScreenshotToStringCommand(values
-                    .get(0), sessionId).execute();
+            results = new CaptureEntirePageScreenshotToStringCommand(
+                    values.get(0), sessionId).execute();
             break;
         case captureScreenshot:
             results = new CaptureScreenshotCommand(values.get(0)).execute();
@@ -490,8 +495,8 @@ public class SeleniumDriverResourceHandler extends ResourceHandler {
             results = new CaptureNetworkTrafficCommand(values.get(0)).execute();
             break;
         case addCustomRequestHeader:
-            results = new AddCustomRequestHeaderCommand(values.get(0), values
-                    .get(1)).execute();
+            results = new AddCustomRequestHeaderCommand(values.get(0),
+                    values.get(1)).execute();
             break;
         case keyDownNative:
             try {
@@ -607,8 +612,8 @@ public class SeleniumDriverResourceHandler extends ResourceHandler {
             try {
                 File downloadedFile = downloadFile(values.get(1));
                 queue.addTemporaryFile(downloadedFile);
-                results = queue.doCommand("type", values.get(0), downloadedFile
-                        .getAbsolutePath());
+                results = queue.doCommand("type", values.get(0),
+                        downloadedFile.getAbsolutePath());
             } catch (Exception e) {
                 results = e.toString();
             }
@@ -647,14 +652,13 @@ public class SeleniumDriverResourceHandler extends ResourceHandler {
             if (domain == null) {
                 setDomain(sessionId, urlDomain);
             } else if (!url.startsWith(domain)) {
-                LOGGER
-                        .warn("you appear to be changing domains from "
-                                + domain
-                                + " to "
-                                + urlDomain
-                                + "\n"
-                                + "this may lead to a 'Permission denied' from the browser (unless it is running as *iehta or *chrome,\n"
-                                + "or alternatively the selenium server is running in proxy injection mode)");
+                LOGGER.warn("you appear to be changing domains from "
+                        + domain
+                        + " to "
+                        + urlDomain
+                        + "\n"
+                        + "this may lead to a 'Permission denied' from the browser (unless it is running as *iehta or *chrome,\n"
+                        + "or alternatively the selenium server is running in proxy injection mode)");
             }
         }
     }

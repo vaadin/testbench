@@ -11,6 +11,7 @@ import com.thoughtworks.selenium.grid.HttpClient;
 import com.thoughtworks.selenium.grid.HttpParameters;
 import com.thoughtworks.selenium.grid.Response;
 import com.thoughtworks.selenium.grid.hub.HubServer;
+import com.thoughtworks.selenium.grid.hub.Resolver;
 
 /**
  * Local interface to a real remote control running somewhere in the grid.
@@ -25,6 +26,8 @@ public class RemoteControlProxy {
     private final String host;
     private final int port;
     private long startTime;
+
+    private String currentTestName;
 
     public RemoteControlProxy(String host, int port, String environment,
             HttpClient httpClient) {
@@ -46,8 +49,7 @@ public class RemoteControlProxy {
     }
 
     public String hostName() {
-        return host();
-        // return Resolver.getHostname(host);
+        return Resolver.getHostname(host);
     }
 
     public int port() {
@@ -120,6 +122,7 @@ public class RemoteControlProxy {
                     "Exceeded concurrent session max for " + toString());
         }
         sessionInProgress = true;
+        currentTestName = "?";
         startTime = System.currentTimeMillis();
     }
 
@@ -169,6 +172,14 @@ public class RemoteControlProxy {
             return response.statusCode();
         }
         return 200;
+    }
+
+    public void setCurrentTestName(String testName) {
+        currentTestName = testName;
+    }
+
+    public String getCurrentTestName() {
+        return currentTestName;
     }
 
 }

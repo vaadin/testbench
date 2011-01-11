@@ -115,14 +115,16 @@
 							  <tr>
 							  	<th>Host</th>
 							  	<th>Environment</th>
+							  	<th>Test</th>
 							  	<th>Execution time</th>
 							  </tr>
 								  <#list reservedRemoteControls as remoteControl>
 									<tr>
 									  <td>${remoteControl.getHost()}</td>
 									  <td>${remoteControl.getActiveEnvironment()}</td>
+									  <td>${remoteControl.getCurrentTestName()}</td>
 									  <td style="text-align: right;">
-									  	${remoteControl.getExecutionTime()}
+									  	${remoteControl.getExecutionTimeSeconds()} s
 									  </td>
 									</tr>
 								  </#list>
