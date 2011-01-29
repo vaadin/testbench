@@ -122,7 +122,7 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
         try {
             // Compare screenshot with saved reference screen
             result = compare.compareStringImage(image, fileName,
-                    errorTolerance, dimensions, false);
+                    errorTolerance, dimensions);
         } catch (junit.framework.AssertionFailedError e) {
             // If a Assert.fail("") is caught check if it's a missing reference.
             // If other throw the AssertionFailedError.
@@ -160,7 +160,7 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
 
                     try {
                         result = compare.compareStringImage(image, fileName,
-                                errorTolerance, dimensions, false);
+                                errorTolerance, dimensions);
                         if (result == true) {
                             long endScreenshot = System.currentTimeMillis();
                             boolean success = (new File(directory + fileName

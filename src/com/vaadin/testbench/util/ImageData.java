@@ -24,7 +24,6 @@ public class ImageData {
 
     private int cursorX, cursorY;
     private double difference = 0.025;
-    private boolean testEdges = false;
 
     private BrowserDimensions dimensions = null;
 
@@ -61,17 +60,6 @@ public class ImageData {
         setDifference();
     }
 
-    public ImageData(String originalImage, String fileName,
-            BrowserDimensions dimensions, double difference, boolean testEdges) {
-        this.originalImage = originalImage;
-        this.fileName = fileName;
-        this.dimensions = dimensions;
-        this.difference = difference;
-        this.testEdges = testEdges;
-
-        setDifference();
-    }
-
     // Functions
     private void setDifference() {
         if (Parameters.getScreenshotComparisonTolerance() != null) {
@@ -98,8 +86,8 @@ public class ImageData {
                             + "=c:\\screenshot\\. ");
         }
 
-        if (!File.separator.equals(baseDirectory
-                .charAt(baseDirectory.length() - 1))) {
+        if (!File.separator
+                .equals(baseDirectory.charAt(baseDirectory.length() - 1))) {
             baseDirectory = baseDirectory + File.separator;
         }
     }
@@ -109,8 +97,8 @@ public class ImageData {
      */
     public void generateComparisonImage() {
         comparisonImage = (ImageUtil.stringToImage(originalImage)).getSubimage(
-                dimensions.getCanvasXPosition(), dimensions
-                        .getCanvasYPosition(), dimensions.getCanvasWidth(),
+                dimensions.getCanvasXPosition(),
+                dimensions.getCanvasYPosition(), dimensions.getCanvasWidth(),
                 dimensions.getCanvasHeight());
     }
 
@@ -122,11 +110,6 @@ public class ImageData {
     public void generateReferenceImage() throws IOException {
         referenceImage = ImageIO.read(new File(getReferenceDirectory()
                 + getFileName()));
-    }
-
-    public void getEdges() {
-        comparisonImage = ImageUtil.detectEdges(comparisonImage);
-        referenceImage = ImageUtil.detectEdges(referenceImage);
     }
 
     /**
@@ -282,14 +265,6 @@ public class ImageData {
 
     public void setDifference(double difference) {
         this.difference = difference;
-    }
-
-    public boolean isTestEdges() {
-        return testEdges;
-    }
-
-    public void setTestEdges(boolean testEdges) {
-        this.testEdges = testEdges;
     }
 
     public BrowserDimensions getDimensions() {

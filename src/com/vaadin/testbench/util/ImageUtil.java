@@ -60,28 +60,6 @@ public class ImageUtil {
     }
 
     /**
-     * Runs edge detection on image and returns a grayscale image with edges.
-     * 
-     * @param image
-     *            Base64 encoded String of image.
-     * @return Base64 encoded String of image. [TYPE_BYTE_GRAY]
-     */
-    public static String detectEdges(String image) {
-        return encodeImageToBase64(robertsCrossEdges(stringToImage(image)));
-    }
-
-    /**
-     * Runs edge detection on image and returns a grayscale image with edges.
-     * 
-     * @param image
-     *            BufferedImage
-     * @return BufferedImage [TYPE_BYTE_GRAY]
-     */
-    public static BufferedImage detectEdges(BufferedImage image) {
-        return robertsCrossEdges(image);
-    }
-
-    /**
      * Generates a grayscale image of give image.
      * 
      * @param image
@@ -89,8 +67,8 @@ public class ImageUtil {
      * @return BufferedImage [TYPE_BYTE_GRAY]
      */
     public static BufferedImage grayscaleImage(BufferedImage image) {
-        BufferedImage gray = new BufferedImage(image.getWidth(), image
-                .getHeight(), BufferedImage.TYPE_BYTE_GRAY);
+        BufferedImage gray = new BufferedImage(image.getWidth(),
+                image.getHeight(), BufferedImage.TYPE_BYTE_GRAY);
 
         Graphics2D g = (Graphics2D) gray.getGraphics();
         g.drawImage(image, 0, 0, image.getWidth(), image.getHeight(), null);
@@ -129,8 +107,8 @@ public class ImageUtil {
         BufferedImage bw2 = getBlackAndWhiteImage(image2);
 
         // Create empty image
-        BufferedImage diff = new BufferedImage(image1.getWidth(), image1
-                .getHeight(), BufferedImage.TYPE_BYTE_GRAY);
+        BufferedImage diff = new BufferedImage(image1.getWidth(),
+                image1.getHeight(), BufferedImage.TYPE_BYTE_GRAY);
 
         // For each pixel, if pixel in both images equal "draw" white pixel.
         for (int x = 0; x < bw1.getWidth(); x++) {
@@ -201,51 +179,7 @@ public class ImageUtil {
 
         return rgb;
     }
-
-    /**
-     * Runns a Roberts Cross edge detection on image.
-     * 
-     * @param image
-     *            BufferedImage
-     * @return BufferedImage [TYPE_BYTE_GRAY] with found edges.
-     */
-    private static BufferedImage robertsCrossEdges(BufferedImage image) {
-        BufferedImage edges = new BufferedImage(image.getWidth(), image
-                .getHeight(), BufferedImage.TYPE_BYTE_GRAY);
-
-        float[] hx = new float[] { 1, 0, 0, -1 };
-        float[] hy = new float[] { 0, 1, -1, 0 };
-
-        int[] rgbX = new int[3];
-        int[] rgbY = new int[3];
-
-        for (int x = 1; x < image.getWidth() - 1; x++) {
-            for (int y = 1; y < image.getHeight() - 1; y++) {
-                convolvePixel(hx, 2, 2, image, x, y, rgbX);
-                convolvePixel(hy, 2, 2, image, x, y, rgbY);
-
-                int r = Math.abs(rgbX[0]) + Math.abs(rgbY[0]);
-                int g = Math.abs(rgbX[1]) + Math.abs(rgbY[1]);
-                int b = Math.abs(rgbX[2]) + Math.abs(rgbY[2]);
-
-                if (r > 255) {
-                    r = 255;
-                }
-                if (g > 255) {
-                    g = 255;
-                }
-                if (b > 255) {
-                    b = 255;
-                }
-
-                edges.setRGB(x, y, (r << 16) | (g << 8) | b);
-            }
-        }
-        threshold(edges);
-        return edges;
-    }
-
-    /**
+ /**
      * Creates a b&w image of grayscale image.
      * 
      * @param image
@@ -278,49 +212,4 @@ public class ImageUtil {
         return .299 * r + .587 * g + .114 * b;
     }
 
-    /**
-     * Does a mild blur on the given image
-     * 
-     * @param image
-     */
-    @SuppressWarnings("unused")
-    private static void blur(BufferedImage image) {
-
-        float[] matrix = { 0.111f, 0.111f, 0.111f, 0.111f, 0.111f, 0.111f,
-                0.111f, 0.111f, 0.111f, };
-
-        int[] rgb = new int[3];
-
-        for (int x = 1; x < image.getWidth() - 1; x++) {
-            for (int y = 1; y < image.getHeight() - 1; y++) {
-                convolvePixel(matrix, 3, 3, image, x, y, rgb);
-                image.setRGB(x, y, getRGB(rgb));
-            }
-        }
-    }
-
-    /**
-     * Creates a single int representation of r, g & b
-     * 
-     * @param rgb
-     *            int[] rgb
-     * @return int rgb
-     */
-    private static int getRGB(int[] rgb) {
-        int r = Math.abs(rgb[0]);
-        int g = Math.abs(rgb[1]);
-        int b = Math.abs(rgb[2]);
-
-        if (r > 255) {
-            r = 255;
-        }
-        if (g > 255) {
-            g = 255;
-        }
-        if (b > 255) {
-            b = 255;
-        }
-
-        return ((r << 16) | (g << 8) | b);
-    }
 }
