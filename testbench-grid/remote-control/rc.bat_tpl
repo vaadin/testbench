@@ -3,12 +3,6 @@ setlocal
 @echo Running version: @build@
 
 set cpVars=lib\selenium-grid-remote-control-standalone-vaadin-testbench-@build@.jar;lib\selenium-server-1.0.1.jar
-
-rem by default, obtained from rc_configuration.xml
-rem set ENVIRONMENT=winxp-firefox35
-set USEREXTENSIONS=user-extensions.js
-
-rem java -cp "%cpVars%" com.thoughtworks.selenium.grid.remotecontrol.SelfRegisteringRemoteControlLauncher -env %ENVIRONMENT% -userExtensions %USEREXTENSIONS%
-java -cp "%cpVars%" com.thoughtworks.selenium.grid.remotecontrol.SelfRegisteringRemoteControlLauncher -userExtensions %USEREXTENSIONS%
+java -cp "%cpVars%" com.thoughtworks.selenium.grid.remotecontrol.SelfRegisteringRemoteControlLauncher -userExtensions %USEREXTENSIONS%  -ensureCleanSession
 
 endlocal
