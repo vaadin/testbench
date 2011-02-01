@@ -6,6 +6,6 @@ path=`dirname $0`
 # Directory containing jar files
 libdir=$path/lib
 
-cpvars=.:$libdir/selenium-grid-hub-standalone-vaadin-testbench-@build@.jar com.thoughtworks.selenium.grid.hub.HubServer
+cpvars=.:$libdir/selenium-grid-hub-standalone-vaadin-testbench-@build@.jar
 
-java -cp "$cpvars"
+java -cp "$cpvars" com.thoughtworks.selenium.grid.hub.HubServer
