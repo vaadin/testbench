@@ -9,7 +9,18 @@ LOCKFILE    = "/var/lock/oo-server"
 APPNAME     = "OpenOffice"
 PROCESSNAME = "soffice"
 BINNAME     = "soffice.bin"
-STARTCMD    = "soffice -headless -accept=\"socket,host=127.0.0.1,port=8100;urp;\" -nofirststartwizard"
+STARTPARAM  = "-headless -accept=\"socket,host=127.0.0.1,port=8100;urp;\" -nofirststartwizard"
+
+def findStartCommand():
+    p = subprocess.Popen(['which', 'soffice'], stdout=subprocess.PIPE)
+    cmd = p.communicate()[0].strip()
+    if not cmd:
+        if os.path.exists("/Applications/OpenOffice.org.app/Contents/MacOS"):
+            cmd = "/Applications/OpenOffice.org.app/Contents/MacOS/soffice"
+        else:
+            print "Could not find 'soffice' binary"
+            sys.exit(1)
+    return "%s %s" % (cmd, STARTPARAM)
 
 ################################################################################
 # Tools
@@ -24,7 +35,7 @@ def execute(cmd):
 def commandStart():
     print "Starting %s server..." % (APPNAME)
     
-    cmd = STARTCMD
+    cmd = findStartCommand()
 
     # All the stdin, stdout, and stderr must be redirected
     # or otherwise Ant will hang when this start script returns.
@@ -36,7 +47,7 @@ def commandStart():
     time.sleep(5)
 
     # It is more important to check the .bin name than the launch script
-    pids = findProcessPIDs(BINNAME)
+    pids = findProcessPIDs(PROCESSNAME)
     if len(pids) > 0:
         print "Server started successfully with PID [%s]." % (pids[0])
     else:
@@ -66,7 +77,7 @@ def findProcessPIDs(name):
     return pids
 
 def checkProcess(pid):
-    pin = os.popen("ps -o pid -p %s --no-headers" % (pid), "r")
+    pin = os.popen("ps -o pid='' -p %s" % (pid), "r")
     pid = pin.readlines()
     pin.close()
 
@@ -110,6 +121,9 @@ if command == "stop":
 
 elif command == "start" or command == "restart":
     commandStart()
+
+elif command == "findpid":
+    print findProcessPIDs(PROCESSNAME)
 
 elif command == "convert":
     if len(sys.argv) < 4:
