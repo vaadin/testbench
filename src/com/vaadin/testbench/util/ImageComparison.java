@@ -867,4 +867,29 @@ public class ImageComparison {
 
         return referenceImage.exists();
     }
+
+    public String generateBlocksFromImageFile(String fileName) {
+        StringBuilder blockData = new StringBuilder();
+        ImageData image = new ImageData(null, fileName, null, 0);
+
+        image.generateBaseDirectory();
+
+        checkAndCreateDirectories(image.getBaseDirectory());
+
+        try {
+            image.generateReferenceImage();
+            int[] blocks = ImageComparisonUtil.generateImageBlocks(image
+                    .getReferenceImage());
+            blockData.append(blocks.length);
+            for (int block : blocks) {
+                blockData.append(",");
+                blockData.append(Integer.toString(block, 16));
+            }
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return blockData.toString();
+    }
+
 }

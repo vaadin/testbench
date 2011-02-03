@@ -13,8 +13,8 @@ public class VaadinSeleniumImplementation extends DefaultSelenium {
         commandProcessor.doCommand("waitForVaadin", new String[] {});
     }
 
-    public void doCommand(String cmd, String[] params) {
-        commandProcessor.doCommand(cmd, params);
+    public String doCommand(String cmd, String[] params) {
+        return commandProcessor.doCommand(cmd, params);
     }
 
 }

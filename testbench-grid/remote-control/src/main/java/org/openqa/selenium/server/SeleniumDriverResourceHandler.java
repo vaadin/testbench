@@ -62,6 +62,8 @@ import org.openqa.selenium.server.commands.SeleniumCoreCommand;
 import org.openqa.selenium.server.htmlrunner.HTMLLauncher;
 import org.openqa.selenium.server.log.AntJettyLoggerBuildListener;
 
+import com.vaadin.testbench.commands.CompareScreenCommand;
+
 /**
  * A Jetty handler that takes care of remote Selenium requests.
  * 
@@ -80,10 +82,10 @@ public class SeleniumDriverResourceHandler extends ResourceHandler {
             .getLog(SeleniumDriverResourceHandler.class.getName()
                     + ".browserSideLog");
 
-    private SeleniumServer remoteControl;
+    private final SeleniumServer remoteControl;
     private static String lastSessionId = null;
-    private Map<String, String> domainsBySessionId = new HashMap<String, String>();
-    private StringBuffer logMessagesBuffer = new StringBuffer();
+    private final Map<String, String> domainsBySessionId = new HashMap<String, String>();
+    private final StringBuffer logMessagesBuffer = new StringBuffer();
 
     private BrowserLauncherFactory browserLauncherFactory = new BrowserLauncherFactory();
     private final BrowserSessionFactory browserSessionFactory = new BrowserSessionFactory(
@@ -429,11 +431,15 @@ public class SeleniumDriverResourceHandler extends ResourceHandler {
                 + " on session " + sessionId);
         String results = null;
         // handle special commands
-        if ("setTestName".equals(cmd)) {
+        // First TestBench commands...
+        switch (TestBenchCommand.getValue(cmd)) {
+        case setTestName:
             LOGGER.info("Test name: " + values.get(0));
-            results = "OK";
-            return results;
+            return "OK";
+        case compareScreen:
+            return new CompareScreenCommand(values).execute();
         }
+        // ...then selenium commands
         switch (SpecialCommand.getValue(cmd)) {
         case getNewBrowserSession:
             String browserString = values.get(0);

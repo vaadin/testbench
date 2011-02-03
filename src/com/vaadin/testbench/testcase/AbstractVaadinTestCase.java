@@ -60,23 +60,24 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
         testBase.waitForVaadin();
     }
 
-    public void doCommand(String cmd, String[] params) {
-        testBase.doCommand(cmd, params);
+    public String doCommand(String cmd, String[] params) {
+        String result = testBase.doCommand(cmd, params);
 
         if (!cmd.equals("close") && !cmd.equals("expectDialog")) {
             waitForVaadin();
         }
+
+        return result;
     }
 
     /**
      * Capture a screenshot of only the browser canvas and save to saveName.
      * Compare captured screenshot to reference screenshot.
      * 
-     * @param saveName
-     *            Place to save screenshot + name
      * @return true, if equals reference image
      */
-    public boolean validateScreenshot(String fileId, double d, String identifier) {
+    public boolean validateScreenshot(String fileId, double errorTolerance,
+            String identifier) {
 
         // If browser is not set get browser info.
         BrowserVersion browser = getBrowserVersion();
@@ -93,12 +94,11 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
                     + "_" + identifier;
         }
 
-        return validateScreenshot(fileName, d);
+        return validateScreenshot(fileName, errorTolerance);
     }
 
     public boolean validateScreenshot(String fileName, double errorTolerance) {
         maxAmountOfTests = Parameters.getMaxRetries();
-        long startScreenshot = System.currentTimeMillis();
 
         boolean result = false;
 
@@ -110,108 +110,70 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
         }
 
         // Small pause to give components a bit of render time
-        pause(screenshotPause);
-        doCommand("waitForVaadin", new String[] { "", "" });
-
-        // Actually capture the screen
-        String image = getImage();
+        // pause(screenshotPause);
+        // doCommand("waitForVaadin", new String[] { "", "" });
 
         // Get the dimensions of the browser window and canvas
         BrowserDimensions dimensions = getBrowserAndCanvasDimensions();
 
-        try {
-            // Compare screenshot with saved reference screen
-            result = compare.compareStringImage(image, fileName,
-                    errorTolerance, dimensions);
-        } catch (junit.framework.AssertionFailedError e) {
-            // If a Assert.fail("") is caught check if it's a missing reference.
-            // If other throw the AssertionFailedError.
-            if (e.getMessage().contains("No reference found")) {
-                softAssert.add(e);
-            } else if (e.getMessage().contains("differs from reference image")) {
+        String compareScreenResult = doCommand(
+                "compareScreen",
+                new String[] { compare.generateBlocksFromImageFile(fileName),
+                        String.valueOf(errorTolerance),
+                        String.valueOf(maxAmountOfTests),
+                        String.valueOf(dimensions.getCanvasXPosition()),
+                        String.valueOf(dimensions.getCanvasYPosition()),
+                        String.valueOf(dimensions.getCanvasWidth()),
+                        String.valueOf(dimensions.getCanvasHeight()) });
 
-                // Build error screenshot directory.
-                String directory = Parameters.getScreenshotDirectory();
+        if ("OK,equal".equals(compareScreenResult)) {
+            result = true;
+        } else {
+            // Get the screen shot, which has been passed in the result
+            String image = compareScreenResult.substring(3);
 
-                if (!File.separator
-                        .equals(directory.charAt(directory.length() - 1))) {
-                    directory = directory + File.separator;
-                }
-                directory = directory + File.separator + "errors"
-                        + File.separator;
-                screenshotPause += 200;
-
-                // If we find errors in the image take new references x times or
-                // until functional image is found.
-                for (int i = 0; i < maxAmountOfTests; i++) {
-                    pause(screenshotPause);
-
-                    image = selenium.captureScreenshotToString();
-
-                    // check that we didn't get null for out image
-                    // and that it has length > 0
-                    if (image == null) {
-                        Assert.fail("Didn't get an image from selenium on run "
-                                + (i + 1));
-                    } else if (image.length() == 0) {
-                        Assert.fail("Got a screenshot String with length 0 on run "
-                                + (i + 1));
-                    }
-
-                    try {
-                        result = compare.compareStringImage(image, fileName,
-                                errorTolerance, dimensions);
-                        if (result == true) {
-                            long endScreenshot = System.currentTimeMillis();
-                            boolean success = (new File(directory + fileName
-                                    + ".html")).delete();
-                            if (success) {
-                                success = (new File(directory + fileName
-                                        + ".png")).delete();
-                                if (Parameters.isDebug()) {
-                                    if (success) {
-                                        System.err
-                                                .println("Removed created clean image and difference html.\n"
-                                                        + "Comparison successful");
-                                    } else {
-                                        System.err
-                                                .println("Removed created difference html.\n"
-                                                        + "Comparison successful");
-                                    }
-                                }
-                            } else {
-                                System.err
-                                        .println("Failed to remove created error files.\n"
-                                                + "Comparison successful.");
-                            }
-                            screenshotPause = (int) (endScreenshot - startScreenshot);
-                            if (screenshotPause > 700) {
-                                screenshotPause = 50;
-                            }
-                            return result;
-                        }
-                    } catch (junit.framework.AssertionFailedError afe) {
-                        result = false;
-                    }
-                }
-
-                // Do a Roberts Cross edge detection on images and compare for
-                // diff. Should remove some small faults.
-                // result = compare.compareStringImage(image, fileName, d,
-                // dimensions, true);
-                if (Parameters.isScreenshotSoftFail()) {
+            try {
+                // Compare screenshot with saved reference screen
+                result = compare.compareStringImage(image, fileName,
+                        errorTolerance, dimensions);
+            } catch (junit.framework.AssertionFailedError e) {
+                // If a Assert.fail("") is caught check if it's a missing
+                // reference.
+                // If other throw the AssertionFailedError.
+                if (e.getMessage().contains("No reference found")) {
                     softAssert.add(e);
                     result = true;
-                }
-                if (!result) {
-                    throw e;
-                }
-            } else {
-                if (Parameters.isScreenshotSoftFail()) {
-                    softAssert.add(e);
-                    result = true;
+                } else if (e.getMessage().contains(
+                        "differs from reference image")) {
+
+                    // Build error screenshot directory.
+                    String directory = Parameters.getScreenshotDirectory();
+
+                    if (!File.separator.equals(directory.charAt(directory
+                            .length() - 1))) {
+                        directory = directory + File.separator;
+                    }
+                    directory = directory + File.separator + "errors"
+                            + File.separator;
+
+                    // Do a Roberts Cross edge detection on images and compare
+                    // for diff. Should remove some small faults.
+                    // result = compare.compareStringImage(image, fileName, d,
+                    // dimensions, true);
+                    if (Parameters.isScreenshotSoftFail()) {
+                        softAssert.add(e);
+                        result = true;
+                    }
+                    if (!result) {
+                        throw e;
+                    }
                 } else {
-                    throw e;
+                    if (Parameters.isScreenshotSoftFail()) {
+                        softAssert.add(e);
+                        result = true;
+                    } else {
+                        throw e;
+                    }
                 }
             }
         }
@@ -226,17 +188,12 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
 
         pause(screenshotPause);
 
-        data.setOriginalImage(getImage());
-
-        data.generateComparisonImage();
         do {
+            data.setOriginalImage(getImage());
+            data.generateComparisonImage();
             data.copyComparison();
 
             pause(screenshotPause);
-
-            data.setOriginalImage(getImage());
-
-            data.generateComparisonImage();
         } while (!compare.compareImages(data));
 
         // Check that the comparison folder exists and create if

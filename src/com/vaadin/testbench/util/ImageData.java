@@ -96,10 +96,16 @@ public class ImageData {
      * Convert base64 image to buffered image and crop out canvas
      */
     public void generateComparisonImage() {
-        comparisonImage = (ImageUtil.stringToImage(originalImage)).getSubimage(
-                dimensions.getCanvasXPosition(),
-                dimensions.getCanvasYPosition(), dimensions.getCanvasWidth(),
-                dimensions.getCanvasHeight());
+        comparisonImage = ImageUtil.stringToImage(originalImage);
+        // Crop the image if not already cropped client-side. This is true for
+        // when there is no reference image.
+        if (comparisonImage.getWidth() > dimensions.getCanvasWidth()
+                || comparisonImage.getHeight() > dimensions.getCanvasHeight()) {
+            comparisonImage = comparisonImage.getSubimage(
+                    dimensions.getCanvasXPosition(),
+                    dimensions.getCanvasYPosition(),
+                    dimensions.getCanvasWidth(), dimensions.getCanvasHeight());
+        }
     }
 
     /**

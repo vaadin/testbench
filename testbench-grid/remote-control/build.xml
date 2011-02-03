@@ -37,6 +37,7 @@
 	           debug="true"
 	           source="1.5"
 	           target="1.5" encoding="utf-8">
+	   		<src path="${rootdir}/../common/src" />
 	   		<classpath refid="compile.classpath"/>
 	   	</javac>
 	   	<copy todir="${build.output}" verbose="true">
