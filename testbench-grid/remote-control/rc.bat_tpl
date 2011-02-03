@@ -2,6 +2,7 @@
 setlocal
 @echo Running version: @build@
 
+set USEREXTENSIONS=user-extensions.js
 set cpVars=lib\selenium-grid-remote-control-standalone-vaadin-testbench-@build@.jar;lib\selenium-server-1.0.1.jar
 java -cp "%cpVars%" com.thoughtworks.selenium.grid.remotecontrol.SelfRegisteringRemoteControlLauncher -userExtensions %USEREXTENSIONS%  -ensureCleanSession
 
