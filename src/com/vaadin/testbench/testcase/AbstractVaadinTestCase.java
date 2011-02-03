@@ -119,7 +119,7 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
         String compareScreenResult = doCommand(
                 "compareScreen",
                 new String[] { compare.generateBlocksFromImageFile(fileName),
-                        String.valueOf(errorTolerance),
+                        String.valueOf(errorTolerance * 768),
                         String.valueOf(maxAmountOfTests),
                         String.valueOf(dimensions.getCanvasXPosition()),
                         String.valueOf(dimensions.getCanvasYPosition()),

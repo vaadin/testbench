@@ -20,7 +20,7 @@ public class ImageComparisonUtil {
         int yBlocks = (int) Math.floor(image.getHeight() / 16) + 1;
 
         BufferedImage scaledImage = new BufferedImage(xBlocks, yBlocks,
-                BufferedImage.TYPE_INT_ARGB);
+                BufferedImage.TYPE_INT_RGB);
         Graphics2D graphics2D = scaledImage.createGraphics();
         float scale = 0.0625f; // 1/16
         AffineTransform transform = AffineTransform.getScaleInstance(scale,
@@ -43,7 +43,7 @@ public class ImageComparisonUtil {
      * @param shotBlocks
      *            the screen shot blocks
      * @param tolerance
-     *            the tolerance
+     *            the tolerance (0..1 * 16 * 16 * 3 = 0..768)
      * @return true if the blocks are equal
      */
     public static boolean blocksEqual(int[] referenceBlocks, int[] shotBlocks,
@@ -52,12 +52,24 @@ public class ImageComparisonUtil {
             return false;
         }
         for (int i = 0; i < referenceBlocks.length; i++) {
-            float diff = Math.abs(referenceBlocks[i] - shotBlocks[i]);
+            int diff = Math.abs(sumIntColor(referenceBlocks[i])
+                    - sumIntColor(shotBlocks[i]));
             if (diff > tolerance) {
                 return false;
             }
         }
         return true;
+    }
+
+    /**
+     * Sums the red, green and blue channels from an int.
+     * 
+     * @param col
+     *            the int containing the RGB channels
+     * @return the sum of the RGB channels.
+     */
+    private static int sumIntColor(int col) {
+        return ((col >> 16) & 0xFF) + ((col >> 8) & 0xFF) + (col & 0xFF);
     }
 
 }
