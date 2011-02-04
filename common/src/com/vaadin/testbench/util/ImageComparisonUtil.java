@@ -1,8 +1,6 @@
 package com.vaadin.testbench.util;
 
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
 public class ImageComparisonUtil {
@@ -22,16 +20,10 @@ public class ImageComparisonUtil {
         BufferedImage scaledImage = new BufferedImage(xBlocks, yBlocks,
                 BufferedImage.TYPE_INT_RGB);
         Graphics2D graphics2D = scaledImage.createGraphics();
-        float scale = 0.0625f; // 1/16
-        AffineTransform transform = AffineTransform.getScaleInstance(scale,
-                scale);
-        graphics2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-                RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-        graphics2D.drawImage(image, transform, null);
+        graphics2D.drawImage(image, 0, 0, xBlocks, yBlocks, null);
         graphics2D.dispose();
 
-        return scaledImage.getRGB(0, 0, scaledImage.getWidth(),
-                scaledImage.getHeight(), null, 0, scaledImage.getWidth());
+        return scaledImage.getRGB(0, 0, xBlocks, yBlocks, null, 0, xBlocks);
     }
 
     /**
