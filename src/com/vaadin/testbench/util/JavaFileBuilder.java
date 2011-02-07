@@ -57,9 +57,11 @@ public class JavaFileBuilder {
         testMethodSource.append("cmd.setCommand(");
         testMethodSource.append(quotedSafeParameterString(command));
         testMethodSource.append(", ");
-        testMethodSource.append(quotedSafeParameterString(locator));
+        testMethodSource
+                .append(quotedSafeParameterString(replaceParameters(locator)));
         testMethodSource.append(", ");
-        testMethodSource.append(quotedSafeParameterString(value));
+        testMethodSource
+                .append(quotedSafeParameterString(replaceParameters(value)));
         testMethodSource.append(");\n");
 
     }
@@ -79,7 +81,8 @@ public class JavaFileBuilder {
         testMethodSource.append(",new String[] {");
 
         if (locator != null) {
-            testMethodSource.append(quotedSafeParameterString(locator));
+            testMethodSource
+                    .append(quotedSafeParameterString(replaceParameters(locator)));
         }
         // TODO: Can locator be null and value != null. What should even happen
         // then?
