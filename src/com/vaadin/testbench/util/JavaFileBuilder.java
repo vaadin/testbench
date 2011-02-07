@@ -72,7 +72,8 @@ public class JavaFileBuilder {
      * @param parameters
      */
     public void appendCommand(String command, String locator, String value) {
-        appendCommandInfo(command, locator, replaceParameters(value));
+        appendCommandInfo(command, replaceParameters(locator),
+                replaceParameters(value));
         testMethodSource.append("doCommand(");
         testMethodSource.append(quotedSafeParameterString(command));
         testMethodSource.append(",new String[] {");
@@ -193,7 +194,8 @@ public class JavaFileBuilder {
     }
 
     public void appendOpen(Command command) {
-        appendCommandInfo(command.getCmd(), command.getLocator(),
+        appendCommandInfo(command.getCmd(),
+                replaceParameters(command.getLocator()),
                 replaceParameters(command.getValue()));
         testMethodSource.append("open(\"" + command.getLocator() + "\");\n\n");
     }
@@ -206,7 +208,8 @@ public class JavaFileBuilder {
     public void appendMouseClick(String locator, String value) {
         appendCommandInfo("mouseClick", locator, value);
         testMethodSource.append("doMouseClick(");
-        testMethodSource.append(quotedSafeParameterString(locator));
+        testMethodSource
+                .append(quotedSafeParameterString(replaceParameters(locator)));
         testMethodSource.append(",");
         testMethodSource
                 .append(quotedSafeParameterString(replaceParameters(value)));
