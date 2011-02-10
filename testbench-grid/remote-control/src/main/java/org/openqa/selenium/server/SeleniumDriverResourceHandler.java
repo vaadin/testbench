@@ -63,6 +63,8 @@ import org.openqa.selenium.server.htmlrunner.HTMLLauncher;
 import org.openqa.selenium.server.log.AntJettyLoggerBuildListener;
 
 import com.vaadin.testbench.commands.CompareScreenCommand;
+import com.vaadin.testbench.commands.GetCanvasSizeCommand;
+import com.vaadin.testbench.commands.SetCanvasSizeCommand;
 
 /**
  * A Jetty handler that takes care of remote Selenium requests.
@@ -438,6 +440,10 @@ public class SeleniumDriverResourceHandler extends ResourceHandler {
             return "OK";
         case compareScreen:
             return new CompareScreenCommand(values).execute();
+        case setCanvasSize:
+            return new SetCanvasSizeCommand(values, sessionId).execute();
+        case getCanvasSize:
+            return new GetCanvasSizeCommand(sessionId).execute();
         }
         // ...then selenium commands
         switch (SpecialCommand.getValue(cmd)) {

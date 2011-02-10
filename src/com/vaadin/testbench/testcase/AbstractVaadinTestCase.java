@@ -235,9 +235,15 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
         }
     }
 
-    protected boolean setRequestedCanvasSize() {
-        return BrowserDimensions.setCanvasSize(selenium, getBrowserVersion(),
-                requestedCanvasWidth, requestedCanvasHeight);
+    protected BrowserDimensions setRequestedCanvasSize() {
+        String dimensions = doCommand(
+                "setCanvasSize",
+                new String[] { String.valueOf(requestedCanvasWidth),
+                        String.valueOf(requestedCanvasHeight) });
+        if (dimensions.startsWith("OK")) {
+            return new BrowserDimensions(dimensions.substring(3));
+        }
+        return null;
     }
 
     public void clearDimensions() {
@@ -250,10 +256,13 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
 
     public BrowserDimensions getBrowserDimensions(boolean force) {
         if (force || browserDimensions == null) {
-            browserDimensions = BrowserDimensions.getBrowserDimensions(
-                    getBrowserVersion(), selenium);
             if (Parameters.isDebug()) {
                 System.err.println("Calculating browser dimensions..");
+            }
+            String dimensions = doCommand("getCanvasSize", new String[] {});
+            if (dimensions.startsWith("OK")) {
+                browserDimensions = new BrowserDimensions(
+                        dimensions.substring(3));
             }
             if (browserDimensions == null) {
                 Assert.fail("Couldn't get browser dimensions.");
@@ -385,7 +394,10 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
         } else if (hasRequestedCanvasSize()) {
             // The user has specified a canvas size to use so we should
             // initialize to that size
-            setRequestedCanvasSize();
+            BrowserDimensions dim = setRequestedCanvasSize();
+            if (dim != null) {
+                browserDimensions = dim;
+            }
         } else if (mightUseScreenshots) {
             // It is possible that sometimes during the script we want to take a
             // screenshot. No canvas size is specified so we maximize the
@@ -397,7 +409,11 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
         }
 
         // Fetch the size of the browser. Overwrite any previous info.
-        getBrowserDimensions(true);
+        if (!hasRequestedCanvasSize()) {
+            // A canvas size request automatically updates the browser
+            // dimensions
+            getBrowserDimensions(true);
+        }
 
     }
 

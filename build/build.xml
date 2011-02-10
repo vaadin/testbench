@@ -236,6 +236,7 @@
 		</loadfile>
 		<loadfile property="dofunction" srcFile="../selenium-extensions/core/doFunction.js" />
 		<loadfile property="playback" srcFile="../testbench-recorder/chrome/content/selenium/scripts/selenium-executionloop.js" />
-		<echo message="${locator}${line.separator}${dofunction}${line.separator}${playback}" file="../selenium-extensions/core/user-extensions.js"/>
+		<loadfile property="utilities" srcFile="../selenium-extensions/core/utilities.js" />
+		<echo message="${locator}${line.separator}${dofunction}${line.separator}${playback}${line.separator}${utilities}" file="../selenium-extensions/core/user-extensions.js"/>
 	</target>
 </project>

@@ -29,6 +29,28 @@ public enum TestBenchCommand {
     compareScreen,
 
     /**
+     * Initializes the browser to a certain canvas size and returns the
+     * coordinates and the size.
+     * 
+     * Parameters:<br>
+     * - canvas width<br>
+     * - canvas height
+     * 
+     * Returns:
+     * OK,screenWidth,screenHeight,canvasWidth,canvasHeight,canvasX,canvasY
+     */
+    setCanvasSize,
+
+    /**
+     * Fetches the current canvas size from cache if possible, otherwise it
+     * measures the canvas size and returns the result.
+     * 
+     * Returns:
+     * OK,screenWidth,screenHeight,canvasWidth,canvasHeight,canvasX,canvasY
+     */
+    getCanvasSize,
+
+    /**
      * An empty command. Used instead of passing nulls here and there.
      */
     none;
