@@ -235,9 +235,18 @@ public class ImageComparison {
         // Check for cursor.
         if (Parameters.isScreenshotComparisonCursorDetection()) {
             if (isCursorCheckNeeded(xBlocks, yBlocks, falseBlocks)) {
+                if (Parameters.isDebug()) {
+                    System.err.println("Checking for cursor...");
+                }
                 boolean cursor = checkForCursor();
                 if (cursor) {
+                    if (Parameters.isDebug()) {
+                        System.err.println("... cursor found!");
+                    }
                     return true;
+                }
+                if (Parameters.isDebug()) {
+                    System.err.println("... no cursor found.");
                 }
             }
         }

@@ -126,11 +126,20 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
                         String.valueOf(dimensions.getCanvasWidth()),
                         String.valueOf(dimensions.getCanvasHeight()) });
 
-        if ("OK,equal".equals(compareScreenResult)) {
+        String[] compareScreenResults = compareScreenResult.split(",");
+        if (compareScreenResults.length == 2) {
+            if (Parameters.isDebug()) {
+                System.err.println("RC retried screen shot "
+                        + compareScreenResults[1] + " time(s)");
+            }
             result = true;
         } else {
+            if (Parameters.isDebug()) {
+                System.err.println("RC retried screen shot "
+                        + compareScreenResults[1] + " time(s)");
+            }
             // Get the screen shot, which has been passed in the result
-            String image = compareScreenResult.substring(3);
+            String image = compareScreenResults[2];
 
             try {
                 // Compare screenshot with saved reference screen

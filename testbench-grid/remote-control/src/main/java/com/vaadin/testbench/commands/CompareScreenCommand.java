@@ -53,6 +53,8 @@ public class CompareScreenCommand extends Command {
 
     private BufferedImage screenshot;
 
+    private int numScreenShotsTaken = 0;
+
     public CompareScreenCommand(Vector<String> parameters) {
         parseBlockParameter(parameters.get(0));
         tolerance = Float.valueOf(parameters.get(1));
@@ -84,9 +86,10 @@ public class CompareScreenCommand extends Command {
     public String execute() {
         try {
             if (grabAndCompareScreenshot()) {
-                return "OK,equal";
+                return "OK," + numScreenShotsTaken;
             } else {
-                return "OK," + getBase64EncodedScreenshot();
+                return "OK," + numScreenShotsTaken + ","
+                        + getBase64EncodedScreenshot();
             }
         } catch (InterruptedException e) {
             LOGGER.error("Problem comparing screenshots", e);
@@ -121,20 +124,17 @@ public class CompareScreenCommand extends Command {
      */
     private boolean grabAndCompareScreenshot() throws InterruptedException,
             ExecutionException, TimeoutException {
-        int screenshotPause = 50;
+        numScreenShotsTaken = 0;
         for (int i = 0; i < maxRetries; i++) {
-            Thread.sleep(screenshotPause);
             screenshot = grabScreenshot();
+            numScreenShotsTaken++;
             int[] shotBlocks = ImageComparisonUtil
                     .generateImageBlocks(screenshot);
             if (ImageComparisonUtil.blocksEqual(referenceImageBlocks,
                     shotBlocks, tolerance)) {
                 return true;
             }
-            screenshotPause += 200;
-            if (screenshotPause > 700) {
-                screenshotPause = 50;
-            }
+            CommandUtil.pause(250);
         }
         return false;
     }
