@@ -18,15 +18,12 @@ function vaadin_testbench_calculateAndSetCanvasSize(width, height) {
 		innerHeight = body.clientHeight;
 	}
 
-    // Update the window size so that the canvas size matches the requested
-    win.resizeBy(width-innerWidth, height-innerHeight);
-
     // Need to move browser to top left before resize to avoid the
     // possibility that it goes below or to the right of the screen.
     
+    win.moveTo(1,1);
     if (navigator.userAgent.indexOf("Chrome") != -1) {
         // Window resize functions are pretty broken in Chrome 6..
-    	win.moveTo(1,1);
         do {
         	sleep(500);
         	innerWidth = win.innerWidth;
@@ -42,7 +39,6 @@ function vaadin_testbench_calculateAndSetCanvasSize(width, height) {
     		innerHeight = body.clientHeight;
     	}
 
-        win.moveTo(1,1);
     	win.resizeBy(width-innerWidth, height-innerHeight);
     }
 
