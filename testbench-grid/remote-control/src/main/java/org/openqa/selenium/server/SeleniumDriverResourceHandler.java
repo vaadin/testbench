@@ -429,8 +429,13 @@ public class SeleniumDriverResourceHandler extends ResourceHandler {
 
     public String doCommand(String cmd, Vector<String> values,
             String sessionId, HttpResponse res) {
-        LOGGER.info("Command request: " + cmd + values.toString()
-                + " on session " + sessionId);
+        if (TestBenchCommand.getValue(cmd) == TestBenchCommand.compareScreen) {
+            // Don't log the parameters if they contain reference image data.
+            LOGGER.info("Command request: " + cmd + " on session " + sessionId);
+        } else {
+            LOGGER.info("Command request: " + cmd + values.toString()
+                    + " on session " + sessionId);
+        }
         String results = null;
         // handle special commands
         // First TestBench commands...
