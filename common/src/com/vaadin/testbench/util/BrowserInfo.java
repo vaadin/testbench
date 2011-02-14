@@ -51,7 +51,7 @@ public class BrowserInfo {
     /**
      * Cache for outer width / height
      */
-    private static HashMap<String, HashMap<String, SimpleDimensions>> userAgentToOuterDimensions;
+    private static HashMap<String, HashMap<String, SimpleDimensions>> userAgentToOuterDimensions = new HashMap<String, HashMap<String, SimpleDimensions>>();
 
     /**
      * Sets the outer dimensions
@@ -69,9 +69,6 @@ public class BrowserInfo {
      */
     public static void setOuterDimensions(String userAgent, int canvasWidth,
             int canvasHeight, int width, int height) {
-        if (userAgentToOuterDimensions == null) {
-            userAgentToOuterDimensions = new HashMap<String, HashMap<String, SimpleDimensions>>();
-        }
         if (userAgentToOuterDimensions.get(userAgent) == null) {
             userAgentToOuterDimensions.put(userAgent,
                     new HashMap<String, SimpleDimensions>());
