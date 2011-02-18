@@ -25,7 +25,7 @@ function vaadin_testbench_calculateAndSetCanvasSize(width, height) {
     if (navigator.userAgent.indexOf("Chrome") != -1) {
         // Window resize functions are pretty broken in Chrome 6..
         do {
-        	sleep(500);
+        	//sleep(500);
         	innerWidth = win.innerWidth;
         	innerHeight = win.innerHeight;
         	win.resizeBy(width-innerWidth, height-innerHeight);
@@ -46,7 +46,7 @@ function vaadin_testbench_calculateAndSetCanvasSize(width, height) {
         // window.resizeTo() is pretty badly broken in Linux Chrome...
 
         // Need to wait for innerWidth to stabilize (Chrome issue #55409)
-        sleep(500);
+    	//sleep(500);
 
     	innerWidth = win.innerWidth;
         innerHeight = win.innerHeight;
@@ -78,7 +78,7 @@ function vaadin_testbench_hideIEScrollBar() {
     // Hide main view scrollbar to get correct measurements in IE
     // (overflow=hidden)
     if (navigator.userAgent.indexOf("MSIE") != -1) {
-    	selenium.browserbot.getUserWindow().body.style.overflow='hidden';
+    	selenium.browserbot.getUserWindow().document.body.style.overflow='hidden';
     }
 }
 
