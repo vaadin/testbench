@@ -51,8 +51,8 @@ public class SetCanvasSizeCommand extends Command {
                     .eval(String.format(
                             "vaadin_testbench_calculateAndSetCanvasSize(%d, %d);",
                             wantedWidth, wantedHeight), sessionId).split(",");
-            int width = Integer.valueOf(outerDim[0]);
-            int height = Integer.valueOf(outerDim[1]);
+            int width = Integer.valueOf(outerDim[1]);
+            int height = Integer.valueOf(outerDim[2]);
             BrowserInfo.setOuterDimensions(userAgent, wantedWidth,
                     wantedHeight, width, height);
         }
