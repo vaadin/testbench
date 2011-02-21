@@ -10,29 +10,27 @@ function vaadin_testbench_calculateAndSetCanvasSize(width, height) {
 	var win = selenium.browserbot.getUserWindow();
 	var body = win.document.body;
 	
-	var innerWidth = win.innerWidth;
-    var innerHeight = win.innerHeight;
-	if (typeof innerWidth == 'undefined') {
-		vaadin_testbench_hideIEScrollBar();
-		innerWidth = body.clientWidth;
-		innerHeight = body.clientHeight;
-	}
+//	var innerWidth = win.innerWidth;
+//    var innerHeight = win.innerHeight;
+//	if (typeof innerWidth == 'undefined') {
+//		vaadin_testbench_hideIEScrollBar();
+//		innerWidth = body.clientWidth;
+//		innerHeight = body.clientHeight;
+//	}
 
     // Need to move browser to top left before resize to avoid the
     // possibility that it goes below or to the right of the screen.
     
     win.moveTo(1,1);
-    if (navigator.userAgent.indexOf("Chrome") != -1) {
-        // Window resize functions are pretty broken in Chrome 6..
-        do {
-        	//sleep(500);
-        	innerWidth = win.innerWidth;
-        	innerHeight = win.innerHeight;
-        	win.resizeBy(width-innerWidth, height-innerHeight);
-        } while (win.innerWidth != width || win.innerHeight != height);
-    } else {
-    	innerWidth = win.innerWidth;
-        innerHeight = win.innerHeight;
+//    if (navigator.userAgent.indexOf("Chrome") != -1) {
+//        // Window resize functions are pretty broken in Chrome 6..
+//    	//sleep(500);
+//    	innerWidth = win.innerWidth;
+//    	innerHeight = win.innerHeight;
+//    	win.resizeBy(width-innerWidth, height-innerHeight);
+//    } else {
+    	var innerWidth = win.innerWidth;
+        var innerHeight = win.innerHeight;
     	if (typeof innerWidth == 'undefined') {
     		vaadin_testbench_hideIEScrollBar();
     		innerWidth = body.clientWidth;
@@ -40,7 +38,7 @@ function vaadin_testbench_calculateAndSetCanvasSize(width, height) {
     	}
 
     	win.resizeBy(width-innerWidth, height-innerHeight);
-    }
+//    }
 
     if (navigator.userAgent.indexOf("Linux") != -1 && navigator.userAgent.indexOf("Chrome") != -1) {
         // window.resizeTo() is pretty badly broken in Linux Chrome...
@@ -71,7 +69,22 @@ function vaadin_testbench_calculateAndSetCanvasSize(width, height) {
         		win.outerHeight - win.innerHeight + height + heightError);
     }
 
-    return win.outerWidth + "," + win.outerHeight;
+    var outerWidth = win.outerWidth;
+    var outerHeight = win.outerHeight;
+    if (typeof outerWidth == 'undefined') {
+      // Find the outerWidth/outerHeight for IE by
+      // resizing the window twice and measuring the
+      // differences.
+      var offsWidth = body.offsetWidth;
+      var offsHeight = body.offsetHeight;
+      win.resizeTo(500,500);
+      var barsWidth = 500 - body.offsetWidth;
+      var barsHidth = 500 - body.offsetHeight;
+      outerWidth = barsWidth + offsWidth;
+      outerHeight = barsHidth + offsHeight;
+      win.resizeTo(outerWidth, outerHeight);
+    }
+    return outerWidth + "," + outerHeight;
 }
 
 function vaadin_testbench_hideIEScrollBar() {
@@ -91,10 +104,10 @@ function vaadin_testbench_getCanvasWidth() {
     if (win.innerWidth) {
     	return win.innerWidth;
     }
-    if (win.document.body.clientWidth) {
+    if (win.document.body) {
     	return win.document.body.clientWidth;
     }
-    if (win.document.documentElement.clientWidth) {
+    if (win.document.documentElement) {
     	return win.document.documentElement.clientWidth;
     }
     return 0;
