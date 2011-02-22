@@ -40,6 +40,8 @@ public class SetCanvasSizeCommand extends Command {
     @Override
     public String execute() {
         String userAgent = CommandUtil.eval("navigator.userAgent;", sessionId);
+        BrowserVersion browser = new BrowserVersion(userAgent);
+
         if (BrowserInfo.getOuterWidth(userAgent, wantedWidth, wantedHeight) > -1) {
             CommandUtil.eval(String.format(
                     "vaadin_testbench_setWindowSize(%d, %d);",
@@ -51,6 +53,17 @@ public class SetCanvasSizeCommand extends Command {
                     .eval(String.format(
                             "vaadin_testbench_calculateAndSetCanvasSize(%d, %d);",
                             wantedWidth, wantedHeight), sessionId).split(",");
+
+            // Chrome is unstable when resizing the window
+            if (browser.isChrome()) {
+                CommandUtil.pause(2000);
+                outerDim = CommandUtil
+                        .eval(String.format(
+                                "vaadin_testbench_calculateAndSetCanvasSize(%d, %d);",
+                                wantedWidth, wantedHeight), sessionId).split(
+                                ",");
+            }
+
             int offs = 0;
             if (outerDim.length == 3) {
                 offs = 1;
@@ -61,7 +74,6 @@ public class SetCanvasSizeCommand extends Command {
                     wantedHeight, width, height);
         }
 
-        BrowserVersion browser = new BrowserVersion(userAgent);
         // Firefox on OSX has a problem with moveTo(0,0)
         if (browser.isMac() && browser.isFirefox()) {
             CommandUtil.eval("window.moveTo(0,1);", sessionId);

@@ -10,35 +10,27 @@ function vaadin_testbench_calculateAndSetCanvasSize(width, height) {
 	var win = selenium.browserbot.getUserWindow();
 	var body = win.document.body;
 	
-//	var innerWidth = win.innerWidth;
-//    var innerHeight = win.innerHeight;
-//	if (typeof innerWidth == 'undefined') {
-//		vaadin_testbench_hideIEScrollBar();
-//		innerWidth = body.clientWidth;
-//		innerHeight = body.clientHeight;
-//	}
-
     // Need to move browser to top left before resize to avoid the
     // possibility that it goes below or to the right of the screen.
     
     win.moveTo(1,1);
-//    if (navigator.userAgent.indexOf("Chrome") != -1) {
-//        // Window resize functions are pretty broken in Chrome 6..
-//    	//sleep(500);
-//    	innerWidth = win.innerWidth;
-//    	innerHeight = win.innerHeight;
-//    	win.resizeBy(width-innerWidth, height-innerHeight);
-//    } else {
-    	var innerWidth = win.innerWidth;
-        var innerHeight = win.innerHeight;
-    	if (typeof innerWidth == 'undefined') {
-    		vaadin_testbench_hideIEScrollBar();
-    		innerWidth = body.clientWidth;
-    		innerHeight = body.clientHeight;
-    	}
 
-    	win.resizeBy(width-innerWidth, height-innerHeight);
-//    }
+    var innerWidth = win.innerWidth;
+    var innerHeight = win.innerHeight;
+	if (typeof innerWidth == 'undefined') {
+		vaadin_testbench_hideIEScrollBar();
+		innerWidth = body.clientWidth;
+		innerHeight = body.clientHeight;
+	}
+
+	win.resizeBy(width-innerWidth, height-innerHeight);
+	
+//	if (navigator.userAgent.indexOf("Chrome") != -1) {
+//		// Window resize functions are pretty broken in Chrome 6..
+//		innerWidth = win.innerWidth;
+//		innerHeight = win.innerHeight;
+//		win.resizeBy(width-innerWidth, height-innerHeight);
+//	}
 
     if (navigator.userAgent.indexOf("Linux") != -1 && navigator.userAgent.indexOf("Chrome") != -1) {
         // window.resizeTo() is pretty badly broken in Linux Chrome...
