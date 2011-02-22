@@ -393,14 +393,14 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
         // Focus the window to ensure it is on top of the control window
         selenium.windowFocus();
 
-        if (getBrowserVersion().isOpera()) {
-            /*
-             * Opera (10.62 and older at least) does not support window.resizeTo
-             * or window.moveTo so we cannot move/resize the window but have to
-             * accept whatever the browser uses (overrideable in
-             * profile-opera.txt).
-             */
-        } else if (hasRequestedCanvasSize()) {
+        // if (getBrowserVersion().isOpera()) {
+        /*
+         * Opera (10.62 and older at least) does not support window.resizeTo or
+         * window.moveTo so we cannot move/resize the window but have to accept
+         * whatever the browser uses (overrideable in profile-opera.txt).
+         */
+        // } else
+        if (hasRequestedCanvasSize()) {
             // The user has specified a canvas size to use so we should
             // initialize to that size
             BrowserDimensions dim = setRequestedCanvasSize();
