@@ -96,7 +96,9 @@ function vaadin_testbench_hideIEScrollBar() {
 }
 
 function vaadin_testbench_setWindowSize(width, height) {
-	selenium.browserbot.getUserWindow().resizeTo(width, height);
+    var win = selenium.browserbot.getUserWindow();
+    win.moveTo(1,1);
+	win.resizeTo(width, height);
 }
 
 function vaadin_testbench_getCanvasWidth() {
