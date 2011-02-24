@@ -82,6 +82,7 @@ public class CompareScreenCommand extends Command {
             ObjectInputStream objIn = new ObjectInputStream(
                     new GZIPInputStream(in));
             Object obj = objIn.readObject();
+            objIn.close();
             if (obj instanceof ReferenceImageRepresentation) {
                 referenceImage = (ReferenceImageRepresentation) obj;
             } else {
