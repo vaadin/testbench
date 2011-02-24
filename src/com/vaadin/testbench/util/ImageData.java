@@ -120,6 +120,11 @@ public class ImageData {
                 + getFileName()));
     }
 
+    /**
+     * Generates reference images from the reference directory.
+     * 
+     * @throws IOException
+     */
     public void generateReferenceImages() throws IOException {
         referenceImages = new ArrayList<BufferedImage>();
         String nextName = getFileName();
@@ -128,7 +133,7 @@ public class ImageData {
         while (file.exists()) {
             referenceImages.add(ImageIO.read(file));
             nextName = getFileName().replace(".png",
-                    String.format("-%d.png", i++));
+                    String.format("_%d.png", i++));
             file = new File(getReferenceDirectory() + nextName);
         }
     }
