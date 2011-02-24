@@ -4,6 +4,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
@@ -32,6 +33,7 @@ public class ImageData {
 
     private BufferedImage referenceImage = null;
     private BufferedImage comparisonImage = null;
+    private ArrayList<BufferedImage> referenceImages;
 
     // Constructors
     public ImageData(String fileName, BrowserDimensions dimensions) {
@@ -116,6 +118,19 @@ public class ImageData {
     public void generateReferenceImage() throws IOException {
         referenceImage = ImageIO.read(new File(getReferenceDirectory()
                 + getFileName()));
+    }
+
+    public void generateReferenceImages() throws IOException {
+        referenceImages = new ArrayList<BufferedImage>();
+        String nextName = getFileName();
+        File file = new File(getReferenceDirectory() + nextName);
+        int i = 1;
+        while (file.exists()) {
+            referenceImages.add(ImageIO.read(file));
+            nextName = getFileName().replace(".png",
+                    String.format("-%d.png", i++));
+            file = new File(getReferenceDirectory() + nextName);
+        }
     }
 
     /**
@@ -293,6 +308,10 @@ public class ImageData {
         return referenceImage;
     }
 
+    public Iterable<BufferedImage> getReferenceImages() {
+        return referenceImages;
+    }
+
     public void setReferenceImage(BufferedImage referenceImage) {
         this.referenceImage = referenceImage;
     }
@@ -317,4 +336,5 @@ public class ImageData {
     public int getCursorY() {
         return cursorY;
     }
+
 }

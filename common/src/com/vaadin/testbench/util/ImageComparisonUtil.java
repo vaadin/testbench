@@ -3,6 +3,8 @@ package com.vaadin.testbench.util;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
+import com.vaadin.testbench.util.ReferenceImageRepresentation.BlockRepresentation;
+
 public class ImageComparisonUtil {
 
     /**
@@ -51,6 +53,29 @@ public class ImageComparisonUtil {
             }
         }
         return true;
+    }
+
+    /**
+     * Checks whether any of the reference images in a
+     * ReferenceImageRepresentation are equal to the screen shot within the
+     * specified error tolerance.
+     * 
+     * @param reference
+     *            an object holding the block data of the reference images
+     * @param shotBlocks
+     *            the screen shot blocks
+     * @param tolerance
+     *            the tolerance (0..1 * 16 * 16 * 3 = 0..768)
+     * @return
+     */
+    public static boolean blocksEqual(ReferenceImageRepresentation reference,
+            int[] shotBlocks, float tolerance) {
+        for (BlockRepresentation rep : reference.getRepresentations()) {
+            if (blocksEqual(rep.getBlocks(), shotBlocks, tolerance)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

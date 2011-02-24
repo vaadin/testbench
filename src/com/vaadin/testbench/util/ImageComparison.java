@@ -4,18 +4,23 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.zip.GZIPOutputStream;
 
 import javax.imageio.ImageIO;
 
 import junit.framework.Assert;
+
+import org.apache.commons.codec.binary.Base64;
 
 import com.vaadin.testbench.Parameters;
 
@@ -878,27 +883,30 @@ public class ImageComparison {
     }
 
     public String generateBlocksFromImageFile(String fileName) {
-        StringBuilder blockData = new StringBuilder();
         ImageData image = new ImageData(null, fileName, null, 0);
-
         image.generateBaseDirectory();
-
         checkAndCreateDirectories(image.getBaseDirectory());
 
         try {
-            image.generateReferenceImage();
-            int[] blocks = ImageComparisonUtil.generateImageBlocks(image
-                    .getReferenceImage());
-            blockData.append(blocks.length);
-            for (int block : blocks) {
-                blockData.append(",");
-                blockData.append(Integer.toString(block, 16));
+            image.generateReferenceImages();
+            ReferenceImageRepresentation ref = new ReferenceImageRepresentation();
+            for (BufferedImage referenceImage : image.getReferenceImages()) {
+                ref.addRepresentation(ImageComparisonUtil
+                        .generateImageBlocks(referenceImage));
             }
+            ByteArrayOutputStream dest = new ByteArrayOutputStream();
+            ObjectOutputStream out = new ObjectOutputStream(
+                    new GZIPOutputStream(dest));
+            out.writeObject(ref);
+            // out.flush();
+            out.close();
+            return new String(Base64.encodeBase64(dest.toByteArray()));
+
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        return blockData.toString();
+        return "";
     }
 
 }

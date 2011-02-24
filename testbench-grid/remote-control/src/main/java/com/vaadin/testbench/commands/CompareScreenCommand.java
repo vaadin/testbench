@@ -2,11 +2,14 @@ package com.vaadin.testbench.commands;
 
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.Vector;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
+import java.util.zip.GZIPInputStream;
 
 import javax.imageio.ImageIO;
 
@@ -17,6 +20,7 @@ import org.openqa.selenium.server.RobotRetriever;
 import org.openqa.selenium.server.commands.Command;
 
 import com.vaadin.testbench.util.ImageComparisonUtil;
+import com.vaadin.testbench.util.ReferenceImageRepresentation;
 
 /**
  * This command gets a list of 16x16 pixel blocks generated from a reference
@@ -43,7 +47,7 @@ public class CompareScreenCommand extends Command {
     private static final Log LOGGER = LogFactory
             .getLog(CompareScreenCommand.class);
 
-    int referenceImageBlocks[];
+    private ReferenceImageRepresentation referenceImage;
     private final float tolerance;
     private final int maxRetries;
     private final int canvasX;
@@ -66,19 +70,27 @@ public class CompareScreenCommand extends Command {
     }
 
     /**
-     * Parses the 16x16 pixel block data from a string with the format
-     * N,val1,val2,...,valN to an array of ints.
+     * Parses the 16x16 pixel block data from a Base64 encoded representation.
      * 
      * @param blockParam
      *            the block data string.
      */
     private void parseBlockParameter(String blockParam) {
-        // The format is N,val1,val2,...,valN
-        String[] strBlocks = blockParam.split(",");
-        int length = Integer.valueOf(strBlocks[0]);
-        referenceImageBlocks = new int[length];
-        for (int ix = 0; ix < length; ix++) {
-            referenceImageBlocks[ix] = Integer.valueOf(strBlocks[ix + 1], 16);
+        try {
+            ByteArrayInputStream in = new ByteArrayInputStream(
+                    Base64.decodeBase64(blockParam.getBytes()));
+            ObjectInputStream objIn = new ObjectInputStream(
+                    new GZIPInputStream(in));
+            Object obj = objIn.readObject();
+            if (obj instanceof ReferenceImageRepresentation) {
+                referenceImage = (ReferenceImageRepresentation) obj;
+            } else {
+                LOGGER.error("Unexpected class in serialized data.");
+            }
+        } catch (IOException e) {
+            LOGGER.error("Could not load reference image data", e);
+        } catch (ClassNotFoundException e) {
+            LOGGER.error("Could not load reference image data", e);
         }
     }
 
@@ -130,8 +142,8 @@ public class CompareScreenCommand extends Command {
             numScreenShotsTaken++;
             int[] shotBlocks = ImageComparisonUtil
                     .generateImageBlocks(screenshot);
-            if (ImageComparisonUtil.blocksEqual(referenceImageBlocks,
-                    shotBlocks, tolerance)) {
+            if (ImageComparisonUtil.blocksEqual(referenceImage, shotBlocks,
+                    tolerance)) {
                 return true;
             }
             CommandUtil.pause(250);
