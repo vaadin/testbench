@@ -37,8 +37,10 @@ public class BrowserVersion {
 
         if (userAgent.contains("MSIE")) {
             browserName = "InternetExplorer";
-            if (userAgent.contains("Trident")) {
+            if (userAgent.contains("Trident/4")) {
                 versionString = "8";
+            } else if (userAgent.contains("Trident/5")) {
+                versionString = "9";
             } else {
                 versionString = userAgent
                         .substring(userAgent.indexOf("MSIE") + 5);
