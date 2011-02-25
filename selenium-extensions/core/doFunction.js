@@ -263,15 +263,16 @@ function triggerSpecialKeyEvent(element, eventType, keySequence, canBubble, cont
             evt = document.createEvent('KeyEvents');
             evt.initKeyEvent(eventType, true, true, window, controlKeyDown, altKeyDown, shiftKeyDown, metaKeyDown, keycode, "");
         } else {
-            evt = document.createEvent('UIEvents');
+        	// WebKit based browsers
+      		evt = document.createEvent('Events');
             
             evt.shiftKey = shiftKeyDown;
             evt.metaKey = metaKeyDown;
             evt.altKey = altKeyDown;
             evt.ctrlKey = controlKeyDown;
 
-            evt.initUIEvent(eventType, true, true, window, 1);
-            evt.keyCode = keycode;
+            evt.initEvent(eventType, true, true);
+            evt.keyCode = parseInt(keycode);
             evt.which = keycode;
         }
 
