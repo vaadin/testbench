@@ -241,7 +241,7 @@ public class TestConverter {
 
         File testFile = new File(TestBenchHTMLFile);
 
-        if (testFile == null) {
+        if (!testFile.exists()) {
             throw new FileNotFoundException("Could not find file "
                     + TestBenchHTMLFile);
         }
