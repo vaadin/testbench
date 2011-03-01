@@ -1,6 +1,5 @@
 package com.vaadin.testbench;
 
-
 public class Parameters {
 
     private static final String BASE_PACKAGE = "com.vaadin.testbench.";
@@ -28,6 +27,8 @@ public class Parameters {
             + "cursor";
     public static final String SCREENSHOT_MAX_RETRIES = SCREENSHOT_PACKAGE
             + "max.retries";
+    public static final String SCREENSHOT_RETRY_DELAY = SCREENSHOT_PACKAGE
+            + "retry.delay";
 
     // Other parameters
     public static final String BROWSER_STRING = BASE_PACKAGE + "browsers";
@@ -93,6 +94,15 @@ public class Parameters {
             retries = Integer.parseInt(p);
         }
         return retries;
+    }
+
+    public static int getRetryDelay() {
+        String p = System.getProperty(SCREENSHOT_RETRY_DELAY);
+        int retryDelay = 500;
+        if (p != null && p.length() > 0) {
+            retryDelay = Integer.parseInt(p);
+        }
+        return retryDelay;
     }
 
     // Retry test

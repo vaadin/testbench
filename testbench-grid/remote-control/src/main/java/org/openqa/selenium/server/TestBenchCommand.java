@@ -24,7 +24,8 @@ public enum TestBenchCommand {
      * - The X position of the canvas <br>
      * - The Y position of the canvas <br>
      * - The width of the canvas <br>
-     * - The height of the canvas
+     * - The height of the canvas <br>
+     * - The delay between retries
      */
     compareScreen,
 

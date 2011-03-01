@@ -38,7 +38,8 @@ import com.vaadin.testbench.util.ReferenceImageRepresentation;
  * - The X position of the canvas <br>
  * - The Y position of the canvas <br>
  * - The width of the canvas <br>
- * - The height of the canvas
+ * - The height of the canvas <br>
+ * - The delay between retries (ms)
  * 
  * @author Jonatan Kronqvist / Vaadin Ltd
  */
@@ -54,7 +55,7 @@ public class CompareScreenCommand extends Command {
     private final int canvasY;
     private final int canvasWidth;
     private final int canvasHeight;
-
+    private final int retryDelay;
     private BufferedImage screenshot;
 
     private int numScreenShotsTaken = 0;
@@ -67,6 +68,7 @@ public class CompareScreenCommand extends Command {
         canvasY = Integer.valueOf(parameters.get(4));
         canvasWidth = Integer.valueOf(parameters.get(5));
         canvasHeight = Integer.valueOf(parameters.get(6));
+        retryDelay = Integer.valueOf(parameters.get(7));
     }
 
     /**
@@ -147,7 +149,7 @@ public class CompareScreenCommand extends Command {
                     tolerance)) {
                 return true;
             }
-            CommandUtil.pause(250);
+            CommandUtil.pause(retryDelay);
         }
         return false;
     }
