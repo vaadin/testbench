@@ -326,7 +326,7 @@ public class JavaFileBuilder {
             hasScreenshots = true;
             catchClause += "createFailureScreenshot(\"" + testName + "\");\n";
         }
-        catchClause += "throw new java.lang.AssertionError(cmd.getInfo() + \"\\n Message: \" + e.getMessage());\n}\n";
+        catchClause += "throw new java.lang.AssertionError(cmd.getInfo() + \"\\n Message: \" + e.getMessage()+\"\\nRemote control: \"+getRemoteControlName());\n}\n";
 
         // adding the softAssert so creating reference images throws a assert
         // failure at end of test

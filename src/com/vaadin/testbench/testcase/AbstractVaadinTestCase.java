@@ -554,4 +554,20 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Returns the name (host name or IP address) of the remote control where
+     * the test is being run.
+     * 
+     * @return Host name or IP of the remote control host
+     */
+    protected String getRemoteControlName() {
+        String retVal = doCommand("getRemoteControlName", new String[] {});
+        if (retVal.startsWith("OK")) {
+            // "OK,hostname"
+            return retVal.substring(3);
+        }
+        return "?";
+    }
+
 }
