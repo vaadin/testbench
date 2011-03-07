@@ -64,6 +64,7 @@ import org.openqa.selenium.server.log.AntJettyLoggerBuildListener;
 
 import com.vaadin.testbench.commands.CompareScreenCommand;
 import com.vaadin.testbench.commands.GetCanvasSizeCommand;
+import com.vaadin.testbench.commands.GetRemoteControlNameCommand;
 import com.vaadin.testbench.commands.SetCanvasSizeCommand;
 import com.vaadin.testbench.commands.TestBenchCommand;
 import com.vaadin.testbench.commands.UploadFileCommand;
@@ -458,6 +459,8 @@ public class SeleniumDriverResourceHandler extends ResourceHandler {
             FrameGroupCommandQueueSet queue = getQueueSet(sessionId);
             queue.addTemporaryFile(uploadCommand.getTemporaryFile());
             return uploadCommand.execute();
+        case getRemoteControlName:
+            return new GetRemoteControlNameCommand().execute();
         }
         // ...then selenium commands
         switch (SpecialCommand.getValue(cmd)) {

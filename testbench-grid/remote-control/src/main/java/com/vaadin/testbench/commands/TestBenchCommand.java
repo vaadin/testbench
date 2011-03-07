@@ -62,6 +62,12 @@ public enum TestBenchCommand {
     uploadFile,
 
     /**
+     * Returns the name of the remote control. Mainly useful for debugging
+     * problems with specific machines.
+     */
+    getRemoteControlName,
+
+    /**
      * An empty command. Used instead of passing nulls here and there.
      */
     none;
