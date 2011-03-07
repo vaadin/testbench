@@ -356,6 +356,13 @@ public class TestConverter {
         String htmlSource = IOUtils.toString(fis);
         fis.close();
 
+        // Escape special characters, since they are passed to a JavaScript
+        // function through a string, i.e. str = "var src ='" + htmlSource +
+        // "';".
+        // replace(CharSequence, CharSequence) replaces all occurrences in the
+        // string, as does replaceAll(regexp, String)...
+        // Backslashes are escaped so that filenames passed to upload commands
+        // work correctly.
         htmlSource = htmlSource.replace("\\", "\\\\").replace("\"", "\\\"")
                 .replaceAll("\\n", "\\\\n").replace("'", "\\'")
                 .replaceAll("\\r", "");
