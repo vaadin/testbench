@@ -1,6 +1,5 @@
 package com.vaadin.testbench.testcase;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -537,21 +536,10 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
 
     public void doUploadFile(String locator, String filename) {
         try {
-            IOUtils.toString(input)
             File file = new File(filename);
             FileInputStream fin = new FileInputStream(file);
-            ByteArrayOutputStream dataStream = new ByteArrayOutputStream();
-            byte[] buf = new byte[fin.available()];
-            while (true) {
-                int bytesRead = fin.read(buf);
-                if (bytesRead == -1) {
-                    break;
-                }
-                dataStream.write(buf);
-            }
-
-            String fileData = new String(Base64.encodeBase64(dataStream
-                    .toByteArray()));
+            String fileData = new String(Base64.encodeBase64(IOUtils
+                    .toByteArray(fin)));
 
             testBase.doCommand("uploadFile", new String[] { locator, filename,
                     fileData });
