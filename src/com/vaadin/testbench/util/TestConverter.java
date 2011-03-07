@@ -501,9 +501,9 @@ public class TestConverter {
                 // Special case because we need to try open several times in IE6
                 // sometimes..
                 builder.appendOpen(command);
-            } else if ("upload".equals(command.getCmd())) {
-                // rewrite to an uploadFile command.
-                builder.appendUpload(command, filePath);
+            } else if ("uploadFile".equals(command.getCmd())) {
+                // process the uploadFile command.
+                builder.appendUploadFile(command, filePath);
             } else {
                 // Default way to handle commands
                 builder.appendCommand(command);

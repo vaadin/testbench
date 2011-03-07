@@ -220,7 +220,7 @@ public class JavaFileBuilder {
         testMethodSource.append(");\n\n");
     }
 
-    public void appendUpload(Command command, String filePath) {
+    public void appendUploadFile(Command command, String filePath) {
         appendCommandInfo(command.getCmd(), command.getLocator(),
                 command.getValue());
         testMethodSource.append("doUploadFile(");

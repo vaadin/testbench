@@ -293,8 +293,8 @@ Recorder.addEventHandler('type', 'change', function(event) {
 			this.record("enterCharacter", target, event.target.value);
 		} else {
 			if ('file' == type) {
-				// Record an 'upload' command instead of 'type' for uploads
-				this.record("upload", target, event.target.value);
+				// Record an 'uploadFile' command instead of 'type' for uploads
+				this.record("uploadFile", target, event.target.value);
 			} else {
 				this.record("type", target, event.target.value);
 			}

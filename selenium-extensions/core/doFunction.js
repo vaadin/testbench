@@ -354,6 +354,6 @@ Selenium.prototype.doAssertCSSClass = function(locator, value){
     }
 };
 
-Selenium.prototype.doUpload = function(locator, value){
+Selenium.prototype.doUploadFile = function(locator, value){
 	this.doType(locator, value);
 };

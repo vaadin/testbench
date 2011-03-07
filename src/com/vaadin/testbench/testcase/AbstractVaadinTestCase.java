@@ -13,6 +13,7 @@ import javax.imageio.ImageIO;
 import junit.framework.Assert;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.IOUtils;
 
 import com.thoughtworks.selenium.SeleneseTestCase;
 import com.vaadin.testbench.Parameters;
@@ -536,6 +537,7 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
 
     public void doUploadFile(String locator, String filename) {
         try {
+            IOUtils.toString(input)
             File file = new File(filename);
             FileInputStream fin = new FileInputStream(file);
             ByteArrayOutputStream dataStream = new ByteArrayOutputStream();
