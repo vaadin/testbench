@@ -356,7 +356,7 @@ public class TestConverter {
         String htmlSource = IOUtils.toString(fis);
         fis.close();
 
-        htmlSource = htmlSource.replace("\"", "\\\"")
+        htmlSource = htmlSource.replace("\\", "\\\\").replace("\"", "\\\"")
                 .replaceAll("\\n", "\\\\n").replace("'", "\\'")
                 .replaceAll("\\r", "");
 
