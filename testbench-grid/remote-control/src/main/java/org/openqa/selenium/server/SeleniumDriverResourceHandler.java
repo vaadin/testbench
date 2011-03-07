@@ -65,6 +65,7 @@ import org.openqa.selenium.server.log.AntJettyLoggerBuildListener;
 import com.vaadin.testbench.commands.CompareScreenCommand;
 import com.vaadin.testbench.commands.GetCanvasSizeCommand;
 import com.vaadin.testbench.commands.SetCanvasSizeCommand;
+import com.vaadin.testbench.commands.TestBenchCommand;
 import com.vaadin.testbench.commands.UploadFileCommand;
 
 /**

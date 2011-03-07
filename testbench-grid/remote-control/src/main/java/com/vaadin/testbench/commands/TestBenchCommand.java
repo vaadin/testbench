@@ -1,4 +1,4 @@
-package org.openqa.selenium.server;
+package com.vaadin.testbench.commands;
 
 /**
  * Additional TestBench commands are enumerated here.
