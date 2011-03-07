@@ -218,11 +218,11 @@ objectExtend(TreeView.prototype, {
                 Editor.GENERIC_AUTOCOMPLETE.setCandidatesWithComments(XulUtils.toXPCOMString(this.editor.getAutoCompleteSearchParam("commandTarget")),
                                                                       XulUtils.toXPCOMArray(locators),
                                                                       XulUtils.toXPCOMArray(types));
-                this.setTextBox("commandTarget", this.encodeText(command.target), false);
+                this.setTextBox("commandTarget", this.encodeText(command.target, command.command), false);
             } else {
                 targetBox.setAttribute("enablehistory", "false");
                 targetBox.disableAutoComplete = true;
-                this.setTextBox("commandTarget", this.encodeText(command.target), false);
+                this.setTextBox("commandTarget", this.encodeText(command.target, command.command), false);
             }
         },
         
@@ -245,7 +245,7 @@ objectExtend(TreeView.prototype, {
                         keys.push(name);
                     }
                     this.setTextBox('commandValue',
-                        this.encodeText(to_kwargs(args, keys)), false);
+                        this.encodeText(to_kwargs(args, keys), command.command), false);
                 }
             }
         },
@@ -260,15 +260,19 @@ objectExtend(TreeView.prototype, {
             window.updateCommands("undo");
         },
             
-        encodeText: function(text) {
-            text = text.replace(/\\/g, "\\\\");
+        encodeText: function(text, command) {
+        	if ('uploadFile' != command) {
+        		text = text.replace(/\\/g, "\\\\");
+        	}
             text = text.replace(/\n/g, "\\n");
             return text;
         },
             
-        decodeText: function(text) {
+        decodeText: function(text, command) {
             text = text.replace(/\\n/g, "\n");
-            text = text.replace(/\\\\/g, "\\");
+            if ('uploadFile' != command) {
+            	text = text.replace(/\\\\/g, "\\");
+            }
             return text;
         },
         
@@ -314,7 +318,7 @@ objectExtend(TreeView.prototype, {
                 if (command.type == 'command') {
                     this.setTextBox("commandAction", command.command, false);
                     this.updateSeleniumTargets();
-                    this.setTextBox("commandValue", this.encodeText(command.value), false);
+                    this.setTextBox("commandValue", this.encodeText(command.value, command.command), false);
                 } else if (command.type == 'comment') {
                     this.setTextBox("commandAction", command.comment, false);
                     this.setTextBox("commandTarget", '', true);

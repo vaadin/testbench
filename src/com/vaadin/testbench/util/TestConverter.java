@@ -361,9 +361,7 @@ public class TestConverter {
         // "';".
         // replace(CharSequence, CharSequence) replaces all occurrences in the
         // string, as does replaceAll(regexp, String)...
-        // Backslashes are escaped so that filenames passed to upload commands
-        // work correctly.
-        htmlSource = htmlSource.replace("\\", "\\\\").replace("\"", "\\\"")
+        htmlSource = htmlSource.replace("\"", "\\\"")
                 .replaceAll("\\n", "\\\\n").replace("'", "\\'")
                 .replaceAll("\\r", "");
 

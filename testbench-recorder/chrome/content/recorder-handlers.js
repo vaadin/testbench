@@ -294,7 +294,7 @@ Recorder.addEventHandler('type', 'change', function(event) {
 		} else {
 			if ('file' == type) {
 				// Record an 'uploadFile' command instead of 'type' for uploads
-				this.record("uploadFile", target, event.target.value);
+				this.record("uploadFile", target, event.target.value.replace(/\\/g, "\\\\"));
 			} else {
 				this.record("type", target, event.target.value);
 			}
