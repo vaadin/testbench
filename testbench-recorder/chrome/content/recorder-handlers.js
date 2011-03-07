@@ -284,6 +284,7 @@ Recorder.addEventHandler('type', 'change', function(event) {
 	var target = this.findLocators(event.target);
 	if (('input' == tagName && ('text' == type || 'password' == type || 'file' == type)) ||
 		'textarea' == tagName) {
+
 		if(enterPressed){
 			enterPressed = false;
 			charBuffer = "";
@@ -291,7 +292,12 @@ Recorder.addEventHandler('type', 'change', function(event) {
 			charBuffer = "";
 			this.record("enterCharacter", target, event.target.value);
 		} else {
-			this.record("type", target, event.target.value);
+			if ('file' == type) {
+				// Record an 'upload' command instead of 'type' for uploads
+				this.record("upload", target, event.target.value);
+			} else {
+				this.record("type", target, event.target.value);
+			}
 		}
 	}
 });

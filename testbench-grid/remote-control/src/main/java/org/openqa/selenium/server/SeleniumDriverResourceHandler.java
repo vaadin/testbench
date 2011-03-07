@@ -65,6 +65,7 @@ import org.openqa.selenium.server.log.AntJettyLoggerBuildListener;
 import com.vaadin.testbench.commands.CompareScreenCommand;
 import com.vaadin.testbench.commands.GetCanvasSizeCommand;
 import com.vaadin.testbench.commands.SetCanvasSizeCommand;
+import com.vaadin.testbench.commands.UploadFileCommand;
 
 /**
  * A Jetty handler that takes care of remote Selenium requests.
@@ -449,6 +450,13 @@ public class SeleniumDriverResourceHandler extends ResourceHandler {
             return new SetCanvasSizeCommand(values, sessionId).execute();
         case getCanvasSize:
             return new GetCanvasSizeCommand(sessionId).execute();
+        case uploadFile:
+            UploadFileCommand uploadCommand = new UploadFileCommand(values,
+                    sessionId);
+            // Make sure that the file is deleted after use.
+            FrameGroupCommandQueueSet queue = getQueueSet(sessionId);
+            queue.addTemporaryFile(uploadCommand.getTemporaryFile());
+            return uploadCommand.execute();
         }
         // ...then selenium commands
         switch (SpecialCommand.getValue(cmd)) {

@@ -1,6 +1,9 @@
 package com.vaadin.testbench.testcase;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
@@ -8,6 +11,8 @@ import java.util.List;
 import javax.imageio.ImageIO;
 
 import junit.framework.Assert;
+
+import org.apache.commons.codec.binary.Base64;
 
 import com.thoughtworks.selenium.SeleneseTestCase;
 import com.vaadin.testbench.Parameters;
@@ -529,4 +534,31 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
         testBase.doCommand("setTestName", new String[] { testName });
     }
 
+    public void doUploadFile(String locator, String filename) {
+        try {
+            File file = new File(filename);
+            FileInputStream fin = new FileInputStream(file);
+            ByteArrayOutputStream dataStream = new ByteArrayOutputStream();
+            byte[] buf = new byte[fin.available()];
+            while (true) {
+                int bytesRead = fin.read(buf);
+                if (bytesRead == -1) {
+                    break;
+                }
+                dataStream.write(buf);
+            }
+
+            String fileData = new String(Base64.encodeBase64(dataStream
+                    .toByteArray()));
+
+            testBase.doCommand("uploadFile", new String[] { locator, filename,
+                    fileData });
+        } catch (FileNotFoundException e) {
+            Assert.fail("File " + filename + " does not exist!");
+            e.printStackTrace();
+        } catch (IOException e) {
+            Assert.fail("Error while reading file " + filename);
+            e.printStackTrace();
+        }
+    }
 }

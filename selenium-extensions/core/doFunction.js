@@ -353,3 +353,7 @@ Selenium.prototype.doAssertCSSClass = function(locator, value){
         Assert.fail("Element doesn't have the " + value + " class.");
     }
 };
+
+Selenium.prototype.doUpload = function(locator, value){
+	this.doType(locator, value);
+};

@@ -1,6 +1,7 @@
 package com.vaadin.testbench.util;
 
 import java.awt.event.KeyEvent;
+import java.io.File;
 import java.util.Date;
 
 import com.vaadin.testbench.Parameters;
@@ -217,6 +218,42 @@ public class JavaFileBuilder {
         testMethodSource
                 .append(quotedSafeParameterString(replaceParameters(value)));
         testMethodSource.append(");\n\n");
+    }
+
+    public void appendUpload(Command command, String filePath) {
+        appendCommandInfo(command.getCmd(), command.getLocator(),
+                command.getValue());
+        testMethodSource.append("doUploadFile(");
+        testMethodSource
+                .append(quotedSafeParameterString(replaceParameters(command
+                        .getLocator())));
+        testMethodSource.append(",");
+        testMethodSource
+                .append(quotedSafeParameterString(replaceParameters(getFileName(
+                        command.getValue(), filePath))));
+        testMethodSource.append(");\n\n");
+    }
+
+    private String getFileName(String value, String filePath) {
+        String fileWithPath = value;
+
+        String filename = null;
+        if (fileWithPath.indexOf(":\\") == 1) {
+            // This is probably a windows path
+            filename = fileWithPath
+                    .substring(fileWithPath.lastIndexOf('\\') + 1);
+        } else {
+            // Unix-style path
+            filename = fileWithPath
+                    .substring(fileWithPath.lastIndexOf('/') + 1);
+        }
+
+        File localFile = new File(filePath + filename);
+        if (localFile.exists()) {
+            fileWithPath = localFile.getAbsolutePath();
+        }
+
+        return fileWithPath;
     }
 
     public byte[] getTestMethodWrapper() {

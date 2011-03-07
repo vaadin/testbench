@@ -406,7 +406,7 @@ public class TestConverter {
         boolean firstScreenshot = true;
 
         for (Command command : commands) {
-            if (command.getCmd().equals("screenCapture")) {
+            if ("screenCapture".equals(command.getCmd())) {
                 String imageId = command.getValue();
 
                 if (firstScreenshot) {
@@ -415,13 +415,13 @@ public class TestConverter {
                 }
 
                 builder.appendScreenshot(0.025, imageId);
-            } else if (command.getCmd().equalsIgnoreCase("pause")) {
+            } else if ("pause".equalsIgnoreCase(command.getCmd())) {
                 // Special case to ensure pause value is an integer
 
                 // For some weird Selenium compatible reason the value is stored
                 // as a locator...
                 builder.appendPause(command.getLocator());
-            } else if (command.getCmd().equalsIgnoreCase("pressSpecialKey")) {
+            } else if ("pressSpecialKey".equalsIgnoreCase(command.getCmd())) {
                 // Special case because keys are played back differently in
                 // different browsers.
                 String locator = command.getLocator();
@@ -447,19 +447,19 @@ public class TestConverter {
                             convertedValue);
 
                 }
-            } else if (command.getCmd().equalsIgnoreCase("mouseClick")) {
+            } else if ("mouseClick".equalsIgnoreCase(command.getCmd())) {
                 // Special case because the actual command we execute vary
 
                 builder.appendMouseClick(command.getLocator(),
                         command.getValue());
 
-            } else if (command.getCmd().equalsIgnoreCase("verifyTextPresent")
-                    || command.getCmd().equalsIgnoreCase("assertTextPresent")) {
+            } else if ("verifyTextPresent".equalsIgnoreCase(command.getCmd())
+                    || "assertTextPresent".equalsIgnoreCase(command.getCmd())) {
                 // Special case because value is in locator and not in value
                 // (stupid...)
                 String text = command.getLocator();
                 builder.appendCommand(command.getCmd(), text, null);
-            } else if (command.getCmd().equalsIgnoreCase("htmlTest")) {
+            } else if ("htmlTest".equalsIgnoreCase(command.getCmd())) {
                 // FIXME is this even a command? "locator" is not used for
                 // anything and no command is appended
                 String locator = command.getLocator().replace("\\", "\\\\");
@@ -469,7 +469,7 @@ public class TestConverter {
                 builder.appendCode("cmd.setFile(\"" + value + "\");\n");
                 builder.appendCode("System.out.println(\"Start test " + value
                         + "\");");
-            } else if (command.getCmd().equalsIgnoreCase("showTooltip")) {
+            } else if ("showTooltip".equalsIgnoreCase(command.getCmd())) {
                 // Special case only because of pause afterwards..
                 // TODO Change to default command and add pause later on
                 String locator = command.getLocator();
@@ -477,7 +477,7 @@ public class TestConverter {
 
                 builder.appendCommand(command.getCmd(), locator, value);
                 builder.appendPause("700");
-            } else if (command.getCmd().equalsIgnoreCase("includeTest")) {
+            } else if ("includeTest".equalsIgnoreCase(command.getCmd())) {
                 // Loads another test, parses the commands, converts tests and
                 // adds result to this TestCase
                 String value = command.getValue().replace("\\", "\\\\");
@@ -490,10 +490,13 @@ public class TestConverter {
                 } else {
                     includeTest(builder, value);
                 }
-            } else if (command.getCmd().equals("open")) {
+            } else if ("open".equals(command.getCmd())) {
                 // Special case because we need to try open several times in IE6
                 // sometimes..
                 builder.appendOpen(command);
+            } else if ("upload".equals(command.getCmd())) {
+                // rewrite to an uploadFile command.
+                builder.appendUpload(command, filePath);
             } else {
                 // Default way to handle commands
                 builder.appendCommand(command);

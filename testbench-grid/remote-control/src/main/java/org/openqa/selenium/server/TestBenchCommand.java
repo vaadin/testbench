@@ -52,6 +52,16 @@ public enum TestBenchCommand {
     getCanvasSize,
 
     /**
+     * Sends a file that is to be passed to an Upload input field.
+     * 
+     * Parameters:<br>
+     * - The fieldLocator (locator of the upload input field)<br>
+     * - The name of the file<br>
+     * - The base64 encoded file data
+     */
+    uploadFile,
+
+    /**
      * An empty command. Used instead of passing nulls here and there.
      */
     none;
