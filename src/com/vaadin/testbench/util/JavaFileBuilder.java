@@ -318,32 +318,21 @@ public class JavaFileBuilder {
     }
 
     private String getTestMethodDefinitionEnd() {
-
-        // adding the softAssert so creating reference images throws a assert
-        // failure at end of test
-        String softAsserts = "if(!getSoftErrors().isEmpty()){\n"
-                + "handleSoftErrors();\n" + "}\n";
-        // if screenshot.onfail defined add try{ }catch( ){ }
-        if (!Parameters.isCaptureScreenshotOnFailure()) {
-            softAsserts = "}catch(Throwable e){\nthrow new java.lang.AssertionError(cmd.getInfo() + \"\\n Message: \" + e.getMessage());\n}\n"
-                    + softAsserts;
-        } else {
-            hasScreenshots = true;
-            softAsserts = "}catch(Throwable e){\n"
-                    + "createFailureScreenshot(\""
-                    + testName
-                    + "\");\n"
-                    + "throw new java.lang.AssertionError(cmd.getInfo() + \"\\n Message: \" + e.getMessage());\n}\n"
-                    + softAsserts;
-        }
         String footer = TEST_METHOD_DEFINITION_END;
         footer = footer.replace("{testName}", testName);
 
-        if (hasScreenshots) {
-            return softAsserts + footer;
+        String catchClause = "}catch(Throwable e){\n";
+        if (Parameters.isCaptureScreenshotOnFailure()) {
+            hasScreenshots = true;
+            catchClause += "createFailureScreenshot(\"" + testName + "\");\n";
         }
-        return "}catch(Throwable e){\nthrow new java.lang.AssertionError(cmd.getInfo() + \". Failure message = \" + e.getMessage());\n}\n"
-                + footer;
+        catchClause += "throw new java.lang.AssertionError(cmd.getInfo() + \"\\n Message: \" + e.getMessage());\n}\n";
+
+        // adding the softAssert so creating reference images throws a assert
+        // failure at end of test
+        String softAsserts = "handleSoftErrors();\n";
+
+        return catchClause + softAsserts + footer;
     }
 
     /**

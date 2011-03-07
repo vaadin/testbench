@@ -494,6 +494,9 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
     }
 
     public void handleSoftErrors() {
+        if (getSoftErrors().isEmpty()) {
+            return;
+        }
 
         StringBuilder message = new StringBuilder();
         byte[] errors = new byte[5];
