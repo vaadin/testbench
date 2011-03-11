@@ -30,7 +30,7 @@ public class GetRemoteControlNameCommand extends Command {
 
             try {
                 InetAddress localHost = InetAddress.getLocalHost();
-                hostName = localHost.getHostName();
+                hostName = localHost.getCanonicalHostName();
             } catch (UnknownHostException e) {
                 hostName = "???";
                 LOGGER.error("Could not determine host name or IP address", e);
