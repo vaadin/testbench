@@ -59,8 +59,10 @@ public class NewBrowserSessionCommand extends SeleneseCommand {
             sessionId = parseSessionId(response.body());
             if (null == sessionId) {
                 pool.release(remoteControl);
-                return new Response("Could not retrieve a new session: "
-                        + response.body());
+                return new Response(
+                        "Could not retrieve a new session from remote control running on "
+                                + remoteControl.hostName() + ": "
+                                + response.body());
             }
             pool.associateWithSession(remoteControl, sessionId);
             pool.updateSessionLastActiveAt(sessionId);
