@@ -62,7 +62,7 @@ LocatorBuilders.prototype.buildAll = function(e) {
 	var locator;
     var locators = [];
 	this.log.debug("getLocator for element " + e);
-	
+
 	for (var i = 0; i < LocatorBuilders.order.length; i++) {
 		var finderName = LocatorBuilders.order[i];
 		this.log.debug("trying " + finderName);
@@ -78,11 +78,16 @@ LocatorBuilders.prototype.buildAll = function(e) {
                 //alert(PageBot.prototype.locateElementByUIElement);
                 var is_fuzzy_match = this.pageBot().locationStrategies[finderName].is_fuzzy_match;
                 if (is_fuzzy_match) {
+                	if ("unwrap" in XPCNativeWrapper) {
+                		e = XPCNativeWrapper.unwrap(e);
+                	}else if (e.wrappedJSObject) {
+                		e = e.wrappedJSObject;
+                    }
+                	
                     if (is_fuzzy_match(this.findElement(locator), e)) {
                         locators.push([ locator, finderName ]);
                     }
-                }
-                else {
+                } else {
                     if (e == this.findElement(locator)) {
                         locators.push([ locator, finderName ]);
                     }
@@ -95,6 +100,7 @@ LocatorBuilders.prototype.buildAll = function(e) {
             }
 		}
 	}
+	
     return locators;
 }
 
