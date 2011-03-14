@@ -42,7 +42,7 @@ function getVaadinConnector(wnd) {
 	try {
     	if ("unwrap" in XPCNativeWrapper) {
     		target = XPCNativeWrapper.unwrap(target);
-    	}else if (e.wrappedJSObject) {
+    	}else if (target.wrappedJSObject) {
     		target = target.wrappedJSObject;
         }
     	
