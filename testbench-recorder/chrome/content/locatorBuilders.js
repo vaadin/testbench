@@ -78,12 +78,6 @@ LocatorBuilders.prototype.buildAll = function(e) {
                 //alert(PageBot.prototype.locateElementByUIElement);
                 var is_fuzzy_match = this.pageBot().locationStrategies[finderName].is_fuzzy_match;
                 if (is_fuzzy_match) {
-                	if ("unwrap" in XPCNativeWrapper) {
-                		e = XPCNativeWrapper.unwrap(e);
-                	}else if (e.wrappedJSObject) {
-                		e = e.wrappedJSObject;
-                    }
-                	
                     if (is_fuzzy_match(this.findElement(locator), e)) {
                         locators.push([ locator, finderName ]);
                     }

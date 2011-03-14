@@ -40,6 +40,13 @@ function getVaadinConnector(wnd) {
 
 @bot@.prototype.locateElementByVaadin.is_fuzzy_match = function(node, target) {
 	try {
+    	if ("unwrap" in XPCNativeWrapper) {
+    		target = XPCNativeWrapper.unwrap(target);
+    	}else if (e.wrappedJSObject) {
+    		target = target.wrappedJSObject;
+        }
+    	
+
         var isMatch = (node == target) || is_ancestor(node, target);
         return isMatch;
     }
