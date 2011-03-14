@@ -82,6 +82,9 @@ AutoCompleteResult.prototype = {
 	},
 	removeValueAt: function(rowIndex, removeFromDb) {
 	},
+	getLabelAt: function(index) { 
+		return this.result[index][0]; 
+	},
     QueryInterface: function (uuid) {
 		if (uuid.equals(Components.interfaces.nsIAutoCompleteResult) ||
 			uuid.equals(Components.interfaces.nsISupports)) {
