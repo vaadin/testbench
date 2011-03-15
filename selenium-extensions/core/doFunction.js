@@ -128,6 +128,8 @@ Selenium.prototype.doPressSpecialKey = function(locator, value){
 		value="\\32";
 	}else if((new RegExp("tab")).test(value.toLowerCase())){
 		value="\\9";
+	}else{
+		value = value.substr(value.lastIndexOf(" ")+1);
 	}
 	var element = this.browserbot.findElement(locator);
 	triggerSpecialKeyEvent(element, 'keydown', value, true, ctrl, alt, shift, this.browserbot.metaKeyDown);
