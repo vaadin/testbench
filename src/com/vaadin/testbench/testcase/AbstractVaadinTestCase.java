@@ -68,7 +68,8 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
     public String doCommand(String cmd, String[] params) {
         String result = testBase.doCommand(cmd, params);
 
-        if (!cmd.equals("close") && !cmd.equals("expectDialog")) {
+        if (!cmd.equals("close") && !cmd.equals("expectDialog")
+                && !cmd.equals("getRemoteControlName")) {
             waitForVaadin();
         }
 
