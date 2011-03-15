@@ -93,7 +93,7 @@ public class SeleniumDriverResourceHandler extends ResourceHandler {
     private final StringBuffer logMessagesBuffer = new StringBuffer();
 
     private BrowserLauncherFactory browserLauncherFactory = new BrowserLauncherFactory();
-    private final BrowserSessionFactory browserSessionFactory = new BrowserSessionFactory(
+    private final TestBenchBrowserSessionFactory browserSessionFactory = new TestBenchBrowserSessionFactory(
             browserLauncherFactory);
 
     public SeleniumDriverResourceHandler(SeleniumServer remoteControl) {
@@ -812,6 +812,12 @@ public class SeleniumDriverResourceHandler extends ResourceHandler {
             String startURL, String extensionJs,
             BrowserConfigurationOptions browserConfigurations)
             throws RemoteCommandException {
+        if (browserSessionFactory.hasActiveSessions()) {
+            LOGGER.warn("UH-OH! There are active sessions, which will "
+                    + "now be killed due to a new session request!");
+            browserSessionFactory.endAllBrowserSessions(remoteControl
+                    .getConfiguration());
+        }
         BrowserSessionInfo sessionInfo = browserSessionFactory
                 .getNewBrowserSession(browserString, startURL, extensionJs,
                         browserConfigurations, remoteControl.getConfiguration());
