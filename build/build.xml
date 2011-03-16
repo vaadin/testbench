@@ -47,7 +47,7 @@
 
     <!-- Manual -->
     <target name="manual" unless="run.no-manual">
-        <property name="manual.version" value="2.1"/>
+        <property name="manual.version" value="2.2"/>
         <property name="manual.basename" value="vaadin-testbench-manual-${manual.version}"/>
 
         <!-- Source and target files of the manual -->
