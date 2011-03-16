@@ -356,6 +356,15 @@ Selenium.prototype.doAssertCSSClass = function(locator, value){
     }
 };
 
+Selenium.prototype.doAssertCSSClassNotAvailable = function(locator, value){
+	var element = this.browserbot.findElement(locator);
+	var css = element.className;
+
+    if ((new RegExp(value)).test(css)) {
+        Assert.fail("Element has the " + value + " class.");
+    }
+};
+
 Selenium.prototype.doUploadFile = function(locator, value){
 	this.doType(locator, value);
 };

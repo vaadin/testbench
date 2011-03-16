@@ -1938,4 +1938,13 @@ image marking found differences. The browser canvas is cropped out of the taken 
 <comment>Asserts that the target element has the requested css class.</comment>
 
 </function>
+
+<function name="assertCSSClassNotAvailable">
+
+<param name="locator">an element locator</param>
+<param name="class">name of css class that shouldn't be available</param>
+
+<comment>Asserts that the target element doesn't have the requested css class.</comment>
+
+</function>
 </apidoc>
