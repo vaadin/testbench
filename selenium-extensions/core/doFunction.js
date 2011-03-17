@@ -356,7 +356,7 @@ Selenium.prototype.doAssertCSSClass = function(locator, value){
     }
 };
 
-Selenium.prototype.doAssertCSSClassNotAvailable = function(locator, value){
+Selenium.prototype.doAssertNotCSSClass = function(locator, value){
 	var element = this.browserbot.findElement(locator);
 	var css = element.className;
 

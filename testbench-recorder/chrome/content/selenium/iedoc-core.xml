@@ -1899,7 +1899,7 @@ image marking found differences. The browser canvas is cropped out of the taken 
 
 </function>
 
-<function name="assertCSSClassNotAvailable">
+<function name="assertNotCSSClass">
 
 <param name="locator">an element locator</param>
 <param name="class">name of css class that shouldn't be available</param>
