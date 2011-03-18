@@ -257,7 +257,16 @@ function triggerSpecialKeyEvent(element, eventType, keySequence, canBubble, cont
     if (element.fireEvent && element.ownerDocument && element.ownerDocument.createEventObject) { // IE
         var keyEvent = createEventObject(element, controlKeyDown, altKeyDown, shiftKeyDown, metaKeyDown);
         keyEvent.keyCode = keycode;
-        element.fireEvent('on' + eventType, keyEvent);
+        try {
+			element.fireEvent('on' + eventType, keyEvent);
+		} catch (e) {
+			if (e.number && e.number == -2147467259) {
+				// IE is most likely trying to tell us that the element was
+				// removed and the event could thus not be sent. We ignore this.
+			} else {
+				throw e;
+			}
+		}
     }
     else {
         var evt;
