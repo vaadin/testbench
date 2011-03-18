@@ -1,6 +1,7 @@
 package com.vaadin.testbench.commands;
 
 import java.awt.Rectangle;
+import java.awt.Robot;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -100,6 +101,7 @@ public class CompareScreenCommand extends Command {
     @Override
     public String execute() {
         try {
+
             if (grabAndCompareScreenshot()) {
                 return "OK," + numScreenShotsTaken;
             } else {
@@ -156,8 +158,10 @@ public class CompareScreenCommand extends Command {
 
     private BufferedImage grabScreenshot() throws InterruptedException,
             ExecutionException, TimeoutException {
-        return RobotRetriever.getRobot().createScreenCapture(
-                new Rectangle(canvasX, canvasY, canvasWidth, canvasHeight));
+        Robot robot = RobotRetriever.getRobot();
+        robot.mouseMove(0, 0);
+        return robot.createScreenCapture(new Rectangle(canvasX, canvasY,
+                canvasWidth, canvasHeight));
     }
 
 }
