@@ -812,7 +812,8 @@ public class SeleniumDriverResourceHandler extends ResourceHandler {
             String startURL, String extensionJs,
             BrowserConfigurationOptions browserConfigurations)
             throws RemoteCommandException {
-        if (browserSessionFactory.hasActiveSessions()) {
+        if (browserSessionFactory.hasActiveSessions()
+                && browserConfigurations.is("ensureCleanSession")) {
             LOGGER.warn("UH-OH! There are active sessions, which will "
                     + "now be killed due to a new session request!");
             browserSessionFactory.endAllBrowserSessions(remoteControl
