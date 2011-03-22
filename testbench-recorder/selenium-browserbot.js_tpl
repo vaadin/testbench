@@ -630,6 +630,11 @@ BrowserBot.prototype.modifyWindowToRecordPopUpDialogs = function(windowToModify,
             windowToModify.setTimeout(setOriginalRef, 0);
         }
     } else {
+    	if ("unwrap" in XPCNativeWrapper) {
+    		// Firefox4 won't call the newOpen method unless we unwrap the window (#6676)
+    		// Really needed for RC, so fixed also in selenium-server.jar
+	    	windowToModify = XPCNativeWrapper.unwrap(windowToModify);
+		}
         windowToModify.open = newOpen;
     }
 };
