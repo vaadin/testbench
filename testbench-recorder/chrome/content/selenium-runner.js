@@ -63,7 +63,13 @@ MozillaBrowserBot.prototype.modifyWindowToRecordPopUpDialogs = function(windowTo
     return BrowserBot.prototype.modifyWindowToRecordPopUpDialogs.call(this, windowToModify, browserBot);
 }
 
-Selenium.prototype.doPause = function(waitTime) {
+Selenium.prototype.doPause = function(waitTime, alternateWaitTime) {
+	if (waitTime == "" || !(waitTime >0))
+		waitTime = alternateWaitTime;
+	
+	if (waitTime == "" || !(waitTime > 0))
+		throw new SeleniumError("No delay specified for pause");
+	
     currentTest.pauseInterval = waitTime;
 };
 

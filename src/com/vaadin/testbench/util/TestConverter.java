@@ -423,9 +423,23 @@ public class TestConverter {
             } else if ("pause".equalsIgnoreCase(command.getCmd())) {
                 // Special case to ensure pause value is an integer
 
-                // For some weird Selenium compatible reason the value is stored
-                // as a locator...
-                builder.appendPause(command.getLocator());
+                // Value is either in the locator (Selenium compatibility) or in
+                // the value
+                int pause = 0;
+                try {
+                    pause = Integer.parseInt(command.getLocator());
+                } catch (NumberFormatException e) {
+                }
+                if (pause <= 0) {
+                    try {
+                        pause = Integer.parseInt(command.getValue());
+                    } catch (NumberFormatException e) {
+                    }
+                }
+                if (pause <= 0) {
+                    throw new RuntimeException("No delay given for pause");
+                }
+                builder.appendPause(String.valueOf(pause));
             } else if ("pressSpecialKey".equalsIgnoreCase(command.getCmd())) {
                 // Special case because keys are played back differently in
                 // different browsers.
