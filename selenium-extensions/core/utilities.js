@@ -132,8 +132,12 @@ function vaadin_testbench_getCanvasX() {
 
     // IE
     if (navigator.userAgent.indexOf("MSIE") != -1) {
-	    // FIXME: Canvas position given by IE is 2px off
-	    return win.screenLeft + 2;
+    	var left = win.screenLeft;
+    	if (navigator.userAgent.indexOf("Trident/5") == -1) {
+    		// Canvas position given by IE6-IE8 is 2px off
+    		left += 2;
+    	}
+	    return left;
     }
     var horizontalDecorations = win.outerWidth - win.innerWidth;
     return horizontalDecorations / 2 + win.screenX;
@@ -148,8 +152,12 @@ function vaadin_testbench_getCanvasX() {
  */
 function vaadin_testbench_getCanvasY(canvasHeight) {
     if (navigator.userAgent.indexOf("MSIE") != -1) {
-	    // FIXME: Canvas position given by IE is 2px off
-    	return selenium.browserbot.getUserWindow().screenTop + 2;
+    	var top = selenium.browserbot.getUserWindow().screenTop;
+    	if (navigator.userAgent.indexOf("Trident/5") == -1) {
+    		// Canvas position given by IE6-IE8 is 2px off
+    		top += 2;
+    	}
+    	return top;
     }
 
     // We need to guess a location that is within the canvas. The window
