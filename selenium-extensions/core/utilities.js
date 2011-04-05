@@ -82,7 +82,7 @@ function vaadin_testbench_calculateAndSetCanvasSize(width, height) {
 function vaadin_testbench_hideIEScrollBar() {
     // Hide main view scrollbar to get correct measurements in IE
     // (overflow=hidden)
-    if (navigator.userAgent.indexOf("MSIE") != -1) {
+    if (vaadin_testbench_isIE()) {
     	selenium.browserbot.getUserWindow().document.body.style.overflow='hidden';
     }
 }
@@ -130,17 +130,26 @@ function vaadin_testbench_getCanvasHeight() {
 function vaadin_testbench_getCanvasX() {
 	var win = selenium.browserbot.getUserWindow();
 
-    // IE
-    if (navigator.userAgent.indexOf("MSIE") != -1) {
+    if (vaadin_testbench_isIE()) {
     	var left = win.screenLeft;
-    	if (navigator.userAgent.indexOf("Trident/5") == -1) {
-    		// Canvas position given by IE6-IE8 is 2px off
-    		left += 2;
-    	}
+   		// Canvas position given by IE6-IE8 is 2px off due to using
+		// body.clientWidth/clientHeight and IE6-IE8 adds a two pixel
+		// gradient/shadow around the body
+    	// IE9 in compatibility mode adds the shadow but IE9 in native mode does
+		// not. Still we need to take the shadow into account here as we don't
+		// know if the application to be tested will be run in IE7/IE8 or IE9
+		// mode.
+    	// For IE9 in native mode the offset is removed in the screenshot
+		// command
+  		left += 2;
 	    return left;
     }
     var horizontalDecorations = win.outerWidth - win.innerWidth;
     return horizontalDecorations / 2 + win.screenX;
+}
+
+function vaadin_testbench_isIE() {
+	return (navigator.userAgent.indexOf("MSIE") != -1);
 }
 
 /**
@@ -151,12 +160,18 @@ function vaadin_testbench_getCanvasX() {
  * @return
  */
 function vaadin_testbench_getCanvasY(canvasHeight) {
-    if (navigator.userAgent.indexOf("MSIE") != -1) {
+    if (vaadin_testbench_isIE()) {
     	var top = selenium.browserbot.getUserWindow().screenTop;
-    	if (navigator.userAgent.indexOf("Trident/5") == -1) {
-    		// Canvas position given by IE6-IE8 is 2px off
-    		top += 2;
-    	}
+   		// Canvas position given by IE6-IE8 is 2px off due to using
+		// body.clientWidth/clientHeight and IE6-IE8 adds a two pixel
+		// gradient/shadow around the body
+    	// IE9 in compatibility mode adds the shadow but IE9 in native mode does
+		// not. Still we need to take the shadow into account here as we don't
+		// know if the application to be tested will be run in IE7/IE8 or IE9
+		// mode.
+    	// For IE9 in native mode the offset is removed in the screenshot
+		// command
+    	top += 2;
     	return top;
     }
 

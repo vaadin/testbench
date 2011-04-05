@@ -1,6 +1,5 @@
 package com.vaadin.testbench.util;
 
-
 /**
  * Class with browser dimensions
  * 
@@ -11,6 +10,14 @@ public class BrowserDimensions {
     private int screenHeight;
     private int canvasWidth;
     private int canvasHeight;
+    /**
+     * X position of the canvas. For IE9 in native mode this will be 2 pixel too
+     * large.
+     */
+    /**
+     * Y position of the canvas. For IE9 in native mode this will be 2 pixel too
+     * large.
+     */
     private int canvasXPosition;
     private int canvasYPosition;
 
