@@ -447,7 +447,7 @@ public class SeleniumDriverResourceHandler extends ResourceHandler {
             LOGGER.info("Test name: " + values.get(0));
             return "OK";
         case compareScreen:
-            return new CompareScreenCommand(values, sessionId).execute();
+            return new CompareScreenCommand(values).execute();
         case setCanvasSize:
             return new SetCanvasSizeCommand(values, sessionId).execute();
         case getCanvasSize:

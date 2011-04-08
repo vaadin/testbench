@@ -61,10 +61,7 @@ public class CompareScreenCommand extends Command {
 
     private int numScreenShotsTaken = 0;
 
-    private String sessionId;
-
-    public CompareScreenCommand(Vector<String> parameters, String sessionId) {
-        this.sessionId = sessionId;
+    public CompareScreenCommand(Vector<String> parameters) {
         parseBlockParameter(parameters.get(0));
         tolerance = Float.valueOf(parameters.get(1));
         maxRetries = Integer.valueOf(parameters.get(2));
@@ -161,28 +158,10 @@ public class CompareScreenCommand extends Command {
 
     private BufferedImage grabScreenshot() throws InterruptedException,
             ExecutionException, TimeoutException {
-        int x = canvasX;
-        int y = canvasY;
-
-        if (isIE9inNativeMode()) {
-            x -= 2;
-            y -= 2;
-        }
-
         Robot robot = RobotRetriever.getRobot();
         robot.mouseMove(0, 0);
-        return robot.createScreenCapture(new Rectangle(x, y, canvasWidth,
-                canvasHeight));
-    }
-
-    private boolean isIE9inNativeMode() {
-        String result = CommandUtil
-                .eval("navigator.userAgent.indexOf('MSIE') != -1 && window.document.documentMode && window.document.documentMode >= 9;",
-                        sessionId);
-        if ("OK,true".equals(result)) {
-            return true;
-        }
-        return false;
+        return robot.createScreenCapture(new Rectangle(canvasX, canvasY,
+                canvasWidth, canvasHeight));
     }
 
 }

@@ -21,6 +21,13 @@ function vaadin_testbench_calculateAndSetCanvasSize(width, height) {
 		vaadin_testbench_hideIEScrollBar();
 		innerWidth = body.clientWidth;
 		innerHeight = body.clientHeight;
+		if (vaadin_testbench_isIE9_in_compatibility_mode()) {
+			// IE9 runs in compatibility mode at startup and has the extra
+			// IE6-IE8 2px borders present which we want to exclude so the
+			// canvas will be correctly sized when we are in native mode.
+			innerWidth+=4;
+			innerHeight+=4;
+		}
 	}
 
 	win.resizeBy(width-innerWidth, height-innerHeight);
@@ -99,7 +106,15 @@ function vaadin_testbench_getCanvasWidth() {
     	return win.innerWidth;
     }
     if (win.document.body) {
-    	return win.document.body.clientWidth;
+    	var width = win.document.body.clientWidth;
+		if (vaadin_testbench_isIE9_in_compatibility_mode()) {
+			// IE9 runs in compatibility mode at startup and has the extra
+			// IE6-IE8 2px borders present which we want to exclude so the
+			// canvas will be correctly sized when we are in native mode.
+			width += 4;
+		}
+		
+		return width;
     }
     if (win.document.documentElement) {
     	return win.document.documentElement.clientWidth;
@@ -113,7 +128,15 @@ function vaadin_testbench_getCanvasHeight() {
     	return win.innerHeight;
     }
 	if (win.document.body.clientHeight) {
-		return win.document.body.clientHeight;
+    	var height = win.document.body.clientHeight;
+		if (vaadin_testbench_isIE9_in_compatibility_mode()) {
+			// IE9 runs in compatibility mode at startup and has the extra
+			// IE6-IE8 2px borders present which we want to exclude so the
+			// canvas will be correctly sized when we are in native mode.
+			height += 4;
+		}
+		
+		return height;
     }
 	if (win.document.documentElement.clientHeight) {
 		return win.document.documentElement.clientHeight;
@@ -135,14 +158,16 @@ function vaadin_testbench_getCanvasX() {
    		// Canvas position given by IE6-IE8 is 2px off due to using
 		// body.clientWidth/clientHeight and IE6-IE8 adds a two pixel
 		// gradient/shadow around the body
+    	if (vaadin_testbench_isIE8OrEarlier()) {
+    		left += 2;
+    	}
+    	
     	// IE9 in compatibility mode adds the shadow but IE9 in native mode does
-		// not. Still we need to take the shadow into account here as we don't
-		// know if the application to be tested will be run in IE7/IE8 or IE9
-		// mode.
-    	// For IE9 in native mode the offset is removed in the screenshot
-		// command
-  		left += 2;
-	    return left;
+		// not. This will result in the extra 2 pixel bordes appearing if
+		// running IE9 in compatibility mode. It cannot be taken into account
+		// here as we do not know whether we will run parts of the test in
+		// compatibility mode or not.
+    	return left;
     }
     var horizontalDecorations = win.outerWidth - win.innerWidth;
     return horizontalDecorations / 2 + win.screenX;
@@ -150,6 +175,18 @@ function vaadin_testbench_getCanvasX() {
 
 function vaadin_testbench_isIE() {
 	return (navigator.userAgent.indexOf("MSIE") != -1);
+}
+
+function vaadin_testbench_isIE8OrEarlier() {
+	return vaadin_testbench_isIE() && !vaadin_testbench_isIE9();
+}
+
+function vaadin_testbench_isIE9() {
+	return vaadin_testbench_isIE() && (navigator.userAgent.indexOf("Trident/5.") != -1);
+}
+
+function vaadin_testbench_isIE9_in_compatibility_mode() {
+	return vaadin_testbench_isIE() && (navigator.userAgent.indexOf("Trident/5.") != -1) && document.documentMode < 9;
 }
 
 /**
@@ -165,13 +202,15 @@ function vaadin_testbench_getCanvasY(canvasHeight) {
    		// Canvas position given by IE6-IE8 is 2px off due to using
 		// body.clientWidth/clientHeight and IE6-IE8 adds a two pixel
 		// gradient/shadow around the body
+    	if (vaadin_testbench_isIE8OrEarlier()) {
+    		top += 2;
+    	}
+
     	// IE9 in compatibility mode adds the shadow but IE9 in native mode does
-		// not. Still we need to take the shadow into account here as we don't
-		// know if the application to be tested will be run in IE7/IE8 or IE9
-		// mode.
-    	// For IE9 in native mode the offset is removed in the screenshot
-		// command
-    	top += 2;
+		// not. This will result in the extra 2 pixel bordes appearing if
+		// running IE9 in compatibility mode. It cannot be taken into account
+		// here as we do not know whether we will run parts of the test in
+		// compatibility mode or not.
     	return top;
     }
 
