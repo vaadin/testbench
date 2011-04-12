@@ -194,13 +194,20 @@ Recorder.addEventHandler('contextmenu', 'contextmenu', function(event) {
 });
 
 var charBuffer = "";
-var enterPressed = false;
+var skipType = false;
 var clearCharBuffer = false;
+
+var KEYCODE_ENTER = 13;
+var KEYCODE_LEFT = 37;
+var KEYCODE_RIGHT = 39;
+var KEYCODE_UP = 38;
+var KEYCODE_DOWN = 40;
+
 
 /* Checks keyCodes on keydown event and adds a pressSpecialKey if confirmed. */
 Recorder.addEventHandler('pressSpecialKey', 'keydown', function(event){
-		/* only record modifiers if arrow keys pressed */
-		if((event.keyCode >= 37 && event.keyCode <= 40) || event.charCode >= 32 || event.keyCode >= 32 || event.which >= 32){
+		/* only record modifiers if arrow key or character key pressed */
+		if(event.keyCode >= 32){
 			var target = "";
 			if (event.ctrlKey) {
 				target = target + "ctrl ";
@@ -220,49 +227,42 @@ Recorder.addEventHandler('pressSpecialKey', 'keydown', function(event){
 //			this.log.debug('pressed TAB');
 //			value =  "tab";
 //			break;
-		case 13:
+		case KEYCODE_ENTER:
 			this.log.debug('pressed ENTER!');
-			enterPressed = true;
+			skipType = true;
 			value = "enter";
 			break;
-		case 37: 
+		case KEYCODE_LEFT: 
 			this.log.debug('pressed LEFT!');
 			value = target + "left";
 			break;
-		case 39: 
+		case KEYCODE_RIGHT: 
 			this.log.debug('pressed RIGHT!');
 			value = target + "right";
 			break;
-		case 38: 
+		case KEYCODE_UP: 
 			this.log.debug('pressed UP!');
 			value = target + "up";
 			break;
-		case 40:
+		case KEYCODE_DOWN:
 			this.log.debug('pressed DOWN!');
 			value = target + "down";
 			break;
 		default:
-			if((event.ctrlKey || event.shiftKey || event.altKey) && event.charCode >= 32){
-				this.log.debug('Recording key ' + String.fromCharCode(event.charCode));
-				value = target + String.fromCharCode(event.charCode);
-				clearCharBuffer = true;
-			}else if((event.ctrlKey || event.shiftKey || event.altKey) && event.keyCode >= 32){
+			if((event.ctrlKey || event.shiftKey || event.altKey) && event.keyCode >= 32){
 				this.log.debug('Recording key ' + String.fromCharCode(event.keyCode));
 				value = target + String.fromCharCode(event.keyCode);
-				clearCharBuffer = true;
-			}else if((event.ctrlKey || event.shiftKey || event.altKey) && event.which >= 32){
-				this.log.debug('Recording key ' + String.fromCharCode(event.which));
-				value = target + String.fromCharCode(event.which);
-				clearCharBuffer = true;
 			}
 		}
 		
 		if(value != null){
 			if(charBuffer.length > 0){
 				this.record("enterCharacter", this.findLocators(event.target), charBuffer);
-				charBuffer = "";				
+				charBuffer = "";
+				skipType = true;
 			}
 			this.record("pressSpecialKey", this.findLocators(event.target), value);
+			clearCharBuffer = true;
 		}
 		
 	}, { capture: true });
@@ -306,8 +306,8 @@ Recorder.addEventHandler('type', 'change', function(event) {
 	if (('input' == tagName && ('text' == type || 'password' == type || 'file' == type)) ||
 		'textarea' == tagName) {
 
-		if(enterPressed){
-			enterPressed = false;
+		if(skipType){
+			skipType = false;
 			charBuffer = "";
 		} else if (charBuffer.length > 0){
 			charBuffer = "";
