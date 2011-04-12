@@ -207,9 +207,9 @@ var KEYCODE_SPACE = 32;
 
 /* Checks keyCodes on keydown event and adds a pressSpecialKey if confirmed. */
 Recorder.addEventHandler('pressSpecialKey', 'keydown', function(event){
+		var target = "";
 		/* only record modifiers if arrow key or character key pressed */
 		if(event.keyCode >= KEYCODE_SPACE){
-			var target = "";
 			if (event.ctrlKey) {
 				target = target + "ctrl ";
 			}
@@ -233,18 +233,15 @@ Recorder.addEventHandler('pressSpecialKey', 'keydown', function(event){
 			skipType = true;
 			value = "enter";
 			break;
-		case KEYCODE_SPACE:
-			value = target + "space";
-			break;
-		case KEYCODE_LEFT: 
+		case KEYCODE_LEFT:
 			this.log.debug('pressed LEFT!');
 			value = target + "left";
 			break;
-		case KEYCODE_RIGHT: 
+		case KEYCODE_RIGHT:
 			this.log.debug('pressed RIGHT!');
 			value = target + "right";
 			break;
-		case KEYCODE_UP: 
+		case KEYCODE_UP:
 			this.log.debug('pressed UP!');
 			value = target + "up";
 			break;
@@ -253,9 +250,13 @@ Recorder.addEventHandler('pressSpecialKey', 'keydown', function(event){
 			value = target + "down";
 			break;
 		default:
-			if((event.ctrlKey || event.shiftKey || event.altKey) && event.keyCode >= KEYCODE_SPACE){
+			if((event.ctrlKey || event.shiftKey || event.altKey) && event.keyCode > KEYCODE_SPACE){
 				this.log.debug('Recording key ' + String.fromCharCode(event.keyCode));
 				value = target + String.fromCharCode(event.keyCode);
+			} else if((event.ctrlKey || event.shiftKey || event.altKey) && event.keyCode == KEYCODE_SPACE){
+				/* Parsing requires 'space' instead of ' ' */
+				this.log.debug('Recording space');
+				value = target + "space";
 			}
 		}
 		
