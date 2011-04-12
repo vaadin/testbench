@@ -202,12 +202,13 @@ var KEYCODE_LEFT = 37;
 var KEYCODE_RIGHT = 39;
 var KEYCODE_UP = 38;
 var KEYCODE_DOWN = 40;
+var KEYCODE_SPACE = 32;
 
 
 /* Checks keyCodes on keydown event and adds a pressSpecialKey if confirmed. */
 Recorder.addEventHandler('pressSpecialKey', 'keydown', function(event){
 		/* only record modifiers if arrow key or character key pressed */
-		if(event.keyCode >= 32){
+		if(event.keyCode >= KEYCODE_SPACE){
 			var target = "";
 			if (event.ctrlKey) {
 				target = target + "ctrl ";
@@ -232,6 +233,9 @@ Recorder.addEventHandler('pressSpecialKey', 'keydown', function(event){
 			skipType = true;
 			value = "enter";
 			break;
+		case KEYCODE_SPACE:
+			value = target + "space";
+			break;
 		case KEYCODE_LEFT: 
 			this.log.debug('pressed LEFT!');
 			value = target + "left";
@@ -249,7 +253,7 @@ Recorder.addEventHandler('pressSpecialKey', 'keydown', function(event){
 			value = target + "down";
 			break;
 		default:
-			if((event.ctrlKey || event.shiftKey || event.altKey) && event.keyCode >= 32){
+			if((event.ctrlKey || event.shiftKey || event.altKey) && event.keyCode >= KEYCODE_SPACE){
 				this.log.debug('Recording key ' + String.fromCharCode(event.keyCode));
 				value = target + String.fromCharCode(event.keyCode);
 			}
@@ -270,13 +274,13 @@ Recorder.addEventHandler('pressSpecialKey', 'keydown', function(event){
 /* record all keypresses to character buffer */
 Recorder.addEventHandler('keyPressedDown', 'keypress', function(event){
 		/* only record character keys and skip special keys */
-		if(event.charCode >= 32){
+		if(event.charCode >= KEYCODE_SPACE){
 			this.log.debug('Typed key ' + String.fromCharCode(event.charCode));
 			charBuffer = charBuffer + String.fromCharCode(event.charCode);
-		}else if(event.keyCode >= 32){
+		}else if(event.keyCode >= KEYCODE_SPACE){
 			this.log.debug('Typed key ' + String.fromCharCode(event.keyCode));
 			charBuffer = charBuffer + String.fromCharCode(event.keyCode);
-		}else if(event.which >= 32){
+		}else if(event.which >= KEYCODE_SPACE){
 			this.log.debug('Typed key ' + String.fromCharCode(event.which));
 			charBuffer = charBuffer + String.fromCharCode(event.which);
 		}
