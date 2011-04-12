@@ -195,19 +195,20 @@ Recorder.addEventHandler('contextmenu', 'contextmenu', function(event) {
 
 var charBuffer = "";
 var enterPressed = false;
+var clearCharBuffer = false;
 
 /* Checks keyCodes on keydown event and adds a pressSpecialKey if confirmed. */
 Recorder.addEventHandler('pressSpecialKey', 'keydown', function(event){
 		/* only record modifiers if arrow keys pressed */
-		if(event.keyCode >= 37 && event.keyCode <= 40){
+		if((event.keyCode >= 37 && event.keyCode <= 40) || event.charCode >= 32 || event.keyCode >= 32 || event.which >= 32){
 			var target = "";
-			if(event.ctrlKey){
+			if (event.ctrlKey) {
 				target = target + "ctrl ";
 			}
-			if(event.shiftKey){
+			if (event.shiftKey) {
 				target = target + "shift ";
 			}
-			if (event.altKey){
+			if (event.altKey) {
 				target = target + "alt ";
 			}
 		}
@@ -239,6 +240,21 @@ Recorder.addEventHandler('pressSpecialKey', 'keydown', function(event){
 		case 40:
 			this.log.debug('pressed DOWN!');
 			value = target + "down";
+			break;
+		default:
+			if((event.ctrlKey || event.shiftKey || event.altKey) && event.charCode >= 32){
+				this.log.debug('Recording key ' + String.fromCharCode(event.charCode));
+				value = target + String.fromCharCode(event.charCode);
+				clearCharBuffer = true;
+			}else if((event.ctrlKey || event.shiftKey || event.altKey) && event.keyCode >= 32){
+				this.log.debug('Recording key ' + String.fromCharCode(event.keyCode));
+				value = target + String.fromCharCode(event.keyCode);
+				clearCharBuffer = true;
+			}else if((event.ctrlKey || event.shiftKey || event.altKey) && event.which >= 32){
+				this.log.debug('Recording key ' + String.fromCharCode(event.which));
+				value = target + String.fromCharCode(event.which);
+				clearCharBuffer = true;
+			}
 		}
 		
 		if(value != null){
@@ -259,7 +275,7 @@ Recorder.addEventHandler('keyPressedDown', 'keypress', function(event){
 			charBuffer = charBuffer + String.fromCharCode(event.charCode);
 		}else if(event.keyCode >= 32){
 			this.log.debug('Typed key ' + String.fromCharCode(event.keyCode));
-			charBuffer = charBuffer + fromKeyCode(event.keyCode);
+			charBuffer = charBuffer + String.fromCharCode(event.keyCode);
 		}else if(event.which >= 32){
 			this.log.debug('Typed key ' + String.fromCharCode(event.which));
 			charBuffer = charBuffer + String.fromCharCode(event.which);
@@ -272,6 +288,11 @@ Recorder.addEventHandler('keyPressedDown', 'keypress', function(event){
 			}else{
 				charBuffer = charBuffer.substring(0, charBuffer.length-1); 
 			}
+		}
+		/* Clear buffer due to modifierKey+character*/
+		if(clearCharBuffer){
+			charBuffer = "";
+			clearCharBuffer = false;
 		}
 	});
 
