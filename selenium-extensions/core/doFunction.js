@@ -114,6 +114,7 @@ Selenium.prototype.doPressSpecialKey = function(locator, value){
 	var shift = (new RegExp("shift")).test(value);
 	var ctrl = (new RegExp("ctrl")).test(value);
 	var alt = (new RegExp("alt")).test(value);
+	var meta = (new RegExp("meta")).test(value);
 	if((new RegExp("left")).test(value.toLowerCase())){
 		value="\\37";
 	}else if((new RegExp("right")).test(value.toLowerCase())){
@@ -132,9 +133,9 @@ Selenium.prototype.doPressSpecialKey = function(locator, value){
 		value = value.substr(value.lastIndexOf(" ")+1);
 	}
 	var element = this.browserbot.findElement(locator);
-	triggerSpecialKeyEvent(element, 'keydown', value, true, ctrl, alt, shift, this.browserbot.metaKeyDown);
-	triggerSpecialKeyEvent(element, 'keypress', value, true,ctrl, alt, shift, this.browserbot.metaKeyDown);
-	triggerSpecialKeyEvent(element, 'keyup', value, true, ctrl, alt, shift, this.browserbot.metaKeyDown);
+	triggerSpecialKeyEvent(element, 'keydown', value, true, ctrl, alt, shift, meta);
+	triggerSpecialKeyEvent(element, 'keypress', value, true,ctrl, alt, shift, meta);
+	triggerSpecialKeyEvent(element, 'keyup', value, true, ctrl, alt, shift, meta);
 };
 
 /*Simulates the correct mouse click events.*/

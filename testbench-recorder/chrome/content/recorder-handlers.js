@@ -203,7 +203,9 @@ var KEYCODE_RIGHT = 39;
 var KEYCODE_UP = 38;
 var KEYCODE_DOWN = 40;
 var KEYCODE_SPACE = 32;
-
+var KEYCODE_COMMAND = 224;
+var KEYCODE_LEFTSTART = 91;
+var KETCODE_RIGHTSTART = 92;
 
 /* Checks keyCodes on keydown event and adds a pressSpecialKey if confirmed. */
 Recorder.addEventHandler('pressSpecialKey', 'keydown', function(event){
@@ -218,6 +220,9 @@ Recorder.addEventHandler('pressSpecialKey', 'keydown', function(event){
 			}
 			if (event.altKey) {
 				target = target + "alt ";
+			}
+			if (event.metaKey) {
+				target = target + "meta ";
 			}
 		}
 		
@@ -250,10 +255,13 @@ Recorder.addEventHandler('pressSpecialKey', 'keydown', function(event){
 			value = target + "down";
 			break;
 		default:
-			if((event.ctrlKey || event.shiftKey || event.altKey) && event.keyCode > KEYCODE_SPACE){
+			if(event.keyCode == KEYCODE_COMMAND || event.keyCode == KEYCODE_LEFTSTART || event.keyCode == KETCODE_RIGHTSTART){
+				break;
+			}
+			if((event.ctrlKey || event.shiftKey || event.altKey || event.metaKey) && event.keyCode > KEYCODE_SPACE){
 				this.log.debug('Recording key ' + String.fromCharCode(event.keyCode));
 				value = target + String.fromCharCode(event.keyCode);
-			} else if((event.ctrlKey || event.shiftKey || event.altKey) && event.keyCode == KEYCODE_SPACE){
+			} else if((event.ctrlKey || event.shiftKey || event.altKey || event.metaKey) && event.keyCode == KEYCODE_SPACE){
 				/* Parsing requires 'space' instead of ' ' */
 				this.log.debug('Recording space');
 				value = target + "space";
