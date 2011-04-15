@@ -255,7 +255,8 @@ OptionLocatorFactory.prototype.OptionLocatorByLabel = function(label) {
 function triggerSpecialKeyEvent(element, eventType, keySequence, canBubble, controlKeyDown, altKeyDown, shiftKeyDown, metaKeyDown) {
     var keycode = getKeyCodeFromKeySequence(keySequence);
     canBubble = (typeof(canBubble) == undefined) ? true : canBubble;
-    if (element.fireEvent && element.ownerDocument && element.ownerDocument.createEventObject) { // IE
+    if (element.fireEvent && element.ownerDocument && element.ownerDocument.createEventObject && element.ownerDocument.createEvent === undefined) {
+    	// IE6-8
         var keyEvent = createEventObject(element, controlKeyDown, altKeyDown, shiftKeyDown, metaKeyDown);
         keyEvent.keyCode = keycode;
         try {
@@ -268,15 +269,14 @@ function triggerSpecialKeyEvent(element, eventType, keySequence, canBubble, cont
 				throw e;
 			}
 		}
-    }
-    else {
+    } else {
         var evt;
         if (window.KeyEvent) {
             evt = document.createEvent('KeyEvents');
             evt.initKeyEvent(eventType, true, true, window, controlKeyDown, altKeyDown, shiftKeyDown, metaKeyDown, keycode, "");
         } else {
-        	// WebKit based browsers
-      		evt = document.createEvent('Events');
+        	// WebKit based browsers and IE9
+      		evt = element.ownerDocument.createEvent('Events');
             
             evt.shiftKey = shiftKeyDown;
             evt.metaKey = metaKeyDown;
