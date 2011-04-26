@@ -2119,6 +2119,10 @@ IEBrowserBot.prototype._windowClosed = function(win) {
                 } else {
                     // this is probably one of those frame window situations
                     LOG.debug("IEBrowserBot.windowClosed: couldn't read win.document, assume closed: " + de.message + " (this.pageUnloading=" + this.pageUnloading + ")");
+		    		// IE9 Will fail here and be unloading the page on refresh. So just retry as a real close will be caught soon.
+				    if(this.pageUnloading == true){
+						return false;
+				    }
                     return true;
                 }
             }
