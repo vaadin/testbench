@@ -168,7 +168,7 @@ function getText(element) {
     var isRecentFirefox = (browserVersion.isFirefox && browserVersion.firefoxVersion >= "1.5");
     if (isRecentFirefox || browserVersion.isKonqueror || browserVersion.isSafari || browserVersion.isOpera) {
         text = getTextContent(element);
-    } else if (element.textContent) {
+    } else if (!browserVersion.isIE && element.textContent) {
         text = element.textContent;
     } else if (element.innerText) {
         text = element.innerText;
