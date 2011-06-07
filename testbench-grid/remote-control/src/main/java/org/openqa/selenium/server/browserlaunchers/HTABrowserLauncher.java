@@ -8,6 +8,9 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.commons.logging.Log;
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Project;
+import org.apache.tools.ant.taskdefs.Delete;
 import org.apache.tools.ant.util.FileUtils;
 import org.mortbay.log.LogFactory;
 import org.openqa.selenium.server.BrowserConfigurationOptions;
@@ -29,8 +32,9 @@ public class HTABrowserLauncher implements BrowserLauncher {
     private RemoteControlConfiguration configuration;
     private BrowserConfigurationOptions browserOptions;
 
-    public HTABrowserLauncher(BrowserConfigurationOptions browserOptions, RemoteControlConfiguration configuration,
-            String sessionId, String browserLaunchLocation) {
+    public HTABrowserLauncher(BrowserConfigurationOptions browserOptions,
+            RemoteControlConfiguration configuration, String sessionId,
+            String browserLaunchLocation) {
         if (browserLaunchLocation == null) {
             browserLaunchLocation = findHTALaunchLocation();
         }
@@ -43,7 +47,8 @@ public class HTABrowserLauncher implements BrowserLauncher {
     private static String findHTALaunchLocation() {
         String defaultPath = System.getProperty("mshtaDefaultPath");
         if (defaultPath == null) {
-            defaultPath = WindowsUtils.findSystemRoot() + "\\system32\\mshta.exe";
+            defaultPath = WindowsUtils.findSystemRoot()
+                    + "\\system32\\mshta.exe";
         }
         File defaultLocation = new File(defaultPath);
         if (defaultLocation.exists()) {
@@ -53,15 +58,46 @@ public class HTABrowserLauncher implements BrowserLauncher {
         if (mshtaEXE != null) {
             return mshtaEXE.getAbsolutePath();
         }
-        throw new RuntimeException("MSHTA.exe couldn't be found in the path!\n"
-                + "Please add the directory containing mshta.exe to your PATH environment\n"
-                + "variable, or explicitly specify a path to mshta.exe like this:\n" + "*mshta c:\\blah\\mshta.exe");
+        throw new RuntimeException(
+                "MSHTA.exe couldn't be found in the path!\n"
+                        + "Please add the directory containing mshta.exe to your PATH environment\n"
+                        + "variable, or explicitly specify a path to mshta.exe like this:\n"
+                        + "*mshta c:\\blah\\mshta.exe");
+    }
+
+    private static void deleteTemporaryInternetFiles() {
+        log.info("Removing temporary internet files...");
+
+        String cachePath = WindowsUtils
+                .readStringRegistryValue("HKEY_CURRENT_USER"
+                        + "\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders\\Cache");
+        File globalCacheDir = new File(cachePath);
+        File iexploreCacheDir = new File(globalCacheDir, "Content.IE5");
+        if (iexploreCacheDir.exists()) {
+            try {
+                recursivelyDeleteDir(iexploreCacheDir);
+            } catch (BuildException e) {
+            } // Errors are expected here; the index.dat file is undeletable
+        }
+    }
+
+    private static void recursivelyDeleteDir(File iexploreCacheDir) {
+        if (iexploreCacheDir == null || !iexploreCacheDir.exists()) {
+            return;
+        }
+
+        Delete delete = new Delete();
+        delete.setProject(new Project());
+        delete.setDir(iexploreCacheDir);
+        delete.setFailOnError(false);
+        delete.execute();
     }
 
     private void launch(String url, String htaName) {
 
         if (browserOptions.is("ensureCleanSession")) {
             CleanIE.cleanRunningIE();
+            deleteTemporaryInternetFiles();
         }
 
         String query = LauncherUtils.getQueryString(url);
@@ -70,8 +106,9 @@ public class HTABrowserLauncher implements BrowserLauncher {
         String hta = (new File(dir, "core/" + htaName)).getAbsolutePath();
         log.info("Launching Embedded Internet Explorer...");
         AsyncExecute exe = new AsyncExecute();
-        exe.setCommandline(new String[] { new InternetExplorerLocator().findBrowserLocationOrFail().launcherFilePath(),
-                "-Embedding" });
+        exe.setCommandline(new String[] {
+                new InternetExplorerLocator().findBrowserLocationOrFail()
+                        .launcherFilePath(), "-Embedding" });
         try {
             iexploreProcess = exe.asyncSpawn();
         } catch (IOException e) {
@@ -92,7 +129,8 @@ public class HTABrowserLauncher implements BrowserLauncher {
         File coreDir = new File(dir, "core");
         try {
             coreDir.mkdirs();
-            ResourceExtractor.extractResourcePath(HTABrowserLauncher.class, "/core", coreDir);
+            ResourceExtractor.extractResourcePath(HTABrowserLauncher.class,
+                    "/core", coreDir);
             FileUtils f = FileUtils.newFileUtils();
             File selRunnerSrc = new File(coreDir, "RemoteRunner.html");
             File selRunnerDest = new File(coreDir, "RemoteRunner.hta");
@@ -101,7 +139,8 @@ public class HTABrowserLauncher implements BrowserLauncher {
             // custom user-extensions
             File userExt = configuration.getUserExtensions();
             if (userExt != null) {
-                File selUserExt = new File(coreDir, "scripts/user-extensions.js");
+                File selUserExt = new File(coreDir,
+                        "scripts/user-extensions.js");
                 f.copyFile(userExt, selUserExt, null, true);
             }
             f.copyFile(selRunnerSrc, selRunnerDest);
@@ -137,8 +176,8 @@ public class HTABrowserLauncher implements BrowserLauncher {
     }
 
     public void launchHTMLSuite(String suiteUrl, String browserURL) {
-        launch(LauncherUtils
-                .getDefaultHTMLSuiteUrl(browserURL, suiteUrl, (!browserOptions.isSingleWindow()), getPort()),
+        launch(LauncherUtils.getDefaultHTMLSuiteUrl(browserURL, suiteUrl,
+                (!browserOptions.isSingleWindow()), getPort()),
                 "TestRunner.hta");
     }
 
@@ -151,7 +190,8 @@ public class HTABrowserLauncher implements BrowserLauncher {
      * configuration is not supported for IE
      */
     public void launchRemoteSession(String url) {
-        launch(LauncherUtils.getDefaultRemoteSessionUrl(url, sessionId, (!browserOptions.isSingleWindow()), getPort(),
+        launch(LauncherUtils.getDefaultRemoteSessionUrl(url, sessionId,
+                (!browserOptions.isSingleWindow()), getPort(),
                 browserOptions.is("browserSideLog")), "RemoteRunner.hta");
     }
 
