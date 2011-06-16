@@ -17,6 +17,20 @@ function getVaadinConnector(wnd) {
 	return connector;
 }
 
+/**
+ * Overriding window.open to fix Chrome 12 bug TODO Should be removed when
+ * chrome 12 is fixed.
+ */
+if(navigator.userAgent.toLowerCase().indexOf('chrome/12') > -1){
+  window.open_ = window.open;  
+  window.open = function(url, name, props) {          
+    var win = window.open_("",name,props);
+    win.opener = null;
+    win.document.location = url; 
+    return win;          
+  };  
+}
+
 @bot@.prototype.locateElementByVaadin = function(tkString, inDocument) {
 
 	var connector = getVaadinConnector(this.currentWindow);
@@ -36,7 +50,7 @@ function getVaadinConnector(wnd) {
 		LOG.error('an error occured when locating element for '+tkString+': ' + exception);
 	}
 	return null;
-}
+};
 
 @bot@.prototype.locateElementByVaadin.is_fuzzy_match = function(node, target) {
 	try {
@@ -53,4 +67,4 @@ function getVaadinConnector(wnd) {
     catch (e) {
         return false;
     }
-}
+};
