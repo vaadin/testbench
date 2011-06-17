@@ -1,3 +1,109 @@
+/**
+ * Overriding to fix IE9 native subwindow opening bug #6896
+ */
+BrowserBot.prototype.modifyWindowToRecordPopUpDialogs = function(
+		windowToModify, browserBot) {
+	var self = this;
+
+	windowToModify.seleniumAlert = windowToModify.alert;
+
+	windowToModify.alert = function(alert) {
+		browserBot.recordedAlerts.push(alert);
+		self.relayBotToRC.call(self, "browserbot.recordedAlerts");
+	};
+
+	windowToModify.confirm = function(message) {
+		browserBot.recordedConfirmations.push(message);
+		var result = browserBot.nextConfirmResult;
+		browserBot.nextConfirmResult = true;
+		self.relayBotToRC.call(self, "browserbot.recordedConfirmations");
+		return result;
+	};
+
+	windowToModify.prompt = function(message) {
+		browserBot.recordedPrompts.push(message);
+		var result = !browserBot.nextConfirmResult ? null
+				: browserBot.nextPromptResult;
+		browserBot.nextConfirmResult = true;
+		browserBot.nextPromptResult = '';
+		self.relayBotToRC.call(self, "browserbot.recordedPrompts");
+		return result;
+	};
+
+	// Keep a reference to all popup windows by name
+	// note that in IE the "windowName" argument must be a valid javascript
+	// identifier, it seems.
+	var originalOpen = windowToModify.open;
+	var originalOpenReference;
+	if (browserVersion.isHTA) {
+		originalOpenReference = 'selenium_originalOpen' + new Date().getTime();
+		windowToModify[originalOpenReference] = windowToModify.open;
+	}
+
+	var isHTA = browserVersion.isHTA;
+
+	var newOpen = function(url, windowName, windowFeatures, replaceFlag) {
+		var myOriginalOpen = originalOpen;
+
+		if (windowName == "" || windowName == "_blank") {
+			windowName = "selenium_blank" + Math.round(100000 * Math.random());
+			LOG
+					.warn("Opening window '_blank', which is not a real window name.  Randomizing target to be: "
+							+ windowName);
+		}
+
+		/**
+		 * This fixes the issues with subwindow opening in IE9. Instead of
+		 * directly calling myOriginal open we use the reference to call it.
+		 */
+		var openedWindow;
+		if (isHTA) {
+			openedWindow = windowToModify[originalOpenReference](url,
+					windowName, windowFeatures, replaceFlag);
+		} else {
+			openedWindow = myOriginalOpen(url, windowName, windowFeatures,
+					replaceFlag);
+		}
+
+		LOG.debug("window.open call intercepted; window ID (which you can use with selectWindow()) is \""
+						+ windowName + "\"");
+
+		if (windowName != null) {
+			openedWindow["seleniumWindowName"] = windowName;
+		}
+		selenium.browserbot.openedWindows[windowName] = openedWindow;
+		return openedWindow;
+	};
+
+	if (browserVersion.isHTA) {
+		originalOpenReference = 'selenium_originalOpen' + new Date().getTime();
+		newOpenReference = 'selenium_newOpen' + new Date().getTime();
+		var setOriginalRef = "this['" + originalOpenReference
+				+ "'] = this.open;";
+
+		if (windowToModify.eval) {
+			windowToModify.eval(setOriginalRef);
+			windowToModify.open = newOpen;
+		} else {
+			// DGF why can't I eval here? Seems like I'm querying the window at
+			// a bad time, maybe?
+			setOriginalRef += "this.open = this['" + newOpenReference + "'];";
+			windowToModify[newOpenReference] = newOpen;
+			windowToModify.setTimeout(setOriginalRef, 0);
+		}
+	} else {
+		if (typeof XPCNativeWrapper != "undefined"
+				&& "unwrap" in XPCNativeWrapper) {
+			// Firefox4 won't call the newOpen method unless we unwrap the
+			// window (#6676)
+			// Really needed for RC, so fixed also in selenium-server.jar
+			windowToModify = XPCNativeWrapper.unwrap(windowToModify);
+		}
+		windowToModify.open = newOpen;
+	}
+};
+
+
 Selenium.prototype.doWaitForVaadin = function(locator, value) {
 
 	// max time to wait for toolkit to settle
