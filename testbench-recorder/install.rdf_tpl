@@ -7,7 +7,7 @@
     <em:id>testbenchrecorder@vaadin.com</em:id>
     <em:name>Vaadin TestBench Recorder</em:name>
     <em:description>Record, edit and play tests</em:description>
-    <em:creator>IT Mill Ltd</em:creator>
+    <em:creator>Vaadin Ltd</em:creator>
     <em:version>@build@</em:version>
     <em:homepageURL>http://vaadin.com/testbench</em:homepageURL>
     <em:optionsURL>chrome://testbench-recorder/content/optionsDialog.xul</em:optionsURL>
