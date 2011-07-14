@@ -3,7 +3,7 @@
 <project name="TestBench build" basedir="." default="testbench-distribution-package">
 	<tstamp />
 	<property name="timestamp" value="${DSTAMP}${TSTAMP}" />
-	<property name="version" value="2.2.3.development.${timestamp}" />
+	<property name="version" value="2.3.0.development.${timestamp}" />
 	<property name="output.dir" value="result/package" />
 	<!-- Add this property to exlude TestBenchRunner from build -->
 	<property name="exclude.runner" value="true" />
@@ -47,7 +47,7 @@
 
     <!-- Manual -->
     <target name="manual" unless="run.no-manual">
-        <property name="manual.version" value="2.2"/>
+        <property name="manual.version" value="2.3"/>
         <property name="manual.basename" value="vaadin-testbench-manual-${manual.version}"/>
 
         <!-- Source and target files of the manual -->
