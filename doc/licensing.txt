@@ -1,0 +1,19 @@
+
+= LICENSING =
+
+This Add-on component ("Software") to Vaadin Framework is distributed
+under the terms of Commercial Vaadin Add-On License version 2.0
+("CVALv2") included as license-cval-2.0.txt in this software package.
+
+You must either accept the terms of the above mentioned license agreement
+or delete the Software immediately. 
+
+
+= Included software components =
+
+The Vaadin TestBench contains parts of Selenium and Selenium Grid
+(http://seleniumhq.org), which are under the Apache License 2.0 (full
+license text is available at http://www.apache.org/licenses/LICENSE-2.0).
+
+All modifications by Vaadin Ltd in the Vaadin TestBench to files from
+those projects are under CVALv2.

@@ -149,6 +149,8 @@
 			<!-- Add documentation -->
 			<zipfileset dir="../doc" prefix="${package.root}/documentation">
 				<include name="*.pdf" />
+				<include name="license*.txt" />
+				<include name="licensing.txt" />
 				<exclude name="TestBenchRunner*.pdf" if="exclude.runner" />
 			</zipfileset>
 			<zipfileset dir="result" prefix="${package.root}/documentation">
