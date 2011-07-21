@@ -16,8 +16,8 @@ public class ImageComparisonUtil {
      * @return the block representation of the image
      */
     public static int[] generateImageBlocks(BufferedImage image) {
-        int xBlocks = (int) Math.floor(image.getWidth() / 16) + 1;
-        int yBlocks = (int) Math.floor(image.getHeight() / 16) + 1;
+        int xBlocks = ImageUtil.getBlocks(image.getWidth());
+        int yBlocks = ImageUtil.getBlocks(image.getHeight());
 
         BufferedImage scaledImage = new BufferedImage(xBlocks, yBlocks,
                 BufferedImage.TYPE_INT_RGB);
