@@ -123,11 +123,11 @@ public class JavaFileBuilder {
         return string;
     }
 
-    public void appendScreenshot(double errorTolerance, String imageIdentifier) {
+    public void appendScreenshot(String imageIdentifier) {
         appendCommandInfo("screenCapture", "", imageIdentifier);
         testMethodSource.append("validateScreenshot(");
         testMethodSource.append(quotedSafeParameterString(testName));
-        testMethodSource.append(", " + errorTolerance + ", ");
+        testMethodSource.append(", ");
         testMethodSource
                 .append(quotedSafeParameterString(replaceParameters(imageIdentifier)));
         testMethodSource.append(");\n\n");

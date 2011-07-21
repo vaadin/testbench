@@ -76,6 +76,11 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
         return result;
     }
 
+    public boolean validateScreenshot(String fileId, String identifier) {
+        return validateScreenshot(fileId,
+                Parameters.getScreenshotComparisonTolerance(), identifier);
+    }
+
     /**
      * Capture a screenshot of only the browser canvas and save to saveName.
      * Compare captured screenshot to reference screenshot.
@@ -198,7 +203,7 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
 
     protected void getReferenceImage(String fileName) {
         ImageData data = new ImageData(fileName,
-                getBrowserAndCanvasDimensions());
+                getBrowserAndCanvasDimensions(), 0);
 
         data.generateBaseDirectory();
 

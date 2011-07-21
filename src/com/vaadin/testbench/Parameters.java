@@ -69,13 +69,26 @@ public class Parameters {
         return System.getProperty(SCREENSHOT_RESOLUTION);
     }
 
-    public static Double getScreenshotComparisonTolerance() {
+    /**
+     * Returns user defined tolerance to use for screenshots or the default
+     * tolerance.
+     * 
+     * @return
+     */
+    public static double getScreenshotComparisonTolerance() {
         String p = System.getProperty(SCREENSHOT_COMPARISON_TOLERANCE);
+        double tolerance = 0.025;
         if (p != null) {
-            return Double.parseDouble(p);
+            tolerance = Double.parseDouble(p);
+
+            // Check that [difference] value inside allowed range.
+            // if false set [difference] to default value.
+            if (tolerance < 0 || tolerance > 1) {
+                tolerance = 0.025;
+            }
         }
 
-        return null;
+        return tolerance;
     }
 
     public static boolean isCaptureScreenshotOnFailure() {

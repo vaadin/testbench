@@ -419,7 +419,7 @@ public class TestConverter {
                     firstScreenshot = false;
                 }
 
-                builder.appendScreenshot(0.025, imageId);
+                builder.appendScreenshot(imageId);
             } else if ("pause".equalsIgnoreCase(command.getCmd())) {
                 // Special case to ensure pause value is an integer
 

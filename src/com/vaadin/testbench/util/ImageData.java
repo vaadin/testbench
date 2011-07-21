@@ -24,7 +24,7 @@ public class ImageData {
     private String errorDirectory = null;
 
     private int cursorX, cursorY;
-    private double difference = 0.025;
+    private double difference;
 
     private BrowserDimensions dimensions = null;
 
@@ -36,20 +36,11 @@ public class ImageData {
     private ArrayList<BufferedImage> referenceImages;
 
     // Constructors
-    public ImageData(String fileName, BrowserDimensions dimensions) {
+    public ImageData(String fileName, BrowserDimensions dimensions,
+            double difference) {
         this.fileName = fileName;
         this.dimensions = dimensions;
-
-        setDifference();
-    }
-
-    public ImageData(String originalImage, String fileName,
-            BrowserDimensions dimensions) {
-        this.originalImage = originalImage;
-        this.fileName = fileName;
-        this.dimensions = dimensions;
-
-        setDifference();
+        this.difference = difference;
     }
 
     public ImageData(String originalImage, String fileName,
@@ -58,21 +49,6 @@ public class ImageData {
         this.fileName = fileName;
         this.dimensions = dimensions;
         this.difference = difference;
-
-        setDifference();
-    }
-
-    // Functions
-    private void setDifference() {
-        if (Parameters.getScreenshotComparisonTolerance() != null) {
-            difference = Parameters.getScreenshotComparisonTolerance();
-        }
-
-        // Check that [difference] value inside allowed range.
-        // if false set [difference] to default value.
-        if (difference < 0 || difference > 1) {
-            difference = 0.025;
-        }
     }
 
     /**
