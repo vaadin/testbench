@@ -3,6 +3,7 @@ package com.vaadin.testbench.util;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
@@ -126,7 +127,23 @@ public class ImageFileUtil {
     }
 
     public static File getReferenceScreenshotFile(String referenceImageFileName) {
-        return new File(getScreenshotReferenceDirectory() + referenceImageFileName);
+        return new File(getScreenshotReferenceDirectory()
+                + referenceImageFileName);
     }
 
+    public static Iterable<BufferedImage> getReferenceImages(
+            String referenceImageFileName) throws IOException {
+        ArrayList<BufferedImage> referenceImages = new ArrayList<BufferedImage>();
+        String nextName = referenceImageFileName;
+        File file = ImageFileUtil.getReferenceScreenshotFile(nextName);
+        int i = 1;
+        while (file.exists()) {
+            referenceImages.add(ImageIO.read(file));
+            nextName = referenceImageFileName.replace(".png",
+                    String.format("_%d.png", i++));
+            file = ImageFileUtil.getReferenceScreenshotFile(nextName);
+        }
+
+        return referenceImages;
+    }
 }

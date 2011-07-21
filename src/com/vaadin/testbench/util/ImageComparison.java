@@ -4,11 +4,9 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
-import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
@@ -194,29 +192,6 @@ public class ImageComparison {
             }
         }
         return result;
-    }
-
-    private void debug(ImageData imageData) {
-        if (Parameters.isDebug() && imageData.getImageErrors().length() >= 0) {
-            String fileId = imageData.getReferenceImageFileName().substring(0,
-                    imageData.getReferenceImageFileName().lastIndexOf('.'));
-            // Write error macroblocks data to log file
-            BufferedWriter out;
-            try {
-                out = new BufferedWriter(new FileWriter(
-                        ImageFileUtil.getScreenshotErrorDirectory()
-                                + File.separator + "logs" + File.separator
-                                + fileId + ".log"));
-
-                out.write("Exceptions for " + fileId + NEW_LINE + NEW_LINE);
-                out.write(imageData.getImageErrors().toString());
-                out.flush();
-                out.close();
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
     }
 
     private boolean compareImage(boolean[][] falseBlocks,
@@ -635,9 +610,8 @@ public class ImageComparison {
                 directory = directory + File.separator;
             }
 
-            PrintWriter writer = new PrintWriter(new File(directory
-                    + ImageData.ERROR_DIRECTORY + File.separator + fileId
-                    + ".html"));
+            PrintWriter writer = new PrintWriter(
+                    ImageFileUtil.getErrorScreenshotFile(fileId + ".html"));
             // Write head
             writer.println("<html>");
             writer.println("<head>");
@@ -706,15 +680,14 @@ public class ImageComparison {
         }
     }
 
-    public String generateBlocksFromReferenceFile(String referenceFileName) {
+    public String generateBlocksFromReferenceFiles(String referenceFileId) {
         ImageFileUtil.createScreenshotDirectoriesIfNeeded();
 
-        ImageData image = new ImageData(referenceFileName, null, 0);
-
         try {
-            image.generateReferenceImages();
+            Iterable<BufferedImage> referenceImages = ImageFileUtil
+                    .getReferenceImages(referenceFileId + ".png");
             ReferenceImageRepresentation ref = new ReferenceImageRepresentation();
-            for (BufferedImage referenceImage : image.getReferenceImages()) {
+            for (BufferedImage referenceImage : referenceImages) {
                 ref.addRepresentation(ImageComparisonUtil
                         .generateImageBlocks(referenceImage));
             }
