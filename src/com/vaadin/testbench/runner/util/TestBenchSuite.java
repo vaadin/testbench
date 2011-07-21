@@ -304,8 +304,9 @@ public class TestBenchSuite {
             // Remove browser name from test
             if (test.toString().contains(
                     browser.replaceAll("[^a-zA-Z0-9]", "_"))) {
-                test = test.substring(0, test.indexOf(browser.replaceAll(
-                        "[^a-zA-Z0-9]", "_")) - 1);
+                test = test
+                        .substring(0, test.indexOf(browser.replaceAll(
+                                "[^a-zA-Z0-9]", "_")) - 1);
             }
             suiteTests[i++] = test;
         }

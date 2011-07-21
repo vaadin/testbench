@@ -58,8 +58,8 @@ public class ParserFunctions {
             testSuite = new File(path + file);
             if (!testSuite.exists()) {
                 // If not found do a small search for file
-                testSuite = getFile(testSuite.getName(), testSuite
-                        .getParentFile(), 0);
+                testSuite = getFile(testSuite.getName(),
+                        testSuite.getParentFile(), 0);
             }
         }
 
@@ -95,9 +95,9 @@ public class ParserFunctions {
 
         // Check given path if found in xml file
         if (result.getPath() != null
-                && getFile(tests.get(0), new File(testSuite.getParentFile()
-                        .getAbsolutePath()
-                        + File.separator + result.getPath()), 0) == null) {
+                && getFile(tests.get(0),
+                        new File(testSuite.getParentFile().getAbsolutePath()
+                                + File.separator + result.getPath()), 0) == null) {
             System.err.println("Path definition in " + file
                     + " seems to be faulty.\nIgnoring given path "
                     + result.getPath());
@@ -113,20 +113,18 @@ public class ParserFunctions {
                     testFile = new File(testSuite.getParentFile()
                             .getAbsolutePath()
                             + File.separator
-                            + result.getPath()
-                            + File.separator + test);
+                            + result.getPath() + File.separator + test);
                 } else {
                     testFile = new File(testSuite.getParentFile()
-                            .getAbsolutePath()
-                            + File.separator + test);
+                            .getAbsolutePath() + File.separator + test);
                 }
                 if (!testFile.exists()) {
                     System.out.println("Resorting to search in suite "
                             + testSuite.getName() + " for "
                             + testFile.getName());
                     // If not found do a small search for file
-                    testFile = getFile(testFile.getName(), testFile
-                            .getParentFile(), 0);
+                    testFile = getFile(testFile.getName(),
+                            testFile.getParentFile(), 0);
                 }
             }
 
@@ -167,8 +165,8 @@ public class ParserFunctions {
             testSuite = new File(path + file);
             if (!testSuite.exists()) {
                 // If not found do a small search for file
-                testSuite = getFile(testSuite.getName(), testSuite
-                        .getParentFile(), 0);
+                testSuite = getFile(testSuite.getName(),
+                        testSuite.getParentFile(), 0);
             }
         }
 
@@ -185,8 +183,8 @@ public class ParserFunctions {
             while ((line = in.readLine()) != null) {
                 if (line.contains("a href=\"")) {
                     // Get file name and path
-                    line = line.substring(line.indexOf("\"") + 1, line
-                            .lastIndexOf("\""));
+                    line = line.substring(line.indexOf("\"") + 1,
+                            line.lastIndexOf("\""));
                     // check that .html file
                     if (!line.contains(".html")) {
                         System.err
@@ -197,15 +195,14 @@ public class ParserFunctions {
                     File testFile = new File(line);
                     if (!testFile.exists()) {
                         testFile = new File(testSuite.getParentFile()
-                                .getAbsolutePath()
-                                + File.separator + line);
+                                .getAbsolutePath() + File.separator + line);
                         if (!testFile.exists()) {
                             System.out.println("Resorting to search in suite "
                                     + testSuite.getName() + " for "
                                     + testFile.getName());
                             // If not found do a small search for file
-                            testFile = getFile(testFile.getName(), testFile
-                                    .getParentFile(), 0);
+                            testFile = getFile(testFile.getName(),
+                                    testFile.getParentFile(), 0);
                         }
                     }
 
@@ -217,8 +214,8 @@ public class ParserFunctions {
                     // add test to list
                     tests.add(testFile.getAbsolutePath());
                 } else if (line.contains("<b>")) {
-                    line = line.substring(line.indexOf("<b>") + 3, line
-                            .lastIndexOf("</b>"));
+                    line = line.substring(line.indexOf("<b>") + 3,
+                            line.lastIndexOf("</b>"));
                     result.setTestName(line);
                 }
             }
@@ -328,14 +325,10 @@ public class ParserFunctions {
 
     private static void writeHeader(Writer out, String name) throws Exception {
         out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-        out
-                .write("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n");
-        out
-                .write("<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">\n");
-        out
-                .write("<head profile=\"http://selenium-ide.openqa.org/profiles/test-case\">\n");
-        out
-                .write("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\n");
+        out.write("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n");
+        out.write("<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">\n");
+        out.write("<head profile=\"http://selenium-ide.openqa.org/profiles/test-case\">\n");
+        out.write("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\n");
         out.write("<link rel=\"selenium.base\" href=\"\" />\n");
         out.write("<title>" + name + "</title>\n");
         out.write("</head>\n");

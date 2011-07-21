@@ -17,19 +17,19 @@ public class DirectoryTestConverter {
 
     }
 
-    private static void convertTests(File[] listFiles,
-            String[] fakeArgs) throws Exception {
+    private static void convertTests(File[] listFiles, String[] fakeArgs)
+            throws Exception {
         for (File file2 : listFiles) {
-            if(file2.isDirectory()) {
+            if (file2.isDirectory()) {
                 convertTests(file2.listFiles(), fakeArgs);
             } else if (file2.getName().endsWith(".html")) {
                 String path = file2.getPath();
-                fakeArgs[fakeArgs.length -1] = path;
+                fakeArgs[fakeArgs.length - 1] = path;
                 try {
-                	TestConverter.main(fakeArgs);
+                    TestConverter.main(fakeArgs);
                 } catch (Exception e) {
-					// TODO: handle exception
-				}
+                    // TODO: handle exception
+                }
             }
         }
     }

@@ -50,11 +50,13 @@ public class ParameterUtil {
 
         if (Parameters.hasParameterFile()) {
             try {
-                FileInputStream in = new FileInputStream(Parameters.getParameterFile());
+                FileInputStream in = new FileInputStream(
+                        Parameters.getParameterFile());
                 properties.load(in);
                 in.close();
             } catch (IOException ioe) {
-                throw new FileNotFoundException("Properties file " + Parameters.getParameterFile() + " was not found");
+                throw new FileNotFoundException("Properties file "
+                        + Parameters.getParameterFile() + " was not found");
             }
 
             getEnviromentProperties();
@@ -65,12 +67,14 @@ public class ParameterUtil {
         File properties = new File(Parameters.getParameterFile());
         File directory = new File(properties.getParent());
 
-        final String baseName = properties.getName().substring(0, properties.getName().indexOf("."));
+        final String baseName = properties.getName().substring(0,
+                properties.getName().indexOf("."));
 
         if (directory.isDirectory()) {
             FilenameFilter filter = new FilenameFilter() {
                 public boolean accept(File dir, String name) {
-                    return name.startsWith(baseName) && name.endsWith(".properties");
+                    return name.startsWith(baseName)
+                            && name.endsWith(".properties");
                 }
             };
             File[] files = directory.listFiles(filter);
@@ -92,7 +96,8 @@ public class ParameterUtil {
             prop.load(in);
             in.close();
 
-            String packageName = fileName.substring(fileName.indexOf("_") + 1, fileName.lastIndexOf("."));
+            String packageName = fileName.substring(fileName.indexOf("_") + 1,
+                    fileName.lastIndexOf("."));
 
             properties_map.put(packageName, prop);
         } catch (IOException ioe) {
@@ -135,7 +140,8 @@ public class ParameterUtil {
         String parameterized = properties.getProperty(key, defaultValue);
 
         if (properties_map.containsKey(pack)) {
-            String packParameter = properties_map.get(pack).getProperty(key, defaultValue);
+            String packParameter = properties_map.get(pack).getProperty(key,
+                    defaultValue);
 
             if (!packParameter.equals(defaultValue)) {
                 parameterized = packParameter;
