@@ -17,7 +17,6 @@ import org.junit.Test;
 import com.vaadin.testbench.Parameters;
 import com.vaadin.testbench.util.ImageComparison;
 import com.vaadin.testbench.util.ImageComparisonUtil;
-import com.vaadin.testbench.util.ImageUtil;
 
 public class ImageComparisonTest {
 
@@ -132,13 +131,13 @@ public class ImageComparisonTest {
 
     @Test
     public void blocksCalculation() {
-        assertEquals(0, ImageUtil.getBlocks(0));
-        assertEquals(1, ImageUtil.getBlocks(1));
-        assertEquals(1, ImageUtil.getBlocks(15));
-        assertEquals(1, ImageUtil.getBlocks(16));
-        assertEquals(2, ImageUtil.getBlocks(17));
-        assertEquals(2, ImageUtil.getBlocks(31));
-        assertEquals(2, ImageUtil.getBlocks(32));
+        assertEquals(0, ImageComparisonUtil.getBlocks(0));
+        assertEquals(1, ImageComparisonUtil.getBlocks(1));
+        assertEquals(1, ImageComparisonUtil.getBlocks(15));
+        assertEquals(1, ImageComparisonUtil.getBlocks(16));
+        assertEquals(2, ImageComparisonUtil.getBlocks(17));
+        assertEquals(2, ImageComparisonUtil.getBlocks(31));
+        assertEquals(2, ImageComparisonUtil.getBlocks(32));
 
     }
 }
