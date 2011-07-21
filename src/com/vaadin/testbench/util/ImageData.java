@@ -91,58 +91,6 @@ public class ImageData {
         }
     }
 
-    /**
-     * Check canvas sizes and resize images to same size
-     * 
-     * @return true/false
-     */
-    public boolean checkIfCanvasSizesDiffer() {
-        if (referenceImage.getHeight() != comparisonImage.getHeight()
-                || referenceImage.getWidth() != comparisonImage.getWidth()) {
-            // smallest height and width of images
-            int minHeight, minWidth;
-            if (referenceImage.getHeight() > comparisonImage.getHeight()) {
-                minHeight = comparisonImage.getHeight();
-
-                debug("Screenshot height less than reference image.");
-            } else {
-                minHeight = referenceImage.getHeight();
-
-                if (referenceImage.getHeight() != comparisonImage.getHeight()) {
-                    debug("Reference image height less than screenshot.");
-                }
-            }
-            if (referenceImage.getWidth() > comparisonImage.getWidth()) {
-                minWidth = comparisonImage.getWidth();
-
-                debug("Screenshot width less than reference image.");
-            } else {
-                minWidth = referenceImage.getWidth();
-
-                if (referenceImage.getWidth() != comparisonImage.getWidth()) {
-                    debug("Reference image width less than screenshot.");
-                }
-            }
-            cropImages(minWidth, minHeight);
-
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Crop reference and comparison images to same size
-     * 
-     * @param width
-     *            width in pixels
-     * @param height
-     *            height in pixels
-     */
-    private void cropImages(int width, int height) {
-        referenceImage = referenceImage.getSubimage(0, 0, width, height);
-        comparisonImage = comparisonImage.getSubimage(0, 0, width, height);
-    }
-
     public void debug(String text) {
         imageErrors.append(text + "\n");
     }

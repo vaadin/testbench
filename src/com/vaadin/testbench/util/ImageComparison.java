@@ -67,7 +67,19 @@ public class ImageComparison {
 
             // if images are of different size crop both images to same size
             // before checking for differences
-            boolean sizesDiffer = imageData.checkIfCanvasSizesDiffer();
+            boolean sizesDiffer = !ImageUtil.imagesSameSize(
+                    imageData.getReferenceImage(),
+                    imageData.getComparisonImage());
+            if (sizesDiffer) {
+                imageData.debug("Screenshot size ("
+                        + ImageUtil.getSizeAsString(imageData
+                                .getComparisonImage())
+                        + " ) differs from reference image size ("
+                        + ImageUtil.getSizeAsString(imageData
+                                .getReferenceImage()) + ")");
+            }
+            ImageUtil.cropToBeSameSize(imageData.getReferenceImage(),
+                    imageData.getComparisonImage());
 
             int imageWidth = imageData.getReferenceImage().getWidth();
             int imageHeight = imageData.getReferenceImage().getHeight();

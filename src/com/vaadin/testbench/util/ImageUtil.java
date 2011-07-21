@@ -213,4 +213,64 @@ public class ImageUtil {
         return .299 * r + .587 * g + .114 * b;
     }
 
+    /**
+     * Check canvas sizes and resize images to same size
+     * 
+     * @return true/false
+     */
+    public static boolean imagesSameSize(BufferedImage image1,
+            BufferedImage image2) {
+        return (image1.getWidth() == image2.getWidth() && image1.getHeight() == image2
+                .getHeight());
+    }
+
+    /**
+     * Resize images to be same size. The size is determined by the minimum
+     * height and minimum width of the images.
+     * 
+     * @param image1
+     * @param image2
+     * @return true if at least one of the images was cropped, false otherwise
+     * @return
+     */
+    public static boolean cropToBeSameSize(BufferedImage image1,
+            BufferedImage image2) {
+        if (imagesSameSize(image1, image2)) {
+            return false;
+        }
+
+        int minHeight = Math.min(image1.getHeight(), image2.getHeight());
+        int minWidth = Math.min(image1.getWidth(), image2.getWidth());
+
+        cropImage(image1, minWidth, minHeight);
+        cropImage(image2, minWidth, minHeight);
+        return true;
+    }
+
+    /**
+     * Crops the image to the given size
+     * 
+     * @param image
+     *            The image to crop
+     * @param width
+     *            width in pixels
+     * @param height
+     *            height in pixels
+     */
+    private static void cropImage(BufferedImage image, int width, int height) {
+        if (image.getWidth() == width && image.getHeight() == height) {
+            return;
+        }
+        image = image.getSubimage(0, 0, width, height);
+    }
+
+    /**
+     * Returns the size of the image as a human readable string.
+     * 
+     * @param image
+     * @return
+     */
+    public static String getSizeAsString(BufferedImage image) {
+        return image.getWidth() + "x" + image.getHeight();
+    }
 }
