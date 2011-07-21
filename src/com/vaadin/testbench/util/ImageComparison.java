@@ -479,8 +479,8 @@ public class ImageComparison {
         int width = referenceImage.getWidth();
         int height = referenceImage.getHeight();
 
-        BufferedImage diff = ImageUtil.getDifference(comparisonImage,
-                referenceImage);
+        BufferedImage diff = ImageUtil.createBlackAndWhiteDifferenceImage(
+                comparisonImage, referenceImage);
 
         // If at the outer edge move in one step.
         if (x == 0) {

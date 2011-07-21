@@ -78,21 +78,21 @@ public class ImageUtil {
     }
 
     /**
-     * Generate a black and white image.
+     * Creates a black and white version of the given image.
      * 
      * @param image
-     *            Image to turn to a b&w image
-     * @return BufferedImage in B&W
+     *            The image to convert into a black and white image
+     * @return A black and white version of the given image
      */
-    public static BufferedImage getBlackAndWhiteImage(BufferedImage image) {
+    public static BufferedImage createBlackAndWhiteImage(BufferedImage image) {
         BufferedImage bw = grayscaleImage(image);
-        threshold(bw);
+        convertGrayscaleToBlackAndWhite(bw);
         return bw;
     }
 
     /**
-     * Generates a white image with the image differences in black. Image sizes
-     * are expected to be the same.
+     * Generates an image that is white where there are no differences and black
+     * where the images differ.
      * 
      * @param image1
      *            First image
@@ -100,11 +100,11 @@ public class ImageUtil {
      *            Second image
      * @return B&W image
      */
-    public static BufferedImage getDifference(BufferedImage image1,
-            BufferedImage image2) {
+    public static BufferedImage createBlackAndWhiteDifferenceImage(
+            BufferedImage image1, BufferedImage image2) {
         // Get black and white images for both images
-        BufferedImage bw1 = getBlackAndWhiteImage(image1);
-        BufferedImage bw2 = getBlackAndWhiteImage(image2);
+        BufferedImage bw1 = createBlackAndWhiteImage(image1);
+        BufferedImage bw2 = createBlackAndWhiteImage(image2);
 
         // Create empty image
         BufferedImage diff = new BufferedImage(image1.getWidth(),
@@ -179,16 +179,17 @@ public class ImageUtil {
 
         return rgb;
     }
- /**
+
+    /**
      * Creates a b&w image of grayscale image.
      * 
      * @param image
      */
-    private static void threshold(BufferedImage image) {
+    private static void convertGrayscaleToBlackAndWhite(BufferedImage image) {
         for (int x = 0; x < image.getWidth(); x++) {
             for (int y = 0; y < image.getHeight(); y++) {
                 Color color = new Color(image.getRGB(x, y));
-                double lum = lum(color);
+                double lum = getLuminance(color);
                 if (lum >= 150) {
                     image.setRGB(x, y, Color.WHITE.getRGB());
                 } else {
@@ -204,7 +205,7 @@ public class ImageUtil {
      * @param color
      * @return Luminance value
      */
-    private static double lum(Color color) {
+    private static double getLuminance(Color color) {
         // return the monochrome luminance of given color
         int r = color.getRed();
         int g = color.getGreen();
