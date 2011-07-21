@@ -2,6 +2,7 @@ package com.vaadin.testbench.util;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
@@ -87,8 +88,13 @@ public class ImageComparison {
                 // Check for cursor.
                 if (Parameters.isScreenshotComparisonCursorDetection()
                         && !sizesDiffer) {
-                    if (isCursorCheckNeeded(xBlocks, yBlocks, falseBlocks)) {
-                        boolean cursor = checkForCursor();
+                    Point possibleCursorPosition = getPossibleCursorPosition(
+                            xBlocks, yBlocks, falseBlocks);
+                    if (possibleCursorPosition != null) {
+                        boolean cursor = isCursorTheOnlyError(
+                                possibleCursorPosition,
+                                imageData.getReferenceImage(),
+                                imageData.getComparisonImage());
                         if (cursor) {
                             return true;
                         }
@@ -240,19 +246,13 @@ public class ImageComparison {
 
         // Check for cursor.
         if (Parameters.isScreenshotComparisonCursorDetection()) {
-            if (isCursorCheckNeeded(xBlocks, yBlocks, falseBlocks)) {
-                if (Parameters.isDebug()) {
-                    System.err.println("Checking for cursor...");
-                }
-                boolean cursor = checkForCursor();
-                if (cursor) {
-                    if (Parameters.isDebug()) {
-                        System.err.println("... cursor found!");
-                    }
+            Point possibleCursorPosition = getPossibleCursorPosition(xBlocks,
+                    yBlocks, falseBlocks);
+            if (possibleCursorPosition != null) {
+                if (isCursorTheOnlyError(possibleCursorPosition,
+                        imageData.getReferenceImage(),
+                        imageData.getComparisonImage())) {
                     return true;
-                }
-                if (Parameters.isDebug()) {
-                    System.err.println("... no cursor found.");
                 }
             }
         }
@@ -402,74 +402,83 @@ public class ImageComparison {
         return (sum / fullSum);
     }
 
-    private boolean isCursorCheckNeeded(int xBlocks, int yBlocks,
-            boolean[][] falseBlocks) {
+    /**
+     * Determine if an error is possibly caused by a blinking cursor and, in
+     * that case, at what position the cursor might be. Uses only information
+     * about the blocks that have failed to determine if the failure _possibly
+     * can_ be caused by a cursor that is either missing from the reference or
+     * the screenshot.
+     * 
+     * @param xBlocks
+     *            Number of blocks in x direction
+     * @param yBlocks
+     * @param blocksWithErrors
+     *            Matrix with true marked for blocks where errors have been
+     *            detected
+     * @return A Point referring to the x and y coordinates in the image where
+     *         the cursor might be (actually might be inside a 16x32 block
+     *         starting from that point)
+     */
+    private static Point getPossibleCursorPosition(int xBlocks, int yBlocks,
+            boolean[][] blocksWithErrors) {
 
-        // check amount of error blocks
-        int errorAmount = 0, x = 0, y = 0, firstBlockX = 0, firstBlockY = 0;
+        Point firstErrorBlock = null;
 
-        for (int j = 0; j < yBlocks; j++) {
-            for (int i = 0; i < xBlocks; i++) {
-                if (falseBlocks[i][j] && errorAmount == 0) {
-                    // save first error block position
-                    errorAmount++;
-                    x = i * 16;
-                    y = j * 16;
-                    firstBlockX = i;
-                    firstBlockY = j;
-                } else if (falseBlocks[i][j] && errorAmount == 1) {
-                    if (j == 0) {
-                        // stop checking no cursor detection will be
-                        // done. Same line as the first block.
-                        errorAmount++;
-                        i = xBlocks;
-                        j = yBlocks;
-                    } else if (!falseBlocks[i][j - 1] && i != firstBlockX
-                            && j != (firstBlockY + 1)) {
-                        // stop checking no cursor detection will be
-                        // done
-                        errorAmount++;
-                        i = xBlocks;
-                        j = yBlocks;
+        /*
+         * Look for 1-2 blocks with errors. Iff the blocks are vertically
+         * adjacent to each other we might have a cursor problem. This is the
+         * only case we are looking for.
+         */
+
+        for (int y = 0; y < yBlocks; y++) {
+            for (int x = 0; x < xBlocks; x++) {
+                if (blocksWithErrors[x][y]) {
+                    if (firstErrorBlock == null) {
+                        // This is the first erroneous block we have found
+                        firstErrorBlock = new Point(x, y);
+                    } else {
+                        // This is the second erroneous block we have found
+                        if (x == firstErrorBlock.x
+                                && y == firstErrorBlock.y + 1) {
+                            // This is directly below the first so it is OK
+                        } else {
+                            // This error is not below the first so there are
+                            // other errors than 1-2 blocks above each other (we
+                            // are moving from top down).
+                            return null;
+                        }
                     }
                 }
             }
         }
 
-        if (errorAmount == 1) {
-            imageData.setCursorError(x, y);
-            return true;
-        }
-
-        return false;
+        return firstErrorBlock;
     }
 
     /**
      * Check if failure is because of a blinking text cursor.
      * 
-     * @param test
-     *            Image for this run
-     * @param target
-     *            Reference image
-     * @param x
-     *            x position of error block
-     * @param y
-     *            y position of error block
-     * @param fileId
-     *            Image file name
-     * @return true if found cursor else false
+     * @param possibleCursorPosition
+     *            The position in the image where a cursor possibly can be found
+     * @param referenceImage
+     *            The reference image (with or without a cursor)
+     * @param comparisonImage
+     *            The captured image (with or without a cursor)
+     * @return true If cursor (vertical black line with white on both sides) is
+     *         the only difference between the images.
      */
-    private boolean checkForCursor() {
+    private static boolean isCursorTheOnlyError(Point possibleCursorPosition,
+            BufferedImage referenceImage, BufferedImage comparisonImage) {
         boolean cursor = false;
 
-        int x = imageData.getCursorX();
-        int y = imageData.getCursorY();
+        int x = possibleCursorPosition.x;
+        int y = possibleCursorPosition.y;
 
-        int width = imageData.getReferenceImage().getWidth();
-        int height = imageData.getReferenceImage().getHeight();
+        int width = referenceImage.getWidth();
+        int height = referenceImage.getHeight();
 
-        BufferedImage diff = ImageUtil.getDifference(
-                imageData.getComparisonImage(), imageData.getReferenceImage());
+        BufferedImage diff = ImageUtil.getDifference(comparisonImage,
+                referenceImage);
 
         // If at the outer edge move in one step.
         if (x == 0) {
@@ -494,82 +503,10 @@ public class ImageComparison {
                     do {
                         if (diff.getRGB(i - 1, j) != white
                                 || diff.getRGB(i + 1, j) != white) {
-                            if (Parameters.isDebug()) {
-                                imageData
-                                        .debug("Returning cursor false for "
-                                                + imageData
-                                                        .getReferenceImageFileName());
-                                try {
-                                    ImageIO.write(
-                                            diff,
-                                            "png",
-                                            new File(
-                                                    imageData
-                                                            .getErrorDirectory()
-                                                            + File.separator
-                                                            + "diff"
-                                                            + File.separator
-                                                            + imageData
-                                                                    .getReferenceImageFileName()
-                                                            + "_false.png"));
-                                } catch (IOException e) {
-                                    imageData.debug("Couldn't write file.\n"
-                                            + e.getMessage());
-                                }
-                            }
                             return false;
                         }
                         j++;
                         if (diff.getRGB(i, j) != black) {
-                            if (Parameters.isDebug()) {
-                                imageData
-                                        .debug("Returning cursor true for "
-                                                + imageData
-                                                        .getReferenceImageFileName());
-
-                                try {
-                                    ImageIO.write(
-                                            imageData.getReferenceImage(),
-                                            "png",
-                                            new File(
-                                                    imageData
-                                                            .getErrorDirectory()
-                                                            + File.separator
-                                                            + "diff"
-                                                            + File.separator
-                                                            + imageData
-                                                                    .getReferenceImageFileName()
-                                                            + "_ref.png"));
-
-                                    ImageIO.write(
-                                            imageData.getComparisonImage(),
-                                            "png",
-                                            new File(
-                                                    imageData
-                                                            .getErrorDirectory()
-                                                            + File.separator
-                                                            + "diff"
-                                                            + File.separator
-                                                            + imageData
-                                                                    .getReferenceImageFileName()
-                                                            + "_comp.png"));
-
-                                    ImageIO.write(
-                                            diff,
-                                            "png",
-                                            new File(
-                                                    imageData
-                                                            .getErrorDirectory()
-                                                            + File.separator
-                                                            + "diff"
-                                                            + File.separator
-                                                            + imageData
-                                                                    .getReferenceImageFileName()));
-                                } catch (IOException e) {
-                                    imageData.debug("Couldn't write file.\n"
-                                            + e.getMessage());
-                                }
-                            }
                             return true;
                         }
                     } while (true);

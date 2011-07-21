@@ -35,7 +35,6 @@ public class ImageData {
      */
     private String errorDirectory = null;
 
-    private int cursorX, cursorY;
     private double difference;
 
     private BrowserDimensions dimensions = null;
@@ -315,18 +314,4 @@ public class ImageData {
     public void setComparisonImage(BufferedImage comparisonImage) {
         this.comparisonImage = comparisonImage;
     }
-
-    public void setCursorError(int cursorX, int cursorY) {
-        this.cursorX = cursorX;
-        this.cursorY = cursorY;
-    }
-
-    public int getCursorX() {
-        return cursorX;
-    }
-
-    public int getCursorY() {
-        return cursorY;
-    }
-
 }
