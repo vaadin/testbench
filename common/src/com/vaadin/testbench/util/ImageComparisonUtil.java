@@ -16,8 +16,8 @@ public class ImageComparisonUtil {
      * @return the block representation of the image
      */
     public static int[] generateImageBlocks(BufferedImage image) {
-        int xBlocks = ImageUtil.getBlocks(image.getWidth());
-        int yBlocks = ImageUtil.getBlocks(image.getHeight());
+        int xBlocks = getBlocks(image.getWidth());
+        int yBlocks = getBlocks(image.getHeight());
 
         BufferedImage scaledImage = new BufferedImage(xBlocks, yBlocks,
                 BufferedImage.TYPE_INT_RGB);
@@ -89,4 +89,16 @@ public class ImageComparisonUtil {
         return ((col >> 16) & 0xFF) + ((col >> 8) & 0xFF) + (col & 0xFF);
     }
 
+    /**
+     * Returns the number of blocks used for the given number of pixels. All
+     * blocks are full size with the (possible) exception of the bottom and
+     * right edges.
+     * 
+     * @param pixels
+     *            The number of pixels for the dimension.
+     * @return The number of blocks used for that dimension
+     */
+    public static int getBlocks(int pixels) {
+        return (int) Math.floor(pixels + 15) / 16;
+    }
 }
