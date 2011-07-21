@@ -96,32 +96,6 @@ public class ImageData {
     }
 
     /**
-     * Get 16x16 rgb block from referenceImage
-     * 
-     * @param x
-     *            x position
-     * @param y
-     *            y position
-     * @return RGB values for macroblock
-     */
-    public int[] getReferenceBlock(int x, int y) {
-        return referenceImage.getRGB(x, y, 16, 16, null, 0, 16);
-    }
-
-    /**
-     * Get 16x16 rgb block from comparisonImage
-     * 
-     * @param x
-     *            x position
-     * @param y
-     *            y position
-     * @return RGB values for macroblock
-     */
-    public int[] getComparisonBlock(int x, int y) {
-        return comparisonImage.getRGB(x, y, 16, 16, null, 0, 16);
-    }
-
-    /**
      * Copy comparisonImage as referenceImage
      */
     public void copyComparison() {

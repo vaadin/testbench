@@ -214,7 +214,8 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
             data.copyComparison();
 
             pause(screenshotPause);
-        } while (!compare.compareImages(data));
+        } while (!compare.compareImages(data.getReferenceImage(),
+                data.getComparisonImage(), data.getDifference(), data));
 
         // Check that the comparison folder exists and create if
         // false

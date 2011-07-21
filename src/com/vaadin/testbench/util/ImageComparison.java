@@ -32,15 +32,13 @@ public class ImageComparison {
 
     private static final String NEW_LINE = System.getProperty("line.separator");
 
-    private ImageData imageData = null;
-
     /**
      * Compare image [name] to image under /reference/. Images may differ in RGB
      * hues 0.1% (default) per macroblock of 16x16
      * 
      * @param screenshotAsBase64String
      *            Image as BASE64 encoded String
-     * @param d
+     * @param errorTolerance
      *            Allowed RGB error for a macroblock (value range 0-1 default
      *            0.025 == 2.5%)
      * @param fileId
@@ -50,12 +48,12 @@ public class ImageComparison {
      * @return true if images are the same
      */
     public boolean compareStringImage(String screenshotAsBase64String,
-            String fileId, double d, BrowserDimensions dimensions) {
+            String fileId, double errorTolerance, BrowserDimensions dimensions) {
 
-        imageData = new ImageData(screenshotAsBase64String, fileId, dimensions,
-                d);
+        ImageData imageData = new ImageData(screenshotAsBase64String, fileId,
+                dimensions, errorTolerance);
 
-        imageData.debug("Using block error tolerance: " + d);
+        imageData.debug("Using block error tolerance: " + errorTolerance);
 
         boolean result = false;
 
@@ -88,7 +86,8 @@ public class ImageComparison {
             int yBlocks = (int) Math.floor(imageHeight / 16) + 1;
             boolean[][] falseBlocks = new boolean[xBlocks][yBlocks];
 
-            result = compareImage(falseBlocks);
+            result = compareImage(falseBlocks, imageData.getReferenceImage(),
+                    imageData.getComparisonImage(), errorTolerance, imageData);
 
             // if errors found in file save diff file with marked
             // macroblocks and create html file for visual confirmation of
@@ -136,7 +135,7 @@ public class ImageComparison {
                         new File(compareFolder + File.separator
                                 + imageData.getReferenceImageFileName()));
 
-                drawErrorsToImage(errorAreas);
+                drawErrorsToImage(errorAreas, imageData);
 
                 createDiffHtml(errorAreas, fileId,
                         ImageUtil.encodeImageToBase64(imageData
@@ -150,7 +149,7 @@ public class ImageComparison {
                 if (sizesDiffer == false) {
                     imageData.debug("Screenshot (" + fileId
                             + ") differs from reference image.");
-                    debug();
+                    debug(imageData);
                     Assert.fail("Screenshot (" + fileId
                             + ") differs from reference image.");
                 }
@@ -181,7 +180,7 @@ public class ImageComparison {
                     List<ErrorBlock> errorAreas = collectErrorsToList(xBlocks,
                             yBlocks, falseBlocks);
 
-                    drawErrorsToImage(errorAreas);
+                    drawErrorsToImage(errorAreas, imageData);
 
                     imageData.generateReferenceImage();
 
@@ -192,12 +191,12 @@ public class ImageComparison {
                                     .getReferenceImage()));
 
                     imageData.debug("Images are of different size");
-                    debug();
+                    debug(imageData);
                     Assert.fail("Images are of different size (" + fileId
                             + ").");
                 } else {
                     imageData.debug("Images differ and are of different size");
-                    debug();
+                    debug(imageData);
                     Assert.fail("Images differ and are of different size ("
                             + fileId + ").");
                 }
@@ -228,7 +227,7 @@ public class ImageComparison {
             } catch (FileNotFoundException fnfe) {
                 imageData
                         .debug("Failed to open file to write reference image.");
-                debug();
+                debug(imageData);
                 Assert.fail("Failed to open file to write reference image.");
             } catch (IOException ioe) {
                 e.printStackTrace();
@@ -236,7 +235,7 @@ public class ImageComparison {
             }
             if (result == false) {
                 imageData.debug("No reference found for " + fileId);
-                debug();
+                debug(imageData);
                 Assert.fail("No reference found for " + fileId + " in "
                         + ImageFileUtil.getScreenshotReferenceDirectory());
             }
@@ -245,17 +244,17 @@ public class ImageComparison {
         return result;
     }
 
-    public boolean compareImages(ImageData imageData) {
-        this.imageData = imageData;
+    public boolean compareImages(BufferedImage referenceImage,
+            BufferedImage screenshotImage, double errorTolerance,
+            ImageData imageData) {
         checkAndCreateDirectories(ImageFileUtil.getScreenshotBaseDirectory());
 
-        int xBlocks = (int) Math
-                .floor(imageData.getReferenceImage().getWidth() / 16) + 1;
-        int yBlocks = (int) Math.floor(imageData.getReferenceImage()
-                .getHeight() / 16) + 1;
+        int xBlocks = (int) Math.floor(referenceImage.getWidth() / 16) + 1;
+        int yBlocks = (int) Math.floor(referenceImage.getHeight() / 16) + 1;
         boolean[][] falseBlocks = new boolean[xBlocks][yBlocks];
 
-        boolean result = compareImage(falseBlocks);
+        boolean result = compareImage(falseBlocks, referenceImage,
+                screenshotImage, errorTolerance, imageData);
 
         // Check for cursor.
         if (Parameters.isScreenshotComparisonCursorDetection()) {
@@ -263,8 +262,7 @@ public class ImageComparison {
                     yBlocks, falseBlocks);
             if (possibleCursorPosition != null) {
                 if (isCursorTheOnlyError(possibleCursorPosition,
-                        imageData.getReferenceImage(),
-                        imageData.getComparisonImage())) {
+                        referenceImage, screenshotImage)) {
                     return true;
                 }
             }
@@ -272,7 +270,7 @@ public class ImageComparison {
         return result;
     }
 
-    private void debug() {
+    private void debug(ImageData imageData) {
         if (Parameters.isDebug() && imageData.getImageErrors().length() >= 0) {
             String fileId = imageData.getReferenceImageFileName().substring(0,
                     imageData.getReferenceImageFileName().lastIndexOf('.'));
@@ -295,11 +293,13 @@ public class ImageComparison {
         }
     }
 
-    private boolean compareImage(boolean[][] falseBlocks) {
+    private boolean compareImage(boolean[][] falseBlocks,
+            BufferedImage referenceImage, BufferedImage screenshotImage,
+            double errorTolerance, ImageData imageData) {
         boolean result = true;
 
-        int imageWidth = imageData.getReferenceImage().getWidth();
-        int imageHeight = imageData.getReferenceImage().getHeight();
+        int imageWidth = referenceImage.getWidth();
+        int imageHeight = referenceImage.getHeight();
 
         int xBlocks = (int) Math.floor(imageWidth / 16) + 1;
         int yBlocks = (int) Math.floor(imageHeight / 16) + 1;
@@ -308,7 +308,8 @@ public class ImageComparison {
         // n-16)
         for (int y = 0; y < imageHeight - 16; y += 16) {
             for (int x = 0; x < imageWidth - 16; x += 16) {
-                if (blocksDiffer(x, y)) {
+                if (blocksDiffer(x, y, referenceImage, screenshotImage,
+                        errorTolerance, imageData)) {
                     if (falseBlocks != null) {
                         falseBlocks[x / 16][y / 16] = true;
                     }
@@ -320,7 +321,8 @@ public class ImageComparison {
         // Check image bottom
         if (imageHeight % 16 != 0) {
             for (int x = 0; x < imageWidth - 16; x += 16) {
-                if (blocksDiffer(x, imageHeight - 16)) {
+                if (blocksDiffer(x, imageHeight - 16, referenceImage,
+                        screenshotImage, errorTolerance, imageData)) {
                     if (falseBlocks != null) {
                         falseBlocks[x / 16][yBlocks - 1] = true;
                     }
@@ -332,7 +334,8 @@ public class ImageComparison {
         // Check right side of image
         if (imageWidth % 16 != 0) {
             for (int y = 0; y < imageHeight - 16; y += 16) {
-                if (blocksDiffer(imageWidth - 16, y)) {
+                if (blocksDiffer(imageWidth - 16, y, referenceImage,
+                        screenshotImage, errorTolerance, imageData)) {
                     if (falseBlocks != null) {
                         falseBlocks[xBlocks - 1][y / 16] = true;
                     }
@@ -343,7 +346,8 @@ public class ImageComparison {
 
         // Check lower right corner if necessary
         if (imageWidth % 16 != 0 && imageHeight % 16 != 0) {
-            if (blocksDiffer(imageWidth - 16, imageHeight - 16)) {
+            if (blocksDiffer(imageWidth - 16, imageHeight - 16, referenceImage,
+                    screenshotImage, errorTolerance, imageData)) {
                 if (falseBlocks != null) {
                     falseBlocks[xBlocks - 1][yBlocks - 1] = true;
                 }
@@ -354,24 +358,28 @@ public class ImageComparison {
         return result;
     }
 
-    private boolean blocksDiffer(int x, int y) {
+    private boolean blocksDiffer(int x, int y, BufferedImage referenceImage,
+            BufferedImage screenshotImage, double errorTolerance,
+            ImageData imageData) {
         boolean result = false;
 
-        int[] targetBlock = new int[16 * 16], testBlock = new int[16 * 16];
+        int[] referenceBlock = new int[16 * 16];
+        int[] screenshotBlock = new int[16 * 16];
 
         // Get 16x16 blocks from picture
-        targetBlock = imageData.getReferenceBlock(x, y);
-        testBlock = imageData.getComparisonBlock(x, y);
+        referenceBlock = ImageUtil.getBlock(referenceImage, x, y);
+        screenshotBlock = ImageUtil.getBlock(screenshotImage, x, y);
 
         // If arrays aren't equal then
-        if (!Arrays.equals(targetBlock, testBlock)) {
+        if (!Arrays.equals(referenceBlock, screenshotBlock)) {
 
-            double sums = rgbCompare(targetBlock, testBlock);
+            double sums = rgbCompare(referenceBlock, screenshotBlock);
 
             // Check if total RGB error in a macroblock exceeds
             // allowed error % if true mark block with a rectangle,
             // append block info to imageErrors
-            if (sums > imageData.getDifference()) {
+            if (sums > errorTolerance) {
+                // FIXME Remove
                 imageData.debug("Error in block at position:\tx=" + x + " y="
                         + y + NEW_LINE);
                 imageData.debug("RGB error for block:\t\t"
@@ -381,7 +389,7 @@ public class ImageComparison {
                 result = true;
             }
         }
-        targetBlock = testBlock = null;
+        referenceBlock = screenshotBlock = null;
 
         return result;
     }
@@ -647,7 +655,8 @@ public class ImageComparison {
         return errorAreas;
     }
 
-    private void drawErrorsToImage(List<ErrorBlock> errorAreas) {
+    private void drawErrorsToImage(List<ErrorBlock> errorAreas,
+            ImageData imageData) {
         // Draw lines around false ErrorBlocks before saving _diff
         // file.
         Graphics2D drawToPicture = imageData.getComparisonImage()

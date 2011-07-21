@@ -273,4 +273,19 @@ public class ImageUtil {
     public static String getSizeAsString(BufferedImage image) {
         return image.getWidth() + "x" + image.getHeight();
     }
+
+    /**
+     * Returns the 16x16 RGB block starting at (x,y) from the given image
+     * 
+     * @param image
+     *            The image containing the block
+     * @param x
+     *            The x coordinate of the block (in pixels)
+     * @param y
+     *            The y coordinate of the block (in pixels)
+     * @return An array of RGB values for the block
+     */
+    public static int[] getBlock(BufferedImage image, int x, int y) {
+        return image.getRGB(x, y, 16, 16, null, 0, 16);
+    }
 }
