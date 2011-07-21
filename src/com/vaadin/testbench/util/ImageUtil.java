@@ -340,4 +340,17 @@ public class ImageUtil {
 
         return newImage;
     }
+
+    /**
+     * Returns the number of blocks used for the given number of pixels. All
+     * blocks are full size with the (possible) exception of the bottom and
+     * right edges.
+     * 
+     * @param pixels
+     *            The number of pixels for the dimension.
+     * @return The number of blocks used for that dimension
+     */
+    public static int getBlocks(int pixels) {
+        return (int) Math.floor(pixels + 15) / 16;
+    }
 }

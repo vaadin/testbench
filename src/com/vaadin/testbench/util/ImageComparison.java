@@ -78,8 +78,8 @@ public class ImageComparison {
         int imageWidth = referenceImage.getWidth();
         int imageHeight = referenceImage.getHeight();
 
-        int xBlocks = (int) Math.floor(imageWidth / 16) + 1;
-        int yBlocks = (int) Math.floor(imageHeight / 16) + 1;
+        int xBlocks = ImageUtil.getBlocks(imageWidth);
+        int yBlocks = ImageUtil.getBlocks(imageHeight);
         boolean[][] falseBlocks = new boolean[xBlocks][yBlocks];
         boolean imagesEqual = compareImage(falseBlocks, referenceImage,
                 screenshotImage, errorTolerance);
@@ -171,10 +171,8 @@ public class ImageComparison {
 
     public boolean compareImages(BufferedImage referenceImage,
             BufferedImage screenshotImage, double errorTolerance) {
-        ImageFileUtil.createScreenshotDirectoriesIfNeeded();
-
-        int xBlocks = (int) Math.floor(referenceImage.getWidth() / 16) + 1;
-        int yBlocks = (int) Math.floor(referenceImage.getHeight() / 16) + 1;
+        int xBlocks = ImageUtil.getBlocks(referenceImage.getWidth());
+        int yBlocks = ImageUtil.getBlocks(referenceImage.getHeight());
         boolean[][] falseBlocks = new boolean[xBlocks][yBlocks];
 
         boolean result = compareImage(falseBlocks, referenceImage,
@@ -202,8 +200,8 @@ public class ImageComparison {
         int imageWidth = referenceImage.getWidth();
         int imageHeight = referenceImage.getHeight();
 
-        int xBlocks = (int) Math.floor(imageWidth / 16) + 1;
-        int yBlocks = (int) Math.floor(imageHeight / 16) + 1;
+        int xBlocks = ImageUtil.getBlocks(imageWidth);
+        int yBlocks = ImageUtil.getBlocks(imageHeight);
 
         // iterate picture in macroblocks of 16x16 (x,y) (0-> m-16, 0->
         // n-16)
