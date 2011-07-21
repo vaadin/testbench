@@ -1,6 +1,5 @@
 package com.vaadin.testbench.util;
 
-import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -93,21 +92,6 @@ public class ImageData {
 
     public void debug(String text) {
         imageErrors.append(text + "\n");
-    }
-
-    /**
-     * Copy comparisonImage as referenceImage
-     */
-    public void copyComparison() {
-        BufferedImage newImage = new BufferedImage(dimensions.getCanvasWidth(),
-                dimensions.getCanvasHeight(), BufferedImage.TYPE_INT_RGB);
-
-        Graphics2D g = (Graphics2D) newImage.getGraphics();
-        g.drawImage(comparisonImage, 0, 0, dimensions.getCanvasWidth(),
-                dimensions.getCanvasHeight(), null);
-        g.dispose();
-
-        referenceImage = newImage;
     }
 
     // Getters and setters

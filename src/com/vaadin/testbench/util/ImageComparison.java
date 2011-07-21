@@ -56,8 +56,7 @@ public class ImageComparison {
         imageData.debug("Using block error tolerance: " + errorTolerance);
 
         boolean result = false;
-
-        checkAndCreateDirectories(ImageFileUtil.getScreenshotBaseDirectory());
+        ImageFileUtil.createScreenshotDirectoriesIfNeeded();
 
         try {
             imageData.generateComparisonImage();
@@ -87,7 +86,7 @@ public class ImageComparison {
             boolean[][] falseBlocks = new boolean[xBlocks][yBlocks];
 
             result = compareImage(falseBlocks, imageData.getReferenceImage(),
-                    imageData.getComparisonImage(), errorTolerance, imageData);
+                    imageData.getComparisonImage(), errorTolerance);
 
             // if errors found in file save diff file with marked
             // macroblocks and create html file for visual confirmation of
@@ -245,16 +244,15 @@ public class ImageComparison {
     }
 
     public boolean compareImages(BufferedImage referenceImage,
-            BufferedImage screenshotImage, double errorTolerance,
-            ImageData imageData) {
-        checkAndCreateDirectories(ImageFileUtil.getScreenshotBaseDirectory());
+            BufferedImage screenshotImage, double errorTolerance) {
+        ImageFileUtil.createScreenshotDirectoriesIfNeeded();
 
         int xBlocks = (int) Math.floor(referenceImage.getWidth() / 16) + 1;
         int yBlocks = (int) Math.floor(referenceImage.getHeight() / 16) + 1;
         boolean[][] falseBlocks = new boolean[xBlocks][yBlocks];
 
         boolean result = compareImage(falseBlocks, referenceImage,
-                screenshotImage, errorTolerance, imageData);
+                screenshotImage, errorTolerance);
 
         // Check for cursor.
         if (Parameters.isScreenshotComparisonCursorDetection()) {
@@ -295,7 +293,7 @@ public class ImageComparison {
 
     private boolean compareImage(boolean[][] falseBlocks,
             BufferedImage referenceImage, BufferedImage screenshotImage,
-            double errorTolerance, ImageData imageData) {
+            double errorTolerance) {
         boolean result = true;
 
         int imageWidth = referenceImage.getWidth();
@@ -309,7 +307,7 @@ public class ImageComparison {
         for (int y = 0; y < imageHeight - 16; y += 16) {
             for (int x = 0; x < imageWidth - 16; x += 16) {
                 if (blocksDiffer(x, y, referenceImage, screenshotImage,
-                        errorTolerance, imageData)) {
+                        errorTolerance)) {
                     if (falseBlocks != null) {
                         falseBlocks[x / 16][y / 16] = true;
                     }
@@ -322,7 +320,7 @@ public class ImageComparison {
         if (imageHeight % 16 != 0) {
             for (int x = 0; x < imageWidth - 16; x += 16) {
                 if (blocksDiffer(x, imageHeight - 16, referenceImage,
-                        screenshotImage, errorTolerance, imageData)) {
+                        screenshotImage, errorTolerance)) {
                     if (falseBlocks != null) {
                         falseBlocks[x / 16][yBlocks - 1] = true;
                     }
@@ -335,7 +333,7 @@ public class ImageComparison {
         if (imageWidth % 16 != 0) {
             for (int y = 0; y < imageHeight - 16; y += 16) {
                 if (blocksDiffer(imageWidth - 16, y, referenceImage,
-                        screenshotImage, errorTolerance, imageData)) {
+                        screenshotImage, errorTolerance)) {
                     if (falseBlocks != null) {
                         falseBlocks[xBlocks - 1][y / 16] = true;
                     }
@@ -347,7 +345,7 @@ public class ImageComparison {
         // Check lower right corner if necessary
         if (imageWidth % 16 != 0 && imageHeight % 16 != 0) {
             if (blocksDiffer(imageWidth - 16, imageHeight - 16, referenceImage,
-                    screenshotImage, errorTolerance, imageData)) {
+                    screenshotImage, errorTolerance)) {
                 if (falseBlocks != null) {
                     falseBlocks[xBlocks - 1][yBlocks - 1] = true;
                 }
@@ -359,8 +357,7 @@ public class ImageComparison {
     }
 
     private boolean blocksDiffer(int x, int y, BufferedImage referenceImage,
-            BufferedImage screenshotImage, double errorTolerance,
-            ImageData imageData) {
+            BufferedImage screenshotImage, double errorTolerance) {
         boolean result = false;
 
         int[] referenceBlock = new int[16 * 16];
@@ -379,13 +376,6 @@ public class ImageComparison {
             // allowed error % if true mark block with a rectangle,
             // append block info to imageErrors
             if (sums > errorTolerance) {
-                // FIXME Remove
-                imageData.debug("Error in block at position:\tx=" + x + " y="
-                        + y + NEW_LINE);
-                imageData.debug("RGB error for block:\t\t"
-                        + roundTwoDecimals(sums * 100) + "%" + NEW_LINE
-                        + NEW_LINE);
-
                 result = true;
             }
         }
@@ -787,85 +777,10 @@ public class ImageComparison {
         }
     }
 
-    /**
-     * Checks that all required directories can be found and creates them if
-     * necessary
-     * 
-     * @param directory
-     */
-    private void checkAndCreateDirectories(String directory) {
-        // Check directories and create if needed
-        File imageDir = new File(directory);
-        if (!imageDir.exists()) {
-            imageDir.mkdir();
-        }
-        imageDir = new File(directory + ImageData.REFERENCE_DIRECTORY);
-        if (!imageDir.exists()) {
-            imageDir.mkdir();
-        }
-        imageDir = new File(directory + ImageData.ERROR_DIRECTORY);
-        if (!imageDir.exists()) {
-            imageDir.mkdir();
-        }
+    public String generateBlocksFromReferenceFile(String referenceFileName) {
+        ImageFileUtil.createScreenshotDirectoriesIfNeeded();
 
-        if (Parameters.isDebug()) {
-            imageDir = new File(directory + ImageData.ERROR_DIRECTORY
-                    + File.separator + "diff");
-            if (!imageDir.exists()) {
-                imageDir.mkdir();
-            }
-            imageDir = new File(directory + ImageData.ERROR_DIRECTORY
-                    + File.separator + "logs");
-            if (!imageDir.exists()) {
-                imageDir.mkdir();
-            }
-        }
-        imageDir = null;
-    }
-
-    /**
-     * Set double down to 2 decimal places
-     * 
-     * @param d
-     *            double set down
-     * @return double with 2 decimal places
-     */
-    private double roundTwoDecimals(double d) {
-        int ix = (int) (d * 100.0); // scale it
-        return (ix) / 100.0;
-    }
-
-    /**
-     * Check that given reference image exists in reference directory.
-     * 
-     * @param fileId
-     *            Name of reference file
-     * @return true/false
-     */
-    public boolean checkIfReferenceExists(String fileId) {
-        String directory = Parameters.getScreenshotDirectory();
-
-        if (directory == null || directory.length() == 0) {
-            throw new IllegalArgumentException(
-                    "Missing reference directory definition. Use -D"
-                            + Parameters.SCREENSHOT_DIRECTORY
-                            + "=c:\\screenshot\\. ");
-        }
-
-        if (!File.separator.equals(directory.charAt(directory.length() - 1))) {
-            directory = directory + File.separator;
-        }
-
-        File referenceImage = new File(directory
-                + ImageData.REFERENCE_DIRECTORY + File.separator + fileId
-                + ".png");
-
-        return referenceImage.exists();
-    }
-
-    public String generateBlocksFromImageFile(String fileName) {
-        ImageData image = new ImageData(null, fileName, null, 0);
-        checkAndCreateDirectories(ImageFileUtil.getScreenshotBaseDirectory());
+        ImageData image = new ImageData(referenceFileName, null, 0);
 
         try {
             image.generateReferenceImages();

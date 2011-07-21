@@ -248,7 +248,7 @@ public class ImageUtil {
     }
 
     /**
-     * Crops the image to the given size
+     * Crops the image to the given size starting at (0,0)
      * 
      * @param image
      *            The image to crop
@@ -262,6 +262,36 @@ public class ImageUtil {
             return;
         }
         image = image.getSubimage(0, 0, width, height);
+    }
+
+    public static void cropImage(BufferedImage rawImage,
+            BrowserDimensions browserAndCanvasDimensions) {
+        cropImage(rawImage, browserAndCanvasDimensions.getCanvasWidth(),
+                browserAndCanvasDimensions.getCanvasHeight(),
+                browserAndCanvasDimensions.getCanvasXPosition(),
+                browserAndCanvasDimensions.getCanvasYPosition());
+    }
+
+    /**
+     * Crops the image to the given size starting at (x,y)
+     * 
+     * @param image
+     *            The image to crop
+     * @param width
+     *            width in pixels
+     * @param height
+     *            height in pixels
+     * @param x
+     *            x-coordinate of top left corner
+     * @param y
+     *            y-coordinate of top left corner
+     */
+    private static void cropImage(BufferedImage image, int width, int height,
+            int x, int y) {
+        if (image.getWidth() == width && image.getHeight() == height) {
+            return;
+        }
+        image = image.getSubimage(x, y, width, height);
     }
 
     /**
@@ -287,5 +317,27 @@ public class ImageUtil {
      */
     public static int[] getBlock(BufferedImage image, int x, int y) {
         return image.getRGB(x, y, 16, 16, null, 0, 16);
+    }
+
+    /**
+     * Clones the given BufferedImage
+     * 
+     * @param sourceImage
+     *            The image to copy
+     * @return A copy of sourceImage
+     */
+    public static BufferedImage duplicateImage(BufferedImage sourceImage) {
+        // This method could likely be optimized but the gain is probably small
+        int w = sourceImage.getWidth();
+        int h = sourceImage.getHeight();
+
+        BufferedImage newImage = new BufferedImage(w, h,
+                BufferedImage.TYPE_INT_RGB);
+
+        Graphics2D g = (Graphics2D) newImage.getGraphics();
+        g.drawImage(sourceImage, 0, 0, w, h, null);
+        g.dispose();
+
+        return newImage;
     }
 }

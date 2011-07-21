@@ -1,5 +1,6 @@
 package com.vaadin.testbench.testcase;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -20,7 +21,6 @@ import com.vaadin.testbench.util.BrowserDimensions;
 import com.vaadin.testbench.util.BrowserUtil;
 import com.vaadin.testbench.util.BrowserVersion;
 import com.vaadin.testbench.util.ImageComparison;
-import com.vaadin.testbench.util.ImageData;
 import com.vaadin.testbench.util.ImageFileUtil;
 import com.vaadin.testbench.util.ImageUtil;
 
@@ -109,15 +109,16 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
         return validateScreenshot(fileName, errorTolerance);
     }
 
-    public boolean validateScreenshot(String fileName, double errorTolerance) {
+    public boolean validateScreenshot(String referenceFileName,
+            double errorTolerance) {
         maxAmountOfTests = Parameters.getMaxRetries();
 
         boolean result = false;
 
         // Add longer pause for reference screenshot!
-        if (!compare.checkIfReferenceExists(fileName)) {
-            getReferenceImage(fileName);
-
+        if (!ImageFileUtil.getReferenceScreenshotFile(referenceFileName)
+                .exists()) {
+            captureReferenceImage(referenceFileName);
             return true;
         }
 
@@ -130,7 +131,8 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
 
         String compareScreenResult = doCommand(
                 "compareScreen",
-                new String[] { compare.generateBlocksFromImageFile(fileName),
+                new String[] {
+                        compare.generateBlocksFromReferenceFile(referenceFileName),
                         String.valueOf(errorTolerance * 768),
                         String.valueOf(maxAmountOfTests),
                         String.valueOf(dimensions.getCanvasXPosition()),
@@ -157,7 +159,7 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
             try {
                 // Compare screenshot with saved reference screen
                 result = compare.compareStringImage(screenshotAsBase64String,
-                        fileName, errorTolerance, dimensions);
+                        referenceFileName, errorTolerance, dimensions);
             } catch (junit.framework.AssertionFailedError e) {
                 // If a Assert.fail("") is caught check if it's a missing
                 // reference.
@@ -202,42 +204,46 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
         return result;
     }
 
-    protected void getReferenceImage(String fileName) {
-        ImageData data = new ImageData(fileName,
-                getBrowserAndCanvasDimensions(), 0);
-
+    protected void captureReferenceImage(String referenceFileName) {
         pause(screenshotPause);
+        BufferedImage capturedImage = captureCanvas();
 
+        BufferedImage imageCopy;
+
+        // Loop until two consequtive screenshots are an exact match
         do {
-            data.setScreenshotAsBase64String(getImage());
-            data.generateComparisonImage();
-            data.copyComparison();
-
+            imageCopy = ImageUtil.duplicateImage(capturedImage);
             pause(screenshotPause);
-        } while (!compare.compareImages(data.getReferenceImage(),
-                data.getComparisonImage(), data.getDifference(), data));
+            capturedImage = captureCanvas();
+        } while (!compare.compareImages(capturedImage, imageCopy, 0.0));
 
         // Check that the comparison folder exists and create if
-        // false
-        File compareFolder = new File(
-                ImageFileUtil.getScreenshotErrorDirectory());
-        if (!compareFolder.exists()) {
-            compareFolder.mkdir();
-        }
+        // needed
+        ImageFileUtil.createScreenshotDirectoriesIfNeeded();
 
         try {
-            ImageIO.write(
-                    data.getComparisonImage(),
-                    "png",
-                    new File(compareFolder + File.separator
-                            + data.getReferenceImageFileName()));
+            ImageIO.write(capturedImage, "png",
+                    ImageFileUtil.getErrorScreenshotFile(referenceFileName));
             softAssert.add(new junit.framework.AssertionFailedError(
-                    "No reference found for " + fileName));
+                    "No reference found for " + referenceFileName));
         } catch (IOException ioe) {
+            // FIXME: Report error
         }
     }
 
-    private String getImage() {
+    /**
+     * Capture a screenshot of the canvas
+     * 
+     * @return BufferedImage with an screenshot of the browser canvas
+     */
+    private BufferedImage captureCanvas() {
+        BufferedImage image = ImageUtil.stringToImage(captureScreenshot());
+        ImageUtil.cropImage(image, getBrowserAndCanvasDimensions());
+
+        return image;
+    }
+
+    private String captureScreenshot() {
         String image = selenium.captureScreenshotToString();
 
         // check that we didn't get null for out image
