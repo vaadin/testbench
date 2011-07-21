@@ -215,7 +215,7 @@
 	
 	<target name="run-tests" if="exclude.runner">
 		<property name="class.path" value="${java.class.path}"/>
-		<subant target="all-tests" buildpath="../test">
+		<subant target="all-tests" buildpath="../test" failonerror="false">
 			<property name="class.path" value="${class.path}"/>
 			<property name="exclude.runner" value="${exclude.runner}" />
 		</subant>
