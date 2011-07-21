@@ -53,17 +53,22 @@ public class HubServlet extends HttpServlet {
     protected Response forward(HttpParameters parameters,
             DynamicRemoteControlPool pool, EnvironmentManager environmentManager)
             throws IOException {
-        SeleneseCommand command = null;
-        Response response = null;
-
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Processing '" + parameters.toString() + "'");
         }
+        // retry if and only if could not get session
         for (int i = 0; i < SESSION_RETRIES; ++i) {
             try {
-                command = new HttpCommandParser(parameters)
+                SeleneseCommand command = new HttpCommandParser(parameters)
                         .parse(environmentManager);
-                response = command.execute(pool);
+                Response response = command.execute(pool);
+
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Responding with " + response.statusCode()
+                            + "/ '" + response.body() + "'");
+                }
+
+                return response;
             } catch (CouldNotGetSessionException e) {
                 LOGGER.warn("Failed to get session: " + e.getMessage());
                 if (i < SESSION_RETRIES - 1) {
@@ -88,13 +93,8 @@ public class HubServlet extends HttpServlet {
                 return new Response(e.getMessage());
             }
         }
-        // response is never null here, but the compiler wants the null check
-        if (LOGGER.isDebugEnabled() && response != null) {
-            LOGGER.debug("Responding with " + response.statusCode() + "/ '"
-                    + response.body() + "'");
-        }
-
-        return response;
+        // cannot come here if SESSION_RETRIES > 0
+        return new Response("Session retries should not be 0");
     }
 
     protected void reply(HttpServletResponse response,
