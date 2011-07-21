@@ -21,6 +21,8 @@ import com.thoughtworks.selenium.grid.hub.remotecontrol.commands.SeleneseCommand
  */
 public class HubServlet extends HttpServlet {
 
+    private static final int SESSION_RETRIES = 3;
+
     private final static Log LOGGER = LogFactory.getLog(HubServer.class);
 
     @Override
@@ -43,39 +45,51 @@ public class HubServlet extends HttpServlet {
 
         registry = HubRegistry.registry();
         parameters = requestParameters(request);
-        remoteControlResponse = forward(parameters, registry
-                .remoteControlPool(), registry.environmentManager());
+        remoteControlResponse = forward(parameters,
+                registry.remoteControlPool(), registry.environmentManager());
         reply(response, remoteControlResponse);
     }
 
     protected Response forward(HttpParameters parameters,
             DynamicRemoteControlPool pool, EnvironmentManager environmentManager)
             throws IOException {
-        final SeleneseCommand command;
-        final Response response;
+        SeleneseCommand command = null;
+        Response response = null;
 
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Processing '" + parameters.toString() + "'");
         }
-        try {
-            command = new HttpCommandParser(parameters)
-                    .parse(environmentManager);
-            response = command.execute(pool);
-        } catch (CommandParsingException e) {
-            LOGGER.error("Failed to parse '" + parameters.toString() + "' : "
-                    + e.getMessage());
-            return new Response(e.getMessage());
-        } catch (NoSuchEnvironmentException e) {
-            LOGGER
-                    .error("Could not find any remote control providing the '"
-                            + e.environment()
-                            + "' environment. Please make sure you started some remote controls which registered as offering this environment.");
-            return new Response(e.getMessage());
-        } catch (NoSuchSessionException e) {
-            LOGGER.error(e.getMessage());
-            return new Response(e.getMessage());
+        for (int i = 0; i < SESSION_RETRIES; ++i) {
+            try {
+                command = new HttpCommandParser(parameters)
+                        .parse(environmentManager);
+                response = command.execute(pool);
+            } catch (CouldNotGetSessionException e) {
+                LOGGER.warn("Failed to get session: " + e.getMessage());
+                if (i < SESSION_RETRIES - 1) {
+                    LOGGER.warn("Retrying to get session");
+                    continue;
+                } else {
+                    LOGGER.error("Failed to get session after "
+                            + SESSION_RETRIES + " attempts.");
+                    return new Response(e.getMessage());
+                }
+            } catch (CommandParsingException e) {
+                LOGGER.error("Failed to parse '" + parameters.toString()
+                        + "' : " + e.getMessage());
+                return new Response(e.getMessage());
+            } catch (NoSuchEnvironmentException e) {
+                LOGGER.error("Could not find any remote control providing the '"
+                        + e.environment()
+                        + "' environment. Please make sure you started some remote controls which registered as offering this environment.");
+                return new Response(e.getMessage());
+            } catch (NoSuchSessionException e) {
+                LOGGER.error(e.getMessage());
+                return new Response(e.getMessage());
+            }
         }
-        if (LOGGER.isDebugEnabled()) {
+        // response is never null here, but the compiler wants the null check
+        if (LOGGER.isDebugEnabled() && response != null) {
             LOGGER.debug("Responding with " + response.statusCode() + "/ '"
                     + response.body() + "'");
         }
@@ -91,7 +105,7 @@ public class HubServlet extends HttpServlet {
         response.getWriter().print(remoteControlResponse.body());
     }
 
-    @SuppressWarnings( { "unchecked" })
+    @SuppressWarnings({ "unchecked" })
     protected HttpParameters requestParameters(HttpServletRequest request) {
         final HttpParameters parameters;
         parameters = new HttpParameters(request.getParameterMap());

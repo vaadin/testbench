@@ -9,6 +9,7 @@ import org.apache.commons.logging.LogFactory;
 
 import com.thoughtworks.selenium.grid.HttpParameters;
 import com.thoughtworks.selenium.grid.Response;
+import com.thoughtworks.selenium.grid.hub.CouldNotGetSessionException;
 import com.thoughtworks.selenium.grid.hub.Environment;
 import com.thoughtworks.selenium.grid.hub.remotecontrol.GlobalRemoteControlPool;
 import com.thoughtworks.selenium.grid.hub.remotecontrol.RemoteControlPool;
@@ -59,7 +60,7 @@ public class NewBrowserSessionCommand extends SeleneseCommand {
             sessionId = parseSessionId(response.body());
             if (null == sessionId) {
                 pool.release(remoteControl);
-                return new Response(
+                throw new CouldNotGetSessionException(
                         "Could not retrieve a new session from remote control running on "
                                 + remoteControl.hostName() + ": "
                                 + response.body());
