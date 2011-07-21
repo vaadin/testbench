@@ -40,8 +40,8 @@ public class ImageData {
     public ImageData(String screenshotAsBase64String,
             String referenceImageFileName, BrowserDimensions dimensions,
             double difference) {
-        this(screenshotAsBase64String, dimensions, difference);
-        this.referenceImageFileName = referenceImageFileName;
+        this(referenceImageFileName, dimensions, difference);
+        this.screenshotAsBase64String = screenshotAsBase64String;
     }
 
     /**
