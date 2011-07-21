@@ -348,7 +348,7 @@ public class ImageComparison {
                 if (blocksWithErrors[x][y]) {
                     if (firstErrorBlock == null) {
                         // This is the first erroneous block we have found
-                        firstErrorBlock = new Point(x, y);
+                        firstErrorBlock = new Point(x * 16, y * 16);
                     } else {
                         // This is the second erroneous block we have found
                         if (x == firstErrorBlock.x
