@@ -37,210 +37,138 @@ public class ImageComparison {
      * hues 0.1% (default) per macroblock of 16x16
      * 
      * @param screenshotAsBase64String
-     *            Image as BASE64 encoded String
+     *            Image of canvas as BASE64 encoded String (must have proper
+     *            dimensions)
      * @param errorTolerance
      *            Allowed RGB error for a macroblock (value range 0-1 default
      *            0.025 == 2.5%)
-     * @param fileId
-     *            File name for this image
+     * @param referenceFileName
+     *            File id for this image without .png extension
      * @param dimensions
      *            Browser window dimensions
      * @return true if images are the same
      */
     public boolean compareStringImage(String screenshotAsBase64String,
             String fileId, double errorTolerance, BrowserDimensions dimensions) {
-
-        ImageData imageData = new ImageData(screenshotAsBase64String, fileId,
-                dimensions, errorTolerance);
-
-        imageData.debug("Using block error tolerance: " + errorTolerance);
-
-        boolean result = false;
+        String referenceFileName = fileId + ".png";
         ImageFileUtil.createScreenshotDirectoriesIfNeeded();
 
+        BufferedImage screenshotImage = ImageUtil
+                .stringToImage(screenshotAsBase64String);
+
+        BufferedImage referenceImage;
         try {
-            imageData.generateComparisonImage();
-            imageData.generateReferenceImage();
-
-            // if images are of different size crop both images to same size
-            // before checking for differences
-            boolean sizesDiffer = !ImageUtil.imagesSameSize(
-                    imageData.getReferenceImage(),
-                    imageData.getComparisonImage());
-            if (sizesDiffer) {
-                imageData.debug("Screenshot size ("
-                        + ImageUtil.getSizeAsString(imageData
-                                .getComparisonImage())
-                        + " ) differs from reference image size ("
-                        + ImageUtil.getSizeAsString(imageData
-                                .getReferenceImage()) + ")");
-            }
-            ImageUtil.cropToBeSameSize(imageData.getReferenceImage(),
-                    imageData.getComparisonImage());
-
-            int imageWidth = imageData.getReferenceImage().getWidth();
-            int imageHeight = imageData.getReferenceImage().getHeight();
-
-            int xBlocks = (int) Math.floor(imageWidth / 16) + 1;
-            int yBlocks = (int) Math.floor(imageHeight / 16) + 1;
-            boolean[][] falseBlocks = new boolean[xBlocks][yBlocks];
-
-            result = compareImage(falseBlocks, imageData.getReferenceImage(),
-                    imageData.getComparisonImage(), errorTolerance);
-
-            // if errors found in file save diff file with marked
-            // macroblocks and create html file for visual confirmation of
-            // differences
-            if (result == false) {
-
-                // Check for cursor.
-                if (Parameters.isScreenshotComparisonCursorDetection()
-                        && !sizesDiffer) {
-                    Point possibleCursorPosition = getPossibleCursorPosition(
-                            xBlocks, yBlocks, falseBlocks);
-                    if (possibleCursorPosition != null) {
-                        boolean cursor = isCursorTheOnlyError(
-                                possibleCursorPosition,
-                                imageData.getReferenceImage(),
-                                imageData.getComparisonImage());
-                        if (cursor) {
-                            return true;
-                        }
-                    }
-                }
-
-                // Check that the comparison folder exists and create if
-                // false
-                File compareFolder = new File(
-                        ImageFileUtil.getScreenshotErrorDirectory());
-                if (!compareFolder.exists()) {
-                    compareFolder.mkdir();
-                }
-
-                // collect big error blocks of differences
-                List<ErrorBlock> errorAreas = collectErrorsToList(xBlocks,
-                        yBlocks, falseBlocks);
-
-                // get both images again if different size
-                if (sizesDiffer) {
-                    imageData.generateComparisonImage();
-                    imageData.generateReferenceImage();
-                }
-
-                // Write clean image to file
-                ImageIO.write(
-                        imageData.getComparisonImage(),
-                        "png",
-                        new File(compareFolder + File.separator
-                                + imageData.getReferenceImageFileName()));
-
-                drawErrorsToImage(errorAreas, imageData);
-
-                createDiffHtml(errorAreas, fileId,
-                        ImageUtil.encodeImageToBase64(imageData
-                                .getComparisonImage()),
-                        ImageUtil.encodeImageToBase64(imageData
-                                .getReferenceImage()));
-
-                imageData
-                        .debug("Created clean image, image with marked differences and difference html.");
-                // Throw assert fail here if no debug requested
-                if (sizesDiffer == false) {
-                    imageData.debug("Screenshot (" + fileId
-                            + ") differs from reference image.");
-                    debug(imageData);
-                    Assert.fail("Screenshot (" + fileId
-                            + ") differs from reference image.");
-                }
-            }
-
-            if (sizesDiffer) {
-
-                // Throws an assertion error with message depending on result
-                // (images only differ in size or images differ in size and
-                // contain errors)
-                if (result) {
-                    // Check that the comparison folder exists and create if
-                    // false
-                    File compareFolder = new File(
-                            ImageFileUtil.getScreenshotErrorDirectory());
-                    if (!compareFolder.exists()) {
-                        compareFolder.mkdir();
-                    }
-
-                    imageData.generateComparisonImage();
-
-                    // Write clean image to file
-                    ImageIO.write(imageData.getComparisonImage(), "png",
-                            new File(compareFolder + File.separator + fileId
-                                    + ".png"));
-
-                    // collect big error blocks of differences
-                    List<ErrorBlock> errorAreas = collectErrorsToList(xBlocks,
-                            yBlocks, falseBlocks);
-
-                    drawErrorsToImage(errorAreas, imageData);
-
-                    imageData.generateReferenceImage();
-
-                    createDiffHtml(errorAreas, fileId,
-                            ImageUtil.encodeImageToBase64(imageData
-                                    .getComparisonImage()),
-                            ImageUtil.encodeImageToBase64(imageData
-                                    .getReferenceImage()));
-
-                    imageData.debug("Images are of different size");
-                    debug(imageData);
-                    Assert.fail("Images are of different size (" + fileId
-                            + ").");
-                } else {
-                    imageData.debug("Images differ and are of different size");
-                    debug(imageData);
-                    Assert.fail("Images differ and are of different size ("
-                            + fileId + ").");
-                }
-            }
+            referenceImage = ImageFileUtil
+                    .readReferenceImage(referenceFileName);
         } catch (IOException e) {
-            // Create an RGB image without alpha channel for reference
-            BufferedImage referenceImage = new BufferedImage(
-                    dimensions.getCanvasWidth(), dimensions.getCanvasHeight(),
-                    BufferedImage.TYPE_INT_RGB);
+            // We require a reference image to continue
+            Assert.fail("No reference found for " + referenceFileName + " in "
+                    + ImageFileUtil.getScreenshotReferenceDirectory());
 
-            Graphics2D g = (Graphics2D) referenceImage.getGraphics();
-            g.drawImage(imageData.getComparisonImage(), 0, 0,
-                    dimensions.getCanvasWidth(), dimensions.getCanvasHeight(),
-                    null);
-            g.dispose();
+            // Needed to avoid compiler warnings about referenceImage
+            return false;
+        }
 
-            try {
-                File referenceFile = new File(
-                        ImageFileUtil.getScreenshotErrorDirectory() + fileId
-                                + ".png");
-                if (!referenceFile.exists()) {
-                    imageData.debug("Creating reference to "
-                            + ImageData.ERROR_DIRECTORY + ".");
-                    // Write clean image to error folder.
-                    ImageIO.write(referenceImage, "png", referenceFile);
+        // If images are of different size crop both images to same size
+        // before checking for differences
+        boolean sizesDiffer = !ImageUtil.imagesSameSize(referenceImage,
+                screenshotImage);
+        if (sizesDiffer) {
+            ImageUtil.cropToBeSameSize(referenceImage, screenshotImage);
+        }
+
+        int imageWidth = referenceImage.getWidth();
+        int imageHeight = referenceImage.getHeight();
+
+        int xBlocks = (int) Math.floor(imageWidth / 16) + 1;
+        int yBlocks = (int) Math.floor(imageHeight / 16) + 1;
+        boolean[][] falseBlocks = new boolean[xBlocks][yBlocks];
+        boolean imagesEqual = compareImage(falseBlocks, referenceImage,
+                screenshotImage, errorTolerance);
+
+        if (imagesEqual) {
+            // Images match. Nothing else to do.
+            return true;
+        }
+
+        if (!sizesDiffer && Parameters.isScreenshotComparisonCursorDetection()) {
+            // Images are not equal, still check if the only difference is a
+            // blinking cursor
+            Point possibleCursorPosition = getPossibleCursorPosition(xBlocks,
+                    yBlocks, falseBlocks);
+            if (possibleCursorPosition != null) {
+                if (isCursorTheOnlyError(possibleCursorPosition,
+                        referenceImage, screenshotImage)) {
+                    // Cursor is the only difference so we are done.
+                    return true;
                 }
-                result = false;
-            } catch (FileNotFoundException fnfe) {
-                imageData
-                        .debug("Failed to open file to write reference image.");
-                debug(imageData);
-                Assert.fail("Failed to open file to write reference image.");
-            } catch (IOException ioe) {
-                e.printStackTrace();
-                return false;
-            }
-            if (result == false) {
-                imageData.debug("No reference found for " + fileId);
-                debug(imageData);
-                Assert.fail("No reference found for " + fileId + " in "
-                        + ImageFileUtil.getScreenshotReferenceDirectory());
             }
         }
 
-        return result;
+        if (!sizesDiffer) {
+            /*
+             * The command has failed because the captured image differs from
+             * the reference image
+             */
+            createErrorImageAndHTML(referenceFileName, screenshotImage,
+                    referenceImage, falseBlocks, xBlocks, yBlocks);
+
+            // TODO: Add info about which RC it was run on
+            Assert.fail("Screenshot (" + fileId
+                    + ") differs from reference image.");
+        } else {
+            /*
+             * The command has failed because the dimensions of the captured
+             * image do not match the reference image
+             */
+            if (imagesEqual) {
+                /*
+                 * The images are equal but of different size
+                 */
+                createErrorImageAndHTML(referenceFileName, screenshotImage,
+                        referenceImage, falseBlocks, xBlocks, yBlocks);
+
+                // TODO: Add info about which RC it was run on
+                Assert.fail("Images are of different size (" + fileId + ").");
+            } else {
+                // Neither size nor contents match
+
+                // FIXME: Why is nothing written here?
+
+                // TODO: Add info about which RC it was run on
+                Assert.fail("Images differ and are of different size ("
+                        + fileId + ").");
+            }
+        }
+
+        // Should never get here
+        return false;
+    }
+
+    private void createErrorImageAndHTML(String fileId,
+            BufferedImage screenshotImage, BufferedImage referenceImage,
+            boolean[][] falseBlocks, int xBlocks, int yBlocks) {
+
+        try {
+            // Write the screenshot into the error directory
+            ImageIO.write(screenshotImage, "png",
+                    ImageFileUtil.getErrorScreenshotFile(fileId + ".png"));
+        } catch (IOException e) {
+            System.err.println("Error writing screenshot to "
+                    + ImageFileUtil.getErrorScreenshotFile(fileId + ".png")
+                            .getPath());
+            e.printStackTrace();
+        }
+
+        // collect big error blocks of differences
+        List<ErrorBlock> errorAreas = collectErrorsToList(xBlocks, yBlocks,
+                falseBlocks);
+
+        // Draw boxes around blocks that differ
+        drawErrorsToImage(errorAreas, screenshotImage);
+
+        createDiffHtml(errorAreas, fileId, screenshotImage, referenceImage);
+
     }
 
     public boolean compareImages(BufferedImage referenceImage,
@@ -646,15 +574,14 @@ public class ImageComparison {
     }
 
     private void drawErrorsToImage(List<ErrorBlock> errorAreas,
-            ImageData imageData) {
+            BufferedImage screenshotImage) {
         // Draw lines around false ErrorBlocks before saving _diff
         // file.
-        Graphics2D drawToPicture = imageData.getComparisonImage()
-                .createGraphics();
+        Graphics2D drawToPicture = screenshotImage.createGraphics();
         drawToPicture.setColor(Color.MAGENTA);
 
-        int width = imageData.getComparisonImage().getWidth();
-        int height = imageData.getComparisonImage().getHeight();
+        int width = screenshotImage.getWidth();
+        int height = screenshotImage.getHeight();
 
         for (ErrorBlock error : errorAreas) {
             int offsetX = 0, offsetY = 0;
@@ -698,7 +625,9 @@ public class ImageComparison {
      *            fileName for html file
      */
     private void createDiffHtml(List<ErrorBlock> blocks, String fileId,
-            String image, String ref_image) {
+            BufferedImage screenshotImage, BufferedImage referenceImage) {
+        String image = ImageUtil.encodeImageToBase64(screenshotImage);
+        String ref_image = ImageUtil.encodeImageToBase64(referenceImage);
         try {
             String directory = Parameters.getScreenshotDirectory();
             if (!File.separator

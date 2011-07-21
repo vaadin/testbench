@@ -77,19 +77,26 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
         return result;
     }
 
-    public boolean validateScreenshot(String fileId, String identifier) {
-        return validateScreenshot(fileId,
-                Parameters.getScreenshotComparisonTolerance(), identifier);
+    public boolean validateScreenshot(String testName, String imageIdentifier) {
+        return validateScreenshot(testName,
+                Parameters.getScreenshotComparisonTolerance(), imageIdentifier);
     }
 
     /**
-     * Capture a screenshot of only the browser canvas and save to saveName.
-     * Compare captured screenshot to reference screenshot.
+     * Capture a screenshot of the browser canvas and compare with Compare
+     * captured screenshot to reference screenshot.
      * 
-     * @return true, if equals reference image
+     * @param fileId
+     *            The test identifier. Used as part of the image filename.
+     * @param errorTolerance
+     *            The error to accept during comparison. Higher value means more
+     *            tolerant. Between 0 and 1.
+     * @param imageIdentifier
+     *            The screenshot identifier. Used as part of the image filename.
+     * @return true, if the captured screenshots equals the reference image
      */
-    public boolean validateScreenshot(String fileId, double errorTolerance,
-            String identifier) {
+    public boolean validateScreenshot(String testName, double errorTolerance,
+            String imageIdentifier) {
 
         // If browser is not set get browser info.
         BrowserVersion browser = getBrowserVersion();
@@ -98,27 +105,36 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
 
         // setup filename
         String fileName = "";
-        if (identifier == null || identifier.length() < 1) {
-            fileName = fileId + "_" + browser.getPlatform() + "_" + navigatorId
-                    + "_" + ++imageNumber;
+        if (imageIdentifier == null || imageIdentifier.length() < 1) {
+            fileName = testName + "_" + browser.getPlatform() + "_"
+                    + navigatorId + "_" + ++imageNumber;
         } else {
-            fileName = fileId + "_" + browser.getPlatform() + "_" + navigatorId
-                    + "_" + identifier;
+            fileName = testName + "_" + browser.getPlatform() + "_"
+                    + navigatorId + "_" + imageIdentifier;
         }
 
         return validateScreenshot(fileName, errorTolerance);
     }
 
-    public boolean validateScreenshot(String referenceFileName,
+    /**
+     * Capture a screenshot of the canvas and compare it to a reference image
+     * 
+     * @param referenceFileId
+     *            The filename for the screenshot, without any extension
+     * @param errorTolerance
+     *            The tolerance to use in the comparison
+     * @return
+     */
+    public boolean validateScreenshot(String referenceFileId,
             double errorTolerance) {
         maxAmountOfTests = Parameters.getMaxRetries();
 
         boolean result = false;
 
         // Add longer pause for reference screenshot!
-        if (!ImageFileUtil.getReferenceScreenshotFile(referenceFileName)
+        if (!ImageFileUtil.getReferenceScreenshotFile(referenceFileId + ".png")
                 .exists()) {
-            captureReferenceImage(referenceFileName);
+            captureReferenceImage(referenceFileId);
             return true;
         }
 
@@ -132,7 +148,7 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
         String compareScreenResult = doCommand(
                 "compareScreen",
                 new String[] {
-                        compare.generateBlocksFromReferenceFile(referenceFileName),
+                        compare.generateBlocksFromReferenceFile(referenceFileId),
                         String.valueOf(errorTolerance * 768),
                         String.valueOf(maxAmountOfTests),
                         String.valueOf(dimensions.getCanvasXPosition()),
@@ -159,7 +175,7 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
             try {
                 // Compare screenshot with saved reference screen
                 result = compare.compareStringImage(screenshotAsBase64String,
-                        referenceFileName, errorTolerance, dimensions);
+                        referenceFileId, errorTolerance, dimensions);
             } catch (junit.framework.AssertionFailedError e) {
                 // If a Assert.fail("") is caught check if it's a missing
                 // reference.
@@ -204,7 +220,7 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
         return result;
     }
 
-    protected void captureReferenceImage(String referenceFileName) {
+    protected void captureReferenceImage(String referenceFileId) {
         pause(screenshotPause);
         BufferedImage capturedImage = captureCanvas();
 
@@ -222,10 +238,13 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
         ImageFileUtil.createScreenshotDirectoriesIfNeeded();
 
         try {
-            ImageIO.write(capturedImage, "png",
-                    ImageFileUtil.getErrorScreenshotFile(referenceFileName));
+            ImageIO.write(
+                    capturedImage,
+                    "png",
+                    ImageFileUtil.getErrorScreenshotFile(referenceFileId
+                            + ".png"));
             softAssert.add(new junit.framework.AssertionFailedError(
-                    "No reference found for " + referenceFileName));
+                    "No reference found for " + referenceFileId));
         } catch (IOException ioe) {
             // FIXME: Report error
         }

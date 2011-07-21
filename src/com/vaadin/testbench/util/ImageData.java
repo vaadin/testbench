@@ -36,40 +36,6 @@ public class ImageData {
         this.difference = difference;
     }
 
-    public ImageData(String screenshotAsBase64String,
-            String referenceImageFileName, BrowserDimensions dimensions,
-            double difference) {
-        this(referenceImageFileName, dimensions, difference);
-        this.screenshotAsBase64String = screenshotAsBase64String;
-    }
-
-    /**
-     * Convert base64 image to buffered image and crop out canvas
-     */
-    public void generateComparisonImage() {
-        comparisonImage = ImageUtil.stringToImage(screenshotAsBase64String);
-        // Crop the image if not already cropped client-side. This is true for
-        // when there is no reference image.
-        if (comparisonImage.getWidth() > dimensions.getCanvasWidth()
-                || comparisonImage.getHeight() > dimensions.getCanvasHeight()) {
-            comparisonImage = comparisonImage.getSubimage(
-                    dimensions.getCanvasXPosition(),
-                    dimensions.getCanvasYPosition(),
-                    dimensions.getCanvasWidth(), dimensions.getCanvasHeight());
-        }
-    }
-
-    /**
-     * Get referenceImage from reference directory
-     * 
-     * @throws IOException
-     */
-    public void generateReferenceImage() throws IOException {
-        referenceImage = ImageIO.read(new File(ImageFileUtil
-                .getScreenshotReferenceDirectory()
-                + getReferenceImageFileName()));
-    }
-
     /**
      * Generates reference images from the reference directory.
      * 
