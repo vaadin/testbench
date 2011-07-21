@@ -151,12 +151,12 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
                         + compareScreenResults[1] + " time(s)");
             }
             // Get the screen shot, which has been passed in the result
-            String image = compareScreenResults[2];
+            String screenshotAsBase64String = compareScreenResults[2];
 
             try {
                 // Compare screenshot with saved reference screen
-                result = compare.compareStringImage(image, fileName,
-                        errorTolerance, dimensions);
+                result = compare.compareStringImage(screenshotAsBase64String,
+                        fileName, errorTolerance, dimensions);
             } catch (junit.framework.AssertionFailedError e) {
                 // If a Assert.fail("") is caught check if it's a missing
                 // reference.
@@ -210,7 +210,7 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
         pause(screenshotPause);
 
         do {
-            data.setOriginalImage(getImage());
+            data.setScreenshotAsBase64String(getImage());
             data.generateComparisonImage();
             data.copyComparison();
 
@@ -225,8 +225,11 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
         }
 
         try {
-            ImageIO.write(data.getComparisonImage(), "png", new File(
-                    compareFolder + File.separator + data.getFileName()));
+            ImageIO.write(
+                    data.getComparisonImage(),
+                    "png",
+                    new File(compareFolder + File.separator
+                            + data.getReferenceImageFileName()));
             softAssert.add(new junit.framework.AssertionFailedError(
                     "No reference found for " + fileName));
         } catch (IOException ioe) {

@@ -37,7 +37,7 @@ public class ImageComparison {
      * Compare image [name] to image under /reference/. Images may differ in RGB
      * hues 0.1% (default) per macroblock of 16x16
      * 
-     * @param image
+     * @param screenshotAsBase64String
      *            Image as BASE64 encoded String
      * @param d
      *            Allowed RGB error for a macroblock (value range 0-1 default
@@ -48,10 +48,11 @@ public class ImageComparison {
      *            Browser window dimensions
      * @return true if images are the same
      */
-    public boolean compareStringImage(String image, String fileId, double d,
-            BrowserDimensions dimensions) {
+    public boolean compareStringImage(String screenshotAsBase64String,
+            String fileId, double d, BrowserDimensions dimensions) {
 
-        imageData = new ImageData(image, fileId, dimensions, d);
+        imageData = new ImageData(screenshotAsBase64String, fileId, dimensions,
+                d);
 
         imageData.debug("Using block error tolerance: " + d);
 
@@ -116,7 +117,7 @@ public class ImageComparison {
                         imageData.getComparisonImage(),
                         "png",
                         new File(compareFolder + File.separator
-                                + imageData.getFileName()));
+                                + imageData.getReferenceImageFileName()));
 
                 drawErrorsToImage(errorAreas);
 
@@ -260,8 +261,8 @@ public class ImageComparison {
 
     private void debug() {
         if (Parameters.isDebug() && imageData.getImageErrors().length() >= 0) {
-            String fileId = imageData.getFileName().substring(0,
-                    imageData.getFileName().lastIndexOf('.'));
+            String fileId = imageData.getReferenceImageFileName().substring(0,
+                    imageData.getReferenceImageFileName().lastIndexOf('.'));
             // Write error macroblocks data to log file
             BufferedWriter out;
             try {
@@ -444,7 +445,7 @@ public class ImageComparison {
     }
 
     /**
-     * Try to check if failure is due to blicking text cursor
+     * Check if failure is because of a blinking text cursor.
      * 
      * @param test
      *            Image for this run
@@ -494,15 +495,23 @@ public class ImageComparison {
                         if (diff.getRGB(i - 1, j) != white
                                 || diff.getRGB(i + 1, j) != white) {
                             if (Parameters.isDebug()) {
-                                imageData.debug("Returning cursor false for "
-                                        + imageData.getFileName());
+                                imageData
+                                        .debug("Returning cursor false for "
+                                                + imageData
+                                                        .getReferenceImageFileName());
                                 try {
-                                    ImageIO.write(diff, "png", new File(
-                                            imageData.getErrorDirectory()
-                                                    + File.separator + "diff"
-                                                    + File.separator
-                                                    + imageData.getFileName()
-                                                    + "_false.png"));
+                                    ImageIO.write(
+                                            diff,
+                                            "png",
+                                            new File(
+                                                    imageData
+                                                            .getErrorDirectory()
+                                                            + File.separator
+                                                            + "diff"
+                                                            + File.separator
+                                                            + imageData
+                                                                    .getReferenceImageFileName()
+                                                            + "_false.png"));
                                 } catch (IOException e) {
                                     imageData.debug("Couldn't write file.\n"
                                             + e.getMessage());
@@ -513,37 +522,49 @@ public class ImageComparison {
                         j++;
                         if (diff.getRGB(i, j) != black) {
                             if (Parameters.isDebug()) {
-                                imageData.debug("Returning cursor true for "
-                                        + imageData.getFileName());
+                                imageData
+                                        .debug("Returning cursor true for "
+                                                + imageData
+                                                        .getReferenceImageFileName());
 
                                 try {
                                     ImageIO.write(
                                             imageData.getReferenceImage(),
                                             "png",
-                                            new File(imageData
-                                                    .getErrorDirectory()
-                                                    + File.separator
-                                                    + "diff"
-                                                    + File.separator
-                                                    + imageData.getFileName()
-                                                    + "_ref.png"));
+                                            new File(
+                                                    imageData
+                                                            .getErrorDirectory()
+                                                            + File.separator
+                                                            + "diff"
+                                                            + File.separator
+                                                            + imageData
+                                                                    .getReferenceImageFileName()
+                                                            + "_ref.png"));
 
                                     ImageIO.write(
                                             imageData.getComparisonImage(),
                                             "png",
-                                            new File(imageData
-                                                    .getErrorDirectory()
-                                                    + File.separator
-                                                    + "diff"
-                                                    + File.separator
-                                                    + imageData.getFileName()
-                                                    + "_comp.png"));
+                                            new File(
+                                                    imageData
+                                                            .getErrorDirectory()
+                                                            + File.separator
+                                                            + "diff"
+                                                            + File.separator
+                                                            + imageData
+                                                                    .getReferenceImageFileName()
+                                                            + "_comp.png"));
 
-                                    ImageIO.write(diff, "png", new File(
-                                            imageData.getErrorDirectory()
-                                                    + File.separator + "diff"
-                                                    + File.separator
-                                                    + imageData.getFileName()));
+                                    ImageIO.write(
+                                            diff,
+                                            "png",
+                                            new File(
+                                                    imageData
+                                                            .getErrorDirectory()
+                                                            + File.separator
+                                                            + "diff"
+                                                            + File.separator
+                                                            + imageData
+                                                                    .getReferenceImageFileName()));
                                 } catch (IOException e) {
                                     imageData.debug("Couldn't write file.\n"
                                             + e.getMessage());

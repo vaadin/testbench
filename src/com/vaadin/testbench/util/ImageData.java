@@ -17,10 +17,22 @@ public class ImageData {
     public static final String REFERENCE_DIRECTORY = "reference";
     public static final String ERROR_DIRECTORY = "errors";
 
-    private String fileName = null;
-    private String originalImage = null;
+    private String referenceImageFileName = null;
+    private String screenshotAsBase64String = null;
+
+    /**
+     * Screenshot base directory. Ends with a slash.
+     */
     private String baseDirectory = null;
+
+    /**
+     * Screenshot reference directory. Ends with a slash.
+     */
     private String referenceDirectory = null;
+
+    /**
+     * Screenshot error directory. Ends with a slash.
+     */
     private String errorDirectory = null;
 
     private int cursorX, cursorY;
@@ -36,19 +48,18 @@ public class ImageData {
     private ArrayList<BufferedImage> referenceImages;
 
     // Constructors
-    public ImageData(String fileName, BrowserDimensions dimensions,
-            double difference) {
-        this.fileName = fileName;
+    public ImageData(String referenceImageFileName,
+            BrowserDimensions dimensions, double difference) {
+        this.referenceImageFileName = referenceImageFileName;
         this.dimensions = dimensions;
         this.difference = difference;
     }
 
-    public ImageData(String originalImage, String fileName,
-            BrowserDimensions dimensions, double difference) {
-        this.originalImage = originalImage;
-        this.fileName = fileName;
-        this.dimensions = dimensions;
-        this.difference = difference;
+    public ImageData(String screenshotAsBase64String,
+            String referenceImageFileName, BrowserDimensions dimensions,
+            double difference) {
+        this(screenshotAsBase64String, dimensions, difference);
+        this.referenceImageFileName = referenceImageFileName;
     }
 
     /**
@@ -74,7 +85,7 @@ public class ImageData {
      * Convert base64 image to buffered image and crop out canvas
      */
     public void generateComparisonImage() {
-        comparisonImage = ImageUtil.stringToImage(originalImage);
+        comparisonImage = ImageUtil.stringToImage(screenshotAsBase64String);
         // Crop the image if not already cropped client-side. This is true for
         // when there is no reference image.
         if (comparisonImage.getWidth() > dimensions.getCanvasWidth()
@@ -93,7 +104,7 @@ public class ImageData {
      */
     public void generateReferenceImage() throws IOException {
         referenceImage = ImageIO.read(new File(getReferenceDirectory()
-                + getFileName()));
+                + getReferenceImageFileName()));
     }
 
     /**
@@ -103,12 +114,12 @@ public class ImageData {
      */
     public void generateReferenceImages() throws IOException {
         referenceImages = new ArrayList<BufferedImage>();
-        String nextName = getFileName();
+        String nextName = getReferenceImageFileName();
         File file = new File(getReferenceDirectory() + nextName);
         int i = 1;
         while (file.exists()) {
             referenceImages.add(ImageIO.read(file));
-            nextName = getFileName().replace(".png",
+            nextName = getReferenceImageFileName().replace(".png",
                     String.format("_%d.png", i++));
             file = new File(getReferenceDirectory() + nextName);
         }
@@ -212,23 +223,23 @@ public class ImageData {
     }
 
     // Getters and setters
-    public String getFileName() {
-        if (fileName.endsWith(".png")) {
-            return fileName;
+    public String getReferenceImageFileName() {
+        if (referenceImageFileName.endsWith(".png")) {
+            return referenceImageFileName;
         }
-        return fileName + ".png";
+        return referenceImageFileName + ".png";
     }
 
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
+    public void setReferenceImageFileName(String fileName) {
+        referenceImageFileName = fileName;
     }
 
-    public String getOriginalImage() {
-        return originalImage;
+    public String getScreenshotAsBase64String() {
+        return screenshotAsBase64String;
     }
 
-    public void setOriginalImage(String image) {
-        originalImage = image;
+    public void setScreenshotAsBase64String(String image) {
+        screenshotAsBase64String = image;
     }
 
     public String getBaseDirectory() {
