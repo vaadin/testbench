@@ -59,9 +59,7 @@ public class ImageComparison {
 
         boolean result = false;
 
-        imageData.generateBaseDirectory();
-
-        checkAndCreateDirectories(imageData.getBaseDirectory());
+        checkAndCreateDirectories(ImageFileUtil.getScreenshotBaseDirectory());
 
         try {
             imageData.generateComparisonImage();
@@ -103,7 +101,8 @@ public class ImageComparison {
 
                 // Check that the comparison folder exists and create if
                 // false
-                File compareFolder = new File(imageData.getErrorDirectory());
+                File compareFolder = new File(
+                        ImageFileUtil.getScreenshotErrorDirectory());
                 if (!compareFolder.exists()) {
                     compareFolder.mkdir();
                 }
@@ -153,7 +152,8 @@ public class ImageComparison {
                 if (result) {
                     // Check that the comparison folder exists and create if
                     // false
-                    File compareFolder = new File(imageData.getErrorDirectory());
+                    File compareFolder = new File(
+                            ImageFileUtil.getScreenshotErrorDirectory());
                     if (!compareFolder.exists()) {
                         compareFolder.mkdir();
                     }
@@ -203,8 +203,9 @@ public class ImageComparison {
             g.dispose();
 
             try {
-                File referenceFile = new File(imageData.getErrorDirectory()
-                        + fileId + ".png");
+                File referenceFile = new File(
+                        ImageFileUtil.getScreenshotErrorDirectory() + fileId
+                                + ".png");
                 if (!referenceFile.exists()) {
                     imageData.debug("Creating reference to "
                             + ImageData.ERROR_DIRECTORY + ".");
@@ -225,7 +226,7 @@ public class ImageComparison {
                 imageData.debug("No reference found for " + fileId);
                 debug();
                 Assert.fail("No reference found for " + fileId + " in "
-                        + imageData.getReferenceDirectory());
+                        + ImageFileUtil.getScreenshotReferenceDirectory());
             }
         }
 
@@ -234,7 +235,7 @@ public class ImageComparison {
 
     public boolean compareImages(ImageData imageData) {
         this.imageData = imageData;
-        checkAndCreateDirectories(imageData.getBaseDirectory());
+        checkAndCreateDirectories(ImageFileUtil.getScreenshotBaseDirectory());
 
         int xBlocks = (int) Math
                 .floor(imageData.getReferenceImage().getWidth() / 16) + 1;
@@ -267,8 +268,9 @@ public class ImageComparison {
             BufferedWriter out;
             try {
                 out = new BufferedWriter(new FileWriter(
-                        imageData.getErrorDirectory() + File.separator + "logs"
-                                + File.separator + fileId + ".log"));
+                        ImageFileUtil.getScreenshotErrorDirectory()
+                                + File.separator + "logs" + File.separator
+                                + fileId + ".log"));
 
                 out.write("Exceptions for " + fileId + NEW_LINE + NEW_LINE);
                 out.write(imageData.getImageErrors().toString());
@@ -842,8 +844,7 @@ public class ImageComparison {
 
     public String generateBlocksFromImageFile(String fileName) {
         ImageData image = new ImageData(null, fileName, null, 0);
-        image.generateBaseDirectory();
-        checkAndCreateDirectories(image.getBaseDirectory());
+        checkAndCreateDirectories(ImageFileUtil.getScreenshotBaseDirectory());
 
         try {
             image.generateReferenceImages();

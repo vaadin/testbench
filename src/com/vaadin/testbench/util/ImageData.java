@@ -8,32 +8,15 @@ import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
-import com.vaadin.testbench.Parameters;
-
 public class ImageData {
 
     // referenceDirectory is the name of the directory with the reference
     // pictures of the same name as the one to be compared
-    public static final String REFERENCE_DIRECTORY = "reference";
-    public static final String ERROR_DIRECTORY = "errors";
+    public static final String REFERENCE_DIRECTORY = ImageFileUtil.REFERENCE_DIRECTORY;
+    public static final String ERROR_DIRECTORY = ImageFileUtil.ERROR_DIRECTORY;
 
     private String referenceImageFileName = null;
     private String screenshotAsBase64String = null;
-
-    /**
-     * Screenshot base directory. Ends with a slash.
-     */
-    private String baseDirectory = null;
-
-    /**
-     * Screenshot reference directory. Ends with a slash.
-     */
-    private String referenceDirectory = null;
-
-    /**
-     * Screenshot error directory. Ends with a slash.
-     */
-    private String errorDirectory = null;
 
     private double difference;
 
@@ -62,25 +45,6 @@ public class ImageData {
     }
 
     /**
-     * Get base directory
-     */
-    public void generateBaseDirectory() {
-        baseDirectory = Parameters.getScreenshotDirectory();
-
-        if (baseDirectory == null || baseDirectory.length() == 0) {
-            throw new IllegalArgumentException(
-                    "Missing reference directory definition. Use -D"
-                            + Parameters.SCREENSHOT_DIRECTORY
-                            + "=c:\\screenshot\\. ");
-        }
-
-        if (!File.separator
-                .equals(baseDirectory.charAt(baseDirectory.length() - 1))) {
-            baseDirectory = baseDirectory + File.separator;
-        }
-    }
-
-    /**
      * Convert base64 image to buffered image and crop out canvas
      */
     public void generateComparisonImage() {
@@ -102,7 +66,8 @@ public class ImageData {
      * @throws IOException
      */
     public void generateReferenceImage() throws IOException {
-        referenceImage = ImageIO.read(new File(getReferenceDirectory()
+        referenceImage = ImageIO.read(new File(ImageFileUtil
+                .getScreenshotReferenceDirectory()
                 + getReferenceImageFileName()));
     }
 
@@ -114,13 +79,15 @@ public class ImageData {
     public void generateReferenceImages() throws IOException {
         referenceImages = new ArrayList<BufferedImage>();
         String nextName = getReferenceImageFileName();
-        File file = new File(getReferenceDirectory() + nextName);
+        File file = new File(ImageFileUtil.getScreenshotReferenceDirectory()
+                + nextName);
         int i = 1;
         while (file.exists()) {
             referenceImages.add(ImageIO.read(file));
             nextName = getReferenceImageFileName().replace(".png",
                     String.format("_%d.png", i++));
-            file = new File(getReferenceDirectory() + nextName);
+            file = new File(ImageFileUtil.getScreenshotReferenceDirectory()
+                    + nextName);
         }
     }
 
@@ -239,36 +206,6 @@ public class ImageData {
 
     public void setScreenshotAsBase64String(String image) {
         screenshotAsBase64String = image;
-    }
-
-    public String getBaseDirectory() {
-        return baseDirectory;
-    }
-
-    public void setBaseDirectory(String baseDirectory) {
-        this.baseDirectory = baseDirectory;
-    }
-
-    public String getReferenceDirectory() {
-        if (referenceDirectory == null) {
-            return baseDirectory + REFERENCE_DIRECTORY + File.separator;
-        }
-        return referenceDirectory;
-    }
-
-    public void setReferenceDirectory(String referenceDirectory) {
-        this.referenceDirectory = referenceDirectory;
-    }
-
-    public String getErrorDirectory() {
-        if (errorDirectory == null) {
-            return baseDirectory + ERROR_DIRECTORY + File.separator;
-        }
-        return errorDirectory;
-    }
-
-    public void setErrorDirectory(String errorDirectory) {
-        this.errorDirectory = errorDirectory;
     }
 
     public double getDifference() {

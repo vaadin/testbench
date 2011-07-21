@@ -21,6 +21,7 @@ import com.vaadin.testbench.util.BrowserUtil;
 import com.vaadin.testbench.util.BrowserVersion;
 import com.vaadin.testbench.util.ImageComparison;
 import com.vaadin.testbench.util.ImageData;
+import com.vaadin.testbench.util.ImageFileUtil;
 import com.vaadin.testbench.util.ImageUtil;
 
 /**
@@ -205,8 +206,6 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
         ImageData data = new ImageData(fileName,
                 getBrowserAndCanvasDimensions(), 0);
 
-        data.generateBaseDirectory();
-
         pause(screenshotPause);
 
         do {
@@ -219,7 +218,8 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
 
         // Check that the comparison folder exists and create if
         // false
-        File compareFolder = new File(data.getErrorDirectory());
+        File compareFolder = new File(
+                ImageFileUtil.getScreenshotErrorDirectory());
         if (!compareFolder.exists()) {
             compareFolder.mkdir();
         }
