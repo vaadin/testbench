@@ -47,8 +47,9 @@ public class ImageComparison {
      * @return true if images are the same
      */
     public boolean compareStringImage(String screenshotAsBase64String,
-            String fileId, double errorTolerance, BrowserDimensions dimensions) {
-        String referenceFileName = fileId + ".png";
+            String referenceFileId, double errorTolerance,
+            BrowserDimensions dimensions) {
+        String referenceFileName = referenceFileId + ".png";
         ImageFileUtil.createScreenshotDirectoriesIfNeeded();
 
         BufferedImage screenshotImage = ImageUtil
@@ -108,11 +109,11 @@ public class ImageComparison {
              * The command has failed because the captured image differs from
              * the reference image
              */
-            createErrorImageAndHTML(referenceFileName, screenshotImage,
+            createErrorImageAndHTML(referenceFileId, screenshotImage,
                     referenceImage, falseBlocks, xBlocks, yBlocks);
 
             // TODO: Add info about which RC it was run on
-            Assert.fail("Screenshot (" + fileId
+            Assert.fail("Screenshot (" + referenceFileId
                     + ") differs from reference image.");
         } else {
             /*
@@ -123,11 +124,12 @@ public class ImageComparison {
                 /*
                  * The images are equal but of different size
                  */
-                createErrorImageAndHTML(referenceFileName, screenshotImage,
+                createErrorImageAndHTML(referenceFileId, screenshotImage,
                         referenceImage, falseBlocks, xBlocks, yBlocks);
 
                 // TODO: Add info about which RC it was run on
-                Assert.fail("Images are of different size (" + fileId + ").");
+                Assert.fail("Images are of different size (" + referenceFileId
+                        + ").");
             } else {
                 // Neither size nor contents match
 
@@ -135,7 +137,7 @@ public class ImageComparison {
 
                 // TODO: Add info about which RC it was run on
                 Assert.fail("Images differ and are of different size ("
-                        + fileId + ").");
+                        + referenceFileId + ").");
             }
         }
 
