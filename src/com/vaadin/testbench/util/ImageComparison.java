@@ -182,11 +182,11 @@ public class ImageComparison {
         int yBlocks = ImageComparisonUtil.getBlocks(referenceImage.getHeight());
         boolean[][] falseBlocks = new boolean[xBlocks][yBlocks];
 
-        boolean result = compareImage(falseBlocks, referenceImage,
+        boolean imagesEqual = compareImage(falseBlocks, referenceImage,
                 screenshotImage, errorTolerance);
 
         // Check for cursor.
-        if (Parameters.isScreenshotComparisonCursorDetection()) {
+        if (!imagesEqual && Parameters.isScreenshotComparisonCursorDetection()) {
             Point possibleCursorPosition = getPossibleCursorPosition(xBlocks,
                     yBlocks, falseBlocks);
             if (possibleCursorPosition != null) {
@@ -196,7 +196,7 @@ public class ImageComparison {
                 }
             }
         }
-        return result;
+        return imagesEqual;
     }
 
     private boolean compareImage(boolean[][] falseBlocks,
@@ -398,9 +398,6 @@ public class ImageComparison {
         int width = referenceImage.getWidth();
         int height = referenceImage.getHeight();
 
-        BufferedImage diff = ImageUtil.createBlackAndWhiteDifferenceImage(
-                comparisonImage, referenceImage);
-
         // If at the outer edge move in one step.
         if (x == 0) {
             x = 1;
@@ -413,9 +410,28 @@ public class ImageComparison {
         if ((y + 16) >= height) {
             y = height - 17;
         }
-        //
-        for (int j = y; j < y + 16; j++) {
-            for (int i = x; i < x + 16; i++) {
+
+        // Create a black and white diff image for the part we are scanning (we
+        // are starting at the error block and scanning it and possible the one
+        // below. Also possibly scanning one pixel outside in all directions).
+
+        int areaX = x - 1;
+        int areaY = y;
+        int areaWidth = 16 + 2;
+        int areaHeight = 32 + 2;
+        if (x + areaWidth >= width) {
+            areaWidth = width - x;
+        }
+        if (y + areaHeight >= height) {
+            areaHeight = height - y;
+        }
+
+        BufferedImage diff = ImageUtil.createBlackAndWhiteDifferenceImage(
+                comparisonImage, referenceImage, areaX, areaY, areaWidth,
+                areaHeight);
+
+        for (int j = 1; j < 16 + 1; j++) {
+            for (int i = 1; i < 16 + 1; i++) {
                 // if found differing pixel
                 if (diff.getRGB(i, j) == Color.BLACK.getRGB()) {
                     int black = Color.BLACK.getRGB();
@@ -427,6 +443,10 @@ public class ImageComparison {
                             return false;
                         }
                         j++;
+                        if (j == areaHeight) {
+                            // End of image, assume it is a cursor
+                            return true;
+                        }
                         if (diff.getRGB(i, j) != black) {
                             return true;
                         }

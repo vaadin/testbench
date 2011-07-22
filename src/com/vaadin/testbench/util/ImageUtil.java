@@ -98,13 +98,15 @@ public class ImageUtil {
      *            First image
      * @param image2
      *            Second image
+     * @param height
+     * @param width
+     * @param y
+     * @param x
      * @return B&W image
      */
     public static BufferedImage createBlackAndWhiteDifferenceImage(
-            BufferedImage image1, BufferedImage image2) {
-        int width = image1.getWidth();
-        int height = image1.getHeight();
-
+            BufferedImage image1, BufferedImage image2, int startX, int startY,
+            int width, int height) {
         // Create empty image
         BufferedImage diff = new BufferedImage(width, height,
                 BufferedImage.TYPE_BYTE_GRAY);
@@ -116,8 +118,8 @@ public class ImageUtil {
 
         // Convert both images to black and white and mark differences in the
         // "difference" image as black
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
+        for (int x = startX; x < startX + width; x++) {
+            for (int y = startY; y < startY + height; y++) {
                 double luminance1 = getLuminance(image1.getRGB(x, y));
                 double luminance2 = getLuminance(image2.getRGB(x, y));
 
@@ -125,7 +127,7 @@ public class ImageUtil {
                 boolean black2 = (luminance2 < 150);
 
                 if (black1 != black2) {
-                    diff.setRGB(x, y, Color.BLACK.getRGB());
+                    diff.setRGB(x - startX, y - startY, Color.BLACK.getRGB());
                 }
             }
         }

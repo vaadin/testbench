@@ -59,6 +59,19 @@ public class ImageComparisonTest {
         testFullCompareImages("11.png", "111.png", false, 0.0);
         testFullCompareImages("17x17-similar-26.png", "17x17-similar-31.png",
                 false, 0.0);
+
+        // Differ in outline should be detected using tolerance 0.0 but ignored
+        // using 0.02
+        testFullCompareImages("cursor2-on-outline-on.png",
+                "cursor2-on-outline-off.png", false, 0.0);
+        testFullCompareImages("cursor2-on-outline-on.png",
+                "cursor2-on-outline-off.png", true, 0.02);
+
+        testFullCompareImages("cursor2-off-outline-on.png",
+                "cursor2-off-outline-off.png", false, 0.0);
+        testFullCompareImages("cursor2-off-outline-on.png",
+                "cursor2-off-outline-off.png", true, 0.02);
+
     }
 
     @Test
@@ -89,8 +102,6 @@ public class ImageComparisonTest {
         testRCCompareImages("cursor-on.png",
                 "cursor-on-with-minor-difference.png", true);
         testRCCompareImages("cursor-off.png", "cursor-on.png", false);
-        testRCCompareImages("cursor2-off-outline-on.png",
-                "cursor2-on-outline-off.png", false);
     }
 
     @Test
@@ -119,6 +130,22 @@ public class ImageComparisonTest {
         // Cursor but no outline problem
         testFullCompareImages("cursor2-off-outline-on.png",
                 "cursor2-on-outline-on.png", true, 0.0);
+
+    }
+
+    @Test
+    public void cursorAtEdge() throws IOException {
+        System.setProperty(Parameters.SCREENSHOT_COMPARISON_CURSOR_DETECTION,
+                "true");
+
+        testFullCompareImages("cursor-bottom-edge-off.png",
+                "cursor-bottom-edge-on.png", true, 0.0);
+
+        testFullCompareImages("cursor-right-edge-off.png",
+                "cursor-right-edge-on.png", true, 0.0);
+
+        testFullCompareImages("cursor-bottom-right-off.png",
+                "cursor-bottom-right-on.png", true, 0.0);
 
     }
 
