@@ -233,9 +233,9 @@ public class ImageUtil {
         image = image.getSubimage(0, 0, width, height);
     }
 
-    public static void cropImage(BufferedImage rawImage,
+    public static BufferedImage cropImage(BufferedImage rawImage,
             BrowserDimensions browserAndCanvasDimensions) {
-        cropImage(rawImage, browserAndCanvasDimensions.getCanvasWidth(),
+        return cropImage(rawImage, browserAndCanvasDimensions.getCanvasWidth(),
                 browserAndCanvasDimensions.getCanvasHeight(),
                 browserAndCanvasDimensions.getCanvasXPosition(),
                 browserAndCanvasDimensions.getCanvasYPosition());
@@ -255,12 +255,12 @@ public class ImageUtil {
      * @param y
      *            y-coordinate of top left corner
      */
-    private static void cropImage(BufferedImage image, int width, int height,
-            int x, int y) {
+    private static BufferedImage cropImage(BufferedImage image, int width,
+            int height, int x, int y) {
         if (image.getWidth() == width && image.getHeight() == height) {
-            return;
+            return image;
         }
-        image = image.getSubimage(x, y, width, height);
+        return image.getSubimage(x, y, width, height);
     }
 
     /**

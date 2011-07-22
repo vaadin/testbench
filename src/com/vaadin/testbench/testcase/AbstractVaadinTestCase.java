@@ -138,12 +138,14 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
 
         boolean result = false;
 
-        // Add longer pause for reference screenshot!
         if (!ImageFileUtil.getReferenceScreenshotFile(referenceFileId + ".png")
                 .exists()) {
             if (writeScreenshots) {
-                captureReferenceImage(referenceFileId);
+                captureAndStoreReferenceImage(referenceFileId);
             }
+            // A missing reference image is always an error
+            softAssert.add(new junit.framework.AssertionFailedError(
+                    "No reference found for " + referenceFileId));
             return true;
         }
 
@@ -230,7 +232,7 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
         return result;
     }
 
-    protected void captureReferenceImage(String referenceFileId) {
+    protected void captureAndStoreReferenceImage(String referenceFileId) {
         pause(screenshotPause);
         BufferedImage capturedImage = captureCanvas();
 
@@ -253,8 +255,6 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
                     "png",
                     ImageFileUtil.getErrorScreenshotFile(referenceFileId
                             + ".png"));
-            softAssert.add(new junit.framework.AssertionFailedError(
-                    "No reference found for " + referenceFileId));
         } catch (IOException ioe) {
             // FIXME: Report error
         }
@@ -267,9 +267,7 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
      */
     private BufferedImage captureCanvas() {
         BufferedImage image = ImageUtil.stringToImage(captureScreenshot());
-        ImageUtil.cropImage(image, getBrowserAndCanvasDimensions());
-
-        return image;
+        return ImageUtil.cropImage(image, getBrowserAndCanvasDimensions());
     }
 
     private String captureScreenshot() {
