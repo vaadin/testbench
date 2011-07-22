@@ -350,7 +350,7 @@ public class ImageComparison {
                 if (blocksWithErrors[x][y]) {
                     if (firstErrorBlock == null) {
                         // This is the first erroneous block we have found
-                        firstErrorBlock = new Point(x * 16, y * 16);
+                        firstErrorBlock = new Point(x, y);
                     } else {
                         // This is the second erroneous block we have found
                         if (x == firstErrorBlock.x
@@ -367,7 +367,12 @@ public class ImageComparison {
             }
         }
 
-        return firstErrorBlock;
+        if (firstErrorBlock != null) {
+            // Return value is the pixel coordinates for the first block
+            return new Point(firstErrorBlock.x * 16, firstErrorBlock.y * 16);
+        }
+
+        return null;
     }
 
     /**
