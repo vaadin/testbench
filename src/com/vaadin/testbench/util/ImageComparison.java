@@ -697,7 +697,7 @@ public class ImageComparison {
             ReferenceImageRepresentation ref = new ReferenceImageRepresentation();
             for (BufferedImage referenceImage : referenceImages) {
                 ref.addRepresentation(ImageComparisonUtil
-                        .generateImageBlocks(referenceImage));
+                        .generateImageHash(referenceImage));
             }
             ByteArrayOutputStream dest = new ByteArrayOutputStream();
             ObjectOutputStream out = new ObjectOutputStream(

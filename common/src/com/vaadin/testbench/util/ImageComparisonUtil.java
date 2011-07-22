@@ -1,9 +1,8 @@
 package com.vaadin.testbench.util;
 
-import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-
-import com.vaadin.testbench.util.ReferenceImageRepresentation.BlockRepresentation;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 public class ImageComparisonUtil {
 
@@ -15,78 +14,42 @@ public class ImageComparisonUtil {
      *            the image
      * @return the block representation of the image
      */
-    public static int[] generateImageBlocks(BufferedImage image) {
-        int xBlocks = getBlocks(image.getWidth());
-        int yBlocks = getBlocks(image.getHeight());
+    public static String generateImageHash(BufferedImage image) {
+        int width = image.getWidth();
+        int height = image.getHeight();
 
-        BufferedImage scaledImage = new BufferedImage(xBlocks, yBlocks,
-                BufferedImage.TYPE_INT_RGB);
-        Graphics2D graphics2D = scaledImage.createGraphics();
-        graphics2D.drawImage(image, 0, 0, xBlocks, yBlocks, null);
-        graphics2D.dispose();
+        byte[] data = new byte[width * height * 3];
 
-        return scaledImage.getRGB(0, 0, xBlocks, yBlocks, null, 0, xBlocks);
-    }
+        int idx = 0;
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                int rgb = image.getRGB(x, y);
+                rgb &= 0x00FCFCFC;
 
-    /**
-     * Checks whether the screen shot blocks are equal to the reference blocks
-     * within a certain error tolerance.
-     * 
-     * @param referenceBlocks
-     *            the reference blocks
-     * @param shotBlocks
-     *            the screen shot blocks
-     * @param tolerance
-     *            the tolerance (0..1 * 16 * 16 * 3 = 0..768)
-     * @return true if the blocks are equal
-     */
-    public static boolean blocksEqual(int[] referenceBlocks, int[] shotBlocks,
-            float tolerance) {
-        if (shotBlocks.length != referenceBlocks.length) {
-            return false;
-        }
-        for (int i = 0; i < referenceBlocks.length; i++) {
-            int diff = Math.abs(sumIntColor(referenceBlocks[i])
-                    - sumIntColor(shotBlocks[i]));
-            if (diff > tolerance) {
-                return false;
+                // Skip the two last bits for fuzzy comparison
+                data[idx++] = (byte) ((rgb >> 16));
+                data[idx++] = (byte) ((rgb >> 8));
+                data[idx++] = (byte) (rgb);
             }
         }
-        return true;
-    }
 
-    /**
-     * Checks whether any of the reference images in a
-     * ReferenceImageRepresentation are equal to the screen shot within the
-     * specified error tolerance.
-     * 
-     * @param reference
-     *            an object holding the block data of the reference images
-     * @param shotBlocks
-     *            the screen shot blocks
-     * @param tolerance
-     *            the tolerance (0..1 * 16 * 16 * 3 = 0..768)
-     * @return
-     */
-    public static boolean blocksEqual(ReferenceImageRepresentation reference,
-            int[] shotBlocks, float tolerance) {
-        for (BlockRepresentation rep : reference.getRepresentations()) {
-            if (blocksEqual(rep.getBlocks(), shotBlocks, tolerance)) {
-                return true;
-            }
+        try {
+
+            MessageDigest md5 = MessageDigest.getInstance("MD5");
+            md5.update(data);
+            String hash = byteToHex(md5.digest());
+            return hash;
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("MD5 algorithm provider not found", e);
         }
-        return false;
     }
 
-    /**
-     * Sums the red, green and blue channels from an int.
-     * 
-     * @param col
-     *            the int containing the RGB channels
-     * @return the sum of the RGB channels.
-     */
-    private static int sumIntColor(int col) {
-        return ((col >> 16) & 0xFF) + ((col >> 8) & 0xFF) + (col & 0xFF);
+    public static String byteToHex(byte[] bytes) {
+        String hex = "";
+        for (int i = 0; i < bytes.length; i++) {
+            hex += Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1);
+        }
+        return hex;
     }
 
     /**

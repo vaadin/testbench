@@ -13,37 +13,38 @@ import java.util.List;
  */
 public class ReferenceImageRepresentation implements Serializable {
 
-    public class BlockRepresentation implements Serializable {
-        private int[] blocks;
+    public class HashRepresentation implements Serializable {
+        private String hash;
 
-        public BlockRepresentation(int[] blocks) {
-            setBlocks(blocks);
+        public HashRepresentation(String hash) {
+            setHash(hash);
         }
 
-        public void setBlocks(int[] blocks) {
-            this.blocks = blocks;
+        public String getHash() {
+            return hash;
         }
 
-        public int[] getBlocks() {
-            return blocks;
+        public void setHash(String hash) {
+            this.hash = hash;
         }
+
     }
 
-    private List<BlockRepresentation> representations = new ArrayList<BlockRepresentation>();
+    private List<HashRepresentation> representations = new ArrayList<HashRepresentation>();
 
     public ReferenceImageRepresentation() {
 
     }
 
-    public void addRepresentation(int[] blocks) {
-        representations.add(new BlockRepresentation(blocks));
+    public void addRepresentation(String hash) {
+        representations.add(new HashRepresentation(hash));
     }
 
-    public void addRepresentation(BlockRepresentation rep) {
+    public void addRepresentation(HashRepresentation rep) {
         representations.add(rep);
     }
 
-    public Iterable<BlockRepresentation> getRepresentations() {
+    public Iterable<HashRepresentation> getRepresentations() {
         return representations;
     }
 }

@@ -139,13 +139,12 @@ public class ImageComparisonTest {
         BufferedImage referenceImage = ImageIO.read(reference);
         BufferedImage screenshotImage = ImageIO.read(screenshot);
 
-        int[] referenceBlocks = ImageComparisonUtil
-                .generateImageBlocks(referenceImage);
-        int[] screenshotBlocks = ImageComparisonUtil
-                .generateImageBlocks(screenshotImage);
+        String referenceHash = ImageComparisonUtil
+                .generateImageHash(referenceImage);
+        String screenshotHash = ImageComparisonUtil
+                .generateImageHash(screenshotImage);
 
-        boolean blocksEqual = ImageComparisonUtil.blocksEqual(referenceBlocks,
-                screenshotBlocks, (float) errorTolerance);
+        boolean blocksEqual = (referenceHash.equals(screenshotHash));
 
         String expected = "Images " + referenceFilename + " and "
                 + screenshotFilename + " should "

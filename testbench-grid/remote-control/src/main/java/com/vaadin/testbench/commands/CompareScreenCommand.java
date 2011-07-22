@@ -22,6 +22,7 @@ import org.openqa.selenium.server.commands.Command;
 
 import com.vaadin.testbench.util.ImageComparisonUtil;
 import com.vaadin.testbench.util.ReferenceImageRepresentation;
+import com.vaadin.testbench.util.ReferenceImageRepresentation.HashRepresentation;
 
 /**
  * This command gets a list of 16x16 pixel blocks generated from a reference
@@ -49,7 +50,7 @@ public class CompareScreenCommand extends Command {
     private static final Log LOGGER = LogFactory
             .getLog(CompareScreenCommand.class);
 
-    private ReferenceImageRepresentation referenceImage;
+    private ReferenceImageRepresentation referenceImageRepresentation;
     private final float tolerance;
     private final int maxRetries;
     private final int canvasX;
@@ -87,7 +88,7 @@ public class CompareScreenCommand extends Command {
             Object obj = objIn.readObject();
             objIn.close();
             if (obj instanceof ReferenceImageRepresentation) {
-                referenceImage = (ReferenceImageRepresentation) obj;
+                referenceImageRepresentation = (ReferenceImageRepresentation) obj;
             } else {
                 LOGGER.error("Unexpected class in serialized data.");
             }
@@ -145,11 +146,13 @@ public class CompareScreenCommand extends Command {
         for (int i = 0; i < maxRetries; i++) {
             screenshot = grabScreenshot();
             numScreenShotsTaken++;
-            int[] shotBlocks = ImageComparisonUtil
-                    .generateImageBlocks(screenshot);
-            if (ImageComparisonUtil.blocksEqual(referenceImage, shotBlocks,
-                    tolerance)) {
-                return true;
+            String screenshotHash = ImageComparisonUtil
+                    .generateImageHash(screenshot);
+            for (HashRepresentation representation : referenceImageRepresentation
+                    .getRepresentations()) {
+                if (representation.getHash().equals(screenshotHash)) {
+                    return true;
+                }
             }
             CommandUtil.pause(retryDelay);
         }
