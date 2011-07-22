@@ -5,6 +5,8 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -102,22 +104,29 @@ public class ImageUtil {
      */
     public static BufferedImage createBlackAndWhiteDifferenceImage(
             BufferedImage image1, BufferedImage image2) {
-        // Get black and white images for both images
-        BufferedImage bw1 = createBlackAndWhiteImage(image1);
-        BufferedImage bw2 = createBlackAndWhiteImage(image2);
+        int width = image1.getWidth();
+        int height = image1.getHeight();
 
         // Create empty image
-        BufferedImage diff = new BufferedImage(image1.getWidth(),
-                image1.getHeight(), BufferedImage.TYPE_BYTE_GRAY);
+        BufferedImage diff = new BufferedImage(width, height,
+                BufferedImage.TYPE_BYTE_GRAY);
 
-        // For each pixel, if pixel in both images equal "draw" white pixel.
-        for (int x = 0; x < bw1.getWidth(); x++) {
-            for (int y = 0; y < bw1.getHeight(); y++) {
-                int color1 = bw1.getRGB(x, y);
-                int color2 = bw2.getRGB(x, y);
-                if (color1 == color2) {
-                    diff.setRGB(x, y, Color.WHITE.getRGB());
-                } else {
+        // Set background to white
+        Graphics2D g = diff.createGraphics();
+        g.setBackground(Color.WHITE);
+        g.clearRect(0, 0, width, height);
+
+        // Convert both images to black and white and mark differences in the
+        // "difference" image as black
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                double luminance1 = getLuminance(image1.getRGB(x, y));
+                double luminance2 = getLuminance(image2.getRGB(x, y));
+
+                boolean black1 = (luminance1 < 150);
+                boolean black2 = (luminance2 < 150);
+
+                if (black1 != black2) {
                     diff.setRGB(x, y, Color.BLACK.getRGB());
                 }
             }
@@ -200,6 +209,24 @@ public class ImageUtil {
     }
 
     /**
+     * Get luminance value for the given rgb value.
+     * 
+     * @param rgb
+     * @return
+     */
+    private static double getLuminance(int rgb) {
+        int r = ((rgb >> 16) & 0xFF);
+        int g = ((rgb >> 8) & 0xFF);
+        int b = (rgb & 0xFF);
+
+        return getLuminance(r, g, b);
+    }
+
+    private static double getLuminance(int r, int g, int b) {
+        return .299 * r + .587 * g + .114 * b;
+    }
+
+    /**
      * Gets the luminance value for given color
      * 
      * @param color
@@ -207,10 +234,7 @@ public class ImageUtil {
      */
     private static double getLuminance(Color color) {
         // return the monochrome luminance of given color
-        int r = color.getRed();
-        int g = color.getGreen();
-        int b = color.getBlue();
-        return .299 * r + .587 * g + .114 * b;
+        return getLuminance(color.getRed(), color.getGreen(), color.getBlue());
     }
 
     /**
