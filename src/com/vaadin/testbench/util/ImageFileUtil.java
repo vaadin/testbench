@@ -61,7 +61,7 @@ public class ImageFileUtil {
      * @return The screenshot error directory, ending in a slash.
      */
     public static String getScreenshotErrorDirectory() {
-        return baseDirectory + ERROR_DIRECTORY + File.separator;
+        return getScreenshotBaseDirectory() + ERROR_DIRECTORY + File.separator;
 
     }
 
