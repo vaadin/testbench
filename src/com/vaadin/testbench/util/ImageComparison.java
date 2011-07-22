@@ -706,25 +706,29 @@ public class ImageComparison {
         }
     }
 
-    public String generateBlocksFromReferenceFiles(String referenceFileId) {
-        ImageFileUtil.createScreenshotDirectoriesIfNeeded();
+    public ReferenceImageRepresentation getReferenceImageRepresentation(
+            String referenceFileId) throws IOException {
+        Iterable<BufferedImage> referenceImages = ImageFileUtil
+                .getReferenceImages(referenceFileId + ".png");
+        ReferenceImageRepresentation ref = new ReferenceImageRepresentation();
+        for (BufferedImage referenceImage : referenceImages) {
+            ref.addRepresentation(ImageComparisonUtil
+                    .generateImageHash(referenceImage));
+        }
 
+        return ref;
+    }
+
+    public String generateHashFromReferenceFiles(String referenceFileId) {
         try {
-            Iterable<BufferedImage> referenceImages = ImageFileUtil
-                    .getReferenceImages(referenceFileId + ".png");
-            ReferenceImageRepresentation ref = new ReferenceImageRepresentation();
-            for (BufferedImage referenceImage : referenceImages) {
-                ref.addRepresentation(ImageComparisonUtil
-                        .generateImageHash(referenceImage));
-            }
+            ReferenceImageRepresentation representation = getReferenceImageRepresentation(referenceFileId);
             ByteArrayOutputStream dest = new ByteArrayOutputStream();
             ObjectOutputStream out = new ObjectOutputStream(
                     new GZIPOutputStream(dest));
-            out.writeObject(ref);
+            out.writeObject(representation);
             // out.flush();
             out.close();
             return new String(Base64.encodeBase64(dest.toByteArray()));
-
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
