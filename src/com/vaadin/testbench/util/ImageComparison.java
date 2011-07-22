@@ -214,8 +214,8 @@ public class ImageComparison {
 
         // iterate picture in macroblocks of 16x16 (x,y) (0-> m-16, 0->
         // n-16)
-        for (int y = 0; y < imageHeight - 16; y += 16) {
-            for (int x = 0; x < imageWidth - 16; x += 16) {
+        for (int y = 0; y < imageHeight - 15; y += 16) {
+            for (int x = 0; x < imageWidth - 15; x += 16) {
                 if (blocksDiffer(x, y, referenceImage, screenshotImage,
                         errorTolerance)) {
                     if (falseBlocks != null) {
@@ -228,7 +228,7 @@ public class ImageComparison {
 
         // Check image bottom
         if (imageHeight % 16 != 0) {
-            for (int x = 0; x < imageWidth - 16; x += 16) {
+            for (int x = 0; x < imageWidth - 15; x += 16) {
                 if (blocksDiffer(x, imageHeight - 16, referenceImage,
                         screenshotImage, errorTolerance)) {
                     if (falseBlocks != null) {
@@ -241,7 +241,7 @@ public class ImageComparison {
 
         // Check right side of image
         if (imageWidth % 16 != 0) {
-            for (int y = 0; y < imageHeight - 16; y += 16) {
+            for (int y = 0; y < imageHeight - 15; y += 16) {
                 if (blocksDiffer(imageWidth - 16, y, referenceImage,
                         screenshotImage, errorTolerance)) {
                     if (falseBlocks != null) {
@@ -270,12 +270,9 @@ public class ImageComparison {
             BufferedImage screenshotImage, double errorTolerance) {
         boolean result = false;
 
-        int[] referenceBlock = new int[16 * 16];
-        int[] screenshotBlock = new int[16 * 16];
-
         // Get 16x16 blocks from picture
-        referenceBlock = ImageUtil.getBlock(referenceImage, x, y);
-        screenshotBlock = ImageUtil.getBlock(screenshotImage, x, y);
+        int[] referenceBlock = ImageUtil.getBlock(referenceImage, x, y);
+        int[] screenshotBlock = ImageUtil.getBlock(screenshotImage, x, y);
 
         // If arrays aren't equal then
         if (!Arrays.equals(referenceBlock, screenshotBlock)) {
@@ -289,7 +286,6 @@ public class ImageComparison {
                 result = true;
             }
         }
-        referenceBlock = screenshotBlock = null;
 
         return result;
     }
