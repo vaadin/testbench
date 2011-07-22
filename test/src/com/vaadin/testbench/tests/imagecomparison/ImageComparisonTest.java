@@ -29,6 +29,31 @@ public class ImageComparisonTest {
     }
 
     @Test
+    public void testPartialBlockComparisonRC() throws IOException {
+        testRCCompareImages("purple-border.png", "purple-border-top-left.png",
+                false);
+        testRCCompareImages("purple-border.png", "purple-border.png", true);
+    }
+
+    @Test
+    public void testPartialBlockComparisonFull() throws IOException {
+        testFullCompareImages("purple-border.png",
+                "purple-border-top-left.png", false, 0.0);
+        testFullCompareImages("purple-border.png", "purple-border.png", true,
+                0.0);
+    }
+
+    @Test
+    public void testColorChangesRC() throws IOException {
+        testRCCompareImages("text-red.png", "text-blue.png", false);
+    }
+
+    @Test
+    public void testColorChangesFull() throws IOException {
+        testFullCompareImages("text-red.png", "text-blue.png", false, 0);
+    }
+
+    @Test
     public void compareSimilarImagesFull() throws IOException {
         // #7297
         testFullCompareImages("11.png", "111.png", false, 0.0);
@@ -39,9 +64,9 @@ public class ImageComparisonTest {
     @Test
     public void compareSimilarImagesRC() throws IOException {
         // #7297
-        testRCCompareImages("11.png", "111.png", false, 0.0);
+        testRCCompareImages("11.png", "111.png", false);
         testRCCompareImages("17x17-similar-26.png", "17x17-similar-31.png",
-                false, 0.0);
+                false);
     }
 
     @Test
@@ -55,17 +80,17 @@ public class ImageComparisonTest {
     public void compareBlockSizedImagesRC() throws IOException {
         // #7300
         testRCCompareImages("16x16-reference.png", "16x16-screenshot.png",
-                false, 0.0);
+                false);
     }
 
     @Test
     public void compareCursorImagesRC() throws IOException {
-        testRCCompareImages("cursor-on.png", "cursor-on.png", true, 0.0);
+        testRCCompareImages("cursor-on.png", "cursor-on.png", true);
         testRCCompareImages("cursor-on.png",
-                "cursor-on-with-minor-difference.png", true, 0.0);
-        testRCCompareImages("cursor-off.png", "cursor-on.png", false, 0.0);
+                "cursor-on-with-minor-difference.png", true);
+        testRCCompareImages("cursor-off.png", "cursor-on.png", false);
         testRCCompareImages("cursor2-off-outline-on.png",
-                "cursor2-on-outline-off.png", false, 0.0);
+                "cursor2-on-outline-off.png", false);
     }
 
     @Test
@@ -124,8 +149,8 @@ public class ImageComparisonTest {
     }
 
     private void testRCCompareImages(String referenceFilename,
-            String screenshotFilename, boolean shouldBeEqual,
-            double errorTolerance) throws IOException {
+            String screenshotFilename, boolean shouldBeEqual)
+            throws IOException {
         URL ref = getClass().getClassLoader().getResource(
                 FOLDER + "/" + referenceFilename);
         URL scr = getClass().getClassLoader().getResource(
@@ -148,8 +173,7 @@ public class ImageComparisonTest {
 
         String expected = "Images " + referenceFilename + " and "
                 + screenshotFilename + " should "
-                + (shouldBeEqual ? "" : "not")
-                + " be considered equal using tolerance " + errorTolerance;
+                + (shouldBeEqual ? "" : "not") + " be considered equal";
         assertTrue(expected, shouldBeEqual ? blocksEqual : !blocksEqual);
 
     }
