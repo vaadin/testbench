@@ -266,13 +266,13 @@ public class JavaFileBuilder {
 
         browserInit.append("startBrowser(\"" + browserIdentifier + "\");\n");
 
-        if (Parameters.gerMaxTestRetries() > 0) {
+        if (Parameters.getMaxTestRetries() > 0) {
             retryHeader(browserInit);
         }
 
         browserInit.append(getTestMethodJavaName(testName) + "();\n");
 
-        if (Parameters.gerMaxTestRetries() > 0) {
+        if (Parameters.getMaxTestRetries() > 0) {
             retryFooter(browserInit);
         }
         browserInit.append("}\n\n");
@@ -283,11 +283,11 @@ public class JavaFileBuilder {
     private void retryHeader(StringBuilder browserInit) {
         browserInit.append("writeScreenshots=false;\n");
         browserInit.append("for (int i = 0; i < "
-                + Parameters.gerMaxTestRetries() + "; i++) {\n");
+                + Parameters.getMaxTestRetries() + "; i++) {\n");
         browserInit.append("try {\n");
         // Only write screenshots for the last iteration to avoid extra images
         // in the error folder
-        browserInit.append("if (i == " + (Parameters.gerMaxTestRetries() - 1)
+        browserInit.append("if (i == " + (Parameters.getMaxTestRetries() - 1)
                 + ")\n {\nwriteScreenshots=true;\n}\n");
     }
 
@@ -296,7 +296,7 @@ public class JavaFileBuilder {
                 .append("System.out.println(\"Retried: \" + i + \" times\");\n");
         browserInit.append("break;\n");
         browserInit.append("} catch (Throwable t) {\n");
-        browserInit.append("if (i < " + (Parameters.gerMaxTestRetries() - 1)
+        browserInit.append("if (i < " + (Parameters.getMaxTestRetries() - 1)
                 + ") {\n");
         browserInit.append("selenium.stop();\n");
         browserInit.append("selenium.start();\n");

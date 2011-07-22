@@ -119,7 +119,7 @@ public class Parameters {
     }
 
     // Retry test
-    public static int gerMaxTestRetries() {
+    public static int getMaxTestRetries() {
         String p = System.getProperty(TEST_MAX_RETRIES);
         int retries = 0;
         if (p != null && p.length() > 0) {
