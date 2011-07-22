@@ -77,9 +77,15 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
         return result;
     }
 
-    public boolean validateScreenshot(String testName, String imageIdentifier) {
+    protected boolean validateScreenshot(String testName, String imageIdentifier) {
+        return validateScreenshot(testName, imageIdentifier, true);
+    }
+
+    protected boolean validateScreenshot(String testName,
+            String imageIdentifier, boolean writeScreenshots) {
         return validateScreenshot(testName,
-                Parameters.getScreenshotComparisonTolerance(), imageIdentifier);
+                Parameters.getScreenshotComparisonTolerance(), imageIdentifier,
+                writeScreenshots);
     }
 
     /**
@@ -95,8 +101,9 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
      *            The screenshot identifier. Used as part of the image filename.
      * @return true, if the captured screenshots equals the reference image
      */
-    public boolean validateScreenshot(String testName, double errorTolerance,
-            String imageIdentifier) {
+    protected boolean validateScreenshot(String testName,
+            double errorTolerance, String imageIdentifier,
+            boolean writeScreenshots) {
 
         // If browser is not set get browser info.
         BrowserVersion browser = getBrowserVersion();
@@ -113,7 +120,7 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
                     + navigatorId + "_" + imageIdentifier;
         }
 
-        return validateScreenshot(fileName, errorTolerance);
+        return validateScreenshot(fileName, errorTolerance, writeScreenshots);
     }
 
     /**
@@ -125,8 +132,8 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
      *            The tolerance to use in the comparison
      * @return
      */
-    public boolean validateScreenshot(String referenceFileId,
-            double errorTolerance) {
+    protected boolean validateScreenshot(String referenceFileId,
+            double errorTolerance, boolean writeScreenshots) {
         maxAmountOfTests = Parameters.getMaxRetries();
 
         boolean result = false;
@@ -134,7 +141,9 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
         // Add longer pause for reference screenshot!
         if (!ImageFileUtil.getReferenceScreenshotFile(referenceFileId + ".png")
                 .exists()) {
-            captureReferenceImage(referenceFileId);
+            if (writeScreenshots) {
+                captureReferenceImage(referenceFileId);
+            }
             return true;
         }
 
@@ -175,7 +184,8 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
             try {
                 // Compare screenshot with saved reference screen
                 result = compare.compareStringImage(screenshotAsBase64String,
-                        referenceFileId, errorTolerance, dimensions);
+                        referenceFileId, errorTolerance, dimensions,
+                        writeScreenshots);
             } catch (junit.framework.AssertionFailedError e) {
                 // If a Assert.fail("") is caught check if it's a missing
                 // reference.

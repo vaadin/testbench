@@ -26,6 +26,7 @@ public class JavaFileBuilder {
             + "import com.vaadin.testbench.util.BrowserUtil;\n"
             + "import com.vaadin.testbench.util.BrowserVersion;\n\n"
             + "public class {class} extends AbstractVaadinTestCase {\n\n"
+            + "private boolean writeScreenshots = true;\n"
             + "public void setUp(){\n}\n\n";;
 
     private static final String JAVA_FOOTER = "}\n";
@@ -130,7 +131,7 @@ public class JavaFileBuilder {
         testMethodSource.append(", ");
         testMethodSource
                 .append(quotedSafeParameterString(replaceParameters(imageIdentifier)));
-        testMethodSource.append(");\n\n");
+        testMethodSource.append(",writeScreenshots);\n\n");
         hasScreenshots = true;
     }
 
@@ -280,9 +281,14 @@ public class JavaFileBuilder {
     }
 
     private void retryHeader(StringBuilder browserInit) {
+        browserInit.append("writeScreenshots=false;\n");
         browserInit.append("for (int i = 0; i < "
                 + Parameters.gerMaxTestRetries() + "; i++) {\n");
         browserInit.append("try {\n");
+        // Only write screenshots for the last iteration to avoid extra images
+        // in the error folder
+        browserInit.append("if (i == " + (Parameters.gerMaxTestRetries() - 1)
+                + ")\n {\nwriteScreenshots=true;\n}\n");
     }
 
     private void retryFooter(StringBuilder browserInit) {
@@ -325,7 +331,8 @@ public class JavaFileBuilder {
         String catchClause = "}catch(Throwable e){\n";
         if (Parameters.isCaptureScreenshotOnFailure()) {
             hasScreenshots = true;
-            catchClause += "createFailureScreenshot(\"" + testName + "\");\n";
+            catchClause += "if (writeScreenshots) {\ncreateFailureScreenshot(\""
+                    + testName + "\");\n}\n";
         }
         catchClause += "throw new java.lang.AssertionError(cmd.getInfo() + \"\\n Message: \" + e.getMessage()+\"\\nRemote control: \"+getRemoteControlName());\n}\n";
 

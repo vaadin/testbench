@@ -44,11 +44,14 @@ public class ImageComparison {
      *            File id for this image without .png extension
      * @param dimensions
      *            Browser window dimensions
+     * @param writeScreenshots
+     *            true if error images and diff files should be written to disk,
+     *            false otherwise
      * @return true if images are the same
      */
     public boolean compareStringImage(String screenshotAsBase64String,
             String referenceFileId, double errorTolerance,
-            BrowserDimensions dimensions) {
+            BrowserDimensions dimensions, boolean writeScreenshots) {
         String referenceFileName = referenceFileId + ".png";
         ImageFileUtil.createScreenshotDirectoriesIfNeeded();
 
@@ -109,8 +112,10 @@ public class ImageComparison {
              * The command has failed because the captured image differs from
              * the reference image
              */
-            createErrorImageAndHTML(referenceFileId, screenshotImage,
-                    referenceImage, falseBlocks, xBlocks, yBlocks);
+            if (writeScreenshots) {
+                createErrorImageAndHTML(referenceFileId, screenshotImage,
+                        referenceImage, falseBlocks, xBlocks, yBlocks);
+            }
 
             // TODO: Add info about which RC it was run on
             Assert.fail("Screenshot (" + referenceFileId
@@ -124,8 +129,10 @@ public class ImageComparison {
                 /*
                  * The images are equal but of different size
                  */
-                createErrorImageAndHTML(referenceFileId, screenshotImage,
-                        referenceImage, falseBlocks, xBlocks, yBlocks);
+                if (writeScreenshots) {
+                    createErrorImageAndHTML(referenceFileId, screenshotImage,
+                            referenceImage, falseBlocks, xBlocks, yBlocks);
+                }
 
                 // TODO: Add info about which RC it was run on
                 Assert.fail("Images are of different size (" + referenceFileId
