@@ -292,12 +292,12 @@ public class JavaFileBuilder {
     }
 
     private void retryFooter(StringBuilder browserInit) {
-        browserInit
-                .append("System.out.println(\"Retried: \" + i + \" times\");\n");
         browserInit.append("break;\n");
         browserInit.append("} catch (Throwable t) {\n");
         browserInit.append("if (i < " + (Parameters.getMaxTestRetries() - 1)
                 + ") {\n");
+        browserInit
+                .append("System.out.println(\"Retrying test: try \" + (i+2) + \"\");\n");
         browserInit.append("selenium.stop();\n");
         browserInit.append("selenium.start();\n");
         browserInit.append("resetImageNumber();\n");
