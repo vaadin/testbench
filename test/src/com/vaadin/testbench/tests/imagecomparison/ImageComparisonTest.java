@@ -26,9 +26,6 @@ public class ImageComparisonTest {
     @Before
     public void setup() {
         System.setProperty(Parameters.SCREENSHOT_DIRECTORY, "test");
-        System.setProperty(Parameters.SCREENSHOT_COMPARISON_CURSOR_DETECTION,
-                "true");
-
     }
 
     @Test
@@ -63,13 +60,41 @@ public class ImageComparisonTest {
 
     @Test
     public void compareCursorImagesRC() throws IOException {
-        testRCCompareImages("cursor-off.png", "cursor-on.png", true, 0.15);
+        testRCCompareImages("cursor-on.png", "cursor-on.png", true, 0.0);
+        testRCCompareImages("cursor-on.png",
+                "cursor-on-with-minor-difference.png", true, 0.0);
         testRCCompareImages("cursor-off.png", "cursor-on.png", false, 0.0);
+        testRCCompareImages("cursor2-off-outline-on.png",
+                "cursor2-on-outline-off.png", false, 0.0);
     }
 
     @Test
-    public void compareCursorImagesFull() throws IOException {
+    public void compareCursorImagesFullWithoutCursorDetection()
+            throws IOException {
+        System.setProperty(Parameters.SCREENSHOT_COMPARISON_CURSOR_DETECTION,
+                "false");
+        testFullCompareImages("cursor-off.png", "cursor-on.png", false, 0.0);
+        testFullCompareImages("cursor2-off-outline-on.png",
+                "cursor2-on-outline-off.png", false, 0.0);
+    }
+
+    @Test
+    public void compareCursorImagesFullWithCursorDetection() throws IOException {
+        System.setProperty(Parameters.SCREENSHOT_COMPARISON_CURSOR_DETECTION,
+                "true");
+
         testFullCompareImages("cursor-off.png", "cursor-on.png", true, 0.0);
+
+        // Cursor and additional outline problem
+        testFullCompareImages("cursor2-off-outline-on.png",
+                "cursor2-on-outline-off.png", false, 0.0);
+        testFullCompareImages("cursor2-off-outline-on.png",
+                "cursor2-on-outline-off.png", true, 0.05);
+
+        // Cursor but no outline problem
+        testFullCompareImages("cursor2-off-outline-on.png",
+                "cursor2-on-outline-on.png", true, 0.0);
+
     }
 
     private void testFullCompareImages(String referenceFilename,
@@ -93,9 +118,9 @@ public class ImageComparisonTest {
 
         String expected = "Images " + referenceFilename + " and "
                 + screenshotFilename + " should "
-                + (shouldBeEqual ? "" : "not") + " be considered equal";
+                + (shouldBeEqual ? "" : "not")
+                + " be considered equal using tolerance " + errorTolerance;
         assertTrue(expected, shouldBeEqual ? blocksEqual : !blocksEqual);
-
     }
 
     private void testRCCompareImages(String referenceFilename,
@@ -124,7 +149,8 @@ public class ImageComparisonTest {
 
         String expected = "Images " + referenceFilename + " and "
                 + screenshotFilename + " should "
-                + (shouldBeEqual ? "" : "not") + " be considered equal";
+                + (shouldBeEqual ? "" : "not")
+                + " be considered equal using tolerance " + errorTolerance;
         assertTrue(expected, shouldBeEqual ? blocksEqual : !blocksEqual);
 
     }
@@ -138,6 +164,5 @@ public class ImageComparisonTest {
         assertEquals(2, ImageComparisonUtil.getBlocks(17));
         assertEquals(2, ImageComparisonUtil.getBlocks(31));
         assertEquals(2, ImageComparisonUtil.getBlocks(32));
-
     }
 }
