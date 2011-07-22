@@ -5,8 +5,6 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -132,61 +130,6 @@ public class ImageUtil {
             }
         }
         return diff;
-    }
-
-    /**
-     * Makes a matrix convolution on pixel. Used to find edges.
-     * 
-     * @param kernel
-     *            convolution kernel
-     * @param kernWidth
-     * @param kernHeight
-     * @param src
-     *            Source image
-     * @param x
-     *            X position of pixel
-     * @param y
-     *            Y position of pixel
-     * @param rgb
-     *            int[] to save new r, g and b values
-     * @return new rgb values
-     */
-    private static int[] convolvePixel(float[] kernel, int kernWidth,
-            int kernHeight, BufferedImage src, int x, int y, int[] rgb) {
-        if (rgb == null) {
-            rgb = new int[3];
-        }
-
-        int halfWidth = kernWidth / 2;
-        int halfHeight = kernHeight / 2;
-
-        /*
-         * This algorithm pretends as though the kernel is indexed from
-         * -halfWidth to halfWidth horizontally and -halfHeight to halfHeight
-         * vertically. This makes the center pixel indexed at row 0, column 0.
-         */
-
-        for (int component = 0; component < 3; component++) {
-            float sum = 0;
-            for (int i = 0; i < kernel.length; i++) {
-                int row = (i / kernWidth) - halfWidth;
-                int column = (i - (kernWidth * row)) - halfHeight;
-
-                // Check range
-                if (x - row < 0 || x - row > src.getWidth()) {
-                    continue;
-                }
-                if (y - column < 0 || y - column > src.getHeight()) {
-                    continue;
-                }
-                int srcRGB = src.getRGB(x - row, y - column);
-                sum = sum + kernel[i]
-                        * ((srcRGB >> (16 - 8 * component)) & 0xff);
-            }
-            rgb[component] = (int) sum;
-        }
-
-        return rgb;
     }
 
     /**

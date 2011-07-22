@@ -28,8 +28,6 @@ import com.vaadin.testbench.Parameters;
  */
 public class ImageComparison {
 
-    private static final String NEW_LINE = System.getProperty("line.separator");
-
     /**
      * Compare image [name] to image under /reference/. Images may differ in RGB
      * hues 0.1% (default) per macroblock of 16x16
