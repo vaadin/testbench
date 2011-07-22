@@ -418,7 +418,7 @@ public class ImageComparison {
         int areaX = x - 1;
         int areaY = y;
         int areaWidth = 16 + 2;
-        int areaHeight = 32 + 2;
+        int areaHeight = 32 + 1;
         if (x + areaWidth >= width) {
             areaWidth = width - x;
         }
@@ -430,7 +430,7 @@ public class ImageComparison {
                 comparisonImage, referenceImage, areaX, areaY, areaWidth,
                 areaHeight);
 
-        for (int j = 1; j < 16 + 1; j++) {
+        for (int j = 0; j < 16 + 1; j++) {
             for (int i = 1; i < 16 + 1; i++) {
                 // if found differing pixel
                 if (diff.getRGB(i, j) == Color.BLACK.getRGB()) {
