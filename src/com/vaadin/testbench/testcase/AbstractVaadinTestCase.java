@@ -32,7 +32,7 @@ import com.vaadin.testbench.util.ImageUtil;
  */
 public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
 
-    private static int imageNumber = 0;
+    private int imageNumber = 0;
     private static List<junit.framework.AssertionFailedError> softAssert = new LinkedList<junit.framework.AssertionFailedError>();
 
     private static final String[] error_messages = {
@@ -605,4 +605,11 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
         return "?";
     }
 
+    /**
+     * Resets the number for screenshots back to the original. Needs to be done
+     * if a test is restarted.
+     */
+    protected void resetImageNumber() {
+        imageNumber = 0;
+    }
 }

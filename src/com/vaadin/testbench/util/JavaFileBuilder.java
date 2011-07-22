@@ -294,6 +294,7 @@ public class JavaFileBuilder {
                 + ") {\n");
         browserInit.append("selenium.stop();\n");
         browserInit.append("selenium.start();\n");
+        browserInit.append("resetImageNumber();\n");
         browserInit.append("}else{\n");
         browserInit
                 .append("System.out.println(\"Retried: \" + i + \" times\");\n");
