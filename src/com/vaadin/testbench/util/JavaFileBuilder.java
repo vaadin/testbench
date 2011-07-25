@@ -299,8 +299,9 @@ public class JavaFileBuilder {
         browserInit
                 .append("System.out.println(\"Retrying test: try \" + (i+2) + \"\");\n");
         browserInit.append("selenium.stop();\n");
-        browserInit.append("selenium.start();\n");
         browserInit.append("resetImageNumber();\n");
+        browserInit.append("getSoftErrors().clear();\n");
+        browserInit.append("selenium.start();\n");
         browserInit.append("}else{\n");
         browserInit
                 .append("System.out.println(\"Retried: \" + i + \" times\");\n");
