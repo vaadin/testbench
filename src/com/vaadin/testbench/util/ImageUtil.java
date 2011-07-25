@@ -60,37 +60,6 @@ public class ImageUtil {
     }
 
     /**
-     * Generates a grayscale image of give image.
-     * 
-     * @param image
-     *            Image to turn to grayscale
-     * @return BufferedImage [TYPE_BYTE_GRAY]
-     */
-    public static BufferedImage grayscaleImage(BufferedImage image) {
-        BufferedImage gray = new BufferedImage(image.getWidth(),
-                image.getHeight(), BufferedImage.TYPE_BYTE_GRAY);
-
-        Graphics2D g = (Graphics2D) gray.getGraphics();
-        g.drawImage(image, 0, 0, image.getWidth(), image.getHeight(), null);
-        g.dispose();
-
-        return gray;
-    }
-
-    /**
-     * Creates a black and white version of the given image.
-     * 
-     * @param image
-     *            The image to convert into a black and white image
-     * @return A black and white version of the given image
-     */
-    public static BufferedImage createBlackAndWhiteImage(BufferedImage image) {
-        BufferedImage bw = grayscaleImage(image);
-        convertGrayscaleToBlackAndWhite(bw);
-        return bw;
-    }
-
-    /**
      * Generates an image that is white where there are no differences and black
      * where the images differ.
      * 
@@ -132,25 +101,6 @@ public class ImageUtil {
             }
         }
         return diff;
-    }
-
-    /**
-     * Creates a b&w image of grayscale image.
-     * 
-     * @param image
-     */
-    private static void convertGrayscaleToBlackAndWhite(BufferedImage image) {
-        for (int x = 0; x < image.getWidth(); x++) {
-            for (int y = 0; y < image.getHeight(); y++) {
-                Color color = new Color(image.getRGB(x, y));
-                double lum = getLuminance(color);
-                if (lum >= 150) {
-                    image.setRGB(x, y, Color.WHITE.getRGB());
-                } else {
-                    image.setRGB(x, y, Color.BLACK.getRGB());
-                }
-            }
-        }
     }
 
     /**
