@@ -766,8 +766,8 @@ public class ImageComparison {
         }
 
         if (Parameters.isDebug()) {
-            System.out.println("Generated hashes for " + referenceImages.size()
-                    + " reference image(s)");
+            System.out.println("Generated hashes for "
+                    + referenceFileNames.size() + " reference image(s)");
         }
         return ref;
     }
