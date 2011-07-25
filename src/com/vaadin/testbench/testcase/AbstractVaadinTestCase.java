@@ -175,13 +175,13 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
         if (compareScreenResults.length == 2) {
             if (Parameters.isDebug()) {
                 System.out
-                        .print("CompareScreenCommand (RC compare) succeeded after trying "
+                        .println("CompareScreenCommand (RC compare) succeeded after trying "
                                 + compareScreenResults[1] + " time(s)");
             }
             result = true;
         } else {
             if (Parameters.isDebug()) {
-                System.err
+                System.out
                         .println("CompareScreenCommand (RC compare) FAILED after trying "
                                 + compareScreenResults[1] + " time(s)");
             }
@@ -320,7 +320,7 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
     public BrowserDimensions getBrowserDimensions(boolean force) {
         if (force || browserDimensions == null) {
             if (Parameters.isDebug()) {
-                System.err.println("Calculating browser dimensions..");
+                System.out.println("Calculating browser dimensions..");
             }
             String dimensions = doCommand("getCanvasSize", new String[] {});
             if (dimensions.startsWith("OK")) {
