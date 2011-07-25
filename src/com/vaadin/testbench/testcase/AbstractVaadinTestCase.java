@@ -425,7 +425,7 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
     protected BrowserVersion getBrowserVersion() {
         if (browserVersion == null) {
             if (Parameters.isDebug()) {
-                System.err.println("Fetching browser version...");
+                System.out.println("Fetching browser version...");
             }
             browserVersion = BrowserUtil.getBrowserVersion(selenium);
         }
