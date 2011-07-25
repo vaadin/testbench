@@ -156,6 +156,9 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
         // Get the dimensions of the browser window and canvas
         BrowserDimensions dimensions = getBrowserAndCanvasDimensions();
 
+        if (Parameters.isDebug()) {
+            System.out.println("Running CompareScreenCommand (RC compare)");
+        }
         String compareScreenResult = doCommand(
                 "compareScreen",
                 new String[] {
@@ -171,14 +174,16 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
         String[] compareScreenResults = compareScreenResult.split(",");
         if (compareScreenResults.length == 2) {
             if (Parameters.isDebug()) {
-                System.err.println("RC retried screen shot "
-                        + compareScreenResults[1] + " time(s)");
+                System.out
+                        .print("CompareScreenCommand (RC compare) succeeded after trying "
+                                + compareScreenResults[1] + " time(s)");
             }
             result = true;
         } else {
             if (Parameters.isDebug()) {
-                System.err.println("RC retried screen shot "
-                        + compareScreenResults[1] + " time(s)");
+                System.err
+                        .println("CompareScreenCommand (RC compare) FAILED after trying "
+                                + compareScreenResults[1] + " time(s)");
             }
             // Get the screen shot, which has been passed in the result
             String screenshotAsBase64String = compareScreenResults[2];

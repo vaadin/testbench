@@ -708,7 +708,7 @@ public class ImageComparison {
 
     public ReferenceImageRepresentation getReferenceImageRepresentation(
             String referenceFileId) throws IOException {
-        Iterable<BufferedImage> referenceImages = ImageFileUtil
+        List<BufferedImage> referenceImages = ImageFileUtil
                 .getReferenceImages(referenceFileId + ".png");
         ReferenceImageRepresentation ref = new ReferenceImageRepresentation();
         for (BufferedImage referenceImage : referenceImages) {
@@ -716,6 +716,10 @@ public class ImageComparison {
                     .generateImageHash(referenceImage));
         }
 
+        if (Parameters.isDebug()) {
+            System.out.println("Generated hashes for " + referenceImages.size()
+                    + " reference image(s)");
+        }
         return ref;
     }
 
