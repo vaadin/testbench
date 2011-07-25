@@ -132,14 +132,22 @@ public class ImageFileUtil {
                 + referenceImageFileName);
     }
 
-    public static List<BufferedImage> getReferenceImages(
-            String referenceImageFileName) throws IOException {
-        ArrayList<BufferedImage> referenceImages = new ArrayList<BufferedImage>();
+    /**
+     * Returns the relative file names of reference images. The actual image
+     * file for a relative file name can be retrieved with
+     * {@link #getReferenceScreenshotFile(String)}.
+     * 
+     * @param referenceImageFileName
+     * @return file names of reference images
+     */
+    public static List<String> getReferenceImageFileNames(
+            String referenceImageFileName) {
+        ArrayList<String> referenceImages = new ArrayList<String>();
         String nextName = referenceImageFileName;
         File file = ImageFileUtil.getReferenceScreenshotFile(nextName);
         int i = 1;
         while (file.exists()) {
-            referenceImages.add(ImageIO.read(file));
+            referenceImages.add(nextName);
             nextName = referenceImageFileName.replace(".png",
                     String.format("_%d.png", i++));
             file = ImageFileUtil.getReferenceScreenshotFile(nextName);

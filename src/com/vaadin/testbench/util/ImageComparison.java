@@ -38,7 +38,7 @@ public class ImageComparison {
      * @param errorTolerance
      *            Allowed RGB error for a macroblock (value range 0-1 default
      *            0.025 == 2.5%)
-     * @param referenceFileName
+     * @param referenceFileId
      *            File id for this image without .png extension
      * @param dimensions
      *            Browser window dimensions
@@ -50,101 +50,148 @@ public class ImageComparison {
     public boolean compareStringImage(String screenshotAsBase64String,
             String referenceFileId, double errorTolerance,
             BrowserDimensions dimensions, boolean writeScreenshots) {
-        String referenceFileName = referenceFileId + ".png";
         ImageFileUtil.createScreenshotDirectoriesIfNeeded();
+
+        Iterable<String> referenceFileNames = ImageFileUtil
+                .getReferenceImageFileNames(referenceFileId + ".png");
+
+        if (!referenceFileNames.iterator().hasNext()) {
+            // We require a reference image to continue
+            Assert.fail("No reference found for " + referenceFileId + " in "
+                    + ImageFileUtil.getScreenshotReferenceDirectory());
+        }
 
         BufferedImage screenshotImage = ImageUtil
                 .stringToImage(screenshotAsBase64String);
 
-        BufferedImage referenceImage;
-        try {
-            referenceImage = ImageFileUtil
-                    .readReferenceImage(referenceFileName);
-        } catch (IOException e) {
-            // We require a reference image to continue
-            Assert.fail("No reference found for " + referenceFileName + " in "
-                    + ImageFileUtil.getScreenshotReferenceDirectory());
+        // these are used to make the final error HTML page based on main
+        // reference file only
+        BufferedImage primaryReferenceImage = null;
+        boolean[][] primaryReferenceFalseBlocks = null;
 
-            // Needed to avoid compiler warnings about referenceImage
-            return false;
-        }
+        for (String referenceFileName : referenceFileNames) {
+            BufferedImage referenceImage;
+            try {
+                referenceImage = ImageFileUtil
+                        .readReferenceImage(referenceFileName);
+            } catch (IOException e) {
+                Assert.fail("Could not read reference image file "
+                        + referenceFileName);
 
-        // If images are of different size crop both images to same size
-        // before checking for differences
-        boolean sizesDiffer = !ImageUtil.imagesSameSize(referenceImage,
-                screenshotImage);
-        if (sizesDiffer) {
-            ImageUtil.cropToBeSameSize(referenceImage, screenshotImage);
-        }
-
-        int imageWidth = referenceImage.getWidth();
-        int imageHeight = referenceImage.getHeight();
-
-        int xBlocks = ImageComparisonUtil.getBlocks(imageWidth);
-        int yBlocks = ImageComparisonUtil.getBlocks(imageHeight);
-        boolean[][] falseBlocks = new boolean[xBlocks][yBlocks];
-        boolean imagesEqual = compareImage(falseBlocks, referenceImage,
-                screenshotImage, errorTolerance);
-
-        if (imagesEqual) {
-            // Images match. Nothing else to do.
-            return true;
-        }
-
-        if (!sizesDiffer && Parameters.isScreenshotComparisonCursorDetection()) {
-            // Images are not equal, still check if the only difference is a
-            // blinking cursor
-            Point possibleCursorPosition = getPossibleCursorPosition(xBlocks,
-                    yBlocks, falseBlocks);
-            if (possibleCursorPosition != null) {
-                if (isCursorTheOnlyError(possibleCursorPosition,
-                        referenceImage, screenshotImage)) {
-                    // Cursor is the only difference so we are done.
-                    return true;
-                }
-            }
-        }
-
-        if (!sizesDiffer) {
-            /*
-             * The command has failed because the captured image differs from
-             * the reference image
-             */
-            if (writeScreenshots) {
-                createErrorImageAndHTML(referenceFileId, screenshotImage,
-                        referenceImage, falseBlocks, xBlocks, yBlocks);
+                // needed to keep the compiler happy
+                return false;
             }
 
-            // TODO: Add info about which RC it was run on
-            Assert.fail("Screenshot (" + referenceFileId
-                    + ") differs from reference image.");
-        } else {
-            /*
-             * The command has failed because the dimensions of the captured
-             * image do not match the reference image
-             */
-            if (imagesEqual) {
+            // If images are of different size crop both images to same size
+            // before checking for differences
+            boolean sizesDiffer = !ImageUtil.imagesSameSize(referenceImage,
+                    screenshotImage);
+            if (sizesDiffer) {
+                ImageUtil.cropToBeSameSize(referenceImage, screenshotImage);
+            }
+
+            int imageWidth = referenceImage.getWidth();
+            int imageHeight = referenceImage.getHeight();
+
+            int xBlocks = ImageComparisonUtil.getBlocks(imageWidth);
+            int yBlocks = ImageComparisonUtil.getBlocks(imageHeight);
+            boolean[][] falseBlocks = new boolean[xBlocks][yBlocks];
+            boolean imagesEqual = compareImage(falseBlocks, referenceImage,
+                    screenshotImage, errorTolerance);
+
+            if (sizesDiffer) {
                 /*
-                 * The images are equal but of different size
+                 * The command has failed because the dimensions of the captured
+                 * image do not match the reference image
                  */
-                if (writeScreenshots) {
-                    createErrorImageAndHTML(referenceFileId, screenshotImage,
-                            referenceImage, falseBlocks, xBlocks, yBlocks);
+                if (imagesEqual) {
+                    /*
+                     * The images are equal but of different size
+                     */
+                    if (writeScreenshots) {
+                        createErrorImageAndHTML(referenceFileId,
+                                screenshotImage, referenceImage, falseBlocks,
+                                xBlocks, yBlocks);
+                    }
+
+                    // TODO: Add info about which RC it was run on
+                    Assert.fail("Images are of different size ("
+                            + referenceFileName + ").");
+                } else {
+                    // Neither size nor contents match
+
+                    // FIXME: Why is nothing written here?
+
+                    // TODO: Add info about which RC it was run on
+                    Assert.fail("Images differ and are of different size ("
+                            + referenceFileName + ").");
                 }
-
-                // TODO: Add info about which RC it was run on
-                Assert.fail("Images are of different size (" + referenceFileId
-                        + ").");
-            } else {
-                // Neither size nor contents match
-
-                // FIXME: Why is nothing written here?
-
-                // TODO: Add info about which RC it was run on
-                Assert.fail("Images differ and are of different size ("
-                        + referenceFileId + ").");
             }
+
+            if (imagesEqual) {
+                if (Parameters.isDebug()) {
+                    System.out.println("Screenshot matched reference "
+                            + referenceFileName);
+                }
+                // Images match. Nothing else to do.
+                return true;
+            }
+
+            if (Parameters.isScreenshotComparisonCursorDetection()) {
+                // Images are not equal, still check if the only difference
+                // is a blinking cursor
+                Point possibleCursorPosition = getPossibleCursorPosition(
+                        xBlocks, yBlocks, falseBlocks);
+                if (possibleCursorPosition != null) {
+                    if (isCursorTheOnlyError(possibleCursorPosition,
+                            referenceImage, screenshotImage)) {
+                        if (Parameters.isDebug()) {
+                            System.out.println("Screenshot matched reference "
+                                    + referenceFileName
+                                    + " after removing cursor");
+                        }
+                        // Cursor is the only difference so we are done.
+                        return true;
+                    } else if (Parameters.isDebug()) {
+                        System.out
+                                .println("Screenshot did not match reference "
+                                        + referenceFileName
+                                        + " after removing cursor");
+                    }
+                }
+            }
+
+            if (Parameters.isDebug()) {
+                System.out.println("Screenshot did not match reference "
+                        + referenceFileName);
+            }
+
+            // store information about the primary reference image for creating
+            // the error image if no match is found
+            if (null == primaryReferenceImage) {
+                primaryReferenceImage = referenceImage;
+                primaryReferenceFalseBlocks = falseBlocks;
+            }
+
         }
+
+        /*
+         * The command has failed because the captured image differs from the
+         * reference image
+         */
+        if (writeScreenshots) {
+            int xBlocks = ImageComparisonUtil.getBlocks(primaryReferenceImage
+                    .getWidth());
+            int yBlocks = ImageComparisonUtil.getBlocks(primaryReferenceImage
+                    .getHeight());
+            createErrorImageAndHTML(referenceFileId, screenshotImage,
+                    primaryReferenceImage, primaryReferenceFalseBlocks,
+                    xBlocks, yBlocks);
+        }
+
+        // TODO: Add info about which RC it was run on
+        Assert.fail("Screenshot (" + referenceFileId
+                + ") differs from reference image.");
 
         // Should never get here
         return false;
@@ -708,10 +755,12 @@ public class ImageComparison {
 
     public ReferenceImageRepresentation getReferenceImageRepresentation(
             String referenceFileId) throws IOException {
-        List<BufferedImage> referenceImages = ImageFileUtil
-                .getReferenceImages(referenceFileId + ".png");
+        List<String> referenceFileNames = ImageFileUtil
+                .getReferenceImageFileNames(referenceFileId + ".png");
         ReferenceImageRepresentation ref = new ReferenceImageRepresentation();
-        for (BufferedImage referenceImage : referenceImages) {
+        for (String referenceFileName : referenceFileNames) {
+            BufferedImage referenceImage = ImageFileUtil
+                    .readReferenceImage(referenceFileName);
             ref.addRepresentation(ImageComparisonUtil
                     .generateImageHash(referenceImage));
         }
