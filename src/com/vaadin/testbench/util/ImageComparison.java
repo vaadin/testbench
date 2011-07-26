@@ -497,12 +497,16 @@ public class ImageComparison {
         int areaY = y;
         int xSize = 16;
         int ySize = 32;
-        if (x > width - 16) {
-            areaX = Math.max(0, (x - 16) & 0xFFFFF0);
+        // if close to the right edge, move to a 16px aligned block edge which
+        // allows at least 16px wide blocks, then widen area to the edge
+        if (areaX > width - 16) {
+            areaX = (width - 16) & 0xFFFFF0;
             xSize = width - areaX;
         }
-        if (y > height - 32) {
-            areaY = Math.max(0, (height - 32) & 0xFFFFF0);
+        // likewise for bottom edge (at least 32px high, aligned at 16px block
+        // edge)
+        if (areaY > height - 32) {
+            areaY = (height - 32) & 0xFFFFF0;
             ySize = height - areaY;
         }
         BufferedImage referenceCopy = referenceImage.getSubimage(areaX, areaY,
