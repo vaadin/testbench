@@ -134,6 +134,23 @@ public class ImageComparisonTest {
     }
 
     @Test
+    public void comparisonTolerance() throws IOException {
+        testFullCompareImages("black.png", "white.png", true, 1);
+        testFullCompareImages("white.png", "black.png", true, 1);
+        testFullCompareImages("black.png", "white.png", false, 0.99999999);
+        testFullCompareImages("white.png", "black.png", false, 0.99999999);
+
+        // Differs in one channel -> 33% error
+        testFullCompareImages("red.png", "black.png", true, 0.334);
+        testFullCompareImages("red.png", "black.png", false, 0.333);
+
+        // Differs in two channels -> 66% error
+        testFullCompareImages("red.png", "white.png", true, 0.667);
+        testFullCompareImages("red.png", "white.png", false, 0.666);
+
+    }
+
+    @Test
     public void cursorAtEdge() throws IOException {
         System.setProperty(Parameters.SCREENSHOT_COMPARISON_CURSOR_DETECTION,
                 "true");

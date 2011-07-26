@@ -338,30 +338,30 @@ public class ImageComparison {
     /**
      * Calculates the difference between pixels in the block.
      * 
-     * @param targetBlock
-     * @param testBlock
+     * @param referenceBlock
+     * @param screenshotBlock
      * @return Difference %
      */
-    private double rgbCompare(int[] targetBlock, int[] testBlock) {
+    private double rgbCompare(int[] referenceBlock, int[] screenshotBlock) {
         int sum = 0;
-        double fullSum = 0.0;
 
         // build sums from all available colors Red, Green
         // and Blue
-        for (int i = 0; i < targetBlock.length; i++) {
-            Color targetPixel = new Color(targetBlock[i]);
-            Color testPixel = new Color(testBlock[i]);
-            int targetColor = (targetPixel.getRed() + targetPixel.getGreen() + targetPixel
-                    .getBlue());
-            int testColor = (testPixel.getRed() + testPixel.getGreen() + testPixel
-                    .getBlue());
-            fullSum += targetColor;
-            if (targetColor > testColor) {
-                sum += targetColor - testColor;
-            } else if (testColor > targetColor) {
-                sum += testColor - targetColor;
-            }
+        for (int i = 0; i < referenceBlock.length; i++) {
+            Color targetPixel = new Color(referenceBlock[i]);
+            Color testPixel = new Color(screenshotBlock[i]);
+            int redDiff = Math.abs(targetPixel.getRed() - testPixel.getRed());
+            int greenDiff = Math.abs(targetPixel.getGreen()
+                    - testPixel.getGreen());
+            int blueDiff = Math
+                    .abs(targetPixel.getBlue() - testPixel.getBlue());
+
+            sum += redDiff;
+            sum += greenDiff;
+            sum += blueDiff;
+
         }
+        double fullSum = referenceBlock.length * 255 * 3;
         return (sum / fullSum);
     }
 
