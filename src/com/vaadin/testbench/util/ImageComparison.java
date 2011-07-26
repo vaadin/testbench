@@ -491,20 +491,31 @@ public class ImageComparison {
         // copy pixels from reference over the possible cursor, then recompare
         // blocks
 
-        // Get 16x32 sub-images
-        int xSize = Math.min(16, width - x);
-        int ySize = Math.min(32, height - y);
-        BufferedImage referenceCopy = referenceImage.getSubimage(x, y, xSize,
-                ySize);
-        BufferedImage screenshotCopy = screenshotImage.getSubimage(x, y, xSize,
-                ySize);
+        // Get 16x32 sub-images, aligned on the 16x16 grid
+        // this might compare some extra blocks when at the right or bottom edge
+        int areaX = x;
+        int areaY = y;
+        int xSize = 16;
+        int ySize = 32;
+        if (x > width - 16) {
+            areaX = Math.max(0, (x - 16) & 0xFFFFF0);
+            xSize = width - areaX;
+        }
+        if (y > height - 32) {
+            areaY = Math.max(0, (height - 32) & 0xFFFFF0);
+            ySize = height - areaY;
+        }
+        BufferedImage referenceCopy = referenceImage.getSubimage(areaX, areaY,
+                xSize, ySize);
+        BufferedImage screenshotCopy = screenshotImage.getSubimage(areaX,
+                areaY, xSize, ySize);
         // avoid modifying original image
         screenshotCopy = ImageUtil.duplicateImage(screenshotCopy);
 
         // copy pixels for cursor position from reference to screenshot
-        for (int j = cursorStartY - y; j <= cursorEndY - y; ++j) {
-            int referenceRgb = referenceCopy.getRGB(cursorX - x, j);
-            screenshotCopy.setRGB(cursorX - x, j, referenceRgb);
+        for (int j = cursorStartY - areaY; j <= cursorEndY - areaY; ++j) {
+            int referenceRgb = referenceCopy.getRGB(cursorX - areaX, j);
+            screenshotCopy.setRGB(cursorX - areaX, j, referenceRgb);
         }
 
         // compare one or two blocks of reference with modified screenshot
