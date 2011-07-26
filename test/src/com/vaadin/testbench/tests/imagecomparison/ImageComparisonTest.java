@@ -26,6 +26,8 @@ public class ImageComparisonTest {
     @Before
     public void setup() {
         System.setProperty(Parameters.SCREENSHOT_DIRECTORY, "test");
+        System.setProperty(Parameters.SCREENSHOT_COMPARISON_CURSOR_DETECTION,
+                "false");
     }
 
     @Test
@@ -107,8 +109,6 @@ public class ImageComparisonTest {
     @Test
     public void compareCursorImagesFullWithoutCursorDetection()
             throws IOException {
-        System.setProperty(Parameters.SCREENSHOT_COMPARISON_CURSOR_DETECTION,
-                "false");
         testFullCompareImages("cursor-off.png", "cursor-on.png", false, 0.0);
         testFullCompareImages("cursor2-off-outline-on.png",
                 "cursor2-on-outline-off.png", false, 0.0);
@@ -130,6 +130,20 @@ public class ImageComparisonTest {
         // Cursor but no outline problem
         testFullCompareImages("cursor2-off-outline-on.png",
                 "cursor2-on-outline-on.png", true, 0.0);
+
+    }
+
+    @Test
+    public void incorrectlyDetectedCursor() throws IOException {
+        // Difference between cursor3-ref and cursor3-new is NOT a cursor
+        System.setProperty(Parameters.SCREENSHOT_COMPARISON_CURSOR_DETECTION,
+                "false");
+        testFullCompareImages("cursor3-ref.png", "cursor3-new.png", false,
+                0.025);
+        System.setProperty(Parameters.SCREENSHOT_COMPARISON_CURSOR_DETECTION,
+                "true");
+        testFullCompareImages("cursor3-ref.png", "cursor3-new.png", false,
+                0.025);
 
     }
 
