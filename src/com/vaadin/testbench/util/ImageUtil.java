@@ -60,56 +60,12 @@ public class ImageUtil {
     }
 
     /**
-     * Generates an image that is white where there are no differences and black
-     * where the images differ.
-     * 
-     * @param image1
-     *            First image
-     * @param image2
-     *            Second image
-     * @param height
-     * @param width
-     * @param y
-     * @param x
-     * @return B&W image
-     */
-    public static BufferedImage createBlackAndWhiteDifferenceImage(
-            BufferedImage image1, BufferedImage image2, int startX, int startY,
-            int width, int height) {
-        // Create empty image
-        BufferedImage diff = new BufferedImage(width, height,
-                BufferedImage.TYPE_BYTE_GRAY);
-
-        // Set background to white
-        Graphics2D g = diff.createGraphics();
-        g.setBackground(Color.WHITE);
-        g.clearRect(0, 0, width, height);
-
-        // Convert both images to black and white and mark differences in the
-        // "difference" image as black
-        for (int x = startX; x < startX + width; x++) {
-            for (int y = startY; y < startY + height; y++) {
-                double luminance1 = getLuminance(image1.getRGB(x, y));
-                double luminance2 = getLuminance(image2.getRGB(x, y));
-
-                boolean black1 = (luminance1 < 150);
-                boolean black2 = (luminance2 < 150);
-
-                if (black1 != black2) {
-                    diff.setRGB(x - startX, y - startY, Color.BLACK.getRGB());
-                }
-            }
-        }
-        return diff;
-    }
-
-    /**
      * Get luminance value for the given rgb value.
      * 
      * @param rgb
      * @return
      */
-    private static double getLuminance(int rgb) {
+    public static double getLuminance(int rgb) {
         int r = ((rgb >> 16) & 0xFF);
         int g = ((rgb >> 8) & 0xFF);
         int b = (rgb & 0xFF);

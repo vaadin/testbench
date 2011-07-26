@@ -144,7 +144,7 @@ public class ImageComparison {
                         xBlocks, yBlocks, falseBlocks);
                 if (possibleCursorPosition != null) {
                     if (isCursorTheOnlyError(possibleCursorPosition,
-                            referenceImage, screenshotImage)) {
+                            referenceImage, screenshotImage, errorTolerance)) {
                         if (Parameters.isDebug()) {
                             System.out.println("Screenshot matched reference "
                                     + referenceFileName
@@ -238,7 +238,7 @@ public class ImageComparison {
                     yBlocks, falseBlocks);
             if (possibleCursorPosition != null) {
                 if (isCursorTheOnlyError(possibleCursorPosition,
-                        referenceImage, screenshotImage)) {
+                        referenceImage, screenshotImage, errorTolerance)) {
                     return true;
                 }
             }
@@ -428,81 +428,103 @@ public class ImageComparison {
      * 
      * @param possibleCursorPosition
      *            The position in the image where a cursor possibly can be found
+     *            (pixel coordinates of the top left corner of a block)
      * @param referenceImage
      *            The reference image (with or without a cursor)
-     * @param comparisonImage
+     * @param screenshotImage
      *            The captured image (with or without a cursor)
-     * @return true If cursor (vertical black line with white on both sides) is
-     *         the only difference between the images.
+     * @param errorTolerance
+     *            Allowed RGB error (value range 0-1)
+     * @return true If cursor (vertical line of at least 5 pixels if not at the
+     *         top or bottom) is the only difference between the images.
      */
-    private static boolean isCursorTheOnlyError(Point possibleCursorPosition,
-            BufferedImage referenceImage, BufferedImage comparisonImage) {
-        boolean cursor = false;
-
+    private boolean isCursorTheOnlyError(Point possibleCursorPosition,
+            BufferedImage referenceImage, BufferedImage screenshotImage,
+            double errorTolerance) {
         int x = possibleCursorPosition.x;
         int y = possibleCursorPosition.y;
 
         int width = referenceImage.getWidth();
         int height = referenceImage.getHeight();
 
-        // If at the outer edge move in one step.
-        if (x == 0) {
-            x = 1;
-        }
-        // If we would step over the edge move start point
-        if ((x + 16) >= width) {
-            x = width - 17;
-        }
-        // If at bottom move start point up.
-        if ((y + 16) >= height) {
-            y = height - 17;
-        }
-
-        // Create a black and white diff image for the part we are scanning (we
-        // are starting at the error block and scanning it and possible the one
-        // below. Also possibly scanning one pixel outside in all directions).
-
-        int areaX = x - 1;
-        int areaY = y;
-        int areaWidth = 16 + 2;
-        int areaHeight = 32 + 1;
-        if (x + areaWidth >= width) {
-            areaWidth = width - x;
-        }
-        if (y + areaHeight >= height) {
-            areaHeight = height - y;
-        }
-
-        BufferedImage diff = ImageUtil.createBlackAndWhiteDifferenceImage(
-                comparisonImage, referenceImage, areaX, areaY, areaWidth,
-                areaHeight);
-
-        for (int j = 0; j < 16 + 1; j++) {
-            for (int i = 1; i < 16 + 1; i++) {
+        // find first different pixel in the block of possibleCursorPosition
+        int cursorX = -1;
+        int cursorStartY = -1;
+        findCursor: for (int j = y; j < y + 16 && j < height; j++) {
+            for (int i = x; i < x + 16 && i < width; i++) {
                 // if found differing pixel
-                if (diff.getRGB(i, j) == Color.BLACK.getRGB()) {
-                    int black = Color.BLACK.getRGB();
-                    int white = Color.WHITE.getRGB();
-
-                    do {
-                        if (diff.getRGB(i - 1, j) != white
-                                || diff.getRGB(i + 1, j) != white) {
-                            return false;
-                        }
-                        j++;
-                        if (j == areaHeight) {
-                            // End of image, assume it is a cursor
-                            return true;
-                        }
-                        if (diff.getRGB(i, j) != black) {
-                            return true;
-                        }
-                    } while (true);
+                if (isDifferent(referenceImage, screenshotImage, i, j)) {
+                    cursorX = i;
+                    cursorStartY = j;
+                    break findCursor;
                 }
             }
         }
+        if (-1 == cursorX) {
+            // no difference found with cursor detection threshold
+            return false;
+        }
 
-        return cursor;
+        // find the end of the cursor
+        int cursorEndY = cursorStartY;
+        while (cursorEndY < height - 1
+                && cursorEndY < y + 32
+                && isDifferent(referenceImage, screenshotImage, cursorX,
+                        cursorEndY + 1)) {
+            cursorEndY++;
+        }
+
+        // only accept as cursor if at least 5 pixels or at top or bottom of
+        // image
+        if (cursorEndY - cursorStartY < 5 && cursorStartY > 0
+                && cursorEndY < height - 1) {
+            return false;
+        }
+
+        // copy pixels from reference over the possible cursor, then recompare
+        // blocks
+
+        // Get 16x32 sub-images
+        int xSize = Math.min(16, width - x);
+        int ySize = Math.min(32, height - y);
+        BufferedImage referenceCopy = referenceImage.getSubimage(x, y, xSize,
+                ySize);
+        BufferedImage screenshotCopy = screenshotImage.getSubimage(x, y, xSize,
+                ySize);
+        // avoid modifying original image
+        screenshotCopy = ImageUtil.duplicateImage(screenshotCopy);
+
+        // copy pixels for cursor position from reference to screenshot
+        for (int j = cursorStartY - y; j <= cursorEndY - y; ++j) {
+            int referenceRgb = referenceCopy.getRGB(cursorX - x, j);
+            screenshotCopy.setRGB(cursorX - x, j, referenceRgb);
+        }
+
+        // compare one or two blocks of reference with modified screenshot
+        int xBlocks = ImageComparisonUtil.getBlocks(referenceCopy.getWidth());
+        int yBlocks = ImageComparisonUtil.getBlocks(referenceCopy.getHeight());
+        boolean[][] falseBlocks = new boolean[xBlocks][yBlocks];
+
+        boolean imagesEqual = compareImage(falseBlocks, referenceCopy,
+                screenshotCopy, errorTolerance);
+
+        return imagesEqual;
+    }
+
+    /**
+     * Luminance based comparison of a pixel in two images for cursor detection.
+     * 
+     * @param image1
+     * @param image2
+     * @param x
+     * @param y
+     * @return
+     */
+    private boolean isDifferent(BufferedImage image1, BufferedImage image2,
+            int x, int y) {
+        boolean dark1 = ImageUtil.getLuminance(image1.getRGB(x, y)) < 150;
+        boolean dark2 = ImageUtil.getLuminance(image2.getRGB(x, y)) < 150;
+        return (dark1 != dark2);
     }
 
     /**
