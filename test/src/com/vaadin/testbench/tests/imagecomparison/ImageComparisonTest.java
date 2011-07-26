@@ -56,6 +56,19 @@ public class ImageComparisonTest {
     }
 
     @Test
+    public void compareSimilarImagesWithCursorAndMinorDifferences()
+            throws IOException {
+        System.setProperty(Parameters.SCREENSHOT_COMPARISON_CURSOR_DETECTION,
+                "false");
+        testFullCompareImages("no-outline-cursor.png", "outline-no-cursor.png",
+                false, 0.025);
+        System.setProperty(Parameters.SCREENSHOT_COMPARISON_CURSOR_DETECTION,
+                "true");
+        testFullCompareImages("no-outline-cursor.png", "outline-no-cursor.png",
+                true, 0.025);
+    }
+
+    @Test
     public void compareSimilarImagesFull() throws IOException {
         // #7297
         testFullCompareImages("11.png", "111.png", false, 0.0);
