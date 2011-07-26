@@ -454,6 +454,13 @@ public class ImageComparison {
             for (int i = x; i < x + 16 && i < width; i++) {
                 // if found differing pixel
                 if (isDifferent(referenceImage, screenshotImage, i, j)) {
+                    // workaround to ignore vertical lines in certain tests
+                    if (j < height - 1
+                            && !isDifferent(referenceImage, screenshotImage, i,
+                                    j + 1)) {
+                        continue;
+                    }
+
                     cursorX = i;
                     cursorStartY = j;
                     break findCursor;
