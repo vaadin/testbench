@@ -453,11 +453,11 @@ public class ImageComparison {
         findCursor: for (int j = y; j < y + 16 && j < height; j++) {
             for (int i = x; i < x + 16 && i < width; i++) {
                 // if found differing pixel
-                if (isDifferent(referenceImage, screenshotImage, i, j)) {
+                if (isCursorPixel(referenceImage, screenshotImage, i, j)) {
                     // workaround to ignore vertical lines in certain tests
                     if (j < height - 1
-                            && !isDifferent(referenceImage, screenshotImage, i,
-                                    j + 1)) {
+                            && !isCursorPixel(referenceImage, screenshotImage,
+                                    i, j + 1)) {
                         continue;
                     }
 
@@ -476,7 +476,7 @@ public class ImageComparison {
         int cursorEndY = cursorStartY;
         while (cursorEndY < height - 1
                 && cursorEndY < y + 32
-                && isDifferent(referenceImage, screenshotImage, cursorX,
+                && isCursorPixel(referenceImage, screenshotImage, cursorX,
                         cursorEndY + 1)) {
             cursorEndY++;
         }
@@ -508,12 +508,8 @@ public class ImageComparison {
         }
 
         // compare one or two blocks of reference with modified screenshot
-        int xBlocks = ImageComparisonUtil.getBlocks(referenceCopy.getWidth());
-        int yBlocks = ImageComparisonUtil.getBlocks(referenceCopy.getHeight());
-        boolean[][] falseBlocks = new boolean[xBlocks][yBlocks];
-
-        boolean imagesEqual = compareImage(falseBlocks, referenceCopy,
-                screenshotCopy, errorTolerance);
+        boolean imagesEqual = compareImage(null, referenceCopy, screenshotCopy,
+                errorTolerance);
 
         return imagesEqual;
     }
@@ -527,11 +523,13 @@ public class ImageComparison {
      * @param y
      * @return
      */
-    private boolean isDifferent(BufferedImage image1, BufferedImage image2,
+    private boolean isCursorPixel(BufferedImage image1, BufferedImage image2,
             int x, int y) {
-        boolean dark1 = ImageUtil.getLuminance(image1.getRGB(x, y)) < 150;
-        boolean dark2 = ImageUtil.getLuminance(image2.getRGB(x, y)) < 150;
-        return (dark1 != dark2);
+        double lum1 = ImageUtil.getLuminance(image1.getRGB(x, y));
+        double lum2 = ImageUtil.getLuminance(image2.getRGB(x, y));
+
+        // cursor must be dark and the other pixel bright enough for contrast
+        return (lum1 < 50 && lum2 > 150) || (lum1 > 150 && lum2 < 50);
     }
 
     /**
