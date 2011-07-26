@@ -488,8 +488,9 @@ public class ImageComparison {
             return false;
         }
 
-        // copy pixels from reference over the possible cursor, then recompare
-        // blocks
+        // Copy pixels from reference over the possible cursor, then recompare
+        // blocks. Pixels at cursor position are always copied from the
+        // reference image regardless of which of the images has the cursor.
 
         // Get 16x32 sub-images, aligned on the 16x16 grid
         // this might compare some extra blocks when at the right or bottom edge
