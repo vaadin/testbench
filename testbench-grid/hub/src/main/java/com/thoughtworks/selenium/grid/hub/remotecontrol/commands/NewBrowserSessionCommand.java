@@ -59,7 +59,6 @@ public class NewBrowserSessionCommand extends SeleneseCommand {
             response = remoteControl.forward(parameters());
             sessionId = parseSessionId(response.body());
             if (null == sessionId) {
-                pool.release(remoteControl);
                 throw new CouldNotGetSessionException(
                         "Could not retrieve a new session from remote control running on "
                                 + remoteControl.hostName() + ": "
@@ -70,8 +69,9 @@ public class NewBrowserSessionCommand extends SeleneseCommand {
 
             return response;
         } catch (CouldNotGetSessionException e) {
-            // RC already released; rethrow exception to caller
+            // rethrow exception to caller for the retry mechanism
             logger.error("Problem while requesting new browser session", e);
+            pool.release(remoteControl);
             throw e;
         } catch (Exception e) {
             logger.error("Problem while requesting new browser session", e);
