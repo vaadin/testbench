@@ -69,6 +69,10 @@ public class NewBrowserSessionCommand extends SeleneseCommand {
             pool.updateSessionLastActiveAt(sessionId);
 
             return response;
+        } catch (CouldNotGetSessionException e) {
+            // RC already released; rethrow exception to caller
+            logger.error("Problem while requesting new browser session", e);
+            throw e;
         } catch (Exception e) {
             logger.error("Problem while requesting new browser session", e);
             pool.release(remoteControl);
