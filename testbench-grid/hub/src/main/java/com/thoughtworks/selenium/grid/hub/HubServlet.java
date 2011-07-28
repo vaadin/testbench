@@ -59,7 +59,10 @@ public class HubServlet extends HttpServlet {
         // retry if and only if could not get session
         for (int i = 0; i < SESSION_RETRIES; ++i) {
             try {
-                SeleneseCommand command = new HttpCommandParser(parameters)
+                // HttpCommandParser.parse() modifies this in the request, so
+                // need to use a copy
+                SeleneseCommand command = new HttpCommandParser(
+                        copyHttpParameters(parameters))
                         .parse(environmentManager);
                 Response response = command.execute(pool);
 
@@ -95,6 +98,14 @@ public class HubServlet extends HttpServlet {
         }
         // cannot come here if SESSION_RETRIES > 0
         return new Response("Session retries should not be 0");
+    }
+
+    private HttpParameters copyHttpParameters(HttpParameters parameters) {
+        HttpParameters result = new HttpParameters();
+        for (String paramName : parameters.names()) {
+            result.put(paramName, parameters.get(paramName));
+        }
+        return result;
     }
 
     protected void reply(HttpServletResponse response,
