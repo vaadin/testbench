@@ -216,14 +216,14 @@ BrowserBot.prototype.triggerMouseEvent = function(element, eventType, canBubble,
 
     canBubble = (typeof(canBubble) == undefined) ? true : canBubble;
     if (element.fireEvent && element.ownerDocument && element.ownerDocument.createEventObject && document.createEventObject) { //IE
-        var evt = document.createEventObject(element, this.controlKeyDown, this.altKeyDown, this.shiftKeyDown, this.metaKeyDown);
-        evt.detail = 0;
-        evt.button = button ? button : 1; // default will be the left mouse click ( http://www.javascriptkit.com/jsref/event.shtml )
-        evt.relatedTarget = null;
-        if (!screenX && !screenY && !clientX && !clientY && !this.controlKeyDown && !this.altKeyDown && !this.shiftKeyDown && !this.metaKeyDown) {
+        if (!button && !screenX && !screenY && !clientX && !clientY && !this.controlKeyDown && !this.altKeyDown && !this.shiftKeyDown && !this.metaKeyDown) {
             element.fireEvent('on' + eventType);
         }
         else {
+            var evt = createEventObject(element, this.controlKeyDown, this.altKeyDown, this.shiftKeyDown, this.metaKeyDown);
+            evt.detail = 0;
+            evt.relatedTarget = null;
+            evt.button = button ? button : 1; // default will be the left mouse click ( http://www.javascriptkit.com/jsref/event.shtml )
             evt.screenX = screenX;
             evt.screenY = screenY;
             evt.clientX = clientX;
