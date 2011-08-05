@@ -18,10 +18,11 @@ function getVaadinConnector(wnd) {
 }
 
 /**
- * Overriding window.open to fix Chrome 12 bug TODO Should be removed when
- * chrome 12 is fixed.
+ * Overriding window.open to fix Chrome 12+ bug
+ * 
+ * TODO Should be removed when Chrome is fixed.
  */
-if(navigator.userAgent.toLowerCase().indexOf('chrome/12') > -1){
+if(navigator.userAgent.toLowerCase().indexOf('chrome/') > -1){
   window.open_ = window.open;  
   window.open = function(url, name, props) {          
     var win = window.open_("",name,props);
