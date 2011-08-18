@@ -466,18 +466,29 @@ Selenium.prototype.doDrop = function(locator, value){
 Selenium.prototype.doAssertCSSClass = function(locator, value){
 	var element = this.browserbot.findElement(locator);
 	var css = element.className;
-
-    if (!(new RegExp(value)).test(css)) {
-        Assert.fail("Element doesn't have the " + value + " class.");
+    
+    var splitNames = css.split(' ');
+    var matcher = new PatternMatcher(value);
+    for (var i = 0; i < splitNames.length; i++) {
+        if (matcher.matches(splitNames[i])) {
+            return;
+        }
     }
+
+    Assert.fail("Element doesn't have the " + value + " class.");
 };
 
 Selenium.prototype.doAssertNotCSSClass = function(locator, value){
 	var element = this.browserbot.findElement(locator);
 	var css = element.className;
 
-    if ((new RegExp(value)).test(css)) {
-        Assert.fail("Element has the " + value + " class.");
+    var splitNames = css.split(' ');
+    var matcher = new PatternMatcher(value);
+    for (var i = 0; i < splitNames.length; i++) {
+        if (matcher.matches(splitNames[i])) {
+            Assert.fail("Element has the " + value + " class.");
+            return;
+        }
     }
 };
 
