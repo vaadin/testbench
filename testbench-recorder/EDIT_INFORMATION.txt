@@ -54,4 +54,4 @@ selenium-ide.css
 [tooltip and assert button image definitions]
 
 install.rdf
-[firefox 3.6 compatibility]
+[firefox 4-10 compatibility]
