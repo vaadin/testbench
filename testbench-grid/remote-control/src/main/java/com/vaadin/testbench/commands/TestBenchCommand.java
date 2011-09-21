@@ -19,12 +19,7 @@ public enum TestBenchCommand {
      * Parameters (Strings): <br>
      * - A representation of reference image calculated as the average sum of
      * RGB values over 16x16 blocks <br>
-     * - The tolerance for error (0..768) <br>
      * - The maximum number of retries <br>
-     * - The X position of the canvas <br>
-     * - The Y position of the canvas <br>
-     * - The width of the canvas <br>
-     * - The height of the canvas <br>
      * - The delay between retries
      */
     compareScreen,

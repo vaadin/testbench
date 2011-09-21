@@ -1,6 +1,5 @@
 package com.vaadin.testbench.commands;
 
-import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
@@ -9,7 +8,6 @@ import java.util.concurrent.TimeoutException;
 import org.apache.commons.logging.Log;
 import org.mortbay.log.LogFactory;
 import org.openqa.selenium.server.FrameGroupCommandQueueSet;
-import org.openqa.selenium.server.RobotRetriever;
 
 import com.vaadin.testbench.util.BrowserDimensions;
 
@@ -37,11 +35,98 @@ public class CommandUtil {
         }
     }
 
+    /**
+     * Finds the physical display where the browser window was opened. This is
+     * done by first grabbing a screen shot of every attached screen and then
+     * changing the background color of the browser window to red. After this, a
+     * new screen shot is grabbed of each screen in turn until the shot where a
+     * large area of changed color is found.
+     * 
+     * @return the index of the display in the GraphicsEnvironment's list of
+     *         GraphicsDevices.
+     * @throws TimeoutException
+     * @throws ExecutionException
+     * @throws InterruptedException
+     */
+    public static int findPhysicalDisplay(String sessionId)
+            throws InterruptedException, ExecutionException, TimeoutException {
+        int numDevices = ScreenShot.getNumScreenDevices();
+        if (numDevices == 1) {
+            return 0;
+        }
+        BufferedImage[] references = new BufferedImage[numDevices];
+        for (int ix = 0; ix < numDevices; ix++) {
+            references[ix] = ScreenShot.capture(ix);
+        }
+        eval("selenium.browserbot.getUserWindow().document.body.bgColor='red';",
+                sessionId);
+        pause(500);
+        for (int ix = 0; ix < numDevices; ix++) {
+            BufferedImage shot = ScreenShot.capture(ix);
+            if (isBrowserWindowPresent(shot, references[ix])) {
+                return ix;
+            }
+        }
+        // Couldn't find the correct one, just use the primary display.
+        return 0;
+    }
+
+    /**
+     * @param shot
+     * @param reference
+     * @return true if the browser window has been detected in the screen shot
+     *         by swapping its background color from white (reference) to red
+     *         (shot)
+     */
+    static boolean isBrowserWindowPresent(BufferedImage shot,
+            BufferedImage reference) {
+        int x = 0;
+        int w = shot.getWidth() / 2;
+
+        for (int y = 0; y < shot.getHeight(); y += 10) {
+            int[] shotBlock = new int[w];
+            int[] refBlock = new int[w];
+            shotBlock = shot.getRGB(x, y, w, 1, shotBlock, 0, w);
+            refBlock = reference.getRGB(x, y, w, 1, refBlock, 0, w);
+            if (blockMostly(refBlock, 0xFFFFFF)
+                    && blockMostly(shotBlock, 0xFF0000)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @param refBlock
+     * @param i
+     * @return true if refBlock mostly contains the specified rgb color.
+     */
+    private static boolean blockMostly(int[] refBlock, int rgb) {
+        int tolerance = 100;
+        float r = 0, g = 0, b = 0;
+        float len = refBlock.length;
+        for (int pixel : refBlock) {
+            r = r + ((pixel >> 16) & 0xFF) / len;
+            g = g + ((pixel >> 8) & 0xFF) / len;
+            b = b + (pixel & 0xFF) / len;
+        }
+        if ((r - ((rgb >> 16) & 0xFF)) > tolerance) {
+            return false;
+        }
+        if ((g - ((rgb >> 8) & 0xFF)) > tolerance) {
+            return false;
+        }
+        if ((b - (rgb & 0xFF)) > tolerance) {
+            return false;
+        }
+        return true;
+    }
+
     public static void findCanvasPositionByScreenshot(
             BrowserDimensions dimensions) throws InterruptedException,
             ExecutionException, TimeoutException {
-        BufferedImage screenshot = captureScreenshot(
-                dimensions.getScreenWidth(), dimensions.getScreenHeight());
+        BufferedImage screenshot = ScreenShot.capture(dimensions
+                .getDisplayIndex());
         /* Find out canvas y position */
         int[] startBlock = new int[10];
         int xPosition = dimensions.getCanvasXPosition()
@@ -81,12 +166,6 @@ public class CommandUtil {
          * dimensions.getCanvasXPosition() + "\ncanvasY: " +
          * dimensions.getCanvasYPosition()); }
          */
-    }
-
-    private static BufferedImage captureScreenshot(int width, int height)
-            throws InterruptedException, ExecutionException, TimeoutException {
-        return RobotRetriever.getRobot().createScreenCapture(
-                new Rectangle(width, height));
     }
 
     public static void pause(int millisecs) {

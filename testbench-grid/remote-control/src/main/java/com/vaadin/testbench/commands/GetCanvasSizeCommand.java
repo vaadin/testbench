@@ -43,6 +43,19 @@ public class GetCanvasSizeCommand extends Command {
             dim = new BrowserDimensions(CommandUtil.eval(
                     "vaadin_testbench_getDimensions();", sessionId));
 
+            try {
+                dim.setDisplayIndex(CommandUtil.findPhysicalDisplay(sessionId));
+            } catch (InterruptedException e) {
+                LOGGER.error("Could not find the correct physical display", e);
+                return "ERROR: Could not find the correct physical display";
+            } catch (ExecutionException e) {
+                LOGGER.error("Could not find the correct physical display", e);
+                return "ERROR: Could not find the correct physical display";
+            } catch (TimeoutException e) {
+                LOGGER.error("Could not find the correct physical display", e);
+                return "ERROR: Could not find the correct physical display";
+            }
+
             if (!browser.isIE()) {
                 // Only IE provides canvas position. For the other browsers we
                 // locate it based on a screenshot.

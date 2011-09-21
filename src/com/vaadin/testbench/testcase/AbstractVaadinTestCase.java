@@ -163,12 +163,7 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
                 "compareScreen",
                 new String[] {
                         compare.generateHashFromReferenceFiles(referenceFileId),
-                        String.valueOf(errorTolerance * 768),
                         String.valueOf(maxAmountOfTests),
-                        String.valueOf(dimensions.getCanvasXPosition()),
-                        String.valueOf(dimensions.getCanvasYPosition()),
-                        String.valueOf(dimensions.getCanvasWidth()),
-                        String.valueOf(dimensions.getCanvasHeight()),
                         String.valueOf(Parameters.getRetryDelay()) });
 
         String[] compareScreenResults = compareScreenResult.split(",");

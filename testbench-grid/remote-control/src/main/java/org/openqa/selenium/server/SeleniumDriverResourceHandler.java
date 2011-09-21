@@ -447,7 +447,7 @@ public class SeleniumDriverResourceHandler extends ResourceHandler {
             LOGGER.info("Test name: " + values.get(0));
             return "OK";
         case compareScreen:
-            return new CompareScreenCommand(values).execute();
+            return new CompareScreenCommand(values, sessionId).execute();
         case setCanvasSize:
             return new SetCanvasSizeCommand(values, sessionId).execute();
         case getCanvasSize:
@@ -518,7 +518,8 @@ public class SeleniumDriverResourceHandler extends ResourceHandler {
             results = new CaptureScreenshotCommand(values.get(0)).execute();
             break;
         case captureScreenshotToString:
-            results = new CaptureScreenshotToStringCommand().execute();
+            results = new com.vaadin.testbench.commands.CaptureScreenshotToStringCommand(
+                    sessionId).execute();
             break;
         case captureNetworkTraffic:
             results = new CaptureNetworkTrafficCommand(values.get(0)).execute();

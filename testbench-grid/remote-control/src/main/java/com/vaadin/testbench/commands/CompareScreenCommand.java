@@ -1,7 +1,5 @@
 package com.vaadin.testbench.commands;
 
-import java.awt.Rectangle;
-import java.awt.Robot;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -17,9 +15,10 @@ import javax.imageio.ImageIO;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.Log;
 import org.mortbay.log.LogFactory;
-import org.openqa.selenium.server.RobotRetriever;
 import org.openqa.selenium.server.commands.Command;
 
+import com.vaadin.testbench.util.BrowserDimensions;
+import com.vaadin.testbench.util.BrowserInfo;
 import com.vaadin.testbench.util.ImageComparisonUtil;
 import com.vaadin.testbench.util.ReferenceImageRepresentation;
 import com.vaadin.testbench.util.ReferenceImageRepresentation.HashRepresentation;
@@ -35,12 +34,7 @@ import com.vaadin.testbench.util.ReferenceImageRepresentation.HashRepresentation
  * Parameters (Strings): <br>
  * - A representation of reference image calculated as the average sum of RGB
  * values over 16x16 blocks <br>
- * - The tolerance for error (0..768) <br>
  * - The maximum number of retries <br>
- * - The X position of the canvas <br>
- * - The Y position of the canvas <br>
- * - The width of the canvas <br>
- * - The height of the canvas <br>
  * - The delay between retries (ms)
  * 
  * @author Jonatan Kronqvist / Vaadin Ltd
@@ -51,26 +45,20 @@ public class CompareScreenCommand extends Command {
             .getLog(CompareScreenCommand.class);
 
     private ReferenceImageRepresentation referenceImageRepresentation;
-    private final float tolerance;
     private final int maxRetries;
-    private final int canvasX;
-    private final int canvasY;
-    private final int canvasWidth;
-    private final int canvasHeight;
     private final int retryDelay;
     private BufferedImage screenshot;
 
     private int numScreenShotsTaken = 0;
 
-    public CompareScreenCommand(Vector<String> parameters) {
+    private BrowserDimensions dim;
+
+    public CompareScreenCommand(Vector<String> parameters, String sessionId) {
         parseBlockParameter(parameters.get(0));
-        tolerance = Float.valueOf(parameters.get(1));
-        maxRetries = Integer.valueOf(parameters.get(2));
-        canvasX = Integer.valueOf(parameters.get(3));
-        canvasY = Integer.valueOf(parameters.get(4));
-        canvasWidth = Integer.valueOf(parameters.get(5));
-        canvasHeight = Integer.valueOf(parameters.get(6));
-        retryDelay = Integer.valueOf(parameters.get(7));
+        maxRetries = Integer.valueOf(parameters.get(1));
+        retryDelay = Integer.valueOf(parameters.get(2));
+        String userAgent = CommandUtil.eval("navigator.userAgent;", sessionId);
+        dim = BrowserInfo.getBrowserDimensions(userAgent);
     }
 
     /**
@@ -144,7 +132,9 @@ public class CompareScreenCommand extends Command {
             ExecutionException, TimeoutException {
         numScreenShotsTaken = 0;
         for (int i = 0; i < maxRetries; i++) {
-            screenshot = grabScreenshot();
+            screenshot = new ScreenShot(dim.getDisplayIndex()).capture(
+                    dim.getCanvasXPosition(), dim.getCanvasYPosition(),
+                    dim.getCanvasWidth(), dim.getCanvasHeight());
             numScreenShotsTaken++;
             String screenshotHash = ImageComparisonUtil
                     .generateImageHash(screenshot);
@@ -158,13 +148,4 @@ public class CompareScreenCommand extends Command {
         }
         return false;
     }
-
-    private BufferedImage grabScreenshot() throws InterruptedException,
-            ExecutionException, TimeoutException {
-        Robot robot = RobotRetriever.getRobot();
-        robot.mouseMove(0, 0);
-        return robot.createScreenCapture(new Rectangle(canvasX, canvasY,
-                canvasWidth, canvasHeight));
-    }
-
 }

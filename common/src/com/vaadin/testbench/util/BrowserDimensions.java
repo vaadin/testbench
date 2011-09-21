@@ -14,12 +14,17 @@ public class BrowserDimensions {
      * X position of the canvas. For IE9 in native mode this will be 2 pixel too
      * large.
      */
+    private int canvasXPosition;
     /**
      * Y position of the canvas. For IE9 in native mode this will be 2 pixel too
      * large.
      */
-    private int canvasXPosition;
     private int canvasYPosition;
+
+    /**
+     * The index of the physical display where the browser window is opened.
+     */
+    private int displayIndex = -1;
 
     public BrowserDimensions(int screenWidth, int screenHeight,
             int canvasWidth, int canvasHeight, int canvasXPosition,
@@ -104,5 +109,13 @@ public class BrowserDimensions {
         return getScreenWidth() + "," + getScreenHeight() + ","
                 + getCanvasWidth() + "," + getCanvasHeight() + ","
                 + getCanvasXPosition() + "," + getCanvasYPosition();
+    }
+
+    public int getDisplayIndex() {
+        return displayIndex;
+    }
+
+    public void setDisplayIndex(int displayIndex) {
+        this.displayIndex = displayIndex;
     }
 }
