@@ -1,9 +1,21 @@
 <?xml version="1.0"?>
 
 <project name="TestBench build" basedir="." default="testbench-distribution-package">
+
+	<!-- Build type specific configuration -->
+    <echo>Using build type specfic property file: "${build.properties.file}"</echo>
+	<!-- Load version from properties file. If not found, version is specified below. -->
+    <property file="${build.properties.file}" />
+	
+	<property name="version.base" value="2.4.2" />
+	
 	<tstamp />
 	<property name="timestamp" value="${DSTAMP}${TSTAMP}" />
-	<property name="version" value="2.4.2.development.${timestamp}" />
+	<property name="testbench.version" value="${version.base}.development.${timestamp}" />
+	
+    <!-- If not already set by the build system -->
+    <property name="version" value="${testbench.version}" />
+
 	<property name="output.dir" value="result/package" />
 	<!-- Add this property to exlude TestBenchRunner from build -->
 	<property name="exclude.runner" value="true" />
