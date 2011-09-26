@@ -20,6 +20,8 @@
 	<!-- Add this property to exlude TestBenchRunner from build -->
 	<property name="exclude.runner" value="true" />
 
+	<echo>Version: ${version}</echo>
+		
 	<target name="testbench.jar">
 		<delete dir="result" failonerror="true" />
 
