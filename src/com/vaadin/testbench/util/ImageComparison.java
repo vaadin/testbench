@@ -87,7 +87,10 @@ public class ImageComparison {
             boolean sizesDiffer = !ImageUtil.imagesSameSize(referenceImage,
                     screenshotImage);
             if (sizesDiffer) {
-                ImageUtil.cropToBeSameSize(referenceImage, screenshotImage);
+                List<BufferedImage> images = ImageUtil.cropToBeSameSize(Arrays
+                        .asList(referenceImage, screenshotImage));
+                referenceImage = images.get(0);
+                screenshotImage = images.get(1);
             }
 
             int imageWidth = referenceImage.getWidth();

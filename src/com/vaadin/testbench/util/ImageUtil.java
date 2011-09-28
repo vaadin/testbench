@@ -6,6 +6,8 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
@@ -103,23 +105,28 @@ public class ImageUtil {
      * Resize images to be same size. The size is determined by the minimum
      * height and minimum width of the images.
      * 
-     * @param image1
-     * @param image2
-     * @return true if at least one of the images was cropped, false otherwise
-     * @return
+     * @param images
+     *            a list of two images.
+     * @return a list containing two images with the same dimensions
      */
-    public static boolean cropToBeSameSize(BufferedImage image1,
-            BufferedImage image2) {
+    public static List<BufferedImage> cropToBeSameSize(
+            List<BufferedImage> images) {
+        if (images.size() != 2) {
+            throw new IllegalArgumentException(
+                    "the images list must contain exactly two images");
+        }
+        BufferedImage image1 = images.get(0);
+        BufferedImage image2 = images.get(1);
         if (imagesSameSize(image1, image2)) {
-            return false;
+            return images;
         }
 
         int minHeight = Math.min(image1.getHeight(), image2.getHeight());
         int minWidth = Math.min(image1.getWidth(), image2.getWidth());
 
-        cropImage(image1, minWidth, minHeight);
-        cropImage(image2, minWidth, minHeight);
-        return true;
+        BufferedImage cropped1 = cropImage(image1, minWidth, minHeight);
+        BufferedImage cropped2 = cropImage(image2, minWidth, minHeight);
+        return Arrays.asList(cropped1, cropped2);
     }
 
     /**
@@ -132,11 +139,12 @@ public class ImageUtil {
      * @param height
      *            height in pixels
      */
-    private static void cropImage(BufferedImage image, int width, int height) {
+    private static BufferedImage cropImage(BufferedImage image, int width,
+            int height) {
         if (image.getWidth() == width && image.getHeight() == height) {
-            return;
+            return image;
         }
-        image = image.getSubimage(0, 0, width, height);
+        return image.getSubimage(0, 0, width, height);
     }
 
     public static BufferedImage cropImage(BufferedImage rawImage,

@@ -1,22 +1,18 @@
-package com.vaadin.testbench.tests.imagecomparison;
+package com.vaadin.testbench.util;
 
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
-import javax.imageio.ImageIO;
+import junit.framework.AssertionFailedError;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import com.vaadin.testbench.Parameters;
-import com.vaadin.testbench.util.ImageComparison;
-import com.vaadin.testbench.util.ImageComparisonUtil;
 
 public class ImageComparisonTest {
 
@@ -25,7 +21,9 @@ public class ImageComparisonTest {
 
     @Before
     public void setup() {
-        System.setProperty(Parameters.SCREENSHOT_DIRECTORY, "test");
+        URL screenshotUrl = getClass().getClassLoader().getResource(FOLDER);
+        System.setProperty(Parameters.SCREENSHOT_DIRECTORY,
+                screenshotUrl.getPath());
         System.setProperty(Parameters.SCREENSHOT_COMPARISON_CURSOR_DETECTION,
                 "false");
     }
@@ -190,24 +188,22 @@ public class ImageComparisonTest {
 
         testFullCompareImages("cursor-bottom-right-off.png",
                 "cursor-bottom-right-on.png", true, 0.0);
+    }
 
+    @Test(expected = AssertionFailedError.class)
+    public void canCompareReferenceSmallerThanScreenshot() throws IOException {
+        ImageComparison ic = new ImageComparison();
+        ic.compareStringImage(ImageLoader.loadImageToString(FOLDER,
+                "screenshot1008x767.png"), "reference738x624", 1, null, false);
     }
 
     private void testFullCompareImages(String referenceFilename,
             String screenshotFilename, boolean shouldBeEqual,
             double errorTolerance) throws IOException {
-        URL ref = getClass().getClassLoader().getResource(
-                FOLDER + "/" + referenceFilename);
-        URL scr = getClass().getClassLoader().getResource(
-                FOLDER + "/" + screenshotFilename);
-        assertNotNull("Missing reference " + referenceFilename, ref);
-        assertNotNull("Missing screenshot" + screenshotFilename, ref);
-        File reference = new File(ref.getPath());
-        File screenshot = new File(scr.getPath());
-        junit.framework.Assert.assertTrue(screenshot.exists());
-
-        BufferedImage referenceImage = ImageIO.read(reference);
-        BufferedImage screenshotImage = ImageIO.read(screenshot);
+        BufferedImage referenceImage = ImageLoader.loadImage(FOLDER,
+                referenceFilename);
+        BufferedImage screenshotImage = ImageLoader.loadImage(FOLDER,
+                screenshotFilename);
 
         boolean blocksEqual = new ImageComparison().compareImages(
                 referenceImage, screenshotImage, errorTolerance);
@@ -222,18 +218,10 @@ public class ImageComparisonTest {
     private void testRCCompareImages(String referenceFilename,
             String screenshotFilename, boolean shouldBeEqual)
             throws IOException {
-        URL ref = getClass().getClassLoader().getResource(
-                FOLDER + "/" + referenceFilename);
-        URL scr = getClass().getClassLoader().getResource(
-                FOLDER + "/" + screenshotFilename);
-        assertNotNull("Missing reference " + referenceFilename, ref);
-        assertNotNull("Missing screenshot" + screenshotFilename, ref);
-        File reference = new File(ref.getPath());
-        File screenshot = new File(scr.getPath());
-        junit.framework.Assert.assertTrue(screenshot.exists());
-
-        BufferedImage referenceImage = ImageIO.read(reference);
-        BufferedImage screenshotImage = ImageIO.read(screenshot);
+        BufferedImage referenceImage = ImageLoader.loadImage(FOLDER,
+                referenceFilename);
+        BufferedImage screenshotImage = ImageLoader.loadImage(FOLDER,
+                screenshotFilename);
 
         String referenceHash = ImageComparisonUtil
                 .generateImageHash(referenceImage);
