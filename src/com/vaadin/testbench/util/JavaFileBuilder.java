@@ -335,13 +335,23 @@ public class JavaFileBuilder {
             catchClause += "if (writeScreenshots) {\ncreateFailureScreenshot(\""
                     + testName + "\");\n}\n";
         }
-        catchClause += "throw new java.lang.AssertionError(cmd.getInfo() + \"\\n Message: \" + e.getMessage()+\"\\nRemote control: \"+getRemoteControlName());\n}\n";
+        catchClause += "throw new com.vaadin.testbench.testcase.TestFailedException("
+                + getCommandInfoString("e.getMessage()") + ", e);\n}\n";
 
         // adding the softAssert so creating reference images throws a assert
         // failure at end of test
-        String softAsserts = "handleSoftErrors();\n";
+        String softAsserts = "String softError = getSoftErrorMessage();\n";
+        softAsserts += "if (softError != null) {\n";
+        softAsserts += "throw new com.vaadin.testbench.testcase.TestFailedException("
+                + getCommandInfoString("softError") + ");\n";
+        softAsserts += "}\n";
 
         return catchClause + softAsserts + footer;
+    }
+
+    private String getCommandInfoString(String errorMessage) {
+        return "cmd.getInfo() + \"\\n Message: \" + " + errorMessage
+                + "+\"\\nRemote control: \"+getRemoteControlName()";
     }
 
     /**

@@ -536,9 +536,9 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
         }
     }
 
-    public void handleSoftErrors() {
+    public String getSoftErrorMessage() {
         if (getSoftErrors().isEmpty()) {
-            return;
+            return null;
         }
 
         StringBuilder message = new StringBuilder();
@@ -573,7 +573,7 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
                 add_and = true;
             }
         }
-        junit.framework.Assert.fail(message.toString());
+        return message.toString();
     }
 
     protected void setTestName(String testName) {
