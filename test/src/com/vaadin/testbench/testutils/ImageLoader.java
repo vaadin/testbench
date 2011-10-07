@@ -1,7 +1,7 @@
 /* 
 @ITMillApache2LicenseForJavaFiles@
  */
-package com.vaadin.testbench.util;
+package com.vaadin.testbench.testutils;
 
 import static junit.framework.Assert.assertNotNull;
 

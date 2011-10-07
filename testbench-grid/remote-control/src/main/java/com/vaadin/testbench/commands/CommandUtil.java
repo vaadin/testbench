@@ -1,7 +1,6 @@
 package com.vaadin.testbench.commands;
 
 import java.awt.image.BufferedImage;
-import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
@@ -12,7 +11,9 @@ import org.openqa.selenium.server.FrameGroupCommandQueueSet;
 import com.vaadin.testbench.util.BrowserDimensions;
 
 public class CommandUtil {
+
     private static final Log LOGGER = LogFactory.getLog(CommandUtil.class);
+    private static final int MIN_LINES_FOR_MATCH = 10;
 
     public static String eval(String cmd, String sessionId) {
         final FrameGroupCommandQueueSet queue;
@@ -35,6 +36,13 @@ public class CommandUtil {
         }
     }
 
+    public static void pause(int millisecs) {
+        try {
+            Thread.sleep(millisecs);
+        } catch (InterruptedException e) {
+        }
+    }
+
     /**
      * Finds the physical display where the browser window was opened. This is
      * done by first grabbing a screen shot of every attached screen and then
@@ -50,6 +58,9 @@ public class CommandUtil {
      */
     public static int findPhysicalDisplay(String sessionId)
             throws InterruptedException, ExecutionException, TimeoutException {
+        eval("selenium.browserbot.getUserWindow().document.body.bgColor='red';",
+                sessionId);
+        pause(500);
         int numDevices = ScreenShot.getNumScreenDevices();
         if (numDevices == 1) {
             return 0;
@@ -58,7 +69,7 @@ public class CommandUtil {
         for (int ix = 0; ix < numDevices; ix++) {
             references[ix] = ScreenShot.capture(ix);
         }
-        eval("selenium.browserbot.getUserWindow().document.body.bgColor='red';",
+        eval("selenium.browserbot.getUserWindow().document.body.bgColor='white';",
                 sessionId);
         pause(500);
         for (int ix = 0; ix < numDevices; ix++) {
@@ -75,7 +86,7 @@ public class CommandUtil {
      * @param shot
      * @param reference
      * @return true if the browser window has been detected in the screen shot
-     *         by swapping its background color from white (reference) to red
+     *         by swapping its background color from red (reference) to white
      *         (shot)
      */
     static boolean isBrowserWindowPresent(BufferedImage shot,
@@ -88,8 +99,8 @@ public class CommandUtil {
             int[] refBlock = new int[w];
             shotBlock = shot.getRGB(x, y, w, 1, shotBlock, 0, w);
             refBlock = reference.getRGB(x, y, w, 1, refBlock, 0, w);
-            if (blockMostly(refBlock, 0xFFFFFF)
-                    && blockMostly(shotBlock, 0xFF0000)) {
+            if (blockMostly(refBlock, 0xFF0000)
+                    && blockMostly(shotBlock, 0xFFFFFF)) {
                 return true;
             }
         }
@@ -102,7 +113,16 @@ public class CommandUtil {
      * @return true if refBlock mostly contains the specified rgb color.
      */
     private static boolean blockMostly(int[] refBlock, int rgb) {
-        int tolerance = 100;
+        return blockMostly(refBlock, rgb, 100);
+    }
+
+    /**
+     * @param refBlock
+     * @param i
+     * @param tolerance
+     * @return true if refBlock mostly contains the specified rgb color.
+     */
+    private static boolean blockMostly(int[] refBlock, int rgb, int tolerance) {
         float r = 0, g = 0, b = 0;
         float len = refBlock.length;
         for (int pixel : refBlock) {
@@ -127,51 +147,141 @@ public class CommandUtil {
             ExecutionException, TimeoutException {
         BufferedImage screenshot = ScreenShot.capture(dimensions
                 .getDisplayIndex());
-        /* Find out canvas y position */
-        int[] startBlock = new int[10];
-        int xPosition = dimensions.getCanvasXPosition()
-                + dimensions.getCanvasWidth() / 2;
-        startBlock = screenshot.getRGB(xPosition,
-                dimensions.getCanvasYPosition() + 10, 1, 10, startBlock, 0, 1);
-
-        for (int y = dimensions.getCanvasYPosition() + 10; y > 0; y--) {
-            int[] testBlock = new int[10];
-            testBlock = screenshot.getRGB(xPosition, y, 1, 10, testBlock, 0, 1);
-            if (!Arrays.equals(startBlock, testBlock)) {
-                dimensions.setCanvasYPosition(y + 1);
-                break;
-            }
-        }
-
-        int yPosition = dimensions.getCanvasYPosition() + 10;
-        startBlock = screenshot.getRGB(xPosition, yPosition, 10, 1, startBlock,
-                0, 1);
-
-        for (int x = xPosition; x > 0; x--) {
-            int[] testBlock = new int[10];
-            testBlock = screenshot.getRGB(x, yPosition, 10, 1, testBlock, 0, 1);
-            if (!Arrays.equals(startBlock, testBlock)) {
-                dimensions.setCanvasXPosition(x + 1);
-                break;
-            }
-        }
-
-        // Print dimensions if debug
-        /*
-         * if (Parameters.isDebug()) { System.out.println("availWidth: " +
-         * dimensions.getScreenWidth() + "\navailHeight: " +
-         * dimensions.getScreenHeight() + "\ncanvasWidth: " +
-         * dimensions.getCanvasWidth() + "\ncanvasHeight: " +
-         * dimensions.getCanvasHeight() + "\ncanvasX: " +
-         * dimensions.getCanvasXPosition() + "\ncanvasY: " +
-         * dimensions.getCanvasYPosition()); }
-         */
+        CanvasPositionFinder finder = new CanvasPositionFinder(screenshot,
+                dimensions.getCanvasWidth(), dimensions.getCanvasHeight());
+        finder.find();
+        dimensions.setCanvasXPosition(finder.getX());
+        dimensions.setCanvasYPosition(finder.getY());
     }
 
-    public static void pause(int millisecs) {
-        try {
-            Thread.sleep(millisecs);
-        } catch (InterruptedException e) {
+    /**
+     * Finds the position of a white canvas when it's width and height are
+     * known.
+     */
+    public static class CanvasPositionFinder {
+
+        private final BufferedImage image;
+        private final int canvasWidth;
+        private final int canvasHeight;
+        private int x = -1;
+        private int y = -1;
+
+        public CanvasPositionFinder(BufferedImage image, int canvasWidth,
+                int canvasHeight) {
+            this.image = image;
+            this.canvasWidth = canvasWidth;
+            this.canvasHeight = canvasHeight;
+        }
+
+        /**
+         * @return the x position of the located canvas
+         */
+        public int getX() {
+            return x;
+        }
+
+        /**
+         * @return the y position of the located canvas
+         */
+        public int getY() {
+            return y;
+        }
+
+        /**
+         * Knowing the width and height of the canvas, find it's top left corner
+         * in an image. The canvas is all white, but might be obstructed by a
+         * popup (e.g. the Flash updater).
+         */
+        public void find() {
+            findPosition();
+            throwExceptionUnlessCorrect();
+        }
+
+        private void findPosition() {
+            int successiveLines = 0;
+            int pixelRow = 0;
+
+            while (pixelRow < image.getHeight()
+                    && successiveLines < MIN_LINES_FOR_MATCH) {
+                int startOfLine = findStartOfWhiteLineInPixelRow(pixelRow,
+                        canvasWidth);
+                if (isFound(startOfLine)) {
+                    successiveLines++;
+                    if (y == -1) {
+                        setSolutionCandidate(startOfLine, pixelRow);
+                    }
+                } else if (y != -1) {
+                    // Reset, since we didn't find enough successive lines
+                    setSolutionCandidate(-1, -1);
+                    successiveLines = 0;
+                }
+                pixelRow++;
+            }
+        }
+
+        private boolean isFound(int startOfLine) {
+            return startOfLine != -1;
+        }
+
+        private void setSolutionCandidate(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+
+        private int findStartOfWhiteLineInPixelRow(int y, int lineWidth) {
+            int[] testBlock = new int[image.getWidth()];
+            image.getRGB(0, y, image.getWidth(), 1, testBlock, 0, 1);
+            return findStartOfWhiteLine(testBlock, lineWidth);
+        }
+
+        int findStartOfWhiteLine(int[] pixels, int length) {
+            int startIx = -1;
+            for (int i = 0; i < pixels.length; i++) {
+                if (startIx < 0) {
+                    if (isWhite(pixels[i])) {
+                        startIx = i;
+                    }
+                } else {
+                    if (!isWhite(pixels[i])) {
+                        if (i - startIx == length) {
+                            return startIx;
+                        } else {
+                            startIx = -1;
+                        }
+                    }
+                }
+            }
+            return -1;
+        }
+
+        private boolean isWhite(int pixel) {
+            return (pixel & 0xFFFFFF) == 0xFFFFFF;
+        }
+
+        private void throwExceptionUnlessCorrect() {
+            int lastLineY = y + canvasHeight - 1;
+            if (findStartOfWhiteLineInPixelRow(lastLineY, canvasWidth) == -1) {
+                // Some windows have rounded corners, e.g. newer Firefox on osx
+                if (!isLastLineOfPixelsOnRoundedCornerWindow(lastLineY)) {
+                    throw new CanvasNotFoundException(
+                            String.format(
+                                    "Failed to find the correct coordinates of the canvas, %d,%d were not correct",
+                                    x, y));
+                }
+            }
+        }
+
+        private boolean isLastLineOfPixelsOnRoundedCornerWindow(int lastLineY) {
+            for (int cornerRadius = 1; cornerRadius <= 5; cornerRadius++) {
+                if (lineIsFound(lastLineY, canvasWidth - 2 * cornerRadius)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private boolean lineIsFound(int y, int lineWidth) {
+            return isFound(findStartOfWhiteLineInPixelRow(y, lineWidth));
         }
     }
 }

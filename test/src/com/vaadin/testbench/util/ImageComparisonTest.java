@@ -13,6 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.vaadin.testbench.Parameters;
+import com.vaadin.testbench.testutils.ImageLoader;
 
 public class ImageComparisonTest {
 

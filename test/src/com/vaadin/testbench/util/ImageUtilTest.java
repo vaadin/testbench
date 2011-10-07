@@ -12,6 +12,8 @@ import java.util.List;
 
 import org.junit.Test;
 
+import com.vaadin.testbench.testutils.ImageLoader;
+
 public class ImageUtilTest {
 
     private static final String FOLDER = ImageUtilTest.class.getPackage()
