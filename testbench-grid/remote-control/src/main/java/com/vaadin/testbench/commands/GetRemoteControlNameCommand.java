@@ -20,8 +20,19 @@ public class GetRemoteControlNameCommand extends Command {
             .getLog(GetRemoteControlNameCommand.class);
 
     private static String hostName = null;
+    private HostResolver resolver;
 
     public GetRemoteControlNameCommand() {
+        try {
+            setHostResolver(new HostResolver());
+        } catch (UnknownHostException e) {
+            hostName = "???";
+            LOGGER.error("Could not determine host name or IP address", e);
+        }
+    }
+
+    void setHostResolver(HostResolver resolver) {
+        this.resolver = resolver;
     }
 
     @Override
@@ -29,8 +40,8 @@ public class GetRemoteControlNameCommand extends Command {
         if (hostName == null) {
 
             try {
-                InetAddress localHost = InetAddress.getLocalHost();
-                hostName = localHost.getCanonicalHostName();
+                hostName = String.format("%s (%s)", resolver.getHostName(),
+                        resolver.getHostIP());
             } catch (UnknownHostException e) {
                 hostName = "???";
                 LOGGER.error("Could not determine host name or IP address", e);
@@ -38,5 +49,25 @@ public class GetRemoteControlNameCommand extends Command {
         }
 
         return "OK," + hostName;
+    }
+
+    static class HostResolver {
+        private InetAddress localHost;
+
+        public static HostResolver make() throws UnknownHostException {
+            return new HostResolver();
+        }
+
+        public HostResolver() throws UnknownHostException {
+            localHost = InetAddress.getLocalHost();
+        }
+
+        public String getHostName() throws UnknownHostException {
+            return localHost.getCanonicalHostName();
+        }
+
+        public String getHostIP() {
+            return localHost.getHostAddress();
+        }
     }
 }
