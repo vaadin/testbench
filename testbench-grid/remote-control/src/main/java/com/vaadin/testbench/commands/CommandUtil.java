@@ -58,13 +58,13 @@ public class CommandUtil {
      */
     public static int findPhysicalDisplay(String sessionId)
             throws InterruptedException, ExecutionException, TimeoutException {
-        eval("selenium.browserbot.getUserWindow().document.body.bgColor='red';",
-                sessionId);
-        pause(500);
         int numDevices = ScreenShot.getNumScreenDevices();
         if (numDevices == 1) {
             return 0;
         }
+        eval("selenium.browserbot.getUserWindow().document.body.bgColor='red';",
+                sessionId);
+        pause(500);
         BufferedImage[] references = new BufferedImage[numDevices];
         for (int ix = 0; ix < numDevices; ix++) {
             references[ix] = ScreenShot.capture(ix);
