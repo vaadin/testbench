@@ -395,9 +395,13 @@ public class JavaFileBuilder {
         return JAVA_FOOTER;
     }
 
-    public static String getWindowInitFunctions(boolean hasScreenshots) {
+    public String getWindowInitFunctions(boolean hasScreenshots) {
         String windowInitFunctions = "try {\n setupWindow(#hasScreenshots#);\n";
         windowInitFunctions += "} catch (Exception e) {\n";
+        if (Parameters.isCaptureScreenshotOnFailure()) {
+            windowInitFunctions += "if (writeScreenshots) {\ncreateFailureScreenshot(\""
+                    + testName + "\");\n}\n";
+        }
         windowInitFunctions += "  throw new RuntimeException(\"Problem finding canvas on \" + getRemoteControlName() + \": \" + e.getMessage(), e);\n";
         windowInitFunctions += "}";
 

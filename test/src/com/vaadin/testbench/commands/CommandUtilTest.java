@@ -190,4 +190,28 @@ public class CommandUtilTest {
                 755);
         finder.find();
     }
+
+    @Test
+    public void findCanvasPositionByScreenshot_opera11OnXP() throws IOException {
+        CanvasPositionFinder finder = new CanvasPositionFinder(
+                ImageLoader.loadImage(FOLDER, "findBrowser_operaXP.png"), 1546,
+                796);
+        finder.find();
+
+        assertEquals(20, finder.getX());
+        assertEquals(173, finder.getY());
+    }
+
+    @Test
+    public void findCanvasPositionByScreenshot_maximizedOpera11OnXP()
+            throws IOException {
+        CanvasPositionFinder finder = new CanvasPositionFinder(
+                ImageLoader.loadImage(FOLDER,
+                        "findBrowser_opera11_maximized.png"), 1920, 1084);
+        finder.find();
+
+        assertEquals(0, finder.getX());
+        assertEquals(61, finder.getY());
+    }
+
 }

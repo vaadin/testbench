@@ -50,8 +50,11 @@ public class CaptureScreenshotToStringCommand {
             IOException {
         final ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 
-        ImageIO.write(ScreenShot.capture(dim.getDisplayIndex()), "png",
-                outStream);
+        int displayIx = 0;
+        if (dim != null) {
+            displayIx = dim.getDisplayIndex();
+        }
+        ImageIO.write(ScreenShot.capture(displayIx), "png", outStream);
 
         return new String(Base64.encodeBase64(outStream.toByteArray()));
     }

@@ -251,6 +251,11 @@ public class CommandUtil {
                     }
                 }
             }
+            if (length == pixels.length && startIx == 0) {
+                // the entire row of pixels is white and we were asked for just
+                // that
+                return 0;
+            }
             return -1;
         }
 
@@ -265,8 +270,8 @@ public class CommandUtil {
                 if (!isLastLineOfPixelsOnRoundedCornerWindow(lastLineY)) {
                     throw new CanvasNotFoundException(
                             String.format(
-                                    "Failed to find the correct coordinates of the canvas, %d,%d were not correct",
-                                    x, y));
+                                    "Failed to find the correct coordinates of the canvas with dimensions %dx%d, an origin at %d,%d was deemed incorrect",
+                                    canvasWidth, canvasHeight, x, y));
                 }
             }
         }
