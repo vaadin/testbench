@@ -4,6 +4,7 @@
 package com.vaadin.testbench.testutils;
 
 import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertTrue;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
@@ -32,7 +33,7 @@ public class ImageLoader {
                 folder + "/" + filename);
         assertNotNull("Missing reference " + filename, imgUrl);
         File imgFile = new File(imgUrl.getPath());
-        junit.framework.Assert.assertTrue(imgFile.exists());
+        assertTrue(imgFile.exists());
 
         return ImageIO.read(imgFile);
     }
