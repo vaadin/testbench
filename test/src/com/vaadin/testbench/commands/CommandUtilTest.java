@@ -10,6 +10,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.vaadin.testbench.commands.CommandUtil.CanvasPositionFinder;
@@ -69,6 +70,7 @@ public class CommandUtilTest {
         assertEquals(-1, canvasFinder.findStartOfWhiteLine(pixels, 10));
     }
 
+    @Ignore
     @Test
     public void whiteLineStart_tooLong() {
         int[] pixels = new int[100];
@@ -87,6 +89,7 @@ public class CommandUtilTest {
         assertEquals(10, canvasFinder.findStartOfWhiteLine(pixels, 5));
     }
 
+    @Ignore
     @Test
     public void whiteLineStart_twoLinesOfDifferentLength() {
         int[] pixels = new int[100];
@@ -99,119 +102,80 @@ public class CommandUtilTest {
         assertEquals(50, canvasFinder.findStartOfWhiteLine(pixels, 10));
     }
 
-    @Test
-    public void findCanvasPositionByScreenshot_whiteWindowDarkDesktop()
-            throws IOException {
+    private void assertCanvasPosition(String filename, int x, int y, int width,
+            int height) throws IOException {
         CanvasPositionFinder finder = new CanvasPositionFinder(
-                ImageLoader.loadImage(FOLDER, "findBrowserTest.png"), 1090, 753);
+                ImageLoader.loadImage(FOLDER, filename), width, height);
         finder.find();
 
-        assertEquals(126, finder.getX());
-        assertEquals(94, finder.getY());
+        assertEquals(x, finder.getX());
+        assertEquals(y, finder.getY());
     }
 
     @Test
+    public void findCanvasPositionByScreenshot_whiteWindowDarkDesktop()
+            throws IOException {
+        assertCanvasPosition("findBrowserTest.png", 126, 94, 1090, 753);
+    }
+
+    @Test(expected = CanvasObstructedException.class)
     public void findCanvasPositionByScreenshot_whiteWindowDarkDesktopFlashPopup()
             throws IOException {
-        CanvasPositionFinder finder = new CanvasPositionFinder(
-                ImageLoader.loadImage(FOLDER, "findBrowserTest_flash.png"),
-                1090, 753);
-        finder.find();
-
-        assertEquals(126, finder.getX());
-        assertEquals(94, finder.getY());
+        assertCanvasPosition("findBrowserTest_flash.png", 126, 94, 1090, 753);
     }
 
     @Test
     public void findCanvasPositionByScreenshot_whiteWindowEclipseOnDesktop()
             throws IOException {
-        CanvasPositionFinder finder = new CanvasPositionFinder(
-                ImageLoader.loadImage(FOLDER, "findBrowserTest2.png"), 1090,
-                753);
-        finder.find();
-
-        assertEquals(133, finder.getX());
-        assertEquals(174, finder.getY());
+        assertCanvasPosition("findBrowserTest2.png", 133, 174, 1090, 753);
     }
 
-    @Test
+    @Test(expected = CanvasObstructedException.class)
     public void findCanvasPositionByScreenshot_whiteWindowEclipseOnDesktopFlashPopup()
             throws IOException {
-        CanvasPositionFinder finder = new CanvasPositionFinder(
-                ImageLoader.loadImage(FOLDER, "findBrowserTest2_flash.png"),
-                1090, 753);
-        finder.find();
-
-        assertEquals(133, finder.getX());
-        assertEquals(174, finder.getY());
+        assertCanvasPosition("findBrowserTest2_flash.png", 133, 174, 1090, 753);
     }
 
     @Test
     public void findCanvasPositionByScreenshot_whiteWindowEclipseOnDesktopFFAt0x0()
             throws IOException {
-        CanvasPositionFinder finder = new CanvasPositionFinder(
-                ImageLoader.loadImage(FOLDER, "findBrowserTest3.png"), 1024,
-                768);
-        finder.find();
-
-        assertEquals(0, finder.getX());
-        assertEquals(109, finder.getY());
+        assertCanvasPosition("findBrowserTest3.png", 0, 109, 1024, 768);
     }
 
-    @Test
+    @Test(expected = CanvasObstructedException.class)
     public void findCanvasPositionByScreenshot_whiteWindowEclipseOnDesktopFFAt0x0FlasPopup()
             throws IOException {
-        CanvasPositionFinder finder = new CanvasPositionFinder(
-                ImageLoader.loadImage(FOLDER, "findBrowserTest3_flash.png"),
-                1024, 768);
-        finder.find();
-
-        assertEquals(0, finder.getX());
-        assertEquals(109, finder.getY());
+        assertCanvasPosition("findBrowserTest3_flash.png", 0, 109, 1024, 768);
     }
 
     @Test
     public void findCanvasPositionByScreenshot_whiteWindowOnSolidWhiteDesktop()
             throws IOException {
-        CanvasPositionFinder finder = new CanvasPositionFinder(
-                ImageLoader.loadImage(FOLDER, "findBrowserTest4.png"), 1090,
-                755);
-        finder.find();
-
-        assertEquals(103, finder.getX());
-        assertEquals(193, finder.getY());
+        assertCanvasPosition("findBrowserTest4.png", 103, 193, 1090, 755);
     }
 
-    @Test(expected = CanvasNotFoundException.class)
+    @Test(expected = CanvasObstructedException.class)
     public void findCanvasPositionByScreenshot_windowOverlappingTopLeftCorner()
             throws IOException {
-        CanvasPositionFinder finder = new CanvasPositionFinder(
-                ImageLoader.loadImage(FOLDER, "findBrowserTest4.png"), 1091,
-                755);
-        finder.find();
+        assertCanvasPosition("findBrowserTest4.png", 0, 0, 1091, 755);
     }
 
     @Test
     public void findCanvasPositionByScreenshot_opera11OnXP() throws IOException {
-        CanvasPositionFinder finder = new CanvasPositionFinder(
-                ImageLoader.loadImage(FOLDER, "findBrowser_operaXP.png"), 1546,
-                796);
-        finder.find();
-
-        assertEquals(20, finder.getX());
-        assertEquals(173, finder.getY());
+        assertCanvasPosition("findBrowser_operaXP.png", 20, 173, 1546, 796);
     }
 
     @Test
     public void findCanvasPositionByScreenshot_maximizedOpera11OnXP()
             throws IOException {
-        CanvasPositionFinder finder = new CanvasPositionFinder(
-                ImageLoader.loadImage(FOLDER,
-                        "findBrowser_opera11_maximized.png"), 1920, 1084);
-        finder.find();
-
-        assertEquals(0, finder.getX());
-        assertEquals(61, finder.getY());
+        assertCanvasPosition("findBrowser_opera11_maximized.png", 0, 61, 1920,
+                1084);
     }
 
+    @Test
+    public void findCanvasPositionByScreenshot_borderlessWindowWithWhiteBehind()
+            throws IOException {
+        assertCanvasPosition("findBrowser_borderless_windowbehind.png", 1, 119,
+                1024, 768);
+    }
 }

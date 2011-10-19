@@ -163,6 +163,7 @@ public class CommandUtil {
         private final BufferedImage image;
         private final int canvasWidth;
         private final int canvasHeight;
+        private int[] pixels;
         private int x = -1;
         private int y = -1;
 
@@ -171,6 +172,11 @@ public class CommandUtil {
             this.image = image;
             this.canvasWidth = canvasWidth;
             this.canvasHeight = canvasHeight;
+
+            if (image != null) {
+                pixels = image.getRGB(0, 0, image.getWidth(),
+                        image.getHeight(), null, 0, image.getWidth());
+            }
         }
 
         /**
@@ -197,26 +203,60 @@ public class CommandUtil {
             throwExceptionUnlessCorrect();
         }
 
+        // private void findPosition() {
+        // int successiveLines = 0;
+        // int pixelRow = 0;
+        //
+        // while (pixelRow < image.getHeight()
+        // && successiveLines < MIN_LINES_FOR_MATCH) {
+        // int startOfLine = findStartOfWhiteLineInPixelRow(pixelRow,
+        // canvasWidth);
+        // if (isFound(startOfLine)) {
+        // successiveLines++;
+        // if (y == -1) {
+        // setSolutionCandidate(startOfLine, pixelRow);
+        // }
+        // } else if (y != -1) {
+        // // Reset, since we didn't find enough successive lines
+        // setSolutionCandidate(-1, -1);
+        // successiveLines = 0;
+        // }
+        // pixelRow++;
+        // }
+        // }
+
         private void findPosition() {
-            int successiveLines = 0;
             int pixelRow = 0;
 
-            while (pixelRow < image.getHeight()
-                    && successiveLines < MIN_LINES_FOR_MATCH) {
+            while (pixelRow < image.getHeight()) {
                 int startOfLine = findStartOfWhiteLineInPixelRow(pixelRow,
                         canvasWidth);
                 if (isFound(startOfLine)) {
-                    successiveLines++;
-                    if (y == -1) {
+                    if (looksCorrect(startOfLine, pixelRow)) {
                         setSolutionCandidate(startOfLine, pixelRow);
+                        return;
                     }
-                } else if (y != -1) {
-                    // Reset, since we didn't find enough successive lines
-                    setSolutionCandidate(-1, -1);
-                    successiveLines = 0;
                 }
                 pixelRow++;
             }
+        }
+
+        private boolean looksCorrect(int left, int top) {
+            for (int y = top; y < top + canvasHeight; y++) {
+                for (int x = left; x < left + canvasWidth; x++) {
+                    // account for possible rounded corners
+                    if (y > top + canvasHeight - 5) {
+                        if (x < left + 5 || x > left + canvasWidth - 5) {
+                            continue;
+                        }
+                    }
+                    int color = pixels[x + y * image.getWidth()];
+                    if (!isWhite(color)) {
+                        return false;
+                    }
+                }
+            }
+            return true;
         }
 
         private boolean isFound(int startOfLine) {
@@ -229,9 +269,14 @@ public class CommandUtil {
         }
 
         private int findStartOfWhiteLineInPixelRow(int y, int lineWidth) {
-            int[] testBlock = new int[image.getWidth()];
-            image.getRGB(0, y, image.getWidth(), 1, testBlock, 0, 1);
-            return findStartOfWhiteLine(testBlock, lineWidth);
+            int imgWidth = image.getWidth();
+            int[] testBlock = new int[imgWidth];
+            try {
+                System.arraycopy(pixels, y * imgWidth, testBlock, 0, imgWidth);
+                return findStartOfWhiteLine(testBlock, lineWidth);
+            } catch (ArrayIndexOutOfBoundsException e) {
+                return -1;
+            }
         }
 
         int findStartOfWhiteLine(int[] pixels, int length) {
@@ -243,7 +288,7 @@ public class CommandUtil {
                     }
                 } else {
                     if (!isWhite(pixels[i])) {
-                        if (i - startIx == length) {
+                        if (i - startIx >= length) {
                             return startIx;
                         } else {
                             startIx = -1;
@@ -260,10 +305,17 @@ public class CommandUtil {
         }
 
         private boolean isWhite(int pixel) {
-            return (pixel & 0xFFFFFF) == 0xFFFFFF;
+            // Linux firefox has a default background color varying every second
+            // pixel rgb(255,255,255) and every second rgb(254,254,254)
+            return (pixel & 0xFFFFFF) == 0xFFFFFF
+                    || (pixel & 0xFFFFFF) == 0xFEFEFE;
         }
 
         private void throwExceptionUnlessCorrect() {
+            if (x == -1 && y == -1) {
+                throw new CanvasObstructedException(
+                        "Looks like the browser window might be obstructed by some other window or popup!");
+            }
             int lastLineY = y + canvasHeight - 1;
             if (findStartOfWhiteLineInPixelRow(lastLineY, canvasWidth) == -1) {
                 // Some windows have rounded corners, e.g. newer Firefox on osx
