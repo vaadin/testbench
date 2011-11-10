@@ -470,6 +470,9 @@ public class LauncherUtils {
         out.println("user_pref('browser.search.update', false);");
         out.println("user_pref('browser.safebrowsing.enabled', false);");
 
+        // Allow extensions to be installed into the profile and still work
+        out.println("user_pref('extensions.autoDisableScopes', 10);");
+
         if (changeMaxConnections) {
             out.println("user_pref('network.http.max-connections', 256);");
             out.println("user_pref('network.http.max-connections-per-server', 256);");
