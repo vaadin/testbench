@@ -160,6 +160,15 @@ public class CommandUtil {
      */
     public static class CanvasPositionFinder {
 
+        private static final int MAX_CORNER_RADIUS = 5;
+        private static final int MAX_DRAG_HANDLE_SIZE = 15;
+        /**
+         * The amount of non-white pixels allowed on a canvas (in the lower
+         * corners) in order to still accept it as a solution.
+         */
+        private static final int NR_ALLOWED_NON_WHITE_PIXELS = ((MAX_DRAG_HANDLE_SIZE * MAX_DRAG_HANDLE_SIZE) / 2)
+                + (MAX_CORNER_RADIUS * MAX_CORNER_RADIUS);
+
         private final BufferedImage image;
         private final int canvasWidth;
         private final int canvasHeight;
@@ -203,28 +212,6 @@ public class CommandUtil {
             throwExceptionUnlessCorrect();
         }
 
-        // private void findPosition() {
-        // int successiveLines = 0;
-        // int pixelRow = 0;
-        //
-        // while (pixelRow < image.getHeight()
-        // && successiveLines < MIN_LINES_FOR_MATCH) {
-        // int startOfLine = findStartOfWhiteLineInPixelRow(pixelRow,
-        // canvasWidth);
-        // if (isFound(startOfLine)) {
-        // successiveLines++;
-        // if (y == -1) {
-        // setSolutionCandidate(startOfLine, pixelRow);
-        // }
-        // } else if (y != -1) {
-        // // Reset, since we didn't find enough successive lines
-        // setSolutionCandidate(-1, -1);
-        // successiveLines = 0;
-        // }
-        // pixelRow++;
-        // }
-        // }
-
         private void findPosition() {
             int pixelRow = 0;
 
@@ -242,21 +229,59 @@ public class CommandUtil {
         }
 
         private boolean looksCorrect(int left, int top) {
+            int nrNonWhitePixels = 0;
             for (int y = top; y < top + canvasHeight; y++) {
                 for (int x = left; x < left + canvasWidth; x++) {
-                    // account for possible rounded corners
-                    if (y > top + canvasHeight - 5) {
-                        if (x < left + 5 || x > left + canvasWidth - 5) {
-                            continue;
-                        }
-                    }
                     int color = pixels[x + y * image.getWidth()];
                     if (!isWhite(color)) {
-                        return false;
+                        nrNonWhitePixels++;
+                        // account for possible rounded corners and drag handles
+                        boolean mightBeOk = pointInsideCornerRadiusArea(top,
+                                left, x, y)
+                                || pointInsideDragHandleArea(top, left, x, y);
+                        if (!mightBeOk
+                                && nrNonWhitePixels < NR_ALLOWED_NON_WHITE_PIXELS) {
+                            return false;
+                        }
                     }
                 }
             }
             return true;
+        }
+
+        /**
+         * Returns true if the point at (x,y) might be part of a drag handle
+         * (MAX_DRAG_HANDLE_SIZE x MAX_DRAG_HANDLE_SIZE (15x15) pixel part of
+         * the window at the lower right corner)
+         * 
+         * @param top
+         * @param left
+         * @param x
+         * @param y
+         * @return
+         */
+        private boolean pointInsideDragHandleArea(int top, int left, int x,
+                int y) {
+            return (y > top + canvasHeight - MAX_DRAG_HANDLE_SIZE)
+                    && (x > left + canvasWidth - MAX_DRAG_HANDLE_SIZE);
+        }
+
+        /**
+         * Returns true if the point at (x,y) might be part of a rounded window
+         * corner. This assumes a maximum corner radius of MAX_CORNER_RADIUS (5)
+         * pixels.
+         * 
+         * @param top
+         * @param left
+         * @param x
+         * @param y
+         * @return
+         */
+        private boolean pointInsideCornerRadiusArea(int top, int left, int x,
+                int y) {
+            return (y > top + canvasHeight - MAX_CORNER_RADIUS)
+                    && (x < left + MAX_CORNER_RADIUS || x > left + canvasWidth
+                            - MAX_CORNER_RADIUS);
         }
 
         private boolean isFound(int startOfLine) {

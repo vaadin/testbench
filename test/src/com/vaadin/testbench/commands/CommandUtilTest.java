@@ -178,4 +178,40 @@ public class CommandUtilTest {
         assertCanvasPosition("findBrowser_borderless_windowbehind.png", 1, 119,
                 1024, 768);
     }
+
+    @Test
+    public void findCanvasPositionByScreenshot_firefox4WinXP()
+            throws IOException {
+        assertCanvasPosition("findBrowser_winxp_firefox4.png", 5, 114, 1500,
+                850);
+    }
+
+    @Test
+    public void findCanvasPositionByScreenshot_firefox6WinXP()
+            throws IOException {
+        assertCanvasPosition("findBrowser_winxp_firefox6.png", 5, 114, 1500,
+                850);
+    }
+
+    @Test
+    public void findCanvasPositionByScreenshot_firefox7WinXP()
+            throws IOException {
+        assertCanvasPosition("findBrowser_winxp_firefox7.png", 5, 114, 1500,
+                850);
+    }
+
+    @Test
+    public void findCanvasPositionByScreenshot_firefox8WinXP()
+            throws IOException {
+        assertCanvasPosition("findBrowser_winxp_firefox8.png", 5, 114, 1500,
+                850);
+    }
+
+    @Test(expected = CanvasObstructedException.class)
+    public void findCanvasPositionByScreenshot_tooManyNonWhitePixelsInDragCorner()
+            throws IOException {
+        assertCanvasPosition("findBrowser_winxp_firefox4_blackCorner.png", 5,
+                114, 1500, 850);
+    }
+
 }
