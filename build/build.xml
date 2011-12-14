@@ -7,7 +7,7 @@
 	<!-- Load version from properties file. If not found, version is specified below. -->
     <property file="${build.properties.file}" />
 	
-	<property name="version.base" value="2.4.2" />
+	<property name="version.base" value="2.4.3" />
 	
 	<tstamp />
 	<property name="timestamp" value="${DSTAMP}${TSTAMP}" />
