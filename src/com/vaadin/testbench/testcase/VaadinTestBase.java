@@ -54,7 +54,7 @@ public class VaadinTestBase extends SeleneseTestBase {
         vaadinSelenium.waitForVaadin();
     }
 
-    public String doCommand(String cmd, String[] params) {
+    public String doCommand(String cmd, String... params) {
         return getVaadinSelenium().doCommand(cmd, params);
     }
 }

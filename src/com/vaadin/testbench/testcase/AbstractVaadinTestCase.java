@@ -66,7 +66,7 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
         testBase.waitForVaadin();
     }
 
-    public String doCommand(String cmd, String[] params) {
+    public String doCommand(String cmd, String... params) {
         String result = testBase.doCommand(cmd, params);
 
         if (!cmd.equals("close") && !cmd.equals("expectDialog")
@@ -159,12 +159,10 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
         if (Parameters.isDebug()) {
             System.out.println("Running CompareScreenCommand (RC compare)");
         }
-        String compareScreenResult = doCommand(
-                "compareScreen",
-                new String[] {
-                        compare.generateHashFromReferenceFiles(referenceFileId),
-                        String.valueOf(maxAmountOfTests),
-                        String.valueOf(Parameters.getRetryDelay()) });
+        String compareScreenResult = doCommand("compareScreen",
+                compare.generateHashFromReferenceFiles(referenceFileId),
+                String.valueOf(maxAmountOfTests),
+                String.valueOf(Parameters.getRetryDelay()));
 
         String[] compareScreenResults = compareScreenResult.split(",");
         if (compareScreenResults.length == 2) {
@@ -294,10 +292,9 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
     }
 
     protected BrowserDimensions setRequestedCanvasSize() {
-        String dimensions = doCommand(
-                "setCanvasSize",
-                new String[] { String.valueOf(requestedCanvasWidth),
-                        String.valueOf(requestedCanvasHeight) });
+        String dimensions = doCommand("setCanvasSize",
+                String.valueOf(requestedCanvasWidth),
+                String.valueOf(requestedCanvasHeight));
         if (dimensions.startsWith("OK")) {
             return new BrowserDimensions(dimensions.substring(3));
         }
@@ -317,7 +314,7 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
             if (Parameters.isDebug()) {
                 System.out.println("Calculating browser dimensions..");
             }
-            String dimensions = doCommand("getCanvasSize", new String[] {});
+            String dimensions = doCommand("getCanvasSize");
             if (dimensions.startsWith("OK")) {
                 browserDimensions = new BrowserDimensions(
                         dimensions.substring(3));
@@ -494,19 +491,19 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
                 mouseClickCommand = "mouseClick";
             }
         }
-        doCommand(mouseClickCommand, new String[] { locator, value });
+        doCommand(mouseClickCommand, locator, value);
     }
 
     public void open(String url) {
         try {
-            doCommand("open", new String[] { url });
+            doCommand("open", url);
         } catch (Exception e) {
             System.out.println("Open failed, retrying");
             selenium.stop();
             selenium.start();
             clearDimensions();
             setupWindow(true);
-            doCommand("open", new String[] { url });
+            doCommand("open", url);
         }
         waitForVaadin();
     }
@@ -577,7 +574,7 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
     }
 
     protected void setTestName(String testName) {
-        testBase.doCommand("setTestName", new String[] { testName });
+        testBase.doCommand("setTestName", testName);
     }
 
     public void doUploadFile(String locator, String filename) {
@@ -587,8 +584,7 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
             String fileData = new String(Base64.encodeBase64(IOUtils
                     .toByteArray(fin)));
 
-            testBase.doCommand("uploadFile", new String[] { locator, filename,
-                    fileData });
+            testBase.doCommand("uploadFile", locator, filename, fileData);
         } catch (FileNotFoundException e) {
             Assert.fail("File " + filename + " does not exist!");
             e.printStackTrace();
@@ -605,7 +601,7 @@ public abstract class AbstractVaadinTestCase extends SeleneseTestCase {
      * @return Host name or IP of the remote control host
      */
     protected String getRemoteControlName() {
-        String retVal = doCommand("getRemoteControlName", new String[] {});
+        String retVal = doCommand("getRemoteControlName");
         if (retVal.startsWith("OK")) {
             // "OK,hostname"
             return retVal.substring(3);
