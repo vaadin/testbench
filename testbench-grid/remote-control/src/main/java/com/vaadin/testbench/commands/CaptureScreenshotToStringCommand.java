@@ -18,8 +18,7 @@ import com.vaadin.testbench.util.BrowserDimensions;
 import com.vaadin.testbench.util.BrowserInfo;
 
 /**
- * @author jonatan
- * 
+ * @author Jonatan Kronqvist / Vaadin Ltd
  */
 public class CaptureScreenshotToStringCommand {
 

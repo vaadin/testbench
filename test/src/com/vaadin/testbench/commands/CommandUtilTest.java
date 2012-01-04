@@ -10,10 +10,8 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
-import com.vaadin.testbench.commands.CommandUtil.CanvasPositionFinder;
 import com.vaadin.testbench.testutils.ImageLoader;
 
 public class CommandUtilTest {
@@ -70,16 +68,6 @@ public class CommandUtilTest {
         assertEquals(-1, canvasFinder.findStartOfWhiteLine(pixels, 10));
     }
 
-    @Ignore
-    @Test
-    public void whiteLineStart_tooLong() {
-        int[] pixels = new int[100];
-        for (int i = 5; i < 30; i++) {
-            pixels[i] = 0xFFFFFF;
-        }
-        assertEquals(-1, canvasFinder.findStartOfWhiteLine(pixels, 10));
-    }
-
     @Test
     public void whiteLineStart_atTenWithAlpha() {
         int[] pixels = new int[100];
@@ -87,19 +75,6 @@ public class CommandUtilTest {
             pixels[i] = 0xFFFFFFFF;
         }
         assertEquals(10, canvasFinder.findStartOfWhiteLine(pixels, 5));
-    }
-
-    @Ignore
-    @Test
-    public void whiteLineStart_twoLinesOfDifferentLength() {
-        int[] pixels = new int[100];
-        for (int i = 5; i < 30; i++) {
-            pixels[i] = 0xFFFFFF;
-        }
-        for (int i = 50; i < 60; i++) {
-            pixels[i] = 0xFFFFFF;
-        }
-        assertEquals(50, canvasFinder.findStartOfWhiteLine(pixels, 10));
     }
 
     private void assertCanvasPosition(String filename, int x, int y, int width,
