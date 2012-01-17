@@ -81,21 +81,21 @@ public class GlobalRemoteControlPool implements DynamicRemoteControlPool {
         RemoteControlProvisioner provisioner;
         RemoteControlProxy reserved = null;
         // check provisioners if reservation returns as null.
-        do {
+        while (reserved == null) {
             provisioner = getProvisioner(environment.name());
             if (null == provisioner) {
                 throw new NoSuchEnvironmentException(environment.name());
             }
-
-            // Wait 1 second between each attempt to avoid over-high CPU usage
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                
-            }
-            
             reserved = provisioner.reserve(environment.name());
-        } while (reserved == null);
+            if (reserved == null) {
+                // Wait 1 second between each attempt to avoid over-high CPU
+                // usage
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                }
+            }
+        }
 
         return reserved;
     }
