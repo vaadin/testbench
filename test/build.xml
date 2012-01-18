@@ -12,21 +12,8 @@
 	</path>
 
 	<target name="compile-tests">
-		<antcall target="compile-runner-tests" />
 		<antcall target="compile-testbench-tests" />
 		<antcall target="compile-unit-tests" />
-	</target>
-
-	<target name="compile-runner-tests" unless="exclude.runner">
-		<mkdir dir="${basedir}/../test/classes" />
-		<javac srcdir="src/com/vaadin/testbench/runner/tests" destdir="${temp-dir}/classes" encoding="utf-8">
-			<classpath>
-				<fileset dir="../build/result/package" includes="vaadin-testbench-*.jar" />
-				<fileset dir="../lib" id="libs">
-					<include name="*.jar" />
-				</fileset>
-			</classpath>
-		</javac>
 	</target>
 
 	<target name="compile-testbench-tests" depends="test-conversion">
@@ -43,7 +30,7 @@
 
     <target name="compile-unit-tests" unless="exclude.unittests">
         <mkdir dir="${basedir}/../test/classes" />
-        <javac srcdir="src" destdir="${temp-dir}/classes" excludes="**/testbench/runner/tests/**" encoding="utf-8" source="1.5">
+        <javac srcdir="src" destdir="${temp-dir}/classes" encoding="utf-8" source="1.5">
             <classpath>
                 <fileset dir="../testbench-grid/remote-control/target/dist/lib" includes="selenium-grid-remote-control-vaadin-testbench*.jar" />
                 <fileset dir="../testbench-grid/hub/target/dist/lib" includes="selenium-grid-hub-vaadin-testbench*.jar" />

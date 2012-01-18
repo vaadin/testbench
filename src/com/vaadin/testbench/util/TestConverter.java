@@ -48,7 +48,6 @@ public class TestConverter {
 
     // Flags to determine what to do during conversion.
     private static boolean isOpera = false, isSafari = false, isChrome = false;
-    private static boolean runner = false;
 
     // Path to file being converted.
     private static String filePath = "";
@@ -144,98 +143,6 @@ public class TestConverter {
         }
     }
 
-    /**
-     * Test converter for use with TestBenchRunner, gives less output.
-     * 
-     * @param args
-     *            (output directory) (browsers) (html test files)
-     */
-    public static void runnerConvert(String[] args) {
-        if (args.length < 3) {
-            System.err.println("Usage: " + TestConverter.class.getName()
-                    + " <output directory> <browsers> <html test files>");
-            System.exit(1);
-        }
-
-        runner = true;
-
-        String outputDirectory = args[0];
-        String browserString = args[1];
-        String browserIdentifiers[] = browserString.split(",");
-
-        File outputPath = new File(outputDirectory);
-        if (!outputPath.exists()) {
-            if (!outputPath.mkdirs()) {
-                System.err.println("Could not create directory: "
-                        + outputDirectory);
-                System.exit(1);
-            }
-        }
-        outputPath = new File(outputDirectory);
-        if (!outputPath.exists()) {
-            if (!outputPath.mkdirs()) {
-                System.err.println("Could not create directory: "
-                        + outputPath.getAbsolutePath());
-            }
-        }
-
-        for (String browserIdentifier : browserIdentifiers) {
-            // browserUnderConversion = browser;
-            isOpera = isSafari = isChrome = false;
-
-            OutputStream out = null;
-            try {
-                // Check if browser is opera, safari or chrome
-                checkBrowser(browserIdentifier);
-
-                String filename = args[2];
-
-                // Create a java file for holding all tests for this browser
-                String safeBrowserIdentifier = getSafeName(browserIdentifier);
-                String testName = getTestName(filename) + "_"
-                        + safeBrowserIdentifier;
-
-                String className = getSafeName(testName);
-                JavaFileBuilder builder = new JavaFileBuilder(testName,
-                        className, browserIdentifier);
-
-                out = createJavaFile(testName, browserIdentifier,
-                        getJavaPackageName(testName, browserIdentifier),
-                        outputDirectory);
-                try {
-                    addCommandsToTestMethod(builder,
-                            getCommandsFromFile(filename));
-
-                    out.write(builder.getTestMethodSource().getBytes());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                // Write the footer to the browser test class.
-                out.write(builder.getJavaFooter().getBytes());
-
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } finally {
-                try {
-                    if (out != null) {
-                        out.flush();
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                try {
-                    if (out != null) {
-                        out.close();
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
     private static String getTestInputFilename(String TestBenchHTMLFile)
             throws FileNotFoundException, IOException {
 
@@ -313,23 +220,6 @@ public class TestConverter {
         System.out.println("Creating " + outputFile + " for " + testName);
         createIfNotExists(outputFile.getParent());
         FileOutputStream outputStream = new FileOutputStream(outputFile);
-
-        return outputStream;
-    }
-
-    private static OutputStream createJavaFile(String testName,
-            String browserIdentifier, String packageName, String outputDirectory)
-            throws IOException {
-        File outputFile = getJavaFile(testName, packageName, outputDirectory);
-
-        createIfNotExists(outputFile.getParent());
-        FileOutputStream outputStream = new FileOutputStream(outputFile);
-
-        JavaFileBuilder b = new JavaFileBuilder(testName,
-                getSafeName(testName), browserIdentifier);
-
-        // FIXME This does no longer write a browser dependent header
-        outputStream.write(b.getJavaHeader());
 
         return outputStream;
     }

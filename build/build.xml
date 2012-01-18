@@ -17,8 +17,6 @@
     <property name="version" value="${testbench.version}" />
 
 	<property name="output.dir" value="result/package" />
-	<!-- Add this property to exlude TestBenchRunner from build -->
-	<property name="exclude.runner" value="true" />
 
 	<echo>Version: ${version}</echo>
 		
@@ -45,7 +43,6 @@
 			<zipfileset dir="result/classes">
 				<include name="**/**" />
 				<exclude name="**/test/**" />
-				<exclude name="**/runner/**" if="exclude.runner"/>
 			</zipfileset>
 			<zipfileset src="../lib/commons-io-1.1.jar" />
 			<zipfileset src="../lib/commons-codec-1.4.jar" />
@@ -93,19 +90,6 @@
         </exec>
     </target>
 
-	<target name="javadoc" unless="exclude.runner">
-		<javadoc sourcepath="../src" destdir="result/doc" excludepackagenames="com.vaadin.testbench.test,com.vaadin.testbench.testcase,com.vaadin.testbench.util">
-			<classpath>
-				<fileset dir="../lib" id="libs">
-					<include name="*.jar" />
-				</fileset>
-			</classpath>
-		</javadoc>
-		<zip destfile="${output.dir}/TestBenchRunner-javadoc-${version}.zip" compress="true">
-			<zipfileset dir="result/doc"/>
-		</zip>
-	</target>
-	
     <!-- ================================================================== -->
     <!--                                                                    -->
     <!-- ================================================================== -->
@@ -134,7 +118,7 @@
 		</parallel>
 	</target>
 	
-	<target name="testbench-distribution-package" depends="testbench.jar,manual,javadoc,testbench-recorder,testbench-grid,update-run-scripts,run-tests,run-all-tests,create-extension">
+	<target name="testbench-distribution-package" depends="testbench.jar,manual,testbench-recorder,testbench-grid,update-run-scripts,run-tests,create-extension">
 		<property name="package.root" value="vaadin-testbench-${version}"/>
 		<property name="package.grid.root" value="vaadin-testbench-grid-${version}"/>
         <copy todir="${output.dir}">
@@ -165,7 +149,6 @@
 				<include name="*.pdf" />
 				<include name="license*.txt" />
 				<include name="licensing.txt" />
-				<exclude name="TestBenchRunner*.pdf" if="exclude.runner" />
 			</zipfileset>
 			<zipfileset dir="result" prefix="${package.root}/documentation">
 				<include name="${manual.pdf.filename}" />
@@ -226,22 +209,14 @@
 					</filterchain>
 		</copy>
 	</target>
-	
-	<target name="run-tests" if="exclude.runner">
-		<property name="class.path" value="${java.class.path}"/>
-		<subant target="all-tests" buildpath="../test" failonerror="false">
-			<property name="class.path" value="${class.path}"/>
-			<property name="exclude.runner" value="${exclude.runner}" />
-		</subant>
-	</target>
-	
-	<target name="run-all-tests" unless="exclude.runner">
-		<property name="class.path" value="${java.class.path}"/>
-		<subant target="all-tests" buildpath="../test">
-			<property name="class.path" value="${class.path}"/>
-		</subant>
-	</target>
-				
+
+    <target name="run-tests">
+        <property name="class.path" value="${java.class.path}"/>
+        <subant target="all-tests" buildpath="../test" failonerror="false">
+            <property name="class.path" value="${class.path}"/>
+        </subant>
+    </target>
+
 	<target name="create-extension">
 		<loadfile property="locator" srcFile="../selenium-extensions/core/locator.js">
 			<filterchain>
