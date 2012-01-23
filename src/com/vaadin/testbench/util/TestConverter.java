@@ -16,11 +16,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.sourceforge.htmlunit.corejs.javascript.Context;
+import net.sourceforge.htmlunit.corejs.javascript.NativeArray;
+import net.sourceforge.htmlunit.corejs.javascript.NativeObject;
+import net.sourceforge.htmlunit.corejs.javascript.Scriptable;
+
 import org.apache.commons.io.IOUtils;
-import org.mozilla.javascript.Context;
-import org.mozilla.javascript.NativeArray;
-import org.mozilla.javascript.NativeObject;
-import org.mozilla.javascript.Scriptable;
 
 import com.vaadin.testbench.Parameters;
 import com.vaadin.testbench.util.SeleniumHTMLTestCaseParser.Command;
