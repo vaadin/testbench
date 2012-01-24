@@ -32,8 +32,6 @@
         <mkdir dir="${basedir}/../test/classes" />
         <javac srcdir="src" destdir="${temp-dir}/classes" encoding="utf-8" source="1.5">
             <classpath>
-                <fileset dir="../testbench-grid/remote-control/target/dist/lib" includes="selenium-grid-remote-control-vaadin-testbench*.jar" />
-                <fileset dir="../testbench-grid/hub/target/dist/lib" includes="selenium-grid-hub-vaadin-testbench*.jar" />
                 <fileset dir="../build/result/package" includes="vaadin-testbench-*.jar" />
                 <fileset dir="../lib" id="libs">
                     <include name="**/*.jar" />
@@ -50,12 +48,10 @@
 		<junit>
 			<classpath>
 				<pathelement path="src/" />
-                <fileset dir="../testbench-grid/remote-control/target/dist/lib" includes="selenium-grid-remote-control-vaadin-testbench*.jar" />
-                <fileset dir="../testbench-grid/hub/target/dist/lib" includes="selenium-grid-hub-vaadin-testbench*.jar" />
 				<fileset dir="../build/result/package" includes="vaadin-testbench-*.jar" />
                 <fileset dir="../lib" id="libs">
                     <include name="tests/**/*.jar" />
-                    <include name="selenium-server.jar" />
+                    <include name="selenium/*.jar" />
                 </fileset>
 				<path path="${class.path}" />
 				<pathelement path="${temp-dir}/classes" />
@@ -84,6 +80,7 @@
 	<target name="test-conversion">
 		<path id="classpath">
 			<fileset dir="../build/result/package" includes="vaadin-testbench-*.jar" />
+	        <fileset dir="../lib" includes="**/*.jar" />
 		</path>
 
 		<!-- Convert example test normally // note browser so the second doesn't override -->

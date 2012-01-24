@@ -29,7 +29,7 @@
 			<src path="../common/src" />
 			<classpath>
 				<fileset dir="../lib" id="libs">
-					<include name="*.jar" />
+					<include name="**/*.jar" />
 				</fileset>
 			</classpath>
 		</javac>
@@ -103,22 +103,7 @@
 		<copy file="../testbench-recorder/extension/vaadin-testbench-recorder-${version}.xpi" todir="${output.dir}/vaadin-testbench-recorder" />
 	</target>
 
-	<target name="testbench-grid">
-		<parallel>
-			<subant target="package-standalone">
-				<property name="timestamp" value="${timestamp}"/>
-			  	<property name="version" value="vaadin-testbench-${version}"/>
-				<fileset dir="../testbench-grid/hub" includes="build.xml" />
-			</subant>
-			<subant target="package-standalone">
-				<property name="timestamp" value="${timestamp}"/>
-			  	<property name="version" value="vaadin-testbench-${version}"/>
-				<fileset dir="../testbench-grid/remote-control" includes="build.xml" />
-			</subant>
-		</parallel>
-	</target>
-	
-	<target name="testbench-distribution-package" depends="testbench.jar,manual,testbench-recorder,testbench-grid,update-run-scripts,run-tests,create-extension">
+	<target name="testbench-distribution-package" depends="testbench.jar,manual,testbench-recorder,run-tests,create-extension">
 		<property name="package.root" value="vaadin-testbench-${version}"/>
 		<property name="package.grid.root" value="vaadin-testbench-grid-${version}"/>
         <copy todir="${output.dir}">
@@ -154,60 +139,10 @@
 				<include name="${manual.pdf.filename}" />
 			</zipfileset>
 
-<!--			<fileset dir=".." includes="example/tests/**" />-->
 			<!-- Add hub and remote-control to zip -->
-			<zipfileset dir="../testbench-grid/hub" includes="hub.sh hub.bat grid_configuration.yml" prefix="${package.root}/grid/hub" />
-			<zipfileset dir="../testbench-grid/hub/target/dist/lib" includes="**standalone*.jar" prefix="${package.root}/grid/hub/lib" />
-			
-			<zipfileset dir="../testbench-grid/remote-control" includes="rc.sh rc.bat rc_configuration.xml" prefix="${package.root}/grid/remote-control" />
-			<zipfileset dir="../testbench-grid/remote-control/target/dist/lib" includes="**standalone*.jar" prefix="${package.root}/grid/remote-control/lib" />
-			<zipfileset dir="../testbench-grid/vendor" includes="selenium-server*.jar" prefix="${package.root}/grid/remote-control/lib" />
-			<zipfileset dir="../selenium-extensions/core" includes="user-extensions.js" prefix="${package.root}/grid/remote-control" />
+			<zipfileset dir="../lib/selenium" includes="selenium-standalone.jar" prefix="${package.root}/grid" />
+			<zipfileset dir="../selenium-extensions/core" includes="user-extensions.js" prefix="${package.root}/grid" />
 		</zip>
-			
-		<zip destfile="${output.dir}/vaadin-testbench-grid-${version}.zip">
-			<zipfileset dir="../testbench-grid/hub" includes="hub.sh hub.bat grid_configuration.yml" prefix="${package.grid.root}/hub" />
-			<zipfileset dir="../testbench-grid/hub/target/dist/lib" includes="**standalone*.jar" prefix="${package.grid.root}/hub/lib" />
-			
-			<zipfileset dir="../testbench-grid/remote-control" includes="rc.sh rc.bat rc_configuration.xml" prefix="${package.grid.root}/remote-control" />
-			<zipfileset dir="../testbench-grid/remote-control/target/dist/lib" includes="**standalone*.jar" prefix="${package.grid.root}/remote-control/lib" />
-			<zipfileset dir="../testbench-grid/vendor" includes="selenium-server*.jar" prefix="${package.grid.root}/remote-control/lib" />
-			<zipfileset dir="../selenium-extensions/core" includes="user-extensions.js" prefix="${package.grid.root}/remote-control" />
-		</zip>
-	</target>
-
-	<!-- Creates script files for starting hub and remote-control -->
-	<target name="update-run-scripts">
-		<copy file="../testbench-grid/hub/hub.tpl" tofile="../testbench-grid/hub/hub.sh" overwrite="true">
-					<filterchain>
-						<replacetokens>
-							<token key="build" value="${version}" />
-						</replacetokens>
-					</filterchain>
-		</copy>
-		<chmod file="../testbench-grid/hub/hub.sh" perm="775" />
-		<copy file="../testbench-grid/hub/hub.bat_tpl" tofile="../testbench-grid/hub/hub.bat" overwrite="true">
-					<filterchain>
-						<replacetokens>
-							<token key="build" value="${version}" />
-						</replacetokens>
-					</filterchain>
-		</copy>
-		<copy file="../testbench-grid/remote-control/rc.tpl" tofile="../testbench-grid/remote-control/rc.sh" overwrite="true">
-					<filterchain>
-						<replacetokens>
-							<token key="build" value="${version}" />
-						</replacetokens>
-					</filterchain>
-		</copy>
-		<chmod file="../testbench-grid/remote-control/rc.sh" perm="775" />
-		<copy file="../testbench-grid/remote-control/rc.bat_tpl" tofile="../testbench-grid/remote-control/rc.bat" overwrite="true">
-					<filterchain>
-						<replacetokens>
-							<token key="build" value="${version}" />
-						</replacetokens>
-					</filterchain>
-		</copy>
 	</target>
 
     <target name="run-tests">
