@@ -7,7 +7,7 @@
 	<!-- Load version from properties file. If not found, version is specified below. -->
     <property file="${build.properties.file}" />
 	
-	<property name="version.base" value="2.4.3" />
+	<property name="version.base" value="3.0.0.beta" />
 	
 	<tstamp />
 	<property name="timestamp" value="${DSTAMP}${TSTAMP}" />
@@ -35,7 +35,7 @@
 		</javac>
 		<jar jarfile="${output.dir}/vaadin-testbench-${version}.jar" compress="true">
 			<manifest>
-                <attribute name="Class-Path" value="selenium-standalone.jar" />
+				<attribute name="Main-Class" value="org.openqa.grid.selenium.GridLauncher" />
 			</manifest>
 			<zipfileset dir="../src">
 				<include name="**/**.js" />
