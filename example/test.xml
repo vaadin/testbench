@@ -10,7 +10,7 @@
 
 	<!-- Browsers to use for testing -->
 	<!--<property name="browsers" value="winxp-ie6,winxp-ie7,winxp-ie8,winxp-firefox3,winxp-safari4,winxp-opera10,winxp-googlechrome4" />-->
-	<property name="browsers" value="winxp-ie8,winxp-firefox3" />
+	<property name="browsers" value="*googlechrome" />
 
 	<!-- Temporary output directory, created and removed by this script -->
 	<property name="temp-dir" value="temp-dir" />
@@ -23,6 +23,7 @@
 	
 	<!-- classpath must include test bench jar and its dependencies -->
 	<path id="classpath">
+        <fileset dir="../grid" includes="*-standalone*.jar" />
 		<fileset dir=".." includes="vaadin-testbench-*.jar" />
 
 		<!-- For development environment compatibility only -->
