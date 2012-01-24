@@ -44,7 +44,7 @@
 				<include name="**/**" />
 				<exclude name="**/test/**" />
 			</zipfileset>
-			<zipfileset src="../lib/selenium/selenium-standalone.jar" />
+			<zipfileset src="../lib/selenium-standalone.jar" />
 		</jar>
 	</target>
 	
