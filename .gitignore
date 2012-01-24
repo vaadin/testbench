@@ -1,3 +1,11 @@
 .classpath
 .project
 bin
+build/result/
+selenium-extensions/core/user-extensions.js
+testbench-recorder/chrome/content/selenium/scripts/selenium-api.js
+testbench-recorder/chrome/content/selenium/scripts/selenium-browserbot.js
+testbench-recorder/chrome/testbench-recorder.jar
+testbench-recorder/extension/
+testbench-recorder/install.rdf
+tmp/
