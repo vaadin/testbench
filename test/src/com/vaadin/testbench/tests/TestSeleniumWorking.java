@@ -21,7 +21,7 @@ public class TestSeleniumWorking {
     }
 
     @Test
-    public void testScreenshot() throws IOException {
+    public void testStartBrowser() throws IOException {
         driver.navigate().to("http://google.com");
         // File screenshot = driver.getScreenshotAs(OutputType.FILE);
         // FileUtils.copyFile(screenshot, new File("/tmp/shot.png"));

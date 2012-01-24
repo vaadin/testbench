@@ -9,7 +9,6 @@
 	<target name="build-and-deploy-to-dev-test-dir" depends="testbench.jar,testbench-recorder,create-extension">
 		<delete quiet="true">
 			<fileset dir="${dev.test.dir}" includes="vaadin-testbench-*.jar" />
-            <fileset dir="${dev.test.dir}/grid/" includes="*standalone*.jar" />
 		</delete>
 
 		<mkdir dir="${dev.test.dir}" />
@@ -25,20 +24,7 @@
 			</fileset>
 		</copy>
 		
-<!--
-		<copy todir="${dev.test.dir}/grid/hub">
-			<fileset dir="../testbench-grid/hub" includes="hub.sh hub.bat grid_configuration.yml" />
-            <fileset dir="../testbench-grid/hub" includes="hub.sh hub.bat" />
-		</copy>
--->
-		
 		<copy todir="${dev.test.dir}/grid">
-			<fileset dir="../lib/selenium" includes="**standalone*.jar" />
-		</copy>
-		
-		<copy todir="${dev.test.dir}/grid">
-<!--	        <fileset dir="../testbench-grid/remote-control" includes="rc.sh rc.bat rc_configuration.xml" />-->
-<!--            <fileset dir="../testbench-grid/remote-control" includes="rc.sh rc.bat" />-->
 			<fileset dir="../selenium-extensions/core" includes="user-extensions.js" />
 		</copy>
 	</target>

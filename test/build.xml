@@ -8,7 +8,9 @@
 	<property name="browsers" value="winxp-firefox36" />
 
 	<path id="classpath">
+<!--
 		<fileset dir="../lib" includes="**/*.jar" />
+-->
 	</path>
 
 	<target name="compile-tests">
@@ -21,9 +23,6 @@
 		<javac srcdir="src/com/vaadin/testbench/tests" destdir="${temp-dir}/classes" encoding="utf-8">
 			<classpath>
 				<fileset dir="../build/result/package" includes="vaadin-testbench-*.jar" />
-				<fileset dir="../lib" id="libs">
-					<include name="*.jar" />
-				</fileset>
 			</classpath>
 		</javac>
 	</target>
@@ -34,7 +33,7 @@
             <classpath>
                 <fileset dir="../build/result/package" includes="vaadin-testbench-*.jar" />
                 <fileset dir="../lib" id="libs">
-                    <include name="**/*.jar" />
+                	<include name="tests/**/*.jar"/>
                 </fileset>
             </classpath>
         </javac>
@@ -51,7 +50,6 @@
 				<fileset dir="../build/result/package" includes="vaadin-testbench-*.jar" />
                 <fileset dir="../lib" id="libs">
                     <include name="tests/**/*.jar" />
-                    <include name="selenium/*.jar" />
                 </fileset>
 				<path path="${class.path}" />
 				<pathelement path="${temp-dir}/classes" />
@@ -80,7 +78,6 @@
 	<target name="test-conversion">
 		<path id="classpath">
 			<fileset dir="../build/result/package" includes="vaadin-testbench-*.jar" />
-	        <fileset dir="../lib" includes="**/*.jar" />
 		</path>
 
 		<!-- Convert example test normally // note browser so the second doesn't override -->

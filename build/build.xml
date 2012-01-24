@@ -35,7 +35,7 @@
 		</javac>
 		<jar jarfile="${output.dir}/vaadin-testbench-${version}.jar" compress="true">
 			<manifest>
-				<attribute name="Class-Path" value="junit-4.5.jar selenium-java-client-driver.jar js.jar" />
+                <attribute name="Class-Path" value="selenium-standalone.jar" />
 			</manifest>
 			<zipfileset dir="../src">
 				<include name="**/**.js" />
@@ -44,11 +44,7 @@
 				<include name="**/**" />
 				<exclude name="**/test/**" />
 			</zipfileset>
-			<zipfileset src="../lib/commons-io-1.1.jar" />
-			<zipfileset src="../lib/commons-codec-1.4.jar" />
-			<zipfileset src="../lib/js.jar" />
-			<zipfileset src="../lib/junit-4.5.jar" />
-			<zipfileset src="../lib/selenium-java-client-driver.jar" />
+			<zipfileset src="../lib/selenium/selenium-standalone.jar" />
 		</jar>
 	</target>
 	
@@ -122,9 +118,6 @@
 			<zipfileset dir="${output.dir}" includes="MANIFEST.MF" prefix="META-INF"/>
 			<zipfileset dir="${output.dir}" includes="vaadin-testbench-${version}.jar" prefix="${package.root}"/>
 			<zipfileset dir="${output.dir}" includes="vaadin-testbench-recorder/vaadin-testbench-recorder-${version}.xpi" prefix="${package.root}" />
-<!--			<zipfileset dir=".." includes="selenium-extensions/**" />-->
-			<!-- Not certain about MPL or CPL licenses -->
-<!--			<fileset dir=".." includes="lib/js.jar lib/junit*.jar" excludes="lib/**-source* lib/**-src*" />-->
 			<zipfileset dir=".." includes="example/test.xml" prefix="${package.root}" />
 			<zipfileset dir=".." includes="example/testscripts/*.html" prefix="${package.root}" />
 			<zipfileset dir=".." includes="example/parameters/*.properties" prefix="${package.root}" />
@@ -140,8 +133,7 @@
 			</zipfileset>
 
 			<!-- Add hub and remote-control to zip -->
-			<zipfileset dir="../lib/selenium" includes="selenium-standalone.jar" prefix="${package.root}/grid" />
-			<zipfileset dir="../selenium-extensions/core" includes="user-extensions.js" prefix="${package.root}/grid" />
+			<zipfileset dir="../selenium-extensions/core" includes="user-extensions.js" prefix="${package.root}" />
 		</zip>
 	</target>
 
