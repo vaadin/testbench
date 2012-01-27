@@ -1,13 +1,24 @@
 package com.vaadin.testbench;
 
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.openqa.selenium.Dimension;
+import org.openqa.selenium.Point;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.internal.WrapsDriver;
+import org.openqa.selenium.remote.HttpCommandExecutor;
+import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.remote.Response;
 
+import com.google.common.collect.ImmutableMap;
 import com.vaadin.testbench.commands.TestBenchCommands;
 
 public class TestBenchDriver<WD extends WebDriver> implements
@@ -75,6 +86,32 @@ public class TestBenchDriver<WD extends WebDriver> implements
         return actualDriver;
     }
 
+    protected Response execute(String driverCommand, Map<String, ?> parameters) {
+        try {
+            Method exec = RemoteWebDriver.class.getMethod("execute",
+                    String.class, Map.class);
+            exec.setAccessible(true);
+            return (Response) exec.invoke(actualDriver, driverCommand,
+                    parameters);
+        } catch (SecurityException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IllegalArgumentException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     /*
      * (non-Javadoc)
      * 
@@ -84,18 +121,68 @@ public class TestBenchDriver<WD extends WebDriver> implements
      */
     @Override
     public void setTestName(String testName) {
-        LOGGER.info("Test name: " + testName);
-        this.testName = testName;
+        if (actualDriver instanceof RemoteWebDriver) {
+            execute(TestBenchCommands.SET_TEST_NAME,
+                    ImmutableMap.of("name", testName));
+        } else {
+            LOGGER.info(String.format("Currently running \"%s\"", testName));
+        }
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see com.vaadin.testbench.commands.TestBenchCommands#getTestName()
+     * @see com.vaadin.testbench.commands.TestBenchCommands#setCanvasSize(int,
+     * int)
      */
     @Override
-    public String getTestName() {
-        return testName;
+    public void setCanvasSize(int w, int h) {
+        actualDriver.manage().window().setSize(new Dimension(w, h));
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.vaadin.testbench.commands.TestBenchCommands#getCanvasSize()
+     */
+    @Override
+    public String getCanvasSize() {
+        Dimension dim = actualDriver.manage().window().getSize();
+        Point pos = actualDriver.manage().window().getPosition();
+        return "0,0," + dim.getWidth() + "," + dim.getHeight() + ","
+                + pos.getX() + "," + pos.getY();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.vaadin.testbench.commands.TestBenchCommands#getRemoteControlName()
+     */
+    @Override
+    public String getRemoteControlName() {
+        InetAddress ia = null;
+        try {
+            if (actualDriver instanceof RemoteWebDriver) {
+                RemoteWebDriver rwd = (RemoteWebDriver) actualDriver;
+                if (rwd.getCommandExecutor() instanceof HttpCommandExecutor) {
+                    ia = InetAddress.getByName(((HttpCommandExecutor) rwd
+                            .getCommandExecutor()).getAddressOfRemoteServer()
+                            .getHost());
+                }
+            } else {
+                ia = InetAddress.getLocalHost();
+            }
+        } catch (UnknownHostException e) {
+            LOGGER.log(Level.WARNING, "Could not find name of remote control",
+                    e);
+            return "unknown";
+        }
+
+        if (ia != null) {
+            return String.format("%s (%s)", ia.getCanonicalHostName(),
+                    ia.getHostAddress());
+        }
+        return null;
+    }
 }

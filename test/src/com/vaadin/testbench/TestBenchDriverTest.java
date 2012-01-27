@@ -96,8 +96,5 @@ public class TestBenchDriverTest {
         WebDriver driver = TestBench.create(createNiceMock(WebDriver.class));
         TestBenchCommands tbDriver = (TestBenchCommands) driver;
         tbDriver.setTestName("foo");
-        assertEquals("foo", tbDriver.getTestName());
-        tbDriver.setTestName("bar");
-        assertEquals("bar", tbDriver.getTestName());
     }
 }
