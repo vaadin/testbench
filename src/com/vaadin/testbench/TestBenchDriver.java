@@ -2,51 +2,18 @@ package com.vaadin.testbench;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.logging.Logger;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.internal.WrapsDriver;
 
+import com.vaadin.testbench.commands.TestBenchCommands;
+
 public class TestBenchDriver<WD extends WebDriver> implements
-        InvocationHandler, WrapsDriver {
-
-    @SuppressWarnings("unchecked")
-    public static <WD extends WebDriver> WD create(WD driver) {
-        Set<Class<?>> allInterfaces = extractInterfaces(driver);
-        final Class<?>[] allInterfacesArray = allInterfaces
-                .toArray(new Class<?>[allInterfaces.size()]);
-        Object proxy = Proxy.newProxyInstance(driver.getClass()
-                .getClassLoader(), allInterfacesArray,
-                new TestBenchDriver<WebDriver>(driver));
-        return (WD) proxy;
-    }
-
-    private static Set<Class<?>> extractInterfaces(final Object object) {
-        final Set<Class<?>> allInterfaces = new HashSet<Class<?>>();
-        extractInterfaces(allInterfaces, object.getClass());
-
-        return allInterfaces;
-    }
-
-    private static void extractInterfaces(final Set<Class<?>> addTo,
-            final Class<?> clazz) {
-        if (clazz == null || Object.class.equals(clazz)) {
-            return; // Done
-        }
-
-        final Class<?>[] classes = clazz.getInterfaces();
-        for (final Class<?> interfaceClass : classes) {
-            addTo.add(interfaceClass);
-            for (final Class<?> superInterface : interfaceClass.getInterfaces()) {
-                addTo.add(superInterface);
-                extractInterfaces(addTo, superInterface);
-            }
-        }
-        extractInterfaces(addTo, clazz.getSuperclass());
-    }
+        InvocationHandler, WrapsDriver, TestBenchCommands {
+    private static final Logger LOGGER = Logger.getLogger(TestBenchDriver.class
+            .getName());
 
     private WD actualDriver;
 
@@ -60,7 +27,9 @@ public class TestBenchDriver<WD extends WebDriver> implements
         actualDriver = webDriver;
     }
 
-    private HashMap<Method, Method> cachedMethodMap = new HashMap<Method, Method>();
+    private HashMap<Method, Method> proxiedMethodCache = new HashMap<Method, Method>();
+    private HashMap<Method, Method> implementedMethodCache = new HashMap<Method, Method>();
+    private String testName;
 
     /*
      * (non-Javadoc)
@@ -71,15 +40,29 @@ public class TestBenchDriver<WD extends WebDriver> implements
     @Override
     public Object invoke(Object proxy, Method method, Object[] args)
             throws Throwable {
-        Method actualMethod = null;
-        if (!cachedMethodMap.containsKey(method)) {
-            actualMethod = actualDriver.getClass().getMethod(method.getName(),
-                    method.getParameterTypes());
-            cachedMethodMap.put(method, actualMethod);
-        } else {
-            actualMethod = cachedMethodMap.get(method);
+        if (!isMethodCached(method)) {
+            Method actualMethod = null;
+            try {
+                // Is it a method in the TestBenchCommands interface?
+                actualMethod = TestBenchCommands.class.getMethod(
+                        method.getName(), method.getParameterTypes());
+                implementedMethodCache.put(method, actualMethod);
+            } catch (Exception e) {
+                // It's probably a method implemented by the actual driver.
+                actualMethod = actualDriver.getClass().getMethod(
+                        method.getName(), method.getParameterTypes());
+                proxiedMethodCache.put(method, actualMethod);
+            }
         }
-        return actualMethod.invoke(actualDriver, args);
+        if (proxiedMethodCache.containsKey(method)) {
+            return proxiedMethodCache.get(method).invoke(actualDriver, args);
+        }
+        return implementedMethodCache.get(method).invoke(this, args);
+    }
+
+    private boolean isMethodCached(Method method) {
+        return proxiedMethodCache.containsKey(method)
+                || implementedMethodCache.containsKey(method);
     }
 
     /*
@@ -90,6 +73,29 @@ public class TestBenchDriver<WD extends WebDriver> implements
     @Override
     public WebDriver getWrappedDriver() {
         return actualDriver;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.vaadin.testbench.commands.TestBenchCommands#setTestName(java.lang
+     * .String)
+     */
+    @Override
+    public void setTestName(String testName) {
+        LOGGER.info("Test name: " + testName);
+        this.testName = testName;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.vaadin.testbench.commands.TestBenchCommands#getTestName()
+     */
+    @Override
+    public String getTestName() {
+        return testName;
     }
 
 }

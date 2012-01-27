@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.TakesScreenshot;
@@ -25,12 +26,13 @@ import org.openqa.selenium.WebDriver.TargetLocator;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
+import com.vaadin.testbench.commands.TestBenchCommands;
+
 public class TestBenchDriverTest {
 
     @Test
     public void testTestBenchDriverIsAWebDriver() {
-        WebDriver driver = TestBenchDriver
-                .create(createNiceMock(WebDriver.class));
+        WebDriver driver = TestBench.create(createNiceMock(WebDriver.class));
         assertTrue(driver instanceof WebDriver);
     }
 
@@ -62,7 +64,7 @@ public class TestBenchDriverTest {
         replay(mockDriver);
 
         // TestBenchDriver driver = new TestBenchDriver(mockDriver);
-        WebDriver driver = TestBenchDriver.create(mockDriver);
+        WebDriver driver = TestBench.create(mockDriver);
         driver.close();
         By mockBy = createNiceMock(By.class);
         assertEquals(mockElement, driver.findElement(mockBy));
@@ -81,10 +83,21 @@ public class TestBenchDriverTest {
         verify(mockDriver);
     }
 
+    @Ignore
     @Test
     public void testAugmentedDriver() {
-        WebDriver driver = TestBenchDriver.create(new FirefoxDriver());
+        WebDriver driver = TestBench.create(new FirefoxDriver());
         assertTrue(driver instanceof TakesScreenshot);
-        driver.quit();
+        driver.close();
+    }
+
+    @Test
+    public void canSetTestName() {
+        WebDriver driver = TestBench.create(createNiceMock(WebDriver.class));
+        TestBenchCommands tbDriver = (TestBenchCommands) driver;
+        tbDriver.setTestName("foo");
+        assertEquals("foo", tbDriver.getTestName());
+        tbDriver.setTestName("bar");
+        assertEquals("bar", tbDriver.getTestName());
     }
 }
