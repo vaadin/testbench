@@ -1,15 +1,54 @@
 package com.vaadin.testbench;
 
-import java.util.List;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Set;
 
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.internal.WrapsDriver;
 
-public class TestBenchDriver implements WebDriver {
+public class TestBenchDriver<WD extends WebDriver> implements
+        InvocationHandler, WrapsDriver {
 
-    private WebDriver actualDriver;
+    @SuppressWarnings("unchecked")
+    public static <WD extends WebDriver> WD create(WD driver) {
+        Set<Class<?>> allInterfaces = extractInterfaces(driver);
+        final Class<?>[] allInterfacesArray = allInterfaces
+                .toArray(new Class<?>[allInterfaces.size()]);
+        Object proxy = Proxy.newProxyInstance(driver.getClass()
+                .getClassLoader(), allInterfacesArray,
+                new TestBenchDriver<WebDriver>(driver));
+        return (WD) proxy;
+    }
+
+    private static Set<Class<?>> extractInterfaces(final Object object) {
+        final Set<Class<?>> allInterfaces = new HashSet<Class<?>>();
+        extractInterfaces(allInterfaces, object.getClass());
+
+        return allInterfaces;
+    }
+
+    private static void extractInterfaces(final Set<Class<?>> addTo,
+            final Class<?> clazz) {
+        if (clazz == null || Object.class.equals(clazz)) {
+            return; // Done
+        }
+
+        final Class<?>[] classes = clazz.getInterfaces();
+        for (final Class<?> interfaceClass : classes) {
+            addTo.add(interfaceClass);
+            for (final Class<?> superInterface : interfaceClass.getInterfaces()) {
+                addTo.add(superInterface);
+                extractInterfaces(addTo, superInterface);
+            }
+        }
+        extractInterfaces(addTo, clazz.getSuperclass());
+    }
+
+    private WD actualDriver;
 
     /**
      * Constructs a TestBenchDriver using the provided web driver for the actual
@@ -17,137 +56,40 @@ public class TestBenchDriver implements WebDriver {
      * 
      * @param webDriver
      */
-    public TestBenchDriver(WebDriver webDriver) {
+    public TestBenchDriver(WD webDriver) {
         actualDriver = webDriver;
     }
 
+    private HashMap<Method, Method> cachedMethodMap = new HashMap<Method, Method>();
+
     /*
      * (non-Javadoc)
      * 
-     * @see org.openqa.selenium.WebDriver#close()
+     * @see java.lang.reflect.InvocationHandler#invoke(java.lang.Object,
+     * java.lang.reflect.Method, java.lang.Object[])
      */
     @Override
-    public void close() {
-        actualDriver.close();
+    public Object invoke(Object proxy, Method method, Object[] args)
+            throws Throwable {
+        Method actualMethod = null;
+        if (!cachedMethodMap.containsKey(method)) {
+            actualMethod = actualDriver.getClass().getMethod(method.getName(),
+                    method.getParameterTypes());
+            cachedMethodMap.put(method, actualMethod);
+        } else {
+            actualMethod = cachedMethodMap.get(method);
+        }
+        return actualMethod.invoke(actualDriver, args);
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see org.openqa.selenium.WebDriver#findElement(org.openqa.selenium.By)
+     * @see org.openqa.selenium.internal.WrapsDriver#getWrappedDriver()
      */
     @Override
-    public WebElement findElement(By by) {
-        return actualDriver.findElement(by);
+    public WebDriver getWrappedDriver() {
+        return actualDriver;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.openqa.selenium.WebDriver#findElements(org.openqa.selenium.By)
-     */
-    @Override
-    public List<WebElement> findElements(By by) {
-        return actualDriver.findElements(by);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.openqa.selenium.WebDriver#get(java.lang.String)
-     */
-    @Override
-    public void get(String url) {
-        actualDriver.get(url);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.openqa.selenium.WebDriver#getCurrentUrl()
-     */
-    @Override
-    public String getCurrentUrl() {
-        return actualDriver.getCurrentUrl();
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.openqa.selenium.WebDriver#getPageSource()
-     */
-    @Override
-    public String getPageSource() {
-        return actualDriver.getPageSource();
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.openqa.selenium.WebDriver#getTitle()
-     */
-    @Override
-    public String getTitle() {
-        return actualDriver.getTitle();
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.openqa.selenium.WebDriver#getWindowHandle()
-     */
-    @Override
-    public String getWindowHandle() {
-        return actualDriver.getWindowHandle();
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.openqa.selenium.WebDriver#getWindowHandles()
-     */
-    @Override
-    public Set<String> getWindowHandles() {
-        return actualDriver.getWindowHandles();
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.openqa.selenium.WebDriver#manage()
-     */
-    @Override
-    public Options manage() {
-        return actualDriver.manage();
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.openqa.selenium.WebDriver#navigate()
-     */
-    @Override
-    public Navigation navigate() {
-        return actualDriver.navigate();
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.openqa.selenium.WebDriver#quit()
-     */
-    @Override
-    public void quit() {
-        actualDriver.quit();
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.openqa.selenium.WebDriver#switchTo()
-     */
-    @Override
-    public TargetLocator switchTo() {
-        return actualDriver.switchTo();
-    }
 }
