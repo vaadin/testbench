@@ -11,7 +11,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.openqa.selenium.Dimension;
+import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Point;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.internal.WrapsDriver;
 import org.openqa.selenium.remote.HttpCommandExecutor;
@@ -182,6 +184,22 @@ public class TestBenchDriver<WD extends WebDriver> implements
         if (ia != null) {
             return String.format("%s (%s)", ia.getCanonicalHostName(),
                     ia.getHostAddress());
+        }
+        return null;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.vaadin.testbench.commands.TestBenchCommands#captureScreenshotToString
+     * ()
+     */
+    @Override
+    public String captureScreenshotToString() {
+        if (actualDriver instanceof TakesScreenshot) {
+            return ((TakesScreenshot) actualDriver)
+                    .getScreenshotAs(OutputType.BASE64);
         }
         return null;
     }

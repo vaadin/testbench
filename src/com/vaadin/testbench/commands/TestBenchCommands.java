@@ -14,4 +14,7 @@ public interface TestBenchCommands {
     public String getCanvasSize();
 
     public String getRemoteControlName();
+
+    @Deprecated
+    public String captureScreenshotToString();
 }
