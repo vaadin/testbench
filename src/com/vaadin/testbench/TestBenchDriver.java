@@ -42,7 +42,6 @@ public class TestBenchDriver<WD extends WebDriver> implements
 
     private HashMap<Method, Method> proxiedMethodCache = new HashMap<Method, Method>();
     private HashMap<Method, Method> implementedMethodCache = new HashMap<Method, Method>();
-    private String testName;
 
     /*
      * (non-Javadoc)
