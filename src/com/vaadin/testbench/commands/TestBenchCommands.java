@@ -1,5 +1,7 @@
 package com.vaadin.testbench.commands;
 
+import org.openqa.selenium.WebElement;
+
 /**
  */
 public interface TestBenchCommands {
@@ -17,4 +19,8 @@ public interface TestBenchCommands {
 
     @Deprecated
     public String captureScreenshotToString();
+
+    public void expectDialog(WebElement element, String value);
+
+    public boolean closeNotification(WebElement element);
 }

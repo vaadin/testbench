@@ -5,27 +5,44 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.openqa.selenium.WebDriver;
-
-import com.vaadin.testbench.commands.TestBenchCommands;
+import org.openqa.selenium.WebElement;
 
 /**
  */
 public class TestBench {
     @SuppressWarnings("unchecked")
-    public static <WD extends WebDriver> WD create(WD driver) {
+    public static <WD extends WebDriver> WD createDriver(WD driver) {
         Set<Class<?>> allInterfaces = extractInterfaces(driver);
-        allInterfaces.add(TestBenchCommands.class);
+        allInterfaces.addAll(extractInterfaces(TestBenchDriver.class));
         final Class<?>[] allInterfacesArray = allInterfaces
                 .toArray(new Class<?>[allInterfaces.size()]);
         Object proxy = Proxy.newProxyInstance(driver.getClass()
                 .getClassLoader(), allInterfacesArray,
-                new TestBenchDriver<WebDriver>(driver));
+                new CachedInvocationHandler(new TestBenchDriver<WD>(driver),
+                        driver));
         return (WD) proxy;
     }
 
+    @SuppressWarnings("unchecked")
+    public static <WE extends WebElement> WE createElement(WE webElement) {
+        Set<Class<?>> allInterfaces = extractInterfaces(webElement);
+        allInterfaces.addAll(extractInterfaces(TestBenchElement.class));
+        final Class<?>[] allInterfacesArray = allInterfaces
+                .toArray(new Class<?>[allInterfaces.size()]);
+        Object proxy = Proxy.newProxyInstance(webElement.getClass()
+                .getClassLoader(), allInterfacesArray,
+                new CachedInvocationHandler(
+                        new TestBenchElement<WE>(webElement), webElement));
+        return (WE) proxy;
+    }
+
     private static Set<Class<?>> extractInterfaces(final Object object) {
+        return extractInterfaces(object.getClass());
+    }
+
+    private static Set<Class<?>> extractInterfaces(final Class<?> clazz) {
         final Set<Class<?>> allInterfaces = new HashSet<Class<?>>();
-        extractInterfaces(allInterfaces, object.getClass());
+        extractInterfaces(allInterfaces, clazz);
 
         return allInterfaces;
     }

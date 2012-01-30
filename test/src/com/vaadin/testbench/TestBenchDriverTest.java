@@ -32,7 +32,7 @@ public class TestBenchDriverTest {
 
     @Test
     public void testTestBenchDriverIsAWebDriver() {
-        WebDriver driver = TestBench.create(createNiceMock(WebDriver.class));
+        WebDriver driver = TestBench.createDriver(createNiceMock(WebDriver.class));
         assertTrue(driver instanceof WebDriver);
     }
 
@@ -64,7 +64,7 @@ public class TestBenchDriverTest {
         replay(mockDriver);
 
         // TestBenchDriver driver = new TestBenchDriver(mockDriver);
-        WebDriver driver = TestBench.create(mockDriver);
+        WebDriver driver = TestBench.createDriver(mockDriver);
         driver.close();
         By mockBy = createNiceMock(By.class);
         assertEquals(mockElement, driver.findElement(mockBy));
@@ -86,14 +86,14 @@ public class TestBenchDriverTest {
     @Ignore
     @Test
     public void testAugmentedDriver() {
-        WebDriver driver = TestBench.create(new FirefoxDriver());
+        WebDriver driver = TestBench.createDriver(new FirefoxDriver());
         assertTrue(driver instanceof TakesScreenshot);
         driver.close();
     }
 
     @Test
     public void canSetTestName() {
-        WebDriver driver = TestBench.create(createNiceMock(WebDriver.class));
+        WebDriver driver = TestBench.createDriver(createNiceMock(WebDriver.class));
         TestBenchCommands tbDriver = (TestBenchCommands) driver;
         tbDriver.setTestName("foo");
     }

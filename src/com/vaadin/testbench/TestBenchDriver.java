@@ -1,20 +1,21 @@
 package com.vaadin.testbench;
 
-import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.openqa.selenium.Dimension;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.internal.WrapsDriver;
 import org.openqa.selenium.remote.HttpCommandExecutor;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -23,8 +24,8 @@ import org.openqa.selenium.remote.Response;
 import com.google.common.collect.ImmutableMap;
 import com.vaadin.testbench.commands.TestBenchCommands;
 
-public class TestBenchDriver<WD extends WebDriver> implements
-        InvocationHandler, WrapsDriver, TestBenchCommands {
+public class TestBenchDriver<WD extends WebDriver> implements WrapsDriver,
+        TestBenchCommands {
     private static final Logger LOGGER = Logger.getLogger(TestBenchDriver.class
             .getName());
 
@@ -36,45 +37,8 @@ public class TestBenchDriver<WD extends WebDriver> implements
      * 
      * @param webDriver
      */
-    public TestBenchDriver(WD webDriver) {
+    protected TestBenchDriver(WD webDriver) {
         actualDriver = webDriver;
-    }
-
-    private HashMap<Method, Method> proxiedMethodCache = new HashMap<Method, Method>();
-    private HashMap<Method, Method> implementedMethodCache = new HashMap<Method, Method>();
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.reflect.InvocationHandler#invoke(java.lang.Object,
-     * java.lang.reflect.Method, java.lang.Object[])
-     */
-    @Override
-    public Object invoke(Object proxy, Method method, Object[] args)
-            throws Throwable {
-        if (!isMethodCached(method)) {
-            Method actualMethod = null;
-            try {
-                // Is it a method in the TestBenchCommands interface?
-                actualMethod = TestBenchCommands.class.getMethod(
-                        method.getName(), method.getParameterTypes());
-                implementedMethodCache.put(method, actualMethod);
-            } catch (Exception e) {
-                // It's probably a method implemented by the actual driver.
-                actualMethod = actualDriver.getClass().getMethod(
-                        method.getName(), method.getParameterTypes());
-                proxiedMethodCache.put(method, actualMethod);
-            }
-        }
-        if (proxiedMethodCache.containsKey(method)) {
-            return proxiedMethodCache.get(method).invoke(actualDriver, args);
-        }
-        return implementedMethodCache.get(method).invoke(this, args);
-    }
-
-    private boolean isMethodCached(Method method) {
-        return proxiedMethodCache.containsKey(method)
-                || implementedMethodCache.containsKey(method);
     }
 
     /*
@@ -201,5 +165,65 @@ public class TestBenchDriver<WD extends WebDriver> implements
                     .getScreenshotAs(OutputType.BASE64);
         }
         return null;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.vaadin.testbench.commands.TestBenchElementCommands#expectDialog()
+     */
+    @Override
+    public void expectDialog(WebElement element, String value) {
+        String[] val = value.split(":");
+        Actions actions = new Actions(actualDriver);
+        // Press modifier key(s)
+        if (val.length > 1) {
+            if (val[1].contains("shift")) {
+                actions = actions.keyDown(Keys.SHIFT);
+            }
+            if (val[1].contains("ctrl")) {
+                actions = actions.keyDown(Keys.CONTROL);
+            }
+            if (val[1].contains("alt")) {
+                actions = actions.keyDown(Keys.ALT);
+            }
+        }
+        actions = actions.click(element);
+        // Release modifier key(s)
+        if (val.length > 1) {
+            if (val[1].contains("shift")) {
+                actions = actions.keyUp(Keys.SHIFT);
+            }
+            if (val[1].contains("ctrl")) {
+                actions = actions.keyUp(Keys.CONTROL);
+            }
+            if (val[1].contains("alt")) {
+                actions = actions.keyUp(Keys.ALT);
+            }
+        }
+        actions.perform();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.vaadin.testbench.commands.TestBenchCommands#closeNotification(org
+     * .openqa.selenium.WebElement)
+     */
+    @Override
+    public boolean closeNotification(WebElement element) {
+        element.click();
+        // Wait for 5000 ms or until the element is no longer visible.
+        int times = 0;
+        while (element.isDisplayed() || times > 25) {
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+            }
+            times++;
+        }
+        return element.isDisplayed();
     }
 }
