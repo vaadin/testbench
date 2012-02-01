@@ -27,6 +27,7 @@ public class CachedInvocationHandler implements InvocationHandler {
     @Override
     public Object invoke(Object proxy, Method method, Object[] args)
             throws Throwable {
+        waitForVaadinIfNecessary(method.getName());
         if (!isMethodCached(method)) {
             Method actualMethod = null;
             try {
@@ -45,6 +46,21 @@ public class CachedInvocationHandler implements InvocationHandler {
             return proxiedMethodCache.get(method).invoke(actualObject, args);
         }
         return implementedMethodCache.get(method).invoke(proxyObject, args);
+    }
+
+    /**
+     * Invokes waitForVaadin unless the command is known to not need to wait.
+     * 
+     * @param methodName
+     */
+    private void waitForVaadinIfNecessary(String methodName) {
+        if ("getRemoteControlName".equals(methodName)
+                || "close".equals(methodName) || "quit".equals(methodName)) {
+            return;
+        }
+        if (proxyObject instanceof TestBenchDriver) {
+            ((TestBenchDriver<?>) proxyObject).waitForVaadin();
+        }
     }
 
     private boolean isMethodCached(Method method) {

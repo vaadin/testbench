@@ -5,22 +5,21 @@ import org.openqa.selenium.WebElement;
 /**
  */
 public interface TestBenchCommands {
-    public static String SET_TEST_NAME = "setTestName";
+    static String SET_TEST_NAME = "setTestName";
 
-    public void setTestName(String testName);
+    void setTestName(String testName);
 
-    @Deprecated
-    public void setCanvasSize(int w, int h);
+    String getRemoteControlName();
 
-    @Deprecated
-    public String getCanvasSize();
+    void expectDialog(WebElement element, String value);
 
-    public String getRemoteControlName();
+    boolean closeNotification(WebElement element);
 
-    @Deprecated
-    public String captureScreenshotToString();
+    void showTooltip(WebElement element);
 
-    public void expectDialog(WebElement element, String value);
+    void scroll(WebElement element, int scrollTop);
 
-    public boolean closeNotification(WebElement element);
+    void scrollLeft(WebElement element, int scrollLeft);
+
+    void waitForVaadin();
 }

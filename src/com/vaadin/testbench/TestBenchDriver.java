@@ -8,11 +8,8 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.openqa.selenium.Dimension;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.Point;
-import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -97,30 +94,6 @@ public class TestBenchDriver<WD extends WebDriver> implements WrapsDriver,
     /*
      * (non-Javadoc)
      * 
-     * @see com.vaadin.testbench.commands.TestBenchCommands#setCanvasSize(int,
-     * int)
-     */
-    @Override
-    public void setCanvasSize(int w, int h) {
-        actualDriver.manage().window().setSize(new Dimension(w, h));
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.vaadin.testbench.commands.TestBenchCommands#getCanvasSize()
-     */
-    @Override
-    public String getCanvasSize() {
-        Dimension dim = actualDriver.manage().window().getSize();
-        Point pos = actualDriver.manage().window().getPosition();
-        return "0,0," + dim.getWidth() + "," + dim.getHeight() + ","
-                + pos.getX() + "," + pos.getY();
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
      * @see
      * com.vaadin.testbench.commands.TestBenchCommands#getRemoteControlName()
      */
@@ -147,22 +120,6 @@ public class TestBenchDriver<WD extends WebDriver> implements WrapsDriver,
         if (ia != null) {
             return String.format("%s (%s)", ia.getCanonicalHostName(),
                     ia.getHostAddress());
-        }
-        return null;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * com.vaadin.testbench.commands.TestBenchCommands#captureScreenshotToString
-     * ()
-     */
-    @Override
-    public String captureScreenshotToString() {
-        if (actualDriver instanceof TakesScreenshot) {
-            return ((TakesScreenshot) actualDriver)
-                    .getScreenshotAs(OutputType.BASE64);
         }
         return null;
     }
@@ -226,4 +183,86 @@ public class TestBenchDriver<WD extends WebDriver> implements WrapsDriver,
         }
         return element.isDisplayed();
     }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.vaadin.testbench.commands.TestBenchElementCommands#showTooltip()
+     */
+    @Override
+    public void showTooltip(WebElement element) {
+        new Actions(actualDriver).moveToElement(element).perform();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.vaadin.testbench.commands.TestBenchCommands#scroll(org.openqa.selenium
+     * .WebElement, int)
+     */
+    @Override
+    public void scroll(WebElement element, int scrollTop) {
+        JavascriptExecutor js = (JavascriptExecutor) actualDriver;
+        js.executeScript("arguments[0].setScrollTop(arguments[1])", element,
+                scrollTop);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.vaadin.testbench.commands.TestBenchCommands#scrollLeft(org.openqa
+     * .selenium.WebElement, int)
+     */
+    @Override
+    public void scrollLeft(WebElement element, int scrollLeft) {
+        JavascriptExecutor js = (JavascriptExecutor) actualDriver;
+        js.executeScript("arguments[0].setScrollLeft(arguments[1])", element,
+                scrollLeft);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.vaadin.testbench.commands.TestBenchCommands#waitForVaadin()
+     */
+    @Override
+    public void waitForVaadin() {
+        String getVaadinConnector = "function getVaadinConnector(wnd) {\n"
+                + "  if (wnd.wrappedJSObject) { \n"
+                + "    wnd = wnd.wrappedJSObject; \n" + "  } \n"
+                + "  var connector = null; \n" + "  if (wnd.itmill) { \n"
+                + "    connector = wnd.itmill; \n"
+                + "  } else if (wnd.vaadin) { \n"
+                + "    connector = wnd.vaadin; \n" + "  } \n"
+                + "  return connector; \n" + "} \n";
+        String waitForVaadin = "        // max time to wait for toolkit to settle \n"
+                + "var timeout = 20000; \n"
+                + "var foundClientOnce = false; \n"
+                + "return Selenium.decorateFunctionWithTimeout( function() { \n"
+                + "  var wnd = selenium.browserbot.getCurrentWindow(); \n"
+                + "  var connector = getVaadinConnector(wnd); \n"
+                + "  if (!connector) { \n"
+                +
+                // No connector found == Not a Vaadin application so we don't
+                // need to wait
+                "    return true; \n"
+                + "  } \n"
+                + "  var clients = connector.clients; \n"
+                + "  if (clients) { \n"
+                + "    for ( var client in clients) { \n"
+                + "      if (clients[client].isActive()) { \n"
+                + "        return false; \n"
+                + "      } \n"
+                + "    } \n"
+                + "    return true; \n" + "  } else { \n" +
+                // A Vaadin connector was found so this is most likely a Vaadin
+                // application. Keep waiting.
+                "    return false; \n" + "  } \n" + "}, timeout);";
+
+        JavascriptExecutor js = (JavascriptExecutor) actualDriver;
+        js.executeScript(getVaadinConnector + waitForVaadin);
+    }
+
 }
