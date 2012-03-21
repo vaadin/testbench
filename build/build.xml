@@ -8,7 +8,8 @@
     <property file="${build.properties.file}" />
 	
 	<property name="version.base" value="3.0.0.beta" />
-	
+	<property name="manual.version" value="3.0"/>
+	        	
 	<tstamp />
 	<property name="timestamp" value="${DSTAMP}${TSTAMP}" />
 	<property name="testbench.version" value="${version.base}.development.${timestamp}" />
@@ -54,7 +55,6 @@
 
     <!-- Manual -->
     <target name="manual" unless="run.no-manual">
-        <property name="manual.version" value="2.4"/>
         <property name="manual.basename" value="vaadin-testbench-manual-${manual.version}"/>
 
         <!-- Source and target files of the manual -->
