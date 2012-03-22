@@ -237,32 +237,31 @@ public class TestBenchDriver<WD extends WebDriver> implements WrapsDriver,
                 + "  } else if (wnd.vaadin) { \n"
                 + "    connector = wnd.vaadin; \n" + "  } \n"
                 + "  return connector; \n" + "} \n";
-        String waitForVaadin = "        // max time to wait for toolkit to settle \n"
-                + "var timeout = 20000; \n"
-                + "var foundClientOnce = false; \n"
-                + "return Selenium.decorateFunctionWithTimeout( function() { \n"
-                + "  var wnd = selenium.browserbot.getCurrentWindow(); \n"
-                + "  var connector = getVaadinConnector(wnd); \n"
-                + "  if (!connector) { \n"
-                +
-                // No connector found == Not a Vaadin application so we don't
-                // need to wait
-                "    return true; \n"
-                + "  } \n"
+        String isVaadinBusy = "function isVaadinBusy() {\n"
+                + "  var connector = getVaadinConnector(window); \n"
                 + "  var clients = connector.clients; \n"
                 + "  if (clients) { \n"
-                + "    for ( var client in clients) { \n"
-                + "      if (clients[client].isActive()) { \n"
-                + "        return false; \n"
-                + "      } \n"
-                + "    } \n"
-                + "    return true; \n" + "  } else { \n" +
+                + "    for ( var client in clients) {\n"
+                + "      if (clients[client].isActive()) {\n"
+                + "        return true; \n" + "      } \n" + "    } \n"
+                + "    return false;\n" + "  } else {\n"
                 // A Vaadin connector was found so this is most likely a Vaadin
                 // application. Keep waiting.
-                "    return false; \n" + "  } \n" + "}, timeout);";
+                + "    return true;\n" + "  }\n" + "}\n";
+        // wait a maximum of 20s for vaadin to settle
+        String waitForVaadin = "var timeoutTime = new Date().getTime() + 20000;\n"
 
+                + "function waitForVaadin() {\n"
+                + "  if (isVaadinBusy()) {\n"
+                + "    if (new Date().getTime() < timeoutTime) {\n"
+                + "      setTimeout('waitForVaadin()', 300);\n"
+                + "    }\n"
+                + "  }\n"
+                + "}\n"
+
+                + "if (getVaadinConnector(window) != null) {\n"
+                + "  waitForVaadin();\n" + "}\n";
         JavascriptExecutor js = (JavascriptExecutor) actualDriver;
-        js.executeScript(getVaadinConnector + waitForVaadin);
+        js.executeScript(getVaadinConnector + isVaadinBusy + waitForVaadin);
     }
-
 }
