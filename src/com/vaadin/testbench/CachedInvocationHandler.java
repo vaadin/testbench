@@ -54,13 +54,18 @@ public class CachedInvocationHandler implements InvocationHandler {
      * @param methodName
      */
     private void waitForVaadinIfNecessary(String methodName) {
-        if ("getRemoteControlName".equals(methodName)
-                || "close".equals(methodName) || "quit".equals(methodName)) {
+        if (shouldNotWaitForVaadin(methodName)) {
             return;
         }
         if (proxyObject instanceof TestBenchDriver) {
             ((TestBenchDriver<?>) proxyObject).waitForVaadin();
         }
+    }
+
+    private boolean shouldNotWaitForVaadin(String methodName) {
+        return "navigate".equals(methodName)
+                || "getRemoteControlName".equals(methodName)
+                || "close".equals(methodName) || "quit".equals(methodName);
     }
 
     private boolean isMethodCached(Method method) {
