@@ -5,14 +5,13 @@ import org.openqa.selenium.internal.WrapsElement;
 
 import com.vaadin.testbench.commands.TestBenchElementCommands;
 
-public class TestBenchElement<WE extends WebElement> implements WrapsElement,
-        TestBenchElementCommands {
+public class TestBenchElement implements WrapsElement, TestBenchElementCommands {
     // private static final Logger LOGGER = Logger
     // .getLogger(TestBenchElement.class.getName());
 
-    private WE actualElement;
+    private WebElement actualElement;
 
-    protected TestBenchElement(WE element) {
+    protected TestBenchElement(WebElement element) {
         actualElement = element;
     }
 

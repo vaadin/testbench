@@ -21,12 +21,11 @@ import org.openqa.selenium.remote.Response;
 import com.google.common.collect.ImmutableMap;
 import com.vaadin.testbench.commands.TestBenchCommands;
 
-public class TestBenchDriver<WD extends WebDriver> implements WrapsDriver,
-        TestBenchCommands {
+public class TestBenchDriver implements WrapsDriver, TestBenchCommands {
     private static final Logger LOGGER = Logger.getLogger(TestBenchDriver.class
             .getName());
 
-    private WD actualDriver;
+    private WebDriver actualDriver;
 
     /**
      * Constructs a TestBenchDriver using the provided web driver for the actual
@@ -34,7 +33,7 @@ public class TestBenchDriver<WD extends WebDriver> implements WrapsDriver,
      * 
      * @param webDriver
      */
-    protected TestBenchDriver(WD webDriver) {
+    protected TestBenchDriver(WebDriver webDriver) {
         actualDriver = webDriver;
     }
 
@@ -229,39 +228,21 @@ public class TestBenchDriver<WD extends WebDriver> implements WrapsDriver,
      */
     @Override
     public void waitForVaadin() {
-        String getVaadinConnector = "function getVaadinConnector(wnd) {\n"
-                + "  if (wnd.wrappedJSObject) { \n"
-                + "    wnd = wnd.wrappedJSObject; \n" + "  } \n"
-                + "  var connector = null; \n" + "  if (wnd.itmill) { \n"
-                + "    connector = wnd.itmill; \n"
-                + "  } else if (wnd.vaadin) { \n"
-                + "    connector = wnd.vaadin; \n" + "  } \n"
-                + "  return connector; \n" + "} \n";
-        String isVaadinBusy = "function isVaadinBusy() {\n"
-                + "  var connector = getVaadinConnector(window); \n"
-                + "  var clients = connector.clients; \n"
-                + "  if (clients) { \n"
-                + "    for ( var client in clients) {\n"
-                + "      if (clients[client].isActive()) {\n"
-                + "        return true; \n" + "      } \n" + "    } \n"
-                + "    return false;\n" + "  } else {\n"
+        String isVaadinFinished = "if (window.vaadin == null) {\n"
+                + "  return true;\n" + "}\n"
+                + "var clients = window.vaadin.clients;\n"
+                + "if (clients) { \n" + "  for (var client in clients) { \n"
+                + "    if (clients[client].isActive()) {\n"
+                + "      return false;\n" + "      }\n" + "    } \n"
+                + "  return true;\n" + "} else {\n"
                 // A Vaadin connector was found so this is most likely a Vaadin
                 // application. Keep waiting.
-                + "    return true;\n" + "  }\n" + "}\n";
-        // wait a maximum of 20s for vaadin to settle
-        String waitForVaadin = "var timeoutTime = new Date().getTime() + 20000;\n"
-
-                + "function waitForVaadin() {\n"
-                + "  if (isVaadinBusy()) {\n"
-                + "    if (new Date().getTime() < timeoutTime) {\n"
-                + "      setTimeout('waitForVaadin()', 300);\n"
-                + "    }\n"
-                + "  }\n"
-                + "}\n"
-
-                + "if (getVaadinConnector(window) != null) {\n"
-                + "  waitForVaadin();\n" + "}\n";
+                + "  return false;\n" + "}\n";
         JavascriptExecutor js = (JavascriptExecutor) actualDriver;
-        js.executeScript(getVaadinConnector + isVaadinBusy + waitForVaadin);
+        long timeoutTime = System.currentTimeMillis() + 20000;
+        boolean finished = false;
+        while (System.currentTimeMillis() < timeoutTime && !finished) {
+            finished = (Boolean) js.executeScript(isVaadinFinished);
+        }
     }
 }

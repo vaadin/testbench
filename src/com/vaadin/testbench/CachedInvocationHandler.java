@@ -58,7 +58,7 @@ public class CachedInvocationHandler implements InvocationHandler {
             return;
         }
         if (proxyObject instanceof TestBenchDriver) {
-            ((TestBenchDriver<?>) proxyObject).waitForVaadin();
+            ((TestBenchDriver) proxyObject).waitForVaadin();
         }
     }
 

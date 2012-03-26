@@ -10,30 +10,29 @@ import org.openqa.selenium.WebElement;
 /**
  */
 public class TestBench {
-    @SuppressWarnings("unchecked")
-    public static <WD extends WebDriver> WD createDriver(WD driver) {
+
+    public static WebDriver createDriver(WebDriver driver) {
         Set<Class<?>> allInterfaces = extractInterfaces(driver);
         allInterfaces.addAll(extractInterfaces(TestBenchDriver.class));
         final Class<?>[] allInterfacesArray = allInterfaces
                 .toArray(new Class<?>[allInterfaces.size()]);
-        Object proxy = Proxy.newProxyInstance(driver.getClass()
-                .getClassLoader(), allInterfacesArray,
-                new CachedInvocationHandler(new TestBenchDriver<WD>(driver),
-                        driver));
-        return (WD) proxy;
+        Object proxy = Proxy
+                .newProxyInstance(driver.getClass().getClassLoader(),
+                        allInterfacesArray, new CachedInvocationHandler(
+                                new TestBenchDriver(driver), driver));
+        return (WebDriver) proxy;
     }
 
-    @SuppressWarnings("unchecked")
-    public static <WE extends WebElement> WE createElement(WE webElement) {
+    public static WebElement createElement(WebElement webElement) {
         Set<Class<?>> allInterfaces = extractInterfaces(webElement);
         allInterfaces.addAll(extractInterfaces(TestBenchElement.class));
         final Class<?>[] allInterfacesArray = allInterfaces
                 .toArray(new Class<?>[allInterfaces.size()]);
         Object proxy = Proxy.newProxyInstance(webElement.getClass()
                 .getClassLoader(), allInterfacesArray,
-                new CachedInvocationHandler(
-                        new TestBenchElement<WE>(webElement), webElement));
-        return (WE) proxy;
+                new CachedInvocationHandler(new TestBenchElement(webElement),
+                        webElement));
+        return (WebElement) proxy;
     }
 
     private static Set<Class<?>> extractInterfaces(final Object object) {
