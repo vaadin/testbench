@@ -1,5 +1,8 @@
 package com.vaadin.testbench;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.InetAddress;
@@ -8,8 +11,13 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.imageio.ImageIO;
+
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -20,6 +28,7 @@ import org.openqa.selenium.remote.Response;
 
 import com.google.common.collect.ImmutableMap;
 import com.vaadin.testbench.commands.TestBenchCommands;
+import com.vaadin.testbench.screenshot.ImageComparison;
 
 public class TestBenchDriver implements WrapsDriver, TestBenchCommands {
     private static final Logger LOGGER = Logger.getLogger(TestBenchDriver.class
@@ -245,4 +254,25 @@ public class TestBenchDriver implements WrapsDriver, TestBenchCommands {
             finished = (Boolean) js.executeScript(isVaadinFinished);
         }
     }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.vaadin.testbench.commands.TestBenchCommands#screenshotEqualToReference
+     * (java.lang.String)
+     */
+    @Override
+    public boolean screenshotEqualToReference(String referenceId)
+            throws IOException {
+        BufferedImage screenshotImage = ImageIO.read(new ByteArrayInputStream(
+                ((TakesScreenshot) actualDriver)
+                        .getScreenshotAs(OutputType.BYTES)));
+        ImageComparison ic = new ImageComparison();
+        Dimension dim = new Dimension(screenshotImage.getWidth(),
+                screenshotImage.getHeight());
+        return ic.imageEqualToReference(screenshotImage, "shot",
+                Parameters.getScreenshotComparisonTolerance(), dim, true);
+    }
+
 }
