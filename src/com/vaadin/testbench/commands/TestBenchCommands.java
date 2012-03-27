@@ -35,5 +35,5 @@ public interface TestBenchCommands {
      * @return
      * @throws IOException
      */
-    boolean screenshotEqualToReference(String referenceId) throws IOException;
+    boolean compareScreen(String referenceId) throws IOException;
 }

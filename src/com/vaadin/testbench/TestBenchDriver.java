@@ -263,7 +263,7 @@ public class TestBenchDriver implements WrapsDriver, TestBenchCommands {
      * (java.lang.String)
      */
     @Override
-    public boolean screenshotEqualToReference(String referenceId)
+    public boolean compareScreen(String referenceId)
             throws IOException {
         BufferedImage screenshotImage = ImageIO.read(new ByteArrayInputStream(
                 ((TakesScreenshot) actualDriver)
