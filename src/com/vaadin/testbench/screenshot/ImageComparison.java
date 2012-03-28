@@ -84,8 +84,8 @@ public class ImageComparison {
             boolean sizesDiffer = !ImageUtil.imagesSameSize(referenceImage,
                     screenshotImage);
             if (sizesDiffer) {
-                List<BufferedImage> images = ImageUtil.cropToBeSameSize(Arrays
-                        .asList(referenceImage, screenshotImage));
+                List<BufferedImage> images = ImageUtil.cropToBeSameSize(
+                        referenceImage, screenshotImage);
                 referenceImage = images.get(0);
                 screenshotImage = images.get(1);
             }
@@ -515,7 +515,7 @@ public class ImageComparison {
         BufferedImage screenshotCopy = screenshotImage.getSubimage(areaX,
                 areaY, xSize, ySize);
         // avoid modifying original image
-        screenshotCopy = ImageUtil.duplicateImage(screenshotCopy);
+        screenshotCopy = ImageUtil.cloneImage(screenshotCopy);
 
         // copy pixels for cursor position from reference to screenshot
         for (int j = cursorStartY - areaY; j <= cursorEndY - areaY; ++j) {

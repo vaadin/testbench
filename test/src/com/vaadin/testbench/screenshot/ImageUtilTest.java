@@ -4,10 +4,10 @@
 package com.vaadin.testbench.screenshot;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
@@ -25,17 +25,18 @@ public class ImageUtilTest {
                 "screenshot1008x767.png");
         BufferedImage image2 = ImageLoader.loadImage(FOLDER + "/reference",
                 "reference738x624.png");
-        ImageUtil.cropToBeSameSize(Arrays.asList(image1, image2));
+        ImageUtil.cropToBeSameSize(image1, image2);
     }
 
     @Test
-    public void cropImagesToSameSizeReturnsNewImages() throws IOException {
+    public void cropImagesToSameSizeReturnsNewFirstImage() throws IOException {
         BufferedImage image1 = ImageLoader.loadImage(FOLDER,
                 "screenshot1008x767.png");
         BufferedImage image2 = ImageLoader.loadImage(FOLDER + "/reference",
                 "reference738x624.png");
-        List<BufferedImage> images = ImageUtil.cropToBeSameSize(Arrays.asList(
-                image1, image2));
+        List<BufferedImage> images = ImageUtil.cropToBeSameSize(image1, image2);
+        assertFalse(image1.equals(images.get(0)));
+        assertEquals(image2, images.get(1));
     }
 
     @Test
@@ -45,23 +46,11 @@ public class ImageUtilTest {
                 "screenshot1008x767.png");
         BufferedImage image2 = ImageLoader.loadImage(FOLDER + "/reference",
                 "reference738x624.png");
-        List<BufferedImage> images = ImageUtil.cropToBeSameSize(Arrays.asList(
-                image1, image2));
+        List<BufferedImage> images = ImageUtil.cropToBeSameSize(image1, image2);
         image1 = images.get(0);
         image2 = images.get(1);
         assertEquals(image1.getHeight(), image2.getHeight());
         assertEquals(image1.getWidth(), image2.getWidth());
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void cropImagesToSameSizeDoesntAcceptListOfOne() {
-        ImageUtil.cropToBeSameSize(Arrays.asList(dummyImage()));
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void cropImagesToSameSizeDoesntAcceptListOfThree() {
-        ImageUtil.cropToBeSameSize(Arrays.asList(dummyImage(), dummyImage(),
-                dummyImage()));
     }
 
     @Test
@@ -71,15 +60,21 @@ public class ImageUtilTest {
                 "screenshot1008x767.png");
         BufferedImage image2 = ImageLoader.loadImage(FOLDER + "/reference",
                 "reference738x624.png");
-        List<BufferedImage> images = ImageUtil.cropToBeSameSize(Arrays.asList(
-                image1, image2));
+        List<BufferedImage> images = ImageUtil.cropToBeSameSize(image1, image2);
         // image2 should remain unchanged, since it is smaller than image1 and
         // should not be cropped
         assertEquals(image2, images.get(1));
     }
 
-    private BufferedImage dummyImage() {
-        return new BufferedImage(1, 1, BufferedImage.TYPE_3BYTE_BGR);
+    @Test
+    public void cropImagesToSameSize_bothImagesAlreadySameSize_doesNothing()
+            throws IOException {
+        BufferedImage image1 = ImageLoader.loadImage(FOLDER,
+                "16x16-screenshot.png");
+        BufferedImage image2 = ImageLoader.loadImage(FOLDER,
+                "16x16-reference.png");
+        List<BufferedImage> images = ImageUtil.cropToBeSameSize(image1, image2);
+        assertEquals(image1, images.get(0));
+        assertEquals(image2, images.get(1));
     }
-
 }

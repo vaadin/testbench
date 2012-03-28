@@ -69,20 +69,17 @@ public class ImageUtil {
      * Resize images to be same size. The size is determined by the minimum
      * height and minimum width of the images.
      * 
-     * @param images
-     *            a list of two images.
+     * @param image1
+     *            an image.
+     * @param image2
+     *            an image.
      * @return a list containing two images with the same dimensions
      */
-    public static List<BufferedImage> cropToBeSameSize(
-            List<BufferedImage> images) {
-        if (images.size() != 2) {
-            throw new IllegalArgumentException(
-                    "the images list must contain exactly two images");
-        }
-        BufferedImage image1 = images.get(0);
-        BufferedImage image2 = images.get(1);
+    public static List<BufferedImage> cropToBeSameSize(BufferedImage image1,
+            BufferedImage image2) {
+
         if (imagesSameSize(image1, image2)) {
-            return images;
+            return Arrays.asList(image1, image2);
         }
 
         int minHeight = Math.min(image1.getHeight(), image2.getHeight());
@@ -112,16 +109,6 @@ public class ImageUtil {
     }
 
     /**
-     * Returns the size of the image as a human readable string.
-     * 
-     * @param image
-     * @return
-     */
-    public static String getSizeAsString(BufferedImage image) {
-        return image.getWidth() + "x" + image.getHeight();
-    }
-
-    /**
      * Returns the 16x16 RGB block starting at (x,y) from the given image
      * 
      * @param image
@@ -143,7 +130,7 @@ public class ImageUtil {
      *            The image to copy
      * @return A copy of sourceImage
      */
-    public static BufferedImage duplicateImage(BufferedImage sourceImage) {
+    public static BufferedImage cloneImage(BufferedImage sourceImage) {
         // This method could likely be optimized but the gain is probably small
         int w = sourceImage.getWidth();
         int h = sourceImage.getHeight();
