@@ -13,7 +13,7 @@ public class Parameters {
     // Screenshot related parameters
     public static final String SCREENSHOT_DIRECTORY = SCREENSHOT_PACKAGE
             + "directory";
-    private static final String CAPTURE_SCREENSHOT_ON_FAILURE = SCREENSHOT_PACKAGE
+    public static final String CAPTURE_SCREENSHOT_ON_FAILURE = SCREENSHOT_PACKAGE
             + ".onfail";
     public static final String SCREENSHOT_SOFT_FAIL = BASE_PACKAGE
             + "screenshot.softfail";
@@ -31,7 +31,6 @@ public class Parameters {
             + "retry.delay";
 
     // Other parameters
-    public static final String BROWSER_STRING = BASE_PACKAGE + "browsers";
     public static final String REMOTE_CONTROL_HOST_NAME = BASE_PACKAGE
             + "tester.host";
     public static final String DEPLOYMENT_URL = BASE_PACKAGE + "deployment.url";
@@ -131,15 +130,6 @@ public class Parameters {
     // --- end retry test ---
     public static String getFileEncoding() {
         return System.getProperty(TEST_FILE_ENCODING);
-    }
-
-    public static String[] getBrowsers() {
-        String browserString = System.getProperty(BROWSER_STRING);
-        if (browserString == null) {
-            return null;
-        }
-
-        return browserString.split(",");
     }
 
     public static boolean hasParameterFile() {
