@@ -1,5 +1,6 @@
 package com.vaadin.testbench;
 
+import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.expect;
@@ -18,6 +19,7 @@ import java.util.Set;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriver.Navigation;
@@ -32,13 +34,14 @@ public class TestBenchDriverTest {
 
     @Test
     public void testTestBenchDriverIsAWebDriver() {
-        WebDriver driver = TestBench.createDriver(createNiceMock(WebDriver.class));
+        WebDriver driver = TestBench
+                .createDriver(createNiceMock(WebDriver.class));
         assertTrue(driver instanceof WebDriver);
     }
 
     @Test
     public void testTestBenchDriverActsAsProxy() {
-        WebDriver mockDriver = createMock(WebDriver.class);
+        WebDriver mockDriver = createMock(FirefoxDriver.class);
         mockDriver.close();
         expectLastCall().once();
         WebElement mockElement = createNiceMock(WebElement.class);
@@ -59,6 +62,10 @@ public class TestBenchDriverTest {
         expect(mockDriver.navigate()).andReturn(mockNavigation);
         mockDriver.quit();
         expectLastCall().once();
+        expect(
+                ((JavascriptExecutor) mockDriver)
+                        .executeScript(anyObject(String.class))).andStubReturn(
+                true);
         TargetLocator mockTargetLocator = createNiceMock(TargetLocator.class);
         expect(mockDriver.switchTo()).andReturn(mockTargetLocator);
         replay(mockDriver);
@@ -83,7 +90,7 @@ public class TestBenchDriverTest {
         verify(mockDriver);
     }
 
-    @Ignore
+    @Ignore("This opens a web browser window, so we (currently) shouldn't try to run it in any CI environment")
     @Test
     public void testAugmentedDriver() {
         WebDriver driver = TestBench.createDriver(new FirefoxDriver());
@@ -93,7 +100,8 @@ public class TestBenchDriverTest {
 
     @Test
     public void canSetTestName() {
-        WebDriver driver = TestBench.createDriver(createNiceMock(WebDriver.class));
+        WebDriver driver = TestBench
+                .createDriver(createNiceMock(WebDriver.class));
         TestBenchCommands tbDriver = (TestBenchCommands) driver;
         tbDriver.setTestName("foo");
     }

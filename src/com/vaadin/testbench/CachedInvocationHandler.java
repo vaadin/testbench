@@ -2,7 +2,9 @@ package com.vaadin.testbench;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 import com.vaadin.testbench.commands.TestBenchCommands;
 
@@ -62,10 +64,12 @@ public class CachedInvocationHandler implements InvocationHandler {
         }
     }
 
+    private static final List<String> methodsNotNeedingWaitForVaadin = Arrays
+            .asList("close", "getRemoteControlName", "navigate", "quit",
+                    "setTestName");
+
     private boolean shouldNotWaitForVaadin(String methodName) {
-        return "navigate".equals(methodName)
-                || "getRemoteControlName".equals(methodName)
-                || "close".equals(methodName) || "quit".equals(methodName);
+        return methodsNotNeedingWaitForVaadin.contains(methodName);
     }
 
     private boolean isMethodCached(Method method) {
