@@ -1,4 +1,4 @@
-package com.vaadin.testbench.util;
+package com.vaadin.testbench.screenshot;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
@@ -194,8 +194,9 @@ public class ImageComparisonTest {
     @Test(expected = AssertionFailedError.class)
     public void canCompareReferenceSmallerThanScreenshot() throws IOException {
         ImageComparison ic = new ImageComparison();
-        ic.compareStringImage(ImageLoader.loadImageToString(FOLDER,
-                "screenshot1008x767.png"), "reference738x624", 1, null, false);
+        ic.imageEqualToReference(
+                ImageLoader.loadImage(FOLDER, "screenshot1008x767.png"),
+                "reference738x624", 1, null, false);
     }
 
     private void testFullCompareImages(String referenceFilename,

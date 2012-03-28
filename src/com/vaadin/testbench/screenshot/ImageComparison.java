@@ -23,7 +23,6 @@ import org.apache.commons.codec.binary.Base64;
 import org.openqa.selenium.Dimension;
 
 import com.vaadin.testbench.Parameters;
-import com.vaadin.testbench.util.ErrorBlock;
 
 /**
  * Class with features for comparing 2 images.

@@ -1,4 +1,4 @@
-package com.vaadin.testbench.util;
+package com.vaadin.testbench.screenshot;
 
 /**
  * Class for holding position and size of a error found during image comparison

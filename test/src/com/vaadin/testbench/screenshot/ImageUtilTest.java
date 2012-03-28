@@ -1,7 +1,7 @@
 /* 
 @ITMillApache2LicenseForJavaFiles@
  */
-package com.vaadin.testbench.util;
+package com.vaadin.testbench.screenshot;
 
 import static org.junit.Assert.assertEquals;
 
