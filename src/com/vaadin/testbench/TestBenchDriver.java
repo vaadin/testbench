@@ -263,8 +263,7 @@ public class TestBenchDriver implements WrapsDriver, TestBenchCommands {
      * (java.lang.String)
      */
     @Override
-    public boolean compareScreen(String referenceId)
-            throws IOException {
+    public boolean compareScreen(String referenceId) throws IOException {
         BufferedImage screenshotImage = ImageIO.read(new ByteArrayInputStream(
                 ((TakesScreenshot) actualDriver)
                         .getScreenshotAs(OutputType.BYTES)));
@@ -272,7 +271,8 @@ public class TestBenchDriver implements WrapsDriver, TestBenchCommands {
         Dimension dim = new Dimension(screenshotImage.getWidth(),
                 screenshotImage.getHeight());
         return ic.imageEqualToReference(screenshotImage, "shot",
-                Parameters.getScreenshotComparisonTolerance(), dim, true);
+                Parameters.getScreenshotComparisonTolerance(), dim,
+                Parameters.isCaptureScreenshotOnFailure());
     }
 
 }
