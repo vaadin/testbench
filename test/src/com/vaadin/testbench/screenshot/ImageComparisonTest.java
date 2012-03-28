@@ -241,12 +241,12 @@ public class ImageComparisonTest {
 
     @Test
     public void blocksCalculation() {
-        assertEquals(0, ImageComparisonUtil.getBlocks(0));
-        assertEquals(1, ImageComparisonUtil.getBlocks(1));
-        assertEquals(1, ImageComparisonUtil.getBlocks(15));
-        assertEquals(1, ImageComparisonUtil.getBlocks(16));
-        assertEquals(2, ImageComparisonUtil.getBlocks(17));
-        assertEquals(2, ImageComparisonUtil.getBlocks(31));
-        assertEquals(2, ImageComparisonUtil.getBlocks(32));
+        assertEquals(0, ImageComparisonUtil.getNrBlocks(0));
+        assertEquals(1, ImageComparisonUtil.getNrBlocks(1));
+        assertEquals(1, ImageComparisonUtil.getNrBlocks(15));
+        assertEquals(1, ImageComparisonUtil.getNrBlocks(16));
+        assertEquals(2, ImageComparisonUtil.getNrBlocks(17));
+        assertEquals(2, ImageComparisonUtil.getNrBlocks(31));
+        assertEquals(2, ImageComparisonUtil.getNrBlocks(32));
     }
 }

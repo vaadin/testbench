@@ -4,22 +4,18 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.zip.GZIPOutputStream;
 
 import javax.imageio.ImageIO;
 
 import junit.framework.Assert;
 
-import org.apache.commons.codec.binary.Base64;
 import org.openqa.selenium.Dimension;
 
 import com.vaadin.testbench.Parameters;
@@ -93,8 +89,8 @@ public class ImageComparison {
             int imageWidth = referenceImage.getWidth();
             int imageHeight = referenceImage.getHeight();
 
-            int xBlocks = ImageComparisonUtil.getBlocks(imageWidth);
-            int yBlocks = ImageComparisonUtil.getBlocks(imageHeight);
+            int xBlocks = ImageComparisonUtil.getNrBlocks(imageWidth);
+            int yBlocks = ImageComparisonUtil.getNrBlocks(imageHeight);
             boolean[][] falseBlocks = new boolean[xBlocks][yBlocks];
             boolean imagesEqual = compareImage(falseBlocks, referenceImage,
                     screenshotImage, errorTolerance);
@@ -180,9 +176,9 @@ public class ImageComparison {
          * reference image
          */
         if (writeScreenshots) {
-            int xBlocks = ImageComparisonUtil.getBlocks(primaryReferenceImage
+            int xBlocks = ImageComparisonUtil.getNrBlocks(primaryReferenceImage
                     .getWidth());
-            int yBlocks = ImageComparisonUtil.getBlocks(primaryReferenceImage
+            int yBlocks = ImageComparisonUtil.getNrBlocks(primaryReferenceImage
                     .getHeight());
             createErrorImageAndHTML(referenceFileId, screenshotImage,
                     primaryReferenceImage, primaryReferenceFalseBlocks,
@@ -225,8 +221,10 @@ public class ImageComparison {
 
     public boolean compareImages(BufferedImage referenceImage,
             BufferedImage screenshotImage, double errorTolerance) {
-        int xBlocks = ImageComparisonUtil.getBlocks(referenceImage.getWidth());
-        int yBlocks = ImageComparisonUtil.getBlocks(referenceImage.getHeight());
+        int xBlocks = ImageComparisonUtil
+                .getNrBlocks(referenceImage.getWidth());
+        int yBlocks = ImageComparisonUtil.getNrBlocks(referenceImage
+                .getHeight());
         boolean[][] falseBlocks = new boolean[xBlocks][yBlocks];
 
         boolean imagesEqual = compareImage(falseBlocks, referenceImage,
@@ -254,8 +252,8 @@ public class ImageComparison {
         int imageWidth = referenceImage.getWidth();
         int imageHeight = referenceImage.getHeight();
 
-        int xBlocks = ImageComparisonUtil.getBlocks(imageWidth);
-        int yBlocks = ImageComparisonUtil.getBlocks(imageHeight);
+        int xBlocks = ImageComparisonUtil.getNrBlocks(imageWidth);
+        int yBlocks = ImageComparisonUtil.getNrBlocks(imageHeight);
 
         // iterate picture in macroblocks of 16x16 (x,y) (0-> m-16, 0->
         // n-16)
@@ -795,41 +793,4 @@ public class ImageComparison {
             e.printStackTrace();
         }
     }
-
-    public ReferenceImageRepresentation getReferenceImageRepresentation(
-            String referenceFileId) throws IOException {
-        List<String> referenceFileNames = ImageFileUtil
-                .getReferenceImageFileNames(referenceFileId + ".png");
-        ReferenceImageRepresentation ref = new ReferenceImageRepresentation();
-        for (String referenceFileName : referenceFileNames) {
-            BufferedImage referenceImage = ImageFileUtil
-                    .readReferenceImage(referenceFileName);
-            ref.addRepresentation(ImageComparisonUtil
-                    .generateImageHash(referenceImage));
-        }
-
-        if (Parameters.isDebug()) {
-            System.out.println("Generated hashes for "
-                    + referenceFileNames.size() + " reference image(s)");
-        }
-        return ref;
-    }
-
-    public String generateHashFromReferenceFiles(String referenceFileId) {
-        try {
-            ReferenceImageRepresentation representation = getReferenceImageRepresentation(referenceFileId);
-            ByteArrayOutputStream dest = new ByteArrayOutputStream();
-            ObjectOutputStream out = new ObjectOutputStream(
-                    new GZIPOutputStream(dest));
-            out.writeObject(representation);
-            // out.flush();
-            out.close();
-            return new String(Base64.encodeBase64(dest.toByteArray()));
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        return "";
-    }
-
 }
