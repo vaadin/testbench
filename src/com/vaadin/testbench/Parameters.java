@@ -15,10 +15,6 @@ public class Parameters {
             + "directory";
     public static final String CAPTURE_SCREENSHOT_ON_FAILURE = SCREENSHOT_PACKAGE
             + ".onfail";
-    public static final String SCREENSHOT_SOFT_FAIL = BASE_PACKAGE
-            + "screenshot.softfail";
-    public static final String SCREENSHOT_REFERENCE_DEBUG = SCREENSHOT_PACKAGE
-            + "reference.debug";
     public static final String SCREENSHOT_RESOLUTION = SCREENSHOT_PACKAGE
             + "resolution";
     public static final String SCREENSHOT_COMPARISON_TOLERANCE = SCREENSHOT_PACKAGE
@@ -41,10 +37,6 @@ public class Parameters {
 
     public static boolean isDebug() {
         return ("true".equalsIgnoreCase(System.getProperty(DEBUG)));
-    }
-
-    public static boolean isScreenshotSoftFail() {
-        return ("true".equals(System.getProperty(SCREENSHOT_SOFT_FAIL)));
     }
 
     public static boolean isScreenshotComparisonCursorDetection() {
