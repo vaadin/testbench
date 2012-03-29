@@ -6,8 +6,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import com.vaadin.testbench.commands.TestBenchCommands;
-
 public class CachedInvocationHandler implements InvocationHandler {
 
     private HashMap<Method, Method> proxiedMethodCache = new HashMap<Method, Method>();
@@ -33,8 +31,8 @@ public class CachedInvocationHandler implements InvocationHandler {
         if (!isMethodCached(method)) {
             Method actualMethod = null;
             try {
-                // Is it a method in the TestBenchCommands interface?
-                actualMethod = TestBenchCommands.class.getMethod(
+                // Is it a method in the TestBenchDriver?
+                actualMethod = TestBenchDriver.class.getMethod(
                         method.getName(), method.getParameterTypes());
                 implementedMethodCache.put(method, actualMethod);
             } catch (Exception e) {
@@ -65,8 +63,8 @@ public class CachedInvocationHandler implements InvocationHandler {
     }
 
     private static final List<String> methodsNotNeedingWaitForVaadin = Arrays
-            .asList("close", "getRemoteControlName", "navigate", "quit",
-                    "setTestName");
+            .asList("close", "getRemoteControlName", "getWrappedDriver",
+                    "navigate", "quit", "setTestName");
 
     private boolean shouldNotWaitForVaadin(String methodName) {
         return methodsNotNeedingWaitForVaadin.contains(methodName);
