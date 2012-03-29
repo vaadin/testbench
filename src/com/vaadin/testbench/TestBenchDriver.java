@@ -34,7 +34,7 @@ public class TestBenchDriver implements WrapsDriver, TestBenchCommands {
     private static final Logger LOGGER = Logger.getLogger(TestBenchDriver.class
             .getName());
 
-    private WebDriver actualDriver;
+    private final WebDriver actualDriver;
 
     /**
      * Constructs a TestBenchDriver using the provided web driver for the actual
