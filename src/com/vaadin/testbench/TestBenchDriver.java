@@ -1,38 +1,21 @@
 package com.vaadin.testbench;
 
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.Map;
-import java.util.logging.Level;
+import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
 
-import javax.imageio.ImageIO;
-
-import org.openqa.selenium.Dimension;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.internal.WrapsDriver;
-import org.openqa.selenium.remote.HttpCommandExecutor;
-import org.openqa.selenium.remote.RemoteWebDriver;
-import org.openqa.selenium.remote.Response;
 
-import com.google.common.collect.ImmutableMap;
-import com.vaadin.testbench.commands.TestBenchCommands;
-import com.vaadin.testbench.screenshot.ImageComparison;
+import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 
-public class TestBenchDriver implements WrapsDriver, TestBenchCommands {
-    private static final Logger LOGGER = Logger.getLogger(TestBenchDriver.class
-            .getName());
+public class TestBenchDriver extends TestBenchCommandExecutor implements
+        WebDriver, WrapsDriver {
+    private static Logger getLogger() {
+        return Logger.getLogger(TestBenchDriver.class.getName());
+    }
 
     private final WebDriver actualDriver;
 
@@ -43,6 +26,7 @@ public class TestBenchDriver implements WrapsDriver, TestBenchCommands {
      * @param webDriver
      */
     protected TestBenchDriver(WebDriver webDriver) {
+        super(webDriver);
         actualDriver = webDriver;
     }
 
@@ -56,223 +40,136 @@ public class TestBenchDriver implements WrapsDriver, TestBenchCommands {
         return actualDriver;
     }
 
-    protected Response execute(String driverCommand, Map<String, ?> parameters) {
-        try {
-            Method exec = RemoteWebDriver.class.getMethod("execute",
-                    String.class, Map.class);
-            exec.setAccessible(true);
-            return (Response) exec.invoke(actualDriver, driverCommand,
-                    parameters);
-        } catch (SecurityException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IllegalArgumentException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        return null;
+    // ----------------- WebDriver methods for convenience.
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.openqa.selenium.WebDriver#close()
+     */
+    @Override
+    public void close() {
+        actualDriver.close();
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * com.vaadin.testbench.commands.TestBenchCommands#setTestName(java.lang
-     * .String)
+     * @see org.openqa.selenium.WebDriver#findElement(org.openqa.selenium.By)
      */
     @Override
-    public void setTestName(String testName) {
-        if (actualDriver instanceof RemoteWebDriver) {
-            execute(TestBenchCommands.SET_TEST_NAME,
-                    ImmutableMap.of("name", testName));
-        } else {
-            LOGGER.info(String.format("Currently running \"%s\"", testName));
-        }
+    public WebElement findElement(By arg0) {
+        return actualDriver.findElement(arg0);
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * com.vaadin.testbench.commands.TestBenchCommands#getRemoteControlName()
+     * @see org.openqa.selenium.WebDriver#findElements(org.openqa.selenium.By)
      */
     @Override
-    public String getRemoteControlName() {
-        InetAddress ia = null;
-        try {
-            if (actualDriver instanceof RemoteWebDriver) {
-                RemoteWebDriver rwd = (RemoteWebDriver) actualDriver;
-                if (rwd.getCommandExecutor() instanceof HttpCommandExecutor) {
-                    ia = InetAddress.getByName(((HttpCommandExecutor) rwd
-                            .getCommandExecutor()).getAddressOfRemoteServer()
-                            .getHost());
-                }
-            } else {
-                ia = InetAddress.getLocalHost();
-            }
-        } catch (UnknownHostException e) {
-            LOGGER.log(Level.WARNING, "Could not find name of remote control",
-                    e);
-            return "unknown";
-        }
-
-        if (ia != null) {
-            return String.format("%s (%s)", ia.getCanonicalHostName(),
-                    ia.getHostAddress());
-        }
-        return null;
+    public List<WebElement> findElements(By arg0) {
+        return actualDriver.findElements(arg0);
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * com.vaadin.testbench.commands.TestBenchElementCommands#expectDialog()
+     * @see org.openqa.selenium.WebDriver#get(java.lang.String)
      */
     @Override
-    public void expectDialog(WebElement element, String value) {
-        String[] val = value.split(":");
-        Actions actions = new Actions(actualDriver);
-        // Press modifier key(s)
-        if (val.length > 1) {
-            if (val[1].contains("shift")) {
-                actions = actions.keyDown(Keys.SHIFT);
-            }
-            if (val[1].contains("ctrl")) {
-                actions = actions.keyDown(Keys.CONTROL);
-            }
-            if (val[1].contains("alt")) {
-                actions = actions.keyDown(Keys.ALT);
-            }
-        }
-        actions = actions.click(element);
-        // Release modifier key(s)
-        if (val.length > 1) {
-            if (val[1].contains("shift")) {
-                actions = actions.keyUp(Keys.SHIFT);
-            }
-            if (val[1].contains("ctrl")) {
-                actions = actions.keyUp(Keys.CONTROL);
-            }
-            if (val[1].contains("alt")) {
-                actions = actions.keyUp(Keys.ALT);
-            }
-        }
-        actions.perform();
+    public void get(String arg0) {
+        actualDriver.get(arg0);
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * com.vaadin.testbench.commands.TestBenchCommands#closeNotification(org
-     * .openqa.selenium.WebElement)
+     * @see org.openqa.selenium.WebDriver#getCurrentUrl()
      */
     @Override
-    public boolean closeNotification(WebElement element) {
-        element.click();
-        // Wait for 5000 ms or until the element is no longer visible.
-        int times = 0;
-        while (element.isDisplayed() || times > 25) {
-            try {
-                Thread.sleep(200);
-            } catch (InterruptedException e) {
-            }
-            times++;
-        }
-        return element.isDisplayed();
+    public String getCurrentUrl() {
+        return actualDriver.getCurrentUrl();
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see com.vaadin.testbench.commands.TestBenchElementCommands#showTooltip()
+     * @see org.openqa.selenium.WebDriver#getPageSource()
      */
     @Override
-    public void showTooltip(WebElement element) {
-        new Actions(actualDriver).moveToElement(element).perform();
+    public String getPageSource() {
+        return actualDriver.getPageSource();
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * com.vaadin.testbench.commands.TestBenchCommands#scroll(org.openqa.selenium
-     * .WebElement, int)
+     * @see org.openqa.selenium.WebDriver#getTitle()
      */
     @Override
-    public void scroll(WebElement element, int scrollTop) {
-        JavascriptExecutor js = (JavascriptExecutor) actualDriver;
-        js.executeScript("arguments[0].setScrollTop(arguments[1])", element,
-                scrollTop);
+    public String getTitle() {
+        return actualDriver.getTitle();
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * com.vaadin.testbench.commands.TestBenchCommands#scrollLeft(org.openqa
-     * .selenium.WebElement, int)
+     * @see org.openqa.selenium.WebDriver#getWindowHandle()
      */
     @Override
-    public void scrollLeft(WebElement element, int scrollLeft) {
-        JavascriptExecutor js = (JavascriptExecutor) actualDriver;
-        js.executeScript("arguments[0].setScrollLeft(arguments[1])", element,
-                scrollLeft);
+    public String getWindowHandle() {
+        return actualDriver.getWindowHandle();
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see com.vaadin.testbench.commands.TestBenchCommands#waitForVaadin()
+     * @see org.openqa.selenium.WebDriver#getWindowHandles()
      */
     @Override
-    public void waitForVaadin() {
-        String isVaadinFinished = "if (window.vaadin == null) {\n"
-                + "  return true;\n" + "}\n"
-                + "var clients = window.vaadin.clients;\n"
-                + "if (clients) { \n" + "  for (var client in clients) { \n"
-                + "    if (clients[client].isActive()) {\n"
-                + "      return false;\n" + "      }\n" + "    } \n"
-                + "  return true;\n" + "} else {\n"
-                // A Vaadin connector was found so this is most likely a Vaadin
-                // application. Keep waiting.
-                + "  return false;\n" + "}\n";
-        JavascriptExecutor js = (JavascriptExecutor) actualDriver;
-        long timeoutTime = System.currentTimeMillis() + 20000;
-        boolean finished = false;
-        while (System.currentTimeMillis() < timeoutTime && !finished) {
-            finished = (Boolean) js.executeScript(isVaadinFinished);
-        }
+    public Set<String> getWindowHandles() {
+        return actualDriver.getWindowHandles();
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * com.vaadin.testbench.commands.TestBenchCommands#screenshotEqualToReference
-     * (java.lang.String)
+     * @see org.openqa.selenium.WebDriver#manage()
      */
     @Override
-    public boolean compareScreen(String referenceId) throws IOException {
-        BufferedImage screenshotImage = ImageIO.read(new ByteArrayInputStream(
-                ((TakesScreenshot) actualDriver)
-                        .getScreenshotAs(OutputType.BYTES)));
-        ImageComparison ic = new ImageComparison();
-        Dimension dim = new Dimension(screenshotImage.getWidth(),
-                screenshotImage.getHeight());
-        return ic.imageEqualToReference(screenshotImage, "shot",
-                Parameters.getScreenshotComparisonTolerance(), dim,
-                Parameters.isCaptureScreenshotOnFailure());
+    public Options manage() {
+        return actualDriver.manage();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.openqa.selenium.WebDriver#navigate()
+     */
+    @Override
+    public Navigation navigate() {
+        return actualDriver.navigate();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.openqa.selenium.WebDriver#quit()
+     */
+    @Override
+    public void quit() {
+        actualDriver.quit();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.openqa.selenium.WebDriver#switchTo()
+     */
+    @Override
+    public TargetLocator switchTo() {
+        return actualDriver.switchTo();
     }
 
 }

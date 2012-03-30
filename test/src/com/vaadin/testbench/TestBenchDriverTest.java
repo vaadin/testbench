@@ -2,7 +2,6 @@ package com.vaadin.testbench;
 
 import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.createMockBuilder;
 import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
@@ -29,10 +28,6 @@ import org.openqa.selenium.WebDriver.TargetLocator;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.internal.WrapsDriver;
-import org.openqa.selenium.remote.RemoteWebDriver;
-
-import com.google.common.collect.ImmutableMap;
-import com.vaadin.testbench.commands.TestBenchCommands;
 
 public class TestBenchDriverTest {
 
@@ -103,27 +98,10 @@ public class TestBenchDriverTest {
     }
 
     @Test
-    public void setTestName_executesOnRemote() {
-        WebDriver driver = createNiceMock(RemoteWebDriver.class);
-        TestBenchDriver tbDriver = createMockBuilder(TestBenchDriver.class)
-                .addMockedMethod("execute").withConstructor(driver)
-                .createMock();
-        expect(
-                tbDriver.execute(TestBenchCommands.SET_TEST_NAME,
-                        ImmutableMap.of("name", "foo"))).andReturn(null).once();
-        replay(tbDriver);
-
-        tbDriver.setTestName("foo");
-
-        verify(tbDriver);
-    }
-
-    @Test
     public void getWrappedDriver_returnsTheWrappedDriver() {
         WebDriver driverMock = createNiceMock(WebDriver.class);
         WebDriver driver = TestBench.createDriver(driverMock);
         WebDriver wrappedDriver = ((WrapsDriver) driver).getWrappedDriver();
         assertEquals(driverMock, wrappedDriver);
     }
-
 }
