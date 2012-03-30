@@ -2,6 +2,7 @@ package com.vaadin.testbench.commands;
 
 import java.io.IOException;
 
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 
 /**
@@ -13,7 +14,7 @@ public interface TestBenchCommands {
 
     String getRemoteControlName();
 
-    void expectDialog(WebElement element, String value);
+    void expectDialog(WebElement element, Keys... modifierKeysPressed);
 
     boolean closeNotification(WebElement element);
 

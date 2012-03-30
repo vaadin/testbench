@@ -128,33 +128,16 @@ public class TestBenchCommandExecutor implements TestBenchCommands {
      * com.vaadin.testbench.commands.TestBenchElementCommands#expectDialog()
      */
     @Override
-    public void expectDialog(WebElement element, String value) {
-        String[] val = value.split(":");
+    public void expectDialog(WebElement element, Keys... modifierKeysPressed) {
         Actions actions = new Actions(actualDriver);
         // Press modifier key(s)
-        if (val.length > 1) {
-            if (val[1].contains("shift")) {
-                actions = actions.keyDown(Keys.SHIFT);
-            }
-            if (val[1].contains("ctrl")) {
-                actions = actions.keyDown(Keys.CONTROL);
-            }
-            if (val[1].contains("alt")) {
-                actions = actions.keyDown(Keys.ALT);
-            }
+        for (Keys key : modifierKeysPressed) {
+            actions = actions.keyDown(key);
         }
         actions = actions.click(element);
         // Release modifier key(s)
-        if (val.length > 1) {
-            if (val[1].contains("shift")) {
-                actions = actions.keyUp(Keys.SHIFT);
-            }
-            if (val[1].contains("ctrl")) {
-                actions = actions.keyUp(Keys.CONTROL);
-            }
-            if (val[1].contains("alt")) {
-                actions = actions.keyUp(Keys.ALT);
-            }
+        for (Keys key : modifierKeysPressed) {
+            actions = actions.keyUp(key);
         }
         actions.perform();
     }
