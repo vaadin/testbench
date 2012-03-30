@@ -196,7 +196,7 @@ public class ImageComparisonTest {
         ImageComparison ic = new ImageComparison();
         ic.imageEqualToReference(
                 ImageLoader.loadImage(FOLDER, "screenshot1008x767.png"),
-                "reference738x624", 1, null, false);
+                "reference738x624", 1, false);
     }
 
     private void testFullCompareImages(String referenceFilename,
