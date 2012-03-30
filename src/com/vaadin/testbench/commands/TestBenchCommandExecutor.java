@@ -13,7 +13,6 @@ import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 
-import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.OutputType;
@@ -39,9 +38,12 @@ public class TestBenchCommandExecutor implements TestBenchCommands {
     }
 
     private final WebDriver actualDriver;
+    private final ImageComparison imageComparison;
 
-    public TestBenchCommandExecutor(WebDriver actualDriver) {
+    public TestBenchCommandExecutor(WebDriver actualDriver,
+            ImageComparison imageComparison) {
         this.actualDriver = actualDriver;
+        this.imageComparison = imageComparison;
     }
 
     protected Response execute(String driverCommand, Map<String, ?> parameters) {
@@ -236,15 +238,20 @@ public class TestBenchCommandExecutor implements TestBenchCommands {
      */
     @Override
     public boolean compareScreen(String referenceId) throws IOException {
-        BufferedImage screenshotImage = ImageIO.read(new ByteArrayInputStream(
-                ((TakesScreenshot) actualDriver)
-                        .getScreenshotAs(OutputType.BYTES)));
-        ImageComparison ic = new ImageComparison();
-        Dimension dim = new Dimension(screenshotImage.getWidth(),
-                screenshotImage.getHeight());
-        return ic.imageEqualToReference(screenshotImage, "shot",
-                Parameters.getScreenshotComparisonTolerance(), dim,
-                Parameters.isCaptureScreenshotOnFailure());
+        for (int times = 0; times < Parameters.getMaxRetries(); times++) {
+            BufferedImage screenshotImage = ImageIO
+                    .read(new ByteArrayInputStream(
+                            ((TakesScreenshot) actualDriver)
+                                    .getScreenshotAs(OutputType.BYTES)));
+            boolean equal = imageComparison.imageEqualToReference(
+                    screenshotImage, referenceId,
+                    Parameters.getScreenshotComparisonTolerance(),
+                    Parameters.isCaptureScreenshotOnFailure());
+            if (equal) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

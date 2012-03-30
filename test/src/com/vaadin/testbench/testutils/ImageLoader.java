@@ -8,7 +8,9 @@ import static junit.framework.Assert.assertTrue;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
 
@@ -38,4 +40,16 @@ public class ImageLoader {
         return ImageIO.read(imgFile);
     }
 
+    public static byte[] loadImageBytes(String folder, String filename)
+            throws IOException {
+        URL imgUrl = ImageLoader.class.getClassLoader().getResource(
+                folder + "/" + filename);
+        assertNotNull("Missing reference " + filename, imgUrl);
+        File imgFile = new File(imgUrl.getPath());
+        assertTrue(imgFile.exists());
+
+        byte[] bytes = new byte[(int) imgFile.length()];
+        new DataInputStream(new FileInputStream(imgFile)).readFully(bytes);
+        return bytes;
+    }
 }

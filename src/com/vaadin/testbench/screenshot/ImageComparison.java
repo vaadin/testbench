@@ -16,8 +16,6 @@ import javax.imageio.ImageIO;
 
 import junit.framework.Assert;
 
-import org.openqa.selenium.Dimension;
-
 import com.vaadin.testbench.Parameters;
 
 /**
@@ -36,8 +34,6 @@ public class ImageComparison {
      *            0.025 == 2.5%)
      * @param referenceFileId
      *            File id for this image without .png extension
-     * @param dimensions
-     *            Browser window dimensions
      * @param writeScreenshots
      *            true if error images and diff files should be written to disk,
      *            false otherwise
@@ -45,7 +41,7 @@ public class ImageComparison {
      */
     public boolean imageEqualToReference(BufferedImage screenshotImage,
             String referenceFileId, double errorTolerance,
-            Dimension dimensions, boolean writeScreenshots) {
+            boolean writeScreenshots) {
         ImageFileUtil.createScreenshotDirectoriesIfNeeded();
 
         List<String> referenceFileNames = ImageFileUtil
