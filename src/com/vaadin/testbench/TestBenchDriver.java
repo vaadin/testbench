@@ -11,6 +11,7 @@ import org.openqa.selenium.internal.WrapsDriver;
 
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.screenshot.ImageComparison;
+import com.vaadin.testbench.screenshot.ReferenceNameGenerator;
 
 public class TestBenchDriver extends TestBenchCommandExecutor implements
         WebDriver, WrapsDriver {
@@ -27,7 +28,7 @@ public class TestBenchDriver extends TestBenchCommandExecutor implements
      * @param webDriver
      */
     protected TestBenchDriver(WebDriver webDriver) {
-        super(webDriver, new ImageComparison());
+        super(webDriver, new ImageComparison(), new ReferenceNameGenerator());
         actualDriver = webDriver;
     }
 

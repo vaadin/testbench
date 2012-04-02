@@ -16,6 +16,8 @@ import java.io.IOException;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.openqa.selenium.Capabilities;
+import org.openqa.selenium.HasCapabilities;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
@@ -26,6 +28,7 @@ import com.google.common.collect.ImmutableMap;
 import com.vaadin.testbench.Parameters;
 import com.vaadin.testbench.screenshot.ImageComparison;
 import com.vaadin.testbench.screenshot.ImageComparisonTest;
+import com.vaadin.testbench.screenshot.ReferenceNameGenerator;
 import com.vaadin.testbench.testutils.ImageLoader;
 
 public class TestBenchCommandExecutorTest {
@@ -41,7 +44,8 @@ public class TestBenchCommandExecutorTest {
     public void testTestBenchCommandExecutorIsATestBenchCommands() {
         TestBenchCommandExecutor tbce = new TestBenchCommandExecutor(
                 createNiceMock(WebDriver.class),
-                createNiceMock(ImageComparison.class));
+                createNiceMock(ImageComparison.class),
+                createNiceMock(ReferenceNameGenerator.class));
         assertTrue(tbce instanceof TestBenchCommands);
     }
 
@@ -51,7 +55,9 @@ public class TestBenchCommandExecutorTest {
                 TestBenchCommandExecutor.class)
                 .addMockedMethod("execute")
                 .withConstructor(createNiceMock(RemoteWebDriver.class),
-                        createNiceMock(ImageComparison.class)).createMock();
+                        createNiceMock(ImageComparison.class),
+                        createNiceMock(ReferenceNameGenerator.class))
+                .createMock();
         expect(
                 tbce.execute(TestBenchCommands.SET_TEST_NAME,
                         ImmutableMap.of("name", "foo"))).andReturn(null).once();
@@ -65,73 +71,49 @@ public class TestBenchCommandExecutorTest {
     @Test
     public void testCompareScreen_takesScreenshotAndComparesImages()
             throws IOException {
-        WebDriver driver = createMock(FirefoxDriver.class);
-        byte[] screenshotBytes = ImageLoader.loadImageBytes(IMG_FOLDER,
-                "cursor-bottom-edge-off.png");
-        expect(((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES))
-                .andReturn(screenshotBytes);
-        ImageComparison icMock = createMock(ImageComparison.class);
-        expect(
-                icMock.imageEqualToReference(isA(BufferedImage.class),
-                        eq("foo"),
-                        eq(Parameters.getScreenshotComparisonTolerance()),
-                        eq(Parameters.isCaptureScreenshotOnFailure())))
-                .andReturn(true);
-        replay(driver, icMock);
+        WebDriver driver = mockScreenshotDriver(1);
+        ReferenceNameGenerator rngMock = mockReferenceNumberGenerator("foo",
+                "foo_bar_11");
+        ImageComparison icMock = mockImageComparison(1, "foo_bar_11", true);
+        replay(driver, icMock, rngMock);
 
         TestBenchCommandExecutor tbce = new TestBenchCommandExecutor(driver,
-                icMock);
+                icMock, rngMock);
         assertTrue(tbce.compareScreen("foo"));
 
-        verify(driver, icMock);
+        verify(driver, icMock, rngMock);
     }
 
     @Test
     public void testCompareScreen_defaultNrOfRetriesImagesEqual_succeedsTheFirstTime()
             throws IOException {
-        WebDriver driver = createMock(FirefoxDriver.class);
-        byte[] screenshotBytes = ImageLoader.loadImageBytes(IMG_FOLDER,
-                "cursor-bottom-edge-off.png");
-        expect(((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES))
-                .andReturn(screenshotBytes).once();
-        ImageComparison icMock = createMock(ImageComparison.class);
-        expect(
-                icMock.imageEqualToReference(isA(BufferedImage.class),
-                        eq("foo"),
-                        eq(Parameters.getScreenshotComparisonTolerance()),
-                        eq(Parameters.isCaptureScreenshotOnFailure())))
-                .andReturn(true).once();
-        replay(driver, icMock);
+        WebDriver driver = mockScreenshotDriver(1);
+        ReferenceNameGenerator rngMock = mockReferenceNumberGenerator("foo",
+                "foo_bar_11");
+        ImageComparison icMock = mockImageComparison(1, "foo_bar_11", true);
+        replay(driver, icMock, rngMock);
 
         TestBenchCommandExecutor tbce = new TestBenchCommandExecutor(driver,
-                icMock);
+                icMock, rngMock);
         assertTrue(tbce.compareScreen("foo"));
 
-        verify(driver, icMock);
+        verify(driver, icMock, rngMock);
     }
 
     @Test
     public void testCompareScreen_defaultNrOfRetriesImagesDiffer_retriesTwice()
             throws IOException {
-        WebDriver driver = createMock(FirefoxDriver.class);
-        byte[] screenshotBytes = ImageLoader.loadImageBytes(IMG_FOLDER,
-                "cursor-bottom-edge-off.png");
-        expect(((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES))
-                .andReturn(screenshotBytes).times(2);
-        ImageComparison icMock = createMock(ImageComparison.class);
-        expect(
-                icMock.imageEqualToReference(isA(BufferedImage.class),
-                        eq("foo"),
-                        eq(Parameters.getScreenshotComparisonTolerance()),
-                        eq(Parameters.isCaptureScreenshotOnFailure())))
-                .andReturn(false).times(2);
-        replay(driver, icMock);
+        WebDriver driver = mockScreenshotDriver(2);
+        ReferenceNameGenerator rngMock = mockReferenceNumberGenerator("foo",
+                "foo_bar_11");
+        ImageComparison icMock = mockImageComparison(2, "foo_bar_11", false);
+        replay(driver, icMock, rngMock);
 
         TestBenchCommandExecutor tbce = new TestBenchCommandExecutor(driver,
-                icMock);
+                icMock, rngMock);
         assertFalse(tbce.compareScreen("foo"));
 
-        verify(driver, icMock);
+        verify(driver, icMock, rngMock);
     }
 
     @Test
@@ -139,28 +121,52 @@ public class TestBenchCommandExecutorTest {
             throws IOException {
         System.setProperty(Parameters.SCREENSHOT_MAX_RETRIES, "4");
         try {
-            WebDriver driver = createMock(FirefoxDriver.class);
-            byte[] screenshotBytes = ImageLoader.loadImageBytes(IMG_FOLDER,
-                    "cursor-bottom-edge-off.png");
-            expect(((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES))
-                    .andReturn(screenshotBytes).times(4);
-            ImageComparison icMock = createMock(ImageComparison.class);
-            expect(
-                    icMock.imageEqualToReference(isA(BufferedImage.class),
-                            eq("foo"),
-                            eq(Parameters.getScreenshotComparisonTolerance()),
-                            eq(Parameters.isCaptureScreenshotOnFailure())))
-                    .andReturn(false).times(4);
-            replay(driver, icMock);
+            WebDriver driver = mockScreenshotDriver(4);
+            ReferenceNameGenerator rngMock = mockReferenceNumberGenerator(
+                    "foo", "foo_bar_11");
+            ImageComparison icMock = mockImageComparison(4, "foo_bar_11", false);
+            replay(driver, icMock, rngMock);
 
             TestBenchCommandExecutor tbce = new TestBenchCommandExecutor(
-                    driver, icMock);
+                    driver, icMock, rngMock);
             assertFalse(tbce.compareScreen("foo"));
 
-            verify(driver, icMock);
+            verify(driver, icMock, rngMock);
         } finally {
             System.clearProperty(Parameters.SCREENSHOT_MAX_RETRIES);
         }
+    }
+
+    private WebDriver mockScreenshotDriver(int nrScreenshotsGrabbed)
+            throws IOException {
+        WebDriver driver = createMock(FirefoxDriver.class);
+        byte[] screenshotBytes = ImageLoader.loadImageBytes(IMG_FOLDER,
+                "cursor-bottom-edge-off.png");
+        expect(((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES))
+                .andReturn(screenshotBytes).times(nrScreenshotsGrabbed);
+        expect(((HasCapabilities) driver).getCapabilities()).andReturn(
+                createNiceMock(Capabilities.class)).once();
+        return driver;
+    }
+
+    private ReferenceNameGenerator mockReferenceNumberGenerator(String refId,
+            String expected) {
+        ReferenceNameGenerator rngMock = createMock(ReferenceNameGenerator.class);
+        expect(rngMock.generateName(eq(refId), isA(Capabilities.class)))
+                .andReturn(expected);
+        return rngMock;
+    }
+
+    private ImageComparison mockImageComparison(int timesCalled,
+            String referenceName, boolean expected) {
+        ImageComparison icMock = createMock(ImageComparison.class);
+        expect(
+                icMock.imageEqualToReference(isA(BufferedImage.class),
+                        eq(referenceName),
+                        eq(Parameters.getScreenshotComparisonTolerance()),
+                        eq(Parameters.isCaptureScreenshotOnFailure())))
+                .andReturn(expected).times(timesCalled);
+        return icMock;
     }
 
 }

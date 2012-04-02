@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 
+import org.openqa.selenium.HasCapabilities;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.OutputType;
@@ -27,6 +28,7 @@ import org.openqa.selenium.remote.Response;
 import com.google.common.collect.ImmutableMap;
 import com.vaadin.testbench.Parameters;
 import com.vaadin.testbench.screenshot.ImageComparison;
+import com.vaadin.testbench.screenshot.ReferenceNameGenerator;
 
 /**
  * @author jonatan
@@ -39,11 +41,14 @@ public class TestBenchCommandExecutor implements TestBenchCommands {
 
     private final WebDriver actualDriver;
     private final ImageComparison imageComparison;
+    private final ReferenceNameGenerator referenceNameGenerator;
 
     public TestBenchCommandExecutor(WebDriver actualDriver,
-            ImageComparison imageComparison) {
+            ImageComparison imageComparison,
+            ReferenceNameGenerator referenceNameGenerator) {
         this.actualDriver = actualDriver;
         this.imageComparison = imageComparison;
+        this.referenceNameGenerator = referenceNameGenerator;
     }
 
     protected Response execute(String driverCommand, Map<String, ?> parameters) {
@@ -238,13 +243,16 @@ public class TestBenchCommandExecutor implements TestBenchCommands {
      */
     @Override
     public boolean compareScreen(String referenceId) throws IOException {
+        String referenceName = referenceNameGenerator.generateName(referenceId,
+                ((HasCapabilities) actualDriver).getCapabilities());
+
         for (int times = 0; times < Parameters.getMaxRetries(); times++) {
             BufferedImage screenshotImage = ImageIO
                     .read(new ByteArrayInputStream(
                             ((TakesScreenshot) actualDriver)
                                     .getScreenshotAs(OutputType.BYTES)));
             boolean equal = imageComparison.imageEqualToReference(
-                    screenshotImage, referenceId,
+                    screenshotImage, referenceName,
                     Parameters.getScreenshotComparisonTolerance(),
                     Parameters.isCaptureScreenshotOnFailure());
             if (equal) {
