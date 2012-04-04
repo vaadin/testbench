@@ -1,5 +1,6 @@
 package com.vaadin.testbench;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -61,7 +62,7 @@ public class TestBenchDriver extends TestBenchCommandExecutor implements
      */
     @Override
     public WebElement findElement(By arg0) {
-        return actualDriver.findElement(arg0);
+        return TestBench.createElement(actualDriver.findElement(arg0), this);
     }
 
     /*
@@ -71,7 +72,12 @@ public class TestBenchDriver extends TestBenchCommandExecutor implements
      */
     @Override
     public List<WebElement> findElements(By arg0) {
-        return actualDriver.findElements(arg0);
+        List<WebElement> elements = actualDriver.findElements(arg0);
+        List<WebElement> tbElements = new ArrayList<WebElement>(elements.size());
+        for (WebElement e : elements) {
+            tbElements.add(TestBench.createElement(e, this));
+        }
+        return tbElements;
     }
 
     /*

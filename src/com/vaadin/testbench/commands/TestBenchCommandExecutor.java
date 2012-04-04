@@ -216,16 +216,25 @@ public class TestBenchCommandExecutor implements TestBenchCommands {
      */
     @Override
     public void waitForVaadin() {
-        String isVaadinFinished = "if (window.vaadin == null) {\n"
-                + "  return true;\n" + "}\n"
-                + "var clients = window.vaadin.clients;\n"
-                + "if (clients) { \n" + "  for (var client in clients) { \n"
-                + "    if (clients[client].isActive()) {\n"
-                + "      return false;\n" + "      }\n" + "    } \n"
-                + "  return true;\n" + "} else {\n"
-                // A Vaadin connector was found so this is most likely a Vaadin
-                // application. Keep waiting.
-                + "  return false;\n" + "}\n";
+        // @formatter:off
+        String isVaadinFinished =
+                "if (window.vaadin == null) {" + 
+                "  return true;" +
+                "}" +
+                "var clients = window.vaadin.clients;" + 
+                "if (clients) {" +
+                "  for (var client in clients) {" + 
+                "    if (clients[client].isActive()) {" + 
+                "      return false;" +
+                "    }" +
+                "  }" + 
+                "  return true;" +
+                "} else {" + 
+                   // A Vaadin connector was found so this is most likely a Vaadin
+                   // application. Keep waiting.
+                "  return false;" +
+                "}";
+        // @formatter:on
         JavascriptExecutor js = (JavascriptExecutor) actualDriver;
         long timeoutTime = System.currentTimeMillis() + 20000;
         boolean finished = false;

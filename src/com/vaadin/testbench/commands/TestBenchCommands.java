@@ -5,9 +5,10 @@ import java.io.IOException;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 
+
 /**
  */
-public interface TestBenchCommands {
+public interface TestBenchCommands extends CanWaitForVaadin {
     static String SET_TEST_NAME = "setTestName";
 
     void setTestName(String testName);
@@ -23,8 +24,6 @@ public interface TestBenchCommands {
     void scroll(WebElement element, int scrollTop);
 
     void scrollLeft(WebElement element, int scrollLeft);
-
-    void waitForVaadin();
 
     /**
      * Tests that a screen shot is equal to the specified reference image. The
