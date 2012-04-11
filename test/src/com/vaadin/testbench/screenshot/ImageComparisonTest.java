@@ -2,6 +2,7 @@ package com.vaadin.testbench.screenshot;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -249,4 +250,55 @@ public class ImageComparisonTest {
         assertEquals(2, ImageComparisonUtil.getNrBlocks(31));
         assertEquals(2, ImageComparisonUtil.getNrBlocks(32));
     }
+
+    @Test
+    public void testImageEqualToReference_equalImages_returnsNull()
+            throws IOException {
+        ImageComparison ic = new ImageComparison();
+        BufferedImage screenshotImage = ImageLoader.loadImage(FOLDER,
+                "16x16-reference.png");
+        BufferedImage referenceImage = ImageLoader.loadImage(FOLDER,
+                "16x16-reference.png");
+        assertTrue(ic.imageEqualToReference(screenshotImage, referenceImage,
+                "16x16-reference.png", 0, false));
+    }
+
+    @Test
+    public void testImageEqualToReference_differingImages_returnsNotNull()
+            throws IOException {
+        ImageComparison ic = new ImageComparison();
+        BufferedImage screenshotImage = ImageLoader.loadImage(FOLDER,
+                "16x16-screenshot.png");
+        BufferedImage referenceImage = ImageLoader.loadImage(FOLDER,
+                "16x16-reference.png");
+        assertFalse(ic.imageEqualToReference(screenshotImage, referenceImage,
+                "16x16-reference.png", 0, false));
+    }
+
+    @Test
+    public void testImageEqualToReference_equalImagesDifferentSize_false()
+            throws IOException {
+        ImageComparison ic = new ImageComparison();
+        BufferedImage screenshotImage = ImageLoader.loadImage(FOLDER,
+                "17x17-similar-26.png");
+        BufferedImage referenceImage = ImageLoader.loadImage(FOLDER,
+                "16x16-reference.png");
+        assertFalse(ic.imageEqualToReference(screenshotImage, referenceImage,
+                "16x16-reference.png", 0, false));
+    }
+
+    @Test
+    public void testImageEqualToReference_cursorError_true() throws IOException {
+        System.setProperty(Parameters.SCREENSHOT_COMPARISON_CURSOR_DETECTION,
+                "true");
+
+        ImageComparison ic = new ImageComparison();
+        BufferedImage screenshotImage = ImageLoader.loadImage(FOLDER,
+                "cursor-on.png");
+        BufferedImage referenceImage = ImageLoader.loadImage(FOLDER,
+                "cursor-off.png");
+        assertTrue(ic.imageEqualToReference(screenshotImage, referenceImage,
+                "cursor-off.png", 0, false));
+    }
+
 }

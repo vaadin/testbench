@@ -2,6 +2,7 @@ package com.vaadin.testbench.commands;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -265,6 +266,44 @@ public class TestBenchCommandExecutor implements TestBenchCommands {
                     Parameters.getScreenshotComparisonTolerance(),
                     Parameters.isCaptureScreenshotOnFailure());
             if (equal) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.vaadin.testbench.commands.TestBenchCommands#compareScreen(java.io
+     * .File)
+     */
+    @Override
+    public boolean compareScreen(File reference) throws IOException {
+        BufferedImage image = ImageIO.read(reference);
+        return compareScreen(image, reference.getName());
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.vaadin.testbench.commands.TestBenchCommands#compareScreen(java.awt
+     * .image.BufferedImage)
+     */
+    @Override
+    public boolean compareScreen(BufferedImage reference, String referenceName)
+            throws IOException {
+        for (int times = 0; times < Parameters.getMaxRetries(); times++) {
+            BufferedImage screenshotImage = ImageIO
+                    .read(new ByteArrayInputStream(
+                            ((TakesScreenshot) actualDriver)
+                                    .getScreenshotAs(OutputType.BYTES)));
+            if (imageComparison.imageEqualToReference(screenshotImage,
+                    reference, referenceName,
+                    Parameters.getScreenshotComparisonTolerance(),
+                    Parameters.isCaptureScreenshotOnFailure())) {
                 return true;
             }
         }

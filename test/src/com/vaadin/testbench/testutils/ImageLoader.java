@@ -31,21 +31,23 @@ public class ImageLoader {
 
     public static BufferedImage loadImage(String folder, String filename)
             throws IOException {
-        URL imgUrl = ImageLoader.class.getClassLoader().getResource(
-                folder + "/" + filename);
-        assertNotNull("Missing reference " + filename, imgUrl);
-        File imgFile = new File(imgUrl.getPath());
+        File imgFile = getImageFile(folder, filename);
         assertTrue(imgFile.exists());
 
         return ImageIO.read(imgFile);
     }
 
-    public static byte[] loadImageBytes(String folder, String filename)
-            throws IOException {
+    public static File getImageFile(String folder, String filename) {
         URL imgUrl = ImageLoader.class.getClassLoader().getResource(
                 folder + "/" + filename);
         assertNotNull("Missing reference " + filename, imgUrl);
         File imgFile = new File(imgUrl.getPath());
+        return imgFile;
+    }
+
+    public static byte[] loadImageBytes(String folder, String filename)
+            throws IOException {
+        File imgFile = getImageFile(folder, filename);
         assertTrue(imgFile.exists());
 
         byte[] bytes = new byte[(int) imgFile.length()];
