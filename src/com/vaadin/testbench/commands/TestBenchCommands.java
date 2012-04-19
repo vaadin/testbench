@@ -4,6 +4,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
+import junit.framework.AssertionFailedError;
+
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 
@@ -36,8 +38,10 @@ public interface TestBenchCommands extends CanWaitForVaadin {
      *            the ID of the reference image
      * @return
      * @throws IOException
+     * @throws AssertionFailedError
      */
-    boolean compareScreen(String referenceId) throws IOException;
+    boolean compareScreen(String referenceId) throws IOException,
+            AssertionFailedError;
 
     /**
      * Tests that a screen shot is equal to the specified reference image. The
@@ -49,8 +53,10 @@ public interface TestBenchCommands extends CanWaitForVaadin {
      *            the reference image file
      * @return
      * @throws IOException
+     * @throws AssertionFailedError
      */
-    boolean compareScreen(File reference) throws IOException;
+    boolean compareScreen(File reference) throws IOException,
+            AssertionFailedError;
 
     /**
      * Tests that a screen shot is equal to the specified reference image. The
@@ -65,7 +71,16 @@ public interface TestBenchCommands extends CanWaitForVaadin {
      *            error files.
      * @return
      * @throws IOException
+     * @throws AssertionFailedError
      */
     boolean compareScreen(BufferedImage reference, String referenceName)
-            throws IOException;
+            throws IOException, AssertionFailedError;
+
+    long timeSpentRenderingLastRequest();
+
+    long totalTimeSpentRendering();
+
+    long timeSpentServicingLastRequest();
+
+    long totalTimeSpentServicingRequests();
 }

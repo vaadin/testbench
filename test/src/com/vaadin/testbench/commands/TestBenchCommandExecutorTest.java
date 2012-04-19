@@ -8,12 +8,14 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.isA;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -269,5 +271,67 @@ public class TestBenchCommandExecutorTest {
                         eq(Parameters.isCaptureScreenshotOnFailure())))
                 .andReturn(expected).times(timesCalled);
         return icMock;
+    }
+
+    @Test
+    public void testProvidesPerformanceData() {
+        TestBenchCommandExecutor tbce = new TestBenchCommandExecutor(
+                createNiceMock(WebDriver.class), null, null);
+        long milliseconds = 0;
+        milliseconds = tbce.timeSpentRenderingLastRequest();
+        assertEquals(-1, milliseconds);
+        milliseconds = tbce.totalTimeSpentRendering();
+        assertEquals(-1, milliseconds);
+        milliseconds = tbce.timeSpentServicingLastRequest();
+        assertEquals(-1, milliseconds);
+        milliseconds = tbce.totalTimeSpentServicingRequests();
+        assertEquals(-1, milliseconds);
+    }
+
+    @Test
+    public void testTimeSpentRenderingLastRequest_callsJavaScript_returnsValueFetchedFromVaadinClient() {
+        FirefoxDriver jse = mockJSExecutor();
+        replay(jse);
+
+        TestBenchCommandExecutor tbce = new TestBenchCommandExecutor(jse, null,
+                null);
+        long milliseconds = tbce.timeSpentRenderingLastRequest();
+        assertEquals(1000, milliseconds);
+
+        verify(jse);
+    }
+
+    @Test
+    public void testTotalTimeSpentRendering() {
+        FirefoxDriver jse = mockJSExecutor();
+        replay(jse);
+
+        TestBenchCommandExecutor tbce = new TestBenchCommandExecutor(jse, null,
+                null);
+        long milliseconds = tbce.totalTimeSpentRendering();
+        assertEquals(2000, milliseconds);
+
+        verify(jse);
+    }
+
+    @Test
+    public void testTotalTimeSpentServicingRequests() {
+        FirefoxDriver jse = mockJSExecutor();
+        replay(jse);
+
+        TestBenchCommandExecutor tbce = new TestBenchCommandExecutor(jse, null,
+                null);
+        long milliseconds = tbce.totalTimeSpentServicingRequests();
+        assertEquals(3000, milliseconds);
+
+        verify(jse);
+    }
+
+    private FirefoxDriver mockJSExecutor() {
+        FirefoxDriver jse = createMock(FirefoxDriver.class);
+        expect(
+                jse.executeScript("return window.vaadin.clients.ROOT.getProfilingData()"))
+                .andReturn(Arrays.asList(1000L, 2000L, 3000L));
+        return jse;
     }
 }

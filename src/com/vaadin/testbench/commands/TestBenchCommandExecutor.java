@@ -7,12 +7,17 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.InetAddress;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.UnknownHostException;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
+
+import junit.framework.AssertionFailedError;
 
 import org.openqa.selenium.HasCapabilities;
 import org.openqa.selenium.JavascriptExecutor;
@@ -252,7 +257,8 @@ public class TestBenchCommandExecutor implements TestBenchCommands {
      * (java.lang.String)
      */
     @Override
-    public boolean compareScreen(String referenceId) throws IOException {
+    public boolean compareScreen(String referenceId) throws IOException,
+            AssertionFailedError {
         String referenceName = referenceNameGenerator.generateName(referenceId,
                 ((HasCapabilities) actualDriver).getCapabilities());
 
@@ -280,7 +286,8 @@ public class TestBenchCommandExecutor implements TestBenchCommands {
      * .File)
      */
     @Override
-    public boolean compareScreen(File reference) throws IOException {
+    public boolean compareScreen(File reference) throws IOException,
+            AssertionFailedError {
         BufferedImage image = ImageIO.read(reference);
         return compareScreen(image, reference.getName());
     }
@@ -294,7 +301,7 @@ public class TestBenchCommandExecutor implements TestBenchCommands {
      */
     @Override
     public boolean compareScreen(BufferedImage reference, String referenceName)
-            throws IOException {
+            throws IOException, AssertionFailedError {
         for (int times = 0; times < Parameters.getMaxRetries(); times++) {
             BufferedImage screenshotImage = ImageIO
                     .read(new ByteArrayInputStream(
@@ -310,4 +317,99 @@ public class TestBenchCommandExecutor implements TestBenchCommands {
         return false;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.vaadin.testbench.commands.TestBenchCommands#timeSpentRenderingLastRequest
+     * ()
+     */
+    @Override
+    public long timeSpentRenderingLastRequest() {
+        List<Long> timingValues = getTimingValues(false);
+        if (timingValues == null) {
+            return -1;
+        }
+        return timingValues.get(0);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.vaadin.testbench.commands.TestBenchCommands#totalTimeSpentRendering()
+     */
+    @Override
+    public long totalTimeSpentRendering() {
+        List<Long> timingValues = getTimingValues(false);
+        if (timingValues == null) {
+            return -1;
+        }
+        return timingValues.get(1);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.vaadin.testbench.commands.TestBenchCommands#timeSpentServicingLastRequest
+     * ()
+     */
+    @Override
+    public long timeSpentServicingLastRequest() {
+        List<Long> timingValues = getTimingValues(true);
+        if (timingValues == null) {
+            return -1;
+        }
+        return timingValues.get(3);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.vaadin.testbench.commands.TestBenchCommands#
+     * totalTimeSpentServicingRequests()
+     */
+    @Override
+    public long totalTimeSpentServicingRequests() {
+        List<Long> timingValues = getTimingValues(true);
+        if (timingValues == null) {
+            return -1;
+        }
+        return timingValues.get(2);
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<Long> getTimingValues(boolean forceSync) {
+        if (actualDriver instanceof JavascriptExecutor) {
+            try {
+                JavascriptExecutor jse = (JavascriptExecutor) actualDriver;
+                if (forceSync) {
+                    // Force sync to get the latest server-side timing data. The
+                    // server-side timing data is always one request behind.
+                    jse.executeScript("window.vaadin.forceSync()");
+                }
+                return (List<Long>) jse
+                        .executeScript("return window.vaadin.clients."
+                                + getAppId() + ".getProfilingData()");
+            } catch (URISyntaxException e) {
+                getLogger().log(Level.SEVERE,
+                        "The application URL seems to be invalid", e);
+            }
+        }
+        return null;
+    }
+
+    private String getAppId() throws URISyntaxException {
+        String appUrl = new URI(actualDriver.getCurrentUrl()).getPath();
+        if (appUrl.endsWith("/")) {
+            appUrl = appUrl.substring(0, appUrl.length() - 1);
+        }
+
+        String appId = appUrl;
+        if ("".equals(appUrl)) {
+            appId = "ROOT";
+        }
+        return appId.replaceAll("[^a-zA-Z0-9]", "");
+    }
 }
