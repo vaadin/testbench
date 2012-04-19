@@ -7,12 +7,11 @@
 	<!-- Load version from properties file. If not found, version is specified below. -->
     <property file="${build.properties.file}" />
 	
-	<property name="version.base" value="3.0.0.beta" />
+	<property name="version.base" value="3.0.0" />
 	<property name="manual.version" value="3.0"/>
 	        	
 	<tstamp />
-	<property name="timestamp" value="${DSTAMP}${TSTAMP}" />
-	<property name="testbench.version" value="${version.base}.development.${timestamp}" />
+	<property name="testbench.version" value="${version.base}" />
 	
     <!-- If not already set by the build system -->
     <property name="version" value="${testbench.version}" />
@@ -21,7 +20,7 @@
 
 	<echo>Version: ${version}</echo>
 		
-	<target name="testbench.jar">
+	<target name="testbench-standalone.jar">
 		<delete dir="result" failonerror="true" />
 
 		<mkdir dir="${output.dir}" />
@@ -33,7 +32,7 @@
 				</fileset>
 			</classpath>
 		</javac>
-		<jar jarfile="${output.dir}/vaadin-testbench-${version}.jar" compress="true">
+		<jar jarfile="${output.dir}/vaadin-testbench-standalone-${version}.jar" compress="true">
 			<manifest>
 				<attribute name="Main-Class" value="org.openqa.grid.selenium.GridLauncher" />
 			</manifest>
@@ -47,6 +46,33 @@
 			<zipfileset src="../lib/selenium-standalone.jar" />
 		</jar>
 	</target>
+	
+	<target name="testbench.jar">
+	     <delete dir="result" failonerror="true" />
+
+        <mkdir dir="${output.dir}" />
+        <mkdir dir="result/classes" />
+        <javac srcdir="../src" destdir="result/classes" debug="true" encoding="utf-8" target="1.5" source="1.5">
+            <classpath>
+                <fileset dir="../lib" id="libs">
+                    <include name="**/*.jar" />
+                </fileset>
+            </classpath>
+        </javac>
+        <jar jarfile="${output.dir}/vaadin-testbench-${version}.jar" compress="true">
+            <manifest>
+                <attribute name="Main-Class" value="org.openqa.grid.selenium.GridLauncher" />
+            </manifest>
+            <zipfileset dir="../src">
+                <include name="**/**.js" />
+            </zipfileset>
+            <zipfileset dir="result/classes">
+                <include name="**/**" />
+                <exclude name="**/test/**" />
+            </zipfileset>
+        </jar>
+    </target>
+
 	
     <!-- ================================================================== -->
     <!-- Documentation                                                      -->
@@ -98,7 +124,7 @@
 		<copy file="../testbench-recorder/extension/vaadin-testbench-recorder-${version}.xpi" todir="${output.dir}/vaadin-testbench-recorder" />
 	</target>
 
-	<target name="testbench-distribution-package" depends="testbench.jar,manual,testbench-recorder,run-tests,create-extension">
+	<target name="testbench-distribution-package" depends="testbench-standalone.jar,manual,testbench-recorder,run-tests,create-extension">
 		<property name="package.root" value="vaadin-testbench-${version}"/>
 		<property name="package.grid.root" value="vaadin-testbench-grid-${version}"/>
         <copy todir="${output.dir}">

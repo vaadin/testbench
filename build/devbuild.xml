@@ -4,6 +4,8 @@
 	<import file="build.xml" />
 	<tstamp />
 
+	<property name="testbench.version" value="${version.base}-SNAPSHOT" />
+
 	<property name="dev.test.dir" value="../tmp/vaadin-testbench-3.dev" />
 
 	<target name="build-and-deploy-to-dev-test-dir" depends="testbench.jar,testbench-recorder,create-extension">
