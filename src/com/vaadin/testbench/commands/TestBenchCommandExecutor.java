@@ -17,8 +17,6 @@ import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 
-import junit.framework.AssertionFailedError;
-
 import org.openqa.selenium.HasCapabilities;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
@@ -258,7 +256,7 @@ public class TestBenchCommandExecutor implements TestBenchCommands {
      */
     @Override
     public boolean compareScreen(String referenceId) throws IOException,
-            AssertionFailedError {
+            AssertionError {
         String referenceName = referenceNameGenerator.generateName(referenceId,
                 ((HasCapabilities) actualDriver).getCapabilities());
 
@@ -287,7 +285,7 @@ public class TestBenchCommandExecutor implements TestBenchCommands {
      */
     @Override
     public boolean compareScreen(File reference) throws IOException,
-            AssertionFailedError {
+            AssertionError {
         BufferedImage image = ImageIO.read(reference);
         return compareScreen(image, reference.getName());
     }
@@ -301,7 +299,7 @@ public class TestBenchCommandExecutor implements TestBenchCommands {
      */
     @Override
     public boolean compareScreen(BufferedImage reference, String referenceName)
-            throws IOException, AssertionFailedError {
+            throws IOException, AssertionError {
         for (int times = 0; times < Parameters.getMaxRetries(); times++) {
             BufferedImage screenshotImage = ImageIO
                     .read(new ByteArrayInputStream(
