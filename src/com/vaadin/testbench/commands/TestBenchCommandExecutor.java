@@ -35,8 +35,7 @@ import com.vaadin.testbench.screenshot.ImageComparison;
 import com.vaadin.testbench.screenshot.ReferenceNameGenerator;
 
 /**
- * @author jonatan
- * 
+ * @author Jonatan Kronqvist / Vaadin Ltd
  */
 public class TestBenchCommandExecutor implements TestBenchCommands {
     private static Logger getLogger() {
@@ -409,5 +408,43 @@ public class TestBenchCommandExecutor implements TestBenchCommands {
             appId = "ROOT";
         }
         return appId.replaceAll("[^a-zA-Z0-9]", "");
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.vaadin.testbench.commands.TestBenchCommands#findElementByVaadinSelector
+     * (java.lang.String)
+     */
+    @Override
+    public WebElement findElementByVaadinSelector(String selector) {
+        // @formatter:off
+        String findByVaadinScript =
+                  "var clients = window.vaadin.clients;"
+                + "for (client in clients) {"
+                + "  var element = clients[client].getElementByPath(arguments[0]);"
+                + "  if (element) {"
+                + "    return element;"
+                + "  }"
+                + "}"
+                + "return null;";
+        // @formatter:on
+        if (actualDriver instanceof JavascriptExecutor) {
+            JavascriptExecutor jse = (JavascriptExecutor) actualDriver;
+            // TODO: We should return a TB WebElement once the TB web
+            // element is not only an empty wrapper any more.
+            if (selector.contains("::")) {
+                String client = selector.substring(0, selector.indexOf("::"));
+                String path = selector.substring(selector.indexOf("::") + 2);
+                return (WebElement) jse.executeScript(
+                        "return window.vaadin.clients." + client
+                                + ".getElementByPath(arguments[0])", path);
+            } else {
+                return (WebElement) jse.executeScript(findByVaadinScript,
+                        selector);
+            }
+        }
+        return null;
     }
 }

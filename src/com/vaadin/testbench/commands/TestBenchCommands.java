@@ -80,4 +80,6 @@ public interface TestBenchCommands extends CanWaitForVaadin {
     long timeSpentServicingLastRequest();
 
     long totalTimeSpentServicingRequests();
+
+    WebElement findElementByVaadinSelector(String selector);
 }
