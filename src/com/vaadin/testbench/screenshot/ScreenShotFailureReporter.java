@@ -3,7 +3,6 @@ package com.vaadin.testbench.screenshot;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -11,8 +10,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
-
-import com.vaadin.testbench.Parameters;
 
 public class ScreenShotFailureReporter {
     private final BufferedImage referenceImage;
@@ -220,12 +217,6 @@ public class ScreenShotFailureReporter {
         String image = ImageUtil.encodeImageToBase64(screenshotImage);
         String ref_image = ImageUtil.encodeImageToBase64(referenceImage);
         try {
-            String directory = Parameters.getScreenshotDirectory();
-            if (!File.separator
-                    .equals(directory.charAt(directory.length() - 1))) {
-                directory = directory + File.separator;
-            }
-
             PrintWriter writer = new PrintWriter(
                     ImageFileUtil.getErrorScreenshotFile(fileId + ".html"));
             // Write head

@@ -24,7 +24,10 @@ public class ImageComparisonTest {
     @Before
     public void setup() {
         URL screenshotUrl = getClass().getClassLoader().getResource(FOLDER);
-        Parameters.setScreenshotDirectory(screenshotUrl.getPath());
+        Parameters.setScreenshotErrorDirectory(screenshotUrl.getPath()
+                + "/errors");
+        Parameters.setScreenshotReferenceDirectory(screenshotUrl.getPath()
+                + "/reference");
         Parameters.setScreenshotComparisonCursorDetection(false);
     }
 
@@ -56,10 +59,10 @@ public class ImageComparisonTest {
     @Test
     public void compareSimilarImagesWithCursorAndMinorDifferences()
             throws IOException {
-    	Parameters.setScreenshotComparisonCursorDetection(false);
+        Parameters.setScreenshotComparisonCursorDetection(false);
         testFullCompareImages("no-outline-cursor.png", "outline-no-cursor.png",
                 false, 0.025);
-    	Parameters.setScreenshotComparisonCursorDetection(true);
+        Parameters.setScreenshotComparisonCursorDetection(true);
         testFullCompareImages("no-outline-cursor.png", "outline-no-cursor.png",
                 true, 0.025);
     }
@@ -125,7 +128,7 @@ public class ImageComparisonTest {
 
     @Test
     public void compareCursorImagesFullWithCursorDetection() throws IOException {
-    	Parameters.setScreenshotComparisonCursorDetection(true);
+        Parameters.setScreenshotComparisonCursorDetection(true);
 
         testFullCompareImages("cursor-off.png", "cursor-on.png", true, 0.0);
 
@@ -144,10 +147,10 @@ public class ImageComparisonTest {
     @Test
     public void incorrectlyDetectedCursor() throws IOException {
         // Difference between cursor3-ref and cursor3-new is NOT a cursor
-    	Parameters.setScreenshotComparisonCursorDetection(false);
+        Parameters.setScreenshotComparisonCursorDetection(false);
         testFullCompareImages("cursor3-ref.png", "cursor3-new.png", false,
                 0.025);
-    	Parameters.setScreenshotComparisonCursorDetection(true);
+        Parameters.setScreenshotComparisonCursorDetection(true);
         testFullCompareImages("cursor3-ref.png", "cursor3-new.png", false,
                 0.025);
 
@@ -172,7 +175,7 @@ public class ImageComparisonTest {
 
     @Test
     public void cursorAtEdge() throws IOException {
-    	Parameters.setScreenshotComparisonCursorDetection(true);
+        Parameters.setScreenshotComparisonCursorDetection(true);
 
         testFullCompareImages("cursor-bottom-edge-off.png",
                 "cursor-bottom-edge-on.png", true, 0.0);
@@ -281,7 +284,7 @@ public class ImageComparisonTest {
 
     @Test
     public void testImageEqualToReference_cursorError_true() throws IOException {
-    	Parameters.setScreenshotComparisonCursorDetection(true);
+        Parameters.setScreenshotComparisonCursorDetection(true);
 
         ImageComparison ic = new ImageComparison();
         BufferedImage screenshotImage = ImageLoader.loadImage(FOLDER,
