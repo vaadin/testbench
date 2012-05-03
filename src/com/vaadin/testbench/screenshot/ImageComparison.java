@@ -90,6 +90,8 @@ public class ImageComparison {
     public boolean imageEqualToReference(BufferedImage screenshotImage,
             BufferedImage referenceImage, String referenceFileName,
             double errorTolerance, boolean writeScreenshots) {
+        ImageFileUtil.createScreenshotDirectoriesIfNeeded();
+
         ScreenShotFailureReporter failureReporter = compareToReference(
                 screenshotImage, referenceImage, errorTolerance,
                 writeScreenshots);
