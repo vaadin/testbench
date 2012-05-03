@@ -101,24 +101,28 @@ public class ImageFileUtil {
          * exist.
          */
         public void createScreenshotDirectoriesIfNeeded() {
-            // Check directories and create if needed
-            File dir = new File(getScreenshotReferenceDirectory());
-            if (!dir.exists()) {
-                dir.mkdir();
-            }
-            dir = new File(getScreenshotErrorDirectory());
-            if (!dir.exists()) {
-                dir.mkdir();
-            }
-
-            if (Parameters.isDebug()) {
-                dir = new File(getScreenshotErrorDirectory() + "diff");
+            if (getScreenshotReferenceDirectory() != null) {
+                // Check directories and create if needed
+                File dir = new File(getScreenshotReferenceDirectory());
                 if (!dir.exists()) {
-                    dir.mkdir();
+                    dir.mkdirs();
                 }
-                dir = new File(getScreenshotErrorDirectory() + "logs");
+            }
+            if (getScreenshotErrorDirectory() != null) {
+                File dir = new File(getScreenshotErrorDirectory());
                 if (!dir.exists()) {
-                    dir.mkdir();
+                    dir.mkdirs();
+                }
+
+                if (Parameters.isDebug()) {
+                    dir = new File(getScreenshotErrorDirectory() + "diff");
+                    if (!dir.exists()) {
+                        dir.mkdir();
+                    }
+                    dir = new File(getScreenshotErrorDirectory() + "logs");
+                    if (!dir.exists()) {
+                        dir.mkdir();
+                    }
                 }
             }
         }
