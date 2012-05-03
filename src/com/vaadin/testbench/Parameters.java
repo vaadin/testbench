@@ -1,63 +1,41 @@
 package com.vaadin.testbench;
 
 public class Parameters {
+    private static boolean isDebug = false;
+    private static boolean isScreenshotComparisonCursorDetection = false;
+    private static String screenshotDirectory = null;
+    private static double screenshotComparisonTolerance = 0.25;
+    private static boolean isCaptureScreenshotOnFailure = true;
+    private static int maxScreenshotRetries = 2;
+    private static int screenshotRetryDelay = 500;
 
-    private static final String BASE_PACKAGE = "com.vaadin.testbench.";
-    private static final String SCREENSHOT_PACKAGE = BASE_PACKAGE
-            + "screenshot.";
-
-    // TODO Move all parameters constants here
-
-    private static final String DEBUG = BASE_PACKAGE + "debug";
-
-    // Screenshot related parameters
-    public static final String SCREENSHOT_DIRECTORY = SCREENSHOT_PACKAGE
-            + "directory";
-    public static final String CAPTURE_SCREENSHOT_ON_FAILURE = SCREENSHOT_PACKAGE
-            + ".onfail";
-    public static final String SCREENSHOT_RESOLUTION = SCREENSHOT_PACKAGE
-            + "resolution";
-    public static final String SCREENSHOT_COMPARISON_TOLERANCE = SCREENSHOT_PACKAGE
-            + "block.error";
-    public static final String SCREENSHOT_COMPARISON_CURSOR_DETECTION = SCREENSHOT_PACKAGE
-            + "cursor";
-    public static final String SCREENSHOT_MAX_RETRIES = SCREENSHOT_PACKAGE
-            + "max.retries";
-    public static final String SCREENSHOT_RETRY_DELAY = SCREENSHOT_PACKAGE
-            + "retry.delay";
-
-    // Other parameters
-    public static final String REMOTE_CONTROL_HOST_NAME = BASE_PACKAGE
-            + "tester.host";
-    public static final String DEPLOYMENT_URL = BASE_PACKAGE + "deployment.url";
-    private static final String TEST_FILE_ENCODING = BASE_PACKAGE + "encoding";
-    private static final String PARAMETER_FILE = BASE_PACKAGE
-            + "converter.parameterFile";
-    public static final String TEST_MAX_RETRIES = BASE_PACKAGE + "test.retries";
+    public static void setDebug(boolean isDebug) {
+        Parameters.isDebug = isDebug;
+    }
 
     public static boolean isDebug() {
-        return ("true".equalsIgnoreCase(System.getProperty(DEBUG)));
+        return isDebug;
+    }
+
+    public static void setScreenshotComparisonCursorDetection(
+            boolean isScreenshotComparisonCursorDetection) {
+        Parameters.isScreenshotComparisonCursorDetection = isScreenshotComparisonCursorDetection;
     }
 
     public static boolean isScreenshotComparisonCursorDetection() {
-        return ("true".equals(System
-                .getProperty(SCREENSHOT_COMPARISON_CURSOR_DETECTION)));
+        return isScreenshotComparisonCursorDetection;
+    }
+
+    public static void setScreenshotDirectory(String screenshotDirectory) {
+        Parameters.screenshotDirectory = screenshotDirectory;
     }
 
     public static String getScreenshotDirectory() {
-        return System.getProperty(SCREENSHOT_DIRECTORY);
+        return screenshotDirectory;
     }
 
-    public static String getRemoteControlHostName() {
-        return System.getProperty(REMOTE_CONTROL_HOST_NAME);
-    }
-
-    public static String getDeploymentURL() {
-        return System.getProperty(DEPLOYMENT_URL);
-    }
-
-    public static String getScreenshotResolution() {
-        return System.getProperty(SCREENSHOT_RESOLUTION);
+    public static void setScreenshotComparisonTolerance(double tolerance) {
+        Parameters.screenshotComparisonTolerance = tolerance;
     }
 
     /**
@@ -67,70 +45,31 @@ public class Parameters {
      * @return
      */
     public static double getScreenshotComparisonTolerance() {
-        String p = System.getProperty(SCREENSHOT_COMPARISON_TOLERANCE);
-        double tolerance = 0.025;
-        if (p != null) {
-            tolerance = Double.parseDouble(p);
+        return screenshotComparisonTolerance;
+    }
 
-            // Check that [difference] value inside allowed range.
-            // if false set [difference] to default value.
-            if (tolerance < 0 || tolerance > 1) {
-                tolerance = 0.025;
-            }
-        }
-
-        return tolerance;
+    public static void setCaptureScreenshotOnFailure(
+            boolean isCaptureScreenshotOnFailure) {
+        Parameters.isCaptureScreenshotOnFailure = isCaptureScreenshotOnFailure;
     }
 
     public static boolean isCaptureScreenshotOnFailure() {
-        // Default is true. Only false if explicitly defined
-        if ("false".equalsIgnoreCase(System
-                .getProperty(CAPTURE_SCREENSHOT_ON_FAILURE))) {
-            return false;
-        }
-        return true;
+        return isCaptureScreenshotOnFailure;
     }
 
-    public static int getMaxRetries() {
-        String p = System.getProperty(SCREENSHOT_MAX_RETRIES);
-        int retries = 2;
-        if (p != null && p.length() > 0) {
-            retries = Integer.parseInt(p);
-        }
-        return retries;
+    public static void setMaxScreenshotRetries(int maxRetries) {
+        maxScreenshotRetries = maxRetries;
     }
 
-    public static int getRetryDelay() {
-        String p = System.getProperty(SCREENSHOT_RETRY_DELAY);
-        int retryDelay = 500;
-        if (p != null && p.length() > 0) {
-            retryDelay = Integer.parseInt(p);
-        }
-        return retryDelay;
+    public static int getMaxScreenshotRetries() {
+        return maxScreenshotRetries;
     }
 
-    // Retry test
-    public static int getMaxTestRetries() {
-        String p = System.getProperty(TEST_MAX_RETRIES);
-        int retries = 0;
-        if (p != null && p.length() > 0) {
-            retries = Integer.parseInt(p);
-        }
-        return retries;
+    public static void setScreenshotRetryDelay(int retryDelay) {
+        screenshotRetryDelay = retryDelay;
     }
 
-    // --- end retry test ---
-    public static String getFileEncoding() {
-        return System.getProperty(TEST_FILE_ENCODING);
+    public static int getScreenshotRetryDelay() {
+        return screenshotRetryDelay;
     }
-
-    public static boolean hasParameterFile() {
-        return System.getProperty(PARAMETER_FILE) != null
-                && System.getProperty(PARAMETER_FILE).length() > 0;
-    }
-
-    public static String getParameterFile() {
-        return System.getProperty(PARAMETER_FILE);
-    }
-
 }

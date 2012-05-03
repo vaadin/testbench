@@ -3,7 +3,6 @@ package com.vaadin.testbench;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Logger;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -16,9 +15,9 @@ import com.vaadin.testbench.screenshot.ReferenceNameGenerator;
 
 public class TestBenchDriver extends TestBenchCommandExecutor implements
         WebDriver, WrapsDriver {
-    private static Logger getLogger() {
-        return Logger.getLogger(TestBenchDriver.class.getName());
-    }
+    // private static Logger getLogger() {
+    // return Logger.getLogger(TestBenchDriver.class.getName());
+    // }
 
     private final WebDriver actualDriver;
 

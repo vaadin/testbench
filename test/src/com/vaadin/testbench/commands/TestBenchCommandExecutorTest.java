@@ -122,7 +122,7 @@ public class TestBenchCommandExecutorTest {
     @Test
     public void testCompareScreen_fourRetriesImagesDiffer_retriesFourTimes()
             throws IOException {
-        System.setProperty(Parameters.SCREENSHOT_MAX_RETRIES, "4");
+    	Parameters.setMaxScreenshotRetries(4);
         try {
             WebDriver driver = mockScreenshotDriver(4, true);
             ReferenceNameGenerator rngMock = mockReferenceNameGenerator("foo",
@@ -136,7 +136,7 @@ public class TestBenchCommandExecutorTest {
 
             verify(driver, icMock, rngMock);
         } finally {
-            System.clearProperty(Parameters.SCREENSHOT_MAX_RETRIES);
+        	Parameters.setMaxScreenshotRetries(2);
         }
     }
 
@@ -165,7 +165,7 @@ public class TestBenchCommandExecutorTest {
 
     @Test
     public void testCompareScreen_acceptsFile_retries() throws IOException {
-        System.setProperty(Parameters.SCREENSHOT_MAX_RETRIES, "4");
+    	Parameters.setMaxScreenshotRetries(4);
         try {
             File referenceFile = ImageLoader.getImageFile(IMG_FOLDER,
                     "cursor-bottom-edge-off.png");
@@ -187,7 +187,7 @@ public class TestBenchCommandExecutorTest {
 
             verify(driver, icMock);
         } finally {
-            System.clearProperty(Parameters.SCREENSHOT_MAX_RETRIES);
+        	Parameters.setMaxScreenshotRetries(2);
         }
     }
 
@@ -215,7 +215,7 @@ public class TestBenchCommandExecutorTest {
     @Test
     public void testCompareScreen_acceptsBufferedImage_retries()
             throws IOException {
-        System.setProperty(Parameters.SCREENSHOT_MAX_RETRIES, "4");
+        Parameters.setMaxScreenshotRetries(4);
         try {
             BufferedImage mockImg = createNiceMock(BufferedImage.class);
 
@@ -235,7 +235,7 @@ public class TestBenchCommandExecutorTest {
 
             verify(driver, icMock);
         } finally {
-            System.clearProperty(Parameters.SCREENSHOT_MAX_RETRIES);
+        	Parameters.setMaxScreenshotRetries(2);
         }
     }
 
@@ -290,7 +290,7 @@ public class TestBenchCommandExecutorTest {
 
     @Test
     public void testTimeSpentRenderingLastRequest_callsJavaScript_returnsValueFetchedFromVaadinClient() {
-        FirefoxDriver jse = mockJSExecutor();
+        FirefoxDriver jse = mockJSExecutor(false);
         replay(jse);
 
         TestBenchCommandExecutor tbce = new TestBenchCommandExecutor(jse, null,
@@ -303,7 +303,7 @@ public class TestBenchCommandExecutorTest {
 
     @Test
     public void testTotalTimeSpentRendering() {
-        FirefoxDriver jse = mockJSExecutor();
+        FirefoxDriver jse = mockJSExecutor(false);
         replay(jse);
 
         TestBenchCommandExecutor tbce = new TestBenchCommandExecutor(jse, null,
@@ -316,7 +316,7 @@ public class TestBenchCommandExecutorTest {
 
     @Test
     public void testTotalTimeSpentServicingRequests() {
-        FirefoxDriver jse = mockJSExecutor();
+        FirefoxDriver jse = mockJSExecutor(true);
         replay(jse);
 
         TestBenchCommandExecutor tbce = new TestBenchCommandExecutor(jse, null,
@@ -327,8 +327,12 @@ public class TestBenchCommandExecutorTest {
         verify(jse);
     }
 
-    private FirefoxDriver mockJSExecutor() {
+    private FirefoxDriver mockJSExecutor(boolean forcesSync) {
         FirefoxDriver jse = createMock(FirefoxDriver.class);
+        expect(((FirefoxDriver)jse).getCurrentUrl()).andReturn("http://foo.com/ROOT");
+        if (forcesSync) {
+        	expect(jse.executeScript("window.vaadin.forceSync()")).andReturn(null);
+        }
         expect(
                 jse.executeScript("return window.vaadin.clients.ROOT.getProfilingData()"))
                 .andReturn(Arrays.asList(1000L, 2000L, 3000L));

@@ -28,6 +28,9 @@ import org.openqa.selenium.WebDriver.TargetLocator;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.internal.WrapsDriver;
+import org.openqa.selenium.internal.WrapsElement;
+
+import com.vaadin.testbench.commands.TestBenchElementCommands;
 
 public class TestBenchDriverTest {
 
@@ -73,8 +76,8 @@ public class TestBenchDriverTest {
         WebDriver driver = TestBench.createDriver(mockDriver);
         driver.close();
         By mockBy = createNiceMock(By.class);
-        assertEquals(mockElement, driver.findElement(mockBy));
-        assertEquals(elements, driver.findElements(mockBy));
+        assertTrue(driver.findElement(mockBy) instanceof TestBenchElementCommands);
+        assertTrue(driver.findElements(mockBy).get(0) instanceof TestBenchElementCommands);
         driver.get("foo");
         assertEquals("foo", driver.getCurrentUrl());
         assertEquals("<html></html>", driver.getPageSource());

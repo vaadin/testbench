@@ -259,7 +259,7 @@ public class TestBenchCommandExecutor implements TestBenchCommands {
         String referenceName = referenceNameGenerator.generateName(referenceId,
                 ((HasCapabilities) actualDriver).getCapabilities());
 
-        for (int times = 0; times < Parameters.getMaxRetries(); times++) {
+        for (int times = 0; times < Parameters.getMaxScreenshotRetries(); times++) {
             BufferedImage screenshotImage = ImageIO
                     .read(new ByteArrayInputStream(
                             ((TakesScreenshot) actualDriver)
@@ -299,7 +299,7 @@ public class TestBenchCommandExecutor implements TestBenchCommands {
     @Override
     public boolean compareScreen(BufferedImage reference, String referenceName)
             throws IOException, AssertionError {
-        for (int times = 0; times < Parameters.getMaxRetries(); times++) {
+        for (int times = 0; times < Parameters.getMaxScreenshotRetries(); times++) {
             BufferedImage screenshotImage = ImageIO
                     .read(new ByteArrayInputStream(
                             ((TakesScreenshot) actualDriver)
