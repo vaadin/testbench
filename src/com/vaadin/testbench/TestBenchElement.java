@@ -10,6 +10,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.internal.WrapsElement;
 
 import com.vaadin.testbench.commands.CanWaitForVaadin;
+import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.commands.TestBenchElementCommands;
 
 public class TestBenchElement implements WrapsElement, WebElement,
@@ -18,11 +19,12 @@ public class TestBenchElement implements WrapsElement, WebElement,
     // .getLogger(TestBenchElement.class.getName());
 
     private WebElement actualElement;
-    private final TestBenchDriver tbDriver;
+    private final TestBenchCommandExecutor tbCommandExecutor;
 
-    protected TestBenchElement(WebElement element, TestBenchDriver tbDriver) {
+    protected TestBenchElement(WebElement element,
+            TestBenchCommandExecutor tbCommandExecutor) {
         actualElement = element;
-        this.tbDriver = tbDriver;
+        this.tbCommandExecutor = tbCommandExecutor;
     }
 
     /*
@@ -37,7 +39,7 @@ public class TestBenchElement implements WrapsElement, WebElement,
 
     @Override
     public void waitForVaadin() {
-        tbDriver.waitForVaadin();
+        tbCommandExecutor.waitForVaadin();
     }
 
     @Override
@@ -90,14 +92,15 @@ public class TestBenchElement implements WrapsElement, WebElement,
         List<WebElement> elements = actualElement.findElements(by);
         List<WebElement> tbElements = new ArrayList<WebElement>(elements.size());
         for (WebElement e : elements) {
-            tbElements.add(TestBench.createElement(e, tbDriver));
+            tbElements.add(TestBench.createElement(e, tbCommandExecutor));
         }
         return tbElements;
     }
 
     @Override
     public WebElement findElement(By by) {
-        return TestBench.createElement(actualElement.findElement(by), tbDriver);
+        return TestBench.createElement(actualElement.findElement(by),
+                tbCommandExecutor);
     }
 
     @Override

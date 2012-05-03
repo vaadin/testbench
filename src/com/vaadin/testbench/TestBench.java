@@ -7,6 +7,8 @@ import java.util.Set;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import com.vaadin.testbench.commands.TestBenchCommandExecutor;
+
 /**
  */
 public class TestBench {
@@ -24,7 +26,7 @@ public class TestBench {
     }
 
     public static WebElement createElement(WebElement webElement,
-            TestBenchDriver tbDriver) {
+            TestBenchCommandExecutor tbCommandExecutor) {
         Set<Class<?>> allInterfaces = extractInterfaces(webElement);
         allInterfaces.addAll(extractInterfaces(TestBenchElement.class));
         final Class<?>[] allInterfacesArray = allInterfaces
@@ -32,7 +34,7 @@ public class TestBench {
         Object proxy = Proxy.newProxyInstance(webElement.getClass()
                 .getClassLoader(), allInterfacesArray,
                 new CachedInvocationHandler(new TestBenchElement(webElement,
-                        tbDriver), webElement));
+                        tbCommandExecutor), webElement));
         return (WebElement) proxy;
     }
 

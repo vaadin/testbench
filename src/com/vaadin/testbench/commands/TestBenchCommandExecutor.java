@@ -31,6 +31,7 @@ import org.openqa.selenium.remote.Response;
 
 import com.google.common.collect.ImmutableMap;
 import com.vaadin.testbench.Parameters;
+import com.vaadin.testbench.TestBench;
 import com.vaadin.testbench.screenshot.ImageComparison;
 import com.vaadin.testbench.screenshot.ReferenceNameGenerator;
 
@@ -434,16 +435,18 @@ public class TestBenchCommandExecutor implements TestBenchCommands {
             JavascriptExecutor jse = (JavascriptExecutor) actualDriver;
             // TODO: We should return a TB WebElement once the TB web
             // element is not only an empty wrapper any more.
+            WebElement element = null;
             if (selector.contains("::")) {
                 String client = selector.substring(0, selector.indexOf("::"));
                 String path = selector.substring(selector.indexOf("::") + 2);
-                return (WebElement) jse.executeScript(
+                element = (WebElement) jse.executeScript(
                         "return window.vaadin.clients." + client
                                 + ".getElementByPath(arguments[0])", path);
             } else {
-                return (WebElement) jse.executeScript(findByVaadinScript,
+                element = (WebElement) jse.executeScript(findByVaadinScript,
                         selector);
             }
+            return TestBench.createElement(element, this);
         }
         return null;
     }
