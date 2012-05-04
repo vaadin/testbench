@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.imageio.IIOException;
 import javax.imageio.ImageIO;
 
 import org.openqa.selenium.HasCapabilities;
@@ -33,6 +34,7 @@ import com.google.common.collect.ImmutableMap;
 import com.vaadin.testbench.Parameters;
 import com.vaadin.testbench.TestBench;
 import com.vaadin.testbench.screenshot.ImageComparison;
+import com.vaadin.testbench.screenshot.ImageFileUtil;
 import com.vaadin.testbench.screenshot.ReferenceNameGenerator;
 
 /**
@@ -286,7 +288,13 @@ public class TestBenchCommandExecutor implements TestBenchCommands {
     @Override
     public boolean compareScreen(File reference) throws IOException,
             AssertionError {
-        BufferedImage image = ImageIO.read(reference);
+        BufferedImage image = null;
+        try {
+            image = ImageIO.read(reference);
+        } catch (IIOException e) {
+            // Don't worry, an error screen shot will be generated that later
+            // can be used as the reference
+        }
         return compareScreen(image, reference.getName());
     }
 
@@ -305,6 +313,12 @@ public class TestBenchCommandExecutor implements TestBenchCommands {
                     .read(new ByteArrayInputStream(
                             ((TakesScreenshot) actualDriver)
                                     .getScreenshotAs(OutputType.BYTES)));
+            if (reference == null) {
+                // Store the screenshot in the errors directory
+                ImageIO.write(screenshotImage, "png",
+                        ImageFileUtil.getErrorScreenshotFile(referenceName));
+                return false;
+            }
             if (imageComparison.imageEqualToReference(screenshotImage,
                     reference, referenceName,
                     Parameters.getScreenshotComparisonTolerance(),

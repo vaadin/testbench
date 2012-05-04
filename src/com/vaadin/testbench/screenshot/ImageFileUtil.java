@@ -115,11 +115,11 @@ public class ImageFileUtil {
                 }
 
                 if (Parameters.isDebug()) {
-                    dir = new File(getScreenshotErrorDirectory() + "diff");
+                    dir = new File(getScreenshotErrorDirectory(), "diff");
                     if (!dir.exists()) {
                         dir.mkdir();
                     }
-                    dir = new File(getScreenshotErrorDirectory() + "logs");
+                    dir = new File(getScreenshotErrorDirectory(), "logs");
                     if (!dir.exists()) {
                         dir.mkdir();
                     }
@@ -136,30 +136,17 @@ public class ImageFileUtil {
          */
         public BufferedImage readReferenceImage(String referenceImageFileName)
                 throws IOException {
-            return readImage(ImageFileUtil.getScreenshotReferenceDirectory()
-                    + referenceImageFileName);
-        }
-
-        /**
-         * Reads the given file into a BufferedImage.
-         * 
-         * @param fullyQualifiedFileName
-         * @return
-         * @throws IOException
-         */
-        private BufferedImage readImage(String fullyQualifiedFileName)
-                throws IOException {
-            File file = new File(fullyQualifiedFileName);
-            return ImageIO.read(file);
+            return ImageIO
+                    .read(getReferenceScreenshotFile(referenceImageFileName));
         }
 
         public File getErrorScreenshotFile(String errorImageFileName) {
-            return new File(getScreenshotErrorDirectory() + errorImageFileName);
+            return new File(getScreenshotErrorDirectory(), errorImageFileName);
         }
 
         public File getReferenceScreenshotFile(String referenceImageFileName) {
-            return new File(getScreenshotReferenceDirectory()
-                    + referenceImageFileName);
+            return new File(getScreenshotReferenceDirectory(),
+                    referenceImageFileName);
         }
 
         /**
