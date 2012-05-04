@@ -8,8 +8,6 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
 
-import junit.framework.AssertionFailedError;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -187,12 +185,12 @@ public class ImageComparisonTest {
                 "cursor-bottom-right-on.png", true, 0.0);
     }
 
-    @Test(expected = AssertionFailedError.class)
+    @Test
     public void canCompareReferenceSmallerThanScreenshot() throws IOException {
         ImageComparison ic = new ImageComparison();
-        ic.imageEqualToReference(
+        assertFalse(ic.imageEqualToReference(
                 ImageLoader.loadImage(FOLDER, "screenshot1008x767.png"),
-                "reference738x624", 1, false);
+                "reference738x624", 1, false));
     }
 
     private void testFullCompareImages(String referenceFilename,

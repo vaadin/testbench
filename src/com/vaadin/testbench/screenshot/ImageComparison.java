@@ -31,10 +31,11 @@ public class ImageComparison {
      *            true if error images and diff files should be written to disk,
      *            false otherwise
      * @return true if images are the same
+     * @throws IOException
      */
     public boolean imageEqualToReference(BufferedImage screenshotImage,
             String referenceFileId, double errorTolerance,
-            boolean writeScreenshots) {
+            boolean writeScreenshots) throws IOException {
         ImageFileUtil.createScreenshotDirectoriesIfNeeded();
 
         List<String> referenceFileNames = ImageFileUtil
@@ -52,16 +53,8 @@ public class ImageComparison {
 
         for (String referenceFileName : referenceFileNames) {
             BufferedImage referenceImage;
-            try {
-                referenceImage = ImageFileUtil
-                        .readReferenceImage(referenceFileName);
-            } catch (IOException e) {
-                Assert.fail("Could not read reference image file "
-                        + referenceFileName);
-
-                // needed to keep the compiler happy
-                return false;
-            }
+            referenceImage = ImageFileUtil
+                    .readReferenceImage(referenceFileName);
 
             failureReporter = compareToReference(screenshotImage,
                     referenceImage, errorTolerance, writeScreenshots);
@@ -79,11 +72,7 @@ public class ImageComparison {
                     screenshotImage);
         }
 
-        // TODO: Add info about which RC it was run on
-        Assert.fail("Screenshot (" + referenceFileId
-                + ") differs from reference image.");
-
-        // Should never get here
+        // The images differ
         return false;
     }
 

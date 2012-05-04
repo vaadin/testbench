@@ -122,7 +122,7 @@ public class TestBenchCommandExecutorTest {
     @Test
     public void testCompareScreen_fourRetriesImagesDiffer_retriesFourTimes()
             throws IOException {
-    	Parameters.setMaxScreenshotRetries(4);
+        Parameters.setMaxScreenshotRetries(4);
         try {
             WebDriver driver = mockScreenshotDriver(4, true);
             ReferenceNameGenerator rngMock = mockReferenceNameGenerator("foo",
@@ -136,7 +136,7 @@ public class TestBenchCommandExecutorTest {
 
             verify(driver, icMock, rngMock);
         } finally {
-        	Parameters.setMaxScreenshotRetries(2);
+            Parameters.setMaxScreenshotRetries(2);
         }
     }
 
@@ -165,7 +165,7 @@ public class TestBenchCommandExecutorTest {
 
     @Test
     public void testCompareScreen_acceptsFile_retries() throws IOException {
-    	Parameters.setMaxScreenshotRetries(4);
+        Parameters.setMaxScreenshotRetries(4);
         try {
             File referenceFile = ImageLoader.getImageFile(IMG_FOLDER,
                     "cursor-bottom-edge-off.png");
@@ -187,7 +187,7 @@ public class TestBenchCommandExecutorTest {
 
             verify(driver, icMock);
         } finally {
-        	Parameters.setMaxScreenshotRetries(2);
+            Parameters.setMaxScreenshotRetries(2);
         }
     }
 
@@ -235,7 +235,7 @@ public class TestBenchCommandExecutorTest {
 
             verify(driver, icMock);
         } finally {
-        	Parameters.setMaxScreenshotRetries(2);
+            Parameters.setMaxScreenshotRetries(2);
         }
     }
 
@@ -262,7 +262,7 @@ public class TestBenchCommandExecutorTest {
     }
 
     private ImageComparison mockImageComparison(int timesCalled,
-            String referenceName, boolean expected) {
+            String referenceName, boolean expected) throws IOException {
         ImageComparison icMock = createMock(ImageComparison.class);
         expect(
                 icMock.imageEqualToReference(isA(BufferedImage.class),
@@ -329,9 +329,11 @@ public class TestBenchCommandExecutorTest {
 
     private FirefoxDriver mockJSExecutor(boolean forcesSync) {
         FirefoxDriver jse = createMock(FirefoxDriver.class);
-        expect(((FirefoxDriver)jse).getCurrentUrl()).andReturn("http://foo.com/ROOT");
+        expect(((FirefoxDriver) jse).getCurrentUrl()).andReturn(
+                "http://foo.com/ROOT");
         if (forcesSync) {
-        	expect(jse.executeScript("window.vaadin.forceSync()")).andReturn(null);
+            expect(jse.executeScript("window.vaadin.forceSync()")).andReturn(
+                    null);
         }
         expect(
                 jse.executeScript("return window.vaadin.clients.ROOT.getProfilingData()"))
