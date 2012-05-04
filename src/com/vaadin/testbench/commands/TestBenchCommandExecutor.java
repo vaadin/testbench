@@ -30,7 +30,6 @@ import org.openqa.selenium.remote.HttpCommandExecutor;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.remote.Response;
 
-import com.google.common.collect.ImmutableMap;
 import com.vaadin.testbench.Parameters;
 import com.vaadin.testbench.TestBench;
 import com.vaadin.testbench.screenshot.ImageComparison;
@@ -82,24 +81,6 @@ public class TestBenchCommandExecutor implements TestBenchCommands {
             e.printStackTrace();
         }
         return null;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * com.vaadin.testbench.commands.TestBenchCommands#setTestName(java.lang
-     * .String)
-     */
-    @Override
-    public void setTestName(String testName) {
-        if (actualDriver instanceof RemoteWebDriver) {
-            execute(TestBenchCommands.SET_TEST_NAME,
-                    ImmutableMap.of("name", testName));
-        } else {
-            getLogger().info(
-                    String.format("Currently running \"%s\"", testName));
-        }
     }
 
     /*

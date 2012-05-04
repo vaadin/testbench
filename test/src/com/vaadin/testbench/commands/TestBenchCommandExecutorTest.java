@@ -1,7 +1,6 @@
 package com.vaadin.testbench.commands;
 
 import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.createMockBuilder;
 import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
@@ -25,9 +24,7 @@ import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.remote.RemoteWebDriver;
 
-import com.google.common.collect.ImmutableMap;
 import com.vaadin.testbench.Parameters;
 import com.vaadin.testbench.screenshot.ImageComparison;
 import com.vaadin.testbench.screenshot.ImageComparisonTest;
@@ -50,25 +47,6 @@ public class TestBenchCommandExecutorTest {
                 createNiceMock(ImageComparison.class),
                 createNiceMock(ReferenceNameGenerator.class));
         assertTrue(tbce instanceof TestBenchCommands);
-    }
-
-    @Test
-    public void setTestName_executesOnRemote() {
-        TestBenchCommandExecutor tbce = createMockBuilder(
-                TestBenchCommandExecutor.class)
-                .addMockedMethod("execute")
-                .withConstructor(createNiceMock(RemoteWebDriver.class),
-                        createNiceMock(ImageComparison.class),
-                        createNiceMock(ReferenceNameGenerator.class))
-                .createMock();
-        expect(
-                tbce.execute(TestBenchCommands.SET_TEST_NAME,
-                        ImmutableMap.of("name", "foo"))).andReturn(null).once();
-        replay(tbce);
-
-        tbce.setTestName("foo");
-
-        verify(tbce);
     }
 
     @Test

@@ -10,16 +10,35 @@ import org.openqa.selenium.WebElement;
 /**
  */
 public interface TestBenchCommands extends CanWaitForVaadin {
-    static String SET_TEST_NAME = "setTestName";
 
-    void setTestName(String testName);
-
+    /**
+     * Finds the canonical host name of the remotely executing node where the
+     * test is being run. This is useful for failure reporting when running on
+     * large grids where one machine may start having problems and you need to
+     * find out which of the machines it is.
+     * 
+     * @return the canonical host name along with it's IP as a string.
+     */
     String getRemoteControlName();
 
     void expectDialog(WebElement element, Keys... modifierKeysPressed);
 
+    /**
+     * Closes a notification
+     * 
+     * @param element
+     *            the notification element to close or any element that is safe
+     *            to click.
+     * @return true if the notification was successfully closed.
+     */
     boolean closeNotification(WebElement element);
 
+    /**
+     * Shows the tool tip of the specified element.
+     * 
+     * @param element
+     *            the element to show a tool tip for.
+     */
     void showTooltip(WebElement element);
 
     void scroll(WebElement element, int scrollTop);
@@ -73,17 +92,84 @@ public interface TestBenchCommands extends CanWaitForVaadin {
     boolean compareScreen(BufferedImage reference, String referenceName)
             throws IOException, AssertionError;
 
+    /**
+     * This method provides performance information of the client-side rendering
+     * for the last operation performed. You can use this information to make
+     * sure that some operation is executed in a timely fashion.
+     * 
+     * <em>Note!</em> This method needs to be called before
+     * {@link #timeSpentRenderingLastRequest()} or
+     * {@link #totalTimeSpentServicingRequests()}, since they will perform an
+     * extra request, causing the value returned from this method to be that for
+     * an empty request/response.
+     * 
+     * @return the time spent rendering the last request.
+     */
     long timeSpentRenderingLastRequest();
 
+    /**
+     * This method provides performance information of the client-side rendering
+     * for the entire session. The session starts when you navigate to an
+     * application and this method returns the amount of time spent rendering up
+     * to the point of the call.
+     * 
+     * @return the total time spent rendering in this session.
+     */
     long totalTimeSpentRendering();
 
+    /**
+     * This method provides performance information of the server-side
+     * processing for the last request. You can use this information to ensure
+     * that an operation is processed in a timely fashion.
+     * 
+     * <em>Note!</em> If you are interested in the client-side performance for
+     * the last request, you must call {@link #timeSpentRenderingLastRequest()}
+     * before calling this method. This is due to the fact that this method
+     * causes an extra server round-trip, which will cause an empty response to
+     * be rendered.
+     * 
+     * @return the time spent servicing the last request on the server.
+     */
     long timeSpentServicingLastRequest();
 
+    /**
+     * This method provides performance information of the server-side
+     * processing for the entire session. The session starts when you navigate
+     * to an application and this method returns the amount of time spent
+     * processing requests up to the point of the call.
+     * 
+     * <em>Note!</em> If you are interested in the client-side performance for
+     * the last request, you must call {@link #timeSpentRenderingLastRequest()}
+     * before calling this method. This is due to the fact that this method
+     * causes an extra server round-trip, which will cause an empty response to
+     * be rendered.
+     * 
+     * @return the total time spent servicing requests in this session.
+     */
     long totalTimeSpentServicingRequests();
 
+    /**
+     * Finds an element by the Vaadin selector, recorded by the TestBench
+     * recorder.
+     * 
+     * @param selector
+     *            the Vaadin selector.
+     * @return the element identified by the selector.
+     */
     WebElement findElementByVaadinSelector(String selector);
 
+    /**
+     * Disables implicit waiting for Vaadin to finish processing requests. This
+     * is useful if you need to test bombarding an application with events.
+     * 
+     * Implicit waiting is enabled by default.
+     */
     void disableWaitForVaadin();
 
+    /**
+     * Enables implicit waiting for Vaadin to finish processing requests.
+     * 
+     * Implicit waiting is enabled by default.
+     */
     void enableWaitForVaadin();
 }
