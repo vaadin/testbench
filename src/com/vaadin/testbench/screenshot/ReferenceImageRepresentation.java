@@ -12,8 +12,10 @@ import java.util.List;
  * @author Jonatan Kronqvist / Vaadin
  */
 public class ReferenceImageRepresentation implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     public class HashRepresentation implements Serializable {
+        private static final long serialVersionUID = 1L;
         private String hash;
 
         public HashRepresentation(String hash) {
