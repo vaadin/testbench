@@ -28,8 +28,8 @@ import org.openqa.selenium.WebDriver.TargetLocator;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.internal.WrapsDriver;
-import org.openqa.selenium.internal.WrapsElement;
 
+import com.vaadin.testbench.commands.TestBenchCommands;
 import com.vaadin.testbench.commands.TestBenchElementCommands;
 
 public class TestBenchDriverTest {
@@ -107,4 +107,22 @@ public class TestBenchDriverTest {
         WebDriver wrappedDriver = ((WrapsDriver) driver).getWrappedDriver();
         assertEquals(driverMock, wrappedDriver);
     }
+
+    @Test
+    public void testDisableWaitForVaadin() {
+        FirefoxDriver mockFF = createMock(FirefoxDriver.class);
+        expect(mockFF.executeScript(isA(String.class))).andReturn(true).once();
+        WebElement mockElement = createNiceMock(WebElement.class);
+        replay(mockFF, mockElement);
+
+        WebDriver driver = TestBench.createDriver(mockFF);
+        TestBenchCommands tb = (TestBenchCommands) driver;
+        tb.disableWaitForVaadin();
+        tb.closeNotification(mockElement);
+        tb.enableWaitForVaadin();
+        tb.closeNotification(mockElement);
+
+        verify(mockFF, mockElement);
+    }
+
 }

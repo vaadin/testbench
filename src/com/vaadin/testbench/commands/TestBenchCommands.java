@@ -82,4 +82,8 @@ public interface TestBenchCommands extends CanWaitForVaadin {
     long totalTimeSpentServicingRequests();
 
     WebElement findElementByVaadinSelector(String selector);
+
+    void disableWaitForVaadin();
+
+    void enableWaitForVaadin();
 }

@@ -48,6 +48,7 @@ public class TestBenchCommandExecutor implements TestBenchCommands {
     private final WebDriver actualDriver;
     private final ImageComparison imageComparison;
     private final ReferenceNameGenerator referenceNameGenerator;
+    private boolean enableWaitForVaadin;
 
     public TestBenchCommandExecutor(WebDriver actualDriver,
             ImageComparison imageComparison,
@@ -222,6 +223,11 @@ public class TestBenchCommandExecutor implements TestBenchCommands {
      */
     @Override
     public void waitForVaadin() {
+        if (!enableWaitForVaadin) {
+            // wait for vaadin is disabled, just return.
+            return;
+        }
+
         // @formatter:off
         String isVaadinFinished =
                 "if (window.vaadin == null) {" + 
@@ -463,5 +469,15 @@ public class TestBenchCommandExecutor implements TestBenchCommands {
             return TestBench.createElement(element, this);
         }
         return null;
+    }
+
+    @Override
+    public void disableWaitForVaadin() {
+        enableWaitForVaadin = false;
+    }
+
+    @Override
+    public void enableWaitForVaadin() {
+        enableWaitForVaadin = true;
     }
 }
