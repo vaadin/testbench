@@ -47,7 +47,7 @@ public class TestBenchCommandExecutor implements TestBenchCommands {
     private final WebDriver actualDriver;
     private final ImageComparison imageComparison;
     private final ReferenceNameGenerator referenceNameGenerator;
-    private boolean enableWaitForVaadin;
+    private boolean enableWaitForVaadin = true;
 
     public TestBenchCommandExecutor(WebDriver actualDriver,
             ImageComparison imageComparison,
