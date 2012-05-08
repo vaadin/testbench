@@ -1,5 +1,6 @@
 .classpath
 .project
+.settings
 bin
 build/result/
 selenium-extensions/core/user-extensions.js
