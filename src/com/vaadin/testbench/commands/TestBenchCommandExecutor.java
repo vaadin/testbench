@@ -434,8 +434,6 @@ public class TestBenchCommandExecutor implements TestBenchCommands {
         // @formatter:on
         if (actualDriver instanceof JavascriptExecutor) {
             JavascriptExecutor jse = (JavascriptExecutor) actualDriver;
-            // TODO: We should return a TB WebElement once the TB web
-            // element is not only an empty wrapper any more.
             WebElement element = null;
             if (selector.contains("::")) {
                 String client = selector.substring(0, selector.indexOf("::"));
@@ -447,7 +445,9 @@ public class TestBenchCommandExecutor implements TestBenchCommands {
                 element = (WebElement) jse.executeScript(findByVaadinScript,
                         selector);
             }
-            return TestBench.createElement(element, this);
+            if (element != null) {
+                return TestBench.createElement(element, this);
+            }
         }
         return null;
     }
