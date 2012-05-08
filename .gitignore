@@ -10,3 +10,4 @@ testbench-recorder/chrome/testbench-recorder.jar
 testbench-recorder/extension/
 testbench-recorder/install.rdf
 tmp/
+example/Maven/target
