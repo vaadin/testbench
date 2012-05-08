@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.imageio.ImageIO;
+
 import junit.framework.Assert;
 
 import com.vaadin.testbench.Parameters;
@@ -43,6 +45,12 @@ public class ImageComparison {
 
         if (referenceFileNames.isEmpty()) {
             // We require a reference image to continue
+            // Save the screenshot in the error directory.
+            ImageIO.write(
+                    screenshotImage,
+                    "png",
+                    ImageFileUtil.getErrorScreenshotFile(referenceFileId
+                            + ".png"));
             Assert.fail("No reference found for " + referenceFileId + " in "
                     + ImageFileUtil.getScreenshotReferenceDirectory());
         }
