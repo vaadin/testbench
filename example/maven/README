@@ -1,0 +1,43 @@
+Running the maven example
+=========================
+
+Before running the maven examples, you must install TestBench into your local maven repository by
+executing the following command in the <TESTBENCH PACKAGE ROOT>/maven directory:
+
+	mvn install:install-file -Dfile=vaadin-testbench-3.0.0-SNAPSHOT.jar -DpomFile=pom.xml
+
+
+About the maven example project
+===============================
+
+How the project was created
+---------------------------
+The project was created using the vaadin-archetype-clean archetype. E.g.
+
+	mvn archetype:generate \
+	-DarchetypeGroupId=com.vaadin \
+	-DarchetypeArtifactId=vaadin-archetype-clean \
+	-DarchetypeVersion=LATEST \
+	-DgroupId=your.company \
+	-DartifactId=project-name \
+	-Dversion=1.0 \
+	-Dpackaging=war
+
+After the project was generated, the pom.xml was edited and the following dependency added:
+    <dependency>
+      <groupId>com.vaadin</groupId>
+      <artifactId>vaadin-testbench</artifactId>
+      <version>3.0.0-SNAPSHOT</version>
+    </dependency>
+
+That's it.
+
+
+Screen shot comparison in the example project
+---------------------------------------------
+Screen shot comparison is a feature of TestBench. In the example project the screen shot reference
+images are placed in src/test/resources/screenshots/reference/ and error reports are stored in
+target/testbench/errors/
+
+See src/test/java/com/vaadin/testbenchexample/TestBenchExample.java for the code that sets the parameters
+that specify the above directories.

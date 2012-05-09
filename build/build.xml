@@ -142,7 +142,8 @@
 			<zipfileset dir="${output.dir}" includes="MANIFEST.MF" prefix="META-INF"/>
 			<zipfileset dir="${output.dir}" includes="vaadin-testbench-standalone-${version}.jar" prefix="${package.root}"/>
 			<zipfileset dir="${output.dir}" includes="vaadin-testbench-recorder/vaadin-testbench-recorder-${version}.xpi" prefix="${package.root}" />
-			<zipfileset dir="${output.dir}" includes="vaadin-testbench-${version}.jar" prefix="${package.root}/maven"/>
+			<zipfileset dir="${output.dir}" includes="vaadin-testbench-${version}.jar" prefix="${package.root}/maven" />
+			<zipfileset dir="." includes="pom.xml" prefix="${package.root}/maven" />
 			<zipfileset dir=".." includes="example/**/**" excludes="**/*.class,**/target/**" prefix="${package.root}" />
 
 			<!-- Add documentation -->
