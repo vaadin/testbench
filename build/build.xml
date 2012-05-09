@@ -27,7 +27,7 @@
 		<mkdir dir="result/classes" />
 	</target>
 		
-	<target name="testbench-standalone.jar" depends="make-output-dirs">
+	<target name="testbench-standalone.jar" depends="make-output-dirs,javadoc">
 		<javac srcdir="../src" destdir="result/classes" debug="true" encoding="utf-8" target="1.5" source="1.5">
 			<classpath>
 				<fileset dir="../lib" id="libs">
@@ -46,6 +46,9 @@
 				<include name="**/**" />
 				<exclude name="**/test/**" />
 			</zipfileset>
+            <zipfileset dir="result/api">
+                <include name="**/**" />
+            </zipfileset>
 			<zipfileset src="../lib/selenium-standalone.jar" />
 		</jar>
 	</target>
@@ -72,7 +75,6 @@
         </jar>
     </target>
 
-	
     <!-- ================================================================== -->
     <!-- Documentation                                                      -->
     <!-- ================================================================== -->
@@ -110,6 +112,31 @@
         </exec>
     </target>
 
+	<target name="javadoc">
+		  <javadoc
+		           destdir="result/api"
+		           author="true"
+		           version="true"
+		           use="true"
+		           windowtitle="TestBench API">
+
+		    <packageset dir="../src" defaultexcludes="yes">
+		      <include name="com/vaadin/**"/>
+		    </packageset>
+
+		    <doctitle><![CDATA[<h1>TestBench API</h1>]]></doctitle>
+		    <bottom><![CDATA[<i>Copyright &#169; 2012 Vaadin Ltd. All Rights Reserved.</i>]]></bottom>
+		  </javadoc>
+	</target>
+
+	<target name="javadoc.jar" depends="javadoc">
+        <jar jarfile="${output.dir}/vaadin-testbench-${version}-javadoc.jar" compress="true">
+            <zipfileset dir="result/api">
+                <include name="**/**" />
+            </zipfileset>
+        </jar>
+	</target>
+	
     <!-- ================================================================== -->
     <!--                                                                    -->
     <!-- ================================================================== -->
@@ -123,7 +150,7 @@
 		<copy file="../testbench-recorder/extension/vaadin-testbench-recorder-${version}.xpi" todir="${output.dir}/vaadin-testbench-recorder" />
 	</target>
 
-	<target name="testbench-distribution-package" depends="testbench-standalone.jar,testbench.jar,manual,testbench-recorder,run-tests,create-extension">
+	<target name="testbench-distribution-package" depends="testbench-standalone.jar,testbench.jar,javadoc.jar,manual,testbench-recorder,run-tests,create-extension">
 		<property name="package.root" value="vaadin-testbench-${version}"/>
 		<property name="package.grid.root" value="vaadin-testbench-grid-${version}"/>
         <copy todir="${output.dir}">
@@ -142,7 +169,7 @@
 			<zipfileset dir="${output.dir}" includes="MANIFEST.MF" prefix="META-INF"/>
 			<zipfileset dir="${output.dir}" includes="vaadin-testbench-standalone-${version}.jar" prefix="${package.root}"/>
 			<zipfileset dir="${output.dir}" includes="vaadin-testbench-recorder/vaadin-testbench-recorder-${version}.xpi" prefix="${package.root}" />
-			<zipfileset dir="${output.dir}" includes="vaadin-testbench-${version}.jar" prefix="${package.root}/maven" />
+			<zipfileset dir="${output.dir}" includes="vaadin-testbench-${version}.jar,vaadin-testbench-${version}-javadoc.jar" prefix="${package.root}/maven" />
 			<zipfileset dir="." includes="pom.xml" prefix="${package.root}/maven" />
 			<zipfileset dir="../doc/maven" includes="INSTALL" prefix="${package.root}/maven" />
 			<zipfileset dir=".." includes="example/**/**" excludes="**/*.class,**/target/**" prefix="${package.root}" />
@@ -155,6 +182,7 @@
 			</zipfileset>
 			<zipfileset dir="result" prefix="${package.root}/documentation">
 				<include name="${manual.pdf.filename}" />
+				<include name="api/**" />
 			</zipfileset>
 		</zip>
 	</target>

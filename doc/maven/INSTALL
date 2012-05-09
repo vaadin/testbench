@@ -4,7 +4,10 @@ Installing TestBench in your local maven repository
 You can install TestBench into your local maven repository by executing the following command in the
 <TESTBENCH PACKAGE ROOT>/maven directory:
 
-	mvn install:install-file -Dfile=vaadin-testbench-3.0.0-SNAPSHOT.jar -DpomFile=pom.xml
+	mvn install:install-file \
+	-Dfile=vaadin-testbench-3.0.0-SNAPSHOT.jar \
+	-Djavadoc=vaadin-testbench-3.0.0-SNAPSHOT-javadoc.jar \
+	-DpomFile=pom.xml
 
 
 Creating a maven project using TestBench
