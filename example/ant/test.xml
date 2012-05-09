@@ -4,11 +4,12 @@
 
 	<!-- classpath must include test bench jar and its dependencies -->
 	<path id="classpath">
-		<fileset dir=".." includes="vaadin-testbench-*.jar" />
+		<fileset dir=".." includes="vaadin-testbench-standalone-*.jar" />
 
-		<!-- For development environment compatibility only -->
+		<!-- BEGIN: For development environment compatibility only -->
 		<fileset dir="../../lib/" includes="*.jar" />
 		<path location="../../bin" />
+		<!-- END: development environment compatibility -->
 	</path>
 
 	<!-- Remove old error screenshots. -->
