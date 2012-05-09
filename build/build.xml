@@ -7,7 +7,7 @@
 	<!-- Load version from properties file. If not found, version is specified below. -->
     <property file="${build.properties.file}" />
 	
-	<property name="version.base" value="3.0.0" />
+	<property name="version.base" value="3.0.0-SNAPSHOT" />
 	<property name="manual.version" value="3.0"/>
 	        	
 	<tstamp />
@@ -20,11 +20,14 @@
 
 	<echo>Version: ${version}</echo>
 		
-	<target name="testbench-standalone.jar">
+	<target name="make-output-dirs">
 		<delete dir="result" failonerror="true" />
 
 		<mkdir dir="${output.dir}" />
 		<mkdir dir="result/classes" />
+	</target>
+		
+	<target name="testbench-standalone.jar" depends="make-output-dirs">
 		<javac srcdir="../src" destdir="result/classes" debug="true" encoding="utf-8" target="1.5" source="1.5">
 			<classpath>
 				<fileset dir="../lib" id="libs">
@@ -47,11 +50,7 @@
 		</jar>
 	</target>
 	
-	<target name="testbench.jar">
-	     <delete dir="result" failonerror="true" />
-
-        <mkdir dir="${output.dir}" />
-        <mkdir dir="result/classes" />
+	<target name="testbench.jar" depends="make-output-dirs">
         <javac srcdir="../src" destdir="result/classes" debug="true" encoding="utf-8" target="1.5" source="1.5">
             <classpath>
                 <fileset dir="../lib" id="libs">
@@ -124,7 +123,7 @@
 		<copy file="../testbench-recorder/extension/vaadin-testbench-recorder-${version}.xpi" todir="${output.dir}/vaadin-testbench-recorder" />
 	</target>
 
-	<target name="testbench-distribution-package" depends="testbench-standalone.jar,manual,testbench-recorder,run-tests,create-extension">
+	<target name="testbench-distribution-package" depends="testbench-standalone.jar,testbench.jar,manual,testbench-recorder,run-tests,create-extension">
 		<property name="package.root" value="vaadin-testbench-${version}"/>
 		<property name="package.grid.root" value="vaadin-testbench-grid-${version}"/>
         <copy todir="${output.dir}">
@@ -141,11 +140,10 @@
 
 		<zip destfile="${output.dir}/vaadin-testbench-${version}.zip">
 			<zipfileset dir="${output.dir}" includes="MANIFEST.MF" prefix="META-INF"/>
-			<zipfileset dir="${output.dir}" includes="vaadin-testbench-${version}.jar" prefix="${package.root}"/>
+			<zipfileset dir="${output.dir}" includes="vaadin-testbench-standalone-${version}.jar" prefix="${package.root}"/>
 			<zipfileset dir="${output.dir}" includes="vaadin-testbench-recorder/vaadin-testbench-recorder-${version}.xpi" prefix="${package.root}" />
-			<zipfileset dir=".." includes="example/test.xml" prefix="${package.root}" />
-			<zipfileset dir=".." includes="example/testscripts/*.html" prefix="${package.root}" />
-			<zipfileset dir=".." includes="example/parameters/*.properties" prefix="${package.root}" />
+			<zipfileset dir="${output.dir}" includes="vaadin-testbench-${version}.jar" prefix="${package.root}/maven"/>
+			<zipfileset dir=".." includes="example/**/**" excludes="**/*.class,**/target/**" prefix="${package.root}" />
 
 			<!-- Add documentation -->
 			<zipfileset dir="../doc" prefix="${package.root}/documentation">
@@ -156,9 +154,6 @@
 			<zipfileset dir="result" prefix="${package.root}/documentation">
 				<include name="${manual.pdf.filename}" />
 			</zipfileset>
-
-			<!-- Add hub and remote-control to zip -->
-			<zipfileset dir="../selenium-extensions/core" includes="user-extensions.js" prefix="${package.root}" />
 		</zip>
 	</target>
 

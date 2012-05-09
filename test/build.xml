@@ -14,24 +14,14 @@
 	</path>
 
 	<target name="compile-tests">
-		<antcall target="compile-testbench-tests" />
 		<antcall target="compile-unit-tests" />
-	</target>
-
-	<target name="compile-testbench-tests" depends="test-conversion">
-		<mkdir dir="${temp-dir}/classes" />
-		<javac srcdir="src/com/vaadin/testbench/tests" destdir="${temp-dir}/classes" encoding="utf-8">
-			<classpath>
-				<fileset dir="../build/result/package" includes="vaadin-testbench-*.jar" />
-			</classpath>
-		</javac>
 	</target>
 
     <target name="compile-unit-tests" unless="exclude.unittests">
         <mkdir dir="${basedir}/../test/classes" />
         <javac srcdir="src" destdir="${temp-dir}/classes" encoding="utf-8" source="1.5">
             <classpath>
-                <fileset dir="../build/result/package" includes="vaadin-testbench-*.jar" />
+                <fileset dir="../build/result/package" includes="vaadin-testbench-standalone-*.jar" />
                 <fileset dir="../lib" id="libs">
                 	<include name="tests/**/*.jar"/>
                 </fileset>
@@ -75,52 +65,8 @@
 
 	</target>
 
-	<target name="test-conversion">
-		<path id="classpath">
-			<fileset dir="../build/result/package" includes="vaadin-testbench-*.jar" />
-		</path>
-
-		<!-- Convert example test normally // note browser so the second doesn't override -->
-		<java classname="com.vaadin.testbench.util.TestConverter" classpathref="classpath" failonerror="true">
-			<sysproperty key="com.vaadin.testbench.screenshot.onfail" value="false" />
-			<arg value="${temp-dir}/src" />
-			<arg value="winxp-firefox35" />
-			<arg line="${basedir}/../example/testscripts/parameter.demo.html" />
-		</java>
-
-		<!-- Convert example test using parameter substitution -->
-		<java classname="com.vaadin.testbench.util.TestConverter" classpathref="classpath" failonerror="true">
-			<sysproperty key="com.vaadin.testbench.screenshot.onfail" value="false" />
-			<sysproperty key="com.vaadin.testbench.converter.parameterFile" value="${basedir}/../example/parameters/NewParameters.properties" />
-			<arg value="${temp-dir}/src" />
-			<arg value="${browsers}" />
-			<arg line="${basedir}/../example/testscripts/parameter.demo.html" />
-		</java>
-
-		<!-- Convert example test using parameter substitution with automatic environment file -->
-		<java classname="com.vaadin.testbench.util.TestConverter" classpathref="classpath" failonerror="true">
-			<sysproperty key="com.vaadin.testbench.screenshot.onfail" value="false" />
-			<sysproperty key="com.vaadin.testbench.converter.parameterFile" value="${basedir}/../example/parameters/NewParameters.properties" />
-			<arg value="${temp-dir}/src" />
-			<arg value="winxp-firefox4" />
-			<arg line="${basedir}/../example/testscripts/parameter.demo.html" />
-		</java>
-
-		<!-- Convert TestSuite -->
-		<java classname="com.vaadin.testbench.util.TestConverter" classpathref="classpath" failonerror="true">
-			<sysproperty key="com.vaadin.testbench.screenshot.onfail" value="false" />
-			<arg value="${temp-dir}/src" />
-			<arg value="${browsers}" />
-			<arg line="${basedir}/../test/SuiteTest/TestSuite.html" />
-		</java>
-	</target>
-
 	<target name="clean">
 		<delete dir="${temp-dir}" />
-	</target>
-
-	<target name="testbench-tests" depends="clean, compile-testbench-tests, run-tests">
-		<antcall target="clean" />
 	</target>
 
 	<target name="all-tests" depends="clean, run-all-tests">
