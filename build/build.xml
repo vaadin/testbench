@@ -144,6 +144,7 @@
 			<zipfileset dir="${output.dir}" includes="vaadin-testbench-recorder/vaadin-testbench-recorder-${version}.xpi" prefix="${package.root}" />
 			<zipfileset dir="${output.dir}" includes="vaadin-testbench-${version}.jar" prefix="${package.root}/maven" />
 			<zipfileset dir="." includes="pom.xml" prefix="${package.root}/maven" />
+			<zipfileset dir="../doc/maven" includes="INSTALL" prefix="${package.root}/maven" />
 			<zipfileset dir=".." includes="example/**/**" excludes="**/*.class,**/target/**" prefix="${package.root}" />
 
 			<!-- Add documentation -->
