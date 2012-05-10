@@ -7,8 +7,6 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.InetAddress;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Map;
@@ -380,36 +378,27 @@ public class TestBenchCommandExecutor implements TestBenchCommands {
 
     @SuppressWarnings("unchecked")
     private List<Long> getTimingValues(boolean forceSync) {
+        // @formatter:off
+        String getProfilingData = "var pd = [0,0,0,0];\n" +
+                                  "for (client in window.vaadin.clients) {\n" + 
+                                  "  var p = window.vaadin.clients[client].getProfilingData();\n" +
+                                  "  pd[0] += p[0];\n" +
+                                  "  pd[1] += p[1];\n" +
+                                  "  pd[2] += p[2];\n" +
+                                  "  pd[3] += p[3];\n" +
+                                  "}\n" +
+                                  "return pd;\n";
+        // @formatter:on
         if (actualDriver instanceof JavascriptExecutor) {
-            try {
-                JavascriptExecutor jse = (JavascriptExecutor) actualDriver;
-                if (forceSync) {
-                    // Force sync to get the latest server-side timing data. The
-                    // server-side timing data is always one request behind.
-                    jse.executeScript("window.vaadin.forceSync()");
-                }
-                return (List<Long>) jse
-                        .executeScript("return window.vaadin.clients."
-                                + getAppId() + ".getProfilingData()");
-            } catch (URISyntaxException e) {
-                getLogger().log(Level.SEVERE,
-                        "The application URL seems to be invalid", e);
+            JavascriptExecutor jse = (JavascriptExecutor) actualDriver;
+            if (forceSync) {
+                // Force sync to get the latest server-side timing data. The
+                // server-side timing data is always one request behind.
+                jse.executeScript("window.vaadin.forceSync()");
             }
+            return (List<Long>) jse.executeScript(getProfilingData);
         }
         return null;
-    }
-
-    private String getAppId() throws URISyntaxException {
-        String appUrl = new URI(actualDriver.getCurrentUrl()).getPath();
-        if (appUrl.endsWith("/")) {
-            appUrl = appUrl.substring(0, appUrl.length() - 1);
-        }
-
-        String appId = appUrl;
-        if ("".equals(appUrl)) {
-            appId = "ROOT";
-        }
-        return appId.replaceAll("[^a-zA-Z0-9]", "");
     }
 
     /*

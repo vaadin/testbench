@@ -97,6 +97,10 @@ public interface TestBenchCommands extends CanWaitForVaadin {
      * for the last operation performed. You can use this information to make
      * sure that some operation is executed in a timely fashion.
      * 
+     * If more than one application is running at the same URL, e.g. a portal
+     * environment with many portlets on the same page, the value returned will
+     * be the sum for all applications.
+     * 
      * <em>Note!</em> This method needs to be called before
      * {@link #timeSpentRenderingLastRequest()} or
      * {@link #totalTimeSpentServicingRequests()}, since they will perform an
@@ -113,6 +117,10 @@ public interface TestBenchCommands extends CanWaitForVaadin {
      * application and this method returns the amount of time spent rendering up
      * to the point of the call.
      * 
+     * If more than one application is running at the same URL, e.g. a portal
+     * environment with many portlets on the same page, the value returned will
+     * be the sum for all applications.
+     * 
      * @return the total time spent rendering in this session.
      */
     long totalTimeSpentRendering();
@@ -121,6 +129,10 @@ public interface TestBenchCommands extends CanWaitForVaadin {
      * This method provides performance information of the server-side
      * processing for the last request. You can use this information to ensure
      * that an operation is processed in a timely fashion.
+     * 
+     * If more than one application is running at the same URL, e.g. a portal
+     * environment with many portlets on the same page, the value returned will
+     * be the sum for all applications.
      * 
      * <em>Note!</em> If you are interested in the client-side performance for
      * the last request, you must call {@link #timeSpentRenderingLastRequest()}
@@ -137,6 +149,10 @@ public interface TestBenchCommands extends CanWaitForVaadin {
      * processing for the entire session. The session starts when you navigate
      * to an application and this method returns the amount of time spent
      * processing requests up to the point of the call.
+     * 
+     * If more than one application is running at the same URL, e.g. a portal
+     * environment with many portlets on the same page, the value returned will
+     * be the sum for all applications.
      * 
      * <em>Note!</em> If you are interested in the client-side performance for
      * the last request, you must call {@link #timeSpentRenderingLastRequest()}
