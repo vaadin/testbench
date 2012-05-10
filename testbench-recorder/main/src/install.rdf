@@ -2,18 +2,19 @@
 <RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
  xmlns:em="http://www.mozilla.org/2004/em-rdf#">
     <Description about="urn:mozilla:install-manifest">
-        <em:id>{a6fd85ed-e919-4a43-a5af-8da18bda539f}</em:id>
+        <em:id>vaadin-testbench-recorder@vaadin.com</em:id>
         <em:name>Selenium IDE</em:name>
         <em:version>1.8.0</em:version>
         <em:creator>Shinya Kasatani</em:creator>
         <em:developer>Adam Goucher</em:developer>
         <em:developer>Samit Badle</em:developer>
         <em:developer>Dave Hunt</em:developer>
-        <em:description>Record, edit and play Selenium tests</em:description>
+		<em:developer>Jonatan Kronqvist</em:developer>
+        <em:description>Record, edit and play Vaadin TestBench tests</em:description>
         <em:type>2</em:type>
-        <em:homepageURL>http://seleniumhq.org/projects/ide</em:homepageURL>
+        <em:homepageURL>https://vaadin.com/add-ons/testbench</em:homepageURL>
         <em:optionsURL>chrome://selenium-ide/content/optionsDialog.xul</em:optionsURL>
-        <em:updateURL>https://addons.seleniumhq.org/se-ide/update.rdf</em:updateURL>
+<!--        <em:updateURL>https://.../update.rdf</em:updateURL>-->
         <em:iconURL>chrome://selenium-ide/content/images/selenium-ide-logo32.png</em:iconURL>
         <em:unpack>true</em:unpack>
 
@@ -24,13 +25,5 @@
             <em:maxVersion>12.*</em:maxVersion>
           </Description>
         </em:targetApplication>
-
-        <em:localized>
-          <Description>
-            <em:locale>fr-FR</em:locale>
-            <em:name>Selenium IDE</em:name>
-            <em:description>Enregistrer, modifier et exécuter des tests Selenium</em:description>
-          </Description>
-        </em:localized>
     </Description>
 </RDF>
