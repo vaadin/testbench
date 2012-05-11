@@ -2,15 +2,15 @@
 <RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
  xmlns:em="http://www.mozilla.org/2004/em-rdf#">
     <Description about="urn:mozilla:install-manifest">
-        <em:id>rubyformatters@seleniumhq.org</em:id>
-        <em:name>Selenium IDE: Ruby Formatters</em:name>
-        <em:version>1.8.0</em:version>
-        <em:creator>Adam Goucher</em:creator>
-        <em:developer>Samit Badle</em:developer>
-        <em:description>Ruby code formatters for Selenium IDE</em:description>
+        <em:id>java-testbench-formatters@vaadin.com</em:id>
+        <em:name>TestBench Recorder: Java Formatters</em:name>
+        <em:version>@build@</em:version>
+        <em:developer>Jonatan Kronqvist</em:developer>
+        <em:creator>Jonatan Kronqvist</em:creator>
+        <em:description>Java code formatters for Vaadin TestBench Recorder</em:description>
         <em:type>2</em:type>
-        <em:homepageURL>http://seleniumhq.org/projects/ide</em:homepageURL>
-        <em:updateURL>https://addons.seleniumhq.org/ruby-formatter/update.rdf</em:updateURL>
+        <em:homepageURL>https://vaadin.com/add-ons/testbench</em:homepageURL>
+<!--        <em:updateURL>https://..../update.rdf</em:updateURL>-->
 
         <em:targetApplication>
           <Description>
@@ -22,7 +22,7 @@
         
         <em:requires>   
           <Description>
-            <em:id>{a6fd85ed-e919-4a43-a5af-8da18bda539f}</em:id>
+            <em:id>vaadin-testbench-recorder@vaadin.com</em:id>
             <em:minVersion>1.1.0</em:minVersion>
             <em:maxVersion>1.*</em:maxVersion>
           </Description>  

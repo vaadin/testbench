@@ -1,0 +1,91 @@
+<?xml version="1.0"?>
+
+<project name="TestBench IDE extension" basedir="." default="extension">
+	<tstamp />
+	<property name="version" value="3.0.0-SNAPSHOT" />
+
+	<target name="testbench-recorder-package" depends="install-rdfs">
+		<zip destfile="extension/vaadin-testbench-recorder.xpi">
+			<fileset dir="main/src">
+				<exclude name="install.rdf_tpl" />
+				<exclude name="chrome.manifest.production" />
+			</fileset>
+		</zip>
+	</target>
+	
+	<target name="testbench-formatter" depends="install-rdfs">
+		<zip destfile="extension/java-testbench-format.xpi">
+			<fileset dir="plugins/java-testbench-format/src">
+				<exclude name="install.rdf_tpl" />
+				<exclude name="chrome.manifest.production" />
+			</fileset>
+		</zip>
+	</target>
+
+
+	<target name="install-rdfs">
+		<copy file="install.rdf_tpl" tofile="install.rdf" overwrite="true">
+			<filterchain>
+				<replacetokens>
+					<token key="build" value="${version}" />
+				</replacetokens>
+			</filterchain>
+		</copy>
+		<copy file="plugins/java-testbench-format/src/install.rdf_tpl" tofile="plugins/java-testbench-format/src/install.rdf" overwrite="true">
+			<filterchain>
+				<replacetokens>
+					<token key="build" value="${version}" />
+				</replacetokens>
+			</filterchain>
+		</copy>
+		<copy file="main/src/install.rdf_tpl" tofile="main/src/install.rdf" overwrite="true">
+			<filterchain>
+				<replacetokens>
+					<token key="build" value="${version}" />
+				</replacetokens>
+			</filterchain>
+		</copy>
+	</target>
+	
+	
+	<target name="extension" depends="clean,install-rdfs,testbench-recorder-package,testbench-formatter">
+		<zip destfile="extension/vaadin-testbench-recorder-${version}.xpi">
+			<fileset dir="." includes="install.rdf" />
+			<fileset dir="extension" includes="vaadin-testbench-recorder.xpi,java-testbench-format.xpi" />
+		</zip>
+	</target>
+
+	<target name="clean">
+		<delete failonerror="false" includeEmptyDirs="true">
+			<fileset dir="extension"/>
+		</delete>
+		<mkdir dir="extension" />
+	</target>
+	
+	<target name="create-scripts">
+<!--		<loadfile property="dofunction" srcFile="../selenium-extensions/core/doFunction.js" />
+		<copy file="selenium-api.js_tpl" tofile="chrome/content/selenium/scripts/selenium-api.js" overwrite="true">
+			<filterchain>
+				<replacetokens>
+					<token key="doFunction" value="${dofunction}" />
+				</replacetokens>
+			</filterchain>
+		</copy>
+		<loadfile property="locator" srcFile="../selenium-extensions/core/locator.js">
+			<filterchain>
+				<replacetokens>
+					<token key="bot" value="BrowserBot" />
+				</replacetokens>
+			</filterchain>
+		</loadfile>
+		<copy file="selenium-browserbot.js_tpl" tofile="chrome/content/selenium/scripts/selenium-browserbot.js" overwrite="true">
+			<filterchain>
+				<replacetokens>
+					<token key="locator" value="${locator}" />
+				</replacetokens>
+			</filterchain>
+		</copy>
+-->
+	</target>
+	
+</project>

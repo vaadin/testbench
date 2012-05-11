@@ -1,21 +1,18 @@
 <?xml version="1.0"?>
-<RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
+<RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
  xmlns:em="http://www.mozilla.org/2004/em-rdf#">
     <Description about="urn:mozilla:install-manifest">
-        <em:id>vaadin-testbench-recorder@vaadin.com</em:id>
+        <em:id>vaadin-testbench-bundle@vaadin.com</em:id>
         <em:name>Vaadin TestBench Recorder</em:name>
         <em:version>3.0.0-SNAPSHOT</em:version>
-        <em:creator>Shinya Kasatani</em:creator>
-        <em:developer>Adam Goucher</em:developer>
+        <em:creator>Adam Goucher</em:creator>
         <em:developer>Samit Badle</em:developer>
         <em:developer>Dave Hunt</em:developer>
-		<em:developer>Jonatan Kronqvist</em:developer>
-        <em:description>Record, edit and play Vaadin TestBench tests</em:description>
-        <em:type>2</em:type>
+        <em:developer>Jonatan Kronqvist</em:developer>
+        <em:description>Vaadin TestBench Recorder</em:description>
+        <em:type>32</em:type>
         <em:homepageURL>https://vaadin.com/add-ons/testbench</em:homepageURL>
-        <em:optionsURL>chrome://selenium-ide/content/optionsDialog.xul</em:optionsURL>
-<!--        <em:updateURL>https://.../update.rdf</em:updateURL>-->
-        <em:iconURL>chrome://selenium-ide/content/images/selenium-ide-logo32.png</em:iconURL>
+<!--        <em:updateURL>https://addons.seleniumhq.org/ide-multi/update.rdf</em:updateURL>-->
         <em:unpack>true</em:unpack>
 
         <em:targetApplication>

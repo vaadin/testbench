@@ -72,11 +72,11 @@ public class TestBenchExample extends TestBenchTestCase {
         e.click();
         e.click();
 
-        // Check that the first row is 'ÅLAND ISLANDS'
+        // Check that the first row is '√ÖLAND ISLANDS'
         e = testBench(driver)
                 .findElementByVaadinSelector(
                         "sampler::/VVerticalLayout[0]/ChildComponentContainer[1]/VSplitPanelHorizontal[0]/VHorizontalLayout[0]/ChildComponentContainer[0]/VVerticalLayout[0]/ChildComponentContainer[1]/VVerticalLayout[0]/ChildComponentContainer[0]/VScrollTable[0]/domChild[1]/domChild[0]/domChild[1]/domChild[0]/domChild[0]/domChild[1]/domChild[0]");
-        assertEquals("ÅLAND ISLANDS", e.getText());
+        assertEquals("√ÖLAND ISLANDS", e.getText());
     }
 
     @Test
