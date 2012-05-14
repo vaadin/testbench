@@ -94,7 +94,7 @@
         <delete file="${manual.pdf}"/>
 
         <!-- Start OpenOffice service -->
-        <exec executable="python" searchpath="true" failonerror="true" >
+        <exec executable="python" searchpath="true" failonerror="false" >
             <arg value="odf-converter.py"/>
             <arg value="start"/>
         </exec>
@@ -106,7 +106,7 @@
         </java>
 
         <!-- Stop OpenOffice service -->
-        <exec executable="python" searchpath="true" failonerror="true" >
+        <exec executable="python" searchpath="true" failonerror="false" >
             <arg value="odf-converter.py"/>
             <arg value="stop"/>
         </exec>
