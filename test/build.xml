@@ -18,7 +18,7 @@
 	</target>
 
     <target name="compile-unit-tests" unless="exclude.unittests">
-        <mkdir dir="${basedir}/../test/classes" />
+        <mkdir dir="${temp-dir}/classes" />
         <javac srcdir="src" destdir="${temp-dir}/classes" encoding="utf-8" source="1.5">
             <classpath>
                 <fileset dir="../build/result/package" includes="vaadin-testbench-standalone-*.jar" />
