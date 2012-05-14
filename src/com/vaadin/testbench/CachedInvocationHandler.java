@@ -67,7 +67,8 @@ public class CachedInvocationHandler implements InvocationHandler {
     private static final List<String> methodsNotNeedingWaitForVaadin = Arrays
             .asList("close", "getRemoteControlName", "getWrappedDriver",
                     "manage", "navigate", "quit", "setTestName",
-                    "waitForVaadin");
+                    "waitForVaadin", "enableWaitForVaadin",
+                    "disableWaitForVaadin");
 
     private boolean shouldNotWaitForVaadin(String methodName) {
         return methodsNotNeedingWaitForVaadin.contains(methodName);

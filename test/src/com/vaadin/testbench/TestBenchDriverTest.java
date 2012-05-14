@@ -1,6 +1,7 @@
 package com.vaadin.testbench;
 
 import static org.easymock.EasyMock.anyObject;
+import static org.easymock.EasyMock.contains;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.expect;
@@ -111,7 +112,8 @@ public class TestBenchDriverTest {
     @Test
     public void testDisableWaitForVaadin() {
         FirefoxDriver mockFF = createMock(FirefoxDriver.class);
-        expect(mockFF.executeScript(isA(String.class))).andReturn(true).once();
+        expect(mockFF.executeScript(contains("clients[client].isActive()")))
+                .andReturn(true).once();
         WebElement mockElement = createNiceMock(WebElement.class);
         replay(mockFF, mockElement);
 

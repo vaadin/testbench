@@ -1,5 +1,6 @@
 package com.vaadin.testbench.commands;
 
+import static org.easymock.EasyMock.contains;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.eq;
@@ -307,15 +308,12 @@ public class TestBenchCommandExecutorTest {
 
     private FirefoxDriver mockJSExecutor(boolean forcesSync) {
         FirefoxDriver jse = createMock(FirefoxDriver.class);
-        expect(((FirefoxDriver) jse).getCurrentUrl()).andReturn(
-                "http://foo.com/ROOT");
         if (forcesSync) {
             expect(jse.executeScript("window.vaadin.forceSync()")).andReturn(
                     null);
         }
-        expect(
-                jse.executeScript("return window.vaadin.clients.ROOT.getProfilingData()"))
-                .andReturn(Arrays.asList(1000L, 2000L, 3000L));
+        expect(jse.executeScript(contains("getProfilingData()"))).andReturn(
+                Arrays.asList(1000L, 2000L, 3000L));
         return jse;
     }
 }
