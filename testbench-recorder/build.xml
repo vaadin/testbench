@@ -5,11 +5,34 @@
 	<property name="version" value="3.0.0-SNAPSHOT" />
 
 	<target name="testbench-recorder-package" depends="install-rdfs">
-		<zip destfile="extension/vaadin-testbench-recorder.xpi">
+		<delete dir="extension/tmp" />
+		<mkdir dir="extension/tmp" />
+		<mkdir dir="extension/tmp/package" />
+		<mkdir dir="extension/tmp/package/chrome" />
+		<copy todir="extension/tmp/package">
 			<fileset dir="main/src">
-				<exclude name="install.rdf_tpl" />
-				<exclude name="chrome.manifest.production" />
+				<include name="components/**" />
+				<include name="install.rdf" />
 			</fileset>
+		</copy>
+		<copy todir="extension/tmp/package/chrome">
+			<fileset dir="main/src">
+				<include name="content/**" />
+				<include name="locale/**" />
+				<include name="skin/**" />
+			</fileset>
+			<fileset dir="main/src/chrome">
+				<include name="**/**" />
+			</fileset>
+		</copy>
+		<copy todir="extension/tmp/package/chrome/content">
+			<fileset dir="javascript" includes="selenium-core/**/**" />
+		</copy>
+		<copy file="javascript/prebuilt/selenium-atoms.js" tofile="extension/tmp/package/chrome/content/selenium-core/scripts/atoms.js" />
+		<copy file="main/src/chrome.manifest.production" tofile="extension/tmp/package/chrome.manifest" />
+		<copy file="main/prebuilt/main/SeleniumIDEGenericAutoCompleteSearch.xpt" todir="extension/tmp/package/components/" />
+		<zip destfile="extension/vaadin-testbench-recorder.xpi">
+			<fileset dir="extension/tmp/package/"/>
 		</zip>
 	</target>
 	

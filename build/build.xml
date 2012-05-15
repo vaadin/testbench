@@ -79,39 +79,6 @@
     <!-- Documentation                                                      -->
     <!-- ================================================================== -->
 
-    <!-- Manual -->
-    <target name="manual" unless="run.no-manual">
-        <property name="manual.basename" value="vaadin-testbench-manual-${manual.version}"/>
-
-        <!-- Source and target files of the manual -->
-        <property name="manual.odt.filename" value="${manual.basename}.odt"/>
-        <property name="manual.pdf.filename" value="${manual.basename}.pdf"/>
-
-        <property name="manual.odt" value="../doc/${manual.odt.filename}"/>
-        <property name="manual.pdf" value="result/${manual.pdf.filename}"/>
-
-        <!-- Must delete the old version or conversion fails -->
-        <delete file="${manual.pdf}"/>
-
-        <!-- Start OpenOffice service -->
-        <exec executable="python" searchpath="true" failonerror="false" >
-            <arg value="odf-converter.py"/>
-            <arg value="start"/>
-        </exec>
-
-        <!-- Convert the ODF text document to PDF -->
-        <java jar="lib/jodconverter/jodconverter-cli-2.2.2.jar" fork="true">
-            <arg value="${manual.odt}"/>
-            <arg value="${manual.pdf}"/>
-        </java>
-
-        <!-- Stop OpenOffice service -->
-        <exec executable="python" searchpath="true" failonerror="false" >
-            <arg value="odf-converter.py"/>
-            <arg value="stop"/>
-        </exec>
-    </target>
-
 	<target name="javadoc">
 		  <javadoc
 		           destdir="result/api"
@@ -150,7 +117,7 @@
 		<copy file="../testbench-recorder/extension/vaadin-testbench-recorder-${version}.xpi" todir="${output.dir}/vaadin-testbench-recorder" />
 	</target>
 
-	<target name="testbench-distribution-package" depends="testbench-standalone.jar,testbench.jar,javadoc.jar,manual,testbench-recorder,run-tests,create-extension">
+	<target name="testbench-distribution-package" depends="testbench-standalone.jar,testbench.jar,javadoc.jar,testbench-recorder,run-tests,create-extension">
 		<property name="package.root" value="vaadin-testbench-${version}"/>
 		<property name="package.grid.root" value="vaadin-testbench-grid-${version}"/>
         <copy todir="${output.dir}">

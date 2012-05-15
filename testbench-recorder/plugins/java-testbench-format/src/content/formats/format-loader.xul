@@ -5,9 +5,7 @@
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
          xmlns:html="http://www.w3.org/1999/xhtml">
     <script type="application/x-javascript" src="chrome://selenium-ide/content/api.js"/>
-    <script type="application/x-javascript" src="chrome://java-formatters/content/formats/java-rc.js"/>
-    <script type="application/x-javascript" src="chrome://java-formatters/content/formats/java-rc-junit4.js"/>
-    <script type="application/x-javascript" src="chrome://java-formatters/content/formats/java-rc-testng.js"/>
+    <script type="application/x-javascript" src="chrome://java-formatters/content/formats/testbenchdriver-junit4.js"/>
     <html:script type="application/javascript">
         var ide_api = new API();
         ide_api.addPlugin("java-testbench-formatters@vaadin.com");

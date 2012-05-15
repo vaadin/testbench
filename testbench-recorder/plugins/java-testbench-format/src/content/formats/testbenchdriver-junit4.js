@@ -214,7 +214,7 @@ options.header =
         "\tprivate StringBuffer verificationErrors = new StringBuffer();\n" +
         "\t@Before\n" +
         "\tpublic void setUp() throws Exception {\n" +
-        "\t\tdriver = TestBench.create(new FirefoxDriver());\n" +
+        "\t\tdriver = TestBench.createDriver(new FirefoxDriver());\n" +
         "\t\tbaseUrl = \"${baseURL}\";\n" +
         "\t}\n" +
         "\n" +
