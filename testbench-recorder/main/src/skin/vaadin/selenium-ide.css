@@ -30,6 +30,7 @@
     border-radius: 4px;
     color: #eee;
     padding:5px;  
+    margin-left: 8px;
 }
 
 textbox[type="autocomplete"] .autocomplete-history-dropmarker{
@@ -92,4 +93,20 @@ tree{
 	background-color:#eee;
 	border:none;
 	border-radius: 4px;
+}
+
+#testbench-logo{
+	list-style-image: url("chrome://vaadin-ide/skin/testbench-logo.png");
+	margin-left: 8px;
+	margin-bottom: 5px;
+	width: 315px;
+	height: 40px;  
+}
+
+#vaadin-logo{
+    list-style-image: url("chrome://vaadin-ide/skin/vaadin-logo.png");
+    margin-right: 8px;
+    margin-bottom: 5px;
+    width: 165px;
+    height: 40px;  
 }
