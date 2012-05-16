@@ -1,5 +1,12 @@
 /* Background color */
-#selenium-ide,#menubar,#toolbar1,#toolbar2 {
+#selenium-ide,
+#selenium-ide-sidebar,
+#sidebarToolbar_URL,
+#sidebarToolbar_controls,
+#sidebarToolbar_speed,
+#menubar,
+#toolbar1,
+#toolbar2 {
 	-moz-appearance: none;
     background-color: black;
 }
@@ -19,7 +26,11 @@
 
 #menubar > menu { color: white; }
 
-#toolbar1, #toolbar2 { 
+#toolbar1, 
+#toolbar2,
+#sidebarToolbar_URL,
+#sidebarToolbar_controls,
+#sidebarToolbar_speed { 
 	color: white; 	
 }
 
@@ -67,6 +78,7 @@ tabpanels {
     margin-right:8px;
 }
 
+
 tab, .vaadin-console-tab{
 	-moz-appearance: none;
     -moz-border-radius: 4px 4px 0px 0px;
@@ -77,6 +89,10 @@ tab, .vaadin-console-tab{
     width:100px;
     color:#333;
     text-align:center;
+}
+#selenium-ide-sidebar tab, 
+#selenium-ide-sidebar .vaadin-console-tab{
+	width:auto;
 }
 
 tab[selected="true"],
@@ -102,16 +118,24 @@ tree{
 	list-style-image: url("chrome://vaadin-ide/skin/testbench-logo.png");
 	margin-left: 8px;
 	margin-bottom: 5px;
-	width: 315px;
 	height: 40px;  
+	width: auto;
+}
+
+#selenium-ide-sidebar #testbench-logo{
+	height: 20px;
 }
 
 #vaadin-logo{
     list-style-image: url("chrome://vaadin-ide/skin/vaadin-logo.png");
     margin-right: 8px;
     margin-bottom: 5px;
-    width: 165px;
     height: 40px;  
+    width: auto;
+}
+
+#selenium-ide-sidebar #vaadin-logo{
+    height: 20px;
 }
 
 treecols{
@@ -129,7 +153,6 @@ treecol{
 	padding-left: 5px;
 }
 
-treechildren::-moz-tree-cell(recordIndex)
-{
+treechildren::-moz-tree-cell(recordIndex){
   border-top: none;
 }

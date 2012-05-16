@@ -38,9 +38,9 @@ SeleniumIDE.Loader.getTopEditor = function() {
 SeleniumIDE.Loader.getEditors = function() {
 	var editors = [];
 	if (document) {
-		var sidebarBox = document.getElementById('sidebar-box');
+		var sidebarBox = document.getElementById('sidebar-box');	
 		if (sidebarBox && !sidebarBox.hidden) {
-			var sidebar = document.getElementById('sidebar');
+			var sidebar = document.getElementById('sidebar');			
 			try {
 				if (sidebar && sidebar.contentDocument) {
 					if ("chrome://selenium-ide/content/selenium-ide-sidebar.xul" == sidebar.contentDocument.documentURI) {

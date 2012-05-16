@@ -139,6 +139,14 @@ limitations under the License.
     </splitter>
 
     <vbox id="logBox" flex="1" height="100" />
+    
+    <hbox minheight="50">
+        <image id="testbench-logo"/>  
+        <spacer flex="1"/>
+        <image id="vaadin-logo"/>  
+    </hbox>   
+    
+    
   </vbox>
 
 </page>

@@ -654,6 +654,7 @@ Editor.prototype.resetWindow = function() {
         try {
             window.restore();
             window.resizeTo(400,520);
+            alert("Hello");
             window.moveTo(0,0);
         }catch(err) {
             alert("Error: [" + err + "] while trying to reset window size and position.");
