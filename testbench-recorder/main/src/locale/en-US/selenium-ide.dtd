@@ -47,7 +47,7 @@
 <!ENTITY helpReportIssue.label "Report Issue">
 <!ENTITY helpReleaseNotes.label "Release Notes">
 <!ENTITY helpBlog.label "Official Selenium Blog">
-<!ENTITY helpWebsite.label "Official Selenium Website">
+<!ENTITY helpWebsite.label "Vaadin Website">
 
 <!ENTITY logConsole.label "Log">
 <!ENTITY logFilter.debug.label "Debug">

@@ -9,10 +9,10 @@
   <RDF:Description about="urn:mozilla:package:selenium-ide"
     chrome:displayName="Vaadin Testbench Recorder"
     chrome:author="OpenQA"
-    chrome:authorURL="http://seleniumhq.org/projects/ide"
+    chrome:authorURL="http://vaadin.com"
     chrome:name="selenium-ide"
     chrome:extension="true"
-    chrome:description="Record user input for selenium tests.">
+    chrome:description="Record user input for Vaadin Testbench tests.">
   </RDF:Description>
  
   <RDF:Seq about="urn:mozilla:overlays">
