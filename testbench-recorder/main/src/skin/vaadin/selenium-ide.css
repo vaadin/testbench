@@ -32,8 +32,18 @@
     padding:5px;  
 }
 
-textbox[type="autocomplete"] > *{
-	-moz-appearance: none;
+textbox[type="autocomplete"] .autocomplete-history-dropmarker{
+ 	-moz-appearance: menulist;    
+    width:25px;   
+    border-radius:4px;
+}
+
+textbox[type="autocomplete"] .textbox-input-box{
+    -moz-appearance: none;       
+}
+
+textbox[type="autocomplete"] .autocomplete-textbox-container{
+	 -moz-appearance: none; 
 }
 
 textbox{ 
