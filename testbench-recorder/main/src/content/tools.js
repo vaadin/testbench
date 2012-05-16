@@ -45,7 +45,7 @@ function Log(category) {
 	this.log = function(level, msg) {
 		var threshold = this[this._getThreshold()];
 		if (level.level >= threshold.level) {
-			this._write("Selenium IDE [" + level.name + "] " + 
+			this._write("Vaadin Testbench Recorder [" + level.name + "] " + 
                       this._formatDate(new Date()) + " " +
 					  self.category + ": " + msg);
 		}

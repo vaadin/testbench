@@ -253,7 +253,7 @@ SeleniumIDE.Overlay.onLoad = function(event) {
 SeleniumIDE.Overlay.debug = function(msg) {
     var consoleService = Components.classes["@mozilla.org/consoleservice;1"]
         .getService(Components.interfaces.nsIConsoleService);
-    consoleService.logStringMessage("Selenium IDE Overlay [DEBUG] " + msg);
+    consoleService.logStringMessage("Vaadin Testbench Recorder Overlay [DEBUG] " + msg);
 }
 
 SeleniumIDE.Overlay.init = function() {

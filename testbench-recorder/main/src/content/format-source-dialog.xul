@@ -20,7 +20,7 @@ limitations under the License.
 	id="selenium-ide-format-source"
 	ondialogaccept="return saveDialog()"
 	onload="loadDialog()"
-	title="Selenium IDE Format Source"
+	title="Vaadin Testbench Recorder Format Source"
 	width="650"
 	height="550"
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">

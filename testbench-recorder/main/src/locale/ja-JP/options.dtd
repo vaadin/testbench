@@ -1,9 +1,9 @@
-<!ENTITY options.title "Selenium IDE Options">
+<!ENTITY options.title "Vaadin Testbench Recorder Options">
 <!ENTITY options.encoding.description "テストファイルのエンコーディング">
 <!ENTITY options.timeout.description "記録時のデフォルトのタイムアウト">
-<!ENTITY options.userExtensionsPaths.description "Selenium Core 拡張スクリプト (user-extensions.js) のパス">
-<!ENTITY options.ideExtensionsPaths.description "Selenium IDE 拡張スクリプトのパス">
-<!ENTITY options.extensions.tip "拡張スクリプトについて：設定変更を有効にするには Selenium IDE のウィンドウを開き直してください。カンマ区切りで複数のファイル名を指定できます。">
+<!ENTITY options.userExtensionsPaths.description "Vaadin Testbench Recorder Core 拡張スクリプト (user-extensions.js) のパス">
+<!ENTITY options.ideExtensionsPaths.description "Vaadin Testbench Recorder 拡張スクリプトのパス">
+<!ENTITY options.extensions.tip "拡張スクリプトについて：設定変更を有効にするには Vaadin Testbench Recorder のウィンドウを開き直してください。カンマ区切りで複数のファイル名を指定できます。">
 <!ENTITY options.rememberBaseURL.description "Base URL を保存する">
 <!ENTITY options.recordAssertTitle.description "assertTitle を自動的に記録する">
 <!ENTITY options.recordAbsoluteURL.description "絶対 URL を記録する">

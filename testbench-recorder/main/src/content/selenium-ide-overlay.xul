@@ -44,7 +44,7 @@ limitations under the License.
 
   <menupopup id="menu_ToolsPopup">
     <menuitem id="menuToolsSeleniumIDE"
-              label="Selenium IDE"
+              label="Vaadin Testbench Recorder"
               key="key_toggleIDE"
               command="openRecorder"
               insertbefore="sanitizeSeparator,prefSep"
@@ -55,13 +55,13 @@ limitations under the License.
 
   <!-- Enh: Add Selenium IDE toolbar button -->
   <toolbarpalette id="BrowserToolbarPalette">
-    <toolbarbutton id="selenium-ide-button" label="Selenium IDE" class="toolbarbutton-1" tooltiptext="Selenium IDE" oncommand="SeleniumIDE.Loader.openRecorder();"/>
+    <toolbarbutton id="selenium-ide-button" label="Vaadin Testbench Recorder" class="toolbarbutton-1" tooltiptext="Vaadin Testbench Recorder" oncommand="SeleniumIDE.Loader.openRecorder();"/>
   </toolbarpalette>
 
   <!-- Samit: Enh: Add to the App menu Web developer popup in Firefox 4 -->
   <menupopup id="appmenu_webDeveloper_popup">
     <menuitem id="menuAppmenuSeleniumIDE"
-              label="Selenium IDE"
+              label="Vaadin Testbench Recorder"
               key="key_toggleIDE"
               command="openRecorder"
               class="menuitem-iconic"

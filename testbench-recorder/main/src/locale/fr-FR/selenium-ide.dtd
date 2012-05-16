@@ -1,4 +1,4 @@
-<!ENTITY selenium-ide.name "Selenium IDE">
+<!ENTITY selenium-ide.name "Vaadin Testbench Recorder">
 <!ENTITY selenium-ide.version "1.8.0">
 <!ENTITY selenium-ide.sidebar.title "&selenium-ide.name; &selenium-ide.version;">
 <!ENTITY selenium-ide.standalone.title "&selenium-ide.name; &selenium-ide.version;">
@@ -87,4 +87,4 @@
 <!ENTITY tableViewUnavailable.label "La vue sous forme de tableau n'est pas disponible">
 <!ENTITY suiteProgressRuns.label "Succès :">
 <!ENTITY suiteProgressFailures.label "Échecs :">
-<!ENTITY internalTestsMenu.label "Tests internes Selenium IDE">
+<!ENTITY internalTestsMenu.label "Tests internes Vaadin Testbench Recorder">
