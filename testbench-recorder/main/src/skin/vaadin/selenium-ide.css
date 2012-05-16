@@ -64,9 +64,10 @@ tabpanels {
     background:#333;
     border-radius: 4px;
     color: #eee;   
+    margin-right:8px;
 }
 
-tab, #logTab, #helpTab, #uiTab, #rollupTab{
+tab, .vaadin-console-tab{
 	-moz-appearance: none;
     -moz-border-radius: 4px 4px 0px 0px;
     background:silver;
@@ -77,7 +78,9 @@ tab, #logTab, #helpTab, #uiTab, #rollupTab{
     color:#333;
     text-align:center;
 }
-tab[selected="true"]{
+
+tab[selected="true"],
+toolbarbutton[selected="true"]{
 	background:#eee;	
 }
 
