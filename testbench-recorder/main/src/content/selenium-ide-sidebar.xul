@@ -140,7 +140,7 @@ limitations under the License.
 
     <vbox id="logBox" flex="1" height="100" />
     
-    <hbox>
+    <hbox minheight="25">
         <image id="testbench-logo"/>  
         <spacer flex="1"/>
         <image id="vaadin-logo"/>  

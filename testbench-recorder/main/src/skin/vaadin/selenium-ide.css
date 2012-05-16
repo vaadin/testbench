@@ -121,7 +121,6 @@ tree{
 }
 
 #selenium-ide-sidebar #testbench-logo{
-	height:20px;
 	list-style-image: url("chrome://vaadin-ide/skin/testbench-logo_small.png");
 }
 
@@ -132,8 +131,7 @@ tree{
 }
 
 #selenium-ide-sidebar #vaadin-logo{
-	height:20px;
-     list-style-image: url("chrome://vaadin-ide/skin/vaadin-logo_small.png");
+    list-style-image: url("chrome://vaadin-ide/skin/vaadin-logo_small.png");
 }
 
 treecols{
