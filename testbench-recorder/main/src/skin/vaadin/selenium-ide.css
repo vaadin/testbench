@@ -117,25 +117,23 @@ tree{
 #testbench-logo{
 	list-style-image: url("chrome://vaadin-ide/skin/testbench-logo.png");
 	margin-left: 8px;
-	margin-bottom: 5px;
-	height: 40px;  
-	width: auto;
+	margin-bottom: 5px;	
 }
 
 #selenium-ide-sidebar #testbench-logo{
-	height: 20px;
+	height:20px;
+	list-style-image: url("chrome://vaadin-ide/skin/testbench-logo_small.png");
 }
 
 #vaadin-logo{
     list-style-image: url("chrome://vaadin-ide/skin/vaadin-logo.png");
     margin-right: 8px;
-    margin-bottom: 5px;
-    height: 40px;  
-    width: auto;
+    margin-bottom: 5px;   
 }
 
 #selenium-ide-sidebar #vaadin-logo{
-    height: 20px;
+	height:20px;
+     list-style-image: url("chrome://vaadin-ide/skin/vaadin-logo_small.png");
 }
 
 treecols{
