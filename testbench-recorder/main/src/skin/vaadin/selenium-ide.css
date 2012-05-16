@@ -113,3 +113,23 @@ tree{
     width: 165px;
     height: 40px;  
 }
+
+treecols{
+	background:white;
+	border-radius: 4px 4px 0 0;
+	border-bottom: 1px solid #666;
+}
+
+treecol{
+	-moz-appearance: none;
+	background: none;
+	border:none;
+	color: #333;
+	border-right: 1px solid #666;
+	padding-left: 5px;
+}
+
+treechildren::-moz-tree-cell(recordIndex)
+{
+  border-top: none;
+}
