@@ -12,6 +12,7 @@ locale selenium-ide sv-SE locale/sv-SE/
 
 skin selenium-ide classic/1.0 skin/classic/
 skin selenium-ide-platform classic/1.0 skin/classic/platforms/ appversion>=3.0
+skin vaadin-ide vaadin/1.0 skin/vaadin/
 
 # Samit: Enh: Added style for the icon on firefox toolbar
 style chrome://global/content/customizeToolbar.xul         chrome://selenium-ide/skin/toolbar.css

@@ -9,6 +9,7 @@
         <em:developer>Samit Badle</em:developer>
         <em:developer>Dave Hunt</em:developer>
         <em:developer>Jonatan Kronqvist</em:developer>
+        <em:developer>John Ahlroos</em:developer>
         <em:description>Vaadin TestBench Recorder</em:description>
         <em:type>32</em:type>
         <em:homepageURL>https://vaadin.com/add-ons/testbench</em:homepageURL>

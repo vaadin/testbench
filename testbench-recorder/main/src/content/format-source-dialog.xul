@@ -1,5 +1,6 @@
 <?xml-stylesheet href="chrome://global/skin" type="text/css"?>
 <?xml-stylesheet href="chrome://selenium-ide/skin/selenium-ide.css" type="text/css"?>
+<?xml-stylesheet href="chrome://vaadin-ide/skin/selenium-ide.css" type="text/css"?>
 <!--
 Copyright 2005 Shinya Kasatani
 
@@ -19,7 +20,7 @@ limitations under the License.
 	id="selenium-ide-format-source"
 	ondialogaccept="return saveDialog()"
 	onload="loadDialog()"
-	title="Selenium IDE Format Source"
+	title="Vaadin Testbench Recorder Format Source"
 	width="650"
 	height="550"
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">

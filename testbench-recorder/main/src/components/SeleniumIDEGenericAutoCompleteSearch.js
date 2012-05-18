@@ -119,7 +119,7 @@ var SeleniumIDEGenericAutoCompleteModule = {
     registerSelf: function (compMgr, fileSpec, location, type) {
         compMgr = compMgr.QueryInterface(Components.interfaces.nsIComponentRegistrar);
         compMgr.registerFactoryLocation(COMPONENT_ID,
-                                        "Selenium IDE Generic Autocomplete",
+                                        "Vaadin Testbench Recorder Generic Autocomplete",
                                         "@mozilla.org/autocomplete/search;1?name=selenium-ide-generic",
                                         fileSpec,
                                         location,

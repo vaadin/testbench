@@ -1,0 +1,154 @@
+/* Background color */
+#selenium-ide,
+#selenium-ide-sidebar,
+#sidebarToolbar_URL,
+#sidebarToolbar_controls,
+#sidebarToolbar_speed,
+#menubar,
+#toolbar1,
+#toolbar2 {
+	-moz-appearance: none;
+    background-color: black;
+}
+
+#logBox{
+	-moz-appearance: none;
+	border:none;
+	padding:5px;
+	background:#333;
+    border-radius: 4px;
+}
+
+#logFilter, #logClear{
+    -moz-appearance: none;
+	color: #eee;
+}
+
+#menubar > menu { color: white; }
+
+#toolbar1, 
+#toolbar2,
+#sidebarToolbar_URL,
+#sidebarToolbar_controls,
+#sidebarToolbar_speed { 
+	color: white; 	
+}
+
+#suitePane {
+	-moz-appearance: none;
+    border:none;
+    background:#333;
+    border-radius: 4px;
+    color: #eee;
+    padding:5px;  
+    margin-left: 8px;
+}
+
+textbox[type="autocomplete"] .autocomplete-history-dropmarker{
+ 	-moz-appearance: menulist;    
+    width:25px;   
+    border-radius:4px;
+}
+
+textbox[type="autocomplete"] .textbox-input-box{
+    -moz-appearance: none;       
+}
+
+textbox[type="autocomplete"] .autocomplete-textbox-container{
+	 -moz-appearance: none; 
+}
+
+textbox{ 
+	-moz-appearance: none;
+	background:#eee; 
+	border:0px solid red;
+    border-radius:4px;
+    height:24px;
+}
+textbox[disabled="true"]{
+	background:silver;
+}
+
+tabpanels {
+    -moz-appearance: none;
+    border:none;
+    background:#333;
+    border-radius: 4px;
+    color: #eee;   
+    margin-right:8px;
+}
+
+
+tab, .vaadin-console-tab{
+	-moz-appearance: none;
+    -moz-border-radius: 4px 4px 0px 0px;
+    background:silver;
+    margin:0 0 0 5px;
+    border:none;
+    color: white;
+    width:100px;
+    color:#333;
+    text-align:center;
+}
+#selenium-ide-sidebar tab, 
+#selenium-ide-sidebar .vaadin-console-tab{
+	width:auto;
+}
+
+tab[selected="true"],
+toolbarbutton[selected="true"]{
+	background:#eee;	
+}
+
+#logView,#helpView,#uiView,#rollupView{
+	border:none;
+    background:#333;
+    border-radius: 4px;
+    color: #eee;   
+}
+
+tree{
+	-moz-appearance: none;
+	background-color:#eee;
+	border:none;
+	border-radius: 4px;
+}
+
+#testbench-logo{
+	list-style-image: url("chrome://vaadin-ide/skin/testbench-logo.png");
+	margin-left: 8px;
+	margin-bottom: 5px;	
+}
+
+#selenium-ide-sidebar #testbench-logo{
+	list-style-image: url("chrome://vaadin-ide/skin/testbench-logo_small.png");
+}
+
+#vaadin-logo{
+    list-style-image: url("chrome://vaadin-ide/skin/vaadin-logo.png");
+    margin-right: 8px;
+    margin-bottom: 5px;   
+}
+
+#selenium-ide-sidebar #vaadin-logo{
+    list-style-image: url("chrome://vaadin-ide/skin/vaadin-logo_small.png");
+}
+
+treecols{
+	background:white;
+	border-radius: 4px 4px 0 0;
+	border-bottom: 1px solid #666;
+}
+
+treecol{
+	-moz-appearance: none;
+	background: none;
+	border:none;
+	color: #333;
+	border-right: 1px solid #666;
+	padding-left: 5px;
+}
+
+treechildren::-moz-tree-cell(recordIndex){
+  border-top: none;
+}

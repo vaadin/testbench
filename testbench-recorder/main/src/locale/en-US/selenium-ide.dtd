@@ -1,4 +1,4 @@
-<!ENTITY selenium-ide.name "Selenium IDE">
+<!ENTITY selenium-ide.name "Vaadin Testbench Recorder">
 <!ENTITY selenium-ide.version "1.8.0">
 <!ENTITY selenium-ide.sidebar.title "&selenium-ide.name; &selenium-ide.version;">
 <!ENTITY selenium-ide.standalone.title "&selenium-ide.name; &selenium-ide.version;">
@@ -47,7 +47,7 @@
 <!ENTITY helpReportIssue.label "Report Issue">
 <!ENTITY helpReleaseNotes.label "Release Notes">
 <!ENTITY helpBlog.label "Official Selenium Blog">
-<!ENTITY helpWebsite.label "Official Selenium Website">
+<!ENTITY helpWebsite.label "Vaadin Website">
 
 <!ENTITY logConsole.label "Log">
 <!ENTITY logFilter.debug.label "Debug">
@@ -87,4 +87,4 @@
 <!ENTITY tableViewUnavailable.label "Table view is not available with this format.">
 <!ENTITY suiteProgressRuns.label "Runs:">
 <!ENTITY suiteProgressFailures.label "Failures:">
-<!ENTITY internalTestsMenu.label "Test Selenium IDE">
+<!ENTITY internalTestsMenu.label "Test Vaadin Testbench Recorder">
