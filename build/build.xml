@@ -117,7 +117,7 @@
 		<copy file="../testbench-recorder/extension/vaadin-testbench-recorder-${version}.xpi" todir="${output.dir}/vaadin-testbench-recorder" />
 	</target>
 
-	<target name="testbench-distribution-package" depends="testbench-standalone.jar,testbench.jar,javadoc.jar,testbench-recorder,run-tests,create-extension">
+	<target name="testbench-distribution-package" depends="testbench-standalone.jar,testbench.jar,javadoc.jar,testbench-recorder,run-tests">
 		<property name="package.root" value="vaadin-testbench-${version}"/>
 		<property name="package.grid.root" value="vaadin-testbench-grid-${version}"/>
         <copy todir="${output.dir}">
@@ -160,20 +160,4 @@
             <property name="class.path" value="${class.path}"/>
         </subant>
     </target>
-
-	<target name="create-extension">
-	<!--
-		<loadfile property="locator" srcFile="../selenium-extensions/core/locator.js">
-			<filterchain>
-				<replacetokens>
-					<token key="bot" value="PageBot" />
-				</replacetokens>
-			</filterchain>
-		</loadfile>
-		<loadfile property="dofunction" srcFile="../selenium-extensions/core/doFunction.js" />
-		<loadfile property="playback" srcFile="../testbench-recorder/chrome/content/selenium/scripts/selenium-executionloop.js" />
-		<loadfile property="utilities" srcFile="../selenium-extensions/core/utilities.js" />
-		<echo message="${locator}${line.separator}${dofunction}${line.separator}${playback}${line.separator}${utilities}" file="../selenium-extensions/core/user-extensions.js"/>
-		-->
-	</target>
 </project>

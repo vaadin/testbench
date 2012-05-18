@@ -37,7 +37,7 @@ if(navigator.userAgent.toLowerCase().indexOf('chrome/') > -1){
 	var connector = getVaadinConnector(this.currentWindow);
 
 	if (!connector) {
-		// Not a toolkit application
+		// Not a vaadin application
 		return null;
 	}
 

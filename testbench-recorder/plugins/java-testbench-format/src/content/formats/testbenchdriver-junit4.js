@@ -1,5 +1,5 @@
 /*
- * Formatter for Selenium 2 / WebDriver Java client.
+ * Formatter for Vaadin TestBench (Java JUnit).
  */
 
 var subScriptLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);

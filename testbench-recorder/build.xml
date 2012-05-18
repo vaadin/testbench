@@ -4,11 +4,7 @@
 	<tstamp />
 	<property name="version" value="3.0.0-SNAPSHOT" />
 
-	<target name="testbench-recorder-package" depends="install-rdfs">
-		<delete dir="extension/tmp" />
-		<mkdir dir="extension/tmp" />
-		<mkdir dir="extension/tmp/package" />
-		<mkdir dir="extension/tmp/package/chrome" />
+	<target name="testbench-recorder-package" depends="install-rdfs,create-extension">
 		<copy todir="extension/tmp/package">
 			<fileset dir="main/src">
 				<include name="components/**" />
@@ -26,11 +22,16 @@
 			</fileset>
 		</copy>
 		<copy todir="extension/tmp/package/chrome/content">
+			<!-- selenium-api.js and selenium-browserbot.js are copied in the 'create-scripts' target -->
 			<fileset dir="javascript" includes="selenium-core/**/**" />
 		</copy>
 		<copy file="javascript/prebuilt/selenium-atoms.js" tofile="extension/tmp/package/chrome/content/selenium-core/scripts/atoms.js" />
 		<copy file="main/src/chrome.manifest.production" tofile="extension/tmp/package/chrome.manifest" />
 		<copy file="main/prebuilt/main/SeleniumIDEGenericAutoCompleteSearch.xpt" todir="extension/tmp/package/components/" />
+		<copy file="../selenium-extensions/core/user-extensions.js" todir="extension/tmp/package/chrome/content/selenium-core/scripts" />
+			
+		<antcall target="create-scripts" />
+		
 		<zip destfile="extension/vaadin-testbench-recorder.xpi">
 			<fileset dir="extension/tmp/package/"/>
 		</zip>
@@ -83,11 +84,14 @@
 			<fileset dir="extension"/>
 		</delete>
 		<mkdir dir="extension" />
+		<mkdir dir="extension/tmp" />
+		<mkdir dir="extension/tmp/package" />
+		<mkdir dir="extension/tmp/package/chrome" />
 	</target>
 	
 	<target name="create-scripts">
-<!--		<loadfile property="dofunction" srcFile="../selenium-extensions/core/doFunction.js" />
-		<copy file="selenium-api.js_tpl" tofile="chrome/content/selenium/scripts/selenium-api.js" overwrite="true">
+		<loadfile property="dofunction" srcFile="../selenium-extensions/core/doFunction.js" />
+		<copy file="selenium-api.js_tpl" tofile="extension/tmp/package/chrome/content/selenium-core/scripts/selenium-api.js" overwrite="true">
 			<filterchain>
 				<replacetokens>
 					<token key="doFunction" value="${dofunction}" />
@@ -101,14 +105,26 @@
 				</replacetokens>
 			</filterchain>
 		</loadfile>
-		<copy file="selenium-browserbot.js_tpl" tofile="chrome/content/selenium/scripts/selenium-browserbot.js" overwrite="true">
+		<copy file="selenium-browserbot.js_tpl" tofile="extension/tmp/package/chrome/content/selenium-core/scripts/selenium-browserbot.js" overwrite="true">
 			<filterchain>
 				<replacetokens>
 					<token key="locator" value="${locator}" />
 				</replacetokens>
 			</filterchain>
 		</copy>
--->
 	</target>
-	
+
+	<target name="create-extension">
+		<loadfile property="locator" srcFile="../selenium-extensions/core/locator.js">
+			<filterchain>
+				<replacetokens>
+					<token key="bot" value="PageBot" />
+				</replacetokens>
+			</filterchain>
+		</loadfile>
+		<loadfile property="dofunction" srcFile="../selenium-extensions/core/doFunction.js" />
+		<loadfile property="playback" srcFile="javascript/selenium-core/scripts/selenium-executionloop.js" />
+		<loadfile property="utilities" srcFile="../selenium-extensions/core/utilities.js" />
+		<echo message="${locator}${line.separator}${dofunction}${line.separator}${playback}${line.separator}${utilities}" file="../selenium-extensions/core/user-extensions.js"/>
+	</target>
 </project>

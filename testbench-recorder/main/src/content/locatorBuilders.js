@@ -292,6 +292,47 @@ LocatorBuilders.prototype.preciseXPath = function(xpath, e){
  * ===== builders =====
  */
 
+function getVaadinConnector(wnd) {
+	if (wnd.wrappedJSObject) {
+		wnd = wnd.wrappedJSObject;
+	}
+
+	var connector = null;
+	if (wnd.itmill) {
+		connector = wnd.itmill;
+	} else if (wnd.vaadin) {
+		connector = wnd.vaadin;
+	}
+
+	return connector;
+}
+
+LocatorBuilders.add('vaadin', function(e) {
+	var connector = getVaadinConnector(this.window);
+
+	if (!connector) {
+		// Not a Vaadin application
+		return null;
+	}
+
+	/* Unwrap the element if wrapped so we can access tkPid */
+	if (e.wrappedJSObject) {
+		e = e.wrappedJSObject;
+	}
+	
+	/* Catches a java.lang.ClassCastException for popupView
+	 * that stops the whole Locator search.
+	 */
+	for ( var windowname in connector.clients) {
+		var path = connector.clients[windowname].getPathForElement(e);
+		if (path != null) {
+			return "vaadin=" + windowname + "::" + path;
+		}
+	}
+	
+	return null;
+});
+
 LocatorBuilders.add('ui', function(pageElement) {
   return UIMap.getInstance().getUISpecifierString(pageElement,
       this.window.document);
@@ -518,3 +559,5 @@ LocatorBuilders.add('xpath:position', function(e, opt_contextNode) {
 // Samit: Warning: The old method of setting the order using LocatorBuilders.order is now deprecated
 // You can change the priority of builders by setting LocatorBuilders.order.
 //LocatorBuilders.order = ['ui', 'id', 'link', 'name', 'css', 'dom:name', 'xpath:link', 'xpath:img', 'xpath:attributes', 'xpath:idRelative', 'xpath:href', 'dom:index', 'xpath:position'];
+
+LocatorBuilders.setPreferredOrder(['vaadin', 'ui', 'id', 'link', 'name', 'css', 'dom:name', 'xpath:link', 'xpath:img', 'xpath:attributes', 'xpath:idRelative', 'xpath:href', 'dom:index', 'xpath:position']);
