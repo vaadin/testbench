@@ -276,6 +276,8 @@ WDAPI.Driver.searchContext = function(locatorType, locator) {
       return 'By.name(' + locatorString + ')';
     case 'tag_name':
       return 'By.tagName(' + locatorString + ')';
+	case 'vaadin':
+	  return '';
   }
   throw 'Error: unknown strategy [' + locatorType + '] for locator [' + locator + ']';
 };

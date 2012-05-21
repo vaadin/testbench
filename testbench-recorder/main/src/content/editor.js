@@ -793,6 +793,9 @@ Editor.prototype.appendWaitForPageToLoad = function(window) {
 	}
 	this.lastCommandIndex = null;
 	var lastCommand = this.getTestCase().commands[lastCommandIndex];
+	if(lastCommand.command.match(/^waitForVaadin/)){
+		lastCommand = this.getTestCase().commands[lastCommandIndex-1];
+	}
 	if (lastCommand.type == 'command' && 
 		!lastCommand.command.match(/^(assert|verify|store)/)) {
 		if (this.app.getCurrentFormat().getFormatter().remoteControl) {
@@ -868,8 +871,14 @@ Editor.prototype.openLogWindow = function() {
 }
 
 Editor.prototype.onPopupOptions = function() {
-	document.getElementById("clipboardFormatMenu").setAttribute("disabled", !editor.app.isPlayable());
-	document.getElementById("internalTestsMenu").setAttribute("hidden", this.getOptions().showInternalTestsMenu == null);
+	var v1  = document.getElementById("clipboardFormatMenu");
+	if (v1) {
+		v1.setAttribute("disabled", !editor.app.isPlayable());
+	}
+	var v2 = document.getElementById("internalTestsMenu");
+	if (v2) {
+		v2.setAttribute("hidden", this.getOptions().showInternalTestsMenu == null);
+	}
 }
 
 Editor.prototype.populateFormatsPopup = function(e, action, format) {

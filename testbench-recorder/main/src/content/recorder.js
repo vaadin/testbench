@@ -22,6 +22,86 @@ function Recorder(window) {
     this.registerUnloadListener();
 }
 
+Recorder.changeSelection = false;
+var enabledRecording = false;
+
+/* Function for enabling selecting new target to a command */
+Recorder.reSelectTarget = function(){
+	if(!this.changeSelection){
+		// set flag for click recorder and highlight Select button
+		this.changeSelection = true;
+		document.getElementById('selectButton').style.color="green";
+		document.getElementById('selectButton').style.fontWeight="bold";
+		// Enable recording if not enabled
+		if(!document.getElementById('record-button').checked){
+			document.getElementById('record-button').click();
+			enabledRecording = true;
+		}
+	}else{
+		// remove flag and highlights from Select button
+		this.changeSelection = false;
+		document.getElementById('selectButton').style.color="black";
+		document.getElementById('selectButton').style.fontWeight="normal";
+		// Disable recoring if enabled by button and still enabled
+		if(enabledRecording && document.getElementById('record-button').checked){
+			document.getElementById('record-button').click();
+			enabledRecording = false;
+		}else{
+			enabledRecording = false;
+		}
+	}
+}
+
+Recorder.recordAssertText = false;
+/* Function for recording assert text from click */
+Recorder.assertTarget = function(){
+	if(document.getElementById('assert-button').checked){
+		// Set flag
+		this.recordAssertText = true;
+		// Enable recording if not enabled
+		if(!document.getElementById('record-button').checked){
+			document.getElementById('record-button').click();
+			enabledRecording = true;
+		}
+	}else{
+		// Remove flag
+		this.recordAssertText = false;
+		// Disable recoring if enabled by button and still enabled
+		if(enabledRecording && document.getElementById('record-button').checked){
+			document.getElementById('record-button').click();
+			enabledRecording = false;
+		}else{
+			enabledRecording = false;
+		}
+	}
+}
+
+Recorder.recordTooltip = false;
+/* Expect and record a tooltip */
+Recorder.expectTooltip = function(){
+	if(document.getElementById('tooltip-button').checked){
+		// Set flag
+		this.recordTooltip = true;
+		// Enable recording if not enabled
+		if(!document.getElementById('record-button').checked){
+			document.getElementById('record-button').click();
+			enabledRecording = true;
+		}
+	}else{
+		// Remove flag
+		this.recordTooltip = false;
+		// Disable recoring if enabled by button and still enabled
+		if(enabledRecording && document.getElementById('record-button').checked){
+			document.getElementById('record-button').click();
+			enabledRecording = false;
+		}else{
+			enabledRecording = false;
+		}
+	}
+}
+
+
+
 Recorder.WINDOW_RECORDER_PROPERTY = "_Selenium_IDE_Recorder";
 
 Recorder.log = new Log("Recorder");
@@ -129,7 +209,8 @@ Recorder.prototype.attach = function() {
 					}
 				}
 			}
-			this.window.document.addEventListener(eventName, listener, capture);
+//			this.window.document.addEventListener(eventName, listener, capture);
+			this.window.addEventListener(eventName, listener, capture);
 			this.eventListeners[eventKey] = listener;
 		}
 		register.call(this);
@@ -352,3 +433,21 @@ Recorder.forEachFrame = function(window, handler) {
 }
 
 Recorder.eventHandlers = {};
+
+/* Add waits for each Vaadin command */
+Recorder.prototype.record_orig = Recorder.prototype.record;
+
+Recorder.prototype.record = function(command, target, value,
+		insertBeforeLastCommand) {
+//	if (!this.VaadinFirstWaitAdded) {
+//		/* wait for the initial uidl request to be handled */
+//		this.record_orig("waitForVaadin");
+//		this.VaadinFirstWaitAdded = true;
+//	}
+	this.record_orig(command, target, value, insertBeforeLastCommand);
+	// TODO This should be conditional, only if the path starts with vaadin=
+	// this.log.warn("command: "+command+"\ntarget: "+target+"\nvalue:
+	// "+value+"\ninsertBeforeLastCommand: "+insertBeforeLastCommand+")");
+	// add wait after each recorded UI event automatically
+//	this.record_orig("waitForVaadin");
+}

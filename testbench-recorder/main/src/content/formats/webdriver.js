@@ -486,6 +486,9 @@ SeleniumWebDriverAdaptor.prototype._elementLocator = function(sel1Locator) {
   if (locator.type == 'name') {
     return locator;
   }
+  if (locator.type == 'vaadin') {
+    return locator;
+  }
   if (sel1Locator.match(/^document/) || locator.type == 'dom') {
     throw 'Error: Dom locators are not implemented yet!';
   }
