@@ -44,6 +44,11 @@
     margin-left: 8px;
 }
 
+.console-button:hover{
+	border-radius: 4px;
+	border:none;
+}
+
 textbox[type="autocomplete"] .autocomplete-history-dropmarker{
  	-moz-appearance: menulist;    
     width:25px;   
@@ -100,8 +105,18 @@ toolbarbutton[selected="true"]{
 	background:#eee;	
 }
 
+#logMenu {
+  height: 24px;
+  border-bottom: 0;
+}
+
+#logTab,#helpTab,#uiTab,#rollupTab,#logButtons{
+	-moz-appearance: none;
+	border:0 !important;	
+}
+
 #logView,#helpView,#uiView,#rollupView{
-	border:none;
+	border:0;
     background:#333;
     border-radius: 4px;
     color: #eee;   
@@ -135,18 +150,20 @@ tree{
 }
 
 treecols{
-	background:white;
+	background-color: #E2E3E5;
+	background-image: -moz-linear-gradient(top, #E2E3E5, #D4D7D9);   
 	border-radius: 4px 4px 0 0;
-	border-bottom: 1px solid #666;
+	border-bottom: 1px solid rgb(194, 195, 196);
 }
 
 treecol{
 	-moz-appearance: none;
 	background: none;
 	border:none;
-	color: #333;
-	border-right: 1px solid #666;
+	border-right: 1px solid rgb(194, 195, 196);
 	padding-left: 5px;
+	color: rgb(34,34,34);
+	text-shadow:0pt 1px 0pt rgb(243,245,248);
 }
 
 treechildren::-moz-tree-cell(recordIndex){
