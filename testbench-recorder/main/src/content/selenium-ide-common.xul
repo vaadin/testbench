@@ -224,7 +224,8 @@ limitations under the License.
       <menuitem label="&helpDocumentation.label;" oncommand="openTabOrWindow('https://vaadin.com/book/-/page/testbench.html')"/>
       <menuseparator/>
       <menuitem label="&helpReportIssue.label;" oncommand="openTabOrWindow('http://dev.vaadin.com/newticket?component=TestBench&amp;version=&amp;priority=normal')"/>
-      <menuitem label="&helpWebsite.label;" oncommand="openTabOrWindow('http://www.vaadin.com/')"/>
+      <menuitem label="&helpWebsite.label;" oncommand="openTabOrWindow('https://www.vaadin.com/')"/>
+      <menuitem label="&helpProAccount.label;" oncommand="openTabOrWindow('https://vaadin.com/pro')"/>
     </menupopup>
   </menu>
 
