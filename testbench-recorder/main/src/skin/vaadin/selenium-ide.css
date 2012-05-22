@@ -34,6 +34,14 @@
 	color: white; 	
 }
 
+#toolbar2{ margin-right: 10px }
+
+#record-button{
+	-moz-appearance: none;
+	background:black !important;
+	border:0 
+}
+
 #suitePane {
 	-moz-appearance: none;
     border:none;
