@@ -201,9 +201,9 @@ function Editor(window) {
     this.alreadySaved = false;
 
     //Samit: Enh: display a webpage on the first start (and also on locale change if the version string is localised)
+    //John: Removed Samit's modification since we do not want to open seleniums website
     var versionString = Editor.getString('selenium-ide.version');
-    if (!this.app.options.currentVersion || this.app.options.currentVersion != versionString) {
-        openTabOrWindow('http://code.google.com/p/selenium/wiki/SeIDEReleaseNotes');
+    if (!this.app.options.currentVersion || this.app.options.currentVersion != versionString) {       
         this.app.options.currentVersion = versionString;
         Preferences.save(this.app.options, 'currentVersion');
     }
@@ -495,9 +495,9 @@ Editor.prototype.updateTitle = function() {
 	var title;
     var testCase = this.getTestCase();
 	if (testCase && testCase.file) {
-		title = testCase.file.leafName + " - " + Editor.getString('selenium-ide.name') + " " + Editor.getString('selenium-ide.version');
+		title = testCase.file.leafName + " - " + Editor.getString('selenium-ide.name');
 	} else {
-		title = Editor.getString('selenium-ide.name') + " " + Editor.getString('selenium-ide.version');
+		title = Editor.getString('selenium-ide.name');
 	}
 	if (testCase && testCase.modified) {
 		title += " *";
