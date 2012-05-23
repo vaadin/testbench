@@ -682,6 +682,45 @@ SeleniumWebDriverAdaptor.prototype.select = function(elementLocator, label) {
   return driver.findElement(locator.type, locator.string).select(this.rawArgs[1].substring("label=".length, this.rawArgs[1].length));
 };
 
+/****** TestBench commands ******/
+
+SeleniumWebDriverAdaptor.prototype.expectDialog = function(elementLocator, modifierKeysPressed) {
+    var locator = this._elementLocator(this.rawArgs[0]);
+    var driver = new WDAPI.Driver();
+    var webElement = driver.findElement(locator.type, locator.string);
+	// FIXME: the parameters are wrong, should be Keys...
+	return webElement.expectDialog(this.rawArgs[1]);
+}
+
+SeleniumWebDriverAdaptor.prototype.closeNotification = function(elementLocator) {
+    var locator = this._elementLocator(this.rawArgs[0]);
+    var driver = new WDAPI.Driver();
+    var webElement = driver.findElement(locator.type, locator.string);
+	return webElement.closeNotification();
+}
+
+SeleniumWebDriverAdaptor.prototype.showTooltip = function(elementLocator) {
+    var locator = this._elementLocator(this.rawArgs[0]);
+    var driver = new WDAPI.Driver();
+    var webElement = driver.findElement(locator.type, locator.string);
+	return webElement.showTooltip();
+}
+
+SeleniumWebDriverAdaptor.prototype.scroll = function(elementLocator, scrollTop) {
+    var locator = this._elementLocator(this.rawArgs[0]);
+    var driver = new WDAPI.Driver();
+    var webElement = driver.findElement(locator.type, locator.string);
+	return webElement.scroll(this.rawArgs[1]);
+}
+
+SeleniumWebDriverAdaptor.prototype.scrollLeft = function(elementLocator, scrollLeft) {
+    var locator = this._elementLocator(this.rawArgs[0]);
+    var driver = new WDAPI.Driver();
+    var webElement = driver.findElement(locator.type, locator.string);
+	return webElement.scrollLeft(this.rawArgs[1]);
+}
+
+
 //SeleniumWebDriverAdaptor.prototype.isSomethingSelected = function(elementLocator) {
 ////  var locator = this._elementLocator(this.rawArgs[0]);
 ////  var driver = new WDAPI.Driver();
