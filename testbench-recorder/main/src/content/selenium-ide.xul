@@ -160,8 +160,7 @@ limitations under the License.
 	
     <vbox id="logBox" flex="1" height="100"/>
     
-    <hbox minheight="45">
-        <image id="testbench-logo" onclick="openTabOrWindow('https://vaadin.com/add-ons/testbench')" />  
+    <hbox minheight="45">       
         <spacer flex="1"/>
         <image id="vaadin-logo" onclick="openTabOrWindow('https://vaadin.com')"/>  
     </hbox>   
