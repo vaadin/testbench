@@ -6,6 +6,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import org.openqa.selenium.WebDriver;
+
 import com.vaadin.testbench.commands.CanWaitForVaadin;
 
 public class CachedInvocationHandler implements InvocationHandler {
@@ -33,9 +35,14 @@ public class CachedInvocationHandler implements InvocationHandler {
         if (!isMethodCached(method)) {
             Method actualMethod = null;
             try {
-                // Is it a method in the TestBenchDriver?
-                actualMethod = TestBenchDriver.class.getMethod(
-                        method.getName(), method.getParameterTypes());
+                if (actualObject instanceof WebDriver) {
+                    // Is it a method in the TestBenchDriver?
+                    actualMethod = TestBenchDriver.class.getMethod(
+                            method.getName(), method.getParameterTypes());
+                } else {
+                    actualMethod = TestBenchElement.class.getMethod(
+                            method.getName(), method.getParameterTypes());
+                }
                 implementedMethodCache.put(method, actualMethod);
             } catch (Exception e) {
                 // It's probably a method implemented by the actual driver.

@@ -61,7 +61,7 @@ public class TestBenchExample extends TestBenchTestCase {
         WebElement e = driver
                 .findElement(By
                         .xpath("//span[@class='v-button-wrap' and span='Mouse over for plain tooltip']"));
-        testBench(driver).showTooltip(e);
+        tbElement(e).showTooltip();
     }
 
     @Test

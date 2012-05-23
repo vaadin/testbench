@@ -18,12 +18,10 @@ import javax.imageio.ImageIO;
 
 import org.openqa.selenium.HasCapabilities;
 import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.Keys;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.remote.HttpCommandExecutor;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.remote.Response;
@@ -37,7 +35,8 @@ import com.vaadin.testbench.screenshot.ReferenceNameGenerator;
 /**
  * @author Jonatan Kronqvist / Vaadin Ltd
  */
-public class TestBenchCommandExecutor implements TestBenchCommands {
+public class TestBenchCommandExecutor implements TestBenchCommands,
+        JavascriptExecutor {
     private static Logger getLogger() {
         return Logger.getLogger(TestBenchCommandExecutor.class.getName());
     }
@@ -112,87 +111,6 @@ public class TestBenchCommandExecutor implements TestBenchCommands {
                     ia.getHostAddress());
         }
         return null;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * com.vaadin.testbench.commands.TestBenchElementCommands#expectDialog()
-     */
-    @Override
-    public void expectDialog(WebElement element, Keys... modifierKeysPressed) {
-        Actions actions = new Actions(actualDriver);
-        // Press modifier key(s)
-        for (Keys key : modifierKeysPressed) {
-            actions = actions.keyDown(key);
-        }
-        actions = actions.click(element);
-        // Release modifier key(s)
-        for (Keys key : modifierKeysPressed) {
-            actions = actions.keyUp(key);
-        }
-        actions.perform();
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * com.vaadin.testbench.commands.TestBenchCommands#closeNotification(org
-     * .openqa.selenium.WebElement)
-     */
-    @Override
-    public boolean closeNotification(WebElement element) {
-        element.click();
-        // Wait for 5000 ms or until the element is no longer visible.
-        int times = 0;
-        while (element.isDisplayed() || times > 25) {
-            try {
-                Thread.sleep(200);
-            } catch (InterruptedException e) {
-            }
-            times++;
-        }
-        return element.isDisplayed();
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.vaadin.testbench.commands.TestBenchElementCommands#showTooltip()
-     */
-    @Override
-    public void showTooltip(WebElement element) {
-        new Actions(actualDriver).moveToElement(element).perform();
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * com.vaadin.testbench.commands.TestBenchCommands#scroll(org.openqa.selenium
-     * .WebElement, int)
-     */
-    @Override
-    public void scroll(WebElement element, int scrollTop) {
-        JavascriptExecutor js = (JavascriptExecutor) actualDriver;
-        js.executeScript("arguments[0].setScrollTop(arguments[1])", element,
-                scrollTop);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * com.vaadin.testbench.commands.TestBenchCommands#scrollLeft(org.openqa
-     * .selenium.WebElement, int)
-     */
-    @Override
-    public void scrollLeft(WebElement element, int scrollLeft) {
-        JavascriptExecutor js = (JavascriptExecutor) actualDriver;
-        js.executeScript("arguments[0].setScrollLeft(arguments[1])", element,
-                scrollLeft);
     }
 
     /*
@@ -427,9 +345,9 @@ public class TestBenchCommandExecutor implements TestBenchCommands {
             if (selector.contains("::")) {
                 String client = selector.substring(0, selector.indexOf("::"));
                 String path = selector.substring(selector.indexOf("::") + 2);
-                element = (WebElement) jse.executeScript(
-                        "return window.vaadin.clients." + client
-                                + ".getElementByPath(arguments[0])", path);
+                element = (WebElement) jse
+                        .executeScript("return window.vaadin.clients." + client
+                                + ".getElementByPath(\"" + path + "\");");
             } else {
                 element = (WebElement) jse.executeScript(findByVaadinScript,
                         selector);
@@ -449,5 +367,27 @@ public class TestBenchCommandExecutor implements TestBenchCommands {
     @Override
     public void enableWaitForVaadin() {
         enableWaitForVaadin = true;
+    }
+
+    @Override
+    public Object executeScript(String script, Object... args) {
+        if (actualDriver instanceof JavascriptExecutor) {
+            return ((JavascriptExecutor) actualDriver).executeScript(script,
+                    args);
+        }
+        throw new RuntimeException("The driver is not a JavascriptExecutor");
+    }
+
+    @Override
+    public Object executeAsyncScript(String script, Object... args) {
+        if (actualDriver instanceof JavascriptExecutor) {
+            return ((JavascriptExecutor) actualDriver).executeAsyncScript(
+                    script, args);
+        }
+        throw new RuntimeException("The driver is not a JavascriptExecutor");
+    }
+
+    public WebDriver getWrappedDriver() {
+        return null;
     }
 }

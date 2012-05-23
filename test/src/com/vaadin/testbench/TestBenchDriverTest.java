@@ -115,14 +115,17 @@ public class TestBenchDriverTest {
         expect(mockFF.executeScript(contains("clients[client].isActive()")))
                 .andReturn(true).once();
         WebElement mockElement = createNiceMock(WebElement.class);
+        expect(mockFF.findElement(isA(By.class))).andReturn(mockElement);
         replay(mockFF, mockElement);
 
         WebDriver driver = TestBench.createDriver(mockFF);
         TestBenchCommands tb = (TestBenchCommands) driver;
         tb.disableWaitForVaadin();
-        tb.closeNotification(mockElement);
+        WebElement tbElement = driver.findElement(By.id("foo"));
+
+        ((TestBenchElementCommands) tbElement).closeNotification();
         tb.enableWaitForVaadin();
-        tb.closeNotification(mockElement);
+        ((TestBenchElementCommands) tbElement).closeNotification();
 
         verify(mockFF, mockElement);
     }

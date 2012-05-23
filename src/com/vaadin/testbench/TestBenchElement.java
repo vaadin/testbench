@@ -5,8 +5,12 @@ import java.util.List;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.Point;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.internal.WrapsElement;
 
 import com.vaadin.testbench.commands.CanWaitForVaadin;
@@ -40,6 +44,93 @@ public class TestBenchElement implements WrapsElement, WebElement,
     @Override
     public void waitForVaadin() {
         tbCommandExecutor.waitForVaadin();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.vaadin.testbench.commands.TestBenchElementCommands#expectDialog()
+     */
+    @Override
+    public void expectDialog(Keys... modifierKeysPressed) {
+        Actions actions = new Actions((WebDriver) tbCommandExecutor);
+        // Press modifier key(s)
+        for (Keys key : modifierKeysPressed) {
+            actions = actions.keyDown(key);
+        }
+        actions = actions.click(actualElement);
+        // Release modifier key(s)
+        for (Keys key : modifierKeysPressed) {
+            actions = actions.keyUp(key);
+        }
+        actions.perform();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.vaadin.testbench.commands.TestBenchElementCommands#closeNotification
+     * ()
+     */
+    @Override
+    public boolean closeNotification() {
+        click();
+        try {
+            // Wait for 5000 ms or until the element is no longer visible.
+            int times = 0;
+            while (isDisplayed() || times > 25) {
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                }
+                times++;
+            }
+            return !isDisplayed();
+        } catch (RuntimeException e) {
+            if (!e.getMessage().contains("no longer attached")) {
+                // This was some other exception than a no longer attached
+                // exception. Rethrow.
+                throw e;
+            }
+            return true;
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.vaadin.testbench.commands.TestBenchElementCommands#showTooltip()
+     */
+    @Override
+    public void showTooltip() {
+        new Actions(tbCommandExecutor.getWrappedDriver()).moveToElement(
+                actualElement).perform();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.vaadin.testbench.commands.TestBenchElementCommands#scroll(int)
+     */
+    @Override
+    public void scroll(int scrollTop) {
+        JavascriptExecutor js = (JavascriptExecutor) tbCommandExecutor;
+        js.executeScript("arguments[0].scrollTop = " + scrollTop, actualElement);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.vaadin.testbench.commands.TestBenchElementCommands#scrollLeft(int)
+     */
+    @Override
+    public void scrollLeft(int scrollLeft) {
+        JavascriptExecutor js = (JavascriptExecutor) tbCommandExecutor;
+        js.executeScript("arguments[0].scrollLeft = " + scrollLeft,
+                actualElement);
     }
 
     @Override

@@ -4,7 +4,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 
 /**
@@ -20,30 +19,6 @@ public interface TestBenchCommands extends CanWaitForVaadin {
      * @return the canonical host name along with it's IP as a string.
      */
     String getRemoteControlName();
-
-    void expectDialog(WebElement element, Keys... modifierKeysPressed);
-
-    /**
-     * Closes a notification
-     * 
-     * @param element
-     *            the notification element to close or any element that is safe
-     *            to click.
-     * @return true if the notification was successfully closed.
-     */
-    boolean closeNotification(WebElement element);
-
-    /**
-     * Shows the tool tip of the specified element.
-     * 
-     * @param element
-     *            the element to show a tool tip for.
-     */
-    void showTooltip(WebElement element);
-
-    void scroll(WebElement element, int scrollTop);
-
-    void scrollLeft(WebElement element, int scrollLeft);
 
     /**
      * Tests that a screen shot is equal to the specified reference image. The
