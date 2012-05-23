@@ -387,11 +387,6 @@ WDAPI.Utils.isElementPresent = function(how, what) {
 
 /****** TestBench commands ******/
 
-WDAPI.Element.prototype.expectDialog = function(modifierKeysPressed) {
-	// FIXME: the parameter is of type Keys...
-	return "tbElement(" + this.ref + ").expectDialog(" + xlateArgument(modifierKeysPressed) + ")";
-}
-
 WDAPI.Element.prototype.closeNotification = function(element) {
 	return "tbElement(" + this.ref + ").closeNotification()";
 }

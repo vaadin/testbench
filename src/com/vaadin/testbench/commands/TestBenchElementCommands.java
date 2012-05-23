@@ -1,10 +1,6 @@
 package com.vaadin.testbench.commands;
 
-import org.openqa.selenium.Keys;
-
 public interface TestBenchElementCommands {
-    void expectDialog(Keys... modifierKeysPressed);
-
     /**
      * Closes a notification
      * 
@@ -17,7 +13,19 @@ public interface TestBenchElementCommands {
      */
     void showTooltip();
 
+    /**
+     * Scrolls the element down to the specified top value.
+     * 
+     * @param scrollTop
+     *            the new value for scrollTop.
+     */
     void scroll(int scrollTop);
 
+    /**
+     * Scrolls the element left to the specified left value.
+     * 
+     * @param scrollLeft
+     *            the new value for scrollLeft.
+     */
     void scrollLeft(int scrollLeft);
 }

@@ -6,9 +6,7 @@ import java.util.List;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.Keys;
 import org.openqa.selenium.Point;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.internal.WrapsElement;
@@ -44,27 +42,6 @@ public class TestBenchElement implements WrapsElement, WebElement,
     @Override
     public void waitForVaadin() {
         tbCommandExecutor.waitForVaadin();
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * com.vaadin.testbench.commands.TestBenchElementCommands#expectDialog()
-     */
-    @Override
-    public void expectDialog(Keys... modifierKeysPressed) {
-        Actions actions = new Actions((WebDriver) tbCommandExecutor);
-        // Press modifier key(s)
-        for (Keys key : modifierKeysPressed) {
-            actions = actions.keyDown(key);
-        }
-        actions = actions.click(actualElement);
-        // Release modifier key(s)
-        for (Keys key : modifierKeysPressed) {
-            actions = actions.keyUp(key);
-        }
-        actions.perform();
     }
 
     /*

@@ -684,14 +684,6 @@ SeleniumWebDriverAdaptor.prototype.select = function(elementLocator, label) {
 
 /****** TestBench commands ******/
 
-SeleniumWebDriverAdaptor.prototype.expectDialog = function(elementLocator, modifierKeysPressed) {
-    var locator = this._elementLocator(this.rawArgs[0]);
-    var driver = new WDAPI.Driver();
-    var webElement = driver.findElement(locator.type, locator.string);
-	// FIXME: the parameters are wrong, should be Keys...
-	return webElement.expectDialog(this.rawArgs[1]);
-}
-
 SeleniumWebDriverAdaptor.prototype.closeNotification = function(elementLocator) {
     var locator = this._elementLocator(this.rawArgs[0]);
     var driver = new WDAPI.Driver();
