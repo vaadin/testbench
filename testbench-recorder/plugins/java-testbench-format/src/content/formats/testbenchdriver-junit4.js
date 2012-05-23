@@ -383,3 +383,22 @@ WDAPI.Utils = function() {
 WDAPI.Utils.isElementPresent = function(how, what) {
   return "isElementPresent(" + WDAPI.Driver.searchContext(how, what) + ")";
 };
+
+
+/****** TestBench commands ******/
+
+WDAPI.Element.prototype.closeNotification = function(element) {
+	return "tbElement(" + this.ref + ").closeNotification()";
+}
+
+WDAPI.Element.prototype.showTooltip = function(element) {
+	return "tbElement(" + this.ref + ").showTooltip()";
+}
+
+WDAPI.Element.prototype.scroll = function(scrollTop) {
+	return "tbElement(" + this.ref + ").scroll(" + xlateArgument(scrollTop, "number") + ")";
+}
+
+WDAPI.Element.prototype.scrollLeft = function(scrollLeft) {
+	return "tbElement(" + this.ref + ").scrollLeft(" + xlateArgument(scrollLeft, "number") + ")";
+}
