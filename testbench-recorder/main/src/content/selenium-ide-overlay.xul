@@ -32,7 +32,7 @@ limitations under the License.
   </commandset>
 
   <keyset id="mainKeyset">
-    <key id="key_toggleIDE" modifiers="control alt" key="S"
+    <key id="key_toggleIDE" modifiers="control alt" key="T"
          command="openRecorder"/>
     <key id="key_toggleSidebarIDE" modifiers="control shift" key="S"
          command="openSidebarRecorder"/>
