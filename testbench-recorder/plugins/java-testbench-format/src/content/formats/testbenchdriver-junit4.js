@@ -402,3 +402,7 @@ WDAPI.Element.prototype.scroll = function(scrollTop) {
 WDAPI.Element.prototype.scrollLeft = function(scrollLeft) {
 	return "tbElement(" + this.ref + ").scrollLeft(" + xlateArgument(scrollLeft, "number") + ")";
 }
+
+WDAPI.Driver.prototype.waitForVaadin = function() {
+	return "testBench(" + this.ref + ").waitForVaadin()";
+}

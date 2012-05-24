@@ -712,6 +712,11 @@ SeleniumWebDriverAdaptor.prototype.scrollLeft = function(elementLocator, scrollL
 	return webElement.scrollLeft(this.rawArgs[1]);
 }
 
+SeleniumWebDriverAdaptor.prototype.waitForVaadin = function() {
+	var driver = new WDAPI.Driver();
+	return driver.waitForVaadin();
+}
+
 
 //SeleniumWebDriverAdaptor.prototype.isSomethingSelected = function(elementLocator) {
 ////  var locator = this._elementLocator(this.rawArgs[0]);

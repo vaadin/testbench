@@ -507,6 +507,20 @@ waitForPageToLoad.<p>Arguments:</p>
 window or tab.</dd>
 <br>
 <dt>
+<strong><a name="closeNotification"></a>closeNotification
+		(
+			locator, position
+		)
+	</strong>
+</dt>
+<dd>Closes Vaadin notifications by clicking on the notification.<p>Arguments:</p>
+<ul>
+<li>locator - an element locator</li>
+<li>coordString - specifies the x,y position (i.e. - 10,20) of the mouse      event relative to the element returned by the locator.</li>
+</ul>
+</dd>
+<br>
+<dt>
 <strong><a name="contextMenu"></a>contextMenu
 		(
 			locator
@@ -1163,6 +1177,34 @@ an exception.<p>Arguments:</p>
 </dd>
 <br>
 <dt>
+<strong><a name="scroll"></a>scroll
+		(
+			locator,scrollString
+		)
+	</strong>
+</dt>
+<dd>Scrolls up/down to the given position.<p>Arguments:</p>
+<ul>
+<li>locator - an element locator</li>
+<li>scrollString - scroll position</li>
+</ul>
+</dd>
+<br>
+<dt>
+<strong><a name="scrollLeft"></a>scrollLeft
+		(
+			locator,scrollString
+		)
+	</strong>
+</dt>
+<dd>Scrolls left/right the given position.<p>Arguments:</p>
+<ul>
+<li>locator - an element locator</li>
+<li>scrollString - scroll position</li>
+</ul>
+</dd>
+<br>
+<dt>
 <strong><a name="select"></a>select
 		(
 			selectLocator,optionLocator
@@ -1427,6 +1469,20 @@ The default timeout is 30 seconds.<p>Arguments:</p>
 <dd>Release the shift key.</dd>
 <br>
 <dt>
+<strong><a name="showTooltip"></a>showTooltip
+		(
+			locator,coordString
+		)
+	</strong>
+</dt>
+<dd>Makes a mouseOver event over given element so that a possible tooltip becomes visible.<p>Arguments:</p>
+<ul>
+<li>locator - an element locator</li>
+<li>coordString - specifies the x,y position (i.e. - 10,20) of the mouse      event relative to the element returned by the locator.</li>
+</ul>
+</dd>
+<br>
+<dt>
 <strong><a name="store"></a>store
 		(
 			expression,variableName
@@ -1603,6 +1659,16 @@ wait immediately after a Selenium command that caused a page-load.</p>
 <li>windowID - the JavaScript window "name" of the window that will appear (not the text of the title bar)                 If unspecified, or specified as "null", this command will                 wait for the first non-top window to appear (don't rely                 on this if you are working with multiple popups                 simultaneously).</li>
 <li>timeout - a timeout in milliseconds, after which the action will return with an error.                If this value is not specified, the default Selenium                timeout will be used. See the setTimeout() command.</li>
 </ul>
+</dd>
+<br>
+<dt>
+<strong><a name="waitForVaadin"></a>waitForVaadin
+		(
+			locator,value
+		)
+	</strong>
+</dt>
+<dd>Waits for Vaadin application to finish loading before executing next command.<p>Arguments: no arguments are defined</p>
 </dd>
 <br>
 <dt>
