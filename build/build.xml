@@ -27,7 +27,7 @@
 		<mkdir dir="result/classes" />
 	</target>
 		
-	<target name="testbench-standalone.jar" depends="make-output-dirs,javadoc">
+	<target name="testbench-standalone.jar" depends="make-output-dirs">
 		<javac srcdir="../src" destdir="result/classes" debug="true" encoding="utf-8" target="1.5" source="1.5">
 			<classpath>
 				<fileset dir="../lib" id="libs">
@@ -46,9 +46,6 @@
 				<include name="**/**" />
 				<exclude name="**/test/**" />
 			</zipfileset>
-            <zipfileset dir="result/api">
-                <include name="**/**" />
-            </zipfileset>
 			<zipfileset src="../lib/selenium-standalone.jar" />
 		</jar>
 	</target>
