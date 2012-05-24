@@ -8,7 +8,7 @@
 
 	<property name="dev.test.dir" value="../tmp/vaadin-testbench-3.dev" />
 
-	<target name="build-and-deploy-to-dev-test-dir" depends="testbench.jar,testbench-recorder,create-extension">
+	<target name="build-and-deploy-to-dev-test-dir" depends="testbench.jar,testbench-standalone.jar,testbench-recorder">
 		<delete quiet="true">
 			<fileset dir="${dev.test.dir}" includes="vaadin-testbench-*.jar" />
 		</delete>
