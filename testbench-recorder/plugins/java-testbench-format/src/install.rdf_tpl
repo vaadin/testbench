@@ -11,6 +11,7 @@
         <em:type>2</em:type>
         <em:homepageURL>https://vaadin.com/add-ons/testbench</em:homepageURL>
 <!--        <em:updateURL>https://..../update.rdf</em:updateURL>-->
+        <em:iconURL>chrome://testbench-recorder/content/images/tbicon.png</em:iconURL>
 
         <em:targetApplication>
           <Description>

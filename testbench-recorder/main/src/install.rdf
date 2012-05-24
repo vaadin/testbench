@@ -16,7 +16,7 @@
         <em:homepageURL>https://vaadin.com/add-ons/testbench</em:homepageURL>
         <em:optionsURL>chrome://testbench-recorder/content/optionsDialog.xul</em:optionsURL>
 <!--        <em:updateURL>https://.../update.rdf</em:updateURL>-->
-        <em:iconURL>chrome://testbench-recorder/content/images/selenium-ide-logo32.png</em:iconURL>
+        <em:iconURL>chrome://testbench-recorder/content/images/tbicon.png</em:iconURL>
         <em:unpack>true</em:unpack>
 
         <em:targetApplication>
