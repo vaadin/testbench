@@ -1,5 +1,5 @@
-document.write('<script src="chrome://selenium-ide/content/preferences.js" type="text/javascript"></script>');
-document.write('<script src="chrome://selenium-ide/content/selenium-ide-loader.js" type="text/javascript"></script>');
+document.write('<script src="chrome://testbench-recorder/content/preferences.js" type="text/javascript"></script>');
+document.write('<script src="chrome://testbench-recorder/content/selenium-ide-loader.js" type="text/javascript"></script>');
 
 SeleniumTestResult.prototype.originalPost = SeleniumTestResult.prototype.post;
 

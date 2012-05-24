@@ -100,7 +100,7 @@ FormatCollection.loadFormatter = function(url) {
 			subScriptLoader.loadSubScript(file, format);
 		} else {
 			//otherwise assume this is a packaged format file
-			subScriptLoader.loadSubScript('chrome://selenium-ide/content/formats/' + file, format);
+			subScriptLoader.loadSubScript('chrome://testbench-recorder/content/formats/' + file, format);
 		}
 	}
 
@@ -394,7 +394,7 @@ function InternalFormat(options, id, name, file, reversible) {
     this.options = options;
     this.id = id;
     this.name = name;
-    this.url = 'chrome://selenium-ide/content/formats/' + file;
+    this.url = 'chrome://testbench-recorder/content/formats/' + file;
     //use to determine if this format implements the parse method
     //and can switch to another format
     this.reversible = reversible;
@@ -484,7 +484,7 @@ UserFormat.prototype.getSource = function() {
     if (this.id) {
         return FileUtils.readFile(this.getFormatFile());
     } else {
-        return FileUtils.readURL('chrome://selenium-ide/content/formats/blank.js');
+        return FileUtils.readURL('chrome://testbench-recorder/content/formats/blank.js');
     }
 }
 

@@ -3,7 +3,7 @@
  */
 
 var subScriptLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
-subScriptLoader.loadSubScript('chrome://selenium-ide/content/formats/formatCommandOnlyAdapter.js', this);
+subScriptLoader.loadSubScript('chrome://testbench-recorder/content/formats/formatCommandOnlyAdapter.js', this);
 
 /* @override
  * This function filters the command list and strips away the commands we no longer need

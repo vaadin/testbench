@@ -17,7 +17,7 @@ limitations under the License.
 <!DOCTYPE window [
 <!ENTITY % browserDTD SYSTEM "chrome://browser/locale/browser.dtd">
 %browserDTD;
-<!ENTITY % optionsDTD SYSTEM "chrome://selenium-ide/locale/selenium-ide.dtd">
+<!ENTITY % optionsDTD SYSTEM "chrome://testbench-recorder/locale/selenium-ide.dtd">
 %optionsDTD;
 ]>
 <dialog buttons="accept,cancel"
@@ -28,13 +28,13 @@ limitations under the License.
 	width="520"
 	height="200"
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-  <script type="application/x-javascript" src="chrome://selenium-ide/content/preferences.js"/>
-  <script type="application/x-javascript" src="chrome://selenium-ide/content/tools.js"/>
-  <script type="application/x-javascript" src="chrome://selenium-ide/content/optionsDialog.js"/>
-  <script type="application/x-javascript" src="chrome://selenium-ide/content/selenium-ide-loader.js"/>
-  <script type="application/x-javascript" src="chrome://selenium-ide/content/testCase.js"/>
-  <script type="application/x-javascript" src="chrome://selenium-ide/content/file-utils.js"/>
-  <script type="application/x-javascript" src="chrome://selenium-ide/content/format.js"/>
+  <script type="application/x-javascript" src="chrome://testbench-recorder/content/preferences.js"/>
+  <script type="application/x-javascript" src="chrome://testbench-recorder/content/tools.js"/>
+  <script type="application/x-javascript" src="chrome://testbench-recorder/content/optionsDialog.js"/>
+  <script type="application/x-javascript" src="chrome://testbench-recorder/content/selenium-ide-loader.js"/>
+  <script type="application/x-javascript" src="chrome://testbench-recorder/content/testCase.js"/>
+  <script type="application/x-javascript" src="chrome://testbench-recorder/content/file-utils.js"/>
+  <script type="application/x-javascript" src="chrome://testbench-recorder/content/format.js"/>
   <script type="application/x-javascript">
     function load() {
         this.testCase = window.arguments[0];

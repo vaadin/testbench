@@ -153,7 +153,7 @@ objectExtend(SuiteTreeView.prototype, {
             var testCase = this.getSelectedTestCase();
             var self = this;
             if (testCase) {
-                window.openDialog('chrome://selenium-ide/content/testCaseProperties.xul', 'testCaseProperties', 'chrome,modal', testCase, function() {
+                window.openDialog('chrome://testbench-recorder/content/testCaseProperties.xul', 'testCaseProperties', 'chrome,modal', testCase, function() {
                         self.treebox.invalidateRow(self.currentTestCaseIndex);
                     });
             }

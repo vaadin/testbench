@@ -3,14 +3,14 @@
          xmlns:chrome="http://www.mozilla.org/rdf/chrome#"> 
 		   
   <RDF:Seq about="urn:mozilla:package:root">
-    <RDF:li resource="urn:mozilla:package:selenium-ide"/>
+    <RDF:li resource="urn:mozilla:package:testbench-recorder"/>
   </RDF:Seq>
   
-  <RDF:Description about="urn:mozilla:package:selenium-ide"
+  <RDF:Description about="urn:mozilla:package:testbench-recorder"
     chrome:displayName="Vaadin Testbench Recorder"
     chrome:author="OpenQA"
     chrome:authorURL="http://vaadin.com"
-    chrome:name="selenium-ide"
+    chrome:name="testbench-recorder"
     chrome:extension="true"
     chrome:description="Record user input for Vaadin Testbench tests.">
   </RDF:Description>
@@ -20,7 +20,7 @@
   </RDF:Seq>
     
   <RDF:Seq about="chrome://browser/content/browser.xul">
-    <RDF:li>chrome://selenium-ide/content/selenium-ide-overlay.xul</RDF:li>
+    <RDF:li>chrome://testbench-recorder/content/selenium-ide-overlay.xul</RDF:li>
   </RDF:Seq>
 
 </RDF:RDF>

@@ -810,7 +810,7 @@ Editor.prototype.appendWaitForPageToLoad = function(window) {
 }
 
 Editor.prototype.openSeleniumIDEPreferences = function() {
-	window.openDialog("chrome://selenium-ide/content/optionsDialog.xul", "options", "chrome,modal,resizable", null);
+	window.openDialog("chrome://testbench-recorder/content/optionsDialog.xul", "options", "chrome,modal,resizable", null);
 }
 
 Editor.prototype.showInBrowser = function(url, newWindow) {
@@ -864,7 +864,7 @@ Editor.prototype.playTestSuite = function() {
 Editor.prototype.openLogWindow = function() {
 	if (!LOG.getLogWindow()) {
 		LOG.logWindow = window.open(
-            "chrome://selenium-ide/content/selenium-core/SeleniumLog.html", "SeleniumLog",
+            "chrome://testbench-recorder/content/selenium-core/SeleniumLog.html", "SeleniumLog",
             "chrome,width=600,height=250,bottom=0,right=0,status,scrollbars,resizable"
 		);
 	}
@@ -974,7 +974,7 @@ Editor.prototype.loadExtensions = function() {
 Editor.prototype.loadSeleniumAPI = function() {
     // load API document
     var parser = new DOMParser();
-    var document = parser.parseFromString(FileUtils.readURL("chrome://selenium-ide/content/selenium-core/iedoc-core.xml"), "text/xml");
+    var document = parser.parseFromString(FileUtils.readURL("chrome://testbench-recorder/content/selenium-core/iedoc-core.xml"), "text/xml");
     Command.apiDocuments = new Array(document);
     
     // load functions
@@ -983,7 +983,7 @@ Editor.prototype.loadSeleniumAPI = function() {
     const subScriptLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
         .getService(Components.interfaces.mozIJSSubScriptLoader);
     
-    subScriptLoader.loadSubScript('chrome://selenium-ide/content/selenium-core/scripts/selenium-api.js', this.seleniumAPI);
+    subScriptLoader.loadSubScript('chrome://testbench-recorder/content/selenium-core/scripts/selenium-api.js', this.seleniumAPI);
 
     // user supplied extensions
     if (this.getOptions().userExtensionsURL) {
@@ -1334,7 +1334,7 @@ Editor.prototype.selectDefaultReference = function() {
 }
 
 Editor.references.push(new GeneratedReference("Generated"));
-Editor.references.push(new HTMLReference("Internal HTML", "chrome://selenium-ide/content/selenium-core/reference.html"));
+Editor.references.push(new HTMLReference("Internal HTML", "chrome://testbench-recorder/content/selenium-core/reference.html"));
 Editor.references.push(new UIReference('UI-Element'));
 Editor.references.push(new RollupReference('Rollup'));
 //Editor.references.push(new HTMLReference("Japanese", "Reference HTML contained in Selenium IDE", "http://wiki.openqa.org/display/SEL/Selenium+0.7+Reference+%28Japanese%29"));

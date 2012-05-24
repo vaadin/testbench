@@ -3,11 +3,11 @@
   <head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>Selenium IDE Test</title>
-		<script type="text/javascript" src="chrome://selenium-ide/content/selenium-core/lib/prototype.js"></script>
-		<script type="text/javascript" src="chrome://selenium-ide/content/selenium-core/lib/scriptaculous/scriptaculous.js"></script>
-		<script type="text/javascript" src="chrome://selenium-ide/content/selenium-core/lib/scriptaculous/unittest.js"></script>
-		<script type="text/javascript" src="chrome://selenium-ide/content/preferences.js"></script>
-    <script type="text/javascript" src="chrome://selenium-ide/content/selenium-ide-loader.js"></script>
+		<script type="text/javascript" src="chrome://testbench-recorder/content/selenium-core/lib/prototype.js"></script>
+		<script type="text/javascript" src="chrome://testbench-recorder/content/selenium-core/lib/scriptaculous/scriptaculous.js"></script>
+		<script type="text/javascript" src="chrome://testbench-recorder/content/selenium-core/lib/scriptaculous/unittest.js"></script>
+		<script type="text/javascript" src="chrome://testbench-recorder/content/preferences.js"></script>
+    <script type="text/javascript" src="chrome://testbench-recorder/content/selenium-ide-loader.js"></script>
   </head>
 
   <body>
@@ -33,8 +33,8 @@ new Test.Unit.Runner({
 
   testTestRunner: function() { with(this) {
     var editor = SeleniumIDE.Loader.getTopEditor();
-    editor.getOptions().userExtensionsURL = "chrome://selenium-ide/content/tests/functional/TestTestRunner-extension.js";
-    var testCase = editor.app.getFormats().getDefaultFormat().loadFile("chrome://selenium-ide/content/tests/functional/TestTestRunner-testcase.html", true);
+    editor.getOptions().userExtensionsURL = "chrome://testbench-recorder/content/tests/functional/TestTestRunner-extension.js";
+    var testCase = editor.app.getFormats().getDefaultFormat().loadFile("chrome://testbench-recorder/content/tests/functional/TestTestRunner-testcase.html", true);
     editor.app.setTestCaseWithNewSuite(testCase);
     editor.app.setBaseURL("http://www.openqa.org/");
     editor.playback(true, function(result, window) {

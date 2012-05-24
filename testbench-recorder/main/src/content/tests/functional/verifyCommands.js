@@ -26,7 +26,7 @@ function loadTest() {
     }
     var iframe = document.getElementById('testCase');
 	iframe.addEventListener('load', verifyCommands, false);
-	iframe.src = 'chrome://selenium-ide/content/tests/functional/' + location.hash.substring(1);
+	iframe.src = 'chrome://testbench-recorder/content/tests/functional/' + location.hash.substring(1);
 }
 
 function verifyCommands() {

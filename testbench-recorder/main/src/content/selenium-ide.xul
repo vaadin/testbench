@@ -17,17 +17,17 @@ limitations under the License.
 
 <?xml-stylesheet href="chrome://global/skin" type="text/css"?>
 <?xml-stylesheet href="chrome://global/content/xul.css" type="text/css"?>
-<?xml-stylesheet href="chrome://selenium-ide/skin/selenium-ide.css" type="text/css"?>
-<?xml-stylesheet href="chrome://selenium-ide-platform/skin/selenium-ide-platform.css" type="text/css"?>
+<?xml-stylesheet href="chrome://testbench-recorder/skin/selenium-ide.css" type="text/css"?>
+<?xml-stylesheet href="chrome://testbench-recorder-platform/skin/selenium-ide-platform.css" type="text/css"?>
 <?xml-stylesheet href="chrome://vaadin-ide/skin/selenium-ide.css" type="text/css"?>
 <?xul-overlay href="chrome://global/content/editMenuOverlay.xul"?>
 <?xul-overlay href="chrome://browser/content/baseMenuOverlay.xul"?>
-<?xul-overlay href="chrome://selenium-ide/content/selenium-ide-common.xul"?>
+<?xul-overlay href="chrome://testbench-recorder/content/selenium-ide-common.xul"?>
 
 <!DOCTYPE window [
 <!ENTITY % browserDTD SYSTEM "chrome://browser/locale/browser.dtd">
 %browserDTD;
-<!ENTITY % seleniumIdeDTD SYSTEM "chrome://selenium-ide/locale/selenium-ide.dtd">
+<!ENTITY % seleniumIdeDTD SYSTEM "chrome://testbench-recorder/locale/selenium-ide.dtd">
 %seleniumIdeDTD;
 ]>
 

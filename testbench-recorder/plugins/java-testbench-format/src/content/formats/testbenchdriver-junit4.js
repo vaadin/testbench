@@ -3,7 +3,7 @@
  */
 
 var subScriptLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
-subScriptLoader.loadSubScript('chrome://selenium-ide/content/formats/webdriver.js', this);
+subScriptLoader.loadSubScript('chrome://testbench-recorder/content/formats/webdriver.js', this);
 
 function useSeparateEqualsForArray() {
   return true;

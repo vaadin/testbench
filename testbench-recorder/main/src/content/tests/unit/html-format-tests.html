@@ -3,14 +3,14 @@
   <head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>Selenium IDE Test</title>
-    <link rel="stylesheet" type="text/css" href="chrome://selenium-ide/content/jsunit/css/jsUnitStyle.css">
-		<script type="text/javascript" src="chrome://selenium-ide/content/jsunit/app/jsUnitCore.js"></script>
-		<script type="text/javascript" src="chrome://selenium-ide/content/preferences.js"></script>
-		<script type="text/javascript" src="chrome://selenium-ide/content/tools.js"></script>
-		<script type="text/javascript" src="chrome://selenium-ide/content/file-utils.js"></script>
-		<script type="text/javascript" src="chrome://selenium-ide/content/testCase.js"></script>
-		<script type="text/javascript" src="chrome://selenium-ide/content/xhtml-entities.js"></script>
-		<script type="text/javascript" src="chrome://selenium-ide/content/formats/html.js"></script>
+    <link rel="stylesheet" type="text/css" href="chrome://testbench-recorder/content/jsunit/css/jsUnitStyle.css">
+		<script type="text/javascript" src="chrome://testbench-recorder/content/jsunit/app/jsUnitCore.js"></script>
+		<script type="text/javascript" src="chrome://testbench-recorder/content/preferences.js"></script>
+		<script type="text/javascript" src="chrome://testbench-recorder/content/tools.js"></script>
+		<script type="text/javascript" src="chrome://testbench-recorder/content/file-utils.js"></script>
+		<script type="text/javascript" src="chrome://testbench-recorder/content/testCase.js"></script>
+		<script type="text/javascript" src="chrome://testbench-recorder/content/xhtml-entities.js"></script>
+		<script type="text/javascript" src="chrome://testbench-recorder/content/formats/html.js"></script>
 		<script type="text/javascript">
 function setUp() {
 	this.log = new Log("format");
@@ -47,7 +47,7 @@ function testEncodeTextWithHtmlFormat() {
 }
 
 function testParse() {
-	var source = FileUtils.readURL("chrome://selenium-ide/content/tests/unit/html/TestWaitInPopupWindow.html");
+	var source = FileUtils.readURL("chrome://testbench-recorder/content/tests/unit/html/TestWaitInPopupWindow.html");
 	var testCase = new TestCase();
 	parse(testCase, source);
 	var commands = testCase.commands;
@@ -70,7 +70,7 @@ function testParse() {
 }
 
 function testParseXHTML() {
-	var source = FileUtils.readURL("chrome://selenium-ide/content/tests/unit/html/XhtmlTestCase.xml");
+	var source = FileUtils.readURL("chrome://testbench-recorder/content/tests/unit/html/XhtmlTestCase.xml");
 	var testCase = new TestCase();
 	parse(testCase, source);
 	var commands = testCase.commands;
@@ -81,7 +81,7 @@ function testParseXHTML() {
 }
 
 function testParseEmptyTD() {
-    var source = FileUtils.readURL("chrome://selenium-ide/content/tests/unit/html/TestEmptyTD.html");
+    var source = FileUtils.readURL("chrome://testbench-recorder/content/tests/unit/html/TestEmptyTD.html");
     var testCase = new TestCase();
     parse(testCase, source);
     var commands = testCase.commands;

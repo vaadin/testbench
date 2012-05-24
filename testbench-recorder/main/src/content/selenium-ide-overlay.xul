@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<?xml-stylesheet href="chrome://selenium-ide/skin/toolbar.css"?>
+<?xml-stylesheet href="chrome://testbench-recorder/skin/toolbar.css"?>
 <!--
 Copyright 2005 Shinya Kasatani
 
@@ -15,15 +15,15 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 -->
-<!DOCTYPE overlay SYSTEM "chrome://selenium-ide/locale/selenium-ide.dtd">
+<!DOCTYPE overlay SYSTEM "chrome://testbench-recorder/locale/selenium-ide.dtd">
 
 <overlay id="selenium-ide-overlay" 
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-  <script type="application/x-javascript" src="chrome://selenium-ide/content/preferences.js"/>
-  <script type="application/x-javascript" src="chrome://selenium-ide/content/selenium-ide-loader.js"/>
-  <script type="application/x-javascript" src="chrome://selenium-ide/content/selenium-ide-overlay.js"/>
+  <script type="application/x-javascript" src="chrome://testbench-recorder/content/preferences.js"/>
+  <script type="application/x-javascript" src="chrome://testbench-recorder/content/selenium-ide-loader.js"/>
+  <script type="application/x-javascript" src="chrome://testbench-recorder/content/selenium-ide-overlay.js"/>
   <stringbundleset id="stringbundleset">
-    <stringbundle id="selenium-ide-strings" src="chrome://selenium-ide/locale/selenium-ide.properties" />
+    <stringbundle id="selenium-ide-strings" src="chrome://testbench-recorder/locale/selenium-ide.properties" />
   </stringbundleset>
 
   <commandset id="mainCommandSet">
@@ -65,7 +65,7 @@ limitations under the License.
               key="key_toggleIDE"
               command="openRecorder"
               class="menuitem-iconic"
-              image="chrome://selenium-ide/content/images/selenium-ide-logo16.png"/>
+              image="chrome://testbench-recorder/content/images/selenium-ide-logo16.png"/>
   </menupopup>
 
   <popup id="contentAreaContextMenu">
@@ -78,7 +78,7 @@ limitations under the License.
          type="checkbox"
          group="sidebar"
          key="key_toggleSidebarIDE"
-         sidebarurl="chrome://selenium-ide/content/selenium-ide-sidebar.xul"
+         sidebarurl="chrome://testbench-recorder/content/selenium-ide-sidebar.xul"
          sidebartitle="&selenium-ide.sidebar.title;"
          command="openSidebarRecorder" />
   </broadcasterset>

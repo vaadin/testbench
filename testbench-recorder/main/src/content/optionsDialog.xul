@@ -1,5 +1,5 @@
 <?xml-stylesheet href="chrome://global/skin" type="text/css"?>
-<?xml-stylesheet href="chrome://selenium-ide/skin/optionsDialog.css" type="text/css"?>
+<?xml-stylesheet href="chrome://testbench-recorder/skin/optionsDialog.css" type="text/css"?>
 <!--
 Copyright 2005 Shinya Kasatani
 
@@ -18,7 +18,7 @@ limitations under the License.
 <!DOCTYPE window [
     <!ENTITY % browserDTD SYSTEM "chrome://browser/locale/browser.dtd">
     %browserDTD;
-    <!ENTITY % optionsDTD SYSTEM "chrome://selenium-ide/locale/options.dtd">
+    <!ENTITY % optionsDTD SYSTEM "chrome://testbench-recorder/locale/options.dtd">
     %optionsDTD;
     ]>
 <dialog buttons="accept,cancel,extra2"
@@ -31,17 +31,17 @@ limitations under the License.
         width="520"
         height="600"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-  <script type="application/x-javascript" src="chrome://selenium-ide/content/preferences.js"/>
-  <script type="application/x-javascript" src="chrome://selenium-ide/content/tools.js"/>
-  <script type="application/x-javascript" src="chrome://selenium-ide/content/xhtml-entities.js"/>
-  <script type="application/x-javascript" src="chrome://selenium-ide/content/dndReorderedListbox.js"/>
-  <script type="application/x-javascript" src="chrome://selenium-ide/content/optionsDialog.js"/>
-  <script type="application/x-javascript" src="chrome://selenium-ide/content/selenium-ide-loader.js"/>
-  <script type="application/x-javascript" src="chrome://selenium-ide/content/testCase.js"/>
-  <script type="application/x-javascript" src="chrome://selenium-ide/content/file-utils.js"/>
-  <script type="application/x-javascript" src="chrome://selenium-ide/content/format.js"/>
-  <script type="application/x-javascript" src="chrome://selenium-ide/content/plugin.js"/>
-  <stringbundle id="strings" src="chrome://selenium-ide/locale/selenium-ide.properties"/>
+  <script type="application/x-javascript" src="chrome://testbench-recorder/content/preferences.js"/>
+  <script type="application/x-javascript" src="chrome://testbench-recorder/content/tools.js"/>
+  <script type="application/x-javascript" src="chrome://testbench-recorder/content/xhtml-entities.js"/>
+  <script type="application/x-javascript" src="chrome://testbench-recorder/content/dndReorderedListbox.js"/>
+  <script type="application/x-javascript" src="chrome://testbench-recorder/content/optionsDialog.js"/>
+  <script type="application/x-javascript" src="chrome://testbench-recorder/content/selenium-ide-loader.js"/>
+  <script type="application/x-javascript" src="chrome://testbench-recorder/content/testCase.js"/>
+  <script type="application/x-javascript" src="chrome://testbench-recorder/content/file-utils.js"/>
+  <script type="application/x-javascript" src="chrome://testbench-recorder/content/format.js"/>
+  <script type="application/x-javascript" src="chrome://testbench-recorder/content/plugin.js"/>
+  <stringbundle id="strings" src="chrome://testbench-recorder/locale/selenium-ide.properties"/>
 
   <tabbox id="optionsTabbox" flex="1">
     <tabs id="optionsTabs" orient="horizontal">
