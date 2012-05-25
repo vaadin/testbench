@@ -99,6 +99,7 @@
                 <include name="**/**" />
             </zipfileset>
         </jar>
+		<copy file="${output.dir}/vaadin-testbench-${version}-javadoc.jar" tofile="${output.dir}/vaadin-testbench-standalone-${version}-javadoc.jar" />
 	</target>
 	
     <!-- ================================================================== -->
@@ -131,7 +132,7 @@
 
 		<zip destfile="${output.dir}/vaadin-testbench-${version}.zip">
 			<zipfileset dir="${output.dir}" includes="MANIFEST.MF" prefix="META-INF"/>
-			<zipfileset dir="${output.dir}" includes="vaadin-testbench-standalone-${version}.jar" prefix="${package.root}"/>
+			<zipfileset dir="${output.dir}" includes="vaadin-testbench-standalone-${version}.jar,vaadin-testbench-standalone-${version}-javadoc.jar" prefix="${package.root}"/>
 			<zipfileset dir="${output.dir}" includes="vaadin-testbench-recorder/vaadin-testbench-recorder-${version}.xpi" prefix="${package.root}" />
 			<zipfileset dir="${output.dir}" includes="vaadin-testbench-${version}.jar,vaadin-testbench-${version}-javadoc.jar" prefix="${package.root}/maven" />
 			<zipfileset dir="." includes="pom.xml" prefix="${package.root}/maven" />
