@@ -91,9 +91,15 @@ Log.prototype = {
 }
 
 function showFilePicker(window, title, mode, defaultDirPrefName, handler, defaultExtension) {
+	showFilePicker(window, title, mode, defaultDirPrefName, handler, "", defaultExtension);
+}
+
+
+function showFilePicker(window, title, mode, defaultDirPrefName, handler, defaultFileName, defaultExtension) {
 	var nsIFilePicker = Components.interfaces.nsIFilePicker;
 	var fp = Components.classes["@mozilla.org/filepicker;1"].createInstance(nsIFilePicker);
 	fp.init(window, title, mode);
+	fp.defaultString = defaultFileName;
 	if (defaultExtension) {
 	  fp.defaultExtension = defaultExtension;
 	}
@@ -110,6 +116,7 @@ function showFilePicker(window, title, mode, defaultDirPrefName, handler, defaul
         return null;
     }
 }
+
 
 /**
  * Opens the given URL in a new tab if a browser window is already open, or
