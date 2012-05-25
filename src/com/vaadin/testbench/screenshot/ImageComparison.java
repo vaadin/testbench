@@ -323,7 +323,7 @@ public class ImageComparison {
         // build sums from all available colors Red, Green
         // and Blue
         for (int i = 0; i < referenceBlock.length; i++) {
-            Color targetPixel = new Color(referenceBlock[i]);
+            Color targetPixel = new Color(referenceBlock[i], /* hasAlpha */true);
             Color testPixel = new Color(screenshotBlock[i]);
             int redDiff = Math.abs(targetPixel.getRed() - testPixel.getRed());
             int greenDiff = Math.abs(targetPixel.getGreen()
@@ -331,10 +331,14 @@ public class ImageComparison {
             int blueDiff = Math
                     .abs(targetPixel.getBlue() - testPixel.getBlue());
 
-            sum += redDiff;
-            sum += greenDiff;
-            sum += blueDiff;
-
+            // Only completely opaque pixels are considered. Pixels with alpha
+            // values below 255 (== fully opaque) are considered masked and
+            // differences in these pixels won't be reported as differences.
+            if (targetPixel.getAlpha() >= 255) {
+                sum += redDiff;
+                sum += greenDiff;
+                sum += blueDiff;
+            }
         }
         double fullSum = referenceBlock.length * 255 * 3;
         return (sum / fullSum);
