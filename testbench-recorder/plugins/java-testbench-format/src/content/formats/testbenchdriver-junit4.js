@@ -468,3 +468,7 @@ WDAPI.Driver.prototype.releaseModifierKeys = function(value) {
 WDAPI.Driver.prototype.waitForVaadin = function() {
 	return "testBench(" + this.ref + ").waitForVaadin()";
 }
+
+WDAPI.Driver.prototype.isTextPresent = function(value) {
+	return this.ref + ".getPageSource().contains(\"" + value + "\")";
+}

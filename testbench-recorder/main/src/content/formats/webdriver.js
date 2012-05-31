@@ -731,6 +731,11 @@ SeleniumWebDriverAdaptor.prototype.pressSpecialKey = function(elementLocator, va
 	return webElement.pressSpecialKey(this.rawArgs[1]);
 }
 
+SeleniumWebDriverAdaptor.prototype.isTextPresent = function(value) {
+	var driver = new WDAPI.Driver();
+	return driver.isTextPresent(this.rawArgs[0]);
+}
+
 //SeleniumWebDriverAdaptor.prototype.isSomethingSelected = function(elementLocator) {
 ////  var locator = this._elementLocator(this.rawArgs[0]);
 ////  var driver = new WDAPI.Driver();
