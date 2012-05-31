@@ -303,7 +303,6 @@ var KEYCODE_LEFTSTART = 91;
 var KETCODE_RIGHTSTART = 92;
 
 /* Checks keyCodes on keydown event and adds a pressSpecialKey if confirmed. */
-/*
 Recorder.addEventHandler('pressSpecialKey', 'keydown', function(event){
 	var target = "";
 	// only record modifiers if arrow key or character key pressed
@@ -366,7 +365,8 @@ Recorder.addEventHandler('pressSpecialKey', 'keydown', function(event){
 	
 	if(value != null){
 		if(charBuffer.length > 0){
-			this.record("enterCharacter", this.findLocators(event.target), charBuffer);
+			this.record("type", this.findLocators(event.target), charBuffer);
+//			this.record("enterCharacter", this.findLocators(event.target), charBuffer);
 			charBuffer = "";
 			skipType = true;
 		}
@@ -375,7 +375,6 @@ Recorder.addEventHandler('pressSpecialKey', 'keydown', function(event){
 	}
 	
 }, { capture: true });
-*/
 
 /* record all keypresses to character buffer */
 Recorder.addEventHandler('keyPressedDown', 'keypress', function(event){

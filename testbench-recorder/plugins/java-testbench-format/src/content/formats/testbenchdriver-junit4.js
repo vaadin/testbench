@@ -204,6 +204,7 @@ options.header =
         "import static org.hamcrest.CoreMatchers.*;\n" +
         "import org.openqa.selenium.*;\n" +
         "import org.openqa.selenium.firefox.FirefoxDriver;\n" +
+		"import org.openqa.selenium.interactions.Actions;\n" +
         "import org.openqa.selenium.support.ui.Select;\n" +
 		"import com.vaadin.testbench.TestBench;\n" +
 		"import com.vaadin.testbench.TestBenchTestCase;\n" +
@@ -401,6 +402,67 @@ WDAPI.Element.prototype.scroll = function(scrollTop) {
 
 WDAPI.Element.prototype.scrollLeft = function(scrollLeft) {
 	return "tbElement(" + this.ref + ").scrollLeft(" + xlateArgument(scrollLeft, "number") + ")";
+}
+
+WDAPI.Element.prototype.pressSpecialKey = function(value) {
+	var key = "\"" + value.substr(value.lastIndexOf(" ")+1) + "\"";
+	if ((new RegExp("left")).test(value.toLowerCase())){
+		key = "Keys.ARROW_LEFT";
+	} else if ((new RegExp("right")).test(value.toLowerCase())){
+		key = "Keys.ARROW_RIGHT";
+	} else if ((new RegExp("up")).test(value.toLowerCase())){
+		key = "Keys.ARROW_UP";
+	} else if ((new RegExp("down")).test(value.toLowerCase())){
+		key = "Keys.ARROW_DOWN";
+	} else if ((new RegExp("enter")).test(value.toLowerCase())){
+		key = "Keys.RETURN";
+	} else if ((new RegExp("space")).test(value.toLowerCase())){
+		key = "Keys.SPACE";
+	} else if ((new RegExp("tab")).test(value.toLowerCase())){
+		key = "Keys.TAB";
+	}
+	return this.ref + ".sendKeys(" + key + ")";
+}
+
+WDAPI.Driver.prototype.pressModifierKeys = function(value) {
+	var modifiers = "";
+	if ((new RegExp("shift")).test(value)) {
+		modifiers += ".keyDown(Keys.SHIFT)";
+	}
+	if ((new RegExp("ctrl")).test(value)) {
+		modifiers += ".keyDown(Keys.CTRL)";
+	}
+	if ((new RegExp("alt")).test(value)) {
+		modifiers += ".keyDown(Keys.ALT)";
+	}
+	if ((new RegExp("meta")).test(value)) {
+		modifiers += ".keyDown(Keys.META)";
+	}
+	
+	if (modifiers !== "") {
+		return "new Actions(" + this.ref + ")" + modifiers + ".build().perform()";
+	}
+	return "";
+}
+
+WDAPI.Driver.prototype.releaseModifierKeys = function(value) {
+	var modifiers = "";
+	if ((new RegExp("shift")).test(value)) {
+		modifiers += ".keyUp(Keys.SHIFT)";
+	}
+	if ((new RegExp("ctrl")).test(value)) {
+		modifiers += ".keyUp(Keys.CTRL)";
+	}
+	if ((new RegExp("alt")).test(value)) {
+		modifiers += ".keyUp(Keys.ALT)";
+	}
+	if ((new RegExp("meta")).test(value)) {
+		modifiers += ".keyUp(Keys.META)";
+	}
+	if (modifiers !== "") {
+		return "new Actions(" + this.ref + ")" + modifiers + ".build().perform()";
+	}
+	return "";
 }
 
 WDAPI.Driver.prototype.waitForVaadin = function() {

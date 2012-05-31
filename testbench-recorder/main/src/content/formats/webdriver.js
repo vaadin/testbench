@@ -717,6 +717,19 @@ SeleniumWebDriverAdaptor.prototype.waitForVaadin = function() {
 	return driver.waitForVaadin();
 }
 
+SeleniumWebDriverAdaptor.prototype.pressSpecialKey = function(elementLocator, value) {
+	var driver = new WDAPI.Driver();
+    var locator = this._elementLocator(this.rawArgs[0]);
+	var webElement = driver.findElement(locator.type, locator.string);
+	var pressModifiers = driver.pressModifierKeys(this.rawArgs[1]);
+	var releaseModifiers = driver.pressModifierKeys(this.rawArgs[1]);
+	if (pressModifiers !== "") {
+		return statement(new SeleniumWebDriverAdaptor.SimpleExpression(pressModifiers)) + "\n" +
+				statement(new SeleniumWebDriverAdaptor.SimpleExpression(webElement.pressSpecialKey(this.rawArgs[1]))) + "\n" +
+				releaseModifiers;
+	}
+	return webElement.pressSpecialKey(this.rawArgs[1]);
+}
 
 //SeleniumWebDriverAdaptor.prototype.isSomethingSelected = function(elementLocator) {
 ////  var locator = this._elementLocator(this.rawArgs[0]);

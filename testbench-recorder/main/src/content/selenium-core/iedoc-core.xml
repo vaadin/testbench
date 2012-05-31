@@ -1822,6 +1822,15 @@ Useful for debugging.</comment>
 
 </function>
 
+<function name="pressSpecialKey">
+
+<param name="locator">an element locator</param>
+<param name="key">key to press (as ascii value [\\39] or as a string [right])</param>
+
+<comment>Does a keypress for arrow keys with possible modifiers.</comment>
+
+</function>
+
 <function name="closeNotification">
 
 <param name="locator">an element locator</param>
