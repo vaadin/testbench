@@ -66,25 +66,32 @@ limitations under the License.
       <menupopup id="menu_ToolsPopup"/> <!-- for Mac -->
     </menubar>
     <toolbar id="toolbar1">
-      <hbox align="center" flex="1">
-	<label value="&baseURL.label;"/>
-	<textbox id="baseURL" flex="1" tooltiptext="&baseURLTextbox.tooltip;" 
-		 onchange="window.editor.app.setBaseURL(this.value)"
-		 ontextentered="window.editor.app.setBaseURL(this.value)"
-         type="autocomplete" autocompletesearch="selenium-ide-generic" enablehistory="true" tabscrolling="true"/>
+      <hbox class="toolbar1" align="center" flex="1" height="27">
+		<label id="labelURL" value="&baseURL.label;"/>
+		<image id="baseURL-left" />
+		<textbox id="baseURL" flex="1" tooltiptext="&baseURLTextbox.tooltip;" 
+			 onchange="window.editor.app.setBaseURL(this.value)"
+			 ontextentered="window.editor.app.setBaseURL(this.value)"
+	         type="autocomplete" autocompletesearch="selenium-ide-generic" enablehistory="true" tabscrolling="true" class="plain"/>
+		<image id="baseURL-right" mousethrough="always" />
+		<image id="vaadin-logo" onclick="openTabOrWindow('https://vaadin.com')"/>  
       </hbox>
     </toolbar>
     <toolbar id="toolbar2">
-      <stack id="speedSliderBox" />
-      <toolbarbutton id="play-suite-button" label="Play TestSuite" class="icon" tooltiptext="&playSuiteButton.tooltip;" command="cmd_selenium_play_suite"/>
-      <toolbarbutton id="play-button" label="Play" class="icon" tooltiptext="&playButton.tooltip;" command="cmd_selenium_play"/>
-      <toolbarbutton id="pause-button" label="Pause" class="icon pause" tooltiptext="&pauseButton.tooltip;" command="cmd_selenium_pause"/>
-      <toolbarbutton id="step-button" label="Step" class="icon" tooltiptext="&stepButton.tooltip;" command="cmd_selenium_step"/>
-      <toolbarseparator/>
-      <toolbarbutton id="rollup-button" label="Rollup" class="icon" tooltiptext="&rollupButton.tooltip;" command="cmd_selenium_rollup"/>
-      <toolbarbutton id="reload-button" label="Reload" class="icon" tooltiptext="&reloadExtButton.tooltip;" command="cmd_selenium_reload" hidden="true"/>
-      <toolbarspacer flex="1"/>
-      <toolbarbutton id="record-button" label="Record" class="icon" tooltiptext="&recordButton.tooltip;" checked="true" command="cmd_selenium_record"/>
+		<hbox class="toolbar2" align="center" flex="1" height="26">
+	        <stack id="speedSliderBox" />
+	        <toolbarbutton id="play-suite-button" label="Play TestSuite" class="icon" tooltiptext="&playSuiteButton.tooltip;" command="cmd_selenium_play_suite"/>
+	        <toolbarbutton id="play-button" label="Play" class="icon" tooltiptext="&playButton.tooltip;" command="cmd_selenium_play"/>
+	        <toolbarbutton id="pause-button" label="Pause" class="icon pause" tooltiptext="&pauseButton.tooltip;" command="cmd_selenium_pause"/>
+	        <toolbarbutton id="step-button" label="Step" class="icon" tooltiptext="&stepButton.tooltip;" command="cmd_selenium_step"/>
+	        <toolbarseparator/>
+		    <!--
+	        <toolbarbutton id="rollup-button" label="Rollup" class="icon" tooltiptext="&rollupButton.tooltip;" command="cmd_selenium_rollup"/>
+	  	    -->
+	        <toolbarbutton id="reload-button" label="Reload" class="icon" tooltiptext="&reloadExtButton.tooltip;" command="cmd_selenium_reload" hidden="true"/>
+	        <toolbarspacer flex="1"/>
+	        <toolbarbutton id="record-button" label="Record" class="icon" tooltiptext="&recordButton.tooltip;" checked="true" command="cmd_selenium_record"/>
+		</hbox>
     </toolbar>
   </toolbox>
 
@@ -159,12 +166,6 @@ limitations under the License.
     </splitter>
 	
     <vbox id="logBox" flex="1" height="100"/>
-    
-    <hbox minheight="45">       
-        <spacer flex="1"/>
-        <image id="vaadin-logo" onclick="openTabOrWindow('https://vaadin.com')"/>  
-    </hbox>   
-
   </vbox>
 
 </window>

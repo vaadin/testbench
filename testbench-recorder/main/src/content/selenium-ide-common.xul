@@ -233,24 +233,23 @@ limitations under the License.
   </menu>
 
   <stack id="speedSliderBox">
-    <hbox>
-      <label value="&speedSliderFast.label;" />
-      <hbox flex="1" />
-      <label value="&speedSliderSlow.label;" />
-    </hbox>
-    <vbox>
-      <vbox class="spacer" />
-      <stack class="slider-box" flex="1" >
-          <hbox class="slider-background">
-            <hbox class="slider-left" />
-            <hbox class="slider-middle" flex="1" />
-            <hbox class="slider-right" />
-          </hbox>
-          <slider id="speedSlider" width="80" curpos="0" maxpos="1000">
-            <thumb />
-          </slider>
-      </stack>
-    </vbox>
+	<hbox align="center">
+        <label value="&speedSliderFast.label;" />
+	    <vbox>
+	      <vbox class="spacer" />
+	      <stack class="slider-box" flex="1" >
+	          <hbox class="slider-background">
+	            <hbox class="slider-left" />
+	            <hbox class="slider-middle" flex="1" />
+	            <hbox class="slider-right" />
+	          </hbox>
+	          <slider id="speedSlider" width="80" curpos="0" maxpos="1000">
+	            <thumb />
+	          </slider>
+	      </stack>
+	    </vbox>
+        <label value="&speedSliderSlow.label;" />
+	</hbox>
   </stack>
   
   <vbox id="suitePane">

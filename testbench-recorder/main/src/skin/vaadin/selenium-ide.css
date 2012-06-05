@@ -5,8 +5,7 @@
 #sidebarToolbar_controls,
 #sidebarToolbar_speed,
 #menubar,
-#toolbar1,
-#toolbar2 {
+#toolbar1 {
 	-moz-appearance: none;
     background-color: black;
 }
@@ -27,19 +26,10 @@
 #menubar > menu { color: white; }
 
 #toolbar1, 
-#toolbar2,
 #sidebarToolbar_URL,
 #sidebarToolbar_controls,
 #sidebarToolbar_speed { 
 	color: white; 	
-}
-
-#toolbar2{ margin-right: 10px }
-
-#record-button{
-	-moz-appearance: none;
-	background:black !important;
-	border:0 
 }
 
 #suitePane {
@@ -147,16 +137,6 @@ tree{
 	list-style-image: url("chrome://vaadin-ide/skin/testbench-logo_small.png");
 }
 
-#vaadin-logo{
-    list-style-image: url("chrome://vaadin-ide/skin/vaadin-logo.png");
-    margin-right: 8px;
-    margin-bottom: 5px;   
-}
-
-#selenium-ide-sidebar #vaadin-logo{
-    list-style-image: url("chrome://vaadin-ide/skin/vaadin-logo_small.png");
-}
-
 treecols{
 	background-color: #E2E3E5;
 	background-image: -moz-linear-gradient(top, #E2E3E5, #D4D7D9);   
@@ -176,4 +156,171 @@ treecol{
 
 treechildren::-moz-tree-cell(recordIndex){
   border-top: none;
+}
+
+/** URL bar */
+#toolbar1,
+hbox.toolbar1 {
+	-moz-appearance: none;
+	background-image: url("url-bar-bg.png");
+	background-repeat: repeat-x;
+	margin: 0px;
+	padding: 0px;
+}
+label {
+	background-color: transparent;
+	padding: 0;
+}
+#labelURL {
+	margin-left: 15px;
+	margin-right: 15px;
+}
+#baseURL,
+#baseURL .textbox-input-box {
+	-moz-appearance: none;
+	background-image: url("url-field-bg.png") !important;
+	background-repeat: repeat-x;
+	color: white;
+	height: 26px;
+}
+#baseURL-left {
+	list-style-image: url("url-field-start.png");
+	height: 26px;
+/*	margin-right: -5px;*/
+}
+#baseURL-right {
+	list-style-image: url("url-field-arrow.png");
+	margin-left: -22px
+}
+#vaadin-logo{
+    list-style-image: url("vaadin-logo.png");
+	background-color: transparent;
+    margin: 0px;
+	padding: 0px;
+}
+#selenium-ide-sidebar #vaadin-logo{
+    list-style-image: url("chrome://vaadin-ide/skin/vaadin-logo_small.png");
+}
+
+
+/** Record/play toolbar */
+#toolbar2,
+hbox.toolbar2 {
+	-moz-appearance: none;
+	margin: 0;
+	padding: 0;
+	background-image: url("toolbar-bg.png");
+	background-repeat: repeat-x;
+}
+toolbarseparator {
+	margin: 0;
+}
+toolbarbutton,
+toolbarseparator {
+	-moz-appearance: none;
+    padding: 0;
+    width: 33px;
+    height: 25px;
+    background-image: url("toolbar-separator.png");
+    background-color: transparent;
+    background-repeat: no-repeat;
+}
+
+toolbarbutton.icon {
+/*  padding: 2px 4px 2px 4px;*/
+  margin: 0;
+  border: 0;
+}
+
+toolbarbutton:hover:not([disabled="true"]) { 
+  background-color: #aaaaaa;
+}
+
+toolbarbutton.icon:not([disabled="true"]) {
+/*  list-style-image: url("icons.png");*/
+}
+
+toolbarbutton.icon[disabled="true"] {
+/*  list-style-image: url("icons_disabled.png");*/
+}
+
+toolbarbutton.icon image {
+  margin-right: 0px;
+}
+
+toolbarbutton.icon label {
+  display: none;
+}
+
+#play-suite-button {
+	-moz-image-region: auto;
+    list-style-image: url("play-suite.png");
+}
+#play-button {
+	-moz-image-region: auto;
+    list-style-image: url("play-testcase.png");
+}
+.pause#pause-button,
+.resume#pause-button { 
+	-moz-image-region: auto;
+    list-style-image: url("pause.png");
+}
+#step-button {
+	-moz-image-region: auto;
+    list-style-image: url("skip.png");
+}
+#record-button:not([checked="true"]) { 
+	-moz-image-region: auto;
+    list-style-image: url("record.png");
+	margin-top: -2px;
+/*	margin-right: 5px;*/
+}
+#record-button[checked="true"] {
+	-moz-image-region: auto;
+	height: 24px;
+	margin-top: -2px;
+    list-style-image: url("recording.png");
+	background-image: url("toolbar-btn-down.png");
+}
+
+/** Slider */
+
+#speedSliderBox label {
+  font-size: 8pt;
+  color: white;
+}
+
+#speedSliderBox .slider-box {
+	margin-top: -10px;
+}
+
+#speedSliderBox .slider-middle {
+  background: url("slider-middle.png");
+  background-position: left 9px;
+  background-repeat: repeat-x;
+}
+
+#speedSliderBox .slider-left {
+  background: url("slider-left.png");
+  background-position: left 9px;
+  background-repeat: no-repeat;
+  width: 5px !important;
+}
+
+#speedSliderBox .slider-right {
+  background: url("slider-right.png");
+  background-position: right 9px;
+  background-repeat: no-repeat;
+  width: 4px;
+}
+
+#speedSliderBox thumb {
+  -moz-appearance: none !important;
+  border: none;
+  background: url("slider-handle.png");
+  background-repeat: no-repeat;
+  background-position: 0 1px;
+  width: 9px;
+  height: 16px;
+  min-width: 9px;
 }
