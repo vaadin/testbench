@@ -121,7 +121,7 @@ limitations under the License.
                 </treecols>
                 <treechildren ondraggesture="nsDragAndDrop.startDrag(event, commandsDragObserver);"/>
               </tree>
-              <separator class="thin"/>
+              <separator class="shadow"/>
               <!-- command editing -->
               <vbox id="commandDetail" persist="height">
                 <grid>
@@ -134,15 +134,17 @@ limitations under the License.
                       <!-- do drop down that depends upon the element type -->
                       <label control="commandAction" value="&command.label;"/>
                       <textbox disabled="true" id="commandAction" oninput="window.editor.treeView.updateCurrentCommand('command', this.value)" type="autocomplete" autocompletesearch="selenium-ide-generic" enablehistory="true" forcecomplete="true" tabscrolling="true"/>
+					  <image class="autocomplete-arrow" mousethrough="always" />
                     </row>
                     <row align="center">
                       <!-- show different options collected by the client. Allow user to override -->
                       <label control="commandTarget" value="&target.label;"/>
                       <hbox flex="1">
                         <textbox flex="1" disabled="true" id="commandTarget" oninput="window.editor.treeView.updateCurrentCommand('target', window.editor.treeView.decodeText(this.value))" autocompletesearch="selenium-ide-generic" enablehistory="true" forcecomplete="true" tabscrolling="true" type="autocomplete" showcommentcolumn="true" />
+					    <image class="autocomplete-arrow" mousethrough="always" />
                         <button label="&findTarget.label;"
                                 oncommand="window.editor.selDebugger.showElement(document.getElementById('commandTarget').value)"
-                                id="findElementButton" />
+                                id="findElementButton" image="chrome://vaadin-ide/skin/find-element.png" />
                       </hbox>
                     </row>
                     <row align="center">

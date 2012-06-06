@@ -32,32 +32,20 @@
 	color: white; 	
 }
 
+separator.shadow {
+	height: 5px;
+	background-image: url("form-shadow-bg.png");
+	background-repeat: repeat-x;
+}
+#shadowOverlay {
+	height: 6px;
+	background-image: url("content-shadow-bg.png");
+	background-repeat: repeat-x;
+}
+
 .console-button:hover{
 	border-radius: 4px;
 	border:none;
-}
-
-textbox[type="autocomplete"] .autocomplete-history-dropmarker{
- 	-moz-appearance: menulist;    
-    width:25px;   
-}
-
-textbox[type="autocomplete"] .textbox-input-box{
-    -moz-appearance: none;       
-}
-
-textbox[type="autocomplete"] .autocomplete-textbox-container{
-	 -moz-appearance: none; 
-}
-
-textbox{ 
-	-moz-appearance: none;
-	background:#eee; 
-	border:none;
-    height:24px;
-}
-textbox[disabled="true"]{
-	background:silver;
 }
 
 /** Tabs */
@@ -326,9 +314,6 @@ toolbarbutton.icon label {
 	border-bottom: 1px solid black;
 }
 #suitePane #shadowOverlay {
-	height: 6px;
-	background-image: url("content-shadow-bg.png");
-	background-repeat: repeat-x;
 	margin-top: 20px;
 }
 #suitePane treechildren {
@@ -382,6 +367,8 @@ toolbarbutton.icon label {
 }
 
 #editorpane {
+	background: white;
+	color: rgb(135,135,135);
 }
 
 #mainvbox,
@@ -397,6 +384,9 @@ tree {
 }
 
 /** Commands tree (table) */
+#commands {
+	border-bottom: 1px solid rgb(200,200,200);
+}
 #commands treechildren {
 	color: black;
 	background-color: white;
@@ -421,4 +411,51 @@ tree {
 }
 treechildren::-moz-tree-row {
   height: 20px;
+}
+
+/** Command editing */
+/*
+#commandDetail .autocomplete-arrow {
+	background-image: url("dropdown-arrow.png");
+	background-repeat: no-repeat;
+	background-position: center center;
+	width: 16px;
+	height: 16px;
+	margin-left: -25px
+}
+*/
+#commandDetail textbox[type="autocomplete"] .autocomplete-history-dropmarker image {
+	-moz-appearance: none !important;
+	display: none !important;
+}
+
+#commandDetail textbox[type="autocomplete"] .autocomplete-history-dropmarker{
+ 	-moz-appearance: none;
+	background-image: url("dropdown-arrow.png");
+	background-repeat: no-repeat;
+	background-position: center center;
+	width: 20px;
+}
+
+#commandDetail textbox[type="autocomplete"] .textbox-input-box {
+    -moz-appearance: none;
+}
+
+#commandDetail textbox[type="autocomplete"] .autocomplete-textbox-container{
+	 -moz-appearance: none; 
+}
+#commandDetail .textbox-input-box {
+	-moz-appearance: none;
+}
+#commandDetail textbox { 
+	-moz-appearance: none;
+	background-color: rgb(248,248,248);
+	border:1px solid rgb(183,183,183);
+    height:24px;
+	color: black;
+    border-radius: 4px;
+}
+#commandDetail textbox[disabled="true"]{
+	-moz-appearance: none;
+	/* TODO */
 }
