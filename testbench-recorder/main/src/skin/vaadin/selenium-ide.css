@@ -60,36 +60,58 @@ textbox[disabled="true"]{
 	background:silver;
 }
 
+/** Tabs */
+
 tabpanels {
     -moz-appearance: none;
     border:none;
     background:#333;
-    border-radius: 4px;
-    color: #eee;   
-    margin-right:8px;
+    color: #eee;
+	margin: 0;
+	padding-top: 11px;
 }
-
-
-tab, .vaadin-console-tab{
+#tabbox,
+tabs {
+	margin:0;
+	padding:0;
+	background-image: url("tab-bg.png");
+	background-repeat: repeat-x;
+}
+tabs {
 	-moz-appearance: none;
-    -moz-border-radius: 4px 4px 0px 0px;
-    background:silver;
-    margin:0 0 0 5px;
+	background-image: url("tab-bg.png");
+	background-repeat: repeat-x;
+	width: 100%;
+}
+tab,
+.vaadin-console-tab {
+	-moz-appearance: none;
+	background-image: url("tab-bg.png");
+	background-repeat: repeat-x;
+    margin:0;
     border:none;
     color: white;
-    width:100px;
-    color:#333;
+    width: auto;
     text-align:center;
+	height: 20px;
 }
 #selenium-ide-sidebar tab, 
 #selenium-ide-sidebar .vaadin-console-tab{
 	width:auto;
 }
 
+tab[selected="true"] {
+	background-image: url("tab-selected-right.png");
+}
+
+/*
 tab[selected="true"],
 toolbarbutton[selected="true"]{
 	background:#eee;	
 }
+*/
+
+/** Log */
 
 #logMenu {
   height: 24px;
@@ -104,15 +126,15 @@ toolbarbutton[selected="true"]{
 #logView,#helpView,#uiView,#rollupView{
 	border:0;
     background:#333;
-    border-radius: 4px;
     color: #eee;   
+	padding: 0;
+	margin: 0;
 }
 
 tree{
 	-moz-appearance: none;
 	background-color:#eee;
 	border:none;
-	border-radius: 4px;
 }
 
 #testbench-logo{
@@ -142,15 +164,16 @@ label {
 	padding: 0;
 }
 #labelURL {
-	margin-left: 15px;
-	margin-right: 15px;
+	margin-left: 14px;
+	margin-right: 14px;
+	color: rgb(209,209,209);
 }
 #baseURL,
 #baseURL .textbox-input-box {
 	-moz-appearance: none;
 	background-image: url("url-field-bg.png") !important;
 	background-repeat: repeat-x;
-	color: white;
+	color: rgb(209,209,209);
 	height: 26px;
 }
 #baseURL-left {
@@ -302,6 +325,12 @@ toolbarbutton.icon label {
 	padding: 0;
 	border-bottom: 1px solid black;
 }
+#suitePane #shadowOverlay {
+	height: 6px;
+	background-image: url("content-shadow-bg.png");
+	background-repeat: repeat-x;
+	margin-top: 20px;
+}
 #suitePane treechildren {
 	color: white;
 	background-color: rgb(82,82,82);
@@ -352,3 +381,44 @@ toolbarbutton.icon label {
   color: rgb(57,227,66);
 }
 
+#editorpane {
+}
+
+#mainvbox,
+#mainhbox,
+#editorpane,
+#commands,
+#commandDetail,
+#source,
+tabpanels,
+tree {
+	margin: 0;
+	padding: 0;
+}
+
+/** Commands tree (table) */
+#commands treechildren {
+	color: black;
+	background-color: white;
+}
+#commands treechildren::-moz-tree-row(even) {
+	background-color: rgb(247,247,247);
+}
+#commands treechildren::-moz-tree-row(odd) {
+	background-color: white;
+}
+#commands treechildren::-moz-tree-row(selected) {
+	background-image: url("list-selected-bg.png");
+	color: white;
+}
+#commands treecol {
+	-moz-appearance: none;
+	background-image: url("table-header-bg.png");
+	background-repeat: repeat-x;
+	color: white;
+	height: 20px;
+	border: none;
+}
+treechildren::-moz-tree-row {
+  height: 20px;
+}

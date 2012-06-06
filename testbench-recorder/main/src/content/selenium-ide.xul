@@ -36,8 +36,8 @@ limitations under the License.
   windowtype="global:selenium-ide"
   xmlns:html="http://www.w3.org/1999/xhtml"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-  width="550"
-  height="520"
+  width="660"
+  height="470"
   persist="screenX screenY width height"
   onload="new StandaloneEditor(window)"
   onunload="window.editor.unload()"
@@ -95,20 +95,20 @@ limitations under the License.
     </toolbar>
   </toolbox>
 
-  <vbox flex="1">
+  <vbox flex="1" id="mainvbox">
     <hbox id="mainhbox" width="100" persist="height width" flex="1">
       <vbox id="suitePane" persist="height width" />
       <splitter id="suiteTreeSplitter" collapse="before" persist="state">
         <grippy/>
       </splitter>
-      <tabbox id="tabbox" flex="3" height="300" width="250" persist="height width">
+      <tabbox id="tabbox" flex="3" height="300" width="250" persist="height width" align="left">
         <tabs orient="horizontal" onselect="if (window.editor) { window.editor.tabSelected(selectedItem.id) }" id="viewTabs">
 	      <tab id="editorTab" label="&tableTab.label;" />
 	      <tab id="sourceTab" label="&sourceTab.label;" />
         </tabs>
         <tabpanels flex="1">
           <stack>
-            <vbox flex="1">
+            <vbox flex="1" id="editorpane" width="530">
               <tree id="commands" flex="1" enableColumnDrag="false" hidecolumnpicker="true"
                 context="treeContextMenu" onselect="window.editor.treeView.selectCommand()"
                 ondblclick="goDoCommand('cmd_selenium_exec_command')" disableKeyNavigation="true">
