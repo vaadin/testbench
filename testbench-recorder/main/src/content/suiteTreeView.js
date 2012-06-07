@@ -175,6 +175,9 @@ objectExtend(SuiteTreeView.prototype, {
             return text;
         },
         getRowProperties: function(row, props) {
+            if (row == this.currentTestCaseIndex) {
+                props.AppendElement(XulUtils.atomService.getAtom("currentTestCase"));
+            }
             if (this.selection.isSelected(row)) return;
             var testCase = this.getTestSuite().tests[row];
             if (testCase.testResult) {

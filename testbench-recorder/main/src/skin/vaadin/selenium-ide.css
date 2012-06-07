@@ -7,8 +7,9 @@
 #menubar,
 #toolbar1 {
 	-moz-appearance: none;
-    background-color: black;
-    font-family: Helvetica, Arial;
+    background-color: #282828;
+    font-family: Helvetica, Arial, sans-serif;
+	font-size: 9pt;
 }
 
 #logBox{
@@ -37,16 +38,10 @@ separator.shadow {
 	background-image: url("form-shadow-bg.png");
 	background-repeat: repeat-x;
 }
-separator.dark-shadow,
-#shadowOverlay {
-	height: 6px;
+separator.dark-shadow {
+	height: 3px;
 	background-image: url("content-shadow-bg.png");
 	background-repeat: repeat-x;
-}
-
-.console-button:hover{
-	border-radius: 4px;
-	border:none;
 }
 
 /** Tabs */
@@ -68,6 +63,7 @@ tabs {
 	height: 20px;
 	margin:0;
 	padding:0;
+	border-collapse: collapse;
 }
 tab,
 .vaadin-console-tab {
@@ -75,11 +71,14 @@ tab,
 	background-image: url("tab-bg.png");
 	background-repeat: repeat-x;
     margin:0;
-    border:none;
-    color: white;
+	color: rgb(23,23,23);
+	text-shadow: #999999 0px 1px 0px;
     width: auto;
     text-align:center;
 	height: 20px;
+	border: 1px solid rgba(0,0,0,0.3);
+	border-top: none;
+	border-bottom: none;
 }
 #selenium-ide-sidebar tab, 
 #selenium-ide-sidebar .vaadin-console-tab{
@@ -88,6 +87,11 @@ tab,
 
 tab[selected="true"] {
 	background-image: url("tab-selected-right.png");
+	color: rgb(241,241,241);
+	text-shadow: rgb(32,73,132) 0px 1px 0px;
+	border: 1px solid rgba(255,255,255,0.1);
+	border-top: none;
+	border-bottom: none;
 }
 
 /*
@@ -101,25 +105,32 @@ toolbarbutton[selected="true"]{
 
 #logMenu {
   height: 20px;
-  border-bottom: 0;
+  border-bottom: none;
   background-image: url("tab-bg.png");
   background-repeat: repeat-x;
+  border-bottom: 1px solid rgb(40,40,40);
 }
 
 toolbarbutton.vaadin-console-tab {
 	-moz-appearance: none;
-	border:0 !important;
 	color: black;
 	text-shadow: #999999 0px 1px 0px;
+	border: 1px solid rgba(0,0,0,0.3);
+	border-top: none;
+	border-bottom: none;
+	padding-top: 1px;
 }
 toolbarbutton.vaadin-console-tab[selected="true"] {
 	background-image: url("tab-selected-right.png");
 	text-shadow: none;
-	color: white;
+	color: rgb(241,241,241);
+	border: 1px solid rgba(255,255,255,0.1);
+	border-top: none;
+	border-bottom: none;
 }
 
 #logView,#helpView,#uiView,#rollupView{
-	border:0;
+	border: none;
     background-color: rgb(76,76,76);
 	background-image: url("content-shadow-bg.png");
 	background-repeat: repeat-x;
@@ -133,6 +144,7 @@ toolbarbutton.vaadin-console-tab[selected="true"] {
 	background-image: none;
 	color: black;
 	text-shadow: #999999 0px 1px 0px;
+	padding-top: 1px;
 }
 #logFilter:hover,#logClear:hover {
 	background-color: transparent;
@@ -173,6 +185,7 @@ label {
 	margin-left: 14px;
 	margin-right: 14px;
 	color: rgb(209,209,209);
+	text-shadow: rgb(13,13,13) 0px -1px 0px;
 }
 #baseURL,
 #baseURL .textbox-input-box {
@@ -185,7 +198,6 @@ label {
 #baseURL-left {
 	list-style-image: url("url-field-start.png");
 	height: 26px;
-/*	margin-right: -5px;*/
 }
 #baseURL-right {
 	list-style-image: url("url-field-arrow.png");
@@ -203,6 +215,10 @@ label {
 
 
 /** Record/play toolbar */
+#toolbar2 {
+	border-top: none !important;
+	height: 25px;
+}
 #toolbar2,
 hbox.toolbar2 {
 	-moz-appearance: none;
@@ -273,14 +289,12 @@ toolbarbutton.icon label {
 }
 #record-button:not([checked="true"]) { 
 	-moz-image-region: auto;
+	height: 24px;
     list-style-image: url("record.png");
-	margin-top: -2px;
-/*	margin-right: 5px;*/
 }
 #record-button[checked="true"] {
 	-moz-image-region: auto;
 	height: 24px;
-	margin-top: -2px;
     list-style-image: url("recording.png");
 	background-image: url("toolbar-btn-down.png");
 }
@@ -288,8 +302,9 @@ toolbarbutton.icon label {
 /** Slider */
 
 #speedSliderBox label {
-  -moz-border-radius-size: 8pt;
   color: white;
+  text-shadow: black 0px -1px 0px;
+  font-size: 8pt;
 }
 
 #speedSliderBox .slider-box {
@@ -338,25 +353,37 @@ toolbarbutton.icon label {
 	margin-top: 20px;
 }
 #suitePane treechildren {
-	color: white;
 	background-color: rgb(82,82,82);
+	background-image: url("content-shadow-bg-2.png");
+	background-repeat: repeat-x;
+}
+#suitePane treechildren::-moz-tree-cell-text {
+	color: white;
 }
 #suitePane treechildren::-moz-tree-row(even) {
-	background-color: rgb(76,76,76);
+	background-color: rgba(0,0,0,0.073);
 }
 #suitePane treechildren::-moz-tree-row(odd) {
-	background-color: rgb(82,82,82);
+	background-color: transparent;
 }
-#suitePane treechildren::-moz-tree-row(selected) {
+#suitePane treechildren::-moz-tree-cell-text(currentTestCase) {
+	font-weight: bold;
+	text-shadow: rgba(58,58,58,0.3) 0px 1px 0px;
+}
+#suitePane treechildren::-moz-tree-row/*,
+#suitePane treechildren::-moz-tree-row(currentTestCase) */{
 	background-image: url("list-selected-bg.png");
+	height: 20px;
 }
 #suitePane treecol {
 	-moz-appearance: none;
 	background-image: url("tab-bg.png");
 	background-repeat: repeat-x;
 	color: white;
-	height: 20px;
+	height: 21px;
 	border: none;
+	border-bottom: 1px solid #282828;
+	text-shadow: rgb(58,58,58) 0px -1px 0px;
 }
 #suitePane {
 	-moz-appearance: none;
@@ -387,6 +414,9 @@ toolbarbutton.icon label {
 #suiteProgressRuns {
   color: rgb(57,227,66);
 }
+#suiteProgressInfo {
+	margin: 1px 10px 6px 10px;
+}
 
 #editorpane {
 	background: white;
@@ -405,6 +435,7 @@ toolbar,
 tree {
 	margin: 0;
 	padding: 0;
+	border: none;
 }
 
 /** Commands tree (table) */
@@ -422,16 +453,22 @@ tree {
 	background-color: white;
 }
 #commands treechildren::-moz-tree-row(selected) {
-	background-image: url("list-selected-bg.png");
+	background-color: rgb(101,145,247);
+}
+#commands treechildren::-moz-tree-cell-text(selected) {
 	color: white;
+	text-shadow: #DDD 10px 10px 2px;
 }
 #commands treecol {
 	-moz-appearance: none;
 	background-image: url("table-header-bg.png");
 	background-repeat: repeat-x;
-	color: white;
+	color: #d5d5d5;
+	text-shadow: #444 0px -1px 0px;
 	height: 20px;
 	border: none;
+	border-right: 1px solid rgba(0,0,0,0.35);
+	font-size: 8pt;
 }
 treechildren::-moz-tree-row {
   height: 20px;
@@ -469,7 +506,8 @@ treechildren::-moz-tree-row {
 	-moz-appearance: none;
 	background-color: rgb(248,248,248);
 	border:1px solid rgb(183,183,183);
-    height:24px;
+    height:19px;
+	font-size: 8pt;
 	color: black;
     border-radius: 4px;
 }
