@@ -98,9 +98,6 @@ limitations under the License.
   <vbox flex="1" id="mainvbox">
     <hbox id="mainhbox" width="100" persist="height width" flex="1">
       <vbox id="suitePane" persist="height width" />
-      <splitter id="suiteTreeSplitter" collapse="before" persist="state">
-        <grippy/>
-      </splitter>
       <tabbox id="tabbox" flex="3" height="300" width="250" persist="height width" align="left">
         <tabs orient="horizontal" onselect="if (window.editor) { window.editor.tabSelected(selectedItem.id) }" id="viewTabs">
 	      <tab id="editorTab" label="&tableTab.label;" />
@@ -163,9 +160,6 @@ limitations under the License.
         </tabpanels>
       </tabbox>
     </hbox>
-    <splitter id="logSplitter" collapse="after" persist="state">
-	  <grippy/>
-    </splitter>
 	
     <vbox id="logBox" flex="1" height="100"/>
   </vbox>
