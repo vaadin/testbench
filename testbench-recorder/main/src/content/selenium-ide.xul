@@ -66,7 +66,7 @@ limitations under the License.
       <menupopup id="menu_ToolsPopup"/> <!-- for Mac -->
     </menubar>
     <toolbar id="toolbar1">
-      <hbox class="toolbar1" align="center" flex="1" height="27">
+      <hbox class="toolbar1" align="center" flex="1" height="26">
 		<label id="labelURL" value="&baseURL.label;"/>
 		<image id="baseURL-left" />
 		<textbox id="baseURL" flex="1" tooltiptext="&baseURLTextbox.tooltip;" 
@@ -78,7 +78,7 @@ limitations under the License.
       </hbox>
     </toolbar>
     <toolbar id="toolbar2">
-		<hbox class="toolbar2" align="center" flex="1" height="26">
+		<hbox class="toolbar2" align="center" flex="1">
 	        <stack id="speedSliderBox" />
 	        <toolbarbutton id="play-suite-button" label="Play TestSuite" class="icon" tooltiptext="&playSuiteButton.tooltip;" command="cmd_selenium_play_suite"/>
 	        <toolbarbutton id="play-button" label="Play" class="icon" tooltiptext="&playButton.tooltip;" command="cmd_selenium_play"/>
