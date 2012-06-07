@@ -110,6 +110,7 @@ toolbarbutton.vaadin-console-tab {
 	-moz-appearance: none;
 	border:0 !important;
 	color: black;
+	text-shadow: #999999 0px 1px 0px;
 }
 toolbarbutton.vaadin-console-tab[selected="true"] {
 	background-image: url("tab-selected-right.png");
@@ -127,6 +128,15 @@ toolbarbutton.vaadin-console-tab[selected="true"] {
 	margin: 0;
 }
 
+#logFilter,#logClear {
+	width: 50px;
+	background-image: none;
+	color: black;
+	text-shadow: #999999 0px 1px 0px;
+}
+#logFilter:hover,#logClear:hover {
+	background-color: transparent;
+}
 tree{
 	-moz-appearance: none;
 	background-color:#eee;
@@ -209,7 +219,7 @@ toolbarseparator {
 	-moz-appearance: none;
     padding: 0;
     width: 33px;
-    height: 25px;
+    height: 24px;
     background-image: url("toolbar-separator.png");
     background-color: transparent;
     background-repeat: no-repeat;
@@ -253,6 +263,9 @@ toolbarbutton.icon label {
 .resume#pause-button { 
 	-moz-image-region: auto;
     list-style-image: url("pause.png");
+}
+.resume#pause-button {
+	background-image: url("toolbar-btn-down.png");
 }
 #step-button {
 	-moz-image-region: auto;
@@ -352,7 +365,8 @@ toolbarbutton.icon label {
     color: #eee;
     padding:0;
     margin: 0;
-	border-right: 1px solid black;
+	border-right: 1px solid rgb(50,50,50);
+	border-bottom: 1px solid rgb(30,30,30);
 }
 
 #suiteProgressBar {
@@ -386,6 +400,8 @@ toolbarbutton.icon label {
 #commandDetail,
 #source,
 tabpanels,
+toolbox,
+toolbar,
 tree {
 	margin: 0;
 	padding: 0;
@@ -460,4 +476,7 @@ treechildren::-moz-tree-row {
 #commandDetail textbox[disabled="true"]{
 	-moz-appearance: none;
 	/* TODO */
+}
+#commandDetail {
+    border-bottom: 1px solid rgb(64,64,64);
 }
