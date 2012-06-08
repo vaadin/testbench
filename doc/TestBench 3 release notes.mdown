@@ -1,0 +1,47 @@
+# TestBench 3 release notes
+
+## Major changes since 2.x
+* TestBench 3 is based on Selenium 2 (WebDriver), while TB 2 was based on Selenium 1
+* Supports automatic testing on Android and iOS
+* Much improved Maven integration
+* HTML files are no longer used as a storage format for test cases. Test cases are now stored and edited as JUnit test cases.
+* TestBench 3 adds API for getting the server-side and client-side processing time per request or per session for testing the performance of applications – see added commands below.
+* The following commands have been removed, since they are already provided by the underlying Selenium 2:
+	* `contextmenu`/`contextmenuAt`
+	
+        	new Actions(driver).moveToElement(element).contextClick(e).perform();
+		
+	* `pressSpecialKey`
+	
+			new Actions(driver).keyDown(Keys.CTRL).build().perform();
+			element.sendKeys(Keys.F1);
+			new Actions(driver).keyUp(Keys.CTRL).build().perform();
+		
+	* `includeTest` - no longer relevant since tests are stored as JUnit test cases.
+	* `assertCSSClass`
+	
+			Assert.assertTrue(element.getAttribute("class").contains("myCSSClass"));
+		
+	* `assertNotCSSClass`
+	
+			Assert.assertFalse(element.getAttribute("class").contains("myCSSClass"));
+			
+	* `uploadFile` - the `type` command can be executed on file inputs and works in more browsers.
+* Added and changed commands
+	* `getRemoteControlName` - Retrieves the canonical name of the node running the test. Useful when reporting failures that might be due to hardware issues, automatically updated browsers or other software issues on a large grid.
+	* `compareScreen` can now take the reference image as either a name string (browser and version are appended), a `File` reference or `BufferedImage`. Examples:
+	
+			WebDriver driver = TestBench.createDriver(new FirefoxDriver());
+	        driver.navigate().to("http://google.com");
+	        assertTrue(testBench(driver).compareScreen("shot")); // fetches shot_firefox_11.0.png from the reference directory (set in Parameters).
+	        assertTrue(testBench(driver).compareScreen(ImageFileUtil.getReferenceScreenshotFile("actualshot.png")));
+			BufferedImage referenceImage = getReferenceImage();
+	        assertTrue(testBench(driver).compareScreen(referenceImage));
+			
+	* `timeSpentRenderingLastRequest`, `totalTimeSpentRendering` - Timing info for client-side rendering of the last request or the entire session
+	* `timeSpentServicingLastRequest`, `totalTimeSpentServicingRequests` - Timing info for the server-side servicing of the last request or the entire session
+    * `findElementByVaadinSelector` - find an element by the Vaadin specific selector
+	
+        	WebElement e = testBench(driver).findElementByVaadinSelector("/VVerticalLayout[0]/ChildComponentContainer[0]/VLabel[0]");
+		
+	* `disableWaitForVaadin`, `enableWaitForVaadin` - disable the AJAX intelligence. Useful for testing e.g. bombarding an application with keypresses. Enabled by default.
