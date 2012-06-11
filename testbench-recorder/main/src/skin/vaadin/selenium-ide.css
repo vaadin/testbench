@@ -296,6 +296,7 @@ toolbarbutton.icon label {
 	-moz-image-region: auto;
 	height: 24px;
     list-style-image: url("recording.png");
+	background-image: url("toolbar-btn-down.png");
 }
 #toolbar2 toolbarbutton:active:not([disabled="true"]) {
 	background-image: url("toolbar-btn-down.png");
