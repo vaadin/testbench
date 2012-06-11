@@ -41,7 +41,8 @@
 <!ENTITY command.label "Commande">
 <!ENTITY target.label "Cible">
 <!ENTITY value.label "Valeur">
-<!ENTITY findTarget.label "Rechercher">
+<!ENTITY findTarget.label "Montrer">
+<!ENTITY selectTarget.label "Sélectionner">
 
 <!ENTITY helpDocumentation.label "Documentation">
 <!ENTITY helpReportIssue.label "Signaler le problème">

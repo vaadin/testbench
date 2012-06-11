@@ -139,9 +139,12 @@ limitations under the License.
                       <hbox flex="1">
                         <textbox flex="1" disabled="true" id="commandTarget" oninput="window.editor.treeView.updateCurrentCommand('target', window.editor.treeView.decodeText(this.value))" autocompletesearch="selenium-ide-generic" enablehistory="true" forcecomplete="true" tabscrolling="true" type="autocomplete" showcommentcolumn="true" />
 					    <image class="autocomplete-arrow" mousethrough="always" />
+                        <button label="&selectTarget.label;"
+                                oncommand="Recorder.reSelectTarget();"
+                                id="selectElementButton" image="chrome://vaadin-ide/skin/find-element.png" />
                         <button label="&findTarget.label;"
                                 oncommand="window.editor.selDebugger.showElement(document.getElementById('commandTarget').value)"
-                                id="findElementButton" image="chrome://vaadin-ide/skin/find-element.png" />
+                                id="findElementButton" />
                       </hbox>
                     </row>
                     <row align="center">

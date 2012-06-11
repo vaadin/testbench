@@ -41,7 +41,8 @@
 <!ENTITY command.label "Kommando">
 <!ENTITY target.label "Mål">
 <!ENTITY value.label "Värde">
-<!ENTITY findTarget.label "Lokalisera">
+<!ENTITY findTarget.label "Visa">
+<!ENTITY selectTarget.label "Välj">
 
 <!ENTITY helpDocumentation.label "Dokumentation">
 <!ENTITY helpReportIssue.label "Rapport Utgåva">

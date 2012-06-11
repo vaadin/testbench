@@ -41,7 +41,8 @@
 <!ENTITY command.label "Command">
 <!ENTITY target.label "Target">
 <!ENTITY value.label "Value">
-<!ENTITY findTarget.label "Find">
+<!ENTITY findTarget.label "Show">
+<!ENTITY selectTarget.label "Select">
 
 <!ENTITY helpDocumentation.label "Documentation">
 <!ENTITY helpReportIssue.label "Report Issue">

@@ -42,6 +42,7 @@
 <!ENTITY target.label "対象">
 <!ENTITY value.label "値">
 <!ENTITY findTarget.label "検索">
+<!ENTITY selectTarget.label "選び出す">
 
 <!ENTITY helpDocumentation.label "ドキュメンテーション">
 <!ENTITY helpReportIssue.label "レポートを発行">
