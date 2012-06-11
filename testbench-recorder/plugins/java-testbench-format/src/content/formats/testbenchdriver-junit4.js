@@ -310,6 +310,10 @@ WDAPI.Driver.prototype.get = function(url) {
   if (url.length > 1 && (url.substring(1,8) == "http://" || url.substring(1,9) == "https://")) { // url is quoted
     return this.ref + ".get(" + url + ")";
   } else {
+	if (baseURL[baseURL.length-1] == "/" && url[0] == "/") {
+		// Avoid double slashes in URL.
+		url = url.substring(1);
+	}
     return this.ref + ".get(baseUrl + " + url + ")";
   }
 };
