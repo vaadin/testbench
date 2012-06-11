@@ -5,7 +5,7 @@ public class Parameters {
     private static boolean isScreenshotComparisonCursorDetection = false;
     private static String screenshotReferenceDirectory = null;
     private static String screenshotErrorDirectory = null;
-    private static double screenshotComparisonTolerance = 0.25;
+    private static double screenshotComparisonTolerance = 0.01;
     private static boolean isCaptureScreenshotOnFailure = true;
     private static int maxScreenshotRetries = 2;
     private static int screenshotRetryDelay = 500;
@@ -96,7 +96,7 @@ public class Parameters {
 
     /**
      * @return the error tolerance to use for screen shots. The default
-     *         tolerance is 0.25
+     *         tolerance is 0.01
      */
     public static double getScreenshotComparisonTolerance() {
         return screenshotComparisonTolerance;
