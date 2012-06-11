@@ -116,8 +116,7 @@
 	</target>
 
 	<target name="testbench-distribution-package" depends="testbench-standalone.jar,testbench.jar,javadoc.jar,testbench-recorder,run-tests">
-		<property name="package.root" value="vaadin-testbench-${version}"/>
-		<property name="package.grid.root" value="vaadin-testbench-grid-${version}"/>
+		<property name="package.root" value=""/>
         <copy todir="${output.dir}">
             <filterchain>
                 <expandproperties />
@@ -142,7 +141,6 @@
 			<!-- Add documentation -->
 			<zipfileset dir="../doc" prefix="${package.root}/documentation">
 				<include name="releasenotes.html" />
-				<include name="quickstart.html" />
 				<include name="*.pdf" />
 				<include name="license*.txt" />
 				<include name="licensing.txt" />
