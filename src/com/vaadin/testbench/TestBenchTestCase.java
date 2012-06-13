@@ -31,4 +31,22 @@ public class TestBenchTestCase {
     public TestBenchElementCommands tbElement(WebElement webElement) {
         return (TestBenchElementCommands) webElement;
     }
+
+    /**
+     * Combines a base URL with an URI to create a final URL. This removes
+     * possible double slashes if the base URL ends with a slash and the URI
+     * begins with a slash.
+     * 
+     * @param baseUrl
+     *            the base URL
+     * @param uri
+     *            the URI
+     * @return the URL resulting from the combination of base URL and URI
+     */
+    protected String concatUrl(String baseUrl, String uri) {
+        if (baseUrl.endsWith("/") && uri.startsWith("/")) {
+            return baseUrl + uri.substring(1);
+        }
+        return baseUrl + uri;
+    }
 }

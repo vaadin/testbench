@@ -310,7 +310,7 @@ WDAPI.Driver.prototype.get = function(url) {
   if (url.length > 1 && (url.substring(1,8) == "http://" || url.substring(1,9) == "https://")) { // url is quoted
     return this.ref + ".get(" + url + ")";
   } else {
-    return this.ref + ".get(baseUrl + " + url + ")";
+    return this.ref + ".get(concatUrl(baseUrl, " + url + "))";
   }
 };
 
