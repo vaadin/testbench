@@ -26,37 +26,35 @@ import com.vaadin.testbench.screenshot.ImageFileUtil;
 
 public class TestBenchExample extends TestBenchTestCase {
 
-    private WebDriver driver;
-
     @Before
     public void setUp() {
         Parameters.setScreenshotErrorDirectory("screenshots/errors");
         Parameters.setScreenshotReferenceDirectory("screenshots/reference");
         Parameters.setCaptureScreenshotOnFailure(true);
 
-        driver = TestBench.createDriver(new FirefoxDriver());
+        setDriver(TestBench.createDriver(new FirefoxDriver()));
         // dimension includes browser chrome
-        driver.manage().window().setSize(new Dimension(1024, 768));
+        getDriver().manage().window().setSize(new Dimension(1024, 768));
     }
 
     @After
     public void tearDown() {
-        driver.quit();
+        getDriver().quit();
     }
 
     @Test
     public void testContextMenu() {
-        driver.navigate().to("http://demo.vaadin.com/sampler#TreeActions");
-        WebElement e = driver
+        getDriver().navigate().to("http://demo.vaadin.com/sampler#TreeActions");
+        WebElement e = getDriver()
                 .findElement(By
                         .xpath("//div[@class='v-tree-node-caption']/div[span='Desktops']"));
-        new Actions(driver).moveToElement(e).contextClick(e).perform();
+        new Actions(getDriver()).moveToElement(e).contextClick(e).perform();
     }
 
     @Test
     public void testToolTip() {
-        driver.navigate().to("http://demo.vaadin.com/sampler#Tooltips");
-        WebElement e = driver
+        getDriver().navigate().to("http://demo.vaadin.com/sampler#Tooltips");
+        WebElement e = getDriver()
                 .findElement(By
                         .xpath("//span[@class='v-button-wrap' and span='Mouse over for plain tooltip']"));
         tbElement(e).showTooltip();
@@ -64,16 +62,16 @@ public class TestBenchExample extends TestBenchTestCase {
 
     @Test
     public void testVaadinSelectors() {
-        driver.navigate().to("http://demo.vaadin.com/sampler#TableSorting");
+        getDriver().navigate().to("http://demo.vaadin.com/sampler#TableSorting");
         // Sort the table in reverse alphabetical order on the country names.
-        WebElement e = testBench(driver)
+        WebElement e = testBench(getDriver())
                 .findElementByVaadinSelector(
                         "sampler::/VVerticalLayout[0]/ChildComponentContainer[1]/VSplitPanelHorizontal[0]/VHorizontalLayout[0]/ChildComponentContainer[0]/VVerticalLayout[0]/ChildComponentContainer[1]/VVerticalLayout[0]/ChildComponentContainer[0]/VScrollTable[0]/domChild[0]/domChild[0]/domChild[0]/domChild[0]/domChild[0]/domChild[0]/domChild[1]/domChild[2]");
         e.click();
         e.click();
 
         // Check that the first row is 'ÅLAND ISLANDS'
-        e = testBench(driver)
+        e = testBench(getDriver())
                 .findElementByVaadinSelector(
                         "sampler::/VVerticalLayout[0]/ChildComponentContainer[1]/VSplitPanelHorizontal[0]/VHorizontalLayout[0]/ChildComponentContainer[0]/VVerticalLayout[0]/ChildComponentContainer[1]/VVerticalLayout[0]/ChildComponentContainer[0]/VScrollTable[0]/domChild[1]/domChild[0]/domChild[1]/domChild[0]/domChild[0]/domChild[1]/domChild[0]");
         assertEquals("ÅLAND ISLANDS", e.getText());
@@ -99,56 +97,56 @@ public class TestBenchExample extends TestBenchTestCase {
 
     @Test
     public void testDemo() throws InterruptedException {
-        driver.navigate().to(
+        getDriver().navigate().to(
                 "http://demo.vaadin.com/sampler#FormAdvancedLayout");
 
-        WebElement firstNameField = driver.findElement(By
+        WebElement firstNameField = getDriver().findElement(By
                 .xpath("(//input[@type='text'])[1]"));
         firstNameField.click();
         firstNameField.clear();
         firstNameField.sendKeys("John");
 
-        WebElement lastNameField = driver.findElement(By
+        WebElement lastNameField = getDriver().findElement(By
                 .xpath("(//input[@type='text'])[2]"));
         lastNameField.clear();
         lastNameField.sendKeys("Doe");
-        driver.findElement(By.cssSelector("div.v-filterselect-button")).click();
+        getDriver().findElement(By.cssSelector("div.v-filterselect-button")).click();
 
-        driver.findElement(By.cssSelector("input.v-filterselect-input"))
+        getDriver().findElement(By.cssSelector("input.v-filterselect-input"))
                 .sendKeys("ber");
 
-        driver.findElement(
+        getDriver().findElement(
                 By.xpath("id('VAADIN_COMBOBOX_OPTIONLIST')//td[span='BERMUDA']"))
                 .click();
 
-        WebElement passwordField = driver.findElement(By
+        WebElement passwordField = getDriver().findElement(By
                 .xpath("//input[@type='password']"));
         passwordField.clear();
         passwordField.sendKeys("asdf");
 
-        driver.findElement(By.cssSelector("button.v-datefield-button")).click();
-        driver.findElement(
+        getDriver().findElement(By.cssSelector("button.v-datefield-button")).click();
+        getDriver().findElement(
                 By.xpath("id('PID_VAADIN_POPUPCAL')//td[span='17']/span"))
                 .click();
 
-        assertEquals("5/17/12", driver.findElement(By.xpath("(//input)[5]"))
+        assertEquals("5/17/12", getDriver().findElement(By.xpath("(//input)[5]"))
                 .getAttribute("value"));
     }
 
     @Test
     public void testScreenshot() throws IOException {
-        driver.navigate().to("http://google.com");
+        getDriver().navigate().to("http://google.com");
         assertTrue(
                 "Screenshots differ",
-                testBench(driver).compareScreen(
+                testBench(getDriver()).compareScreen(
                         ImageFileUtil
                                 .getReferenceScreenshotFile("actualshot.png")));
         assertTrue(
                 "Screenshots differ",
-                testBench(driver).compareScreen(
+                testBench(getDriver()).compareScreen(
                         ImageFileUtil
                                 .getReferenceScreenshotFile("actualshot2.png")));
-        assertTrue("Screenshots differ", testBench(driver)
+        assertTrue("Screenshots differ", testBench(getDriver())
                 .compareScreen("shot"));
     }
 }

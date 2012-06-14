@@ -8,6 +8,8 @@ import com.vaadin.testbench.commands.TestBenchElementCommands;
 
 public class TestBenchTestCase {
 
+    protected WebDriver driver;
+
     /**
      * Convenience method that casts the specified {@link WebDriver} instance to
      * an instance of {@link TestBenchCommands}, making it easy to access the
@@ -49,4 +51,29 @@ public class TestBenchTestCase {
         }
         return baseUrl + uri;
     }
+
+    /**
+     * Returns true if an element can be found from the driver with given selector.
+     * 
+     * @param by the selector used to find element
+     * @return true if the element can be found
+     */
+    public boolean isElementPresent(By by) {
+        try {
+            getDriver().findElement(by);
+            return true;
+        } catch (NoSuchElementException e) {
+            return false;
+        }
+    }
+
+    public WebDriver getDriver() {
+        return driver;
+    }
+
+    public void setDriver(WebDriver driver) {
+        this.driver = driver;
+    }
+
+
 }
