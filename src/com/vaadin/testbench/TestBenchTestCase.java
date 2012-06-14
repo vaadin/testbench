@@ -1,5 +1,7 @@
 package com.vaadin.testbench;
 
+import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
@@ -53,9 +55,11 @@ public class TestBenchTestCase {
     }
 
     /**
-     * Returns true if an element can be found from the driver with given selector.
+     * Returns true if an element can be found from the driver with given
+     * selector.
      * 
-     * @param by the selector used to find element
+     * @param by
+     *            the selector used to find element
      * @return true if the element can be found
      */
     public boolean isElementPresent(By by) {
@@ -74,6 +78,5 @@ public class TestBenchTestCase {
     public void setDriver(WebDriver driver) {
         this.driver = driver;
     }
-
 
 }
