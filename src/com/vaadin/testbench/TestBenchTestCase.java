@@ -8,7 +8,12 @@ import org.openqa.selenium.WebElement;
 import com.vaadin.testbench.commands.TestBenchCommands;
 import com.vaadin.testbench.commands.TestBenchElementCommands;
 
-public class TestBenchTestCase {
+/**
+ * A superclass with some helpers to aid TestBench developers. This superclass
+ * is also used by tests created by the Recorder.
+ * 
+ */
+public abstract class TestBenchTestCase {
 
     protected WebDriver driver;
 
@@ -20,8 +25,18 @@ public class TestBenchTestCase {
      * @param webDriver
      * @return
      */
-    public TestBenchCommands testBench(WebDriver webDriver) {
+    public static TestBenchCommands testBench(WebDriver webDriver) {
         return (TestBenchCommands) webDriver;
+    }
+
+    /**
+     * Convenience method the return {@link TestBenchCommands} for the default
+     * {@link WebDriver} instance.
+     * 
+     * @return
+     */
+    public TestBenchCommands testBench() {
+        return (TestBenchCommands) getDriver();
     }
 
     /**
@@ -71,10 +86,18 @@ public class TestBenchTestCase {
         }
     }
 
+    /**
+     * @return the active WebDriver instance
+     */
     public WebDriver getDriver() {
         return driver;
     }
 
+    /**
+     * Sets the active WebDriver that is used by this this case
+     * 
+     * @param driver
+     */
     public void setDriver(WebDriver driver) {
         this.driver = driver;
     }
