@@ -9,6 +9,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.internal.WrapsDriver;
 
+import com.vaadin.testbench.By.ByVaadin;
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.screenshot.ImageComparison;
 import com.vaadin.testbench.screenshot.ReferenceNameGenerator;
@@ -61,6 +62,9 @@ public class TestBenchDriver extends TestBenchCommandExecutor implements
      */
     @Override
     public WebElement findElement(By arg0) {
+        if (arg0 instanceof ByVaadin) {
+            return ((ByVaadin) arg0).findElement(this);
+        }
         return TestBench.createElement(actualDriver.findElement(arg0), this);
     }
 

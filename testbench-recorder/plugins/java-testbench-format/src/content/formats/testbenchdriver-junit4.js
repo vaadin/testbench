@@ -202,10 +202,29 @@ options.header =
         "import org.junit.*;\n" +
         "import static org.junit.Assert.*;\n" +
         "import static org.hamcrest.CoreMatchers.*;\n" +
-        "import org.openqa.selenium.*;\n" +
+        "import org.openqa.selenium.Alert;\n" +
+        "import org.openqa.selenium.Capabilities;\n" +
+        "import org.openqa.selenium.Cookie;\n" +
+        "import org.openqa.selenium.HasCapabilities;\n" +
+        "import org.openqa.selenium.HasInputDevices;\n" +
+        "import org.openqa.selenium.HasTouchScreen;\n" +
+        "import org.openqa.selenium.JavascriptExecutor;\n" +
+        "import org.openqa.selenium.Keyboard;\n" +
+        "import org.openqa.selenium.Keys;\n" +
+        "import org.openqa.selenium.Mouse;\n" +
+        "import org.openqa.selenium.NoSuchElementException;\n" +
+        "import org.openqa.selenium.OutputType;\n" +
+        "import org.openqa.selenium.Rotatable;\n" +
+        "import org.openqa.selenium.SearchContext;\n" +
+        "import org.openqa.selenium.TakesScreenshot;\n" +
+        "import org.openqa.selenium.TouchScreen;\n" +
+        "import org.openqa.selenium.WebDriver;\n" +
+        "import org.openqa.selenium.WebDriverCommandProcessor;\n" +
+        "import org.openqa.selenium.WebElement;\n" +
         "import org.openqa.selenium.firefox.FirefoxDriver;\n" +
 		"import org.openqa.selenium.interactions.Actions;\n" +
         "import org.openqa.selenium.support.ui.Select;\n" +
+		"import com.vaadin.testbench.By;\n" +
 		"import com.vaadin.testbench.TestBench;\n" +
 		"import com.vaadin.testbench.TestBenchTestCase;\n" +
         "\n" +
@@ -278,7 +297,7 @@ WDAPI.Driver.searchContext = function(locatorType, locator) {
     case 'tag_name':
       return 'By.tagName(' + locatorString + ')';
 	case 'vaadin':
-	  return '';
+	  return 'By.vaadin(' + locatorString + ')';
   }
   throw 'Error: unknown strategy [' + locatorType + '] for locator [' + locator + ']';
 };
@@ -292,9 +311,6 @@ WDAPI.Driver.prototype.close = function() {
 };
 
 WDAPI.Driver.prototype.findElement = function(locatorType, locator) {
-	if (locatorType == 'vaadin') {
-		return new WDAPI.Element("testBench(" + this.ref + ").findElementByVaadinSelector(" + xlateArgument(locator) + ")");
-	}
   return new WDAPI.Element(this.ref + ".findElement(" + WDAPI.Driver.searchContext(locatorType, locator) + ")");
 };
 
