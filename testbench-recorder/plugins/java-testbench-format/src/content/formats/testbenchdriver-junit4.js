@@ -252,15 +252,6 @@ options.footer =
         "\t\t\tfail(verificationErrorString);\n" +
         "\t\t}\n" +
         "\t}\n" +
-        "\n" +
-        "\tprivate boolean isElementPresent(By by) {\n" +
-        "\t\ttry {\n" +
-        "\t\t\tdriver.findElement(by);\n" +
-        "\t\t\treturn true;\n" +
-        "\t\t} catch (NoSuchElementException e) {\n" +
-        "\t\t\treturn false;\n" +
-        "\t\t}\n" +
-        "\t}\n" +
         "}\n";
 
 this.configForm =
