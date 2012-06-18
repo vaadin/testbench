@@ -286,8 +286,10 @@ limitations under the License.
     <hbox id="logMenu" align="center">
       <toolbarbutton id="logTab"  label="&logConsole.label;" onclick="window.editor.infoPanel.switchView(window.editor.infoPanel.logView)" class="vaadin-console-tab" selected="true"/>
       <toolbarbutton id="helpTab"  label="&reference.label;" onclick="window.editor.infoPanel.switchView(window.editor.infoPanel.helpView)" class="vaadin-console-tab"/>
+      <!--
       <toolbarbutton id="uiTab"  label="&uiReference.label;" onclick="window.editor.infoPanel.switchView(window.editor.infoPanel.uiView)" class="vaadin-console-tab"/>
       <toolbarbutton id="rollupTab"  label="&rollupReference.label;" onclick="window.editor.infoPanel.switchView(window.editor.infoPanel.rollupView)" class="vaadin-console-tab"/>
+      -->
       <spacer class="shadow" flex="1"/>
       <hbox align="center" id="logButtons">
         <toolbarbutton id="logFilter" label="Debug" type="menu" class="console-button">
