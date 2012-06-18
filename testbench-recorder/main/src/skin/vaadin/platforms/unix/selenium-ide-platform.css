@@ -18,13 +18,15 @@
    padding-bottom:0;
 }
 
-#source{
+#source, #editorpane{
 	-moz-appearance: none;       
     margin:0;
-    border-top:1px solid black;
+    border-top:1px solid rgb(50,50,50);
 }
 
 #logTab, #helpTab{
 	padding-left: 5px;
 	padding-right: 5px;	
 }
+
+#toolbar2{ height:24px; }
