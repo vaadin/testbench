@@ -98,8 +98,8 @@ limitations under the License.
 
   <vbox flex="1" id="mainvbox">
     <hbox id="mainhbox" width="100" persist="height width" flex="1">
-      <vbox id="suitePane" persist="height width" />
-      <tabbox id="tabbox" flex="3" height="300" width="250" persist="height width" align="left">
+      <vbox id="suitePane" width="0" />
+      <tabbox id="tabbox" flex="1" height="300" width="250">
         <tabs orient="horizontal" onselect="if (window.editor) { window.editor.tabSelected(selectedItem.id) }" id="viewTabs">
 	      <tab id="editorTab" label="&tableTab.label;" />
 	      <tab id="sourceTab" label="&sourceTab.label;" />
@@ -165,7 +165,7 @@ limitations under the License.
       </tabbox>
     </hbox>
 	
-    <vbox id="logBox" flex="1" height="100"/>
+    <vbox id="logBox" height="150" persist="height" />
   </vbox>
 
 </window>
