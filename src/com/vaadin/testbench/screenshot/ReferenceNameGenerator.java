@@ -23,7 +23,8 @@ public class ReferenceNameGenerator {
      */
     public String generateName(String referenceId,
             Capabilities browserCapabilities) {
-        return String.format("%s_%s_%s", referenceId,
+        return String.format("%s_%s_%s_%s", referenceId,
+                browserCapabilities.getPlatform(),
                 browserCapabilities.getBrowserName(),
                 browserCapabilities.getVersion());
     }
