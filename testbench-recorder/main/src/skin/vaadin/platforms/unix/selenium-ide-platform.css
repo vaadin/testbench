@@ -1,0 +1,12 @@
+#baseURL[type="autocomplete"] .autocomplete-history-dropmarker{
+	-moz-appearance: none;       
+    display: -moz-box;
+    width:25px;
+    height:25px;    
+}
+
+#baseURL[type="autocomplete"] .textbox-input-box,
+#baseURL[type="autocomplete"] .autocomplete-textbox-container,
+#baseURL[type="autocomplete"] .autocomplete-history-dropmarker image{
+    -moz-appearance: none;       
+}
