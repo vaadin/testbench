@@ -345,6 +345,9 @@ toolbarbutton.icon label {
 }
 
 /** Test Case Tree */
+
+#suitePane { display:none; }
+
 #suiteTree {
 	background-color: black;
 	margin: 0;
