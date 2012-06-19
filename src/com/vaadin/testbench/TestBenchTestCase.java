@@ -1,7 +1,6 @@
 package com.vaadin.testbench;
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
@@ -81,7 +80,7 @@ public abstract class TestBenchTestCase {
         try {
             getDriver().findElement(by);
             return true;
-        } catch (NoSuchElementException e) {
+        } catch (Exception e) {
             return false;
         }
     }
