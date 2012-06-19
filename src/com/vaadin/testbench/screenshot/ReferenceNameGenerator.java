@@ -23,10 +23,25 @@ public class ReferenceNameGenerator {
      */
     public String generateName(String referenceId,
             Capabilities browserCapabilities) {
-        return String.format("%s_%s_%s_%s", referenceId,
-                browserCapabilities.getPlatform(),
+        return String.format("%s_%s_%s_%s", referenceId, browserCapabilities
+                .getPlatform().toString().toLowerCase(),
                 browserCapabilities.getBrowserName(),
-                browserCapabilities.getVersion());
+                getMajorVersion(browserCapabilities));
+    }
+
+    /**
+     * Finds the major version by parsing the browser version string.
+     * 
+     * @param browserCapabilities
+     *            the capabilities object holding the version information
+     * @return the major version of the browser.
+     */
+    private String getMajorVersion(Capabilities browserCapabilities) {
+        String versionString = browserCapabilities.getVersion();
+        if (versionString.contains(".")) {
+            return versionString.substring(0, versionString.indexOf('.'));
+        }
+        return versionString;
     }
 
 }
