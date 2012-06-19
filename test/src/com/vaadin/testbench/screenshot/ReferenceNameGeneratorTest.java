@@ -28,7 +28,7 @@ public class ReferenceNameGeneratorTest {
         expect(ffcaps.getVersion()).andReturn("11");
         replay(ffcaps);
         String name = rng.generateName("shot", ffcaps);
-        assertEquals("shot_XP_Firefox_11", name);
+        assertEquals("shot_xp_Firefox_11", name);
         verify(ffcaps);
     }
 
@@ -41,7 +41,7 @@ public class ReferenceNameGeneratorTest {
         expect(chrome.getVersion()).andReturn("14");
         replay(chrome);
         String name = rng.generateName("shot", chrome);
-        assertEquals("shot_LINUX_Chrome_14", name);
+        assertEquals("shot_linux_Chrome_14", name);
         verify(chrome);
     }
 
@@ -54,7 +54,7 @@ public class ReferenceNameGeneratorTest {
         expect(safari.getVersion()).andReturn("5");
         replay(safari);
         String name = rng.generateName("foo", safari);
-        assertEquals("foo_MAC_Safari_5", name);
+        assertEquals("foo_mac_Safari_5", name);
         verify(safari);
     }
 }
