@@ -7,7 +7,7 @@
 
 <!ENTITY newTestCmd.label "Novo Teste">
 <!ENTITY addTestCmd.label "Add Test Case...">
-<!ENTITY openCmd.label "Abrir...">
+<!ENTITY openCmd.label "Import HTML...">
 <!ENTITY saveTestCmd.label "Salvar Teste">
 <!ENTITY saveTestAsCmd.label "Salvar Teste Como...">
 <!ENTITY exportCmd.label "Exportar Teste Como...">
