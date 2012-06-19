@@ -290,6 +290,7 @@ toolbarbutton.icon label {
 #step-button {
 	-moz-image-region: auto;
     list-style-image: url("skip.png");
+    border-right: 1px solid rgb(55,55,55)
 }
 #record-button:not([checked="true"]) { 
 	-moz-image-region: auto;

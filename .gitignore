@@ -12,3 +12,4 @@ testbench-recorder/install.rdf
 tmp/
 example/Maven/target
 test/temp/
+example/maven/.externalToolBuilders/
