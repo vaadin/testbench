@@ -2,6 +2,9 @@
 content testbench-recorder  chrome/content/
 content testbench-recorder-platform chrome/content/ platform
 
+content vaadin-ide chrome/content/
+content vaadin-ide-platform chrome/content/ platform
+
 overlay chrome://browser/content/browser.xul  chrome://testbench-recorder/content/selenium-ide-overlay.xul
 
 locale testbench-recorder en-US chrome/locale/en-US/
@@ -12,7 +15,9 @@ locale testbench-recorder sv-SE chrome/locale/sv-SE/
 
 skin testbench-recorder classic/1.0 chrome/skin/classic/
 skin testbench-recorder-platform classic/1.0 chrome/skin/classic/platforms/ appversion>=3.0
+
 skin vaadin-ide vaadin/1.0 chrome/skin/vaadin/
+skin vaadin-ide-platform vaadin/1.0 chrome/skin/vaadin/platforms/ appversion>=3.0
 
 # Samit: Enh: Added style for the icon on firefox toolbar
 style chrome://global/content/customizeToolbar.xul         chrome://testbench-recorder/skin/toolbar.css

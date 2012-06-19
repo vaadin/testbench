@@ -20,6 +20,7 @@ limitations under the License.
 <?xml-stylesheet href="chrome://testbench-recorder/skin/selenium-ide.css" type="text/css"?>
 <?xml-stylesheet href="chrome://testbench-recorder-platform/skin/selenium-ide-platform.css" type="text/css"?>
 <?xml-stylesheet href="chrome://vaadin-ide/skin/selenium-ide.css" type="text/css"?>
+<?xml-stylesheet href="chrome://vaadin-ide-platform/skin/selenium-ide-platform.css" type="text/css"?>
 <?xul-overlay href="chrome://global/content/editMenuOverlay.xul"?>
 <?xul-overlay href="chrome://browser/content/baseMenuOverlay.xul"?>
 <?xul-overlay href="chrome://testbench-recorder/content/selenium-ide-common.xul"?>
@@ -57,9 +58,7 @@ limitations under the License.
       <menu id="menu_edit" />
       <menu id="runMenu" />
       <menu id="optionsMenu">
-        <menupopup id="options-popup">
-          <menuitem id="menu-reset-window" label="&resetWindowCmd.label;" oncommand="window.editor.resetWindow();" accesskey="R"/>
-        </menupopup>
+        <menupopup id="options-popup" />          
       </menu>
       <menu id="windowMenu"/>
       <menu id="menu_help" />
@@ -97,8 +96,8 @@ limitations under the License.
 
   <vbox flex="1" id="mainvbox">
     <hbox id="mainhbox" width="100" persist="height width" flex="1">
-      <vbox id="suitePane" persist="height width" />
-      <tabbox id="tabbox" flex="3" height="300" width="250" persist="height width" align="left">
+      <vbox id="suitePane" width="0" />
+      <tabbox id="tabbox" flex="1" height="300" width="250">
         <tabs orient="horizontal" onselect="if (window.editor) { window.editor.tabSelected(selectedItem.id) }" id="viewTabs">
 	      <tab id="editorTab" label="&tableTab.label;" />
 	      <tab id="sourceTab" label="&sourceTab.label;" />
@@ -164,7 +163,7 @@ limitations under the License.
       </tabbox>
     </hbox>
 	
-    <vbox id="logBox" flex="1" height="100"/>
+    <vbox id="logBox" height="150" persist="height" />
   </vbox>
 
 </window>
