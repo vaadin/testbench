@@ -16,7 +16,7 @@ import com.vaadin.testbench.Parameters;
 import com.vaadin.testbench.TestBench;
 import com.vaadin.testbench.TestBenchTestCase;
 
-public class MaskedScreenshotITCase extends TestBenchTestCase {
+public class ScreenshotITCase extends TestBenchTestCase {
     private String baseUrl;
 
     @Before
@@ -31,8 +31,30 @@ public class MaskedScreenshotITCase extends TestBenchTestCase {
         Parameters.setCaptureScreenshotOnFailure(true);
     }
 
+    private void openCalculator() {
+        getDriver().get(baseUrl + "/demo-site/Calc?restartApplication");
+    }
+
     @Test
     public void testOnePlusTwo() throws Exception {
+        openCalculator();
+        calculateOnePlusTwo();
+        assertEquals("3.0", getDriver().findElement(By.id("display")).getText());
+
+        // Note that this will likely fail if you have a bit different platform,
+        // the reference image has been taken with Firefox 13 on a mac
+        assertTrue(testBench().compareScreen("oneplustwo"));
+    }
+
+    private void calculateOnePlusTwo() {
+        getDriver().findElement(By.id("button_1")).click();
+        getDriver().findElement(By.id("button_+")).click();
+        getDriver().findElement(By.id("button_2")).click();
+        getDriver().findElement(By.id("button_=")).click();
+    }
+
+    @Test
+    public void testOnePlusTwoWithRandomLog() throws Exception {
         openCalculator();
         // Add a bunch of random values together to fill the log with
         // randomness.
@@ -41,19 +63,12 @@ public class MaskedScreenshotITCase extends TestBenchTestCase {
 
         // Clear and calculate 1 + 2
         getDriver().findElement(By.id("button_C")).click();
-        getDriver().findElement(By.id("button_1")).click();
-        getDriver().findElement(By.id("button_+")).click();
-        getDriver().findElement(By.id("button_2")).click();
-        getDriver().findElement(By.id("button_=")).click();
+        calculateOnePlusTwo();
         assertEquals("3.0", display.getText());
 
         // Compare with a screenshot, which should pass as the log is
         // masked.
         assertTrue(testBench().compareScreen("onePlusTwoMasked"));
-    }
-
-    private void openCalculator() {
-        getDriver().get(baseUrl + "/demo-site/Calc?restartApplication");
     }
 
     /**
