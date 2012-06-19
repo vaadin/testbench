@@ -6,9 +6,15 @@
 	border: none;
 }
 
+
+#logging-console li.error{
+	color:#DC4D4D;
+}
+
 #logging-console {
     background-color: rgb(76,76,76);
     color: rgb(166,166,166);
     font-family: Helvetica, Arial;
 	font-size: 9pt;
 }
+
