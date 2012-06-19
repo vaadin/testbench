@@ -1,13 +1,19 @@
 package com.vaadin.testbenchexample;
 
 import com.vaadin.Application;
+import com.vaadin.data.Item;
+import com.vaadin.event.Action;
+import com.vaadin.event.Action.Handler;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.GridLayout;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.NativeButton;
+import com.vaadin.ui.Table;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
@@ -38,13 +44,15 @@ public class Calc extends Application {
 
     class CalcWindow extends Window implements ClickListener {
         // All variables are automatically stored in the session.
-        private double current = 0.0;
+        private Double current = 0.0;
         private double stored = 0.0;
         private char lastOperationRequested = 'C';
         private VerticalLayout topLayout = new VerticalLayout();
 
         // User interface components
         private final Label display = new Label("0.0");
+
+        private final Log log = new Log();
 
         public CalcWindow() {
             super("Calc window");
@@ -58,7 +66,13 @@ public class Calc extends Application {
             topLayout.setSpacing(true);
             Label title = new Label("<h1>Calculator</h1>", Label.CONTENT_XHTML);
             topLayout.addComponent(title);
-            topLayout.addComponent(layout);
+            topLayout.addComponent(log);
+
+            HorizontalLayout horizontalLayout = new HorizontalLayout();
+            horizontalLayout.setSpacing(true);
+            horizontalLayout.addComponent(layout);
+            horizontalLayout.addComponent(log);
+            topLayout.addComponent(horizontalLayout);
 
             // Create a result label that over all 4 columns in the first row
             layout.addComponent(display, 0, 0, 3, 0);
@@ -67,9 +81,8 @@ public class Calc extends Application {
 
             // The operations for the calculator in the order they appear on the
             // screen (left to right, top to bottom)
-            String[] operations = new String[] { "7", "8", "9", "/", "b", "u",
-                    "g", "?", "4", "5", "6", "*", "1", "2", "3", "-", "0", "=",
-                    "C", "+" };
+            String[] operations = new String[] { "7", "8", "9", "/", "4", "5",
+                    "6", "*", "1", "2", "3", "-", "0", "=", "C", "+" };
 
             for (String caption : operations) {
 
@@ -107,9 +120,16 @@ public class Calc extends Application {
         // minimal
         private double calculate(char requestedOperation) {
             if ('0' <= requestedOperation && requestedOperation <= '9') {
+                if (current == null) {
+                    current = 0.0;
+                }
                 current = current * 10
                         + Double.parseDouble("" + requestedOperation);
                 return current;
+            }
+
+            if (current == null) {
+                current = stored;
             }
             switch (lastOperationRequested) {
             case '+':
@@ -128,12 +148,95 @@ public class Calc extends Application {
                 stored = current;
                 break;
             }
+
+            switch (requestedOperation) {
+            case '+':
+                log.addRow(current + " +");
+                break;
+            case '-':
+                log.addRow(current + " -");
+                break;
+            case '/':
+                log.addRow(current + " /");
+                break;
+            case '*':
+                log.addRow(current + " x");
+                break;
+            case '=':
+                log.addRow(current + " =");
+                log.addRow("=======");
+                log.addRow("" + stored);
+                break;
+            }
+
             lastOperationRequested = requestedOperation;
-            current = 0.0;
+            current = null;
             if (requestedOperation == 'C') {
                 stored = 0.0;
             }
             return stored;
+        }
+
+    }
+
+    static class Log extends Table implements Handler {
+
+        private int row = 1;
+
+        private static final Action CLEAR = new Action("Clear");
+        private static final Action ADD_COMMENT = new Action("Add Comment");
+        private static final Action[] ACTIONS = { CLEAR, ADD_COMMENT };
+
+        public Log() {
+            setWidth("200px");
+            // setHeight("100%");
+            setPageLength(7);
+            setColumnHeaderMode(COLUMN_HEADER_MODE_HIDDEN);
+            addContainerProperty("text", String.class, null);
+            setColumnAlignments(new String[] { ALIGN_RIGHT });
+            addActionHandler(this);
+            setColumnExpandRatio("text", 1);
+        }
+
+        public void addRow(String rowStr) {
+            Integer itemId = new Integer(row++);
+            Item i = addItem(itemId);
+            i.getItemProperty("text").setValue(rowStr);
+            setCurrentPageFirstItemId(itemId);
+        }
+
+        @Override
+        public Action[] getActions(Object target, Object sender) {
+            return ACTIONS;
+        }
+
+        @Override
+        public void handleAction(Action action, Object sender, Object target) {
+            if (action == CLEAR) {
+                removeAllItems();
+                row = 1;
+            } else if (action == ADD_COMMENT) {
+                final Window window = new Window("Add comment");
+                window.getContent().setSizeUndefined();
+                final TextField textField = new TextField();
+                window.addComponent(textField);
+                textField.focus();
+                Button button = new Button("Add");
+                button.addListener(new ClickListener() {
+                    @Override
+                    public void buttonClick(ClickEvent event) {
+                        Object comment = textField.getValue();
+                        if (comment != null) {
+                            addRow("Comment: " + comment);
+                        }
+                        getWindow().removeWindow(window);
+                    }
+                });
+                window.addComponent(button);
+                window.setClosable(true);
+                window.setModal(true);
+                getWindow().addWindow(window);
+            }
         }
 
     }
