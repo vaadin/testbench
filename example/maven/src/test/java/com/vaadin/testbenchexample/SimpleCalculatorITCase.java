@@ -48,7 +48,7 @@ public class SimpleCalculatorITCase extends TestBenchTestCase {
     }
 
     private void openCalculator() {
-        getDriver().get(baseUrl + "/demo-site/Calc");
+        getDriver().get(baseUrl + "/demo-site/Calc?restartApplication");
     }
 
     private void calculateOnePlusTwo() {

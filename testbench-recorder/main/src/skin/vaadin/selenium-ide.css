@@ -94,6 +94,10 @@ tab[selected="true"] {
 	border-bottom: none;
 }
 
+.tabs-left {
+   -moz-box-flex: 0 !important;
+}
+
 /*
 tab[selected="true"],
 toolbarbutton[selected="true"]{
@@ -345,6 +349,9 @@ toolbarbutton.icon label {
 }
 
 /** Test Case Tree */
+
+#suitePane { display:none; }
+
 #suiteTree {
 	background-color: black;
 	margin: 0;
