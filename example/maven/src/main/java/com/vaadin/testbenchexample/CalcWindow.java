@@ -113,7 +113,7 @@ class CalcWindow extends Window implements ClickListener {
         case '*':
             stored *= current;
             break;
-        case 'C':
+        default:
             stored = current;
             break;
         }
