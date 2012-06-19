@@ -25,10 +25,10 @@ public class ReferenceNameGeneratorTest {
         Capabilities ffcaps = createNiceMock(Capabilities.class);
         expect(ffcaps.getPlatform()).andReturn(Platform.XP);
         expect(ffcaps.getBrowserName()).andReturn("Firefox");
-        expect(ffcaps.getVersion()).andReturn("11");
+        expect(ffcaps.getVersion()).andReturn("13.0.1");
         replay(ffcaps);
         String name = rng.generateName("shot", ffcaps);
-        assertEquals("shot_xp_Firefox_11", name);
+        assertEquals("shot_xp_Firefox_13", name);
         verify(ffcaps);
     }
 
@@ -38,7 +38,7 @@ public class ReferenceNameGeneratorTest {
         Capabilities chrome = createNiceMock(Capabilities.class);
         expect(chrome.getPlatform()).andReturn(Platform.LINUX);
         expect(chrome.getBrowserName()).andReturn("Chrome");
-        expect(chrome.getVersion()).andReturn("14");
+        expect(chrome.getVersion()).andReturn("14.5");
         replay(chrome);
         String name = rng.generateName("shot", chrome);
         assertEquals("shot_linux_Chrome_14", name);
