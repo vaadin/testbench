@@ -35,7 +35,7 @@ public class SelectorExamplesITCase extends TestBenchTestCase {
      * @throws Exception
      */
     @Test
-    public void testOnePlusTwo() throws Exception {
+    public void testOnePlusTwoWithIdentifiers() throws Exception {
         openCalculator();
         getDriver().findElement(By.id("button_1")).click();
         getDriver().findElement(By.id("button_+")).click();
@@ -53,7 +53,7 @@ public class SelectorExamplesITCase extends TestBenchTestCase {
      * Using identifiers is often the most easiest and most stable approach.
      * There are though several other methods to select elements during tests of
      * which XPath is one of the most powerful. This example is identical to
-     * {@link #testOnePlusTwo()}, but uses XPath queries.
+     * {@link #testOnePlusTwoWithIdentifiers()}, but uses XPath queries.
      * 
      * @throws AssertionError
      * @throws IOException
