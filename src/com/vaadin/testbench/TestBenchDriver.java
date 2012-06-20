@@ -76,11 +76,11 @@ public class TestBenchDriver extends TestBenchCommandExecutor implements
     @Override
     public List<WebElement> findElements(By arg0) {
         List<WebElement> elements = actualDriver.findElements(arg0);
-        List<WebElement> tbElements = new ArrayList<WebElement>(elements.size());
+        List<WebElement> testBenchElements = new ArrayList<WebElement>(elements.size());
         for (WebElement e : elements) {
-            tbElements.add(TestBench.createElement(e, this));
+            testBenchElements.add(TestBench.createElement(e, this));
         }
-        return tbElements;
+        return testBenchElements;
     }
 
     /*

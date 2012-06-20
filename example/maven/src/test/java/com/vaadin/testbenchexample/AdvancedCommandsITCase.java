@@ -70,10 +70,10 @@ public class AdvancedCommandsITCase extends TestBenchTestCase {
         getDriver().findElement(By.xpath("//*[text() = 'Add Comment']"))
                 .click();
 
-        TestBenchElementCommands tbElement = tbElement(getDriver().findElement(
+        TestBenchElementCommands testBenchElement = testBenchElement(getDriver().findElement(
                 By.xpath("//*[text() = 'Add']")));
 
-        tbElement.showTooltip();
+        testBenchElement.showTooltip();
 
         String tooltipText = driver.findElement(By.className("v-tooltip"))
                 .getText();

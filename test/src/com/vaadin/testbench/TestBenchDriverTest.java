@@ -121,11 +121,11 @@ public class TestBenchDriverTest {
         WebDriver driver = TestBench.createDriver(mockFF);
         TestBenchCommands tb = (TestBenchCommands) driver;
         tb.disableWaitForVaadin();
-        WebElement tbElement = driver.findElement(By.id("foo"));
+        WebElement testBenchElement = driver.findElement(By.id("foo"));
 
-        ((TestBenchElementCommands) tbElement).closeNotification();
+        ((TestBenchElementCommands) testBenchElement).closeNotification();
         tb.enableWaitForVaadin();
-        ((TestBenchElementCommands) tbElement).closeNotification();
+        ((TestBenchElementCommands) testBenchElement).closeNotification();
 
         verify(mockFF, mockElement);
     }

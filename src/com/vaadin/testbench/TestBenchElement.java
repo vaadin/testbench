@@ -163,11 +163,11 @@ public class TestBenchElement implements WrapsElement, WebElement,
     @Override
     public List<WebElement> findElements(By by) {
         List<WebElement> elements = actualElement.findElements(by);
-        List<WebElement> tbElements = new ArrayList<WebElement>(elements.size());
+        List<WebElement> testBenchElements = new ArrayList<WebElement>(elements.size());
         for (WebElement e : elements) {
-            tbElements.add(TestBench.createElement(e, tbCommandExecutor));
+            testBenchElements.add(TestBench.createElement(e, tbCommandExecutor));
         }
-        return tbElements;
+        return testBenchElements;
     }
 
     @Override

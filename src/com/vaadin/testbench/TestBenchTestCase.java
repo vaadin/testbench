@@ -46,7 +46,7 @@ public abstract class TestBenchTestCase {
      * @param webElement
      * @return
      */
-    public TestBenchElementCommands tbElement(WebElement webElement) {
+    public TestBenchElementCommands testBenchElement(WebElement webElement) {
         return (TestBenchElementCommands) webElement;
     }
 
