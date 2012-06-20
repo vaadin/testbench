@@ -39,8 +39,8 @@ That's it.
 Screen shot comparison in the example project
 ---------------------------------------------
 Screen shot comparison is a feature of TestBench. In the example project the screen shot reference
-images are placed in src/test/resources/screenshots/reference/ and error reports are stored in
-target/testbench/errors/
+images are placed in src/test/resources/screenshots/ and error reports are stored in
+target/testbench/screenshot_errors/
 
-See src/test/java/com/vaadin/testbenchexample/TestBenchExample.java for the code that sets the parameters
-that specify the above directories.
+See src/test/java/com/vaadin/testbenchexample/ScreenshotITCase.java for the code that sets the parameters
+that specify the above directories and performs actual screenshot comparison tests.
