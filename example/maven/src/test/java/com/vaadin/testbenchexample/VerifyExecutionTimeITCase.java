@@ -37,7 +37,7 @@ public class VerifyExecutionTimeITCase extends TestBenchTestCase {
     }
 
     /**
-     * Makes the same thing as in {@link #testOnePlusTwo()} and verifies server
+     * Makes the same thing as in {@link #testOnePlusTwoWithIdentifiers()} and verifies server
      * don't spend too much time during the process. Also the test makes sure
      * the time spent by browser to render the UI within sane limits.
      * 

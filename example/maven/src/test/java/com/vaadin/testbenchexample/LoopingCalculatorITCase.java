@@ -22,7 +22,7 @@ public class LoopingCalculatorITCase extends TestBenchTestCase {
     }
 
     @Test
-    public void testOnePlusTwo() throws Exception {
+    public void testAdditionWithLoop() throws Exception {
         openCalculator();
         WebElement display = getDriver().findElement(By.id("display"));
         // Add five ones together and verify that the result is 5.0

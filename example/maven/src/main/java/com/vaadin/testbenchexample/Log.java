@@ -4,11 +4,11 @@ import com.vaadin.data.Item;
 import com.vaadin.event.Action;
 import com.vaadin.event.Action.Handler;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.Window;
-import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Button.ClickListener;
 
 class Log extends Table implements Handler {
 
@@ -52,6 +52,7 @@ class Log extends Table implements Handler {
             window.addComponent(textField);
             textField.focus();
             Button button = new Button("Add");
+            button.setDescription("Clicking this button will add a comment row to log.");
             button.addListener(new ClickListener() {
                 @Override
                 public void buttonClick(ClickEvent event) {
