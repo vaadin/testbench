@@ -9,6 +9,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
@@ -23,6 +24,9 @@ public class ScreenshotITCase extends TestBenchTestCase {
     public void setUp() throws Exception {
         setDriver(TestBench.createDriver(new FirefoxDriver()));
         baseUrl = "http://localhost:8080";
+
+        getDriver().manage().window().setSize(new Dimension(500, 400));
+
         Parameters
                 .setScreenshotReferenceDirectory("src/test/resources/screenshots");
         Parameters
