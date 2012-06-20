@@ -3,9 +3,11 @@ Running the maven example
 
 This is a simple example project that uses Vaadin TestBench. The project produces 
 a standard WAR file containing a simple calculator application written with Vaadin. 
-During the build phase the artifact is tested using Vaadin TestBench. The project
-is built using Maven and can easily be imported to any IDE supporting Maven or 
-used via command line interface. Maven can be downlaoded from:
+During the build phase the artifact is tested using Vaadin TestBench. 
+
+The project is built using Maven. Similar setup can be done using other build
+systems as well. The maven project can easily be imported to any IDE supporting 
+Maven or used via command line interface. Maven can be downlaoded from:
 http://maven.apache.org
 
 Currently TestBench isn't available in any public repository. So before working 
