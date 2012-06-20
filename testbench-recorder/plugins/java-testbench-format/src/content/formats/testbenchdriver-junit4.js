@@ -479,3 +479,7 @@ WDAPI.Driver.prototype.waitForVaadin = function() {
 WDAPI.Driver.prototype.isTextPresent = function(value) {
 	return this.ref + ".getPageSource().contains(\"" + value + "\")";
 }
+
+WDAPI.Driver.prototype.screenCapture = function(value) {
+	return "testBench(" + this.ref + ").compareScreen(\"" + value + "\")";
+}
