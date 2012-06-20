@@ -262,7 +262,7 @@ Format.prototype.saveAs = function(testCase, filename, exportTest) {
                                   Components.interfaces.nsIFilePicker.modeSave,
                                   exportTest ? Format.TEST_CASE_EXPORT_DIRECTORY_PREF : Format.TEST_CASE_DIRECTORY_PREF,
                                   function(fp) {return fp.file;},
-								  (testCase.getTitle() && testCase.getTitle() != "" ? testCase.getTitle()+".java" : "Testcase.java"),
+								  (testCase.getTitle() && testCase.getTitle() != "" ? testCase.getTitle()+"."+defaultExtension : "Testcase."+defaultExtension),
                                   defaultExtension);
         } else {
             file = FileUtils.getFile(filename);
