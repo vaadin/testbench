@@ -687,6 +687,8 @@ var dragTarget = null;
 var dragElement = null;
 var noDnd = false;
 
+/* Disable recording of drag & drop commands, as they do not export correctly
+ 
 // save element, it's locator and mouse targets for checking if we have a drag event
 Recorder.addEventHandler('mouseDownEvent', 'mousedown', function(event){
 	if(!Recorder.changeSelection){
@@ -729,7 +731,7 @@ Recorder.addEventHandler('mouseUpEvent', 'mouseup', function(event){
 	}
 
 }, { capture: false });
-
+*/
 Recorder.addEventHandler('slideSplitEvent', 'mouseup', function(event){
 	if (slider || split) {
 		// alert(slider + "::" + split);
