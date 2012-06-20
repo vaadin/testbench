@@ -736,6 +736,11 @@ SeleniumWebDriverAdaptor.prototype.isTextPresent = function(value) {
 	return driver.isTextPresent(this.rawArgs[0]);
 }
 
+SeleniumWebDriverAdaptor.prototype.screenCapture = function(value) {
+	var driver = new WDAPI.Driver();
+	return driver.screenCapture(this.rawArgs[1]);
+}
+
 //SeleniumWebDriverAdaptor.prototype.isSomethingSelected = function(elementLocator) {
 ////  var locator = this._elementLocator(this.rawArgs[0]);
 ////  var driver = new WDAPI.Driver();

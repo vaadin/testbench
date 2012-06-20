@@ -116,7 +116,6 @@
 	</target>
 
 	<target name="testbench-distribution-package" depends="testbench-standalone.jar,testbench.jar,javadoc.jar,testbench-recorder,run-tests">
-		<property name="package.root" value=""/>
         <copy todir="${output.dir}">
             <filterchain>
                 <expandproperties />
@@ -142,21 +141,21 @@
 
 		<zip destfile="${output.dir}/vaadin-testbench-${version}.zip">
 			<zipfileset dir="${output.dir}" includes="MANIFEST.MF" prefix="META-INF"/>
-			<zipfileset dir="${output.dir}" includes="vaadin-testbench-standalone-${version}.jar,vaadin-testbench-standalone-${version}-javadoc.jar" prefix="${package.root}"/>
-			<zipfileset dir="${output.dir}" includes="vaadin-testbench-recorder/vaadin-testbench-recorder-${version}.xpi" prefix="${package.root}" />
-			<zipfileset dir="${output.dir}" includes="vaadin-testbench-${version}.jar,vaadin-testbench-${version}-javadoc.jar" prefix="${package.root}/maven" />
-			<zipfileset dir="." includes="pom.xml" prefix="${package.root}/maven" />
-			<zipfileset dir="../doc/maven" includes="INSTALL" prefix="${package.root}/maven" />
-			<zipfileset dir=".." includes="example/**/**" excludes="**/*.class,**/target/**" prefix="${package.root}" />
+			<zipfileset dir="${output.dir}" includes="vaadin-testbench-standalone-${version}.jar,vaadin-testbench-standalone-${version}-javadoc.jar" prefix=""/>
+			<zipfileset dir="${output.dir}" includes="vaadin-testbench-recorder/vaadin-testbench-recorder-${version}.xpi" prefix="" />
+			<zipfileset dir="${output.dir}" includes="vaadin-testbench-${version}.jar,vaadin-testbench-${version}-javadoc.jar" prefix="maven" />
+			<zipfileset dir="." includes="pom.xml" prefix="maven" />
+			<zipfileset dir="../doc/maven" includes="INSTALL" prefix="maven" />
+			<zipfileset dir=".." includes="example/**/**" excludes="**/*.class,**/target/**" prefix="" />
 
 			<!-- Add documentation -->
-			<zipfileset dir="../doc" prefix="${package.root}/documentation">
+			<zipfileset dir="../doc" prefix="documentation">
 				<include name="*.pdf" />
 				<include name="license*.txt" />
 				<include name="licensing.txt" />
 				<include name="vaadin-testbench-manual.pdf" />
 			</zipfileset>
-			<zipfileset dir="result" prefix="${package.root}/documentation">
+			<zipfileset dir="result" prefix="documentation">
 				<include name="releasenotes.html" />
 				<include name="api/**" />
 			</zipfileset>
