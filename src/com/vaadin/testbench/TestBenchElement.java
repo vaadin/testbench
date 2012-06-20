@@ -84,6 +84,11 @@ public class TestBenchElement implements WrapsElement, WebElement,
     public void showTooltip() {
         new Actions(tbCommandExecutor.getWrappedDriver()).moveToElement(
                 actualElement).perform();
+        // Wait for a small moment for the tooltip to appear
+        try {
+            Thread.sleep(800); // VTooltip.OPEN_DELAY = 750;
+        } catch (InterruptedException e) {
+        }
     }
 
     /*
@@ -93,7 +98,7 @@ public class TestBenchElement implements WrapsElement, WebElement,
      */
     @Override
     public void scroll(int scrollTop) {
-        JavascriptExecutor js = (JavascriptExecutor) tbCommandExecutor;
+        JavascriptExecutor js = tbCommandExecutor;
         js.executeScript("arguments[0].scrollTop = " + scrollTop, actualElement);
     }
 
@@ -105,7 +110,7 @@ public class TestBenchElement implements WrapsElement, WebElement,
      */
     @Override
     public void scrollLeft(int scrollLeft) {
-        JavascriptExecutor js = (JavascriptExecutor) tbCommandExecutor;
+        JavascriptExecutor js = tbCommandExecutor;
         js.executeScript("arguments[0].scrollLeft = " + scrollLeft,
                 actualElement);
     }
