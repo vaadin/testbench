@@ -27,16 +27,31 @@ public class AdvancedCommandsITCase extends TestBenchTestCase {
         baseUrl = "http://localhost:8080";
     }
 
+    /**
+     * This test demonstrates how developers can use context menus in tests. The
+     * example app has some features behind a context menu that can be opened
+     * over calculators log.
+     * 
+     * @throws Exception
+     */
     @Test
     public void useContextMenuToAddCommentRow() throws Exception {
         openCalculator();
+        // just do some math first
         getDriver().findElement(By.id("button_1")).click();
         getDriver().findElement(By.id("button_+")).click();
+
+        // This is the essential part of this test. We select the table body
+        // element and perform context click action on it and select
+        // "Add Comment" from the opened menu
         WebElement e = getDriver().findElement(By.className("v-table-body"));
         new Actions(getDriver()).moveToElement(e).contextClick(e).perform();
         getDriver().findElement(By.xpath("//*[text() = 'Add Comment']"))
                 .click();
 
+        // The rest of the test is less relevant as a context menu
+        // demonstration. We just fill in a comment and verify the commenting
+        // feature works as expected
         getDriver().findElement(By.className("v-textfield")).sendKeys(
                 COMMENT_TEXT);
 
@@ -62,19 +77,29 @@ public class AdvancedCommandsITCase extends TestBenchTestCase {
 
     }
 
+    /**
+     * This demonstrates usage of {@link TestBenchElementCommands#showTooltip()}
+     * method.
+     * 
+     * @throws Exception
+     */
     @Test
     public void verifyAddCommentButtonHasProperTooltip() throws Exception {
         openCalculator();
+
+        // using context menu, add the popup to fill in a comment
         WebElement e = getDriver().findElement(By.className("v-table-body"));
         new Actions(getDriver()).moveToElement(e).contextClick(e).perform();
         getDriver().findElement(By.xpath("//*[text() = 'Add Comment']"))
                 .click();
 
-        TestBenchElementCommands testBenchElement = testBenchElement(getDriver().findElement(
-                By.xpath("//*[text() = 'Add']")));
-
+        // Use TestBench helper to show tooltip (practically moves mouse over
+        // the specified element and waits until tooltip is visible)
+        TestBenchElementCommands testBenchElement = testBenchElement(getDriver()
+                .findElement(By.xpath("//*[text() = 'Add']")));
         testBenchElement.showTooltip();
 
+        // Verify the tooltip showed contains the expected text
         String tooltipText = driver.findElement(By.className("v-tooltip"))
                 .getText();
         assertEquals("Clicking this button will add a comment row to log.",
