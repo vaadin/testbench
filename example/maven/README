@@ -37,7 +37,8 @@ About the maven example project
 
 How the project was created
 ---------------------------
-The project is based on the vaadin-archetype-clean archetype. Creating one can be achieved like this
+The project is based on the vaadin-archetype-clean archetype and originally 
+created like this:
 
 	mvn archetype:generate \
 	-DarchetypeGroupId=com.vaadin \
@@ -48,7 +49,8 @@ The project is based on the vaadin-archetype-clean archetype. Creating one can b
 	-Dversion=1.0 \
 	-Dpackaging=war
 
-After the project was generated, the pom.xml was edited and the following dependencies were added:
+After the project was generated, the pom.xml was edited and the following 
+dependencies were added:
 	<dependency>
 		<groupId>com.vaadin</groupId>
 		<artifactId>vaadin-testbench</artifactId>
