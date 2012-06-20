@@ -6,6 +6,7 @@ import java.net.URL;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -44,11 +45,12 @@ public class UsingHubITCase extends TestBenchTestCase {
         URL testingbotdotcom = new URL("http://" + clientKey + ":"
                 + clientSecret + "@hub.testingbot.com:4444/wd/hub");
         setDriver(TestBench.createDriver(new RemoteWebDriver(testingbotdotcom,
-                DesiredCapabilities.firefox())));
+                DesiredCapabilities.iphone())));
         baseUrl = "http://demo.vaadin.com/Calc/";
     }
 
     @Test
+    @Ignore("Requires testingbot.com credientials")
     public void testOnePlusTwo() throws Exception {
         // run the test as with "local bots"
         openCalculator();
