@@ -152,6 +152,8 @@ limitations under the License.
       <menu label="&recentTestCmd.label;">
         <menupopup id="popup_recent_tests" onpopupshowing="window.editor.app.recentTestCases.populateMenu(this)" oncommand="window.editor.loadRecentTestCase(event.target.getAttribute('value'))" /><!-- Samit: Enh: Prompt to save first -->
       </menu>
+
+<!-- 
       <menuseparator/>
       <menuitem label="&addTestCmd.label;" command="cmd_add" key="add-key" accesskey="D"/>
       <menuitem label="&testCaseProperties.label;" oncommand="window.editor.suiteTreeView.editProperties()"/>
@@ -160,13 +162,11 @@ limitations under the License.
       <menuitem label="&openSuiteCmd.label;" command="cmd_open_suite" id="menu_FileOpenSuite" />
       <menuitem label="&saveSuiteCmd.label;" command="cmd_save_suite" />
       <menuitem label="&saveSuiteAsCmd.label;" command="cmd_save_suite_as" />
-<!--      <menu label="&exportSuiteCmd.label;" accesskey="X">
+      <menu label="&exportSuiteCmd.label;" accesskey="X">
         <menupopup id="popup_export_formats" onpopupshowing="window.editor.populateFormatsPopup(this, 'exportTestSuite')" oncommand="window.editor.exportTestSuiteWithFormat(window.editor.app.getFormats().selectFormat(event.target.getAttribute('value')))" />
       </menu>
       <menu label="&recentSuiteCmd.label;">
-        <menupopup id="popup_recent_suites" onpopupshowing="window.editor.app.recentTestSuites.populateMenu(this)" oncommand="window.editor.loadRecentSuite(event.target.getAttribute('value'))" /> -->
-		<!-- Samit: Enh: Prompt to save first -->
-<!--
+        <menupopup id="popup_recent_suites" onpopupshowing="window.editor.app.recentTestSuites.populateMenu(this)" oncommand="window.editor.loadRecentSuite(event.target.getAttribute('value'))" />
       </menu>
 -->
       <menuseparator id="closeMenuSeparator"/>
