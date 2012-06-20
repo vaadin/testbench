@@ -1,13 +1,35 @@
 Running the maven example
 =========================
 
-Before running the maven examples, you must install TestBench into your local maven repository by
-executing the following command in the <TESTBENCH PACKAGE ROOT>/maven directory:
+This is a simple example project that uses Vaadin TestBench. The project produces 
+a standard WAR file containing a simple calculator application written with Vaadin. 
+During the build phase the artifact is tested using Vaadin TestBench. The project
+is built using Maven and can easily be imported to any IDE supporting Maven or 
+used via command line interface. Maven can be downlaoded from:
+http://maven.apache.org
+
+Currently TestBench isn't available in any public repository. So before working 
+with this example project examples, you must ensure TestBench is installed into
+your local maven proxy or to install it directly into your local Maven repository 
+by executing the following command in the <TESTBENCH PACKAGE ROOT>/maven directory:
 
 	mvn install:install-file \
 	-Dfile=vaadin-testbench-3.0.0-SNAPSHOT.jar \
 	-Djavadoc=vaadin-testbench-3.0.0-SNAPSHOT-javadoc.jar \
 	-DpomFile=pom.xml
+
+After that the project is ready for your testing, learning or evaluation.
+
+During the build process TestBench tests are automatically run against the final
+war file using a jetty server. Java classes (JUnit tests in this project) ending 
+ITCase are considered as integration tests. From command line the build (including
+tests) can be run with following command:
+mvn install
+
+If you are running specific tests directly via IDE, you might need to deploy the
+project beforehand to http://localhost:8080/. Any method will do, but easiest
+one is probably Maven and the jetty-maven-plugin:
+mvn jetty:run
 
 
 About the maven example project
@@ -15,7 +37,7 @@ About the maven example project
 
 How the project was created
 ---------------------------
-The project was created using the vaadin-archetype-clean archetype. E.g.
+The project is based on the vaadin-archetype-clean archetype. Creating one can be achieved like this
 
 	mvn archetype:generate \
 	-DarchetypeGroupId=com.vaadin \
@@ -26,12 +48,24 @@ The project was created using the vaadin-archetype-clean archetype. E.g.
 	-Dversion=1.0 \
 	-Dpackaging=war
 
-After the project was generated, the pom.xml was edited and the following dependency added:
-    <dependency>
-      <groupId>com.vaadin</groupId>
-      <artifactId>vaadin-testbench</artifactId>
-      <version>3.0.0-SNAPSHOT</version>
-    </dependency>
+After the project was generated, the pom.xml was edited and the following dependencies were added:
+	<dependency>
+		<groupId>com.vaadin</groupId>
+		<artifactId>vaadin-testbench</artifactId>
+		<version>3.0.0-SNAPSHOT</version>
+		<scope>test</scope>
+	</dependency>
+	<dependency>
+		<groupId>junit</groupId>
+		<artifactId>junit</artifactId>
+		<version>4.10</version>
+		<scope>test</scope>
+	</dependency>
+
+In addition jetty-maven-plugin is used to automatically deploy the war to a Jetty server 
+during the integration-test phase and maven-failsafe-plugin is configured to run tests 
+named with *ITCase convention from src/test/java directory. Check their setup 
+from the pom.xml file.
 
 That's it.
 
