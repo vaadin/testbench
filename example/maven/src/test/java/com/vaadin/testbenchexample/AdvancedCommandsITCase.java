@@ -75,9 +75,6 @@ public class AdvancedCommandsITCase extends TestBenchTestCase {
 
         tbElement.showTooltip();
 
-        // FIXME this shouldn't be needed!
-        Thread.sleep(1000);
-
         String tooltipText = driver.findElement(By.className("v-tooltip"))
                 .getText();
         assertEquals("Clicking this button will add a comment row to log.",
