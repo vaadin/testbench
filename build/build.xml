@@ -128,6 +128,17 @@
                 <include name="MANIFEST.MF" />
             </fileset>
         </copy>
+        <copy todir="result">
+            <filterchain>
+                <expandproperties />
+                <replacetokens begintoken="@" endtoken="@">
+                    <token key="version" value="${version}" />
+                </replacetokens>
+            </filterchain>
+            <fileset dir="../doc">
+                <include name="releasenotes.html" />
+            </fileset>
+        </copy>
 
 		<zip destfile="${output.dir}/vaadin-testbench-${version}.zip">
 			<zipfileset dir="${output.dir}" includes="MANIFEST.MF" prefix="META-INF"/>
@@ -140,12 +151,12 @@
 
 			<!-- Add documentation -->
 			<zipfileset dir="../doc" prefix="${package.root}/documentation">
-				<include name="releasenotes.html" />
 				<include name="*.pdf" />
 				<include name="license*.txt" />
 				<include name="licensing.txt" />
 			</zipfileset>
 			<zipfileset dir="result" prefix="${package.root}/documentation">
+				<include name="releasenotes.html" />
 				<include name="${manual.pdf.filename}" />
 				<include name="api/**" />
 			</zipfileset>

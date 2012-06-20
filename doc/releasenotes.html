@@ -1,65 +1,589 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
-	<head>
-		<meta name="Format" content="complete" />
-	</head>
-<body>
-<h1 id="testbench3releasenotes">TestBench 3 release notes</h1>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Vaadin Framework 6.8.0</title>
+    <style type="text/css">
+	html {
+		margin: 0;
+		padding: 0;
+		text-align: center;
+		}
 
-<h2 id="majorchangessince2.x">Major changes since 2.x</h2>
+	body {
+		background-color: #fff;
+		font: normal 14px/20px Helvetica, "Lucida Grande", Arial, Verdana, sans-serif;
+		color: #464440;
+		padding: 0;
+		min-width: 980px;
+		text-align: left;
+		margin: 0 auto;
+		}
+
+	.clearer {
+		height: 0;
+		overflow: hidden;
+		clear: both;
+		}
+
+	h1,h2,h3,h4,h5,h6 {
+		color: #000;
+		font-weight: normal;
+		line-height: normal;
+		}
+
+	h1 {
+		font-size: 48px;
+		font-weight: bold;
+		}
+
+	h2 {
+		font-size: 36px;
+		font-weight: bold;
+		}
+
+	h3 {
+		font-size: 30px;
+		font-weight: bold;
+		margin-bottom: 23px;
+		}
+
+	h4 {
+		font-size: 18px;
+		margin-bottom: .8em;
+		}
+
+	h5 {
+		font-size: 16px;
+		margin-bottom: .5em;
+		}
+
+	h6 {
+		font-size: 14px;
+		margin: .6em 0 .1em;
+		}
+
+	p {
+		margin: 0 0 1em;
+		}
+
+	a {
+		text-decoration: none;
+		padding: 0 3px;
+		margin: 0 -3px;
+		-moz-border-radius: 2px;
+		-webkit-border-radius: 2px;
+		border-radius: 2px;
+		}
+
+	a:link {
+		color: #00a2d8;
+		}
+
+	a:visited {
+		color: #003648;
+		}
+
+	a:hover {
+		background: #e4e3da;
+		color: #505048;
+		}
+
+	a:active {
+		color: #000;
+		background: #a09f91;
+		}
+
+	ul {
+		list-style-type: square;
+		}
+
+	.codeblock {
+		background: #f0efea;
+		padding: 1em;
+		margin: 1em 0;
+		-webkit-border-radius: 8px;
+		-moz-border-radius: 8px;
+		}
+
+	.codeblock h4 {
+		margin-top: 0;
+		}
+
+
+	/***************************************************
+	 * Furniture 
+	 ***************************************************/
+
+	#header {
+		height: 93px;
+		position: relative;
+		}
+
+	#header h1 {
+		width: 393px;
+		height: 46px;
+		background: transparent url(../img/vaadin-logo.png) no-repeat;
+		position: absolute;
+		top: 23px;
+		left: 50%;
+		margin: 0;
+		margin-left: -484px;
+		text-indent: -9999px;
+		}
+
+	#version {
+		position: absolute;
+		left: 50%;
+		top: 38px;
+		color: #000;
+		text-align: right;
+		width: 484px;
+		}
+
+	#version a {
+		color: #78776d;
+		display: inline-block;
+		zoom: 1;
+		padding: 1px 12px;
+		font-size: 12px;
+		background: #e4e3da;
+		-moz-border-radius: 9px;
+		-webkit-border-radius: 9px;
+		border-radius: 9px;
+		}
+
+	#version a:hover {
+		border: none;
+		background: #a09f91;
+		color: #fff;
+		}
+
+	#version .release-notes {
+		margin-left: 10px;
+		}
+
+	#subheader {
+		position: relative;
+		height: 38px;
+		line-height: 38px;
+		background: #000;
+		}
+
+	#menu,
+	#links {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		}
+
+	#subheader li {
+		display: inline;
+		float: left;
+		padding: 0;
+		}
+
+	#menu {
+		position: absolute;
+		left: 50%;
+		width: 650px;
+		margin-left: -483px;
+		font-weight: bold;
+		white-space: nowrap;
+		z-index: 2;
+		}
+
+	#menu li {
+		margin: 0 .3em;
+		}
+
+	#menu li,
+	#menu a {
+		color: #d9d8cb;
+		}
+
+	#links {
+		width: 484px;
+		position: absolute;
+		top: 2px;
+		left: 50%;
+		z-index: 1;
+		}
+
+	#links li {
+		float: right;
+		}
+
+	#links a {
+		font-size: 12px;
+		line-height: 34px;
+		color: #a09f91;
+		margin-left: 14px;
+		white-space: nowrap;
+		}
+
+	#subheader a:hover {
+		background: transparent;
+		color: #fff;
+		}
+
+	ul {
+		padding-left: 1.3em;
+		}
+
+	#footer {
+		margin: 0 auto;
+		width: 968px;
+		height: 60px;
+		color: #000;
+		font-size: 11px;
+		}
+
+	#footer a {
+		float: right;
+		}
+
+	#footer strong {
+		font-size: 13px;
+		}
+
+	#footer strong em {
+		color: #00b4f0;
+		font-style: normal;
+		margin: 0 0.2em 0 -0.15em;
+		}
+
+	/***************************************************
+	 * Content wrapper
+	 ***************************************************/
+
+	#content {
+		position: relative;
+		margin: 0 0 56px -484px;
+		left: 50%;
+		width: 968px;
+		overflow: hidden;
+		}
+
+
+
+	/***************************************************
+	 * Vertical tabs
+	 ***************************************************/
+	#tabs {
+		float: left;
+		width: 196px;
+		}
+
+	#tabs .tab {
+		font-size: 18px;
+		cursor: pointer;
+		padding: 8px 14px;
+		background: #fff;
+		color: #a09f91;
+		-webkit-transition: linear .2s color;
+		}
+
+	#tabs .tab * {
+		vertical-align: middle;
+	}
+
+	#tabs .tab a {
+		margin: 0;
+		padding: 0;
+		color: #00a2d8;
+		-webkit-transition: linear .2s color;
+		}
+
+	#tabs .tab:hover a,
+	#tabs .tab a:focus {
+		background: transparent;
+		margin: 0;
+		padding: 0;
+		color: #464440;
+		}
+
+	#tabs .tab:hover {
+		color: #464440;
+		}
+
+	#tabs .tab span {
+		font-size: 9px;
+		margin-left: .7em;
+		}
+
+	#tabs .selected,
+	#tabs .selected:hover,
+	#tabs .selected:hover a,
+	#tabs .selected a,
+	#tabs .selected a:hover,
+	#tabs .selected a:focus {
+		color: #000;
+		cursor: default;
+		-webkit-transition: linear .2s color;
+		font-weight: bold;
+		}
+
+	#tabs .first {
+		margin-top: 0;
+		}
+
+	h3.reasons {
+		color: #78776d;
+		margin: 0 0 40px;
+		height: 30px;
+		}
+	
+	#reasons {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		}
+
+	#reasons.js {
+		float: left;
+		width: 769px;
+		}
+
+	#reasons .tab {
+		display: block;
+		margin: 0 0 1em;
+		padding: 20px 40px;
+		background: #efeee9;
+		-webkit-border-radius: 9px;
+		-moz-border-radius: 9px;
+		border-radius: 9px;
+		clear: left;
+		overflow: hidden;
+		}
+
+	#reasons.js .tab {
+		width: 689px;
+		}
+
+	#reasons .tab h4 {
+		font-weight: bold;
+		font-size: 24px;
+		margin: 14px 0 24px;
+		}
+
+	#reasons .tab .col {
+		width: 22.8%;
+		margin-right: 2%;
+		float: left;
+		margin-bottom: 2em;
+		}
+
+	#reasons .tab .col2 {
+		width: 47.8%;
+		margin-right: 2%;
+		float: left;
+		margin-bottom: 2em;
+		}
+
+	#reasons .tab .col3 {
+		width: 72.8%;
+		margin-right: 2%;
+		float: left;
+		margin-bottom: 2em;
+		}
+
+	#reasons .tab .col4 {
+		clear: left;
+		margin-bottom: 2em;
+		}
+
+	#reasons .tab .newline {
+		clear: left;
+		}
+
+	#reasons .tab p:last-child {
+		margin: 0;
+		}
+
+	#reasons .tab h5 {
+		margin-top: 0;
+		}
+
+
+	/***************************************************
+	 * Section specific styles
+	 ***************************************************/
+	img {
+		border: none;
+		}
+
+	.book {
+		overflow: hidden;
+		}
+
+	.book h5 {
+		font-weight: bold;
+		font-size: 18px;
+		}
+
+	.book h6 {
+		margin: -0.7em 0 .7em;
+		color: #464440;
+		font-size: 13px;
+		font-style: italic;
+		color: #736f5e;
+		}
+
+	.book img {
+		float: left;
+		margin-right: 1.2em;
+		}
+
+	.dzone img,
+	.tutorial img {
+		float: left;
+		margin: 0 1em 2em 0;
+		}
+
+	.tools img {
+		margin: 0em 2em .8em 2em;
+		float: right;
+		}
+
+		.nested-list ol {
+			counter-reset: item
+		}
+
+		.nested-list li {
+			display: block
+		}
+
+		.nested-list li:before {
+			content: counters(item, ".") ". ";
+			counter-increment: item
+		}
+    </style>
+  </head>
+
+  <body>
+	  <div id="content">
+	 	
+<h1 id="release_notes_for_vaadin_testbench_version">Release Notes for Vaadin TestBench @version@</h1>
+
+<h2 id="overview_of_vaadin_testbench_3">Overview of Vaadin TestBench 3</h2>
+
+<p>Vaadin TestBench is a UI browser automation tool used for automated testing of Vaadin UIs in the browser. Vaadin TestBench is based on Selenium 2 and provides a WebDriver based API for controlling different browsers on multiple platforms.</p>
+
+<h2 id="changes_since_2x">Changes Since 2.x</h2>
 
 <ul>
-<li>TestBench 3 is based on Selenium 2 (WebDriver), while TB 2 was based on Selenium 1</li>
-<li>Supports automatic testing on Android and iOS</li>
-<li>Much improved Maven integration</li>
-<li>HTML files are no longer used as a storage format for test cases. Test cases are now stored and edited as JUnit test cases.</li>
-<li>TestBench 3 adds API for getting the server-side and client-side processing time per request or per session for testing the performance of applications – see added commands below.</li>
-<li><p>The following commands have been removed, since they are already provided by the underlying Selenium 2:</p>
+<li>Updated to the latest version of Selenium 2, TestBench 2.x is based on Selenium 1</li>
+<li>Moved from HTML test files to a WebDriver based Java API</li>
+<li>Support for logic operations, such as loops and conditionals, in tests</li>
+<li>No longer necessary to record all tests &ndash; tests can be written in plain Java</li>
+<li>Revamped Vaadin TestBench Recorder, streamlined to support the new use case</li>
+<li>Support for masked screenshot comparison</li>
+<li>Support for querying performance information from a running Vaadin Application (Requires Vaadin 6.8.0 or later)</li>
+<li>Full Apache Maven support</li>
+<li>Support for testing on touch devices running iOS or Android</li>
+</ul>
+
+<h2 id="package_contents">Package Contents</h2>
+
+<p>The package contains the following files and directories:
+	<table>
+		<tr>
+			<td><pre>documentation/</pre></td>
+    		<td>The documentation folder contains the TestBench library API documentation, a PDF excerpt of this chapter of Book of Vaadin, and the license.</td>
+		</tr>
+		<tr>
+			<td><pre>example/</pre></td>
+    		<td>The example folder contains a Maven example project with examples of how to use Vaadin TestBench. These include the project descriptor and a Vaadin test project, as well as the JUnit test Java source files.</td>
+		</tr>
+		<tr>
+			<td><pre>maven/</pre></td>
+    		<td>The Maven folder contains version of the Vaadin TestBench libraries that you can install in your local Maven repository along with short instructions on how to install.</td>
+		</tr>
+		<tr>
+			<td><pre>vaadin-testbench-recorder/</pre></td>
+    		<td>This folder contains the Vaadin TestBench Recorder, which you can install in Firefox. Please see the manual for installation instructions.</td>
+		</tr>
+		<tr>
+			<td><pre>vaadin-testbench-standalone-@version@.jar</pre></td>
+    		<td>This is the Vaadin TestBench library. It is a standalone library that includes the Selenium 2 WebDriver along with all other dependencies.</td>
+		</tr>
+		<tr>
+			<td><pre>vaadin-testbench-standalone-@version@-javadoc.jar</pre></td>
+    		<td>This is the JavaDoc API documentation for the TestBench library. If you use Eclipse, you can associate this JAR with the TestBench JAR in the project preferences, in the build path library settings.</td>
+		</tr>
+	</table>
+</p>
+
+<h2 id="dependencies">Dependencies</h2>
+
+<p>All dependencies are bundled in <code>vaadin-testbench-standalone-@version@.jar</code>. The maven directory also contains <code>vaadin-testbench-@version@.jar</code>, which does not contain any dependencies. Vaadin TestBench 3 depends on Selenium 2, which in turn has dependencies. Here is a list of the dependencies:</p>
 
 <ul>
-<li><p><code>contextmenu</code>/<code>contextmenuAt</code></p>
-
-<pre><code>new Actions(driver).moveToElement(element).contextClick(e).perform();
-</code></pre></li>
-<li><p><code>pressSpecialKey</code></p>
-
-<pre><code>new Actions(driver).keyDown(Keys.CTRL).build().perform();
-element.sendKeys(Keys.F1);
-new Actions(driver).keyUp(Keys.CTRL).build().perform();
-</code></pre></li>
-<li><p><code>includeTest</code> - no longer relevant since tests are stored as JUnit test cases.</p></li>
-<li><p><code>assertCSSClass</code></p>
-
-<pre><code>Assert.assertTrue(element.getAttribute("class").contains("myCSSClass"));
-</code></pre></li>
-<li><p><code>assertNotCSSClass</code></p>
-
-<pre><code>Assert.assertFalse(element.getAttribute("class").contains("myCSSClass"));
-</code></pre></li>
-<li><p><code>uploadFile</code> - the <code>type</code> command can be executed on file inputs and works in more browsers.</p></li>
-</ul></li>
-<li><p>Added and changed commands</p>
-
+<li>Selenium 2.24.1
 <ul>
-<li><code>getRemoteControlName</code> - Retrieves the canonical name of the node running the test. Useful when reporting failures that might be due to hardware issues, automatically updated browsers or other software issues on a large grid.</li>
-<li><p><code>compareScreen</code> can now take the reference image as either a name string (browser and version are appended), a <code>File</code> reference or <code>BufferedImage</code>. Examples:</p>
-
-<pre><code>WebDriver driver = TestBench.createDriver(new FirefoxDriver());
-driver.navigate().to("http://google.com");
-assertTrue(testBench(driver).compareScreen("shot")); // fetches shot_firefox_11.0.png from the reference directory (set in Parameters).
-assertTrue(testBench(driver).compareScreen(ImageFileUtil.getReferenceScreenshotFile("actualshot.png")));
-BufferedImage referenceImage = getReferenceImage();
-assertTrue(testBench(driver).compareScreen(referenceImage));
-</code></pre></li>
-<li><p><code>timeSpentRenderingLastRequest</code>, <code>totalTimeSpentRendering</code> - Timing info for client-side rendering of the last request or the entire session</p></li>
-<li><code>timeSpentServicingLastRequest</code>, <code>totalTimeSpentServicingRequests</code> - Timing info for the server-side servicing of the last request or the entire session</li>
-<li><p><code>findElementByVaadinSelector</code> - find an element by the Vaadin specific selector</p>
-
-<pre><code>WebElement e = testBench(driver).findElementByVaadinSelector("/VVerticalLayout[0]/ChildComponentContainer[0]/VLabel[0]");
-</code></pre></li>
-<li><p><code>disableWaitForVaadin</code>, <code>enableWaitForVaadin</code> - disable the AJAX intelligence. Useful for testing e.g. bombarding an application with keypresses. Enabled by default.</p></li>
+<li>cgilib 2.1_3</li>
+<li>guava 11.0.1</li>
+<li>commons-io 2.0.1</li>
+<li>commons-codec 1.6</li>
+<li>commons-exec 1.1</li>
+<li>jcip-annotations 1.0</li>
+<li>junit 4.10</li>
+<li>jna 3.4.0</li>
+<li>platform 3.4.0</li>
+<li>httpclient 4.1.2</li>
+<li>httpcore 4.1.3</li>
+<li>hamcrest-all 1.1</li>
+<li>json 20080701</li>
+<li>testng 6.0.1</li>
+<li>webbit 0.4.6</li>
 </ul></li>
 </ul>
-</body>
+
+<h2 id="migration_notes">Migration Notes</h2>
+
+<p>Vaadin TestBench 2.x tests cannot directly be converted to run on TestBench 3. For existing projects, it is recommended to continue using TestBench 2 for existing tests and installing TestBench 3 in parallel if you want the new features. For new projects it is recommended to use only TestBench 3.</p>
+
+<h2 id="supported_platforms_and_browsers">Supported Platforms and Browsers</h2>
+
+<p>Vaadin TestBench 3 fully supports Windows, Mac OS X and Linux as well as iOS and Android for running tests. The following browsers are supported:</p>
+
+<ul>
+<li>Google Chrome 13+</li>
+<li>Internet Explorer 6+</li>
+<li>Mozilla Firefox 3+</li>
+<li>Opera 11.5+</li>
+<li>Mobile browsers:
+<ul>
+<li>Android 2.3+</li>
+<li>iOS 4+</li>
+</ul></li>
+</ul>
+
+	</div>
+	
+	<div id="footer">
+      <span class="slogan"><strong>vaadin <em>}&gt;</em> </strong> thinking of U and I<span>
+      <a href="#top">&uarr; Back to top</a>
+	</div> <!-- /footer -->
+
+  </body>
 </html>
+
+<!-- Keep this comment at the end of the file
+Local variables:
+mode: xml
+sgml-omittag:nil
+sgml-shorttag:nil
+sgml-namecase-general:nil
+sgml-general-insert-case:lower
+sgml-minimize-attributes:nil
+sgml-always-quote-attributes:t
+sgml-indent-step:2
+sgml-indent-data:t
+sgml-parent-document:nil
+sgml-exposed-tags:nil
+sgml-local-catalogs:("/etc/sgml/catalog" "/usr/share/xemacs21/xemacs-packages/etc/psgml-dtds/CATALOG")
+sgml-local-ecat-files:("ECAT" "~/sgml/ECAT" "/usr/share/sgml/ECAT" "/usr/local/share/sgml/ECAT" "/usr/local/lib/sgml/ECAT")
+End:
+-->
