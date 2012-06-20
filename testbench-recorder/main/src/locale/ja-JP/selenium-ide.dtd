@@ -7,7 +7,7 @@
 
 <!ENTITY newTestCmd.label "テストケースを新規作成">
 <!ENTITY addTestCmd.label "テストケースを追加...">
-<!ENTITY openCmd.label "テストケースを開く...">
+<!ENTITY openCmd.label "インポートHTML...">
 <!ENTITY saveTestCmd.label "テストケースを保存">
 <!ENTITY saveTestAsCmd.label "テストケースに名前を付けて保存...">
 <!ENTITY exportCmd.label "テストケースをエクスポート...">
