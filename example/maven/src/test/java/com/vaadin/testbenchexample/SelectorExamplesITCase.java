@@ -14,6 +14,9 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import com.vaadin.testbench.TestBench;
 import com.vaadin.testbench.TestBenchTestCase;
 
+/**
+ * This example demonstrates usege of varios element selection methods.
+ */
 public class SelectorExamplesITCase extends TestBenchTestCase {
 
     private String baseUrl;

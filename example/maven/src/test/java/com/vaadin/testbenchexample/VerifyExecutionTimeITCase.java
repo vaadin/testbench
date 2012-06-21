@@ -37,9 +37,10 @@ public class VerifyExecutionTimeITCase extends TestBenchTestCase {
     }
 
     /**
-     * Makes the same thing as in {@link #testOnePlusTwoWithIdentifiers()} and verifies server
-     * don't spend too much time during the process. Also the test makes sure
-     * the time spent by browser to render the UI within sane limits.
+     * Makes the same thing as in {@link #testOnePlusTwoWithIdentifiers()} and
+     * verifies server don't spend too much time during the process. Also the
+     * test makes sure the time spent by browser to render the UI within sane
+     * limits.
      * 
      * @throws Exception
      */
@@ -65,9 +66,9 @@ public class VerifyExecutionTimeITCase extends TestBenchTestCase {
         long totalTimeSpentRendering = testBench().totalTimeSpentRendering();
         System.out.println("Rendering UI took " + totalTimeSpentRendering
                 + "ms");
-        if (timeSpentByServerForSimpleCalculation > 400) {
-            fail("Rendering UI shouldn't take "
-                    + timeSpentByServerForSimpleCalculation + "ms!");
+        if (totalTimeSpentRendering > 400) {
+            fail("Rendering UI shouldn't take " + totalTimeSpentRendering
+                    + "ms!");
         }
 
         assertEquals("3.0", getDriver().findElement(By.id("display")).getText());

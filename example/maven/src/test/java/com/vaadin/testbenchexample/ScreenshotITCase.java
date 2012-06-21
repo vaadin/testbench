@@ -17,7 +17,17 @@ import com.vaadin.testbench.Parameters;
 import com.vaadin.testbench.TestBench;
 import com.vaadin.testbench.TestBenchTestCase;
 
+/**
+ * This example contains usage examples of screenshot comparison feature.
+ * <p>
+ * By default tests should pass (in case Firefox hasn't upgraded and correct
+ * reference image is found). To see how TestBench visualizes changed parts,
+ * either modify reference images from src/test/resources/screenshots or change
+ * the application a bit (like add components).
+ * 
+ */
 public class ScreenshotITCase extends TestBenchTestCase {
+
     private String baseUrl;
 
     @Before
@@ -25,12 +35,20 @@ public class ScreenshotITCase extends TestBenchTestCase {
         setDriver(TestBench.createDriver(new FirefoxDriver()));
         baseUrl = "http://localhost:8080";
 
+        // Fix the browser size to make comparisons more stable between devices
+        // (and different sized screens). This is usually not an issue if tests
+        // are executed on stable test bots.
         getDriver().manage().window().setSize(new Dimension(500, 400));
 
+        // Define the default directory for reference screenshots
         Parameters
                 .setScreenshotReferenceDirectory("src/test/resources/screenshots");
+
+        // Define the directory where possible error files and screenshots
+        // should go
         Parameters
                 .setScreenshotErrorDirectory("target/testbench/screenshot_errors");
+
         // Capture a screenshot if no reference image is found
         Parameters.setCaptureScreenshotOnFailure(true);
     }
@@ -45,9 +63,16 @@ public class ScreenshotITCase extends TestBenchTestCase {
         calculateOnePlusTwo();
         assertEquals("3.0", getDriver().findElement(By.id("display")).getText());
 
-        // Note that this will likely fail if you have a bit different platform,
-        // the reference image has been taken with Firefox 13 on a mac
+        // Compare screen with reference image with id "oneplusto" from the
+        // reference image directory. Reference image filenames also contain
+        // browser, version and platform.
+        // Note, that this will likely fail if you have a bit different platform
+        // Reference images currently exist for FF13 XP, FF13 mac, FF12 linux
         assertTrue(testBench().compareScreen("oneplustwo"));
+
+        // If the id based reference image don't fit for your needs, you can
+        // also use a direct File reference like this:
+        // testBench().compareScreen(new File("path/to/MyFile"));
     }
 
     private void calculateOnePlusTwo() {

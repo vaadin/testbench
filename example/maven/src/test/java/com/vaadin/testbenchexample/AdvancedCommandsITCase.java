@@ -16,6 +16,11 @@ import com.vaadin.testbench.TestBench;
 import com.vaadin.testbench.TestBenchTestCase;
 import com.vaadin.testbench.commands.TestBenchElementCommands;
 
+/**
+ * This example contains some usages of bit more advanced TestBench and
+ * WebDriver usage.
+ * 
+ */
 public class AdvancedCommandsITCase extends TestBenchTestCase {
 
     private static final String COMMENT_TEXT = "Next we'll click button 2";

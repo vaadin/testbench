@@ -12,6 +12,14 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import com.vaadin.testbench.TestBench;
 import com.vaadin.testbench.TestBenchTestCase;
 
+/**
+ * This example demonstrates how developers can use techniques like loops and
+ * random data to make their tests more powerful. Using Java this kind of
+ * techniques can be easily implemented with your existing skills.
+ * <p>
+ * Developers should also consider add parameters to their tests and
+ * systematically test boundary values etc.
+ */
 public class LoopingCalculatorITCase extends TestBenchTestCase {
     private String baseUrl;
 

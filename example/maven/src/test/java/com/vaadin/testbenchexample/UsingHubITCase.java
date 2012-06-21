@@ -24,10 +24,10 @@ import com.vaadin.testbench.TestBenchTestCase;
  * usage. To simplify setup (avoid setting up tunnel or deploying to server
  * visible in Internet) we actually run this test against the calculator demo
  * running in demo.vaadin.com. The example should though be easily be fitted to
- * your needs for either local hub or to external service.
+ * your needs for either local hub or to an external service.
  * <p>
- * The example is by default ignored as you need to fill in your username and
- * password.
+ * The example is by default ignored as you will need to fill in your username
+ * and password or switch the removed driver address to a local hub.
  * 
  */
 public class UsingHubITCase extends TestBenchTestCase {
@@ -52,7 +52,7 @@ public class UsingHubITCase extends TestBenchTestCase {
     @Test
     @Ignore("Requires testingbot.com credientials")
     public void testOnePlusTwo() throws Exception {
-        // run the test as with "local bots"
+        // run the test just as with "local bots"
         openCalculator();
         getDriver().findElement(By.xpath("//*[text() = '1']")).click();
         getDriver().findElement(By.xpath("//*[text() = '+']")).click();
