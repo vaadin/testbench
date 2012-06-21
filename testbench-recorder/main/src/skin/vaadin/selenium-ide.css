@@ -213,17 +213,15 @@ label {
     margin: 0px;
 	padding: 0px;
 }
-#selenium-ide-sidebar #vaadin-logo{
-    list-style-image: url("chrome://vaadin-ide/skin/vaadin-logo_small.png");
-}
-
 
 /** Record/play toolbar */
-#toolbar2 {
+#toolbar2, #sidebarToolbar_controls {
 	border-top: none !important;
 	height: 25px;
 }
 #toolbar2,
+#sidebarToolbar_controls,
+hbox.sidebarToolbar,
 hbox.toolbar2 {
 	-moz-appearance: none;
 	margin: 0;
