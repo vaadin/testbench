@@ -475,3 +475,8 @@ Selenium.prototype.doAssertNotCSSClass = function(locator, value){
 Selenium.prototype.doUploadFile = function(locator, value){
 	this.doType(locator, value);
 };
+
+/* Override doType to replay as a bunch of enterCharacter's */
+Selenium.prototype.doType = function(locator, value) {
+	this.doEnterCharacter(locator, value);
+}
