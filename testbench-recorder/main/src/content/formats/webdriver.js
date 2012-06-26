@@ -759,6 +759,13 @@ SeleniumWebDriverAdaptor.prototype.contextmenu = function(elementLocator) {
 	return webElement.contextmenu(driver);
 }
 
+SeleniumWebDriverAdaptor.prototype.addSelection = function(elementLocator, label) {
+    var locator = this._elementLocator(this.rawArgs[0]);
+    var driver = new WDAPI.Driver();
+    return driver.findElement(locator.type, locator.string).addSelection(this.rawArgs[1].substring("label=".length, this.rawArgs[1].length));
+}
+
+
 //SeleniumWebDriverAdaptor.prototype.isSomethingSelected = function(elementLocator) {
 ////  var locator = this._elementLocator(this.rawArgs[0]);
 ////  var driver = new WDAPI.Driver();

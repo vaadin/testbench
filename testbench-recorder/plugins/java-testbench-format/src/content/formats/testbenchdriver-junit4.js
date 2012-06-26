@@ -468,6 +468,10 @@ WDAPI.Element.prototype.contextmenu = function(driver) {
 	return "new Actions(" + driver.ref + ").contextClick(" + this.ref + ").perform()";
 }
 
+WDAPI.Element.prototype.addSelection = function(label) {
+  return "new Select(" + this.ref + ").selectByVisibleText(" + xlateArgument(label) + ")";
+};
+
 WDAPI.Driver.prototype.pressModifierKeys = function(value) {
 	var modifiers = "";
 	if ((new RegExp("shift")).test(value)) {
