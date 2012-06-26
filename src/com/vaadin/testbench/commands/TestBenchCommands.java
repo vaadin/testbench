@@ -163,4 +163,23 @@ public interface TestBenchCommands extends CanWaitForVaadin {
      * Implicit waiting is enabled by default.
      */
     void enableWaitForVaadin();
+
+    /**
+     * Tries to resize the browsers window so that the space available for
+     * actual web content (aka viewport) is of given size.
+     * <p>
+     * Note, that the result cannot be guaranteed on all platforms. For example
+     * browsers in mobile devices are most often always fullscreen and their
+     * viewport can be "simultated". Also browsers might not allow resizing the
+     * window or limit size of window to minimum or maximum (often limited by
+     * screen size). Currently most common desktop browsers support this.
+     * <p>
+     * 
+     * @param width
+     *            the desired width of the viewport
+     * @param height
+     *            the desired height of the viewport
+     */
+    void resizeViewPortTo(int width, int height)
+            throws UnsupportedOperationException;
 }

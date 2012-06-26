@@ -9,7 +9,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
@@ -21,9 +20,20 @@ import com.vaadin.testbench.TestBenchTestCase;
  * This example contains usage examples of screenshot comparison feature.
  * <p>
  * By default tests should pass (in case Firefox hasn't upgraded and correct
- * reference image is found). To see how TestBench visualizes changed parts,
- * either modify reference images from src/test/resources/screenshots or change
- * the application a bit (like add components).
+ * reference image is found). Rendering of the example app can though differ
+ * from platform to platform (e.g. rendering of fonts or NativeButton styles).
+ * <p>
+ * To see how TestBench visualizes changed parts, either modify reference images
+ * from src/test/resources/screenshots or change the application a bit (like add
+ * components).
+ * <p>
+ * Results of failed screenshot comparisons are stored to
+ * target/testbench/screenshot_errors. If you wish to make them pass copy,
+ * failed screenshots to reference directory. Note that in in the random log
+ * test the reference screenshot should have the log part masked as transparent.
+ * TestBench ignores transparent pixels from the comparison and changes on that
+ * area are permitted.
+ * 
  * 
  */
 public class ScreenshotITCase extends TestBenchTestCase {
@@ -35,10 +45,9 @@ public class ScreenshotITCase extends TestBenchTestCase {
         setDriver(TestBench.createDriver(new FirefoxDriver()));
         baseUrl = "http://localhost:8080";
 
-        // Fix the browser size to make comparisons more stable between devices
-        // (and different sized screens). This is usually not an issue if tests
-        // are executed on stable test bots.
-        getDriver().manage().window().setSize(new Dimension(500, 400));
+        // Try to adjust browser window size so that its content area is 500x400
+        // pixels
+        testBench().resizeViewPortTo(500, 400);
 
         // Define the default directory for reference screenshots
         Parameters

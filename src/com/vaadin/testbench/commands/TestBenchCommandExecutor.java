@@ -16,9 +16,11 @@ import java.util.logging.Logger;
 import javax.imageio.IIOException;
 import javax.imageio.ImageIO;
 
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.HasCapabilities;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.OutputType;
+import org.openqa.selenium.Point;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -126,23 +128,16 @@ public class TestBenchCommandExecutor implements TestBenchCommands,
         }
 
         // @formatter:off
-        String isVaadinFinished =
-                "if (window.vaadin == null) {" + 
-                "  return true;" +
-                "}" +
-                "var clients = window.vaadin.clients;" + 
-                "if (clients) {" +
-                "  for (var client in clients) {" + 
-                "    if (clients[client].isActive()) {" + 
-                "      return false;" +
-                "    }" +
-                "  }" + 
-                "  return true;" +
-                "} else {" + 
-                   // A Vaadin connector was found so this is most likely a Vaadin
-                   // application. Keep waiting.
-                "  return false;" +
-                "}";
+        String isVaadinFinished = "if (window.vaadin == null) {"
+                + "  return true;" + "}"
+                + "var clients = window.vaadin.clients;" + "if (clients) {"
+                + "  for (var client in clients) {"
+                + "    if (clients[client].isActive()) {"
+                + "      return false;" + "    }" + "  }" + "  return true;"
+                + "} else {" +
+                // A Vaadin connector was found so this is most likely a Vaadin
+                // application. Keep waiting.
+                "  return false;" + "}";
         // @formatter:on
         JavascriptExecutor js = (JavascriptExecutor) actualDriver;
         long timeoutTime = System.currentTimeMillis() + 20000;
@@ -297,15 +292,12 @@ public class TestBenchCommandExecutor implements TestBenchCommands,
     @SuppressWarnings("unchecked")
     private List<Long> getTimingValues(boolean forceSync) {
         // @formatter:off
-        String getProfilingData = "var pd = [0,0,0,0];\n" +
-                                  "for (client in window.vaadin.clients) {\n" + 
-                                  "  var p = window.vaadin.clients[client].getProfilingData();\n" +
-                                  "  pd[0] += p[0];\n" +
-                                  "  pd[1] += p[1];\n" +
-                                  "  pd[2] += p[2];\n" +
-                                  "  pd[3] += p[3];\n" +
-                                  "}\n" +
-                                  "return pd;\n";
+        String getProfilingData = "var pd = [0,0,0,0];\n"
+                + "for (client in window.vaadin.clients) {\n"
+                + "  var p = window.vaadin.clients[client].getProfilingData();\n"
+                + "  pd[0] += p[0];\n" + "  pd[1] += p[1];\n"
+                + "  pd[2] += p[2];\n" + "  pd[3] += p[3];\n" + "}\n"
+                + "return pd;\n";
         // @formatter:on
         if (actualDriver instanceof JavascriptExecutor) {
             JavascriptExecutor jse = (JavascriptExecutor) actualDriver;
@@ -329,14 +321,10 @@ public class TestBenchCommandExecutor implements TestBenchCommands,
     @Override
     public WebElement findElementByVaadinSelector(String selector) {
         // @formatter:off
-        String findByVaadinScript =
-                  "var clients = window.vaadin.clients;"
+        String findByVaadinScript = "var clients = window.vaadin.clients;"
                 + "for (client in clients) {"
                 + "  var element = clients[client].getElementByPath(arguments[0]);"
-                + "  if (element) {"
-                + "    return element;"
-                + "  }"
-                + "}"
+                + "  if (element) {" + "    return element;" + "  }" + "}"
                 + "return null;";
         // @formatter:on
         if (actualDriver instanceof JavascriptExecutor) {
@@ -389,5 +377,67 @@ public class TestBenchCommandExecutor implements TestBenchCommands,
 
     public WebDriver getWrappedDriver() {
         return null;
+    }
+
+    @Override
+    public void resizeViewPortTo(final int desiredWidth, final int desiredHeight)
+            throws UnsupportedOperationException {
+        try {
+            actualDriver.manage().window().setPosition(new Point(0, 0));
+
+            // first try with mac FF, these will change from plat to plat and
+            // browser setup to another
+            int extrah = 106;
+            int extraw = 0;
+            actualDriver
+                    .manage()
+                    .window()
+                    .setSize(
+                            new Dimension(desiredWidth + extraw, desiredHeight
+                                    + extrah));
+
+            int actualWidth = detectViewportWidth();
+            int actualHeight = detectViewportHeight();
+
+            int diffW = desiredWidth - actualWidth;
+            int diffH = desiredHeight - actualHeight;
+
+            if (diffH != 0 || diffW != 0) {
+                actualDriver
+                        .manage()
+                        .window()
+                        .setSize(
+                                new Dimension(desiredWidth + extraw + diffW,
+                                        desiredHeight + extrah + diffH));
+            }
+            actualWidth = detectViewportWidth();
+            actualHeight = detectViewportHeight();
+            if (desiredWidth != actualWidth || desiredHeight != actualHeight) {
+                throw new Exception("Viewport size couldn't be set to desired.");
+            }
+        } catch (Exception e) {
+            throw new UnsupportedOperationException(
+                    "Viewport couldn't be adjusted.", e);
+        }
+    }
+
+    private int detectViewportHeight() {
+        // also check in IE combat mode etc + detect IE9 for extra borders in
+        // combat mode (although vaadin always in std mode, function may be
+        // needed earlier)
+        int height = ((Number) ((JavascriptExecutor) actualDriver)
+                .executeScript("function f() { if(typeof window.innerHeight != 'undefined') { return window.innerHeight; } if(document.documentElement && document.documentElement.offsetHeight) { return document.documentElement.offsetHeight; } w = document.body.clientHeight; if(navigator.userAgent.indexOf('Trident/5') != -1 && document.documentMode < 9) { w += 4; } return w;} return f();"))
+                .intValue();
+        return height;
+    }
+
+    private int detectViewportWidth() {
+        // also check in IE combat mode etc + detect IE9 for extra borders in
+        // combat mode (although vaadin always in std mode, function may be
+        // needed earlier)
+        int width = ((Number) ((JavascriptExecutor) actualDriver)
+                .executeScript("function f() { if(typeof window.innerWidth != 'undefined') { return window.innerWidth; } if(document.documentElement && document.documentElement.offsetWidth) { return document.documentElement.offsetWidth; } w = document.body.clientWidth; if(navigator.userAgent.indexOf('Trident/5') != -1 && document.documentMode < 9) { w += 4; } return w;} return f();"))
+                .intValue();
+        return width;
     }
 }
