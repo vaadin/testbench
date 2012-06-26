@@ -464,6 +464,10 @@ WDAPI.Element.prototype.mouseClick = function(driver, value) {
 	return "new Actions(" + driver.ref + ").moveToElement(" + this.ref + ")" + modifiersDown + ".click()" + modifiersUp + ".build().perform()";
 }
 
+WDAPI.Element.prototype.contextmenu = function(driver) {
+	return "new Actions(" + driver.ref + ").contextClick(" + this.ref + ").perform()";
+}
+
 WDAPI.Driver.prototype.pressModifierKeys = function(value) {
 	var modifiers = "";
 	if ((new RegExp("shift")).test(value)) {
