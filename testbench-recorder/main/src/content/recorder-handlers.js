@@ -257,12 +257,12 @@ Recorder.addEventHandler('scroll', 'scroll', function(event) {
 				if(previousLeft != left){
 					s.record("scrollLeft", loc, left);
 					previousLeft = left;
-					s.record_orig("pause", "300");
+					s.record_orig("pause", "500");
 				}
 				if(previousTop != top){
 					s.record("scroll", loc , top);
 					previousTop = top;
-					s.record_orig("pause", "300");
+					s.record_orig("pause", "500");
 				}
 				s._scrollTimeout = null;
 			},260);
