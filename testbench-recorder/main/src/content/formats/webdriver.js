@@ -741,6 +741,17 @@ SeleniumWebDriverAdaptor.prototype.screenCapture = function(value) {
 	return driver.screenCapture(this.rawArgs[1]);
 }
 
+SeleniumWebDriverAdaptor.prototype.mouseClick = function(elementLocator, value) {
+	var driver = new WDAPI.Driver();
+	var locator = this._elementLocator(this.rawArgs[0]);
+	var webElement = driver.findElement(locator.type, locator.string);
+	if (this.rawArgs[1].indexOf(":") == -1) {
+		// Perform a normal click if there are no modifier keys pressed.
+		return webElement.click();
+	}
+	return webElement.mouseClick(driver, this.rawArgs[1]);
+}
+
 //SeleniumWebDriverAdaptor.prototype.isSomethingSelected = function(elementLocator) {
 ////  var locator = this._elementLocator(this.rawArgs[0]);
 ////  var driver = new WDAPI.Driver();

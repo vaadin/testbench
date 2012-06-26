@@ -431,6 +431,39 @@ WDAPI.Element.prototype.pressSpecialKey = function(value) {
 	return this.ref + ".sendKeys(" + key + ")";
 }
 
+WDAPI.Element.prototype.mouseClick = function(driver, value) {
+	value = value.split(":");
+	var shift = false;
+	var ctrl = false;
+	var alt = false;
+	var meta = false;
+	if(value.length > 1){
+		shift = (new RegExp("shift")).test(value[1]);
+		ctrl = (new RegExp("ctrl")).test(value[1]);
+		alt = (new RegExp("alt")).test(value[1]);
+		meta = (new RegExp("meta")).test(value[1]);
+	}
+	var modifiersDown = "";
+	var modifiersUp = "";
+	if (shift) {
+		modifiersDown += ".keyDown(Keys.SHIFT)";
+		modifiersUp += ".keyUp(Keys.SHIFT)";
+	}
+	if (ctrl) {
+		modifiersDown += ".keyDown(Keys.CTRL)"
+		modifiersUp += ".keyUp(Keys.CTRL)"
+	}
+	if (alt) {
+		modifiersDown += ".keyDown(Keys.ALT)"
+		modifiersUp += ".keyUp(Keys.ALT)"
+	}
+	if (meta) {
+		modifiersDown += ".keyDown(Keys.META)"
+		modifiersUp += ".keyUp(Keys.META)"
+	}
+	return "new Actions(" + driver.ref + ").moveToElement(" + this.ref + ")" + modifiersDown + ".click()" + modifiersUp + ".build().perform()";
+}
+
 WDAPI.Driver.prototype.pressModifierKeys = function(value) {
 	var modifiers = "";
 	if ((new RegExp("shift")).test(value)) {

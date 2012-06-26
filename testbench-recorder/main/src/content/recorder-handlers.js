@@ -457,7 +457,7 @@ Recorder.addEventHandler('clickLocator', 'click', function(event){
         /* Stop checking mouseOver events */
         if(checkForMouseOver){
         	checkForMouseOver = false;
-        	this.record_orig("click", this.findLocators(event.target), '');
+            	this.record_orig("mouseClick", this.findLocators(event.target), x + ',' + y);
         	return;
         }
         
@@ -482,6 +482,7 @@ Recorder.addEventHandler('clickLocator', 'click', function(event){
         var control = event.ctrlKey;
         var shift = event.shiftKey;
         var alt = event.altKey;
+		var meta = event.metaKey;
         var specials = "";
         if(control){
         	specials = ":ctrl";
@@ -500,6 +501,13 @@ Recorder.addEventHandler('clickLocator', 'click', function(event){
         		specials = specials + " alt";
         	}
         }
+		if(meta){
+			if(specials.length == 0){
+				specials = ":meta";
+			} else {
+				specials = specials + " meta";
+			}
+		}
         
         var clickable = this.findClickableElement(event.target);
 		if (clickable) {
@@ -531,7 +539,7 @@ Recorder.addEventHandler('clickLocator', 'click', function(event){
             			target[0][1] = target[1][1];
             			target[1][0] = vaadin;
             			target[1][1] = vaadin_name;
-            			this.record("click", target, '');
+	            			this.record("mouseClick", target, x + ',' + y + specials);
 					/* if either target or target parent (click recorded for img,span, etc inside <a></a>)
 					 * is a link <a/> record open instead of mouseClick as it fails in many cases */
             		}else if (event.target.nodeName.toLowerCase() == "a" && !(new RegExp(document.getElementById("baseURL").value)).test(event.target.href) && event.target.target != "_blank"){
@@ -540,11 +548,11 @@ Recorder.addEventHandler('clickLocator', 'click', function(event){
             			this.record_orig("open", event.target.parentNode.href, '');
             		/* else record mouseClick with possible AndWait added by seleniums editor */
             		} else {
-            			this.record("click", target, '');
+	            			this.record("mouseClick", target, x + ',' + y + specials);
             		}
             	/* else record mouseClick with record_orig so that AndWait comes to right place */
 				} else {
-            		this.record_orig("click", target, '');
+	            		this.record_orig("mouseClick", target, x + ',' + y);
 				}
             	clicked = false;
             } else if ((new RegExp("@id=\'loginf\'")).test(target) && !(new RegExp("input")).test(target)) {
@@ -556,13 +564,13 @@ Recorder.addEventHandler('clickLocator', 'click', function(event){
             	this.record("click", target, '');
             } else {
             	/* record mouseClick with waitForVaadin(s) added */
-    			this.record("click", target, '');
+        			this.record("mouseClick", target, x + ',' + y + specials);
             }
         } else {
             var target = event.target;
             /* Record all clicks inside div elements */
             if(event.target.nodeName.toLowerCase() == "div" || event.target.nodeName.toLowerCase() == "span"){
-   				this.record("click", this.findLocators(target), '');
+       				this.record("mouseClick", this.findLocators(target), x + ',' + y + specials);
             }
         }
 	} else {

@@ -254,6 +254,7 @@ Selenium.prototype.doMouseClick = function(locator, value){
 		this.browserbot.shiftKeyDown = (new RegExp("shift")).test(value[1]);
 		this.browserbot.controlKeyDown = (new RegExp("ctrl")).test(value[1]);
 		this.browserbot.altKeyDown = (new RegExp("alt")).test(value[1]);
+		this.browserbot.metaKeyDown = (new RegExp("meta")).test(value[1]);
 	}
 	
 	this.browserbot.triggerMouseEvent(element, 'mousedown', true, clientXY[0], clientXY[1]);
@@ -261,7 +262,7 @@ Selenium.prototype.doMouseClick = function(locator, value){
 	this.browserbot.triggerMouseEvent(element, 'mouseup', true, clientXY[0], clientXY[1]);
 	this.browserbot.clickElement(element);
 
-	this.browserbot.shiftKeyDown = this.browserbot.controlKeyDown = this.browserbot.altKeyDown = false;
+	this.browserbot.shiftKeyDown = this.browserbot.controlKeyDown = this.browserbot.altKeyDown = this.browserbot.metaKeyDown = false;
 };
 
 /*Opera requires a special mouseClick as it else clicks twice*/
