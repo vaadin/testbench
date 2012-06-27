@@ -461,7 +461,7 @@ WDAPI.Element.prototype.mouseClick = function(driver, value) {
 		modifiersDown += ".keyDown(Keys.META)"
 		modifiersUp += ".keyUp(Keys.META)"
 	}
-	return "new Actions(" + driver.ref + ").moveToElement(" + this.ref + ")" + modifiersDown + ".click()" + modifiersUp + ".build().perform()";
+	return "new Actions(" + driver.ref + ").moveToElement(" + this.ref + "," + value[0] + ")" + modifiersDown + ".click()" + modifiersUp + ".build().perform()";
 }
 
 WDAPI.Element.prototype.contextmenu = function(driver) {
