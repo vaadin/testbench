@@ -63,10 +63,8 @@ public class CachedInvocationHandler implements InvocationHandler {
      * @param methodName
      */
     private void waitForVaadinIfNecessary(String methodName) {
-        if (shouldNotWaitForVaadin(methodName)) {
-            return;
-        }
-        if (proxyObject instanceof CanWaitForVaadin) {
+        if (shouldWaitForVaadin(methodName)
+                && proxyObject instanceof CanWaitForVaadin) {
             ((CanWaitForVaadin) proxyObject).waitForVaadin();
         }
     }
@@ -77,8 +75,8 @@ public class CachedInvocationHandler implements InvocationHandler {
                     "waitForVaadin", "enableWaitForVaadin",
                     "disableWaitForVaadin");
 
-    private boolean shouldNotWaitForVaadin(String methodName) {
-        return methodsNotNeedingWaitForVaadin.contains(methodName);
+    private boolean shouldWaitForVaadin(String methodName) {
+        return !methodsNotNeedingWaitForVaadin.contains(methodName);
     }
 
     private boolean isMethodCached(Method method) {
