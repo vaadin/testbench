@@ -73,7 +73,7 @@ public class CachedInvocationHandler implements InvocationHandler {
 
     private static final List<String> methodsNotNeedingWaitForVaadin = Arrays
             .asList("close", "get", "getRemoteControlName", "getWrappedDriver",
-                    "manage", "navigate", "quit", "setTestName",
+                    "manage", "navigate", "quit", "setTestName", "switchTo",
                     "waitForVaadin", "enableWaitForVaadin",
                     "disableWaitForVaadin");
 

@@ -536,3 +536,8 @@ WDAPI.Driver.prototype.isTextPresent = function(value) {
 WDAPI.Driver.prototype.screenCapture = function(value) {
 	return "testBench(" + this.ref + ").compareScreen(\"" + value + "\")";
 }
+
+WDAPI.Driver.prototype.assertAlert = function(alert) {
+	//TODO:
+	return "assertAlert";
+}
