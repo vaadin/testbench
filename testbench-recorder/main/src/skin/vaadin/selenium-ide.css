@@ -460,7 +460,8 @@ tree {
 	background-color: white;
 }
 #commands treechildren::-moz-tree-row(selected) {
-	background-color: #B4D8E7;
+	background-color: rgb(101,145,247);
+	/*background-color: #B4D8E7;*/
 }
 #commands treechildren::-moz-tree-row(commandSelectedForReplacement),
 #commands treechildren::-moz-tree-row(commandStarted){
