@@ -30,6 +30,9 @@ Recorder.addEventHandler('type', 'change', function(event) {
  * select / addSelection / removeSelection
  */
 Recorder.addEventHandler('selectFocus', 'focus', function(event) {
+		if(event.target.nodeName == undefined){
+			return;
+		}
 		var tagName = event.target.nodeName.toLowerCase();
 		if ('select' == tagName && event.target.multiple) {
 			this.log.debug('remembering selections');
