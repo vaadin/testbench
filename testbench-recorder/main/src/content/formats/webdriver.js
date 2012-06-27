@@ -786,9 +786,9 @@ SeleniumWebDriverAdaptor.prototype.drop = function(elementLocator, coordinates) 
   return driver.drop(webElement, this.rawArgs[1]);
 }
 
-SeleniumWebDriverAdaptor.prototype.assertAlert = function(alert) {
+SeleniumWebDriverAdaptor.prototype.getAlert = function(value) {
   var driver = new WDAPI.Driver();
-  return driver.assertAlert(alert);
+  return driver.getAlert(this.rawArgs[0]);
 }
 
 //SeleniumWebDriverAdaptor.prototype.isSomethingSelected = function(elementLocator) {
