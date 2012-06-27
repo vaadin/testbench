@@ -472,6 +472,18 @@ WDAPI.Element.prototype.addSelection = function(label) {
   return "new Select(" + this.ref + ").selectByVisibleText(" + xlateArgument(label) + ")";
 };
 
+WDAPI.Element.prototype.dragAndDrop = function(driver, coordinates) {
+  return "new Actions(" + driver.ref + ").dragAndDropBy(" + this.ref + ", " + coordinates + ").perform()";
+};
+
+WDAPI.Driver.prototype.drag = function(dragged, coordinates) {
+  return "Actions dnd = new Actions(" + this.ref + ").moveToElement(" + dragged.ref + ", " + coordinates + ").clickAndHold()";
+}
+
+WDAPI.Driver.prototype.drop = function(target, coordinates) {
+  return "dnd.moveToElement(" + target.ref + ", " + coordinates + ").release().perform()";
+}
+
 WDAPI.Driver.prototype.pressModifierKeys = function(value) {
 	var modifiers = "";
 	if ((new RegExp("shift")).test(value)) {

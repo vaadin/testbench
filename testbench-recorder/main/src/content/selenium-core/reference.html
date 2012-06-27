@@ -712,6 +712,34 @@ waitForPageToLoad.<p>Arguments:</p>
 </dd>
 <br>
 <dt>
+<strong><a name="drag"></a>dragdrop
+		(
+			locator,movementsString
+		)
+	</strong>
+</dt>
+<dd>Initiates a drag of an element. A 'drop' command must follow.<p>Arguments:</p>
+<ul>
+<li>locator - an element locator for the dragged element</li>
+<li>movementsString - offset in pixels from the top left corner of the element where the drag was initiated.</li>
+</ul>
+</dd>
+<br>
+<dt>
+<strong><a name="drop"></a>dragdrop
+		(
+			locator,movementsString
+		)
+	</strong>
+</dt>
+<dd>Drops a dragged element, must follow a 'drag' command.<p>Arguments:</p>
+<ul>
+<li>locator - an element locator for the drop target</li>
+<li>movementsString - offset in pixels from the top left corner of the target where the dragged element was dropped.</li>
+</ul>
+</dd>
+<br>
+<dt>
 <strong><a name="echo"></a>echo
 		(
 			message

@@ -765,6 +765,25 @@ SeleniumWebDriverAdaptor.prototype.addSelection = function(elementLocator, label
     return driver.findElement(locator.type, locator.string).addSelection(this.rawArgs[1].substring("label=".length, this.rawArgs[1].length));
 }
 
+SeleniumWebDriverAdaptor.prototype.dragAndDrop = function(elementLocator, coordinates) {
+    var locator = this._elementLocator(this.rawArgs[0]);
+    var driver = new WDAPI.Driver();
+    return driver.findElement(locator.type, locator.string).dragAndDrop(driver, this.rawArgs[1]);
+}
+
+SeleniumWebDriverAdaptor.prototype.drag = function(elementLocator, coordinates) {
+    var locator = this._elementLocator(this.rawArgs[0]);
+    var driver = new WDAPI.Driver();
+	var webElement = driver.findElement(locator.type, locator.string);
+    return driver.drag(webElement, this.rawArgs[1]);
+}
+
+SeleniumWebDriverAdaptor.prototype.drop = function(elementLocator, coordinates) {
+    var locator = this._elementLocator(this.rawArgs[0]);
+    var driver = new WDAPI.Driver();
+	var webElement = driver.findElement(locator.type, locator.string);
+    return driver.drop(webElement, this.rawArgs[1]);
+}
 
 //SeleniumWebDriverAdaptor.prototype.isSomethingSelected = function(elementLocator) {
 ////  var locator = this._elementLocator(this.rawArgs[0]);

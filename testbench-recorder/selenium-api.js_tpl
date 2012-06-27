@@ -2043,7 +2043,6 @@ Selenium.prototype.doDragAndDropToObject = function(locatorOfObjectToBeDragged, 
    var deltaY = endY - startY;
    
    var movementsString = "" + deltaX + "," + deltaY;
-   
    this.doDragAndDrop(locatorOfObjectToBeDragged, movementsString);
 };
 
