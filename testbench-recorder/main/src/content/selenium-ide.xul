@@ -79,7 +79,10 @@ limitations under the License.
     <toolbar id="toolbar2">
 		<hbox class="toolbar2" align="center" flex="1">
 	        <stack id="speedSliderBox" />
+	        <!--
 	        <toolbarbutton id="play-suite-button" label="Play TestSuite" class="icon" tooltiptext="&playSuiteButton.tooltip;" command="cmd_selenium_play_suite"/>
+	        -->
+	        
 	        <toolbarbutton id="play-button" label="Play" class="icon" tooltiptext="&playButton.tooltip;" command="cmd_selenium_play"/>
 	        <toolbarbutton id="pause-button" label="Pause" class="icon pause" tooltiptext="&pauseButton.tooltip;" command="cmd_selenium_pause"/>
 	        <toolbarbutton id="step-button" label="Step" class="icon" tooltiptext="&stepButton.tooltip;" command="cmd_selenium_step"/>

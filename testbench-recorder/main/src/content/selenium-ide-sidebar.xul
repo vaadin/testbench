@@ -73,7 +73,10 @@ limitations under the License.
     <toolbar class="sidebarToolbar" id="sidebarToolbar_controls">
       <stack id="speedSliderBox" />      
       
+      <!--
       <toolbarbutton id="play-suite-button" label="Play TestSuite" class="icon" tooltiptext="&playSuiteButton.tooltip;" command="cmd_selenium_play_suite"/>
+      -->
+      
       <toolbarbutton id="play-button" label="Play" class="icon" tooltiptext="&playButton.tooltip;" command="cmd_selenium_play"/>
       <toolbarbutton id="pause-button" label="Pause" class="icon pause" tooltiptext="&pauseButton.tooltip;" command="cmd_selenium_pause"/>
       <toolbarbutton id="step-button" label="Step" class="icon" tooltiptext="&stepButton.tooltip;" command="cmd_selenium_step"/>
