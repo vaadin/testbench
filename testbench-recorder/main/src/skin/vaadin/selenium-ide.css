@@ -460,8 +460,20 @@ tree {
 	background-color: white;
 }
 #commands treechildren::-moz-tree-row(selected) {
-	background-color: rgb(101,145,247);
+	background-color: #B4D8E7;
 }
+#commands treechildren::-moz-tree-row(commandSelectedForReplacement),
+#commands treechildren::-moz-tree-row(commandStarted){
+     background-color: #FFF0AA;
+}
+#commands treechildren::-moz-tree-row(commandDone),
+#commands treechildren::-moz-tree-row(commandPassed) {
+	background-color: #B0E57C;
+}
+#commands treechildren::-moz-tree-row(commandFailed) {
+    background-color: #FFAEAE;
+}
+
 #commands treechildren::-moz-tree-cell-text(selected) {
 	color: white;
 	text-shadow: #DDD 10px 10px 2px;

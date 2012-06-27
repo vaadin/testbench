@@ -531,10 +531,13 @@ objectExtend(TreeView.prototype, {
             }
         },
         getRowProperties: function(row, props) {
-            var command = this.getCommand(row);
+            var command = this.getCommand(row);        
             if (this.selection.isSelected(row)) return;
             if (row == this.testCase.debugContext.debugIndex) {
-                props.AppendElement(this.atomService.getAtom("debugIndex"));
+                props.AppendElement(this.atomService.getAtom("debugIndex"));               
+            }            
+            if (command.result == 'started') {
+            	props.AppendElement(this.atomService.getAtom("commandStarted"));
             } else if (command.result == 'done') {
                 props.AppendElement(this.atomService.getAtom("commandDone"));
             } else if (command.result == 'passed') {
@@ -544,7 +547,7 @@ objectExtend(TreeView.prototype, {
             } else if (command.selectedForReplacement) {
                 props.AppendElement(this.atomService.getAtom(
                     'commandSelectedForReplacement'));
-            }
+            } 
         },
         getCellProperties: function(row, col, props) {
             var command = this.getCommand(row);

@@ -145,6 +145,7 @@ objectExtend(IDETestLoop.prototype, {
         commandStarted: function() {
             // editor.setState("playing");
             //setState(Debugger.PLAYING);
+        	testCase.debugContext.currentCommand().result = 'started';
             editor.view.rowUpdated(testCase.debugContext.debugIndex);
             editor.view.scrollToRow(testCase.debugContext.debugIndex);
         },
