@@ -5,33 +5,37 @@ This is a simple example project that uses Vaadin TestBench. The project produce
 a standard WAR file containing a simple calculator application written with Vaadin. 
 During the build phase the artifact is tested using Vaadin TestBench. 
 
-The project is built using Maven. Similar setup can be done using other build
-systems as well. The maven project can easily be imported to any IDE supporting 
-Maven or used via command line interface. Maven can be downlaoded from:
+The project is built using Maven. A similar setup can be done using other build
+systems as well. The maven project can easily be imported into any IDE supporting 
+Maven or used via the command line interface. Maven can be downlaoded from:
 http://maven.apache.org
 
-Currently TestBench isn't available in any public repository. So before working 
-with this example project examples, you must ensure TestBench is installed into
-your local maven proxy or to install it directly into your local Maven repository 
-by executing the following command in the <TESTBENCH PACKAGE ROOT>/maven directory:
+TestBench is currently not available in any public repository. This means that
+before working with this example project examples, you must ensure TestBench is
+installed into your local maven proxy or to install it directly into your local
+Maven repository by executing the following command in the
+<TESTBENCH PACKAGE ROOT>/maven directory:
 
 	mvn install:install-file \
 	-Dfile=vaadin-testbench-@version@.jar \
 	-Djavadoc=vaadin-testbench-@version@-javadoc.jar \
 	-DpomFile=pom.xml
 
-After that the project is ready for your testing, learning or evaluation.
+Once the library is installed, the project is ready for your testing, learning
+or evaluation.
 
 During the build process TestBench tests are automatically run against the final
-war file using a jetty server. Java classes (JUnit tests in this project) ending 
-ITCase are considered as integration tests. From command line the build (including
-tests) can be run with following command:
-mvn install
+war file using a Jetty server. Java classes (JUnit tests in this project) ending 
+in "ITCase" are considered integration. The build (including tests) can be run
+from the command line by issuing the following command:
 
-If you are running specific tests directly via IDE, you might need to deploy the
-project beforehand to http://localhost:8080/. Any method will do, but easiest
+	mvn install
+
+If you are running specific tests directly via an IDE, you might need to deploy the
+project beforehand to http://localhost:8080/. Any method will do, but the easiest
 one is probably Maven and the jetty-maven-plugin:
-mvn jetty:run
+
+	mvn jetty:run
 
 
 About the maven example project
@@ -53,6 +57,7 @@ created like this:
 
 After the project was generated, the pom.xml was edited and the following 
 dependencies were added:
+
 	<dependency>
 		<groupId>com.vaadin</groupId>
 		<artifactId>vaadin-testbench</artifactId>
@@ -66,10 +71,10 @@ dependencies were added:
 		<scope>test</scope>
 	</dependency>
 
-In addition jetty-maven-plugin is used to automatically deploy the war to a Jetty server 
+Additionally jetty-maven-plugin is used to automatically deploy the war to a Jetty server 
 during the integration-test phase and maven-failsafe-plugin is configured to run tests 
-named with *ITCase convention from src/test/java directory. Check their setup 
-from the pom.xml file.
+named using the *ITCase convention from the src/test/java directory. Check their setup 
+in the pom.xml file.
 
 That's it.
 
@@ -82,3 +87,10 @@ target/testbench/screenshot_errors/
 
 See src/test/java/com/vaadin/testbenchexample/ScreenshotITCase.java for the code that sets the parameters
 that specify the above directories and performs actual screenshot comparison tests.
+
+If a screenshot comparison test fails, it might be because your system differs from our systems in some
+way that causes the generated screenshots to be different. If this is the case, you can make the tests pass
+by copying the correct looking screenshots from target/testbench/screenshot_errors/ to the
+src/test/resources/screenshots/ directory. This will make the screenshot tests pass again. Note that some
+of the screenshot tests rely on masked reference images which are created by loading the reference screenshot
+into a program such as Paint.NET (http://www.getpaint.net/) and erase the part of the image that is dynamic.
