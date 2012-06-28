@@ -7,7 +7,7 @@
 	<!-- Load version from properties file. If not found, version is specified below. -->
     <property file="${build.properties.file}" />
 	
-	<property name="version.base" value="3.0.0-FOOBAR" />
+	<property name="version.base" value="3.0.0-SNAPSHOT" />
 	<property name="manual.version" value="3.0"/>
 	        	
 	<tstamp />
@@ -112,7 +112,7 @@
 			<property name="version" value="${version}"/>
 			<fileset dir="../testbench-recorder" includes="build.xml" />
 		</subant>
-		<copy file="../testbench-recorder/extension/vaadin-testbench-recorder-${version}.xpi" todir="${output.dir}/vaadin-testbench-recorder" />
+		<copy file="../testbench-recorder/extension/vaadin-testbench-recorder-${version}.xpi" todir="${output.dir}" />
 	</target>
 
 	<target name="testbench-distribution-package" depends="testbench-standalone.jar,testbench.jar,javadoc.jar,testbench-recorder,run-tests">
@@ -162,7 +162,7 @@
 		<zip destfile="${output.dir}/vaadin-testbench-${version}.zip">
 			<zipfileset dir="${output.dir}" includes="MANIFEST.MF" prefix="META-INF"/>
 			<zipfileset dir="${output.dir}" includes="vaadin-testbench-standalone-${version}.jar,vaadin-testbench-standalone-${version}-javadoc.jar" prefix=""/>
-			<zipfileset dir="${output.dir}" includes="vaadin-testbench-recorder/vaadin-testbench-recorder-${version}.xpi" prefix="" />
+			<zipfileset dir="${output.dir}" includes="vaadin-testbench-recorder-${version}.xpi" prefix="" />
 			<zipfileset dir="${output.dir}" includes="vaadin-testbench-${version}.jar,vaadin-testbench-${version}-javadoc.jar" prefix="maven" />
 			<zipfileset dir="result" includes="pom.xml" prefix="maven" />
 			<zipfileset dir="result/maven" includes="INSTALL" prefix="maven" />

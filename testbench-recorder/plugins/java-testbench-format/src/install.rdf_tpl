@@ -3,7 +3,7 @@
  xmlns:em="http://www.mozilla.org/2004/em-rdf#">
     <Description about="urn:mozilla:install-manifest">
         <em:id>java-testbench-formatters@vaadin.com</em:id>
-        <em:name>TestBench Recorder: Java Formatters</em:name>
+        <em:name>Vaadin TestBench Recorder: Java Formatters</em:name>
         <em:version>@build@</em:version>
         <em:developer>Jonatan Kronqvist</em:developer>
         <em:creator>Jonatan Kronqvist</em:creator>
