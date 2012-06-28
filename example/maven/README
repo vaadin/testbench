@@ -16,8 +16,8 @@ your local maven proxy or to install it directly into your local Maven repositor
 by executing the following command in the <TESTBENCH PACKAGE ROOT>/maven directory:
 
 	mvn install:install-file \
-	-Dfile=vaadin-testbench-3.0.0-SNAPSHOT.jar \
-	-Djavadoc=vaadin-testbench-3.0.0-SNAPSHOT-javadoc.jar \
+	-Dfile=vaadin-testbench-@version@.jar \
+	-Djavadoc=vaadin-testbench-@version@-javadoc.jar \
 	-DpomFile=pom.xml
 
 After that the project is ready for your testing, learning or evaluation.
@@ -56,7 +56,7 @@ dependencies were added:
 	<dependency>
 		<groupId>com.vaadin</groupId>
 		<artifactId>vaadin-testbench</artifactId>
-		<version>3.0.0-SNAPSHOT</version>
+		<version>@version@</version>
 		<scope>test</scope>
 	</dependency>
 	<dependency>

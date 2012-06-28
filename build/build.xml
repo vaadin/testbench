@@ -7,7 +7,7 @@
 	<!-- Load version from properties file. If not found, version is specified below. -->
     <property file="${build.properties.file}" />
 	
-	<property name="version.base" value="3.0.0-SNAPSHOT" />
+	<property name="version.base" value="3.0.0-FOOBAR" />
 	<property name="manual.version" value="3.0"/>
 	        	
 	<tstamp />
@@ -136,7 +136,27 @@
             </filterchain>
             <fileset dir="../doc">
                 <include name="releasenotes.html" />
+            	<include name="maven/INSTALL" />
             </fileset>
+        	<fileset dir=".">
+        		<include name="pom.xml" />
+        	</fileset>
+        </copy>
+        <copy file="../example/maven/packaged-pom.xml" tofile="result/example/pom.xml">
+            <filterchain>
+                <expandproperties />
+                <replacetokens begintoken="@" endtoken="@">
+                    <token key="version" value="${version}" />
+                </replacetokens>
+            </filterchain>
+        </copy>
+        <copy file="../example/maven/README" todir="result/example">
+            <filterchain>
+                <expandproperties />
+                <replacetokens begintoken="@" endtoken="@">
+                    <token key="version" value="${version}" />
+                </replacetokens>
+            </filterchain>
         </copy>
 
 		<zip destfile="${output.dir}/vaadin-testbench-${version}.zip">
@@ -144,9 +164,10 @@
 			<zipfileset dir="${output.dir}" includes="vaadin-testbench-standalone-${version}.jar,vaadin-testbench-standalone-${version}-javadoc.jar" prefix=""/>
 			<zipfileset dir="${output.dir}" includes="vaadin-testbench-recorder/vaadin-testbench-recorder-${version}.xpi" prefix="" />
 			<zipfileset dir="${output.dir}" includes="vaadin-testbench-${version}.jar,vaadin-testbench-${version}-javadoc.jar" prefix="maven" />
-			<zipfileset dir="." includes="pom.xml" prefix="maven" />
-			<zipfileset dir="../doc/maven" includes="INSTALL" prefix="maven" />
-			<zipfileset dir=".." includes="example/**/**" excludes="**/*.class,**/target/**" prefix="" />
+			<zipfileset dir="result" includes="pom.xml" prefix="maven" />
+			<zipfileset dir="result/maven" includes="INSTALL" prefix="maven" />
+			<zipfileset dir="../example/maven" includes="**/**" excludes="README,*pom.xml,**/*.class,**/target/**" prefix="example" />
+			<zipfileset dir="result" includes="example/*" />
 
 			<!-- Add documentation -->
 			<zipfileset dir="../doc" prefix="documentation">
