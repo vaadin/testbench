@@ -8,6 +8,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.interactions.Actions;
@@ -56,12 +57,11 @@ public class AdvancedCommandsITCase extends TestBenchTestCase {
 
         // The rest of the test is less relevant as a context menu
         // demonstration. We just fill in a comment and verify the commenting
-        // feature works as expected
+        // feature works as expected.
+        // Also send a Keys.RETURN at the end of the string to make sure that
+        // a value change event is sent.
         getDriver().findElement(By.className("v-textfield")).sendKeys(
-                COMMENT_TEXT);
-
-        // FIXME this shouldn't be needed!
-        getDriver().findElement(By.className("v-textfield")).sendKeys("\n");
+                COMMENT_TEXT, Keys.RETURN);
 
         getDriver().findElement(By.xpath("//*[text() = 'Add']")).click();
 
