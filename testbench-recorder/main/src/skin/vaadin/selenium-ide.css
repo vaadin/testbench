@@ -275,7 +275,7 @@ toolbarbutton.icon label {
 }
 #play-button {
 	-moz-image-region: auto;
-    list-style-image: url("play-testcase.png");
+    list-style-image: url("play.png");
 }
 .pause#pause-button,
 .resume#pause-button { 
