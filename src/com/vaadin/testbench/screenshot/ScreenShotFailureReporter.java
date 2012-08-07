@@ -228,9 +228,9 @@ public class ScreenShotFailureReporter {
                     + "document.getElementById('reference').style.display='none';document.getElementById('diff').style.display='block';"
                     + "}}</script>");
             writer.println("</head>");
-            writer.println("<body onclick=\"switchImage()\">");
+            writer.println("<body onclick=\"switchImage()\" style=\"-moz-user-select: none; -webkit-user-select: none; -ms-user-select: none;\">");
 
-            writer.println("<div id=\"diff\" style=\"display: block; position: absolute; top: 0px; left: 0px; \"><img src=\"data:image/png;base64,"
+            writer.println("<div id=\"diff\" style=\"display: block; position: absolute; top: 0px; left: 0px;\"><img src=\"data:image/png;base64,"
                     + image
                     + "\"/><span style=\"position: absolute; top: 0px; left: 0px; opacity:0.4; filter: alpha(opacity=40); font-weight: bold;\">Image for this run</span></div>");
             writer.println("<div id=\"reference\" style=\"display: none; position: absolute; top: 0px; left: 0px; z-index: 999;\"><img src=\"data:image/png;base64,"
