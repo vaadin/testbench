@@ -189,7 +189,11 @@ Selenium.prototype.doEnterCharacter = function(locator, value){
             }
         }
     } else {
-        element.value = actualValue;
+    	if (typeof XPCNativeWrapper != "undefined") {
+    		XPCNativeWrapper(element).value = actualValue;	
+    	} else {
+    		element.value = actualValue;
+    	}
     }
 
     value = value.replace(/\n/g, "");
