@@ -3,6 +3,7 @@
 <project name="TestBench IDE extension" basedir="." default="extension">
 	<tstamp />
 	<property name="version" value="3.0.0-SNAPSHOT" />
+	<property name="signer" value="/opt/scripts/jarsigner/testbenchsigner.sh" />
 
 	<target name="testbench-recorder-package" depends="install-rdfs,create-extension">
 		<copy todir="extension/tmp/package">
@@ -71,8 +72,28 @@
 		</copy>
 	</target>
 	
+	<target name="check-signer-exists">
+		<available file="${signer}" property="signer.exists" />
+	</target>
+
+	<target name="sign" depends="check-signer-exists" if="signer.exists">
+		<exec executable="${signer}">
+			<arg value="extension/vaadin-testbench-recorder-${version}.xpi" />
+		</exec>
+	</target>
+
+	<target name="sign-inner" depends="check-signer-exists,testbench-recorder-package,testbench-formatter" if="signer.exists">
+		<exec executable="${signer}">
+			<arg value="extension/vaadin-testbench-recorder.xpi" />
+		</exec>
+		<exec executable="${signer}">
+			<arg value="extension/java-testbench-format.xpi" />
+		</exec>
+	</target>
 	
-	<target name="extension" depends="clean,install-rdfs,testbench-recorder-package,testbench-formatter">
+	<target name="extension" depends="package-all, sign" />
+	
+	<target name="package-all" depends="clean,install-rdfs,testbench-recorder-package,testbench-formatter,sign-inner">
 		<zip destfile="extension/vaadin-testbench-recorder-${version}.xpi">
 			<fileset dir="." includes="install.rdf" />
 			<fileset dir="extension" includes="vaadin-testbench-recorder.xpi,java-testbench-format.xpi" />
