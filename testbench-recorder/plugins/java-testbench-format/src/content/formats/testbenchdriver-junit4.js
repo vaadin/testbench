@@ -118,7 +118,7 @@ RegexpMatch.prototype.toString = function() {
 
 function waitFor(expression) {
   return "for (int second = 0;; second++) {\n" +
-      "\tif (second >= 60) fail(\"timeout\");\n" +
+      "\tif (second >= 30) fail(\"timeout\");\n" +
       "\ttry { " + (expression.setup ? expression.setup() + " " : "") +
       "if (" + expression.toString() + ") break; } catch (Exception e) {}\n" +
       "\tThread.sleep(1000);\n" +
