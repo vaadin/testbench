@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.remote.Augmenter;
 
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 
@@ -14,6 +15,8 @@ import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 public class TestBench {
 
     public static WebDriver createDriver(WebDriver driver) {
+        driver = new Augmenter().augment(driver);
+
         Set<Class<?>> allInterfaces = extractInterfaces(driver);
         allInterfaces.addAll(extractInterfaces(TestBenchDriver.class));
         final Class<?>[] allInterfacesArray = allInterfaces
