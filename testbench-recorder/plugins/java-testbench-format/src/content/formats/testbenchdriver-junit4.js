@@ -476,6 +476,10 @@ WDAPI.Element.prototype.dragAndDrop = function(driver, coordinates) {
   return "new Actions(" + driver.ref + ").dragAndDropBy(" + this.ref + ", " + coordinates + ").perform()";
 };
 
+WDAPI.Element.prototype.doubleClickAt = function(driver, value) {
+  return "new Actions(" + driver.ref + ").doubleClick(" + this.ref + ")";
+};
+
 WDAPI.Driver.prototype.drag = function(dragged, coordinates) {
   return "Actions dnd = new Actions(" + this.ref + ").moveToElement(" + dragged.ref + ", " + coordinates + ").clickAndHold()";
 }
@@ -539,4 +543,16 @@ WDAPI.Driver.prototype.screenCapture = function(value) {
 
 WDAPI.Driver.prototype.getAlert = function(alert) {
 	return this.ref + ".switchTo().alert().getText()";
+}
+
+WDAPI.Driver.prototype.selectFrame = function(locatorType, locator) {
+  var frame = "";
+  if (locatorType == "index") {
+    frame = locator;
+  } else if (locatorType == "relative") {
+    return "// WARNING: The recording switched to a relative frame [relative=" + locator + "] but WebDriver doesn't support this.";
+  } else {
+    frame = this.findElement(locatorType, locator);
+  }
+  return this.ref + ".switchTo().frame(" + frame + ")";
 }

@@ -488,6 +488,12 @@ SeleniumWebDriverAdaptor.prototype._elementLocator = function(sel1Locator) {
   if (locator.type == 'vaadin') {
     return locator;
   }
+  if (locator.type == 'index') {
+    return locator;
+  }
+  if (locator.type == 'relative') {
+    return locator;
+  }
   if (sel1Locator.match(/^document/) || locator.type == 'dom') {
     throw 'Error: Dom locators are not implemented yet!';
   }
@@ -789,6 +795,19 @@ SeleniumWebDriverAdaptor.prototype.drop = function(elementLocator, coordinates) 
 SeleniumWebDriverAdaptor.prototype.getAlert = function(value) {
   var driver = new WDAPI.Driver();
   return driver.getAlert(this.rawArgs[0]);
+}
+SeleniumWebDriverAdaptor.prototype.selectFrame = function(elementLocator) {
+  var locator = this._elementLocator(this.rawArgs[0]);
+  // return driver.findElement(locator.type, locator.string).focus();
+  var driver = new WDAPI.Driver();
+  return driver.selectFrame(locator.type, locator.string);
+}
+
+SeleniumWebDriverAdaptor.prototype.doubleClickAt = function(elementLocator, value) {
+   var driver = new WDAPI.Driver();
+   var locator = this._elementLocator(this.rawArgs[0]);
+   var webElement = driver.findElement(locator.type, locator.string);
+   return webElement.doubleClickAt(driver, this.rawArgs[1]);
 }
 
 //SeleniumWebDriverAdaptor.prototype.isSomethingSelected = function(elementLocator) {
