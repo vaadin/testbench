@@ -4,6 +4,7 @@ import java.lang.reflect.Proxy;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.Augmenter;
@@ -15,7 +16,9 @@ import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 public class TestBench {
 
     public static WebDriver createDriver(WebDriver driver) {
-        driver = new Augmenter().augment(driver);
+        if (!(driver instanceof TakesScreenshot)) {
+            driver = new Augmenter().augment(driver);
+        }
 
         Set<Class<?>> allInterfaces = extractInterfaces(driver);
         allInterfaces.addAll(extractInterfaces(TestBenchDriver.class));
