@@ -16,6 +16,7 @@ import java.util.logging.Logger;
 import javax.imageio.IIOException;
 import javax.imageio.ImageIO;
 
+import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.HasCapabilities;
 import org.openqa.selenium.JavascriptExecutor;
@@ -157,8 +158,10 @@ public class TestBenchCommandExecutor implements TestBenchCommands,
     @Override
     public boolean compareScreen(String referenceId) throws IOException,
             AssertionError {
+        Capabilities capabilities = ((HasCapabilities) actualDriver)
+                .getCapabilities();
         String referenceName = referenceNameGenerator.generateName(referenceId,
-                ((HasCapabilities) actualDriver).getCapabilities());
+                capabilities);
 
         for (int times = 0; times < Parameters.getMaxScreenshotRetries(); times++) {
             BufferedImage screenshotImage = ImageIO
@@ -168,7 +171,7 @@ public class TestBenchCommandExecutor implements TestBenchCommands,
             boolean equal = imageComparison.imageEqualToReference(
                     screenshotImage, referenceName,
                     Parameters.getScreenshotComparisonTolerance(),
-                    Parameters.isCaptureScreenshotOnFailure());
+                    Parameters.isCaptureScreenshotOnFailure(), capabilities);
             if (equal) {
                 return true;
             }

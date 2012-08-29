@@ -8,6 +8,8 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
+import org.openqa.selenium.Capabilities;
+
 import com.vaadin.testbench.Parameters;
 
 public class ImageFileUtil {
@@ -68,11 +70,13 @@ public class ImageFileUtil {
      * {@link #getReferenceScreenshotFile(String)}.
      * 
      * @param referenceImageFileName
+     * @param capabilities
      * @return file names of reference images
      */
     public static List<String> getReferenceImageFileNames(
-            String referenceImageFileName) {
-        return impl.getReferenceImageFileNames(referenceImageFileName);
+            String referenceImageFileName, Capabilities capabilities) {
+        return impl.getReferenceImageFileNames(referenceImageFileName,
+                capabilities);
     }
 
     public static class ImageFileUtilImpl {
@@ -155,12 +159,14 @@ public class ImageFileUtil {
          * {@link #getReferenceScreenshotFile(String)}.
          * 
          * @param referenceImageFileName
+         * @param capabilities
          * @return file names of reference images
          */
         public List<String> getReferenceImageFileNames(
-                String referenceImageFileName) {
+                String referenceImageFileName, Capabilities capabilities) {
             ArrayList<String> referenceImages = new ArrayList<String>();
-            String nextName = referenceImageFileName;
+            String nextName = findActualFileName(referenceImageFileName,
+                    capabilities);
             File file = getReferenceScreenshotFile(nextName);
             int i = 1;
             while (file.exists()) {
@@ -172,5 +178,53 @@ public class ImageFileUtil {
 
             return referenceImages;
         }
+
+        private String findActualFileName(String referenceFileName,
+                Capabilities cap) {
+            if (cap == null) {
+                return referenceFileName;
+            }
+            String fileName = findOldReferenceScreenshot(
+                    cap.getBrowserName(),
+                    Integer.valueOf(ReferenceNameGenerator.getMajorVersion(cap)),
+                    referenceFileName);
+            return fileName;
+        }
+
+        /**
+         * Checks for reference screenshots for older versions of Google Chrome
+         * and use that instead of the generated file name if so.
+         * 
+         * @param browserName
+         *            the browser identifier (name + version, e.g. "Chrome_17")
+         * @param browserVersion
+         * @param fileName
+         *            the file name generated from the test name and browser
+         *            name + version.
+         * @return the generated file name or the file name of a reference image
+         *         that actually exists (for an older version of Chrome).
+         */
+        String findOldReferenceScreenshot(String browserName,
+                int browserVersion, String fileName) {
+            String newFileName = new String(fileName);
+            if (!ImageFileUtil.getReferenceScreenshotFile(fileName).exists()) {
+                String navigatorId = browserName + "_" + browserVersion;
+                int nextVersion = browserVersion;
+                String fileNameTemplate = fileName.replace(navigatorId, "####");
+                do {
+                    nextVersion--;
+                    newFileName = fileNameTemplate.replace("####",
+                            String.format("%s_%d", browserName, nextVersion));
+                } while (!ImageFileUtil.getReferenceScreenshotFile(newFileName)
+                        .exists() && nextVersion > 0);
+                // We didn't find any existing screenshot for any older
+                // versions of the browser.
+                if (nextVersion == 0) {
+                    newFileName = fileName;
+                }
+            }
+            return newFileName;
+        }
+
     }
 }

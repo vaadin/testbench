@@ -11,6 +11,8 @@ import javax.imageio.ImageIO;
 
 import junit.framework.Assert;
 
+import org.openqa.selenium.Capabilities;
+
 import com.vaadin.testbench.Parameters;
 
 /**
@@ -32,16 +34,20 @@ public class ImageComparison {
      * @param writeScreenshots
      *            true if error images and diff files should be written to disk,
      *            false otherwise
+     * @param capabilities
+     *            browser capabilities
      * @return true if images are the same
      * @throws IOException
      */
     public boolean imageEqualToReference(BufferedImage screenshotImage,
             String referenceFileId, double errorTolerance,
-            boolean writeScreenshots) throws IOException {
+            boolean writeScreenshots, Capabilities capabilities)
+            throws IOException {
         ImageFileUtil.createScreenshotDirectoriesIfNeeded();
 
         List<String> referenceFileNames = ImageFileUtil
-                .getReferenceImageFileNames(referenceFileId + ".png");
+                .getReferenceImageFileNames(referenceFileId + ".png",
+                        capabilities);
 
         if (referenceFileNames.isEmpty()) {
             // We require a reference image to continue

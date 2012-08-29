@@ -247,8 +247,9 @@ public class TestBenchCommandExecutorTest {
                 icMock.imageEqualToReference(isA(BufferedImage.class),
                         eq(referenceName),
                         eq(Parameters.getScreenshotComparisonTolerance()),
-                        eq(Parameters.isCaptureScreenshotOnFailure())))
-                .andReturn(expected).times(timesCalled);
+                        eq(Parameters.isCaptureScreenshotOnFailure()),
+                        isA(Capabilities.class))).andReturn(expected).times(
+                timesCalled);
         return icMock;
     }
 

@@ -36,7 +36,7 @@ public class ReferenceNameGenerator {
      *            the capabilities object holding the version information
      * @return the major version of the browser.
      */
-    private String getMajorVersion(Capabilities browserCapabilities) {
+    public static String getMajorVersion(Capabilities browserCapabilities) {
         String versionString = browserCapabilities.getVersion();
         if (versionString.contains(".")) {
             return versionString.substring(0, versionString.indexOf('.'));
