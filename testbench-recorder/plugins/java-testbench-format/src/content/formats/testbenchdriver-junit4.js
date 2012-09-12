@@ -450,8 +450,8 @@ WDAPI.Element.prototype.mouseClick = function(driver, value) {
 		modifiersUp += ".keyUp(Keys.SHIFT)";
 	}
 	if (ctrl) {
-		modifiersDown += ".keyDown(Keys.CTRL)"
-		modifiersUp += ".keyUp(Keys.CTRL)"
+		modifiersDown += ".keyDown(Keys.CONTROL)"
+		modifiersUp += ".keyUp(Keys.CONTROL)"
 	}
 	if (alt) {
 		modifiersDown += ".keyDown(Keys.ALT)"
