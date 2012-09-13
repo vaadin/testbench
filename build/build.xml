@@ -191,7 +191,7 @@
     </target>
 	
 	<target name="git-log">
-		<exec executable="git" output="build/result/vaadin-testbench3-git-log.txt">
+		<exec executable="git" output="result/vaadin-testbench3-git-log.txt">
 			<arg value="log" />
 			<arg value="--pretty=oneline" />                
 		</exec>
