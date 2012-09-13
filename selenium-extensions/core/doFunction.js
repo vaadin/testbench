@@ -480,7 +480,12 @@ Selenium.prototype.doUploadFile = function(locator, value){
 	this.doType(locator, value);
 };
 
-/* Override doType to replay as a bunch of enterCharacter's */
+/* Override doType to replay as a bunch of enterCharacter's unless value is an empty string */
 Selenium.prototype.doType = function(locator, value) {
-	this.doEnterCharacter(locator, value);
+	if ("" == value) {
+	    var element = this.browserbot.findElement(locator);
+		core.events.setValue(element, value);
+	} else {
+		this.doEnterCharacter(locator, value);
+	}
 }
