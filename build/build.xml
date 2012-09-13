@@ -189,4 +189,12 @@
             <property name="class.path" value="${class.path}"/>
         </subant>
     </target>
+	
+	<target name="git-log">
+		<exec executable="git" output="build/result/timeline-git-log.txt">
+			<arg value="log" />
+			<arg value="--pretty=oneline" />                
+		</exec>
+	</target>
+
 </project>
