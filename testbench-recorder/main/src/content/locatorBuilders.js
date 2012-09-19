@@ -55,7 +55,8 @@ LocatorBuilders.prototype.build = function(e) {
   }
 };
 
-LocatorBuilders.prototype.buildAll = function(e) {
+LocatorBuilders.prototype.buildAll = function(el) {
+  var e = core.firefox.unwrap(el);	// Samit: Fix: Do the magic to get it to work in Firefox 4
   var xpathLevel = 0;
   var maxLevel = 10;
   var locator;
@@ -65,7 +66,11 @@ LocatorBuilders.prototype.buildAll = function(e) {
   for (var i = 0; i < LocatorBuilders.order.length; i++) {
     var finderName = LocatorBuilders.order[i];
     this.log.debug("trying " + finderName);
-    locator = this.buildWith(finderName, e);
+    if (finderName == 'vaadin') {
+      locator = this.buildWith(finderName, el);
+    } else {
+      locator = this.buildWith(finderName, e);
+    }
     if (locator) {
       locator = String(locator);
       this.log.debug("locator=" + locator);
@@ -77,8 +82,14 @@ LocatorBuilders.prototype.buildAll = function(e) {
         //alert(PageBot.prototype.locateElementByUIElement);
         var is_fuzzy_match = this.pageBot().locationStrategies[finderName].is_fuzzy_match;
         if (is_fuzzy_match) {
-          if (is_fuzzy_match(this.findElement(locator), e)) {
-            locators.push([ locator, finderName ]);
+          if (finderName == 'vaadin') {
+            if (is_fuzzy_match(this.findElement(locator), el)) {
+              locators.push([ locator, finderName ]);
+            }
+          } else {
+            if (is_fuzzy_match(this.findElement(locator), e)) {
+              locators.push([ locator, finderName ]);
+            }
           }
         }
         else {
