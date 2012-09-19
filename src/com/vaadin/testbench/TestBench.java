@@ -15,6 +15,10 @@ import com.vaadin.testbench.commands.TestBenchCommandExecutor;
  */
 public class TestBench {
 
+    static {
+        LicenseNag.nag();
+    }
+
     public static WebDriver createDriver(WebDriver driver) {
         if (!(driver instanceof TakesScreenshot)) {
             driver = new Augmenter().augment(driver);
