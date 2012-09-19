@@ -55,8 +55,7 @@ LocatorBuilders.prototype.build = function(e) {
   }
 };
 
-LocatorBuilders.prototype.buildAll = function(el) {
-  var e = core.firefox.unwrap(el);    //Samit: Fix: Do the magic to get it to work in Firefox 4
+LocatorBuilders.prototype.buildAll = function(e) {
   var xpathLevel = 0;
   var maxLevel = 10;
   var locator;
@@ -314,16 +313,11 @@ LocatorBuilders.add('vaadin', function(e) {
 		// Not a Vaadin application
 		return null;
 	}
-
-	/* Unwrap the element if wrapped so we can access tkPid */
-	if (e.wrappedJSObject) {
-		e = e.wrappedJSObject;
-	}
 	
 	/* Catches a java.lang.ClassCastException for popupView
 	 * that stops the whole Locator search.
 	 */
-	for ( var windowname in connector.clients) {
+	for (var windowname in connector.clients) {
 		var path = connector.clients[windowname].getPathForElement(e);
 		if (path != null) {
 			return "vaadin=" + windowname + "::" + path;

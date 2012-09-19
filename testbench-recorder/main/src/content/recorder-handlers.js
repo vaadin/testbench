@@ -416,7 +416,7 @@ var noSelection = true;
 var clicked = false;
 var cancelClick = false;
 
-Recorder.addEventHandler('clickLocator', 'click', function(event){		
+Recorder.addEventHandler('clickLocator', 'click', function(event){
 	if(cancelClick){
 		cancelClick = false;
 		return;
@@ -655,10 +655,14 @@ Recorder.addEventHandler('append', 'DOMNodeInserted', function(event){
 });
 
 Recorder.addEventHandler('remove', 'DOMNodeRemoved', function(event){
-	if(event.target.nodeName.toLowerCase() == "div"){
+	var target = event.target;
+	if (target.wrappedJSObject) {
+		target = target.wrappedJSObject;
+	}
+	if(target.nodeName.toLowerCase() == "div"){
 		/* If a Notification was removed. Record closeNotification event for closing notification */
-		if((new RegExp("Notification")).test(event.target.className)){
-			this.record("closeNotification", this.findLocators(event.target), '0,0');
+		if((new RegExp("Notification")).test(target.className)){
+			this.record("closeNotification", this.findLocators(target), '0,0');
 		}
 	}
 });

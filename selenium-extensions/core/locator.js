@@ -55,14 +55,14 @@ if(navigator.userAgent.toLowerCase().indexOf('chrome/') > -1){
 
 @bot@.prototype.locateElementByVaadin.is_fuzzy_match = function(node, target) {
 	try {
+		var unwrapped = target;
     	if ("unwrap" in XPCNativeWrapper) {
-    		target = XPCNativeWrapper.unwrap(target);
+    		unwrapped = XPCNativeWrapper.unwrap(target);
     	}else if (target.wrappedJSObject) {
-    		target = target.wrappedJSObject;
+    		unwrapped = target.wrappedJSObject;
         }
     	
-
-        var isMatch = (node == target) || is_ancestor(node, target);
+        var isMatch = (node == target || node == unwrapped) || is_ancestor(node, target) || is_ancestor(node, unwrapped);
         return isMatch;
     }
     catch (e) {

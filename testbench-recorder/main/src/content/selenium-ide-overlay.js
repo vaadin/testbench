@@ -227,7 +227,7 @@ SeleniumIDE.Overlay.onContentLoaded = function(event) {
             isRootDocument = true;
         }
     }
-    //SeleniumIDE.Loader.reloadRecorder(window.getBrowser().contentWindow, isRootDocument);
+//    SeleniumIDE.Loader.reloadRecorder(window.getBrowser().contentWindow, isRootDocument);
     SeleniumIDE.Loader.reloadRecorder(event.target.defaultView, isRootDocument);
     
     var contextMenu = window.document.getElementById("contentAreaContextMenu");
