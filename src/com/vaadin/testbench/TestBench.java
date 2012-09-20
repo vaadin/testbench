@@ -16,7 +16,7 @@ import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 public class TestBench {
 
     static {
-        LicenseNag.nag();
+        LicenseChecker.nag();
     }
 
     public static WebDriver createDriver(WebDriver driver) {
