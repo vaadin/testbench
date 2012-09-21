@@ -26,6 +26,51 @@
 		<mkdir dir="${output.dir}" />
 		<mkdir dir="result/classes" />
 	</target>
+	
+	<target name="replace-tokens" depends="make-output-dirs">
+	    <copy todir="${output.dir}">
+	        <filterchain>
+	            <expandproperties />
+	            <replacetokens begintoken="@" endtoken="@">
+	                <token key="version" value="${version}" />
+	            </replacetokens>
+	        </filterchain>
+	        <fileset dir=".">
+	            <include name="MANIFEST.MF" />
+	        </fileset>
+	    </copy>
+	    <copy todir="result">
+	        <filterchain>
+	            <expandproperties />
+	            <replacetokens begintoken="@" endtoken="@">
+	                <token key="version" value="${version}" />
+	            </replacetokens>
+	        </filterchain>
+	        <fileset dir="../doc">
+	            <include name="releasenotes.html" />
+	        	<include name="maven/INSTALL" />
+	        </fileset>
+	    	<fileset dir=".">
+	    		<include name="pom.xml" />
+	    	</fileset>
+	    </copy>
+        <copy file="../example/maven/packaged-pom.xml" tofile="result/example/pom.xml">
+            <filterchain>
+                <expandproperties />
+                <replacetokens begintoken="@" endtoken="@">
+                    <token key="version" value="${version}" />
+                </replacetokens>
+            </filterchain>
+        </copy>
+        <copy file="../example/maven/README" todir="result/example">
+            <filterchain>
+                <expandproperties />
+                <replacetokens begintoken="@" endtoken="@">
+                    <token key="version" value="${version}" />
+                </replacetokens>
+            </filterchain>
+        </copy>
+	</target>
 		
 	<target name="testbench-standalone.jar" depends="make-output-dirs">
 		<javac srcdir="../src" destdir="result/classes" debug="true" encoding="utf-8" target="1.5" source="1.5">
@@ -41,6 +86,7 @@
 			</manifest>
 			<zipfileset dir="../src">
 				<include name="**/**.js" />
+				<include name="**/**.txt" />
 			</zipfileset>
 			<zipfileset dir="result/classes">
 				<include name="**/**" />
@@ -50,7 +96,7 @@
 		</jar>
 	</target>
 	
-	<target name="testbench.jar" depends="make-output-dirs">
+	<target name="testbench.jar" depends="make-output-dirs,replace-tokens">
         <javac srcdir="../src" destdir="result/classes" debug="true" encoding="utf-8" target="1.5" source="1.5">
             <classpath>
                 <fileset dir="../lib" id="libs">
@@ -62,8 +108,12 @@
             <manifest>
                 <attribute name="Main-Class" value="org.openqa.grid.selenium.GridLauncher" />
             </manifest>
+        	<zipfileset dir="result" prefix="META-INF/maven/com.vaadin/vaadin-testbench/">
+        		<include name="pom.xml" />
+        	</zipfileset>
             <zipfileset dir="../src">
                 <include name="**/**.js" />
+				<include name="**/**.txt" />
             </zipfileset>
             <zipfileset dir="result/classes">
                 <include name="**/**" />
@@ -115,50 +165,7 @@
 		<copy file="../testbench-recorder/extension/vaadin-testbench-recorder-${version}.xpi" todir="${output.dir}" />
 	</target>
 
-	<target name="testbench-distribution-package" depends="testbench-standalone.jar,testbench.jar,javadoc.jar,testbench-recorder,run-tests">
-        <copy todir="${output.dir}">
-            <filterchain>
-                <expandproperties />
-                <replacetokens begintoken="@" endtoken="@">
-                    <token key="version" value="${version}" />
-                </replacetokens>
-            </filterchain>
-            <fileset dir=".">
-                <include name="MANIFEST.MF" />
-            </fileset>
-        </copy>
-        <copy todir="result">
-            <filterchain>
-                <expandproperties />
-                <replacetokens begintoken="@" endtoken="@">
-                    <token key="version" value="${version}" />
-                </replacetokens>
-            </filterchain>
-            <fileset dir="../doc">
-                <include name="releasenotes.html" />
-            	<include name="maven/INSTALL" />
-            </fileset>
-        	<fileset dir=".">
-        		<include name="pom.xml" />
-        	</fileset>
-        </copy>
-        <copy file="../example/maven/packaged-pom.xml" tofile="result/example/pom.xml">
-            <filterchain>
-                <expandproperties />
-                <replacetokens begintoken="@" endtoken="@">
-                    <token key="version" value="${version}" />
-                </replacetokens>
-            </filterchain>
-        </copy>
-        <copy file="../example/maven/README" todir="result/example">
-            <filterchain>
-                <expandproperties />
-                <replacetokens begintoken="@" endtoken="@">
-                    <token key="version" value="${version}" />
-                </replacetokens>
-            </filterchain>
-        </copy>
-
+	<target name="testbench-distribution-package" depends="replace-tokens,testbench-standalone.jar,testbench.jar,javadoc.jar,testbench-recorder,run-tests">
 		<zip destfile="${output.dir}/vaadin-testbench-${version}.zip">
 			<zipfileset dir="${output.dir}" includes="MANIFEST.MF" prefix="META-INF"/>
 			<zipfileset dir="${output.dir}" includes="vaadin-testbench-standalone-${version}.jar,vaadin-testbench-standalone-${version}-javadoc.jar" prefix=""/>
