@@ -107,6 +107,9 @@
         <jar jarfile="${output.dir}/vaadin-testbench-${version}.jar" compress="true">
             <manifest>
                 <attribute name="Main-Class" value="org.openqa.grid.selenium.GridLauncher" />
+            	<attribute name="Vaadin-Package-Version" value="1" />
+            	<attribute name="Implementation-Title" value="Vaadin TestBench" />
+                <attribute name="Implementation-Version" value="${version}" />
             </manifest>
         	<zipfileset dir="result" prefix="META-INF/maven/com.vaadin/vaadin-testbench/">
         		<include name="pom.xml" />
