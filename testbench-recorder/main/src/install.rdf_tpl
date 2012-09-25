@@ -5,12 +5,13 @@
         <em:id>vaadin-testbench-recorder@vaadin.com</em:id>
         <em:name>Vaadin TestBench Recorder</em:name>
         <em:version>@build@</em:version>
-        <em:creator>Shinya Kasatani</em:creator>
+        <em:creator>Vaadin Ltd</em:creator>
+        <em:developer>Shinya Kasatani</em:developer>
         <em:developer>Adam Goucher</em:developer>
         <em:developer>Samit Badle</em:developer>
         <em:developer>Dave Hunt</em:developer>
-		<em:developer>Jonatan Kronqvist</em:developer>
-		<em:developer>John Ahlroos</em:developer>
+        <em:developer>Jonatan Kronqvist</em:developer>
+        <em:developer>John Ahlroos</em:developer>
         <em:description>Record, edit and play Vaadin TestBench tests</em:description>
         <em:type>2</em:type>
         <em:homepageURL>https://vaadin.com/add-ons/testbench</em:homepageURL>
