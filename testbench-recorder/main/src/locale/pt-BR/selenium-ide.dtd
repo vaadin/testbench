@@ -47,8 +47,9 @@
 <!ENTITY helpDocumentation.label "Documentação">
 <!ENTITY helpReportIssue.label "Reportagem Edição">
 <!ENTITY helpReleaseNotes.label "Notas sobre o Release">
-<!ENTITY helpBlog.label "Blog Oficial Selenium">
-<!ENTITY helpWebsite.label "Site Oficial Selenium">
+<!ENTITY helpBlog.label "Blog Oficial Vaadin">
+<!ENTITY helpWebsite.label "Site Oficial Vaadin">
+<!ENTITY helpProAccount.label "Vaadin Pro Account">
 
 <!ENTITY logConsole.label "Mensagens">
 <!ENTITY logFilter.debug.label "Depuração">
