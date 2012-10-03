@@ -183,7 +183,7 @@ Selenium.prototype.doEnterCharacter = function(locator, value){
     if (getTagName(element) == "body") {
         if (element.ownerDocument && element.ownerDocument.designMode) {
             var designMode = new String(element.ownerDocument.designMode).toLowerCase();
-            if (designMode = "on") {
+            if (designMode == "on") {
                 // this must be a rich text control!
                 element.innerHTML = actualValue;
             }
