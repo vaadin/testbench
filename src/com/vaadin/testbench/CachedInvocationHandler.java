@@ -1,6 +1,7 @@
 package com.vaadin.testbench;
 
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -31,30 +32,35 @@ public class CachedInvocationHandler implements InvocationHandler {
     @Override
     public Object invoke(Object proxy, Method method, Object[] args)
             throws Throwable {
-        waitForVaadinIfNecessary(method.getName());
-        if (!isMethodCached(method)) {
-            Method actualMethod = null;
-            try {
-                if (actualObject instanceof WebDriver) {
-                    // Is it a method in the TestBenchDriver?
-                    actualMethod = TestBenchDriver.class.getMethod(
+        try {
+            waitForVaadinIfNecessary(method.getName());
+            if (!isMethodCached(method)) {
+                Method actualMethod = null;
+                try {
+                    if (actualObject instanceof WebDriver) {
+                        // Is it a method in the TestBenchDriver?
+                        actualMethod = TestBenchDriver.class.getMethod(
+                                method.getName(), method.getParameterTypes());
+                    } else {
+                        actualMethod = TestBenchElement.class.getMethod(
+                                method.getName(), method.getParameterTypes());
+                    }
+                    implementedMethodCache.put(method, actualMethod);
+                } catch (Exception e) {
+                    // It's probably a method implemented by the actual driver.
+                    actualMethod = actualObject.getClass().getMethod(
                             method.getName(), method.getParameterTypes());
-                } else {
-                    actualMethod = TestBenchElement.class.getMethod(
-                            method.getName(), method.getParameterTypes());
+                    proxiedMethodCache.put(method, actualMethod);
                 }
-                implementedMethodCache.put(method, actualMethod);
-            } catch (Exception e) {
-                // It's probably a method implemented by the actual driver.
-                actualMethod = actualObject.getClass().getMethod(
-                        method.getName(), method.getParameterTypes());
-                proxiedMethodCache.put(method, actualMethod);
             }
+            if (proxiedMethodCache.containsKey(method)) {
+                return proxiedMethodCache.get(method)
+                        .invoke(actualObject, args);
+            }
+            return implementedMethodCache.get(method).invoke(proxyObject, args);
+        } catch (InvocationTargetException e) {
+            throw e.getCause();
         }
-        if (proxiedMethodCache.containsKey(method)) {
-            return proxiedMethodCache.get(method).invoke(actualObject, args);
-        }
-        return implementedMethodCache.get(method).invoke(proxyObject, args);
     }
 
     /**

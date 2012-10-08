@@ -20,6 +20,7 @@ import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.HasCapabilities;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.TakesScreenshot;
@@ -336,9 +337,16 @@ public class TestBenchCommandExecutor implements TestBenchCommands,
             if (selector.contains("::")) {
                 String client = selector.substring(0, selector.indexOf("::"));
                 String path = selector.substring(selector.indexOf("::") + 2);
-                element = (WebElement) jse
-                        .executeScript("return window.vaadin.clients." + client
-                                + ".getElementByPath(\"" + path + "\");");
+                try {
+                    element = (WebElement) jse
+                            .executeScript("return window.vaadin.clients."
+                                    + client + ".getElementByPath(\"" + path
+                                    + "\");");
+                } catch (Exception e) {
+                    throw new NoSuchElementException(
+                            "Vaadin could not find an element with the selector "
+                                    + selector, e);
+                }
             } else {
                 element = (WebElement) jse.executeScript(findByVaadinScript,
                         selector);
