@@ -4,12 +4,9 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -30,7 +27,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.HttpCommandExecutor;
 import org.openqa.selenium.remote.RemoteWebDriver;
-import org.openqa.selenium.remote.Response;
 
 import com.vaadin.testbench.Parameters;
 import com.vaadin.testbench.TestBench;
@@ -58,32 +54,6 @@ public class TestBenchCommandExecutor implements TestBenchCommands,
         this.actualDriver = actualDriver;
         this.imageComparison = imageComparison;
         this.referenceNameGenerator = referenceNameGenerator;
-    }
-
-    protected Response execute(String driverCommand, Map<String, ?> parameters) {
-        try {
-            Method exec = RemoteWebDriver.class.getMethod("execute",
-                    String.class, Map.class);
-            exec.setAccessible(true);
-            return (Response) exec.invoke(actualDriver, driverCommand,
-                    parameters);
-        } catch (SecurityException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IllegalArgumentException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        return null;
     }
 
     /*
