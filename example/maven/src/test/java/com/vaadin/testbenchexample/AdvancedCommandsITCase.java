@@ -113,7 +113,7 @@ public class AdvancedCommandsITCase extends TestBenchTestCase {
     }
 
     private void openCalculator() {
-        getDriver().get(baseUrl + "/demo-site/Calc?restartApplication");
+        getDriver().get(baseUrl + "/testbenchexample?restartApplication");
     }
 
     @After
