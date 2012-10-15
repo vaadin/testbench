@@ -30,7 +30,7 @@ Recorder.reSelectTarget = function(){
 	if(!this.changeSelection){
 		// set flag for click recorder and highlight Select button
 		this.changeSelection = true;
-		document.getElementById('selectElementButton').disabled = true;
+		document.getElementById('selectElementButton').className = "active";
 		// Enable recording if not enabled
 		if(!document.getElementById('record-button').checked){
 			document.getElementById('record-button').click();
@@ -39,7 +39,7 @@ Recorder.reSelectTarget = function(){
 	}else{
 		// remove flag and highlights from Select button
 		this.changeSelection = false;
-		document.getElementById('selectElementButton').disabled = false;
+		document.getElementById('selectElementButton').className = "";
 		// Disable recoring if enabled by button and still enabled
 		if(enabledRecording && document.getElementById('record-button').checked){
 			document.getElementById('record-button').click();
