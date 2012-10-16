@@ -6,6 +6,7 @@ import java.util.List;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -163,9 +164,11 @@ public class TestBenchElement implements WrapsElement, WebElement,
     @Override
     public List<WebElement> findElements(By by) {
         List<WebElement> elements = actualElement.findElements(by);
-        List<WebElement> testBenchElements = new ArrayList<WebElement>(elements.size());
+        List<WebElement> testBenchElements = new ArrayList<WebElement>(
+                elements.size());
         for (WebElement e : elements) {
-            testBenchElements.add(TestBench.createElement(e, tbCommandExecutor));
+            testBenchElements
+                    .add(TestBench.createElement(e, tbCommandExecutor));
         }
         return testBenchElements;
     }
@@ -194,6 +197,22 @@ public class TestBenchElement implements WrapsElement, WebElement,
     @Override
     public String getCssValue(String propertyName) {
         return actualElement.getCssValue(propertyName);
+    }
+
+    @Override
+    public void click(int x, int y, Keys... modifiers) {
+        Actions actions = new Actions(tbCommandExecutor.getWrappedDriver());
+        actions.moveToElement(actualElement, x, y);
+        // Press any modifier keys
+        for (Keys modifier : modifiers) {
+            actions.keyDown(modifier);
+        }
+        actions.click();
+        // Release any modifier keys
+        for (Keys modifier : modifiers) {
+            actions.keyUp(modifier);
+        }
+        actions.build().perform();
     }
 
 }

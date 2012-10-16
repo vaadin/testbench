@@ -750,12 +750,6 @@ SeleniumWebDriverAdaptor.prototype.mouseClick = function(elementLocator, value) 
   var driver = new WDAPI.Driver();
   var locator = this._elementLocator(this.rawArgs[0]);
   var webElement = driver.findElement(locator.type, locator.string);
-  if (this.rawArgs[1].indexOf(":") == -1 && !(new RegExp("VTree.*expand")).test(locator.string)) {
-    // Perform a normal click if there are no modifier keys pressed and we're not clicking on a Tree expander.
-    // Tree expanders/collapsors depend on which part of the element is clicked, which means that they
-    // need the coordinates, which cannot be provided by a normal click().
-    return webElement.click();
-  }
   return webElement.mouseClick(driver, this.rawArgs[1]);
 }
 

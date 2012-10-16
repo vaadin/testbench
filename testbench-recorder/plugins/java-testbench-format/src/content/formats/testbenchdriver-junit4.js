@@ -222,11 +222,11 @@ options.header =
         "import org.openqa.selenium.WebDriverCommandProcessor;\n" +
         "import org.openqa.selenium.WebElement;\n" +
         "import org.openqa.selenium.firefox.FirefoxDriver;\n" +
-		"import org.openqa.selenium.interactions.Actions;\n" +
+    "import org.openqa.selenium.interactions.Actions;\n" +
         "import org.openqa.selenium.support.ui.Select;\n" +
-		"import com.vaadin.testbench.By;\n" +
-		"import com.vaadin.testbench.TestBench;\n" +
-		"import com.vaadin.testbench.TestBenchTestCase;\n" +
+    "import com.vaadin.testbench.By;\n" +
+    "import com.vaadin.testbench.TestBench;\n" +
+    "import com.vaadin.testbench.TestBenchTestCase;\n" +
         "\n" +
         "public class ${className} extends TestBenchTestCase {\n" +
         "\tprivate WebDriver driver;\n" +
@@ -287,8 +287,8 @@ WDAPI.Driver.searchContext = function(locatorType, locator) {
       return 'By.name(' + locatorString + ')';
     case 'tag_name':
       return 'By.tagName(' + locatorString + ')';
-	case 'vaadin':
-	  return 'By.vaadin(' + locatorString + ')';
+  case 'vaadin':
+    return 'By.vaadin(' + locatorString + ')';
   }
   throw 'Error: unknown strategy [' + locatorType + '] for locator [' + locator + ']';
 };
@@ -396,76 +396,60 @@ WDAPI.Utils.isElementPresent = function(how, what) {
 /****** TestBench commands ******/
 
 WDAPI.Element.prototype.closeNotification = function(element) {
-	return "testBenchElement(" + this.ref + ").closeNotification()";
+  return "testBenchElement(" + this.ref + ").closeNotification()";
 }
 
 WDAPI.Element.prototype.showTooltip = function(element) {
-	return "testBenchElement(" + this.ref + ").showTooltip()";
+  return "testBenchElement(" + this.ref + ").showTooltip()";
 }
 
 WDAPI.Element.prototype.scroll = function(scrollTop) {
-	return "testBenchElement(" + this.ref + ").scroll(" + xlateArgument(scrollTop, "number") + ")";
+  return "testBenchElement(" + this.ref + ").scroll(" + xlateArgument(scrollTop, "number") + ")";
 }
 
 WDAPI.Element.prototype.scrollLeft = function(scrollLeft) {
-	return "testBenchElement(" + this.ref + ").scrollLeft(" + xlateArgument(scrollLeft, "number") + ")";
+  return "testBenchElement(" + this.ref + ").scrollLeft(" + xlateArgument(scrollLeft, "number") + ")";
 }
 
 WDAPI.Element.prototype.pressSpecialKey = function(value) {
-	var key = "\"" + value.substr(value.lastIndexOf(" ")+1) + "\"";
-	if ((new RegExp("left")).test(value.toLowerCase())){
-		key = "Keys.ARROW_LEFT";
-	} else if ((new RegExp("right")).test(value.toLowerCase())){
-		key = "Keys.ARROW_RIGHT";
-	} else if ((new RegExp("up")).test(value.toLowerCase())){
-		key = "Keys.ARROW_UP";
-	} else if ((new RegExp("down")).test(value.toLowerCase())){
-		key = "Keys.ARROW_DOWN";
-	} else if ((new RegExp("enter")).test(value.toLowerCase())){
-		key = "Keys.RETURN";
-	} else if ((new RegExp("space")).test(value.toLowerCase())){
-		key = "Keys.SPACE";
-	} else if ((new RegExp("tab")).test(value.toLowerCase())){
-		key = "Keys.TAB";
-	}
-	return this.ref + ".sendKeys(" + key + ")";
+  var key = "\"" + value.substr(value.lastIndexOf(" ")+1) + "\"";
+  if ((new RegExp("left")).test(value.toLowerCase())){
+    key = "Keys.ARROW_LEFT";
+  } else if ((new RegExp("right")).test(value.toLowerCase())){
+    key = "Keys.ARROW_RIGHT";
+  } else if ((new RegExp("up")).test(value.toLowerCase())){
+    key = "Keys.ARROW_UP";
+  } else if ((new RegExp("down")).test(value.toLowerCase())){
+    key = "Keys.ARROW_DOWN";
+  } else if ((new RegExp("enter")).test(value.toLowerCase())){
+    key = "Keys.RETURN";
+  } else if ((new RegExp("space")).test(value.toLowerCase())){
+    key = "Keys.SPACE";
+  } else if ((new RegExp("tab")).test(value.toLowerCase())){
+    key = "Keys.TAB";
+  }
+  return this.ref + ".sendKeys(" + key + ")";
 }
 
 WDAPI.Element.prototype.mouseClick = function(driver, value) {
-	value = value.split(":");
-	var shift = false;
-	var ctrl = false;
-	var alt = false;
-	var meta = false;
-	if(value.length > 1){
-		shift = (new RegExp("shift")).test(value[1]);
-		ctrl = (new RegExp("ctrl")).test(value[1]);
-		alt = (new RegExp("alt")).test(value[1]);
-		meta = (new RegExp("meta")).test(value[1]);
-	}
-	var modifiersDown = "";
-	var modifiersUp = "";
-	if (shift) {
-		modifiersDown += ".keyDown(Keys.SHIFT)";
-		modifiersUp += ".keyUp(Keys.SHIFT)";
-	}
-	if (ctrl) {
-		modifiersDown += ".keyDown(Keys.CONTROL)"
-		modifiersUp += ".keyUp(Keys.CONTROL)"
-	}
-	if (alt) {
-		modifiersDown += ".keyDown(Keys.ALT)"
-		modifiersUp += ".keyUp(Keys.ALT)"
-	}
-	if (meta) {
-		modifiersDown += ".keyDown(Keys.META)"
-		modifiersUp += ".keyUp(Keys.META)"
-	}
-	return "new Actions(" + driver.ref + ").moveToElement(" + this.ref + "," + value[0] + ")" + modifiersDown + ".click()" + modifiersUp + ".build().perform()";
+  var shift, ctrl, alt, meta;
+  shift = ctrl = alt = meta = false;
+  value = value.split(":");
+  if(value.length > 1){
+    shift = (new RegExp("shift")).test(value[1]);
+    ctrl = (new RegExp("ctrl")).test(value[1]);
+    alt = (new RegExp("alt")).test(value[1]);
+    meta = (new RegExp("meta")).test(value[1]);
+  }
+  var modifiers = shift ? ", Keys.SHIFT" : "";
+  modifiers += ctrl ? ", Keys.CONTROL" : "";
+  modifiers += alt ? ", Keys.ALT" : "";
+  modifiers += meta ? ", Keys.META" : "";
+  return "testBenchElement(" + this.ref + ").click(" + value[0] + modifiers + ")";
 }
 
 WDAPI.Element.prototype.contextmenu = function(driver) {
-	return "new Actions(" + driver.ref + ").contextClick(" + this.ref + ").perform()";
+  return "new Actions(" + driver.ref + ").contextClick(" + this.ref + ").perform()";
 }
 
 WDAPI.Element.prototype.addSelection = function(label) {
@@ -489,60 +473,60 @@ WDAPI.Driver.prototype.drop = function(target, coordinates) {
 }
 
 WDAPI.Driver.prototype.pressModifierKeys = function(value) {
-	var modifiers = "";
-	if ((new RegExp("shift")).test(value)) {
-		modifiers += ".keyDown(Keys.SHIFT)";
-	}
-	if ((new RegExp("ctrl")).test(value)) {
-		modifiers += ".keyDown(Keys.CTRL)";
-	}
-	if ((new RegExp("alt")).test(value)) {
-		modifiers += ".keyDown(Keys.ALT)";
-	}
-	if ((new RegExp("meta")).test(value)) {
-		modifiers += ".keyDown(Keys.META)";
-	}
-	
-	if (modifiers !== "") {
-		return "new Actions(" + this.ref + ")" + modifiers + ".build().perform()";
-	}
-	return "";
+  var modifiers = "";
+  if ((new RegExp("shift")).test(value)) {
+    modifiers += ".keyDown(Keys.SHIFT)";
+  }
+  if ((new RegExp("ctrl")).test(value)) {
+    modifiers += ".keyDown(Keys.CTRL)";
+  }
+  if ((new RegExp("alt")).test(value)) {
+    modifiers += ".keyDown(Keys.ALT)";
+  }
+  if ((new RegExp("meta")).test(value)) {
+    modifiers += ".keyDown(Keys.META)";
+  }
+  
+  if (modifiers !== "") {
+    return "new Actions(" + this.ref + ")" + modifiers + ".build().perform()";
+  }
+  return "";
 }
 
 WDAPI.Driver.prototype.releaseModifierKeys = function(value) {
-	var modifiers = "";
-	if ((new RegExp("shift")).test(value)) {
-		modifiers += ".keyUp(Keys.SHIFT)";
-	}
-	if ((new RegExp("ctrl")).test(value)) {
-		modifiers += ".keyUp(Keys.CTRL)";
-	}
-	if ((new RegExp("alt")).test(value)) {
-		modifiers += ".keyUp(Keys.ALT)";
-	}
-	if ((new RegExp("meta")).test(value)) {
-		modifiers += ".keyUp(Keys.META)";
-	}
-	if (modifiers !== "") {
-		return "new Actions(" + this.ref + ")" + modifiers + ".build().perform()";
-	}
-	return "";
+  var modifiers = "";
+  if ((new RegExp("shift")).test(value)) {
+    modifiers += ".keyUp(Keys.SHIFT)";
+  }
+  if ((new RegExp("ctrl")).test(value)) {
+    modifiers += ".keyUp(Keys.CTRL)";
+  }
+  if ((new RegExp("alt")).test(value)) {
+    modifiers += ".keyUp(Keys.ALT)";
+  }
+  if ((new RegExp("meta")).test(value)) {
+    modifiers += ".keyUp(Keys.META)";
+  }
+  if (modifiers !== "") {
+    return "new Actions(" + this.ref + ")" + modifiers + ".build().perform()";
+  }
+  return "";
 }
 
 WDAPI.Driver.prototype.waitForVaadin = function() {
-	return "testBench(" + this.ref + ").waitForVaadin()";
+  return "testBench(" + this.ref + ").waitForVaadin()";
 }
 
 WDAPI.Driver.prototype.isTextPresent = function(value) {
-	return this.ref + ".getPageSource().contains(\"" + value + "\")";
+  return this.ref + ".getPageSource().contains(\"" + value + "\")";
 }
 
 WDAPI.Driver.prototype.screenCapture = function(value) {
-	return "testBench(" + this.ref + ").compareScreen(\"" + value + "\")";
+  return "testBench(" + this.ref + ").compareScreen(\"" + value + "\")";
 }
 
 WDAPI.Driver.prototype.getAlert = function(alert) {
-	return this.ref + ".switchTo().alert().getText()";
+  return this.ref + ".switchTo().alert().getText()";
 }
 
 WDAPI.Driver.prototype.selectFrame = function(locatorType, locator) {

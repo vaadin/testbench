@@ -1,5 +1,7 @@
 package com.vaadin.testbench.commands;
 
+import org.openqa.selenium.Keys;
+
 public interface TestBenchElementCommands {
     /**
      * Closes a notification
@@ -28,4 +30,18 @@ public interface TestBenchElementCommands {
      *            the new value for scrollLeft.
      */
     void scrollLeft(int scrollLeft);
+
+    /**
+     * Clicks at the specified coordinates on an element while pressing possible
+     * modifier keys. The coordinates are relative to top left on the element.
+     * 
+     * @param x
+     *            the offset from the left position of the element
+     * @param y
+     *            the offset from the top position of the element
+     * @param modifiers
+     *            any modifier keys to press while clicking the element
+     *            (optional).
+     */
+    void click(int x, int y, Keys... modifiers);
 }
