@@ -16,6 +16,8 @@ import java.util.logging.Logger;
 import javax.imageio.IIOException;
 import javax.imageio.ImageIO;
 
+import junit.framework.Assert;
+
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.HasCapabilities;
@@ -216,11 +218,13 @@ public class TestBenchCommandExecutor implements TestBenchCommands,
                             ((TakesScreenshot) actualDriver)
                                     .getScreenshotAs(OutputType.BYTES)));
             if (reference == null) {
-                // Store the screenshot in the errors directory
+                // Store the screenshot in the errors directory and fail the
+                // test
                 ImageFileUtil.createScreenshotDirectoriesIfNeeded();
                 ImageIO.write(screenshotImage, "png",
                         ImageFileUtil.getErrorScreenshotFile(referenceName));
-                return false;
+                Assert.fail("No reference found for " + referenceName + " in "
+                        + ImageFileUtil.getScreenshotReferenceDirectory());
             }
             if (imageComparison.imageEqualToReference(screenshotImage,
                     reference, referenceName,
