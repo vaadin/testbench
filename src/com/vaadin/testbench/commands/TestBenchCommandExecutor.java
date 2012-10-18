@@ -217,6 +217,7 @@ public class TestBenchCommandExecutor implements TestBenchCommands,
                                     .getScreenshotAs(OutputType.BYTES)));
             if (reference == null) {
                 // Store the screenshot in the errors directory
+                ImageFileUtil.createScreenshotDirectoriesIfNeeded();
                 ImageIO.write(screenshotImage, "png",
                         ImageFileUtil.getErrorScreenshotFile(referenceName));
                 return false;

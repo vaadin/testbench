@@ -3,8 +3,8 @@ package com.vaadin.testbench;
 public class Parameters {
     private static boolean isDebug = false;
     private static boolean isScreenshotComparisonCursorDetection = false;
-    private static String screenshotReferenceDirectory = null;
-    private static String screenshotErrorDirectory = null;
+    private static String screenshotReferenceDirectory = "reference-screenshots";
+    private static String screenshotErrorDirectory = "error-screenshots";
     private static double screenshotComparisonTolerance = 0.01;
     private static boolean isCaptureScreenshotOnFailure = true;
     private static int maxScreenshotRetries = 2;
