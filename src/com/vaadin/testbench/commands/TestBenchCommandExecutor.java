@@ -309,13 +309,17 @@ public class TestBenchCommandExecutor implements TestBenchCommands,
                 + "return pd;\n";
         // @formatter:on
         if (actualDriver instanceof JavascriptExecutor) {
-            JavascriptExecutor jse = (JavascriptExecutor) actualDriver;
-            if (forceSync) {
-                // Force sync to get the latest server-side timing data. The
-                // server-side timing data is always one request behind.
-                jse.executeScript("window.vaadin.forceSync()");
+            try {
+                JavascriptExecutor jse = (JavascriptExecutor) actualDriver;
+                if (forceSync) {
+                    // Force sync to get the latest server-side timing data. The
+                    // server-side timing data is always one request behind.
+                    jse.executeScript("window.vaadin.forceSync()");
+                }
+                return (List<Long>) jse.executeScript(getProfilingData);
+            } catch (Exception e) {
+                // Could not retrieve profiling data, just return null.
             }
-            return (List<Long>) jse.executeScript(getProfilingData);
         }
         return null;
     }
