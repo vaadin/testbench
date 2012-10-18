@@ -18,11 +18,11 @@
  * An UI of Selenium IDE.
  */
 function Editor(window) {
-	this.log.debug("initializing");
-	this.window = window;
-	window.editor = this;
-	var self = this;
-	this.recordFrameTitle = false;
+    this.log.debug("initializing");
+    this.window = window;
+    window.editor = this;
+    var self = this;
+    this.recordFrameTitle = false;
     this.app = new Application();
     this.app.addObserver({
             baseURLChanged: function() {
@@ -33,8 +33,8 @@ function Editor(window) {
                     self.view.refresh();
                 }
             },
-			
-			optionsChanged: function() {
+            
+            optionsChanged: function() {
                 if (self.view){
                     self.view.refresh();
                 }
@@ -125,7 +125,7 @@ function Editor(window) {
                     self.updateTitle();
                     if (self.view.updateView){
                         self.view.testCase = self.getTestCase();
-			self.view.updateView();
+            self.view.updateView();
                     }
                 }
             },
@@ -143,23 +143,23 @@ function Editor(window) {
             Preferences.save(self.app.options, 'locatorBuildersOrder');
           }
       });
-	this.document = document;
+    this.document = document;
     this.recordButton = document.getElementById("record-button");
     this.recordMenuItem = document.getElementById("menu_record");
     this.speedMaxInterval = parseInt(document.getElementById("speedSlider").getAttribute("maxpos"));
     this.initMenus();
-	this.app.initOptions();
-	this.loadExtensions();
-	this.loadSeleniumAPI();
-	this.selectDefaultReference();
-	this.treeView = new TreeView(this, document, document.getElementById("commands"));
-	this.sourceView = new SourceView(this, document.getElementById("source"));
+    this.app.initOptions();
+    this.loadExtensions();
+    this.loadSeleniumAPI();
+    this.selectDefaultReference();
+    this.treeView = new TreeView(this, document, document.getElementById("commands"));
+    this.sourceView = new SourceView(this, document.getElementById("source"));
         this.suiteTreeView = new SuiteTreeView(this, document.getElementById("suiteTree"));
         this.testSuiteProgress = new TestSuiteProgress("suiteProgress");
-	//this.toggleView(this.treeView);
-	
-	// "debugger" cannot be used since it is a reserved word in JS
-	this.selDebugger = new Debugger(this);
+    //this.toggleView(this.treeView);
+    
+    // "debugger" cannot be used since it is a reserved word in JS
+    this.selDebugger = new Debugger(this);
         this.selDebugger.addObserver({
             stateUpdated: function(state) {
                 if (state == Debugger.PAUSED) {
@@ -170,12 +170,12 @@ function Editor(window) {
                 self.updateState();
             }
         });
-	
-	//top.document.commandDispatcher.getControllers().appendController(Editor.controller);
-	//window.controllers.appendController(Editor.controller);
-	top.controllers.appendController(Editor.controller);
+    
+    //top.document.commandDispatcher.getControllers().appendController(Editor.controller);
+    //window.controllers.appendController(Editor.controller);
+    top.controllers.appendController(Editor.controller);
 
-	//window.controllers.appendController(controller);
+    //window.controllers.appendController(controller);
 
     this.app.newTestSuite();
     if (this.app.options.recordOnOpen && this.app.options.recordOnOpen == 'true') {
@@ -184,17 +184,17 @@ function Editor(window) {
       this.toggleRecordingEnabled(false);
     }
 
-	this.updateViewTabs();
+    this.updateViewTabs();
     this.infoPanel = new Editor.InfoPanel(this);
     
-	//top.document.commandDispatcher.updateCommands("selenium-ide-state");
+    //top.document.commandDispatcher.updateCommands("selenium-ide-state");
 
-	document.addEventListener("focus", Editor.checkTimestamp, false);
-	
-	this.log.info("initialized");
-	
-	setTimeout("editor.showLoadErrors()", 500);
-	
+    document.addEventListener("focus", Editor.checkTimestamp, false);
+    
+    this.log.info("initialized");
+    
+    setTimeout("editor.showLoadErrors()", 500);
+    
     this.registerRecorder();
 
     this.oldtc = null;
@@ -220,15 +220,15 @@ Editor.prototype.saveTC = function(){
 };
 
 Editor.checkTimestamp = function() {
-	editor.log.debug('checkTimestamp');
-	if (editor.app.getTestCase().checkTimestamp()) {
-		if (window.confirm(Editor.getString('confirmReload'))) {
-			var testCase = editor.app.getCurrentFormat().loadFile(editor.getTestCase().file);
-			if (testCase) {
-				editor.app.setTestCase(testCase);
-			}
-		}
-	}
+    editor.log.debug('checkTimestamp');
+    if (editor.app.getTestCase().checkTimestamp()) {
+        if (window.confirm(Editor.getString('confirmReload'))) {
+            var testCase = editor.app.getCurrentFormat().loadFile(editor.getTestCase().file);
+            if (testCase) {
+                editor.app.setTestCase(testCase);
+            }
+        }
+    }
 };
 
 Editor.getString = function(key) {
@@ -241,21 +241,21 @@ Editor.getFormattedString = function(key, strArray) {
 };
 
 Editor.controller = {
-	supportsCommand : function(cmd) {
-		//Editor.log.debug("supportsCommand");
-		switch (cmd) {
-		case "cmd_close":
-		case "cmd_open":
-		case "cmd_add":
+    supportsCommand : function(cmd) {
+        //Editor.log.debug("supportsCommand");
+        switch (cmd) {
+        case "cmd_close":
+        case "cmd_open":
+        case "cmd_add":
         case "cmd_new_suite":
-		case "cmd_open_suite":
-		case "cmd_save":
-		case "cmd_save_suite":
-		case "cmd_save_suite_as":
-		case "cmd_selenium_play":
-		case "cmd_selenium_play_suite":
-		case "cmd_selenium_pause":
-		case "cmd_selenium_step":
+        case "cmd_open_suite":
+        case "cmd_save":
+        case "cmd_save_suite":
+        case "cmd_save_suite_as":
+        case "cmd_selenium_play":
+        case "cmd_selenium_play_suite":
+        case "cmd_selenium_pause":
+        case "cmd_selenium_step":
         case "cmd_selenium_testcase_clear":
         case "cmd_selenium_rollup":
         case "cmd_selenium_reload":
@@ -265,23 +265,23 @@ Editor.controller = {
         case "cmd_selenium_speed_slower":
         case "cmd_selenium_speed_slowest":
             return true;
-		default:
-			return false;
-		}
-	},
-	isCommandEnabled : function(cmd){
-		//Editor.log.debug("isCommandEnabled");
-		switch (cmd) {
-		case "cmd_close":
-		case "cmd_open":
-		case "cmd_add":
-		case "cmd_new_suite":
-		case "cmd_open_suite":
-		case "cmd_save":
-		case "cmd_save_suite":
-		case "cmd_save_suite_as":
+        default:
+            return false;
+        }
+    },
+    isCommandEnabled : function(cmd){
+        //Editor.log.debug("isCommandEnabled");
+        switch (cmd) {
+        case "cmd_close":
+        case "cmd_open":
+        case "cmd_add":
+        case "cmd_new_suite":
+        case "cmd_open_suite":
+        case "cmd_save":
+        case "cmd_save_suite":
+        case "cmd_save_suite_as":
         case "cmd_selenium_testcase_clear":
-			return true;
+            return true;
         case "cmd_selenium_play":
             return editor.app.isPlayable() && editor.selDebugger.state != Debugger.PLAYING;
         case "cmd_selenium_rollup":
@@ -291,12 +291,12 @@ Editor.controller = {
                 return false;
             }
         case "cmd_selenium_reload":
-			return editor.app.isPlayable() && editor.selDebugger.state != Debugger.PLAYING && editor.app.getBooleanOption('showDeveloperTools');
-		case "cmd_selenium_play_suite":
+            return editor.app.isPlayable() && editor.selDebugger.state != Debugger.PLAYING && editor.app.getBooleanOption('showDeveloperTools');
+        case "cmd_selenium_play_suite":
             return editor.app.isPlayable() && editor.selDebugger.state != Debugger.PLAYING;
-		case "cmd_selenium_pause":
+        case "cmd_selenium_pause":
             return editor.app.isPlayable() && (editor.selDebugger.state == Debugger.PLAYING || editor.selDebugger.state == Debugger.PAUSED);
-		case "cmd_selenium_step":
+        case "cmd_selenium_step":
             return editor.app.isPlayable() && editor.selDebugger.state == Debugger.PAUSED;
         case "cmd_selenium_record":
             return true;
@@ -308,39 +308,39 @@ Editor.controller = {
             return editor.getInterval() < editor.speedMaxInterval;
         case "cmd_selenium_speed_slowest":
             return editor.getInterval() < editor.speedMaxInterval;
-		default:
-			return false;
-		}
-	},
-	doCommand : function(cmd) {
-		Editor.log.debug("doCommand: " + cmd);
-		switch (cmd) {
-		case "cmd_close":if (editor.confirmClose()) {window.close();}break;
-		case "cmd_save":editor.saveTestCase();break;
-		case "cmd_add":editor.app.addTestCase();break;
-		case "cmd_open":editor.loadRecentTestCase();break;	
-		case "cmd_new_suite":if (editor.confirmClose()) {editor.app.newTestSuite();}break;	//Samit: Enh: Prompt to save first
-		case "cmd_open_suite":editor.loadRecentSuite();break;	
-		case "cmd_save_suite":editor.app.saveTestSuite(true);break;
-		case "cmd_save_suite_as":editor.app.saveNewTestSuite(true);break;
+        default:
+            return false;
+        }
+    },
+    doCommand : function(cmd) {
+        Editor.log.debug("doCommand: " + cmd);
+        switch (cmd) {
+        case "cmd_close":if (editor.confirmClose()) {window.close();}break;
+        case "cmd_save":editor.saveTestCase();break;
+        case "cmd_add":editor.app.addTestCase();break;
+        case "cmd_open":editor.loadRecentTestCase();break;  
+        case "cmd_new_suite":if (editor.confirmClose()) {editor.app.newTestSuite();}break;  //Samit: Enh: Prompt to save first
+        case "cmd_open_suite":editor.loadRecentSuite();break;   
+        case "cmd_save_suite":editor.app.saveTestSuite(true);break;
+        case "cmd_save_suite_as":editor.app.saveNewTestSuite(true);break;
         case "cmd_selenium_testcase_clear": editor.clear();break;
-		case "cmd_selenium_play":
+        case "cmd_selenium_play":
             editor.testSuiteProgress.reset();
             editor.playCurrentTestCase(null, 0, 1);
-			break;
-		case "cmd_selenium_play_suite":
-			editor.playTestSuite();
-			break;
-		case "cmd_selenium_pause":
-			if (editor.selDebugger.state == Debugger.PAUSED) {
-				editor.selDebugger.doContinue();
-			} else {
-				editor.selDebugger.pause();
-			}
-			break;
-		case "cmd_selenium_step":
-			editor.selDebugger.doContinue(true);
-			break;
+            break;
+        case "cmd_selenium_play_suite":
+            editor.playTestSuite();
+            break;
+        case "cmd_selenium_pause":
+            if (editor.selDebugger.state == Debugger.PAUSED) {
+                editor.selDebugger.doContinue();
+            } else {
+                editor.selDebugger.pause();
+            }
+            break;
+        case "cmd_selenium_step":
+            editor.selDebugger.doContinue(true);
+            break;
         case "cmd_selenium_rollup":
             if (Editor.rollupManager) {
                 try {
@@ -353,12 +353,12 @@ Editor.controller = {
             }
             break;
         case "cmd_selenium_reload":
-        	try{
-        		editor.reload();
-        	}catch(e){
-        		alert('Reload error : '+e);
-        	}
-        	break;
+            try{
+                editor.reload();
+            }catch(e){
+                alert('Reload error : '+e);
+            }
+            break;
         case "cmd_selenium_record":
             editor.toggleRecordingEnabled();
             break;
@@ -374,78 +374,78 @@ Editor.controller = {
         case "cmd_selenium_speed_slowest":
             editor.updateInterval(1000);
             break;
-		default:
-		}
-	},
-	onEvent : function(evt) {}
+        default:
+        }
+    },
+    onEvent : function(evt) {}
 };
 
 Editor.prototype.showLoadErrors = function() {
-	if (this.errorMessage) {
-		window.alert(this.errorMessage);
-		delete this.errorMessage;
-	}
+    if (this.errorMessage) {
+        window.alert(this.errorMessage);
+        delete this.errorMessage;
+    }
 };
 
 //Samit: Enh: Prompt to save first
 Editor.prototype.loadRecentTestCase = function(path) {
-	if (this.confirmClose()) {
-		this.app.loadTestCaseWithNewSuite(path);
-	}
+    if (this.confirmClose()) {
+        this.app.loadTestCaseWithNewSuite(path);
+    }
 };
 
 //Samit: Enh: Prompt to save first
 Editor.prototype.loadRecentSuite = function(path) {
-	if (this.confirmClose()) {
-		this.app.loadTestSuite(path);
-	}
+    if (this.confirmClose()) {
+        this.app.loadTestSuite(path);
+    }
 };
 
 Editor.prototype.confirmClose = function() {
-	//Samit: Enh: Prompt if test suite and/or any of the test cases have changed and save them
-	var curSuite = this.app.getTestSuite();
-	if (curSuite) {
-		var saveSuite = !curSuite.isTempSuite() && curSuite.isModified(); 
-		var changedTestCases = 0; 
-		for (var i = 0; i < curSuite.tests.length; i++ ) {
-			if (curSuite.tests[i].content && curSuite.tests[i].content.modified) {
-				changedTestCases++;
-			}
-		}		
+    //Samit: Enh: Prompt if test suite and/or any of the test cases have changed and save them
+    var curSuite = this.app.getTestSuite();
+    if (curSuite) {
+        var saveSuite = !curSuite.isTempSuite() && curSuite.isModified(); 
+        var changedTestCases = 0; 
+        for (var i = 0; i < curSuite.tests.length; i++ ) {
+            if (curSuite.tests[i].content && curSuite.tests[i].content.modified) {
+                changedTestCases++;
+            }
+        }       
 
-		if (saveSuite || changedTestCases > 0) {
-			var promptType = (saveSuite ? 1 : 0) + (changedTestCases > 0 ? 2 : 0) - 1;
-			var prompt = ["Would you like to save the test suite?", 
-			              "Would you like to save the " + changedTestCases + " changed test case/s?", 
-			              "Would you like to save the test suite and the " + changedTestCases + " changed test case/s?"][promptType];	
-			var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].getService(Components.interfaces.nsIPromptService);
-       		
-       		var flags = 
-       			promptService.BUTTON_TITLE_SAVE * promptService.BUTTON_POS_0 +
-       			promptService.BUTTON_TITLE_CANCEL * promptService.BUTTON_POS_1 +
-       			promptService.BUTTON_TITLE_DONT_SAVE * promptService.BUTTON_POS_2;
-       		
-       		var result = promptService.confirmEx(window, "Save?",
-       				prompt, flags, null, null, null, null, {});
-       		
-       		switch (result) {
-       		case 0:
-       			if (curSuite.isTempSuite()) {
-       				//For temp suites, just save the test case (as there is only one test case)
-       				return this.saveTestCase();
-       			}
-       			//For all others, save the suite (perhaps unnecessary) and all test cases that have changed 
-       			return this.app.saveTestSuite(true);
-       		case 1:
-       			return false;
-       		case 2:
-       			return true;
-       		}
-		}
-	}else {
-		//TODO: Why is there no current suite???
-	}
-	return true;
+        if (saveSuite || changedTestCases > 0) {
+            var promptType = (saveSuite ? 1 : 0) + (changedTestCases > 0 ? 2 : 0) - 1;
+            var prompt = ["Would you like to save the test suite?", 
+                          "Would you like to save the " + changedTestCases + " changed test case/s?", 
+                          "Would you like to save the test suite and the " + changedTestCases + " changed test case/s?"][promptType];   
+            var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].getService(Components.interfaces.nsIPromptService);
+            
+            var flags = 
+                promptService.BUTTON_TITLE_SAVE * promptService.BUTTON_POS_0 +
+                promptService.BUTTON_TITLE_CANCEL * promptService.BUTTON_POS_1 +
+                promptService.BUTTON_TITLE_DONT_SAVE * promptService.BUTTON_POS_2;
+            
+            var result = promptService.confirmEx(window, "Save?",
+                    prompt, flags, null, null, null, null, {});
+            
+            switch (result) {
+            case 0:
+                if (curSuite.isTempSuite()) {
+                    //For temp suites, just save the test case (as there is only one test case)
+                    return this.saveTestCase();
+                }
+                //For all others, save the suite (perhaps unnecessary) and all test cases that have changed 
+                return this.app.saveTestSuite(true);
+            case 1:
+                return false;
+            case 2:
+                return true;
+            }
+        }
+    }else {
+        //TODO: Why is there no current suite???
+    }
+    return true;
 };
 
 Editor.prototype.log = Editor.log = new Log("Editor");
@@ -454,15 +454,15 @@ Editor.prototype.unload = function() {
     this.app.saveState();
 
     this.deregisterRecorder();
-	top.controllers.removeController(Editor.controller);
+    top.controllers.removeController(Editor.controller);
 
     this.cleanupAutoComplete();
     
-	delete window.editor;
+    delete window.editor;
 };
 
 Editor.prototype.updateState = function() {
-	window.document.commandDispatcher.updateCommands("selenium-ide-state");
+    window.document.commandDispatcher.updateCommands("selenium-ide-state");
 };
 
 Editor.prototype.updateSeleniumCommands = function() {
@@ -492,51 +492,51 @@ Editor.prototype.getOptions = function(options) {
 };
 
 Editor.prototype.updateTitle = function() {
-	var title;
+    var title;
     var testCase = this.getTestCase();
-	if (testCase && testCase.file) {
-		title = testCase.file.leafName + " - " + Editor.getString('selenium-ide.name');
-	} else {
-		title = Editor.getString('selenium-ide.name');
-	}
-	if (testCase && testCase.modified) {
-		title += " *";
-	}
-	document.title = title;
+    if (testCase && testCase.file) {
+        title = testCase.file.leafName + " - " + Editor.getString('selenium-ide.name');
+    } else {
+        title = Editor.getString('selenium-ide.name');
+    }
+    if (testCase && testCase.modified) {
+        title += " *";
+    }
+    document.title = title;
 };
 
 Editor.prototype.tabSelected = function(id) {
-	if (this.getTestCase() != null) {
-		this.log.debug("tabSelected: id=" + id);
-		if (id == 'sourceTab') {
-			this.toggleView(this.sourceView);
-		} else if (id == 'editorTab') {
-			this.toggleView(this.treeView);
-		}
-	}
+    if (this.getTestCase() != null) {
+        this.log.debug("tabSelected: id=" + id);
+        if (id == 'sourceTab') {
+            this.toggleView(this.sourceView);
+        } else if (id == 'editorTab') {
+            this.toggleView(this.treeView);
+        }
+    }
 };
 
 Editor.prototype.saveTestCase = function() {
-	this.view.syncModel();
-	if (this.app.saveTestCase()) {
-		//document.getElementById("filename").value = this.testCase.filename;
-		return true;
-	} else {
-		return false;
-	}
+    this.view.syncModel();
+    if (this.app.saveTestCase()) {
+        //document.getElementById("filename").value = this.testCase.filename;
+        return true;
+    } else {
+        return false;
+    }
 };
 
 Editor.prototype.saveNewTestCase = function() {
-	this.view.syncModel();
-	if (this.app.saveNewTestCase()) {
-		//document.getElementById("filename").value = this.testCase.filename;
-		this.updateTitle();
-	}
+    this.view.syncModel();
+    if (this.app.saveNewTestCase()) {
+        //document.getElementById("filename").value = this.testCase.filename;
+        this.updateTitle();
+    }
 };
 
 Editor.prototype.exportTestCaseWithFormat = function(format) {
-	this.view.syncModel();
-	format.saveAsNew(this.getTestCase().createCopy(), true);
+    this.view.syncModel();
+    format.saveAsNew(this.getTestCase().createCopy(), true);
 };
 
 Editor.prototype.exportTestSuiteWithFormat = function(format) {
@@ -545,19 +545,19 @@ Editor.prototype.exportTestSuiteWithFormat = function(format) {
 };
 
 Editor.prototype.loadRecorderFor = function(contentWindow, isRootDocument) {
-	this.log.debug("loadRecorderFor: " + contentWindow);
-	if (this.recordingEnabled && (isRootDocument || this.recordFrameTitle) &&
-		contentWindow == this.lastWindow) {
-		this.recordTitle(contentWindow);
-	}
-	Recorder.register(this, contentWindow);
+    this.log.debug("loadRecorderFor: " + contentWindow);
+    if (this.recordingEnabled && (isRootDocument || this.recordFrameTitle) &&
+        contentWindow == this.lastWindow) {
+        this.recordTitle(contentWindow);
+    }
+    Recorder.register(this, contentWindow);
 };
 
 Editor.prototype.toggleRecordingEnabled = function(enabled) {
     if (arguments.length == 0) {
         enabled = !this.recordingEnabled;
     }
-	this.recordingEnabled = enabled;
+    this.recordingEnabled = enabled;
     this.recordButton.checked = enabled;
     this.recordMenuItem.setAttribute('checked', enabled);
     var tooltip = Editor.getString("recordButton.tooltip." + (enabled ? "on" : "off"));
@@ -565,7 +565,7 @@ Editor.prototype.toggleRecordingEnabled = function(enabled) {
 };
 
 Editor.prototype.setRecordingEnabled = function(enabled) {
-	this.toggleRecordingEnabled(enabled);
+    this.toggleRecordingEnabled(enabled);
 }
 
 Editor.prototype.onUnloadDocument = function(doc) {
@@ -578,39 +578,39 @@ Editor.prototype.onUnloadDocument = function(doc) {
 };
 
 Editor.prototype.recordTitle = function(window) {
-	if (this.getOptions().recordAssertTitle == 'true' && this.getTestCase().commands.length > 0) {
-		//setTimeout("addCommand", 200, "assertTitle", window.document.title, null, window);
-		this.addCommand("assertTitle", exactMatchPattern(window.document.title), null, window);
-	}
+    if (this.getOptions().recordAssertTitle == 'true' && this.getTestCase().commands.length > 0) {
+        //setTimeout("addCommand", 200, "assertTitle", window.document.title, null, window);
+        this.addCommand("assertTitle", exactMatchPattern(window.document.title), null, window);
+    }
 };
 
 Editor.prototype.getPathAndUpdateBaseURL = function(window) {
-	if (!window || !window.location) return [null, null];
-	var path = window.location.href;
-	var regexp = new RegExp(/^(https?:\/\/[^/:]+(:\d+)?)\/.*/);
-	var base = '';
-	var result = regexp.exec(path);
-	if (result && "true" != this.getOptions().recordAbsoluteURL) {
-		path = path.substr(result[1].length);
-		base = result[1] + '/';
-	}
+    if (!window || !window.location) return [null, null];
+    var path = window.location.href;
+    var regexp = new RegExp(/^(https?:\/\/[^/:]+(:\d+)?)\/.*/);
+    var base = '';
+    var result = regexp.exec(path);
+    if (result && "true" != this.getOptions().recordAbsoluteURL) {
+        path = path.substr(result[1].length);
+        base = result[1] + '/';
+    }
     if (!this.app.getBaseURL() ||
         this.app.getBaseURL().indexOf(base) < 0) {
         this.app.setBaseURL(base);
-	}
+    }
     return [path, base];
 }
 
 Editor.prototype.clear = function(force) {
-	if (this.getTestCase() != null) {
-		if (force || confirm("Really clear the test?")) {
-			this.getTestCase().clear();
-			this.view.refresh();
-			this.log.debug("cleared");
-			return true;
-		}
-	}
-	return false;
+    if (this.getTestCase() != null) {
+        if (force || confirm("Really clear the test?")) {
+            this.getTestCase().clear();
+            this.view.refresh();
+            this.log.debug("cleared");
+            return true;
+        }
+    }
+    return false;
 }
 
 // create the path represented as an array from top level window to the specified frame
@@ -637,13 +637,17 @@ Editor.prototype._getTopWindow = function(window) {
 
 Editor.prototype._isSameWindow = function(w1, w2) {
     if (w1 == null || w2 == null) return false;
-    if (w1 == w1.parent && w2 == w2.parent) {
-        // top level window
-        return w1.name == w2.name;
-    } else if (w1.parent == w2.parent) {
-        // frame
-        return w1.name == w2.name;
-    } else {
+    try {
+        if (w1 == w1.parent && w2 == w2.parent) {
+            // top level window
+            return w1.name == w2.name;
+        } else if (w1.parent == w2.parent) {
+            // frame
+            return w1.name == w2.name;
+        } else {
+            return false;
+        }
+    } catch (err) {
         return false;
     }
 }
@@ -699,62 +703,66 @@ Editor.prototype.updateDeveloperTools = function(show) {
 
 Editor.prototype.addCommand = function(command,target,value,window,insertBeforeLastCommand) {
     this.log.debug("addCommand: command=" + command + ", target=" + target + ", value=" + value + " window.name=" + window.name);
-    if (this.lastWindow) {
-        this.log.debug("window.name=" + window.name + ", lastWindow.name=" + this.lastWindow.name);
-    } else {
-        this.log.debug("window.name=" + window.name);
-    }
-	if (command != 'open' && 
-        command != 'selectWindow' &&
-        command != 'selectFrame') {
-        if (this.getTestCase().commands.length == 0) {
-            var top = this._getTopWindow(window);
-            this.log.debug("top=" + top);
-            var path = this.getPathAndUpdateBaseURL(top)[0];
-            this.addCommand("open", path, '', top);
-            this.recordTitle(top);
+    try {
+        if (this.lastWindow && this.lastWindow.name) {
+            this.log.debug("window.name=" + window.name + ", lastWindow.name=" + this.lastWindow.name);
+        } else {
+            this.log.debug("window.name=" + window.name);
         }
-        if (this.lastWindow != null &&
-            !this._isSameWindow(this.lastWindow, window)) {
-            if (this._isSameWindow(window.top, this.lastWindow.top)) {
-                // frame
-                var destPath = this._createPaths(window);
-                var srcPath = this._createPaths(this.lastWindow);
-                this.log.debug("selectFrame: srcPath.length=" + srcPath.length + ", destPath.length=" + destPath.length);
-                var branch = 0;
-                var i;
-                for (i = 0;; i++) {
-                    if (i >= destPath.length || i >= srcPath.length) break;
-                    if (destPath[i] == srcPath[i]) {
-                        branch = i;
+        if (command != 'open' && 
+            command != 'selectWindow' &&
+            command != 'selectFrame') {
+            if (this.getTestCase().commands.length == 0) {
+                var top = this._getTopWindow(window);
+                this.log.debug("top=" + top);
+                var path = this.getPathAndUpdateBaseURL(top)[0];
+                this.addCommand("open", path, '', top);
+                this.recordTitle(top);
+            }
+            if (this.lastWindow != null &&
+                !this._isSameWindow(this.lastWindow, window)) {
+                if (this._isSameWindow(window.top, this.lastWindow.top)) {
+                    // frame
+                    var destPath = this._createPaths(window);
+                    var srcPath = this._createPaths(this.lastWindow);
+                    this.log.debug("selectFrame: srcPath.length=" + srcPath.length + ", destPath.length=" + destPath.length);
+                    var branch = 0;
+                    var i;
+                    for (i = 0;; i++) {
+                        if (i >= destPath.length || i >= srcPath.length) break;
+                        if (destPath[i] == srcPath[i]) {
+                            branch = i;
+                        }
                     }
-                }
-                this.log.debug("branch=" + branch);
-                if (branch == 0 && srcPath.size > 1) {
-                    // go to root
-                    this.addCommand('selectFrame', 'relative=top', '', window);
+                    this.log.debug("branch=" + branch);
+                    if (branch == 0 && srcPath.size > 1) {
+                        // go to root
+                        this.addCommand('selectFrame', 'relative=top', '', window);
+                    } else {
+                        for (i = srcPath.length - 1; i > branch; i--) {
+                            this.addCommand('selectFrame', 'relative=up', '', window);
+                        }
+                    }
+                    for (i = branch + 1; i < destPath.length; i++) {
+                        this.addCommand('selectFrame', destPath[i].name, '', window);
+                    }
                 } else {
-                    for (i = srcPath.length - 1; i > branch; i--) {
-                        this.addCommand('selectFrame', 'relative=up', '', window);
+                    // popup
+                    var windowName = window.name;
+                    if (windowName == '') {
+                        this.addCommand('selectWindow', 'null', '', window);
+                    }else{
+                        this.addCommand('selectWindow', "name=" + windowName, '', window);
                     }
                 }
-                for (i = branch + 1; i < destPath.length; i++) {
-                    this.addCommand('selectFrame', destPath[i].name, '', window);
-                }
-            } else {
-                // popup
-                var windowName = window.name;
-                if (windowName == '') {
-					this.addCommand('selectWindow', 'null', '', window);
-                }else{
-					this.addCommand('selectWindow', "name=" + windowName, '', window);
-				}
             }
         }
-	}
-	//resultBox.inputField.scrollTop = resultBox.inputField.scrollHeight - resultBox.inputField.clientHeight;
+    } catch (err) {
+        // There was an error (probably while accessing this.lastWindow)
+    }
+    //resultBox.inputField.scrollTop = resultBox.inputField.scrollHeight - resultBox.inputField.clientHeight;
     this.clearLastCommand();
-	this.lastWindow = window;
+    this.lastWindow = window;
     var command = new Command(command, target, value);
     // bind to the href attribute instead of to window.document.location, which
     // is an object reference
@@ -774,11 +782,11 @@ Editor.prototype.addCommand = function(command,target,value,window,insertBeforeL
 }
 
 Editor.prototype.clearLastCommand = function() {
-	this.lastCommandIndex = null;
-	if (this.timeoutID != null) {
-		clearTimeout(this.timeoutID);
+    this.lastCommandIndex = null;
+    if (this.timeoutID != null) {
+        clearTimeout(this.timeoutID);
         this.timeoutID = null;
-	}
+    }
 }
 
 Editor.prototype.appendWaitForPageToLoad = function(window) {
@@ -787,30 +795,30 @@ Editor.prototype.appendWaitForPageToLoad = function(window) {
         this.log.debug("window did not match");
         return;
     }
-	var lastCommandIndex = this.lastCommandIndex;
-	if (lastCommandIndex == null || lastCommandIndex >= this.getTestCase().commands.length) {
-		return;
-	}
-	this.lastCommandIndex = null;
-	var lastCommand = this.getTestCase().commands[lastCommandIndex];
-	if(lastCommand.command.match(/^waitForVaadin/)){
-		lastCommand = this.getTestCase().commands[lastCommandIndex-1];
-	}
-	if (lastCommand.type == 'command' && 
-		!lastCommand.command.match(/^(assert|verify|store)/)) {
-		if (this.app.getCurrentFormat().getFormatter().remoteControl) {
-			this.addCommand("waitForPageToLoad", this.getOptions().timeout, null, this.lastWindow);
-		} else {
-			lastCommand.command = lastCommand.command + "AndWait";
-			this.view.rowUpdated(lastCommandIndex);
-		}
-	}
+    var lastCommandIndex = this.lastCommandIndex;
+    if (lastCommandIndex == null || lastCommandIndex >= this.getTestCase().commands.length) {
+        return;
+    }
+    this.lastCommandIndex = null;
+    var lastCommand = this.getTestCase().commands[lastCommandIndex];
+    if(lastCommand.command.match(/^waitForVaadin/)){
+        lastCommand = this.getTestCase().commands[lastCommandIndex-1];
+    }
+    if (lastCommand.type == 'command' && 
+        !lastCommand.command.match(/^(assert|verify|store)/)) {
+        if (this.app.getCurrentFormat().getFormatter().remoteControl) {
+            this.addCommand("waitForPageToLoad", this.getOptions().timeout, null, this.lastWindow);
+        } else {
+            lastCommand.command = lastCommand.command + "AndWait";
+            this.view.rowUpdated(lastCommandIndex);
+        }
+    }
     this.clearLastCommand();
-	//updateSource();
+    //updateSource();
 }
 
 Editor.prototype.openSeleniumIDEPreferences = function() {
-	window.openDialog("chrome://testbench-recorder/content/optionsDialog.xul", "options", "chrome,modal,resizable", null);
+    window.openDialog("chrome://testbench-recorder/content/optionsDialog.xul", "options", "chrome,modal,resizable", null);
 }
 
 Editor.prototype.showInBrowser = function(url, newWindow) {
@@ -862,29 +870,29 @@ Editor.prototype.playTestSuite = function() {
 }
 
 Editor.prototype.openLogWindow = function() {
-	if (!LOG.getLogWindow()) {
-		LOG.logWindow = window.open(
+    if (!LOG.getLogWindow()) {
+        LOG.logWindow = window.open(
             "chrome://testbench-recorder/content/selenium-core/SeleniumLog.html", "SeleniumLog",
             "chrome,width=600,height=250,bottom=0,right=0,status,scrollbars,resizable"
-		);
-	}
+        );
+    }
 }
 
 Editor.prototype.onPopupOptions = function() {
-	var v1  = document.getElementById("clipboardFormatMenu");
-	if (v1) {
-		v1.setAttribute("disabled", !editor.app.isPlayable());
-	}
-	var v2 = document.getElementById("internalTestsMenu");
-	if (v2) {
-		v2.setAttribute("hidden", this.getOptions().showInternalTestsMenu == null);
-	}
+    var v1  = document.getElementById("clipboardFormatMenu");
+    if (v1) {
+        v1.setAttribute("disabled", !editor.app.isPlayable());
+    }
+    var v2 = document.getElementById("internalTestsMenu");
+    if (v2) {
+        v2.setAttribute("hidden", this.getOptions().showInternalTestsMenu == null);
+    }
 }
 
 Editor.prototype.populateFormatsPopup = function(e, action, format) {
     XulUtils.clearChildren(e);
-	var formats = this.app.getFormats().formats;
-	for (var i = 0; i < formats.length; i++) {
+    var formats = this.app.getFormats().formats;
+    for (var i = 0; i < formats.length; i++) {
             if (formats[i].id == "default" && action.indexOf("export") != -1)
                 continue;
             if (action == "exportTestSuite" && typeof(formats[i].getFormatter().formatSuite) != 'function')
@@ -895,25 +903,25 @@ Editor.prototype.populateFormatsPopup = function(e, action, format) {
                     label: formats[i].name,
                     value: formats[i].id,
                     checked: (format && format.id == formats[i].id) ? true : null});
-	}
+    }
 }
 
 Editor.prototype.updateViewTabs = function() {
-	var editorTab = $('editorTab');
-	var tabs = $('viewTabs');
+    var editorTab = $('editorTab');
+    var tabs = $('viewTabs');
     var tableViewUnavailable = $('tableViewUnavailable');
-	if (this.app.isPlayable()) {
-		editorTab.setAttribute("disabled", false);
+    if (this.app.isPlayable()) {
+        editorTab.setAttribute("disabled", false);
         tableViewUnavailable.setAttribute("hidden", true);
-		this.toggleView(this.view || this.treeView);
-	} else {
-		tabs.selectedIndex = 1;
-		this.toggleView(this.sourceView);
-		editorTab.setAttribute("disabled", true);
+        this.toggleView(this.view || this.treeView);
+    } else {
+        tabs.selectedIndex = 1;
+        this.toggleView(this.sourceView);
+        editorTab.setAttribute("disabled", true);
         tableViewUnavailable.setAttribute("hidden", false);
         tableViewUnavailable.style.backgroundColor = window.getComputedStyle(tableViewUnavailable.parentNode.parentNode, "").backgroundColor;
-	}
-	this.updateState();
+    }
+    this.updateState();
 }
 
 
@@ -926,22 +934,22 @@ Editor.prototype.getTestCase = function() {
 }
 
 Editor.prototype.toggleView = function(view) {
-	this.log.debug("toggle view: testCase=" + this.getTestCase());
-	if (this.view != null) {
-		this.view.onHide();
-	}
-	var previous = this.view;
-	this.view = view;
-	if (previous) previous.syncModel(true);
-	this.view.testCase = this.getTestCase();
-	this.view.refresh();
+    this.log.debug("toggle view: testCase=" + this.getTestCase());
+    if (this.view != null) {
+        this.view.onHide();
+    }
+    var previous = this.view;
+    this.view = view;
+    if (previous) previous.syncModel(true);
+    this.view.testCase = this.getTestCase();
+    this.view.refresh();
         //notify app to change the base URL
         this.app.notify("baseURLChanged");
 }
 
 Editor.prototype.showAlert = function(message) {
-	this.errorMessage = message;
-	//	window.alert(message);
+    this.errorMessage = message;
+    //  window.alert(message);
 }
 
 /*
@@ -949,26 +957,26 @@ Editor.prototype.showAlert = function(message) {
  * Used for self-testing Selenium IDE.
  */
 Editor.prototype.loadDefaultOptions = function() {
-	this.app.setOptions(Preferences.DEFAULT_OPTIONS);
+    this.app.setOptions(Preferences.DEFAULT_OPTIONS);
 }
 
 Editor.prototype.loadExtensions = function() {
-	const subScriptLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
-	if (this.getOptions().ideExtensionsPaths) {
-		try {
-			ExtensionsLoader.loadSubScript(subScriptLoader, this.getOptions().ideExtensionsPaths, window);
-		} catch (error) {
-			this.showAlert("error loading Selenium IDE extensions: " + error);
-		}
-	}
-	//Samit: Enh: add support for plugin provided IDE extensions 
-	if (this.getOptions().pluginProvidedIDEExtensions) {
-		try {
-			ExtensionsLoader.loadSubScript(subScriptLoader, this.getOptions().pluginProvidedIDEExtensions, window);
-		} catch (error) {
-			this.showAlert("error loading Selenium IDE extensions: " + error);
-		}
-	}
+    const subScriptLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
+    if (this.getOptions().ideExtensionsPaths) {
+        try {
+            ExtensionsLoader.loadSubScript(subScriptLoader, this.getOptions().ideExtensionsPaths, window);
+        } catch (error) {
+            this.showAlert("error loading Selenium IDE extensions: " + error);
+        }
+    }
+    //Samit: Enh: add support for plugin provided IDE extensions 
+    if (this.getOptions().pluginProvidedIDEExtensions) {
+        try {
+            ExtensionsLoader.loadSubScript(subScriptLoader, this.getOptions().pluginProvidedIDEExtensions, window);
+        } catch (error) {
+            this.showAlert("error loading Selenium IDE extensions: " + error);
+        }
+    }
 }
 
 Editor.prototype.loadSeleniumAPI = function() {
@@ -1020,14 +1028,14 @@ Editor.prototype.loadSeleniumAPI = function() {
 
 Editor.prototype.reload = function(){
 
-	try{
-		this.loadSeleniumAPI();
-		this.selDebugger.reInit();
-		this.treeView.reloadSeleniumCommands();
-	}catch(e){
-		
-		alert("error reload: "+e);
-	}
+    try{
+        this.loadSeleniumAPI();
+        this.selDebugger.reInit();
+        this.treeView.reloadSeleniumCommands();
+    }catch(e){
+        
+        alert("error reload: "+e);
+    }
 }
 
 Editor.prototype.showReference = function(command) {
@@ -1135,19 +1143,19 @@ function AbstractReference() {
 }
 
 AbstractReference.prototype.load = function(frame) {
-	var self = this;
+    var self = this;
     this.frame = document.getElementById("helpView");
-	this.frame.addEventListener("load", 
-						   function() {
-							   if (self.selectedDefinition) {
+    this.frame.addEventListener("load", 
+                           function() {
+                               if (self.selectedDefinition) {
                                    self.doShow();
                                }
-						   }, 
-						   true);
+                           }, 
+                           true);
 }
 
 AbstractReference.prototype.show = function(def, command) {
-	this.selectedDefinition = def;
+    this.selectedDefinition = def;
     this.selectedCommand = command;
     this.doShow();
 }
@@ -1155,32 +1163,32 @@ AbstractReference.prototype.show = function(def, command) {
 // GeneratedReference: reference generated from iedoc.xml
 
 function GeneratedReference(name) {
-	this.name = name;
+    this.name = name;
 }
 
 GeneratedReference.prototype = new AbstractReference;
 
 GeneratedReference.prototype.doShow = function(frame) {
-	this.frame.contentDocument.body.innerHTML = this.selectedDefinition.getReferenceFor(this.selectedCommand);
+    this.frame.contentDocument.body.innerHTML = this.selectedDefinition.getReferenceFor(this.selectedCommand);
 }
 
 // HTMLReference: reference based on single HTML page
 
 function HTMLReference(name, url) {
-	this.name = name;
-	this.url = url;
+    this.name = name;
+    this.url = url;
 }
 
 HTMLReference.prototype = new AbstractReference;
 
 HTMLReference.prototype.load = function() {
     AbstractReference.prototype.load.call(this);
-	this.frame.setAttribute("src", this.url);
+    this.frame.setAttribute("src", this.url);
 }
 
 HTMLReference.prototype.doShow = function() {
-	var func = this.selectedDefinition.name.replace(/^(get|is)/, "store");
-	this.frame.contentWindow.location.hash = func;
+    var func = this.selectedDefinition.name.replace(/^(get|is)/, "store");
+    this.frame.contentWindow.location.hash = func;
 }
 
 //******************************************************************************
@@ -1325,8 +1333,8 @@ RollupReference.prototype.doShow = function() {
 Editor.references = [];
 
 Editor.prototype.selectDefaultReference = function() {
-	this.reference = Editor.references[0];
-	this.reference.load();
+    this.reference = Editor.references[0];
+    this.reference.load();
     this.uiReference = Editor.references[2];
     this.uiReference.load();
     this.rollupReference = Editor.references[3];
@@ -1352,10 +1360,10 @@ Editor.InfoPanel = function(editor) {
 }
 
 Editor.InfoPanel.prototype.switchView = function(view) {
-	if (this.currentView == view) return;
+    if (this.currentView == view) return;
     this.currentView.hide();
     view.show();
-	this.currentView = view;
+    this.currentView = view;
 }
 
 /*
@@ -1366,13 +1374,13 @@ Editor.InfoView = function() {
 }
 
 Editor.InfoView.prototype.show = function() {
-	document.getElementById(this.name + "View").hidden = false;
-	document.getElementById(this.name + "Tab").setAttribute("selected", "true");
+    document.getElementById(this.name + "View").hidden = false;
+    document.getElementById(this.name + "Tab").setAttribute("selected", "true");
 }
 
 Editor.InfoView.prototype.hide = function() {
-	document.getElementById(this.name + "Tab").removeAttribute("selected");
-	document.getElementById(this.name + "View").hidden = true;
+    document.getElementById(this.name + "Tab").removeAttribute("selected");
+    document.getElementById(this.name + "View").hidden = true;
 }
 
 /*
@@ -1382,12 +1390,12 @@ Editor.InfoView.prototype.hide = function() {
 Editor.LogView = function(panel, editor) {
     this.name = "log";
     this.changeLogLevel("1"); // INFO
-	this.view = document.getElementById("logView");
+    this.view = document.getElementById("logView");
     this.panel = panel;
     //this.log = editor.selDebugger.runner.LOG;
     //this.log.observers.push(this.infoPanel.logView);
     var self = this;
-	this.view.addEventListener("load", function() {self.reload()}, true);
+    this.view.addEventListener("load", function() {self.reload()}, true);
 }
 
 Editor.LogView.prototype = new Editor.InfoView;
@@ -1426,11 +1434,11 @@ Editor.LogView.prototype.changeLogLevel = function(level, reload) {
 }
 
 Editor.LogView.prototype.getLogElement = function() {
-	return this.view.contentDocument.getElementById("log");
+    return this.view.contentDocument.getElementById("log");
 }
 
 Editor.LogView.prototype.isHidden = function() {
-	return this.view.hidden || this.getLogElement() == null;
+    return this.view.hidden || this.getLogElement() == null;
 }
 
 Editor.LogView.prototype.clear = function() {
@@ -1440,21 +1448,21 @@ Editor.LogView.prototype.clear = function() {
 }
 
 Editor.LogView.prototype.onClear = function() {
-	if (!this.isHidden()) {
-		var nodes = this.getLogElement().childNodes;
-		var i;
-		for (i = nodes.length - 1; i >= 0; i--) {
-			this.getLogElement().removeChild(nodes[i]);
-		}
-	}
+    if (!this.isHidden()) {
+        var nodes = this.getLogElement().childNodes;
+        var i;
+        for (i = nodes.length - 1; i >= 0; i--) {
+            this.getLogElement().removeChild(nodes[i]);
+        }
+    }
 }
 
 Editor.LogView.prototype.reload = function() {
-	if (!this.isHidden() && this.log) {
-		var self = this;
-		this.onClear();
-		this.log.entries.forEach(function(entry) {self.onAppendEntry(entry);});
-	}
+    if (!this.isHidden() && this.log) {
+        var self = this;
+        this.onClear();
+        this.log.entries.forEach(function(entry) {self.onAppendEntry(entry);});
+    }
 }
 
 Editor.LogView.prototype.onAppendEntry = function(entry) {
