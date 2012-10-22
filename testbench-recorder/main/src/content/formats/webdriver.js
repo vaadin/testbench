@@ -791,7 +791,8 @@ SeleniumWebDriverAdaptor.prototype.getAlert = function(value) {
   return driver.getAlert(this.rawArgs[0]);
 }
 SeleniumWebDriverAdaptor.prototype.selectFrame = function(elementLocator) {
-  var locator = this._elementLocator(this.rawArgs[0]);
+  // Parse it, since we want implicit locators handled in this case and _elementLocator throws an error on them
+  var locator = parse_locator(this.rawArgs[0]);
   // return driver.findElement(locator.type, locator.string).focus();
   var driver = new WDAPI.Driver();
   return driver.selectFrame(locator.type, locator.string);

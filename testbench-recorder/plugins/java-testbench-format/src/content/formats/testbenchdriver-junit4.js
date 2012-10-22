@@ -535,6 +535,9 @@ WDAPI.Driver.prototype.selectFrame = function(locatorType, locator) {
     frame = locator;
   } else if (locatorType == "relative") {
     return "// WARNING: The recording switched to a relative frame [relative=" + locator + "] but WebDriver doesn't support this.";
+  } else if (locatorType == "implicit") {
+    // No locator type, assume it's a name or ID
+    frame = "\"" + locator + "\"";
   } else {
     frame = this.findElement(locatorType, locator);
   }
