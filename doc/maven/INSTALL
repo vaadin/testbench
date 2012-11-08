@@ -7,8 +7,8 @@ command in the <TESTBENCH PACKAGE ROOT>/maven directory:
 
 	mvn install:install-file \
 	-Dfile=vaadin-testbench-@version@.jar \
-	-Djavadoc=vaadin-testbench-@version@-javadoc.jar
-  -DpomFile=pom.xml
+	-Djavadoc=vaadin-testbench-@version@-javadoc.jar \
+	-DpomFile=pom.xml
 
 
 Creating a maven project using TestBench
