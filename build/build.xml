@@ -7,7 +7,7 @@
 	<!-- Load version from properties file. If not found, version is specified below. -->
     <property file="${build.properties.file}" />
 	
-	<property name="version.base" value="3.0.4-SNAPSHOT" />
+	<property name="version.base" value="3.0.5-SNAPSHOT" />
 	<property name="manual.version" value="3.0"/>
 	        	
 	<tstamp />
