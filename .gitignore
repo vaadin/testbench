@@ -1,6 +1,7 @@
 .classpath
 .project
 .settings
+*.iml
 bin
 build/result/
 selenium-extensions/core/user-extensions.js

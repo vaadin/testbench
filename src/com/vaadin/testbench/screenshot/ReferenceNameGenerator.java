@@ -39,7 +39,11 @@ public class ReferenceNameGenerator {
     public static String getMajorVersion(Capabilities browserCapabilities) {
         String versionString = browserCapabilities.getVersion();
         if (versionString.contains(".")) {
-            return versionString.substring(0, versionString.indexOf('.'));
+            String major = versionString.substring(0, versionString.indexOf('.'));
+            if (major.contains("-")) {
+                major = major.substring(major.indexOf("-") + 1);
+            }
+            return major;
         }
         return versionString;
     }

@@ -4,7 +4,7 @@
     <Description about="urn:mozilla:install-manifest">
         <em:id>vaadin-testbench-recorder@vaadin.com</em:id>
         <em:name>Vaadin TestBench Recorder</em:name>
-        <em:version>3.0.4-SNAPSHOT</em:version>
+        <em:version>3.0.5-SNAPSHOT</em:version>
         <em:creator>Vaadin Ltd</em:creator>
         <em:developer>Shinya Kasatani</em:developer>
         <em:developer>Adam Goucher</em:developer>

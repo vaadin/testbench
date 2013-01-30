@@ -4,7 +4,7 @@
     <Description about="urn:mozilla:install-manifest">
         <em:id>java-testbench-formatters@vaadin.com</em:id>
         <em:name>Vaadin TestBench Recorder: Java Formatters</em:name>
-        <em:version>3.0.4-SNAPSHOT</em:version>
+        <em:version>3.0.5-SNAPSHOT</em:version>
         <em:creator>Vaadin Ltd</em:creator>
         <em:developer>Jonatan Kronqvist</em:developer>
         <em:description>Java code formatters for Vaadin TestBench Recorder</em:description>
