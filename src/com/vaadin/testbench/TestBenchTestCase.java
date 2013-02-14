@@ -22,7 +22,8 @@ public abstract class TestBenchTestCase {
      * special TestBench commands.
      * 
      * @param webDriver
-     * @return
+     *            The WebDriver instance to cast.
+     * @return a WebDriver cast to TestBenchCommands
      */
     public static TestBenchCommands testBench(WebDriver webDriver) {
         return (TestBenchCommands) webDriver;
@@ -32,7 +33,7 @@ public abstract class TestBenchTestCase {
      * Convenience method the return {@link TestBenchCommands} for the default
      * {@link WebDriver} instance.
      * 
-     * @return
+     * @return The driver cast to a TestBenchCommands instance.
      */
     public TestBenchCommands testBench() {
         return (TestBenchCommands) getDriver();
@@ -44,7 +45,8 @@ public abstract class TestBenchTestCase {
      * access the special TestBench commands.
      * 
      * @param webElement
-     * @return
+     *            The WebElement to cast.
+     * @return The WebElement cast to a TestBenchElementCommands instance.
      */
     public TestBenchElementCommands testBenchElement(WebElement webElement) {
         return (TestBenchElementCommands) webElement;
@@ -78,8 +80,8 @@ public abstract class TestBenchTestCase {
      */
     public boolean isElementPresent(By by) {
         try {
-            getDriver().findElement(by);
-            return true;
+            WebElement element = getDriver().findElement(by);
+            return element != null;
         } catch (Exception e) {
             return false;
         }
@@ -93,9 +95,10 @@ public abstract class TestBenchTestCase {
     }
 
     /**
-     * Sets the active WebDriver that is used by this this case
+     * Sets the active {@link WebDriver} that is used by this this case
      * 
      * @param driver
+     *            The WebDriver instance to set.
      */
     public void setDriver(WebDriver driver) {
         this.driver = driver;
