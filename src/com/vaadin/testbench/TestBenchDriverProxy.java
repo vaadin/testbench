@@ -14,21 +14,21 @@ import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.screenshot.ImageComparison;
 import com.vaadin.testbench.screenshot.ReferenceNameGenerator;
 
-public class TestBenchDriver extends TestBenchCommandExecutor implements
+public class TestBenchDriverProxy extends TestBenchCommandExecutor implements
         WebDriver, WrapsDriver {
     // private static Logger getLogger() {
-    // return Logger.getLogger(TestBenchDriver.class.getName());
+    // return Logger.getLogger(TestBenchDriverProxy.class.getName());
     // }
 
     private final WebDriver actualDriver;
 
     /**
-     * Constructs a TestBenchDriver using the provided web driver for the actual
+     * Constructs a TestBenchDriverProxy using the provided web driver for the actual
      * driving.
      * 
      * @param webDriver
      */
-    protected TestBenchDriver(WebDriver webDriver) {
+    protected TestBenchDriverProxy(WebDriver webDriver) {
         super(webDriver, new ImageComparison(), new ReferenceNameGenerator());
         actualDriver = webDriver;
     }

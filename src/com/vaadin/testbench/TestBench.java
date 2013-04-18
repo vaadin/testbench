@@ -25,13 +25,13 @@ public class TestBench {
         }
 
         Set<Class<?>> allInterfaces = extractInterfaces(driver);
-        allInterfaces.addAll(extractInterfaces(TestBenchDriver.class));
+        allInterfaces.addAll(extractInterfaces(TestBenchDriverProxy.class));
         final Class<?>[] allInterfacesArray = allInterfaces
                 .toArray(new Class<?>[allInterfaces.size()]);
         Object proxy = Proxy
                 .newProxyInstance(driver.getClass().getClassLoader(),
                         allInterfacesArray, new CachedInvocationHandler(
-                                new TestBenchDriver(driver), driver));
+                                new TestBenchDriverProxy(driver), driver));
         return (WebDriver) proxy;
     }
 

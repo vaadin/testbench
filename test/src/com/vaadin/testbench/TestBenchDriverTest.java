@@ -73,7 +73,7 @@ public class TestBenchDriverTest {
         expect(mockDriver.switchTo()).andReturn(mockTargetLocator);
         replay(mockDriver);
 
-        // TestBenchDriver driver = new TestBenchDriver(mockDriver);
+        // TestBenchDriverProxy driver = new TestBenchDriverProxy(mockDriver);
         WebDriver driver = TestBench.createDriver(mockDriver);
         driver.close();
         By mockBy = createNiceMock(By.class);

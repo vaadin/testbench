@@ -38,8 +38,8 @@ public class CachedInvocationHandler implements InvocationHandler {
                 Method actualMethod = null;
                 try {
                     if (actualObject instanceof WebDriver) {
-                        // Is it a method in the TestBenchDriver?
-                        actualMethod = TestBenchDriver.class.getMethod(
+                        // Is it a method in the TestBenchDriverProxy?
+                        actualMethod = TestBenchDriverProxy.class.getMethod(
                                 method.getName(), method.getParameterTypes());
                     } else {
                         actualMethod = TestBenchElement.class.getMethod(
