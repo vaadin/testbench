@@ -1,0 +1,58 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.vaadin</groupId>
+    <artifactId>vaadin-testbench-parent</artifactId>
+    <packaging>pom</packaging>
+    <version>3.1-SNAPSHOT</version>
+    <name>Vaadin TestBench parent</name>
+
+    <organization>
+        <name>Vaadin Ltd</name>
+        <url>http://vaadin.com/</url>
+    </organization>
+    <url>http://vaadin.com/</url>
+    <issueManagement>
+        <system>trac</system>
+        <url>http://dev.vaadin.com/</url>
+    </issueManagement>
+    <developers>
+        <developer>
+            <name>Jonatan Kronqvist</name>
+            <id>jonatan</id>
+            <email>jonatan at vaadin.com</email>
+            <organization>Vaadin Ltd</organization>
+            <timezone>+2</timezone>
+        </developer>
+    </developers>
+    <licenses>
+        <license>
+            <name>Vaadin CVAL 2.0</name>
+            <url>https://vaadin.com/license/cval-2.0</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+<!--     <distributionManagement> -->
+<!--         <repository> -->
+<!--             <id>vaadin-staging</id> -->
+<!--             <name>Vaadin release staging repository</name> -->
+<!--             <url>http://oss.sonatype.org/service/local/staging/deploy/maven2/</url> -->
+<!--         </repository> -->
+<!--         <snapshotRepository> -->
+<!--             <id>vaadin-snapshots</id> -->
+<!--             <name>Vaadin snapshot repository</name> -->
+<!--             <url>${snapshot.repository.url}</url> -->
+<!--         </snapshotRepository> -->
+<!--     </distributionManagement> -->
+
+    <modules>
+        <module>vaadin-testbench</module>
+        <!--<module>vaadin-testbench-example</module>-->
+        <module>vaadin-testbench-standalone</module>
+        <module>vaadin-testbench-recorder</module>
+        <module>vaadin-testbench-assembly</module>
+    </modules>
+
+</project>

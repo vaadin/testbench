@@ -1,0 +1,32 @@
+#baseURL[type="autocomplete"] .autocomplete-history-dropmarker{
+	-moz-appearance: none;       
+    display: -moz-box;
+    width:25px;
+    height:25px;    
+}
+
+#baseURL[type="autocomplete"] .textbox-input-box,
+#baseURL[type="autocomplete"] .autocomplete-textbox-container,
+#baseURL[type="autocomplete"] .autocomplete-history-dropmarker image{
+    -moz-appearance: none;       
+}
+
+#viewTabs tab{ 
+   border-radius: 0; 
+   background-color: transparent;
+   margin-bottom:0;
+   padding-bottom:0;
+}
+
+#source, #editorpane{
+	-moz-appearance: none;       
+    margin:0;
+    border-top:1px solid rgb(50,50,50);
+}
+
+#logTab, #helpTab{
+	padding-left: 5px;
+	padding-right: 5px;	
+}
+
+#toolbar2{ height:24px; }

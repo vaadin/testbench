@@ -1,0 +1,32 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+  <head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Selenium IDE Test Suite</title>
+    <link rel="stylesheet" type="text/css" href="chrome://testbench-recorder/content/jsunit/css/jsUnitStyle.css">
+		<script type="text/javascript" src="chrome://testbench-recorder/content/jsunit/app/xbDebug.js"></script>
+		<script type="text/javascript" src="chrome://testbench-recorder/content/jsunit/app/jsUnitCore.js"></script>
+		<script type="text/javascript" src="chrome://testbench-recorder/content/jsunit/app/jsUnitTestSuite.js"></script>
+    <script language="Javascript" type="text/javascript">
+       function suite() {
+           var testSuite = new jsUnitTestSuite();
+           testSuite.addTestPage("chrome://testbench-recorder/content/tests/unit/testSuiteProgress-tests.html");
+           testSuite.addTestPage("chrome://testbench-recorder/content/tests/unit/storedHistory-tests.html");
+           testSuite.addTestPage("chrome://testbench-recorder/content/tests/unit/application-tests.html");
+           testSuite.addTestPage("chrome://testbench-recorder/content/tests/unit/preferences-tests.html");
+           testSuite.addTestPage("chrome://testbench-recorder/content/tests/unit/testSuite-tests.html");
+           testSuite.addTestPage("chrome://testbench-recorder/content/tests/unit/tools-tests.html");
+           testSuite.addTestPage("chrome://testbench-recorder/content/tests/unit/format-tests.html");
+           testSuite.addTestPage("chrome://testbench-recorder/content/tests/unit/editor-tests.html");
+           testSuite.addTestPage("chrome://testbench-recorder/content/tests/unit/locatorBuilders-tests.html");
+           testSuite.addTestPage("chrome://testbench-recorder/content/tests/unit/locatorBuilders-xhtml-tests.xhtml");
+           testSuite.addTestPage("chrome://testbench-recorder/content/tests/unit/html-format-tests.html");
+           testSuite.addTestPage("chrome://testbench-recorder/content/tests/unit/recorder-tests.html");
+           return testSuite;
+       }
+    </script>
+  </head>
+  <body>
+		JSUnit test suite for Selenium IDE
+	</body>
+</html>

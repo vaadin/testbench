@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<assembly
+        xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
+    <id>vaadin-testbench-assembly</id>
+
+    <!-- Note: the base directory for this assembly descriptor is one of the
+        license specific subprojects -->
+
+    <formats>
+        <format>zip</format>
+    </formats>
+
+    <!-- Do not use because we must put META-INF/MANIFEST.MF there. -->
+    <includeBaseDirectory>false</includeBaseDirectory>
+
+    <fileSets>
+        <fileSet>
+            <directory>../vaadin-testbench/target</directory>
+            <outputDirectory>maven</outputDirectory>
+            <includes>
+                <include>*.jar</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <directory>../vaadin-testbench-recorder/extension</directory>
+            <outputDirectory>./</outputDirectory>
+            <includes>
+                <include>vaadin-testbench-recorder*.xpi</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <directory>../vaadin-testbench-standalone/target</directory>
+            <outputDirectory>./</outputDirectory>
+            <includes>
+                <include>vaadin-testbench-standalone*.jar</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <directory>../vaadin-testbench-example</directory>
+            <outputDirectory>example</outputDirectory>
+            <excludes>
+                <exclude>*.iml</exclude>
+                <exclude>target/*</exclude>
+                <!-- The pom is filtered in the next section -->
+                <exclude>package/**</exclude>
+                <exclude>*pom.xml</exclude>
+            </excludes>
+        </fileSet>
+        <fileSet>
+            <directory>../doc</directory>
+            <outputDirectory>documentation</outputDirectory>
+            <includes>
+                <include>licen*</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <directory>../vaadin-testbench/target</directory>
+            <outputDirectory>documentation</outputDirectory>
+            <includes>
+                <include>*.pdf</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <directory>../vaadin-testbench/target/apidocs</directory>
+            <outputDirectory>documentation/api</outputDirectory>
+        </fileSet>
+    </fileSets>
+
+    <files>
+        <!-- This is a vaadin.com/directory related manifest needed in the zip package -->
+        <file>
+            <source>MANIFEST.MF</source>
+            <outputDirectory>META-INF</outputDirectory>
+            <filtered>true</filtered>
+        </file>
+        <file>
+            <source>../doc/maven/INSTALL</source>
+            <outputDirectory>maven</outputDirectory>
+            <filtered>true</filtered>
+        </file>
+        <file>
+            <source>../vaadin-testbench-example/package/pom.xml</source>
+            <outputDirectory>example</outputDirectory>
+            <filtered>true</filtered>
+        </file>
+        <file>
+            <source>../doc/releasenotes.html</source>
+            <outputDirectory>documentation</outputDirectory>
+            <filtered>true</filtered>
+        </file>
+        <file>
+            <source>../vaadin-testbench/pom.xml</source>
+            <outputDirectory>maven</outputDirectory>
+        </file>
+    </files>
+</assembly>

@@ -6,8 +6,8 @@ can install TestBench into your local maven repository by executing the followin
 command in the <TESTBENCH PACKAGE ROOT>/maven directory:
 
 	mvn install:install-file \
-	-Dfile=vaadin-testbench-@version@.jar \
-	-Djavadoc=vaadin-testbench-@version@-javadoc.jar \
+	-Dfile=vaadin-testbench-${project.version}.jar \
+	-Djavadoc=vaadin-testbench-${project.version}-javadoc.jar \
 	-DpomFile=pom.xml
 
 
@@ -31,7 +31,7 @@ dependency:
     <dependency>
       <groupId>com.vaadin</groupId>
       <artifactId>vaadin-testbench</artifactId>
-      <version>@version@</version>
+      <version>${project.version}</version>
     </dependency>
 
 If not using the archetype, be sure to add the vaadin-addons repository to

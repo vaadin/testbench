@@ -1,4 +1,0 @@
-# chrome.manifest for development
-content testbench-formatters  content/
-
-overlay chrome://testbench-recorder/content/selenium-ide-overlay.xul chrome://testbench-formatters/content/formats/format-loader.xul

@@ -464,7 +464,7 @@
   <body>
 	  <div id="content">
 	 	
-<h1 id="release_notes_for_vaadin_testbench_version">Release Notes for Vaadin TestBench @version@</h1>
+<h1 id="release_notes_for_vaadin_testbench_version">Release Notes for Vaadin TestBench ${project.version}</h1>
 
 <h2 id="overview_of_vaadin_testbench_3">Overview of Vaadin TestBench 3</h2>
 
@@ -505,11 +505,11 @@
     		<td>This folder contains the Vaadin TestBench Recorder, which you can install in Firefox. Please see the manual for installation instructions.</td>
 		</tr>
 		<tr>
-			<td><pre>vaadin-testbench-standalone-@version@.jar</pre></td>
+			<td><pre>vaadin-testbench-standalone-${project.version}.jar</pre></td>
     		<td>This is the Vaadin TestBench library. It is a standalone library that includes the Selenium 2 WebDriver along with all other dependencies.</td>
 		</tr>
 		<tr>
-			<td><pre>vaadin-testbench-standalone-@version@-javadoc.jar</pre></td>
+			<td><pre>vaadin-testbench-standalone-${project.version}-javadoc.jar</pre></td>
     		<td>This is the JavaDoc API documentation for the TestBench library. If you use Eclipse, you can associate this JAR with the TestBench JAR in the project preferences, in the build path library settings.</td>
 		</tr>
 	</table>
@@ -517,7 +517,7 @@
 
 <h2 id="dependencies">Dependencies</h2>
 
-<p>All dependencies are bundled in <code>vaadin-testbench-standalone-@version@.jar</code>. The maven directory also contains <code>vaadin-testbench-@version@.jar</code>, which does not contain any dependencies. Vaadin TestBench 3 depends on Selenium 2, which in turn has dependencies. Here is a list of the dependencies:</p>
+<p>All dependencies are bundled in <code>vaadin-testbench-standalone-${project.version}.jar</code>. The maven directory also contains <code>vaadin-testbench-${project.version}.jar</code>, which does not contain any dependencies. Vaadin TestBench 3 depends on Selenium 2, which in turn has dependencies. Here is a list of the dependencies:</p>
 
 <ul>
 <li>Selenium 2.24.1
