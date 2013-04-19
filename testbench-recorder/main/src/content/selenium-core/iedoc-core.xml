@@ -1903,5 +1903,13 @@ image, reporting any differences. The browser chrome is not included in the scre
 
 </function>
 
+<function name="upload">
+
+<param name="locator">An element locator for a file input field</param>
+<param name="filepath">Specifies the file to upload</param>
+
+<comment>Sets the file that should be uploaded once the upload button is clicked or immediately depending on the application under test.</comment>
+
+</function>
 
 </apidoc>

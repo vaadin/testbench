@@ -676,6 +676,13 @@ SeleniumWebDriverAdaptor.prototype.type = function(elementLocator, text) {
   return statement(new SeleniumWebDriverAdaptor.SimpleExpression(webElement.clear())) + "\n" + webElement.sendKeys(this.rawArgs[1]);
 };
 
+SeleniumWebDriverAdaptor.prototype.upload = function(elementLocator, text) {
+    var locator = this._elementLocator(this.rawArgs[0]);
+    var driver = new WDAPI.Driver();
+    var webElement = driver.findElement(locator.type, locator.string);
+    return webElement.sendKeys(this.rawArgs[1]);
+};
+
 SeleniumWebDriverAdaptor.prototype.uncheck = function(elementLocator) {
   var locator = this._elementLocator(this.rawArgs[0]);
   var driver = new WDAPI.Driver();

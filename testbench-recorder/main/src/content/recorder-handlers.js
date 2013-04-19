@@ -20,10 +20,13 @@
 Recorder.addEventHandler('type', 'change', function(event) {
 		var tagName = event.target.tagName.toLowerCase();
 		var type = event.target.type;
-		if (('input' == tagName && ('text' == type || 'password' == type || 'file' == type)) ||
+		if (('input' == tagName && ('text' == type || 'password' == type)) ||
 			'textarea' == tagName) {
 			this.record("type", this.findLocators(event.target), event.target.value);
-		}
+		} else if ('file' == type) {
+            // Record a custom command for typing in file inputs as clear() is not supported on these
+            this.record("upload", this.findLocators(event.target), event.target.value);
+        }
 	});
 
 /*
