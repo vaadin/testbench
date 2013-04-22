@@ -11,11 +11,8 @@ vaadin-testbench-recorder/chrome/content/selenium/scripts/selenium-browserbot.js
 vaadin-testbench-recorder/chrome/testbench-recorder.jar
 vaadin-testbench-recorder/extension/
 vaadin-testbench-recorder/install.rdf
+vaadin-testbench-playground
+chromedriver.log
 
-bin
-build/result/
-tmp/
-example/Maven/target
 test/temp/
-example/maven/.externalToolBuilders/
 
