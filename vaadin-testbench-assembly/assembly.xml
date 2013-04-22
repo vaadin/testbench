@@ -24,7 +24,7 @@
             </includes>
         </fileSet>
         <fileSet>
-            <directory>../vaadin-testbench-recorder/extension</directory>
+            <directory>../vaadin-testbench-recorder/target</directory>
             <outputDirectory>./</outputDirectory>
             <includes>
                 <include>vaadin-testbench-recorder*.xpi</include>

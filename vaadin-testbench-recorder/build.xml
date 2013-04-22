@@ -6,13 +6,13 @@
 	<property name="signer" value="/opt/scripts/jarsigner/testbenchsigner.sh" />
 
 	<target name="testbench-recorder-package" depends="install-rdfs,create-extension">
-		<copy todir="extension/tmp/package">
+		<copy todir="target/tmp/package">
 			<fileset dir="main/src">
 				<include name="components/**" />
 				<include name="install.rdf" />
 			</fileset>
 		</copy>
-		<copy todir="extension/tmp/package/chrome">
+		<copy todir="target/tmp/package/chrome">
 			<fileset dir="main/src">
 				<include name="content/**" />
 				<include name="locale/**" />
@@ -22,24 +22,24 @@
 				<include name="**/**" />
 			</fileset>
 		</copy>
-		<copy todir="extension/tmp/package/chrome/content">
+		<copy todir="target/tmp/package/chrome/content">
 			<!-- selenium-api.js and selenium-browserbot.js are copied in the 'create-scripts' target -->
 			<fileset dir="javascript" includes="selenium-core/**/**" />
 		</copy>
-		<copy file="javascript/prebuilt/selenium-atoms.js" tofile="extension/tmp/package/chrome/content/selenium-core/scripts/atoms.js" />
-		<copy file="main/src/chrome.manifest.production" tofile="extension/tmp/package/chrome.manifest" />
-		<copy file="main/prebuilt/main/SeleniumIDEGenericAutoCompleteSearch.xpt" todir="extension/tmp/package/components/" />
-		<copy file="selenium-extensions/core/user-extensions.js" todir="extension/tmp/package/chrome/content/selenium-core/scripts" />
+		<copy file="javascript/prebuilt/selenium-atoms.js" tofile="target/tmp/package/chrome/content/selenium-core/scripts/atoms.js" />
+		<copy file="main/src/chrome.manifest.production" tofile="target/tmp/package/chrome.manifest" />
+		<copy file="main/prebuilt/main/SeleniumIDEGenericAutoCompleteSearch.xpt" todir="target/tmp/package/components/" />
+		<copy file="selenium-extensions/core/user-extensions.js" todir="target/tmp/package/chrome/content/selenium-core/scripts" />
 			
 		<antcall target="create-scripts" />
 		
-		<zip destfile="extension/recorder.xpi">
-			<fileset dir="extension/tmp/package/"/>
+		<zip destfile="target/recorder.xpi">
+			<fileset dir="target/tmp/package/"/>
 		</zip>
 	</target>
 	
 	<target name="testbench-formatter" depends="install-rdfs">
-		<zip destfile="extension/java-testbench-format.xpi">
+		<zip destfile="target/java-testbench-format.xpi">
 			<fileset dir="plugins/java-testbench-format/src">
 				<exclude name="install.rdf_tpl" />
 				<exclude name="chrome.manifest.production" />
@@ -78,41 +78,41 @@
 
 	<target name="sign" depends="check-signer-exists" if="signer.exists">
 		<exec executable="${signer}">
-			<arg value="extension/vaadin-testbench-recorder-${version}.xpi" />
+			<arg value="target/vaadin-testbench-recorder-${version}.xpi" />
 		</exec>
 	</target>
 
 	<target name="sign-inner" depends="check-signer-exists,testbench-recorder-package,testbench-formatter" if="signer.exists">
 		<exec executable="${signer}">
-			<arg value="extension/recorder.xpi" />
+			<arg value="target/recorder.xpi" />
 		</exec>
 		<exec executable="${signer}">
-			<arg value="extension/java-testbench-format.xpi" />
+			<arg value="target/java-testbench-format.xpi" />
 		</exec>
 	</target>
 	
 	<target name="extension" depends="package-all, sign" />
 	
 	<target name="package-all" depends="clean,install-rdfs,testbench-recorder-package,testbench-formatter,sign-inner">
-		<zip destfile="extension/vaadin-testbench-recorder-${version}.xpi">
+		<zip destfile="target/vaadin-testbench-recorder-${version}.xpi">
 			<fileset dir="." includes="install.rdf" />
-			<fileset dir="extension" includes="recorder.xpi,java-testbench-format.xpi" />
+			<fileset dir="target" includes="recorder.xpi,java-testbench-format.xpi" />
 		</zip>
 	</target>
 
 	<target name="clean">
 		<delete failonerror="false" includeEmptyDirs="true">
-			<fileset dir="extension"/>
+			<fileset dir="target"/>
 		</delete>
-		<mkdir dir="extension" />
-		<mkdir dir="extension/tmp" />
-		<mkdir dir="extension/tmp/package" />
-		<mkdir dir="extension/tmp/package/chrome" />
+		<mkdir dir="target" />
+		<mkdir dir="target/tmp" />
+		<mkdir dir="target/tmp/package" />
+		<mkdir dir="target/tmp/package/chrome" />
 	</target>
 	
 	<target name="create-scripts">
 		<loadfile property="dofunction" srcFile="selenium-extensions/core/doFunction.js" />
-		<copy file="selenium-api.js_tpl" tofile="extension/tmp/package/chrome/content/selenium-core/scripts/selenium-api.js" overwrite="true">
+		<copy file="selenium-api.js_tpl" tofile="target/tmp/package/chrome/content/selenium-core/scripts/selenium-api.js" overwrite="true">
 			<filterchain>
 				<replacetokens>
 					<token key="doFunction" value="${dofunction}" />
@@ -126,7 +126,7 @@
 				</replacetokens>
 			</filterchain>
 		</loadfile>
-		<copy file="selenium-browserbot.js_tpl" tofile="extension/tmp/package/chrome/content/selenium-core/scripts/selenium-browserbot.js" overwrite="true">
+		<copy file="selenium-browserbot.js_tpl" tofile="target/tmp/package/chrome/content/selenium-core/scripts/selenium-browserbot.js" overwrite="true">
 			<filterchain>
 				<replacetokens>
 					<token key="locator" value="${locator}" />
