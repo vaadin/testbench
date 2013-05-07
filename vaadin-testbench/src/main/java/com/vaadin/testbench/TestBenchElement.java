@@ -151,9 +151,16 @@ public class TestBenchElement implements WrapsElement, WebElement,
         return actualElement.isSelected();
     }
 
+    /**
+     * Returns whether the Vaadin component, that this element represents, is
+     * enabled or not.
+     * 
+     * @return true if the component is enabled.
+     */
     @Override
     public boolean isEnabled() {
-        return actualElement.isEnabled();
+        return !actualElement.getAttribute("class").contains("v-disabled")
+                && actualElement.isEnabled();
     }
 
     @Override
