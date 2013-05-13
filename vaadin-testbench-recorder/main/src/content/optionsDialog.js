@@ -210,9 +210,12 @@ function showFormatDialog() {
 
 function openFormatSource() {
     this.formatInfo.saved = false;
-    window.openDialog('chrome://testbench-recorder/content/format-source-dialog.xul', 'options-format-source', 'chrome', this.formatInfo);
+    window.openDialog('chrome://testbench-recorder/content/format-source-dialog.xul', 'options-format-source', 'chrome,modal', this.formatInfo);
     if (this.formatInfo.saved) {
-        updateFormatSelection();
+      var id = this.formatInfo.id;
+      this.formats.reloadFormats();
+      loadFormatList();
+      selectFormat(id);
     }
 }
 

@@ -93,14 +93,14 @@ FormatCollection.loadFormatter = function(url) {
     format.log = new Log("Format");
     format.playable = true;
     format.remoteControl = false;
-	
+
 	format.load = function(file){
 		if (file.startsWith('chrome://')) {
-			//extensions may load in their own files so allow an absolute URL 
-			subScriptLoader.loadSubScript(file, format);
+			//extensions may load in their own files so allow an absolute URL
+			subScriptLoader.loadSubScript(file + "?" + new Date().getTime(), format);
 		} else {
 			//otherwise assume this is a packaged format file
-			subScriptLoader.loadSubScript('chrome://testbench-recorder/content/formats/' + file, format);
+			subScriptLoader.loadSubScript('chrome://testbench-recorder/content/formats/' + file + "?" + new Date().getTime(), format);
 		}
 	}
 
@@ -109,7 +109,7 @@ FormatCollection.loadFormatter = function(url) {
         format[prop] = StringUtils[prop];
     }
     this.log.debug('loading format from ' + url);
-    subScriptLoader.loadSubScript(url, format);
+    subScriptLoader.loadSubScript(url + "?" + new Date().getTime(), format);
     if (format.configForm && format.configForm.length > 0) {
         function copyElement(doc, element) {
             var copy = doc.createElement(element.nodeName.toLowerCase());
@@ -226,7 +226,7 @@ Format.prototype.getUnicodeConverter = function() {
 Format.prototype.getFormatter = function() {
     if (!this.formatterCache) {
         this.formatterCache = this.loadFormatter();
-        for (name in this.options) {
+        for (var name in this.options) {
             var r = new RegExp('formats\.' + this.id + '\.(.*)').exec(name);
             if (r) {
                 this.formatterCache.options[r[1]] = this.options[name];
