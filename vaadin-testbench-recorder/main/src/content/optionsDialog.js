@@ -218,15 +218,12 @@ function openFormatSource() {
 
 function createNewFormat() {
     var formatInfo = new UserFormat();
-    window.openDialog('chrome://testbench-recorder/content/format-source-dialog.xul', 'options-format-source', 'chrome', formatInfo);
-    // This used to check if formatInfo.saved was true before reloading, but the changes made in the format-source-dialog
-    // don't seem to be passed back here. #9980]]
-    //  if (formatInfo.saved) {
-    this.formats.reloadFormats();
-    loadFormatList();
-    // this is the same as selectFormat(null)
-    selectFormat(formatInfo.id);
-    //  }
+    window.openDialog('chrome://testbench-recorder/content/format-source-dialog.xul', 'options-format-source', 'chrome,modal', formatInfo);
+    if (formatInfo.saved) {
+      this.formats.reloadFormats();
+      loadFormatList();
+      selectFormat(formatInfo.id);
+    }
 }
 
 function findFormatIndex(formatInfo) {
