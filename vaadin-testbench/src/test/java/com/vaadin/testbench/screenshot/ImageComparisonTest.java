@@ -1,18 +1,17 @@
 package com.vaadin.testbench.screenshot;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
+import com.vaadin.testbench.Parameters;
+import com.vaadin.testbench.testutils.ImageLoader;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
 
-import org.junit.Before;
-import org.junit.Test;
-
-import com.vaadin.testbench.Parameters;
-import com.vaadin.testbench.testutils.ImageLoader;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class ImageComparisonTest {
 
@@ -190,12 +189,12 @@ public class ImageComparisonTest {
         ImageComparison ic = new ImageComparison();
         assertFalse(ic.imageEqualToReference(
                 ImageLoader.loadImage(FOLDER, "screenshot1008x767.png"),
-                "reference738x624", 1, false, null));
+                "reference738x624", 1, null));
     }
 
     private void testFullCompareImages(String referenceFilename,
-            String screenshotFilename, boolean shouldBeEqual,
-            double errorTolerance) throws IOException {
+                                       String screenshotFilename, boolean shouldBeEqual,
+                                       double errorTolerance) throws IOException {
         BufferedImage referenceImage = ImageLoader.loadImage(FOLDER,
                 referenceFilename);
         BufferedImage screenshotImage = ImageLoader.loadImage(FOLDER,
@@ -212,7 +211,7 @@ public class ImageComparisonTest {
     }
 
     private void testRCCompareImages(String referenceFilename,
-            String screenshotFilename, boolean shouldBeEqual)
+                                     String screenshotFilename, boolean shouldBeEqual)
             throws IOException {
         BufferedImage referenceImage = ImageLoader.loadImage(FOLDER,
                 referenceFilename);
@@ -253,7 +252,7 @@ public class ImageComparisonTest {
         BufferedImage referenceImage = ImageLoader.loadImage(FOLDER,
                 "16x16-reference.png");
         assertTrue(ic.imageEqualToReference(screenshotImage, referenceImage,
-                "16x16-reference.png", 0, false));
+                "16x16-reference.png", 0));
     }
 
     @Test
@@ -265,7 +264,7 @@ public class ImageComparisonTest {
         BufferedImage referenceImage = ImageLoader.loadImage(FOLDER,
                 "16x16-reference.png");
         assertFalse(ic.imageEqualToReference(screenshotImage, referenceImage,
-                "16x16-reference.png", 0, false));
+                "16x16-reference.png", 0));
     }
 
     @Test
@@ -277,7 +276,7 @@ public class ImageComparisonTest {
         BufferedImage referenceImage = ImageLoader.loadImage(FOLDER,
                 "16x16-reference.png");
         assertFalse(ic.imageEqualToReference(screenshotImage, referenceImage,
-                "16x16-reference.png", 0, false));
+                "16x16-reference.png", 0));
     }
 
     @Test
@@ -290,7 +289,7 @@ public class ImageComparisonTest {
         BufferedImage referenceImage = ImageLoader.loadImage(FOLDER,
                 "cursor-off.png");
         assertTrue(ic.imageEqualToReference(screenshotImage, referenceImage,
-                "cursor-off.png", 0, false));
+                "cursor-off.png", 0));
     }
 
 }

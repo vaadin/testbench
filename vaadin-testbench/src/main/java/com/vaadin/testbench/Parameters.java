@@ -6,13 +6,12 @@ public class Parameters {
     private static String screenshotReferenceDirectory = "reference-screenshots";
     private static String screenshotErrorDirectory = "error-screenshots";
     private static double screenshotComparisonTolerance = 0.01;
-    private static boolean isCaptureScreenshotOnFailure = true;
     private static int maxScreenshotRetries = 2;
     private static int screenshotRetryDelay = 500;
 
     /**
      * Turns debugging info on/off
-     * 
+     *
      * @param isDebug
      */
     public static void setDebug(boolean isDebug) {
@@ -30,8 +29,9 @@ public class Parameters {
      * Turns cursor detection on/off when comparing screen shots. If on, the
      * screen shot comparison will pass if the only difference is a text input
      * cursor.
-     * 
+     *
      * @param isScreenshotComparisonCursorDetection
+     *
      */
     public static void setScreenshotComparisonCursorDetection(
             boolean isScreenshotComparisonCursorDetection) {
@@ -41,7 +41,7 @@ public class Parameters {
     /**
      * Tells whether to treat screen shots with the only difference being a text
      * input cursor as equal or not. If true, they will be treated as equal.
-     * 
+     *
      * @return true if cursor detection is used
      */
     public static boolean isScreenshotComparisonCursorDetection() {
@@ -50,7 +50,7 @@ public class Parameters {
 
     /**
      * Sets the directory to search for reference images.
-     * 
+     *
      * @param screenshotReferenceDirectory
      */
     public static void setScreenshotReferenceDirectory(
@@ -67,7 +67,7 @@ public class Parameters {
 
     /**
      * Sets the directory where error screen shots are stored.
-     * 
+     *
      * @param screenshotErrorDirectory
      */
     public static void setScreenshotErrorDirectory(
@@ -86,9 +86,8 @@ public class Parameters {
      * Sets the error tolerance for screen shot comparisons. The tolerance is a
      * value between 0 and 1, where 0 means that the images must be a pixel
      * perfect match and 1 means that any changes are accepted.
-     * 
-     * @param tolerance
-     *            the error tolerance.
+     *
+     * @param tolerance the error tolerance.
      */
     public static void setScreenshotComparisonTolerance(double tolerance) {
         Parameters.screenshotComparisonTolerance = tolerance;
@@ -104,26 +103,32 @@ public class Parameters {
 
     /**
      * Sets whether to capture a screen shot when a test fails or not.
-     * 
+     *
      * @param isCaptureScreenshotOnFailure
+     * @throws UnsupportedOperationException
+     * @deprecated This does nothing, use {@link ScreenshotOnFailureRule}
      */
+    @Deprecated
     public static void setCaptureScreenshotOnFailure(
             boolean isCaptureScreenshotOnFailure) {
-        Parameters.isCaptureScreenshotOnFailure = isCaptureScreenshotOnFailure;
+        throw new UnsupportedOperationException("Deprecated, this method no longer does anything.");
     }
 
     /**
      * @return whether to capture a screen shot when a test fails or not.
+     * @throws UnsupportedOperationException
+     * @deprecated This does nothing, use {@link ScreenshotOnFailureRule}
      */
+    @Deprecated
     public static boolean isCaptureScreenshotOnFailure() {
-        return isCaptureScreenshotOnFailure;
+        throw new UnsupportedOperationException("Deprecated, this method no longer does anything.");
     }
 
     /**
      * Sets the maximum allowed retries when comparing screen shots. This is
      * useful since in some situations it might take a little bit longer for all
      * the elements to settle into place.
-     * 
+     *
      * @param maxRetries
      */
     public static void setMaxScreenshotRetries(int maxRetries) {
@@ -140,9 +145,8 @@ public class Parameters {
     /**
      * Sets the delay between screen shot comparison retries. The default is 500
      * ms.
-     * 
-     * @param retryDelay
-     *            the delay in milliseconds.
+     *
+     * @param retryDelay the delay in milliseconds.
      */
     public static void setScreenshotRetryDelay(int retryDelay) {
         screenshotRetryDelay = retryDelay;

@@ -1,19 +1,15 @@
 package com.vaadin.testbench.screenshot;
 
-import java.awt.Color;
-import java.awt.Point;
+import com.vaadin.testbench.Parameters;
+import org.junit.Assert;
+import org.openqa.selenium.Capabilities;
+
+import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-
-import javax.imageio.ImageIO;
-
-import org.junit.Assert;
-
-import org.openqa.selenium.Capabilities;
-
-import com.vaadin.testbench.Parameters;
 
 /**
  * Class with features for comparing 2 images.
@@ -23,25 +19,18 @@ public class ImageComparison {
     /**
      * Compare image [name] to image under /reference/. Images may differ in RGB
      * hues 0.1% (default) per macroblock of 16x16
-     * 
-     * @param screenshotImage
-     *            Image of canvas (must have proper dimensions)
-     * @param errorTolerance
-     *            Allowed RGB error for a macroblock (value range 0-1 default
-     *            0.025 == 2.5%)
-     * @param referenceFileId
-     *            File id for this image without .png extension
-     * @param writeScreenshots
-     *            true if error images and diff files should be written to disk,
-     *            false otherwise
-     * @param capabilities
-     *            browser capabilities
+     *
+     * @param screenshotImage Image of canvas (must have proper dimensions)
+     * @param referenceFileId File id for this image without .png extension
+     * @param errorTolerance  Allowed RGB error for a macroblock (value range 0-1 default
+     *                        0.025 == 2.5%)
+     * @param capabilities    browser capabilities
      * @return true if images are the same
      * @throws IOException
      */
     public boolean imageEqualToReference(BufferedImage screenshotImage,
-            String referenceFileId, double errorTolerance,
-            boolean writeScreenshots, Capabilities capabilities)
+                                         String referenceFileId, double errorTolerance,
+                                         Capabilities capabilities)
             throws IOException {
         ImageFileUtil.createScreenshotDirectoriesIfNeeded();
 
@@ -71,7 +60,7 @@ public class ImageComparison {
                     .readReferenceImage(referenceFileName);
 
             failureReporter = compareToReference(screenshotImage,
-                    referenceImage, errorTolerance, writeScreenshots);
+                    referenceImage, errorTolerance);
             if (failureReporter == null) {
                 return true;
             }
@@ -81,7 +70,7 @@ public class ImageComparison {
          * The command has failed because the captured image differs from the
          * reference image
          */
-        if (writeScreenshots && failureReporter != null) {
+        if (failureReporter != null) {
             failureReporter.createErrorImageAndHTML(referenceFileId + ".png",
                     screenshotImage);
         }
@@ -91,18 +80,15 @@ public class ImageComparison {
     }
 
     public boolean imageEqualToReference(BufferedImage screenshotImage,
-            BufferedImage referenceImage, String referenceFileName,
-            double errorTolerance, boolean writeScreenshots) {
+                                         BufferedImage referenceImage, String referenceFileName,
+                                         double errorTolerance) {
         ImageFileUtil.createScreenshotDirectoriesIfNeeded();
 
         ScreenShotFailureReporter failureReporter = compareToReference(
-                screenshotImage, referenceImage, errorTolerance,
-                writeScreenshots);
+                screenshotImage, referenceImage, errorTolerance);
         if (failureReporter != null) {
-            if (writeScreenshots) {
-                failureReporter.createErrorImageAndHTML(referenceFileName,
-                        screenshotImage);
-            }
+            failureReporter.createErrorImageAndHTML(referenceFileName,
+                    screenshotImage);
             return false;
         }
         return true;
@@ -111,15 +97,12 @@ public class ImageComparison {
     /**
      * @param screenshotImage
      * @param referenceImage
-     * @param referenceFileName
      * @param errorTolerance
-     * @param writeScreenshots
-     * @param failureReporter
      * @return
      */
     private ScreenShotFailureReporter compareToReference(
             BufferedImage screenshotImage, BufferedImage referenceImage,
-            double errorTolerance, boolean writeScreenshots) {
+            double errorTolerance) {
 
         // If images are of different size crop both images to same size
         // before checking for differences
@@ -203,7 +186,7 @@ public class ImageComparison {
     }
 
     public boolean compareImages(BufferedImage referenceImage,
-            BufferedImage screenshotImage, double errorTolerance) {
+                                 BufferedImage screenshotImage, double errorTolerance) {
         int xBlocks = ImageComparisonUtil
                 .getNrBlocks(referenceImage.getWidth());
         int yBlocks = ImageComparisonUtil.getNrBlocks(referenceImage
@@ -228,8 +211,8 @@ public class ImageComparison {
     }
 
     private boolean compareImage(boolean[][] falseBlocks,
-            BufferedImage referenceImage, BufferedImage screenshotImage,
-            double errorTolerance) {
+                                 BufferedImage referenceImage, BufferedImage screenshotImage,
+                                 double errorTolerance) {
         boolean result = true;
 
         int imageWidth = referenceImage.getWidth();
@@ -293,7 +276,7 @@ public class ImageComparison {
     }
 
     private boolean blocksDiffer(int x, int y, BufferedImage referenceImage,
-            BufferedImage screenshotImage, double errorTolerance) {
+                                 BufferedImage screenshotImage, double errorTolerance) {
         boolean result = false;
 
         // Get 16x16 blocks from picture
@@ -318,7 +301,7 @@ public class ImageComparison {
 
     /**
      * Calculates the difference between pixels in the block.
-     * 
+     *
      * @param referenceBlock
      * @param screenshotBlock
      * @return Difference %
@@ -356,19 +339,17 @@ public class ImageComparison {
      * about the blocks that have failed to determine if the failure _possibly
      * can_ be caused by a cursor that is either missing from the reference or
      * the screenshot.
-     * 
-     * @param xBlocks
-     *            Number of blocks in x direction
+     *
+     * @param xBlocks          Number of blocks in x direction
      * @param yBlocks
-     * @param blocksWithErrors
-     *            Matrix with true marked for blocks where errors have been
-     *            detected
+     * @param blocksWithErrors Matrix with true marked for blocks where errors have been
+     *                         detected
      * @return A Point referring to the x and y coordinates in the image where
      *         the cursor might be (actually might be inside a 16x32 block
      *         starting from that point)
      */
     private static Point getPossibleCursorPosition(int xBlocks, int yBlocks,
-            boolean[][] blocksWithErrors) {
+                                                   boolean[][] blocksWithErrors) {
 
         Point firstErrorBlock = null;
 
@@ -410,22 +391,18 @@ public class ImageComparison {
 
     /**
      * Check if failure is because of a blinking text cursor.
-     * 
-     * @param possibleCursorPosition
-     *            The position in the image where a cursor possibly can be found
-     *            (pixel coordinates of the top left corner of a block)
-     * @param referenceImage
-     *            The reference image (with or without a cursor)
-     * @param screenshotImage
-     *            The captured image (with or without a cursor)
-     * @param errorTolerance
-     *            Allowed RGB error (value range 0-1)
+     *
+     * @param possibleCursorPosition The position in the image where a cursor possibly can be found
+     *                               (pixel coordinates of the top left corner of a block)
+     * @param referenceImage         The reference image (with or without a cursor)
+     * @param screenshotImage        The captured image (with or without a cursor)
+     * @param errorTolerance         Allowed RGB error (value range 0-1)
      * @return true If cursor (vertical line of at least 5 pixels if not at the
      *         top or bottom) is the only difference between the images.
      */
     private boolean isCursorTheOnlyError(Point possibleCursorPosition,
-            BufferedImage referenceImage, BufferedImage screenshotImage,
-            double errorTolerance) {
+                                         BufferedImage referenceImage, BufferedImage screenshotImage,
+                                         double errorTolerance) {
         int x = possibleCursorPosition.x;
         int y = possibleCursorPosition.y;
 
@@ -435,14 +412,15 @@ public class ImageComparison {
         // find first different pixel in the block of possibleCursorPosition
         int cursorX = -1;
         int cursorStartY = -1;
-        findCursor: for (int j = y; j < y + 16 && j < height; j++) {
+        findCursor:
+        for (int j = y; j < y + 16 && j < height; j++) {
             for (int i = x; i < x + 16 && i < width; i++) {
                 // if found differing pixel
                 if (isCursorPixel(referenceImage, screenshotImage, i, j)) {
                     // workaround to ignore vertical lines in certain tests
                     if (j < height - 1
                             && !isCursorPixel(referenceImage, screenshotImage,
-                                    i, j + 1)) {
+                            i, j + 1)) {
                         continue;
                     }
 
@@ -462,7 +440,7 @@ public class ImageComparison {
         while (cursorEndY < height - 1
                 && cursorEndY < y + 32
                 && isCursorPixel(referenceImage, screenshotImage, cursorX,
-                        cursorEndY + 1)) {
+                cursorEndY + 1)) {
             cursorEndY++;
         }
 
@@ -517,7 +495,7 @@ public class ImageComparison {
 
     /**
      * Luminance based comparison of a pixel in two images for cursor detection.
-     * 
+     *
      * @param image1
      * @param image2
      * @param x
@@ -525,7 +503,7 @@ public class ImageComparison {
      * @return
      */
     private boolean isCursorPixel(BufferedImage image1, BufferedImage image2,
-            int x, int y) {
+                                  int x, int y) {
         double lum1 = ImageUtil.getLuminance(image1.getRGB(x, y));
         double lum2 = ImageUtil.getLuminance(image2.getRGB(x, y));
 

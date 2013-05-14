@@ -1,14 +1,13 @@
 package com.vaadin.testbench.screenshot;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import com.vaadin.testbench.testutils.ImageLoader;
+import org.junit.Test;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
-import org.junit.Test;
-
-import com.vaadin.testbench.testutils.ImageLoader;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class ScreenshotMaskingTest {
     private static final String FOLDER = ScreenshotMaskingTest.class
@@ -23,7 +22,7 @@ public class ScreenshotMaskingTest {
         BufferedImage referenceImage = ImageLoader.loadImage(FOLDER,
                 "google1.png");
         assertTrue(ic.imageEqualToReference(screenshotImage, referenceImage,
-                "google1.png", 0, false));
+                "google1.png", 0));
     }
 
     @Test
@@ -34,7 +33,7 @@ public class ScreenshotMaskingTest {
         BufferedImage referenceImage = ImageLoader.loadImage(FOLDER,
                 "google1.png");
         assertFalse(ic.imageEqualToReference(screenshotImage, referenceImage,
-                "google1.png", 0, false));
+                "google1.png", 0));
     }
 
     public void testEqualScreenshotsBlankMaskPass() throws IOException {
@@ -44,7 +43,7 @@ public class ScreenshotMaskingTest {
         BufferedImage referenceImage = ImageLoader.loadImage(FOLDER,
                 "blank-mask.png");
         assertTrue(ic.imageEqualToReference(screenshotImage, referenceImage,
-                "google1.png", 0, false));
+                "google1.png", 0));
     }
 
     @Test
@@ -55,7 +54,7 @@ public class ScreenshotMaskingTest {
         BufferedImage referenceImage = ImageLoader.loadImage(FOLDER,
                 "google1-masked.png");
         assertTrue(ic.imageEqualToReference(screenshotImage, referenceImage,
-                "google1-masked.png", 0, false));
+                "google1-masked.png", 0));
     }
 
     @Test
@@ -66,7 +65,7 @@ public class ScreenshotMaskingTest {
         BufferedImage referenceImage = ImageLoader.loadImage(FOLDER,
                 "google1-masked.png");
         assertTrue(ic.imageEqualToReference(screenshotImage, referenceImage,
-                "google1-masked.png", 0, false));
+                "google1-masked.png", 0));
     }
 
     @Test
@@ -79,7 +78,7 @@ public class ScreenshotMaskingTest {
         // Just enough tolerance to allow the focused text field and darker font
         // on the buttons.
         assertTrue(ic.imageEqualToReference(screenshotImage, referenceImage,
-                "google1-masked2.png", 0.16, false));
+                "google1-masked2.png", 0.16));
     }
 
     @Test
@@ -91,7 +90,7 @@ public class ScreenshotMaskingTest {
         BufferedImage referenceImage = ImageLoader.loadImage(FOLDER,
                 "google1-masked.png");
         assertFalse(ic.imageEqualToReference(screenshotImage, referenceImage,
-                "google1-masked.png", 0, false));
+                "google1-masked.png", 0));
     }
 
 }
