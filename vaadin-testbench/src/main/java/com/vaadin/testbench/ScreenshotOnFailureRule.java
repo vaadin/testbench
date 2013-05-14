@@ -14,15 +14,16 @@ import java.io.IOException;
 /**
  * This JUnit {@link org.junit.Rule} grabs a screenshot when a test fails.
  * Usage:
- * <code>
+ * <pre><code>
  * public class MyTestCase extends TestBenchTestCase {
  *
- * @Rule public ScreenshotOnFailureRule screenshotOnFailure = new ScreenshotOnFailureRule(this, true);
- * @Test public void myTest() throws Exception {
- * ...
+ *      @Rule public ScreenshotOnFailureRule screenshotOnFailure = new ScreenshotOnFailureRule(this, true);
+ *
+ *      @Test public void myTest() throws Exception {
+ *          ...
+ *      }
  * }
- * }
- * </code>
+ * </code></pre>
  * <p/>
  * <em>NOTE!</em> Do <b>NOT</b> call <code>driver.quit()</code> in your <code>tearDown()</code> method
  * (annotated with {@link org.junit.After}). The tear down method will be run before this rule is run and
