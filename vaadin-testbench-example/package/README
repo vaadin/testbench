@@ -17,8 +17,8 @@ Maven repository by executing the following command in the
 <TESTBENCH PACKAGE ROOT>/maven directory:
 
 	mvn install:install-file \
-	-Dfile=vaadin-testbench-@version@.jar \
-	-Djavadoc=vaadin-testbench-@version@-javadoc.jar \
+	-Dfile=vaadin-testbench-${project.version}.jar \
+	-Djavadoc=vaadin-testbench-${project.version}-javadoc.jar \
 	-DpomFile=pom.xml
 
 Once the library is installed, the project is ready for your testing, learning
@@ -61,13 +61,13 @@ dependencies were added:
 	<dependency>
 		<groupId>com.vaadin</groupId>
 		<artifactId>vaadin-testbench</artifactId>
-		<version>@version@</version>
+		<version>${project.version}</version>
 		<scope>test</scope>
 	</dependency>
 	<dependency>
 		<groupId>junit</groupId>
 		<artifactId>junit</artifactId>
-		<version>4.10</version>
+		<version>4.11</version>
 		<scope>test</scope>
 	</dependency>
 

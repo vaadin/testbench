@@ -43,7 +43,7 @@
             <excludes>
                 <exclude>*.iml</exclude>
                 <exclude>target/*</exclude>
-                <!-- The pom is filtered in the next section -->
+                <!-- The pom and README are filtered in the next section -->
                 <exclude>package/**</exclude>
                 <exclude>*pom.xml</exclude>
             </excludes>
@@ -82,6 +82,11 @@
         </file>
         <file>
             <source>../vaadin-testbench-example/package/pom.xml</source>
+            <outputDirectory>example</outputDirectory>
+            <filtered>true</filtered>
+        </file>
+        <file>
+            <source>../vaadin-testbench-example/package/README</source>
             <outputDirectory>example</outputDirectory>
             <filtered>true</filtered>
         </file>
