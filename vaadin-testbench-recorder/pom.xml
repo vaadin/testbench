@@ -24,6 +24,7 @@
                         <configuration>
                             <target>
                                 <ant antfile="build.xml" target="extension" />
+                                <attachartifact file="target/vaadin-testbench-recorder-${version}.xpi" type="xpi" />
                             </target>
                         </configuration>
                         <goals>
