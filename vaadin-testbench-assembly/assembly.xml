@@ -42,7 +42,7 @@
             <outputDirectory>example</outputDirectory>
             <excludes>
                 <exclude>*.iml</exclude>
-                <exclude>target/*</exclude>
+                <exclude>target/**</exclude>
                 <!-- The pom and README are filtered in the next section -->
                 <exclude>package/**</exclude>
                 <exclude>*pom.xml</exclude>
@@ -98,6 +98,10 @@
         <file>
             <source>../vaadin-testbench/pom.xml</source>
             <outputDirectory>maven</outputDirectory>
+        </file>
+        <file>
+            <source>../doc/Screenshot Comparison Tests.pdf</source>
+            <outputDirectory>example</outputDirectory>
         </file>
     </files>
 </assembly>

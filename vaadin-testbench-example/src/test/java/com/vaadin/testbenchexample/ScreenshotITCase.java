@@ -7,6 +7,7 @@ import java.util.Random;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -36,6 +37,7 @@ import com.vaadin.testbench.TestBenchTestCase;
  * 
  * 
  */
+@Ignore
 public class ScreenshotITCase extends TestBenchTestCase {
 
     private String baseUrl;
@@ -50,16 +52,11 @@ public class ScreenshotITCase extends TestBenchTestCase {
         testBench().resizeViewPortTo(500, 400);
 
         // Define the default directory for reference screenshots
-        Parameters
-                .setScreenshotReferenceDirectory("src/test/resources/screenshots");
+        Parameters.setScreenshotReferenceDirectory("src/test/resources/screenshots");
 
         // Define the directory where possible error files and screenshots
         // should go
-        Parameters
-                .setScreenshotErrorDirectory("target/testbench/screenshot_errors");
-
-        // Capture a screenshot if no reference image is found
-        Parameters.setCaptureScreenshotOnFailure(true);
+        Parameters.setScreenshotErrorDirectory("target/testbench/screenshot_errors");
     }
 
     private void openCalculator() {
