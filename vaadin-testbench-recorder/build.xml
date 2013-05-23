@@ -2,7 +2,6 @@
 
 <project name="TestBench IDE extension" basedir="." default="extension">
 	<tstamp />
-	<property name="version" value="3.1-SNAPSHOT" />
 	<property name="signer" value="/opt/scripts/jarsigner/testbenchsigner.sh" />
 
 	<target name="testbench-recorder-package" depends="install-rdfs,create-extension">

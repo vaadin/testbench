@@ -23,8 +23,9 @@
                         <phase>package</phase>
                         <configuration>
                             <target>
+                                <property name="version" value="${project.version}" />
                                 <ant antfile="build.xml" target="extension" />
-                                <attachartifact file="target/vaadin-testbench-recorder-${version}.xpi" type="xpi" />
+                                <attachartifact file="target/vaadin-testbench-recorder-${project.version}.xpi" type="xpi" />
                             </target>
                         </configuration>
                         <goals>
