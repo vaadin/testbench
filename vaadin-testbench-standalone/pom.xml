@@ -24,6 +24,14 @@
 
     <build>
         <sourceDirectory>../vaadin-testbench/src/main/java</sourceDirectory>
+        <resources>
+            <resource>
+                <directory>../vaadin-testbench/src/main/java</directory>
+            </resource>
+            <resource>
+                <directory>../vaadin-testbench/src/main/resources</directory>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -33,20 +41,6 @@
                     <source>1.6</source>
                     <target>1.6</target>
                 </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.9</version>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
 
             <!-- Everything in one jar -->
