@@ -735,7 +735,7 @@ SeleniumWebDriverAdaptor.prototype.pressSpecialKey = function(elementLocator, va
   var locator = this._elementLocator(this.rawArgs[0]);
   var webElement = driver.findElement(locator.type, locator.string);
   var pressModifiers = driver.pressModifierKeys(this.rawArgs[1]);
-  var releaseModifiers = driver.pressModifierKeys(this.rawArgs[1]);
+  var releaseModifiers = driver.releaseModifierKeys(this.rawArgs[1]);
   if (pressModifiers !== "") {
     return statement(new SeleniumWebDriverAdaptor.SimpleExpression(pressModifiers)) + "\n" + statement(new SeleniumWebDriverAdaptor.SimpleExpression(webElement.pressSpecialKey(this.rawArgs[1]))) + "\n" + releaseModifiers;
   }

@@ -18,15 +18,18 @@
  * type
  */
 Recorder.addEventHandler('type', 'change', function (event) {
-    var tagName = event.target.tagName.toLowerCase();
-    var type = event.target.type;
-    if (('input' == tagName && ('text' == type || 'password' == type)) ||
-        'textarea' == tagName) {
-        this.record("type", this.findLocators(event.target), event.target.value);
-    } else if ('file' == type) {
-        // Record a custom command for typing in file inputs as clear() is not supported on these
-        this.record("upload", this.findLocators(event.target), event.target.value);
+    if (!skipType) {
+        var tagName = event.target.tagName.toLowerCase();
+        var type = event.target.type;
+        if (('input' == tagName && ('text' == type || 'password' == type)) ||
+            'textarea' == tagName) {
+            this.record("type", this.findLocators(event.target), event.target.value);
+        } else if ('file' == type) {
+            // Record a custom command for typing in file inputs as clear() is not supported on these
+            this.record("upload", this.findLocators(event.target), event.target.value);
+        }
     }
+    skipType = false;
 });
 
 /*
@@ -361,7 +364,7 @@ Recorder.addEventHandler('pressSpecialKey', 'keydown', function (event) {
             if (event.keyCode == KEYCODE_COMMAND || event.keyCode == KEYCODE_LEFTSTART || event.keyCode == KETCODE_RIGHTSTART) {
                 break;
             }
-            if ((event.ctrlKey || event.shiftKey || event.altKey || event.metaKey) && event.keyCode > KEYCODE_SPACE) {
+            if ((event.ctrlKey || event.altKey || event.metaKey) && event.keyCode > KEYCODE_SPACE) {
                 this.log.debug('Recording key ' + String.fromCharCode(event.keyCode));
                 value = target + String.fromCharCode(event.keyCode);
             } else if ((event.ctrlKey || event.shiftKey || event.altKey || event.metaKey) && event.keyCode == KEYCODE_SPACE) {
