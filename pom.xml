@@ -28,9 +28,9 @@
     </developers>
     <licenses>
         <license>
-            <name>Vaadin CVAL 2.0</name>
-            <url>https://vaadin.com/license/cval-2.0</url>
-            <distribution>repo</distribution>
+            <name>Commercial Vaadin Add-On License version 2.0</name>
+            <url>http://vaadin.com/license/cval-2.0</url>
+            <distribution>manual</distribution>
         </license>
     </licenses>
 

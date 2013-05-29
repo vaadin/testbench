@@ -13,6 +13,14 @@
         <selenium.version>2.32.0</selenium.version>
     </properties>
 
+    <licenses>
+        <license>
+            <name>Commercial Vaadin Add-On License version 2.0</name>
+            <url>http://vaadin.com/license/cval-2.0</url>
+            <distribution>manual</distribution>
+        </license>
+    </licenses>
+
     <build>
         <plugins>
             <plugin>

@@ -7,6 +7,7 @@
 	<packaging>jar</packaging>
 	<version>3.1-SNAPSHOT</version>
 	<name>Vaadin TestBench</name>
+    <inceptionYear>2012</inceptionYear>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -19,6 +20,14 @@
             <url>https://raw.github.com/zch/maven/releases/</url>
         </pluginRepository>
     </pluginRepositories>
+
+    <licenses>
+        <license>
+            <name>Commercial Vaadin Add-On License version 2.0</name>
+            <url>http://vaadin.com/license/cval-2.0</url>
+            <distribution>manual</distribution>
+        </license>
+    </licenses>
 
     <profiles>
         <profile>
@@ -100,7 +109,37 @@
 					</execution>
 				</executions>
 			</plugin>
-		</plugins>
+            <plugin>
+                <groupId>com.mycila.maven-license-plugin</groupId>
+                <artifactId>maven-license-plugin</artifactId>
+                <configuration>
+                    <basedir>${basedir}</basedir>
+                    <header>${basedir}/src/license/cval2/header.txt</header>
+                    <quiet>false</quiet>
+                    <failIfMissing>true</failIfMissing>
+                    <aggregate>false</aggregate>
+                    <useDefaultExcludes>true</useDefaultExcludes>
+                    <useDefaultMapping>true</useDefaultMapping>
+                    <encoding>UTF-8</encoding>
+                    <properties>
+                        <year>${project.inceptionYear}</year>
+                    </properties>
+                    <excludes>
+                        <exclude>target/**</exclude>
+                        <exclude>**/*.xml</exclude>
+                        <exclude>src/license/**/*</exclude>
+                        <exclude>**/*.txt</exclude>
+                    </excludes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>format</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
 	</build>
 
 	<dependencies>
