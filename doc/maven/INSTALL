@@ -1,9 +1,9 @@
 Installing TestBench in your local maven repository
 ===================================================
 
-TestBench is accessible from the vaadin-addons repository, but if you wish, you
-can install TestBench into your local maven repository by executing the following
-command in the <TESTBENCH PACKAGE ROOT>/maven directory:
+TestBench is accessible from the vaadin-addons repository (see below), but if
+you wish, you can install TestBench into your local maven repository by
+executing the following command in the <TESTBENCH PACKAGE ROOT>/maven directory:
 
 	mvn install:install-file \
 	-Dfile=vaadin-testbench-${project.version}.jar \
