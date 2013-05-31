@@ -86,12 +86,7 @@ public abstract class TestBenchTestCase implements HasDriver {
      * @return true if the element can be found
      */
     public boolean isElementPresent(By by) {
-        try {
-            WebElement element = getDriver().findElement(by);
-            return element != null;
-        } catch (Exception e) {
-            return false;
-        }
+        return !getDriver().findElements(by).isEmpty();
     }
 
     /**
