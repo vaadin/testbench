@@ -19,82 +19,39 @@ import static org.junit.Assert.assertTrue;
 
 import org.easymock.EasyMock;
 import org.junit.Test;
-import org.openqa.selenium.ElementNotVisibleException;
-import org.openqa.selenium.InvalidSelectorException;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-import com.gargoylesoftware.htmlunit.ElementNotFoundException;
+import java.util.ArrayList;
 
 /**
  * @author Jonatan Kronqvist / Vaadin Ltd
  */
 public class TestBenchTestCaseTest extends TestBenchTestCase {
 
-    private WebDriver mockWebDriverFindElementToReturnOrThrow(
-            Object toReturnOrThrow) {
+    private WebDriver mockWebDriverFindElements(boolean empty) {
         WebDriver driver = EasyMock.createNiceMock(WebDriver.class);
-        if (toReturnOrThrow instanceof Throwable) {
-            EasyMock.expect(
-                    driver.findElement(EasyMock
-                            .isA(org.openqa.selenium.By.class))).andThrow(
-                    (Throwable) toReturnOrThrow);
-        } else {
-            EasyMock.expect(
-                    driver.findElement(EasyMock
-                            .isA(org.openqa.selenium.By.class))).andReturn(
-                    (WebElement) toReturnOrThrow);
+
+        ArrayList<WebElement> result = new ArrayList<WebElement>();
+        if (!empty) {
+            result.add(EasyMock.createNiceMock(WebElement.class));
         }
+        EasyMock.expect(
+                driver.findElements(EasyMock
+                        .isA(org.openqa.selenium.By.class))).andReturn(result);
         EasyMock.replay(driver);
         return driver;
     }
 
     @Test
     public void testIsElementPresent_elementFound() {
-        setDriver(mockWebDriverFindElementToReturnOrThrow(EasyMock
-                .createNiceMock(WebElement.class)));
+        setDriver(mockWebDriverFindElements(false));
         assertTrue(isElementPresent(By.id("thisIDExists")));
     }
 
     @Test
-    public void testIsElementPresent_elementNotFoundThrowsNoSuchElementException() {
-        setDriver(mockWebDriverFindElementToReturnOrThrow(new NoSuchElementException(
-                "")));
-        assertFalse(isElementPresent(By.id("thisIDDoesNotExist")));
-    }
-
-    @Test
-    public void testIsElementPresent_elementNotFoundThrowsInvalidSelectorException() {
-        setDriver(mockWebDriverFindElementToReturnOrThrow(new InvalidSelectorException(
-                "")));
-        assertFalse(isElementPresent(By.id("thisIDDoesNotExist")));
-    }
-
-    @Test
-    public void testIsElementPresent_elementNotFoundThrowsElementNotVisibleException() {
-        setDriver(mockWebDriverFindElementToReturnOrThrow(new ElementNotVisibleException(
-                "")));
-        assertFalse(isElementPresent(By.id("thisElementIsNotVisible")));
-    }
-
-    @Test
-    public void testIsElementPresent_elementNotFoundThrowsElementNotFoundException() {
-        setDriver(mockWebDriverFindElementToReturnOrThrow(new ElementNotFoundException(
-                "", "", "")));
-        assertFalse(isElementPresent(By.id("thisIDDoesNotExist")));
-    }
-
-    @Test
-    public void testIsElementPresent_elementNotFoundThrowsNPE() {
-        setDriver(mockWebDriverFindElementToReturnOrThrow(new NullPointerException(
-                "")));
-        assertFalse(isElementPresent(By.id("thisIDDoesNotExist")));
-    }
-
-    @Test
-    public void testIsElementPresent_elementNotFoundReturnsNull() {
-        setDriver(mockWebDriverFindElementToReturnOrThrow(null));
+    public void testIsElementPresent_elementNotFound() throws Exception {
+        setDriver(mockWebDriverFindElements(true));
         assertFalse(isElementPresent(By.id("thisIDDoesNotExist")));
     }
 }
