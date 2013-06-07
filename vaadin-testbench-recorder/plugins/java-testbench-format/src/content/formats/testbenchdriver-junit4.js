@@ -463,8 +463,8 @@ WDAPI.Element.prototype.dragAndDrop = function (driver, coordinates) {
     return "new Actions(" + driver.ref + ").dragAndDropBy(" + this.ref + ", " + coordinates + ").perform()";
 };
 
-WDAPI.Element.prototype.doubleClickAt = function (driver, value) {
-    return "new Actions(" + driver.ref + ").doubleClick(" + this.ref + ")";
+WDAPI.Element.prototype.doubleClickAt = function (driver, coordinates) {
+    return "new Actions(" + driver.ref + ").moveToElement(" + this.ref + ", " + coordinates + ").doubleClick().perform()";
 };
 
 WDAPI.Driver.prototype.drag = function (dragged, coordinates) {
