@@ -405,8 +405,12 @@ Selenium.prototype.doDoubleClickAt = function(locator, coordString) {
     var clientXY = getClientXY(element, coordString)
     this.doMouseMove(locator);
     this.doMouseDown(locator);
-    this.browserbot.doubleClickElement(element, clientXY[0], clientXY[1]);
     this.doMouseUp(locator);
+    this.browserbot.clickElement(element, clientXY[0], clientXY[1]);
+    this.doMouseDown(locator);
+    this.doMouseUp(locator);
+    this.browserbot.clickElement(element, clientXY[0], clientXY[1]);
+    this.browserbot.doubleClickElement(element, clientXY[0], clientXY[1]);
 };
 
 Selenium.prototype.doContextMenuAt = function(locator, coordString) {
