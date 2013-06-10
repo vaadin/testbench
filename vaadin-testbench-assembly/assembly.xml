@@ -100,7 +100,7 @@
             <outputDirectory>maven</outputDirectory>
         </file>
         <file>
-            <source>../doc/Screenshot Comparison Tests.pdf</source>
+            <source>../doc/Screenshot_Comparison_Tests.pdf</source>
             <outputDirectory>example</outputDirectory>
         </file>
     </files>
