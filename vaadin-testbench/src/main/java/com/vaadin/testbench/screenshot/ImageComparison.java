@@ -24,11 +24,13 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Class with features for comparing 2 images.
  */
 public class ImageComparison {
+    private static Logger logger = Logger.getLogger(ImageComparison.class.getName());
 
     /**
      * Compare image [name] to image under /reference/. Images may differ in RGB
@@ -60,8 +62,9 @@ public class ImageComparison {
                     "png",
                     ImageFileUtil.getErrorScreenshotFile(referenceFileId
                             + ".png"));
-            Assert.fail("No reference found for " + referenceFileId + " in "
+            logger.severe("No reference found for " + referenceFileId + " in "
                     + ImageFileUtil.getScreenshotReferenceDirectory());
+            return false;
         }
 
         // this is used to make the final error HTML page based on main

@@ -50,6 +50,9 @@ import java.util.logging.Logger;
  */
 public class TestBenchCommandExecutor implements TestBenchCommands,
         JavascriptExecutor {
+
+    private static Logger logger = Logger.getLogger(TestBenchCommandExecutor.class.getName());
+
     private static Logger getLogger() {
         return Logger.getLogger(TestBenchCommandExecutor.class.getName());
     }
@@ -140,8 +143,7 @@ public class TestBenchCommandExecutor implements TestBenchCommands,
      * (java.lang.String)
      */
     @Override
-    public boolean compareScreen(String referenceId) throws IOException,
-            AssertionError {
+    public boolean compareScreen(String referenceId) throws IOException {
         Capabilities capabilities = ((HasCapabilities) actualDriver)
                 .getCapabilities();
         String referenceName = referenceNameGenerator.generateName(referenceId,
@@ -172,8 +174,7 @@ public class TestBenchCommandExecutor implements TestBenchCommands,
      * .File)
      */
     @Override
-    public boolean compareScreen(File reference) throws IOException,
-            AssertionError {
+    public boolean compareScreen(File reference) throws IOException {
         BufferedImage image = null;
         try {
             image = ImageIO.read(reference);
@@ -193,7 +194,7 @@ public class TestBenchCommandExecutor implements TestBenchCommands,
      */
     @Override
     public boolean compareScreen(BufferedImage reference, String referenceName)
-            throws IOException, AssertionError {
+            throws IOException {
         for (int times = 0; times < Parameters.getMaxScreenshotRetries(); times++) {
             BufferedImage screenshotImage = ImageIO
                     .read(new ByteArrayInputStream(
@@ -205,8 +206,9 @@ public class TestBenchCommandExecutor implements TestBenchCommands,
                 ImageFileUtil.createScreenshotDirectoriesIfNeeded();
                 ImageIO.write(screenshotImage, "png",
                         ImageFileUtil.getErrorScreenshotFile(referenceName));
-                Assert.fail("No reference found for " + referenceName + " in "
+                logger.severe("No reference found for " + referenceName + " in "
                         + ImageFileUtil.getScreenshotReferenceDirectory());
+                return false;
             }
             if (imageComparison.imageEqualToReference(screenshotImage,
                     reference, referenceName,
