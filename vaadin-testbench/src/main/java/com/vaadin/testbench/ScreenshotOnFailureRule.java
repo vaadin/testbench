@@ -87,6 +87,10 @@ public class ScreenshotOnFailureRule extends TestWatcher {
     protected void failed(Throwable throwable, Description description) {
         super.failed(throwable, description);
 
+        if (driverHolder.getDriver() == null) {
+            return;
+        }
+
         // Grab a screenshot when a test fails
         try {
             BufferedImage screenshotImage = ImageIO
@@ -110,7 +114,7 @@ public class ScreenshotOnFailureRule extends TestWatcher {
     @Override
     protected void finished(Description description) {
         super.finished(description);
-        if (quitDriverOnFinish) {
+        if (quitDriverOnFinish && driverHolder != null && driverHolder.getDriver() != null) {
             driverHolder.getDriver().quit();
         }
     }
