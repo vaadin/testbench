@@ -5,12 +5,12 @@
     <groupId>com.vaadin</groupId>
     <artifactId>vaadin-testbench-standalone</artifactId>
     <packaging>jar</packaging>
-    <version>3.1-SNAPSHOT</version>
+    <version>3.2-SNAPSHOT</version>
     <name>Vaadin TestBench Standalone</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <selenium.version>2.33.0-PATCHED</selenium.version>
+        <selenium.version>2.35.0</selenium.version>
     </properties>
 
     <licenses>
