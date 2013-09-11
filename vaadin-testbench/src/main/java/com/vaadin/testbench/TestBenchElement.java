@@ -101,7 +101,7 @@ public class TestBenchElement implements WrapsElement, WebElement,
                 actualElement).perform();
         // Wait for a small moment for the tooltip to appear
         try {
-            Thread.sleep(800); // VTooltip.OPEN_DELAY = 750;
+            Thread.sleep(1000); // VTooltip.OPEN_DELAY = 750;
         } catch (InterruptedException e) {
         }
     }
