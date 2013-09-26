@@ -14,12 +14,19 @@
  */
 package com.vaadin.testbench.commands;
 
-import com.vaadin.testbench.Parameters;
-import com.vaadin.testbench.TestBench;
-import com.vaadin.testbench.screenshot.ImageComparison;
-import com.vaadin.testbench.screenshot.ImageFileUtil;
-import com.vaadin.testbench.screenshot.ReferenceNameGenerator;
-import org.junit.Assert;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.imageio.IIOException;
+import javax.imageio.ImageIO;
+
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.HasCapabilities;
@@ -33,25 +40,21 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.HttpCommandExecutor;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
-import javax.imageio.IIOException;
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.vaadin.testbench.HasDriver;
+import com.vaadin.testbench.Parameters;
+import com.vaadin.testbench.TestBench;
+import com.vaadin.testbench.screenshot.ImageComparison;
+import com.vaadin.testbench.screenshot.ImageFileUtil;
+import com.vaadin.testbench.screenshot.ReferenceNameGenerator;
 
 /**
  * @author Jonatan Kronqvist / Vaadin Ltd
  */
 public class TestBenchCommandExecutor implements TestBenchCommands,
-        JavascriptExecutor {
+        JavascriptExecutor, HasDriver {
 
-    private static Logger logger = Logger.getLogger(TestBenchCommandExecutor.class.getName());
+    private static Logger logger = Logger
+            .getLogger(TestBenchCommandExecutor.class.getName());
 
     private static Logger getLogger() {
         return Logger.getLogger(TestBenchCommandExecutor.class.getName());
@@ -63,8 +66,8 @@ public class TestBenchCommandExecutor implements TestBenchCommands,
     private boolean enableWaitForVaadin = true;
 
     public TestBenchCommandExecutor(WebDriver actualDriver,
-                                    ImageComparison imageComparison,
-                                    ReferenceNameGenerator referenceNameGenerator) {
+            ImageComparison imageComparison,
+            ReferenceNameGenerator referenceNameGenerator) {
         this.actualDriver = actualDriver;
         this.imageComparison = imageComparison;
         this.referenceNameGenerator = referenceNameGenerator;
@@ -154,10 +157,10 @@ public class TestBenchCommandExecutor implements TestBenchCommands,
                     .read(new ByteArrayInputStream(
                             ((TakesScreenshot) actualDriver)
                                     .getScreenshotAs(OutputType.BYTES)));
-            boolean equal = imageComparison.imageEqualToReference(
-                    screenshotImage, referenceName,
-                    Parameters.getScreenshotComparisonTolerance(),
-                    capabilities);
+            boolean equal = imageComparison
+                    .imageEqualToReference(screenshotImage, referenceName,
+                            Parameters.getScreenshotComparisonTolerance(),
+                            capabilities);
             if (equal) {
                 return true;
             }
@@ -206,7 +209,8 @@ public class TestBenchCommandExecutor implements TestBenchCommands,
                 ImageFileUtil.createScreenshotDirectoriesIfNeeded();
                 ImageIO.write(screenshotImage, "png",
                         ImageFileUtil.getErrorScreenshotFile(referenceName));
-                logger.severe("No reference found for " + referenceName + " in "
+                logger.severe("No reference found for " + referenceName
+                        + " in "
                         + ImageFileUtil.getScreenshotReferenceDirectory());
                 return false;
             }
@@ -450,5 +454,10 @@ public class TestBenchCommandExecutor implements TestBenchCommands,
                 .executeScript("function f() { if(typeof window.innerWidth != 'undefined') { return window.innerWidth; } if(document.documentElement && document.documentElement.offsetWidth) { return document.documentElement.offsetWidth; } w = document.body.clientWidth; if(navigator.userAgent.indexOf('Trident/5') != -1 && document.documentMode < 9) { w += 4; } return w;} return f();"))
                 .intValue();
         return width;
+    }
+
+    @Override
+    public WebDriver getDriver() {
+        return actualDriver;
     }
 }

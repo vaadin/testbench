@@ -22,9 +22,11 @@ import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.Point;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.internal.WrapsElement;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
 import com.vaadin.testbench.commands.CanWaitForVaadin;
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
@@ -75,7 +77,7 @@ public class TestBenchElement implements WrapsElement, WebElement,
             while (isDisplayed() || times > 25) {
                 try {
                     Thread.sleep(200);
-                } catch (InterruptedException e) {
+                } catch (InterruptedException ignored) {
                 }
                 times++;
             }
@@ -102,7 +104,7 @@ public class TestBenchElement implements WrapsElement, WebElement,
         // Wait for a small moment for the tooltip to appear
         try {
             Thread.sleep(1000); // VTooltip.OPEN_DELAY = 750;
-        } catch (InterruptedException e) {
+        } catch (InterruptedException ignored) {
         }
     }
 
@@ -133,6 +135,67 @@ public class TestBenchElement implements WrapsElement, WebElement,
     @Override
     public void click() {
         actualElement.click();
+        // Hack to make ChromeDriver and PhantomJSDriver correctly trigger
+        // onchange events in ListSelects. See #12507
+        if (needsOnChangeHack()
+                && "option".equalsIgnoreCase(actualElement.getTagName())) {
+            triggerEvent("change");
+        }
+    }
+
+    /**
+     * @return true if running on ChromeDriver or PhantomJSDriver, which require
+     *         the onchange hack.
+     */
+    private boolean needsOnChangeHack() {
+        return (isChromeDriver() || isPhantomJSDriver());
+    }
+
+    /**
+     * @return true if we're running on PhantomJS
+     */
+    private boolean isPhantomJSDriver() {
+        WebDriver driver = tbCommandExecutor.getDriver();
+        if (driver instanceof RemoteWebDriver) {
+            return "phantomjs".equalsIgnoreCase(((RemoteWebDriver) driver)
+                    .getCapabilities().getBrowserName());
+        }
+        return false;
+    }
+
+    /**
+     * @return true if we're running on Chrome
+     */
+    private boolean isChromeDriver() {
+        WebDriver driver = tbCommandExecutor.getDriver();
+        if (driver instanceof RemoteWebDriver) {
+            return "chrome".equalsIgnoreCase(((RemoteWebDriver) driver)
+                    .getCapabilities().getBrowserName());
+        }
+        return false;
+    }
+
+    /**
+     * Triggers an HTML event on the element using JavaScript. Used internally
+     * for hacking around bugs in driver implementations.
+     * 
+     * @param eventType
+     *            the type of event (e.g. "change")
+     */
+    private void triggerEvent(String eventType) {
+        String js = "var event;" + "if (document.createEvent) {"
+                + "    event = document.createEvent('HTMLEvents');"
+                + "    event.initEvent(arguments[1], true, true);" + "} else {"
+                + "    event = document.createEventObject();"
+                + "    event.eventType = arguments[1];" + "}" +
+
+                "event.eventName = arguments[1];" +
+
+                "if (document.createEvent) {"
+                + "    arguments[0].dispatchEvent(event);" + "} else {"
+                + "    arguments[0].fireEvent('on' + event.eventType, event);"
+                + "}";
+        tbCommandExecutor.executeScript(js, actualElement, eventType);
     }
 
     @Override
@@ -235,5 +298,4 @@ public class TestBenchElement implements WrapsElement, WebElement,
         }
         actions.build().perform();
     }
-
 }
