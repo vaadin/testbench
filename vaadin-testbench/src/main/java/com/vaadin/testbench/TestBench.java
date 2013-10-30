@@ -42,23 +42,29 @@ public class TestBench {
         allInterfaces.addAll(extractInterfaces(TestBenchDriverProxy.class));
         final Class<?>[] allInterfacesArray = allInterfaces
                 .toArray(new Class<?>[allInterfaces.size()]);
-        Object proxy = Proxy
-                .newProxyInstance(driver.getClass().getClassLoader(),
-                        allInterfacesArray, new CachedInvocationHandler(
-                                new TestBenchDriverProxy(driver), driver));
+        Object proxy = Proxy.newProxyInstance(driver.getClass()
+                .getClassLoader(), allInterfacesArray,
+                new CachedInvocationHandler(new TestBenchDriverProxy(driver),
+                        driver));
         return (WebDriver) proxy;
     }
 
     public static WebElement createElement(WebElement webElement,
             TestBenchCommandExecutor tbCommandExecutor) {
+
         Set<Class<?>> allInterfaces = extractInterfaces(webElement);
         allInterfaces.addAll(extractInterfaces(TestBenchElement.class));
+        allInterfaces
+                .addAll(extractInterfaces(HasTestBenchCommandExecutor.class));
+
         final Class<?>[] allInterfacesArray = allInterfaces
                 .toArray(new Class<?>[allInterfaces.size()]);
+
         Object proxy = Proxy.newProxyInstance(webElement.getClass()
                 .getClassLoader(), allInterfacesArray,
                 new CachedInvocationHandler(new TestBenchElement(webElement,
                         tbCommandExecutor), webElement));
+
         return (WebElement) proxy;
     }
 

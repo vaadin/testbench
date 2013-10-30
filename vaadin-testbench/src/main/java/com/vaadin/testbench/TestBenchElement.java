@@ -22,25 +22,26 @@ import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.Point;
+import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.internal.WrapsElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
+import com.vaadin.testbench.By.ByVaadin;
 import com.vaadin.testbench.commands.CanWaitForVaadin;
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.commands.TestBenchElementCommands;
 
 public class TestBenchElement implements WrapsElement, WebElement,
-        TestBenchElementCommands, CanWaitForVaadin {
-    // private static final Logger LOGGER = Logger
-    // .getLogger(TestBenchElement.class.getName());
+        TestBenchElementCommands, CanWaitForVaadin,
+        HasTestBenchCommandExecutor, HasDriver, SearchContext {
 
     private WebElement actualElement;
     private final TestBenchCommandExecutor tbCommandExecutor;
 
-    protected TestBenchElement(WebElement element,
+    public TestBenchElement(WebElement element,
             TestBenchCommandExecutor tbCommandExecutor) {
         actualElement = element;
         this.tbCommandExecutor = tbCommandExecutor;
@@ -77,7 +78,7 @@ public class TestBenchElement implements WrapsElement, WebElement,
             while (isDisplayed() || times > 25) {
                 try {
                     Thread.sleep(200);
-                } catch (InterruptedException ignored) {
+                } catch (InterruptedException e) {
                 }
                 times++;
             }
@@ -155,7 +156,7 @@ public class TestBenchElement implements WrapsElement, WebElement,
      * @return true if we're running on PhantomJS
      */
     private boolean isPhantomJSDriver() {
-        WebDriver driver = tbCommandExecutor.getDriver();
+        WebDriver driver = tbCommandExecutor.getWrappedDriver();
         if (driver instanceof RemoteWebDriver) {
             return "phantomjs".equalsIgnoreCase(((RemoteWebDriver) driver)
                     .getCapabilities().getBrowserName());
@@ -167,7 +168,7 @@ public class TestBenchElement implements WrapsElement, WebElement,
      * @return true if we're running on Chrome
      */
     private boolean isChromeDriver() {
-        WebDriver driver = tbCommandExecutor.getDriver();
+        WebDriver driver = tbCommandExecutor.getWrappedDriver();
         if (driver instanceof RemoteWebDriver) {
             return "chrome".equalsIgnoreCase(((RemoteWebDriver) driver)
                     .getCapabilities().getBrowserName());
@@ -247,7 +248,12 @@ public class TestBenchElement implements WrapsElement, WebElement,
 
     @Override
     public List<WebElement> findElements(By by) {
-        List<WebElement> elements = actualElement.findElements(by);
+        List<WebElement> elements;
+        if (by instanceof ByVaadin) {
+            elements = by.findElements(this);
+        } else {
+            elements = actualElement.findElements(by);
+        }
         List<WebElement> testBenchElements = new ArrayList<WebElement>(
                 elements.size());
         for (WebElement e : elements) {
@@ -259,6 +265,9 @@ public class TestBenchElement implements WrapsElement, WebElement,
 
     @Override
     public WebElement findElement(By by) {
+        if (by instanceof ByVaadin) {
+            return by.findElement(this);
+        }
         return TestBench.createElement(actualElement.findElement(by),
                 tbCommandExecutor);
     }
@@ -298,4 +307,32 @@ public class TestBenchElement implements WrapsElement, WebElement,
         }
         actions.build().perform();
     }
+
+    @Override
+    public TestBenchCommandExecutor getTestBenchCommandExecutor() {
+        return tbCommandExecutor;
+    }
+
+    @Override
+    public WebDriver getDriver() {
+        return tbCommandExecutor.getWrappedDriver();
+    }
+
+    /**
+     * Returns this TestBenchElement cast to a SearchContext. Method provided
+     * for compatibility and consistency.
+     */
+    @Override
+    public SearchContext getContext() {
+        return this;
+    }
+
+    /**
+     * Move browser focus to this Element
+     */
+    @Override
+    public void focus() {
+        tbCommandExecutor.focusElement(this);
+    }
+
 }

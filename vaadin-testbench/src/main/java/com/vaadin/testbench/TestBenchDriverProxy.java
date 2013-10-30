@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.internal.WrapsDriver;
@@ -29,16 +30,13 @@ import com.vaadin.testbench.screenshot.ImageComparison;
 import com.vaadin.testbench.screenshot.ReferenceNameGenerator;
 
 public class TestBenchDriverProxy extends TestBenchCommandExecutor implements
-        WebDriver, WrapsDriver {
-    // private static Logger getLogger() {
-    // return Logger.getLogger(TestBenchDriverProxy.class.getName());
-    // }
+        WebDriver, WrapsDriver, HasTestBenchCommandExecutor, HasDriver {
 
     private final WebDriver actualDriver;
 
     /**
-     * Constructs a TestBenchDriverProxy using the provided web driver for the actual
-     * driving.
+     * Constructs a TestBenchDriverProxy using the provided web driver for the
+     * actual driving.
      * 
      * @param webDriver
      */
@@ -77,7 +75,7 @@ public class TestBenchDriverProxy extends TestBenchCommandExecutor implements
     @Override
     public WebElement findElement(By arg0) {
         if (arg0 instanceof ByVaadin) {
-            return ((ByVaadin) arg0).findElement(this);
+            return arg0.findElement(this);
         }
         return TestBench.createElement(actualDriver.findElement(arg0), this);
     }
@@ -89,10 +87,21 @@ public class TestBenchDriverProxy extends TestBenchCommandExecutor implements
      */
     @Override
     public List<WebElement> findElements(By arg0) {
-        List<WebElement> elements = actualDriver.findElements(arg0);
-        List<WebElement> testBenchElements = new ArrayList<WebElement>(elements.size());
+
+        List<WebElement> elements;
+
+        if (arg0 instanceof ByVaadin) {
+            elements = arg0.findElements(this);
+        } else {
+            elements = actualDriver.findElements(arg0);
+        }
+
+        List<WebElement> testBenchElements = new ArrayList<WebElement>(
+                elements.size());
+
         for (WebElement e : elements) {
-            testBenchElements.add(TestBench.createElement(e, this));
+            WebElement el = TestBench.createElement(e, this);
+            testBenchElements.add(el);
         }
         return testBenchElements;
     }
@@ -195,6 +204,21 @@ public class TestBenchDriverProxy extends TestBenchCommandExecutor implements
     @Override
     public TargetLocator switchTo() {
         return actualDriver.switchTo();
+    }
+
+    @Override
+    public SearchContext getContext() {
+        return this;
+    }
+
+    @Override
+    public TestBenchCommandExecutor getTestBenchCommandExecutor() {
+        return this;
+    }
+
+    @Override
+    public WebDriver getDriver() {
+        return this;
     }
 
 }

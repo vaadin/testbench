@@ -17,6 +17,12 @@ package com.vaadin.testbench.commands;
 import org.openqa.selenium.Keys;
 
 public interface TestBenchElementCommands {
+
+    /**
+     * Set focus to this element.
+     */
+    void focus();
+
     /**
      * Closes a notification
      * 

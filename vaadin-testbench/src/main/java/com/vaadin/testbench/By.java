@@ -15,12 +15,13 @@
 package com.vaadin.testbench;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebElement;
 
-import com.vaadin.testbench.commands.TestBenchCommands;
+import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 
 public abstract class By extends org.openqa.selenium.By {
 
@@ -47,18 +48,28 @@ public abstract class By extends org.openqa.selenium.By {
             this.vaadinSelector = vaadinSelector;
         }
 
+        /**
+         * Returns a single WebElement identified by a Vaadin ComponentFinder
+         * selector, wrapped in a List, or an empty list if no elements were
+         * found.
+         */
         @Override
         public List<WebElement> findElements(SearchContext context) {
-            return Arrays.asList(findElement(context));
+            WebElement e = findElement(context);
+            if (e == null) {
+                return Collections.emptyList();
+            }
+            return Arrays.asList(e);
         }
 
+        /**
+         * Return a single WebElement identified by a Vaadin ComponentFinder
+         * selector, or null, if no matching element was found.
+         */
         @Override
         public WebElement findElement(SearchContext context) {
-            if (context instanceof TestBenchCommands) {
-                return ((TestBenchCommands) context)
-                        .findElementByVaadinSelector(vaadinSelector);
-            }
-            return null;
+            return TestBenchCommandExecutor.findElementByVaadinSelector(
+                    vaadinSelector, context);
         }
 
         @Override

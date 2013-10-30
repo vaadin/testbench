@@ -18,8 +18,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-import org.openqa.selenium.WebElement;
-
 /**
  */
 public interface TestBenchCommands extends CanWaitForVaadin {
@@ -148,16 +146,6 @@ public interface TestBenchCommands extends CanWaitForVaadin {
      * @return the total time spent servicing requests in this session.
      */
     long totalTimeSpentServicingRequests();
-
-    /**
-     * Finds an element by the Vaadin selector, recorded by the TestBench
-     * recorder.
-     *
-     * @param selector
-     *            the Vaadin selector.
-     * @return the element identified by the selector.
-     */
-    WebElement findElementByVaadinSelector(String selector);
 
     /**
      * Disables implicit waiting for Vaadin to finish processing requests. This
