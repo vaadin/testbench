@@ -143,8 +143,7 @@ public class TestBenchCommandExecutorTest {
                 icMock.imageEqualToReference(isA(BufferedImage.class),
                         isA(BufferedImage.class),
                         eq("cursor-bottom-edge-off.png"),
-                        eq(Parameters.getScreenshotComparisonTolerance())
-                ))
+                        eq(Parameters.getScreenshotComparisonTolerance())))
                 .andReturn(true);
         replay(driver, icMock);
 
@@ -168,8 +167,7 @@ public class TestBenchCommandExecutorTest {
                     icMock.imageEqualToReference(isA(BufferedImage.class),
                             isA(BufferedImage.class),
                             eq("cursor-bottom-edge-off.png"),
-                            eq(Parameters.getScreenshotComparisonTolerance())
-                    ))
+                            eq(Parameters.getScreenshotComparisonTolerance())))
                     .andReturn(false).times(4);
             replay(driver, icMock);
 
@@ -192,8 +190,7 @@ public class TestBenchCommandExecutorTest {
         expect(
                 icMock.imageEqualToReference(isA(BufferedImage.class),
                         isA(BufferedImage.class), eq("bar name"),
-                        eq(Parameters.getScreenshotComparisonTolerance())
-                ))
+                        eq(Parameters.getScreenshotComparisonTolerance())))
                 .andReturn(true);
         replay(driver, icMock);
 
@@ -216,8 +213,7 @@ public class TestBenchCommandExecutorTest {
             expect(
                     icMock.imageEqualToReference(isA(BufferedImage.class),
                             isA(BufferedImage.class), eq("bar name"),
-                            eq(Parameters.getScreenshotComparisonTolerance())
-                    ))
+                            eq(Parameters.getScreenshotComparisonTolerance())))
                     .andReturn(false).times(4);
             replay(driver, icMock);
 
@@ -232,7 +228,7 @@ public class TestBenchCommandExecutorTest {
     }
 
     private WebDriver mockScreenshotDriver(int nrScreenshotsGrabbed,
-                                           boolean expectGetCapabilities) throws IOException {
+            boolean expectGetCapabilities) throws IOException {
         WebDriver driver = createMock(FirefoxDriver.class);
         byte[] screenshotBytes = ImageLoader.loadImageBytes(IMG_FOLDER,
                 "cursor-bottom-edge-off.png");
@@ -246,7 +242,7 @@ public class TestBenchCommandExecutorTest {
     }
 
     private ReferenceNameGenerator mockReferenceNameGenerator(String refId,
-                                                              String expected) {
+            String expected) {
         ReferenceNameGenerator rngMock = createMock(ReferenceNameGenerator.class);
         expect(rngMock.generateName(eq(refId), isA(Capabilities.class)))
                 .andReturn(expected);
@@ -254,7 +250,7 @@ public class TestBenchCommandExecutorTest {
     }
 
     private ImageComparison mockImageComparison(int timesCalled,
-                                                String referenceName, boolean expected) throws IOException {
+            String referenceName, boolean expected) throws IOException {
         ImageComparison icMock = createMock(ImageComparison.class);
         expect(
                 icMock.imageEqualToReference(isA(BufferedImage.class),

@@ -1,31 +1,18 @@
-/**
- * Copyright (C) 2012 Vaadin Ltd
- *
- * This program is available under Commercial Vaadin Add-On License 2.0
- * (CVALv2) or GNU Affero General Public License (version 3 or later at
- * your option).
- *
- * See the file licensing.txt distributed with this software for more
- * information about licensing.
- *
- * You should have received a copy of the license along with this program.
- * If not, see <http://vaadin.com/license/cval-2.0> or
- * <http://www.gnu.org/licenses> respectively.
- */
 package com.vaadin.testbench.screenshot;
 
-import com.vaadin.testbench.Parameters;
-import com.vaadin.testbench.testutils.ImageLoader;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import org.junit.Before;
+import org.junit.Test;
+
+import com.vaadin.testbench.Parameters;
+import com.vaadin.testbench.testutils.ImageLoader;
 
 public class ImageComparisonTest {
 
@@ -207,8 +194,8 @@ public class ImageComparisonTest {
     }
 
     private void testFullCompareImages(String referenceFilename,
-                                       String screenshotFilename, boolean shouldBeEqual,
-                                       double errorTolerance) throws IOException {
+            String screenshotFilename, boolean shouldBeEqual,
+            double errorTolerance) throws IOException {
         BufferedImage referenceImage = ImageLoader.loadImage(FOLDER,
                 referenceFilename);
         BufferedImage screenshotImage = ImageLoader.loadImage(FOLDER,
@@ -225,7 +212,7 @@ public class ImageComparisonTest {
     }
 
     private void testRCCompareImages(String referenceFilename,
-                                     String screenshotFilename, boolean shouldBeEqual)
+            String screenshotFilename, boolean shouldBeEqual)
             throws IOException {
         BufferedImage referenceImage = ImageLoader.loadImage(FOLDER,
                 referenceFilename);

@@ -1,17 +1,3 @@
-/**
- * Copyright (C) 2012 Vaadin Ltd
- *
- * This program is available under Commercial Vaadin Add-On License 2.0
- * (CVALv2) or GNU Affero General Public License (version 3 or later at
- * your option).
- *
- * See the file licensing.txt distributed with this software for more
- * information about licensing.
- *
- * You should have received a copy of the license along with this program.
- * If not, see <http://vaadin.com/license/cval-2.0> or
- * <http://www.gnu.org/licenses> respectively.
- */
 package com.vaadin.testbench;
 
 public class Parameters {
@@ -25,7 +11,7 @@ public class Parameters {
 
     /**
      * Turns debugging info on/off
-     *
+     * 
      * @param isDebug
      */
     public static void setDebug(boolean isDebug) {
@@ -43,9 +29,9 @@ public class Parameters {
      * Turns cursor detection on/off when comparing screen shots. If on, the
      * screen shot comparison will pass if the only difference is a text input
      * cursor.
-     *
+     * 
      * @param isScreenshotComparisonCursorDetection
-     *
+     * 
      */
     public static void setScreenshotComparisonCursorDetection(
             boolean isScreenshotComparisonCursorDetection) {
@@ -55,7 +41,7 @@ public class Parameters {
     /**
      * Tells whether to treat screen shots with the only difference being a text
      * input cursor as equal or not. If true, they will be treated as equal.
-     *
+     * 
      * @return true if cursor detection is used
      */
     public static boolean isScreenshotComparisonCursorDetection() {
@@ -64,7 +50,7 @@ public class Parameters {
 
     /**
      * Sets the directory to search for reference images.
-     *
+     * 
      * @param screenshotReferenceDirectory
      */
     public static void setScreenshotReferenceDirectory(
@@ -81,7 +67,7 @@ public class Parameters {
 
     /**
      * Sets the directory where error screen shots are stored.
-     *
+     * 
      * @param screenshotErrorDirectory
      */
     public static void setScreenshotErrorDirectory(
@@ -100,8 +86,9 @@ public class Parameters {
      * Sets the error tolerance for screen shot comparisons. The tolerance is a
      * value between 0 and 1, where 0 means that the images must be a pixel
      * perfect match and 1 means that any changes are accepted.
-     *
-     * @param tolerance the error tolerance.
+     * 
+     * @param tolerance
+     *            the error tolerance.
      */
     public static void setScreenshotComparisonTolerance(double tolerance) {
         Parameters.screenshotComparisonTolerance = tolerance;
@@ -117,7 +104,7 @@ public class Parameters {
 
     /**
      * Sets whether to capture a screen shot when a test fails or not.
-     *
+     * 
      * @param isCaptureScreenshotOnFailure
      * @throws UnsupportedOperationException
      * @deprecated This does nothing, use {@link ScreenshotOnFailureRule}
@@ -125,7 +112,8 @@ public class Parameters {
     @Deprecated
     public static void setCaptureScreenshotOnFailure(
             boolean isCaptureScreenshotOnFailure) {
-        throw new UnsupportedOperationException("Deprecated, this method no longer does anything.");
+        throw new UnsupportedOperationException(
+                "Deprecated, this method no longer does anything.");
     }
 
     /**
@@ -135,14 +123,15 @@ public class Parameters {
      */
     @Deprecated
     public static boolean isCaptureScreenshotOnFailure() {
-        throw new UnsupportedOperationException("Deprecated, this method no longer does anything.");
+        throw new UnsupportedOperationException(
+                "Deprecated, this method no longer does anything.");
     }
 
     /**
      * Sets the maximum allowed retries when comparing screen shots. This is
      * useful since in some situations it might take a little bit longer for all
      * the elements to settle into place.
-     *
+     * 
      * @param maxRetries
      */
     public static void setMaxScreenshotRetries(int maxRetries) {
@@ -158,9 +147,10 @@ public class Parameters {
 
     /**
      * Sets the delay between screen shot comparison retries. The default is 500
-     * ms.
-     *
-     * @param retryDelay the delay in milliseconds.
+     * milliseconds.
+     * 
+     * @param retryDelay
+     *            the delay in milliseconds.
      */
     public static void setScreenshotRetryDelay(int retryDelay) {
         screenshotRetryDelay = retryDelay;

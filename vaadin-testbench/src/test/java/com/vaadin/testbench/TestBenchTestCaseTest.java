@@ -17,16 +17,13 @@ package com.vaadin.testbench;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
+
 import org.easymock.EasyMock;
 import org.junit.Test;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-import java.util.ArrayList;
-
-/**
- * @author Jonatan Kronqvist / Vaadin Ltd
- */
 public class TestBenchTestCaseTest extends TestBenchTestCase {
 
     private WebDriver mockWebDriverFindElements(boolean empty) {
@@ -37,8 +34,8 @@ public class TestBenchTestCaseTest extends TestBenchTestCase {
             result.add(EasyMock.createNiceMock(WebElement.class));
         }
         EasyMock.expect(
-                driver.findElements(EasyMock
-                        .isA(org.openqa.selenium.By.class))).andReturn(result);
+                driver.findElements(EasyMock.isA(org.openqa.selenium.By.class)))
+                .andReturn(result);
         EasyMock.replay(driver);
         return driver;
     }

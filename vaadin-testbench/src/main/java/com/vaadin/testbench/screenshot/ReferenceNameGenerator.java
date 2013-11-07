@@ -1,17 +1,3 @@
-/**
- * Copyright (C) 2012 Vaadin Ltd
- *
- * This program is available under Commercial Vaadin Add-On License 2.0
- * (CVALv2) or GNU Affero General Public License (version 3 or later at
- * your option).
- *
- * See the file licensing.txt distributed with this software for more
- * information about licensing.
- *
- * You should have received a copy of the license along with this program.
- * If not, see <http://vaadin.com/license/cval-2.0> or
- * <http://www.gnu.org/licenses> respectively.
- */
 package com.vaadin.testbench.screenshot;
 
 import org.openqa.selenium.Capabilities;
@@ -19,8 +5,6 @@ import org.openqa.selenium.Capabilities;
 /**
  * Generates the name of a reference screen shot from a string ID and browser
  * information.
- * 
- * @author Jonatan Kronqvist / Vaadin Ltd
  */
 public class ReferenceNameGenerator {
 
@@ -53,7 +37,8 @@ public class ReferenceNameGenerator {
     public static String getMajorVersion(Capabilities browserCapabilities) {
         String versionString = browserCapabilities.getVersion();
         if (versionString.contains(".")) {
-            String major = versionString.substring(0, versionString.indexOf('.'));
+            String major = versionString.substring(0,
+                    versionString.indexOf('.'));
             if (major.contains("-")) {
                 major = major.substring(major.indexOf("-") + 1);
             }
