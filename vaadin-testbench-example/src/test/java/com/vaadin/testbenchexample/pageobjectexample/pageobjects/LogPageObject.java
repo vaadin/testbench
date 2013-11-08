@@ -1,19 +1,15 @@
 package com.vaadin.testbenchexample.pageobjectexample.pageobjects;
 
-import com.vaadin.testbench.By;
-import com.vaadin.testbench.TestBenchTestCase;
-import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.PageFactory;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import com.vaadin.testbench.TestBenchTestCase;
+import com.vaadin.ui.Button;
 
 /**
- * This page object knows how to retrieve individual log lines from the calculator log table.
+ * This page object knows how to retrieve individual log lines from the
+ * calculator log table.
  */
 public class LogPageObject extends TestBenchTestCase {
 
@@ -23,7 +19,9 @@ public class LogPageObject extends TestBenchTestCase {
 
     /**
      * Returns the text contents of the specified log row.
-     * @param row the row index
+     * 
+     * @param row
+     *            the row index
      * @return the text at the specified row.
      */
     public String getRow(int row) {
@@ -32,31 +30,28 @@ public class LogPageObject extends TestBenchTestCase {
 
     /**
      * Finds the Nth row element
-     *
-     * @param row the index of the row element
+     * 
+     * @param row
+     *            the index of the row element
      * @return the Nth row element.
      */
     private WebElement findRowElement(int row) {
-        return getDriver().findElements(By.className("v-table-cell-wrapper")).get(row);
-    }
 
-    /**
-     * Right clicks on the log table to open the context menu.
-     */
-    public void openContextMenu() {
-        WebElement tableBody = getDriver().findElement(By.className("v-table-body"));
-        new Actions(getDriver()).moveToElement(tableBody).contextClick().perform();
+        // To get at the CELL specified by a certain row and column in a Table,
+        // we need to select them both, in the specific order of row first, then
+        // col.
+        return getElementByPath("//VScrollTable#row[" + row + "]/col[0]");
     }
 
     /**
      * Opens the context menu and clicks "Add Comment" in the menu.
-     *
+     * 
      * @return An AddCommentPageObject to interact with the add comment window.
      */
     public AddCommentPageObject openAddCommentWindow() {
-        openContextMenu();
-        getDriver().findElement(By.xpath("//*[text() = 'Add Comment']")).click();
-        return PageFactory.initElements(getDriver(), AddCommentPageObject.class);
+        getElementByCaption(Button.class, "Add Comment").click();
+        return PageFactory
+                .initElements(getDriver(), AddCommentPageObject.class);
     }
 
 }

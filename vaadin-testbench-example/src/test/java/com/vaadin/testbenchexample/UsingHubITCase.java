@@ -1,6 +1,6 @@
 package com.vaadin.testbenchexample;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 import java.net.URL;
 
@@ -8,12 +8,12 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.openqa.selenium.By;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
-import com.vaadin.testbench.TestBench;
 import com.vaadin.testbench.TestBenchTestCase;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.TextField;
 
 /**
  * This example executes tests using a hub. Often the hub is run on a server in
@@ -33,7 +33,6 @@ import com.vaadin.testbench.TestBenchTestCase;
 public class UsingHubITCase extends TestBenchTestCase {
 
     private String baseUrl;
-
     private String clientKey = "INSERT-YOUR-CLIENT-KEY-HERE";
     private String clientSecret = "INSERT-YOUR-CLIENT-KEY-HERE";
 
@@ -44,8 +43,8 @@ public class UsingHubITCase extends TestBenchTestCase {
         // service like testingbot.com they can be used for authentication
         URL testingbotdotcom = new URL("http://" + clientKey + ":"
                 + clientSecret + "@hub.testingbot.com:4444/wd/hub");
-        setDriver(TestBench.createDriver(new RemoteWebDriver(testingbotdotcom,
-                DesiredCapabilities.iphone())));
+        setDriver(new RemoteWebDriver(testingbotdotcom,
+                DesiredCapabilities.iphone()));
         baseUrl = "http://demo.vaadin.com/Calc/";
     }
 
@@ -54,12 +53,11 @@ public class UsingHubITCase extends TestBenchTestCase {
     public void testOnePlusTwo() throws Exception {
         // run the test just as with "local bots"
         openCalculator();
-        getDriver().findElement(By.xpath("//*[text() = '1']")).click();
-        getDriver().findElement(By.xpath("//*[text() = '+']")).click();
-        getDriver().findElement(By.xpath("//*[text() = '2']")).click();
-        getDriver().findElement(By.xpath("//*[text() = '=']")).click();
-        assertTrue(isElementPresent(By
-                .xpath("//div[text() = '3.0' and contains(@class, 'v-label')]")));
+        getElementByCaption(Button.class, "1").click();
+        getElementByCaption(Button.class, "+").click();
+        getElementByCaption(Button.class, "2").click();
+        getElementByCaption(Button.class, "=").click();
+        assertEquals("3.0", getElement(TextField.class).getAttribute("value"));
 
         // Thats it. Services may provide also some other goodies like the video
         // replay of your test in testingbot.com

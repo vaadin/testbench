@@ -1,9 +1,9 @@
 package com.vaadin.testbenchexample.pageobjectexample;
 
-import com.vaadin.testbench.TestBench;
-import com.vaadin.testbenchexample.pageobjectexample.pageobjects.AddCommentPageObject;
-import com.vaadin.testbenchexample.pageobjectexample.pageobjects.CalculatorPageObject;
-import com.vaadin.testbenchexample.pageobjectexample.pageobjects.LogPageObject;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,9 +11,10 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.PageFactory;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import com.vaadin.testbench.TestBench;
+import com.vaadin.testbenchexample.pageobjectexample.pageobjects.AddCommentPageObject;
+import com.vaadin.testbenchexample.pageobjectexample.pageobjects.CalculatorPageObject;
+import com.vaadin.testbenchexample.pageobjectexample.pageobjects.LogPageObject;
 
 /**
  * A simple test case using page objects.
@@ -54,7 +55,7 @@ public class PageObjectExampleITCase {
         // Verify the log
         assertEquals("1.0 +", log.getRow(0));
         assertEquals("2.0 =", log.getRow(1));
-        assertEquals("3.0", log.getRow(3));
+        assertEquals("3.0", log.getRow(2));
     }
 
     @Test
@@ -84,12 +85,12 @@ public class PageObjectExampleITCase {
 
         // Add a comment
         AddCommentPageObject addComment = log.openAddCommentWindow();
-        addComment.enterComment(COMMENT).submit();
+        addComment.enterComment(COMMENT);
 
         // Ensure the comment window is closed
         assertFalse(addComment.isOpen());
 
         // Verify that the log contains our comment
-        assertTrue(log.getRow(4).contains(COMMENT));
+        assertTrue(log.getRow(3).contains(COMMENT));
     }
 }

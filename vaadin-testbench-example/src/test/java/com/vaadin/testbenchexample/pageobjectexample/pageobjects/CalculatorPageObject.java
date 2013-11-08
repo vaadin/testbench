@@ -1,10 +1,11 @@
 package com.vaadin.testbenchexample.pageobjectexample.pageobjects;
 
-import com.vaadin.testbench.TestBenchTestCase;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+
+import com.vaadin.testbench.TestBenchTestCase;
 
 /**
  * The CalculatorPageObject knows how to enter digits and operands
@@ -54,7 +55,7 @@ public class CalculatorPageObject extends TestBenchTestCase {
      * Opens the URL where the calculator resides.
      */
     public void open() {
-        getDriver().get("http://localhost:8080/?restartApplication");
+        getDriver().get("http://localhost:8080/testbenchexample/?restartApplication");
     }
 
     /**
@@ -119,7 +120,7 @@ public class CalculatorPageObject extends TestBenchTestCase {
      */
     public String getResult() {
         equals.click();
-        return display.getText();
+        return display.getAttribute("value");
     }
 
     /**

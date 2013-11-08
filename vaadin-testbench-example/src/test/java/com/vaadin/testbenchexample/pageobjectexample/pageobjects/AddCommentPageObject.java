@@ -1,9 +1,12 @@
 package com.vaadin.testbenchexample.pageobjectexample.pageobjects;
 
-import com.vaadin.testbench.TestBenchTestCase;
-import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
+
+import com.vaadin.testbench.TestBenchTestCase;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.TextField;
+import com.vaadin.ui.Window;
 
 public class AddCommentPageObject extends TestBenchTestCase {
 
@@ -12,24 +15,27 @@ public class AddCommentPageObject extends TestBenchTestCase {
     }
 
     /**
-     * Enters a comment in the comment text field. Does not submit the
-     * comment.
-     *
-     * @param comment The text to enter in the comment field
+     * Enters a comment in the comment text field. Does not submit the comment.
+     * 
+     * @param comment
+     *            The text to enter in the comment field
      * @return the same AddCommentPageObject instance for method chaining.
      */
     public AddCommentPageObject enterComment(String comment) {
-        getDriver().findElement(By.className("v-textfield")).sendKeys(
-                comment, Keys.RETURN);
+
+        // We want to find a textfield inside a Window instance - the only
+        // Window we expect to be visible is the Add Comment modal dialog
+        // window.
+        getElement(TextField.class, getElement(Window.class)).sendKeys(comment,
+                Keys.RETURN);
         return this;
     }
-
 
     /**
      * Clicks the 'Add' button to submit the comment entered in the text field.
      */
     public void submit() {
-        getDriver().findElement(By.xpath("//*[text() = 'Add']")).click();
+        getElementByCaption(Button.class, "OK").click();
     }
 
     /**
@@ -37,10 +43,11 @@ public class AddCommentPageObject extends TestBenchTestCase {
      */
     public boolean isOpen() {
         /*
-         * We get away easily here as there is only one window in the application.
-         * In more complex applications we could check e.g. that the element with
-         * the style name v-window-header contains the expected window header string.
+         * We get away easily here as there is only one window in the
+         * application. In more complex applications we could check e.g. that
+         * the element with the style name v-window-header contains the expected
+         * window header string.
          */
-        return isElementPresent(By.className("v-window"));
+        return isElementPresent(Window.class);
     }
 }

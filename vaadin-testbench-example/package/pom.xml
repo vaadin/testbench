@@ -12,7 +12,7 @@ set( $symbol_dollar = '$' )
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <vaadin.version>6.8.0</vaadin.version>
+        <vaadin.version>7.1.testbench4-SNAPSHOT</vaadin.version>
     </properties>
 
     <repositories>

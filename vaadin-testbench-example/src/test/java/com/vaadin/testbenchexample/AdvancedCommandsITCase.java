@@ -4,33 +4,27 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.interactions.Actions;
 
-import com.vaadin.testbench.TestBench;
-import com.vaadin.testbench.TestBenchTestCase;
+import com.vaadin.testbench.By;
 import com.vaadin.testbench.commands.TestBenchElementCommands;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.TextField;
+import com.vaadin.ui.Window;
 
 /**
  * This example contains some usages of bit more advanced TestBench and
  * WebDriver usage.
  * 
  */
-public class AdvancedCommandsITCase extends TestBenchTestCase {
+public class AdvancedCommandsITCase extends TestBase {
 
     private static final String COMMENT_TEXT = "Next we'll click button 2";
-    private String baseUrl;
 
-    @Before
-    public void setUp() throws Exception {
-        setDriver(TestBench.createDriver(new FirefoxDriver()));
-        baseUrl = "http://localhost:8080";
+    private WebElement getButton(String caption) {
+        return getElementByCaption(Button.class, caption);
     }
 
     /**
@@ -42,44 +36,47 @@ public class AdvancedCommandsITCase extends TestBenchTestCase {
      */
     @Test
     public void useContextMenuToAddCommentRow() throws Exception {
-        openCalculator();
-        // just do some math first
-        getDriver().findElement(By.id("button_1")).click();
-        getDriver().findElement(By.id("button_+")).click();
 
-        // This is the essential part of this test. We select the table body
-        // element and perform context click action on it and select
-        // "Add Comment" from the opened menu
-        WebElement e = getDriver().findElement(By.className("v-table-body"));
-        new Actions(getDriver()).moveToElement(e).contextClick(e).perform();
-        getDriver().findElement(By.xpath("//*[text() = 'Add Comment']"))
-                .click();
+        // Get some buttons using getButton(String caption) function defined
+        // earlier.
+        WebElement oneButton = getButton("1");
+        WebElement addButton = getButton("+");
 
-        // The rest of the test is less relevant as a context menu
-        // demonstration. We just fill in a comment and verify the commenting
-        // feature works as expected.
-        // Also send a Keys.RETURN at the end of the string to make sure that
-        // a value change event is sent.
-        getDriver().findElement(By.className("v-textfield")).sendKeys(
-                COMMENT_TEXT, Keys.RETURN);
+        // Click them
+        oneButton.click();
+        addButton.click();
 
-        getDriver().findElement(By.xpath("//*[text() = 'Add']")).click();
+        // We fill in a comment and verify the commenting feature works as
+        // expected.
+        getButton("Add Comment").click();
+        WebElement commentField = getElement(TextField.class,
+                getElement(Window.class));
+
+        // Make sure the input is empty
+        commentField.clear();
+
+        // Sending Keys.RETURN updates the input value and triggers
+        // a Shortcut clicking the OK button for us.
+        commentField.sendKeys(COMMENT_TEXT, Keys.RETURN);
 
         // Ensure window is closed
-        boolean windowPresent = isElementPresent(By.className("v-window"));
+        boolean windowPresent = isElementPresent(Window.class);
         if (windowPresent) {
             fail("Modal window prompting textfield was not properly closed");
         }
-        getDriver().findElement(By.id("button_2")).click();
-        getDriver().findElement(By.id("button_=")).click();
-        assertEquals("3.0", getDriver().findElement(By.id("display")).getText());
+
+        // Click a few more buttons
+        getButton("2").click();
+        getButton("=").click();
+
+        // Check that the display is correct (1 + 2 = 3)
+        assertEquals("3.0", getElement(TextField.class).getAttribute("value"));
 
         // Verify the second row in log contains our comment
-        String secondRowText = getDriver()
-                .findElements(By.className("v-table-cell-wrapper")).get(1)
+        // Uses Vaadin table selector with subpart.
+        String secondRowText = getElementByPath("//VScrollTable#row[1]/col[0]")
                 .getText();
         assertTrue(secondRowText.contains(COMMENT_TEXT));
-
     }
 
     /**
@@ -90,18 +87,13 @@ public class AdvancedCommandsITCase extends TestBenchTestCase {
      */
     @Test
     public void verifyAddCommentButtonHasProperTooltip() throws Exception {
-        openCalculator();
 
-        // using context menu, add the popup to fill in a comment
-        WebElement e = getDriver().findElement(By.className("v-table-body"));
-        new Actions(getDriver()).moveToElement(e).contextClick(e).perform();
-        getDriver().findElement(By.xpath("//*[text() = 'Add Comment']"))
-                .click();
+        // using the button, show the popup to fill in a comment
+        getButton("Add Comment").click();
 
         // Use TestBench helper to show tooltip (practically moves mouse over
         // the specified element and waits until tooltip is visible)
-        TestBenchElementCommands testBenchElement = testBenchElement(getDriver()
-                .findElement(By.xpath("//*[text() = 'Add']")));
+        TestBenchElementCommands testBenchElement = testBenchElement(getButton("OK"));
         testBenchElement.showTooltip();
 
         // Verify the tooltip showed contains the expected text
@@ -111,14 +103,4 @@ public class AdvancedCommandsITCase extends TestBenchTestCase {
                 tooltipText);
 
     }
-
-    private void openCalculator() {
-        getDriver().get(baseUrl + "/testbenchexample?restartApplication");
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        getDriver().quit();
-    }
-
 }

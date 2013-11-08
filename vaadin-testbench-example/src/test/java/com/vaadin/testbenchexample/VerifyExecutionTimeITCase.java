@@ -3,50 +3,39 @@ package com.vaadin.testbenchexample;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.WebElement;
 
-import com.vaadin.testbench.TestBench;
-import com.vaadin.testbench.TestBenchTestCase;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.TextField;
 
 /**
  * This case demonstrates usage of execution time reporting.
  */
-public class VerifyExecutionTimeITCase extends TestBenchTestCase {
+public class VerifyExecutionTimeITCase extends TestBase {
 
-    private String baseUrl;
-
-    @Before
-    public void setUp() throws Exception {
-        setDriver(TestBench.createDriver(new FirefoxDriver()));
-        baseUrl = "http://localhost:8080";
-    }
-
-    private void openCalculator() {
-        getDriver().get(baseUrl + "/testbenchexample?restartApplication");
+    private WebElement getButton(String caption) {
+        return getElementByCaption(Button.class, caption);
     }
 
     private void calculateOnePlusTwo() {
-        getDriver().findElement(By.id("button_1")).click();
-        getDriver().findElement(By.id("button_+")).click();
-        getDriver().findElement(By.id("button_2")).click();
-        getDriver().findElement(By.id("button_=")).click();
+        // We use the getButton shortcut we defined earlier so we don't have to
+        // write getElementByCaption(Button.class, caption) every time
+        getButton("1").click();
+        getButton("+").click();
+        getButton("2").click();
+        getButton("=").click();
     }
 
     /**
-     * Makes the same thing as in {@link #testOnePlusTwoWithIdentifiers()} and
-     * verifies server don't spend too much time during the process. Also the
-     * test makes sure the time spent by browser to render the UI within sane
-     * limits.
+     * Does the same thing as in {@link SimpleCalculatorITCase} and verifies
+     * server don't spend too much time during the process. Also the test makes
+     * sure the time spent by browser to render the UI within sane limits.
      * 
      * @throws Exception
      */
     @Test
     public void verifyServerExecutionTime() throws Exception {
-        openCalculator();
         long currentSessionTime = testBench(getDriver())
                 .totalTimeSpentServicingRequests();
         calculateOnePlusTwo();
@@ -71,13 +60,6 @@ public class VerifyExecutionTimeITCase extends TestBenchTestCase {
                     + "ms!");
         }
 
-        assertEquals("3.0", getDriver().findElement(By.id("display")).getText());
-
+        assertEquals("3.0", getElement(TextField.class).getAttribute("value"));
     }
-
-    @After
-    public void tearDown() throws Exception {
-        getDriver().quit();
-    }
-
 }

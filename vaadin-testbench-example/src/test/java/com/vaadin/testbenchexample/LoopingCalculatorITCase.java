@@ -2,15 +2,11 @@ package com.vaadin.testbenchexample;
 
 import static org.junit.Assert.assertEquals;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.firefox.FirefoxDriver;
 
-import com.vaadin.testbench.TestBench;
-import com.vaadin.testbench.TestBenchTestCase;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.TextField;
 
 /**
  * This example demonstrates how developers can use techniques like loops and
@@ -20,31 +16,27 @@ import com.vaadin.testbench.TestBenchTestCase;
  * Developers should also consider add parameters to their tests and
  * systematically test boundary values etc.
  */
-public class LoopingCalculatorITCase extends TestBenchTestCase {
-    private String baseUrl;
+public class LoopingCalculatorITCase extends TestBase {
 
-    @Before
-    public void setUp() throws Exception {
-        setDriver(TestBench.createDriver(new FirefoxDriver()));
-        baseUrl = "http://localhost:8080";
+    private String getDisplayValue() {
+        return getElement(TextField.class).getAttribute("value");
+    }
+
+    private WebElement getButton(String caption) {
+        return getElementByCaption(Button.class, caption);
     }
 
     @Test
     public void testAdditionWithLoop() throws Exception {
-        openCalculator();
-        WebElement display = getDriver().findElement(By.id("display"));
         // Add five ones together and verify that the result is 5.0
-        performAddition("button_1", 5);
-        assertEquals("5.0", display.getText());
+        performAdditions(1, 5);
+        assertEquals("5.0", getDisplayValue());
 
         // Clear the calculator and add four twos together
-        getDriver().findElement(By.id("button_C")).click();
-        performAddition("button_2", 4);
-        assertEquals("8.0", display.getText());
-    }
+        getButton("C").click();
 
-    private void openCalculator() {
-        getDriver().get(baseUrl + "/testbenchexample?restartApplication");
+        performAdditions(2, 4);
+        assertEquals("8.0", getDisplayValue());
     }
 
     /**
@@ -52,22 +44,24 @@ public class LoopingCalculatorITCase extends TestBenchTestCase {
      * timesToAdd times and then clicks the = button to make the calculator
      * display the result.
      * 
-     * @param buttonId
+     * @param value
      * @param timesToAdd
+     * @throws Exception
      */
-    private void performAddition(String buttonId, int timesToAdd) {
-        WebElement numberButton = getDriver().findElement(By.id(buttonId));
-        WebElement plusButton = getDriver().findElement(By.id("button_+"));
+    private void performAdditions(int value, int timesToAdd) throws Exception {
+
+        assert (value >= 0 && value < 10);
+
+        WebElement numberButton = getButton("" + value);
+        WebElement plusButton = getButton("+");
+
         for (int i = 0; i < timesToAdd - 1; i++) {
             numberButton.click();
             plusButton.click();
         }
-        numberButton.click();
-        getDriver().findElement(By.id("button_=")).click();
-    }
 
-    @After
-    public void tearDown() throws Exception {
-        getDriver().quit();
+        numberButton.click();
+
+        getButton("=").click();
     }
 }
