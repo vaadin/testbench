@@ -361,8 +361,13 @@ public class TestBenchCommandExecutor implements TestBenchCommands,
             }
         } else {
             try {
-                element = (WebElement) jse.executeScript(findByVaadinScript,
-                        selector, context);
+                if (context instanceof WebDriver) {
+                    element = (WebElement) jse.executeScript(
+                            findByVaadinScript, selector);
+                } else {
+                    element = (WebElement) jse.executeScript(
+                            findByVaadinScript, selector, context);
+                }
             } catch (Exception e) {
                 throw new NoSuchElementException(errorString, e);
             }
