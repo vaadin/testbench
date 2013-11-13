@@ -1,6 +1,7 @@
 package com.vaadin.testbench;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -73,6 +74,22 @@ public abstract class TestBenchTestCase implements HasDriver {
     }
 
     /**
+     * Return true if an element can be found from the driver for given class.
+     * 
+     * @param clazz
+     *            a com.vaadin.ui.* class supported by the automatic
+     *            component->finder mapping.
+     * @return true if element of given class can be found
+     */
+    public boolean isElementPresent(Class<?> clazz) {
+        try {
+            return null != find(clazz).done();
+        } catch (NoSuchElementException e) {
+            return false;
+        }
+    }
+
+    /**
      * Returns true if an element can be found from the driver with given
      * selector.
      * 
@@ -81,7 +98,11 @@ public abstract class TestBenchTestCase implements HasDriver {
      * @return true if the element can be found
      */
     public boolean isElementPresent(By by) {
-        return !getDriver().findElements(by).isEmpty();
+        try {
+            return !getDriver().findElements(by).isEmpty();
+        } catch (NoSuchElementException e) {
+            return false;
+        }
     }
 
     /**
@@ -92,6 +113,7 @@ public abstract class TestBenchTestCase implements HasDriver {
      * 
      * @return the active WebDriver instance
      */
+    @Override
     public WebDriver getDriver() {
         return driver;
     }
@@ -277,6 +299,35 @@ public abstract class TestBenchTestCase implements HasDriver {
      */
     public WebElement getElementByPath(String vaadinPath, SearchContext context) {
         return context.findElement(com.vaadin.testbench.By.vaadin(vaadinPath));
+    }
+
+    /**
+     * Retrieve a {@link WebElement} by a path using the xpath selector syntax.
+     * This feature is provided for advanced use.
+     * 
+     * @param xpath
+     *            xpath selector string
+     * @throws NoSuchElementException
+     * @return a {@link WebElement} instance
+     */
+    public WebElement getElementByXPath(String xpath) {
+        return getElementByXPath(xpath, driver);
+    }
+
+    /**
+     * Retrieve a {@link WebElement} by a path using the xpath selector syntax,
+     * starting as a specified SearchContext. This feature is provided for
+     * advanced use.
+     * 
+     * @param xpath
+     *            xpath selector string
+     * @param context
+     *            any instance of a class implementing {@link SearchContext}
+     * @throws NoSuchElementException
+     * @return a {@link WebElement} instance
+     */
+    public WebElement getElementByXPath(String xpath, SearchContext context) {
+        return context.findElement(By.xpath(xpath));
     }
 
 }
