@@ -19,6 +19,7 @@ import java.util.List;
 import org.easymock.Capture;
 import org.easymock.EasyMock;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -105,6 +106,7 @@ public class VaadinFinderTest {
         verify(webDriverMock);
     }
 
+    @Ignore("Instead of getting an array and indexing it, ComponentFinder requests only one element based on the given index")
     @Test
     public void testFindTextField_returnValueIncludesAllResults()
             throws Exception {
