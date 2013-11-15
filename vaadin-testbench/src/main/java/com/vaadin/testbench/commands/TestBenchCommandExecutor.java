@@ -41,7 +41,7 @@ import com.vaadin.testbench.screenshot.ReferenceNameGenerator;
  * Provides actual implementation of TestBenchCommands
  */
 public class TestBenchCommandExecutor implements TestBenchCommands,
-        JavascriptExecutor {
+JavascriptExecutor {
 
     private static Logger logger = Logger
             .getLogger(TestBenchCommandExecutor.class.getName());
@@ -103,7 +103,8 @@ public class TestBenchCommandExecutor implements TestBenchCommands,
      */
     @Override
     public void waitForVaadin() {
-        if (!enableWaitForVaadin) {
+        if (!enableWaitForVaadin
+                || !(actualDriver instanceof JavascriptExecutor)) {
             // wait for vaadin is disabled, just return.
             return;
         }
@@ -146,7 +147,7 @@ public class TestBenchCommandExecutor implements TestBenchCommands,
             BufferedImage screenshotImage = ImageIO
                     .read(new ByteArrayInputStream(
                             ((TakesScreenshot) actualDriver)
-                                    .getScreenshotAs(OutputType.BYTES)));
+                            .getScreenshotAs(OutputType.BYTES)));
             boolean equal = imageComparison
                     .imageEqualToReference(screenshotImage, referenceName,
                             Parameters.getScreenshotComparisonTolerance(),
@@ -192,7 +193,7 @@ public class TestBenchCommandExecutor implements TestBenchCommands,
             BufferedImage screenshotImage = ImageIO
                     .read(new ByteArrayInputStream(
                             ((TakesScreenshot) actualDriver)
-                                    .getScreenshotAs(OutputType.BYTES)));
+                            .getScreenshotAs(OutputType.BYTES)));
             if (reference == null) {
                 // Store the screenshot in the errors directory and fail the
                 // test
@@ -375,7 +376,7 @@ public class TestBenchCommandExecutor implements TestBenchCommands,
         if (element != null) {
             return TestBench.createElement(element,
                     ((HasTestBenchCommandExecutor) context)
-                            .getTestBenchCommandExecutor());
+                    .getTestBenchCommandExecutor());
         }
 
         throw new NoSuchElementException(
@@ -466,11 +467,11 @@ public class TestBenchCommandExecutor implements TestBenchCommands,
             int extrah = 106;
             int extraw = 0;
             actualDriver
-                    .manage()
-                    .window()
-                    .setSize(
-                            new Dimension(desiredWidth + extraw, desiredHeight
-                                    + extrah));
+            .manage()
+            .window()
+            .setSize(
+                    new Dimension(desiredWidth + extraw, desiredHeight
+                            + extrah));
 
             int actualWidth = detectViewportWidth();
             int actualHeight = detectViewportHeight();
@@ -480,11 +481,11 @@ public class TestBenchCommandExecutor implements TestBenchCommands,
 
             if (diffH != 0 || diffW != 0) {
                 actualDriver
-                        .manage()
-                        .window()
-                        .setSize(
-                                new Dimension(desiredWidth + extraw + diffW,
-                                        desiredHeight + extrah + diffH));
+                .manage()
+                .window()
+                .setSize(
+                        new Dimension(desiredWidth + extraw + diffW,
+                                desiredHeight + extrah + diffH));
             }
             actualWidth = detectViewportWidth();
             actualHeight = detectViewportHeight();
