@@ -34,6 +34,7 @@ import java.util.Set;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
@@ -125,12 +126,17 @@ public class TestBenchDriverTest {
 
     @Test
     public void testDisableWaitForVaadin() {
+        Capabilities mockCapabilities = createNiceMock(Capabilities.class);
+        expect(mockCapabilities.getBrowserName()).andReturn("firefox")
+                .anyTimes();
+
         FirefoxDriver mockFF = createMock(FirefoxDriver.class);
+        expect(mockFF.getCapabilities()).andReturn(mockCapabilities).anyTimes();
         expect(mockFF.executeScript(contains("clients[client].isActive()")))
                 .andReturn(true).once();
         WebElement mockElement = createNiceMock(WebElement.class);
         expect(mockFF.findElement(isA(By.class))).andReturn(mockElement);
-        replay(mockFF, mockElement);
+        replay(mockFF, mockElement, mockCapabilities);
 
         WebDriver driver = TestBench.createDriver(mockFF);
         TestBenchCommands tb = (TestBenchCommands) driver;
