@@ -4,6 +4,8 @@ import java.awt.image.BufferedImage;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import com.vaadin.testbench.qprofile.QProfile;
+
 public class ImageComparisonUtil {
 
     /**
@@ -15,40 +17,52 @@ public class ImageComparisonUtil {
      * @return the block representation of the image
      */
     public static String generateImageHash(BufferedImage image) {
-        int width = image.getWidth();
-        int height = image.getHeight();
-
-        byte[] data = new byte[width * height * 3];
-
-        int idx = 0;
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                int rgb = image.getRGB(x, y);
-                rgb &= 0x00FCFCFC;
-
-                // Skip the two last bits for fuzzy comparison
-                data[idx++] = (byte) ((rgb >> 16));
-                data[idx++] = (byte) ((rgb >> 8));
-                data[idx++] = (byte) (rgb);
-            }
-        }
-
+        QProfile.begin();
         try {
-            MessageDigest md5 = MessageDigest.getInstance("MD5");
-            md5.update(data);
-            String hash = byteToHex(md5.digest());
-            return hash;
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("MD5 algorithm provider not found", e);
+            int width = image.getWidth();
+            int height = image.getHeight();
+
+            byte[] data = new byte[width * height * 3];
+
+            int idx = 0;
+            for (int y = 0; y < height; y++) {
+                for (int x = 0; x < width; x++) {
+                    int rgb = image.getRGB(x, y);
+                    rgb &= 0x00FCFCFC;
+
+                    // Skip the two last bits for fuzzy comparison
+                    data[idx++] = (byte) ((rgb >> 16));
+                    data[idx++] = (byte) ((rgb >> 8));
+                    data[idx++] = (byte) (rgb);
+                }
+            }
+
+            try {
+                MessageDigest md5 = MessageDigest.getInstance("MD5");
+                md5.update(data);
+                String hash = byteToHex(md5.digest());
+                return hash;
+            } catch (NoSuchAlgorithmException e) {
+                throw new RuntimeException("MD5 algorithm provider not found",
+                        e);
+            }
+        } finally {
+            QProfile.end();
         }
     }
 
     private static String byteToHex(byte[] bytes) {
-        String hex = "";
-        for (int i = 0; i < bytes.length; i++) {
-            hex += Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1);
+        QProfile.begin();
+        try {
+            String hex = "";
+            for (int i = 0; i < bytes.length; i++) {
+                hex += Integer.toString((bytes[i] & 0xff) + 0x100, 16)
+                        .substring(1);
+            }
+            return hex;
+        } finally {
+            QProfile.end();
         }
-        return hex;
     }
 
     /**
@@ -61,6 +75,11 @@ public class ImageComparisonUtil {
      * @return The number of blocks used for that dimension
      */
     public static int getNrBlocks(int pixels) {
-        return (int) Math.floor(pixels + 15) / 16;
+        QProfile.begin();
+        try {
+            return (int) Math.floor(pixels + 15) / 16;
+        } finally {
+            QProfile.end();
+        }
     }
 }

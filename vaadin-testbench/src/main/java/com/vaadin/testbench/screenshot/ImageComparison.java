@@ -1,6 +1,7 @@
 package com.vaadin.testbench.screenshot;
 
-import java.awt.Color;
+import static java.lang.Math.abs;
+
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -13,6 +14,8 @@ import javax.imageio.ImageIO;
 import org.openqa.selenium.Capabilities;
 
 import com.vaadin.testbench.Parameters;
+import com.vaadin.testbench.qprofile.QProfile;
+import com.vaadin.testbench.screenshot.ImageUtil.ImageProperties;
 
 /**
  * Class with features for comparing 2 images.
@@ -40,67 +43,79 @@ public class ImageComparison {
     public boolean imageEqualToReference(BufferedImage screenshotImage,
             String referenceFileId, double errorTolerance,
             Capabilities capabilities) throws IOException {
-        ImageFileUtil.createScreenshotDirectoriesIfNeeded();
+        QProfile.begin();
+        try {
 
-        List<String> referenceFileNames = ImageFileUtil
-                .getReferenceImageFileNames(referenceFileId + ".png",
-                        capabilities);
+            ImageFileUtil.createScreenshotDirectoriesIfNeeded();
 
-        if (referenceFileNames.isEmpty()) {
-            // We require a reference image to continue
-            // Save the screenshot in the error directory.
-            ImageIO.write(
-                    screenshotImage,
-                    "png",
-                    ImageFileUtil.getErrorScreenshotFile(referenceFileId
-                            + ".png"));
-            logger.severe("No reference found for " + referenceFileId + " in "
-                    + ImageFileUtil.getScreenshotReferenceDirectory());
-            return false;
-        }
+            List<String> referenceFileNames = ImageFileUtil
+                    .getReferenceImageFileNames(referenceFileId + ".png",
+                            capabilities);
 
-        // this is used to make the final error HTML page based on main
-        // reference file only
-        ScreenShotFailureReporter failureReporter = null;
-
-        for (String referenceFileName : referenceFileNames) {
-            BufferedImage referenceImage;
-            referenceImage = ImageFileUtil
-                    .readReferenceImage(referenceFileName);
-
-            failureReporter = compareToReference(screenshotImage,
-                    referenceImage, errorTolerance);
-            if (failureReporter == null) {
-                return true;
+            if (referenceFileNames.isEmpty()) {
+                // We require a reference image to continue
+                // Save the screenshot in the error directory.
+                ImageIO.write(
+                        screenshotImage,
+                        "png",
+                        ImageFileUtil.getErrorScreenshotFile(referenceFileId
+                                + ".png"));
+                logger.severe("No reference found for " + referenceFileId
+                        + " in "
+                        + ImageFileUtil.getScreenshotReferenceDirectory());
+                return false;
             }
-        }
 
-        /*
-         * The command has failed because the captured image differs from the
-         * reference image
-         */
-        if (failureReporter != null) {
-            failureReporter.createErrorImageAndHTML(referenceFileId + ".png",
-                    screenshotImage);
-        }
+            // this is used to make the final error HTML page based on main
+            // reference file only
+            ScreenShotFailureReporter failureReporter = null;
 
-        // The images differ
-        return false;
+            for (String referenceFileName : referenceFileNames) {
+                BufferedImage referenceImage;
+                referenceImage = ImageFileUtil
+                        .readReferenceImage(referenceFileName);
+
+                failureReporter = compareToReference(screenshotImage,
+                        referenceImage, errorTolerance);
+                if (failureReporter == null) {
+                    return true;
+                }
+            }
+
+            /*
+             * The command has failed because the captured image differs from
+             * the reference image
+             */
+            if (failureReporter != null) {
+                failureReporter.createErrorImageAndHTML(referenceFileId
+                        + ".png", screenshotImage);
+            }
+
+            // The images differ
+            return false;
+        } finally {
+            QProfile.end();
+        }
     }
 
     public boolean imageEqualToReference(BufferedImage screenshotImage,
             BufferedImage referenceImage, String referenceFileName,
             double errorTolerance) {
-        ImageFileUtil.createScreenshotDirectoriesIfNeeded();
+        QProfile.begin();
+        try {
+            ImageFileUtil.createScreenshotDirectoriesIfNeeded();
 
-        ScreenShotFailureReporter failureReporter = compareToReference(
-                screenshotImage, referenceImage, errorTolerance);
-        if (failureReporter != null) {
-            failureReporter.createErrorImageAndHTML(referenceFileName,
-                    screenshotImage);
-            return false;
+            ScreenShotFailureReporter failureReporter = compareToReference(
+                    screenshotImage, referenceImage, errorTolerance);
+            if (failureReporter != null) {
+                failureReporter.createErrorImageAndHTML(referenceFileName,
+                        screenshotImage);
+                return false;
+            }
+            return true;
+        } finally {
+            QProfile.end();
         }
-        return true;
     }
 
     /**
@@ -112,81 +127,92 @@ public class ImageComparison {
     private ScreenShotFailureReporter compareToReference(
             BufferedImage screenshotImage, BufferedImage referenceImage,
             double errorTolerance) {
+        QProfile.begin();
+        try {
 
-        // If images are of different size crop both images to same size
-        // before checking for differences
-        boolean sizesDiffer = !ImageUtil.imagesSameSize(referenceImage,
-                screenshotImage);
-        if (sizesDiffer) {
-            List<BufferedImage> images = ImageUtil.cropToBeSameSize(
-                    referenceImage, screenshotImage);
-            referenceImage = images.get(0);
-            screenshotImage = images.get(1);
-        }
+            // If images are of different size crop both images to same size
+            // before checking for differences
+            boolean sizesDiffer = !ImageUtil.imagesSameSize(referenceImage,
+                    screenshotImage);
 
-        int imageWidth = referenceImage.getWidth();
-        int imageHeight = referenceImage.getHeight();
-
-        int xBlocks = ImageComparisonUtil.getNrBlocks(imageWidth);
-        int yBlocks = ImageComparisonUtil.getNrBlocks(imageHeight);
-        boolean[][] falseBlocks = new boolean[xBlocks][yBlocks];
-        boolean imagesEqual = compareImage(falseBlocks, referenceImage,
-                screenshotImage, errorTolerance);
-
-        if (sizesDiffer) {
-            /*
-             * The command has failed because the dimensions of the captured
-             * image do not match the reference image
-             */
-            if (Parameters.isDebug()) {
-                if (imagesEqual) {
-                    // The images are equal but of different size
-                    System.out.println("Images are of different size.");
-                } else {
-                    // Neither size nor contents match
-                    System.out
-                            .println("Images differ and are of different size.");
-                }
+            if (sizesDiffer) {
+                List<BufferedImage> images = ImageUtil.cropToBeSameSize(
+                        referenceImage, screenshotImage);
+                referenceImage = images.get(0);
+                screenshotImage = images.get(1);
             }
-            // TODO: Add info about which RC it was run on
-            return makeFailureReporter(referenceImage, falseBlocks);
-        }
 
-        if (imagesEqual) {
-            if (Parameters.isDebug()) {
-                System.out.println("Screenshot matched reference");
-            }
-            // Images match. Nothing else to do.
-            return null;
-        }
+            int imageWidth = referenceImage.getWidth();
+            int imageHeight = referenceImage.getHeight();
 
-        if (Parameters.isScreenshotComparisonCursorDetection()) {
-            // Images are not equal, still check if the only difference
-            // is a blinking cursor
-            Point possibleCursorPosition = getPossibleCursorPosition(xBlocks,
-                    yBlocks, falseBlocks);
-            if (possibleCursorPosition != null) {
-                if (isCursorTheOnlyError(possibleCursorPosition,
-                        referenceImage, screenshotImage, errorTolerance)) {
-                    if (Parameters.isDebug()) {
+            int xBlocks = ImageComparisonUtil.getNrBlocks(imageWidth);
+            int yBlocks = ImageComparisonUtil.getNrBlocks(imageHeight);
+
+            boolean[][] falseBlocks = new boolean[xBlocks][yBlocks];
+
+            boolean imagesEqual = compareImage(falseBlocks, referenceImage,
+                    screenshotImage, errorTolerance);
+
+            if (sizesDiffer) {
+
+                // The command has failed because the dimensions of the captured
+                // image do not match the reference image
+                if (Parameters.isDebug()) {
+                    if (imagesEqual) {
+                        // The images are equal but of different size
+                        System.out.println("Images are of different size.");
+                    } else {
+                        // Neither size nor contents match
                         System.out
-                                .println("Screenshot matched reference after removing cursor");
+                                .println("Images differ and are of different size.");
                     }
-                    // Cursor is the only difference so we are done.
-                    return null;
-                } else if (Parameters.isDebug()) {
-                    System.out
-                            .println("Screenshot did not match reference after removing cursor");
+                }
+
+                // TODO: Add info about which RC it was run on
+                ScreenShotFailureReporter fr = makeFailureReporter(
+                        referenceImage, falseBlocks);
+                return fr;
+            }
+
+            if (imagesEqual) {
+                if (Parameters.isDebug()) {
+                    System.out.println("Screenshot matched reference");
+                }
+
+                // Images match. Nothing else to do.
+                return null;
+            }
+
+            if (Parameters.isScreenshotComparisonCursorDetection()) {
+                // Images are not equal, still check if the only difference
+                // is a blinking cursor
+                Point possibleCursorPosition = getPossibleCursorPosition(
+                        xBlocks, yBlocks, falseBlocks);
+                if (possibleCursorPosition != null) {
+                    if (isCursorTheOnlyError(possibleCursorPosition,
+                            referenceImage, screenshotImage, errorTolerance)) {
+                        if (Parameters.isDebug()) {
+                            System.out
+                                    .println("Screenshot matched reference after removing cursor");
+                        }
+                        // Cursor is the only difference so we are done.
+                        return null;
+                    } else if (Parameters.isDebug()) {
+                        System.out
+                                .println("Screenshot did not match reference after removing cursor");
+                    }
                 }
             }
-        }
 
-        if (Parameters.isDebug()) {
-            System.out.println("Screenshot did not match reference");
-        }
+            if (Parameters.isDebug()) {
+                System.out.println("Screenshot did not match reference");
+            }
 
-        // Make a failure reporter that is used upstream
-        return makeFailureReporter(referenceImage, falseBlocks);
+            // Make a failure reporter that is used upstream
+            return makeFailureReporter(referenceImage, falseBlocks);
+        } finally {
+            QProfile.end();
+        }
     }
 
     private ScreenShotFailureReporter makeFailureReporter(
@@ -196,116 +222,105 @@ public class ImageComparison {
 
     public boolean compareImages(BufferedImage referenceImage,
             BufferedImage screenshotImage, double errorTolerance) {
-        int xBlocks = ImageComparisonUtil
-                .getNrBlocks(referenceImage.getWidth());
-        int yBlocks = ImageComparisonUtil.getNrBlocks(referenceImage
-                .getHeight());
-        boolean[][] falseBlocks = new boolean[xBlocks][yBlocks];
+        QProfile.begin();
+        try {
+            int xBlocks = ImageComparisonUtil.getNrBlocks(referenceImage
+                    .getWidth());
+            int yBlocks = ImageComparisonUtil.getNrBlocks(referenceImage
+                    .getHeight());
+            boolean[][] falseBlocks = new boolean[xBlocks][yBlocks];
 
-        boolean imagesEqual = compareImage(falseBlocks, referenceImage,
-                screenshotImage, errorTolerance);
+            boolean imagesEqual = compareImage(falseBlocks, referenceImage,
+                    screenshotImage, errorTolerance);
 
-        // Check for cursor.
-        if (!imagesEqual && Parameters.isScreenshotComparisonCursorDetection()) {
-            Point possibleCursorPosition = getPossibleCursorPosition(xBlocks,
-                    yBlocks, falseBlocks);
-            if (possibleCursorPosition != null) {
-                if (isCursorTheOnlyError(possibleCursorPosition,
-                        referenceImage, screenshotImage, errorTolerance)) {
-                    return true;
+            // Check for cursor.
+            if (!imagesEqual
+                    && Parameters.isScreenshotComparisonCursorDetection()) {
+                Point possibleCursorPosition = getPossibleCursorPosition(
+                        xBlocks, yBlocks, falseBlocks);
+                if (possibleCursorPosition != null) {
+                    if (isCursorTheOnlyError(possibleCursorPosition,
+                            referenceImage, screenshotImage, errorTolerance)) {
+                        return true;
+                    }
                 }
             }
+            return imagesEqual;
+        } finally {
+            QProfile.end();
         }
-        return imagesEqual;
     }
 
     private boolean compareImage(boolean[][] falseBlocks,
             BufferedImage referenceImage, BufferedImage screenshotImage,
             double errorTolerance) {
-        boolean result = true;
+        QProfile.begin();
+        try {
+            boolean result = true;
 
-        int imageWidth = referenceImage.getWidth();
-        int imageHeight = referenceImage.getHeight();
+            int imageWidth = referenceImage.getWidth();
+            int imageHeight = referenceImage.getHeight();
 
-        int xBlocks = ImageComparisonUtil.getNrBlocks(imageWidth);
-        int yBlocks = ImageComparisonUtil.getNrBlocks(imageHeight);
+            int[] ref_sample = new int[16 * 16], ss_sample = new int[16 * 16];
+            int[] sample_buf = ImageUtil.createSampleBuffer();
 
-        // iterate picture in macroblocks of 16x16 (x,y) (0-> m-16, 0->
-        // n-16)
-        for (int y = 0; y < imageHeight - 15; y += 16) {
-            for (int x = 0; x < imageWidth - 15; x += 16) {
-                if (blocksDiffer(x, y, referenceImage, screenshotImage,
-                        errorTolerance)) {
-                    if (falseBlocks != null) {
-                        falseBlocks[x / 16][y / 16] = true;
+            ImageProperties referenceProperties = ImageUtil
+                    .getImageProperties(referenceImage);
+            ImageProperties screenshotProperties = ImageUtil
+                    .getImageProperties(screenshotImage);
+
+            // Iterate through image in 16x16 blocks
+            for (int y = 0; y < imageHeight; y += 16) {
+                for (int x = 0; x < imageWidth; x += 16) {
+                    if (blocksDiffer(x, y, referenceImage, referenceProperties,
+                            screenshotImage, screenshotProperties,
+                            errorTolerance, ref_sample, ss_sample, sample_buf)) {
+                        if (falseBlocks != null) {
+                            falseBlocks[x >>> 4][y >>> 4] = true;
+                        }
+                        result = false;
                     }
-                    result = false;
                 }
             }
+            return result;
+        } finally {
+            QProfile.end();
         }
-
-        // Check image bottom
-        if (imageHeight % 16 != 0) {
-            for (int x = 0; x < imageWidth - 15; x += 16) {
-                if (blocksDiffer(x, imageHeight - 16, referenceImage,
-                        screenshotImage, errorTolerance)) {
-                    if (falseBlocks != null) {
-                        falseBlocks[x / 16][yBlocks - 1] = true;
-                    }
-                    result = false;
-                }
-            }
-        }
-
-        // Check right side of image
-        if (imageWidth % 16 != 0) {
-            for (int y = 0; y < imageHeight - 15; y += 16) {
-                if (blocksDiffer(imageWidth - 16, y, referenceImage,
-                        screenshotImage, errorTolerance)) {
-                    if (falseBlocks != null) {
-                        falseBlocks[xBlocks - 1][y / 16] = true;
-                    }
-                    result = false;
-                }
-            }
-        }
-
-        // Check lower right corner if necessary
-        if (imageWidth % 16 != 0 && imageHeight % 16 != 0) {
-            if (blocksDiffer(imageWidth - 16, imageHeight - 16, referenceImage,
-                    screenshotImage, errorTolerance)) {
-                if (falseBlocks != null) {
-                    falseBlocks[xBlocks - 1][yBlocks - 1] = true;
-                }
-                result = false;
-            }
-        }
-
-        return result;
     }
 
     private boolean blocksDiffer(int x, int y, BufferedImage referenceImage,
-            BufferedImage screenshotImage, double errorTolerance) {
+            ImageProperties referenceImageProperties,
+            BufferedImage screenshotImage,
+            ImageProperties screenshotImageProperties, double errorTolerance,
+            int[] referenceBlock, int[] screenshotBlock, int[] sample) {
         boolean result = false;
 
-        // Get 16x16 blocks from picture
-        int[] referenceBlock = ImageUtil.getBlock(referenceImage, x, y);
-        int[] screenshotBlock = ImageUtil.getBlock(screenshotImage, x, y);
+        QProfile.begin();
+        try {
 
-        // If arrays aren't equal then
-        if (!Arrays.equals(referenceBlock, screenshotBlock)) {
+            // Get 16x16 blocks from picture
+            referenceBlock = ImageUtil.getBlock(referenceImage,
+                    referenceImageProperties, x, y, referenceBlock, sample);
+            screenshotBlock = ImageUtil.getBlock(screenshotImage,
+                    screenshotImageProperties, x, y, screenshotBlock, sample);
 
-            double sums = rgbCompare(referenceBlock, screenshotBlock);
+            // If arrays aren't equal then
+            if (!Arrays.equals(referenceBlock, screenshotBlock)) {
 
-            // Check if total RGB error in a macroblock exceeds
-            // allowed error % if true mark block with a rectangle,
-            // append block info to imageErrors
-            if (sums > errorTolerance) {
-                result = true;
+                double sums = rgbCompare(referenceBlock, screenshotBlock);
+
+                // Check if total RGB error in a macroblock exceeds
+                // allowed error % if true mark block with a rectangle,
+                // append block info to imageErrors
+                if (sums > errorTolerance) {
+                    result = true;
+                }
             }
+            return result;
+        } finally {
+            QProfile.end();
         }
 
-        return result;
     }
 
     /**
@@ -316,30 +331,44 @@ public class ImageComparison {
      * @return Difference %
      */
     private double rgbCompare(int[] referenceBlock, int[] screenshotBlock) {
-        int sum = 0;
+        QProfile.begin();
+        try {
 
-        // build sums from all available colors Red, Green
-        // and Blue
-        for (int i = 0; i < referenceBlock.length; i++) {
-            Color targetPixel = new Color(referenceBlock[i], /* hasAlpha */true);
-            Color testPixel = new Color(screenshotBlock[i]);
-            int redDiff = Math.abs(targetPixel.getRed() - testPixel.getRed());
-            int greenDiff = Math.abs(targetPixel.getGreen()
-                    - testPixel.getGreen());
-            int blueDiff = Math
-                    .abs(targetPixel.getBlue() - testPixel.getBlue());
+            int sum = 0;
+            assert (referenceBlock.length == screenshotBlock.length);
 
-            // Only completely opaque pixels are considered. Pixels with alpha
-            // values below 255 (== fully opaque) are considered masked and
-            // differences in these pixels won't be reported as differences.
-            if (targetPixel.getAlpha() >= 255) {
+            // Build sums from all available colors Red, Green and Blue
+            for (int i = 0, l = referenceBlock.length; i < l; i++) {
+                int targetPixel = referenceBlock[i];
+
+                if ((targetPixel >>> 24) < 255) {
+
+                    // Only completely opaque pixels are considered. Pixels with
+                    // alpha values below 255 (== fully opaque) are considered
+                    // masked and differences in these pixels won't be reported.
+                    continue;
+                }
+
+                int testPixel = screenshotBlock[i];
+
+                int redDiff = abs(((targetPixel & 0xff0000) >> 16)
+                        - ((testPixel & 0xff0000) >> 16));
+
+                int greenDiff = abs(((targetPixel & 0xff00) >> 8)
+                        - ((testPixel & 0xff00) >> 8));
+
+                int blueDiff = abs((targetPixel & 0xff) - (testPixel & 0xff));
+
                 sum += redDiff;
                 sum += greenDiff;
                 sum += blueDiff;
             }
+
+            double fullSum = sum / ((double) referenceBlock.length * 255 * 3);
+            return (fullSum);
+        } finally {
+            QProfile.end();
         }
-        double fullSum = referenceBlock.length * 255 * 3;
-        return (sum / fullSum);
     }
 
     /**
@@ -362,42 +391,53 @@ public class ImageComparison {
     private static Point getPossibleCursorPosition(int xBlocks, int yBlocks,
             boolean[][] blocksWithErrors) {
 
-        Point firstErrorBlock = null;
+        QProfile.begin();
+        try {
 
-        /*
-         * Look for 1-2 blocks with errors. Iff the blocks are vertically
-         * adjacent to each other we might have a cursor problem. This is the
-         * only case we are looking for.
-         */
+            int firstErrorBlockX = 0;
+            int firstErrorBlockY = 0;
+            boolean errorFound = false;
 
-        for (int y = 0; y < yBlocks; y++) {
-            for (int x = 0; x < xBlocks; x++) {
-                if (blocksWithErrors[x][y]) {
-                    if (firstErrorBlock == null) {
-                        // This is the first erroneous block we have found
-                        firstErrorBlock = new Point(x, y);
-                    } else {
-                        // This is the second erroneous block we have found
-                        if (x == firstErrorBlock.x
-                                && y == firstErrorBlock.y + 1) {
+            // Look for 1-2 blocks with errors. Iff the blocks are vertically
+            // adjacent to each other we might have a cursor problem. This is
+            // the only case we are looking for.
+
+            for (int y = 0; y < yBlocks; y++) {
+                for (int x = 0; x < xBlocks; x++) {
+                    if (blocksWithErrors[x][y]) {
+                        if (errorFound) {
+
+                            // This is the second erroneous block we have found
+                            if (x != firstErrorBlockX
+                                    || y != firstErrorBlockY + 1) {
+                                // This error is not below the first so there
+                                // are other errors than 1-2 blocks above each
+                                // other (we are moving from top down).
+                                return null;
+                            }
+
                             // This is directly below the first so it is OK
+
                         } else {
-                            // This error is not below the first so there are
-                            // other errors than 1-2 blocks above each other (we
-                            // are moving from top down).
-                            return null;
+                            // This is the first erroneous block we have found
+                            firstErrorBlockX = x;
+                            firstErrorBlockY = y;
+                            errorFound = true;
                         }
                     }
                 }
             }
-        }
 
-        if (firstErrorBlock != null) {
-            // Return value is the pixel coordinates for the first block
-            return new Point(firstErrorBlock.x * 16, firstErrorBlock.y * 16);
-        }
+            Point value = null;
 
-        return null;
+            if (errorFound) {
+                // Return value is the pixel coordinates for the first block
+                value = new Point(firstErrorBlockX << 4, firstErrorBlockY << 4);
+            }
+            return value;
+        } finally {
+            QProfile.end();
+        }
     }
 
     /**
@@ -418,93 +458,108 @@ public class ImageComparison {
     private boolean isCursorTheOnlyError(Point possibleCursorPosition,
             BufferedImage referenceImage, BufferedImage screenshotImage,
             double errorTolerance) {
-        int x = possibleCursorPosition.x;
-        int y = possibleCursorPosition.y;
 
-        int width = referenceImage.getWidth();
-        int height = referenceImage.getHeight();
+        QProfile.begin();
+        try {
 
-        // find first different pixel in the block of possibleCursorPosition
-        int cursorX = -1;
-        int cursorStartY = -1;
-        findCursor: for (int j = y; j < y + 16 && j < height; j++) {
-            for (int i = x; i < x + 16 && i < width; i++) {
-                // if found differing pixel
-                if (isCursorPixel(referenceImage, screenshotImage, i, j)) {
-                    // workaround to ignore vertical lines in certain tests
-                    if (j < height - 1
-                            && !isCursorPixel(referenceImage, screenshotImage,
-                                    i, j + 1)) {
-                        continue;
+            int x = possibleCursorPosition.x;
+            int y = possibleCursorPosition.y;
+
+            int width = referenceImage.getWidth();
+            int height = referenceImage.getHeight();
+
+            // Find first different pixel in the block of possibleCursorPosition
+            int cursorX = -1;
+            int cursorStartY = -1;
+            findCursor: for (int j = y; j < y + 16 && j < height; j++) {
+                for (int i = x; i < x + 16 && i < width; i++) {
+
+                    // If found differing pixel
+                    if (isCursorPixel(referenceImage, screenshotImage, i, j)) {
+
+                        // Workaround to ignore vertical lines in certain tests
+                        if (j < height - 1
+                                && !isCursorPixel(referenceImage,
+                                        screenshotImage, i, j + 1)) {
+                            continue;
+                        }
+
+                        cursorX = i;
+                        cursorStartY = j;
+                        break findCursor;
                     }
-
-                    cursorX = i;
-                    cursorStartY = j;
-                    break findCursor;
                 }
             }
-        }
-        if (-1 == cursorX) {
-            // no difference found with cursor detection threshold
-            return false;
-        }
 
-        // find the end of the cursor
-        int cursorEndY = cursorStartY;
-        while (cursorEndY < height - 1
-                && cursorEndY < y + 32
-                && isCursorPixel(referenceImage, screenshotImage, cursorX,
-                        cursorEndY + 1)) {
-            cursorEndY++;
+            if (-1 == cursorX) {
+                // No difference found with cursor detection threshold
+                return false;
+            }
+
+            // Find the end of the cursor
+            int cursorEndY = cursorStartY;
+            while (cursorEndY < height - 1
+                    && cursorEndY < y + 32
+                    && isCursorPixel(referenceImage, screenshotImage, cursorX,
+                            cursorEndY + 1)) {
+                cursorEndY++;
+            }
+
+            // Only accept as cursor if at least 5 pixels or at top or bottom of
+            // image
+            if (cursorEndY - cursorStartY < 5 && cursorStartY > 0
+                    && cursorEndY < height - 1) {
+                return false;
+            }
+
+            // Copy pixels from reference over the possible cursor, then
+            // re-compare blocks. Pixels at cursor position are always copied
+            // from the reference image regardless of which of the images has
+            // the cursor.
+
+            // Get 16x32 sub-images, aligned on the 16x16 grid
+            // this might compare some extra blocks when at the right or bottom
+            // edge
+            int areaX = x;
+            int areaY = y;
+            int xSize = 16;
+            int ySize = 32;
+
+            // If close to the right edge, move to a 16px aligned block edge
+            // which allows at least 16px wide blocks, then widen area to the
+            // edge
+            if (areaX > width - 16) {
+                areaX = (width - 16) & 0xFFFFF0;
+                xSize = width - areaX;
+            }
+            // likewise for bottom edge (at least 32px high, aligned at 16px
+            // block edge)
+            if (areaY > height - 32) {
+                areaY = (height - 32) & 0xFFFFF0;
+                ySize = height - areaY;
+            }
+
+            BufferedImage referenceCopy = referenceImage.getSubimage(areaX,
+                    areaY, xSize, ySize);
+            BufferedImage screenshotCopy = screenshotImage.getSubimage(areaX,
+                    areaY, xSize, ySize);
+
+            // Avoid modifying original image
+            screenshotCopy = ImageUtil.cloneImage(screenshotCopy);
+
+            // Copy pixels for cursor position from reference to screenshot
+            for (int j = cursorStartY - areaY; j <= cursorEndY - areaY; ++j) {
+                int referenceRgb = referenceCopy.getRGB(cursorX - areaX, j);
+                screenshotCopy.setRGB(cursorX - areaX, j, referenceRgb);
+            }
+
+            // Compare one or two blocks of reference with modified screenshot
+            return compareImage(null, referenceCopy, screenshotCopy,
+                    errorTolerance);
+
+        } finally {
+            QProfile.end();
         }
-
-        // only accept as cursor if at least 5 pixels or at top or bottom of
-        // image
-        if (cursorEndY - cursorStartY < 5 && cursorStartY > 0
-                && cursorEndY < height - 1) {
-            return false;
-        }
-
-        // Copy pixels from reference over the possible cursor, then recompare
-        // blocks. Pixels at cursor position are always copied from the
-        // reference image regardless of which of the images has the cursor.
-
-        // Get 16x32 sub-images, aligned on the 16x16 grid
-        // this might compare some extra blocks when at the right or bottom edge
-        int areaX = x;
-        int areaY = y;
-        int xSize = 16;
-        int ySize = 32;
-        // if close to the right edge, move to a 16px aligned block edge which
-        // allows at least 16px wide blocks, then widen area to the edge
-        if (areaX > width - 16) {
-            areaX = (width - 16) & 0xFFFFF0;
-            xSize = width - areaX;
-        }
-        // likewise for bottom edge (at least 32px high, aligned at 16px block
-        // edge)
-        if (areaY > height - 32) {
-            areaY = (height - 32) & 0xFFFFF0;
-            ySize = height - areaY;
-        }
-        BufferedImage referenceCopy = referenceImage.getSubimage(areaX, areaY,
-                xSize, ySize);
-        BufferedImage screenshotCopy = screenshotImage.getSubimage(areaX,
-                areaY, xSize, ySize);
-        // avoid modifying original image
-        screenshotCopy = ImageUtil.cloneImage(screenshotCopy);
-
-        // copy pixels for cursor position from reference to screenshot
-        for (int j = cursorStartY - areaY; j <= cursorEndY - areaY; ++j) {
-            int referenceRgb = referenceCopy.getRGB(cursorX - areaX, j);
-            screenshotCopy.setRGB(cursorX - areaX, j, referenceRgb);
-        }
-
-        // compare one or two blocks of reference with modified screenshot
-        boolean imagesEqual = compareImage(null, referenceCopy, screenshotCopy,
-                errorTolerance);
-
-        return imagesEqual;
     }
 
     /**
@@ -518,11 +573,19 @@ public class ImageComparison {
      */
     private boolean isCursorPixel(BufferedImage image1, BufferedImage image2,
             int x, int y) {
-        double lum1 = ImageUtil.getLuminance(image1.getRGB(x, y));
-        double lum2 = ImageUtil.getLuminance(image2.getRGB(x, y));
+        QProfile.begin();
+        try {
+            double lum1 = ImageUtil.getLuminance(image1.getRGB(x, y));
+            double lum2 = ImageUtil.getLuminance(image2.getRGB(x, y));
 
-        // cursor must be dark and the other pixel bright enough for contrast
-        return (lum1 < 50 && lum2 > 150) || (lum1 > 150 && lum2 < 50);
+            // Cursor must be dark and the other pixel bright enough for
+            // contrast
+            boolean value = (lum1 < 50 && lum2 > 150)
+                    || (lum1 > 150 && lum2 < 50);
+            return value;
+        } finally {
+            QProfile.end();
+        }
     }
 
 }

@@ -8,16 +8,23 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
 
+import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestName;
 
 import com.vaadin.testbench.Parameters;
+import com.vaadin.testbench.qprofile.QProfile;
 import com.vaadin.testbench.testutils.ImageLoader;
 
 public class ImageComparisonTest {
 
     private static final String FOLDER = ImageComparisonTest.class.getPackage()
             .getName().replace('.', '/');
+
+    @Rule
+    public TestName testName = new TestName();
 
     @Before
     public void setup() {
@@ -27,6 +34,18 @@ public class ImageComparisonTest {
         Parameters.setScreenshotReferenceDirectory(screenshotUrl.getPath()
                 + "/reference");
         Parameters.setScreenshotComparisonCursorDetection(false);
+
+        QProfile.setEnabled(false);
+        QProfile.clear();
+    }
+
+    @After
+    public void report() {
+        if (QProfile.isEnabled()) {
+            System.err.println("Completed " + testName.getMethodName()
+                    + ", printing QProfile report");
+            QProfile.reportByAverageTime();
+        }
     }
 
     @Test
@@ -69,6 +88,7 @@ public class ImageComparisonTest {
     public void compareSimilarImagesFull() throws IOException {
         // #7297
         testFullCompareImages("11.png", "111.png", false, 0.0);
+
         testFullCompareImages("17x17-similar-26.png", "17x17-similar-31.png",
                 false, 0.0);
 
@@ -83,7 +103,6 @@ public class ImageComparisonTest {
                 "cursor2-off-outline-off.png", false, 0.0);
         testFullCompareImages("cursor2-off-outline-on.png",
                 "cursor2-off-outline-off.png", true, 0.02);
-
     }
 
     @Test
