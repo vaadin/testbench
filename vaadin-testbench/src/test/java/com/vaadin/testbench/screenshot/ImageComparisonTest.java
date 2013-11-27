@@ -42,10 +42,15 @@ public class ImageComparisonTest {
     @After
     public void report() {
         if (QProfile.isEnabled()) {
-            System.err.println("Completed " + testName.getMethodName()
-                    + ", printing QProfile report");
             QProfile.reportByAverageTime();
+            QProfile.reportByCumulativeTime();
         }
+    }
+
+    @Test
+    public void testBigImage() throws IOException {
+        Parameters.setScreenshotComparisonCursorDetection(true);
+        testFullCompareImages("big-image.png", "big-image-ss.png", false, 0.05);
     }
 
     @Test
@@ -200,8 +205,14 @@ public class ImageComparisonTest {
         testFullCompareImages("cursor-right-edge-off.png",
                 "cursor-right-edge-on.png", true, 0.0);
 
+        // A test where cursor is so close to the right edge that old way
+        // results in four failing blocks instead of two.
+        testFullCompareImages("cursor-right-edge-overlap-off.png",
+                "cursor-right-edge-overlap-on.png", true, 0.0);
+
         testFullCompareImages("cursor-bottom-right-off.png",
                 "cursor-bottom-right-on.png", true, 0.0);
+
     }
 
     @Test

@@ -27,9 +27,9 @@ public class ImageUtil {
      * getBlock() method.
      */
     public static class ImageProperties {
+        private BufferedImage image = null;
         private Raster raster = null;
-        private int bands = 0;
-        private boolean rgb = false;
+        private boolean alpha = false;
         private boolean fallback = false;
         private int width = 0;
         private int height = 0;
@@ -170,17 +170,23 @@ public class ImageUtil {
      * 
      * @param image
      *            a BufferedImage
-     * @return magical properties of great power
+     * @return an ImageProperties descriptor object
      */
-    public static final ImageProperties getImageProperties(BufferedImage image) {
+    public static final ImageProperties getImageProperties(
+            final BufferedImage image) {
         final int imageType = image.getType();
         ImageProperties p = new ImageProperties();
+        p.image = image;
         p.raster = image.getRaster();
-        p.bands = p.raster.getNumBands();
-        p.rgb = imageType == TYPE_INT_ARGB || imageType == TYPE_INT_RGB;
+        p.alpha = imageType == TYPE_INT_ARGB
+                || imageType == BufferedImage.TYPE_4BYTE_ABGR;
+        boolean rgb = imageType == TYPE_INT_ARGB || imageType == TYPE_INT_RGB;
+        boolean bgr = imageType == BufferedImage.TYPE_INT_BGR
+                || imageType == BufferedImage.TYPE_3BYTE_BGR
+                || imageType == BufferedImage.TYPE_4BYTE_ABGR;
         p.width = image.getWidth();
         p.height = image.getHeight();
-        p.fallback = !p.rgb || p.bands < 3 || p.bands > 4;
+        p.fallback = !(rgb || bgr);
         return p;
     }
 
@@ -193,11 +199,18 @@ public class ImageUtil {
      *            The x coordinate of the block (in pixels)
      * @param y
      *            The y coordinate of the block (in pixels)
+     * @param result
+     *            A sample buffer (32 bits per pixel) for storing the resulting
+     *            block, or null (a new buffer will be created)
+     * @param sample
+     *            A sample buffer for storing intermediate values, or null (a
+     *            new buffer will be created). This parameter is provided mainly
+     *            for speed (providing it eliminates unnecessary block
+     *            allocations).
      * @return An array of RGB values for the block
      */
-    public static final int[] getBlock(final BufferedImage image,
-            final ImageProperties properties, int x, int y, int[] result,
-            int[] sample) {
+    public static final int[] getBlock(final ImageProperties properties, int x,
+            int y, int[] result, int[] sample) {
 
         QProfile.begin();
         try {
@@ -225,64 +238,53 @@ public class ImageUtil {
                 height = 16;
             }
 
+            final int l = width * height;
+
             if (properties.fallback) {
-                image.getRGB(x, y, width, height, result, 0, width);
+
+                properties.image.getRGB(x, y, width, height, result, 0, width);
+
             } else {
-                assert (properties.rgb);
 
+                // NOTE: Apparently raster.getPixels() standardises channel
+                // order in the retrieved sample.
+                // NOTE: if this is NOT the case, provide system info and
+                // relevant screenshot & reference for new integration test
                 properties.raster.getPixels(x, y, width, height, sample);
-                int xx, yy, i = 0;
 
-                if (properties.bands == 4) {
+                if (properties.alpha) {
 
-                    // Image has an alpha channel
-                    for (yy = 0; yy < height; ++yy) {
-
-                        int p = (yy * height) << 2;
-
-                        for (xx = 0; xx < width; ++xx) {
-                            result[i++] = (sample[p + 3] << 24)
-                                    | (sample[p] << 16) | (sample[p + 1] << 8)
-                                    | sample[p + 2];
-                            p += 4;
-                        }
-
-                        // Fill in possible overlap
-                        for (xx = width; xx < 16; ++xx) {
-                            result[i++] = 0;
-                        }
+                    int p = 0;
+                    for (int i = 0; i < l; ++i) {
+                        result[i] = (sample[p + 3] << 24) // A
+                                | (sample[p] << 16) // R
+                                | (sample[p + 1] << 8) // G
+                                | sample[p + 2]; // B
+                        p += 4;
                     }
 
                 } else {
 
-                    // Image does not have an alpha channel; assume alpha =
-                    // 255
-                    for (yy = 0; yy < height; ++yy) {
-
-                        int p = (yy * height) * 3;
-
-                        for (xx = 0; xx < width; ++xx) {
-                            result[i++] = (255 << 24) | (sample[p] << 16)
-                                    | (sample[p + 1] << 8) | sample[p + 2];
-                            p += 3;
-                        }
-
-                        // Fill in possible overlap
-                        for (xx = width; xx < 16; ++xx) {
-                            result[i++] = 0;
-                        }
+                    int p = 0;
+                    for (int i = 0; i < l; ++i) {
+                        result[i] = (255 << 24) // A
+                                | (sample[p] << 16) // R
+                                | (sample[p + 1] << 8) // G
+                                | sample[p + 2]; // B
+                        p += 3;
                     }
+
                 }
 
-                // Fill in any possible overlap with transparent black
-                for (yy = height; yy < 16; ++yy) {
-                    for (xx = 0; xx < 16; ++xx) {
-                        result[i++] = 0;
-                    }
-                }
+            }
+
+            // Fill the rest with zeros
+            for (int i = l, max = result.length; i < max; ++i) {
+                result[i] = 0;
             }
 
             return result;
+
         } finally {
             QProfile.end();
         }
@@ -302,8 +304,8 @@ public class ImageUtil {
 
             // This method could likely be optimized but the gain is probably
             // small
-            int w = sourceImage.getWidth();
-            int h = sourceImage.getHeight();
+            final int w = sourceImage.getWidth();
+            final int h = sourceImage.getHeight();
 
             BufferedImage newImage = new BufferedImage(w, h, TYPE_INT_RGB);
 
