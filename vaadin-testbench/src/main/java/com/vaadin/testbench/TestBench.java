@@ -46,10 +46,11 @@ public class TestBench {
         final Class<?>[] allInterfacesArray = allInterfaces
                 .toArray(new Class<?>[allInterfaces.size()]);
 
-        Object proxy = Proxy.newProxyInstance(webElement.getClass()
-                .getClassLoader(), allInterfacesArray,
-                new CachedInvocationHandler(new TestBenchElement(webElement,
-                        tbCommandExecutor), webElement));
+        Object proxy = Proxy.newProxyInstance(
+                webElement.getClass().getClassLoader(),
+                allInterfacesArray,
+                new CachedInvocationHandler(TestBenchElement.wrapElement(
+                        webElement, tbCommandExecutor), webElement));
 
         return (WebElement) proxy;
     }

@@ -20,17 +20,52 @@ import com.vaadin.testbench.commands.CanWaitForVaadin;
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.commands.TestBenchElementCommands;
 
-public class TestBenchElement implements WrapsElement, WebElement,
-        TestBenchElementCommands, CanWaitForVaadin,
-        HasTestBenchCommandExecutor, HasDriver, SearchContext {
+/**
+ * TestBenchElement is a WebElement wrapper. It provides Vaadin specific helper
+ * functionality. TestBenchElements are created when you search for elements
+ * from TestBenchTestCase or a context relative search from TestBenchElement.
+ */
+public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
+        implements WrapsElement, WebElement, TestBenchElementCommands,
+        CanWaitForVaadin, HasDriver, SearchContext {
 
-    private WebElement actualElement;
-    private final TestBenchCommandExecutor tbCommandExecutor;
+    private WebElement actualElement = null;
+    private TestBenchCommandExecutor tbCommandExecutor = null;
 
-    public TestBenchElement(WebElement element,
+    protected TestBenchElement() {
+
+    }
+
+    protected TestBenchElement(WebElement webElement,
             TestBenchCommandExecutor tbCommandExecutor) {
-        actualElement = element;
-        this.tbCommandExecutor = tbCommandExecutor;
+        init(webElement, tbCommandExecutor);
+    }
+
+    /**
+     * TestBenchElement initialization function. If a subclass of
+     * TestBenchElement needs to run some initialization code, it should
+     * override init(), not this function.
+     * 
+     * @param element
+     *            WebElement to wrap
+     * @param tbCommandExecutor
+     *            TestBenchCommandExecutor instance
+     */
+    protected void init(WebElement element,
+            TestBenchCommandExecutor tbCommandExecutor) {
+        if (null == this.tbCommandExecutor) {
+            setCommandExecutor(tbCommandExecutor);
+            actualElement = element;
+            init();
+        }
+    }
+
+    /**
+     * This is run after initializing a TestBenchElement. This can be overridden
+     * in subclasses of TestBenchElement to run some initialization code.
+     */
+    protected void init() {
+
     }
 
     /*
@@ -45,17 +80,15 @@ public class TestBenchElement implements WrapsElement, WebElement,
 
     @Override
     public void waitForVaadin() {
-        tbCommandExecutor.waitForVaadin();
+        getCommandExecutor().waitForVaadin();
     }
 
     /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * com.vaadin.testbench.commands.TestBenchElementCommands#closeNotification
-     * ()
+     * Functionality moved to NotificationElement. API from TestBenchElement
+     * will be removed in the future
      */
     @Override
+    @Deprecated
     public boolean closeNotification() {
         click();
         try {
@@ -86,7 +119,7 @@ public class TestBenchElement implements WrapsElement, WebElement,
      */
     @Override
     public void showTooltip() {
-        new Actions(tbCommandExecutor.getWrappedDriver()).moveToElement(
+        new Actions(getCommandExecutor().getWrappedDriver()).moveToElement(
                 actualElement).perform();
         // Wait for a small moment for the tooltip to appear
         try {
@@ -102,7 +135,7 @@ public class TestBenchElement implements WrapsElement, WebElement,
      */
     @Override
     public void scroll(int scrollTop) {
-        JavascriptExecutor js = tbCommandExecutor;
+        JavascriptExecutor js = getCommandExecutor();
         js.executeScript("arguments[0].scrollTop = " + scrollTop, actualElement);
     }
 
@@ -114,7 +147,7 @@ public class TestBenchElement implements WrapsElement, WebElement,
      */
     @Override
     public void scrollLeft(int scrollLeft) {
-        JavascriptExecutor js = tbCommandExecutor;
+        JavascriptExecutor js = getCommandExecutor();
         js.executeScript("arguments[0].scrollLeft = " + scrollLeft,
                 actualElement);
     }
@@ -142,7 +175,7 @@ public class TestBenchElement implements WrapsElement, WebElement,
      * @return true if we're running on PhantomJS
      */
     private boolean isPhantomJSDriver() {
-        WebDriver driver = tbCommandExecutor.getWrappedDriver();
+        WebDriver driver = getCommandExecutor().getWrappedDriver();
         if (driver instanceof RemoteWebDriver) {
             return "phantomjs".equalsIgnoreCase(((RemoteWebDriver) driver)
                     .getCapabilities().getBrowserName());
@@ -154,7 +187,7 @@ public class TestBenchElement implements WrapsElement, WebElement,
      * @return true if we're running on Chrome
      */
     private boolean isChromeDriver() {
-        WebDriver driver = tbCommandExecutor.getWrappedDriver();
+        WebDriver driver = getCommandExecutor().getWrappedDriver();
         if (driver instanceof RemoteWebDriver) {
             return "chrome".equalsIgnoreCase(((RemoteWebDriver) driver)
                     .getCapabilities().getBrowserName());
@@ -182,7 +215,7 @@ public class TestBenchElement implements WrapsElement, WebElement,
                 + "    arguments[0].dispatchEvent(event);" + "} else {"
                 + "    arguments[0].fireEvent('on' + event.eventType, event);"
                 + "}";
-        tbCommandExecutor.executeScript(js, actualElement, eventType);
+        getCommandExecutor().executeScript(js, actualElement, eventType);
     }
 
     @Override
@@ -234,28 +267,23 @@ public class TestBenchElement implements WrapsElement, WebElement,
 
     @Override
     public List<WebElement> findElements(By by) {
-        List<WebElement> elements;
+        List<WebElement> elements = new ArrayList<WebElement>();
         if (by instanceof ByVaadin) {
-            elements = by.findElements(this);
+            elements.addAll(wrapElements(by.findElements(this),
+                    getCommandExecutor()));
         } else {
-            elements = actualElement.findElements(by);
+            elements.addAll(wrapElements(actualElement.findElements(by),
+                    getCommandExecutor()));
         }
-        List<WebElement> testBenchElements = new ArrayList<WebElement>(
-                elements.size());
-        for (WebElement e : elements) {
-            testBenchElements
-                    .add(TestBench.createElement(e, tbCommandExecutor));
-        }
-        return testBenchElements;
+        return elements;
     }
 
     @Override
     public WebElement findElement(By by) {
         if (by instanceof ByVaadin) {
-            return by.findElement(this);
+            return wrapElement(by.findElement(this), getCommandExecutor());
         }
-        return TestBench.createElement(actualElement.findElement(by),
-                tbCommandExecutor);
+        return wrapElement(actualElement.findElement(by), getCommandExecutor());
     }
 
     @Override
@@ -280,7 +308,7 @@ public class TestBenchElement implements WrapsElement, WebElement,
 
     @Override
     public void click(int x, int y, Keys... modifiers) {
-        Actions actions = new Actions(tbCommandExecutor.getWrappedDriver());
+        Actions actions = new Actions(getCommandExecutor().getWrappedDriver());
         actions.moveToElement(actualElement, x, y);
         // Press any modifier keys
         for (Keys modifier : modifiers) {
@@ -296,12 +324,12 @@ public class TestBenchElement implements WrapsElement, WebElement,
 
     @Override
     public TestBenchCommandExecutor getTestBenchCommandExecutor() {
-        return tbCommandExecutor;
+        return getCommandExecutor();
     }
 
     @Override
     public WebDriver getDriver() {
-        return tbCommandExecutor.getWrappedDriver();
+        return getCommandExecutor().getWrappedDriver();
     }
 
     /**
@@ -318,7 +346,35 @@ public class TestBenchElement implements WrapsElement, WebElement,
      */
     @Override
     public void focus() {
-        tbCommandExecutor.focusElement(this);
+        getCommandExecutor().focusElement(this);
     }
 
+    protected static List<TestBenchElement> wrapElements(
+            List<WebElement> elements,
+            TestBenchCommandExecutor tbCommandExecutor) {
+        List<TestBenchElement> wrappedList = new ArrayList<TestBenchElement>();
+
+        for (WebElement e : elements) {
+            wrappedList.add(wrapElement(e, tbCommandExecutor));
+        }
+
+        return wrappedList;
+    }
+
+    protected static TestBenchElement wrapElement(WebElement element,
+            TestBenchCommandExecutor tbCommandExecutor) {
+        if (element instanceof TestBenchElement) {
+            return (TestBenchElement) element;
+        } else {
+            return new TestBenchElement(element, tbCommandExecutor);
+        }
+    }
+
+    public TestBenchCommandExecutor getCommandExecutor() {
+        return tbCommandExecutor;
+    }
+
+    private void setCommandExecutor(TestBenchCommandExecutor tbCommandExecutor) {
+        this.tbCommandExecutor = tbCommandExecutor;
+    }
 }

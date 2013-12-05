@@ -17,21 +17,14 @@ import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.HasCapabilities;
 import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Point;
-import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.HttpCommandExecutor;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
-import com.vaadin.testbench.HasDriver;
-import com.vaadin.testbench.HasTestBenchCommandExecutor;
 import com.vaadin.testbench.Parameters;
-import com.vaadin.testbench.TestBench;
-import com.vaadin.testbench.TestBenchDriverProxy;
 import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.testbench.screenshot.ImageComparison;
 import com.vaadin.testbench.screenshot.ImageFileUtil;
@@ -308,81 +301,6 @@ public class TestBenchCommandExecutor implements TestBenchCommands,
             }
         }
         return null;
-    }
-
-    /**
-     * Finds an element by a Vaadin selector string.
-     * 
-     * @param selector
-     *            TestBench4 style Vaadin selector.
-     * @param context
-     *            a suitable search context - either a
-     *            {@link TestBenchDriverProxy} or a {@link TestBenchElement}
-     *            instance.
-     * @return the element identified by the selector or null if not found.
-     */
-    public static WebElement findElementByVaadinSelector(String selector,
-            SearchContext context) {
-
-        final String errorString = "Vaadin could not find an element with the selector "
-                + selector;
-
-        // Construct elementSelectionString script fragment based on type of
-        // search context
-        String elementSelectionString = "var element = clients[client].getElementByPath";
-        if (context instanceof WebDriver) {
-            elementSelectionString += "(arguments[0]);";
-        } else {
-            elementSelectionString += "StartingAt(arguments[0], arguments[1]);";
-        }
-
-        String findByVaadinScript = "var clients = window.vaadin.clients;"
-                + "for (client in clients) {" + elementSelectionString
-                + "  if (element) {" + " return element;" + "  }" + "}"
-                + "return null;";
-
-        WebDriver driver = ((HasDriver) context).getDriver();
-
-        JavascriptExecutor jse = (JavascriptExecutor) driver;
-        WebElement element = null;
-
-        if (selector.contains("::")) {
-            // We've been given specifications to access a specific client on
-            // the page; the client ApplicationConnection is managed by the
-            // JavaScript running on the page, so we use the driver's
-            // JavaScriptExecutor to query further...
-            String client = selector.substring(0, selector.indexOf("::"));
-            String path = selector.substring(selector.indexOf("::") + 2);
-            try {
-                element = (WebElement) jse
-                        .executeScript("return window.vaadin.clients." + client
-                                + ".getElementByPath(\"" + path + "\");");
-            } catch (Exception e) {
-                throw new NoSuchElementException(errorString, e);
-            }
-        } else {
-            try {
-                if (context instanceof WebDriver) {
-                    element = (WebElement) jse.executeScript(
-                            findByVaadinScript, selector);
-                } else {
-                    element = (WebElement) jse.executeScript(
-                            findByVaadinScript, selector, context);
-                }
-            } catch (Exception e) {
-                throw new NoSuchElementException(errorString, e);
-            }
-        }
-        if (element != null) {
-            return TestBench.createElement(element,
-                    ((HasTestBenchCommandExecutor) context)
-                            .getTestBenchCommandExecutor());
-        }
-
-        throw new NoSuchElementException(
-                errorString,
-                new Exception(
-                        "Client could not identify an element with the provided selector"));
     }
 
     /*

@@ -10,10 +10,9 @@ public interface TestBenchElementCommands {
     void focus();
 
     /**
-     * Closes a notification
-     * 
-     * @return true if the notification was successfully closed.
+     * Moved to NotificationElement. API will be removed in the future.
      */
+    @Deprecated
     boolean closeNotification();
 
     /**

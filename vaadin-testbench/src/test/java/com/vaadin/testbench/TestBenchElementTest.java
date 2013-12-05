@@ -34,7 +34,8 @@ public class TestBenchElementTest {
                 "v-button v-disabled");
         replay(webElement);
 
-        TestBenchElement element = new TestBenchElement(webElement, null);
+        TestBenchElement element = TestBenchElement.wrapElement(webElement,
+                null);
         assertFalse(element.isEnabled());
 
         verify(webElement);
@@ -49,7 +50,8 @@ public class TestBenchElementTest {
         expect(webElement.isEnabled()).andReturn(false);
         replay(webElement);
 
-        TestBenchElement element = new TestBenchElement(webElement, null);
+        TestBenchElement element = TestBenchElement.wrapElement(webElement,
+                null);
         assertFalse(element.isEnabled());
 
         verify(webElement);
@@ -63,7 +65,8 @@ public class TestBenchElementTest {
         expect(webElement.isEnabled()).andReturn(true);
         replay(webElement);
 
-        TestBenchElement element = new TestBenchElement(webElement, null);
+        TestBenchElement element = TestBenchElement.wrapElement(webElement,
+                null);
         assertTrue(element.isEnabled());
 
         verify(webElement);
