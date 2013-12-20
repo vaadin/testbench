@@ -5,8 +5,8 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
 
-import com.vaadin.ui.Button;
-import com.vaadin.ui.TextField;
+import com.vaadin.testbench.elements.ButtonElement;
+import com.vaadin.testbench.elements.TextFieldElement;
 
 /**
  * This example demonstrates how developers can use techniques like loops and
@@ -19,11 +19,11 @@ import com.vaadin.ui.TextField;
 public class LoopingCalculatorITCase extends TestBase {
 
     private String getDisplayValue() {
-        return getElement(TextField.class).getAttribute("value");
+        return findElement(TextFieldElement.class).getAttribute("value");
     }
 
     private WebElement getButton(String caption) {
-        return getElementByCaption(Button.class, caption);
+        return findElementByCaption(ButtonElement.class, caption);
     }
 
     @Test

@@ -1,5 +1,7 @@
 package com.vaadin.testbench;
 
+import java.util.List;
+
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -106,5 +108,13 @@ public abstract class TestBenchTestCase extends
     public TestBenchCommandExecutor getTestBenchCommandExecutor() {
         return ((HasTestBenchCommandExecutor) driver)
                 .getTestBenchCommandExecutor();
+    }
+    
+    public WebElement findElement(org.openqa.selenium.By by) {
+        return getContext().findElement(by);
+    }
+    
+    public List<WebElement> findElements(org.openqa.selenium.By by) {
+        return getContext().findElements(by);
     }
 }

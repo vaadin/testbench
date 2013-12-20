@@ -12,8 +12,8 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 import com.vaadin.testbench.TestBenchTestCase;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.TextField;
+import com.vaadin.testbench.elements.ButtonElement;
+import com.vaadin.testbench.elements.TextFieldElement;
 
 /**
  * This example executes tests using a hub. Often the hub is run on a server in
@@ -53,11 +53,11 @@ public class UsingHubITCase extends TestBenchTestCase {
     public void testOnePlusTwo() throws Exception {
         // run the test just as with "local bots"
         openCalculator();
-        getElementByCaption(Button.class, "1").click();
-        getElementByCaption(Button.class, "+").click();
-        getElementByCaption(Button.class, "2").click();
-        getElementByCaption(Button.class, "=").click();
-        assertEquals("3.0", getElement(TextField.class).getAttribute("value"));
+        findElementByCaption(ButtonElement.class, "1").click();
+        findElementByCaption(ButtonElement.class, "+").click();
+        findElementByCaption(ButtonElement.class, "2").click();
+        findElementByCaption(ButtonElement.class, "=").click();
+        assertEquals("3.0", findElement(TextFieldElement.class).getAttribute("value"));
 
         // Thats it. Services may provide also some other goodies like the video
         // replay of your test in testingbot.com

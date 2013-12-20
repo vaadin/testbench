@@ -5,8 +5,8 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
 
-import com.vaadin.ui.Button;
-import com.vaadin.ui.TextField;
+import com.vaadin.testbench.elements.ButtonElement;
+import com.vaadin.testbench.elements.TextFieldElement;
 
 /**
  * This is an example of very simple TestBench usage.
@@ -17,7 +17,7 @@ import com.vaadin.ui.TextField;
 public class SimpleCalculatorITCase extends TestBase {
 
     private WebElement getButton(String caption) {
-        return getElementByCaption(Button.class, caption);
+        return findElementByCaption(ButtonElement.class, caption);
     }
 
     private void calculateOnePlusTwo() {
@@ -36,6 +36,6 @@ public class SimpleCalculatorITCase extends TestBase {
         calculateOnePlusTwo();
 
         // Verify the expected result
-        assertEquals("3.0", getElement(TextField.class).getAttribute("value"));
+        assertEquals("3.0", findElement(TextFieldElement.class).getAttribute("value"));
     }
 }

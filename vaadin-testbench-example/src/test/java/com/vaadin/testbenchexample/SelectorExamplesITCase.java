@@ -9,8 +9,8 @@ import org.junit.Test;
 import org.openqa.selenium.WebElement;
 
 import com.vaadin.testbench.By;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.TextField;
+import com.vaadin.testbench.elements.ButtonElement;
+import com.vaadin.testbench.elements.TextFieldElement;
 
 /**
  * This example demonstrates usege of varios element selection methods.
@@ -28,23 +28,23 @@ public class SelectorExamplesITCase extends TestBase {
 
         // When IDs are not available, this is the simplest and generally
         // preferred way of finding a Vaadin widget in your application when it
-        // can be uniquely identified by its caption. getElementByCaption is a
+        // can be uniquely identified by its caption. findElementByCaption is a
         // convenience function provided by TestBenchTestCase.
-        getElementByCaption(Button.class, "1").click();
+        findElementByCaption(ButtonElement.class, "1").click();
 
         // This is a slightly more complex alternative, allowing you to build
         // your own selector string by chaining together ComponentFinder
         // identifier calls. When you're done specifying how to identify the
         // element (in this case, withCaption()), call done() to have TestBench
         // try to fetch your Element.
-        find(Button.class, getDriver()).withCaption("+").done().click();
+        find(ButtonElement.class).withCaption("+").getElement().click();
 
         // If find() doesn't work for you, or you know exactly what kind of
         // selector string you want to enter, you can do so manually.
-        // getElementByPath() is a convenience function provided by
+        // findElementByPath() is a convenience function provided by
         // TestBenchTestCase, which calls By.vaadin() with the given selector
         // and a suitable search context.
-        getElementByPath("//VButton[caption='2']").click();
+        findElementByPath("//VButton[caption='2']").click();
 
         // If all else fails, you can find elements "the classic Selenium way",
         // by calling findElements on a SearchContext directly, and specifying a
@@ -56,14 +56,12 @@ public class SelectorExamplesITCase extends TestBase {
         // Finally, test that we actually got the right answer from our clicking
         // with the different ways of selecting buttons. Here, we get the first
         // TextField Element we come across, and read its "value" attribute.
-        assertEquals("3.0", getElement(TextField.class).getAttribute("value"));
+        assertEquals("3.0", findElement(TextFieldElement.class).getAttribute("value"));
     }
 
     /**
      * XPath queries are Selenium's way of finding elements with a rather
-     * complex but powerful syntax. You can easily use XPath searches through
-     * TestBenchTestCases convenience function .getElementByXPath() or you can
-     * use the classic Selenium style .findElements(By.xpath())
+     * complex but powerful syntax. You can use the classic Selenium style .findElements(By.xpath())
      * 
      * @throws AssertionError
      * @throws IOException
@@ -74,16 +72,16 @@ public class SelectorExamplesITCase extends TestBase {
 
         // Find an element whose text is exactly '1', that should be "button 1"
         // and click it, ...
-        getElementByXPath("//*[text() = '1']").click();
+        findElement(By.xpath("//*[text() = '1']")).click();
 
         // Find the element that has been given the exact id "button_+", and
         // click that
-        getElementByXPath("//*[@id = 'button_+']").click();
+        findElement(By.xpath("//*[@id = 'button_+']")).click();
 
         // Here we do the same thing as with button 1, except we do it the old
         // Selenium way, by calling the .findElement() method on the applicable
         // search context (in this case, the driver).
-        getDriver().findElement(By.xpath("//*[text() = '2']")).click();
+        findElement(By.xpath("//*[text() = '2']")).click();
 
         // findElements returns a list of all matching elements. We can use this
         // to find the element we're looking for - in this case, we want to find
@@ -103,7 +101,7 @@ public class SelectorExamplesITCase extends TestBase {
         // then retrieve its 'value' attribute. This should be the Vaadin
         // TextField's displayed text.
         assertEquals("3.0",
-                getElementByXPath("//input[contains(@class, 'v-textfield')]")
+                findElement(By.xpath("//input[contains(@class, 'v-textfield')]"))
                         .getAttribute("value"));
     }
 }

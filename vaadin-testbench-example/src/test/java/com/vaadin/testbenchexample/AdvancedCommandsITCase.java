@@ -10,9 +10,10 @@ import org.openqa.selenium.WebElement;
 
 import com.vaadin.testbench.By;
 import com.vaadin.testbench.commands.TestBenchElementCommands;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.Window;
+import com.vaadin.testbench.elements.ButtonElement;
+import com.vaadin.testbench.elements.TableElement;
+import com.vaadin.testbench.elements.TextFieldElement;
+import com.vaadin.testbench.elements.WindowElement;
 
 /**
  * This example contains some usages of bit more advanced TestBench and
@@ -23,8 +24,8 @@ public class AdvancedCommandsITCase extends TestBase {
 
     private static final String COMMENT_TEXT = "Next we'll click button 2";
 
-    private WebElement getButton(String caption) {
-        return getElementByCaption(Button.class, caption);
+    private ButtonElement getButton(String caption) {
+        return findElementByCaption(ButtonElement.class, caption);
     }
 
     /**
@@ -49,8 +50,7 @@ public class AdvancedCommandsITCase extends TestBase {
         // We fill in a comment and verify the commenting feature works as
         // expected.
         getButton("Add Comment").click();
-        WebElement commentField = getElement(TextField.class,
-                getElement(Window.class));
+        WebElement commentField = findElement(WindowElement.class).findElement(TextFieldElement.class);
 
         // Make sure the input is empty
         commentField.clear();
@@ -60,7 +60,7 @@ public class AdvancedCommandsITCase extends TestBase {
         commentField.sendKeys(COMMENT_TEXT, Keys.RETURN);
 
         // Ensure window is closed
-        boolean windowPresent = isElementPresent(Window.class);
+        boolean windowPresent = isElementPresent(WindowElement.class);
         if (windowPresent) {
             fail("Modal window prompting textfield was not properly closed");
         }
@@ -70,12 +70,11 @@ public class AdvancedCommandsITCase extends TestBase {
         getButton("=").click();
 
         // Check that the display is correct (1 + 2 = 3)
-        assertEquals("3.0", getElement(TextField.class).getAttribute("value"));
+        assertEquals("3.0", findElement(TextFieldElement.class).getAttribute("value"));
 
         // Verify the second row in log contains our comment
         // Uses Vaadin table selector with subpart.
-        String secondRowText = getElementByPath("//VScrollTable#row[1]/col[0]")
-                .getText();
+        String secondRowText = findElement(TableElement.class).getCell(1, 0).getText();
         assertTrue(secondRowText.contains(COMMENT_TEXT));
     }
 
@@ -93,8 +92,8 @@ public class AdvancedCommandsITCase extends TestBase {
 
         // Use TestBench helper to show tooltip (practically moves mouse over
         // the specified element and waits until tooltip is visible)
-        TestBenchElementCommands testBenchElement = testBenchElement(getButton("OK"));
-        testBenchElement.showTooltip();
+        ButtonElement okButton = getButton("OK");
+        okButton.showTooltip();
 
         // Verify the tooltip showed contains the expected text
         String tooltipText = driver.findElement(By.className("v-tooltip"))

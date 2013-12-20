@@ -6,8 +6,8 @@ import static org.junit.Assert.fail;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
 
-import com.vaadin.ui.Button;
-import com.vaadin.ui.TextField;
+import com.vaadin.testbench.elements.ButtonElement;
+import com.vaadin.testbench.elements.TextFieldElement;
 
 /**
  * This case demonstrates usage of execution time reporting.
@@ -15,7 +15,7 @@ import com.vaadin.ui.TextField;
 public class VerifyExecutionTimeITCase extends TestBase {
 
     private WebElement getButton(String caption) {
-        return getElementByCaption(Button.class, caption);
+        return findElementByCaption(ButtonElement.class, caption);
     }
 
     private void calculateOnePlusTwo() {
@@ -60,6 +60,6 @@ public class VerifyExecutionTimeITCase extends TestBase {
                     + "ms!");
         }
 
-        assertEquals("3.0", getElement(TextField.class).getAttribute("value"));
+        assertEquals("3.0", findElement(TextFieldElement.class).getAttribute("value"));
     }
 }

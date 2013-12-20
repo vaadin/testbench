@@ -11,8 +11,8 @@ import org.junit.Test;
 import org.openqa.selenium.WebElement;
 
 import com.vaadin.testbench.Parameters;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.TextField;
+import com.vaadin.testbench.elements.ButtonElement;
+import com.vaadin.testbench.elements.TextFieldElement;
 
 /**
  * This example contains usage examples of screenshot comparison feature.
@@ -70,32 +70,32 @@ public class ScreenshotITCase extends TestBase {
      * Calculates one plus two for the absolute reference test
      */
     private void calculateOnePlusTwo() {
-        getElementByCaption(Button.class, "1").click();
-        getElementByCaption(Button.class, "+").click();
-        getElementByCaption(Button.class, "2").click();
-        getElementByCaption(Button.class, "=").click();
+        findElementByCaption(ButtonElement.class, "1").click();
+        findElementByCaption(ButtonElement.class, "+").click();
+        findElementByCaption(ButtonElement.class, "2").click();
+        findElementByCaption(ButtonElement.class, "=").click();
     }
 
     /**
      * Adds random values together for the masked reference test
      */
     private void addRandomValues() {
-        WebElement plusButton = getElementByCaption(Button.class, "+");
+        WebElement plusButton = findElementByCaption(ButtonElement.class, "+");
         Random rnd = new Random();
         for (int i = 0; i < rnd.nextInt(10) + 1; i++) {
-            getElementByCaption(Button.class, "" + (rnd.nextInt(9) + 1));
+            findElementByCaption(ButtonElement.class, "" + (rnd.nextInt(9) + 1));
             plusButton.click();
         }
 
-        getElementByCaption(Button.class, "" + (rnd.nextInt(9) + 1)).click();
-        getElementByCaption(Button.class, "=").click();
+        findElementByCaption(ButtonElement.class, "" + (rnd.nextInt(9) + 1)).click();
+        findElementByCaption(ButtonElement.class, "=").click();
     }
 
     @Test
     public void testOnePlusTwo() throws Exception {
 
         calculateOnePlusTwo();
-        assertEquals("3.0", getElement(TextField.class).getAttribute("value"));
+        assertEquals("3.0", findElement(TextFieldElement.class).getAttribute("value"));
 
         // Compare screen with reference image with id "oneplustwo" from the
         // reference image directory. Reference image filenames also contain
@@ -113,10 +113,10 @@ public class ScreenshotITCase extends TestBase {
         // Add a bunch of random values together to fill the log with
         // randomness.
         addRandomValues();
-        WebElement display = getElement(TextField.class);
+        WebElement display = findElement(TextFieldElement.class);
 
         // Clear and calculate 1 + 2
-        getElementByCaption(Button.class, "C").click();
+        findElementByCaption(ButtonElement.class, "C").click();
         calculateOnePlusTwo();
         assertEquals("3.0", display.getAttribute("value"));
 

@@ -4,9 +4,9 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 
 import com.vaadin.testbench.TestBenchTestCase;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.Window;
+import com.vaadin.testbench.elements.ButtonElement;
+import com.vaadin.testbench.elements.TextFieldElement;
+import com.vaadin.testbench.elements.WindowElement;
 
 public class AddCommentPageObject extends TestBenchTestCase {
 
@@ -26,7 +26,7 @@ public class AddCommentPageObject extends TestBenchTestCase {
         // We want to find a textfield inside a Window instance - the only
         // Window we expect to be visible is the Add Comment modal dialog
         // window.
-        getElement(TextField.class, getElement(Window.class)).sendKeys(comment,
+        findElement(WindowElement.class).findElement(TextFieldElement.class).sendKeys(comment,
                 Keys.RETURN);
         return this;
     }
@@ -35,7 +35,7 @@ public class AddCommentPageObject extends TestBenchTestCase {
      * Clicks the 'Add' button to submit the comment entered in the text field.
      */
     public void submit() {
-        getElementByCaption(Button.class, "OK").click();
+        findElementByCaption(ButtonElement.class, "OK").click();
     }
 
     /**
@@ -48,6 +48,6 @@ public class AddCommentPageObject extends TestBenchTestCase {
          * the element with the style name v-window-header contains the expected
          * window header string.
          */
-        return isElementPresent(Window.class);
+        return isElementPresent(WindowElement.class);
     }
 }

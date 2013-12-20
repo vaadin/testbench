@@ -5,7 +5,8 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.PageFactory;
 
 import com.vaadin.testbench.TestBenchTestCase;
-import com.vaadin.ui.Button;
+import com.vaadin.testbench.elements.ButtonElement;
+import com.vaadin.testbench.elements.TableElement;
 
 /**
  * This page object knows how to retrieve individual log lines from the
@@ -40,7 +41,7 @@ public class LogPageObject extends TestBenchTestCase {
         // To get at the CELL specified by a certain row and column in a Table,
         // we need to select them both, in the specific order of row first, then
         // col.
-        return getElementByPath("//VScrollTable#row[" + row + "]/col[0]");
+        return findElement(TableElement.class).getCell(row, 0);
     }
 
     /**
@@ -49,7 +50,7 @@ public class LogPageObject extends TestBenchTestCase {
      * @return An AddCommentPageObject to interact with the add comment window.
      */
     public AddCommentPageObject openAddCommentWindow() {
-        getElementByCaption(Button.class, "Add Comment").click();
+        findElementByCaption(ButtonElement.class, "Add Comment").click();
         return PageFactory
                 .initElements(getDriver(), AddCommentPageObject.class);
     }
