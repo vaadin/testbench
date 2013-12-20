@@ -12,25 +12,34 @@
  * If not, see <http://vaadin.com/license/cval-2.0> or
  * <http://www.gnu.org/licenses> respectively.
  */
+
 package com.vaadin.testbench.screenshot;
-
-import com.vaadin.testbench.Parameters;
-import com.vaadin.testbench.testutils.ImageLoader;
-import org.junit.Before;
-import org.junit.Test;
-
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.net.URL;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.net.URL;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TestName;
+
+import com.vaadin.testbench.Parameters;
+import com.vaadin.testbench.qprofile.QProfile;
+import com.vaadin.testbench.testutils.ImageLoader;
+
 public class ImageComparisonTest {
 
     private static final String FOLDER = ImageComparisonTest.class.getPackage()
             .getName().replace('.', '/');
+
+    @Rule
+    public TestName testName = new TestName();
 
     @Before
     public void setup() {
@@ -40,6 +49,23 @@ public class ImageComparisonTest {
         Parameters.setScreenshotReferenceDirectory(screenshotUrl.getPath()
                 + "/reference");
         Parameters.setScreenshotComparisonCursorDetection(false);
+
+        QProfile.setEnabled(false);
+        QProfile.clear();
+    }
+
+    @After
+    public void report() {
+        if (QProfile.isEnabled()) {
+            QProfile.reportByAverageTime();
+            QProfile.reportByCumulativeTime();
+        }
+    }
+
+    @Test
+    public void testBigImage() throws IOException {
+        Parameters.setScreenshotComparisonCursorDetection(true);
+        testFullCompareImages("big-image.png", "big-image-ss.png", false, 0.05);
     }
 
     @Test
@@ -82,6 +108,7 @@ public class ImageComparisonTest {
     public void compareSimilarImagesFull() throws IOException {
         // #7297
         testFullCompareImages("11.png", "111.png", false, 0.0);
+
         testFullCompareImages("17x17-similar-26.png", "17x17-similar-31.png",
                 false, 0.0);
 
@@ -96,7 +123,6 @@ public class ImageComparisonTest {
                 "cursor2-off-outline-off.png", false, 0.0);
         testFullCompareImages("cursor2-off-outline-on.png",
                 "cursor2-off-outline-off.png", true, 0.02);
-
     }
 
     @Test
@@ -194,8 +220,14 @@ public class ImageComparisonTest {
         testFullCompareImages("cursor-right-edge-off.png",
                 "cursor-right-edge-on.png", true, 0.0);
 
+        // A test where cursor is so close to the right edge that old way
+        // results in four failing blocks instead of two.
+        testFullCompareImages("cursor-right-edge-overlap-off.png",
+                "cursor-right-edge-overlap-on.png", true, 0.0);
+
         testFullCompareImages("cursor-bottom-right-off.png",
                 "cursor-bottom-right-on.png", true, 0.0);
+
     }
 
     @Test
@@ -207,8 +239,8 @@ public class ImageComparisonTest {
     }
 
     private void testFullCompareImages(String referenceFilename,
-                                       String screenshotFilename, boolean shouldBeEqual,
-                                       double errorTolerance) throws IOException {
+            String screenshotFilename, boolean shouldBeEqual,
+            double errorTolerance) throws IOException {
         BufferedImage referenceImage = ImageLoader.loadImage(FOLDER,
                 referenceFilename);
         BufferedImage screenshotImage = ImageLoader.loadImage(FOLDER,
@@ -225,7 +257,7 @@ public class ImageComparisonTest {
     }
 
     private void testRCCompareImages(String referenceFilename,
-                                     String screenshotFilename, boolean shouldBeEqual)
+            String screenshotFilename, boolean shouldBeEqual)
             throws IOException {
         BufferedImage referenceImage = ImageLoader.loadImage(FOLDER,
                 referenceFilename);
