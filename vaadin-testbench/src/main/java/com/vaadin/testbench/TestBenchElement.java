@@ -154,11 +154,11 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
 
     @Override
     public void click() {
+        String tagName = actualElement.getTagName();
         actualElement.click();
         // Hack to make ChromeDriver and PhantomJSDriver correctly trigger
         // onchange events in ListSelects. See #12507
-        if (needsOnChangeHack()
-                && "option".equalsIgnoreCase(actualElement.getTagName())) {
+        if (needsOnChangeHack() && "option".equalsIgnoreCase(tagName)) {
             triggerEvent("change");
         }
     }

@@ -1,0 +1,32 @@
+Notes on the included Selenium Grid version:
+
+
+Upgrade steps (to check):
+- update selenium.version in vaadin-testbench/pom.xml and
+  vaadin-testbench-standalone/pom.xml (dependency-reduced-pom.xml is generated
+  from it)
+- update phantomjsdriver version in vaadin-testbench/pom.xml if necessary
+- add selenium JARs to lib/org/seleniumhq/selenium/selenium-standalone/[version]
+  - this is a local Maven repository as the grid components are not in Maven
+  - the main JAR can downloaded from http://seleniumhq.org/ and renamed
+    from selenium-server-standalone-[version].jar to
+    selenium-standalone-[version].jar
+  - the POM for it can be copied from the previous version and version
+    number in it updated
+  - the sources JAR is more problematic as it is not distributed by
+    SeleniumHQ; it should contain the sources for the packages
+    - org.openqa.grid
+    - org.openqa.selenium
+    - com.thoughtworks.selenium
+    - use the following commands in a checkout of the selenium server project
+      to create such a JAR:
+      cd selenium/java/server/src
+      jar cvf ../../../../selenium-standalone-2.37.0-sources.jar org/openqa/selenium/ org/openqa/grid
+      cd ../../client/src
+      jar uvf ../../../../selenium-standalone-2.37.0-sources.jar org/openqa/selenium/ com/thoughtworks/
+- remove old Selenium standalone version
+- update maven-metadata-local.xml (last update date and versions)
+- update all dependency versions in doc/releasenotes.html
+
+Note that upgrading Selenium for the recorder requires a separate set of steps
+that is not documented yet.
