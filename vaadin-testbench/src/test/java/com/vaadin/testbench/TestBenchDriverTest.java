@@ -132,8 +132,6 @@ public class TestBenchDriverTest {
 
         FirefoxDriver mockFF = createMock(FirefoxDriver.class);
         expect(mockFF.getCapabilities()).andReturn(mockCapabilities).anyTimes();
-        expect(mockFF.executeScript(contains("clients[client].isActive()")))
-                .andReturn(true).once();
         WebElement mockElement = createNiceMock(WebElement.class);
         expect(mockFF.findElement(isA(By.class))).andReturn(mockElement);
         replay(mockFF, mockElement, mockCapabilities);
