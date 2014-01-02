@@ -92,6 +92,23 @@ public class TestBenchDriverProxy extends TestBenchCommandExecutor implements
     }
 
     /**
+     * Finds an element by a Vaadin selector string.
+     * 
+     * @param selector
+     *            TestBench4 style Vaadin selector.
+     * @param context
+     *            a suitable search context - either a
+     *            {@link TestBenchDriverProxy} or a {@link TestBenchElement}
+     *            instance.
+     * @return the first element identified by the selector
+     */
+    protected static WebElement findElementByVaadinSelector(String selector,
+            SearchContext context) {
+        // This is needed for 7.1 and earlier Vaadin versions.
+        return executeSearch(selector, context, "getElementByPath").get(0);
+    }
+
+    /**
      * Finds a list of elements by a Vaadin selector string.
      * 
      * @param selector
@@ -104,13 +121,18 @@ public class TestBenchDriverProxy extends TestBenchCommandExecutor implements
      */
     protected static List<WebElement> findElementsByVaadinSelector(
             String selector, SearchContext context) {
+        return executeSearch(selector, context, "getElementsByPath");
+    }
 
+    private static List<WebElement> executeSearch(String selector,
+            SearchContext context, String jsFunction) {
         final String errorString = "Vaadin could not find elements with the selector "
                 + selector;
 
         // Construct elementSelectionString script fragment based on type of
         // search context
-        String elementSelectionString = "var element = clients[client].getElementsByPath";
+        String elementSelectionString = "var element = clients[client]."
+                + jsFunction;
         if (context instanceof WebDriver) {
             elementSelectionString += "(arguments[0]);";
         } else {
@@ -137,10 +159,8 @@ public class TestBenchDriverProxy extends TestBenchCommandExecutor implements
             try {
                 Object output = jse
                         .executeScript("return window.vaadin.clients." + client
-                                + ".getElementsByPath(\"" + path + "\");");
-                if (output instanceof List) {
-                    elements.addAll(extractWebElementsFromList((List<?>) output));
-                }
+                                + "." + jsFunction + "(\"" + path + "\");");
+                elements.addAll(extractWebElements(output));
             } catch (Exception e) {
                 throw new NoSuchElementException(errorString, e);
             }
@@ -149,15 +169,11 @@ public class TestBenchDriverProxy extends TestBenchCommandExecutor implements
                 if (context instanceof WebDriver) {
                     Object output = jse.executeScript(findByVaadinScript,
                             selector);
-                    if (output instanceof List) {
-                        elements.addAll(extractWebElementsFromList((List<?>) output));
-                    }
+                    elements.addAll(extractWebElements(output));
                 } else {
                     Object output = jse.executeScript(findByVaadinScript,
                             selector, context);
-                    if (output instanceof List) {
-                        elements.addAll(extractWebElementsFromList((List<?>) output));
-                    }
+                    elements.addAll(extractWebElements(output));
                 }
             } catch (Exception e) {
                 throw new NoSuchElementException(errorString, e);
@@ -174,12 +190,15 @@ public class TestBenchDriverProxy extends TestBenchCommandExecutor implements
         return elements;
     }
 
-    private static List<WebElement> extractWebElementsFromList(
-            List<?> elementList) {
+    private static List<WebElement> extractWebElements(Object elementList) {
         List<WebElement> result = new ArrayList<WebElement>();
-        for (Object o : elementList) {
-            if (null != o && o instanceof WebElement) {
-                result.add((WebElement) o);
+        if (elementList instanceof WebElement) {
+            result.add((WebElement) elementList);
+        } else if (elementList instanceof List<?>) {
+            for (Object o : (List<?>) elementList) {
+                if (null != o && o instanceof WebElement) {
+                    result.add((WebElement) o);
+                }
             }
         }
         return result;
