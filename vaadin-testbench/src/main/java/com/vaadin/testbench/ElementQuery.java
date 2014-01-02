@@ -263,16 +263,13 @@ public class ElementQuery<T extends AbstractElement> {
 
         TestBenchCommandExecutor tbCommandExecutor = ((HasTestBenchCommandExecutor) getContext())
                 .getTestBenchCommandExecutor();
-        for (WebElement elem : results) {
-            T element;
-            try {
-                element = elementClass.newInstance();
-            } catch (Exception e) {
-                throw new RuntimeException(
-                        "Unable to create new element instance", e);
+        for (WebElement webElement : results) {
+            T element = TestBench.createElement(elementClass, webElement,
+                    tbCommandExecutor);
+            
+            if (null != element) {
+                elements.add(element);
             }
-            element.init(elem, tbCommandExecutor);
-            elements.add(element);
         }
 
         return elements;

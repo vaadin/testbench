@@ -27,7 +27,7 @@ import com.vaadin.testbench.commands.TestBenchElementCommands;
  */
 public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
         implements WrapsElement, WebElement, TestBenchElementCommands,
-        CanWaitForVaadin, HasDriver, SearchContext {
+        CanWaitForVaadin, HasDriver {
 
     private WebElement actualElement = null;
     private TestBenchCommandExecutor tbCommandExecutor = null;
@@ -366,7 +366,7 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
         if (element instanceof TestBenchElement) {
             return (TestBenchElement) element;
         } else {
-            return new TestBenchElement(element, tbCommandExecutor);
+            return TestBench.createElement(element, tbCommandExecutor);
         }
     }
 
@@ -377,4 +377,5 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
     private void setCommandExecutor(TestBenchCommandExecutor tbCommandExecutor) {
         this.tbCommandExecutor = tbCommandExecutor;
     }
+
 }

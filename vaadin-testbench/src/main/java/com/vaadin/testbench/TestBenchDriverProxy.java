@@ -40,7 +40,9 @@ public class TestBenchDriverProxy extends TestBenchCommandExecutor implements
      */
     @Override
     public WebDriver getWrappedDriver() {
-        return actualDriver;
+        // This is in practice the same thing as actualDriver because of proxy.
+        // Selenium can use us exactly the same way.
+        return this;
     }
 
     // ----------------- WebDriver methods for convenience.
