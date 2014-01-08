@@ -37,7 +37,7 @@ public class SelectorExamplesITCase extends TestBase {
         // identifier calls. When you're done specifying how to identify the
         // element (in this case, withCaption()), call done() to have TestBench
         // try to fetch your Element.
-        find(ButtonElement.class).withCaption("+").getElement().click();
+        $(ButtonElement.class).caption("+").first().click();
 
         // If find() doesn't work for you, or you know exactly what kind of
         // selector string you want to enter, you can do so manually.

@@ -16,16 +16,16 @@ public abstract class AbstractHasTestBenchCommandExecutor implements
         HasTestBenchCommandExecutor {
 
     /**
-     * Prepare a {@link ComponentFinder} instance to use for locating components
-     * on the client. The returned object can be manipulated to uniquely
-     * identify the sought-after object. Type of element is supplied later. If
-     * this function gets called through an element, it uses the element as its
+     * Prepare a {@link ElementQuery} instance to use for locating components on
+     * the client. The returned object can be manipulated to uniquely identify
+     * the sought-after object. Type of element is supplied later. If this
+     * function gets called through an element, it uses the element as its
      * search context. Otherwise the search context is the driver.
      * 
-     * @return an appropriate {@link ComponentFinder} instance
+     * @return an appropriate {@link ElementQuery} instance
      */
-    public <T extends AbstractElement> ComponentFinder<T> find(Class<T> clazz) {
-        return new ComponentFinder<T>(clazz).inContext(getContext());
+    public <T extends AbstractElement> ElementQuery<T> $(Class<T> clazz) {
+        return new ElementQuery<T>(clazz).context(getContext());
     }
 
     /**
@@ -36,7 +36,7 @@ public abstract class AbstractHasTestBenchCommandExecutor implements
      * @return List of found components wrapped in given Element class
      */
     public <T extends AbstractElement> List<T> findElements(Class<T> clazz) {
-        return find(clazz).getElements();
+        return $(clazz).all();
     }
 
     /**
@@ -50,7 +50,7 @@ public abstract class AbstractHasTestBenchCommandExecutor implements
      */
     public <T extends AbstractElement> List<T> findElementsByCaption(
             Class<T> clazz, String caption) {
-        return find(clazz).withCaption(caption).getElements();
+        return $(clazz).caption(caption).all();
     }
 
     /**
@@ -75,7 +75,7 @@ public abstract class AbstractHasTestBenchCommandExecutor implements
      * @return a {@link WebElement} instance wrapped in given Element class
      */
     public <T extends AbstractElement> T findElement(Class<T> clazz) {
-        return find(clazz).getElement();
+        return $(clazz).first();
     }
 
     /**
@@ -89,7 +89,7 @@ public abstract class AbstractHasTestBenchCommandExecutor implements
      */
     public <T extends AbstractElement> T findElementByIndex(Class<T> clazz,
             int index) {
-        return find(clazz).atIndex(index).getElement();
+        return $(clazz).index(index).first();
     }
 
     /**
@@ -100,8 +100,9 @@ public abstract class AbstractHasTestBenchCommandExecutor implements
      *            id of the component to find
      * @return a {@link TestBenchElement} instance
      */
-    public <T extends AbstractElement> T findElementById(Class<T> clazz, String id) {
-        return find(clazz).withId(id).getElement();
+    public <T extends AbstractElement> T findElementById(Class<T> clazz,
+            String id) {
+        return $(clazz).id(id).first();
     }
 
     /**
@@ -115,7 +116,7 @@ public abstract class AbstractHasTestBenchCommandExecutor implements
      */
     public <T extends AbstractElement> T findElementByCaption(Class<T> clazz,
             String caption) {
-        return find(clazz).withCaption(caption).getElement();
+        return $(clazz).caption(caption).first();
     }
 
     /**
@@ -140,11 +141,7 @@ public abstract class AbstractHasTestBenchCommandExecutor implements
      * @return true if component of given class can be found
      */
     public boolean isElementPresent(Class<? extends AbstractElement> clazz) {
-        try {
-            return null != find(clazz).getElement();
-        } catch (NoSuchElementException e) {
-            return false;
-        }
+        return !$(clazz).all().isEmpty();
     }
 
     /**
@@ -155,11 +152,7 @@ public abstract class AbstractHasTestBenchCommandExecutor implements
      * @return true if the component can be found
      */
     public boolean isElementPresent(org.openqa.selenium.By by) {
-        try {
-            return !getContext().findElements(by).isEmpty();
-        } catch (NoSuchElementException e) {
-            return false;
-        }
+        return !getContext().findElements(by).isEmpty();
     }
 
 }
