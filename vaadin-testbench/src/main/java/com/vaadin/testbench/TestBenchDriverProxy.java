@@ -105,7 +105,19 @@ public class TestBenchDriverProxy extends TestBenchCommandExecutor implements
     protected static WebElement findElementByVaadinSelector(String selector,
             SearchContext context) {
         // This is needed for 7.1 and earlier Vaadin versions.
-        return executeSearch(selector, context, "getElementByPath").get(0);
+        List<WebElement> elements = executeSearch(selector, context,
+                "getElementByPath");
+
+        if (elements.isEmpty()) {
+            final String errorString = "Vaadin could not find elements with the selector "
+                    + selector;
+            throw new NoSuchElementException(
+                    errorString,
+                    new Exception(
+                            "Client could not identify elements with the provided selector"));
+        }
+
+        return elements.get(0);
     }
 
     /**
@@ -178,13 +190,6 @@ public class TestBenchDriverProxy extends TestBenchCommandExecutor implements
             } catch (Exception e) {
                 throw new NoSuchElementException(errorString, e);
             }
-        }
-
-        if (elements.isEmpty()) {
-            throw new NoSuchElementException(
-                    errorString,
-                    new Exception(
-                            "Client could not identify elements with the provided selector"));
         }
 
         return elements;
