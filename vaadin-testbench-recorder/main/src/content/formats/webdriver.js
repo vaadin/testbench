@@ -2,22 +2,33 @@
  * Common classes / functions for Selenium RC format.
  */
 
-var subScriptLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
-subScriptLoader.loadSubScript('chrome://testbench-recorder/content/formats/formatCommandOnlyAdapter.js', this);
+if (!this.formatterType) {  // this.formatterType is defined for the new Formatter system
+  // This method (the if block) of loading the formatter type is deprecated.
+  // For new formatters, simply specify the type in the addPluginProvidedFormatter() and omit this
+  // if block in your formatter.
+  var subScriptLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
+  subScriptLoader.loadSubScript('chrome://testbench-recorder/content/formats/formatCommandOnlyAdapter.js', this);
+}
 
 /* @override
  * This function filters the command list and strips away the commands we no longer need
+ * or changes the command to another one.
+ * NOTE: do not change the existing command directly or it will also change in the test case.
  */
 this.postFilter = function(originalCommands) {
   var commands = [];
   var commandsToSkip = {
-    'waitForPageToLoad': 1
+    'waitForPageToLoad' : 1,
   };
+  var rc;
   for (var i = 0; i < originalCommands.length; i++) {
     var c = originalCommands[i];
     if (c.type == 'command') {
       if (commandsToSkip[c.command] && commandsToSkip[c.command] == 1) {
         //Skip
+      } else if (rc = SeleneseMapper.remap(c)) {  //Yes, this IS an assignment
+        //Remap
+        commands.push.apply(commands, rc);
       } else {
         commands.push(c);
       }
@@ -28,6 +39,59 @@ this.postFilter = function(originalCommands) {
   return commands;
 };
 
+/* SeleneseMapper changes one Selenese command to another that is more suitable for WebDriver export
+ */
+function SeleneseMapper() {
+}
+
+SeleneseMapper.remap = function(cmd) {
+/*
+  for (var mapper in SeleneseMapper) {
+    if (SeleneseMapper.hasOwnProperty(mapper) && typeof SeleneseMapper.mapper.isDefined === 'function'  && typeof SeleneseMapper.mapper.convert === 'function') {
+      if (SeleneseMapper.mapper.isDefined(cmd)) {
+        return SeleneseMapper.mapper.convert(cmd);
+      }
+    }
+  }
+*/
+  // NOTE The above code is useful if there are more than one mappers, since there is just one, it is more efficient to call it directly
+  if (SeleneseMapper.IsTextPresent.isDefined(cmd)) {
+    return SeleneseMapper.IsTextPresent.convert(cmd);
+  }
+  return null;
+};
+
+SeleneseMapper.IsTextPresent = {
+  isTextPresentRegex: /^(assert|verify|waitFor)Text(Not)?Present$/,
+  isPatternRegex: /^(regexp|regexpi|regex):/,
+  exactRegex: /^exact:/,
+
+  isDefined:function (cmd) {
+    return this.isTextPresentRegex.test(cmd.command);
+  },
+
+  convert:function (cmd) {
+    if (this.isTextPresentRegex.test(cmd.command)) {
+      var pattern = cmd.target;
+      if (!this.isPatternRegex.test(pattern)) {
+        if (this.exactRegex.test(pattern)) {
+          //TODO how to escape wildcards in an glob pattern?
+          pattern = pattern.replace(this.exactRegex, 'glob:*') + '*';
+        } else {
+          //glob
+          pattern = pattern.replace(/^(glob:)?\*?/, 'glob:*');
+          if (!/\*$/.test(pattern)) {
+            pattern += '*';
+          }
+        }
+      }
+      var remappedCmd = new Command(cmd.command.replace(this.isTextPresentRegex, "$1$2Text"), 'css=BODY', pattern);
+      remappedCmd.remapped = cmd;
+      return [new Comment('Warning: ' + cmd.command + ' may require manual changes'), remappedCmd];
+    }
+  }
+};
+
 function formatHeader(testCase) {
   var className = testCase.getTitle();
   if (!className) {
@@ -35,17 +99,16 @@ function formatHeader(testCase) {
   }
   className = testClassName(className);
   var formatLocal = testCase.formatLocal(this.name);
-  methodName = testMethodName(className.replace(/Test$/i, "").replace(/^Test/i, "").
-  replace(/^[A-Z]/, function(str) {
+  methodName = testMethodName(className.replace(/Test$/i, "").replace(/^Test/i, "").replace(/^[A-Z]/, function(str) {
     return str.toLowerCase();
   }));
   var header = (options.getHeader ? options.getHeader() : options.header).
-  replace(/\$\{className\}/g, className).
-  replace(/\$\{methodName\}/g, methodName).
-  replace(/\$\{baseURL\}/g, testCase.getBaseURL()).
-  replace(/\$\{([a-zA-Z0-9_]+)\}/g, function(str, name) {
-    return options[name];
-  });
+      replace(/\$\{className\}/g, className).
+      replace(/\$\{methodName\}/g, methodName).
+      replace(/\$\{baseURL\}/g, testCase.getBaseURL()).
+      replace(/\$\{([a-zA-Z0-9_]+)\}/g, function(str, name) {
+        return options[name];
+      });
   this.lastIndent = indents(parseInt(options.initialIndents, 10));
   formatLocal.header = header;
   return formatLocal.header;
@@ -183,6 +246,27 @@ function concatString(array) {
   return array.join(" + ");
 }
 
+function toArgumentList(array) {
+  return array.join(", ");
+}
+
+function keyVariable(key) {
+  return variableName(key);
+}
+
+this.sendKeysMaping = {};
+
+function xlateKeyVariable(variable) {
+  var r;
+  if ((r = /^KEY_(.+)$/.exec(variable))) {
+    var key = this.sendKeysMaping[r[1]];
+    if (key) {
+      return keyVariable(key);
+    }
+  }
+  return null;
+}
+
 function xlateArgument(value, type) {
   value = value.replace(/^\s+/, '');
   value = value.replace(/\s+$/, '');
@@ -204,11 +288,12 @@ function xlateArgument(value, type) {
     var regexp = /\$\{(.*?)\}/g;
     var lastIndex = 0;
     while (r2 = regexp.exec(value)) {
-      if (this.declaredVars && this.declaredVars[r2[1]]) {
+      var key = xlateKeyVariable(r2[1]);
+      if (key || (this.declaredVars && this.declaredVars[r2[1]])) {
         if (r2.index - lastIndex > 0) {
           parts.push(string(value.substring(lastIndex, r2.index)));
         }
-        parts.push(variableName(r2[1]));
+        parts.push(key ? key : variableName(r2[1]));
         lastIndex = regexp.lastIndex;
       } else if (r2[1] == "nbsp") {
         if (r2.index - lastIndex > 0) {
@@ -221,7 +306,7 @@ function xlateArgument(value, type) {
     if (lastIndex < value.length) {
       parts.push(string(value.substring(lastIndex, value.length)));
     }
-    return concatString(parts);
+    return (type && type.toLowerCase() == 'args') ? toArgumentList(parts) : concatString(parts);
   } else if (type && type.toLowerCase() == 'number') {
     return value;
   } else {
@@ -331,7 +416,7 @@ CallSelenium.prototype.toString = function() {
     result += codeBlock;
   } else {
     //unsupported
-    throw 'ERROR: Unsupported command [' + this.message + ']';
+    throw 'ERROR: Unsupported command [' + this.message + ' | ' + (this.rawArgs.length > 0 && this.rawArgs[0] ? this.rawArgs[0] : '') + ' | ' + (this.rawArgs.length > 1 && this.rawArgs[1] ? this.rawArgs[1] : '') + ']';
   }
   return result;
 };
@@ -353,7 +438,8 @@ function formatCommand(command) {
         }
         var extraArg = command.getParameterAt(def.params.length);
         if (def.name.match(/^is/)) { // isXXX
-          if (command.command.match(/^assert/) || (this.assertOrVerifyFailureOnNext && command.command.match(/^verify/))) {
+          if (command.command.match(/^assert/) ||
+              (this.assertOrVerifyFailureOnNext && command.command.match(/^verify/))) {
             line = (def.negative ? assertFalse : assertTrue)(call);
           } else if (command.command.match(/^verify/)) {
             line = (def.negative ? verifyFalse : verifyTrue)(call);
@@ -428,20 +514,20 @@ function formatCommand(command) {
         throw 'unknown command [' + command.command + ']';
       }
     }
-  } catch (e) {
+  } catch(e) {
     this.log.error("Caught exception: [" + e + "]");
     // TODO
-    //    var call = new CallSelenium(command.command);
-    //    if ((command.target != null && command.target.length > 0)
-    //        || (command.value != null && command.value.length > 0)) {
-    //      call.rawArgs.push(command.target);
-    //      call.args.push(string(command.target));
-    //      if (command.value != null && command.value.length > 0) {
-    //        call.rawArgs.push(command.value);
-    //        call.args.push(string(command.value));
-    //      }
-    //    }
-    //    line = formatComment(new Comment(statement(call)));
+//    var call = new CallSelenium(command.command);
+//    if ((command.target != null && command.target.length > 0)
+//        || (command.value != null && command.value.length > 0)) {
+//      call.rawArgs.push(command.target);
+//      call.args.push(string(command.target));
+//      if (command.value != null && command.value.length > 0) {
+//        call.rawArgs.push(command.value);
+//        call.args.push(string(command.value));
+//      }
+//    }
+//    line = formatComment(new Comment(statement(call)));
     line = formatComment(new Comment('ERROR: Caught exception [' + e + ']'));
   }
   if (line && this.assertOrVerifyFailureOnNext) {
@@ -452,7 +538,11 @@ function formatCommand(command) {
   }
   //TODO: convert array to newline separated string -> if(array) return array.join"\n"
   if (command.type == 'command' && options.showSelenese && options.showSelenese == 'true') {
-    line = formatComment(new Comment(command.command + ' | ' + command.target + ' | ' + command.value)) + "\n" + line;
+    if (command.remapped) {
+      line = formatComment(new Comment(command.remapped.command + ' | ' + command.remapped.target + ' | ' + command.remapped.value)) + "\n" + line;
+    } else {
+      line = formatComment(new Comment(command.command + ' | ' + command.target + ' | ' + command.value)) + "\n" + line;
+    }
   }
   return line;
 }
@@ -479,6 +569,7 @@ SeleniumWebDriverAdaptor.prototype._elementLocator = function(sel1Locator) {
     return locator;
   }
   if (locator.type == 'link') {
+    locator.string = locator.string.replace(/^exact:/, '');
     return locator;
   }
   if (locator.type == 'name') {
@@ -513,18 +604,12 @@ SeleniumWebDriverAdaptor.prototype._attributeLocator = function(sel1Locator) {
   var attributePos = sel1Locator.lastIndexOf("@");
   var elementLocator = sel1Locator.slice(0, attributePos);
   var attributeName = sel1Locator.slice(attributePos + 1);
-  return {
-    elementLocator: elementLocator,
-    attributeName: attributeName
-  };
+  return {elementLocator: elementLocator, attributeName: attributeName};
 };
 
 SeleniumWebDriverAdaptor.prototype._selectLocator = function(sel1Locator) {
   //Figure out which strategy to use
-  var locator = {
-    type: 'label',
-    string: sel1Locator
-  };
+  var locator = {type: 'label', string: sel1Locator};
   // If there is a locator prefix, use the specified strategy
   var result = sel1Locator.match(/^([a-zA-Z]+)=(.*)/);
   if (result) {
@@ -564,7 +649,9 @@ SeleniumWebDriverAdaptor.prototype.check = function(elementLocator) {
   var locator = this._elementLocator(this.rawArgs[0]);
   var driver = new WDAPI.Driver();
   var webElement = driver.findElement(locator.type, locator.string);
-  return SeleniumWebDriverAdaptor.ifCondition(notOperator() + webElement.isSelected(), indents(1) + webElement.click());
+  return SeleniumWebDriverAdaptor.ifCondition(notOperator() + webElement.isSelected(),
+    indents(1) + webElement.click()
+  );
 };
 
 SeleniumWebDriverAdaptor.prototype.click = function(elementLocator) {
@@ -611,6 +698,34 @@ SeleniumWebDriverAdaptor.prototype.getText = function(elementLocator) {
 SeleniumWebDriverAdaptor.prototype.getTitle = function() {
   var driver = new WDAPI.Driver();
   return driver.getTitle();
+};
+
+SeleniumWebDriverAdaptor.prototype.getAlert = function() {
+  var driver = new WDAPI.Driver();
+  return driver.getAlert();
+};
+
+SeleniumWebDriverAdaptor.prototype.isAlertPresent = function() {
+  return WDAPI.Utils.isAlertPresent();
+};
+
+SeleniumWebDriverAdaptor.prototype.getConfirmation = function() {
+  var driver = new WDAPI.Driver();
+  return driver.getAlert();
+};
+
+SeleniumWebDriverAdaptor.prototype.isConfirmationPresent = function() {
+  return WDAPI.Utils.isAlertPresent();
+};
+
+SeleniumWebDriverAdaptor.prototype.chooseOkOnNextConfirmation = function() {
+  var driver = new WDAPI.Driver();
+  return driver.chooseOkOnNextConfirmation();
+};
+
+SeleniumWebDriverAdaptor.prototype.chooseCancelOnNextConfirmation = function() {
+  var driver = new WDAPI.Driver();
+  return driver.chooseCancelOnNextConfirmation();
 };
 
 SeleniumWebDriverAdaptor.prototype.getValue = function(elementLocator) {
@@ -675,24 +790,32 @@ SeleniumWebDriverAdaptor.prototype.type = function(elementLocator, text) {
   return statement(new SeleniumWebDriverAdaptor.SimpleExpression(webElement.clear())) + "\n" + webElement.sendKeys(this.rawArgs[1]);
 };
 
+SeleniumWebDriverAdaptor.prototype.sendKeys = function(elementLocator, text) {
+  var locator = this._elementLocator(this.rawArgs[0]);
+  var driver = new WDAPI.Driver();
+  return driver.findElement(locator.type, locator.string).sendKeys(this.rawArgs[1]);
+};
+
 SeleniumWebDriverAdaptor.prototype.upload = function(elementLocator, text) {
-    var locator = this._elementLocator(this.rawArgs[0]);
-    var driver = new WDAPI.Driver();
-    var webElement = driver.findElement(locator.type, locator.string);
-    return webElement.sendKeys(this.rawArgs[1]);
+  var locator = this._elementLocator(this.rawArgs[0]);
+  var driver = new WDAPI.Driver();
+  var webElement = driver.findElement(locator.type, locator.string);
+  return webElement.sendKeys(this.rawArgs[1]);
 };
 
 SeleniumWebDriverAdaptor.prototype.uncheck = function(elementLocator) {
   var locator = this._elementLocator(this.rawArgs[0]);
   var driver = new WDAPI.Driver();
   var webElement = driver.findElement(locator.type, locator.string);
-  return SeleniumWebDriverAdaptor.ifCondition(webElement.isSelected(), indents(1) + webElement.click());
+  return SeleniumWebDriverAdaptor.ifCondition(webElement.isSelected(),
+    indents(1) + webElement.click()
+  );
 };
 
 SeleniumWebDriverAdaptor.prototype.select = function(elementLocator, label) {
   var locator = this._elementLocator(this.rawArgs[0]);
   var driver = new WDAPI.Driver();
-  return driver.findElement(locator.type, locator.string).select(this.rawArgs[1].substring("label=".length, this.rawArgs[1].length));
+  return driver.findElement(locator.type, locator.string).select(this._selectLocator(this.rawArgs[1]));
 };
 
 /****** TestBench commands ******/
@@ -805,10 +928,10 @@ SeleniumWebDriverAdaptor.prototype.selectFrame = function(elementLocator) {
 }
 
 SeleniumWebDriverAdaptor.prototype.doubleClickAt = function(elementLocator, value) {
-   var driver = new WDAPI.Driver();
-   var locator = this._elementLocator(this.rawArgs[0]);
-   var webElement = driver.findElement(locator.type, locator.string);
-   return webElement.doubleClickAt(driver, this.rawArgs[1]);
+  var driver = new WDAPI.Driver();
+  var locator = this._elementLocator(this.rawArgs[0]);
+  var webElement = driver.findElement(locator.type, locator.string);
+  return webElement.doubleClickAt(driver, this.rawArgs[1]);
 }
 
 //SeleniumWebDriverAdaptor.prototype.isSomethingSelected = function(elementLocator) {
@@ -848,4 +971,5 @@ SeleniumWebDriverAdaptor.prototype.doubleClickAt = function(elementLocator, valu
 ////  }
 //};
 
-function WDAPI() {}
+function WDAPI() {
+}

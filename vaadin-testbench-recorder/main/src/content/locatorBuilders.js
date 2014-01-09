@@ -46,6 +46,12 @@ LocatorBuilders.prototype.buildWith = function(name, e, opt_contextNode) {
   return LocatorBuilders.builderMap[name].call(this, e, opt_contextNode);
 };
 
+LocatorBuilders.prototype.elementEquals = function(name, e, locator) {
+  var fe = this.findElement(locator);
+  //TODO: add match function to the ui locator builder, note the inverted parameters
+  return (e == fe) || (LocatorBuilders.builderMap[name] && LocatorBuilders.builderMap[name].match && LocatorBuilders.builderMap[name].match(e, fe));
+};
+
 LocatorBuilders.prototype.build = function(e) {
   var locators = this.buildAll(e);
   if (locators.length > 0) {
@@ -56,13 +62,14 @@ LocatorBuilders.prototype.build = function(e) {
 };
 
 LocatorBuilders.prototype.buildAll = function(el) {
-  var e = core.firefox.unwrap(el);	// Samit: Fix: Do the magic to get it to work in Firefox 4
+  var e = core.firefox.unwrap(el);    //Samit: Fix: Do the magic to get it to work in Firefox 4
   var xpathLevel = 0;
   var maxLevel = 10;
   var locator;
   var locators = [];
   this.log.debug("getLocator for element " + e);
 
+  var coreLocatorStrategies = this.pageBot().locationStrategies;
   for (var i = 0; i < LocatorBuilders.order.length; i++) {
     var finderName = LocatorBuilders.order[i];
     this.log.debug("trying " + finderName);
@@ -78,30 +85,38 @@ LocatorBuilders.prototype.buildAll = function(el) {
       // defined for the location strategy, use it to determine the
       // validity of the locator's results. Otherwise, maintain existing
       // behavior.
-      try {
-        //alert(PageBot.prototype.locateElementByUIElement);
-        var is_fuzzy_match = this.pageBot().locationStrategies[finderName].is_fuzzy_match;
-        if (is_fuzzy_match) {
-          if (finderName == 'vaadin') {
-            if (is_fuzzy_match(this.findElement(locator), el)) {
-              locators.push([ locator, finderName ]);
-            }
-          } else {
-            if (is_fuzzy_match(this.findElement(locator), e)) {
-              locators.push([ locator, finderName ]);
-            }
-          }
-        }
-        else {
-          if (e == this.findElement(locator)) {
-            locators.push([ locator, finderName ]);
-          }
-        }
+//      try {
+//        //alert(PageBot.prototype.locateElementByUIElement);
+//        //Samit: The is_fuzzy_match stuff is buggy - comparing builder name with a locator name usually results in an exception :(
+//        var is_fuzzy_match = this.pageBot().locationStrategies[finderName].is_fuzzy_match;
+//        if (is_fuzzy_match) {
+//          if (is_fuzzy_match(this.findElement(locator), e)) {
+//            locators.push([ locator, finderName ]);
+//          }
+//        }
+//        else {
+//          if (e == this.findElement(locator)) {
+//            locators.push([ locator, finderName ]);
+//          }
+//        }
+//      }
+//      catch (exception) {
+//        if (e == this.findElement(locator)) {
+//          locators.push([ locator, finderName ]);
+//        }
+//      }
+
+      //Samit: The following is a quickfix for above commented code to stop exceptions on almost every locator builder
+      //TODO: the builderName should NOT be used as a strategy name, create a feature to allow locatorBuilders to specify this kind of behaviour
+      //TODO: Useful if a builder wants to capture a different element like a parent. Use the this.elementEquals
+      var fe = this.findElement(locator);
+      // TODO Vaadin TestBench - trying to be compatible with old code, to be checked
+      var e2 = e;
+      if (finderName == 'vaadin') {
+          e2 = el;
       }
-      catch (exception) {
-        if (e == this.findElement(locator)) {
-          locators.push([ locator, finderName ]);
-        }
+      if ((e2 == fe) || (coreLocatorStrategies[finderName] && coreLocatorStrategies[finderName].is_fuzzy_match && coreLocatorStrategies[finderName].is_fuzzy_match(fe, e2))) {
+        locators.push([ locator, finderName ]);
       }
     }
   }
@@ -565,4 +580,5 @@ LocatorBuilders.add('xpath:position', function(e, opt_contextNode) {
 // You can change the priority of builders by setting LocatorBuilders.order.
 //LocatorBuilders.order = ['ui', 'id', 'link', 'name', 'css', 'dom:name', 'xpath:link', 'xpath:img', 'xpath:attributes', 'xpath:idRelative', 'xpath:href', 'dom:index', 'xpath:position'];
 
+// TODO check this
 LocatorBuilders.setPreferredOrder(['vaadin', 'ui', 'id', 'link', 'name', 'css', 'dom:name', 'xpath:link', 'xpath:img', 'xpath:attributes', 'xpath:idRelative', 'xpath:href', 'dom:index', 'xpath:position']);

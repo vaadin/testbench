@@ -113,11 +113,11 @@ TestLoop.prototype = {
         
 
         this.waitForCondition = this.result.terminationCondition;
- 	    
-		command = new Command("waitForVaadin", "", "");
- 	    handler = this.commandFactory.getCommandHandler(command.command);
- 	    this.vaadinresult = handler.execute(selenium, command);
- 	    this.waitForVaadinCondition = this.vaadinresult.terminationCondition;
+
+        command = new Command("waitForVaadin", "", "");
+        handler = this.commandFactory.getCommandHandler(command.command);
+        this.vaadinresult = handler.execute(selenium, command);
+        this.waitForVaadinCondition = this.vaadinresult.terminationCondition;
     },
 
     _handleCommandError : function(e) {
@@ -142,25 +142,25 @@ TestLoop.prototype = {
         selenium.browserbot.runScheduledPollers();
         try {
             if (this.waitForCondition == null) {
-            	if(this.waitForVaadinCondition()){
-	                LOG.debug("null condition; let's continueTest()");
-	                LOG.debug("Command complete");
-	                this.commandComplete(this.result);
-	                this.continueTest();
-            	}else{
+                if(this.waitForVaadinCondition()) {
+                    LOG.debug("null condition; let's continueTest()");
+                    LOG.debug("Command complete");
+                    this.commandComplete(this.result);
+                    this.continueTest();
+                } else {
+                	window.setTimeout(fnBind(this.continueTestWhenConditionIsTrue, this), 10);
+                }
+            } else if (this.waitForCondition()) {
+            	if(this.waitForVaadinCondition()) {
+                    LOG.debug("condition satisfied; let's continueTest()");
+                    this.waitForCondition = null;
+                    LOG.debug("Command complete");
+                    this.commandComplete(this.result);
+                    this.continueTest();
+            	} else {
+	            	this.waitForCondition = null;
             		window.setTimeout(fnBind(this.continueTestWhenConditionIsTrue, this), 10);
             	}
-            } else if (this.waitForCondition()) {
-            	if(this.waitForVaadinCondition()){
-	                LOG.debug("condition satisfied; let's continueTest()");
-	                this.waitForCondition = null;
-	                LOG.debug("Command complete");
-	                this.commandComplete(this.result);
-	                this.continueTest();
-	            }else{
-	            	this.waitForCondition = null;
-	            	window.setTimeout(fnBind(this.continueTestWhenConditionIsTrue, this), 10);
-	            }
             } else {
                 //LOG.debug("waitForCondition was false; keep waiting!");
                 window.setTimeout(fnBind(this.continueTestWhenConditionIsTrue, this), 10);

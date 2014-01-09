@@ -17,19 +17,30 @@
 /*
  * type
  */
-Recorder.addEventHandler('type', 'change', function (event) {
-    if (!skipType) {
-        var tagName = event.target.tagName.toLowerCase();
-        var type = event.target.type;
-        if (('input' == tagName && ('text' == type || 'password' == type)) ||
-            'textarea' == tagName) {
-            this.record("type", this.findLocators(event.target), event.target.value);
-        } else if ('file' == type) {
-            // Record a custom command for typing in file inputs as clear() is not supported on these
-            this.record("upload", this.findLocators(event.target), event.target.value);
-        }
+// Vaadin TestBench: special handling of type "file"
+Recorder.inputTypes = ["text", "password", "datetime", "datetime-local", "date", "month", "time", "week", "number", "range", "email", "url", "search", "tel", "color"];
+Recorder.addEventHandler('type', 'change', function(event) {
+  if (!skipType) {
+    var tagName = event.target.tagName.toLowerCase();
+    var type = event.target.type;
+    if ('input' == tagName && Recorder.inputTypes.indexOf(type) >= 0) {
+      if (event.target.value.length > 0) {
+        // TODO figure out if we need sendKeys or type and record it
+        this.record("type", this.findLocators(event.target), event.target.value);
+      } else {
+        //use type to clear
+        this.record("type", this.findLocators(event.target), event.target.value);
+      }
+    } else if ('file' == type) {
+      // Vaadin TestBench:
+      // Record a custom command for typing in file inputs as clear() is not supported on these
+      this.record("upload", this.findLocators(event.target), event.target.value);
+    } else if ('textarea' == tagName) {
+      //use type for file uploads
+      this.record("type", this.findLocators(event.target), event.target.value);
     }
-    skipType = false;
+  }
+  skipType = false;
 });
 
 /*
@@ -86,7 +97,7 @@ Recorder.prototype.getOptionLocator = function (option) {
     } else {
         return "label=" + label;
     }
-}
+};
 
 /*
  Recorder.addEventHandler('select', 'change', function(event) {
@@ -152,45 +163,45 @@ Recorder.prototype.getOptionLocator = function (option) {
  }, { capture: true });
 
  Recorder.prototype.findClickableElement = function(e) {
- if (!e.tagName) return null;
- var tagName = e.tagName.toLowerCase();
- var type = e.type;
- if (e.hasAttribute("onclick") || e.hasAttribute("href") || tagName == "button" ||
- (tagName == "input" &&
- (type == "submit" || type == "button" || type == "image" || type == "radio" || type == "checkbox" || type == "reset"))) {
- return e;
- } else {
- if (e.parentNode != null) {
- return this.findClickableElement(e.parentNode);
- } else {
- return null;
- }
- }
- }
+	if (!e.tagName) return null;
+	var tagName = e.tagName.toLowerCase();
+	var type = e.type;
+	if (e.hasAttribute("onclick") || e.hasAttribute("href") || tagName == "button" ||
+		(tagName == "input" && 
+		 (type == "submit" || type == "button" || type == "image" || type == "radio" || type == "checkbox" || type == "reset"))) {
+		return e;
+	} else {
+		if (e.parentNode != null) {
+			return this.findClickableElement(e.parentNode);
+		} else {
+			return null;
+		}
+	}
+};
  */
 
 // remember clicked element to be used in CommandBuilders
-Recorder.addEventHandler('rememberClickedElement', 'mousedown', function (event) {
+Recorder.addEventHandler('rememberClickedElement', 'mousedown', function(event) {
     this.clickedElement = event.target;
     this.clickedElementLocators = this.findLocators(event.target);
 }, { alwaysRecord: true, capture: true });
 
-Recorder.addEventHandler('attrModified', 'DOMAttrModified', function (event) {
+Recorder.addEventHandler('attrModified', 'DOMAttrModified', function(event) {
     this.log.debug('attrModified');
     this.domModified();
 }, {capture: true});
 
-Recorder.addEventHandler('nodeInserted', 'DOMNodeInserted', function (event) {
+Recorder.addEventHandler('nodeInserted', 'DOMNodeInserted', function(event) {
     this.log.debug('nodeInserted');
     this.domModified();
 }, {capture: true});
 
-Recorder.addEventHandler('nodeRemoved', 'DOMNodeRemoved', function (event) {
+Recorder.addEventHandler('nodeRemoved', 'DOMNodeRemoved', function(event) {
     this.log.debug('nodeRemoved');
     this.domModified();
 }, {capture: true});
 
-Recorder.prototype.domModified = function () {
+Recorder.prototype.domModified = function() {
     if (this.delayedRecorder) {
         this.delayedRecorder.apply(this);
         this.delayedRecorder = null;
@@ -198,18 +209,18 @@ Recorder.prototype.domModified = function () {
             clearTimeout(this.domModifiedTimeout);
         }
     }
-}
+};
 
-Recorder.prototype.callIfMeaningfulEvent = function (handler) {
+Recorder.prototype.callIfMeaningfulEvent = function(handler) {
     this.log.debug("callIfMeaningfulEvent");
     this.delayedRecorder = handler;
     var self = this;
-    this.domModifiedTimeout = setTimeout(function () {
-        self.log.debug("clear event");
-        self.delayedRecorder = null;
-        self.domModifiedTimeout = null;
-    }, 50);
-}
+    this.domModifiedTimeout = setTimeout(function() {
+            self.log.debug("clear event");
+            self.delayedRecorder = null;
+            self.domModifiedTimeout = null;
+        }, 50);
+};
 
 /************ TestBench specifics ************/
 
@@ -797,6 +808,4 @@ Recorder.addEventHandler('slideSplitEvent', 'mouseup', function (event) {
         clX = clY = 0;
     }
 }, {capture: true});
-
-
 

@@ -20,6 +20,7 @@ limitations under the License.
 <?xml-stylesheet href="chrome://testbench-recorder/skin/selenium-ide.css" type="text/css"?>
 <?xml-stylesheet href="chrome://testbench-recorder-platform/skin/selenium-ide-platform.css" type="text/css"?>
 <?xml-stylesheet href="chrome://vaadin-ide/skin/selenium-ide.css" type="text/css"?>
+<!-- TODO check this -->
 <?xml-stylesheet href="chrome://vaadin-ide-platform/skin/selenium-ide-platform.css" type="text/css"?>
 <?xul-overlay href="chrome://global/content/editMenuOverlay.xul"?>
 <?xul-overlay href="chrome://browser/content/baseMenuOverlay.xul"?>

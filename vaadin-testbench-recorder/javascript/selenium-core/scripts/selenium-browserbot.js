@@ -296,17 +296,18 @@ BrowserBot.prototype.triggerMouseEvent = function(element, eventType, canBubble,
         }
     }
     else {
-        evt = document.createEvent('MouseEvents');
-        if (evt.initMouseEvent)
-        {
+        var doc = goog.dom.getOwnerDocument(element);
+        var view = goog.dom.getWindow(doc);
+
+        evt = doc.createEvent('MouseEvents');
+        if (evt.initMouseEvent) {
             // see http://developer.mozilla.org/en/docs/DOM:event.button and
             // http://developer.mozilla.org/en/docs/DOM:event.initMouseEvent for button ternary logic logic
             //Safari
-            evt.initMouseEvent(eventType, canBubble, true, document.defaultView, 1, screenX, screenY, clientX, clientY,
+            evt.initMouseEvent(eventType, canBubble, true, view, 1, screenX, screenY, clientX, clientY,
                 this.controlKeyDown, this.altKeyDown, this.shiftKeyDown, this.metaKeyDown, button ? button : 0, null);
-        }
-        else {
-            LOG.warn("element doesn't have initMouseEvent; firing an event which should -- but doesn't -- have other mouse-event related attributes here, as well as controlKeyDown, altKeyDown, shiftKeyDown, metaKeyDown");
+        } else {
+          LOG.warn("element doesn't have initMouseEvent; firing an event which should -- but doesn't -- have other mouse-event related attributes here, as well as controlKeyDown, altKeyDown, shiftKeyDown, metaKeyDown");
             evt.initEvent(eventType, canBubble, true);
 
             evt.shiftKey = this.shiftKeyDown;
@@ -323,10 +324,19 @@ BrowserBot.prototype.triggerMouseEvent = function(element, eventType, canBubble,
 };
 
 BrowserBot.prototype._windowClosed = function(win) {
-    var c = win.closed;
-    if (c == null) return true;
-    return c;
+    try {
+        var c = win.closed;
+        if (c == null) return true;
+        return c;
+    } catch (ignored) {
+        // Firefox 15+ may already have marked the win dead. Accessing it
+        // causes an exception to be thrown. That exception tells us the window
+        // is closed.
+        return true;
+    }
 };
+
+BrowserBot.uniqueKey = 1;
 
 BrowserBot.prototype._modifyWindow = function(win) {
     // In proxyInjectionMode, have to suppress LOG calls in _modifyWindow to avoid an infinite loop
@@ -339,6 +349,10 @@ BrowserBot.prototype._modifyWindow = function(win) {
     if (!this.proxyInjectionMode) {
         LOG.debug('modifyWindow ' + this.uniqueId + ":" + win[this.uniqueId]);
     }
+
+    // Assign a unique label for this window. We set this on a known attribute so we can reliably
+    // find it later. This is slightly different from uniqueId.
+    win.seleniumKey = BrowserBot.uniqueKey++;
 
     this.modifyWindowToRecordPopUpDialogs(win, this);
     
@@ -378,7 +392,12 @@ BrowserBot.prototype.selectWindow = function(target) {
     else if (locatorType == "name") {
         this._selectWindowByName(locatorValue);
     } else if (locatorType == "var") {
-        this._selectWindowByName(locatorValue);
+        var win = this.getCurrentWindow().eval(locatorValue);
+        if (win) {
+            this._selectWindowByName(win.name);
+        } else {
+            throw new SeleniumError("Window not found by var: " + locatorValue);
+        }
     } else {
         throw new SeleniumError("Window locator not recognized: " + locatorType);
     }
@@ -1135,7 +1154,7 @@ BrowserBot.prototype.getWindowByName = function(windowName, doNotModify) {
         }
     }
     if (!targetWindow) {
-        throw new SeleniumError("Window does not exist. If this looks like a Selenium bug, make sure to read http://seleniumhq.org/docs/04_selenese_commands.html#alerts-popups-and-multiple-windows for potential workarounds.");
+        throw new SeleniumError("Window does not exist. If this looks like a Selenium bug, make sure to read http://seleniumhq.org/docs/02_selenium_ide.html#alerts-popups-and-multiple-windows for potential workarounds.");
     }
     if (browserVersion.isHTA) {
         try {
@@ -1231,7 +1250,8 @@ BrowserBot.prototype._handleClosedSubFrame = function(testWindow, doNotModify) {
         var missing = true;
         if (testWindow.parent && testWindow.parent.frames && testWindow.parent.frames.length) {
             for (var i = 0; i < testWindow.parent.frames.length; i++) {
-                if (testWindow.parent.frames[i] == testWindow) {
+                var frame = testWindow.parent.frames[i];
+                if (frame == testWindow || frame.seleniumKey == testWindow.seleniumKey) {
                     missing = false;
                     break;
                 }
@@ -1646,7 +1666,9 @@ BrowserBot.prototype.locateElementByWebDriver.prefix = "webdriver";
  */
 BrowserBot.prototype.locateElementByXPath = function(xpath, inDocument, inWindow) {
     return this.xpathEvaluator.selectSingleNode(inDocument, xpath, null,
-        this._namespaceResolver);
+        inDocument.createNSResolver
+          ? inDocument.createNSResolver(inDocument.documentElement)
+          : this._namespaceResolver);
 };
 
 
@@ -1659,7 +1681,9 @@ BrowserBot.prototype.locateElementByXPath = function(xpath, inDocument, inWindow
  */
 BrowserBot.prototype.locateElementsByXPath = function(xpath, inDocument, inWindow) {
     return this.xpathEvaluator.selectNodes(inDocument, xpath, null,
-        this._namespaceResolver);
+        inDocument.createNSResolver
+          ? inDocument.createNSResolver(inDocument.documentElement)
+          : this._namespaceResolver);
 };
 
 
@@ -1668,6 +1692,8 @@ BrowserBot.prototype._namespaceResolver = function(prefix) {
         return 'http://www.w3.org/1999/xhtml';
     } else if (prefix == 'mathml') {
         return 'http://www.w3.org/1998/Math/MathML';
+    } else if (prefix == 'svg') {
+        return 'http://www.w3.org/2000/svg';
     } else {
         throw new Error("Unknown namespace: " + prefix + ".");
     }
@@ -1676,21 +1702,32 @@ BrowserBot.prototype._namespaceResolver = function(prefix) {
 /**
  * Returns the number of xpath results.
  */
-BrowserBot.prototype.evaluateXPathCount = function(xpath, inDocument) {
-    return this.xpathEvaluator.countNodes(inDocument, xpath, null,
-        this._namespaceResolver);
+BrowserBot.prototype.evaluateXPathCount = function(selector, inDocument) {
+    var locator = parse_locator(selector);
+    var opts = {};
+    opts['namespaceResolver'] =
+        inDocument.createNSResolver
+          ? inDocument.createNSResolver(inDocument.documentElement)
+          : this._namespaceResolver;
+    if (locator.type == 'xpath' || locator.type == 'implicit') {
+    	return eval_xpath(locator.string, inDocument, opts).length;
+    } else {
+        LOG.error("Locator does not use XPath strategy: " + selector);
+        return 0;
+    }
 };
 
 /**
  * Returns the number of css results.
  */
 BrowserBot.prototype.evaluateCssCount = function(selector, inDocument) {
-    var results = [];
     var locator = parse_locator(selector);
-    if (locator.type == 'css') {
-        results = eval_css(locator.string, inDocument);
+    if (locator.type == 'css' || locator.type == 'implicit') {
+        return eval_css(locator.string, inDocument).length;
+    } else {
+        LOG.error("Locator does not use CSS strategy: " + selector);
+        return 0;
     }
-    return results.length;
 };
 
 /**
@@ -1730,7 +1767,7 @@ BrowserBot.prototype.findAttribute = function(locator) {
 * Select the specified option and trigger the relevant events of the element.
 */
 BrowserBot.prototype.selectOption = function(element, optionToSelect) {
-    triggerEvent(element, 'focus', false);
+    bot.events.fire(element, bot.events.EventType.FOCUS);
     var changed = false;
     for (var i = 0; i < element.options.length; i++) {
         var option = element.options[i];
@@ -1745,7 +1782,7 @@ BrowserBot.prototype.selectOption = function(element, optionToSelect) {
     }
 
     if (changed) {
-        triggerEvent(element, 'change', true);
+        bot.events.fire(element, bot.events.EventType.CHANGE);
     }
 };
 
@@ -1754,10 +1791,10 @@ BrowserBot.prototype.selectOption = function(element, optionToSelect) {
 */
 BrowserBot.prototype.addSelection = function(element, option) {
     this.checkMultiselect(element);
-    triggerEvent(element, 'focus', false);
+    bot.events.fire(element, bot.events.EventType.FOCUS);
     if (!option.selected) {
         option.selected = true;
-        triggerEvent(element, 'change', true);
+        bot.events.fire(element, bot.events.EventType.CHANGE);
     }
 };
 
@@ -1766,10 +1803,10 @@ BrowserBot.prototype.addSelection = function(element, option) {
 */
 BrowserBot.prototype.removeSelection = function(element, option) {
     this.checkMultiselect(element);
-    triggerEvent(element, 'focus', false);
+    bot.events.fire(element, bot.events.EventType.FOCUS);
     if (option.selected) {
         option.selected = false;
-        triggerEvent(element, 'change', true);
+        bot.events.fire(element, bot.events.EventType.CHANGE);
     }
 };
 
@@ -1782,8 +1819,8 @@ BrowserBot.prototype.checkMultiselect = function(element) {
 };
 
 BrowserBot.prototype.replaceText = function(element, stringValue) {
-    triggerEvent(element, 'focus', false);
-    triggerEvent(element, 'select', true);
+    bot.events.fire(element, bot.events.EventType.FOCUS);
+    bot.events.fire(element, bot.events.EventType.SELECT);
     var maxLengthAttr = element.getAttribute("maxLength");
     var actualValue = stringValue;
     if (maxLengthAttr != null) {
@@ -1806,7 +1843,7 @@ BrowserBot.prototype.replaceText = function(element, stringValue) {
     }
     // DGF this used to be skipped in chrome URLs, but no longer.  Is xpcnativewrappers to blame?
     try {
-        triggerEvent(element, 'change', true);
+        bot.events.fire(element, bot.events.EventType.CHANGE);
     } catch (e) {}
 };
 
@@ -2449,7 +2486,7 @@ SafariBrowserBot.prototype.modifyWindowToRecordPopUpDialogs = function(windowToM
 
 MozillaBrowserBot.prototype._fireEventOnElement = function(eventType, element, clientX, clientY) {
     var win = this.getCurrentWindow();
-    triggerEvent(element, 'focus', false);
+    bot.events.fire(element, bot.events.EventType.FOCUS);
 
     // Add an event listener that detects if the default action has been prevented.
     // (This is caused by a javascript onclick handler returning false)
@@ -2487,7 +2524,7 @@ MozillaBrowserBot.prototype._fireEventOnElement = function(eventType, element, c
 
 OperaBrowserBot.prototype._fireEventOnElement = function(eventType, element, clientX, clientY) {
     var win = this.getCurrentWindow();
-    triggerEvent(element, 'focus', false);
+    bot.events.fire(element, bot.events.EventType.FOCUS);
 
     this._modifyElementTarget(element);
 
@@ -2503,7 +2540,7 @@ OperaBrowserBot.prototype._fireEventOnElement = function(eventType, element, cli
 
 KonquerorBrowserBot.prototype._fireEventOnElement = function(eventType, element, clientX, clientY) {
     var win = this.getCurrentWindow();
-    triggerEvent(element, 'focus', false);
+    bot.events.fire(element, bot.events.EventType.FOCUS);
 
     this._modifyElementTarget(element);
 
@@ -2521,7 +2558,7 @@ KonquerorBrowserBot.prototype._fireEventOnElement = function(eventType, element,
 };
 
 SafariBrowserBot.prototype._fireEventOnElement = function(eventType, element, clientX, clientY) {
-    triggerEvent(element, 'focus', false);
+    bot.events.fire(element, bot.events.EventType.FOCUS);
     var wasChecked = element.checked;
 
     this._modifyElementTarget(element);
@@ -2556,7 +2593,7 @@ SafariBrowserBot.prototype.refresh = function() {
 
 IEBrowserBot.prototype._fireEventOnElement = function(eventType, element, clientX, clientY) {
     var win = this.getCurrentWindow();
-    triggerEvent(element, 'focus', false);
+    bot.events.fire(element, bot.events.EventType.FOCUS);
 
     var wasChecked = element.checked;
 
@@ -2587,7 +2624,7 @@ IEBrowserBot.prototype._fireEventOnElement = function(eventType, element, client
 
         // Onchange event is not triggered automatically in IE.
         if (isDefined(element.checked) && wasChecked != element.checked) {
-            triggerEvent(element, 'change', true);
+            bot.events.fire(element, bot.events.EventType.CHANGE);
         }
 
     }

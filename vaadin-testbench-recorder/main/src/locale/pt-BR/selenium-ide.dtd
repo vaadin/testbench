@@ -1,5 +1,5 @@
 <!ENTITY selenium-ide.name "Vaadin Testbench Recorder">
-<!ENTITY selenium-ide.version "1.8.0">
+<!ENTITY selenium-ide.version "2.5.0">
 <!ENTITY selenium-ide.sidebar.title "&selenium-ide.name;">
 <!ENTITY selenium-ide.standalone.title "&selenium-ide.name;">
 
@@ -66,7 +66,7 @@
 <!ENTITY contextMenu.insertCommand.label "Inserir Novo Comando">
 <!ENTITY contextMenu.insertComment.label "Inserir Novo Comentário">
 <!ENTITY contextMenu.clear.label "Limpar Tudo">
-<!ENTITY contextMenu.breakpoint.label "Inserir Breakpoint">
+<!ENTITY contextMenu.breakpoint.label "Definir / Limpar Breakpoint">
 <!ENTITY contextMenu.startpoint.label "Definir / Limpar Ponto de Início">
 <!ENTITY contextMenu.execCommand.label "Executar Este Comando">
 

@@ -12,6 +12,7 @@
         <em:developer>Dave Hunt</em:developer>
         <em:developer>Jonatan Kronqvist</em:developer>
         <em:developer>John Ahlroos</em:developer>
+        <em:developer>Henri Sara</em:developer>
         <em:description>Record, edit and play Vaadin TestBench tests</em:description>
         <em:type>2</em:type>
         <em:homepageURL>https://vaadin.com/add-ons/testbench</em:homepageURL>
@@ -24,7 +25,7 @@
           <Description>
             <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id> <!-- firefox -->
             <em:minVersion>3.6.*</em:minVersion>
-            <em:maxVersion>20.*</em:maxVersion>
+            <em:maxVersion>26.*</em:maxVersion>
           </Description>
         </em:targetApplication>
     </Description>

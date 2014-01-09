@@ -50,7 +50,7 @@ limitations under the License.
               insertbefore="sanitizeSeparator,prefSep"
               accesskey="N"
               class="menuitem-iconic"
-              image="chrome://vaadin-ide/skin/vaadin-icon.png"/>
+              image="chrome://testbench-recorder/skin/vaadin-icon.png"/>
   </menupopup>
 
   <!-- Enh: Add Selenium IDE toolbar button -->

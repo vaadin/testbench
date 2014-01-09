@@ -113,7 +113,7 @@ AutoCompleteResult.prototype = {
 };
 
 //const COMPONENT_ID = Components.ID("{4791AF5F-AFBA-45A1-8204-47A135DF9591}");
-const COMPONENT_ID = Components.ID("{E5226A0D-4698-4E15-9D6D-86771AE172C9}");
+const COMPONENT_ID = Components.ID("{47AFA811-9BAC-4211-AE30-EAEACE2138AE}");
 
 var SeleniumIDEGenericAutoCompleteModule = {
     registerSelf: function (compMgr, fileSpec, location, type) {

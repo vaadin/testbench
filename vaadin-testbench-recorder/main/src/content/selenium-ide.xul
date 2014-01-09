@@ -19,6 +19,7 @@ limitations under the License.
 <?xml-stylesheet href="chrome://global/content/xul.css" type="text/css"?>
 <?xml-stylesheet href="chrome://testbench-recorder/skin/selenium-ide.css" type="text/css"?>
 <?xml-stylesheet href="chrome://testbench-recorder-platform/skin/selenium-ide-platform.css" type="text/css"?>
+<!-- TODO check these -->
 <?xml-stylesheet href="chrome://vaadin-ide/skin/selenium-ide.css" type="text/css"?>
 <?xml-stylesheet href="chrome://vaadin-ide-platform/skin/selenium-ide-platform.css" type="text/css"?>
 <?xul-overlay href="chrome://global/content/editMenuOverlay.xul"?>
@@ -151,7 +152,11 @@ limitations under the License.
                                 id="findElementButton" />
                       </hbox>
                     </row>
-                    <row align="center">
+                    <row align="right" id="selectElementTip" style="display: none">
+                      <label></label>
+                      <description>Select an element by clicking on it in the browser or click Cancel to cancel.</description>
+                    </row>
+                     <row align="center">
                       <label control="commandValue" value="&value.label;"/>
                       <textbox disabled="true" id="commandValue" oninput="window.editor.treeView.updateCurrentCommand('value', window.editor.treeView.decodeText(this.value))"/>
                     </row>

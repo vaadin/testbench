@@ -1,5 +1,6 @@
 <?xml-stylesheet href="chrome://global/skin" type="text/css"?>
 <?xml-stylesheet href="chrome://testbench-recorder/skin/selenium-ide.css" type="text/css"?>
+<!-- TODO remove this? -->
 <?xml-stylesheet href="chrome://vaadin-ide/skin/selenium-ide.css" type="text/css"?>
 <!--
 Copyright 2005 Shinya Kasatani

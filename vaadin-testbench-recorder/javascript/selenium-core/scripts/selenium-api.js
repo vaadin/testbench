@@ -302,7 +302,7 @@ Selenium.prototype.doClick = function(locator) {
           var d = elementWithHref.ownerDocument;
           var html = d ? d.documentElement : null;
           var curElem = elementWithHref;
-          while (curElem && html && !curElem.isSameNode(html)) {
+          while (curElem && html && (curElem.isSameNode ? !curElem.isSameNode(html) : curElem != html)) {
             curElem = curElem.parentNode;
           }
           if (!html || !curElem) {
@@ -415,14 +415,24 @@ Selenium.prototype.doContextMenuAt = function(locator, coordString) {
 
 Selenium.prototype.doFireEvent = function(locator, eventName) {
     /**
-   * Explicitly simulate an event, to trigger the corresponding &quot;on<em>event</em>&quot;
-   * handler.
-   *
-   * @param locator an <a href="#locators">element locator</a>
-   * @param eventName the event name, e.g. "focus" or "blur"
-   */
+     * Explicitly simulate an event, to trigger the corresponding &quot;on<em>event</em>&quot;
+     * handler.
+     *
+     * @param locator an <a href="#locators">element locator</a>
+     * @param eventName the event name, e.g. "focus" or "blur"
+     */
     var element = this.browserbot.findElement(locator);
-    triggerEvent(element, eventName, false);
+    var doc = goog.dom.getOwnerDocument(element);
+    var view = goog.dom.getWindow(doc);
+
+    if (element.fireEvent && element.ownerDocument && element.ownerDocument.createEventObject) { // IE
+        var ieEvent = createEventObject(element, false, false, false, false);
+        element.fireEvent('on' + eventName, ieEvent);
+    } else {
+        var evt = doc.createEvent('HTMLEvents');
+        evt.initEvent(eventName, true, true);
+        element.dispatchEvent(evt);
+    }
 };
 
 Selenium.prototype.doFocus = function(locator) {
@@ -434,7 +444,7 @@ Selenium.prototype.doFocus = function(locator) {
     if (element.focus) {
         element.focus();
     } else {
-         triggerEvent(element, "focus", false);
+         bot.events.fire(element, bot.events.EventType.FOCUS);
     }
 }
 
@@ -1465,7 +1475,7 @@ Selenium.prototype.getText = function(locator) {
    * @return string the text of the element
    */
     var element = this.browserbot.findElement(locator);
-    return core.text.getText(element);
+    return core.text.getElementText(element);
 };
 
 Selenium.prototype.doHighlight = function(locator) {
@@ -1893,12 +1903,18 @@ Selenium.prototype.getAttributeFromAllWindows = function(attributeName) {
     // DGF normally you should use []s instead of eval "win."+attributeName
     // but in this case, attributeName may contain dots (e.g. document.title)
     // in that case, we have no choice but to use eval...
-    attributes.push(eval("win."+attributeName));
+    try {
+        attributes.push(eval("win."+attributeName));
+    } catch (ignored) {
+        // Dead object
+    }
     for (var windowName in this.browserbot.openedWindows)
     {
         try {
             win = selenium.browserbot.openedWindows[windowName];
-            attributes.push(eval("win."+attributeName));
+            if (! selenium.browserbot._windowClosed(win)) {
+              attributes.push(eval("win."+attributeName));
+            }
         } catch (e) {} // DGF If we miss one... meh. It's probably closed or inaccessible anyway.
     }
     return attributes;
@@ -2118,7 +2134,7 @@ Selenium.prototype.doSetCursorPosition = function(locator, position) {
         element.setSelectionRange(/*start*/position,/*end*/position);
    }
    else if( element.createTextRange ) {
-      triggerEvent(element, 'focus', false);
+      bot.events.fire(element, bot.events.EventType.FOCUS);
       var range = element.createTextRange();
       range.collapse(true);
       range.moveEnd('character',position);
@@ -2366,11 +2382,11 @@ Selenium.prototype.getExpression = function(expression) {
 
 Selenium.prototype.getXpathCount = function(xpath) {
     /**
-    * Returns the number of nodes that match the specified css selector, eg. "css=table" would give
+    * Returns the number of nodes that match the specified xpath, eg. "//table" would give
     * the number of tables.
     * 
-    * @param css the css selector to evaluate. do NOT wrap this expression in a 'count()' function; we will do that for you.
-    * @return the number of nodes that match the specified selector
+    * @param xpath the xpath expression to evaluate. do NOT wrap this expression in a 'count()' function; we will do that for you.
+    * @return number the number of nodes that match the specified xpath
     */
     var result = this.browserbot.evaluateXPathCount(xpath, this.browserbot.getDocument());
     return result;
@@ -2378,11 +2394,11 @@ Selenium.prototype.getXpathCount = function(xpath) {
 
 Selenium.prototype.getCssCount = function(css) {
     /**
-    * Returns the number of nodes that match the specified xpath, eg. "//table" would give
+    * Returns the number of nodes that match the specified css selector, eg. "css=table" would give
     * the number of tables.
     * 
-    * @param xpath the xpath expression to evaluate. do NOT wrap this expression in a 'count()' function; we will do that for you.
-    * @return number the number of nodes that match the specified xpath
+    * @param css the css selector to evaluate. do NOT wrap this expression in a 'count()' function; we will do that for you.
+    * @return the number of nodes that match the specified selector
     */
     var result = this.browserbot.evaluateCssCount(css, this.browserbot.getDocument());
     return result;
@@ -2528,7 +2544,8 @@ Selenium.prototype.doWaitForPageToLoad.dontCheckAlertsAndConfirms = true;
 Selenium.prototype.preprocessParameter = function(value) {
     var match = value.match(/^javascript\{((.|\r?\n)+)\}$/);
     if (match && match[1]) {
-        return eval(match[1]).toString();
+        var result = eval(match[1]);
+        return result == null ? null : result.toString();
     }
     return this.replaceVariables(value);
 };
@@ -2983,12 +3000,28 @@ Selenium.prototype.doCaptureEntirePageScreenshot = function(filename, kwargs) {
     // compute dimensions
     var window = this.browserbot.getCurrentWindow();
     var doc = window.document.documentElement;
+    var body = window.document.body;
     var box = {
         x: 0,
         y: 0,
-        width: doc.scrollWidth,
-        height: doc.scrollHeight
+        width: Math.max(doc.scrollWidth, body.scrollWidth),
+        height: Math.max(doc.scrollHeight, body.scrollHeight)
     };
+
+    // CanvasRenderingContext2D::DrawWindow limits width and height up to 65535
+    //  > 65535 leads to NS_ERROR_FAILURE
+    //
+    // HTMLCanvasElement::ToDataURLImpl limits width and height up to 32767
+    //  >= 32769 leads to NS_ERROR_FAILURE
+    //  >= 32767 leads to transparent image (moz issue?).
+    //
+    var limit = 32766;
+    if (box.width > limit) {
+      box.width = limit;
+    }
+    if (box.height > limit) {
+      box.height = limit;
+    }
     LOG.debug('computed dimensions');
     
     var originalBackground = doc.style.background;

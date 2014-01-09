@@ -2,105 +2,92 @@
  * Overriding to fix IE9 native subwindow opening bug #6896
  */
 BrowserBot.prototype.modifyWindowToRecordPopUpDialogs = function(
-		windowToModify, browserBot) {
-	var self = this;
+    originalWindow, browserBot) {
+    var self = this;
 
-	windowToModify.seleniumAlert = windowToModify.alert;
+    // Apparently, Firefox 4 makes it possible to unwrap an object to find that
+    // there's nothing in it.
+    var windowToModify = core.firefox.unwrap(originalWindow);
+    if (!windowToModify) {
+        windowToModify = originalWindow;
+    }
 
-	windowToModify.alert = function(alert) {
-		browserBot.recordedAlerts.push(alert);
-		self.relayBotToRC.call(self, "browserbot.recordedAlerts");
-	};
+    windowToModify.seleniumAlert = windowToModify.alert;
 
-	windowToModify.confirm = function(message) {
-		browserBot.recordedConfirmations.push(message);
-		var result = browserBot.nextConfirmResult;
-		browserBot.nextConfirmResult = true;
-		self.relayBotToRC.call(self, "browserbot.recordedConfirmations");
-		return result;
-	};
+    if (!self.windowNeedsModifying(windowToModify, browserBot.uniqueId)) {
+        return;
+    }
 
-	windowToModify.prompt = function(message) {
-		browserBot.recordedPrompts.push(message);
-		var result = !browserBot.nextConfirmResult ? null
-				: browserBot.nextPromptResult;
-		browserBot.nextConfirmResult = true;
-		browserBot.nextPromptResult = '';
-		self.relayBotToRC.call(self, "browserbot.recordedPrompts");
-		return result;
-	};
+    windowToModify.alert = function(alert) {
+        browserBot.recordedAlerts.push(alert);
+        self.relayBotToRC.call(self, "browserbot.recordedAlerts");
+    };
 
-	// Keep a reference to all popup windows by name
-	// note that in IE the "windowName" argument must be a valid javascript
-	// identifier, it seems.
-	var originalOpen = windowToModify.open;
-	var originalOpenReference;
-	if (browserVersion.isHTA) {
-		originalOpenReference = 'selenium_originalOpen' + new Date().getTime();
-		windowToModify[originalOpenReference] = windowToModify.open;
-	}
+    windowToModify.confirm = function(message) {
+        browserBot.recordedConfirmations.push(message);
+        var result = browserBot.nextConfirmResult;
+        browserBot.nextConfirmResult = true;
+        self.relayBotToRC.call(self, "browserbot.recordedConfirmations");
+        return result;
+    };
 
-	var isHTA = browserVersion.isHTA;
+    windowToModify.prompt = function(message) {
+        browserBot.recordedPrompts.push(message);
+        var result = !browserBot.nextConfirmResult ? null : browserBot.nextPromptResult;
+        browserBot.nextConfirmResult = true;
+        browserBot.nextPromptResult = '';
+        self.relayBotToRC.call(self, "browserbot.recordedPrompts");
+        return result;
+    };
 
-	var newOpen = function(url, windowName, windowFeatures, replaceFlag) {
-		var myOriginalOpen = originalOpen;
+    // Keep a reference to all popup windows by name
+    // note that in IE the "windowName" argument must be a valid javascript 
+    // identifier, it seems.
+    var originalOpen = windowToModify.open;
+    var originalOpenReference;
+    if (browserVersion.isHTA) {
+        originalOpenReference = 'selenium_originalOpen' + new Date().getTime();
+        windowToModify[originalOpenReference] = windowToModify.open;
+    }
 
-		if (windowName == "" || windowName == "_blank") {
-			windowName = "selenium_blank" + Math.round(100000 * Math.random());
-			LOG
-					.warn("Opening window '_blank', which is not a real window name.  Randomizing target to be: "
-							+ windowName);
-		}
+    var isHTA = browserVersion.isHTA;
 
-		/**
-		 * This fixes the issues with subwindow opening in IE9. Instead of
-		 * directly calling myOriginal open we use the reference to call it.
-		 */
-		var openedWindow;
-		if (isHTA) {
-			openedWindow = windowToModify[originalOpenReference](url,
-					windowName, windowFeatures, replaceFlag);
-		} else {
-			openedWindow = myOriginalOpen(url, windowName, windowFeatures,
-					replaceFlag);
-		}
+    var newOpen = function(url, windowName, windowFeatures, replaceFlag) {
+        var myOriginalOpen = originalOpen;
+        if (isHTA) {
+            myOriginalOpen = this[originalOpenReference];
+        }
+        if (windowName == "" || windowName == "_blank") {
+            windowName = "selenium_blank" + Math.round(100000 * Math.random());
+            LOG.warn("Opening window '_blank', which is not a real window name.  Randomizing target to be: " + windowName);
+        }
+        var openedWindow = myOriginalOpen(url, windowName, windowFeatures, replaceFlag);
+        LOG.debug("window.open call intercepted; window ID (which you can use with selectWindow()) is \"" +  windowName + "\"");
+        if (windowName!=null) {
+            openedWindow["seleniumWindowName"] = windowName;
+        }
+        selenium.browserbot.openedWindows[windowName] = openedWindow;
+        return openedWindow;
+    };
 
-		LOG.debug("window.open call intercepted; window ID (which you can use with selectWindow()) is \""
-						+ windowName + "\"");
+    if (browserVersion.isHTA) {
+        originalOpenReference = 'selenium_originalOpen' + new Date().getTime();
+        newOpenReference = 'selenium_newOpen' + new Date().getTime();
+        var setOriginalRef = "this['" + originalOpenReference + "'] = this.open;";
 
-		if (windowName != null) {
-			openedWindow["seleniumWindowName"] = windowName;
-		}
-		selenium.browserbot.openedWindows[windowName] = openedWindow;
-		return openedWindow;
-	};
-
-	if (browserVersion.isHTA) {
-		originalOpenReference = 'selenium_originalOpen' + new Date().getTime();
-		newOpenReference = 'selenium_newOpen' + new Date().getTime();
-		var setOriginalRef = "this['" + originalOpenReference
-				+ "'] = this.open;";
-
-		if (windowToModify.eval) {
-			windowToModify.eval(setOriginalRef);
-			windowToModify.open = newOpen;
-		} else {
-			// DGF why can't I eval here? Seems like I'm querying the window at
-			// a bad time, maybe?
-			setOriginalRef += "this.open = this['" + newOpenReference + "'];";
-			windowToModify[newOpenReference] = newOpen;
-			windowToModify.setTimeout(setOriginalRef, 0);
-		}
-	} else {
-		if (typeof XPCNativeWrapper != "undefined"
-				&& "unwrap" in XPCNativeWrapper) {
-			// Firefox4 won't call the newOpen method unless we unwrap the
-			// window (#6676)
-			// Really needed for RC, so fixed also in selenium-server.jar
-			windowToModify = XPCNativeWrapper.unwrap(windowToModify);
-		}
-		windowToModify.open = newOpen;
-	}
+        if (windowToModify.eval) {
+            windowToModify.eval(setOriginalRef);
+            windowToModify.open = newOpen;
+        } else {
+            // DGF why can't I eval here?  Seems like I'm querying the window at 
+            // a bad time, maybe?
+            setOriginalRef += "this.open = this['" + newOpenReference + "'];";
+            windowToModify[newOpenReference] = newOpen;
+            windowToModify.setTimeout(setOriginalRef, 0);
+        }
+    } else {
+        windowToModify.open = newOpen;
+    }
 };
 
 
@@ -146,7 +133,7 @@ Selenium.prototype.doScrollLeft = function(locator, scrollString){
 Selenium.prototype.doContextmenu = function(locator) { 
      var element = this.page().findElement(locator); 
      this.page()._fireEventOnElement("contextmenu", element, 0, 0); 
-}; 
+};
 
 Selenium.prototype.doContextmenuAt = function(locator, coordString) { 
       if (!coordString) 
@@ -169,8 +156,8 @@ Selenium.prototype.doEnterCharacter = function(locator, value){
         value = new String(value).toUpperCase();
     }
     
-    triggerEvent(element, 'focus', false);
-    triggerEvent(element, 'select', true);
+    bot.events.fire(element, bot.events.EventType.FOCUS);
+    bot.events.fire(element, bot.events.EventType.SELECT);
     var maxLengthAttr = element.getAttribute("maxLength");
     var actualValue = value;
     if (maxLengthAttr != null) {
@@ -215,7 +202,7 @@ Selenium.prototype.doEnterCharacter = function(locator, value){
 		this.doKeyUp(locator, value);
 	}
 	try {
-		triggerEvent(element, 'change', true);
+        bot.events.fire(element, bot.events.EventType.CHANGE);
 	} catch (e) {}
 };
 
@@ -340,89 +327,121 @@ OptionLocatorFactory.prototype.OptionLocatorByLabel = function(label) {
 };
 
 /**
- * Copies triggerKeyEvent from htmlutils.js and removes keycode for charCodeArg on firefox keyEvent
+ * Copies triggerKeyEvent from htmlutils.js and removes keycode for charCodeArg on firefox keyEvent.
+ * 
+ * This function is probably overly generic as the recorder is only used in Firefox.
  */
 function triggerSpecialKeyEvent(element, eventType, keySequence, canBubble, controlKeyDown, altKeyDown, shiftKeyDown, metaKeyDown) {
     var keycode = getKeyCodeFromKeySequence(keySequence);
     canBubble = (typeof(canBubble) == undefined) ? true : canBubble;
-    if (element.fireEvent && element.ownerDocument && element.ownerDocument.createEventObject && element.ownerDocument.createEvent === undefined) {
-    	// IE6-8
-        var keyEvent = createEventObject(element, controlKeyDown, altKeyDown, shiftKeyDown, metaKeyDown);
-        keyEvent.keyCode = keycode;
-        try {
-			element.fireEvent('on' + eventType, keyEvent);
-		} catch (e) {
-			if (e.number && e.number == -2147467259) {
-				// IE is most likely trying to tell us that the element was
-				// removed and the event could thus not be sent. We ignore this.
-			} else {
-				throw e;
-			}
-		}
-    } else {
-        var evt;
-        if (window.KeyEvent) {
-            evt = document.createEvent('KeyEvents');
-            evt.initKeyEvent(eventType, true, true, window, controlKeyDown, altKeyDown, shiftKeyDown, metaKeyDown, keycode, "");
-        } else {
-        	// WebKit based browsers and IE9
-      		evt = element.ownerDocument.createEvent('Events');
-            
-            evt.shiftKey = shiftKeyDown;
-            evt.metaKey = metaKeyDown;
-            evt.altKey = altKeyDown;
-            evt.ctrlKey = controlKeyDown;
-
-            evt.initEvent(eventType, true, true);
-            evt.keyCode = parseInt(keycode);
-            evt.which = keycode;
-        }
-
+//    if (element.fireEvent && element.ownerDocument && element.ownerDocument.createEventObject && element.ownerDocument.createEvent === undefined) {
+//    	// IE6-8
+//        var keyEvent = createEventObject(element, controlKeyDown, altKeyDown, shiftKeyDown, metaKeyDown);
+//        keyEvent.keyCode = keycode;
+//        try {
+//			element.fireEvent('on' + eventType, keyEvent);
+//		} catch (e) {
+//			if (e.number && e.number == -2147467259) {
+//				// IE is most likely trying to tell us that the element was
+//				// removed and the event could thus not be sent. We ignore this.
+//			} else {
+//				throw e;
+//			}
+//		}
+//    } else {
+//        var evt;
+//        if (window.KeyEvent) {
+            var doc = goog.dom.getOwnerDocument(element);
+            var view = goog.dom.getWindow(doc);
+//            if (goog.userAgent.GECKO) {
+//                // this branch adapted from atoms/events.js
+//                evt = document.createEvent('KeyboardEvent');
+//            } else {
+                evt = doc.createEvent('KeyEvents');
+//            }
+            evt.initKeyEvent(eventType, true, true, view, controlKeyDown, altKeyDown, shiftKeyDown, metaKeyDown, keycode, 0);
+//        } else {
+//            // WebKit based browsers and IE9
+//            evt = document.createEvent('Events');
+//            
+//            evt.shiftKey = shiftKeyDown;
+//            evt.metaKey = metaKeyDown;
+//            evt.altKey = altKeyDown;
+//            evt.ctrlKey = controlKeyDown;
+//
+//            evt.initEvent(eventType, true, true, window, 1);
+//            evt.keyCode = parseInt(keycode);
+//            evt.which = keycode;
+//        }
+//
         element.dispatchEvent(evt);
-    }
+//    }
 }
 
 Selenium.prototype.getElementPositionTop = function(locator) {
-   /**
-   * Retrieves the vertical position of an element
-   *
-   * @param locator an <a href="#locators">element locator</a> pointing to an element OR an element itself
-   * @return number of pixels from the edge of the frame.
-   */
+    /**
+     * Retrieves the vertical position of an element
+     *
+     * @param locator an <a href="#locators">element locator</a> pointing to an element OR an element itself
+     * @return number of pixels from the edge of the frame.
+     */
     var element;
-	if ("string"==typeof locator) {
-		element = this.browserbot.findElement(locator);
-	} else {
-		element = locator;
-	}
+    if ("string"==typeof locator) {
+        element = this.browserbot.findElement(locator);
+    }
+    else {
+        element = locator;
+    }
 
-	var y = 0;
-	while (element != null) {
-        if(document.all) {
-            if( (element.tagName != "TABLE") && (element.tagName != "BODY") ) {
-				y += element.clientTop;
+    var y = 0;
+
+    while (element != null)
+    {
+        if(document.all)
+        {
+            if( (element.tagName != "TABLE") && (element.tagName != "BODY") )
+            {
+                y += element.clientTop;
             }
         } else {
 			// Netscape/DOM
             if(element.tagName == "TABLE") {
-				var parentBorder = parseInt(element.border);
-				if(isNaN(parentBorder)) {
-					var parentFrame = element.getAttribute('frame');
-					if(parentFrame != null) {
-						y += 1;
-					}
-				} else if(parentBorder > 0) {
-					y += parentBorder;
-				}
+                var parentBorder = parseInt(element.border);
+                if(isNaN(parentBorder))
+                {
+                    var parentFrame = element.getAttribute('frame');
+                    if(parentFrame != null)
+                    {
+                        y += 1;
+                    }
+                }
+                else if(parentBorder > 0)
+                {
+                    y += parentBorder;
+                }
             } else if (!/Opera[\/\s](\d+\.\d+)/.test(navigator.userAgent)) {
 				y += element.clientTop;
-			}
+            }
         }
         y += element.offsetTop;
-		element = element.offsetParent;
+
+        // Netscape can get confused in some cases, such that the height of the parent is smaller
+        // than that of the element (which it shouldn't really be). If this is the case, we need to
+        // exclude this element, since it will result in too large a 'top' return value.
+        if (element.offsetParent && element.offsetParent.offsetHeight && element.offsetParent.offsetHeight < element.offsetHeight)
+        {
+            // skip the parent that's too small
+            element = element.offsetParent.offsetParent;
+        }
+        else
+        {
+            // Next up...
+            element = element.offsetParent;
+        }
     }
     return y;
 };
+
 
 //Starts dragging of taget element
 Selenium.prototype.doDrag = function(locator, value){
