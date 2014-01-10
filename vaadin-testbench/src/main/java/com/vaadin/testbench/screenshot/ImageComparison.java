@@ -480,7 +480,7 @@ public class ImageComparison {
             // Find first different pixel in the block of possibleCursorPosition
             int cursorX = -1;
             int cursorStartY = -1;
-            findCursor: for (int j = 0; j < height; j++) {
+            findCursor: for (int j = 0, l = (height > 16 ? 16 : height); j < l; j++) {
                 for (int i = 0; i < width; i++) {
 
                     // If found differing pixel
@@ -488,7 +488,7 @@ public class ImageComparison {
                             params.ssBlock[i + j * width])) {
 
                         // Workaround to ignore vertical lines in certain tests
-                        if (j < height - 1
+                        if (j < l - 1
                                 && !isCursorPixel(
                                         refBlock[i + (j + 1) * width],
                                         ssBlock[i + (j + 1) * width])) {
