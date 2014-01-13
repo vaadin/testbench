@@ -15,7 +15,7 @@ import com.vaadin.testbench.elements.TextFieldElement;
 public class VerifyExecutionTimeITCase extends TestBase {
 
     private WebElement getButton(String caption) {
-        return findElementByCaption(ButtonElement.class, caption);
+        return $(ButtonElement.class).caption(caption).first();
     }
 
     private void calculateOnePlusTwo() {
@@ -60,6 +60,7 @@ public class VerifyExecutionTimeITCase extends TestBase {
                     + "ms!");
         }
 
-        assertEquals("3.0", findElement(TextFieldElement.class).getAttribute("value"));
+        assertEquals("3.0",
+                $(TextFieldElement.class).first().getAttribute("value"));
     }
 }

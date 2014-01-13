@@ -1,5 +1,6 @@
 package com.vaadin.testbench.elements;
 
+import com.vaadin.testbench.By;
 import com.vaadin.testbench.TestBenchElement;
 
 @ServerClass("com.vaadin.ui.Table")
@@ -17,8 +18,8 @@ public class TableElement extends AbstractSelectElement {
      */
     public TestBenchElement getCell(int row, int column) {
 
-        TestBenchElement cell = wrapElement(findElementByPath("#row[" + row
-                + "]/col[" + column + "]"), getCommandExecutor());
+        TestBenchElement cell = wrapElement(findElement(By.vaadin("#row[" + row
+                + "]/col[" + column + "]")), getCommandExecutor());
 
         return cell;
     }
@@ -31,8 +32,8 @@ public class TableElement extends AbstractSelectElement {
      * @return TestBenchElement containing wanted header cell
      */
     public TestBenchElement getHeaderCell(int column) {
-        TestBenchElement headerCell = wrapElement(findElementByPath("#header["
-                + column + "]"), getCommandExecutor());
+        TestBenchElement headerCell = wrapElement(findElement(By.vaadin("#header["
+                + column + "]")), getCommandExecutor());
         return headerCell;
     }
 
@@ -44,8 +45,8 @@ public class TableElement extends AbstractSelectElement {
      * @return TestBenchElement containing wanted footer cell
      */
     public TestBenchElement getFooterCell(int column) {
-        TestBenchElement footerCell = wrapElement(findElementByPath("#footer["
-                + column + "]"), getCommandExecutor());
+        TestBenchElement footerCell = wrapElement(findElement(By.vaadin("#footer["
+                + column + "]")), getCommandExecutor());
         return footerCell;
     }
 }

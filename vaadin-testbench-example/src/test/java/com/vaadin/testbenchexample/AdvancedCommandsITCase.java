@@ -25,7 +25,7 @@ public class AdvancedCommandsITCase extends TestBase {
     private static final String COMMENT_TEXT = "Next we'll click button 2";
 
     private ButtonElement getButton(String caption) {
-        return findElementByCaption(ButtonElement.class, caption);
+        return $(ButtonElement.class).caption(caption).first();
     }
 
     /**
@@ -50,7 +50,7 @@ public class AdvancedCommandsITCase extends TestBase {
         // We fill in a comment and verify the commenting feature works as
         // expected.
         getButton("Add Comment").click();
-        WebElement commentField = findElement(WindowElement.class).findElement(TextFieldElement.class);
+        WebElement commentField = $(TextFieldElement.class).in(WindowElement.class).first();
 
         // Make sure the input is empty
         commentField.clear();
@@ -70,11 +70,11 @@ public class AdvancedCommandsITCase extends TestBase {
         getButton("=").click();
 
         // Check that the display is correct (1 + 2 = 3)
-        assertEquals("3.0", findElement(TextFieldElement.class).getAttribute("value"));
+        assertEquals("3.0", $(TextFieldElement.class).first().getAttribute("value"));
 
         // Verify the second row in log contains our comment
         // Uses Vaadin table selector with subpart.
-        String secondRowText = findElement(TableElement.class).getCell(1, 0).getText();
+        String secondRowText = $(TableElement.class).first().getCell(1, 0).getText();
         assertTrue(secondRowText.contains(COMMENT_TEXT));
     }
 

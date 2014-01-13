@@ -26,7 +26,7 @@ public class AddCommentPageObject extends TestBenchTestCase {
         // We want to find a textfield inside a Window instance - the only
         // Window we expect to be visible is the Add Comment modal dialog
         // window.
-        findElement(WindowElement.class).findElement(TextFieldElement.class).sendKeys(comment,
+        $(TextFieldElement.class).in(WindowElement.class).first().sendKeys(comment,
                 Keys.RETURN);
         return this;
     }
@@ -35,7 +35,7 @@ public class AddCommentPageObject extends TestBenchTestCase {
      * Clicks the 'Add' button to submit the comment entered in the text field.
      */
     public void submit() {
-        findElementByCaption(ButtonElement.class, "OK").click();
+        $(ButtonElement.class).caption("OK").first().click();
     }
 
     /**

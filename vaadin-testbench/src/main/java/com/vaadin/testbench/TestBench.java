@@ -108,6 +108,19 @@ public class TestBench {
                 tbCoimmandExecutor);
     }
 
+    /**
+     * Create new Element of given type. Initialize it with WebElement and
+     * TestBenchCommandExecutor. This feature is advanced and potentially
+     * dangerous.
+     * 
+     * @param clazz
+     *            Class of wanted Element
+     * @param webElement
+     *            Selenium WebElement to be wrapped into given Class
+     * @param tbCommandExecutor
+     *            TestBenchCommandExecutor instance
+     * @return Element of given Class wrapping given WebElement
+     */
     public static <T extends TestBenchElement> T createElement(Class<T> clazz,
             WebElement webElement, TestBenchCommandExecutor tbCommandExecutor) {
 

@@ -53,11 +53,11 @@ public class UsingHubITCase extends TestBenchTestCase {
     public void testOnePlusTwo() throws Exception {
         // run the test just as with "local bots"
         openCalculator();
-        findElementByCaption(ButtonElement.class, "1").click();
-        findElementByCaption(ButtonElement.class, "+").click();
-        findElementByCaption(ButtonElement.class, "2").click();
-        findElementByCaption(ButtonElement.class, "=").click();
-        assertEquals("3.0", findElement(TextFieldElement.class).getAttribute("value"));
+        $(ButtonElement.class).caption("1").first().click();
+        $(ButtonElement.class).caption("+").first().click();
+        $(ButtonElement.class).caption("2").first().click();
+        $(ButtonElement.class).caption("=").first().click();
+        assertEquals("3.0", $(TextFieldElement.class).first().getAttribute("value"));
 
         // Thats it. Services may provide also some other goodies like the video
         // replay of your test in testingbot.com

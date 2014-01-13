@@ -10,20 +10,19 @@ import com.vaadin.testbench.elements.TextFieldElement;
 
 /**
  * This example demonstrates how developers can use techniques like loops and
- * random data to make their tests more powerful. Using Java this kind of
- * techniques can be easily implemented with your existing skills.
+ * random data to make their tests more powerful.
  * <p>
- * Developers should also consider add parameters to their tests and
+ * Developers should also consider adding parameters to their tests and
  * systematically test boundary values etc.
  */
 public class LoopingCalculatorITCase extends TestBase {
 
     private String getDisplayValue() {
-        return findElement(TextFieldElement.class).getAttribute("value");
+        return $(TextFieldElement.class).first().getAttribute("value");
     }
 
     private WebElement getButton(String caption) {
-        return findElementByCaption(ButtonElement.class, caption);
+        return $(ButtonElement.class).caption(caption).first();
     }
 
     @Test

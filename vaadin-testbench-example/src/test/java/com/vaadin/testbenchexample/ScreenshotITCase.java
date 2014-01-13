@@ -70,32 +70,32 @@ public class ScreenshotITCase extends TestBase {
      * Calculates one plus two for the absolute reference test
      */
     private void calculateOnePlusTwo() {
-        findElementByCaption(ButtonElement.class, "1").click();
-        findElementByCaption(ButtonElement.class, "+").click();
-        findElementByCaption(ButtonElement.class, "2").click();
-        findElementByCaption(ButtonElement.class, "=").click();
+        $(ButtonElement.class).caption("1").first().click();
+        $(ButtonElement.class).caption("+").first().click();
+        $(ButtonElement.class).caption("2").first().click();
+        $(ButtonElement.class).caption("=").first().click();
     }
 
     /**
      * Adds random values together for the masked reference test
      */
     private void addRandomValues() {
-        WebElement plusButton = findElementByCaption(ButtonElement.class, "+");
+        WebElement plusButton = $(ButtonElement.class).caption("+").first();
         Random rnd = new Random();
         for (int i = 0; i < rnd.nextInt(10) + 1; i++) {
-            findElementByCaption(ButtonElement.class, "" + (rnd.nextInt(9) + 1));
+            $(ButtonElement.class).caption("" + (rnd.nextInt(9) + 1)).first().click();
             plusButton.click();
         }
 
-        findElementByCaption(ButtonElement.class, "" + (rnd.nextInt(9) + 1)).click();
-        findElementByCaption(ButtonElement.class, "=").click();
+        $(ButtonElement.class).caption("" + (rnd.nextInt(9) + 1)).first().click();
+        $(ButtonElement.class).caption("=").first().click();
     }
 
     @Test
     public void testOnePlusTwo() throws Exception {
 
         calculateOnePlusTwo();
-        assertEquals("3.0", findElement(TextFieldElement.class).getAttribute("value"));
+        assertEquals("3.0", $(TextFieldElement.class).first().getAttribute("value"));
 
         // Compare screen with reference image with id "oneplustwo" from the
         // reference image directory. Reference image filenames also contain
@@ -113,10 +113,10 @@ public class ScreenshotITCase extends TestBase {
         // Add a bunch of random values together to fill the log with
         // randomness.
         addRandomValues();
-        WebElement display = findElement(TextFieldElement.class);
+        WebElement display = $(TextFieldElement.class).first();
 
         // Clear and calculate 1 + 2
-        findElementByCaption(ButtonElement.class, "C").click();
+        $(ButtonElement.class).caption("C").first().click();
         calculateOnePlusTwo();
         assertEquals("3.0", display.getAttribute("value"));
 

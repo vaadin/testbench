@@ -41,7 +41,7 @@ public class LogPageObject extends TestBenchTestCase {
         // To get at the CELL specified by a certain row and column in a Table,
         // we need to select them both, in the specific order of row first, then
         // col.
-        return findElement(TableElement.class).getCell(row, 0);
+        return $(TableElement.class).first().getCell(row, 0);
     }
 
     /**
@@ -50,7 +50,7 @@ public class LogPageObject extends TestBenchTestCase {
      * @return An AddCommentPageObject to interact with the add comment window.
      */
     public AddCommentPageObject openAddCommentWindow() {
-        findElementByCaption(ButtonElement.class, "Add Comment").click();
+        $(ButtonElement.class).caption("Add Comment").first().click();
         return PageFactory
                 .initElements(getDriver(), AddCommentPageObject.class);
     }
