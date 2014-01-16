@@ -290,10 +290,11 @@ Selenium.prototype.doCloseNotification = function(locator, value){
 
 /*Does a mouse over on target element at point x,y so tooltip shows up over element and not mouse cursor position*/
 Selenium.prototype.doShowTooltip = function(locator, value){
-	var element = this.browserbot.findElement(locator);
-	var clientXY = getClientXY(element, value);
+    var element = this.browserbot.findElement(locator);
+    var clientXY = getClientXY(element, value);
 
-	this.browserbot.triggerMouseEvent(element, 'mouseover', true, clientXY[0], clientXY[1]);
+    this.browserbot.triggerMouseEvent(element, 'mouseover', true, clientXY[0], clientXY[1]);
+    this.browserbot.triggerMouseEvent(element, 'mousemove', true, clientXY[0], clientXY[1]);
 };
 
 /* For adding test to be run before this test */
