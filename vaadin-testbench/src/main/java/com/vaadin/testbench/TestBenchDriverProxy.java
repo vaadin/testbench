@@ -88,8 +88,11 @@ public class TestBenchDriverProxy extends TestBenchCommandExecutor implements
      * @see org.openqa.selenium.WebDriver#findElements(org.openqa.selenium.By)
      */
     @Override
-    public List<WebElement> findElements(By arg0) {
-        List<WebElement> elements = actualDriver.findElements(arg0);
+    public List<WebElement> findElements(By by) {
+        if (by instanceof ByVaadin) {
+            return ((ByVaadin) by).findElements(this);
+        }
+        List<WebElement> elements = actualDriver.findElements(by);
         List<WebElement> testBenchElements = new ArrayList<WebElement>(elements.size());
         for (WebElement e : elements) {
             testBenchElements.add(TestBench.createElement(e, this));

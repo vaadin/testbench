@@ -15,8 +15,10 @@
 package com.vaadin.testbench;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebElement;
 
@@ -26,9 +28,8 @@ public abstract class By extends org.openqa.selenium.By {
 
     /**
      * Finds an element using a Vaadin selector
-     * 
-     * @param vaadinSelector
-     *            the selector string.
+     *
+     * @param vaadinSelector the selector string.
      * @return an element or null if none found.
      */
     public static org.openqa.selenium.By vaadin(final String vaadinSelector) {
@@ -49,7 +50,15 @@ public abstract class By extends org.openqa.selenium.By {
 
         @Override
         public List<WebElement> findElements(SearchContext context) {
-            return Arrays.asList(findElement(context));
+            try {
+                WebElement element = findElement(context);
+                if (element != null) {
+                    return Arrays.asList(element);
+                }
+            } catch (NoSuchElementException e) {
+                // Nothing found, return an empty list (below)
+            }
+            return Collections.emptyList();
         }
 
         @Override
@@ -58,7 +67,8 @@ public abstract class By extends org.openqa.selenium.By {
                 return ((TestBenchCommands) context)
                         .findElementByVaadinSelector(vaadinSelector);
             }
-            return null;
+            throw new UnsupportedOperationException(
+                    "Can only perform By.vaadin() searches on the driver level.");
         }
 
         @Override
