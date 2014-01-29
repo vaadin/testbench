@@ -234,7 +234,26 @@ public class ElementQuery<T extends AbstractElement> {
      * @return Component as a corresponding element
      */
     public T first() {
-        List<T> elements = all();
+        return get(0);
+    }
+
+    /**
+     * Search the open Vaadin application for a matching component relative to
+     * given context. Elements are post filtered with given index.
+     * 
+     * @param index
+     *            Post filtering index
+     * @return Component as a corresponding element
+     */
+    public T get(int index) {
+        String query;
+        try {
+            query = "(" + generateQuery() + ")[" + index + "]";
+        } catch (Exception e) {
+            throw new RuntimeException("Unable to create locator query", e);
+        }
+
+        List<T> elements = executeSearch(query);
         if (elements.isEmpty()) {
             final String errorString = "Vaadin could not find elements with selector "
                     + generateQuery();
@@ -250,8 +269,6 @@ public class ElementQuery<T extends AbstractElement> {
      * @return Components as a list of corresponding elements
      */
     public List<T> all() {
-        List<WebElement> results = null;
-        List<T> elements = new ArrayList<T>();
         String query;
         try {
             query = generateQuery();
@@ -259,6 +276,19 @@ public class ElementQuery<T extends AbstractElement> {
             throw new RuntimeException("Unable to create locator query", e);
         }
 
+        return executeSearch(query);
+    }
+
+    /**
+     * Execute the actual search with Vaadin.
+     * 
+     * @param query
+     *            Generated selector path
+     * @return List of elements. List is empty if no elements are found.
+     */
+    private List<T> executeSearch(String query) {
+        List<WebElement> results = null;
+        List<T> elements = new ArrayList<T>();
         results = By.vaadin(query).findElements(getContext());
 
         TestBenchCommandExecutor tbCommandExecutor = ((HasTestBenchCommandExecutor) getContext())
@@ -266,7 +296,7 @@ public class ElementQuery<T extends AbstractElement> {
         for (WebElement webElement : results) {
             T element = TestBench.createElement(elementClass, webElement,
                     tbCommandExecutor);
-            
+
             if (null != element) {
                 elements.add(element);
             }
