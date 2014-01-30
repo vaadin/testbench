@@ -117,11 +117,11 @@ public class TestBenchDriverTest {
     }
 
     @Test
-    public void getWrappedDriver_returnsTheWrappedDriver() {
+    public void getWrappedDriver_returnsItself() {
         WebDriver driverMock = createNiceMock(WebDriver.class);
         WebDriver driver = TestBench.createDriver(driverMock);
         WebDriver wrappedDriver = ((WrapsDriver) driver).getWrappedDriver();
-        assertEquals(driverMock, wrappedDriver);
+        assertEquals(driver, wrappedDriver);
     }
 
     @Test
@@ -132,18 +132,18 @@ public class TestBenchDriverTest {
 
         FirefoxDriver mockFF = createMock(FirefoxDriver.class);
         expect(mockFF.getCapabilities()).andReturn(mockCapabilities).anyTimes();
+        expect(mockFF.executeScript(contains("clients[client].isActive()"))).andReturn(true).once();
         WebElement mockElement = createNiceMock(WebElement.class);
-        expect(mockFF.findElement(isA(By.class))).andReturn(mockElement);
+        expect(mockFF.findElement(isA(By.class))).andReturn(mockElement).times(2);
         replay(mockFF, mockElement, mockCapabilities);
 
-        WebDriver driver = TestBench.createDriver(mockFF);
-        TestBenchCommands tb = (TestBenchCommands) driver;
+        TestBenchDriverProxy tb = (TestBenchDriverProxy) TestBench
+                .createDriver(mockFF);
         tb.disableWaitForVaadin();
-        WebElement testBenchElement = driver.findElement(By.id("foo"));
+        WebElement testBenchElement = tb.findElement(By.id("foo"));
 
-        ((TestBenchElementCommands) testBenchElement).closeNotification();
         tb.enableWaitForVaadin();
-        ((TestBenchElementCommands) testBenchElement).closeNotification();
+        testBenchElement = tb.findElement(By.id("foo"));
 
         verify(mockFF, mockElement);
     }
