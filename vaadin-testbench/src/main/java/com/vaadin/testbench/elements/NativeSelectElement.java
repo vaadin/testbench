@@ -17,60 +17,29 @@ public class NativeSelectElement extends AbstractSelectElement {
         selectElement = new Select(findElement(By.tagName("select")));
     }
 
-    @Override
-    public void deselectAll() {
-        selectElement.deselectAll();
-    }
-
-    @Override
-    public void deselectByIndex(int index) {
-        selectElement.deselectByIndex(index);
-    }
-
-    @Override
-    public void deselectByValue(String value) {
-        selectElement.deselectByValue(value);
-    }
-
-    @Override
-    public void deselectByVisibleText(String text) {
+    public void deselectByText(String text) {
         selectElement.deselectByVisibleText(text);
     }
 
-    @Override
     public List<TestBenchElement> getAllSelectedOptions() {
         return wrapElements(selectElement.getAllSelectedOptions(),
                 getCommandExecutor());
     }
 
-    @Override
     public TestBenchElement getFirstSelectedOption() {
         return wrapElement(selectElement.getFirstSelectedOption(),
                 getCommandExecutor());
     }
 
-    @Override
     public List<TestBenchElement> getOptions() {
         return wrapElements(selectElement.getOptions(), getCommandExecutor());
     }
 
-    @Override
     public boolean isMultiple() {
         return selectElement.isMultiple();
     }
 
-    @Override
-    public void selectByIndex(int index) {
-        selectElement.selectByIndex(index);
-    }
-
-    @Override
-    public void selectByValue(String value) {
-        selectElement.selectByValue(value);
-    }
-
-    @Override
-    public void selectByVisibleText(String text) {
+    public void selectByText(String text) {
         selectElement.selectByVisibleText(text);
     }
 }

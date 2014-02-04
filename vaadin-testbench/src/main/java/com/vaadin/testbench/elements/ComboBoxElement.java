@@ -3,7 +3,6 @@ package com.vaadin.testbench.elements;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 
@@ -12,20 +11,23 @@ import com.vaadin.testbench.By;
 @ServerClass("com.vaadin.ui.ComboBox")
 public class ComboBoxElement extends AbstractSelectElement {
 
-    private static org.openqa.selenium.By bySuggestMenu = By
-            .className("v-filterselect-suggestmenu");
+    private static org.openqa.selenium.By bySuggestionPopup = By
+            .vaadin("#popup");
     private static org.openqa.selenium.By byNextPage = By
             .className("v-filterselect-nextpage");
     private static org.openqa.selenium.By byPrevPage = By
             .className("v-filterselect-prevpage");
 
     /**
-     * Input the given text to ComboBox
+     * Input the given text to ComboBox and click on the suggestion if it matches.
      * 
      * @param text
      */
     public void selectByText(String text) {
-        findElement(By.vaadin("#textbox")).sendKeys(text, Keys.ENTER);
+        findElement(By.vaadin("#textbox")).sendKeys(text);
+        if (text.equals(getPopupSuggestions().get(0))) {
+            getSuggestionPopup().findElement(By.tagName("td")).click();
+        }
     }
 
     /**
@@ -42,17 +44,13 @@ public class ComboBoxElement extends AbstractSelectElement {
      */
     public List<String> getPopupSuggestions() {
         List<String> suggestionsTexts = new ArrayList<String>();
-        if (!isElementPresent(bySuggestMenu)) {
-            openPopup();
-        }
-        try {
-            List<WebElement> suggestions = getSuggestionMenu().findElements(
-                    By.tagName("span"));
-            for (WebElement suggestion : suggestions) {
-                suggestionsTexts.add(suggestion.getText());
+        List<WebElement> suggestions = getSuggestionPopup().findElements(
+                By.tagName("span"));
+        for (WebElement suggestion : suggestions) {
+            String text = suggestion.getText();
+            if (!text.isEmpty()) {
+                suggestionsTexts.add(text);
             }
-        } catch (NoSuchElementException e) {
-            // Something went horribly wrong.
         }
         return suggestionsTexts;
     }
@@ -64,7 +62,7 @@ public class ComboBoxElement extends AbstractSelectElement {
      */
     public boolean openNextPage() {
         try {
-            getSuggestionMenu().findElement(byNextPage).click();
+            getSuggestionPopup().findElement(byNextPage).click();
             return true;
         } catch (NoSuchElementException e) {
             return false;
@@ -78,22 +76,20 @@ public class ComboBoxElement extends AbstractSelectElement {
      */
     public boolean openPrevPage() {
         try {
-            getSuggestionMenu().findElement(byPrevPage).click();
+            getSuggestionPopup().findElement(byPrevPage).click();
             return true;
         } catch (NoSuchElementException e) {
             return false;
         }
     }
 
-    private WebElement getSuggestionMenu() {
+    private WebElement getSuggestionPopup() {
         ensurePopupOpen();
-        // Following needs an extension to ComboBox subparts.
-        // return findElement(By.vaadin("#menu"));
-        return getDriver().findElement(bySuggestMenu);
+        return findElement(bySuggestionPopup);
     }
 
     private void ensurePopupOpen() {
-        if (getDriver().findElements(bySuggestMenu).isEmpty()) {
+        if (!isElementPresent(bySuggestionPopup)) {
             openPopup();
         }
     }

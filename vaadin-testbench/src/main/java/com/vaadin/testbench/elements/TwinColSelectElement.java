@@ -1,142 +1,101 @@
 package com.vaadin.testbench.elements;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
 
 import com.vaadin.testbench.By;
-import com.vaadin.testbench.TestBenchElement;
 
 @ServerClass("com.vaadin.ui.TwinColSelect")
 public class TwinColSelectElement extends AbstractSelectElement {
 
-    private Select select;
-    private Select selected;
+    private Select options;
+    private Select selectedOptions;
     private WebElement deselButton;
     private WebElement selButton;
+    private static org.openqa.selenium.By bySelect = By.tagName("select");
+    private static org.openqa.selenium.By byButton = By.className("v-button");
 
     @Override
     public void init() {
         super.init();
-        List<WebElement> selectElements = findElements(By.tagName("select"));
-        select = new Select(selectElements.get(0));
-        selected = new Select(selectElements.get(1));
-        List<WebElement> buttons = findElements(By.className("v-button"));
+        List<WebElement> selectElements = findElements(bySelect);
+        options = new Select(selectElements.get(0));
+        selectedOptions = new Select(selectElements.get(1));
+        List<WebElement> buttons = findElements(byButton);
         selButton = buttons.get(0);
         deselButton = buttons.get(1);
     }
 
-    @Override
     public void deselectAll() {
-        if (selected.isMultiple()) {
-            if (selected.getAllSelectedOptions().size() != selected
+        if (selectedOptions.isMultiple()) {
+            if (selectedOptions.getAllSelectedOptions().size() != selectedOptions
                     .getOptions().size()) {
-                for (int i = 0, l = selected.getOptions().size(); i < l; ++i) {
-                    selected.selectByIndex(i);
+                for (int i = 0, l = selectedOptions.getOptions().size(); i < l; ++i) {
+                    selectedOptions.selectByIndex(i);
                 }
             }
             deselButton.click();
         }
-        while (selected.getOptions().size() > 0) {
-            selected.selectByIndex(0);
+        while (selectedOptions.getOptions().size() > 0) {
+            selectedOptions.selectByIndex(0);
             deselButton.click();
         }
     }
 
-    @Override
-    public void deselectByIndex(int index) {
-        index -= getUnselectedOptions().size();
-        if (index >= 0 && index < selected.getAllSelectedOptions().size()) {
-            if (selected.isMultiple()) {
-                selected.deselectAll();
-            }
-            selected.selectByIndex(index);
-            deselButton.click();
+    public void deselectByText(String text) {
+        if (selectedOptions.isMultiple()) {
+            selectedOptions.deselectAll();
         }
-    }
-
-    @Override
-    public void deselectByValue(String value) {
-        if (selected.isMultiple()) {
-            selected.deselectAll();
-        }
-        selected.selectByValue(value);
+        selectedOptions.selectByVisibleText(text);
         deselButton.click();
-    }
-
-    @Override
-    public void deselectByVisibleText(String text) {
-        if (selected.isMultiple()) {
-            selected.deselectAll();
-        }
-        selected.selectByVisibleText(text);
-        deselButton.click();
-    }
-
-    @Override
-    public List<TestBenchElement> getAllSelectedOptions() {
-        return wrapElements(selected.getAllSelectedOptions(),
-                getCommandExecutor());
-    }
-
-    @Override
-    public TestBenchElement getFirstSelectedOption() {
-        return wrapElement(selected.getFirstSelectedOption(),
-                getCommandExecutor());
-    }
-
-    @Override
-    public List<TestBenchElement> getOptions() {
-        List<TestBenchElement> options = wrapElements(select.getOptions(),
-                getCommandExecutor());
-        options.addAll(wrapElements(selected.getOptions(), getCommandExecutor()));
-        return options;
     }
 
     /**
-     * Functionality to find out what options are currently unselected.
+     * Functionality to find option texts of all currently selected options.
      * 
-     * @return TestBenchElement list of unselected options
+     * @return List of visible text for all selected options
      */
-    public List<TestBenchElement> getUnselectedOptions() {
-        return wrapElements(select.getOptions(), getCommandExecutor());
+    public List<String> getSelectedOptions() {
+        return getOptionsFromSelect(selectedOptions);
     }
 
-    @Override
-    public void selectByIndex(int index) {
-        if (index < getUnselectedOptions().size()) {
-            if (selected.isMultiple()) {
-                selected.deselectAll();
-            }
-
-            select.selectByIndex(index);
-            selButton.click();
-        }
+    /**
+     * Functionality to find all option texts.
+     * 
+     * @return List of visible text for all options
+     */
+    public List<String> getOptions() {
+        List<String> optionTexts = getUnselectedOptions();
+        optionTexts.addAll(getSelectedOptions());
+        return optionTexts;
     }
 
-    @Override
+    /**
+     * Functionality to find option texts of all currently unselected options.
+     * 
+     * @return List of visible text for all unselected options
+     */
+    public List<String> getUnselectedOptions() {
+        return getOptionsFromSelect(options);
+    }
+
     public boolean isMultiple() {
         return true;
     }
 
-    @Override
-    public void selectByValue(String value) {
-        if (selected.isMultiple()) {
-            selected.deselectAll();
-        }
-
-        select.selectByValue(value);
+    public void selectByText(String text) {
+        options.selectByVisibleText(text);
         selButton.click();
     }
 
-    @Override
-    public void selectByVisibleText(String text) {
-        if (selected.isMultiple()) {
-            selected.deselectAll();
+    private List<String> getOptionsFromSelect(Select select) {
+        List<String> optionTexts = new ArrayList<String>();
+        for (WebElement option : select.getOptions()) {
+            optionTexts.add(option.getText());
         }
-
-        select.selectByVisibleText(text);
-        selButton.click();
+        return optionTexts;
     }
 }
