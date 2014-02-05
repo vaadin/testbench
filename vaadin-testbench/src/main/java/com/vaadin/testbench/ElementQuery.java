@@ -77,6 +77,19 @@ public class ElementQuery<T extends AbstractElement> {
     }
 
     /**
+     * For advanced use. Set ElementQuery to either recursive search or a search
+     * starting directly from he context.
+     * 
+     * @param recursion
+     *            Boolean value. false for direct child search
+     * @return a reference to self
+     */
+    public ElementQuery<T> recursive(boolean recursion) {
+        this.recursive = recursion;
+        return this;
+    }
+
+    /**
      * Adds another query to the search hierarchy of this ElementQuery. This
      * search is recursive.
      * 
@@ -256,7 +269,7 @@ public class ElementQuery<T extends AbstractElement> {
         List<T> elements = executeSearch(query);
         if (elements.isEmpty()) {
             final String errorString = "Vaadin could not find elements with selector "
-                    + generateQuery();
+                    + query;
             throw new NoSuchElementException(errorString);
         }
         return elements.get(0);

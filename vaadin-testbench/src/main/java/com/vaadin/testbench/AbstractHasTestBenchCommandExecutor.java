@@ -13,16 +13,34 @@ public abstract class AbstractHasTestBenchCommandExecutor implements
     /**
      * Prepare a {@link ElementQuery} instance to use for locating components on
      * the client. The returned object can be manipulated to uniquely identify
-     * the sought-after object. Type of element is supplied later. If this
-     * function gets called through an element, it uses the element as its
-     * search context. Otherwise the search context is the driver.
+     * the sought-after object. If this function gets called through an element,
+     * it uses the element as its search context. Otherwise the search context
+     * is the driver.
      * 
      * @return an appropriate {@link ElementQuery} instance
      */
     public <T extends AbstractElement> ElementQuery<T> $(Class<T> clazz) {
         return new ElementQuery<T>(clazz).context(getContext());
     }
-    
+
+    /**
+     * Prepare a {@link ElementQuery} instance to use for locating components on
+     * the client. The returned object can be manipulated to uniquely identify
+     * the sought-after object. If this function gets called through an element,
+     * it uses the element as its search context. Otherwise the search context
+     * is the driver.
+     * 
+     * This search is not recursive and can find the given hierarchy only if it
+     * can be found as direct children of given context. The same can be done
+     * with {@code $(Foo.class).recursive(false) }
+     * 
+     * @return an appropriate {@link ElementQuery} instance
+     */
+    public <T extends AbstractElement> ElementQuery<T> $$(Class<T> clazz) {
+        return new ElementQuery<T>(clazz).context(getContext())
+                .recursive(false);
+    }
+
     /**
      * Returns true if a component can be found.
      * 
