@@ -105,7 +105,7 @@ public class ElementQuery<T extends AbstractElement> {
      * Adds another query to the search hierarchy of this ElementQuery. This
      * search is recursive.
      * 
-     * @param clazz
+     * @param cls
      *            Parent type for search hierarchy
      * @return a reference to self
      */
@@ -119,7 +119,7 @@ public class ElementQuery<T extends AbstractElement> {
      * Adds another query to the search hierarchy of this ElementQuery. This
      * search is non-recursive. Only direct children are found.
      * 
-     * @param clazz
+     * @param cls
      *            Parent type for search hierarchy
      * @return a reference to self
      */
@@ -246,7 +246,7 @@ public class ElementQuery<T extends AbstractElement> {
 
     /**
      * Return the {@link SearchContext} previously set with the
-     * {@link inContext} call.
+     * {@link #in} call.
      */
     protected SearchContext getContext() {
         return searchContext;

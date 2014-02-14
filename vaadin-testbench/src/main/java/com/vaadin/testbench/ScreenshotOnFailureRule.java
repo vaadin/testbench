@@ -33,19 +33,20 @@ import com.vaadin.testbench.screenshot.ImageFileUtil;
  * <code>
  * public class MyTestCase extends TestBenchTestCase {
  * 
- *      @Rule public ScreenshotOnFailureRule screenshotOnFailure = new ScreenshotOnFailureRule(this, true);
+ *      \@Rule public ScreenshotOnFailureRule screenshotOnFailure = new ScreenshotOnFailureRule(this, true);
  * 
- *      @Test public void myTest() throws Exception {
+ *      \@Test public void myTest() throws Exception {
  *          ...
  *      }
  * }
  * </code>
  * </pre>
- * <p/>
+ * <p>
  * <em>NOTE!</em> Do <b>NOT</b> call <code>driver.quit()</code> in your
  * <code>tearDown()</code> method (annotated with {@link org.junit.After}). The
  * tear down method will be run before this rule is run and if the driver is
  * closed it is no longer possible to grab a screen shot of the situation.
+ * </p>
  */
 public class ScreenshotOnFailureRule extends TestWatcher {
 

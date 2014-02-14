@@ -205,8 +205,8 @@ public class ImageUtil {
     /**
      * Returns the 16x16 RGB block starting at (x,y) from the given image
      * 
-     * @param image
-     *            The image containing the block
+     * @param properties
+     *            The properties of the image (image + metadata)
      * @param x
      *            The x coordinate of the block (in pixels)
      * @param y

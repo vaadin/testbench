@@ -86,10 +86,11 @@ public abstract class TestBenchTestCase extends
     }
 
     /**
-     * Returns the {@link WebDriver} instance previously specified by {@link
-     * setDriver()}, or (if the previously provided WebDriver instance was not
-     * already a {@link TestBenchDriverProxy} instance) a
-     * {@link TestBenchDriverProxy} that wraps that driver.
+     * Returns the {@link WebDriver} instance previously specified by
+     * {@link #setDriver(org.openqa.selenium.WebDriver)}, or (if the previously
+     * provided WebDriver instance was not already a
+     * {@link TestBenchDriverProxy} instance) a {@link TestBenchDriverProxy}
+     * that wraps that driver.
      * 
      * @return the active WebDriver instance
      */
@@ -121,11 +122,11 @@ public abstract class TestBenchTestCase extends
         return ((HasTestBenchCommandExecutor) driver)
                 .getTestBenchCommandExecutor();
     }
-    
+
     public WebElement findElement(org.openqa.selenium.By by) {
         return getContext().findElement(by);
     }
-    
+
     public List<WebElement> findElements(org.openqa.selenium.By by) {
         return getContext().findElements(by);
     }
