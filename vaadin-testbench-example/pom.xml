@@ -10,7 +10,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <vaadin.version>7.1.testbench4-SNAPSHOT</vaadin.version>
+        <vaadin.version>7.2-SNAPSHOT</vaadin.version>
         <vaadin.plugin.version>7.1.8</vaadin.plugin.version>
     </properties>
     <repositories>
