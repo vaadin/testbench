@@ -51,7 +51,6 @@
         <module>vaadin-testbench</module>
         <!--<module>vaadin-testbench-example</module>-->
         <module>vaadin-testbench-standalone</module>
-        <module>vaadin-testbench-recorder</module>
         <module>vaadin-testbench-assembly</module>
     </modules>
 
