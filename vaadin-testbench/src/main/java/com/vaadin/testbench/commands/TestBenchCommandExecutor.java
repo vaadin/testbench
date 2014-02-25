@@ -357,9 +357,13 @@ public class TestBenchCommandExecutor implements TestBenchCommands,
             }
             if (element != null) {
                 return TestBench.createElement(element, this);
+            } else {
+                throw new NoSuchElementException(
+                        "Vaadin could not find an element with the selector "
+                                + selector);
             }
         }
-        return null;
+        throw new RuntimeException("WebDriver is not a JavascriptExecutor");
     }
 
     @Override
