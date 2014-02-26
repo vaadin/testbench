@@ -1,25 +1,32 @@
 package com.vaadin.testbench;
 
-import com.vaadin.testbench.commands.TestBenchCommandExecutor;
+import static org.easymock.EasyMock.contains;
+import static org.easymock.EasyMock.expect;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Collections;
+import java.util.List;
+
 import org.easymock.EasyMock;
 import org.junit.Test;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-
-import java.util.Collections;
-import java.util.List;
-
-import static org.junit.Assert.assertTrue;
+import org.openqa.selenium.firefox.FirefoxDriver;
 
 public class TestBenchDriverProxyTest {
 
     @Test
-    public void testFindElementsByVaadin_shouldNotCallActualDriver() throws Exception {
+    public void testFindElementsByVaadin_shouldNotCallActualDriver()
+            throws Exception {
         WebDriver mockDriver = EasyMock.createMock(WebDriver.class);
         TestBenchDriverProxy tbdp = new TestBenchDriverProxy(mockDriver);
         EasyMock.replay(mockDriver);
-        tbdp.findElements(By.vaadin("foo"));
+        try {
+            tbdp.findElements(By.vaadin("foo"));
+        } catch (RuntimeException e) {
+            assertTrue(e.getMessage().contains("is not a JavascriptExecutor"));
+        }
         EasyMock.verify(mockDriver);
     }
 
@@ -36,7 +43,11 @@ public class TestBenchDriverProxyTest {
 
     @Test
     public void testFindElementsByVaadin_shouldCallByVaadin() throws Exception {
-        WebDriver mockDriver = EasyMock.createMock(WebDriver.class);
+        FirefoxDriver mockDriver = EasyMock.createMock(FirefoxDriver.class);
+        expect(
+                mockDriver.executeScript(contains("getElementByPath"),
+                        contains("foo"))).andReturn(
+                EasyMock.createMock(WebElement.class));
         TestBenchDriverProxy tbdp = new TestBenchDriverProxy(mockDriver);
         EasyMock.replay(mockDriver);
         // Beware, this is ugly...
