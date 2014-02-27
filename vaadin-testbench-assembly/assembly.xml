@@ -90,6 +90,10 @@
             <filtered>true</filtered>
         </file>
         <file>
+            <source>../doc/vaadin-logo.png</source>
+            <outputDirectory>documentation</outputDirectory>
+        </file>
+        <file>
             <source>../vaadin-testbench/pom.xml</source>
             <outputDirectory>maven</outputDirectory>
         </file>
