@@ -12,36 +12,27 @@
  */
 package com.vaadin.testbench.commands;
 
-import com.vaadin.testbench.Parameters;
-import com.vaadin.testbench.screenshot.ImageComparison;
-import com.vaadin.testbench.screenshot.ImageComparisonTest;
-import com.vaadin.testbench.screenshot.ReferenceNameGenerator;
-import com.vaadin.testbench.testutils.ImageLoader;
-import org.junit.Before;
-import org.junit.Test;
-import org.openqa.selenium.Capabilities;
-import org.openqa.selenium.HasCapabilities;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
+import static org.easymock.EasyMock.*;
+import static org.junit.Assert.*;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
-import static org.easymock.EasyMock.contains;
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.createNiceMock;
-import static org.easymock.EasyMock.eq;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.isA;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import org.junit.Before;
+import org.junit.Test;
+import org.openqa.selenium.Capabilities;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.remote.RemoteWebDriver;
+
+import com.vaadin.testbench.Parameters;
+import com.vaadin.testbench.screenshot.ImageComparison;
+import com.vaadin.testbench.screenshot.ImageComparisonTest;
+import com.vaadin.testbench.screenshot.ReferenceNameGenerator;
+import com.vaadin.testbench.testutils.ImageLoader;
 
 public class TestBenchCommandExecutorTest {
 
@@ -227,13 +218,13 @@ public class TestBenchCommandExecutorTest {
 
     private WebDriver mockScreenshotDriver(int nrScreenshotsGrabbed,
             boolean expectGetCapabilities) throws IOException {
-        WebDriver driver = createMock(FirefoxDriver.class);
+        RemoteWebDriver driver = createMock(FirefoxDriver.class);
         byte[] screenshotBytes = ImageLoader.loadImageBytes(IMG_FOLDER,
                 "cursor-bottom-edge-off.png");
-        expect(((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES))
+        expect(driver.getScreenshotAs(OutputType.BYTES))
                 .andReturn(screenshotBytes).times(nrScreenshotsGrabbed);
         if (expectGetCapabilities) {
-            expect(((HasCapabilities) driver).getCapabilities()).andReturn(
+            expect(driver.getCapabilities()).andReturn(
                     createNiceMock(Capabilities.class)).once();
         }
         return driver;

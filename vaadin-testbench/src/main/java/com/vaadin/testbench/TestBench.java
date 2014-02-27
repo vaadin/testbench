@@ -88,10 +88,6 @@ public class TestBench {
     }
 
     public static WebDriver createDriver(WebDriver driver) {
-        if (!(driver instanceof TakesScreenshot)) {
-            driver = new Augmenter().augment(driver);
-        }
-
         Set<Class<?>> allInterfaces = extractInterfaces(driver);
         Class<TestBenchDriverProxy> driverClass = TestBenchDriverProxy.class;
         allInterfaces.addAll(extractInterfaces(driverClass));

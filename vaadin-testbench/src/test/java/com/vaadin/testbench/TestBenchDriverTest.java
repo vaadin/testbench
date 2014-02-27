@@ -12,15 +12,7 @@
  */
 package com.vaadin.testbench;
 
-import static org.easymock.EasyMock.anyObject;
-import static org.easymock.EasyMock.contains;
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.createNiceMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.expectLastCall;
-import static org.easymock.EasyMock.isA;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
+import static org.easymock.EasyMock.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -31,15 +23,11 @@ import java.util.Set;
 
 import org.junit.Ignore;
 import org.junit.Test;
+import org.openqa.selenium.*;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Capabilities;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriver.Navigation;
 import org.openqa.selenium.WebDriver.Options;
 import org.openqa.selenium.WebDriver.TargetLocator;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.internal.WrapsDriver;
 
@@ -57,7 +45,7 @@ public class TestBenchDriverTest {
 
     @Test
     public void testTestBenchDriverActsAsProxy() {
-        WebDriver mockDriver = createMock(FirefoxDriver.class);
+        FirefoxDriver mockDriver = createMock(FirefoxDriver.class);
         mockDriver.close();
         expectLastCall().once();
         WebElement mockElement = createNiceMock(WebElement.class);
