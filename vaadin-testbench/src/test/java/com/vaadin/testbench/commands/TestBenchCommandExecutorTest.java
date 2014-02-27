@@ -47,6 +47,7 @@ import com.vaadin.testbench.screenshot.ImageComparison;
 import com.vaadin.testbench.screenshot.ImageComparisonTest;
 import com.vaadin.testbench.screenshot.ReferenceNameGenerator;
 import com.vaadin.testbench.testutils.ImageLoader;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
 public class TestBenchCommandExecutorTest {
 
@@ -232,13 +233,13 @@ public class TestBenchCommandExecutorTest {
 
     private WebDriver mockScreenshotDriver(int nrScreenshotsGrabbed,
             boolean expectGetCapabilities) throws IOException {
-        WebDriver driver = createMock(FirefoxDriver.class);
+        RemoteWebDriver driver = createMock(FirefoxDriver.class);
         byte[] screenshotBytes = ImageLoader.loadImageBytes(IMG_FOLDER,
                 "cursor-bottom-edge-off.png");
-        expect(((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES))
+        expect(driver.getScreenshotAs(OutputType.BYTES))
                 .andReturn(screenshotBytes).times(nrScreenshotsGrabbed);
         if (expectGetCapabilities) {
-            expect(((HasCapabilities) driver).getCapabilities()).andReturn(
+            expect(driver.getCapabilities()).andReturn(
                     createNiceMock(Capabilities.class)).once();
         }
         return driver;
