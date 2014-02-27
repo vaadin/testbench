@@ -29,7 +29,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
-import com.vaadin.testbench.ElementQuery;
 import com.vaadin.testbench.TestBenchTestCase;
 import com.vaadin.testbench.elements.ComboBoxElement;
 import com.vaadin.testbench.elements.PanelElement;
@@ -54,24 +53,45 @@ public class ElementQueryTest extends TestBenchTestCase {
                 .andReturn(Arrays.asList(mockElement)).once();
     }
 
+    private void expectSelectorStartingAt(String vaadinSelector) {
+        expect(
+                ((JavascriptExecutor) mockDriver).executeScript(
+                        anyObject(String.class), contains(vaadinSelector),
+                        anyObject(WebElement.class))).andReturn(
+                Arrays.asList(mockElement)).once();
+
+    }
+
     @Test
     public void testElementQueryGeneratesCorrectSelectors() {
         // First ComboBox
-        expectSelector("(//com.vaadin.ui.ComboBox)[0]");
+        expectSelector("//com.vaadin.ui.ComboBox");
         // All ComboBoxes with caption "Country" somewhere inside a
         // VerticalLayout
         expectSelector("//com.vaadin.ui.VerticalLayout"
                 + "//com.vaadin.ui.ComboBox[caption=\"Country\"]");
-        // First ComboBox with caption in VerticalLayout with id "vl2" which is
+        // First ComboBox with caption in VerticalLayout with id "vl1" which is
         // a direct child of second Panel in application
-        expectSelector("(" + "//com.vaadin.ui.Panel[1]"
+        expectSelector("//com.vaadin.ui.Panel[1]"
                 + "/com.vaadin.ui.VerticalLayout[id=\"vl2\"]"
-                + "//com.vaadin.ui.ComboBox[caption=\"Country\"]" + ")[0]");
+                + "//com.vaadin.ui.ComboBox[caption=\"Country\"]");
+
+        // Another way to split the search in two parts. First with the ID and
+        // then just ComboBox StartingAt
+        expectSelector("//com.vaadin.ui.Panel[1]"
+                + "/com.vaadin.ui.VerticalLayout[id=\"vl1\"]");
+        expectSelectorStartingAt("//com.vaadin.ui.ComboBox[caption=\"Country\"]");
         replay(mockDriver);
-        ElementQuery<ComboBoxElement> cbQuery = $(ComboBoxElement.class);
-        cbQuery.first();
-        cbQuery.caption("Country").in(VerticalLayoutElement.class).all();
-        cbQuery.id("vl2").childOf(PanelElement.class).index(1).first();
+        $(ComboBoxElement.class).first();
+        $(VerticalLayoutElement.class).$(ComboBoxElement.class)
+                .caption("Country").first();
+
+        $(ComboBoxElement.class).caption("Country")
+                .in($(VerticalLayoutElement.class).state("id", "vl2"))
+                .child($(PanelElement.class).index(1)).first();
+
+        $(PanelElement.class).index(1).$$(VerticalLayoutElement.class)
+                .id("vl1").$(ComboBoxElement.class).caption("Country").first();
     }
 
     @After

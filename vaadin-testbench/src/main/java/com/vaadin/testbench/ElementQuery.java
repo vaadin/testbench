@@ -73,8 +73,8 @@ public class ElementQuery<T extends AbstractElement> {
     private Map<String, Set<String>> statevars = new LinkedHashMap<String, Set<String>>();
     private int idx = -1;
     private SearchContext searchContext;
-    private Class<T> elementClass;
     private boolean recursive = true;
+    Class<T> elementClass;
     private Stack<ElementQuery<?>> queryStack = new Stack<ElementQuery<?>>();
 
     /**
@@ -85,7 +85,6 @@ public class ElementQuery<T extends AbstractElement> {
      */
     public ElementQuery(Class<T> elementClass) {
         this.elementClass = elementClass;
-        queryStack.push(this);
     }
 
     /**
@@ -102,16 +101,52 @@ public class ElementQuery<T extends AbstractElement> {
     }
 
     /**
+     * Prepare a {@link ElementQuery} instance to use for locating components on
+     * the client. The returned object can be manipulated to uniquely identify
+     * the sought-after object. If this function gets called through an element,
+     * it uses the element as its search context. Otherwise the search context
+     * is the driver.
+     * 
+     * @return an appropriate {@link ElementQuery} instance
+     */
+    public <E extends AbstractElement> ElementQuery<E> $(Class<E> cls) {
+        ElementQuery<E> newQuery = new ElementQuery<E>(cls)
+                .context(getContext());
+        newQuery.queryStack.push(this);
+        return newQuery;
+    }
+
+    /**
+     * Prepare a {@link ElementQuery} instance to use for locating components on
+     * the client. The returned object can be manipulated to uniquely identify
+     * the sought-after object. If this function gets called through an element,
+     * it uses the element as its search context. Otherwise the search context
+     * is the driver.
+     * 
+     * This search is not recursive and can find the given hierarchy only if it
+     * can be found as direct children of given context. The same can be done
+     * with {@code $(Foo.class).recursive(false) }
+     * 
+     * @return an appropriate {@link ElementQuery} instance
+     */
+    public <E extends AbstractElement> ElementQuery<E> $$(Class<E> cls) {
+        ElementQuery<E> newQuery = new ElementQuery<E>(cls)
+                .context(getContext());
+        newQuery.recursive(false);
+        newQuery.queryStack.push(this);
+        return newQuery;
+    }
+
+    /**
      * Adds another query to the search hierarchy of this ElementQuery. This
      * search is recursive.
      * 
-     * @param cls
-     *            Parent type for search hierarchy
+     * @param query
+     *            ElementQuery instance to be used as part of search hierarchy.
      * @return a reference to self
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    public ElementQuery<T> in(Class<? extends AbstractElement> cls) {
-        queryStack.push(new ElementQuery(cls));
+    public <E extends AbstractElement> ElementQuery<T> in(ElementQuery<E> query) {
+        queryStack.push(query);
         return this;
     }
 
@@ -119,30 +154,29 @@ public class ElementQuery<T extends AbstractElement> {
      * Adds another query to the search hierarchy of this ElementQuery. This
      * search is non-recursive. Only direct children are found.
      * 
-     * @param cls
-     *            Parent type for search hierarchy
+     * @param query
+     *            ElementQuery instance to be used as part of search hierarchy.
      * @return a reference to self
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    public ElementQuery<T> childOf(Class<? extends AbstractElement> cls) {
-        queryStack.peek().recursive = false;
-        queryStack.push(new ElementQuery(cls));
-        return this;
+    public <E extends AbstractElement> ElementQuery<T> child(
+            ElementQuery<E> query) {
+        if (queryStack.isEmpty()) {
+            recursive(false);
+        } else {
+            queryStack.peek().recursive(false);
+        }
+        return in(query);
     }
 
     /**
-     * Add a requirement to accept components with the special id state set to a
-     * certain value. This refers to Vaadin server side id that can be set for
-     * components with .setId(). If query has a search hierarchy set with .in()
-     * or .childOf() the requirement is applied to the latest referenced Element
-     * type.
+     *  Executes a search for element with given ID.
      * 
      * @param id
-     *            a String value or null
-     * @return a reference to self
+     *            a String value
+     * @return found element
      */
-    public ElementQuery<T> id(String id) {
-        return state("id", id);
+    public T id(String id) {
+        return state("id", id).first();
     }
 
     /**
@@ -179,16 +213,14 @@ public class ElementQuery<T extends AbstractElement> {
      *         entered
      */
     public ElementQuery<T> state(String varname, String value) {
-
-        ElementQuery<?> current = queryStack.peek();
         // NOTE: this should be changed to a regexp if someone has the time
         try {
             Integer.parseInt(varname);
         } catch (NumberFormatException e) {
-            if (!current.statevars.containsKey(varname)) {
-                current.statevars.put(varname, new LinkedHashSet<String>());
+            if (!statevars.containsKey(varname)) {
+                statevars.put(varname, new LinkedHashSet<String>());
             }
-            current.statevars.get(varname).add(value);
+            statevars.get(varname).add(value);
             return this;
         }
 
@@ -227,7 +259,7 @@ public class ElementQuery<T extends AbstractElement> {
      * @return a reference to self
      */
     public ElementQuery<T> index(int index) {
-        queryStack.peek().idx = index;
+        idx = index;
         return this;
     }
 
@@ -245,8 +277,8 @@ public class ElementQuery<T extends AbstractElement> {
     }
 
     /**
-     * Return the {@link SearchContext} previously set with the
-     * {@link #in} call.
+     * Return the {@link SearchContext} previously set with the {@link #in}
+     * call.
      */
     protected SearchContext getContext() {
         return searchContext;
@@ -343,10 +375,9 @@ public class ElementQuery<T extends AbstractElement> {
                 .clone();
 
         // Chain all the queries from stack.
-        ElementQuery<?> current = tmpStack.pop();
-        while (current != this) {
+        while (!tmpStack.isEmpty()) {
+            ElementQuery<?> current = tmpStack.pop();
             output += current.generateQuery();
-            current = tmpStack.pop();
         }
 
         output += (recursive ? "//" : "/");
