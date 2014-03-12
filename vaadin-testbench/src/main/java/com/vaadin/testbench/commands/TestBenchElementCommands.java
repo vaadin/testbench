@@ -14,6 +14,8 @@ package com.vaadin.testbench.commands;
 
 import org.openqa.selenium.Keys;
 
+import com.vaadin.testbench.elements.AbstractElement;
+
 public interface TestBenchElementCommands {
 
     /**
@@ -61,4 +63,22 @@ public interface TestBenchElementCommands {
      *            (optional).
      */
     void click(int x, int y, Keys... modifiers);
+
+    /**
+     * Decorates the element with the specified Element type, making it possible
+     * to use Vaadin component-specific API on elements found using standard
+     * selenium API.
+     * <p>
+     * Example: <code>
+     *     WebElement e = driver.findElement(By.id("my-table"));
+     *     TableElement table = testBenchElement(e).wrap(TableElement.class);
+     *     assertEquals("Foo", table.getHeaderCell(1).getText());
+     * </code>
+     * 
+     * @param elementType
+     *            The type (class) containing the API to decorate with. Must
+     *            extend {@link com.vaadin.testbench.elements.AbstractElement}.
+     * @return The element wrapped in an instance of the specified element type.
+     */
+    <T extends AbstractElement> T wrap(Class<T> elementType);
 }

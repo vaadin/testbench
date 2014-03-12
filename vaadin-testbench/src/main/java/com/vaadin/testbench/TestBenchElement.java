@@ -15,14 +15,8 @@ package com.vaadin.testbench;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openqa.selenium.*;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Dimension;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.Point;
-import org.openqa.selenium.SearchContext;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.internal.WrapsElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -31,6 +25,7 @@ import com.vaadin.testbench.By.ByVaadin;
 import com.vaadin.testbench.commands.CanWaitForVaadin;
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.commands.TestBenchElementCommands;
+import com.vaadin.testbench.elements.AbstractElement;
 
 /**
  * TestBenchElement is a WebElement wrapper. It provides Vaadin specific helper
@@ -332,6 +327,11 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
             actions.keyUp(modifier);
         }
         actions.build().perform();
+    }
+
+    @Override
+    public <T extends AbstractElement> T wrap(Class<T> elementType) {
+        return TestBench.createElement(elementType, getWrappedElement(), getCommandExecutor());
     }
 
     @Override

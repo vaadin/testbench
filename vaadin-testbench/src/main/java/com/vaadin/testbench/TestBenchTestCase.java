@@ -21,6 +21,7 @@ import org.openqa.selenium.WebElement;
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.commands.TestBenchCommands;
 import com.vaadin.testbench.commands.TestBenchElementCommands;
+import com.vaadin.testbench.elements.AbstractElement;
 
 /**
  * A superclass with some helpers to aid TestBench developers. This superclass
@@ -129,5 +130,27 @@ public abstract class TestBenchTestCase extends
 
     public List<WebElement> findElements(org.openqa.selenium.By by) {
         return getContext().findElements(by);
+    }
+
+    /**
+     * Decorates the element with the specified Element type, making it possible
+     * to use Vaadin component-specific API on elements found using standard
+     * selenium API.
+     * <p>
+     * Example: <code>
+     *     TableElement table = e.wrap(TableElement.class, driver.findElement(By.id("my-table")));
+     *     assertEquals("Foo", table.getHeaderCell(1).getText());
+     * </code>
+     * 
+     * @param elementType
+     *            The type (class) containing the API to decorate with. Must
+     *            extend {@link com.vaadin.testbench.elements.AbstractElement}.
+     * @param element
+     *            The element instance to decorate
+     * @return The element wrapped in an instance of the specified element type.
+     */
+    public <T extends AbstractElement> T wrap(Class<T> elementType,
+            WebElement element) {
+        return ((TestBenchElement) element).wrap(elementType);
     }
 }

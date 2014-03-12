@@ -111,9 +111,9 @@ public class TestBench {
     }
 
     public static TestBenchElement createElement(WebElement webElement,
-            TestBenchCommandExecutor tbCoimmandExecutor) {
+            TestBenchCommandExecutor tbCommandExecutor) {
         return createElement(TestBenchElement.class, webElement,
-                tbCoimmandExecutor);
+                tbCommandExecutor);
     }
 
     /**
