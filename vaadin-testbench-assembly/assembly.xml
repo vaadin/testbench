@@ -46,6 +46,7 @@
             <outputDirectory>documentation</outputDirectory>
             <includes>
                 <include>licen*</include>
+                <include>GettingStarted.pdf</include>
             </includes>
         </fileSet>
         <fileSet>
