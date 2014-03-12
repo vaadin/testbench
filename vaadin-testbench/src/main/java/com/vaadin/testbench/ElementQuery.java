@@ -169,7 +169,7 @@ public class ElementQuery<T extends AbstractElement> {
     }
 
     /**
-     *  Executes a search for element with given ID.
+     * Executes a search for element with given ID.
      * 
      * @param id
      *            a String value
@@ -317,6 +317,16 @@ public class ElementQuery<T extends AbstractElement> {
             throw new NoSuchElementException(errorString);
         }
         return elements.get(0);
+    }
+
+    /**
+     * Checks if this ElementQuery describes existing elements. Same as
+     * .all().isEmpty().
+     * 
+     * @return true if elements exists. false if not
+     */
+    public boolean exists() {
+        return !all().isEmpty();
     }
 
     /**
