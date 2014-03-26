@@ -1,8 +1,6 @@
 package com.vaadin.testbenchexample;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import org.junit.Test;
 import org.openqa.selenium.Keys;
@@ -50,7 +48,8 @@ public class AdvancedCommandsITCase extends TestBase {
         // We fill in a comment and verify the commenting feature works as
         // expected.
         getButton("Add Comment").click();
-        WebElement commentField = $(TextFieldElement.class).in(WindowElement.class).first();
+        WebElement commentField = $(WindowElement.class).$(
+                TextFieldElement.class).first();
 
         // Make sure the input is empty
         commentField.clear();
@@ -60,8 +59,7 @@ public class AdvancedCommandsITCase extends TestBase {
         commentField.sendKeys(COMMENT_TEXT, Keys.RETURN);
 
         // Ensure window is closed
-        boolean windowPresent = isElementPresent(WindowElement.class);
-        if (windowPresent) {
+        if ($(WindowElement.class).exists()) {
             fail("Modal window prompting textfield was not properly closed");
         }
 
@@ -70,11 +68,13 @@ public class AdvancedCommandsITCase extends TestBase {
         getButton("=").click();
 
         // Check that the display is correct (1 + 2 = 3)
-        assertEquals("3.0", $(TextFieldElement.class).first().getAttribute("value"));
+        assertEquals("3.0",
+                $(TextFieldElement.class).first().getAttribute("value"));
 
         // Verify the second row in log contains our comment
         // Uses Vaadin table selector with subpart.
-        String secondRowText = $(TableElement.class).first().getCell(1, 0).getText();
+        String secondRowText = $(TableElement.class).first().getCell(1, 0)
+                .getText();
         assertTrue(secondRowText.contains(COMMENT_TEXT));
     }
 

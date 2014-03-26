@@ -37,15 +37,15 @@ public class SelectorExamplesITCase extends TestBase {
         // a button with given caption in a specific container can be done with
         // .in() or .childOf() function. We are looking for a button with
         // caption "+" somewhere inside a Panel with caption "Calculator".
-        $(ButtonElement.class).caption("+").in(PanelElement.class)
-                .caption("Calculator").first().click();
+        $(PanelElement.class).caption("Calculator").$(ButtonElement.class)
+                .caption("+").first().click();
 
         // You can also get all the ButtonElements with .all(). You get a list
         // of Elements that can be used in many ways. Filtering with
         // ElementQuery features can be used to limit the results. This will
         // find all direct children of Keypad (which is a GridLayout).
-        for (ButtonElement button : $(ButtonElement.class).childOf(
-                GridLayoutElement.class).all()) {
+        for (ButtonElement button : $(GridLayoutElement.class).$$(
+                ButtonElement.class).all()) {
             if ("2".equals(button.getText())) {
                 button.click();
             }

@@ -26,8 +26,8 @@ public class AddCommentPageObject extends TestBenchTestCase {
         // We want to find a textfield inside a Window instance - the only
         // Window we expect to be visible is the Add Comment modal dialog
         // window.
-        $(TextFieldElement.class).in(WindowElement.class).first().sendKeys(comment,
-                Keys.RETURN);
+        $(WindowElement.class).$(TextFieldElement.class).first()
+                .sendKeys(comment, Keys.RETURN);
         return this;
     }
 
@@ -43,11 +43,9 @@ public class AddCommentPageObject extends TestBenchTestCase {
      */
     public boolean isOpen() {
         /*
-         * We get away easily here as there is only one window in the
-         * application. In more complex applications we could check e.g. that
-         * the element with the style name v-window-header contains the expected
-         * window header string.
+         * There is only one window in the application. In more complex
+         * applications we could add filtering on caption or ID.
          */
-        return isElementPresent(WindowElement.class);
+        return $(WindowElement.class).exists();
     }
 }

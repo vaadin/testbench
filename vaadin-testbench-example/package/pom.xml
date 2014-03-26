@@ -1,5 +1,3 @@
-set( $symbol_dollar = '$' )
-
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
@@ -12,15 +10,36 @@ set( $symbol_dollar = '$' )
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <vaadin.version>7.1.testbench4-SNAPSHOT</vaadin.version>
+        <vaadin.version>7.2.0.beta1</vaadin.version>
     </properties>
-
     <repositories>
         <repository>
             <id>vaadin-addons</id>
             <url>http://maven.vaadin.com/vaadin-addons</url>
         </repository>
+        <repository>
+            <id>vaadin-snapshots</id>
+            <url>http://oss.sonatype.org/content/repositories/vaadin-snapshots/</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
     </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>vaadin-snapshots</id>
+            <url>http://oss.sonatype.org/content/repositories/vaadin-snapshots/</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
 
     <build>
         <plugins>
@@ -45,8 +64,8 @@ set( $symbol_dollar = '$' )
                     <stopKey>testbenchexample</stopKey>
                 </configuration>
                 <executions>
-                    <!-- start and stop jetty (running our app) when running integration
-                        tests -->
+                    <!-- start and stop jetty (running our app) when running
+                        integration tests -->
                     <execution>
                         <id>start-jetty</id>
                         <phase>pre-integration-test</phase>
@@ -87,7 +106,8 @@ set( $symbol_dollar = '$' )
                         <include>**/*ITCase.java</include>
                         <include>**/bdd/*.java</include>
                     </includes>
-                    <!-- So that the browser correctly gains focus on Mac OS X -->
+                    <!-- So that the browser correctly gains focus on Mac
+                        OS X -->
                     <systemProperties>
                         <property>
                             <name>java.awt.headless</name>
@@ -102,19 +122,29 @@ set( $symbol_dollar = '$' )
     <dependencies>
         <dependency>
             <groupId>com.vaadin</groupId>
-            <artifactId>vaadin</artifactId>
-            <version>${symbol_dollar}{vaadin.version}</version>
+            <artifactId>vaadin-server</artifactId>
+            <version>${vaadin.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.vaadin</groupId>
+            <artifactId>vaadin-client-compiled</artifactId>
+            <version>${vaadin.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.vaadin</groupId>
+            <artifactId>vaadin-themes</artifactId>
+            <version>${vaadin.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.0.1</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.vaadin</groupId>
             <artifactId>vaadin-testbench</artifactId>
             <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.11</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -124,5 +154,4 @@ set( $symbol_dollar = '$' )
             <scope>test</scope>
         </dependency>
     </dependencies>
-
 </project>
