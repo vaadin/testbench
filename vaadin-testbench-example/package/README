@@ -34,7 +34,7 @@ created like this:
 
 	mvn archetype:generate \
 	-DarchetypeGroupId=com.vaadin \
-	-DarchetypeArtifactId=vaadin-archetype-clean \
+	-DarchetypeArtifactId=vaadin-archetype-application \
 	-DarchetypeVersion=LATEST \
 	-DgroupId=your.company \
 	-DartifactId=project-name \
