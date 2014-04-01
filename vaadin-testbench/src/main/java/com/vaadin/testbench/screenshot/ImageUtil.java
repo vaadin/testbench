@@ -27,8 +27,6 @@ import javax.imageio.ImageIO;
 
 import org.apache.commons.codec.binary.Base64;
 
-import com.vaadin.testbench.qprofile.QProfile;
-
 /**
  * These image utility functions are for internal use only.
  */
@@ -55,24 +53,19 @@ public class ImageUtil {
      * @return Base64 encoded String of image
      */
     public static String encodeImageToBase64(BufferedImage image) {
-        QProfile.begin();
+        String encodedImage = "";
+        Base64 encoder = new Base64();
         try {
-            String encodedImage = "";
-            Base64 encoder = new Base64();
-            try {
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                ImageIO.write(image, "png", baos);
-                baos.flush();
-                byte[] encodedBytes = encoder.encode(baos.toByteArray());
-                encodedImage = new String(encodedBytes);
-                baos.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return encodedImage;
-        } finally {
-            QProfile.end();
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ImageIO.write(image, "png", baos);
+            baos.flush();
+            byte[] encodedBytes = encoder.encode(baos.toByteArray());
+            encodedImage = new String(encodedBytes);
+            baos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+        return encodedImage;
     }
 
     /**
@@ -82,16 +75,11 @@ public class ImageUtil {
      * @return
      */
     public static double getLuminance(int rgb) {
-        QProfile.begin();
-        try {
-            int r = ((rgb >> 16) & 0xFF);
-            int g = ((rgb >> 8) & 0xFF);
-            int b = (rgb & 0xFF);
+        int r = ((rgb >> 16) & 0xFF);
+        int g = ((rgb >> 8) & 0xFF);
+        int b = (rgb & 0xFF);
 
-            return getLuminance(r, g, b);
-        } finally {
-            QProfile.end();
-        }
+        return getLuminance(r, g, b);
     }
 
     private static double getLuminance(int r, int g, int b) {
@@ -105,13 +93,8 @@ public class ImageUtil {
      */
     public static boolean imagesSameSize(BufferedImage image1,
             BufferedImage image2) {
-        QProfile.begin();
-        try {
-            return (image1.getWidth() == image2.getWidth() && image1
-                    .getHeight() == image2.getHeight());
-        } finally {
-            QProfile.end();
-        }
+        return (image1.getWidth() == image2.getWidth() && image1.getHeight() == image2
+                .getHeight());
     }
 
     /**
@@ -126,22 +109,16 @@ public class ImageUtil {
      */
     public static List<BufferedImage> cropToBeSameSize(BufferedImage image1,
             BufferedImage image2) {
-        QProfile.begin();
-        try {
-
-            if (imagesSameSize(image1, image2)) {
-                return Arrays.asList(image1, image2);
-            }
-
-            int minHeight = Math.min(image1.getHeight(), image2.getHeight());
-            int minWidth = Math.min(image1.getWidth(), image2.getWidth());
-
-            BufferedImage cropped1 = cropImage(image1, minWidth, minHeight);
-            BufferedImage cropped2 = cropImage(image2, minWidth, minHeight);
-            return Arrays.asList(cropped1, cropped2);
-        } finally {
-            QProfile.end();
+        if (imagesSameSize(image1, image2)) {
+            return Arrays.asList(image1, image2);
         }
+
+        int minHeight = Math.min(image1.getHeight(), image2.getHeight());
+        int minWidth = Math.min(image1.getWidth(), image2.getWidth());
+
+        BufferedImage cropped1 = cropImage(image1, minWidth, minHeight);
+        BufferedImage cropped2 = cropImage(image2, minWidth, minHeight);
+        return Arrays.asList(cropped1, cropped2);
     }
 
     /**
@@ -156,16 +133,10 @@ public class ImageUtil {
      */
     private static BufferedImage cropImage(BufferedImage image, int width,
             int height) {
-        QProfile.begin();
-        try {
-
-            if (image.getWidth() == width && image.getHeight() == height) {
-                return image;
-            }
-            return image.getSubimage(0, 0, width, height);
-        } finally {
-            QProfile.end();
+        if (image.getWidth() == width && image.getHeight() == height) {
+            return image;
         }
+        return image.getSubimage(0, 0, width, height);
     }
 
     /**
@@ -224,82 +195,75 @@ public class ImageUtil {
     public static final int[] getBlock(final ImageProperties properties, int x,
             int y, int[] result, int[] sample) {
 
-        QProfile.begin();
-        try {
+        final int width;
+        final int height;
 
-            final int width;
-            final int height;
+        if (result == null) {
+            result = new int[16 * 16];
+        }
 
-            if (result == null) {
-                result = new int[16 * 16];
-            }
+        if (sample == null) {
+            sample = new int[16 * 16 * 4];
+        }
 
-            if (sample == null) {
-                sample = new int[16 * 16 * 4];
-            }
+        if (x + 16 >= properties.width) {
+            width = properties.width - x;
+        } else {
+            width = 16;
+        }
 
-            if (x + 16 >= properties.width) {
-                width = properties.width - x;
+        if (y + 16 >= properties.height) {
+            height = properties.height - y;
+        } else {
+            height = 16;
+        }
+
+        final int l = width * height;
+
+        if (properties.fallback) {
+
+            properties.image.getRGB(x, y, width, height, result, 0, width);
+
+        } else {
+
+            // NOTE: Apparently raster.getPixels() standardises channel
+            // order in the retrieved sample.
+            // NOTE: if this is NOT the case, provide system info and
+            // relevant screenshot & reference for new integration test
+            properties.raster.getPixels(x, y, width, height, sample);
+
+            if (properties.alpha) {
+
+                int p = 0;
+                for (int i = 0; i < l; ++i) {
+                    result[i] = (sample[p + 3] << 24) // A
+                            | (sample[p] << 16) // R
+                            | (sample[p + 1] << 8) // G
+                            | sample[p + 2]; // B
+                    p += 4;
+                }
+
             } else {
-                width = 16;
-            }
 
-            if (y + 16 >= properties.height) {
-                height = properties.height - y;
-            } else {
-                height = 16;
-            }
-
-            final int l = width * height;
-
-            if (properties.fallback) {
-
-                properties.image.getRGB(x, y, width, height, result, 0, width);
-
-            } else {
-
-                // NOTE: Apparently raster.getPixels() standardises channel
-                // order in the retrieved sample.
-                // NOTE: if this is NOT the case, provide system info and
-                // relevant screenshot & reference for new integration test
-                properties.raster.getPixels(x, y, width, height, sample);
-
-                if (properties.alpha) {
-
-                    int p = 0;
-                    for (int i = 0; i < l; ++i) {
-                        result[i] = (sample[p + 3] << 24) // A
-                                | (sample[p] << 16) // R
-                                | (sample[p + 1] << 8) // G
-                                | sample[p + 2]; // B
-                        p += 4;
-                    }
-
-                } else {
-
-                    int p = 0;
-                    for (int i = 0; i < l; ++i) {
-                        result[i] = (255 << 24) // A
-                                | (sample[p] << 16) // R
-                                | (sample[p + 1] << 8) // G
-                                | sample[p + 2]; // B
-                        p += 3;
-                    }
-
+                int p = 0;
+                for (int i = 0; i < l; ++i) {
+                    result[i] = (255 << 24) // A
+                            | (sample[p] << 16) // R
+                            | (sample[p + 1] << 8) // G
+                            | sample[p + 2]; // B
+                    p += 3;
                 }
 
             }
 
-            // Fill the rest with zeros
-            for (int i = l, max = result.length; i < max; ++i) {
-                result[i] = 0;
-            }
-
-            return result;
-
-        } finally {
-            QProfile.end();
         }
+
+        // Fill the rest with zeros
+        for (int i = l, max = result.length; i < max; ++i) {
+            result[i] = 0;
+        }
+
+        return result;
     }
 
     /**
@@ -310,25 +274,18 @@ public class ImageUtil {
      * @return A copy of sourceImage
      */
     public static BufferedImage cloneImage(BufferedImage sourceImage) {
+        // This method could likely be optimized but the gain is probably
+        // small
+        final int w = sourceImage.getWidth();
+        final int h = sourceImage.getHeight();
 
-        QProfile.begin();
-        try {
+        BufferedImage newImage = new BufferedImage(w, h, TYPE_INT_RGB);
 
-            // This method could likely be optimized but the gain is probably
-            // small
-            final int w = sourceImage.getWidth();
-            final int h = sourceImage.getHeight();
+        Graphics2D g = (Graphics2D) newImage.getGraphics();
+        g.drawImage(sourceImage, 0, 0, w, h, null);
+        g.dispose();
 
-            BufferedImage newImage = new BufferedImage(w, h, TYPE_INT_RGB);
-
-            Graphics2D g = (Graphics2D) newImage.getGraphics();
-            g.drawImage(sourceImage, 0, 0, w, h, null);
-            g.dispose();
-
-            return newImage;
-        } finally {
-            QProfile.end();
-        }
+        return newImage;
     }
 
 }

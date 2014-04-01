@@ -27,7 +27,6 @@ import org.junit.Test;
 import org.junit.rules.TestName;
 
 import com.vaadin.testbench.Parameters;
-import com.vaadin.testbench.qprofile.QProfile;
 import com.vaadin.testbench.testutils.ImageLoader;
 
 public class ImageComparisonTest {
@@ -47,16 +46,6 @@ public class ImageComparisonTest {
                 + "/reference");
         Parameters.setScreenshotComparisonCursorDetection(false);
 
-        QProfile.setEnabled(false);
-        QProfile.clear();
-    }
-
-    @After
-    public void report() {
-        if (QProfile.isEnabled()) {
-            QProfile.reportByAverageTime();
-            QProfile.reportByCumulativeTime();
-        }
     }
 
     @Test
