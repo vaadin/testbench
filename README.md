@@ -22,4 +22,4 @@ For information about how you can contribute to the project, see https://vaadin.
 
 ## License
 
-This add-on is distributed under [CVAL 2.0](https://vaadin.com/license/cval-2.0).
+This add-on is distributed under [CVAL 3.0](https://vaadin.com/license/cval-3).
