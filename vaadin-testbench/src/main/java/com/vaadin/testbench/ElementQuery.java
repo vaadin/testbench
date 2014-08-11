@@ -26,8 +26,8 @@ import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebElement;
 
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
-import com.vaadin.testbench.elements.AbstractElement;
-import com.vaadin.testbench.elements.ServerClass;
+import com.vaadin.testbench.elementsbase.AbstractElement;
+import com.vaadin.testbench.elementsbase.ServerClass;
 
 /**
  * Descriptor class used for locating components.

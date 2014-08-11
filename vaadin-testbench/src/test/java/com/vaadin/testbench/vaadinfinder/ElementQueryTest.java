@@ -82,6 +82,7 @@ public class ElementQueryTest extends TestBenchTestCase {
                 + "/com.vaadin.ui.VerticalLayout[id=\"vl1\"]");
         expectSelectorStartingAt("//com.vaadin.ui.ComboBox[caption=\"Country\"]");
         replay(mockDriver);
+
         $(ComboBoxElement.class).first();
         $(VerticalLayoutElement.class).$(ComboBoxElement.class)
                 .caption("Country").first();

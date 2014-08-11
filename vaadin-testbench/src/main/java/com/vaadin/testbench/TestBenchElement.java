@@ -25,7 +25,7 @@ import com.vaadin.testbench.By.ByVaadin;
 import com.vaadin.testbench.commands.CanWaitForVaadin;
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.commands.TestBenchElementCommands;
-import com.vaadin.testbench.elements.AbstractElement;
+import com.vaadin.testbench.elementsbase.AbstractElement;
 
 /**
  * TestBenchElement is a WebElement wrapper. It provides Vaadin specific helper

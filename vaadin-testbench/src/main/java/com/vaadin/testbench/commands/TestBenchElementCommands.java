@@ -14,7 +14,7 @@ package com.vaadin.testbench.commands;
 
 import org.openqa.selenium.Keys;
 
-import com.vaadin.testbench.elements.AbstractElement;
+import com.vaadin.testbench.elementsbase.AbstractElement;
 
 public interface TestBenchElementCommands {
 
@@ -77,7 +77,7 @@ public interface TestBenchElementCommands {
      * 
      * @param elementType
      *            The type (class) containing the API to decorate with. Must
-     *            extend {@link com.vaadin.testbench.elements.AbstractElement}.
+     *            extend {@link com.vaadin.testbench.elementsbase.AbstractElement}.
      * @return The element wrapped in an instance of the specified element type.
      */
     <T extends AbstractElement> T wrap(Class<T> elementType);

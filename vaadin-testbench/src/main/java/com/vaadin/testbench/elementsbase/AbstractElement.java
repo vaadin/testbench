@@ -10,9 +10,10 @@
  * You should have received a copy of the license along with this program.
  * If not, see <http://vaadin.com/license/cval-3>.
  */
-package com.vaadin.testbench.elements;
+package com.vaadin.testbench.elementsbase;
 
-@ServerClass("com.vaadin.ui.AbstractMedia")
-public class AbstractMediaElement extends AbstractComponentElement {
+import com.vaadin.testbench.TestBenchElement;
 
+@ServerClass("com.vaadin.ui.Component")
+public abstract class AbstractElement extends TestBenchElement {
 }

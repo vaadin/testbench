@@ -12,7 +12,7 @@
  */
 package com.vaadin.testbench;
 
-import com.vaadin.testbench.elements.AbstractElement;
+import com.vaadin.testbench.elementsbase.AbstractElement;
 
 /**
  * Abstract class that provides useful Element finding functions. Extended in

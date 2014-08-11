@@ -21,7 +21,7 @@ import org.openqa.selenium.WebElement;
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.commands.TestBenchCommands;
 import com.vaadin.testbench.commands.TestBenchElementCommands;
-import com.vaadin.testbench.elements.AbstractElement;
+import com.vaadin.testbench.elementsbase.AbstractElement;
 
 /**
  * A superclass with some helpers to aid TestBench developers. This superclass
@@ -144,7 +144,7 @@ public abstract class TestBenchTestCase extends
      * 
      * @param elementType
      *            The type (class) containing the API to decorate with. Must
-     *            extend {@link com.vaadin.testbench.elements.AbstractElement}.
+     *            extend {@link com.vaadin.testbench.elementsbase.AbstractElement}.
      * @param element
      *            The element instance to decorate
      * @return The element wrapped in an instance of the specified element type.
