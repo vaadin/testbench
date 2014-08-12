@@ -1,0 +1,52 @@
+/**
+ * Copyright (C) 2012 Vaadin Ltd
+ *
+ * This program is available under Commercial Vaadin Add-On License 3.0
+ * (CVALv3).
+ *
+ * See the file licensing.txt distributed with this software for more
+ * information about licensing.
+ *
+ * You should have received a copy of the license along with this program.
+ * If not, see <http://vaadin.com/license/cval-3>.
+ */
+package com.vaadin.testbench.parallel;
+
+import org.openqa.selenium.remote.DesiredCapabilities;
+
+import com.vaadin.testbench.annotations.RunLocally;
+
+/**
+ * Enumerates the most commonly used browsers. This enumeration can be used in
+ * the {@link RunLocally} annotation
+ */
+public enum Browser {
+    FIREFOX, CHROME, SAFARI, IE8, IE9, IE10, IE11, OPERA, PHANTOMJS;
+
+    private Browser() {
+    }
+
+    public DesiredCapabilities getDesiredCapabilities() {
+        switch (this) {
+        case CHROME:
+            return BrowserUtil.chrome();
+        case IE10:
+            return BrowserUtil.ie10();
+        case IE11:
+            return BrowserUtil.ie11();
+        case IE8:
+            return BrowserUtil.ie8();
+        case IE9:
+            return BrowserUtil.ie9();
+        case OPERA:
+            return BrowserUtil.opera();
+        case PHANTOMJS:
+            return BrowserUtil.phantomJS();
+        case SAFARI:
+            return BrowserUtil.safari();
+        case FIREFOX:
+        default:
+            return BrowserUtil.firefox();
+        }
+    }
+}
