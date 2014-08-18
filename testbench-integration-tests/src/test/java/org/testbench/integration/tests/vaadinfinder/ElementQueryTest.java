@@ -10,7 +10,7 @@
  * You should have received a copy of the license along with this program.
  * If not, see <http://vaadin.com/license/cval-3>.
  */
-package com.vaadin.testbench.vaadinfinder;
+package org.testbench.integration.tests.vaadinfinder;
 
 import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.contains;
