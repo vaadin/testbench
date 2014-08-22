@@ -316,7 +316,7 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
             logger.info(errMsg);
             return false;
         }
-        if (method.getParameterCount() != 0) {
+        if (method.getParameterTypes().length != 0) {
             String errMsg = String
                     .format(genericErrorMessage, method.getDeclaringClass()
                             .getName(), method.getName(),
