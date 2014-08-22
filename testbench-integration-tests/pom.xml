@@ -22,7 +22,7 @@
     <dependencies>
         <dependency>
             <groupId>com.vaadin</groupId>
-            <artifactId>testbench-api</artifactId>
+            <artifactId>vaadin-testbench-api</artifactId>
             <version>0.0-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
