@@ -18,6 +18,7 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import com.vaadin.testbench.TestBenchTestCase;
 import com.vaadin.testbench.annotations.RunLocally;
 import com.vaadin.testbench.parallel.Browser;
+import com.vaadin.testbench.parallel.BrowserUtil;
 
 /**
  * <p>
@@ -50,6 +51,8 @@ public class SetupDriver {
     public WebDriver setupRemoteDriver(RemoteDriver remoteDriver, String hubURL)
             throws Exception {
         DesiredCapabilities capabilities = getDesiredCapabilities();
+        setDesiredCapabilities(capabilities);
+
         WebDriver driver = remoteDriver.createDriver(hubURL, capabilities);
         return driver;
     }
@@ -87,6 +90,8 @@ public class SetupDriver {
      */
     public WebDriver setupLocalDriver(LocalDriver localDriver) {
         DesiredCapabilities capabilities = getDesiredCapabilities();
+        setDesiredCapabilities(capabilities);
+
         WebDriver driver = localDriver.createDriver(capabilities);
         return driver;
     }
@@ -127,9 +132,10 @@ public class SetupDriver {
     public WebDriver setupLocalDriver(Browser runLocallyBrowser,
             String version, LocalDriver localDriver) {
         assert (runLocallyBrowser != null);
-        DesiredCapabilities capabilities = runLocallyBrowser
-                .getDesiredCapabilities();
-        capabilities.setVersion(version);
+        DesiredCapabilities capabilities = BrowserUtil.getBrowserFactory()
+                .create(runLocallyBrowser, version);
+        setDesiredCapabilities(capabilities);
+
         WebDriver driver = localDriver.createDriver(capabilities);
         return driver;
     }
@@ -185,7 +191,7 @@ public class SetupDriver {
         return setupLocalDriver(runLocallyBrowser, "", new LocalDriver());
     }
 
-    private static DesiredCapabilities desiredCapabilities = Browser.FIREFOX
+    private DesiredCapabilities desiredCapabilities = Browser.FIREFOX
             .getDesiredCapabilities();
 
     /**
@@ -196,7 +202,7 @@ public class SetupDriver {
      *
      * @return the requested browser capabilities
      */
-    public static DesiredCapabilities getDesiredCapabilities() {
+    public DesiredCapabilities getDesiredCapabilities() {
         return desiredCapabilities;
     }
 
@@ -206,8 +212,7 @@ public class SetupDriver {
      *
      * @param desiredCapabilities
      */
-    public static void setDesiredCapabilities(
-            DesiredCapabilities desiredCapabilities) {
-        SetupDriver.desiredCapabilities = desiredCapabilities;
+    public void setDesiredCapabilities(DesiredCapabilities desiredCapabilities) {
+        this.desiredCapabilities = desiredCapabilities;
     }
 }

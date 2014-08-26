@@ -40,7 +40,8 @@ public class ParallelTestSuite extends Suite {
 
     /**
      * This only restricts the number of test suites running concurrently. The
-     * number of tests to run concurrently are configured in {@link TB3Runner}.
+     * number of tests to run concurrently are configured in
+     * {@link ParallelRunner}.
      */
     private static final int MAX_CONCURRENT_TEST_SUITES = 20;
 
@@ -52,9 +53,8 @@ public class ParallelTestSuite extends Suite {
             .newFixedThreadPool(MAX_CONCURRENT_TEST_SUITES);
 
     public ParallelTestSuite(Class<?> klass,
-            Class<? extends MultiBrowserTest> baseClass,
-            String basePackage, String[] ignorePackages)
-            throws InitializationError {
+            Class<? extends ParallelTest> baseClass, String basePackage,
+            String[] ignorePackages) throws InitializationError {
         super(klass, findTests(baseClass, basePackage, ignorePackages));
         setScheduler(new ParallelScheduler(service));
     }
@@ -71,11 +71,10 @@ public class ParallelTestSuite extends Suite {
      * @return
      */
     private static Class<?>[] findTests(
-            Class<? extends MultiBrowserTest> baseClass,
-            String basePackage, String[] ignorePackages) {
+            Class<? extends ParallelTest> baseClass, String basePackage,
+            String[] ignorePackages) {
         try {
-            List<?> l = findClasses(baseClass, basePackage,
-                    ignorePackages);
+            List<?> l = findClasses(baseClass, basePackage, ignorePackages);
             return l.toArray(new Class[] {});
         } catch (IOException e) {
             // TODO Auto-generated catch block
@@ -96,9 +95,8 @@ public class ParallelTestSuite extends Suite {
      * @return
      * @throws IOException
      */
-    private static <T> List<Class<? extends T>> findClasses(
-            Class<T> baseClass, String basePackage,
-            String[] ignoredPackages) throws IOException {
+    private static <T> List<Class<? extends T>> findClasses(Class<T> baseClass,
+            String basePackage, String[] ignoredPackages) throws IOException {
         List<Class<? extends T>> classes = new ArrayList<Class<? extends T>>();
         String basePackageDirName = "/" + basePackage.replace('.', '/');
         URL location = baseClass.getResource(basePackageDirName);
@@ -115,16 +113,14 @@ public class ParallelTestSuite extends Suite {
                 throw new IOException(e.getMessage());
             }
         } else if (location.getProtocol().equals("jar")) {
-            JarURLConnection juc = (JarURLConnection) location
-                    .openConnection();
+            JarURLConnection juc = (JarURLConnection) location.openConnection();
             findClassesInJar(juc, basePackage, baseClass, classes);
         }
 
         Collections.sort(classes, new Comparator<Class<? extends T>>() {
 
             @Override
-            public int compare(Class<? extends T> o1,
-                    Class<? extends T> o2) {
+            public int compare(Class<? extends T> o1, Class<? extends T> o2) {
                 return o1.getName().compareTo(o2.getName());
             }
 
@@ -148,9 +144,8 @@ public class ParallelTestSuite extends Suite {
      * @param ignoredPackages
      *            A collection of packages (including sub packages) to ignore
      */
-    private static <T> void findPackages(File parent,
-            String javaPackage, Class<T> baseClass,
-            Collection<Class<? extends T>> result,
+    private static <T> void findPackages(File parent, String javaPackage,
+            Class<T> baseClass, Collection<Class<? extends T>> result,
             String[] ignoredPackages) {
         for (String ignoredPackage : ignoredPackages) {
             if (javaPackage.equals(ignoredPackage)) {
@@ -165,8 +160,7 @@ public class ParallelTestSuite extends Suite {
             } else if (file.getName().endsWith(".class")) {
                 String fullyQualifiedClassName = javaPackage + "."
                         + file.getName().replace(".class", "");
-                addClassIfMatches(result, fullyQualifiedClassName,
-                        baseClass);
+                addClassIfMatches(result, fullyQualifiedClassName, baseClass);
             }
         }
 
@@ -195,10 +189,9 @@ public class ParallelTestSuite extends Suite {
             JarEntry e = ent.nextElement();
             if (e.getName().endsWith(".class")
                     && e.getName().startsWith(javaPackageDir)) {
-                String fullyQualifiedClassName = e.getName()
-                        .replace('/', '.').replace(".class", "");
-                addClassIfMatches(result, fullyQualifiedClassName,
-                        baseClass);
+                String fullyQualifiedClassName = e.getName().replace('/', '.')
+                        .replace(".class", "");
+                addClassIfMatches(result, fullyQualifiedClassName, baseClass);
             }
         }
     }
@@ -230,8 +223,7 @@ public class ParallelTestSuite extends Suite {
                 return;
             }
 
-            if (!Modifier.isAbstract(c.getModifiers())
-                    && !c.isAnonymousClass()) {
+            if (!Modifier.isAbstract(c.getModifiers()) && !c.isAnonymousClass()) {
                 result.add((Class<? extends T>) c);
             }
         } catch (Exception e) {

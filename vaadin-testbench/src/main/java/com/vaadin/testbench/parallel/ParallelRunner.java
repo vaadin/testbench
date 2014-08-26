@@ -36,8 +36,8 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 
 import com.vaadin.testbench.Parameters;
 import com.vaadin.testbench.annotations.BrowserConfiguration;
+import com.vaadin.testbench.annotations.BrowserFactory;
 import com.vaadin.testbench.annotations.RunLocally;
-import com.vaadin.testbench.parallel.setup.SetupDriver;
 
 /**
  * This runner is loosely based on FactoryTestRunner by Ted Young
@@ -75,12 +75,12 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
     protected List<FrameworkMethod> computeTestMethods() {
         List<FrameworkMethod> tests = new LinkedList<FrameworkMethod>();
 
-        if (!MultiBrowserTest.class.isAssignableFrom(getTestClass()
-                .getJavaClass())) {
+        if (!ParallelTest.class.isAssignableFrom(getTestClass().getJavaClass())) {
             throw new RuntimeException(getClass().getName() + " only supports "
-                    + MultiBrowserTest.class.getName());
+                    + ParallelTest.class.getName());
         }
 
+        BrowserUtil.setBrowserFactory(getBrowserFactory());
         try {
             Collection<DesiredCapabilities> desiredCapabilities = getDesiredCapabilities();
 
@@ -181,9 +181,10 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
     private Collection<DesiredCapabilities> getDesiredCapabilities() {
 
         if (testRunsLocally()) {
+
             Collection<DesiredCapabilities> desiredCapabilities = new ArrayList<DesiredCapabilities>();
-            desiredCapabilities.add(runLocallyBrowser()
-                    .getDesiredCapabilities());
+            desiredCapabilities.add(BrowserUtil.getBrowserFactory().create(
+                    runLocallyBrowser(), runLocallyVersion()));
             return desiredCapabilities;
         }
 
@@ -208,6 +209,32 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
             return null;
         }
         return runLocally.value();
+    }
+
+    private String runLocallyVersion() {
+        RunLocally runLocally = getTestClass().getJavaClass().getAnnotation(
+                RunLocally.class);
+        if (runLocally == null) {
+            return "";
+        }
+        return runLocally.version();
+    }
+
+    private TestBenchBrowserFactory getBrowserFactory() {
+        BrowserFactory browserFactoryAnnotation = findAnnotation(getTestClass()
+                .getJavaClass(), BrowserFactory.class);
+
+        try {
+            if (browserFactoryAnnotation != null
+                    && TestBenchBrowserFactory.class
+                            .isAssignableFrom(browserFactoryAnnotation.value())) {
+                return (TestBenchBrowserFactory) browserFactoryAnnotation
+                        .value().newInstance();
+            }
+        } catch (Exception e) {
+        }
+
+        return new DefaultBrowserFactory();
     }
 
     /*
@@ -292,10 +319,7 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
         }
 
         // No valid BrowserConfiguration annotated method was found
-        List<DesiredCapabilities> desiredCapabilities = new ArrayList<DesiredCapabilities>();
-        desiredCapabilities.add(SetupDriver.getDesiredCapabilities());
-
-        return desiredCapabilities;
+        return ParallelTest.getDefaultCapabilities();
     }
 
     /**
@@ -341,10 +365,9 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
         return true;
     }
 
-    private MultiBrowserTest getTestClassInstance()
-            throws InstantiationException, IllegalAccessException,
-            InvocationTargetException {
-        MultiBrowserTest testClassInstance = (MultiBrowserTest) getTestClass()
+    private ParallelTest getTestClassInstance() throws InstantiationException,
+            IllegalAccessException, InvocationTargetException {
+        ParallelTest testClassInstance = (ParallelTest) getTestClass()
                 .getOnlyConstructor().newInstance();
         return testClassInstance;
     }

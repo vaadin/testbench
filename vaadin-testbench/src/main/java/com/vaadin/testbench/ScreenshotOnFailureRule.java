@@ -14,6 +14,7 @@ package com.vaadin.testbench;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -28,7 +29,7 @@ import com.vaadin.testbench.screenshot.ImageFileUtil;
 /**
  * This JUnit {@link org.junit.Rule} grabs a screenshot when a test fails.
  * Usage:
- * 
+ *
  * <pre>
  * <code>
  * public class MyTestCase extends TestBenchTestCase {
@@ -55,7 +56,7 @@ public class ScreenshotOnFailureRule extends TestWatcher {
 
     /**
      * Creates a new ScreenshotOnFailureRule in the provided test case.
-     * 
+     *
      * @param driverHolder
      *            The {@link HasDriver} instance that holds the active WebDriver
      *            instance. Commonly this is the {@link TestBenchTestCase}.
@@ -66,7 +67,7 @@ public class ScreenshotOnFailureRule extends TestWatcher {
 
     /**
      * Creates a new ScreenshotOnFailureRule in the provided test case.
-     * 
+     *
      * @param driverHolder
      *            The {@link HasDriver} instance that holds the active WebDriver
      *            instance. Commonly this is the {@link TestBenchTestCase}.
@@ -83,7 +84,7 @@ public class ScreenshotOnFailureRule extends TestWatcher {
     /**
      * Tells the rule whether to quit the driver when the test has finished
      * executing or to allow the user to specify this.
-     * 
+     *
      * @param quitDriverOnFinish
      *            true if the driver should be quit when a test has finished
      *            running.
@@ -108,11 +109,8 @@ public class ScreenshotOnFailureRule extends TestWatcher {
                                     .getScreenshotAs(OutputType.BYTES)));
             // Store the screenshot in the errors directory
             ImageFileUtil.createScreenshotDirectoriesIfNeeded();
-            ImageIO.write(
-                    screenshotImage,
-                    "png",
-                    ImageFileUtil.getErrorScreenshotFile(description
-                            .getDisplayName() + ".png"));
+            ImageIO.write(screenshotImage, "png",
+                    getErrorScreenshotFile(description));
         } catch (IOException e1) {
             throw new RuntimeException(
                     "There was a problem grabbing and writing a screen shot of a test failure.",
@@ -127,5 +125,15 @@ public class ScreenshotOnFailureRule extends TestWatcher {
                 && driverHolder.getDriver() != null) {
             driverHolder.getDriver().quit();
         }
+    }
+
+    /**
+     * @param description
+     *            test {@link Description}
+     * @return Failure screenshot file.
+     */
+    protected File getErrorScreenshotFile(Description description) {
+        return ImageFileUtil.getErrorScreenshotFile(description
+                .getDisplayName() + ".png");
     }
 }

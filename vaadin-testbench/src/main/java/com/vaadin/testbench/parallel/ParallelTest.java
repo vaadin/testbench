@@ -14,13 +14,18 @@ package com.vaadin.testbench.parallel;
 
 import static com.vaadin.testbench.Parameters.isLocalWebDriverUsed;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
 
 import com.vaadin.testbench.ScreenshotOnFailureRule;
 import com.vaadin.testbench.TestBenchTestCase;
+import com.vaadin.testbench.annotations.BrowserConfiguration;
 import com.vaadin.testbench.annotations.RunLocally;
 import com.vaadin.testbench.annotations.RunOnHub;
 import com.vaadin.testbench.parallel.setup.SetupDriver;
@@ -31,7 +36,7 @@ import com.vaadin.testbench.parallel.setup.SetupDriver;
  * is properly created with the desired configuration.
  */
 @RunWith(ParallelRunner.class)
-public class MultiBrowserTest extends TestBenchTestCase {
+public class ParallelTest extends TestBenchTestCase {
 
     @Rule
     public ScreenshotOnFailureRule screenshotOnFailure = new ScreenshotOnFailureRule(
@@ -158,4 +163,12 @@ public class MultiBrowserTest extends TestBenchTestCase {
         }
     }
 
+    /**
+     *
+     * @return default capabilities, used if no {@link BrowserConfiguration}
+     *          method was found
+     */
+    public static List<DesiredCapabilities> getDefaultCapabilities() {
+        return Collections.singletonList(BrowserUtil.firefox());
+    }
 }

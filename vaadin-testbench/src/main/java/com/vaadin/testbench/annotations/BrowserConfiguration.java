@@ -12,8 +12,10 @@
  */
 package com.vaadin.testbench.annotations;
 
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.Collection;
 
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -26,8 +28,8 @@ import org.openqa.selenium.remote.DesiredCapabilities;
  * <p/>
  *
  * <p>
- * Methods annotated with BrowserConfiguration annotation should return a <b>
- * {@link Collection}&lt;{@link DesiredCapabilities}&gt;</b>
+ * Methods annotated with BrowserConfiguration annotation should be static and
+ * return a <b> {@link Collection}&lt;{@link DesiredCapabilities}&gt;</b>
  * </p>
  *
  * <p>
@@ -35,7 +37,7 @@ import org.openqa.selenium.remote.DesiredCapabilities;
  *
  * <pre>
  * &#064;BrowserConfiguration
- * public List&lt;DesiredCapabilities&gt; firefoxAndChromeConfiguration() {
+ * public static List&lt;DesiredCapabilities&gt; firefoxAndChromeConfiguration() {
  *     List&lt;DesiredCapabilities&gt; list = new ArrayList&lt;DesiredCapabilities&gt;();
  *     list.add(Browser.FIREFOX.getDesiredCapabilities());
  *     list.add(Browser.CHROME.getDesiredCapabilities());
@@ -47,6 +49,7 @@ import org.openqa.selenium.remote.DesiredCapabilities;
  * </p>
  */
 @Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
 public @interface BrowserConfiguration {
 
 }

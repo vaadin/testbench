@@ -20,7 +20,7 @@ import java.lang.annotation.Target;
 import org.openqa.selenium.WebDriver;
 
 import com.vaadin.testbench.parallel.Browser;
-import com.vaadin.testbench.parallel.MultiBrowserTest;
+import com.vaadin.testbench.parallel.ParallelTest;
 
 /**
  * <p>
@@ -30,7 +30,7 @@ import com.vaadin.testbench.parallel.MultiBrowserTest;
  *
  * <p>
  * This parameter will be used to instantiate the {@link WebDriver}.<br>
- * The value can be obtained through {@link MultiBrowserTest#getRunLocally()}
+ * The value can be obtained through {@link ParallelTest#getRunLocally()}
  * </p>
  *
  * <p>

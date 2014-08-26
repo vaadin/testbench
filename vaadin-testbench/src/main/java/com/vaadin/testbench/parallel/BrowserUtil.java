@@ -21,7 +21,7 @@ import org.openqa.selenium.remote.DesiredCapabilities;
  */
 public class BrowserUtil {
 
-    private static BrowserFactory browserFactory = new BrowserFactory();
+    private static TestBenchBrowserFactory browserFactory = new DefaultBrowserFactory();
 
     /**
      * Gets the capabilities for Safari
@@ -118,8 +118,7 @@ public class BrowserUtil {
      *         on PhantomJS
      */
     public static DesiredCapabilities phantomJS() {
-        DesiredCapabilities c = browserFactory
-                .create(Browser.PHANTOMJS);
+        DesiredCapabilities c = browserFactory.create(Browser.PHANTOMJS);
         return c;
     }
 
@@ -130,8 +129,7 @@ public class BrowserUtil {
      * @return true if the capabilities refer to IE8, false otherwise
      */
     public static boolean isIE8(DesiredCapabilities capabilities) {
-        return isIE(capabilities)
-                && "8".equals(capabilities.getVersion());
+        return isIE(capabilities) && "8".equals(capabilities.getVersion());
     }
 
     /**
@@ -177,8 +175,7 @@ public class BrowserUtil {
      * @return true if the capabilities refer to Firefox, false otherwise
      */
     public static boolean isFirefox(DesiredCapabilities capabilities) {
-        return BrowserType.FIREFOX
-                .equals(capabilities.getBrowserName());
+        return BrowserType.FIREFOX.equals(capabilities.getBrowserName());
     }
 
     /**
@@ -187,8 +184,7 @@ public class BrowserUtil {
      * @return true if the capabilities refer to PhantomJS, false otherwise
      */
     public static boolean isPhantomJS(DesiredCapabilities capabilities) {
-        return BrowserType.PHANTOMJS.equals(capabilities
-                .getBrowserName());
+        return BrowserType.PHANTOMJS.equals(capabilities.getBrowserName());
     }
 
     /**
@@ -198,8 +194,7 @@ public class BrowserUtil {
      * @param capabilities
      * @return a human readable string describing the capabilities
      */
-    public static String getBrowserIdentifier(
-            DesiredCapabilities capabilities) {
+    public static String getBrowserIdentifier(DesiredCapabilities capabilities) {
         if (isIE(capabilities)) {
             return "InternetExplorer";
         } else if (isFirefox(capabilities)) {
@@ -244,11 +239,9 @@ public class BrowserUtil {
      *
      * @return a unique string for each browser
      */
-    public static String getUniqueIdentifier(
-            DesiredCapabilities capabilities) {
+    public static String getUniqueIdentifier(DesiredCapabilities capabilities) {
         return getUniqueIdentifier(getPlatform(capabilities),
-                getBrowserIdentifier(capabilities),
-                capabilities.getVersion());
+                getBrowserIdentifier(capabilities), capabilities.getVersion());
     }
 
     /**
@@ -259,14 +252,14 @@ public class BrowserUtil {
      *
      * @return a unique string for each browser
      */
-    public static String getUniqueIdentifier(
-            DesiredCapabilities capabilities, String versionOverride) {
+    public static String getUniqueIdentifier(DesiredCapabilities capabilities,
+            String versionOverride) {
         return getUniqueIdentifier(getPlatform(capabilities),
                 getBrowserIdentifier(capabilities), versionOverride);
     }
 
-    private static String getUniqueIdentifier(String platform,
-            String browser, String version) {
+    private static String getUniqueIdentifier(String platform, String browser,
+            String version) {
         return platform + "_" + browser + "_" + version;
     }
 
@@ -280,7 +273,16 @@ public class BrowserUtil {
      *            BrowserFactory instance to use to generate default
      *            DesiredCapabilities
      */
-    public static void setBrowserFactory(BrowserFactory browserFactory) {
+    public static void setBrowserFactory(TestBenchBrowserFactory browserFactory) {
         BrowserUtil.browserFactory = browserFactory;
+    }
+
+    /**
+     * Gets the BrowserFactory used to generate new DesiredCapabilities
+     *
+     * @return BrowserFactory used to generate new DesiredCapabilities
+     */
+    public static TestBenchBrowserFactory getBrowserFactory() {
+        return browserFactory;
     }
 }

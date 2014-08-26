@@ -15,26 +15,32 @@ package com.vaadin.testbench.parallel;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
-public class BrowserFactory {
+import com.vaadin.testbench.annotations.BrowserFactory;
 
+/**
+ * <p>
+ * Default {@link TestBenchBrowserFactory} used to generate
+ * {@link DesiredCapabilities} through {@link BrowserFactory}
+ * </p>
+ */
+public class DefaultBrowserFactory implements TestBenchBrowserFactory {
+
+    @Override
     public DesiredCapabilities create(Browser browser) {
         return create(browser, "", Platform.ANY);
     }
 
+    @Override
     public DesiredCapabilities create(Browser browser, String version) {
         return create(browser, version, Platform.ANY);
     }
 
+    @Override
     public DesiredCapabilities create(Browser browser, String version,
             Platform platform) {
         DesiredCapabilities desiredCapabilities;
 
         switch (browser) {
-        case FIREFOX:
-            desiredCapabilities = DesiredCapabilities.firefox();
-            desiredCapabilities.setVersion(version);
-            desiredCapabilities.setPlatform(platform);
-            break;
         case CHROME:
             desiredCapabilities = DesiredCapabilities.chrome();
             desiredCapabilities.setVersion(version);
@@ -44,7 +50,11 @@ public class BrowserFactory {
             desiredCapabilities = DesiredCapabilities.phantomjs();
             desiredCapabilities.setVersion(version);
             desiredCapabilities.setPlatform(platform);
-
+            break;
+        case SAFARI:
+            desiredCapabilities = DesiredCapabilities.safari();
+            desiredCapabilities.setVersion(version);
+            desiredCapabilities.setPlatform(platform);
             break;
         case OPERA:
             desiredCapabilities = DesiredCapabilities.opera();
@@ -71,8 +81,11 @@ public class BrowserFactory {
             desiredCapabilities.setVersion("11");
             desiredCapabilities.setPlatform(platform);
             break;
+        case FIREFOX:
         default:
-            throw new IllegalArgumentException("Unknown browser");
+            desiredCapabilities = DesiredCapabilities.firefox();
+            desiredCapabilities.setVersion(version);
+            desiredCapabilities.setPlatform(platform);
         }
 
         return desiredCapabilities;
