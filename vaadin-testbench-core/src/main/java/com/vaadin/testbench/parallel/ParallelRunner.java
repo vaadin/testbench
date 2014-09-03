@@ -32,6 +32,7 @@ import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.Parameterized;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
+import org.junit.runners.model.Statement;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import com.vaadin.testbench.Parameters;
@@ -430,6 +431,39 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
         }
 
         return findAnnotation(searchClass.getSuperclass(), annotationClass);
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see
+     * org.junit.runners.BlockJUnit4ClassRunner#withBefores(org.junit.runners
+     * .model.FrameworkMethod, java.lang.Object,
+     * org.junit.runners.model.Statement)
+     */
+    @Override
+    protected Statement withBefores(final FrameworkMethod method,
+            final Object target, Statement statement) {
+        if (!(method instanceof TBMethod)) {
+            throw new RuntimeException("Unexpected method type "
+                    + method.getClass().getName() + ", expected TBMethod");
+        }
+        final TBMethod tbmethod = (TBMethod) method;
+
+        // setDesiredCapabilities before running the real @Befores (which use
+        // capabilities)
+
+        final Statement realBefores = super.withBefores(method, target,
+                statement);
+        return new Statement() {
+
+            @Override
+            public void evaluate() throws Throwable {
+                ((ParallelTest) target)
+                        .setDesiredCapabilities(tbmethod.capabilities);
+                realBefores.evaluate();
+            }
+        };
     }
 
     private static class TBMethod extends FrameworkMethod {

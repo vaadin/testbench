@@ -31,9 +31,9 @@ import com.vaadin.testbench.annotations.RunOnHub;
 import com.vaadin.testbench.parallel.setup.SetupDriver;
 
 /**
- * Unit tests should extend MultiBrowserTest if they are to be run in several
- * browser configurations. For each browser configuration, a {@link WebDriver}
- * is properly created with the desired configuration.
+ * Unit tests should extend {@link ParallelTest} if they are to be run in
+ * several browser configurations. For each browser configuration, a
+ * {@link WebDriver} is properly created with the desired configuration.
  */
 @RunWith(ParallelRunner.class)
 public class ParallelTest extends TestBenchTestCase {
@@ -41,6 +41,8 @@ public class ParallelTest extends TestBenchTestCase {
     @Rule
     public ScreenshotOnFailureRule screenshotOnFailure = new ScreenshotOnFailureRule(
             this, true);
+
+    private SetupDriver driverConfiguration = new SetupDriver();
 
     /**
      * <p>
@@ -104,17 +106,17 @@ public class ParallelTest extends TestBenchTestCase {
      */
     @Before
     public void setup() throws Exception {
-
         // Always give priority to @RunLocally annotation
         if (getRunLocallyBrowser() != null) {
-            WebDriver driver = new SetupDriver().setupLocalDriver(
+            WebDriver driver = driverConfiguration.setupLocalDriver(
                     getRunLocallyBrowser(), getRunLocallyBrowserVersion());
             setDriver(driver);
         } else if (isLocalWebDriverUsed()) {
-            WebDriver driver = new SetupDriver().setupLocalDriver();
+            WebDriver driver = driverConfiguration.setupLocalDriver();
             setDriver(driver);
         } else if (getRunOnHub(getClass()) != null) {
-            WebDriver driver = new SetupDriver().setupRemoteDriver(getHubURL());
+            WebDriver driver = driverConfiguration
+                    .setupRemoteDriver(getHubURL());
             setDriver(driver);
         } else {
             // can't find any configuration to setup WebDriver
@@ -170,5 +172,24 @@ public class ParallelTest extends TestBenchTestCase {
      */
     public static List<DesiredCapabilities> getDefaultCapabilities() {
         return Collections.singletonList(BrowserUtil.firefox());
+    }
+
+    /**
+     * Sets the requested {@link DesiredCapabilities} (usually browser name and
+     * version)
+     *
+     * @param desiredCapabilities
+     */
+    public void setDesiredCapabilities(DesiredCapabilities desiredCapabilities) {
+        driverConfiguration.setDesiredCapabilities(desiredCapabilities);
+    }
+
+    /**
+     * Gets the {@link DesiredCapabilities} (usually browser name and version)
+     * 
+     * @return
+     */
+    protected DesiredCapabilities getDesiredCapabilities() {
+        return driverConfiguration.getDesiredCapabilities();
     }
 }
