@@ -22,12 +22,11 @@ import javassist.util.proxy.MethodFilter;
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
 
-import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.remote.Augmenter;
 
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
+import com.vaadin.testbench.tools.LicenseChecker;
 
 /**
  */
@@ -120,7 +119,7 @@ public class TestBench {
      * Create new Element of given type. Initialize it with WebElement and
      * TestBenchCommandExecutor. This feature is advanced and potentially
      * dangerous.
-     * 
+     *
      * @param clazz
      *            Class of wanted Element
      * @param webElement

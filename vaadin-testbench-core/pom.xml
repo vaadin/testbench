@@ -9,6 +9,7 @@
 	<name>Vaadin TestBench Core</name>
     <inceptionYear>2012</inceptionYear>
 
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <selenium.version>2.42.2</selenium.version>
@@ -164,6 +165,13 @@
     </profiles>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources/com/vaadin/testbench</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+        
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
