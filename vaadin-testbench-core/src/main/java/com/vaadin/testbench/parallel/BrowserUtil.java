@@ -12,6 +12,7 @@
  */
 package com.vaadin.testbench.parallel;
 
+import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.remote.BrowserType;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -128,7 +129,7 @@ public class BrowserUtil {
      * @param capabilities
      * @return true if the capabilities refer to IE8, false otherwise
      */
-    public static boolean isIE8(DesiredCapabilities capabilities) {
+    public static boolean isIE8(Capabilities capabilities) {
         return isIE(capabilities) && "8".equals(capabilities.getVersion());
     }
 
@@ -138,7 +139,7 @@ public class BrowserUtil {
      * @return true if the capabilities refer to Internet Explorer, false
      *         otherwise
      */
-    public static boolean isIE(DesiredCapabilities capabilities) {
+    public static boolean isIE(Capabilities capabilities) {
         return BrowserType.IE.equals(capabilities.getBrowserName());
     }
 
@@ -147,7 +148,7 @@ public class BrowserUtil {
      *            The capabilities to check
      * @return true if the capabilities refer to Chrome, false otherwise
      */
-    public static boolean isChrome(DesiredCapabilities capabilities) {
+    public static boolean isChrome(Capabilities capabilities) {
         return BrowserType.CHROME.equals(capabilities.getBrowserName());
     }
 
@@ -156,7 +157,7 @@ public class BrowserUtil {
      *            The capabilities to check
      * @return true if the capabilities refer to Opera, false otherwise
      */
-    public static boolean isOpera(DesiredCapabilities capabilities) {
+    public static boolean isOpera(Capabilities capabilities) {
         return BrowserType.OPERA.equals(capabilities.getBrowserName());
     }
 
@@ -165,7 +166,7 @@ public class BrowserUtil {
      *            The capabilities to check
      * @return true if the capabilities refer to Safari, false otherwise
      */
-    public static boolean isSafari(DesiredCapabilities capabilities) {
+    public static boolean isSafari(Capabilities capabilities) {
         return BrowserType.SAFARI.equals(capabilities.getBrowserName());
     }
 
@@ -174,7 +175,7 @@ public class BrowserUtil {
      *            The capabilities to check
      * @return true if the capabilities refer to Firefox, false otherwise
      */
-    public static boolean isFirefox(DesiredCapabilities capabilities) {
+    public static boolean isFirefox(Capabilities capabilities) {
         return BrowserType.FIREFOX.equals(capabilities.getBrowserName());
     }
 
@@ -183,7 +184,7 @@ public class BrowserUtil {
      *            The capabilities to check
      * @return true if the capabilities refer to PhantomJS, false otherwise
      */
-    public static boolean isPhantomJS(DesiredCapabilities capabilities) {
+    public static boolean isPhantomJS(Capabilities capabilities) {
         return BrowserType.PHANTOMJS.equals(capabilities.getBrowserName());
     }
 
@@ -194,7 +195,7 @@ public class BrowserUtil {
      * @param capabilities
      * @return a human readable string describing the capabilities
      */
-    public static String getBrowserIdentifier(DesiredCapabilities capabilities) {
+    public static String getBrowserIdentifier(Capabilities capabilities) {
         if (isIE(capabilities)) {
             return "InternetExplorer";
         } else if (isFirefox(capabilities)) {
@@ -219,7 +220,7 @@ public class BrowserUtil {
      * @param capabilities
      * @return a human readable string describing the platform
      */
-    public static String getPlatform(DesiredCapabilities capabilities) {
+    public static String getPlatform(Capabilities capabilities) {
         if (capabilities.getPlatform() == Platform.WIN8
                 || capabilities.getPlatform() == Platform.WINDOWS
                 || capabilities.getPlatform() == Platform.VISTA
@@ -239,7 +240,7 @@ public class BrowserUtil {
      *
      * @return a unique string for each browser
      */
-    public static String getUniqueIdentifier(DesiredCapabilities capabilities) {
+    public static String getUniqueIdentifier(Capabilities capabilities) {
         return getUniqueIdentifier(getPlatform(capabilities),
                 getBrowserIdentifier(capabilities), capabilities.getVersion());
     }
@@ -252,7 +253,7 @@ public class BrowserUtil {
      *
      * @return a unique string for each browser
      */
-    public static String getUniqueIdentifier(DesiredCapabilities capabilities,
+    public static String getUniqueIdentifier(Capabilities capabilities,
             String versionOverride) {
         return getUniqueIdentifier(getPlatform(capabilities),
                 getBrowserIdentifier(capabilities), versionOverride);
