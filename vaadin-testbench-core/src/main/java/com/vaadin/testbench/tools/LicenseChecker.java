@@ -67,8 +67,8 @@ public class LicenseChecker {
     private static void printCVALInformationAndHowToGetRidOfThisInformation() {
         try {
             System.err.println(CharStreams.toString(new InputStreamReader(
-                    LicenseChecker.class.getResourceAsStream("licensenag.txt"),
-                    Charsets.UTF_8)));
+                    LicenseChecker.class.getClassLoader().getResourceAsStream(
+                            "licensenag.txt"), Charsets.UTF_8)));
         } catch (IOException e) {
             System.err
                     .println("VAADIN TESTBENCH IS COMMERCIAL SOFTWARE, SEE https://vaadin.com/license/cval-3.0");
