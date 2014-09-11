@@ -117,6 +117,7 @@
         <file>
             <source>../vaadin-testbench/pom.xml</source>
             <outputDirectory>maven</outputDirectory>
+            <filtered>true</filtered>
         </file>
         <file>
             <source>../doc/Screenshot_Comparison_Tests.pdf</source>

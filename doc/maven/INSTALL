@@ -7,17 +7,14 @@ executing the following commands in the <TESTBENCH PACKAGE ROOT>/maven directory
 
 	mvn install:install-file \
 	-Dfile=vaadin-testbench-core-${project.version}.jar \
-    -Djavadoc=vaadin-testbench-core-${project.version}-javadoc.jar \
-    -DpomFile=pom.xml
+    -Djavadoc=vaadin-testbench-core-${project.version}-javadoc.jar
 
 	mvn install:install-file \
 	-Dfile=vaadin-testbench-api-${project.version}.jar \
-	-Djavadoc=vaadin-testbench-api-${project.version}-javadoc.jar \
-	-DpomFile=pom.xml
+	-Djavadoc=vaadin-testbench-api-${project.version}-javadoc.jar
 
 	mvn install:install-file \
 	-Dfile=vaadin-testbench-${project.version}.jar \
-	-Djavadoc=vaadin-testbench-${project.version}-javadoc.jar \
 	-DpomFile=pom.xml
 
 
