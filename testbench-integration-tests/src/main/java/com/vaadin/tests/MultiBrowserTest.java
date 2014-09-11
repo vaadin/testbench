@@ -1,0 +1,84 @@
+/*
+ * Copyright 2000-2014 Vaadin Ltd.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package com.vaadin.tests;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import org.openqa.selenium.remote.DesiredCapabilities;
+
+import com.vaadin.testbench.annotations.BrowserConfiguration;
+import com.vaadin.testbench.parallel.BrowserUtil;
+
+/**
+ * Base class for tests which should be run on all supported browsers. The test
+ * is automatically launched for multiple browsers in parallel by the test
+ * runner.
+ *
+ * Sub classes can, but typically should not, restrict the browsers used by
+ * implementing a
+ *
+ * <pre>
+ * &#064;Parameters
+ * public static Collection&lt;DesiredCapabilities&gt; getBrowsersForTest() {
+ * }
+ * </pre>
+ *
+ * @author Vaadin Ltd
+ */
+
+public abstract class MultiBrowserTest extends PrivateTB3Configuration {
+
+    protected static List<DesiredCapabilities> getBrowsersExcludingIE() {
+        List<DesiredCapabilities> browsers = new ArrayList<DesiredCapabilities>(
+                getAllBrowsers());
+        browsers.remove(BrowserUtil.ie8());
+        browsers.remove(BrowserUtil.ie9());
+        browsers.remove(BrowserUtil.ie10());
+        browsers.remove(BrowserUtil.ie11());
+        return browsers;
+    }
+
+    static List<DesiredCapabilities> allBrowsers = new ArrayList<DesiredCapabilities>();
+    static {
+        allBrowsers.add(BrowserUtil.ie8());
+        allBrowsers.add(BrowserUtil.ie9());
+        allBrowsers.add(BrowserUtil.ie10());
+        allBrowsers.add(BrowserUtil.ie11());
+        allBrowsers.add(BrowserUtil.firefox());
+        // // // Uncomment once we have the capability to run on Safari 6
+        // // // allBrowsers.add(SAFARI);
+        allBrowsers.add(BrowserUtil.chrome());
+        allBrowsers.add(BrowserUtil.phantomJS());
+        // Re-enable this when it is possible to run on a modern Opera version
+        // allBrowsers.add(Browser.OPERA.getDesiredCapabilities());
+    }
+
+    /**
+     * @return all supported browsers which are actively tested
+     */
+    public static List<DesiredCapabilities> getAllBrowsers() {
+        return Collections.unmodifiableList(allBrowsers);
+    }
+
+    @BrowserConfiguration
+    public static List<DesiredCapabilities> getBrowserConfiguration() {
+        return getAllBrowsers();
+    }
+
+}

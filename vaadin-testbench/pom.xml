@@ -6,7 +6,6 @@
 
     <groupId>com.vaadin</groupId>
     <artifactId>vaadin-testbench</artifactId>
-    <version>4.0-SNAPSHOT</version>
     <name>Vaadin TestBench</name>
     <inceptionYear>2012</inceptionYear>
 
@@ -20,7 +19,6 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <vaadin.testbench.api.version>7.3.0.alpha2</vaadin.testbench.api.version>
         <snapshot.repository.url>http://oss.sonatype.org/content/repositories/vaadin-snapshots/
         </snapshot.repository.url>
     </properties>
@@ -97,7 +95,8 @@
         <dependency>
             <groupId>com.vaadin</groupId>
             <artifactId>vaadin-testbench-api</artifactId>
-            <version>${vaadin.testbench.api.version}</version>
+            <version>7.3-SNAPSHOT</version>
         </dependency>
     </dependencies>
+    <version>4.0-SNAPSHOT</version>
 </project>
