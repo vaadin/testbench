@@ -12,12 +12,17 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <vaadin.testbench.api.version>0.0-SNAPSHOT</vaadin.testbench.api.version>
+        <vaadin.testbench.api.version>7.3.0.alpha2</vaadin.testbench.api.version>
         <snapshot.repository.url>http://oss.sonatype.org/content/repositories/vaadin-snapshots/
         </snapshot.repository.url>
     </properties>
 
-
+    <repositories>
+        <repository>
+            <id>vaadin-addons</id>
+            <url>http://vaadin.com/nexus/content/repositories/vaadin-addons</url>
+        </repository>
+    </repositories>
     <dependencies>
         <dependency>
             <groupId>com.vaadin</groupId>
