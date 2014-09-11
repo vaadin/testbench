@@ -24,6 +24,27 @@
             </includes>
         </fileSet>
         <fileSet>
+            <directory>../vaadin-testbench-core/target</directory>
+            <outputDirectory>maven</outputDirectory>
+            <includes>
+                <include>*.jar</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <directory>target/dependency</directory>
+            <outputDirectory>maven</outputDirectory>
+            <includes>
+                <include>vaadin-testbench-api*.jar</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <directory>../vaadin-testbench/target</directory>
+            <outputDirectory>maven</outputDirectory>
+            <includes>
+                <include>*.jar</include>
+            </includes>
+        </fileSet>
+        <fileSet>
             <directory>../vaadin-testbench-standalone/target</directory>
             <outputDirectory>./</outputDirectory>
             <includes>

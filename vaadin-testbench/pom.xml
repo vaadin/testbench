@@ -10,6 +10,14 @@
     <name>Vaadin TestBench</name>
     <inceptionYear>2012</inceptionYear>
 
+    <licenses>
+        <license>
+            <name>Commercial Vaadin Add-On License version 3.0</name>
+            <url>http://vaadin.com/license/cval-3</url>
+            <distribution>manual</distribution>
+        </license>
+    </licenses>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <vaadin.testbench.api.version>7.3.0.alpha2</vaadin.testbench.api.version>
@@ -23,6 +31,63 @@
             <url>http://vaadin.com/nexus/content/repositories/vaadin-addons</url>
         </repository>
     </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>pdfsplit-plugin</id>
+            <url>https://raw.github.com/zch/maven/releases/</url>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.3.1</version>
+                <configuration>
+                    <archive>
+                        <index>true</index>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <!-- Implementation-Title and Implementation-Version come from the
+                                POM by default -->
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                        </manifest>
+                        <manifestEntries>
+                            <!-- Package format version - do not change -->
+                            <Vaadin-Package-Version>1</Vaadin-Package-Version>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+
+            <!-- Extracts the TouchKit chapter from BoV -->
+            <plugin>
+                <groupId>com.github.zch</groupId>
+                <artifactId>pdfsplit-maven-plugin</artifactId>
+                <version>1.0.1</version>
+                <executions>
+                    <execution>
+                        <id>pdfsplit</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>split</goal>
+                        </goals>
+                        <configuration>
+                            <inputUrl>
+                                https://vaadin.com/download/book-of-vaadin/vaadin-7/pdf/book-of-vaadin.pdf
+                            </inputUrl>
+                            <chapter>Chapter 21. Vaadin TestBench</chapter>
+                            <outFile>${project.build.directory}/vaadin-testbench-manual-${project.version}.pdf
+                            </outFile>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
     <dependencies>
         <dependency>
             <groupId>com.vaadin</groupId>
