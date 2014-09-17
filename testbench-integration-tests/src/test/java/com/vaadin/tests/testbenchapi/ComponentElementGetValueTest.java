@@ -20,7 +20,6 @@ import com.vaadin.testbench.elements.SliderElement;
 import com.vaadin.testbench.elements.TextAreaElement;
 import com.vaadin.testbench.elements.TextFieldElement;
 import com.vaadin.testbench.elements.TwinColSelectElement;
-import com.vaadin.tests.MultiBrowserTest;
 
 /*
  * Copyright 2000-2014 Vaadin Ltd.

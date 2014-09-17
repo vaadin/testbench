@@ -21,7 +21,6 @@ import org.junit.Test;
 
 import com.vaadin.testUI.TreeElementGetValue;
 import com.vaadin.testbench.elements.TreeElement;
-import com.vaadin.tests.MultiBrowserTest;
 
 public class TreeElementGetValueTest extends MultiBrowserTest {
     @Before

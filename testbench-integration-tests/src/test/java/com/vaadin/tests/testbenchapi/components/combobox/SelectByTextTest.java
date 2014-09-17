@@ -23,7 +23,7 @@ import org.openqa.selenium.WebElement;
 
 import com.vaadin.testbench.By;
 import com.vaadin.testbench.elements.ComboBoxElement;
-import com.vaadin.tests.MultiBrowserTest;
+import com.vaadin.tests.testbenchapi.MultiBrowserTest;
 
 /**
  * Validates ComboBox.selectByText(String s) works properly if input String s

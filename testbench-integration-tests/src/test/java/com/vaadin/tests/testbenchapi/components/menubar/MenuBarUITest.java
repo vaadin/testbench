@@ -26,7 +26,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import com.vaadin.testbench.elements.MenuBarElement;
-import com.vaadin.tests.MultiBrowserTest;
+import com.vaadin.tests.testbenchapi.MultiBrowserTest;
 
 /**
  */

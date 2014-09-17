@@ -28,7 +28,6 @@ import com.vaadin.testbench.elements.TreeElement;
 import com.vaadin.testbench.elements.TreeTableElement;
 import com.vaadin.testbench.elements.TwinColSelectElement;
 import com.vaadin.testbench.elements.VerticalLayoutElement;
-import com.vaadin.tests.MultiBrowserTest;
 
 /*
  * Copyright 2000-2014 Vaadin Ltd.

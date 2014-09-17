@@ -34,7 +34,6 @@ import com.vaadin.testbench.elements.PasswordFieldElement;
 import com.vaadin.testbench.elements.TextAreaElement;
 import com.vaadin.testbench.elements.TextFieldElement;
 import com.vaadin.testbench.elements.TwinColSelectElement;
-import com.vaadin.tests.MultiBrowserTest;
 
 /**
  * Test clear method. Checks that value of the component was changed both on

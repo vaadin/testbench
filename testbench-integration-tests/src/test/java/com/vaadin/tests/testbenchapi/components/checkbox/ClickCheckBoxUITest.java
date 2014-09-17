@@ -22,7 +22,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.vaadin.testbench.elements.CheckBoxElement;
-import com.vaadin.tests.MultiBrowserTest;
+import com.vaadin.tests.testbenchapi.MultiBrowserTest;
 
 /**
  * Testcase used to validate {@link CheckBoxElement#click()} works as expected.

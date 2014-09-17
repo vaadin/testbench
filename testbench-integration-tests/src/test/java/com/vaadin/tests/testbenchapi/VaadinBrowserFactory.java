@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.vaadin.tests;
+package com.vaadin.tests.testbenchapi;
 
 import java.util.HashMap;
 import java.util.Map;

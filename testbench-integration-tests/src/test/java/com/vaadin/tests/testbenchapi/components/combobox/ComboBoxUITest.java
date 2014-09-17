@@ -24,7 +24,7 @@ import org.openqa.selenium.WebElement;
 
 import com.vaadin.testUI.ComboBoxUI;
 import com.vaadin.testbench.elements.ComboBoxElement;
-import com.vaadin.tests.MultiBrowserTest;
+import com.vaadin.tests.testbenchapi.MultiBrowserTest;
 
 /**
  * Validates that multiple calls to ComboBoxElement.selectByText(String) do not

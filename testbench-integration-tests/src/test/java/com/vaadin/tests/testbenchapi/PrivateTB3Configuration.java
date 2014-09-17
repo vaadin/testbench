@@ -14,7 +14,7 @@
  * the License.
  */
 
-package com.vaadin.tests;
+package com.vaadin.tests.testbenchapi;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;

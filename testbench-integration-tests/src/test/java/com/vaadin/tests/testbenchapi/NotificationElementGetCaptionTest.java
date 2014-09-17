@@ -20,7 +20,6 @@ import org.junit.Test;
 
 import com.vaadin.testUI.NotificationElementGetCaption;
 import com.vaadin.testbench.elements.NotificationElement;
-import com.vaadin.tests.MultiBrowserTest;
 
 public class NotificationElementGetCaptionTest extends MultiBrowserTest {
     @Test
