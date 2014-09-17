@@ -25,15 +25,28 @@ import org.openqa.selenium.safari.SafariDriver;
 
 import com.vaadin.testbench.TestBench;
 import com.vaadin.testbench.parallel.BrowserUtil;
+import com.vaadin.testbench.parallel.ParallelTest;
 
 public class LocalDriver {
+
+    /**
+     * Use createDriver method instead of constructor
+     */
+
+    /**
+     * Creates a {@link WebDriver} instance used for running the test locally
+     * for debug purposes. Uses firefoxDriver as WebDriver.
+     */
+    static public WebDriver createDriver() {
+        return createDriver(ParallelTest.getDefaultCapabilities().get(0));
+    }
 
     /**
      * Creates a {@link WebDriver} instance used for running the test locally
      * for debug purposes. Used only when {@link #runLocally()} is overridden to
      * return true;
      */
-    public WebDriver createDriver(DesiredCapabilities desiredCapabilities) {
+    static public WebDriver createDriver(DesiredCapabilities desiredCapabilities) {
         WebDriver driver;
         if (BrowserUtil.isFirefox(desiredCapabilities)) {
             String firefoxPath = System.getProperty("firefox.path");

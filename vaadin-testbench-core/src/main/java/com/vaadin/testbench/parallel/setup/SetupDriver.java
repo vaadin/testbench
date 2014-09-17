@@ -88,29 +88,9 @@ public class SetupDriver {
      *            {@link WebDriver}
      * @return {@link WebDriver} properly setup
      */
-    public WebDriver setupLocalDriver(LocalDriver localDriver) {
-        DesiredCapabilities capabilities = getDesiredCapabilities();
-        setDesiredCapabilities(capabilities);
-
-        WebDriver driver = localDriver.createDriver(capabilities);
-        return driver;
-    }
-
-    /**
-     * <p>
-     * Sets up and returns a {@link WebDriver} to run test.
-     * </p>
-     * <p>
-     * The test will run on browser specified by
-     * {@link #getDesiredCapabilities()}<br>
-     * The test must set the driver through
-     * {@link TestBenchTestCase#setDriver(webDriver)}
-     * </p>
-     *
-     * @return {@link WebDriver} properly setup
-     */
     public WebDriver setupLocalDriver() {
-        return setupLocalDriver(new LocalDriver());
+        setDesiredCapabilities(desiredCapabilities);
+        return LocalDriver.createDriver(desiredCapabilities);
     }
 
     /**
@@ -129,51 +109,12 @@ public class SetupDriver {
      *            {@link WebDriver}
      * @return {@link WebDriver} properly setup
      */
-    public WebDriver setupLocalDriver(Browser runLocallyBrowser,
-            String version, LocalDriver localDriver) {
+    public WebDriver setupLocalDriver(Browser runLocallyBrowser, String version) {
         assert (runLocallyBrowser != null);
         DesiredCapabilities capabilities = BrowserUtil.getBrowserFactory()
                 .create(runLocallyBrowser, version);
         setDesiredCapabilities(capabilities);
-
-        WebDriver driver = localDriver.createDriver(capabilities);
-        return driver;
-    }
-
-    /**
-     * <p>
-     * Sets up and returns a {@link WebDriver} to run test. This driver will run
-     * the test on the {@link Browser} provided in the {@link RunLocally}
-     * annotation.
-     * </p>
-     *
-     * @param runLocallyBrowser
-     *            Browser to run test on
-     * @param localDriver
-     *            {@link LocalDriver} instance used to setup the
-     *            {@link WebDriver}
-     * @return {@link WebDriver} properly setup
-     */
-    public WebDriver setupLocalDriver(Browser runLocallyBrowser,
-            LocalDriver localDriver) {
-        return setupLocalDriver(runLocallyBrowser, "", localDriver);
-    }
-
-    /**
-     * <p>
-     * Sets up and returns a {@link WebDriver} to run test. This driver will run
-     * the test on the {@link Browser} provided in the {@link RunLocally}
-     * annotation.
-     * </p>
-     *
-     * @param runLocallyBrowser
-     *            Browser to run test on
-     * @param version
-     *            version of the browser
-     * @return {@link WebDriver} properly setup
-     */
-    public WebDriver setupLocalDriver(Browser runLocallyBrowser, String version) {
-        return setupLocalDriver(runLocallyBrowser, version, new LocalDriver());
+        return LocalDriver.createDriver(capabilities);
     }
 
     /**
@@ -188,7 +129,7 @@ public class SetupDriver {
      * @return {@link WebDriver} properly setup
      */
     public WebDriver setupLocalDriver(Browser runLocallyBrowser) {
-        return setupLocalDriver(runLocallyBrowser, "", new LocalDriver());
+        return setupLocalDriver(runLocallyBrowser, "");
     }
 
     private DesiredCapabilities desiredCapabilities = Browser.FIREFOX

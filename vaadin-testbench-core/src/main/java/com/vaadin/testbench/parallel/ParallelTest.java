@@ -107,12 +107,13 @@ public class ParallelTest extends TestBenchTestCase {
     @Before
     public void setup() throws Exception {
         // Always give priority to @RunLocally annotation
-        if (getRunLocallyBrowser() != null) {
+        if ((getRunLocallyBrowser() != null)) {
             WebDriver driver = driverConfiguration.setupLocalDriver(
                     getRunLocallyBrowser(), getRunLocallyBrowserVersion());
             setDriver(driver);
         } else if (isLocalWebDriverUsed()) {
-            WebDriver driver = driverConfiguration.setupLocalDriver();
+            WebDriver driver = driverConfiguration
+                    .setupLocalDriver(Browser.FIREFOX);
             setDriver(driver);
         } else if (getRunOnHub(getClass()) != null) {
             WebDriver driver = driverConfiguration
@@ -186,7 +187,7 @@ public class ParallelTest extends TestBenchTestCase {
 
     /**
      * Gets the {@link DesiredCapabilities} (usually browser name and version)
-     * 
+     *
      * @return
      */
     protected DesiredCapabilities getDesiredCapabilities() {

@@ -180,18 +180,16 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
      * property to override all capabilities.
      */
     private Collection<DesiredCapabilities> getDesiredCapabilities() {
-
         if (testRunsLocally()) {
-
             Collection<DesiredCapabilities> desiredCapabilities = new ArrayList<DesiredCapabilities>();
             desiredCapabilities.add(BrowserUtil.getBrowserFactory().create(
                     runLocallyBrowser(), runLocallyVersion()));
             return desiredCapabilities;
+        } else if (Parameters.isLocalWebDriverUsed()) {
+            return ParallelTest.getDefaultCapabilities();
+        } else {
+            return getFilteredCapabilities();
         }
-
-        Collection<DesiredCapabilities> desiredCapabilites = getFilteredCapabilities();
-
-        return desiredCapabilites;
     }
 
     private boolean testRunsLocally() {
