@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.NotFoundException;
 import org.openqa.selenium.WebElement;
 
 import com.vaadin.testbench.By;
@@ -26,8 +27,11 @@ import com.vaadin.testbench.elementsbase.ServerClass;
 @ServerClass("com.vaadin.ui.TabSheet")
 public class TabSheetElement extends AbstractComponentContainerElement {
 
+    // a locator that does not lead to selecting tabs from a contained inner
+    // TabSheet (#13735)
     protected org.openqa.selenium.By byTabCell = By
-            .className("v-tabsheet-tabitem");
+            .xpath("./div/table/tbody/tr/td[contains(normalize-space(concat(' ', @class, ' ')),"
+                    + "normalize-space(' v-tabsheet-tabitem '))]");
     private static org.openqa.selenium.By byCaption = By
             .className("v-captiontext");
     private static org.openqa.selenium.By byClosable = By
@@ -57,8 +61,11 @@ public class TabSheetElement extends AbstractComponentContainerElement {
             WebElement tab = tabCell.findElement(byCaption);
             if (tabCaption.equals(tab.getText())) {
                 tab.click();
+                return;
             }
         }
+        throw new NotFoundException("Tab with caption " + tabCaption
+                + " was not found.");
     }
 
     /**
