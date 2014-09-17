@@ -12,6 +12,11 @@
  */
 package com.vaadin.testbench.elements;
 
+import java.util.List;
+
+import org.openqa.selenium.WebElement;
+
+import com.vaadin.testbench.By;
 import com.vaadin.testbench.TestBench;
 import com.vaadin.testbench.elementsbase.AbstractElement;
 import com.vaadin.testbench.elementsbase.ServerClass;
@@ -19,6 +24,13 @@ import com.vaadin.testbench.elementsbase.ServerClass;
 @ServerClass("com.vaadin.ui.AbstractSplitPanel")
 public class AbstractSplitPanelElement extends
         AbstractComponentContainerElement {
+
+    private static org.openqa.selenium.By byFirstContainer = By
+            .xpath("./div/div[contains(normalize-space(concat(@class, ' ')), "
+                    + "normalize-space('-first-container '))]/*");
+    private static org.openqa.selenium.By bySecondContainer = By
+            .xpath("./div/div[contains(normalize-space(concat(@class, ' ')), "
+                    + "normalize-space('-second-container '))]/*");
 
     /**
      * Gets the first component of a split panel and wraps it in given class.
@@ -28,9 +40,7 @@ public class AbstractSplitPanelElement extends
      * @return First component wrapped in given class
      */
     public <T extends AbstractElement> T getFirstComponent(Class<T> clazz) {
-        return TestBench.createElement(clazz,
-                $$(AbstractComponentElement.class).first().getWrappedElement(),
-                getCommandExecutor());
+        return getContainedComponent(clazz, byFirstContainer);
     }
 
     /**
@@ -41,9 +51,32 @@ public class AbstractSplitPanelElement extends
      * @return Second component wrapped in given class
      */
     public <T extends AbstractElement> T getSecondComponent(Class<T> clazz) {
-        return TestBench.createElement(clazz,
-                $$(AbstractComponentElement.class).get(1).getWrappedElement(),
-                getCommandExecutor());
+        return getContainedComponent(clazz, bySecondContainer);
+    }
+
+    /**
+     * Gets a component of a split panel and wraps it in the given class.
+     * 
+     * @param clazz
+     *            Components element class
+     * @param byContainer
+     *            A locator that specifies the container (first or second) whose
+     *            component is looked for
+     * @return A component wrapped in the given class
+     */
+    private <T extends AbstractElement> T getContainedComponent(Class<T> clazz,
+            org.openqa.selenium.By byContainer) {
+        List<AbstractComponentElement> containedComponents = $$(
+                AbstractComponentElement.class).all();
+        List<WebElement> componentsInSelectedContainer = findElements(byContainer);
+        for (AbstractComponentElement component : containedComponents) {
+            WebElement elem = component.getWrappedElement();
+            if (componentsInSelectedContainer.contains(elem)) {
+                return TestBench.createElement(clazz, elem,
+                        getCommandExecutor());
+            }
+        }
+        return null;
     }
 
 }
