@@ -10,7 +10,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <vaadin.testbench.api.version>7.3.0.alpha2</vaadin.testbench.api.version>
+        <vaadin.testbench.api.version>7.3.0.alpha3</vaadin.testbench.api.version>
     </properties>
 
     <licenses>
