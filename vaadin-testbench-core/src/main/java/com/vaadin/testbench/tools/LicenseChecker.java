@@ -13,11 +13,8 @@
 package com.vaadin.testbench.tools;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.Properties;
 
-import com.google.common.base.Charsets;
-import com.google.common.io.CharStreams;
 import com.vaadin.testbench.tools.CvalChecker.CvalInfo;
 import com.vaadin.testbench.tools.CvalChecker.InvalidCvalException;
 import com.vaadin.testbench.tools.CvalChecker.UnreachableCvalServerException;
@@ -32,6 +29,8 @@ public class LicenseChecker {
     private static final String PRODUCT_TITLE = "Vaadin TestBench";
     private static String productVersion = "unversioned";
     private static final CvalChecker licenseChecker = new CvalChecker();
+    private static String CVALInfo = "";
+    private static String NEW_LINE = System.getProperty("line.separator");
 
     public static void nag() {
         try {
@@ -50,28 +49,48 @@ public class LicenseChecker {
             CvalInfo validationInfo = licenseChecker.validateProduct(
                     PRODUCT_NAME, productVersion, PRODUCT_TITLE);
             // If license is valid print the message about it
-            System.out.println(validationInfo.getMessage());
+            printValidationInfo(validationInfo);
         } catch (InvalidCvalException e) {
-            System.err.println(e.getMessage());
-            printCVALInformationAndHowToGetRidOfThisInformation();
-            System.exit(0);
-        }
-
-        catch (UnreachableCvalServerException e) {
-            System.err.println(e.getMessage());
-            printCVALInformationAndHowToGetRidOfThisInformation();
-            System.exit(0);
+            printAndRethrowException(e.getMessage());
+        } catch (UnreachableCvalServerException e) {
+            // No connection and no cached lisence
+            String message = "License for Vaadin TestBench 4 has not been validated. Check you network connection.";
+            printAndRethrowException(message);
         }
     }
 
-    private static void printCVALInformationAndHowToGetRidOfThisInformation() {
-        try {
-            System.err.println(CharStreams.toString(new InputStreamReader(
-                    LicenseChecker.class.getClassLoader().getResourceAsStream(
-                            "licensenag.txt"), Charsets.UTF_8)));
-        } catch (IOException e) {
-            System.err
-                    .println("VAADIN TESTBENCH IS COMMERCIAL SOFTWARE, SEE https://vaadin.com/license/cval-3.0");
+    private static void printAndRethrowException(String eMessage) {
+        CVALInfo = getValidationInfo(eMessage);
+        System.out.println(CVALInfo);
+        throw new Error(CVALInfo);
+    }
+
+    private static String getValidationInfo(String validationInfo) {
+        String message = "";
+        message += getLine(validationInfo.length()) + NEW_LINE;
+        message += validationInfo + NEW_LINE;
+        message += getLine(validationInfo.length()) + NEW_LINE;
+        return message;
+    }
+
+    private static void printValidationInfo(CvalInfo validationInfo) {
+        printLine(validationInfo.getMessage().length());
+        System.out.println(validationInfo.getMessage());
+        printLine(validationInfo.getMessage().length());
+    }
+
+    private static String getLine(int n) {
+        String line = "";
+        for (int i = 0; i <= n; i++) {
+            line += "-";
         }
+        return line;
+    }
+
+    // print formating line of "-" symbols
+    private static void printLine(int n) {
+        String line = getLine(n);
+        System.out.print(line);
+        System.out.println();
     }
 }
