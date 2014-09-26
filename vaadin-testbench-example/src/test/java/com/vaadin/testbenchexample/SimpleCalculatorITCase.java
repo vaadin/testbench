@@ -37,6 +37,6 @@ public class SimpleCalculatorITCase extends TestBase {
 
         // Verify the expected result
         assertEquals("3.0",
-                $(TextFieldElement.class).first().getAttribute("value"));
+                $(TextFieldElement.class).first().getValue());
     }
 }

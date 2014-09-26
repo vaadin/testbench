@@ -1,11 +1,13 @@
 package com.vaadin.testbenchexample;
 
+import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.UI;
 
+@Theme("valo")
 @Title("Calculator example")
 @SuppressWarnings("serial")
 public class CalcUI extends UI {

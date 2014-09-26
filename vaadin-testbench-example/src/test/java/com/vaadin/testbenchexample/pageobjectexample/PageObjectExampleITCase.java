@@ -53,9 +53,7 @@ public class PageObjectExampleITCase {
         // Enter 1+2 and verify the result
         assertEquals("3.0", calculator.enter("1").add("2").getResult());
         // Verify the log
-        assertEquals("1.0 +", log.getRow(0));
-        assertEquals("2.0 =", log.getRow(1));
-        assertEquals("3.0", log.getRow(2));
+        assertEquals("1.0 + 2.0 = 3.0", log.getRow(0));
     }
 
     @Test
@@ -91,6 +89,6 @@ public class PageObjectExampleITCase {
         assertFalse(addComment.isOpen());
 
         // Verify that the log contains our comment
-        assertTrue(log.getRow(3).contains(COMMENT));
+        assertTrue(log.getRow(1).contains(COMMENT));
     }
 }

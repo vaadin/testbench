@@ -45,6 +45,14 @@ public class AdvancedCommandsITCase extends TestBase {
         oneButton.click();
         addButton.click();
 
+        // Click a few more buttons
+        getButton("2").click();
+        getButton("=").click();
+
+        // Check that the display is correct (1 + 2 = 3)
+        assertEquals("3.0",
+                $(TextFieldElement.class).first().getAttribute("value"));
+
         // We fill in a comment and verify the commenting feature works as
         // expected.
         getButton("Add Comment").click();
@@ -62,14 +70,6 @@ public class AdvancedCommandsITCase extends TestBase {
         if ($(WindowElement.class).exists()) {
             fail("Modal window prompting textfield was not properly closed");
         }
-
-        // Click a few more buttons
-        getButton("2").click();
-        getButton("=").click();
-
-        // Check that the display is correct (1 + 2 = 3)
-        assertEquals("3.0",
-                $(TextFieldElement.class).first().getAttribute("value"));
 
         // Verify the second row in log contains our comment
         // Uses Vaadin table selector with subpart.

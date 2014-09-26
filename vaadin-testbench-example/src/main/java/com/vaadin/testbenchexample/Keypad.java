@@ -1,7 +1,10 @@
 package com.vaadin.testbenchexample;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
+import java.util.Stack;
 
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -19,6 +22,7 @@ public class Keypad extends GridLayout {
 
     private TextField display;
     private List<CalculatorLogger> loggers;
+    private Queue<String> currentCalculation = new ArrayDeque<String>();
 
     // By using an autoboxed Double value for the current value, we eliminate an
     // otherwise necessary state boolean, resulting in cleaner (if somewhat less
@@ -134,25 +138,25 @@ public class Keypad extends GridLayout {
         // handling a 'clear' request.
         switch (operation) {
         case '+':
-            log(currentValue + " +");
+            currentCalculation.add(currentValue + " + ");
             break;
 
         case '-':
-            log(currentValue + " -");
+            currentCalculation.add(currentValue + " - ");
             break;
 
         case '*':
-            log(currentValue + " *");
+            currentCalculation.add(currentValue + " * ");
             break;
 
         case '/':
-            log(currentValue + " /");
+            currentCalculation.add(currentValue + " / ");
             break;
 
         case '=':
             // Set the stored value to the current value, and log
-            log(currentValue + " =");
-            log("" + storedValue);
+            currentCalculation.add(currentValue + " = " + storedValue);
+            logCurrentCalculationAndResult();
             break;
 
         case 'C':
@@ -174,6 +178,17 @@ public class Keypad extends GridLayout {
         // When an operation has been performed, return the stored value in
         // order to correctly update the display
         return storedValue;
+    }
+
+    /**
+     * Forms a string representing the current calculation and logs it.
+     */
+    private void logCurrentCalculationAndResult() {
+        StringBuilder logSB = new StringBuilder();
+        while (!currentCalculation.isEmpty()) {
+            logSB.append(currentCalculation.poll());
+        }
+        log(logSB.toString());
     }
 
     /**

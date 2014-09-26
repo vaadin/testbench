@@ -137,7 +137,7 @@ public class Log extends VerticalLayout implements CalculatorLogger {
         table = new Table();
         table.setSizeFull();
 
-        setWidth("200px");
+        setWidth("400px");
         setHeight("100%");
 
         table.setColumnHeaderMode(ColumnHeaderMode.HIDDEN);
