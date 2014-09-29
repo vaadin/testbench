@@ -52,17 +52,6 @@
             </includes>
         </fileSet>
         <fileSet>
-            <directory>../vaadin-testbench-example</directory>
-            <outputDirectory>example</outputDirectory>
-            <excludes>
-                <exclude>*.iml</exclude>
-                <exclude>target/**</exclude>
-                <!-- The pom and README are filtered in the next section -->
-                <exclude>package/**</exclude>
-                <exclude>*pom.xml</exclude>
-            </excludes>
-        </fileSet>
-        <fileSet>
             <directory>../doc</directory>
             <outputDirectory>documentation</outputDirectory>
             <includes>
@@ -96,16 +85,6 @@
             <filtered>true</filtered>
         </file>
         <file>
-            <source>../vaadin-testbench-example/package/pom.xml</source>
-            <outputDirectory>example</outputDirectory>
-            <filtered>true</filtered>
-        </file>
-        <file>
-            <source>../vaadin-testbench-example/package/README</source>
-            <outputDirectory>example</outputDirectory>
-            <filtered>true</filtered>
-        </file>
-        <file>
             <source>../doc/releasenotes.html</source>
             <outputDirectory>documentation</outputDirectory>
             <filtered>true</filtered>
@@ -118,10 +97,6 @@
             <source>../vaadin-testbench/pom.xml</source>
             <outputDirectory>maven</outputDirectory>
             <filtered>true</filtered>
-        </file>
-        <file>
-            <source>../doc/Screenshot_Comparison_Tests.pdf</source>
-            <outputDirectory>example</outputDirectory>
         </file>
     </files>
 </assembly>
