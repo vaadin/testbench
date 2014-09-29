@@ -22,8 +22,7 @@ import com.vaadin.testbench.elementsbase.ServerClass;
 public class AbstractFieldElement extends AbstractComponentElement {
     /**
      * Return value of the field element
-     * 
-     * @since
+     *
      * @return value of the field element
      */
     public String getValue() {
@@ -31,10 +30,19 @@ public class AbstractFieldElement extends AbstractComponentElement {
     }
 
     /**
+     * Set value of the field element
+     *
+     * @param chars
+     *            characters will be set
+     */
+    public void setValue(CharSequence chars) {
+    }
+
+    /**
      * Select contents of TextField Element
-     * 
+     *
      * NOTE: When testing with firefox browser window should have focus in it
-     * 
+     *
      * @since
      * @param elem
      *            element which context will be select
@@ -46,4 +54,11 @@ public class AbstractFieldElement extends AbstractComponentElement {
         js.executeScript(script, elem);
     }
 
+    protected void clearElementClientSide(WebElement elem) {
+        // clears without triggering an event (on client side)
+        JavascriptExecutor js = (JavascriptExecutor) getDriver();
+        String script = "window.focus(); var elem=arguments[0];"
+                + "elem.value=\"\";";
+        js.executeScript(script, elem);
+    }
 }

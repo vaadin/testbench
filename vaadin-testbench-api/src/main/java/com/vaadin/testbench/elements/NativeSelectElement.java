@@ -69,4 +69,9 @@ public class NativeSelectElement extends AbstractSelectElement {
     public String getValue() {
         return selectElement.getFirstSelectedOption().getText();
     }
+
+    @Override
+    public void setValue(CharSequence chars) {
+        selectByText((String) chars);
+    }
 }

@@ -12,18 +12,29 @@
  */
 package com.vaadin.testbench.elements;
 
+import org.openqa.selenium.Keys;
+
 import com.vaadin.testbench.elementsbase.ServerClass;
 
 @ServerClass("com.vaadin.ui.TextArea")
 public class TextAreaElement extends AbstractTextFieldElement {
     /**
      * Return value of the field element
-     * 
+     *
      * @since
      * @return value of the field element
      */
     @Override
     public String getValue() {
         return getAttribute("value");
+    }
+
+    @Override
+    public void setValue(CharSequence chars) {
+        // clears without triggering an event
+        clearElementClientSide(this);
+        focus();
+        sendKeys(chars);
+        sendKeys(Keys.TAB);
     }
 }

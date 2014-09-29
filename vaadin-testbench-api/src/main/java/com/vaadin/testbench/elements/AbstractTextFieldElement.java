@@ -12,9 +12,17 @@
  */
 package com.vaadin.testbench.elements;
 
+import org.openqa.selenium.Keys;
+
 import com.vaadin.testbench.elementsbase.ServerClass;
 
 @ServerClass("com.vaadin.ui.AbstractTextField")
 public class AbstractTextFieldElement extends AbstractFieldElement {
-
+    @Override
+    public void setValue(CharSequence chars) {
+        clearElementClientSide(this);
+        focus();
+        sendKeys(chars);
+        sendKeys(Keys.RETURN);
+    }
 }

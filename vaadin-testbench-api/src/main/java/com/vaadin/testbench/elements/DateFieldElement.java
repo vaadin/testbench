@@ -12,9 +12,11 @@
  */
 package com.vaadin.testbench.elements;
 
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 
 import com.vaadin.testbench.By;
+import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.testbench.elementsbase.ServerClass;
 
 @ServerClass("com.vaadin.ui.DateField")
@@ -27,5 +29,14 @@ public class DateFieldElement extends AbstractFieldElement {
     public void clear() {
         WebElement elem = findElement(By.tagName("input"));
         elem.clear();
+    }
+
+    @Override
+    public void setValue(CharSequence chars) {
+        WebElement elem = findElement(By.tagName("input"));
+        TestBenchElement tbElement = (TestBenchElement) elem;
+        clearElementClientSide(tbElement);
+        tbElement.sendKeys(chars);
+        tbElement.sendKeys(Keys.TAB);
     }
 }
