@@ -29,7 +29,7 @@ import com.vaadin.tests.testbenchapi.MultiBrowserTest;
  * Validates ComboBox.selectByText(String s) works properly if input String s
  * contains parentheses
  */
-public class SelectByTextTest extends MultiBrowserTest {
+public class SelectByTextIT extends MultiBrowserTest {
 
     @Before
     public void init() {

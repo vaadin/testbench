@@ -30,7 +30,7 @@ import com.vaadin.tests.testbenchapi.MultiBrowserTest;
 
 /**
  */
-public class MenuBarUITest extends MultiBrowserTest {
+public class MenuBarUIIT extends MultiBrowserTest {
 
     @Before
     public void init() {

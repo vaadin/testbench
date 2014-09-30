@@ -28,7 +28,7 @@ import com.vaadin.tests.testbenchapi.MultiBrowserTest;
  * Testcase used to validate {@link CheckBoxElement#click()} works as expected.
  * See #13763
  */
-public class ClickCheckBoxUITest extends MultiBrowserTest {
+public class ClickCheckBoxUIIT extends MultiBrowserTest {
 
     @Before
     public void init() {

@@ -53,7 +53,7 @@ import com.vaadin.testbench.elements.VerticalLayoutElement;
  * used
  */
 
-public abstract class ElementComponentGetCaptionBaseTest extends
+public abstract class ElementComponentGetCaptionBaseIT extends
         MultiBrowserTest {
     AbstractLayoutElement mainLayout;
 

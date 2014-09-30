@@ -37,7 +37,7 @@ import com.vaadin.testbench.elements.TwinColSelectElement;
  * the License.
  */
 
-public class ComponentElementGetValueTest extends MultiBrowserTest {
+public class ComponentElementGetValueIT extends MultiBrowserTest {
 
     @Before
     public void init() {

@@ -25,7 +25,7 @@ import com.vaadin.tests.testbenchapi.MultiBrowserTest;
  * Tests that an exception is thrown when attempting to select a tab that does
  * not exist in the tab sheet.
  */
-public class TabSheetElementExceptionTest extends MultiBrowserTest {
+public class TabSheetElementExceptionIT extends MultiBrowserTest {
 
     @Test
     public void testNoExceptionWhenFound() {

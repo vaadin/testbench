@@ -33,7 +33,7 @@ import com.vaadin.tests.testbenchapi.MultiBrowserTest;
  * and #14075.
  * 
  */
-public class SplitPanelComponentsTest extends MultiBrowserTest {
+public class SplitPanelComponentsIT extends MultiBrowserTest {
 
     @Before
     public void init() {

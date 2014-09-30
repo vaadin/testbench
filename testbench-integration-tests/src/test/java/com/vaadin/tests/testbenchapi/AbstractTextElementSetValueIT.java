@@ -32,7 +32,7 @@ import com.vaadin.testbench.elements.TextFieldElement;
  * @since
  * @author Vaadin Ltd
  */
-public class AbstractTextElementSetValueTest extends MultiBrowserTest {
+public class AbstractTextElementSetValueIT extends MultiBrowserTest {
     private final static String TYPED_STRING = "this is typed string";
 
     @Before

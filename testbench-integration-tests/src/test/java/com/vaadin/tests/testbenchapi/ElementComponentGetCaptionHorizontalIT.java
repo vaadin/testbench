@@ -15,19 +15,20 @@
  */
 package com.vaadin.tests.testbenchapi;
 
-import com.vaadin.testUI.ElementComponentGetCaptionCssLayout;
-import com.vaadin.testbench.elements.CssLayoutElement;
+import com.vaadin.testUI.ElementComponentGetCaptionHorizontal;
+import com.vaadin.testbench.elements.HorizontalLayoutElement;
 
-public class ElementComponentGetCaptionCssLayoutTest extends
-        ElementComponentGetCaptionBaseTest {
+public class ElementComponentGetCaptionHorizontalIT extends
+        ElementComponentGetCaptionBaseIT {
+
     @Override
     protected Class<?> getUIClass() {
-        return ElementComponentGetCaptionCssLayout.class;
+        return ElementComponentGetCaptionHorizontal.class;
     }
 
     @Override
     protected void openTestURL() {
         super.openTestURL();
-        mainLayout = $(CssLayoutElement.class).get(0);
+        mainLayout = $(HorizontalLayoutElement.class).get(0);
     }
 }

@@ -34,7 +34,7 @@ import com.vaadin.tests.testbenchapi.MultiBrowserTest;
  * tab sheet. Only the tabs in the current tab sheet should be candidates for
  * selection.
  */
-public class NestedTabSheetTest extends MultiBrowserTest {
+public class NestedTabSheetIT extends MultiBrowserTest {
 
     @Test
     public void openOuterTabInNestedTabSheet() {

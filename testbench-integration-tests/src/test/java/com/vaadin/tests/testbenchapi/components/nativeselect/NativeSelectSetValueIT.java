@@ -13,7 +13,7 @@ import com.vaadin.testbench.elements.NativeSelectElement;
 import com.vaadin.testbench.parallel.BrowserUtil;
 import com.vaadin.tests.testbenchapi.MultiBrowserTest;
 
-public class NativeSelectSetValueTest extends MultiBrowserTest {
+public class NativeSelectSetValueIT extends MultiBrowserTest {
 
     @Test
     public void testSetValue() {

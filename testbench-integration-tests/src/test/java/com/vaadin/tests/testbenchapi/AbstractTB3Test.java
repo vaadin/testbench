@@ -524,10 +524,17 @@ public abstract class AbstractTB3Test extends ParallelTest {
      */
     protected Class<?> getUIClass() {
         try {
-            // Convention: SomeUITest uses the SomeUI UI class
+            // Convention: SomeUI UI class is used by SomeUITest
+            // or SomeUIIT (IT-integration test)
             String testUIpackage = "com.vaadin.testUI";
-            String uiClassName = getClass().getSimpleName().replaceFirst(
-                    "Test$", "");
+            String uiClassName = "";
+            if (getClass().getSimpleName().endsWith("Test")) {
+                uiClassName = getClass().getSimpleName().replaceFirst("Test$",
+                        "");
+            } else if (getClass().getSimpleName().endsWith("IT")) {
+                uiClassName = getClass().getSimpleName()
+                        .replaceFirst("IT$", "");
+            }
             Class<?> cls = Class.forName(testUIpackage + "." + uiClassName);
             if (isSupportedRunnerClass(cls)) {
                 return cls;

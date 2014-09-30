@@ -1,12 +1,12 @@
 /*
  * Copyright 2000-2014 Vaadin Ltd.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -15,19 +15,20 @@
  */
 package com.vaadin.tests.testbenchapi;
 
-import com.vaadin.testUI.ElementComponentGetCaptionFormLayout;
-import com.vaadin.testbench.elements.FormLayoutElement;
+import org.junit.Assert;
+import org.junit.Test;
 
-public class ElementComponentGetCaptionFormLayoutTest extends
-        ElementComponentGetCaptionBaseTest {
-    @Override
-    protected Class<?> getUIClass() {
-        return ElementComponentGetCaptionFormLayout.class;
-    }
+import com.vaadin.testUI.NotificationElementGetCaption;
+import com.vaadin.testbench.elements.NotificationElement;
 
-    @Override
-    protected void openTestURL() {
-        super.openTestURL();
-        mainLayout = $(FormLayoutElement.class).get(0);
+public class NotificationElementGetCaptionIT extends MultiBrowserTest {
+    @Test
+    public void testNotificationCaption() {
+        openTestURL();
+        NotificationElement elem = $(NotificationElement.class).get(0);
+        String actual = elem.getCaption();
+        String expected = NotificationElementGetCaption.CAPTION;
+        Assert.assertTrue("Error with class:" + elem.getAttribute("class"),
+                expected.equals(actual));
     }
 }

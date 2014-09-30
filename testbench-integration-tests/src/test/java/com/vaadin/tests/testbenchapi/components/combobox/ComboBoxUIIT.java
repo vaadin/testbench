@@ -31,7 +31,7 @@ import com.vaadin.tests.testbenchapi.MultiBrowserTest;
  * append the input given each time to the previous one. The value in the
  * combobox's search field should be cleared before searching for a new one.
  */
-public class ComboBoxUITest extends MultiBrowserTest {
+public class ComboBoxUIIT extends MultiBrowserTest {
 
     @Before
     public void init() {

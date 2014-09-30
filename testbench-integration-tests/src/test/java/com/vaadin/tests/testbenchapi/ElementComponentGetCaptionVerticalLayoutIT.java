@@ -15,19 +15,19 @@
  */
 package com.vaadin.tests.testbenchapi;
 
-import com.vaadin.testUI.ElementComponentGetCaptionGridLayout;
-import com.vaadin.testbench.elements.GridLayoutElement;
+import com.vaadin.testUI.ElementComponentGetCaptionVerticalLayout;
+import com.vaadin.testbench.elements.VerticalLayoutElement;
 
-public class ElementComponentGetCaptionGridLayoutTest extends
-        ElementComponentGetCaptionBaseTest {
+public class ElementComponentGetCaptionVerticalLayoutIT extends
+        ElementComponentGetCaptionBaseIT {
     @Override
     protected Class<?> getUIClass() {
-        return ElementComponentGetCaptionGridLayout.class;
+        return ElementComponentGetCaptionVerticalLayout.class;
     }
 
     @Override
     protected void openTestURL() {
         super.openTestURL();
-        mainLayout = $(GridLayoutElement.class).get(0);
+        mainLayout = $(VerticalLayoutElement.class).get(2);
     }
 }

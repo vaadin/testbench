@@ -47,7 +47,7 @@ import com.vaadin.testbench.elements.TwinColSelectElement;
  * @author Vaadin Ltd
  */
 
-public class TestBenchElementClearValueTest extends MultiBrowserTest {
+public class TestBenchElementClearValueIT extends MultiBrowserTest {
     // The label text is changed on element component ValueChange event
     // Used to test that element.clear() method has actually triggered the
     // server side code
