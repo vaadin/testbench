@@ -47,9 +47,16 @@ public class CheckBoxElement extends AbstractFieldElement {
         }
     }
 
+    @Override
+    public String getCaption() {
+        WebElement elem = findElement(By.xpath("..")).findElement(
+                By.tagName("label"));
+        return elem.getText();
+    }
+
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.vaadin.testbench.TestBenchElement#click()
      */
     @Override
