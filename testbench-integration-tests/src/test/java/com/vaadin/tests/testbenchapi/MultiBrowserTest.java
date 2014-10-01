@@ -44,7 +44,7 @@ import com.vaadin.testbench.parallel.BrowserUtil;
 
 public abstract class MultiBrowserTest extends PrivateTB3Configuration {
 
-    protected static List<DesiredCapabilities> getBrowsersExcludingIE() {
+    protected List<DesiredCapabilities> getBrowsersExcludingIE() {
         List<DesiredCapabilities> browsers = new ArrayList<DesiredCapabilities>(
                 getAllBrowsers());
         browsers.remove(BrowserUtil.ie8());
@@ -54,30 +54,31 @@ public abstract class MultiBrowserTest extends PrivateTB3Configuration {
         return browsers;
     }
 
-    static List<DesiredCapabilities> allBrowsers = new ArrayList<DesiredCapabilities>();
-    static {
-        allBrowsers.add(BrowserUtil.ie8());
-        allBrowsers.add(BrowserUtil.ie9());
-        allBrowsers.add(BrowserUtil.ie10());
-        allBrowsers.add(BrowserUtil.ie11());
-        allBrowsers.add(BrowserUtil.firefox());
-        // // // Uncomment once we have the capability to run on Safari 6
-        // // // allBrowsers.add(SAFARI);
-        allBrowsers.add(BrowserUtil.chrome());
-        allBrowsers.add(BrowserUtil.phantomJS());
-        // Re-enable this when it is possible to run on a modern Opera version
-        // allBrowsers.add(Browser.OPERA.getDesiredCapabilities());
-    }
+    protected List<DesiredCapabilities> allBrowsers = null;
 
     /**
      * @return all supported browsers which are actively tested
      */
-    public static List<DesiredCapabilities> getAllBrowsers() {
+    public List<DesiredCapabilities> getAllBrowsers() {
+        if (allBrowsers == null) {
+            allBrowsers = new ArrayList<DesiredCapabilities>();
+            allBrowsers.add(BrowserUtil.ie8());
+            allBrowsers.add(BrowserUtil.ie9());
+            allBrowsers.add(BrowserUtil.ie10());
+            allBrowsers.add(BrowserUtil.ie11());
+            allBrowsers.add(BrowserUtil.firefox());
+            // // // Uncomment once we have the capability to run on Safari 6
+            // // // allBrowsers.add(SAFARI);
+            allBrowsers.add(BrowserUtil.chrome());
+            allBrowsers.add(BrowserUtil.phantomJS());
+            // Re-enable this when it is possible to run on a modern Opera version
+            // allBrowsers.add(Browser.OPERA.getDesiredCapabilities());
+        }
         return Collections.unmodifiableList(allBrowsers);
     }
 
     @BrowserConfiguration
-    public static List<DesiredCapabilities> getBrowserConfiguration() {
+    public List<DesiredCapabilities> getBrowserConfiguration() {
         return getAllBrowsers();
     }
 

@@ -295,7 +295,7 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
 
                     try {
                         return (Collection<DesiredCapabilities>) method
-                                .invoke(null);
+                                .invoke(getTestClassInstance());
                     } catch (Exception e) {
                         // Handle possible exceptions.
 
@@ -332,13 +332,6 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
         String genericErrorMessage = "Error occurred while invoking BrowserConfigurationMethod %s.%s()."
                 + " %s. Method was ignored, searching BrowserConfiguration method in superclasses";
 
-        if (!Modifier.isStatic(method.getModifiers())) {
-            String errMsg = String.format(genericErrorMessage, method
-                    .getDeclaringClass().getName(), method.getName(),
-                    "BrowserConfiguration annotated method must be static");
-            logger.info(errMsg);
-            return false;
-        }
         if (method.getParameterTypes().length != 0) {
             String errMsg = String
                     .format(genericErrorMessage, method.getDeclaringClass()

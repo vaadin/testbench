@@ -29,7 +29,7 @@ public class NativeSelectSetValueIT extends MultiBrowserTest {
 
     // Exclude Phantom js for that test because of #14516
     @BrowserConfiguration
-    public static List<DesiredCapabilities> getBrowserConfiguration() {
+    public List<DesiredCapabilities> getBrowserConfiguration() {
         List<DesiredCapabilities> browsers = new ArrayList<DesiredCapabilities>(
                 getAllBrowsers());
         browsers.remove(BrowserUtil.phantomJS());
