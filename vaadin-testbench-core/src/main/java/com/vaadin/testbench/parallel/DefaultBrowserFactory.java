@@ -80,6 +80,10 @@ public class DefaultBrowserFactory implements TestBenchBrowserFactory {
             desiredCapabilities = DesiredCapabilities.internetExplorer();
             desiredCapabilities.setVersion("11");
             desiredCapabilities.setPlatform(platform);
+            // There are 2 capabilities ie.ensureCleanSession and
+            // ensureCleanSession in Selenium
+            // IE 11 uses ie.ensureCleanSession
+            desiredCapabilities.setCapability("ie.ensureCleanSession", true);
             break;
         case FIREFOX:
         default:
