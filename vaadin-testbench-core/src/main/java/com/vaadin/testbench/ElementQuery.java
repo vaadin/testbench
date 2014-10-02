@@ -20,6 +20,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.SearchContext;
@@ -213,19 +215,19 @@ public class ElementQuery<T extends AbstractElement> {
      *         entered
      */
     public ElementQuery<T> state(String varname, String value) {
-        // NOTE: this should be changed to a regexp if someone has the time
-        try {
-            Integer.parseInt(varname);
-        } catch (NumberFormatException e) {
+        Pattern p = Pattern.compile("[0-9]+");
+        Matcher m = p.matcher(varname);
+        boolean isValid = !m.matches();
+        if (isValid) {
             if (!statevars.containsKey(varname)) {
                 statevars.put(varname, new LinkedHashSet<String>());
             }
             statevars.get(varname).add(value);
             return this;
+        } else {
+            logger.warning("State variable is invalid! State variable name cannot be an integer.");
+            return null;
         }
-
-        logger.warning("State variable name cannot be an integer!");
-        return null;
 
     }
 
