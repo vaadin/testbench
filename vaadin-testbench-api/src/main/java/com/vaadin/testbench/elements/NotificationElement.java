@@ -12,6 +12,9 @@
  */
 package com.vaadin.testbench.elements;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -22,7 +25,7 @@ import com.vaadin.testbench.elementsbase.ServerClass;
 public class NotificationElement extends AbstractElement {
     /**
      * Closes a notification
-     * 
+     *
      * @return true if the notification was successfully closed.
      */
     @Override
@@ -51,7 +54,7 @@ public class NotificationElement extends AbstractElement {
 
     /**
      * Returns the caption of the Notification element
-     * 
+     *
      * @since
      * @return the caption of the Notification element
      */
@@ -59,6 +62,47 @@ public class NotificationElement extends AbstractElement {
         WebElement popup = findElement(By.className("popupContent"));
         WebElement caption = popup.findElement(By.tagName("h1"));
         return caption.getText();
+    }
 
+    /**
+     * Returns description of the Notification element
+     *
+     * @return description of the Notification element
+     */
+    public String getDescription() {
+        WebElement popup = findElement(By.className("popupContent"));
+        WebElement caption = popup.findElement(By.tagName("p"));
+        return caption.getText();
+    }
+
+    /**
+     * Returns type of the Notification element
+     *
+     * @return type of the Notification element
+     */
+    public String getType() {
+        // The info about notification type can be taken only from css rule of
+        // the notification
+        // To get type we search for css rules which represent notification type
+        // This map maps css style rule to type of a notification
+        HashMap<String, String> styleToTypeMap = initStyleToTypeMap();
+        for (Map.Entry<String, String> entry : styleToTypeMap.entrySet()) {
+            String notifType = entry.getKey();
+            // Check notification has css style which describes notification
+            // type
+            if (getAttribute("class").contains(notifType)) {
+                return entry.getValue();
+            }
+        }
+        return "";
+    }
+
+    private HashMap<String, String> initStyleToTypeMap() {
+        HashMap<String, String> styleToType = new HashMap<String, String>();
+        styleToType.put("v-Notification-error", "error");
+        styleToType.put("v-Notification-warning", "warning");
+        styleToType.put("v-Notification-humanized", "humanized");
+        styleToType.put("v-Notification-tray", "tray_notification");
+        return styleToType;
     }
 }
