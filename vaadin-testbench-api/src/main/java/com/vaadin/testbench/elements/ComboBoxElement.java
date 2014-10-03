@@ -36,7 +36,7 @@ public class ComboBoxElement extends AbstractSelectElement {
     /**
      * Input the given text to ComboBox and click on the suggestion if it
      * matches.
-     * 
+     *
      * @param text
      */
     public void selectByText(String text) {
@@ -87,13 +87,20 @@ public class ComboBoxElement extends AbstractSelectElement {
 
     /**
      * Get the text representation of all suggestions on the current page
-     * 
+     *
      * @return List of suggestion texts
      */
     public List<String> getPopupSuggestions() {
+        WebElement popup = getSuggestionPopup();
         List<String> suggestionsTexts = new ArrayList<String>();
-        List<WebElement> suggestions = getSuggestionPopup().findElements(
-                By.tagName("span"));
+        // Check that there are suggestions
+        List<WebElement> tables = getSuggestionPopup().findElements(
+                By.tagName("table"));
+        if (tables == null || tables.isEmpty()) {
+            return suggestionsTexts;
+        }
+        WebElement table = tables.get(0);
+        List<WebElement> suggestions = table.findElements(By.tagName("span"));
         for (WebElement suggestion : suggestions) {
             String text = suggestion.getText();
             if (!text.isEmpty()) {
@@ -105,7 +112,7 @@ public class ComboBoxElement extends AbstractSelectElement {
 
     /**
      * Opens next popup page.
-     * 
+     *
      * @return True if next page opened. false if doesn't have next page
      */
     public boolean openNextPage() {
@@ -119,7 +126,7 @@ public class ComboBoxElement extends AbstractSelectElement {
 
     /**
      * Open previous popup page.
-     * 
+     *
      * @return True if previous page opened. False if doesn't have previous page
      */
     public boolean openPrevPage() {
