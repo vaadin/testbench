@@ -4,12 +4,13 @@
     <groupId>com.vaadin</groupId>
     <artifactId>vaadin-testbench-api</artifactId>
     <version>7.3-SNAPSHOT</version>
-    <distributionManagement>
-        <repository>
-            <id>vaadin-addons</id>
-            <url>http://vaadin.com/nexus/content/repositories/vaadin-addons</url>
-        </repository>
-    </distributionManagement>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <snapshot.repository.url>http://oss.sonatype.org/content/repositories/vaadin-snapshots/
+        </snapshot.repository.url>
+    </properties>
+
     <repositories>
         <repository>
             <id>vaadin-addons</id>
