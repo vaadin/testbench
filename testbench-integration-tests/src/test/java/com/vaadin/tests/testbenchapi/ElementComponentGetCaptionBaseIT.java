@@ -64,7 +64,6 @@ public abstract class ElementComponentGetCaptionBaseIT extends
 
     @Test
     public void getComboboxCaptionTest() {
-        openTestURL();
         ComboBoxElement elem = mainLayout.$(ComboBoxElement.class).get(0);
         testCaption(elem, 0);
     }
