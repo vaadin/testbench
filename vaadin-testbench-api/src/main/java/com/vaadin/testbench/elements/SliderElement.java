@@ -23,7 +23,7 @@ import com.vaadin.testbench.elementsbase.ServerClass;
 public class SliderElement extends AbstractFieldElement {
     /**
      * Get value of the slider
-     * 
+     *
      * Warning! This method cause slider popup to appear on the screen. To hide
      * this popup just focus any other element on the page.
      */
@@ -39,5 +39,9 @@ public class SliderElement extends AbstractFieldElement {
         }
         WebElement popupElem = popupElems.get(0);
         return popupElem.findElement(By.className("popupContent")).getText();
+    }
+
+    public WebElement getHandle() {
+        return findElement(By.className("v-slider-handle"));
     }
 }
