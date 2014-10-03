@@ -9,6 +9,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <snapshot.repository.url>http://oss.sonatype.org/content/repositories/vaadin-snapshots/
         </snapshot.repository.url>
+        <vaadin.testbench.version>4.0-SNAPSHOT</vaadin.testbench.version>
     </properties>
 
     <repositories>
@@ -129,7 +130,7 @@
         <dependency>
             <groupId>com.vaadin</groupId>
             <artifactId>vaadin-testbench-core</artifactId>
-            <version>4.0-SNAPSHOT</version>
+            <version>${vaadin.testbench.version}</version>
         </dependency>
     </dependencies>
 </project>
