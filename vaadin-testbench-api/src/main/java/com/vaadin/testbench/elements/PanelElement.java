@@ -12,9 +12,21 @@
  */
 package com.vaadin.testbench.elements;
 
+import com.vaadin.testbench.By;
+import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.testbench.elementsbase.ServerClass;
 
 @ServerClass("com.vaadin.ui.Panel")
 public class PanelElement extends AbstractSingleComponentContainerElement {
+    @Override
+    public void scroll(int scrollTop) {
+        ((TestBenchElement) findElement(By.className("v-scrollable")))
+                .scroll(scrollTop);
+    }
 
+    @Override
+    public void scrollLeft(int scrollLeft) {
+        ((TestBenchElement) findElement(By.className("v-scrollable")))
+                .scrollLeft(scrollLeft);
+    }
 }
