@@ -49,8 +49,7 @@ public class NativeSelectSetValue extends AbstractTestUI {
 
     @Override
     protected Integer getTicketNumber() {
-        // TODO Auto-generated method stub
-        return null;
+        return 13365;
     }
 
 }

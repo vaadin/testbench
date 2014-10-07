@@ -54,6 +54,7 @@ public class NativeSelectElement extends AbstractSelectElement {
 
     public void selectByText(String text) {
         selectElement.selectByVisibleText(text);
+        waitForVaadin();
     }
 
     /**
