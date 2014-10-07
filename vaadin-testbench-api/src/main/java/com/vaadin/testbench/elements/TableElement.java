@@ -22,7 +22,7 @@ public class TableElement extends AbstractSelectElement {
     /**
      * Function to find a Table cell. Looking for a cell that is currently not
      * visible will throw NoSuchElementException
-     * 
+     *
      * @param row
      *            0 based row index
      * @param column
@@ -40,7 +40,7 @@ public class TableElement extends AbstractSelectElement {
 
     /**
      * Function to get header cell with given column index
-     * 
+     *
      * @param column
      *            0 based column index
      * @return TestBenchElement containing wanted header cell
@@ -54,7 +54,7 @@ public class TableElement extends AbstractSelectElement {
 
     /**
      * Function to get footer cell with given column index
-     * 
+     *
      * @param column
      *            0 based column index
      * @return TestBenchElement containing wanted footer cell
@@ -73,5 +73,17 @@ public class TableElement extends AbstractSelectElement {
     public String getValue() {
         throw new UnsupportedOperationException(
                 "Implement table get Value. Ticket #14498");
+    }
+
+    @Override
+    public void scroll(int scrollTop) {
+        ((TestBenchElement) findElement(By.className("v-scrollable")))
+                .scroll(scrollTop);
+    }
+
+    @Override
+    public void scrollLeft(int scrollLeft) {
+        ((TestBenchElement) findElement(By.className("v-scrollable")))
+                .scrollLeft(scrollLeft);
     }
 }
