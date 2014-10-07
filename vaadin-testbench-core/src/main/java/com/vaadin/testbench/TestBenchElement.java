@@ -15,8 +15,14 @@ package com.vaadin.testbench;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.openqa.selenium.*;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.Point;
+import org.openqa.selenium.SearchContext;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.internal.WrapsElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -52,7 +58,7 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
      * TestBenchElement initialization function. If a subclass of
      * TestBenchElement needs to run some initialization code, it should
      * override init(), not this function.
-     * 
+     *
      * @param element
      *            WebElement to wrap
      * @param tbCommandExecutor
@@ -77,7 +83,7 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.openqa.selenium.internal.WrapsElement#getWrappedElement()
      */
     @Override
@@ -91,37 +97,8 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
     }
 
     /*
-     * Functionality moved to NotificationElement. API from TestBenchElement
-     * will be removed in the future
-     */
-    @Override
-    @Deprecated
-    public boolean closeNotification() {
-        click();
-        try {
-            // Wait for 5000 ms or until the element is no longer visible.
-            int times = 0;
-            while (isDisplayed() || times > 25) {
-                try {
-                    Thread.sleep(200);
-                } catch (InterruptedException e) {
-                }
-                times++;
-            }
-            return !isDisplayed();
-        } catch (RuntimeException e) {
-            if (!e.getMessage().contains("no longer attached")) {
-                // This was some other exception than a no longer attached
-                // exception. Rethrow.
-                throw e;
-            }
-            return true;
-        }
-    }
-
-    /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.vaadin.testbench.commands.TestBenchElementCommands#showTooltip()
      */
     @Override
@@ -137,7 +114,7 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.vaadin.testbench.commands.TestBenchElementCommands#scroll(int)
      */
     @Override
@@ -148,7 +125,7 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.vaadin.testbench.commands.TestBenchElementCommands#scrollLeft(int)
      */
@@ -205,7 +182,7 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
     /**
      * Triggers an HTML event on the element using JavaScript. Used internally
      * for hacking around bugs in driver implementations.
-     * 
+     *
      * @param eventType
      *            the type of event (e.g. "change")
      */
@@ -258,7 +235,7 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
     /**
      * Returns whether the Vaadin component, that this element represents, is
      * enabled or not.
-     * 
+     *
      * @return true if the component is enabled.
      */
     @Override
@@ -331,7 +308,8 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
 
     @Override
     public <T extends AbstractElement> T wrap(Class<T> elementType) {
-        return TestBench.createElement(elementType, getWrappedElement(), getCommandExecutor());
+        return TestBench.createElement(elementType, getWrappedElement(),
+                getCommandExecutor());
     }
 
     @Override

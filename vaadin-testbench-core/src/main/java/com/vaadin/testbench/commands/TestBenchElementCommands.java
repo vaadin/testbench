@@ -24,19 +24,13 @@ public interface TestBenchElementCommands {
     void focus();
 
     /**
-     * Moved to NotificationElement. API will be removed in the future.
-     */
-    @Deprecated
-    boolean closeNotification();
-
-    /**
      * Shows the tool tip of the specified element.
      */
     void showTooltip();
 
     /**
      * Scrolls the element down to the specified top value.
-     * 
+     *
      * @param scrollTop
      *            the new value for scrollTop.
      */
@@ -44,7 +38,7 @@ public interface TestBenchElementCommands {
 
     /**
      * Scrolls the element left to the specified left value.
-     * 
+     *
      * @param scrollLeft
      *            the new value for scrollLeft.
      */
@@ -53,7 +47,7 @@ public interface TestBenchElementCommands {
     /**
      * Clicks at the specified coordinates on an element while pressing possible
      * modifier keys. The coordinates are relative to top left on the element.
-     * 
+     *
      * @param x
      *            the offset from the left position of the element
      * @param y
@@ -74,10 +68,11 @@ public interface TestBenchElementCommands {
      *     TableElement table = testBenchElement(e).wrap(TableElement.class);
      *     assertEquals("Foo", table.getHeaderCell(1).getText());
      * </code>
-     * 
+     *
      * @param elementType
      *            The type (class) containing the API to decorate with. Must
-     *            extend {@link com.vaadin.testbench.elementsbase.AbstractElement}.
+     *            extend
+     *            {@link com.vaadin.testbench.elementsbase.AbstractElement}.
      * @return The element wrapped in an instance of the specified element type.
      */
     <T extends AbstractElement> T wrap(Class<T> elementType);

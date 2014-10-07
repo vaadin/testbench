@@ -16,7 +16,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.vaadin.testbench.elementsbase.AbstractElement;
 import com.vaadin.testbench.elementsbase.ServerClass;
@@ -26,30 +29,15 @@ public class NotificationElement extends AbstractElement {
     /**
      * Closes a notification
      *
-     * @return true if the notification was successfully closed.
+     * @throws TimeoutException
+     *             If a notification can not be closed and the timeout expires.
      */
-    @Override
-    public boolean closeNotification() {
+    public void closeNotification() {
         click();
-        try {
-            // Wait for 5000 ms or until the element is no longer visible.
-            int times = 0;
-            while (isDisplayed() || times > 25) {
-                try {
-                    Thread.sleep(200);
-                } catch (InterruptedException e) {
-                }
-                times++;
-            }
-            return !isDisplayed();
-        } catch (RuntimeException e) {
-            if (!e.getMessage().contains("no longer attached")) {
-                // This was some other exception than a no longer attached
-                // exception. Rethrow.
-                throw e;
-            }
-            return true;
-        }
+        WebDriverWait wait = new WebDriverWait(getDriver(), 10);
+        wait.until(ExpectedConditions.not(ExpectedConditions
+                .presenceOfAllElementsLocatedBy(By.className("v-Notification"))));
+
     }
 
     /**
