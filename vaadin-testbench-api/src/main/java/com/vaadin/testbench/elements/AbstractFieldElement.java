@@ -35,7 +35,10 @@ public class AbstractFieldElement extends AbstractComponentElement {
      * @param chars
      *            characters will be set
      */
-    public void setValue(CharSequence chars) {
+    public void setValue(CharSequence chars) throws ReadOnlyException {
+        if (isReadOnly()) {
+            throw new ReadOnlyException();
+        }
     }
 
     /**
@@ -61,4 +64,5 @@ public class AbstractFieldElement extends AbstractComponentElement {
                 + "elem.value=\"\";";
         js.executeScript(script, elem);
     }
+
 }

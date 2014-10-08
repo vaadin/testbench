@@ -22,7 +22,7 @@ import com.vaadin.testbench.elementsbase.ServerClass;
 public class AbstractComponentElement extends AbstractElement {
     /**
      * Returns the caption of the Component element
-     * 
+     *
      * @since
      * @return
      */
@@ -45,5 +45,22 @@ public class AbstractComponentElement extends AbstractElement {
 
     public String getHTML() {
         return getWrappedElement().getAttribute("innerHTML");
+    }
+
+    public boolean isReadOnly() {
+        final String READONLY_CSS_CLASS = "v-readonly";
+        String readonlyClass = getAttribute("class");
+        // lookin for READONLY_CSS_CLASS string
+        String[] cssSelectors = readonlyClass.split("\\s");
+        for (String selector : cssSelectors) {
+            if (selector.equals(READONLY_CSS_CLASS)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public class ReadOnlyException extends RuntimeException {
+
     }
 }

@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.vaadin.tests.testbenchapi;
+package com.vaadin.tests.testbenchapi.components.abstracttextfield;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -26,6 +26,7 @@ import com.vaadin.testbench.elements.LabelElement;
 import com.vaadin.testbench.elements.PasswordFieldElement;
 import com.vaadin.testbench.elements.TextAreaElement;
 import com.vaadin.testbench.elements.TextFieldElement;
+import com.vaadin.tests.testbenchapi.MultiBrowserTest;
 
 /**
  *

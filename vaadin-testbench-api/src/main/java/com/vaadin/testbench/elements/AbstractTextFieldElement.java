@@ -19,7 +19,10 @@ import com.vaadin.testbench.elementsbase.ServerClass;
 @ServerClass("com.vaadin.ui.AbstractTextField")
 public class AbstractTextFieldElement extends AbstractFieldElement {
     @Override
-    public void setValue(CharSequence chars) {
+    public void setValue(CharSequence chars) throws ReadOnlyException {
+        if (isReadOnly()) {
+            throw new ReadOnlyException();
+        }
         clearElementClientSide(this);
         focus();
         sendKeys(chars);

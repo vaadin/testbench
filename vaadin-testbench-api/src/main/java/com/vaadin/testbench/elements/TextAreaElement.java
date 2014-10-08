@@ -31,6 +31,9 @@ public class TextAreaElement extends AbstractTextFieldElement {
 
     @Override
     public void setValue(CharSequence chars) {
+        if (isReadOnly()) {
+            throw new ReadOnlyException();
+        }
         // clears without triggering an event
         clearElementClientSide(this);
         focus();

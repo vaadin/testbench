@@ -32,7 +32,10 @@ public class DateFieldElement extends AbstractFieldElement {
     }
 
     @Override
-    public void setValue(CharSequence chars) {
+    public void setValue(CharSequence chars) throws ReadOnlyException {
+        if (isReadOnly()) {
+            throw new ReadOnlyException();
+        }
         WebElement elem = findElement(By.tagName("input"));
         TestBenchElement tbElement = (TestBenchElement) elem;
         clearElementClientSide(tbElement);

@@ -71,7 +71,10 @@ public class NativeSelectElement extends AbstractSelectElement {
     }
 
     @Override
-    public void setValue(CharSequence chars) {
+    public void setValue(CharSequence chars) throws ReadOnlyException {
+        if (isReadOnly()) {
+            throw new ReadOnlyException();
+        }
         selectByText((String) chars);
     }
 }
