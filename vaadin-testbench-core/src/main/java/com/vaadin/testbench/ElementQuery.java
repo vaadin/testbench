@@ -328,7 +328,11 @@ public class ElementQuery<T extends AbstractElement> {
      * @return true if elements exists. false if not
      */
     public boolean exists() {
-        return !all().isEmpty();
+        try {
+            return !all().isEmpty();
+        } catch (NoSuchElementException e) {
+            return false;
+        }
     }
 
     /**
