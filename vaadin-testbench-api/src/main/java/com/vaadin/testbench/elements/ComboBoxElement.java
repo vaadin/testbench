@@ -21,6 +21,7 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 
 import com.vaadin.testbench.By;
+import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.testbench.elementsbase.ServerClass;
 
 @ServerClass("com.vaadin.ui.ComboBox")
@@ -44,8 +45,18 @@ public class ComboBoxElement extends AbstractSelectElement {
             sendTextWithParentheses(text);
         } else {
             WebElement textBox = findElement(By.vaadin("#textbox"));
+            TestBenchElement tb = (TestBenchElement) textBox;
+            boolean isReadonly = getReadOnly(tb);
+            // if element is readonly, we will change that, change the value
+            // and restore the original value of readonly
+            if (isReadonly) {
+                setReadOnly(tb, false);
+            }
             textBox.clear();
             textBox.sendKeys(text);
+            if (isReadonly) {
+                setReadOnly(tb, true);
+            }
         }
 
         List<String> popupSuggestions = getPopupSuggestions();
@@ -53,6 +64,18 @@ public class ComboBoxElement extends AbstractSelectElement {
                 && text.equals(popupSuggestions.get(0))) {
             getSuggestionPopup().findElement(By.tagName("td")).click();
         }
+    }
+
+    private boolean getReadOnly(WebElement elem) {
+        JavascriptExecutor js = (JavascriptExecutor) getDriver();
+        return (Boolean) js.executeScript("return arguments[0].readOnly", elem);
+
+    }
+
+    private void setReadOnly(WebElement elem, boolean value) {
+        String strValue = Boolean.toString(value);
+        JavascriptExecutor js = (JavascriptExecutor) getDriver();
+        js.executeScript("arguments[0].readOnly =" + strValue, elem);
     }
 
     /*
