@@ -38,6 +38,14 @@ public class TableElement extends AbstractSelectElement {
         return cell;
     }
 
+    public TableRowElement getRow(int row) {
+        TestBenchElement rowElem = wrapElement(
+                findElement(By.vaadin("#row[" + row + "]")),
+                getCommandExecutor());
+
+        return new TableRowElement(rowElem);
+    }
+
     /**
      * Function to get header cell with given column index
      *
@@ -86,4 +94,5 @@ public class TableElement extends AbstractSelectElement {
         ((TestBenchElement) findElement(By.className("v-scrollable")))
                 .scrollLeft(scrollLeft);
     }
+
 }
