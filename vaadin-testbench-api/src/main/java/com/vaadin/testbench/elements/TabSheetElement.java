@@ -21,6 +21,7 @@ import org.openqa.selenium.WebElement;
 
 import com.vaadin.testbench.By;
 import com.vaadin.testbench.TestBench;
+import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.testbench.elementsbase.AbstractElement;
 import com.vaadin.testbench.elementsbase.ServerClass;
 
@@ -45,9 +46,34 @@ public class TabSheetElement extends AbstractComponentContainerElement {
     public List<String> getTabCaptions() {
         List<String> tabCaptions = new ArrayList<String>();
         for (WebElement tab : findElements(byTabCell)) {
-            tabCaptions.add(tab.findElement(byCaption).getText());
+            tabCaptions.add(getTabCaption(tab));
         }
         return tabCaptions;
+    }
+
+    /**
+     * Gets the number of tabs contained in this tab sheet.
+     * 
+     * @return Number of tabs.
+     */
+    public int getTabCount() {
+        return findElements(byTabCell).size();
+    }
+
+    /**
+     * Opens the tab with the given index.
+     * 
+     * @param index
+     *            The zero-based index of the tab to be opened.
+     */
+    public void openTab(int index) {
+        List<WebElement> tabs = findElements(byTabCell);
+        if (index < 0 || index >= tabs.size()) {
+            throw new NotFoundException(
+                    "The tab sheet does not contain a tab with index " + index
+                            + ".");
+        }
+        openTab(tabs.get(index));
     }
 
     /**
@@ -58,9 +84,12 @@ public class TabSheetElement extends AbstractComponentContainerElement {
      */
     public void openTab(String tabCaption) {
         for (WebElement tabCell : findElements(byTabCell)) {
-            WebElement tab = tabCell.findElement(byCaption);
-            if (tabCaption.equals(tab.getText())) {
-                tab.click();
+            String currentCaption = getTabCaption(tabCell);
+            boolean captionMatches = (currentCaption != null && currentCaption
+                    .equals(tabCaption))
+                    || (currentCaption == null && tabCaption == null);
+            if (captionMatches) {
+                openTab(tabCell);
                 return;
             }
         }
@@ -69,23 +98,80 @@ public class TabSheetElement extends AbstractComponentContainerElement {
     }
 
     /**
+     * Opens the given tab by clicking its caption text or icon. If the tab has
+     * neither text caption nor icon, clicks at a fixed position.
+     * 
+     * @param tabCell
+     *            The tab to be opened.
+     */
+    private void openTab(WebElement tabCell) {
+        // Open the tab by clicking its caption text if it exists.
+        List<WebElement> tabCaptions = tabCell.findElements(byCaption);
+        if (tabCaptions.size() > 0) {
+            tabCaptions.get(0).click();
+            return;
+        }
+        // If no caption text was found, click the icon of the tab.
+        List<WebElement> tabIcons = tabCell
+                .findElements(By.className("v-icon"));
+        if (tabIcons.size() > 0) {
+            tabIcons.get(0).click();
+            return;
+        }
+        // If neither text nor icon caption was found, click at a position that
+        // is unlikely to close the tab.
+        ((TestBenchElement) tabCell).click(10, 10);
+    }
+
+    /**
+     * If the tab with given index is closable, closes it.
+     * 
+     * @param index
+     *            The index of the tab to be closed
+     */
+    public void closeTab(int index) {
+        List<WebElement> tabs = findElements(byTabCell);
+        if (index < 0 || index >= tabs.size()) {
+            throw new NotFoundException(
+                    "The tab sheet does not contain a tab with index " + index
+                            + ".");
+        }
+        WebElement tabCell = tabs.get(index);
+        closeTab(tabCell);
+    }
+
+    /**
      * If tab with given caption is closable, closes it.
      * 
      * @param tabCaption
-     *            Caption of the tab to be opened
+     *            Caption of the tab to be closed
      */
     public void closeTab(String tabCaption) {
         for (WebElement tabCell : findElements(byTabCell)) {
-            WebElement tab = tabCell.findElement(byCaption);
-            if (tabCaption.equals(tab.getText())) {
-                try {
-                    tabCell.findElement(byClosable).click();
-                    // Going further causes a StaleElementReferenceException.
-                    return;
-                } catch (NoSuchElementException e) {
-                    // Do nothing.
-                }
+            String currentCaption = getTabCaption(tabCell);
+            boolean captionMatches = (currentCaption != null && currentCaption
+                    .equals(tabCaption))
+                    || (currentCaption == null && tabCaption == null);
+            if (captionMatches) {
+                closeTab(tabCell);
+                return;
             }
+        }
+    }
+
+    /**
+     * Closes the given tab if it is closable.
+     * 
+     * @param tabCell
+     *            The tab to be closed
+     */
+    private void closeTab(WebElement tabCell) {
+        try {
+            tabCell.findElement(byClosable).click();
+            // Going further causes a StaleElementReferenceException.
+            return;
+        } catch (NoSuchElementException e) {
+            // Do nothing.
         }
     }
 
@@ -100,5 +186,23 @@ public class TabSheetElement extends AbstractComponentContainerElement {
         return TestBench.createElement(clazz,
                 $$(AbstractComponentElement.class).first().getWrappedElement(),
                 getCommandExecutor());
+    }
+
+    /**
+     * Returns the caption text of the given tab. If the tab has no caption,
+     * returns null.
+     * 
+     * @param tabCell
+     *            A web element representing a tab, as given by
+     *            findElements(byTabCell).get(index).
+     * @return The caption of tabCell or null if tabCell has no caption.
+     */
+    private String getTabCaption(WebElement tabCell) {
+        List<WebElement> captionElements = tabCell.findElements(byCaption);
+        if (captionElements.size() == 0) {
+            return null;
+        } else {
+            return captionElements.get(0).getText();
+        }
     }
 }
