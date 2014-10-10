@@ -29,6 +29,17 @@ public class NotificationGetTypeAndDescriptionIT extends MultiBrowserTest {
         testNotificationByIndex(3);
     }
 
+    @Test
+    public void testNotificationShow() {
+        openTestURL();
+        // checking notification show for #14356
+        ButtonElement btn = $(ButtonElement.class).id("showid");
+        btn.click();
+        NotificationElement notification = $(NotificationElement.class).first();
+        Assert.assertEquals("Notification getText() return invalid value.",
+                "test", notification.getText());
+    }
+
     // helper method find button by index click and test the notification
     // This method tests caption, description and type of the notification
     private void testNotificationByIndex(int index) {

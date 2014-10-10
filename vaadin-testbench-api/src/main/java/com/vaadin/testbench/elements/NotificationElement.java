@@ -64,6 +64,16 @@ public class NotificationElement extends AbstractElement {
     }
 
     /**
+     * Returns the caption of the Notification element
+     *
+     * @return same value as {@link #getCaption() getCaption()}
+     */
+    @Override
+    public String getText() {
+        return getCaption();
+    }
+
+    /**
      * Returns type of the Notification element
      *
      * @return type of the Notification element
