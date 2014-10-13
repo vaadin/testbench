@@ -288,8 +288,9 @@ public class ElementQuery<T extends AbstractElement> {
 
     /**
      * Search the open Vaadin application for a matching component relative to
-     * given context.
-     * 
+     * given context. NoSuchElement exception is thrown if the first element is
+     * not found.
+     *
      * @return Component as a corresponding element
      */
     public T first() {
@@ -298,8 +299,9 @@ public class ElementQuery<T extends AbstractElement> {
 
     /**
      * Search the open Vaadin application for a matching component relative to
-     * given context. Elements are post filtered with given index.
-     * 
+     * given context. Elements are post filtered with given index. NoSuchElement
+     * exception is thrown if there is no element with such index.
+     *
      * @param index
      *            Post filtering index
      * @return Component as a corresponding element
