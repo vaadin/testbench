@@ -306,6 +306,14 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
         actions.build().perform();
     }
 
+    public void doubleClick() {
+        new Actions(getDriver()).doubleClick(actualElement).build().perform();
+    }
+
+    public void contextClick() {
+        new Actions(getDriver()).contextClick(actualElement).build().perform();
+    }
+
     @Override
     public <T extends AbstractElement> T wrap(Class<T> elementType) {
         return TestBench.createElement(elementType, getWrappedElement(),
