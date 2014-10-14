@@ -37,7 +37,7 @@ public class TestBenchDriverProxy extends TestBenchCommandExecutor implements
     /**
      * Constructs a TestBenchDriverProxy using the provided web driver for the
      * actual driving.
-     * 
+     *
      * @param webDriver
      */
     protected TestBenchDriverProxy(WebDriver webDriver) {
@@ -47,7 +47,7 @@ public class TestBenchDriverProxy extends TestBenchCommandExecutor implements
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.openqa.selenium.internal.WrapsDriver#getWrappedDriver()
      */
     @Override
@@ -55,6 +55,10 @@ public class TestBenchDriverProxy extends TestBenchCommandExecutor implements
         // This is in practice the same thing as actualDriver because of proxy.
         // Selenium can use us exactly the same way.
         return this;
+    }
+
+    public WebDriver getActualDriver() {
+        return actualDriver;
     }
 
     // ----------------- WebDriver methods for convenience.
@@ -71,7 +75,7 @@ public class TestBenchDriverProxy extends TestBenchCommandExecutor implements
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.openqa.selenium.WebDriver#findElement(org.openqa.selenium.By)
      */
     @Override
@@ -85,7 +89,7 @@ public class TestBenchDriverProxy extends TestBenchCommandExecutor implements
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.openqa.selenium.WebDriver#findElements(org.openqa.selenium.By)
      */
     @Override
@@ -107,7 +111,7 @@ public class TestBenchDriverProxy extends TestBenchCommandExecutor implements
 
     /**
      * Finds an element by a Vaadin selector string.
-     * 
+     *
      * @param selector
      *            TestBench4 style Vaadin selector.
      * @param context

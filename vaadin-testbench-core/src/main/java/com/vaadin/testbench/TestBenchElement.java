@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
@@ -23,8 +24,10 @@ import org.openqa.selenium.Point;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.internal.WrapsElement;
+import org.openqa.selenium.remote.BrowserType;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 import com.vaadin.testbench.By.ByVaadin;
@@ -70,6 +73,37 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
             setCommandExecutor(tbCommandExecutor);
             actualElement = element;
             init();
+        }
+    }
+
+    public boolean isPhantomJS() {
+        return BrowserType.PHANTOMJS.equals(getCapabilities().getBrowserName());
+    }
+
+    public boolean isChrome() {
+        return BrowserType.CHROME.equals(getCapabilities().getBrowserName());
+    }
+
+    /**
+     * Returns information about current browser used
+     *
+     * @see org.openqa.selenium.Capabilities
+     * @return information about current browser used
+     */
+    public Capabilities getCapabilities() {
+        WebDriver driver;
+        if (getDriver() instanceof TestBenchDriverProxy) {
+            driver = ((TestBenchDriverProxy) getDriver()).getActualDriver();
+        } else {
+            driver = getDriver();
+        }
+
+        if (driver instanceof RemoteWebDriver) {
+            return ((RemoteWebDriver) driver).getCapabilities();
+        } else if (driver instanceof HtmlUnitDriver) {
+            return ((HtmlUnitDriver) driver).getCapabilities();
+        } else {
+            return null;
         }
     }
 

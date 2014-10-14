@@ -12,6 +12,10 @@
  */
 package com.vaadin.testbench.elements;
 
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
+
 import com.vaadin.testbench.By;
 import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.testbench.elementsbase.ServerClass;
@@ -95,4 +99,20 @@ public class TableElement extends AbstractSelectElement {
                 .scrollLeft(scrollLeft);
     }
 
+    @Override
+    public void contextClick() {
+        WebElement tbody = findElement(By.className("v-table-body"));
+        // There is a problem in with phantomjs driver, just calling
+        // contextClick() doesn't work. We have to use javascript.
+        if (isPhantomJS()) {
+            JavascriptExecutor js = getCommandExecutor();
+            String scr = "var element=arguments[0];"
+                    + "var ev = document.createEvent('HTMLEvents');"
+                    + "ev.initEvent('contextmenu', true, false);"
+                    + "element.dispatchEvent(ev);";
+            js.executeScript(scr, tbody);
+        } else {
+            new Actions(getDriver()).contextClick(tbody).build().perform();
+        }
+    }
 }
