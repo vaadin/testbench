@@ -46,8 +46,7 @@ public class TableElement extends AbstractSelectElement {
         TestBenchElement rowElem = wrapElement(
                 findElement(By.vaadin("#row[" + row + "]")),
                 getCommandExecutor());
-
-        return new TableRowElement(rowElem);
+        return rowElem.wrap(TableRowElement.class);
     }
 
     /**

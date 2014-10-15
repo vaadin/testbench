@@ -12,6 +12,7 @@
  */
 package com.vaadin.testbench.elements;
 
+import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.testbench.elementsbase.ServerClass;
 
 @ServerClass("com.vaadin.ui.TreeTable")
@@ -22,4 +23,11 @@ public class TreeTableElement extends TableElement {
         throw new UnsupportedOperationException(
                 "Implement TreeTable get Value. Ticket #14498");
     }
+
+    @Override
+    public TreeTableRowElement getRow(int row) {
+        TestBenchElement element = super.getRow(row);
+        return element.wrap(TreeTableRowElement.class);
+    }
+
 }

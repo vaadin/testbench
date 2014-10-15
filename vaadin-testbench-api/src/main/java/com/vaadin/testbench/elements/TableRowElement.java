@@ -10,12 +10,6 @@ import com.vaadin.testbench.exceptions.NoSuchColumnException;
 
 public class TableRowElement extends AbstractComponentElement {
 
-    WebElement actualElement;
-
-    public TableRowElement(WebElement actualElement) {
-        this.actualElement = actualElement;
-    }
-
     /**
      * Returns cell from current row by index. Returns the same element as
      * $(TableElement.class).first().getCell(row, col).
@@ -26,7 +20,8 @@ public class TableRowElement extends AbstractComponentElement {
      * @return cell from current row by index.
      */
     public TestBenchElement getCell(int col) {
-        List<WebElement> cells = actualElement.findElements(By.tagName("td"));
+        List<WebElement> cells = getWrappedElement().findElements(
+                By.tagName("td"));
         if (col >= cells.size()) {
             throw new NoSuchColumnException();
         }
