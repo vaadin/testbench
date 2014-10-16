@@ -83,7 +83,7 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.openqa.selenium.internal.WrapsElement#getWrappedElement()
      */
     @Override
@@ -98,7 +98,7 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see com.vaadin.testbench.commands.TestBenchElementCommands#showTooltip()
      */
     @Override
@@ -114,7 +114,7 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see com.vaadin.testbench.commands.TestBenchElementCommands#scroll(int)
      */
     @Override
@@ -125,7 +125,7 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * com.vaadin.testbench.commands.TestBenchElementCommands#scrollLeft(int)
      */
@@ -308,10 +308,16 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
 
     public void doubleClick() {
         new Actions(getDriver()).doubleClick(actualElement).build().perform();
+        // Wait till vaadin component will process the event. Without it may
+        // cause problems with phantomjs
+        waitForVaadin();
     }
 
     public void contextClick() {
         new Actions(getDriver()).contextClick(actualElement).build().perform();
+        // Wait till vaadin component will process the event. Without it may
+        // cause problems with phantomjs
+        waitForVaadin();
     }
 
     @Override
