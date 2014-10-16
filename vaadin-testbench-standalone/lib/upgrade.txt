@@ -1,32 +1,32 @@
 Notes on the included Selenium Grid version:
 
-
 Upgrade steps (to check):
 - update selenium.version in vaadin-testbench/pom.xml and
   vaadin-testbench-standalone/pom.xml (dependency-reduced-pom.xml is generated
   from it)
 - update phantomjsdriver version in vaadin-testbench/pom.xml if necessary
-- add selenium JARs to lib/org/seleniumhq/selenium/selenium-standalone/[version]
-  - this is a local Maven repository as the grid components are not in Maven
-  - the main JAR can downloaded from http://seleniumhq.org/ and renamed
-    from selenium-server-standalone-[version].jar to
-    selenium-standalone-[version].jar
-  - the POM for it can be copied from the previous version and version
-    number in it updated
-  - the sources JAR is more problematic as it is not distributed by
-    SeleniumHQ; it should contain the sources for the packages
+- Download selenium-server-standalone-VERSION.jar from http://docs.seleniumhq.org/download/
+- Rename selenium-server-standalone-VERSION.jar to selenium-standalone-VERSION.jar
+- Build the source jar (selenium-standalone-VERSION-sources.jar) for this selenium-server version:
+  -  it should contain the sources for the packages
     - org.openqa.grid
     - org.openqa.selenium
     - com.thoughtworks.selenium
-    - use the following commands in a checkout of the selenium server project
-      to create such a JAR:
+  - use the following commands in a checkout of the selenium server project
+    to create such a JAR:
       cd selenium/java/server/src
-      jar cvf ../../../../selenium-standalone-2.37.0-sources.jar org/openqa/selenium/ org/openqa/grid
+      jar cvf ../../../../selenium-standalone-VERSION-sources.jar org/openqa/selenium/ org/openqa/grid
       cd ../../client/src
-      jar uvf ../../../../selenium-standalone-2.37.0-sources.jar org/openqa/selenium/ com/thoughtworks/
-- remove old Selenium standalone version
-- update maven-metadata-local.xml (last update date and versions)
-- update all dependency versions in doc/releasenotes.html
+      jar uvf ../../../../selenium-standalone-VERSION-sources.jar org/openqa/selenium/ com/thoughtworks/
+ - Install the selenium-standalone-VERSION.jar and selenium-standalone-VERSION-sources.jar
+   to the local TB repository using the following command:
 
-Note that upgrading Selenium for the recorder requires a separate set of steps
-that is not documented yet.
+     $ mvn install:install-file -Dfile=selenium-standalone-2.43.1.jar \
+       -DgroupId=org.seleniumhq.selenium -DartifactId=selenium-standalone \
+       -Dversion=2.43.1 -Dpackaging=jar \
+       -Dsources=selenium-standalone-2.43.1-sources.jar \
+       -DlocalRepositoryPath=<PATH-TO-TB-CHECKOUT>/vaadin-testbench-standalone/lib/
+
+- remove any old Selenium standalone version
+- update maven-metadata-local.xml (remove old versions)
+- update all dependency versions in doc/releasenotes.html
