@@ -64,6 +64,17 @@ public class TableElement extends AbstractSelectElement {
     }
 
     /**
+     * Returns a header of a column by index
+     *
+     * @param column
+     *            0 based column index
+     * @return TableHeaderElement
+     */
+    public TableHeaderElement getHeader(int column) {
+        return getHeaderCell(column).wrap(TableHeaderElement.class);
+    }
+
+    /**
      * Function to get footer cell with given column index
      *
      * @param column
