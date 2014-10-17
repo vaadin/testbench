@@ -16,10 +16,14 @@
 
 package com.vaadin.tests.testbenchapi;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.Enumeration;
+import java.util.Properties;
 
 import com.vaadin.testbench.annotations.BrowserFactory;
 import com.vaadin.testbench.annotations.RunOnHub;
@@ -35,11 +39,35 @@ import com.vaadin.testbench.annotations.RunOnHub;
 @BrowserFactory(VaadinBrowserFactory.class)
 @RunOnHub("tb3-hub.intra.itmill.com")
 public abstract class PrivateTB3Configuration extends AbstractTB3Test {
-    private static final String HOSTNAME_PROPERTY = "com.vaadin.testbench.deployment.hostname";
-    private static final String PORT_PROPERTY = "com.vaadin.testbench.deployment.port";
+    private static final String HOSTNAME_PROPERTY = "deployment.hostname";
+    private static final String PORT_PROPERTY = "deployment.port";
+    public static final String CHROME_PATH_PROPERTY = "chrome.path";
+    public static final String FIREFOX_PATH_PROPERTY = "firefox.path";
+    public static final String FIREFOX_PROFILE_PATH_PROPERTY = "firefox.profile.path";
+    private static final Properties properties = new Properties();
+    private static final File propertiesFile = new File("config",
+            "testbench.properties");
+    static {
+        if (propertiesFile.exists()) {
+            try {
+                properties.load(new FileInputStream(propertiesFile));
+                Enumeration e = properties.propertyNames();
+                while (e.hasMoreElements()) {
+                    String key = (String) e.nextElement();
+                    System.setProperty(key, properties.getProperty(key));
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
 
-    private static String getProperty(String name) {
-        return System.getProperty(name);
+    public static String getProperty(String name) {
+        String property = properties.getProperty(name);
+        if (property == null) {
+            property = System.getProperty(name);
+        }
+        return property;
     }
 
     @Override

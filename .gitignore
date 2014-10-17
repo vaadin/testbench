@@ -14,6 +14,7 @@ vaadin-testbench-recorder/extension/
 vaadin-testbench-recorder/install.rdf
 vaadin-testbench-playground
 testbench-integration-tests/error-screenshots/
+testbench-integration-tests/config/testbench.properties
 chromedriver.log
 phantomjsdriver.log
 

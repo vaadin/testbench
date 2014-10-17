@@ -19,6 +19,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxBinary;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.safari.SafariDriver;
@@ -50,14 +51,23 @@ public class LocalDriver {
         WebDriver driver;
         if (BrowserUtil.isFirefox(desiredCapabilities)) {
             String firefoxPath = System.getProperty("firefox.path");
+            String profilePath = System.getProperty("firefox.profile.path");
+
             if (firefoxPath != null) {
-                driver = new FirefoxDriver(new FirefoxBinary(new File(
-                        firefoxPath)), null);
+                if (profilePath != null) {
+                    File profileDir = new File(profilePath);
+                    FirefoxProfile profile = new FirefoxProfile(profileDir);
+                    driver = new FirefoxDriver(new FirefoxBinary(new File(
+                            firefoxPath)), profile);
+                } else {
+                    driver = new FirefoxDriver(new FirefoxBinary(new File(
+                            firefoxPath)), null);
+                }
+
             } else {
                 driver = new FirefoxDriver();
             }
         } else if (BrowserUtil.isChrome(desiredCapabilities)) {
-
             // Tells chrome not to show warning
             // "You are using an unsupported command-line flag: --ignore-certifcate-errors".
             // #14319
