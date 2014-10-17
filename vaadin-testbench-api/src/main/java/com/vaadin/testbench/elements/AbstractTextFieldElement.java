@@ -26,6 +26,6 @@ public class AbstractTextFieldElement extends AbstractFieldElement {
         clearElementClientSide(this);
         focus();
         sendKeys(chars);
-        sendKeys(Keys.RETURN);
+        sendKeys(Keys.TAB);
     }
 }
