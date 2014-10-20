@@ -55,7 +55,8 @@
             <directory>../doc</directory>
             <outputDirectory>documentation</outputDirectory>
             <includes>
-                <include>licen*</include>
+                <include>assets/*</include>
+                <include>licens*</include>
                 <include>GettingStarted.pdf</include>
             </includes>
         </fileSet>
@@ -88,10 +89,6 @@
             <source>../doc/releasenotes.html</source>
             <outputDirectory>documentation</outputDirectory>
             <filtered>true</filtered>
-        </file>
-        <file>
-            <source>../doc/vaadin-logo.png</source>
-            <outputDirectory>documentation</outputDirectory>
         </file>
         <file>
             <source>../vaadin-testbench/pom.xml</source>
