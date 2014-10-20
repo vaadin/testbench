@@ -481,11 +481,13 @@ img {
     <h2 id="changes_since_2x">Changes in 4.0</h2>
 
     <ul>
-        <li>Introducing ElementQuery for easily selecting Vaadin components (requires Vaadin 7.2.0.beta1 or newer)</li>
-        <li>A new TestBench section for the Vaadin debug window (included in Vaadin 7.2.0.beta1 or newer)</li>
+        <li>Introducing ElementQuery for easily selecting Vaadin components (requires Vaadin 7.2.0 or newer)</li>
+        <li>A new TestBench section for the Vaadin debug window (included in Vaadin 7.2.0 or newer)</li>
         <li>Vaadin TestBench Recorder has been dropped in favor of ElementQuery and the TestBench section of the debug
             window
         </li>
+        <li>High level, typed element API, which makes it easy to interact with Vaadin components (requires Vaadin 7.3.0+)</li>
+        <li>Base classes for easily running on many browsers in parallel without extra code</li>
         <li>Developer UX improvements</li>
         <li>The license is changed from CVALv2 to CVALv3</li>
     </ul>
@@ -498,8 +500,8 @@ img {
             <td>
                 <pre>documentation/</pre>
             </td>
-            <td>The documentation folder contains the TestBench library API documentation, a PDF excerpt of the
-                TestBench chapter in Book of Vaadin, and the license.
+            <td>The documentation folder contains a PDF excerpt of the TestBench chapter in Book of Vaadin, and
+                information about the license.
             </td>
         </tr>
         <tr>
@@ -507,30 +509,31 @@ img {
                 <pre>maven/</pre>
             </td>
             <td>The Maven folder contains a version of the Vaadin TestBench libraries that you can install in your local
-                Maven repository along with short instructions on how to install. You can also access these directly by
-                specifying the dependency from the Vaadin add-ons maven repository.
+                Maven repository along with short instructions on how to install. Use these if you cannot access the Vaadin
+                add-ons maven repository at <a href="http://maven.vaadin.com/vaadin-addons">http://maven.vaadin.com/vaadin-addons</a>.
             </td>
         </tr>
         <tr>
             <td>
                 <pre>vaadin-testbench-standalone-${project.version}.jar</pre>
             </td>
-            <td>This is the Vaadin TestBench library. It is a standalone library that includes the Selenium 2 WebDriver
-                along with all other dependencies.
+            <td>This is the standalone version of the Vaadin TestBench library. It includes the Selenium 2 WebDriver
+                along with all other dependencies and is suitable for running the grid hub and nodes. See the manual
+                for details.
             </td>
         </tr>
     </table>
     </p>
 
-    <h2 id="dependencies">Dependencies</h2>
+    <h2 id="dependencies">Third Party Dependencies</h2>
 
     <p>All dependencies, along with their dependencies are bundled in <code>vaadin-testbench-standalone-${project.version}.jar</code>.
         The maven directory also contains <code>vaadin-testbench-${project.version}.jar</code>, which does not bundle
         any dependencies. Vaadin TestBench 4 directly depends on the following third-party libraries:</p>
 
     <ul>
-        <li>Selenium 2.42.2</li>
-        <li>PhantomJSDriver 1.1.0</li>
+        <li>Selenium 2.43.1</li>
+        <li>PhantomJSDriver 1.2.0</li>
         <li>Javassist 3.18.1-GA</li>
         <li>JUnit 4.11</li>
     </ul>
@@ -538,7 +541,12 @@ img {
     <h2 id="migration_notes">Migration Notes</h2>
 
     <p>Vaadin TestBench 4 is API compatible with Vaadin TestBench 3.x, and can thus be used as a drop-in replacement for
-        any 3.x version.</p>
+        any 3.x version. The exceptions to this rule are listed in the API changes section below.</p>
+
+    <h3 id="api_changes">API Changes</h3>
+    <ul>
+        <li><tt>closeNotification()</tt> has been removed from TestBenchElement and is now <tt>NotificationElement.close()</tt></li>
+    </ul>
 
     <h2 id="supported_platforms_and_browsers">Supported Platforms and Browsers</h2>
 
@@ -551,8 +559,8 @@ img {
         <li>Latest Mozilla Firefox</li>
         <li>Mobile browsers:
             <ul>
-                <li>Latest Android</li>
-                <li>Latest iOS</li>
+                <li>Latest Android default browser</li>
+                <li>Latest iOS Safari</li>
             </ul>
         </li>
     </ul>
