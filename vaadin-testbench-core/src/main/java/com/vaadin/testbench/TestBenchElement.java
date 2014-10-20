@@ -117,7 +117,7 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.openqa.selenium.internal.WrapsElement#getWrappedElement()
      */
     @Override
@@ -132,7 +132,7 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.vaadin.testbench.commands.TestBenchElementCommands#showTooltip()
      */
     @Override
@@ -146,9 +146,12 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
+    /**
+     * Sets the number of pixels that an element's content is scrolled from the
+     * top.
+     *
+     * @param scrollTop
+     *            value set to Element.scroll property
      * @see com.vaadin.testbench.commands.TestBenchElementCommands#scroll(int)
      */
     @Override
@@ -157,11 +160,13 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
         js.executeScript("arguments[0].scrollTop = " + scrollTop, actualElement);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * com.vaadin.testbench.commands.TestBenchElementCommands#scrollLeft(int)
+    /**
+     * Sets the number of pixels that an element's content is scrolled to the
+     * left.
+     *
+     * @param scrollLeft
+     *            value set to Element.scrollLeft property
+     * @see com.vaadin.testbench.commands.TestBenchElementCommands#scrollLeft(int)
      */
     @Override
     public void scrollLeft(int scrollLeft) {
