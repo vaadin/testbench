@@ -74,7 +74,7 @@ public class ImageComparison {
     /**
      * Compare image [name] to image under /reference/. Images may differ in RGB
      * hues 0.1% (default) per macroblock of 16x16
-     * 
+     *
      * @param screenshotImage
      *            Image of canvas (must have proper dimensions)
      * @param referenceFileId
@@ -155,7 +155,7 @@ public class ImageComparison {
     }
 
     /**
-     * 
+     *
      * @param params
      *            a ComparisonParameters object. See {@link createParameters}.
      * @return
@@ -163,9 +163,7 @@ public class ImageComparison {
     private ScreenShotFailureReporter compareImages(
             final ComparisonParameters param) {
         boolean imagesEqual = compareImage(param);
-
         if (param.sizesDiffer) {
-
             // The command has failed because the dimensions of the captured
             // image do not match the reference image
             if (Parameters.isDebug()) {
@@ -278,7 +276,7 @@ public class ImageComparison {
 
     /**
      * Calculates the difference between pixels in the block.
-     * 
+     *
      * @param referenceBlock
      * @param screenshotBlock
      * @return Difference %
@@ -320,10 +318,10 @@ public class ImageComparison {
      * about the blocks that have failed to determine if the failure _possibly
      * can_ be caused by a cursor that is either missing from the reference or
      * the screenshot.
-     * 
+     *
      * @param params
      *            a ComparisonParameters object. See {@link createParameters}.
-     * 
+     *
      * @return A Point referring to the x and y coordinates in the image where
      *         the cursor might be (actually might be inside a 16x32 block
      *         starting from that point)
@@ -379,7 +377,7 @@ public class ImageComparison {
 
     /**
      * Check if failure is because of a blinking text cursor.
-     * 
+     *
      * @param possibleCursorPosition
      *            The position in the image where a cursor possibly can be found
      *            (pixel coordinates of the top left corner of a block)
@@ -504,7 +502,7 @@ public class ImageComparison {
 
     /**
      * Luminance based comparison of a pixel in two images for cursor detection.
-     * 
+     *
      * @param pixel1
      * @param pixel2
      * @return
@@ -526,7 +524,7 @@ public class ImageComparison {
      * allocations, function calls and the like in internal processing (and to
      * keep the method signatures manageable and the entire system more readily
      * maintainable).
-     * 
+     *
      * @param reference
      *            a BufferedImage
      * @param screenshot
