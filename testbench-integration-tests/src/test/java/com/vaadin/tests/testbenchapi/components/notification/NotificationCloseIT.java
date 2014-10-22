@@ -43,7 +43,7 @@ public class NotificationCloseIT extends MultiBrowserTest {
         ButtonElement btn = $(ButtonElement.class).id(id);
         // show notification
         btn.click();
-        $(NotificationElement.class).get(0).closeNotification();
+        $(NotificationElement.class).get(0).close();
         List<NotificationElement> notifications = $(NotificationElement.class)
                 .all();
         // check that all notifications are closed

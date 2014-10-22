@@ -33,7 +33,7 @@ public class TableComponentsInsideIT extends MultiBrowserTest {
         expected.click();
         NotificationElement not = $(NotificationElement.class).first();
         String expectedString = not.getText();
-        not.closeNotification();
+        not.close();
         actual.click();
         not = $(NotificationElement.class).first();
         String actualString = not.getText();

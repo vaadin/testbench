@@ -32,7 +32,7 @@ public class NotificationElement extends AbstractElement {
      * @throws TimeoutException
      *             If a notification can not be closed and the timeout expires.
      */
-    public void closeNotification() {
+    public void close() {
         click();
         WebDriverWait wait = new WebDriverWait(getDriver(), 10);
         wait.until(ExpectedConditions.not(ExpectedConditions
@@ -61,16 +61,6 @@ public class NotificationElement extends AbstractElement {
         WebElement popup = findElement(By.className("popupContent"));
         WebElement caption = popup.findElement(By.tagName("p"));
         return caption.getText();
-    }
-
-    /**
-     * Returns the caption of the Notification element
-     *
-     * @return same value as {@link #getCaption() getCaption()}
-     */
-    @Override
-    public String getText() {
-        return getCaption();
     }
 
     /**
