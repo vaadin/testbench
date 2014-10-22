@@ -22,7 +22,7 @@ import java.util.List;
 
 import org.junit.Test;
 import org.openqa.selenium.By;
-import org.openqa.selenium.NotFoundException;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 
 import com.vaadin.testbench.elements.TabSheetElement;
@@ -63,7 +63,7 @@ public class NestedTabSheetIT extends MultiBrowserTest {
         TabSheetElement outer = $(TabSheetElement.class).first();
         try {
             outer.openTab("Tab 1.3");
-        } catch (NotFoundException e) {
+        } catch (NoSuchElementException e) {
             // openTab may throw an exception when the tab is not found.
         }
         // Check that inner tab 1.3 is not selected.

@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.NotFoundException;
 import org.openqa.selenium.WebElement;
 
 import com.vaadin.testbench.By;
@@ -69,7 +68,7 @@ public class TabSheetElement extends AbstractComponentContainerElement {
     public void openTab(int index) {
         List<WebElement> tabs = findElements(byTabCell);
         if (index < 0 || index >= tabs.size()) {
-            throw new NotFoundException(
+            throw new NoSuchElementException(
                     "The tab sheet does not contain a tab with index " + index
                             + ".");
         }
@@ -93,7 +92,7 @@ public class TabSheetElement extends AbstractComponentContainerElement {
                 return;
             }
         }
-        throw new NotFoundException("Tab with caption " + tabCaption
+        throw new NoSuchElementException("Tab with caption " + tabCaption
                 + " was not found.");
     }
 
@@ -132,7 +131,7 @@ public class TabSheetElement extends AbstractComponentContainerElement {
     public void closeTab(int index) {
         List<WebElement> tabs = findElements(byTabCell);
         if (index < 0 || index >= tabs.size()) {
-            throw new NotFoundException(
+            throw new NoSuchElementException(
                     "The tab sheet does not contain a tab with index " + index
                             + ".");
         }

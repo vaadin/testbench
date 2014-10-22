@@ -16,7 +16,7 @@
 package com.vaadin.tests.testbenchapi.components.tabsheet;
 
 import org.junit.Test;
-import org.openqa.selenium.NotFoundException;
+import org.openqa.selenium.NoSuchElementException;
 
 import com.vaadin.testbench.elements.TabSheetElement;
 import com.vaadin.tests.testbenchapi.MultiBrowserTest;
@@ -36,7 +36,7 @@ public class TabSheetElementExceptionIT extends MultiBrowserTest {
         }
     }
 
-    @Test(expected = NotFoundException.class)
+    @Test(expected = NoSuchElementException.class)
     public void testExceptionWhenNotFound() {
         openTestURL();
         TabSheetElement tse = $(TabSheetElement.class).first();
