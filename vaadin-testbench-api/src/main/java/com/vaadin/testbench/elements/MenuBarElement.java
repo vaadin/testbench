@@ -217,7 +217,7 @@ public class MenuBarElement extends AbstractComponentElement {
 
     private final int vaadinMajorVersionRequired = 7;
     private final int vaadinMinorVersionRequired = 3;
-    private final int vaadinRevisionRequired = 1;
+    private final int vaadinRevisionRequired = 4;
 
     /**
      * 
