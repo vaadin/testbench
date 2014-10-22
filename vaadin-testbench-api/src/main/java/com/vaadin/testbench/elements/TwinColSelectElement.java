@@ -32,7 +32,7 @@ public class TwinColSelectElement extends AbstractSelectElement {
     private static org.openqa.selenium.By byButton = By.className("v-button");
 
     @Override
-    public void init() {
+    protected void init() {
         super.init();
         List<WebElement> selectElements = findElements(bySelect);
         options = new Select(selectElements.get(0));
