@@ -3,12 +3,14 @@ package com.vaadin.tests.testbenchapi.components.table;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 
 import com.vaadin.testUI.TableScroll;
 import com.vaadin.testbench.elements.TableElement;
 import com.vaadin.testbench.elements.TableHeaderElement;
+import com.vaadin.testbench.parallel.BrowserUtil;
 import com.vaadin.tests.testbenchapi.MultiBrowserTest;
 
 public class GetRowHeaderIT extends MultiBrowserTest {
@@ -43,8 +45,10 @@ public class GetRowHeaderIT extends MultiBrowserTest {
         TableHeaderElement header = table.getHeader(COLUMN_INDEX);
         // sort in asc order
         header.click();
+        table.waitForVaadin();
         // sort in desc order
         header.click();
+        table.waitForVaadin();
         String expected = "col=1 row=99";
         String actual = table.getCell(0, COLUMN_INDEX).getText();
         Assert.assertEquals(
@@ -58,11 +62,33 @@ public class GetRowHeaderIT extends MultiBrowserTest {
         int initialWidth = header.getSize().width;
         WebElement handle = header.getResizeHandle();
         Actions builder = new Actions(getDriver());
-        builder.clickAndHold(handle).moveByOffset(-20, 0).release().build()
-                .perform();
+        /*
+         * To workaround a bug with clicking on small elements(not precise
+         * cursor positioning) in IE8 we do the following: 1. Extend the resize
+         * handle element (it's initial width is 3) 2. Resize the column. 3.
+         * Resize the handle back to initial value.
+         */
+        if (BrowserUtil.isIE8(getDesiredCapabilities())) {
+            int initHanldeWidth = handle.getSize().width;
+            setElementWidth(handle, 20);
+            handle = header.getResizeHandle();
+            builder.clickAndHold(handle).moveByOffset(-20, 0).release().build()
+                    .perform();
+            setElementWidth(handle, initHanldeWidth);
+        } else {
+            builder.clickAndHold(handle).moveByOffset(-20, 0).release().build()
+                    .perform();
+        }
         header = table.getHeader(COLUMN_INDEX);
         int widthAfterResize = header.getSize().width;
         Assert.assertTrue("The column with index " + COLUMN_INDEX
                 + " was not resized.", initialWidth > widthAfterResize);
+    }
+
+    private void setElementWidth(WebElement elem, int width) {
+        JavascriptExecutor js = getTestBenchCommandExecutor();
+        String jsScript = "var elem=arguments[0];" + "elem.style.width='"
+                + width + "px';";
+        js.executeScript(jsScript, elem);
     }
 }
