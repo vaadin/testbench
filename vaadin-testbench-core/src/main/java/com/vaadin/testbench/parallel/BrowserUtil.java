@@ -47,17 +47,6 @@ public class BrowserUtil {
     }
 
     /**
-     * Gets the capabilities for Opera
-     *
-     * @return an object describing the capabilities required for running a test
-     *         on Opera
-     */
-    public static DesiredCapabilities opera() {
-        DesiredCapabilities c = browserFactory.create(Browser.OPERA);
-        return c;
-    }
-
-    /**
      * Gets the capabilities for Firefox
      *
      * @return an object describing the capabilities required for running a test
@@ -155,15 +144,6 @@ public class BrowserUtil {
     /**
      * @param capabilities
      *            The capabilities to check
-     * @return true if the capabilities refer to Opera, false otherwise
-     */
-    public static boolean isOpera(Capabilities capabilities) {
-        return BrowserType.OPERA.equals(capabilities.getBrowserName());
-    }
-
-    /**
-     * @param capabilities
-     *            The capabilities to check
      * @return true if the capabilities refer to Safari, false otherwise
      */
     public static boolean isSafari(Capabilities capabilities) {
@@ -204,8 +184,6 @@ public class BrowserUtil {
             return "Chrome";
         } else if (isSafari(capabilities)) {
             return "Safari";
-        } else if (isOpera(capabilities)) {
-            return "Opera";
         } else if (isPhantomJS(capabilities)) {
             return "PhantomJS";
         }
@@ -230,38 +208,6 @@ public class BrowserUtil {
             return "Mac";
         }
         return capabilities.getPlatform().toString();
-    }
-
-    /**
-     * Returns a string which uniquely (enough) identifies this browser. Used
-     * mainly in screenshot names.
-     *
-     * @param capabilities
-     *
-     * @return a unique string for each browser
-     */
-    public static String getUniqueIdentifier(Capabilities capabilities) {
-        return getUniqueIdentifier(getPlatform(capabilities),
-                getBrowserIdentifier(capabilities), capabilities.getVersion());
-    }
-
-    /**
-     * Returns a string which uniquely (enough) identifies this browser. Used
-     * mainly in screenshot names.
-     *
-     * @param capabilities
-     *
-     * @return a unique string for each browser
-     */
-    public static String getUniqueIdentifier(Capabilities capabilities,
-            String versionOverride) {
-        return getUniqueIdentifier(getPlatform(capabilities),
-                getBrowserIdentifier(capabilities), versionOverride);
-    }
-
-    private static String getUniqueIdentifier(String platform, String browser,
-            String version) {
-        return platform + "_" + browser + "_" + version;
     }
 
     /**

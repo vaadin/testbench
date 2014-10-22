@@ -56,11 +56,6 @@ public class DefaultBrowserFactory implements TestBenchBrowserFactory {
             desiredCapabilities.setVersion(version);
             desiredCapabilities.setPlatform(platform);
             break;
-        case OPERA:
-            desiredCapabilities = DesiredCapabilities.opera();
-            desiredCapabilities.setVersion(version);
-            desiredCapabilities.setPlatform(platform);
-            break;
         case IE8:
             desiredCapabilities = DesiredCapabilities.internetExplorer();
             desiredCapabilities.setVersion("8");

@@ -23,7 +23,6 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 
 import com.vaadin.testbench.parallel.Browser;
 import com.vaadin.testbench.parallel.DefaultBrowserFactory;
-import com.vaadin.tests.testbenchapi.PrivateTB3Configuration;
 
 /**
  * Specifies default browser configuration for {@link PrivateTB3Configuration}
@@ -35,7 +34,6 @@ public class VaadinBrowserFactory extends DefaultBrowserFactory {
     static {
         defaultBrowserVersion.put(Browser.CHROME, "33");
         defaultBrowserVersion.put(Browser.PHANTOMJS, "1");
-        defaultBrowserVersion.put(Browser.OPERA, "17");
         defaultBrowserVersion.put(Browser.SAFARI, "7");
         defaultBrowserVersion.put(Browser.IE8, "8");
         defaultBrowserVersion.put(Browser.IE9, "9");
@@ -49,7 +47,6 @@ public class VaadinBrowserFactory extends DefaultBrowserFactory {
         defaultBrowserPlatform.put(Browser.CHROME, Platform.XP);
         defaultBrowserPlatform.put(Browser.PHANTOMJS, Platform.LINUX);
         defaultBrowserPlatform.put(Browser.SAFARI, Platform.MAC);
-        defaultBrowserPlatform.put(Browser.OPERA, Platform.XP);
         defaultBrowserPlatform.put(Browser.IE8, Platform.WINDOWS);
         defaultBrowserPlatform.put(Browser.IE9, Platform.WINDOWS);
         defaultBrowserPlatform.put(Browser.IE10, Platform.WINDOWS);

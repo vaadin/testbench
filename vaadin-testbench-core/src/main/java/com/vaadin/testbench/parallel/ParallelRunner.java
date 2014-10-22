@@ -16,7 +16,6 @@ package com.vaadin.testbench.parallel;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -33,6 +32,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
+import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import com.vaadin.testbench.Parameters;
@@ -480,10 +480,19 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
         @Override
         public String getName() {
             return String.format("%s[%s]", getMethod().getName()
-                    + testNameSuffix,
-                    BrowserUtil.getUniqueIdentifier(capabilities));
+                    + testNameSuffix, getUniqueIdentifier(capabilities));
         }
 
+        /*
+         * Returns a string which uniquely (enough) identifies this browser.
+         * Used mainly in screenshot names.
+         */
+        private static String getUniqueIdentifier(Capabilities capabilities) {
+            String platform = BrowserUtil.getPlatform(capabilities);
+            String browser = BrowserUtil.getBrowserIdentifier(capabilities);
+            String version = capabilities.getVersion();
+            return platform + "_" + browser + "_" + version;
+        }
     }
 
 }
