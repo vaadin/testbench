@@ -42,7 +42,7 @@ public class TwinColSelectElement extends AbstractSelectElement {
         deselButton = buttons.get(1);
     }
 
-    public void deselectAll() {
+    private void deselectAll() {
         if (selectedOptions.isMultiple()) {
             if (selectedOptions.getAllSelectedOptions().size() != selectedOptions
                     .getOptions().size()) {
@@ -68,35 +68,22 @@ public class TwinColSelectElement extends AbstractSelectElement {
 
     /**
      * Functionality to find option texts of all currently selected options.
-     * 
+     *
      * @return List of visible text for all selected options
      */
-    public List<String> getSelectedOptions() {
+    public List<String> getValues() {
         return getOptionsFromSelect(selectedOptions);
     }
 
     /**
      * Functionality to find all option texts.
-     * 
+     *
      * @return List of visible text for all options
      */
     public List<String> getOptions() {
-        List<String> optionTexts = getUnselectedOptions();
-        optionTexts.addAll(getSelectedOptions());
+        List<String> optionTexts = getOptionsFromSelect(options);
+        optionTexts.addAll(getValues());
         return optionTexts;
-    }
-
-    /**
-     * Functionality to find option texts of all currently unselected options.
-     * 
-     * @return List of visible text for all unselected options
-     */
-    public List<String> getUnselectedOptions() {
-        return getOptionsFromSelect(options);
-    }
-
-    public boolean isMultiple() {
-        return true;
     }
 
     public void selectByText(String text) {
