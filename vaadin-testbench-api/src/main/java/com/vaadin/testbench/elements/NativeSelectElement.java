@@ -52,7 +52,10 @@ public class NativeSelectElement extends AbstractSelectElement {
         return selectElement.isMultiple();
     }
 
-    public void selectByText(String text) {
+    public void selectByText(String text) throws ReadOnlyException {
+        if (isReadOnly()) {
+            throw new ReadOnlyException();
+        }
         selectElement.selectByVisibleText(text);
         waitForVaadin();
     }
@@ -73,9 +76,6 @@ public class NativeSelectElement extends AbstractSelectElement {
 
     @Override
     public void setValue(CharSequence chars) throws ReadOnlyException {
-        if (isReadOnly()) {
-            throw new ReadOnlyException();
-        }
         selectByText((String) chars);
     }
 }

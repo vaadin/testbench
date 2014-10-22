@@ -37,7 +37,10 @@ public class OptionGroupElement extends AbstractSelectElement {
         return optionTexts;
     }
 
-    public void selectByText(String text) {
+    public void selectByText(String text) throws ReadOnlyException {
+        if (isReadOnly()) {
+            throw new ReadOnlyException();
+        }
         List<WebElement> options = findElements(byButtonSpan);
         for (WebElement option : options) {
             if (text.equals(option.findElement(byLabel).getText())) {
@@ -62,6 +65,11 @@ public class OptionGroupElement extends AbstractSelectElement {
             }
         }
         return null;
+    }
+
+    @Override
+    public void setValue(CharSequence chars) throws ReadOnlyException {
+        selectByText((String) chars);
     }
 
     /**
