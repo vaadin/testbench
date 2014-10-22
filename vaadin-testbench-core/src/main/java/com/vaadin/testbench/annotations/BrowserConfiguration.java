@@ -28,8 +28,8 @@ import org.openqa.selenium.remote.DesiredCapabilities;
  * <p/>
  *
  * <p>
- * Methods annotated with BrowserConfiguration annotation should be static and
- * return a <b> {@link Collection}&lt;{@link DesiredCapabilities}&gt;</b>
+ * Methods annotated with BrowserConfiguration annotation should return a <b>
+ * {@link Collection}&lt;{@link DesiredCapabilities}&gt;</b>
  * </p>
  *
  * <p>
@@ -37,7 +37,7 @@ import org.openqa.selenium.remote.DesiredCapabilities;
  *
  * <pre>
  * &#064;BrowserConfiguration
- * public static List&lt;DesiredCapabilities&gt; firefoxAndChromeConfiguration() {
+ * public List&lt;DesiredCapabilities&gt; firefoxAndChromeConfiguration() {
  *     List&lt;DesiredCapabilities&gt; list = new ArrayList&lt;DesiredCapabilities&gt;();
  *     list.add(Browser.FIREFOX.getDesiredCapabilities());
  *     list.add(Browser.CHROME.getDesiredCapabilities());
