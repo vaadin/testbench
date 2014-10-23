@@ -13,6 +13,7 @@
 package com.vaadin.testbench.elements;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.Point;
@@ -21,50 +22,12 @@ import org.openqa.selenium.interactions.Actions;
 
 import com.vaadin.testbench.elementsbase.ServerClass;
 import com.vaadin.testbench.exceptions.LowVaadinVersionException;
-import com.vaadin.testbench.exceptions.MenuItemNotAvailableException;
 import com.vaadin.testbench.util.VersionUtil;
 
 @ServerClass("com.vaadin.ui.MenuBar")
 public class MenuBarElement extends AbstractComponentElement {
 
     private Point lastItemLocationMovedTo = null;
-
-    /**
-     * <p>
-     * Opens a visible menu or item. If the item has a submenu, the submenu will
-     * be opened. If the item has no submenu, the item will be clicked on.
-     * </p>
-     * <p>
-     * An item is visible if cursor can hover over it without any pre-requisite
-     * action, such as clicking somewhere or choosing a specific path.
-     * </p>
-     * <p>
-     * Example:<br>
-     * If item "Open" is in submenu of top level item "File", "Open" is not
-     * visible when the interface is loaded, and thus cannot be opened or
-     * clicked on. First, "File" has to be opened.
-     * </p>
-     * 
-     * @param menu
-     *            menu or item to open, in any level, as long as it is visible
-     *            in the interface.
-     * @throws MenuItemNotAvailableException
-     *             if menu does not exist or is not visible
-     */
-    public void open(String menu) {
-        if (!isMenuBarApiSupported()) {
-            throw new LowVaadinVersionException(String.format(
-                    "Vaadin version required: %d.%d.%d",
-                    vaadinMajorVersionRequired, vaadinMinorVersionRequired,
-                    vaadinRevisionRequired));
-        }
-
-        WebElement webElement = getVisibleItem("#" + menu);
-        if (webElement == null) {
-            throw new MenuItemNotAvailableException(menu);
-        }
-        activateOrOpenSubmenu(webElement, false);
-    }
 
     /**
      * Clicks on a visible item.<br>
@@ -82,7 +45,8 @@ public class MenuBarElement extends AbstractComponentElement {
     private void clickItem(String item) {
         WebElement webElement = getVisibleItem("#" + item);
         if (webElement == null) {
-            throw new MenuItemNotAvailableException(item);
+            throw new NoSuchElementException("Menu item " + item
+                    + " is not available.");
         }
         activateOrOpenSubmenu(webElement, true);
     }
@@ -126,7 +90,7 @@ public class MenuBarElement extends AbstractComponentElement {
      * Closes all submenus, if any is open.<br>
      * This is done by clicking on the currently selected top level item.
      */
-    public void closeAll() {
+    private void closeAll() {
         if (!isMenuBarApiSupported()) {
             throw new LowVaadinVersionException(String.format(
                     "Vaadin version required: %d.%d.%d",

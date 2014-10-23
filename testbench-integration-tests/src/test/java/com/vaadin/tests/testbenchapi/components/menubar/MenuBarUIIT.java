@@ -28,8 +28,6 @@ import org.openqa.selenium.WebElement;
 import com.vaadin.testbench.elements.MenuBarElement;
 import com.vaadin.tests.testbenchapi.MultiBrowserTest;
 
-/**
- */
 public class MenuBarUIIT extends MultiBrowserTest {
 
     @Before
@@ -42,10 +40,10 @@ public class MenuBarUIIT extends MultiBrowserTest {
     public void testClickTopLevelItemHavingSubmenuItemFocused() {
         MenuBarElement menuBar = $(MenuBarElement.class).first();
 
-        menuBar.open("File");
+        menuBar.clickItem("File");
         assertTrue(isItemVisible("Export.."));
 
-        menuBar.open("Export..");
+        menuBar.clickItem("Export..");
         assertTrue(isItemVisible("As PDF..."));
 
         menuBar.clickItem("File");
@@ -53,20 +51,22 @@ public class MenuBarUIIT extends MultiBrowserTest {
     }
 
     /**
-     * Validates MenuBarElement general open(String) and clickItem(String)
-     * features.
+     * Validates clickItem(String) of MenuBarElement.
      */
     @Test
-    public void testMenuBarOpenAndClick() {
+    public void testMenuBarClick() {
         MenuBarElement menuBar = $(MenuBarElement.class).first();
 
         menuBar.clickItem("File");
         assertTrue(isItemVisible("Save As.."));
 
-        menuBar.open("Export..");
+        menuBar.clickItem("Export..");
         assertTrue(isItemVisible("As PDF..."));
 
-        menuBar.open("Edit");
+        // The Edit menu will be opened by moving the mouse over the item (done
+        // by clickItem). The first click then actually closes the menu.
+        menuBar.clickItem("Edit");
+        menuBar.clickItem("Edit");
         assertFalse(isItemVisible("Save As.."));
         assertTrue(isItemVisible("Paste"));
 
@@ -78,10 +78,12 @@ public class MenuBarUIIT extends MultiBrowserTest {
         assertFalse(isItemVisible("Save As.."));
         assertTrue(isItemVisible("Paste"));
 
-        menuBar.open("Help");
+        // Menu does not contain a submenu, no need to click twice.
+        menuBar.clickItem("Help");
         assertFalse(isItemVisible("Save As.."));
         assertFalse(isItemVisible("Paste"));
 
+        // No submenu is open, so click only once to open the File menu.
         menuBar.clickItem("File");
         assertTrue(isItemVisible("Save As.."));
     }
@@ -97,24 +99,24 @@ public class MenuBarUIIT extends MultiBrowserTest {
     }
 
     /**
-     * Tests whether the MenuBar selected and its items, are the correct ones or
-     * not (when several MenuBar exist, possibly with ).
+     * Tests whether the selected MenuBar and its items are the correct ones.
      */
     @Test
     public void testMenuBarSelector() {
         MenuBarElement menuBar = $(MenuBarElement.class).get(2);
 
-        menuBar.open("File");
+        menuBar.clickItem("File");
         assertTrue(isItemVisible("Open2"));
-        menuBar.closeAll();
+        // Close the menu item
+        menuBar.clickItem("File");
 
         menuBar = $(MenuBarElement.class).get(1);
         menuBar.clickItem("Edit2");
         assertTrue(isItemVisible("Cut"));
-        menuBar.closeAll();
+        menuBar.clickItem("Edit2");
 
         menuBar = $(MenuBarElement.class).first();
-        menuBar.open("File");
+        menuBar.clickItem("File");
         assertTrue(isItemVisible("Open"));
     }
 
