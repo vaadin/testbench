@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 
@@ -31,7 +32,7 @@ public class GetRowHeaderIT extends MultiBrowserTest {
 
     @Test
     public void testGetRowHeaderCaption() {
-        TableHeaderElement header = table.getHeader(COLUMN_INDEX);
+        TableHeaderElement header = table.getHeaderCell(COLUMN_INDEX);
         String expected = "PROPERTY1";
         String actual = header.getCaption();
         Assert.assertEquals(
@@ -42,7 +43,7 @@ public class GetRowHeaderIT extends MultiBrowserTest {
     // Test that clicking on the header sorts the column
     @Test
     public void testTableRowHeaderSort() {
-        TableHeaderElement header = table.getHeader(COLUMN_INDEX);
+        TableHeaderElement header = table.getHeaderCell(COLUMN_INDEX);
         // sort in asc order
         header.click();
         table.waitForVaadin();
@@ -58,7 +59,7 @@ public class GetRowHeaderIT extends MultiBrowserTest {
 
     @Test
     public void testTableRowHeaderGetHandle() {
-        TableHeaderElement header = table.getHeader(COLUMN_INDEX);
+        TableHeaderElement header = table.getHeaderCell(COLUMN_INDEX);
         int initialWidth = header.getSize().width;
         WebElement handle = header.getResizeHandle();
         Actions builder = new Actions(getDriver());
@@ -79,10 +80,15 @@ public class GetRowHeaderIT extends MultiBrowserTest {
             builder.clickAndHold(handle).moveByOffset(-20, 0).release().build()
                     .perform();
         }
-        header = table.getHeader(COLUMN_INDEX);
+        header = table.getHeaderCell(COLUMN_INDEX);
         int widthAfterResize = header.getSize().width;
         Assert.assertTrue("The column with index " + COLUMN_INDEX
                 + " was not resized.", initialWidth > widthAfterResize);
+    }
+
+    @Test(expected = NoSuchElementException.class)
+    public void testGetHeaderCellException() {
+        table.getHeaderCell(-10);
     }
 
     private void setElementWidth(WebElement elem, int width) {

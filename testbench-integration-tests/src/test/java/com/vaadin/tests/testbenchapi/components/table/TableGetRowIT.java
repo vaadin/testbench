@@ -3,6 +3,7 @@ package com.vaadin.tests.testbenchapi.components.table;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 
 import com.vaadin.testUI.TableScroll;
@@ -65,5 +66,15 @@ public class TableGetRowIT extends MultiBrowserTest {
         String actual = cell.getText();
         String expected = "col=0 row=0";
         Assert.assertEquals(GET_CELL_ERROR_MESSAGE, expected, actual);
+    }
+
+    @Test(expected = NoSuchElementException.class)
+    public void getRowExceptionTest() {
+        table.getRow(-5);
+    }
+
+    @Test(expected = NoSuchElementException.class)
+    public void tableGetCellExceptionTest() {
+        table.getCell(-1, -1);
     }
 }

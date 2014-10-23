@@ -32,6 +32,7 @@ public class TableElement extends AbstractSelectElement {
      * @param column
      *            0 based column index
      * @return TestBenchElement containing wanted cell.
+     * @throw NoSuchElementException if the cell (row, column) is not found.
      */
     public TestBenchElement getCell(int row, int column) {
 
@@ -50,28 +51,17 @@ public class TableElement extends AbstractSelectElement {
     }
 
     /**
-     * Function to get header cell with given column index
-     *
+     * Returns the header cell with the given column index.
+     * 
      * @param column
      *            0 based column index
-     * @return TestBenchElement containing wanted header cell
+     * @return TableHeaderElement containing the wanted header cell
      */
-    public TestBenchElement getHeaderCell(int column) {
+    public TableHeaderElement getHeaderCell(int column) {
         TestBenchElement headerCell = wrapElement(
                 findElement(By.vaadin("#header[" + column + "]")),
                 getCommandExecutor());
-        return headerCell;
-    }
-
-    /**
-     * Returns a header of a column by index
-     *
-     * @param column
-     *            0 based column index
-     * @return TableHeaderElement
-     */
-    public TableHeaderElement getHeader(int column) {
-        return getHeaderCell(column).wrap(TableHeaderElement.class);
+        return headerCell.wrap(TableHeaderElement.class);
     }
 
     /**
@@ -86,15 +76,6 @@ public class TableElement extends AbstractSelectElement {
                 findElement(By.vaadin("#footer[" + column + "]")),
                 getCommandExecutor());
         return footerCell;
-    }
-
-    /**
-     * Return value of selected value or first selected item in multiselect mode
-     */
-    @Override
-    public String getValue() {
-        throw new UnsupportedOperationException(
-                "Implement table get Value. Ticket #14498");
     }
 
     @Override
