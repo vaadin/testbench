@@ -36,7 +36,7 @@ public class SetupDriver {
      * <p>
      * Sets up and returns a {@link WebDriver} to run test on hubURL. <br>
      * The test must set the driver through
-     * {@link TestBenchTestCase#setDriver(webDriver)}
+     * {@link TestBenchTestCase#setDriver(org.openqa.selenium.WebDriver)}
      * </p>
      *
      * @param remoteDriver
@@ -60,7 +60,7 @@ public class SetupDriver {
     /**
      * Sets up and returns a {@link WebDriver} to run test on hubURL. <br>
      * The test must set the driver through
-     * {@link TestBenchTestCase#setDriver(webDriver)}
+     * {@link TestBenchTestCase#setDriver(org.openqa.selenium.WebDriver)}
      *
      * @param hubURL
      *            URL of the Hub to run the tests on
@@ -80,12 +80,9 @@ public class SetupDriver {
      * The test will run on browser specified by
      * {@link #getDesiredCapabilities()}<br>
      * The test must set the driver through
-     * {@link TestBenchTestCase#setDriver(webDriver)}
+     * {@link TestBenchTestCase#setDriver(org.openqa.selenium.WebDriver)}
      * </p>
      *
-     * @param localDriver
-     *            {@link LocalDriver} instance used to setup the
-     *            {@link WebDriver}
      * @return {@link WebDriver} properly setup
      */
     public WebDriver setupLocalDriver() {
@@ -104,9 +101,6 @@ public class SetupDriver {
      *            Browser to run test on
      * @param version
      *            version of the browser
-     * @param localDriver
-     *            {@link LocalDriver} instance used to setup the
-     *            {@link WebDriver}
      * @return {@link WebDriver} properly setup
      */
     public WebDriver setupLocalDriver(Browser runLocallyBrowser, String version) {

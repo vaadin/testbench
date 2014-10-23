@@ -56,17 +56,16 @@ public class MenuBarElement extends AbstractComponentElement {
      * Fails if path given is not full (ie: last submenu is already opened, and
      * path given is last item only).
      * <p>
-     * Example:<br>
-     * 
+     * Example:
+     * </p>
+     *
      * <pre>
      * // clicks on &quot;File&quot; item
      * menuBarElement.click(&quot;File&quot;);
      * // clicks on &quot;Copy&quot; item in &quot;File&quot; top level menu.
      * menuBarElement.click(&quot;File&quot;, &quot;Copy&quot;);
      * </pre>
-     * 
-     * </p>
-     * 
+     *
      * @param path
      *            Array of items to click through
      */

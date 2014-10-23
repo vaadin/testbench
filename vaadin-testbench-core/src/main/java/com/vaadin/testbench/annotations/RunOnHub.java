@@ -21,7 +21,7 @@ import org.openqa.selenium.WebDriver;
  * <p>
  * Test classes annotated with RunOnHub will be run on the hub whose host is
  * defined by its value. Default value is "localhost".
- * <p/>
+ * </p>
  *
  * <p>
  * This parameter will be used to instantiate the {@link WebDriver}.<br>

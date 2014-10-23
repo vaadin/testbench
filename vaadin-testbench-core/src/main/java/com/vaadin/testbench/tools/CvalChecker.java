@@ -356,7 +356,6 @@ public final class CvalChecker {
      *             when there is no a valid license for the product
      * @throws UnreachableCvalServerException
      *             when we have license key but server is unreachable
-     * @throws LicenseExpiredException
      */
     public CvalInfo validateProduct(String productName, String productVersion,
             String productTitle) throws InvalidCvalException,

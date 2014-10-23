@@ -44,8 +44,7 @@ public class LocalDriver {
 
     /**
      * Creates a {@link WebDriver} instance used for running the test locally
-     * for debug purposes. Used only when {@link #runLocally()} is overridden to
-     * return true;
+     * for debug purposes.
      */
     static public WebDriver createDriver(DesiredCapabilities desiredCapabilities) {
         WebDriver driver;

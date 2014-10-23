@@ -25,7 +25,7 @@ import org.openqa.selenium.remote.DesiredCapabilities;
  * Methods annotated with BrowserConfiguration in test classes will be used to
  * configure the browsers that are to be used for test cases in that class. Each
  * test case is run on each of the browsers returned by the method.
- * <p/>
+ * </p>
  *
  * <p>
  * Methods annotated with BrowserConfiguration annotation should return a <b>
@@ -33,7 +33,8 @@ import org.openqa.selenium.remote.DesiredCapabilities;
  * </p>
  *
  * <p>
- * Example:<br />
+ * Example:
+ * </p>
  *
  * <pre>
  * &#064;BrowserConfiguration
@@ -45,8 +46,6 @@ import org.openqa.selenium.remote.DesiredCapabilities;
  *     return list;
  * }
  * </pre>
- *
- * </p>
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)

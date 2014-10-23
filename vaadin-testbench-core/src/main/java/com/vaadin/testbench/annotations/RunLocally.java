@@ -30,7 +30,8 @@ import com.vaadin.testbench.parallel.ParallelTest;
  *
  * <p>
  * This parameter will be used to instantiate the {@link WebDriver}.<br>
- * The value can be obtained through {@link ParallelTest#getRunLocally()}
+ * The value can be obtained through {@link ParallelTest#getRunLocallyBrowser()}
+ * and {@link ParallelTest#getRunLocallyBrowserVersion()}
  * </p>
  *
  * <p>
