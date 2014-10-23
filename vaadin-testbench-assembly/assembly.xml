@@ -57,7 +57,6 @@
             <includes>
                 <include>assets/*</include>
                 <include>licens*</include>
-                <include>GettingStarted.pdf</include>
             </includes>
         </fileSet>
         <fileSet>
