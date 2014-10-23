@@ -220,7 +220,7 @@ public class BrowserUtil {
      *            BrowserFactory instance to use to generate default
      *            DesiredCapabilities
      */
-    public static void setBrowserFactory(TestBenchBrowserFactory browserFactory) {
+    static void setBrowserFactory(TestBenchBrowserFactory browserFactory) {
         BrowserUtil.browserFactory = browserFactory;
     }
 
