@@ -14,6 +14,7 @@ package com.vaadin.testbench;
 
 import java.util.List;
 
+import com.vaadin.testbench.tools.LicenseChecker;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -29,6 +30,11 @@ import com.vaadin.testbench.elementsbase.AbstractElement;
  */
 public abstract class TestBenchTestCase extends
         AbstractHasTestBenchCommandExecutor implements HasDriver {
+
+    static {
+        // Check the license here, before any driver has been initialized (#15102)
+        LicenseChecker.nag();
+    }
 
     protected WebDriver driver;
 
