@@ -102,7 +102,6 @@ public class TwinColSelectElement extends AbstractSelectElement {
     /**
      * Return first selected item (item in the right part of component)
      */
-    @Override
     public String getValue() {
         String value = "";
         WebElement selectedElement = findElement(By

@@ -16,5 +16,4 @@ import com.vaadin.testbench.elementsbase.ServerClass;
 
 @ServerClass("com.vaadin.ui.RichTextArea")
 public class RichTextAreaElement extends AbstractFieldElement {
-
 }

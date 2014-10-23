@@ -50,9 +50,10 @@ public class OptionGroupElement extends AbstractSelectElement {
     }
 
     /**
-     * Return value of checked option
+     * Return value of the selected option in the option group
+     *
+     * @return value of the selected option in the option group
      */
-    @Override
     public String getValue() {
         List<WebElement> options = findElements(byButtonSpan);
         for (WebElement option : options) {
@@ -67,7 +68,12 @@ public class OptionGroupElement extends AbstractSelectElement {
         return null;
     }
 
-    @Override
+    /**
+     * Select option in the option group with the specified value
+     *
+     * @param chars
+     *            value of the option in the option group which will be selected
+     */
     public void setValue(CharSequence chars) throws ReadOnlyException {
         selectByText((String) chars);
     }

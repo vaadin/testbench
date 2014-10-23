@@ -19,12 +19,6 @@ import com.vaadin.testbench.elementsbase.ServerClass;
 public class TreeTableElement extends TableElement {
 
     @Override
-    public String getValue() {
-        throw new UnsupportedOperationException(
-                "Implement TreeTable get Value. Ticket #14498");
-    }
-
-    @Override
     public TreeTableRowElement getRow(int row) {
         TestBenchElement element = super.getRow(row);
         return element.wrap(TreeTableRowElement.class);

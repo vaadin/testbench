@@ -7,8 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.vaadin.testUI.ComponentElementGetValue;
-import com.vaadin.testbench.elements.AbstractFieldElement;
-import com.vaadin.testbench.elements.AbstractSelectElement;
+import com.vaadin.testbench.elements.AbstractTextFieldElement;
 import com.vaadin.testbench.elements.CheckBoxElement;
 import com.vaadin.testbench.elements.ComboBoxElement;
 import com.vaadin.testbench.elements.DateFieldElement;
@@ -47,31 +46,41 @@ public class ComponentElementGetValueIT extends MultiBrowserTest {
     @Test
     public void checkComboBox() {
         ComboBoxElement elem = $(ComboBoxElement.class).get(0);
-        checkValue(elem);
+        String expected = ComponentElementGetValue.TEST_STRING_VALUE;
+        String actual = elem.getValue();
+        Assert.assertEquals(expected, actual);
     }
 
     @Test
     public void checkListSelect() {
         ListSelectElement elem = $(ListSelectElement.class).get(0);
-        checkValue(elem);
+        String expected = ComponentElementGetValue.TEST_STRING_VALUE;
+        String actual = elem.getValue();
+        Assert.assertEquals(expected, actual);
     }
 
     @Test
     public void checkNativeSelect() {
         NativeSelectElement elem = $(NativeSelectElement.class).get(0);
-        checkValue(elem);
+        String expected = ComponentElementGetValue.TEST_STRING_VALUE;
+        String actual = elem.getValue();
+        Assert.assertEquals(expected, actual);
     }
 
     @Test
     public void checkOptionGroup() {
         OptionGroupElement elem = $(OptionGroupElement.class).get(0);
-        checkValue(elem);
+        String expected = ComponentElementGetValue.TEST_STRING_VALUE;
+        String actual = elem.getValue();
+        Assert.assertEquals(expected, actual);
     }
 
     @Test
     public void checkTwinColSelect() {
         TwinColSelectElement elem = $(TwinColSelectElement.class).get(0);
-        checkValue(elem);
+        String expected = ComponentElementGetValue.TEST_STRING_VALUE;
+        String actual = elem.getValue();
+        Assert.assertEquals(expected, actual);
     }
 
     @Test
@@ -118,13 +127,7 @@ public class ComponentElementGetValueIT extends MultiBrowserTest {
         Assert.assertEquals(expected, actual);
     }
 
-    private void checkValue(AbstractFieldElement elem) {
-        String expected = ComponentElementGetValue.TEST_STRING_VALUE;
-        String actual = elem.getValue();
-        Assert.assertEquals(expected, actual);
-    }
-
-    private void checkValue(AbstractSelectElement elem) {
+    private void checkValue(AbstractTextFieldElement elem) {
         String expected = ComponentElementGetValue.TEST_STRING_VALUE;
         String actual = elem.getValue();
         Assert.assertEquals(expected, actual);

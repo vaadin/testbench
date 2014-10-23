@@ -31,7 +31,21 @@ public class DateFieldElement extends AbstractFieldElement {
         elem.clear();
     }
 
-    @Override
+    /**
+     * Return value of the date field element
+     *
+     * @return value of the date field element
+     */
+    public String getValue() {
+        return findElement(By.tagName("input")).getAttribute("value");
+    }
+
+    /**
+     * Set value of the date field element
+     *
+     * @param chars
+     *            new value of the date field
+     */
     public void setValue(CharSequence chars) throws ReadOnlyException {
         if (isReadOnly()) {
             throw new ReadOnlyException();

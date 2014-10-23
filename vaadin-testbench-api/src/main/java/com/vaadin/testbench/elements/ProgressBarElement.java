@@ -17,12 +17,4 @@ import com.vaadin.testbench.elementsbase.ServerClass;
 @ServerClass("com.vaadin.ui.ProgressBar")
 public class ProgressBarElement extends AbstractFieldElement {
 
-    /**
-     * ProgressBarElement does not support get value method
-     */
-    @Override
-    public String getValue() {
-        throw new UnsupportedOperationException(
-                "ProgressBarElement does not have getValue() method implementation");
-    }
 }

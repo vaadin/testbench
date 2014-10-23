@@ -24,7 +24,6 @@ public class CheckBoxElement extends AbstractFieldElement {
      * Return string representation of value of the checkbox Return either
      * checked or unchecked
      */
-    @Override
     public String getValue() {
         WebElement elem = findElement(By.tagName("input"));
         if (elem.isSelected()) {
@@ -37,7 +36,7 @@ public class CheckBoxElement extends AbstractFieldElement {
     /**
      * Clears the check box, setting unchecked value. The check box is unchecked
      * by sending a click event on it.
-     * 
+     *
      */
     @Override
     public void clear() {
@@ -56,7 +55,7 @@ public class CheckBoxElement extends AbstractFieldElement {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see com.vaadin.testbench.TestBenchElement#click()
      */
     @Override

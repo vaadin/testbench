@@ -58,7 +58,11 @@ public class ListSelectElement extends AbstractSelectElement {
         super.clear();
     }
 
-    @Override
+    /**
+     * Return value of the list select element
+     *
+     * @return value of the list select element
+     */
     public String getValue() {
         return select.getFirstSelectedOption().getText();
     }

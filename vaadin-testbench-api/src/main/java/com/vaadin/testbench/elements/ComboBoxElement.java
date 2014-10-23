@@ -166,6 +166,15 @@ public class ComboBoxElement extends AbstractSelectElement {
         return findElement(bySuggestionPopup);
     }
 
+    /**
+     * Return value of the combo box element
+     *
+     * @return value of the combo box element
+     */
+    public String getValue() {
+        return findElement(By.tagName("input")).getAttribute("value");
+    }
+
     private void ensurePopupOpen() {
         if (!isElementPresent(bySuggestionPopup)) {
             openPopup();

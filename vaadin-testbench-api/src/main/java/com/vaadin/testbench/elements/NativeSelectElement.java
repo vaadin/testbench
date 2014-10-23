@@ -51,12 +51,21 @@ public class NativeSelectElement extends AbstractSelectElement {
         super.clear();
     }
 
-    @Override
+    /**
+     * Return value of the selected item in the native select element
+     *
+     * @return value of the selected item in the native select element
+     */
     public String getValue() {
         return selectElement.getFirstSelectedOption().getText();
     }
 
-    @Override
+    /**
+     * Select item of the native select element with the specified value
+     *
+     * @param chars
+     *            value of the native select item will be selected
+     */
     public void setValue(CharSequence chars) throws ReadOnlyException {
         selectByText((String) chars);
     }

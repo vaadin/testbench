@@ -24,10 +24,9 @@ public class TreeElement extends AbstractSelectElement {
     /**
      * Returns selected item of the tree. In multiselect mode returns first
      * selected item. If there is no selected item returns empty string
-     * 
+     *
      * @return selected item of the tree
      */
-    @Override
     public String getValue() {
         List<WebElement> selectedElements = findElements(By
                 .className("v-tree-node-selected"));

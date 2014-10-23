@@ -43,6 +43,11 @@ public class TableElement extends AbstractSelectElement {
         return cell;
     }
 
+    /**
+     * Return table row element by zero-based index
+     *
+     * @return table row element by zero-based index
+     */
     public TableRowElement getRow(int row) {
         TestBenchElement rowElem = wrapElement(
                 findElement(By.vaadin("#row[" + row + "]")),
@@ -52,7 +57,7 @@ public class TableElement extends AbstractSelectElement {
 
     /**
      * Returns the header cell with the given column index.
-     * 
+     *
      * @param column
      *            0 based column index
      * @return TableHeaderElement containing the wanted header cell

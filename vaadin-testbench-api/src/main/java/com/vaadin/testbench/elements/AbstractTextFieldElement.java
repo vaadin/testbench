@@ -12,13 +12,29 @@
  */
 package com.vaadin.testbench.elements;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 
 import com.vaadin.testbench.elementsbase.ServerClass;
 
 @ServerClass("com.vaadin.ui.AbstractTextField")
 public class AbstractTextFieldElement extends AbstractFieldElement {
-    @Override
+
+    /**
+     * Return value of the field element
+     *
+     * @return value of the field element
+     */
+    public String getValue() {
+        return findElement(By.tagName("input")).getAttribute("value");
+    }
+
+    /**
+     * Set value of the field element
+     *
+     * @param chars
+     *            new value of the field
+     */
     public void setValue(CharSequence chars) throws ReadOnlyException {
         if (isReadOnly()) {
             throw new ReadOnlyException();

@@ -1,12 +1,12 @@
 /*
  * Copyright 2000-2014 Vaadin Ltd.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -22,7 +22,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.vaadin.testUI.ComponentElementGetValue;
-import com.vaadin.testbench.elements.AbstractFieldElement;
+import com.vaadin.testbench.elements.AbstractTextFieldElement;
 import com.vaadin.testbench.elements.CheckBoxElement;
 import com.vaadin.testbench.elements.ComboBoxElement;
 import com.vaadin.testbench.elements.DateFieldElement;
@@ -42,7 +42,7 @@ import com.vaadin.testbench.elements.TwinColSelectElement;
  * of the server side by checking that changeValue even was raised on the server
  * side. Each element has changeValue listener added in the UI class. Compare
  * labelChangeValue value with the value used in the listener of the UI class.
- * 
+ *
  * @since
  * @author Vaadin Ltd
  */
@@ -143,12 +143,13 @@ public class TestBenchElementClearValueIT extends MultiBrowserTest {
     }
 
     // helper functions
-    private void checkElementValue(AbstractFieldElement elem) {
+    private void checkElementValue(AbstractTextFieldElement elem) {
         String initial = ComponentElementGetValue.TEST_STRING_VALUE;
         checkElementValue(elem, initial);
     }
 
-    private void checkElementValue(AbstractFieldElement elem, String expected) {
+    private void checkElementValue(AbstractTextFieldElement elem,
+            String expected) {
         // check initial element value
         String actual = elem.getValue();
         Assert.assertEquals(expected, actual);

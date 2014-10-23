@@ -27,7 +27,6 @@ public class SliderElement extends AbstractFieldElement {
      * Warning! This method cause slider popup to appear on the screen. To hide
      * this popup just focus any other element on the page.
      */
-    @Override
     public String getValue() {
         List<WebElement> popupElems = findElements(By.vaadin("#popup"));
         // SubPartAware was implemented after 7.2.6, not sure in which release
