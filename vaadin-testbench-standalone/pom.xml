@@ -34,6 +34,10 @@
             <name>In Project Repo</name>
             <url>file:${project.basedir}/lib</url>
         </repository>
+        <repository>
+            <id>vaadin-addons</id>
+            <url>http://vaadin.com/nexus/content/repositories/vaadin-addons</url>
+        </repository>
     </repositories>
 
     <build>
