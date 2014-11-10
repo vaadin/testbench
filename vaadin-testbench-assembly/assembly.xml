@@ -17,29 +17,22 @@
 
     <fileSets>
         <fileSet>
-            <directory>../vaadin-testbench/target</directory>
-            <outputDirectory>maven</outputDirectory>
-            <includes>
-                <include>*.jar</include>
-            </includes>
-        </fileSet>
-        <fileSet>
             <directory>../vaadin-testbench-core/target</directory>
-            <outputDirectory>maven</outputDirectory>
+            <outputDirectory>maven/vaadin-testbench-core</outputDirectory>
             <includes>
                 <include>*.jar</include>
             </includes>
         </fileSet>
         <fileSet>
-            <directory>target/dependency</directory>
-            <outputDirectory>maven</outputDirectory>
+            <directory>../vaadin-testbench-api/target</directory>
+            <outputDirectory>maven/vaadin-testbench-api</outputDirectory>
             <includes>
-                <include>vaadin-testbench-api*.jar</include>
+                <include>*.jar</include>
             </includes>
         </fileSet>
         <fileSet>
             <directory>../vaadin-testbench/target</directory>
-            <outputDirectory>maven</outputDirectory>
+            <outputDirectory>maven/vaadin-testbench</outputDirectory>
             <includes>
                 <include>*.jar</include>
             </includes>
@@ -60,15 +53,19 @@
             </includes>
         </fileSet>
         <fileSet>
-            <directory>../vaadin-testbench/target</directory>
+            <directory>target</directory>
             <outputDirectory>documentation</outputDirectory>
             <includes>
                 <include>*.pdf</include>
             </includes>
         </fileSet>
         <fileSet>
-            <directory>../vaadin-testbench/target/apidocs</directory>
-            <outputDirectory>documentation/api</outputDirectory>
+            <directory>../vaadin-testbench-core/target/apidocs</directory>
+            <outputDirectory>documentation/api/vaadin-testbench-core</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>../vaadin-testbench-api/target/apidocs</directory>
+            <outputDirectory>documentation/api/vaadin-testbench-api</outputDirectory>
         </fileSet>
     </fileSets>
 
@@ -91,7 +88,17 @@
         </file>
         <file>
             <source>../vaadin-testbench/pom.xml</source>
-            <outputDirectory>maven</outputDirectory>
+            <outputDirectory>maven/vaadin-testbench</outputDirectory>
+            <filtered>true</filtered>
+        </file>
+        <file>
+            <source>../vaadin-testbench-core/pom.xml</source>
+            <outputDirectory>maven/vaadin-testbench-core</outputDirectory>
+            <filtered>true</filtered>
+        </file>
+        <file>
+            <source>../vaadin-testbench-api/pom.xml</source>
+            <outputDirectory>maven/vaadin-testbench-api</outputDirectory>
             <filtered>true</filtered>
         </file>
     </files>

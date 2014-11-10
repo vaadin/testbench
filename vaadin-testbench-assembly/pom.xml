@@ -21,6 +21,12 @@
         </license>
     </licenses>
 
+    <pluginRepositories>
+        <pluginRepository>
+            <id>pdfsplit-plugin</id>
+            <url>https://raw.github.com/zch/maven/releases/</url>
+        </pluginRepository>
+    </pluginRepositories>
     <repositories>
         <repository>
             <id>vaadin-addons</id>
@@ -38,40 +44,25 @@
                 </configuration>
             </plugin>
 
+            <!-- Extracts the TouchKit chapter from BoV -->
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>2.8</version>
+                <groupId>com.github.zch</groupId>
+                <artifactId>pdfsplit-maven-plugin</artifactId>
+                <version>1.0.1</version>
                 <executions>
                     <execution>
-                        <id>copy</id>
+                        <id>pdfsplit</id>
                         <phase>package</phase>
                         <goals>
-                            <goal>copy</goal>
+                            <goal>split</goal>
                         </goals>
                         <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>com.vaadin</groupId>
-                                    <artifactId>vaadin-testbench-api</artifactId>
-                                    <version>${vaadin.testbench.api.version}</version>
-                                    <overWrite>true</overWrite>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>com.vaadin</groupId>
-                                    <artifactId>vaadin-testbench-api</artifactId>
-                                    <version>${vaadin.testbench.api.version}</version>
-                                    <classifier>javadoc</classifier>
-                                    <overWrite>true</overWrite>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>com.vaadin</groupId>
-                                    <artifactId>vaadin-testbench-api</artifactId>
-                                    <version>${vaadin.testbench.api.version}</version>
-                                    <classifier>sources</classifier>
-                                    <overWrite>true</overWrite>
-                                </artifactItem>
-                            </artifactItems>
+                            <inputUrl>
+                                https://vaadin.com/download/book-of-vaadin/vaadin-7/pdf/book-of-vaadin.pdf
+                            </inputUrl>
+                            <chapter>Chapter 21. Vaadin TestBench</chapter>
+                            <outFile>${project.build.directory}/vaadin-testbench-manual-${project.version}.pdf
+                            </outFile>
                         </configuration>
                     </execution>
                 </executions>
