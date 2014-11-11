@@ -1,4 +1,4 @@
 Vaadin-Package-Version: 1
 Implementation-Title: Vaadin TestBench
 Implementation-Version: ${project.version}
-Vaadin-Addon: maven/vaadin-testbench-${project.version}.jar
+Vaadin-Addon: maven/vaadin-testbench/vaadin-testbench-${project.version}.jar
