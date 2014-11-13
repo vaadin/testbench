@@ -54,15 +54,19 @@ public class LicenseChecker {
             printAndRethrowException(e.getMessage(), e);
         } catch (UnreachableCvalServerException e) {
             // No connection and no cached lisence
-            String message = "License for Vaadin TestBench 4 has not been validated. Check you network connection.";
-            printAndRethrowException(message, e);
+            String message = "Your license for TestBench 4 has not been validated. Check your network connection.";
+            printMessage(message);
         }
     }
 
     private static void printAndRethrowException(String eMessage, Throwable t) {
+        printMessage(eMessage);
+        throw new Error(CVALInfo, t);
+    }
+
+    private static void printMessage(String eMessage) {
         CVALInfo = getValidationInfo(eMessage);
         System.out.println(CVALInfo);
-        throw new Error(CVALInfo, t);
     }
 
     private static String getValidationInfo(String validationInfo) {
