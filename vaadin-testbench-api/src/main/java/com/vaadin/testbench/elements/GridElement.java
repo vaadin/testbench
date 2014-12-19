@@ -1,3 +1,15 @@
+/**
+ * Copyright (C) 2012 Vaadin Ltd
+ *
+ * This program is available under Commercial Vaadin Add-On License 3.0
+ * (CVALv3).
+ *
+ * See the file licensing.txt distributed with this software for more
+ * information about licensing.
+ *
+ * You should have received a copy of the license along with this program.
+ * If not, see <http://vaadin.com/license/cval-3>.
+ */
 package com.vaadin.testbench.elements;
 
 import java.util.ArrayList;
@@ -22,16 +34,11 @@ public class GridElement extends AbstractComponentElement {
 
     public static class GridCellElement extends AbstractElement {
 
-        private static final String FOCUSED_CELL_CLASS_NAME = "-cell-active";
-        private static final String FOCUSED_HEADER_CLASS_NAME = "-header-active";
+        private static final String FOCUSED_CELL_CLASS_NAME = "-cell-focused";
         private static final String FROZEN_CLASS_NAME = "frozen";
 
         public boolean isFocused() {
             return getAttribute("class").contains(FOCUSED_CELL_CLASS_NAME);
-        }
-
-        public boolean isFocusedHeader() {
-            return getAttribute("class").contains(FOCUSED_HEADER_CLASS_NAME);
         }
 
         public boolean isFrozen() {
@@ -41,7 +48,7 @@ public class GridElement extends AbstractComponentElement {
 
     public static class GridRowElement extends AbstractElement {
 
-        private static final String FOCUSED_CLASS_NAME = "-row-active";
+        private static final String FOCUSED_CLASS_NAME = "-row-focused";
         private static final String SELECTED_CLASS_NAME = "-row-selected";
 
         public boolean isFocused() {
