@@ -27,8 +27,6 @@ import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicHttpEntityEnclosingRequest;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.junit.Before;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -45,6 +43,9 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 import com.thoughtworks.selenium.webdriven.WebDriverBackedSelenium;
 import com.vaadin.server.LegacyApplication;
 import com.vaadin.server.UIProvider;
@@ -799,8 +800,8 @@ public abstract class AbstractTB3Test extends ParallelTest {
             BasicHttpEntityEnclosingRequest r = new BasicHttpEntityEnclosingRequest(
                     "POST", sessionURL.toExternalForm());
             HttpResponse response = client.execute(host, r);
-            JSONObject object = extractObject(response);
-            URL myURL = new URL(object.getString("proxyId"));
+            JsonObject object = extractObject(response);
+            URL myURL = new URL(object.get("proxyId").getAsString());
             if ((myURL.getHost() != null) && (myURL.getPort() != -1)) {
                 return myURL.getHost();
             }
@@ -810,12 +811,12 @@ public abstract class AbstractTB3Test extends ParallelTest {
         return null;
     }
 
-    private static JSONObject extractObject(HttpResponse resp)
-            throws IOException, JSONException {
+    private static JsonObject extractObject(HttpResponse resp)
+            throws IOException, JsonSyntaxException {
         InputStream contents = resp.getEntity().getContent();
         StringWriter writer = new StringWriter();
         IOUtils.copy(contents, writer, "UTF8");
-        JSONObject objToReturn = new JSONObject(writer.toString());
+        JsonObject objToReturn = new JsonParser().parse(writer.toString()).getAsJsonObject();
         return objToReturn;
     }
 
