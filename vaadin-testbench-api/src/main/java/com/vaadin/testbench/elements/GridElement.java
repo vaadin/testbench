@@ -74,11 +74,39 @@ public class GridElement extends AbstractComponentElement {
          * Gets the editor field for column in given index.
          * 
          * @param colIndex
-         *            column index
+         *            the column index
          * @return the editor field for given location
+         * 
+         * @throws NoSuchElementException
+         *             if {@code isEditable(colIndex) == false}
          */
         public TestBenchElement getField(int colIndex) {
             return grid.getSubPart("#editor[" + colIndex + "]");
+        }
+
+        /**
+         * Gets whether the column with the given index is editable, that is,
+         * has an associated editor field.
+         * 
+         * @param colIndex
+         *            the column index
+         * @return {@code true} if the column has an editor field, {@code false}
+         *          otherwise
+         */
+        public boolean isEditable(int colIndex) {
+            return grid
+                    .isElementPresent(By.vaadin("#editor[" + colIndex + "]"));
+        }
+
+        /**
+         * Checks whether a field is marked with an error.
+         * 
+         * @param colIndex
+         *            column index
+         * @return <code>true</code> iff the field is marked with an error
+         */
+        public boolean isFieldErrorMarked(int colIndex) {
+            return getField(colIndex).getAttribute("class").contains("error");
         }
 
         /**
@@ -88,9 +116,7 @@ public class GridElement extends AbstractComponentElement {
          * useless.
          */
         public void save() {
-            getField(0);
-            List<WebElement> buttons = findElements(By.xpath("./button"));
-            buttons.get(0).click();
+            findElement(By.className("v-grid-editor-save")).click();
         }
 
         /**
@@ -100,9 +126,23 @@ public class GridElement extends AbstractComponentElement {
          * useless.
          */
         public void cancel() {
-            getField(0);
-            List<WebElement> buttons = findElements(By.xpath("./button"));
-            buttons.get(1).click();
+            findElement(By.className("v-grid-editor-cancel")).click();
+        }
+
+        /**
+         * Gets the error message text, or <code>null</code> if no message is
+         * present.
+         */
+        public String getErrorMessage() {
+            WebElement messageWrapper = findElement(By
+                    .className("v-grid-editor-message"));
+            List<WebElement> divs = messageWrapper.findElements(By
+                    .tagName("div"));
+            if (divs.isEmpty()) {
+                return null;
+            } else {
+                return divs.get(0).getText();
+            }
         }
     }
 
@@ -234,7 +274,7 @@ public class GridElement extends AbstractComponentElement {
      *            Row index
      * @return The th element of the row
      */
-    public WebElement getHeaderRow(int rowIndex) {
+    public TestBenchElement getHeaderRow(int rowIndex) {
         return getSubPart("#header[" + rowIndex + "]");
     }
 
@@ -245,7 +285,7 @@ public class GridElement extends AbstractComponentElement {
      *            Row index
      * @return The tr element of the row
      */
-    public WebElement getFooterRow(int rowIndex) {
+    public TestBenchElement getFooterRow(int rowIndex) {
         return getSubPart("#footer[" + rowIndex + "]");
     }
 
@@ -254,9 +294,9 @@ public class GridElement extends AbstractComponentElement {
      * 
      * @return The element representing the vertical scrollbar
      */
-    public WebElement getVerticalScroller() {
+    public TestBenchElement getVerticalScroller() {
         List<WebElement> rootElements = findElements(By.xpath("./div"));
-        return rootElements.get(0);
+        return (TestBenchElement) rootElements.get(0);
     }
 
     /**
@@ -264,9 +304,9 @@ public class GridElement extends AbstractComponentElement {
      * 
      * @return The element representing the horizontal scrollbar
      */
-    public WebElement getHorizontalScroller() {
+    public TestBenchElement getHorizontalScroller() {
         List<WebElement> rootElements = findElements(By.xpath("./div"));
-        return rootElements.get(1);
+        return (TestBenchElement) rootElements.get(1);
     }
 
     /**
@@ -274,7 +314,7 @@ public class GridElement extends AbstractComponentElement {
      * 
      * @return The thead element
      */
-    public WebElement getHeader() {
+    public TestBenchElement getHeader() {
         return getSubPart("#header");
     }
 
@@ -283,7 +323,7 @@ public class GridElement extends AbstractComponentElement {
      * 
      * @return the tbody element
      */
-    public WebElement getBody() {
+    public TestBenchElement getBody() {
         return getSubPart("#cell");
     }
 
@@ -292,7 +332,7 @@ public class GridElement extends AbstractComponentElement {
      * 
      * @return the tfoot element
      */
-    public WebElement getFooter() {
+    public TestBenchElement getFooter() {
         return getSubPart("#footer");
     }
 
@@ -301,9 +341,9 @@ public class GridElement extends AbstractComponentElement {
      * 
      * @return The element that wraps the table element
      */
-    public WebElement getTableWrapper() {
+    public TestBenchElement getTableWrapper() {
         List<WebElement> rootElements = findElements(By.xpath("./div"));
-        return rootElements.get(2);
+        return (TestBenchElement) rootElements.get(2);
     }
 
     public GridEditorElement getEditor() {
