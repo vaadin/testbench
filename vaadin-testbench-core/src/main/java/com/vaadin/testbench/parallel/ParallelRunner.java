@@ -185,8 +185,6 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
             desiredCapabilities.add(BrowserUtil.getBrowserFactory().create(
                     runLocallyBrowser(), runLocallyVersion()));
             return desiredCapabilities;
-        } else if (Parameters.isLocalWebDriverUsed()) {
-            return ParallelTest.getDefaultCapabilities();
         } else {
             return getFilteredCapabilities();
         }
@@ -220,8 +218,8 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
     }
 
     private TestBenchBrowserFactory getBrowserFactory() {
-        BrowserFactory browserFactoryAnnotation = findAnnotation(getTestClass()
-                .getJavaClass(), BrowserFactory.class);
+        BrowserFactory browserFactoryAnnotation = getTestClass().getJavaClass()
+                .getAnnotation(BrowserFactory.class);
 
         try {
             if (browserFactoryAnnotation != null
@@ -323,7 +321,7 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
 
     /**
      * Validates the signature of a BrowserConfiguration annotated method.
-     *
+     * 
      * @param method
      *            BrowserConfiguration annotated method
      * @return true if method signature is valid. false otherwise.
@@ -406,7 +404,7 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
     /**
      * Finds the given annotation in the given class or one of its super
      * classes. Return the first found annotation
-     *
+     * 
      * @param searchClass
      * @param annotationClass
      * @return
@@ -426,7 +424,7 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * org.junit.runners.BlockJUnit4ClassRunner#withBefores(org.junit.runners
      * .model.FrameworkMethod, java.lang.Object,
