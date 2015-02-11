@@ -13,6 +13,7 @@
 package com.vaadin.testbench.annotations;
 
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
@@ -32,11 +33,12 @@ import com.vaadin.testbench.parallel.TestBenchBrowserFactory;
  * a specific browser).
  * </p>
  * Example:<br>
- *
+ * 
  * {@code @BrowserFactory(DefaultBrowserFactory.class)}
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
+@Inherited
 public @interface BrowserFactory {
     public Class<?> value() default TestBenchBrowserFactory.class;
 }

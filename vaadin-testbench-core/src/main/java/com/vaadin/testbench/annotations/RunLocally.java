@@ -13,6 +13,7 @@
 package com.vaadin.testbench.annotations;
 
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
@@ -27,13 +28,13 @@ import com.vaadin.testbench.parallel.ParallelTest;
  * Marks this testcase to run locally.<br>
  * Can receive a parameter to define which browser to run test on.<br>
  * </p>
- *
+ * 
  * <p>
  * This parameter will be used to instantiate the {@link WebDriver}.<br>
  * The value can be obtained through {@link ParallelTest#getRunLocallyBrowser()}
  * and {@link ParallelTest#getRunLocallyBrowserVersion()}
  * </p>
- *
+ * 
  * <p>
  * Usage:<br>
  * {@code @RunLocally(Browser.CHROME)}
@@ -41,6 +42,7 @@ import com.vaadin.testbench.parallel.ParallelTest;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
+@Inherited
 public @interface RunLocally {
     public Browser value() default Browser.FIREFOX;
 
