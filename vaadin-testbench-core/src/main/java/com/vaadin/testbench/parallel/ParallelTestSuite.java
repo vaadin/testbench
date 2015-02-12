@@ -55,7 +55,12 @@ public class ParallelTestSuite extends Suite {
     public ParallelTestSuite(Class<?> klass,
             Class<? extends ParallelTest> baseClass, String basePackage,
             String[] ignorePackages) throws InitializationError {
-        super(klass, findTests(baseClass, basePackage, ignorePackages));
+        this(klass, findTests(baseClass, basePackage, ignorePackages));
+    }
+
+    protected ParallelTestSuite(Class<?> klass, Class<?>[] suiteClasses)
+            throws InitializationError {
+        super(klass, suiteClasses);
         setScheduler(new ParallelScheduler(service));
     }
 
@@ -64,7 +69,7 @@ public class ParallelTestSuite extends Suite {
      * specified by 'basePackage'. Collects all classes inside the location
      * which can be assigned to 'baseClass' except for classes inside packages
      * listed in 'ignoredPackages'.
-     *
+     * 
      * @param baseClass
      * @param basePackage
      * @param ignorePackages
@@ -88,7 +93,7 @@ public class ParallelTestSuite extends Suite {
      * specified by 'basePackage'. Collects all classes inside the location
      * which can be assigned to 'baseClass' except for classes inside packages
      * listed in 'ignoredPackages'.
-     *
+     * 
      * @param baseClass
      * @param basePackage
      * @param ignoredPackages
@@ -132,7 +137,7 @@ public class ParallelTestSuite extends Suite {
      * Traverses the given directory and collects all classes which are inside
      * the given 'javaPackage' and can be assigned to the given 'baseClass'. The
      * found classes are added to 'result'.
-     *
+     * 
      * @param parent
      *            The directory to traverse
      * @param javaPackage
@@ -170,7 +175,7 @@ public class ParallelTestSuite extends Suite {
      * Traverses a Jar file using the given connection and collects all classes
      * which are inside the given 'javaPackage' and can be assigned to the given
      * 'baseClass'. The found classes are added to 'result'.
-     *
+     * 
      * @param javaPackage
      *            The java package containing the classes (classes may be in a
      *            sub package)
@@ -200,7 +205,7 @@ public class ParallelTestSuite extends Suite {
      * Verifies that the class represented by 'fullyQualifiedClassName' can be
      * loaded, assigned to 'baseClass' and is not an abstract or anonymous
      * class.
-     *
+     * 
      * @param result
      *            The collection to add to
      * @param fullyQualifiedClassName
