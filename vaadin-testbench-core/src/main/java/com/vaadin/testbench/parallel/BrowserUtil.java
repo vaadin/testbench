@@ -26,7 +26,7 @@ public class BrowserUtil {
 
     /**
      * Gets the capabilities for Safari
-     *
+     * 
      * @return an object describing the capabilities required for running a test
      *         on Safari
      */
@@ -37,7 +37,7 @@ public class BrowserUtil {
 
     /**
      * Gets the capabilities for Chrome
-     *
+     * 
      * @return an object describing the capabilities required for running a test
      *         on Chrome
      */
@@ -48,7 +48,7 @@ public class BrowserUtil {
 
     /**
      * Gets the capabilities for Firefox
-     *
+     * 
      * @return an object describing the capabilities required for running a test
      *         on Firefox
      */
@@ -59,7 +59,7 @@ public class BrowserUtil {
 
     /**
      * Gets the capabilities for Internet Explorer 8
-     *
+     * 
      * @return an object describing the capabilities required for running a test
      *         on Internet Explorer 8
      */
@@ -70,7 +70,7 @@ public class BrowserUtil {
 
     /**
      * Gets the capabilities for Internet Explorer 9
-     *
+     * 
      * @return an object describing the capabilities required for running a test
      *         on Internet Explorer 9
      */
@@ -81,7 +81,7 @@ public class BrowserUtil {
 
     /**
      * Gets the capabilities for Internet Explorer 10
-     *
+     * 
      * @return an object describing the capabilities required for running a test
      *         on Internet Explorer 10
      */
@@ -92,7 +92,7 @@ public class BrowserUtil {
 
     /**
      * Gets the capabilities for Internet Explorer 11
-     *
+     * 
      * @return an object describing the capabilities required for running a test
      *         on Internet Explorer 11
      */
@@ -103,7 +103,7 @@ public class BrowserUtil {
 
     /**
      * Gets the capabilities for PhantomJS
-     *
+     * 
      * @return an object describing the capabilities required for running a test
      *         on PhantomJS
      */
@@ -114,12 +114,12 @@ public class BrowserUtil {
 
     /**
      * Checks if the given capabilities refer to Internet Explorer 8
-     *
+     * 
      * @param capabilities
      * @return true if the capabilities refer to IE8, false otherwise
      */
     public static boolean isIE8(Capabilities capabilities) {
-        return isIE(capabilities) && "8".equals(capabilities.getVersion());
+        return isIE(capabilities, 8);
     }
 
     /**
@@ -130,6 +130,19 @@ public class BrowserUtil {
      */
     public static boolean isIE(Capabilities capabilities) {
         return BrowserType.IE.equals(capabilities.getBrowserName());
+    }
+
+    /**
+     * @param capabilities
+     *            The capabilities to check
+     * @param version
+     *            Version number as an integer
+     * @return true if the capabilities refer to correct version of Internet
+     *         Explorer, false otherwise
+     */
+    public static boolean isIE(Capabilities capabilities, int version) {
+        return isIE(capabilities)
+                && ("" + version).equals(capabilities.getVersion());
     }
 
     /**
@@ -171,7 +184,7 @@ public class BrowserUtil {
     /**
      * Returns a human readable identifier of the given browser. Used for test
      * naming and screenshots
-     *
+     * 
      * @param capabilities
      * @return a human readable string describing the capabilities
      */
@@ -194,7 +207,7 @@ public class BrowserUtil {
     /**
      * Returns a human readable identifier of the platform described by the
      * given capabilities. Used mainly for screenshots
-     *
+     * 
      * @param capabilities
      * @return a human readable string describing the platform
      */
@@ -215,7 +228,7 @@ public class BrowserUtil {
      * Browser.<br>
      * Extend BrowserFactory and override its methods in order to add default
      * version, platform or other capabilities.
-     *
+     * 
      * @param browserFactory
      *            BrowserFactory instance to use to generate default
      *            DesiredCapabilities
@@ -226,7 +239,7 @@ public class BrowserUtil {
 
     /**
      * Gets the BrowserFactory used to generate new DesiredCapabilities
-     *
+     * 
      * @return BrowserFactory used to generate new DesiredCapabilities
      */
     public static TestBenchBrowserFactory getBrowserFactory() {
