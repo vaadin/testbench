@@ -24,10 +24,10 @@
             </includes>
         </fileSet>
         <fileSet>
-            <directory>../vaadin-testbench-api/target</directory>
+            <directory>${project.build.directory}</directory>
             <outputDirectory>maven/vaadin-testbench-api</outputDirectory>
             <includes>
-                <include>*.jar</include>
+                <include>vaadin-testbench-api*.jar</include>
             </includes>
         </fileSet>
         <fileSet>

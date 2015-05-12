@@ -16,7 +16,7 @@
         <snapshot.repository.url>http://oss.sonatype.org/content/repositories/vaadin-snapshots/
         </snapshot.repository.url>
         <vaadin.version>7.4-SNAPSHOT</vaadin.version>
-        <vaadin.testbench.api.version>7.3-SNAPSHOT</vaadin.testbench.api.version>
+        <vaadin.testbench.api.version>7.4-SNAPSHOT</vaadin.testbench.api.version>
     </properties>
     <repositories>
         <repository>

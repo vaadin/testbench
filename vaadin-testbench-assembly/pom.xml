@@ -10,7 +10,8 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <vaadin.testbench.api.version>7.3-SNAPSHOT</vaadin.testbench.api.version>
+        <!-- is replaced by the latest version in the build server -->
+        <vaadin.testbench.api.version>7.4.5</vaadin.testbench.api.version>
     </properties>
 
     <licenses>
@@ -66,6 +67,47 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.10</version>
+                <executions>
+                    <execution>
+                        <id>copy</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>com.vaadin</groupId>
+                                    <artifactId>vaadin-testbench-api</artifactId>
+                                    <version>${vaadin.testbench.api.version}</version>
+                                    <type>jar</type>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>com.vaadin</groupId>
+                                    <artifactId>vaadin-testbench-api</artifactId>
+                                    <version>${vaadin.testbench.api.version}</version>
+                                    <classifier>sources</classifier>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>com.vaadin</groupId>
+                                    <artifactId>vaadin-testbench-api</artifactId>
+                                    <version>${vaadin.testbench.api.version}</version>
+                                    <classifier>javadoc</classifier>
+                                </artifactItem>
+                            </artifactItems>
+                            <outputDirectory>${project.build.directory}/</outputDirectory>
+                            <overWriteReleases>false</overWriteReleases>
+                            <overWriteSnapshots>true</overWriteSnapshots>
+                        </configuration>
+                    </execution>
+                </executions>
+
             </plugin>
 
             <plugin>
