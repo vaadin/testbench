@@ -455,13 +455,17 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
         };
     }
 
-    private static class TBMethod extends FrameworkMethod {
+    public static class TBMethod extends FrameworkMethod {
         private final DesiredCapabilities capabilities;
         private String testNameSuffix = "";
 
         public TBMethod(Method method, DesiredCapabilities capabilities) {
             super(method);
             this.capabilities = capabilities;
+        }
+
+        public DesiredCapabilities getCapabilities() {
+            return capabilities;
         }
 
         public void setTestNameSuffix(String testNameSuffix) {
