@@ -13,7 +13,7 @@ Upgrade steps (to check):
     - org.openqa.selenium
     - com.thoughtworks.selenium
   - use the following commands to create such a JAR (note: large Git repository):
-      git clone http://selenium.googlecode.com/git/ selenium
+      git clone https://github.com/SeleniumHQ/selenium.git
       cd selenium
       git checkout selenium-VERSION
       cd java/server/src

@@ -11,7 +11,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <selenium.version>2.44.0</selenium.version>
+        <selenium.version>2.46.0</selenium.version>
         <snapshot.repository.url>http://oss.sonatype.org/content/repositories/vaadin-snapshots/
         </snapshot.repository.url>
     </properties>
