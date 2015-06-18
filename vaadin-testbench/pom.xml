@@ -21,7 +21,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <snapshot.repository.url>http://oss.sonatype.org/content/repositories/vaadin-snapshots/
         </snapshot.repository.url>
-        <vaadin.testbench.api.version>7.3-SNAPSHOT</vaadin.testbench.api.version>
+        <vaadin.testbench.api.version>7.4.8</vaadin.testbench.api.version>
     </properties>
 
     <repositories>
@@ -53,7 +53,7 @@
                         <index>true</index>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <!-- Implementation-Title and Implementation-Version 
+                            <!-- Implementation-Title and Implementation-Version
                                 come from the POM by default -->
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                         </manifest>

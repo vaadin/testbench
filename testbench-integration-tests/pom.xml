@@ -15,8 +15,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <snapshot.repository.url>http://oss.sonatype.org/content/repositories/vaadin-snapshots/
         </snapshot.repository.url>
-        <vaadin.version>7.4-SNAPSHOT</vaadin.version>
-        <vaadin.testbench.api.version>7.4-SNAPSHOT</vaadin.testbench.api.version>
+        <vaadin.version>7.4.8</vaadin.version>
+        <vaadin.testbench.api.version>7.4.8</vaadin.testbench.api.version>
     </properties>
     <repositories>
         <repository>
