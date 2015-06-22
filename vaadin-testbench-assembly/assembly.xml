@@ -24,7 +24,7 @@
             </includes>
         </fileSet>
         <fileSet>
-            <directory>${project.build.directory}</directory>
+            <directory>../vaadin-testbench-api/target</directory>
             <outputDirectory>maven/vaadin-testbench-api</outputDirectory>
             <includes>
                 <include>vaadin-testbench-api*.jar</include>

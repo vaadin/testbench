@@ -47,8 +47,9 @@
 <!--         </snapshotRepository> -->
 <!--     </distributionManagement> -->
     <properties>
-        <vaadin.testbench.core.version>${project.version}</vaadin.testbench.core.version>
-        <vaadin.testbench.api.version>7.3.0.alpha3</vaadin.testbench.api.version>
+        <vaadin.testbench.api.version>7.4.8-SNAPSHOT</vaadin.testbench.api.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <vaadin.version>7.4.8</vaadin.version>
     </properties>
     <modules>
         <module>vaadin-testbench</module>
@@ -58,7 +59,6 @@
         <module>testbench-integration-tests</module>
         <module>vaadin-testbench-api</module>
     </modules>
-
 
     <build>
         <plugins>

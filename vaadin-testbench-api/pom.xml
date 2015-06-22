@@ -1,15 +1,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <groupId>com.vaadin</groupId>
     <artifactId>vaadin-testbench-api</artifactId>
-    <version>7.4.8</version>
+    <version>7.4.8-SNAPSHOT</version>
 
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <snapshot.repository.url>http://oss.sonatype.org/content/repositories/vaadin-snapshots/
         </snapshot.repository.url>
-        <vaadin.testbench.version>4.0-SNAPSHOT</vaadin.testbench.version>
+        <testbench.core.version>4.0-SNAPSHOT</testbench.core.version>
     </properties>
 
     <repositories>
@@ -130,7 +130,7 @@
         <dependency>
             <groupId>com.vaadin</groupId>
             <artifactId>vaadin-testbench-core</artifactId>
-            <version>${vaadin.testbench.version}</version>
+            <version>${testbench.core.version}</version>
         </dependency>
     </dependencies>
 </project>
