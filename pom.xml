@@ -47,7 +47,6 @@
 <!--         </snapshotRepository> -->
 <!--     </distributionManagement> -->
     <properties>
-        <vaadin.testbench.api.version>7.4.8-SNAPSHOT</vaadin.testbench.api.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <vaadin.version>7.4.8</vaadin.version>
     </properties>

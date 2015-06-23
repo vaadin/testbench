@@ -17,6 +17,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <selenium.version>2.46.0</selenium.version>
+        <vaadin.testbench.api.version>7.4.8-SNAPSHOT</vaadin.testbench.api.version>
     </properties>
 
     <licenses>
