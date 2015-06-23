@@ -34,18 +34,14 @@
         </license>
     </licenses>
 
-<!--     <distributionManagement> -->
-<!--         <repository> -->
-<!--             <id>vaadin-staging</id> -->
-<!--             <name>Vaadin release staging repository</name> -->
-<!--             <url>http://oss.sonatype.org/service/local/staging/deploy/maven2/</url> -->
-<!--         </repository> -->
-<!--         <snapshotRepository> -->
-<!--             <id>vaadin-snapshots</id> -->
-<!--             <name>Vaadin snapshot repository</name> -->
-<!--             <url>${snapshot.repository.url}</url> -->
-<!--         </snapshotRepository> -->
-<!--     </distributionManagement> -->
+     <distributionManagement>
+         <repository>
+             <id>vaadin-addons</id>
+             <name>Vaadin add-ons repository</name>
+             <url>http://vaadin.com/nexus/content/repositories/vaadin-addons</url>
+         </repository>
+     </distributionManagement>
+    
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <vaadin.version>7.4.8</vaadin.version>
