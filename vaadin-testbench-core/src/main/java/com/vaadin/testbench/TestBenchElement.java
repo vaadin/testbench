@@ -20,9 +20,11 @@ import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
+import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.interactions.Actions;
@@ -358,6 +360,12 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
 
     private void setCommandExecutor(TestBenchCommandExecutor tbCommandExecutor) {
         this.tbCommandExecutor = tbCommandExecutor;
+    }
+
+    @Override
+    public <X> X getScreenshotAs(OutputType<X> target)
+            throws WebDriverException {
+        return actualElement.getScreenshotAs(target);
     }
 
 }

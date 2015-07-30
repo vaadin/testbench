@@ -15,18 +15,19 @@ Upgrade steps (to check):
   - use the following commands to create such a JAR (note: large Git repository):
       git clone https://github.com/SeleniumHQ/selenium.git
       cd selenium
-      git checkout selenium-VERSION
+      VERSION=2.47.1
+      git checkout selenium-$VERSION
       cd java/server/src
-      jar cvf ../../../../selenium-standalone-VERSION-sources.jar `find org/openqa/selenium -name *.java` `find org/openqa/grid -name *.java`
+      jar cvf ../../../../selenium-standalone-$VERSION-sources.jar `find org/openqa/selenium -name *.java` `find org/openqa/grid -name *.java`
       cd ../../client/src
-      jar uvf ../../../../selenium-standalone-VERSION-sources.jar `find org/openqa/selenium -name *.java` `find com/thoughtworks -name *.java`
+      jar uvf ../../../../selenium-standalone-$VERSION-sources.jar `find org/openqa/selenium -name *.java` `find com/thoughtworks -name *.java`
       cd ../../../..
- - Install the selenium-standalone-VERSION.jar and selenium-standalone-VERSION-sources.jar
+ - Install the selenium-standalone-$VERSION.jar and selenium-standalone-$VERSION-sources.jar
    to the local TB repository using the following command:
 
-     $ mvn install:install-file -Dfile=selenium-standalone-VERSION.jar \
+     $ mvn install:install-file -Dfile=selenium-standalone-$VERSION.jar \
        -DgroupId=org.seleniumhq.selenium -DartifactId=selenium-standalone \
-       -Dversion=VERSION -Dpackaging=jar \
+       -Dversion=$VERSION -Dpackaging=jar \
        -Dsources=selenium-standalone-VERSION-sources.jar \
        -DlocalRepositoryPath=<PATH-TO-TB-CHECKOUT>/vaadin-testbench-standalone/lib/
 
