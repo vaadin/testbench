@@ -21,7 +21,7 @@ import com.vaadin.testbench.annotations.RunLocally;
  * the {@link RunLocally} annotation
  */
 public enum Browser {
-    FIREFOX, CHROME, SAFARI, IE8, IE9, IE10, IE11, PHANTOMJS;
+    FIREFOX, CHROME, SAFARI, IE8, IE9, IE10, IE11, EDGE, PHANTOMJS;
 
     private Browser() {
     }
@@ -38,6 +38,8 @@ public enum Browser {
             return BrowserUtil.ie8();
         case IE9:
             return BrowserUtil.ie9();
+        case EDGE:
+            return BrowserUtil.edge();
         case PHANTOMJS:
             return BrowserUtil.phantomJS();
         case SAFARI:

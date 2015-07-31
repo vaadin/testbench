@@ -80,6 +80,10 @@ public class DefaultBrowserFactory implements TestBenchBrowserFactory {
             // IE 11 uses ie.ensureCleanSession
             desiredCapabilities.setCapability("ie.ensureCleanSession", true);
             break;
+        case EDGE:
+            desiredCapabilities = DesiredCapabilities.edge();
+            desiredCapabilities.setPlatform(platform);
+            break;
         case FIREFOX:
         default:
             desiredCapabilities = DesiredCapabilities.firefox();

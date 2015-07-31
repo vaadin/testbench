@@ -102,6 +102,17 @@ public class BrowserUtil {
     }
 
     /**
+     * Gets the capabilities for Edge
+     * 
+     * @return an object describing the capabilities required for running a test
+     *         on Edge
+     */
+    public static DesiredCapabilities edge() {
+        DesiredCapabilities c = browserFactory.create(Browser.EDGE);
+        return c;
+    }
+
+    /**
      * Gets the capabilities for PhantomJS
      * 
      * @return an object describing the capabilities required for running a test
@@ -143,6 +154,15 @@ public class BrowserUtil {
     public static boolean isIE(Capabilities capabilities, int version) {
         return isIE(capabilities)
                 && ("" + version).equals(capabilities.getVersion());
+    }
+
+    /**
+     * @param capabilities
+     *            The capabilities to check
+     * @return true if the capabilities refer to Edge, false otherwise
+     */
+    public static boolean isEdge(Capabilities capabilities) {
+        return BrowserType.EDGE.equals(capabilities.getBrowserName());
     }
 
     /**
@@ -199,6 +219,8 @@ public class BrowserUtil {
             return "Safari";
         } else if (isPhantomJS(capabilities)) {
             return "PhantomJS";
+        } else if (isEdge(capabilities)) {
+            return "Edge";
         }
 
         return capabilities.getBrowserName();
