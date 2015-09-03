@@ -35,6 +35,13 @@ import com.vaadin.testbench.screenshot.ImageUtil.ImageProperties;
  */
 public class ImageComparison {
 
+    /**
+     * Extracted for clarity. No guarantee that it can be changed without other
+     * code changes!
+     */
+    private static final int BLOCK_SIZE = 16;
+    private static final int MAX_CURSOR_Y_BLOCKS = 3; // 3 to cover cursor up to
+                                                      // 33px high
     //
     // NOTE: All functions in the screenshot comparison package process images
     // in 16x16 blocks. This behavior is hard-coded in several places in this
@@ -248,8 +255,8 @@ public class ImageComparison {
         final int imageHeight = params.height;
 
         // Iterate through image in 16x16 blocks
-        for (int y = 0; y < imageHeight; y += 16) {
-            for (int x = 0; x < imageWidth; x += 16) {
+        for (int y = 0; y < imageHeight; y += BLOCK_SIZE) {
+            for (int x = 0; x < imageWidth; x += BLOCK_SIZE) {
                 if (blocksDiffer(x, y, params)) {
                     params.falseBlocks[x >>> 4][y >>> 4] = true;
                     result = false;
@@ -265,7 +272,7 @@ public class ImageComparison {
         final int[] ssBlock = getBlock(params.ssProperties, x, y,
                 params.ssBlock, params.sampleBuffer);
 
-        for (int i = 0; i < (16 * 16); ++i) {
+        for (int i = 0; i < (BLOCK_SIZE * BLOCK_SIZE); ++i) {
             if (refBlock[i] != ssBlock[i]) {
                 return rgbCompare(refBlock, ssBlock) > params.errorTolerance;
             }
@@ -346,10 +353,12 @@ public class ImageComparison {
                     if (errorFound) {
 
                         // This is the second erroneous block we have found
-                        if (x != firstErrorBlockX || y != firstErrorBlockY + 1) {
-
-                            // This error is not below the first so there
-                            // are other errors than 1-2 blocks above each
+                        if (x != firstErrorBlockX) {
+                            // This error is not below the first
+                            return null;
+                        }
+                        if ((y - firstErrorBlockY) > (MAX_CURSOR_Y_BLOCKS - 1)) {
+                            // Cursor is accepted for 1-3 blocks above each
                             // other (we are moving from top down).
                             return null;
                         }
@@ -392,18 +401,22 @@ public class ImageComparison {
         int y = possibleCursorPosition.y;
 
         final int width, height;
-        if (params.width <= x + 16) {
+        if (params.width <= x + BLOCK_SIZE) {
             width = params.width - x;
         } else {
-            width = 16;
+            width = BLOCK_SIZE;
         }
 
-        if (params.height <= y + 32) {
+        if (params.height <= y + MAX_CURSOR_Y_BLOCKS * BLOCK_SIZE) {
             height = params.height - y;
         } else {
-            height = 32;
+            height = MAX_CURSOR_Y_BLOCKS * BLOCK_SIZE;
         }
 
+        if (Parameters.isDebug()) {
+            System.out.println("Looking for cursor starting from " + x + ","
+                    + y + " using width=" + width + " and height=" + height);
+        }
         // getBlock writes the result into the int[] sample parameter, in
         // this case params.refBlock and params.ssBlock. params.sampleBuffer
         // is re-used between calls, and is used for temporary data storage.
@@ -420,7 +433,8 @@ public class ImageComparison {
         // Find first different pixel in the block of possibleCursorPosition
         int cursorX = -1;
         int cursorStartY = -1;
-        findCursor: for (int j = 0, l = (height > 16 ? 16 : height); j < l; j++) {
+        findCursor: for (int j = 0, l = (height > BLOCK_SIZE ? BLOCK_SIZE
+                : height); j < l; j++) {
             for (int i = 0; i < width; i++) {
 
                 // If found differing pixel
@@ -436,12 +450,19 @@ public class ImageComparison {
 
                     cursorX = i;
                     cursorStartY = j;
+                    if (Parameters.isDebug()) {
+                        System.out.println("Cursor found at " + cursorX + ","
+                                + cursorStartY);
+                    }
                     break findCursor;
                 }
             }
         }
 
         if (-1 == cursorX) {
+            if (Parameters.isDebug()) {
+                System.out.println("Cursor not found");
+            }
             // No difference found with cursor detection threshold
             return false;
         }
@@ -450,18 +471,19 @@ public class ImageComparison {
         int cursorEndY = cursorStartY;
         int idx = cursorX + (cursorEndY + 1) * width;
         int diff = 0;
-        while (cursorEndY < height - 1 && cursorEndY < 32
+        while (cursorEndY < height - 1
+                && cursorEndY < MAX_CURSOR_Y_BLOCKS * BLOCK_SIZE
                 && isCursorPixel(params.refBlock[idx], params.ssBlock[idx])) {
 
-            if (++cursorEndY == 15) {
+            if (++cursorEndY == (BLOCK_SIZE - 1)) {
                 // We need to get the next block and adjust our index by the
                 // size of previous block
-                params.refBlock = getBlock(refProperties, x, y + 16, refBlock,
-                        sampleBuffer);
-                params.ssBlock = getBlock(ssProperties, x, y + 16, ssBlock,
-                        sampleBuffer);
+                params.refBlock = getBlock(refProperties, x, y + BLOCK_SIZE,
+                        refBlock, sampleBuffer);
+                params.ssBlock = getBlock(ssProperties, x, y + BLOCK_SIZE,
+                        ssBlock, sampleBuffer);
 
-                diff = width * 16;
+                diff = width * BLOCK_SIZE;
             }
 
             idx = cursorX + (cursorEndY + 1) * width - diff;
@@ -471,9 +493,17 @@ public class ImageComparison {
         // image
         if (cursorEndY - cursorStartY < 5 && cursorStartY > 0
                 && cursorEndY < height - 1) {
+            if (Parameters.isDebug()) {
+                System.out.println("Cursor rejected at " + cursorX + ","
+                        + cursorStartY + "-" + cursorEndY);
+            }
             return false;
         }
 
+        if (Parameters.isDebug()) {
+            System.out.println("Cursor is at " + cursorX + "," + cursorStartY
+                    + "-" + cursorEndY);
+        }
         // Copy pixels from reference over the possible cursor, then
         // re-compare blocks. Pixels at cursor position are always copied
         // from the reference image regardless of which of the images has
@@ -511,9 +541,13 @@ public class ImageComparison {
         double lum1 = getLuminance(pixel1);
         double lum2 = getLuminance(pixel2);
 
+        int blackMaxLuminance = 80;
+        int whiteMinLuminance = 150;
         // Cursor must be dark and the other pixel bright enough for
         // contrast
-        boolean value = (lum1 < 50 && lum2 > 150) || (lum1 > 150 && lum2 < 50);
+        boolean value = (lum1 < blackMaxLuminance && lum2 > whiteMinLuminance)
+                || (lum1 > whiteMinLuminance && lum2 < blackMaxLuminance);
+
         return value;
     }
 
@@ -541,8 +575,8 @@ public class ImageComparison {
         p.refImage = reference;
         p.ssImage = screenshot;
 
-        p.refBlock = new int[16 * 16];
-        p.ssBlock = new int[16 * 16];
+        p.refBlock = new int[BLOCK_SIZE * BLOCK_SIZE];
+        p.ssBlock = new int[BLOCK_SIZE * BLOCK_SIZE];
         p.sampleBuffer = ImageUtil.createSampleBuffer();
         p.errorTolerance = tolerance;
 
