@@ -32,6 +32,8 @@ import java.util.jar.JarEntry;
 import org.junit.runners.Suite;
 import org.junit.runners.model.InitializationError;
 
+import com.vaadin.testbench.Parameters;
+
 /**
  * Test suite which consists of all the TestBench tests passed in the
  * constructor. Runs the tests in parallel using a {@link ParallelScheduler}
@@ -43,7 +45,7 @@ public class ParallelTestSuite extends Suite {
      * number of tests to run concurrently are configured in
      * {@link ParallelRunner}.
      */
-    private static final int MAX_CONCURRENT_TEST_SUITES = 20;
+    private static final int MAX_CONCURRENT_TEST_SUITES = Parameters.getTestSuitesInParallel();
 
     /**
      * This is static so it is shared by all test suites running concurrently on
