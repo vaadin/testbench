@@ -10,7 +10,7 @@ import com.vaadin.tests.testbenchapi.MultiBrowserTest;
 public class OptionGroupSetValueIT extends MultiBrowserTest {
     @Before
     public void init() {
-        openTestURL();
+        openTestURL("theme=reindeer");
     }
 
     @Test

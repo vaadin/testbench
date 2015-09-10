@@ -35,7 +35,7 @@ public class TabSheetElementTabWithoutCaptionIT extends MultiBrowserTest {
 
     @Before
     public void init() {
-        openTestURL();
+        openTestURL("theme=reindeer");
     }
 
     @Test

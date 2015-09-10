@@ -161,7 +161,10 @@ public class ComboBoxElement extends AbstractSelectElement {
         }
     }
 
-    private WebElement getSuggestionPopup() {
+    /**
+     * Returns the suggestion popup element
+     */
+    public WebElement getSuggestionPopup() {
         ensurePopupOpen();
         return findElement(bySuggestionPopup);
     }

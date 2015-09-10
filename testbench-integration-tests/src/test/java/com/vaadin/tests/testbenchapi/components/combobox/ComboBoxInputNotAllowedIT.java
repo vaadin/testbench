@@ -11,7 +11,7 @@ public class ComboBoxInputNotAllowedIT extends MultiBrowserTest {
 
     @Test
     public void selectByTextTest() {
-        openTestURL();
+        openTestURL("theme=reindeer");
         ComboBoxElement cb = $(ComboBoxElement.class).first();
         String expected = ComboBoxInputNotAllowed.SELECTED_ITEM;
         // select the item

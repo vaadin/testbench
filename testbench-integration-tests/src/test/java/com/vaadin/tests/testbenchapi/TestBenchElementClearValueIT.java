@@ -61,7 +61,7 @@ public class TestBenchElementClearValueIT extends MultiBrowserTest {
 
     @Before
     public void init() {
-        openTestURL();
+        openTestURL("theme=reindeer");
         labelChangeValue = $(LabelElement.class).get(1);
     }
 

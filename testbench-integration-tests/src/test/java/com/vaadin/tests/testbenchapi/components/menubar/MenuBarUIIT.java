@@ -23,6 +23,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 
 import com.vaadin.testbench.elements.MenuBarElement;
@@ -122,8 +123,13 @@ public class MenuBarUIIT extends MultiBrowserTest {
 
     private boolean isItemVisible(String item) {
         for (WebElement webElement : getItemCaptions()) {
-            if (webElement.getText().equals(item)) {
-                return true;
+            try {
+                if (webElement.getText().equals(item)) {
+                    return true;
+                }
+            } catch (WebDriverException e) {
+                // stale, detached element is not visible
+                return false;
             }
         }
         return false;

@@ -27,7 +27,7 @@ public class ElementComponentGetCaptionCssLayoutIT extends
 
     @Override
     protected void openTestURL() {
-        super.openTestURL();
+        openTestURL("theme=reindeer");
         mainLayout = $(CssLayoutElement.class).get(0);
     }
 }

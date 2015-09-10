@@ -27,7 +27,7 @@ public class ElementComponentGetCaptionVerticalLayoutIT extends
 
     @Override
     protected void openTestURL() {
-        super.openTestURL();
+        openTestURL("theme=reindeer");
         mainLayout = $(VerticalLayoutElement.class).get(2);
     }
 }

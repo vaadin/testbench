@@ -12,9 +12,28 @@
  */
 package com.vaadin.testbench.elements;
 
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+
 import com.vaadin.testbench.elementsbase.ServerClass;
 
 @ServerClass("com.vaadin.ui.ProgressBar")
 public class ProgressBarElement extends AbstractFieldElement {
+
+    /**
+     * Retrns the value of the progress bar
+     * 
+     * @return
+     */
+    public double getValue() {
+        WebElement indicator = findElement(By
+                .className("v-progressbar-indicator"));
+        String width = getStyleAttribute(indicator, "width");
+        if (!width.endsWith("%")) {
+            return 0;
+        }
+
+        return Double.parseDouble(width.replace("%", "")) / 100.0;
+    }
 
 }

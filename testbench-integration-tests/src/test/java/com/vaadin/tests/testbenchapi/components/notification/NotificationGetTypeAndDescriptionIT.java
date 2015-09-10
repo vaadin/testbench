@@ -32,7 +32,7 @@ public class NotificationGetTypeAndDescriptionIT extends MultiBrowserTest {
     // helper method find button by index click and test the notification
     // This method tests caption, description and type of the notification
     private void testNotificationByIndex(int index) {
-        openTestURL();
+        openTestURL("theme=reindeer");
         String id = "button" + index;
         ButtonElement btn = $(ButtonElement.class).id(id);
         btn.click();

@@ -15,7 +15,6 @@ import com.vaadin.testbench.elements.ListSelectElement;
 import com.vaadin.testbench.elements.NativeSelectElement;
 import com.vaadin.testbench.elements.OptionGroupElement;
 import com.vaadin.testbench.elements.PasswordFieldElement;
-import com.vaadin.testbench.elements.SliderElement;
 import com.vaadin.testbench.elements.TextAreaElement;
 import com.vaadin.testbench.elements.TextFieldElement;
 import com.vaadin.testbench.elements.TwinColSelectElement;
@@ -116,14 +115,6 @@ public class ComponentElementGetValueIT extends MultiBrowserTest {
         String expected = format1
                 .format(ComponentElementGetValue.TEST_DATE_VALUE);
         String actual = df.getValue();
-        Assert.assertEquals(expected, actual);
-    }
-
-    @Test
-    public void checkSlider() {
-        SliderElement pb = $(SliderElement.class).get(0);
-        String expected = "" + ComponentElementGetValue.TEST_SLIDER_VALUE;
-        String actual = pb.getValue();
         Assert.assertEquals(expected, actual);
     }
 

@@ -15,6 +15,7 @@ package com.vaadin.testbench.elements;
 import java.util.List;
 
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.remote.BrowserType;
 
 import com.vaadin.testbench.By;
 import com.vaadin.testbench.elementsbase.ServerClass;
@@ -23,7 +24,7 @@ import com.vaadin.testbench.elementsbase.ServerClass;
 public class SliderElement extends AbstractFieldElement {
     /**
      * Get value of the slider
-     *
+     * 
      * Warning! This method cause slider popup to appear on the screen. To hide
      * this popup just focus any other element on the page.
      */
@@ -37,7 +38,14 @@ public class SliderElement extends AbstractFieldElement {
 
         }
         WebElement popupElem = popupElems.get(0);
-        return popupElem.findElement(By.className("popupContent")).getText();
+
+        if (BrowserType.IE.equals(getCapabilities().getBrowserName())
+                && "8".equals(getCapabilities().getVersion())) {
+            return popupElem.getAttribute("innerText");
+        } else {
+            return popupElem.getAttribute("textContent");
+        }
+
     }
 
     public WebElement getHandle() {

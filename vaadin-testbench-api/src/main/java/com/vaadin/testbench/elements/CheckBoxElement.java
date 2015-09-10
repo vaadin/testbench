@@ -15,6 +15,7 @@ package com.vaadin.testbench.elements;
 import org.openqa.selenium.WebElement;
 
 import com.vaadin.testbench.By;
+import com.vaadin.testbench.commands.TestBenchElementCommands;
 import com.vaadin.testbench.elementsbase.ServerClass;
 
 @ServerClass("com.vaadin.ui.CheckBox")
@@ -53,13 +54,13 @@ public class CheckBoxElement extends AbstractFieldElement {
         return elem.getText();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.vaadin.testbench.TestBenchElement#click()
-     */
     @Override
     public void click() {
-        findElement(By.xpath("input")).click();
+        WebElement input = findElement(By.xpath("input"));
+        if (isChrome()) {
+            ((TestBenchElementCommands)(input)).click(0, 0);
+        } else {
+            input.click();
+        }
     }
 }

@@ -1,24 +1,26 @@
 /**
  * Copyright (C) 2012 Vaadin Ltd
- *
+ * <p/>
  * This program is available under Commercial Vaadin Add-On License 3.0
  * (CVALv3).
- *
+ * <p/>
  * See the file licensing.txt distributed with this software for more
  * information about licensing.
- *
+ * <p/>
  * You should have received a copy of the license along with this program.
  * If not, see <http://vaadin.com/license/cval-3>.
  */
 package com.vaadin.testbench.elements;
 
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
-
 import com.vaadin.testbench.By;
 import com.vaadin.testbench.TestBenchElement;
+import com.vaadin.testbench.elementsbase.AbstractElement;
 import com.vaadin.testbench.elementsbase.ServerClass;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebDriverException;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 
 @ServerClass("com.vaadin.ui.Table")
 public class TableElement extends AbstractSelectElement {
@@ -111,4 +113,31 @@ public class TableElement extends AbstractSelectElement {
             new Actions(getDriver()).contextClick(tbody).build().perform();
         }
     }
+
+    public static class ContextMenuElement extends AbstractElement {
+
+        public WebElement getItem(int index) {
+            return findElement(By.xpath(".//table//tr[" + (index + 1)
+                    + "]//td/*"));
+        }
+
+    }
+
+    /**
+     * Fetches the context menu for the table
+     *
+     * @return {@link com.vaadin.testbench.elements.TableElement.ContextMenuElement}
+     * @throws java.util.NoSuchElementException if the menu isn't open
+     */
+    public ContextMenuElement getContextMenu() {
+        try {
+            WebElement cm = getDriver().findElement(By.className("v-contextmenu"));
+            return wrapElement(cm, getCommandExecutor()).wrap(
+                    ContextMenuElement.class);
+        } catch (WebDriverException e) {
+            throw new NoSuchElementException("Context menu not found", e);
+        }
+    }
+
+
 }

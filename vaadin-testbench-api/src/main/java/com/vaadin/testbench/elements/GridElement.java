@@ -361,4 +361,21 @@ public class GridElement extends AbstractComponentElement {
     private TestBenchElement getSubPart(String subPartSelector) {
         return (TestBenchElement) findElement(By.vaadin(subPartSelector));
     }
+    
+    /**
+     * Gets the element that contains the details of a row.
+     * 
+     * @since
+     * @param rowIndex
+     *            the index of the row for the details
+     * @return the element that contains the details of a row. <code>null</code>
+     *         if no widget is defined for the details row
+     * @throws NoSuchElementException
+     *             if the given details row is currently not open
+     */
+    public TestBenchElement getDetails(int rowIndex)
+            throws NoSuchElementException {
+        return getSubPart("#details[" + rowIndex + "]");
+    }
+
 }

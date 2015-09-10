@@ -17,7 +17,7 @@ import com.vaadin.tests.testbenchapi.MultiBrowserTest;
 public class GetRowHeaderIT extends MultiBrowserTest {
 
     TableElement table;
-    private static final int COLUMN_INDEX = 1;
+    private static final int COLUMN_INDEX = 0;
 
     @Override
     protected Class<?> getUIClass() {
@@ -33,7 +33,7 @@ public class GetRowHeaderIT extends MultiBrowserTest {
     @Test
     public void testGetRowHeaderCaption() {
         TableHeaderElement header = table.getHeaderCell(COLUMN_INDEX);
-        String expected = "PROPERTY1";
+        String expected = "property0";
         String actual = header.getCaption();
         Assert.assertEquals(
                 "TableHeaderElement.getCaption() returns wrong value.",
@@ -50,7 +50,7 @@ public class GetRowHeaderIT extends MultiBrowserTest {
         // sort in desc order
         header.click();
         table.waitForVaadin();
-        String expected = "col=1 row=99";
+        String expected = "col=0 row=99";
         String actual = table.getCell(0, COLUMN_INDEX).getText();
         Assert.assertEquals(
                 "TableHeaderElement.toggleSort() did not sort column "
@@ -65,11 +65,11 @@ public class GetRowHeaderIT extends MultiBrowserTest {
         Actions builder = new Actions(getDriver());
         /*
          * To workaround a bug with clicking on small elements(not precise
-         * cursor positioning) in IE8 we do the following: 1. Extend the resize
+         * cursor positioning) in IE we do the following: 1. Extend the resize
          * handle element (it's initial width is 3) 2. Resize the column. 3.
          * Resize the handle back to initial value.
          */
-        if (BrowserUtil.isIE8(getDesiredCapabilities())) {
+        if (BrowserUtil.isIE(getDesiredCapabilities())) {
             int initHanldeWidth = handle.getSize().width;
             setElementWidth(handle, 20);
             handle = header.getResizeHandle();

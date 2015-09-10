@@ -60,6 +60,21 @@ public class AbstractComponentElement extends AbstractElement {
         return false;
     }
 
+    protected String getStyleAttribute(WebElement element, String styleName) {
+        String style = element.getAttribute("style");
+
+        String[] styles = style.split(";");
+        for (String stylePart : styles) {
+            // IE8 has uppercased styles
+            String lowercasePart = stylePart.toLowerCase();
+            if (lowercasePart.startsWith(styleName + ":")) {
+                return lowercasePart.substring(styleName.length() + 1).trim();
+            }
+        }
+
+        return null;
+    }
+
     public class ReadOnlyException extends RuntimeException {
 
     }

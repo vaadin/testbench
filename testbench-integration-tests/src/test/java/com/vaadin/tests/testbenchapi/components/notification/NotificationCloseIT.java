@@ -38,7 +38,7 @@ public class NotificationCloseIT extends MultiBrowserTest {
     }
 
     private void testClose(int index) {
-        openTestURL();
+        openTestURL("theme=reindeer");
         String id = "button" + index;
         ButtonElement btn = $(ButtonElement.class).id(id);
         // show notification
