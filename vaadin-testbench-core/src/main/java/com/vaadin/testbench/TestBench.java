@@ -13,10 +13,10 @@
 package com.vaadin.testbench;
 
 import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javassist.util.proxy.MethodFilter;
 import javassist.util.proxy.MethodHandler;
@@ -41,7 +41,7 @@ public class TestBench {
 
         public ElementMethodFilter(Class<?> clazz) {
             proxyClass = clazz;
-            invocationNeeded = new HashMap<Method, Boolean>();
+            invocationNeeded = new ConcurrentHashMap<Method, Boolean>();
         }
 
         @Override
@@ -83,7 +83,7 @@ public class TestBench {
 
     static {
         LicenseChecker.nag();
-        methodFilters = new HashMap<Class<?>, MethodFilter>();
+        methodFilters = new ConcurrentHashMap<Class<?>, MethodFilter>();
     }
 
     public static WebDriver createDriver(WebDriver driver) {
