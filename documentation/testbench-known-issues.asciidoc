@@ -1,0 +1,36 @@
+---
+title: Known Issues
+order: 17
+layout: page
+---
+
+[[testbench.known-issues]]
+= Known Issues
+
+This section provides information and instructions on a few features that are
+known to be difficult to use or need modification to work.
+
+[[testbench.known-issues.firefox-mac]]
+== Running Firefox Tests on Mac OS X
+
+Firefox needs to have focus in the main window for any focus events to be
+triggered. This sometimes causes problems if something interferes with the
+focus. For example, a [classname]#TextField# that has an input prompt relies on
+the JavaScript [methodname]#onFocus()# event to clear the prompt when the field
+is focused.
+
+The problem occurs when OS X considers the Java process of an application using
+TestBench (or the node service) to have a native user interface capability, as
+with AWT or Swing, even when they are not used. This causes the focus to switch
+from Firefox to the process using TestBench, causing tests requiring focus to
+fail. To remedy this problem, you need to start the JVM in which the tests are
+running with the [parameter]#-Djava.awt.headless=true# parameter to disable the
+user interface capability of the Java process.
+
+Note that the same problem is present also when debugging tests with Firefox. We
+therefore recommend using Chrome for debugging tests, unless Firefox is
+necessary.
+
+
+
+

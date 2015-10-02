@@ -1,0 +1,363 @@
+---
+title: Installing Vaadin TestBench
+order: 3
+layout: page
+---
+
+[[testbench.installation]]
+= Installing Vaadin TestBench
+
+As with most Vaadin add-ons, you can install Vaadin TestBench as a Maven or Ivy
+dependency in your project, or from an installation package. The installation
+package contains some extra material, such as documentation, as well as the
+standalone library, which you use for testing in a grid.
+
+The component element classes are Vaadin version specific and they are packaged
+in a [filename]#vaadin-testbench-api# library JAR, separately from the
+[filename]#vaadin-testbench-core# runtime library, which is needed for executing
+the tests.
+
+Additionally, you may need to install drivers for the browsers you are using.
+
+[[testbench.installation.development]]
+== Test Development Setup
+
+In a typical test development setup, you develop tests in a Java project and run
+them on the development workstation. You can run the same tests in a dedicated
+test server, such as a continuous integration system.
+
+In a test development setup, you do not need a grid hub or nodes. However, if
+you develop tests for a grid, you can run the tests, the grid hub, and one node
+all in your development workstation. A distributed setup is described later.
+
+[[testbench.installation.development.maven]]
+=== Maven Dependency
+
+The Maven dependency for Vaadin TestBench goes by the TestBench API, which
+matches the Vaadin Framework version that you use. The dependency pulls the
+actual TestBench libraries.
+
+[subs="normal"]
+----
+&lt;dependency&gt;
+    &lt;groupId&gt;com.vaadin&lt;/groupId&gt;
+    &lt;artifactId&gt;vaadin-testbench-api&lt;/artifactId&gt;
+    &lt;version&gt;[replaceable]##7.x.x##&lt;/version&gt;
+    &lt;scope&gt;test&lt;/scope&gt;
+&lt;/dependency&gt;
+----
+
+[NOTE]
+.TestBench 4.0.2 has a problem with Firefox
+====
+To make it work with latest Firefox versions, you need to use a newer version of
+Selenium. For example:
+
+
+----
+<dependency>
+    <groupId>org.seleniumhq.selenium</groupId>
+    <artifactId>selenium-java</artifactId>
+    <version>2.45.0</version>
+    <scope>test</scope>
+</dependency>
+----
+
+====
+
+
+
+You also need to define the Vaadin add-ons repository if not already defined:
+
+
+----
+<repository>
+   <id>vaadin-addons</id>
+   <url>http://maven.vaadin.com/vaadin-addons</url>
+</repository>
+----
+
+The [literal]#++vaadin-archetype-application++# archetype, as mentioned in
+<<dummy/../../testbench/testbench-quickstart#testbench.quickstart.maven,"Quick
+Start with Maven">>, includes the declarations.
+
+
+[[testbench.installation.development.ivy]]
+=== Ivy Dependency
+
+The Ivy dependency, to be defined in [filename]#ivy.xml#, would be as follows:
+
+[subs="normal"]
+----
+&lt;dependency org="com.vaadin" name="vaadin-testbench-api"
+   rev="**latest.release**" conf="nodeploy-&gt;default"/&gt;
+----
+The optional [literal]#++nodeploy->default++# configuration mapping requires a
+[literal]#++nodeploy++# configuration in the Ivy module; it is automatically
+created for new Vaadin projects.
+
+A new Vaadin project created with the Vaadin Plugin for Eclipse, as described in
+<<dummy/../../testbench/testbench-quickstart#testbench.quickstart.eclipse,"Quick
+Start with Eclipse">>, includes the dependency.
+
+
+[[testbench.installation.development.organization]]
+=== Code Organization
+
+We generally recommend developing tests in a project or module separate from the
+web application to be tested to avoid library problems. If the tests are part of
+the same project, you should at least arrange the source code and dependencies
+so that the test classes, the TestBench library, and their dependencies would
+not be deployed unnecessarily with the web application.
+
+
+
+[[testbench.installation.distributed]]
+== A Distributed Testing Environment
+
+Vaadin TestBench supports distributed execution of tests in a grid. A test grid
+consists of the following categories of hosts:
+
+* One or more test servers executing the tests
+
+* A grid hub
+
+* Grid nodes
+
+
+The components of a grid setup are illustrated in
+<<figure.testbench.architecture>>.
+
+[[figure.testbench.architecture]]
+.Vaadin TestBench Grid Setup
+image::img/tt-architecture-simple-lo.png[]
+
+The grid hub is a service that handles communication between the JUnit test
+runner and the nodes. The nodes are services that perform the actual execution
+of test commands in the browser.
+
+The hub requires very little resources, so you would typically run it either in
+the test server or on one of the nodes. You can run the tests, the hub, and one
+node all in one host, but in a fully distributed setup, you install the Vaadin
+TestBench components on separate hosts.
+
+Controlling browsers over a distributed setup requires using a remote WebDriver.
+Grid development and use of the hub and nodes is described in
+<<dummy/../../testbench/testbench-grid#testbench.grid,"Running Tests in a
+Distributed Environment">>.
+
+
+[[testbench.installation.contents]]
+== Installation Package Contents
+
+The installation package contains the following:
+
+[filename]#documentation#:: The documentation folder contains release notes, a PDF excerpt of this chapter
+of Book of Vaadin, and the license.
+
+[filename]#maven#:: The Maven folder contains the Vaadin TestBench library JARs (you can use them in
+non-Maven projects as well). The folder contains a POM file, so that you can
+install it in your local Maven repository. Please follow the instructions in
+<<dummy/../../testbench/testbench-execution#testbench.execution.maven,"Running
+Tests with Maven">>.
+
+[filename]#vaadin-testbench-standalone-4.x.x.jar#:: This is a standalone version of the Vaadin TestBench library that is mainly used
+for running the grid hub and node services, as described in
+<<dummy/../../testbench/testbench-grid#testbench.grid,"Running Tests in a
+Distributed Environment">>.
+
+
+
+
+[[testbench.installation.examples]]
+== TestBench Demo
+
+A TestBench demo is available at https://github.com/vaadin/testbench-demo. You
+can browse the sources at the website and clone the repository with a Git
+client; from command line with:
+
+[subs="normal"]
+----
+[prompt]#$# [command]#git# clone [parameter]#https://github.com/vaadin/testbench-demo#
+----
+The tests can be run from the command line by issuing the following command:
+
+[subs="normal"]
+----
+[prompt]#$# [command]#mvn# verify
+----
+The source code for the application to be tested, a desktop calculator
+application, is given in the [filename]#src/main/java# subfolder.
+
+The TestBench tests for the application are located under the
+[filename]#src/test/java# subfolder, in the
+[filename]#com/vaadin/testbenchexample# package subfolder. They are as follows:
+
+[filename]#link:https://github.com/vaadin/testbench-demo/blob/master/src/test/java/com/vaadin/testbenchexample/SimpleCalculatorITCase.java[SimpleCalculatorITCase.java]#:: Demonstrates the basic use of WebDriver. Interacts with the buttons in the user
+interface by clicking them and checks the resulting value. Uses the ElementQuery
+API to access the elements.
+
+[filename]#LoopingCalculatorITCase.java#:: Otherwise as the simple example, but shows how to use looping to produce
+programmatic repetition to create a complex use case.
+
+[filename]#ScreenshotITCase.java#:: Shows how to compare screenshots, as described in
+<<dummy/../../testbench/testbench-screenshots#testbench.screenshot.comparison,"Taking
+Screenshots for Comparison">>. Some of the test cases include random input, so
+they require masked screenshot comparison to mask the random areas out.
+
++
+The example is ignored by default with an [literal]#++@Ignore++# annotation,
+because the included images were taken with a specific browser on a specific
+platform, so if you use another environment, they will fail. If you enable the
+test, you will need to run the tests, copy the error images to the reference
+screenshot folder, and mask out the areas with the alpha channel. Please see the
+[filename]#example/Screenshot_Comparison_Tests.pdf# for details about how to
+enable the example and how to create the masked reference images.
+
+[filename]#SelectorExamplesITCase.java#:: This example shows how to find elements in different ways; by using the
+high-level ElementQuery API as well as low-level [methodname]#By.xpath()#
+selectors.
+
+[filename]#VerifyExecutionTimeITCase.java#:: Shows how to time the execution of a test case and how to report it.
+
+[filename]#AdvancedCommandsITCase.java#:: Demonstrates how to test context menus (see
+<<dummy/../../testbench/testbench-special#testbench.special.contextmenu,"Testing
+Context Menus">>) and tooltips (see
+<<dummy/../../testbench/testbench-special#testbench.special.tooltip,"Testing
+Tooltips">>). Also shows how to send keypresses to a component and how to read
+values of table cells.
+
+[filename]#pageobjectexample/PageObjectExampleITCase.java#:: Shows how to create maintanable tests using the __Page Object Pattern__ that
+separates the low-level page structure from the business logic, as described in
+<<dummy/../../testbench/testbench-maintainable#testbench.maintainable,"Creating
+Maintainable Tests">>. The page object classes that handle low-level interaction
+with the application views are in the [filename]#pageobjects# subpackage.
+
+[filename]#bdd/CalculatorSteps.java#,[filename]#bdd/SimpleCalculation.java#:: Shows how to develop tests following the __behaviour-driven development__ (BDD)
+model, by using the link:http://jbehave.org[JBehave framework].
+[filename]#SimpleCalculation.java# defines a JUnit-based user story with one
+scenario, which is defined in [filename]#CalculatorSteps.java#. The scenario
+reuses the page objects defined in the page object example (see above) for
+low-level application view access and control. The example is described in
+<<dummy/../../testbench/testbench-bdd#testbench.bdd,"Behaviour-Driven
+Development">>.
+
+
+
+
+[[testbench.installation.browserdrivers]]
+== Installing Browser Drivers
+
+Whether developing tests with the WebDriver in the workstation or running tests
+in a grid, using some browsers requires that a browser driver is installed.
+
+. Download the latest browser driver
+
+** Internet Explorer (Windows only) - install [filename]#IEDriverServer.exe# from
+under the latest Selenium release:
+
++
+http://selenium-release.storage.googleapis.com/index.html
+
+** Chrome - install ChromeDriver (a part of the Chromium project) for your platform
+from under the latest release at:
+
++
+http://chromedriver.storage.googleapis.com/index.html
+
+
+. Add the driver executable to user PATH. In a distributed testing environment, give it as a command-line parameter to the grid node service, as described in <<dummy/../../testbench/testbench-grid#testbench.grid.node,"Starting a Grid Node">>.
+
+ifdef::disabled[]
+[[testbench.installation.browserdrivers.ubuntu]]
+=== Installing ChromeDriver for Ubuntu Chromium
+
+While you can install Google Chrome in Ubuntu, it also has its own Chromium
+Browser, which is based on the Google Chrome. Chromium has its own version of
+ChromeDriver, which requires some additional installation steps to be usable.
+
+Install the ChromeDriver:
+
+[subs="normal"]
+----
+[prompt]#$# [command]#sudo apt-get# install [parameter]#chromium-chromedriver#
+----
+Add the driver executable to path, such as:
+
+[subs="normal"]
+----
+[prompt]#$# [command]#sudo ln# -s [parameter]#/usr/lib/chromium-browser/chromedriver# [parameter]#/usr/local/bin/chromedriver#
+----
+The Chromium libraries need to be included in the system library path:
+
+[subs="normal"]
+----
+[prompt]#$# [command]#sudo sh# -c 'echo "/usr/lib/chromium-browser/libs" &gt; /etc/ld.so.conf.d/chrome_libs.conf'
+----
+[subs="normal"]
+----
+[prompt]#$# [command]#sudo ldconfig#
+----
+endif::disabled[]
+
+
+[[testbench.installation.testnode]]
+== Test Node Configuration
+
+If you are running the tests in a grid environment, you need to make some
+configuration to the test nodes to get more stable results.
+
+Further configuration is provided in command-line parameters when starting the
+node services, as described in
+<<dummy/../../testbench/testbench-grid#testbench.grid.node,"Starting a Grid
+Node">>.
+
+[[testbench.installation.testnode.os-settings]]
+=== Operating system settings
+
+Make any operating system settings that might interfere with the browser and how
+it is opened or closed. Typical problems include crash handler dialogs.
+
+On Windows, disable error reporting in case a browser crashes as follows:
+
+. Open "Control Panel > System"
+
+. Select the [guilabel]#Advanced# tab
+
+. Select [guilabel]#Error reporting#
+
+. Check that [guilabel]#Disable error reporting# is selected
+
+. Check that [guilabel]#But notify me when critical errors occur# is not selected
+
+
+
+[[testbench.installation.testnode.screenshot-settings]]
+=== Settings for Screenshots
+
+The screenshot comparison feature requires that the user interface of the
+browser stays constant. The exact features that interfere with testing depend on
+the browser and the operating system.
+
+In general:
+
+* Disable blinking cursor
+
+* Use identical operating system themeing on every host
+
+* Turn off any software that may suddenly pop up a new window
+
+* Turn off screen saver
+
+
+If using Windows and Internet Explorer, you should give also the following
+setting:
+
+* Turn on [guilabel]#Allow active content to run in files on My Computer# under
+[guilabel]#Security settings#
+
+
+
+
+
+
