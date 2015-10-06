@@ -15,6 +15,7 @@ package com.vaadin.testbench.parallel;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.remote.BrowserType;
+import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 /**
@@ -234,15 +235,21 @@ public class BrowserUtil {
      * @return a human readable string describing the platform
      */
     public static String getPlatform(Capabilities capabilities) {
-        if (capabilities.getPlatform() == Platform.WIN8
-                || capabilities.getPlatform() == Platform.WINDOWS
-                || capabilities.getPlatform() == Platform.VISTA
-                || capabilities.getPlatform() == Platform.XP) {
-            return "Windows";
-        } else if (capabilities.getPlatform() == Platform.MAC) {
-            return "Mac";
+        try {
+            Platform p = capabilities.getPlatform();
+            if (p == Platform.WIN8 || p == Platform.WINDOWS
+                    || p == Platform.VISTA || p == Platform.XP) {
+                return "Windows";
+            } else if (p == Platform.MAC) {
+                return "Mac";
+            }
+            
+        } catch (Exception e) {
         }
-        return capabilities.getPlatform().toString();
+        Object rawPlatform = capabilities.getCapability(CapabilityType.PLATFORM);
+        if (rawPlatform == null)
+            return "Unknown";
+        return rawPlatform.toString();
     }
 
     /**
