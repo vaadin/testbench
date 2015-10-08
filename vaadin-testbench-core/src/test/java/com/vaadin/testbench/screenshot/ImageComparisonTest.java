@@ -217,6 +217,31 @@ public class ImageComparisonTest {
     }
 
     @Test
+    public void cursorAt15x1() throws IOException {
+        Parameters.setScreenshotComparisonCursorDetection(true);
+        
+        testFullCompareImages("white-33x33-cursor-15x1-cursoron.png",
+                "white-33x33-cursor-15x1-cursoroff.png", true, 0.0);
+        
+    }
+    @Test
+    public void cursorAt15x17() throws IOException {
+        Parameters.setScreenshotComparisonCursorDetection(true);
+        
+        testFullCompareImages("white-33x33-cursor-15x17-cursoron.png",
+                "white-33x33-cursor-15x17-cursoroff.png", true, 0.0);
+        
+    }
+    @Test
+    public void cursorAt15x16() throws IOException {
+        Parameters.setScreenshotComparisonCursorDetection(true);
+        
+        testFullCompareImages("white-33x33-cursor-15x16-cursoron.png",
+                "white-33x33-cursor-15x16-cursoroff.png", true, 0.0);
+        
+    }
+    
+    @Test
     public void canCompareReferenceSmallerThanScreenshot() throws IOException {
         ImageComparison ic = new ImageComparison();
         assertFalse(ic.imageEqualToReference(
@@ -324,4 +349,10 @@ public class ImageComparisonTest {
                 "cursor-off.png", 0));
     }
 
+    @Test
+    public void testCursorComparisonAt0x15() throws IOException {
+        Parameters.setScreenshotComparisonCursorDetection(true);
+        testFullCompareImages("cursor-like-diff-at-0x15-ref.png",
+                "cursor-like-diff-at-0x15-new.png", false, 0.01);
+    }
 }

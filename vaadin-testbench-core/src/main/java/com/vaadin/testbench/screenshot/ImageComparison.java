@@ -469,13 +469,14 @@ public class ImageComparison {
 
         // Find the end of the cursor
         int cursorEndY = cursorStartY;
-        int idx = cursorX + (cursorEndY + 1) * width;
+        // Start from what we already know is a cursor pixel because that is certainly inside the current block
+        int idx = cursorX + (cursorEndY) * width; 
         int diff = 0;
         while (cursorEndY < height - 1
                 && cursorEndY < MAX_CURSOR_Y_BLOCKS * BLOCK_SIZE
                 && isCursorPixel(params.refBlock[idx], params.ssBlock[idx])) {
 
-            if (++cursorEndY == (BLOCK_SIZE - 1)) {
+            if (++cursorEndY == BLOCK_SIZE) {
                 // We need to get the next block and adjust our index by the
                 // size of previous block
                 params.refBlock = getBlock(refProperties, x, y + BLOCK_SIZE,
@@ -486,7 +487,7 @@ public class ImageComparison {
                 diff = width * BLOCK_SIZE;
             }
 
-            idx = cursorX + (cursorEndY + 1) * width - diff;
+            idx = cursorX + (cursorEndY) * width - diff;
         }
 
         // Only accept as cursor if at least 5 pixels or at top or bottom of
