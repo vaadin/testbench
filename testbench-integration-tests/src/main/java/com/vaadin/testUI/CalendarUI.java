@@ -21,7 +21,7 @@ public class CalendarUI extends AbstractTestUI {
 
     @Override
     protected void setup(VaadinRequest request) {
-        setLocale(new Locale("fi", "FI"));
+        setLocale(new Locale("en", "US"));
         final Calendar calendar = new Calendar();
         calendar.setWidth("100%");
 
