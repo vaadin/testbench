@@ -1,6 +1,6 @@
 package com.vaadin.testUI;
 
-import java.util.Locale;
+import static java.util.Calendar.DAY_OF_MONTH;
 
 import javax.servlet.annotation.WebServlet;
 
@@ -10,7 +10,6 @@ import com.vaadin.server.VaadinServlet;
 import com.vaadin.tests.AbstractTestUI;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Calendar;
-import com.vaadin.ui.HorizontalLayout;
 
 public class CalendarUI extends AbstractTestUI {
 
@@ -21,7 +20,6 @@ public class CalendarUI extends AbstractTestUI {
 
     @Override
     protected void setup(VaadinRequest request) {
-        setLocale(new Locale("en", "US"));
         final Calendar calendar = new Calendar();
         calendar.setWidth("100%");
 
@@ -29,35 +27,17 @@ public class CalendarUI extends AbstractTestUI {
         monthView.setId("month-view");
         monthView.addClickListener(new Button.ClickListener() {
             public void buttonClick(Button.ClickEvent event) {
-                java.util.Calendar juCalendar = java.util.Calendar
+                java.util.Calendar javaCalendar = java.util.Calendar
                         .getInstance();
-                juCalendar.set(java.util.Calendar.DAY_OF_MONTH, 1);
-                calendar.setStartDate(juCalendar.getTime());
-                juCalendar.set(java.util.Calendar.DAY_OF_MONTH, juCalendar
-                        .getActualMaximum(java.util.Calendar.DAY_OF_MONTH));
-                calendar.setEndDate(juCalendar.getTime());
+                javaCalendar.set(DAY_OF_MONTH, 1);
+                calendar.setStartDate(javaCalendar.getTime());
+                javaCalendar.set(DAY_OF_MONTH,
+                        javaCalendar.getActualMaximum(DAY_OF_MONTH));
+                calendar.setEndDate(javaCalendar.getTime());
             }
         });
 
-        Button weekView = new Button("Week view");
-        weekView.setId("week-view");
-        weekView.addClickListener(new Button.ClickListener() {
-            public void buttonClick(Button.ClickEvent event) {
-                java.util.Calendar juCalendar = java.util.Calendar
-                        .getInstance();
-                juCalendar.set(java.util.Calendar.DAY_OF_WEEK,
-                        java.util.Calendar.MONDAY);
-                calendar.setStartDate(juCalendar.getTime());
-                juCalendar.set(java.util.Calendar.DAY_OF_WEEK,
-                        java.util.Calendar.SUNDAY);
-                System.out.println(juCalendar.getTime());
-                calendar.setEndDate(juCalendar.getTime());
-            }
-        });
-        HorizontalLayout buttonLayout = new HorizontalLayout(monthView,
-                weekView);
-
-        addComponents(buttonLayout, calendar);
+        addComponents(monthView, calendar);
     }
 
     @Override
