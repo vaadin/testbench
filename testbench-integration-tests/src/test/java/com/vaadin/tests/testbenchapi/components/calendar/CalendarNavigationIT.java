@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.vaadin.testUI.CalendarUI;
@@ -28,6 +29,7 @@ public class CalendarNavigationIT extends MultiBrowserTest {
     }
 
     @Test
+    @Ignore("Fails randomly, also related to Calendar bug #19158")
     public void calendarNavigation_backAndForwardInWeekView_navigationWorks() {
         assertTrue(calendarElement.hasWeekView());
         String originalFirstDay = calendarElement.getDayHeaders().get(0)

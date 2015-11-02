@@ -53,6 +53,13 @@
             </includes>
         </fileSet>
         <fileSet>
+            <directory>..</directory>
+            <outputDirectory>documentation</outputDirectory>
+            <includes>
+                <include>LICENSE.txt</include>
+            </includes>
+        </fileSet>
+        <fileSet>
             <directory>target</directory>
             <outputDirectory>documentation</outputDirectory>
             <includes>
