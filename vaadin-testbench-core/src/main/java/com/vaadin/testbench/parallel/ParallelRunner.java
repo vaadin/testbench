@@ -485,6 +485,15 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
                     + testNameSuffix, getUniqueIdentifier(capabilities));
         }
 
+        @Override
+        public boolean equals(Object obj) {
+            if (!TBMethod.class.isInstance(obj)) {
+                return false;
+            }
+
+            return ((TBMethod) obj).capabilities.equals(capabilities) && super.equals(obj);
+        }
+
         /*
          * Returns a string which uniquely (enough) identifies this browser.
          * Used mainly in screenshot names.
