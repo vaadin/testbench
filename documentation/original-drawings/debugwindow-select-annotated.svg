@@ -68,9 +68,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.8388519"
-     inkscape:cx="346.10366"
-     inkscape:cy="921.91319"
+     inkscape:zoom="3.6777038"
+     inkscape:cx="264.14572"
+     inkscape:cy="893.02851"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -96,28 +96,28 @@
      inkscape:groupmode="layer"
      id="layer1">
     <image
-       y="62.177433"
-       x="76.223885"
-       id="image3172"
-       xlink:href="file:///home/magi/itmill/book-7/manual/img/testbench/debugwindow-select.png"
-       height="200.89268"
-       width="550.10803" />
+       y="67.5177"
+       x="72.538338"
+       id="image3105"
+       xlink:href="file:///home/magi/itmill/testbench/documentation/img/debugwindow-select.png"
+       height="190.61386"
+       width="544.70795" />
     <path
        sodipodi:nodetypes="cc"
        style="fill:none;stroke:#0000ff;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-end:url(#Arrow2MendtR)"
-       d="m 226.91511,135.87069 c -2.86809,-17.6432 -9.32719,-24.97107 -35.17774,-31.71398"
+       d="m 207.22974,130.80574 c -2.32428,-10.57358 -6.53081,-14.53061 -15.49237,-26.64903"
        id="path4430-5"
        inkscape:connector-curvature="0" />
     <path
        sodipodi:nodetypes="cc"
        style="fill:none;stroke:#ff0000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-end:url(#Arrow2Mendt)"
-       d="m 150.36581,108.59718 c 3.78171,19.98999 25.0003,48.49791 46.75763,59.1792"
+       d="m 150.36581,108.59718 c 3.78171,19.98999 5.77344,33.11643 25.22355,52.25753"
        id="path4430-4-7"
        inkscape:connector-curvature="0" />
     <path
        sodipodi:nodetypes="cc"
        style="fill:none;stroke:#ff0000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-end:url(#Arrow2Mendt)"
-       d="m 117.06885,148.54941 c 10.31884,21.91267 54.50504,55.16699 79.11341,62.28283"
+       d="m 118.607,147.78034 c 10.31884,21.91267 30.66374,46.70717 55.27211,53.82301"
        id="path4430-4-7-7"
        inkscape:connector-curvature="0" />
   </g>
