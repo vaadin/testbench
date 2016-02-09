@@ -22,6 +22,7 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Point;
+import org.openqa.selenium.Rectangle;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
@@ -366,6 +367,11 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
     public <X> X getScreenshotAs(OutputType<X> target)
             throws WebDriverException {
         return actualElement.getScreenshotAs(target);
+    }
+
+    @Override
+    public Rectangle getRect() {
+        return actualElement.getRect();
     }
 
 }

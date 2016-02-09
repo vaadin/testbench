@@ -28,7 +28,7 @@ Upgrade steps (to check):
      $ mvn install:install-file -Dfile=selenium-standalone-$VERSION.jar \
        -DgroupId=org.seleniumhq.selenium -DartifactId=selenium-standalone \
        -Dversion=$VERSION -Dpackaging=jar \
-       -Dsources=selenium-standalone-VERSION-sources.jar \
+       -Dsources=selenium-standalone-$VERSION-sources.jar \
        -DlocalRepositoryPath=<PATH-TO-TB-CHECKOUT>/vaadin-testbench-standalone/lib/
 
 - remove any old Selenium standalone version
