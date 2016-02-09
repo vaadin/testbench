@@ -197,9 +197,9 @@ public class ImageFileUtil {
                 return referenceFileName;
             }
             String fileName = findOldReferenceScreenshot(
-                    cap.getBrowserName(),
-                    Integer.valueOf(ReferenceNameGenerator.getMajorVersion(cap)),
-                    referenceFileName);
+                cap.getBrowserName(),
+                Integer.valueOf(ReferenceNameGenerator.getMajorVersion(cap)),
+                referenceFileName);
             return fileName;
         }
 

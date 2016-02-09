@@ -48,6 +48,13 @@ public class ReferenceNameGenerator {
      */
     public static String getMajorVersion(Capabilities browserCapabilities) {
         String versionString = browserCapabilities.getVersion();
+        if (versionString.equals("")) {
+            Object browserVersion = browserCapabilities
+                    .getCapability("browserVersion");
+            if (browserVersion != null) {
+                versionString = browserVersion.toString();
+            }
+        }
         if (versionString.contains(".")) {
             String major = versionString.substring(0,
                     versionString.indexOf('.'));

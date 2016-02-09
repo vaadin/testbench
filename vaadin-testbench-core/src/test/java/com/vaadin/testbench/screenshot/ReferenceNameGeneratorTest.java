@@ -86,4 +86,17 @@ public class ReferenceNameGeneratorTest {
         assertEquals("bar_mac_phantomjs_1", name);
         verify(phantom);
     }
+
+    @Test
+    public void testGenerateName_shotEdgeinCapabilities_returnsGeneratedName() {
+        Capabilities chrome = createNiceMock(Capabilities.class);
+        expect(chrome.getPlatform()).andReturn(Platform.XP);
+        expect(chrome.getBrowserName()).andReturn("MicrosoftEdge");
+        expect(chrome.getVersion()).andReturn("");
+        expect(chrome.getCapability("browserVersion")).andReturn("25");
+        replay(chrome);
+        String name = rng.generateName("shot", chrome);
+        assertEquals("shot_xp_MicrosoftEdge_25", name);
+        verify(chrome);
+    }
 }
