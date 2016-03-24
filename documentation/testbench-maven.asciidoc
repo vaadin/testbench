@@ -118,7 +118,7 @@ To run TestBench tests made with JUnit, you need that dependency in the
   &lt;dependency&gt;
   &lt;groupId&gt;junit&lt;/groupId&gt;
   &lt;artifactId&gt;junit&lt;/artifactId&gt;
-  &lt;version&gt;[replaceable]##4.11##&lt;/version&gt;
+  &lt;version&gt;[replaceable]##4.12##&lt;/version&gt;
   &lt;scope&gt;test&lt;/scope&gt;
 &lt;/dependency&gt;
 ----
