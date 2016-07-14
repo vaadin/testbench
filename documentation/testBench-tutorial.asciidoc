@@ -1,0 +1,612 @@
+---
+title: Vaadin TestBench Tutorial
+order: 2
+layout: page
+---
+
+[[getting-started.testbench-tutorial]]
+= TestBench Tutorial
+
+[[testbench.testbench-tutorial.introduction]]
+== Introduction
+
+This tutorial shows how to add tests to an existing project, step-by-step. As the project to add tests to, we will use the <<dummy/../../../framework/tutorial#tutorial,"Address book tutorial">> (link:https://github.com/vaadin/addressbook[Github]).
+
+In this tutorial, you will learn how to:
+
+* Add TestBench to an existing project
+* Create a TestBench test case
+* Identify and select different components using the new ElementQuery API
+* Interact with different components using the relevant Element API
+* Create maintainable tests using the Page Object pattern
+
+The complete source code for the resulting project is available at link:https://github.com/vaadin/testbench-tutorial[].
+
+*_NOTE!_* Mozilla Firefox changed important APIs in version 35. This means that TestBench versions 4.0.2 or older do not work with the latest versions of Firefox. It is recommended you use Firefox 34 or link:https://www.mozilla.org/en-US/firefox/organizations/all/[Firefox ESR] (currently at 31.x) to execute tests on Firefox until this can be fixed. A new release of TestBench will be made as soon as this is fixed.
+
+[[testbench.testbench-tutorial.prerequisites]]
+== Prerequisites
+
+To follow along with this tutorial exactly as it’s written, you need to have the command line Git and Maven tools as well as a JDK installed. You may also follow along using your favorite IDE, but this tutorial does not contain instructions on how to use Maven or Git in your IDE.
+
+[[testbench.testbench-tutorial.setup]]
+== Setup
+
+To begin, we need to clone the Address book project from link:https://github.com/vaadin/addressbook[Github]. Using command line git, you can clone the project by issuing the following command:
+
+After the repository is cloned on your local machine, make sure that you can run and view it in your browser. You can do that by using the run goal of the jetty plugin:
+
+[subs="normal"]
+----
+[command]#cd# addressbook
+[command]#mvn# jetty:run
+----
+
+The above command will start a Jetty server and run the Address Book application on link: http://localhost:8080/[http://localhost:8080/]. Go ahead, point your browser to that address and play around with the application for a bit.
+
+When you have finished investigating the Address Book application, you can shut down the Jetty server by pressing kbd:[ctrl+C] in the terminal where you started it.
+
+[[testbench.testbench-tutorial.add-the-testbench-dependency]]
+== Add the TestBench dependency
+
+Now that we have an application that needs to be tested, we are ready to add Vaadin TestBench to the project. Since this is a Maven project, adding TestBench is easy.
+
+Open the [filename]#pom.xml# file and find the [literal]#<dependencies># section. Here, add a new dependency on vaadin-testbench as follows:
+
+[subs="normal"]
+----
+<dependency>
+   <groupId>com.vaadin</groupId>
+   <artifactId>vaadin-testbench</artifactId>
+   <version>4.0.2</version>
+   <scope>test</scope>
+</dependency>
+----
+
+[[testbench.testbench-tutorial.create-a-test-class]]
+== Create a Test Class
+
+In the Maven world, all test classes and resources live in the [literal]#src/test# directory, so create that directory. Continue by creating a java directory under that so that you end up with an [literal]#src/test/java# directory structure.
+
+Now we can create our first test. Create a new file called [filename]#AddressBookTest.java# in the [literal]#src/test/java# directory and save it with the following contents:
+
+[source, java]
+----
+import org.junit.Assert;
+import org.junit.Test;
+
+public class AddressBookTest {
+   @Test
+   public void testFails() {
+       Assert.fail("This is supposed to fail");
+   }
+}
+----
+
+It might seem strange to add a failing test like this, but by running this test you can verify that everything is working correctly. You can run the test by issuing
+
+----
+mvn test
+----
+
+The result should look something like the following:
+
+
+----
+<snip>
+testFails(AddressBookTest)  Time elapsed: 0.011 sec  <<< FAILURE!
+java.lang.AssertionError: This is supposed to fail
+
+Failed tests:   testFails(AddressBookTest)
+
+Tests run: 1, Failures: 1, Errors: 0, Skipped: 0
+
+[INFO] -------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] -------------------------------------------------------
+<snip>
+----
+
+Great! Now we know that everything works as it should.
+
+[[testbench.testbench-tutorial.the-first-testBench-steps]]
+== The First TestBench Steps
+
+[[testbench.testbench-tutorial.obtaining-and-installing-a-license-key]]
+=== Obtaining and Installing a License Key
+
+You need a license key to use TestBench. If you subscribe to Vaadin Pro Tools, you already have a license for Vaadin TestBench, but if that is not the case, go to the link:https://vaadin.com/directory#!addon/vaadin-testbench[download page] in Vaadin Directory and click the “Free trial key” button to the right. Note that this requires you to be signed in to vaadin.com. Clicking the button will show you a text box with the trial key. Copy the key and put it in a file called [filename]#.vaadin.testbench.developer.license# in your home directory (see link:https://en.wikipedia.org/wiki/Home_directory#Default_home_directory_per_operating_system[this article] for information on where your home directory is if you don’t know).
+
+[[testbench.testbench-tutorial.using-testBench]]
+=== Using TestBench
+
+We are now ready to make this JUnit test use Vaadin TestBench. Let’s start by opening a browser, let’s make it Firefox in this instance – make sure you have Firefox installed. TestBench also supports testing applications through other browsers, such as Chrome, Internet Explorer or even in the headless (doesn’t show any UI) PhantomJS browser by instantiating [literal]#ChromeDriver#, [literal]#InternetExplorerDriver#, or [literal]#PhantomJSDriver# respectively. See the manual for <<dummy/../../testbench/testbench-testcase.html#testbench.testcase.webdriver,"details">> on how to run on the different browsers.
+
+First make the class extend [literal]#TestBenchTestCase#:
+
+[source, java]
+----
+import com.vaadin.testbench.TestBenchTestCase;
+...
+
+public class AddressBookTest extends TestBenchTestCase {
+   ...
+}
+----
+
+Extending this base class will provide you with all the VaadinTestBench API that makes it easy for you to write UI-level tests for Vaadin applications.
+
+Next, we should actually open the Firefox browser. This can be done in the [literal]#@Before# method, which is run before each of the tests are run. We should also close the browser in the [literal]#@After# method. This way we have a clean browser for each test that is run.
+
+[source, java]
+----
+import org.junit.After;
+import org.junit.Before;
+import org.openqa.selenium.firefox.FirefoxDriver;
+...
+
+public class AddressBookTest extends TestBenchTestCase {
+   @Before
+   public void setUp() throws Exception {
+       setDriver(new FirefoxDriver());
+   }
+
+   @After
+   public void tearDown() throws Exception {
+       getDriver().quit();
+   }
+   ...
+}
+----
+
+Run this test (using mvn test) and see that it opens up a Firefox browser and immediately closes it again.
+
+[[testbench.testbench-tutorial.making-something-useful]]
+=== Making Something Useful
+
+Let’s change the failing test into something more useful. First we’ll make it navigate to the URL where our Address Book application is running. Note that the server needs to be running for any test to work. Use the [literal]#mvn jetty:run# command to run it like we did above. Rename the [methodname]#testFails# method to [methodname]#testAddressBook# and tell the driver to navigate to link:http://localhost:8080/[]. We’ll also make the test verify that the AddressBook application is started by verifying that a table is visible:
+
+[source, java]
+----
+import com.vaadin.testbench.elements.TableElement;
+...
+
+public class AddressBookTest extends TestBenchTestCase {
+   ...
+
+   @Test
+   public void testAddressBook() {
+       getDriver().get("http://localhost:8080/");
+       Assert.assertTrue($(GridElement.class).exists());
+   }
+}
+----
+
+We’ve looked for a Vaadin component on the web page by using ElementQuery, i.e. the [literal]#$()# method. The argument to this method is what kind of element we are searching for, and then we can specify additional rules like .caption(“My Caption”) or .at(index), etc. See <<dummy/../../testbench/testbench-overview.html,"the TestBench chapter">> and especially <<dummy/../../testbench/testbench-elementquery.html,"the ElementQuery section">> in Book of Vaadin for details.
+
+Now we are ready to run this test. To run it, make sure that the application server is up and running. If you didn’t already start it, issuing the [command]#mvn jetty:run# command to start it now and wait for the “Started Jetty server” message to appear in the terminal. Once Jetty is running, we can run our test in a different terminal – or even using the run as JUnit command in your favorite IDE. It is just a plain JUnit test, after all. The test now opens up a browser, loads the application, successfully verifies that a table is visible, closes the browser and passes the test. Awesome! Now stop the jetty server by pressing kbd:[ctrl+C] in the terminal.
+
+[[testbench.testbench-tutorial.start-the-server-automatically]]
+=== Start the Server Automatically
+
+You might feel that it’s tedious to have to start and stop the jetty server. The good news is that Maven can do this for us automatically. First we should make our tests run in the integration-test phase of the Maven build. To do this, we should rename our test class to  [classname]#AddressBookIT#, which marks it as an Integration Test using the conventions of the failsafe plugin. Make sure the filename is also changed. Next up: adding the failsafe plugin declaration to the  [filename]#pom.xml# file. Open [filename]#pom.xml# and add the following declaration of the failsafe plugin after the [literal]#<plugins># start tag directly inside of the [literal]#<build></build># tags:
+
+----
+<plugin>
+ <artifactId>maven-failsafe-plugin</artifactId>
+ <version>2.17</version>
+ <executions>
+   <execution>
+     <goals>
+       <goal>integration-test</goal>
+       <goal>verify</goal>
+     </goals>
+   </execution>
+ </executions>
+</plugin>
+----
+
+Next, find the jetty plugin section in the same file and replace it with the following configuration:
+
+----
+<plugin>
+   <groupId>org.eclipse.jetty</groupId>
+   <artifactId>jetty-maven-plugin</artifactId>
+   <version>9.2.3.v20140905</version>
+   <executions>
+       <!-- start and stop jetty (running our app) when
+            running integration tests -->
+       <execution>
+           <id>start-jetty</id>
+           <phase>pre-integration-test</phase>
+           <goals>
+               <goal>start</goal>
+           </goals>
+           <configuration>
+               <scanIntervalSeconds>0</scanIntervalSeconds>
+               <stopKey>STOP</stopKey>
+               <stopPort>8866</stopPort>
+           </configuration>
+       </execution>
+       <execution>
+           <id>stop-jetty</id>
+           <phase>post-integration-test</phase>
+           <goals>
+               <goal>stop</goal>
+           </goals>
+           <configuration>
+               <stopKey>STOP</stopKey>
+               <stopPort>8866</stopPort>
+           </configuration>
+       </execution>
+   </executions>
+</plugin>
+----
+
+Now running all integration tests is as easy as typing
+
+[source, command]
+----
+mvn clean verify
+----
+
+Try it and see that it compiles and packages everything, starts a jetty server, runs our integration test and stops the jetty server. The build is still successful.
+
+[[testbench.testbench-tutorial.build-real-tests]]
+== Build Real Tests
+
+Awesome! Now we are ready to build real test cases for the Address Book application.
+
+[[testbench.testbench-tutorial.data-validation]]
+=== Your First Test - Data Validation
+
+The first test will click the first row in the table and verify that a form, containing the same information, is shown.
+
+First create a new test in the [classname]#AddressBookIT# class by copying the [methodname]#testAddressBook()# method and naming it e.g. [methodname]#testFormShowsCorrectData()#. The test should do the following:
+
+. The contacts are shown using a Vaadin Table component, so the test should find the Table using ElementQuery. You can use the Vaadin debug window to get an ElementQuery for the Table component by pointing and clicking:
+
+.. Open the application by navigating to link:http://localhost:8080/?debug[] in your favorite browser. Note the [literal]#?debug# parameter in the URL, this will open the debug window in the lower right corner of the window
+
+.. In the debug window (see <<figure.testbench.debugscreenshot>>)
+
+... Click on the TestBench icon (1)
+
+... Click on the “targeting” icon (2)
+
+... Click on the Table component (3)
+
+... An ElementQuery code line will be printed in the debug window [prompt]#TableElement table1 = $(TableElement.class).first();# This line of Java code can be directly copy&pasted into your JUnit test!
+
+.. Store the first name and last name values shown in the first row of the table for later comparison
+
+[[figure.testbench.debugscreenshot]]
+.Vaadin Debug Screenshot
+image::img/screenshots/debug-screenshot.png[]
+
+. Click on the first row
+
+. Assert that the values in the first name and last name fields are the same as in the table
+
+The resulting test looks like this:
+
+[source, java]
+----
+import com.vaadin.testbench.elements.TextFieldElement;
+...
+
+@Test
+public void testFormShowsCorrectData() {
+   getDriver().get("http://localhost:8080/");
+
+   // 1. Find the Table
+   TableElement table = $(TableElement.class).first();
+
+   // 2. Store the first name and last name values shown
+   // in the first row of the table for later comparison
+   String firstName = table.getCell(0, 0).getText();
+   String lastName = table.getCell(0, 1).getText();
+
+   // 3. Click on the first row
+   table.getCell(0, 0).click();
+
+   // 4. Assert that the values in the first name and
+   // last name fields are the same as in the table
+   Assert.assertEquals(firstName,
+       $(TextFieldElement.class)
+           .caption("First Name").first().getValue());
+   Assert.assertEquals(lastName,
+       $(TextFieldElement.class)
+           .caption("Last Name").first().getValue());
+}
+----
+
+Run the test and verify that the build is successful by issuing the [command]#mvn verify# command.
+
+[[testbench.testbench-tutorial.data-entry]]
+=== Data Entry
+
+In this second test, we will enter a new person, search for this person and then click it and verify that the same data that was entered is shown in the form, like in the test above.
+
+Create a new test in the same class in the same way as earlier when we created our first test. Name this one [methodname]#testEnterNew()#. The steps of this test are the following:
+
+. Click on the [guibutton]#“New”# button
+
+. Type “Tyler” in the first name field
+
+. Type “Durden” in the last name field
+
+. Click on some other row, e.g. row 7
+
+. Verify that the same name is not in the fields after selecting some other row
+
+. Click on the first row again
+
+. Verify that the first row and the form contains the new contact
+
+The test looks like this:
+
+[source, java]
+----
+import com.vaadin.testbench.elements.ButtonElement;
+...
+
+@Test
+public void testEnterNew() {
+   getDriver().get("http://localhost:8080/");
+   // 1. Click the "New" button
+   $(ButtonElement.class).caption("New").first().click();
+   // 2. Enter "Tyler" into the first name field
+   $(TextFieldElement.class).caption("First Name").first()
+       .setValue("Tyler");
+   // 3. Enter "Durden" into the last name field
+   $(TextFieldElement.class).caption("Last Name").first()
+       .setValue("Durden");
+   // 4. Click on some other row
+   TableElement table = $(TableElement.class).first();
+   table.getCell(6, 0).click();
+   // 5. Assert that the entered name is not in the text
+   // fields any longer
+   Assert.assertNotEquals("Tyler", $(TextFieldElement.class)
+           .caption("First Name").first().getValue());
+   Assert.assertNotEquals("Durden", $(TextFieldElement.class)
+           .caption("Last Name").first().getValue());
+   // 6. Click on the first row
+   table.getCell(0,0).click();
+   // 7. Verify that the first row and form
+   // contain "Tyler Durden"
+   Assert.assertEquals("Tyler",
+       table.getCell(0, 0).getText());
+   Assert.assertEquals("Durden",
+       table.getCell(0, 1).getText());
+   Assert.assertEquals("Tyler", $(TextFieldElement.class)
+           .caption("First Name").first().getValue());
+   Assert.assertEquals("Durden", $(TextFieldElement.class)
+           .caption("Last Name").first().getValue());
+}
+----
+
+Again, run the test and verify that the build is successful by issuing the [command]#mvn verify# command. Not bad!
+
+[[testbench.testbench-tutorial.making-the-tests-maintainable]]
+=== Making the Tests Maintainable
+
+The tests are still not too bad so far, but when you build more and more complicated tests, you can probably imagine that the code can get pretty messy. One solution to this is to use the link:https://github.com/seleniumhq/selenium-google-code-issue-archive[Page Object pattern]. The Page Object pattern helps make the code more readable, and thus more maintainable and at the same time it allows us to decouple the test from the actual implementation and structure of the UI.
+
+Now we will convert the data entry test to use page objects. This means that we will build an object that has methods which model the fields and interactions possible in the application. We will start by extracting methods in the test class:
+
+. Extract the line clicking on the [guibutton]#“New”# button to a method called [methodname]#createNewEntry()#
+
+. Extract the line setting the value of the first name field to a method called [methodname]#setFirstName(String firstName)#
+
+. Do the same for the last name field
+
+. Extract the code for clicking on another row to a method called [methodname]#selectEntryAtIndex(int index)#
+
+. Extract the parts of the assertions that find the values of the first name and last name fields to methods called [methodname]#getFirstName()# and [methodname]#getLastName()# both returning [literal]#String#
+
+. Replace the code that clicks on the first row with a call to the new [methodname]#selectEntryAtIndex#
+
+. Extract the parts of the assertions that find the values of the first name and last name cells in the table to methods called [methodname]#getFirstNameAtIndex(int index)# and [methodname]#getLastNameAtIndex(int index)# both returning [literal]#String#
+
+The code of the test itself should now look something like this:
+
+[source, java]
+----
+@Test
+public void testEnterNew() {
+   getDriver().get("http://localhost:8080/");
+
+   createNewEntry();
+   setFirstName("Tyler");
+   setLastName("Durden");
+
+   // Select some other entry
+   selectEntryAtIndex(6);
+
+   // Assert that the entered name is not in the
+   // text fields any longer
+   Assert.assertNotEquals("Tyler", getFirstName());
+   Assert.assertNotEquals("Durden", getLastName());
+
+   // Verify that the first row and form contain
+   // "Tyler Durden"
+   selectEntryAtIndex(0);
+   Assert.assertEquals("Tyler", getFirstNameAtIndex(0));
+   Assert.assertEquals("Durden", getLastNameAtIndex());
+   Assert.assertEquals("Tyler", getFirstName());
+   Assert.assertEquals("Durden", getLastName());
+}
+----
+
+Much more readable, isn’t it? When the test is more understandable, it is also more maintainable.
+
+The extracted methods are as follows:
+
+[source, java]
+----
+private String getLastNameAtIndex() {
+   return $(TableElement.class).first()
+           .getCell(0, 1).getText();
+}
+
+private String getFirstNameAtIndex(int index) {
+   return $(TableElement.class).first().getCell(index, 0)
+           .getText();
+}
+
+private String getLastName() {
+   return $(TextFieldElement.class)
+           .caption("Last Name").first().getValue();
+}
+
+private String getFirstName() {
+   return $(TextFieldElement.class)
+           .caption("First Name").first().getValue();
+}
+
+private void selectEntryAtIndex(int index) {
+   $(TableElement.class).first().getCell(index, 0).click();
+}
+
+private void setLastName(String lastName) {
+   $(TextFieldElement.class).caption("Last Name")
+       .first().setValue(lastName);
+}
+
+private void setFirstName(String firstName) {
+   $(TextFieldElement.class).caption("First Name")
+       .first().setValue(firstName);
+}
+
+private void createNewEntry() {
+   $(ButtonElement.class).caption("New").first().click();
+}
+----
+
+Now that we have extracted methods for all relevant things, we can go ahead and create the page objects for our UI. For this application, we’ll create two page objects:
+
+* [classname]#AddressBook#
+
+- Contains methods for interacting with the table, search field and new button. I.e. the left hand side of the UI.
+
+* [classname]#EntryForm#
+
+- Contains methods for interacting with the entry form and it’s fields.
+
+What we’ll do is to create the two classes and move the methods we extracted into them. Our test will only instantiate the [classname]#AddressBook# class, and by calling some methods, such as [methodname]#AddressBook.createNewEntry()#, it will receive an instance of [classname]#EntryForm#. Here’s the code for the [classname]#AddressBook# class, which should already be fairly familiar:
+
+[source, java]
+----
+import com.vaadin.testbench.TestBenchTestCase;
+import com.vaadin.testbench.elements.ButtonElement;
+import com.vaadin.testbench.elements.TableElement;
+import org.openqa.selenium.WebDriver;
+
+public class AddressBook extends TestBenchTestCase {
+
+   public AddressBook(WebDriver driver) {
+       setDriver(driver);
+   }
+
+   public String getLastNameAtIndex() {
+       return $(TableElement.class).first()
+                   .getCell(0, 1).getText();
+   }
+
+   public String getFirstNameAtIndex(int index) {
+       return $(TableElement.class).first()
+                   .getCell(index, 0).getText();
+   }
+
+   public EntryForm selectEntryAtIndex(int index) {
+       $(TableElement.class).first()
+                   .getCell(index, 0).click();
+       return new EntryForm(getDriver());
+   }
+
+   public EntryForm createNewEntry() {
+       $(ButtonElement.class).caption("New").first().click();
+       return new EntryForm(getDriver());
+   }
+}
+----
+
+Note how [methodname]#selectEntryAtIndex# and [methodname]#createNewEntry# return a new [classname]#EntryForm#. This is to move the logic of how the application UI is structured away from the actual test case, so that if the structure of your application changes, it doesn’t require the test method to change.
+
+Also note that the page objects extend the [classname]#TestBenchTestCase# class. This is to include the TestBench API and helpers into the class.
+
+And this is the [classname]#EntryForm# class, which only contains the getters and setters that we extracted earlier:
+
+[source, java]
+----
+import com.vaadin.testbench.TestBenchTestCase;
+import com.vaadin.testbench.elements.TextFieldElement;
+import org.openqa.selenium.WebDriver;
+
+public class EntryForm extends TestBenchTestCase {
+
+   public EntryForm(WebDriver driver) {
+       setDriver(driver);
+   }
+
+   public String getLastName() {
+       return $(TextFieldElement.class)
+               .caption("Last Name").first().getValue();
+   }
+
+   public String getFirstName() {
+       return $(TextFieldElement.class)
+               .caption("First Name").first().getValue();
+   }
+
+   public void setLastName(String lastName) {
+       $(TextFieldElement.class).caption("Last Name")
+           .first().setValue(lastName);
+   }
+
+   public void setFirstName(String firstName) {
+       $(TextFieldElement.class).caption("First Name")
+           .first().setValue(firstName);
+   }
+}
+----
+
+Now, using the two new page objects, our final test looks like this:
+
+[source, java]
+----
+@Test
+public void testEnterNew() {
+   getDriver().get("http://localhost:8080/");
+
+   AddressBook addressBook = new AddressBook(getDriver());
+
+   EntryForm form = addressBook.createNewEntry();
+   form.setFirstName("Tyler");
+   form.setLastName("Durden");
+
+   // Select some other entry
+   form = addressBook.selectEntryAtIndex(6);
+
+   // Assert that the entered name is not in the
+   // text fields any longer
+   Assert.assertNotEquals("Tyler", form.getFirstName());
+   Assert.assertNotEquals("Durden", form.getLastName());
+
+   // Verify that the first row and form contain
+   // "Tyler Durden"
+   form = addressBook.selectEntryAtIndex(0);
+   Assert.assertEquals("Tyler",
+       addressBook.getFirstNameAtIndex(0));
+   Assert.assertEquals("Durden",
+       addressBook.getLastNameAtIndex());
+   Assert.assertEquals("Tyler", form.getFirstName());
+   Assert.assertEquals("Durden", form.getLastName());
+}
+----
+
+[[testbench.testbench-tutorial.summary]]
+== Summary
+
+Congratulations! Hopefully you now have a good idea of how to set up a project for tests with Vaadin TestBench and how to write tests in a maintainable and effective way. For more information, please see the the <<dummy/../../testbench/testbench-overview.html, "Vaadin TestBench chapter">> in Book of Vaadin.
