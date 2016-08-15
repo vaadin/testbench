@@ -12,6 +12,8 @@
  */
 package com.vaadin.testbench.elements;
 
+import java.util.List;
+
 import org.openqa.selenium.WebElement;
 
 import com.vaadin.testbench.By;
@@ -24,5 +26,31 @@ public class ButtonElement extends AbstractComponentElement {
     public String getCaption() {
         WebElement captElem = findElement(By.className("v-button-caption"));
         return captElem.getText();
+    }
+
+    private boolean tryClickChild(WebElement e) {
+        List<WebElement> children = e.findElements(By.xpath(".//*"));
+        for (WebElement c : children) {
+            if (c.isDisplayed()) {
+                c.click();
+                return true;
+            } else {
+                if (tryClickChild(c)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public void click() {
+        if (!isDisplayed()) {
+            if (tryClickChild(this)) {
+                return;
+            }
+        }
+
+        super.click();
     }
 }
