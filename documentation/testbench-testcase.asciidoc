@@ -1,6 +1,6 @@
 ---
 title: Creating a Test Case
-order: 5
+order: 6
 layout: page
 ---
 
@@ -58,10 +58,10 @@ These tasks are realized in the following test code:
 public void basic() throws Exception {
     getDriver().get("http://localhost:8080/tobetested");
 
-    // Find an element to interact upon    
+    // Find an element to interact upon
     ButtonElement button =
         $(ButtonElement.class).id("mybutton");
- 
+
     // Click the button
     button.click();
 
@@ -196,8 +196,3 @@ FirefoxBinary binary =
 driver = TestBench.createDriver(
     new FirefoxDriver(binary, new FirefoxProfile()));
 ----
-
-
-
-
-

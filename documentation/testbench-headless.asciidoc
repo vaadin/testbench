@@ -1,6 +1,6 @@
 ---
 title: Headless Testing
-order: 14
+order: 15
 layout: page
 ---
 
@@ -84,7 +84,3 @@ grid is as easy as passing [methodname]#DesiredCapabilities.phantomjs()# to the
 setDriver(new RemoteWebDriver(
         DesiredCapabilities.phantomjs()));
 ----
-
-
-
-

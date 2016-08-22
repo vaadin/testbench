@@ -1,6 +1,6 @@
 ---
 title: Known Issues
-order: 17
+order: 18
 layout: page
 ---
 
@@ -30,7 +30,3 @@ user interface capability of the Java process.
 Note that the same problem is present also when debugging tests with Firefox. We
 therefore recommend using Chrome for debugging tests, unless Firefox is
 necessary.
-
-
-
-
