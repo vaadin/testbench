@@ -83,7 +83,7 @@ context. The search is done recursively in the context.
 ButtonElement button = $(ButtonElement.class)
     .caption("OK").first();
 
-// A nested query where the context of the latter 
+// A nested query where the context of the latter
 // component type query is the matching elements
 // - matches the first Label inside the "content" layout.
 LabelElement label = $(VerticalLayoutElement.class)
@@ -162,8 +162,3 @@ A query returns one or more elements extending Selenium [classname]#WebElement#.
 The particular element-specific class offers methods to manipulate the
 associated Vaadin component, while you can also use the lower-level
 general-purpose methods defined in [classname]#WebElement#.
-
-
-
-
-

@@ -39,7 +39,7 @@ necessary libraries.
             <include name="junit-*.jar"/>
         </fileset>
     </path>
-	
+
     <!-- This target compiles the JUnit tests. -->
     <target name="compile-tests">
         <mkdir dir="classes" />
@@ -61,7 +61,7 @@ necessary libraries.
             </classpath>
 
             <formatter type="brief" usefile="false" />
-                                
+
             <batchtest>
                 <fileset dir="test">
                     <include name="**/**.java" />
@@ -176,7 +176,7 @@ Tests run: 6, Failures: 1, Errors: 0, Skipped: 1, Time elapsed: 36.736 sec &lt;&
 
 Results :
 
-Failed tests: 
+Failed tests:
   testDemo(TestBenchExample):
       expected:&lt;[5/17/]12&gt; but was:&lt;[17.6.20]12&gt;
 
@@ -193,8 +193,3 @@ enable comparing them to "expected" screenshots, you need to copy the
 screenshots to the [filename]#src/test/resources/screenshots/reference/# folder.
 See <<dummy/../../testbench/testbench-screenshots#testbench.screenshots,"Taking
 and Comparing Screenshots">> for more information regarding screenshots.
-
-
-
-
-

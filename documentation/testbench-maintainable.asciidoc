@@ -55,15 +55,15 @@ public class UIToBeTested extends UI {
     @Override
     protected void init(VaadinRequest request) {
         setId("myui");
-        
+
         final VerticalLayout content = new VerticalLayout();
         content.setMargin(true);
         content.setId("myui.content");
         setContent(content);
-        
+
         // Create a button
         Button button = new Button("Push Me!");
-        
+
         // Optional: give the button a unique ID
         button.setId("myui.content.pushmebutton");
 
@@ -258,9 +258,3 @@ the log table, and right-click them to open the comment sub-window.
 
 * The [classname]#AddComment# can enter a comment string in the comment editor
 sub-window and submit it (click the [guilabel]#Add# button).
-
-
-
-
-
-

@@ -64,7 +64,7 @@ Let us assume that you have set the tooltip as follows:
 Button button = new Button("Push Me!");
 button.setId("main.button");
 
-// Set the tooltip        
+// Set the tooltip
 button.setDescription("This is a tip");
 ----
 
@@ -79,7 +79,7 @@ element of the component, but you can find it by
 @Test
 public void testTooltip() throws Exception {
     driver.get(appUrl);
-    
+
     ButtonElement button =
         $(ButtonElement.class).id("main.button");
 
@@ -308,7 +308,3 @@ public void verifyServerExecutionTime() throws Exception {
         .getAttribute("value"));
 }
 ----
-
-
-
-
