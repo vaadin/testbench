@@ -1,6 +1,6 @@
 ---
 title: Parallel Execution of Tests
-order: 14
+order: 13
 layout: page
 ---
 
@@ -73,12 +73,12 @@ public class MyTest extends ParallelTest {
    public List<DesiredCapabilities> getBrowserConfiguration() {
        List<DesiredCapabilities> browsers =
            new ArrayList<DesiredCapabilities>();
-        
+
        // Add all the browsers you want to test
        browsers.add(BrowserUtil.firefox());
        browsers.add(BrowserUtil.chrome());
        browsers.add(BrowserUtil.ie11());
-        
+
        return browsers;
    }
 }
@@ -89,7 +89,3 @@ or nodes.
 
 If you have more test classes, you can put the configuration in a common base
 class that extends [classname]#ParallelTest#.
-
-
-
-

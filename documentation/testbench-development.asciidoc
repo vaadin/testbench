@@ -1,6 +1,6 @@
 ---
 title: Developing JUnit Tests
-order: 5
+order: 4
 layout: page
 ---
 
@@ -90,7 +90,7 @@ commands and make assertions on the content.
 @Test
 public void testClickButton() throws Exception {
     getDriver().get("http://localhost:8080/myproject");
-    
+
     // Click the button
     ButtonElement button = $(ButtonElement.class).
             caption("Click Me").first();
@@ -270,7 +270,3 @@ image::img/screenshots/eclipse-junit-run.png[]
 
 If you are using some other IDE, it might support JUnit tests as well. If not,
 you can run the tests using Ant or Maven.
-
-
-
-

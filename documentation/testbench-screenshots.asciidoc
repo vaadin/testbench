@@ -1,6 +1,6 @@
 ---
 title: Taking and Comparing Screenshots
-order: 11
+order: 10
 layout: page
 ---
 
@@ -228,9 +228,3 @@ Screenshots when running Internet Explorer 9 in Compatibility Mode
 area. Version 9 no longer does this and as a result screenshots taken using
 Internet Explorer 9 running in compatibility mode (IE7/IE8) will include the two
 pixel border, contrary to what the older versions of Internet Explorer do.
-
-
-
-
-
-

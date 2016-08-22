@@ -1,6 +1,6 @@
 ---
 title: Behaviour-Driven Development
-order: 16
+order: 15
 layout: page
 ---
 
@@ -82,6 +82,3 @@ and how stories are reported.
 
 For further documentation, please see JBehave website at
 link:http://jbehave.org/[jbehave.org].
-
-
-

@@ -22,7 +22,7 @@ In this tutorial, you will learn how to:
 
 The complete source code for the resulting project is available at link:https://github.com/vaadin/testbench-tutorial[].
 
-*_NOTE!_* Mozilla Firefox changed important APIs in version 35. This means that TestBench versions 4.0.2 or older do not work with the latest versions of Firefox. It is recommended you use Firefox 34 or link:https://www.mozilla.org/en-US/firefox/organizations/all/[Firefox ESR] (currently at 31.x) to execute tests on Firefox until this can be fixed. A new release of TestBench will be made as soon as this is fixed.
+*_NOTE!_* Mozilla Firefox changed important APIs in version 48. This means that TestBench versions 4.1.0 or older do not work with the latest versions of Firefox. It is recommended you use link:https://ftp.mozilla.org/pub/firefox/releases/47.0.1/[Firefox 47] or link:https://www.mozilla.org/en-US/firefox/organizations/all/[Firefox ESR] (currently at 45.3) to execute tests on Firefox until this can be fixed. A new release of TestBench will be made as soon as this is fixed.
 
 [[testbench.testbench-tutorial.prerequisites]]
 == Prerequisites

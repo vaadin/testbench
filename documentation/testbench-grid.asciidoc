@@ -1,20 +1,30 @@
 ---
 title: Running Tests in a Distributed Environment
-order: 13
+order: 12
 layout: page
 ---
 
 [[testbench.grid]]
 = Running Tests in a Distributed Environment
 
-A distributed test environment consists of a grid hub and a number of test
-nodes. The hub listens to calls from test runners and delegates them to the grid
-nodes. Different nodes can run on different operating system platforms and have
-different browsers installed.
+A distributed test environment consists of a test server, a grid hub and a number of test nodes.
 
-A basic distributed installation was covered in
-<<dummy/../../testbench/testbench-installation#testbench.installation.distributed,"A
-Distributed Testing Environment">>.
+The components of a grid setup are illustrated in
+<<figure.testbench.architecture>>.
+
+[[figure.testbench.architecture]]
+.Vaadin TestBench Grid Setup
+image::img/tt-architecture-simple-lo.png[]
+
+The grid hub is a service that handles communication between the JUnit test runner and the nodes.
+The hub listens to calls from test runners and delegates them to the grid nodes.
+The nodes are services that perform the actual execution of test commands in the browser.
+Different nodes can run on different operating system platforms and have different browsers installed.
+
+The hub requires very little resources, so you would typically run it either in the test server or on one of the nodes.
+You can run the tests, the hub, and one node all in one host, but in a fully distributed setup, you install the Vaadin TestBench components on separate hosts.
+
+Controlling browsers over a distributed setup requires using a remote WebDriver.
 
 [[testbench.grid.remote]]
 == Running Tests Remotely
@@ -265,16 +275,53 @@ file as described in <<testbench.grid.node-configuration>>.
 You can run one grid node in the same host as the hub, as is done in the example
 above with the localhost address.
 
+[[testbench.grid.node.os-settings]]
+=== Operating system settings
+
+Make any operating system settings that might interfere with the browser and how it is opened or closed.
+Typical problems include crash handler dialogs.
+
+On Windows, disable error reporting in case a browser crashes as follows:
+
+. Open "Control Panel > System"
+
+. Select the [guilabel]#Advanced# tab
+
+. Select [guilabel]#Error reporting#
+
+. Check that [guilabel]#Disable error reporting# is selected
+
+. Check that [guilabel]#But notify me when critical errors occur# is not selected
+
+[[testbench.grid.node.screenshot-settings]]
+=== Settings for Screenshots
+
+The screenshot comparison feature requires that the user interface of the browser stays constant.
+The exact features that interfere with testing depend on the browser and the operating system.
+
+In general:
+
+* Disable blinking cursor
+
+* Use identical operating system themeing on every host
+
+* Turn off any software that may suddenly pop up a new window
+
+* Turn off screen saver
+
+
+If using Windows and Internet Explorer, you should give also the following setting:
+
+* Turn on [guilabel]#Allow active content to run in files on My Computer# under
+[guilabel]#Security settings#
+
+
 [[testbench.grid.node.browser-capabilities]]
 === Browser Capabilities
 
-The browsers installed in the node can be defined either with command-line
-parameters or with a configuration file in JSON format, as described in
-<<testbench.grid.node-configuration>>.
+The browsers installed in the node can be defined either with command-line parameters or with a configuration file in JSON format, as described in <<testbench.grid.node-configuration>>.
 
-On command-line, you can issue one or more [parameter]#-browser# options to
-define the browser capabilities. It must be followed by a comma-separated list
-of property-value definitions, such as the following:
+On command-line, you can issue one or more [parameter]#-browser# options to define the browser capabilities. It must be followed by a comma-separated list of property-value definitions, such as the following:
 
 
 ----
@@ -299,8 +346,6 @@ Internet Explorer:: [parameter]#-Dwebdriver.ie.driver=C:\path\to\IEDriverServer.
 Google Chrome:: [parameter]#-Dwebdriver.chrome.driver=/path/to/ChromeDriver#
 
 
-
-
 [[testbench.grid.mobile]]
 == Mobile Testing
 
@@ -319,7 +364,3 @@ the hub URI explicitly.
 The mobile testing setup is covered in detail in the Selenium documentation for
 both the link:http://ios-driver.github.io/ios-driver/[iOS driver] and the
 link:http://selendroid.io/mobileWeb.html[AndroidDriver].
-
-
-
-

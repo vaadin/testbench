@@ -1,6 +1,6 @@
 ---
 title: Element Selectors
-order: 8
+order: 9
 layout: page
 ---
 
@@ -76,7 +76,3 @@ For a complete example, see the [filename]#AdvancedCommandsITCase.java# file in
 the TestBench demo described in
 <<dummy/../../testbench/testbench-installation#testbench.installation.examples,"TestBench
 Demo">>.
-
-
-
-
