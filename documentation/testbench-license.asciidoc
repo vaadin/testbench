@@ -30,6 +30,8 @@ In Windows
 [prompt]#$# [command]#echo# [replaceable]##L1cen5e-c0de## &gt; [parameter]#%HOMEPATH%\.vaadin.testbench.developer.license#
 ----
 
+If you are behind a proxy server, see <<testbench.license.proxies>>.
+
 [[testbench.license.variable]]
 == Using System Property
 You can also pass the key as a system property to the Java application running
@@ -95,3 +97,20 @@ ifdef::web[]
 See link:https://vaadin.com/directory/help/installing-cval-license[the CVAL
 license key installation instructions] for more details.
 endif::web[]
+
+[[testbench.license.proxies]]
+== Configuring License Check Through Proxy
+TestBench requires a network access to the license server. If you are behind a proxy server, you have to configure Java Virtual Machine proxy settings with the following system properties:
+
+* https.proxyHost
+* https.proxyPort
+* http.nonProxyHosts
+
+How the system properties are passed depends on the Java application you are using. Maven Failsafe and Surefire plugins require you to pass the parameters in plugin configuration for the forked VM.
+
+[subs="normal"]
+----
+&lt;configuration&gt;
+    &lt;argLine&gt;-Dhttps.proxyHost=**proxy.example.com** -Dhttps.proxyPort=**443** -Dhttp.nonProxyHosts="**localhost|host.example.com**"&lt;/argLine&gt;
+&lt;/configuration&gt;
+----
