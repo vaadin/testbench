@@ -130,7 +130,9 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
 
     @Override
     public void waitForVaadin() {
-        getCommandExecutor().waitForVaadin();
+        if(getCommandExecutor()!=null) {
+            getCommandExecutor().waitForVaadin();
+        }
     }
 
     /*
@@ -140,6 +142,7 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
      */
     @Override
     public void showTooltip() {
+        waitForVaadin();
         new Actions(getCommandExecutor().getWrappedDriver()).moveToElement(
                 actualElement).perform();
         // Wait for a small moment for the tooltip to appear
@@ -180,36 +183,44 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
 
     @Override
     public void click() {
+        waitForVaadin();
         actualElement.click();
+
     }
 
     @Override
     public void submit() {
+        waitForVaadin();
         actualElement.click();
     }
 
     @Override
     public void sendKeys(CharSequence... keysToSend) {
+        waitForVaadin();
         actualElement.sendKeys(keysToSend);
     }
 
     @Override
     public void clear() {
+        waitForVaadin();
         actualElement.clear();
     }
 
     @Override
     public String getTagName() {
+        waitForVaadin();
         return actualElement.getTagName();
     }
 
     @Override
     public String getAttribute(String name) {
+        waitForVaadin();
         return actualElement.getAttribute(name);
     }
 
     @Override
     public boolean isSelected() {
+        waitForVaadin();
         return actualElement.isSelected();
     }
 
@@ -221,12 +232,14 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
      */
     @Override
     public boolean isEnabled() {
+        waitForVaadin();
         return !actualElement.getAttribute("class").contains("v-disabled")
                 && actualElement.isEnabled();
     }
 
     @Override
     public String getText() {
+        waitForVaadin();
         return actualElement.getText();
     }
 
@@ -245,6 +258,7 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
 
     @Override
     public WebElement findElement(By by) {
+        waitForVaadin();
         if (by instanceof ByVaadin) {
             return wrapElement(by.findElement(this), getCommandExecutor());
         }
@@ -253,26 +267,31 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
 
     @Override
     public boolean isDisplayed() {
+        waitForVaadin();
         return actualElement.isDisplayed();
     }
 
     @Override
     public Point getLocation() {
+        waitForVaadin();
         return actualElement.getLocation();
     }
 
     @Override
     public Dimension getSize() {
+        waitForVaadin();
         return actualElement.getSize();
     }
 
     @Override
     public String getCssValue(String propertyName) {
+        waitForVaadin();
         return actualElement.getCssValue(propertyName);
     }
 
     @Override
     public void click(int x, int y, Keys... modifiers) {
+        waitForVaadin();
         Actions actions = new Actions(getCommandExecutor().getWrappedDriver());
         actions.moveToElement(actualElement, x, y);
         // Press any modifier keys
@@ -288,17 +307,17 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
     }
 
     public void doubleClick() {
+        waitForVaadin();
         new Actions(getDriver()).doubleClick(actualElement).build().perform();
         // Wait till vaadin component will process the event. Without it may
         // cause problems with phantomjs
-        waitForVaadin();
     }
 
     public void contextClick() {
+        waitForVaadin();
         new Actions(getDriver()).contextClick(actualElement).build().perform();
         // Wait till vaadin component will process the event. Without it may
         // cause problems with phantomjs
-        waitForVaadin();
     }
 
     @Override
@@ -331,6 +350,7 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
      */
     @Override
     public void focus() {
+        waitForVaadin();
         getCommandExecutor().focusElement(this);
     }
 
@@ -366,11 +386,13 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
     @Override
     public <X> X getScreenshotAs(OutputType<X> target)
             throws WebDriverException {
+        waitForVaadin();
         return actualElement.getScreenshotAs(target);
     }
 
     @Override
     public Rectangle getRect() {
+        waitForVaadin();
         return actualElement.getRect();
     }
 

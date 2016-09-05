@@ -40,6 +40,10 @@
             <name>Vaadin snapshot repository</name>
             <url>${snapshot.repository.url}</url>
         </snapshotRepository>
+        <repository>
+            <id>vaadin-addons</id>
+            <url>http://vaadin.com/nexus/content/repositories/vaadin-addons</url>
+        </repository>
     </distributionManagement>
     <build>
         <plugins>
