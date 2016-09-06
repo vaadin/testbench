@@ -1,11 +1,11 @@
 ---
-title: Getting Started
+title: Quickstart
 order: 2
 layout: page
 ---
 
-[[testbench.getting-started]]
-= Getting Started
+[[testbench.quickstart]]
+= Quickstart
 
 This section walks you through the steps needed to add a Testbench test to your Vaadin application.
 We use Maven to set up the project and handle the dependencies.
@@ -33,6 +33,7 @@ You can run your tests using Internet Explorer or Chrome browsers.
 Both Internet Explorer and Chrome require a special driver and some additional setup, see
 <<dummy/../../testbench/testbench-installation#testbench.installation.browserdrivers,"Installing Browser Drivers">>.
 
+[[testbench.quickstart.adding-dependency]]
 == Adding the Maven Dependency
 Let us add the Vaadin Testbench dependency to the project.
 Open the [filename]#pom.xml# file and find the [elementname]#dependencies# tag.
@@ -42,12 +43,13 @@ Add the following dependency declaration just before the end tag ([elementname]#
    <dependency>
       <groupId>com.vaadin</groupId>
       <artifactId>vaadin-testbench</artifactId>
-      <version>LATEST</version>
+      <version>4.1.0</version>
       <scope>test</scope>
    </dependency>
 ----
 [subs="normal"]
 
+[[testbench.quickstart.installing-key]]
 == Installing License Key
 Before running tests, you need to install a license key.
 You can purchase a license or obtain a free trial key from the Vaadin Testbench download page in Vaadin Directory.
@@ -55,7 +57,7 @@ The easiest way to install the license key is to copy and paste it to a [filenam
 Other options of installing license key are described <<dummy/../../testbench/testbench-license#testbench-license,"here">>.
 
 
-[[testbench.getting-started.create-a-test-class]]
+[[testbench.quickstart.create-a-test-class]]
 == Create a Sample Test Class
 
 In the Maven world, all test classes and resources live in the [filename]#src/test# directory, so create that directory.

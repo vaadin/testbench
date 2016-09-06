@@ -6,7 +6,7 @@ This chapter describes the installation and use of the Vaadin TestBench.
 
 include::testbench-overview.asciidoc[leveloffset=+2]
 
-include::getting-started.asciidoc[leveloffset=+2]
+include::testbench-quickstart.asciidoc[leveloffset=+2]
 
 include::testbench-installation.asciidoc[leveloffset=+2]
 

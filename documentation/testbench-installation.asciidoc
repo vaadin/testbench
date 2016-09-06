@@ -1,6 +1,6 @@
 ---
 title: Installing Vaadin TestBench
-order: 3
+order: 4
 layout: page
 ---
 
@@ -88,8 +88,6 @@ web application to be tested to avoid library problems. If the tests are part of
 the same project, you should at least arrange the source code and dependencies
 so that the test classes, the TestBench library, and their dependencies would
 not be deployed unnecessarily with the web application.
-
-
 
 [[testbench.installation.distributed]]
 == A Distributed Testing Environment
