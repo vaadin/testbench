@@ -1,0 +1,117 @@
+---
+title: Getting Started
+order: 2
+layout: page
+---
+
+[[testbench.getting-started.introduction]]
+== Introduction
+
+This section walks you through the steps needed to add a Testbench test to your Vaadin application.
+We use Maven to set up the project and handle the dependencies.
+If you don't have a Vaadin application you can generate it using maven archetype:
+
+[subs="normal"]
+----
+mvn -B archetype:generate -DarchetypeGroupId=com.vaadin -DarchetypeArtifactId=vaadin-archetype-application -DarchetypeVersion=7.7.0 -DgroupId=org.test -DartifactId=vaadin-app -Dversion=1.0-SNAPSHOT
+----
+
+*_NOTE!_* Mozilla Firefox changed important APIs in version 48.
+This means that TestBench versions 4.1.0 or older do not work with the latest versions of Firefox.
+It is recommended you use link:https://ftp.mozilla.org/pub/firefox/releases/47.0.1/[Firefox 47] or link:https://www.mozilla.org/en-US/firefox/organizations/all/[Firefox ESR] (currently at 45.3) to execute tests on Firefox until this can be fixed.
+
+You can run your tests using Internet Explorer or Chrome browsers.
+Both Internet Explorer and Chrome require a special driver and some additional setup, see
+<<dummy/../../testbench/testbench-installation#testbench.installation.browserdrivers,"Installing Browser Drivers">>.
+
+== Adding Maven Dependency
+Let us add the Vaadin Testbench dependency to the project.
+Open the pom.xml file and find the <dependencies> tag.
+Add the following dependency declaration just before the end tag (</dependencies>):
+[subs="normal"]
+----
+   <dependency>
+      <groupId>com.vaadin</groupId>
+      <artifactId>vaadin-testbench</artifactId>
+      <version>LATEST</version>
+      <scope>test</scope>
+   </dependency>
+----
+[subs="normal"]
+
+== Installing License Key
+Before running tests, you need to install a license key.
+You can purchase Vaadin License or obtain a free trial key from the Vaadin Testbench download page in Vaadin Directory.
+The easiest way to install the license key is to copy and paste it to a [filename]#.vaadin.testbench.developer.license# file in your home directory.
+Other options of installing license key are described <<dummy/../../testbench/testbench-license#testbench-license,"here">>.
+
+
+[[testbench.getting-started.create-a-test-class]]
+== Create a Sample Test Class
+
+In the Maven world, all test classes and resources live in the [literal]#src/test# directory, so create that directory.
+Continue by creating a java directory under that so that you end up with an [literal]#src/test/java# directory structure.
+Create a new file called [filename]#MyAppTest.java# in the [literal]#src/test/java# directory.
+
+To create a TestBench test you need to perform the following steps:
+
+* Set the browser driver and open the tested web page.
+* Simulate user actions by using TestbenchElement classes.
+* Compare expected and actual results.
+* Close the browser window.
+
+As an example we create a test, which clicks the button in the UI and checks that the value of the label has changed:
+
+[source, java]
+----
+import org.junit.Assert;
+import org.junit.Test;
+
+public class MyAppTest extends ParallelTest {
+
+    private static final String URL="http://localhost";
+    private static final String PORT="8080";
+
+    @Before
+    public void setup() throws Exception {
+        setDriver(new FirefoxDriver());
+        //Open the web page
+        getDriver().get(URL+":"+PORT);
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        //close the browser window
+        getDriver().quit();
+    }
+
+    @Test
+    public void test() {
+        //Get a reference to the button
+        ButtonElement button = $(ButtonElement.class).first();
+
+        //Simulate button click;
+        button.click();
+
+        //Get text field value;
+        String actualValue = $(LabelElement.class).first().getText();
+
+        //Check that the value is not empty
+        Assert.assertFalse(actualValue.isEmpty());
+    }
+}
+----
+Now you have your first Testbench test case ready.
+
+== Running Tests
+Before running the test you should start your Vaadin application under test.
+----
+mvn jetty:run
+----
+
+You can run the test by issuing Maven command line
+----
+mvn test
+----
+
+or run it as a Junit Test from you IDE.
