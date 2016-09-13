@@ -480,7 +480,11 @@ img {
 
     <h2 id="changes_since_2x">Changes in 4.1</h2>
 
-    <ul>
+    <ul> <li>
+        Mozilla Firefox changed important APIs in version 48 that affected their compatibility with WebDriver which directly affects TestBench. Firefox 48 and posterior versions will require the use of GeckoDriver that is not feature complete or fully compatible with Selenium currently.
+        As a workaround it is recommended to use either Firefox 47 or
+        Firefox ESR to execute tests on Firefox until this can be fixed with a stable release of GeckoDriver.
+        </li>
         <li>Add element API helpers from the framework project</li>
         <li>Allow specifying parameters using system properties</li>
         <li>Improvements in cursor detection (#18773, #19097)</li>
@@ -561,7 +565,7 @@ img {
     <ul>
         <li>Latest Google Chrome</li>
         <li>Internet Explorer 8, 9, 10, 11</li>
-        <li>Latest Mozilla Firefox</li>
+        <li>Mozilla Firefox 47 and earlier</li>
         <li>Mobile browsers:
             <ul>
                 <li>Latest Android default browser</li>
