@@ -1,6 +1,6 @@
 ---
 title: Taking and Comparing Screenshots
-order: 10
+order: 5
 layout: page
 ---
 

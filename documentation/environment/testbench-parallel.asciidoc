@@ -1,6 +1,6 @@
 ---
 title: Parallel Execution of Tests
-order: 13
+order: 3
 layout: page
 ---
 
@@ -41,7 +41,7 @@ enumeration:
 
 For Chrome and IE, you need to have the browser driver installed, as described
 in
-<<dummy/../../testbench/testbench-installation#testbench.installation.browserdrivers,"Installing
+<<dummy/../../setup/testbench-installation#testbench.installation.browserdrivers,"Installing
 Browser Drivers">>.
 
 
@@ -50,7 +50,7 @@ Browser Drivers">>.
 
 To run tests in multiple different browsers or remotely, you first need to set
 up and launch a grid hub and one or more grid nodes, as described in
-<<dummy/../../testbench/testbench-grid#testbench.grid,"Running Tests in a
+<<dummy/../../environment/testbench-grid#testbench.grid,"Running Tests in a
 Distributed Environment">>. This enables remote execution in a test grid,
 although you can run the hub and a test node also in your development
 workstation.

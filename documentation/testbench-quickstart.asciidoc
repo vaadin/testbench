@@ -31,7 +31,7 @@ It is recommended you use link:https://ftp.mozilla.org/pub/firefox/releases/47.0
 
 You can run your tests using Internet Explorer or Chrome browsers.
 Both Internet Explorer and Chrome require a special driver and some additional setup, see
-<<dummy/../../testbench/testbench-installation#testbench.installation.browserdrivers,"Installing Browser Drivers">>.
+<<dummy/../../testbench/setup/testbench-installation#testbench.installation.browserdrivers,"Installing Browser Drivers">>.
 
 [[testbench.quickstart.adding-dependency]]
 == Adding the Maven Dependency
@@ -54,7 +54,7 @@ Add the following dependency declaration just before the end tag ([elementname]#
 Before running tests, you need to install a license key.
 You can purchase a license or obtain a free trial key from the Vaadin Testbench download page in Vaadin Directory.
 The easiest way to install the license key is to copy and paste it to a [filename]#.vaadin.testbench.developer.license# file in your home directory.
-Other options of installing license key are described <<dummy/../../testbench/testbench-license#testbench-license,"here">>.
+Other options of installing license key are described <<dummy/../../testbench/setup/testbench-license#testbench-license,"here">>.
 
 
 [[testbench.quickstart.create-a-test-class]]

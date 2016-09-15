@@ -1,0 +1,6 @@
+[[setup]]
+== Testbench Setup
+
+include::testbench-installation.asciidoc[leveloffset=+2]
+
+include::testbench-license.asciidoc[leveloffset=+2]

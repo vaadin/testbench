@@ -1,0 +1,12 @@
+[[creatingtests]]
+== Creating Tests
+
+include::testbench-testcase.asciidoc[leveloffset=+2]
+
+include::testbench-elementquery.asciidoc[leveloffset=+2]
+
+include::testbench-special.asciidoc[leveloffset=+2]
+
+include::testbench-selectors.asciidoc[leveloffset=+2]
+
+include::testbench-screenshots.asciidoc[leveloffset=+2]

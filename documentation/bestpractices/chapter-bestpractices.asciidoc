@@ -1,0 +1,6 @@
+[[bestpractices]]
+== Best Practices
+
+include::testbench-maintainable.asciidoc[leveloffset=+2]
+
+include::testbench-bdd.asciidoc[leveloffset=+2]
