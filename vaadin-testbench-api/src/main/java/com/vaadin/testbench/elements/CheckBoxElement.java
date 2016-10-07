@@ -26,12 +26,21 @@ public class CheckBoxElement extends AbstractFieldElement {
      * checked or unchecked
      */
     public String getValue() {
-        WebElement elem = findElement(By.tagName("input"));
-        if (elem.isSelected()) {
+        if (isChecked()) {
             return "checked";
         } else {
             return "unchecked";
         }
+    }
+
+    /**
+     * Checks if the checkbox is checked.
+     *
+     * @return <code>true</code> if the checkbox is checked, <code>false</code>
+     *         otherwise.
+     */
+    public boolean isChecked() {
+        return getInputElement().isSelected();
     }
 
     /**
@@ -41,26 +50,34 @@ public class CheckBoxElement extends AbstractFieldElement {
      */
     @Override
     public void clear() {
-        WebElement elem = findElement(By.tagName("input"));
-        if (elem.isSelected()) {
-            elem.click();
+        if (isChecked()) {
+            click();
         }
     }
 
     @Override
     public String getCaption() {
-        WebElement elem = findElement(By.xpath("..")).findElement(
-                By.tagName("label"));
+        WebElement elem = findElement(By.xpath(".."))
+                .findElement(By.tagName("label"));
         return elem.getText();
     }
 
     @Override
     public void click() {
-        WebElement input = findElement(By.xpath("input"));
+        WebElement input = getInputElement();
         if (isChrome()) {
-            ((TestBenchElementCommands)(input)).click(0, 0);
+            ((TestBenchElementCommands) (input)).click(0, 0);
         } else {
             input.click();
         }
+    }
+
+    /**
+     * Gets the &lt;input&gt; element of the checkbox.
+     *
+     * @return the input element
+     */
+    public WebElement getInputElement() {
+        return findElement(By.tagName("input"));
     }
 }
