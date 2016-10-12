@@ -1,6 +1,6 @@
 ---
 title: Installing Vaadin TestBench License
-order: 2
+order: 4
 layout: page
 ---
 
@@ -66,7 +66,7 @@ Select JUnit 4 if not selected automatically.
 Go to [guilabel]#Arguments# tab and give the [parameter]#-D# expression in the [guilabel]#VM arguments# field.
 Click [guibutton]#Run# to run the tests immediately or [guibutton]#Close# to just save the settings.
 
-Apache Ant:: If running tests with the [literal]#++<junit>++# task in Apache Ant, as described in <<dummy/../../environment/testbench-execution#testbench.execution.ant,"Running Tests with Ant">>, you can pass the key as follows:
+Apache Ant:: If running tests with the [literal]#++<junit>++# task in Apache Ant, as described in <<dummy/../../testbench/testbench-execution#testbench.execution.ant,"Running Tests with Ant">>, you can pass the key as follows:
 
 +
 [subs="normal"]

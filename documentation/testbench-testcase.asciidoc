@@ -1,6 +1,6 @@
 ---
 title: Creating a Test Case
-order: 1
+order: 5
 layout: page
 ---
 
@@ -25,7 +25,7 @@ The basic configuration tasks are:
 TestBench parameters are defined with static methods in the
 [classname]#com.vaadin.testbench.Parameters# class. The parameters are mainly
 for screenshots and documented in
-<<dummy/../../creatingtests/testbench-screenshots#testbench.screenshots,"Taking and
+<<dummy/../../testbench/testbench-screenshots#testbench.screenshots,"Taking and
 Comparing Screenshots">>.
 
 
@@ -76,7 +76,7 @@ state.
 
 ifdef::web[]
 For information about URI fragments, see
-<<dummy/../../../framework/advanced/advanced-urifu#advanced.urifu,"Managing URI
+<<dummy/../../framework/advanced/advanced-urifu#advanced.urifu,"Managing URI
 Fragments">>.
 endif::web[]
 
@@ -102,7 +102,7 @@ While you can develop tests simply with test cases as described above, for the
 sake of maintainability it is often best to modularize the test code further,
 such as to separate testing at the levels of business logic and the page layout.
 See
-<<dummy/../../bestpractices/testbench-maintainable#testbench.maintainable,"Creating
+<<dummy/../../testbench/testbench-maintainable#testbench.maintainable,"Creating
 Maintainable Tests">> for information about using page objects for this purpose.
 
 
@@ -174,7 +174,7 @@ a complete list of supported drivers, that is, classes implementing the
 interface.
 
 Both the Internet Explorer and Chrome require a special driver, as was noted in
-<<dummy/../../setup/testbench-installation#testbench.installation.browserdrivers,"Installing
+<<dummy/../../testbench/testbench-installation#testbench.installation.browserdrivers,"Installing
 Browser Drivers">>. The driver executable must be included in the operating
 system [literal]#++PATH++#, be given with a driver-specific system Java
 property:

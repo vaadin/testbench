@@ -1,6 +1,6 @@
 ---
 title: Behaviour-Driven Development
-order: 2
+order: 15
 layout: page
 ---
 
@@ -70,7 +70,7 @@ public class CalculatorSteps extends TestBenchTestCase {
 ----
 
 The demo employs the page object defined for the application UI, as described in
-<<dummy/../testbench-maintainable#testbench.maintainable.pageobject,"The
+<<dummy/../../testbench/testbench-maintainable#testbench.maintainable.pageobject,"The
 Page Object Pattern">>.
 
 Such scenarios are included in one or more stories, which need to be configured

@@ -1,6 +1,6 @@
 ---
 title: Querying Elements
-order: 2
+order: 6
 layout: page
 ---
 
@@ -47,7 +47,7 @@ to use TestBench, to get the idea what the queries should be like.
 
 First, enable the debug window with the [literal]#++&debug++# parameter for the
 application, as described in more detail in
-<<dummy/../../../framework/advanced/advanced-debug#advanced.debug,"Debug Mode and
+<<dummy/../../framework/advanced/advanced-debug#advanced.debug,"Debug Mode and
 Window">>. You can interact with the UI in any way you like before generating
 the query code, but we recommend that you proceed by following the sequence in
 which the user would use the UI in each use case, making the queries at each
@@ -112,7 +112,7 @@ TestBench, as they must correspond with the Vaadin version used in the
 application.
 
 In addition to components, other Vaadin UI elements such as notifications (see
-<<dummy/../../creatingtests/testbench-special#testbench.special.notifications,"Testing
+<<dummy/../../testbench/testbench-special#testbench.special.notifications,"Testing
 Notifications">>) can have their corresponding element class. Add-on libraries
 may also define their custom element classes.
 

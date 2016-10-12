@@ -1,6 +1,6 @@
 ---
 title: Running Tests
-order: 1
+order: 11
 layout: page
 ---
 
@@ -154,7 +154,7 @@ your project as follows:
 ----
 
 For instructions on how to create a new Vaadin project with Maven, please see
-<<dummy/../../../framework/getting-started/getting-started-maven#getting-started.maven,"Using
+<<dummy/../../framework/getting-started/getting-started-maven#getting-started.maven,"Using
 Vaadin with Maven">>.
 
 
@@ -186,10 +186,10 @@ Tests run: 6, Failures: 1, Errors: 0, Skipped: 1
 The example configuration starts Jetty to run the application that is tested.
 
 If you have screenshot tests enabled, as mentioned in
-<<dummy/../../setup/testbench-installation#testbench.installation.examples,"TestBench
+<<dummy/../../testbench/testbench-installation#testbench.installation.examples,"TestBench
 Demo">>, you will get failures from screenshot comparison. The failed
 screenshots are written to the [filename]#target/testbench/errors# folder. To
 enable comparing them to "expected" screenshots, you need to copy the
 screenshots to the [filename]#src/test/resources/screenshots/reference/# folder.
-See <<dummy/../../creatingtests/testbench-screenshots#testbench.screenshots,"Taking
+See <<dummy/../../testbench/testbench-screenshots#testbench.screenshots,"Taking
 and Comparing Screenshots">> for more information regarding screenshots.
