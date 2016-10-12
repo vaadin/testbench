@@ -1,6 +1,6 @@
 ---
 title: Element Selectors
-order: 9
+order: 4
 layout: page
 ---
 
@@ -32,7 +32,7 @@ does not have an ID or is outside the Vaadin application.
 
 Selecting elements by their HTML element [literal]#++id++# attribute is a robust
 way to select elements, as noted in
-<<dummy/../../testbench/testbench-maintainable#testbench.maintainable.robustness,"Increasing
+<<dummy/../../bestpractices/testbench-maintainable#testbench.maintainable.robustness,"Increasing
 Selector Robustness">>. It requires that you component IDs for the UI components
 with [methodname]#setId()#.
 
@@ -72,7 +72,5 @@ String tooltipText = findElement(
     By.className("v-tooltip")).getText();
 ----
 
-For a complete example, see the [filename]#AdvancedCommandsITCase.java# file in
-the TestBench demo described in
-<<dummy/../../testbench/testbench-installation#testbench.installation.examples,"TestBench
-Demo">>.
+you can find the complete example
+[filename]#link:https://github.com/vaadin/testbench-demo/blob/master/src/test/java/com/vaadin/testbenchexample/AdvancedCommandsITCase.java[AdvancedCommandsITCase.java]# in link:https://github.com/vaadin/testbench-demo/tree/master/src/test/java/com/vaadin/testbenchexample[TestBench demo].

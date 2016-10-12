@@ -1,8 +1,8 @@
----
-title: Developing JUnit Tests
-order: 4
-layout: page
----
+//---
+//title: Developing JUnit Tests
+//order: 2
+//layout: page
+//---
 
 [[testbench.development]]
 = Developing JUnit Tests
@@ -39,7 +39,7 @@ The basic JUnit annotations used in TestBench testing are the following:
 
 +
 For example, to enable taking screenshots on test failures, as described in
-<<dummy/../../testbench/testbench-screenshots#testbench.screenshots.failure,"Taking
+<<dummy/../../../testbench/creatingtests/testbench-screenshots#testbench.screenshots.failure,"Taking
 Screenshots on Failure">>, you would define:
 
 
@@ -73,7 +73,7 @@ The driver class should be one of [classname]#FirefoxDriver#,
 [classname]#RemoteWebDriver# from API documentation for the current list of
 implementations. Notice that some of the drivers require installing a browser
 driver, as described in
-<<dummy/../../testbench/testbench-installation#testbench.installation.browserdrivers,"Installing
+<<dummy/../../../testbench/setup/testbench-installation#testbench.installation.browserdrivers,"Installing
 Browser Drivers">>.
 
 +

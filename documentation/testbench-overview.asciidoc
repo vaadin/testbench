@@ -57,7 +57,7 @@ In agile development, their automation allows continuous tracking of progress
 towards iteration goals, as well as detecting regressions. The importance of
 requirements is emphasized in __test-driven development__ (TDD), where tests are
 written before actual code. In
-<<dummy/../../testbench/testbench-bdd#testbench.bdd,"Behaviour-Driven
+<<dummy/../../testbench/bestpractices/testbench-bdd#testbench.bdd,"Behaviour-Driven
 Development">>, we show how to use Vaadin TestBench for __behaviour-driven
 development__ (BDD), a form of TDD that concentrates on the formal behavioural
 specification of requirements.
@@ -67,7 +67,7 @@ Vaadin applications these are typically individual UI components or view
 classes. You may also want to generate many different kinds of inputs for the
 application and check that they produce the desired outputs. For complex
 composites, such as views, you can use the Page Object Pattern described in
-<<dummy/../../testbench/testbench-maintainable#testbench.maintainable.pageobject,"The
+<<dummy/../../testbench/bestpractices/testbench-maintainable#testbench.maintainable.pageobject,"The
 Page Object Pattern">>. The pattern simplifies and modularizes testing by
 separating low-level details from the more abstract UI logic. In addition to
 serving the purpose of unit tests, it creates an abstraction layer for
@@ -94,7 +94,7 @@ more sensitive layer to detect regressions, at the expense of losing robustness
 for changes in layout and themeing. The costs of the tradeoff can be minimized
 by careful application of screenshot comparison only at critical points and by
 making the analysis of such regressions as easy as possible. As described in
-<<dummy/../../testbench/testbench-screenshots#testbench.screenshots,"Taking and
+<<dummy/../../testbench/creatingtests/testbench-screenshots#testbench.screenshots,"Taking and
 Comparing Screenshots">>, Vaadin TestBench automatically highlights differences
 in screenshots and allows masking irrelevant areas from image comparison.
 

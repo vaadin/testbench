@@ -57,8 +57,8 @@ When you have finished investigating the Address Book application, you can shut 
 [[testbench.tutorial.add-dependency]]
 == Adding TestBench to Your Project
 To start using TestBench, you need to add it as a dependency to your project and install a license key.
-These topics are covered in <<dummy/../../testbench/testbench-installation#testbench.installation.development.maven,"adding-dependency">>
-and <<dummy/../../testbench/testbench-license#testbench-license,"testbench-license">>.
+These topics are covered in <<dummy/../../testbench/setup/testbench-installation#testbench.installation.development.maven,"Maven Dependency">>
+and <<dummy/../../testbench/setup/testbench-license#testbench-license,"Installing Vaadin TestBench License">>.
 
 [[testbench.tutorial.first-test]]
 == Creating the First TestBench Test
@@ -114,7 +114,7 @@ public class AddressBookTest extends TestBenchTestCase {
 ----
 
 TestBench also supports testing applications through other browsers, such as Chrome, Internet Explorer, or even in the headless (doesn’t show any UI) PhantomJS browser by instantiating [classname]#ChromeDriver#, [classname]#InternetExplorerDriver#, or [classname]#PhantomJSDriver#, respectively.
-See <<testbench-testcase#testbench.testcase.webdriver,"Creating and Closing a Web Driver">> on how to run on the different browsers.
+See <<creatingtests/testbench-testcase#testbench.testcase.webdriver,"Creating and Closing a Web Driver">> on how to run on the different browsers.
 
 [NOTE]
 
@@ -123,7 +123,7 @@ This means that TestBench versions 4.1.0 or older do not work with the latest ve
 It is recommended you use link:https://ftp.mozilla.org/pub/firefox/releases/47.0.1/[Firefox 47] or link:https://www.mozilla.org/en-US/firefox/organizations/all/[Firefox ESR] (currently at 45.3) to execute tests on Firefox until this can be fixed.
 You can run your tests using Internet Explorer or Chrome browsers.
 Both Internet Explorer and Chrome require a special driver and some additional setup, see
-<<dummy/../../testbench/testbench-installation#testbench.installation.browserdrivers,"Installing Browser Drivers">>.
+<<dummy/../../testbench/setup/testbench-installation#testbench.installation.browserdrivers,"Installing Browser Drivers">>.
 
 Run the test with the following command and observe that it opens up a Firefox browser and immediately closes it again.
 
@@ -161,7 +161,7 @@ public class AddressBookTest extends TestBenchTestCase {
 Above, we looked for a Vaadin component on the web page by using an element query, that is, the [literal]#$()# method.
 The argument to this method is an element class corresponding to the element we are searching for.
 After obtaining a basic element query, we can specify additional rules such as [methodname]#.caption(“My Caption”)# or [methodname]#.at(index)#, etc.
-See the <<testbench-overview#testbench.overview,"TestBench chapter">> and especially <<testbench-elementquery,"the ElementQuery section">> for details.
+See the <<testbench-overview#testbench.overview,"TestBench chapter">> and especially <<creatingtests/testbench-elementquery,"Querying Elements">> for details.
 
 We are now ready to run the test. Make sure that the application server is up and running.
 If you have not started it yet, issue the [command]#mvn jetty:run# command to start it now and wait for the “Started Jetty server” message to appear in the terminal.
@@ -222,19 +222,19 @@ import com.vaadin.testbench.elements.TextFieldElement;
 public void testFormShowsCorrectData() {
     getDriver().get("http://localhost:8080/");
 
-    // 1. Find the Table
-    GridElement table = $(GridElement.class).first();
+    // 1. Find the grid
+    GridElement grid = $(GridElement.class).first();
 
     // 2. Store the first name and last name values shown
-    // in the first row of the table for later comparison
-    String firstName = table.getCell(0, 0).getText();
-    String lastName = table.getCell(0, 1).getText();
+    // in the first row of the grid for later comparison
+    String firstName = grid.getCell(0, 0).getText();
+    String lastName = grid.getCell(0, 1).getText();
 
     // 3. Click on the first row
-    table.getCell(0, 0).click();
+    grid.getCell(0, 0).click();
 
     // 4. Assert that the values in the first name and
-    // last name fields are the same as in the table
+    // last name fields are the same as in the grid
     Assert.assertEquals(firstName, $(FormLayoutElement.class).
         $(TextFieldElement.class).first().getValue());
     Assert.assertEquals(lastName, $(FormLayoutElement.class).
@@ -398,6 +398,6 @@ The build is still successful.
 Congratulations! Hopefully you now have a good idea of how to set up a project for tests with Vaadin TestBench and how to write tests.
 Now you can continue with more advanced topics such as:
 
- * <<dummy/../../testbench/testbench-maintainable#testbench.maintainable,"Creating Maintainable Tests">>
- * <<dummy/../../testbench/testbench-headless#testbench.headless,"Headless Testing">>
- * <<dummy/../../testbench/testbench-selectors#testbench.selectors,"Element Selectors">>
+ * <<dummy/../../testbench/bestpractices/testbench-maintainable#testbench.maintainable,"Creating Maintainable Tests">>
+ * <<dummy/../../testbench/environment/testbench-headless#testbench.headless,"Headless Testing">>
+ * <<dummy/../../testbench/creatingtests/testbench-selectors#testbench.selectors,"Element Selectors">>

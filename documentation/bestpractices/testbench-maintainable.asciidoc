@@ -1,6 +1,6 @@
 ---
 title: Creating Maintainable Tests
-order: 9
+order: 1
 layout: page
 ---
 
@@ -42,7 +42,7 @@ class in a robust way.
 
 To make UIs more robust for testing, you can set a unique __component ID__ for
 specific components with [methodname]#setId()#, as described in more detail in
-<<dummy/../../testbench/testbench-selectors#testbench.selectors.id,"Finding by
+<<dummy/../../creatingtests/testbench-selectors#testbench.selectors.id,"Finding by
 ID">>.
 
 Let us consider the following application, in which we set the IDs using a
@@ -95,7 +95,7 @@ UIs, you can include a UI part in the ID, as we did in the example above.
 As a similar method to using component IDs, you can add CSS class names to
 components with [methodname]#addStyleName()#. This enables matching them with
 the [methodname]#findElement(By.className())# selector, as described in
-<<dummy/../../testbench/testbench-selectors#testbench.selectors.css,"Finding by
+<<dummy/../../creatingtests/testbench-selectors#testbench.selectors.css,"Finding by
 CSS Class">>. You can use the selector in element queries. Unlike IDs, CSS class
 names do not need to be unique, so an HTML page can have many elements with the
 same CSS class.

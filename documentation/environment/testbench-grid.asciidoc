@@ -1,6 +1,6 @@
 ---
 title: Running Tests in a Distributed Environment
-order: 12
+order: 2
 layout: page
 ---
 
@@ -36,12 +36,12 @@ which browsers are installed in the node.
 
 Instead of creating and handling the remote driver explicitly, as described in
 the following, you can use the [classname]#ParallelTest# framework presented in
-<<dummy/../../testbench/testbench-parallel#testbench.parallel,"Parallel
+<<dummy/../testbench-parallel#testbench.parallel,"Parallel
 Execution of Tests">>.
 
 An example of remote execution of tests is given in the TestBench demo described
 in
-<<dummy/../../testbench/testbench-installation#testbench.installation.examples,"TestBench
+<<dummy/../../setup/testbench-installation#testbench.installation.examples,"TestBench
 Demo">>. See the [filename]#README.md# file for further instructions.
 
 In the following example, we create and use a remote driver that runs tests in a

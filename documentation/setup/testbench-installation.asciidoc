@@ -1,6 +1,6 @@
 ---
 title: Installing Vaadin TestBench
-order: 4
+order: 1
 layout: page
 ---
 
@@ -56,9 +56,7 @@ You also need to define the Vaadin add-ons repository if not already defined:
 </repository>
 ----
 
-The [literal]#++vaadin-archetype-application++# archetype, as mentioned in
-<<dummy/../../testbench/testbench-quickstart#testbench.quickstart.maven,"Quick
-Start with Maven">>, includes the repository declarations.
+The [literal]#++vaadin-archetype-application++# archetype includes the repository declarations.
 
 
 [[testbench.installation.development.ivy]]
@@ -75,9 +73,7 @@ The optional [literal]#++nodeploy->default++# configuration mapping requires a
 [literal]#++nodeploy++# configuration in the Ivy module; it is automatically
 created for new Vaadin projects.
 
-A new Vaadin project created with the Vaadin Plugin for Eclipse, as described in
-<<dummy/../../testbench/testbench-quickstart#testbench.quickstart.eclipse,"Quick
-Start with Eclipse">>, includes the dependency.
+A new Vaadin project created with the Vaadin Plugin for Eclipse includes the dependency.
 
 
 [[testbench.installation.development.organization]]
@@ -92,7 +88,7 @@ not be deployed unnecessarily with the web application.
 [[testbench.installation.distributed]]
 == A Distributed Testing Environment
 
-Vaadin TestBench supports distributed execution of tests in a grid. See <<dummy/../../testbench/testbench-grid#testbench.grid,"Running Tests in a
+Vaadin TestBench supports distributed execution of tests in a grid. See <<dummy/../../environment/testbench-grid#testbench.grid,"Running Tests in a
 Distributed Environment">>.
 
 [[testbench.installation.browserdrivers]]
@@ -116,7 +112,7 @@ from under the latest release at:
 http://chromedriver.storage.googleapis.com/index.html
 
 
-. Add the driver executable to user PATH. In a distributed testing environment, give it as a command-line parameter to the grid node service, as described in <<dummy/../../testbench/testbench-grid#testbench.grid.node,"Starting a Grid Node">>.
+. Add the driver executable to user PATH. In a distributed testing environment, give it as a command-line parameter to the grid node service, as described in <<dummy/../../environment/testbench-grid#testbench.grid.node,"Starting a Grid Node">>.
 
 ifdef::disabled[]
 [[testbench.installation.browserdrivers.ubuntu]]

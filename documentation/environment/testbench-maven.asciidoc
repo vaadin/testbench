@@ -1,6 +1,6 @@
 ---
 title: Integration Testing with Maven
-order: 16
+order: 5
 layout: page
 ---
 
@@ -98,7 +98,7 @@ The Vaadin Maven Plugin compiles the widget set with the Vaadin Client Compiler
 and the theme with the Vaadin Sass compiler in the [literal]#++compile++# phase.
 Its configuration should be as is normal for Vaadin projects. The default
 configuration is created by the Vaadin project archetype, as described in
-<<dummy/../../framework/getting-started/getting-started-maven#getting-started.maven,"Using
+<<dummy/../../../framework/getting-started/getting-started-maven#getting-started.maven,"Using
 Vaadin with Maven">>.
 
 
