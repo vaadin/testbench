@@ -19,8 +19,13 @@ import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.HashSet;
+
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.remote.RemoteWebElement;
+
+import junit.framework.Assert;
 
 public class TestBenchElementTest {
 
@@ -28,8 +33,8 @@ public class TestBenchElementTest {
     public void testIsEnabled_VaadinComponentDisabled_returnsFalse()
             throws Exception {
         WebElement webElement = createMock(WebElement.class);
-        expect(webElement.getAttribute("class")).andStubReturn(
-                "v-button v-disabled");
+        expect(webElement.getAttribute("class"))
+                .andStubReturn("v-button v-disabled");
         replay(webElement);
 
         TestBenchElement element = TestBenchElement.wrapElement(webElement,
@@ -68,5 +73,38 @@ public class TestBenchElementTest {
         assertTrue(element.isEnabled());
 
         verify(webElement);
+    }
+
+    @Test
+    public void elementsEquals() {
+        RemoteWebElement webElement = new RemoteWebElement();
+        webElement.setId("remote1");
+        TestBenchElement element = TestBenchElement.wrapElement(webElement,
+                null);
+        TestBenchElement element2 = TestBenchElement.wrapElement(webElement,
+                null);
+
+        assertTrue(webElement.equals(webElement));
+        assertTrue(element.equals(element));
+        assertTrue(webElement.equals(element));
+        assertTrue(element.equals(webElement));
+
+        assertTrue(element.equals(element2));
+        assertTrue(element2.equals(element));
+
+    }
+
+    @Test
+    public void elementsHashCode() {
+        RemoteWebElement webElement = new RemoteWebElement();
+        webElement.setId("remote1");
+        TestBenchElement element = TestBenchElement.wrapElement(webElement,
+                null);
+
+        HashSet<WebElement> elements = new HashSet<WebElement>();
+        elements.add(webElement);
+        elements.add(element);
+        Assert.assertEquals(1, elements.size());
+
     }
 }

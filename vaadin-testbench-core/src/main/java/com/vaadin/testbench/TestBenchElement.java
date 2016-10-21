@@ -130,7 +130,7 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
 
     @Override
     public void waitForVaadin() {
-        if(getCommandExecutor()!=null) {
+        if (getCommandExecutor() != null) {
             getCommandExecutor().waitForVaadin();
         }
     }
@@ -143,8 +143,8 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
     @Override
     public void showTooltip() {
         waitForVaadin();
-        new Actions(getCommandExecutor().getWrappedDriver()).moveToElement(
-                actualElement).perform();
+        new Actions(getCommandExecutor().getWrappedDriver())
+                .moveToElement(actualElement).perform();
         // Wait for a small moment for the tooltip to appear
         try {
             Thread.sleep(1000); // VTooltip.OPEN_DELAY = 750;
@@ -163,7 +163,8 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
     @Override
     public void scroll(int scrollTop) {
         JavascriptExecutor js = getCommandExecutor();
-        js.executeScript("arguments[0].scrollTop = " + scrollTop, actualElement);
+        js.executeScript("arguments[0].scrollTop = " + scrollTop,
+                actualElement);
     }
 
     /**
@@ -247,8 +248,8 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
     public List<WebElement> findElements(By by) {
         List<WebElement> elements = new ArrayList<WebElement>();
         if (by instanceof ByVaadin) {
-            elements.addAll(wrapElements(by.findElements(this),
-                    getCommandExecutor()));
+            elements.addAll(
+                    wrapElements(by.findElements(this), getCommandExecutor()));
         } else {
             elements.addAll(wrapElements(actualElement.findElements(by),
                     getCommandExecutor()));
@@ -379,7 +380,8 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
         return tbCommandExecutor;
     }
 
-    private void setCommandExecutor(TestBenchCommandExecutor tbCommandExecutor) {
+    private void setCommandExecutor(
+            TestBenchCommandExecutor tbCommandExecutor) {
         this.tbCommandExecutor = tbCommandExecutor;
     }
 
@@ -396,4 +398,20 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
         return actualElement.getRect();
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (actualElement == null) {
+            return false;
+        }
+        return actualElement.equals(obj);
+    }
+
+    @Override
+    public int hashCode() {
+        if (actualElement == null) {
+            return 32;
+        }
+
+        return actualElement.hashCode();
+    }
 }
