@@ -12,9 +12,15 @@
  */
 package com.vaadin.testbench.elements;
 
+import org.openqa.selenium.By;
+
 import com.vaadin.testbench.elementsbase.ServerClass;
 
 @ServerClass("com.vaadin.ui.Link")
 public class LinkElement extends AbstractComponentElement {
 
+    @Override
+    public void click() {
+        findElement(By.tagName("span")).click();
+    }
 }
