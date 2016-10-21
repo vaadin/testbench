@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
 
@@ -26,21 +27,53 @@ public class ListSelectElement extends AbstractSelectElement {
 
     private Select select;
     private static By bySelect = By.tagName("select");
+    private WebElement selectElement;
 
     @Override
     protected void init() {
         super.init();
-        select = new Select(findElement(bySelect));
+        selectElement = findElement(bySelect);
+        select = new Select(selectElement);
     }
 
+    /**
+     * Selects the option(s) with the given text.
+     * <p>
+     * For a ListSelect in multi select mode, adds the given option(s) to the
+     * current selection.
+     *
+     * @param text
+     *            the text of the option
+     */
     public void selectByText(String text) {
         select.selectByVisibleText(text);
+        if (isPhantomJS() && select.isMultiple()) {
+            // Phantom JS does not fire a change event when
+            // selecting/deselecting items in a multi select
+            fireChangeEvent(selectElement);
+        }
     }
 
+    /**
+     * Deselects the option(s) with the given text.
+     *
+     * @param text
+     *            the text of the option
+     */
     public void deselectByText(String text) {
         select.deselectByVisibleText(text);
+        if (isPhantomJS() && select.isMultiple()) {
+            // Phantom JS does not fire a change event when
+            // selecting/deselecting items in a multi select
+            fireChangeEvent(selectElement);
+        }
     }
 
+    /**
+     * Gets a list of the texts shown for all options.
+     *
+     * @return a list of option texts
+     */
     public List<String> getOptions() {
         List<String> options = new ArrayList<String>();
         for (WebElement webElement : select.getOptions()) {
@@ -66,4 +99,18 @@ public class ListSelectElement extends AbstractSelectElement {
     public String getValue() {
         return select.getFirstSelectedOption().getText();
     }
+
+    private void fireChangeEvent(WebElement target) {
+        if (!(getDriver() instanceof JavascriptExecutor)) {
+            return;
+        }
+
+        ((JavascriptExecutor) getDriver()).executeScript(
+                "var ev = document.createEvent('HTMLEvents');" //
+                        + "ev.initEvent('change', false, true);" //
+                        + "arguments[0].dispatchEvent(ev);", //
+                target);
+
+    }
+
 }

@@ -14,14 +14,18 @@ import com.vaadin.tests.testbenchapi.MultiBrowserTest;
 
 public class ListSelectOptionClickIT extends MultiBrowserTest {
     ListSelectElement select;
+    ListSelectElement multiSelect;
     LabelElement counterLbl;
+    LabelElement multiCounterLbl;
     int oneBasedIndex = 2;
 
     @Before
     public void init() {
         openTestURL();
         select = $(ListSelectElement.class).first();
+        multiSelect = $(ListSelectElement.class).get(1);
         counterLbl = $(LabelElement.class).id("counterLbl");
+        multiCounterLbl = $(LabelElement.class).id("multiCounterLbl");
     }
 
     @Test
@@ -38,6 +42,17 @@ public class ListSelectOptionClickIT extends MultiBrowserTest {
         checkValueChanged();
     }
 
+    @Test
+    public void testMultiSelectDeselectByText() {
+        multiSelect.selectByText("item2");
+        Assert.assertEquals("1: [item1, item2]", multiCounterLbl.getText());
+        multiSelect.selectByText("item3");
+        Assert.assertEquals("2: [item1, item2, item3]",
+                multiCounterLbl.getText());
+        multiSelect.deselectByText("item2");
+        Assert.assertEquals("3: [item1, item3]", multiCounterLbl.getText());
+    }
+
     /*
      * Checks that value has changed. Checks that the change event was fired
      * once.
@@ -49,6 +64,6 @@ public class ListSelectOptionClickIT extends MultiBrowserTest {
                 "item2", actual);
         Assert.assertEquals(
                 "The number of list select valueChange events is not one.",
-                "1", actualCounter);
+                "1: item2", actualCounter);
     }
 }
