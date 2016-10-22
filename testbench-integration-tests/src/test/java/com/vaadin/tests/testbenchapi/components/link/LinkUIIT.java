@@ -30,4 +30,9 @@ public class LinkUIIT extends MultiBrowserTest {
 
     }
 
+    @Test
+    public void getLinkCaption() {
+        Assert.assertEquals("server root", link.getCaption());
+    }
+
 }

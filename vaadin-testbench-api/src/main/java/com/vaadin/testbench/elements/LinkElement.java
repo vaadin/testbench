@@ -13,6 +13,7 @@
 package com.vaadin.testbench.elements;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 
 import com.vaadin.testbench.elementsbase.ServerClass;
 
@@ -21,6 +22,15 @@ public class LinkElement extends AbstractComponentElement {
 
     @Override
     public void click() {
-        findElement(By.tagName("span")).click();
+        getAnchor().click();
+    }
+
+    private WebElement getAnchor() {
+        return findElement(By.tagName("a"));
+    }
+
+    @Override
+    public String getCaption() {
+        return getAnchor().getText();
     }
 }
