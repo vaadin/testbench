@@ -117,8 +117,8 @@ public class ComboBoxElement extends AbstractSelectElement {
         WebElement popup = getSuggestionPopup();
         List<String> suggestionsTexts = new ArrayList<String>();
         // Check that there are suggestions
-        List<WebElement> tables = getSuggestionPopup().findElements(
-                By.tagName("table"));
+        List<WebElement> tables = getSuggestionPopup()
+                .findElements(By.tagName("table"));
         if (tables == null || tables.isEmpty()) {
             return suggestionsTexts;
         }
@@ -175,7 +175,17 @@ public class ComboBoxElement extends AbstractSelectElement {
      * @return value of the combo box element
      */
     public String getValue() {
-        return findElement(By.tagName("input")).getAttribute("value");
+        return getInputField().getAttribute("value");
+    }
+
+    /**
+     * Returns the text input field element, used for entering text into the
+     * combo box.
+     *
+     * @return the input field element
+     */
+    public WebElement getInputField() {
+        return findElement(By.xpath("input"));
     }
 
     private void ensurePopupOpen() {

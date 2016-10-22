@@ -19,7 +19,6 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import com.vaadin.testUI.ComboBoxUI;
@@ -56,8 +55,7 @@ public class ComboBoxUIIT extends MultiBrowserTest {
             comboBox.selectByText(currency);
 
             // Check that the value was selected as the input value of the CB
-            WebElement input = comboBox.findElement(By
-                    .className("v-filterselect-input"));
+            WebElement input = comboBox.getInputField();
             assertEquals(currency, input.getAttribute("value"));
         }
     }
