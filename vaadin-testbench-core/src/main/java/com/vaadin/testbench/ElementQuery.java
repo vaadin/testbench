@@ -299,6 +299,17 @@ public class ElementQuery<T extends AbstractElement> {
 
     /**
      * Search the open Vaadin application for a matching component relative to
+     * given context. NoSuchElement exception is thrown if no element is found.
+     *
+     * @return Component as a corresponding element
+     */
+    public T last() {
+        List<T> all = all();
+        return all.get(all.size() - 1);
+    }
+
+    /**
+     * Search the open Vaadin application for a matching component relative to
      * given context. Elements are post filtered with given index. NoSuchElement
      * exception is thrown if there is no element with such index.
      *
