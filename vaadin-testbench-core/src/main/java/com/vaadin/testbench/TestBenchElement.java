@@ -13,7 +13,10 @@
 package com.vaadin.testbench;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.Capabilities;
@@ -234,8 +237,7 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
     @Override
     public boolean isEnabled() {
         waitForVaadin();
-        return !actualElement.getAttribute("class").contains("v-disabled")
-                && actualElement.isEnabled();
+        return !hasClassName("v-disabled") && actualElement.isEnabled();
     }
 
     @Override
@@ -396,6 +398,45 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
     public Rectangle getRect() {
         waitForVaadin();
         return actualElement.getRect();
+    }
+
+    /**
+     * Gets all the class names set for this element.
+     *
+     * @return a set of class names
+     */
+    public Set<String> getClassNames() {
+        String classAttribute = getAttribute("class");
+        Set<String> classes = new HashSet<String>();
+        if (classAttribute == null) {
+            return classes;
+        }
+        classAttribute = classAttribute.trim();
+        if (classAttribute.isEmpty()) {
+            return classes;
+        }
+
+        Collections.addAll(classes, classAttribute.split("[ ]+"));
+        return classes;
+    }
+
+    /**
+     * Checks if this element has the given class name.
+     * <p>
+     * Matches only full class names, i.e. has ("foo") does not match
+     * class="foobar bafoo"
+     *
+     * @param className
+     *            the class name to check for
+     * @return <code>true</code> if the element has the given class name,
+     *         <code>false</code> otherwise
+     */
+    public boolean hasClassName(String className) {
+        if (className == null || className.isEmpty()) {
+            return false;
+        }
+
+        return getClassNames().contains(className);
     }
 
     @Override
