@@ -13,6 +13,7 @@
 package com.vaadin.testbench.elements;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.openqa.selenium.NoSuchElementException;
@@ -58,6 +59,12 @@ public class GridElement extends AbstractComponentElement {
         @Override
         public boolean isSelected() {
             return getAttribute("class").contains(SELECTED_CLASS_NAME);
+        }
+
+        public GridCellElement getCell(int columnIndex) {
+            TestBenchElement e = (TestBenchElement) findElement(
+                    By.xpath("./td[" + (columnIndex + 1) + "]"));
+            return e.wrap(GridCellElement.class);
         }
     }
 
@@ -361,7 +368,7 @@ public class GridElement extends AbstractComponentElement {
     private TestBenchElement getSubPart(String subPartSelector) {
         return (TestBenchElement) findElement(By.vaadin(subPartSelector));
     }
-    
+
     /**
      * Gets the element that contains the details of a row.
      * 
@@ -378,4 +385,55 @@ public class GridElement extends AbstractComponentElement {
         return getSubPart("#details[" + rowIndex + "]");
     }
 
+    /**
+     * Gets the total number of data rows in the grid.
+     *
+     * @return the number of data rows in the grid,
+     */
+    public long getRowCount() {
+        Long res = (Long) getTestBenchCommandExecutor()
+                .executeScript("return arguments[0].getBodyRowCount()", this);
+        if (res == null) {
+            throw new IllegalStateException("getBodyRowCount returned null");
+        }
+
+        return res.longValue();
+    }
+
+    /**
+     * Gets all the data rows in the grid.
+     * <p>
+     * Returns an iterable which will lazily scroll rows into views and lazy
+     * load data as needed.
+     *
+     * @return an iterable of all the data rows in the grid.
+     */
+    public Iterable<GridRowElement> getRows() {
+        return new Iterable<GridElement.GridRowElement>() {
+            public Iterator<GridRowElement> iterator() {
+                return new Iterator<GridElement.GridRowElement>() {
+                    int nextIndex = 0;
+
+                    public GridRowElement next() {
+                        return getRow(nextIndex++);
+                    }
+
+                    public boolean hasNext() {
+                        try {
+                            getRow(nextIndex);
+                            return true;
+                        } catch (Exception e) {
+                            return false;
+                        }
+                    }
+
+                    public void remove() {
+                        throw new UnsupportedOperationException(
+                                "remove not supported");
+                    }
+
+                };
+            }
+        };
+    }
 }
