@@ -54,6 +54,7 @@ import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.testbench.parallel.Browser;
 import com.vaadin.testbench.parallel.BrowserUtil;
 import com.vaadin.testbench.parallel.ParallelTest;
+import com.vaadin.testbench.parallel.setup.SetupDriver;
 import com.vaadin.ui.UI;
 
 /**
@@ -108,14 +109,16 @@ public abstract class AbstractTB3Test extends ParallelTest {
     @Override
     @Before
     public void setup() throws Exception {
-        Browser runLocallyBrowser = getRunLocallyBrowser();
-        if (runLocallyBrowser != null
-                && System.getenv().containsKey("TEAMCITY_VERSION")) {
-            throw new RuntimeException(
-                    "@RunLocally is not supported for tests run on the build server");
+        // override local driver behaviour, so we can easily specify local
+        // PhantomJS
+        // with a system property
+        if (getBooleanProperty("localPhantom")) {
+            WebDriver driver = new SetupDriver()
+                    .setupLocalDriver(Browser.PHANTOMJS);
+            setDriver(driver);
+        } else {
+            super.setup();
         }
-
-        super.setup();
 
         int w = SCREENSHOT_WIDTH;
         int h = SCREENSHOT_HEIGHT;
@@ -130,6 +133,10 @@ public abstract class AbstractTB3Test extends ParallelTest {
         } catch (UnsupportedOperationException e) {
             // Opera does not support this...
         }
+    }
+
+    protected boolean getBooleanProperty(String key) {
+        return Boolean.parseBoolean(System.getProperty(key));
     }
 
     protected WebElement getTooltipElement() {
@@ -158,6 +165,7 @@ public abstract class AbstractTB3Test extends ParallelTest {
     protected void waitForDebugMessage(final String expectedMessage, int timeout) {
         waitUntil(new ExpectedCondition<Boolean>() {
 
+            @Override
             public Boolean apply(WebDriver input) {
                 return hasDebugMessage(expectedMessage);
             }
@@ -719,6 +727,7 @@ public abstract class AbstractTB3Test extends ParallelTest {
     protected void openDebugLogTab() {
 
         waitUntil(new ExpectedCondition<Boolean>() {
+            @Override
             public Boolean apply(WebDriver input) {
                 WebElement element = getDebugLogButton();
                 return element != null;

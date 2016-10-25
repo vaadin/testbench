@@ -37,8 +37,19 @@ public class ImageComparisonTest {
     @Rule
     public TestName testName = new TestName();
 
+    private String previousScreenshotErrorDirectory;
+    private String previousScreenshotReferenceDirectory;
+    private boolean previousScreenshotComparisonCursorDetection;
+
     @Before
     public void setup() {
+        previousScreenshotErrorDirectory = Parameters
+                .getScreenshotErrorDirectory();
+        previousScreenshotReferenceDirectory = Parameters
+                .getScreenshotReferenceDirectory();
+        previousScreenshotComparisonCursorDetection = Parameters
+                .isScreenshotComparisonCursorDetection();
+
         URL screenshotUrl = getClass().getClassLoader().getResource(FOLDER);
         Parameters.setScreenshotErrorDirectory(screenshotUrl.getPath()
                 + "/errors");
@@ -46,6 +57,16 @@ public class ImageComparisonTest {
                 + "/reference");
         Parameters.setScreenshotComparisonCursorDetection(false);
 
+    }
+
+    @After
+    public void teardown() {
+        Parameters
+                .setScreenshotErrorDirectory(previousScreenshotErrorDirectory);
+        Parameters
+                .setScreenshotReferenceDirectory(previousScreenshotReferenceDirectory);
+        Parameters
+                .setScreenshotComparisonCursorDetection(previousScreenshotComparisonCursorDetection);
     }
 
     @Test
@@ -219,28 +240,30 @@ public class ImageComparisonTest {
     @Test
     public void cursorAt15x1() throws IOException {
         Parameters.setScreenshotComparisonCursorDetection(true);
-        
+
         testFullCompareImages("white-33x33-cursor-15x1-cursoron.png",
                 "white-33x33-cursor-15x1-cursoroff.png", true, 0.0);
-        
+
     }
+
     @Test
     public void cursorAt15x17() throws IOException {
         Parameters.setScreenshotComparisonCursorDetection(true);
-        
+
         testFullCompareImages("white-33x33-cursor-15x17-cursoron.png",
                 "white-33x33-cursor-15x17-cursoroff.png", true, 0.0);
-        
+
     }
+
     @Test
     public void cursorAt15x16() throws IOException {
         Parameters.setScreenshotComparisonCursorDetection(true);
-        
+
         testFullCompareImages("white-33x33-cursor-15x16-cursoron.png",
                 "white-33x33-cursor-15x16-cursoroff.png", true, 0.0);
-        
+
     }
-    
+
     @Test
     public void canCompareReferenceSmallerThanScreenshot() throws IOException {
         ImageComparison ic = new ImageComparison();
