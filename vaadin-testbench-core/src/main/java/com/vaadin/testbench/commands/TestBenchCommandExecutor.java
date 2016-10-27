@@ -128,9 +128,16 @@ public class TestBenchCommandExecutor implements TestBenchCommands,
         // @formatter:on
         JavascriptExecutor js = (JavascriptExecutor) actualDriver;
         long timeoutTime = System.currentTimeMillis() + 20000;
-        boolean finished = false;
+        Boolean finished = false;
         while (System.currentTimeMillis() < timeoutTime && !finished) {
             finished = (Boolean) js.executeScript(isVaadinFinished);
+            if (finished == null) {
+                // This should never happen but according to
+                // https://dev.vaadin.com/ticket/19703, it happens
+                getLogger().fine(
+                        "waitForVaadin returned null, this should never happen");
+                finished = false;
+            }
         }
     }
 
