@@ -33,9 +33,9 @@ import com.vaadin.testbench.screenshot.ImageFileUtil;
  * <pre>
  * <code>
  * public class MyTestCase extends TestBenchTestCase {
- * 
+ *
  *      \@Rule public ScreenshotOnFailureRule screenshotOnFailure = new ScreenshotOnFailureRule(this, true);
- * 
+ *
  *      \@Test public void myTest() throws Exception {
  *          ...
  *      }

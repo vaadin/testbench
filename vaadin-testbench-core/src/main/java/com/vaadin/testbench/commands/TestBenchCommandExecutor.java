@@ -13,7 +13,6 @@
 package com.vaadin.testbench.commands;
 
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -22,31 +21,24 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.imageio.IIOException;
-import javax.imageio.ImageIO;
-
-import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.HasCapabilities;
 import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.HttpCommandExecutor;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
-import com.vaadin.testbench.Parameters;
 import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.testbench.screenshot.ImageComparison;
-import com.vaadin.testbench.screenshot.ImageFileUtil;
 import com.vaadin.testbench.screenshot.ReferenceNameGenerator;
 
 /**
  * Provides actual implementation of TestBenchCommands
  */
-public class TestBenchCommandExecutor implements TestBenchCommands,
-        JavascriptExecutor {
+public class TestBenchCommandExecutor
+        implements TestBenchCommands, JavascriptExecutor {
 
     private static Logger logger = Logger
             .getLogger(TestBenchCommandExecutor.class.getName());
@@ -75,9 +67,9 @@ public class TestBenchCommandExecutor implements TestBenchCommands,
             if (actualDriver instanceof RemoteWebDriver) {
                 RemoteWebDriver rwd = (RemoteWebDriver) actualDriver;
                 if (rwd.getCommandExecutor() instanceof HttpCommandExecutor) {
-                    ia = InetAddress.getByName(((HttpCommandExecutor) rwd
-                            .getCommandExecutor()).getAddressOfRemoteServer()
-                            .getHost());
+                    ia = InetAddress.getByName(
+                            ((HttpCommandExecutor) rwd.getCommandExecutor())
+                                    .getAddressOfRemoteServer().getHost());
                 }
             } else {
                 ia = InetAddress.getLocalHost();
@@ -132,74 +124,28 @@ public class TestBenchCommandExecutor implements TestBenchCommands,
 
     @Override
     public boolean compareScreen(String referenceId) throws IOException {
-        Capabilities capabilities = ((HasCapabilities) actualDriver)
-                .getCapabilities();
-        String referenceName = referenceNameGenerator.generateName(referenceId,
-                capabilities);
-
-        for (int times = 0; times < Parameters.getMaxScreenshotRetries(); times++) {
-            BufferedImage screenshotImage = ImageIO
-                    .read(new ByteArrayInputStream(
-                            ((TakesScreenshot) actualDriver)
-                                    .getScreenshotAs(OutputType.BYTES)));
-            boolean equal = imageComparison
-                    .imageEqualToReference(screenshotImage, referenceName,
-                            Parameters.getScreenshotComparisonTolerance(),
-                            capabilities);
-            if (equal) {
-                return true;
-            }
-            pause(Parameters.getScreenshotRetryDelay());
-        }
-        return false;
+        WebDriver driver = getWrappedDriver();
+        return ScreenshotComparator.compareScreen(referenceId,
+                referenceNameGenerator, imageComparison,
+                (TakesScreenshot) driver, (HasCapabilities) driver);
     }
 
     @Override
     public boolean compareScreen(File reference) throws IOException {
-        BufferedImage image = null;
-        try {
-            image = ImageIO.read(reference);
-        } catch (IIOException e) {
-            // Don't worry, an error screen shot will be generated that later
-            // can be used as the reference
-        }
-        return compareScreen(image, reference.getName());
+        WebDriver driver = getWrappedDriver();
+        return ScreenshotComparator.compareScreen(reference, imageComparison,
+                (TakesScreenshot) driver, (HasCapabilities) driver);
+
     }
 
     @Override
     public boolean compareScreen(BufferedImage reference, String referenceName)
             throws IOException {
-        for (int times = 0; times < Parameters.getMaxScreenshotRetries(); times++) {
-            BufferedImage screenshotImage = ImageIO
-                    .read(new ByteArrayInputStream(
-                            ((TakesScreenshot) actualDriver)
-                                    .getScreenshotAs(OutputType.BYTES)));
-            if (reference == null) {
-                // Store the screenshot in the errors directory and fail the
-                // test
-                ImageFileUtil.createScreenshotDirectoriesIfNeeded();
-                ImageIO.write(screenshotImage, "png",
-                        ImageFileUtil.getErrorScreenshotFile(referenceName));
-                logger.severe("No reference found for " + referenceName
-                        + " in "
-                        + ImageFileUtil.getScreenshotReferenceDirectory());
-                return false;
-            }
-            if (imageComparison.imageEqualToReference(screenshotImage,
-                    reference, referenceName,
-                    Parameters.getScreenshotComparisonTolerance())) {
-                return true;
-            }
-            pause(Parameters.getScreenshotRetryDelay());
-        }
-        return false;
-    }
+        WebDriver driver = getWrappedDriver();
+        return ScreenshotComparator.compareScreen(reference, referenceName,
+                imageComparison, (TakesScreenshot) driver,
+                (HasCapabilities) driver);
 
-    private void pause(int delay) {
-        try {
-            Thread.sleep(delay);
-        } catch (InterruptedException e) {
-        }
     }
 
     @Override
@@ -286,8 +232,8 @@ public class TestBenchCommandExecutor implements TestBenchCommands,
     @Override
     public Object executeAsyncScript(String script, Object... args) {
         if (actualDriver instanceof JavascriptExecutor) {
-            return ((JavascriptExecutor) actualDriver).executeAsyncScript(
-                    script, args);
+            return ((JavascriptExecutor) actualDriver)
+                    .executeAsyncScript(script, args);
         }
         throw new RuntimeException("The driver is not a JavascriptExecutor");
     }
@@ -295,7 +241,7 @@ public class TestBenchCommandExecutor implements TestBenchCommands,
     /**
      * Return a reference to the {@link WebDriver} instance associated with this
      * {@link TestBenchCommandExecutor}
-     * 
+     *
      * @return a WebDriver instance
      */
     public WebDriver getWrappedDriver() {
@@ -303,8 +249,8 @@ public class TestBenchCommandExecutor implements TestBenchCommands,
     }
 
     @Override
-    public void resizeViewPortTo(final int desiredWidth, final int desiredHeight)
-            throws UnsupportedOperationException {
+    public void resizeViewPortTo(final int desiredWidth,
+            final int desiredHeight) throws UnsupportedOperationException {
         try {
             actualDriver.manage().window().setPosition(new Point(0, 0));
 
@@ -312,12 +258,8 @@ public class TestBenchCommandExecutor implements TestBenchCommands,
             // browser setup to another
             int extrah = 106;
             int extraw = 0;
-            actualDriver
-                    .manage()
-                    .window()
-                    .setSize(
-                            new Dimension(desiredWidth + extraw, desiredHeight
-                                    + extrah));
+            actualDriver.manage().window().setSize(new Dimension(
+                    desiredWidth + extraw, desiredHeight + extrah));
 
             int actualWidth = detectViewportWidth();
             int actualHeight = detectViewportHeight();
@@ -326,17 +268,15 @@ public class TestBenchCommandExecutor implements TestBenchCommands,
             int diffH = desiredHeight - actualHeight;
 
             if (diffH != 0 || diffW != 0) {
-                actualDriver
-                        .manage()
-                        .window()
-                        .setSize(
-                                new Dimension(desiredWidth + extraw + diffW,
-                                        desiredHeight + extrah + diffH));
+                actualDriver.manage().window()
+                        .setSize(new Dimension(desiredWidth + extraw + diffW,
+                                desiredHeight + extrah + diffH));
             }
             actualWidth = detectViewportWidth();
             actualHeight = detectViewportHeight();
             if (desiredWidth != actualWidth || desiredHeight != actualHeight) {
-                throw new Exception("Viewport size couldn't be set to desired.");
+                throw new Exception(
+                        "Viewport size couldn't be set to desired.");
             }
         } catch (Exception e) {
             throw new UnsupportedOperationException(
@@ -349,8 +289,9 @@ public class TestBenchCommandExecutor implements TestBenchCommands,
         // combat mode (although vaadin always in std mode, function may be
         // needed earlier)
         int height = ((Number) ((JavascriptExecutor) actualDriver)
-                .executeScript("function f() { if(typeof window.innerHeight != 'undefined') { return window.innerHeight; } if(document.documentElement && document.documentElement.offsetHeight) { return document.documentElement.offsetHeight; } w = document.body.clientHeight; if(navigator.userAgent.indexOf('Trident/5') != -1 && document.documentMode < 9) { w += 4; } return w;} return f();"))
-                .intValue();
+                .executeScript(
+                        "function f() { if(typeof window.innerHeight != 'undefined') { return window.innerHeight; } if(document.documentElement && document.documentElement.offsetHeight) { return document.documentElement.offsetHeight; } w = document.body.clientHeight; if(navigator.userAgent.indexOf('Trident/5') != -1 && document.documentMode < 9) { w += 4; } return w;} return f();"))
+                                .intValue();
         return height;
     }
 
@@ -358,9 +299,9 @@ public class TestBenchCommandExecutor implements TestBenchCommands,
         // also check in IE combat mode etc + detect IE9 for extra borders in
         // combat mode (although vaadin always in std mode, function may be
         // needed earlier)
-        int width = ((Number) ((JavascriptExecutor) actualDriver)
-                .executeScript("function f() { if(typeof window.innerWidth != 'undefined') { return window.innerWidth; } if(document.documentElement && document.documentElement.offsetWidth) { return document.documentElement.offsetWidth; } w = document.body.clientWidth; if(navigator.userAgent.indexOf('Trident/5') != -1 && document.documentMode < 9) { w += 4; } return w;} return f();"))
-                .intValue();
+        int width = ((Number) ((JavascriptExecutor) actualDriver).executeScript(
+                "function f() { if(typeof window.innerWidth != 'undefined') { return window.innerWidth; } if(document.documentElement && document.documentElement.offsetWidth) { return document.documentElement.offsetWidth; } w = document.body.clientWidth; if(navigator.userAgent.indexOf('Trident/5') != -1 && document.documentMode < 9) { w += 4; } return w;} return f();"))
+                        .intValue();
         return width;
     }
 
@@ -373,5 +314,23 @@ public class TestBenchCommandExecutor implements TestBenchCommands,
                 "try { arguments[0].focus() } catch(e) {}; return null;",
                 testBenchElement);
         assert (ret == null);
+    }
+
+    /**
+     * Gets the name generator used for screenshot references.
+     *
+     * @return the name generator for screenshot references
+     */
+    public ReferenceNameGenerator getReferenceNameGenerator() {
+        return referenceNameGenerator;
+    }
+
+    /**
+     * Gets the image comparison implementation used for screenshots.
+     *
+     * @return the image comparison implementation
+     */
+    public ImageComparison getImageComparison() {
+        return imageComparison;
     }
 }

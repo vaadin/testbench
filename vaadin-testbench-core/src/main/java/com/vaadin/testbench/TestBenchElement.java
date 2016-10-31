@@ -12,6 +12,9 @@
  */
 package com.vaadin.testbench;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -21,12 +24,14 @@ import java.util.Set;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.Dimension;
+import org.openqa.selenium.HasCapabilities;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.Rectangle;
 import org.openqa.selenium.SearchContext;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
@@ -37,7 +42,9 @@ import org.openqa.selenium.remote.BrowserType;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 import com.vaadin.testbench.By.ByVaadin;
+import com.vaadin.testbench.commands.CanCompareScreenshots;
 import com.vaadin.testbench.commands.CanWaitForVaadin;
+import com.vaadin.testbench.commands.ScreenshotComparator;
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.commands.TestBenchElementCommands;
 import com.vaadin.testbench.elementsbase.AbstractElement;
@@ -49,7 +56,7 @@ import com.vaadin.testbench.elementsbase.AbstractElement;
  */
 public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
         implements WrapsElement, WebElement, TestBenchElementCommands,
-        CanWaitForVaadin, HasDriver {
+        CanWaitForVaadin, HasDriver, CanCompareScreenshots {
 
     private WebElement actualElement = null;
     private TestBenchCommandExecutor tbCommandExecutor = null;
@@ -445,4 +452,29 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
 
         return actualElement.hashCode();
     }
+
+    @Override
+    public boolean compareScreen(String referenceId) throws IOException {
+        return ScreenshotComparator.compareScreen(referenceId,
+                getTestBenchCommandExecutor().getReferenceNameGenerator(),
+                getTestBenchCommandExecutor().getImageComparison(), this,
+                (HasCapabilities) getDriver());
+    }
+
+    @Override
+    public boolean compareScreen(File reference) throws IOException {
+        return ScreenshotComparator.compareScreen(reference,
+                getTestBenchCommandExecutor().getImageComparison(),
+                (TakesScreenshot) this, (HasCapabilities) getDriver());
+
+    }
+
+    @Override
+    public boolean compareScreen(BufferedImage reference, String referenceName)
+            throws IOException {
+        return ScreenshotComparator.compareScreen(reference, referenceName,
+                getTestBenchCommandExecutor().getImageComparison(),
+                (TakesScreenshot) this, (HasCapabilities) getDriver());
+    }
+
 }

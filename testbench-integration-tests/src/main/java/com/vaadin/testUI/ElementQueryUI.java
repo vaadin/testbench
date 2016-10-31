@@ -21,6 +21,7 @@ public class ElementQueryUI extends AbstractTestUI {
             addComponent(new Button("Button " + i));
         }
 
+        getLayout().setSizeUndefined();
     }
 
     @Override
