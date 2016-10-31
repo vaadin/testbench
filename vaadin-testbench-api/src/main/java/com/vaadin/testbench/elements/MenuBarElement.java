@@ -21,8 +21,6 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 
 import com.vaadin.testbench.elementsbase.ServerClass;
-import com.vaadin.testbench.exceptions.LowVaadinVersionException;
-import com.vaadin.testbench.util.VersionUtil;
 
 @ServerClass("com.vaadin.ui.MenuBar")
 public class MenuBarElement extends AbstractComponentElement {
@@ -70,13 +68,6 @@ public class MenuBarElement extends AbstractComponentElement {
      *            Array of items to click through
      */
     public void clickItem(String... path) {
-        if (!isMenuBarApiSupported()) {
-            throw new LowVaadinVersionException(String.format(
-                    "Vaadin version required: %d.%d.%d",
-                    vaadinMajorVersionRequired, vaadinMinorVersionRequired,
-                    vaadinRevisionRequired));
-        }
-
         if (path.length > 1) {
             closeAll();
         }
@@ -90,13 +81,6 @@ public class MenuBarElement extends AbstractComponentElement {
      * This is done by clicking on the currently selected top level item.
      */
     private void closeAll() {
-        if (!isMenuBarApiSupported()) {
-            throw new LowVaadinVersionException(String.format(
-                    "Vaadin version required: %d.%d.%d",
-                    vaadinMajorVersionRequired, vaadinMinorVersionRequired,
-                    vaadinRevisionRequired));
-        }
-
         lastItemLocationMovedTo = null;
         WebElement selectedItem = getSelectedTopLevelItem();
         if (selectedItem != null) {
@@ -178,20 +162,4 @@ public class MenuBarElement extends AbstractComponentElement {
         return !hasSubmenu(item);
     }
 
-    private final int vaadinMajorVersionRequired = 7;
-    private final int vaadinMinorVersionRequired = 3;
-    private final int vaadinRevisionRequired = 4;
-
-    /**
-     * 
-     * @return true if Vaadin version is high enough to have VMenuBar update
-     *         needed in order to use this API. False otherwise.
-     */
-    private boolean isMenuBarApiSupported() {
-
-        return VersionUtil
-                .isAtLeast(vaadinMajorVersionRequired,
-                        vaadinMinorVersionRequired, vaadinRevisionRequired,
-                        getDriver());
-    }
 }
