@@ -99,21 +99,11 @@ public class ButtonUI extends AbstractTestUI {
         });
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.vaadin.tests.components.AbstractTestUI#getTestDescription()
-     */
     @Override
     protected String getTestDescription() {
         return "Test button click, for button with ValoTheme.BUTTON_QUIET style";
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.vaadin.tests.components.AbstractTestUI#getTicketNumber()
-     */
     @Override
     protected Integer getTicketNumber() {
         return 16346;

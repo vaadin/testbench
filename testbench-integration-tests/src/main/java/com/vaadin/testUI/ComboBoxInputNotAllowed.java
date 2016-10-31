@@ -26,12 +26,6 @@ public class ComboBoxInputNotAllowed extends AbstractTestUI {
         ITEMS.add("item 3");
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.vaadin.tests.components.AbstractTestUI#setup(com.vaadin.server.
-     * VaadinRequest)
-     */
     @Override
     protected void setup(VaadinRequest request) {
         ComboBox comboBox = new ComboBox("", ITEMS);
@@ -39,21 +33,11 @@ public class ComboBoxInputNotAllowed extends AbstractTestUI {
         addComponent(comboBox);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.vaadin.tests.components.AbstractTestUI#getTestDescription()
-     */
     @Override
     protected String getTestDescription() {
         return "ComboBoxElement.selectByText(String) selects only first item when setTextInputAllowed set to false ";
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.vaadin.tests.components.AbstractTestUI#getTicketNumber()
-     */
     @Override
     protected Integer getTicketNumber() {
         return 14486;

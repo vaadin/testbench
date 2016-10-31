@@ -121,11 +121,6 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
 
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.openqa.selenium.internal.WrapsElement#getWrappedElement()
-     */
     @Override
     public WebElement getWrappedElement() {
         return actualElement;
@@ -138,11 +133,6 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.vaadin.testbench.commands.TestBenchElementCommands#showTooltip()
-     */
     @Override
     public void showTooltip() {
         waitForVaadin();

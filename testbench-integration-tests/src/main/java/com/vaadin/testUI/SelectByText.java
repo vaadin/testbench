@@ -35,12 +35,6 @@ public class SelectByText extends AbstractTestUI {
     public static class Servlet extends VaadinServlet {
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.vaadin.tests.components.AbstractTestUI#setup(com.vaadin.server.
-     * VaadinRequest)
-     */
     @Override
     protected void setup(VaadinRequest request) {
         final VerticalLayout layout = new VerticalLayout();
@@ -58,21 +52,11 @@ public class SelectByText extends AbstractTestUI {
         layout.addComponent(combobox);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.vaadin.tests.components.AbstractTestUI#getTestDescription()
-     */
     @Override
     protected String getTestDescription() {
         return "ComboBox's selectByText(String text) method should work if text contains parentheses";
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.vaadin.tests.components.AbstractTestUI#getTicketNumber()
-     */
     @Override
     protected Integer getTicketNumber() {
         return 14048;

@@ -68,12 +68,6 @@ public class TestBenchCommandExecutor implements TestBenchCommands,
         this.referenceNameGenerator = referenceNameGenerator;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * com.vaadin.testbench.commands.TestBenchCommands#getRemoteControlName()
-     */
     @Override
     public String getRemoteControlName() {
         InetAddress ia = null;
@@ -101,11 +95,6 @@ public class TestBenchCommandExecutor implements TestBenchCommands,
         return null;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.vaadin.testbench.commands.TestBenchCommands#waitForVaadin()
-     */
     @Override
     public void waitForVaadin() {
         if (!enableWaitForVaadin
@@ -141,13 +130,6 @@ public class TestBenchCommandExecutor implements TestBenchCommands,
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * com.vaadin.testbench.commands.TestBenchCommands#screenshotEqualToReference
-     * (java.lang.String)
-     */
     @Override
     public boolean compareScreen(String referenceId) throws IOException {
         Capabilities capabilities = ((HasCapabilities) actualDriver)
@@ -172,13 +154,6 @@ public class TestBenchCommandExecutor implements TestBenchCommands,
         return false;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * com.vaadin.testbench.commands.TestBenchCommands#compareScreen(java.io
-     * .File)
-     */
     @Override
     public boolean compareScreen(File reference) throws IOException {
         BufferedImage image = null;
@@ -191,13 +166,6 @@ public class TestBenchCommandExecutor implements TestBenchCommands,
         return compareScreen(image, reference.getName());
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * com.vaadin.testbench.commands.TestBenchCommands#compareScreen(java.awt
-     * .image.BufferedImage)
-     */
     @Override
     public boolean compareScreen(BufferedImage reference, String referenceName)
             throws IOException {
@@ -234,13 +202,6 @@ public class TestBenchCommandExecutor implements TestBenchCommands,
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * com.vaadin.testbench.commands.TestBenchCommands#timeSpentRenderingLastRequest
-     * ()
-     */
     @Override
     public long timeSpentRenderingLastRequest() {
         List<Long> timingValues = getTimingValues(false);
@@ -250,12 +211,6 @@ public class TestBenchCommandExecutor implements TestBenchCommands,
         return timingValues.get(0);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * com.vaadin.testbench.commands.TestBenchCommands#totalTimeSpentRendering()
-     */
     @Override
     public long totalTimeSpentRendering() {
         List<Long> timingValues = getTimingValues(false);
@@ -265,13 +220,6 @@ public class TestBenchCommandExecutor implements TestBenchCommands,
         return timingValues.get(1);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * com.vaadin.testbench.commands.TestBenchCommands#timeSpentServicingLastRequest
-     * ()
-     */
     @Override
     public long timeSpentServicingLastRequest() {
         List<Long> timingValues = getTimingValues(true);
@@ -281,12 +229,6 @@ public class TestBenchCommandExecutor implements TestBenchCommands,
         return timingValues.get(3);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.vaadin.testbench.commands.TestBenchCommands#
-     * totalTimeSpentServicingRequests()
-     */
     @Override
     public long totalTimeSpentServicingRequests() {
         List<Long> timingValues = getTimingValues(true);
@@ -322,35 +264,16 @@ public class TestBenchCommandExecutor implements TestBenchCommands,
         return null;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * com.vaadin.testbench.commands.TestBenchCommands#disableWaitForVaadin()
-     */
     @Override
     public void disableWaitForVaadin() {
         enableWaitForVaadin = false;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * com.vaadin.testbench.commands.TestBenchCommands#enableWaitForVaadin()
-     */
     @Override
     public void enableWaitForVaadin() {
         enableWaitForVaadin = true;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.openqa.selenium.JavascriptExecutor#executeScript(java.lang.String,
-     * java.lang.Object[])
-     */
     @Override
     public Object executeScript(String script, Object... args) {
         if (actualDriver instanceof JavascriptExecutor) {
@@ -360,13 +283,6 @@ public class TestBenchCommandExecutor implements TestBenchCommands,
         throw new RuntimeException("The driver is not a JavascriptExecutor");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.openqa.selenium.JavascriptExecutor#executeAsyncScript(java.lang.String
-     * , java.lang.Object[])
-     */
     @Override
     public Object executeAsyncScript(String script, Object... args) {
         if (actualDriver instanceof JavascriptExecutor) {
@@ -386,13 +302,6 @@ public class TestBenchCommandExecutor implements TestBenchCommands,
         return actualDriver;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * com.vaadin.testbench.commands.TestBenchCommands#resizeViewPortTo(int,
-     * int)
-     */
     @Override
     public void resizeViewPortTo(final int desiredWidth, final int desiredHeight)
             throws UnsupportedOperationException {

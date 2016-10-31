@@ -34,33 +34,17 @@ public class ClickCheckBoxUI extends AbstractTestUI {
     public static class Servlet extends VaadinServlet {
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.vaadin.tests.components.AbstractTestUI#setup(com.vaadin.server.
-     * VaadinRequest)
-     */
     @Override
     protected void setup(VaadinRequest request) {
         CheckBox checkBox = new CheckBox("Checkbox Caption");
         addComponent(checkBox);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.vaadin.tests.components.AbstractTestUI#getTestDescription()
-     */
     @Override
     protected String getTestDescription() {
         return "Ensure that CheckBoxElement.click() actually toggles checkmark";
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.vaadin.tests.components.AbstractTestUI#getTicketNumber()
-     */
     @Override
     protected Integer getTicketNumber() {
         return 13763;

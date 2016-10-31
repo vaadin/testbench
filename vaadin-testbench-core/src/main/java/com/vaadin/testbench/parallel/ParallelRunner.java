@@ -422,14 +422,6 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
         return findAnnotation(searchClass.getSuperclass(), annotationClass);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.junit.runners.BlockJUnit4ClassRunner#withBefores(org.junit.runners
-     * .model.FrameworkMethod, java.lang.Object,
-     * org.junit.runners.model.Statement)
-     */
     @Override
     protected Statement withBefores(final FrameworkMethod method,
             final Object target, Statement statement) {

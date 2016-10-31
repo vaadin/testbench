@@ -43,12 +43,6 @@ public class ComboBoxUI extends AbstractTestUI {
         currencies.add("USD");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.vaadin.tests.components.AbstractTestUI#setup(com.vaadin.server.
-     * VaadinRequest)
-     */
     @Override
     protected void setup(VaadinRequest request) {
         ComboBox comboBox = new ComboBox("NullAllowedComboBox", currencies);
@@ -59,21 +53,11 @@ public class ComboBoxUI extends AbstractTestUI {
         addComponent(comboBox);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.vaadin.tests.components.AbstractTestUI#getTestDescription()
-     */
     @Override
     protected String getTestDescription() {
         return "When calling ComboBoxElement.selectByText(String) several times, the input text should be cleared every time, instead of being appended";
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.vaadin.tests.components.AbstractTestUI#getTicketNumber()
-     */
     @Override
     protected Integer getTicketNumber() {
         return 14404;

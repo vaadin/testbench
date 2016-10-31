@@ -36,12 +36,6 @@ public class MenuBarUI extends AbstractTestUI {
     public static class Servlet extends VaadinServlet {
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.vaadin.tests.components.AbstractTestUI#setup(com.vaadin.server.
-     * VaadinRequest)
-     */
     @Override
     protected void setup(VaadinRequest request) {
         addComponent(createDefaultMenuBar("", ""));
@@ -78,21 +72,11 @@ public class MenuBarUI extends AbstractTestUI {
         return menuBar;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.vaadin.tests.components.AbstractTestUI#getTestDescription()
-     */
     @Override
     protected String getTestDescription() {
         return "UI used to validate MenuBarElement API";
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.vaadin.tests.components.AbstractTestUI#getTicketNumber()
-     */
     @Override
     protected Integer getTicketNumber() {
         return 13364;
@@ -100,13 +84,6 @@ public class MenuBarUI extends AbstractTestUI {
 
     private class MenuBarCommand implements Command {
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see
-         * com.vaadin.ui.MenuBar.Command#menuSelected(com.vaadin.ui.MenuBar.
-         * MenuItem)
-         */
         public void menuSelected(MenuItem selectedItem) {
         }
 

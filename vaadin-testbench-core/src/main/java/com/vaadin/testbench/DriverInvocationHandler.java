@@ -35,12 +35,6 @@ public class DriverInvocationHandler implements MethodHandler {
         this.actualObject = actualObject;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.reflect.InvocationHandler#invoke(java.lang.Object,
-     * java.lang.reflect.Method, java.lang.Object[])
-     */
     @Override
     public Object invoke(Object proxy, Method method, Method proceed,
             Object[] args) throws Throwable {
