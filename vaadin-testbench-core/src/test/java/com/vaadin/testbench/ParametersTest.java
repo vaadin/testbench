@@ -9,7 +9,8 @@ public class ParametersTest {
     public void testDefaultValues() {
         Assert.assertEquals(2, Parameters.getMaxScreenshotRetries());
         Assert.assertEquals(0.01,
-                Parameters.getScreenshotComparisonTolerance(), 0.0);
+                Parameters.getScreenshotComparisonTolerance(),
+                0.0);
         Assert.assertEquals(500, Parameters.getScreenshotRetryDelay());
         Assert.assertEquals(50, Parameters.getTestsInParallel());
         Assert.assertEquals(20, Parameters.getTestSuitesInParallel());

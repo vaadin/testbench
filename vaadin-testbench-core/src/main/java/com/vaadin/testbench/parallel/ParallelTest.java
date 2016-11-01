@@ -23,6 +23,7 @@ import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
+import com.vaadin.testbench.Parameters;
 import com.vaadin.testbench.ScreenshotOnFailureRule;
 import com.vaadin.testbench.TestBenchTestCase;
 import com.vaadin.testbench.annotations.BrowserConfiguration;
@@ -66,8 +67,9 @@ public class ParallelTest extends TestBenchTestCase {
      * <p>
      * Returns the hostname of the hub where test is to be run on. If unit test
      * is annotated by {@link RunLocally}, this method returns localhost.
-     * Otherwise, it will return the host defined by {@link RunOnHub}
-     * annotation.
+     * Otherwise, it will return the host defined by the
+     * {@code com.vaadin.testbench.Parameters.hubHostname} system parameter or the
+     * host defined using a {@link RunOnHub} annotation.
      * </p>
      * <p>
      * This method is used by {@link #getHubURL()} to get the full URL of the
@@ -77,6 +79,11 @@ public class ParallelTest extends TestBenchTestCase {
      * @return the hostname of the hub where test is to be run on.
      */
     protected String getHubHostname() {
+        String hubSystemProperty = Parameters.getHubHostname();
+        if (hubSystemProperty != null) {
+            return hubSystemProperty;
+        }
+
         RunLocally runLocally = getClass().getAnnotation(RunLocally.class);
         if (runLocally != null) {
             return "localhost";
@@ -178,7 +185,8 @@ public class ParallelTest extends TestBenchTestCase {
      * 
      * @param desiredCapabilities
      */
-    public void setDesiredCapabilities(DesiredCapabilities desiredCapabilities) {
+    public void setDesiredCapabilities(
+            DesiredCapabilities desiredCapabilities) {
         driverConfiguration.setDesiredCapabilities(desiredCapabilities);
     }
 

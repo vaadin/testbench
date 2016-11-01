@@ -12,6 +12,8 @@
  */
 package com.vaadin.testbench;
 
+import com.vaadin.testbench.annotations.RunOnHub;
+
 public class Parameters {
     private static boolean isDebug;
     private static boolean isScreenshotComparisonCursorDetection;
@@ -62,10 +64,11 @@ public class Parameters {
 
     private static String getSystemPropertyString(String unqualifiedName,
             String defaultValue) {
-        if (hasSystemProperty(unqualifiedName))
+        if (hasSystemProperty(unqualifiedName)) {
             return System.getProperty(getQualifiedParameter(unqualifiedName));
-        else
+        } else {
             return defaultValue;
+        }
     }
 
     private static boolean getSystemPropertyBoolean(String unqualifiedName,
@@ -73,10 +76,11 @@ public class Parameters {
         if (hasSystemProperty(unqualifiedName)) {
             String str = System
                     .getProperty(getQualifiedParameter(unqualifiedName));
-            if (str != null && str.equalsIgnoreCase("true"))
+            if (str != null && str.equalsIgnoreCase("true")) {
                 return true;
-            else
+            } else {
                 return false;
+            }
         } else {
             return defaultValue;
         }
@@ -319,6 +323,19 @@ public class Parameters {
      */
     public static int getTestSuitesInParallel() {
         return testSuitesInParallel;
+    }
+
+    /**
+     * Gets host name of the hub to run tests on.
+     * <p>
+     * This will override any {@link RunOnHub @RunOnHub} annotation present on
+     * the test class.
+     * 
+     * @return the host name of the hub, or null if no host name has been
+     *         defined
+     */
+    public static String getHubHostname() {
+        return getSystemPropertyString("hubHostname", null);
     }
 
     public static boolean isLocalWebDriverUsed() {
