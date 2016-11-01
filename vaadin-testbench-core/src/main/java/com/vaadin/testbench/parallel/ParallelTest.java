@@ -12,8 +12,6 @@
  */
 package com.vaadin.testbench.parallel;
 
-import static com.vaadin.testbench.Parameters.isLocalWebDriverUsed;
-
 import java.util.Collections;
 import java.util.List;
 
@@ -68,8 +66,8 @@ public class ParallelTest extends TestBenchTestCase {
      * Returns the hostname of the hub where test is to be run on. If unit test
      * is annotated by {@link RunLocally}, this method returns localhost.
      * Otherwise, it will return the host defined by the
-     * {@code com.vaadin.testbench.Parameters.hubHostname} system parameter or the
-     * host defined using a {@link RunOnHub} annotation.
+     * {@code com.vaadin.testbench.Parameters.hubHostname} system parameter or
+     * the host defined using a {@link RunOnHub} annotation.
      * </p>
      * <p>
      * This method is used by {@link #getHubURL()} to get the full URL of the
@@ -118,7 +116,7 @@ public class ParallelTest extends TestBenchTestCase {
             WebDriver driver = driverConfiguration.setupLocalDriver(
                     getRunLocallyBrowser(), getRunLocallyBrowserVersion());
             setDriver(driver);
-        } else if (isLocalWebDriverUsed()) {
+        } else if (Parameters.isLocalWebDriverUsed()) {
             WebDriver driver = driverConfiguration.setupLocalDriver();
             setDriver(driver);
         } else if (getRunOnHub(getClass()) != null) {
@@ -149,12 +147,7 @@ public class ParallelTest extends TestBenchTestCase {
      *         Class, or null if annotation is not present.
      */
     protected Browser getRunLocallyBrowser() {
-        RunLocally runLocally = getClass().getAnnotation(RunLocally.class);
-        if (runLocally != null) {
-            return runLocally.value();
-        } else {
-            return null;
-        }
+        return ParallelRunner.getRunLocallyBrowserName(getClass());
     }
 
     /**
@@ -162,12 +155,7 @@ public class ParallelTest extends TestBenchTestCase {
      *         Class, or empty empty String if annotation is not present.
      */
     protected String getRunLocallyBrowserVersion() {
-        RunLocally runLocally = getClass().getAnnotation(RunLocally.class);
-        if (runLocally != null) {
-            return runLocally.version();
-        } else {
-            return "";
-        }
+        return ParallelRunner.getRunLocallyBrowserVersion(getClass());
     }
 
     /**

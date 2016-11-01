@@ -182,8 +182,10 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
     private Collection<DesiredCapabilities> getDesiredCapabilities() {
         if (testRunsLocally()) {
             Collection<DesiredCapabilities> desiredCapabilities = new ArrayList<DesiredCapabilities>();
+            Class<?> javaTestClass = getTestClass().getJavaClass();
             desiredCapabilities.add(BrowserUtil.getBrowserFactory().create(
-                    runLocallyBrowser(), runLocallyVersion()));
+                    getRunLocallyBrowserName(javaTestClass),
+                    getRunLocallyBrowserVersion(javaTestClass)));
             return desiredCapabilities;
         } else {
             return getFilteredCapabilities();
@@ -191,26 +193,39 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
     }
 
     private boolean testRunsLocally() {
-        RunLocally runLocally = getTestClass().getJavaClass().getAnnotation(
-                RunLocally.class);
+        if (Parameters.getRunLocallyBrowserName() != null) {
+            return true;
+        }
+
+        RunLocally runLocally = getTestClass().getJavaClass()
+                .getAnnotation(RunLocally.class);
         if (runLocally == null) {
             return false;
         }
         return true;
     }
 
-    private Browser runLocallyBrowser() {
-        RunLocally runLocally = getTestClass().getJavaClass().getAnnotation(
-                RunLocally.class);
+    static Browser getRunLocallyBrowserName(Class<?> testClass) {
+
+        String runLocallyBrowserName = Parameters.getRunLocallyBrowserName();
+        if (runLocallyBrowserName != null) {
+            return Browser.valueOf(runLocallyBrowserName.toUpperCase());
+        }
+        RunLocally runLocally = testClass.getAnnotation(RunLocally.class);
         if (runLocally == null) {
             return null;
         }
         return runLocally.value();
     }
 
-    private String runLocallyVersion() {
-        RunLocally runLocally = getTestClass().getJavaClass().getAnnotation(
-                RunLocally.class);
+    static String getRunLocallyBrowserVersion(Class<?> testClass) {
+        String runLocallyBrowserVersion = Parameters
+                .getRunLocallyBrowserVersion();
+        if (runLocallyBrowserVersion != null) {
+            return runLocallyBrowserVersion;
+        }
+
+        RunLocally runLocally = testClass.getAnnotation(RunLocally.class);
         if (runLocally == null) {
             return "";
         }

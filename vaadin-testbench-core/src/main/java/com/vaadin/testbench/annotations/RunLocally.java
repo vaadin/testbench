@@ -24,11 +24,12 @@ import com.vaadin.testbench.parallel.Browser;
 import com.vaadin.testbench.parallel.ParallelTest;
 
 /**
- * <p>
  * Marks this testcase to run locally.<br>
- * Can receive a parameter to define which browser to run test on.<br>
- * </p>
- * 
+ * Can receive a parameter to define which browser and version to run the test
+ * on.<br>
+ * <p>
+ * You can also define a browser name/version to run on locally using the
+ * {@code com.vaadin.testbench.Parameters.runLocally} system parameter.
  * <p>
  * This parameter will be used to instantiate the {@link WebDriver}.<br>
  * The value can be obtained through {@link ParallelTest#getRunLocallyBrowser()}

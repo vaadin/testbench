@@ -12,6 +12,7 @@
  */
 package com.vaadin.testbench;
 
+import com.vaadin.testbench.annotations.RunLocally;
 import com.vaadin.testbench.annotations.RunOnHub;
 
 public class Parameters {
@@ -36,7 +37,8 @@ public class Parameters {
         screenshotComparisonTolerance = getSystemPropertyDouble(
                 "screenshotComparisonTolerance", 0.01);
         maxScreenshotRetries = getSystemPropertyInt("maxScreenshotRetries", 2);
-        screenshotRetryDelay = getSystemPropertyInt("screenshotRetryDelay", 500);
+        screenshotRetryDelay = getSystemPropertyInt("screenshotRetryDelay",
+                500);
 
         testSuitesInParallel = getSystemPropertyInt("testSuitesInParallel", 20);
 
@@ -59,7 +61,8 @@ public class Parameters {
     }
 
     private static boolean hasSystemProperty(String unqualifiedName) {
-        return System.getProperty(getQualifiedParameter(unqualifiedName)) != null;
+        return System
+                .getProperty(getQualifiedParameter(unqualifiedName)) != null;
     }
 
     private static String getSystemPropertyString(String unqualifiedName,
@@ -338,10 +341,79 @@ public class Parameters {
         return getSystemPropertyString("hubHostname", null);
     }
 
+    /**
+     * Gets the name of the browser to use for a local test.
+     * <p>
+     * Reads the value from the
+     * {@code com.vaadin.testbench.Parameters.runLocally} system property. If
+     * the parameter is defined, it will override any
+     * {@link RunLocally @RunLocally} annotation.
+     * <p>
+     * The format of the system property is "[browsername]" or
+     * "[browsername]-[version]" where the version is optional.
+     * <p>
+     * If the system property is defined, the test will be run locally and not
+     * on a hub. The property effectively does the same thing as a
+     * {@link RunLocally @RunLocally} annotation on the test class.
+     * 
+     * @return the browser name read from the system property, or null if it has
+     *         not been set
+     */
+    public static String getRunLocallyBrowserName() {
+        String browserAndVersion = getSystemPropertyString("runLocally", null);
+        if (browserAndVersion == null) {
+            return null;
+        }
+        return parseRunLocally(browserAndVersion)[0];
+    }
+
+    /**
+     * Gets the version of the browser to use for a local test.
+     * <p>
+     * Reads the value from the
+     * {@code com.vaadin.testbench.Parameters.runLocally} system property. If
+     * the parameter is defined, it will override any
+     * {@link RunLocally @RunLocally} annotation.
+     * <p>
+     * The format of the system property is "[browsername]" or
+     * "[browsername]-[version]" where the version is optional.
+     * 
+     * @return the browser version read from the system property, or null if it
+     *         has not been set
+     */
+    public static String getRunLocallyBrowserVersion() {
+        String browserAndVersion = getSystemPropertyString("runLocally", null);
+        if (browserAndVersion == null) {
+            return null;
+        }
+        return parseRunLocally(browserAndVersion)[1];
+    }
+
+    /**
+     * Parses a string given to
+     * {@code com.vaadin.testbench.Parameters.runLocally} system property.
+     * <p>
+     * The format of the system property is "[browsername]" or
+     * "[browsername]-[version]" where the version is optional.
+     * 
+     * @param browserAndVersion
+     *            the string to parse
+     * @return an array with two items, the browser name and the browser
+     *         version. Does not contain nulls
+     */
+    static String[] parseRunLocally(String browserAndVersion) {
+        if (browserAndVersion.contains("-")) {
+            return browserAndVersion.split("-", 2);
+        } else {
+            return new String[] { browserAndVersion, "" };
+        }
+    }
+
     public static boolean isLocalWebDriverUsed() {
         String useLocalWebDriver = System.getProperty("useLocalWebDriver");
 
         return useLocalWebDriver != null
                 && useLocalWebDriver.toLowerCase().equals("true");
     }
+
 }
