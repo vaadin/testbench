@@ -29,7 +29,8 @@ import com.vaadin.ui.CheckBox;
  */
 @SuppressWarnings("serial")
 public class ClickCheckBoxUI extends AbstractTestUI {
-    @WebServlet(value = { "/VAADIN/*", "/ClickCheckBoxUI/*" }, asyncSupported = true)
+    @WebServlet(value = { "/VAADIN/*",
+            "/ClickCheckBoxUI/*" }, asyncSupported = true)
     @VaadinServletConfiguration(productionMode = false, ui = ClickCheckBoxUI.class)
     public static class Servlet extends VaadinServlet {
     }
@@ -38,6 +39,7 @@ public class ClickCheckBoxUI extends AbstractTestUI {
     protected void setup(VaadinRequest request) {
         CheckBox checkBox = new CheckBox("Checkbox Caption");
         addComponent(checkBox);
+        addComponent(new CheckBox());
     }
 
     @Override

@@ -37,13 +37,19 @@ public class ClickCheckBoxUIIT extends MultiBrowserTest {
 
     @Test
     public void testClickToggleCheckboxMark() {
-        CheckBoxElement checkbox = $(CheckBoxElement.class).first();
-        assertFalse(checkbox.isChecked());
+        CheckBoxElement checkboxWithLabel = $(CheckBoxElement.class).first();
+        CheckBoxElement checkboxWithoutLabel = $(CheckBoxElement.class).last();
+        assertFalse(checkboxWithLabel.isChecked());
+        assertFalse(checkboxWithoutLabel.isChecked());
 
-        checkbox.click();
-        assertTrue(checkbox.isChecked());
+        checkboxWithLabel.click();
+        assertTrue(checkboxWithLabel.isChecked());
+        checkboxWithoutLabel.click();
+        assertTrue(checkboxWithoutLabel.isChecked());
 
-        checkbox.click();
-        assertFalse(checkbox.isChecked());
+        checkboxWithLabel.click();
+        assertFalse(checkboxWithLabel.isChecked());
+        checkboxWithoutLabel.click();
+        assertFalse(checkboxWithoutLabel.isChecked());
     }
 }

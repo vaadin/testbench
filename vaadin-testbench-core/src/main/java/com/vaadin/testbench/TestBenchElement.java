@@ -97,6 +97,10 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
         return BrowserType.CHROME.equals(getCapabilities().getBrowserName());
     }
 
+    protected boolean isFirefox() {
+        return BrowserType.FIREFOX.equals(getCapabilities().getBrowserName());
+    }
+
     /**
      * Returns information about current browser used
      *
