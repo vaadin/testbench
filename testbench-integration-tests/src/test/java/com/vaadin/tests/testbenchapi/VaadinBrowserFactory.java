@@ -57,6 +57,14 @@ public class VaadinBrowserFactory extends DefaultBrowserFactory {
     @Override
     public DesiredCapabilities create(Browser browser, String version,
             Platform platform) {
+        if (browser == Browser.PHANTOMJS) {
+            DesiredCapabilities phantom2 = super.create(browser, "2",
+                    Platform.LINUX);
+            // Hack for the test cluster
+            phantom2.setCapability("phantomjs.binary.path",
+                    "/usr/bin/phantomjs2");
+            return phantom2;
+        }
 
         DesiredCapabilities desiredCapabilities = super.create(browser,
                 version, platform);
