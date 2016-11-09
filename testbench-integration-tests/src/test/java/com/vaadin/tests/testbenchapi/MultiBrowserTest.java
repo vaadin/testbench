@@ -68,11 +68,7 @@ public abstract class MultiBrowserTest extends PrivateTB3Configuration {
             allBrowsers.add(BrowserUtil.ie11());
             allBrowsers.add(BrowserUtil.firefox());
             allBrowsers.add(BrowserUtil.chrome());
-            DesiredCapabilities phantomJS = BrowserUtil.phantomJS();
-            phantomJS.setVersion("2");
-            allBrowsers.add(phantomJS);
-            // Re-enable this when it is possible to run on a modern Opera version
-            // allBrowsers.add(Browser.OPERA.getDesiredCapabilities());
+            allBrowsers.add(BrowserUtil.phantomJS());
         }
         return Collections.unmodifiableList(allBrowsers);
     }
