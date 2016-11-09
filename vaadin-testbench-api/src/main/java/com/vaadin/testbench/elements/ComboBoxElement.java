@@ -91,7 +91,7 @@ public class ComboBoxElement extends AbstractSelectElement {
         String tamperedText = text.replaceAll("\\(", OPEN_PARENTHESES);
         findElement(By.vaadin("#textbox")).sendKeys(tamperedText);
 
-        JavascriptExecutor js = getCommandExecutor();
+        JavascriptExecutor js = getTestBenchCommandExecutor();
         String jsScript = String.format(
                 "arguments[0].value = arguments[0].value.replace(/%s/g, '(')",
                 OPEN_PARENTHESES);

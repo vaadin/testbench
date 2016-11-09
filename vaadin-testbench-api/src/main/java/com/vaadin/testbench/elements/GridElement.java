@@ -233,7 +233,7 @@ public class GridElement extends AbstractComponentElement {
         List<GridCellElement> headers = new ArrayList<GridCellElement>();
         for (TestBenchElement e : TestBenchElement.wrapElements(
                 getSubPart("#header[" + rowIndex + "]").findElements(
-                        By.xpath("./th")), getCommandExecutor())) {
+                        By.xpath("./th")), getTestBenchCommandExecutor())) {
             headers.add(e.wrap(GridCellElement.class));
         }
         return headers;
@@ -250,7 +250,7 @@ public class GridElement extends AbstractComponentElement {
         List<GridCellElement> footers = new ArrayList<GridCellElement>();
         for (TestBenchElement e : TestBenchElement.wrapElements(
                 getSubPart("#footer[" + rowIndex + "]").findElements(
-                        By.xpath("./td")), getCommandExecutor())) {
+                        By.xpath("./td")), getTestBenchCommandExecutor())) {
             footers.add(e.wrap(GridCellElement.class));
         }
         return footers;

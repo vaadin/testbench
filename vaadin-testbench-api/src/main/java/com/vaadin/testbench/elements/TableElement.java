@@ -42,7 +42,7 @@ public class TableElement extends AbstractSelectElement {
 
         TestBenchElement cell = wrapElement(
                 findElement(By.vaadin("#row[" + row + "]/col[" + column + "]")),
-                getCommandExecutor());
+                getTestBenchCommandExecutor());
 
         return cell;
     }
@@ -55,7 +55,7 @@ public class TableElement extends AbstractSelectElement {
     public TableRowElement getRow(int row) {
         TestBenchElement rowElem = wrapElement(
                 findElement(By.vaadin("#row[" + row + "]")),
-                getCommandExecutor());
+                getTestBenchCommandExecutor());
         return rowElem.wrap(TableRowElement.class);
     }
 
@@ -69,7 +69,7 @@ public class TableElement extends AbstractSelectElement {
     public TableHeaderElement getHeaderCell(int column) {
         TestBenchElement headerCell = wrapElement(
                 findElement(By.vaadin("#header[" + column + "]")),
-                getCommandExecutor());
+                getTestBenchCommandExecutor());
         return headerCell.wrap(TableHeaderElement.class);
     }
 
@@ -83,7 +83,7 @@ public class TableElement extends AbstractSelectElement {
     public TestBenchElement getFooterCell(int column) {
         TestBenchElement footerCell = wrapElement(
                 findElement(By.vaadin("#footer[" + column + "]")),
-                getCommandExecutor());
+                getTestBenchCommandExecutor());
         return footerCell;
     }
 
@@ -105,7 +105,7 @@ public class TableElement extends AbstractSelectElement {
         // There is a problem in with phantomjs driver, just calling
         // contextClick() doesn't work. We have to use javascript.
         if (isPhantomJS()) {
-            JavascriptExecutor js = getCommandExecutor();
+            JavascriptExecutor js = getTestBenchCommandExecutor();
             String scr = "var element=arguments[0];"
                     + "var ev = document.createEvent('HTMLEvents');"
                     + "ev.initEvent('contextmenu', true, false);"
@@ -134,7 +134,7 @@ public class TableElement extends AbstractSelectElement {
     public ContextMenuElement getContextMenu() {
         try {
             WebElement cm = getDriver().findElement(By.className("v-contextmenu"));
-            return wrapElement(cm, getCommandExecutor()).wrap(
+            return wrapElement(cm, getTestBenchCommandExecutor()).wrap(
                     ContextMenuElement.class);
         } catch (WebDriverException e) {
             throw new NoSuchElementException("Context menu not found", e);

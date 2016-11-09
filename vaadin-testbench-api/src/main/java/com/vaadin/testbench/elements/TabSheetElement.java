@@ -184,7 +184,7 @@ public class TabSheetElement extends AbstractComponentContainerElement {
     public <T extends AbstractElement> T getContent(Class<T> clazz) {
         return TestBench.createElement(clazz,
                 $$(AbstractComponentElement.class).first().getWrappedElement(),
-                getCommandExecutor());
+                getTestBenchCommandExecutor());
     }
 
     /**
