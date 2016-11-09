@@ -18,11 +18,7 @@ package com.vaadin.testUI;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.annotation.WebServlet;
-
-import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.VaadinServlet;
 import com.vaadin.tests.AbstractTestUI;
 import com.vaadin.ui.ComboBox;
 
@@ -31,10 +27,6 @@ import com.vaadin.ui.ComboBox;
  */
 @SuppressWarnings("serial")
 public class ComboBoxUI extends AbstractTestUI {
-    @WebServlet(value = { "/VAADIN/*", "/ComboBoxUI/*" }, asyncSupported = true)
-    @VaadinServletConfiguration(productionMode = false, ui = ComboBoxUI.class)
-    public static class Servlet extends VaadinServlet {
-    }
 
     public static final List<String> currencies = new ArrayList<String>();
     static {
@@ -49,7 +41,7 @@ public class ComboBoxUI extends AbstractTestUI {
         addComponent(comboBox);
 
         comboBox = new ComboBox("NullForbiddenComboBox", currencies);
-        comboBox.setNullSelectionAllowed(false);
+        comboBox.setEmptySelectionAllowed(false);
         addComponent(comboBox);
     }
 

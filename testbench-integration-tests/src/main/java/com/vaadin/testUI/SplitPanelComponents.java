@@ -15,11 +15,7 @@
  */
 package com.vaadin.testUI;
 
-import javax.servlet.annotation.WebServlet;
-
-import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.VaadinServlet;
 import com.vaadin.tests.AbstractTestUI;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalSplitPanel;
@@ -32,10 +28,6 @@ import com.vaadin.ui.VerticalSplitPanel;
  * split panel using getSecondComponent() even when there is no first component.
  */
 public class SplitPanelComponents extends AbstractTestUI {
-    @WebServlet(value = { "/VAADIN/*", "/SplitPanelComponents/*" }, asyncSupported = true)
-    @VaadinServletConfiguration(productionMode = false, ui = SplitPanelComponents.class)
-    public static class Servlet extends VaadinServlet {
-    }
 
     @Override
     protected void setup(VaadinRequest request) {

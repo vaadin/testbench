@@ -15,11 +15,7 @@
  */
 package com.vaadin.testUI;
 
-import javax.servlet.annotation.WebServlet;
-
-import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.VaadinServlet;
 import com.vaadin.tests.AbstractTestUI;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.TabSheet;
@@ -29,11 +25,6 @@ import com.vaadin.ui.TabSheet;
  * to open a tab that does not exist.
  */
 public class TabSheetElementException extends AbstractTestUI {
-
-    @WebServlet(value = { "/VAADIN/*", "/TabSheetElementException/*" }, asyncSupported = true)
-    @VaadinServletConfiguration(productionMode = false, ui = TabSheetElementException.class)
-    public static class Servlet extends VaadinServlet {
-    }
 
     @Override
     protected void setup(VaadinRequest request) {

@@ -5,28 +5,24 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 
-import javax.servlet.annotation.WebServlet;
-
-import com.vaadin.annotations.VaadinServletConfiguration;
-import com.vaadin.data.Property.ValueChangeEvent;
-import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.VaadinServlet;
 import com.vaadin.tests.AbstractTestUI;
-import com.vaadin.ui.AbstractSelect;
-import com.vaadin.ui.AbstractTextField;
-import com.vaadin.ui.CheckBox;
-import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.DateField;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.ListSelect;
-import com.vaadin.ui.NativeSelect;
-import com.vaadin.ui.OptionGroup;
-import com.vaadin.ui.PasswordField;
-import com.vaadin.ui.Slider;
-import com.vaadin.ui.TextArea;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.TwinColSelect;
+import com.vaadin.v7.data.Property.ValueChangeEvent;
+import com.vaadin.v7.data.Property.ValueChangeListener;
+import com.vaadin.v7.ui.AbstractSelect;
+import com.vaadin.v7.ui.AbstractTextField;
+import com.vaadin.v7.ui.CheckBox;
+import com.vaadin.v7.ui.ComboBox;
+import com.vaadin.v7.ui.DateField;
+import com.vaadin.v7.ui.Label;
+import com.vaadin.v7.ui.ListSelect;
+import com.vaadin.v7.ui.NativeSelect;
+import com.vaadin.v7.ui.OptionGroup;
+import com.vaadin.v7.ui.PasswordField;
+import com.vaadin.v7.ui.Slider;
+import com.vaadin.v7.ui.TextArea;
+import com.vaadin.v7.ui.TextField;
+import com.vaadin.v7.ui.TwinColSelect;
 
 /*
  * Copyright 2000-2014 Vaadin Ltd.
@@ -53,10 +49,6 @@ import com.vaadin.ui.TwinColSelect;
  * @author Vaadin Ltd
  */
 public class ComponentElementGetValue extends AbstractTestUI {
-    @WebServlet(value = { "/VAADIN/*", "/ComponentElementGetValue/*" }, asyncSupported = true)
-    @VaadinServletConfiguration(productionMode = false, ui = ComponentElementGetValue.class)
-    public static class Servlet extends VaadinServlet {
-    }
 
     public static final String TEST_STRING_VALUE = "item 2";
     public static final int TEST_SLIDER_VALUE = 42;
@@ -113,6 +105,7 @@ public class ComponentElementGetValue extends AbstractTestUI {
         df.setDateFormat("yyyy-MM-dd");
         df.setValue(TEST_DATE_VALUE);
         df.addValueChangeListener(new ValueChangeListener() {
+            @Override
             public void valueChange(ValueChangeEvent event) {
                 valueChangeLabel.setValue(DATEFIELD_VALUE_CHANGE);
             }
@@ -131,6 +124,7 @@ public class ComponentElementGetValue extends AbstractTestUI {
         CheckBox cb = new CheckBox();
         cb.setValue(true);
         cb.addValueChangeListener(new ValueChangeListener() {
+            @Override
             public void valueChange(ValueChangeEvent event) {
                 valueChangeLabel.setValue(CHECKBOX_VALUE_CHANGE);
             }
@@ -154,6 +148,7 @@ public class ComponentElementGetValue extends AbstractTestUI {
         // Preselect a few items by creating a set
         tab.setValue(new HashSet<String>(Arrays.asList(TEST_STRING_VALUE)));
         tab.addValueChangeListener(new ValueChangeListener() {
+            @Override
             public void valueChange(ValueChangeEvent event) {
                 valueChangeLabel.setValue(TWINCOL_VALUE_CHANGE);
             }
@@ -169,6 +164,7 @@ public class ComponentElementGetValue extends AbstractTestUI {
             this.value = value;
         }
 
+        @Override
         public void valueChange(ValueChangeEvent event) {
             valueChangeLabel.setValue("");
             valueChangeLabel.setValue(value);

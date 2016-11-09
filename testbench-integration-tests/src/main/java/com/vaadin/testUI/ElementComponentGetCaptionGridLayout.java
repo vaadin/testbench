@@ -15,20 +15,10 @@
  */
 package com.vaadin.testUI;
 
-import javax.servlet.annotation.WebServlet;
-
-import com.vaadin.annotations.VaadinServletConfiguration;
-import com.vaadin.server.VaadinServlet;
 import com.vaadin.ui.GridLayout;
 
 public class ElementComponentGetCaptionGridLayout extends
         ElementComponentGetCaptionBase {
-
-    @WebServlet(value = { "/VAADIN/*",
-            "/ElementComponentGetCaptionGridLayout/*" }, asyncSupported = true)
-    @VaadinServletConfiguration(productionMode = false, ui = ElementComponentGetCaptionGridLayout.class)
-    public static class Servlet extends VaadinServlet {
-    }
 
     public ElementComponentGetCaptionGridLayout() {
         mainLayout = new GridLayout();

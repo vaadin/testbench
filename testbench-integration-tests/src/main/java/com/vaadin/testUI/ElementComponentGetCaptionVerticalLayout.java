@@ -15,20 +15,10 @@
  */
 package com.vaadin.testUI;
 
-import javax.servlet.annotation.WebServlet;
-
-import com.vaadin.annotations.VaadinServletConfiguration;
-import com.vaadin.server.VaadinServlet;
 import com.vaadin.ui.VerticalLayout;
 
 public class ElementComponentGetCaptionVerticalLayout extends
         ElementComponentGetCaptionBase {
-
-    @WebServlet(value = { "/VAADIN/*",
-            "/ElementComponentGetCaptionVerticalLayout/*" }, asyncSupported = true)
-    @VaadinServletConfiguration(productionMode = false, ui = ElementComponentGetCaptionVerticalLayout.class)
-    public static class Servlet extends VaadinServlet {
-    }
 
     public ElementComponentGetCaptionVerticalLayout() {
         mainLayout = new VerticalLayout();

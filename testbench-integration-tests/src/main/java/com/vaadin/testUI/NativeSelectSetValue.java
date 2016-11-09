@@ -1,22 +1,18 @@
 package com.vaadin.testUI;
 
-import javax.servlet.annotation.WebServlet;
+import java.util.ArrayList;
+import java.util.List;
 
-import com.vaadin.annotations.VaadinServletConfiguration;
-import com.vaadin.data.Property.ValueChangeEvent;
-import com.vaadin.data.Property.ValueChangeListener;
+import com.vaadin.event.selection.SingleSelectionChangeEvent;
+import com.vaadin.event.selection.SingleSelectionListener;
 import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.VaadinServlet;
+import com.vaadin.server.data.ListDataSource;
 import com.vaadin.tests.AbstractTestUI;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.NativeSelect;
 
 public class NativeSelectSetValue extends AbstractTestUI {
 
-    @WebServlet(value = { "/VAADIN/*", "/NativeSelectSetValue/*" }, asyncSupported = true)
-    @VaadinServletConfiguration(productionMode = false, ui = NativeSelectSetValue.class)
-    public static class Servlet extends VaadinServlet {
-    }
 
     private int counter = 0;
     Label lblCounter = new Label("0");
@@ -24,22 +20,28 @@ public class NativeSelectSetValue extends AbstractTestUI {
     @Override
     protected void setup(VaadinRequest request) {
         NativeSelect select = new NativeSelect();
-        select.addItem("item 1");
-        select.addItem("item 2");
-        select.addItem("item 3");
-        select.setValue("item 1");
+        List<String> options = new ArrayList<String>();
+        options.add("item 1");
+        options.add("item 2");
+        options.add("item 3");
+        select.setDataSource(new ListDataSource<String>(options));
+        select.select("item 1");
         lblCounter.setId("counter");
 
-        select.addValueChangeListener(new ValueChangeListener() {
-
-            public void valueChange(ValueChangeEvent event) {
-                counter++;
-                lblCounter.setValue("" + counter);
-
-            }
-        });
+        select.addSelectionListener(new EventCounter());
         addComponent(select);
         addComponent(lblCounter);
+    }
+
+    private class EventCounter implements SingleSelectionListener<String> {
+        private int counter = 0;
+
+        @Override
+        public void accept(SingleSelectionChangeEvent<String> event) {
+            counter++;
+            lblCounter.setValue("" + counter);
+        }
+
     }
 
     @Override
