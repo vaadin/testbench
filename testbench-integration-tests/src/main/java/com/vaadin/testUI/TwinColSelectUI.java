@@ -1,24 +1,17 @@
 package com.vaadin.testUI;
 
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.List;
 
-import javax.servlet.annotation.WebServlet;
-
-import com.vaadin.annotations.VaadinServletConfiguration;
-import com.vaadin.data.Property.ValueChangeEvent;
-import com.vaadin.data.Property.ValueChangeListener;
+import com.vaadin.event.selection.MultiSelectionEvent;
+import com.vaadin.event.selection.MultiSelectionListener;
 import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.VaadinServlet;
+import com.vaadin.server.data.ListDataSource;
 import com.vaadin.tests.AbstractTestUI;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.TwinColSelect;
 
 public class TwinColSelectUI extends AbstractTestUI {
-
-    @WebServlet(value = { "/TwinColSelectUI/*" }, asyncSupported = true)
-    @VaadinServletConfiguration(productionMode = false, ui = TwinColSelectUI.class)
-    public static class Servlet extends VaadinServlet {
-    }
 
     Label multiCounterLbl = new Label();
 
@@ -26,12 +19,13 @@ public class TwinColSelectUI extends AbstractTestUI {
     protected void setup(VaadinRequest request) {
         TwinColSelect twinColSelect = new TwinColSelect();
         multiCounterLbl.setValue("0");
-        twinColSelect.addItem("item1");
-        twinColSelect.addItem("item2");
-        twinColSelect.addItem("item3");
-        twinColSelect.setValue(Collections.singletonList("item1"));
-        twinColSelect.addValueChangeListener(
-                new CounterListener(multiCounterLbl, 0));
+        List<String> options = new ArrayList<String>();
+        options.add("item1");
+        options.add("item2");
+        options.add("item3");
+        twinColSelect.setDataSource(new ListDataSource<String>(options));
+        twinColSelect.select("item1");
+        twinColSelect.addSelectionListener(new CounterListener(0));
 
         addComponent(twinColSelect);
         multiCounterLbl.setId("multiCounterLbl");
@@ -49,19 +43,17 @@ public class TwinColSelectUI extends AbstractTestUI {
         return null;
     }
 
-    private static class CounterListener implements ValueChangeListener {
+    private class CounterListener implements MultiSelectionListener<String> {
         int counter = 0;
-        private Label counterLbl;
 
-        public CounterListener(Label counterLbl, int i) {
-            this.counterLbl = counterLbl;
+        public CounterListener(int i) {
             counter = i;
         }
 
-        public void valueChange(ValueChangeEvent event) {
+        @Override
+        public void accept(MultiSelectionEvent<String> event) {
             counter++;
-            counterLbl.setValue(
-                    "" + counter + ": " + event.getProperty().getValue());
+            multiCounterLbl.setValue("" + counter + ": " + event.getValue());
         }
     }
 }

@@ -1,22 +1,13 @@
 package com.vaadin.testUI;
 
-import javax.servlet.annotation.WebServlet;
-
-import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.event.Action;
 import com.vaadin.event.Action.Handler;
 import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.VaadinServlet;
 import com.vaadin.tests.AbstractTestUI;
 import com.vaadin.ui.Notification;
-import com.vaadin.ui.Table;
+import com.vaadin.v7.ui.Table;
 
 public class TableElementContextMenu extends AbstractTestUI {
-
-    @WebServlet(value = { "/VAADIN/*", "/TableElementContextMenu/*" }, asyncSupported = true)
-    @VaadinServletConfiguration(productionMode = false, ui = TableElementContextMenu.class)
-    public static class Servlet extends VaadinServlet {
-    }
 
     Table table = new Table();
     private int COLUMNS = 4;
@@ -61,6 +52,7 @@ public class TableElementContextMenu extends AbstractTestUI {
 
     public class TableActionHandler implements Handler {
 
+        @Override
         public Action[] getActions(Object target, Object sender) {
             Action[] actions = new Action[2];
             actions[0] = new Action("Add");
@@ -68,6 +60,7 @@ public class TableElementContextMenu extends AbstractTestUI {
             return actions;
         }
 
+        @Override
         public void handleAction(Action action, Object sender, Object target) {
             Notification.show(action.getCaption());
 

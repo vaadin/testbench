@@ -1,20 +1,11 @@
 package com.vaadin.testUI;
 
-import javax.servlet.annotation.WebServlet;
-
-import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.VaadinServlet;
 import com.vaadin.tests.AbstractTestUI;
-import com.vaadin.ui.TreeTable;
+import com.vaadin.v7.ui.TreeTable;
 
 public class TreeTableElementExpandRow extends AbstractTestUI {
 
-    @WebServlet(value = { "/VAADIN/*", "/TreeTableElementExpandRow/*" }, asyncSupported = true)
-    @VaadinServletConfiguration(productionMode = false, ui = TreeTableElementExpandRow.class)
-    public static class Servlet extends VaadinServlet {
-
-    }
 
     TreeTable treeTable = new TreeTable();
     public static final String TEST_VALUE = "testValue";

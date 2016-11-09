@@ -1,25 +1,17 @@
 package com.vaadin.testUI;
 
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.List;
 
-import javax.servlet.annotation.WebServlet;
-
-import com.vaadin.annotations.VaadinServletConfiguration;
-import com.vaadin.data.Property.ValueChangeEvent;
-import com.vaadin.data.Property.ValueChangeListener;
+import com.vaadin.event.selection.MultiSelectionEvent;
+import com.vaadin.event.selection.MultiSelectionListener;
 import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.VaadinServlet;
+import com.vaadin.server.data.ListDataSource;
 import com.vaadin.tests.AbstractTestUI;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.ListSelect;
 
 public class ListSelectOptionClick extends AbstractTestUI {
-
-    @WebServlet(value = { "/VAADIN/*",
-            "/ListSelectOptionClick/*" }, asyncSupported = true)
-    @VaadinServletConfiguration(productionMode = false, ui = ListSelectOptionClick.class)
-    public static class Servlet extends VaadinServlet {
-    }
 
     Label counterLbl = new Label();
     Label multiCounterLbl = new Label();
@@ -28,27 +20,30 @@ public class ListSelectOptionClick extends AbstractTestUI {
     protected void setup(VaadinRequest request) {
         ListSelect select = new ListSelect();
         counterLbl.setValue("0");
-        select.addItem("item1");
-        select.addItem("item2");
-        select.addItem("item3");
-        select.setValue("item1");
-        select.addValueChangeListener(new CounterListener(counterLbl, 0));
-        select.setNullSelectionAllowed(false);
+        List<String> options = new ArrayList<String>();
+        options.add("item1");
+        options.add("item2");
+        options.add("item3");
+        select.setDataSource(new ListDataSource<String>(options));
+        select.select("item1");
+        select.addSelectionListener(new CounterListener(counterLbl, 0));
+        // select.setNullSelectionAllowed(false);
 
         addComponent(select);
         counterLbl.setId("counterLbl");
         addComponent(counterLbl);
 
         ListSelect multiSelect = new ListSelect();
-        multiSelect.setMultiSelect(true);
         multiCounterLbl.setValue("0");
-        multiSelect.addItem("item1");
-        multiSelect.addItem("item2");
-        multiSelect.addItem("item3");
-        multiSelect.setValue(Collections.singletonList("item1"));
-        multiSelect.addValueChangeListener(
-                new CounterListener(multiCounterLbl, 0));
-        multiSelect.setNullSelectionAllowed(false);
+        options = new ArrayList<String>();
+        options.add("item1");
+        options.add("item2");
+        options.add("item3");
+        multiSelect.setDataSource(new ListDataSource<String>(options));
+        multiSelect.select("item1");
+        multiSelect
+                .addSelectionListener(new CounterListener(multiCounterLbl, 0));
+        // multiSelect.setNullSelectionAllowed(false);
 
         addComponent(multiSelect);
         multiCounterLbl.setId("multiCounterLbl");
@@ -66,7 +61,7 @@ public class ListSelectOptionClick extends AbstractTestUI {
         return null;
     }
 
-    private static class CounterListener implements ValueChangeListener {
+    private class CounterListener implements MultiSelectionListener<String> {
         int counter = 0;
         private Label counterLbl;
 
@@ -75,10 +70,10 @@ public class ListSelectOptionClick extends AbstractTestUI {
             counter = i;
         }
 
-        public void valueChange(ValueChangeEvent event) {
+        @Override
+        public void accept(MultiSelectionEvent<String> event) {
             counter++;
-            counterLbl.setValue(
-                    "" + counter + ": " + event.getProperty().getValue());
+            counterLbl.setValue("" + counter + ": " + event.getValue());
         }
     }
 }

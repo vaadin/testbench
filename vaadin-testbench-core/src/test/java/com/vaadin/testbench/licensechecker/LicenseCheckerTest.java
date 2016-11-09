@@ -69,7 +69,7 @@ public class LicenseCheckerTest {
         props.setProperty("vaadin.testbench.developer.license", "");
         String expectingMessage = "---------------------------------------------------------------------------------"
                 + NEW_LINE
-                + "License for Vaadin TestBench 4 not found. Go to vaadin.com/pro for more details."
+                + "License for Vaadin TestBench 5 not found. Go to vaadin.com/pro for more details."
                 + NEW_LINE
                 + "---------------------------------------------------------------------------------"
                 + NEW_LINE;
@@ -84,7 +84,7 @@ public class LicenseCheckerTest {
         props.setProperty("vaadin.testbench.developer.license", INVALID_KEY);
         String expectingMessage = "-------------------------------------------------------------------------------------"
                 + NEW_LINE
-                + "License for Vaadin TestBench 4 is not valid. Get a valid license from vaadin.com/pro"
+                + "License for Vaadin TestBench 5 is not valid. Get a valid license from vaadin.com/pro"
                 + NEW_LINE
                 + "-------------------------------------------------------------------------------------"
                 + NEW_LINE;

@@ -15,19 +15,10 @@
  */
 package com.vaadin.testUI;
 
-import javax.servlet.annotation.WebServlet;
-
-import com.vaadin.annotations.VaadinServletConfiguration;
-import com.vaadin.server.VaadinServlet;
 import com.vaadin.ui.CssLayout;
 
 public class ElementComponentGetCaptionCssLayout extends
         ElementComponentGetCaptionBase {
-
-    @WebServlet(value = { "/VAADIN/*", "/ElementComponentGetCaptionCssLayout/*" }, asyncSupported = true)
-    @VaadinServletConfiguration(productionMode = false, ui = ElementComponentGetCaptionCssLayout.class)
-    public static class Servlet extends VaadinServlet {
-    }
 
     public ElementComponentGetCaptionCssLayout() {
         mainLayout = new CssLayout();

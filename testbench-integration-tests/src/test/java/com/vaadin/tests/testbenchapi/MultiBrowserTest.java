@@ -47,9 +47,6 @@ public abstract class MultiBrowserTest extends PrivateTB3Configuration {
     protected List<DesiredCapabilities> getBrowsersExcludingIE() {
         List<DesiredCapabilities> browsers = new ArrayList<DesiredCapabilities>(
                 getAllBrowsers());
-        browsers.remove(BrowserUtil.ie8());
-        browsers.remove(BrowserUtil.ie9());
-        browsers.remove(BrowserUtil.ie10());
         browsers.remove(BrowserUtil.ie11());
         return browsers;
     }
@@ -62,9 +59,6 @@ public abstract class MultiBrowserTest extends PrivateTB3Configuration {
     public List<DesiredCapabilities> getAllBrowsers() {
         if (allBrowsers == null) {
             allBrowsers = new ArrayList<DesiredCapabilities>();
-            allBrowsers.add(BrowserUtil.ie8());
-            allBrowsers.add(BrowserUtil.ie9());
-            allBrowsers.add(BrowserUtil.ie10());
             allBrowsers.add(BrowserUtil.ie11());
             allBrowsers.add(BrowserUtil.firefox());
             allBrowsers.add(BrowserUtil.chrome());
