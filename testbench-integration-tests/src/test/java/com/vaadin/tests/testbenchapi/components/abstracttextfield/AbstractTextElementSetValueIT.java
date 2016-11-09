@@ -21,7 +21,6 @@ import org.junit.Test;
 
 import com.vaadin.testUI.AbstractTextElementSetValue;
 import com.vaadin.testbench.elements.AbstractTextFieldElement;
-import com.vaadin.testbench.elements.DateFieldElement;
 import com.vaadin.testbench.elements.LabelElement;
 import com.vaadin.testbench.elements.PasswordFieldElement;
 import com.vaadin.testbench.elements.TextAreaElement;
@@ -56,16 +55,6 @@ public class AbstractTextElementSetValueIT extends MultiBrowserTest {
     @Test
     public void textAreaSetValue() {
         checkType($(TextAreaElement.class).get(0), $(LabelElement.class).get(3));
-    }
-
-    @Test
-    public void dateFieldSetValue() {
-        DateFieldElement elem = $(DateFieldElement.class).get(0);
-        LabelElement eventCount = $(LabelElement.class).get(4);
-        // we can type any string in date field element
-        elem.setValue(TYPED_STRING);
-        Assert.assertEquals(TYPED_STRING, elem.getValue());
-        Assert.assertEquals("1", eventCount.getText());
     }
 
     // helper methods

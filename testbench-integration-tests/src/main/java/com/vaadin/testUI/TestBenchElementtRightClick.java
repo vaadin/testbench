@@ -1,22 +1,14 @@
 package com.vaadin.testUI;
 
-import javax.servlet.annotation.WebServlet;
-
-import com.vaadin.annotations.VaadinServletConfiguration;
-import com.vaadin.event.ItemClickEvent;
-import com.vaadin.event.ItemClickEvent.ItemClickListener;
 import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.VaadinServlet;
 import com.vaadin.shared.MouseEventDetails.MouseButton;
 import com.vaadin.tests.AbstractTestUI;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Table;
+import com.vaadin.v7.event.ItemClickEvent;
+import com.vaadin.v7.event.ItemClickEvent.ItemClickListener;
+import com.vaadin.v7.ui.Table;
 
 public class TestBenchElementtRightClick extends AbstractTestUI {
-    @WebServlet(value = { "/VAADIN/*", "/TestBenchElementtRightClick/*" }, asyncSupported = true)
-    @VaadinServletConfiguration(productionMode = false, ui = TestBenchElementtRightClick.class)
-    public static class Servlet extends VaadinServlet {
-    }
 
     Table table = new Table();
     Label labelEvent = new Label();
@@ -32,7 +24,8 @@ public class TestBenchElementtRightClick extends AbstractTestUI {
         addComponent(labelEvent);
         labelEvent.setValue("InitialValue");
         table.addItemClickListener(new ItemClickListener() {
-
+            
+            @Override
             public void itemClick(ItemClickEvent event) {
                 if (event.getButton().equals(MouseButton.RIGHT)) {
                     labelEvent.setValue("RightClick");

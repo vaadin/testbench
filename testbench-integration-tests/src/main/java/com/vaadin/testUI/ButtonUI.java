@@ -15,12 +15,8 @@
  */
 package com.vaadin.testUI;
 
-import javax.servlet.annotation.WebServlet;
-
-import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.VaadinServlet;
 import com.vaadin.tests.AbstractTestUI;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Label;
@@ -38,11 +34,6 @@ public class ButtonUI extends AbstractTestUI {
     public static String QUITE_BUTTON_ID = "quiteButton";
     public static String QUITE_BUTTON_NO_CAPTION_ID = "quiteButton2";
     public static String NORMAL_BUTTON_ID = "normalButton";
-
-    @WebServlet(value = {"/VAADIN/*", "/ButtonUI/*"}, asyncSupported = true)
-    @VaadinServletConfiguration(productionMode = false, ui = ButtonUI.class)
-    public static class Servlet extends VaadinServlet {
-    }
 
     final TextField testedField = new TextField();
     final Label testedLabel = new Label();
@@ -79,6 +70,7 @@ public class ButtonUI extends AbstractTestUI {
         Button btn = new Button();
         btn.setId(NORMAL_BUTTON_ID);
         btn.addClickListener(new Button.ClickListener() {
+            @Override
             public void buttonClick(Button.ClickEvent event) {
                 try {
                     Thread.sleep(1000);
@@ -93,6 +85,7 @@ public class ButtonUI extends AbstractTestUI {
 
     private void addListener(Button button, final String clickEventText) {
         button.addClickListener(new Button.ClickListener() {
+            @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
                 testedField.setValue(clickEventText);
             }

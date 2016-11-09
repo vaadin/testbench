@@ -15,11 +15,11 @@
  */
 package com.vaadin.testUI;
 
-import javax.servlet.annotation.WebServlet;
+import java.util.ArrayList;
+import java.util.List;
 
-import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.VaadinServlet;
+import com.vaadin.server.data.ListDataSource;
 import com.vaadin.tests.AbstractTestUI;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.VerticalLayout;
@@ -30,10 +30,6 @@ import com.vaadin.ui.VerticalLayout;
  */
 @SuppressWarnings("serial")
 public class SelectByText extends AbstractTestUI {
-    @WebServlet(value = { "/VAADIN/*", "/SelectByText/*" }, asyncSupported = true)
-    @VaadinServletConfiguration(productionMode = false, ui = SelectByText.class)
-    public static class Servlet extends VaadinServlet {
-    }
 
     @Override
     protected void setup(VaadinRequest request) {
@@ -41,14 +37,19 @@ public class SelectByText extends AbstractTestUI {
         addComponent(layout);
 
         ComboBox combobox = new ComboBox();
-        combobox.addItem("Value 1");
-        combobox.addItem("(");
-        combobox.addItem("(Value");
-        combobox.addItem("Value 2");
-        combobox.addItem("Value(");
-        combobox.addItem("Value(i)");
-        combobox.addItem("((Test ) selectByTest() method(with' parentheses)((");
-        combobox.addItem("Value 3");
+        List<String> options = new ArrayList<String>();
+
+        options.add("Value 1");
+        options.add("(");
+        options.add("(Value");
+        options.add("Value 2");
+        options.add("Value(");
+        options.add("Value(i)");
+        options.add("((Test ) selectByTest() method(with' parentheses)((");
+        options.add("Value 3");
+
+        combobox.setDataSource(new ListDataSource<String>(options));
+
         layout.addComponent(combobox);
     }
 

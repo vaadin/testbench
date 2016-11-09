@@ -1,30 +1,23 @@
 package com.vaadin.testUI;
 
+import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
 
-import javax.servlet.annotation.WebServlet;
-
-import com.vaadin.annotations.VaadinServletConfiguration;
-import com.vaadin.data.Property.ValueChangeEvent;
-import com.vaadin.data.Property.ValueChangeListener;
+import com.vaadin.data.HasValue.ValueChangeEvent;
+import com.vaadin.data.HasValue.ValueChangeListener;
 import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.VaadinServlet;
 import com.vaadin.tests.AbstractTestUI;
 import com.vaadin.ui.DateField;
 import com.vaadin.ui.Label;
 
 public class DateFieldPopupSetValue extends AbstractTestUI {
 
-    @WebServlet(value = { "/VAADIN/*", "/DateFieldPopupSetValue/*" }, asyncSupported = true)
-    @VaadinServletConfiguration(productionMode = false, ui = DateFieldPopupSetValue.class)
-    public static class Servlet extends VaadinServlet {
-    }
-
     public Calendar calendar = Calendar.getInstance();
 
-    public static Date initialDate = new Date(2015, 3, 12);
+    public static LocalDate initialDate = LocalDate.of(2015, 4, 12);
     public static Date changedDate = new Date(2015, 5, 11);
+
     Label counterLbl = new Label();
 
     @Override
@@ -48,10 +41,11 @@ public class DateFieldPopupSetValue extends AbstractTestUI {
         return 15092;
     }
 
-    private class EventCounter implements ValueChangeListener {
+    private class EventCounter implements ValueChangeListener<LocalDate> {
         private int counter = 0;
 
-        public void valueChange(ValueChangeEvent event) {
+        @Override
+        public void accept(ValueChangeEvent<LocalDate> event) {
             counter++;
             counterLbl.setValue("" + counter);
         }

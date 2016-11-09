@@ -1,21 +1,11 @@
 package com.vaadin.testUI;
 
-import javax.servlet.annotation.WebServlet;
-
-import com.vaadin.annotations.VaadinServletConfiguration;
-import com.vaadin.event.LayoutEvents;
 import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.VaadinServlet;
 import com.vaadin.tests.AbstractTestUI;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Window;
 
 public class WindowUI extends AbstractTestUI {
-
-    @WebServlet(value = { "/VAADIN/*", "/WindowUI/*" }, asyncSupported = true)
-    @VaadinServletConfiguration(productionMode = false, ui = WindowUI.class)
-    public static class Servlet extends VaadinServlet {
-    }
 
     @Override
     protected void setup(VaadinRequest request) {

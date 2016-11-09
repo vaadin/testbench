@@ -15,11 +15,7 @@
  */
 package com.vaadin.testUI;
 
-import javax.servlet.annotation.WebServlet;
-
-import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.VaadinServlet;
 import com.vaadin.tests.AbstractTestUI;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.MenuBar.Command;
@@ -30,11 +26,6 @@ import com.vaadin.ui.MenuBar.MenuItem;
  */
 @SuppressWarnings("serial")
 public class MenuBarUI extends AbstractTestUI {
-
-    @WebServlet(value = { "/VAADIN/*", "/MenuBarUI/*" }, asyncSupported = true)
-    @VaadinServletConfiguration(productionMode = false, ui = MenuBarUI.class)
-    public static class Servlet extends VaadinServlet {
-    }
 
     @Override
     protected void setup(VaadinRequest request) {
@@ -84,6 +75,7 @@ public class MenuBarUI extends AbstractTestUI {
 
     private class MenuBarCommand implements Command {
 
+        @Override
         public void menuSelected(MenuItem selectedItem) {
         }
 
