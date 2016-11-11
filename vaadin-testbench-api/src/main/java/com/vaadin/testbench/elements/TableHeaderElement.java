@@ -3,6 +3,7 @@ package com.vaadin.testbench.elements;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
+@Deprecated
 public class TableHeaderElement extends AbstractComponentElement {
 
     @Override

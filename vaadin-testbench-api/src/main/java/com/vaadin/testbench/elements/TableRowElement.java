@@ -8,6 +8,7 @@ import com.vaadin.testbench.By;
 import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.testbench.exceptions.NoSuchColumnException;
 
+@Deprecated
 public class TableRowElement extends AbstractComponentElement {
 
     /**
