@@ -35,9 +35,6 @@ public class VaadinBrowserFactory extends DefaultBrowserFactory {
         defaultBrowserVersion.put(Browser.CHROME, "40");
         defaultBrowserVersion.put(Browser.PHANTOMJS, "1");
         defaultBrowserVersion.put(Browser.SAFARI, "7");
-        defaultBrowserVersion.put(Browser.IE8, "8");
-        defaultBrowserVersion.put(Browser.IE9, "9");
-        defaultBrowserVersion.put(Browser.IE10, "10");
         defaultBrowserVersion.put(Browser.IE11, "11");
         defaultBrowserVersion.put(Browser.FIREFOX, "24");
     }
@@ -47,9 +44,6 @@ public class VaadinBrowserFactory extends DefaultBrowserFactory {
         defaultBrowserPlatform.put(Browser.CHROME, Platform.VISTA);
         defaultBrowserPlatform.put(Browser.PHANTOMJS, Platform.LINUX);
         defaultBrowserPlatform.put(Browser.SAFARI, Platform.MAC);
-        defaultBrowserPlatform.put(Browser.IE8, Platform.WINDOWS);
-        defaultBrowserPlatform.put(Browser.IE9, Platform.WINDOWS);
-        defaultBrowserPlatform.put(Browser.IE10, Platform.WINDOWS);
         defaultBrowserPlatform.put(Browser.IE11, Platform.WINDOWS);
         defaultBrowserPlatform.put(Browser.FIREFOX, Platform.XP);
     }

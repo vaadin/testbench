@@ -2,21 +2,13 @@ package com.vaadin.testUI;
 
 import static java.util.Calendar.DAY_OF_MONTH;
 
-import javax.servlet.annotation.WebServlet;
-
-import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.VaadinServlet;
 import com.vaadin.tests.AbstractTestUI;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.Calendar;
+import com.vaadin.v7.ui.Calendar;
 
 public class CalendarUI extends AbstractTestUI {
 
-    @WebServlet(value = { "/VAADIN/*", "/CalendarUI/*" }, asyncSupported = true)
-    @VaadinServletConfiguration(productionMode = false, ui = CalendarUI.class)
-    public static class Servlet extends VaadinServlet {
-    }
 
     @Override
     protected void setup(VaadinRequest request) {
@@ -26,6 +18,7 @@ public class CalendarUI extends AbstractTestUI {
         Button monthView = new Button("Month view");
         monthView.setId("month-view");
         monthView.addClickListener(new Button.ClickListener() {
+            @Override
             public void buttonClick(Button.ClickEvent event) {
                 java.util.Calendar javaCalendar = java.util.Calendar
                         .getInstance();
