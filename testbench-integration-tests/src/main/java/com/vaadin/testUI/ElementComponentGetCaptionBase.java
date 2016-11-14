@@ -6,26 +6,25 @@ import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.Accordion;
 import com.vaadin.ui.BrowserFrame;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.CheckBox;
+import com.vaadin.ui.CheckBoxGroup;
 import com.vaadin.ui.ColorPicker;
+import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
+import com.vaadin.ui.DateField;
 import com.vaadin.ui.Flash;
 import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.Grid;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
+import com.vaadin.ui.ListSelect;
+import com.vaadin.ui.RadioButtonGroup;
+import com.vaadin.ui.TextArea;
+import com.vaadin.ui.TextField;
+import com.vaadin.ui.TwinColSelect;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.v7.ui.CheckBox;
-import com.vaadin.v7.ui.ComboBox;
-import com.vaadin.v7.ui.DateField;
-import com.vaadin.v7.ui.ListSelect;
-import com.vaadin.v7.ui.OptionGroup;
-import com.vaadin.v7.ui.Table;
-import com.vaadin.v7.ui.TextArea;
-import com.vaadin.v7.ui.TextField;
-import com.vaadin.v7.ui.Tree;
-import com.vaadin.v7.ui.TreeTable;
-import com.vaadin.v7.ui.TwinColSelect;
 
 /*
  * Copyright 2000-2014 Vaadin Ltd.
@@ -54,7 +53,10 @@ public abstract class ElementComponentGetCaptionBase extends AbstractTestUI {
     AbstractLayout mainLayout = null;
     // default captions for all elements
     public static final String[] DEFAULT_CAPTIONS = { "Combobox", "button",
-            "table", "treeTable", "tree", "TwinColSelect", "optionGroup",
+            "grid",
+            "CheckBoxGroup",
+            "RadioButtonGroup",
+            "TwinColSelect",
             "ListSelect", "ColorPicker", "Accordion", "Image", "Flash",
             "BrowserFrame", "CheckBox", "TextField", "TextArea", "DateField",
             "VerticalLayout", "HorizontalLayout", "FormLayout", "GridLayout",
@@ -62,9 +64,14 @@ public abstract class ElementComponentGetCaptionBase extends AbstractTestUI {
 
     @Override
     protected void setup(VaadinRequest request) {
-        Component[] comps = { new ComboBox(), new Button(), new Table(),
-                new TreeTable(), new Tree(), new TwinColSelect(),
-                new OptionGroup(), new ListSelect(), new ColorPicker(),
+        Component[] comps = {
+                new ComboBox(),
+                new Button(),
+                new Grid(),
+                new CheckBoxGroup(),
+                new RadioButtonGroup(),
+                new TwinColSelect(),
+                new ListSelect(), new ColorPicker(),
                 new Accordion(), new Image(), new Flash(), new BrowserFrame(),
                 new CheckBox(), new TextField(), new TextArea(),
                 new DateField(), new VerticalLayout(), new HorizontalLayout(),

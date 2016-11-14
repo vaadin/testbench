@@ -1,6 +1,6 @@
 package com.vaadin.tests.testbenchapi;
 
-import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -9,12 +9,13 @@ import org.junit.Test;
 import com.vaadin.testUI.ComponentElementGetValue;
 import com.vaadin.testbench.elements.AbstractTextFieldElement;
 import com.vaadin.testbench.elements.CheckBoxElement;
+import com.vaadin.testbench.elements.CheckBoxGroupElement;
 import com.vaadin.testbench.elements.ComboBoxElement;
 import com.vaadin.testbench.elements.DateFieldElement;
 import com.vaadin.testbench.elements.ListSelectElement;
 import com.vaadin.testbench.elements.NativeSelectElement;
-import com.vaadin.testbench.elements.OptionGroupElement;
 import com.vaadin.testbench.elements.PasswordFieldElement;
+import com.vaadin.testbench.elements.RadioButtonGroupElement;
 import com.vaadin.testbench.elements.TextAreaElement;
 import com.vaadin.testbench.elements.TextFieldElement;
 import com.vaadin.testbench.elements.TwinColSelectElement;
@@ -67,8 +68,16 @@ public class ComponentElementGetValueIT extends MultiBrowserTest {
     }
 
     @Test
-    public void checkOptionGroup() {
-        OptionGroupElement elem = $(OptionGroupElement.class).get(0);
+    public void checkCheckBoxGroup() {
+        CheckBoxGroupElement elem = $(CheckBoxGroupElement.class).get(0);
+        String expected = ComponentElementGetValue.TEST_STRING_VALUE;
+        String actual = elem.getValue();
+        Assert.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void checkRadioButtonGroup() {
+        RadioButtonGroupElement elem = $(RadioButtonGroupElement.class).get(0);
         String expected = ComponentElementGetValue.TEST_STRING_VALUE;
         String actual = elem.getValue();
         Assert.assertEquals(expected, actual);
@@ -111,8 +120,8 @@ public class ComponentElementGetValueIT extends MultiBrowserTest {
     @Test
     public void checkDateField() {
         DateFieldElement df = $(DateFieldElement.class).get(0);
-        SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
-        String expected = format1
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String expected = formatter
                 .format(ComponentElementGetValue.TEST_DATE_VALUE);
         String actual = df.getValue();
         Assert.assertEquals(expected, actual);

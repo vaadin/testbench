@@ -11,21 +11,20 @@ import com.vaadin.testbench.elements.AccordionElement;
 import com.vaadin.testbench.elements.BrowserFrameElement;
 import com.vaadin.testbench.elements.ButtonElement;
 import com.vaadin.testbench.elements.CheckBoxElement;
+import com.vaadin.testbench.elements.CheckBoxGroupElement;
 import com.vaadin.testbench.elements.ColorPickerElement;
 import com.vaadin.testbench.elements.ComboBoxElement;
 import com.vaadin.testbench.elements.DateFieldElement;
 import com.vaadin.testbench.elements.FlashElement;
 import com.vaadin.testbench.elements.FormLayoutElement;
+import com.vaadin.testbench.elements.GridElement;
 import com.vaadin.testbench.elements.GridLayoutElement;
 import com.vaadin.testbench.elements.HorizontalLayoutElement;
 import com.vaadin.testbench.elements.ImageElement;
 import com.vaadin.testbench.elements.ListSelectElement;
-import com.vaadin.testbench.elements.OptionGroupElement;
-import com.vaadin.testbench.elements.TableElement;
+import com.vaadin.testbench.elements.RadioButtonGroupElement;
 import com.vaadin.testbench.elements.TextAreaElement;
 import com.vaadin.testbench.elements.TextFieldElement;
-import com.vaadin.testbench.elements.TreeElement;
-import com.vaadin.testbench.elements.TreeTableElement;
 import com.vaadin.testbench.elements.TwinColSelectElement;
 import com.vaadin.testbench.elements.VerticalLayoutElement;
 
@@ -75,20 +74,22 @@ public abstract class ElementComponentGetCaptionBaseIT extends
     }
 
     @Test
-    public void getTableCaptionTest() {
-        TableElement elem = mainLayout.$(TableElement.class).get(0);
+    public void getGridCaptionTest() {
+        GridElement elem = mainLayout.$(GridElement.class).get(0);
         testCaption(elem, 2);
     }
 
     @Test
-    public void getTreeTableCaptionTest() {
-        TreeTableElement elem = mainLayout.$(TreeTableElement.class).get(0);
+    public void getCheckBoxGroupCaptionTest() {
+        CheckBoxGroupElement elem = mainLayout.$(CheckBoxGroupElement.class)
+                .get(0);
         testCaption(elem, 3);
     }
 
     @Test
-    public void getTreeCaptionTest() {
-        TreeElement elem = mainLayout.$(TreeElement.class).get(0);
+    public void getRadioButtonGroupCaptionTest() {
+        RadioButtonGroupElement elem = mainLayout.$(
+                RadioButtonGroupElement.class).get(0);
         testCaption(elem, 4);
     }
 
@@ -100,96 +101,90 @@ public abstract class ElementComponentGetCaptionBaseIT extends
     }
 
     @Test
-    public void getOptionGroupCaptionTest() {
-        OptionGroupElement elem = mainLayout.$(OptionGroupElement.class).get(0);
-        testCaption(elem, 6);
-    }
-
-    @Test
     public void getListSelectCaptionTest() {
         ListSelectElement elem = mainLayout.$(ListSelectElement.class).get(0);
-        testCaption(elem, 7);
+        testCaption(elem, 6);
     }
 
     @Test
     public void getColorPickerCaptionTest() {
         ColorPickerElement elem = mainLayout.$(ColorPickerElement.class).get(0);
-        testCaption(elem, 8);
+        testCaption(elem, 7);
     }
 
     @Test
     public void getAccordionCaptionTest() {
         AccordionElement elem = mainLayout.$(AccordionElement.class).get(0);
-        testCaption(elem, 9);
+        testCaption(elem, 8);
     }
 
     @Test
     public void getImageCaptionTest() {
         ImageElement elem = mainLayout.$(ImageElement.class).get(0);
-        testCaption(elem, 10);
+        testCaption(elem, 9);
     }
 
     @Test
     public void getFlashCaptionTest() {
         FlashElement elem = mainLayout.$(FlashElement.class).get(0);
-        testCaption(elem, 11);
+        testCaption(elem, 10);
     }
 
     @Test
     public void getBrowserFrameCaptionTest() {
         BrowserFrameElement elem = mainLayout.$(BrowserFrameElement.class).get(
                 0);
-        testCaption(elem, 12);
+        testCaption(elem, 11);
     }
 
     @Test
     public void getCheckBoxCaptionTest() {
         CheckBoxElement elem = mainLayout.$(CheckBoxElement.class).get(0);
-        testCaption(elem, 13);
+        testCaption(elem, 12);
     }
 
     @Test
     public void getTextFieldCaptionTest() {
         TextFieldElement elem = mainLayout.$(TextFieldElement.class).get(0);
-        testCaption(elem, 14);
+        testCaption(elem, 13);
     }
 
     @Test
     public void getTextAreaCaptionTest() {
         TextAreaElement elem = mainLayout.$(TextAreaElement.class).get(0);
-        testCaption(elem, 15);
+        testCaption(elem, 14);
     }
 
     @Test
     public void getDateFieldCaptionTest() {
         DateFieldElement elem = mainLayout.$(DateFieldElement.class).get(0);
-        testCaption(elem, 16);
+        testCaption(elem, 15);
     }
 
     @Test
     public void getVerticalLayoutCaptionTest() {
         VerticalLayoutElement elem = mainLayout.$(VerticalLayoutElement.class)
                 .get(0);
-        testCaption(elem, 17);
+        testCaption(elem, 16);
     }
 
     @Test
     public void getHorizontalLayoutCaptionTest() {
         HorizontalLayoutElement elem = mainLayout.$(
                 HorizontalLayoutElement.class).get(0);
-        testCaption(elem, 18);
+        testCaption(elem, 17);
     }
 
     @Test
     public void getFormLayoutCaptionTest() {
         FormLayoutElement elem = mainLayout.$(FormLayoutElement.class).get(0);
-        testCaption(elem, 19);
+        testCaption(elem, 18);
     }
 
     @Test
     public void getGridLayoutCaptionTest() {
         GridLayoutElement elem = mainLayout.$(GridLayoutElement.class).get(0);
-        testCaption(elem, 20);
+        testCaption(elem, 19);
     }
 
     private void testCaption(AbstractComponentElement elem, int caption_index) {
