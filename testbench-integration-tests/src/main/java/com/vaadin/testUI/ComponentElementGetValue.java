@@ -106,7 +106,6 @@ public class ComponentElementGetValue extends AbstractTestUI {
             field.setValue(TEST_STRING_VALUE);
             String value = FIELD_VALUES[i];
             field.addValueChangeListener(event -> {
-                valueChangeLabel.setValue("");
                 valueChangeLabel.setValue(value);
             });
             addComponent(field);
