@@ -156,4 +156,9 @@ public class TestBenchElementTest {
 
         return TestBenchElement.wrapElement(webElement, null);
     }
+
+    @Test
+    public void wrapNullElement() {
+        Assert.assertNull(TestBenchElement.wrapElement(null, null));
+    }
 }

@@ -18,15 +18,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javassist.util.proxy.MethodFilter;
-import javassist.util.proxy.MethodHandler;
-import javassist.util.proxy.ProxyFactory;
-
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.tools.LicenseChecker;
+
+import javassist.util.proxy.MethodFilter;
+import javassist.util.proxy.MethodHandler;
+import javassist.util.proxy.ProxyFactory;
 
 /**
  */
@@ -126,11 +126,14 @@ public class TestBench {
      *            Selenium WebElement to be wrapped into given Class
      * @param tbCommandExecutor
      *            TestBenchCommandExecutor instance
-     * @return Element of given Class wrapping given WebElement
+     * @return an element of the given class wrapping given the given
+     *         WebElement, or <code>null</code> if the element is null
      */
     public static <T extends TestBenchElement> T createElement(Class<T> clazz,
             WebElement webElement, TestBenchCommandExecutor tbCommandExecutor) {
-
+        if (webElement == null) {
+            return null;
+        }
         Set<Class<?>> allInterfaces = extractInterfaces(webElement);
 
         final Class<?>[] allInterfacesArray = allInterfaces
