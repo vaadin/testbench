@@ -15,6 +15,7 @@ package com.vaadin.testbench.elements;
 import com.vaadin.testbench.elementsbase.ServerClass;
 
 @ServerClass("com.vaadin.ui.PopupDateField")
+@Deprecated
 public class PopupDateFieldElement extends DateFieldElement {
 
 }

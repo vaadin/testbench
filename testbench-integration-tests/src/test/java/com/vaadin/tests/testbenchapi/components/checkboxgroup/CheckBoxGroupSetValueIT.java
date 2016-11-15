@@ -1,22 +1,23 @@
-package com.vaadin.tests.testbenchapi.components.optiongroup;
+package com.vaadin.tests.testbenchapi.components.checkboxgroup;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.vaadin.testbench.elements.OptionGroupElement;
+import com.vaadin.testbench.elements.CheckBoxGroupElement;
 import com.vaadin.tests.testbenchapi.MultiBrowserTest;
 
-public class OptionGroupSetValueIT extends MultiBrowserTest {
+public class CheckBoxGroupSetValueIT extends MultiBrowserTest {
 
     private static final String NEW_VALUE = "item2";
 
-    private OptionGroupElement group;
+    private CheckBoxGroupElement group;
 
     @Before
     public void init() {
-        openTestURL("theme=reindeer");
-        group = $(OptionGroupElement.class).first();
+        openTestURL();
+        group = $(CheckBoxGroupElement.class).first();
+
     }
 
     @Test

@@ -5,6 +5,7 @@ import java.util.List;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
+@Deprecated
 public class TreeTableRowElement extends TableRowElement {
 
     /**

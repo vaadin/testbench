@@ -20,6 +20,7 @@ import org.openqa.selenium.WebElement;
 import com.vaadin.testbench.elementsbase.ServerClass;
 
 @ServerClass("com.vaadin.ui.Tree")
+@Deprecated
 public class TreeElement extends AbstractSelectElement {
     /**
      * Returns selected item of the tree. In multiselect mode returns first

@@ -20,6 +20,7 @@ import org.openqa.selenium.WebElement;
 import com.vaadin.testbench.elementsbase.ServerClass;
 
 @ServerClass("com.vaadin.ui.Calendar")
+@Deprecated
 public class CalendarElement extends AbstractComponentElement {
     public List<WebElement> getWeekNumbers() {
         return findElements(By.className("v-calendar-week-number"));
