@@ -15,31 +15,27 @@ import com.vaadin.tests.testbenchapi.MultiBrowserTest;
 
 public class ListSelectOptionClickIT extends MultiBrowserTest {
     ListSelectElement select;
-    ListSelectElement multiSelect;
     LabelElement counterLbl;
-    LabelElement multiCounterLbl;
-    int oneBasedIndex = 2;
 
     @Before
     public void init() {
         openTestURL();
         select = $(ListSelectElement.class).first();
-        multiSelect = $(ListSelectElement.class).get(1);
-        counterLbl = $(LabelElement.class).id("counterLbl");
-        multiCounterLbl = $(LabelElement.class).id("multiCounterLbl");
+        counterLbl = $(LabelElement.class).id("multiCounterLbl");
     }
 
     @Test
-    @Ignore("needs to be fixed for TB5")
+    @Ignore("depends on framework8-issues/issues/464 fix")
     public void testOptionClick() {
-        List<WebElement> options = select.findElements(By.tagName("option"));
+        List<WebElement> options = select.findElements(By
+                .tagName("option"));
         WebElement option = options.get(1);
         option.click();
         checkValueChanged();
     }
 
     @Test
-    @Ignore("needs to be fixed for TB5")
+    @Ignore("depends on framework8-issues/issues/464 fix")
     public void testSelectByText() {
         select.selectByText("item2");
         checkValueChanged();
@@ -47,13 +43,12 @@ public class ListSelectOptionClickIT extends MultiBrowserTest {
 
     @Test
     public void testMultiSelectDeselectByText() {
-        multiSelect.selectByText("item2");
-        Assert.assertEquals("1: [item1, item2]", multiCounterLbl.getText());
-        multiSelect.selectByText("item3");
-        Assert.assertEquals("2: [item1, item2, item3]",
-                multiCounterLbl.getText());
-        multiSelect.deselectByText("item2");
-        Assert.assertEquals("3: [item1, item3]", multiCounterLbl.getText());
+        select.selectByText("item2");
+        Assert.assertEquals("1: [item1, item2]", counterLbl.getText());
+        select.selectByText("item3");
+        Assert.assertEquals("2: [item1, item2, item3]", counterLbl.getText());
+        select.deselectByText("item2");
+        Assert.assertEquals("3: [item1, item3]", counterLbl.getText());
     }
 
     /*

@@ -2,37 +2,49 @@ package com.vaadin.testUI;
 
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.tests.AbstractTestUI;
-import com.vaadin.v7.ui.AbstractField;
-import com.vaadin.v7.ui.CheckBox;
-import com.vaadin.v7.ui.ComboBox;
-import com.vaadin.v7.ui.DateField;
-import com.vaadin.v7.ui.Form;
-import com.vaadin.v7.ui.ListSelect;
-import com.vaadin.v7.ui.NativeSelect;
-import com.vaadin.v7.ui.OptionGroup;
-import com.vaadin.v7.ui.PasswordField;
-import com.vaadin.v7.ui.ProgressBar;
-import com.vaadin.v7.ui.RichTextArea;
-import com.vaadin.v7.ui.Slider;
-import com.vaadin.v7.ui.Table;
-import com.vaadin.v7.ui.TextArea;
-import com.vaadin.v7.ui.TextField;
-import com.vaadin.v7.ui.Tree;
-import com.vaadin.v7.ui.TwinColSelect;
+import com.vaadin.ui.AbstractField;
+import com.vaadin.ui.AbstractMultiSelect;
+import com.vaadin.ui.AbstractSingleSelect;
+import com.vaadin.ui.CheckBox;
+import com.vaadin.ui.CheckBoxGroup;
+import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.DateField;
+import com.vaadin.ui.Grid;
+import com.vaadin.ui.ListSelect;
+import com.vaadin.ui.NativeSelect;
+import com.vaadin.ui.PasswordField;
+import com.vaadin.ui.RadioButtonGroup;
+import com.vaadin.ui.RichTextArea;
+import com.vaadin.ui.Slider;
+import com.vaadin.ui.TextArea;
+import com.vaadin.ui.TextField;
+import com.vaadin.ui.TwinColSelect;
 
 public class AbstractFieldElementSetValueReadOnly extends AbstractTestUI {
 
-    AbstractField<?>[] elems = { new ComboBox(), new ListSelect(),
-            new NativeSelect(), new OptionGroup(), new Table(), new Tree(),
-            new TwinColSelect(), new TextArea(), new TextField(),
-            new DateField(), new PasswordField(), new CheckBox(), new Form(),
-            new ProgressBar(), new RichTextArea(), new Slider() };
+    private AbstractField<?>[] fields = {
+            new TextArea(), new TextField(),
+            new DateField(), new PasswordField(), new CheckBox(),
+            new RichTextArea(), new Slider() };
+    private AbstractMultiSelect<?>[] multiSelects = { new ListSelect(),
+            new CheckBoxGroup(), new TwinColSelect() };
+    private AbstractSingleSelect<?>[] singleSelects = { new ComboBox(),
+            new NativeSelect(),
+            new RadioButtonGroup(), new Grid() };
 
     @Override
     protected void setup(VaadinRequest request) {
-        for (int i = 0; i < elems.length; i++) {
-            elems[i].setReadOnly(true);
-            addComponent(elems[i]);
+        for (AbstractField field : fields) {
+            field.setReadOnly(true);
+            addComponent(field);
+        }
+        for (AbstractMultiSelect multiSelect : multiSelects) {
+            multiSelect.setReadOnly(true);
+            addComponent(multiSelect);
+        }
+        for (AbstractSingleSelect singleSelect : singleSelects) {
+            singleSelect.setReadOnly(true);
+            addComponent(singleSelect);
         }
     }
 

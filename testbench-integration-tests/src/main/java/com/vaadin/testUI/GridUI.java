@@ -1,16 +1,14 @@
 package com.vaadin.testUI;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import com.vaadin.server.VaadinRequest;
+import com.vaadin.server.data.DataSource;
+import com.vaadin.server.data.ListDataSource;
 import com.vaadin.tests.AbstractTestUI;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Button.ClickListener;
-import com.vaadin.ui.Component;
+import com.vaadin.ui.Grid;
 import com.vaadin.ui.Label;
-import com.vaadin.v7.data.Item;
-import com.vaadin.v7.data.util.IndexedContainer;
-import com.vaadin.v7.event.ItemClickEvent;
-import com.vaadin.v7.ui.Grid;
 
 public class GridUI extends AbstractTestUI {
 
@@ -20,48 +18,35 @@ public class GridUI extends AbstractTestUI {
         if (request.getParameter("rowCount") != null) {
             rowCount = Integer.parseInt(request.getParameter("rowCount"));
         }
-        IndexedContainer container = new IndexedContainer();
 
-        container.addContainerProperty("foo", String.class, null);
-        container.addContainerProperty("bar", String.class, null);
 
-        for (int i = 0; i < rowCount; i++) {
-            final Item item = container.addItem(i);
-            item.getItemProperty("foo").setValue("foo " + i);
-            item.getItemProperty("bar").setValue("bar " + i);
-        }
+        DataSource<Item> ds = getMockData(rowCount);
+        final Grid<Item> grid = new Grid<Item>();
+        grid.setDataSource(ds);
+        grid.addColumn("foo", Item::getFoo);
+        grid.addColumn("bar", Item::getBar);
 
-        final Grid grid = new Grid(container);
-        grid.setDetailsGenerator(new Grid.DetailsGenerator() {
-            @Override
-            public Component getDetails(Grid.RowReference rowReference) {
-                final Item item = rowReference.getItem();
-                return new Label("Foo = "
-                        + item.getItemProperty("foo").getValue() + " Bar = "
-                        + item.getItemProperty("bar").getValue());
-            }
+        grid.setDetailsGenerator(item -> {
+            return new Label("Foo = " + item.getFoo() + " Bar = "
+                    + item.getBar());
         });
-
-        grid.addItemClickListener(new ItemClickEvent.ItemClickListener() {
-            @Override
-            public void itemClick(ItemClickEvent itemClickEvent) {
-                if (itemClickEvent.isDoubleClick()) {
-                    Object itemId = itemClickEvent.getItemId();
-                    grid.setDetailsVisible(itemId,
-                            !grid.isDetailsVisible(itemId));
-                }
+        grid.addItemClickListener(event -> {
+            if (event.getMouseEventDetails().isDoubleClick()) {
+                grid.setDetailsVisible(event.getItem(),
+                        !grid.isDetailsVisible(event.getItem()));
             }
         });
 
         addComponent(grid);
-        addComponent(new Button("Scroll to 10", new ClickListener() {
+    }
 
-            @Override
-            public void buttonClick(ClickEvent event) {
-                grid.scrollTo(grid.getContainerDataSource().getIdByIndex(10));
-
-            }
-        }));
+    private DataSource<Item> getMockData(int rowCount) {
+        Collection<Item> data = new ArrayList<Item>();
+        for (int i = 0; i < rowCount; i++) {
+            Item item = new Item("foo " + i, "bar " + i);
+            data.add(item);
+        }
+        return new ListDataSource<Item>(data);
     }
 
     @Override
@@ -72,5 +57,23 @@ public class GridUI extends AbstractTestUI {
     @Override
     protected Integer getTicketNumber() {
         return null;
+    }
+
+    private class Item {
+        private String foo;
+        private String bar;
+
+        public Item(String foo, String bar) {
+            this.foo = foo;
+            this.bar = bar;
+        }
+
+        public String getFoo() {
+            return foo;
+        }
+
+        public String getBar() {
+            return bar;
+        }
     }
 }

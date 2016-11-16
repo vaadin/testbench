@@ -12,7 +12,15 @@
  */
 package com.vaadin.testbench;
 
-import static org.easymock.EasyMock.*;
+import static org.easymock.EasyMock.anyObject;
+import static org.easymock.EasyMock.contains;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.createNiceMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.expectLastCall;
+import static org.easymock.EasyMock.isA;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -21,17 +29,18 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.junit.Ignore;
 import org.junit.Test;
-import org.openqa.selenium.*;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Capabilities;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriver.Navigation;
 import org.openqa.selenium.WebDriver.Options;
 import org.openqa.selenium.WebDriver.TargetLocator;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.internal.WrapsDriver;
 
-import com.vaadin.testbench.commands.TestBenchCommands;
 import com.vaadin.testbench.commands.TestBenchElementCommands;
 
 public class TestBenchDriverTest {
@@ -92,14 +101,6 @@ public class TestBenchDriverTest {
         assertEquals(mockTargetLocator, driver.switchTo());
 
         verify(mockDriver);
-    }
-
-    @Ignore("This opens a web browser window, so we (currently) shouldn't try to run it in any CI environment")
-    @Test
-    public void testAugmentedDriver() {
-        WebDriver driver = TestBench.createDriver(new FirefoxDriver());
-        assertTrue(driver instanceof TakesScreenshot);
-        driver.close();
     }
 
     @Test
