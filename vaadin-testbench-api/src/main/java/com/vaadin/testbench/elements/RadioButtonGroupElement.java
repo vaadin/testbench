@@ -20,9 +20,8 @@ import org.openqa.selenium.WebElement;
 import com.vaadin.testbench.By;
 import com.vaadin.testbench.elementsbase.ServerClass;
 
-@ServerClass("com.vaadin.ui.OptionGroup")
-@Deprecated
-public class OptionGroupElement extends AbstractSelectElement {
+@ServerClass("com.vaadin.ui.RadioButtonGroup")
+public class RadioButtonGroupElement extends AbstractSelectElement {
 
     private static org.openqa.selenium.By byButtonSpan = By
             .className("v-select-option");

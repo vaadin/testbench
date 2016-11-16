@@ -15,7 +15,7 @@
  */
 package com.vaadin.tests.testbenchapi;
 
-import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -24,13 +24,14 @@ import org.junit.Test;
 import com.vaadin.testUI.ComponentElementGetValue;
 import com.vaadin.testbench.elements.AbstractTextFieldElement;
 import com.vaadin.testbench.elements.CheckBoxElement;
+import com.vaadin.testbench.elements.CheckBoxGroupElement;
 import com.vaadin.testbench.elements.ComboBoxElement;
 import com.vaadin.testbench.elements.DateFieldElement;
 import com.vaadin.testbench.elements.LabelElement;
 import com.vaadin.testbench.elements.ListSelectElement;
 import com.vaadin.testbench.elements.NativeSelectElement;
-import com.vaadin.testbench.elements.OptionGroupElement;
 import com.vaadin.testbench.elements.PasswordFieldElement;
+import com.vaadin.testbench.elements.RadioButtonGroupElement;
 import com.vaadin.testbench.elements.TextAreaElement;
 import com.vaadin.testbench.elements.TextFieldElement;
 import com.vaadin.testbench.elements.TwinColSelectElement;
@@ -92,8 +93,8 @@ public class TestBenchElementClearValueIT extends MultiBrowserTest {
     @Test
     public void clearDateField() {
         DateFieldElement df = $(DateFieldElement.class).get(0);
-        SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
-        String expected = format1
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String expected = formatter
                 .format(ComponentElementGetValue.TEST_DATE_VALUE);
         String initial = df.getValue();
         Assert.assertEquals(expected, initial);
@@ -119,8 +120,13 @@ public class TestBenchElementClearValueIT extends MultiBrowserTest {
         elem.clear();
     }
 
-    public void clearOptionGroup() {
-        OptionGroupElement elem = $(OptionGroupElement.class).get(0);
+    public void clearCheckBoxGroup() {
+        CheckBoxGroupElement elem = $(CheckBoxGroupElement.class).get(0);
+        elem.clear();
+    }
+
+    public void clearRadioButtonGroup() {
+        RadioButtonGroupElement elem = $(RadioButtonGroupElement.class).get(0);
         elem.clear();
     }
 
@@ -138,7 +144,7 @@ public class TestBenchElementClearValueIT extends MultiBrowserTest {
         TwinColSelectElement elem = $(TwinColSelectElement.class).get(0);
         elem.clear();
         Assert.assertEquals("", elem.getValue());
-        Assert.assertEquals(ComponentElementGetValue.TWINCOL_VALUE_CHANGE,
+        Assert.assertEquals(ComponentElementGetValue.MULTI_SELECT_VALUE_CHANGE,
                 labelChangeValue.getText());
     }
 

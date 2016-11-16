@@ -15,5 +15,6 @@ package com.vaadin.testbench.elements;
 import com.vaadin.testbench.elementsbase.ServerClass;
 
 @ServerClass("com.vaadin.ui.Select")
+@Deprecated
 public class SelectElement extends ComboBoxElement {
 }

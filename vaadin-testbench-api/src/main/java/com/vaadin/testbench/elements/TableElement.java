@@ -12,17 +12,19 @@
  */
 package com.vaadin.testbench.elements;
 
-import com.vaadin.testbench.By;
-import com.vaadin.testbench.TestBenchElement;
-import com.vaadin.testbench.elementsbase.AbstractElement;
-import com.vaadin.testbench.elementsbase.ServerClass;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 
+import com.vaadin.testbench.By;
+import com.vaadin.testbench.TestBenchElement;
+import com.vaadin.testbench.elementsbase.AbstractElement;
+import com.vaadin.testbench.elementsbase.ServerClass;
+
 @ServerClass("com.vaadin.ui.Table")
+@Deprecated
 public class TableElement extends AbstractSelectElement {
 
     /**
