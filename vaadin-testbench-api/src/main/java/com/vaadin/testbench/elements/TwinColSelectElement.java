@@ -86,6 +86,15 @@ public class TwinColSelectElement extends AbstractSelectElement {
         return optionTexts;
     }
 
+    /**
+     * Functionality to find available option texts.
+     *
+     * @return List of visible text for available options
+     */
+    public List<String> getAvailableOptions() {
+        return getOptionsFromSelect(options);
+    }
+
     public void selectByText(String text) {
         options.selectByVisibleText(text);
         selButton.click();
