@@ -325,7 +325,7 @@ Again, run the test and verify that the build is successful by issuing the [lite
 
 You might feel that it is tedious to have to start and stop the jetty server.
 The good news is that Maven can do this for us automatically.
-The 'IT' in the test class name [classname]#AddressBookIT#, marks it as an Integration Test using the conventions of the Failsafe plugin. Wich results in the test being run in the [literal]#integration-test# phase of the Maven build.
+The 'IT' in the test class name [classname]#AddressBookIT#, marks it as an Integration Test using the conventions of the Failsafe plugin. Which results in the test being run in the [literal]#integration-test# phase of the Maven build.
 Next up: adding the Failsafe plugin declaration to the  [filename]#pom.xml# file.
 Open [filename]#pom.xml# and add the following declaration of the Failsafe plugin after the [literal]#<plugins># start tag directly inside of the [literal]#<build></build># tags:
 
