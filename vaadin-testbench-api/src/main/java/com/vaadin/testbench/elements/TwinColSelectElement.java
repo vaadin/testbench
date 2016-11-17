@@ -59,9 +59,7 @@ public class TwinColSelectElement extends AbstractSelectElement {
     }
 
     public void deselectByText(String text) {
-        if (selectedOptions.isMultiple()) {
-            selectedOptions.deselectAll();
-        }
+        selectedOptions.deselectAll();
         selectedOptions.selectByVisibleText(text);
         deselButton.click();
     }
@@ -97,6 +95,7 @@ public class TwinColSelectElement extends AbstractSelectElement {
     }
 
     public void selectByText(String text) {
+        options.deselectAll();
         options.selectByVisibleText(text);
         selButton.click();
     }
