@@ -1,5 +1,7 @@
 package com.vaadin.tests.testbenchapi.components.twincolselect;
 
+import java.util.List;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,6 +30,20 @@ public class TwinColSelectUIIT extends MultiBrowserTest {
                 multiCounterLbl.getText());
         multiSelect.deselectByText("item2");
         Assert.assertEquals("3: [item1, item3]", multiCounterLbl.getText());
+    }
+
+    @Test
+    public void testGetAvailableOptions() {
+        assertAvailableOptions("item2", "item3");
+        multiSelect.selectByText("item2");
+        assertAvailableOptions("item3");
+        multiSelect.deselectByText("item1");
+        assertAvailableOptions("item1", "item3");
+    }
+
+    private void assertAvailableOptions(String... items) {
+        List<String> optionTexts = multiSelect.getAvailableOptions();
+        Assert.assertArrayEquals(items, optionTexts.toArray());
     }
 
 }
