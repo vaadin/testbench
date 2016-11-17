@@ -53,10 +53,7 @@ public abstract class ElementComponentGetCaptionBase extends AbstractTestUI {
     AbstractLayout mainLayout = null;
     // default captions for all elements
     public static final String[] DEFAULT_CAPTIONS = { "Combobox", "button",
-            "grid",
-            "CheckBoxGroup",
-            "RadioButtonGroup",
-            "TwinColSelect",
+            "grid", "CheckBoxGroup", "RadioButtonGroup", "TwinColSelect",
             "ListSelect", "ColorPicker", "Accordion", "Image", "Flash",
             "BrowserFrame", "CheckBox", "TextField", "TextArea", "DateField",
             "VerticalLayout", "HorizontalLayout", "FormLayout", "GridLayout",
@@ -64,14 +61,9 @@ public abstract class ElementComponentGetCaptionBase extends AbstractTestUI {
 
     @Override
     protected void setup(VaadinRequest request) {
-        Component[] comps = {
-                new ComboBox(),
-                new Button(),
-                new Grid(),
-                new CheckBoxGroup(),
-                new RadioButtonGroup(),
-                new TwinColSelect(),
-                new ListSelect(), new ColorPicker(),
+        Component[] comps = { new ComboBox(), new Button(), new Grid(),
+                new CheckBoxGroup(), new RadioButtonGroup(),
+                new TwinColSelect(), new ListSelect(), new ColorPicker(),
                 new Accordion(), new Image(), new Flash(), new BrowserFrame(),
                 new CheckBox(), new TextField(), new TextArea(),
                 new DateField(), new VerticalLayout(), new HorizontalLayout(),
