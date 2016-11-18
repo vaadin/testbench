@@ -33,6 +33,14 @@ public class TwinColSelectUIIT extends MultiBrowserTest {
     }
 
     @Test
+    public void testDeselectSelectByText() {
+        multiSelect.deselectByText("item1");
+        Assert.assertEquals("1: []", multiCounterLbl.getText());
+        multiSelect.selectByText("item1");
+        Assert.assertEquals("2: [item1]", multiCounterLbl.getText());
+    }
+
+    @Test
     public void testGetAvailableOptions() {
         assertAvailableOptions("item2", "item3");
         multiSelect.selectByText("item2");
@@ -45,5 +53,4 @@ public class TwinColSelectUIIT extends MultiBrowserTest {
         List<String> optionTexts = multiSelect.getAvailableOptions();
         Assert.assertArrayEquals(items, optionTexts.toArray());
     }
-
 }

@@ -27,8 +27,7 @@ public class ListSelectOptionClickIT extends MultiBrowserTest {
     @Test
     @Ignore("depends on framework8-issues/issues/464 fix")
     public void testOptionClick() {
-        List<WebElement> options = select.findElements(By
-                .tagName("option"));
+        List<WebElement> options = select.findElements(By.tagName("option"));
         WebElement option = options.get(1);
         option.click();
         checkValueChanged();
@@ -49,6 +48,18 @@ public class ListSelectOptionClickIT extends MultiBrowserTest {
         Assert.assertEquals("2: [item1, item2, item3]", counterLbl.getText());
         select.deselectByText("item2");
         Assert.assertEquals("3: [item1, item3]", counterLbl.getText());
+    }
+
+    @Test
+    public void testDeselectSelectByText() {
+        select.deselectByText("item1");
+        Assert.assertEquals("1: []", counterLbl.getText());
+        select.selectByText("item1");
+        Assert.assertEquals("2: [item1]", counterLbl.getText());
+        select.selectByText("item3");
+        Assert.assertEquals("3: [item1, item3]", counterLbl.getText());
+        select.deselectByText("item1");
+        Assert.assertEquals("4: [item3]", counterLbl.getText());
     }
 
     /*
