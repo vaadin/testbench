@@ -66,7 +66,7 @@ and <<dummy/../../testbench/setup/testbench-license#testbench-license,"Installin
 In the Maven world, all test classes and resources live in the [filename]#src/test# directory, so create that directory.
 Continue by creating a java directory under that so that you end up with a [filename]#src/test/java# directory structure.
 
-Create a new file called [filename]#AddressBookTest.java# in the [filename]#src/test/java# directory.
+Create a new file called [filename]#AddressBookIT.java# in the [filename]#src/test/java# directory.
 
 First, make the class extend [classname]#TestBenchTestCase#:
 
@@ -75,7 +75,7 @@ First, make the class extend [classname]#TestBenchTestCase#:
 import com.vaadin.testbench.TestBenchTestCase;
 ...
 
-public class AddressBookTest extends TestBenchTestCase {
+public class AddressBookIT extends TestBenchTestCase {
    ...
 }
 ----
@@ -95,7 +95,7 @@ import org.junit.Before;
 import org.openqa.selenium.firefox.FirefoxDriver;
 ...
 
-public class AddressBookTest extends TestBenchTestCase {
+public class AddressBookIT extends TestBenchTestCase {
    @Before
    public void setUp() throws Exception {
        setDriver(new FirefoxDriver());
@@ -129,7 +129,7 @@ Run the test with the following command and observe that it opens up a Firefox b
 
 [subs="normal"]
 ----
-[command]#mvn# test
+[command]#mvn# verify
 ----
 
 [[testbench.tutorial.writing-tests.navigating]]
@@ -147,7 +147,7 @@ We will also make the test verify that the application is started by verifying t
 import com.vaadin.testbench.elements.GridElement;
 ...
 
-public class AddressBookTest extends TestBenchTestCase {
+public class AddressBookIT extends TestBenchTestCase {
    ...
 
    @Test
@@ -181,7 +181,7 @@ Now we are ready to build real test cases for the Address Book application.
 
 The first test will click the first row in the table and verify that a form containing the same information is shown.
 
-First, create a new test in the [classname]#AddressBookTest# class by copying the [methodname]#testAddressBook()# method and naming it [methodname]#testFormShowsCorrectData()#.
+First, create a new test in the [classname]#AddressBookIT# class by copying the [methodname]#testAddressBook()# method and naming it [methodname]#testFormShowsCorrectData()#.
 The test should do the following:
 
 . The contacts are shown using a Vaadin [classname]#Grid# component, so the test should find it using ElementQuery.
@@ -325,9 +325,7 @@ Again, run the test and verify that the build is successful by issuing the [lite
 
 You might feel that it is tedious to have to start and stop the jetty server.
 The good news is that Maven can do this for us automatically.
-First, we should make our tests run in the [literal]#integration-test# phase of the Maven build.
-To do this, we should rename our test class to  [classname]#AddressBookIT#, which marks it as an Integration Test using the conventions of the Failsafe plugin.
-Make sure the filename is also changed.
+The 'IT' in the test class name [classname]#AddressBookIT#, marks it as an Integration Test using the conventions of the Failsafe plugin. This results in the test being run in the [literal]#integration-test# phase of the Maven build.
 Next up: adding the Failsafe plugin declaration to the  [filename]#pom.xml# file.
 Open [filename]#pom.xml# and add the following declaration of the Failsafe plugin after the [literal]#<plugins># start tag directly inside of the [literal]#<build></build># tags:
 
