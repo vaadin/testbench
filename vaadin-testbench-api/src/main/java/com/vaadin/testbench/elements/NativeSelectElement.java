@@ -31,7 +31,7 @@ public class NativeSelectElement extends AbstractSelectElement {
     }
 
     public List<TestBenchElement> getOptions() {
-        return wrapElements(selectElement.getOptions(), getCommandExecutor());
+        return wrapElements(selectElement.getOptions(), getTestBenchCommandExecutor());
     }
 
     public void selectByText(String text) throws ReadOnlyException {
