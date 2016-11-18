@@ -478,32 +478,11 @@ img {
         TestBench is based on Selenium 2 and provides a WebDriver based API for controlling different browsers on
         multiple platforms.</p>
 
-    <h2 id="changes_since_2x">Changes in 4.2.0</h2>
+    <h2 id="changes_since_2x">Changes in 5.0</h2>
 
-    <ul> 
-    <li>Screen comparison is supported for individual elements through TestBenchElement.compareScreen</li>
-    <li>TestBenchElement can be compared with WebElement using equals()</li>
-    <li>TestBenchElement has getClassNames() and hasClassName(String) for testing class names</li>
-    <li>The last matching element can be retrieved using ElementQuery.last()</li>
-    <li>Removed Vaadin version detection which was broken in Liferay</li>
-    
-    <li>List selects in multiselect mode can be tested with PhantomJS</li>
-    <li>waitForVaadin is executed before each element method, eliminating timing issues in some tests</li>
-    <li>waitForVaadin handles a possible null return value</li>
-    <li>The hub host name can be overridden using -Dcom.vaadin.testbench.Parameters.hubHostname</li>
-    <li>The browser name and version to run on locally can be overridden using -Dcom.vaadin.testbench.Parameters.runLocally</li>
-    
-    <li>
-        Component Element API changes in vaadin-testbench-api 7.7.4:
-        <ul>
-            <li>The input field for a ComboBox can be retrieved using ComboBoxElement.getInputField()</li>
-            <li>GridElement has getRowCount() to get the number of data rows in the grid</li>
-            <li>GridElement has getRows() for iterating over all data rows in the grid</li>
-            <li>State of a checkbox can be checked using CheckBoxElement.isChecked()</li>
-            <li>Links can be clicked using LinkElement.click()</li>
-            <li>Link caption is correctly returned using LinkElement.getCaption()</li>
-        </ul>
-    </li>
+    <ul>
+    <li>Support for Vaadin Framework 8</li>
+    <li>Selenium upgraded to 3.0.1</li>
     
     </ul>
     <p>
