@@ -20,10 +20,12 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxBinary;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
+import org.openqa.selenium.firefox.MarionetteDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.safari.SafariDriver;
 
+import com.google.gson.JsonObject;
 import com.vaadin.testbench.TestBench;
 import com.vaadin.testbench.parallel.BrowserUtil;
 import com.vaadin.testbench.parallel.ParallelTest;
@@ -46,29 +48,44 @@ public class LocalDriver {
      * Creates a {@link WebDriver} instance used for running the test locally
      * for debug purposes.
      */
-    static public WebDriver createDriver(DesiredCapabilities desiredCapabilities) {
+    static public WebDriver createDriver(
+            DesiredCapabilities desiredCapabilities) {
         WebDriver driver;
         if (BrowserUtil.isFirefox(desiredCapabilities)) {
             String firefoxPath = System.getProperty("firefox.path");
-            String profilePath = System.getProperty("firefox.profile.path");
+            
+            if (BrowserUtil.isOlderThan(48, desiredCapabilities, false)) {
+                String profilePath = System.getProperty("firefox.profile.path");
 
-            if (firefoxPath != null) {
-                if (profilePath != null) {
-                    File profileDir = new File(profilePath);
-                    FirefoxProfile profile = new FirefoxProfile(profileDir);
-                    driver = new FirefoxDriver(new FirefoxBinary(new File(
-                            firefoxPath)), profile);
+                if (firefoxPath != null) {
+                    if (profilePath != null) {
+                        File profileDir = new File(profilePath);
+                        FirefoxProfile profile = new FirefoxProfile(profileDir);
+                        driver = new FirefoxDriver(
+                                new FirefoxBinary(new File(firefoxPath)),
+                                profile);
+                    } else {
+                        driver = new FirefoxDriver(
+                                new FirefoxBinary(new File(firefoxPath)), null);
+                    }
+
                 } else {
-                    driver = new FirefoxDriver(new FirefoxBinary(new File(
-                            firefoxPath)), null);
+                    driver = new FirefoxDriver();
                 }
-
             } else {
-                driver = new FirefoxDriver();
+                if (firefoxPath != null) {
+                    JsonObject options = new JsonObject();
+                    options.addProperty("binary", firefoxPath);
+                    desiredCapabilities.setCapability("moz:firefoxOptions",
+                            options);
+                }
+                driver = new MarionetteDriver(desiredCapabilities);
+
             }
         } else if (BrowserUtil.isChrome(desiredCapabilities)) {
             // Tells chrome not to show warning
-            // "You are using an unsupported command-line flag: --ignore-certifcate-errors".
+            // "You are using an unsupported command-line flag:
+            // --ignore-certifcate-errors".
             // #14319
             ChromeOptions options = new ChromeOptions();
             options.addArguments("--test-type ");

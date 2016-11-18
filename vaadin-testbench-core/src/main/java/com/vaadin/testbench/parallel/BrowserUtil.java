@@ -243,12 +243,14 @@ public class BrowserUtil {
             } else if (p == Platform.MAC) {
                 return "Mac";
             }
-            
+
         } catch (Exception e) {
         }
-        Object rawPlatform = capabilities.getCapability(CapabilityType.PLATFORM);
-        if (rawPlatform == null)
+        Object rawPlatform = capabilities
+                .getCapability(CapabilityType.PLATFORM);
+        if (rawPlatform == null) {
             return "Unknown";
+        }
         return rawPlatform.toString();
     }
 
@@ -273,5 +275,30 @@ public class BrowserUtil {
      */
     public static TestBenchBrowserFactory getBrowserFactory() {
         return browserFactory;
+    }
+
+    /**
+     * Checks if the given capabilities represent a browser with a version
+     * number older than the given reference version.
+     * 
+     * @param referenceVersion
+     *            the version to compare to
+     * @param capabilities
+     *            the capabilities specifying the version
+     * @param defaultValue
+     *            the value to return if the comparison could not be performed
+     * @return <code>true</code> if the version in the capabilities is greater
+     *         or equal to the reference version, {@code defaultValue} if there
+     *         is no version in the capabilities or the version could not be
+     *         parsed, <code>false</code> otherwise
+     */
+    public static boolean isOlderThan(int referenceVersion,
+            DesiredCapabilities capabilities, boolean defaultValue) {
+        try {
+            Integer version = Integer.parseInt(capabilities.getVersion());
+            return version < referenceVersion;
+        } catch (NumberFormatException e) {
+            return defaultValue;
+        }
     }
 }
