@@ -17,7 +17,7 @@ public class TwinColSelectUI extends AbstractTestUI {
 
     @Override
     protected void setup(VaadinRequest request) {
-        TwinColSelect twinColSelect = new TwinColSelect();
+        TwinColSelect<String> twinColSelect = new TwinColSelect<String>();
         multiCounterLbl.setValue("0");
         List<String> options = new ArrayList<String>();
         options.add("item1");
