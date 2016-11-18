@@ -86,6 +86,16 @@ public class TwinColSelectElement extends AbstractSelectElement {
         return optionTexts;
     }
 
+    /**
+     * Gets the available option texts, i.e. all values which have not been
+     * selected.
+     *
+     * @return List of visible text for available options
+     */
+    public List<String> getAvailableOptions() {
+        return getOptionsFromSelect(options);
+    }
+
     public void selectByText(String text) {
         options.selectByVisibleText(text);
         selButton.click();
