@@ -19,6 +19,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 
 import com.vaadin.testUI.ComboBoxUI;
@@ -49,13 +50,14 @@ public class ComboBoxUIIT extends MultiBrowserTest {
         testMultipleSelectByTextOperationsIn(cb);
     }
 
-    @Test
+    @Test(expected = NoSuchElementException.class)
     public void testSelectByTextNotFound() {
         ComboBoxElement cb = $(ComboBoxElement.class).first();
         cb.selectByText("foobar");
     }
 
-    private void testMultipleSelectByTextOperationsIn(ComboBoxElement comboBox) {
+    private void testMultipleSelectByTextOperationsIn(
+            ComboBoxElement comboBox) {
         // Select all items from the menu
         for (String currency : ComboBoxUI.currencies) {
             comboBox.selectByText(currency);

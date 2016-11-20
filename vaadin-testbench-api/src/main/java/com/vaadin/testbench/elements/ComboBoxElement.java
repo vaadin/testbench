@@ -48,7 +48,10 @@ public class ComboBoxElement extends AbstractSelectElement {
         getInputField().clear();
         sendInputFieldKeys(text);
 
-        selectSuggestion(text);
+        if (!selectSuggestion(text)) {
+            throw new NoSuchElementException(
+                    "No option with text '" + text + "' found");
+        }
     }
 
     /**
@@ -74,6 +77,8 @@ public class ComboBoxElement extends AbstractSelectElement {
                 return;
             }
         } while (openNextPage());
+        throw new NoSuchElementException(
+                "No option with text '" + text + "' found");
     }
 
     private boolean selectSuggestion(String text) {
