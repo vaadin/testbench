@@ -53,6 +53,8 @@ public class ComboBoxElement extends AbstractSelectElement {
                 && text.equals(popupSuggestions.get(0))) {
             getSuggestionPopup().findElement(By.tagName("td")).click();
         }
+        throw new NoSuchElementException(
+                "No option with text '" + text + "' found");
     }
 
     /**
@@ -81,6 +83,8 @@ public class ComboBoxElement extends AbstractSelectElement {
                 }
             }
         } while (openNextPage());
+        throw new NoSuchElementException(
+                "No option with text '" + text + "' found");
     }
 
     private boolean isReadOnly(WebElement elem) {

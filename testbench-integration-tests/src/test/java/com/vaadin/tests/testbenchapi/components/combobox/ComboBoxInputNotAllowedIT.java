@@ -2,6 +2,7 @@ package com.vaadin.tests.testbenchapi.components.combobox;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.openqa.selenium.NoSuchElementException;
 
 import com.vaadin.testUI.ComboBoxInputNotAllowed;
 import com.vaadin.testbench.elements.ComboBoxElement;
@@ -10,7 +11,7 @@ import com.vaadin.tests.testbenchapi.MultiBrowserTest;
 
 public class ComboBoxInputNotAllowedIT extends MultiBrowserTest {
 
-    @Test
+    @Test(expected = NoSuchElementException.class)
     public void selectByTextComboBoxWithTextInputDisabled_invalidSelection() {
         openTestURL();
         ComboBoxElement cb = $(ComboBoxElement.class).first();
