@@ -21,7 +21,6 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 
 import com.vaadin.testbench.By;
-import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.testbench.elementsbase.ServerClass;
 
 @ServerClass("com.vaadin.ui.ComboBox")
@@ -35,29 +34,14 @@ public class ComboBoxElement extends AbstractSelectElement {
             .className("v-filterselect-prevpage");
 
     /**
-     * Input the given text to ComboBox and click on the suggestion if it
-     * matches.
+     * Selects the first option in the ComboBox which matches the given text.
      *
      * @param text
+     *            the text of the option to select
      */
     public void selectByText(String text) {
-        if (text.contains("(")) {
-            sendTextWithParentheses(text);
-        } else {
-            WebElement textBox = findElement(By.vaadin("#textbox"));
-            TestBenchElement tb = (TestBenchElement) textBox;
-            boolean isReadonly = getReadOnly(tb);
-            // if element is readonly, we will change that, change the value
-            // and restore the original value of readonly
-            if (isReadonly) {
-                setReadOnly(tb, false);
-            }
-            textBox.clear();
-            textBox.sendKeys(text);
-            if (isReadonly) {
-                setReadOnly(tb, true);
-            }
-        }
+        getInputField().clear();
+        sendInputFieldKeys(text);
 
         List<String> popupSuggestions = getPopupSuggestions();
         if (popupSuggestions.size() != 0
@@ -66,30 +50,20 @@ public class ComboBoxElement extends AbstractSelectElement {
         }
     }
 
-    private boolean getReadOnly(WebElement elem) {
-        JavascriptExecutor js = (JavascriptExecutor) getDriver();
-        return (Boolean) js.executeScript("return arguments[0].readOnly", elem);
-
-    }
-
-    private void setReadOnly(WebElement elem, boolean value) {
-        String strValue = Boolean.toString(value);
-        JavascriptExecutor js = (JavascriptExecutor) getDriver();
-        js.executeScript("arguments[0].readOnly =" + strValue, elem);
-    }
-
     /*
      * Workaround selenium's bug: sendKeys() will not send left parentheses
      * properly. See #14048.
      */
-    private void sendTextWithParentheses(String text) {
+    private void sendInputFieldKeys(String text) {
+        WebElement textBox = getInputField();
+        if (!text.contains("(")) {
+            textBox.sendKeys(text);
+            return;
+        }
 
         String OPEN_PARENTHESES = "_OPEN_PARENT#H#ESES_";
-
-        WebElement textBox = findElement(By.vaadin("#textbox"));
-        textBox.clear();
         String tamperedText = text.replaceAll("\\(", OPEN_PARENTHESES);
-        findElement(By.vaadin("#textbox")).sendKeys(tamperedText);
+        textBox.sendKeys(tamperedText);
 
         JavascriptExecutor js = getCommandExecutor();
         String jsScript = String.format(
