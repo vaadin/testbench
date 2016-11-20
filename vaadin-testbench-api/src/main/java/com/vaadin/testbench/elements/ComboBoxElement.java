@@ -13,6 +13,7 @@
 package com.vaadin.testbench.elements;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.openqa.selenium.JavascriptExecutor;
@@ -40,6 +41,10 @@ public class ComboBoxElement extends AbstractSelectElement {
      *            the text of the option to select
      */
     public void selectByText(String text) {
+        if (!isTextInputAllowed()) {
+            selectByTextFromPopup(text);
+            return;
+        }
         getInputField().clear();
         sendInputFieldKeys(text);
 
@@ -48,6 +53,49 @@ public class ComboBoxElement extends AbstractSelectElement {
                 && text.equals(popupSuggestions.get(0))) {
             getSuggestionPopup().findElement(By.tagName("td")).click();
         }
+    }
+
+    /**
+     * Selects, without filtering, the first option in the ComboBox which
+     * matches the given text.
+     * 
+     * @param text
+     *            the text of the option to select
+     */
+    private void selectByTextFromPopup(String text) {
+        // This method assumes there is no need to touch the filter string
+
+        // 1. Find first page
+        // 2. Select first matching text if found
+        // 3. Iterate towards end
+
+        while (openPrevPage()) {
+            // Scroll until beginning
+        }
+
+        do {
+            for (WebElement suggestion : getPopupSuggestionElements()) {
+                if (text.equals(suggestion.getText())) {
+                    suggestion.click();
+                    return;
+                }
+            }
+        } while (openNextPage());
+    }
+
+    private boolean isReadOnly(WebElement elem) {
+        JavascriptExecutor js = (JavascriptExecutor) getDriver();
+        return (Boolean) js.executeScript("return arguments[0].readOnly", elem);
+    }
+
+    /**
+     * Checks if text input is allowed for the combo box.
+     * 
+     * @return <code>true</code> if text input is allowed, <code>false</code>
+     *         otherwise
+     */
+    public boolean isTextInputAllowed() {
+        return !isReadOnly(getInputField());
     }
 
     /*
@@ -83,21 +131,13 @@ public class ComboBoxElement extends AbstractSelectElement {
     }
 
     /**
-     * Get the text representation of all suggestions on the current page
+     * Gets the text representation of all suggestions on the current page
      *
      * @return List of suggestion texts
      */
     public List<String> getPopupSuggestions() {
-        WebElement popup = getSuggestionPopup();
         List<String> suggestionsTexts = new ArrayList<String>();
-        // Check that there are suggestions
-        List<WebElement> tables = getSuggestionPopup()
-                .findElements(By.tagName("table"));
-        if (tables == null || tables.isEmpty()) {
-            return suggestionsTexts;
-        }
-        WebElement table = tables.get(0);
-        List<WebElement> suggestions = table.findElements(By.tagName("span"));
+        List<WebElement> suggestions = getPopupSuggestionElements();
         for (WebElement suggestion : suggestions) {
             String text = suggestion.getText();
             if (!text.isEmpty()) {
@@ -105,6 +145,23 @@ public class ComboBoxElement extends AbstractSelectElement {
             }
         }
         return suggestionsTexts;
+    }
+
+    /**
+     * Gets the elements of all suggestions on the current page.
+     * <p>
+     * Opens the popup if not already open.
+     *
+     * @return a list of elements for the suggestions on the current page
+     */
+    public List<WebElement> getPopupSuggestionElements() {
+        List<WebElement> tables = getSuggestionPopup()
+                .findElements(By.tagName("table"));
+        if (tables == null || tables.isEmpty()) {
+            return Collections.emptyList();
+        }
+        WebElement table = tables.get(0);
+        return table.findElements(By.tagName("td"));
     }
 
     /**
