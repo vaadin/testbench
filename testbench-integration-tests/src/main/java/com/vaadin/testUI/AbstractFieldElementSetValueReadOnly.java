@@ -9,7 +9,6 @@ import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.CheckBoxGroup;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.DateField;
-import com.vaadin.ui.Grid;
 import com.vaadin.ui.ListSelect;
 import com.vaadin.ui.NativeSelect;
 import com.vaadin.ui.PasswordField;
@@ -22,15 +21,13 @@ import com.vaadin.ui.TwinColSelect;
 
 public class AbstractFieldElementSetValueReadOnly extends AbstractTestUI {
 
-    private AbstractField<?>[] fields = {
-            new TextArea(), new TextField(),
+    private AbstractField<?>[] fields = { new TextArea(), new TextField(),
             new DateField(), new PasswordField(), new CheckBox(),
             new RichTextArea(), new Slider() };
     private AbstractMultiSelect<?>[] multiSelects = { new ListSelect(),
             new CheckBoxGroup(), new TwinColSelect() };
     private AbstractSingleSelect<?>[] singleSelects = { new ComboBox(),
-            new NativeSelect(),
-            new RadioButtonGroup(), new Grid() };
+            new NativeSelect(), new RadioButtonGroup() };
 
     @Override
     protected void setup(VaadinRequest request) {

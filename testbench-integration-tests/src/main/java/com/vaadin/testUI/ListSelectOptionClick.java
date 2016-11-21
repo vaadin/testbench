@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.data.ListDataSource;
+import com.vaadin.server.data.ListDataProvider;
 import com.vaadin.tests.AbstractTestUI;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.ListSelect;
@@ -22,7 +22,7 @@ public class ListSelectOptionClick extends AbstractTestUI {
         options.add("item1");
         options.add("item2");
         options.add("item3");
-        multiSelect.setDataSource(new ListDataSource<String>(options));
+        multiSelect.setDataProvider(new ListDataProvider<String>(options));
         multiSelect.select("item1");
         multiSelect.addSelectionListener(event -> {
             counter++;

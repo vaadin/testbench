@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.data.ListDataSource;
+import com.vaadin.server.data.ListDataProvider;
 import com.vaadin.tests.AbstractTestUI;
 import com.vaadin.ui.ComboBox;
 
@@ -19,7 +19,7 @@ public class ComboBoxGetSuggestions extends AbstractTestUI {
         for (int i = 1; i < 100; i++) {
             options.add("item" + i);
         }
-        cb.setDataSource(new ListDataSource<String>(options));
+        cb.setDataProvider(new ListDataProvider<String>(options));
 
         addComponent(cb);
     }
