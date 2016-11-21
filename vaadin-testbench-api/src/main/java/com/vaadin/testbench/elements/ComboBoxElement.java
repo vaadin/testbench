@@ -13,6 +13,7 @@
 package com.vaadin.testbench.elements;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.openqa.selenium.JavascriptExecutor;
@@ -21,7 +22,6 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 
 import com.vaadin.testbench.By;
-import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.testbench.elementsbase.ServerClass;
 
 @ServerClass("com.vaadin.ui.ComboBox")
@@ -35,29 +35,18 @@ public class ComboBoxElement extends AbstractSelectElement {
             .className("v-filterselect-prevpage");
 
     /**
-     * Input the given text to ComboBox and click on the suggestion if it
-     * matches.
+     * Selects the first option in the ComboBox which matches the given text.
      *
      * @param text
+     *            the text of the option to select
      */
     public void selectByText(String text) {
-        if (text.contains("(")) {
-            sendTextWithParentheses(text);
-        } else {
-            WebElement textBox = findElement(By.vaadin("#textbox"));
-            TestBenchElement tb = (TestBenchElement) textBox;
-            boolean isReadonly = getReadOnly(tb);
-            // if element is readonly, we will change that, change the value
-            // and restore the original value of readonly
-            if (isReadonly) {
-                setReadOnly(tb, false);
-            }
-            textBox.clear();
-            textBox.sendKeys(text);
-            if (isReadonly) {
-                setReadOnly(tb, true);
-            }
+        if (!isTextInputAllowed()) {
+            selectByTextFromPopup(text);
+            return;
         }
+        getInputField().clear();
+        sendInputFieldKeys(text);
 
         List<String> popupSuggestions = getPopupSuggestions();
         if (popupSuggestions.size() != 0
@@ -66,30 +55,63 @@ public class ComboBoxElement extends AbstractSelectElement {
         }
     }
 
-    private boolean getReadOnly(WebElement elem) {
-        JavascriptExecutor js = (JavascriptExecutor) getDriver();
-        return (Boolean) js.executeScript("return arguments[0].readOnly", elem);
+    /**
+     * Selects, without filtering, the first option in the ComboBox which
+     * matches the given text.
+     * 
+     * @param text
+     *            the text of the option to select
+     */
+    private void selectByTextFromPopup(String text) {
+        // This method assumes there is no need to touch the filter string
 
+        // 1. Find first page
+        // 2. Select first matching text if found
+        // 3. Iterate towards end
+
+        while (openPrevPage()) {
+            // Scroll until beginning
+        }
+
+        do {
+            for (WebElement suggestion : getPopupSuggestionElements()) {
+                if (text.equals(suggestion.getText())) {
+                    suggestion.click();
+                    return;
+                }
+            }
+        } while (openNextPage());
     }
 
-    private void setReadOnly(WebElement elem, boolean value) {
-        String strValue = Boolean.toString(value);
+    private boolean isReadOnly(WebElement elem) {
         JavascriptExecutor js = (JavascriptExecutor) getDriver();
-        js.executeScript("arguments[0].readOnly =" + strValue, elem);
+        return (Boolean) js.executeScript("return arguments[0].readOnly", elem);
+    }
+
+    /**
+     * Checks if text input is allowed for the combo box.
+     * 
+     * @return <code>true</code> if text input is allowed, <code>false</code>
+     *         otherwise
+     */
+    public boolean isTextInputAllowed() {
+        return !isReadOnly(getInputField());
     }
 
     /*
      * Workaround selenium's bug: sendKeys() will not send left parentheses
      * properly. See #14048.
      */
-    private void sendTextWithParentheses(String text) {
+    private void sendInputFieldKeys(String text) {
+        WebElement textBox = getInputField();
+        if (!text.contains("(")) {
+            textBox.sendKeys(text);
+            return;
+        }
 
         String OPEN_PARENTHESES = "_OPEN_PARENT#H#ESES_";
-
-        WebElement textBox = findElement(By.vaadin("#textbox"));
-        textBox.clear();
         String tamperedText = text.replaceAll("\\(", OPEN_PARENTHESES);
-        findElement(By.vaadin("#textbox")).sendKeys(tamperedText);
+        textBox.sendKeys(tamperedText);
 
         JavascriptExecutor js = getCommandExecutor();
         String jsScript = String.format(
@@ -109,21 +131,13 @@ public class ComboBoxElement extends AbstractSelectElement {
     }
 
     /**
-     * Get the text representation of all suggestions on the current page
+     * Gets the text representation of all suggestions on the current page
      *
      * @return List of suggestion texts
      */
     public List<String> getPopupSuggestions() {
-        WebElement popup = getSuggestionPopup();
         List<String> suggestionsTexts = new ArrayList<String>();
-        // Check that there are suggestions
-        List<WebElement> tables = getSuggestionPopup()
-                .findElements(By.tagName("table"));
-        if (tables == null || tables.isEmpty()) {
-            return suggestionsTexts;
-        }
-        WebElement table = tables.get(0);
-        List<WebElement> suggestions = table.findElements(By.tagName("span"));
+        List<WebElement> suggestions = getPopupSuggestionElements();
         for (WebElement suggestion : suggestions) {
             String text = suggestion.getText();
             if (!text.isEmpty()) {
@@ -131,6 +145,23 @@ public class ComboBoxElement extends AbstractSelectElement {
             }
         }
         return suggestionsTexts;
+    }
+
+    /**
+     * Gets the elements of all suggestions on the current page.
+     * <p>
+     * Opens the popup if not already open.
+     *
+     * @return a list of elements for the suggestions on the current page
+     */
+    public List<WebElement> getPopupSuggestionElements() {
+        List<WebElement> tables = getSuggestionPopup()
+                .findElements(By.tagName("table"));
+        if (tables == null || tables.isEmpty()) {
+            return Collections.emptyList();
+        }
+        WebElement table = tables.get(0);
+        return table.findElements(By.tagName("td"));
     }
 
     /**
