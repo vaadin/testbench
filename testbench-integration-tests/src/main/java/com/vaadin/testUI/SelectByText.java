@@ -18,10 +18,13 @@ package com.vaadin.testUI;
 import javax.servlet.annotation.WebServlet;
 
 import com.vaadin.annotations.VaadinServletConfiguration;
+import com.vaadin.data.Property.ValueChangeEvent;
+import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.tests.AbstractTestUI;
 import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
 /**
@@ -30,7 +33,8 @@ import com.vaadin.ui.VerticalLayout;
  */
 @SuppressWarnings("serial")
 public class SelectByText extends AbstractTestUI {
-    @WebServlet(value = { "/VAADIN/*", "/SelectByText/*" }, asyncSupported = true)
+    @WebServlet(value = { "/VAADIN/*",
+            "/SelectByText/*" }, asyncSupported = true)
     @VaadinServletConfiguration(productionMode = false, ui = SelectByText.class)
     public static class Servlet extends VaadinServlet {
     }
@@ -44,12 +48,21 @@ public class SelectByText extends AbstractTestUI {
         combobox.addItem("Value 1");
         combobox.addItem("(");
         combobox.addItem("(Value");
+        combobox.addItem("Value 222");
+        combobox.addItem("Value 22");
         combobox.addItem("Value 2");
         combobox.addItem("Value(");
         combobox.addItem("Value(i)");
         combobox.addItem("((Test ) selectByTest() method(with' parentheses)((");
         combobox.addItem("Value 3");
         layout.addComponent(combobox);
+        combobox.addValueChangeListener(new ValueChangeListener() {
+            @Override
+            public void valueChange(ValueChangeEvent e) {
+                layout.addComponent(new Label(
+                        "Value is now '" + e.getProperty().getValue() + "'"));
+            }
+        });
     }
 
     @Override
