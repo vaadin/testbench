@@ -23,6 +23,7 @@ import org.openqa.selenium.WebElement;
 
 import com.vaadin.testbench.By;
 import com.vaadin.testbench.elements.ComboBoxElement;
+import com.vaadin.testbench.elements.LabelElement;
 import com.vaadin.tests.testbenchapi.MultiBrowserTest;
 
 /**
@@ -81,4 +82,16 @@ public class SelectByTextIT extends MultiBrowserTest {
         WebElement textbox = comboBox.findElement(By.vaadin("#textbox"));
         return textbox.getAttribute("value");
     }
+
+    @Test
+    public void selectSharedPrefixOption() {
+        for (String text : new String[] { "Value 2", "Value 22",
+                "Value 222" }) {
+            selectByText(text);
+            assertEquals(text, getComboBoxValue());
+            assertEquals("Value is now '" + text + "'",
+                    $(LabelElement.class).last().getText());
+        }
+    }
+
 }
