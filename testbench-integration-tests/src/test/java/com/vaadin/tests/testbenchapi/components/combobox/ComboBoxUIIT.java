@@ -49,6 +49,12 @@ public class ComboBoxUIIT extends MultiBrowserTest {
         testMultipleSelectByTextOperationsIn(cb);
     }
 
+    @Test
+    public void testSelectByTextNotFound() {
+        ComboBoxElement cb = $(ComboBoxElement.class).first();
+        cb.selectByText("foobar");
+    }
+
     private void testMultipleSelectByTextOperationsIn(ComboBoxElement comboBox) {
         // Select all items from the menu
         for (String currency : ComboBoxUI.currencies) {
