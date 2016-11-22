@@ -289,6 +289,17 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
                 getTestBenchCommandExecutor());
     }
 
+    /**
+     * Calls the Javascript click method on the element.
+     * 
+     * Useful for elements that are hidden or covered by a pseudo-element on
+     * some browser-theme combinations (for instance Firefox-Valo)
+     */
+    public void clickHiddenElement() {
+        getTestBenchCommandExecutor().executeScript("arguments[0].click()",
+                actualElement);
+    }
+
     @Override
     public boolean isDisplayed() {
         waitForVaadin();
