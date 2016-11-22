@@ -16,12 +16,12 @@ If there are differences, you can fail the test case.
 The screenshot configuration parameters are defined with static methods in the
 [classname]#com.vaadin.testbench.Parameters# class.
 
-[parameter]#screenshotErrorDirectory#(default:[literal]#++null++#):: Defines the directory where screenshots for failed tests or comparisons are stored.
-[parameter]#screenshotReferenceDirectory#(default:[literal]#++null++#):: Defines the directory where the reference images for screenshot comparison are stored.
-[parameter]#screenshotComparisonTolerance#(default:[literal]#++0.01++#):: Screen comparison is usually not done with exact pixel values, because rendering in browser often has some tiny inconsistencies. Also image compression may cause small artifacts.
-[parameter]#screenshotComparisonCursorDetection#(default:[literal]#++false++#):: Some field component get a blinking cursor when they have the focus. The cursor can cause unnecessary failures depending on whether the blink happens to make the cursor visible or invisible when taking a screenshot. This parameter enables cursor detection that tries to minimize these failures.
-[parameter]#maxScreenshotRetries#(default: 2):: Sometimes a screenshot comparison may fail because the screen rendering has not yet finished, or there is a blinking cursor that is different from the reference screenshot. For these reasons, Vaadin TestBench retries the screenshot comparison for a number of times defined with this parameter.
-[parameter]#screenshotRetryDelay#(default:[literal]#++500++#):: Delay in milliseconds for making a screenshot retry when a comparison fails.
+[parameter]#screenshotErrorDirectory#(default: [literal]#++null++#):: Defines the directory where screenshots for failed tests or comparisons are stored.
+[parameter]#screenshotReferenceDirectory#(default: [literal]#++null++#):: Defines the directory where the reference images for screenshot comparison are stored.
+[parameter]#screenshotComparisonTolerance#(default: [literal]#++0.01++#):: Screen comparison is usually not done with exact pixel values, because rendering in browser often has some tiny inconsistencies. Also image compression may cause small artifacts.
+[parameter]#screenshotComparisonCursorDetection#(default: [literal]#++false++#):: Some field component get a blinking cursor when they have the focus. The cursor can cause unnecessary failures depending on whether the blink happens to make the cursor visible or invisible when taking a screenshot. This parameter enables cursor detection that tries to minimize these failures.
+[parameter]#maxScreenshotRetries#(default: [literal]#++2++#):: Sometimes a screenshot comparison may fail because the screen rendering has not yet finished, or there is a blinking cursor that is different from the reference screenshot. For these reasons, Vaadin TestBench retries the screenshot comparison for a number of times defined with this parameter.
+[parameter]#screenshotRetryDelay#(default: [literal]#++500++#):: Delay in milliseconds for making a screenshot retry when a comparison fails.
 
 
 For example:
