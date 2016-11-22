@@ -3,10 +3,10 @@ package com.vaadin.testUI;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.vaadin.event.selection.SingleSelectionChangeEvent;
+import com.vaadin.event.selection.SingleSelectionEvent;
 import com.vaadin.event.selection.SingleSelectionListener;
 import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.data.ListDataSource;
+import com.vaadin.server.data.ListDataProvider;
 import com.vaadin.tests.AbstractTestUI;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.NativeSelect;
@@ -24,11 +24,11 @@ public class NativeSelectSetValue extends AbstractTestUI {
         options.add("item 1");
         options.add("item 2");
         options.add("item 3");
-        select.setDataSource(new ListDataSource<String>(options));
-        select.select("item 1");
+        select.setDataProvider(new ListDataProvider<String>(options));
+        select.setValue("item 1");
         lblCounter.setId("counter");
 
-        select.addSelectionListener(new EventCounter());
+        select.addSelectionChangeListener(new EventCounter());
         addComponent(select);
         addComponent(lblCounter);
     }
@@ -37,7 +37,7 @@ public class NativeSelectSetValue extends AbstractTestUI {
         private int counter = 0;
 
         @Override
-        public void accept(SingleSelectionChangeEvent<String> event) {
+        public void accept(SingleSelectionEvent<String> event) {
             counter++;
             lblCounter.setValue("" + counter);
         }

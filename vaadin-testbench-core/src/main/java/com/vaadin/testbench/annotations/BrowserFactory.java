@@ -24,7 +24,7 @@ import com.vaadin.testbench.parallel.TestBenchBrowserFactory;
 /**
  * <p>
  * {@link BrowserFactory} annotation is used to define which
- * {@link TestBenchBrowserFactory} implementation to use in a test.
+ * {@link TestBenchBrowserFactory} implementation to use in a test.
  * </p>
  * <p>
  * {@link TestBenchBrowserFactory} should be implemented by another class, or
