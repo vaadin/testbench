@@ -98,7 +98,7 @@ public class GridElement extends AbstractComponentElement {
          * @param colIndex
          *            the column index
          * @return {@code true} if the column has an editor field, {@code false}
-         *          otherwise
+         *         otherwise
          */
         public boolean isEditable(int colIndex) {
             return grid

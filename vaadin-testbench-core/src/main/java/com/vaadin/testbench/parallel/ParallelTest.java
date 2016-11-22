@@ -151,7 +151,7 @@ public class ParallelTest extends TestBenchTestCase {
     }
 
     /**
-     * @return Version value of the {@link RunLocally} annotation of current
+     * @return Version value of the {@link RunLocally} annotation of current
      *         Class, or empty empty String if annotation is not present.
      */
     protected String getRunLocallyBrowserVersion() {
@@ -161,7 +161,7 @@ public class ParallelTest extends TestBenchTestCase {
     /**
      * 
      * @return default capabilities, used if no {@link BrowserConfiguration}
-     *          method was found
+     *         method was found
      */
     public static List<DesiredCapabilities> getDefaultCapabilities() {
         return Collections.singletonList(BrowserUtil.firefox());
