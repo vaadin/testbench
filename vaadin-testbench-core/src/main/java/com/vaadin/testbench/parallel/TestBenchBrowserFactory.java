@@ -24,7 +24,7 @@ import com.vaadin.testbench.annotations.BrowserFactory;
  * </p>
  * <p>
  * This interface should be implemented and used in test cases through the
- * {@link BrowserFactory} annotation. Classes that implement this interface must
+ * {@link BrowserFactory} annotation. Classes that implement this interface must
  * have a constructor with zero arguments.
  * </p>
  */
