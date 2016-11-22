@@ -15,7 +15,7 @@ public class OptionGroupSetValueIT extends MultiBrowserTest {
 
     @Before
     public void init() {
-        openTestURL("theme=reindeer");
+        openTestURL();
         group = $(OptionGroupElement.class).first();
     }
 

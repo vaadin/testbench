@@ -18,19 +18,20 @@ import java.util.List;
 import org.openqa.selenium.WebElement;
 
 import com.vaadin.testbench.By;
+import com.vaadin.testbench.commands.TestBenchElementCommands;
 import com.vaadin.testbench.elementsbase.ServerClass;
 
 @ServerClass("com.vaadin.ui.RadioButtonGroup")
 public class RadioButtonGroupElement extends AbstractSelectElement {
 
-    private static org.openqa.selenium.By byButtonSpan = By
+    private static org.openqa.selenium.By bySelectOption = By
             .className("v-select-option");
     private static org.openqa.selenium.By byLabel = By.tagName("label");
     private static org.openqa.selenium.By byRadioInput = By.tagName("input");
 
     public List<String> getOptions() {
         List<String> optionTexts = new ArrayList<String>();
-        List<WebElement> options = findElements(byButtonSpan);
+        List<WebElement> options = findElements(bySelectOption);
         for (WebElement option : options) {
             optionTexts.add(option.findElement(byLabel).getText());
         }
@@ -41,10 +42,20 @@ public class RadioButtonGroupElement extends AbstractSelectElement {
         if (isReadOnly()) {
             throw new ReadOnlyException();
         }
-        List<WebElement> options = findElements(byButtonSpan);
+        List<WebElement> options = findElements(bySelectOption);
         for (WebElement option : options) {
             if (text.equals(option.findElement(byLabel).getText())) {
-                option.findElement(byRadioInput).click();
+                WebElement input = option.findElement(byRadioInput);
+                if (isFirefox()) {
+                    // When using Valo, the input element is covered by a
+                    // pseudo-element, which Firefox will complain about
+                    getTestBenchCommandExecutor().executeScript(
+                            "arguments[0].click()", input);
+                } else if (isChrome()) {
+                    ((TestBenchElementCommands) (input)).click(0, 0);
+                } else {
+                    input.click();
+                }
             }
         }
     }
@@ -55,7 +66,7 @@ public class RadioButtonGroupElement extends AbstractSelectElement {
      * @return value of the selected option in the option group
      */
     public String getValue() {
-        List<WebElement> options = findElements(byButtonSpan);
+        List<WebElement> options = findElements(bySelectOption);
         for (WebElement option : options) {
             WebElement checkedItem;
             checkedItem = option.findElement(By.tagName("input"));
