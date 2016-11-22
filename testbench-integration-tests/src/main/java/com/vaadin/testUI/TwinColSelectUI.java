@@ -6,7 +6,7 @@ import java.util.List;
 import com.vaadin.event.selection.MultiSelectionEvent;
 import com.vaadin.event.selection.MultiSelectionListener;
 import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.data.ListDataSource;
+import com.vaadin.server.data.ListDataProvider;
 import com.vaadin.tests.AbstractTestUI;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.TwinColSelect;
@@ -23,7 +23,7 @@ public class TwinColSelectUI extends AbstractTestUI {
         options.add("item1");
         options.add("item2");
         options.add("item3");
-        twinColSelect.setDataSource(new ListDataSource<String>(options));
+        twinColSelect.setDataProvider(new ListDataProvider<String>(options));
         twinColSelect.select("item1");
         twinColSelect.addSelectionListener(new CounterListener(0));
 
