@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.data.ListDataSource;
+import com.vaadin.server.data.ListDataProvider;
 import com.vaadin.tests.AbstractTestUI;
 import com.vaadin.ui.AbstractMultiSelect;
 import com.vaadin.ui.AbstractSingleSelect;
@@ -80,7 +80,7 @@ public class ComponentElementGetValue extends AbstractTestUI {
             options.add("item 1");
             options.add(TEST_STRING_VALUE);
             options.add("item 3");
-            comp.setDataSource(new ListDataSource<String>(options));
+            comp.setDataProvider(new ListDataProvider<String>(options));
             comp.setValue(TEST_STRING_VALUE);
             addComponent(comp);
         }
@@ -92,7 +92,7 @@ public class ComponentElementGetValue extends AbstractTestUI {
             options.add(TEST_STRING_VALUE);
             options.add("item 3");
             options.add("item 4");
-            comp.setDataSource(new ListDataSource<String>(options));
+            comp.setDataProvider(new ListDataProvider<String>(options));
             // Preselect a few items by creating a set
             comp.setValue(new HashSet<String>(Arrays.asList(TEST_STRING_VALUE)));
             comp.addValueChangeListener(event -> {
