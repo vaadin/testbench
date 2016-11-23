@@ -7,8 +7,9 @@
     <version>7.8-SNAPSHOT</version>
 
     <properties>
-        <snapshot.repository.url>https://oss.sonatype.org/content/repositories/vaadin-snapshots/
-        </snapshot.repository.url>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <snapshot.repository.url>https://oss.sonatype.org/content/repositories/vaadin-snapshots/</snapshot.repository.url>
         <testbench.core.version>4.1-SNAPSHOT</testbench.core.version>
     </properties>
 
