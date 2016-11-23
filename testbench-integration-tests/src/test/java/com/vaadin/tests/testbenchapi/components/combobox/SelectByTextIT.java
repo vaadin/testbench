@@ -37,44 +37,38 @@ public class SelectByTextIT extends MultiBrowserTest {
         openTestURL();
     }
 
+    private void selectAndAssertValue(String text) {
+        ComboBoxElement comboBox = $(ComboBoxElement.class).first();
+        comboBox.selectByText(text);
+
+        assertEquals(text, getComboBoxValue());
+        assertEquals("Value is now '" + text + "'",
+                $(LabelElement.class).last().getText());
+    }
+
     @Test
     public void selectByParenthesesOnly() {
-        String text = "(";
-        selectByText(text);
-        assertEquals(text, getComboBoxValue());
+        selectAndAssertValue("(");
     }
 
     @Test
     public void selectByStartingParentheses() {
-        String text = "(Value";
-        selectByText(text);
-        assertEquals(text, getComboBoxValue());
+        selectAndAssertValue("(Value");
     }
 
     @Test
     public void selectByFinishingParentheses() {
-        String text = "Value(";
-        selectByText(text);
-        assertEquals(text, getComboBoxValue());
+        selectAndAssertValue("Value(");
     }
 
     @Test
     public void selectByRegularParentheses() {
-        String text = "Value(i)";
-        selectByText(text);
-        assertEquals(text, getComboBoxValue());
+        selectAndAssertValue("Value(i)");
     }
 
     @Test
     public void selectByComplexParenthesesCase() {
-        String text = "((Test my ) selectByTest() method(with' parentheses)((";
-        selectByText(text);
-        assertEquals(text, getComboBoxValue());
-    }
-
-    private void selectByText(String text) {
-        ComboBoxElement comboBox = $(ComboBoxElement.class).first();
-        comboBox.selectByText(text);
+        selectAndAssertValue("((Test ) selectByTest() method(with' parentheses)((");
     }
 
     private String getComboBoxValue() {
@@ -87,10 +81,7 @@ public class SelectByTextIT extends MultiBrowserTest {
     public void selectSharedPrefixOption() {
         for (String text : new String[] { "Value 2", "Value 22",
                 "Value 222" }) {
-            selectByText(text);
-            assertEquals(text, getComboBoxValue());
-            assertEquals("Value is now '" + text + "'",
-                    $(LabelElement.class).last().getText());
+            selectAndAssertValue(text);
         }
     }
 
