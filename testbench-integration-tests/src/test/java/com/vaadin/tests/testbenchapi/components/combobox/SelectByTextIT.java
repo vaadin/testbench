@@ -41,35 +41,41 @@ public class SelectByTextIT extends MultiBrowserTest {
     public void selectByParenthesesOnly() {
         String text = "(";
         selectByText(text);
-        assertEquals(text, getComboBoxValue());
+        assertComboBoxValue(text);
     }
 
     @Test
     public void selectByStartingParentheses() {
         String text = "(Value";
         selectByText(text);
+        assertComboBoxValue(text);
+    }
+
+    private void assertComboBoxValue(String text) {
         assertEquals(text, getComboBoxValue());
+        assertEquals("Value is now '" + text + "'",
+                $(LabelElement.class).last().getText());
     }
 
     @Test
     public void selectByFinishingParentheses() {
         String text = "Value(";
         selectByText(text);
-        assertEquals(text, getComboBoxValue());
+        assertComboBoxValue(text);
     }
 
     @Test
     public void selectByRegularParentheses() {
         String text = "Value(i)";
         selectByText(text);
-        assertEquals(text, getComboBoxValue());
+        assertComboBoxValue(text);
     }
 
     @Test
     public void selectByComplexParenthesesCase() {
-        String text = "((Test my ) selectByTest() method(with' parentheses)((";
+        String text = "((Test ) selectByTest() method(with' parentheses)((";
         selectByText(text);
-        assertEquals(text, getComboBoxValue());
+        assertComboBoxValue(text);
     }
 
     private void selectByText(String text) {
@@ -88,9 +94,7 @@ public class SelectByTextIT extends MultiBrowserTest {
         for (String text : new String[] { "Value 2", "Value 22",
                 "Value 222" }) {
             selectByText(text);
-            assertEquals(text, getComboBoxValue());
-            assertEquals("Value is now '" + text + "'",
-                    $(LabelElement.class).last().getText());
+            assertComboBoxValue(text);
         }
     }
 
