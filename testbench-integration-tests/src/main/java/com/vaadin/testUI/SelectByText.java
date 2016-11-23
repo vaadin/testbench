@@ -22,6 +22,7 @@ import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.data.ListDataProvider;
 import com.vaadin.tests.AbstractTestUI;
 import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
 /**
@@ -36,12 +37,14 @@ public class SelectByText extends AbstractTestUI {
         final VerticalLayout layout = new VerticalLayout();
         addComponent(layout);
 
-        ComboBox combobox = new ComboBox();
+        ComboBox<String> combobox = new ComboBox<>();
         List<String> options = new ArrayList<String>();
 
         options.add("Value 1");
         options.add("(");
         options.add("(Value");
+        options.add("Value 222");
+        options.add("Value 22");
         options.add("Value 2");
         options.add("Value(");
         options.add("Value(i)");
@@ -51,6 +54,11 @@ public class SelectByText extends AbstractTestUI {
         combobox.setDataProvider(new ListDataProvider<String>(options));
 
         layout.addComponent(combobox);
+        combobox.addValueChangeListener(e -> {
+            layout.addComponent(
+                    new Label("Value is now '" + e.getValue() + "'"));
+        });
+
     }
 
     @Override
