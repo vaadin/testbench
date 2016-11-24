@@ -46,7 +46,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
-import com.thoughtworks.selenium.webdriven.WebDriverBackedSelenium;
 import com.vaadin.server.LegacyApplication;
 import com.vaadin.server.UIProvider;
 import com.vaadin.testbench.TestBenchDriverProxy;
@@ -711,17 +710,6 @@ public abstract class AbstractTB3Test extends ParallelTest {
      */
     public Keyboard getKeyboard() {
         return ((HasInputDevices) getDriver()).getKeyboard();
-    }
-
-    public void hitButton(String id) {
-        if (BrowserUtil.isPhantomJS(getDesiredCapabilities())) {
-            driver.findElement(By.id(id)).click();
-        } else {
-            WebDriverBackedSelenium selenium = new WebDriverBackedSelenium(
-                    driver, driver.getCurrentUrl());
-
-            selenium.keyPress("id=" + id, "\\13");
-        }
     }
 
     protected void openDebugLogTab() {
