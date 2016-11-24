@@ -531,21 +531,22 @@ img {
         any dependencies. Vaadin TestBench 4 directly depends on the following third-party libraries:</p>
 
     <ul>
-        <li>Selenium 2.51.0</li>
-        <li>PhantomJSDriver 1.2.1</li>
+        <li>Selenium 3.0.1</li>
+        <li>PhantomJSDriver 1.3.0</li>
         <li>Javassist 3.18.1-GA</li>
         <li>JUnit 4.12</li>
-        <li>org.json</li>
     </ul>
 
     <h2 id="migration_notes">Migration Notes</h2>
 
-    <p>Vaadin TestBench 4 is API compatible with Vaadin TestBench 3.x, and can thus be used as a drop-in replacement for
-        any 3.x version. The exceptions to this rule are listed in the API changes section below.</p>
+    <p>Vaadin TestBench 5 is API compatible with Vaadin TestBench 4.x, and can thus be used as a drop-in replacement for
+        any 4.x version provided the tested project has been migrated to Vaadin Framework 8. The exceptions to this rule are listed in the API changes section below.</p>
 
     <h3 id="api_changes">API Changes</h3>
     <ul>
-        <li><tt>closeNotification()</tt> has been removed from TestBenchElement and is now <tt>NotificationElement.close()</tt></li>
+        <li><tt>CheckBoxGroupElement</tt> added to test <tt>CheckBoxGroup</tt> Component</li>
+        <li><tt>RadioButtonGroupElement</tt> added to test <tt>RadioButtonGroup</tt> Component</li>
+        <li>Elements for compatibility Components were deprecated</li>
     </ul>
 
     <h2 id="supported_platforms_and_browsers">Supported Platforms and Browsers</h2>
@@ -557,7 +558,7 @@ img {
         <li>Latest Google Chrome</li>
         <li>Internet Explorer 8, 9, 10, 11</li>
         <li>Latest Microsoft Edge</li>
-        <li>Mozilla Firefox 47 and earlier</li>
+        <li>Mozilla Firefox</li>
         <li>Latest Safari</li>
         <li>Mobile browsers:
             <ul>
