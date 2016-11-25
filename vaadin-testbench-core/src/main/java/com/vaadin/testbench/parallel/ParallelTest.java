@@ -18,6 +18,8 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.UseParametersRunnerFactory;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
@@ -34,7 +36,8 @@ import com.vaadin.testbench.parallel.setup.SetupDriver;
  * several browser configurations. For each browser configuration, a
  * {@link WebDriver} is properly created with the desired configuration.
  */
-@RunWith(ParallelRunner.class)
+@RunWith(Parameterized.class)
+@UseParametersRunnerFactory(ParallelRunnerFactory.class)
 public class ParallelTest extends TestBenchTestCase {
 
     @Rule

@@ -27,11 +27,12 @@ import java.util.logging.Logger;
 
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.Parameterized;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
+import org.junit.runners.parameterized.BlockJUnit4ClassRunnerWithParameters;
+import org.junit.runners.parameterized.TestWithParameters;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
@@ -46,10 +47,10 @@ import com.vaadin.testbench.annotations.RunLocally;
  * generated test names give information about the parameters used (unlike
  * {@link Parameterized}).
  */
-public class ParallelRunner extends BlockJUnit4ClassRunner {
+public class ParallelRunner extends BlockJUnit4ClassRunnerWithParameters {
 
-    private static Logger logger = Logger.getLogger(ParallelRunner.class
-            .getName());
+    private static Logger logger = Logger
+            .getLogger(ParallelRunner.class.getName());
 
     /**
      * This is the total limit of actual JUnit test instances run in parallel
@@ -67,8 +68,8 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
         service = Executors.newFixedThreadPool(MAX_CONCURRENT_TESTS);
     }
 
-    public ParallelRunner(Class<?> klass) throws InitializationError {
-        super(klass);
+    public ParallelRunner(TestWithParameters test) throws InitializationError {
+        super(test);
         setScheduler(new ParallelScheduler(service));
     }
 
@@ -76,7 +77,8 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
     protected List<FrameworkMethod> computeTestMethods() {
         List<FrameworkMethod> tests = new LinkedList<FrameworkMethod>();
 
-        if (!ParallelTest.class.isAssignableFrom(getTestClass().getJavaClass())) {
+        if (!ParallelTest.class
+                .isAssignableFrom(getTestClass().getJavaClass())) {
             throw new RuntimeException(getClass().getName() + " only supports "
                     + ParallelTest.class.getName());
         }
@@ -100,16 +102,16 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
                         TBMethod method = new TBMethod(m.getMethod(),
                                 capabilities);
                         if (testNameSuffixProperty != null) {
-                            method.setTestNameSuffix("-"
-                                    + System.getProperty(testNameSuffixProperty
-                                            .property()));
+                            method.setTestNameSuffix("-" + System.getProperty(
+                                    testNameSuffixProperty.property()));
                         }
                         tests.add(method);
                     }
                 }
             }
         } catch (Exception e) {
-            throw new RuntimeException("Error retrieving browsers to run on", e);
+            throw new RuntimeException("Error retrieving browsers to run on",
+                    e);
         }
 
         return tests;
@@ -238,8 +240,8 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
 
         try {
             if (browserFactoryAnnotation != null
-                    && TestBenchBrowserFactory.class
-                            .isAssignableFrom(browserFactoryAnnotation.value())) {
+                    && TestBenchBrowserFactory.class.isAssignableFrom(
+                            browserFactoryAnnotation.value())) {
                 return (TestBenchBrowserFactory) browserFactoryAnnotation
                         .value().newInstance();
             }
@@ -295,7 +297,8 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
                 // user?
 
                 if (method.isAnnotationPresent(BrowserConfiguration.class)) {
-                    boolean methodSignatureIsValid = validateBrowserConfigurationAnnotatedSignature(method);
+                    boolean methodSignatureIsValid = validateBrowserConfigurationAnnotatedSignature(
+                            method);
 
                     if (!methodSignatureIsValid) {
                         /*
@@ -312,10 +315,10 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
                     } catch (Exception e) {
                         // Handle possible exceptions.
 
-                        String errMsg = String
-                                .format("Error occurred while invoking BrowserConfiguration method %s.%s(). Method was ignored, searching BrowserConfiguration method in superclasses",
-                                        method.getDeclaringClass().getName(),
-                                        method.getName());
+                        String errMsg = String.format(
+                                "Error occurred while invoking BrowserConfiguration method %s.%s(). Method was ignored, searching BrowserConfiguration method in superclasses",
+                                method.getDeclaringClass().getName(),
+                                method.getName());
                         logger.log(Level.INFO, errMsg, e);
 
                         /*
@@ -341,15 +344,15 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
      *            BrowserConfiguration annotated method
      * @return true if method signature is valid. false otherwise.
      */
-    private boolean validateBrowserConfigurationAnnotatedSignature(Method method) {
+    private boolean validateBrowserConfigurationAnnotatedSignature(
+            Method method) {
         String genericErrorMessage = "Error occurred while invoking BrowserConfigurationMethod %s.%s()."
                 + " %s. Method was ignored, searching BrowserConfiguration method in superclasses";
 
         if (method.getParameterTypes().length != 0) {
-            String errMsg = String
-                    .format(genericErrorMessage, method.getDeclaringClass()
-                            .getName(), method.getName(),
-                            "BrowserConfiguration annotated method must not require any arguments");
+            String errMsg = String.format(genericErrorMessage,
+                    method.getDeclaringClass().getName(), method.getName(),
+                    "BrowserConfiguration annotated method must not require any arguments");
             logger.info(errMsg);
             return false;
         }
@@ -359,11 +362,9 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
              * ClassCastException may still occur if method's return type is not
              * Collection<DesiredCapabilities>
              */
-            String errMsg = String
-                    .format(genericErrorMessage,
-                            method.getDeclaringClass().getName(),
-                            method.getName(),
-                            "BrowserConfiguration annotated method must return a Collection<DesiredCapabilities>");
+            String errMsg = String.format(genericErrorMessage,
+                    method.getDeclaringClass().getName(), method.getName(),
+                    "BrowserConfiguration annotated method must return a Collection<DesiredCapabilities>");
             logger.info(errMsg);
             return false;
         }
@@ -488,8 +489,9 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
 
         @Override
         public String getName() {
-            return String.format("%s[%s]", getMethod().getName()
-                    + testNameSuffix, getUniqueIdentifier(capabilities));
+            return String.format("%s[%s]",
+                    getMethod().getName() + testNameSuffix,
+                    getUniqueIdentifier(capabilities));
         }
 
         @Override
@@ -498,7 +500,8 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
                 return false;
             }
 
-            return ((TBMethod) obj).capabilities.equals(capabilities) && super.equals(obj);
+            return ((TBMethod) obj).capabilities.equals(capabilities)
+                    && super.equals(obj);
         }
 
         /*
