@@ -23,6 +23,6 @@ public class VerticalSplitPanelElement extends AbstractSplitPanelElement {
     private static By bySplit = By.className("v-splitpanel-vsplitter");
 
     public TestBenchElement getSplitter() {
-        return wrapElement(findElement(bySplit), getTestBenchCommandExecutor());
+        return wrapElement(findElement(bySplit), getCommandExecutor());
     }
 }

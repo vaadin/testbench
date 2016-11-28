@@ -29,6 +29,6 @@ public class TableRowElement extends AbstractComponentElement {
 
         WebElement cellContent = cells.get(col);
         return wrapElement(cellContent.findElement(By.xpath("./*")),
-                getTestBenchCommandExecutor());
+                getCommandExecutor());
     }
 }

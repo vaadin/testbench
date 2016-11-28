@@ -233,7 +233,7 @@ public class GridElement extends AbstractComponentElement {
         List<GridCellElement> headers = new ArrayList<GridCellElement>();
         for (TestBenchElement e : TestBenchElement.wrapElements(
                 getSubPart("#header[" + rowIndex + "]").findElements(
-                        By.xpath("./th")), getTestBenchCommandExecutor())) {
+                        By.xpath("./th")), getCommandExecutor())) {
             headers.add(e.wrap(GridCellElement.class));
         }
         return headers;
@@ -250,7 +250,7 @@ public class GridElement extends AbstractComponentElement {
         List<GridCellElement> footers = new ArrayList<GridCellElement>();
         for (TestBenchElement e : TestBenchElement.wrapElements(
                 getSubPart("#footer[" + rowIndex + "]").findElements(
-                        By.xpath("./td")), getTestBenchCommandExecutor())) {
+                        By.xpath("./td")), getCommandExecutor())) {
             footers.add(e.wrap(GridCellElement.class));
         }
         return footers;
@@ -391,7 +391,7 @@ public class GridElement extends AbstractComponentElement {
      * @return the number of data rows in the grid,
      */
     public long getRowCount() {
-        Long res = (Long) getTestBenchCommandExecutor()
+        Long res = (Long) getCommandExecutor()
                 .executeScript("return arguments[0].getBodyRowCount()", this);
         if (res == null) {
             throw new IllegalStateException("getBodyRowCount returned null");

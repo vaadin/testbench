@@ -263,7 +263,7 @@ public class TestBenchDriverProxy extends TestBenchCommandExecutor implements
     }
 
     @Override
-    public TestBenchCommandExecutor getTestBenchCommandExecutor() {
+    public TestBenchCommandExecutor getCommandExecutor() {
         return this;
     }
 

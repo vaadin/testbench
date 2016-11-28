@@ -73,7 +73,7 @@ public class AbstractSplitPanelElement extends
             WebElement elem = component.getWrappedElement();
             if (componentsInSelectedContainer.contains(elem)) {
                 return TestBench.createElement(clazz, elem,
-                        getTestBenchCommandExecutor());
+                        getCommandExecutor());
             }
         }
         return null;
