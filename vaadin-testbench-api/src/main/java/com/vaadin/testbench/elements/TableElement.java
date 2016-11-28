@@ -34,7 +34,8 @@ public class TableElement extends AbstractSelectElement {
      * @param column
      *            0 based column index
      * @return TestBenchElement containing wanted cell.
-     * @throw NoSuchElementException if the cell (row, column) is not found.
+     * @throws NoSuchElementException
+     *             if the cell (row, column) is not found.
      */
     public TestBenchElement getCell(int row, int column) {
 

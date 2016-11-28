@@ -92,7 +92,7 @@ public class SetupDriver {
 
     /**
      * <p>
-     * Sets up and returns a {@link WebDriver} to run test. This driver will run
+     * Sets up and returns a {@link WebDriver} to run test. This driver will run
      * the test on the {@link Browser} provided in the {@link RunLocally}
      * annotation.
      * </p>
@@ -113,7 +113,7 @@ public class SetupDriver {
 
     /**
      * <p>
-     * Sets up and returns a {@link WebDriver} to run test. This driver will run
+     * Sets up and returns a {@link WebDriver} to run test. This driver will run
      * the test on the {@link Browser} provided in the {@link RunLocally}
      * annotation.
      * </p>
