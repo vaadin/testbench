@@ -49,7 +49,7 @@
     
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <vaadin.version>7.7-SNAPSHOT</vaadin.version>
+        <vaadin.version>7.7.4</vaadin.version>
         <Implementation-Version>${project.version}</Implementation-Version>
     </properties>
     <modules>
