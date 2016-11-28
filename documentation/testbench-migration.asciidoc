@@ -1,0 +1,22 @@
+---
+title: TestBench 4 to TestBench 5 Migration Guide
+order: 5
+layout: page
+---
+
+[[testbench.migration]]
+= TestBench 4 to TestBench 5 Migration Guide
+
+[[testbench.migration.introduction]]
+== Introduction
+
+Vaadin TestBench 5 is API compatible with Vaadin TestBench 4.x, and can thus be used as a drop-in replacement for any 4.x version provided the tested project has been migrated to Vaadin Framework 8, see Vaadin Framework 8 migration guide.
+The exceptions to this rule are listed in the API changes section below.
+
+[[testbench.migration.api-changes]]
+== API Changes in TestBench 5
+
+* [classname]#CheckBoxGroupElement# added to test [classname]#CheckBoxGroup# Component
+* [classname]#RadioButtonGroupElement# added to test [classname]#RadioButtonGroup# Component
+* [classname]#Elements# for compatibility Components were deprecated
+* Method [methodname]#getCommandExecutor# was removed from [classname]#TestBenchElement#, its usages should be replaced with the method [methodname]#getTestBenchCommandExecutor()#
