@@ -14,7 +14,7 @@
 
   <url>http://maven.apache.org</url>
     <properties>
-        <snapshot.repository.url>http://oss.sonatype.org/content/repositories/vaadin-snapshots/
+        <snapshot.repository.url>https://oss.sonatype.org/content/repositories/vaadin-snapshots/
         </snapshot.repository.url>
         <vaadin.testbench.api.version>8.0-SNAPSHOT</vaadin.testbench.api.version>
         <jetty.version>9.3.12.v20160915</jetty.version>
