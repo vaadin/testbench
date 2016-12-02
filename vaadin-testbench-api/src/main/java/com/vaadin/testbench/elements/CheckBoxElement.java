@@ -13,6 +13,7 @@
 package com.vaadin.testbench.elements;
 
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.remote.BrowserType;
 
 import com.vaadin.testbench.By;
 import com.vaadin.testbench.commands.TestBenchElementCommands;
@@ -60,6 +61,10 @@ public class CheckBoxElement extends AbstractFieldElement {
         WebElement elem = findElement(By.xpath(".."))
                 .findElement(By.tagName("label"));
         return elem.getText();
+    }
+
+    protected boolean isFirefox() {
+        return BrowserType.FIREFOX.equals(getCapabilities().getBrowserName());
     }
 
     @Override

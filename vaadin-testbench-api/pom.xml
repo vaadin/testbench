@@ -9,7 +9,7 @@
     <properties>
         <snapshot.repository.url>https://oss.sonatype.org/content/repositories/vaadin-snapshots/
         </snapshot.repository.url>
-        <testbench.core.version>4.1-SNAPSHOT</testbench.core.version>
+        <testbench.core.version>4.1.0</testbench.core.version>
     </properties>
 
     <repositories>
