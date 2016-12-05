@@ -79,14 +79,12 @@ public class ScreenshotComparator {
                     byte[] screenshotBytes = screenshotContext
                             .getScreenshotAs(OutputType.BYTES);
                     supportsElementScreenshots = true;
-                    System.out
-                            .println(driver + " supports element screenshots");
                     return ImageIO
                             .read(new ByteArrayInputStream(screenshotBytes));
+                } catch (UnsupportedCommandException e) {
+                    supportsElementScreenshots = false;
                 } catch (WebDriverException e) {
                     if (e.getCause() instanceof UnsupportedCommandException) {
-                        System.out.println(driver
-                                + " DOES NOT support element screenshots");
                         supportsElementScreenshots = false;
                     } else {
                         throw e;
@@ -95,9 +93,7 @@ public class ScreenshotComparator {
             }
         }
 
-        if (elementScreenshot && !supportsElementScreenshots)
-
-        {
+        if (elementScreenshot && !supportsElementScreenshots) {
             // Driver does not support element screenshots, get whole screen
             // and crop
             BufferedImage image = ImageIO.read(new ByteArrayInputStream(
