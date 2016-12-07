@@ -2,22 +2,19 @@ package com.vaadin.testUI;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 
 import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.data.ListDataProvider;
 import com.vaadin.tests.AbstractTestUI;
-import com.vaadin.ui.AbstractMultiSelect;
-import com.vaadin.ui.AbstractSingleSelect;
 import com.vaadin.ui.AbstractTextField;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.CheckBoxGroup;
 import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.DateField;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.ListSelect;
+import com.vaadin.ui.MultiSelect;
 import com.vaadin.ui.NativeSelect;
 import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.RadioButtonGroup;
@@ -67,39 +64,61 @@ public class ComponentElementGetValue extends AbstractTestUI {
     public static final String DATEFIELD_VALUE_CHANGE = "dateFieldValueChange";
     public static final String MULTI_SELECT_VALUE_CHANGE = "multiSelectValueChange";
 
+    private List<String> createTestItems() {
+        List<String> options = new ArrayList<String>();
+        options.add("item 1");
+        options.add(TEST_STRING_VALUE);
+        options.add("item 3");
+        return options;
+    }
+    private void addSingleSelectComponents() {
+        List<String> options = new ArrayList<String>();
+        options.add("item 1");
+        options.add(TEST_STRING_VALUE);
+        options.add("item 3");
+
+        ComboBox<String> cb = new ComboBox<>("",options);
+        cb.setValue(TEST_STRING_VALUE);
+        addComponent(cb);
+
+        NativeSelect<String> nativeSelect = new NativeSelect<>("",options);
+        nativeSelect.setValue(TEST_STRING_VALUE);
+        addComponent(nativeSelect);
+
+        RadioButtonGroup<String> rbGroup = new RadioButtonGroup<>("",options);
+        rbGroup.setValue(TEST_STRING_VALUE);
+        addComponent(rbGroup);
+    }
+
+    private List<String> createData() {
+        List<String> options = new ArrayList<String>();
+        options.add("item 1");
+        options.add(TEST_STRING_VALUE);
+        options.add("item 3");
+        options.add("item 4");
+        return options;
+    }
+    private void addMultiSelectComponents() {
+
+        List<MultiSelect<String>> components = new ArrayList<>();
+        components.add(new ListSelect("",createData()));
+        components.add(new CheckBoxGroup("",createData()));
+        components.add(new TwinColSelect("",createData()));
+        components.forEach(c->{
+            c.select(TEST_STRING_VALUE);
+            c.addValueChangeListener(event -> {
+                valueChangeLabel.setValue(MULTI_SELECT_VALUE_CHANGE);
+            });
+            addComponent((Component)c);
+        });
+    }
     @Override
     protected void setup(VaadinRequest request) {
 
         AbstractTextField[] fieldComponents = { new TextField(),
                 new TextArea(), new PasswordField() };
-
-        AbstractSingleSelect[] singleSelectComponents = { new ComboBox(),
-                new NativeSelect(), new RadioButtonGroup() };
-        for (AbstractSingleSelect comp : singleSelectComponents) {
-            List<String> options = new ArrayList<String>();
-            options.add("item 1");
-            options.add(TEST_STRING_VALUE);
-            options.add("item 3");
-            comp.setDataProvider(new ListDataProvider<String>(options));
-            comp.setValue(TEST_STRING_VALUE);
-            addComponent(comp);
-        }
-        AbstractMultiSelect[] multiSelectComponents = { new ListSelect(),
-                new CheckBoxGroup(), new TwinColSelect() };
-        for (AbstractMultiSelect<String> comp : multiSelectComponents) {
-            List<String> options = new ArrayList<String>();
-            options.add("item 1");
-            options.add(TEST_STRING_VALUE);
-            options.add("item 3");
-            options.add("item 4");
-            comp.setDataProvider(new ListDataProvider<String>(options));
-            // Preselect a few items by creating a set
-            comp.setValue(new HashSet<String>(Arrays.asList(TEST_STRING_VALUE)));
-            comp.addValueChangeListener(event -> {
-                valueChangeLabel.setValue(MULTI_SELECT_VALUE_CHANGE);
-            });
-            addComponent(comp);
-        }
+        addSingleSelectComponents();
+        addMultiSelectComponents();
 
         for (int i = 0; i < fieldComponents.length; i++) {
             AbstractTextField field = fieldComponents[i];
