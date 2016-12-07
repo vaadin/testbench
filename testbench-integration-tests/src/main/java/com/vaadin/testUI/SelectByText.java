@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.data.ListDataProvider;
 import com.vaadin.tests.AbstractTestUI;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Label;
@@ -51,7 +50,7 @@ public class SelectByText extends AbstractTestUI {
         options.add("((Test ) selectByTest() method(with' parentheses)((");
         options.add("Value 3");
 
-        combobox.setDataProvider(new ListDataProvider<String>(options));
+        combobox.setItems(options);
 
         layout.addComponent(combobox);
         combobox.addValueChangeListener(e -> {

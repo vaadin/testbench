@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.data.DataProvider;
-import com.vaadin.server.data.ListDataProvider;
 import com.vaadin.tests.AbstractTestUI;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Label;
@@ -19,10 +17,8 @@ public class GridUI extends AbstractTestUI {
             rowCount = Integer.parseInt(request.getParameter("rowCount"));
         }
 
-
-        DataProvider<Item> ds = getMockData(rowCount);
         final Grid<Item> grid = new Grid<Item>();
-        grid.setDataProvider(ds);
+        grid.setItems(getMockData(rowCount));
         grid.addColumn("foo", Item::getFoo);
         grid.addColumn("bar", Item::getBar);
 
@@ -40,13 +36,13 @@ public class GridUI extends AbstractTestUI {
         addComponent(grid);
     }
 
-    private DataProvider<Item> getMockData(int rowCount) {
+    private Collection<Item> getMockData(int rowCount) {
         Collection<Item> data = new ArrayList<Item>();
         for (int i = 0; i < rowCount; i++) {
             Item item = new Item("foo " + i, "bar " + i);
             data.add(item);
         }
-        return new ListDataProvider<Item>(data);
+        return data;
     }
 
     @Override
