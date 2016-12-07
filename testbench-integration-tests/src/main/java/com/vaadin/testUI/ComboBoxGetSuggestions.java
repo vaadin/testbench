@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.data.ListDataProvider;
 import com.vaadin.tests.AbstractTestUI;
 import com.vaadin.ui.ComboBox;
 
@@ -12,15 +11,13 @@ public class ComboBoxGetSuggestions extends AbstractTestUI {
 
     @Override
     protected void setup(VaadinRequest request) {
-        ComboBox<String> cb = new ComboBox<String>();
+        ComboBox<String> cb = new ComboBox<>();
         cb.setEmptySelectionAllowed(false);
-        List<String> options = new ArrayList<String>();
-
+        List<String> options = new ArrayList<>();
         for (int i = 1; i < 100; i++) {
             options.add("item" + i);
         }
-        cb.setDataProvider(new ListDataProvider<String>(options));
-
+        cb.setItems(options);
         addComponent(cb);
     }
 
