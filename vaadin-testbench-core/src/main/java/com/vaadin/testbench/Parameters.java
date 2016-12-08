@@ -416,4 +416,20 @@ public class Parameters {
                 && useLocalWebDriver.toLowerCase().equals("true");
     }
 
+    /**
+     *
+     * @return retry count, which is used to run same test several times.
+     */
+    public static int getRetryCount() {
+        String countParam = System.getProperty(getQualifiedParameter("retryCount"));
+        int count = 1;
+        if (countParam != null) {
+            try {
+               count = Integer.parseInt(countParam);
+            } catch (NumberFormatException e) {
+               // NOP count == 1 by default
+            }
+        }
+        return count;
+    }
 }

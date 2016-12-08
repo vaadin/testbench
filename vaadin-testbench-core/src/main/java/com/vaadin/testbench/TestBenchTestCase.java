@@ -14,15 +14,17 @@ package com.vaadin.testbench;
 
 import java.util.List;
 
-import com.vaadin.testbench.tools.LicenseChecker;
+import org.junit.Rule;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import com.vaadin.testbench.annotations.RetryRule;
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.commands.TestBenchCommands;
 import com.vaadin.testbench.commands.TestBenchElementCommands;
 import com.vaadin.testbench.elementsbase.AbstractElement;
+import com.vaadin.testbench.tools.LicenseChecker;
 
 /**
  * A superclass with some helpers to aid TestBench developers. This superclass
@@ -36,8 +38,16 @@ public abstract class TestBenchTestCase extends
         LicenseChecker.nag();
     }
 
-    protected WebDriver driver;
+    /**
+     * Specifies retry count, which is used to run same test several times.
+     * Can be changed by setting retrycount system property.
+     * Can be overriden in a child class.
+     * Default: 1
+     */
+    @Rule
+    public RetryRule retryCount = new RetryRule(Parameters.getRetryCount());
 
+    protected WebDriver driver;
     /**
      * Convenience method that casts the specified {@link WebDriver} instance to
      * an instance of {@link TestBenchCommands}, making it easy to access the
