@@ -37,3 +37,46 @@ user interface capability of the Java process.
 Note that the same problem is present also when debugging tests with Firefox. We
 therefore recommend using Chrome for debugging tests, unless Firefox is
 necessary.
+
+[[testbench.known-issues.ie-random-failures]]
+== Random Failures with Internet Explorer Driver
+
+Unfortunately, sometimes TestBench test may behave unexpectedly, causing random failures.
+One of the reasons for these random failures is problems with the Internet Explorer Driver.
+Internet Explorer specification requires browser window to be focused to receive user events,
+while Selenium Web Driver specification points out that Web Driver should work without window focus.
+
+TestBench provides a workaround to this problem.
+Use [classname]#RetryRule(int maxAttempts)# rule to re-run a test several times in case of a random failure.
+Use [parameter]#maxAttempts# to specify the maximum number of attempts for running tests.
+The test passes as soon as one attempt is executed without any errors,
+i.e. it is only run as many times as needed.
+
+----
+public class RandomFailureTest extends TestBenchTestCase {
+    private int count = 0;
+
+    @Rule
+    public RetryRule rule = new RetryRule(2);
+
+    @Test
+    public void defaultExecution_noRetryRule_testcaseRunOnce() {
+        count++;
+        Assert.assertEquals(2, count);
+    }
+
+}
+----
+[NOTE]
+[classname]#RetryRule# affects all the test methods in the class and also child classes.
+
+The default value of [parameter]#maxAttempts# is 1, meaning that tests run only once by default.
+You can change the value of [parameter]#maxAttempts# using Java system property:
+[methodname]#System.setProperty(3, "max.attempts"))#. This will affect all the TestBench tests.
+
+[NOTE]
+Use [classname]#RetryRule# when you are sure that the test fails, because of the problems
+with the Web Driver, but not your application. Using [classname]#RetryRule# without cautions may
+hide random problems happening in your application.
+
+

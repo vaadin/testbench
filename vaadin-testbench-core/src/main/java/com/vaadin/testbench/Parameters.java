@@ -416,4 +416,25 @@ public class Parameters {
                 && useLocalWebDriver.toLowerCase().equals("true");
     }
 
+    /**
+     *
+     * Gets the maximum number of times to run the test in case of a random failure.
+     * See {@link com.vaadin.testbench.annotations.RetryRule} for details.
+     *
+     * @return maximum attempts the test can be run.
+     */
+    public static int getMaxAttempts() {
+        String countParam = System.getProperty(getQualifiedParameter("max.attempts"));
+        int count = 1;
+        if (countParam != null) {
+            try {
+                count = Integer.parseInt(countParam);
+            }
+            catch (NumberFormatException e){
+                throw new RuntimeException(
+                        "MaxAttempts parameter for a Retry Rule can not be parsed");
+            }
+        }
+        return count;
+    }
 }
