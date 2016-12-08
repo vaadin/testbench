@@ -68,7 +68,7 @@ public class CheckBoxElement extends AbstractFieldElement {
         if (isFirefox()) {
             // When using Valo, the input element is covered by a
             // pseudo-element, which Firefox will complain about
-            getTestBenchCommandExecutor().executeScript("arguments[0].click()",
+            getCommandExecutor().executeScript("arguments[0].click()",
                     input);
         } else if (isChrome()) {
             ((TestBenchElementCommands) (input)).click(0, 0);

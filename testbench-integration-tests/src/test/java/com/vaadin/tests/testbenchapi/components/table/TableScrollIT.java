@@ -30,7 +30,7 @@ public class TableScrollIT extends MultiBrowserTest {
 
     // helper functions
     private int getScrollTopValue(WebElement elem) {
-        JavascriptExecutor js = getTestBenchCommandExecutor();
+        JavascriptExecutor js = getCommandExecutor();
         String jsScript = "return arguments[0].getElementsByClassName(\"v-scrollable\")[0].scrollTop;";
         if (BrowserUtil.isIE8(getDesiredCapabilities())) {
             jsScript = "return arguments[0].querySelectorAll(\".v-scrollable\")[0].scrollTop;";
@@ -40,7 +40,7 @@ public class TableScrollIT extends MultiBrowserTest {
     }
 
     private int getScrollLeftValue(WebElement elem) {
-        JavascriptExecutor js = getTestBenchCommandExecutor();
+        JavascriptExecutor js = getCommandExecutor();
         String jsScript = "return arguments[0].getElementsByClassName(\"v-scrollable\")[0].scrollLeft;";
         if (BrowserUtil.isIE8(getDesiredCapabilities())) {
             jsScript = "return arguments[0].querySelectorAll(\".v-scrollable\")[0].scrollLeft;";

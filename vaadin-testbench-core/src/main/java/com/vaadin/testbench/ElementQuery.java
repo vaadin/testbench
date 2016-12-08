@@ -378,7 +378,7 @@ public class ElementQuery<T extends AbstractElement> {
         results = By.vaadin(query).findElements(getContext());
 
         TestBenchCommandExecutor tbCommandExecutor = ((HasTestBenchCommandExecutor) getContext())
-                .getTestBenchCommandExecutor();
+                .getCommandExecutor();
         for (WebElement webElement : results) {
             T element = TestBench.createElement(elementClass, webElement,
                     tbCommandExecutor);

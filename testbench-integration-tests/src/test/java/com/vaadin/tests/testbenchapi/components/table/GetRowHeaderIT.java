@@ -92,7 +92,7 @@ public class GetRowHeaderIT extends MultiBrowserTest {
     }
 
     private void setElementWidth(WebElement elem, int width) {
-        JavascriptExecutor js = getTestBenchCommandExecutor();
+        JavascriptExecutor js = getCommandExecutor();
         String jsScript = "var elem=arguments[0];" + "elem.style.width='"
                 + width + "px';";
         js.executeScript(jsScript, elem);

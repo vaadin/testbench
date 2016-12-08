@@ -28,6 +28,6 @@ public interface HasTestBenchCommandExecutor extends HasSearchContext {
      * 
      * @return
      */
-    public TestBenchCommandExecutor getTestBenchCommandExecutor();
+    public TestBenchCommandExecutor getCommandExecutor();
 
 }

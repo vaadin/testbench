@@ -125,9 +125,9 @@ public abstract class TestBenchTestCase extends
     }
 
     @Override
-    public TestBenchCommandExecutor getTestBenchCommandExecutor() {
+    public TestBenchCommandExecutor getCommandExecutor() {
         return ((HasTestBenchCommandExecutor) driver)
-                .getTestBenchCommandExecutor();
+                .getCommandExecutor();
     }
 
     public WebElement findElement(org.openqa.selenium.By by) {
