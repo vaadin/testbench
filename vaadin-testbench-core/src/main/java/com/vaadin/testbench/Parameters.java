@@ -25,6 +25,7 @@ public class Parameters {
     private static int screenshotRetryDelay = 500;
     private static int testsInParallel;
     private static int testSuitesInParallel;
+    private static int maxAttempts;
     static {
         isDebug = getSystemPropertyBoolean("debug", false);
 
@@ -41,7 +42,7 @@ public class Parameters {
                 500);
 
         testSuitesInParallel = getSystemPropertyInt("testSuitesInParallel", 20);
-
+        maxAttempts = getSystemPropertyInt("maxAttempts", 1);
         if (hasSystemProperty("testsInParallel")) {
             testsInParallel = getSystemPropertyInt("testsInParallel", 1);
         } else if (isLocalWebDriverUsed()) {
@@ -416,4 +417,24 @@ public class Parameters {
                 && useLocalWebDriver.toLowerCase().equals("true");
     }
 
+    /**
+     *
+     * Gets the maximum number of times to run the test in case of a random failure.
+     * See {@link com.vaadin.testbench.annotations.RetryRule} for details.
+     *
+     * @return maximum attempts the test can be run.
+     */
+    public static int getMaxAttempts() {
+        return maxAttempts;
+     }
+
+    /**
+     * Sets the maximum number of times to run the test in case of a random failure
+     *
+     * @param maxAttempts
+     *            maximum attempts the test can be run.
+     */
+    public static void setMaxAttempts(int maxAttempts) {
+        Parameters.maxAttempts = maxAttempts;
+    }
 }
