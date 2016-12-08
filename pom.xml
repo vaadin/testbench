@@ -38,7 +38,7 @@
          <snapshotRepository>
              <id>vaadin-snapshots</id>
              <name>Vaadin snapshot repository</name>
-             <url>http://oss.sonatype.org/content/repositories/vaadin-snapshots/</url>
+             <url>https://oss.sonatype.org/content/repositories/vaadin-snapshots/</url>
          </snapshotRepository>
          <repository>
              <id>vaadin-addons</id>
@@ -50,7 +50,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <vaadin.version>8.0.0.alpha7</vaadin.version>
+        <vaadin.version>8.0.0.alpha8</vaadin.version>
         <Implementation-Version>${project.version}</Implementation-Version>
     </properties>
     <modules>

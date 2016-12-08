@@ -22,7 +22,7 @@
     </licenses>
 
     <properties>
-        <snapshot.repository.url>http://oss.sonatype.org/content/repositories/vaadin-snapshots/
+        <snapshot.repository.url>https://oss.sonatype.org/content/repositories/vaadin-snapshots/
         </snapshot.repository.url>
         <vaadin.testbench.api.version>8.0-SNAPSHOT</vaadin.testbench.api.version>
     </properties>
