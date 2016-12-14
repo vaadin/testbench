@@ -28,7 +28,7 @@ public class NativeSelectSetValue extends AbstractTestUI {
         select.setValue("item 1");
         lblCounter.setId("counter");
 
-        select.addSelectionChangeListener(new EventCounter());
+        select.addSelectionListener(new EventCounter());
         addComponent(select);
         addComponent(lblCounter);
     }
