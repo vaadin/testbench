@@ -492,6 +492,10 @@ img {
     <li>waitForVaadin handles a possible null return value</li>
     <li>The hub host name can be overridden using -Dcom.vaadin.testbench.Parameters.hubHostname</li>
     <li>The browser name and version to run on locally can be overridden using -Dcom.vaadin.testbench.Parameters.runLocally</li>
+    <li>Buttons in Internet Explorer are primarily clicked by pressing space
+    on them to work around problems in the Internet Explorer web driver. The
+    feature can be disabled using
+    -Dcom.vaadin.testbench.Parameters.ieClickWorkaround=false</li>
     
     <li>
         Component Element API changes in vaadin-testbench-api 7.7.4:

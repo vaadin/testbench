@@ -48,6 +48,7 @@ import com.vaadin.testbench.commands.ScreenshotComparator;
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.commands.TestBenchElementCommands;
 import com.vaadin.testbench.elementsbase.AbstractElement;
+import com.vaadin.testbench.parallel.BrowserUtil;
 
 /**
  * TestBenchElement is a WebElement wrapper. It provides Vaadin specific helper
@@ -189,8 +190,20 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
     @Override
     public void click() {
         waitForVaadin();
-        actualElement.click();
-
+        if (Parameters.isIeClickWorkaround()
+                && BrowserUtil.isIE(getCapabilities())) {
+            // IE randomly misclicks because of problems in the IE driver.
+            // This is a workaround for Vaadin buttons and native buttons, which
+            // accept clicks by pressing space
+            if (hasClassName("v-button")
+                    || "button".equalsIgnoreCase(getTagName())) {
+                actualElement.sendKeys(Keys.SPACE);
+            } else {
+                actualElement.click();
+            }
+        } else {
+            actualElement.click();
+        }
     }
 
     @Override

@@ -12,6 +12,8 @@
  */
 package com.vaadin.testbench;
 
+import org.openqa.selenium.WebElement;
+
 import com.vaadin.testbench.annotations.RunLocally;
 import com.vaadin.testbench.annotations.RunOnHub;
 
@@ -25,6 +27,7 @@ public class Parameters {
     private static int screenshotRetryDelay = 500;
     private static int testsInParallel;
     private static int testSuitesInParallel;
+    private static boolean ieClickWorkaround;
     static {
         isDebug = getSystemPropertyBoolean("debug", false);
 
@@ -49,6 +52,8 @@ public class Parameters {
         } else {
             testsInParallel = 50;
         }
+
+        ieClickWorkaround = getSystemPropertyBoolean("ieClickWorkaround", true);
     }
 
     /**
@@ -416,4 +421,30 @@ public class Parameters {
                 && useLocalWebDriver.toLowerCase().equals("true");
     }
 
+    /**
+     * Checks if the click workaround is enabled for Internet Explorer.
+     * 
+     * The click workaround causes {@link WebElement#click()} to work slightly
+     * different and more reliably in certain cases on Internet Explorer. This
+     * is a work around for problems in the web driver for Internet Explorer.
+     * 
+     * @return <code>true</code> if the click workaround for IE is enabled,
+     *         <code>false</code> otherwise
+     */
+    public static boolean isIeClickWorkaround() {
+        return ieClickWorkaround;
+    }
+
+    /**
+     * Sets whether the click workaround is enabled for Internet Explorer.
+     * 
+     * @see #isIeClickWorkaround()
+     * 
+     * @param ieClickWorkaround
+     *            <code>true</code> to enable the click workaround for IE,
+     *            <code>false</code> to disable it
+     */
+    public static void setIeClickWorkaround(boolean ieClickWorkaround) {
+        Parameters.ieClickWorkaround = ieClickWorkaround;
+    }
 }
