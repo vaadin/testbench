@@ -50,7 +50,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <vaadin.version>8.0.0.alpha8</vaadin.version>
+        <vaadin.version>8.0.0.alpha9</vaadin.version>
         <Implementation-Version>${project.version}</Implementation-Version>
     </properties>
     <modules>
