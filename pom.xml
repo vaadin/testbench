@@ -59,7 +59,6 @@
         <module>vaadin-testbench-standalone</module>
         <module>vaadin-testbench-assembly</module>
         <module>testbench-integration-tests</module>
-        <module>vaadin-testbench-api</module>
     </modules>
 
     <build>
