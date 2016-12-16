@@ -95,15 +95,14 @@ Distributed Environment">>.
 == Installing Browser Drivers
 
 Whether developing tests with the WebDriver in the workstation or running tests
-in a grid, using some browsers requires that a browser driver is installed.
+in a grid, for different browsers requires the browser driver to be installed.
 
 . Download the latest browser driver
 
-** Internet Explorer (Windows only) - install [filename]#IEDriverServer.exe# from
-under the latest Selenium release:
+** Firefox - install GeckoDriver for your platform from under the latest release at:
 
 +
-http://selenium-release.storage.googleapis.com/index.html
+https://github.com/mozilla/geckodriver/releases
 
 ** Chrome - install ChromeDriver (a part of the Chromium project) for your platform
 from under the latest release at:
@@ -111,10 +110,47 @@ from under the latest release at:
 +
 http://chromedriver.storage.googleapis.com/index.html
 
+** Microsoft Edge - install MicrosoftWebDriver for your platform
+from under the latest release at:
+
++
+http://chromedriver.storage.googleapis.com/index.html
+
+** Internet Explorer (Windows only) - install [filename]#IEDriverServer.exe# from
+under the latest Selenium release:
+
++
+https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/
 
 . Add the driver executable to user PATH. In a distributed testing environment, give it as a command-line parameter to the grid node service, as described in <<dummy/../../environment/testbench-grid#testbench.grid.node,"Starting a Grid Node">>.
 
-ifdef::disabled[]
+[[testbench.installation.browserdrivers.addingtopath]]
+=== Adding Web Driver to a System Path
+The driver executable must be included in the operating
+system [literal]#++PATH++#, be given with a driver-specific system Java
+property:
+
+* Chrome: [parameter]#webdriver.chrome.driver#
+* Firefox: [parameter]#webdriver.gecko.driver#
+* Microsoft Edge: [parameter]#webdriver.edge.driver#
+* Internet Explorer: [parameter]#webdriver.ie.driver#
+* PhantomJS: [parameter]#phantomjs.binary.path#
+
+You can set the property in Java with [methodname]#System.setProperty(prop,
+key))# or pass it as a command-line parameter to the Java executable with
+[parameter]#-Dwebdriver.chrome.driver=/path/to/driver#.
+
+If you use an ESR version of Firefox, which is recommended for test stability,
+you need to the binary when creating the driver as follows:
+
+
+----
+FirefoxBinary binary =
+    new FirefoxBinary(new File("/path/to/firefox_ESR_10"));
+driver = TestBench.createDriver(
+    new FirefoxDriver(binary, new FirefoxProfile()));
+----
+
 [[testbench.installation.browserdrivers.ubuntu]]
 === Installing ChromeDriver for Ubuntu Chromium
 
@@ -145,3 +181,4 @@ The Chromium libraries need to be included in the system library path:
 [prompt]#$# [command]#sudo ldconfig#
 ----
 endif::disabled[]
+
