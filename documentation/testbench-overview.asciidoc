@@ -22,7 +22,7 @@ application, interact with the UI components, for example, by clicking them, and
 then get the HTML element values.
 
 [[figure.testbench.webdriver]]
-.Controlling the Browser with Testbench
+.Controlling the Browser with TestBench
 image::img/webdriver-use-lo.png[]
 
 Before going further into feature details, you may want to try out Vaadin
