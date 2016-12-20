@@ -30,7 +30,7 @@ normally be in [filename]#src/main# and test code, together with TestBench
 tests, in [filename]#src/test#.
 
 
-[[testbench.maven.project.application]]
+[[testbench.maven.project.multimodule]]
 === In Libraries and Add-ons
 
 In multi-module projects, you may have libraries in other modules, and the
