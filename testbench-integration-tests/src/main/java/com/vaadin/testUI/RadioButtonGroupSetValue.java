@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.data.ListDataProvider;
+import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.tests.AbstractTestUI;
 import com.vaadin.ui.RadioButtonGroup;
 
