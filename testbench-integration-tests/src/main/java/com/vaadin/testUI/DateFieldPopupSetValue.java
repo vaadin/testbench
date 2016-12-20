@@ -45,7 +45,7 @@ public class DateFieldPopupSetValue extends AbstractTestUI {
         private int counter = 0;
 
         @Override
-        public void accept(ValueChangeEvent<LocalDate> event) {
+        public void valueChange(ValueChangeEvent<LocalDate> event) {
             counter++;
             counterLbl.setValue("" + counter);
         }
