@@ -36,6 +36,8 @@ public abstract class AbstractTestUI extends UI {
         setContent(rootLayout);
 
         layout = new VerticalLayout();
+        layout.setMargin(false);
+        layout.setSpacing(false);
 
         rootLayout.addComponent(label);
         rootLayout.addComponent(layout);
