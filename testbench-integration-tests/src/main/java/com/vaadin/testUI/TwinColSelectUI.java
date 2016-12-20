@@ -3,7 +3,6 @@ package com.vaadin.testUI;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.event.selection.MultiSelectionEvent;
 import com.vaadin.event.selection.MultiSelectionListener;
 import com.vaadin.server.VaadinRequest;
@@ -23,7 +22,7 @@ public class TwinColSelectUI extends AbstractTestUI {
         options.add("item1");
         options.add("item2");
         options.add("item3");
-        twinColSelect.setDataProvider(new ListDataProvider<>(options));
+        twinColSelect.setItems(options);
         twinColSelect.select("item1");
         twinColSelect.addSelectionListener(new CounterListener(0));
 
