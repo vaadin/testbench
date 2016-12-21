@@ -180,5 +180,4 @@ The Chromium libraries need to be included in the system library path:
 ----
 [prompt]#$# [command]#sudo ldconfig#
 ----
-endif::disabled[]
 
