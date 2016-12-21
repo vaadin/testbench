@@ -162,7 +162,7 @@ The top-level associative map should have two associations:
   "capabilities":
     [
       {
-        "browserName": "[parameter]##firefox##",
+        "browserName": "firefox",
         ...
       },
       ...
@@ -216,28 +216,28 @@ See the following example for a typical server configuration.
   "capabilities":
     [
       {
-        "browserName": "[parameter]##firefox##",
-        "maxInstances": [parameter]#5#,
-        "seleniumProtocol": "[parameter]##WebDriver##",
-        "version": "[parameter]##10##",
-        "firefox_binary": "[parameter]##/path/to/firefox10##"
+        "browserName": "firefox",
+        "maxInstances": 5,
+        "seleniumProtocol": "WebDriver",
+        "version": "10",
+        "firefox_binary": "/path/to/firefox10"
       },
       {
-        "browserName": "[parameter]##firefox##",
-        "maxInstances": [parameter]#5#,
-        "version": "[parameter]##16##",
-        "firefox_binary": "[parameter]##/path/to/firefox16##"
+        "browserName": "firefox",
+        "maxInstances": 5,
+        "version": "16",
+        "firefox_binary": "/path/to/firefox16"
       },
       {
-        "browserName": "[parameter]##chrome##",
-        "maxInstances": [parameter]#5#,
-        "seleniumProtocol": "[parameter]##WebDriver##"
+        "browserName": "chrome",
+        "maxInstances": 5,
+        "seleniumProtocol": "WebDriver"
       },
       {
-        "platform": "[parameter]##WINDOWS##",
-        "browserName": "[parameter]##internet explorer##",
-        "maxInstances": [parameter]#1#,
-        "seleniumProtocol": "[parameter]##WebDriver##"
+        "platform": "WINDOWS",
+        "browserName": "internet explorer",
+        "maxInstances": 1,
+        "seleniumProtocol": "WebDriver"
       }
     ],
   "configuration":
