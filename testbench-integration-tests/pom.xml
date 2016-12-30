@@ -160,11 +160,6 @@
             </dependency>
         <dependency>
             <groupId>com.vaadin</groupId>
-            <artifactId>vaadin-testbench-api</artifactId>
-            <version>${vaadin.testbench.api.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.vaadin</groupId>
             <artifactId>vaadin-testbench-core</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
