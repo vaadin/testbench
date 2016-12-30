@@ -7,7 +7,7 @@ import com.vaadin.testUI.ElementQueryUI;
 import com.vaadin.testbench.By;
 import com.vaadin.testbench.TestBenchElement;
 
-public class ElementScreenCompareTest extends MultiBrowserTest {
+public class ElementScreenCompareIT extends MultiBrowserTest {
 
     @Override
     protected String getDeploymentPath() {
