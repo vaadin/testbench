@@ -10,6 +10,8 @@ public class ElementQueryUI extends UI {
     @Override
     protected void init(VaadinRequest request) {
         VerticalLayout vl = new VerticalLayout();
+        vl.setSpacing(false);
+        vl.setMargin(false);
         setContent(vl);
         for (int i = 0; i < 10; i++) {
             vl.addComponent(new Button("Button " + i));
