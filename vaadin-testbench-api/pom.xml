@@ -10,7 +10,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <snapshot.repository.url>https://oss.sonatype.org/content/repositories/vaadin-snapshots/</snapshot.repository.url>
-        <testbench.core.version>5.0-SNAPSHOT</testbench.core.version>
+        <testbench.core.version>5.0.0.alpha2</testbench.core.version>
     </properties>
 
     <repositories>
