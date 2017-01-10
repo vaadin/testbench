@@ -21,16 +21,14 @@
         </license>
     </licenses>
 
-    <properties>
-        <snapshot.repository.url>https://oss.sonatype.org/content/repositories/vaadin-snapshots/
-        </snapshot.repository.url>
-        <vaadin.testbench.api.version>8.0-SNAPSHOT</vaadin.testbench.api.version>
-    </properties>
-
     <repositories>
         <repository>
             <id>vaadin-addons</id>
             <url>http://vaadin.com/nexus/content/repositories/vaadin-addons</url>
+        </repository>
+        <repository>
+            <id>vaadin-snapshots</id>
+            <url>${snapshot.repository.url}</url>
         </repository>
     </repositories>
 
