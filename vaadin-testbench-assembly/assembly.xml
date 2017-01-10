@@ -24,13 +24,6 @@
             </includes>
         </fileSet>
         <fileSet>
-            <directory>../vaadin-testbench-api/target</directory>
-            <outputDirectory>maven/vaadin-testbench-api</outputDirectory>
-            <includes>
-                <include>vaadin-testbench-api*.jar</include>
-            </includes>
-        </fileSet>
-        <fileSet>
             <directory>../vaadin-testbench/target</directory>
             <outputDirectory>maven/vaadin-testbench</outputDirectory>
             <includes>
@@ -70,10 +63,6 @@
             <directory>../vaadin-testbench-core/target/apidocs</directory>
             <outputDirectory>documentation/api/vaadin-testbench-core</outputDirectory>
         </fileSet>
-        <fileSet>
-            <directory>../vaadin-testbench-api/target/apidocs</directory>
-            <outputDirectory>documentation/api/vaadin-testbench-api</outputDirectory>
-        </fileSet>
     </fileSets>
 
     <files>
@@ -101,11 +90,6 @@
         <file>
             <source>../vaadin-testbench-core/pom.xml</source>
             <outputDirectory>maven/vaadin-testbench-core</outputDirectory>
-            <filtered>true</filtered>
-        </file>
-        <file>
-            <source>../vaadin-testbench-api/pom.xml</source>
-            <outputDirectory>maven/vaadin-testbench-api</outputDirectory>
             <filtered>true</filtered>
         </file>
     </files>
