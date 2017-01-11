@@ -128,7 +128,8 @@ All supported browsers require a special driver and some additional setup, see
 
 [NOTE]
 Geckodriver used for the latest Firefox versions (48 and newer) does not support link:https://github.com/mozilla/geckodriver/issues/159[actions API].
-It is recommended you use link:https://www.mozilla.org/en-US/firefox/organizations/all/[Firefox ESR] (currently at 45.3) to execute tests on Firefox until this has been fixed.
+In practise, meaning that you can not simulate context click and double click in tests.
+It is recommended you use link:https://www.mozilla.org/en-US/firefox/organizations/all/[Firefox 51] to execute tests on Firefox, when this is fixed.
 
 Run the test with the following command and observe that it opens up a Firefox browser and immediately closes it again.
 
