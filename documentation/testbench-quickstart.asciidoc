@@ -32,8 +32,8 @@ Since TestBench version 5.0.0, Geckodriver is used to run tests on Firefox.
 Geckodriver requires a separate installation.
 
 [NOTE]
-Geckodriver used for the latest Firefox versions (48 and newer) does not support link:https://github.com/mozilla/geckodriver/issues/159[actions API].
-It is recommended you use link:https://www.mozilla.org/en-US/firefox/organizations/all/[Firefox ESR] (currently at 45.3) to execute tests on Firefox until this has been fixed.
+Unfortunately, Selenium 3 does not support any current Firefox version, because the latest Firefox versions (50 and newer) does not support link:https://github.com/mozilla/geckodriver/issues/159[actions API].
+Previous versions have other problems with GeckoDriver.
 
 [[testbench.quickstart.adding-dependency]]
 == Adding the Maven Dependency
