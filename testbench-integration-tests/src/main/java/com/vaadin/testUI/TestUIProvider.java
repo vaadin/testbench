@@ -7,10 +7,6 @@ import com.vaadin.server.UIClassSelectionEvent;
 import com.vaadin.server.UIProvider;
 import com.vaadin.ui.UI;
 
-/**
- *
- */
-@SuppressWarnings("serial")
 public class TestUIProvider extends UIProvider {
     private static Logger logger = Logger.getLogger(TestUIProvider.class
             .getName());

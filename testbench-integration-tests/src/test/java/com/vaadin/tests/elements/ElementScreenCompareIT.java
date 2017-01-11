@@ -1,23 +1,24 @@
-package com.vaadin.tests.testbenchapi;
+package com.vaadin.tests.elements;
 
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.vaadin.testUI.ElementQueryUI;
 import com.vaadin.testbench.By;
 import com.vaadin.testbench.TestBenchElement;
-import com.vaadin.testbench.elements.ButtonElement;
 
 public class ElementScreenCompareIT extends MultiBrowserTest {
 
     @Override
     protected String getDeploymentPath() {
-        return "/ElementQueryUI";
+        return "/" + ElementQueryUI.class.getSimpleName();
     }
 
     @Test
     public void elementCompareScreen() throws Exception {
         openTestURL();
-        ButtonElement button4 = $(ButtonElement.class).all().get(4);
+        TestBenchElement button4 = (TestBenchElement) findElements(
+                By.className("v-button")).get(4);
 
         Assert.assertTrue(button4.compareScreen("button4"));
         TestBenchElement layout = (TestBenchElement) button4

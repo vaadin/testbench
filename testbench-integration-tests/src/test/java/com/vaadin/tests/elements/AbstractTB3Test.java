@@ -14,7 +14,7 @@
  * the License.
  */
 
-package com.vaadin.tests.testbenchapi;
+package com.vaadin.tests.elements;
 
 import java.io.IOException;
 import java.io.InputStream;
