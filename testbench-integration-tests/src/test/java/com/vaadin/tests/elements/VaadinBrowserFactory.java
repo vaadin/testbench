@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.openqa.selenium.Platform;
+import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import com.vaadin.testbench.parallel.Browser;
@@ -36,7 +37,7 @@ public class VaadinBrowserFactory extends DefaultBrowserFactory {
         defaultBrowserVersion.put(Browser.PHANTOMJS, "1");
         defaultBrowserVersion.put(Browser.SAFARI, "7");
         defaultBrowserVersion.put(Browser.IE11, "11");
-        defaultBrowserVersion.put(Browser.FIREFOX, "24");
+        defaultBrowserVersion.put(Browser.FIREFOX, "45");
     }
 
     private static Map<Browser, Platform> defaultBrowserPlatform = new HashMap<Browser, Platform>();
@@ -45,18 +46,20 @@ public class VaadinBrowserFactory extends DefaultBrowserFactory {
         defaultBrowserPlatform.put(Browser.PHANTOMJS, Platform.LINUX);
         defaultBrowserPlatform.put(Browser.SAFARI, Platform.MAC);
         defaultBrowserPlatform.put(Browser.IE11, Platform.WINDOWS);
-        defaultBrowserPlatform.put(Browser.FIREFOX, Platform.XP);
+        defaultBrowserPlatform.put(Browser.FIREFOX, Platform.WINDOWS);
     }
 
     @Override
     public DesiredCapabilities create(Browser browser, String version,
             Platform platform) {
+        final String PHANTOMJS_PATH_PROPERTY = "phantomjs.binary.path";
+        final String PHANTOMJS_PATH_VALUE = "/usr/bin/phantomjs2";
         if (browser == Browser.PHANTOMJS) {
             DesiredCapabilities phantom2 = super.create(browser, "2",
                     Platform.LINUX);
             // Hack for the test cluster
-            phantom2.setCapability("phantomjs.binary.path",
-                    "/usr/bin/phantomjs2");
+            phantom2.setCapability(PHANTOMJS_PATH_PROPERTY,
+                PHANTOMJS_PATH_VALUE);
             return phantom2;
         }
 
@@ -71,6 +74,9 @@ public class VaadinBrowserFactory extends DefaultBrowserFactory {
 
         if ("".equals(version) && defaultBrowserVersion.containsKey(browser)) {
             desiredCapabilities.setVersion(defaultBrowserVersion.get(browser));
+        }
+        if(browser.equals(Browser.FIREFOX)) {
+            desiredCapabilities.setCapability(FirefoxDriver.MARIONETTE, false);
         }
         return desiredCapabilities;
     }
