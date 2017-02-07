@@ -36,7 +36,7 @@ public class VaadinBrowserFactory extends DefaultBrowserFactory {
         defaultBrowserVersion.put(Browser.PHANTOMJS, "1");
         defaultBrowserVersion.put(Browser.SAFARI, "7");
         defaultBrowserVersion.put(Browser.IE11, "11");
-        defaultBrowserVersion.put(Browser.FIREFOX, "24");
+        defaultBrowserVersion.put(Browser.FIREFOX, "45");
     }
 
     private static Map<Browser, Platform> defaultBrowserPlatform = new HashMap<Browser, Platform>();
@@ -45,7 +45,7 @@ public class VaadinBrowserFactory extends DefaultBrowserFactory {
         defaultBrowserPlatform.put(Browser.PHANTOMJS, Platform.LINUX);
         defaultBrowserPlatform.put(Browser.SAFARI, Platform.MAC);
         defaultBrowserPlatform.put(Browser.IE11, Platform.WINDOWS);
-        defaultBrowserPlatform.put(Browser.FIREFOX, Platform.XP);
+        defaultBrowserPlatform.put(Browser.FIREFOX, Platform.WINDOWS);
     }
 
     @Override
@@ -71,6 +71,9 @@ public class VaadinBrowserFactory extends DefaultBrowserFactory {
 
         if ("".equals(version) && defaultBrowserVersion.containsKey(browser)) {
             desiredCapabilities.setVersion(defaultBrowserVersion.get(browser));
+        }
+        if(browser.equals(Browser.FIREFOX)) {
+            desiredCapabilities.setCapability("marionette", "false");
         }
         return desiredCapabilities;
     }
