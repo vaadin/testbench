@@ -39,6 +39,11 @@
             <url>http://vaadin.com/nexus/content/repositories/vaadin-addons</url>
         </repository>
         <repository>
+            <id>vaadin-prereleases</id>
+            <name>Vaadin Pre-releases</name>
+            <url>https://maven.vaadin.com/vaadin-prereleases</url>
+        </repository>
+        <repository>
             <id>vaadin-snapshots</id>
             <url>${snapshot.repository.url}</url>
         </repository>
