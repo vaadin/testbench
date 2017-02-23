@@ -1,5 +1,6 @@
 package com.vaadin.testbench;
 
+import org.junit.internal.AssumptionViolatedException;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
@@ -34,7 +35,7 @@ public class RetryRule implements TestRule {
      * @return the maximum number of times to run the test.
      */
     public int getMaxAttempts() {
-        return this.maxAttempts;
+        return maxAttempts;
     }
     @Override
     public Statement apply(Statement base, Description description) {
@@ -55,6 +56,8 @@ public class RetryRule implements TestRule {
                     try {
                         base.evaluate();
                         return;
+                    } catch (AssumptionViolatedException t) {
+                        throw t;
                     } catch (Throwable t) {
                         caughtThrowable = t;
                     }
