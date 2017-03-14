@@ -40,6 +40,8 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.internal.WrapsElement;
 import org.openqa.selenium.remote.BrowserType;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.vaadin.testbench.By.ByVaadin;
 import com.vaadin.testbench.commands.CanCompareScreenshots;
@@ -166,12 +168,11 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
     public void showTooltip() {
         waitForVaadin();
         new Actions(getCommandExecutor().getWrappedDriver())
-                .moveToElement(actualElement).perform();
-        // Wait for a small moment for the tooltip to appear
-        try {
-            Thread.sleep(1000); // VTooltip.OPEN_DELAY = 750;
-        } catch (InterruptedException ignored) {
-        }
+            .moveToElement(actualElement).perform();
+
+        new WebDriverWait(getDriver(), 3)
+            .until(ExpectedConditions
+            .visibilityOfElementLocated(By.className("v-tooltip-text")));
     }
 
     /**
