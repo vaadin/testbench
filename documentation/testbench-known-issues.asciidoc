@@ -13,9 +13,26 @@ known to be difficult to use or need modification to work.
 [[testbench.known-issues.firefox]]
 == Latest Firefox Compatibility
 
-Mozilla Firefox changed important APIs in version 48 that affected their compatibility with WebDriver which directly affects TestBench. Firefox 48 and posterior versions will require the use of GeckoDriver that is not feature complete or fully compatible with Selenium currently.
-As a workaround it is recommended to use either link:https://ftp.mozilla.org/pub/firefox/releases/47.0.1/[Firefox 47] or link:https://www.mozilla.org/en-US/firefox/organizations/all/[Firefox ESR] (currently at 45.3) to execute tests on Firefox until this can be fixed with a stable release of GeckoDriver.
+Mozilla Firefox changed important APIs in version 48 that affected their compatibility with WebDriver which directly affects TestBench.
+Geckodriver used for the latest Firefox versions (48 and newer) does not support link:https://github.com/mozilla/geckodriver/issues/159[actions API].
+In practice, meaning that you can not simulate context click and double click in tests.
+It is recommended to use either link:https://www.mozilla.org/en-US/firefox/organizations/all/[Firefox ESR] (currently at 45.3)
+or link:https://ftp.mozilla.org/pub/firefox/releases/47.0.1/[Firefox 47] with GeckoDriver.
+You should use GeckoDriver in legacy mode with Firefox ESR and Firefox 47.
 
+[source, java]
+----
+@Before
+public void setup() {
+    FirefoxBinary binary = new FirefoxBinary(new File(pathToFirefox));
+    FirefoxProfile firefoxProfile = new FirefoxProfile();
+    DesiredCapabilities capabilities = DesiredCapabilities.firefox();
+    capabilities.setCapability(FirefoxDriver.MARIONETTE, false);
+    WebDriver driver = new FirefoxDriver(binary,firefoxProfile,capabilities);
+    setDriver(driver);
+}
+
+----
 
 [[testbench.known-issues.firefox-mac]]
 == Running Firefox Tests on Mac OS X

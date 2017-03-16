@@ -30,11 +30,15 @@ see <<dummy/../../testbench/setup/testbench-installation#testbench.installation.
 Before TestBench version 5.0.0, Firefox did not require a web driver setup.
 Since TestBench version 5.0.0, Geckodriver is used to run tests on Firefox.
 Geckodriver requires a separate installation.
+You can run your tests using other browsers.
+All supported browsers require a special driver and some additional setup, see
+<<dummy/../../testbench/setup/testbench-installation#testbench.installation.browserdrivers,"Installing Browser Drivers">>.
 
 [NOTE]
 Geckodriver used for the latest Firefox versions (48 and newer) does not support link:https://github.com/mozilla/geckodriver/issues/159[actions API].
 In practice, meaning that you can not simulate context click and double click in tests.
-It is recommended you use link:https://www.mozilla.org/en-US/firefox/organizations/all/[Firefox 51] to execute tests on Firefox, when this is fixed.
+It is recommended you use link:https://www.mozilla.org/en-US/firefox/organizations/all/[Firefox ESR] to execute tests on Firefox, before this is fixed.
+See <<dummy/../../testbench/testbench-known-issues#testbench.known-issues.firefox,"Known Issues">> for details.
 
 [[testbench.quickstart.adding-dependency]]
 == Adding the Maven Dependency
