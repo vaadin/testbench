@@ -129,7 +129,9 @@ All supported browsers require a special driver and some additional setup, see
 [NOTE]
 Geckodriver used for the latest Firefox versions (48 and newer) does not support link:https://github.com/mozilla/geckodriver/issues/159[actions API].
 In practice, meaning that you can not simulate context click and double click in tests.
-It is recommended you use link:https://www.mozilla.org/en-US/firefox/organizations/all/[Firefox 51] to execute tests on Firefox, when this is fixed.
+It also means that some parts of the Element API just will not work
+It is recommended you use link:https://www.mozilla.org/en-US/firefox/organizations/all/[Firefox 45 ESR] to execute tests on Firefox, before this is fixed.
+See <<dummy/../../testbench/testbench-known-issues#testbench.known-issues.firefox,"Known Issues">> for details.
 
 Run the test with the following command and observe that it opens up a Firefox browser and immediately closes it again.
 
