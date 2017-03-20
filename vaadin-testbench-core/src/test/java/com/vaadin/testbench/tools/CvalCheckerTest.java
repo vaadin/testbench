@@ -243,8 +243,8 @@ public class CvalCheckerTest {
             Assert.fail();
         } catch (InvalidCvalException expected) {
             assertEquals(productNameCval, expected.name);
-            // Check that we use server customized message if it comes
-            Assert.assertTrue(expected.getMessage().contains("Custom"));
+            // The expired message will be the same, regardless of what the
+            // server says, as the expired state is checked on the client
         }
         Assert.assertTrue(cacheExists(productNameCval));
 

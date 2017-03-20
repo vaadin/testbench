@@ -14,6 +14,8 @@ package com.vaadin.testbench.tools;
 
 import java.io.IOException;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.vaadin.testbench.tools.CvalChecker.CvalInfo;
 import com.vaadin.testbench.tools.CvalChecker.InvalidCvalException;
@@ -51,12 +53,19 @@ public class LicenseChecker {
             // If license is valid print the message about it
             printValidationInfo(validationInfo);
         } catch (InvalidCvalException e) {
+            if (e.info != null && e.info.getMessage() != null) {
+                getLogger().log(Level.FINE, e.info.getMessage());
+            }
             printAndRethrowException(e.getMessage(), e);
         } catch (UnreachableCvalServerException e) {
             // No connection and no cached lisence
             String message = "Your license for TestBench 4 has not been validated. Check your network connection.";
             printMessage(message);
         }
+    }
+
+    private static Logger getLogger() {
+        return Logger.getLogger(LicenseChecker.class.getName());
     }
 
     private static void printAndRethrowException(String eMessage, Throwable t) {
