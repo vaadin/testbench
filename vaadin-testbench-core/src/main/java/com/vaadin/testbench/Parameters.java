@@ -419,17 +419,18 @@ public class Parameters {
 
     /**
      *
-     * Gets the maximum number of times to run the test in case of a random failure.
-     * See {@link RetryRule} for details.
+     * Gets the maximum number of times to run the test in case of a random
+     * failure. See {@link RetryRule} for details.
      *
      * @return maximum attempts the test can be run.
      */
     public static int getMaxAttempts() {
         return maxAttempts;
-     }
+    }
 
     /**
-     * Sets the maximum number of times to run the test in case of a random failure
+     * Sets the maximum number of times to run the test in case of a random
+     * failure
      *
      * @param maxAttempts
      *            maximum attempts the test can be run.

@@ -243,10 +243,11 @@ public class BrowserUtil {
             } else if (p == Platform.MAC) {
                 return "Mac";
             }
-            
+
         } catch (Exception e) {
         }
-        Object rawPlatform = capabilities.getCapability(CapabilityType.PLATFORM);
+        Object rawPlatform = capabilities
+                .getCapability(CapabilityType.PLATFORM);
         if (rawPlatform == null)
             return "Unknown";
         return rawPlatform.toString();

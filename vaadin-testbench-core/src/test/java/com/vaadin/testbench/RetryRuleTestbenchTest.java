@@ -5,7 +5,6 @@ import org.junit.Test;
 
 import com.vaadin.testbench.TestBenchTestCase;
 
-
 public class RetryRuleTestbenchTest extends TestBenchTestCase {
 
     private int count = 0;

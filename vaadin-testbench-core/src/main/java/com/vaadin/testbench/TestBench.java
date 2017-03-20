@@ -60,8 +60,8 @@ public class TestBench {
         }
     }
 
-    private static final class ElementInvocationHandler implements
-            MethodHandler {
+    private static final class ElementInvocationHandler
+            implements MethodHandler {
 
         private Object actualElement;
 
@@ -186,7 +186,8 @@ public class TestBench {
         final Class<?>[] classes = clazz.getInterfaces();
         for (final Class<?> interfaceClass : classes) {
             addTo.add(interfaceClass);
-            for (final Class<?> superInterface : interfaceClass.getInterfaces()) {
+            for (final Class<?> superInterface : interfaceClass
+                    .getInterfaces()) {
                 addTo.add(superInterface);
                 extractInterfaces(addTo, superInterface);
             }

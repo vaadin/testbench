@@ -29,17 +29,19 @@ import com.vaadin.testbench.tools.LicenseChecker;
  * A superclass with some helpers to aid TestBench developers. This superclass
  * is also used by tests created by the Recorder.
  */
-public abstract class TestBenchTestCase extends
-        AbstractHasTestBenchCommandExecutor implements HasDriver {
+public abstract class TestBenchTestCase
+        extends AbstractHasTestBenchCommandExecutor implements HasDriver {
 
     static {
-        // Check the license here, before any driver has been initialized (#15102)
+        // Check the license here, before any driver has been initialized
+        // (#15102)
         LicenseChecker.nag();
     }
 
     /**
-     * Specifies retry count, which is used to run same test several times.
-     * Can be changed by setting "com.vaadin.testbench.Parameters.maxAttempts" system property.
+     * Specifies retry count, which is used to run same test several times. Can
+     * be changed by setting "com.vaadin.testbench.Parameters.maxAttempts"
+     * system property.
      *
      * Default: 1
      */
@@ -47,6 +49,7 @@ public abstract class TestBenchTestCase extends
     public RetryRule maxAttempts = new RetryRule(Parameters.getMaxAttempts());
 
     protected WebDriver driver;
+
     /**
      * Convenience method that casts the specified {@link WebDriver} instance to
      * an instance of {@link TestBenchCommands}, making it easy to access the
@@ -135,8 +138,7 @@ public abstract class TestBenchTestCase extends
 
     @Override
     public TestBenchCommandExecutor getCommandExecutor() {
-        return ((HasTestBenchCommandExecutor) driver)
-                .getCommandExecutor();
+        return ((HasTestBenchCommandExecutor) driver).getCommandExecutor();
     }
 
     public WebElement findElement(org.openqa.selenium.By by) {
@@ -159,7 +161,8 @@ public abstract class TestBenchTestCase extends
      * 
      * @param elementType
      *            The type (class) containing the API to decorate with. Must
-     *            extend {@link com.vaadin.testbench.elementsbase.AbstractElement}.
+     *            extend
+     *            {@link com.vaadin.testbench.elementsbase.AbstractElement}.
      * @param element
      *            The element instance to decorate
      * @return The element wrapped in an instance of the specified element type.

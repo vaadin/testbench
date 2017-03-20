@@ -269,8 +269,8 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
     public List<WebElement> findElements(By by) {
         List<WebElement> elements = new ArrayList<WebElement>();
         if (by instanceof ByVaadin) {
-            elements.addAll(wrapElements(by.findElements(this),
-                    getCommandExecutor()));
+            elements.addAll(
+                    wrapElements(by.findElements(this), getCommandExecutor()));
         } else {
             elements.addAll(wrapElements(actualElement.findElements(by),
                     getCommandExecutor()));
@@ -282,11 +282,9 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
     public WebElement findElement(By by) {
         waitForVaadin();
         if (by instanceof ByVaadin) {
-            return wrapElement(by.findElement(this),
-                    getCommandExecutor());
+            return wrapElement(by.findElement(this), getCommandExecutor());
         }
-        return wrapElement(actualElement.findElement(by),
-                getCommandExecutor());
+        return wrapElement(actualElement.findElement(by), getCommandExecutor());
     }
 
     /**
@@ -327,8 +325,7 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
     @Override
     public void click(int x, int y, Keys... modifiers) {
         waitForVaadin();
-        Actions actions = new Actions(
-                getCommandExecutor().getWrappedDriver());
+        Actions actions = new Actions(getCommandExecutor().getWrappedDriver());
         actions.moveToElement(actualElement, x, y);
         // Press any modifier keys
         for (Keys modifier : modifiers) {

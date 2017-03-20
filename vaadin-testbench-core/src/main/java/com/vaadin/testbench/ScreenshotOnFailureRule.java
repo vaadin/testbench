@@ -133,7 +133,7 @@ public class ScreenshotOnFailureRule extends TestWatcher {
      * @return Failure screenshot file.
      */
     protected File getErrorScreenshotFile(Description description) {
-        return ImageFileUtil.getErrorScreenshotFile(description
-                .getDisplayName() + ".png");
+        return ImageFileUtil
+                .getErrorScreenshotFile(description.getDisplayName() + ".png");
     }
 }

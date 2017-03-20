@@ -66,7 +66,8 @@ public class DriverInvocationHandler implements MethodHandler {
      * 
      * @param methodName
      */
-    private void waitForVaadinIfNecessary(Object proxyObject, String methodName) {
+    private void waitForVaadinIfNecessary(Object proxyObject,
+            String methodName) {
         if (shouldWaitForVaadin(methodName)
                 && proxyObject instanceof CanWaitForVaadin) {
             ((CanWaitForVaadin) proxyObject).waitForVaadin();

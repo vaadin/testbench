@@ -46,7 +46,8 @@ public class LocalDriver {
      * Creates a {@link WebDriver} instance used for running the test locally
      * for debug purposes.
      */
-    static public WebDriver createDriver(DesiredCapabilities desiredCapabilities) {
+    static public WebDriver createDriver(
+            DesiredCapabilities desiredCapabilities) {
         WebDriver driver;
         if (BrowserUtil.isFirefox(desiredCapabilities)) {
             String firefoxPath = System.getProperty("firefox.path");
@@ -56,11 +57,11 @@ public class LocalDriver {
                 if (profilePath != null) {
                     File profileDir = new File(profilePath);
                     FirefoxProfile profile = new FirefoxProfile(profileDir);
-                    driver = new FirefoxDriver(new FirefoxBinary(new File(
-                            firefoxPath)), profile);
+                    driver = new FirefoxDriver(
+                            new FirefoxBinary(new File(firefoxPath)), profile);
                 } else {
-                    driver = new FirefoxDriver(new FirefoxBinary(new File(
-                            firefoxPath)), null);
+                    driver = new FirefoxDriver(
+                            new FirefoxBinary(new File(firefoxPath)), null);
                 }
 
             } else {
@@ -68,7 +69,8 @@ public class LocalDriver {
             }
         } else if (BrowserUtil.isChrome(desiredCapabilities)) {
             // Tells chrome not to show warning
-            // "You are using an unsupported command-line flag: --ignore-certifcate-errors".
+            // "You are using an unsupported command-line flag:
+            // --ignore-certifcate-errors".
             // #14319
             ChromeOptions options = new ChromeOptions();
             options.addArguments("--test-type ");

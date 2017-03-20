@@ -63,8 +63,8 @@ public class ImageFileUtil {
      * @return
      * @throws IOException
      */
-    public static BufferedImage readReferenceImage(String referenceImageFileName)
-            throws IOException {
+    public static BufferedImage readReferenceImage(
+            String referenceImageFileName) throws IOException {
         return impl.readReferenceImage(referenceImageFileName);
     }
 
@@ -72,7 +72,8 @@ public class ImageFileUtil {
         return impl.getErrorScreenshotFile(errorImageFileName);
     }
 
-    public static File getReferenceScreenshotFile(String referenceImageFileName) {
+    public static File getReferenceScreenshotFile(
+            String referenceImageFileName) {
         return impl.getReferenceScreenshotFile(referenceImageFileName);
     }
 
@@ -196,10 +197,10 @@ public class ImageFileUtil {
             if (cap == null) {
                 return referenceFileName;
             }
-            String fileName = findOldReferenceScreenshot(
-                cap.getBrowserName(),
-                Integer.valueOf(ReferenceNameGenerator.getMajorVersion(cap)),
-                referenceFileName);
+            String fileName = findOldReferenceScreenshot(cap.getBrowserName(),
+                    Integer.valueOf(
+                            ReferenceNameGenerator.getMajorVersion(cap)),
+                    referenceFileName);
             return fileName;
         }
 
