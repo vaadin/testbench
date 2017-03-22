@@ -140,8 +140,7 @@ public class TestBenchElementTest {
                 createElementWithClass("foo ").getClassNames());
         Assert.assertEquals(set("foo"),
                 createElementWithClass(" foo").getClassNames());
-        Assert.assertEquals(set(),
-                createElementWithClass("").getClassNames());
+        Assert.assertEquals(set(), createElementWithClass("").getClassNames());
 
     }
 

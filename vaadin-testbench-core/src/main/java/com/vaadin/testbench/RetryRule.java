@@ -6,10 +6,10 @@ import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
 /**
- * A retry rule is used to re-run a test several times in case of a random failure.
- * The test passes as soon as one attempt is executed without any errors,
- * i.e. it is only run as many times as needed.
- * The maximum number of attempts is specified in the constructor.
+ * A retry rule is used to re-run a test several times in case of a random
+ * failure. The test passes as soon as one attempt is executed without any
+ * errors, i.e. it is only run as many times as needed. The maximum number of
+ * attempts is specified in the constructor.
  *
  * @since 5.0
  */
@@ -18,9 +18,9 @@ public class RetryRule implements TestRule {
 
     /**
      *
-     * Constructs the retry rule with a maximum number of attempts.
-     * The maximum number of attempts specifies how many times the test
-     * will be run in case of a random failure.
+     * Constructs the retry rule with a maximum number of attempts. The maximum
+     * number of attempts specifies how many times the test will be run in case
+     * of a random failure.
      *
      * @param maxAttempts
      *            a maximum number of attempts.
@@ -37,9 +37,10 @@ public class RetryRule implements TestRule {
     public int getMaxAttempts() {
         return maxAttempts;
     }
+
     @Override
     public Statement apply(Statement base, Description description) {
-        if(maxAttempts >1) {
+        if (maxAttempts > 1) {
             return statement(base, description);
         } else {
             return base;
@@ -47,7 +48,8 @@ public class RetryRule implements TestRule {
 
     }
 
-    private Statement statement(final Statement base, final Description description) {
+    private Statement statement(final Statement base,
+            final Description description) {
         return new Statement() {
             @Override
             public void evaluate() throws Throwable {
@@ -63,8 +65,7 @@ public class RetryRule implements TestRule {
                     }
                 }
                 String errorMessage = String.format("%s: run failed %s times",
-                        description.getDisplayName(),
-                        maxAttempts);
+                        description.getDisplayName(), maxAttempts);
                 throw new RuntimeException(errorMessage, caughtThrowable);
             }
         };

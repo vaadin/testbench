@@ -52,22 +52,21 @@ public abstract class By extends org.openqa.selenium.By {
          */
         @Override
         public List<WebElement> findElements(SearchContext context) {
-            return TestBenchDriverProxy.findElementsByVaadinSelector(
-                    vaadinSelector, context);
+            return TestBenchDriverProxy
+                    .findElementsByVaadinSelector(vaadinSelector, context);
         }
-        
+
         /**
-         * Returns a WebElement identified by a Vaadin ComponentFinder
-         * selector.
+         * Returns a WebElement identified by a Vaadin ComponentFinder selector.
          * 
          * @param context
          *            SearchContext for originating the search
          * @return First found WebElement
-         */        
+         */
         @Override
         public WebElement findElement(SearchContext context) {
-            return TestBenchDriverProxy.findElementByVaadinSelector(
-                    vaadinSelector, context);
+            return TestBenchDriverProxy
+                    .findElementByVaadinSelector(vaadinSelector, context);
         }
 
         @Override

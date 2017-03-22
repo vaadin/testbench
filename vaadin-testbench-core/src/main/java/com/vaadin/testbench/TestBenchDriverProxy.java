@@ -79,11 +79,11 @@ public class TestBenchDriverProxy extends TestBenchCommandExecutor implements
 
         // We can Wrap It!
         if (arg0 instanceof ByVaadin) {
-            elements.addAll(TestBenchElement.wrapElements(
-                    arg0.findElements(this), this));
+            elements.addAll(TestBenchElement
+                    .wrapElements(arg0.findElements(this), this));
         } else {
-            elements.addAll(TestBenchElement.wrapElements(
-                    actualDriver.findElements(arg0), this));
+            elements.addAll(TestBenchElement
+                    .wrapElements(actualDriver.findElements(arg0), this));
         }
 
         return elements;
@@ -109,10 +109,8 @@ public class TestBenchDriverProxy extends TestBenchCommandExecutor implements
         if (elements.isEmpty()) {
             final String errorString = "Vaadin could not find elements with the selector "
                     + selector;
-            throw new NoSuchElementException(
-                    errorString,
-                    new Exception(
-                            "Client could not identify elements with the provided selector"));
+            throw new NoSuchElementException(errorString, new Exception(
+                    "Client could not identify elements with the provided selector"));
         }
 
         return elements.get(0);

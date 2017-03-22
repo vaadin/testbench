@@ -19,8 +19,8 @@ import com.vaadin.testbench.elementsbase.AbstractElement;
  * {@link TestBenchElement} and {@link TestBenchTestCase}. These classes have
  * their own search contexts to manage scoping element searches where needed.
  */
-public abstract class AbstractHasTestBenchCommandExecutor implements
-        HasTestBenchCommandExecutor {
+public abstract class AbstractHasTestBenchCommandExecutor
+        implements HasTestBenchCommandExecutor {
 
     /**
      * Prepare a {@link ElementQuery} instance to use for locating components on

@@ -69,8 +69,8 @@ import com.vaadin.testbench.elementsbase.ServerClass;
  */
 public class ElementQuery<T extends AbstractElement> {
 
-    private static Logger logger = Logger.getLogger(ElementQuery.class
-            .getName());
+    private static Logger logger = Logger
+            .getLogger(ElementQuery.class.getName());
 
     private Map<String, Set<String>> statevars = new LinkedHashMap<String, Set<String>>();
     private int idx = -1;
@@ -147,7 +147,8 @@ public class ElementQuery<T extends AbstractElement> {
      *            ElementQuery instance to be used as part of search hierarchy.
      * @return a reference to self
      */
-    public <E extends AbstractElement> ElementQuery<T> in(ElementQuery<E> query) {
+    public <E extends AbstractElement> ElementQuery<T> in(
+            ElementQuery<E> query) {
         queryStack.push(query);
         return this;
     }
@@ -225,7 +226,8 @@ public class ElementQuery<T extends AbstractElement> {
             statevars.get(varname).add(value);
             return this;
         } else {
-            logger.warning("State variable is invalid! State variable name cannot be an integer.");
+            logger.warning(
+                    "State variable is invalid! State variable name cannot be an integer.");
             return null;
         }
 

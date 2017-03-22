@@ -103,7 +103,8 @@ public class SetupDriver {
      *            version of the browser
      * @return {@link WebDriver} properly setup
      */
-    public WebDriver setupLocalDriver(Browser runLocallyBrowser, String version) {
+    public WebDriver setupLocalDriver(Browser runLocallyBrowser,
+            String version) {
         assert (runLocallyBrowser != null);
         DesiredCapabilities capabilities = BrowserUtil.getBrowserFactory()
                 .create(runLocallyBrowser, version);
@@ -147,7 +148,8 @@ public class SetupDriver {
      *
      * @param desiredCapabilities
      */
-    public void setDesiredCapabilities(DesiredCapabilities desiredCapabilities) {
+    public void setDesiredCapabilities(
+            DesiredCapabilities desiredCapabilities) {
         this.desiredCapabilities = desiredCapabilities;
     }
 }

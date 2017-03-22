@@ -45,7 +45,8 @@ public class ParallelTestSuite extends Suite {
      * number of tests to run concurrently are configured in
      * {@link ParallelRunner}.
      */
-    private static final int MAX_CONCURRENT_TEST_SUITES = Parameters.getTestSuitesInParallel();
+    private static final int MAX_CONCURRENT_TEST_SUITES = Parameters
+            .getTestSuitesInParallel();
 
     /**
      * This is static so it is shared by all test suites running concurrently on
@@ -77,9 +78,8 @@ public class ParallelTestSuite extends Suite {
      * @param ignorePackages
      * @return
      */
-    private static Class<?>[] findTests(
-            Class<? extends ParallelTest> baseClass, String basePackage,
-            String[] ignorePackages) {
+    private static Class<?>[] findTests(Class<? extends ParallelTest> baseClass,
+            String basePackage, String[] ignorePackages) {
         try {
             List<?> l = findClasses(baseClass, basePackage, ignorePackages);
             return l.toArray(new Class[] {});
@@ -111,8 +111,8 @@ public class ParallelTestSuite extends Suite {
             try {
                 File f = new File(location.toURI());
                 if (!f.exists()) {
-                    throw new IOException("Directory " + f.toString()
-                            + " does not exist");
+                    throw new IOException(
+                            "Directory " + f.toString() + " does not exist");
                 }
                 findPackages(f, basePackage, baseClass, classes,
                         ignoredPackages);
@@ -230,7 +230,8 @@ public class ParallelTestSuite extends Suite {
                 return;
             }
 
-            if (!Modifier.isAbstract(c.getModifiers()) && !c.isAnonymousClass()) {
+            if (!Modifier.isAbstract(c.getModifiers())
+                    && !c.isAnonymousClass()) {
                 result.add((Class<? extends T>) c);
             }
         } catch (Exception e) {

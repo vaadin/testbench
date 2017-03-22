@@ -93,8 +93,8 @@ public class ImageUtil {
      */
     public static boolean imagesSameSize(BufferedImage image1,
             BufferedImage image2) {
-        return (image1.getWidth() == image2.getWidth() && image1.getHeight() == image2
-                .getHeight());
+        return (image1.getWidth() == image2.getWidth()
+                && image1.getHeight() == image2.getHeight());
     }
 
     /**

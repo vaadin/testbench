@@ -36,14 +36,12 @@ public class RemoteDriver {
             DesiredCapabilities capabilities) throws Exception {
         for (int i = 1; i <= BROWSER_INIT_ATTEMPTS; i++) {
             try {
-                WebDriver dr = TestBench
-                        .createDriver(new RemoteWebDriver(new URL(
-                                hubURL), capabilities));
+                WebDriver dr = TestBench.createDriver(
+                        new RemoteWebDriver(new URL(hubURL), capabilities));
                 return dr;
             } catch (Exception e) {
-                System.err.println("Browser startup for "
-                        + capabilities + " failed on attempt " + i
-                        + ": " + e.getMessage());
+                System.err.println("Browser startup for " + capabilities
+                        + " failed on attempt " + i + ": " + e.getMessage());
                 if (i == BROWSER_INIT_ATTEMPTS) {
                     throw e;
                 }
