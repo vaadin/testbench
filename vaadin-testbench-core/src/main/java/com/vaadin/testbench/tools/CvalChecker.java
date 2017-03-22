@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2014 Vaadin Ltd.
+ * Copyright 2000-2016 Vaadin Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -34,10 +34,10 @@ import java.util.prefs.Preferences;
 
 import org.apache.commons.io.IOUtils;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.JsonSyntaxException;
+import elemental.json.JsonException;
+import elemental.json.JsonNull;
+import elemental.json.JsonObject;
+import elemental.json.impl.JsonUtil;
 
 /**
  * This class is able to validate the vaadin CVAL license.
@@ -56,8 +56,8 @@ public final class CvalChecker {
      * It is not in a separate f le, so as it is easier to copy into any product
      * which does not depend on vaadin core.
      *
-     * We are using org.json in order not to use additional dependency like
-     * auto-beans, gson, etc.
+     * We are using elemental.json in order not to use additional dependency
+     * like auto-beans, gson, etc.
      */
     public static class CvalInfo {
 
@@ -81,26 +81,22 @@ public final class CvalChecker {
         private static <T> T get(JsonObject o, String k, Class<T> clz) {
             Object ret = null;
             try {
-                if (o == null) {
+                if (o == null || o.get(k) == null
+                        || o.get(k) instanceof JsonNull) {
                     return null;
                 }
-                JsonElement value = o.get(k);
-                if (value == null || value.isJsonNull()) {
-                    return null;
-                } else if (clz == JsonObject.class && value.isJsonObject()) {
-                    ret = value.getAsJsonObject();
-                } else if (value.isJsonPrimitive()) {
-                    if (clz == String.class) {
-                        ret = value.getAsString();
-                    } else if (clz == Integer.class) {
-                        ret = value.getAsInt();
-                    } else if (clz == Date.class) {
-                        ret = new Date(value.getAsLong());
-                    } else if (clz == Boolean.class) {
-                        ret = value.getAsBoolean();
-                    }
+                if (clz == String.class) {
+                    ret = o.getString(k);
+                } else if (clz == JsonObject.class) {
+                    ret = o.getObject(k);
+                } else if (clz == Integer.class) {
+                    ret = Integer.valueOf((int) o.getNumber(k));
+                } else if (clz == Date.class) {
+                    ret = new Date((long) o.getNumber(k));
+                } else if (clz == Boolean.class) {
+                    ret = o.getBoolean(k);
                 }
-            } catch (Exception e) {
+            } catch (JsonException e) {
             }
             return (T) ret;
         }
@@ -143,13 +139,11 @@ public final class CvalChecker {
         }
 
         public void setExpiredEpoch(Date expiredEpoch) {
-            o.remove("expiredEpoch");
-            o.addProperty("expiredEpoch", expiredEpoch.getTime());
+            o.put("expiredEpoch", expiredEpoch.getTime());
         }
 
         public void setMessage(String msg) {
-            o.remove("message");
-            o.addProperty("message", msg);
+            o.put("message", msg);
         }
 
         @Override
@@ -249,7 +243,9 @@ public final class CvalChecker {
             String msg = "";
             int majorVers = computeMajorVersion(version);
 
-            if (info != null && info.getMessage() != null) {
+            if (info != null && !info.isValidVersion(majorVers)) {
+                msg = getErrorMessage("invalid", title, majorVers);
+            } else if (info != null && info.getMessage() != null) {
                 msg = info.getMessage().replace("\\n", "\n");
             } else if (info != null && info.isLicenseExpired()) {
                 String type = "evaluation".equals(info.getType()) ? "Evaluation license"
@@ -333,9 +329,9 @@ public final class CvalChecker {
             return null;
         }
         try {
-            JsonObject o = new JsonParser().parse(json).getAsJsonObject();
+            JsonObject o = JsonUtil.parse(json);
             return new CvalInfo(o);
-        } catch (JsonSyntaxException e) {
+        } catch (JsonException e) {
             return null;
         }
     }
@@ -470,7 +466,6 @@ public final class CvalChecker {
                     new File(userHome, licenseName).toURI().toURL(),
                     URL.class.getResource("/" + dotLicenseName),
                     URL.class.getResource("/" + licenseName) }) {
-
                 if (url != null) {
                     try {
                         key = readKeyFromFile(url,
