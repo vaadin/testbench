@@ -153,8 +153,8 @@ public final class CvalChecker {
 
         public boolean isLicenseExpired() {
             return (getExpired() != null && getExpired())
-                    || (getExpiredEpoch() != null && getExpiredEpoch().before(
-                            new Date()));
+                    || (getExpiredEpoch() != null
+                            && getExpiredEpoch().before(new Date()));
         }
 
         public boolean isValidVersion(int majorVersion) {
@@ -228,9 +228,9 @@ public final class CvalChecker {
         public final String version;
         public final String title;
 
-        public InvalidCvalException(String name, String version, String title,
-                String key, CvalInfo info) {
-            super(composeMessage(title, version, key, info));
+        public InvalidCvalException(String message, String name, String version,
+                String title, String key, CvalInfo info) {
+            super(message);
             this.info = info;
             this.name = name;
             this.key = key;
@@ -238,26 +238,6 @@ public final class CvalChecker {
             this.title = title;
         }
 
-        static String composeMessage(String title, String version, String key,
-                CvalInfo info) {
-            String msg = "";
-            int majorVers = computeMajorVersion(version);
-
-            if (info != null && !info.isValidVersion(majorVers)) {
-                msg = getErrorMessage("invalid", title, majorVers);
-            } else if (info != null && info.getMessage() != null) {
-                msg = info.getMessage().replace("\\n", "\n");
-            } else if (info != null && info.isLicenseExpired()) {
-                String type = "evaluation".equals(info.getType()) ? "Evaluation license"
-                        : "License";
-                msg = getErrorMessage("expired", title, majorVers, type);
-            } else if (key == null) {
-                msg = getErrorMessage("none", title, majorVers);
-            } else {
-                msg = getErrorMessage("invalid", title, majorVers);
-            }
-            return msg;
-        }
     }
 
     /**
@@ -359,28 +339,54 @@ public final class CvalChecker {
      *             when we have license key but server is unreachable
      */
     public CvalInfo validateProduct(String productName, String productVersion,
-            String productTitle) throws InvalidCvalException,
-            UnreachableCvalServerException {
+            String productTitle)
+            throws InvalidCvalException, UnreachableCvalServerException {
         String key = getDeveloperLicenseKey(productName, productVersion,
                 productTitle);
+        int majorVersion = computeMajorVersion(productVersion);
 
-        CvalInfo info = null;
-        if (key != null && !key.isEmpty()) {
-            info = getCachedLicenseInfo(productName);
-            if (info != null && !info.isValidInfo(productName, key)) {
-                deleteCache(productName);
-                info = null;
-            }
-            info = askLicenseServer(productName, key, productVersion, info);
-            if (info != null && info.isValidInfo(productName, key)
-                    && info.isValidVersion(computeMajorVersion(productVersion))
-                    && !info.isLicenseExpired()) {
-                return info;
-            }
+        if (key == null || key.isEmpty()) {
+            String errorMessage = getErrorMessage(null, "none", productTitle,
+                    majorVersion);
+            throw new InvalidCvalException(errorMessage, productName,
+                    productVersion, productTitle, key, null);
+
         }
 
-        throw new InvalidCvalException(productName, productVersion,
-                productTitle, key, info);
+        CvalInfo info = getCachedLicenseInfo(productName);
+        if (info != null && !info.isValidInfo(productName, key)) {
+            deleteCache(productName);
+            info = null;
+        }
+
+        info = askLicenseServer(productName, key, productVersion, info);
+
+        if (info == null) {
+            String msg = getErrorMessage(info, "invalid", productTitle,
+                    majorVersion, "invalid key");
+            throw new InvalidCvalException(msg, productName, productVersion,
+                    productTitle, key, info);
+        } else if (!info.isValidInfo(productName, key)) {
+            String msg = getErrorMessage(info, "invalid", productTitle,
+                    majorVersion, "invalid info");
+            throw new InvalidCvalException(msg, productName, productVersion,
+                    productTitle, key, info);
+        } else if (!info.isValidVersion(majorVersion)) {
+            String msg = getErrorMessage(info, "invalid", productTitle,
+                    majorVersion, "invalid version");
+            throw new InvalidCvalException(msg, productName, productVersion,
+                    productTitle, key, info);
+        } else if (info.isLicenseExpired()) {
+            String type = "evaluation".equals(info.getType())
+                    ? "Evaluation license" : "License";
+            String msg = getErrorMessage(info, "expired", productTitle,
+                    majorVersion, type);
+            throw new InvalidCvalException(msg, productName, productVersion,
+                    productTitle, key, info);
+        }
+
+        return info;
+
     }
 
     /*
@@ -416,8 +422,8 @@ public final class CvalChecker {
         int timeout = validCache ? 2000 : 10000;
 
         try {
-            CvalInfo srvinfo = parseJson(provider.askServer(productName + "-"
-                    + productVersion, productKey, timeout));
+            CvalInfo srvinfo = parseJson(provider.askServer(
+                    productName + "-" + productVersion, productKey, timeout));
             if (srvinfo != null && srvinfo.isValidInfo(productName, productKey)
                     && srvinfo.isValidVersion(majorVersion)) {
                 // We always cache the info if it is valid although it is
@@ -480,8 +486,8 @@ public final class CvalChecker {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        throw new InvalidCvalException(productName, productVersion,
-                productTitle, null, null);
+
+        return null;
     }
 
     String readKeyFromFile(URL url, int majorVersion) throws IOException {
@@ -500,11 +506,13 @@ public final class CvalChecker {
         return defaultKey;
     }
 
-    static String getErrorMessage(String key, Object... pars) {
+    static String getErrorMessage(CvalInfo serverInfo, String key,
+            Object... pars) {
         Locale loc = Locale.getDefault();
-        ResourceBundle res = ResourceBundle.getBundle(
-                CvalChecker.class.getName(), loc);
+        ResourceBundle res = ResourceBundle
+                .getBundle(CvalChecker.class.getName(), loc);
         String msg = res.getString(key);
-        return new MessageFormat(msg, loc).format(pars);
+        String result = new MessageFormat(msg, loc).format(pars);
+        return result;
     }
 }

@@ -50,15 +50,8 @@ public class LicenseCheckerTest {
         Properties props = System.getProperties();
         props.setProperty("vaadin.testbench.developer.license",
                 SUBSCRIPTION_KEY_EXPIRED);
-        String expectingMessage = "----------------------------------------------------------------------------------"
-                + NEW_LINE
-                + "License for Vaadin TestBench 4 has expired. Get a valid license at vaadin.com/pro"
-                + NEW_LINE
-                + "----------------------------------------------------------------------------------"
-                + NEW_LINE;
-
-        exception.expect(Error.class);
-        exception.expectMessage(expectingMessage);
+        verifyNagError(
+                "License for Vaadin TestBench 5 has expired. Get a valid license at vaadin.com/pro");
         LicenseChecker.nag();
     }
 
@@ -67,14 +60,8 @@ public class LicenseCheckerTest {
     public void testNoLicense() {
         Properties props = System.getProperties();
         props.setProperty("vaadin.testbench.developer.license", "");
-        String expectingMessage = "---------------------------------------------------------------------------------"
-                + NEW_LINE
-                + "License for Vaadin TestBench 5 not found. Go to vaadin.com/pro for more details."
-                + NEW_LINE
-                + "---------------------------------------------------------------------------------"
-                + NEW_LINE;
-        exception.expect(Error.class);
-        exception.expectMessage(expectingMessage);
+        verifyNagError(
+                "License for Vaadin TestBench 5 not found. Go to vaadin.com/pro for more details.");
         LicenseChecker.nag();
     }
 
@@ -82,14 +69,28 @@ public class LicenseCheckerTest {
     public void testInvalidLicense() {
         Properties props = System.getProperties();
         props.setProperty("vaadin.testbench.developer.license", INVALID_KEY);
-        String expectingMessage = "-------------------------------------------------------------------------------------"
-                + NEW_LINE
-                + "License for Vaadin TestBench 5 is not valid. Get a valid license from vaadin.com/pro"
-                + NEW_LINE
-                + "-------------------------------------------------------------------------------------"
+
+        verifyNagError(
+                "License for Vaadin TestBench 5 is not valid (invalid key). Get a valid license from vaadin.com/pro");
+
+    }
+
+    private void verifyNagError(String expectedError) {
+        String expectedMessage = getDashes(expectedError) + NEW_LINE
+                + expectedError + NEW_LINE + getDashes(expectedError)
                 + NEW_LINE;
         exception.expect(Error.class);
-        exception.expectMessage(expectingMessage);
+        exception.expectMessage(expectedMessage);
         LicenseChecker.nag();
+
+    }
+
+    private String getDashes(String model) {
+        int n = model.length();
+        String line = "";
+        for (int i = 0; i <= n; i++) {
+            line += "-";
+        }
+        return line;
     }
 }
