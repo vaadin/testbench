@@ -130,12 +130,12 @@ public abstract class TestBenchTestCase extends
 
     @Override
     public SearchContext getContext() {
-        return driver;
+        return getDriver();
     }
 
     @Override
     public TestBenchCommandExecutor getCommandExecutor() {
-        return ((HasTestBenchCommandExecutor) driver)
+        return ((HasTestBenchCommandExecutor) getDriver())
                 .getCommandExecutor();
     }
 
