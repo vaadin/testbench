@@ -15,6 +15,7 @@ package com.vaadin.testbench;
 import java.util.List;
 
 import org.junit.Rule;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -168,4 +169,34 @@ public abstract class TestBenchTestCase extends
             WebElement element) {
         return ((TestBenchElement) element).wrap(elementType);
     }
+
+    /**
+     * Executes the given JavaScript in the context of the currently selected
+     * frame or window. The script fragment provided will be executed as the
+     * body of an anonymous function.
+     *
+     * @param script
+     *            the script to execute
+     * @param args
+     *            the arguments, available in the script as
+     *            {@code arguments[0]...arguments[N]}
+     * @return whatever
+     *         {@link org.openqa.selenium.JavascriptExecutor#executeScript(String, Object...)}
+     *         returns
+     * @throws UnsupportedOperationException
+     *             if the underlying driver does not support JavaScript
+     *             execution
+     * @see JavascriptExecutor#executeScript(String, Object...)
+     */
+    protected Object executeScript(String script, Object... args) {
+        WebDriver driver = getDriver();
+        if (driver instanceof JavascriptExecutor) {
+            return ((JavascriptExecutor) getDriver()).executeScript(script,
+                    args);
+        } else {
+            throw new UnsupportedOperationException(
+                    "The web driver does not support JavaScript execution");
+        }
+    }
+
 }
