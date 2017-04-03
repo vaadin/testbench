@@ -13,6 +13,7 @@
 package com.vaadin.testbench.screenshot;
 
 import org.openqa.selenium.Capabilities;
+import org.openqa.selenium.Platform;
 
 /**
  * Generates the name of a reference screen shot from a string ID and browser
@@ -23,7 +24,7 @@ public class ReferenceNameGenerator {
     /**
      * Generates the actual name of a reference screen shot from a reference ID
      * and browser information.
-     * 
+     *
      * @param referenceId
      *            the reference ID
      * @param browserCapabilities
@@ -33,15 +34,23 @@ public class ReferenceNameGenerator {
      */
     public String generateName(String referenceId,
             Capabilities browserCapabilities) {
-        return String.format("%s_%s_%s_%s", referenceId, browserCapabilities
-                .getPlatform().toString().toLowerCase(),
+        String platformString;
+
+        Platform platform = browserCapabilities.getPlatform();
+        if (platform != null) {
+            platformString = platform.toString().toLowerCase();
+        } else {
+            platformString = "unknown";
+        }
+
+        return String.format("%s_%s_%s_%s", referenceId, platformString,
                 browserCapabilities.getBrowserName(),
                 getMajorVersion(browserCapabilities));
     }
 
     /**
      * Finds the major version by parsing the browser version string.
-     * 
+     *
      * @param browserCapabilities
      *            the capabilities object holding the version information
      * @return the major version of the browser.
