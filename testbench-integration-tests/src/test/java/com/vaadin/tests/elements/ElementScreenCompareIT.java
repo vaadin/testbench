@@ -25,5 +25,4 @@ public class ElementScreenCompareIT extends MultiBrowserTest {
                 .findElement(By.xpath("../.."));
         Assert.assertTrue(layout.compareScreen("layout"));
     }
-
 }
