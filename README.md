@@ -11,6 +11,8 @@ Official releases of this add-on are available at http://vaadin.com/addon/vaadin
     git clone https://github.com/vaadin/testbench.git
     cd testbench
     mvn clean install
+    
+    Activate profiles : start-jetty-for-it and verify-only-phantom
 
 ## Issue tracking & Contributions
 
