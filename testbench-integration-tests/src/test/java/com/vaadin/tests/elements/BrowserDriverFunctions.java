@@ -56,7 +56,7 @@ public interface BrowserDriverFunctions {
             matchCase(() -> browsertype.equals(BrowserType.PHANTOMJS), () -> success(DesiredCapabilities.phantomjs())),
             matchCase(() -> browsertype.equals(BrowserType.FIREFOX), () -> {
                           DesiredCapabilities firefox = DesiredCapabilities.firefox();
-                          firefox.setCapability(FirefoxDriver.MARIONETTE, true);
+                          firefox.setCapability(FirefoxDriver.MARIONETTE, false);
                           return success(firefox);
                       }
             ),
