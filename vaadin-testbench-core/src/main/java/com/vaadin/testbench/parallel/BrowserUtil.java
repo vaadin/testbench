@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2012 Vaadin Ltd
- *
+ * <p>
  * This program is available under Commercial Vaadin Add-On License 3.0
  * (CVALv3).
- *
+ * <p>
  * See the file licensing.txt distributed with this software for more
  * information about licensing.
- *
+ * <p>
  * You should have received a copy of the license along with this program.
  * If not, see <http://vaadin.com/license/cval-3>.
  */
@@ -27,7 +27,7 @@ public class BrowserUtil {
 
     /**
      * Gets the capabilities for Safari
-     * 
+     *
      * @return an object describing the capabilities required for running a test
      *         on Safari
      */
@@ -38,7 +38,7 @@ public class BrowserUtil {
 
     /**
      * Gets the capabilities for Chrome
-     * 
+     *
      * @return an object describing the capabilities required for running a test
      *         on Chrome
      */
@@ -49,7 +49,7 @@ public class BrowserUtil {
 
     /**
      * Gets the capabilities for Firefox
-     * 
+     *
      * @return an object describing the capabilities required for running a test
      *         on Firefox
      */
@@ -60,7 +60,7 @@ public class BrowserUtil {
 
     /**
      * Gets the capabilities for Internet Explorer 8
-     * 
+     *
      * @return an object describing the capabilities required for running a test
      *         on Internet Explorer 8
      */
@@ -71,7 +71,7 @@ public class BrowserUtil {
 
     /**
      * Gets the capabilities for Internet Explorer 9
-     * 
+     *
      * @return an object describing the capabilities required for running a test
      *         on Internet Explorer 9
      */
@@ -82,7 +82,7 @@ public class BrowserUtil {
 
     /**
      * Gets the capabilities for Internet Explorer 10
-     * 
+     *
      * @return an object describing the capabilities required for running a test
      *         on Internet Explorer 10
      */
@@ -93,7 +93,7 @@ public class BrowserUtil {
 
     /**
      * Gets the capabilities for Internet Explorer 11
-     * 
+     *
      * @return an object describing the capabilities required for running a test
      *         on Internet Explorer 11
      */
@@ -104,7 +104,7 @@ public class BrowserUtil {
 
     /**
      * Gets the capabilities for Edge
-     * 
+     *
      * @return an object describing the capabilities required for running a test
      *         on Edge
      */
@@ -115,7 +115,7 @@ public class BrowserUtil {
 
     /**
      * Gets the capabilities for PhantomJS
-     * 
+     *
      * @return an object describing the capabilities required for running a test
      *         on PhantomJS
      */
@@ -126,7 +126,7 @@ public class BrowserUtil {
 
     /**
      * Checks if the given capabilities refer to Internet Explorer 8
-     * 
+     *
      * @param capabilities
      * @return true if the capabilities refer to IE8, false otherwise
      */
@@ -154,7 +154,7 @@ public class BrowserUtil {
      */
     public static boolean isIE(Capabilities capabilities, int version) {
         return isIE(capabilities)
-                && ("" + version).equals(capabilities.getVersion());
+               && ("" + version).equals(capabilities.getVersion());
     }
 
     /**
@@ -205,7 +205,7 @@ public class BrowserUtil {
     /**
      * Returns a human readable identifier of the given browser. Used for test
      * naming and screenshots
-     * 
+     *
      * @param capabilities
      * @return a human readable string describing the capabilities
      */
@@ -230,26 +230,27 @@ public class BrowserUtil {
     /**
      * Returns a human readable identifier of the platform described by the
      * given capabilities. Used mainly for screenshots
-     * 
+     *
      * @param capabilities
      * @return a human readable string describing the platform
      */
     public static String getPlatform(Capabilities capabilities) {
-        try {
-            Platform p = capabilities.getPlatform();
+        final Platform p = capabilities.getPlatform();
+        if (p != null) {
             if (p == Platform.WIN8 || p == Platform.WINDOWS
-                    || p == Platform.VISTA || p == Platform.XP) {
+                || p == Platform.VISTA || p == Platform.XP) {
                 return "Windows";
             } else if (p == Platform.MAC) {
                 return "Mac";
+            } else {
+                return p.family().name();
             }
-            
-        } catch (Exception e) {
+        } else {
+            Object rawPlatform = capabilities.getCapability(CapabilityType.PLATFORM);
+            return rawPlatform == null
+                ? "Unknown"
+                : rawPlatform.toString();
         }
-        Object rawPlatform = capabilities.getCapability(CapabilityType.PLATFORM);
-        if (rawPlatform == null)
-            return "Unknown";
-        return rawPlatform.toString();
     }
 
     /**
@@ -257,7 +258,7 @@ public class BrowserUtil {
      * Browser.<br>
      * Extend BrowserFactory and override its methods in order to add default
      * version, platform or other capabilities.
-     * 
+     *
      * @param browserFactory
      *            BrowserFactory instance to use to generate default
      *            DesiredCapabilities
@@ -268,7 +269,7 @@ public class BrowserUtil {
 
     /**
      * Gets the BrowserFactory used to generate new DesiredCapabilities
-     * 
+     *
      * @return BrowserFactory used to generate new DesiredCapabilities
      */
     public static TestBenchBrowserFactory getBrowserFactory() {
