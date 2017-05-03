@@ -80,11 +80,8 @@ public class Parameters {
         if (hasSystemProperty(unqualifiedName)) {
             String str = System
                     .getProperty(getQualifiedParameter(unqualifiedName));
-            if (str != null && str.equalsIgnoreCase("true")) {
-                return true;
-            } else {
-                return false;
-            }
+            return str != null
+                   && str.equalsIgnoreCase("true");
         } else {
             return defaultValue;
         }
@@ -362,10 +359,9 @@ public class Parameters {
      */
     public static String getRunLocallyBrowserName() {
         String browserAndVersion = getSystemPropertyString("runLocally", null);
-        if (browserAndVersion == null) {
-            return null;
-        }
-        return parseRunLocally(browserAndVersion)[0];
+        return browserAndVersion == null
+            ? null
+            : parseRunLocally(browserAndVersion)[0];
     }
 
     /**
@@ -384,10 +380,9 @@ public class Parameters {
      */
     public static String getRunLocallyBrowserVersion() {
         String browserAndVersion = getSystemPropertyString("runLocally", null);
-        if (browserAndVersion == null) {
-            return null;
-        }
-        return parseRunLocally(browserAndVersion)[1];
+        return browserAndVersion == null
+            ? null
+            : parseRunLocally(browserAndVersion)[1];
     }
 
     /**
@@ -403,11 +398,9 @@ public class Parameters {
      *         version. Does not contain nulls
      */
     static String[] parseRunLocally(String browserAndVersion) {
-        if (browserAndVersion.contains("-")) {
-            return browserAndVersion.split("-", 2);
-        } else {
-            return new String[] { browserAndVersion, "" };
-        }
+        return browserAndVersion.contains("-")
+            ? browserAndVersion.split("-", 2)
+            : new String[] { browserAndVersion, "" };
     }
 
     public static boolean isLocalWebDriverUsed() {

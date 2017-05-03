@@ -39,11 +39,9 @@ public class RetryRule implements TestRule {
     }
     @Override
     public Statement apply(Statement base, Description description) {
-        if(maxAttempts >1) {
-            return statement(base, description);
-        } else {
-            return base;
-        }
+        return maxAttempts > 1
+            ? statement(base, description)
+            : base;
 
     }
 
