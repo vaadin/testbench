@@ -162,13 +162,7 @@ public abstract class AbstractTB3Test extends ParallelTest {
     }
 
     protected void waitForDebugMessage(final String expectedMessage, int timeout) {
-        waitUntil(new ExpectedCondition<Boolean>() {
-
-            @Override
-            public Boolean apply(WebDriver input) {
-                return hasDebugMessage(expectedMessage);
-            }
-        }, timeout);
+        waitUntil(input -> hasDebugMessage(expectedMessage), timeout);
     }
 
     protected void clearDebugMessages() {
@@ -193,11 +187,9 @@ public abstract class AbstractTB3Test extends ParallelTest {
      */
     protected void openTestURL(String extraParameters) {
         String url = getTestUrl();
-        if (url.contains("?")) {
-            url = url + "&" + extraParameters;
-        } else {
-            url = url + "?" + extraParameters;
-        }
+        url = url.contains("?")
+            ? url + "&" + extraParameters
+            : url + "?" + extraParameters;
         driver.get(url);
     }
 
@@ -208,11 +200,9 @@ public abstract class AbstractTB3Test extends ParallelTest {
      */
     protected String getTestUrl() {
         String baseUrl = getBaseURL();
-        if (baseUrl.endsWith("/")) {
-            baseUrl = baseUrl.substring(0, baseUrl.length() - 1);
-        }
-
-        return baseUrl + getDeploymentPath();
+        return (baseUrl.endsWith("/"))
+            ? baseUrl.substring(0, baseUrl.length() - 1) + getDeploymentPath()
+            : baseUrl + getDeploymentPath();
     }
 
     /**
@@ -251,11 +241,9 @@ public abstract class AbstractTB3Test extends ParallelTest {
      */
     protected WebElement getFocusedElement() {
         Object focusedElement = executeScript("return document.activeElement");
-        if (null != focusedElement) {
-            return (WebElement) focusedElement;
-        } else {
-            return null;
-        }
+        return null != focusedElement
+            ? (WebElement) focusedElement
+            : null;
     }
 
     /**
@@ -428,11 +416,8 @@ public abstract class AbstractTB3Test extends ParallelTest {
      */
     public static final <T> void assertGreaterOrEqual(String message,
             Comparable<T> a, T b) throws AssertionError {
-        if (a.compareTo(b) >= 0) {
-            return;
-        }
-
-        throw new AssertionError(decorate(message, a, b));
+        if (a.compareTo(b) < 0)
+            throw new AssertionError(decorate(message, a, b));
     }
 
     /**
@@ -447,10 +432,8 @@ public abstract class AbstractTB3Test extends ParallelTest {
      */
     public static final <T> void assertGreater(String message, Comparable<T> a,
             T b) throws AssertionError {
-        if (a.compareTo(b) > 0) {
-            return;
-        }
-        throw new AssertionError(decorate(message, a, b));
+        if (a.compareTo(b) <= 0)
+            throw new AssertionError(decorate(message, a, b));
     }
 
     /**
@@ -465,11 +448,8 @@ public abstract class AbstractTB3Test extends ParallelTest {
      */
     public static final <T> void assertLessThanOrEqual(String message,
             Comparable<T> a, T b) throws AssertionError {
-        if (a.compareTo(b) <= 0) {
-            return;
-        }
-
-        throw new AssertionError(decorate(message, a, b));
+        if (a.compareTo(b) > 0)
+            throw new AssertionError(decorate(message, a, b));
     }
 
     /**
@@ -484,10 +464,8 @@ public abstract class AbstractTB3Test extends ParallelTest {
      */
     public static final <T> void assertLessThan(String message,
             Comparable<T> a, T b) throws AssertionError {
-        if (a.compareTo(b) < 0) {
-            return;
-        }
-        throw new AssertionError(decorate(message, a, b));
+        if (a.compareTo(b) >= 0)
+            throw new AssertionError(decorate(message, a, b));
     }
 
     private static <T> String decorate(String message, Comparable<T> a, T b) {
@@ -511,10 +489,9 @@ public abstract class AbstractTB3Test extends ParallelTest {
         Class<?> uiClass = getUIClass();
         if (uiClass != null) {
             return getDeploymentPath(uiClass);
-        }
+        } else
         throw new IllegalArgumentException("Unable to determine path for "
                 + getClass().getCanonicalName());
-
     }
 
     /**
@@ -706,12 +683,9 @@ public abstract class AbstractTB3Test extends ParallelTest {
 
     protected void openDebugLogTab() {
 
-        waitUntil(new ExpectedCondition<Boolean>() {
-            @Override
-            public Boolean apply(WebDriver input) {
-                WebElement element = getDebugLogButton();
-                return element != null;
-            }
+        waitUntil(input -> {
+            WebElement element = getDebugLogButton();
+            return element != null;
         }, 15);
         getDebugLogButton().click();
     }
