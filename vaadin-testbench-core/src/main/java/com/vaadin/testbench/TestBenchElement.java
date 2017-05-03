@@ -53,6 +53,9 @@ import com.vaadin.testbench.commands.TestBenchElementCommands;
 import com.vaadin.testbench.elementsbase.AbstractElement;
 import com.vaadin.testbench.parallel.BrowserUtil;
 
+import elemental.json.Json;
+import elemental.json.JsonValue;
+
 /**
  * TestBenchElement is a WebElement wrapper. It provides Vaadin specific helper
  * functionality. TestBenchElements are created when you search for elements
@@ -111,6 +114,16 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
      */
     protected boolean isChrome() {
         return BrowserUtil.isChrome(getCapabilities());
+    }
+
+    /**
+     * Checks if the current test is running on Internet Explorer.
+     *
+     * @return <code>true</code> if the test is running on Internet Explorer,
+     *         <code>false</code> otherwise
+     */
+    protected boolean isIE() {
+        return BrowserUtil.isIE(getCapabilities());
     }
 
     /**
@@ -284,7 +297,7 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
     }
 
     @Override
-    public WebElement findElement(By by) {
+    public TestBenchElement findElement(By by) {
         waitForVaadin();
         if (by instanceof ByVaadin) {
             return wrapElement(by.findElement(this), getCommandExecutor());
@@ -537,7 +550,7 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
      * <p>
      * Use e.g. as
      * <code>waitUntil(ExpectedConditions.presenceOfElementLocated(by), 10);</code>
-     * 
+     *
      * @param condition
      *            Models a condition that might reasonably be expected to
      *            eventually evaluate to something that is neither null nor
@@ -546,10 +559,10 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
      *            The timeout in seconds for the wait.
      * @return The condition's return value if it returned something different
      *         from null or false before the timeout expired.
-     * 
+     *
      * @throws TimeoutException
      *             If the timeout expires.
-     * 
+     *
      * @see FluentWait#until
      * @see ExpectedCondition
      */
@@ -565,22 +578,147 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
      * <p>
      * Use e.g. as
      * <code>waitUntil(ExpectedConditions.presenceOfElementLocated(by));</code>
-     * 
+     *
      * @param condition
      *            Models a condition that might reasonably be expected to
      *            eventually evaluate to something that is neither null nor
      *            false.
      * @return The condition's return value if it returned something different
      *         from null or false before the timeout expired.
-     * 
+     *
      * @throws TimeoutException
      *             If 10 seconds passed.
-     * 
+     *
      * @see FluentWait#until
      * @see ExpectedCondition
      */
     protected <T> T waitUntil(ExpectedCondition<T> condition) {
         return waitUntil(condition, 10);
+    }
+
+    /**
+     * Sets a JavaScript property of the given element.
+     *
+     * @param name
+     *            the name of the property
+     * @param value
+     *            the value to set
+     */
+    public void setProperty(String name, String value) {
+        internalSetProperty(name, value);
+    }
+
+    /**
+     * Sets a JavaScript property of the given element.
+     *
+     * @param name
+     *            the name of the property
+     * @param value
+     *            the value to set
+     */
+    public void setProperty(String name, Boolean value) {
+        internalSetProperty(name, value);
+    }
+
+    /**
+     * Sets a JavaScript property of the given element.
+     *
+     * @param name
+     *            the name of the property
+     * @param value
+     *            the value to set
+     */
+    public void setProperty(String name, Double value) {
+        internalSetProperty(name, value);
+    }
+
+    /**
+     * Gets a JavaScript property of the given element as a string.
+     *
+     * @param name
+     *            the name of the property
+     */
+    public String getPropertyString(String name) {
+        Object value = internalGetProperty(name);
+        if (value == null) {
+            return null;
+        }
+        return createJsonValue(value).asString();
+    }
+
+    /**
+     * Gets a JavaScript property of the given element as a boolean.
+     *
+     * @param name
+     *            the name of the property
+     */
+    public Boolean getPropertyBoolean(String name) {
+        Object value = internalGetProperty(name);
+        if (value == null) {
+            return null;
+        }
+        return createJsonValue(value).asBoolean();
+    }
+
+    /**
+     * Gets a JavaScript property of the given element as a double.
+     *
+     * @param name
+     *            the name of the property
+     */
+    public Double getPropertyDouble(String name) {
+        Object value = internalGetProperty(name);
+        if (value == null) {
+            return null;
+        }
+        return createJsonValue(value).asNumber();
+    }
+
+    private void internalSetProperty(String name, Object value) {
+        if ((isIE() || isFirefox()) && value instanceof Double) {
+            // IE 11 fails with java.lang.NumberFormatException
+            // if we try to send a double...
+            tbCommandExecutor.executeScript(
+                    "arguments[0][arguments[1]]=Number(arguments[2])", this,
+                    name, String.valueOf((value)));
+        } else {
+            tbCommandExecutor.executeScript(
+                    "arguments[0][arguments[1]]=arguments[2]", this, name,
+                    value);
+        }
+    }
+
+    private Object internalGetProperty(String name) {
+        String script = "var value = arguments[0][arguments[1]];";
+        if (isIE() || isFirefox()) {
+            String isNumberScript = script + "return typeof value == 'number';";
+            boolean number = (boolean) getCommandExecutor()
+                    .executeScript(isNumberScript, this, name);
+
+            if (number) {
+                String str = (String) getCommandExecutor().executeScript(
+                        script + "return value.toString();", this, name);
+                return Double.parseDouble(str);
+            }
+        }
+        return ((JavascriptExecutor) getDriver())
+                .executeScript(script + "return value;", this, name);
+    }
+
+    private JsonValue createJsonValue(Object value) {
+        if (value == null) {
+            return Json.createNull();
+        } else if (value instanceof String) {
+            return Json.create((String) value);
+        } else if (value instanceof Number) {
+            return Json.create(((Number) value).doubleValue());
+        } else if (value instanceof Boolean) {
+            return Json.create((Boolean) value);
+        } else {
+            throw new IllegalArgumentException(
+                    "Type of property is unsupported: "
+                            + value.getClass().getName());
+        }
     }
 
 }
