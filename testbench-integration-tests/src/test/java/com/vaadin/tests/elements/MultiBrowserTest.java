@@ -45,8 +45,8 @@ import com.vaadin.testbench.parallel.BrowserUtil;
 public abstract class MultiBrowserTest extends PrivateTB3Configuration {
 
     protected List<DesiredCapabilities> getBrowsersExcludingIE() {
-        List<DesiredCapabilities> browsers = new ArrayList<DesiredCapabilities>(
-                getAllBrowsers());
+        List<DesiredCapabilities> browsers = new ArrayList<>(
+            getAllBrowsers());
         browsers.remove(BrowserUtil.ie11());
         return browsers;
     }
@@ -58,7 +58,7 @@ public abstract class MultiBrowserTest extends PrivateTB3Configuration {
      */
     public List<DesiredCapabilities> getAllBrowsers() {
         if (allBrowsers == null) {
-            allBrowsers = new ArrayList<DesiredCapabilities>();
+            allBrowsers = new ArrayList<>();
             allBrowsers.add(BrowserUtil.ie11());
             allBrowsers.add(BrowserUtil.firefox());
             allBrowsers.add(BrowserUtil.chrome());
