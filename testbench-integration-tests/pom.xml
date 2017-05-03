@@ -1,18 +1,18 @@
 <?xml version="1.0"?>
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <modelVersion>4.0.0</modelVersion>
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>com.vaadin</groupId>
-    <artifactId>vaadin-testbench-parent</artifactId>
-    <version>5.0-SNAPSHOT</version>
-  </parent>
+    <parent>
+        <groupId>com.vaadin</groupId>
+        <artifactId>vaadin-testbench-parent</artifactId>
+        <version>5.0-SNAPSHOT</version>
+    </parent>
 
-  <artifactId>testbench-integration-tests</artifactId>
-  <name>testbench-integration-tests</name>
+    <artifactId>testbench-integration-tests</artifactId>
+    <name>testbench-integration-tests</name>
 
-  <url>http://maven.apache.org</url>
+    <url>http://maven.apache.org</url>
     <properties>
         <snapshot.repository.url>https://oss.sonatype.org/content/repositories/vaadin-snapshots/
         </snapshot.repository.url>
@@ -94,7 +94,7 @@
         </plugins>
     </build>
     <dependencies>
-    <!-- Vaadin framework dependency for running tests -->
+        <!-- Vaadin framework dependency for running tests -->
         <dependency>
             <groupId>com.vaadin</groupId>
             <artifactId>vaadin-server</artifactId>
@@ -134,30 +134,30 @@
         </dependency>
         <dependency>
             <groupId>com.vaadin</groupId>
-                <artifactId>vaadin-compatibility-server</artifactId>
-                <version>${vaadin.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.vaadin</groupId>
-                <artifactId>vaadin-compatibility-client</artifactId>
-                <version>${vaadin.version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.vaadin</groupId>
-                <artifactId>vaadin-compatibility-client-compiled</artifactId>
-                <version>${vaadin.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.vaadin</groupId>
-                <artifactId>vaadin-compatibility-shared</artifactId>
-                <version>${vaadin.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.vaadin</groupId>
-                <artifactId>vaadin-compatibility-themes</artifactId>
-                <version>${vaadin.version}</version>
-            </dependency>
+            <artifactId>vaadin-compatibility-server</artifactId>
+            <version>${vaadin.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.vaadin</groupId>
+            <artifactId>vaadin-compatibility-client</artifactId>
+            <version>${vaadin.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.vaadin</groupId>
+            <artifactId>vaadin-compatibility-client-compiled</artifactId>
+            <version>${vaadin.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.vaadin</groupId>
+            <artifactId>vaadin-compatibility-shared</artifactId>
+            <version>${vaadin.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.vaadin</groupId>
+            <artifactId>vaadin-compatibility-themes</artifactId>
+            <version>${vaadin.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.vaadin</groupId>
             <artifactId>vaadin-testbench-core</artifactId>
@@ -175,7 +175,7 @@
 
     </dependencies>
     <profiles>
-            <profile>
+        <profile>
             <id>verify-only-phantom</id>
             <build>
                 <plugins>
@@ -232,5 +232,97 @@
                 </plugins>
             </build>
         </profile>
+
+        <!--Docker and SeleniumGrid -->
+
+        <profile>
+            <id>docker-selenium-hub</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>io.fabric8</groupId>
+                        <artifactId>docker-maven-plugin</artifactId>
+                        <configuration>
+                            <autoPull>on</autoPull>
+                            <startParallel>false</startParallel>
+                            <images>
+                                <image>
+                                    <name>selenium/hub</name>
+                                    <alias>selenium-hub</alias>
+                                    <run>
+                                        <ports>
+                                            <port>4444:4444</port>
+                                        </ports>
+                                    </run>
+                                </image>
+                                <image>
+                                    <name>selenium/node-chrome</name>
+                                    <alias>selenium-node-chrome</alias>
+                                    <run>
+                                        <links>
+                                            <link>selenium-hub:hub</link>
+                                        </links>
+                                        <dependsOn>
+                                            <container>selenium-hub</container>
+                                        </dependsOn>
+                                    </run>
+                                </image>
+                                <image>
+                                    <name>selenium/node-phantomjs</name>
+                                    <alias>selenium-node-phantomjs</alias>
+                                    <run>
+                                        <links>
+                                            <link>selenium-hub:hub</link>
+                                        </links>
+                                        <dependsOn>
+                                            <container>selenium-hub</container>
+                                        </dependsOn>
+                                    </run>
+                                </image>
+                                <image>
+                                    <name>selenium/node-firefox</name>
+                                    <alias>selenium-node-firefox</alias>
+                                    <run>
+                                        <links>
+                                            <link>selenium-hub:hub</link>
+                                        </links>
+                                        <dependsOn>
+                                            <container>selenium-hub</container>
+                                        </dependsOn>
+                                    </run>
+                                </image>
+                            </images>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>docker:build</id>
+                                <goals>
+                                    <goal>build</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>docker:start</id>
+                                <phase>compile</phase>
+                                <goals>
+                                    <goal>start</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>docker:stop</id>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>stop</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+
     </profiles>
 </project>
