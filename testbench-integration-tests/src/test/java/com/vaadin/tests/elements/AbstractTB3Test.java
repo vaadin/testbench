@@ -558,17 +558,9 @@ public abstract class AbstractTB3Test extends ParallelTest {
      */
     @SuppressWarnings("deprecation")
     private boolean isSupportedRunnerClass(Class<?> cls) {
-        if (UI.class.isAssignableFrom(cls)) {
-            return true;
-        }
-        if (UIProvider.class.isAssignableFrom(cls)) {
-            return true;
-        }
-        if (LegacyApplication.class.isAssignableFrom(cls)) {
-            return true;
-        }
-
-        return false;
+        return UI.class.isAssignableFrom(cls)
+               || UIProvider.class.isAssignableFrom(cls)
+               || LegacyApplication.class.isAssignableFrom(cls);
     }
 
     /**
