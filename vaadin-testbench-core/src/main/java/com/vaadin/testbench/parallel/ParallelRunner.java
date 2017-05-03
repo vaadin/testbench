@@ -74,7 +74,7 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
 
     @Override
     protected List<FrameworkMethod> computeTestMethods() {
-        List<FrameworkMethod> tests = new LinkedList<FrameworkMethod>();
+        List<FrameworkMethod> tests = new LinkedList<>();
 
         if (!ParallelTest.class.isAssignableFrom(getTestClass().getJavaClass())) {
             throw new RuntimeException(getClass().getName() + " only supports "
@@ -118,24 +118,18 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
     private boolean categoryIsExcludedOrNotExcplicitlyIncluded() {
         Class<?> c = getTestClass().getJavaClass();
 
-        if (categoryIsExcluded(c)) {
-            return true;
-        }
+        return categoryIsExcluded(c)
+               || explicitInclusionIsUsed()
+                  && !categoryIsIncluded(c);
 
-        if (explicitInclusionIsUsed()) {
-            return !categoryIsIncluded(c);
-        }
-
-        return false;
     }
 
     private boolean categoryIsIncluded(Class<?> c) {
         String include = System.getProperty("categories.include");
-        if (include != null && include.trim().length() > 0) {
-            return hasCategoryFor(c, include.toLowerCase().trim());
-        }
+        return include != null
+               && include.trim().length() > 0
+               && hasCategoryFor(c, include.toLowerCase().trim());
 
-        return false;
     }
 
     private static boolean explicitInclusionIsUsed() {
@@ -146,19 +140,16 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
 
     private static boolean categoryIsExcluded(Class<?> c) {
         String exclude = System.getProperty("categories.exclude");
-        if (exclude != null && exclude.trim().length() > 0) {
-            return hasCategoryFor(c, exclude.toLowerCase().trim());
-        }
+        return exclude != null
+               && exclude.trim().length() > 0
+               && hasCategoryFor(c, exclude.toLowerCase().trim());
 
-        return false;
     }
 
     private static boolean hasCategoryFor(Class<?> c, String searchString) {
-        if (hasCategory(c)) {
-            return searchString.contains(getCategory(c).toLowerCase());
-        }
+        return hasCategory(c)
+               && searchString.contains(getCategory(c).toLowerCase());
 
-        return false;
     }
 
     private static boolean hasCategory(Class<?> c) {
