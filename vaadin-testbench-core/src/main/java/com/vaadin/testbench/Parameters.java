@@ -68,11 +68,9 @@ public class Parameters {
 
     private static String getSystemPropertyString(String unqualifiedName,
             String defaultValue) {
-        if (hasSystemProperty(unqualifiedName)) {
-            return System.getProperty(getQualifiedParameter(unqualifiedName));
-        } else {
-            return defaultValue;
-        }
+        return hasSystemProperty(unqualifiedName)
+            ? System.getProperty(getQualifiedParameter(unqualifiedName))
+            : defaultValue;
     }
 
     private static boolean getSystemPropertyBoolean(String unqualifiedName,
