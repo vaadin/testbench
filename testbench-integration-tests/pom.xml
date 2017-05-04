@@ -168,7 +168,7 @@
         <dependency>
             <groupId>org.rapidpm</groupId>
             <artifactId>rapidpm-functional-reactive</artifactId>
-            <version>0.0.2</version>
+            <version>0.0.3-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
 
@@ -245,6 +245,7 @@
                     <plugin>
                         <groupId>io.fabric8</groupId>
                         <artifactId>docker-maven-plugin</artifactId>
+                        <version>0.20.1</version>
                         <configuration>
                             <autoPull>on</autoPull>
                             <startParallel>false</startParallel>
