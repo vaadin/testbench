@@ -9,8 +9,8 @@
     <version>5.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>testbench-integration-tests</artifactId>
-  <name>testbench-integration-tests</name>
+  <artifactId>vaadin-testbench-integration-tests</artifactId>
+  <name>vaadin-testbench-integration-tests</name>
 
   <url>http://maven.apache.org</url>
     <properties>
