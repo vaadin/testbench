@@ -48,8 +48,8 @@ import com.vaadin.testbench.annotations.RunLocally;
  */
 public class ParallelRunner extends BlockJUnit4ClassRunner {
 
-    private static Logger logger = Logger.getLogger(ParallelRunner.class
-            .getName());
+    private static Logger logger = Logger
+            .getLogger(ParallelRunner.class.getName());
 
     /**
      * This is the total limit of actual JUnit test instances run in parallel
@@ -74,9 +74,10 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
 
     @Override
     protected List<FrameworkMethod> computeTestMethods() {
-        List<FrameworkMethod> tests = new LinkedList<FrameworkMethod>();
+        List<FrameworkMethod> tests = new LinkedList<>();
 
-        if (!ParallelTest.class.isAssignableFrom(getTestClass().getJavaClass())) {
+        if (!ParallelTest.class
+                .isAssignableFrom(getTestClass().getJavaClass())) {
             throw new RuntimeException(getClass().getName() + " only supports "
                     + ParallelTest.class.getName());
         }
@@ -100,16 +101,16 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
                         TBMethod method = new TBMethod(m.getMethod(),
                                 capabilities);
                         if (testNameSuffixProperty != null) {
-                            method.setTestNameSuffix("-"
-                                    + System.getProperty(testNameSuffixProperty
-                                            .property()));
+                            method.setTestNameSuffix("-" + System.getProperty(
+                                    testNameSuffixProperty.property()));
                         }
                         tests.add(method);
                     }
                 }
             }
         } catch (Exception e) {
-            throw new RuntimeException("Error retrieving browsers to run on", e);
+            throw new RuntimeException("Error retrieving browsers to run on",
+                    e);
         }
 
         return tests;
@@ -181,7 +182,7 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
      */
     private Collection<DesiredCapabilities> getDesiredCapabilities() {
         if (testRunsLocally()) {
-            Collection<DesiredCapabilities> desiredCapabilities = new ArrayList<DesiredCapabilities>();
+            Collection<DesiredCapabilities> desiredCapabilities = new ArrayList<>();
             Class<?> javaTestClass = getTestClass().getJavaClass();
             desiredCapabilities.add(BrowserUtil.getBrowserFactory().create(
                     getRunLocallyBrowserName(javaTestClass),
@@ -238,8 +239,8 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
 
         try {
             if (browserFactoryAnnotation != null
-                    && TestBenchBrowserFactory.class
-                            .isAssignableFrom(browserFactoryAnnotation.value())) {
+                    && TestBenchBrowserFactory.class.isAssignableFrom(
+                            browserFactoryAnnotation.value())) {
                 return (TestBenchBrowserFactory) browserFactoryAnnotation
                         .value().newInstance();
             }
@@ -258,7 +259,7 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
 
         Collection<DesiredCapabilities> desiredCapabilites = getBrowsersConfiguration();
 
-        ArrayList<DesiredCapabilities> filteredCapabilities = new ArrayList<DesiredCapabilities>();
+        ArrayList<DesiredCapabilities> filteredCapabilities = new ArrayList<>();
 
         String include = System.getProperty("browsers.include");
         String exclude = System.getProperty("browsers.exclude");
@@ -295,7 +296,8 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
                 // user?
 
                 if (method.isAnnotationPresent(BrowserConfiguration.class)) {
-                    boolean methodSignatureIsValid = validateBrowserConfigurationAnnotatedSignature(method);
+                    boolean methodSignatureIsValid = validateBrowserConfigurationAnnotatedSignature(
+                            method);
 
                     if (!methodSignatureIsValid) {
                         /*
@@ -312,10 +314,10 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
                     } catch (Exception e) {
                         // Handle possible exceptions.
 
-                        String errMsg = String
-                                .format("Error occurred while invoking BrowserConfiguration method %s.%s(). Method was ignored, searching BrowserConfiguration method in superclasses",
-                                        method.getDeclaringClass().getName(),
-                                        method.getName());
+                        String errMsg = String.format(
+                                "Error occurred while invoking BrowserConfiguration method %s.%s(). Method was ignored, searching BrowserConfiguration method in superclasses",
+                                method.getDeclaringClass().getName(),
+                                method.getName());
                         logger.log(Level.INFO, errMsg, e);
 
                         /*
@@ -336,20 +338,20 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
 
     /**
      * Validates the signature of a BrowserConfiguration annotated method.
-     * 
+     *
      * @param method
      *            BrowserConfiguration annotated method
      * @return true if method signature is valid. false otherwise.
      */
-    private boolean validateBrowserConfigurationAnnotatedSignature(Method method) {
+    private boolean validateBrowserConfigurationAnnotatedSignature(
+            Method method) {
         String genericErrorMessage = "Error occurred while invoking BrowserConfigurationMethod %s.%s()."
                 + " %s. Method was ignored, searching BrowserConfiguration method in superclasses";
 
         if (method.getParameterTypes().length != 0) {
-            String errMsg = String
-                    .format(genericErrorMessage, method.getDeclaringClass()
-                            .getName(), method.getName(),
-                            "BrowserConfiguration annotated method must not require any arguments");
+            String errMsg = String.format(genericErrorMessage,
+                    method.getDeclaringClass().getName(), method.getName(),
+                    "BrowserConfiguration annotated method must not require any arguments");
             logger.info(errMsg);
             return false;
         }
@@ -359,11 +361,9 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
              * ClassCastException may still occur if method's return type is not
              * Collection<DesiredCapabilities>
              */
-            String errMsg = String
-                    .format(genericErrorMessage,
-                            method.getDeclaringClass().getName(),
-                            method.getName(),
-                            "BrowserConfiguration annotated method must return a Collection<DesiredCapabilities>");
+            String errMsg = String.format(genericErrorMessage,
+                    method.getDeclaringClass().getName(), method.getName(),
+                    "BrowserConfiguration annotated method must return a Collection<DesiredCapabilities>");
             logger.info(errMsg);
             return false;
         }
@@ -419,7 +419,7 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
     /**
      * Finds the given annotation in the given class or one of its super
      * classes. Return the first found annotation
-     * 
+     *
      * @param searchClass
      * @param annotationClass
      * @return
@@ -488,8 +488,9 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
 
         @Override
         public String getName() {
-            return String.format("%s[%s]", getMethod().getName()
-                    + testNameSuffix, getUniqueIdentifier(capabilities));
+            return String.format("%s[%s]",
+                    getMethod().getName() + testNameSuffix,
+                    getUniqueIdentifier(capabilities));
         }
 
         @Override
@@ -498,17 +499,23 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
                 return false;
             }
 
-            return ((TBMethod) obj).capabilities.equals(capabilities) && super.equals(obj);
+            return ((TBMethod) obj).capabilities.equals(capabilities)
+                    && super.equals(obj);
         }
 
-        /*
+        /**
          * Returns a string which uniquely (enough) identifies this browser.
          * Used mainly in screenshot names.
          */
         private static String getUniqueIdentifier(Capabilities capabilities) {
             String platform = BrowserUtil.getPlatform(capabilities);
             String browser = BrowserUtil.getBrowserIdentifier(capabilities);
-            String version = capabilities.getVersion();
+            String version;
+            if (capabilities == null) {
+                version = "Unknown";
+            } else {
+                version = capabilities.getVersion();
+            }
             return platform + "_" + browser + "_" + version;
         }
     }
