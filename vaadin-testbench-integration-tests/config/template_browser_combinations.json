@@ -1,0 +1,20 @@
+{
+  "browsers": [
+    {
+      "browserName": "Chrome",
+      "platform": "ANY",
+      "version": ""
+    },
+    {
+      "browserName": "Internet Explorer",
+      "platform": "ANY",
+      "version": "11"
+    },
+    {
+      "browserName": "Firefox",
+      "platform": "ANY",
+      "version": "45",
+      "marionette":"false"
+    }
+  ]
+}
