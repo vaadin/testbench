@@ -15,7 +15,7 @@ import com.vaadin.testbench.TestBenchTestCase;
 public class BaseParallelTest extends TestBenchTestCase {
 
     public BaseParallelTest() {
-        throw new RuntimeException("not unsable right now");
+        throw new RuntimeException("not usable right now");
     }
 
     // prepare @BrowserConfiguration

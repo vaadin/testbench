@@ -24,7 +24,7 @@ public class ParallelForkAndJoinRunner extends BlockJUnit4ClassRunner {
         throws InitializationError {
         super(klass);
 
-        throw new RuntimeException("not unsable right now");
+        throw new RuntimeException("not usable right now");
 
     }
 
