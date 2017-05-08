@@ -235,22 +235,21 @@ public class BrowserUtil {
      * @return a human readable string describing the platform
      */
     public static String getPlatform(Capabilities capabilities) {
-        final Platform p = capabilities.getPlatform();
-        if (p != null) {
+        try {
+            Platform p = capabilities.getPlatform();
             if (p == Platform.WIN8 || p == Platform.WINDOWS
-                || p == Platform.VISTA || p == Platform.XP) {
+                    || p == Platform.VISTA || p == Platform.XP) {
                 return "Windows";
             } else if (p == Platform.MAC) {
                 return "Mac";
-            } else {
-                return p.family().name();
             }
-        } else {
-            Object rawPlatform = capabilities.getCapability(CapabilityType.PLATFORM);
-            return rawPlatform == null
-                ? "Unknown"
-                : rawPlatform.toString();
+
+        } catch (Exception e) {
         }
+        Object rawPlatform = capabilities.getCapability(CapabilityType.PLATFORM);
+        if (rawPlatform == null)
+            return "Unknown";
+        return rawPlatform.toString();
     }
 
     /**

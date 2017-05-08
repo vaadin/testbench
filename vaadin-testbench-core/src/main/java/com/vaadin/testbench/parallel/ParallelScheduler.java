@@ -15,7 +15,6 @@ package com.vaadin.testbench.parallel;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
@@ -26,7 +25,7 @@ import org.junit.runners.model.RunnerScheduler;
  * run in its own thread. Uses an {@link ExecutorService} to manage the threads.
  */
 public class ParallelScheduler implements RunnerScheduler {
-    private final List<Future<Object>> fResults = new ArrayList<Future<Object>>();
+    private final List<Future<Object>> fResults = new ArrayList<>();
     private ExecutorService fService;
 
     /**
@@ -42,12 +41,9 @@ public class ParallelScheduler implements RunnerScheduler {
 
     @Override
     public void schedule(final Runnable childStatement) {
-        fResults.add(fService.submit(new Callable<Object>() {
-            @Override
-            public Object call() throws Exception {
-                childStatement.run();
-                return null;
-            }
+        fResults.add(fService.submit(() -> {
+            childStatement.run();
+            return null;
         }));
     }
 
