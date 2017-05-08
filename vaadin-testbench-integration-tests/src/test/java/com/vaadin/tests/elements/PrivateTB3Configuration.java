@@ -70,13 +70,13 @@ public abstract class PrivateTB3Configuration extends AbstractTB3Test {
         return property;
     }
 
-    @Override
-    protected String getDeploymentHostname() {
-        if (getRunLocallyBrowser() != null) {
-            return "localhost";
-        }
-        return getConfiguredDeploymentHostname();
-    }
+//    @Override
+//    protected String getDeploymentHostname() {
+//        if (getRunLocallyBrowser() != null) {
+//            return "localhost";
+//        }
+//        return getConfiguredDeploymentHostname();
+//    }
 
     /**
      * Gets the hostname that tests are configured to use.
@@ -94,7 +94,7 @@ public abstract class PrivateTB3Configuration extends AbstractTB3Test {
     }
 
     @Override
-    protected int getDeploymentPort() {
+    public int getDeploymentPort() {
         return getConfiguredDeploymentPort();
     }
 

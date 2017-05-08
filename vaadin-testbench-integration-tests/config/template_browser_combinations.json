@@ -1,17 +1,17 @@
 {
   "browsers": [
     {
-      "browserName": "Chrome",
+      "browserName": "chrome",
       "platform": "ANY",
       "version": ""
     },
     {
-      "browserName": "Internet Explorer",
+      "browserName": "internet explorer",
       "platform": "ANY",
       "version": "11"
     },
     {
-      "browserName": "Firefox",
+      "browserName": "firefox",
       "platform": "ANY",
       "version": "45",
       "marionette":"false"

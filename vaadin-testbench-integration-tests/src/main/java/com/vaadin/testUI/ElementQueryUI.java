@@ -5,6 +5,9 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
+/**
+ * http://localhost:8080/ElementQueryUI
+ */
 public class ElementQueryUI extends UI {
 
     @Override

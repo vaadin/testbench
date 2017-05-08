@@ -1,6 +1,7 @@
 package com.vaadin.tests.elements;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.vaadin.testUI.ElementQueryUI;
@@ -10,7 +11,7 @@ import com.vaadin.testbench.TestBenchElement;
 public class ElementScreenCompareIT extends MultiBrowserTest {
 
     @Override
-    protected String getDeploymentPath() {
+    public String getDeploymentPath() {
         return "/" + ElementQueryUI.class.getSimpleName();
     }
 
