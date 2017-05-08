@@ -168,7 +168,7 @@
         <dependency>
             <groupId>org.rapidpm</groupId>
             <artifactId>rapidpm-functional-reactive</artifactId>
-            <version>0.0.3-SNAPSHOT</version>
+            <version>0.0.3</version>
             <scope>test</scope>
         </dependency>
 
