@@ -35,11 +35,8 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.internal.WrapsElement;
-import org.openqa.selenium.remote.BrowserType;
-import org.openqa.selenium.remote.RemoteWebDriver;
 
 import com.vaadin.testbench.By.ByVaadin;
 import com.vaadin.testbench.commands.CanCompareScreenshots;
@@ -48,6 +45,7 @@ import com.vaadin.testbench.commands.ScreenshotComparator;
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.commands.TestBenchElementCommands;
 import com.vaadin.testbench.elementsbase.AbstractElement;
+import com.vaadin.testbench.parallel.BrowserUtil;
 
 /**
  * TestBenchElement is a WebElement wrapper. It provides Vaadin specific helper
@@ -91,32 +89,32 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
 
     /**
      * Checks if the current test is running on PhantomJS.
-     * 
+     *
      * @return <code>true</code> if the test is running on PhantomJS,
      *         <code>false</code> otherwise
      */
     protected boolean isPhantomJS() {
-        return BrowserType.PHANTOMJS.equals(getCapabilities().getBrowserName());
+        return BrowserUtil.isPhantomJS(getCapabilities());
     }
 
     /**
      * Checks if the current test is running on Chrome.
-     * 
+     *
      * @return <code>true</code> if the test is running on Chrome,
      *         <code>false</code> otherwise
      */
     protected boolean isChrome() {
-        return BrowserType.CHROME.equals(getCapabilities().getBrowserName());
+        return BrowserUtil.isChrome(getCapabilities());
     }
 
     /**
      * Checks if the current test is running on Firefox.
-     * 
+     *
      * @return <code>true</code> if the test is running on Firefox,
      *         <code>false</code> otherwise
      */
     protected boolean isFirefox() {
-        return BrowserType.FIREFOX.equals(getCapabilities().getBrowserName());
+        return BrowserUtil.isFirefox(getCapabilities());
     }
 
     /**
@@ -133,10 +131,8 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
             driver = getDriver();
         }
 
-        if (driver instanceof RemoteWebDriver) {
-            return ((RemoteWebDriver) driver).getCapabilities();
-        } else if (driver instanceof HtmlUnitDriver) {
-            return ((HtmlUnitDriver) driver).getCapabilities();
+        if (driver instanceof HasCapabilities) {
+            return ((HasCapabilities) driver).getCapabilities();
         } else {
             return null;
         }
@@ -267,10 +263,10 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
 
     @Override
     public List<WebElement> findElements(By by) {
-        List<WebElement> elements = new ArrayList<WebElement>();
+        List<WebElement> elements = new ArrayList<>();
         if (by instanceof ByVaadin) {
-            elements.addAll(wrapElements(by.findElements(this),
-                    getCommandExecutor()));
+            elements.addAll(
+                    wrapElements(by.findElements(this), getCommandExecutor()));
         } else {
             elements.addAll(wrapElements(actualElement.findElements(by),
                     getCommandExecutor()));
@@ -282,16 +278,14 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
     public WebElement findElement(By by) {
         waitForVaadin();
         if (by instanceof ByVaadin) {
-            return wrapElement(by.findElement(this),
-                    getCommandExecutor());
+            return wrapElement(by.findElement(this), getCommandExecutor());
         }
-        return wrapElement(actualElement.findElement(by),
-                getCommandExecutor());
+        return wrapElement(actualElement.findElement(by), getCommandExecutor());
     }
 
     /**
      * Calls the Javascript click method on the element.
-     * 
+     *
      * Useful for elements that are hidden or covered by a pseudo-element on
      * some browser-theme combinations (for instance Firefox-Valo)
      */
@@ -327,8 +321,7 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
     @Override
     public void click(int x, int y, Keys... modifiers) {
         waitForVaadin();
-        Actions actions = new Actions(
-                getCommandExecutor().getWrappedDriver());
+        Actions actions = new Actions(getCommandExecutor().getWrappedDriver());
         actions.moveToElement(actualElement, x, y);
         // Press any modifier keys
         for (Keys modifier : modifiers) {
@@ -393,7 +386,7 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
     protected static List<TestBenchElement> wrapElements(
             List<WebElement> elements,
             TestBenchCommandExecutor tbCommandExecutor) {
-        List<TestBenchElement> wrappedList = new ArrayList<TestBenchElement>();
+        List<TestBenchElement> wrappedList = new ArrayList<>();
 
         for (WebElement e : elements) {
             wrappedList.add(wrapElement(e, tbCommandExecutor));
@@ -431,7 +424,7 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
      */
     public Set<String> getClassNames() {
         String classAttribute = getAttribute("class");
-        Set<String> classes = new HashSet<String>();
+        Set<String> classes = new HashSet<>();
         if (classAttribute == null) {
             return classes;
         }
