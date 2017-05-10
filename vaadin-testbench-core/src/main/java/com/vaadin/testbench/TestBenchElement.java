@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2012 Vaadin Ltd
- *
+ * <p>
  * This program is available under Commercial Vaadin Add-On License 3.0
  * (CVALv3).
- *
+ * <p>
  * See the file licensing.txt distributed with this software for more
  * information about licensing.
- *
+ * <p>
  * You should have received a copy of the license along with this program.
  * If not, see <http://vaadin.com/license/cval-3>.
  */
@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.Capabilities;
@@ -55,8 +56,8 @@ import com.vaadin.testbench.elementsbase.AbstractElement;
  * from TestBenchTestCase or a context relative search from TestBenchElement.
  */
 public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
-        implements WrapsElement, WebElement, TestBenchElementCommands,
-        CanWaitForVaadin, HasDriver, CanCompareScreenshots {
+    implements WrapsElement, WebElement, TestBenchElementCommands,
+               CanWaitForVaadin, HasDriver, CanCompareScreenshots {
 
     private WebElement actualElement = null;
     private TestBenchCommandExecutor tbCommandExecutor = null;
@@ -66,7 +67,7 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
     }
 
     protected TestBenchElement(WebElement webElement,
-            TestBenchCommandExecutor tbCommandExecutor) {
+                               TestBenchCommandExecutor tbCommandExecutor) {
         init(webElement, tbCommandExecutor);
     }
 
@@ -81,7 +82,7 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
      *            TestBenchCommandExecutor instance
      */
     protected void init(WebElement element,
-            TestBenchCommandExecutor tbCommandExecutor) {
+                        TestBenchCommandExecutor tbCommandExecutor) {
         if (null == this.tbCommandExecutor) {
             this.tbCommandExecutor = tbCommandExecutor;
             actualElement = element;
@@ -91,7 +92,7 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
 
     /**
      * Checks if the current test is running on PhantomJS.
-     * 
+     *
      * @return <code>true</code> if the test is running on PhantomJS,
      *         <code>false</code> otherwise
      */
@@ -101,7 +102,7 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
 
     /**
      * Checks if the current test is running on Chrome.
-     * 
+     *
      * @return <code>true</code> if the test is running on Chrome,
      *         <code>false</code> otherwise
      */
@@ -111,7 +112,7 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
 
     /**
      * Checks if the current test is running on Firefox.
-     * 
+     *
      * @return <code>true</code> if the test is running on Firefox,
      *         <code>false</code> otherwise
      */
@@ -166,7 +167,7 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
     public void showTooltip() {
         waitForVaadin();
         new Actions(getCommandExecutor().getWrappedDriver())
-                .moveToElement(actualElement).perform();
+            .moveToElement(actualElement).perform();
         // Wait for a small moment for the tooltip to appear
         try {
             Thread.sleep(1000); // VTooltip.OPEN_DELAY = 750;
@@ -186,7 +187,7 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
     public void scroll(int scrollTop) {
         JavascriptExecutor js = getCommandExecutor();
         js.executeScript("arguments[0].scrollTop = " + scrollTop,
-                actualElement);
+                         actualElement);
     }
 
     /**
@@ -201,7 +202,7 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
     public void scrollLeft(int scrollLeft) {
         JavascriptExecutor js = getCommandExecutor();
         js.executeScript("arguments[0].scrollLeft = " + scrollLeft,
-                actualElement);
+                         actualElement);
     }
 
     @Override
@@ -267,13 +268,13 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
 
     @Override
     public List<WebElement> findElements(By by) {
-        List<WebElement> elements = new ArrayList<WebElement>();
+        List<WebElement> elements = new ArrayList<>();
         if (by instanceof ByVaadin) {
             elements.addAll(wrapElements(by.findElements(this),
-                    getCommandExecutor()));
+                                         getCommandExecutor()));
         } else {
             elements.addAll(wrapElements(actualElement.findElements(by),
-                    getCommandExecutor()));
+                                         getCommandExecutor()));
         }
         return elements;
     }
@@ -283,21 +284,21 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
         waitForVaadin();
         if (by instanceof ByVaadin) {
             return wrapElement(by.findElement(this),
-                    getCommandExecutor());
+                               getCommandExecutor());
         }
         return wrapElement(actualElement.findElement(by),
-                getCommandExecutor());
+                           getCommandExecutor());
     }
 
     /**
      * Calls the Javascript click method on the element.
-     * 
+     *
      * Useful for elements that are hidden or covered by a pseudo-element on
      * some browser-theme combinations (for instance Firefox-Valo)
      */
     public void clickHiddenElement() {
         getCommandExecutor().executeScript("arguments[0].click()",
-                actualElement);
+                                           actualElement);
     }
 
     @Override
@@ -328,7 +329,7 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
     public void click(int x, int y, Keys... modifiers) {
         waitForVaadin();
         Actions actions = new Actions(
-                getCommandExecutor().getWrappedDriver());
+            getCommandExecutor().getWrappedDriver());
         actions.moveToElement(actualElement, x, y);
         // Press any modifier keys
         for (Keys modifier : modifiers) {
@@ -359,7 +360,7 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
     @Override
     public <T extends AbstractElement> T wrap(Class<T> elementType) {
         return TestBench.createElement(elementType, getWrappedElement(),
-                getCommandExecutor());
+                                       getCommandExecutor());
     }
 
     @Override
@@ -391,29 +392,24 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
     }
 
     protected static List<TestBenchElement> wrapElements(
-            List<WebElement> elements,
-            TestBenchCommandExecutor tbCommandExecutor) {
-        List<TestBenchElement> wrappedList = new ArrayList<TestBenchElement>();
-
-        for (WebElement e : elements) {
-            wrappedList.add(wrapElement(e, tbCommandExecutor));
-        }
-
-        return wrappedList;
+        List<WebElement> elements,
+        TestBenchCommandExecutor tbCommandExecutor) {
+        return elements
+            .stream()
+            .map(e -> wrapElement(e, tbCommandExecutor))
+            .collect(Collectors.toList());
     }
 
     protected static TestBenchElement wrapElement(WebElement element,
-            TestBenchCommandExecutor tbCommandExecutor) {
-        if (element instanceof TestBenchElement) {
-            return (TestBenchElement) element;
-        } else {
-            return TestBench.createElement(element, tbCommandExecutor);
-        }
+                                                  TestBenchCommandExecutor tbCommandExecutor) {
+        return element instanceof TestBenchElement
+            ? (TestBenchElement) element
+            : TestBench.createElement(element, tbCommandExecutor);
     }
 
     @Override
     public <X> X getScreenshotAs(OutputType<X> target)
-            throws WebDriverException {
+        throws WebDriverException {
         waitForVaadin();
         return actualElement.getScreenshotAs(target);
     }
@@ -431,7 +427,7 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
      */
     public Set<String> getClassNames() {
         String classAttribute = getAttribute("class");
-        Set<String> classes = new HashSet<String>();
+        Set<String> classes = new HashSet<>();
         if (classAttribute == null) {
             return classes;
         }
@@ -456,19 +452,14 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
      *         <code>false</code> otherwise
      */
     public boolean hasClassName(String className) {
-        if (className == null || className.isEmpty()) {
-            return false;
-        }
+        return !(className == null || className.isEmpty())
+               && getClassNames().contains(className);
 
-        return getClassNames().contains(className);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (actualElement == null) {
-            return false;
-        }
-        return actualElement.equals(obj);
+        return actualElement != null && actualElement.equals(obj);
     }
 
     @Override
@@ -481,27 +472,29 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
     }
 
     @Override
-    public boolean compareScreen(String referenceId) throws IOException {
+    public boolean compareScreen(String referenceId)
+        throws IOException {
         return ScreenshotComparator.compareScreen(referenceId,
-                getCommandExecutor().getReferenceNameGenerator(),
-                getCommandExecutor().getImageComparison(), this,
-                (HasCapabilities) getDriver());
+                                                  getCommandExecutor().getReferenceNameGenerator(),
+                                                  getCommandExecutor().getImageComparison(), this,
+                                                  (HasCapabilities) getDriver());
     }
 
     @Override
-    public boolean compareScreen(File reference) throws IOException {
+    public boolean compareScreen(File reference)
+        throws IOException {
         return ScreenshotComparator.compareScreen(reference,
-                getCommandExecutor().getImageComparison(),
-                (TakesScreenshot) this, (HasCapabilities) getDriver());
+                                                  getCommandExecutor().getImageComparison(),
+                                                  (TakesScreenshot) this, (HasCapabilities) getDriver());
 
     }
 
     @Override
     public boolean compareScreen(BufferedImage reference, String referenceName)
-            throws IOException {
+        throws IOException {
         return ScreenshotComparator.compareScreen(reference, referenceName,
-                getCommandExecutor().getImageComparison(),
-                (TakesScreenshot) this, (HasCapabilities) getDriver());
+                                                  getCommandExecutor().getImageComparison(),
+                                                  (TakesScreenshot) this, (HasCapabilities) getDriver());
     }
 
 }

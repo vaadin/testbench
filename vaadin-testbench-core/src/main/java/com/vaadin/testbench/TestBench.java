@@ -41,7 +41,7 @@ public class TestBench {
 
         public ElementMethodFilter(Class<?> clazz) {
             proxyClass = clazz;
-            invocationNeeded = new ConcurrentHashMap<Method, Boolean>();
+            invocationNeeded = new ConcurrentHashMap<>();
         }
 
         @Override
@@ -83,7 +83,7 @@ public class TestBench {
 
     static {
         LicenseChecker.nag();
-        methodFilters = new ConcurrentHashMap<Class<?>, MethodFilter>();
+        methodFilters = new ConcurrentHashMap<>();
     }
 
     public static WebDriver createDriver(WebDriver driver) {
@@ -171,7 +171,7 @@ public class TestBench {
     }
 
     private static Set<Class<?>> extractInterfaces(final Class<?> clazz) {
-        final Set<Class<?>> allInterfaces = new HashSet<Class<?>>();
+        final Set<Class<?>> allInterfaces = new HashSet<>();
         extractInterfaces(allInterfaces, clazz);
 
         return allInterfaces;
@@ -179,18 +179,18 @@ public class TestBench {
 
     private static void extractInterfaces(final Set<Class<?>> addTo,
             final Class<?> clazz) {
-        if (clazz == null || Object.class.equals(clazz)) {
-            return; // Done
-        }
-
-        final Class<?>[] classes = clazz.getInterfaces();
-        for (final Class<?> interfaceClass : classes) {
-            addTo.add(interfaceClass);
-            for (final Class<?> superInterface : interfaceClass.getInterfaces()) {
-                addTo.add(superInterface);
-                extractInterfaces(addTo, superInterface);
+        if (clazz != null && !Object.class.equals(clazz)) {
+            final Class<?>[] classes = clazz.getInterfaces();
+            for (final Class<?> interfaceClass : classes) {
+                addTo.add(interfaceClass);
+                for (final Class<?> superInterface : interfaceClass.getInterfaces()) {
+                    addTo.add(superInterface);
+                    extractInterfaces(addTo, superInterface);
+                }
             }
+            extractInterfaces(addTo, clazz.getSuperclass());
+        } else {
+            //return; // Done
         }
-        extractInterfaces(addTo, clazz.getSuperclass());
     }
 }

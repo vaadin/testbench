@@ -15,12 +15,17 @@
  */
 package com.vaadin.tests.elements;
 
+import static org.rapidpm.frp.matcher.Case.match;
+import static org.rapidpm.frp.matcher.Case.matchCase;
+import static org.rapidpm.frp.model.Result.success;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.rapidpm.frp.matcher.Case;
+import org.rapidpm.frp.model.Result;
 
 import com.vaadin.testbench.parallel.Browser;
 import com.vaadin.testbench.parallel.DefaultBrowserFactory;
@@ -31,7 +36,7 @@ import com.vaadin.testbench.parallel.DefaultBrowserFactory;
  */
 public class VaadinBrowserFactory extends DefaultBrowserFactory {
 
-    private static Map<Browser, String> defaultBrowserVersion = new HashMap<Browser, String>();
+    private static Map<Browser, String> defaultBrowserVersion = new HashMap<>();
     static {
         defaultBrowserVersion.put(Browser.CHROME, "40");
         defaultBrowserVersion.put(Browser.PHANTOMJS, "1");
@@ -40,7 +45,7 @@ public class VaadinBrowserFactory extends DefaultBrowserFactory {
         defaultBrowserVersion.put(Browser.FIREFOX, "45");
     }
 
-    private static Map<Browser, Platform> defaultBrowserPlatform = new HashMap<Browser, Platform>();
+    private static Map<Browser, Platform> defaultBrowserPlatform = new HashMap<>();
     static {
         defaultBrowserPlatform.put(Browser.CHROME, Platform.VISTA);
         defaultBrowserPlatform.put(Browser.PHANTOMJS, Platform.LINUX);
@@ -54,30 +59,37 @@ public class VaadinBrowserFactory extends DefaultBrowserFactory {
             Platform platform) {
         final String PHANTOMJS_PATH_PROPERTY = "phantomjs.binary.path";
         final String PHANTOMJS_PATH_VALUE = "/usr/bin/phantomjs2";
-        if (browser == Browser.PHANTOMJS) {
-            DesiredCapabilities phantom2 = super.create(browser, "2",
-                    Platform.LINUX);
-            // Hack for the test cluster
-            phantom2.setCapability(PHANTOMJS_PATH_PROPERTY,
-                PHANTOMJS_PATH_VALUE);
-            return phantom2;
-        }
 
-        DesiredCapabilities desiredCapabilities = super.create(browser,
-                version, platform);
+        Result<DesiredCapabilities> result =
+            match(
+                matchCase(() -> success((super.create(browser,version, platform)))),
 
-        if (platform == Platform.ANY
-                && defaultBrowserPlatform.containsKey(browser)) {
-            desiredCapabilities
-                    .setPlatform(defaultBrowserPlatform.get(browser));
-        }
+                matchCase(() -> browser == Browser.PHANTOMJS, () -> {
+                    DesiredCapabilities c = super.create(browser, "2",Platform.LINUX);
+                    // Hack for the test cluster
+                    c.setCapability(PHANTOMJS_PATH_PROPERTY, PHANTOMJS_PATH_VALUE);
+                    return success(c);
+                }),
 
-        if ("".equals(version) && defaultBrowserVersion.containsKey(browser)) {
-            desiredCapabilities.setVersion(defaultBrowserVersion.get(browser));
-        }
-        if(browser.equals(Browser.FIREFOX)) {
-            desiredCapabilities.setCapability(FirefoxDriver.MARIONETTE, false);
-        }
-        return desiredCapabilities;
+                matchCase(() -> browser == Browser.FIREFOX, () -> {
+                    final DesiredCapabilities c = super.create(browser, version, platform);
+                    c.setCapability(FirefoxDriver.MARIONETTE, false);
+                    return success(c);
+                }),
+
+                matchCase(() -> platform == Platform.ANY
+                                     && defaultBrowserPlatform.containsKey(browser), () -> {
+                    final DesiredCapabilities c = super.create(browser, version, platform);
+                    c.setPlatform(defaultBrowserPlatform.get(browser));
+                    return success(c);
+                }),
+
+                matchCase(() -> "".equals(version) && defaultBrowserVersion.containsKey(browser), () -> {
+                    final DesiredCapabilities c = super.create(browser, version, platform);
+                    c.setVersion(defaultBrowserVersion.get(browser));
+                    return success(c);
+                })
+            );
+        return result.get();
     }
 }

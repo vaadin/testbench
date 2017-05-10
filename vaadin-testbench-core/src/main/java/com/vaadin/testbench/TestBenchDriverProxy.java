@@ -29,8 +29,9 @@ import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.screenshot.ImageComparison;
 import com.vaadin.testbench.screenshot.ReferenceNameGenerator;
 
-public class TestBenchDriverProxy extends TestBenchCommandExecutor implements
-        WebDriver, WrapsDriver, HasTestBenchCommandExecutor, HasDriver {
+public class TestBenchDriverProxy
+    extends TestBenchCommandExecutor
+    implements WebDriver, WrapsDriver, HasTestBenchCommandExecutor, HasDriver {
 
     private final WebDriver actualDriver;
 
@@ -75,7 +76,7 @@ public class TestBenchDriverProxy extends TestBenchCommandExecutor implements
     @Override
     public List<WebElement> findElements(By arg0) {
 
-        List<WebElement> elements = new ArrayList<WebElement>();
+        List<WebElement> elements = new ArrayList<>();
 
         // We can Wrap It!
         if (arg0 instanceof ByVaadin) {
@@ -143,11 +144,9 @@ public class TestBenchDriverProxy extends TestBenchCommandExecutor implements
         // search context
         String elementSelectionString = "var element = clients[client]."
                 + jsFunction;
-        if (context instanceof WebDriver) {
-            elementSelectionString += "(arguments[0]);";
-        } else {
-            elementSelectionString += "StartingAt(arguments[0], arguments[1]);";
-        }
+        elementSelectionString += context instanceof WebDriver
+            ? "(arguments[0]);"
+            : "StartingAt(arguments[0], arguments[1]);";
 
         String findByVaadinScript = "var clients = window.vaadin.clients;"
                 + "for (client in clients) {" + elementSelectionString
@@ -157,7 +156,7 @@ public class TestBenchDriverProxy extends TestBenchCommandExecutor implements
         WebDriver driver = ((HasDriver) context).getDriver();
 
         JavascriptExecutor jse = (JavascriptExecutor) driver;
-        List<WebElement> elements = new ArrayList<WebElement>();
+        List<WebElement> elements = new ArrayList<>();
 
         if (selector.contains("::")) {
             // We've been given specifications to access a specific client on
@@ -194,7 +193,7 @@ public class TestBenchDriverProxy extends TestBenchCommandExecutor implements
     }
 
     private static List<WebElement> extractWebElements(Object elementList) {
-        List<WebElement> result = new ArrayList<WebElement>();
+        List<WebElement> result = new ArrayList<>();
         if (elementList instanceof WebElement) {
             result.add((WebElement) elementList);
         } else if (elementList instanceof List<?>) {
