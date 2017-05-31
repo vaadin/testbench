@@ -88,6 +88,7 @@ public class LicenseChecker {
 
     private static void printValidationInfo(CvalInfo validationInfo) {
         printLine(validationInfo.getMessage().length());
+        getLogger().log(Level.FINE, validationInfo.getMessage());
         System.out.println(validationInfo.getMessage());
         printLine(validationInfo.getMessage().length());
     }
@@ -103,6 +104,7 @@ public class LicenseChecker {
     // print formating line of "-" symbols
     private static void printLine(int n) {
         String line = getLine(n);
+        getLogger().log(Level.FINE, line);
         System.out.print(line);
         System.out.println();
     }
