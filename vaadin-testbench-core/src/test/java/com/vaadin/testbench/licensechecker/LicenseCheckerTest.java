@@ -40,7 +40,7 @@ public class LicenseCheckerTest {
         // output =
         // "-------------Vaadin TestBench 4 registered to dmitrii@vaadin.com (Pro Tools subscription).------------------";
         String pattern = "-*" + NEW_LINE
-                + "Vaadin TestBench 4 registered to .*" + NEW_LINE + "-*("
+                + "Vaadin TestBench 5 registered to .*" + NEW_LINE + "-*("
                 + NEW_LINE + ")*";
         Assert.assertTrue(output.matches(pattern));
     }
