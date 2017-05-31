@@ -119,7 +119,8 @@ public class ParallelTest extends TestBenchTestCase {
         } else if (Parameters.isLocalWebDriverUsed()) {
             WebDriver driver = driverConfiguration.setupLocalDriver();
             setDriver(driver);
-        } else if (getRunOnHub(getClass()) != null) {
+        } else if (getRunOnHub(getClass()) != null
+                || Parameters.getHubHostname() != null) {
             WebDriver driver = driverConfiguration
                     .setupRemoteDriver(getHubURL());
             setDriver(driver);
