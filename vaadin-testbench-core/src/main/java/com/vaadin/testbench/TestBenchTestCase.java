@@ -126,7 +126,7 @@ public abstract class TestBenchTestCase
      *            The WebDriver instance to set.
      */
     public void setDriver(WebDriver driver) {
-        if (!(driver instanceof TestBenchDriverProxy)) {
+        if (driver != null && !(driver instanceof TestBenchDriverProxy)) {
             driver = TestBench.createDriver(driver);
         }
         this.driver = driver;
