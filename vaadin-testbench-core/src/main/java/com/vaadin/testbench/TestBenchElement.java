@@ -514,12 +514,14 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
 
     /**
      * Scrolls the element into the visible area of the browser window if
-     * {@link TestBenchCommands#isAutoScrollIntoView()} is enabled
-     * 
+     * {@link TestBenchCommands#isAutoScrollIntoView()} is enabled and the
+     * element is not displayed
      */
     private void autoScrollIntoView() {
         if (getCommandExecutor().isAutoScrollIntoView()) {
-            scrollIntoView();
+            if (!actualElement.isDisplayed()) {
+                scrollIntoView();
+            }
         }
     }
 
