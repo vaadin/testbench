@@ -15,6 +15,7 @@ package com.vaadin.testbench;
 import java.util.List;
 
 import org.junit.Rule;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -29,17 +30,19 @@ import com.vaadin.testbench.tools.LicenseChecker;
  * A superclass with some helpers to aid TestBench developers. This superclass
  * is also used by tests created by the Recorder.
  */
-public abstract class TestBenchTestCase extends
-        AbstractHasTestBenchCommandExecutor implements HasDriver {
+public abstract class TestBenchTestCase
+        extends AbstractHasTestBenchCommandExecutor implements HasDriver {
 
     static {
-        // Check the license here, before any driver has been initialized (#15102)
+        // Check the license here, before any driver has been initialized
+        // (#15102)
         LicenseChecker.nag();
     }
 
     /**
-     * Specifies retry count, which is used to run same test several times.
-     * Can be changed by setting "com.vaadin.testbench.Parameters.maxAttempts" system property.
+     * Specifies retry count, which is used to run same test several times. Can
+     * be changed by setting "com.vaadin.testbench.Parameters.maxAttempts"
+     * system property.
      *
      * Default: 1
      */
@@ -47,11 +50,12 @@ public abstract class TestBenchTestCase extends
     public RetryRule maxAttempts = new RetryRule(Parameters.getMaxAttempts());
 
     protected WebDriver driver;
+
     /**
      * Convenience method that casts the specified {@link WebDriver} instance to
      * an instance of {@link TestBenchCommands}, making it easy to access the
      * special TestBench commands.
-     * 
+     *
      * @param webDriver
      *            The WebDriver instance to cast.
      * @return a WebDriver cast to TestBenchCommands
@@ -63,7 +67,7 @@ public abstract class TestBenchTestCase extends
     /**
      * Convenience method the return {@link TestBenchCommands} for the default
      * {@link WebDriver} instance.
-     * 
+     *
      * @return The driver cast to a TestBenchCommands instance.
      */
     public TestBenchCommands testBench() {
@@ -74,7 +78,7 @@ public abstract class TestBenchTestCase extends
      * Convenience method that casts the specified {@link WebElement} instance
      * to an instance of {@link TestBenchElementCommands}, making it easy to
      * access the special TestBench commands.
-     * 
+     *
      * @param webElement
      *            The WebElement to cast.
      * @return The WebElement cast to a TestBenchElementCommands instance.
@@ -87,7 +91,7 @@ public abstract class TestBenchTestCase extends
      * Combines a base URL with an URI to create a final URL. This removes
      * possible double slashes if the base URL ends with a slash and the URI
      * begins with a slash.
-     * 
+     *
      * @param baseUrl
      *            the base URL
      * @param uri
@@ -107,7 +111,7 @@ public abstract class TestBenchTestCase extends
      * provided WebDriver instance was not already a
      * {@link TestBenchDriverProxy} instance) a {@link TestBenchDriverProxy}
      * that wraps that driver.
-     * 
+     *
      * @return the active WebDriver instance
      */
     @Override
@@ -117,7 +121,7 @@ public abstract class TestBenchTestCase extends
 
     /**
      * Sets the active {@link WebDriver} that is used by this this case
-     * 
+     *
      * @param driver
      *            The WebDriver instance to set.
      */
@@ -135,8 +139,7 @@ public abstract class TestBenchTestCase extends
 
     @Override
     public TestBenchCommandExecutor getCommandExecutor() {
-        return ((HasTestBenchCommandExecutor) getDriver())
-                .getCommandExecutor();
+        return ((HasTestBenchCommandExecutor) getDriver()).getCommandExecutor();
     }
 
     public WebElement findElement(org.openqa.selenium.By by) {
@@ -156,10 +159,11 @@ public abstract class TestBenchTestCase extends
      *     TableElement table = e.wrap(TableElement.class, driver.findElement(By.id("my-table")));
      *     assertEquals("Foo", table.getHeaderCell(1).getText());
      * </code>
-     * 
+     *
      * @param elementType
      *            The type (class) containing the API to decorate with. Must
-     *            extend {@link com.vaadin.testbench.elementsbase.AbstractElement}.
+     *            extend
+     *            {@link com.vaadin.testbench.elementsbase.AbstractElement}.
      * @param element
      *            The element instance to decorate
      * @return The element wrapped in an instance of the specified element type.
@@ -168,4 +172,34 @@ public abstract class TestBenchTestCase extends
             WebElement element) {
         return ((TestBenchElement) element).wrap(elementType);
     }
+
+    /**
+     * Executes the given JavaScript in the context of the currently selected
+     * frame or window. The script fragment provided will be executed as the
+     * body of an anonymous function.
+     *
+     * @param script
+     *            the script to execute
+     * @param args
+     *            the arguments, available in the script as
+     *            {@code arguments[0]...arguments[N]}
+     * @return whatever
+     *         {@link org.openqa.selenium.JavascriptExecutor#executeScript(String, Object...)}
+     *         returns
+     * @throws UnsupportedOperationException
+     *             if the underlying driver does not support JavaScript
+     *             execution
+     * @see JavascriptExecutor#executeScript(String, Object...)
+     */
+    protected Object executeScript(String script, Object... args) {
+        WebDriver driver = getDriver();
+        if (driver instanceof JavascriptExecutor) {
+            return ((JavascriptExecutor) getDriver()).executeScript(script,
+                    args);
+        } else {
+            throw new UnsupportedOperationException(
+                    "The web driver does not support JavaScript execution");
+        }
+    }
+
 }
