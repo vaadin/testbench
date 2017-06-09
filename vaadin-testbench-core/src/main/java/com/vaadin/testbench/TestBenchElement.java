@@ -43,6 +43,7 @@ import com.vaadin.testbench.commands.CanCompareScreenshots;
 import com.vaadin.testbench.commands.CanWaitForVaadin;
 import com.vaadin.testbench.commands.ScreenshotComparator;
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
+import com.vaadin.testbench.commands.TestBenchCommands;
 import com.vaadin.testbench.commands.TestBenchElementCommands;
 import com.vaadin.testbench.elementsbase.AbstractElement;
 import com.vaadin.testbench.parallel.BrowserUtil;
@@ -202,25 +203,26 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
 
     @Override
     public void click() {
+        autoScrollIntoView();
         waitForVaadin();
         actualElement.click();
-
     }
 
     @Override
     public void submit() {
-        waitForVaadin();
-        actualElement.click();
+        click();
     }
 
     @Override
     public void sendKeys(CharSequence... keysToSend) {
+        autoScrollIntoView();
         waitForVaadin();
         actualElement.sendKeys(keysToSend);
     }
 
     @Override
     public void clear() {
+        autoScrollIntoView();
         waitForVaadin();
         actualElement.clear();
     }
@@ -239,6 +241,7 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
 
     @Override
     public boolean isSelected() {
+        autoScrollIntoView();
         waitForVaadin();
         return actualElement.isSelected();
     }
@@ -257,6 +260,7 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
 
     @Override
     public String getText() {
+        autoScrollIntoView();
         waitForVaadin();
         return actualElement.getText();
     }
@@ -320,6 +324,7 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
 
     @Override
     public void click(int x, int y, Keys... modifiers) {
+        autoScrollIntoView();
         waitForVaadin();
         Actions actions = new Actions(getCommandExecutor().getWrappedDriver());
         actions.moveToElement(actualElement, x, y);
@@ -336,6 +341,7 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
     }
 
     public void doubleClick() {
+        autoScrollIntoView();
         waitForVaadin();
         new Actions(getDriver()).doubleClick(actualElement).build().perform();
         // Wait till vaadin component will process the event. Without it may
@@ -343,6 +349,7 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
     }
 
     public void contextClick() {
+        autoScrollIntoView();
         waitForVaadin();
         new Actions(getDriver()).contextClick(actualElement).build().perform();
         // Wait till vaadin component will process the event. Without it may
@@ -495,6 +502,27 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
         return ScreenshotComparator.compareScreen(reference, referenceName,
                 getCommandExecutor().getImageComparison(),
                 (TakesScreenshot) this, (HasCapabilities) getDriver());
+    }
+
+    /***
+     * Scrolls the element into the visible area of the browser window
+     */
+    public void scrollIntoView() {
+        getCommandExecutor().executeScript("arguments[0].scrollIntoView()",
+                actualElement);
+    }
+
+    /**
+     * Scrolls the element into the visible area of the browser window if
+     * {@link TestBenchCommands#isAutoScrollIntoView()} is enabled and the
+     * element is not displayed
+     */
+    private void autoScrollIntoView() {
+        if (getCommandExecutor().isAutoScrollIntoView()) {
+            if (!actualElement.isDisplayed()) {
+                scrollIntoView();
+            }
+        }
     }
 
 }

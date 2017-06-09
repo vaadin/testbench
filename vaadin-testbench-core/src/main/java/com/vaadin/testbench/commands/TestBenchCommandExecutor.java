@@ -51,6 +51,7 @@ public class TestBenchCommandExecutor
     private final ImageComparison imageComparison;
     private final ReferenceNameGenerator referenceNameGenerator;
     private boolean enableWaitForVaadin = true;
+    private boolean autoScrollIntoView = true;
 
     public TestBenchCommandExecutor(WebDriver actualDriver,
             ImageComparison imageComparison,
@@ -218,6 +219,22 @@ public class TestBenchCommandExecutor
     @Override
     public void enableWaitForVaadin() {
         enableWaitForVaadin = true;
+    }
+
+    /**
+     * {@inheritDoc}. The default is {@code true}
+     */
+    @Override
+    public boolean isAutoScrollIntoView() {
+        return autoScrollIntoView;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setAutoScrollIntoView(boolean autoScrollIntoView) {
+        this.autoScrollIntoView = autoScrollIntoView;
     }
 
     @Override
