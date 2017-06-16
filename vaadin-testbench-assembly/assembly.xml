@@ -78,11 +78,6 @@
             <filtered>true</filtered>
         </file>
         <file>
-            <source>../doc/releasenotes.html</source>
-            <outputDirectory>documentation</outputDirectory>
-            <filtered>true</filtered>
-        </file>
-        <file>
             <source>../vaadin-testbench/pom.xml</source>
             <outputDirectory>maven/vaadin-testbench</outputDirectory>
             <filtered>true</filtered>
