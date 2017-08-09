@@ -310,50 +310,6 @@ public abstract class AbstractTB3Test extends ParallelTest {
     }
 
     /**
-     * Waits up to 10s for the given condition to become true. Use e.g. as
-     * {@link #waitUntil(ExpectedConditions.textToBePresentInElement(by, text))}
-     *
-     * @param condition
-     *            the condition to wait for to become true
-     */
-    protected <T> void waitUntil(ExpectedCondition<T> condition) {
-        waitUntil(condition, 10);
-    }
-
-    /**
-     * Waits up to 10s for the given condition to become false. Use e.g. as
-     * {@link #waitUntilNot(ExpectedConditions.textToBePresentInElement(by,
-     * text))}
-     *
-     * @param condition
-     *            the condition to wait for to become false
-     */
-    protected <T> void waitUntilNot(ExpectedCondition<T> condition) {
-        waitUntilNot(condition, 10);
-    }
-
-    /**
-     * Waits the given number of seconds for the given condition to become
-     * false. Use e.g. as {@link
-     * #waitUntilNot(ExpectedConditions.textToBePresentInElement(by, text))}
-     *
-     * @param condition
-     *            the condition to wait for to become false
-     */
-    protected <T> void waitUntilNot(ExpectedCondition<T> condition,
-            long timeoutInSeconds) {
-        waitUntil(ExpectedConditions.not(condition), timeoutInSeconds);
-    }
-
-    protected void waitForElementPresent(final By by) {
-        waitUntil(ExpectedConditions.presenceOfElementLocated(by));
-    }
-
-    protected void waitForElementVisible(final By by) {
-        waitUntil(ExpectedConditions.visibilityOfElementLocated(by));
-    }
-
-    /**
      * Checks if the given element has the given class name.
      *
      * Matches only full class names, i.e. has ("foo") does not match
@@ -699,19 +655,10 @@ public abstract class AbstractTB3Test extends ParallelTest {
     }
 
     protected void openDebugLogTab() {
-
-        waitUntil(new ExpectedCondition<Boolean>() {
-            @Override
-            public Boolean apply(WebDriver input) {
-                WebElement element = getDebugLogButton();
-                return element != null;
-            }
-        }, 15);
-        getDebugLogButton().click();
-    }
-
-    private WebElement getDebugLogButton() {
-        return findElement(By.xpath("//button[@title='Debug message log']"));
+        WebElement debugLogButton = waitUntil(
+                ExpectedConditions.presenceOfElementLocated(
+                By.xpath("//button[@title='Debug message log']")), 15);
+        debugLogButton.click();
     }
 
     /**
