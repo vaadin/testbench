@@ -41,7 +41,6 @@ import org.openqa.selenium.remote.HttpCommandExecutor;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -319,19 +318,6 @@ public abstract class AbstractTB3Test extends ParallelTest {
      */
     protected <T> void waitUntil(ExpectedCondition<T> condition) {
         waitUntil(condition, 10);
-    }
-
-    /**
-     * Waits the given number of seconds for the given condition to become true.
-     * Use e.g. as {@link
-     * #waitUntil(ExpectedConditions.textToBePresentInElement(by, text))}
-     *
-     * @param condition
-     *            the condition to wait for to become true
-     */
-    protected <T> void waitUntil(ExpectedCondition<T> condition,
-            long timeoutInSeconds) {
-        new WebDriverWait(driver, timeoutInSeconds).until(condition);
     }
 
     /**
