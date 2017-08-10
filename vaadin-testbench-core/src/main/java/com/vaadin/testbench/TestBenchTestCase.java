@@ -18,6 +18,7 @@ import org.junit.Rule;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NotFoundException;
 import org.openqa.selenium.SearchContext;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
@@ -219,9 +220,12 @@ public abstract class TestBenchTestCase
      *            eventually evaluate to something that is neither null nor
      *            false.
      * @param timeoutInSeconds
-     *            The timeout in seconds when an expectation is called
+     *            The timeout in seconds for the wait.
      * @return The condition's return value if it returned something different
      *         from null or false before the timeout expired.
+     * 
+     * @throws TimeoutException
+     *             If the timeout expires.
      * 
      * @see FluentWait#until
      * @see ExpectedCondition
@@ -230,6 +234,30 @@ public abstract class TestBenchTestCase
             long timeoutInSeconds) {
         return new WebDriverWait(getDriver(), timeoutInSeconds)
                 .until(condition);
+    }
+
+    /**
+     * Waits up to 10 seconds for the given condition to become neither null nor
+     * false. {@link NotFoundException}s are ignored by default.
+     * <p>
+     * Use e.g. as
+     * <code>waitUntil(ExpectedConditions.presenceOfElementLocated(by));</code>
+     * 
+     * @param condition
+     *            Models a condition that might reasonably be expected to
+     *            eventually evaluate to something that is neither null nor
+     *            false.
+     * @return The condition's return value if it returned something different
+     *         from null or false before the timeout expired.
+     * 
+     * @throws TimeoutException
+     *             If the 10 seconds passed.
+     * 
+     * @see FluentWait#until
+     * @see ExpectedCondition
+     */
+    protected <T> T waitUntil(ExpectedCondition<T> condition) {
+        return waitUntil(condition, 10);
     }
 
 }
