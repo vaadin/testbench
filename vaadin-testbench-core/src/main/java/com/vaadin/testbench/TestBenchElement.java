@@ -574,7 +574,7 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
      *         from null or false before the timeout expired.
      * 
      * @throws TimeoutException
-     *             If the 10 seconds passed.
+     *             If 10 seconds passed.
      * 
      * @see FluentWait#until
      * @see ExpectedCondition
