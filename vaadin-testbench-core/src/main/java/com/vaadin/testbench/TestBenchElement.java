@@ -30,6 +30,7 @@ import org.openqa.selenium.Dimension;
 import org.openqa.selenium.HasCapabilities;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.NotFoundException;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Point;
@@ -820,4 +821,25 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
                 + paramPlaceholderString + ")", jsParameters);
     }
 
+    /**
+     * Gets the element with the given id, inside the current element's shadow
+     * root.
+     *
+     * @param id
+     *            the id to look for
+     * @return the element with the given {@code id}
+     * @throws NoSuchElementException
+     *             If no matching elements are found
+     */
+    public TestBenchElement getShadowElementById(String id) {
+        TestBenchElement element = (TestBenchElement) executeScript(
+                "return arguments[0].shadowRoot.getElementById(arguments[1])",
+                this, id);
+        if (element == null) {
+            throw new NoSuchElementException(
+                    "No element with id '" + id + "' found inside shadow root");
+        }
+
+        return element;
+    }
 }
