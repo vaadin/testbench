@@ -53,7 +53,6 @@ import com.vaadin.testbench.commands.ScreenshotComparator;
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.commands.TestBenchCommands;
 import com.vaadin.testbench.commands.TestBenchElementCommands;
-import com.vaadin.testbench.elementsbase.AbstractElement;
 import com.vaadin.testbench.parallel.BrowserUtil;
 
 import elemental.json.Json;
@@ -378,9 +377,8 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
     }
 
     @Override
-    public <T extends AbstractElement> T wrap(Class<T> elementType) {
-        return TestBench.createElement(elementType, getWrappedElement(),
-                getCommandExecutor());
+    public <T extends TestBenchElement> T wrap(Class<T> elementType) {
+        return TestBench.wrap(this, elementType);
     }
 
     @Override

@@ -28,7 +28,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.commands.TestBenchCommands;
 import com.vaadin.testbench.commands.TestBenchElementCommands;
-import com.vaadin.testbench.elementsbase.AbstractElement;
 import com.vaadin.testbench.tools.LicenseChecker;
 
 /**
@@ -157,23 +156,16 @@ public abstract class TestBenchTestCase
 
     /**
      * Decorates the element with the specified Element type, making it possible
-     * to use Vaadin component-specific API on elements found using standard
-     * selenium API.
-     * <p>
-     * Example: <code>
-     *     TableElement table = e.wrap(TableElement.class, driver.findElement(By.id("my-table")));
-     *     assertEquals("Foo", table.getHeaderCell(1).getText());
-     * </code>
+     * to use component-specific API on elements found using standard Selenium
+     * API.
      *
      * @param elementType
-     *            The type (class) containing the API to decorate with. Must
-     *            extend
-     *            {@link com.vaadin.testbench.elementsbase.AbstractElement}.
+     *            The type (class) containing the API to decorate with
      * @param element
      *            The element instance to decorate
      * @return The element wrapped in an instance of the specified element type.
      */
-    public <T extends AbstractElement> T wrap(Class<T> elementType,
+    public <T extends TestBenchElement> T wrap(Class<T> elementType,
             WebElement element) {
         return ((TestBenchElement) element).wrap(elementType);
     }
@@ -214,7 +206,7 @@ public abstract class TestBenchTestCase
      * <p>
      * Use e.g. as
      * <code>waitUntil(ExpectedConditions.presenceOfElementLocated(by), 10);</code>
-     * 
+     *
      * @param condition
      *            Models a condition that might reasonably be expected to
      *            eventually evaluate to something that is neither null nor
@@ -223,10 +215,10 @@ public abstract class TestBenchTestCase
      *            The timeout in seconds for the wait.
      * @return The condition's return value if it returned something different
      *         from null or false before the timeout expired.
-     * 
+     *
      * @throws TimeoutException
      *             If the timeout expires.
-     * 
+     *
      * @see FluentWait#until
      * @see ExpectedCondition
      */
@@ -242,17 +234,17 @@ public abstract class TestBenchTestCase
      * <p>
      * Use e.g. as
      * <code>waitUntil(ExpectedConditions.presenceOfElementLocated(by));</code>
-     * 
+     *
      * @param condition
      *            Models a condition that might reasonably be expected to
      *            eventually evaluate to something that is neither null nor
      *            false.
      * @return The condition's return value if it returned something different
      *         from null or false before the timeout expired.
-     * 
+     *
      * @throws TimeoutException
      *             If 10 seconds passed.
-     * 
+     *
      * @see FluentWait#until
      * @see ExpectedCondition
      */

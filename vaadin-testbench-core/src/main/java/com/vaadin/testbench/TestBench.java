@@ -41,7 +41,7 @@ public class TestBench {
 
         public ElementMethodFilter(Class<?> clazz) {
             proxyClass = clazz;
-            invocationNeeded = new ConcurrentHashMap<Method, Boolean>();
+            invocationNeeded = new ConcurrentHashMap<>();
         }
 
         @Override
@@ -60,8 +60,8 @@ public class TestBench {
         }
     }
 
-    private static final class ElementInvocationHandler implements
-            MethodHandler {
+    private static final class ElementInvocationHandler
+            implements MethodHandler {
 
         private Object actualElement;
 
@@ -83,7 +83,7 @@ public class TestBench {
 
     static {
         LicenseChecker.nag();
-        methodFilters = new ConcurrentHashMap<Class<?>, MethodFilter>();
+        methodFilters = new ConcurrentHashMap<>();
     }
 
     public static WebDriver createDriver(WebDriver driver) {
@@ -107,6 +107,12 @@ public class TestBench {
             return null;
         }
         return (WebDriver) proxy;
+    }
+
+    public static <T extends TestBenchElement> T wrap(TestBenchElement element,
+            Class<T> elementType) {
+        return createElement(elementType, element.getWrappedElement(),
+                element.getCommandExecutor());
     }
 
     public static TestBenchElement createElement(WebElement webElement,
@@ -171,7 +177,7 @@ public class TestBench {
     }
 
     private static Set<Class<?>> extractInterfaces(final Class<?> clazz) {
-        final Set<Class<?>> allInterfaces = new HashSet<Class<?>>();
+        final Set<Class<?>> allInterfaces = new HashSet<>();
         extractInterfaces(allInterfaces, clazz);
 
         return allInterfaces;
@@ -186,7 +192,8 @@ public class TestBench {
         final Class<?>[] classes = clazz.getInterfaces();
         for (final Class<?> interfaceClass : classes) {
             addTo.add(interfaceClass);
-            for (final Class<?> superInterface : interfaceClass.getInterfaces()) {
+            for (final Class<?> superInterface : interfaceClass
+                    .getInterfaces()) {
                 addTo.add(superInterface);
                 extractInterfaces(addTo, superInterface);
             }
