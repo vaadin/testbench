@@ -30,6 +30,7 @@ import org.openqa.selenium.Dimension;
 import org.openqa.selenium.HasCapabilities;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.NotFoundException;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Point;
@@ -53,7 +54,6 @@ import com.vaadin.testbench.commands.ScreenshotComparator;
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.commands.TestBenchCommands;
 import com.vaadin.testbench.commands.TestBenchElementCommands;
-import com.vaadin.testbench.elementsbase.AbstractElement;
 import com.vaadin.testbench.parallel.BrowserUtil;
 
 import elemental.json.Json;
@@ -378,9 +378,8 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
     }
 
     @Override
-    public <T extends AbstractElement> T wrap(Class<T> elementType) {
-        return TestBench.createElement(elementType, getWrappedElement(),
-                getCommandExecutor());
+    public <T extends TestBenchElement> T wrap(Class<T> elementType) {
+        return TestBench.wrap(this, elementType);
     }
 
     @Override
@@ -422,9 +421,6 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
      * <p>
      * Does not modify the argument, instead creates a new object containing the
      * wrapped elements and other possible values.
-     *
-     * @param <T>
-     *            the type of the argument
      *
      * @param elementElementsOrValues
      *            an object containing a {@link WebElement}, a {@link List} of
@@ -821,4 +817,25 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
                 + paramPlaceholderString + ")", jsParameters);
     }
 
+    /**
+     * Gets the element with the given id, inside the current element's shadow
+     * root.
+     *
+     * @param id
+     *            the id to look for
+     * @return the element with the given {@code id}
+     * @throws NoSuchElementException
+     *             If no matching elements are found
+     */
+    public TestBenchElement getShadowElementById(String id) {
+        TestBenchElement element = (TestBenchElement) executeScript(
+                "return arguments[0].shadowRoot.getElementById(arguments[1])",
+                this, id);
+        if (element == null) {
+            throw new NoSuchElementException(
+                    "No element with id '" + id + "' found inside shadow root");
+        }
+
+        return element;
+    }
 }
