@@ -20,6 +20,9 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.Capabilities;
@@ -408,6 +411,49 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
         getCommandExecutor().focusElement(this);
     }
 
+    /**
+     * Wraps any {@link WebElement} found inside the object inside a
+     * {@link TestBenchElement}.
+     * <p>
+     * Traverses through any {@link List} found inside the object and wraps any
+     * elements inside the list, recursively. The behavior is compatible with
+     * e.g. what {@link JavascriptExecutor#executeScript(String, Object...)}
+     * returns.
+     * <p>
+     * Does not modify the argument, instead creates a new object containing the
+     * wrapped elements and other possible values.
+     *
+     * @param elementElementsOrValues
+     *            an object containing a {@link WebElement}, a {@link List} of
+     *            {@link WebElement WebElements} or something completely
+     *            different.
+     * @param tbCommandExecutor
+     *            the {@link TestBenchCommandExecutor} related to the driver
+     *            instance
+     */
+    public static Object wrapElementOrElements(Object elementElementsOrValues,
+            TestBenchCommandExecutor tbCommandExecutor) {
+        if (elementElementsOrValues instanceof List) {
+            @SuppressWarnings({ "unchecked", "rawtypes" })
+            List<Object> list = (List) elementElementsOrValues;
+            List<Object> newList = new ArrayList<>();
+
+            for (Object value : list) {
+                newList.add(wrapElementOrElements(value, tbCommandExecutor));
+            }
+            return newList;
+        } else if (elementElementsOrValues instanceof WebElement) {
+            if (elementElementsOrValues instanceof TestBenchElement) {
+                return elementElementsOrValues;
+            } else {
+                return wrapElement((WebElement) elementElementsOrValues,
+                        tbCommandExecutor);
+            }
+        } else {
+            return elementElementsOrValues;
+        }
+    }
+
     protected static List<TestBenchElement> wrapElements(
             List<WebElement> elements,
             TestBenchCommandExecutor tbCommandExecutor) {
@@ -719,6 +765,57 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
                     "Type of property is unsupported: "
                             + value.getClass().getName());
         }
+    }
+
+    /**
+     * Executes the given JavaScript in the context of the currently selected
+     * frame or window. The script fragment provided will be executed as the
+     * body of an anonymous function.
+     *
+     * @param script
+     *            the script to execute
+     * @param args
+     *            the arguments, available in the script as
+     *            {@code arguments[0]...arguments[N]}
+     * @return whatever
+     *         {@link org.openqa.selenium.JavascriptExecutor#executeScript(String, Object...)}
+     *         returns
+     * @throws UnsupportedOperationException
+     *             if the underlying driver does not support JavaScript
+     *             execution
+     * @see JavascriptExecutor#executeScript(String, Object...)
+     */
+    protected Object executeScript(String script, Object... args) {
+        WebDriver driver = getDriver();
+        if (driver instanceof JavascriptExecutor) {
+            return ((JavascriptExecutor) getDriver()).executeScript(script,
+                    args);
+        } else {
+            throw new UnsupportedOperationException(
+                    "The web driver does not support JavaScript execution");
+        }
+    }
+
+    /**
+     * Invoke the given method on this element using the given arguments as
+     * arguments to the method.
+     *
+     * @param methodName
+     *            the method to invoke
+     * @param args
+     *            the arguments to pass to the method
+     * @return the value returned by the method
+     */
+    public Object callFunction(String methodName, Object... args) {
+        // arguments[0].method(arguments[1],arguments[2],arguments[3])
+        String paramPlaceholderString = IntStream.range(1, args.length + 1)
+                .mapToObj(i -> "arguments[" + i + "]")
+                .collect(Collectors.joining(","));
+        Object[] jsParameters = Stream.concat(Stream.of(this), Stream.of(args))
+                .toArray(size -> new Object[size]);
+
+        return executeScript("return arguments[0]." + methodName + "("
+                + paramPlaceholderString + ")", jsParameters);
     }
 
 }
