@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -27,9 +28,11 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.HttpCommandExecutor;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
+import com.vaadin.testbench.TestBench;
 import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.testbench.screenshot.ImageComparison;
 import com.vaadin.testbench.screenshot.ReferenceNameGenerator;
@@ -108,11 +111,12 @@ public class TestBenchCommandExecutor
                 // application. Keep waiting.
                 "  return false;" + "}";
         // @formatter:on
-        JavascriptExecutor js = (JavascriptExecutor) actualDriver;
         long timeoutTime = System.currentTimeMillis() + 20000;
         Boolean finished = false;
         while (System.currentTimeMillis() < timeoutTime && !finished) {
-            finished = (Boolean) js.executeScript(isVaadinFinished);
+            // Don't call executeScript here as it will re-trigger waitForVaadin
+            finished = (Boolean) ((JavascriptExecutor) actualDriver)
+                    .executeScript(isVaadinFinished);
             if (finished == null) {
                 // This should never happen but according to
                 // https://dev.vaadin.com/ticket/19703, it happens
@@ -195,20 +199,12 @@ public class TestBenchCommandExecutor
                 + "  pd[2] += p[2];\n" + "  pd[3] += p[3];\n" + "}\n"
                 + "return pd;\n";
         // @formatter:on
-        if (actualDriver instanceof JavascriptExecutor) {
-            try {
-                JavascriptExecutor jse = (JavascriptExecutor) actualDriver;
-                if (forceSync) {
-                    // Force sync to get the latest server-side timing data. The
-                    // server-side timing data is always one request behind.
-                    jse.executeScript("window.vaadin.forceSync()");
-                }
-                return (List<Long>) jse.executeScript(getProfilingData);
-            } catch (Exception e) {
-                // Could not retrieve profiling data, just return null.
-            }
+        if (forceSync) {
+            // Force sync to get the latest server-side timing data. The
+            // server-side timing data is always one request behind.
+            executeScript("window.vaadin.forceSync()");
         }
-        return null;
+        return (List<Long>) executeScript(getProfilingData);
     }
 
     @Override
@@ -237,22 +233,82 @@ public class TestBenchCommandExecutor
         this.autoScrollIntoView = autoScrollIntoView;
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * This method wraps any returned {@link WebElement} as
+     * {@link TestBenchElement}.
+     */
     @Override
     public Object executeScript(String script, Object... args) {
         if (actualDriver instanceof JavascriptExecutor) {
-            return ((JavascriptExecutor) actualDriver).executeScript(script,
-                    args);
+            return wrapElementOrElements(((JavascriptExecutor) actualDriver)
+                    .executeScript(script, args), this);
+
         }
         throw new RuntimeException("The driver is not a JavascriptExecutor");
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * This method wraps any returned {@link WebElement} as
+     * {@link TestBenchElement}.
+     */
     @Override
     public Object executeAsyncScript(String script, Object... args) {
         if (actualDriver instanceof JavascriptExecutor) {
-            return ((JavascriptExecutor) actualDriver)
-                    .executeAsyncScript(script, args);
+            return wrapElementOrElements(((JavascriptExecutor) actualDriver)
+                    .executeAsyncScript(script, args), this);
         }
         throw new RuntimeException("The driver is not a JavascriptExecutor");
+    }
+
+    /**
+     * Wraps any {@link WebElement} found inside the object inside a
+     * {@link TestBenchElement}.
+     * <p>
+     * Traverses through any {@link List} found inside the object and wraps any
+     * elements inside the list, recursively. The behavior is compatible with
+     * what {@link #executeScript(String, Object...)} and
+     * {@link #executeAsyncScript(String, Object...)} returns.
+     * <p>
+     * Does not modify the argument, instead creates a new object containing the
+     * wrapped elements and other possible values.
+     * <p>
+     * This method is protected for testing purposes only.
+     *
+     * @param elementElementsOrValues
+     *            an object containing a {@link WebElement}, a {@link List} of
+     *            {@link WebElement WebElements} or something completely
+     *            different.
+     * @param tbCommandExecutor
+     *            the {@link TestBenchCommandExecutor} related to the driver
+     *            instance
+     */
+    protected static Object wrapElementOrElements(
+            Object elementElementsOrValues,
+            TestBenchCommandExecutor tbCommandExecutor) {
+        if (elementElementsOrValues instanceof List) {
+            @SuppressWarnings({ "unchecked", "rawtypes" })
+            List<Object> list = (List) elementElementsOrValues;
+            List<Object> newList = new ArrayList<>();
+
+            for (Object value : list) {
+                newList.add(wrapElementOrElements(value, tbCommandExecutor));
+            }
+            return newList;
+        } else if (elementElementsOrValues instanceof WebElement) {
+            if (elementElementsOrValues instanceof TestBenchElement) {
+                return elementElementsOrValues;
+            } else {
+                return TestBench.createElement(
+                        (WebElement) elementElementsOrValues,
+                        tbCommandExecutor);
+            }
+        } else {
+            return elementElementsOrValues;
+        }
     }
 
     /**
@@ -305,10 +361,9 @@ public class TestBenchCommandExecutor
         // also check in IE combat mode etc + detect IE9 for extra borders in
         // combat mode (although vaadin always in std mode, function may be
         // needed earlier)
-        int height = ((Number) ((JavascriptExecutor) actualDriver)
-                .executeScript(
-                        "function f() { if(typeof window.innerHeight != 'undefined') { return window.innerHeight; } if(document.documentElement && document.documentElement.offsetHeight) { return document.documentElement.offsetHeight; } w = document.body.clientHeight; if(navigator.userAgent.indexOf('Trident/5') != -1 && document.documentMode < 9) { w += 4; } return w;} return f();"))
-                                .intValue();
+        int height = ((Number) executeScript(
+                "function f() { if(typeof window.innerHeight != 'undefined') { return window.innerHeight; } if(document.documentElement && document.documentElement.offsetHeight) { return document.documentElement.offsetHeight; } w = document.body.clientHeight; if(navigator.userAgent.indexOf('Trident/5') != -1 && document.documentMode < 9) { w += 4; } return w;} return f();"))
+                        .intValue();
         return height;
     }
 
@@ -316,18 +371,14 @@ public class TestBenchCommandExecutor
         // also check in IE combat mode etc + detect IE9 for extra borders in
         // combat mode (although vaadin always in std mode, function may be
         // needed earlier)
-        int width = ((Number) ((JavascriptExecutor) actualDriver).executeScript(
+        int width = ((Number) executeScript(
                 "function f() { if(typeof window.innerWidth != 'undefined') { return window.innerWidth; } if(document.documentElement && document.documentElement.offsetWidth) { return document.documentElement.offsetWidth; } w = document.body.clientWidth; if(navigator.userAgent.indexOf('Trident/5') != -1 && document.documentMode < 9) { w += 4; } return w;} return f();"))
                         .intValue();
         return width;
     }
 
     public void focusElement(TestBenchElement testBenchElement) {
-        // The actual driver is _always_ a JavaScriptExecutor - if it is not,
-        // something is terribly wrong.
-        JavascriptExecutor jse = (JavascriptExecutor) actualDriver;
-
-        Object ret = jse.executeScript(
+        Object ret = executeScript(
                 "try { arguments[0].focus() } catch(e) {}; return null;",
                 testBenchElement);
         assert (ret == null);
