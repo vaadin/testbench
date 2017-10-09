@@ -20,6 +20,9 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.Capabilities;
@@ -199,9 +202,7 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
      */
     @Override
     public void scroll(int scrollTop) {
-        JavascriptExecutor js = getCommandExecutor();
-        js.executeScript("arguments[0].scrollTop = " + scrollTop,
-                actualElement);
+        executeScript("arguments[0].scrollTop = " + scrollTop, actualElement);
     }
 
     /**
@@ -214,9 +215,7 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
      */
     @Override
     public void scrollLeft(int scrollLeft) {
-        JavascriptExecutor js = getCommandExecutor();
-        js.executeScript("arguments[0].scrollLeft = " + scrollLeft,
-                actualElement);
+        executeScript("arguments[0].scrollLeft = " + scrollLeft, actualElement);
     }
 
     @Override
@@ -312,8 +311,7 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
      * some browser-theme combinations (for instance Firefox-Valo)
      */
     public void clickHiddenElement() {
-        getCommandExecutor().executeScript("arguments[0].click()",
-                actualElement);
+        callFunction("click");
     }
 
     @Override
@@ -526,8 +524,7 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
      * Scrolls the element into the visible area of the browser window
      */
     public void scrollIntoView() {
-        getCommandExecutor().executeScript("arguments[0].scrollIntoView()",
-                actualElement);
+        callFunction("scrollIntoView");
     }
 
     /**
@@ -678,12 +675,10 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
         if ((isIE() || isFirefox()) && value instanceof Double) {
             // IE 11 fails with java.lang.NumberFormatException
             // if we try to send a double...
-            tbCommandExecutor.executeScript(
-                    "arguments[0][arguments[1]]=Number(arguments[2])", this,
-                    name, String.valueOf((value)));
+            executeScript("arguments[0][arguments[1]]=Number(arguments[2])",
+                    this, name, String.valueOf((value)));
         } else {
-            tbCommandExecutor.executeScript(
-                    "arguments[0][arguments[1]]=arguments[2]", this, name,
+            executeScript("arguments[0][arguments[1]]=arguments[2]", this, name,
                     value);
         }
     }
@@ -692,17 +687,16 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
         String script = "var value = arguments[0][arguments[1]];";
         if (isIE() || isFirefox()) {
             String isNumberScript = script + "return typeof value == 'number';";
-            boolean number = (boolean) getCommandExecutor()
-                    .executeScript(isNumberScript, this, name);
+            boolean number = (boolean) executeScript(isNumberScript, this,
+                    name);
 
             if (number) {
-                String str = (String) getCommandExecutor().executeScript(
+                String str = (String) executeScript(
                         script + "return value.toString();", this, name);
                 return Double.parseDouble(str);
             }
         }
-        return ((JavascriptExecutor) getDriver())
-                .executeScript(script + "return value;", this, name);
+        return executeScript(script + "return value;", this, name);
     }
 
     private JsonValue createJsonValue(Object value) {
@@ -719,6 +713,53 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
                     "Type of property is unsupported: "
                             + value.getClass().getName());
         }
+    }
+
+    /**
+     * Executes the given JavaScript in the context of the currently selected
+     * frame or window. The script fragment provided will be executed as the
+     * body of an anonymous function.
+     * <p>
+     * This method wraps any returned {@link WebElement} as
+     * {@link TestBenchElement}.
+     *
+     * @param script
+     *            the script to execute
+     * @param args
+     *            the arguments, available in the script as
+     *            {@code arguments[0]...arguments[N]}
+     * @return whatever
+     *         {@link org.openqa.selenium.JavascriptExecutor#executeScript(String, Object...)}
+     *         returns
+     * @throws UnsupportedOperationException
+     *             if the underlying driver does not support JavaScript
+     *             execution
+     * @see JavascriptExecutor#executeScript(String, Object...)
+     */
+    protected Object executeScript(String script, Object... args) {
+        return getCommandExecutor().executeScript(script, args);
+    }
+
+    /**
+     * Invoke the given method on this element using the given arguments as
+     * arguments to the method.
+     *
+     * @param methodName
+     *            the method to invoke
+     * @param args
+     *            the arguments to pass to the method
+     * @return the value returned by the method
+     */
+    public Object callFunction(String methodName, Object... args) {
+        // arguments[0].method(arguments[1],arguments[2],arguments[3])
+        String paramPlaceholderString = IntStream.range(1, args.length + 1)
+                .mapToObj(i -> "arguments[" + i + "]")
+                .collect(Collectors.joining(","));
+        Object[] jsParameters = Stream.concat(Stream.of(this), Stream.of(args))
+                .toArray(size -> new Object[size]);
+
+        return executeScript("return arguments[0]." + methodName + "("
+                + paramPlaceholderString + ")", jsParameters);
     }
 
 }
