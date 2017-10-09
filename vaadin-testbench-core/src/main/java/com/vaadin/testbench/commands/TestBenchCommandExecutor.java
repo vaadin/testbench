@@ -240,8 +240,10 @@ public class TestBenchCommandExecutor
     @Override
     public Object executeScript(String script, Object... args) {
         if (actualDriver instanceof JavascriptExecutor) {
-            return ((JavascriptExecutor) actualDriver).executeScript(script,
-                    args);
+            return TestBenchElement
+                    .wrapElementsInline(((JavascriptExecutor) actualDriver)
+                            .executeScript(script, args), this);
+
         }
         throw new RuntimeException("The driver is not a JavascriptExecutor");
     }
