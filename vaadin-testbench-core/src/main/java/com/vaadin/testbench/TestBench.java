@@ -22,7 +22,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
-import com.vaadin.testbench.elementsbase.AbstractElement;
 import com.vaadin.testbench.tools.LicenseChecker;
 
 import javassist.util.proxy.MethodFilter;
@@ -110,7 +109,7 @@ public class TestBench {
         return (WebDriver) proxy;
     }
 
-    public static <T extends AbstractElement> T wrap(TestBenchElement element,
+    public static <T extends TestBenchElement> T wrap(TestBenchElement element,
             Class<T> elementType) {
         return createElement(elementType, element.getWrappedElement(),
                 element.getCommandExecutor());

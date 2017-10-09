@@ -12,266 +12,81 @@
  */
 package com.vaadin.testbench;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.Stack;
-import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.SearchContext;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-import com.vaadin.testbench.commands.TestBenchCommandExecutor;
-import com.vaadin.testbench.elementsbase.AbstractElement;
-import com.vaadin.testbench.elementsbase.ServerClass;
+import com.vaadin.testbench.elementsbase.Element;
 
 /**
- * Descriptor class used for locating components.
- * 
- * Different Element classes that extend AbstractElement class and have
- * ServerClass annotation describing the server side class name of a Vaadin
- * component are used by ElementQuery.
- * 
+ * Query class used for finding a given element inside a given search context.
  * <p>
- * The typical end-user use case for a ElementQuery is as follows - in this
- * example, we're looking for the fifth Vaadin Button from inside a
- * {@link TestBenchTestCase}:
- * </p>
- * 
- * {@code ButtonElement e = $(ButtonElement.class).index(4).first(); } <br>
- * or<br>
- * {@code ButtonElement e = $(ButtonElement.class).all().get(4); }<br>
- * 
+ * The search context is either a {@link WebDriver} instance which searches
+ * starting from the root of the current document, or a {@link WebElement}
+ * instance, which searches inside the shadow root of the given element.
  * <p>
- * Second alternative results in slightly more network traffic. These two are
- * not identical when you use search hierarchy. See the documentation for
- * {@link #index(int)}.
- * </p>
- * 
- * <p>
- * For a more advanced example, we'll find the second Label inside a
- * VerticalLayout inside a GridLayout:
- * </p>
- * 
- * {@code LabelElement e = $(LabelElement.class).index(1).in(VerticalLayoutElement.class) }
- * {@code .in(GridLayoutElement.class).first(); }
- * 
- * <p>
- * To find your own component, extend AbstractElement class and use ServerClass
- * annotation to define it's full class name e.g. com.vaadin.example.MyWidget
- * </p>
+ * The element class specified in the constructor defines the tag name which is
+ * searched for an also the type of element returned.
  */
-public class ElementQuery<T extends AbstractElement> {
+public class ElementQuery<T extends TestBenchElement> {
 
-    private static Logger logger = Logger.getLogger(ElementQuery.class
-            .getName());
-
-    private Map<String, Set<String>> statevars = new LinkedHashMap<String, Set<String>>();
-    private int idx = -1;
+    private Map<String, String> attributes = new HashMap<>();
     private SearchContext searchContext;
-    private boolean recursive = true;
-    Class<T> elementClass;
-    private Stack<ElementQuery<?>> queryStack = new Stack<ElementQuery<?>>();
+    private final Class<T> elementClass;
 
     /**
-     * Instantiate a new ElementQuery for given type.
-     * 
+     * Instantiate a new ElementQuery to look for the given type of element.
+     *
      * @param elementClass
-     *            AbstractElement subclass
+     *            the type of element to look for
      */
     public ElementQuery(Class<T> elementClass) {
         this.elementClass = elementClass;
     }
 
     /**
-     * For advanced use. Set ElementQuery to either recursive search or a search
-     * starting directly from he context.
-     * 
-     * @param recursion
-     *            Boolean value. false for direct child search
-     * @return a reference to self
-     */
-    public ElementQuery<T> recursive(boolean recursion) {
-        this.recursive = recursion;
-        return this;
-    }
-
-    /**
-     * Prepare a {@link ElementQuery} instance to use for locating components on
-     * the client. The returned object can be manipulated to uniquely identify
-     * the sought-after object. If this function gets called through an element,
-     * it uses the element as its search context. Otherwise the search context
-     * is the driver.
-     * 
-     * @return an appropriate {@link ElementQuery} instance
-     */
-    public <E extends AbstractElement> ElementQuery<E> $(Class<E> cls) {
-        ElementQuery<E> newQuery = new ElementQuery<E>(cls)
-                .context(getContext());
-        newQuery.queryStack.push(this);
-        return newQuery;
-    }
-
-    /**
-     * Prepare a {@link ElementQuery} instance to use for locating components on
-     * the client. The returned object can be manipulated to uniquely identify
-     * the sought-after object. If this function gets called through an element,
-     * it uses the element as its search context. Otherwise the search context
-     * is the driver.
-     * 
-     * This search is not recursive and can find the given hierarchy only if it
-     * can be found as direct children of given context. The same can be done
-     * with {@code $(Foo.class).recursive(false) }
-     * 
-     * @return an appropriate {@link ElementQuery} instance
-     */
-    public <E extends AbstractElement> ElementQuery<E> $$(Class<E> cls) {
-        ElementQuery<E> newQuery = new ElementQuery<E>(cls)
-                .context(getContext());
-        newQuery.recursive(false);
-        newQuery.queryStack.push(this);
-        return newQuery;
-    }
-
-    /**
-     * Adds another query to the search hierarchy of this ElementQuery. This
-     * search is recursive.
-     * 
-     * @param query
-     *            ElementQuery instance to be used as part of search hierarchy.
-     * @return a reference to self
-     */
-    public <E extends AbstractElement> ElementQuery<T> in(ElementQuery<E> query) {
-        queryStack.push(query);
-        return this;
-    }
-
-    /**
-     * Adds another query to the search hierarchy of this ElementQuery. This
-     * search is non-recursive. Only direct children are found.
-     * 
-     * @param query
-     *            ElementQuery instance to be used as part of search hierarchy.
-     * @return a reference to self
-     */
-    public <E extends AbstractElement> ElementQuery<T> child(
-            ElementQuery<E> query) {
-        if (queryStack.isEmpty()) {
-            recursive(false);
-        } else {
-            queryStack.peek().recursive(false);
-        }
-        return in(query);
-    }
-
-    /**
-     * Executes a search for element with given ID.
-     * 
+     * Executes a search for element with the given id.
+     *
      * @param id
-     *            a String value
-     * @return found element
+     *            the id to look up
+     * @return the element with the given id
+     *
+     * @throws NoSuchElementException
+     *             if no element is found
      */
     public T id(String id) {
-        return state("id", id).first();
+        return attribute("id", id).first();
     }
 
     /**
-     * Add a requirement to only accept components with a specified caption
-     * value. If query has a search hierarchy set with .in() or .childOf() the
-     * requirement is applied to the latest referenced Element type.
-     * 
-     * @param caption
-     *            a String value
-     * @return a reference to self
-     */
-    public ElementQuery<T> caption(String caption) {
-        return state("caption", caption);
-    }
-
-    /**
-     * For advanced use. Add a requirement to only accept components that have a
-     * certain state variable set to a specific value. If query has a search
-     * hierarchy set with .in() or .childOf() the requirement is applied to the
-     * latest referenced Element type.
-     * 
-     * Using null as a value checks for existence of the given variable, and
-     * accepts any value. This is usually not what you want to do.
-     * 
-     * Please note that names of state variables are component specific and are
-     * subject to change.
-     * 
-     * 
-     * @param varname
-     *            name of the desired Vaadin object state variable
+     * Adds the given attribute as a condition for the lookup.
+     *
+     * @param key
+     *            the attribute key
      * @param value
-     *            the state variable value as a {@link String}
-     * @return a reference to self or null if an invalid variable name was
-     *         entered
+     *            the attribute value
+     * @return this element query instance for chaining
      */
-    public ElementQuery<T> state(String varname, String value) {
-        Pattern p = Pattern.compile("[0-9]+");
-        Matcher m = p.matcher(varname);
-        boolean isValid = !m.matches();
-        if (isValid) {
-            if (!statevars.containsKey(varname)) {
-                statevars.put(varname, new LinkedHashSet<String>());
-            }
-            statevars.get(varname).add(value);
-            return this;
-        } else {
-            logger.warning("State variable is invalid! State variable name cannot be an integer.");
-            return null;
-        }
-
-    }
-
-    /**
-     * Set an index requirement for the current ElementQuery. If query has a
-     * context hierarchy set using {@code .in()} or {@code .childOf()} the index
-     * requirement is set for the latest referenced Element type. For example
-     * the {@code .index()} call in {@code $(Foo.class).index(4)} would apply to
-     * the {@code Foo} type (referring to the fifth instance of {@code Foo} that
-     * can be found in the current search context) in the hierarchy, while in
-     * {@code $(Foo.class).in(Bar.class).index(3)} it would apply to the Bar
-     * type, and the search would refer to <b>all {@code Foo} instances</b>
-     * found in every Bar instance which is the <b>fourth {@code Bar}
-     * instance</b> within the search context and any and all sub-contexts.
-     * 
-     * When searching for one Element without search hierarchy this is
-     * equivalent to {@code .all().get(index)}.
-     * <p>
-     * Note the difference between {@code .in()} and {@code .childOf()}:<br>
-     * {@code $(LabelElement.class).index(1).in(HorizontalLayoutElement.class)}
-     * does a depth first search in all {@code HorizontalLayout} instances and
-     * returns the second {@code Label} instance from each result.<br>
-     * 
-     * {@code $(LabelElement.class).index(1).childOf(HorizontalLayoutElement.class)}
-     * only finds {@code Labels} the second <b>direct children</b> of all
-     * {@code HorizontalLayout} instances.
-     * 
-     * @param index
-     *            zero-based index of the desired element
-     * 
-     * @return a reference to self
-     */
-    public ElementQuery<T> index(int index) {
-        idx = index;
+    private ElementQuery<T> attribute(String key, String value) {
+        attributes.put(key, value);
         return this;
     }
 
     /**
-     * Specify a different {@link SearchContext} to use.
-     * 
+     * Sets the context to search inside.
+     *
      * @param searchContext
-     *            a {@link SearchContext}; usually a {@link TestBenchElement}
-     *            instance.
-     * @return a reference to self
+     *            a {@link SearchContext}; either a {@link TestBenchElement} or
+     *            {@link WebDriver} (to search from the root) instance
+     * @return this element query instance for chaining
      */
     public ElementQuery<T> context(SearchContext searchContext) {
         this.searchContext = searchContext;
@@ -279,29 +94,30 @@ public class ElementQuery<T extends AbstractElement> {
     }
 
     /**
-     * Return the {@link SearchContext} previously set with the {@link #in}
-     * call.
+     * Return the context (element or driver) to search inside.
      */
     protected SearchContext getContext() {
         return searchContext;
     }
 
     /**
-     * Search the open Vaadin application for a matching component relative to
-     * given context. NoSuchElement exception is thrown if the first element is
-     * not found.
+     * Executes the search and returns the first result.
      *
-     * @return Component as a corresponding element
+     * @return The element of the type specified in the constructor
+     * @throws NoSuchElementException
+     *             if no element is found
      */
     public T first() {
         return get(0);
     }
 
     /**
-     * Search the open Vaadin application for a matching component relative to
-     * given context. NoSuchElement exception is thrown if no element is found.
+     * Executes the search and returns the last result.
      *
-     * @return Component as a corresponding element
+     * @return The element of the type specified in the constructor
+     *
+     * @throws NoSuchElementException
+     *             if no element is found
      */
     public T last() {
         List<T> all = all();
@@ -309,27 +125,17 @@ public class ElementQuery<T extends AbstractElement> {
     }
 
     /**
-     * Search the open Vaadin application for a matching component relative to
-     * given context. Elements are post filtered with given index. NoSuchElement
-     * exception is thrown if there is no element with such index.
+     * Executes the search and returns the requested element.
      *
-     * @param index
-     *            Post filtering index
-     * @return Component as a corresponding element
+     * @return The element of the type specified in the constructor
+     * @throws NoSuchElementException
+     *             if no element is found
      */
     public T get(int index) {
-        String query;
-        try {
-            query = "(" + generateQuery() + ")[" + index + "]";
-        } catch (Exception e) {
-            throw new RuntimeException("Unable to create locator query", e);
-        }
-
-        List<T> elements = executeSearch(query);
+        List<T> elements = executeSearch(index);
         if (elements.isEmpty()) {
-            final String errorString = "Vaadin could not find elements with selector "
-                    + query;
-            throw new NoSuchElementException(errorString);
+            throw new NoSuchElementException(
+                    "No element found for the given conditions");
         }
         return elements.get(0);
     }
@@ -337,110 +143,110 @@ public class ElementQuery<T extends AbstractElement> {
     /**
      * Checks if this ElementQuery describes existing elements. Same as
      * .all().isEmpty().
-     * 
+     *
      * @return true if elements exists. false if not
      */
     public boolean exists() {
-        try {
-            return !all().isEmpty();
-        } catch (NoSuchElementException e) {
-            return false;
-        }
+        return !all().isEmpty();
     }
 
     /**
      * Search the open Vaadin application for a list of matching components
      * relative to given context.
-     * 
+     *
      * @return Components as a list of corresponding elements
      */
     public List<T> all() {
-        String query;
-        try {
-            query = generateQuery();
-        } catch (Exception e) {
-            throw new RuntimeException("Unable to create locator query", e);
-        }
-
-        return executeSearch(query);
+        return executeSearch(null);
     }
 
     /**
-     * Execute the actual search with Vaadin.
-     * 
-     * @param query
-     *            Generated selector path
-     * @return List of elements. List is empty if no elements are found.
+     * Executes the search operation with the given conditions and returns a
+     * list of matchin elements.
+     *
+     * @param index
+     *            the index of the element to return or <code>null</code> to
+     *            return all matching elements
+     * @return a list of macthing elements or an empty list if no matches were
+     *         found
      */
-    private List<T> executeSearch(String query) {
-        List<WebElement> results = null;
-        List<T> elements = new ArrayList<T>();
-        results = By.vaadin(query).findElements(getContext());
-
-        TestBenchCommandExecutor tbCommandExecutor = ((HasTestBenchCommandExecutor) getContext())
-                .getCommandExecutor();
-        for (WebElement webElement : results) {
-            T element = TestBench.createElement(elementClass, webElement,
-                    tbCommandExecutor);
-
-            if (null != element) {
-                elements.add(element);
-            }
+    private List<T> executeSearch(Integer index) {
+        String indexSuffix = "";
+        if (index != null) {
+            indexSuffix = "[" + index + "]";
         }
 
-        return elements;
+        String tagName = elementClass.getAnnotation(Element.class).value();
+
+        String script;
+        WebElement context;
+        JavascriptExecutor executor;
+        if (searchContext instanceof TestBenchElement) {
+            script = "return arguments[0].shadowRoot.querySelectorAll(arguments[1]+arguments[2])";
+            context = (TestBenchElement) getContext();
+            executor = ((TestBenchElement) context).getCommandExecutor();
+        } else {
+            // Search the whole document
+            script = "return document.querySelectorAll(arguments[1]+arguments[2])";
+            context = null;
+            executor = (JavascriptExecutor) searchContext;
+        }
+        if (indexSuffix != null) {
+            script += indexSuffix;
+        }
+
+        // document.querySelectorAll("vaadin-text-field[id=username][label=Email]")
+
+        // [id=username][label=Email]
+        String attributePairs = attributes.entrySet().stream()
+                .map(entry -> "[" + entry.getKey() + "="
+                        + escapeAttributeValue(entry.getValue()) + "]")
+                .collect(Collectors.joining());
+        return executeSearchScript(script, context, tagName, attributePairs,
+                executor);
     }
 
     /**
-     * Generates a vaadin locator path.
-     * 
-     * @return String in form of
-     *         //fullServerSideClassName([(StateVar=StateVal,?)*(index)?])?
+     * Executes the given search script.
+     * <p>
+     * Package private to enable testing
+     *
+     * @param script
+     *            the script to execute
+     * @param context
+     *            the element to start the search from or <code>null</code> for
+     *            a whole document search
+     * @param tagName
+     *            the tag name to look for
+     * @param attributePairs
+     *            the attribute pairs to match
+     * @return a list of matching elements of the type defined in the
+     *         constructor
      */
-    @SuppressWarnings("unchecked")
-    protected String generateQuery() {
-        String output = "";
-        Stack<ElementQuery<?>> tmpStack = (Stack<ElementQuery<?>>) queryStack
-                .clone();
-
-        // Chain all the queries from stack.
-        while (!tmpStack.isEmpty()) {
-            ElementQuery<?> current = tmpStack.pop();
-            output += current.generateQuery();
-        }
-
-        output += (recursive ? "//" : "/");
-        output += elementClass.getAnnotation(ServerClass.class).value();
-
-        if (statevars.size() > 0 || idx >= 0) {
-            output += "[";
-            boolean first = true;
-
-            for (Map.Entry<String, Set<String>> entry : statevars.entrySet()) {
-                String key = entry.getKey();
-
-                for (String value : entry.getValue()) {
-                    if (!first) {
-                        output += ",";
-                    } else {
-                        first = false;
-                    }
-
-                    value = (null == value ? "?" : "\"" + value + "\"");
-                    output += key + "=" + value;
-                }
+    List<T> executeSearchScript(String script, Object context, String tagName,
+            String attributePairs, JavascriptExecutor executor) {
+        Object result = executor.executeScript(script, context, tagName,
+                attributePairs);
+        if (result == null) {
+            return Collections.emptyList();
+        } else if (result instanceof TestBenchElement) {
+            return Collections.singletonList(
+                    TestBench.wrap((TestBenchElement) result, elementClass));
+        } else {
+            List<TestBenchElement> elements = (List<TestBenchElement>) result;
+            // Wrap as the correct type
+            for (int i = 0; i < elements.size(); i++) {
+                T wrapped = TestBench.wrap(elements.get(i), elementClass);
+                elements.set(i, wrapped);
             }
-
-            if (idx >= 0) {
-                if (statevars.size() > 0) {
-                    output += ",";
-                }
-                output += idx;
-            }
-
-            output += "]";
+            return (List) elements;
         }
-
-        return output;
     }
+
+    private String escapeAttributeValue(String value) {
+        // This is needed once something else than id's are allowed, e.g.
+        // label='First name'
+        return value;
+    }
+
 }

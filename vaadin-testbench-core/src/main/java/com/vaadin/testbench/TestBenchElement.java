@@ -54,7 +54,6 @@ import com.vaadin.testbench.commands.ScreenshotComparator;
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.commands.TestBenchCommands;
 import com.vaadin.testbench.commands.TestBenchElementCommands;
-import com.vaadin.testbench.elementsbase.AbstractElement;
 import com.vaadin.testbench.parallel.BrowserUtil;
 
 import elemental.json.Json;
@@ -379,7 +378,7 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
     }
 
     @Override
-    public <T extends AbstractElement> T wrap(Class<T> elementType) {
+    public <T extends TestBenchElement> T wrap(Class<T> elementType) {
         return TestBench.wrap(this, elementType);
     }
 
@@ -422,9 +421,6 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
      * <p>
      * Does not modify the argument, instead creates a new object containing the
      * wrapped elements and other possible values.
-     *
-     * @param <T>
-     *            the type of the argument
      *
      * @param elementElementsOrValues
      *            an object containing a {@link WebElement}, a {@link List} of
