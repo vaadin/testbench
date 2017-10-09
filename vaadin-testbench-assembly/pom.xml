@@ -43,30 +43,6 @@
                 </configuration>
             </plugin>
 
-            <!-- Extracts the TouchKit chapter from BoV -->
-            <plugin>
-                <groupId>com.github.zch</groupId>
-                <artifactId>pdfsplit-maven-plugin</artifactId>
-                <version>1.0.1</version>
-                <executions>
-                    <execution>
-                        <id>pdfsplit</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>split</goal>
-                        </goals>
-                        <configuration>
-                            <inputUrl>
-                                https://vaadin.com/download/book-of-vaadin/vaadin-7/pdf/book-of-vaadin.pdf
-                            </inputUrl>
-                            <chapter>Chapter 22. Vaadin TestBench</chapter>
-                            <outFile>${project.build.directory}/vaadin-testbench-manual-${project.version}.pdf
-                            </outFile>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
