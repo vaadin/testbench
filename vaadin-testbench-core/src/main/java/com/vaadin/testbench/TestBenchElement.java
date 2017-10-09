@@ -376,8 +376,7 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
 
     @Override
     public <T extends AbstractElement> T wrap(Class<T> elementType) {
-        return TestBench.createElement(elementType, getWrappedElement(),
-                getCommandExecutor());
+        return TestBench.wrap(this, elementType);
     }
 
     @Override
