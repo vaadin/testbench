@@ -79,7 +79,7 @@ public class ElementQuery<T extends TestBenchElement> {
      *            the attribute value
      * @return this element query instance for chaining
      */
-    private ElementQuery<T> attribute(String key, String value) {
+    public ElementQuery<T> attribute(String key, String value) {
         attributes.put(key, value);
         return this;
     }
