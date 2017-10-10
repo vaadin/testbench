@@ -38,10 +38,10 @@ public class LicenseCheckerTest {
         LicenseChecker.nag();
         String output = outContent.toString();
         // output =
-        // "-------------Vaadin TestBench 4 registered to dmitrii@vaadin.com (Pro Tools subscription).------------------";
-        String pattern = "-*" + NEW_LINE
-                + "Vaadin TestBench 4 registered to .*" + NEW_LINE + "-*("
-                + NEW_LINE + ")*";
+        // "-------------Vaadin TestBench 4 registered to dmitrii@vaadin.com
+        // (Pro Tools subscription).------------------";
+        String pattern = "-*" + NEW_LINE + "Vaadin TestBench 4 registered to .*"
+                + NEW_LINE + "-*(" + NEW_LINE + ")*";
         Assert.assertTrue(output.matches(pattern));
     }
 
@@ -51,7 +51,7 @@ public class LicenseCheckerTest {
         props.setProperty("vaadin.testbench.developer.license",
                 SUBSCRIPTION_KEY_EXPIRED);
         verifyNagError(
-                "License for Vaadin TestBench 5 has expired. Get a valid license at vaadin.com/pro");
+                "License for Vaadin TestBench 6 has expired. Get a valid license at vaadin.com/pro");
         LicenseChecker.nag();
     }
 
@@ -61,7 +61,7 @@ public class LicenseCheckerTest {
         Properties props = System.getProperties();
         props.setProperty("vaadin.testbench.developer.license", "");
         verifyNagError(
-                "License for Vaadin TestBench 5 not found. Go to vaadin.com/pro for more details.");
+                "License for Vaadin TestBench 6 not found. Go to vaadin.com/pro for more details.");
         LicenseChecker.nag();
     }
 
@@ -71,7 +71,7 @@ public class LicenseCheckerTest {
         props.setProperty("vaadin.testbench.developer.license", INVALID_KEY);
 
         verifyNagError(
-                "License for Vaadin TestBench 5 is not valid (invalid key). Get a valid license from vaadin.com/pro");
+                "License for Vaadin TestBench 6 is not valid (invalid key). Get a valid license from vaadin.com/pro");
 
     }
 
