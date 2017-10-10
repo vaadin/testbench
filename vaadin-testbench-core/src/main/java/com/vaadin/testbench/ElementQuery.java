@@ -23,6 +23,7 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.vaadin.testbench.elementsbase.Element;
 
@@ -112,6 +113,43 @@ public class ElementQuery<T extends TestBenchElement> {
     }
 
     /**
+     * Executes the search and returns the first result once at least once
+     * result is available.
+     * <p>
+     * This method is identical to {@link #first()} if at least one element is
+     * present. If no element is found, this method will keep searching until an
+     * element is found or if 10 seconds has elapsed.
+     *
+     * @return The element of the type specified in the constructor
+     * @throws NoSuchElementException
+     *             if no element is found after 10 seconds has elapsed
+     */
+    public T waitForFirst() {
+        Object result = new WebDriverWait(getDriver(), 10).until(driver -> {
+            try {
+                return first();
+            } catch (NoSuchElementException e) {
+                return null;
+            }
+        });
+        if (result == null) {
+            throw new NoSuchElementException(
+                    "No element found for the given conditions");
+        } else {
+            return (T) result;
+        }
+
+    }
+
+    private WebDriver getDriver() {
+        if (getContext() instanceof WebDriver) {
+            return (WebDriver) getContext();
+        } else {
+            return ((TestBenchElement) getContext()).getDriver();
+        }
+    }
+
+    /**
      * Executes the search and returns the last result.
      *
      * @return The element of the type specified in the constructor
@@ -179,17 +217,21 @@ public class ElementQuery<T extends TestBenchElement> {
         String tagName = elementClass.getAnnotation(Element.class).value();
 
         String script;
-        WebElement context;
+        TestBenchElement elementContext;
         JavascriptExecutor executor;
-        if (searchContext instanceof TestBenchElement) {
+        if (getContext() instanceof TestBenchElement) {
             script = "return arguments[0].shadowRoot.querySelectorAll(arguments[1]+arguments[2])";
-            context = (TestBenchElement) getContext();
-            executor = ((TestBenchElement) context).getCommandExecutor();
-        } else {
+            elementContext = (TestBenchElement) getContext();
+            executor = elementContext.getCommandExecutor();
+        } else if (getContext() instanceof WebDriver) {
             // Search the whole document
             script = "return document.querySelectorAll(arguments[1]+arguments[2])";
-            context = null;
-            executor = (JavascriptExecutor) searchContext;
+            elementContext = null;
+            executor = (JavascriptExecutor) getContext();
+        } else {
+            throw new IllegalStateException(
+                    "Unknown context type: " + getContext() == null ? "null"
+                            : getContext().getClass().getName());
         }
         if (indexSuffix != null) {
             script += indexSuffix;
@@ -202,8 +244,8 @@ public class ElementQuery<T extends TestBenchElement> {
                 .map(entry -> "[" + entry.getKey() + "="
                         + escapeAttributeValue(entry.getValue()) + "]")
                 .collect(Collectors.joining());
-        return executeSearchScript(script, context, tagName, attributePairs,
-                executor);
+        return executeSearchScript(script, elementContext, tagName,
+                attributePairs, executor);
     }
 
     /**
