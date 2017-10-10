@@ -95,6 +95,16 @@ public class ElementQuery<T extends TestBenchElement> {
     }
 
     /**
+     * Defines that the query should start the search from the root of the page,
+     * in practice from the {@code <body>} tag.
+     *
+     * @return this element query instance for chaining
+     */
+    public ElementQuery<T> onPage() {
+        return context(getDriver());
+    }
+
+    /**
      * Return the context (element or driver) to search inside.
      */
     protected SearchContext getContext() {
