@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.openqa.selenium.JavascriptExecutor;
@@ -50,6 +51,8 @@ public class ElementQuery<T extends TestBenchElement> {
      *            the type of element to look for
      */
     public ElementQuery(Class<T> elementClass) {
+        Objects.requireNonNull(elementClass,
+                "The element class cannot be null");
         this.elementClass = elementClass;
     }
 
@@ -143,8 +146,7 @@ public class ElementQuery<T extends TestBenchElement> {
             }
         });
         if (result == null) {
-            throw new NoSuchElementException(
-                    "No element found for the given conditions");
+            throw new NoSuchElementException(getNoSuchElementMessage(null));
         } else {
             return (T) result;
         }
@@ -182,10 +184,21 @@ public class ElementQuery<T extends TestBenchElement> {
     public T get(int index) {
         List<T> elements = executeSearch(index);
         if (elements.isEmpty()) {
-            throw new NoSuchElementException(
-                    "No element found for the given conditions");
+            throw new NoSuchElementException(getNoSuchElementMessage(index));
         }
         return elements.get(0);
+    }
+
+    private String getNoSuchElementMessage(Integer index) {
+        String msg = "No element with tag <" + getTagName() + "> found";
+        String attrPairs = getAttributePairs();
+        if (!attrPairs.isEmpty()) {
+            msg += " with the attributes " + attrPairs;
+        }
+        if (index != null) {
+            msg += " using index " + index;
+        }
+        return msg;
     }
 
     /**
@@ -224,8 +237,6 @@ public class ElementQuery<T extends TestBenchElement> {
             indexSuffix = "[" + index + "]";
         }
 
-        String tagName = elementClass.getAnnotation(Element.class).value();
-
         String script;
         TestBenchElement elementContext;
         JavascriptExecutor executor;
@@ -247,15 +258,26 @@ public class ElementQuery<T extends TestBenchElement> {
             script += indexSuffix;
         }
 
-        // document.querySelectorAll("vaadin-text-field[id=username][label=Email]")
+        return executeSearchScript(script, elementContext, getTagName(),
+                getAttributePairs(), executor);
+    }
 
+    private String getTagName() {
+        Element annotation = elementClass.getAnnotation(Element.class);
+        if (annotation == null) {
+            throw new IllegalStateException("The given element class "
+                    + elementClass.getName() + " must be annotated using @"
+                    + Element.class.getName());
+        }
+        return annotation.value();
+    }
+
+    private String getAttributePairs() {
         // [id=username][label=Email]
-        String attributePairs = attributes.entrySet().stream()
+        return attributes.entrySet().stream()
                 .map(entry -> "[" + entry.getKey() + "="
                         + escapeAttributeValue(entry.getValue()) + "]")
                 .collect(Collectors.joining());
-        return executeSearchScript(script, elementContext, tagName,
-                attributePairs, executor);
     }
 
     /**
