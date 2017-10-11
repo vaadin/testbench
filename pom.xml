@@ -61,7 +61,6 @@
         <module>vaadin-testbench-core</module>
         <module>vaadin-testbench-standalone</module>
         <module>vaadin-testbench-assembly</module>
-        <module>vaadin-testbench-integration-tests</module>
     </modules>
 
     <build>
