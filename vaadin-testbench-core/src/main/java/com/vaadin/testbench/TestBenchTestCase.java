@@ -28,7 +28,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.commands.TestBenchCommands;
 import com.vaadin.testbench.commands.TestBenchElementCommands;
-import com.vaadin.testbench.elementsbase.AbstractElement;
 import com.vaadin.testbench.tools.LicenseChecker;
 
 /**
@@ -157,23 +156,16 @@ public abstract class TestBenchTestCase
 
     /**
      * Decorates the element with the specified Element type, making it possible
-     * to use Vaadin component-specific API on elements found using standard
-     * selenium API.
-     * <p>
-     * Example: <code>
-     *     TableElement table = e.wrap(TableElement.class, driver.findElement(By.id("my-table")));
-     *     assertEquals("Foo", table.getHeaderCell(1).getText());
-     * </code>
+     * to use component-specific API on elements found using standard Selenium
+     * API.
      *
      * @param elementType
-     *            The type (class) containing the API to decorate with. Must
-     *            extend
-     *            {@link com.vaadin.testbench.elementsbase.AbstractElement}.
+     *            The type (class) containing the API to decorate with
      * @param element
      *            The element instance to decorate
      * @return The element wrapped in an instance of the specified element type.
      */
-    public <T extends AbstractElement> T wrap(Class<T> elementType,
+    public <T extends TestBenchElement> T wrap(Class<T> elementType,
             WebElement element) {
         return ((TestBenchElement) element).wrap(elementType);
     }
