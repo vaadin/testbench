@@ -182,6 +182,9 @@ public abstract class TestBenchTestCase
      * Executes the given JavaScript in the context of the currently selected
      * frame or window. The script fragment provided will be executed as the
      * body of an anonymous function.
+     * <p>
+     * This method wraps any returned {@link WebElement} as
+     * {@link TestBenchElement}.
      *
      * @param script
      *            the script to execute
@@ -197,14 +200,7 @@ public abstract class TestBenchTestCase
      * @see JavascriptExecutor#executeScript(String, Object...)
      */
     protected Object executeScript(String script, Object... args) {
-        WebDriver driver = getDriver();
-        if (driver instanceof JavascriptExecutor) {
-            return ((JavascriptExecutor) getDriver()).executeScript(script,
-                    args);
-        } else {
-            throw new UnsupportedOperationException(
-                    "The web driver does not support JavaScript execution");
-        }
+        return getCommandExecutor().executeScript(script, args);
     }
 
     /**
@@ -214,7 +210,7 @@ public abstract class TestBenchTestCase
      * <p>
      * Use e.g. as
      * <code>waitUntil(ExpectedConditions.presenceOfElementLocated(by), 10);</code>
-     * 
+     *
      * @param condition
      *            Models a condition that might reasonably be expected to
      *            eventually evaluate to something that is neither null nor
@@ -223,10 +219,10 @@ public abstract class TestBenchTestCase
      *            The timeout in seconds for the wait.
      * @return The condition's return value if it returned something different
      *         from null or false before the timeout expired.
-     * 
+     *
      * @throws TimeoutException
      *             If the timeout expires.
-     * 
+     *
      * @see FluentWait#until
      * @see ExpectedCondition
      */
@@ -242,17 +238,17 @@ public abstract class TestBenchTestCase
      * <p>
      * Use e.g. as
      * <code>waitUntil(ExpectedConditions.presenceOfElementLocated(by));</code>
-     * 
+     *
      * @param condition
      *            Models a condition that might reasonably be expected to
      *            eventually evaluate to something that is neither null nor
      *            false.
      * @return The condition's return value if it returned something different
      *         from null or false before the timeout expired.
-     * 
+     *
      * @throws TimeoutException
      *             If 10 seconds passed.
-     * 
+     *
      * @see FluentWait#until
      * @see ExpectedCondition
      */
