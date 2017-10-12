@@ -18,19 +18,11 @@ package com.vaadin.testbench;
  * their own search contexts to manage scoping element searches where needed.
  */
 public abstract class AbstractHasTestBenchCommandExecutor
-        implements HasTestBenchCommandExecutor {
+        implements HasTestBenchCommandExecutor, HasElementQuery {
 
-    /**
-     * Prepare a {@link ElementQuery} instance to use for locating components on
-     * the client. The returned object can be manipulated to uniquely identify
-     * the sought-after object. If this function gets called through an element,
-     * it uses the element as its search context. Otherwise the search context
-     * is the driver.
-     *
-     * @return an appropriate {@link ElementQuery} instance
-     */
+    @Override
     public <T extends TestBenchElement> ElementQuery<T> $(Class<T> clazz) {
-        return new ElementQuery<T>(clazz).context(getContext());
+        return new ElementQuery<>(clazz).context(getContext());
     }
 
     /**
