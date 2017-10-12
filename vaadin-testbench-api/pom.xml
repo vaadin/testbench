@@ -16,7 +16,7 @@
     <repositories>
         <repository>
             <id>vaadin-addons</id>
-            <url>https://vaadin.com/nexus/content/repositories/vaadin-addons</url>
+            <url>http://maven.vaadin.com/vaadin-addons</url>
         </repository>
     </repositories>
     <licenses>
@@ -38,7 +38,7 @@
                 <repository>
                     <id>vaadin-addons</id>
                     <name>Vaadin add-ons repository</name>
-                    <url>http://vaadin.com/nexus/content/repositories/vaadin-addons</url>
+                    <url>http://maven.vaadin.com/vaadin-addons</url>
                 </repository>
             </distributionManagement>
             <build>
