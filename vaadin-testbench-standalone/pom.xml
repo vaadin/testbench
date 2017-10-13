@@ -36,7 +36,7 @@
         </repository>
         <repository>
             <id>vaadin-addons</id>
-            <url>http://vaadin.com/nexus/content/repositories/vaadin-addons</url>
+            <url>https://maven.vaadin.com/vaadin-addons</url>
         </repository>
         <repository>
             <id>vaadin-prereleases</id>
