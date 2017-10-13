@@ -28,8 +28,6 @@ import org.apache.http.HttpResponse;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicHttpEntityEnclosingRequest;
 import org.junit.Before;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.HasInputDevices;
@@ -39,21 +37,17 @@ import org.openqa.selenium.interactions.internal.Coordinates;
 import org.openqa.selenium.internal.Locatable;
 import org.openqa.selenium.remote.HttpCommandExecutor;
 import org.openqa.selenium.remote.RemoteWebDriver;
-import org.openqa.selenium.support.ui.ExpectedCondition;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
-import com.vaadin.server.LegacyApplication;
-import com.vaadin.server.UIProvider;
 import com.vaadin.testbench.TestBenchDriverProxy;
 import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.testbench.parallel.Browser;
 import com.vaadin.testbench.parallel.BrowserUtil;
 import com.vaadin.testbench.parallel.ParallelTest;
 import com.vaadin.testbench.parallel.setup.SetupDriver;
-import com.vaadin.ui.UI;
+import com.vaadin.ui.Component;
 
 /**
  * Base class for TestBench 3+ tests. All TB3+ tests in the project should
@@ -65,7 +59,8 @@ import com.vaadin.ui.UI;
  * <li>Hub connection setup and teardown</li>
  * <li>Automatic generation of URL for a given test on the development server
  * using {@link #getUIClass()} or by automatically finding an enclosing UI class
- * and based on requested features, e.g. {@link #isDebug()}, {@link #isPush()}</li>
+ * and based on requested features, e.g. {@link #isDebug()},
+ * {@link #isPush()}</li>
  * <li>Generic helpers for creating TB3+ tests</li>
  * </ul>
  *
@@ -137,43 +132,8 @@ public abstract class AbstractTB3Test extends ParallelTest {
         return Boolean.parseBoolean(System.getProperty(key));
     }
 
-    protected WebElement getTooltipElement() {
-        return getDriver().findElement(
-                com.vaadin.testbench.By.className("v-tooltip-text"));
-    }
-
     protected Coordinates getCoordinates(TestBenchElement element) {
         return ((Locatable) element.getWrappedElement()).getCoordinates();
-    }
-
-    private boolean hasDebugMessage(String message) {
-        return getDebugMessage(message) != null;
-    }
-
-    private WebElement getDebugMessage(String message) {
-        return driver.findElement(By.xpath(String.format(
-                "//span[@class='v-debugwindow-message' and text()='%s']",
-                message)));
-    }
-
-    protected void waitForDebugMessage(final String expectedMessage) {
-        waitForDebugMessage(expectedMessage, 30);
-    }
-
-    protected void waitForDebugMessage(final String expectedMessage, int timeout) {
-        waitUntil(new ExpectedCondition<Boolean>() {
-
-            @Override
-            public Boolean apply(WebDriver input) {
-                return hasDebugMessage(expectedMessage);
-            }
-        }, timeout);
-    }
-
-    protected void clearDebugMessages() {
-        driver.findElement(
-                By.xpath("//button[@class='v-debugwindow-button' and @title='Clear log']"))
-                .click();
     }
 
     /**
@@ -231,19 +191,6 @@ public abstract class AbstractTB3Test extends ParallelTest {
     }
 
     /**
-     * Finds an element based on the part of a TB2 style locator following the
-     * :: (e.g. vaadin=runLabelModes::PID_Scheckboxaction-Enabled/domChild[0] ->
-     * PID_Scheckboxaction-Enabled/domChild[0]).
-     *
-     * @param vaadinLocator
-     *            The part following :: of the vaadin locator string
-     * @return
-     */
-    protected WebElement vaadinElement(String vaadinLocator) {
-        return driver.findElement(vaadinLocator(vaadinLocator));
-    }
-
-    /**
      * Uses JavaScript to determine the currently focused element.
      *
      * @return Focused element or null
@@ -255,107 +202,6 @@ public abstract class AbstractTB3Test extends ParallelTest {
         } else {
             return null;
         }
-    }
-
-    /**
-     * Executes the given Javascript
-     *
-     * @param script
-     *            the script to execute
-     * @return whatever
-     *         {@link org.openqa.selenium.JavascriptExecutor#executeScript(String, Object...)}
-     *         returns
-     */
-    protected Object executeScript(String script) {
-        return ((JavascriptExecutor) getDriver()).executeScript(script);
-    }
-
-    /**
-     * Find a Vaadin element based on its id given using Component.setId
-     *
-     * @param id
-     *            The id to locate
-     * @return
-     */
-    public WebElement vaadinElementById(String id) {
-        return driver.findElement(vaadinLocatorById(id));
-    }
-
-    /**
-     * Finds a {@link By} locator based on the part of a TB2 style locator
-     * following the :: (e.g.
-     * vaadin=runLabelModes::PID_Scheckboxaction-Enabled/domChild[0] ->
-     * PID_Scheckboxaction-Enabled/domChild[0]).
-     *
-     * @param vaadinLocator
-     *            The part following :: of the vaadin locator string
-     * @return
-     */
-    public org.openqa.selenium.By vaadinLocator(String vaadinLocator) {
-        String base = getApplicationId(getDeploymentPath());
-
-        base += "::";
-        return com.vaadin.testbench.By.vaadin(base + vaadinLocator);
-    }
-
-    /**
-     * Constructs a {@link By} locator for the id given using Component.setId
-     *
-     * @param id
-     *            The id to locate
-     * @return a locator for the given id
-     */
-    public By vaadinLocatorById(String id) {
-        return vaadinLocator("PID_S" + id);
-    }
-
-    /**
-     * Checks if the given element has the given class name.
-     *
-     * Matches only full class names, i.e. has ("foo") does not match
-     * class="foobar"
-     *
-     * @param element
-     * @param className
-     * @return
-     */
-    protected boolean hasCssClass(WebElement element, String className) {
-        String classes = element.getAttribute("class");
-        if (classes == null || classes.isEmpty()) {
-            return (className == null || className.isEmpty());
-        }
-
-        for (String cls : classes.split(" ")) {
-            if (className.equals(cls)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * For tests extending {@link AbstractTestUIWithLog}, returns the element
-     * for the Nth log row
-     *
-     * @param rowNr
-     *            The log row to retrieve
-     * @return the Nth log row
-     */
-    protected WebElement getLogRowElement(int rowNr) {
-        return vaadinElementById("Log_row_" + rowNr);
-    }
-
-    /**
-     * For tests extending {@link AbstractTestUIWithLog}, returns the text in
-     * the Nth log row
-     *
-     * @param rowNr
-     *            The log row to retrieve text for
-     * @return the text in the log row
-     */
-    protected String getLogRow(int rowNr) {
-        return getLogRowElement(rowNr).getText();
     }
 
     /**
@@ -424,8 +270,8 @@ public abstract class AbstractTB3Test extends ParallelTest {
      * @throws AssertionError
      *             If comparison fails
      */
-    public static final <T> void assertLessThan(String message,
-            Comparable<T> a, T b) throws AssertionError {
+    public static final <T> void assertLessThan(String message, Comparable<T> a,
+            T b) throws AssertionError {
         if (a.compareTo(b) < 0) {
             return;
         }
@@ -450,141 +296,7 @@ public abstract class AbstractTB3Test extends ParallelTest {
      * @return The URL path to the UI class to test
      */
     protected String getDeploymentPath() {
-        Class<?> uiClass = getUIClass();
-        if (uiClass != null) {
-            return getDeploymentPath(uiClass);
-        }
-        throw new IllegalArgumentException("Unable to determine path for "
-                + getClass().getCanonicalName());
-
-    }
-
-    /**
-     * Returns the UI class the current test is connected to (or in special
-     * cases UIProvider or LegacyApplication). Uses the enclosing class if the
-     * test class is a static inner class to a UI class.
-     *
-     * Test which are not enclosed by a UI class must implement this method and
-     * return the UI class they want to test.
-     *
-     * Note that this method will update the test name to the enclosing class to
-     * be compatible with TB2 screenshot naming
-     *
-     * @return the UI class the current test is connected to
-     */
-    protected Class<?> getUIClass() {
-        try {
-            // Convention: SomeUI UI class is used by SomeUITest
-            // or SomeUIIT (IT-integration test)
-            String testUIpackage = "com.vaadin.testUI";
-            String uiClassName = "";
-            if (getClass().getSimpleName().endsWith("Test")) {
-                uiClassName = getClass().getSimpleName().replaceFirst("Test$",
-                        "");
-            } else if (getClass().getSimpleName().endsWith("IT")) {
-                uiClassName = getClass().getSimpleName()
-                        .replaceFirst("IT$", "");
-            }
-            Class<?> cls = Class.forName(testUIpackage + "." + uiClassName);
-            if (isSupportedRunnerClass(cls)) {
-                return cls;
-            }
-        } catch (Exception e) {
-        }
-        throw new RuntimeException(
-                "Could not determine UI class. Ensure the test is named UIClassTest and is in the same package as the UIClass");
-    }
-
-    /**
-     * @return true if the given class is supported by ApplicationServletRunner
-     */
-    @SuppressWarnings("deprecation")
-    private boolean isSupportedRunnerClass(Class<?> cls) {
-        if (UI.class.isAssignableFrom(cls)) {
-            return true;
-        }
-        if (UIProvider.class.isAssignableFrom(cls)) {
-            return true;
-        }
-        if (LegacyApplication.class.isAssignableFrom(cls)) {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Returns whether to run the test in debug mode (with the debug console
-     * open) or not
-     *
-     * @return true to run with the debug window open, false by default
-     */
-    protected final boolean isDebug() {
-        return debug;
-    }
-
-    /**
-     * Sets whether to run the test in debug mode (with the debug console open)
-     * or not.
-     *
-     * @param debug
-     *            true to open debug window, false otherwise
-     */
-    protected final void setDebug(boolean debug) {
-        this.debug = debug;
-    }
-
-    /**
-     * Returns whether to run the test with push enabled (using /run-push) or
-     * not. Note that push tests can and should typically be created using @Push
-     * on the UI instead of overriding this method
-     *
-     * @return true if /run-push is used, false otherwise
-     */
-    protected final boolean isPush() {
-        return push;
-    }
-
-    /**
-     * Sets whether to run the test with push enabled (using /run-push) or not.
-     * Note that push tests can and should typically be created using @Push on
-     * the UI instead of overriding this method
-     *
-     * @param push
-     *            true to use /run-push in the test, false otherwise
-     */
-    protected final void setPush(boolean push) {
-        this.push = push;
-    }
-
-    /**
-     * Returns the path for the given UI class when deployed on the test server.
-     * The path contains the full path (appended to hostname+port) and must
-     * start with a slash.
-     *
-     * This method takes into account {@link #isPush()} and {@link #isDebug()}
-     * when the path is generated.
-     *
-     * @param uiClass
-     * @param push
-     *            true if "?debug" should be added
-     * @param debug
-     *            true if /run-push should be used instead of /run
-     * @return The path to the given UI class
-     */
-    private String getDeploymentPath(Class<?> uiClass) {
-        String runPath = "";
-        if (UI.class.isAssignableFrom(uiClass)) {
-            return runPath + "/" + uiClass.getSimpleName()
-                    + (isDebug() ? "?debug" : "");
-        } else if (LegacyApplication.class.isAssignableFrom(uiClass)) {
-            return runPath + "/" + uiClass.getSimpleName()
-                    + "?restartApplication" + (isDebug() ? "&debug" : "");
-        } else {
-            throw new IllegalArgumentException(
-                    "Unable to determine path for enclosing class "
-                            + uiClass.getCanonicalName());
-        }
+        return "/" + getTestView().getSimpleName();
     }
 
     /**
@@ -594,27 +306,6 @@ public abstract class AbstractTB3Test extends ParallelTest {
      */
     protected String getBaseURL() {
         return "http://" + getDeploymentHostname() + ":" + getDeploymentPort();
-    }
-
-    /**
-     * Generates the application id based on the URL in a way compatible with
-     * VaadinServletService.
-     *
-     * @param pathWithQueryParameters
-     *            The path part of the URL, possibly still containing query
-     *            parameters
-     * @return The application ID string used in Vaadin locators
-     */
-    private String getApplicationId(String pathWithQueryParameters) {
-        // Remove any possible URL parameters
-        String pathWithoutQueryParameters = pathWithQueryParameters.replaceAll(
-                "\\?.*", "");
-        if ("".equals(pathWithoutQueryParameters)) {
-            return "ROOT";
-        }
-
-        // Retain only a-z and numbers
-        return pathWithoutQueryParameters.replaceAll("[^a-zA-Z0-9]", "");
     }
 
     /**
@@ -652,13 +343,6 @@ public abstract class AbstractTB3Test extends ParallelTest {
      */
     public Keyboard getKeyboard() {
         return ((HasInputDevices) getDriver()).getKeyboard();
-    }
-
-    protected void openDebugLogTab() {
-        WebElement debugLogButton = waitUntil(
-                ExpectedConditions.presenceOfElementLocated(
-                By.xpath("//button[@title='Debug message log']")), 15);
-        debugLogButton.click();
     }
 
     /**
@@ -746,8 +430,11 @@ public abstract class AbstractTB3Test extends ParallelTest {
         InputStream contents = resp.getEntity().getContent();
         StringWriter writer = new StringWriter();
         IOUtils.copy(contents, writer, "UTF8");
-        JsonObject objToReturn = new JsonParser().parse(writer.toString()).getAsJsonObject();
+        JsonObject objToReturn = new JsonParser().parse(writer.toString())
+                .getAsJsonObject();
         return objToReturn;
     }
+
+    protected abstract Class<? extends Component> getTestView();
 
 }

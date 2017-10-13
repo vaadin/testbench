@@ -46,7 +46,6 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import com.vaadin.testbench.By.ByVaadin;
 import com.vaadin.testbench.commands.CanCompareScreenshots;
 import com.vaadin.testbench.commands.CanWaitForVaadin;
 import com.vaadin.testbench.commands.ScreenshotComparator;
@@ -283,23 +282,13 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
 
     @Override
     public List<WebElement> findElements(By by) {
-        List<WebElement> elements = new ArrayList<>();
-        if (by instanceof ByVaadin) {
-            elements.addAll(
-                    wrapElements(by.findElements(this), getCommandExecutor()));
-        } else {
-            elements.addAll(wrapElements(actualElement.findElements(by),
-                    getCommandExecutor()));
-        }
-        return elements;
+        return (List) TestBenchElement.wrapElements(
+                actualElement.findElements(by), getCommandExecutor());
     }
 
     @Override
     public TestBenchElement findElement(By by) {
         waitForVaadin();
-        if (by instanceof ByVaadin) {
-            return wrapElement(by.findElement(this), getCommandExecutor());
-        }
         return wrapElement(actualElement.findElement(by), getCommandExecutor());
     }
 
