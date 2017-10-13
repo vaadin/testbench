@@ -16,7 +16,8 @@
     <properties>
         <snapshot.repository.url>https://oss.sonatype.org/content/repositories/vaadin-snapshots/
         </snapshot.repository.url>
-        <vaadin.testbench.api.version>8.0-SNAPSHOT</vaadin.testbench.api.version>
+        <vaadin.testbench.api.version>8.1.0</vaadin.testbench.api.version>
+        <vaadin.version>8.1.0</vaadin.version>
         <jetty.version>9.3.12.v20160915</jetty.version>
     </properties>
     <repositories>
