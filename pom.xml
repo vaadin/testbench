@@ -50,17 +50,13 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <vaadin.version>8.0.0</vaadin.version>
-        <vaadin.testbench.api.version>${vaadin.version}</vaadin.testbench.api.version>
         <snapshot.repository.url>https://oss.sonatype.org/content/repositories/vaadin-snapshots/
         </snapshot.repository.url>
         <Implementation-Version>${project.version}</Implementation-Version>
     </properties>
     <modules>
         <module>vaadin-testbench</module>
-        <module>vaadin-testbench-core</module>
         <module>vaadin-testbench-standalone</module>
-        <module>vaadin-testbench-assembly</module>
         <module>vaadin-testbench-integration-tests</module>
     </modules>
 
