@@ -23,7 +23,6 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.ie.InternetExplorerDriver;
-import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.safari.SafariDriver;
 
@@ -49,7 +48,8 @@ public class LocalDriver {
      * Creates a {@link WebDriver} instance used for running the test locally
      * for debug purposes.
      */
-    static public WebDriver createDriver(DesiredCapabilities desiredCapabilities) {
+    static public WebDriver createDriver(
+            DesiredCapabilities desiredCapabilities) {
         WebDriver driver;
         if (BrowserUtil.isFirefox(desiredCapabilities)) {
             String firefoxPath = System.getProperty("firefox.path");
@@ -68,15 +68,14 @@ public class LocalDriver {
             driver = new FirefoxDriver(options);
         } else if (BrowserUtil.isChrome(desiredCapabilities)) {
             // Tells chrome not to show warning
-            // "You are using an unsupported command-line flag: --ignore-certifcate-errors".
+            // "You are using an unsupported command-line flag:
+            // --ignore-certifcate-errors".
             // #14319
             ChromeOptions options = new ChromeOptions();
             options.addArguments("--test-type ");
             driver = new ChromeDriver(options);
         } else if (BrowserUtil.isSafari(desiredCapabilities)) {
             driver = new SafariDriver();
-        } else if (BrowserUtil.isPhantomJS(desiredCapabilities)) {
-            driver = new PhantomJSDriver();
         } else if (BrowserUtil.isEdge(desiredCapabilities)) {
             driver = new EdgeDriver();
         } else if (BrowserUtil.isIE(desiredCapabilities)) {

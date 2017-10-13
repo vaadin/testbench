@@ -46,7 +46,6 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import com.vaadin.testbench.By.ByVaadin;
 import com.vaadin.testbench.commands.CanCompareScreenshots;
 import com.vaadin.testbench.commands.CanWaitForVaadin;
 import com.vaadin.testbench.commands.ScreenshotComparator;
@@ -96,16 +95,6 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
             actualElement = element;
             init();
         }
-    }
-
-    /**
-     * Checks if the current test is running on PhantomJS.
-     *
-     * @return <code>true</code> if the test is running on PhantomJS,
-     *         <code>false</code> otherwise
-     */
-    protected boolean isPhantomJS() {
-        return BrowserUtil.isPhantomJS(getCapabilities());
     }
 
     /**
@@ -283,23 +272,13 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
 
     @Override
     public List<WebElement> findElements(By by) {
-        List<WebElement> elements = new ArrayList<>();
-        if (by instanceof ByVaadin) {
-            elements.addAll(
-                    wrapElements(by.findElements(this), getCommandExecutor()));
-        } else {
-            elements.addAll(wrapElements(actualElement.findElements(by),
-                    getCommandExecutor()));
-        }
-        return elements;
+        return (List) TestBenchElement.wrapElements(
+                actualElement.findElements(by), getCommandExecutor());
     }
 
     @Override
     public TestBenchElement findElement(By by) {
         waitForVaadin();
-        if (by instanceof ByVaadin) {
-            return wrapElement(by.findElement(this), getCommandExecutor());
-        }
         return wrapElement(actualElement.findElement(by), getCommandExecutor());
     }
 
@@ -359,16 +338,12 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
         autoScrollIntoView();
         waitForVaadin();
         new Actions(getDriver()).doubleClick(actualElement).build().perform();
-        // Wait till vaadin component will process the event. Without it may
-        // cause problems with phantomjs
     }
 
     public void contextClick() {
         autoScrollIntoView();
         waitForVaadin();
         new Actions(getDriver()).contextClick(actualElement).build().perform();
-        // Wait till vaadin component will process the event. Without it may
-        // cause problems with phantomjs
     }
 
     @Override

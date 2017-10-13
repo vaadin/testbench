@@ -12,14 +12,15 @@
  */
 package com.vaadin.testbench.screenshot;
 
-import com.vaadin.testbench.testutils.ImageLoader;
-import org.junit.Test;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import org.junit.Test;
+
+import com.vaadin.testbench.testutils.ImageLoader;
 
 public class ScreenshotMaskingTest {
     private static final String FOLDER = ScreenshotMaskingTest.class

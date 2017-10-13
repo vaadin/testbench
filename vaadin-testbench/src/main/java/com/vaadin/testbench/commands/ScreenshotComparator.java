@@ -20,7 +20,6 @@ import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 
 import com.vaadin.testbench.Parameters;
-import com.vaadin.testbench.parallel.BrowserUtil;
 import com.vaadin.testbench.screenshot.ImageComparison;
 import com.vaadin.testbench.screenshot.ImageFileUtil;
 import com.vaadin.testbench.screenshot.ReferenceNameGenerator;
@@ -70,25 +69,19 @@ public class ScreenshotComparator {
         boolean elementScreenshot = (screenshotContext instanceof WebElement);
 
         if (elementScreenshot && supportsElementScreenshots == null) {
-            if (BrowserUtil.isPhantomJS(capabilities)) {
-                // PhantomJS will die if you try to detect this...
+            // Detect if the driver supports element screenshots or not
+            try {
+                byte[] screenshotBytes = screenshotContext
+                        .getScreenshotAs(OutputType.BYTES);
+                supportsElementScreenshots = true;
+                return ImageIO.read(new ByteArrayInputStream(screenshotBytes));
+            } catch (UnsupportedCommandException e) {
                 supportsElementScreenshots = false;
-            } else {
-                // Detect if the driver supports element screenshots or not
-                try {
-                    byte[] screenshotBytes = screenshotContext
-                            .getScreenshotAs(OutputType.BYTES);
-                    supportsElementScreenshots = true;
-                    return ImageIO
-                            .read(new ByteArrayInputStream(screenshotBytes));
-                } catch (UnsupportedCommandException e) {
+            } catch (WebDriverException e) {
+                if (e.getCause() instanceof UnsupportedCommandException) {
                     supportsElementScreenshots = false;
-                } catch (WebDriverException e) {
-                    if (e.getCause() instanceof UnsupportedCommandException) {
-                        supportsElementScreenshots = false;
-                    } else {
-                        throw e;
-                    }
+                } else {
+                    throw e;
                 }
             }
         }
@@ -98,8 +91,7 @@ public class ScreenshotComparator {
             // and crop
             BufferedImage image = ImageIO.read(new ByteArrayInputStream(
                     driver.getScreenshotAs(OutputType.BYTES)));
-            return cropToElement((WebElement) screenshotContext, image,
-                    BrowserUtil.isIE8(capabilities));
+            return cropToElement((WebElement) screenshotContext, image);
         } else {
             // Element or full screen image
             return ImageIO.read(new ByteArrayInputStream(
@@ -115,24 +107,17 @@ public class ScreenshotComparator {
      *            the element to retain in the screenshot
      * @param fullScreen
      *            the full screen image
-     * @param isIE8
-     *            true if the browser is IE8
      * @return
      * @throws IOException
      */
     public static BufferedImage cropToElement(WebElement element,
-            BufferedImage fullScreen, boolean isIE8) throws IOException {
+            BufferedImage fullScreen) throws IOException {
         Point loc = element.getLocation();
         Dimension size = element.getSize();
         int x = loc.x, y = loc.y;
         int w = size.width;
         int h = size.height;
 
-        if (isIE8) {
-            // IE8 border...
-            x += 2;
-            y += 2;
-        }
         if (x >= 0 && x < fullScreen.getWidth()) {
             // X loc on screen
             // Get the part of the element which is on screen
