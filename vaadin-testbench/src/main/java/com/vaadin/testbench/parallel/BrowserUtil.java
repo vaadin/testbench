@@ -59,39 +59,6 @@ public class BrowserUtil {
     }
 
     /**
-     * Gets the capabilities for Internet Explorer 8
-     *
-     * @return an object describing the capabilities required for running a test
-     *         on Internet Explorer 8
-     */
-    public static DesiredCapabilities ie8() {
-        DesiredCapabilities c = browserFactory.create(Browser.IE8);
-        return c;
-    }
-
-    /**
-     * Gets the capabilities for Internet Explorer 9
-     *
-     * @return an object describing the capabilities required for running a test
-     *         on Internet Explorer 9
-     */
-    public static DesiredCapabilities ie9() {
-        DesiredCapabilities c = browserFactory.create(Browser.IE9);
-        return c;
-    }
-
-    /**
-     * Gets the capabilities for Internet Explorer 10
-     *
-     * @return an object describing the capabilities required for running a test
-     *         on Internet Explorer 10
-     */
-    public static DesiredCapabilities ie10() {
-        DesiredCapabilities c = browserFactory.create(Browser.IE10);
-        return c;
-    }
-
-    /**
      * Gets the capabilities for Internet Explorer 11
      *
      * @return an object describing the capabilities required for running a test
