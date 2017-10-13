@@ -4,7 +4,6 @@ import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 
-import com.vaadin.testbench.RetryRule;
 import com.vaadin.testbench.testutils.ParentRetryRule;
 
 public class ParentRetryRuleTest extends ParentRetryRule {

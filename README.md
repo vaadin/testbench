@@ -12,7 +12,7 @@ Official releases of this add-on are available at http://vaadin.com/addon/vaadin
     cd testbench
     mvn clean install
     
-    Activate profiles : start-jetty-for-it and verify-only-phantom
+    Activate profiles : start-jetty-for-it and validation
 
 ## Issue tracking & Contributions
 

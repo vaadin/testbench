@@ -68,17 +68,19 @@
                                 <index>true</index>
                                 <manifest>
                                     <addClasspath>true</addClasspath>
-                                    <!-- Implementation-Title and Implementation-Version come from the
-                                        POM by default -->
+                                    <!-- Implementation-Title and Implementation-Version 
+                                        come from the POM by default -->
                                     <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                                 </manifest>
                                 <manifestEntries>
-                                    <!-- Package format version - do not change -->
+                                    <!-- Package format version - do not 
+                                        change -->
                                     <Vaadin-Package-Version>1</Vaadin-Package-Version>
                                 </manifestEntries>
                             </archive>
                             <excludes>
-                                <!-- Remove resources included due to gwt compilation -->
+                                <!-- Remove resources included due to gwt 
+                                    compilation -->
                                 <exclude>**/demoandtestapp/*</exclude>
                             </excludes>
                         </configuration>
@@ -177,10 +179,6 @@
     </build>
 
     <dependencies>
-        <!-- specify version numbers for selenium-server and
-             selenium-remote-driver in order to override the
-             old version numbers specified by phantomjsdriver
-        -->
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-server</artifactId>
@@ -195,11 +193,6 @@
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
             <version>${selenium.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.codeborne</groupId>
-            <artifactId>phantomjsdriver</artifactId>
-            <version>1.4.3</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

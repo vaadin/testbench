@@ -14,7 +14,7 @@
  * the License.
  */
 
-package com.vaadin.tests.elements;
+package com.vaadin.tests;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -62,7 +62,6 @@ public abstract class MultiBrowserTest extends PrivateTB3Configuration {
             allBrowsers.add(BrowserUtil.ie11());
             allBrowsers.add(BrowserUtil.firefox());
             allBrowsers.add(BrowserUtil.chrome());
-            allBrowsers.add(BrowserUtil.phantomJS());
         }
         return Collections.unmodifiableList(allBrowsers);
     }
