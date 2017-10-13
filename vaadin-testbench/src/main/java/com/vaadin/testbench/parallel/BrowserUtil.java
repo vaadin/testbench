@@ -59,39 +59,6 @@ public class BrowserUtil {
     }
 
     /**
-     * Gets the capabilities for Internet Explorer 8
-     *
-     * @return an object describing the capabilities required for running a test
-     *         on Internet Explorer 8
-     */
-    public static DesiredCapabilities ie8() {
-        DesiredCapabilities c = browserFactory.create(Browser.IE8);
-        return c;
-    }
-
-    /**
-     * Gets the capabilities for Internet Explorer 9
-     *
-     * @return an object describing the capabilities required for running a test
-     *         on Internet Explorer 9
-     */
-    public static DesiredCapabilities ie9() {
-        DesiredCapabilities c = browserFactory.create(Browser.IE9);
-        return c;
-    }
-
-    /**
-     * Gets the capabilities for Internet Explorer 10
-     *
-     * @return an object describing the capabilities required for running a test
-     *         on Internet Explorer 10
-     */
-    public static DesiredCapabilities ie10() {
-        DesiredCapabilities c = browserFactory.create(Browser.IE10);
-        return c;
-    }
-
-    /**
      * Gets the capabilities for Internet Explorer 11
      *
      * @return an object describing the capabilities required for running a test
@@ -111,30 +78,6 @@ public class BrowserUtil {
     public static DesiredCapabilities edge() {
         DesiredCapabilities c = browserFactory.create(Browser.EDGE);
         return c;
-    }
-
-    /**
-     * Gets the capabilities for PhantomJS
-     *
-     * @return an object describing the capabilities required for running a test
-     *         on PhantomJS
-     */
-    public static DesiredCapabilities phantomJS() {
-        DesiredCapabilities c = browserFactory.create(Browser.PHANTOMJS);
-        return c;
-    }
-
-    /**
-     * Checks if the given capabilities refer to Internet Explorer 8
-     *
-     * @param capabilities
-     * @return true if the capabilities refer to IE8, false otherwise
-     */
-    public static boolean isIE8(Capabilities capabilities) {
-        if (capabilities == null) {
-            return false;
-        }
-        return isIE(capabilities, 8);
     }
 
     /**
@@ -215,18 +158,6 @@ public class BrowserUtil {
     }
 
     /**
-     * @param capabilities
-     *            The capabilities to check
-     * @return true if the capabilities refer to PhantomJS, false otherwise
-     */
-    public static boolean isPhantomJS(Capabilities capabilities) {
-        if (capabilities == null) {
-            return false;
-        }
-        return BrowserType.PHANTOMJS.equals(capabilities.getBrowserName());
-    }
-
-    /**
      * Returns a human readable identifier of the given browser. Used for test
      * naming and screenshots
      *
@@ -242,8 +173,6 @@ public class BrowserUtil {
             return "Chrome";
         } else if (isSafari(capabilities)) {
             return "Safari";
-        } else if (isPhantomJS(capabilities)) {
-            return "PhantomJS";
         } else if (isEdge(capabilities)) {
             return "Edge";
         } else if (capabilities == null) {

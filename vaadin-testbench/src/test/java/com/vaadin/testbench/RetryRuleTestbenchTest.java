@@ -3,8 +3,6 @@ package com.vaadin.testbench;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.vaadin.testbench.TestBenchTestCase;
-
 
 public class RetryRuleTestbenchTest extends TestBenchTestCase {
 

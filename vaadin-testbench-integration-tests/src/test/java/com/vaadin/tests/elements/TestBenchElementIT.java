@@ -1,26 +1,31 @@
 package com.vaadin.tests.elements;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
-import com.vaadin.testUI.ElementQueryUI;
-import com.vaadin.testbench.By;
+import com.vaadin.testUI.ElementQueryView;
 import com.vaadin.testbench.TestBenchElement;
+import com.vaadin.tests.MultiBrowserTest;
+import com.vaadin.ui.Component;
 
 public class TestBenchElementIT extends MultiBrowserTest {
 
+    private TestBenchElement buttonElement;
+
     @Override
-    protected Class<?> getUIClass() {
-        return ElementQueryUI.class;
+    protected Class<? extends Component> getTestView() {
+        return ElementQueryView.class;
+    }
+
+    @Before
+    public void openAndFindElement() {
+        openTestURL();
+        buttonElement = $(NativeButtonElement.class).first();
     }
 
     @Test
     public void getSetStringProperty() {
-        openTestURL();
-
-        TestBenchElement buttonElement = (TestBenchElement) findElements(
-                By.className("v-button")).get(0);
-
         Assert.assertNull(buttonElement.getPropertyString("foo"));
         buttonElement.setProperty("foo", "12");
         Assert.assertEquals("12", buttonElement.getPropertyString("foo"));
@@ -30,11 +35,6 @@ public class TestBenchElementIT extends MultiBrowserTest {
 
     @Test
     public void getSetBooleanProperty() {
-        openTestURL();
-
-        TestBenchElement buttonElement = (TestBenchElement) findElements(
-                By.className("v-button")).get(0);
-
         Assert.assertNull(buttonElement.getPropertyBoolean("foo"));
         buttonElement.setProperty("foo", true);
         Assert.assertEquals("true", buttonElement.getPropertyString("foo"));
@@ -44,11 +44,6 @@ public class TestBenchElementIT extends MultiBrowserTest {
 
     @Test
     public void getSetDoubleProperty() {
-        openTestURL();
-
-        TestBenchElement buttonElement = (TestBenchElement) findElements(
-                By.className("v-button")).get(0);
-
         Assert.assertNull(buttonElement.getPropertyDouble("foo"));
         buttonElement.setProperty("foo", 12.5);
         Assert.assertEquals("12.5", buttonElement.getPropertyString("foo"));

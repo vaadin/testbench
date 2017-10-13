@@ -19,12 +19,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javassist.util.proxy.MethodHandler;
-
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-
 import com.vaadin.testbench.commands.CanWaitForVaadin;
+
+import javassist.util.proxy.MethodHandler;
 
 public class DriverInvocationHandler implements MethodHandler {
 

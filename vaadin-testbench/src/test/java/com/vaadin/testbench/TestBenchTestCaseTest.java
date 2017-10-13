@@ -19,6 +19,7 @@ import java.util.ArrayList;
 
 import org.easymock.EasyMock;
 import org.junit.Test;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
@@ -27,7 +28,7 @@ public class TestBenchTestCaseTest extends TestBenchTestCase {
     private WebDriver mockWebDriverFindElements(boolean empty) {
         WebDriver driver = EasyMock.createNiceMock(WebDriver.class);
 
-        ArrayList<WebElement> result = new ArrayList<WebElement>();
+        ArrayList<WebElement> result = new ArrayList<>();
         if (!empty) {
             result.add(EasyMock.createNiceMock(WebElement.class));
         }
