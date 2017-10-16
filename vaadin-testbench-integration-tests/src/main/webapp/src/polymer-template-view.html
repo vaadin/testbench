@@ -1,0 +1,27 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+
+<dom-module id="polymer-template-view">
+    <template>
+        <div>
+            <button id="shadow-button-1">Shadow Button 1</button>
+        </div>
+        <slot></slot>
+        <div>
+            <button id="shadow-button-2">Shadow Button 2</button>
+        </div>
+        <slot name="special-slot"></slot>
+        <div>
+            <button id="special-button">Special Button (in Shadow DOM)</button>
+        </div>
+    </template>
+
+    <script>
+        class PolymerTemplateView extends Polymer.Element {
+            static get is() {
+                return 'polymer-template-view';
+            }
+        }
+
+        window.customElements.define(PolymerTemplateView.is, PolymerTemplateView);
+    </script>
+</dom-module>

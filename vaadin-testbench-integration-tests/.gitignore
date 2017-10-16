@@ -1,0 +1,28 @@
+# Maven files
+target/
+
+# Eclipse files
+.project
+.settings
+.classpath
+
+# IDEA files
+.idea
+*.iml
+
+# Testing
+.driver
+error-screenshots
+selenium_standalone_zips
+
+# macOs
+.DS_Store
+
+# Frontend
+/build-tools/bin/
+/src/main/webapp/bower_components/
+/src/main/webapp/build/
+/build-tools/etc/
+/build-tools/lib/
+/build-tools/node/
+/build-tools/node_modules/

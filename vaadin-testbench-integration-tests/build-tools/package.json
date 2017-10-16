@@ -1,0 +1,17 @@
+{
+  "name": "vaadin-testbench-integration-tests",
+  "description": "A reference application for the TestBench integration tests.",
+  "version": "1.0.0",
+  "license": "SEE LICENSE IN http://vaadin.com/license/cval-3",
+  "author": "Vaadin Ltd",
+  "devDependencies": {
+    "bower": "1.8.2",
+    "polymer-cli": "1.4.1"
+  },
+  "scripts": {
+    "start": "cd ../src/main/webapp && polymer serve",
+    "install": "cd ../src/main/webapp && bower install",
+    "build": "cd ../src/main/webapp && polymer build",
+    "skip-build": "echo \"skipping polymer build\""
+  }
+}
