@@ -29,10 +29,9 @@ import com.vaadin.testbench.elementsbase.Element;
 
 public class ElementQueryTest {
 
-    private static final Object DOCUMENT_QUERY_ALL_SCRIPT = "return document.querySelectorAll(arguments[1]+arguments[2])";
-    private static final Object ELEMENT_QUERY_ALL_SCRIPT = "return arguments[0].shadowRoot.querySelectorAll(arguments[1]+arguments[2])";
-    private static final Object DOCUMENT_QUERY_GET_SCRIPT = "return document.querySelectorAll(arguments[1]+arguments[2])[0]";
-    private static final Object ELEMENT_QUERY_GET_SCRIPT = "return arguments[0].shadowRoot.querySelectorAll(arguments[1]+arguments[2])[0]";
+    private static final String DOCUMENT_QUERY_FRAGMENT = "document.querySelectorAll(arguments[1]+arguments[2])";
+    private static final String ELEMENT_QUERY_FRAGMENT = "arguments[0].shadowRoot.querySelectorAll(arguments[1]+arguments[2])";
+    private static final String SINGLE_RESULT_QUERY_SUFFIX = "[0]";
     private WebDriverWithJS mockDriver;
     private TestBenchElement exampleElement;
 
@@ -102,7 +101,8 @@ public class ElementQueryTest {
     public void findInDocument_allElements() {
         TestElementQuery<ExampleElement> query = createExampleDocumentQuery();
         query.all();
-        Assert.assertEquals(DOCUMENT_QUERY_ALL_SCRIPT, query.lastScript);
+        Assert.assertTrue("last query script contains DOCUMENT_QUERY_FRAGMENT",
+                query.lastScript.contains(DOCUMENT_QUERY_FRAGMENT));
         Assert.assertEquals("", query.lastAttributePairs);
         Assert.assertEquals(ExampleElement.TAG, query.lastTagName);
         Assert.assertNull(query.lastContext);
@@ -122,7 +122,8 @@ public class ElementQueryTest {
     public void findInElement_allElements() {
         TestElementQuery<ExampleElement> query = createExampleElementQuery();
         query.all();
-        Assert.assertEquals(ELEMENT_QUERY_ALL_SCRIPT, query.lastScript);
+        Assert.assertTrue("last query script contains ELEMENT_QUERY_FRAGMENT",
+                query.lastScript.contains(ELEMENT_QUERY_FRAGMENT));
         Assert.assertEquals("", query.lastAttributePairs);
         Assert.assertEquals(ExampleElement.TAG, query.lastTagName);
         Assert.assertSame(exampleElement, query.lastContext);
@@ -136,7 +137,10 @@ public class ElementQueryTest {
             Assert.fail("Search should fail as no element with the id exists");
         } catch (NoSuchElementException e) {
         }
-        Assert.assertEquals(ELEMENT_QUERY_GET_SCRIPT, query.lastScript);
+        Assert.assertTrue("last query script contains ELEMENT_QUERY_FRAGMENT",
+                query.lastScript.contains(ELEMENT_QUERY_FRAGMENT));
+        Assert.assertTrue("last query script end with SINGLE_RESULT_QUERY_SUFFIX",
+                query.lastScript.endsWith(SINGLE_RESULT_QUERY_SUFFIX));
         Assert.assertEquals("[id=the_id]", query.lastAttributePairs);
         Assert.assertEquals(ExampleElement.TAG, query.lastTagName);
         Assert.assertSame(exampleElement, query.lastContext);
@@ -150,7 +154,10 @@ public class ElementQueryTest {
             Assert.fail("Search should fail as no element with the id exists");
         } catch (NoSuchElementException e) {
         }
-        Assert.assertEquals(DOCUMENT_QUERY_GET_SCRIPT, query.lastScript);
+        Assert.assertTrue("last query script contains DOCUMENT_QUERY_FRAGMENT",
+                query.lastScript.contains(DOCUMENT_QUERY_FRAGMENT));
+        Assert.assertTrue("last query script end with SINGLE_RESULT_QUERY_SUFFIX",
+                query.lastScript.endsWith(SINGLE_RESULT_QUERY_SUFFIX));
         Assert.assertEquals("[id=the_id]", query.lastAttributePairs);
         Assert.assertEquals(ExampleElement.TAG, query.lastTagName);
         Assert.assertSame(null, query.lastContext);
@@ -164,7 +171,10 @@ public class ElementQueryTest {
             Assert.fail("Search should fail as no element with the id exists");
         } catch (NoSuchElementException e) {
         }
-        Assert.assertEquals(ELEMENT_QUERY_GET_SCRIPT, query.lastScript);
+        Assert.assertTrue("last query script contains ELEMENT_QUERY_FRAGMENT",
+                query.lastScript.contains(ELEMENT_QUERY_FRAGMENT));
+        Assert.assertTrue("last query script end with SINGLE_RESULT_QUERY_SUFFIX",
+                query.lastScript.endsWith(SINGLE_RESULT_QUERY_SUFFIX));
         Assert.assertEquals("[foo=bar]", query.lastAttributePairs);
         Assert.assertEquals(ExampleElement.TAG, query.lastTagName);
         Assert.assertSame(exampleElement, query.lastContext);
@@ -178,7 +188,10 @@ public class ElementQueryTest {
             Assert.fail("Search should fail as no element with the id exists");
         } catch (NoSuchElementException e) {
         }
-        Assert.assertEquals(DOCUMENT_QUERY_GET_SCRIPT, query.lastScript);
+        Assert.assertTrue("last query script contains DOCUMENT_QUERY_FRAGMENT",
+                query.lastScript.contains(DOCUMENT_QUERY_FRAGMENT));
+        Assert.assertTrue("last query script end with SINGLE_RESULT_QUERY_SUFFIX",
+                query.lastScript.endsWith(SINGLE_RESULT_QUERY_SUFFIX));
         Assert.assertEquals("[foo=bar]", query.lastAttributePairs);
         Assert.assertEquals(ExampleElement.TAG, query.lastTagName);
         Assert.assertSame(null, query.lastContext);
@@ -192,7 +205,10 @@ public class ElementQueryTest {
             Assert.fail("Search should fail as no element with the id exists");
         } catch (NoSuchElementException e) {
         }
-        Assert.assertEquals(ELEMENT_QUERY_GET_SCRIPT, query.lastScript);
+        Assert.assertTrue("last query script contains ELEMENT_QUERY_FRAGMENT",
+                query.lastScript.contains(ELEMENT_QUERY_FRAGMENT));
+        Assert.assertTrue("last query script end with SINGLE_RESULT_QUERY_SUFFIX",
+                query.lastScript.endsWith(SINGLE_RESULT_QUERY_SUFFIX));
         Assert.assertEquals("[foo=bar][das=boot]", query.lastAttributePairs);
         Assert.assertEquals(ExampleElement.TAG, query.lastTagName);
         Assert.assertSame(exampleElement, query.lastContext);
@@ -206,7 +222,10 @@ public class ElementQueryTest {
             Assert.fail("Search should fail as no element with the id exists");
         } catch (NoSuchElementException e) {
         }
-        Assert.assertEquals(DOCUMENT_QUERY_GET_SCRIPT, query.lastScript);
+        Assert.assertTrue("last query script contains DOCUMENT_QUERY_FRAGMENT",
+                query.lastScript.contains(DOCUMENT_QUERY_FRAGMENT));
+        Assert.assertTrue("last query script end with SINGLE_RESULT_QUERY_SUFFIX",
+                query.lastScript.endsWith(SINGLE_RESULT_QUERY_SUFFIX));
         Assert.assertEquals("[foo=bar][das=boot]", query.lastAttributePairs);
         Assert.assertEquals(ExampleElement.TAG, query.lastTagName);
         Assert.assertSame(null, query.lastContext);
@@ -220,7 +239,10 @@ public class ElementQueryTest {
             Assert.fail("Search should fail as no element with the id exists");
         } catch (NoSuchElementException e) {
         }
-        Assert.assertEquals(ELEMENT_QUERY_GET_SCRIPT, query.lastScript);
+        Assert.assertTrue("last query script contains ELEMENT_QUERY_FRAGMENT",
+                query.lastScript.contains(ELEMENT_QUERY_FRAGMENT));
+        Assert.assertTrue("last query script end with SINGLE_RESULT_QUERY_SUFFIX",
+                query.lastScript.endsWith(SINGLE_RESULT_QUERY_SUFFIX));
         Assert.assertEquals("[foo=bar][das=boot][id=theid]",
                 query.lastAttributePairs);
         Assert.assertEquals(ExampleElement.TAG, query.lastTagName);
@@ -235,7 +257,10 @@ public class ElementQueryTest {
             Assert.fail("Search should fail as no element with the id exists");
         } catch (NoSuchElementException e) {
         }
-        Assert.assertEquals(DOCUMENT_QUERY_GET_SCRIPT, query.lastScript);
+        Assert.assertTrue("last query script contains DOCUMENT_QUERY_FRAGMENT",
+                query.lastScript.contains(DOCUMENT_QUERY_FRAGMENT));
+        Assert.assertTrue("last query script end with SINGLE_RESULT_QUERY_SUFFIX",
+                query.lastScript.endsWith(SINGLE_RESULT_QUERY_SUFFIX));
         Assert.assertEquals("[foo=bar][das=boot][id=theid]",
                 query.lastAttributePairs);
         Assert.assertEquals(ExampleElement.TAG, query.lastTagName);
@@ -250,7 +275,10 @@ public class ElementQueryTest {
             Assert.fail("Search should fail as no element with the id exists");
         } catch (NoSuchElementException e) {
         }
-        Assert.assertEquals(DOCUMENT_QUERY_GET_SCRIPT, query.lastScript);
+        Assert.assertTrue("last query script contains DOCUMENT_QUERY_FRAGMENT",
+                query.lastScript.contains(DOCUMENT_QUERY_FRAGMENT));
+        Assert.assertTrue("last query script end with SINGLE_RESULT_QUERY_SUFFIX",
+                query.lastScript.endsWith(SINGLE_RESULT_QUERY_SUFFIX));
         Assert.assertEquals("[id=theid]", query.lastAttributePairs);
         Assert.assertEquals(ExampleElement.TAG, query.lastTagName);
         Assert.assertSame(null, query.lastContext);

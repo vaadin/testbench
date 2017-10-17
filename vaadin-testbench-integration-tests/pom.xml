@@ -18,6 +18,12 @@
         <snapshot.repository.url>https://oss.sonatype.org/content/repositories/vaadin-snapshots/
         </snapshot.repository.url>
         <jetty.version>9.3.12.v20160915</jetty.version>
+
+        <!-- Frontend -->
+        <node.version>v8.1.2</node.version>
+        <yarn.version>v0.27.5</yarn.version>
+        <buildtools.directory>build-tools</buildtools.directory>
+        <frontend.directory>src/main/webapp</frontend.directory>
     </properties>
     <repositories>
         <repository>
@@ -71,6 +77,25 @@
                 <configuration>
                     <skip>true</skip>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.github.eirslett</groupId>
+                <artifactId>frontend-maven-plugin</artifactId>
+                <version>1.3</version>
+                <executions>
+                    <execution>
+                        <id>install-node-and-yarn</id>
+                        <goals>
+                            <goal>install-node-and-yarn</goal>
+                            <goal>yarn</goal> <!-- runs 'install' by default -->
+                        </goals>
+                        <configuration>
+                            <nodeVersion>${node.version}</nodeVersion>
+                            <yarnVersion>${yarn.version}</yarnVersion>
+                            <workingDirectory>${buildtools.directory}</workingDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
