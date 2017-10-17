@@ -33,7 +33,13 @@ import com.vaadin.testbench.elementsbase.Element;
  * <p>
  * The search context is either a {@link WebDriver} instance which searches
  * starting from the root of the current document, or a {@link WebElement}
- * instance, which searches inside the shadow root of the given element.
+ * instance, which searches both in the light DOM and inside the shadow root of
+ * the given element.
+ * <p>
+ * When the search context is a {@link WebElement}, the shadow root is searched
+ * first. E.g. when searching by ID and the same ID is used by a light DOM
+ * child of the element and also inside its shadow root, the element from the
+ * shadow root is returned.
  * <p>
  * The element class specified in the constructor defines the tag name which is
  * searched for an also the type of element returned.
@@ -241,7 +247,12 @@ public class ElementQuery<T extends TestBenchElement> {
         TestBenchElement elementContext;
         JavascriptExecutor executor;
         if (getContext() instanceof TestBenchElement) {
-            script = "return arguments[0].shadowRoot.querySelectorAll(arguments[1]+arguments[2])";
+            script = "var shadow = arguments[0].shadowRoot.querySelectorAll(arguments[1]+arguments[2]);" +
+                    "var light = arguments[0].querySelectorAll(arguments[1]+arguments[2]);" +
+                    "if (light.length > 0) {" +
+                        "return Array.prototype.slice.call(shadow).concat(Array.prototype.slice.call(light));" +
+                    "}" +
+                    "return shadow;";
             elementContext = (TestBenchElement) getContext();
             executor = elementContext.getCommandExecutor();
         } else if (getContext() instanceof WebDriver) {
