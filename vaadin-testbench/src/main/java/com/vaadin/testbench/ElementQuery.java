@@ -247,12 +247,12 @@ public class ElementQuery<T extends TestBenchElement> {
         TestBenchElement elementContext;
         JavascriptExecutor executor;
         if (getContext() instanceof TestBenchElement) {
-            script = "var shadow = arguments[0].shadowRoot.querySelectorAll(arguments[1]+arguments[2]);" +
+            script = "var result = arguments[0].shadowRoot.querySelectorAll(arguments[1]+arguments[2]);" +
                     "var light = arguments[0].querySelectorAll(arguments[1]+arguments[2]);" +
                     "if (light.length > 0) {" +
-                        "return Array.prototype.slice.call(shadow).concat(Array.prototype.slice.call(light));" +
+                        "result = Array.prototype.slice.call(result).concat(Array.prototype.slice.call(light));" +
                     "}" +
-                    "return shadow;";
+                    "return result";
             elementContext = (TestBenchElement) getContext();
             executor = elementContext.getCommandExecutor();
         } else if (getContext() instanceof WebDriver) {
