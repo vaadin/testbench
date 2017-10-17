@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.vaadin.tests.elements;
+package com.vaadin.tests;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,44 +33,17 @@ public class VaadinBrowserFactory extends DefaultBrowserFactory {
 
     private static Map<Browser, String> defaultBrowserVersion = new HashMap<Browser, String>();
     static {
-        defaultBrowserVersion.put(Browser.CHROME, "40");
-        defaultBrowserVersion.put(Browser.PHANTOMJS, "1");
+        defaultBrowserVersion.put(Browser.CHROME, "");
         defaultBrowserVersion.put(Browser.SAFARI, "7");
         defaultBrowserVersion.put(Browser.IE11, "11");
-        defaultBrowserVersion.put(Browser.FIREFOX, "45");
-    }
-
-    private static Map<Browser, Platform> defaultBrowserPlatform = new HashMap<Browser, Platform>();
-    static {
-        defaultBrowserPlatform.put(Browser.CHROME, Platform.VISTA);
-        defaultBrowserPlatform.put(Browser.PHANTOMJS, Platform.LINUX);
-        defaultBrowserPlatform.put(Browser.SAFARI, Platform.MAC);
-        defaultBrowserPlatform.put(Browser.IE11, Platform.WINDOWS);
-        defaultBrowserPlatform.put(Browser.FIREFOX, Platform.WINDOWS);
+        defaultBrowserVersion.put(Browser.FIREFOX, "");
     }
 
     @Override
     public DesiredCapabilities create(Browser browser, String version,
             Platform platform) {
-        final String PHANTOMJS_PATH_PROPERTY = "phantomjs.binary.path";
-        final String PHANTOMJS_PATH_VALUE = "/usr/bin/phantomjs2";
-        if (browser == Browser.PHANTOMJS) {
-            DesiredCapabilities phantom2 = super.create(browser, "2",
-                    Platform.LINUX);
-            // Hack for the test cluster
-            phantom2.setCapability(PHANTOMJS_PATH_PROPERTY,
-                PHANTOMJS_PATH_VALUE);
-            return phantom2;
-        }
-
         DesiredCapabilities desiredCapabilities = super.create(browser,
                 version, platform);
-
-        if (platform == Platform.ANY
-                && defaultBrowserPlatform.containsKey(browser)) {
-            desiredCapabilities
-                    .setPlatform(defaultBrowserPlatform.get(browser));
-        }
 
         if ("".equals(version) && defaultBrowserVersion.containsKey(browser)) {
             desiredCapabilities.setVersion(defaultBrowserVersion.get(browser));

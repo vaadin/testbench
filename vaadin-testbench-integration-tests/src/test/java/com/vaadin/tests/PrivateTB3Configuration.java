@@ -14,7 +14,7 @@
  * the License.
  */
 
-package com.vaadin.tests.elements;
+package com.vaadin.tests;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -37,7 +37,7 @@ import com.vaadin.testbench.annotations.RunOnHub;
  */
 
 @BrowserFactory(VaadinBrowserFactory.class)
-@RunOnHub("tb3-hub.intra.itmill.com")
+@RunOnHub
 public abstract class PrivateTB3Configuration extends AbstractTB3Test {
     private static final String HOSTNAME_PROPERTY = "deployment.hostname";
     private static final String PORT_PROPERTY = "deployment.port";
@@ -60,6 +60,14 @@ public abstract class PrivateTB3Configuration extends AbstractTB3Test {
                 throw new RuntimeException(e);
             }
         }
+    }
+
+    @Override
+    protected String getHubURL() {
+        String username = System.getenv("SAUCE_USERNAME");
+        String accessKey = System.getenv("SAUCE_ACCESS_KEY");
+
+        return "http://" + username + ":" + accessKey + "@localhost:4445/wd/hub";
     }
 
     public static String getProperty(String name) {

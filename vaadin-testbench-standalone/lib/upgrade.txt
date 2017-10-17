@@ -4,7 +4,6 @@ Upgrade steps (to check):
 - update selenium.version in vaadin-testbench-core/pom.xml and
   vaadin-testbench-standalone/pom.xml (dependency-reduced-pom.xml is generated
   from it)
-- update phantomjsdriver version in vaadin-testbench-core/pom.xml if necessary
 - Download selenium-server-standalone-VERSION.jar from http://docs.seleniumhq.org/download/
 - Rename selenium-server-standalone-VERSION.jar to selenium-standalone-VERSION.jar
 - Build the source jar (selenium-standalone-VERSION-sources.jar) for this selenium-server version:
