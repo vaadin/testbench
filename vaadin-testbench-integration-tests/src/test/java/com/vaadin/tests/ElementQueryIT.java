@@ -20,7 +20,7 @@ public class ElementQueryIT extends MultiBrowserTest {
     public void findLightDomElementById() throws Exception {
         openTestURL();
 
-        PolymerTemplateViewElement view = $(PolymerTemplateViewElement.class).waitForFirst();
+        PolymerTemplateViewElement view = $(PolymerTemplateViewElement.class).first();
         NativeButtonElement button = view.$(NativeButtonElement.class).id("light-button-1");
         Assert.assertEquals("Button 1", button.getText());
     }

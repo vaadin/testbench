@@ -10,7 +10,7 @@ import com.vaadin.ui.polymertemplate.PolymerTemplate;
 
 @Route("PolymerTemplateView")
 @Tag("polymer-template-view")
-@HtmlImport("context://src/polymer-template-view.html")
+@HtmlImport("/src/polymer-template-view.html")
 public class PolymerTemplateView extends PolymerTemplate<TemplateModel> {
 
     public PolymerTemplateView() {
