@@ -5,6 +5,7 @@ import com.vaadin.tests.elements.NativeButtonElement;
 import com.vaadin.tests.elements.PolymerTemplateViewElement;
 import com.vaadin.ui.Component;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.List;
@@ -16,6 +17,7 @@ public class ElementQueryIT extends MultiBrowserTest {
         return PolymerTemplateView.class;
     }
 
+    @Ignore("Needs production mode to work in IE")
     @Test
     public void findLightDomElementById() throws Exception {
         openTestURL();
@@ -25,6 +27,7 @@ public class ElementQueryIT extends MultiBrowserTest {
         Assert.assertEquals("Button 1", button.getText());
     }
 
+    @Ignore("Needs production mode to work in IE")
     @Test
     public void findShadowDomElementById() throws Exception {
         openTestURL();
@@ -34,6 +37,7 @@ public class ElementQueryIT extends MultiBrowserTest {
         Assert.assertEquals("Shadow Button 1", button.getText());
     }
 
+    @Ignore("Needs production mode to work in IE")
     @Test
     public void searchShadowDomBeforeLight() throws Exception {
         openTestURL();
@@ -43,6 +47,7 @@ public class ElementQueryIT extends MultiBrowserTest {
         Assert.assertEquals("Special Button (in Shadow DOM)", button.getText());
     }
 
+    @Ignore("Needs production mode to work in IE")
     @Test
     public void mergeLightAndShadowDomResults() throws Exception {
         openTestURL();
