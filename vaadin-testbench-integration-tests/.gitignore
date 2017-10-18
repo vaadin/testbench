@@ -14,6 +14,7 @@ target/
 .driver
 error-screenshots
 selenium_standalone_zips
+local.properties
 
 # macOs
 .DS_Store
