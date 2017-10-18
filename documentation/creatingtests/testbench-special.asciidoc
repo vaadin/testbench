@@ -49,6 +49,24 @@ You can re-enable the waiting with [methodname]#enableWaitForVaadin()# in the
 same interface.
 
 
+[[testbench.special.waituntil]]
+== Waiting Until a Condition is Met
+
+In addition to waiting for Vaadin, it is also possible to wait until a condition
+is met. This could, for example, be used to wait until an element is visible on
+the web page.
+
+
+----
+waitUntil(ExpectedConditions.presenceOfElementLocated(By.xpath("//button[@title='Debug message log']"));
+----
+
+The above waits until the specified element is present or times out after
+waiting for 10 seconds by default.
+
+`waitUntil(condition, timeout)` allows the timeout duration to be controlled.
+
+
 [[testbench.special.tooltip]]
 == Testing Tooltips
 
