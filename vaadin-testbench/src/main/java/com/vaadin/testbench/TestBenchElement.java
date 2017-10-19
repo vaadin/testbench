@@ -656,6 +656,17 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
         return createJsonValue(value).asNumber();
     }
 
+    /**
+     * Gets a JavaScript property of the given element as an integer.
+     *
+     * @param name
+     *            the name of the property
+     */
+    public Integer getPropertyInteger(String name) {
+        Double number = getPropertyDouble(name);
+        return (number == null) ? null : number.intValue();
+    }
+
     private void internalSetProperty(String name, Object value) {
         if ((isIE() || isFirefox()) && value instanceof Double) {
             // IE 11 fails with java.lang.NumberFormatException
