@@ -25,7 +25,7 @@
         </repository>
         <repository>
             <id>vaadin-addons</id>
-            <url>https://maven.vaadin.com/vaadin-addons</url>
+            <url>http://maven.vaadin.com/vaadin-addons</url>
         </repository>
     </repositories>
     <build>
