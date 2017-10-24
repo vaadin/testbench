@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.SearchContext;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -37,9 +38,9 @@ import com.vaadin.testbench.elementsbase.Element;
  * the given element.
  * <p>
  * When the search context is a {@link WebElement}, the shadow root is searched
- * first. E.g. when searching by ID and the same ID is used by a light DOM
- * child of the element and also inside its shadow root, the element from the
- * shadow root is returned.
+ * first. E.g. when searching by ID and the same ID is used by a light DOM child
+ * of the element and also inside its shadow root, the element from the shadow
+ * root is returned.
  * <p>
  * The element class specified in the constructor defines the tag name which is
  * searched for an also the type of element returned.
@@ -140,7 +141,7 @@ public class ElementQuery<T extends TestBenchElement> {
      * element is found or if 10 seconds has elapsed.
      *
      * @return The element of the type specified in the constructor
-     * @throws NoSuchElementException
+     * @throws TimeoutException
      *             if no element is found after 10 seconds has elapsed
      */
     public T waitForFirst() {
