@@ -67,7 +67,7 @@ public class TestBenchDriverTest {
         expect(mockDriver.getPageSource()).andReturn("<html></html>");
         expect(mockDriver.getTitle()).andReturn("bar");
         expect(mockDriver.getWindowHandle()).andReturn("baz");
-        Set<String> handles = new HashSet<String>();
+        Set<String> handles = new HashSet<>();
         expect(mockDriver.getWindowHandles()).andReturn(handles);
         Options mockOptions = createNiceMock(Options.class);
         expect(mockDriver.manage()).andReturn(mockOptions);
@@ -75,10 +75,8 @@ public class TestBenchDriverTest {
         expect(mockDriver.navigate()).andReturn(mockNavigation);
         mockDriver.quit();
         expectLastCall().once();
-        expect(
-                ((JavascriptExecutor) mockDriver)
-                        .executeScript(anyObject(String.class))).andStubReturn(
-                true);
+        expect(((JavascriptExecutor) mockDriver)
+                .executeScript(anyObject(String.class))).andStubReturn(true);
         TargetLocator mockTargetLocator = createNiceMock(TargetLocator.class);
         expect(mockDriver.switchTo()).andReturn(mockTargetLocator);
         replay(mockDriver);
@@ -87,8 +85,10 @@ public class TestBenchDriverTest {
         WebDriver driver = TestBench.createDriver(mockDriver);
         driver.close();
         By mockBy = createNiceMock(By.class);
-        assertTrue(driver.findElement(mockBy) instanceof TestBenchElementCommands);
-        assertTrue(driver.findElements(mockBy).get(0) instanceof TestBenchElementCommands);
+        assertTrue(
+                driver.findElement(mockBy) instanceof TestBenchElementCommands);
+        assertTrue(driver.findElements(mockBy)
+                .get(0) instanceof TestBenchElementCommands);
         driver.get("foo");
         assertEquals("foo", driver.getCurrentUrl());
         assertEquals("<html></html>", driver.getPageSource());
@@ -104,11 +104,11 @@ public class TestBenchDriverTest {
     }
 
     @Test
-    public void getWrappedDriver_returnsItself() {
+    public void getWrappedDriver_returnsParent() {
         WebDriver driverMock = createNiceMock(WebDriver.class);
         WebDriver driver = TestBench.createDriver(driverMock);
         WebDriver wrappedDriver = ((WrapsDriver) driver).getWrappedDriver();
-        assertEquals(driver, wrappedDriver);
+        assertEquals(driverMock, wrappedDriver);
     }
 
     @Test
@@ -119,9 +119,11 @@ public class TestBenchDriverTest {
 
         FirefoxDriver mockFF = createMock(FirefoxDriver.class);
         expect(mockFF.getCapabilities()).andReturn(mockCapabilities).anyTimes();
-        expect(mockFF.executeScript(contains("clients[client].isActive()"))).andReturn(true).once();
+        expect(mockFF.executeScript(contains("clients[client].isActive()")))
+                .andReturn(true).once();
         WebElement mockElement = createNiceMock(WebElement.class);
-        expect(mockFF.findElement(isA(By.class))).andReturn(mockElement).times(2);
+        expect(mockFF.findElement(isA(By.class))).andReturn(mockElement)
+                .times(2);
         replay(mockFF, mockElement, mockCapabilities);
 
         TestBenchDriverProxy tb = (TestBenchDriverProxy) TestBench

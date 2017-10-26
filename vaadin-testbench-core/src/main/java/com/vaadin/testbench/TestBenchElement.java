@@ -132,7 +132,7 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
     protected Capabilities getCapabilities() {
         WebDriver driver;
         if (getDriver() instanceof TestBenchDriverProxy) {
-            driver = ((TestBenchDriverProxy) getDriver()).getActualDriver();
+            driver = ((TestBenchDriverProxy) getDriver()).getWrappedDriver();
         } else {
             driver = getDriver();
         }
