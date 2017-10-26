@@ -64,10 +64,19 @@ public abstract class PrivateTB3Configuration extends AbstractTB3Test {
 
     @Override
     protected String getHubURL() {
-        String username = System.getenv("SAUCE_USERNAME");
-        String accessKey = System.getenv("SAUCE_ACCESS_KEY");
+        String username = System.getProperty("sauce.user");
+        String accessKey = System.getProperty("sauce.sauceAccessKey");
 
-        return "http://" + username + ":" + accessKey + "@localhost:4445/wd/hub";
+        if (username == null) {
+            throw new IllegalArgumentException(
+                    "You must give a Sauce Labs user name using -Dsauce.user=<username> or by adding sauce.user=<username> to local.properties");
+        }
+        if (accessKey == null) {
+            throw new IllegalArgumentException(
+                    "You must give a Sauce Labs access key using -Dsauce.sauceAccessKey=<accesskey> or by adding sauce.sauceAccessKey=<accesskey> to local.properties");
+        }
+        return "http://" + username + ":" + accessKey
+                + "@localhost:4445/wd/hub";
     }
 
     public static String getProperty(String name) {
