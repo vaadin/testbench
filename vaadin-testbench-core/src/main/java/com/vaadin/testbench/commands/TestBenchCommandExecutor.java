@@ -124,7 +124,7 @@ public class TestBenchCommandExecutor
 
     @Override
     public boolean compareScreen(String referenceId) throws IOException {
-        WebDriver driver = getWrappedDriver();
+        WebDriver driver = getDriver();
         return ScreenshotComparator.compareScreen(referenceId,
                 referenceNameGenerator, imageComparison,
                 (TakesScreenshot) driver, (HasCapabilities) driver);
@@ -132,7 +132,7 @@ public class TestBenchCommandExecutor
 
     @Override
     public boolean compareScreen(File reference) throws IOException {
-        WebDriver driver = getWrappedDriver();
+        WebDriver driver = getDriver();
         return ScreenshotComparator.compareScreen(reference, imageComparison,
                 (TakesScreenshot) driver, (HasCapabilities) driver);
 
@@ -141,7 +141,7 @@ public class TestBenchCommandExecutor
     @Override
     public boolean compareScreen(BufferedImage reference, String referenceName)
             throws IOException {
-        WebDriver driver = getWrappedDriver();
+        WebDriver driver = getDriver();
         return ScreenshotComparator.compareScreen(reference, referenceName,
                 imageComparison, (TakesScreenshot) driver,
                 (HasCapabilities) driver);
@@ -239,12 +239,22 @@ public class TestBenchCommandExecutor
     }
 
     /**
-     * Return a reference to the {@link WebDriver} instance associated with this
+     * Return a reference to the {@link WebDriver} instance wrapped by this
      * {@link TestBenchCommandExecutor}
      *
      * @return a WebDriver instance
      */
     public WebDriver getWrappedDriver() {
+        return actualDriver;
+    }
+
+    /**
+     * Return a reference to the {@link WebDriver} instance associated with this
+     * {@link TestBenchCommandExecutor}
+     *
+     * @return a WebDriver instance
+     */
+    public WebDriver getDriver() {
         return actualDriver;
     }
 
