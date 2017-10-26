@@ -12,7 +12,15 @@
  */
 package com.vaadin.testbench;
 
-import static org.easymock.EasyMock.*;
+import static org.easymock.EasyMock.anyObject;
+import static org.easymock.EasyMock.contains;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.createNiceMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.expectLastCall;
+import static org.easymock.EasyMock.isA;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -23,15 +31,18 @@ import java.util.Set;
 
 import org.junit.Ignore;
 import org.junit.Test;
-import org.openqa.selenium.*;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Capabilities;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriver.Navigation;
 import org.openqa.selenium.WebDriver.Options;
 import org.openqa.selenium.WebDriver.TargetLocator;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.internal.WrapsDriver;
 
-import com.vaadin.testbench.commands.TestBenchCommands;
 import com.vaadin.testbench.commands.TestBenchElementCommands;
 
 public class TestBenchDriverTest {
@@ -66,10 +77,8 @@ public class TestBenchDriverTest {
         expect(mockDriver.navigate()).andReturn(mockNavigation);
         mockDriver.quit();
         expectLastCall().once();
-        expect(
-                ((JavascriptExecutor) mockDriver)
-                        .executeScript(anyObject(String.class))).andStubReturn(
-                true);
+        expect(((JavascriptExecutor) mockDriver)
+                .executeScript(anyObject(String.class))).andStubReturn(true);
         TargetLocator mockTargetLocator = createNiceMock(TargetLocator.class);
         expect(mockDriver.switchTo()).andReturn(mockTargetLocator);
         replay(mockDriver);
@@ -78,8 +87,10 @@ public class TestBenchDriverTest {
         WebDriver driver = TestBench.createDriver(mockDriver);
         driver.close();
         By mockBy = createNiceMock(By.class);
-        assertTrue(driver.findElement(mockBy) instanceof TestBenchElementCommands);
-        assertTrue(driver.findElements(mockBy).get(0) instanceof TestBenchElementCommands);
+        assertTrue(
+                driver.findElement(mockBy) instanceof TestBenchElementCommands);
+        assertTrue(driver.findElements(mockBy)
+                .get(0) instanceof TestBenchElementCommands);
         driver.get("foo");
         assertEquals("foo", driver.getCurrentUrl());
         assertEquals("<html></html>", driver.getPageSource());
@@ -103,11 +114,11 @@ public class TestBenchDriverTest {
     }
 
     @Test
-    public void getWrappedDriver_returnsItself() {
+    public void getWrappedDriver_returnsParent() {
         WebDriver driverMock = createNiceMock(WebDriver.class);
         WebDriver driver = TestBench.createDriver(driverMock);
         WebDriver wrappedDriver = ((WrapsDriver) driver).getWrappedDriver();
-        assertEquals(driver, wrappedDriver);
+        assertEquals(driverMock, wrappedDriver);
     }
 
     @Test
@@ -118,9 +129,11 @@ public class TestBenchDriverTest {
 
         FirefoxDriver mockFF = createMock(FirefoxDriver.class);
         expect(mockFF.getCapabilities()).andReturn(mockCapabilities).anyTimes();
-        expect(mockFF.executeScript(contains("clients[client].isActive()"))).andReturn(true).once();
+        expect(mockFF.executeScript(contains("clients[client].isActive()")))
+                .andReturn(true).once();
         WebElement mockElement = createNiceMock(WebElement.class);
-        expect(mockFF.findElement(isA(By.class))).andReturn(mockElement).times(2);
+        expect(mockFF.findElement(isA(By.class))).andReturn(mockElement)
+                .times(2);
         replay(mockFF, mockElement, mockCapabilities);
 
         TestBenchDriverProxy tb = (TestBenchDriverProxy) TestBench
