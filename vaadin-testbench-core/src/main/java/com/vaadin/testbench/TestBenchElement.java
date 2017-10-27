@@ -110,7 +110,7 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
     public Capabilities getCapabilities() {
         WebDriver driver;
         if (getDriver() instanceof TestBenchDriverProxy) {
-            driver = ((TestBenchDriverProxy) getDriver()).getActualDriver();
+            driver = ((TestBenchDriverProxy) getDriver()).getWrappedDriver();
         } else {
             driver = getDriver();
         }
@@ -296,7 +296,7 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
     @Override
     public void click(int x, int y, Keys... modifiers) {
         waitForVaadin();
-        Actions actions = new Actions(getCommandExecutor().getWrappedDriver());
+        Actions actions = new Actions(getDriver());
         actions.moveToElement(actualElement, x, y);
         // Press any modifier keys
         for (Keys modifier : modifiers) {
@@ -337,7 +337,7 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
 
     @Override
     public WebDriver getDriver() {
-        return getCommandExecutor().getWrappedDriver();
+        return getCommandExecutor().getDriver();
     }
 
     /**
