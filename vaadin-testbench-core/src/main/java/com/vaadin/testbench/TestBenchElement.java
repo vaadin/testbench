@@ -167,8 +167,7 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
     @Override
     public void showTooltip() {
         waitForVaadin();
-        new Actions(getCommandExecutor().getWrappedDriver())
-                .moveToElement(actualElement).perform();
+        new Actions(getDriver()).moveToElement(actualElement).perform();
         // Wait for a small moment for the tooltip to appear
         try {
             Thread.sleep(1000); // VTooltip.OPEN_DELAY = 750;
@@ -331,7 +330,7 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
     public void click(int x, int y, Keys... modifiers) {
         autoScrollIntoView();
         waitForVaadin();
-        Actions actions = new Actions(getCommandExecutor().getWrappedDriver());
+        Actions actions = new Actions(getDriver());
         actions.moveToElement(actualElement, x, y);
         // Press any modifier keys
         for (Keys modifier : modifiers) {
@@ -374,7 +373,7 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
 
     @Override
     public WebDriver getDriver() {
-        return getCommandExecutor().getWrappedDriver();
+        return getCommandExecutor().getDriver();
     }
 
     /**
@@ -537,7 +536,7 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
      * <p>
      * Use e.g. as
      * <code>waitUntil(ExpectedConditions.presenceOfElementLocated(by), 10);</code>
-     * 
+     *
      * @param condition
      *            Models a condition that might reasonably be expected to
      *            eventually evaluate to something that is neither null nor
@@ -546,10 +545,10 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
      *            The timeout in seconds for the wait.
      * @return The condition's return value if it returned something different
      *         from null or false before the timeout expired.
-     * 
+     *
      * @throws TimeoutException
      *             If the timeout expires.
-     * 
+     *
      * @see FluentWait#until
      * @see ExpectedCondition
      */
@@ -565,17 +564,17 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
      * <p>
      * Use e.g. as
      * <code>waitUntil(ExpectedConditions.presenceOfElementLocated(by));</code>
-     * 
+     *
      * @param condition
      *            Models a condition that might reasonably be expected to
      *            eventually evaluate to something that is neither null nor
      *            false.
      * @return The condition's return value if it returned something different
      *         from null or false before the timeout expired.
-     * 
+     *
      * @throws TimeoutException
      *             If 10 seconds passed.
-     * 
+     *
      * @see FluentWait#until
      * @see ExpectedCondition
      */
