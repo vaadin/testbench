@@ -65,7 +65,8 @@ public class DriverInvocationHandler implements MethodHandler {
             String methodName) {
         if (shouldWaitForVaadin(methodName)
                 && proxyObject instanceof TestBenchDriverProxy) {
-            ((TestBenchDriverProxy) proxyObject).waitForVaadin();
+            ((TestBenchDriverProxy) proxyObject).getCommandExecutor()
+                    .waitForVaadin();
         }
     }
 

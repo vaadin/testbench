@@ -45,8 +45,7 @@ public abstract class PrivateTB3Configuration extends AbstractTB3Test {
     public static final String FIREFOX_PATH_PROPERTY = "firefox.path";
     public static final String FIREFOX_PROFILE_PATH_PROPERTY = "firefox.profile.path";
     private static final Properties properties = new Properties();
-    private static final File propertiesFile = new File("config",
-            "testbench.properties");
+    private static final File propertiesFile = new File("local.properties");
     static {
         if (propertiesFile.exists()) {
             try {

@@ -253,7 +253,7 @@ public class ElementQuery<T extends TestBenchElement> {
                     + "result = Array.prototype.slice.call(result).concat(Array.prototype.slice.call(light));"
                     + "}" + "return result";
             elementContext = (TestBenchElement) getContext();
-            executor = elementContext.getCommandExecutor();
+            executor = elementContext.getCommandExecutor().getDriver();
         } else if (getContext() instanceof WebDriver) {
             // Search the whole document
             script = "return document.querySelectorAll(arguments[1]+arguments[2])";

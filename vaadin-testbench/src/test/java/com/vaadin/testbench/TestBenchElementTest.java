@@ -28,7 +28,6 @@ import java.util.Set;
 import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Test;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebElement;
 
@@ -191,16 +190,17 @@ public class TestBenchElementTest {
     public static class PublicTestBenchCommandExecutor
             extends TestBenchCommandExecutor {
 
-        public PublicTestBenchCommandExecutor(WebDriver actualDriver,
+        public PublicTestBenchCommandExecutor(TestBenchDriverProxy actualDriver,
                 ImageComparison imageComparison,
                 ReferenceNameGenerator referenceNameGenerator) {
-            super(actualDriver, imageComparison, referenceNameGenerator);
+            super(imageComparison, referenceNameGenerator);
+            setDriver(actualDriver);
         }
 
         public static Object wrapElementOrElements(
                 Object elementElementsOrValues,
                 TestBenchCommandExecutor tbCommandExecutor) {
-            return TestBenchCommandExecutor.wrapElementOrElements(
+            return TestBenchDriverProxy.wrapElementOrElements(
                     elementElementsOrValues, tbCommandExecutor);
         }
 
