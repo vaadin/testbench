@@ -51,6 +51,25 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
 
     private boolean enableWaitForVaadin = true;
     private boolean autoScrollIntoView = true;
+    // @formatter:off
+    String WAIT_FOR_VAADIN_SCRIPT =
+              "if (window.vaadin == null) {"
+            + "  return true;"
+            + "}"
+            + "var clients = window.vaadin.clients;"
+            + "if (clients) {"
+            + "  for (var client in clients) {"
+            + "    if (clients[client].isActive()) {"
+            + "      return false;"
+            + "    }"
+            + "  }"
+            + "  return true;"
+            + "} else {" +
+            // A Vaadin connector was found so this is most likely a Vaadin
+            // application. Keep waiting.
+            "  return false;"
+            + "}";
+    // @formatter:on
 
     public TestBenchCommandExecutor(ImageComparison imageComparison,
             ReferenceNameGenerator referenceNameGenerator) {
@@ -99,25 +118,13 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
             return;
         }
 
-        // @formatter:off
-        String isVaadinFinished = "if (window.vaadin == null) {"
-                + "  return true;" + "}"
-                + "var clients = window.vaadin.clients;" + "if (clients) {"
-                + "  for (var client in clients) {"
-                + "    if (clients[client].isActive()) {"
-                + "      return false;" + "    }" + "  }" + "  return true;"
-                + "} else {" +
-                // A Vaadin connector was found so this is most likely a Vaadin
-                // application. Keep waiting.
-                "  return false;" + "}";
-        // @formatter:on
         long timeoutTime = System.currentTimeMillis() + 20000;
         Boolean finished = false;
         while (System.currentTimeMillis() < timeoutTime && !finished) {
             // Must use the wrapped driver here to avoid calling waitForVaadin
             // again
             finished = (Boolean) ((JavascriptExecutor) getDriver()
-                    .getWrappedDriver()).executeScript(isVaadinFinished);
+                    .getWrappedDriver()).executeScript(WAIT_FOR_VAADIN_SCRIPT);
             if (finished == null) {
                 // This should never happen but according to
                 // https://dev.vaadin.com/ticket/19703, it happens
