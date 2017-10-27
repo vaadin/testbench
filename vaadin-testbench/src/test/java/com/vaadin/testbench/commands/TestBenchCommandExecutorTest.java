@@ -38,6 +38,8 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 import com.vaadin.testbench.Parameters;
+import com.vaadin.testbench.TestBench;
+import com.vaadin.testbench.TestBenchDriverProxy;
 import com.vaadin.testbench.screenshot.ImageComparison;
 import com.vaadin.testbench.screenshot.ImageComparisonTest;
 import com.vaadin.testbench.screenshot.ReferenceNameGenerator;
@@ -55,9 +57,9 @@ public class TestBenchCommandExecutorTest {
     @Test
     public void testTestBenchCommandExecutorIsATestBenchCommands() {
         TestBenchCommandExecutor tbce = new TestBenchCommandExecutor(
-                createNiceMock(WebDriver.class),
                 createNiceMock(ImageComparison.class),
                 createNiceMock(ReferenceNameGenerator.class));
+        tbce.setDriver(createNiceMock(TestBenchDriverProxy.class));
         assertTrue(tbce instanceof TestBenchCommands);
     }
 
@@ -70,8 +72,9 @@ public class TestBenchCommandExecutorTest {
         ImageComparison icMock = mockImageComparison(1, "foo_bar_11", true);
         replay(driver, icMock, rngMock);
 
-        TestBenchCommandExecutor tbce = new TestBenchCommandExecutor(driver,
-                icMock, rngMock);
+        TestBenchCommandExecutor tbce = new TestBenchCommandExecutor(icMock,
+                rngMock);
+        tbce.setDriver(TestBench.createDriver(driver, tbce));
         assertTrue(tbce.compareScreen("foo"));
 
         verify(driver, icMock, rngMock);
@@ -86,8 +89,9 @@ public class TestBenchCommandExecutorTest {
         ImageComparison icMock = mockImageComparison(1, "foo_bar_11", true);
         replay(driver, icMock, rngMock);
 
-        TestBenchCommandExecutor tbce = new TestBenchCommandExecutor(driver,
-                icMock, rngMock);
+        TestBenchCommandExecutor tbce = new TestBenchCommandExecutor(icMock,
+                rngMock);
+        tbce.setDriver(TestBench.createDriver(driver, tbce));
         assertTrue(tbce.compareScreen("foo"));
 
         verify(driver, icMock, rngMock);
@@ -102,8 +106,9 @@ public class TestBenchCommandExecutorTest {
         ImageComparison icMock = mockImageComparison(2, "foo_bar_11", false);
         replay(driver, icMock, rngMock);
 
-        TestBenchCommandExecutor tbce = new TestBenchCommandExecutor(driver,
-                icMock, rngMock);
+        TestBenchCommandExecutor tbce = new TestBenchCommandExecutor(icMock,
+                rngMock);
+        tbce.setDriver(TestBench.createDriver(driver, tbce));
         assertFalse(tbce.compareScreen("foo"));
 
         verify(driver, icMock, rngMock);
@@ -121,8 +126,9 @@ public class TestBenchCommandExecutorTest {
                     false);
             replay(driver, icMock, rngMock);
 
-            TestBenchCommandExecutor tbce = new TestBenchCommandExecutor(driver,
-                    icMock, rngMock);
+            TestBenchCommandExecutor tbce = new TestBenchCommandExecutor(icMock,
+                    rngMock);
+            tbce.setDriver(TestBench.createDriver(driver, tbce));
             assertFalse(tbce.compareScreen("foo"));
 
             verify(driver, icMock, rngMock);
@@ -144,8 +150,9 @@ public class TestBenchCommandExecutorTest {
                         .andReturn(true);
         replay(driver, icMock);
 
-        TestBenchCommandExecutor tbce = new TestBenchCommandExecutor(driver,
-                icMock, null);
+        TestBenchCommandExecutor tbce = new TestBenchCommandExecutor(icMock,
+                null);
+        tbce.setDriver(TestBench.createDriver(driver, tbce));
         assertTrue(tbce.compareScreen(referenceFile));
 
         verify(driver, icMock);
@@ -166,8 +173,9 @@ public class TestBenchCommandExecutorTest {
                             .andReturn(false).times(4);
             replay(driver, icMock);
 
-            TestBenchCommandExecutor tbce = new TestBenchCommandExecutor(driver,
-                    icMock, null);
+            TestBenchCommandExecutor tbce = new TestBenchCommandExecutor(icMock,
+                    null);
+            tbce.setDriver(TestBench.createDriver(driver, tbce));
             assertFalse(tbce.compareScreen(referenceFile));
 
             verify(driver, icMock);
@@ -188,8 +196,9 @@ public class TestBenchCommandExecutorTest {
                         .andReturn(true);
         replay(driver, icMock);
 
-        TestBenchCommandExecutor tbce = new TestBenchCommandExecutor(driver,
-                icMock, null);
+        TestBenchCommandExecutor tbce = new TestBenchCommandExecutor(icMock,
+                null);
+        tbce.setDriver(TestBench.createDriver(driver, tbce));
         assertTrue(tbce.compareScreen(mockImg, "bar name"));
 
         verify(driver, icMock);
@@ -210,8 +219,9 @@ public class TestBenchCommandExecutorTest {
                             .andReturn(false).times(4);
             replay(driver, icMock);
 
-            TestBenchCommandExecutor tbce = new TestBenchCommandExecutor(driver,
-                    icMock, null);
+            TestBenchCommandExecutor tbce = new TestBenchCommandExecutor(icMock,
+                    null);
+            tbce.setDriver(TestBench.createDriver(driver, tbce));
             assertFalse(tbce.compareScreen(mockImg, "bar name"));
 
             verify(driver, icMock);
@@ -259,8 +269,9 @@ public class TestBenchCommandExecutorTest {
         FirefoxDriver jse = mockJSExecutor(false);
         replay(jse);
 
-        TestBenchCommandExecutor tbce = new TestBenchCommandExecutor(jse, null,
+        TestBenchCommandExecutor tbce = new TestBenchCommandExecutor(null,
                 null);
+        tbce.setDriver(TestBench.createDriver(jse, tbce));
         long milliseconds = tbce.timeSpentRenderingLastRequest();
         assertEquals(1000, milliseconds);
 
@@ -272,8 +283,9 @@ public class TestBenchCommandExecutorTest {
         FirefoxDriver jse = mockJSExecutor(false);
         replay(jse);
 
-        TestBenchCommandExecutor tbce = new TestBenchCommandExecutor(jse, null,
+        TestBenchCommandExecutor tbce = new TestBenchCommandExecutor(null,
                 null);
+        tbce.setDriver(TestBench.createDriver(jse, tbce));
         long milliseconds = tbce.totalTimeSpentRendering();
         assertEquals(2000, milliseconds);
 
@@ -285,8 +297,9 @@ public class TestBenchCommandExecutorTest {
         FirefoxDriver jse = mockJSExecutor(true);
         replay(jse);
 
-        TestBenchCommandExecutor tbce = new TestBenchCommandExecutor(jse, null,
+        TestBenchCommandExecutor tbce = new TestBenchCommandExecutor(null,
                 null);
+        tbce.setDriver(TestBench.createDriver(jse, tbce));
         long milliseconds = tbce.totalTimeSpentServicingRequests();
         assertEquals(3000, milliseconds);
 

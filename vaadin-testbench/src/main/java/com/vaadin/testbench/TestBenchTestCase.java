@@ -55,26 +55,13 @@ public abstract class TestBenchTestCase
     protected WebDriver driver;
 
     /**
-     * Convenience method that casts the specified {@link WebDriver} instance to
-     * an instance of {@link TestBenchCommands}, making it easy to access the
-     * special TestBench commands.
-     *
-     * @param webDriver
-     *            The WebDriver instance to cast.
-     * @return a WebDriver cast to TestBenchCommands
-     */
-    public static TestBenchCommands testBench(WebDriver webDriver) {
-        return (TestBenchCommands) webDriver;
-    }
-
-    /**
      * Convenience method the return {@link TestBenchCommands} for the default
      * {@link WebDriver} instance.
      *
      * @return The driver cast to a TestBenchCommands instance.
      */
     public TestBenchCommands testBench() {
-        return (TestBenchCommands) getDriver();
+        return ((TestBenchDriverProxy) getDriver()).getCommandExecutor();
     }
 
     /**

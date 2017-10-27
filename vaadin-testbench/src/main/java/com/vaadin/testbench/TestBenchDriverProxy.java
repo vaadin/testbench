@@ -12,20 +12,26 @@
  */
 package com.vaadin.testbench;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.HasCapabilities;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.internal.WrapsDriver;
 
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 
-public class TestBenchDriverProxy implements WebDriver, WrapsDriver,
-        HasTestBenchCommandExecutor, HasCapabilities {
+public class TestBenchDriverProxy
+        implements WebDriver, WrapsDriver, HasTestBenchCommandExecutor,
+        HasCapabilities, TakesScreenshot, JavascriptExecutor {
 
     private final WebDriver wrappedDriver;
     private final TestBenchCommandExecutor commandExecutor;
@@ -123,8 +129,79 @@ public class TestBenchDriverProxy implements WebDriver, WrapsDriver,
         return wrappedDriver;
     }
 
-    public void waitForVaadin() {
-        getCommandExecutor().waitForVaadin();
+    /**
+     * Wraps any {@link WebElement} found inside the object inside a
+     * {@link TestBenchElement}.
+     * <p>
+     * Traverses through any {@link List} found inside the object and wraps any
+     * elements inside the list, recursively. The behavior is compatible with
+     * what {@link #executeScript(String, Object...)} and
+     * {@link #executeAsyncScript(String, Object...)} returns.
+     * <p>
+     * Does not modify the argument, instead creates a new object containing the
+     * wrapped elements and other possible values.
+     * <p>
+     * This method is protected for testing purposes only.
+     *
+     * @param elementElementsOrValues
+     *            an object containing a {@link WebElement}, a {@link List} of
+     *            {@link WebElement WebElements} or something completely
+     *            different.
+     * @param tbCommandExecutor
+     *            the {@link TestBenchCommandExecutor} related to the driver
+     *            instance
+     */
+    protected static Object wrapElementOrElements(
+            Object elementElementsOrValues,
+            TestBenchCommandExecutor tbCommandExecutor) {
+        if (elementElementsOrValues instanceof List) {
+            @SuppressWarnings({ "unchecked", "rawtypes" })
+            List<Object> list = (List) elementElementsOrValues;
+            List<Object> newList = new ArrayList<>();
+
+            for (Object value : list) {
+                newList.add(wrapElementOrElements(value, tbCommandExecutor));
+            }
+            return newList;
+        } else if (elementElementsOrValues instanceof WebElement) {
+            if (elementElementsOrValues instanceof TestBenchElement) {
+                return elementElementsOrValues;
+            } else {
+                return TestBench.createElement(
+                        (WebElement) elementElementsOrValues,
+                        tbCommandExecutor);
+            }
+        } else {
+            return elementElementsOrValues;
+        }
+    }
+
+    @Override
+    public Object executeScript(String script, Object... args) {
+        if (!(getWrappedDriver() instanceof JavascriptExecutor)) {
+            throw new RuntimeException(
+                    "The driver is not a JavascriptExecutor");
+        }
+
+        return wrapElementOrElements(((JavascriptExecutor) getWrappedDriver())
+                .executeScript(script, args), getCommandExecutor());
+    }
+
+    @Override
+    public Object executeAsyncScript(String script, Object... args) {
+        if (!(getWrappedDriver() instanceof JavascriptExecutor)) {
+            throw new RuntimeException(
+                    "The driver is not a JavascriptExecutor");
+        }
+
+        return wrapElementOrElements(((JavascriptExecutor) getWrappedDriver())
+                .executeAsyncScript(script, args), getCommandExecutor());
+    }
+
+    @Override
+    public <X> X getScreenshotAs(OutputType<X> target)
+            throws WebDriverException {
+        return ((TakesScreenshot) getWrappedDriver()).getScreenshotAs(target);
     }
 
 }

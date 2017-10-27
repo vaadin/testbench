@@ -88,13 +88,13 @@ public class TestBench {
         methodFilters = new ConcurrentHashMap<>();
     }
 
-    public static WebDriver createDriver(WebDriver driver) {
+    public static TestBenchDriverProxy createDriver(WebDriver driver) {
         TestBenchCommandExecutor commandExecutor = new TestBenchCommandExecutor(
-                driver, new ImageComparison(), new ReferenceNameGenerator());
+                new ImageComparison(), new ReferenceNameGenerator());
         return createDriver(driver, commandExecutor);
     }
 
-    public static WebDriver createDriver(WebDriver driver,
+    public static TestBenchDriverProxy createDriver(WebDriver driver,
             TestBenchCommandExecutor commandExecutor) {
         Set<Class<?>> allInterfaces = extractInterfaces(driver);
         Class<TestBenchDriverProxy> driverClass = TestBenchDriverProxy.class;
@@ -106,9 +106,9 @@ public class TestBench {
         pFactory.setInterfaces(allInterfacesArray);
         pFactory.setSuperclass(driverClass);
 
-        Object proxy;
+        TestBenchDriverProxy proxy;
         try {
-            proxy = pFactory.create(
+            proxy = (TestBenchDriverProxy) pFactory.create(
                     new Class[] { WebDriver.class,
                             TestBenchCommandExecutor.class },
                     new Object[] { driver, commandExecutor },
@@ -117,7 +117,9 @@ public class TestBench {
             throw new IllegalStateException("Unable to create proxy for driver",
                     e);
         }
-        return (WebDriver) proxy;
+
+        commandExecutor.setDriver(proxy);
+        return proxy;
     }
 
     public static <T extends TestBenchElement> T wrap(TestBenchElement element,

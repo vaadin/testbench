@@ -258,7 +258,7 @@ public class ElementQuery<T extends TestBenchElement> {
             script.append("}");
             script.append("return result");
             elementContext = (TestBenchElement) getContext();
-            executor = elementContext.getCommandExecutor();
+            executor = elementContext.getCommandExecutor().getDriver();
         } else if (getContext() instanceof WebDriver) {
             // Search the whole document
             script.append(

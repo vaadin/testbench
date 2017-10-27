@@ -17,7 +17,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,12 +27,11 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.HttpCommandExecutor;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 import com.vaadin.testbench.HasDriver;
-import com.vaadin.testbench.TestBench;
+import com.vaadin.testbench.TestBenchDriverProxy;
 import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.testbench.screenshot.ImageComparison;
 import com.vaadin.testbench.screenshot.ReferenceNameGenerator;
@@ -41,37 +39,36 @@ import com.vaadin.testbench.screenshot.ReferenceNameGenerator;
 /**
  * Provides actual implementation of TestBenchCommands
  */
-public class TestBenchCommandExecutor
-        implements TestBenchCommands, JavascriptExecutor, HasDriver {
-
-    private static Logger logger = Logger
-            .getLogger(TestBenchCommandExecutor.class.getName());
+public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
 
     private static Logger getLogger() {
-        return logger;
+        return Logger.getLogger(TestBenchCommandExecutor.class.getName());
     }
 
-    private final WebDriver driver;
+    private TestBenchDriverProxy driver;
     private final ImageComparison imageComparison;
     private final ReferenceNameGenerator referenceNameGenerator;
 
     private boolean enableWaitForVaadin = true;
     private boolean autoScrollIntoView = true;
 
-    public TestBenchCommandExecutor(WebDriver driver,
-            ImageComparison imageComparison,
+    public TestBenchCommandExecutor(ImageComparison imageComparison,
             ReferenceNameGenerator referenceNameGenerator) {
-        this.driver = driver;
         this.imageComparison = imageComparison;
         this.referenceNameGenerator = referenceNameGenerator;
+    }
+
+    public void setDriver(TestBenchDriverProxy driver) {
+        this.driver = driver;
     }
 
     @Override
     public String getRemoteControlName() {
         InetAddress ia = null;
         try {
-            if (driver instanceof RemoteWebDriver) {
-                RemoteWebDriver rwd = (RemoteWebDriver) driver;
+            WebDriver realDriver = driver.getWrappedDriver();
+            if (realDriver instanceof RemoteWebDriver) {
+                RemoteWebDriver rwd = (RemoteWebDriver) realDriver;
                 if (rwd.getCommandExecutor() instanceof HttpCommandExecutor) {
                     ia = InetAddress.getByName(
                             ((HttpCommandExecutor) rwd.getCommandExecutor())
@@ -93,8 +90,11 @@ public class TestBenchCommandExecutor
         return null;
     }
 
+    /**
+     * Block until Vaadin reports it has finished processing server messages.
+     */
     public void waitForVaadin() {
-        if (!enableWaitForVaadin || !(driver instanceof JavascriptExecutor)) {
+        if (!enableWaitForVaadin) {
             // wait for vaadin is disabled, just return.
             return;
         }
@@ -114,9 +114,10 @@ public class TestBenchCommandExecutor
         long timeoutTime = System.currentTimeMillis() + 20000;
         Boolean finished = false;
         while (System.currentTimeMillis() < timeoutTime && !finished) {
-            // Don't call executeScript here as it will re-trigger waitForVaadin
-            finished = (Boolean) ((JavascriptExecutor) driver)
-                    .executeScript(isVaadinFinished);
+            // Must use the wrapped driver here to avoid calling waitForVaadin
+            // again
+            finished = (Boolean) ((JavascriptExecutor) getDriver()
+                    .getWrappedDriver()).executeScript(isVaadinFinished);
             if (finished == null) {
                 // This should never happen but according to
                 // https://dev.vaadin.com/ticket/19703, it happens
@@ -130,8 +131,7 @@ public class TestBenchCommandExecutor
     @Override
     public boolean compareScreen(String referenceId) throws IOException {
         return ScreenshotComparator.compareScreen(referenceId,
-                referenceNameGenerator, imageComparison,
-                (TakesScreenshot) driver, (HasCapabilities) getDriver());
+                referenceNameGenerator, imageComparison, driver, getDriver());
     }
 
     @Override
@@ -232,83 +232,12 @@ public class TestBenchCommandExecutor
         this.autoScrollIntoView = autoScrollIntoView;
     }
 
-    /**
-     * {@inheritDoc}
-     * <p>
-     * This method wraps any returned {@link WebElement} as
-     * {@link TestBenchElement}.
-     */
-    @Override
     public Object executeScript(String script, Object... args) {
-        if (driver instanceof JavascriptExecutor) {
-            return wrapElementOrElements(
-                    ((JavascriptExecutor) driver).executeScript(script, args),
-                    this);
-
-        }
-        throw new RuntimeException("The driver is not a JavascriptExecutor");
+        return getDriver().executeScript(script, args);
     }
 
-    /**
-     * {@inheritDoc}
-     * <p>
-     * This method wraps any returned {@link WebElement} as
-     * {@link TestBenchElement}.
-     */
-    @Override
-    public Object executeAsyncScript(String script, Object... args) {
-        if (driver instanceof JavascriptExecutor) {
-            return wrapElementOrElements(((JavascriptExecutor) driver)
-                    .executeAsyncScript(script, args), this);
-        }
-        throw new RuntimeException("The driver is not a JavascriptExecutor");
-    }
-
-    /**
-     * Wraps any {@link WebElement} found inside the object inside a
-     * {@link TestBenchElement}.
-     * <p>
-     * Traverses through any {@link List} found inside the object and wraps any
-     * elements inside the list, recursively. The behavior is compatible with
-     * what {@link #executeScript(String, Object...)} and
-     * {@link #executeAsyncScript(String, Object...)} returns.
-     * <p>
-     * Does not modify the argument, instead creates a new object containing the
-     * wrapped elements and other possible values.
-     * <p>
-     * This method is protected for testing purposes only.
-     *
-     * @param elementElementsOrValues
-     *            an object containing a {@link WebElement}, a {@link List} of
-     *            {@link WebElement WebElements} or something completely
-     *            different.
-     * @param tbCommandExecutor
-     *            the {@link TestBenchCommandExecutor} related to the driver
-     *            instance
-     */
-    protected static Object wrapElementOrElements(
-            Object elementElementsOrValues,
-            TestBenchCommandExecutor tbCommandExecutor) {
-        if (elementElementsOrValues instanceof List) {
-            @SuppressWarnings({ "unchecked", "rawtypes" })
-            List<Object> list = (List) elementElementsOrValues;
-            List<Object> newList = new ArrayList<>();
-
-            for (Object value : list) {
-                newList.add(wrapElementOrElements(value, tbCommandExecutor));
-            }
-            return newList;
-        } else if (elementElementsOrValues instanceof WebElement) {
-            if (elementElementsOrValues instanceof TestBenchElement) {
-                return elementElementsOrValues;
-            } else {
-                return TestBench.createElement(
-                        (WebElement) elementElementsOrValues,
-                        tbCommandExecutor);
-            }
-        } else {
-            return elementElementsOrValues;
-        }
+    protected Object executeAsyncScript(String script, Object... args) {
+        return getDriver().executeAsyncScript(script, args);
     }
 
     /**
@@ -318,7 +247,7 @@ public class TestBenchCommandExecutor
      * @return a WebDriver instance
      */
     @Override
-    public WebDriver getDriver() {
+    public TestBenchDriverProxy getDriver() {
         return driver;
     }
 

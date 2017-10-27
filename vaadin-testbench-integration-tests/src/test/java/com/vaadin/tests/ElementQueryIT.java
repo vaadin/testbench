@@ -1,13 +1,14 @@
 package com.vaadin.tests;
 
+import java.util.List;
+
+import org.junit.Assert;
+import org.junit.Test;
+
 import com.vaadin.testUI.PolymerTemplateView;
 import com.vaadin.tests.elements.NativeButtonElement;
 import com.vaadin.tests.elements.PolymerTemplateViewElement;
 import com.vaadin.ui.Component;
-import org.junit.Assert;
-import org.junit.Test;
-
-import java.util.List;
 
 public class ElementQueryIT extends MultiBrowserTest {
 
@@ -17,11 +18,32 @@ public class ElementQueryIT extends MultiBrowserTest {
     }
 
     @Test
+    public void ensureElementListWrapped() {
+        openTestURL();
+        List<PolymerTemplateViewElement> elements = $(
+                PolymerTemplateViewElement.class).all();
+        Assert.assertTrue(
+                elements.get(0) instanceof PolymerTemplateViewElement);
+    }
+
+    @Test
+    public void ensureElementListFromOnPageWrapped() {
+        openTestURL();
+        PolymerTemplateViewElement view = $(PolymerTemplateViewElement.class)
+                .first();
+        PolymerTemplateViewElement view2 = view
+                .$(PolymerTemplateViewElement.class).onPage().first();
+        Assert.assertEquals(view, view2);
+    }
+
+    @Test
     public void findLightDomElementById() throws Exception {
         openTestURL();
 
-        PolymerTemplateViewElement view = $(PolymerTemplateViewElement.class).first();
-        NativeButtonElement button = view.$(NativeButtonElement.class).id("light-button-1");
+        PolymerTemplateViewElement view = $(PolymerTemplateViewElement.class)
+                .first();
+        NativeButtonElement button = view.$(NativeButtonElement.class)
+                .id("light-button-1");
         Assert.assertEquals("Button 1", button.getText());
     }
 
@@ -29,8 +51,10 @@ public class ElementQueryIT extends MultiBrowserTest {
     public void findShadowDomElementById() throws Exception {
         openTestURL();
 
-        PolymerTemplateViewElement view = $(PolymerTemplateViewElement.class).waitForFirst();
-        NativeButtonElement button = view.$(NativeButtonElement.class).id("shadow-button-1");
+        PolymerTemplateViewElement view = $(PolymerTemplateViewElement.class)
+                .waitForFirst();
+        NativeButtonElement button = view.$(NativeButtonElement.class)
+                .id("shadow-button-1");
         Assert.assertEquals("Shadow Button 1", button.getText());
     }
 
@@ -38,8 +62,10 @@ public class ElementQueryIT extends MultiBrowserTest {
     public void searchShadowDomBeforeLight() throws Exception {
         openTestURL();
 
-        PolymerTemplateViewElement view = $(PolymerTemplateViewElement.class).waitForFirst();
-        NativeButtonElement button = view.$(NativeButtonElement.class).id("special-button");
+        PolymerTemplateViewElement view = $(PolymerTemplateViewElement.class)
+                .waitForFirst();
+        NativeButtonElement button = view.$(NativeButtonElement.class)
+                .id("special-button");
         Assert.assertEquals("Special Button (in Shadow DOM)", button.getText());
     }
 
@@ -47,8 +73,10 @@ public class ElementQueryIT extends MultiBrowserTest {
     public void mergeLightAndShadowDomResults() throws Exception {
         openTestURL();
 
-        PolymerTemplateViewElement view = $(PolymerTemplateViewElement.class).waitForFirst();
-        List<NativeButtonElement> buttons = view.$(NativeButtonElement.class).all();
+        PolymerTemplateViewElement view = $(PolymerTemplateViewElement.class)
+                .waitForFirst();
+        List<NativeButtonElement> buttons = view.$(NativeButtonElement.class)
+                .all();
         Assert.assertEquals(9, buttons.size());
     }
 }
