@@ -51,10 +51,10 @@ public class ImageComparisonTest {
                 .isScreenshotComparisonCursorDetection();
 
         URL screenshotUrl = getClass().getClassLoader().getResource(FOLDER);
-        Parameters.setScreenshotErrorDirectory(screenshotUrl.getPath()
-                + "/errors");
-        Parameters.setScreenshotReferenceDirectory(screenshotUrl.getPath()
-                + "/reference");
+        Parameters.setScreenshotErrorDirectory(
+                screenshotUrl.getPath() + "/errors");
+        Parameters.setScreenshotReferenceDirectory(
+                screenshotUrl.getPath() + "/reference");
         Parameters.setScreenshotComparisonCursorDetection(false);
 
     }
@@ -63,10 +63,10 @@ public class ImageComparisonTest {
     public void teardown() {
         Parameters
                 .setScreenshotErrorDirectory(previousScreenshotErrorDirectory);
-        Parameters
-                .setScreenshotReferenceDirectory(previousScreenshotReferenceDirectory);
-        Parameters
-                .setScreenshotComparisonCursorDetection(previousScreenshotComparisonCursorDetection);
+        Parameters.setScreenshotReferenceDirectory(
+                previousScreenshotReferenceDirectory);
+        Parameters.setScreenshotComparisonCursorDetection(
+                previousScreenshotComparisonCursorDetection);
     }
 
     @Test
@@ -84,8 +84,8 @@ public class ImageComparisonTest {
 
     @Test
     public void testPartialBlockComparisonFull() throws IOException {
-        testFullCompareImages("purple-border.png",
-                "purple-border-top-left.png", false, 0.0);
+        testFullCompareImages("purple-border.png", "purple-border-top-left.png",
+                false, 0.0);
         testFullCompareImages("purple-border.png", "purple-border.png", true,
                 0.0);
     }
@@ -171,7 +171,8 @@ public class ImageComparisonTest {
     }
 
     @Test
-    public void compareCursorImagesFullWithCursorDetection() throws IOException {
+    public void compareCursorImagesFullWithCursorDetection()
+            throws IOException {
         Parameters.setScreenshotComparisonCursorDetection(true);
 
         testFullCompareImages("cursor-off.png", "cursor-on.png", true, 0.0);
@@ -280,12 +281,11 @@ public class ImageComparisonTest {
         BufferedImage screenshotImage = ImageLoader.loadImage(FOLDER,
                 screenshotFilename);
 
-        boolean blocksEqual = new ImageComparison().compareImages(
-                referenceImage, screenshotImage, errorTolerance);
+        boolean blocksEqual = new ImageComparison()
+                .compareImages(referenceImage, screenshotImage, errorTolerance);
 
         String expected = "Images " + referenceFilename + " and "
-                + screenshotFilename + " should "
-                + (shouldBeEqual ? "" : "not")
+                + screenshotFilename + " should " + (shouldBeEqual ? "" : "not")
                 + " be considered equal using tolerance " + errorTolerance;
         assertTrue(expected, shouldBeEqual ? blocksEqual : !blocksEqual);
     }
@@ -306,8 +306,8 @@ public class ImageComparisonTest {
         boolean blocksEqual = (referenceHash.equals(screenshotHash));
 
         String expected = "Images " + referenceFilename + " and "
-                + screenshotFilename + " should "
-                + (shouldBeEqual ? "" : "not") + " be considered equal";
+                + screenshotFilename + " should " + (shouldBeEqual ? "" : "not")
+                + " be considered equal";
         assertTrue(expected, shouldBeEqual ? blocksEqual : !blocksEqual);
 
     }
@@ -360,7 +360,8 @@ public class ImageComparisonTest {
     }
 
     @Test
-    public void testImageEqualToReference_cursorError_true() throws IOException {
+    public void testImageEqualToReference_cursorError_true()
+            throws IOException {
         Parameters.setScreenshotComparisonCursorDetection(true);
 
         ImageComparison ic = new ImageComparison();

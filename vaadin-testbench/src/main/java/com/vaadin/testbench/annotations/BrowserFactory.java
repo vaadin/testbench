@@ -33,7 +33,7 @@ import com.vaadin.testbench.parallel.TestBenchBrowserFactory;
  * a specific browser).
  * </p>
  * Example:<br>
- * 
+ *
  * {@code @BrowserFactory(DefaultBrowserFactory.class)}
  */
 @Retention(RetentionPolicy.RUNTIME)

@@ -45,7 +45,8 @@ public class ParallelTestSuite extends Suite {
      * number of tests to run concurrently are configured in
      * {@link ParallelRunner}.
      */
-    private static final int MAX_CONCURRENT_TEST_SUITES = Parameters.getTestSuitesInParallel();
+    private static final int MAX_CONCURRENT_TEST_SUITES = Parameters
+            .getTestSuitesInParallel();
 
     /**
      * This is static so it is shared by all test suites running concurrently on
@@ -71,15 +72,14 @@ public class ParallelTestSuite extends Suite {
      * specified by 'basePackage'. Collects all classes inside the location
      * which can be assigned to 'baseClass' except for classes inside packages
      * listed in 'ignoredPackages'.
-     * 
+     *
      * @param baseClass
      * @param basePackage
      * @param ignorePackages
      * @return
      */
-    private static Class<?>[] findTests(
-            Class<? extends ParallelTest> baseClass, String basePackage,
-            String[] ignorePackages) {
+    private static Class<?>[] findTests(Class<? extends ParallelTest> baseClass,
+            String basePackage, String[] ignorePackages) {
         try {
             List<?> l = findClasses(baseClass, basePackage, ignorePackages);
             return l.toArray(new Class[] {});
@@ -95,7 +95,7 @@ public class ParallelTestSuite extends Suite {
      * specified by 'basePackage'. Collects all classes inside the location
      * which can be assigned to 'baseClass' except for classes inside packages
      * listed in 'ignoredPackages'.
-     * 
+     *
      * @param baseClass
      * @param basePackage
      * @param ignoredPackages
@@ -104,15 +104,15 @@ public class ParallelTestSuite extends Suite {
      */
     private static <T> List<Class<? extends T>> findClasses(Class<T> baseClass,
             String basePackage, String[] ignoredPackages) throws IOException {
-        List<Class<? extends T>> classes = new ArrayList<Class<? extends T>>();
+        List<Class<? extends T>> classes = new ArrayList<>();
         String basePackageDirName = "/" + basePackage.replace('.', '/');
         URL location = baseClass.getResource(basePackageDirName);
         if (location.getProtocol().equals("file")) {
             try {
                 File f = new File(location.toURI());
                 if (!f.exists()) {
-                    throw new IOException("Directory " + f.toString()
-                            + " does not exist");
+                    throw new IOException(
+                            "Directory " + f.toString() + " does not exist");
                 }
                 findPackages(f, basePackage, baseClass, classes,
                         ignoredPackages);
@@ -139,7 +139,7 @@ public class ParallelTestSuite extends Suite {
      * Traverses the given directory and collects all classes which are inside
      * the given 'javaPackage' and can be assigned to the given 'baseClass'. The
      * found classes are added to 'result'.
-     * 
+     *
      * @param parent
      *            The directory to traverse
      * @param javaPackage
@@ -177,7 +177,7 @@ public class ParallelTestSuite extends Suite {
      * Traverses a Jar file using the given connection and collects all classes
      * which are inside the given 'javaPackage' and can be assigned to the given
      * 'baseClass'. The found classes are added to 'result'.
-     * 
+     *
      * @param javaPackage
      *            The java package containing the classes (classes may be in a
      *            sub package)
@@ -207,7 +207,7 @@ public class ParallelTestSuite extends Suite {
      * Verifies that the class represented by 'fullyQualifiedClassName' can be
      * loaded, assigned to 'baseClass' and is not an abstract or anonymous
      * class.
-     * 
+     *
      * @param result
      *            The collection to add to
      * @param fullyQualifiedClassName
@@ -230,7 +230,8 @@ public class ParallelTestSuite extends Suite {
                 return;
             }
 
-            if (!Modifier.isAbstract(c.getModifiers()) && !c.isAnonymousClass()) {
+            if (!Modifier.isAbstract(c.getModifiers())
+                    && !c.isAnonymousClass()) {
                 result.add((Class<? extends T>) c);
             }
         } catch (Exception e) {

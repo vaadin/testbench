@@ -26,7 +26,7 @@ import org.junit.runners.model.RunnerScheduler;
  * run in its own thread. Uses an {@link ExecutorService} to manage the threads.
  */
 public class ParallelScheduler implements RunnerScheduler {
-    private final List<Future<Object>> fResults = new ArrayList<Future<Object>>();
+    private final List<Future<Object>> fResults = new ArrayList<>();
     private ExecutorService fService;
 
     /**

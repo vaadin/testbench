@@ -5,7 +5,6 @@ import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 
-
 public class RetryRuleAfterTest {
     private int afterExecutedCount = 0;
 

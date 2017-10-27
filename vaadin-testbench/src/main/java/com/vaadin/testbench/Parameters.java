@@ -334,7 +334,7 @@ public class Parameters {
      * <p>
      * This will override any {@link RunOnHub @RunOnHub} annotation present on
      * the test class.
-     * 
+     *
      * @return the host name of the hub, or null if no host name has been
      *         defined
      */
@@ -356,7 +356,7 @@ public class Parameters {
      * If the system property is defined, the test will be run locally and not
      * on a hub. The property effectively does the same thing as a
      * {@link RunLocally @RunLocally} annotation on the test class.
-     * 
+     *
      * @return the browser name read from the system property, or null if it has
      *         not been set
      */
@@ -378,7 +378,7 @@ public class Parameters {
      * <p>
      * The format of the system property is "[browsername]" or
      * "[browsername]-[version]" where the version is optional.
-     * 
+     *
      * @return the browser version read from the system property, or null if it
      *         has not been set
      */
@@ -396,7 +396,7 @@ public class Parameters {
      * <p>
      * The format of the system property is "[browsername]" or
      * "[browsername]-[version]" where the version is optional.
-     * 
+     *
      * @param browserAndVersion
      *            the string to parse
      * @return an array with two items, the browser name and the browser
@@ -419,17 +419,18 @@ public class Parameters {
 
     /**
      *
-     * Gets the maximum number of times to run the test in case of a random failure.
-     * See {@link RetryRule} for details.
+     * Gets the maximum number of times to run the test in case of a random
+     * failure. See {@link RetryRule} for details.
      *
      * @return maximum attempts the test can be run.
      */
     public static int getMaxAttempts() {
         return maxAttempts;
-     }
+    }
 
     /**
-     * Sets the maximum number of times to run the test in case of a random failure
+     * Sets the maximum number of times to run the test in case of a random
+     * failure
      *
      * @param maxAttempts
      *            maximum attempts the test can be run.

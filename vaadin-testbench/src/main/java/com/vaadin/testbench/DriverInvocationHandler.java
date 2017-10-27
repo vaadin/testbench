@@ -25,7 +25,7 @@ import javassist.util.proxy.MethodHandler;
 
 public class DriverInvocationHandler implements MethodHandler {
 
-    private Map<Method, Boolean> proxyMethod = new HashMap<Method, Boolean>();
+    private Map<Method, Boolean> proxyMethod = new HashMap<>();
     private final Object actualObject;
 
     public DriverInvocationHandler(Object actualObject) {
@@ -60,10 +60,11 @@ public class DriverInvocationHandler implements MethodHandler {
 
     /**
      * Invokes waitForVaadin unless the command is known to not need to wait.
-     * 
+     *
      * @param methodName
      */
-    private void waitForVaadinIfNecessary(Object proxyObject, String methodName) {
+    private void waitForVaadinIfNecessary(Object proxyObject,
+            String methodName) {
         if (shouldWaitForVaadin(methodName)
                 && proxyObject instanceof CanWaitForVaadin) {
             ((CanWaitForVaadin) proxyObject).waitForVaadin();

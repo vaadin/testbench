@@ -174,8 +174,8 @@ public class TestBenchElementTest {
         List<Object> execJsResult = new ArrayList<>();
         TestBenchCommandExecutor tbCommandExecutor = EasyMock
                 .createMock(TestBenchCommandExecutor.class);
-        List<Object> wrappedResult = (List<Object>) PublicTestBenchCommandExecutor
-                .wrapElementOrElements(execJsResult, tbCommandExecutor);
+        PublicTestBenchCommandExecutor.wrapElementOrElements(execJsResult,
+                tbCommandExecutor);
     }
 
     @Test

@@ -47,8 +47,8 @@ public class ImageLoader {
     }
 
     public static File getImageFile(String folder, String filename) {
-        URL imgUrl = ImageLoader.class.getClassLoader().getResource(
-                folder + "/" + filename);
+        URL imgUrl = ImageLoader.class.getClassLoader()
+                .getResource(folder + "/" + filename);
         assertNotNull("Missing reference " + filename, imgUrl);
         File imgFile = new File(imgUrl.getPath());
         return imgFile;

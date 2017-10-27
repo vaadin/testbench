@@ -129,10 +129,10 @@ public class TestBenchDriverTest {
         TestBenchDriverProxy tb = (TestBenchDriverProxy) TestBench
                 .createDriver(mockFF);
         tb.disableWaitForVaadin();
-        WebElement testBenchElement = tb.findElement(By.id("foo"));
+        tb.findElement(By.id("foo"));
 
         tb.enableWaitForVaadin();
-        testBenchElement = tb.findElement(By.id("foo"));
+        tb.findElement(By.id("foo"));
 
         verify(mockFF, mockElement);
     }
