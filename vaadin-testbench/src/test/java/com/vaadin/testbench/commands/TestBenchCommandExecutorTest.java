@@ -237,6 +237,8 @@ public class TestBenchCommandExecutorTest {
                 "cursor-bottom-edge-off.png");
         expect(driver.getScreenshotAs(OutputType.BYTES))
                 .andReturn(screenshotBytes).times(nrScreenshotsGrabbed);
+        expect(driver.executeScript(contains("window.vaadin.clients")))
+                .andReturn(Boolean.TRUE).anyTimes();
         if (expectGetCapabilities) {
             expect(driver.getCapabilities())
                     .andReturn(createNiceMock(Capabilities.class)).once();
@@ -314,6 +316,8 @@ public class TestBenchCommandExecutorTest {
         }
         expect(jse.executeScript(contains("getProfilingData()")))
                 .andReturn(Arrays.asList(1000L, 2000L, 3000L));
+        expect(jse.executeScript(contains("window.vaadin.clients")))
+                .andReturn(Boolean.TRUE).anyTimes();
         return jse;
     }
 }

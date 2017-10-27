@@ -32,7 +32,7 @@ public class ElementQueryTest {
     private static final String DOCUMENT_QUERY_FRAGMENT = "document.querySelectorAll(arguments[1]+arguments[2])";
     private static final String ELEMENT_QUERY_FRAGMENT = "arguments[0].shadowRoot.querySelectorAll(arguments[1]+arguments[2])";
     private static final String SINGLE_RESULT_QUERY_SUFFIX = "[0]";
-    private WebDriverWithJS mockDriver;
+    private TestBenchDriverProxy mockDriver;
     private TestBenchElement exampleElement;
 
     @Element(ExampleElement.TAG)
@@ -55,9 +55,11 @@ public class ElementQueryTest {
 
     @Before
     public void setup() {
-        mockDriver = EasyMock.createMock(WebDriverWithJS.class);
-        exampleElement = TestBenchElement
-                .wrapElement(EasyMock.createMock(WebElement.class), null);
+        mockDriver = TestBench
+                .createDriver(EasyMock.createMock(WebDriverWithJS.class));
+        exampleElement = TestBenchElement.wrapElement(
+                EasyMock.createMock(WebElement.class),
+                mockDriver.getCommandExecutor());
 
     }
 
