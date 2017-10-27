@@ -35,7 +35,7 @@ import com.vaadin.testbench.parallel.ParallelTest;
  * The value can be obtained through {@link ParallelTest#getRunLocallyBrowser()}
  * and {@link ParallelTest#getRunLocallyBrowserVersion()}
  * </p>
- * 
+ *
  * <p>
  * Usage:<br>
  * {@code @RunLocally(Browser.CHROME)}

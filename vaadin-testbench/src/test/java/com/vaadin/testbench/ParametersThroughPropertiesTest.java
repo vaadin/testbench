@@ -9,22 +9,25 @@ public class ParametersThroughPropertiesTest {
     // this, the test will fail.
     // Run manually only this test to verify that setting parameters using
     // properties works
-//    @Test
+    // @Test
     public void testSettingValuesUsingProperties() {
+        System.setProperty(Parameters.class.getName() + ".maxScreenshotRetries",
+                125 + "");
         System.setProperty(
-                Parameters.class.getName() + ".maxScreenshotRetries", 125 + "");
-        System.setProperty(Parameters.class.getName()
-                + ".screenshotComparisonTolerance", 126.12 + "");
-        System.setProperty(
-                Parameters.class.getName() + ".screenshotRetryDelay", 12 + "");
+                Parameters.class.getName() + ".screenshotComparisonTolerance",
+                126.12 + "");
+        System.setProperty(Parameters.class.getName() + ".screenshotRetryDelay",
+                12 + "");
         System.setProperty(Parameters.class.getName() + ".testsInParallel",
                 13 + "");
+        System.setProperty(Parameters.class.getName() + ".testSuitesInParallel",
+                14 + "");
         System.setProperty(
-                Parameters.class.getName() + ".testSuitesInParallel", 14 + "");
-        System.setProperty(Parameters.class.getName()
-                + ".screenshotErrorDirectory", "errors-yo");
-        System.setProperty(Parameters.class.getName()
-                + ".screenshotReferenceDirectory", "screenshots-yo");
+                Parameters.class.getName() + ".screenshotErrorDirectory",
+                "errors-yo");
+        System.setProperty(
+                Parameters.class.getName() + ".screenshotReferenceDirectory",
+                "screenshots-yo");
         System.setProperty(Parameters.class.getName() + ".debug", "True");
         System.setProperty(Parameters.class.getName()
                 + ".screenshotComparisonCursorDetection", "true");

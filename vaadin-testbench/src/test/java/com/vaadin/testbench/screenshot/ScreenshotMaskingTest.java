@@ -24,8 +24,7 @@ import com.vaadin.testbench.testutils.ImageLoader;
 
 public class ScreenshotMaskingTest {
     private static final String FOLDER = ScreenshotMaskingTest.class
-            .getPackage().getName().replace('.', '/')
-            + "/masking";
+            .getPackage().getName().replace('.', '/') + "/masking";
 
     @Test
     public void testEqualScreenshotsPass() throws IOException {

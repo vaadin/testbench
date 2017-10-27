@@ -26,16 +26,16 @@ import org.openqa.selenium.remote.DesiredCapabilities;
  * configure the browsers that are to be used for test cases in that class. Each
  * test case is run on each of the browsers returned by the method.
  * </p>
- * 
+ *
  * <p>
  * Methods annotated with BrowserConfiguration annotation should return a <b>
  * {@link Collection}&lt;{@link DesiredCapabilities}&gt;</b>
  * </p>
- * 
+ *
  * <p>
  * Example:
  * </p>
- * 
+ *
  * <pre>
  * &#064;BrowserConfiguration
  * public List&lt;DesiredCapabilities&gt; firefoxAndChromeConfiguration() {

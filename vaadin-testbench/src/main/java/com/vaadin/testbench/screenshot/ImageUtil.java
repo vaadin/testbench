@@ -47,7 +47,7 @@ public class ImageUtil {
 
     /**
      * Encodes target image to a Base64 string
-     * 
+     *
      * @param image
      *            BufferedImage to encode to String
      * @return Base64 encoded String of image
@@ -70,7 +70,7 @@ public class ImageUtil {
 
     /**
      * Get luminance value for the given rgb value.
-     * 
+     *
      * @param rgb
      * @return
      */
@@ -88,19 +88,19 @@ public class ImageUtil {
 
     /**
      * Check canvas sizes and resize images to same size
-     * 
+     *
      * @return true/false
      */
     public static boolean imagesSameSize(BufferedImage image1,
             BufferedImage image2) {
-        return (image1.getWidth() == image2.getWidth() && image1.getHeight() == image2
-                .getHeight());
+        return (image1.getWidth() == image2.getWidth()
+                && image1.getHeight() == image2.getHeight());
     }
 
     /**
      * Resize images to be same size. The size is determined by the minimum
      * height and minimum width of the images.
-     * 
+     *
      * @param image1
      *            an image.
      * @param image2
@@ -123,7 +123,7 @@ public class ImageUtil {
 
     /**
      * Crops the image to the given size starting at (0,0)
-     * 
+     *
      * @param image
      *            The image to crop
      * @param width
@@ -141,7 +141,7 @@ public class ImageUtil {
 
     /**
      * Create a 16x16 sample buffer with space for 4 color bands
-     * 
+     *
      * @return
      */
     public static final int[] createSampleBuffer() {
@@ -150,7 +150,7 @@ public class ImageUtil {
 
     /**
      * Extract magical image properties used by the getBlock function.
-     * 
+     *
      * @param image
      *            a BufferedImage
      * @return an ImageProperties descriptor object
@@ -175,7 +175,7 @@ public class ImageUtil {
 
     /**
      * Returns the 16x16 RGB block starting at (x,y) from the given image
-     * 
+     *
      * @param properties
      *            The properties of the image (image + metadata)
      * @param x
@@ -268,7 +268,7 @@ public class ImageUtil {
 
     /**
      * Clones the given BufferedImage
-     * 
+     *
      * @param sourceImage
      *            The image to copy
      * @return A copy of sourceImage

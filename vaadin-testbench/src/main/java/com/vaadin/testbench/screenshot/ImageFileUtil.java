@@ -30,7 +30,7 @@ public class ImageFileUtil {
 
     /**
      * Returns the directory used for screenshot references.
-     * 
+     *
      * @return The screenshot reference directory, ending in a slash.
      * @return
      */
@@ -40,7 +40,7 @@ public class ImageFileUtil {
 
     /**
      * Returns the directory used for screenshot error images.
-     * 
+     *
      * @return The screenshot error directory, ending in a slash.
      */
     public static String getScreenshotErrorDirectory() {
@@ -58,13 +58,13 @@ public class ImageFileUtil {
 
     /**
      * Reads the given reference image into a BufferedImage
-     * 
+     *
      * @param referenceImageFileName
      * @return
      * @throws IOException
      */
-    public static BufferedImage readReferenceImage(String referenceImageFileName)
-            throws IOException {
+    public static BufferedImage readReferenceImage(
+            String referenceImageFileName) throws IOException {
         return impl.readReferenceImage(referenceImageFileName);
     }
 
@@ -72,7 +72,8 @@ public class ImageFileUtil {
         return impl.getErrorScreenshotFile(errorImageFileName);
     }
 
-    public static File getReferenceScreenshotFile(String referenceImageFileName) {
+    public static File getReferenceScreenshotFile(
+            String referenceImageFileName) {
         return impl.getReferenceScreenshotFile(referenceImageFileName);
     }
 
@@ -80,7 +81,7 @@ public class ImageFileUtil {
      * Returns the relative file names of reference images. The actual image
      * file for a relative file name can be retrieved with
      * {@link #getReferenceScreenshotFile(String)}.
-     * 
+     *
      * @param referenceImageFileName
      * @param capabilities
      * @return file names of reference images
@@ -94,7 +95,7 @@ public class ImageFileUtil {
     public static class ImageFileUtilImpl {
         /**
          * Returns the directory used for screenshot references.
-         * 
+         *
          * @return The screenshot reference directory, ending in a slash.
          * @return
          */
@@ -104,7 +105,7 @@ public class ImageFileUtil {
 
         /**
          * Returns the directory used for screenshot error images.
-         * 
+         *
          * @return The screenshot error directory, ending in a slash.
          */
         public String getScreenshotErrorDirectory() {
@@ -145,7 +146,7 @@ public class ImageFileUtil {
 
         /**
          * Reads the given reference image into a BufferedImage
-         * 
+         *
          * @param referenceImageFileName
          * @return
          * @throws IOException
@@ -169,14 +170,14 @@ public class ImageFileUtil {
          * Returns the relative file names of reference images. The actual image
          * file for a relative file name can be retrieved with
          * {@link #getReferenceScreenshotFile(String)}.
-         * 
+         *
          * @param referenceImageFileName
          * @param capabilities
          * @return file names of reference images
          */
         public List<String> getReferenceImageFileNames(
                 String referenceImageFileName, Capabilities capabilities) {
-            ArrayList<String> referenceImages = new ArrayList<String>();
+            ArrayList<String> referenceImages = new ArrayList<>();
             String nextName = findActualFileName(referenceImageFileName,
                     capabilities);
             File file = getReferenceScreenshotFile(nextName);
@@ -196,17 +197,17 @@ public class ImageFileUtil {
             if (cap == null) {
                 return referenceFileName;
             }
-            String fileName = findOldReferenceScreenshot(
-                cap.getBrowserName(),
-                Integer.valueOf(ReferenceNameGenerator.getMajorVersion(cap)),
-                referenceFileName);
+            String fileName = findOldReferenceScreenshot(cap.getBrowserName(),
+                    Integer.valueOf(
+                            ReferenceNameGenerator.getMajorVersion(cap)),
+                    referenceFileName);
             return fileName;
         }
 
         /**
          * Checks for reference screenshots for older versions of Google Chrome
          * and use that instead of the generated file name if so.
-         * 
+         *
          * @param browserName
          *            the browser identifier (name + version, e.g. "Chrome_17")
          * @param browserVersion

@@ -42,7 +42,7 @@ public class ReferenceImageRepresentation implements Serializable {
 
     }
 
-    private List<HashRepresentation> representations = new ArrayList<HashRepresentation>();
+    private List<HashRepresentation> representations = new ArrayList<>();
 
     public ReferenceImageRepresentation() {
 

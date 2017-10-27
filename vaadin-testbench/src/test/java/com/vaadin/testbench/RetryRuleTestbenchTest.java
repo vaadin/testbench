@@ -3,7 +3,6 @@ package com.vaadin.testbench;
 import org.junit.Assert;
 import org.junit.Test;
 
-
 public class RetryRuleTestbenchTest extends TestBenchTestCase {
 
     private int count = 0;

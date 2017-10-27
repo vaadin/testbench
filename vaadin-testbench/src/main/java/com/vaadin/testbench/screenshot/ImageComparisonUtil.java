@@ -21,7 +21,7 @@ public class ImageComparisonUtil {
     /**
      * Generates blocks representing an image by dividing the image up in 16x16
      * pixel blocks and calculating a mean value of the color in each block.
-     * 
+     *
      * @param image
      *            the image
      * @return the block representation of the image
@@ -67,7 +67,7 @@ public class ImageComparisonUtil {
      * Returns the number of blocks used for the given number of pixels. All
      * blocks are full size with the (possible) exception of the bottom and
      * right edges.
-     * 
+     *
      * @param pixels
      *            The number of pixels for the dimension.
      * @return The number of blocks used for that dimension

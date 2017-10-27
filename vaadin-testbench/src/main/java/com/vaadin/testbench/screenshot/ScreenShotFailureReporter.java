@@ -61,7 +61,7 @@ public class ScreenShotFailureReporter {
     /**
      * Runs through the marked false macroblocks and collects them to bigger
      * blocks
-     * 
+     *
      * @param xBlocks
      *            Amount of macroblocks in x direction
      * @param yBlocks
@@ -71,7 +71,7 @@ public class ScreenShotFailureReporter {
      * @return List of ErrorBlocks
      */
     private List<ErrorBlock> collectErrorsToList(int xBlocks, int yBlocks) {
-        List<ErrorBlock> errorAreas = new LinkedList<ErrorBlock>();
+        List<ErrorBlock> errorAreas = new LinkedList<>();
 
         // run through blocks for marked errors for macroblocks.
         for (int y = 0; y < yBlocks; y++) {
@@ -83,7 +83,8 @@ public class ScreenShotFailureReporter {
                     ErrorBlock newBlock = new ErrorBlock();
                     newBlock.setX(x * 16);
                     newBlock.setY(y * 16);
-                    int x1 = x, xmin = x, y1 = y, maxSteps = xBlocks * yBlocks, steps = 0;
+                    int x1 = x, xmin = x, y1 = y, maxSteps = xBlocks * yBlocks,
+                            steps = 0;
                     falseBlocks[x][y] = false;
 
                     // This'll confirm logic errors.
@@ -148,8 +149,10 @@ public class ScreenShotFailureReporter {
                                 y1 = newBlock.getY() / 16;
                                 // Set all blocks to false
                                 // inside found box
-                                for (int j = 0; j < newBlock.getYBlocks(); j++) {
-                                    for (int i = 0; i < newBlock.getXBlocks(); i++) {
+                                for (int j = 0; j < newBlock
+                                        .getYBlocks(); j++) {
+                                    for (int i = 0; i < newBlock
+                                            .getXBlocks(); i++) {
                                         if (x1 + i < xBlocks
                                                 && y1 + j < yBlocks) {
                                             falseBlocks[x1 + i][y1 + j] = false;
@@ -202,8 +205,8 @@ public class ScreenShotFailureReporter {
             }
 
             // draw error to image
-            drawToPicture.drawRect(error.getX() - offsetX, error.getY()
-                    - offsetY, toX, toY);
+            drawToPicture.drawRect(error.getX() - offsetX,
+                    error.getY() - offsetY, toX, toY);
 
         }
         // release resources
@@ -214,7 +217,7 @@ public class ScreenShotFailureReporter {
      * Build a small html file that has mouse over picture change for fast
      * checking of errors and click on picture to switch between reference and
      * diff pictures.
-     * 
+     *
      * @param blocks
      *            List of ErrorBlock
      * @param diff
@@ -234,19 +237,23 @@ public class ScreenShotFailureReporter {
             // Write head
             writer.println("<html>");
             writer.println("<head>");
-            writer.println("<script type=\"text/javascript\">var difference = true;function switchImage(){"
-                    + "if(difference){difference = false;document.getElementById('reference').style.display='block';"
-                    + "document.getElementById('diff').style.display='none';}else{difference = true;"
-                    + "document.getElementById('reference').style.display='none';document.getElementById('diff').style.display='block';"
-                    + "}}</script>");
+            writer.println(
+                    "<script type=\"text/javascript\">var difference = true;function switchImage(){"
+                            + "if(difference){difference = false;document.getElementById('reference').style.display='block';"
+                            + "document.getElementById('diff').style.display='none';}else{difference = true;"
+                            + "document.getElementById('reference').style.display='none';document.getElementById('diff').style.display='block';"
+                            + "}}</script>");
             writer.println("</head>");
-            writer.println("<body onclick=\"switchImage()\" style=\"-moz-user-select: none; -webkit-user-select: none; -ms-user-select: none;\">");
+            writer.println(
+                    "<body onclick=\"switchImage()\" style=\"-moz-user-select: none; -webkit-user-select: none; -ms-user-select: none;\">");
 
-            writer.println("<div id=\"diff\" style=\"display: block; position: absolute; top: 0px; left: 0px;\"><img src=\"data:image/png;base64,"
-                    + image
-                    + "\"/><span style=\"position: absolute; top: 0px; left: 0px; opacity:0.4; filter: alpha(opacity=40); font-weight: bold;\">Image for this run</span></div>");
-            writer.println("<div id=\"reference\" style=\"display: none; position: absolute; top: 0px; left: 0px; z-index: 999;\"><img src=\"data:image/png;base64,"
-                    + ref_image + "\"/></div>");
+            writer.println(
+                    "<div id=\"diff\" style=\"display: block; position: absolute; top: 0px; left: 0px;\"><img src=\"data:image/png;base64,"
+                            + image
+                            + "\"/><span style=\"position: absolute; top: 0px; left: 0px; opacity:0.4; filter: alpha(opacity=40); font-weight: bold;\">Image for this run</span></div>");
+            writer.println(
+                    "<div id=\"reference\" style=\"display: none; position: absolute; top: 0px; left: 0px; z-index: 999;\"><img src=\"data:image/png;base64,"
+                            + ref_image + "\"/></div>");
 
             int add = 0;
             for (ErrorBlock error : blocks) {
@@ -264,25 +271,22 @@ public class ScreenShotFailureReporter {
                         + id
                         + "').style.display='block'\"  style=\"z-index: 66;position: absolute; top: 0px; left: 0px; clip: rect("
                         + (error.getY() - offsetY) + "px,"
-                        + (error.getX() + (error.getXBlocks() * 16) + 1)
-                        + "px,"
-                        + (error.getY() + (error.getYBlocks() * 16) + 1)
-                        + "px," + (error.getX() - offsetX)
+                        + (error.getX() + (error.getXBlocks() * 16) + 1) + "px,"
+                        + (error.getY() + (error.getYBlocks() * 16) + 1) + "px,"
+                        + (error.getX() - offsetX)
                         + "px);\"><img src=\"data:image/png;base64," + image
                         + "\"/></div>");
                 // Start "popup" div
-                writer.println("<div class=\"popUpDiv\" onclick=\"document.getElementById('reference').style.display='block'; document.getElementById('diff').style.display='none';\" onmouseout=\"this.style.display='none'\" id=\""
-                        + id
-                        + "\"  style=\"display: none; position: absolute; top: 0px; left: 0px; clip: rect("
-                        + (error.getY() - offsetY)
-                        + "px,"
-                        + (error.getX() + (error.getXBlocks() * 16) + 1)
-                        + "px,"
-                        + (error.getY() + (error.getYBlocks() * 16) + 1)
-                        + "px,"
-                        + (error.getX() - offsetX)
-                        + "px); z-index: "
-                        + (99 + add) + ";\">");
+                writer.println(
+                        "<div class=\"popUpDiv\" onclick=\"document.getElementById('reference').style.display='block'; document.getElementById('diff').style.display='none';\" onmouseout=\"this.style.display='none'\" id=\""
+                                + id
+                                + "\"  style=\"display: none; position: absolute; top: 0px; left: 0px; clip: rect("
+                                + (error.getY() - offsetY) + "px,"
+                                + (error.getX() + (error.getXBlocks() * 16) + 1)
+                                + "px,"
+                                + (error.getY() + (error.getYBlocks() * 16) + 1)
+                                + "px," + (error.getX() - offsetX)
+                                + "px); z-index: " + (99 + add) + ";\">");
                 writer.println("<img src=\"data:image/png;base64," + ref_image
                         + "\" />");
                 // End popup div
