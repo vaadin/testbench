@@ -16,122 +16,115 @@ import java.util.List;
 import java.util.Set;
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.SearchContext;
+import org.openqa.selenium.Capabilities;
+import org.openqa.selenium.HasCapabilities;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.internal.WrapsDriver;
 
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
-import com.vaadin.testbench.screenshot.ImageComparison;
-import com.vaadin.testbench.screenshot.ReferenceNameGenerator;
 
-public class TestBenchDriverProxy extends TestBenchCommandExecutor implements
-        WebDriver, WrapsDriver, HasTestBenchCommandExecutor, HasDriver {
+public class TestBenchDriverProxy implements WebDriver, WrapsDriver,
+        HasTestBenchCommandExecutor, HasCapabilities {
 
-    private final WebDriver actualDriver;
+    private final WebDriver wrappedDriver;
+    private final TestBenchCommandExecutor commandExecutor;
 
-    /**
-     * Constructs a TestBenchDriverProxy using the provided web driver for the
-     * actual driving.
-     *
-     * @param webDriver
-     */
-    protected TestBenchDriverProxy(WebDriver webDriver) {
-        super(webDriver, new ImageComparison(), new ReferenceNameGenerator());
-        actualDriver = webDriver;
-    }
-
-    @Override
-    public WebDriver getWrappedDriver() {
-        return actualDriver;
-    }
-
-    public WebDriver getActualDriver() {
-        return actualDriver;
+    protected TestBenchDriverProxy(WebDriver webDriver,
+            TestBenchCommandExecutor commandExecutor) {
+        wrappedDriver = webDriver;
+        this.commandExecutor = commandExecutor;
     }
 
     // ----------------- WebDriver methods for convenience.
 
     @Override
     public void close() {
-        actualDriver.close();
+        getWrappedDriver().close();
     }
 
     @Override
     public WebElement findElement(By arg0) {
-        return TestBenchElement.wrapElement(actualDriver.findElement(arg0),
-                this);
+        return TestBenchElement.wrapElement(wrappedDriver.findElement(arg0),
+                getCommandExecutor());
     }
 
     @Override
     public List<WebElement> findElements(By arg0) {
-        return (List) TestBenchElement
-                .wrapElements(actualDriver.findElements(arg0), this);
+        return (List) TestBenchElement.wrapElements(
+                wrappedDriver.findElements(arg0), getCommandExecutor());
     }
 
     @Override
     public void get(String arg0) {
-        actualDriver.get(arg0);
+        wrappedDriver.get(arg0);
     }
 
     @Override
     public String getCurrentUrl() {
-        return actualDriver.getCurrentUrl();
+        return wrappedDriver.getCurrentUrl();
     }
 
     @Override
     public String getPageSource() {
-        return actualDriver.getPageSource();
+        return wrappedDriver.getPageSource();
     }
 
     @Override
     public String getTitle() {
-        return actualDriver.getTitle();
+        return wrappedDriver.getTitle();
     }
 
     @Override
     public String getWindowHandle() {
-        return actualDriver.getWindowHandle();
+        return wrappedDriver.getWindowHandle();
     }
 
     @Override
     public Set<String> getWindowHandles() {
-        return actualDriver.getWindowHandles();
+        return wrappedDriver.getWindowHandles();
     }
 
     @Override
     public Options manage() {
-        return actualDriver.manage();
+        return wrappedDriver.manage();
     }
 
     @Override
     public Navigation navigate() {
-        return actualDriver.navigate();
+        return wrappedDriver.navigate();
     }
 
     @Override
     public void quit() {
-        actualDriver.quit();
+        wrappedDriver.quit();
     }
 
     @Override
     public TargetLocator switchTo() {
-        return actualDriver.switchTo();
-    }
-
-    @Override
-    public SearchContext getContext() {
-        return this;
+        return wrappedDriver.switchTo();
     }
 
     @Override
     public TestBenchCommandExecutor getCommandExecutor() {
-        return this;
+        return commandExecutor;
     }
 
     @Override
-    public WebDriver getDriver() {
-        return this;
+    public Capabilities getCapabilities() {
+        if (wrappedDriver instanceof HasCapabilities) {
+            return ((HasCapabilities) wrappedDriver).getCapabilities();
+        }
+        return null;
+    }
+
+    @Override
+    public WebDriver getWrappedDriver() {
+        return wrappedDriver;
+    }
+
+    public void waitForVaadin() {
+        getCommandExecutor().waitForVaadin();
     }
 
 }

@@ -1,6 +1,6 @@
 package com.vaadin.testbench;
 
-public interface HasElementQuery {
+public interface HasElementQuery extends HasSearchContext {
 
     /**
      * Prepare a {@link ElementQuery} instance to use for locating components on
@@ -11,6 +11,9 @@ public interface HasElementQuery {
      *
      * @return an appropriate {@link ElementQuery} instance
      */
-    public <T extends TestBenchElement> ElementQuery<T> $(Class<T> clazz);
+    public default <T extends TestBenchElement> ElementQuery<T> $(
+            Class<T> clazz) {
+        return new ElementQuery<>(clazz).context(getContext());
+    }
 
 }

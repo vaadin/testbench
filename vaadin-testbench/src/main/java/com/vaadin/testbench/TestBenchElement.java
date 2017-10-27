@@ -47,11 +47,9 @@ import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.vaadin.testbench.commands.CanCompareScreenshots;
-import com.vaadin.testbench.commands.CanWaitForVaadin;
 import com.vaadin.testbench.commands.ScreenshotComparator;
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.commands.TestBenchCommands;
-import com.vaadin.testbench.commands.TestBenchElementCommands;
 import com.vaadin.testbench.parallel.BrowserUtil;
 
 import elemental.json.Json;
@@ -62,37 +60,36 @@ import elemental.json.JsonValue;
  * functionality. TestBenchElements are created when you search for elements
  * from TestBenchTestCase or a context relative search from TestBenchElement.
  */
-public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
-        implements WrapsElement, WebElement, TestBenchElementCommands,
-        CanWaitForVaadin, HasDriver, CanCompareScreenshots {
+public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
+        CanCompareScreenshots, HasTestBenchCommandExecutor, HasElementQuery {
 
-    private WebElement actualElement = null;
-    private TestBenchCommandExecutor tbCommandExecutor = null;
+    private WebElement wrappedElement = null;
+    private TestBenchCommandExecutor commandExecutor = null;
 
     protected TestBenchElement() {
 
     }
 
     protected TestBenchElement(WebElement webElement,
-            TestBenchCommandExecutor tbCommandExecutor) {
-        init(webElement, tbCommandExecutor);
+            TestBenchCommandExecutor commandExecutor) {
+        init(webElement, commandExecutor);
     }
 
     /**
      * TestBenchElement initialization function. If a subclass of
      * TestBenchElement needs to run some initialization code, it should
-     * override init(), not this function.
+     * override {@link #init()}, not this function.
      *
      * @param element
      *            WebElement to wrap
-     * @param tbCommandExecutor
+     * @param commandExecutor
      *            TestBenchCommandExecutor instance
      */
     protected void init(WebElement element,
-            TestBenchCommandExecutor tbCommandExecutor) {
-        if (null == this.tbCommandExecutor) {
-            this.tbCommandExecutor = tbCommandExecutor;
-            actualElement = element;
+            TestBenchCommandExecutor commandExecutor) {
+        if (this.commandExecutor == null) {
+            this.commandExecutor = commandExecutor;
+            wrappedElement = element;
             init();
         }
     }
@@ -134,13 +131,7 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
      * @return information about current browser used
      */
     protected Capabilities getCapabilities() {
-        WebDriver driver;
-        if (getDriver() instanceof TestBenchDriverProxy) {
-            driver = ((TestBenchDriverProxy) getDriver()).getWrappedDriver();
-        } else {
-            driver = getDriver();
-        }
-
+        WebDriver driver = getDriver();
         if (driver instanceof HasCapabilities) {
             return ((HasCapabilities) driver).getCapabilities();
         } else {
@@ -158,25 +149,12 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
 
     @Override
     public WebElement getWrappedElement() {
-        return actualElement;
+        return wrappedElement;
     }
 
-    @Override
-    public void waitForVaadin() {
+    protected void waitForVaadin() {
         if (getCommandExecutor() != null) {
             getCommandExecutor().waitForVaadin();
-        }
-    }
-
-    @Override
-    public void showTooltip() {
-        waitForVaadin();
-        new Actions(getCommandExecutor().getWrappedDriver())
-                .moveToElement(actualElement).perform();
-        // Wait for a small moment for the tooltip to appear
-        try {
-            Thread.sleep(1000); // VTooltip.OPEN_DELAY = 750;
-        } catch (InterruptedException ignored) {
         }
     }
 
@@ -186,9 +164,7 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
      *
      * @param scrollTop
      *            value set to Element.scroll property
-     * @see com.vaadin.testbench.commands.TestBenchElementCommands#scroll(int)
      */
-    @Override
     public void scroll(int scrollTop) {
         setProperty("scrollTop", scrollTop);
     }
@@ -199,9 +175,7 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
      *
      * @param scrollLeft
      *            value set to Element.scrollLeft property
-     * @see com.vaadin.testbench.commands.TestBenchElementCommands#scrollLeft(int)
      */
-    @Override
     public void scrollLeft(int scrollLeft) {
         setProperty("scrollLeft", scrollLeft);
     }
@@ -210,7 +184,7 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
     public void click() {
         autoScrollIntoView();
         waitForVaadin();
-        actualElement.click();
+        wrappedElement.click();
     }
 
     @Override
@@ -222,33 +196,33 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
     public void sendKeys(CharSequence... keysToSend) {
         autoScrollIntoView();
         waitForVaadin();
-        actualElement.sendKeys(keysToSend);
+        wrappedElement.sendKeys(keysToSend);
     }
 
     @Override
     public void clear() {
         autoScrollIntoView();
         waitForVaadin();
-        actualElement.clear();
+        wrappedElement.clear();
     }
 
     @Override
     public String getTagName() {
         waitForVaadin();
-        return actualElement.getTagName();
+        return wrappedElement.getTagName();
     }
 
     @Override
     public String getAttribute(String name) {
         waitForVaadin();
-        return actualElement.getAttribute(name);
+        return wrappedElement.getAttribute(name);
     }
 
     @Override
     public boolean isSelected() {
         autoScrollIntoView();
         waitForVaadin();
-        return actualElement.isSelected();
+        return wrappedElement.isSelected();
     }
 
     /**
@@ -260,26 +234,27 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
     @Override
     public boolean isEnabled() {
         waitForVaadin();
-        return !hasClassName("v-disabled") && actualElement.isEnabled();
+        return !hasClassName("v-disabled") && wrappedElement.isEnabled();
     }
 
     @Override
     public String getText() {
         autoScrollIntoView();
         waitForVaadin();
-        return actualElement.getText();
+        return wrappedElement.getText();
     }
 
     @Override
     public List<WebElement> findElements(By by) {
         return (List) TestBenchElement.wrapElements(
-                actualElement.findElements(by), getCommandExecutor());
+                wrappedElement.findElements(by), getCommandExecutor());
     }
 
     @Override
     public TestBenchElement findElement(By by) {
         waitForVaadin();
-        return wrapElement(actualElement.findElement(by), getCommandExecutor());
+        return wrapElement(wrappedElement.findElement(by),
+                getCommandExecutor());
     }
 
     /**
@@ -295,33 +270,32 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
     @Override
     public boolean isDisplayed() {
         waitForVaadin();
-        return actualElement.isDisplayed();
+        return wrappedElement.isDisplayed();
     }
 
     @Override
     public Point getLocation() {
         waitForVaadin();
-        return actualElement.getLocation();
+        return wrappedElement.getLocation();
     }
 
     @Override
     public Dimension getSize() {
         waitForVaadin();
-        return actualElement.getSize();
+        return wrappedElement.getSize();
     }
 
     @Override
     public String getCssValue(String propertyName) {
         waitForVaadin();
-        return actualElement.getCssValue(propertyName);
+        return wrappedElement.getCssValue(propertyName);
     }
 
-    @Override
     public void click(int x, int y, Keys... modifiers) {
         autoScrollIntoView();
         waitForVaadin();
-        Actions actions = new Actions(getCommandExecutor().getWrappedDriver());
-        actions.moveToElement(actualElement, x, y);
+        Actions actions = new Actions(getDriver());
+        actions.moveToElement(wrappedElement, x, y);
         // Press any modifier keys
         for (Keys modifier : modifiers) {
             actions.keyDown(modifier);
@@ -337,28 +311,27 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
     public void doubleClick() {
         autoScrollIntoView();
         waitForVaadin();
-        new Actions(getDriver()).doubleClick(actualElement).build().perform();
+        new Actions(getDriver()).doubleClick(wrappedElement).build().perform();
     }
 
     public void contextClick() {
         autoScrollIntoView();
         waitForVaadin();
-        new Actions(getDriver()).contextClick(actualElement).build().perform();
+        new Actions(getDriver()).contextClick(wrappedElement).build().perform();
     }
 
-    @Override
     public <T extends TestBenchElement> T wrap(Class<T> elementType) {
         return TestBench.wrap(this, elementType);
     }
 
     @Override
     public TestBenchCommandExecutor getCommandExecutor() {
-        return tbCommandExecutor;
+        return commandExecutor;
     }
 
     @Override
     public WebDriver getDriver() {
-        return getCommandExecutor().getWrappedDriver();
+        return getCommandExecutor().getDriver();
     }
 
     /**
@@ -373,7 +346,6 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
     /**
      * Move browser focus to this Element
      */
-    @Override
     public void focus() {
         waitForVaadin();
         getCommandExecutor().focusElement(this);
@@ -381,22 +353,22 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
 
     protected static List<TestBenchElement> wrapElements(
             List<WebElement> elements,
-            TestBenchCommandExecutor tbCommandExecutor) {
+            TestBenchCommandExecutor commandExecutor) {
         List<TestBenchElement> wrappedList = new ArrayList<>();
 
         for (WebElement e : elements) {
-            wrappedList.add(wrapElement(e, tbCommandExecutor));
+            wrappedList.add(wrapElement(e, commandExecutor));
         }
 
         return wrappedList;
     }
 
     protected static TestBenchElement wrapElement(WebElement element,
-            TestBenchCommandExecutor tbCommandExecutor) {
+            TestBenchCommandExecutor commandExecutor) {
         if (element instanceof TestBenchElement) {
             return (TestBenchElement) element;
         } else {
-            return TestBench.createElement(element, tbCommandExecutor);
+            return TestBench.createElement(element, commandExecutor);
         }
     }
 
@@ -404,13 +376,13 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
     public <X> X getScreenshotAs(OutputType<X> target)
             throws WebDriverException {
         waitForVaadin();
-        return actualElement.getScreenshotAs(target);
+        return wrappedElement.getScreenshotAs(target);
     }
 
     @Override
     public Rectangle getRect() {
         waitForVaadin();
-        return actualElement.getRect();
+        return wrappedElement.getRect();
     }
 
     /**
@@ -454,19 +426,19 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
 
     @Override
     public boolean equals(Object obj) {
-        if (actualElement == null) {
+        if (wrappedElement == null) {
             return false;
         }
-        return actualElement.equals(obj);
+        return wrappedElement.equals(obj);
     }
 
     @Override
     public int hashCode() {
-        if (actualElement == null) {
+        if (wrappedElement == null) {
             return 32;
         }
 
-        return actualElement.hashCode();
+        return wrappedElement.hashCode();
     }
 
     @Override
@@ -507,7 +479,7 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
      */
     private void autoScrollIntoView() {
         if (getCommandExecutor().isAutoScrollIntoView()) {
-            if (!actualElement.isDisplayed()) {
+            if (!wrappedElement.isDisplayed()) {
                 scrollIntoView();
             }
         }

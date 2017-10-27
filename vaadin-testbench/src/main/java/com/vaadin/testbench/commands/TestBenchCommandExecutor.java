@@ -32,6 +32,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.HttpCommandExecutor;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
+import com.vaadin.testbench.HasDriver;
 import com.vaadin.testbench.TestBench;
 import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.testbench.screenshot.ImageComparison;
@@ -41,7 +42,7 @@ import com.vaadin.testbench.screenshot.ReferenceNameGenerator;
  * Provides actual implementation of TestBenchCommands
  */
 public class TestBenchCommandExecutor
-        implements TestBenchCommands, JavascriptExecutor {
+        implements TestBenchCommands, JavascriptExecutor, HasDriver {
 
     private static Logger logger = Logger
             .getLogger(TestBenchCommandExecutor.class.getName());
@@ -50,16 +51,17 @@ public class TestBenchCommandExecutor
         return logger;
     }
 
-    private final WebDriver actualDriver;
+    private final WebDriver driver;
     private final ImageComparison imageComparison;
     private final ReferenceNameGenerator referenceNameGenerator;
+
     private boolean enableWaitForVaadin = true;
     private boolean autoScrollIntoView = true;
 
-    public TestBenchCommandExecutor(WebDriver actualDriver,
+    public TestBenchCommandExecutor(WebDriver driver,
             ImageComparison imageComparison,
             ReferenceNameGenerator referenceNameGenerator) {
-        this.actualDriver = actualDriver;
+        this.driver = driver;
         this.imageComparison = imageComparison;
         this.referenceNameGenerator = referenceNameGenerator;
     }
@@ -68,8 +70,8 @@ public class TestBenchCommandExecutor
     public String getRemoteControlName() {
         InetAddress ia = null;
         try {
-            if (actualDriver instanceof RemoteWebDriver) {
-                RemoteWebDriver rwd = (RemoteWebDriver) actualDriver;
+            if (driver instanceof RemoteWebDriver) {
+                RemoteWebDriver rwd = (RemoteWebDriver) driver;
                 if (rwd.getCommandExecutor() instanceof HttpCommandExecutor) {
                     ia = InetAddress.getByName(
                             ((HttpCommandExecutor) rwd.getCommandExecutor())
@@ -91,10 +93,8 @@ public class TestBenchCommandExecutor
         return null;
     }
 
-    @Override
     public void waitForVaadin() {
-        if (!enableWaitForVaadin
-                || !(actualDriver instanceof JavascriptExecutor)) {
+        if (!enableWaitForVaadin || !(driver instanceof JavascriptExecutor)) {
             // wait for vaadin is disabled, just return.
             return;
         }
@@ -115,7 +115,7 @@ public class TestBenchCommandExecutor
         Boolean finished = false;
         while (System.currentTimeMillis() < timeoutTime && !finished) {
             // Don't call executeScript here as it will re-trigger waitForVaadin
-            finished = (Boolean) ((JavascriptExecutor) actualDriver)
+            finished = (Boolean) ((JavascriptExecutor) driver)
                     .executeScript(isVaadinFinished);
             if (finished == null) {
                 // This should never happen but according to
@@ -129,15 +129,14 @@ public class TestBenchCommandExecutor
 
     @Override
     public boolean compareScreen(String referenceId) throws IOException {
-        WebDriver driver = getWrappedDriver();
         return ScreenshotComparator.compareScreen(referenceId,
                 referenceNameGenerator, imageComparison,
-                (TakesScreenshot) driver, (HasCapabilities) driver);
+                (TakesScreenshot) driver, (HasCapabilities) getDriver());
     }
 
     @Override
     public boolean compareScreen(File reference) throws IOException {
-        WebDriver driver = getWrappedDriver();
+        WebDriver driver = getDriver();
         return ScreenshotComparator.compareScreen(reference, imageComparison,
                 (TakesScreenshot) driver, (HasCapabilities) driver);
 
@@ -146,7 +145,7 @@ public class TestBenchCommandExecutor
     @Override
     public boolean compareScreen(BufferedImage reference, String referenceName)
             throws IOException {
-        WebDriver driver = getWrappedDriver();
+        WebDriver driver = getDriver();
         return ScreenshotComparator.compareScreen(reference, referenceName,
                 imageComparison, (TakesScreenshot) driver,
                 (HasCapabilities) driver);
@@ -241,9 +240,10 @@ public class TestBenchCommandExecutor
      */
     @Override
     public Object executeScript(String script, Object... args) {
-        if (actualDriver instanceof JavascriptExecutor) {
-            return wrapElementOrElements(((JavascriptExecutor) actualDriver)
-                    .executeScript(script, args), this);
+        if (driver instanceof JavascriptExecutor) {
+            return wrapElementOrElements(
+                    ((JavascriptExecutor) driver).executeScript(script, args),
+                    this);
 
         }
         throw new RuntimeException("The driver is not a JavascriptExecutor");
@@ -257,8 +257,8 @@ public class TestBenchCommandExecutor
      */
     @Override
     public Object executeAsyncScript(String script, Object... args) {
-        if (actualDriver instanceof JavascriptExecutor) {
-            return wrapElementOrElements(((JavascriptExecutor) actualDriver)
+        if (driver instanceof JavascriptExecutor) {
+            return wrapElementOrElements(((JavascriptExecutor) driver)
                     .executeAsyncScript(script, args), this);
         }
         throw new RuntimeException("The driver is not a JavascriptExecutor");
@@ -317,21 +317,22 @@ public class TestBenchCommandExecutor
      *
      * @return a WebDriver instance
      */
-    public WebDriver getWrappedDriver() {
-        return actualDriver;
+    @Override
+    public WebDriver getDriver() {
+        return driver;
     }
 
     @Override
     public void resizeViewPortTo(final int desiredWidth,
             final int desiredHeight) throws UnsupportedOperationException {
         try {
-            actualDriver.manage().window().setPosition(new Point(0, 0));
+            getDriver().manage().window().setPosition(new Point(0, 0));
 
             // first try with mac FF, these will change from plat to plat and
             // browser setup to another
             int extrah = 106;
             int extraw = 0;
-            actualDriver.manage().window().setSize(new Dimension(
+            getDriver().manage().window().setSize(new Dimension(
                     desiredWidth + extraw, desiredHeight + extrah));
 
             int actualWidth = detectViewportWidth();
@@ -341,7 +342,7 @@ public class TestBenchCommandExecutor
             int diffH = desiredHeight - actualHeight;
 
             if (diffH != 0 || diffW != 0) {
-                actualDriver.manage().window()
+                driver.manage().window()
                         .setSize(new Dimension(desiredWidth + extraw + diffW,
                                 desiredHeight + extrah + diffH));
             }
@@ -401,4 +402,5 @@ public class TestBenchCommandExecutor
     public ImageComparison getImageComparison() {
         return imageComparison;
     }
+
 }
