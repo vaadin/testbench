@@ -22,6 +22,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
+import com.vaadin.testbench.screenshot.ImageComparison;
+import com.vaadin.testbench.screenshot.ReferenceNameGenerator;
 import com.vaadin.testbench.tools.LicenseChecker;
 
 import javassist.util.proxy.MethodFilter;
@@ -87,6 +89,13 @@ public class TestBench {
     }
 
     public static WebDriver createDriver(WebDriver driver) {
+        TestBenchCommandExecutor commandExecutor = new TestBenchCommandExecutor(
+                driver, new ImageComparison(), new ReferenceNameGenerator());
+        return createDriver(driver, commandExecutor);
+    }
+
+    public static WebDriver createDriver(WebDriver driver,
+            TestBenchCommandExecutor commandExecutor) {
         Set<Class<?>> allInterfaces = extractInterfaces(driver);
         Class<TestBenchDriverProxy> driverClass = TestBenchDriverProxy.class;
         allInterfaces.addAll(extractInterfaces(driverClass));
@@ -99,12 +108,14 @@ public class TestBench {
 
         Object proxy;
         try {
-            proxy = pFactory.create(new Class[] { WebDriver.class },
-                    new Object[] { driver },
+            proxy = pFactory.create(
+                    new Class[] { WebDriver.class,
+                            TestBenchCommandExecutor.class },
+                    new Object[] { driver, commandExecutor },
                     new DriverInvocationHandler(driver));
         } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+            throw new IllegalStateException("Unable to create proxy for driver",
+                    e);
         }
         return (WebDriver) proxy;
     }

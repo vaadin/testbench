@@ -12,8 +12,7 @@
  */
 package com.vaadin.testbench.commands;
 
-public interface TestBenchCommands
-        extends CanWaitForVaadin, CanCompareScreenshots {
+public interface TestBenchCommands extends CanCompareScreenshots {
 
     /**
      * Finds the canonical host name of the remotely executing node where the

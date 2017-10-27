@@ -41,8 +41,6 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.internal.WrapsDriver;
 
-import com.vaadin.testbench.commands.TestBenchElementCommands;
-
 public class TestBenchDriverTest {
 
     @Test
@@ -85,10 +83,9 @@ public class TestBenchDriverTest {
         WebDriver driver = TestBench.createDriver(mockDriver);
         driver.close();
         By mockBy = createNiceMock(By.class);
+        assertTrue(driver.findElement(mockBy) instanceof TestBenchElement);
         assertTrue(
-                driver.findElement(mockBy) instanceof TestBenchElementCommands);
-        assertTrue(driver.findElements(mockBy)
-                .get(0) instanceof TestBenchElementCommands);
+                driver.findElements(mockBy).get(0) instanceof TestBenchElement);
         driver.get("foo");
         assertEquals("foo", driver.getCurrentUrl());
         assertEquals("<html></html>", driver.getPageSource());
@@ -128,10 +125,10 @@ public class TestBenchDriverTest {
 
         TestBenchDriverProxy tb = (TestBenchDriverProxy) TestBench
                 .createDriver(mockFF);
-        tb.disableWaitForVaadin();
+        tb.getCommandExecutor().disableWaitForVaadin();
         tb.findElement(By.id("foo"));
 
-        tb.enableWaitForVaadin();
+        tb.getCommandExecutor().enableWaitForVaadin();
         tb.findElement(By.id("foo"));
 
         verify(mockFF, mockElement);

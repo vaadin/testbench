@@ -20,7 +20,7 @@ import com.vaadin.testbench.commands.TestBenchCommandExecutor;
  * client-control code.
  *
  */
-public interface HasTestBenchCommandExecutor extends HasSearchContext {
+public interface HasTestBenchCommandExecutor {
 
     /**
      * Return a reference to the related {@link TestBenchCommandExecutor}
