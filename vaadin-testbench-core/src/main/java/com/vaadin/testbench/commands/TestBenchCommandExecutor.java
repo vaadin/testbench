@@ -125,7 +125,7 @@ public class TestBenchCommandExecutor
 
     @Override
     public boolean compareScreen(String referenceId) throws IOException {
-        WebDriver driver = getWrappedDriver();
+        WebDriver driver = getDriver();
         return ScreenshotComparator.compareScreen(referenceId,
                 referenceNameGenerator, imageComparison,
                 (TakesScreenshot) driver, (HasCapabilities) driver);
@@ -262,6 +262,19 @@ public class TestBenchCommandExecutor
      * @return a WebDriver instance
      */
     public WebDriver getWrappedDriver() {
+        return actualDriver;
+    }
+
+    /**
+     * Return a reference to the {@link WebDriver} instance associated with this
+     * {@link TestBenchCommandExecutor}
+     *
+     * @return a WebDriver instance
+     */
+    public WebDriver getDriver() {
+        // This is actually never called. The overridden version in
+        // TestBenchDriverProy is. This class hierarchy is wrong in several
+        // ways.
         return actualDriver;
     }
 
