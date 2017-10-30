@@ -4,7 +4,6 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 
-
 public class RetryRuleTestbenchWithParameterTest extends TestBenchTestCase {
 
     static int oldMaxAttempts = Parameters.getMaxAttempts();

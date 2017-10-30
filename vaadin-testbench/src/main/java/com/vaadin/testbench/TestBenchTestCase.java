@@ -27,7 +27,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.commands.TestBenchCommands;
-import com.vaadin.testbench.commands.TestBenchElementCommands;
 import com.vaadin.testbench.tools.LicenseChecker;
 
 /**
@@ -35,7 +34,7 @@ import com.vaadin.testbench.tools.LicenseChecker;
  * is also used by tests created by the Recorder.
  */
 public abstract class TestBenchTestCase
-        extends AbstractHasTestBenchCommandExecutor implements HasDriver {
+        implements HasDriver, HasTestBenchCommandExecutor, HasElementQuery {
 
     static {
         // Check the license here, before any driver has been initialized
@@ -56,39 +55,13 @@ public abstract class TestBenchTestCase
     protected WebDriver driver;
 
     /**
-     * Convenience method that casts the specified {@link WebDriver} instance to
-     * an instance of {@link TestBenchCommands}, making it easy to access the
-     * special TestBench commands.
-     *
-     * @param webDriver
-     *            The WebDriver instance to cast.
-     * @return a WebDriver cast to TestBenchCommands
-     */
-    public static TestBenchCommands testBench(WebDriver webDriver) {
-        return (TestBenchCommands) webDriver;
-    }
-
-    /**
      * Convenience method the return {@link TestBenchCommands} for the default
      * {@link WebDriver} instance.
      *
      * @return The driver cast to a TestBenchCommands instance.
      */
     public TestBenchCommands testBench() {
-        return (TestBenchCommands) getDriver();
-    }
-
-    /**
-     * Convenience method that casts the specified {@link WebElement} instance
-     * to an instance of {@link TestBenchElementCommands}, making it easy to
-     * access the special TestBench commands.
-     *
-     * @param webElement
-     *            The WebElement to cast.
-     * @return The WebElement cast to a TestBenchElementCommands instance.
-     */
-    public TestBenchElementCommands testBenchElement(WebElement webElement) {
-        return (TestBenchElementCommands) webElement;
+        return ((TestBenchDriverProxy) getDriver()).getCommandExecutor();
     }
 
     /**

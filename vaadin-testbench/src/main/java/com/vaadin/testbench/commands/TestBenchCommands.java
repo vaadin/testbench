@@ -12,8 +12,7 @@
  */
 package com.vaadin.testbench.commands;
 
-public interface TestBenchCommands
-        extends CanWaitForVaadin, CanCompareScreenshots {
+public interface TestBenchCommands extends CanCompareScreenshots {
 
     /**
      * Finds the canonical host name of the remotely executing node where the
@@ -115,7 +114,7 @@ public interface TestBenchCommands
     /**
      * Whether or not the elements should be scrolled into the visible area of
      * the browser window before interacting with them
-     * 
+     *
      * @return true if elements should be scrolled, otherwise false
      */
     boolean isAutoScrollIntoView();
@@ -123,7 +122,7 @@ public interface TestBenchCommands
     /**
      * Sets if the elements should be scrolled into the visible area of the
      * browser window before interacting with them
-     * 
+     *
      * @param autoScrollIntoView
      */
     void setAutoScrollIntoView(boolean autoScrollIntoView);

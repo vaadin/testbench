@@ -48,8 +48,8 @@ public class ImageComparison {
     // class.
     //
 
-    private static Logger logger = Logger.getLogger(ImageComparison.class
-            .getName());
+    private static Logger logger = Logger
+            .getLogger(ImageComparison.class.getName());
 
     /**
      * Data collection type, used as input for image comparison functions. Saves
@@ -106,11 +106,8 @@ public class ImageComparison {
         if (referenceFileNames.isEmpty()) {
             // We require a reference image to continue
             // Save the screenshot in the error directory.
-            ImageIO.write(
-                    screenshotImage,
-                    "png",
-                    ImageFileUtil.getErrorScreenshotFile(referenceFileId
-                            + ".png"));
+            ImageIO.write(screenshotImage, "png", ImageFileUtil
+                    .getErrorScreenshotFile(referenceFileId + ".png"));
             logger.severe("No reference found for " + referenceFileId + " in "
                     + ImageFileUtil.getScreenshotReferenceDirectory());
             return false;
@@ -179,8 +176,8 @@ public class ImageComparison {
                     System.out.println("Images are of different size.");
                 } else {
                     // Neither size nor contents match
-                    System.out
-                            .println("Images differ and are of different size.");
+                    System.out.println(
+                            "Images differ and are of different size.");
                 }
             }
 
@@ -205,14 +202,14 @@ public class ImageComparison {
             if (possibleCursorPosition != null) {
                 if (isCursorTheOnlyError(possibleCursorPosition, param)) {
                     if (Parameters.isDebug()) {
-                        System.out
-                                .println("Screenshot matched reference after removing cursor");
+                        System.out.println(
+                                "Screenshot matched reference after removing cursor");
                     }
                     // Cursor is the only difference so we are done.
                     return null;
                 } else if (Parameters.isDebug()) {
-                    System.out
-                            .println("Screenshot did not match reference after removing cursor");
+                    System.out.println(
+                            "Screenshot did not match reference after removing cursor");
                 }
             }
         }
@@ -238,7 +235,8 @@ public class ImageComparison {
         boolean imagesEqual = compareImage(params);
 
         // Check for cursor.
-        if (!imagesEqual && Parameters.isScreenshotComparisonCursorDetection()) {
+        if (!imagesEqual
+                && Parameters.isScreenshotComparisonCursorDetection()) {
             Point possibleCursorPosition = getPossibleCursorPosition(params);
             if (possibleCursorPosition != null) {
                 if (isCursorTheOnlyError(possibleCursorPosition, params)) {
@@ -266,7 +264,8 @@ public class ImageComparison {
         return result;
     }
 
-    private boolean blocksDiffer(int x, int y, final ComparisonParameters params) {
+    private boolean blocksDiffer(int x, int y,
+            final ComparisonParameters params) {
         final int[] refBlock = getBlock(params.refProperties, x, y,
                 params.refBlock, params.sampleBuffer);
         final int[] ssBlock = getBlock(params.ssProperties, x, y,
@@ -357,7 +356,8 @@ public class ImageComparison {
                             // This error is not below the first
                             return null;
                         }
-                        if ((y - firstErrorBlockY) > (MAX_CURSOR_Y_BLOCKS - 1)) {
+                        if ((y - firstErrorBlockY) > (MAX_CURSOR_Y_BLOCKS
+                                - 1)) {
                             // Cursor is accepted for 1-3 blocks above each
                             // other (we are moving from top down).
                             return null;
@@ -414,8 +414,8 @@ public class ImageComparison {
         }
 
         if (Parameters.isDebug()) {
-            System.out.println("Looking for cursor starting from " + x + ","
-                    + y + " using width=" + width + " and height=" + height);
+            System.out.println("Looking for cursor starting from " + x + "," + y
+                    + " using width=" + width + " and height=" + height);
         }
         // getBlock writes the result into the int[] sample parameter, in
         // this case params.refBlock and params.ssBlock. params.sampleBuffer
@@ -469,8 +469,9 @@ public class ImageComparison {
 
         // Find the end of the cursor
         int cursorEndY = cursorStartY;
-        // Start from what we already know is a cursor pixel because that is certainly inside the current block
-        int idx = cursorX + (cursorEndY) * width; 
+        // Start from what we already know is a cursor pixel because that is
+        // certainly inside the current block
+        int idx = cursorX + (cursorEndY) * width;
         int diff = 0;
         while (cursorEndY < height - 1
                 && cursorEndY < MAX_CURSOR_Y_BLOCKS * BLOCK_SIZE

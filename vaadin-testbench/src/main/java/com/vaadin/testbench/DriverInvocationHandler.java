@@ -19,13 +19,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.vaadin.testbench.commands.CanWaitForVaadin;
-
 import javassist.util.proxy.MethodHandler;
 
 public class DriverInvocationHandler implements MethodHandler {
 
-    private Map<Method, Boolean> proxyMethod = new HashMap<Method, Boolean>();
+    private Map<Method, Boolean> proxyMethod = new HashMap<>();
     private final Object actualObject;
 
     public DriverInvocationHandler(Object actualObject) {
@@ -60,13 +58,15 @@ public class DriverInvocationHandler implements MethodHandler {
 
     /**
      * Invokes waitForVaadin unless the command is known to not need to wait.
-     * 
+     *
      * @param methodName
      */
-    private void waitForVaadinIfNecessary(Object proxyObject, String methodName) {
+    private void waitForVaadinIfNecessary(Object proxyObject,
+            String methodName) {
         if (shouldWaitForVaadin(methodName)
-                && proxyObject instanceof CanWaitForVaadin) {
-            ((CanWaitForVaadin) proxyObject).waitForVaadin();
+                && proxyObject instanceof TestBenchDriverProxy) {
+            ((TestBenchDriverProxy) proxyObject).getCommandExecutor()
+                    .waitForVaadin();
         }
     }
 
@@ -74,7 +74,7 @@ public class DriverInvocationHandler implements MethodHandler {
             .asList("close", "get", "getRemoteControlName", "manage",
                     "getWrappedDriver", "navigate", "quit", "setTestName",
                     "switchTo", "waitForVaadin", "enableWaitForVaadin",
-                    "disableWaitForVaadin");
+                    "disableWaitForVaadin", "getCommandExecutor");
 
     private boolean shouldWaitForVaadin(String methodName) {
         return !methodsNotNeedingWaitForVaadin.contains(methodName);

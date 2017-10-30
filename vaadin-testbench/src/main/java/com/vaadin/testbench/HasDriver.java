@@ -24,7 +24,7 @@ public interface HasDriver {
      * class instance. This can be simply the class itself re-cast as a
      * WebDriver, or a reference to some WebDriver obtainable by any other
      * means.
-     * 
+     *
      * @return the contained WebDriver instance
      */
     WebDriver getDriver();

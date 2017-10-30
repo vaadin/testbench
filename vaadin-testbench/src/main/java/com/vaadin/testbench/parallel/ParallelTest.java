@@ -52,7 +52,7 @@ public class ParallelTest extends TestBenchTestCase {
      * This method uses {@link #getHubHostname()} to build the complete address
      * of the Hub. Override in order to define a different hub address.<br>
      * </p>
-     * 
+     *
      * @return the complete URL of the hub where the tests will be run on. Used
      *         by {@link #setup()}, for the creation of the {@link WebDriver}.
      */
@@ -73,7 +73,7 @@ public class ParallelTest extends TestBenchTestCase {
      * This method is used by {@link #getHubURL()} to get the full URL of the
      * hub to run tests on.
      * </p>
-     * 
+     *
      * @return the hostname of the hub where test is to be run on.
      */
     protected String getHubHostname() {
@@ -105,7 +105,7 @@ public class ParallelTest extends TestBenchTestCase {
      * the driver to connect to localhost ({@link RunLocally} annotation
      * overrides {@link RunOnHub} annotation).
      * </p>
-     * 
+     *
      * @throws Exception
      *             if unable to instantiate {@link WebDriver}
      */
@@ -160,7 +160,7 @@ public class ParallelTest extends TestBenchTestCase {
     }
 
     /**
-     * 
+     *
      * @return default capabilities, used if no {@link BrowserConfiguration}
      *         method was found
      */
@@ -171,7 +171,7 @@ public class ParallelTest extends TestBenchTestCase {
     /**
      * Sets the requested {@link DesiredCapabilities} (usually browser name and
      * version)
-     * 
+     *
      * @param desiredCapabilities
      */
     public void setDesiredCapabilities(
@@ -181,7 +181,7 @@ public class ParallelTest extends TestBenchTestCase {
 
     /**
      * Gets the {@link DesiredCapabilities} (usually browser name and version)
-     * 
+     *
      * @return
      */
     protected DesiredCapabilities getDesiredCapabilities() {

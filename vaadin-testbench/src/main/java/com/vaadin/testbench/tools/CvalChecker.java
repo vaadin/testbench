@@ -378,7 +378,8 @@ public final class CvalChecker {
                     productTitle, key, info);
         } else if (info.isLicenseExpired()) {
             String type = "evaluation".equals(info.getType())
-                    ? "Evaluation license" : "License";
+                    ? "Evaluation license"
+                    : "License";
             String msg = getErrorMessage(info, "expired", productTitle,
                     majorVersion, type);
             throw new InvalidCvalException(msg, productName, productVersion,
