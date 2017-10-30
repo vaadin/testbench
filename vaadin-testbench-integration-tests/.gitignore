@@ -21,8 +21,10 @@ local.properties
 
 # Frontend
 /build-tools/bin/
-/src/main/webapp/bower_components/
-/src/main/webapp/build/
+/src/main/webapp/frontend/bower_components/
+/src/main/webapp/frontend/build/
+/src/main/webapp/frontend-es5/
+/src/main/webapp/frontend-es6/
 /build-tools/etc/
 /build-tools/lib/
 /build-tools/node/

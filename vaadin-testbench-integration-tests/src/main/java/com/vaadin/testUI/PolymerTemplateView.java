@@ -10,7 +10,7 @@ import com.vaadin.ui.polymertemplate.PolymerTemplate;
 
 @Route("PolymerTemplateView")
 @Tag("polymer-template-view")
-@HtmlImport("/src/polymer-template-view.html")
+@HtmlImport("polymer-template-view.html")
 public class PolymerTemplateView extends PolymerTemplate<TemplateModel> {
 
     public PolymerTemplateView() {
@@ -20,7 +20,8 @@ public class PolymerTemplateView extends PolymerTemplate<TemplateModel> {
             getElement().appendChild(new Div(button).getElement());
         }
 
-        NativeButton slottedButton = new NativeButton("Special Button (in Light DOM)");
+        NativeButton slottedButton = new NativeButton(
+                "Special Button (in Light DOM)");
         slottedButton.getElement().setAttribute("slot", "special-slot");
         slottedButton.getElement().setAttribute("id", "special-button");
         getElement().appendChild(slottedButton.getElement());

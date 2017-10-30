@@ -23,7 +23,6 @@
         <node.version>v8.1.2</node.version>
         <yarn.version>v0.27.5</yarn.version>
         <buildtools.directory>build-tools</buildtools.directory>
-        <frontend.directory>src/main/webapp</frontend.directory>
     </properties>
     <repositories>
         <repository>
@@ -96,6 +95,24 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>3.0.0</version>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>src/main/webapp/frontend-es5</directory>
+                        </fileset>
+                        <fileset>
+                            <directory>src/main/webapp/frontend-es6</directory>
+                        </fileset>
+                        <fileset>
+                            <directory>src/main/webapp/frontend/build</directory>
+                        </fileset>
+                    </filesets>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -213,6 +230,12 @@
                             <scanIntervalSeconds>10</scanIntervalSeconds>
                             <stopKey>foo</stopKey>
                             <stopPort>9999</stopPort>
+                            <systemProperties>
+                                <systemProperty>
+                                    <name>vaadin.productionMode</name>
+                                    <value></value>
+                                </systemProperty>
+                            </systemProperties>
                         </configuration>
                         <executions>
                             <!-- start and stop jetty (running our app) when 
