@@ -244,21 +244,25 @@ public class ElementQuery<T extends TestBenchElement> {
             indexSuffix = "[" + index + "]";
         }
 
-        String script;
+        StringBuilder script = new StringBuilder();
         TestBenchElement elementContext;
         JavascriptExecutor executor;
         if (getContext() instanceof TestBenchElement) {
-            script = "var result = arguments[0].shadowRoot.querySelectorAll(arguments[1]+arguments[2]);" +
-                    "var light = arguments[0].querySelectorAll(arguments[1]+arguments[2]);" +
-                    "if (light.length > 0) {" +
-                        "result = Array.prototype.slice.call(result).concat(Array.prototype.slice.call(light));" +
-                    "}" +
-                    "return result";
+            script.append(
+                    "var result = arguments[0].shadowRoot.querySelectorAll(arguments[1]+arguments[2]);");
+            script.append(
+                    "var light = arguments[0].querySelectorAll(arguments[1]+arguments[2]);");
+            script.append("if (light.length > 0) {");
+            script.append(
+                    "result = Array.prototype.slice.call(result).concat(Array.prototype.slice.call(light));");
+            script.append("}");
+            script.append("return result");
             elementContext = (TestBenchElement) getContext();
             executor = elementContext.getCommandExecutor();
         } else if (getContext() instanceof WebDriver) {
             // Search the whole document
-            script = "return document.querySelectorAll(arguments[1]+arguments[2])";
+            script.append(
+                    "return document.querySelectorAll(arguments[1]+arguments[2])");
             elementContext = null;
             executor = (JavascriptExecutor) getContext();
         } else {
@@ -267,11 +271,11 @@ public class ElementQuery<T extends TestBenchElement> {
                             : getContext().getClass().getName());
         }
         if (indexSuffix != null) {
-            script += indexSuffix;
+            script.append(indexSuffix);
         }
 
-        return executeSearchScript(script, elementContext, getTagName(),
-                getAttributePairs(), executor);
+        return executeSearchScript(script.toString(), elementContext,
+                getTagName(), getAttributePairs(), executor);
     }
 
     private String getTagName() {
