@@ -3,6 +3,7 @@ package com.vaadin.tests.elements;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.openqa.selenium.TimeoutException;
 
 import com.vaadin.testUI.ElementQueryView;
 import com.vaadin.testbench.TestBenchElement;
@@ -51,4 +52,9 @@ public class BasicElementIT extends MultiBrowserTest {
         Assert.assertTrue(buttonElement.getPropertyBoolean("foo"));
     }
 
+    @Test(expected = TimeoutException.class)
+    public void waitForNonExistant() {
+        $(PolymerTemplateViewElement.class).waitForFirst();
+        Assert.fail("Should not have found an element which does not exist");
+    }
 }
