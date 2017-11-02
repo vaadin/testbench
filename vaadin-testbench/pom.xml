@@ -32,18 +32,6 @@
     <profiles>
         <profile>
             <id>release</id>
-            <distributionManagement>
-                <snapshotRepository>
-                    <id>vaadin-snapshots</id>
-                    <name>Vaadin snapshot repository</name>
-                    <url>${snapshot.repository.url}</url>
-                </snapshotRepository>
-                <repository>
-                    <id>vaadin-addons</id>
-                    <name>Vaadin add-ons repository</name>
-                    <url>https://tools.vaadin.com/nexus/</url>
-                </repository>
-            </distributionManagement>
             <build>
                 <plugins>
                     <plugin>
