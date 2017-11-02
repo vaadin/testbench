@@ -38,7 +38,7 @@
          <snapshotRepository>
              <id>vaadin-snapshots</id>
              <name>Vaadin snapshot repository</name>
-             <url>https://oss.sonatype.org/content/repositories/vaadin-snapshots/</url>
+             <url>http://oss.sonatype.org/content/repositories/vaadin-snapshots/</url>
          </snapshotRepository>
          <repository>
              <id>vaadin-addons</id>
