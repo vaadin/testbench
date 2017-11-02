@@ -17,8 +17,6 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <selenium.version>3.6.0</selenium.version>
-        <snapshot.repository.url>https://oss.sonatype.org/content/repositories/vaadin-snapshots/
-        </snapshot.repository.url>
     </properties>
 
     <licenses>
@@ -32,18 +30,6 @@
     <profiles>
         <profile>
             <id>release</id>
-            <distributionManagement>
-                <snapshotRepository>
-                    <id>vaadin-snapshots</id>
-                    <name>Vaadin snapshot repository</name>
-                    <url>${snapshot.repository.url}</url>
-                </snapshotRepository>
-                <repository>
-                    <id>vaadin-addons</id>
-                    <name>Vaadin add-ons repository</name>
-                    <url>https://tools.vaadin.com/nexus/</url>
-                </repository>
-            </distributionManagement>
             <build>
                 <plugins>
                     <plugin>
