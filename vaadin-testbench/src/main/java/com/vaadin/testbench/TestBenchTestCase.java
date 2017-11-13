@@ -13,6 +13,8 @@
 package com.vaadin.testbench;
 
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.junit.Rule;
 import org.openqa.selenium.JavascriptExecutor;
@@ -21,6 +23,7 @@ import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.internal.BuildInfo;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -36,12 +39,32 @@ import com.vaadin.testbench.tools.LicenseChecker;
 public abstract class TestBenchTestCase
         implements HasDriver, HasTestBenchCommandExecutor, HasElementQuery {
 
+    private static final String SELENIUM_VERSION = "3.6.0";
+
     static {
         // Check the license here, before any driver has been initialized
         // (#15102)
         LicenseChecker.nag();
     }
 
+    static {
+        try {
+            String seleniumVersion = new BuildInfo().getReleaseLabel();
+            if (!SELENIUM_VERSION.equals(seleniumVersion)) {
+                Logger.getLogger(TestBenchTestCase.class.getName()).warning(
+                        "This version of TestBench depends on Selenium version "
+                                + SELENIUM_VERSION + " but version "
+                                + seleniumVersion
+                                + " was found. Make sure you do not have multiple versions of Selenium on the classpath.");
+            }
+        } catch (Exception e) {
+            Logger.getLogger(TestBenchTestCase.class.getName()).log(
+                    Level.WARNING,
+                    "Unable to validate that the correct Selenium version ("
+                            + SELENIUM_VERSION + ") is in use",
+                    e);
+        }
+    }
     /**
      * Specifies retry count, which is used to run same test several times. Can
      * be changed by setting "com.vaadin.testbench.Parameters.maxAttempts"
