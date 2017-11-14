@@ -13,6 +13,9 @@
 package com.vaadin.testbench;
 
 import java.util.List;
+import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.junit.Rule;
 import org.openqa.selenium.JavascriptExecutor;
@@ -21,6 +24,7 @@ import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.internal.BuildInfo;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -42,6 +46,29 @@ public abstract class TestBenchTestCase
         LicenseChecker.nag();
     }
 
+    static {
+        try {
+            String seleniumVersion = new BuildInfo().getReleaseLabel();
+
+            Properties properties = new Properties();
+            properties.load(TestBenchTestCase.class
+                    .getResourceAsStream("testbench.properties"));
+            String expectedVersion = properties.getProperty("selenium.version");
+            if (seleniumVersion == null
+                    || !seleniumVersion.equals(expectedVersion)) {
+                Logger.getLogger(TestBenchTestCase.class.getName()).warning(
+                        "This version of TestBench depends on Selenium version "
+                                + expectedVersion + " but version "
+                                + seleniumVersion
+                                + " was found. Make sure you do not have multiple versions of Selenium on the classpath.");
+            }
+        } catch (Exception e) {
+            Logger.getLogger(TestBenchTestCase.class.getName()).log(
+                    Level.WARNING,
+                    "Unable to validate that the correct Selenium version is in use",
+                    e);
+        }
+    }
     /**
      * Specifies retry count, which is used to run same test several times. Can
      * be changed by setting "com.vaadin.testbench.Parameters.maxAttempts"
