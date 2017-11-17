@@ -30,8 +30,8 @@
             <url>https://repo.vaadin.com/nexus/content/repositories/flow</url>
         </repository>
         <repository>
-            <id>flow-internal-snapshots</id>
-            <url>https://repo.vaadin.com/nexus/content/repositories/flow-snapshots/</url>
+            <id>vaadin-snapshots</id>
+            <url>${snapshot.repository.url}</url>
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
