@@ -7,10 +7,10 @@ import org.openqa.selenium.TimeoutException;
 
 import com.vaadin.testUI.ElementQueryView;
 import com.vaadin.testbench.TestBenchElement;
-import com.vaadin.tests.MultiBrowserTest;
+import com.vaadin.tests.AbstractTB6Test;
 import com.vaadin.ui.Component;
 
-public class BasicElementIT extends MultiBrowserTest {
+public class BasicElementIT extends AbstractTB6Test {
 
     private TestBenchElement buttonElement;
 

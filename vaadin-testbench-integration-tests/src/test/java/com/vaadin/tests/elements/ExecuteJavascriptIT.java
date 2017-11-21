@@ -5,10 +5,10 @@ import org.junit.Test;
 
 import com.vaadin.testUI.ElementQueryView;
 import com.vaadin.testbench.TestBenchElement;
-import com.vaadin.tests.MultiBrowserTest;
+import com.vaadin.tests.AbstractTB6Test;
 import com.vaadin.ui.Component;
 
-public class ExecuteJavascriptIT extends MultiBrowserTest {
+public class ExecuteJavascriptIT extends AbstractTB6Test {
 
     @Override
     protected Class<? extends Component> getTestView() {
