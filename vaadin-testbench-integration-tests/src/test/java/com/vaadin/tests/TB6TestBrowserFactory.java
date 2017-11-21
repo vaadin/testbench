@@ -26,12 +26,12 @@ import com.vaadin.testbench.parallel.Browser;
 import com.vaadin.testbench.parallel.DefaultBrowserFactory;
 
 /**
- * Specifies default browser configuration for {@link PrivateTB3Configuration}
+ * Specifies default browser configuration for {@link AbstractTB6Test}
  * tests.
  */
-public class VaadinBrowserFactory extends DefaultBrowserFactory {
+public class TB6TestBrowserFactory extends DefaultBrowserFactory {
 
-    private static Map<Browser, String> defaultBrowserVersion = new HashMap<Browser, String>();
+    private static Map<Browser, String> defaultBrowserVersion = new HashMap<>();
     static {
         defaultBrowserVersion.put(Browser.CHROME, "");
         defaultBrowserVersion.put(Browser.SAFARI, "7");

@@ -10,7 +10,7 @@ import com.vaadin.tests.elements.NativeButtonElement;
 import com.vaadin.tests.elements.PolymerTemplateViewElement;
 import com.vaadin.ui.Component;
 
-public class ElementQueryIT extends MultiBrowserTest {
+public class ElementQueryIT extends AbstractTB6Test {
 
     @Override
     protected Class<? extends Component> getTestView() {
