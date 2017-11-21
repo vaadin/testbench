@@ -25,8 +25,10 @@ import java.net.SocketException;
 import java.util.Enumeration;
 import java.util.Properties;
 
+import com.saucelabs.ci.sauceconnect.AbstractSauceTunnelManager;
 import com.vaadin.testbench.annotations.BrowserFactory;
 import com.vaadin.testbench.annotations.RunOnHub;
+import org.openqa.selenium.remote.DesiredCapabilities;
 
 /**
  * Provides values for parameters which depend on where the test is run.
@@ -78,6 +80,16 @@ public abstract class PrivateTB3Configuration extends AbstractTB3Test {
                 + "@localhost:4445/wd/hub";
     }
 
+    @Override
+    public void setDesiredCapabilities(DesiredCapabilities desiredCapabilities) {
+        String tunnelId = AbstractSauceTunnelManager.getTunnelIdentifier(
+                System.getProperty("sauce.options"), null);
+        if (tunnelId != null) {
+            desiredCapabilities.setCapability("tunnelIdentifier", tunnelId);
+        }
+        super.setDesiredCapabilities(desiredCapabilities);
+    }
+
     public static String getProperty(String name) {
         String property = properties.getProperty(name);
         if (property == null) {
@@ -103,7 +115,7 @@ public abstract class PrivateTB3Configuration extends AbstractTB3Test {
         String hostName = getProperty(HOSTNAME_PROPERTY);
 
         if (hostName == null || "".equals(hostName)) {
-            hostName = findAutoHostname();
+            hostName = "localhost";
         }
 
         return hostName;
@@ -128,43 +140,5 @@ public abstract class PrivateTB3Configuration extends AbstractTB3Test {
         }
 
         return port;
-    }
-
-    /**
-     * Tries to automatically determine the IP address of the machine the test
-     * is running on.
-     *
-     * @return An IP address of one of the network interfaces in the machine.
-     * @throws RuntimeException
-     *             if there was an error or no IP was found
-     */
-    private static String findAutoHostname() {
-        try {
-            Enumeration<NetworkInterface> interfaces = NetworkInterface
-                    .getNetworkInterfaces();
-            while (interfaces.hasMoreElements()) {
-                NetworkInterface nwInterface = interfaces.nextElement();
-                if (!nwInterface.isUp() || nwInterface.isLoopback()
-                        || nwInterface.isVirtual()) {
-                    continue;
-                }
-                Enumeration<InetAddress> addresses = nwInterface
-                        .getInetAddresses();
-                while (addresses.hasMoreElements()) {
-                    InetAddress address = addresses.nextElement();
-                    if (address.isLoopbackAddress()) {
-                        continue;
-                    }
-                    if (address.isSiteLocalAddress()) {
-                        return address.getHostAddress();
-                    }
-                }
-            }
-        } catch (SocketException e) {
-            throw new RuntimeException("Could not enumerate ");
-        }
-
-        throw new RuntimeException(
-                "No compatible (10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16) ip address found.");
     }
 }
