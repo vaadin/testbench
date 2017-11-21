@@ -1,0 +1,171 @@
+/*
+ * Copyright 2000-2014 Vaadin Ltd.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package com.vaadin.tests;
+
+import java.util.*;
+
+import com.saucelabs.ci.sauceconnect.AbstractSauceTunnelManager;
+import com.vaadin.testbench.annotations.BrowserFactory;
+import com.vaadin.testbench.annotations.RunOnHub;
+import com.vaadin.testbench.parallel.ParallelTest;
+import com.vaadin.ui.Component;
+import org.junit.Before;
+import org.openqa.selenium.remote.DesiredCapabilities;
+
+import com.vaadin.testbench.annotations.BrowserConfiguration;
+import com.vaadin.testbench.parallel.BrowserUtil;
+
+/**
+ * Base class for TestBench 6+ tests. All TB6+ tests in the project should
+ * extend this class.
+ * <p>
+ * Sub classes can, but typically should not, restrict the browsers used by
+ * overriding the {@link #getBrowserConfiguration()} method:
+ *
+ * <pre>
+ * &#064;Override
+ * &#064;BrowserConfiguration
+ * public List&lt;DesiredCapabilities&gt; getBrowserConfiguration() {
+ * }
+ * </pre>
+ *
+ * @author Vaadin Ltd
+ */
+@RunOnHub
+@BrowserFactory(TB6TestBrowserFactory.class)
+public abstract class AbstractTB6Test extends ParallelTest {
+
+    /**
+     * Height of the screenshots we want to capture
+     */
+    private static final int SCREENSHOT_HEIGHT = 850;
+
+    /**
+     * Width of the screenshots we want to capture
+     */
+    private static final int SCREENSHOT_WIDTH = 1500;
+
+    /**
+     * Connect to the hub using a remote web driver, set the canvas size and
+     * opens the initial URL as specified by {@link #getTestUrl()}
+     *
+     * @throws Exception if browser window resize operation fails
+     */
+    @Override
+    @Before
+    public void setup() throws Exception {
+        super.setup();
+        testBench().resizeViewPortTo(SCREENSHOT_WIDTH, SCREENSHOT_HEIGHT);
+    }
+
+    @BrowserConfiguration
+    public List<DesiredCapabilities> getBrowserConfiguration() {
+        return Arrays.asList(BrowserUtil.ie11(), BrowserUtil.firefox(), BrowserUtil.chrome());
+    }
+
+    @Override
+    protected String getHubURL() {
+        String username = System.getProperty("sauce.user");
+        String accessKey = System.getProperty("sauce.sauceAccessKey");
+
+        if (username == null) {
+            throw new IllegalArgumentException(
+                    "You must give a Sauce Labs user name using -Dsauce.user=<username> " +
+                            "or by adding sauce.user=<username> to local.properties");
+        }
+        if (accessKey == null) {
+            throw new IllegalArgumentException(
+                    "You must give a Sauce Labs access key using -Dsauce.sauceAccessKey=<accesskey> " +
+                            "or by adding sauce.sauceAccessKey=<accesskey> to local.properties");
+        }
+        return "http://" + username + ":" + accessKey + "@localhost:4445/wd/hub";
+    }
+
+    @Override
+    public void setDesiredCapabilities(DesiredCapabilities desiredCapabilities) {
+        String tunnelId = AbstractSauceTunnelManager.getTunnelIdentifier(
+                System.getProperty("sauce.options"), null);
+        if (tunnelId != null) {
+            desiredCapabilities.setCapability("tunnelIdentifier", tunnelId);
+        }
+        super.setDesiredCapabilities(desiredCapabilities);
+    }
+
+    /**
+     * Opens the given test (defined by {@link #getTestUrl()}.
+     */
+    protected void openTestURL() {
+        openTestURL("");
+    }
+
+    /**
+     * Opens the given test (defined by {@link #getTestUrl()} by adding the
+     * given parameters.
+     */
+    protected void openTestURL(String extraParameters) {
+        String url = getTestUrl();
+        if (url.contains("?")) {
+            url = url + "&" + extraParameters;
+        } else {
+            url = url + "?" + extraParameters;
+        }
+        driver.get(url);
+    }
+
+    /**
+     * Returns the full URL to be used for the test
+     *
+     * @return the full URL for the test
+     */
+    protected String getTestUrl() {
+        String baseUrl = getBaseURL();
+        if (baseUrl.endsWith("/")) {
+            baseUrl = baseUrl.substring(0, baseUrl.length() - 1);
+        }
+
+        return baseUrl + getDeploymentPath();
+    }
+
+    /**
+     * Returns the path that should be used for the test. The path contains the
+     * full path (appended to hostname+port) and must start with a slash.
+     *
+     * @return The URL path to the UI class to test
+     */
+    protected String getDeploymentPath() {
+        return "/" + getTestView().getSimpleName();
+    }
+
+    /**
+     * Used to determine what URL to initially open for the test
+     *
+     * @return The base URL for the test. Does not include a trailing slash.
+     */
+    protected String getBaseURL() {
+        return "http://" + getDeploymentHostname() + ":" + getDeploymentPort();
+    }
+
+    protected String getDeploymentHostname() {
+        return "localhost";
+    }
+
+    protected int getDeploymentPort() {
+        return 8080;
+    }
+
+    protected abstract Class<? extends Component> getTestView();
+}
