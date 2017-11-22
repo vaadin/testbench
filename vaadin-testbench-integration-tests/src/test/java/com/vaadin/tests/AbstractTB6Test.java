@@ -60,8 +60,7 @@ public abstract class AbstractTB6Test extends ParallelTest {
     private static final int SCREENSHOT_WIDTH = 1500;
 
     /**
-     * Connect to the hub using a remote web driver, set the canvas size and
-     * opens the initial URL as specified by {@link #getTestUrl()}
+     * Connect to the hub using a remote web driver and set the window size.
      *
      * @throws Exception if browser window resize operation fails
      */
