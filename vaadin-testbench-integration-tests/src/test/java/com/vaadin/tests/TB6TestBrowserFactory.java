@@ -51,6 +51,7 @@ public class TB6TestBrowserFactory extends DefaultBrowserFactory {
         if(browser.equals(Browser.FIREFOX)) {
             desiredCapabilities.setCapability(FirefoxDriver.MARIONETTE, false);
         }
+        desiredCapabilities.setCapability("screenResolution", "1600x1200");
         return desiredCapabilities;
     }
 }
