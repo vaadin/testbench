@@ -15,26 +15,20 @@
 
     <url>http://maven.apache.org</url>
     <properties>
-        <snapshot.repository.url>https://oss.sonatype.org/content/repositories/vaadin-snapshots/
-        </snapshot.repository.url>
         <jetty.version>9.3.12.v20160915</jetty.version>
+        <vaadin.version>10.0.0.alpha7</vaadin.version>
 
         <!-- Frontend -->
         <node.version>v8.1.2</node.version>
         <yarn.version>v0.27.5</yarn.version>
         <buildtools.directory>build-tools</buildtools.directory>
+
+        <sauce.options>--tunnel-identifier ${maven.build.timestamp}</sauce.options>
     </properties>
     <repositories>
         <repository>
             <id>flow-internal-release</id>
             <url>https://repo.vaadin.com/nexus/content/repositories/flow</url>
-        </repository>
-        <repository>
-            <id>flow-internal-snapshots</id>
-            <url>https://repo.vaadin.com/nexus/content/repositories/flow-snapshots/</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
         </repository>
         <repository>
             <id>vaadin-addons</id>
@@ -46,16 +40,39 @@
             <url>https://maven.vaadin.com/vaadin-prereleases</url>
         </repository>
     </repositories>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.vaadin</groupId>
+                <artifactId>vaadin-bom</artifactId>
+                <version>${vaadin.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.vaadin</groupId>
+                <artifactId>vaadin</artifactId>
+                <version>${vaadin.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
         <dependency>
             <groupId>com.vaadin</groupId>
-            <artifactId>flow</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <artifactId>vaadin</artifactId>
         </dependency>
         <dependency>
             <groupId>com.vaadin</groupId>
             <artifactId>vaadin-testbench</artifactId>
             <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.saucelabs</groupId>
+            <artifactId>ci-sauce</artifactId>
+            <version>1.129</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -136,6 +153,7 @@
                     <systemPropertyVariables>
                         <sauce.user>${sauce.user}</sauce.user>
                         <sauce.sauceAccessKey>${sauce.sauceAccessKey}</sauce.sauceAccessKey>
+                        <sauce.options>${sauce.options}</sauce.options>
                     </systemPropertyVariables>
                     <trimStackTrace>false</trimStackTrace>
                 </configuration>
