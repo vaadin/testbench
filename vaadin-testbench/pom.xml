@@ -27,6 +27,12 @@
         </license>
     </licenses>
 
+    <repositories>
+        <repository>
+            <id>vaadin-prereleases</id>
+            <url>https://maven.vaadin.com/vaadin-prereleases</url>
+        </repository>
+    </repositories>
     <profiles>
         <profile>
             <id>release</id>
@@ -186,6 +192,11 @@
             <groupId>org.javassist</groupId>
             <artifactId>javassist</artifactId>
             <version>3.18.1-GA</version>
+        </dependency>
+        <dependency>
+            <groupId>com.vaadin</groupId>
+            <artifactId>license-checker</artifactId>
+            <version>1.0.0.alpha2</version>
         </dependency>
         <dependency>
             <groupId>com.google.gwt</groupId>

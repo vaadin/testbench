@@ -29,9 +29,9 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import com.vaadin.pro.licensechecker.LicenseChecker;
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.commands.TestBenchCommands;
-import com.vaadin.testbench.tools.LicenseChecker;
 
 /**
  * A superclass with some helpers to aid TestBench developers. This superclass
@@ -65,7 +65,7 @@ public abstract class TestBenchTestCase
                             + " was found. Make sure you do not have multiple versions of Selenium on the classpath.");
         }
 
-        LicenseChecker.checkLicense("vaadin-testbench",
+        LicenseChecker.checkLicenseFromStaticBlock("vaadin-testbench",
                 TestBenchTestCase.testbenchVersion);
     }
 

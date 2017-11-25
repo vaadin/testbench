@@ -21,10 +21,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import com.vaadin.pro.licensechecker.LicenseChecker;
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.screenshot.ImageComparison;
 import com.vaadin.testbench.screenshot.ReferenceNameGenerator;
-import com.vaadin.testbench.tools.LicenseChecker;
 
 import javassist.util.proxy.MethodFilter;
 import javassist.util.proxy.MethodHandler;
@@ -84,7 +84,7 @@ public class TestBench {
     }
 
     static {
-        LicenseChecker.checkLicense("vaadin-testbench",
+        LicenseChecker.checkLicenseFromStaticBlock("vaadin-testbench",
                 TestBenchTestCase.testbenchVersion);
     }
 
