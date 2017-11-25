@@ -40,35 +40,35 @@ import com.vaadin.testbench.tools.LicenseChecker;
 public abstract class TestBenchTestCase
         implements HasDriver, HasTestBenchCommandExecutor, HasElementQuery {
 
+    public static final String testbenchVersion;
     static {
-        // Check the license here, before any driver has been initialized
-        // (#15102)
-        LicenseChecker.nag();
-    }
-
-    static {
+        Properties properties = new Properties();
         try {
-            String seleniumVersion = new BuildInfo().getReleaseLabel();
-
-            Properties properties = new Properties();
             properties.load(TestBenchTestCase.class
                     .getResourceAsStream("testbench.properties"));
-            String expectedVersion = properties.getProperty("selenium.version");
-            if (seleniumVersion == null
-                    || !seleniumVersion.equals(expectedVersion)) {
-                Logger.getLogger(TestBenchTestCase.class.getName()).warning(
-                        "This version of TestBench depends on Selenium version "
-                                + expectedVersion + " but version "
-                                + seleniumVersion
-                                + " was found. Make sure you do not have multiple versions of Selenium on the classpath.");
-            }
         } catch (Exception e) {
             Logger.getLogger(TestBenchTestCase.class.getName()).log(
-                    Level.WARNING,
-                    "Unable to validate that the correct Selenium version is in use",
+                    Level.WARNING, "Unable to read TestBench properties file",
                     e);
+            throw new ExceptionInInitializerError(e);
         }
+
+        String seleniumVersion = new BuildInfo().getReleaseLabel();
+        testbenchVersion = properties.getProperty("testbench.version");
+        String expectedVersion = properties.getProperty("selenium.version");
+        if (seleniumVersion == null
+                || !seleniumVersion.equals(expectedVersion)) {
+            Logger.getLogger(TestBenchTestCase.class.getName()).warning(
+                    "This version of TestBench depends on Selenium version "
+                            + expectedVersion + " but version "
+                            + seleniumVersion
+                            + " was found. Make sure you do not have multiple versions of Selenium on the classpath.");
+        }
+
+        LicenseChecker.checkLicense("vaadin-testbench",
+                TestBenchTestCase.testbenchVersion);
     }
+
     /**
      * Specifies retry count, which is used to run same test several times. Can
      * be changed by setting "com.vaadin.testbench.Parameters.maxAttempts"

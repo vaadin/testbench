@@ -34,7 +34,7 @@ import javassist.util.proxy.ProxyFactory;
  */
 public class TestBench {
 
-    private static final Map<Class<?>, MethodFilter> methodFilters;
+    private static final Map<Class<?>, MethodFilter> methodFilters = new ConcurrentHashMap<>();
 
     private static final class ElementMethodFilter implements MethodFilter {
 
@@ -84,8 +84,8 @@ public class TestBench {
     }
 
     static {
-        LicenseChecker.nag();
-        methodFilters = new ConcurrentHashMap<>();
+        LicenseChecker.checkLicense("vaadin-testbench",
+                TestBenchTestCase.testbenchVersion);
     }
 
     public static TestBenchDriverProxy createDriver(WebDriver driver) {

@@ -12,8 +12,6 @@
  */
 package com.vaadin.testbench.tools;
 
-import java.io.IOException;
-import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -27,29 +25,15 @@ import com.vaadin.testbench.tools.CvalChecker.UnreachableCvalServerException;
  * ~/.vaadin.testbench.developer.license file exists.
  */
 public class LicenseChecker {
-    private static final String PRODUCT_NAME = "vaadin-testbench";
-    private static final String PRODUCT_TITLE = "Vaadin TestBench";
-    private static String productVersion = "unversioned";
     private static final CvalChecker licenseChecker = new CvalChecker();
     private static String CVALInfo = "";
     private static String NEW_LINE = System.getProperty("line.separator");
 
-    public static void nag() {
+    public static void checkLicense(String productName, String productVersion) {
         try {
-            // get project version from properties file
-            // version in properties file is set by maven
-            Properties props = System.getProperties();
-            try {
-                props.load(LicenseChecker.class.getClassLoader()
-                        .getResourceAsStream("project.properties"));
-            } catch (IOException e) {
-                System.err.println("Coulnd load properties file");
-                e.printStackTrace();
-            }
-            productVersion = props.getProperty("version");
             // Validate license
-            CvalInfo validationInfo = licenseChecker.validateProduct(
-                    PRODUCT_NAME, productVersion, PRODUCT_TITLE);
+            CvalInfo validationInfo = licenseChecker
+                    .validateProduct(productName, productVersion);
             // If license is valid print the message about it
             printValidationInfo(validationInfo);
         } catch (InvalidCvalException e) {

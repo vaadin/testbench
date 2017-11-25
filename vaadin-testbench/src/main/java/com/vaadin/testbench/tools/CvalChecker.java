@@ -338,11 +338,10 @@ public final class CvalChecker {
      * @throws UnreachableCvalServerException
      *             when we have license key but server is unreachable
      */
-    public CvalInfo validateProduct(String productName, String productVersion,
-            String productTitle)
+    public CvalInfo validateProduct(String productName, String productVersion)
             throws InvalidCvalException, UnreachableCvalServerException {
-        String key = getDeveloperLicenseKey(productName, productVersion,
-                productTitle);
+        String productTitle = productName;
+        String key = getDeveloperLicenseKey(productName, productVersion);
         int majorVersion = computeMajorVersion(productVersion);
 
         if (key == null || key.isEmpty()) {
@@ -456,8 +455,7 @@ public final class CvalChecker {
     }
 
     private String getDeveloperLicenseKey(String productName,
-            String productVersion, String productTitle)
-            throws InvalidCvalException {
+            String productVersion) throws InvalidCvalException {
         String licenseName = computeLicenseName(productName);
 
         String key = System.getProperty(licenseName);
