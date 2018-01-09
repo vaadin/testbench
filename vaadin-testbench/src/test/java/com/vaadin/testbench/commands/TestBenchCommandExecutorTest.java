@@ -237,7 +237,7 @@ public class TestBenchCommandExecutorTest {
                 "cursor-bottom-edge-off.png");
         expect(driver.getScreenshotAs(OutputType.BYTES))
                 .andReturn(screenshotBytes).times(nrScreenshotsGrabbed);
-        expect(driver.executeScript(contains("window.Vaadin.Flow.clients")))
+        expect(driver.executeScript(contains("(window.Vaadin && window.Vaadin.Flow) ? window.Vaadin.Flow : window.vaadin")))
                 .andReturn(Boolean.TRUE).anyTimes();
         if (expectGetCapabilities) {
             expect(driver.getCapabilities())
@@ -311,12 +311,12 @@ public class TestBenchCommandExecutorTest {
     private FirefoxDriver mockJSExecutor(boolean forcesSync) {
         FirefoxDriver jse = createMock(FirefoxDriver.class);
         if (forcesSync) {
-            expect(jse.executeScript("window.vaadin ? window.vaadin.forceSync() : window.Vaadin.Flow.forceSync()"))
+            expect(jse.executeScript("(window.Vaadin && window.Vaadin.Flow) ? window.Vaadin.Flow.forceSync() : window.vaadin.forceSync()"))
                     .andReturn(null);
         }
         expect(jse.executeScript(contains("getProfilingData()")))
                 .andReturn(Arrays.asList(1000L, 2000L, 3000L));
-        expect(jse.executeScript(contains("window.Vaadin.Flow.clients")))
+        expect(jse.executeScript(contains("(window.Vaadin && window.Vaadin.Flow) ? window.Vaadin.Flow : window.vaadin")))
                 .andReturn(Boolean.TRUE).anyTimes();
         return jse;
     }
