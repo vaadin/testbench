@@ -53,10 +53,11 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
     private boolean autoScrollIntoView = true;
     // @formatter:off
     String WAIT_FOR_VAADIN_SCRIPT =
-              "if (window.vaadin == null) {"
+              "var vaadin = (window.Vaadin && window.Vaadin.Flow) ? window.Vaadin.Flow : window.vaadin;"
+            + "if (vaadin == null) {"
             + "  return true;"
             + "}"
-            + "var clients = window.vaadin.clients;"
+            + "var clients = vaadin.clients;"
             + "if (clients) {"
             + "  for (var client in clients) {"
             + "    if (clients[client].isActive()) {"
@@ -199,8 +200,9 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
     private List<Long> getTimingValues(boolean forceSync) {
         // @formatter:off
         String getProfilingData = "var pd = [0,0,0,0];\n"
-                + "for (client in window.vaadin.clients) {\n"
-                + "  var p = window.vaadin.clients[client].getProfilingData();\n"
+                + "var clients = (window.Vaadin && window.Vaadin.Flow) ? window.Vaadin.Flow.clients : window.vaadin.clients;\n"
+                + "for (client in clients) {\n"
+                + "  var p = clients[client].getProfilingData();\n"
                 + "  pd[0] += p[0];\n" + "  pd[1] += p[1];\n"
                 + "  pd[2] += p[2];\n" + "  pd[3] += p[3];\n" + "}\n"
                 + "return pd;\n";
@@ -208,7 +210,7 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
         if (forceSync) {
             // Force sync to get the latest server-side timing data. The
             // server-side timing data is always one request behind.
-            executeScript("window.vaadin.forceSync()");
+            executeScript("(window.Vaadin && window.Vaadin.Flow) ? window.Vaadin.Flow.forceSync() : window.vaadin.forceSync()");
         }
         return (List<Long>) executeScript(getProfilingData);
     }
