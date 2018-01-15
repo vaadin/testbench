@@ -617,6 +617,29 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
     }
 
     /**
+     * Gets a JavaScript property of the given element as a DOM element.
+     *
+     * @param propertyNames
+     *            the name of on or more properties, forming a property chain of
+     *            type <code>property1.property2.property3</code>
+     */
+    public TestBenchElement getPropertyElement(String... propertyNames) {
+        return (TestBenchElement) getProperty(propertyNames);
+    }
+
+    /**
+     * Gets a JavaScript property of the given element as a list of DOM
+     * elements.
+     *
+     * @param propertyNames
+     *            the name of on or more properties, forming a property chain of
+     *            type <code>property1.property2.property3</code>
+     */
+    public List<TestBenchElement> getPropertyElements(String... propertyNames) {
+        return (List<TestBenchElement>) getProperty(propertyNames);
+    }
+
+    /**
      * Gets a JavaScript property of the given element as a double.
      *
      * @param propertyNames
