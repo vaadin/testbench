@@ -70,9 +70,26 @@ public class BasicElementIT extends MultiBrowserTest {
 	}
 
 	@Test
+	public void getSetElementProperty() {
+		Assert.assertEquals(buttonElement, buttonElement
+				.getPropertyElement("parentElement", "firstElementChild"));
+		Assert.assertNull(
+				buttonElement.getPropertyElement("firstElementChild"));
+
+	}
+
+	@Test
+	public void getSetElementsProperty() {
+		Assert.assertEquals(0,
+				buttonElement.getPropertyElements("children").size());
+		Assert.assertEquals(1, buttonElement
+				.getPropertyElements("parentElement", "children").size());
+
+	}
+
+	@Test
 	public void getSetPropertyChainMissingValue() {
 		executeScript("arguments[0].foo = {bar: {baz: 123}};", buttonElement);
-
 		Assert.assertNull(buttonElement.getPropertyDouble("foo", "baz", "baz"));
 	}
 
