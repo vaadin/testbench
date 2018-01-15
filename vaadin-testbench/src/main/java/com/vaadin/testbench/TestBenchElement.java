@@ -589,11 +589,12 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
     /**
      * Gets a JavaScript property of the given element as a string.
      *
-     * @param name
-     *            the name of the property
+     * @param propertyNames
+     *            the name of on or more properties, forming a property chain of
+     *            type <code>property1.property2.property3</code>
      */
-    public String getPropertyString(String name) {
-        Object value = internalGetProperty(name);
+    public String getPropertyString(String... propertyNames) {
+        Object value = getProperty(propertyNames);
         if (value == null) {
             return null;
         }
@@ -603,11 +604,12 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
     /**
      * Gets a JavaScript property of the given element as a boolean.
      *
-     * @param name
-     *            the name of the property
+     * @param propertyNames
+     *            the name of on or more properties, forming a property chain of
+     *            type <code>property1.property2.property3</code>
      */
-    public Boolean getPropertyBoolean(String name) {
-        Object value = internalGetProperty(name);
+    public Boolean getPropertyBoolean(String... propertyNames) {
+        Object value = getProperty(propertyNames);
         if (value == null) {
             return null;
         }
@@ -617,11 +619,12 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
     /**
      * Gets a JavaScript property of the given element as a double.
      *
-     * @param name
-     *            the name of the property
+     * @param propertyNames
+     *            the name of on or more properties, forming a property chain of
+     *            type <code>property1.property2.property3</code>
      */
-    public Double getPropertyDouble(String name) {
-        Object value = internalGetProperty(name);
+    public Double getPropertyDouble(String... propertyNames) {
+        Object value = getProperty(propertyNames);
         if (value == null) {
             return null;
         }
@@ -631,11 +634,12 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
     /**
      * Gets a JavaScript property of the given element as an integer.
      *
-     * @param name
-     *            the name of the property
+     * @param propertyNames
+     *            the name of on or more properties, forming a property chain of
+     *            type <code>property1.property2.property3</code>
      */
-    public Integer getPropertyInteger(String name) {
-        Double number = getPropertyDouble(name);
+    public Integer getPropertyInteger(String... propertyNames) {
+        Double number = getPropertyDouble(propertyNames);
         return (number == null) ? null : number.intValue();
     }
 
@@ -651,20 +655,42 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
         }
     }
 
-    private Object internalGetProperty(String name) {
-        String script = "var value = arguments[0][arguments[1]];";
+    /**
+     * Gets a JavaScript property of the given element.
+     * <p>
+     * The return type is defined by {@link #executeScript(String, Object...)}
+     * and the return value needs to be cast manually to the correct type.
+     *
+     * @param propertyNames
+     *            the name of on or more properties, forming a property chain of
+     *            type <code>property1.property2.property3</code>
+     */
+    public Object getProperty(String... propertyNames) {
+        String script = "var value = arguments[0]"
+                + createPropertyChain(propertyNames) + ";";
+        Object[] jsParameters = Stream
+                .concat(Stream.of(this), Stream.of(propertyNames)).toArray();
+
         if (isIE() || isFirefox()) {
             String isNumberScript = script + "return typeof value == 'number';";
-            boolean number = (boolean) executeScript(isNumberScript, this,
-                    name);
+            boolean number = (boolean) executeScript(isNumberScript,
+                    jsParameters);
 
             if (number) {
                 String str = (String) executeScript(
-                        script + "return value.toString();", this, name);
+                        script + "return value.toString();", jsParameters);
                 return Double.parseDouble(str);
             }
         }
-        return executeScript(script + "return value;", this, name);
+        return executeScript(script + "return value;", jsParameters);
+    }
+
+    private static String createPropertyChain(String[] propertyNames) {
+        String result = "";
+        for (int i = 0; i < propertyNames.length; i++) {
+            result += "[arguments[" + (i + 1) + "]]";
+        }
+        return result;
     }
 
     private JsonValue createJsonValue(Object value) {

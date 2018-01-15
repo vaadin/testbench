@@ -52,6 +52,23 @@ public class BasicElementIT extends MultiBrowserTest {
         Assert.assertTrue(buttonElement.getPropertyBoolean("foo"));
     }
 
+    @Test
+    public void getSetIntegerProperty() {
+        Assert.assertNull(buttonElement.getPropertyInteger("foo"));
+        buttonElement.setProperty("foo", 12);
+        Assert.assertEquals("12", buttonElement.getPropertyString("foo"));
+        Assert.assertEquals(12, buttonElement.getPropertyInteger("foo"), 0);
+        Assert.assertTrue(buttonElement.getPropertyBoolean("foo"));
+    }
+
+    @Test
+    public void getSetPropertyChain() {
+        executeScript("arguments[0].foo = {bar: {baz: 123}};", buttonElement);
+
+        Assert.assertEquals(123L, buttonElement
+                .getPropertyDouble("foo", "bar", "baz").longValue());
+    }
+
     @Test(expected = TimeoutException.class)
     public void waitForNonExistant() {
         $(PolymerTemplateViewElement.class).waitForFirst();
