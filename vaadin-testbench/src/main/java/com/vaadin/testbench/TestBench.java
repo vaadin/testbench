@@ -21,10 +21,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import com.vaadin.pro.licensechecker.LicenseChecker;
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.screenshot.ImageComparison;
 import com.vaadin.testbench.screenshot.ReferenceNameGenerator;
-import com.vaadin.testbench.tools.LicenseChecker;
 
 import javassist.util.proxy.MethodFilter;
 import javassist.util.proxy.MethodHandler;
@@ -34,7 +34,7 @@ import javassist.util.proxy.ProxyFactory;
  */
 public class TestBench {
 
-    private static final Map<Class<?>, MethodFilter> methodFilters;
+    private static final Map<Class<?>, MethodFilter> methodFilters = new ConcurrentHashMap<>();
 
     private static final class ElementMethodFilter implements MethodFilter {
 
@@ -84,8 +84,8 @@ public class TestBench {
     }
 
     static {
-        LicenseChecker.nag();
-        methodFilters = new ConcurrentHashMap<>();
+        LicenseChecker.checkLicenseFromStaticBlock("vaadin-testbench",
+                TestBenchTestCase.testbenchVersion);
     }
 
     public static TestBenchDriverProxy createDriver(WebDriver driver) {
