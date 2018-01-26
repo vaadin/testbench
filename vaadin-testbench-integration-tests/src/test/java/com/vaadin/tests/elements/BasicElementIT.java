@@ -52,6 +52,47 @@ public class BasicElementIT extends AbstractTB6Test {
         Assert.assertTrue(buttonElement.getPropertyBoolean("foo"));
     }
 
+    @Test
+    public void getSetIntegerProperty() {
+        Assert.assertNull(buttonElement.getPropertyInteger("foo"));
+        buttonElement.setProperty("foo", 12);
+        Assert.assertEquals("12", buttonElement.getPropertyString("foo"));
+        Assert.assertEquals(12, buttonElement.getPropertyInteger("foo"), 0);
+        Assert.assertTrue(buttonElement.getPropertyBoolean("foo"));
+    }
+
+    @Test
+    public void getSetPropertyChain() {
+        executeScript("arguments[0].foo = {bar: {baz: 123}};", buttonElement);
+
+        Assert.assertEquals(123L, buttonElement
+                .getPropertyDouble("foo", "bar", "baz").longValue());
+    }
+
+    @Test
+    public void getSetElementProperty() {
+        Assert.assertEquals(buttonElement, buttonElement
+                .getPropertyElement("parentElement", "firstElementChild"));
+        Assert.assertNull(
+                buttonElement.getPropertyElement("firstElementChild"));
+
+    }
+
+    @Test
+    public void getSetElementsProperty() {
+        Assert.assertEquals(0,
+                buttonElement.getPropertyElements("children").size());
+        Assert.assertEquals(1, buttonElement
+                .getPropertyElements("parentElement", "children").size());
+
+    }
+
+    @Test
+    public void getSetPropertyChainMissingValue() {
+        executeScript("arguments[0].foo = {bar: {baz: 123}};", buttonElement);
+        Assert.assertNull(buttonElement.getPropertyDouble("foo", "baz", "baz"));
+    }
+
     @Test(expected = TimeoutException.class)
     public void waitForNonExistant() {
         $(PolymerTemplateViewElement.class).waitForFirst();

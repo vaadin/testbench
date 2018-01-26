@@ -61,7 +61,8 @@ import elemental.json.JsonValue;
  * from TestBenchTestCase or a context relative search from TestBenchElement.
  */
 public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
-        CanCompareScreenshots, HasTestBenchCommandExecutor, HasElementQuery {
+        CanCompareScreenshots, HasTestBenchCommandExecutor, HasElementQuery,
+        HasPropertySettersGetters, HasCallFunction {
 
     private WebElement wrappedElement = null;
     private TestBenchCommandExecutor commandExecutor = null;
@@ -538,104 +539,66 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
         return waitUntil(condition, 10);
     }
 
-    /**
-     * Sets a JavaScript property of the given element.
-     *
-     * @param name
-     *            the name of the property
-     * @param value
-     *            the value to set
-     */
+    @Override
     public void setProperty(String name, String value) {
         internalSetProperty(name, value);
     }
 
-    /**
-     * Sets a JavaScript property of the given element.
-     *
-     * @param name
-     *            the name of the property
-     * @param value
-     *            the value to set
-     */
+    @Override
     public void setProperty(String name, Boolean value) {
         internalSetProperty(name, value);
     }
 
-    /**
-     * Sets a JavaScript property of the given element.
-     *
-     * @param name
-     *            the name of the property
-     * @param value
-     *            the value to set
-     */
+    @Override
     public void setProperty(String name, Double value) {
         internalSetProperty(name, value);
     }
 
-    /**
-     * Sets a JavaScript property of the given element.
-     *
-     * @param name
-     *            the name of the property
-     * @param value
-     *            the value to set
-     */
+    @Override
     public void setProperty(String name, Integer value) {
         internalSetProperty(name, value);
     }
 
-    /**
-     * Gets a JavaScript property of the given element as a string.
-     *
-     * @param name
-     *            the name of the property
-     */
-    public String getPropertyString(String name) {
-        Object value = internalGetProperty(name);
+    @Override
+    public String getPropertyString(String... propertyNames) {
+        Object value = getProperty(propertyNames);
         if (value == null) {
             return null;
         }
         return createJsonValue(value).asString();
     }
 
-    /**
-     * Gets a JavaScript property of the given element as a boolean.
-     *
-     * @param name
-     *            the name of the property
-     */
-    public Boolean getPropertyBoolean(String name) {
-        Object value = internalGetProperty(name);
+    @Override
+    public Boolean getPropertyBoolean(String... propertyNames) {
+        Object value = getProperty(propertyNames);
         if (value == null) {
             return null;
         }
         return createJsonValue(value).asBoolean();
     }
 
-    /**
-     * Gets a JavaScript property of the given element as a double.
-     *
-     * @param name
-     *            the name of the property
-     */
-    public Double getPropertyDouble(String name) {
-        Object value = internalGetProperty(name);
+    @Override
+    public TestBenchElement getPropertyElement(String... propertyNames) {
+        return (TestBenchElement) getProperty(propertyNames);
+    }
+
+    @Override
+    public List<TestBenchElement> getPropertyElements(String... propertyNames) {
+        return (List<TestBenchElement>) getProperty(propertyNames);
+    }
+
+    @Override
+    public Double getPropertyDouble(String... propertyNames) {
+        Object value = getProperty(propertyNames);
         if (value == null) {
             return null;
         }
         return createJsonValue(value).asNumber();
     }
 
-    /**
-     * Gets a JavaScript property of the given element as an integer.
-     *
-     * @param name
-     *            the name of the property
-     */
-    public Integer getPropertyInteger(String name) {
-        Double number = getPropertyDouble(name);
+    @Override
+    public Integer getPropertyInteger(String... propertyNames) {
+        Double number = getPropertyDouble(propertyNames);
         return (number == null) ? null : number.intValue();
     }
 
@@ -651,20 +614,35 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
         }
     }
 
-    private Object internalGetProperty(String name) {
-        String script = "var value = arguments[0][arguments[1]];";
+    @Override
+    public Object getProperty(String... propertyNames) {
+        String script = "var value = arguments[0];"
+                + createPropertyChain(propertyNames) + ";";
+        Object[] jsParameters = Stream
+                .concat(Stream.of(this), Stream.of(propertyNames)).toArray();
+
         if (isIE() || isFirefox()) {
             String isNumberScript = script + "return typeof value == 'number';";
-            boolean number = (boolean) executeScript(isNumberScript, this,
-                    name);
+            boolean number = (boolean) executeScript(isNumberScript,
+                    jsParameters);
 
             if (number) {
                 String str = (String) executeScript(
-                        script + "return value.toString();", this, name);
+                        script + "return value.toString();", jsParameters);
                 return Double.parseDouble(str);
             }
         }
-        return executeScript(script + "return value;", this, name);
+        return executeScript(script + "return value;", jsParameters);
+    }
+
+    private static String createPropertyChain(String[] propertyNames) {
+        String result = "";
+        for (int i = 0; i < propertyNames.length; i++) {
+            result += "if (typeof value != 'undefined') value = value[arguments["
+                    + (i + 1) + "]];";
+
+        }
+        return result;
     }
 
     private JsonValue createJsonValue(Object value) {
@@ -708,16 +686,7 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
         return getCommandExecutor().executeScript(script, args);
     }
 
-    /**
-     * Invoke the given method on this element using the given arguments as
-     * arguments to the method.
-     *
-     * @param methodName
-     *            the method to invoke
-     * @param args
-     *            the arguments to pass to the method
-     * @return the value returned by the method
-     */
+    @Override
     public Object callFunction(String methodName, Object... args) {
         // arguments[0].method(arguments[1],arguments[2],arguments[3])
         String paramPlaceholderString = IntStream.range(1, args.length + 1)
