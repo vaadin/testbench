@@ -9,7 +9,12 @@ public class ElementQueryView extends Div {
 
     public ElementQueryView() {
         for (int i = 0; i < 10; i++) {
-            add(new Div(new NativeButton("Button " + i)));
+            NativeButton button = new NativeButton("Button " + i);
+            add(new Div(button));
+            if (i == 5) {
+                button.getElement().setAttribute("boolean", true);
+                button.getElement().setAttribute("string", "value");
+            }
         }
     }
 
