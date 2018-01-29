@@ -16,18 +16,24 @@
 
 package com.vaadin.tests;
 
-import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Properties;
 
-import com.saucelabs.ci.sauceconnect.AbstractSauceTunnelManager;
-import com.vaadin.testbench.annotations.BrowserFactory;
-import com.vaadin.testbench.annotations.RunOnHub;
-import com.vaadin.testbench.parallel.ParallelTest;
-import com.vaadin.ui.Component;
 import org.junit.Before;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
+import com.saucelabs.ci.sauceconnect.AbstractSauceTunnelManager;
 import com.vaadin.testbench.annotations.BrowserConfiguration;
+import com.vaadin.testbench.annotations.BrowserFactory;
+import com.vaadin.testbench.annotations.RunOnHub;
 import com.vaadin.testbench.parallel.BrowserUtil;
+import com.vaadin.testbench.parallel.ParallelTest;
+import com.vaadin.ui.Component;
 
 /**
  * Base class for TestBench 6+ tests. All TB6+ tests in the project should
@@ -58,11 +64,30 @@ public abstract class AbstractTB6Test extends ParallelTest {
      * Width of the screenshots we want to capture
      */
     private static final int SCREENSHOT_WIDTH = 1500;
+    private static final String HOSTNAME_PROPERTY = "deployment.hostname";
+    private static final String PORT_PROPERTY = "deployment.port";
+    private static final Properties properties = new Properties();
+    private static final File propertiesFile = new File("local.properties");
+    static {
+        if (propertiesFile.exists()) {
+            try {
+                properties.load(new FileInputStream(propertiesFile));
+                Enumeration e = properties.propertyNames();
+                while (e.hasMoreElements()) {
+                    String key = (String) e.nextElement();
+                    System.setProperty(key, properties.getProperty(key));
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
 
     /**
      * Connect to the hub using a remote web driver and set the window size.
      *
-     * @throws Exception if browser window resize operation fails
+     * @throws Exception
+     *             if browser window resize operation fails
      */
     @Override
     @Before
@@ -73,7 +98,8 @@ public abstract class AbstractTB6Test extends ParallelTest {
 
     @BrowserConfiguration
     public List<DesiredCapabilities> getBrowserConfiguration() {
-        return Arrays.asList(BrowserUtil.ie11(), BrowserUtil.firefox(), BrowserUtil.chrome());
+        return Arrays.asList(BrowserUtil.ie11(), BrowserUtil.firefox(),
+                BrowserUtil.chrome());
     }
 
     @Override
@@ -83,21 +109,23 @@ public abstract class AbstractTB6Test extends ParallelTest {
 
         if (username == null) {
             throw new IllegalArgumentException(
-                    "You must give a Sauce Labs user name using -Dsauce.user=<username> " +
-                            "or by adding sauce.user=<username> to local.properties");
+                    "You must give a Sauce Labs user name using -Dsauce.user=<username> "
+                            + "or by adding sauce.user=<username> to local.properties");
         }
         if (accessKey == null) {
             throw new IllegalArgumentException(
-                    "You must give a Sauce Labs access key using -Dsauce.sauceAccessKey=<accesskey> " +
-                            "or by adding sauce.sauceAccessKey=<accesskey> to local.properties");
+                    "You must give a Sauce Labs access key using -Dsauce.sauceAccessKey=<accesskey> "
+                            + "or by adding sauce.sauceAccessKey=<accesskey> to local.properties");
         }
-        return "http://" + username + ":" + accessKey + "@localhost:4445/wd/hub";
+        return "http://" + username + ":" + accessKey
+                + "@localhost:4445/wd/hub";
     }
 
     @Override
-    public void setDesiredCapabilities(DesiredCapabilities desiredCapabilities) {
-        String tunnelId = AbstractSauceTunnelManager.getTunnelIdentifier(
-                System.getProperty("sauce.options"), null);
+    public void setDesiredCapabilities(
+            DesiredCapabilities desiredCapabilities) {
+        String tunnelId = AbstractSauceTunnelManager
+                .getTunnelIdentifier(System.getProperty("sauce.options"), null);
         if (tunnelId != null) {
             desiredCapabilities.setCapability("tunnelIdentifier", tunnelId);
         }
@@ -159,11 +187,21 @@ public abstract class AbstractTB6Test extends ParallelTest {
     }
 
     protected String getDeploymentHostname() {
-        return "localhost";
+        String hostName = "";
+        String hostNameProperty = System.getProperty(HOSTNAME_PROPERTY);
+        if (hostNameProperty != null && !"".equals(hostNameProperty)) {
+            hostName = hostNameProperty;
+        }
+        return hostName;
     }
 
     protected int getDeploymentPort() {
-        return 8080;
+        int port = 8080;
+        String portProperty = System.getProperty(PORT_PROPERTY);
+        if (portProperty != null && !"".equals(portProperty)) {
+            port = Integer.parseInt(portProperty);
+        }
+        return port;
     }
 
     protected abstract Class<? extends Component> getTestView();
