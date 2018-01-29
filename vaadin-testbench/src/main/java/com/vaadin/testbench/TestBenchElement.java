@@ -225,6 +225,18 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
         return wrappedElement.getAttribute(name);
     }
 
+    /**
+     * Checks if the given attribute is present on the element.
+     *
+     * @param attribute
+     *            the name of the attribute
+     * @return <code>true</code> if the attribute is present, <code>false</code>
+     *         otherwise
+     */
+    public boolean hasAttribute(String attribute) {
+        return (boolean) callFunction("hasAttribute", attribute);
+    }
+
     @Override
     public boolean isSelected() {
         autoScrollIntoView();

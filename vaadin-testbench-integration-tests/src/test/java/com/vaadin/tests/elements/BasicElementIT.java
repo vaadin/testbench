@@ -98,4 +98,20 @@ public class BasicElementIT extends MultiBrowserTest {
         $(PolymerTemplateViewElement.class).waitForFirst();
         Assert.fail("Should not have found an element which does not exist");
     }
+
+    @Test
+    public void hasAttribute() {
+        NativeButtonElement withAttributes = $(NativeButtonElement.class)
+                .get(5);
+        NativeButtonElement withoutAttributes = $(NativeButtonElement.class)
+                .get(6);
+
+        Assert.assertTrue(withAttributes.hasAttribute("string"));
+        Assert.assertTrue(withAttributes.hasAttribute("boolean"));
+        Assert.assertFalse(withAttributes.hasAttribute("nonexistant"));
+
+        Assert.assertFalse(withoutAttributes.hasAttribute("string"));
+        Assert.assertFalse(withoutAttributes.hasAttribute("boolean"));
+        Assert.assertFalse(withoutAttributes.hasAttribute("nonexistant"));
+    }
 }
