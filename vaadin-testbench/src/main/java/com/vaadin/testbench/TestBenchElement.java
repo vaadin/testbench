@@ -183,9 +183,15 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
 
     @Override
     public void click() {
-        autoScrollIntoView();
-        waitForVaadin();
-        wrappedElement.click();
+        try {
+            // Avoid strange "element not clickable at point" problems
+            callFunction("click");
+        } catch (Exception e) {
+            // SVG elements and maybe others do not have a 'click' method
+            autoScrollIntoView();
+            waitForVaadin();
+            wrappedElement.click();
+        }
     }
 
     @Override
@@ -268,16 +274,6 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
         waitForVaadin();
         return wrapElement(wrappedElement.findElement(by),
                 getCommandExecutor());
-    }
-
-    /**
-     * Calls the Javascript click method on the element.
-     *
-     * Useful for elements that are hidden or covered by a pseudo-element on
-     * some browser-theme combinations (for instance Firefox-Valo)
-     */
-    public void clickHiddenElement() {
-        callFunction("click");
     }
 
     @Override
