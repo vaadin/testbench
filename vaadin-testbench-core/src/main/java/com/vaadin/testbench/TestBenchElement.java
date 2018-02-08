@@ -50,6 +50,7 @@ import com.vaadin.testbench.commands.CanCompareScreenshots;
 import com.vaadin.testbench.commands.ScreenshotComparator;
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.commands.TestBenchCommands;
+import com.vaadin.testbench.elementsbase.Element;
 import com.vaadin.testbench.parallel.BrowserUtil;
 
 import elemental.json.Json;
@@ -60,6 +61,7 @@ import elemental.json.JsonValue;
  * functionality. TestBenchElements are created when you search for elements
  * from TestBenchTestCase or a context relative search from TestBenchElement.
  */
+@Element("*")
 public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
         CanCompareScreenshots, HasTestBenchCommandExecutor, HasElementQuery,
         HasPropertySettersGetters, HasCallFunction {
