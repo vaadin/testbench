@@ -16,7 +16,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.openqa.selenium.JavascriptExecutor;
@@ -50,17 +49,29 @@ public class ElementQuery<T extends TestBenchElement> {
     private Map<String, String> attributes = new HashMap<>();
     private SearchContext searchContext;
     private final Class<T> elementClass;
+    private final String tagName;
 
     /**
      * Instantiate a new ElementQuery to look for the given type of element.
      *
      * @param elementClass
-     *            the type of element to look for
+     *            the type of element to look for and return
      */
     public ElementQuery(Class<T> elementClass) {
-        Objects.requireNonNull(elementClass,
-                "The element class cannot be null");
+        this(elementClass, getTagName(elementClass));
+    }
+
+    /**
+     * Instantiate a new ElementQuery to look for the given type of element.
+     *
+     * @param elementClass
+     *            the type of element to return
+     * @param tagName
+     *            the tag name of the element to find
+     */
+    public ElementQuery(Class<T> elementClass, String tagName) {
         this.elementClass = elementClass;
+        this.tagName = tagName;
     }
 
     /**
@@ -197,7 +208,7 @@ public class ElementQuery<T extends TestBenchElement> {
     }
 
     private String getNoSuchElementMessage(Integer index) {
-        String msg = "No element with tag <" + getTagName() + "> found";
+        String msg = "No element with tag <" + tagName + "> found";
         String attrPairs = getAttributePairs();
         if (!attrPairs.isEmpty()) {
             msg += " with the attributes " + attrPairs;
@@ -274,11 +285,11 @@ public class ElementQuery<T extends TestBenchElement> {
             script.append(indexSuffix);
         }
 
-        return executeSearchScript(script.toString(), elementContext,
-                getTagName(), getAttributePairs(), executor);
+        return executeSearchScript(script.toString(), elementContext, tagName,
+                getAttributePairs(), executor);
     }
 
-    private String getTagName() {
+    private static String getTagName(Class<?> elementClass) {
         Element annotation = elementClass.getAnnotation(Element.class);
         if (annotation == null) {
             throw new IllegalStateException("The given element class "

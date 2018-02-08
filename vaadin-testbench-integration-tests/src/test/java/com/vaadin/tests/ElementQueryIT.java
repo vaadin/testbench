@@ -6,6 +6,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.vaadin.testUI.PolymerTemplateView;
+import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.tests.elements.NativeButtonElement;
 import com.vaadin.tests.elements.PolymerTemplateViewElement;
 import com.vaadin.ui.Component;
@@ -78,5 +79,24 @@ public class ElementQueryIT extends AbstractTB6Test {
         List<NativeButtonElement> buttons = view.$(NativeButtonElement.class)
                 .all();
         Assert.assertEquals(9, buttons.size());
+    }
+
+    @Test
+    public void findTestBenchElementUsingTag() throws Exception {
+        openTestURL();
+
+        TestBenchElement button = $(PolymerTemplateViewElement.class)
+                .waitForFirst().$("button").id("shadow-button-2");
+        Assert.assertEquals("Shadow Button 2", button.getText());
+
+    }
+
+    @Test
+    public void findTestBenchElement() throws Exception {
+        openTestURL();
+
+        TestBenchElement button = $(PolymerTemplateViewElement.class)
+                .waitForFirst().$(TestBenchElement.class).id("shadow-button-2");
+        Assert.assertNotNull(button);
     }
 }
