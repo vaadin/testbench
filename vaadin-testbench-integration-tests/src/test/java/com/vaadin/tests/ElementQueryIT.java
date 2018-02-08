@@ -88,5 +88,15 @@ public class ElementQueryIT extends MultiBrowserTest {
         TestBenchElement button = $(PolymerTemplateViewElement.class)
                 .waitForFirst().$("button").id("shadow-button-2");
         Assert.assertEquals("Shadow Button 2", button.getText());
+
+    }
+
+    @Test
+    public void findTestBenchElement() throws Exception {
+        openTestURL();
+
+        TestBenchElement button = $(PolymerTemplateViewElement.class)
+                .waitForFirst().$(TestBenchElement.class).id("shadow-button-2");
+        Assert.assertNotNull(button);
     }
 }
