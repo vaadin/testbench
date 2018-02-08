@@ -7,7 +7,7 @@ import org.openqa.selenium.By;
 import com.vaadin.testUI.SVGView;
 import com.vaadin.ui.Component;
 
-public class SVGIT extends MultiBrowserTest {
+public class SVGIT extends AbstractTB6Test {
 
     @Override
     protected Class<? extends Component> getTestView() {
