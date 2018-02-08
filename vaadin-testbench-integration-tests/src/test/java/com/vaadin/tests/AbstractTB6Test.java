@@ -187,7 +187,7 @@ public abstract class AbstractTB6Test extends ParallelTest {
     }
 
     protected String getDeploymentHostname() {
-        String hostName = "";
+        String hostName = "localhost";
         String hostNameProperty = System.getProperty(HOSTNAME_PROPERTY);
         if (hostNameProperty != null && !"".equals(hostNameProperty)) {
             hostName = hostNameProperty;
