@@ -168,7 +168,10 @@ public class TestBench {
             proxyObject = pFactory.create(new Class[0], new Object[0],
                     new ElementInvocationHandler(webElement));
         } catch (Exception e) {
-            return null;
+            throw new IllegalStateException(
+                    "Unable to create an element of type " + clazz.getName()
+                            + " wrapping " + webElement,
+                    e);
         }
 
         @SuppressWarnings("unchecked")
