@@ -114,4 +114,12 @@ public class BasicElementIT extends AbstractTB6Test {
         Assert.assertFalse(withoutAttributes.hasAttribute("boolean"));
         Assert.assertFalse(withoutAttributes.hasAttribute("nonexistant"));
     }
+
+    @Test
+    public void dispatchEvent() {
+        NativeButtonElement withAttributes = $(NativeButtonElement.class)
+                .get(5);
+        withAttributes.dispatchEvent("custom123");
+        Assert.assertEquals("Event on Button 5", $("div").id("msg").getText());
+    }
 }
