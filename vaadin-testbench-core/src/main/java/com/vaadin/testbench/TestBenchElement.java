@@ -489,10 +489,13 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
      * element is not displayed
      */
     private void autoScrollIntoView() {
-        if (getCommandExecutor().isAutoScrollIntoView()) {
-            if (!wrappedElement.isDisplayed()) {
-                scrollIntoView();
+        try {
+            if (getCommandExecutor().isAutoScrollIntoView()) {
+                if (!wrappedElement.isDisplayed()) {
+                    scrollIntoView();
+                }
             }
+        } catch (Exception e) {
         }
     }
 
