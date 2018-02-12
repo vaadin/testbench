@@ -259,15 +259,15 @@ public class ElementQuery<T extends TestBenchElement> {
         TestBenchElement elementContext;
         JavascriptExecutor executor;
         if (getContext() instanceof TestBenchElement) {
-            script.append(
-                    "var result = arguments[0].shadowRoot.querySelectorAll(arguments[1]+arguments[2]);");
-            script.append(
-                    "var light = arguments[0].querySelectorAll(arguments[1]+arguments[2]);");
-            script.append("if (light.length > 0) {");
-            script.append(
-                    "result = Array.prototype.slice.call(result).concat(Array.prototype.slice.call(light));");
-            script.append("}");
-            script.append("return result");
+            script.append("var result = [];" //
+                    + "if (arguments[0].shadowRoot) {" //
+                    + "  var shadow = arguments[0].shadowRoot.querySelectorAll(arguments[1]+arguments[2]);" //
+                    + "  result = result.concat(Array.prototype.slice.call(shadow));" //
+                    + "}" //
+                    + "var light = arguments[0].querySelectorAll(arguments[1]+arguments[2]);" //
+                    + "result = result.concat(Array.prototype.slice.call(light));" //
+                    + "return result" //
+            );
             elementContext = (TestBenchElement) getContext();
             executor = elementContext.getCommandExecutor().getDriver();
         } else if (getContext() instanceof WebDriver) {

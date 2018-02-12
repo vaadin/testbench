@@ -99,4 +99,14 @@ public class ElementQueryIT extends AbstractTB6Test {
                 .waitForFirst().$(TestBenchElement.class).id("shadow-button-2");
         Assert.assertNotNull(button);
     }
+
+    @Test
+    public void findTestBenchElementChild() throws Exception {
+        openTestURL();
+
+        TestBenchElement button = $(PolymerTemplateViewElement.class)
+                .waitForFirst().$(TestBenchElement.class).first()
+                .$(TestBenchElement.class).first();
+        Assert.assertEquals("Shadow Button 1", button.getText());
+    }
 }
