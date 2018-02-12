@@ -712,4 +712,18 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
                 + paramPlaceholderString + ")", jsParameters);
     }
 
+    /**
+     * Dispatches (fires) a custom event of the given type on the element.
+     * <p>
+     * The event is created without any parameters.
+     *
+     * @param eventType
+     *            the type of custom event to dispatch
+     */
+    public void dispatchEvent(String eventType) {
+        executeScript(
+                "arguments[0].dispatchEvent(new CustomEvent(arguments[1]));",
+                this, eventType);
+    }
+
 }
