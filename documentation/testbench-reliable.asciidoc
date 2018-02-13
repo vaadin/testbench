@@ -1,0 +1,232 @@
+---
+title: Creating Reliable Tests
+order: 1
+layout: page
+---
+
+[[testbench.reliable]]
+= Creating Reliable and Maintainable Tests
+
+There are different types of problems which can cause problems in your tests:
+* Tests are not understood by other developers/testers and are disabled or accidentally broken
+* Changes in the application causes tests to fail
+* Problems in the testing environment causes tests to fail
+
+You need to take these into account or will quickly end up with a test suite where a few test always fail. As experienced testers can tell you, this test suite is as good as having no tests at all, because a test suite which is always "a bit red" is not taken seriously by any developer.
+
+[TIP]
+You should make sure that your test suite is run on a regular basis. Having a manually triggered test suite which is run only after a lot of changes has been done to the application makes maintenance extermely difficult. The best approach is if you can run the test suite on every change.
+
+[[testbench.reliable.readability]]
+== Creating Readable Tests
+Just as with code, it is important to write tests so that the reader understands the intent. When each test contains high level, meaningful calls, the reader will immediately grasp what is being tested. When/if she wants to know more details about some part of the test, she can then dig into that part. If the test is full of low level details about how you locate the parts of the application you want to interact with, it becomes completely overwhelming to try to decode what the test is actually trying to verify.
+
+By using page/view objects (described below) you can abstract away the low level details about how the view is built and what exact components are used. You can also use <<dummy/../../testbench/testbench-bdd, "BDD">> to describe your test scenarios using normal English sentences.
+
+[[testbench.reliable.application-changes]]
+== Guarding Against Application Changes
+If your application never changes, you can test it manually just once and you will know that it works properly. In most cases though, your application will be development forward and you need to maintain the tests when the application evolves.
+
+As long as you abstract away the details from the tests to page/view objects, you only need to take care that your page/view objects are built in a robust way. 
+
+You should avoid by all means necessary to depend on the HTML DOM structure. If you depend on finding a `<div>` inside a `<span>` or anything similar, you will have to update the page/view object for every small detail that changes in the application.
+
+Similarly, you should avoid depending on strings targeted for humans in your application. While it is in many cases tempting to find the button with the text "Save", you will run into unnecessary problems when somebody decides to change the text to "Store", or decides to internationalize the application.
+
+=== Define Ids for the Components
+For most cases, it makes sense to define `id`s for all the elements you want to interact with inside your page/view object. The `id`s are only created to be able to identify a given element and there is typically no reason to change them when the application evolves. With Shadow DOM, you also do not need to worry about global `id`s and `id`s colliding with each other, as the id of a given element only needs to be unique inside a shadow root (in practice a template).
+
+[TIP]
+Use `id`s which describe the action which will occur when pressing the button, not `ids` describing e.g. where in the hierarchy the button is. If your `id` is tied to the hierarchy, you will indirectly depend on the hierarchy and lose many benefits of using `id`s.
+
+
+[[testbench.reliable.application-changes]]
+== Dealing with Test Environment Problems
+When dealing with browser based tests, and especially older browser such as IE11, you need to take into account that the environment is not always as stable as you would want it to be. Ideally the test would fire up the browser, execute the actions and terminate the browser nicely. Always. In practice, there is potential to have network problems (especially when using a cloud based browser provider), there can be browser problems causing randomness or even browser crashes (yes, this is about you IE11). 
+
+When the point of failure is outside your control, e.g. a temporary network failure, your options are very limited. To deal with all kinds of unexpected randomness, in the network or the browsers, TestBench offers a `RetryRule`, which is simply a way to automatically run the test again to see if the temporary problem has disappeared.
+
+`RetryRule` is used as a JUnit 4 `@Rule`, with an parameter describing the maximum number of times the test should be run, e.g:
+
+```java
+public class RandomFailureTest extends TestBenchTestCase {
+
+    // Run the test max two times
+    @Rule
+    public RetryRule rule = new RetryRule(2);
+
+    @Test
+    public void doStuff() {
+      ...
+    }
+
+}
+```
+If the test passes on the first attempt, it will not be re-run. Only if the first attempt fails, it will try again until either the test passes or the maximum number of attempst has been reached.
+
+[NOTE]
+RetryRule affects all the test methods in the class and also child classes.
+
+[NOTE]
+The default value of maxAttempts is 1, meaning that test is run only once. You can change the value of maxAttempts globally using the Java system property: `-Dcom.vaadin.testbench.Parameters.maxAttempts=2`. 
+
+[NOTE]
+Use RetryRule when you are sure that the test fails because of the problems with the Web Driver, but not your application. Using RetryRule without cautions may hide random problems happening in your application.
+
+
+
+
+[[testbench.maintainable.pageobject]]
+== The Page Object Pattern
+
+The Page Object Pattern aims to simplify and modularize testing application
+views. The pattern follows the design principle of
+link:http://en.wikipedia.org/wiki/Separation_of_concerns[separation of
+concerns], to handle different concerns in separate modules, while hiding
+information irrelevant to other tests by encapsulation.
+
+[[testbench.maintainable.pageobject.defining]]
+=== Defining a Page Object
+
+A __page object__ has methods to interact with a view or a sub-view, and to
+retrieve values in the view. You also need a method to open the page and
+navigate to the proper view.
+
+For example:
+
+
+----
+public class CalculatorPageObject
+       extends TestBenchTestCase {
+    @FindBy(id = "button_=")
+    private WebElement equals;
+    ...
+
+    /**
+     * Opens the URL where the calculator resides.
+     */
+    public void open() {
+        getDriver().get(
+            "http://localhost:8080/?restartApplication");
+    }
+
+    /**
+     * Pushes buttons on the calculator
+     *
+     * @param buttons the buttons to push: "123+2", etc.
+     * @return The same instance for method chaining.
+     */
+    public CalculatorPageObject enter(String buttons) {
+        for (char numberChar : buttons.toCharArray()) {
+            pushButton(numberChar);
+        }
+        return this;
+    }
+
+    /**
+     * Pushes the specified button.
+     *
+     * @param button The character of the button to push.
+     */
+    private void pushButton(char button) {
+        getDriver().findElement(
+            By.id("button_" + button)).click();
+    }
+
+    /**
+     * Pushes the equals button and returns the contents
+     * of the calculator "display".
+     *
+     * @return The string (number) shown in the "display"
+     */
+    public String getResult() {
+        equals.click();
+        return display.getText();
+    }
+
+    ...
+}
+----
+
+
+[[testbench.maintainable.pageobject.findby]]
+=== Finding Member Elements By ID
+
+If you have [classname]#WebElement# members annotated with [classname]#@FindBy#,
+they can be automatically filled with the HTML element matching the given
+component ID, as if done with
+[literal]#++driver.findElement(By.id(fieldname))++#. To do so, you need to
+create the page object with [classname]#PageFactory# as is done in the following
+test setup:
+
+
+----
+public class PageObjectExampleITCase {
+    private CalculatorPageObject calculator;
+
+    @Before
+    public void setUp() throws Exception {
+        driver = TestBench.createDriver(new FirefoxDriver());
+
+        // Use PageFactory to automatically initialize fields
+        calculator = PageFactory.initElements(driver,
+                         CalculatorPageObject.class);
+    }
+    ...
+----
+
+The members must be typed dynamically as [classname]#WebElement#, but you can
+wrap them to a typed element class with the [methodname]#wrap()# method:
+
+
+----
+ButtonElement equals = equalsElement.wrap(ButtonElement.class);
+----
+
+
+[[testbench.maintainable.pageobject.using]]
+=== Using a Page Object
+
+Test cases can use the page object methods at business logic level, without
+knowing about the exact structure of the views.
+
+For example:
+
+
+----
+@Test
+public void testAddCommentRowToLog() throws Exception {
+    calculator.open();
+
+    // Just do some math first
+    calculator.enter("1+2");
+
+    // Verify the result of the calculation
+    assertEquals("3.0", calculator.getResult());
+
+    ...
+}
+----
+
+
+[[testbench.maintainable.pageobject.example]]
+=== The Page Object Example
+
+You can find the complete example of the Page Object Pattern in the
+[filename]#src/test/java/com/vaadin/testbenchexample/pageobjectexample/# folder
+in the TestBench Demo. The [filename]#PageObjectExampleITCase.java# runs tests
+on the Calc UI (also included in the example sources), using the page objects to
+interact with the different parts of the UI and to check the results.
+
+The page objects included in the [filename]#pageobjects# subfolder are as
+follows:
+
+* The [classname]#CalculatorPageObject# (as outlined in the example code above)
+has methods to click the buttons in the calculator and the retrieve the result
+shown in the "display".
+
+* The [classname]#LogPageObject# can retrieve the content of the log entries in
+the log table, and right-click them to open the comment sub-window.
+
+* The [classname]#AddComment# can enter a comment string in the comment editor
+sub-window and submit it (click the [guilabel]#Add# button).
