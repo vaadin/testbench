@@ -1,0 +1,30 @@
+---
+title: Installing Web Drivers
+order: 2
+layout: page
+---
+
+[[testbench.installation.webdriver]]
+= Installing Web Drivers
+
+Each browser requires a browser specific web driver to be setup before tests can be run. If you are creating a Maven project, consider using the automated web driver plugin available. It will automatically download the drivers you need. See https://github.com/vaadin/testbench-demo for an example.
+
+If you want to install the drivers manually, most of them should be available through the package manager you use (e.g. `brew` or `apt-get`). You can also download the drivers and install them yourself from:
+* GeckoDriver for testing using Firefox: https://github.com/mozilla/geckodriver/releases
+* ChromeDriver for testing using Chrome: https://sites.google.com/a/chromium.org/chromedriver/downloads
+* Microsoft web driver for testing using Edge: https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/
+* Selenium IEDriver for testing using IE11: http://selenium-release.storage.googleapis.com/index.html 
+
+[NOTE]
+In many cases the web driver is tied to the browser version. You need to make sure that the combination is a supported one, e.g. ChromeDriver 2.35 only supports Chrome 62-64.
+
+[[testbench.installation.browserdrivers.addingtopath]]
+=== Adding Web Driver to System Path
+The driver executable must be included in the operating system `PATH` or be given to the test using a driver-specific system Java property:
+
+* Google Chrome: [parameter]#webdriver.chrome.driver#
+* Mozilla Firefox: [parameter]#webdriver.gecko.driver#
+* Microsoft Edge: [parameter]#webdriver.edge.driver#
+* Internet Explorer: [parameter]#webdriver.ie.driver#
+
+In most cases, it is easiest to add it to the `PATH` variable so that it is always available. 
