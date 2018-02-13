@@ -1,55 +1,36 @@
 ---
-title: TestBench 4 to TestBench 5 Migration Guide
+title: Migrating to Vaadin 10
 order: 5
 layout: page
 ---
 
 [[testbench.migration]]
-= TestBench 4 to TestBench 5 Migration Guide
+= Migrating to Vaadin 10
 
 [[testbench.migration.introduction]]
 == Introduction
 
-Vaadin TestBench 5 is intended to test Vaadin Framework 8 applications.
+Vaadin TestBench is part of the Vaadin platform and is intended to primarily be used to test applications created using the same platform version. 
 
-Vaadin TestBench 5 is API compatible with Vaadin TestBench 4.x, and can thus be used as a drop-in replacement for any 4.x version provided the tested project has been migrated to Vaadin Framework 8, see Vaadin Framework 8 migration guide.
-The exceptions to this rule are listed in the API changes section below.
+While the features are primarily the same as in TestBench 5 for Vaadin Framework 8 and TestBench 4 for Vaadin Framework 7, the API has been tuned a bit to better match Flow component API and features.
 
 [[testbench.migration.api-changes]]
-== API Changes in TestBench 5
+== ElementQuery Changes
 
-* [classname]#CheckBoxGroupElement# added to test [classname]#CheckBoxGroup# Component
-* [classname]#RadioButtonGroupElement# added to test [classname]#RadioButtonGroup# Component
+The ElementQuery method `caption(String)` has been removed as there is no generic `caption` concept across all web components. The method `state(String,String)` was also tied to the Vaadin Framework "shared state" feature and has been removed. A more generic finder method `attribute(String name, String value)` has been added instead. This can be used to find an element with any given attribute value. The old `caption("OK")` can in some cases be replaced by `attribute("label","OK")` and `state("something","value")` also by `attribute("something", "value")`, depending on the used component.
 
-[[testbench.migration.deprecated-elements]]
-== Testing Deprecated Vaadin Components
+The query methods `in()`, `child()` and `$$()` were rarely used and have been removed to simplify the query language.
 
-Vaadin Framework 8 provides an optional dependency that includes compatibility components to facilitate the migration between versions 7 and 8.
+== Element API Changes
 
-=== Compatibility Only Components
+The Element API has been made consistent with the API provided by the element (web component) itself. The feature set is largely the same as in older versions but the exact method naming differs in some cases.
 
-Some components only exist in [package]#com.vaadin.v7.ui# compatibility package like:
 
-* [classname]#Table#
-* [classname]#Tree#
-* [classname]#TreeTable#
-* [classname]#Form#
-* [classname]#PopupDateField#
-* [classname]#Calendar#
-* [classname]#OptionGroup#
-* [classname]#ProgressIndicator#
-* [classname]#Select#
+[[testbench.migration.mixing-old-and-new]]
+== Applications using both Vaadin Framework and Vaadin platform
 
-Such components and their corresponding [classname]#TestBenchElement# have been deprecated but can still be used and tested.
+If you have an application which is using both a Vaadin Framework version and a Vaadin platform version, you should keep the tests for each version in a separate module in the project. This allows you to use an older TestBench version for the Vaadin Framework tests and a new version for the Vaadin platform tests.
 
-=== Compatibility and Vaadin 8 Components
+== Selenium Version
 
-Other components exist in both [package]#com.vaadin.v7.ui# and [package]#com.vaadin.ui# packages. In these cases the same [classname]#TestBenchElement# can be used to test either version.
-
-One example of this is [classname]#NativeSelectElement# that can be used to test both [package]#com.vaadin.v7.ui#  [classname]#NativeSelect# and [package]#com.vaadin.ui#  [classname]#NativeSelect#
-
-[[testbench.migration.dependency-changes]]
-== Changes in dependency
-
-Selenium::
-Selenium version was upgraded to 3.0.1. TestBench 5 should still work with older (Selenium 2 / TestBench 4 based) test clusters.
+The Selenium version has been upgraded to the latest available version. While it is mostly compatible, some small API changes might require your attention.
