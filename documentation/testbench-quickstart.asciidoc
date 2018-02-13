@@ -5,7 +5,7 @@ layout: page
 ---
 
 [[testbench.quickstart]]
-= Quickstart
+= Getting Started
 
 If you just want to test out TestBench and see how tests are run, the easiest way is to clone the example project at https://github.com/vaadin/testbench-demo. The tests are automatically executed on your local Chrome when you run `mvn install`.
 
@@ -111,7 +111,9 @@ For real tests, you should use the page/view object pattern described in <<dummy
 Don't place your tests in the root package as in this example. Structure them logically according to your application structure.
 
 == Running Tests
-The server hosting your application needs to be running at the given URL before you launch your test. If you are using one of the basic starter apps from https://vaadin.com/start, you can launch Jetty using 
+The server hosting your application needs to be running at the given URL before you launch your test. If the server is already running and the application is deployed, you only need to ensure that the URL in the test is correct.
+
+If you are using one of the basic starter apps from https://vaadin.com/start, you can launch Jetty using 
 ```
 mvn jetty:run
 ```
