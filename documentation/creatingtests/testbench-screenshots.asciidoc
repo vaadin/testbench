@@ -217,14 +217,3 @@ system and check-out them to the [filename]#reference/# directory.
 
 A build system or a continuous integration system can be configured to
 automatically collect and store the screenshots as build artifacts.
-
-
-[[testbench.screenshot.compatibility]]
-== Known Compatibility Problems
-
-Screenshots when running Internet Explorer 9 in Compatibility Mode
-
-:: Internet Explorer prior to version 9 adds a two-pixel border around the content
-area. Version 9 no longer does this and as a result screenshots taken using
-Internet Explorer 9 running in compatibility mode (IE7/IE8) will include the two
-pixel border, contrary to what the older versions of Internet Explorer do.
