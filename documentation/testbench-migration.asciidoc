@@ -25,7 +25,6 @@ The query methods `in()`, `child()` and `$$()` were rarely used and have been re
 
 The Element API has been made consistent with the API provided by the element (web component) itself. The feature set is largely the same as in older versions but the exact method naming differs in some cases.
 
-
 [[testbench.migration.mixing-old-and-new]]
 == Applications using both Vaadin Framework and Vaadin platform
 
@@ -34,3 +33,7 @@ If you have an application which is using both a Vaadin Framework version and a 
 == Selenium Version
 
 The Selenium version has been upgraded to the latest available version. While it is mostly compatible, some small API changes might require your attention.
+
+== PhantomJS
+
+It is no longer recommended to use PhantomJS for headless testing. PhantomJS is lacking behind the latest browser versions in features and will in many cases just not work with Vaadin platform. You should instead run using headless Chrome (using `--headless --disable-gpu`) or using headless Firefox (using `-headless`).
