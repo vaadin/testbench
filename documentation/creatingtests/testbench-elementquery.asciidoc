@@ -36,39 +36,6 @@ for (ButtonElement b: buttons)
     b.click();
 ----
 
-In the following sub-sections, we look into the details of element queries.
-
-[[testbench.elementquery.debugwindow]]
-== Generating Queries with Debug Window
-
-You can use the debug window to easily generate the element query code to select
-a particular element in the UI. This should be especially useful when starting
-to use TestBench, to get the idea what the queries should be like.
-
-First, enable the debug window with the [literal]#++&debug++# parameter for the
-application, as described in more detail in
-<<dummy/../../../framework/advanced/advanced-debug#advanced.debug,"Debug Mode and
-Window">>. You can interact with the UI in any way you like before generating
-the query code, but we recommend that you proceed by following the sequence in
-which the user would use the UI in each use case, making the queries at each
-step.
-
-Switch to the TestBench tab in the debug window, and enable the pick mode by
-clicking the small button. Now, when you hover the mouse pointer on elements, it
-highlights them, and when you click one, it generates the TestBench element
-query to find the element. Use of the debug window is illustrated in
-<<figure.testbench.elementquery.debugwindow>>.
-
-[[figure.testbench.elementquery.debugwindow]]
-.Using Debug Window to Generate Element Queries
-image::img/debugwindow-select-annotated-lo.png[]
-
-You can select and copy and paste the code from the debug window to your editor.
-To exit the pick mode, click the pick button again.
-
-The debug window feature is available in Vaadin 7.2 and later.
-
-
 [[testbench.elementquery.create]]
 == Querying Elements by Component Type ([methodname]#$#)
 
@@ -77,27 +44,10 @@ the given element class. The method is available both in
 [classname]#TestBenchTestcase# and [classname]#ElementQuery#, which defines the
 context. The search is done recursively in the context.
 
-
 ----
-// Find the first OK button in the UI
-ButtonElement button = $(ButtonElement.class)
-    .caption("OK").first();
-
-// A nested query where the context of the latter
-// component type query is the matching elements
-// - matches the first Label inside the "content" layout.
-LabelElement label = $(VerticalLayoutElement.class)
-    .id("content").$(LabelElement.class).first();
+// Find the button with id="ok"
+ButtonElement button = $(ButtonElement.class).id("OK");
 ----
-
-
-[[testbench.elementquery.nonrecursive]]
-== Non-Recursive Component Queries ([methodname]#$$#)
-
-The [methodname]#$$# method creates a non-recursive [classname]#ElementQuery#.
-It is a shorthand for first creating a recursive query with [methodname]#$# and
-then calling [methodname]#recursive(false)# for the query.
-
 
 [[testbench.elementquery.testbenchelement]]
 == Element Classes
@@ -107,9 +57,6 @@ Each Vaadin component has a corresponding element class in TestBench, which
 contains methods for interacting with the particular component. The element
 classes extend [classname]#TestBenchElement#. It implements Selenium
 [interfacename]#WebElement#, so the Selenium element API can be used directly.
-The element classes are distributed in a Vaadin library rather than with
-TestBench, as they must correspond with the Vaadin version used in the
-application.
 
 In addition to components, other Vaadin UI elements such as notifications (see
 <<dummy/../../creatingtests/testbench-special#testbench.special.notifications,"Testing
@@ -127,7 +74,6 @@ VerticalLayoutElement layout =
     $(VerticalLayoutElement.class).id("content");
 LabelElement label = layout.$(LabelElement.class).first();
 ----
-
 
 [[testbench.elementquery.elementquery]]
 == [classname]#ElementQuery# Objects
@@ -154,11 +100,25 @@ unique in the web page. It is therefore meaningless to make a complex query to
 match the ID, just matching the element class is enough.
 
 
+[[testbench.elementquery.own-elements]]
+=== Creating an Element Class
 
-[[testbench.elementquery.elements]]
-=== Web Elements
+An element class requires two things so that it can be used in an `ElementQuery`: 
+1. Extend `TestBenchElement`
+2. Define an `@Element("tag-name")` annotation
 
-A query returns one or more elements extending Selenium [classname]#WebElement#.
-The particular element-specific class offers methods to manipulate the
-associated Vaadin component, while you can also use the lower-level
-general-purpose methods defined in [classname]#WebElement#.
+The `@Element` annotation defines the tag name of the element which can be located by the element class. The tag name does not have to be unique as the element query user always defines what type of element she is looking for. 
+
+If you want to add functionality to an existing element, you can extend the original element class and add more helper methods, e.g.
+```java
+public class MyButtonElement extends ButtonElement {
+   
+   public void pressUsingSpace() {
+     ....
+   }
+}
+```
+If the type of element stays the same, you do not need to redefine the `@Element` tag name. You can find your new element using e.g.
+```java
+$(MyButtonElement.class).id("ok");
+```
