@@ -7,52 +7,24 @@ layout: page
 [[testbench.quickstart]]
 = Getting Started
 
+[TIP]
 If you just want to test out TestBench and see how tests are run, the easiest way is to clone the example project at https://github.com/vaadin/testbench-demo. The tests are automatically executed on your local Chrome when you run `mvn install`.
 
+[[testbench.quickstart.dependency]]
+== Add the TestBench Dependency
 To start using TestBench in an existing project, you need to add the TestBench dependency (`com.vaadin`/`vaadin-testbench`) with a `test` scope. Assuming you have imported the Vaadin platform BOM and have a Maven project, all you need to do is add:
 ```xml
 <dependency>
     <groupId>com.vaadin</groupId>
-    <artifactId>vaadin-testbench-core</artifactId>
+    <artifactId>vaadin-testbench</artifactId>
 </dependency>
 ```
 The `test` scope and version number is predefined by the Vaadin BOM.
 
-[TIP]
-You can use one of the basic starters at https://vaadin.com/start as a base project if you like.
-
-[TIP]
-The Vaadin BOM can be included in the project as
-```xml
-<dependencyManagement>
-    <dependencies>
-        <dependency>
-            <groupId>com.vaadin</groupId>
-            <artifactId>vaadin-bom</artifactId>
-            <version>10.0.0</version>
-            <type>pom</type>
-            <scope>import</scope>
-        </dependency>
-    </dependencies>
-</dependencyManagement>
-```
-
-[TIP]
-If your project does not contain the `vaadin-addons` repository, you might need to add it:
-```xml
-<repository>
-   <id>vaadin-addons</id>
-   <url>http://maven.vaadin.com/vaadin-addons</url>
-</repository>
-```
-
-To be able to run tests locally, you might need to install a webdriver for your browser, see  <<dummy/../testbench/#install.browserdrivers,"Installing Browser Drivers">> for more details.
-
-[TIP]
-The https://github.com/vaadin/testbench-demo project uses a nifty Maven plugin which will automatically download the needed webdriver for you.
+To be able to run tests locally, you might need to install a webdriver for your browser, see  <<dummy/../testbench-installing-drivers#,Installing Web Drivers>> for more details.
 
 [[testbench.quickstart.create-a-test-class]]
-== Create a Simple Test Class
+== Create a Simple Test
 
 The fundamental parts of any TestBench test are:
 
@@ -63,7 +35,7 @@ The fundamental parts of any TestBench test are:
 
 The following test example will perform all the above tasks with the test logic consisting of clicking the first available button and checking the the text of the button changes when clicked. If you are adding this test to your own custom application, it will obviously fail unless you modify it. 
 
-In the Maven world, all test classes live in the `src/test` directory. Create a new class called `SimpleIT` in that directory:
+In the Maven world, all test classes live in the `src/test/java` directory. Create a new class called `SimpleIT` in that directory:
 
 ```java
 import org.junit.After;

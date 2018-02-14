@@ -1,13 +1,14 @@
 ---
 title: Creating Reliable Tests
-order: 1
+order: 5
 layout: page
 ---
 
 [[testbench.reliable]]
-= Creating Reliable and Maintainable Tests
+= Creating Reliable Tests
 
 There are different types of problems which can cause problems in your tests:
+
 * Tests are not understood by other developers/testers and are disabled or accidentally broken
 * Changes in the application causes tests to fail
 * Problems in the testing environment causes tests to fail
@@ -21,7 +22,7 @@ You should make sure that your test suite is run on a regular basis. Having a ma
 == Creating Readable Tests
 Just as with code, it is important to write tests so that the reader understands the intent. When each test contains high level, meaningful calls, the reader will immediately grasp what is being tested. When/if she wants to know more details about some part of the test, she can then dig into that part. If the test is full of low level details about how you locate the parts of the application you want to interact with, it becomes completely overwhelming to try to decode what the test is actually trying to verify.
 
-By using page/view objects (described below) you can abstract away the low level details about how the view is built and what exact components are used. You can also use <<dummy/../../testbench/testbench-bdd, "BDD">> to describe your test scenarios using normal English sentences.
+By using page/view objects (described below) you can abstract away the low level details about how the view is built and what exact components are used. You can also use <<dummy/../testbench-bdd#,BDD>> to describe your test scenarios using normal English sentences.
 
 [[testbench.reliable.application-changes]]
 == Guarding Against Application Changes
@@ -75,158 +76,3 @@ Use RetryRule when you are sure that the test fails because of the problems with
 
 
 
-
-[[testbench.maintainable.pageobject]]
-== The Page Object Pattern
-
-The Page Object Pattern aims to simplify and modularize testing application
-views. The pattern follows the design principle of
-link:http://en.wikipedia.org/wiki/Separation_of_concerns[separation of
-concerns], to handle different concerns in separate modules, while hiding
-information irrelevant to other tests by encapsulation.
-
-[[testbench.maintainable.pageobject.defining]]
-=== Defining a Page Object
-
-A __page object__ has methods to interact with a view or a sub-view, and to
-retrieve values in the view. You also need a method to open the page and
-navigate to the proper view.
-
-For example:
-
-
-----
-public class CalculatorPageObject
-       extends TestBenchTestCase {
-    @FindBy(id = "button_=")
-    private WebElement equals;
-    ...
-
-    /**
-     * Opens the URL where the calculator resides.
-     */
-    public void open() {
-        getDriver().get(
-            "http://localhost:8080/?restartApplication");
-    }
-
-    /**
-     * Pushes buttons on the calculator
-     *
-     * @param buttons the buttons to push: "123+2", etc.
-     * @return The same instance for method chaining.
-     */
-    public CalculatorPageObject enter(String buttons) {
-        for (char numberChar : buttons.toCharArray()) {
-            pushButton(numberChar);
-        }
-        return this;
-    }
-
-    /**
-     * Pushes the specified button.
-     *
-     * @param button The character of the button to push.
-     */
-    private void pushButton(char button) {
-        getDriver().findElement(
-            By.id("button_" + button)).click();
-    }
-
-    /**
-     * Pushes the equals button and returns the contents
-     * of the calculator "display".
-     *
-     * @return The string (number) shown in the "display"
-     */
-    public String getResult() {
-        equals.click();
-        return display.getText();
-    }
-
-    ...
-}
-----
-
-
-[[testbench.maintainable.pageobject.findby]]
-=== Finding Member Elements By ID
-
-If you have [classname]#WebElement# members annotated with [classname]#@FindBy#,
-they can be automatically filled with the HTML element matching the given
-component ID, as if done with
-[literal]#++driver.findElement(By.id(fieldname))++#. To do so, you need to
-create the page object with [classname]#PageFactory# as is done in the following
-test setup:
-
-
-----
-public class PageObjectExampleITCase {
-    private CalculatorPageObject calculator;
-
-    @Before
-    public void setUp() throws Exception {
-        driver = TestBench.createDriver(new FirefoxDriver());
-
-        // Use PageFactory to automatically initialize fields
-        calculator = PageFactory.initElements(driver,
-                         CalculatorPageObject.class);
-    }
-    ...
-----
-
-The members must be typed dynamically as [classname]#WebElement#, but you can
-wrap them to a typed element class with the [methodname]#wrap()# method:
-
-
-----
-ButtonElement equals = equalsElement.wrap(ButtonElement.class);
-----
-
-
-[[testbench.maintainable.pageobject.using]]
-=== Using a Page Object
-
-Test cases can use the page object methods at business logic level, without
-knowing about the exact structure of the views.
-
-For example:
-
-
-----
-@Test
-public void testAddCommentRowToLog() throws Exception {
-    calculator.open();
-
-    // Just do some math first
-    calculator.enter("1+2");
-
-    // Verify the result of the calculation
-    assertEquals("3.0", calculator.getResult());
-
-    ...
-}
-----
-
-
-[[testbench.maintainable.pageobject.example]]
-=== The Page Object Example
-
-You can find the complete example of the Page Object Pattern in the
-[filename]#src/test/java/com/vaadin/testbenchexample/pageobjectexample/# folder
-in the TestBench Demo. The [filename]#PageObjectExampleITCase.java# runs tests
-on the Calc UI (also included in the example sources), using the page objects to
-interact with the different parts of the UI and to check the results.
-
-The page objects included in the [filename]#pageobjects# subfolder are as
-follows:
-
-* The [classname]#CalculatorPageObject# (as outlined in the example code above)
-has methods to click the buttons in the calculator and the retrieve the result
-shown in the "display".
-
-* The [classname]#LogPageObject# can retrieve the content of the log entries in
-the log table, and right-click them to open the comment sub-window.
-
-* The [classname]#AddComment# can enter a comment string in the comment editor
-sub-window and submit it (click the [guilabel]#Add# button).

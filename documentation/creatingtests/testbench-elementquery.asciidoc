@@ -100,14 +100,14 @@ unique in the web page. It is therefore meaningless to make a complex query to
 match the ID, just matching the element class is enough.
 
 
-[[testbench.elementquery.own-elements]]
+[[testbench.elementquery.own-element-class]]
 === Creating an Element Class
 
-An element class requires two things so that it can be used in an `ElementQuery`: 
-1. Extend `TestBenchElement`
-2. Define an `@Element("tag-name")` annotation
+An element class is in practice the same as a __page object__. See <<page objects>> for information on how to create one.
 
-The `@Element` annotation defines the tag name of the element which can be located by the element class. The tag name does not have to be unique as the element query user always defines what type of element she is looking for. 
+
+[[testbench.elementquery.extend-element-class]]
+=== Extending an Element Class
 
 If you want to add functionality to an existing element, you can extend the original element class and add more helper methods, e.g.
 ```java
@@ -118,7 +118,16 @@ public class MyButtonElement extends ButtonElement {
    }
 }
 ```
-If the type of element stays the same, you do not need to redefine the `@Element` tag name. You can find your new element using e.g.
+
+You can then use your new element by replacing
 ```java
-$(MyButtonElement.class).id("ok");
+ButtonElement button = $(ButtonElement.class).id("ok");
+...
 ```
+
+by
+```java
+MyButtonElement button = $(MyButtonElement.class).id("ok");
+button.pressUsingSpace();
+```
+
