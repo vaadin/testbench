@@ -85,9 +85,13 @@ Don't place your tests in the root package as in this example. Structure them lo
 == Running Tests
 The server hosting your application needs to be running at the given URL before you launch your test. If the server is already running and the application is deployed, you only need to ensure that the URL in the test is correct.
 
-If you are using one of the basic starter apps from https://vaadin.com/start, you can launch Jetty using 
+If you are using https://preview.vaadin.com/start/v10-project-base, you can launch Jetty using 
 ```
 mvn jetty:run
+```
+If you are using a Spring Boot based starter, you can launch Spring Boot using
+```
+mvn spring-boot:run
 ```
 
 You can now launch your test in your IDE (run as JUnit test) or in another terminal:

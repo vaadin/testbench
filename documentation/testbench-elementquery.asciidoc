@@ -103,7 +103,7 @@ match the ID, just matching the element class is enough.
 [[testbench.elementquery.own-element-class]]
 === Creating an Element Class
 
-An element class is in practice the same as a __page object__. See <<page objects>> for information on how to create one.
+An element class is in practice the same as a __page object__. See <<dummy/../testbench-maintainable-tests-using-page-objects#,Creating Maintainble Tests using Page Objects>> for information on how to create one.
 
 
 [[testbench.elementquery.extend-element-class]]
