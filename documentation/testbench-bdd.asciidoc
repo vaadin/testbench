@@ -1,16 +1,16 @@
 ---
-title: Behaviour-Driven Development
-order: 2
+title: Behavior-Driven Development
+order: 9
 layout: page
 ---
 
 [[testbench.bdd]]
-= Behaviour-Driven Development
+= Behavior-Driven Development
 
-Behaviour-driven development (BDD) is a development methodology based on
+Behavior-driven development (BDD) is a development methodology based on
 test-driven development, where development starts from writing tests for the
 software-to-be. BDD involves using a __ubiquitous language__ to communicate
-between business goals - the desired behaviour - and tests to ensure that the
+between business goals - the desired Behavior - and tests to ensure that the
 software fulfills those goals.
 
 The BDD process starts by collection of business requirements expressed as
@@ -18,7 +18,7 @@ __user stories__, as is typical in agile methodologies. A user with a __role__
 requests a __feature__ to gain a __benefit__.
 
 Stories can be expressed as number of __scenarios__ that describe different
-cases of the desired behaviour. Such a scenario can be formalized with the
+cases of the desired Behavior. Such a scenario can be formalized with the
 following three phases:
 
 * __Given__ that I have calculator open
@@ -70,8 +70,7 @@ public class CalculatorSteps extends TestBenchTestCase {
 ----
 
 The demo employs the page object defined for the application UI, as described in
-<<dummy/../testbench-maintainable#testbench.maintainable.pageobject,"The
-Page Object Pattern">>.
+<<dummy/../testbench-maintainable-tests-using-page-objects#,Creating Maintainble Tests using Page Objects>>.
 
 Such scenarios are included in one or more stories, which need to be configured
 in a class extending [classname]#JUnitStory# or [classname]#JUnitStories#. In
