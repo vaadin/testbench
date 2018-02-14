@@ -1,11 +1,11 @@
 ---
-title: Creating Reliable Tests
+title: Making Tests Reliable
 order: 5
 layout: page
 ---
 
 [[testbench.reliable]]
-= Creating Reliable Tests
+= Making Tests Reliable
 
 There are different types of problems which can cause problems in your tests:
 

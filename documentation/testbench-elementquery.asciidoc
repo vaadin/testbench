@@ -1,11 +1,11 @@
 ---
-title: Querying Elements
-order: 2
+title: Finding Elements to Interact With
+order: 8
 layout: page
 ---
 
 [[testbench.elementquery]]
-= Querying Elements
+= Finding Elements to Interact With
 
 The high-level ElementQuery API allows querying Vaadin components in the browser
 according to their component class type, hierarchy, caption, and other

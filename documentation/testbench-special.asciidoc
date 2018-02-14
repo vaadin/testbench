@@ -1,8 +1,11 @@
 ---
-title: Special Testing Topics
-order: 3
+title: Advanced Testing Concepts
+order: 10
 layout: page
 ---
+
+= Advanced Testing Concepts
+The following testing concepts are not typically needed in your tests. The cases when you need to disable automatic waiting or scrolling into view are so rare that chances are you have hit a bug if you are considering using these.
 
 [[testbench.special.waitforvaadin]]
 == Waiting for Vaadin
@@ -59,55 +62,7 @@ waiting for 10 seconds by default.
 == Scrolling
 To be able to interact with an element, it needs to be visible on the screen. This limitation is set so that test which are run using a web driver shall simulate a normal user as closely as possible. TestBench handles this automatically by ensuring an element is in view before an interaction is triggered. In some cases you might want to disable this behavior and can then use `TestBenchCommands.setAutoScrollIntoView(false)`.
 
-[[testbench.special.javascript]]
-== Executing JavaScript
 
-((("javascript")))
-Sometimes the available API does not offer what you are looking for and you want
-to execute a JavaScript snippet to accomplish your task. 
-
-TestBench offers some helpers for typical tasks, such as retrieving a property value from an element:
-```java
-String getPropertyString(String... propertyNames)
-Boolean getPropertyBoolean(String... propertyNames)
-Integer getPropertyInteger(String... propertyNames)
-Double getPropertyDouble(String... propertyNames)
-Object getProperty(String... propertyNames)
-TestBenchElement getPropertyElement(String... propertyNames)
-List<TestBenchElement> getPropertyElements(String... propertyNames)
-```
-
-If you need to call a function on an element, you can use `Object callFunction(String methodName, Object... args)`, e.g.
-```java
-divElement.callFunction("setAttribute", "title", "Hello");
-```
-
-[NOTE]
-Typically you should use the correct `getPropertyXYZ` depending on the type of the property in JavaScript. If you use another type, the value will be converted using standard JavaScript rules (which may or may not give the result you desire).
-
-When there is no suitable helper available, you can excute any JavaScript snippet using the `executeScript` method available in `TestBenchTestCase` and `TestBenchElement` and add references to elements and other parameters using the `Object... args` parameter. All arguments passed to the
-method are available through the `arguments` array in JavaScript.
-
-For example to return the `offsetHeight` property of an element you could do
-----
-TestBenchElement element = ...; // find the element somehow
-Long offsetHeight = (Long)executeScript("return arguments[0].offsetHeight", element);
-----
-
-[NOTE]
-The `executeScript` call would be the same as using e.g. `element.getPropertyInteger("offsetHeight");`.
-
-The argument array and the return type support a limited set of types:
-
-* HTML elements are converted to `TestBenchElement` instances
-* Decimal numbers are converted to `Double`
-* Non-decimal numbers are converted to `Integer`
-* Booleans are converted to `Boolean`
-* All other values except arrays are converted to `String`
-* Returned arrays are converted to `List<Object>`, containing types described above
-
-As there is no way to know what type the JavaScript function returns, you always
-need to cast the return value.
 
 [[testbench.special.timing]]
 == Profiling Test Execution Time
