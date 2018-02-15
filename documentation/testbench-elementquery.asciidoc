@@ -38,7 +38,7 @@ for (ButtonElement button : buttons)
 [[testbench.elementquery.create]]
 == Querying Elements by Component Type (`$`)
 
-The `$` method creates an `ElementQuery` that looks for the given element class. The method is available both for `TestBenchTestCase` (searches the whole current page) and in `TestBenchEleemnt` (searches inside the given element).
+The `$` method creates an `ElementQuery` that looks for the given element class. The method is available both for `TestBenchTestCase` (searches the whole current page) and in `TestBenchElement` (searches inside the given element).
 
 ```java
 // Find the button with id="ok"
