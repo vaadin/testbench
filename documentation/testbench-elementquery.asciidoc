@@ -11,7 +11,7 @@ The high-level `ElementQuery` API allows querying Vaadin components in the brows
 according to their component class type, hierarchy, caption, and other
 properties. Once one or more components are found, they can be interacted upon.
 The query API forms an domain-specific language (DSL), embedded in the
-[classname]#TestBenchTestCase# class.
+`TestBenchTestCase` class.
 
 The basic idea of element queries match elements and return queries, which can
 again be queried upon, until terminated by a terminal query that returns one or
@@ -23,7 +23,7 @@ Consider the following query:
 List<ButtonElement> buttons = $(ButtonElement.class).all();
 ```
 
-The query returns a list of HTML elements of all the [classname]#Button#
+The query returns a list of HTML elements of all the `Button`
 components in the UI. Every Vaadin component has its corresponding element
 class, which has methods to interact with the particular component type. We
 could control the buttons found by the query, for example, by clicking them as
@@ -38,7 +38,7 @@ for (ButtonElement button : buttons)
 [[testbench.elementquery.create]]
 == Querying Elements by Component Type (`$`)
 
-The `$` method creates an [classname]#ElementQuery# that looks for the given element class. The method is available both for `TestBenchTestCase` (searches the whole current page) and in `TestBenchEleemnt` (searches inside the given element).
+The `$` method creates an `ElementQuery` that looks for the given element class. The method is available both for `TestBenchTestCase` (searches the whole current page) and in `TestBenchEleemnt` (searches inside the given element).
 
 ```java
 // Find the button with id="ok"
@@ -59,8 +59,8 @@ If there is no suitable element class available, you can also use the `$("tag-na
 
 Each Vaadin component has a corresponding element class in TestBench, which
 contains methods for interacting with the particular component. The element
-classes extend [classname]#TestBenchElement#, which in turn implements the
-[interfacename]#WebElement# interface, so Selenium element API can also be used directly.
+classes extend `TestBenchElement`, which in turn implements the
+`WebElement` interface, so Selenium element API can also be used directly.
 
 Add-ons may also define their custom element classes, and you can create custom element classes for any element. An element class is in practice the same as a __page object__, see <<dummy/../testbench-maintainable-tests-using-page-objects#testbench.maintainable.pageobject.defining,Creating a Page Object>> for more details.
 

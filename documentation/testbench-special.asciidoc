@@ -20,8 +20,8 @@ TestBench knows when something is still being rendered on the page and automatic
 waits for that rendering to finish before moving on with the test.
 
 
-In most cases, this is not something you need to take into account as waiting is automatically enabled. It might be necessary to disable it in some cases though and tou can do that by calling [methodname]#disableWaitForVaadin()# in the
-[interfacename]#TestBenchCommands# interface. You can call it in a test case as
+In most cases, this is not something you need to take into account as waiting is automatically enabled. It might be necessary to disable it in some cases though and tou can do that by calling `disableWaitForVaadin()` in the
+`TestBenchCommands` interface. You can call it in a test case as
 follows:
 
 ```java
@@ -29,7 +29,7 @@ testBench(driver).disableWaitForVaadin();
 ```
 
 When disabled, you can wait for the rendering to finish by calling
-[methodname]#waitForVaadin()# explicitly.
+`waitForVaadin()` explicitly.
 
 
 ```java
@@ -37,7 +37,7 @@ testBench(driver).waitForVaadin();
 ```
 
 
-You can re-enable the waiting with [methodname]#enableWaitForVaadin()# in the
+You can re-enable the waiting with `enableWaitForVaadin()` in the
 same interface.
 
 
@@ -83,10 +83,10 @@ client-side, where it is rendered in the browser. Vaadin TestBench includes
 methods for measuring execution time both on the server-side and the
 client-side.
 
-The [interfacename]#TestBenchCommands# interface offers the following methods
+The `TestBenchCommands` interface offers the following methods
 for profiling test execution time:
 
-[methodname]#totalTimeSpentServicingRequests()#:: Returns the total time (in milliseconds) spent servicing requests in the
+`totalTimeSpentServicingRequests()`:: Returns the total time (in milliseconds) spent servicing requests in the
 application on the server-side. The timer starts when you first navigate to the
 application and hence start a new session. The time passes only when servicing
 requests for the particular session. The timer is shared in the servlet session,
@@ -97,38 +97,38 @@ roots
 
 +
 Notice that if you are also interested in the client-side performance for the
-last request, you must call the [methodname]#timeSpentRenderingLastRequest()#
+last request, you must call the `timeSpentRenderingLastRequest()`
 before calling this method. This is due to the fact that this method makes an
 extra server request, which will cause an empty response to be rendered.
 
-[methodname]#timeSpentServicingLastRequest()#:: Returns the time (in milliseconds) spent servicing the last request in the
+`timeSpentServicingLastRequest()`:: Returns the time (in milliseconds) spent servicing the last request in the
 application on the server-side. Notice that not all user interaction through the
 WebDriver cause server requests.
 
 +
 As with the total above, if you are also interested in the client-side
 performance for the last request, you must call the
-[methodname]#timeSpentRenderingLastRequest()# before calling this method.
+`timeSpentRenderingLastRequest()` before calling this method.
 
-[methodname]#totalTimeSpentRendering()#:: Returns the total time (in milliseconds) spent rendering the user interface of
+`totalTimeSpentRendering()`:: Returns the total time (in milliseconds) spent rendering the user interface of
 the application on the client-side, that is, in the browser. This time only
 passes when the browser is rendering after interacting with it through the
 WebDriver. The timer is shared in the servlet session, so if you have, for
 example, multiple portlets in the same application (session), their execution
 times will be included in the same total.
 
-[methodname]#timeSpentRenderingLastRequest()#:: Returns the time (in milliseconds) spent rendering user interface of the
+`timeSpentRenderingLastRequest()`:: Returns the time (in milliseconds) spent rendering user interface of the
 application after the last server request. Notice that not all user interaction
 through the WebDriver cause server requests.
 
 +
-If you also call the [methodname]#timeSpentServicingLastRequest()# or
-[methodname]#totalTimeSpentServicingRequests()#, you should do so before calling
+If you also call the `timeSpentServicingLastRequest()` or
+`totalTimeSpentServicingRequests()`, you should do so before calling
 this method. The methods cause a server request, which will zero the rendering
 time measured by this method.
 
 The following example is given in the
-[filename]#link:https://github.com/vaadin/testbench-demo/blob/master/src/test/java/com/vaadin/testbenchexample/VerifyExecutionTimeITCase.java[VerifyExecutionTimeITCase.java]#
+`link:https://github.com/vaadin/testbench-demo/blob/master/src/test/java/com/vaadin/testbenchexample/VerifyExecutionTimeITCase.java[VerifyExecutionTimeITCase.java]`
 file in the TestBench demo.
 
 

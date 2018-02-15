@@ -73,7 +73,7 @@ The demo employs the page object defined for the application UI, as described in
 <<dummy/../testbench-maintainable-tests-using-page-objects#,Creating Maintainble Tests using Page Objects>>.
 
 Such scenarios are included in one or more stories, which need to be configured
-in a class extending [classname]#JUnitStory# or [classname]#JUnitStories#. In
+in a class extending `JUnitStory` or `JUnitStories`. In
 the example, this is done in the
 https://github.com/vaadin/testbench-demo/blob/master/src/test/java/com/vaadin/testbenchexample/bdd/SimpleCalculation.java
 class. It defines how story classes can be found dynamically by the class loader

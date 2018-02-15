@@ -80,11 +80,11 @@ test on mobile devices. The tests can be run either in a device or in an
 emulator/simulator.
 
 The actual testing is just like with any WebDriver, using either the
-[classname]#IPhoneDriver# or the [classname]#AndroidDriver#. The Android driver
-assumes that the hub ( [filename]#android-server#) is installed in the emulator
+`IPhoneDriver` or the `AndroidDriver`. The Android driver
+assumes that the hub (`android-server`) is installed in the emulator
 and forwarded to port 8080 in localhost, while the iPhone driver assumes port
-3001. You can also use the [classname]#RemoteWebDriver# with either the
-[methodname]#iphone()# or the [methodname]#android()# capability, and specify
+3001. You can also use the `RemoteWebDriver` with either the
+`iphone()` or the `android()` capability, and specify
 the hub URI explicitly.
 
 The mobile testing setup is covered in detail in the Selenium documentation for
