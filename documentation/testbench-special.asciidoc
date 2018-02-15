@@ -24,17 +24,18 @@ In most cases, this is not something you need to take into account as waiting is
 [interfacename]#TestBenchCommands# interface. You can call it in a test case as
 follows:
 
-----
+```java
 testBench(driver).disableWaitForVaadin();
-----
+```
 
 When disabled, you can wait for the rendering to finish by calling
 [methodname]#waitForVaadin()# explicitly.
 
 
-----
+```java
 testBench(driver).waitForVaadin();
-----
+```
+
 
 You can re-enable the waiting with [methodname]#enableWaitForVaadin()# in the
 same interface.
@@ -48,9 +49,9 @@ is met. This could, for example, be used to wait until an element is visible on
 the web page.
 
 
-----
+```java
 waitUntil(ExpectedConditions.presenceOfElementLocated(By.xpath("//button[@title='Debug message log']"));
-----
+```
 
 The above waits until the specified element is present or times out after
 waiting for 10 seconds by default.
@@ -131,7 +132,7 @@ The following example is given in the
 file in the TestBench demo.
 
 
-----
+```java
 @Test
 public void verifyServerExecutionTime() throws Exception {
     // Get start time on the server-side
@@ -172,4 +173,4 @@ public void verifyServerExecutionTime() throws Exception {
         $(TextFieldElement.class).first()
         .getValue());
 }
-----
+```

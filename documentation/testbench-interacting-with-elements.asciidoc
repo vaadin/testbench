@@ -41,10 +41,10 @@ to execute a JavaScript snippet to accomplish your task. You can excute any Java
 method are available through the `arguments` array in JavaScript.
 
 For example to return the `offsetHeight` property of an element you could do
-----
+```java
 TestBenchElement element = ...; // find the element somehow
 Long offsetHeight = (Long)executeScript("return arguments[0].offsetHeight", element);
-----
+```
 
 [NOTE]
 The above `executeScript` call would be the same as using `element.getPropertyInteger("offsetHeight");`.
