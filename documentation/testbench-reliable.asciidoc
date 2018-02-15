@@ -34,14 +34,15 @@ You should avoid by all means necessary to depend on the HTML DOM structure. If 
 
 Similarly, you should avoid depending on strings targeted for humans in your application. While it is in many cases tempting to find the button with the text "Save", you will run into unnecessary problems when somebody decides to change the text to "Store", or decides to internationalize the application.
 
+[[testbench.reliable.application-changes.component-ids]]
 === Define Ids for the Components
-For most cases, it makes sense to define `id`s for all the elements you want to interact with inside your page/view object. The `id`s are only created to be able to identify a given element and there is typically no reason to change them when the application evolves. With Shadow DOM, you also do not need to worry about global `id`s and `id`s colliding with each other, as the id of a given element only needs to be unique inside a shadow root (in practice a template).
+For most cases, it makes sense to define `ids` for all the elements you want to interact with inside your page/view object. The `ids` are only created to be able to identify a given element and there is typically no reason to change them when the application evolves. With Shadow DOM, you also do not need to worry about global `ids` and `ids` colliding with each other, as the id of a given element only needs to be unique inside a shadow root (in practice a template).
 
 [TIP]
-Use `id`s which describe the action which will occur when pressing the button, not `ids` describing e.g. where in the hierarchy the button is. If your `id` is tied to the hierarchy, you will indirectly depend on the hierarchy and lose many benefits of using `id`s.
+Use `ids` which describe the action which will occur when pressing the button, not `ids` describing e.g. where in the hierarchy the button is. If your `id` is tied to the hierarchy, you will indirectly depend on the hierarchy and lose many benefits of using `ids`.
 
 
-[[testbench.reliable.application-changes]]
+[[testbench.reliable.test-environment-problems]]
 == Dealing with Test Environment Problems
 When dealing with browser based tests, and especially older browser such as IE11, you need to take into account that the environment is not always as stable as you would want it to be. Ideally the test would fire up the browser, execute the actions and terminate the browser nicely. Always. In practice, there is potential to have network problems (especially when using a cloud based browser provider), there can be browser problems causing randomness or even browser crashes (yes, this is about you IE11). 
 

@@ -21,7 +21,7 @@ Regardless of the name, a __page object__ in reality encapsulates a DOM element 
 An element class must:
 
 1. Extend `TestBenchElement`
-1. Define an `@Element("tag-name")` annotation
+2. Define an `@Element("tag-name")` annotation
 
 The `@Element` annotation defines the tag name of the element which can be located by the element class. The tag name does not have to be unique as the element query user always defines what type of element she is looking for. 
 
