@@ -1,0 +1,89 @@
+---
+title: Running Tests with Maven
+order: 9
+layout: page
+---
+
+[[testbench.maven]]
+= Running Tests with Maven
+
+A Maven build is divided into different lifecycle phases where the relevants are: 
+
+* `compile` Compiles the code
+* `test` Runs unit tests which do not require a packaged project
+* `pre-integration-test` Makes preparations for integration tests
+* `integration-test` Executes integration tests
+* `post-integration-test` Cleans up after integration tests
+
+TestBench tests naturally fit into the `integration-test` phase. The `pre-integration-test` phase is the place to start a server and deploy the package and the `post-integration-test` phase is where you would stop the server.
+
+[TIP]
+If you name your tests `\*Test`, they will automatically be run in the `test` phase. Name your TestBench tests `\*IT` instead, and they will automatically be run in the `integration-test` phase.
+
+[NOTE]
+Never execute TestBench in the `test` phase because they cannot be run without a packaged or deployed project.
+
+[[†estbench.maven.start-server]]
+== Starting the Server Automatically
+
+For applications without external dependencies, it is often handy to start a test as part of the build. As an example, if you are using Jetty for running the project you can use the `jetty-maven-plugin` to start the serve in the `pre-integration-test` and stop it in the `post-integration-test` phase as follows:
+```xml
+<plugin>
+    <groupId>org.eclipse.jetty</groupId>
+    <artifactId>jetty-maven-plugin</artifactId>
+    <version>9.2.3.v20140905</version>
+    <configuration>
+        <stopPort>9966</stopPort>
+        <stopKey>something-goes-here</stopKey>
+    </configuration>
+    <executions>
+        <execution>
+            <id>start-jetty</id>
+            <phase>pre-integration-test</phase>
+            <goals>
+                <goal>start</goal>
+            </goals>
+        </execution>
+        <execution>
+            <id>stop-jetty</id>
+            <phase>post-integration-test</phase>
+            <goals>
+                <goal>stop</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin>
+```
+
+The `stopPort` and `stopKey` are Jetty specific parameters which must be given so that Jetty is able to stop the correct server instance. A fully working example of running Jetty as part of the build can be found in https://github.com/vaadin/testbench-demo/blob/master/pom.xml.
+
+If you are using Spring Boot, you can use the `spring-boot-maven-plugin` to achieve the same thing. See the Bakery starter for Spring for an example.
+
+If you are using JavaEE, you can start TomEE, WildFly or a Liberty server in a similar way. See the Bakery starter for JavaEE (at the time of writing only available for Vaadin Framework 8) for an example.
+
+
+[[†estbench.maven.executing-tests]]
+== Executing Tests in the Integration Test Phase
+
+In Maven, unit tests are executed by the `maven-surefire-plugin`, automatically included in all projects. Integration tests on the other hand are executed by the `maven-failsafe-plugin`, which needs to be included manually in the project as
+```xml
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-failsafe-plugin</artifactId>
+    <version>2.19.1</version>
+    <executions>
+        <execution>
+            <goals>
+                <goal>integration-test</goal>
+                <goal>verify</goal>
+            </goals>
+        </execution>
+    </executions>
+    <configuration>
+        <trimStackTrace>false</trimStackTrace>
+    </configuration>
+</plugin>
+```
+
+The `<executions>` part is needed to actually execute the plugin during the `integration-test` phase. The `<configuration>` part is optional but by including it you get the full stack trace when an error occurs, which typically makes it easier to figure out what went wrong in a test.
+
