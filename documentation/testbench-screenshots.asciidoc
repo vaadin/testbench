@@ -27,7 +27,7 @@ The screenshot configuration parameters are defined with static methods in the
 For example:
 
 
-----
+```java
 @Before
 public void setUp() throws Exception {
     Parameters.setScreenshotErrorDirectory(
@@ -40,8 +40,8 @@ public void setUp() throws Exception {
     Parameters.setScreenshotComparisonCursorDetection(true);
     Parameters.setCaptureScreenshotOnFailure(true);
 }
+```
 
-----
 
 
 [[testbench.screenshots.failure]]
@@ -53,11 +53,11 @@ rule with a member variable annotated with [classname]#@Rule# in the test case
 as follows:
 
 
-----
+```java
 @Rule
 public ScreenshotOnFailureRule screenshotOnFailureRule =
     new ScreenshotOnFailureRule(this, true);
-----
+```
 
 Notice that you must not call [methodname]#quit()# for the driver in the
 [literal]#++@After++# method, as that would close the driver before the rule
@@ -68,13 +68,13 @@ The screenshots are written to the error directory defined with the
 test case setup as follows:
 
 
-----
+```java
 @Before
 public void setUp() throws Exception {
     Parameters.setScreenshotErrorDirectory("screenshots/errors");
     ...
 }
-----
+```
 
 
 [[testbench.screenshot.comparison]]
@@ -91,20 +91,20 @@ object to a reference image with the static
 [methodname]#ImageFileUtil.getReferenceScreenshotFile()# helper method.
 
 
-----
+```java
 assertTrue("Screenshots differ",
            testBench(driver).compareScreen(
                ImageFileUtil.getReferenceScreenshotFile(
                    "myshot.png")));
-----
+```
 
 The [methodname]#compareScreen([classname]#String#)# takes a base name of the
 screenshot. It is appended with browser identifier and the file extension.
 
 
-----
+```java
 assertTrue(testBench(driver).compareScreen("tooltip"));
-----
+```
 
 The [methodname]#compareScreen([classname]#BufferedImage#,[classname]#String#)#
 allows keeping the reference image in memory. An error image is written to a
@@ -153,20 +153,20 @@ a screenshot from the [filename]#errors/# directory to the
 For example:
 
 [subs="normal"]
-----
+```java
 [prompt]#$# [command]#cp# [parameter]#screenshot/errors/tooltip_firefox_12.0.png# [parameter]#screenshot/reference/#
-----
+```
 Now, when the proper reference image exists, rerunning the test outputs success:
 
 [subs="normal"]
-----
+```java
 [prompt]#$# [command]#java# ...
 JUnit version 4.5
 .
 Time: 18.222
 
 OK (1 test)
-----
+```
 
 [[testbench.screenshots.comparison.masked]]
 === Masking Screenshots
