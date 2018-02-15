@@ -1,6 +1,6 @@
 ---
 title: Setting up your Own Test Grid
-order: 2
+order: 120
 layout: page
 ---
 
