@@ -1,6 +1,6 @@
 ---
 title: Migrating to Vaadin 10
-order: 10
+order: 140
 layout: page
 ---
 
