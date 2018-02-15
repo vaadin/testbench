@@ -23,7 +23,7 @@ If you name your tests `*Test`, they will automatically be run in the `test` pha
 [NOTE]
 Never execute TestBench in the `test` phase because they cannot be run without a packaged or deployed project.
 
-[[†estbench.maven.start-server]]
+[[testbench.maven.start-server]]
 == Starting the Server Automatically
 
 For applications without external dependencies, it is often handy to start a test as part of the build. As an example, if you are using Jetty for running the project you can use the `jetty-maven-plugin` to start the serve in the `pre-integration-test` and stop it in the `post-integration-test` phase as follows:
@@ -62,7 +62,7 @@ If you are using Spring Boot, you can use the `spring-boot-maven-plugin` to achi
 If you are using JavaEE, you can start TomEE, WildFly or a Liberty server in a similar way. See the Bakery starter for JavaEE (at the time of writing only available for Vaadin Framework 8) for an example.
 
 
-[[†estbench.maven.executing-tests]]
+[[testbench.maven.executing-tests]]
 == Executing Tests in the Integration Test Phase
 
 In Maven, unit tests are executed by the `maven-surefire-plugin`, automatically included in all projects. Integration tests on the other hand are executed by the `maven-failsafe-plugin`, which needs to be included manually in the project as
