@@ -7,7 +7,7 @@ layout: page
 [[testbench.elementquery]]
 = Finding Elements to Interact With
 
-The high-level ElementQuery API allows querying Vaadin components in the browser
+The high-level `ElementQuery` API allows querying Vaadin components in the browser
 according to their component class type, hierarchy, caption, and other
 properties. Once one or more components are found, they can be interacted upon.
 The query API forms an domain-specific language (DSL), embedded in the
@@ -19,10 +19,9 @@ more elements.
 
 Consider the following query:
 
-
-----
+```java
 List<ButtonElement> buttons = $(ButtonElement.class).all();
-----
+```
 
 The query returns a list of HTML elements of all the [classname]#Button#
 components in the UI. Every Vaadin component has its corresponding element
@@ -31,103 +30,53 @@ could control the buttons found by the query, for example, by clicking them as
 follows:
 
 
-----
-for (ButtonElement b: buttons)
-    b.click();
-----
+```java
+for (ButtonElement button : buttons)
+    button.click();
+```
 
 [[testbench.elementquery.create]]
-== Querying Elements by Component Type ([methodname]#$#)
+== Querying Elements by Component Type (`$`)
 
-The [methodname]#$# method creates an [classname]#ElementQuery# that looks for
-the given element class. The method is available both in
-[classname]#TestBenchTestcase# and [classname]#ElementQuery#, which defines the
-context. The search is done recursively in the context.
+The `$` method creates an [classname]#ElementQuery# that looks for the given element class. The method is available both for `TestBenchTestCase` (searches the whole current page) and in `TestBenchEleemnt` (searches inside the given element).
 
-----
+```java
 // Find the button with id="ok"
-ButtonElement button = $(ButtonElement.class).id("OK");
-----
+ButtonElement button = $(ButtonElement.class).id("ok");
+```
+
+```java
+// Find the first label inside the layout with id="content"
+VerticalLayoutElement layout = $(VerticalLayoutElement.class).id("content");
+LabelElement label = layout.$(LabelElement.class).first();
+```
+
+[NOTE]
+If there is no suitable element class available, you can also use the `$("tag-name")` method to find an element of a given type.
 
 [[testbench.elementquery.testbenchelement]]
 == Element Classes
 
-((("[classname]#TestBenchElement#")))
 Each Vaadin component has a corresponding element class in TestBench, which
 contains methods for interacting with the particular component. The element
-classes extend [classname]#TestBenchElement#. It implements Selenium
-[interfacename]#WebElement#, so the Selenium element API can be used directly.
+classes extend [classname]#TestBenchElement#, which in turn implements the
+[interfacename]#WebElement# interface, so Selenium element API can also be used directly.
 
-In addition to components, other Vaadin UI elements such as notifications (see
-<<dummy/../../creatingtests/testbench-special#testbench.special.notifications,"Testing
-Notifications">>) can have their corresponding element class. Add-on libraries
-may also define their custom element classes.
-
-[classname]#TestBenchElement# is a TestBench command executor, so you can always
-use an element to create query in the sub-tree of the element. For example, in
-the following we first find a layout element by its ID and then do a sub-query
-to find the first label in it:
-
-
-----
-VerticalLayoutElement layout =
-    $(VerticalLayoutElement.class).id("content");
-LabelElement label = layout.$(LabelElement.class).first();
-----
+Add-ons may also define their custom element classes, and you can create custom element classes for any element. An element class is in practice the same as a __page object__, see <<dummy/../testbench-maintainable-tests-using-page-objects#testbench.maintainable.pageobject.defining,Creating a Page Object>> for more details.
 
 [[testbench.elementquery.elementquery]]
-== [classname]#ElementQuery# Objects
+== `ElementQuery` filtering methods
 
-You can use an [classname]#ElementQuery# object to either make sub-queries to
-refine the query, or use a query terminator to finalize the query and get one or
-more matching elements.
+You can use the `ElementQuery` instance returned by `$()` to refine the search query using on of the available methods:
 
+* `id("some-id")` Returns the element with the given id
+* `attribute("attributeName", "attributeValue")` Adds a filter to only include elements with the given attribute set to the given value
+* `onPage()` Redefines the search context to cover the whole page
+* `first()` Returns the first matching element
+* `waitForFirst()` Returns the first maching element. If no matches are found, keeps waiting until there is a matching element.
+* `last()` Returns the last matching element
+* `get(N)` Returns the Nth matching element
+* `exists()` Returns `true` if the query matches at least one element   
+* `all()` Returns a list of all matching elements
 
-[[testbench.elementquery.terminators]]
-== Query Terminators
-
-A query is finalized by a sub-query that returns an element or a collection of
-elements.
-
-[methodname]#first()#:: Returns the first found element.
-
-[methodname]#get()#:: Returns the element by index in the collection of matching elements.
-
-[methodname]#all()#:: Returns a [interfacename]#List# of elements of the query type.
-
-[methodname]#id()#:: Returns the unique element having the given ID. Element IDs must always be
-unique in the web page. It is therefore meaningless to make a complex query to
-match the ID, just matching the element class is enough.
-
-
-[[testbench.elementquery.own-element-class]]
-=== Creating an Element Class
-
-An element class is in practice the same as a __page object__. See <<dummy/../testbench-maintainable-tests-using-page-objects#,Creating Maintainble Tests using Page Objects>> for information on how to create one.
-
-
-[[testbench.elementquery.extend-element-class]]
-=== Extending an Element Class
-
-If you want to add functionality to an existing element, you can extend the original element class and add more helper methods, e.g.
-```java
-public class MyButtonElement extends ButtonElement {
-   
-   public void pressUsingSpace() {
-     ....
-   }
-}
-```
-
-You can then use your new element by replacing
-```java
-ButtonElement button = $(ButtonElement.class).id("ok");
-...
-```
-
-by
-```java
-MyButtonElement button = $(MyButtonElement.class).id("ok");
-button.pressUsingSpace();
-```
 
