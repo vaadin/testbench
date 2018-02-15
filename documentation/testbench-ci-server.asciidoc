@@ -19,10 +19,7 @@ Your tests can be run on a CI server as part of the build in the same way as you
 == Deploying the Application
 Deployment of the application can be done in several different ways depending on the setup and your preferences. The important thing is that the applicatiton is deployed and ready to accept requests before the tests are started.
 
-For applications without external dependencies, it is often handy to start a test as part of the build. If you are building with Maven, you can use the `pre-integration-test` phase to deploy your application and start the server. Similarly the `post-integration-test` phase is suitable for shutting down the test server. An example of this can be found in https://github.com/vaadin/testbench-demo/blob/master/pom.xml. While that particular project uses Jetty, you can use the Spring Boot Maven plugin to start a Spring Boot app in a similar way. For JavaEE projects, you can similarly start TomEE, WildFly or a Liberty server the same way.
-
-[TIP]
-For an example on how to start Spring boot or JavaEE servers, see the Bakery app starter for Spring (available for Vaadin 10 and Vaadin Framework 8) or JavaEE (currently only available for Vaadin Framework 8).
+For applications without external dependencies, it is often handy to start a test as part of the build. If you are building with Maven, see <<dummy/../testbench-running-with-maven#,Running Tests with Maven>> for information on how you can start and stop the server as part of the build.
 
 If you have an external server that you deploy the application to, you will typically copy the result of the build to that server in one build step, then wait for the deployment to finish by querying the server or polling the URL where the application should be.  The following build step will then execute the TestBench tests using the predefined URL.
 
@@ -41,7 +38,7 @@ If you are deploying on another host name, you need to pass that information to 
 If you are not using site local addresses (10.x.y.z, 172.16.x.y or 192.168.x.y) then you can use `IPAddress.findIPAddress(..)` instead.
 
 
-[[testbench.ci-server.deploying]]
+[[testbench.ci-server.browsers]]
 == Making Sure the Browsers are Available
 When running the tests on your local machine you need to have a suitable browser installed. If the test creates a `ChromeDriver` instance, you need to have Chrome installed and so on. The same goes for the CI server (the build agent) if you are running tests directly on a local browser (as opposed to a test cluster described in <<dummy/../testbench-grid#,Running Tests in a Distributed Environment>).
 
