@@ -12,7 +12,10 @@ Vaadin TestBench is a tool for controlling the browser from Java and automatical
 == A Typical Test
 
 A typical test can look like:
-1. Start a browser instances (Chrome/Firefox/Safari/IE11/Edge are supported desktop browsers, iPhone/iPad/Android simulators are also supported).
+
+1. Start a browser instances.
+  *  Chrome/Firefox/Safari/IE11/Edge are supported desktop browsers
+  *  iPhone/iPad/Android simulators are supported for mobile testing
 2. Fill in the login form and log in to the application
 3. Navigate to the order view
 4. Fill in form fields to place an order
@@ -35,7 +38,7 @@ public void fillForm() {
 }
 ```
 
-The code above uses the [Page Object](https://martinfowler.com/bliki/PageObject.html) pattern (or View Object in this case) to hide the implementation details of the view from the main test logic. For a more in-depth example, see https://github.com/vaadin/testbench-demo.
+The code above uses the page object pattern to hide the implementation details of the view from the main test logic. For more information, see <<dummy/../testbench-maintainable-tests-using-page-objects#, Creating Maintanable Test using Page Objects>>.
 
 TestBench also supports much more complex test cases such as running on multiple browser instances in parallel, testing that an application works when multiple users interact simultaneously with the same view/data and comparing that the main view of the application still looks like the pregenerated reference screenshot.
 
@@ -54,9 +57,9 @@ The main features of Vaadin TestBench are:
 * Support for JUnit and other testing frameworks
 * Based on Selenium for low level support
 
-== Licensing and Trial Period
+== Commercial License
 
-Vaadin TestBench is a commercial product and part of the [Pro Subscription](https://vaadin.com/pricing). You will be asked to validate your license or start a trial period when you start using the tool.
+Vaadin TestBench is a commercial product and part of the https://vaadin.com/pricing[Pro Subscription]. You will be asked to validate your license or start a trial period when you start using the tool.
 
 
 

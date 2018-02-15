@@ -1,0 +1,110 @@
+---
+title: Creating Maintainble Tests using Page Objects
+order: 4
+layout: page
+---
+
+
+[[testbench.maintainable.pageobject]]
+= Creating Maintainble Tests using Page Objects
+
+The https://martinfowler.com/bliki/PageObject.html[Page Object Pattern] is an abstraction commonly used when performing actions on a web page. The abstraction hides the implementation details (which elements/components are used, how can they be found on the page etc) from the test methods and allows the test methods to focus on the logic to test. The page object depends on how the page/view is implemented and offer high level methods representing actions that a real user could perform on the page. The separation enables the test method to be independent of the implementation details, so refactoring a view and moving components around only require updates to the page object (if any change is required at all) and not the individual tests.
+
+[NOTE]
+The objects are tradititonally called __Page__ objects even though they should not represent the whole page but rather a smaller part of it. 
+
+[[testbench.maintainable.pageobject.defining]]
+== Creating a Page Object
+
+Regardless of the name, a __page object__ in reality encapsulates a DOM element and is also sometimes called a __TestBench Element class__. 
+
+An element class must:
+
+1. Extend `TestBenchElement`
+1. Define an `@Element("tag-name")` annotation
+
+The `@Element` annotation defines the tag name of the element which can be located by the element class. The tag name does not have to be unique as the element query user always defines what type of element she is looking for. 
+
+When creating a page object for your view, you should use the root tag of the view in the `@Element` annotation. For views created using Java, this might be e.g. `div` while for templates it is a custom element, e.g. `main-view`.
+
+A page object for a template based login view might thus look like:
+```java
+@Element("login-view") // map to <login-view>
+public void LoginViewElement extends TestBenchElement {
+
+    protected TextFieldElement getUsernameField() {
+        return $(TextFieldElement.class).id("username");
+    }
+
+    protected PasswordFieldElement getPasswordField() {
+        return $(PasswordFieldElement.class).id("password");
+    }
+
+    protected ButtonElement getLoginButton() {
+        return $(ButtonElement.class).id("login");
+    }
+
+    public void login(String username, String password) {
+        getUsernameField().setValue(username);
+        getPasswordField().setValue(password);
+        getLoginButton().click();
+    }
+}
+```
+
+
+[NOTE]
+All Vaadin component integrations for TestBench can also be considered __page objects__ even though they only provide a high level API for a single component. There is no conceptual difference between creating elements for web components and elements for templates representing a whole view.
+
+[[testbench.maintainable.pageobject.using]]
+== Using a Page Object
+To be able to use the helper methods from a page object, you need to get an instance of the page object. You use the standard `ElementQuery` methods to retrieve an instance of your page object, e.g. to handle login in a test you can do:
+
+```java
+public void LoginIT extends TestBenchTestCase {
+
+   // Driver setup and teardown omitted
+
+    @Test
+    public void loginAsAdmin() {
+        getDriver().open("http://localhost:8080");
+        LoginViewElement loginView = $(LoginViewElement.class).first();
+        loginView.login("admin@vaadin.com", "admin");
+        // TODO Assert that login actually happened
+    }
+}
+```
+
+[[testbench.maintainable.pageobject.chaining]]
+== Chaining Page Objects
+Whenever an action on a page object results in the user being directed to another view, it is good practice to find an instance of the page object for the new view and return that. This allows test methods to chain page object calls and continue to perform actions on the new view.
+
+For the `LoginViewElement` we could accomplish this by updating the `login` method:
+
+```java
+public MainViewElement login(String username, String password) {
+    getUsernameField().setValue(username);
+    getPasswordField().setValue(password);
+    getLoginButton().click();
+    // Find the page object for the main view the user ends up on
+    // onPage() is needed as MainViewElement is not a child of LoginViewElement.
+    return $(MainViewElement.class).onPage().first(); 
+}
+```
+
+[TIP]
+When the login view finds the main view element, it automatically validates that the login succeeded or the main view will not be found.
+
+A test method can now do:
+```java
+@Test
+public void mainViewSaysHello() {
+    getDriver().open("http://localhost:8080");
+    LoginViewElement loginView = $(LoginViewElement.class).first();
+    MainViewElement mainView = loginView.login("admin@vaadin.com", "admin");
+    Assert.assertEquals("Hello", mainView.getBanner());
+}
+```
+
+You can find a fully functional page object based test example in the demo project at https://github.com/vaadin/testbench-demo/tree/master/src/test/java/com/vaadin/testbenchexample/pageobjectexample.
+
