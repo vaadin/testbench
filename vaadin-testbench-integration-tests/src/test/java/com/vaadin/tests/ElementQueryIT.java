@@ -109,4 +109,12 @@ public class ElementQueryIT extends AbstractTB6Test {
                 .$(TestBenchElement.class).first();
         Assert.assertEquals("Shadow Button 1", button.getText());
     }
+
+    @Test
+    public void specialCharactersInId() {
+        openTestURL();
+        NativeButtonElement button = $(PolymerTemplateViewElement.class)
+                .waitForFirst().$(NativeButtonElement.class).id("foo'*+bar'");
+        Assert.assertEquals("Button with special id", button.getText());
+    }
 }
