@@ -78,7 +78,7 @@ public class ElementQueryIT extends AbstractTB6Test {
                 .waitForFirst();
         List<NativeButtonElement> buttons = view.$(NativeButtonElement.class)
                 .all();
-        Assert.assertEquals(9, buttons.size());
+        Assert.assertEquals(10, buttons.size());
     }
 
     @Test
@@ -108,5 +108,13 @@ public class ElementQueryIT extends AbstractTB6Test {
                 .waitForFirst().$(TestBenchElement.class).first()
                 .$(TestBenchElement.class).first();
         Assert.assertEquals("Shadow Button 1", button.getText());
+    }
+
+    @Test
+    public void specialCharactersInId() {
+        openTestURL();
+        NativeButtonElement button = $(PolymerTemplateViewElement.class)
+                .waitForFirst().$(NativeButtonElement.class).id("foo'*+bar'");
+        Assert.assertEquals("Button with special id", button.getText());
     }
 }

@@ -142,7 +142,7 @@ public class ElementQueryTest {
         Assert.assertTrue(
                 "last query script end with SINGLE_RESULT_QUERY_SUFFIX",
                 query.lastScript.endsWith(SINGLE_RESULT_QUERY_SUFFIX));
-        Assert.assertEquals("[id=the_id]", query.lastAttributePairs);
+        Assert.assertEquals("[id='the_id']", query.lastAttributePairs);
         Assert.assertEquals(ExampleElement.TAG, query.lastTagName);
         Assert.assertSame(exampleElement, query.lastContext);
     }
@@ -160,7 +160,7 @@ public class ElementQueryTest {
         Assert.assertTrue(
                 "last query script end with SINGLE_RESULT_QUERY_SUFFIX",
                 query.lastScript.endsWith(SINGLE_RESULT_QUERY_SUFFIX));
-        Assert.assertEquals("[id=the_id]", query.lastAttributePairs);
+        Assert.assertEquals("[id='the_id']", query.lastAttributePairs);
         Assert.assertEquals(ExampleElement.TAG, query.lastTagName);
         Assert.assertSame(null, query.lastContext);
     }
@@ -178,7 +178,7 @@ public class ElementQueryTest {
         Assert.assertTrue(
                 "last query script end with SINGLE_RESULT_QUERY_SUFFIX",
                 query.lastScript.endsWith(SINGLE_RESULT_QUERY_SUFFIX));
-        Assert.assertEquals("[foo=bar]", query.lastAttributePairs);
+        Assert.assertEquals("[foo='bar']", query.lastAttributePairs);
         Assert.assertEquals(ExampleElement.TAG, query.lastTagName);
         Assert.assertSame(exampleElement, query.lastContext);
     }
@@ -196,7 +196,7 @@ public class ElementQueryTest {
         Assert.assertTrue(
                 "last query script end with SINGLE_RESULT_QUERY_SUFFIX",
                 query.lastScript.endsWith(SINGLE_RESULT_QUERY_SUFFIX));
-        Assert.assertEquals("[foo=bar]", query.lastAttributePairs);
+        Assert.assertEquals("[foo='bar']", query.lastAttributePairs);
         Assert.assertEquals(ExampleElement.TAG, query.lastTagName);
         Assert.assertSame(null, query.lastContext);
     }
@@ -214,7 +214,8 @@ public class ElementQueryTest {
         Assert.assertTrue(
                 "last query script end with SINGLE_RESULT_QUERY_SUFFIX",
                 query.lastScript.endsWith(SINGLE_RESULT_QUERY_SUFFIX));
-        Assert.assertEquals("[foo=bar][das=boot]", query.lastAttributePairs);
+        Assert.assertEquals("[foo='bar'][das='boot']",
+                query.lastAttributePairs);
         Assert.assertEquals(ExampleElement.TAG, query.lastTagName);
         Assert.assertSame(exampleElement, query.lastContext);
     }
@@ -232,7 +233,8 @@ public class ElementQueryTest {
         Assert.assertTrue(
                 "last query script end with SINGLE_RESULT_QUERY_SUFFIX",
                 query.lastScript.endsWith(SINGLE_RESULT_QUERY_SUFFIX));
-        Assert.assertEquals("[foo=bar][das=boot]", query.lastAttributePairs);
+        Assert.assertEquals("[foo='bar'][das='boot']",
+                query.lastAttributePairs);
         Assert.assertEquals(ExampleElement.TAG, query.lastTagName);
         Assert.assertSame(null, query.lastContext);
     }
@@ -250,7 +252,7 @@ public class ElementQueryTest {
         Assert.assertTrue(
                 "last query script end with SINGLE_RESULT_QUERY_SUFFIX",
                 query.lastScript.endsWith(SINGLE_RESULT_QUERY_SUFFIX));
-        Assert.assertEquals("[foo=bar][das=boot][id=theid]",
+        Assert.assertEquals("[foo='bar'][das='boot'][id='theid']",
                 query.lastAttributePairs);
         Assert.assertEquals(ExampleElement.TAG, query.lastTagName);
         Assert.assertSame(exampleElement, query.lastContext);
@@ -269,7 +271,7 @@ public class ElementQueryTest {
         Assert.assertTrue(
                 "last query script end with SINGLE_RESULT_QUERY_SUFFIX",
                 query.lastScript.endsWith(SINGLE_RESULT_QUERY_SUFFIX));
-        Assert.assertEquals("[foo=bar][das=boot][id=theid]",
+        Assert.assertEquals("[foo='bar'][das='boot'][id='theid']",
                 query.lastAttributePairs);
         Assert.assertEquals(ExampleElement.TAG, query.lastTagName);
         Assert.assertSame(null, query.lastContext);
@@ -288,7 +290,7 @@ public class ElementQueryTest {
         Assert.assertTrue(
                 "last query script end with SINGLE_RESULT_QUERY_SUFFIX",
                 query.lastScript.endsWith(SINGLE_RESULT_QUERY_SUFFIX));
-        Assert.assertEquals("[id=theid]", query.lastAttributePairs);
+        Assert.assertEquals("[id='theid']", query.lastAttributePairs);
         Assert.assertEquals(ExampleElement.TAG, query.lastTagName);
         Assert.assertSame(null, query.lastContext);
     }

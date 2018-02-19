@@ -300,10 +300,10 @@ public class ElementQuery<T extends TestBenchElement> {
     }
 
     private String getAttributePairs() {
-        // [id=username][label=Email]
+        // [id='username'][label='Email'][special='foo\\'bar']
         return attributes.entrySet().stream()
-                .map(entry -> "[" + entry.getKey() + "="
-                        + escapeAttributeValue(entry.getValue()) + "]")
+                .map(entry -> "[" + entry.getKey() + "='"
+                        + escapeAttributeValue(entry.getValue()) + "']")
                 .collect(Collectors.joining());
     }
 
@@ -345,9 +345,7 @@ public class ElementQuery<T extends TestBenchElement> {
     }
 
     private String escapeAttributeValue(String value) {
-        // This is needed once something else than id's are allowed, e.g.
-        // label='First name'
-        return value;
+        return value.replace("'", "\\'");
     }
 
 }
