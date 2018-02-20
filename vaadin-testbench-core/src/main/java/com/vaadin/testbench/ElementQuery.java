@@ -277,9 +277,12 @@ public class ElementQuery<T extends TestBenchElement> {
             elementContext = null;
             executor = (JavascriptExecutor) getContext();
         } else {
-            throw new IllegalStateException(
-                    "Unknown context type: " + getContext() == null ? "null"
-                            : getContext().getClass().getName());
+            if (getContext() == null) {
+                throw new IllegalStateException("Context cannot be null");
+            } else {
+                throw new IllegalStateException("Unknown context type: "
+                        + getContext().getClass().getName());
+            }
         }
         if (indexSuffix != null) {
             script.append(indexSuffix);
