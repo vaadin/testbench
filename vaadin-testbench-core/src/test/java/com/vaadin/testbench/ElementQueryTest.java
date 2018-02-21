@@ -13,7 +13,9 @@
 package com.vaadin.testbench;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.easymock.EasyMock;
 import org.junit.Assert;
@@ -25,6 +27,8 @@ import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import com.vaadin.testbench.ElementQuery.AttributeMatch;
+import com.vaadin.testbench.annotations.Attribute;
 import com.vaadin.testbench.elementsbase.Element;
 
 public class ElementQueryTest {
@@ -293,5 +297,77 @@ public class ElementQueryTest {
         Assert.assertEquals("[id='theid']", query.lastAttributePairs);
         Assert.assertEquals(ExampleElement.TAG, query.lastTagName);
         Assert.assertSame(null, query.lastContext);
+    }
+
+    @Attribute(name = "id", value = Attribute.SIMPLE_CLASS_NAME)
+    public static class MyFancyViewElement extends TestBenchElement {
+    }
+
+    @Attribute(name = "class", contains = Attribute.SIMPLE_CLASS_NAME)
+    public static class MyFancyViewContainsElement extends TestBenchElement {
+    }
+
+    public static class MyExtendedFancyViewElement extends MyFancyViewElement {
+    }
+
+    @Attribute(name = "class", contains = "foo")
+    @Attribute(name = "class", contains = "bar")
+    public static class MultipleAnnotationElement extends TestBenchElement {
+    }
+
+    @Attribute(name = "id", value = "overruled")
+    public static class MyExtendedAndOverriddenFancyViewElement
+            extends MyFancyViewElement {
+
+    }
+
+    @Test
+    public void attributesConventionValue() {
+        Set<AttributeMatch> attributes = ElementQuery
+                .getAttributes(MyFancyViewElement.class);
+        Assert.assertEquals(set(new AttributeMatch("id", "my-fancy-view")),
+                attributes);
+    }
+
+    @Test
+    public void attributesConventionContains() {
+        Set<AttributeMatch> attributes = ElementQuery
+                .getAttributes(MyFancyViewContainsElement.class);
+        Assert.assertEquals(set(
+                new AttributeMatch("class", "~=", "my-fancy-view-contains")),
+                attributes);
+    }
+
+    @Test
+    public void attributesInherited() {
+        Set<AttributeMatch> attributes = ElementQuery
+                .getAttributes(MyExtendedFancyViewElement.class);
+        Assert.assertEquals(
+                set(new AttributeMatch("id", "my-extended-fancy-view")),
+                attributes);
+    }
+
+    @Test
+    public void attributesCanBeOverridden() {
+        Set<AttributeMatch> attributes = ElementQuery
+                .getAttributes(MyExtendedAndOverriddenFancyViewElement.class);
+        Assert.assertEquals(set(new AttributeMatch("id", "overruled")),
+                attributes);
+    }
+
+    @Test
+    public void multipleAttributeAnnotations() {
+        Set<AttributeMatch> attributes = ElementQuery
+                .getAttributes(MultipleAnnotationElement.class);
+        Assert.assertEquals(set(new AttributeMatch("class", "~=", "foo"),
+                new AttributeMatch("class", "~=", "bar")), attributes);
+    }
+
+    private <T> Set<T> set(T... ts) {
+        HashSet<T> set = new HashSet<>();
+        for (T t : ts) {
+            set.add(t);
+        }
+        return set;
     }
 }
