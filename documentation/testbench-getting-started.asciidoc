@@ -1,6 +1,6 @@
 ---
 title: Getting Started
-order: 10
+order: 20
 layout: page
 ---
 
@@ -8,10 +8,10 @@ layout: page
 = Getting Started
 
 [TIP]
-If you just want to test out TestBench and see how tests are run, the easiest way is to clone the example project at https://github.com/vaadin/testbench-demo. The tests are automatically executed on your local Chrome when you run `mvn install`.
+If you just want to test out TestBench and see how tests are run, the easiest way is to clone the example project at https://github.com/vaadin/testbench-demo. The tests are automatically executed on your local Chrome when you run `mvn verify`.
 
 [[testbench.quickstart.dependency]]
-== Add the TestBench Dependency
+== Setting up your Project
 To start using TestBench in an existing project, you need to add the TestBench dependency (`com.vaadin`/`vaadin-testbench`) with a `test` scope. Assuming you have imported the Vaadin platform BOM and have a Maven project, all you need to do is add:
 ```xml
 <dependency>
@@ -24,7 +24,7 @@ The `test` scope and version number is predefined by the Vaadin BOM.
 To be able to run tests locally, you might need to install a webdriver for your browser, see  <<dummy/../testbench-installing-drivers#,Installing Web Drivers>> for more details.
 
 [[testbench.quickstart.create-a-test-class]]
-== Create a Simple Test
+== Creating a Simple Test
 
 The fundamental parts of any TestBench test are:
 
@@ -35,7 +35,7 @@ The fundamental parts of any TestBench test are:
 
 The following test example will perform all the above tasks with the test logic consisting of clicking the first available button and checking the the text of the button changes when clicked. If you are adding this test to your own custom application, it will obviously fail unless you modify it. 
 
-In the Maven world, all test classes live in the `src/test/java` directory. Create a new class called `SimpleIT` in that directory:
+In the Maven world, all test classes live in the `src/test/java` directory. Create a new class called `SimpleIT` in that directory (`IT` stands for *integration test* and Maven will automatically run all `*IT` classes):
 
 ```java
 import org.junit.After;
@@ -77,7 +77,7 @@ public class SimpleIT extends TestBenchTestCase {
 This is all you need to verify that the text of the button is "Clicked" after clicking on it.
 
 [TIP] 
-For real tests, you should use the page/view object pattern described in <<dummy/../testbench-maintainable#testbench.viewobjects,"Using View Objects">>.
+For real tests, you should use the page/view object pattern described in <<dummy/../testbench-maintainable#testbench.viewobjects,Using View Objects>>.
 
 [TIP]
 Don't place your tests in the root package as in this example. Structure them logically according to your application structure.
@@ -85,7 +85,7 @@ Don't place your tests in the root package as in this example. Structure them lo
 == Running Tests
 The server hosting your application needs to be running at the given URL before you launch your test. If the server is already running and the application is deployed, you only need to ensure that the URL in the test is correct.
 
-If you are using https://preview.vaadin.com/start/v10-project-base, you can launch Jetty using 
+If you are using https://vaadin.com/start/v10-project-base, you can launch Jetty using 
 ```
 mvn jetty:run
 ```

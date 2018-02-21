@@ -1,6 +1,6 @@
 ---
 title: Making Tests Reliable
-order: 50
+order: 90
 layout: page
 ---
 
@@ -22,11 +22,11 @@ You should make sure that your test suite is run on a regular basis. Having a ma
 == Creating Readable Tests
 Just as with code, it is important to write tests so that the reader understands the intent. When each test contains high level, meaningful calls, the reader will immediately grasp what is being tested. When/if she wants to know more details about some part of the test, she can then dig into that part. If the test is full of low level details about how you locate the parts of the application you want to interact with, it becomes completely overwhelming to try to decode what the test is actually trying to verify.
 
-By using page/view objects (described below) you can abstract away the low level details about how the view is built and what exact components are used. You can also use <<dummy/../testbench-bdd#,BDD>> to describe your test scenarios using normal English sentences.
+By using page/view objects you can abstract away the low level details about how the view is built and what exact components are used. You can also use <<dummy/../testbench-bdd#,BDD>> to describe your test scenarios using normal English sentences.
 
 [[testbench.reliable.application-changes]]
 == Guarding Against Application Changes
-If your application never changes, you can test it manually just once and you will know that it works properly. In most cases though, your application will be development forward and you need to maintain the tests when the application evolves.
+If your application never changes, you can test it manually just once and you will know that it works properly. In most cases though, your application will be developed forward and you need to maintain the tests when the application evolves.
 
 As long as you abstract away the details from the tests to page/view objects, you only need to take care that your page/view objects are built in a robust way. 
 
@@ -36,7 +36,9 @@ Similarly, you should avoid depending on strings targeted for humans in your app
 
 [[testbench.reliable.application-changes.component-ids]]
 === Define Ids for the Components
-For most cases, it makes sense to define `ids` for all the elements you want to interact with inside your page/view object. The `ids` are only created to be able to identify a given element and there is typically no reason to change them when the application evolves. With Shadow DOM, you also do not need to worry about global `ids` and `ids` colliding with each other, as the id of a given element only needs to be unique inside a shadow root (in practice a template).
+For most cases, it makes sense to define `ids` for all the elements you want to interact with inside your page/view object. The `ids` are only created to be able to identify a given element and there is typically no reason to change them when the application evolves. 
+
+When using templates, you also do not need to worry about global `ids` and `ids` colliding with each other, as the id of a given element only needs to be unique inside the shadow root, i.e. the template. For layouts and components outside templates (an inside a single template), you should take care that you do not use the same `id` in multiple places.
 
 [TIP]
 Use `ids` which describe the action which will occur when pressing the button, not `ids` describing e.g. where in the hierarchy the button is. If your `id` is tied to the hierarchy, you will indirectly depend on the hierarchy and lose many benefits of using `ids`.

@@ -1,13 +1,17 @@
 ---
 title: Overview
-order: 0
+order: 10
 layout: page
 ---
 
 [[testbench.overview]]
 = Overview
 
-Vaadin TestBench is a tool for controlling the browser from Java and automatically execute repetitive tasks such as functional, compatibility or integration tests. TestBench is also able to visually inspect your application and detect unintentionally introduced changes, and verifying that the application visually looks OK in all the browsers you are testing with. TestBench also includes special support for other Vaadin products, making testing easy and robust compared to generic web testing solutions. Although not the main purpose of TestBench, you can also use TestBench to automate mundane tasks such as filling out forms.
+Vaadin TestBench is a tool for creating and running browser based integration tests for your Vaadin application. TestBench simulates a user of your application, performs the tasks specified using Java code and verifies that the expected actions take place in the application. 
+
+TestBench can also visually inspect your application and detect unintentionally introduced changes, and verify that the application visually looks OK in all the browsers you are testing with. TestBench also includes special support for other Vaadin products, making testing easy and robust compared to generic web testing solutions.
+
+Although not the main purpose of TestBench, you can also use TestBench to automate mundane tasks such as filling out forms.
 
 == A Typical Test
 
@@ -40,7 +44,7 @@ public void fillForm() {
 
 The code above uses the page object pattern to hide the implementation details of the view from the main test logic. For more information, see <<dummy/../testbench-maintainable-tests-using-page-objects#, Creating Maintanable Test using Page Objects>>.
 
-TestBench also supports much more complex test cases such as running on multiple browser instances in parallel, testing that an application works when multiple users interact simultaneously with the same view/data and comparing that the main view of the application still looks like the pregenerated reference screenshot.
+TestBench supports much more complex test cases, both regarding business logic (it's Java, you can do whatever you want), and regarding running tess, e.g. executing on multiple browser instances in parallel, testing that an application works when multiple users interact simultaneously with the same view/data and comparing that the main view of the application still looks like the pregenerated reference screenshot.
 
 == Features
 
@@ -55,7 +59,7 @@ The main features of Vaadin TestBench are:
 * Easily running tests in parallel
 * Test grid support for speeding up tests by running in parallel on multiple browsers on selected operating systems
 * Support for JUnit and other testing frameworks
-* Based on Selenium for low level support
+* All features available in Selenium
 
 == Commercial License
 

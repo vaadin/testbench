@@ -1,6 +1,6 @@
 ---
 title: Taking and Comparing Screenshots
-order: 100
+order: 70
 layout: page
 ---
 
@@ -23,9 +23,10 @@ The screenshot configuration parameters are defined with static methods in the
 `maxScreenshotRetries`(default: `2`):: Sometimes a screenshot comparison may fail because the screen rendering has not yet finished, or there is a blinking cursor that is different from the reference screenshot. For these reasons, Vaadin TestBench retries the screenshot comparison for a number of times defined with this parameter.
 `screenshotRetryDelay`(default: `500`):: Delay in milliseconds for making a screenshot retry when a comparison fails.
 
+[NOTE]
+If the directory names are not absolute, they are relative to the folder you run the tests from. When using Maven, this is typically the root folder of the project.
 
 For example:
-
 
 ```java
 @Before
@@ -61,7 +62,7 @@ public ScreenshotOnFailureRule screenshotOnFailureRule =
 
 Notice that you must not call `quit()` for the driver in the
 `@After` method, as that would close the driver before the rule
-takes the screenshot.
+takes the screenshot. The rule automatically calls `quit()` on the driver (controlled by the `true` parameter) so you can remove any calls to `getDriver().quit()`.
 
 The screenshots are written to the error directory defined with the
 `screenshotErrorDirectory` parameter. You can configure it in the
@@ -103,7 +104,7 @@ screenshot. It is appended with browser identifier and the file extension.
 
 
 ```java
-assertTrue(testBench(driver).compareScreen("tooltip"));
+assertTrue(testBench(driver).compareScreen("oneplustwo"));
 ```
 
 The `compareScreen(BufferedImage, String)`
@@ -124,12 +125,11 @@ the `screenshotErrorDirectory` parameter described in
 <<testbench.screenshots.parameters>>.
 
 For example, the error caused by a missing reference image could be written to
-`screenshot/errors/tooltip_firefox_12.0.png`. The image is shown in
-<<figure.testbench.screenshot.comparison.error-images.calc>>.
+`screenshot/errors/oneplustwo_mac_chrome_64.png`.
 
 [[figure.testbench.screenshot.comparison.error-images.calc]]
 .A screenshot taken by a test run
-image::img/screenshots/tt-screenshot-calc.png[]
+image::img/screenshot-reference.png[]
 
 Screenshots cover the visible page area in the browser. The size of the browser
 is therefore relevant for screenshot comparison. The browser is normally sized
@@ -153,7 +153,7 @@ a screenshot from the `errors/` directory to the
 For example:
 
 ```sh
-$ cp screenshot/errors/tooltip_firefox_12.0.png screenshot/reference/
+$ cp screenshot/errors/oneplustwo_mac_chrome_64.png screenshot/reference/
 ```
 Now, when the proper reference image exists, rerunning the test outputs success:
 
@@ -174,12 +174,6 @@ non-opaque regions. Non-opaque pixels in the reference image, that is, ones with
 less than 1.0 value in the alpha channel, are ignored in the screenshot
 comparison.
 
-Please see the `ScreenshotITCase.java` example in the TestBench Demo
-for an example of using masked screenshots. The
-`example/Screenshot_Comparison_Tests.pdf` document describes how to
-enable the example and how to create the screenshot masks in an image editor.
-
-
 [[testbench.screenshot.comparison.visualization]]
 === Visualization of Differences in Screenshots with Highlighting
 
@@ -193,15 +187,11 @@ The differences in the images are highlighted with blue rectangles. Moving the
 mouse pointer over a square shows the difference area as it appears in the
 reference image. Clicking the image switches the entire view to the reference
 image and back. The text "Image for this run" is displayed in the
-top-left corner of the screenshot to distinguish it from the reference image.
-
-<<figure.testbench.screenshot.comparison.visualization.highlighting>> shows a
-difference report with one difference between the visualized screenshot (bottom)
-and the reference image (top).
+top-left corner of the screenshot to distinguish it from the reference image, for example:
 
 [[figure.testbench.screenshot.comparison.visualization.highlighting]]
-.The reference image and a highlighted error image
-image::img/screenshots/tt-screenshot-comparison-1.png[]
+.A highlighted error image
+image::img/screenshot-html-output.png[]
 
 
 

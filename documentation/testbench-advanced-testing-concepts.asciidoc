@@ -1,6 +1,6 @@
 ---
 title: Advanced Testing Concepts
-order: 130
+order: 80
 layout: page
 ---
 
@@ -89,11 +89,7 @@ for profiling test execution time:
 `totalTimeSpentServicingRequests()`:: Returns the total time (in milliseconds) spent servicing requests in the
 application on the server-side. The timer starts when you first navigate to the
 application and hence start a new session. The time passes only when servicing
-requests for the particular session. The timer is shared in the servlet session,
-so if you have, for example, multiple portlets in the same application
-(session), their execution times will be included in the same total.//TODO
-Vaadin 7: windows to
-roots
+requests for the particular session. 
 
 +
 Notice that if you are also interested in the client-side performance for the
@@ -113,9 +109,7 @@ performance for the last request, you must call the
 `totalTimeSpentRendering()`:: Returns the total time (in milliseconds) spent rendering the user interface of
 the application on the client-side, that is, in the browser. This time only
 passes when the browser is rendering after interacting with it through the
-WebDriver. The timer is shared in the servlet session, so if you have, for
-example, multiple portlets in the same application (session), their execution
-times will be included in the same total.
+WebDriver. 
 
 `timeSpentRenderingLastRequest()`:: Returns the time (in milliseconds) spent rendering user interface of the
 application after the last server request. Notice that not all user interaction
