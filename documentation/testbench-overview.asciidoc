@@ -13,7 +13,7 @@ Vaadin TestBench is a tool for controlling the browser from Java and automatical
 
 A typical test can look like:
 
-1. Start a browser instances.
+1. Start a browser instance.
   *  Chrome/Firefox/Safari/IE11/Edge are supported desktop browsers
   *  iPhone/iPad/Android simulators are supported for mobile testing
 2. Fill in the login form and log in to the application
@@ -47,12 +47,12 @@ TestBench also supports much more complex test cases such as running on multiple
 The main features of Vaadin TestBench are:
 
 * Control one or several browser instances from Java, both desktop and mobile browsers
-* A powerful and robust way to describe your tests so they do not break with every application change
+* A powerful and robust way to describe your tests so they do not break with application changes
 * A high level API for finding the component you want to interact with
 * Vaadin Component API for easy interaction with all Vaadin components and HTML elements
-* Automatic screen comparison with difference highlighting
+* Automatic screen comparison highlighting differences 
 * Assertion based UI state validation
-* Support for easily running tests in parallel
+* Easily running tests in parallel
 * Test grid support for speeding up tests by running in parallel on multiple browsers on selected operating systems
 * Support for JUnit and other testing frameworks
 * Based on Selenium for low level support
