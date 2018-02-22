@@ -117,4 +117,18 @@ public class ElementQueryIT extends AbstractTB6Test {
                 .waitForFirst().$(NativeButtonElement.class).id("foo'*+bar'");
         Assert.assertEquals("Button with special id", button.getText());
     }
+
+    @Test
+    public void attributeContains() {
+        openTestURL();
+        PolymerTemplateViewElement view = $(PolymerTemplateViewElement.class)
+                .waitForFirst();
+        List<NativeButtonElement> button1s = view.$(NativeButtonElement.class)
+                .attributeContains("class", "button-1").all();
+        Assert.assertEquals(1, button1s.size());
+        List<NativeButtonElement> allButtons = view.$(NativeButtonElement.class)
+                .attributeContains("class", "button").all();
+        Assert.assertEquals(10, allButtons.size());
+    }
+
 }
