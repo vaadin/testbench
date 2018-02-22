@@ -10,10 +10,10 @@ layout: page
 The high-level `ElementQuery` API allows querying Vaadin components in the browser
 according to their component class type, hierarchy, caption, and other
 properties. Once one or more components are found, they can be interacted upon.
-The query API forms an domain-specific language (DSL), embedded in the
+The query API forms a domain-specific language (DSL), embedded in the
 `TestBenchTestCase` class.
 
-The basic idea of element queries match elements and return queries, which can
+The basic idea of element queries is to match elements and return queries, which can
 again be queried upon, until terminated by a terminal query that returns one or
 more elements.
 
@@ -60,14 +60,14 @@ If there is no suitable element class available, you can also use the `$("tag-na
 Each Vaadin component has a corresponding element class in TestBench, which
 contains methods for interacting with the particular component. The element
 classes extend `TestBenchElement`, which in turn implements the
-`WebElement` interface, so Selenium element API can also be used directly.
+`WebElement` interface, so the Selenium element API can also be used directly.
 
 Add-ons may also define their custom element classes, and you can create custom element classes for any element. An element class is in practice the same as a __page object__, see <<dummy/../testbench-maintainable-tests-using-page-objects#testbench.maintainable.pageobject.defining,Creating a Page Object>> for more details.
 
 [[testbench.elementquery.elementquery]]
 == `ElementQuery` filtering methods
 
-You can use the `ElementQuery` instance returned by `$()` to refine the search query using on of the available methods:
+You can use the `ElementQuery` instance returned by `$()` to refine the search query using one of the available methods:
 
 * `id("some-id")` Returns the element with the given id
 * `attribute("attributeName", "attributeValue")` Adds a filter to only include elements with the given attribute set to the given value
