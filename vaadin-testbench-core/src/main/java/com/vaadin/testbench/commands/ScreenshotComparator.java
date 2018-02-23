@@ -39,8 +39,7 @@ public class ScreenshotComparator {
         for (int times = 0; times < Parameters
                 .getMaxScreenshotRetries(); times++) {
             boolean equal = imageComparison.imageEqualToReference(
-                    getScreenshot((TakesScreenshot) driver, takesScreenshot,
-                            capabilities),
+                    getScreenshot((TakesScreenshot) driver, takesScreenshot),
                     referenceName,
                     Parameters.getScreenshotComparisonTolerance(),
                     capabilities);
@@ -56,16 +55,16 @@ public class ScreenshotComparator {
      * Captures a screenshot of the given screen (if parameter is a driver) or
      * the given element (if the parameter is a WebElement).
      *
+     * @param driver
+     *            The web driver, capable of taking screenshots
      * @param screenshotContext
-     * @param capabilities
-     * @param isIE8
-     *            <code>true</code> if this is IE8, <code>false</code> otherwise
-     * @return
+     *            The context of the screenshot, either a driver for a full page
+     *            screenshot or an element for a screenshot of only that element
+     * @return a captured image
      * @throws IOException
      */
     private static BufferedImage getScreenshot(TakesScreenshot driver,
-            TakesScreenshot screenshotContext, Capabilities capabilities)
-            throws IOException {
+            TakesScreenshot screenshotContext) throws IOException {
         boolean elementScreenshot = (screenshotContext instanceof WebElement);
 
         if (elementScreenshot && supportsElementScreenshots == null) {
