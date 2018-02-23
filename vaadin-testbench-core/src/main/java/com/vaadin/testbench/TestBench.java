@@ -12,6 +12,7 @@
  */
 package com.vaadin.testbench;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Map;
@@ -76,7 +77,11 @@ public class TestBench {
                 Object[] args) throws Throwable {
             if (null != proceed) {
                 // This is a protected method
-                return proceed.invoke(self, args);
+                try {
+                    return proceed.invoke(self, args);
+                } catch (InvocationTargetException e) {
+                    throw e.getCause();
+                }
             }
             return thisMethod.invoke(actualElement, args);
         }
