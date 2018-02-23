@@ -17,6 +17,8 @@ public class PolymerTemplateView extends PolymerTemplate<TemplateModel> {
         for (int i = 1; i < 6; i++) {
             NativeButton button = new NativeButton("Button " + i);
             button.getElement().setAttribute("id", "light-button-" + i);
+            button.addClassName("button");
+            button.addClassName("button-" + i);
             getElement().appendChild(new Div(button).getElement());
         }
 
@@ -24,6 +26,8 @@ public class PolymerTemplateView extends PolymerTemplate<TemplateModel> {
                 "Special Button (in Light DOM)");
         slottedButton.getElement().setAttribute("slot", "special-slot");
         slottedButton.getElement().setAttribute("id", "special-button");
+        slottedButton.addClassName("button");
+        slottedButton.addClassName("button-special-slot");
         getElement().appendChild(slottedButton.getElement());
     }
 }

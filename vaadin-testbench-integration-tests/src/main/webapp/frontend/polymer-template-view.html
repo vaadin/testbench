@@ -3,17 +3,17 @@
 <dom-module id="polymer-template-view">
     <template>
         <div>
-            <button id="shadow-button-1">Shadow Button 1</button>
+            <button class="button button-shadow-1" id="shadow-button-1">Shadow Button 1</button>
         </div>
         <slot></slot>
         <div>
-            <button id="shadow-button-2">Shadow Button 2</button>
+            <button class="button button-shadow-2" id="shadow-button-2">Shadow Button 2</button>
         </div>
         <slot name="special-slot"></slot>
         <div>
-            <button id="special-button">Special Button (in Shadow DOM)</button>
+            <button class="button button-shadow-special" id="special-button">Special Button (in Shadow DOM)</button>
         </div>
-        <button id="foo'*+bar'">Button with special id</button>
+        <button class="button" id="foo'*+bar'">Button with special id</button>
 
     </template>
 
