@@ -296,4 +296,25 @@ public class TestBenchElementTest {
                 e.lastArgs);
     }
 
+    @Test
+    public void doesNotWrapExceptions() {
+        WebElement webElement = createMock(WebElement.class);
+        replay(webElement);
+
+        TestBenchCommandExecutor executor = createMock(
+                TestBenchCommandExecutor.class);
+        expect(executor.executeScript(EasyMock.anyObject()))
+                .andThrow(new RuntimeException("foobar"));
+        replay(executor);
+        TestBenchElement element = TestBenchElement.wrapElement(webElement,
+                executor);
+        RuntimeException exceptionReceived = null;
+        try {
+            element.executeScript("foo");
+        } catch (RuntimeException e) {
+            exceptionReceived = e;
+        }
+        Assert.assertNotNull(exceptionReceived);
+        Assert.assertEquals("foobar", exceptionReceived.getMessage());
+    }
 }
