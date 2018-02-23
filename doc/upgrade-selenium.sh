@@ -16,8 +16,8 @@ OLDVERSION=`grep '<selenium.version>' vaadin-testbench-core/pom.xml|cut -d">" -f
 git rm -r -f vaadin-testbench-standalone/lib/
 rm -f selenium-server-standalone-$NEWVERSION.jar
 
-# Update pom.xm l
-gsed -i "s/$OLDVERSION/$NEWVERSION/g" vaadin-testbench-core/pom.xml doc/license.html
+# Update files with version number
+gsed -i "s/$OLDVERSION/$NEWVERSION/g" vaadin-testbench-core/pom.xml vaadin-testbench-standalone/pom.xml doc/license.html
 
 # Download standalone jar
 wget https://selenium-release.storage.googleapis.com/$NEWMINOR/selenium-server-standalone-$NEWVERSION.jar
