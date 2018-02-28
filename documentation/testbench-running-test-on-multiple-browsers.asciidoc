@@ -1,6 +1,6 @@
 ---
 title: Running Tests on Multiple Browsers in a Grid
-order: 110
+order: 130
 layout: page
 ---
 
@@ -16,20 +16,21 @@ When running on a hub, you do not need a local webdriver installed. The webdrive
 
 [[testbench.grid.test-remote]]
 == Preparing your Tests for Running on a Test Grid
-To run your TestBench tests on a test grid you need to:
+The tests created previously are setup only to run on a single browser, as a single `ChromeDriver` (or other `WebDriver`) instance is created in a `@Before` method. When running on multiple browsers in parallel, it's easier not to handle the driver instances manually but instead let TestBench handle creation and destruction when needed. To do this, you need to:
 
-1. Extend `ParallelTest` instead of `TestBenchTestCase`
+1. Extend `ParallelTest` instead of `TestBenchTestCase`. The `ParallelTest` class takes care of creating and destroying driver instances as needed.
 2. Define the grid hub URL using either `@RunOnHub("hub.testgrid.mydomain.com")` on the test class (or a super class) or the system property `com.vaadin.testbench.Parameters.hubHostname`
 
 A test class extending `ParallelTest` will automatically:
 
-* Execute test methods in parallel
+* Execute test methods in parallel on the hub defined using `@RunOnHub` or the corresponding system property
 * Create a suitable webdriver instance
 * Terminate the driver after the test ends 
 * Grab a screenshot if the test fails
-* Take into account any `@RunLocally` or `@RunOnHub` annotations on the test class, and the corresponding system properties
+* Support running the test locally on only one browser for debugging, using `@RunLocally` or the corresponding system property
 
-When changing the super class of the test, you thus need to remove any calls to `setDriver(new ChromeDriver())` or similar, and also any `@After` method which does `getDriver().quit()`.
+[NOTE]
+When changing the super class of the test, you  need to remove any calls to `setDriver(new ChromeDriver())` or similar, and also any `@After` method which does `getDriver().quit()`.
 
 [TIP]
 In almost all cases you want to configure something for all your grid tests so it makes sense to create a common superclass, e.g. `public abstract class AbstractIT extends ParallelTest`. Then you can add a `@RunOnHub` annotation on that class.

@@ -1,6 +1,6 @@
 ---
 title: Running Tests on a CI Server
-order: 70
+order: 120
 layout: page
 ---
 
@@ -40,7 +40,7 @@ If you are not using site local addresses (10.x.y.z, 172.16.x.y or 192.168.x.y) 
 
 [[testbench.ci-server.browsers]]
 == Making Sure the Browsers are Available
-When running the tests on your local machine you need to have a suitable browser installed. If the test creates a `ChromeDriver` instance, you need to have Chrome installed and so on. The same goes for the CI server (the build agent) if you are running tests directly on a local browser (as opposed to a test cluster described in <<dummy/../testbench-grid#,Running Tests in a Distributed Environment>).
+When running the tests on your local machine you need to have a suitable browser installed. If the test creates a `ChromeDriver` instance, you need to have Chrome installed and so on. The same goes for the CI server (the build agent) if you are running tests directly on a local browser (as opposed to a test cluster described in <<dummy/../testbench-run-distributed#,Running Tests on Multiple Browsers in a Grid>>).
 
 In addition to installing the browsers on the build agent, you must take into account that browsers typically require a GUI to be run. This is not available directly on your typical build system. The options for running on such a system are:
 

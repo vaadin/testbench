@@ -1,6 +1,6 @@
 ---
 title: Running Tests with Maven
-order: 60
+order: 110
 layout: page
 ---
 
@@ -110,7 +110,7 @@ There is a plugin called `driver-binary-downloader-maven-plugin` which downloads
 </plugin>
 ```
 
-This will download the webdrivers defined in `webdrivers.xml` (repository map) in the project root during the `test-compile` phase, i.e. well before the integration tests start. The downloaded webdrivers will be placed in the `webdriver/zips` folder in the project and unpacked to the `webdriver` folder. The `webdrivers.xml` define which version of the various webdrivers to download, an example can be found at https://github.com/vaadin/testbench-demo/blob/master/webdrivers.xml.
+This will download the webdrivers defined in `webdrivers.xml` (called a repository map) in the project root during the `test-compile` phase, i.e. well before the integration tests start. The downloaded webdrivers will be placed in the `webdriver/zips` folder in the project and unpacked to the `webdriver` folder. The `webdrivers.xml` define which version of the various webdrivers to download, an example can be found at https://github.com/vaadin/testbench-demo/blob/master/webdrivers.xml.
 
 [TIP]
 There is a repository map which is kept quite up to date available at https://github.com/Ardesco/selenium-standalone-server-plugin

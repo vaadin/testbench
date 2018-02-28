@@ -1,6 +1,6 @@
 ---
 title: Creating Maintainable Tests using Page Objects
-order: 40
+order: 50
 layout: page
 ---
 
@@ -27,7 +27,10 @@ The `@Element` annotation defines the tag name of the element which can be locat
 
 When creating a page object for your view, you should use the root tag of the view in the `@Element` annotation. For views created using Java, this might be e.g. `div` while for templates it is a custom element, e.g. `main-view`.
 
-A page object for a template based login view might thus look like:
+[[testbench.maintainable.pageobject.template]]
+== Page Objects for Templates
+
+A page object for a template based login view can look like:
 ```java
 @Element("login-view") // map to <login-view>
 public void LoginViewElement extends TestBenchElement {
@@ -52,9 +55,68 @@ public void LoginViewElement extends TestBenchElement {
 }
 ```
 
+When mapping to a template, it's typically enough to define the tag name as each template has its unique custom tag name.
+
+[[testbench.maintainable.pageobject.java]]
+== Page Objects for Java Classes
+
+For views created using Java, the tag name is not unique enough and the page object will find lots of unrelated elements unless you define more restrictions using the `@Attribute` annotation. The `@Attribute` annotation allows you to define additional restrictions using attribute values, in the same way as `attribute(name,value)` on an `ElementQuery`. `@Attribute` can be used for any attribute on the element but there are two attributes it is commonly used for: id and CSS class name.
+
+Given a Java login view:
+```java
+public class LoginView extends Div {
+```
+
+and a login view element:
+```java
+@Element("div")
+public void LoginViewElement extends TestBenchElement {
+```
+
+A query such as `$(LoginViewElement.class).first()` would find the first `<div>` on the page. To make the page object find only the `LoginView`, you can either define an `id`:
+
+```java
+public class LoginView extends Div {
+    public LoginView() {
+        setId("login-view");
+    }
+```
+
+or add a `class name`:
+
+```java
+public class LoginView extends Div {
+    public LoginView() {
+        addClassName("login-view");
+    }
+```
+
+The page object can then use the `id` as:
+```java
+@Element("div")
+@Attribute(name = "id", value = "login-view")
+public void LoginViewElement extends TestBenchElement {
+```
+
+or the `class name` as:
+
+```java
+@Element("div")
+@Attribute(name = "class", contains = "login-view")
+public void LoginViewElement extends TestBenchElement {
+```
+
+The rest of the page object would be the same in both cases (Template and Java class), the only difference is how you find the element you want to interact with.
 
 [NOTE]
-All Vaadin component integrations for TestBench can also be considered __page objects__ even though they only provide a high level API for a single component. There is no conceptual difference between creating elements for web components and elements for templates representing a whole view.
+You should use `contains` when you are matching `class` or similar multi value attributes, so that `login-view` matches even when there are multiple class names, e.g. `class="dark login-view active"`.
+
+[TIP]
+An `@Attribute` `value` or `contains` property can be set to `Attribute.SIMPLE_CLASS_NAME` to make it match the simple class name of the page object class with any `Element` or `PageObject` suffix removed. As `@Attribute` annotations are inherited, you can add this on a base class for your elements.
+
+
+[NOTE]
+All Vaadin component integrations for TestBench can also be considered __page objects__ even though they only provide a high level API for a single component. There is no conceptual difference between creating elements for web components and elements for templates or classes representing a whole view.
 
 [[testbench.maintainable.pageobject.using]]
 == Using a Page Object
