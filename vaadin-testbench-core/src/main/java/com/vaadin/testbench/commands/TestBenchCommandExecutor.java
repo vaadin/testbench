@@ -53,11 +53,10 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
     private boolean autoScrollIntoView = true;
     // @formatter:off
     String WAIT_FOR_VAADIN_SCRIPT =
-              "var vaadin = (window.Vaadin && window.Vaadin.Flow) ? window.Vaadin.Flow : window.vaadin;"
-            + "if (vaadin == null) {"
+            "if (!window.Vaadin || !window.Vaadin.Flow) {"
             + "  return true;"
             + "}"
-            + "var clients = vaadin.clients;"
+            + "var clients = window.Vaadin.Flow.clients;"
             + "if (clients) {"
             + "  for (var client in clients) {"
             + "    if (clients[client].isActive()) {"
@@ -197,22 +196,33 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
     }
 
     @SuppressWarnings("unchecked")
-    private List<Long> getTimingValues(boolean forceSync) {
-        // @formatter:off
-        String getProfilingData = "var pd = [0,0,0,0];\n"
-                + "var clients = (window.Vaadin && window.Vaadin.Flow) ? window.Vaadin.Flow.clients : window.vaadin.clients;\n"
-                + "for (client in clients) {\n"
-                + "  var p = clients[client].getProfilingData();\n"
-                + "  pd[0] += p[0];\n" + "  pd[1] += p[1];\n"
-                + "  pd[2] += p[2];\n" + "  pd[3] += p[3];\n" + "}\n"
-                + "return pd;\n";
-        // @formatter:on
-        if (forceSync) {
-            // Force sync to get the latest server-side timing data. The
-            // server-side timing data is always one request behind.
-            executeScript("(window.Vaadin && window.Vaadin.Flow) ? window.Vaadin.Flow.forceSync() : window.vaadin.forceSync()");
+    private List<Long> getTimingValues(boolean poll) {
+        if (poll) {
+            // Get the latest server-side timing data.
+            // The server-side timing data is always one request behind.
+            executeScript("" //
+                    + "if (!window.Vaadin || !window.Vaadin.Flow || !window.Vaadin.Flow.clients) {"
+                    + "  throw 'Performance data is only available when using Vaadin Flow';"
+                    + "}" //
+                    + "for (client in window.Vaadin.Flow.clients) {\n" //
+                    + "  window.Vaadin.Flow.clients[client].poll();\n" + "}");
         }
-        return (List<Long>) executeScript(getProfilingData);
+
+        return (List<Long>) executeScript("" //
+                + "if (!window.Vaadin || !window.Vaadin.Flow || !window.Vaadin.Flow.clients) {"
+                + "  throw 'Performance data is only available when using Vaadin Flow';"
+                + "}" //
+                + "var pd = [0,0,0,0];\n" //
+                + "for (client in window.Vaadin.Flow.clients) {\n"
+                + "  if (!window.Vaadin.Flow.clients[client].getProfilingData) {"
+                + "    throw 'Performance data is not available in production mode';"
+                + "  }" //
+                + "  var p = window.Vaadin.Flow.clients[client].getProfilingData();\n"
+                + "  pd[0] += p[0];\n" //
+                + "  pd[1] += p[1];\n"//
+                + "  pd[2] += p[2];\n" //
+                + "  pd[3] += p[3];\n" //
+                + "}\n" + "return pd;\n");
     }
 
     @Override
