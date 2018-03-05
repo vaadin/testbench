@@ -16,7 +16,7 @@
     <url>http://maven.apache.org</url>
     <properties>
         <jetty.version>9.3.12.v20160915</jetty.version>
-        <flow.version>1.0.0.beta1</flow.version>
+        <flow.version>1.0.0.beta2</flow.version>
 
         <!-- Frontend -->
         <node.version>v8.1.2</node.version>
