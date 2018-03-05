@@ -15,14 +15,19 @@ public class ElementScreenCompareIT extends AbstractTB6Test {
         return ElementQueryView.class;
     }
 
+    @Override
+    public void setup() throws Exception {
+        super.setup();
+        testBench().resizeViewPortTo(SCREENSHOT_WIDTH, SCREENSHOT_HEIGHT);
+    }
+
     @Test
     public void elementCompareScreen() throws Exception {
         openTestURL();
         TestBenchElement button4 = $(NativeButtonElement.class).get(4);
 
         Assert.assertTrue(button4.compareScreen("button4"));
-        TestBenchElement layout = (TestBenchElement) button4
-                .findElement(By.xpath("../.."));
+        TestBenchElement layout = button4.findElement(By.xpath("../.."));
         Assert.assertTrue(layout.compareScreen("layout"));
     }
 
