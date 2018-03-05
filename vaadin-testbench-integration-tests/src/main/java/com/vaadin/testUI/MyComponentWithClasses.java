@@ -1,6 +1,6 @@
 package com.vaadin.testUI;
 
-import com.vaadin.ui.html.Div;
+import com.vaadin.flow.component.html.Div;
 
 public class MyComponentWithClasses extends Div {
 

@@ -5,8 +5,8 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.vaadin.flow.component.Component;
 import com.vaadin.testUI.PageObjectView;
-import com.vaadin.ui.Component;
 
 public class PageObjectIT extends AbstractTB6Test {
 

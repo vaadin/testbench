@@ -3,10 +3,10 @@ package com.vaadin.tests.elements;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.vaadin.flow.component.Component;
 import com.vaadin.testUI.ElementQueryView;
 import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.tests.AbstractTB6Test;
-import com.vaadin.ui.Component;
 
 public class ExecuteJavascriptIT extends AbstractTB6Test {
 

@@ -27,12 +27,12 @@ import java.util.Properties;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import com.saucelabs.ci.sauceconnect.AbstractSauceTunnelManager;
+import com.vaadin.flow.component.Component;
 import com.vaadin.testbench.annotations.BrowserConfiguration;
 import com.vaadin.testbench.annotations.BrowserFactory;
 import com.vaadin.testbench.annotations.RunOnHub;
 import com.vaadin.testbench.parallel.BrowserUtil;
 import com.vaadin.testbench.parallel.ParallelTest;
-import com.vaadin.ui.Component;
 
 /**
  * Base class for TestBench 6+ tests. All TB6+ tests in the project should
