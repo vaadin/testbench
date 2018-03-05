@@ -1,8 +1,8 @@
 package com.vaadin.testUI;
 
-import com.vaadin.router.Route;
-import com.vaadin.ui.event.AttachEvent;
-import com.vaadin.ui.html.Div;
+import com.vaadin.flow.component.AttachEvent;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.router.Route;
 
 @Route("SVGView")
 public class SVGView extends Div {

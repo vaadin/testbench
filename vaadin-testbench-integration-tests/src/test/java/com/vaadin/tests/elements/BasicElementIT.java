@@ -5,10 +5,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.TimeoutException;
 
+import com.vaadin.flow.component.Component;
 import com.vaadin.testUI.ElementQueryView;
 import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.tests.AbstractTB6Test;
-import com.vaadin.ui.Component;
 
 public class BasicElementIT extends AbstractTB6Test {
 

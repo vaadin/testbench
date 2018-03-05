@@ -1,8 +1,8 @@
 package com.vaadin.testUI;
 
-import com.vaadin.router.Route;
-import com.vaadin.ui.html.Div;
-import com.vaadin.ui.html.NativeButton;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.NativeButton;
+import com.vaadin.flow.router.Route;
 
 @Route("ElementQueryView")
 public class ElementQueryView extends Div {
