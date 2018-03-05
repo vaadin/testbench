@@ -24,7 +24,6 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
 
-import org.junit.Before;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import com.saucelabs.ci.sauceconnect.AbstractSauceTunnelManager;
@@ -58,12 +57,12 @@ public abstract class AbstractTB6Test extends ParallelTest {
     /**
      * Height of the screenshots we want to capture
      */
-    private static final int SCREENSHOT_HEIGHT = 850;
+    public static final int SCREENSHOT_HEIGHT = 850;
 
     /**
      * Width of the screenshots we want to capture
      */
-    private static final int SCREENSHOT_WIDTH = 1500;
+    public static final int SCREENSHOT_WIDTH = 1500;
     private static final String HOSTNAME_PROPERTY = "deployment.hostname";
     private static final String PORT_PROPERTY = "deployment.port";
     private static final Properties properties = new Properties();
@@ -81,19 +80,6 @@ public abstract class AbstractTB6Test extends ParallelTest {
                 throw new RuntimeException(e);
             }
         }
-    }
-
-    /**
-     * Connect to the hub using a remote web driver and set the window size.
-     *
-     * @throws Exception
-     *             if browser window resize operation fails
-     */
-    @Override
-    @Before
-    public void setup() throws Exception {
-        super.setup();
-        testBench().resizeViewPortTo(SCREENSHOT_WIDTH, SCREENSHOT_HEIGHT);
     }
 
     @BrowserConfiguration
