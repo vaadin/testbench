@@ -6,7 +6,7 @@ layout: page
 
 
 [[testbench.maintainable.pageobject]]
-= Creating Maintainble Tests using Page Objects
+= Creating Maintainable Tests using Page Objects
 
 The https://martinfowler.com/bliki/PageObject.html[Page Object Pattern] is an abstraction commonly used when performing actions on a web page. The abstraction hides the implementation details (which elements/components are used, how can they be found on the page etc) from the test methods and allows the test methods to focus on the logic to test. The page object depends on how the page/view is implemented and offer high level methods representing actions that a real user could perform on the page. The separation enables the test method to be independent of the implementation details, so refactoring a view and moving components around only require updates to the page object (if any change is required at all) and not the individual tests.
 
