@@ -122,4 +122,12 @@ public class BasicElementIT extends AbstractTB6Test {
         withAttributes.dispatchEvent("custom123");
         Assert.assertEquals("Event on Button 5", $("div").id("msg").getText());
     }
+
+    @Test
+    public void nativeButtonDisabled() {
+        NativeButtonElement enabled = $(NativeButtonElement.class).get(0);
+        NativeButtonElement disabled = $(NativeButtonElement.class).get(2);
+        Assert.assertTrue(enabled.isEnabled());
+        Assert.assertFalse(disabled.isEnabled());
+    }
 }
