@@ -10,6 +10,9 @@ public class ElementQueryView extends Div {
     public ElementQueryView() {
         for (int i = 0; i < 10; i++) {
             NativeButton button = new NativeButton("Button " + i);
+            if (i == 2) {
+                button.getElement().setAttribute("disabled", true);
+            }
             button.getElement().addEventListener("custom123", e -> {
                 Div div = new Div();
                 div.setId("msg");
