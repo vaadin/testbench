@@ -53,37 +53,6 @@ public class TestBenchElementTest {
     }
 
     @Test
-    public void testIsEnabled_VaadinComponentEnabled_inputDisabled_returnsFalse()
-            throws Exception {
-        // This would probably never happen, but just make sure it works
-        WebElement webElement = createMock(WebElement.class);
-        expect(webElement.getAttribute("class")).andStubReturn("v-textfield");
-        expect(webElement.isEnabled()).andReturn(false);
-        replay(webElement);
-
-        TestBenchElement element = TestBenchElement.wrapElement(webElement,
-                null);
-        assertFalse(element.isEnabled());
-
-        verify(webElement);
-    }
-
-    @Test
-    public void testIsEnabled_VaadinComponentEnabled_inputEnabled_returnsTrue()
-            throws Exception {
-        WebElement webElement = createMock(WebElement.class);
-        expect(webElement.getAttribute("class")).andStubReturn("v-textfield");
-        expect(webElement.isEnabled()).andReturn(true);
-        replay(webElement);
-
-        TestBenchElement element = TestBenchElement.wrapElement(webElement,
-                null);
-        assertTrue(element.isEnabled());
-
-        verify(webElement);
-    }
-
-    @Test
     public void elementsEquals() {
         RemoteWebElement webElement = new RemoteWebElement();
         webElement.setId("remote1");
