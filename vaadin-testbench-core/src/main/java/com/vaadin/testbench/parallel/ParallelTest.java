@@ -12,7 +12,6 @@
  */
 package com.vaadin.testbench.parallel;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -77,8 +76,10 @@ public class ParallelTest extends TestBenchTestCase {
      *         by {@link #setup()}, for the creation of the {@link WebDriver}.
      */
     protected String getHubURL() {
-        if (SauceLabsIntegration.isConfiguredForSauceLabs()) {
-            return SauceLabsIntegration.getHubUrl();
+        SauceLabsIntegration sauceLabsIntegration = SauceLabsIntegrationFactory
+                .tryGet();
+        if (sauceLabsIntegration != null) {
+            return sauceLabsIntegration.getHubUrl();
         } else {
             return "http://" + getHubHostname() + ":4444/wd/hub";
         }
@@ -142,12 +143,8 @@ public class ParallelTest extends TestBenchTestCase {
         } else if (Parameters.isLocalWebDriverUsed()) {
             WebDriver driver = driverConfiguration.setupLocalDriver();
             setDriver(driver);
-        } else if (SauceLabsIntegration.isConfiguredForSauceLabs()) {
-            WebDriver driver = driverConfiguration
-                    .setupRemoteDriver(getHubURL());
-            setDriver(driver);
-
-        } else if (getRunOnHub(getClass()) != null
+        } else if (SauceLabsIntegrationFactory.tryGet() != null
+                || getRunOnHub(getClass()) != null
                 || Parameters.getHubHostname() != null) {
             WebDriver driver = driverConfiguration
                     .setupRemoteDriver(getHubURL());
@@ -206,10 +203,9 @@ public class ParallelTest extends TestBenchTestCase {
      */
     public void setDesiredCapabilities(
             DesiredCapabilities desiredCapabilities) {
-        String sauceOptions = System.getProperty("sauce.options");
-        if (sauceOptions != null) {
-            SauceLabsIntegration.setDesiredCapabilities(desiredCapabilities,
-                    sauceOptions);
+        if (SauceLabsIntegrationFactory.tryGet() != null) {
+            SauceLabsIntegrationFactory.tryGet()
+                    .setDesiredCapabilities(desiredCapabilities, null);
         }
         driverConfiguration.setDesiredCapabilities(desiredCapabilities);
     }
