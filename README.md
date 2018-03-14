@@ -1,3 +1,5 @@
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/vaadin/testbench?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+
 # Vaadin TestBench
 
 Vaadin TestBench is a tool built on Selenium and it is used for automated user interface testing of web applications on multiple platforms and browsers. Choosing a testing tool optimized for Vaadin UI testing and supported by Vaadin you can rely on having the best integration and forward compatibility with Vaadin framework. 
