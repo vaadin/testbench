@@ -54,10 +54,7 @@ public class ParallelTest extends TestBenchTestCase {
 
     private static final Logger logger = Logger
             .getLogger(ParallelTest.class.getName());
-    private static final String SAUCE_USERNAME_ENV = "SAUCE_USERNAME";
-    private static final String SAUCE_USERNAME_PROP = "sauce.user";
-    private static final String SAUCE_ACCESS_KEY_ENV = "SAUCE_ACCESS_KEY";
-    private static final String SAUCE_ACCESS_KEY_PROP = "sauce.sauceAccessKey";
+
     private SetupDriver driverConfiguration = new SetupDriver();
 
     /**
@@ -80,24 +77,8 @@ public class ParallelTest extends TestBenchTestCase {
      *         by {@link #setup()}, for the creation of the {@link WebDriver}.
      */
     protected String getHubURL() {
-        String username = getSauceUser();
-        String accessKey = getSauceAccessKey();
-
-        if (username == null) {
-            logger.log(Level.FINE,
-                    "You can give a Sauce Labs user name using -D"
-                            + SAUCE_USERNAME_PROP + "=<username> or by "
-                            + SAUCE_USERNAME_ENV + " environment variable.");
-        }
-        if (accessKey == null) {
-            logger.log(Level.FINE,
-                    "You can give a Sauce Labs access key using -D"
-                            + SAUCE_ACCESS_KEY_PROP + "=<accesskey> or by "
-                            + SAUCE_ACCESS_KEY_ENV + " environment variable.");
-        }
-        if (username != null && accessKey != null) {
-            return "http://" + username + ":" + accessKey
-                    + "@localhost:4445/wd/hub";
+        if (SauceLabsIntegration.isConfiguredForSauceLabs()) {
+            return SauceLabsIntegration.getHubUrl();
         } else {
             return "http://" + getHubHostname() + ":4444/wd/hub";
         }
@@ -161,8 +142,7 @@ public class ParallelTest extends TestBenchTestCase {
         } else if (Parameters.isLocalWebDriverUsed()) {
             WebDriver driver = driverConfiguration.setupLocalDriver();
             setDriver(driver);
-        } else if (isConfiguredForSauceLabs()) {
-            checkSauceConnectExists();
+        } else if (SauceLabsIntegration.isConfiguredForSauceLabs()) {
             WebDriver driver = driverConfiguration
                     .setupRemoteDriver(getHubURL());
             setDriver(driver);
@@ -228,27 +208,8 @@ public class ParallelTest extends TestBenchTestCase {
             DesiredCapabilities desiredCapabilities) {
         String sauceOptions = System.getProperty("sauce.options");
         if (sauceOptions != null) {
-            final String tunnelManagerClassName = "com.saucelabs.ci.sauceconnect.AbstractSauceTunnelManager";
-            try {
-                Class<?> tunnelManager = ParallelTest.class.getClassLoader()
-                        .loadClass(tunnelManagerClassName);
-                Method getTunnelIdentifier = tunnelManager.getDeclaredMethod(
-                        "getTunnelIdentifier", String.class, String.class);
-                String tunnelId = (String) getTunnelIdentifier.invoke(null,
-                        sauceOptions, null);
-                if (tunnelId != null) {
-                    desiredCapabilities.setCapability("tunnelIdentifier",
-                            tunnelId);
-                }
-            } catch (ClassNotFoundException e) {
-                logger.log(Level.WARNING, "Sauce options defined, but "
-                        + tunnelManagerClassName
-                        + " not found. Are you missing a Sauce Labs dependency?");
-            } catch (Exception e) {
-                logger.log(Level.WARNING,
-                        "Sauce options defined, but failed to get tunnel identifier.");
-
-            }
+            SauceLabsIntegration.setDesiredCapabilities(desiredCapabilities,
+                    sauceOptions);
         }
         driverConfiguration.setDesiredCapabilities(desiredCapabilities);
     }
@@ -282,34 +243,5 @@ public class ParallelTest extends TestBenchTestCase {
      */
     protected DesiredCapabilities getDesiredCapabilities() {
         return driverConfiguration.getDesiredCapabilities();
-    }
-
-    protected boolean isConfiguredForSauceLabs() {
-        return getSauceUser() != null && getSauceAccessKey() != null;
-    }
-
-    protected String getSauceUser() {
-        return getSystemPropertyOrEnv(SAUCE_USERNAME_PROP, SAUCE_USERNAME_ENV);
-    }
-
-    protected String getSauceAccessKey() {
-        return getSystemPropertyOrEnv(SAUCE_ACCESS_KEY_PROP,
-                SAUCE_ACCESS_KEY_ENV);
-    }
-
-    private String getSystemPropertyOrEnv(String propertyKey, String envName) {
-        String env = System.getenv(envName);
-        String prop = System.getProperty(propertyKey);
-        return (prop != null) ? prop : env;
-    }
-
-    private void checkSauceConnectExists() {
-        final String klass = "com.saucelabs.ci.sauceconnect.SauceTunnelManager";
-        try {
-            ParallelTest.class.getClassLoader().loadClass(klass);
-        } catch (ClassNotFoundException e) {
-            logger.warning(
-                    "Tests are configured for Sauce Labs, but ci-sauce dependency seems to be missing.");
-        }
     }
 }

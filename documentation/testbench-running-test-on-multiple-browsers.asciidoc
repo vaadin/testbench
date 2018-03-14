@@ -51,22 +51,11 @@ You can handle creation and destruction of the webdriver manually also when runn
 For using Sauce Labs you will need:
 
 1. Provide valid Sauce Labs credentials as a system property `sauce.user` and `sauce.sauceAccessKey` or environment variables `SAUCE_USERNAME` and `SAUCE_ACCESS_KEY`
-2. Add `ci-sauce` Maven dependency to your pom.xml
-3. Configure pom.xml to have `sauce-connect-plugin` open a tunnel with a tunnel identifier to Sauce Labs test grid
-4. Write your tests as described in <<testbench.grid.test-remote>>
+2. Configure pom.xml to have `sauce-connect-plugin` open a tunnel with a tunnel identifier to Sauce Labs test grid
+3. Write your tests as described in <<testbench.grid.test-remote>>
 
 After you have your Sauce Labs credentials you can pass them to your build e.g. `mvn verify -Dsauce.user=<yourusername> -Dsauce.sauceAccessKey=<youraccesskey>`.
 
-The dependency for `ci-sauce` is
-[source,xml]
-----
-<dependency>
-    <groupId>com.saucelabs</groupId>
-    <artifactId>ci-sauce</artifactId>
-    <version>1.132</version>
-    <scope>test</scope>
-</dependency>
-----
 
 Sauce Connect plugin opens a tunnel before the integration tests are run and closes it after they are run.
 The plugin needs an identifier for the tunnel. The identifier is passed with `--tunnel-identifier` attribute in `sauce.options` system property e.g. in pom.xml `<sauce.options>--tunnel-identifier ${maven.build.timestamp}</sauce.options>`.
