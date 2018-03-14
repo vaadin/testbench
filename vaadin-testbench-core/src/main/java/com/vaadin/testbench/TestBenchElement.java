@@ -255,7 +255,8 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
     @Override
     public boolean isEnabled() {
         waitForVaadin();
-        return !hasClassName("v-disabled") && wrappedElement.isEnabled();
+        return !hasClassName("v-disabled") && !hasAttribute("disabled")
+                && wrappedElement.isEnabled();
     }
 
     @Override

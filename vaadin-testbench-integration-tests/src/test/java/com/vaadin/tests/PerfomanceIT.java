@@ -1,7 +1,6 @@
 package com.vaadin.tests;
 
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.vaadin.flow.component.Component;
@@ -16,7 +15,6 @@ public class PerfomanceIT extends AbstractTB6Test {
     }
 
     @Test
-    @Ignore("Profiling info not available in production mode until beta3")
     public void serverTime() {
         openTestURL();
         $(NativeButtonElement.class).first().click();
@@ -29,7 +27,6 @@ public class PerfomanceIT extends AbstractTB6Test {
     }
 
     @Test
-    @Ignore("Profiling info not available in production mode until beta3")
     public void renderingTime() {
         openTestURL();
         long initialRendering = testBench().timeSpentRenderingLastRequest();
