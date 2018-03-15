@@ -60,6 +60,15 @@ public class ElementQueryIT extends AbstractTB6Test {
     }
 
     @Test
+    public void findAllShadowDomElements() throws Exception {
+        openTestURL();
+
+        PolymerTemplateViewElement view = $(PolymerTemplateViewElement.class)
+                .waitForFirst();
+        Assert.assertEquals(10, view.$(NativeButtonElement.class).all().size());
+    }
+
+    @Test
     public void searchShadowDomBeforeLight() throws Exception {
         openTestURL();
 
