@@ -24,6 +24,7 @@
         <buildtools.directory>build-tools</buildtools.directory>
 
         <sauce.options>--tunnel-identifier ${maven.build.timestamp}</sauce.options>
+        <maven.build.timestamp.format>yyyy-MM-dd'T'HHmmss.SSSZ</maven.build.timestamp.format>
     </properties>
     <repositories>
         <repository>
