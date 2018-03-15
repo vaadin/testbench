@@ -19,11 +19,11 @@ public class PerfomanceIT extends AbstractTB6Test {
         openTestURL();
         $(NativeButtonElement.class).first().click();
 
-        Assert.assertEquals(1000.0, testBench().timeSpentServicingLastRequest(),
-                100.0);
+        Assert.assertEquals(1250.0, testBench().timeSpentServicingLastRequest(),
+                250.0);
         $(NativeButtonElement.class).first().click();
-        Assert.assertEquals(2000.0,
-                testBench().totalTimeSpentServicingRequests(), 200.0);
+        Assert.assertEquals(2500, testBench().totalTimeSpentServicingRequests(),
+                500.0);
     }
 
     @Test
