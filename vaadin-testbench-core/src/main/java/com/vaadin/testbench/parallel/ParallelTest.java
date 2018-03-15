@@ -205,11 +205,7 @@ public class ParallelTest extends TestBenchTestCase {
      */
     public void setDesiredCapabilities(
             DesiredCapabilities desiredCapabilities) {
-        String sauceOptions = System.getProperty("sauce.options");
-        if (sauceOptions != null) {
-            SauceLabsIntegration.setDesiredCapabilities(desiredCapabilities,
-                    sauceOptions);
-        }
+        SauceLabsIntegration.setDesiredCapabilities(desiredCapabilities);
         driverConfiguration.setDesiredCapabilities(desiredCapabilities);
     }
 

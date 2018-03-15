@@ -22,7 +22,7 @@ public class SauceLabsIntegration {
 
     /**
      * Sets needed desired capabilities, mainly tunnel identifier, based on the
-     * given sauce.options String
+     * given sauce.options String.
      * 
      * @param desiredCapabilities
      *            DesiredCapabilities for RemoteWebDriver. Must not be null.
@@ -30,8 +30,9 @@ public class SauceLabsIntegration {
      *            options to be parsed and added as capabilities to the given
      *            DesiredCapabilities object
      */
-    static void setDesiredCapabilities(DesiredCapabilities desiredCapabilities,
-            String sauceOptions) {
+    static void setDesiredCapabilities(
+            DesiredCapabilities desiredCapabilities) {
+        String sauceOptions = System.getProperty("sauce.options");
         if (sauceOptions == null || sauceOptions.isEmpty()) {
             logger.log(Level.WARNING,
                     "Null or empty sauce.options given. Ignoring.");
