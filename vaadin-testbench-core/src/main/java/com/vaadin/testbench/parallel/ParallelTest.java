@@ -194,7 +194,7 @@ public class ParallelTest extends TestBenchTestCase {
      *         method was found
      */
     public static List<DesiredCapabilities> getDefaultCapabilities() {
-        return Collections.singletonList(BrowserUtil.firefox());
+        return Collections.singletonList(BrowserUtil.chrome());
     }
 
     /**
@@ -214,25 +214,12 @@ public class ParallelTest extends TestBenchTestCase {
     }
 
     @BrowserConfiguration
-    public List<DesiredCapabilities> getDefaultBrowserConfiguration() {
-        String browsers = System.getenv("TESTBENCH_BROWSERS");
-        List<DesiredCapabilities> finalList = new ArrayList<>();
-        if (browsers != null) {
-            for (String browserStr : browsers.split(",")) {
-                String[] browserStrSplit = browserStr.split("-");
-                Browser browser = Browser.valueOf(
-                        browserStrSplit[0].toUpperCase(Locale.ENGLISH).trim());
-                DesiredCapabilities capabilities = browser
-                        .getDesiredCapabilities();
-                if (browserStrSplit.length > 1) {
-                    capabilities.setVersion(browserStrSplit[1].trim());
-                }
-                finalList.add(capabilities);
-            }
+    List<DesiredCapabilities> getBrowserConfigurationFromParameterOrDefault() {
+        if (Parameters.getGridBrowsers().isEmpty()) {
+            return getDefaultCapabilities();
         } else {
-            finalList.add(BrowserUtil.chrome());
+            return Parameters.getGridBrowsers();
         }
-        return finalList;
     }
 
     /**
