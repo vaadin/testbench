@@ -16,7 +16,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <selenium.version>3.9.1</selenium.version>
+        <selenium.version>3.11.0</selenium.version>
     </properties>
 
     <licenses>
