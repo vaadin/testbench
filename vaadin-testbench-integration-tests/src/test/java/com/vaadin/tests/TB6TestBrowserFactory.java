@@ -34,7 +34,7 @@ public class TB6TestBrowserFactory extends DefaultBrowserFactory {
     private static Map<Browser, String> defaultBrowserVersion = new HashMap<>();
     static {
         defaultBrowserVersion.put(Browser.CHROME, "");
-        defaultBrowserVersion.put(Browser.SAFARI, "7");
+        defaultBrowserVersion.put(Browser.SAFARI, "11");
         defaultBrowserVersion.put(Browser.IE11, "11");
         defaultBrowserVersion.put(Browser.FIREFOX, "");
     }
