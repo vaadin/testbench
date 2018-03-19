@@ -12,8 +12,12 @@
  */
 package com.vaadin.testbench.parallel;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -33,6 +37,12 @@ import com.vaadin.testbench.parallel.setup.SetupDriver;
  * Unit tests should extend {@link ParallelTest} if they are to be run in
  * several browser configurations. For each browser configuration, a
  * {@link WebDriver} is properly created with the desired configuration.
+ * <p>
+ * You can configure your tests to be run in Sauce Labs. See details at
+ * <a href="https://wiki.saucelabs.com">https://wiki.saucelabs.com</a> and
+ * <a href=
+ * "https://github.com/vaadin/testbench-demo">https://github.com/vaadin/testbench-demo</a>.
+ * </p>
  */
 @RunWith(ParallelRunner.class)
 public class ParallelTest extends TestBenchTestCase {
@@ -40,6 +50,9 @@ public class ParallelTest extends TestBenchTestCase {
     @Rule
     public ScreenshotOnFailureRule screenshotOnFailure = new ScreenshotOnFailureRule(
             this, true);
+
+    private static final Logger logger = Logger
+            .getLogger(ParallelTest.class.getName());
 
     private SetupDriver driverConfiguration = new SetupDriver();
 
@@ -52,13 +65,22 @@ public class ParallelTest extends TestBenchTestCase {
      * This method uses {@link #getHubHostname()} to build the complete address
      * of the Hub. Override in order to define a different hub address.<br>
      * </p>
+     * <p>
+     * You can provide sauce.user and sauce.sauceAccessKey system properties or
+     * SAUCE_USERNAME and SAUCE_ACCESS_KEY environment variables to run the
+     * tests in Sauce Labs. If both system property and environment variable is
+     * defined, system property is prioritised.
+     * </p>
      *
      * @return the complete URL of the hub where the tests will be run on. Used
      *         by {@link #setup()}, for the creation of the {@link WebDriver}.
      */
     protected String getHubURL() {
-        return "http://" + getHubHostname() + ":4444/wd/hub";
-
+        if (SauceLabsIntegration.isConfiguredForSauceLabs()) {
+            return SauceLabsIntegration.getHubUrl();
+        } else {
+            return "http://" + getHubHostname() + ":4444/wd/hub";
+        }
     }
 
     /**
@@ -119,15 +141,22 @@ public class ParallelTest extends TestBenchTestCase {
         } else if (Parameters.isLocalWebDriverUsed()) {
             WebDriver driver = driverConfiguration.setupLocalDriver();
             setDriver(driver);
+        } else if (SauceLabsIntegration.isConfiguredForSauceLabs()) {
+            WebDriver driver = driverConfiguration
+                    .setupRemoteDriver(getHubURL());
+            setDriver(driver);
+
         } else if (getRunOnHub(getClass()) != null
                 || Parameters.getHubHostname() != null) {
             WebDriver driver = driverConfiguration
                     .setupRemoteDriver(getHubURL());
             setDriver(driver);
         } else {
-            // can't find any configuration to setup WebDriver
-            throw new IllegalArgumentException(
-                    "Can't instantiate WebDriver: No configuration found. Test case was not annotated with @RunLocally annotation nor @RunOnHub annotation, and system variable 'useLocalWebDriver' was not found or not set to true.");
+            logger.log(Level.INFO,
+                    "Did not find a configuration to run locally, on Sauce Labs or on other test grid. Falling back to running locally on Chrome.");
+            WebDriver driver = driverConfiguration
+                    .setupLocalDriver(Browser.CHROME);
+            setDriver(driver);
         }
     }
 
@@ -165,7 +194,7 @@ public class ParallelTest extends TestBenchTestCase {
      *         method was found
      */
     public static List<DesiredCapabilities> getDefaultCapabilities() {
-        return Collections.singletonList(BrowserUtil.firefox());
+        return Collections.singletonList(BrowserUtil.chrome());
     }
 
     /**
@@ -176,7 +205,17 @@ public class ParallelTest extends TestBenchTestCase {
      */
     public void setDesiredCapabilities(
             DesiredCapabilities desiredCapabilities) {
+        SauceLabsIntegration.setDesiredCapabilities(desiredCapabilities);
         driverConfiguration.setDesiredCapabilities(desiredCapabilities);
+    }
+
+    @BrowserConfiguration
+    List<DesiredCapabilities> getBrowserConfigurationFromParameterOrDefault() {
+        if (Parameters.getGridBrowsers().isEmpty()) {
+            return getDefaultCapabilities();
+        } else {
+            return Parameters.getGridBrowsers();
+        }
     }
 
     /**
