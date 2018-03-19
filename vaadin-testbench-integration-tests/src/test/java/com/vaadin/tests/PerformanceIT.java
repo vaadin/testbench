@@ -7,7 +7,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.testUI.PerformanceView;
 import com.vaadin.tests.elements.NativeButtonElement;
 
-public class PerfomanceIT extends AbstractTB6Test {
+public class PerformanceIT extends AbstractTB6Test {
 
     @Override
     protected Class<? extends Component> getTestView() {
@@ -38,9 +38,9 @@ public class PerfomanceIT extends AbstractTB6Test {
         $(NativeButtonElement.class).first().click();
         $(NativeButtonElement.class).first().click();
 
-		// Assuming rendering three poll responses is done in 50ms
-		Assert.assertTrue("totalTimeSpentRendering() > initialRendering",
-				testBench().totalTimeSpentRendering() > initialRendering);
+        // Assuming rendering three poll responses is done in 50ms
+        Assert.assertTrue("totalTimeSpentRendering() > initialRendering",
+                testBench().totalTimeSpentRendering() > initialRendering);
         Assert.assertEquals(initialRendering,
                 testBench().totalTimeSpentRendering(), 50);
     }
