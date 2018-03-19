@@ -26,11 +26,9 @@ import java.util.Properties;
 
 import org.openqa.selenium.remote.DesiredCapabilities;
 
-import com.saucelabs.ci.sauceconnect.AbstractSauceTunnelManager;
 import com.vaadin.flow.component.Component;
 import com.vaadin.testbench.annotations.BrowserConfiguration;
 import com.vaadin.testbench.annotations.BrowserFactory;
-import com.vaadin.testbench.annotations.RunOnHub;
 import com.vaadin.testbench.parallel.BrowserUtil;
 import com.vaadin.testbench.parallel.ParallelTest;
 
@@ -50,7 +48,6 @@ import com.vaadin.testbench.parallel.ParallelTest;
  *
  * @author Vaadin Ltd
  */
-@RunOnHub
 @BrowserFactory(TB6TestBrowserFactory.class)
 public abstract class AbstractTB6Test extends ParallelTest {
 
@@ -86,36 +83,6 @@ public abstract class AbstractTB6Test extends ParallelTest {
     public List<DesiredCapabilities> getBrowserConfiguration() {
         return Arrays.asList(BrowserUtil.ie11(), BrowserUtil.firefox(),
                 BrowserUtil.chrome());
-    }
-
-    @Override
-    protected String getHubURL() {
-        String username = System.getProperty("sauce.user");
-        String accessKey = System.getProperty("sauce.sauceAccessKey");
-
-        if (username == null) {
-            throw new IllegalArgumentException(
-                    "You must give a Sauce Labs user name using -Dsauce.user=<username> "
-                            + "or by adding sauce.user=<username> to local.properties");
-        }
-        if (accessKey == null) {
-            throw new IllegalArgumentException(
-                    "You must give a Sauce Labs access key using -Dsauce.sauceAccessKey=<accesskey> "
-                            + "or by adding sauce.sauceAccessKey=<accesskey> to local.properties");
-        }
-        return "http://" + username + ":" + accessKey
-                + "@localhost:4445/wd/hub";
-    }
-
-    @Override
-    public void setDesiredCapabilities(
-            DesiredCapabilities desiredCapabilities) {
-        String tunnelId = AbstractSauceTunnelManager
-                .getTunnelIdentifier(System.getProperty("sauce.options"), null);
-        if (tunnelId != null) {
-            desiredCapabilities.setCapability("tunnelIdentifier", tunnelId);
-        }
-        super.setDesiredCapabilities(desiredCapabilities);
     }
 
     /**

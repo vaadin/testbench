@@ -12,8 +12,15 @@
  */
 package com.vaadin.testbench;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
+import org.openqa.selenium.remote.DesiredCapabilities;
+
 import com.vaadin.testbench.annotations.RunLocally;
 import com.vaadin.testbench.annotations.RunOnHub;
+import com.vaadin.testbench.parallel.Browser;
 
 public class Parameters {
     private static boolean isDebug;
@@ -26,6 +33,7 @@ public class Parameters {
     private static int testsInParallel;
     private static int testSuitesInParallel;
     private static int maxAttempts;
+    private static String testbenchGridBrowsers;
     static {
         isDebug = getSystemPropertyBoolean("debug", false);
 
@@ -50,6 +58,7 @@ public class Parameters {
         } else {
             testsInParallel = 50;
         }
+        testbenchGridBrowsers = System.getenv("TESTBENCH_GRID_BROWSERS");
     }
 
     /**
@@ -124,6 +133,13 @@ public class Parameters {
 
     private static String getQualifiedParameter(String unqualifiedName) {
         return Parameters.class.getName() + "." + unqualifiedName;
+    }
+
+    private static String getSystemPropertyOrEnv(String propertyKey,
+            String envName) {
+        String env = System.getenv(envName);
+        String prop = System.getProperty(propertyKey);
+        return (prop != null) ? prop : env;
     }
 
     /**
@@ -437,5 +453,52 @@ public class Parameters {
      */
     public static void setMaxAttempts(int maxAttempts) {
         Parameters.maxAttempts = maxAttempts;
+    }
+
+    /**
+     * 
+     * @return The configuration string of browsers (and their versions) as
+     *         a comma separated list. Defaults to null string.
+     */
+    public static String getGridBrowsersString() {
+        return testbenchGridBrowsers;
+    }
+
+    /**
+     * Parses the grid browsers string and returns a new List of
+     * DesiredCapabilities
+     * 
+     * @return a list of DesiredCapabilities based on getGridBrowsersString.
+     *         Empty list if nothing configured.
+     */
+    public static List<DesiredCapabilities> getGridBrowsers() {
+        String browsers = testbenchGridBrowsers;
+        List<DesiredCapabilities> finalList = new ArrayList<>();
+        if (browsers != null) {
+            for (String browserStr : browsers.split(",")) {
+                String[] browserStrSplit = browserStr.split("-");
+                Browser browser = Browser.valueOf(
+                        browserStrSplit[0].toUpperCase(Locale.ENGLISH).trim());
+                DesiredCapabilities capabilities = browser
+                        .getDesiredCapabilities();
+                if (browserStrSplit.length > 1) {
+                    capabilities.setVersion(browserStrSplit[1].trim());
+                }
+                finalList.add(capabilities);
+            }
+        }
+        return finalList;
+    }
+
+    /**
+     * Sets the default browsers used in test grid if not overridden in a
+     * ParallelTest
+     * 
+     * @param browsers
+     *            comma separated list of browsers e.g.
+     *            "ie11,chrome,safari-9,firefox-53"
+     */
+    public static void setGridBrowsers(String browsers) {
+        testbenchGridBrowsers = browsers;
     }
 }
