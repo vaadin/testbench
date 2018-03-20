@@ -1,3 +1,4 @@
+Manifest-Version: 1.0
 Vaadin-Package-Version: 1
 Implementation-Vendor: ${project.organization.name}
 Implementation-Title: Vaadin TestBench
