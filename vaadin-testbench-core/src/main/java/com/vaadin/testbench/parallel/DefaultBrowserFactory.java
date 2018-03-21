@@ -50,21 +50,21 @@ public class DefaultBrowserFactory implements TestBenchBrowserFactory {
         switch (browser) {
         case CHROME:
             desiredCapabilities = new ChromeOptions();
-            desiredCapabilities.setCapability(CapabilityType.BROWSER_VERSION,
+            desiredCapabilities.setCapability(CapabilityType.VERSION,
                     version);
             desiredCapabilities.setCapability(CapabilityType.PLATFORM_NAME,
                     platform);
             break;
         case SAFARI:
             desiredCapabilities = new SafariOptions();
-            desiredCapabilities.setCapability(CapabilityType.BROWSER_VERSION,
+            desiredCapabilities.setCapability(CapabilityType.VERSION,
                     version);
             desiredCapabilities.setCapability(CapabilityType.PLATFORM_NAME,
                     platform);
             break;
         case IE11:
             desiredCapabilities = new InternetExplorerOptions();
-            desiredCapabilities.setCapability(CapabilityType.BROWSER_VERSION,
+            desiredCapabilities.setCapability(CapabilityType.VERSION,
                     "11");
             desiredCapabilities.setCapability(CapabilityType.PLATFORM_NAME,
                     platform);
@@ -75,7 +75,7 @@ public class DefaultBrowserFactory implements TestBenchBrowserFactory {
             break;
         case EDGE:
             desiredCapabilities = new EdgeOptions();
-            desiredCapabilities.setCapability(CapabilityType.BROWSER_VERSION,
+            desiredCapabilities.setCapability(CapabilityType.VERSION,
                     version);
             desiredCapabilities.setCapability(CapabilityType.PLATFORM_NAME,
                     platform);
@@ -83,7 +83,7 @@ public class DefaultBrowserFactory implements TestBenchBrowserFactory {
         case FIREFOX:
         default:
             desiredCapabilities = new FirefoxOptions();
-            desiredCapabilities.setCapability(CapabilityType.BROWSER_VERSION,
+            desiredCapabilities.setCapability(CapabilityType.VERSION,
                     version);
             desiredCapabilities.setCapability(CapabilityType.PLATFORM_NAME,
                     platform);
