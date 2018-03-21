@@ -58,7 +58,8 @@ public class Parameters {
         } else {
             testsInParallel = 50;
         }
-        testbenchGridBrowsers = System.getenv("TESTBENCH_GRID_BROWSERS");
+        testbenchGridBrowsers = getSystemPropertyString("gridBrowsers",
+                System.getenv("TESTBENCH_GRID_BROWSERS"));
     }
 
     /**
