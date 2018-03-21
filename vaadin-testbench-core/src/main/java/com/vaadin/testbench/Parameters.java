@@ -58,7 +58,8 @@ public class Parameters {
         } else {
             testsInParallel = 50;
         }
-        testbenchGridBrowsers = System.getenv("TESTBENCH_GRID_BROWSERS");
+        testbenchGridBrowsers = getSystemPropertyString("gridBrowsers",
+                System.getenv("TESTBENCH_GRID_BROWSERS"));
     }
 
     /**
@@ -474,7 +475,7 @@ public class Parameters {
     public static List<DesiredCapabilities> getGridBrowsers() {
         String browsers = testbenchGridBrowsers;
         List<DesiredCapabilities> finalList = new ArrayList<>();
-        if (browsers != null) {
+        if (browsers != null && !browsers.isEmpty()) {
             for (String browserStr : browsers.split(",")) {
                 String[] browserStrSplit = browserStr.split("-");
                 Browser browser = Browser.valueOf(
