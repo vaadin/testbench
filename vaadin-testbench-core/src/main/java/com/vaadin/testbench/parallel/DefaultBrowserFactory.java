@@ -12,8 +12,15 @@
  */
 package com.vaadin.testbench.parallel;
 
+import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.Platform;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.edge.EdgeOptions;
+import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.ie.InternetExplorerOptions;
+import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.safari.SafariOptions;
 
 import com.vaadin.testbench.annotations.BrowserFactory;
 
@@ -38,39 +45,50 @@ public class DefaultBrowserFactory implements TestBenchBrowserFactory {
     @Override
     public DesiredCapabilities create(Browser browser, String version,
             Platform platform) {
-        DesiredCapabilities desiredCapabilities;
+        MutableCapabilities desiredCapabilities;
 
         switch (browser) {
         case CHROME:
-            desiredCapabilities = DesiredCapabilities.chrome();
-            desiredCapabilities.setVersion(version);
-            desiredCapabilities.setPlatform(platform);
+            desiredCapabilities = new ChromeOptions();
+            desiredCapabilities.setCapability(CapabilityType.BROWSER_VERSION,
+                    version);
+            desiredCapabilities.setCapability(CapabilityType.PLATFORM_NAME,
+                    platform);
             break;
         case SAFARI:
-            desiredCapabilities = DesiredCapabilities.safari();
-            desiredCapabilities.setVersion(version);
-            desiredCapabilities.setPlatform(platform);
+            desiredCapabilities = new SafariOptions();
+            desiredCapabilities.setCapability(CapabilityType.BROWSER_VERSION,
+                    version);
+            desiredCapabilities.setCapability(CapabilityType.PLATFORM_NAME,
+                    platform);
             break;
         case IE11:
-            desiredCapabilities = DesiredCapabilities.internetExplorer();
-            desiredCapabilities.setVersion("11");
-            desiredCapabilities.setPlatform(platform);
+            desiredCapabilities = new InternetExplorerOptions();
+            desiredCapabilities.setCapability(CapabilityType.BROWSER_VERSION,
+                    "11");
+            desiredCapabilities.setCapability(CapabilityType.PLATFORM_NAME,
+                    platform);
             // There are 2 capabilities ie.ensureCleanSession and
             // ensureCleanSession in Selenium
             // IE 11 uses ie.ensureCleanSession
             desiredCapabilities.setCapability("ie.ensureCleanSession", true);
             break;
         case EDGE:
-            desiredCapabilities = DesiredCapabilities.edge();
-            desiredCapabilities.setPlatform(platform);
+            desiredCapabilities = new EdgeOptions();
+            desiredCapabilities.setCapability(CapabilityType.BROWSER_VERSION,
+                    version);
+            desiredCapabilities.setCapability(CapabilityType.PLATFORM_NAME,
+                    platform);
             break;
         case FIREFOX:
         default:
-            desiredCapabilities = DesiredCapabilities.firefox();
-            desiredCapabilities.setVersion(version);
-            desiredCapabilities.setPlatform(platform);
+            desiredCapabilities = new FirefoxOptions();
+            desiredCapabilities.setCapability(CapabilityType.BROWSER_VERSION,
+                    version);
+            desiredCapabilities.setCapability(CapabilityType.PLATFORM_NAME,
+                    platform);
         }
 
-        return desiredCapabilities;
+        return new DesiredCapabilities(desiredCapabilities);
     }
 }
