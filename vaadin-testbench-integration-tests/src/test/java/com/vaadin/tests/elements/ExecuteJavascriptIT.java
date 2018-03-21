@@ -16,7 +16,7 @@ public class ExecuteJavascriptIT extends AbstractTB6Test {
     }
 
     @Test
-    public void elementCompareScreen() throws Exception {
+    public void getProperty() throws Exception {
         openTestURL();
 
         TestBenchElement button = $(NativeButtonElement.class).first();
