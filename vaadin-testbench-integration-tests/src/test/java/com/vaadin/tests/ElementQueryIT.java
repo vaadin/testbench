@@ -140,4 +140,13 @@ public class ElementQueryIT extends AbstractTB6Test {
         Assert.assertEquals(10, allButtons.size());
     }
 
+    @Test
+    public void getSetElementsProperty() {
+        openTestURL();
+        PolymerTemplateViewElement template = $(
+                PolymerTemplateViewElement.class).first();
+
+        Assert.assertEquals(6, template.getPropertyElements("children").size());
+    }
+
 }

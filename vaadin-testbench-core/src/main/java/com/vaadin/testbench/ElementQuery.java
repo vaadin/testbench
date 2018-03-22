@@ -348,19 +348,6 @@ public class ElementQuery<T extends TestBenchElement> {
         TestBenchElement elementContext;
         JavascriptExecutor executor;
 
-        // Workaround to avoid "cyclic object value" when returning
-        // an element list (webdrives use JSON.stringify([element1, ...,
-        // elementN]) internally)
-        String cyclicResultsWorkaround = ""//
-                + "result.forEach(function(e) {" //
-                + "  Object.keys(e).filter(function(k) { return e.hasOwnProperty(k) && ( k.indexOf('__') == 0 || k == '$' ) && e[k];})" //
-                + "  .forEach(function(key) " //
-                + "     {" //
-                + "       e[key].toJSON = function(){return;}" //
-                + "     }" //
-                + "   );" //
-                + "});";
-        ;
         if (getContext() instanceof TestBenchElement) {
             script.append("var result = [];" //
                     + "if (arguments[0].shadowRoot) {" //
@@ -369,7 +356,7 @@ public class ElementQuery<T extends TestBenchElement> {
                     + "}" //
                     + "var light = arguments[0].querySelectorAll(arguments[1]+arguments[2]);" //
                     + "result = result.concat(Array.prototype.slice.call(light));" //
-                    + cyclicResultsWorkaround //
+                    + CyclicObjectWorkaround.get("result") //
                     + "return result" //
             );
             elementContext = (TestBenchElement) getContext();
@@ -379,7 +366,7 @@ public class ElementQuery<T extends TestBenchElement> {
             script.append("var result = [];" //
                     + "const queryResult = document.querySelectorAll(arguments[1]+arguments[2]);"
                     + "result = result.concat(Array.prototype.slice.call(queryResult));"
-                    + cyclicResultsWorkaround //
+                    + CyclicObjectWorkaround.get("result") //
                     + "return result");
             elementContext = null;
             executor = (JavascriptExecutor) getContext();

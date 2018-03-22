@@ -646,7 +646,9 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
                 return Double.parseDouble(str);
             }
         }
-        return executeScript(script + "return value;", jsParameters);
+        return executeScript(
+                script + CyclicObjectWorkaround.get("value") + "return value;",
+                jsParameters);
     }
 
     private static String createPropertyChain(String[] propertyNames) {
