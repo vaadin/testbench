@@ -1,4 +1,4 @@
-if (jsObject.forEach) {
+if (jsObject && jsObject.forEach) {
 	jsObject.forEach(function(e) {
 		Object.keys(e).filter(
 			function(k) {
