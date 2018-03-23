@@ -1,11 +1,11 @@
 package com.vaadin.testbench.parallel;
 
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.openqa.selenium.remote.DesiredCapabilities;
-
-import com.saucelabs.ci.sauceconnect.AbstractSauceTunnelManager;
 
 /**
  * Integration methods for Sauce Labs testing used by {@link ParallelTest}
@@ -38,11 +38,35 @@ public class SauceLabsIntegration {
                     "Null or empty sauce.options given. Ignoring.");
             return;
         }
-        String tunnelId = AbstractSauceTunnelManager
-                .getTunnelIdentifier(sauceOptions, null);
+        String tunnelId = getTunnelIdentifier(sauceOptions, null);
         if (tunnelId != null) {
             desiredCapabilities.setCapability("tunnelIdentifier", tunnelId);
         }
+    }
+
+    /**
+     * @param options
+     *            the command line options used to launch Sauce Connect
+     * @param defaultValue
+     *            the default value to use for the identifier if none specified
+     *            in the options
+     * @return String representing the tunnel identifier
+     */
+    static String getTunnelIdentifier(String options, String defaultValue) {
+        if (options == null || options.isEmpty()) {
+            return defaultValue;
+        }
+        Iterator<String> tokensIterator = Arrays.asList(options.split(" "))
+                .iterator();
+        while (tokensIterator.hasNext()) {
+            String currentToken = tokensIterator.next();
+            if (tokensIterator.hasNext() && (currentToken.equals("-i")
+                    || currentToken.equals("--tunnel-identifier"))) {
+                // next token is identifier
+                return tokensIterator.next();
+            }
+        }
+        return defaultValue;
     }
 
     /**
