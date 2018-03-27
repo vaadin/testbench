@@ -69,11 +69,9 @@ public class DefaultBrowserFactory implements TestBenchBrowserFactory {
         case FIREFOX:
         default:
             desiredCapabilities = new FirefoxOptions();
-            desiredCapabilities.setCapability(PLATFORM, platform);
         }
         desiredCapabilities.setCapability(CapabilityType.VERSION, version);
-        desiredCapabilities.setCapability(CapabilityType.PLATFORM_NAME,
-                platform);
+        desiredCapabilities.setCapability(PLATFORM, platform);
 
         return new DesiredCapabilities(desiredCapabilities);
     }
