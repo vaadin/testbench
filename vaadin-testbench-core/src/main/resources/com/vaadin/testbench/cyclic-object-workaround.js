@@ -3,7 +3,7 @@ if (jsObject && jsObject.forEach) {
 		Object.keys(e).filter(
 			function(k) {
 				return e.hasOwnProperty(k)
-						&& (k.indexOf('__') == 0 || k == '$') && e[k];
+						&& (k.indexOf('__') == 0 || k == '$' || k == 'X') && e[k];
 		}).forEach(function(key) {
 				e[key].toJSON = function() {
 					return;
