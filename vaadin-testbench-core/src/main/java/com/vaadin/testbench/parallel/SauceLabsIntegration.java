@@ -116,4 +116,13 @@ public class SauceLabsIntegration {
         String prop = System.getProperty(propertyKey);
         return (prop != null) ? prop : env;
     }
+
+    /**
+     * Sauce Labs specific remote webdriver capabilities
+     *
+     */
+    public interface CapabilityType {
+        String NAME = "name";
+
+    }
 }

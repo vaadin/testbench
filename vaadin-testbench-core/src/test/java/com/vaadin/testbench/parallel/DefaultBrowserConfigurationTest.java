@@ -25,9 +25,14 @@ public class DefaultBrowserConfigurationTest {
             List<FrameworkMethod> testMethods = parallelRunner
                     .computeTestMethods();
             Assert.assertEquals(1, testMethods.size());
-            TBMethod method = new TBMethod(testMethods.get(0).getMethod(),
-                    Browser.IE11.getDesiredCapabilities());
-            Assert.assertEquals(method, testMethods.get(0));
+            DesiredCapabilities caps = Browser.IE11.getDesiredCapabilities();
+            TBMethod method = (TBMethod) testMethods.get(0);
+            Assert.assertEquals(caps.getBrowserName(),
+                    method.getCapabilities().getBrowserName());
+            Assert.assertEquals(caps.getVersion(),
+                    method.getCapabilities().getVersion());
+            Assert.assertEquals(caps.getPlatform(),
+                    method.getCapabilities().getPlatform());
         } finally {
             Parameters.setGridBrowsers(oldBrowsers);
         }
@@ -44,13 +49,24 @@ public class DefaultBrowserConfigurationTest {
             List<FrameworkMethod> testMethods = parallelRunner
                     .computeTestMethods();
             Assert.assertEquals(2, testMethods.size());
-            TBMethod method1 = new TBMethod(testMethods.get(0).getMethod(),
-                    Browser.FIREFOX.getDesiredCapabilities());
-            DesiredCapabilities safari9Capabilities = Browser.SAFARI.getDesiredCapabilities();
-            safari9Capabilities.setVersion("9");
-            TBMethod method2 = new TBMethod(testMethods.get(1).getMethod(), safari9Capabilities);
-            Assert.assertEquals(method1, testMethods.get(0));
-            Assert.assertEquals(method2, testMethods.get(1));
+            DesiredCapabilities caps1 = Browser.FIREFOX
+                    .getDesiredCapabilities();
+            TBMethod method1 = (TBMethod) testMethods.get(0);
+            DesiredCapabilities caps2 = Browser.SAFARI.getDesiredCapabilities();
+            caps2.setVersion("9");
+            TBMethod method2 = (TBMethod) testMethods.get(1);
+            Assert.assertEquals(caps1.getBrowserName(),
+                    method1.getCapabilities().getBrowserName());
+            Assert.assertEquals(caps1.getVersion(),
+                    method1.getCapabilities().getVersion());
+            Assert.assertEquals(caps1.getPlatform(),
+                    method1.getCapabilities().getPlatform());
+            Assert.assertEquals(caps2.getBrowserName(),
+                    method2.getCapabilities().getBrowserName());
+            Assert.assertEquals(caps2.getVersion(),
+                    method2.getCapabilities().getVersion());
+            Assert.assertEquals(caps2.getPlatform(),
+                    method2.getCapabilities().getPlatform());
         } finally {
             Parameters.setGridBrowsers(oldBrowsers);
         }
@@ -66,15 +82,21 @@ public class DefaultBrowserConfigurationTest {
             List<FrameworkMethod> testMethods = parallelRunner
                     .computeTestMethods();
             Assert.assertEquals(1, testMethods.size());
-            TBMethod method = new TBMethod(testMethods.get(0).getMethod(),
-                    Browser.CHROME.getDesiredCapabilities());
-            Assert.assertEquals(method, testMethods.get(0));
+            DesiredCapabilities caps = Browser.CHROME.getDesiredCapabilities();
+            TBMethod method = (TBMethod) testMethods.get(0);
+            Assert.assertEquals(caps.getBrowserName(),
+                    method.getCapabilities().getBrowserName());
+            Assert.assertEquals(caps.getVersion(),
+                    method.getCapabilities().getVersion());
+            Assert.assertEquals(caps.getPlatform(),
+                    method.getCapabilities().getPlatform());
         } finally {
             Parameters.setGridBrowsers(oldBrowsers);
         }
     }
 
-    public static class ParallelTestWithBrowserConfiguration extends ParallelTest {
+    public static class ParallelTestWithBrowserConfiguration
+            extends ParallelTest {
 
         public ParallelTestWithBrowserConfiguration() {
         }
@@ -95,7 +117,8 @@ public class DefaultBrowserConfigurationTest {
         }
     }
 
-    public static class ParallelTestWithoutBrowserConfiguration extends ParallelTest {
+    public static class ParallelTestWithoutBrowserConfiguration
+            extends ParallelTest {
         public ParallelTestWithoutBrowserConfiguration() {
         }
 
