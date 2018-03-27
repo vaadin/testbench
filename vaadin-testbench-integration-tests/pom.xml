@@ -12,6 +12,7 @@
 
     <artifactId>vaadin-testbench-integration-tests</artifactId>
     <name>vaadin-testbench-integration-tests</name>
+    <packaging>war</packaging>
 
     <url>http://maven.apache.org</url>
     <properties>
@@ -25,12 +26,9 @@
 
         <sauce.options>--tunnel-identifier ${maven.build.timestamp}</sauce.options>
         <maven.build.timestamp.format>yyyy-MM-dd'T'HHmmss.SSSZ</maven.build.timestamp.format>
+        <failOnMissingWebXml>false</failOnMissingWebXml>
     </properties>
     <repositories>
-        <repository>
-            <id>flow-internal-release</id>
-            <url>https://repo.vaadin.com/nexus/content/repositories/flow</url>
-        </repository>
         <repository>
             <id>vaadin-addons</id>
             <url>https://maven.vaadin.com/vaadin-addons</url>
@@ -46,6 +44,11 @@
             <id>vaadin-addons</id>
             <url>https://maven.vaadin.com/vaadin-addons</url>
         </pluginRepository>
+        <pluginRepository>
+            <id>vaadin-prereleases</id>
+            <name>Vaadin Pre-releases</name>
+            <url>https://maven.vaadin.com/vaadin-prereleases</url>
+        </pluginRepository>
     </pluginRepositories>
     <dependencies>
         <dependency>
@@ -55,9 +58,19 @@
         </dependency>
         <dependency>
             <groupId>com.vaadin</groupId>
+            <artifactId>flow-server-production-mode</artifactId>
+            <version>${flow.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.vaadin</groupId>
             <artifactId>vaadin-testbench-core</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.webjars.bowergithub.polymer</groupId>
+            <artifactId>polymer</artifactId>
+            <version>2.5.0</version>
         </dependency>
     </dependencies>
 
@@ -79,41 +92,17 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>com.github.eirslett</groupId>
-                <artifactId>frontend-maven-plugin</artifactId>
-                <version>1.3</version>
+                <groupId>com.vaadin</groupId>
+                <artifactId>flow-maven-plugin</artifactId>
+                <version>${flow.version}</version>
                 <executions>
                     <execution>
-                        <id>install-node-and-yarn</id>
                         <goals>
-                            <goal>install-node-and-yarn</goal>
-                            <goal>yarn</goal> <!-- runs 'install' by default -->
+                            <goal>copy-production-files</goal>
+                            <goal>package-for-production</goal>
                         </goals>
-                        <configuration>
-                            <nodeVersion>${node.version}</nodeVersion>
-                            <yarnVersion>${yarn.version}</yarnVersion>
-                            <workingDirectory>${buildtools.directory}</workingDirectory>
-                        </configuration>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-clean-plugin</artifactId>
-                <version>3.0.0</version>
-                <configuration>
-                    <filesets>
-                        <fileset>
-                            <directory>src/main/webapp/frontend-es5</directory>
-                        </fileset>
-                        <fileset>
-                            <directory>src/main/webapp/frontend-es6</directory>
-                        </fileset>
-                        <fileset>
-                            <directory>src/main/webapp/frontend/build</directory>
-                        </fileset>
-                    </filesets>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -141,6 +130,40 @@
                     </systemPropertyVariables>
                     <trimStackTrace>false</trimStackTrace>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-maven-plugin</artifactId>
+                <version>${jetty.version}</version>
+                <configuration>
+                    <scanIntervalSeconds>10</scanIntervalSeconds>
+                    <stopKey>foo</stopKey>
+                    <stopPort>9999</stopPort>
+                    <systemProperties>
+                        <systemProperty>
+                            <name>vaadin.requestTiming</name>
+                            <value>true</value>
+                        </systemProperty>
+                    </systemProperties>
+                </configuration>
+                <executions>
+                    <!-- start and stop jetty (running our app) when running 
+                        integration tests -->
+                    <execution>
+                        <id>start-jetty</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>deploy-war</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>stop-jetty</id>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <goal>stop</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>com.saucelabs.maven.plugin</groupId>
@@ -210,57 +233,6 @@
                                 <browsers.include>chrome</browsers.include>
                             </systemPropertyVariables>
                         </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>start-jetty-for-it</id>
-            <activation>
-                <property>
-                    <name>skipTests</name>
-                    <value>!true</value>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.eclipse.jetty</groupId>
-                        <artifactId>jetty-maven-plugin</artifactId>
-                        <version>${jetty.version}</version>
-                        <configuration>
-                            <scanIntervalSeconds>10</scanIntervalSeconds>
-                            <stopKey>foo</stopKey>
-                            <stopPort>9999</stopPort>
-                            <systemProperties>
-                                <systemProperty>
-                                    <name>vaadin.productionMode</name>
-                                    <value></value>
-                                </systemProperty>
-                                <systemProperty>
-                                    <name>vaadin.requestTiming</name>
-                                    <value>true</value>
-                                </systemProperty>
-                            </systemProperties>
-                        </configuration>
-                        <executions>
-                            <!-- start and stop jetty (running our app) when 
-                                running integration tests -->
-                            <execution>
-                                <id>start-jetty</id>
-                                <phase>pre-integration-test</phase>
-                                <goals>
-                                    <goal>start</goal>
-                                </goals>
-                            </execution>
-                            <execution>
-                                <id>stop-jetty</id>
-                                <phase>post-integration-test</phase>
-                                <goals>
-                                    <goal>stop</goal>
-                                </goals>
-                            </execution>
-                        </executions>
                     </plugin>
                 </plugins>
             </build>
