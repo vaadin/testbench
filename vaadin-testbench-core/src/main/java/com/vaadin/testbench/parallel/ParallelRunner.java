@@ -107,9 +107,11 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
                                     testNameSuffixProperty.property()));
                         }
 
-                        methodCapabilities.setCapability(
-                                SauceLabsIntegration.CapabilityType.NAME,
-                                method.getName());
+                        if (SauceLabsIntegration.isConfiguredForSauceLabs()) {
+                            methodCapabilities.setCapability(
+                                    SauceLabsIntegration.CapabilityType.NAME,
+                                    method.getName());
+                        }
                         tests.add(method);
                     }
                 }
