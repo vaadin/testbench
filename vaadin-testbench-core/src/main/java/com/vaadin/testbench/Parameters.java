@@ -136,13 +136,6 @@ public class Parameters {
         return Parameters.class.getName() + "." + unqualifiedName;
     }
 
-    private static String getSystemPropertyOrEnv(String propertyKey,
-            String envName) {
-        String env = System.getenv(envName);
-        String prop = System.getProperty(propertyKey);
-        return (prop != null) ? prop : env;
-    }
-
     /**
      * @return true if debugging info is to be shown
      */

@@ -98,11 +98,19 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
                     tests.add(new IgnoredTestMethod(m.getMethod()));
                 } else {
                     for (DesiredCapabilities capabilities : desiredCapabilities) {
-                        TBMethod method = new TBMethod(m.getMethod(),
+                        DesiredCapabilities methodCapabilities = new DesiredCapabilities(
                                 capabilities);
+                        TBMethod method = new TBMethod(m.getMethod(),
+                                methodCapabilities);
                         if (testNameSuffixProperty != null) {
                             method.setTestNameSuffix("-" + System.getProperty(
                                     testNameSuffixProperty.property()));
+                        }
+
+                        if (SauceLabsIntegration.isConfiguredForSauceLabs()) {
+                            methodCapabilities.setCapability(
+                                    SauceLabsIntegration.CapabilityType.NAME,
+                                    method.getName());
                         }
                         tests.add(method);
                     }
