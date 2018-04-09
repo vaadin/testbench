@@ -1,3 +1,5 @@
+[![Published on vaadin.com/directory](https://img.shields.io/vaadin-directory/status/vaadin-testbench.svg)](https://vaadin.com/directory/component/vaadin-testbench)
+
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/vaadin/testbench?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 # Vaadin TestBench
