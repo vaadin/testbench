@@ -12,6 +12,12 @@
  */
 package com.vaadin.testbench.commands;
 
+import java.util.function.BiFunction;
+
+import org.openqa.selenium.Capabilities;
+
+import com.vaadin.testbench.screenshot.ReferenceNameGenerator;
+
 public interface TestBenchCommands
         extends CanWaitForVaadin, CanCompareScreenshots {
 
@@ -146,4 +152,36 @@ public interface TestBenchCommands
      */
     void resizeViewPortTo(int width, int height)
             throws UnsupportedOperationException;
+
+    /**
+     * Gets the name generator used for screenshot references.
+     *
+     * @return the name generator for screenshot references
+     */
+    public ReferenceNameGenerator getReferenceNameGenerator();
+
+    /**
+     * Sets the name generator used for screenshot references.
+     *
+     * @param nameGenerator
+     *            the name generator for screenshot references
+     */
+    public void setReferenceNameGenerator(ReferenceNameGenerator nameGenerator);
+
+    /**
+     * Sets the name generator used for screenshot references.
+     *
+     * @param nameGenerator
+     *            the name generator for screenshot references
+     */
+    public default void setReferenceNameGenerator(
+            BiFunction<String, Capabilities, String> nameGenerator) {
+        setReferenceNameGenerator(new ReferenceNameGenerator() {
+            @Override
+            public String generateName(String referenceId,
+                    Capabilities browserCapabilities) {
+                return nameGenerator.apply(referenceId, browserCapabilities);
+            }
+        });
+    }
 }

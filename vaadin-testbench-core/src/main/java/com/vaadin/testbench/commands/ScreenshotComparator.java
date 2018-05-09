@@ -174,9 +174,9 @@ public class ScreenshotComparator {
             throws IOException {
         for (int times = 0; times < Parameters
                 .getMaxScreenshotRetries(); times++) {
-            BufferedImage screenshotImage = ImageIO
-                    .read(new ByteArrayInputStream(
-                            takesScreenshot.getScreenshotAs(OutputType.BYTES)));
+            BufferedImage screenshotImage = getScreenshot(
+                    (TakesScreenshot) driver, takesScreenshot,
+                    driver.getCapabilities());
             if (reference == null) {
                 // Store the screenshot in the errors directory and fail the
                 // test
