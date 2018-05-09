@@ -172,11 +172,11 @@ public class ScreenshotComparator {
             String referenceName, ImageComparison imageComparison,
             TakesScreenshot takesScreenshot, HasCapabilities driver)
             throws IOException {
+        Capabilities capabilities = driver.getCapabilities();
         for (int times = 0; times < Parameters
                 .getMaxScreenshotRetries(); times++) {
             BufferedImage screenshotImage = getScreenshot(
-                    (TakesScreenshot) driver, takesScreenshot,
-                    driver.getCapabilities());
+                    (TakesScreenshot) driver, takesScreenshot, capabilities);
             if (reference == null) {
                 // Store the screenshot in the errors directory and fail the
                 // test

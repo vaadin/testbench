@@ -126,7 +126,7 @@ public class TestBenchCommandExecutorTest {
         File referenceFile = ImageLoader.getImageFile(IMG_FOLDER,
                 "cursor-bottom-edge-off.png");
 
-        WebDriver driver = mockScreenshotDriver(1, false);
+        WebDriver driver = mockScreenshotDriver(1, true);
         ImageComparison icMock = createMock(ImageComparison.class);
         expect(
                 icMock.imageEqualToReference(isA(BufferedImage.class),
@@ -150,7 +150,7 @@ public class TestBenchCommandExecutorTest {
             File referenceFile = ImageLoader.getImageFile(IMG_FOLDER,
                     "cursor-bottom-edge-off.png");
 
-            WebDriver driver = mockScreenshotDriver(4, false);
+            WebDriver driver = mockScreenshotDriver(4, true);
             ImageComparison icMock = createMock(ImageComparison.class);
             expect(
                     icMock.imageEqualToReference(isA(BufferedImage.class),
@@ -174,7 +174,7 @@ public class TestBenchCommandExecutorTest {
     public void testCompareScreen_acceptsBufferedImage() throws IOException {
         BufferedImage mockImg = createNiceMock(BufferedImage.class);
 
-        WebDriver driver = mockScreenshotDriver(1, false);
+        WebDriver driver = mockScreenshotDriver(1, true);
         ImageComparison icMock = createMock(ImageComparison.class);
         expect(
                 icMock.imageEqualToReference(isA(BufferedImage.class),
@@ -197,7 +197,7 @@ public class TestBenchCommandExecutorTest {
         try {
             BufferedImage mockImg = createNiceMock(BufferedImage.class);
 
-            WebDriver driver = mockScreenshotDriver(4, false);
+            WebDriver driver = mockScreenshotDriver(4, true);
             ImageComparison icMock = createMock(ImageComparison.class);
             expect(
                     icMock.imageEqualToReference(isA(BufferedImage.class),
