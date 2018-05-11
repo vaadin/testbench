@@ -158,7 +158,7 @@ public interface TestBenchCommands
      *
      * @return the name generator for screenshot references
      */
-    public ReferenceNameGenerator getReferenceNameGenerator();
+    ReferenceNameGenerator getReferenceNameGenerator();
 
     /**
      * Sets the name generator used for screenshot references.
@@ -166,7 +166,7 @@ public interface TestBenchCommands
      * @param nameGenerator
      *            the name generator for screenshot references
      */
-    public void setReferenceNameGenerator(ReferenceNameGenerator nameGenerator);
+    void setReferenceNameGenerator(ReferenceNameGenerator nameGenerator);
 
     /**
      * Sets the name generator used for screenshot references.
@@ -174,7 +174,7 @@ public interface TestBenchCommands
      * @param nameGenerator
      *            the name generator for screenshot references
      */
-    public default void setReferenceNameGenerator(
+    default void setReferenceNameGenerator(
             BiFunction<String, Capabilities, String> nameGenerator) {
         setReferenceNameGenerator(new ReferenceNameGenerator() {
             @Override
