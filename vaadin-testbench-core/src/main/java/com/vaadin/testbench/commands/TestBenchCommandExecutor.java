@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -49,7 +50,7 @@ public class TestBenchCommandExecutor
 
     private final WebDriver actualDriver;
     private final ImageComparison imageComparison;
-    private final ReferenceNameGenerator referenceNameGenerator;
+    private ReferenceNameGenerator referenceNameGenerator;
     private boolean enableWaitForVaadin = true;
     private boolean autoScrollIntoView = true;
 
@@ -346,13 +347,15 @@ public class TestBenchCommandExecutor
         assert (ret == null);
     }
 
-    /**
-     * Gets the name generator used for screenshot references.
-     *
-     * @return the name generator for screenshot references
-     */
     public ReferenceNameGenerator getReferenceNameGenerator() {
         return referenceNameGenerator;
+    }
+
+    public void setReferenceNameGenerator(
+            ReferenceNameGenerator nameGenerator) {
+        Objects.requireNonNull(nameGenerator,
+                "ReferenceNameGenerator can not be null");
+        referenceNameGenerator = nameGenerator;
     }
 
     /**
