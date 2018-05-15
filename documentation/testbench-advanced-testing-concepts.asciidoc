@@ -50,7 +50,7 @@ the web page.
 
 
 ```java
-waitUntil(ExpectedConditions.presenceOfElementLocated(By.xpath("//button[@title='Debug message log']"));
+waitUntil(ExpectedConditions.presenceOfElementLocated(By.id("first")));
 ```
 
 The above waits until the specified element is present or times out after
