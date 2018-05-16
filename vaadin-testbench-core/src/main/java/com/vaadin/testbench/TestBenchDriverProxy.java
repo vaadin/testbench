@@ -118,7 +118,7 @@ public class TestBenchDriverProxy extends TestBenchCommandExecutor implements
 
     /**
      * Finds a list of elements by a Vaadin selector string.
-     * 
+     *
      * @param selector
      *            TestBench4 style Vaadin selector.
      * @param context
@@ -148,8 +148,10 @@ public class TestBenchDriverProxy extends TestBenchCommandExecutor implements
         }
 
         String findByVaadinScript = "var clients = window.vaadin.clients;"
+                + "var elements = [];"
                 + "for (client in clients) {" + elementSelectionString
-                + "  if (element) {" + " return element;" + "  }" + "}"
+                + "  if (element) {" + " elements = elements.concat(element);" + "  }" + "}"
+                + "if (elements.length > 0) {" + " return elements;" + "}"
                 + "return null;";
 
         WebDriver driver = ((HasDriver) context).getDriver();
@@ -177,6 +179,7 @@ public class TestBenchDriverProxy extends TestBenchCommandExecutor implements
                 if (context instanceof WebDriver) {
                     Object output = jse.executeScript(findByVaadinScript,
                             selector);
+
                     elements.addAll(extractWebElements(output));
                 } else {
                     Object output = jse.executeScript(findByVaadinScript,
