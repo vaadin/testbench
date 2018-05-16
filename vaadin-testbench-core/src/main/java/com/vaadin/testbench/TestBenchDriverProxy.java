@@ -151,8 +151,7 @@ public class TestBenchDriverProxy extends TestBenchCommandExecutor implements
                 + "var elements = [];"
                 + "for (client in clients) {" + elementSelectionString
                 + "  if (element) {" + " elements = elements.concat(element);" + "  }" + "}"
-                + "if (elements.length > 0) {" + " return elements;" + "}"
-                + "return null;";
+                + "return elements;";
 
         WebDriver driver = ((HasDriver) context).getDriver();
 
