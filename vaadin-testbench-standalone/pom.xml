@@ -14,11 +14,6 @@
     <packaging>jar</packaging>
     <name>Vaadin TestBench Standalone</name>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <selenium.version>3.11.0</selenium.version>
-    </properties>
-
     <licenses>
         <license>
             <name>Commercial Vaadin Add-On License version 3.0</name>

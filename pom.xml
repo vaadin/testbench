@@ -53,8 +53,11 @@
         <snapshot.repository.url>https://oss.sonatype.org/content/repositories/vaadin-snapshots/
         </snapshot.repository.url>
         <Implementation-Version>${project.version}</Implementation-Version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <selenium.version>3.11.0</selenium.version>
     </properties>
     <modules>
+        <module>vaadin-testbench-bom</module>
         <module>vaadin-testbench-core</module>
         <module>vaadin-testbench-standalone</module>
         <module>vaadin-testbench-integration-tests</module>
