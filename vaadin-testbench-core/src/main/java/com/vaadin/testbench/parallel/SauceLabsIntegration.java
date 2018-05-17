@@ -98,7 +98,9 @@ public class SauceLabsIntegration {
     }
 
     static boolean isConfiguredForSauceLabs() {
-        return getSauceUser() != null && getSauceAccessKey() != null;
+        String user = getSauceUser();
+        String accessKey = getSauceAccessKey();
+        return user != null && !user.isEmpty() && accessKey != null && !accessKey.isEmpty();
     }
 
     static String getSauceUser() {
