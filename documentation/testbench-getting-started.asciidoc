@@ -77,7 +77,7 @@ public class SimpleIT extends TestBenchTestCase {
 This is all you need to verify that the text of the button is "Clicked" after clicking on it.
 
 [NOTE] 
-WebComponents hide its content in the Shadow DOM, that's why elements inside a WebComponent cannot be found without specifying a search context. For example, `$(TestBenchElement.class).id("content").$(LabelElement.class).first()`, which means label should be found inside the element with `id="content"`, which should be found on the page or current context. For writing real tests use the <<dummy/../testbench-maintainable-tests-using-page-objects#,Page or View Objects>>, which will improve code readability.
+WebComponents hide their content in the Shadow DOM, that's why elements inside a WebComponent cannot be found without specifying a search context. For example, `$(TestBenchElement.class).id("content").$(LabelElement.class).first()`, which means label should be found inside the element with `id="content"`, which should be found on the page or current context. For writing real tests use the <<dummy/../testbench-maintainable-tests-using-page-objects#,Page or View Objects>>, which will improve code readability.
 
 [TIP]
 Don't place your tests in the root package as in this example. Structure them logically according to your application structure.
