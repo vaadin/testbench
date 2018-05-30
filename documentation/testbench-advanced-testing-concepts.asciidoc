@@ -20,7 +20,7 @@ TestBench knows when something is still being rendered on the page and automatic
 waits for that rendering to finish before moving on with the test.
 
 
-In most cases, this is not something you need to take into account as waiting is automatically enabled. It might be necessary to disable it in some cases though and tou can do that by calling `disableWaitForVaadin()` in the
+In most cases, this is not something you need to take into account as waiting is automatically enabled. It might be necessary to disable it in some cases though and you can do that by calling `disableWaitForVaadin()` in the
 `TestBenchCommands` interface. You can call it in a test case as
 follows:
 
