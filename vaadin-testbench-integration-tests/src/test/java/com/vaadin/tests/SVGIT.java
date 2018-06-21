@@ -1,5 +1,6 @@
 package com.vaadin.tests;
 
+import com.vaadin.testbench.parallel.BrowserUtil;
 import org.junit.Assert;
 import org.junit.Test;
 import org.openqa.selenium.By;
@@ -16,6 +17,9 @@ public class SVGIT extends AbstractTB6Test {
 
     @Test
     public void click() {
+        if (BrowserUtil.isSafari(this.getDesiredCapabilities())) {
+            return; // Skip for Safari 11.
+        }
         openTestURL();
         findElement(By.id("ball")).click();
         Assert.assertEquals("clicked",
