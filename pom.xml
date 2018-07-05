@@ -52,13 +52,15 @@
                     <skip>false</skip>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-                <configuration>
-                    <skipNexusStagingDeployMojo>false</skipNexusStagingDeployMojo>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>release</id>
+            <modules>
+                <module>vaadin-testbench-bom</module>
+                <module>vaadin-testbench-core</module>
+            </modules>
+        </profile>
+    </profiles>
 </project>
