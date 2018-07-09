@@ -54,13 +54,4 @@
             </plugin>
         </plugins>
     </build>
-    <profiles>
-        <profile>
-            <id>release</id>
-            <modules>
-                <module>vaadin-testbench-bom</module>
-                <module>vaadin-testbench-core</module>
-            </modules>
-        </profile>
-    </profiles>
 </project>
