@@ -309,7 +309,7 @@ while scrolling. Some interaction could cause multiple requests, such as when
 images are loaded from the server as the result of user interaction.
 
 The following example is given in the
-[filename]#link:https://github.com/vaadin/testbench-demo/blob/master/src/test/java/com/vaadin/testbenchexample/VerifyExecutionTimeITCase.java[VerifyExecutionTimeITCase.java]#
+[filename]#link:https://github.com/vaadin/testbench-demo/blob/8.0/src/test/java/com/vaadin/testbenchexample/VerifyExecutionTimeITCase.java[VerifyExecutionTimeITCase.java]#
 file in the TestBench demo.
 
 
