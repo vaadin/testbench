@@ -16,17 +16,8 @@
 
 package com.vaadin.tests.testbenchapi;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
 import java.lang.reflect.Field;
-import java.net.URL;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpHost;
-import org.apache.http.HttpResponse;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicHttpEntityEnclosingRequest;
 import org.junit.Before;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -37,15 +28,11 @@ import org.openqa.selenium.interactions.Keyboard;
 import org.openqa.selenium.interactions.Mouse;
 import org.openqa.selenium.interactions.internal.Coordinates;
 import org.openqa.selenium.internal.Locatable;
-import org.openqa.selenium.remote.HttpCommandExecutor;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.JsonSyntaxException;
 import com.vaadin.server.LegacyApplication;
 import com.vaadin.server.UIProvider;
 import com.vaadin.testbench.TestBenchDriverProxy;
@@ -778,43 +765,4 @@ public abstract class AbstractTB3Test extends ParallelTest {
         return null;
 
     }
-
-    // FIXME: Remove this once TB4 getRemoteControlName works properly
-    protected String getRemoteControlName() {
-        try {
-            RemoteWebDriver d = getRemoteDriver();
-            if (d == null) {
-                return null;
-            }
-            HttpCommandExecutor ce = (HttpCommandExecutor) d
-                    .getCommandExecutor();
-            String hostName = ce.getAddressOfRemoteServer().getHost();
-            int port = ce.getAddressOfRemoteServer().getPort();
-            HttpHost host = new HttpHost(hostName, port);
-            DefaultHttpClient client = new DefaultHttpClient();
-            URL sessionURL = new URL("http://" + hostName + ":" + port
-                    + "/grid/api/testsession?session=" + d.getSessionId());
-            BasicHttpEntityEnclosingRequest r = new BasicHttpEntityEnclosingRequest(
-                    "POST", sessionURL.toExternalForm());
-            HttpResponse response = client.execute(host, r);
-            JsonObject object = extractObject(response);
-            URL myURL = new URL(object.get("proxyId").getAsString());
-            if ((myURL.getHost() != null) && (myURL.getPort() != -1)) {
-                return myURL.getHost();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    private static JsonObject extractObject(HttpResponse resp)
-            throws IOException, JsonSyntaxException {
-        InputStream contents = resp.getEntity().getContent();
-        StringWriter writer = new StringWriter();
-        IOUtils.copy(contents, writer, "UTF8");
-        JsonObject objToReturn = new JsonParser().parse(writer.toString()).getAsJsonObject();
-        return objToReturn;
-    }
-
 }
