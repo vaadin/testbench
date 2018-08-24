@@ -475,12 +475,13 @@ img {
     <h2 id="overview_of_vaadin_testbench">Overview of Vaadin TestBench</h2>
 
     <p>Vaadin TestBench is a UI browser automation tool used for automated testing of Vaadin UIs in the browser. Vaadin
-        TestBench is based on Selenium 2 and provides a WebDriver based API for controlling different browsers on
+        TestBench is based on Selenium 3 and provides a WebDriver based API for controlling different browsers on
         multiple platforms.</p>
 
-    <h2 id="changes_since_2x">Changes in 4.2</h2>
+    <h2 id="changes_since_2x">Changes in 4.3</h2>
 
     <ul>
+    <li>Updated Selenium version to 3.14.0</li>
     <li>Screen comparison is supported for individual elements through TestBenchElement.compareScreen</li>
     <li>TestBenchElement can be compared with WebElement using equals()</li>
     <li>TestBenchElement has getClassNames() and hasClassName(String) for testing class names</li>
@@ -552,17 +553,19 @@ img {
         any dependencies. Vaadin TestBench 4 directly depends on the following third-party libraries:</p>
 
     <ul>
-        <li>Selenium 2.51.0</li>
-        <li>PhantomJSDriver 1.2.1</li>
+        <li>Selenium 3.14.0</li>
+        <li>PhantomJSDriver 1.3.0</li>
         <li>Javassist 3.18.1-GA</li>
         <li>JUnit 4.12</li>
-        <li>org.json</li>
+        <li>com.google.code.gson 2.8.5</li>
     </ul>
 
     <h2 id="migration_notes">Migration Notes</h2>
 
     <p>Vaadin TestBench 4 is API compatible with Vaadin TestBench 3.x, and can thus be used as a drop-in replacement for
         any 3.x version. The exceptions to this rule are listed in the API changes section below.</p>
+    <p>Vaadin TestBench 4.3 requires Java 8+, since it is the minimum Java version to run Selenium 3.
+        Testbench 4.2.2 is the latest version to support Java 7.</p>
 
     <h3 id="api_changes">API Changes</h3>
     <ul>
