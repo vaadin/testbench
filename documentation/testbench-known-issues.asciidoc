@@ -10,6 +10,11 @@ layout: page
 This section provides information and instructions on a few features that are
 known to be difficult to use or need modification to work.
 
+[[testbench.known-issues.java]]
+== Java Compatibility
+
+Starting from version 4.3 Testbench requires Java 8+, because of update to Selenium 3. Testbench 4.2.2 is the latest version to support Java 7.
+
 [[testbench.known-issues.firefox]]
 == Latest Firefox Compatibility
 
