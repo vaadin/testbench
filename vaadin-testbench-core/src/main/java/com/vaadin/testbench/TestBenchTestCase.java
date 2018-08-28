@@ -15,6 +15,8 @@ package com.vaadin.testbench;
 import java.util.List;
 
 import com.vaadin.testbench.tools.LicenseChecker;
+
+import org.junit.Rule;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -35,6 +37,15 @@ public abstract class TestBenchTestCase extends
         // Check the license here, before any driver has been initialized (#15102)
         LicenseChecker.nag();
     }
+
+    /**
+     * Specifies retry count, which is used to run same test several times.
+     * Can be changed by setting "com.vaadin.testbench.Parameters.maxAttempts" system property.
+     *
+     * Default: 1
+     */
+    @Rule
+    public RetryRule maxAttempts = new RetryRule(Parameters.getMaxAttempts());
 
     protected WebDriver driver;
 
