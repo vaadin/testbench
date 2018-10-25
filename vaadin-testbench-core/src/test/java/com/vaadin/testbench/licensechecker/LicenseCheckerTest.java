@@ -17,7 +17,7 @@ public class LicenseCheckerTest {
 
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
-    private final static String DEVELOPER_KEY = "0282c076-d6e1-4a11-9092-d36285b5a6f9";
+    private final static String DEVELOPER_KEY = "5b607e59-0731-42a7-947d-b5821a971da3";
     private final static String SUBSCRIPTION_KEY_EXPIRED = "9fa746f1-028e-4f02-823a-d022c29119e2";
     private final static String INVALID_KEY = "1111111111111111111111111111";
     private static String NEW_LINE = System.getProperty("line.separator");
