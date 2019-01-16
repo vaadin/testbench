@@ -16,7 +16,7 @@ If you do not have a Vaadin application, you can generate it using Maven archety
  [prompt]#$# [command]#mvn# -B archetype:generate \
     -DarchetypeGroupId=com.vaadin \
     -DarchetypeArtifactId=[replaceable]#vaadin-archetype-application# \
-    -DarchetypeVersion=[replaceable]#7.7.x# \
+    -DarchetypeVersion=[replaceable]#8.6.x# \
     -DgroupId=[replaceable]#org.test# \
     -DartifactId=[replaceable]#vaadin-app# \
     -Dversion=[replaceable]#0.1# \
