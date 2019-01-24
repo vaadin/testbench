@@ -35,16 +35,16 @@ public class CyclicObjectWorkaround {
         }
     }
 
-    private static String readInputStream(InputStream inputStream)
-        throws IOException {
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        byte[] buffer = new byte[1024];
-        int length;
-        while ((length = inputStream.read(buffer)) != -1) {
-            result.write(buffer, 0, length);
+    private static String readInputStream(InputStream is) throws IOException {
+        try (final InputStream inputStream = is) {
+            ByteArrayOutputStream result = new ByteArrayOutputStream();
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = inputStream.read(buffer)) != -1) {
+                result.write(buffer, 0, length);
+            }
+            return result.toString(StandardCharsets.UTF_8.name());
         }
-        inputStream.close();
-        return result.toString(StandardCharsets.UTF_8.name());
     }
 
     /**
