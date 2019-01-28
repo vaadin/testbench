@@ -13,6 +13,8 @@
 package com.vaadin.testbench.parallel.setup;
 
 import java.io.File;
+import java.util.List;
+import java.util.Map;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -73,6 +75,13 @@ public class LocalDriver {
             // #14319
             ChromeOptions options = new ChromeOptions();
             options.addArguments("--test-type ");
+            Object capabilities = desiredCapabilities.getCapability(ChromeOptions.CAPABILITY);
+            if(capabilities instanceof Map) {
+                Object args = ((Map) capabilities).get("args");
+                if(args instanceof List) {
+                    ((List) args).forEach(o ->  options.addArguments(o.toString()));
+                }
+            }
             driver = new ChromeDriver(options);
         } else if (BrowserUtil.isSafari(desiredCapabilities)) {
             driver = new SafariDriver();
