@@ -12,10 +12,10 @@
  */
 package com.vaadin.testbench;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-
-import org.apache.commons.io.IOUtils;
 
 /**
  * Provides a workaround to avoid "cyclic object value" when returning an
@@ -27,15 +27,27 @@ public class CyclicObjectWorkaround {
     private static final String TEMPLATE;
     static {
         try {
-            TEMPLATE = IOUtils.toString(
+            TEMPLATE = readInputStream(
                     CyclicObjectWorkaround.class
-                            .getResourceAsStream("cyclic-object-workaround.js"),
-                    StandardCharsets.UTF_8);
+                            .getResourceAsStream("cyclic-object-workaround.js"));
         } catch (IOException e) {
             throw new ExceptionInInitializerError(e);
         }
     }
 
+    private static String readInputStream(InputStream is) throws IOException {
+        try (final InputStream inputStream = is) {
+            ByteArrayOutputStream result = new ByteArrayOutputStream();
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = inputStream.read(buffer)) != -1) {
+                result.write(buffer, 0, length);
+            }
+            return result.toString(StandardCharsets.UTF_8.name());
+        }
+    }
+
+    /**
     /**
      * Produces Javascript which modifies a given object (list) so that it can
      * be returned to the test.
