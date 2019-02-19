@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <parent>
+    <artifactId>vaadin-testbench-bom</artifactId>
+    <groupId>com.vaadin</groupId>
+    <version>7.0.0-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+
+  <artifactId>vaadin-testbench-bom-vxx</artifactId>
+  <packaging>pom</packaging>
+
+
+  <dependencyManagement>
+    <dependencies>
+      <!--Version definitions-->
+      <dependency>
+        <groupId>com.vaadin</groupId>
+        <artifactId>vaadin-bom</artifactId>
+        <version>${vaadin-vXX.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <!--Version definitions from parent-->
+      <dependency>
+        <groupId>com.vaadin</groupId>
+        <artifactId>vaadin-testbench-bom</artifactId>
+        <version>7.0.0-SNAPSHOT</version>
+        <scope>import</scope>
+        <type>pom</type>
+      </dependency>
+      <dependency>
+        <groupId>com.vaadin</groupId>
+        <artifactId>vaadin-testbench</artifactId>
+        <version>${vaadin-vXX.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-server</artifactId>
+          </exclusion>
+        </exclusions>
+        <!--<scope>test</scope>-->
+      </dependency>
+      <dependency>
+        <groupId>com.vaadin</groupId>
+        <artifactId>vaadin-testbench-core</artifactId>
+        <version>${vaadin-testbench-vXX.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-server</artifactId>
+          </exclusion>
+        </exclusions>
+        <!--<scope>test</scope>-->
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+</project>

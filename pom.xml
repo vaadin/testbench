@@ -8,7 +8,7 @@
     <version>2.0.1</version>
     <relativePath/>
   </parent>
-  <artifactId>vaadin-testbench-parent</artifactId>
+  <artifactId>vaadin-testbench</artifactId>
   <packaging>pom</packaging>
   <version>7.0.0-SNAPSHOT</version>
   <name>Vaadin TestBench V7</name>
@@ -42,7 +42,6 @@
     </developer>
   </developers>
 
-
   <licenses>
     <license>
       <name>Commercial Vaadin Add-On License version 3.0</name>
@@ -63,12 +62,6 @@
     <slf4j.version>1.7.25</slf4j.version>
     <log4j-api.version>2.11.2</log4j-api.version>
 
-    <jacoco.version>0.8.3</jacoco.version>
-    <pitest.version>1.4.5</pitest.version>
-    <pitest-junit5-plugin.version>0.8</pitest-junit5-plugin.version>
-    <pitest-prod-classes>com.vaadin.testbench.*</pitest-prod-classes>
-    <pitest-test-classes>junit.com.vaadin.testbench.*</pitest-test-classes>
-
     <jmh.version>1.21</jmh.version>
 
     <!--TDD jUnit5-->
@@ -76,16 +69,88 @@
     <junit.platform.version>1.4.0</junit.platform.version>
     <junit-platform-maven-plugin.version>1.0.0-M5</junit-platform-maven-plugin.version>
 
+    <jacoco.version>0.8.3</jacoco.version>
+    <pitest.version>1.4.5</pitest.version>
+    <pitest-junit5-plugin.version>0.8</pitest-junit5-plugin.version>
+    <pitest-prod-classes>com.vaadin.testbench.*</pitest-prod-classes>
+    <pitest-test-classes>junit.com.vaadin.testbench.*</pitest-test-classes>
+
     <opentracing-api.version>0.31.0</opentracing-api.version>
+
+    <!--Initializer-->
+    <meecrowave.version>1.2.6</meecrowave.version>
+    <spring-boot01.version>1.5.19.RELEASE</spring-boot01.version>
+    <spring-boot02.version>2.1.2.RELEASE</spring-boot02.version>
+    <addon-test-helpers.version>2.0</addon-test-helpers.version>
+    <javax.servlet-api.version>4.0.1</javax.servlet-api.version>
+
+    <selenium.version>3.141.59</selenium.version>
+
+
+    <!--    VaadinVersions-->
+    <vaadin-v08.version>8.7.0</vaadin-v08.version>
+    <vaadin-testbench-v08.version>5.2.0</vaadin-testbench-v08.version>
+
+    <vaadin-v10.version>10.0.10</vaadin-v10.version>
+    <vaadin-testbench-v10.version>6.0.1</vaadin-testbench-v10.version>
+
+    <!--    <vaadin-v14.version>10.0.10</vaadin-v14.version>-->
+    <!--    <vaadin-testbench-v14.version>6.0.1</vaadin-testbench-v14.version>-->
+
+    <vaadin-vXX.version>12.0.5</vaadin-vXX.version>
+    <vaadin-testbench-vXX.version>6.0.1</vaadin-testbench-vXX.version>
+
 
   </properties>
 
   <modules>
-
+    <module>bom</module>
+    <module>shared</module>
+    <module>junit5</module>
+    <module>tb</module>
   </modules>
+
+  <repositories>
+    <repository>
+      <id>vaadin-addons</id>
+      <url>http://maven.vaadin.com/vaadin-addons</url>
+      <!--<url>http://maven.vaadin.com/</url>-->
+    </repository>
+  </repositories>
+
 
   <dependencyManagement>
     <dependencies>
+      <!--      Technical Dependencies-->
+      <!--Selenium -->
+      <dependency>
+        <groupId>org.seleniumhq.selenium</groupId>
+        <artifactId>selenium-api</artifactId>
+        <version>${selenium.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.seleniumhq.selenium</groupId>
+        <artifactId>selenium-java</artifactId>
+        <version>${selenium.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.seleniumhq.selenium</groupId>
+        <artifactId>selenium-server</artifactId>
+        <version>${selenium.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.seleniumhq.selenium</groupId>
+        <artifactId>selenium-remote-driver</artifactId>
+        <version>${selenium.version}</version>
+      </dependency>
+
+      <!--      Specs-->
+      <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>javax.servlet-api</artifactId>
+        <version>4.0.1</version>
+      </dependency>
+
       <!--jUnit5-->
       <dependency>
         <groupId>org.junit.jupiter</groupId>
@@ -183,51 +248,26 @@
         <version>${log4j-api.version}</version>
       </dependency>
 
+      <dependency>
+        <groupId>com.google.auto.service</groupId>
+        <artifactId>auto-service</artifactId>
+        <version>1.0-rc4</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-lang3</artifactId>
+        <version>3.8.1</version>
+      </dependency>
+
+      <dependency>
+        <groupId>net.vergien.bau</groupId>
+        <artifactId>bean-auto-utils</artifactId>
+        <optional>true</optional>
+        <version>0.0.9</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
-
-
-  <dependencies>
-
-
-    <!--jUnit5-->
-    <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-api</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-params</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.junit.platform</groupId>
-      <artifactId>junit-platform-launcher</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <!-- Only required to run tests in an IDE that bundles an older version -->
-    <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-engine</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-
-    <!--Logging for development-->
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-simple</artifactId>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
-
 
   <build>
     <pluginManagement>
@@ -367,7 +407,6 @@
     </pluginManagement>
 
     <plugins>
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -379,7 +418,6 @@
           </dependency>
         </dependencies>
       </plugin>
-
 
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -403,8 +441,6 @@
           </execution>
         </executions>
       </plugin>
-
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
@@ -540,6 +576,35 @@
           </execution>
         </executions>
       </plugin>
+
+
+      <plugin>
+        <groupId>com.github.webdriverextensions</groupId>
+        <artifactId>webdriverextensions-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>install-drivers</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <keepDownloadedWebdrivers>true</keepDownloadedWebdrivers>
+          <installationDirectory>${maven.multiModuleProjectDirectory}/_data/webdrivers</installationDirectory>
+          <drivers>
+            <driver>
+              <name>chromedriver</name>
+            </driver>
+            <!--<driver>-->
+            <!--<name>operadriver</name>-->
+            <!--</driver>-->
+            <!--<driver>-->
+            <!--<name>geckodriver</name>-->
+            <!--</driver>-->
+          </drivers>
+        </configuration>
+      </plugin>
+
 
     </plugins>
   </build>
