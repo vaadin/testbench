@@ -46,7 +46,7 @@ public class SpringBoot2ContainerInitializer implements ContainerInitializer, Ha
     SpringBoot2Conf springBootConf =
         AnnotationUtils.getAnnotation(testClass, SpringBoot2Conf.class);
     if (springBootConf == null) {
-      throw new IllegalStateException("No @SpringBoot2Conf annotation found");
+      throw new IllegalStateException("No @SpringBoot2Conf annotations found");
     }
     Class<?> appClass = springBootConf.source();
     if (appClass == null) {

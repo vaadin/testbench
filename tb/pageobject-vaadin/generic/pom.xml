@@ -11,12 +11,10 @@
 
   <artifactId>vaadin-testbench-tb-pageobject-vaadin-generic</artifactId>
 
-
-
   <dependencies>
     <dependency>
       <groupId>com.vaadin</groupId>
-      <artifactId>vaadin-testbench-tb-pageobject</artifactId>
+      <artifactId>vaadin-testbench-junit5-pageobject</artifactId>
     </dependency>
   </dependencies>
 </project>

@@ -46,24 +46,28 @@
       <groupId>com.vaadin</groupId>
       <artifactId>vaadin-core</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.vaadin</groupId>
+      <artifactId>vaadin-testbench-tb-core</artifactId>
+    </dependency>
 
-    <dependency>
-      <groupId>com.vaadin</groupId>
-      <artifactId>vaadin-testbench</artifactId>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.vaadin</groupId>
-      <artifactId>vaadin-testbench-core</artifactId>
-      <scope>compile</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.seleniumhq.selenium</groupId>
-          <artifactId>selenium-server</artifactId>
-        </exclusion>
-      </exclusions>
-      <!--<scope>test</scope>-->
-    </dependency>
+<!--    <dependency>-->
+<!--      <groupId>com.vaadin</groupId>-->
+<!--      <artifactId>vaadin-testbench</artifactId>-->
+<!--      <scope>compile</scope>-->
+<!--    </dependency>-->
+<!--    <dependency>-->
+<!--      <groupId>com.vaadin</groupId>-->
+<!--      <artifactId>vaadin-testbench-core</artifactId>-->
+<!--      <scope>compile</scope>-->
+<!--      <exclusions>-->
+<!--        <exclusion>-->
+<!--          <groupId>org.seleniumhq.selenium</groupId>-->
+<!--          <artifactId>selenium-server</artifactId>-->
+<!--        </exclusion>-->
+<!--      </exclusions>-->
+<!--      &lt;!&ndash;<scope>test</scope>&ndash;&gt;-->
+<!--    </dependency>-->
     <dependency>
       <groupId>com.vaadin</groupId>
       <artifactId>flow-html-components-testbench</artifactId>

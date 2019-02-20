@@ -266,6 +266,15 @@
         <optional>true</optional>
         <version>0.0.9</version>
       </dependency>
+
+
+<!--Should be removed-->
+      <dependency>
+        <groupId>org.javassist</groupId>
+        <artifactId>javassist</artifactId>
+        <version>3.18.1-GA</version>
+      </dependency>
+
     </dependencies>
   </dependencyManagement>
 

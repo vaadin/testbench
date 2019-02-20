@@ -9,7 +9,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>vaadin-testbench-tb-pageobject</artifactId>
+  <artifactId>vaadin-testbench-junit5-pageobject</artifactId>
 
 
   <dependencies>

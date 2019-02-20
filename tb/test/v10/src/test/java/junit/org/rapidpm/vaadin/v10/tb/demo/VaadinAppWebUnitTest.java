@@ -16,21 +16,39 @@
 package junit.org.rapidpm.vaadin.v10.tb.demo;
 
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.TestTemplate;
+import org.junit.jupiter.api.extension.BeforeEachCallback;
+import org.junit.jupiter.api.extension.ExtensionContext;
 import org.rapidpm.vaadin.addons.testbench.junit5.extensions.unittest.VaadinWebUnitTest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-public class VaadinAppWebUnitTest {
+public class VaadinAppWebUnitTest implements BeforeEachCallback {
+
+
+  @BeforeEach
+  void setUp() {
+
+  }
 
   @VaadinWebUnitTest
   @DisplayName("Hello World - Click twice")
+  @Disabled
   void test001(VaadinAppPageObject pageObject) {
     pageObject.loadPage();
     assertEquals(0, pageObject.clickCount());
     pageObject.click();
     assertEquals(1, pageObject.clickCount());
+  }
+
+  @Override
+  public void beforeEach(ExtensionContext extensionContext) throws Exception {
+
+
+
   }
 }

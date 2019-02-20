@@ -16,6 +16,7 @@
     <module>common</module>
     <module>servlet-container</module>
     <module>webdriver</module>
+    <module>pageobject</module>
   </modules>
 
   <dependencyManagement>

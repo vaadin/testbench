@@ -13,8 +13,8 @@
   <packaging>pom</packaging>
 
   <modules>
+    <module>core</module>
     <module>shared</module>
-    <module>pageobject</module>
     <module>pageobject-vaadin</module>
     <module>test</module>
   </modules>

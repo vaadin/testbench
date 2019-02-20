@@ -31,30 +31,30 @@
         <scope>import</scope>
         <type>pom</type>
       </dependency>
-      <dependency>
-        <groupId>com.vaadin</groupId>
-        <artifactId>vaadin-testbench</artifactId>
-        <version>${vaadin-vXX.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-server</artifactId>
-          </exclusion>
-        </exclusions>
-        <!--<scope>test</scope>-->
-      </dependency>
-      <dependency>
-        <groupId>com.vaadin</groupId>
-        <artifactId>vaadin-testbench-core</artifactId>
-        <version>${vaadin-testbench-vXX.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-server</artifactId>
-          </exclusion>
-        </exclusions>
-        <!--<scope>test</scope>-->
-      </dependency>
+<!--      <dependency>-->
+<!--        <groupId>com.vaadin</groupId>-->
+<!--        <artifactId>vaadin-testbench</artifactId>-->
+<!--        <version>${vaadin-vXX.version}</version>-->
+<!--        <exclusions>-->
+<!--          <exclusion>-->
+<!--            <groupId>org.seleniumhq.selenium</groupId>-->
+<!--            <artifactId>selenium-server</artifactId>-->
+<!--          </exclusion>-->
+<!--        </exclusions>-->
+<!--        &lt;!&ndash;<scope>test</scope>&ndash;&gt;-->
+<!--      </dependency>-->
+<!--      <dependency>-->
+<!--        <groupId>com.vaadin</groupId>-->
+<!--        <artifactId>vaadin-testbench-core</artifactId>-->
+<!--        <version>${vaadin-testbench-vXX.version}</version>-->
+<!--        <exclusions>-->
+<!--          <exclusion>-->
+<!--            <groupId>org.seleniumhq.selenium</groupId>-->
+<!--            <artifactId>selenium-server</artifactId>-->
+<!--          </exclusion>-->
+<!--        </exclusions>-->
+<!--        &lt;!&ndash;<scope>test</scope>&ndash;&gt;-->
+<!--      </dependency>-->
     </dependencies>
   </dependencyManagement>
 

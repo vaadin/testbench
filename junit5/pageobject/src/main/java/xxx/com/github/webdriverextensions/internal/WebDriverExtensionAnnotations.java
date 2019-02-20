@@ -44,7 +44,7 @@ public class WebDriverExtensionAnnotations extends Annotations {
     }
     if (fields.length > 1) {
       throw new RuntimeException(
-          "More than one @Delagate annotation used. There should only exist one.");
+          "More than one @Delagate annotations used. There should only exist one.");
     }
     WebElement delegate;
     try {

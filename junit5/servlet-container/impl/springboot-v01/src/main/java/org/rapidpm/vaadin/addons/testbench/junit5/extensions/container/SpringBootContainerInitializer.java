@@ -44,7 +44,7 @@ public class SpringBootContainerInitializer implements ContainerInitializer {
   public void beforeAll(Class<?> testClass , ExtensionContext context) throws Exception {
     SpringBootConf springBootConf = AnnotationUtils.getAnnotation(testClass , SpringBootConf.class);
     if (springBootConf == null) {
-      throw new IllegalStateException("No @SpringBootConf annotation found");
+      throw new IllegalStateException("No @SpringBootConf annotations found");
     }
     Class<?> appClass = springBootConf.source();
     if (appClass == null) {
