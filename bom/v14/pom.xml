@@ -23,31 +23,6 @@
 <!--        <type>pom</type>-->
 <!--        <scope>import</scope>-->
 <!--      </dependency>-->
-
-<!--      <dependency>-->
-<!--        <groupId>com.vaadin</groupId>-->
-<!--        <artifactId>vaadin-testbench</artifactId>-->
-<!--        <version>${vaadin-v14.version}</version>-->
-<!--        <exclusions>-->
-<!--          <exclusion>-->
-<!--            <groupId>org.seleniumhq.selenium</groupId>-->
-<!--            <artifactId>selenium-server</artifactId>-->
-<!--          </exclusion>-->
-<!--        </exclusions>-->
-<!--        &lt;!&ndash;<scope>test</scope>&ndash;&gt;-->
-<!--      </dependency>-->
-<!--      <dependency>-->
-<!--        <groupId>com.vaadin</groupId>-->
-<!--        <artifactId>vaadin-testbench-core</artifactId>-->
-<!--        <version>${vaadin-testbench-v14.version}</version>-->
-<!--        <exclusions>-->
-<!--          <exclusion>-->
-<!--            <groupId>org.seleniumhq.selenium</groupId>-->
-<!--            <artifactId>selenium-server</artifactId>-->
-<!--          </exclusion>-->
-<!--        </exclusions>-->
-<!--        &lt;!&ndash;<scope>test</scope>&ndash;&gt;-->
-<!--      </dependency>-->
 <!--    </dependencies>-->
 <!--  </dependencyManagement>-->
 </project>

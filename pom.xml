@@ -92,13 +92,13 @@
     <vaadin-testbench-v08.version>5.2.0</vaadin-testbench-v08.version>
 
     <vaadin-v10.version>10.0.10</vaadin-v10.version>
-    <vaadin-testbench-v10.version>6.0.1</vaadin-testbench-v10.version>
+<!--    <vaadin-testbench-v10.version>6.0.1</vaadin-testbench-v10.version>-->
 
     <!--    <vaadin-v14.version>10.0.10</vaadin-v14.version>-->
     <!--    <vaadin-testbench-v14.version>6.0.1</vaadin-testbench-v14.version>-->
 
     <vaadin-vXX.version>12.0.5</vaadin-vXX.version>
-    <vaadin-testbench-vXX.version>6.0.1</vaadin-testbench-vXX.version>
+<!--    <vaadin-testbench-vXX.version>6.0.1</vaadin-testbench-vXX.version>-->
 
 
   </properties>

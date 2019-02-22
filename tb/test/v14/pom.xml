@@ -45,11 +45,6 @@
     <!--For TestUI only-->
     <dependency>
       <groupId>com.vaadin</groupId>
-      <artifactId>vaadin-testbench</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.vaadin</groupId>
       <artifactId>vaadin-testbench-tb-pageobject-vaadin-v14</artifactId>
       <scope>test</scope>
     </dependency>

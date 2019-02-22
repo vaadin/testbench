@@ -11,6 +11,7 @@
 
   <artifactId>vaadin-testbench-tb-test-v10</artifactId>
 
+  <packaging>war</packaging>
   <dependencyManagement>
     <dependencies>
       <!--Version definitions from parent-->
@@ -20,6 +21,16 @@
         <version>7.0.0-SNAPSHOT</version>
         <scope>import</scope>
         <type>pom</type>
+        <exclusions>
+          <exclusion>
+              <groupId>com.vaadin</groupId>
+              <artifactId>vaadin-testbench</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>com.vaadin</groupId>
+            <artifactId>vaadin-testbench-core</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -45,23 +56,8 @@
     <!--For TestUI only-->
     <dependency>
       <groupId>com.vaadin</groupId>
-      <artifactId>vaadin-testbench</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.vaadin</groupId>
       <artifactId>vaadin-testbench-tb-pageobject-vaadin-v10</artifactId>
       <scope>test</scope>
     </dependency>
-
-
-    <dependency>
-      <groupId>commons-io</groupId>
-      <artifactId>commons-io</artifactId>
-      <version>2.6</version>
-      <scope>test</scope>
-    </dependency>
-
-
   </dependencies>
 </project>
