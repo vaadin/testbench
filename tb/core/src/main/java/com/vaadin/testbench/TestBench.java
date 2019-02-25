@@ -87,7 +87,7 @@ public class TestBench {
 
     public static TestBenchDriverProxy createDriver(WebDriver driver) {
         TestBenchCommandExecutor commandExecutor = new TestBenchCommandExecutor(
-            new ImageComparison(), new ReferenceNameGenerator());
+            new ImageComparison());
         return createDriver(driver, commandExecutor);
     }
 

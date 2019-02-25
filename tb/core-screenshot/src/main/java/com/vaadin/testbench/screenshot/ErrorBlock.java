@@ -15,10 +15,12 @@ package com.vaadin.testbench.screenshot;
 /**
  * Class for holding position and size of a error found during image comparison
  */
-public class ErrorBlock {
+public final class ErrorBlock {
 
-    private int x, y;
-    private int xBlocks = 1, yBlocks = 1;
+    private int x;
+    private int y;
+    private int xBlocks = 1;
+    private int yBlocks = 1;
 
     public ErrorBlock() {
         //

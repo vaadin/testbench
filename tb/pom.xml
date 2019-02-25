@@ -13,6 +13,7 @@
   <packaging>pom</packaging>
 
   <modules>
+    <module>core-screenshot</module>
     <module>core</module>
     <module>shared</module>
     <module>pageobject-vaadin</module>

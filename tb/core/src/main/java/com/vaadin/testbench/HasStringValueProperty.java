@@ -2,16 +2,16 @@ package com.vaadin.testbench;
 
 public interface HasStringValueProperty extends HasPropertySettersGetters {
 
-    default public String getValue() {
+    default String getValue() {
         return getPropertyString("value");
     }
 
-    default public void setValue(String string) {
+    default void setValue(String string) {
         setProperty("value", string);
     }
 
     @Override
-    default public void clear() {
+    default void clear() {
         setValue("");
     }
 

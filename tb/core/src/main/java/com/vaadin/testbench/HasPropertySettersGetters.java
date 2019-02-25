@@ -13,7 +13,7 @@ public interface HasPropertySettersGetters extends WebElement {
      * @param value
      *            the value to set
      */
-    public void setProperty(String name , String value);
+    void setProperty(String name , String value);
 
     /**
      * Sets a JavaScript property of the given element.
@@ -23,7 +23,7 @@ public interface HasPropertySettersGetters extends WebElement {
      * @param value
      *            the value to set
      */
-    public void setProperty(String name , Boolean value);
+    void setProperty(String name , Boolean value);
 
     /**
      * Sets a JavaScript property of the given element.
@@ -33,7 +33,7 @@ public interface HasPropertySettersGetters extends WebElement {
      * @param value
      *            the value to set
      */
-    public void setProperty(String name , Double value);
+    void setProperty(String name , Double value);
 
     /**
      * Sets a JavaScript property of the given element.
@@ -43,7 +43,7 @@ public interface HasPropertySettersGetters extends WebElement {
      * @param value
      *            the value to set
      */
-    public void setProperty(String name , Integer value);
+    void setProperty(String name , Integer value);
 
     /**
      * Gets a JavaScript property of the given element as a string.
@@ -52,7 +52,7 @@ public interface HasPropertySettersGetters extends WebElement {
      *            the name of on or more properties, forming a property chain of
      *            type <code>property1.property2.property3</code>
      */
-    public String getPropertyString(String... propertyNames);
+    String getPropertyString(String... propertyNames);
 
     /**
      * Gets a JavaScript property of the given element as a boolean.
@@ -61,7 +61,7 @@ public interface HasPropertySettersGetters extends WebElement {
      *            the name of on or more properties, forming a property chain of
      *            type <code>property1.property2.property3</code>
      */
-    public Boolean getPropertyBoolean(String... propertyNames);
+    Boolean getPropertyBoolean(String... propertyNames);
 
     /**
      * Gets a JavaScript property of the given element as a DOM element.
@@ -70,7 +70,7 @@ public interface HasPropertySettersGetters extends WebElement {
      *            the name of on or more properties, forming a property chain of
      *            type <code>property1.property2.property3</code>
      */
-    public TestBenchElement getPropertyElement(String... propertyNames);
+    TestBenchElement getPropertyElement(String... propertyNames);
 
     /**
      * Gets a JavaScript property of the given element as a list of DOM
@@ -80,7 +80,7 @@ public interface HasPropertySettersGetters extends WebElement {
      *            the name of on or more properties, forming a property chain of
      *            type <code>property1.property2.property3</code>
      */
-    public List<TestBenchElement> getPropertyElements(String... propertyNames);
+    List<TestBenchElement> getPropertyElements(String... propertyNames);
 
     /**
      * Gets a JavaScript property of the given element as a double.
@@ -89,7 +89,7 @@ public interface HasPropertySettersGetters extends WebElement {
      *            the name of on or more properties, forming a property chain of
      *            type <code>property1.property2.property3</code>
      */
-    public Double getPropertyDouble(String... propertyNames);
+    Double getPropertyDouble(String... propertyNames);
 
     /**
      * Gets a JavaScript property of the given element as an integer.
@@ -98,7 +98,7 @@ public interface HasPropertySettersGetters extends WebElement {
      *            the name of on or more properties, forming a property chain of
      *            type <code>property1.property2.property3</code>
      */
-    public Integer getPropertyInteger(String... propertyNames);
+    Integer getPropertyInteger(String... propertyNames);
 
     /**
      * Gets a JavaScript property of the given element.
@@ -109,6 +109,6 @@ public interface HasPropertySettersGetters extends WebElement {
      *            the name of on or more properties, forming a property chain of
      *            type <code>property1.property2.property3</code>
      */
-    public Object getProperty(String... propertyNames);
+    Object getProperty(String... propertyNames);
 
 }

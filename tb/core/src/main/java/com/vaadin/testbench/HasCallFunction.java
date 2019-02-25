@@ -14,6 +14,6 @@ public interface HasCallFunction extends WebElement {
      *            the arguments to pass to the method
      * @return the value returned by the method
      */
-    public Object callFunction(String methodName , Object... args);
+    Object callFunction(String methodName , Object... args);
 
 }

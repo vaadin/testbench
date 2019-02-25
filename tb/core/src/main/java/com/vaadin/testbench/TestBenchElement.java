@@ -35,7 +35,6 @@ import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.Rectangle;
 import org.openqa.selenium.SearchContext;
-import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
@@ -468,8 +467,8 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
   @Override
   public boolean compareScreen(String referenceId) throws IOException {
     return ScreenshotComparator.compareScreen(referenceId,
-                                              getCommandExecutor().getReferenceNameGenerator(),
-                                              getCommandExecutor().getImageComparison(), this,
+                                              getCommandExecutor().getImageComparison(),
+                                              this,
                                               (HasCapabilities) getDriver());
   }
 
@@ -477,7 +476,7 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
   public boolean compareScreen(File reference) throws IOException {
     return ScreenshotComparator.compareScreen(reference,
                                               getCommandExecutor().getImageComparison(),
-                                              (TakesScreenshot) this, (HasCapabilities) getDriver());
+                                              this );
 
   }
 
@@ -486,7 +485,7 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
       throws IOException {
     return ScreenshotComparator.compareScreen(reference, referenceName,
                                               getCommandExecutor().getImageComparison(),
-                                              (TakesScreenshot) this, (HasCapabilities) getDriver());
+                                              this );
   }
 
   /***

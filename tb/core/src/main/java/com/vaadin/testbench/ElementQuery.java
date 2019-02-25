@@ -403,7 +403,6 @@ public class ElementQuery<T extends TestBenchElement> {
         }
         Set<AttributeMatch> classAttributes = new HashSet<>();
         for (Attribute attr : attrs) {
-            String toMatch;
             if (!Attribute.DEFAULT_VALUE.equals(attr.value())) {
                 if (!Attribute.DEFAULT_VALUE.equals(attr.contains())) {
                     throw new RuntimeException(

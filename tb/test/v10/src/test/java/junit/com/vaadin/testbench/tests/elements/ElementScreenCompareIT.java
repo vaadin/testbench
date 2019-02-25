@@ -40,12 +40,6 @@ public class ElementScreenCompareIT {
     po.getCommandExecutor().resizeViewPortTo(SCREENSHOT_WIDTH , SCREENSHOT_HEIGHT);
   }
 
-//  @Override
-//  public void setup() throws Exception {
-//    super.setup();
-//    testBench().resizeViewPortTo(SCREENSHOT_WIDTH , SCREENSHOT_HEIGHT);
-//  }
-
   @VaadinWebUnitTest
   public void elementCompareScreen(GenericTestPageObject po) throws Exception {
     openTestURL(po);

@@ -17,6 +17,7 @@ package com.vaadin.testbench.internal;
 
 import java.io.Serializable;
 import java.util.Locale;
+import java.util.stream.IntStream;
 
 /**
  * Copied from Flow to avoid a dependency.
@@ -60,16 +61,12 @@ public class SharedUtil implements Serializable {
         if (i == 0) {
             // Word can't end at the beginning
             return false;
-        } else if (! Character.isUpperCase(camelCaseString.charAt(i - 1))) {
+        } else // Word ends if next char isn't upper case
+            if (! Character.isUpperCase(camelCaseString.charAt(i - 1))) {
             // Word ends if previous char wasn't upper case
             return true;
-        } else if (i + 1 < camelCaseString.length()
-                && ! Character.isUpperCase(camelCaseString.charAt(i + 1))) {
-            // Word ends if next char isn't upper case
-            return true;
-        } else {
-            return false;
-        }
+        } else return i + 1 < camelCaseString.length()
+                      && ! Character.isUpperCase(camelCaseString.charAt(i + 1));
     }
 
     /**
@@ -171,9 +168,7 @@ public class SharedUtil implements Serializable {
      */
     public static String propertyIdToHumanFriendly(Object propertyId) {
         String string = propertyId.toString();
-        if (string.isEmpty()) {
-            return "";
-        }
+        if (string.isEmpty()) return "";
 
         // For nested properties, only use the last part
         int dotLocation = string.lastIndexOf('.');
@@ -243,11 +238,7 @@ public class SharedUtil implements Serializable {
             uri = uri.substring(0, hashPosition);
         }
 
-        if (uri.contains("?")) {
-            uri += "&";
-        } else {
-            uri += "?";
-        }
+        uri += uri.contains("?") ? "&" : "?";
         uri += extraParams;
 
         if (fragment != null) {
@@ -275,9 +266,9 @@ public class SharedUtil implements Serializable {
             return null;
         }
         String[] parts = dashSeparated.split("-");
-        for (int i = 1; i < parts.length; i++) {
-            parts[i] = capitalize(parts[i]);
-        }
+        IntStream
+            .range(1 , parts.length)
+            .forEach(i -> parts[i] = capitalize(parts[i]));
 
         return join(parts, "");
     }
@@ -307,9 +298,9 @@ public class SharedUtil implements Serializable {
             // starts with upper case
             parts[0] = "-" + firstToLower(parts[0]);
         }
-        for (int i = 1; i < parts.length; i++) {
-            parts[i] = firstToLower(parts[i]);
-        }
+        IntStream
+            .range(1 , parts.length)
+            .forEach(i -> parts[i] = firstToLower(parts[i]));
         return join(parts, "-");
     }
 

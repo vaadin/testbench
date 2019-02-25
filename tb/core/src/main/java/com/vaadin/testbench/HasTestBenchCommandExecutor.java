@@ -28,6 +28,6 @@ public interface HasTestBenchCommandExecutor {
      *
      * @return
      */
-    public TestBenchCommandExecutor getCommandExecutor();
+    TestBenchCommandExecutor getCommandExecutor();
 
 }

@@ -14,7 +14,7 @@ public interface HasElementQuery extends HasSearchContext {
      *            <code>@Element</code> on the class
      * @return an appropriate {@link ElementQuery} instance
      */
-    public default <T extends TestBenchElement> ElementQuery<T> $(
+    default <T extends TestBenchElement> ElementQuery<T> $(
         Class<T> clazz) {
         return new ElementQuery<>(clazz).context(getContext());
     }
@@ -30,7 +30,7 @@ public interface HasElementQuery extends HasSearchContext {
      *            the tag name of the element to find
      * @return an appropriate {@link ElementQuery} instance
      */
-    public default ElementQuery<TestBenchElement> $(String tagName) {
+    default ElementQuery<TestBenchElement> $(String tagName) {
         return new ElementQuery<>(TestBenchElement.class, tagName)
                 .context(getContext());
     }

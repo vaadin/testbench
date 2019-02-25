@@ -28,6 +28,6 @@ public interface HasSearchContext {
      *
      * @return a {@link SearchContext} instance
      */
-    public SearchContext getContext();
+    SearchContext getContext();
 
 }

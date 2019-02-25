@@ -252,4 +252,8 @@ public interface Transformations {
     return function;
   }
 
+
+  static <T, R> CheckedFunction<T, R> asCheckedFunc(Function<T, R> f) {
+    return f::apply;
+  }
 }
