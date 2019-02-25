@@ -64,19 +64,19 @@
 
   <build>
     <plugins>
-      <plugin>
-        <groupId>com.vaadin</groupId>
-        <artifactId>flow-maven-plugin</artifactId>
-        <version>1.0.2</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>copy-production-files</goal>
-              <goal>package-for-production</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
+<!--      <plugin>-->
+<!--        <groupId>com.vaadin</groupId>-->
+<!--        <artifactId>flow-maven-plugin</artifactId>-->
+<!--        <version>1.0.2</version>-->
+<!--        <executions>-->
+<!--          <execution>-->
+<!--            <goals>-->
+<!--              <goal>copy-production-files</goal>-->
+<!--              <goal>package-for-production</goal>-->
+<!--            </goals>-->
+<!--          </execution>-->
+<!--        </executions>-->
+<!--      </plugin>-->
     </plugins>
   </build>
 

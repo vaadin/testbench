@@ -3,12 +3,14 @@ package junit.com.vaadin.testbench.tests;
 import java.util.List;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.rapidpm.vaadin.addons.testbench.junit5.extensions.unittest.VaadinWebUnitTest;
 import com.vaadin.testUI.ElementQueryView;
 import com.vaadin.testbench.TestBenchElement;
 import junit.com.vaadin.testbench.tests.elements.NativeButtonElement;
 import junit.com.vaadin.testbench.tests.elements.PolymerTemplateViewElement;
 
+@Disabled
 public class ElementQueryIT {
 
   private void openTestURL(GenericTestPageObject po) {
