@@ -108,6 +108,9 @@
     <module>shared</module>
     <module>junit5</module>
     <module>tb</module>
+    <module>distribution/core</module>
+    <module>distribution/core-v08</module>
+    <module>distribution/core-v10</module>
   </modules>
 
   <repositories>
