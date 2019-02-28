@@ -38,8 +38,8 @@ import java.util.function.Function;
 
 import javax.imageio.ImageIO;
 
-import org.rapidpm.dependencies.core.logger.HasLogger;
-import org.rapidpm.frp.model.Result;
+import com.vaadin.dependencies.core.logger.HasLogger;
+import com.vaadin.frp.model.Result;
 import com.vaadin.testbench.screenshot.ImageFileUtil.ReferenceInfo;
 import com.vaadin.testbench.screenshot.ImageUtil.ImageProperties;
 import com.vaadin.testbench.screenshot.ReferenceNameGenerator.TestcaseInfo;

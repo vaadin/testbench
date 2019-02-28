@@ -9,7 +9,7 @@ import static com.vaadin.testbench.screenshot.ScreenshotProperties.getScreenshot
 import static com.vaadin.testbench.screenshot.ScreenshotProperties.getScreenshotRetriesMax;
 import static com.vaadin.testbench.screenshot.ScreenshotProperties.getScreenshotRetryDelay;
 import static org.openqa.selenium.OutputType.BYTES;
-import static org.rapidpm.dependencies.core.logger.Logger.getLogger;
+import static com.vaadin.dependencies.core.logger.Logger.getLogger;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -29,7 +29,7 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.UnsupportedCommandException;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
-import org.rapidpm.dependencies.core.logger.HasLogger;
+import com.vaadin.dependencies.core.logger.HasLogger;
 import com.vaadin.testbench.screenshot.ImageComparison;
 import com.vaadin.testbench.screenshot.ReferenceNameGenerator.TestcaseInfo;
 

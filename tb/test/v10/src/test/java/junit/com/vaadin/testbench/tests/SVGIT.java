@@ -1,14 +1,9 @@
 package junit.com.vaadin.testbench.tests;
 
 import org.junit.Assert;
-import org.junit.Test;
-import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.openqa.selenium.By;
-import org.rapidpm.vaadin.addons.testbench.junit5.extensions.unittest.VaadinWebUnitTest;
-import com.vaadin.flow.component.Component;
-import com.vaadin.testUI.PageObjectView;
+import com.vaadin.vaadin.addons.testbench.junit5.extensions.unittest.VaadinWebUnitTest;
 import com.vaadin.testUI.SVGView;
-import com.vaadin.testbench.parallel.BrowserUtil;
 
 public class SVGIT  {
 

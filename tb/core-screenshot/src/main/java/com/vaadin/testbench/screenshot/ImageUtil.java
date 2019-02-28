@@ -26,7 +26,7 @@ import java.util.function.Function;
 import javax.imageio.ImageIO;
 
 import org.apache.commons.codec.binary.Base64;
-import org.rapidpm.frp.functions.CheckedFunction;
+import com.vaadin.frp.functions.CheckedFunction;
 
 /**
  * These image utility functions are for internal use only.

@@ -16,7 +16,7 @@ import java.awt.image.BufferedImage;
 import java.security.MessageDigest;
 import java.util.function.Function;
 
-import org.rapidpm.frp.functions.CheckedFunction;
+import com.vaadin.frp.functions.CheckedFunction;
 
 public class ImageComparisonUtil {
 

@@ -14,7 +14,7 @@ package com.vaadin.testbench.screenshot;
 
 import java.util.function.Function;
 
-import org.rapidpm.frp.model.serial.Quad;
+import com.vaadin.frp.model.serial.Quad;
 
 /**
  * Generates the name of a reference screen shot from a string ID and browser

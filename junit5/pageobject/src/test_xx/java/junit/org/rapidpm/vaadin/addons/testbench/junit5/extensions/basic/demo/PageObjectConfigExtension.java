@@ -21,8 +21,8 @@ import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
-import org.rapidpm.dependencies.core.logger.HasLogger;
-import org.rapidpm.vaadin.addons.testbench.junit5.extensions.container.NetworkFunctions;
+import com.vaadin.dependencies.core.logger.HasLogger;
+import com.vaadin.vaadin.addons.testbench.junit5.extensions.container.NetworkFunctions;
 
 public class PageObjectConfigExtension implements BeforeAllCallback, BeforeEachCallback,
     AfterEachCallback, AfterAllCallback, HasLogger {

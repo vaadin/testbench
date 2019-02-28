@@ -28,8 +28,8 @@ import java.util.function.Function;
 
 import javax.imageio.ImageIO;
 
-import org.rapidpm.dependencies.core.logger.HasLogger;
-import org.rapidpm.frp.model.Result;
+import com.vaadin.dependencies.core.logger.HasLogger;
+import com.vaadin.frp.model.Result;
 
 public class ScreenShotFailureReporter implements HasLogger {
   private final BufferedImage referenceImage;

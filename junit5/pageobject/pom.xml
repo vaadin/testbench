@@ -24,7 +24,7 @@
     </dependency>
     <dependency>
       <groupId>com.vaadin</groupId>
-      <artifactId>vaadin-testbench-junit5-servlet-container-api</artifactId>
+      <artifactId>vaadin-testbench-junit5-runtime-api</artifactId>
     </dependency>
 
 

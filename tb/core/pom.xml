@@ -21,9 +21,6 @@
       <artifactId>vaadin-testbench-tb-core-screenshot</artifactId>
     </dependency>
 
-
-
-
     <dependency>
       <groupId>org.seleniumhq.selenium</groupId>
       <artifactId>selenium-java</artifactId>

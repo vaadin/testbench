@@ -26,12 +26,11 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.HttpCommandExecutor;
 import org.openqa.selenium.remote.RemoteWebDriver;
-import org.rapidpm.dependencies.core.logger.HasLogger;
+import com.vaadin.dependencies.core.logger.HasLogger;
 import com.vaadin.testbench.HasDriver;
 import com.vaadin.testbench.TestBenchDriverProxy;
 import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.testbench.screenshot.ImageComparison;
-import com.vaadin.testbench.screenshot.ReferenceNameGenerator;
 
 /**
  * Provides actual implementation of TestBenchCommands

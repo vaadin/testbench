@@ -1,8 +1,7 @@
 package junit.com.vaadin.testbench.tests;
 
 import org.junit.Assert;
-import org.junit.Test;
-import org.rapidpm.vaadin.addons.testbench.junit5.extensions.unittest.VaadinWebUnitTest;
+import com.vaadin.vaadin.addons.testbench.junit5.extensions.unittest.VaadinWebUnitTest;
 import com.vaadin.testUI.PerformanceView;
 import junit.com.vaadin.testbench.tests.elements.NativeButtonElement;
 

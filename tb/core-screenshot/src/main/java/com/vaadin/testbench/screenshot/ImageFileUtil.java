@@ -24,9 +24,9 @@ import java.util.function.Function;
 
 import javax.imageio.ImageIO;
 
-import org.rapidpm.frp.functions.CheckedExecutor;
-import org.rapidpm.frp.functions.CheckedFunction;
-import org.rapidpm.frp.model.serial.Triple;
+import com.vaadin.frp.functions.CheckedExecutor;
+import com.vaadin.frp.functions.CheckedFunction;
+import com.vaadin.frp.model.serial.Triple;
 
 public class ImageFileUtil {
 

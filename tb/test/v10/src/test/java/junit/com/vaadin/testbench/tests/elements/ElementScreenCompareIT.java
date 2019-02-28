@@ -3,7 +3,7 @@ package junit.com.vaadin.testbench.tests.elements;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.openqa.selenium.By;
-import org.rapidpm.vaadin.addons.testbench.junit5.extensions.unittest.VaadinWebUnitTest;
+import com.vaadin.vaadin.addons.testbench.junit5.extensions.unittest.VaadinWebUnitTest;
 import com.vaadin.testUI.ElementQueryView;
 import com.vaadin.testbench.TestBenchElement;
 import junit.com.vaadin.testbench.tests.GenericTestPageObject;

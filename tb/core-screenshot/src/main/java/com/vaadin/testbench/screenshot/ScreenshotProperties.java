@@ -1,13 +1,13 @@
 package com.vaadin.testbench.screenshot;
 
-import static org.rapidpm.frp.SystemProperties.systemProperty;
-import static org.rapidpm.frp.SystemProperties.systemPropertyBoolean;
-import static org.rapidpm.frp.SystemProperties.systemPropertyDouble;
-import static org.rapidpm.frp.SystemProperties.systemPropertyInt;
+import static com.vaadin.frp.SystemProperties.systemProperty;
+import static com.vaadin.frp.SystemProperties.systemPropertyBoolean;
+import static com.vaadin.frp.SystemProperties.systemPropertyDouble;
+import static com.vaadin.frp.SystemProperties.systemPropertyInt;
 
 import java.util.function.Function;
 
-import org.rapidpm.frp.model.Result;
+import com.vaadin.frp.model.Result;
 
 public final class ScreenshotProperties {
 

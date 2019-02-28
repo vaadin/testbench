@@ -49,27 +49,27 @@
       </dependency>
       <dependency>
         <groupId>com.vaadin</groupId>
-        <artifactId>vaadin-testbench-junit5-servlet-container-api</artifactId>
+        <artifactId>vaadin-testbench-junit5-runtime-api</artifactId>
         <version>7.0.0-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.vaadin</groupId>
-        <artifactId>vaadin-testbench-junit5-servlet-container-impl-none</artifactId>
+        <artifactId>vaadin-testbench-junit5-runtime-impl-none</artifactId>
         <version>7.0.0-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.vaadin</groupId>
-        <artifactId>vaadin-testbench-junit5-servlet-container-impl-meecrowave</artifactId>
+        <artifactId>vaadin-testbench-junit5-runtime-impl-meecrowave</artifactId>
         <version>7.0.0-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.vaadin</groupId>
-        <artifactId>vaadin-testbench-junit5-servlet-container-impl-springboot-v01</artifactId>
+        <artifactId>vaadin-testbench-junit5-runtime-impl-springboot-v01</artifactId>
         <version>7.0.0-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.vaadin</groupId>
-        <artifactId>vaadin-testbench-junit5-servlet-container-impl-springboot-v02</artifactId>
+        <artifactId>vaadin-testbench-junit5-runtime-impl-springboot-v02</artifactId>
         <version>7.0.0-SNAPSHOT</version>
       </dependency>
       <dependency>

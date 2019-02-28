@@ -12,12 +12,12 @@
  */
 package com.vaadin.testbench;
 
-import static org.rapidpm.frp.SystemProperties.systemPropertyInt;
+import static com.vaadin.frp.SystemProperties.systemPropertyInt;
 
 import java.util.function.Function;
 
-import org.rapidpm.dependencies.core.logger.HasLogger;
-import org.rapidpm.frp.model.Result;
+import com.vaadin.dependencies.core.logger.HasLogger;
+import com.vaadin.frp.model.Result;
 
 public final class Parameters implements HasLogger {
 

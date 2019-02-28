@@ -3,7 +3,7 @@ package junit.com.vaadin.testbench.tests;
 import java.util.List;
 
 import org.junit.jupiter.api.Assertions;
-import org.rapidpm.vaadin.addons.testbench.junit5.extensions.unittest.VaadinWebUnitTest;
+import com.vaadin.vaadin.addons.testbench.junit5.extensions.unittest.VaadinWebUnitTest;
 import com.vaadin.testUI.PageObjectView;
 
 public class PageObjectIT {

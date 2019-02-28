@@ -14,7 +14,7 @@
 
   <modules>
     <module>common</module>
-    <module>servlet-container</module>
+    <module>runtime</module>
     <module>webdriver</module>
     <module>pageobject</module>
   </modules>
