@@ -33,13 +33,13 @@
 
 
 <!--    <dependency>-->
-<!--      <groupId>com.vaadin</groupId>-->
-<!--      <artifactId>vaadin-core</artifactId>-->
+<!--      <groupId>com.testbench</groupId>-->
+<!--      <artifactId>testbench-core</artifactId>-->
 <!--    </dependency>-->
 
 <!--    <dependency>-->
-<!--      <groupId>com.vaadin</groupId>-->
-<!--      <artifactId>vaadin-lumo-theme</artifactId>-->
+<!--      <groupId>com.testbench</groupId>-->
+<!--      <artifactId>testbench-lumo-theme</artifactId>-->
 <!--    </dependency>-->
 
     <!--For TestUI only-->

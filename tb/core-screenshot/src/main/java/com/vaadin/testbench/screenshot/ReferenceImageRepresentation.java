@@ -22,6 +22,7 @@ import java.util.stream.Stream;
  * image. This is used for comparing the image to a screen shot and detecting
  * changes in the appearance.
  */
+@Deprecated
 public class ReferenceImageRepresentation implements Serializable {
   private static final long serialVersionUID = 1L;
 

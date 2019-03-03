@@ -17,6 +17,7 @@ public final class ScreenshotProperties {
   public static final String SCREENSHOT_COMPARISON_TOLERANCE = "screenshotComparisonTolerance";
   public static final String SCREENSHOT_RETRIES_MAX = "maxScreenshotRetries";
   public static final String SCREENSHOT_RETRY_DELAY = "screenshotRetryDelay";
+  public static final String IMAGE_FILE_NAME_ENDING = "png";
 
   private static final Function<String, Result<String>> property = systemProperty(ScreenshotProperties.class);
   private static final Function<String, Result<Integer>> propertyInt = systemPropertyInt(ScreenshotProperties.class);

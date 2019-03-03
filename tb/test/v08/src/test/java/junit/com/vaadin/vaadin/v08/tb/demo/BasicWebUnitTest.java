@@ -16,7 +16,7 @@
 package junit.com.vaadin.vaadin.v08.tb.demo;
 
 import org.junit.jupiter.api.Assertions;
-import com.vaadin.vaadin.addons.testbench.junit5.extensions.unittest.VaadinWebUnitTest;
+import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinWebUnitTest;
 
 /**
  *

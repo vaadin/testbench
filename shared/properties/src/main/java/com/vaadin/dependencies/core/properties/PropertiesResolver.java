@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.util.Properties;
 
 import com.vaadin.dependencies.core.logger.HasLogger;
+import com.vaadin.frp.functions.CheckedFunction;
 
 /**
  * Creates a {@link java.util.Properties} object merged from different sources.
@@ -33,7 +34,15 @@ import com.vaadin.dependencies.core.logger.HasLogger;
 public class PropertiesResolver implements HasLogger {
   /** Constant <code>CONFIG_LOCATION_PROPERTY="rapidpm.configlocation"</code> */
   public static final String CONFIG_LOCATION_PROPERTY = "rapidpm.configlocation";
-  private static final String PROPERIES_EXTENSION = ".properties";
+  public static final String PROPERIES_EXTENSION = ".properties";
+
+
+  public static CheckedFunction<String, Properties> propertyReader() {
+    return (filename) -> {
+      final PropertiesResolver resolver = new PropertiesResolver();
+      return resolver.get(filename);
+    };
+  }
 
   private String createFileName(String name) {
     return name + PROPERIES_EXTENSION;

@@ -102,7 +102,7 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver, H
    */
   public void waitForVaadin() {
     if (! enableWaitForVaadin) {
-      // wait for vaadin is disabled, just return.
+      // wait for testbench is disabled, just return.
       return;
     }
 
@@ -300,7 +300,7 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver, H
 
   private int detectViewportHeight() {
     // also check in IE combat mode etc + detect IE9 for extra borders in
-    // combat mode (although vaadin always in std mode, function may be
+    // combat mode (although testbench always in std mode, function may be
     // needed earlier)
     int height = ((Number) executeScript(
         "function f() { if(typeof window.innerHeight != 'undefined') { return window.innerHeight; } if(document.documentElement && document.documentElement.offsetHeight) { return document.documentElement.offsetHeight; } w = document.body.clientHeight; if(navigator.userAgent.indexOf('Trident/5') != -1 && document.documentMode < 9) { w += 4; } return w;} return f();"))
@@ -310,7 +310,7 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver, H
 
   private int detectViewportWidth() {
     // also check in IE combat mode etc + detect IE9 for extra borders in
-    // combat mode (although vaadin always in std mode, function may be
+    // combat mode (although testbench always in std mode, function may be
     // needed earlier)
     int width = ((Number) executeScript(
         "function f() { if(typeof window.innerWidth != 'undefined') { return window.innerWidth; } if(document.documentElement && document.documentElement.offsetWidth) { return document.documentElement.offsetWidth; } w = document.body.clientWidth; if(navigator.userAgent.indexOf('Trident/5') != -1 && document.documentMode < 9) { w += 4; } return w;} return f();"))

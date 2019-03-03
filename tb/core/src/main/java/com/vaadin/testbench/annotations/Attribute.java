@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
  * tag name.
  * <p>
  * While custom elements can be uniquely identified using their tag name, e.g.
- * <code>&lt;vaadin-button&gt;</code>. Flow views and server side composites
+ * <code>&lt;testbench-button&gt;</code>. Flow views and server side composites
  * cannot be identified this way but typically needs an additional filter which
  * can be defined using this annotations.
  * <p>

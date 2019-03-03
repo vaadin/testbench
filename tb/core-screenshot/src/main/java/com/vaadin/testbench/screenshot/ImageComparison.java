@@ -12,7 +12,7 @@
  */
 package com.vaadin.testbench.screenshot;
 
-import static com.vaadin.testbench.screenshot.ImageFileUtil.IMAGE_FILE_NAME_ENDING;
+import static com.vaadin.testbench.screenshot.ScreenshotProperties.IMAGE_FILE_NAME_ENDING;
 import static com.vaadin.testbench.screenshot.ImageFileUtil.createScreenshotDirectoriesIfNeeded;
 import static com.vaadin.testbench.screenshot.ImageFileUtil.getErrorScreenshotFile;
 import static com.vaadin.testbench.screenshot.ImageFileUtil.getReferenceImageFileNames;

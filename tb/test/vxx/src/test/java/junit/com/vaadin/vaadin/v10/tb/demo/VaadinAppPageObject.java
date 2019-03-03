@@ -19,12 +19,12 @@ import com.vaadin.flow.component.button.testbench.ButtonElement;
 import com.vaadin.flow.component.html.testbench.SpanElement;
 import org.openqa.selenium.WebDriver;
 import com.vaadin.dependencies.core.logger.HasLogger;
-import com.vaadin.vaadin.addons.testbench.junit5.extensions.container.ContainerInfo;
-import com.vaadin.vaadin.addons.testbench.junit5.pageobject.AbstractVaadinPageObject;
+import com.vaadin.testbench.addons.junit5.extensions.container.ContainerInfo;
+import com.vaadin.testbench.addons.junit5.pageobject.AbstractVaadinPageObject;
 
 import static java.lang.Integer.valueOf;
-import static com.vaadin.vaadin.v10.tb.demo.VaadinApp.BTN_CLICK_ME;
-import static com.vaadin.vaadin.v10.tb.demo.VaadinApp.LB_CLICK_COUNT;
+import static com.vaadin.testbench.v10.tb.demo.VaadinApp.BTN_CLICK_ME;
+import static com.vaadin.testbench.v10.tb.demo.VaadinApp.LB_CLICK_COUNT;
 
 public class VaadinAppPageObject extends AbstractVaadinPageObject implements HasLogger {
 

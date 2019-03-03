@@ -9,7 +9,7 @@ public interface CanCompareScreenshots {
     /**
      * Tests that a screen shot is equal to the specified reference image. The
      * comparison tolerance can be specified by setting the
-     * com.vaadin.testbench.block.error system property to a value between 0 and
+     * com.testbench.testbench.block.error system property to a value between 0 and
      * 1, where 0 == no changes are accepted and 1 == big changes are accepted.
      * Note that specifying 1 doesn't mean that any reference image is accepted.
      *
@@ -25,7 +25,7 @@ public interface CanCompareScreenshots {
     /**
      * Tests that a screen shot is equal to the specified reference image. The
      * comparison tolerance can be specified by setting the
-     * com.vaadin.testbench.block.error system property to a value between 0 and
+     * com.testbench.testbench.block.error system property to a value between 0 and
      * 1, where 0 == no changes are accepted and 1 == all changes are accepted.
      *
      * @param reference
@@ -40,7 +40,7 @@ public interface CanCompareScreenshots {
     /**
      * Tests that a screen shot is equal to the specified reference image. The
      * comparison tolerance can be specified by setting the
-     * com.vaadin.testbench.block.error system property to a value between 0 and
+     * com.testbench.testbench.block.error system property to a value between 0 and
      * 1, where 0 == no changes are accepted and 1 == all changes are accepted.
      *
      * @param reference

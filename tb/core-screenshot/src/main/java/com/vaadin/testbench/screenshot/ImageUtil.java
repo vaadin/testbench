@@ -12,6 +12,7 @@
  */
 package com.vaadin.testbench.screenshot;
 
+import static com.vaadin.testbench.screenshot.ScreenshotProperties.IMAGE_FILE_NAME_ENDING;
 import static java.awt.image.BufferedImage.TYPE_INT_ARGB;
 import static java.awt.image.BufferedImage.TYPE_INT_RGB;
 
@@ -55,7 +56,7 @@ public class ImageUtil {
     return (image) -> {
       Base64 encoder = new Base64();
       ByteArrayOutputStream baos = new ByteArrayOutputStream();
-      ImageIO.write(image , "png" , baos);
+      ImageIO.write(image , IMAGE_FILE_NAME_ENDING , baos);
       baos.flush();
       byte[] encodedBytes = encoder.encode(baos.toByteArray());
       baos.close();

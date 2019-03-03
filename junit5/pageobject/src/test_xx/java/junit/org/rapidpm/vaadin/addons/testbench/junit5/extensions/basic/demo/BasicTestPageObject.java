@@ -17,8 +17,8 @@ package junit.org.rapidpm.vaadin.addons.testbench.junit5.extensions.basic.demo;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.FindBy;
-import com.vaadin.vaadin.addons.testbench.junit5.extensions.container.ContainerInfo;
-import com.vaadin.vaadin.addons.testbench.junit5.pageobject.AbstractPageObject;
+import com.vaadin.testbench.addons.testbench.junit5.extensions.container.ContainerInfo;
+import com.vaadin.testbench.addons.testbench.junit5.pageobject.AbstractPageObject;
 
 public class BasicTestPageObject extends AbstractPageObject {
 

@@ -11,7 +11,7 @@
 
   <artifactId>vaadin-testbench-tb-test-v10</artifactId>
 
-  <packaging>war</packaging>
+  <packaging>jar</packaging>
   <dependencyManagement>
     <dependencies>
       <!--Version definitions from parent-->
@@ -65,7 +65,7 @@
   <build>
     <plugins>
 <!--      <plugin>-->
-<!--        <groupId>com.vaadin</groupId>-->
+<!--        <groupId>com.testbench</groupId>-->
 <!--        <artifactId>flow-maven-plugin</artifactId>-->
 <!--        <version>1.0.2</version>-->
 <!--        <executions>-->

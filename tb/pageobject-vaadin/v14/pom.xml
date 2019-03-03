@@ -46,18 +46,18 @@
     </dependency>
 
 <!--    <dependency>-->
-<!--      <groupId>com.vaadin</groupId>-->
-<!--      <artifactId>vaadin-core</artifactId>-->
+<!--      <groupId>com.testbench</groupId>-->
+<!--      <artifactId>testbench-core</artifactId>-->
 <!--    </dependency>-->
 
 <!--    <dependency>-->
-<!--      <groupId>com.vaadin</groupId>-->
-<!--      <artifactId>vaadin-testbench</artifactId>-->
+<!--      <groupId>com.testbench</groupId>-->
+<!--      <artifactId>testbench-testbench</artifactId>-->
 <!--      <scope>compile</scope>-->
 <!--    </dependency>-->
 <!--    <dependency>-->
-<!--      <groupId>com.vaadin</groupId>-->
-<!--      <artifactId>vaadin-testbench-core</artifactId>-->
+<!--      <groupId>com.testbench</groupId>-->
+<!--      <artifactId>testbench-testbench-core</artifactId>-->
 <!--      <scope>compile</scope>-->
 <!--      <exclusions>-->
 <!--        <exclusion>-->
@@ -68,13 +68,13 @@
 <!--      &lt;!&ndash;<scope>test</scope>&ndash;&gt;-->
 <!--    </dependency>-->
 <!--    <dependency>-->
-<!--      <groupId>com.vaadin</groupId>-->
+<!--      <groupId>com.testbench</groupId>-->
 <!--      <artifactId>flow-html-components-testbench</artifactId>-->
 <!--      <scope>compile</scope>-->
 <!--    </dependency>-->
 <!--    <dependency>-->
-<!--      <groupId>com.vaadin</groupId>-->
-<!--      <artifactId>vaadin-components-testbench</artifactId>-->
+<!--      <groupId>com.testbench</groupId>-->
+<!--      <artifactId>testbench-components-testbench</artifactId>-->
 <!--      <scope>compile</scope>-->
 <!--    </dependency>-->
   </dependencies>

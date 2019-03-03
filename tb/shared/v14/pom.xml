@@ -28,8 +28,8 @@
 
   <dependencies>
 <!--    <dependency>-->
-<!--      <groupId>com.vaadin</groupId>-->
-<!--      <artifactId>vaadin</artifactId>-->
+<!--      <groupId>com.testbench</groupId>-->
+<!--      <artifactId>testbench</artifactId>-->
 <!--    </dependency>-->
 
     <dependency>

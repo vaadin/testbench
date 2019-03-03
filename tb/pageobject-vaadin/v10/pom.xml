@@ -52,13 +52,13 @@
     </dependency>
 
 <!--    <dependency>-->
-<!--      <groupId>com.vaadin</groupId>-->
-<!--      <artifactId>vaadin-testbench</artifactId>-->
+<!--      <groupId>com.testbench</groupId>-->
+<!--      <artifactId>testbench-testbench</artifactId>-->
 <!--      <scope>compile</scope>-->
 <!--    </dependency>-->
 <!--    <dependency>-->
-<!--      <groupId>com.vaadin</groupId>-->
-<!--      <artifactId>vaadin-testbench-core</artifactId>-->
+<!--      <groupId>com.testbench</groupId>-->
+<!--      <artifactId>testbench-testbench-core</artifactId>-->
 <!--      <scope>compile</scope>-->
 <!--      <exclusions>-->
 <!--        <exclusion>-->

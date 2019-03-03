@@ -18,9 +18,9 @@ package junit.com.vaadin.vaadin.v08.tb.demo;
 import com.vaadin.testbench.elements.ButtonElement;
 import com.vaadin.testbench.elements.LabelElement;
 import org.openqa.selenium.WebDriver;
-import com.vaadin.vaadin.addons.testbench.junit5.extensions.container.ContainerInfo;
-import com.vaadin.vaadin.addons.testbench.junit5.pageobject.AbstractVaadinPageObject;
-import com.vaadin.vaadin.v08.tb.demo.BasicTestUI;
+import com.vaadin.testbench.addons.junit5.extensions.container.ContainerInfo;
+import com.vaadin.testbench.addons.junit5.pageobject.AbstractVaadinPageObject;
+import com.vaadin.testbench.v08.tb.demo.BasicTestUI;
 
 
 /**

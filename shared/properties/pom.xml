@@ -15,6 +15,10 @@
   <dependencies>
     <dependency>
       <groupId>com.vaadin</groupId>
+      <artifactId>vaadin-testbench-shared-frp</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.vaadin</groupId>
       <artifactId>vaadin-testbench-shared-logger-adapter</artifactId>
     </dependency>
   </dependencies>

@@ -32,7 +32,6 @@ public class ImageFileUtil {
 
   public static final String DIRECTORY_DIFF = "diff";
   public static final String DIRECTORY_LOGS = "logs";
-  public static final String IMAGE_FILE_NAME_ENDING = "png";
 
   public static final class ReferenceInfo extends Triple<String, String, String> {
     public ReferenceInfo(String referenceImageFileName ,
@@ -68,8 +67,8 @@ public class ImageFileUtil {
       int i = 1;
       while (file.exists()) {
         referenceImages.add(nextName);
-        nextName = info.fileName().replace("." + IMAGE_FILE_NAME_ENDING ,
-                                           String.format("_%d." + IMAGE_FILE_NAME_ENDING , i++));
+        nextName = info.fileName().replace("." + ScreenshotProperties.IMAGE_FILE_NAME_ENDING ,
+                                           String.format("_%d." + ScreenshotProperties.IMAGE_FILE_NAME_ENDING , i++));
         file = fileFunction.apply(nextName);
       }
       return referenceImages;

@@ -15,9 +15,9 @@
  */
 package junit.com.vaadin.vaadin.addons.testbench;
 
+import static com.vaadin.dependencies.core.properties.PropertiesResolver.propertyReader;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static com.vaadin.vaadin.addons.webdriver.BrowserDriverFunctions.CONFIG_FOLDER;
-import static com.vaadin.vaadin.addons.webdriver.BrowserDriverFunctions.propertyReader;
+import static com.vaadin.testbench.addons.webdriver.BrowserDriverFunctions.CONFIG_FOLDER;
 
 import java.util.List;
 import java.util.Properties;
@@ -27,10 +27,10 @@ import org.junit.jupiter.api.Test;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import com.vaadin.frp.model.Result;
-import com.vaadin.vaadin.addons.webdriver.conf.GridConfig;
-import com.vaadin.vaadin.addons.webdriver.conf.GridConfig.Type;
-import com.vaadin.vaadin.addons.webdriver.conf.WebdriversConfig;
-import com.vaadin.vaadin.addons.webdriver.conf.WebdriversConfigFactory;
+import com.vaadin.testbench.addons.webdriver.conf.GridConfig;
+import com.vaadin.testbench.addons.webdriver.conf.GridConfig.Type;
+import com.vaadin.testbench.addons.webdriver.conf.WebdriversConfig;
+import com.vaadin.testbench.addons.webdriver.conf.WebdriversConfigFactory;
 
 public class WebdriversConfigTest {
   private WebdriversConfigFactory factory = new WebdriversConfigFactory();

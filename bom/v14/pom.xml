@@ -17,9 +17,9 @@
 <!--    <dependencies>-->
 <!--      &lt;!&ndash;Version definitions&ndash;&gt;-->
 <!--      <dependency>-->
-<!--        <groupId>com.vaadin</groupId>-->
-<!--        <artifactId>vaadin-bom</artifactId>-->
-<!--        <version>${vaadin-v14.version}</version>-->
+<!--        <groupId>com.testbench</groupId>-->
+<!--        <artifactId>testbench-bom</artifactId>-->
+<!--        <version>${testbench-v14.version}</version>-->
 <!--        <type>pom</type>-->
 <!--        <scope>import</scope>-->
 <!--      </dependency>-->
