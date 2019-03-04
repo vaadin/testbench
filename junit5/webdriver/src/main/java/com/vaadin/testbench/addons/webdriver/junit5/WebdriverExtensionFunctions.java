@@ -15,13 +15,14 @@
  */
 package com.vaadin.testbench.addons.webdriver.junit5;
 
+import static com.vaadin.testbench.addons.junit5.extensions.ExtensionFunctions.storeMethodPlain;
+
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.openqa.selenium.WebDriver;
-import com.vaadin.testbench.addons.junit5.extensions.ExtensionFunctions;
 
 
 /**
@@ -29,18 +30,18 @@ import com.vaadin.testbench.addons.junit5.extensions.ExtensionFunctions;
  */
 public interface WebdriverExtensionFunctions {
 
-  String WEBDRIVER = "webdriver";
+  String WEBDRIVER_STORAGE_KEY = "webdriver";
 
   static Function<ExtensionContext, WebDriver> webdriver() {
-    return (context) -> ExtensionFunctions.store().apply(context).get(WEBDRIVER , WebDriver.class);
+    return (context) -> storeMethodPlain().apply(context).get(WEBDRIVER_STORAGE_KEY , WebDriver.class);
   }
 
   static BiConsumer<ExtensionContext, WebDriver> storeWebDriver() {
-    return (context , webDriver) -> ExtensionFunctions.store().apply(context).put(WEBDRIVER , webDriver);
+    return (context , webDriver) -> storeMethodPlain().apply(context).put(WEBDRIVER_STORAGE_KEY , webDriver);
   }
 
   static Consumer<ExtensionContext> removeWebDriver() {
-    return (context) -> ExtensionFunctions.store().apply(context).remove(WEBDRIVER);
+    return (context) -> storeMethodPlain().apply(context).remove(WEBDRIVER_STORAGE_KEY);
   }
 
 }

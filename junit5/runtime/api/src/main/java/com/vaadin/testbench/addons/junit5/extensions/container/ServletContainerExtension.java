@@ -1,12 +1,12 @@
 /**
  * Copyright © 2017 Sven Ruppert (sven.ruppert@gmail.com)
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -34,10 +34,16 @@ import com.vaadin.dependencies.core.logger.HasLogger;
 /**
  *
  */
-public class ServletContainerExtension implements BeforeAllCallback, BeforeEachCallback,
-    AfterEachCallback, AfterAllCallback, ParameterResolver, HasLogger {
+public class ServletContainerExtension implements
+    BeforeAllCallback,
+    BeforeEachCallback,
+    AfterEachCallback,
+    AfterAllCallback,
+    ParameterResolver,
+    HasLogger {
 
   private final ContainerInitializer containerIntializer;
+
 
   public ServletContainerExtension() {
     ServiceLoader<ContainerInitializer> serviceLoader =
@@ -58,28 +64,30 @@ public class ServletContainerExtension implements BeforeAllCallback, BeforeEachC
   @Override
   public void beforeEach(ExtensionContext context) throws Exception {
     logger().info("ServletContainerExtension - beforeEach");
-    containerIntializer.beforeEach(context.getTestMethod().get(), context);
+    containerIntializer.beforeEach(context.getTestMethod().get() , context);
   }
 
   @Override
   public void afterEach(ExtensionContext context) throws Exception {
     logger().info("ServletContainerExtension - afterEach");
-      containerIntializer.afterEach(context.getTestMethod().get(), context);
+    containerIntializer.afterEach(context.getTestMethod().get() , context);
   }
 
   @Override
   public void beforeAll(ExtensionContext context) throws Exception {
-    containerIntializer.beforeAll(context.getTestClass().get(), context);
+    logger().info("ServletContainerExtension - beforeAll");
+    containerIntializer.beforeAll(context.getTestClass().get() , context);
   }
 
   @Override
   public void afterAll(ExtensionContext context) throws Exception {
-    containerIntializer.afterAll(context.getTestClass().get(), context);
+    logger().info("ServletContainerExtension - afterAll");
+    containerIntializer.afterAll(context.getTestClass().get() , context);
   }
 
   @Override
-  public Object resolveParameter(ParameterContext parameterContext,
-      ExtensionContext extensionContext) throws ParameterResolutionException {
+  public Object resolveParameter(ParameterContext parameterContext ,
+                                 ExtensionContext extensionContext) throws ParameterResolutionException {
     if (ContainerInfo.class.isAssignableFrom(parameterContext.getParameter().getType())) {
       return containerInfo().apply(extensionContext);
     } else {
@@ -88,10 +96,9 @@ public class ServletContainerExtension implements BeforeAllCallback, BeforeEachC
   }
 
 
-
   @Override
-  public boolean supportsParameter(ParameterContext parameterContext,
-      ExtensionContext extensionContext) throws ParameterResolutionException {
+  public boolean supportsParameter(ParameterContext parameterContext ,
+                                   ExtensionContext extensionContext) throws ParameterResolutionException {
     final Class<?> type = parameterContext.getParameter().getType();
     return ContainerInfo.class.isAssignableFrom(type);
 

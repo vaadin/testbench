@@ -69,14 +69,6 @@ public interface BrowserDriverFunctions extends HasLogger {
   String CONFIG_FOLDER = ".testbenchextensions/";
 
 
-
-//  static Supplier<Properties> readSeleniumGridProperties() {
-//    return () -> propertyReader()
-//        .apply(CONFIG_FOLDER + "selenium-grids")
-//        .getOrElse(Properties::new);
-//  }
-
-
   static Function<DesiredCapabilities, Result<WebDriver>> localWebDriverInstance() {
     return dc -> {
       final String browserType = dc.getBrowserName();
@@ -109,22 +101,6 @@ public interface BrowserDriverFunctions extends HasLogger {
         );
   }
 
-//  static Result<WebDriver> unittestingWebDriverInstance() {
-//    WebdriversConfig          config            = readConfig();
-//    final String              unittestingTarget = config.getUnittestingTarget();
-//    final DesiredCapabilities unittestingDC     = config.getUnittestingBrowser();
-//    return (unittestingTarget != null)
-//           ? match(
-//        matchCase(() -> remoteWebDriverInstance(unittestingDC, unittestingTarget).get()),
-//        matchCase(unittestingTarget::isEmpty, () -> failure(UNITTESTING + " should not be empty")),
-//        matchCase(() -> unittestingTarget.equals(SELENIUM_GRID_PROPERTIES_LOCALE_BROWSER),
-//                  () -> localWebDriverInstance().apply(unittestingDC)
-//        )
-//    )
-//           : failure("no target for " + UNITTESTING + " could be found.");
-//  }
-
-
   static CheckedSupplier<WebDriver> remoteWebDriverInstance(DesiredCapabilities desiredCapability ,
                                                             final String ip) {
     return () -> {
@@ -149,7 +125,6 @@ public interface BrowserDriverFunctions extends HasLogger {
             ))
         )
         .map(createWebDriverInstance());
-//        .collect(toList());
   }
 
   static Function<? super Triple<Boolean, DesiredCapabilities, String>, ? extends WebDriver> createWebDriverInstance() {

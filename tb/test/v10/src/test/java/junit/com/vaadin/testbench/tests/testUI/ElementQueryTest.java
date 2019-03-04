@@ -11,6 +11,7 @@ import junit.com.vaadin.testbench.tests.testUI.elements.NativeButtonElement;
 import junit.com.vaadin.testbench.tests.testUI.elements.PolymerTemplateViewElement;
 
 @Disabled
+@VaadinWebUnitTest
 public class ElementQueryTest {
 
   private void openTestURL(GenericTestPageObject po) {

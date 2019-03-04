@@ -5,7 +5,7 @@ import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinWebUnitTest;
 import com.vaadin.testbench.tests.testUI.PageObjectView;
-
+@VaadinWebUnitTest
 public class PageObjectTest {
 
 

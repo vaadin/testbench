@@ -18,18 +18,45 @@ package junit.com.vaadin.testbench.tests.demo;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinWebUnitTest;
 
-
+@VaadinWebUnitTest
 public class VaadinAppWebUnitTest {
 
 
+
+  @DisplayName("Hello World - Click twice 001")
   @VaadinWebUnitTest
-  @DisplayName("Hello World - Click twice")
-  @Disabled
   void test001(VaadinAppPageObject pageObject) {
+    pageObject.loadPage();
+    assertEquals(0 , pageObject.clickCount());
+    pageObject.click();
+    assertEquals(1 , pageObject.clickCount());
+  }
+
+  @DisplayName("Hello World - Click twice 002")
+  @VaadinWebUnitTest
+  void test002(VaadinAppPageObject pageObject) {
+    pageObject.loadPage();
+    assertEquals(0 , pageObject.clickCount());
+    pageObject.click();
+    assertEquals(1 , pageObject.clickCount());
+  }
+
+  @DisplayName("Hello World - Click twice 003")
+  @VaadinWebUnitTest
+  void test003(VaadinAppPageObject pageObject) {
+    pageObject.loadPage();
+    assertEquals(0 , pageObject.clickCount());
+    pageObject.click();
+    assertEquals(1 , pageObject.clickCount());
+  }
+
+  @DisplayName("Hello World - Click twice 004")
+  @VaadinWebUnitTest
+  void test004(VaadinAppPageObject pageObject) {
     pageObject.loadPage();
     assertEquals(0 , pageObject.clickCount());
     pageObject.click();

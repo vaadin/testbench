@@ -49,27 +49,27 @@ public class SpringBootContainerInitializer implements ContainerInitializer {
     if (appClass == null) {
       throw new IllegalStateException("No app class defined");
     }
-    ExtensionFunctions.storeClass().apply(context).put(SPRING_BOOT_APP_CLASS , appClass);
+    ExtensionFunctions.storeClassPlain().apply(context).put(SPRING_BOOT_APP_CLASS , appClass);
 
     final ArrayList<String> arrayList = new ArrayList<>();
     addAll(arrayList , springBootConf.args());
-    ExtensionFunctions.storeClass().apply(context).put(SPRING_BOOT_ARGS , arrayList
+    ExtensionFunctions.storeClassPlain().apply(context).put(SPRING_BOOT_ARGS , arrayList
     );
   }
 
   private BiConsumer<ExtensionContext, ApplicationContext> storeApplicationContext() {
-    return (context , springApplicationContext) -> ExtensionFunctions.store().apply(context)
+    return (context , springApplicationContext) -> ExtensionFunctions.storeMethodPlain().apply(context)
                                                                      .put(SPRING_BOOT_APPLICATION_CONTEXT , springApplicationContext);
   }
 
   private Function<ExtensionContext, ApplicationContext> getApplicationContext() {
-    return context -> ExtensionFunctions.store().apply(context).get(SPRING_BOOT_APPLICATION_CONTEXT ,
-                                                                    ApplicationContext.class
+    return context -> ExtensionFunctions.storeMethodPlain().apply(context).get(SPRING_BOOT_APPLICATION_CONTEXT ,
+                                                                               ApplicationContext.class
     );
   }
 
   private Consumer<ExtensionContext> removeApplicationContext() {
-    return context -> ExtensionFunctions.store().apply(context).remove(SPRING_BOOT_APPLICATION_CONTEXT);
+    return context -> ExtensionFunctions.storeMethodPlain().apply(context).remove(SPRING_BOOT_APPLICATION_CONTEXT);
   }
 
   @Override
@@ -78,10 +78,10 @@ public class SpringBootContainerInitializer implements ContainerInitializer {
     prepareIP(context);
 
     List<String> argsWithoutPort =
-        ((List<String>) ExtensionFunctions.storeClass().apply(context).get(SPRING_BOOT_ARGS , List.class)).stream()
-                                                                                                          .filter(arg -> ! arg.startsWith("--server.port=")).collect(Collectors.toList());
+        ((List<String>) ExtensionFunctions.storeClassPlain().apply(context).get(SPRING_BOOT_ARGS , List.class)).stream()
+                                                                                                               .filter(arg -> ! arg.startsWith("--server.port=")).collect(Collectors.toList());
     argsWithoutPort.add("--server.port=" + port);
-    Class<?> clazz = ExtensionFunctions.storeClass().apply(context).get(SPRING_BOOT_APP_CLASS , Class.class);
+    Class<?> clazz = ExtensionFunctions.storeClassPlain().apply(context).get(SPRING_BOOT_APP_CLASS , Class.class);
     ApplicationContext applicationContext =
         SpringApplication.run(clazz , argsWithoutPort.toArray(new String[0]));
 
@@ -99,7 +99,7 @@ public class SpringBootContainerInitializer implements ContainerInitializer {
 
   @Override
   public void afterAll(Class<?> testClass , ExtensionContext context) throws Exception {
-    ExtensionFunctions.storeClass().apply(context).remove(SPRING_BOOT_APP_CLASS);
-    ExtensionFunctions.storeClass().apply(context).remove(SPRING_BOOT_ARGS);
+    ExtensionFunctions.storeClassPlain().apply(context).remove(SPRING_BOOT_APP_CLASS);
+    ExtensionFunctions.storeClassPlain().apply(context).remove(SPRING_BOOT_ARGS);
   }
 }

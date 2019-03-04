@@ -15,15 +15,15 @@
  */
 package com.vaadin.testbench.addons.junit5.extensions.container;
 
-import static com.vaadin.dependencies.core.logger.Logger.getLogger;
-import static com.vaadin.dependencies.core.properties.PropertiesResolver.propertyReader;
-import static com.vaadin.testbench.addons.junit5.extensions.ExtensionFunctions.store;
+import static com.vaadin.testbench.addons.junit5.extensions.ExtensionFunctions.storeClassPlain;
+import static com.vaadin.testbench.addons.junit5.extensions.ExtensionFunctions.storeMethodPlain;
 import static com.vaadin.testbench.addons.junit5.extensions.container.NetworkFunctions.SERVER_IP;
 import static com.vaadin.testbench.addons.junit5.extensions.container.NetworkFunctions.SERVER_PORT;
 import static com.vaadin.testbench.addons.junit5.extensions.container.NetworkFunctions.SERVER_WEBAPP;
 
 import java.lang.reflect.Method;
 import java.util.Properties;
+import java.util.function.Function;
 
 import org.apache.meecrowave.Meecrowave;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -39,75 +39,50 @@ public class MeecrowaveContainerInitializer implements ContainerInitializer, Has
   private static final String MEECROWAVE_RAMPUP_BEFORE_EACH = "beforeEach";
   private static final String MEECROWAVE_RAMPUP_BEFORE_ALL = "beforeAll";
 
+  private static final String MEECROWAVE_RAMPUP_BEFORE_DEFAULT = MEECROWAVE_RAMPUP_BEFORE_EACH;
 
-  private static final Properties configProperties =
-      propertyReader()
-          .apply(CONFIG_FOLDER + CONFIG_FILE)
-          .ifFailed(failed -> getLogger(MeecrowaveContainerInitializer.class).warning(failed))
-          .getOrElse(Properties::new);
+  private final Properties props = properties().get();
+
+  private Function<String, Boolean> isActiveNow() {
+    return (key) -> {
+      if (props.containsKey(MEECROWAVE_RAMPUP)) {
+        final String property = props.getProperty(MEECROWAVE_RAMPUP);
+        return property.equals(key);
+      } else {
+        //logger().info("isActiveNow - property " + MEECROWAVE_RAMPUP + " not set");
+        return key.equals(MEECROWAVE_RAMPUP_BEFORE_DEFAULT);
+      }
+    };
+  }
 
   @Override
   public void beforeAll(Class<?> testClass , ExtensionContext context) throws Exception {
-    if (configProperties.contains(MEECROWAVE_RAMPUP)) {
-      if (configProperties
-          .get(MEECROWAVE_RAMPUP)
-          .equals(MEECROWAVE_RAMPUP_BEFORE_ALL)) {
-        logger().info("startAndStore at beforeAll");
-        startAndStore(context);
-      } else {
-        logger().info("nothing to do at beforeAll");
-      }
-    } else {
-      logger().info("property " + MEECROWAVE_RAMPUP + " not set");
-    }
+    if (isActiveNow().apply(MEECROWAVE_RAMPUP_BEFORE_ALL))
+      startAndStore(context , MEECROWAVE_RAMPUP_BEFORE_ALL);
   }
 
   @Override
   public void beforeEach(Method testMethod , ExtensionContext context) throws Exception {
-    if (configProperties.contains(MEECROWAVE_RAMPUP)) {
-      if (configProperties
-          .get(MEECROWAVE_RAMPUP)
-          .equals(MEECROWAVE_RAMPUP_BEFORE_EACH)) {
-        logger().info("startAndStore at beforeEach");
-        startAndStore(context);
-      } else {
-        logger().info("nothing to do at beforeEach");
-      }
-    }
+    if (isActiveNow().apply(MEECROWAVE_RAMPUP_BEFORE_EACH))
+      startAndStore(context , MEECROWAVE_RAMPUP_BEFORE_EACH);
   }
 
 
   @Override
   public void afterEach(Method testMethod , ExtensionContext context) throws Exception {
-    if (configProperties.contains(MEECROWAVE_RAMPUP)) {
-      if (configProperties
-          .get(MEECROWAVE_RAMPUP)
-          .equals(MEECROWAVE_RAMPUP_BEFORE_EACH)) {
-        logger().info("stopAndRemove at afterEach");
-        stopAndRemove(context);
-      } else {
-        logger().info("nothing to do at afterEach");
-      }
-    }
+    if (isActiveNow().apply(MEECROWAVE_RAMPUP_BEFORE_EACH))
+      stopAndRemove(context , MEECROWAVE_RAMPUP_BEFORE_EACH);
   }
 
 
   @Override
   public void afterAll(Class<?> testClass , ExtensionContext context) throws Exception {
-    if (configProperties.contains(MEECROWAVE_RAMPUP)) {
-      if (configProperties
-          .get(MEECROWAVE_RAMPUP)
-          .equals(MEECROWAVE_RAMPUP_BEFORE_ALL)) {
-        logger().info("stopAndRemove at afterAll");
-        stopAndRemove(context);
-      } else {
-        logger().info("nothing to do at afterAll");
-
-      }
-    }
+    if (isActiveNow().apply(MEECROWAVE_RAMPUP_BEFORE_ALL))
+      stopAndRemove(context , MEECROWAVE_RAMPUP_BEFORE_ALL);
   }
 
-  private void startAndStore(ExtensionContext context) {
+
+  private void startAndStore(ExtensionContext ctx , String key) {
     final Meecrowave meecrowave = new Meecrowave(new Meecrowave.Builder() {
       {
         randomHttpPort();
@@ -117,14 +92,24 @@ public class MeecrowaveContainerInitializer implements ContainerInitializer, Has
         setHttp2(true);
       }
     }).bake();
-    store().apply(context).put(SERVER_IP , meecrowave.getConfiguration().getHost());
-    store().apply(context).put(SERVER_PORT , meecrowave.getConfiguration().getHttpPort());
-    store().apply(context).put(SERVER_WEBAPP , "/");
-    store().apply(context).put(MEECROWAVE_INSTANCE , meecrowave);
+
+    final boolean beforeEach = key.equals(MEECROWAVE_RAMPUP_BEFORE_EACH);
+    final ExtensionContext.Store store = beforeEach
+                                         ? storeMethodPlain().apply(ctx)
+                                         : storeClassPlain().apply(ctx);
+
+    store.put(SERVER_IP , meecrowave.getConfiguration().getHost());
+    store.put(SERVER_PORT , meecrowave.getConfiguration().getHttpPort());
+    store.put(SERVER_WEBAPP , "/");
+    store.put(MEECROWAVE_INSTANCE , meecrowave);
+
   }
 
-  private void stopAndRemove(ExtensionContext context) {
-    final ExtensionContext.Store store = store().apply(context);
+  private void stopAndRemove(ExtensionContext ctx , String key) {
+    final ExtensionContext.Store store = (key.equals(MEECROWAVE_RAMPUP_BEFORE_EACH))
+                                         ? storeMethodPlain().apply(ctx)
+                                         : storeClassPlain().apply(ctx);
+
     ((Meecrowave) store.get(MEECROWAVE_INSTANCE)).close();
     store.remove(MEECROWAVE_INSTANCE);
   }

@@ -5,6 +5,7 @@ import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinWebUnitTest;
 import com.vaadin.testbench.tests.testUI.PerformanceView;
 import junit.com.vaadin.testbench.tests.testUI.elements.NativeButtonElement;
 
+@VaadinWebUnitTest
 public class PerformanceTest {
 
 

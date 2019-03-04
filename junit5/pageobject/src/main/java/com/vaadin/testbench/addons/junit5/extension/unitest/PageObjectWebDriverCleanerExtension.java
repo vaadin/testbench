@@ -46,10 +46,10 @@ public class PageObjectWebDriverCleanerExtension implements AfterEachCallback, H
 //                          .getSessionId().toString())
 //        )
 //    ).ifPresentOrElse(
-//        success -> store().apply(context).put(SESSION_ID, success),
+//        success -> storeMethodPlain().apply(context).put(SESSION_ID, success),
 //        message -> {
 //          logger().warning(message);
-//          store().apply(context).remove(SESSION_ID);
+//          storeMethodPlain().apply(context).remove(SESSION_ID);
 //        }
 //    );
     webDriver.quit();

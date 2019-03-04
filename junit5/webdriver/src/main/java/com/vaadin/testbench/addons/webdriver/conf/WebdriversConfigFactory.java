@@ -16,6 +16,9 @@
 package com.vaadin.testbench.addons.webdriver.conf;
 
 import static com.github.webdriverextensions.WebDriverProperties.CHROME_DRIVER_PROPERTY_NAME;
+import static com.vaadin.testbench.addons.webdriver.conf.WebdriversConfig.CHROME_BINARY_PATH;
+import static com.vaadin.testbench.addons.webdriver.conf.WebdriversConfig.COMPATTESTING_GRID;
+import static java.util.Arrays.stream;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.stream.Collectors.toSet;
@@ -23,7 +26,6 @@ import static java.util.stream.Collectors.toSet;
 //import static WebdriversConfig.UNITTESTING_PORT;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -39,11 +41,17 @@ import com.vaadin.testbench.addons.webdriver.conf.GridConfig.Type;
 public class WebdriversConfigFactory implements HasLogger {
 
   public static final String DEFAULT_UNITTESTING_BROWSER = "chrome";
+  public static final String PROTO = "proto";
+  public static final String PORT = "port";
+  public static final String PATH = "path";
+  public static final String DEFAULT_PORT = "4444";
+  public static final String DEFAULT_PATH = "wd/hub";
+  public static final String DEFAULT_PROTO = "http";
 
   public WebdriversConfig createFromProperies(Properties configProperties) {
 
     final String chromeBinaryPath =
-        configProperties.getProperty(WebdriversConfig.CHROME_BINARY_PATH , null);
+        configProperties.getProperty(CHROME_BINARY_PATH , null);
     if(chromeBinaryPath != null) {
       System.setProperty(CHROME_DRIVER_PROPERTY_NAME, chromeBinaryPath);
 
@@ -52,48 +60,16 @@ public class WebdriversConfigFactory implements HasLogger {
     //TODO check if compat test should run on local Browser
     final List<GridConfig> gridConfigs = unmodifiableList(createGridConfigs(configProperties));
 
-//    logger().info("Browser for unittests is: " + unittestingBrowser.getBrowserName() + " on "
-//                  + unittestingTarget);
-
     logger().info("Loaded " + gridConfigs.size() + " grid configuration(s)");
-//    return new WebdriversConfig(unittestingTarget , gridConfigs);
     return new WebdriversConfig( gridConfigs);
   }
-
-//  private String getUnitTestingTarget(Properties configProperties) {
-//    final String host =
-//        configProperties.getProperty(UNITTESTING_HOST , SELENIUM_GRID_PROPERTIES_LOCALE_BROWSER);
-//    final String port =
-//        configProperties.getProperty(UNITTESTING_PORT , "4444");
-//    if (SELENIUM_GRID_PROPERTIES_LOCALE_BROWSER.equals(host)) {
-//      return host;
-//    } else {
-//      return "http://" + host + ":" + port + "/wd/hub";
-//    }
-//  }
-
-//  private DesiredCapabilities addCapabilities(DesiredCapabilities capabilities , Map<String, ?> capabilitiesToAdd) {
-//    if (capabilities == null && capabilitiesToAdd == null) {
-//      return new DesiredCapabilities();
-//    }
-//
-//    if (capabilities == null) {
-//      return new DesiredCapabilities(capabilitiesToAdd);
-//    }
-//
-//    if (capabilitiesToAdd == null) {
-//      return capabilities;
-//    }
-//
-//    return new DesiredCapabilities(capabilities , new DesiredCapabilities(capabilitiesToAdd));
-//  }
 
   private List<GridConfig> createGridConfigs(Properties configProperties) {
     List<GridConfig> grids = new ArrayList<>();
     Set<String> gridNames = configProperties.stringPropertyNames()
                                             .stream()
-                                            .filter(key -> key.startsWith(WebdriversConfig.COMPATTESTING_GRID))
-                                            .map(key -> key.substring(WebdriversConfig.COMPATTESTING_GRID.length() + 1))
+                                            .filter(key -> key.startsWith(COMPATTESTING_GRID))
+                                            .map(key -> key.substring(COMPATTESTING_GRID.length() + 1))
                                             .map(key -> key.substring(0 , key.indexOf('.'))).collect(toSet());
     if (gridNames.isEmpty()) {
       grids.add(createDefaultGrid());
@@ -141,7 +117,7 @@ public class WebdriversConfigFactory implements HasLogger {
 
   private List<DesiredCapabilities> getDesiredCapabilities(Properties configProperties ,
                                                            String gridName , Type type) {
-    Set<String> oses = getOses(configProperties , gridName);
+    Set<String> oses = getOSes(configProperties , gridName);
 
     Set<String> browsers = getBrowsers(configProperties , gridName);
     List<DesiredCapabilities> desiredCapabilites = new ArrayList<>();
@@ -195,17 +171,18 @@ public class WebdriversConfigFactory implements HasLogger {
   }
 
   private Set<String> getBrowsers(Properties configProperties , String gridName) {
-    return Arrays.stream(configProperties.getProperty(getGridNameKey(gridName) + ".browser").split(",")).map(String::trim).collect(toSet());
+    return stream(configProperties.getProperty(getGridNameKey(gridName) + ".browser")
+                                  .split(","))
+        .map(String::trim)
+        .collect(toSet());
   }
 
-  private Set<String> getOses(Properties configProperties , String gridName) {
+  private Set<String> getOSes(Properties configProperties , String gridName) {
     String property = configProperties.getProperty(getGridNameKey(gridName) + ".os");
     return (property == null)
-           ? Arrays
-               .stream(new String[]{"ANY"})
+           ? stream(new String[]{"ANY"})
                .collect(toSet())
-           : Arrays
-               .stream(property.split(","))
+           : stream(property.split(","))
                .map(String::trim)
                .collect(toSet());
   }
@@ -213,11 +190,9 @@ public class WebdriversConfigFactory implements HasLogger {
   private Set<String> getVersions(Properties configProperties , String gridName , String browser) {
     String property = configProperties.getProperty(getGridNameKey(gridName) + ".browser." + browser + ".version");
     return (property == null)
-           ? Arrays
-               .stream(new String[]{"ANY"})
+           ? stream(new String[]{"ANY"})
                .collect(toSet())
-           : Arrays
-               .stream(property.split(","))
+           : stream(property.split(","))
                .map(String::trim)
                .collect(toSet());
   }
@@ -228,9 +203,9 @@ public class WebdriversConfigFactory implements HasLogger {
     if (host.equals("locale")) {
       return host;
     } else {
-      final String proto = getProperty(configProperties , gridName , "proto" , "http");
-      final String port = getProperty(configProperties , gridName , "port" , "4444");
-      final String path = getProperty(configProperties , gridName , "path" , "wd/hub");
+      final String proto = getProperty(configProperties , gridName , PROTO , DEFAULT_PROTO);
+      final String port = getProperty(configProperties , gridName , PORT , DEFAULT_PORT);
+      final String path = getProperty(configProperties , gridName , PATH , DEFAULT_PATH);
 
       return proto + "://" + host + ":" + port + "/" + path;
     }
@@ -262,7 +237,7 @@ public class WebdriversConfigFactory implements HasLogger {
   }
 
   private String getGridNameKey(String gridName) {
-    return WebdriversConfig.COMPATTESTING_GRID + "." + gridName;
+    return COMPATTESTING_GRID + "." + gridName;
   }
 
 }

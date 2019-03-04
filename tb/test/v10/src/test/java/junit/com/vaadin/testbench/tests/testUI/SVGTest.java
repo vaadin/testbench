@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.By;
 import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinWebUnitTest;
 
+@VaadinWebUnitTest
 public class SVGTest {
 
 

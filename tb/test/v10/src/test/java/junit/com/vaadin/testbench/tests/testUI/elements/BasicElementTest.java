@@ -9,6 +9,7 @@ import com.vaadin.testbench.tests.testUI.ElementQueryView;
 import com.vaadin.testbench.TestBenchElement;
 import junit.com.vaadin.testbench.tests.testUI.GenericTestPageObject;
 
+@VaadinWebUnitTest
 public class BasicElementTest {
 
 

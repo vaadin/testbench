@@ -1,12 +1,12 @@
 /**
  * Copyright © 2013 Sven Ruppert (sven.ruppert@gmail.com)
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -69,16 +69,19 @@ public class PropertiesResolver implements HasLogger {
     Properties propertiesFromWorkingDir = loadFromWorkingDir(name);
     Properties propertiesFromHomeDir = loadFromHomeDir(name);
     Properties propertiesFromEnvironmentSource = loadFromEnviromentSource(name);
-    return merge(propertiesFromResource, propertiesFromWorkingDir, propertiesFromHomeDir,
-        propertiesFromEnvironmentSource);
+    return merge(propertiesFromResource ,
+                 propertiesFromWorkingDir ,
+                 propertiesFromHomeDir ,
+                 propertiesFromEnvironmentSource);
   }
 
   private Properties loadFromEnviromentSource(String name) {
     String configSource = System.getProperty(CONFIG_LOCATION_PROPERTY);
+    logger().fine("loadFromEnviromentSource - " + configSource);
     Properties properties;
     if (configSource != null) {
       String fileName = createFileName(name);
-      File file = new File(configSource, fileName);
+      File file = new File(configSource , fileName);
       properties = loadFromFile(file);
     } else {
       properties = new Properties();
@@ -92,19 +95,19 @@ public class PropertiesResolver implements HasLogger {
       logger().info("Load properties from file: " + file);
       properties.load(in);
     } catch (FileNotFoundException e) {
-      logger().fine("No properties file " + file + " found.");
+      logger().fine("No properties file " + file.getAbsolutePath() + " found.");
     } catch (IOException e) {
-      logger().severe("Failure loading properties from file: " + file, e);
+      logger().severe("Failure loading properties from file: " + file.getAbsolutePath() , e);
     }
 
     return properties;
   }
 
   private Properties loadFromHomeDir(String name) {
-
     String fileName = createFileName(name);
     String homeDir = System.getProperty("user.home");
-    File file = new File(homeDir, fileName);
+    File file = new File(homeDir , fileName);
+    logger().fine("loadFromHomeDir: the file " + file.getAbsolutePath() + " is existing -> " +file.exists());
     return loadFromFile(file);
   }
 
@@ -113,13 +116,13 @@ public class PropertiesResolver implements HasLogger {
 
     String resourceName = "/" + createFileName(name);
     logger().fine("Resource name: " + resourceName);
-    try (InputStream in = getClass().getResourceAsStream(resourceName);) {
+    try (InputStream in = getClass().getResourceAsStream(resourceName)) {
       if (in != null) {
         logger().info("Load properties from resource: " + resourceName);
         properties.load(in);
       }
     } catch (IOException e) {
-      logger().severe("Failure loading properteis from resource: " + resourceName, e);
+      logger().severe("Failure loading properties from resource: " + resourceName , e);
     }
     return properties;
   }
@@ -127,6 +130,7 @@ public class PropertiesResolver implements HasLogger {
   private Properties loadFromWorkingDir(String name) {
     String fileName = createFileName(name);
     File file = new File(fileName);
+    logger().fine("loadFromWorkingDir: the file " + file.getAbsolutePath() + " is existing -> " +file.exists());
     return loadFromFile(file);
   }
 
@@ -134,7 +138,7 @@ public class PropertiesResolver implements HasLogger {
     Properties result = new Properties();
     for (Properties toAdd : properties) {
       for (Object key : toAdd.keySet()) {
-        result.setProperty(key.toString(), toAdd.getProperty(key.toString()));
+        result.setProperty(key.toString() , toAdd.getProperty(key.toString()));
       }
     }
     return result;

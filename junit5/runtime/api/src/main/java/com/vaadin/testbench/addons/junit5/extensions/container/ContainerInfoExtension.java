@@ -35,7 +35,7 @@ public class ContainerInfoExtension implements BeforeEachCallback, HasLogger {
 
   @Override
   public void beforeEach(ExtensionContext extensionContext) throws Exception {
-    logger().info("ContainerInfoExtension - beforeTestExecution ");
+    logger().info("ContainerInfoExtension - beforeEach ");
     containerInfo = containerInfo().apply(extensionContext);
     logger().info("ContainerInfoExtension - " + containerInfo);
   }
