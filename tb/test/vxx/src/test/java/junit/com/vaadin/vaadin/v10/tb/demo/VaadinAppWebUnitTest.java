@@ -21,7 +21,7 @@ import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinWebUnitTest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-
+@VaadinWebUnitTest
 public class VaadinAppWebUnitTest {
 
   @VaadinWebUnitTest
