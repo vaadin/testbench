@@ -14,6 +14,7 @@ inc testcoverage
 - tb and plain modules
 
 - Bakery tests migration inside bakery repo
+- skeleton-starter-flow-spring with manual started container
 
 - Documentation for the init config
 - Concurrency test with plain junit5
