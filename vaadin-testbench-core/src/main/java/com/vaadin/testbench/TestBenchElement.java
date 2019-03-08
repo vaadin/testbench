@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -729,4 +730,20 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
                 this, eventType);
     }
 
+    /**
+     * Dispatches (fires) a custom event of the given type on the element with
+     * the given properties
+     *
+     * @param eventType
+     *            the type of custom event to dispatch
+     * @param customEventInit
+     *            map with properties and values that will be used to initialize
+     *            the event
+     */
+    public void dispatchEvent(String eventType,
+            Map<String, Object> customEventInit) {
+        executeScript(
+                "arguments[0].dispatchEvent(new CustomEvent(arguments[1], arguments[2]));",
+                this, eventType, customEventInit);
+    }
 }
