@@ -2,6 +2,7 @@ package com.vaadin.testUI;
 
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.NativeButton;
+import com.vaadin.flow.dom.DomListenerRegistration;
 import com.vaadin.flow.router.Route;
 
 @Route("ElementQueryView")
@@ -15,12 +16,17 @@ public class ElementQueryView extends Div {
             if (i == 2) {
                 button.getElement().setAttribute("disabled", true);
             }
-            button.getElement().addEventListener("custom123", e -> {
-                Div div = new Div();
-                div.setId("msg");
-                div.setText("Event on " + button.getText());
-                add(div);
-            });
+            DomListenerRegistration reg = button.getElement()
+                    .addEventListener("custom123", e -> {
+                        Div div = new Div();
+                        div.setId("msg");
+                        e.getType();
+                        div.setText("Event on " + button.getText()
+                                + " bubbles: "
+                                + e.getEventData().getBoolean("event.bubbles"));
+                        add(div);
+                    });
+            reg.addEventData("event.bubbles");
             add(new Div(button));
             if (i == 5) {
                 button.getElement().setAttribute("boolean", true);
