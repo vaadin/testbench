@@ -25,12 +25,12 @@ public class ContainerInfoExtension implements BeforeEachCallback, HasLogger {
 
   private ContainerInfo containerInfo;
 
-  public int getPort() {
-    return containerInfo.getPort();
+  public int port() {
+    return containerInfo.port();
   }
 
-  public String getHost() {
-    return containerInfo.getHost();
+  public String host() {
+    return containerInfo.host();
   }
 
   @Override

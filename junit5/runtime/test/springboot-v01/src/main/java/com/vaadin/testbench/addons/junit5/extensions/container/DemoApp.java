@@ -22,7 +22,6 @@ import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
-@EnableAutoConfiguration
 public class DemoApp {
   public static void main(String[] args) {
     SpringApplication.run(DemoApp.class, args);

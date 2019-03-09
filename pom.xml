@@ -596,32 +596,32 @@
       </plugin>
 
 
-      <plugin>
-        <groupId>com.github.webdriverextensions</groupId>
-        <artifactId>webdriverextensions-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <goals>
-              <goal>install-drivers</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <keepDownloadedWebdrivers>true</keepDownloadedWebdrivers>
-          <installationDirectory>${maven.multiModuleProjectDirectory}/_data/webdrivers</installationDirectory>
-          <drivers>
-            <driver>
-              <name>chromedriver</name>
-            </driver>
-            <!--<driver>-->
-            <!--<name>operadriver</name>-->
-            <!--</driver>-->
-            <!--<driver>-->
-            <!--<name>geckodriver</name>-->
-            <!--</driver>-->
-          </drivers>
-        </configuration>
-      </plugin>
+<!--      <plugin>-->
+<!--        <groupId>com.github.webdriverextensions</groupId>-->
+<!--        <artifactId>webdriverextensions-maven-plugin</artifactId>-->
+<!--        <executions>-->
+<!--          <execution>-->
+<!--            <goals>-->
+<!--              <goal>install-drivers</goal>-->
+<!--            </goals>-->
+<!--          </execution>-->
+<!--        </executions>-->
+<!--        <configuration>-->
+<!--          <keepDownloadedWebdrivers>true</keepDownloadedWebdrivers>-->
+<!--          <installationDirectory>${maven.multiModuleProjectDirectory}/_data/webdrivers</installationDirectory>-->
+<!--          <drivers>-->
+<!--            <driver>-->
+<!--              <name>chromedriver</name>-->
+<!--            </driver>-->
+<!--            &lt;!&ndash;<driver>&ndash;&gt;-->
+<!--            &lt;!&ndash;<name>operadriver</name>&ndash;&gt;-->
+<!--            &lt;!&ndash;</driver>&ndash;&gt;-->
+<!--            <driver>-->
+<!--            <name>geckodriver</name>-->
+<!--            </driver>-->
+<!--          </drivers>-->
+<!--        </configuration>-->
+<!--      </plugin>-->
 
 
     </plugins>

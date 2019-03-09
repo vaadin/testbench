@@ -17,6 +17,10 @@ package com.vaadin.testbench.addons.junit5.extensions.container;
 
 import static com.vaadin.dependencies.core.properties.PropertiesResolver.propertyReader;
 import static com.vaadin.testbench.addons.junit5.extensions.ExtensionFunctions.storeMethodPlain;
+import static com.vaadin.testbench.addons.junit5.extensions.container.NetworkFunctions.SERVER_IP;
+import static com.vaadin.testbench.addons.junit5.extensions.container.NetworkFunctions.SERVER_PORT;
+import static com.vaadin.testbench.addons.junit5.extensions.container.NetworkFunctions.freePort;
+import static com.vaadin.testbench.addons.junit5.extensions.container.NetworkFunctions.localeIP;
 
 import java.lang.reflect.Method;
 import java.util.Properties;
@@ -48,8 +52,8 @@ public interface ContainerInitializer extends HasLogger {
 
   @Deprecated
   default String prepareIP(ExtensionContext context) {
-    final String serverIP = NetworkFunctions.localeIP().get();
-    storeMethodPlain().apply(context).put(NetworkFunctions.SERVER_IP , serverIP);
+    final String serverIP = localeIP().get();
+    storeMethodPlain().apply(context).put(SERVER_IP , serverIP);
     logger().info(
         "IP ServletContainerExtension - will be -> " + serverIP);
     return serverIP;
@@ -57,10 +61,12 @@ public interface ContainerInitializer extends HasLogger {
 
   @Deprecated
   default int preparePort(ExtensionContext context) {
-    final int port = NetworkFunctions.freePort().get().ifAbsent(() -> {
-      throw new RuntimeException("no free Port available...");
-    }).get();
-    storeMethodPlain().apply(context).put(NetworkFunctions.SERVER_PORT , port);
+    final int port = freePort().get()
+                               .ifAbsent(() -> {
+                                 throw new RuntimeException("no free Port available...");
+                               })
+                               .get();
+    storeMethodPlain().apply(context).put(SERVER_PORT , port);
     logger().info(
         "Port ServletContainerExtension - will be -> " + port);
     return port;
@@ -68,12 +74,12 @@ public interface ContainerInitializer extends HasLogger {
 
   @Deprecated
   default void cleanUpPort(ExtensionContext context) {
-    storeMethodPlain().apply(context).remove(NetworkFunctions.SERVER_PORT);
+    storeMethodPlain().apply(context).remove(SERVER_PORT);
   }
 
   @Deprecated
   default void cleanUpIP(ExtensionContext context) {
-    storeMethodPlain().apply(context).remove(NetworkFunctions.SERVER_IP);
+    storeMethodPlain().apply(context).remove(SERVER_IP);
   }
 
 }

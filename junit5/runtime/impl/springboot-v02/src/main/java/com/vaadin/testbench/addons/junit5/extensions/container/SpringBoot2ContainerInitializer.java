@@ -1,12 +1,12 @@
 /**
  * Copyright © 2017 Sven Ruppert (sven.ruppert@gmail.com)
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,94 +15,45 @@
  */
 package com.vaadin.testbench.addons.junit5.extensions.container;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collections;
+import static com.vaadin.testbench.addons.junit5.extensions.ExtensionFunctions.storeMethodPlain;
+
 import java.util.List;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.extension.ExtensionContext;
-import com.vaadin.dependencies.core.logger.HasLogger;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ApplicationContext;
-import org.springframework.core.annotation.AnnotationUtils;
-import com.vaadin.testbench.addons.junit5.extensions.ExtensionFunctions;
 import com.google.auto.service.AutoService;
 
 @AutoService(ContainerInitializer.class)
-public class SpringBoot2ContainerInitializer implements ContainerInitializer, HasLogger {
-
-  private static final String SPRING_BOOT2_APPLICATION_CONTEXT = "spring-boot2-applicationContext";
-  private static final String SPRING_BOOT2_APP_CLASS           = "spring-boot2-app-class";
-  private static final String SPRING_BOOT2_ARGS                = "spring-boot2-args";
-
-  @Override
-  public void beforeAll(Class<?> testClass, ExtensionContext context) throws Exception {
-    SpringBoot2Conf springBootConf =
-        AnnotationUtils.getAnnotation(testClass, SpringBoot2Conf.class);
-    if (springBootConf == null) {
-      throw new IllegalStateException("No @SpringBoot2Conf annotations found");
-    }
-    Class<?> appClass = springBootConf.source();
-    if (appClass == null) {
-      throw new IllegalStateException("No app class defined");
-    }
-    ExtensionFunctions.storeClassPlain().apply(context).put(SPRING_BOOT2_APP_CLASS, appClass);
-
-    final List arrayList = new ArrayList();
-    Collections.addAll(arrayList, springBootConf.args());
-    ExtensionFunctions.storeClassPlain().apply(context).put(SPRING_BOOT2_ARGS, arrayList);
-
-  }
+public class SpringBoot2ContainerInitializer extends AbstractSpringBootContainerInitializer {
 
   private BiConsumer<ExtensionContext, ApplicationContext> storeApplicationContext() {
-    return (context, springApplicationContext) -> ExtensionFunctions.storeMethodPlain().apply(context)
-                                                                    .put(SPRING_BOOT2_APPLICATION_CONTEXT, springApplicationContext);
+    return (context , springApplicationContext) -> storeMethodPlain().apply(context)
+                                                                     .put(SPRING_BOOT_APPLICATION_CONTEXT ,
+                                                                          springApplicationContext);
   }
 
   private Function<ExtensionContext, ApplicationContext> getApplicationContext() {
-    return context -> ExtensionFunctions.storeMethodPlain().apply(context).get(SPRING_BOOT2_APPLICATION_CONTEXT,
-                                                                               ApplicationContext.class
-    );
-  }
-
-  private Consumer<ExtensionContext> removeApplicationContext() {
-    return context -> ExtensionFunctions.storeMethodPlain().apply(context).remove(SPRING_BOOT2_APPLICATION_CONTEXT);
+    return context -> storeMethodPlain().apply(context)
+                                        .get(SPRING_BOOT_APPLICATION_CONTEXT ,
+                                             ApplicationContext.class);
   }
 
   @Override
-  public void beforeEach(Method testMethod, ExtensionContext context) throws Exception {
-    int port = preparePort(context);
-    prepareIP(context);
-
-    List<String> argsWithoutPort =
-        ((List<String>) ExtensionFunctions.storeClassPlain().apply(context).get(SPRING_BOOT2_ARGS, List.class)).stream()
-                                                                                                               .filter(arg -> !arg.startsWith("--server.port=")).collect(Collectors.toList());
-    argsWithoutPort.add("--server.port=" + port);
-    Class<?> clazz = ExtensionFunctions.storeClassPlain().apply(context).get(SPRING_BOOT2_APP_CLASS, Class.class);
+  public void startAndStoreApplicationContext(ExtensionContext context ,
+                                              Class<?> springBootMainClass ,
+                                              List<String> argsWithoutPort) {
     ApplicationContext applicationContext =
-        SpringApplication.run(clazz, argsWithoutPort.toArray(new String[argsWithoutPort.size()]));
+        SpringApplication.run(springBootMainClass , argsWithoutPort.toArray(new String[0]));
 
-    storeApplicationContext().accept(context, applicationContext);
+    storeApplicationContext().accept(context , applicationContext);
   }
 
-
   @Override
-  public void afterEach(Method testMethod, ExtensionContext context) throws Exception {
+  public void stopSpringApplication(ExtensionContext context) {
     ApplicationContext applicationContext = getApplicationContext().apply(context);
     SpringApplication.exit(applicationContext);
-    removeApplicationContext().accept(context);
-    cleanUpPort(context);
-    cleanUpIP(context);
-  }
-
-
-  @Override
-  public void afterAll(Class<?> testClass, ExtensionContext context) throws Exception {
-    ExtensionFunctions.storeClassPlain().apply(context).remove(SPRING_BOOT2_APP_CLASS);
-    ExtensionFunctions.storeClassPlain().apply(context).remove(SPRING_BOOT2_ARGS);
   }
 }

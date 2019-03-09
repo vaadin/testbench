@@ -40,19 +40,14 @@
       <groupId>com.vaadin</groupId>
       <artifactId>vaadin-testbench-tb-shared-v10</artifactId>
     </dependency>
-
-
-
     <dependency>
       <groupId>com.vaadin</groupId>
       <artifactId>vaadin-core</artifactId>
     </dependency>
-
     <dependency>
       <groupId>com.vaadin</groupId>
       <artifactId>vaadin-lumo-theme</artifactId>
     </dependency>
-
     <!--For TestUI only-->
     <dependency>
       <groupId>com.vaadin</groupId>
@@ -60,24 +55,5 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
-
-  <build>
-    <plugins>
-<!--      <plugin>-->
-<!--        <groupId>com.testbench</groupId>-->
-<!--        <artifactId>flow-maven-plugin</artifactId>-->
-<!--        <version>1.0.2</version>-->
-<!--        <executions>-->
-<!--          <execution>-->
-<!--            <goals>-->
-<!--              <goal>copy-production-files</goal>-->
-<!--              <goal>package-for-production</goal>-->
-<!--            </goals>-->
-<!--          </execution>-->
-<!--        </executions>-->
-<!--      </plugin>-->
-    </plugins>
-  </build>
 
 </project>

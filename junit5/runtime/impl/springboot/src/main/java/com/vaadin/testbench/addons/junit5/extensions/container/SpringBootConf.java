@@ -24,7 +24,16 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(TYPE)
 public @interface SpringBootConf {
-  public Class<?> source();
+  /**
+   *
+   * @return the class that is used to start the Spring Boot Application
+   */
+  Class<?> source();
 
-  public String[] args() default {};
+
+  /**
+   * Additional Application-Params that should be used for this test
+   * @return
+   */
+  String[] args() default {};
 }

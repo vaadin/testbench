@@ -9,20 +9,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>vaadin-testbench-junit5-runtime-impl-springboot-v01</artifactId>
+  <artifactId>vaadin-testbench-junit5-runtime-impl-springboot</artifactId>
 
-  <dependencies>
-    <dependency>
-      <groupId>com.vaadin</groupId>
-      <artifactId>vaadin-testbench-junit5-runtime-impl-springboot</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot</artifactId>
-      <version>${spring-boot01.version}</version>
-      <scope>provided</scope>
-    </dependency>
-  </dependencies>
 
 </project>

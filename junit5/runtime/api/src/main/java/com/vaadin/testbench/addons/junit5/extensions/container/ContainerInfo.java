@@ -15,29 +15,20 @@
  */
 package com.vaadin.testbench.addons.junit5.extensions.container;
 
-public class ContainerInfo {
-  private final int port;
-  private final String host;
+import com.vaadin.frp.model.serial.Pair;
 
-  public ContainerInfo(int port , String host) {
-    super();
-    this.port = port;
-    this.host = host;
+public class ContainerInfo extends Pair<Integer, String> {
+
+  public ContainerInfo(Integer port , String host) {
+    super(port , host);
   }
 
-  public int getPort() {
-    return port;
+  public int port() {
+    return getT1();
   }
 
-  public String getHost() {
-    return host;
+  public String host() {
+    return getT2();
   }
 
-  @Override
-  public String toString() {
-    return "ContainerInfo{" +
-           "port=" + port +
-           ", host='" + host + '\'' +
-           '}';
-  }
 }

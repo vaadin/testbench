@@ -30,7 +30,6 @@ import com.vaadin.flow.router.Route;
 @Route("")
 public class VaadinApp extends Composite<Div> implements HasLogger {
 
-  // read http://vaadin.com/testing for more infos
   public static final String BTN_CLICK_ME   = ComponentIDGenerator.buttonID().apply(VaadinApp.class, "btn-click-me");
   public static final String LB_CLICK_COUNT = ComponentIDGenerator.spanID().apply(VaadinApp.class, "lb-click-count");
 

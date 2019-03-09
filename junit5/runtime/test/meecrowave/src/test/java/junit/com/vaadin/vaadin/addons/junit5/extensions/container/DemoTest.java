@@ -43,7 +43,7 @@ public class DemoTest implements HasLogger {
   @Test
   public void test001(TestReporter reporter) {
 
-    final String url = "http://" + config.getHost() + ":" + config.getPort() + "?value=HalloNase";
+    final String url = "http://" + config.host() + ":" + config.port() + "?value=HalloNase";
 //    final String url = "http://" + config.getHost() + ":" + config.getPort() + "";
     logger().info("url - " + url);
 

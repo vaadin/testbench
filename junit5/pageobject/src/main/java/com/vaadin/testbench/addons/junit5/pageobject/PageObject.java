@@ -59,11 +59,11 @@ public interface PageObject extends HasContainerInfo, HasDriver, HasLogger {
   }
 
   default Supplier<String> ip() {
-    return () -> getContainerInfo().getHost();
+    return () -> getContainerInfo().host();
   }
 
   default Supplier<String> port() {
-    return () -> String.valueOf(getContainerInfo().getPort());
+    return () -> String.valueOf(getContainerInfo().port());
   }
 
   //TODO per properties
