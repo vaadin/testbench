@@ -16,6 +16,7 @@
     <dependency>
       <groupId>com.vaadin</groupId>
       <artifactId>vaadin-testbench-junit5-runtime-impl-meecrowave</artifactId>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.meecrowave</groupId>

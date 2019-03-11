@@ -100,7 +100,7 @@ public class MeecrowaveContainerInitializer implements ContainerInitializer, Has
 
     store.put(SERVER_IP , meecrowave.getConfiguration().getHost());
     store.put(SERVER_PORT , meecrowave.getConfiguration().getHttpPort());
-    store.put(SERVER_WEBAPP , "/");
+    store.put(SERVER_WEBAPP , "/"); //TODO make it configurable
     store.put(MEECROWAVE_INSTANCE , meecrowave);
 
   }

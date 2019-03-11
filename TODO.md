@@ -1,7 +1,6 @@
 # ToDo 
 
 create an aggregating module : name will be testbench-core
-package renaming
 
 meecrowave deployment of this template
 

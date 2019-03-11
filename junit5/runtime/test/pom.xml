@@ -16,6 +16,7 @@
     <module>meecrowave</module>
     <module>springboot-v01</module>
     <module>springboot-v02</module>
+    <module>none</module>
   </modules>
 
 

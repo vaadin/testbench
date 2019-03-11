@@ -80,7 +80,7 @@
     <!--Initializer-->
     <meecrowave.version>1.2.6</meecrowave.version>
     <spring-boot01.version>1.5.19.RELEASE</spring-boot01.version>
-    <spring-boot02.version>2.1.2.RELEASE</spring-boot02.version>
+    <spring-boot02.version>2.1.3.RELEASE</spring-boot02.version>
     <addon-test-helpers.version>2.0</addon-test-helpers.version>
     <javax.servlet-api.version>4.0.1</javax.servlet-api.version>
 
