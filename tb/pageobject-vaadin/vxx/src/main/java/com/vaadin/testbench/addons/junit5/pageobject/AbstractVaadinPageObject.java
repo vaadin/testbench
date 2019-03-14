@@ -20,6 +20,17 @@ import java.util.List;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import com.vaadin.flow.component.checkbox.testbench.CheckboxElement;
+import com.vaadin.flow.component.datepicker.testbench.DatePickerElement;
+import com.vaadin.flow.component.dialog.testbench.DialogElement;
+import com.vaadin.flow.component.ironlist.testbench.IronListElement;
+import com.vaadin.flow.component.notification.testbench.NotificationElement;
+import com.vaadin.flow.component.progressbar.testbench.ProgressBarElement;
+import com.vaadin.flow.component.radiobutton.testbench.RadioButtonGroupElement;
+import com.vaadin.flow.component.splitlayout.testbench.SplitLayoutElement;
+import com.vaadin.flow.component.tabs.testbench.TabsElement;
+import com.vaadin.flow.component.textfield.testbench.TextAreaElement;
+import com.vaadin.flow.component.upload.testbench.UploadElement;
 import com.vaadin.testbench.ElementQuery;
 import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.testbench.addons.junit5.extensions.container.ContainerInfo;
@@ -64,8 +75,13 @@ public abstract class AbstractVaadinPageObject
   public List<WebElement> findElements(By by) {return testCase.findElements(by);}
 
 
+
   public WithID<TextFieldElement> textField() {
     return id -> testCase.$(TextFieldElement.class).id(id);
+  }
+
+  public WithID<TextAreaElement> textArea() {
+    return id -> testCase.$(TextAreaElement.class).id(id);
   }
 
   public WithID<PasswordFieldElement> passwordField() {
@@ -92,12 +108,51 @@ public abstract class AbstractVaadinPageObject
     return id -> testCase.$(ComboBoxElement.class).id(id);
   }
 
+  public WithID<CheckboxElement> checkBox() {
+    return id -> testCase.$(CheckboxElement.class).id(id);
+  }
 
+  public WithID<DatePickerElement> datePicker() {
+    return id -> testCase.$(DatePickerElement.class).id(id);
+  }
+
+  public WithID<DialogElement> dialog() {
+    return id -> testCase.$(DialogElement.class).id(id);
+  }
+
+  public WithID<IronListElement> ironList() {
+    return id -> testCase.$(IronListElement.class).id(id);
+  }
+
+  public WithID<NotificationElement> notification() {
+    return id -> testCase.$(NotificationElement.class).id(id);
+  }
+
+  public WithID<ProgressBarElement> progressBar() {
+    return id -> testCase.$(ProgressBarElement.class).id(id);
+  }
+
+  public WithID<RadioButtonGroupElement> radioBtnGrp() {
+    return id -> testCase.$(RadioButtonGroupElement.class).id(id);
+  }
+
+  public WithID<TabsElement> tabs() {
+    return id -> testCase.$(TabsElement.class).id(id);
+  }
+
+  public WithID<UploadElement> upload() {
+    return id -> testCase.$(UploadElement.class).id(id);
+  }
+
+
+
+  //TODO not available until now
 //  public WithID<DateFieldElement> dateField() {
 //    return id -> testCase.$(DateFieldElement.class).id(id);
 //  }
 
 
+  //  New inheritence in V10
   public WithID<FormLayoutElement> formLayout() {
     return id -> testCase.$(FormLayoutElement.class).id(id);
   }
@@ -108,6 +163,9 @@ public abstract class AbstractVaadinPageObject
 
   public WithID<VerticalLayoutElement> verticalLayout() {
     return id -> testCase.$(VerticalLayoutElement.class).id(id);
+  }
+  public WithID<SplitLayoutElement> splitLayout() {
+    return id -> testCase.$(SplitLayoutElement.class).id(id);
   }
 
 
