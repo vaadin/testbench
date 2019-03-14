@@ -22,12 +22,12 @@ import org.junit.jupiter.api.DisplayName;
 import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinTest;
 
 @VaadinTest
-class VaadinAppWebUnitTest {
+public class VaadinAppWebUnitTest {
 
 
 
   @DisplayName("Hello World - Click twice 001")
-  @VaadinTest
+  @VaadinTest(preLoad = false)
   void test001(VaadinAppPageObject pageObject) {
     pageObject.loadPage();
     assertEquals(0 , pageObject.clickCount());
@@ -36,9 +36,8 @@ class VaadinAppWebUnitTest {
   }
 
   @DisplayName("Hello World - Click twice 002")
-  @VaadinTest
+  @VaadinTest(navigateAsString = "")
   void test002(VaadinAppPageObject pageObject) {
-    pageObject.loadPage();
     assertEquals(0 , pageObject.clickCount());
     pageObject.click();
     assertEquals(1 , pageObject.clickCount());
@@ -47,7 +46,6 @@ class VaadinAppWebUnitTest {
   @DisplayName("Hello World - Click twice 003")
   @VaadinTest
   void test003(VaadinAppPageObject pageObject) {
-    pageObject.loadPage();
     assertEquals(0 , pageObject.clickCount());
     pageObject.click();
     assertEquals(1 , pageObject.clickCount());
@@ -56,7 +54,6 @@ class VaadinAppWebUnitTest {
   @DisplayName("Hello World - Click twice 004")
   @VaadinTest
   void test004(VaadinAppPageObject pageObject) {
-    pageObject.loadPage();
     assertEquals(0 , pageObject.clickCount());
     pageObject.click();
     assertEquals(1 , pageObject.clickCount());
