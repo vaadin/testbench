@@ -4,19 +4,13 @@ create an aggregating module : name will be testbench-core
 
 meecrowave deployment of this template
 
-drone example with docker compose
-testing against jdk 
-- 8/9/10/11/12
-- oracle/open/
-
 inc testcoverage
 - tb and plain modules
-
 - Bakery tests migration inside bakery repo
-- skeleton-starter-flow-spring with manual started container
 
 - Documentation for the init config
 - Concurrency test with plain junit5
+    -   Concurrency is running with container - none
 
 
 ## Phase I 

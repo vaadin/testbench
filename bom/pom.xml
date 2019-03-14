@@ -153,6 +153,37 @@
         <artifactId>vaadin-testbench-tb-pageobject-vaadin-vxx</artifactId>
         <version>7.0.0-SNAPSHOT</version>
       </dependency>
+
+
+<!--      TestData-->
+
+      <dependency>
+        <groupId>com.vaadin</groupId>
+        <artifactId>vaadin-testbench-tb-test-data-v08</artifactId>
+        <version>7.0.0-SNAPSHOT</version>
+        <type>test-jar</type>
+      </dependency>
+      <dependency>
+        <groupId>com.vaadin</groupId>
+        <artifactId>vaadin-testbench-tb-test-data-v10</artifactId>
+        <version>7.0.0-SNAPSHOT</version>
+        <type>test-jar</type>
+      </dependency>
+      <dependency>
+        <groupId>com.vaadin</groupId>
+        <artifactId>vaadin-testbench-tb-test-data-v14</artifactId>
+        <version>7.0.0-SNAPSHOT</version>
+        <type>test-jar</type>
+      </dependency>
+      <dependency>
+        <groupId>com.vaadin</groupId>
+        <artifactId>vaadin-testbench-tb-test-data-vxx</artifactId>
+        <version>7.0.0-SNAPSHOT</version>
+        <type>test-jar</type>
+      </dependency>
+
+
+
     </dependencies>
 
   </dependencyManagement>

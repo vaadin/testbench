@@ -20,6 +20,10 @@
     </dependency>
     <dependency>
       <groupId>com.vaadin</groupId>
+      <artifactId>vaadin-testbench-junit5-common</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.vaadin</groupId>
       <artifactId>vaadin-testbench-junit5-webdriver</artifactId>
     </dependency>
     <dependency>

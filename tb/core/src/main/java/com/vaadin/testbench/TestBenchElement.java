@@ -466,16 +466,16 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
 
   @Override
   public boolean compareScreen(String referenceId) throws IOException {
-    return ScreenshotComparator.compareScreen(referenceId,
-                                              getCommandExecutor().getImageComparison(),
+    return new ScreenshotComparator().compareScreen(referenceId,
+//                                              getCommandExecutor().getImageComparison(),
                                               this,
                                               (HasCapabilities) getDriver());
   }
 
   @Override
   public boolean compareScreen(File reference) throws IOException {
-    return ScreenshotComparator.compareScreen(reference,
-                                              getCommandExecutor().getImageComparison(),
+    return new ScreenshotComparator().compareScreen(reference,
+//                                              getCommandExecutor().getImageComparison(),
                                               this );
 
   }
@@ -483,8 +483,8 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
   @Override
   public boolean compareScreen(BufferedImage reference, String referenceName)
       throws IOException {
-    return ScreenshotComparator.compareScreen(reference, referenceName,
-                                              getCommandExecutor().getImageComparison(),
+    return new ScreenshotComparator().compareScreen(reference, referenceName,
+//                                              getCommandExecutor().getImageComparison(),
                                               this );
   }
 

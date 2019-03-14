@@ -1,15 +1,15 @@
 package com.vaadin.testbench.commands;
 
-import static com.vaadin.testbench.screenshot.ScreenshotProperties.IMAGE_FILE_NAME_ENDING;
+import static com.vaadin.dependencies.core.logger.Logger.getLogger;
 import static com.vaadin.testbench.screenshot.ImageFileUtil.createScreenshotDirectoriesIfNeeded;
 import static com.vaadin.testbench.screenshot.ImageFileUtil.getErrorScreenshotFile;
 import static com.vaadin.testbench.screenshot.ReferenceNameGenerator.PLATFORM_UNKNOWN;
+import static com.vaadin.testbench.screenshot.ScreenshotProperties.IMAGE_FILE_NAME_ENDING;
 import static com.vaadin.testbench.screenshot.ScreenshotProperties.getScreenshotComparisonTolerance;
 import static com.vaadin.testbench.screenshot.ScreenshotProperties.getScreenshotReferenceDirectory;
 import static com.vaadin.testbench.screenshot.ScreenshotProperties.getScreenshotRetriesMax;
 import static com.vaadin.testbench.screenshot.ScreenshotProperties.getScreenshotRetryDelay;
 import static org.openqa.selenium.OutputType.BYTES;
-import static com.vaadin.dependencies.core.logger.Logger.getLogger;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -68,21 +68,20 @@ public class ScreenshotComparator implements HasLogger {
     };
   }
 
-  public static boolean compareScreen(String referenceId ,
-                                      ImageComparison imageComparison ,
-                                      TakesScreenshot takesScreenshot ,
-                                      HasCapabilities driver)
+  public boolean compareScreen(String referenceId ,
+//                                      ImageComparison imageComparison ,
+                               TakesScreenshot takesScreenshot ,
+                               HasCapabilities driver)
       throws IOException {
 
     Capabilities capabilities = driver.getCapabilities();
 
     final TestcaseInfo info = convert().apply(referenceId , capabilities);
 
-
+    final ImageComparison imageComparison = new ImageComparison();
     for (int times = 0; times < getScreenshotRetriesMax(); times++) {
       boolean equal = imageComparison.imageEqualToReference(
-          getScreenshot((TakesScreenshot) driver ,
-                        takesScreenshot) ,
+          getScreenshot((TakesScreenshot) driver , takesScreenshot) ,
           info ,
           getScreenshotComparisonTolerance()
       );
@@ -94,9 +93,9 @@ public class ScreenshotComparator implements HasLogger {
     return false;
   }
 
-  public static boolean compareScreen(File reference ,
-                                      ImageComparison imageComparison ,
-                                      TakesScreenshot takesScreenshot)
+  public boolean compareScreen(File reference ,
+//                                      ImageComparison imageComparison ,
+                               TakesScreenshot takesScreenshot)
       throws IOException {
     BufferedImage image = null;
     try {
@@ -107,34 +106,23 @@ public class ScreenshotComparator implements HasLogger {
     }
     return compareScreen(image ,
                          reference.getName() ,
-                         imageComparison ,
+//                         imageComparison ,
                          takesScreenshot);
   }
 
-  public static boolean compareScreen(BufferedImage reference ,
-                                      String referenceName ,
-                                      ImageComparison imageComparison ,
-                                      TakesScreenshot takesScreenshot)
+  public boolean compareScreen(BufferedImage reference ,
+                               String referenceName ,
+//                                      ImageComparison imageComparison ,
+                               TakesScreenshot takesScreenshot)
       throws IOException {
 
-    for (int times = 0; times < getScreenshotRetriesMax(); times++) {
-      BufferedImage screenshotImage = ImageIO
-          .read(new ByteArrayInputStream(
-              takesScreenshot.getScreenshotAs(BYTES)));
-      if (reference == null) {
-        // Store the screenshot in the errors directory and fail the
-        // test
-        createScreenshotDirectoriesIfNeeded()
-            .apply(null)
-            .ifPresentOrElse(aVoid -> getLogger(ScreenshotComparator.class).info("Screenshot Directories are OK.") ,
-                             failed -> getLogger(ScreenshotComparator.class).warning(failed));
 
-        ImageIO.write(screenshotImage , IMAGE_FILE_NAME_ENDING ,
-                      getErrorScreenshotFile().apply(referenceName));
-        getLogger(ScreenshotComparator.class)
-            .warning("No reference found for " + referenceName
-                    + " in "
-                    + getScreenshotReferenceDirectory());
+    final ImageComparison imageComparison = new ImageComparison();
+
+    for (int times = 0; times < getScreenshotRetriesMax(); times++) {
+      BufferedImage screenshotImage = ImageIO.read(new ByteArrayInputStream(takesScreenshot.getScreenshotAs(BYTES)));
+      if (reference == null) {
+        saveErrorScreenShot(screenshotImage , referenceName);
         return false;
       }
       if (imageComparison.imageEqualToReference(screenshotImage ,
@@ -147,6 +135,25 @@ public class ScreenshotComparator implements HasLogger {
     return false;
   }
 
+
+  private void saveErrorScreenShot(BufferedImage screenshotImage , String referenceName) {
+    createScreenshotDirectoriesIfNeeded()
+        .apply(null)
+        .ifPresentOrElse(aVoid -> getLogger(ScreenshotComparator.class).info("Screenshot Directories are OK.") ,
+                         failed -> getLogger(ScreenshotComparator.class).warning(failed));
+
+    try {
+      ImageIO.write(screenshotImage , IMAGE_FILE_NAME_ENDING , getErrorScreenshotFile().apply(referenceName));
+    } catch (IOException e) {
+      logger().warning(e.getMessage());
+    }
+    logger()
+        .warning("No reference found for " + referenceName
+                 + " in "
+                 + getScreenshotReferenceDirectory());
+  }
+
+
   /**
    * Captures a screenshot of the given screen (if parameter is a driver) or
    * the given element (if the parameter is a WebElement).
@@ -157,8 +164,8 @@ public class ScreenshotComparator implements HasLogger {
    * @return a captured image
    * @throws IOException
    */
-  private static BufferedImage getScreenshot(TakesScreenshot driver ,
-                                             TakesScreenshot screenshotContext) throws IOException {
+  private BufferedImage getScreenshot(TakesScreenshot driver ,
+                                      TakesScreenshot screenshotContext) throws IOException {
     boolean elementScreenshot = (screenshotContext instanceof WebElement);
 
     if (elementScreenshot && supportsElementScreenshots == null) {
@@ -201,7 +208,7 @@ public class ScreenshotComparator implements HasLogger {
    * @return
    * @throws IOException
    */
-  public static BufferedImage cropToElement(WebElement element ,
+  private BufferedImage cropToElement(WebElement element ,
                                             BufferedImage fullScreen) throws IOException {
     Point loc = element.getLocation();
     Dimension size = element.getSize();

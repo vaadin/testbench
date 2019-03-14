@@ -28,7 +28,7 @@ public final class ScreenshotProperties {
   public static final int SCREENSHOT_RETRIES_MAX_DEFAULT = 2;
   public static final int SCREENSHOT_RETRY_DELAY_DEFAULT = 500;
   public static final String SCREENSHOT_REFERENCE_DIRECTORY_DEFAULT = "reference-screenshots";
-  public static final String SCREENSHOT_ERROR_DIRECTORY_DEFAULT = "error-screenshots";
+  public static final String SCREENSHOT_ERROR_DIRECTORY_DEFAULT = "target/error-screenshots";
 
 
   private static boolean isScreenshotComparisonCursorDetection = propertyBoolean

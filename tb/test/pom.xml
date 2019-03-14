@@ -37,10 +37,16 @@
   </properties>
 
   <dependencies>
+<!--    <dependency>-->
+<!--      <groupId>com.vaadin</groupId>-->
+<!--      <artifactId>vaadin-testbench-junit5-runtime-impl-meecrowave</artifactId>-->
+<!--    </dependency>-->
+
     <dependency>
       <groupId>com.vaadin</groupId>
-      <artifactId>vaadin-testbench-junit5-runtime-impl-meecrowave</artifactId>
+      <artifactId>vaadin-testbench-junit5-runtime-impl-none</artifactId>
     </dependency>
+
     <!--Meecrowave impl-->
     <dependency>
       <groupId>org.apache.meecrowave</groupId>
@@ -59,6 +65,27 @@
       <artifactId>javax.servlet-api</artifactId>
       <scope>compile</scope>
     </dependency>
+
+
+
+    <!--Logging for development-->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-1.2-api</artifactId>
+    </dependency>
+
   </dependencies>
 
   <build>

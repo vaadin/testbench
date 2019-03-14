@@ -22,6 +22,16 @@
         <version>${vaadin-v10.version}</version>
         <type>pom</type>
         <scope>import</scope>
+        <exclusions>
+          <exclusion>
+            <groupId>com.vaadin</groupId>
+            <artifactId>vaadin-testbench</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>com.vaadin</groupId>
+            <artifactId>vaadin-testbench-core</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
       <!--Version definitions from parent-->
       <dependency>

@@ -12,7 +12,6 @@
  */
 package com.vaadin.testbench.screenshot;
 
-import static com.vaadin.testbench.screenshot.ScreenshotProperties.IMAGE_FILE_NAME_ENDING;
 import static com.vaadin.testbench.screenshot.ImageFileUtil.createScreenshotDirectoriesIfNeeded;
 import static com.vaadin.testbench.screenshot.ImageFileUtil.getErrorScreenshotFile;
 import static com.vaadin.testbench.screenshot.ImageFileUtil.getReferenceImageFileNames;
@@ -25,6 +24,7 @@ import static com.vaadin.testbench.screenshot.ImageUtil.getBlock;
 import static com.vaadin.testbench.screenshot.ImageUtil.imagesSameSize;
 import static com.vaadin.testbench.screenshot.ImageUtil.rgbToLuminance;
 import static com.vaadin.testbench.screenshot.ReferenceNameGenerator.generateName;
+import static com.vaadin.testbench.screenshot.ScreenshotProperties.IMAGE_FILE_NAME_ENDING;
 import static com.vaadin.testbench.screenshot.ScreenshotProperties.getScreenshotReferenceDirectory;
 import static java.lang.Math.abs;
 
@@ -95,7 +95,6 @@ public class ImageComparison implements HasLogger {
    * hues 0.1% (default) per macroblock of 16x16
    *
    * @param screenshotImage Image of canvas (must have proper dimensions)
-   * @param referenceFileId File id for this image without .png extension
    * @param errorTolerance  Allowed RGB error for a macroblock (value range 0-1 default
    *                        0.025 == 2.5%)
    * @return true if images are the same
@@ -115,16 +114,16 @@ public class ImageComparison implements HasLogger {
 //    final String referenceImageFileName = info.referenceId() + "." + IMAGE_FILE_NAME_ENDING;
 
     final String referenceImageFileName = generateName()
-        .apply(new TestcaseInfo(
-            info.referenceId(),
-            info.browserName(),
-            info.platformName(),
-            info.version()
-        )) + "." + IMAGE_FILE_NAME_ENDING;
+                                              .apply(new TestcaseInfo(
+                                                  info.referenceId() ,
+                                                  info.browserName() ,
+                                                  info.platformName() ,
+                                                  info.version()
+                                              )) + "." + IMAGE_FILE_NAME_ENDING;
 
 
     final List<String> referenceFileNames = getReferenceImageFileNames()
-        .apply(new ReferenceInfo(
+        .apply( new ReferenceInfo(
             referenceImageFileName ,
             info.browserName() ,
             info.version()
@@ -149,7 +148,7 @@ public class ImageComparison implements HasLogger {
 
       final long count = referenceFileNames
           .stream()
-          .map(referenceFileName -> readReferenceImage().apply(referenceFileName))
+          .map(referenceFileName -> readReferenceImage().apply( referenceFileName))
           .filter(img -> img
               .ifFailed((failed) -> logger().warning(failed))
               .isPresent())
@@ -350,7 +349,7 @@ public class ImageComparison implements HasLogger {
    * the cursor might be (actually might be inside a 16x32 block
    * starting from that point)
    */
-  private static Point getPossibleCursorPosition(
+  private Point getPossibleCursorPosition(
       final ComparisonParameters params) {
     int firstErrorBlockX = 0;
     int firstErrorBlockY = 0;
@@ -570,7 +569,8 @@ public class ImageComparison implements HasLogger {
    * @return a ComparisonParameters descriptor object
    */
   private static ComparisonParameters createParameters(
-      final BufferedImage reference , final BufferedImage screenshot ,
+      final BufferedImage reference ,
+      final BufferedImage screenshot ,
       final double tolerance) {
 
     ComparisonParameters p = new ComparisonParameters();

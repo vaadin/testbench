@@ -15,6 +15,7 @@
  */
 package com.vaadin.testbench.addons.junit5.extension.unitest;
 
+import static com.vaadin.testbench.addons.junit5.extension.unitest.PageObjectFunctions.storePageObject;
 import static java.util.Collections.singletonList;
 import static com.vaadin.testbench.addons.junit5.extensions.container.ExtensionContextFunctions.containerInfo;
 import static com.vaadin.testbench.addons.webdriver.WebDriverFunctions.webdriverName;
@@ -41,7 +42,8 @@ public final class WebDriverTemplateInvocationContextImpl implements WebDriverTe
   private PageObjectInvocationContextProvider pageObjectInvocationContextProvider;
   private final WebDriver webDriver;
 
-  protected WebDriverTemplateInvocationContextImpl(PageObjectInvocationContextProvider pageObjectInvocationContextProvider , WebDriver webDriver) {
+  protected WebDriverTemplateInvocationContextImpl(PageObjectInvocationContextProvider pageObjectInvocationContextProvider ,
+                                                   WebDriver webDriver) {
     this.pageObjectInvocationContextProvider = pageObjectInvocationContextProvider;
     this.webDriver = webDriver;
   }
@@ -79,14 +81,17 @@ public final class WebDriverTemplateInvocationContextImpl implements WebDriverTe
         final Result<PageObject> po = ((CheckedFunction<Class<?>, PageObject>) aClass -> {
           final Constructor<?> constructor = pageObjectClass.getConstructor(WebDriver.class , ContainerInfo.class);
           WebDriver webDriver = webdriver();
-          PageObject page = PageObject.class.cast(constructor.newInstance(webDriver , containerInfo().apply(extensionContext)));
+          PageObject page = (PageObject) constructor.newInstance(webDriver , containerInfo().apply(extensionContext));
           PageFactory.initElements(new WebDriverExtensionFieldDecorator(webDriver) , page);
           return page;
         })
             .apply(pageObjectClass);
 
         po.ifPresentOrElse(
-            success -> pageObjectInvocationContextProvider.logger().fine("pageobject of type " + pageObjectClass.getSimpleName() + " was created with " + webdriverName().apply(webdriver())) ,
+            success -> {
+              pageObjectInvocationContextProvider.logger().fine("pageobject of type " + pageObjectClass.getSimpleName() + " was created with " + webdriverName().apply(webdriver()));
+              storePageObject().accept(extensionContext, success);
+            } ,
             failed -> pageObjectInvocationContextProvider.logger().warning("was not able to create PageObjectInstance " + failed)
         );
         po.ifAbsent(() -> {

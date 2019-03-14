@@ -16,10 +16,20 @@
       <!--Version definitions from parent-->
       <dependency>
         <groupId>com.vaadin</groupId>
-        <artifactId>vaadin-testbench-bom-v10</artifactId>
+        <artifactId>vaadin-testbench-bom-vxx</artifactId>
         <version>7.0.0-SNAPSHOT</version>
         <scope>import</scope>
         <type>pom</type>
+        <exclusions>
+          <exclusion>
+            <groupId>com.vaadin</groupId>
+            <artifactId>vaadin-testbench</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>com.vaadin</groupId>
+            <artifactId>vaadin-testbench-core</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -29,12 +39,19 @@
       <groupId>com.vaadin</groupId>
       <artifactId>vaadin-testbench-tb-shared-vxx</artifactId>
     </dependency>
-
-
-
     <dependency>
       <groupId>com.vaadin</groupId>
       <artifactId>vaadin-core</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>com.vaadin</groupId>
+          <artifactId>vaadin-testbench</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.vaadin</groupId>
+          <artifactId>vaadin-testbench-core</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -46,6 +63,12 @@
     <dependency>
       <groupId>com.vaadin</groupId>
       <artifactId>vaadin-testbench-tb-pageobject-vaadin-vxx</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.vaadin</groupId>
+      <artifactId>vaadin-testbench-tb-test-data-vxx</artifactId>
+      <type>test-jar</type>
       <scope>test</scope>
     </dependency>
 

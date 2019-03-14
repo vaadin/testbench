@@ -15,6 +15,7 @@
  */
 package com.vaadin.testbench.addons.junit5.extension.unitest;
 
+import static com.vaadin.testbench.addons.junit5.extension.unitest.PageObjectFunctions.removePageObject;
 import static com.vaadin.testbench.addons.webdriver.WebDriverFunctions.webdriverName;
 import static com.vaadin.testbench.addons.webdriver.junit5.WebdriverExtensionFunctions.removeWebDriver;
 import static com.vaadin.testbench.addons.webdriver.junit5.WebdriverExtensionFunctions.webdriver;
@@ -33,25 +34,12 @@ public class PageObjectWebDriverCleanerExtension implements AfterEachCallback, H
 
   @Override
   public void afterEach(ExtensionContext context) throws Exception {
+    logger().info("PageObjectWebDriverCleanerExtension -> remove PageObject");
+    removePageObject().accept(context);
+
     logger().info("PageObjectWebDriverCleanerExtension -> remove Webdriver");
     final WebDriver webDriver = webdriver().apply(context);
     logger().info("close webdriver of type " + webdriverName().apply(webDriver));
-//    match(
-//        matchCase(() -> failure("could not map driver to impl class " + TestbenchFunctions.webdrivername().apply(webDriver))),
-//        matchCase(() -> webDriver instanceof RemoteWebDriver, () -> success(((RemoteWebDriver) webDriver).getSessionId().toString())),
-//        matchCase(() -> webDriver instanceof TestBenchDriverProxy,
-//                  () -> success(
-//                      ((RemoteWebDriver)
-//                          ((TestBenchDriverProxy) webDriver).getActualDriver())
-//                          .getSessionId().toString())
-//        )
-//    ).ifPresentOrElse(
-//        success -> storeMethodPlain().apply(context).put(SESSION_ID, success),
-//        message -> {
-//          logger().warning(message);
-//          storeMethodPlain().apply(context).remove(SESSION_ID);
-//        }
-//    );
     webDriver.quit();
     removeWebDriver().accept(context);
   }

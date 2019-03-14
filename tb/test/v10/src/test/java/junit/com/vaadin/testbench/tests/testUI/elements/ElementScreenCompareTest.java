@@ -3,7 +3,9 @@ package junit.com.vaadin.testbench.tests.testUI.elements;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.openqa.selenium.By;
+import org.openqa.selenium.OutputType;
 import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinWebUnitTest;
 import com.vaadin.testbench.tests.testUI.ElementQueryView;
 import com.vaadin.testbench.TestBenchElement;
@@ -47,8 +49,16 @@ public class ElementScreenCompareTest {
     openTestURL(po);
     TestBenchElement button4 = po.$(NativeButtonElement.class).get(4);
 
+    final byte[] screenshot = button4.getScreenshotAs(OutputType.BYTES);
+
+
+
     Assertions.assertTrue(button4.compareScreen("button4"));
+
+
     TestBenchElement layout = button4.findElement(By.xpath("../.."));
+
+
     Assertions.assertTrue(layout.compareScreen("layout"));
   }
 

@@ -25,6 +25,7 @@ import com.vaadin.testbench.addons.junit5.extensions.container.ServletContainerE
 
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
+//@ExtendWith(ExtensionContextParameterResolver.class)
 @ExtendWith(ServletContainerExtension.class)
 @ExtendWith(PageObjectInvocationContextProvider.class)
 //@ExtendWith(VideoManagementExtension.class)

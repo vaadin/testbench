@@ -30,7 +30,6 @@ import com.vaadin.dependencies.core.logger.HasLogger;
 import com.vaadin.testbench.HasDriver;
 import com.vaadin.testbench.TestBenchDriverProxy;
 import com.vaadin.testbench.TestBenchElement;
-import com.vaadin.testbench.screenshot.ImageComparison;
 
 /**
  * Provides actual implementation of TestBenchCommands
@@ -38,7 +37,7 @@ import com.vaadin.testbench.screenshot.ImageComparison;
 public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver, HasLogger {
 
   private TestBenchDriverProxy driver;
-  private final ImageComparison imageComparison;
+//  private ImageComparison imageComparison = new ImageComparison();
 
   private boolean enableWaitForVaadin = true;
   private boolean autoScrollIntoView = true;
@@ -62,9 +61,9 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver, H
             + "}";
     // @formatter:on
 
-  public TestBenchCommandExecutor(ImageComparison imageComparison) {
-    this.imageComparison = imageComparison;
-  }
+//  public TestBenchCommandExecutor(ImageComparison imageComparison) {
+//    this.imageComparison = imageComparison;
+//  }
 
   public void setDriver(TestBenchDriverProxy driver) {
     this.driver = driver;
@@ -125,18 +124,18 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver, H
 
   @Override
   public boolean compareScreen(String referenceId) throws IOException {
-    return ScreenshotComparator.compareScreen(referenceId ,
-                                              imageComparison ,
-                                              driver ,
-                                              getDriver());
+    return new ScreenshotComparator().compareScreen(referenceId ,
+//                                              imageComparison ,
+                                                    driver ,
+                                                    getDriver());
   }
 
   @Override
   public boolean compareScreen(File reference) throws IOException {
     WebDriver driver = getDriver();
-    return ScreenshotComparator.compareScreen(reference ,
-                                              imageComparison ,
-                                              (TakesScreenshot) driver);
+    return new ScreenshotComparator().compareScreen(reference ,
+//                                              imageComparison ,
+                                                    (TakesScreenshot) driver);
 
   }
 
@@ -144,10 +143,10 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver, H
   public boolean compareScreen(BufferedImage reference , String referenceName)
       throws IOException {
     WebDriver driver = getDriver();
-    return ScreenshotComparator.compareScreen(reference ,
-                                              referenceName ,
-                                              imageComparison ,
-                                              (TakesScreenshot) driver);
+    return new ScreenshotComparator().compareScreen(reference ,
+                                                    referenceName ,
+//                                              imageComparison ,
+                                                    (TakesScreenshot) driver);
 
   }
 
@@ -330,8 +329,8 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver, H
    *
    * @return the image comparison implementation
    */
-  public ImageComparison getImageComparison() {
-    return imageComparison;
-  }
+//  public ImageComparison getImageComparison() {
+//    return imageComparison;
+//  }
 
 }
