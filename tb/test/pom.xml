@@ -37,15 +37,15 @@
   </properties>
 
   <dependencies>
-<!--    <dependency>-->
-<!--      <groupId>com.vaadin</groupId>-->
-<!--      <artifactId>vaadin-testbench-junit5-runtime-impl-meecrowave</artifactId>-->
-<!--    </dependency>-->
-
     <dependency>
       <groupId>com.vaadin</groupId>
-      <artifactId>vaadin-testbench-junit5-runtime-impl-none</artifactId>
+      <artifactId>vaadin-testbench-junit5-runtime-impl-meecrowave</artifactId>
     </dependency>
+
+<!--    <dependency>-->
+<!--      <groupId>com.vaadin</groupId>-->
+<!--      <artifactId>vaadin-testbench-junit5-runtime-impl-none</artifactId>-->
+<!--    </dependency>-->
 
     <!--Meecrowave impl-->
     <dependency>

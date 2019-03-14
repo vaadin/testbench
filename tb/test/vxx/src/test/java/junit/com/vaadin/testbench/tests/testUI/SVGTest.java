@@ -2,9 +2,9 @@ package junit.com.vaadin.testbench.tests.testUI;
 
 import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.By;
-import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinWebUnitTest;
+import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinTest;
 
-@VaadinWebUnitTest
+@VaadinTest
 public class SVGTest {
 
 
@@ -13,7 +13,7 @@ public class SVGTest {
         po.loadPage(com.vaadin.testbench.tests.testUI.SVGView.ROUTE);
     }
 
-    @VaadinWebUnitTest
+    @VaadinTest
     //@DisabledOnOs()
     public void click(GenericTestPageObject po) {
 //        if (BrowserUtil.isSafari(po.getDriver().getDesiredCapabilities())) {

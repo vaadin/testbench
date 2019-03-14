@@ -1,12 +1,12 @@
 /**
  * Copyright © 2017 Sven Ruppert (sven.ruppert@gmail.com)
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,19 +15,20 @@
  */
 package com.vaadin.testbench.addons.junit5.pageobject;
 
-import static java.lang.System.getProperties;
 import static com.vaadin.frp.matcher.Case.match;
 import static com.vaadin.frp.matcher.Case.matchCase;
 import static com.vaadin.frp.model.Result.success;
 import static com.vaadin.testbench.addons.webdriver.WebDriverFunctions.takeScreenShot;
+import static com.vaadin.testbench.addons.webdriver.WebDriverFunctions.webdriverName;
+import static java.lang.System.getProperties;
 
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
 import com.vaadin.dependencies.core.logger.HasLogger;
 import com.vaadin.frp.functions.CheckedExecutor;
-import com.vaadin.testbench.addons.junit5.extensions.container.NetworkFunctions;
 import com.vaadin.testbench.addons.junit5.extensions.container.HasContainerInfo;
+import com.vaadin.testbench.addons.junit5.extensions.container.NetworkFunctions;
 import com.vaadin.testbench.addons.webdriver.HasDriver;
 
 public interface PageObject extends HasContainerInfo, HasDriver, HasLogger {
@@ -51,11 +52,11 @@ public interface PageObject extends HasContainerInfo, HasDriver, HasLogger {
   }
 
   default BiFunction<String, String, String> property() {
-    return (key, defaultValue) -> (String) getProperties().getOrDefault(key, defaultValue);
+    return (key , defaultValue) -> (String) getProperties().getOrDefault(key , defaultValue);
   }
 
   default Supplier<String> protocol() {
-    return () -> property().apply(NetworkFunctions.SERVER_PROTOCOL, NetworkFunctions.DEFAULT_PROTOCOL);
+    return () -> property().apply(NetworkFunctions.SERVER_PROTOCOL , NetworkFunctions.DEFAULT_PROTOCOL);
   }
 
   default Supplier<String> ip() {
@@ -68,7 +69,7 @@ public interface PageObject extends HasContainerInfo, HasDriver, HasLogger {
 
   //TODO per properties
   default Supplier<String> webapp() {
-    return () -> property().apply(NetworkFunctions.SERVER_WEBAPP, NetworkFunctions.DEFAULT_SERVLET_WEBAPP);
+    return () -> property().apply(NetworkFunctions.SERVER_WEBAPP , NetworkFunctions.DEFAULT_SERVLET_WEBAPP);
   }
 
   default Supplier<String> baseURL() {
@@ -77,12 +78,12 @@ public interface PageObject extends HasContainerInfo, HasDriver, HasLogger {
 
   default Supplier<String> url() {
     return () -> match(
-        matchCase(() -> success(BACK_SLASH + webapp().get() + BACK_SLASH)),
-        matchCase(() -> webapp().get().equals(""), () -> success(BACK_SLASH)),
-        matchCase(() -> webapp().get().endsWith(BACK_SLASH) && webapp().get().startsWith(BACK_SLASH), () -> success(webapp().get())),
-        matchCase(() -> webapp().get().endsWith(BACK_SLASH) && !webapp().get().startsWith(BACK_SLASH), () -> success(BACK_SLASH + webapp().get())),
+        matchCase(() -> success(BACK_SLASH + webapp().get() + BACK_SLASH)) ,
+        matchCase(() -> webapp().get().equals("") , () -> success(BACK_SLASH)) ,
+        matchCase(() -> webapp().get().endsWith(BACK_SLASH) && webapp().get().startsWith(BACK_SLASH) , () -> success(webapp().get())) ,
+        matchCase(() -> webapp().get().endsWith(BACK_SLASH) && ! webapp().get().startsWith(BACK_SLASH) , () -> success(BACK_SLASH + webapp().get())) ,
 //        matchCase(() -> !webapp().get().endsWith("/") && webapp().get().startsWith("/"), () -> success(webapp().get() + "/")),
-        matchCase(() -> webapp().get().equals(BACK_SLASH), () -> success(BACK_SLASH))
+        matchCase(() -> webapp().get().equals(BACK_SLASH) , () -> success(BACK_SLASH))
     )
         .map(e -> baseURL().get() + e)
         .get();
@@ -92,14 +93,14 @@ public interface PageObject extends HasContainerInfo, HasDriver, HasLogger {
     ((CheckedExecutor) getDriver()::quit)
         .apply(null)
         .ifPresentOrElse(
-            ok -> logger().info("webdriver quit -> OK"),
+            ok -> logger().info("webdriver quit -> OK") ,
             failed -> logger().warning("webdriver quit failed -> " + failed)
         );
 
     ((CheckedExecutor) getDriver()::close)
         .apply(null)
         .ifPresentOrElse(
-            ok -> logger().info("webdriver close -> OK"),
+            ok -> logger().info("webdriver close -> OK") ,
             failed -> logger().warning("webdriver close failed -> " + failed)
         );
   }
@@ -108,4 +109,7 @@ public interface PageObject extends HasContainerInfo, HasDriver, HasLogger {
     takeScreenShot().accept(getDriver());
   }
 
+  default String drivername() {
+    return webdriverName().apply(getDriver());
+  }
 }

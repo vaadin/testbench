@@ -5,11 +5,11 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.openqa.selenium.By;
 import com.vaadin.testbench.TestBenchElement;
-import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinWebUnitTest;
+import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinTest;
 import com.vaadin.testbench.tests.testUI.ElementQueryView;
 import junit.com.vaadin.testbench.tests.testUI.GenericTestPageObject;
 
-@VaadinWebUnitTest
+@VaadinTest
 public class ElementScreenCompareTest {
 
   /**
@@ -42,7 +42,7 @@ public class ElementScreenCompareTest {
     po.getCommandExecutor().resizeViewPortTo(SCREENSHOT_WIDTH , SCREENSHOT_HEIGHT);
   }
 
-  @VaadinWebUnitTest
+  @VaadinTest
   public void elementCompareScreen(GenericTestPageObject po) throws Exception {
     openTestURL(po);
     TestBenchElement button4 = po.$(NativeButtonElement.class).get(4);

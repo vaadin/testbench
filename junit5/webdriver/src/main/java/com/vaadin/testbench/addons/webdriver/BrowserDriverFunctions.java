@@ -22,9 +22,12 @@ import static com.vaadin.frp.model.Result.failure;
 import static com.vaadin.frp.model.Result.success;
 
 import java.net.URL;
+import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.openqa.selenium.WebDriver;
@@ -112,7 +115,7 @@ public interface BrowserDriverFunctions extends HasLogger {
     };
   }
 
-  static Stream<WebDriver> webDriverInstances() {
+  static Stream<WebDriver> webDriverInstances(List<BrowserTypes> disabledBrowserTypes) {
     return readConfig()
         .getGridConfigs()
         .stream()
@@ -124,6 +127,15 @@ public interface BrowserDriverFunctions extends HasLogger {
                                     gridConfig.getTarget()
             ))
         )
+        .filter(configTriple -> {
+          final DesiredCapabilities desiredCapabilities = configTriple.getT2();
+          final String browserName = desiredCapabilities.getBrowserName();
+          return disabledBrowserTypes
+              .stream()
+              .filter((type) -> type.browserName().equals(browserName))
+              .collect(Collectors.toSet())
+              .isEmpty();
+        } )
         .map(createWebDriverInstance());
   }
 

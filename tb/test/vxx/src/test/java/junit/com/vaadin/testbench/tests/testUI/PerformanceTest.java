@@ -1,11 +1,11 @@
 package junit.com.vaadin.testbench.tests.testUI;
 
 import org.junit.jupiter.api.Assertions;
-import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinWebUnitTest;
+import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinTest;
 import com.vaadin.testbench.tests.testUI.PerformanceView;
 import junit.com.vaadin.testbench.tests.testUI.elements.NativeButtonElement;
 
-@VaadinWebUnitTest
+@VaadinTest
 public class PerformanceTest {
 
 
@@ -13,7 +13,7 @@ public class PerformanceTest {
     po.loadPage(PerformanceView.ROUTE);
   }
 
-  @VaadinWebUnitTest
+  @VaadinTest
   public void serverTime(GenericTestPageObject po) {
     openTestURL(po);
     po.$(NativeButtonElement.class).first().click();
@@ -27,7 +27,7 @@ public class PerformanceTest {
                         500.0);
   }
 
-  @VaadinWebUnitTest
+  @VaadinTest
   public void renderingTime(GenericTestPageObject po) {
     openTestURL(po);
 

@@ -11,7 +11,8 @@ import com.vaadin.testbench.addons.junit5.pageobject.PageObject;
 
 public interface PageObjectFunctions {
 
-
+  String PAGE_OBJECT_PRELOAD = "preload";
+  String PAGE_OBJECT_NAVIGATION_TARGET = "navigation-target";
   String PAGEOBJECT_STORAGE_KEY = "pageobject";
 
   static Function<ExtensionContext, PageObject> pageObject() {

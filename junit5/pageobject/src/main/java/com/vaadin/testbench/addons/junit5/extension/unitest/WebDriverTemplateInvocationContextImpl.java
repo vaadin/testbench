@@ -1,12 +1,12 @@
 /**
  * Copyright © 2017 Sven Ruppert (sven.ruppert@gmail.com)
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,10 +15,14 @@
  */
 package com.vaadin.testbench.addons.junit5.extension.unitest;
 
+import static com.vaadin.testbench.addons.junit5.extension.unitest.PageObjectFunctions.PAGE_OBJECT_NAVIGATION_TARGET;
+import static com.vaadin.testbench.addons.junit5.extension.unitest.PageObjectFunctions.PAGE_OBJECT_PRELOAD;
 import static com.vaadin.testbench.addons.junit5.extension.unitest.PageObjectFunctions.storePageObject;
-import static java.util.Collections.singletonList;
+import static com.vaadin.testbench.addons.junit5.extensions.ExtensionFunctions.storeMethodPlain;
 import static com.vaadin.testbench.addons.junit5.extensions.container.ExtensionContextFunctions.containerInfo;
 import static com.vaadin.testbench.addons.webdriver.WebDriverFunctions.webdriverName;
+import static java.util.Collections.singletonList;
+import static org.openqa.selenium.support.PageFactory.initElements;
 
 import java.lang.reflect.Constructor;
 import java.util.List;
@@ -29,12 +33,11 @@ import org.junit.jupiter.api.extension.ParameterContext;
 import org.junit.jupiter.api.extension.ParameterResolutionException;
 import org.junit.jupiter.api.extension.ParameterResolver;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.support.PageFactory;
 import com.vaadin.dependencies.core.logger.HasLogger;
 import com.vaadin.frp.functions.CheckedFunction;
 import com.vaadin.frp.model.Result;
-import com.vaadin.testbench.addons.junit5.pageobject.PageObject;
 import com.vaadin.testbench.addons.junit5.extensions.container.ContainerInfo;
+import com.vaadin.testbench.addons.junit5.pageobject.PageObject;
 import xxx.com.github.webdriverextensions.WebDriverExtensionFieldDecorator;
 
 public final class WebDriverTemplateInvocationContextImpl implements WebDriverTemplateInvocationContext, HasLogger {
@@ -82,15 +85,33 @@ public final class WebDriverTemplateInvocationContextImpl implements WebDriverTe
           final Constructor<?> constructor = pageObjectClass.getConstructor(WebDriver.class , ContainerInfo.class);
           WebDriver webDriver = webdriver();
           PageObject page = (PageObject) constructor.newInstance(webDriver , containerInfo().apply(extensionContext));
-          PageFactory.initElements(new WebDriverExtensionFieldDecorator(webDriver) , page);
+          //TODO check if needed
+          initElements(new WebDriverExtensionFieldDecorator(webDriver) , page);
+
+          //TODO work on PreLoad features
+
+          final Boolean preLoad = storeMethodPlain().apply(extensionContext).get(PAGE_OBJECT_PRELOAD , Boolean.class);
+          if (preLoad) {
+
+            final String nav = storeMethodPlain().apply(extensionContext).get(PAGE_OBJECT_NAVIGATION_TARGET , String.class);
+            if (nav != null) page.loadPage(nav);
+            else page.loadPage();
+
+          } else logger()
+              .info("no preLoading activated for testClass/testMethod "
+                    + extensionContext.getTestClass() + " / "
+                    + extensionContext.getTestMethod());
+
+
           return page;
         })
             .apply(pageObjectClass);
 
         po.ifPresentOrElse(
             success -> {
-              pageObjectInvocationContextProvider.logger().fine("pageobject of type " + pageObjectClass.getSimpleName() + " was created with " + webdriverName().apply(webdriver()));
-              storePageObject().accept(extensionContext, success);
+              pageObjectInvocationContextProvider.logger().fine("pageobject of type " + pageObjectClass.getSimpleName()
+                                                                + " was created with " + webdriverName().apply(webdriver()));
+              storePageObject().accept(extensionContext , success);
             } ,
             failed -> pageObjectInvocationContextProvider.logger().warning("was not able to create PageObjectInstance " + failed)
         );

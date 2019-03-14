@@ -91,14 +91,9 @@
     <vaadin-v08.version>8.7.0</vaadin-v08.version>
     <vaadin-testbench-v08.version>5.2.0</vaadin-testbench-v08.version>
 
-    <vaadin-v10.version>10.0.10</vaadin-v10.version>
-<!--    <testbench-testbench-v10.version>6.0.1</testbench-testbench-v10.version>-->
-
-    <!--    <testbench-v14.version>10.0.10</testbench-v14.version>-->
-    <!--    <testbench-testbench-v14.version>6.0.1</testbench-testbench-v14.version>-->
-
-    <vaadin-vXX.version>12.0.5</vaadin-vXX.version>
-<!--    <testbench-testbench-vXX.version>6.0.1</testbench-testbench-vXX.version>-->
+    <vaadin-v10.version>10.0.11</vaadin-v10.version>
+    <!--    <testbench-v14.version>14.0.0</testbench-v14.version>-->
+    <vaadin-vXX.version>13.0.1</vaadin-vXX.version>
 
 
   </properties>
@@ -454,7 +449,7 @@
             <phase>package</phase>
             <goals>
               <!--<goal>jar</goal> do not define it here again !!-->
-              <goal>test-jar</goal>
+<!--              <goal>test-jar</goal>-->
             </goals>
           </execution>
         </executions>

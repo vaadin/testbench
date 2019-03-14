@@ -1,12 +1,12 @@
 /**
  * Copyright © 2017 Sven Ruppert (sven.ruppert@gmail.com)
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,20 +15,29 @@
  */
 package com.vaadin.testbench.addons.webdriver.conf;
 
+import static com.github.webdriverextensions.WebDriverProperties.CHROME_BINARY_PROPERTY_NAME;
 import static com.github.webdriverextensions.WebDriverProperties.CHROME_DRIVER_PROPERTY_NAME;
-import static com.vaadin.testbench.addons.webdriver.conf.WebdriversConfig.CHROME_BINARY_PATH;
+import static com.github.webdriverextensions.WebDriverProperties.EDGE_BINARY_PROPERTY_NAME;
+import static com.github.webdriverextensions.WebDriverProperties.EDGE_DRIVER_PROPERTY_NAME;
+import static com.github.webdriverextensions.WebDriverProperties.FIREFOX_DRIVER_PROPERTY_NAME;
+import static com.github.webdriverextensions.WebDriverProperties.GECKO_BINARY_PROPERTY_NAME;
+import static com.github.webdriverextensions.WebDriverProperties.IE_BINARY_PROPERTY_NAME;
+import static com.github.webdriverextensions.WebDriverProperties.IE_DRIVER_PROPERTY_NAME;
+import static com.github.webdriverextensions.WebDriverProperties.OPERA_BINARY_PROPERTY_NAME;
+import static com.github.webdriverextensions.WebDriverProperties.OPERA_DRIVER_PROPERTY_NAME;
+import static com.vaadin.frp.model.Result.ofNullable;
 import static com.vaadin.testbench.addons.webdriver.conf.WebdriversConfig.COMPATTESTING_GRID;
+import static java.lang.System.setProperty;
 import static java.util.Arrays.stream;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.stream.Collectors.toSet;
-//import static WebdriversConfig.UNITTESTING_HOST;
-//import static WebdriversConfig.UNITTESTING_PORT;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
+import java.util.function.Function;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
@@ -50,18 +59,36 @@ public class WebdriversConfigFactory implements HasLogger {
 
   public WebdriversConfig createFromProperies(Properties configProperties) {
 
-    final String chromeBinaryPath =
-        configProperties.getProperty(CHROME_BINARY_PATH , null);
-    if(chromeBinaryPath != null) {
-      System.setProperty(CHROME_DRIVER_PROPERTY_NAME, chromeBinaryPath);
+    Function<String, String> missingMsg = (param) ->  "property " + param + " is not defined in the configuration files.";
 
-    }
+    ofNullable(configProperties.getProperty(CHROME_BINARY_PROPERTY_NAME , null))
+        .ifPresentOrElse(success -> setProperty(CHROME_DRIVER_PROPERTY_NAME , success) ,
+                         failed -> logger().info(missingMsg.apply(CHROME_BINARY_PROPERTY_NAME)));
+
+    ofNullable(configProperties.getProperty(GECKO_BINARY_PROPERTY_NAME , null))
+        .ifPresentOrElse(success -> setProperty(FIREFOX_DRIVER_PROPERTY_NAME , success) ,
+                         failed -> logger().info(missingMsg.apply(GECKO_BINARY_PROPERTY_NAME)));
+
+    ofNullable(configProperties.getProperty(IE_BINARY_PROPERTY_NAME , null))
+        .ifPresentOrElse(success -> setProperty(IE_DRIVER_PROPERTY_NAME , success) ,
+                         failed -> logger().info(missingMsg.apply(IE_BINARY_PROPERTY_NAME)));
+
+    ofNullable(configProperties.getProperty(OPERA_BINARY_PROPERTY_NAME , null))
+        .ifPresentOrElse(success -> setProperty(OPERA_DRIVER_PROPERTY_NAME , success) ,
+                         failed -> logger().info(missingMsg.apply(OPERA_BINARY_PROPERTY_NAME)));
+
+    ofNullable(configProperties.getProperty(EDGE_BINARY_PROPERTY_NAME , null))
+        .ifPresentOrElse(success -> setProperty(EDGE_DRIVER_PROPERTY_NAME , success) ,
+                         failed -> logger().info(missingMsg.apply(EDGE_BINARY_PROPERTY_NAME)));
+
+
+
 
     //TODO check if compat test should run on local Browser
     final List<GridConfig> gridConfigs = unmodifiableList(createGridConfigs(configProperties));
 
     logger().info("Loaded " + gridConfigs.size() + " grid configuration(s)");
-    return new WebdriversConfig( gridConfigs);
+    return new WebdriversConfig(gridConfigs);
   }
 
   private List<GridConfig> createGridConfigs(Properties configProperties) {

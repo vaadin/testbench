@@ -5,13 +5,13 @@ import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import com.vaadin.testbench.TestBenchElement;
-import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinWebUnitTest;
+import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinTest;
 import com.vaadin.testbench.tests.testUI.ElementQueryView;
 import junit.com.vaadin.testbench.tests.testUI.elements.NativeButtonElement;
 import junit.com.vaadin.testbench.tests.testUI.elements.PolymerTemplateViewElement;
 
 @Disabled
-@VaadinWebUnitTest
+@VaadinTest
 public class ElementQueryTest {
 
   private void openTestURL(GenericTestPageObject po) {
@@ -19,7 +19,7 @@ public class ElementQueryTest {
   }
 
 
-  @VaadinWebUnitTest
+  @VaadinTest
   public void ensureElementListWrapped(GenericTestPageObject po) {
     openTestURL(po);
     List<PolymerTemplateViewElement> elements = po.$(PolymerTemplateViewElement.class).all();
@@ -28,7 +28,7 @@ public class ElementQueryTest {
   }
 
 
-  @VaadinWebUnitTest
+  @VaadinTest
   public void ensureElementListFromOnPageWrapped(GenericTestPageObject po) {
     openTestURL(po);
     PolymerTemplateViewElement view = po.$(PolymerTemplateViewElement.class)
@@ -40,7 +40,7 @@ public class ElementQueryTest {
     Assertions.assertEquals(view , view2);
   }
 
-  @VaadinWebUnitTest
+  @VaadinTest
   public void findLightDomElementById(GenericTestPageObject po) throws Exception {
     openTestURL(po);
 
@@ -52,7 +52,7 @@ public class ElementQueryTest {
     Assertions.assertEquals("Button 1" , button.getText());
   }
 
-  @VaadinWebUnitTest
+  @VaadinTest
   public void findShadowDomElementById(GenericTestPageObject po) throws Exception {
     openTestURL(po);
 
@@ -62,7 +62,7 @@ public class ElementQueryTest {
     Assertions.assertEquals("Shadow Button 1" , button.getText());
   }
 
-  @VaadinWebUnitTest
+  @VaadinTest
   public void findAllShadowDomElements(GenericTestPageObject po) throws Exception {
     openTestURL(po);
 
@@ -71,7 +71,7 @@ public class ElementQueryTest {
     Assertions.assertEquals(10 , view.$(NativeButtonElement.class).all().size());
   }
 
-  @VaadinWebUnitTest
+  @VaadinTest
   public void searchShadowDomBeforeLight(GenericTestPageObject po) throws Exception {
     openTestURL(po);
     PolymerTemplateViewElement view = po.$(PolymerTemplateViewElement.class)
@@ -81,7 +81,7 @@ public class ElementQueryTest {
     Assertions.assertEquals("Special Button (in Shadow DOM)" , button.getText());
   }
 
-  @VaadinWebUnitTest
+  @VaadinTest
   public void mergeLightAndShadowDomResults(GenericTestPageObject po) throws Exception {
     openTestURL(po);
 
@@ -92,7 +92,7 @@ public class ElementQueryTest {
     Assertions.assertEquals(10 , buttons.size());
   }
 
-  @VaadinWebUnitTest
+  @VaadinTest
   public void findTestBenchElementUsingTag(GenericTestPageObject po) throws Exception {
     openTestURL(po);
 
@@ -102,7 +102,7 @@ public class ElementQueryTest {
 
   }
 
-  @VaadinWebUnitTest
+  @VaadinTest
   public void findTestBenchElement(GenericTestPageObject po) throws Exception {
     openTestURL(po);
 
@@ -111,7 +111,7 @@ public class ElementQueryTest {
     Assertions.assertNotNull(button);
   }
 
-  @VaadinWebUnitTest
+  @VaadinTest
   public void findTestBenchElementChild(GenericTestPageObject po) throws Exception {
     openTestURL(po);
 
@@ -121,7 +121,7 @@ public class ElementQueryTest {
     Assertions.assertEquals("Shadow Button 1" , button.getText());
   }
 
-  @VaadinWebUnitTest
+  @VaadinTest
   public void specialCharactersInId(GenericTestPageObject po) {
     openTestURL(po);
     NativeButtonElement button = po.$(PolymerTemplateViewElement.class)
@@ -129,7 +129,7 @@ public class ElementQueryTest {
     Assertions.assertEquals("Button with special id" , button.getText());
   }
 
-  @VaadinWebUnitTest
+  @VaadinTest
   public void attributeContains(GenericTestPageObject po) {
     openTestURL(po);
     PolymerTemplateViewElement view = po.$(PolymerTemplateViewElement.class)
@@ -142,7 +142,7 @@ public class ElementQueryTest {
     Assertions.assertEquals(10 , allButtons.size());
   }
 
-  @VaadinWebUnitTest
+  @VaadinTest
   public void getSetElementsProperty(GenericTestPageObject po) {
     openTestURL(po);
     PolymerTemplateViewElement template = po.$(

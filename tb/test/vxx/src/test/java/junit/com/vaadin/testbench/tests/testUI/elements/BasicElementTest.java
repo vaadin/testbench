@@ -5,11 +5,11 @@ import java.util.function.Function;
 import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.TimeoutException;
 import com.vaadin.testbench.TestBenchElement;
-import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinWebUnitTest;
+import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinTest;
 import com.vaadin.testbench.tests.testUI.ElementQueryView;
 import junit.com.vaadin.testbench.tests.testUI.GenericTestPageObject;
 
-@VaadinWebUnitTest
+@VaadinTest
 public class BasicElementTest {
 
 
@@ -24,7 +24,7 @@ public class BasicElementTest {
     };
   }
 
-  @VaadinWebUnitTest
+  @VaadinTest
   public void getSetStringProperty(GenericTestPageObject po) {
     final TestBenchElement buttonElement = elem().apply(po);
     Assertions.assertNull(buttonElement.getPropertyString("foo"));
@@ -34,7 +34,7 @@ public class BasicElementTest {
     Assertions.assertTrue(buttonElement.getPropertyBoolean("foo"));
   }
 
-  @VaadinWebUnitTest
+  @VaadinTest
   public void getSetBooleanProperty(GenericTestPageObject po) {
     final TestBenchElement buttonElement = elem().apply(po);
     Assertions.assertNull(buttonElement.getPropertyBoolean("foo"));
@@ -44,7 +44,7 @@ public class BasicElementTest {
     Assertions.assertTrue(buttonElement.getPropertyBoolean("foo"));
   }
 
-  @VaadinWebUnitTest
+  @VaadinTest
   public void getSetDoubleProperty(GenericTestPageObject po) {
     final TestBenchElement buttonElement = elem().apply(po);
     Assertions.assertNull(buttonElement.getPropertyDouble("foo"));
@@ -54,7 +54,7 @@ public class BasicElementTest {
     Assertions.assertTrue(buttonElement.getPropertyBoolean("foo"));
   }
 
-  @VaadinWebUnitTest
+  @VaadinTest
   public void getSetIntegerProperty(GenericTestPageObject po) {
     final TestBenchElement buttonElement = elem().apply(po);
     Assertions.assertNull(buttonElement.getPropertyInteger("foo"));
@@ -64,7 +64,7 @@ public class BasicElementTest {
     Assertions.assertTrue(buttonElement.getPropertyBoolean("foo"));
   }
 
-  @VaadinWebUnitTest
+  @VaadinTest
   public void getSetPropertyChain(GenericTestPageObject po) {
     final TestBenchElement buttonElement = elem().apply(po);
     po.getCommandExecutor().executeScript("arguments[0].foo = {bar: {baz: 123}};" , buttonElement);
@@ -73,7 +73,7 @@ public class BasicElementTest {
         .getPropertyDouble("foo" , "bar" , "baz").longValue());
   }
 
-  @VaadinWebUnitTest
+  @VaadinTest
   public void getSetElementProperty(GenericTestPageObject po) {
     final TestBenchElement buttonElement = elem().apply(po);
     Assertions.assertEquals(buttonElement , buttonElement
@@ -83,7 +83,7 @@ public class BasicElementTest {
 
   }
 
-  @VaadinWebUnitTest
+  @VaadinTest
   public void getSetElementsProperty(GenericTestPageObject po) {
     final TestBenchElement buttonElement = elem().apply(po);
     Assertions.assertEquals(0 ,
@@ -93,14 +93,14 @@ public class BasicElementTest {
 
   }
 
-  @VaadinWebUnitTest
+  @VaadinTest
   public void getSetPropertyChainMissingValue(GenericTestPageObject po) {
     final TestBenchElement buttonElement = elem().apply(po);
     po.getCommandExecutor().executeScript("arguments[0].foo = {bar: {baz: 123}};" , buttonElement);
     Assertions.assertNull(buttonElement.getPropertyDouble("foo" , "baz" , "baz"));
   }
 
-  @VaadinWebUnitTest()
+  @VaadinTest()
   public void waitForNonExistant(GenericTestPageObject po) {
 
     final TestBenchElement buttonElement = elem().apply(po);
@@ -112,7 +112,7 @@ public class BasicElementTest {
         });
   }
 
-  @VaadinWebUnitTest
+  @VaadinTest
   public void hasAttribute(GenericTestPageObject po) {
     final TestBenchElement buttonElement = elem().apply(po);
     NativeButtonElement withAttributes = po.$(NativeButtonElement.class)
@@ -129,7 +129,7 @@ public class BasicElementTest {
     Assertions.assertFalse(withoutAttributes.hasAttribute("nonexistant"));
   }
 
-  @VaadinWebUnitTest
+  @VaadinTest
   public void dispatchEvent(GenericTestPageObject po) {
     final TestBenchElement buttonElement = elem().apply(po);
     NativeButtonElement withAttributes = po.$(NativeButtonElement.class)
@@ -138,7 +138,7 @@ public class BasicElementTest {
     Assertions.assertEquals("Event on Button 5" , po.$("div").id("msg").getText());
   }
 
-  @VaadinWebUnitTest
+  @VaadinTest
   public void nativeButtonDisabled(GenericTestPageObject po) {
     final TestBenchElement buttonElement = elem().apply(po);
     NativeButtonElement enabled = po.$(NativeButtonElement.class).get(0);

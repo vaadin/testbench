@@ -11,7 +11,7 @@ inc testcoverage
 - Documentation for the init config
 - Concurrency test with plain junit5
     -   Concurrency is running with container - none
-
+- Disable for dedicated Browser
 
 ## Phase I 
 Extensions only
@@ -25,4 +25,10 @@ Docu how to use Vintage
 Testengine with the possibility to run 
 old and new test inside the same engine
 
+ 
+ 
+ ## Safari
+ 
+ https://developer.apple.com/documentation/webkit/testing_with_webdriver_in_safari
+ 
  

@@ -22,7 +22,7 @@ import net.vergien.beanautoutils.annotation.Bean;
 
 @Bean
 public class WebdriversConfig implements HasLogger {
-  public static final String CHROME_BINARY_PATH = "chrome.binary.path";
+
   public static final String COMPATTESTING = "compattesting";
   public static final String COMPATTESTING_GRID = COMPATTESTING + ".grid";
 

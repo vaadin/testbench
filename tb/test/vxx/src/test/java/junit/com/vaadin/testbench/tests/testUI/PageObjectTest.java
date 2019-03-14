@@ -3,10 +3,10 @@ package junit.com.vaadin.testbench.tests.testUI;
 import java.util.List;
 
 import org.junit.jupiter.api.Assertions;
-import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinWebUnitTest;
+import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinTest;
 import com.vaadin.testbench.tests.testUI.PageObjectView;
 
-@VaadinWebUnitTest
+@VaadinTest
 public class PageObjectTest {
 
 
@@ -15,7 +15,7 @@ public class PageObjectTest {
   }
 
 
-  @VaadinWebUnitTest
+  @VaadinTest
   public void findUsingValueAnnotation(GenericTestPageObject po) {
     openTestURL(po);
     List<MyComponentWithIdElement> components = po.$(
@@ -25,7 +25,7 @@ public class PageObjectTest {
     Assertions.assertEquals("MyComponentWithId" , components.get(0).getText());
   }
 
-  @VaadinWebUnitTest
+  @VaadinTest
   public void findUsingContainsAnnotation(GenericTestPageObject po) {
     openTestURL(po);
     List<MyComponentWithClassesElement> components = po.$(
