@@ -10,7 +10,7 @@
  * You should have received a copy of the license along with this program.
  * If not, see <http://vaadin.com/license/cval-3>.
  */
-package com.vaadin.testbench.api;
+package com.vaadin.testbench;
 
 import org.openqa.selenium.WebDriver;
 

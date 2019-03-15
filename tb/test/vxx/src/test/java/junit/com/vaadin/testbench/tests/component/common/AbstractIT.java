@@ -18,7 +18,7 @@ package junit.com.vaadin.testbench.tests.component.common;
 import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.By;
 import com.vaadin.flow.component.common.testbench.HasLabel;
-import com.vaadin.testbench.api.HasStringValueProperty;
+import com.vaadin.testbench.HasStringValueProperty;
 import com.vaadin.testbench.addons.junit5.pageobject.AbstractVaadinPageObject;
 
 public abstract class AbstractIT {

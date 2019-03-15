@@ -1,4 +1,4 @@
-package com.vaadin.testbench.api;
+package com.vaadin.testbench;
 
 import java.util.List;
 

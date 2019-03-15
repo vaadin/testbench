@@ -39,10 +39,10 @@ public class TextAreaIT extends AbstractIT {
     final TextAreaElement initialValue = po.textArea().id(INITIAL_VALUE);
     final TextAreaElement placeholder = po.textArea().id(PLACEHOLDER);
 
-    Assertions.assertEquals("" , labelEager.getValue());
-    Assertions.assertEquals("" , nolabel.getValue());
-    Assertions.assertEquals("Initial" , initialValue.getValue());
-    Assertions.assertEquals("" , placeholder.getValue());
+    Assertions.assertEquals("" , labelEager.getText());
+    Assertions.assertEquals("" , nolabel.getText());
+    Assertions.assertEquals("Initial" , initialValue.getText());
+    Assertions.assertEquals("" , placeholder.getText());
 
     labelEager.setValue("Foo");
     assertStringValue(po,labelEager , "Foo");

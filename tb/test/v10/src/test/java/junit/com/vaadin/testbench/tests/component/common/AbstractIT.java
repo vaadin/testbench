@@ -18,7 +18,7 @@ package junit.com.vaadin.testbench.tests.component.common;
 import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.By;
 import com.vaadin.flow.component.common.testbench.HasLabel;
-import com.vaadin.testbench.api.HasStringValueProperty;
+import com.vaadin.testbench.HasStringValueProperty;
 import com.vaadin.testbench.addons.junit5.pageobject.AbstractVaadinPageObject;
 
 public abstract class AbstractIT {
@@ -35,20 +35,11 @@ public abstract class AbstractIT {
     return getLogRow(po , i).replaceFirst(".*\\. " , "");
   }
 
-
-//  @Before
-//  public void open() {
-//    getDriver().get("http://localhost:8080/" + getTestPath());
-//  }
-
-//  private String getTestPath() {
-//    return getClass().getSimpleName().replaceAll("IT$" , "");
-//  }
-
   protected <T extends HasStringValueProperty & HasLabel> void assertStringValue(
       AbstractVaadinPageObject po ,
       T element ,
       String expectedValue) {
+
     Assertions.assertEquals(expectedValue , element.getValue());
     Assertions.assertEquals(
         "Value of '" + element.getLabel() + "' is now " + expectedValue ,

@@ -29,7 +29,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.HttpCommandExecutor;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import com.vaadin.dependencies.core.logger.HasLogger;
-import com.vaadin.testbench.api.HasDriver;
+import com.vaadin.testbench.HasDriver;
 import com.vaadin.testbench.proxy.TestBenchDriverProxy;
 import com.vaadin.testbench.TestBenchElement;
 

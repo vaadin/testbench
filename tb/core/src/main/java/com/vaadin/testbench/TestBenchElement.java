@@ -48,11 +48,6 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import com.vaadin.testbench.api.HasCallFunction;
-import com.vaadin.testbench.api.HasDriver;
-import com.vaadin.testbench.api.HasElementQuery;
-import com.vaadin.testbench.api.HasPropertySettersGetters;
-import com.vaadin.testbench.api.HasTestBenchCommandExecutor;
 import com.vaadin.testbench.commands.CanCompareScreenshots;
 import com.vaadin.testbench.commands.ScreenshotComparator;
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
