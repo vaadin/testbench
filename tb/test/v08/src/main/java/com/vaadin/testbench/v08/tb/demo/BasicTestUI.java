@@ -25,10 +25,8 @@ import com.vaadin.ui.VerticalLayout;
 
 public class BasicTestUI extends Composite {
 
-
   public static final String BUTTON_ID = buttonID().apply(BasicTestUI.class, "buttonID");
   public static final String LABEL_ID  = buttonID().apply(BasicTestUI.class, "labelID");
-
 
   private final Button button = new Button();
   private final Label  label  = new Label();

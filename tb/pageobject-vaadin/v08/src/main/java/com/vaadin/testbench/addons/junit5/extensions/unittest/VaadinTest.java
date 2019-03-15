@@ -37,9 +37,13 @@ import com.vaadin.testbench.addons.junit5.extensions.container.ServletContainerE
 
 //convert Driver
 @ExtendWith(ConvertWebdriverTestExtension.class)
+@ExtendWith(VaadinPreLoadTargetExtension.class)
 
 @ExtendWith(PageObjectWebDriverCleanerExtension.class)
-
 @TestTemplate
-public @interface VaadinWebUnitTest {
+public @interface VaadinTest {
+  String navigateAsString() default "";
+
+  boolean preLoad() default true;
+
 }
