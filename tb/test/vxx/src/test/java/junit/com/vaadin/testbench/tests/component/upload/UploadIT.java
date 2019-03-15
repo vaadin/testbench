@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Disabled;
 import com.vaadin.dependencies.core.logger.HasLogger;
 import com.vaadin.flow.component.upload.testbench.UploadElement;
 import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinTest;
-import com.vaadin.testbench.addons.webdriver.DisabledBrowserTypes;
+import com.vaadin.testbench.addons.webdriver.SkipBrowsers;
 import junit.com.vaadin.testbench.tests.component.common.AbstractIT;
 import junit.com.vaadin.testbench.tests.testUI.GenericTestPageObject;
 
@@ -50,7 +50,7 @@ public class UploadIT extends AbstractIT implements HasLogger {
    * @throws Exception
    */
   @VaadinTest(navigateAsString = NAV)
-  @DisabledBrowserTypes({SAFARI , FIREFOX})
+  @SkipBrowsers({SAFARI , FIREFOX})
   public void upload(GenericTestPageObject po) throws Exception {
     byte[] file1Contents = "This is file 1"
         .getBytes(UTF_8);

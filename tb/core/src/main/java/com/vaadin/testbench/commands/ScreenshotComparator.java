@@ -69,7 +69,6 @@ public class ScreenshotComparator implements HasLogger {
   }
 
   public boolean compareScreen(String referenceId ,
-//                                      ImageComparison imageComparison ,
                                TakesScreenshot takesScreenshot ,
                                HasCapabilities driver)
       throws IOException {
@@ -94,7 +93,6 @@ public class ScreenshotComparator implements HasLogger {
   }
 
   public boolean compareScreen(File reference ,
-//                                      ImageComparison imageComparison ,
                                TakesScreenshot takesScreenshot)
       throws IOException {
     BufferedImage image = null;
@@ -112,7 +110,6 @@ public class ScreenshotComparator implements HasLogger {
 
   public boolean compareScreen(BufferedImage reference ,
                                String referenceName ,
-//                                      ImageComparison imageComparison ,
                                TakesScreenshot takesScreenshot)
       throws IOException {
 

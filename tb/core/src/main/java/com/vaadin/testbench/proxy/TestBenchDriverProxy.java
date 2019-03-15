@@ -10,7 +10,9 @@
  * You should have received a copy of the license along with this program.
  * If not, see <http://vaadin.com/license/cval-3>.
  */
-package com.vaadin.testbench;
+package com.vaadin.testbench.proxy;
+
+import static com.vaadin.testbench.TestBench.createElement;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +28,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.internal.WrapsDriver;
+import com.vaadin.testbench.api.HasTestBenchCommandExecutor;
+import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 
 public class TestBenchDriverProxy
@@ -166,7 +170,7 @@ public class TestBenchDriverProxy
             if (elementElementsOrValues instanceof TestBenchElement) {
                 return elementElementsOrValues;
             } else {
-                return TestBench.createElement(
+                return createElement(
                         (WebElement) elementElementsOrValues,
                         tbCommandExecutor);
             }

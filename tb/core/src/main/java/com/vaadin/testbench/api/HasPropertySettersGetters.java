@@ -1,8 +1,9 @@
-package com.vaadin.testbench;
+package com.vaadin.testbench.api;
 
 import java.util.List;
 
 import org.openqa.selenium.WebElement;
+import com.vaadin.testbench.TestBenchElement;
 
 public interface HasPropertySettersGetters extends WebElement {
     /**

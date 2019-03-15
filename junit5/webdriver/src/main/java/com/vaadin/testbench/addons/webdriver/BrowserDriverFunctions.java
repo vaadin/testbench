@@ -20,6 +20,7 @@ import static com.vaadin.frp.matcher.Case.match;
 import static com.vaadin.frp.matcher.Case.matchCase;
 import static com.vaadin.frp.model.Result.failure;
 import static com.vaadin.frp.model.Result.success;
+import static java.util.stream.Collectors.toSet;
 
 import java.net.URL;
 import java.util.List;
@@ -133,7 +134,7 @@ public interface BrowserDriverFunctions extends HasLogger {
           return disabledBrowserTypes
               .stream()
               .filter((type) -> type.browserName().equals(browserName))
-              .collect(Collectors.toSet())
+              .collect(toSet())
               .isEmpty();
         } )
         .map(createWebDriverInstance());

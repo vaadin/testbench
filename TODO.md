@@ -12,6 +12,10 @@ inc testcoverage
 - Concurrency test with plain junit5
     -   Concurrency is running with container - none
 - Disable for dedicated Browser
+- PageObject PreLoad
+- reference-screenshots are now loaded from Resources (jar)
+
+
 
 ## Phase I 
 Extensions only

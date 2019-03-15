@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface DisabledBrowserTypes {
+public @interface SkipBrowsers {
 
   BrowserTypes[] ALL_BROWSERS = new BrowserTypes[0];
 

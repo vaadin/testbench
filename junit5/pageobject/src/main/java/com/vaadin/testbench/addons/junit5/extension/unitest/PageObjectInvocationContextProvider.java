@@ -28,7 +28,7 @@ import org.junit.jupiter.api.extension.TestTemplateInvocationContext;
 import org.junit.jupiter.api.extension.TestTemplateInvocationContextProvider;
 import com.vaadin.dependencies.core.logger.HasLogger;
 import com.vaadin.testbench.addons.webdriver.BrowserTypes;
-import com.vaadin.testbench.addons.webdriver.DisabledBrowserTypes;
+import com.vaadin.testbench.addons.webdriver.SkipBrowsers;
 
 /**
  *
@@ -49,12 +49,12 @@ public class PageObjectInvocationContextProvider implements TestTemplateInvocati
 
     final List<BrowserTypes> typesList = context
         .getTestMethod()
-        .filter(method -> method.getAnnotation(DisabledBrowserTypes.class) != null)
+        .filter(method -> method.getAnnotation(SkipBrowsers.class) != null)
         .map((method) -> {
-          final DisabledBrowserTypes annotation = method.getAnnotation(DisabledBrowserTypes.class);
+          final SkipBrowsers annotation = method.getAnnotation(SkipBrowsers.class);
           final BrowserTypes[] browserTypes = annotation.value();
           return (browserTypes == null)
-                 ? DisabledBrowserTypes.ALL_BROWSERS
+                 ? SkipBrowsers.ALL_BROWSERS
                  : browserTypes;
         })
         .map(Arrays::asList)

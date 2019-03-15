@@ -41,10 +41,8 @@ class ButtonIT extends AbstractIT {
     Assertions.assertEquals("2. Button with text clicked" , getLogRow(po , 0));
   }
 
-  @VaadinTest
+  @VaadinTest(navigateAsString = NAV)
   void getText(GenericTestPageObject po) throws Exception {
-    po.loadPage(NAV);
-
     final ButtonElement buttonWithText = po.btn().id(TEXT);
     final ButtonElement buttonWithNoText = po.btn().id(NOTEXT);
     Assertions.assertEquals("" , buttonWithNoText.getText());

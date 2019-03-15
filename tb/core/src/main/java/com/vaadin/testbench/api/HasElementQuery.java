@@ -1,4 +1,7 @@
-package com.vaadin.testbench;
+package com.vaadin.testbench.api;
+
+import com.vaadin.testbench.ElementQuery;
+import com.vaadin.testbench.TestBenchElement;
 
 public interface HasElementQuery extends HasSearchContext {
 

@@ -26,7 +26,7 @@ import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinTest;
 import junit.com.vaadin.testbench.tests.component.common.AbstractIT;
 import junit.com.vaadin.testbench.tests.testUI.GenericTestPageObject;
 
-@VaadinTest()
+@VaadinTest
 public class CheckboxIT extends AbstractIT {
 
 

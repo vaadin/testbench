@@ -17,10 +17,7 @@ package junit.com.vaadin.testbench.tests.component.upload;
 
 import static com.vaadin.flow.component.upload.testbench.test.UploadView.NAV;
 import static com.vaadin.flow.component.upload.testbench.test.UploadView.UPLOAD;
-import static com.vaadin.frp.matcher.Case.match;
 import static com.vaadin.frp.matcher.Case.matchCase;
-import static com.vaadin.frp.model.Result.failure;
-import static com.vaadin.frp.model.Result.success;
 import static com.vaadin.testbench.addons.webdriver.BrowserTypes.FIREFOX;
 import static com.vaadin.testbench.addons.webdriver.BrowserTypes.SAFARI;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -34,7 +31,7 @@ import org.junit.jupiter.api.Disabled;
 import com.vaadin.dependencies.core.logger.HasLogger;
 import com.vaadin.flow.component.upload.testbench.UploadElement;
 import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinTest;
-import com.vaadin.testbench.addons.webdriver.DisabledBrowserTypes;
+import com.vaadin.testbench.addons.webdriver.SkipBrowsers;
 import junit.com.vaadin.testbench.tests.component.common.AbstractIT;
 import junit.com.vaadin.testbench.tests.testUI.GenericTestPageObject;
 
@@ -54,7 +51,7 @@ public class UploadIT extends AbstractIT implements HasLogger {
    * @throws Exception
    */
   @VaadinTest(navigateAsString = NAV)
-  @DisabledBrowserTypes({SAFARI , FIREFOX})
+  @SkipBrowsers({SAFARI , FIREFOX})
   public void upload(GenericTestPageObject po) throws Exception {
     byte[] file1Contents = "This is file 1"
         .getBytes(UTF_8);

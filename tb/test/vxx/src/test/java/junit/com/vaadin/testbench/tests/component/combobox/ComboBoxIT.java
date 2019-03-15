@@ -54,8 +54,6 @@ public class ComboBoxIT extends AbstractIT {
     }
   }
 
-
-
   @VaadinTest
   public void getLabel(PO po) throws Exception {
 

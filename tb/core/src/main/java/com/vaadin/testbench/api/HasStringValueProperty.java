@@ -1,4 +1,4 @@
-package com.vaadin.testbench;
+package com.vaadin.testbench.api;
 
 public interface HasStringValueProperty extends HasPropertySettersGetters {
 

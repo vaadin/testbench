@@ -32,7 +32,7 @@ import com.vaadin.flow.component.grid.testbench.test.GridView;
 import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.testbench.addons.junit5.extensions.container.ContainerInfo;
 import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinTest;
-import com.vaadin.testbench.addons.webdriver.DisabledBrowserTypes;
+import com.vaadin.testbench.addons.webdriver.SkipBrowsers;
 import junit.com.vaadin.testbench.tests.component.common.AbstractIT;
 import junit.com.vaadin.testbench.tests.testUI.GenericTestPageObject;
 
@@ -315,7 +315,7 @@ public class GridIT extends AbstractIT {
    * @param po
    */
   @VaadinTest
-  @DisabledBrowserTypes(IE)
+  @SkipBrowsers(IE)
   public void detailsRows(PO po) {
     GridElement details = po.grid().id(GridView.DETAILS);
     GridTHTDElement cell = details.getCell(9 , 0);

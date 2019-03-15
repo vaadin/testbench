@@ -19,7 +19,7 @@ import java.util.function.Function;
 
 import org.openqa.selenium.WebDriver;
 import com.vaadin.testbench.addons.webdriver.WebDriverFunctions;
-import com.vaadin.testbench.TestBenchDriverProxy;
+import com.vaadin.testbench.proxy.TestBenchDriverProxy;
 
 /**
  *

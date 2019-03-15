@@ -22,6 +22,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
+import com.vaadin.testbench.proxy.DriverInvocationHandler;
+import com.vaadin.testbench.proxy.TestBenchDriverProxy;
 import javassist.util.proxy.MethodFilter;
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
@@ -93,8 +95,7 @@ public class TestBench {
     Set<Class<?>> allInterfaces = extractInterfaces(driver);
     Class<TestBenchDriverProxy> driverClass = TestBenchDriverProxy.class;
     allInterfaces.addAll(extractInterfaces(driverClass));
-    final Class<?>[] allInterfacesArray = allInterfaces
-        .toArray(new Class<?>[allInterfaces.size()]);
+    final Class<?>[] allInterfacesArray = allInterfaces.toArray(new Class<?>[0]);
 
     ProxyFactory pFactory = new ProxyFactory();
     pFactory.setInterfaces(allInterfacesArray);
@@ -143,14 +144,14 @@ public class TestBench {
    *         WebElement, or <code>null</code> if the element is null
    */
   public static <T extends TestBenchElement> T createElement(Class<T> clazz ,
-                                                             WebElement webElement , TestBenchCommandExecutor tbCommandExecutor) {
+                                                             WebElement webElement ,
+                                                             TestBenchCommandExecutor tbCommandExecutor) {
     if (webElement == null) {
       return null;
     }
     Set<Class<?>> allInterfaces = extractInterfaces(webElement);
 
-    final Class<?>[] allInterfacesArray = allInterfaces
-        .toArray(new Class<?>[allInterfaces.size()]);
+    final Class<?>[] allInterfacesArray = allInterfaces.toArray(new Class<?>[0]);
 
     ProxyFactory pFactory = new ProxyFactory();
     pFactory.setSuperclass(clazz);

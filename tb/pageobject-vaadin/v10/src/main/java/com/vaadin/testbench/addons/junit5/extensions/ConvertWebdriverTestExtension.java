@@ -23,7 +23,7 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 import com.vaadin.dependencies.core.logger.HasLogger;
 import com.vaadin.frp.model.Result;
 import com.vaadin.testbench.addons.webdriver.junit5.WebdriverExtensionFunctions;
-import com.vaadin.testbench.TestBenchDriverProxy;
+import com.vaadin.testbench.proxy.TestBenchDriverProxy;
 
 public class ConvertWebdriverTestExtension implements BeforeEachCallback, AfterEachCallback, HasLogger {
 

@@ -12,6 +12,8 @@
  */
 package com.vaadin.testbench.commands;
 
+import static java.net.InetAddress.getLocalHost;
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -27,8 +29,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.HttpCommandExecutor;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import com.vaadin.dependencies.core.logger.HasLogger;
-import com.vaadin.testbench.HasDriver;
-import com.vaadin.testbench.TestBenchDriverProxy;
+import com.vaadin.testbench.api.HasDriver;
+import com.vaadin.testbench.proxy.TestBenchDriverProxy;
 import com.vaadin.testbench.TestBenchElement;
 
 /**
@@ -37,7 +39,6 @@ import com.vaadin.testbench.TestBenchElement;
 public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver, HasLogger {
 
   private TestBenchDriverProxy driver;
-//  private ImageComparison imageComparison = new ImageComparison();
 
   private boolean enableWaitForVaadin = true;
   private boolean autoScrollIntoView = true;
@@ -61,10 +62,6 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver, H
             + "}";
     // @formatter:on
 
-//  public TestBenchCommandExecutor(ImageComparison imageComparison) {
-//    this.imageComparison = imageComparison;
-//  }
-
   public void setDriver(TestBenchDriverProxy driver) {
     this.driver = driver;
   }
@@ -82,7 +79,7 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver, H
                   .getAddressOfRemoteServer().getHost());
         }
       } else {
-        ia = InetAddress.getLocalHost();
+        ia = getLocalHost();
       }
     } catch (UnknownHostException e) {
       logger().warning("Could not find name of remote control" , e);
@@ -111,7 +108,8 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver, H
       // Must use the wrapped driver here to avoid calling waitForVaadin
       // again
       finished = (Boolean) ((JavascriptExecutor) getDriver()
-          .getWrappedDriver()).executeScript(WAIT_FOR_VAADIN_SCRIPT);
+          .getWrappedDriver())
+          .executeScript(WAIT_FOR_VAADIN_SCRIPT);
       if (finished == null) {
         // This should never happen but according to
         // https://dev.vaadin.com/ticket/19703, it happens
@@ -125,7 +123,6 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver, H
   @Override
   public boolean compareScreen(String referenceId) throws IOException {
     return new ScreenshotComparator().compareScreen(referenceId ,
-//                                              imageComparison ,
                                                     driver ,
                                                     getDriver());
   }
@@ -134,7 +131,6 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver, H
   public boolean compareScreen(File reference) throws IOException {
     WebDriver driver = getDriver();
     return new ScreenshotComparator().compareScreen(reference ,
-//                                              imageComparison ,
                                                     (TakesScreenshot) driver);
 
   }
@@ -145,7 +141,6 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver, H
     WebDriver driver = getDriver();
     return new ScreenshotComparator().compareScreen(reference ,
                                                     referenceName ,
-//                                              imageComparison ,
                                                     (TakesScreenshot) driver);
 
   }
@@ -323,14 +318,5 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver, H
         testBenchElement);
     assert (ret == null);
   }
-
-  /**
-   * Gets the image comparison implementation used for screenshots.
-   *
-   * @return the image comparison implementation
-   */
-//  public ImageComparison getImageComparison() {
-//    return imageComparison;
-//  }
 
 }

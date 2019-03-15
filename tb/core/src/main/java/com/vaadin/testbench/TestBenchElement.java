@@ -12,6 +12,8 @@
  */
 package com.vaadin.testbench;
 
+import static com.vaadin.testbench.TestBench.createElement;
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -46,6 +48,11 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import com.vaadin.testbench.api.HasCallFunction;
+import com.vaadin.testbench.api.HasDriver;
+import com.vaadin.testbench.api.HasElementQuery;
+import com.vaadin.testbench.api.HasPropertySettersGetters;
+import com.vaadin.testbench.api.HasTestBenchCommandExecutor;
 import com.vaadin.testbench.commands.CanCompareScreenshots;
 import com.vaadin.testbench.commands.ScreenshotComparator;
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
@@ -374,8 +381,8 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
     getCommandExecutor().focusElement(this);
   }
 
-  protected static List<TestBenchElement> wrapElements(
-      List<WebElement> elements,
+  public static List<TestBenchElement> wrapElements(
+      List<WebElement> elements ,
       TestBenchCommandExecutor commandExecutor) {
     List<TestBenchElement> wrappedList = new ArrayList<>();
 
@@ -386,12 +393,12 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
     return wrappedList;
   }
 
-  protected static TestBenchElement wrapElement(WebElement element,
-                                                TestBenchCommandExecutor commandExecutor) {
+  public static TestBenchElement wrapElement(WebElement element ,
+                                             TestBenchCommandExecutor commandExecutor) {
     if (element instanceof TestBenchElement) {
       return (TestBenchElement) element;
     } else {
-      return TestBench.createElement(element, commandExecutor);
+      return createElement(element, commandExecutor);
     }
   }
 

@@ -23,7 +23,7 @@ import static com.vaadin.testbench.addons.testbench.TestbenchFunctions.unproxy;
 import static com.vaadin.testbench.addons.webdriver.WebDriverFunctions.webdriverName;
 
 import org.openqa.selenium.WebDriver;
-import com.vaadin.testbench.TestBenchDriverProxy;
+import com.vaadin.testbench.proxy.TestBenchDriverProxy;
 
 /**
  *

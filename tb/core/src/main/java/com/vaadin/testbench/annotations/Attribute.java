@@ -32,14 +32,14 @@ import java.lang.annotation.Target;
 @Repeatable(Attribute.Container.class)
 public @interface Attribute {
 
-    public static final String DEFAULT_VALUE = "THE_DEFAULT_VALUE_WHICH_YOU_SURELY_NEVER_EVER_WILL_USE_FOR_REAL, RIGHT?!";
+    String DEFAULT_VALUE = "THE_DEFAULT_VALUE_WHICH_YOU_SURELY_NEVER_EVER_WILL_USE_FOR_REAL, RIGHT?!";
     /**
      * Replaced by the simple class name of the element class, with any
      * <code>Element</code> or <code>PageObject</code> suffix removed, and
      * converted to dash-separated-format when used with either
      * {@link #contains()} or {@link #value()},
      */
-    public static final String SIMPLE_CLASS_NAME = "THE_CONVENTION_VALUE_WHICH_YOU_SURELY_NEVER_EVER_WILL_USE_FOR_REAL, RIGHT?!";
+    String SIMPLE_CLASS_NAME = "THE_CONVENTION_VALUE_WHICH_YOU_SURELY_NEVER_EVER_WILL_USE_FOR_REAL, RIGHT?!";
 
     /**
      * The name of the attribute to check.
@@ -82,7 +82,7 @@ public @interface Attribute {
     @Target(ElementType.TYPE)
     @Documented
     @Inherited
-    public @interface Container {
+    @interface Container {
 
         /**
          * Internally used to enable use of multiple {@link Attribute}

@@ -25,8 +25,7 @@ import com.vaadin.flow.component.button.testbench.ButtonElement;
 import junit.com.vaadin.testbench.tests.component.common.AbstractIT;
 import com.vaadin.flow.component.tabs.testbench.TabsElement;
 import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinTest;
-import com.vaadin.testbench.addons.webdriver.BrowserTypes;
-import com.vaadin.testbench.addons.webdriver.DisabledBrowserTypes;
+import com.vaadin.testbench.addons.webdriver.SkipBrowsers;
 import junit.com.vaadin.testbench.tests.testUI.GenericTestPageObject;
 
 @VaadinTest
@@ -52,7 +51,7 @@ public class TabsIT extends AbstractIT {
    * @throws Exception
    */
   @VaadinTest(navigateAsString = NAV)
-  @DisabledBrowserTypes(value = {FIREFOX, IE})
+  @SkipBrowsers(value = {FIREFOX, IE})
   public void getSelectedTabElement(GenericTestPageObject po) throws Exception {
     final TabsElement def = po.tabs().id(DEFAULT);
 
