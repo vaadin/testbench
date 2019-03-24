@@ -1,4 +1,4 @@
-package com.vaadin.testbench.addons.junit5.extension.unitest;
+package com.vaadin.testbench.addons.junit5.extensions.unitest;
 
 import static com.vaadin.testbench.addons.junit5.extensions.ExtensionFunctions.storeMethodPlain;
 

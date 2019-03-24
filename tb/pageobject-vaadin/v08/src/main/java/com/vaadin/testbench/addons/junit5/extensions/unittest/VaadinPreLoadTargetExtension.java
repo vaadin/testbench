@@ -1,7 +1,7 @@
 package com.vaadin.testbench.addons.junit5.extensions.unittest;
 
-import static com.vaadin.testbench.addons.junit5.extension.unitest.PageObjectFunctions.PAGE_OBJECT_NAVIGATION_TARGET;
-import static com.vaadin.testbench.addons.junit5.extension.unitest.PageObjectFunctions.PAGE_OBJECT_PRELOAD;
+import static com.vaadin.testbench.addons.junit5.extensions.unitest.PageObjectFunctions.PAGE_OBJECT_NAVIGATION_TARGET;
+import static com.vaadin.testbench.addons.junit5.extensions.unitest.PageObjectFunctions.PAGE_OBJECT_PRELOAD;
 import static com.vaadin.testbench.addons.junit5.extensions.ExtensionFunctions.storeMethodPlain;
 
 import org.junit.jupiter.api.extension.BeforeEachCallback;

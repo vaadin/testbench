@@ -1,15 +1,3 @@
-/**
- * Copyright (C) 2012 Vaadin Ltd
- * <p>
- * This program is available under Commercial Vaadin Add-On License 3.0
- * (CVALv3).
- * <p>
- * See the file licensing.txt distributed with this software for more
- * information about licensing.
- * <p>
- * You should have received a copy of the license along with this program.
- * If not, see <http://vaadin.com/license/cval-3>.
- */
 package com.vaadin.testbench.commands;
 
 import static java.net.InetAddress.getLocalHost;

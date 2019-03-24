@@ -25,16 +25,6 @@ public class ElementScreenCompareTest {
    */
   public static final int SCREENSHOT_WIDTH = 1500;
 
-//    @Override
-//    public List<DesiredCapabilities> getBrowserConfiguration() {
-//        List<DesiredCapabilities> browsers = new ArrayList<>(
-//                super.getBrowserConfiguration());
-//        // Resize viewport does not work in Safari
-//        browsers.remove(BrowserUtil.safari());
-//        return browsers;
-//    }
-
-
   @BeforeEach
   void setUp(GenericTestPageObject po) {
     po.getCommandExecutor().resizeViewPortTo(SCREENSHOT_WIDTH , SCREENSHOT_HEIGHT);
@@ -46,13 +36,9 @@ public class ElementScreenCompareTest {
 
     final byte[] screenshot = button4.getScreenshotAs(OutputType.BYTES);
 
-
-
     Assertions.assertTrue(button4.compareScreen("button4"));
 
-
     TestBenchElement layout = button4.findElement(By.xpath("../.."));
-
 
     Assertions.assertTrue(layout.compareScreen("layout"));
   }

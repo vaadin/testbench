@@ -15,7 +15,6 @@
 
   <dependencyManagement>
     <dependencies>
-      <!--Version definitions-->
       <dependency>
         <groupId>com.vaadin</groupId>
         <artifactId>vaadin-bom</artifactId>
@@ -33,7 +32,6 @@
           </exclusion>
         </exclusions>
       </dependency>
-      <!--Version definitions from parent-->
       <dependency>
         <groupId>com.vaadin</groupId>
         <artifactId>vaadin-testbench-bom</artifactId>

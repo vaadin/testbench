@@ -70,7 +70,7 @@
     <junit-platform-maven-plugin.version>1.0.0-M5</junit-platform-maven-plugin.version>
 
     <jacoco.version>0.8.3</jacoco.version>
-    <pitest.version>1.4.5</pitest.version>
+    <pitest.version>1.4.6</pitest.version>
     <pitest-junit5-plugin.version>0.8</pitest-junit5-plugin.version>
     <pitest-prod-classes>com.vaadin.testbench.*</pitest-prod-classes>
     <pitest-test-classes>junit.com.vaadin.testbench.*</pitest-test-classes>
@@ -92,9 +92,10 @@
     <vaadin-testbench-v08.version>5.2.0</vaadin-testbench-v08.version>
 
     <vaadin-v10.version>10.0.11</vaadin-v10.version>
+    <vaadin-v10-flow-components-testbench.version>1.0.9</vaadin-v10-flow-components-testbench.version>
     <!--    <testbench-v14.version>14.0.0</testbench-v14.version>-->
     <vaadin-vXX.version>13.0.1</vaadin-vXX.version>
-
+    <vaadin-vXX-flow-components-testbench.version>1.4.2</vaadin-vXX-flow-components-testbench.version>
 
   </properties>
 
@@ -618,6 +619,34 @@
 <!--        </configuration>-->
 <!--      </plugin>-->
 
+      <plugin>
+        <groupId>com.mycila</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <configuration>
+          <header>com/mycila/maven/plugin/license/templates/APACHE-2.txt</header>
+          <properties>
+            <owner>Sven Ruppert</owner>
+            <email>sven@vaadin.com</email>
+          </properties>
+          <excludes>
+            <exclude>**/*.iml</exclude>
+            <exclude>**/README*</exclude>
+            <exclude>**/jacoco.exec*</exclude>
+            <exclude>**/LICENSE.txt</exclude>
+            <exclude>**/_data/webdrivers/*</exclude>
+            <!--<exclude>src/test/resources/**</exclude>-->
+            <!--<exclude>src/main/resources/**</exclude>-->
+            <exclude>target/**</exclude>
+          </excludes>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
 
     </plugins>
   </build>

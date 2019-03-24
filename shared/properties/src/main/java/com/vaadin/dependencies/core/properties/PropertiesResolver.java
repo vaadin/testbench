@@ -1,18 +1,3 @@
-/**
- * Copyright © 2013 Sven Ruppert (sven.ruppert@gmail.com)
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.vaadin.dependencies.core.properties;
 
 import java.io.File;
@@ -61,7 +46,7 @@ public class PropertiesResolver implements HasLogger {
    * Properties defined in the higher sources override the ones defined in lower sources.
    *
    * @param name the name of the properties file - without the <code>.properties</code> file
-   *        extension
+   *        extensions
    * @return the merged {@link java.util.Properties} object
    */
   public Properties get(String name) {
