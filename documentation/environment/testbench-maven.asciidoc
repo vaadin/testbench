@@ -13,7 +13,7 @@ the [literal]#++test++# phase, TestBench tests are usually executed in the
 [literal]#++integration-test++# phase (to run the phase properly you need to
 invoke [literal]#++verify++# phase as explained later).
 
-<<dummy/../../testbench/testbench-quickstart#testbench.quickstart.maven,"Quick
+<<dummy/../../../testbench/testbench-quickstart#testbench.quickstart.maven,"Quick
 Start with Maven">> describes how to use the Vaadin application archetype for
 Maven provides a TestBench setup. In this section, we largely go through that
 and also describe how to make such a setup also in Vaadin add-on projects.
