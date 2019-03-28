@@ -6,9 +6,8 @@ import static com.vaadin.testbench.addons.junit5.extensions.ExtensionFunctions.s
 
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
-import com.vaadin.dependencies.core.logger.HasLogger;
 
-public class PreLoadTargetExtension implements BeforeEachCallback, HasLogger {
+public class PreLoadTargetExtension implements BeforeEachCallback {
 
   @Override
   public void beforeEach(ExtensionContext context) throws Exception {

@@ -14,7 +14,6 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ParameterContext;
 import org.junit.jupiter.api.extension.ParameterResolutionException;
 import org.junit.jupiter.api.extension.ParameterResolver;
-import com.vaadin.dependencies.core.logger.HasLogger;
 
 /**
  *
@@ -24,8 +23,7 @@ public class ServletContainerExtension implements
     BeforeEachCallback,
     AfterEachCallback,
     AfterAllCallback,
-    ParameterResolver,
-    HasLogger {
+    ParameterResolver {
 
   private final ContainerInitializer containerIntializer;
 
@@ -40,33 +38,33 @@ public class ServletContainerExtension implements
       throw new IllegalStateException("No implementation of ContainerInitializer found");
     }
     if (initializers.size() != 1) {
-      logger().warning("More than one implementation of ContainerInitializer found!");
+//      logger().warning("More than one implementation of ContainerInitializer found!");
     }
     containerIntializer = initializers.get(0);
-    logger().info("Using ContainerInitializer: " + containerIntializer.getClass().getName());
+//    logger().info("Using ContainerInitializer: " + containerIntializer.getClass().getName());
   }
 
   @Override
   public void beforeEach(ExtensionContext context) throws Exception {
-    logger().info("ServletContainerExtension - beforeEach");
+//    logger().info("ServletContainerExtension - beforeEach");
     containerIntializer.beforeEach(context.getTestMethod().get() , context);
   }
 
   @Override
   public void afterEach(ExtensionContext context) throws Exception {
-    logger().info("ServletContainerExtension - afterEach");
+//    logger().info("ServletContainerExtension - afterEach");
     containerIntializer.afterEach(context.getTestMethod().get() , context);
   }
 
   @Override
   public void beforeAll(ExtensionContext context) throws Exception {
-    logger().info("ServletContainerExtension - beforeAll");
+//    logger().info("ServletContainerExtension - beforeAll");
     containerIntializer.beforeAll(context.getTestClass().get() , context);
   }
 
   @Override
   public void afterAll(ExtensionContext context) throws Exception {
-    logger().info("ServletContainerExtension - afterAll");
+//    logger().info("ServletContainerExtension - afterAll");
     containerIntializer.afterAll(context.getTestClass().get() , context);
   }
 

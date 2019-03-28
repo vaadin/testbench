@@ -2,11 +2,10 @@ package com.vaadin.testbench.addons.webdriver.conf;
 
 import java.util.List;
 
-import com.vaadin.dependencies.core.logger.HasLogger;
 import net.vergien.beanautoutils.annotation.Bean;
 
 @Bean
-public class WebdriversConfig implements HasLogger {
+public class WebdriversConfig {
 
   public static final String COMPATTESTING = "compattesting";
   public static final String COMPATTESTING_GRID = COMPATTESTING + ".grid";
@@ -15,7 +14,7 @@ public class WebdriversConfig implements HasLogger {
 
   public WebdriversConfig( List<GridConfig> gridConfigs) {
     this.gridConfigs = gridConfigs;
-    logger().info("WebdriversConfig was created .. - " + toString());
+//    logger().info("WebdriversConfig was created .. - " + toString());
   }
 
   public List<GridConfig> getGridConfigs() {

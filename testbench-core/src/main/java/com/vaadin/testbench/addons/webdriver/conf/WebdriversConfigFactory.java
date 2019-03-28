@@ -28,11 +28,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.remote.DesiredCapabilities;
-import com.vaadin.dependencies.core.logger.HasLogger;
 import com.vaadin.testbench.addons.webdriver.BrowserDriverFunctions;
 import com.vaadin.testbench.addons.webdriver.conf.GridConfig.Type;
 
-public class WebdriversConfigFactory implements HasLogger {
+public class WebdriversConfigFactory  {
 
   public static final String DEFAULT_UNITTESTING_BROWSER = "chrome";
   public static final String PROTO = "proto";
@@ -48,23 +47,23 @@ public class WebdriversConfigFactory implements HasLogger {
 
     ofNullable(configProperties.getProperty(CHROME_BINARY_PROPERTY_NAME , null))
         .ifPresentOrElse(success -> setProperty(CHROME_DRIVER_PROPERTY_NAME , success) ,
-                         failed -> logger().info(missingMsg.apply(CHROME_BINARY_PROPERTY_NAME)));
+                         failed -> {}/*logger().info(missingMsg.apply(CHROME_BINARY_PROPERTY_NAME))*/);
 
     ofNullable(configProperties.getProperty(GECKO_BINARY_PROPERTY_NAME , null))
         .ifPresentOrElse(success -> setProperty(FIREFOX_DRIVER_PROPERTY_NAME , success) ,
-                         failed -> logger().info(missingMsg.apply(GECKO_BINARY_PROPERTY_NAME)));
+                         failed -> {}/*logger().info(missingMsg.apply(GECKO_BINARY_PROPERTY_NAME))*/);
 
     ofNullable(configProperties.getProperty(IE_BINARY_PROPERTY_NAME , null))
         .ifPresentOrElse(success -> setProperty(IE_DRIVER_PROPERTY_NAME , success) ,
-                         failed -> logger().info(missingMsg.apply(IE_BINARY_PROPERTY_NAME)));
+                         failed -> {}/*logger().info(missingMsg.apply(IE_BINARY_PROPERTY_NAME))*/);
 
     ofNullable(configProperties.getProperty(OPERA_BINARY_PROPERTY_NAME , null))
         .ifPresentOrElse(success -> setProperty(OPERA_DRIVER_PROPERTY_NAME , success) ,
-                         failed -> logger().info(missingMsg.apply(OPERA_BINARY_PROPERTY_NAME)));
+                         failed -> {}/*logger().info(missingMsg.apply(OPERA_BINARY_PROPERTY_NAME))*/);
 
     ofNullable(configProperties.getProperty(EDGE_BINARY_PROPERTY_NAME , null))
         .ifPresentOrElse(success -> setProperty(EDGE_DRIVER_PROPERTY_NAME , success) ,
-                         failed -> logger().info(missingMsg.apply(EDGE_BINARY_PROPERTY_NAME)));
+                         failed -> {}/*logger().info(missingMsg.apply(EDGE_BINARY_PROPERTY_NAME))*/);
 
 
 
@@ -72,7 +71,7 @@ public class WebdriversConfigFactory implements HasLogger {
     //TODO check if compat test should run on local Browser
     final List<GridConfig> gridConfigs = unmodifiableList(createGridConfigs(configProperties));
 
-    logger().info("Loaded " + gridConfigs.size() + " grid configuration(s)");
+//    logger().info("Loaded " + gridConfigs.size() + " grid configuration(s)");
     return new WebdriversConfig(gridConfigs);
   }
 

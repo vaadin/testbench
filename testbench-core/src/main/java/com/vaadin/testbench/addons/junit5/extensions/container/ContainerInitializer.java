@@ -12,9 +12,8 @@ import java.util.Properties;
 import java.util.function.Supplier;
 
 import org.junit.jupiter.api.extension.ExtensionContext;
-import com.vaadin.dependencies.core.logger.HasLogger;
 
-public interface ContainerInitializer extends HasLogger {
+public interface ContainerInitializer {
 
   String CONFIG_FOLDER = ".testbenchextensions/";
   String CONFIG_FILE = "container-config";
@@ -30,8 +29,8 @@ public interface ContainerInitializer extends HasLogger {
   default Supplier<Properties> properties() {
     return () -> propertyReader()
         .apply(CONFIG_FOLDER + CONFIG_FILE)
-        .ifFailed(failed -> logger().warning(failed))
-        .ifAbsent(() -> logger().warning("no properties file was loaded.."))
+//        .ifFailed(failed -> logger().warning(failed))
+//        .ifAbsent(() -> logger().warning("no properties file was loaded.."))
         .getOrElse(Properties::new);
   }
 
@@ -39,8 +38,8 @@ public interface ContainerInitializer extends HasLogger {
   default String prepareIP(ExtensionContext context) {
     final String serverIP = localeIP().get();
     storeMethodPlain().apply(context).put(SERVER_IP , serverIP);
-    logger().info(
-        "IP ServletContainerExtension - will be -> " + serverIP);
+//    logger().info(
+//        "IP ServletContainerExtension - will be -> " + serverIP);
     return serverIP;
   }
 
@@ -52,8 +51,8 @@ public interface ContainerInitializer extends HasLogger {
                                })
                                .get();
     storeMethodPlain().apply(context).put(SERVER_PORT , port);
-    logger().info(
-        "Port ServletContainerExtension - will be -> " + port);
+//    logger().info(
+//        "Port ServletContainerExtension - will be -> " + port);
     return port;
   }
 

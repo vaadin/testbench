@@ -37,12 +37,6 @@
 
   <dependencies>
     <dependency>
-      <groupId>com.vaadin</groupId>
-      <artifactId>vaadin-testbench-junit5-runtime-api</artifactId>
-      <version>7.0.0-SNAPSHOT </version>
-    </dependency>
-
-    <dependency>
       <groupId>net.vergien.bau</groupId>
       <artifactId>bean-auto-utils</artifactId>
       <optional>true</optional>

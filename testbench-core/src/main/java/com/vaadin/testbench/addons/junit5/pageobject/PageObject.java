@@ -10,25 +10,22 @@ import static java.lang.System.getProperties;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
-import com.vaadin.dependencies.core.logger.HasLogger;
 import com.vaadin.frp.functions.CheckedExecutor;
 import com.vaadin.testbench.addons.junit5.extensions.container.HasContainerInfo;
 import com.vaadin.testbench.addons.junit5.extensions.container.NetworkFunctions;
 import com.vaadin.testbench.addons.webdriver.HasDriver;
 
-public interface PageObject extends HasContainerInfo, HasDriver, HasLogger {
+public interface PageObject extends HasContainerInfo, HasDriver{
 
   String BACK_SLASH = "/";
 
   default void loadPage() {
     final String url = url().get();
-    logger().info("Navigate browser to " + url);
     getDriver().get(url);
   }
 
   default void loadPage(String route) {
     final String url = url().get();
-    logger().info("Navigate browser to " + url + route);
     getDriver().get(url + route);
   }
 
@@ -76,18 +73,18 @@ public interface PageObject extends HasContainerInfo, HasDriver, HasLogger {
 
   default void destroy() {
     ((CheckedExecutor) getDriver()::quit)
-        .apply(null)
-        .ifPresentOrElse(
-            ok -> logger().info("webdriver quit -> OK") ,
-            failed -> logger().warning("webdriver quit failed -> " + failed)
-        );
+        .apply(null);
+//        .ifPresentOrElse(
+//            ok -> logger().info("webdriver quit -> OK") ,
+//            failed -> logger().warning("webdriver quit failed -> " + failed)
+//        );
 
     ((CheckedExecutor) getDriver()::close)
-        .apply(null)
-        .ifPresentOrElse(
-            ok -> logger().info("webdriver close -> OK") ,
-            failed -> logger().warning("webdriver close failed -> " + failed)
-        );
+        .apply(null);
+//        .ifPresentOrElse(
+//            ok -> logger().info("webdriver close -> OK") ,
+//            failed -> logger().warning("webdriver close failed -> " + failed)
+//        );
   }
 
   default void screenshot() {

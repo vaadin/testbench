@@ -8,23 +8,22 @@ import static com.vaadin.testbench.addons.webdriver.junit5.WebdriverExtensionFun
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.openqa.selenium.WebDriver;
-import com.vaadin.dependencies.core.logger.HasLogger;
 
 /**
  *
  */
-public class PageObjectWebDriverCleanerExtension implements AfterEachCallback, HasLogger {
+public class PageObjectWebDriverCleanerExtension implements AfterEachCallback {
 
 //  public static final String SESSION_ID = "SESSION_ID";
 
   @Override
   public void afterEach(ExtensionContext context) throws Exception {
-    logger().info("PageObjectWebDriverCleanerExtension -> remove PageObject");
+//    logger().info("PageObjectWebDriverCleanerExtension -> remove PageObject");
     removePageObject().accept(context);
 
-    logger().info("PageObjectWebDriverCleanerExtension -> remove Webdriver");
+//    logger().info("PageObjectWebDriverCleanerExtension -> remove Webdriver");
     final WebDriver webDriver = webdriver().apply(context);
-    logger().info("close webdriver of type " + webdriverName().apply(webDriver));
+//    logger().info("close webdriver of type " + webdriverName().apply(webDriver));
     webDriver.quit();
     removeWebDriver().accept(context);
   }

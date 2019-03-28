@@ -29,6 +29,13 @@
   </dependencyManagement>
 
   <dependencies>
+
+    <dependency>
+      <groupId>com.vaadin</groupId>
+      <artifactId>testbench-core</artifactId>
+    </dependency>
+
+
     <!--jUnit5 into production code-->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
@@ -52,25 +59,6 @@
       <artifactId>junit-jupiter-engine</artifactId>
       <scope>test</scope>
     </dependency>
-
-
-    <dependency>
-      <groupId>com.vaadin</groupId>
-      <artifactId>vaadin-testbench-shared-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.vaadin</groupId>
-      <artifactId>vaadin-testbench-shared-frp</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.vaadin</groupId>
-      <artifactId>vaadin-testbench-shared-logger-adapter</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.vaadin</groupId>
-      <artifactId>vaadin-testbench-shared-properties</artifactId>
-    </dependency>
-
 
     <!--Logging for development-->
     <dependency>

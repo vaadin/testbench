@@ -14,7 +14,6 @@ import java.util.function.Function;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ExtensionContext.Namespace;
 import org.junit.jupiter.api.extension.ExtensionContext.Store;
-import com.vaadin.dependencies.core.logger.Logger;
 import com.vaadin.frp.Transformations;
 import com.vaadin.frp.functions.TriFunction;
 import com.vaadin.frp.model.Result;
@@ -158,7 +157,7 @@ public interface ExtensionFunctions {
   static <T> TriFunction<Class<T>, String, ExtensionContext, T> valuePlain() {
     return (type , key , ctx) -> ExtensionFunctions.<T>value()
         .apply(type , key , ctx)
-        .ifFailed(failed -> Logger.getLogger(ExtensionFunctions.class).warning(failed))
+//        .ifFailed(failed -> Logger.getLogger(ExtensionFunctions.class).warning(failed))
         .get();
   }
 
@@ -202,8 +201,6 @@ public interface ExtensionFunctions {
     return (key) -> (ctx) -> valueTyped(type)
         .apply(key)
         .apply(ctx)
-        .ifFailed(failed -> Logger.getLogger(ExtensionFunctions.class)
-                                  .warning(failed))
         .get();
   }
 
@@ -211,8 +208,6 @@ public interface ExtensionFunctions {
     return (key) -> (ctx) -> valueAsInt()
         .apply(key)
         .apply(ctx)
-        .ifFailed(failed -> Logger.getLogger(ExtensionFunctions.class)
-                                  .warning(failed))
         .get();
   }
 
@@ -220,8 +215,6 @@ public interface ExtensionFunctions {
     return (key) -> (ctx) -> valueAsDouble()
         .apply(key)
         .apply(ctx)
-        .ifFailed(failed -> Logger.getLogger(ExtensionFunctions.class)
-                                  .warning(failed))
         .get();
   }
 
@@ -229,8 +222,6 @@ public interface ExtensionFunctions {
     return (key) -> (ctx) -> valueAsBoolean()
         .apply(key)
         .apply(ctx)
-        .ifFailed(failed -> Logger.getLogger(ExtensionFunctions.class)
-                                  .warning(failed))
         .get();
   }
 
@@ -238,8 +229,6 @@ public interface ExtensionFunctions {
     return (key) -> (ctx) -> valueAsString()
         .apply(key)
         .apply(ctx)
-        .ifFailed(failed -> Logger.getLogger(ExtensionFunctions.class)
-                                  .warning(failed))
         .get();
   }
 

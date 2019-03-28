@@ -16,7 +16,6 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.HttpCommandExecutor;
 import org.openqa.selenium.remote.RemoteWebDriver;
-import com.vaadin.dependencies.core.logger.HasLogger;
 import com.vaadin.testbench.HasDriver;
 import com.vaadin.testbench.proxy.TestBenchDriverProxy;
 import com.vaadin.testbench.TestBenchElement;
@@ -24,7 +23,7 @@ import com.vaadin.testbench.TestBenchElement;
 /**
  * Provides actual implementation of TestBenchCommands
  */
-public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver, HasLogger {
+public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
 
   private TestBenchDriverProxy driver;
 
@@ -101,8 +100,8 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver, H
       if (finished == null) {
         // This should never happen but according to
         // https://dev.vaadin.com/ticket/19703, it happens
-        logger().fine(
-            "waitForVaadin returned null, this should never happen");
+//        logger().fine(
+//            "waitForVaadin returned null, this should never happen");
         finished = false;
       }
     }

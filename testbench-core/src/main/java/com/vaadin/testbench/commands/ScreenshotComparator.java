@@ -1,6 +1,5 @@
 package com.vaadin.testbench.commands;
 
-import static com.vaadin.dependencies.core.logger.Logger.getLogger;
 import static com.vaadin.testbench.screenshot.ImageFileUtil.createScreenshotDirectoriesIfNeeded;
 import static com.vaadin.testbench.screenshot.ImageFileUtil.getErrorScreenshotFile;
 import static com.vaadin.testbench.screenshot.ReferenceNameGenerator.PLATFORM_UNKNOWN;
@@ -29,11 +28,10 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.UnsupportedCommandException;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
-import com.vaadin.dependencies.core.logger.HasLogger;
 import com.vaadin.testbench.screenshot.ImageComparison;
 import com.vaadin.testbench.screenshot.ReferenceNameGenerator.TestcaseInfo;
 
-public class ScreenshotComparator implements HasLogger {
+public class ScreenshotComparator {
 
   private static Boolean supportsElementScreenshots = null;
 
@@ -135,19 +133,19 @@ public class ScreenshotComparator implements HasLogger {
 
   private void saveErrorScreenShot(BufferedImage screenshotImage , String referenceName) {
     createScreenshotDirectoriesIfNeeded()
-        .apply(null)
-        .ifPresentOrElse(aVoid -> getLogger(ScreenshotComparator.class).info("Screenshot Directories are OK.") ,
-                         failed -> getLogger(ScreenshotComparator.class).warning(failed));
+        .apply(null);
+//        .ifPresentOrElse(aVoid -> getLogger(ScreenshotComparator.class).info("Screenshot Directories are OK.") ,
+//                         failed -> getLogger(ScreenshotComparator.class).warning(failed));
 
     try {
       ImageIO.write(screenshotImage , IMAGE_FILE_NAME_ENDING , getErrorScreenshotFile().apply(referenceName));
     } catch (IOException e) {
-      logger().warning(e.getMessage());
+//      logger().warning(e.getMessage());
     }
-    logger()
-        .warning("No reference found for " + referenceName
-                 + " in "
-                 + getScreenshotReferenceDirectory());
+//    logger()
+//        .warning("No reference found for " + referenceName
+//                 + " in "
+//                 + getScreenshotReferenceDirectory());
   }
 
 

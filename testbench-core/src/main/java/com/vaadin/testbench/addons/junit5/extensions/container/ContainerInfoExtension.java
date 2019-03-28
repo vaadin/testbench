@@ -4,9 +4,8 @@ import static com.vaadin.testbench.addons.junit5.extensions.container.ExtensionC
 
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
-import com.vaadin.dependencies.core.logger.HasLogger;
 
-public class ContainerInfoExtension implements BeforeEachCallback, HasLogger {
+public class ContainerInfoExtension implements BeforeEachCallback {
 
   private ContainerInfo containerInfo;
 
@@ -20,8 +19,8 @@ public class ContainerInfoExtension implements BeforeEachCallback, HasLogger {
 
   @Override
   public void beforeEach(ExtensionContext extensionContext) throws Exception {
-    logger().info("ContainerInfoExtension - beforeEach ");
+//    logger().info("ContainerInfoExtension - beforeEach ");
     containerInfo = containerInfo().apply(extensionContext);
-    logger().info("ContainerInfoExtension - " + containerInfo);
+//    logger().info("ContainerInfoExtension - " + containerInfo);
   }
 }

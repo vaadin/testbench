@@ -12,17 +12,8 @@
   <artifactId>vaadin-testbench-junit5-runtime</artifactId>
   <packaging>pom</packaging>
   <modules>
-    <module>api</module>
     <module>impl</module>
     <module>test</module>
   </modules>
-
-
-  <dependencies>
-    <dependency>
-      <groupId>com.vaadin</groupId>
-      <artifactId>vaadin-testbench-junit5-common</artifactId>
-    </dependency>
-  </dependencies>
 
 </project>

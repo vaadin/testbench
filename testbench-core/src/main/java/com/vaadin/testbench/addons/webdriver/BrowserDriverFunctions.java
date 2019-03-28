@@ -24,8 +24,6 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.safari.SafariDriver;
 import com.github.webdriverextensions.DriverPathLoader;
-import com.vaadin.dependencies.core.logger.HasLogger;
-import com.vaadin.dependencies.core.logger.Logger;
 import com.vaadin.frp.functions.CheckedSupplier;
 import com.vaadin.frp.model.Result;
 import com.vaadin.frp.model.Triple;
@@ -35,7 +33,7 @@ import com.vaadin.testbench.addons.webdriver.conf.WebdriversConfigFactory;
 /**
  *
  */
-public interface BrowserDriverFunctions extends HasLogger {
+public interface BrowserDriverFunctions  {
 
   String BROWSER_NAME = "browserName";
   String PLATFORM = "platform";
@@ -88,9 +86,9 @@ public interface BrowserDriverFunctions extends HasLogger {
   static CheckedSupplier<WebDriver> remoteWebDriverInstance(DesiredCapabilities desiredCapability ,
                                                             final String ip) {
     return () -> {
-      Logger
-          .getLogger(BrowserDriverFunctions.class)
-          .info("Create RemoteWebdriver to " + ip + " for browser: " + desiredCapability);
+//      Logger
+//          .getLogger(BrowserDriverFunctions.class)
+//          .info("Create RemoteWebdriver to " + ip + " for browser: " + desiredCapability);
       final URL url = new URL(ip);
       return new RemoteWebDriver(url , desiredCapability);
     };

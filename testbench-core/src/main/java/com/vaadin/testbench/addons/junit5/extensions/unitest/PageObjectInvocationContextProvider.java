@@ -11,14 +11,13 @@ import java.util.stream.Stream;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.TestTemplateInvocationContext;
 import org.junit.jupiter.api.extension.TestTemplateInvocationContextProvider;
-import com.vaadin.dependencies.core.logger.HasLogger;
 import com.vaadin.testbench.addons.webdriver.BrowserTypes;
 import com.vaadin.testbench.addons.webdriver.SkipBrowsers;
 
 /**
  *
  */
-public class PageObjectInvocationContextProvider implements TestTemplateInvocationContextProvider, HasLogger {
+public class PageObjectInvocationContextProvider implements TestTemplateInvocationContextProvider {
 
 
   @Override
@@ -28,9 +27,6 @@ public class PageObjectInvocationContextProvider implements TestTemplateInvocati
 
   @Override
   public Stream<TestTemplateInvocationContext> provideTestTemplateInvocationContexts(ExtensionContext context) {
-
-    logger().info("provideTestTemplateInvocationContexts");
-
 
     final List<BrowserTypes> typesList = context
         .getTestMethod()
@@ -48,7 +44,6 @@ public class PageObjectInvocationContextProvider implements TestTemplateInvocati
     return webDriverInstances(typesList)
         .map(e -> new WebDriverTemplateInvocationContextImpl(this , e))
         .peek(po -> {
-          logger().info("peek - page object -> setting as webDriver into Store ");
           storeWebDriver().accept(context , po.webdriver());
         })
         .map(e -> e);

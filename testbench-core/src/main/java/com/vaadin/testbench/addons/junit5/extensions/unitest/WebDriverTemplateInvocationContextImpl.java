@@ -18,14 +18,13 @@ import org.junit.jupiter.api.extension.ParameterContext;
 import org.junit.jupiter.api.extension.ParameterResolutionException;
 import org.junit.jupiter.api.extension.ParameterResolver;
 import org.openqa.selenium.WebDriver;
-import com.vaadin.dependencies.core.logger.HasLogger;
 import com.vaadin.frp.functions.CheckedFunction;
 import com.vaadin.frp.model.Result;
 import com.vaadin.testbench.addons.junit5.extensions.container.ContainerInfo;
 import com.vaadin.testbench.addons.junit5.pageobject.PageObject;
 import xxx.com.github.webdriverextensions.WebDriverExtensionFieldDecorator;
 
-public final class WebDriverTemplateInvocationContextImpl implements WebDriverTemplateInvocationContext, HasLogger {
+public final class WebDriverTemplateInvocationContextImpl implements WebDriverTemplateInvocationContext {
 
   private PageObjectInvocationContextProvider pageObjectInvocationContextProvider;
   private final WebDriver webDriver;
@@ -38,7 +37,7 @@ public final class WebDriverTemplateInvocationContextImpl implements WebDriverTe
 
   @Override
   public WebDriver webdriver() {
-    pageObjectInvocationContextProvider.logger().info("WebDriverTemplateInvocationContextImpl - webdriver() called");
+//    pageObjectInvocationContextProvider.logger().info("WebDriverTemplateInvocationContextImpl - webdriver() called");
     return webDriver;
   }
 
@@ -61,7 +60,7 @@ public final class WebDriverTemplateInvocationContextImpl implements WebDriverTe
       public PageObject resolveParameter(ParameterContext parameterContext ,
                                          ExtensionContext extensionContext) {
 
-        logger().info("resolveParameter called..");
+//        logger().info("resolveParameter called..");
         Class<?> pageObjectClass = parameterContext
             .getParameter()
             .getType();
@@ -82,10 +81,11 @@ public final class WebDriverTemplateInvocationContextImpl implements WebDriverTe
             if (nav != null) page.loadPage(nav);
             else page.loadPage();
 
-          } else logger()
-              .info("no preLoading activated for testClass/testMethod "
-                    + extensionContext.getTestClass() + " / "
-                    + extensionContext.getTestMethod());
+          } else {}
+//          logger()
+//              .info("no preLoading activated for testClass/testMethod "
+//                    + extensionContext.getTestClass() + " / "
+//                    + extensionContext.getTestMethod());
 
 
           return page;
@@ -94,11 +94,11 @@ public final class WebDriverTemplateInvocationContextImpl implements WebDriverTe
 
         po.ifPresentOrElse(
             success -> {
-              pageObjectInvocationContextProvider.logger().fine("pageobject of type " + pageObjectClass.getSimpleName()
-                                                                + " was created with " + webdriverName().apply(webdriver()));
+//              pageObjectInvocationContextProvider.logger().fine("pageobject of type " + pageObjectClass.getSimpleName()
+//                                                                + " was created with " + webdriverName().apply(webdriver()));
               storePageObject().accept(extensionContext , success);
             } ,
-            failed -> pageObjectInvocationContextProvider.logger().warning("was not able to create PageObjectInstance " + failed)
+            failed -> {}/*pageObjectInvocationContextProvider.logger().warning("was not able to create PageObjectInstance " + failed)*/
         );
         po.ifAbsent(() -> {
           throw new ParameterResolutionException("was not able to create PageObjectInstance of type " + pageObjectClass);

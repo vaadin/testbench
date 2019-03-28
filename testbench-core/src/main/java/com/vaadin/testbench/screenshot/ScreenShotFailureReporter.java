@@ -16,10 +16,9 @@ import java.util.function.Function;
 
 import javax.imageio.ImageIO;
 
-import com.vaadin.dependencies.core.logger.HasLogger;
 import com.vaadin.frp.model.Result;
 
-public class ScreenShotFailureReporter implements HasLogger {
+public class ScreenShotFailureReporter {
   private final BufferedImage referenceImage;
   private final boolean[][] falseBlocks;
   private final int xBlocks;
@@ -42,8 +41,8 @@ public class ScreenShotFailureReporter implements HasLogger {
       ImageIO.write(screenshotImage , IMAGE_FILE_NAME_ENDING ,
                     errorFileFunction.apply(fileName));
     } catch (IOException e) {
-      logger().warning("Error writing screenshot to "
-                       + errorFileFunction.apply(fileName).getPath());
+//      logger().warning("Error writing screenshot to "
+//                       + errorFileFunction.apply(fileName).getPath());
       e.printStackTrace();
     }
 

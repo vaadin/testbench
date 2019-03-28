@@ -61,20 +61,10 @@
 <!--    Java Core Dependencies from this project-->
     <dependency>
       <groupId>com.vaadin</groupId>
-      <artifactId>vaadin-testbench-shared-core</artifactId>
+      <artifactId>testbench-core</artifactId>
+      <version>7.0.0-SNAPSHOT</version>
     </dependency>
-    <dependency>
-      <groupId>com.vaadin</groupId>
-      <artifactId>vaadin-testbench-shared-frp</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.vaadin</groupId>
-      <artifactId>vaadin-testbench-shared-logger-adapter</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.vaadin</groupId>
-      <artifactId>vaadin-testbench-shared-properties</artifactId>
-    </dependency>
+
 
 
     <!--Logging for development-->
