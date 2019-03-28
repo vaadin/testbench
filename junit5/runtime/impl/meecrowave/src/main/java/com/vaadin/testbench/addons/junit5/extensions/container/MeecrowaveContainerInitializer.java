@@ -13,10 +13,9 @@ import java.util.function.Function;
 import org.apache.meecrowave.Meecrowave;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import com.google.auto.service.AutoService;
-import com.vaadin.dependencies.core.logger.HasLogger;
 
 @AutoService(ContainerInitializer.class)
-public class MeecrowaveContainerInitializer implements ContainerInitializer, HasLogger {
+public class MeecrowaveContainerInitializer implements ContainerInitializer {
 
   private static final String MEECROWAVE_INSTANCE = "meecrowave_instance";
 

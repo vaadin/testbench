@@ -11,10 +11,9 @@ import java.util.function.Function;
 
 import org.junit.jupiter.api.extension.ExtensionContext;
 import com.google.auto.service.AutoService;
-import com.vaadin.dependencies.core.logger.HasLogger;
 
 @AutoService(ContainerInitializer.class)
-public class NoContainerInitializer implements ContainerInitializer, HasLogger {
+public class NoContainerInitializer implements ContainerInitializer{
 
   public static final String CONTAINER_NONE_HOST = "container.none.host";
   public static final String CONTAINER_NONE_PORT = "container.none.port";
@@ -43,15 +42,15 @@ public class NoContainerInitializer implements ContainerInitializer, HasLogger {
 
   @Override
   public void beforeAll(Class<?> testClass , ExtensionContext context) throws Exception {
-    logger()
-        .info("Running tests from " + testClass.getName() + " against remote deployed application");
+//    logger()
+//        .info("Running tests from " + testClass.getName() + " against remote deployed application");
   }
 
   @Override
   public void beforeEach(Method testMethod , ExtensionContext context) throws Exception {
-    if (! isHostDefined) logger().warning("Property " + CONTAINER_NONE_HOST + " is not defined");
-    if (! isPortDefined) logger().warning("Property " + CONTAINER_NONE_PORT + " is not defined");
-    if (! isWebAppDefined) logger().warning("Property " + CONTAINER_NONE_WEBAPP + " is not defined");
+//    if (! isHostDefined) logger().warning("Property " + CONTAINER_NONE_HOST + " is not defined");
+//    if (! isPortDefined) logger().warning("Property " + CONTAINER_NONE_PORT + " is not defined");
+//    if (! isWebAppDefined) logger().warning("Property " + CONTAINER_NONE_WEBAPP + " is not defined");
 
     final ExtensionContext.Store store = storeMethodPlain().apply(context);
 

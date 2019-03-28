@@ -16,4 +16,11 @@
     <module>test</module>
   </modules>
 
+  <dependencies>
+    <dependency>
+      <groupId>com.vaadin</groupId>
+      <artifactId>testbench-core</artifactId>
+    </dependency>
+  </dependencies>
+
 </project>

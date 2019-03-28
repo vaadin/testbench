@@ -19,6 +19,7 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import com.vaadin.frp.matcher.Case;
 
 /**
  *
@@ -26,11 +27,11 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 public interface WebDriverFunctions {
 
   static Function<WebDriver, String> webdriverName() {
-    return driver -> match(
+    return driver -> Case.match(
         matchCase(() -> success(driver.toString())) ,
         matchCase(() -> driver instanceof RemoteWebDriver , () -> success(formatRemoteWebDriverName().apply((RemoteWebDriver) driver)))
     )
-        .getOrElse(() -> " Mr NoName.... B-) ");
+                         .getOrElse(() -> " Mr NoName.... B-) ");
   }
 
 

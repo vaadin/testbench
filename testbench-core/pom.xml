@@ -37,6 +37,11 @@
 
   <dependencies>
     <dependency>
+      <groupId>org.javassist</groupId>
+      <artifactId>javassist</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>net.vergien.bau</groupId>
       <artifactId>bean-auto-utils</artifactId>
       <optional>true</optional>

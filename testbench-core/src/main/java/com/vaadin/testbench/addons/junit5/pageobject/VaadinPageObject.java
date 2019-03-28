@@ -25,7 +25,7 @@ public interface VaadinPageObject extends GenericVaadinAppSpecific {
         matchCase(() -> driver instanceof TestBenchDriverProxy , () -> success(webdriverName().apply(unproxy().apply(driver)))) ,
         matchCase(() -> driver != null , () -> success(webdriverName().apply(driver)))
     )
-        .ifFailed(failed -> logger().warning(failed))
+//        .ifFailed(failed -> logger().warning(failed))
         .getOrElse(() -> NO_DRIVER);
   }
 

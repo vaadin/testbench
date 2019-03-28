@@ -15,10 +15,9 @@ import java.util.Properties;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import com.vaadin.dependencies.core.logger.HasLogger;
 import com.vaadin.dependencies.core.properties.PropertiesResolver;
 
-public class PropertiesResolverTest implements HasLogger {
+public class PropertiesResolverTest  {
 
   private PropertiesResolver propertiesResolver;
 
@@ -83,7 +82,6 @@ public class PropertiesResolverTest implements HasLogger {
   }
 
   private void createPropertiesFile(File file) throws IOException {
-    logger().info("Create properties file: " + file);
     try (InputStream is = getClass().getResourceAsStream("/test001.properties");
          OutputStream os = new FileOutputStream(file)) {
       byte[] buffer = new byte[1024];

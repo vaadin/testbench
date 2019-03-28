@@ -1,9 +1,8 @@
 package com.vaadin.flow.component.common.testbench.test;
 
-import com.vaadin.dependencies.core.logger.HasLogger;
 import com.vaadin.flow.component.html.Div;
 
-public class AbstractView extends Div implements HasLogger {
+public class AbstractView extends Div {
   private Log log;
 
   protected AbstractView() {
@@ -13,7 +12,6 @@ public class AbstractView extends Div implements HasLogger {
 
   protected void log(String message) {
     log.log(message);
-    logger().info(message);
   }
 
   public static class Log extends Div {

@@ -11,10 +11,9 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import org.junit.jupiter.api.extension.ExtensionContext;
-import com.vaadin.dependencies.core.logger.HasLogger;
 
 public abstract class AbstractSpringBootContainerInitializer
-    implements ContainerInitializer, HasLogger {
+    implements ContainerInitializer {
 
   public static final String SPRING_BOOT_APPLICATION_CONTEXT = "spring-boot-applicationContext";
   public static final String SPRING_BOOT_APP_CLASS = "spring-boot-app-class";
@@ -27,13 +26,13 @@ public abstract class AbstractSpringBootContainerInitializer
   public void beforeAll(Class<?> testClass , ExtensionContext context) throws Exception {
 
     if (! isAnnotated(testClass , SpringBootConf.class)) {
-      logger().warning(NOT_ANNOTATED);
+//      logger().warning(NOT_ANNOTATED);
       throw new IllegalStateException(NOT_ANNOTATED);
     } else {
       final SpringBootConf conf = testClass.getAnnotation(SpringBootConf.class);
       Class<?> appClass = conf.source();
       if (appClass == null) {
-        logger().warning(NO_APP_CLASS_DEFINED);
+//        logger().warning(NO_APP_CLASS_DEFINED);
         throw new IllegalStateException(NO_APP_CLASS_DEFINED);
       } else {
         storeClassPlain().apply(context)

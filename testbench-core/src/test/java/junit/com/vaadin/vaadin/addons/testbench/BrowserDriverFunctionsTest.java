@@ -14,10 +14,9 @@ import java.util.Properties;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import com.vaadin.dependencies.core.logger.HasLogger;
 import com.vaadin.testbench.addons.webdriver.BrowserDriverFunctions;
 
-public class BrowserDriverFunctionsTest implements HasLogger {
+public class BrowserDriverFunctionsTest {
 
   @Test
   @DisplayName("test reading properties")
@@ -28,7 +27,6 @@ public class BrowserDriverFunctionsTest implements HasLogger {
 
 
     final String unittestingTarget = valueOf(properties.get("unittesting.target")).trim();
-    logger().info("unittestingTarget -> #" + unittestingTarget + "#");
     match(
         matchCase(() -> failure("no matching unittesting.target..")) ,
         matchCase(() -> "locale".equals(unittestingTarget) , () -> success(TRUE)) ,
