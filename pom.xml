@@ -62,8 +62,6 @@
     <slf4j.version>1.7.25</slf4j.version>
     <log4j-api.version>2.11.2</log4j-api.version>
 
-    <jmh.version>1.21</jmh.version>
-
     <!--TDD jUnit5-->
     <junit.jupiter.version>5.4.0</junit.jupiter.version>
     <junit.platform.version>1.4.0</junit.platform.version>
@@ -101,12 +99,12 @@
 
   <modules>
     <module>bom</module>
-    <module>shared</module>
     <module>junit5</module>
     <module>tb</module>
-    <module>distribution/core</module>
-    <module>distribution/core-v08</module>
-    <module>distribution/core-v10</module>
+    <module>testbench-core</module>
+<!--    <module>distribution/core</module>-->
+<!--    <module>distribution/core-v08</module>-->
+<!--    <module>distribution/core-v10</module>-->
   </modules>
 
   <repositories>
@@ -194,33 +192,6 @@
         <scope>test</scope>
       </dependency>
 
-      <!--Microbenchmarking-->
-      <dependency>
-        <groupId>org.openjdk.jmh</groupId>
-        <artifactId>jmh-core</artifactId>
-        <version>${jmh.version}</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.openjdk.jmh</groupId>
-        <artifactId>jmh-core-benchmarks</artifactId>
-        <version>${jmh.version}</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.openjdk.jmh</groupId>
-        <artifactId>jmh-generator-annprocess</artifactId>
-        <version>${jmh.version}</version>
-        <!--<scope>provided</scope>-->
-      </dependency>
-      <dependency>
-        <groupId>org.openjdk.jmh</groupId>
-        <artifactId>jmh-generator-reflection</artifactId>
-        <version>${jmh.version}</version>
-        <scope>test</scope>
-      </dependency>
-
-
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-api</artifactId>
@@ -231,22 +202,6 @@
         <artifactId>slf4j-simple</artifactId>
         <version>${slf4j.version}</version>
       </dependency>
-      <dependency>
-        <groupId>org.apache.logging.log4j</groupId>
-        <artifactId>log4j-api</artifactId>
-        <version>${log4j-api.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.logging.log4j</groupId>
-        <artifactId>log4j-core</artifactId>
-        <version>${log4j-api.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.logging.log4j</groupId>
-        <artifactId>log4j-1.2-api</artifactId>
-        <version>${log4j-api.version}</version>
-      </dependency>
-
       <dependency>
         <groupId>com.google.auto.service</groupId>
         <artifactId>auto-service</artifactId>
@@ -265,7 +220,6 @@
         <optional>true</optional>
         <version>0.0.9</version>
       </dependency>
-
 
 <!--Should be removed-->
       <dependency>

@@ -17,7 +17,7 @@
       <!--Version definitions from parent-->
       <dependency>
         <groupId>com.vaadin</groupId>
-        <artifactId>vaadin-testbench-bom-v10</artifactId>
+        <artifactId>vaadin-testbench-bom</artifactId>
         <version>7.0.0-SNAPSHOT</version>
         <scope>import</scope>
         <type>pom</type>
@@ -36,10 +36,6 @@
   </dependencyManagement>
 
   <dependencies>
-    <dependency>
-      <groupId>com.vaadin</groupId>
-      <artifactId>vaadin-testbench-tb-shared-v10</artifactId>
-    </dependency>
     <dependency>
       <groupId>com.vaadin</groupId>
       <artifactId>vaadin-core</artifactId>
@@ -81,11 +77,6 @@
       <artifactId>vaadin-lumo-theme</artifactId>
     </dependency>
     <!--For TestUI only-->
-    <dependency>
-      <groupId>com.vaadin</groupId>
-      <artifactId>vaadin-testbench-tb-pageobject-vaadin-v10</artifactId>
-      <scope>test</scope>
-    </dependency>
     <dependency>
       <groupId>com.vaadin</groupId>
       <artifactId>vaadin-testbench-tb-test-data-v10</artifactId>

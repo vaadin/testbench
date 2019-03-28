@@ -13,10 +13,7 @@
   <packaging>pom</packaging>
 
   <modules>
-    <module>v08</module>
     <module>v10</module>
-    <module>v14</module>
-    <module>vxx</module>
   </modules>
 
   <!-- Just to disable any accidental deployment to maven.central -->

@@ -13,10 +13,7 @@
   <packaging>pom</packaging>
 
   <modules>
-    <module>common</module>
     <module>runtime</module>
-    <module>webdriver</module>
-    <module>pageobject</module>
   </modules>
 
   <dependencyManagement>

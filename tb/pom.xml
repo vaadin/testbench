@@ -17,10 +17,6 @@
     <module>test-data</module>
 <!--    must be at the first place-->
 
-    <module>core-screenshot</module>
-    <module>core</module>
-    <module>shared</module>
-    <module>pageobject-vaadin</module>
     <module>test</module>
   </modules>
 
