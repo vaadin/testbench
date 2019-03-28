@@ -11,6 +11,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -28,8 +29,8 @@ public interface WebDriverFunctions {
 
   static Function<WebDriver, String> webdriverName() {
     return driver -> match(
-        matchCase(() -> success(driver.toString())),
-        matchCase(() -> driver instanceof RemoteWebDriver, () -> success(formatRemoteWebDriverName().apply((RemoteWebDriver) driver)))
+        matchCase(() -> success(driver.toString())) ,
+        matchCase(() -> driver instanceof RemoteWebDriver , () -> success(formatRemoteWebDriverName().apply((RemoteWebDriver) driver)))
     )
         .getOrElse(() -> " Mr NoName.... B-) ");
   }
@@ -44,17 +45,17 @@ public interface WebDriverFunctions {
   }
 
   static BiFunction<WebDriver, String, Optional<WebElement>> elementFor() {
-    return (driver, id) -> ofNullable(driver.findElement(id(id)));
+    return (driver , id) -> ofNullable(driver.findElement(id(id)));
   }
 
-  static Consumer<WebDriver> takeScreenShot() {
+  static Consumer<WebDriver> takeScreenShot(String logicalName) {
     return (webDriver) -> {
       //take Screenshot
       ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
       try {
         outputStream.write(((TakesScreenshot) webDriver).getScreenshotAs(OutputType.BYTES));
         //write to target/screenshot-[timestamp].jpg
-        final FileOutputStream out = new FileOutputStream("target/screenshot-" + LocalDateTime.now() + ".png");
+        final FileOutputStream out = new FileOutputStream("target/screenshot-" + logicalName + "-" + LocalDateTime.now() + ".png");
         out.write(outputStream.toByteArray());
         out.flush();
         out.close();
@@ -62,6 +63,11 @@ public interface WebDriverFunctions {
         e.printStackTrace();
       }
     };
+  }
+
+
+  static Consumer<WebDriver> takeScreenShot() {
+    return takeScreenShot("");
   }
 
 }

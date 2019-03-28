@@ -94,7 +94,7 @@
     <vaadin-v10.version>10.0.11</vaadin-v10.version>
     <vaadin-v10-flow-components-testbench.version>1.0.9</vaadin-v10-flow-components-testbench.version>
     <!--    <testbench-v14.version>14.0.0</testbench-v14.version>-->
-    <vaadin-vXX.version>13.0.1</vaadin-vXX.version>
+    <vaadin-vXX.version>13.0.2</vaadin-vXX.version>
     <vaadin-vXX-flow-components-testbench.version>1.4.2</vaadin-vXX-flow-components-testbench.version>
 
   </properties>
@@ -428,7 +428,7 @@
           <dependency>
             <groupId>org.ow2.asm</groupId>
             <artifactId>asm</artifactId>
-            <version>7.0</version> <!-- Use newer version of ASM -->
+            <version>7.1</version> <!-- Use newer version of ASM -->
           </dependency>
         </dependencies>
       </plugin>
@@ -618,36 +618,6 @@
 <!--          </drivers>-->
 <!--        </configuration>-->
 <!--      </plugin>-->
-
-      <plugin>
-        <groupId>com.mycila</groupId>
-        <artifactId>license-maven-plugin</artifactId>
-        <configuration>
-          <header>com/mycila/maven/plugin/license/templates/APACHE-2.txt</header>
-          <properties>
-            <owner>Sven Ruppert</owner>
-            <email>sven@vaadin.com</email>
-          </properties>
-          <excludes>
-            <exclude>**/*.iml</exclude>
-            <exclude>**/README*</exclude>
-            <exclude>**/jacoco.exec*</exclude>
-            <exclude>**/LICENSE.txt</exclude>
-            <exclude>**/_data/webdrivers/*</exclude>
-            <!--<exclude>src/test/resources/**</exclude>-->
-            <!--<exclude>src/main/resources/**</exclude>-->
-            <exclude>target/**</exclude>
-          </excludes>
-        </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>check</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-
     </plugins>
   </build>
 
@@ -723,8 +693,6 @@
               </execution>
             </executions>
           </plugin>
-
-
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-enforcer-plugin</artifactId>
@@ -750,10 +718,9 @@
             <groupId>com.mycila</groupId>
             <artifactId>license-maven-plugin</artifactId>
             <configuration>
-              <header>LICENSE.txt</header>
+              <header>_data/license/cval3/lic-header.txt</header>
               <properties>
-                <owner>Sven Ruppert</owner>
-                <email>sven@vaadin.com</email>
+                <owner>Vaadin</owner>
               </properties>
               <excludes>
                 <exclude>**/*.iml</exclude>
@@ -793,7 +760,7 @@
               <dependency>
                 <groupId>org.ow2.asm</groupId>
                 <artifactId>asm</artifactId>
-                <version>7.0</version> <!-- Use newer version of ASM -->
+                <version>7.1</version> <!-- Use newer version of ASM -->
               </dependency>
             </dependencies>
             <executions>

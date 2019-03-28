@@ -16,26 +16,7 @@ inc testcoverage
 - reference-screenshots are now loaded from Resources (jar)
 - UploadElement uses  TB Utilityclass - com/vaadin/testbench/parallel/BrowserUtil
 
-Some low hanging fruit
-• Update license header
-• Update dev info in poms
-• Review package names
-• Format with Vaadin Code style
-• Remove commented code chunks
-
-
-TO-DOs
-• Ensure functional patterns are not public API (supplier, bifunction)
-• Go through shared modules and check what’s required for testbench-core, remove the rest
-     For instance logger adapter, when testing an application the application logging shouldn’t come from TB, TB shouldn’t provide logger adapters
-• AbstractVaadinPageObject can’t depend on TBElements implementations, can’t use Grid/Label/ButtonElement, etc. WithID doesn’t add enough value
-
-What modules should we have?
-• No V## specific modules
-• testbench-core
-• IT module
-• Modules per container implementation
-
+ScreenshotOnFailureExtension
 
 ## Phase I 
 Extensions only

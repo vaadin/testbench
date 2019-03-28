@@ -11,6 +11,8 @@ import com.vaadin.testbench.addons.junit5.extensions.unitest.PageObjectInvocatio
 import com.vaadin.testbench.addons.junit5.extensions.unitest.PageObjectWebDriverCleanerExtension;
 import com.vaadin.testbench.addons.junit5.extensions.ConvertWebdriverTestExtension;
 import com.vaadin.testbench.addons.junit5.extensions.container.ServletContainerExtension;
+import com.vaadin.testbench.addons.screenshot.FailedTestScreenhsotExtension;
+
 
 /**
  *
@@ -24,6 +26,8 @@ import com.vaadin.testbench.addons.junit5.extensions.container.ServletContainerE
 @ExtendWith(ConvertWebdriverTestExtension.class)
 
 @ExtendWith(VaadinPreLoadTargetExtension.class)
+
+@ExtendWith(FailedTestScreenhsotExtension.class)
 @ExtendWith(PageObjectWebDriverCleanerExtension.class)
 @TestTemplate
 public @interface VaadinTest {

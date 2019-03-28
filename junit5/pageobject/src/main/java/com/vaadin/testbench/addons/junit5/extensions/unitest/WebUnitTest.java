@@ -7,12 +7,14 @@ import java.lang.annotation.Target;
 
 import org.junit.jupiter.api.extension.ExtendWith;
 import com.vaadin.testbench.addons.junit5.extensions.container.ServletContainerExtension;
+import com.vaadin.testbench.addons.screenshot.FailedTestScreenhsotExtension;
 
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @ExtendWith(ServletContainerExtension.class)
 @ExtendWith(PageObjectInvocationContextProvider.class)
 //@ExtendWith(VideoManagementExtension.class)
+@ExtendWith(FailedTestScreenhsotExtension.class)
 @ExtendWith(PreLoadTargetExtension.class)
 @ExtendWith(PageObjectWebDriverCleanerExtension.class)
 public @interface WebUnitTest {

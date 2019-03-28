@@ -10,14 +10,6 @@ Vaadin TestBench is a tool built on Selenium and it is used for automated user i
 
 Official releases of this add-on are available at http://vaadin.com/addon/vaadin-testbench
 
-## Building TestBench
-
-    git clone https://github.com/vaadin/testbench.git
-    cd testbench
-    mvn clean install
-    
-    Activate profiles : start-jetty-for-it and validation
-
 ## Issue tracking & Contributions
 
 Please report bugs and submit feature requests as [GitHub issues](https://github.com/vaadin/testbench/issues). Contributions in the form of pull requests are more than welcome.
