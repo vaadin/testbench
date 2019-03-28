@@ -18,7 +18,7 @@ public class DialogIT extends AbstractIT {
   public void openClose(GenericTestPageObject po) throws Exception {
     po.loadPage(NAV);
 
-    final DialogElement dialog = po.dialog().id(DialogView.THE_DIALOG);
+    final DialogElement dialog = po.$(DialogElement.class).id(DialogView.THE_DIALOG);
     Assertions.assertTrue(dialog.isOpen());
 
     dialog.$(ButtonElement.class).first().click();

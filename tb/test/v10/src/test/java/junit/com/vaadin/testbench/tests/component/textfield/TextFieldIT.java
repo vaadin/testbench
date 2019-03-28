@@ -19,10 +19,10 @@ public class TextFieldIT extends AbstractIT {
   @VaadinTest(navigateAsString = NAV)
   public void getSetValue(GenericTestPageObject po) throws Exception {
 
-    final TextFieldElement labelEager = po.textField().id(LABEL_EAGER);
-    final TextFieldElement nolabel = po.textField().id(NOLABEL);
-    final TextFieldElement initialValue = po.textField().id(INITIAL_VALUE);
-    final TextFieldElement placeholder = po.textField().id(PLACEHOLDER);
+    final TextFieldElement labelEager = po.$(TextFieldElement.class).id(LABEL_EAGER);
+    final TextFieldElement nolabel = po.$(TextFieldElement.class).id(NOLABEL);
+    final TextFieldElement initialValue = po.$(TextFieldElement.class).id(INITIAL_VALUE);
+    final TextFieldElement placeholder = po.$(TextFieldElement.class).id(PLACEHOLDER);
 
 
     Assertions.assertEquals("" , labelEager.getValue());
@@ -46,10 +46,10 @@ public class TextFieldIT extends AbstractIT {
   @VaadinTest(navigateAsString = NAV)
   public void getLabelEager(GenericTestPageObject po) throws Exception {
 
-    final TextFieldElement labelEager = po.textField().id(LABEL_EAGER);
-    final TextFieldElement nolabel = po.textField().id(NOLABEL);
-    final TextFieldElement initialValue = po.textField().id(INITIAL_VALUE);
-    final TextFieldElement placeholder = po.textField().id(PLACEHOLDER);
+    final TextFieldElement labelEager = po.$(TextFieldElement.class).id(LABEL_EAGER);
+    final TextFieldElement nolabel = po.$(TextFieldElement.class).id(NOLABEL);
+    final TextFieldElement initialValue = po.$(TextFieldElement.class).id(INITIAL_VALUE);
+    final TextFieldElement placeholder = po.$(TextFieldElement.class).id(PLACEHOLDER);
 
     Assertions.assertEquals("Label (eager)" , labelEager.getLabel());
     Assertions.assertEquals("" , nolabel.getLabel());
@@ -60,10 +60,10 @@ public class TextFieldIT extends AbstractIT {
   @VaadinTest(navigateAsString = NAV)
   public void getPlaceholder(GenericTestPageObject po) throws Exception {
 
-    final TextFieldElement labelEager = po.textField().id(LABEL_EAGER);
-    final TextFieldElement nolabel = po.textField().id(NOLABEL);
-    final TextFieldElement initialValue = po.textField().id(INITIAL_VALUE);
-    final TextFieldElement placeholder = po.textField().id(PLACEHOLDER);
+    final TextFieldElement labelEager = po.$(TextFieldElement.class).id(LABEL_EAGER);
+    final TextFieldElement nolabel = po.$(TextFieldElement.class).id(NOLABEL);
+    final TextFieldElement initialValue = po.$(TextFieldElement.class).id(INITIAL_VALUE);
+    final TextFieldElement placeholder = po.$(TextFieldElement.class).id(PLACEHOLDER);
 
     Assertions.assertEquals("" , labelEager.getPlaceholder());
     Assertions.assertEquals("" , nolabel.getPlaceholder());

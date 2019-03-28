@@ -16,9 +16,9 @@ public class DatePickerIT extends AbstractIT {
 
   @VaadinTest(navigateAsString = NAV)
   public void setGetDate(GenericTestPageObject po) throws Exception {
-    final DatePickerElement datePickerWithText = po.datePicker().id(DatePickerView.TEXT);
-    final DatePickerElement datePickerWithNoText = po.datePicker().id(DatePickerView.NOTEXT);
-    final DatePickerElement datePickerWithPreSelectedDate = po.datePicker().id(DatePickerView.PRESELECTED);
+    final DatePickerElement datePickerWithText = po.$(DatePickerElement.class).id(DatePickerView.TEXT);
+    final DatePickerElement datePickerWithNoText = po.$(DatePickerElement.class).id(DatePickerView.NOTEXT);
+    final DatePickerElement datePickerWithPreSelectedDate = po.$(DatePickerElement.class).id(DatePickerView.PRESELECTED);
 
 
     Assertions.assertNull(datePickerWithText.getDate());
@@ -48,9 +48,9 @@ public class DatePickerIT extends AbstractIT {
 
   @VaadinTest(navigateAsString = NAV)
   public void clear(GenericTestPageObject po) {
-    final DatePickerElement datePickerWithText = po.datePicker().id(DatePickerView.TEXT);
-    final DatePickerElement datePickerWithNoText = po.datePicker().id(DatePickerView.NOTEXT);
-    final DatePickerElement datePickerWithPreSelectedDate = po.datePicker().id(DatePickerView.PRESELECTED);
+    final DatePickerElement datePickerWithText = po.$(DatePickerElement.class).id(DatePickerView.TEXT);
+    final DatePickerElement datePickerWithNoText = po.$(DatePickerElement.class).id(DatePickerView.NOTEXT);
+    final DatePickerElement datePickerWithPreSelectedDate = po.$(DatePickerElement.class).id(DatePickerView.PRESELECTED);
 
     datePickerWithText.clear();
     Assertions.assertNull(datePickerWithText.getDate());
@@ -63,8 +63,8 @@ public class DatePickerIT extends AbstractIT {
 
   @VaadinTest(navigateAsString = NAV)
   public void getLabel(GenericTestPageObject po) throws Exception {
-    final DatePickerElement datePickerWithText = po.datePicker().id(DatePickerView.TEXT);
-    final DatePickerElement datePickerWithNoText = po.datePicker().id(DatePickerView.NOTEXT);
+    final DatePickerElement datePickerWithText = po.$(DatePickerElement.class).id(DatePickerView.TEXT);
+    final DatePickerElement datePickerWithNoText = po.$(DatePickerElement.class).id(DatePickerView.NOTEXT);
 
     Assertions.assertEquals("" , datePickerWithNoText.getLabel());
     Assertions.assertEquals("Text" , datePickerWithText.getLabel());

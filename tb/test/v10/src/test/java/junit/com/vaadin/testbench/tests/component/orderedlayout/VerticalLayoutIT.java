@@ -15,7 +15,7 @@ public class VerticalLayoutIT extends AbstractIT {
 
   @VaadinTest(navigateAsString = NAV)
   public void findInside(GenericTestPageObject po) throws Exception {
-    final VerticalLayoutElement verticalLayout = po.verticalLayout()
+    final VerticalLayoutElement verticalLayout = po.$(VerticalLayoutElement.class)
                                                    .id(DEFAULT);
     Assertions.assertEquals(3 , po.$(TextFieldElement.class).all().size());
     Assertions.assertEquals(2 ,

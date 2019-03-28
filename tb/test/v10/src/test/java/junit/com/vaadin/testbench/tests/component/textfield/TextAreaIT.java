@@ -19,10 +19,10 @@ public class TextAreaIT extends AbstractIT {
   @VaadinTest(navigateAsString = NAV)
   public void getSetValue(GenericTestPageObject po) throws Exception {
 
-    final TextAreaElement labelEager = po.textArea().id(LABEL_EAGER);
-    final TextAreaElement nolabel = po.textArea().id(NOLABEL);
-    final TextAreaElement initialValue = po.textArea().id(INITIAL_VALUE);
-    final TextAreaElement placeholder = po.textArea().id(PLACEHOLDER);
+    final TextAreaElement labelEager = po.$(TextAreaElement.class).id(LABEL_EAGER);
+    final TextAreaElement nolabel = po.$(TextAreaElement.class).id(NOLABEL);
+    final TextAreaElement initialValue = po.$(TextAreaElement.class).id(INITIAL_VALUE);
+    final TextAreaElement placeholder = po.$(TextAreaElement.class).id(PLACEHOLDER);
 
     Assertions.assertEquals("" , labelEager.getValue());
     Assertions.assertEquals("" , nolabel.getValue());
@@ -45,10 +45,10 @@ public class TextAreaIT extends AbstractIT {
   @VaadinTest(navigateAsString = NAV)
   public void getLabelEager(GenericTestPageObject po) throws Exception {
 
-    final TextAreaElement labelEager = po.textArea().id(LABEL_EAGER);
-    final TextAreaElement nolabel = po.textArea().id(NOLABEL);
-    final TextAreaElement initialValue = po.textArea().id(INITIAL_VALUE);
-    final TextAreaElement placeholder = po.textArea().id(PLACEHOLDER);
+    final TextAreaElement labelEager = po.$(TextAreaElement.class).id(LABEL_EAGER);
+    final TextAreaElement nolabel = po.$(TextAreaElement.class).id(NOLABEL);
+    final TextAreaElement initialValue = po.$(TextAreaElement.class).id(INITIAL_VALUE);
+    final TextAreaElement placeholder = po.$(TextAreaElement.class).id(PLACEHOLDER);
 
     Assertions.assertEquals("Label (eager)" , labelEager.getLabel());
     Assertions.assertEquals("" , nolabel.getLabel());
@@ -59,10 +59,10 @@ public class TextAreaIT extends AbstractIT {
   @VaadinTest(navigateAsString = NAV)
   public void getPlaceholder(GenericTestPageObject po) throws Exception {
 
-    final TextAreaElement labelEager = po.textArea().id(LABEL_EAGER);
-    final TextAreaElement nolabel = po.textArea().id(NOLABEL);
-    final TextAreaElement initialValue = po.textArea().id(INITIAL_VALUE);
-    final TextAreaElement placeholder = po.textArea().id(PLACEHOLDER);
+    final TextAreaElement labelEager = po.$(TextAreaElement.class).id(LABEL_EAGER);
+    final TextAreaElement nolabel = po.$(TextAreaElement.class).id(NOLABEL);
+    final TextAreaElement initialValue = po.$(TextAreaElement.class).id(INITIAL_VALUE);
+    final TextAreaElement placeholder = po.$(TextAreaElement.class).id(PLACEHOLDER);
 
     Assertions.assertEquals("" , labelEager.getPlaceholder());
     Assertions.assertEquals("" , nolabel.getPlaceholder());

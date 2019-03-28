@@ -12,7 +12,6 @@ import java.io.IOException;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
-import com.vaadin.dependencies.core.logger.HasLogger;
 import com.vaadin.flow.component.upload.testbench.UploadElement;
 import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinTest;
 import com.vaadin.testbench.addons.webdriver.SkipBrowsers;
@@ -20,7 +19,7 @@ import junit.com.vaadin.testbench.tests.component.common.AbstractIT;
 import junit.com.vaadin.testbench.tests.testUI.GenericTestPageObject;
 
 @VaadinTest
-public class UploadIT extends AbstractIT implements HasLogger {
+public class UploadIT extends AbstractIT  {
 
 
   /**
@@ -44,7 +43,7 @@ public class UploadIT extends AbstractIT implements HasLogger {
 
     File file1 = createTempFile(file1Contents);
 
-    final UploadElement upload = po.upload().id(UPLOAD);
+    final UploadElement upload = po.$(UploadElement.class).id(UPLOAD);
 
     upload.upload(file1);
     Assertions.assertEquals("File " + file1.getName() + " of size "
@@ -63,10 +62,10 @@ public class UploadIT extends AbstractIT implements HasLogger {
   // The upload finishes so quickly from localhost. Would need a huge file to
   // be created or throttling support
   public void abortUpload(GenericTestPageObject po) {
-    logger().warning(
-        "To test manually, remove @Ignore and set a breakpoint on the abort() line. Then start uploading a huge file after hitting the breakpoint and continue with the test");
+//    logger().warning(
+//        "To test manually, remove @Ignore and set a breakpoint on the abort() line. Then start uploading a huge file after hitting the breakpoint and continue with the test");
 
-    final UploadElement upload = po.upload().id(UPLOAD);
+    final UploadElement upload = po.$(UploadElement.class).id(UPLOAD);
     upload.abort();
     String start = getLogRow(po , 1);
     String aborted = getLogRow(po , 0);

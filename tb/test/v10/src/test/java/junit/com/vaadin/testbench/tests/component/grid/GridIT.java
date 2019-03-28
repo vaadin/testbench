@@ -46,9 +46,9 @@ public class GridIT extends AbstractIT {
   public void scrollToRow(PO po) {
 
 
-    final GridElement header = po.grid().id(GridView.HEADER_MULTISELECT);
-    final GridElement noHeader = po.grid().id(GridView.NO_HEADER);
-    final GridElement tenMillion = po.grid().id(GridView.TEN_MILLION);
+    final GridElement header = po.$(GridElement.class).id(GridView.HEADER_MULTISELECT);
+    final GridElement noHeader = po.$(GridElement.class).id(GridView.NO_HEADER);
+    final GridElement tenMillion = po.$(GridElement.class).id(GridView.TEN_MILLION);
 
     for (int rowIndex : new int[]{0 , 15 , 82}) {
       header.scrollToRow(rowIndex);
@@ -66,9 +66,9 @@ public class GridIT extends AbstractIT {
 
   @VaadinTest
   public void getPageSize(PO po) {
-    final GridElement header = po.grid().id(GridView.HEADER_MULTISELECT);
-    final GridElement noHeader = po.grid().id(GridView.NO_HEADER);
-    final GridElement tenMillion = po.grid().id(GridView.TEN_MILLION);
+    final GridElement header = po.$(GridElement.class).id(GridView.HEADER_MULTISELECT);
+    final GridElement noHeader = po.$(GridElement.class).id(GridView.NO_HEADER);
+    final GridElement tenMillion = po.$(GridElement.class).id(GridView.TEN_MILLION);
     Assertions.assertEquals(50 , header.getPageSize());
     Assertions.assertEquals(50 , noHeader.getPageSize());
     Assertions.assertEquals(50 , tenMillion.getPageSize());
@@ -76,9 +76,9 @@ public class GridIT extends AbstractIT {
 
   @VaadinTest
   public void getFirstVisibleRowIndex(PO po) {
-    final GridElement header = po.grid().id(GridView.HEADER_MULTISELECT);
-    final GridElement noHeader = po.grid().id(GridView.NO_HEADER);
-    final GridElement tenMillion = po.grid().id(GridView.TEN_MILLION);
+    final GridElement header = po.$(GridElement.class).id(GridView.HEADER_MULTISELECT);
+    final GridElement noHeader = po.$(GridElement.class).id(GridView.NO_HEADER);
+    final GridElement tenMillion = po.$(GridElement.class).id(GridView.TEN_MILLION);
 
     Assertions.assertEquals(0 , header.getFirstVisibleRowIndex());
     Assertions.assertEquals(0 , noHeader.getFirstVisibleRowIndex());
@@ -95,9 +95,9 @@ public class GridIT extends AbstractIT {
 
   @VaadinTest
   public void getRowCount(PO po) {
-    final GridElement header = po.grid().id(GridView.HEADER_MULTISELECT);
-    final GridElement noHeader = po.grid().id(GridView.NO_HEADER);
-    final GridElement tenMillion = po.grid().id(GridView.TEN_MILLION);
+    final GridElement header = po.$(GridElement.class).id(GridView.HEADER_MULTISELECT);
+    final GridElement noHeader = po.$(GridElement.class).id(GridView.NO_HEADER);
+    final GridElement tenMillion = po.$(GridElement.class).id(GridView.TEN_MILLION);
 
     Assertions.assertEquals(100 , header.getRowCount());
     Assertions.assertEquals(1000 , noHeader.getRowCount());
@@ -106,9 +106,9 @@ public class GridIT extends AbstractIT {
 
   @VaadinTest
   public void getAllColumns(PO po) {
-    final GridElement header = po.grid().id(GridView.HEADER_MULTISELECT);
-    final GridElement noHeader = po.grid().id(GridView.NO_HEADER);
-    final GridElement tenMillion = po.grid().id(GridView.TEN_MILLION);
+    final GridElement header = po.$(GridElement.class).id(GridView.HEADER_MULTISELECT);
+    final GridElement noHeader = po.$(GridElement.class).id(GridView.NO_HEADER);
+    final GridElement tenMillion = po.$(GridElement.class).id(GridView.TEN_MILLION);
 
     List<GridColumnElement> headerColumns = header.getAllColumns();
     Assertions.assertEquals(4 , headerColumns.size());
@@ -130,9 +130,9 @@ public class GridIT extends AbstractIT {
 
   @VaadinTest
   public void getHeaderCell(PO po) {
-    final GridElement header = po.grid().id(GridView.HEADER_MULTISELECT);
-    final GridElement noHeader = po.grid().id(GridView.NO_HEADER);
-    final GridElement tenMillion = po.grid().id(GridView.TEN_MILLION);
+    final GridElement header = po.$(GridElement.class).id(GridView.HEADER_MULTISELECT);
+    final GridElement noHeader = po.$(GridElement.class).id(GridView.NO_HEADER);
+    final GridElement tenMillion = po.$(GridElement.class).id(GridView.TEN_MILLION);
 
     Assertions.assertEquals(FIRST_NAME , header.getHeaderCell(1).getText());
     Assertions.assertEquals(LAST_NAME , header.getHeaderCell(2).getText());
@@ -149,9 +149,9 @@ public class GridIT extends AbstractIT {
 
   @VaadinTest
   public void getFooterCell(PO po) {
-    final GridElement header = po.grid().id(GridView.HEADER_MULTISELECT);
-    final GridElement noHeader = po.grid().id(GridView.NO_HEADER);
-    final GridElement tenMillion = po.grid().id(GridView.TEN_MILLION);
+    final GridElement header = po.$(GridElement.class).id(GridView.HEADER_MULTISELECT);
+    final GridElement noHeader = po.$(GridElement.class).id(GridView.NO_HEADER);
+    final GridElement tenMillion = po.$(GridElement.class).id(GridView.TEN_MILLION);
 
     Assertions.assertEquals("First Footer" ,
                             tenMillion.getFooterCell(0).getText());
@@ -169,9 +169,9 @@ public class GridIT extends AbstractIT {
 
   @VaadinTest
   public void getCell(PO po) {
-    final GridElement header = po.grid().id(GridView.HEADER_MULTISELECT);
-    final GridElement noHeader = po.grid().id(GridView.NO_HEADER);
-    final GridElement tenMillion = po.grid().id(GridView.TEN_MILLION);
+    final GridElement header = po.$(GridElement.class).id(GridView.HEADER_MULTISELECT);
+    final GridElement noHeader = po.$(GridElement.class).id(GridView.NO_HEADER);
+    final GridElement tenMillion = po.$(GridElement.class).id(GridView.TEN_MILLION);
 
     Assertions.assertEquals("First Name 0" , header.getCell(0 , 1).getText());
     Assertions.assertEquals("First Name 0" , noHeader.getCell(0 , 0).getText());
@@ -188,7 +188,7 @@ public class GridIT extends AbstractIT {
 
   @VaadinTest
   public void getRow(PO po) {
-    final GridElement header = po.grid().id(GridView.HEADER_MULTISELECT);
+    final GridElement header = po.$(GridElement.class).id(GridView.HEADER_MULTISELECT);
 
     GridTRElement row = header.getRow(5);
     GridColumnElement headerColumn = header.getAllColumns().get(2);
@@ -199,7 +199,7 @@ public class GridIT extends AbstractIT {
   @VaadinTest
   @Disabled
   public void singleSelect(PO po) {
-    final GridElement noHeader = po.grid().id(GridView.NO_HEADER);
+    final GridElement noHeader = po.$(GridElement.class).id(GridView.NO_HEADER);
 
     Assertions.assertFalse(noHeader.getRow(4).isSelected());
     noHeader.getRow(4).select();
@@ -235,7 +235,7 @@ public class GridIT extends AbstractIT {
 
   @VaadinTest
   public void multiSelect(PO po) {
-    final GridElement header = po.grid().id(GridView.HEADER_MULTISELECT);
+    final GridElement header = po.$(GridElement.class).id(GridView.HEADER_MULTISELECT);
 
     header.select(0);
     Assertions.assertTrue(header.getRow(0).isSelected());
@@ -268,8 +268,8 @@ public class GridIT extends AbstractIT {
 
   @VaadinTest
   public void getCellByContents(PO po) {
-    final GridElement header = po.grid().id(GridView.HEADER_MULTISELECT);
-    final GridElement noHeader = po.grid().id(GridView.NO_HEADER);
+    final GridElement header = po.$(GridElement.class).id(GridView.HEADER_MULTISELECT);
+    final GridElement noHeader = po.$(GridElement.class).id(GridView.NO_HEADER);
 
     GridTHTDElement cell = header.getCell("Last name 2");
     Assertions.assertEquals(LAST_NAME ,
@@ -287,7 +287,7 @@ public class GridIT extends AbstractIT {
 
   @VaadinTest
   public void interactWithComponentsInGrid(PO po) {
-    GridElement components = po.grid().id(GridView.COMPONENTS);
+    GridElement components = po.$(GridElement.class).id(GridView.COMPONENTS);
     GridTHTDElement cell = components.getCell(0 , 0);
     ButtonElement button = cell.$(ButtonElement.class).first();
     button.click();
@@ -302,7 +302,7 @@ public class GridIT extends AbstractIT {
   @VaadinTest
   @SkipBrowsers(IE)
   public void detailsRows(PO po) {
-    GridElement details = po.grid().id(GridView.DETAILS);
+    GridElement details = po.$(GridElement.class).id(GridView.DETAILS);
     GridTHTDElement cell = details.getCell(9 , 0);
     cell.click();
     GridTRElement rowElement = cell.getRowElement();
@@ -322,7 +322,7 @@ public class GridIT extends AbstractIT {
   @VaadinTest
   public void getCellByContentsOutsideView(PO po) {
     Assertions.assertThrows(NoSuchElementException.class , () -> {
-      po.grid().id(GridView.TEN_MILLION).getCell("Last name 2000");
+      po.$(GridElement.class).id(GridView.TEN_MILLION).getCell("Last name 2000");
     });
   }
 }

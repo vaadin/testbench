@@ -15,7 +15,7 @@ public class HorizontalLayoutIT extends AbstractIT {
 
   @VaadinTest(navigateAsString = NAV)
   public void findInside(GenericTestPageObject po) throws Exception {
-    final HorizontalLayoutElement horizontalLayout = po.horizontalLayout()
+    final HorizontalLayoutElement horizontalLayout = po.$(HorizontalLayoutElement.class)
                                                        .id(DEFAULT);
 
     Assertions.assertEquals(3 , po.$(TextFieldElement.class).all().size());

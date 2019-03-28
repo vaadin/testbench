@@ -16,7 +16,7 @@ public class FormLayoutIT extends AbstractIT {
 
   @VaadinTest(navigateAsString = NAV)
   public void findInside(GenericTestPageObject po) throws Exception {
-    final FormLayoutElement formLayout = po.formLayout().id(FormLayoutView.DEFAULT);
+    final FormLayoutElement formLayout = po.$(FormLayoutElement.class).id(FormLayoutView.DEFAULT);
 
     Assertions.assertEquals(3 , po.$(TextFieldElement.class).all().size());
     Assertions.assertEquals(2 ,

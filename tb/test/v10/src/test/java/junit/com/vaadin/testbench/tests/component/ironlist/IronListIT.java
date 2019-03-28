@@ -14,7 +14,7 @@ public class IronListIT extends AbstractIT {
 
   @VaadinTest(navigateAsString = NAV)
   public void scrollTo(GenericTestPageObject po) throws Exception {
-    final IronListElement def = po.ironList().id(HUNDRED_THOUSAND);
+    final IronListElement def = po.$(IronListElement.class).id(HUNDRED_THOUSAND);
 
     def.scrollToRow(1000);
     Assertions.assertEquals(1000.0 , def.getFirstVisibleRowIndex() , 2);
@@ -22,14 +22,14 @@ public class IronListIT extends AbstractIT {
 
   @VaadinTest(navigateAsString = NAV)
   public void rowCount(GenericTestPageObject po) {
-    final IronListElement def = po.ironList().id(HUNDRED_THOUSAND);
+    final IronListElement def = po.$(IronListElement.class).id(HUNDRED_THOUSAND);
 
     Assertions.assertEquals(100000 , def.getRowCount());
   }
 
   @VaadinTest(navigateAsString = NAV)
   public void firstLastVisibleRow(GenericTestPageObject po) throws Exception {
-    final IronListElement def = po.ironList().id(HUNDRED_THOUSAND);
+    final IronListElement def = po.$(IronListElement.class).id(HUNDRED_THOUSAND);
 
     Assertions.assertEquals(0 , def.getFirstVisibleRowIndex());
     Assertions.assertEquals(15 , def.getLastVisibleRowIndex());

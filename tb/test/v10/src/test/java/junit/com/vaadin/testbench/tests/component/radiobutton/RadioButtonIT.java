@@ -14,8 +14,8 @@ public class RadioButtonIT extends AbstractIT {
 
   @VaadinTest(navigateAsString = NAV)
   public void getOptions(GenericTestPageObject po) throws Exception {
-    final RadioButtonGroupElement def = po.radioBtnGrp().id(RadioButtonView.DEFAULT);
-    final RadioButtonGroupElement preselected = po.radioBtnGrp()
+    final RadioButtonGroupElement def = po.$(RadioButtonGroupElement.class).id(RadioButtonView.DEFAULT);
+    final RadioButtonGroupElement preselected = po.$(RadioButtonGroupElement.class)
                                                   .id(RadioButtonView.PRESELECTED);
 
     Assertions.assertArrayEquals(new String[]{"Item 0" , "Item 1" , "Item 2" ,
@@ -26,8 +26,8 @@ public class RadioButtonIT extends AbstractIT {
 
   @VaadinTest(navigateAsString = NAV)
   public void getSetByText(GenericTestPageObject po) throws Exception {
-    final RadioButtonGroupElement def = po.radioBtnGrp().id(RadioButtonView.DEFAULT);
-    final RadioButtonGroupElement preselected = po.radioBtnGrp()
+    final RadioButtonGroupElement def = po.$(RadioButtonGroupElement.class).id(RadioButtonView.DEFAULT);
+    final RadioButtonGroupElement preselected = po.$(RadioButtonGroupElement.class)
                                                   .id(RadioButtonView.PRESELECTED);
 
     Assertions.assertNull(def.getSelectedText());

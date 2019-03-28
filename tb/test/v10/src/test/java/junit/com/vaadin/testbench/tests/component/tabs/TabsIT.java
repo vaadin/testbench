@@ -8,6 +8,7 @@ import static com.vaadin.testbench.addons.webdriver.BrowserTypes.IE;
 import org.junit.jupiter.api.Assertions;
 import com.vaadin.flow.component.button.testbench.ButtonElement;
 import junit.com.vaadin.testbench.tests.component.common.AbstractIT;
+import com.vaadin.flow.component.tabs.testbench.TabElement;
 import com.vaadin.flow.component.tabs.testbench.TabsElement;
 import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinTest;
 import com.vaadin.testbench.addons.webdriver.SkipBrowsers;
@@ -21,7 +22,7 @@ public class TabsIT extends AbstractIT {
 
   @VaadinTest(navigateAsString = NAV)
   public void selectTabByIndex(GenericTestPageObject po) throws Exception {
-    final TabsElement def = po.tabs().id(DEFAULT);
+    final TabsElement def = po.$(TabsElement.class).id(DEFAULT);
     Assertions.assertEquals(0 , def.getSelectedTabIndex());
     def.setSelectedTabIndex(2);
     Assertions.assertEquals(2 , def.getSelectedTabIndex());
@@ -38,7 +39,7 @@ public class TabsIT extends AbstractIT {
   @VaadinTest(navigateAsString = NAV)
   @SkipBrowsers(value = {FIREFOX, IE})
   public void getSelectedTabElement(GenericTestPageObject po) throws Exception {
-    final TabsElement def = po.tabs().id(DEFAULT);
+    final TabsElement def = po.$(TabsElement.class).id(DEFAULT);
 
     def.getSelectedTabElement().$(ButtonElement.class).first().click();
     Assertions.assertEquals("2. Hello clicked" , getLogRow(po,0));
@@ -48,7 +49,7 @@ public class TabsIT extends AbstractIT {
 
   @VaadinTest(navigateAsString = NAV)
   public void getTab(GenericTestPageObject po) throws Exception {
-    final TabsElement def = po.tabs().id(DEFAULT);
+    final TabsElement def = po.$(TabsElement.class).id(DEFAULT);
 
     Assertions.assertEquals(1 , def.getTab(DISABLED));
     Assertions.assertEquals(2 , def.getTab(TEXT));
@@ -56,7 +57,7 @@ public class TabsIT extends AbstractIT {
 
   @VaadinTest(navigateAsString = NAV)
   public void isEnabled(GenericTestPageObject po) throws Exception {
-    final TabsElement def = po.tabs().id(DEFAULT);
+    final TabsElement def = po.$(TabsElement.class).id(DEFAULT);
 
     Assertions.assertTrue(def.getTabElement(TEXT).isEnabled());
     Assertions.assertFalse(def.getTabElement(DISABLED).isEnabled());

@@ -15,9 +15,9 @@ public class CheckboxIT extends AbstractIT {
   @VaadinTest(navigateAsString = NAV)
   public void checkUncheck(GenericTestPageObject po) throws Exception {
 
-    final CheckboxElement checkboxWithText = po.checkBox().id(TEXT);
-    final CheckboxElement checkboxWithNoText = po.checkBox().id(NOTEXT);
-    final CheckboxElement checkboxInitiallyChecked = po.checkBox().id(CHECKED);
+    final CheckboxElement checkboxWithText = po.$(CheckboxElement.class).id(TEXT);
+    final CheckboxElement checkboxWithNoText = po.$(CheckboxElement.class).id(NOTEXT);
+    final CheckboxElement checkboxInitiallyChecked = po.$(CheckboxElement.class).id(CHECKED);
 
     Assertions.assertFalse(checkboxWithNoText.isChecked());
     Assertions.assertFalse(checkboxWithText.isChecked());
@@ -41,9 +41,9 @@ public class CheckboxIT extends AbstractIT {
   @VaadinTest(navigateAsString = NAV)
   public void getLabel(GenericTestPageObject po) throws Exception {
 
-    final CheckboxElement checkboxWithText = po.checkBox().id(TEXT);
-    final CheckboxElement checkboxWithNoText = po.checkBox().id(NOTEXT);
-    final CheckboxElement checkboxInitiallyChecked = po.checkBox().id(CHECKED);
+    final CheckboxElement checkboxWithText = po.$(CheckboxElement.class).id(TEXT);
+    final CheckboxElement checkboxWithNoText = po.$(CheckboxElement.class).id(NOTEXT);
+    final CheckboxElement checkboxInitiallyChecked = po.$(CheckboxElement.class).id(CHECKED);
 
     Assertions.assertEquals("Text" , checkboxWithText.getLabel());
     Assertions.assertEquals("" , checkboxWithNoText.getLabel());

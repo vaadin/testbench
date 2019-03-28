@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestReporter;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.RegisterExtension;
-import com.vaadin.dependencies.core.logger.HasLogger;
 import com.vaadin.testbench.addons.junit5.extensions.container.ContainerInfoExtension;
 import com.vaadin.testbench.addons.junit5.extensions.container.ServletContainerExtension;
 import okhttp3.OkHttpClient;
@@ -18,7 +17,7 @@ import okhttp3.Response;
 
 @ExtendWith(ServletContainerExtension.class)
 //@MeecrowaveConfig - would start the meecrowave again on beforeAll level
-public class DemoTest implements HasLogger {
+public class DemoTest  {
 
   @RegisterExtension ContainerInfoExtension config = new ContainerInfoExtension();
 
@@ -30,7 +29,6 @@ public class DemoTest implements HasLogger {
 
     final String url = "http://" + config.host() + ":" + config.port() + "?value=HalloNase";
 //    final String url = "http://" + config.getHost() + ":" + config.getPort() + "";
-    logger().info("url - " + url);
 
     Request request = new Request.Builder()
         .url(url)

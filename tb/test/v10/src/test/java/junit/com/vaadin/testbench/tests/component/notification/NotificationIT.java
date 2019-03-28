@@ -17,8 +17,8 @@ public class NotificationIT extends AbstractIT {
 
   @VaadinTest(navigateAsString = NAV)
   public void getText(GenericTestPageObject po) throws Exception {
-    final NotificationElement noText = po.notification().id(NotificationView.NOTEXT);
-    final NotificationElement text = po.notification().id(NotificationView.TEXT);
+    final NotificationElement noText = po.$(NotificationElement.class).id(NotificationView.NOTEXT);
+    final NotificationElement text = po.$(NotificationElement.class).id(NotificationView.TEXT);
 
     Assertions.assertEquals("" , noText.getText());
     Assertions.assertEquals("Some text" , text.getText());
@@ -26,9 +26,9 @@ public class NotificationIT extends AbstractIT {
 
   @VaadinTest(navigateAsString = NAV)
   public void isOpen(GenericTestPageObject po) throws Exception {
-    final NotificationElement noText = po.notification().id(NotificationView.NOTEXT);
-    final NotificationElement text = po.notification().id(NotificationView.TEXT);
-    final NotificationElement components = po.notification().id(NotificationView.COMPONENTS);
+    final NotificationElement noText = po.$(NotificationElement.class).id(NotificationView.NOTEXT);
+    final NotificationElement text = po.$(NotificationElement.class).id(NotificationView.TEXT);
+    final NotificationElement components = po.$(NotificationElement.class).id(NotificationView.COMPONENTS);
 
     Assertions.assertTrue(noText.isOpen());
     Assertions.assertTrue(text.isOpen());
@@ -45,7 +45,7 @@ public class NotificationIT extends AbstractIT {
 
   @VaadinTest(navigateAsString = NAV)
   public void componentInsideNotification(GenericTestPageObject po) {
-    final NotificationElement components = po.notification().id(NotificationView.COMPONENTS);
+    final NotificationElement components = po.$(NotificationElement.class).id(NotificationView.COMPONENTS);
 
     ButtonElement hello = components.$(ButtonElement.class).id("hello");
     ButtonElement close = components.$(ButtonElement.class).id("close");

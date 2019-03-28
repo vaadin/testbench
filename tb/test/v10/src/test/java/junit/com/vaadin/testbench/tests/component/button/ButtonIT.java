@@ -17,8 +17,8 @@ class ButtonIT extends AbstractIT {
   void click(GenericTestPageObject po) throws Exception {
     po.loadPage(NAV);
 
-    final ButtonElement buttonWithText = po.btn().id(TEXT);
-    final ButtonElement buttonWithNoText = po.btn().id(NOTEXT);
+    final ButtonElement buttonWithText = po.$(ButtonElement.class).id(TEXT);
+    final ButtonElement buttonWithNoText = po.$(ButtonElement.class).id(NOTEXT);
 
     buttonWithNoText.click();
     Assertions.assertEquals("1. Button without text clicked" , getLogRow(po , 0));
@@ -30,8 +30,8 @@ class ButtonIT extends AbstractIT {
   void getText(GenericTestPageObject po) throws Exception {
     po.loadPage(NAV);
 
-    final ButtonElement buttonWithText = po.btn().id(TEXT);
-    final ButtonElement buttonWithNoText = po.btn().id(NOTEXT);
+    final ButtonElement buttonWithText = po.$(ButtonElement.class).id(TEXT);
+    final ButtonElement buttonWithNoText = po.$(ButtonElement.class).id(NOTEXT);
     Assertions.assertEquals("" , buttonWithNoText.getText());
     Assertions.assertEquals("Text" , buttonWithText.getText());
   }

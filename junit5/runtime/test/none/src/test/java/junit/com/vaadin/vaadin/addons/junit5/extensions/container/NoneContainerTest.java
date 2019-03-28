@@ -15,8 +15,8 @@ class NoneContainerTest {
   @Test
   void test001() {
     Assertions.assertEquals("127.0.0.1", config.host());
-    Assertions.assertEquals(7654, config.port());
-//    Assertions.assertEquals("webApp", config.);
+    Assertions.assertEquals(8080, config.port());
+//    Assertions.assertEquals("webApp", config.); x
   }
 
 

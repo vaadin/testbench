@@ -16,7 +16,7 @@ public class SplitLayoutIT extends AbstractIT {
 
   @VaadinTest(navigateAsString = NAV)
   public void findInside(GenericTestPageObject po) throws Exception {
-    final SplitLayoutElement splitLayout = po.splitLayout().id(DEFAULT);
+    final SplitLayoutElement splitLayout = po.$(SplitLayoutElement.class).id(DEFAULT);
 
     Assertions.assertEquals(3 , po.$(TextFieldElement.class).all().size());
     Assertions.assertEquals(2 ,
@@ -25,7 +25,7 @@ public class SplitLayoutIT extends AbstractIT {
 
   @VaadinTest(navigateAsString = NAV)
   public void findSplitter(GenericTestPageObject po) throws Exception {
-    TestBenchElement splitter = po.splitLayout().id(DEFAULT).getSplitter();
+    TestBenchElement splitter = po.$(SplitLayoutElement.class).id(DEFAULT).getSplitter();
     Assertions.assertNotNull(splitter);
   }
 

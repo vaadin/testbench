@@ -32,10 +32,10 @@ public class ComboBoxIT extends AbstractIT {
   @VaadinTest
   public void getLabel(PO po) throws Exception {
 
-    final  ComboBoxElement comboBoxWithText = po.comboBox().id(TEXT);
-    final ComboBoxElement comboBoxWithNoText = po.comboBox().id(NOTEXT);
-    final ComboBoxElement comboBoxWithBeans = po.comboBox().id(BEANS);
-    final ComboBoxElement comboBoxWithLazy = po.comboBox().id(LAZY);
+    final  ComboBoxElement comboBoxWithText = po.$(ComboBoxElement.class).id(TEXT);
+    final ComboBoxElement comboBoxWithNoText = po.$(ComboBoxElement.class).id(NOTEXT);
+    final ComboBoxElement comboBoxWithBeans = po.$(ComboBoxElement.class).id(BEANS);
+    final ComboBoxElement comboBoxWithLazy = po.$(ComboBoxElement.class).id(LAZY);
 
     Assertions.assertEquals("" , comboBoxWithNoText.getLabel());
     Assertions.assertEquals("Text" , comboBoxWithText.getLabel());
@@ -46,10 +46,10 @@ public class ComboBoxIT extends AbstractIT {
   @VaadinTest
   public void selectByText(PO po) throws Exception {
 
-    final  ComboBoxElement comboBoxWithText = po.comboBox().id(TEXT);
-    final ComboBoxElement comboBoxWithNoText = po.comboBox().id(NOTEXT);
-    final ComboBoxElement comboBoxWithBeans = po.comboBox().id(BEANS);
-    final ComboBoxElement comboBoxWithLazy = po.comboBox().id(LAZY);
+    final  ComboBoxElement comboBoxWithText = po.$(ComboBoxElement.class).id(TEXT);
+    final ComboBoxElement comboBoxWithNoText = po.$(ComboBoxElement.class).id(NOTEXT);
+    final ComboBoxElement comboBoxWithBeans = po.$(ComboBoxElement.class).id(BEANS);
+    final ComboBoxElement comboBoxWithLazy = po.$(ComboBoxElement.class).id(LAZY);
 
     Assertions.assertEquals("" , comboBoxWithNoText.getSelectedText());
     Assertions.assertEquals("" , comboBoxWithText.getSelectedText());
@@ -81,10 +81,10 @@ public class ComboBoxIT extends AbstractIT {
   @VaadinTest
   public void getSelectedText(PO po) {
 
-    final ComboBoxElement comboBoxWithTextWithPreSelectedValue = po.comboBox().id(TEXT_WITH_PRE_SLELECTED_VALUE);
-    final ComboBoxElement comboBoxWithNoTextWithPreSelectedValue = po.comboBox().id(NOTEXT_WITH_PRE_SLELECTED_VALUE);
-    final ComboBoxElement comboBoxLazyWithPreSelectedValue = po.comboBox().id(LAZY_WITH_PRE_SLELECTED_VALUE);
-    final ComboBoxElement comboBoxWithBeansWithPreSelectedValue = po.comboBox().id(BEANS_WITH_PRE_SLELECTED_VALUE);
+    final ComboBoxElement comboBoxWithTextWithPreSelectedValue = po.$(ComboBoxElement.class).id(TEXT_WITH_PRE_SLELECTED_VALUE);
+    final ComboBoxElement comboBoxWithNoTextWithPreSelectedValue = po.$(ComboBoxElement.class).id(NOTEXT_WITH_PRE_SLELECTED_VALUE);
+    final ComboBoxElement comboBoxLazyWithPreSelectedValue = po.$(ComboBoxElement.class).id(LAZY_WITH_PRE_SLELECTED_VALUE);
+    final ComboBoxElement comboBoxWithBeansWithPreSelectedValue = po.$(ComboBoxElement.class).id(BEANS_WITH_PRE_SLELECTED_VALUE);
 
     Assertions.assertEquals(PRE_SELECTED_VALUE_FOR_COMBOBOX_WITHOUT_TEXT ,
                             comboBoxWithNoTextWithPreSelectedValue.getSelectedText());
@@ -100,7 +100,7 @@ public class ComboBoxIT extends AbstractIT {
   @VaadinTest
   public void openCloseIsOpenPopup(PO po) throws Exception {
 
-    final  ComboBoxElement comboBoxWithText = po.comboBox().id(TEXT);
+    final  ComboBoxElement comboBoxWithText = po.$(ComboBoxElement.class).id(TEXT);
     comboBoxWithText.openPopup();
     Assertions.assertTrue(comboBoxWithText.isPopupOpen());
     comboBoxWithText.closePopup();
@@ -110,9 +110,9 @@ public class ComboBoxIT extends AbstractIT {
   @VaadinTest
   public void getPopupSuggestions(PO po) throws Exception {
 
-    final  ComboBoxElement comboBoxWithText = po.comboBox().id(TEXT);
-    final ComboBoxElement comboBoxWithNoText = po.comboBox().id(NOTEXT);
-    final ComboBoxElement comboBoxWithBeans = po.comboBox().id(BEANS);
+    final  ComboBoxElement comboBoxWithText = po.$(ComboBoxElement.class).id(TEXT);
+    final ComboBoxElement comboBoxWithNoText = po.$(ComboBoxElement.class).id(NOTEXT);
+    final ComboBoxElement comboBoxWithBeans = po.$(ComboBoxElement.class).id(BEANS);
 
     Assertions.assertArrayEquals(
         IntStream.range(0 , 20).mapToObj(i -> "Item " + i).toArray() ,
@@ -128,9 +128,9 @@ public class ComboBoxIT extends AbstractIT {
   @VaadinTest
   public void filter(PO po) {
 
-    final  ComboBoxElement comboBoxWithText = po.comboBox().id(TEXT);
-    final ComboBoxElement comboBoxWithNoText = po.comboBox().id(NOTEXT);
-    final ComboBoxElement comboBoxWithBeans = po.comboBox().id(BEANS);
+    final  ComboBoxElement comboBoxWithText = po.$(ComboBoxElement.class).id(TEXT);
+    final ComboBoxElement comboBoxWithNoText = po.$(ComboBoxElement.class).id(NOTEXT);
+    final ComboBoxElement comboBoxWithBeans = po.$(ComboBoxElement.class).id(BEANS);
     Assertions.assertEquals("" , comboBoxWithNoText.getFilter());
     Assertions.assertEquals("" , comboBoxWithText.getFilter());
     Assertions.assertEquals("" , comboBoxWithBeans.getFilter());
