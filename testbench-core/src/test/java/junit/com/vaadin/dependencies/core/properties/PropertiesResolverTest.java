@@ -15,7 +15,7 @@ import java.util.Properties;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import com.vaadin.dependencies.core.properties.PropertiesResolver;
+import com.vaadin.testbench.PropertiesResolver;
 
 public class PropertiesResolverTest  {
 

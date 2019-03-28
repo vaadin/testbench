@@ -1,6 +1,6 @@
 package com.vaadin.testbench.addons.webdriver;
 
-import static com.vaadin.dependencies.core.properties.PropertiesResolver.propertyReader;
+import static com.vaadin.testbench.PropertiesResolver.propertyReader;
 import static com.vaadin.frp.matcher.Case.match;
 import static com.vaadin.frp.matcher.Case.matchCase;
 import static com.vaadin.frp.model.Result.failure;

@@ -61,8 +61,7 @@
 <!--    Java Core Dependencies from this project-->
     <dependency>
       <groupId>com.vaadin</groupId>
-      <artifactId>testbench-core</artifactId>
-      <version>7.0.0-SNAPSHOT</version>
+      <artifactId>vaadin-testbench-core</artifactId>
     </dependency>
 
 

@@ -22,7 +22,7 @@ import com.vaadin.frp.functions.CheckedFunction;
 import com.vaadin.frp.model.Result;
 import com.vaadin.testbench.addons.junit5.extensions.container.ContainerInfo;
 import com.vaadin.testbench.addons.junit5.pageobject.PageObject;
-import xxx.com.github.webdriverextensions.WebDriverExtensionFieldDecorator;
+import com.github.webdriverextensions.WebDriverExtensionFieldDecorator;
 
 public final class WebDriverTemplateInvocationContextImpl implements WebDriverTemplateInvocationContext {
 

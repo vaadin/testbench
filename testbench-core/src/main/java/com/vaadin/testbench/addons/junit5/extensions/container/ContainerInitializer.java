@@ -1,6 +1,6 @@
 package com.vaadin.testbench.addons.junit5.extensions.container;
 
-import static com.vaadin.dependencies.core.properties.PropertiesResolver.propertyReader;
+import static com.vaadin.testbench.PropertiesResolver.propertyReader;
 import static com.vaadin.testbench.addons.junit5.extensions.ExtensionFunctions.storeMethodPlain;
 import static com.vaadin.testbench.addons.junit5.extensions.container.NetworkFunctions.SERVER_IP;
 import static com.vaadin.testbench.addons.junit5.extensions.container.NetworkFunctions.SERVER_PORT;

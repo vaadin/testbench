@@ -12,10 +12,6 @@
   <artifactId>vaadin-testbench-tb-test-data</artifactId>
   <packaging>pom</packaging>
 
-  <modules>
-    <module>v10</module>
-  </modules>
-
   <build>
     <plugins>
       <plugin>

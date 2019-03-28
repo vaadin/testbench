@@ -10,11 +10,9 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>vaadin-testbench-tb-test</artifactId>
-  <packaging>pom</packaging>
+  <packaging>jar</packaging>
 
-  <modules>
-    <module>v10</module>
-  </modules>
+
 
   <!-- Just to disable any accidental deployment to maven.central -->
   <distributionManagement>
@@ -32,6 +30,29 @@
     <!--<maven.install.skip>true</maven.install.skip>-->
     <maven.deploy.skip>true</maven.deploy.skip>
   </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <!--Version definitions from parent-->
+      <dependency>
+        <groupId>com.vaadin</groupId>
+        <artifactId>vaadin-testbench-bom</artifactId>
+        <version>7.0.0-SNAPSHOT</version>
+        <scope>import</scope>
+        <type>pom</type>
+        <exclusions>
+          <exclusion>
+            <groupId>com.vaadin</groupId>
+            <artifactId>vaadin-testbench</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>com.vaadin</groupId>
+            <artifactId>vaadin-testbench-core</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
   <dependencies>
     <dependency>
@@ -63,7 +84,51 @@
       <scope>compile</scope>
     </dependency>
 
-
+    <dependency>
+      <groupId>com.vaadin</groupId>
+      <artifactId>vaadin-core</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>com.vaadin</groupId>
+          <artifactId>vaadin-testbench</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.vaadin</groupId>
+          <artifactId>vaadin-testbench-core</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>com.vaadin</groupId>
+      <artifactId>flow-html-components-testbench</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>com.vaadin</groupId>
+          <artifactId>vaadin-testbench-core</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>com.vaadin</groupId>
+      <artifactId>vaadin-components-testbench</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>com.vaadin</groupId>
+          <artifactId>vaadin-testbench-core</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>com.vaadin</groupId>
+      <artifactId>vaadin-lumo-theme</artifactId>
+    </dependency>
+    <!--For TestUI only-->
+    <dependency>
+      <groupId>com.vaadin</groupId>
+      <artifactId>vaadin-testbench-tb-test-data</artifactId>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
 
     <!--Logging for development-->
     <dependency>

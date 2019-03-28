@@ -9,7 +9,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>testbench-core</artifactId>
+  <artifactId>vaadin-testbench-core</artifactId>
 
 
   <dependencyManagement>
@@ -17,7 +17,7 @@
       <dependency>
         <groupId>com.vaadin</groupId>
         <artifactId>vaadin-bom</artifactId>
-        <version>${vaadin-v10.version}</version>
+        <version>${vaadin.version}</version>
         <type>pom</type>
         <scope>import</scope>
         <exclusions>

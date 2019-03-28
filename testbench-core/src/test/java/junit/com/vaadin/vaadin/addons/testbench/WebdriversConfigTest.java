@@ -1,6 +1,6 @@
 package junit.com.vaadin.vaadin.addons.testbench;
 
-import static com.vaadin.dependencies.core.properties.PropertiesResolver.propertyReader;
+import static com.vaadin.testbench.PropertiesResolver.propertyReader;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static com.vaadin.testbench.addons.webdriver.BrowserDriverFunctions.CONFIG_FOLDER;
 
