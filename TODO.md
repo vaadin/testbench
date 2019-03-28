@@ -15,8 +15,7 @@ inc testcoverage
 - PageObject PreLoad
 - reference-screenshots are now loaded from Resources (jar)
 - UploadElement uses  TB Utilityclass - com/vaadin/testbench/parallel/BrowserUtil
-
-ScreenshotOnFailureExtension
+- ScreenshotOnFailureExtension
 
 ## Phase I 
 Extensions only
