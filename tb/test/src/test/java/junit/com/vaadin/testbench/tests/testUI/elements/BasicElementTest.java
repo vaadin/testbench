@@ -1,21 +1,16 @@
 package junit.com.vaadin.testbench.tests.testUI.elements;
 
-import java.util.function.Function;
-
-import org.junit.jupiter.api.Assertions;
-import org.openqa.selenium.TimeoutException;
+import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinTest;
 import com.vaadin.testbench.tests.testUI.ElementQueryView;
-import com.vaadin.testbench.TestBenchElement;
 import junit.com.vaadin.testbench.tests.testUI.GenericTestPageObject;
+import org.junit.jupiter.api.Assertions;
+import org.openqa.selenium.TimeoutException;
+
+import java.util.function.Function;
 
 @VaadinTest
 public class BasicElementTest {
-
-
-  private void openTestURL(GenericTestPageObject po) {
-    po.loadPage(ElementQueryView.ROUTE);
-  }
 
   private static Function<GenericTestPageObject, TestBenchElement> elem() {
     return (po) -> {
@@ -80,7 +75,6 @@ public class BasicElementTest {
         .getPropertyElement("parentElement" , "firstElementChild"));
     Assertions.assertNull(
         buttonElement.getPropertyElement("firstElementChild"));
-
   }
 
   @VaadinTest
@@ -90,7 +84,6 @@ public class BasicElementTest {
                         buttonElement.getPropertyElements("children").size());
     Assertions.assertEquals(1 , buttonElement
         .getPropertyElements("parentElement" , "children").size());
-
   }
 
   @VaadinTest
@@ -102,19 +95,16 @@ public class BasicElementTest {
 
   @VaadinTest()
   public void waitForNonExistant(GenericTestPageObject po) {
-
-    final TestBenchElement buttonElement = elem().apply(po);
-    Assertions
-        .assertThrows(TimeoutException.class , () -> {
-          po.$(PolymerTemplateViewElement.class)
-            .waitForFirst();
-          Assertions.fail("Should not have found an element which does not exist");
-        });
+    elem().apply(po);
+    Assertions.assertThrows(TimeoutException.class, () -> {
+      po.$(PolymerTemplateViewElement.class).waitForFirst();
+      Assertions.fail("Should not have found an element which does not exist");
+    });
   }
 
   @VaadinTest
   public void hasAttribute(GenericTestPageObject po) {
-    final TestBenchElement buttonElement = elem().apply(po);
+    elem().apply(po);
     NativeButtonElement withAttributes = po.$(NativeButtonElement.class)
                                            .get(5);
     NativeButtonElement withoutAttributes = po.$(NativeButtonElement.class)
@@ -131,7 +121,7 @@ public class BasicElementTest {
 
   @VaadinTest
   public void dispatchEvent(GenericTestPageObject po) {
-    final TestBenchElement buttonElement = elem().apply(po);
+    elem().apply(po);
     NativeButtonElement withAttributes = po.$(NativeButtonElement.class)
                                            .get(5);
     withAttributes.dispatchEvent("custom123");
@@ -140,7 +130,7 @@ public class BasicElementTest {
 
   @VaadinTest
   public void nativeButtonDisabled(GenericTestPageObject po) {
-    final TestBenchElement buttonElement = elem().apply(po);
+    elem().apply(po);
     NativeButtonElement enabled = po.$(NativeButtonElement.class).get(0);
     NativeButtonElement disabled = po.$(NativeButtonElement.class).get(2);
     Assertions.assertTrue(enabled.isEnabled());

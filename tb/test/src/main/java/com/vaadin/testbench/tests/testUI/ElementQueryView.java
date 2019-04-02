@@ -11,12 +11,15 @@ public class ElementQueryView extends Div {
 
     public ElementQueryView() {
         getElement().getStyle().set("line-height", "12px");
+
         for (int i = 0; i < 10; i++) {
             NativeButton button = new NativeButton("Button " + i);
             button.getElement().getStyle().set("margin", "0");
+
             if (i == 2) {
                 button.getElement().setAttribute("disabled", true);
             }
+
             button.getElement().addEventListener("custom123", e -> {
                 Div div = new Div();
                 div.setId("msg");
@@ -24,11 +27,11 @@ public class ElementQueryView extends Div {
                 add(div);
             });
             add(new Div(button));
+
             if (i == 5) {
                 button.getElement().setAttribute("boolean", true);
                 button.getElement().setAttribute("string", "value");
             }
         }
     }
-
 }

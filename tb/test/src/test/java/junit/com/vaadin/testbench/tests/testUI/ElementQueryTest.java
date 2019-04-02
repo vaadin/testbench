@@ -15,18 +15,12 @@ import junit.com.vaadin.testbench.tests.testUI.elements.PolymerTemplateViewEleme
 @VaadinTest
 public class ElementQueryTest {
 
-//  private void openTestURL(GenericTestPageObject po) {
-//    po.loadPage(ROUTE);
-//  }
-
-
   @VaadinTest(navigateAsString = ROUTE)
   public void ensureElementListWrapped(GenericTestPageObject po) {
     List<PolymerTemplateViewElement> elements = po.$(PolymerTemplateViewElement.class).all();
     Assertions.assertTrue(
         elements.get(0) instanceof PolymerTemplateViewElement);
   }
-
 
   @VaadinTest
   public void ensureElementListFromOnPageWrapped(GenericTestPageObject po) {
@@ -135,5 +129,4 @@ public class ElementQueryTest {
 
     Assertions.assertEquals(6 , template.getPropertyElements("children").size());
   }
-
 }

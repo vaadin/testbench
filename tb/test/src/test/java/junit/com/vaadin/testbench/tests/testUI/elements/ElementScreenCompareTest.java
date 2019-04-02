@@ -1,6 +1,5 @@
 package junit.com.vaadin.testbench.tests.testUI.elements;
 
-
 import static com.vaadin.testbench.tests.testUI.ElementQueryView.ROUTE;
 
 import org.junit.jupiter.api.Assertions;
@@ -8,21 +7,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.openqa.selenium.By;
 import org.openqa.selenium.OutputType;
 import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinTest;
-import com.vaadin.testbench.tests.testUI.ElementQueryView;
 import com.vaadin.testbench.TestBenchElement;
 import junit.com.vaadin.testbench.tests.testUI.GenericTestPageObject;
 
 @VaadinTest
 public class ElementScreenCompareTest {
 
-  /**
-   * Height of the screenshots we want to capture
-   */
   public static final int SCREENSHOT_HEIGHT = 850;
-
-  /**
-   * Width of the screenshots we want to capture
-   */
   public static final int SCREENSHOT_WIDTH = 1500;
 
   @BeforeEach
@@ -42,5 +33,4 @@ public class ElementScreenCompareTest {
 
     Assertions.assertTrue(layout.compareScreen("layout"));
   }
-
 }

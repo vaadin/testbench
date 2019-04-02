@@ -39,5 +39,4 @@ class PerformanceTest {
     Assertions.assertEquals(initialRendering ,
                             po.getCommandExecutor().totalTimeSpentRendering() , 50);
   }
-
 }

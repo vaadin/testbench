@@ -1,15 +1,12 @@
 package junit.com.vaadin.testbench.tests.demo;
 
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.DisplayName;
 import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinTest;
 
 @VaadinTest
-public class VaadinAppWebUnitTest {
-
-
+public class MainViewTest {
 
   @DisplayName("Hello World - Click twice 001")
   @VaadinTest(preLoad = false)
@@ -43,5 +40,4 @@ public class VaadinAppWebUnitTest {
     pageObject.click();
     assertEquals(1 , pageObject.clickCount());
   }
-
 }

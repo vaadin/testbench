@@ -14,11 +14,12 @@ public class PerformanceView extends Div {
         NativeButton button = new NativeButton("1s delay", e -> {
             try {
                 Thread.sleep(1000);
-            } catch (InterruptedException e1) {
+            } catch (InterruptedException ignored) {
             }
+
             add(new Span("Done sleeping"));
         });
+
         add(button);
     }
-
 }

@@ -22,6 +22,7 @@ public class SVGView extends Div {
                         + "  Sorry, your browser does not support inline SVG."
                         + "</svg>");
         attachEvent.getUI().getPage().executeJavaScript(
-                "document.getElementById('ball').addEventListener('click', function() {document.body.innerText='clicked';})");
+                "document.getElementById('ball').addEventListener('click', " +
+                        "function() {document.body.innerText='clicked';})");
     }
 }

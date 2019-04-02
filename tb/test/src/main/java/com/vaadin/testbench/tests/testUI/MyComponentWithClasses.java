@@ -10,5 +10,4 @@ public class MyComponentWithClasses extends Div {
         addClassName("my-component-last");
         setText(getClass().getSimpleName());
     }
-
 }

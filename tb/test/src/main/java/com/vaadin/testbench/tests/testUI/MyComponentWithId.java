@@ -8,5 +8,4 @@ public class MyComponentWithId extends Div {
         setId("my-component-with-id");
         setText(getClass().getSimpleName());
     }
-
 }

@@ -28,5 +28,4 @@ public class PageObjectTest {
     Assertions.assertEquals("MyComponentWithClasses" ,
                             components.get(0).getText());
   }
-
 }

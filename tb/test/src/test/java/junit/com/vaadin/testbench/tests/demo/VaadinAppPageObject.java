@@ -7,11 +7,10 @@ import com.vaadin.testbench.addons.junit5.extensions.container.ContainerInfo;
 import com.vaadin.testbench.addons.junit5.pageobject.AbstractVaadinPageObject;
 
 import static java.lang.Integer.valueOf;
-import static com.vaadin.testbench.tests.demo.VaadinApp.BTN_CLICK_ME;
-import static com.vaadin.testbench.tests.demo.VaadinApp.LB_CLICK_COUNT;
+import static com.vaadin.testbench.tests.demo.MainView.BTN_CLICK_ME;
+import static com.vaadin.testbench.tests.demo.MainView.LB_CLICK_COUNT;
 
 public class VaadinAppPageObject extends AbstractVaadinPageObject {
-
 
   public VaadinAppPageObject(WebDriver webdriver, ContainerInfo containerInfo) {
     super(webdriver, containerInfo);
@@ -33,9 +32,7 @@ public class VaadinAppPageObject extends AbstractVaadinPageObject {
     return lbClickCount().getText();
   }
 
-  // no exception handling
   public int clickCount() {
     return valueOf(clickCountAsString());
   }
-
 }

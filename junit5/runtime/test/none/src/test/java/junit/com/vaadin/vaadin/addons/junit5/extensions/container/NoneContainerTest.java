@@ -10,14 +10,12 @@ import com.vaadin.testbench.addons.junit5.extensions.container.ServletContainerE
 @ExtendWith(ServletContainerExtension.class)
 class NoneContainerTest {
 
-  @RegisterExtension ContainerInfoExtension config = new ContainerInfoExtension();
+  @RegisterExtension
+  ContainerInfoExtension config = new ContainerInfoExtension();
 
   @Test
   void test001() {
     Assertions.assertEquals("127.0.0.1", config.host());
-    Assertions.assertEquals(8080, config.port());
-//    Assertions.assertEquals("webApp", config.); x
+    Assertions.assertEquals(8088, config.port());
   }
-
-
 }
