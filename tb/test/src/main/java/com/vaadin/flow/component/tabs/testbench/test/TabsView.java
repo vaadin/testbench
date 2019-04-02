@@ -12,24 +12,24 @@ import com.vaadin.flow.theme.lumo.Lumo;
 @Theme(Lumo.class)
 public class TabsView extends AbstractView {
 
-  public static final String DEFAULT = "default";
-  public static final String NAV = "Tabs";
+    public static final String DEFAULT = "default";
+    public static final String NAV = "Tabs";
 
-  public TabsView() {
+    public TabsView() {
 
-    Tabs tabs = new Tabs();
-    tabs.setId(DEFAULT);
+        Tabs tabs = new Tabs();
+        tabs.setId(DEFAULT);
 
-    Tab componentTab = new Tab(
-        new Button("Hello" , e -> log("Hello clicked")));
-    Tab textTab = new Tab("Text");
-    tabs.addSelectedChangeListener(e -> log(
-        "Tab '" + e.getSource().getSelectedIndex() + "' selected"));
-    Tab disabledTab = new Tab("Disabled");
-    disabledTab.setEnabled(false);
+        Tab componentTab = new Tab(
+                new Button("Hello", e -> log("Hello clicked")));
+        Tab textTab = new Tab("Text");
+        tabs.addSelectedChangeListener(e -> log(
+                "Tab '" + e.getSource().getSelectedIndex() + "' selected"));
+        Tab disabledTab = new Tab("Disabled");
+        disabledTab.setEnabled(false);
 
-    tabs.add(componentTab , disabledTab , textTab);
-    add(tabs);
-  }
+        tabs.add(componentTab, disabledTab, textTab);
+        add(tabs);
+    }
 
 }

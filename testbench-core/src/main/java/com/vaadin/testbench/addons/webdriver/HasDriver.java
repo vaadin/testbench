@@ -4,7 +4,7 @@ import org.openqa.selenium.WebDriver;
 
 public interface HasDriver {
 
-  WebDriver getDriver();
+    WebDriver getDriver();
 
-  void setDriver(WebDriver driver);
+    void setDriver(WebDriver driver);
 }

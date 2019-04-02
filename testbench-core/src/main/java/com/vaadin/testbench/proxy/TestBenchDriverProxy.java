@@ -1,11 +1,8 @@
 package com.vaadin.testbench.proxy;
 
-import static com.vaadin.testbench.TestBench.createElement;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
+import com.vaadin.testbench.HasTestBenchCommandExecutor;
+import com.vaadin.testbench.TestBenchElement;
+import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.HasCapabilities;
@@ -16,9 +13,12 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.internal.WrapsDriver;
-import com.vaadin.testbench.HasTestBenchCommandExecutor;
-import com.vaadin.testbench.TestBenchElement;
-import com.vaadin.testbench.commands.TestBenchCommandExecutor;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+import static com.vaadin.testbench.TestBench.createElement;
 
 public class TestBenchDriverProxy
         implements WebDriver, WrapsDriver, HasTestBenchCommandExecutor,
@@ -35,6 +35,51 @@ public class TestBenchDriverProxy
 
     // ----------------- WebDriver methods for convenience.
 
+    /**
+     * Wraps any {@link WebElement} found inside the object inside a
+     * {@link TestBenchElement}.
+     * <p>
+     * Traverses through any {@link List} found inside the object and wraps any
+     * elements inside the list, recursively. The behavior is compatible with
+     * what {@link #executeScript(String, Object...)} and
+     * {@link #executeAsyncScript(String, Object...)} returns.
+     * <p>
+     * Does not modify the argument, instead creates a new object containing the
+     * wrapped elements and other possible values.
+     * <p>
+     * This method is protected for testing purposes only.
+     *
+     * @param elementElementsOrValues an object containing a {@link WebElement}, a {@link List} of
+     *                                {@link WebElement WebElements} or something completely
+     *                                different.
+     * @param tbCommandExecutor       the {@link TestBenchCommandExecutor} related to the driver
+     *                                instance
+     */
+    protected static Object wrapElementOrElements(
+            Object elementElementsOrValues,
+            TestBenchCommandExecutor tbCommandExecutor) {
+        if (elementElementsOrValues instanceof List) {
+            @SuppressWarnings({"unchecked", "rawtypes"})
+            List<Object> list = (List) elementElementsOrValues;
+            List<Object> newList = new ArrayList<>();
+
+            for (Object value : list) {
+                newList.add(wrapElementOrElements(value, tbCommandExecutor));
+            }
+            return newList;
+        } else if (elementElementsOrValues instanceof WebElement) {
+            if (elementElementsOrValues instanceof TestBenchElement) {
+                return elementElementsOrValues;
+            } else {
+                return createElement(
+                        (WebElement) elementElementsOrValues,
+                        tbCommandExecutor);
+            }
+        } else {
+            return elementElementsOrValues;
+        }
+    }
+
     @Override
     public void close() {
         getWrappedDriver().close();
@@ -43,7 +88,7 @@ public class TestBenchDriverProxy
     @Override
     public WebElement findElement(By arg0) {
         return TestBenchElement.wrapElement(wrappedDriver.findElement(arg0),
-                                            getCommandExecutor());
+                getCommandExecutor());
     }
 
     @Override
@@ -120,53 +165,6 @@ public class TestBenchDriverProxy
         return wrappedDriver;
     }
 
-    /**
-     * Wraps any {@link WebElement} found inside the object inside a
-     * {@link TestBenchElement}.
-     * <p>
-     * Traverses through any {@link List} found inside the object and wraps any
-     * elements inside the list, recursively. The behavior is compatible with
-     * what {@link #executeScript(String , Object...)} and
-     * {@link #executeAsyncScript(String , Object...)} returns.
-     * <p>
-     * Does not modify the argument, instead creates a new object containing the
-     * wrapped elements and other possible values.
-     * <p>
-     * This method is protected for testing purposes only.
-     *
-     * @param elementElementsOrValues
-     *            an object containing a {@link WebElement}, a {@link List} of
-     *            {@link WebElement WebElements} or something completely
-     *            different.
-     * @param tbCommandExecutor
-     *            the {@link TestBenchCommandExecutor} related to the driver
-     *            instance
-     */
-    protected static Object wrapElementOrElements(
-            Object elementElementsOrValues,
-            TestBenchCommandExecutor tbCommandExecutor) {
-        if (elementElementsOrValues instanceof List) {
-            @SuppressWarnings({ "unchecked", "rawtypes" })
-            List<Object> list = (List) elementElementsOrValues;
-            List<Object> newList = new ArrayList<>();
-
-            for (Object value : list) {
-                newList.add(wrapElementOrElements(value, tbCommandExecutor));
-            }
-            return newList;
-        } else if (elementElementsOrValues instanceof WebElement) {
-            if (elementElementsOrValues instanceof TestBenchElement) {
-                return elementElementsOrValues;
-            } else {
-                return createElement(
-                        (WebElement) elementElementsOrValues,
-                        tbCommandExecutor);
-            }
-        } else {
-            return elementElementsOrValues;
-        }
-    }
-
     @Override
     public Object executeScript(String script, Object... args) {
         if (!(getWrappedDriver() instanceof JavascriptExecutor)) {
@@ -194,5 +192,4 @@ public class TestBenchDriverProxy
             throws WebDriverException {
         return ((TakesScreenshot) getWrappedDriver()).getScreenshotAs(target);
     }
-
 }

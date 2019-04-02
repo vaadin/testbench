@@ -12,18 +12,18 @@ import java.util.stream.Stream;
  */
 @Deprecated
 public class ReferenceImageRepresentation implements Serializable {
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  private String hash;
+    private String hash;
 
 
-  private Set<String> hashValues = new HashSet<>();
+    private Set<String> hashValues = new HashSet<>();
 
-  public void addRepresentation(String hash) {
-    hashValues.add(hash);
-  }
+    public void addRepresentation(String hash) {
+        hashValues.add(hash);
+    }
 
-  public Stream<String> getRepresentations() {
-    return hashValues.stream();
-  }
+    public Stream<String> getRepresentations() {
+        return hashValues.stream();
+    }
 }

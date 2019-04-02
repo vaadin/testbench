@@ -1,13 +1,13 @@
 package com.vaadin.testbench.addons.junit5.extensions.unitest;
 
+import com.vaadin.testbench.addons.junit5.extensions.container.ServletContainerExtension;
+import com.vaadin.testbench.addons.screenshot.FailedTestScreenhsotExtension;
+import org.junit.jupiter.api.extension.ExtendWith;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
-import org.junit.jupiter.api.extension.ExtendWith;
-import com.vaadin.testbench.addons.junit5.extensions.container.ServletContainerExtension;
-import com.vaadin.testbench.addons.screenshot.FailedTestScreenhsotExtension;
 
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
@@ -19,10 +19,7 @@ import com.vaadin.testbench.addons.screenshot.FailedTestScreenhsotExtension;
 @ExtendWith(PageObjectWebDriverCleanerExtension.class)
 public @interface WebUnitTest {
 
-//  Class navigate() default Object.class;
+    String navigateAsString() default "";
 
-  String navigateAsString() default "";
-
-  boolean preLoad() default true;
-
+    boolean preLoad() default true;
 }

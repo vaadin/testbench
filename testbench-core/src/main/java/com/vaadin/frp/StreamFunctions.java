@@ -12,13 +12,13 @@ import java.util.stream.Stream;
  */
 public interface StreamFunctions {
 
-  /**
-   * <p>streamFilter.</p>
-   *
-   * @param <T> a T object.
-   * @return a {@link Function} object.
-   */
-  static <T> Function<Predicate<T>, Function<Stream<T>, Stream<T>>> streamFilter() {
-    return (filter) -> (Function<Stream<T>, Stream<T>>) inputStream -> inputStream.filter(filter);
-  }
+    /**
+     * <p>streamFilter.</p>
+     *
+     * @param <T> a T object.
+     * @return a {@link Function} object.
+     */
+    static <T> Function<Predicate<T>, Function<Stream<T>, Stream<T>>> streamFilter() {
+        return (filter) -> (Function<Stream<T>, Stream<T>>) inputStream -> inputStream.filter(filter);
+    }
 }

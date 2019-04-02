@@ -10,25 +10,23 @@ import com.vaadin.flow.theme.lumo.Lumo;
 @Theme(Lumo.class)
 public class ButtonView extends AbstractView {
 
-  public static final String TEXT = "text";
-  public static final String NOTEXT = "notext";
-  public static final String NAV = "Button";
+    public static final String TEXT = "text";
+    public static final String NOTEXT = "notext";
+    public static final String NAV = "Button";
 
-  public ButtonView() {
+    public ButtonView() {
+        Button buttonWithoutText = new Button();
+        buttonWithoutText.setId(NOTEXT);
+        buttonWithoutText.addClickListener(e ->
+                log("Button without text clicked"));
+        add(buttonWithoutText);
 
-    Button buttonWithoutText = new Button();
-    buttonWithoutText.setId(NOTEXT);
-    buttonWithoutText.addClickListener(e -> {
-      log("Button without text clicked");
-    });
-    add(buttonWithoutText);
+        Button buttonWithText = new Button("Text");
+        buttonWithText.setId(TEXT);
+        buttonWithText.addClickListener(e -> {
+            log("Button with text clicked");
+        });
 
-    Button buttonWithText = new Button("Text");
-    buttonWithText.setId(TEXT);
-    buttonWithText.addClickListener(e -> {
-      log("Button with text clicked");
-    });
-    add(buttonWithText);
-  }
-
+        add(buttonWithText);
+    }
 }

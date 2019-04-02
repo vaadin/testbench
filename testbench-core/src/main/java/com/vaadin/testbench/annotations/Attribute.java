@@ -88,7 +88,6 @@ public @interface Attribute {
          * Internally used to enable use of multiple {@link Attribute}
          * annotations.
          *
-         *
          * @return an array of the Attribute annotations
          */
         Attribute[] value();

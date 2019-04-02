@@ -1,12 +1,12 @@
 package com.vaadin.testbench.elementsbase;
 
+import com.vaadin.testbench.ElementQuery;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
-import com.vaadin.testbench.ElementQuery;
 
 /**
  * Defines the tag name of the element class.
@@ -24,5 +24,4 @@ public @interface Element {
      * @return the tag for the element
      */
     String value();
-
 }

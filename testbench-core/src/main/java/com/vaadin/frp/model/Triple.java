@@ -18,94 +18,100 @@ package com.vaadin.frp.model;
  * @version $Id: $Id
  */
 public class Triple<T1, T2, T3> {
-  private T1 t1;
-  private T2 t2;
-  private T3 t3;
+    private T1 t1;
+    private T2 t2;
+    private T3 t3;
 
-  /**
-   * <p>Constructor for Triple.</p>
-   *
-   * @param t1 a T1 object.
-   * @param t2 a T2 object.
-   * @param t3 a T3 object.
-   */
-  public Triple(final T1 t1, final T2 t2, final T3 t3) {
-    this.t1 = t1;
-    this.t2 = t2;
-    this.t3 = t3;
-  }
+    /**
+     * <p>Constructor for Triple.</p>
+     *
+     * @param t1 a T1 object.
+     * @param t2 a T2 object.
+     * @param t3 a T3 object.
+     */
+    public Triple(final T1 t1, final T2 t2, final T3 t3) {
+        this.t1 = t1;
+        this.t2 = t2;
+        this.t3 = t3;
+    }
 
-  /**
-   * <p>Getter for the field <code>t3</code>.</p>
-   *
-   * @return a T3 object.
-   */
-  public T3 getT3() {
-    return t3;
-  }
+    /**
+     * <p>next.</p>
+     *
+     * @param t1   a T1 object.
+     * @param t2   a T2 object.
+     * @param t3   a T3 object.
+     * @param <T1> a T1 object.
+     * @param <T2> a T2 object.
+     * @param <T3> a T3 object.
+     * @return a {@link Triple} object.
+     */
+    public static <T1, T2, T3> Triple<T1, T2, T3> next(final T1 t1, final T2 t2, final T3 t3) {
+        return new Triple<>(t1, t2, t3);
+    }
 
-  /**
-   * <p>Getter for the field <code>t1</code>.</p>
-   *
-   * @return a T1 object.
-   */
-  public T1 getT1() {
-    return t1;
-  }
+    /**
+     * <p>Getter for the field <code>t3</code>.</p>
+     *
+     * @return a T3 object.
+     */
+    public T3 getT3() {
+        return t3;
+    }
 
-  /**
-   * <p>Getter for the field <code>t2</code>.</p>
-   *
-   * @return a T2 object.
-   */
-  public T2 getT2() {
-    return t2;
-  }
+    /**
+     * <p>Getter for the field <code>t1</code>.</p>
+     *
+     * @return a T1 object.
+     */
+    public T1 getT1() {
+        return t1;
+    }
 
-  /** {@inheritDoc} */
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (! (o instanceof Triple)) return false;
+    /**
+     * <p>Getter for the field <code>t2</code>.</p>
+     *
+     * @return a T2 object.
+     */
+    public T2 getT2() {
+        return t2;
+    }
 
-    Triple<?, ?, ?> triple = (Triple<?, ?, ?>) o;
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Triple)) return false;
 
-    if (t1 != null ? ! t1.equals(triple.t1) : triple.t1 != null) return false;
-    if (t2 != null ? ! t2.equals(triple.t2) : triple.t2 != null) return false;
-    return t3 != null ? t3.equals(triple.t3) : triple.t3 == null;
-  }
+        Triple<?, ?, ?> triple = (Triple<?, ?, ?>) o;
 
-  /** {@inheritDoc} */
-  @Override
-  public int hashCode() {
-    int result = t1 != null ? t1.hashCode() : 0;
-    result = 31 * result + (t2 != null ? t2.hashCode() : 0);
-    result = 31 * result + (t3 != null ? t3.hashCode() : 0);
-    return result;
-  }
+        if (t1 != null ? !t1.equals(triple.t1) : triple.t1 != null) return false;
+        if (t2 != null ? !t2.equals(triple.t2) : triple.t2 != null) return false;
+        return t3 != null ? t3.equals(triple.t3) : triple.t3 == null;
+    }
 
-  /** {@inheritDoc} */
-  @Override
-  public String toString() {
-    return "Triple{" +
-        "t1=" + t1 +
-        ", t2=" + t2 +
-        ", t3=" + t3 +
-        '}';
-  }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        int result = t1 != null ? t1.hashCode() : 0;
+        result = 31 * result + (t2 != null ? t2.hashCode() : 0);
+        result = 31 * result + (t3 != null ? t3.hashCode() : 0);
+        return result;
+    }
 
-  /**
-   * <p>next.</p>
-   *
-   * @param t1 a T1 object.
-   * @param t2 a T2 object.
-   * @param t3 a T3 object.
-   * @param <T1> a T1 object.
-   * @param <T2> a T2 object.
-   * @param <T3> a T3 object.
-   * @return a {@link Triple} object.
-   */
-  public static <T1, T2, T3> Triple<T1, T2, T3> next(final T1 t1, final T2 t2, final T3 t3) {
-    return new Triple<>(t1, t2, t3);
-  }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return "Triple{" +
+                "t1=" + t1 +
+                ", t2=" + t2 +
+                ", t3=" + t3 +
+                '}';
+    }
 }

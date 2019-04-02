@@ -4,24 +4,23 @@ import java.util.function.Supplier;
 
 public interface GenericVaadinAppSpecific extends PageObject {
 
-  default Supplier<String> urlRestartApp() {
-    return () -> url().get() + "?restartApplication";
-  }
+    default Supplier<String> urlRestartApp() {
+        return () -> url().get() + "?restartApplication";
+    }
 
-  default Supplier<String> urlDebugApp() {
-    return () -> url().get() + "?debug";
-  }
+    default Supplier<String> urlDebugApp() {
+        return () -> url().get() + "?debug";
+    }
 
-  default Supplier<String> urlSwitchToDebugApp() {
-    return () -> url().get() + "?debug&restartApplication";
-  }
+    default Supplier<String> urlSwitchToDebugApp() {
+        return () -> url().get() + "?debug&restartApplication";
+    }
 
-  default void switchToDebugMode() {
-    getDriver().get(urlSwitchToDebugApp().get());
-  }
+    default void switchToDebugMode() {
+        getDriver().get(urlSwitchToDebugApp().get());
+    }
 
-  default void restartApplication() {
-    getDriver().get(urlRestartApp().get());
-  }
-
+    default void restartApplication() {
+        getDriver().get(urlRestartApp().get());
+    }
 }

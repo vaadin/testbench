@@ -13,41 +13,41 @@ import com.vaadin.flow.theme.lumo.Lumo;
 @Theme(Lumo.class)
 public class NotificationView extends AbstractView {
 
-  public static final String TEXT = "text";
-  public static final String NOTEXT = "notext";
-  public static final String COMPONENTS = "components";
-  public static final String NAV = "Notification";
+    public static final String TEXT = "text";
+    public static final String NOTEXT = "notext";
+    public static final String COMPONENTS = "components";
+    public static final String NAV = "Notification";
 
-  @Override
-  protected void onAttach(AttachEvent attachEvent) {
-    super.onAttach(attachEvent);
-    Notification notification = Notification.show("" , 20000 ,
-                                                  Position.TOP_CENTER);
-    notification.setId(NOTEXT);
-    add(notification);
+    @Override
+    protected void onAttach(AttachEvent attachEvent) {
+        super.onAttach(attachEvent);
+        Notification notification = Notification.show("", 20000,
+                Position.TOP_CENTER);
+        notification.setId(NOTEXT);
+        add(notification);
 
-    Notification notification2 = Notification.show("Some text" , 20000 ,
-                                                   Position.TOP_CENTER);
-    notification2.setId(TEXT);
-    notification2.getElement().addEventListener("click" , e -> {
-      notification2.close();
-    });
-    add(notification2);
+        Notification notification2 = Notification.show("Some text", 20000,
+                Position.TOP_CENTER);
+        notification2.setId(TEXT);
+        notification2.getElement().addEventListener("click", e -> {
+            notification2.close();
+        });
+        add(notification2);
 
-    Notification withComponents = new Notification();
-    withComponents.setId(COMPONENTS);
-    Button hello = new Button("Hello" , e -> {
-      log("Hello in notification clicked");
-    });
-    hello.setId("hello");
-    withComponents.add(hello);
-    Button close = new Button("Close" , e -> {
-      withComponents.close();
-    });
-    close.setId("close");
-    withComponents.add(close);
-    withComponents.setDuration(0);
-    withComponents.open();
-  }
+        Notification withComponents = new Notification();
+        withComponents.setId(COMPONENTS);
+        Button hello = new Button("Hello", e -> {
+            log("Hello in notification clicked");
+        });
+        hello.setId("hello");
+        withComponents.add(hello);
+        Button close = new Button("Close", e -> {
+            withComponents.close();
+        });
+        close.setId("close");
+        withComponents.add(close);
+        withComponents.setDuration(0);
+        withComponents.open();
+    }
 
 }

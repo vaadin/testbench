@@ -12,45 +12,45 @@ import com.vaadin.flow.theme.lumo.Lumo;
 @Theme(Lumo.class)
 public class TextFieldView extends AbstractView {
 
-  public static final String LABEL_EAGER = "text";
-  public static final String NOLABEL = "notext";
-  public static final String INITIAL_VALUE = "initialvalue";
-  public static final String PLACEHOLDER = "placeholder";
-  public static final String NAV = "TextField";
+    public static final String LABEL_EAGER = "text";
+    public static final String NOLABEL = "notext";
+    public static final String INITIAL_VALUE = "initialvalue";
+    public static final String PLACEHOLDER = "placeholder";
+    public static final String NAV = "TextField";
 
-  public TextFieldView() {
+    public TextFieldView() {
 
-    TextField textfieldNoLabel = new TextField();
-    textfieldNoLabel.setId(NOLABEL);
-    textfieldNoLabel.addValueChangeListener(this::onValueChange);
+        TextField textfieldNoLabel = new TextField();
+        textfieldNoLabel.setId(NOLABEL);
+        textfieldNoLabel.addValueChangeListener(this::onValueChange);
 
-    add(textfieldNoLabel);
+        add(textfieldNoLabel);
 
-    TextField textfieldLabel = new TextField("Label (eager)");
-    textfieldLabel.setValueChangeMode(ValueChangeMode.EAGER);
-    textfieldLabel.setId(LABEL_EAGER);
-    textfieldLabel.addValueChangeListener(this::onValueChange);
-    add(textfieldLabel);
+        TextField textfieldLabel = new TextField("Label (eager)");
+        textfieldLabel.setValueChangeMode(ValueChangeMode.EAGER);
+        textfieldLabel.setId(LABEL_EAGER);
+        textfieldLabel.addValueChangeListener(this::onValueChange);
+        add(textfieldLabel);
 
-    TextField textfieldInitialValue = new TextField("Has an initial value");
-    textfieldInitialValue.setId(INITIAL_VALUE);
-    textfieldInitialValue.setValue("Initial");
-    textfieldInitialValue.addValueChangeListener(this::onValueChange);
-    add(textfieldInitialValue);
+        TextField textfieldInitialValue = new TextField("Has an initial value");
+        textfieldInitialValue.setId(INITIAL_VALUE);
+        textfieldInitialValue.setValue("Initial");
+        textfieldInitialValue.addValueChangeListener(this::onValueChange);
+        add(textfieldInitialValue);
 
-    TextField textfieldPlaceholder = new TextField("Has a placeholder");
-    textfieldPlaceholder.setId(PLACEHOLDER);
-    textfieldPlaceholder.setPlaceholder("Text goes here");
-    textfieldPlaceholder.addValueChangeListener(this::onValueChange);
-    add(textfieldPlaceholder);
-  }
-
-  protected void onValueChange(ComponentValueChangeEvent<TextField, String> e) {
-    String label = e.getSource().getLabel();
-    if (label == null) {
-      label = "";
+        TextField textfieldPlaceholder = new TextField("Has a placeholder");
+        textfieldPlaceholder.setId(PLACEHOLDER);
+        textfieldPlaceholder.setPlaceholder("Text goes here");
+        textfieldPlaceholder.addValueChangeListener(this::onValueChange);
+        add(textfieldPlaceholder);
     }
-    log("Value of '" + label + "' is now " + e.getValue());
-  }
+
+    protected void onValueChange(ComponentValueChangeEvent<TextField, String> e) {
+        String label = e.getSource().getLabel();
+        if (label == null) {
+            label = "";
+        }
+        log("Value of '" + label + "' is now " + e.getValue());
+    }
 
 }

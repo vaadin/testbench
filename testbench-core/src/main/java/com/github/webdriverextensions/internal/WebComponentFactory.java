@@ -1,11 +1,11 @@
 package com.github.webdriverextensions.internal;
 
+import com.github.webdriverextensions.WebComponent;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import com.github.webdriverextensions.WebComponent;
 
 public interface WebComponentFactory {
 
-  <T extends WebComponent> T create(Class<T> webComponentClass , WebElement webElement ,
-                                    WebDriver webDriver);
+    <T extends WebComponent> T create(Class<T> webComponentClass, WebElement webElement,
+                                      WebDriver webDriver);
 }

@@ -1,10 +1,10 @@
 package com.vaadin.frp.functions;
 
-import static com.vaadin.frp.ExceptionFunctions.message;
+import com.vaadin.frp.model.Result;
 
 import java.util.function.Function;
 
-import com.vaadin.frp.model.Result;
+import static com.vaadin.frp.ExceptionFunctions.message;
 
 /**
  * Created by svenruppert on 25.04.17.
@@ -15,21 +15,21 @@ import com.vaadin.frp.model.Result;
 @FunctionalInterface
 public interface CheckedExecutor extends Function<Void, Result<Void>> {
 
-  default Result<Void> execute() {
-    return apply(null);
-  }
-
-
-  @Override
-  default Result<Void> apply(Void t) {
-    try {
-      applyWithException();
-      return Result.success(null);
-    } catch (Exception e) {
-      return Result.failure(message().apply(e));
+    default Result<Void> execute() {
+        return apply(null);
     }
-  }
 
-  void applyWithException() throws Exception;
+
+    @Override
+    default Result<Void> apply(Void t) {
+        try {
+            applyWithException();
+            return Result.success(null);
+        } catch (Exception e) {
+            return Result.failure(message().apply(e));
+        }
+    }
+
+    void applyWithException() throws Exception;
 
 }

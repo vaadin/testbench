@@ -6,7 +6,6 @@ import com.vaadin.testbench.commands.TestBenchCommandExecutor;
  * Interface for classes that have access to a {@link TestBenchCommandExecutor}
  * instance. TestBenchCommandExecutor provides the implementation of TestBench's
  * client-control code.
- *
  */
 public interface HasTestBenchCommandExecutor {
 
@@ -17,5 +16,4 @@ public interface HasTestBenchCommandExecutor {
      * @return
      */
     TestBenchCommandExecutor getCommandExecutor();
-
 }

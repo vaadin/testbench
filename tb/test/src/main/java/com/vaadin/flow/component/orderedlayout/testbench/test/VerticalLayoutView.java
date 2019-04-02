@@ -11,17 +11,17 @@ import com.vaadin.flow.theme.lumo.Lumo;
 @Theme(Lumo.class)
 public class VerticalLayoutView extends AbstractView {
 
-  public static final String DEFAULT = "default";
-  public static final String NAV = "VerticalLayout";
+    public static final String DEFAULT = "default";
+    public static final String NAV = "VerticalLayout";
 
-  public VerticalLayoutView() {
-    add(new TextField("First name"));
-    VerticalLayout layout = new VerticalLayout();
-    layout.setId(DEFAULT);
-    layout.add(new TextField("First name"));
-    layout.add(new TextField("Last name"));
+    public VerticalLayoutView() {
+        add(new TextField("First name"));
+        VerticalLayout layout = new VerticalLayout();
+        layout.setId(DEFAULT);
+        layout.add(new TextField("First name"));
+        layout.add(new TextField("Last name"));
 
-    add(layout);
-  }
+        add(layout);
+    }
 
 }

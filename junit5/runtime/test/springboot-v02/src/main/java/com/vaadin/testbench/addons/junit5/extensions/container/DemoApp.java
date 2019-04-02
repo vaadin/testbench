@@ -9,20 +9,20 @@ import org.springframework.context.annotation.Bean;
 @SpringBootApplication
 @EnableAutoConfiguration
 public class DemoApp {
-  public static void main(String[] args) {
-    SpringApplication.run(DemoApp.class, args);
-  }
+    public static void main(String[] args) {
+        SpringApplication.run(DemoApp.class, args);
+    }
 
-  @Bean
-  public DemoServlet demoServlet() {
-    return new DemoServlet();
-  }
+    @Bean
+    public DemoServlet demoServlet() {
+        return new DemoServlet();
+    }
 
-  @Bean
-  public ServletRegistrationBean exampleServletBean(DemoServlet demoServlet) {
-    ServletRegistrationBean bean = new ServletRegistrationBean(
-     demoServlet, "/demo/*");
-    bean.setLoadOnStartup(1);
-    return bean;
-}
+    @Bean
+    public ServletRegistrationBean exampleServletBean(DemoServlet demoServlet) {
+        ServletRegistrationBean bean = new ServletRegistrationBean(
+                demoServlet, "/demo/*");
+        bean.setLoadOnStartup(1);
+        return bean;
+    }
 }

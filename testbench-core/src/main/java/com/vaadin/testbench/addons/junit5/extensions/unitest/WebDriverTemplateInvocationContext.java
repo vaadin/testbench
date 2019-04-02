@@ -4,5 +4,5 @@ import org.junit.jupiter.api.extension.TestTemplateInvocationContext;
 import org.openqa.selenium.WebDriver;
 
 public interface WebDriverTemplateInvocationContext extends TestTemplateInvocationContext {
-  WebDriver webdriver();
+    WebDriver webdriver();
 }

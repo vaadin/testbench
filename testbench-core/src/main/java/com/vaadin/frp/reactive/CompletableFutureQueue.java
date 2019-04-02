@@ -1,9 +1,9 @@
 package com.vaadin.frp.reactive;
 
-import static java.util.concurrent.CompletableFuture.supplyAsync;
-
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
+
+import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 /**
  * <p>CompletableFutureQueue class.</p>
@@ -13,47 +13,47 @@ import java.util.function.Function;
  */
 public class CompletableFutureQueue<T, R> {
 
-  private Function<T, CompletableFuture<R>> resultFunction;
+    private Function<T, CompletableFuture<R>> resultFunction;
 
-  private CompletableFutureQueue(Function<T, CompletableFuture<R>> resultFunction) {
-    this.resultFunction = resultFunction;
-  }
+    private CompletableFutureQueue(Function<T, CompletableFuture<R>> resultFunction) {
+        this.resultFunction = resultFunction;
+    }
 
-  /**
-   * <p>define.</p>
-   *
-   * @param transformation a {@link Function} object.
-   * @param <T>            a T object.
-   * @param <R>            a R object.
-   * @return a {@link CompletableFutureQueue} object.
-   */
-  public static <T, R> CompletableFutureQueue<T, R> define(Function<T, R> transformation) {
-    return new CompletableFutureQueue<>(t -> CompletableFuture.completedFuture(transformation.apply(t)));
-  }
+    /**
+     * <p>define.</p>
+     *
+     * @param transformation a {@link Function} object.
+     * @param <T>            a T object.
+     * @param <R>            a R object.
+     * @return a {@link CompletableFutureQueue} object.
+     */
+    public static <T, R> CompletableFutureQueue<T, R> define(Function<T, R> transformation) {
+        return new CompletableFutureQueue<>(t -> CompletableFuture.completedFuture(transformation.apply(t)));
+    }
 
-  /**
-   * <p>thenCombineAsync.</p>
-   *
-   * @param nextTransformation a {@link Function} object.
-   * @param <N>                a N object.
-   * @return a {@link CompletableFutureQueue} object.
-   */
-  public <N> CompletableFutureQueue<T, N> thenCombineAsync(Function<R, N> nextTransformation) {
-    final Function<T, CompletableFuture<N>> f = this.resultFunction
-        .andThen(before -> before.thenComposeAsync(v -> supplyAsync(() -> nextTransformation.apply(v))));
-    return new CompletableFutureQueue<>(f);
-  }
+    /**
+     * <p>thenCombineAsync.</p>
+     *
+     * @param nextTransformation a {@link Function} object.
+     * @param <N>                a N object.
+     * @return a {@link CompletableFutureQueue} object.
+     */
+    public <N> CompletableFutureQueue<T, N> thenCombineAsync(Function<R, N> nextTransformation) {
+        final Function<T, CompletableFuture<N>> f = this.resultFunction
+                .andThen(before -> before.thenComposeAsync(v -> supplyAsync(() -> nextTransformation.apply(v))));
+        return new CompletableFutureQueue<>(f);
+    }
 
 
 //TODO : how to combine a list of CF ?
 
-  public <N> CompletableFutureQueue<T, N> thenCombineAsyncFromArray(Function<R, N>[] nextTransformations) {
-    CompletableFutureQueue cfq = this;
-    for (Function<R, N> nextTransformation : nextTransformations) {
-      cfq = cfq.thenCombineAsync(nextTransformation);
+    public <N> CompletableFutureQueue<T, N> thenCombineAsyncFromArray(Function<R, N>[] nextTransformations) {
+        CompletableFutureQueue cfq = this;
+        for (Function<R, N> nextTransformation : nextTransformations) {
+            cfq = cfq.thenCombineAsync(nextTransformation);
+        }
+        return cfq;
     }
-    return cfq;
-  }
 
 //  public <N> CompletableFutureQueue<T, N> thenCombineAsync(Collection<Function<R, N>> nextTransformations) {
 //
@@ -84,12 +84,12 @@ public class CompletableFutureQueue<T, R> {
 //    return new CompletableFutureQueue<>(f);
 //  }
 
-  /**
-   * <p>resultFunction.</p>
-   *
-   * @return a {@link Function} object.
-   */
-  public Function<T, CompletableFuture<R>> resultFunction() {
-    return this.resultFunction;
-  }
+    /**
+     * <p>resultFunction.</p>
+     *
+     * @return a {@link Function} object.
+     */
+    public Function<T, CompletableFuture<R>> resultFunction() {
+        return this.resultFunction;
+    }
 }

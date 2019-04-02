@@ -11,17 +11,17 @@ import com.vaadin.flow.theme.lumo.Lumo;
 @Theme(Lumo.class)
 public class FormLayoutView extends AbstractView {
 
-  public static final String DEFAULT = "default";
-  public static final String NAV = "FormLayout";
+    public static final String DEFAULT = "default";
+    public static final String NAV = "FormLayout";
 
-  public FormLayoutView() {
-    add(new TextField("First name"));
-    FormLayout layout = new FormLayout();
-    layout.setId(DEFAULT);
-    layout.add(new TextField("First name"));
-    layout.add(new TextField("Last name"));
+    public FormLayoutView() {
+        add(new TextField("First name"));
+        FormLayout layout = new FormLayout();
+        layout.setId(DEFAULT);
+        layout.add(new TextField("First name"));
+        layout.add(new TextField("Last name"));
 
-    add(layout);
-  }
+        add(layout);
+    }
 
 }

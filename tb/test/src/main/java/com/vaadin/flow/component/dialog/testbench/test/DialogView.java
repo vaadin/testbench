@@ -12,16 +12,16 @@ import com.vaadin.flow.theme.lumo.Lumo;
 @Theme(Lumo.class)
 public class DialogView extends AbstractView {
 
-  public static final String THE_DIALOG = "the-dialog";
-  public static final String NAV = "Dialog";
-  private Dialog dialog;
+    public static final String THE_DIALOG = "the-dialog";
+    public static final String NAV = "Dialog";
+    private Dialog dialog;
 
-  public DialogView() {
-    dialog = new Dialog();
-    dialog.setId(THE_DIALOG);
-    dialog.add(new Label("This is the contents of the dialog"));
-    dialog.add(new Button("Close" , e -> dialog.close()));
-    dialog.open();
-  }
+    public DialogView() {
+        dialog = new Dialog();
+        dialog.setId(THE_DIALOG);
+        dialog.add(new Label("This is the contents of the dialog"));
+        dialog.add(new Button("Close", e -> dialog.close()));
+        dialog.open();
+    }
 
 }

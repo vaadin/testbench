@@ -12,18 +12,18 @@ import com.vaadin.flow.theme.lumo.Lumo;
 @Theme(Lumo.class)
 public class IronListView extends AbstractView {
 
-  public static final String HUNDRED_THOUSAND = "default";
-  public static final String NAV = "IronList";
+    public static final String HUNDRED_THOUSAND = "default";
+    public static final String NAV = "IronList";
 
-  public IronListView() {
-    IronList<Person> ironList = new IronList<>();
-    ironList.setRenderer(person -> person.getFirstName() + " "
-                                   + person.getLastName() + " (" + person.getAge() + ")");
-    ironList.setWidth("500px");
-    ironList.setHeight("400px");
-    ironList.setId(HUNDRED_THOUSAND);
-    ironList.setDataProvider(new DataGenerator(100000));
-    add(ironList);
-  }
+    public IronListView() {
+        IronList<Person> ironList = new IronList<>();
+        ironList.setRenderer(person -> person.getFirstName() + " "
+                + person.getLastName() + " (" + person.getAge() + ")");
+        ironList.setWidth("500px");
+        ironList.setHeight("400px");
+        ironList.setId(HUNDRED_THOUSAND);
+        ironList.setDataProvider(new DataGenerator(100000));
+        add(ironList);
+    }
 
 }

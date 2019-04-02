@@ -13,31 +13,31 @@ import java.util.stream.Stream;
  */
 public interface ExceptionFunctions {
 
-  /**
-   * <p>message.</p>
-   *
-   * @return a {@link Function} object.
-   */
-  static Function<Exception, String> message() {
-    return (e) -> {
-      Objects.requireNonNull(e , "Exception instance was null.");
-      final String message = e.getMessage();
-      final String simpleName = e.getClass().getSimpleName();
-      return (message != null ? simpleName + " - " + message : simpleName + " - no message");
-    };
-  }
+    /**
+     * <p>message.</p>
+     *
+     * @return a {@link Function} object.
+     */
+    static Function<Exception, String> message() {
+        return (e) -> {
+            Objects.requireNonNull(e, "Exception instance was null.");
+            final String message = e.getMessage();
+            final String simpleName = e.getClass().getSimpleName();
+            return (message != null ? simpleName + " - " + message : simpleName + " - no message");
+        };
+    }
 
-  /**
-   * <p>toStackTraceStream.</p>
-   *
-   * @return a {@link Function} object.
-   */
-  static Function<Exception, Stream<StackTraceElement>> toStackTraceStream() {
-    return (e) -> {
-      final StackTraceElement[] stackTrace = e.getStackTrace();
-      return (stackTrace != null)
-          ? Arrays.stream(stackTrace)
-          : Stream.empty();
-    };
-  }
+    /**
+     * <p>toStackTraceStream.</p>
+     *
+     * @return a {@link Function} object.
+     */
+    static Function<Exception, Stream<StackTraceElement>> toStackTraceStream() {
+        return (e) -> {
+            final StackTraceElement[] stackTrace = e.getStackTrace();
+            return (stackTrace != null)
+                    ? Arrays.stream(stackTrace)
+                    : Stream.empty();
+        };
+    }
 }

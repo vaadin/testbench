@@ -11,17 +11,17 @@ import com.vaadin.flow.theme.lumo.Lumo;
 @Theme(Lumo.class)
 public class HorizontalLayoutView extends AbstractView {
 
-  public static final String DEFAULT = "default";
-  public static final String NAV = "HorizontalLayout";
+    public static final String DEFAULT = "default";
+    public static final String NAV = "HorizontalLayout";
 
-  public HorizontalLayoutView() {
-    add(new TextField("First name"));
-    HorizontalLayout layout = new HorizontalLayout();
-    layout.setId(DEFAULT);
-    layout.add(new TextField("First name"));
-    layout.add(new TextField("Last name"));
+    public HorizontalLayoutView() {
+        add(new TextField("First name"));
+        HorizontalLayout layout = new HorizontalLayout();
+        layout.setId(DEFAULT);
+        layout.add(new TextField("First name"));
+        layout.add(new TextField("Last name"));
 
-    add(layout);
-  }
+        add(layout);
+    }
 
 }

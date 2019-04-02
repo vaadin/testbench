@@ -10,22 +10,22 @@ import com.vaadin.flow.theme.lumo.Lumo;
 @Theme(Lumo.class)
 public class ProgressBarView extends AbstractView {
 
-  public static final String DEFAULT = "default";
-  public static final String HUNDRED = "hundred";
-  public static final String NAV = "ProgressBar";
+    public static final String DEFAULT = "default";
+    public static final String HUNDRED = "hundred";
+    public static final String NAV = "ProgressBar";
 
-  public ProgressBarView() {
-    ProgressBar progressBar = new ProgressBar(0 , 10);
-    progressBar.setId(DEFAULT);
-    progressBar.setWidth("200px");
-    progressBar.setValue(7);
-    add(progressBar);
+    public ProgressBarView() {
+        ProgressBar progressBar = new ProgressBar(0, 10);
+        progressBar.setId(DEFAULT);
+        progressBar.setWidth("200px");
+        progressBar.setValue(7);
+        add(progressBar);
 
-    progressBar = new ProgressBar(0 , 100);
-    progressBar.setId(HUNDRED);
-    progressBar.setWidth("200px");
-    progressBar.setValue(22);
-    add(progressBar);
-  }
+        progressBar = new ProgressBar(0, 100);
+        progressBar.setId(HUNDRED);
+        progressBar.setWidth("200px");
+        progressBar.setValue(22);
+        add(progressBar);
+    }
 
 }
