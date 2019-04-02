@@ -42,7 +42,6 @@
       <dependency>
         <groupId>com.vaadin</groupId>
         <artifactId>vaadin-testbench-tb-test-data</artifactId>
-        <type>test-jar</type>
         <scope>test</scope>
         <version>7.0.0-SNAPSHOT</version>
       </dependency>

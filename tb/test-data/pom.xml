@@ -10,24 +10,6 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>vaadin-testbench-tb-test-data</artifactId>
-  <packaging>pom</packaging>
-
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <!--<goal>jar</goal> do not define it here again !!-->
-              <goal>test-jar</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
+  <packaging>jar</packaging>
 
 </project>

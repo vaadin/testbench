@@ -126,7 +126,7 @@
     <dependency>
       <groupId>com.vaadin</groupId>
       <artifactId>vaadin-testbench-tb-test-data</artifactId>
-      <type>test-jar</type>
+      <type>jar</type>
       <scope>test</scope>
     </dependency>
 
