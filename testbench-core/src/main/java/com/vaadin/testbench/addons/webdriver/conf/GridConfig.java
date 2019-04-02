@@ -13,6 +13,7 @@ public class GridConfig {
     private final String name;
     private final String target;
     private final List<DesiredCapabilities> desiredCapabilities;
+
     public GridConfig(Type type, String name, String target,
                       List<DesiredCapabilities> desiredCapabilities) {
         super();
