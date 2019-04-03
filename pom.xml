@@ -45,9 +45,9 @@
 
   <modules>
     <module>bom</module>
-    <module>testbench-core</module>
-    <module>junit5</module>
-    <module>tb</module>
+    <module>core</module>
+    <module>container</module>
+    <module>it</module>
   </modules>
 
   <repositories>

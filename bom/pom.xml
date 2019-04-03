@@ -41,39 +41,34 @@
 
       <dependency>
         <groupId>com.vaadin</groupId>
-        <artifactId>vaadin-testbench-tb-test-data</artifactId>
+        <artifactId>vaadin-testbench-it-test-data</artifactId>
         <scope>test</scope>
         <version>${project.version}</version>
       </dependency>
 
       <dependency>
         <groupId>com.vaadin</groupId>
-        <artifactId>vaadin-testbench-junit5-runtime-api</artifactId>
+        <artifactId>vaadin-testbench-container-runtime-none</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>com.vaadin</groupId>
-        <artifactId>vaadin-testbench-junit5-runtime-impl-none</artifactId>
+        <artifactId>vaadin-testbench-container-runtime-meecrowave</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>com.vaadin</groupId>
-        <artifactId>vaadin-testbench-junit5-runtime-impl-meecrowave</artifactId>
+        <artifactId>vaadin-testbench-container-runtime-springboot</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>com.vaadin</groupId>
-        <artifactId>vaadin-testbench-junit5-runtime-impl-springboot</artifactId>
+        <artifactId>vaadin-testbench-container-runtime-springboot-v01</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>com.vaadin</groupId>
-        <artifactId>vaadin-testbench-junit5-runtime-impl-springboot-v01</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.vaadin</groupId>
-        <artifactId>vaadin-testbench-junit5-runtime-impl-springboot-v02</artifactId>
+        <artifactId>vaadin-testbench-container-runtime-springboot-v02</artifactId>
         <version>${project.version}</version>
       </dependency>
     </dependencies>
