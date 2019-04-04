@@ -16,7 +16,6 @@ public class ReferenceImageRepresentation implements Serializable {
 
     private String hash;
 
-
     private Set<String> hashValues = new HashSet<>();
 
     public void addRepresentation(String hash) {

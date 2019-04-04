@@ -31,7 +31,6 @@ public class DriverPathLoader {
         makeSureDriversAreExecutable();
     }
 
-
     private static void loadInternetExplorerDriverPath() {
         PropertyUtils.setPropertyIfNotExists(IE_DRIVER_PROPERTY_NAME,
                 System.getProperty(INTERNET_EXPLORER_DRIVER_PROPERTY_NAME)

@@ -24,15 +24,12 @@ import static com.vaadin.testbench.addons.webdriver.BrowserTypes.IE;
 @VaadinTest
 public class GridIT extends AbstractIT {
 
-
     public static final String FIRST_NAME = "First name";
     public static final String LAST_NAME = "Last name";
     public static final String AGE = "Age";
 
     @VaadinTest
     public void scrollToRow(PO po) {
-
-
         final GridElement header = po.$(GridElement.class).id(GridView.HEADER_MULTISELECT);
         final GridElement noHeader = po.$(GridElement.class).id(GridView.NO_HEADER);
         final GridElement tenMillion = po.$(GridElement.class).id(GridView.TEN_MILLION);

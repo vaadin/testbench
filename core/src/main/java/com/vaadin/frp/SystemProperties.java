@@ -21,7 +21,6 @@ public interface SystemProperties {
         return (key) -> hasSystemProperty().apply(qualifier, key);
     }
 
-
     static BiFunction<Class, String, Result<String>> systemProperty() {
         return qualifiedParameter().andThen(key -> Result.ofNullable(getProperty(key)));
     }
@@ -29,7 +28,6 @@ public interface SystemProperties {
     static BiFunction<Class, String, Result<String>> systemProperty(String defaultValue) {
         return qualifiedParameter().andThen(key -> Result.ofNullable(getProperty(key, defaultValue)));
     }
-
 
     static Function<String, Result<String>> systemProperty(Class qualifier) {
         return (key) -> qualifiedParameter()
@@ -42,7 +40,6 @@ public interface SystemProperties {
                 .andThen(k -> Result.ofNullable(getProperty(k, defaultValue)))
                 .apply(qualifier, key);
     }
-
 
     static Function<String, Result<Boolean>> systemPropertyBoolean(Class qualifier) {
         return (key) -> systemProperty(qualifier)

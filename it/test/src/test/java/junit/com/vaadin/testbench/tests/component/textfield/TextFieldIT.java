@@ -15,7 +15,6 @@ import static com.vaadin.flow.component.textfield.testbench.test.TextFieldView.P
 @VaadinTest
 public class TextFieldIT extends AbstractIT {
 
-
     @VaadinTest(navigateAsString = NAV)
     public void getSetValue(GenericTestPageObject po) throws Exception {
 
@@ -23,7 +22,6 @@ public class TextFieldIT extends AbstractIT {
         final TextFieldElement nolabel = po.$(TextFieldElement.class).id(NOLABEL);
         final TextFieldElement initialValue = po.$(TextFieldElement.class).id(INITIAL_VALUE);
         final TextFieldElement placeholder = po.$(TextFieldElement.class).id(PLACEHOLDER);
-
 
         Assertions.assertEquals("", labelEager.getValue());
         Assertions.assertEquals("", nolabel.getValue());

@@ -88,7 +88,6 @@ public interface ExtensionFunctions {
         return (context) -> (key, value) -> storeGlobalPlain().apply(context).put(key, value);
     }
 
-
     static Function<ExtensionContext, Consumer<String>> removeFromMethodStore() {
         return (context) -> (key) -> storeMethodPlain().apply(context).remove(key);
     }

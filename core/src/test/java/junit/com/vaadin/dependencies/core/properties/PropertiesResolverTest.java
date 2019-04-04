@@ -37,7 +37,6 @@ public class PropertiesResolverTest {
         assertEquals("Hello", properties.getProperty("a.b"));
     }
 
-
     @Test
     @DisplayName("load from resource and working dir")
     void test002() {
@@ -48,7 +47,6 @@ public class PropertiesResolverTest {
         assertEquals("20", properties.get("a.a"));
         assertEquals("Hello", properties.getProperty("a.b"));
     }
-
 
     @Test
     @DisplayName("load from home dir")

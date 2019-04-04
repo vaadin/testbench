@@ -120,13 +120,11 @@ public interface Result<T> {
                 : this.asFailure();
     }
 
-
     default <U> Result<U> asFailure() {
         return (isAbsent())
                 ? ofNullable(null)
                 : failure("converted to Failure orig was " + this);
     }
-
 
     abstract class AbstractResult<T> implements Result<T> {
         protected final T value;

@@ -66,7 +66,6 @@ public abstract class AbstractSpringBootContainerInitializer
         startAndStoreApplicationContext(context, clazz, argsWithoutPort);
     }
 
-
     public abstract void startAndStoreApplicationContext(ExtensionContext context,
                                                          Class<?> springBootMainClass,
                                                          List<String> argsWithoutPort);

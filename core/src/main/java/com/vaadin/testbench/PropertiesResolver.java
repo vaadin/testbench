@@ -23,7 +23,6 @@ public class PropertiesResolver {
     public static final String CONFIG_LOCATION_PROPERTY = "rapidpm.configlocation";
     public static final String PROPERIES_EXTENSION = ".properties";
 
-
     public static CheckedFunction<String, Properties> propertyReader() {
         return (filename) -> {
             final PropertiesResolver resolver = new PropertiesResolver();

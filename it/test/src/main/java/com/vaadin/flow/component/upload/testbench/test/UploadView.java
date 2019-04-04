@@ -28,7 +28,6 @@ public class UploadView extends AbstractView {
             }
         });
 
-
         upload.addStartedListener(e -> log("Upload of " + e.getFileName()
                 + " of size " + e.getContentLength()
                 + " started"));

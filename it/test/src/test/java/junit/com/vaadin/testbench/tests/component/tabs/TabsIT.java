@@ -29,7 +29,6 @@ public class TabsIT extends AbstractIT {
         Assertions.assertEquals(0, def.getSelectedTabIndex());
     }
 
-
     /**
      * https://github.com/vaadin/vaadin-tabs-flow/issues/27
      *

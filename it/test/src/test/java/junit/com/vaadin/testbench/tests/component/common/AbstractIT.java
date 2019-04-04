@@ -8,13 +8,11 @@ import org.openqa.selenium.By;
 
 public abstract class AbstractIT {
 
-
     protected String getLogRow(AbstractVaadinPageObject po, int i) {
         return po.findElement(By.id("log")).findElements(By.tagName("div"))
                 .get(i)
                 .getText();
     }
-
 
     protected String getLogRowWithoutNumber(AbstractVaadinPageObject po, int i) {
         return getLogRow(po, i).replaceFirst(".*\\. ", "");

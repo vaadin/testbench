@@ -43,7 +43,6 @@ public class ScreenshotComparator {
                 platformName = PLATFORM_UNKNOWN;
             }
 
-
             String versionString = browserCapabilities.getVersion();
             if (versionString.equals("")) {
                 Object browserVersion = browserCapabilities.getCapability("browserVersion");
@@ -52,7 +51,6 @@ public class ScreenshotComparator {
                 }
             }
             String browserName = browserCapabilities.getBrowserName();
-
 
             return new TestcaseInfo(
                     referenceId,
@@ -112,7 +110,6 @@ public class ScreenshotComparator {
                                  String referenceName,
                                  TakesScreenshot takesScreenshot)
             throws IOException {
-
 
         final ImageComparison imageComparison = new ImageComparison();
 

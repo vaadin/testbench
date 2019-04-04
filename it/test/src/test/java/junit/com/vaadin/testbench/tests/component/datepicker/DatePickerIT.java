@@ -20,7 +20,6 @@ public class DatePickerIT extends AbstractIT {
         final DatePickerElement datePickerWithNoText = po.$(DatePickerElement.class).id(DatePickerView.NOTEXT);
         final DatePickerElement datePickerWithPreSelectedDate = po.$(DatePickerElement.class).id(DatePickerView.PRESELECTED);
 
-
         Assertions.assertNull(datePickerWithText.getDate());
         Assertions.assertNull(datePickerWithNoText.getDate());
         Assertions.assertEquals(LocalDate.of(2015, 7, 13),

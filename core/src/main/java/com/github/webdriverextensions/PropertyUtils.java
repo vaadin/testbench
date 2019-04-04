@@ -1,6 +1,5 @@
 package com.github.webdriverextensions;
 
-
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 

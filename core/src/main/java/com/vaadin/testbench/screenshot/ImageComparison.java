@@ -128,7 +128,6 @@ public class ImageComparison {
                         info.version()
                 )) + "." + IMAGE_FILE_NAME_ENDING;
 
-
         final List<String> referenceFileNames = getReferenceImageFileNames()
                 .apply(new ReferenceInfo(
                         referenceImageFileName,

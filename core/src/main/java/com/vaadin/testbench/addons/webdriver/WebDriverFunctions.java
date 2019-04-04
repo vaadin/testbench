@@ -31,7 +31,6 @@ public interface WebDriverFunctions {
                 .getOrElse(() -> "WebDriver has no name (unexpected)");
     }
 
-
     static Function<RemoteWebDriver, String> formatRemoteWebDriverName() {
         return (webDriver) -> webDriver.getCapabilities().getBrowserName()
                 + " "

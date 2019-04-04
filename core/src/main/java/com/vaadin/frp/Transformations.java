@@ -25,7 +25,6 @@ import java.util.stream.StreamSupport;
  */
 public interface Transformations {
 
-
     /**
      * <p>not.</p>
      *
@@ -34,7 +33,6 @@ public interface Transformations {
     static Function<Boolean, Boolean> not() {
         return (input) -> !input;
     }
-
 
     /**
      * <p>higherCompose.</p>
@@ -67,7 +65,6 @@ public interface Transformations {
                             }
                         }, Spliterator.ORDERED), false);
     }
-
 
     /**
      * <p>curryBiFunction.</p>
@@ -162,7 +159,6 @@ public interface Transformations {
         return (func) -> (a, b, c) -> func.apply(a).apply(b).apply(c);
     }
 
-
     /**
      * <p>unCurryTrifunction.</p>
      *
@@ -177,7 +173,6 @@ public interface Transformations {
             CheckedTriFunction<A, B, C, R>> unCurryCheckedTriFunction() {
         return (func) -> (a, b, c) -> func.apply(a).apply(b).applyWithException(c);
     }
-
 
     //Function Casts
 
@@ -236,7 +231,6 @@ public interface Transformations {
     static <T, R> Function<T, R> asFunc(Function<T, R> function) {
         return function;
     }
-
 
     static <T, R> CheckedFunction<T, R> asCheckedFunc(Function<T, R> f) {
         return f::apply;

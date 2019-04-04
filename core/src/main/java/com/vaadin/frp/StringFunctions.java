@@ -126,7 +126,6 @@ public interface StringFunctions {
                 ).get();
     }
 
-
     /**
      * Verifies that all needles are contained in value. The search is case insensitive
      * <p>
@@ -140,7 +139,6 @@ public interface StringFunctions {
                 .stream(needles)
                 .allMatch(needle -> containsCaseSensitive().apply(value, needle, true));
     }
-
 
     /**
      * Verifies that all needles are contained in value
@@ -158,7 +156,6 @@ public interface StringFunctions {
                         .allMatch(needle -> containsCaseSensitive().apply(value, needle, caseSensitive));
     }
 
-
     /**
      * <p>containsAny.</p>
      *
@@ -167,7 +164,6 @@ public interface StringFunctions {
     static BiFunction<String, String[], Boolean> containsAny() {
         return (value, needles) -> containsAnyCaseSensitive().apply(value, needles, false);
     }
-
 
     /**
      * <p>containsAnyCaseSensitive.</p>
@@ -180,7 +176,6 @@ public interface StringFunctions {
                 .anyMatch(needle -> containsCaseSensitive().apply(value, needle, caseSensitive));
     }
 
-
     /**
      * <p>countSubStr.</p>
      *
@@ -189,7 +184,6 @@ public interface StringFunctions {
     static BiFunction<String, String, Long> countSubStr() {
         return (value, subStr) -> countSubStrCaseSensitive().apply(value, subStr, true, false);
     }
-
 
     /**
      * <p>countSubStrCaseSensitive.</p>
@@ -227,7 +221,6 @@ public interface StringFunctions {
         };
     }
 
-
     /**
      * <p>endsWith.</p>
      *
@@ -251,7 +244,6 @@ public interface StringFunctions {
                 .apply(value, search, value.length(), caseSensitive);
     }
 
-
     /**
      * <p>endsWithCaseSensitiveUpTo.</p>
      *
@@ -266,7 +258,6 @@ public interface StringFunctions {
         };
     }
 
-
     /**
      * <p>ensureLeft.</p>
      *
@@ -275,7 +266,6 @@ public interface StringFunctions {
     static BiFunction<String, String, String> ensureLeft() {
         return (input, prefix) -> ensureLeftCaseSensitive().apply(input, prefix, true);
     }
-
 
     /**
      * <p>ensureLeftCaseSensitive.</p>
@@ -298,7 +288,6 @@ public interface StringFunctions {
         return (input) -> new String(Base64.getDecoder().decode(input.getBytes(Charset.forName("UTF-8")))).intern();
     }
 
-
     /**
      * <p>base64Encode.</p>
      *
@@ -307,7 +296,6 @@ public interface StringFunctions {
     static Function<String, String> base64Encode() {
         return (input) -> Base64.getEncoder().encodeToString(input.getBytes(Charset.forName("UTF-8")));
     }
-
 
     /**
      * <p>appendArray.</p>
@@ -331,7 +319,6 @@ public interface StringFunctions {
                         appendStream)
                 .collect(joining());
     }
-
 
     /**
      * <p>append.</p>
@@ -383,7 +370,6 @@ public interface StringFunctions {
                         ? value
                         : append().apply(repeat().apply(pad, length - value.length()), value);
     }
-
 
     /**
      * <p>decode.</p>
@@ -505,7 +491,6 @@ public interface StringFunctions {
         return (value) -> first().apply(value, 1);
     }
 
-
     /**
      * Formats a string using parameters
      * <p>
@@ -530,7 +515,6 @@ public interface StringFunctions {
             return result;
         };
     }
-
 
     /**
      * Convert hexadecimal unicode (4 digits) string to string chars
@@ -682,7 +666,6 @@ public interface StringFunctions {
                 lastIndexOfCaseSensitiveWithIndexOf().apply(value, needle, value.length(), caseSensitive);
     }
 
-
     /**
      * This method returns the index within the calling String object of the last occurrence of the specified value, searching backwards from the offset.
      * Returns -1 if the value is not found.
@@ -779,7 +762,6 @@ public interface StringFunctions {
 
     }
 
-
     /**
      * <p>removeFromLeftCaseSensitive.</p>
      *
@@ -793,7 +775,6 @@ public interface StringFunctions {
                         ? input
                         : input.substring(prefix.length());
     }
-
 
     /**
      * <p>startsWith.</p>
@@ -813,7 +794,6 @@ public interface StringFunctions {
         return (value) -> value.replaceAll("[^\\w]+", "");
     }
 
-
     /**
      * <p>removeRight.</p>
      *
@@ -822,7 +802,6 @@ public interface StringFunctions {
     static BiFunction<String, String, String> removeRight() {
         return (value, suffix) -> removeRightCaseSensitive().apply(value, suffix, true);
     }
-
 
     /**
      * <p>removeRightCaseSensitive.</p>
@@ -894,7 +873,6 @@ public interface StringFunctions {
                         : append().apply(value, repeat().apply(pad, length - value.length()));
     }
 
-
     /**
      * <p>rightTrim.</p>
      *
@@ -921,7 +899,6 @@ public interface StringFunctions {
     static BiFunction<String, String, Stream<String>> splitStream() {
         return (input, regex) -> Arrays.stream(input.split(regex));
     }
-
 
     /**
      * <p>join.</p>
@@ -994,7 +971,6 @@ public interface StringFunctions {
         };
     }
 
-
     /**
      * <p>slice.</p>
      *
@@ -1035,7 +1011,6 @@ public interface StringFunctions {
                         .substring(1);
     }
 
-
     /**
      * <p>toStudlyCase.</p>
      *
@@ -1071,7 +1046,6 @@ public interface StringFunctions {
                         .collect(joining(chr));
     }
 
-
     /**
      * <p>toKebabCase.</p>
      *
@@ -1080,7 +1054,6 @@ public interface StringFunctions {
     static Function<String, String> toKebabCase() {
         return (value) -> toDecamelize().apply(value, "-");
     }
-
 
     /**
      * <p>toSnakeCase.</p>
@@ -1112,7 +1085,6 @@ public interface StringFunctions {
                 .get();
     }
 
-
     //TODO refactoring - remove optinal
 
     /**
@@ -1130,7 +1102,6 @@ public interface StringFunctions {
                 .get();
     }
 
-
     /**
      * <p>isEnclosedBetween.</p>
      *
@@ -1140,7 +1111,6 @@ public interface StringFunctions {
         return (input, encloser) -> input.startsWith(encloser) && input.startsWith(encloser);
     }
 
-
     /**
      * <p>isEnclosedBetweenBoth.</p>
      *
@@ -1149,7 +1119,6 @@ public interface StringFunctions {
     static TriFunction<String, String, String, Boolean> isEnclosedBetweenBoth() {
         return (input, left, right) -> input.startsWith(left) && input.startsWith(right);
     }
-
 
     /**
      * <p>upperFirst.</p>

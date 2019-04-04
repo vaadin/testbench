@@ -21,7 +21,6 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 @VaadinTest
 public class UploadIT extends AbstractIT {
 
-
     /**
      * Disabled for
      * * Firefox

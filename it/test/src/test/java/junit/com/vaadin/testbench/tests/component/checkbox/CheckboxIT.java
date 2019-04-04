@@ -14,7 +14,6 @@ import static com.vaadin.flow.component.checkbox.testbench.test.CheckboxView.TEX
 @VaadinTest()
 public class CheckboxIT extends AbstractIT {
 
-
     @VaadinTest(navigateAsString = NAV)
     public void checkUncheck(GenericTestPageObject po) throws Exception {
 

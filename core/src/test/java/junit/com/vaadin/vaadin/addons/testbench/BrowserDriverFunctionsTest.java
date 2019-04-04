@@ -25,7 +25,6 @@ public class BrowserDriverFunctionsTest {
         Properties properties = propertyReader()
                 .apply(BrowserDriverFunctions.CONFIG_FOLDER + "config").get();
 
-
         final String unittestingTarget = valueOf(properties.get("unittesting.target")).trim();
         match(
                 matchCase(() -> failure("no matching unittesting.target..")),

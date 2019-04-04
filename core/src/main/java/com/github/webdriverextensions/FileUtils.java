@@ -1,6 +1,5 @@
 package com.github.webdriverextensions;
 
-
 import java.io.File;
 
 public class FileUtils {

@@ -19,7 +19,6 @@ public interface CheckedExecutor extends Function<Void, Result<Void>> {
         return apply(null);
     }
 
-
     @Override
     default Result<Void> apply(Void t) {
         try {

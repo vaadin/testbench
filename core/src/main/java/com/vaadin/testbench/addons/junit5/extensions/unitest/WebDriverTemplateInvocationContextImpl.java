@@ -88,7 +88,6 @@ public final class WebDriverTemplateInvocationContextImpl implements WebDriverTe
 //                    + extensionContext.getTestClass() + " / "
 //                    + extensionContext.getTestMethod());
 
-
                     return page;
                 })
                         .apply(pageObjectClass);

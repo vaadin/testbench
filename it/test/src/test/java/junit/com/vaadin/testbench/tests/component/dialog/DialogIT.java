@@ -1,6 +1,5 @@
 package junit.com.vaadin.testbench.tests.component.dialog;
 
-
 import com.vaadin.flow.component.button.testbench.ButtonElement;
 import com.vaadin.flow.component.dialog.testbench.DialogElement;
 import com.vaadin.flow.component.dialog.testbench.test.DialogView;

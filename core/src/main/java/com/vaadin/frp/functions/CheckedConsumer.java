@@ -9,5 +9,4 @@ package com.vaadin.frp.functions;
 @FunctionalInterface
 public interface CheckedConsumer<T> extends CheckedFunction<T, Void> {
 
-
 }

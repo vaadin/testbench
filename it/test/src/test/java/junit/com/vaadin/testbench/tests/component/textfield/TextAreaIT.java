@@ -15,7 +15,6 @@ import static com.vaadin.flow.component.textfield.testbench.test.TextAreaView.PL
 @VaadinTest
 public class TextAreaIT extends AbstractIT {
 
-
     @VaadinTest(navigateAsString = NAV)
     public void getSetValue(GenericTestPageObject po) throws Exception {
 

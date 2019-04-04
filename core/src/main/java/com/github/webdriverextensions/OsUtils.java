@@ -1,6 +1,5 @@
 package com.github.webdriverextensions;
 
-
 import org.openqa.selenium.Platform;
 
 public class OsUtils {

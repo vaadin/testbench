@@ -44,7 +44,6 @@ public class CompletableFutureQueue<T, R> {
         return new CompletableFutureQueue<>(f);
     }
 
-
 //TODO : how to combine a list of CF ?
 
     public <N> CompletableFutureQueue<T, N> thenCombineAsyncFromArray(Function<R, N>[] nextTransformations) {

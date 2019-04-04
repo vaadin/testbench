@@ -15,7 +15,6 @@ public interface ComponentIDGenerator {
         return (id) -> id + "." + "placeholder";
     }
 
-
     static Function<Class, BiFunction<Class, String, String>> typedComponentIDGenerator() {
         return (clazz) -> (uiClass, label) -> genericID().apply(uiClass, clazz, label);
     }

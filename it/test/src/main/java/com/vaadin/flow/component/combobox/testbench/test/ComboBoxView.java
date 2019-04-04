@@ -27,7 +27,6 @@ public class ComboBoxView extends AbstractView {
     public static final Person PRE_SELECTED_PERSON_FOR_COMBOBOX_WITH_BEANS = new Person("John", "Doe", 20);
     public static final String NAV = "ComboBox";
 
-
     public ComboBoxView() {
 
         ComboBox<String> comboBoxWithoutText = new ComboBox<>();

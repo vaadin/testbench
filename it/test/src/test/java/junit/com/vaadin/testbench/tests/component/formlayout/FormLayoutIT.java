@@ -1,6 +1,5 @@
 package junit.com.vaadin.testbench.tests.component.formlayout;
 
-
 import com.vaadin.flow.component.formlayout.testbench.FormLayoutElement;
 import com.vaadin.flow.component.formlayout.testbench.test.FormLayoutView;
 import com.vaadin.flow.component.textfield.testbench.TextFieldElement;

@@ -15,7 +15,6 @@ public @interface SpringBootConf {
      */
     Class<?> source();
 
-
     /**
      * Additional Application-Params that should be used for this test
      *

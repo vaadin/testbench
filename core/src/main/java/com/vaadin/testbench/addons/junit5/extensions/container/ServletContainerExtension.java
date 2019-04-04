@@ -24,7 +24,6 @@ public class ServletContainerExtension implements
 
     private final ContainerInitializer containerIntializer;
 
-
     public ServletContainerExtension() {
         ServiceLoader<ContainerInitializer> serviceLoader =
                 ServiceLoader.load(ContainerInitializer.class);
@@ -74,7 +73,6 @@ public class ServletContainerExtension implements
             throw new ParameterResolutionException("was not able to create ContainerInfo instance");
         }
     }
-
 
     @Override
     public boolean supportsParameter(ParameterContext parameterContext,
