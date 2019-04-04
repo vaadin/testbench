@@ -25,7 +25,7 @@ public class ElementScreenCompareTest {
     public void elementCompareScreen(GenericTestPageObject po) throws Exception {
         TestBenchElement button4 = po.$(NativeButtonElement.class).get(4);
 
-        final byte[] screenshot = button4.getScreenshotAs(OutputType.BYTES);
+        button4.getScreenshotAs(OutputType.BYTES);
 
         Assertions.assertTrue(button4.compareScreen("button4"));
 
