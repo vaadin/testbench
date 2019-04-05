@@ -1,18 +1,20 @@
 package com.vaadin.testbench.addons.junit5.extensions.container;
 
-import com.vaadin.frp.model.serial.Pair;
+public class ContainerInfo {
 
-public class ContainerInfo extends Pair<Integer, String> {
+    private final Integer port;
+    private final String host;
 
     public ContainerInfo(Integer port, String host) {
-        super(port, host);
+        this.port = port;
+        this.host = host;
     }
 
     public int port() {
-        return getT1();
+        return port;
     }
 
     public String host() {
-        return getT2();
+        return host;
     }
 }

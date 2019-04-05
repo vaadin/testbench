@@ -1,16 +1,15 @@
 package com.vaadin.testbench.screenshot;
 
-import com.vaadin.frp.functions.CheckedFunction;
 import org.apache.commons.codec.binary.Base64;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Function;
 
 import static com.vaadin.testbench.screenshot.ScreenshotProperties.IMAGE_FILE_NAME_ENDING;
 import static java.awt.image.BufferedImage.TYPE_INT_ARGB;
@@ -26,16 +25,14 @@ public class ImageUtil {
      *
      * @return Base64 encoded String of image
      */
-    public static CheckedFunction<BufferedImage, String> encodeImageToBase64() {
-        return (image) -> {
-            Base64 encoder = new Base64();
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    public static String encodeImageToBase64(BufferedImage image) {
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
             ImageIO.write(image, IMAGE_FILE_NAME_ENDING, baos);
             baos.flush();
-            byte[] encodedBytes = encoder.encode(baos.toByteArray());
-            baos.close();
-            return new String(encodedBytes);
-        };
+            return new String(new Base64().encode(baos.toByteArray()));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -43,13 +40,11 @@ public class ImageUtil {
      *
      * @return
      */
-    public static Function<Integer, Double> rgbToLuminance() {
-        return (rgb) -> {
-            int r = ((rgb >> 16) & 0xFF);
-            int g = ((rgb >> 8) & 0xFF);
-            int b = (rgb & 0xFF);
-            return .299 * r + .587 * g + .114 * b;
-        };
+    public static double rgbToLuminance(int rgb) {
+        int r = ((rgb >> 16) & 0xFF);
+        int g = ((rgb >> 8) & 0xFF);
+        int b = (rgb & 0xFF);
+        return .299 * r + .587 * g + .114 * b;
     }
 
     /**
@@ -116,23 +111,21 @@ public class ImageUtil {
      *
      * @return an ImageProperties descriptor object
      */
-    public static Function<BufferedImage, ImageProperties> extractImageProperties() {
-        return (image) -> {
-            final int imageType = image.getType();
-            ImageProperties p = new ImageProperties();
-            p.image = image;
-            p.raster = image.getRaster();
-            p.alpha = imageType == TYPE_INT_ARGB
-                    || imageType == BufferedImage.TYPE_4BYTE_ABGR;
-            boolean rgb = imageType == TYPE_INT_ARGB || imageType == TYPE_INT_RGB;
-            boolean bgr = imageType == BufferedImage.TYPE_INT_BGR
-                    || imageType == BufferedImage.TYPE_3BYTE_BGR
-                    || imageType == BufferedImage.TYPE_4BYTE_ABGR;
-            p.width = image.getWidth();
-            p.height = image.getHeight();
-            p.fallback = !(rgb || bgr);
-            return p;
-        };
+    public static ImageProperties extractImageProperties(BufferedImage image) {
+        final int imageType = image.getType();
+        ImageProperties p = new ImageProperties();
+        p.image = image;
+        p.raster = image.getRaster();
+        p.alpha = imageType == TYPE_INT_ARGB
+                || imageType == BufferedImage.TYPE_4BYTE_ABGR;
+        boolean rgb = imageType == TYPE_INT_ARGB || imageType == TYPE_INT_RGB;
+        boolean bgr = imageType == BufferedImage.TYPE_INT_BGR
+                || imageType == BufferedImage.TYPE_3BYTE_BGR
+                || imageType == BufferedImage.TYPE_4BYTE_ABGR;
+        p.width = image.getWidth();
+        p.height = image.getHeight();
+        p.fallback = !(rgb || bgr);
+        return p;
     }
 
     /**
@@ -216,22 +209,19 @@ public class ImageUtil {
      *
      * @return A copy of sourceImage
      */
-    public static Function<BufferedImage, BufferedImage> cloneImage() {
-        return (sourceImage) -> {
-            // This method could likely be optimized but the gain is probably
-            // small
-            final int w = sourceImage.getWidth();
-            final int h = sourceImage.getHeight();
+    public static BufferedImage cloneImage(BufferedImage sourceImage) {
+        // This method could likely be optimized but the gain is probably
+        // small
+        final int w = sourceImage.getWidth();
+        final int h = sourceImage.getHeight();
 
-            BufferedImage newImage = new BufferedImage(w, h, TYPE_INT_RGB);
+        BufferedImage newImage = new BufferedImage(w, h, TYPE_INT_RGB);
 
-            Graphics2D g = (Graphics2D) newImage.getGraphics();
-            g.drawImage(sourceImage, 0, 0, w, h, null);
-            g.dispose();
+        Graphics2D g = (Graphics2D) newImage.getGraphics();
+        g.drawImage(sourceImage, 0, 0, w, h, null);
+        g.dispose();
 
-            return newImage;
-        };
-
+        return newImage;
     }
 
     /**
@@ -239,6 +229,7 @@ public class ImageUtil {
      * getBlock() method.
      */
     public static final class ImageProperties {
+
         private BufferedImage image = null;
         private Raster raster = null;
         private boolean alpha = false;

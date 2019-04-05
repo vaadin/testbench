@@ -1,8 +1,6 @@
 package com.vaadin.testbench.addons.junit5.extensions.unitest;
 
 import com.github.webdriverextensions.WebDriverExtensionFieldDecorator;
-import com.vaadin.frp.functions.CheckedFunction;
-import com.vaadin.frp.model.Result;
 import com.vaadin.testbench.addons.junit5.extensions.container.ContainerInfo;
 import com.vaadin.testbench.addons.junit5.pageobject.PageObject;
 import org.junit.jupiter.api.extension.Extension;
@@ -13,6 +11,7 @@ import org.junit.jupiter.api.extension.ParameterResolver;
 import org.openqa.selenium.WebDriver;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import static com.vaadin.testbench.addons.junit5.extensions.ExtensionFunctions.storeMethodPlain;
@@ -29,8 +28,9 @@ public final class WebDriverTemplateInvocationContextImpl implements WebDriverTe
     private final WebDriver webDriver;
     private PageObjectInvocationContextProvider pageObjectInvocationContextProvider;
 
-    protected WebDriverTemplateInvocationContextImpl(PageObjectInvocationContextProvider pageObjectInvocationContextProvider,
-                                                     WebDriver webDriver) {
+    protected WebDriverTemplateInvocationContextImpl(
+            PageObjectInvocationContextProvider pageObjectInvocationContextProvider,
+            WebDriver webDriver) {
         this.pageObjectInvocationContextProvider = pageObjectInvocationContextProvider;
         this.webDriver = webDriver;
     }
@@ -43,7 +43,7 @@ public final class WebDriverTemplateInvocationContextImpl implements WebDriverTe
 
     @Override
     public String getDisplayName(int invocationIndex) {
-        return webdriverName().apply(webdriver());
+        return webdriverName(webdriver());
     }
 
     @Override
@@ -65,46 +65,40 @@ public final class WebDriverTemplateInvocationContextImpl implements WebDriverTe
                         .getParameter()
                         .getType();
 
-                final Result<PageObject> po = ((CheckedFunction<Class<?>, PageObject>) aClass -> {
-                    final Constructor<?> constructor = pageObjectClass.getConstructor(WebDriver.class, ContainerInfo.class);
+                PageObject pageObject = null;
+                try {
+                    final Constructor<?> constructor
+                            = pageObjectClass.getConstructor(WebDriver.class, ContainerInfo.class);
                     WebDriver webDriver = webdriver();
-                    PageObject page = (PageObject) constructor.newInstance(webDriver, containerInfo().apply(extensionContext));
-                    // TODO(sven): Check if needed.
-                    initElements(new WebDriverExtensionFieldDecorator(webDriver), page);
+                    pageObject = (PageObject) constructor.newInstance(webDriver, containerInfo(extensionContext));
+                } catch (Exception e) {
+                    throw new ParameterResolutionException("Unable to create PageObjectInstance of type "
+                            + pageObjectClass);
+                }
 
-                    // TODO(sven): Work on preLoad feature.
+                // TODO(sven): Check if needed.
+                initElements(new WebDriverExtensionFieldDecorator(webDriver), pageObject);
 
-                    final Boolean preLoad = storeMethodPlain().apply(extensionContext).get(PAGE_OBJECT_PRELOAD, Boolean.class);
-                    if (preLoad) {
+                // TODO(sven): Work on preLoad feature.
 
-                        final String nav = storeMethodPlain().apply(extensionContext).get(PAGE_OBJECT_NAVIGATION_TARGET, String.class);
-                        if (nav != null) page.loadPage(nav);
-                        else page.loadPage();
+                final Boolean preLoad = storeMethodPlain(extensionContext).get(PAGE_OBJECT_PRELOAD, Boolean.class);
+                if (preLoad) {
+                    final String nav = storeMethodPlain(extensionContext).get(
+                            PAGE_OBJECT_NAVIGATION_TARGET, String.class);
+                    if (nav != null) pageObject.loadPage(nav);
+                    else pageObject.loadPage();
 
-                    } else {
-                    }
-//          logger()
-//              .info("no preLoading activated for testClass/testMethod "
+                }
+//           else logger()
+//              .info("No preLoading activated for testClass/testMethod "
 //                    + extensionContext.getTestClass() + " / "
 //                    + extensionContext.getTestMethod());
 
-                    return page;
-                })
-                        .apply(pageObjectClass);
-
-                po.ifPresentOrElse(
-                        success -> {
 //              pageObjectInvocationContextProvider.logger().fine("pageobject of type " + pageObjectClass.getSimpleName()
 //                                                                + " was created with " + webdriverName().apply(webdriver()));
-                            storePageObject().accept(extensionContext, success);
-                        },
-                        failed -> {
-                        }/*pageObjectInvocationContextProvider.logger().warning("was not able to create PageObjectInstance " + failed)*/
-                );
-                po.ifAbsent(() -> {
-                    throw new ParameterResolutionException("was not able to create PageObjectInstance of type " + pageObjectClass);
-                });
-                return po.get();
+                storePageObject(pageObject, extensionContext);
+
+                return pageObject;
             }
         });
     }

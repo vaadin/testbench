@@ -1,20 +1,12 @@
 package com.vaadin.testbench.addons.junit5.extensions.container;
 
-import com.vaadin.frp.Transformations;
-import com.vaadin.frp.functions.CheckedPredicate;
-import com.vaadin.frp.functions.CheckedSupplier;
-
-import java.net.Inet4Address;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.ServerSocket;
-import java.util.Collections;
+import java.net.SocketException;
 import java.util.Enumeration;
-import java.util.function.Supplier;
-
-import static com.vaadin.frp.StringFunctions.notEmpty;
-import static com.vaadin.frp.StringFunctions.notStartsWith;
-import static com.vaadin.frp.Transformations.not;
+import java.util.Optional;
 
 public interface NetworkFunctions {
 
@@ -27,33 +19,42 @@ public interface NetworkFunctions {
     String SERVER_PORT = "server.port";
     String SERVER_WEBAPP = "server.webapp";
 
-    static CheckedSupplier<Integer> freePort() {
-        return () -> {
-            try (final ServerSocket socket = new ServerSocket(0)) {
-                return socket.getLocalPort();
-            }
-        };
+    static Optional<Integer> freePort() {
+        try (final ServerSocket socket = new ServerSocket(0)) {
+            return Optional.of(socket.getLocalPort());
+        } catch (IOException e) {
+            return Optional.empty();
+        }
     }
 
-    static Supplier<String> localeIP() {
-        return () -> {
-            final CheckedSupplier<Enumeration<NetworkInterface>> checkedSupplier =
-                    NetworkInterface::getNetworkInterfaces;
+    static String localIp() {
+        try {
+            Enumeration<NetworkInterface> interfaces = NetworkInterface
+                    .getNetworkInterfaces();
+            while (interfaces.hasMoreElements()) {
+                NetworkInterface nwInterface = interfaces.nextElement();
+                if (!nwInterface.isUp() || nwInterface.isLoopback()
+                        || nwInterface.isVirtual()) {
+                    continue;
+                }
+                Enumeration<InetAddress> addresses = nwInterface
+                        .getInetAddresses();
+                while (addresses.hasMoreElements()) {
+                    final InetAddress address = addresses.nextElement();
+                    final String hostAddr = address.getHostAddress();
+                    final boolean acceptable = !hostAddr.startsWith("127")
+                            && hostAddr.startsWith("169.254")
+                            && hostAddr.startsWith("255.255.255.255")
+                            && hostAddr.startsWith("0.0.0.0");
+                    if (acceptable) {
+                        return address.getHostAddress();
+                    }
+                }
+            }
+        } catch (SocketException e) {
+//            logger().info("Unable to enumerate network interfaces");
+        }
 
-            return Transformations.<NetworkInterface>enumToStream()
-                    .apply(checkedSupplier.getOrElse(Collections::emptyEnumeration))
-                    .filter((CheckedPredicate<NetworkInterface>) NetworkInterface::isUp)
-                    .map(NetworkInterface::getInetAddresses)
-                    .flatMap(iaEnum -> Transformations.<InetAddress>enumToStream().apply(iaEnum))
-                    .filter(inetAddress -> inetAddress instanceof Inet4Address)
-                    .filter(not(InetAddress::isMulticastAddress)).filter(not(InetAddress::isLoopbackAddress))
-                    .map(InetAddress::getHostAddress).filter(notEmpty())
-                    .filter(adr -> notStartsWith().apply(adr, "127"))
-                    .filter(adr -> notStartsWith().apply(adr, "169.254"))
-                    .filter(adr -> notStartsWith().apply(adr, "255.255.255.255"))
-                    .filter(adr -> notStartsWith().apply(adr, "255.255.255.255"))
-                    .filter(adr -> notStartsWith().apply(adr, "0.0.0.0"))
-                    .findFirst().orElse("localhost");
-        };
+        return "localhost";
     }
 }

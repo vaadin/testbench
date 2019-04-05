@@ -63,7 +63,8 @@ public class UploadIT extends AbstractIT {
     // be created or throttling support
     public void abortUpload(GenericTestPageObject po) {
 //    logger().warning(
-//        "To test manually, remove @Ignore and set a breakpoint on the abort() line. Then start uploading a huge file after hitting the breakpoint and continue with the test");
+//        "To test manually, remove @Ignore and set a breakpoint on the abort() line.
+//        Then start uploading a huge file after hitting the breakpoint and continue with the test");
 
         final UploadElement upload = po.$(UploadElement.class).id(UPLOAD);
         upload.abort();

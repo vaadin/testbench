@@ -17,10 +17,10 @@ public class VaadinPreLoadTargetExtension implements BeforeEachCallback {
 
                     if (annotation != null) {
                         final boolean preLoad = annotation.preLoad();
-                        storeMethodPlain().apply(context).put(PAGE_OBJECT_PRELOAD, preLoad);
+                        storeMethodPlain(context).put(PAGE_OBJECT_PRELOAD, preLoad);
                         final String target = annotation.navigateAsString();
-                        if (target != null && !target.isEmpty()) {
-                            storeMethodPlain().apply(context).put(PAGE_OBJECT_NAVIGATION_TARGET, target);
+                        if (!target.isEmpty()) {
+                            storeMethodPlain(context).put(PAGE_OBJECT_NAVIGATION_TARGET, target);
                         }
                     }
                 });

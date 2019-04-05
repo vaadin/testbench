@@ -18,7 +18,8 @@ public class DatePickerIT extends AbstractIT {
     public void setGetDate(GenericTestPageObject po) throws Exception {
         final DatePickerElement datePickerWithText = po.$(DatePickerElement.class).id(DatePickerView.TEXT);
         final DatePickerElement datePickerWithNoText = po.$(DatePickerElement.class).id(DatePickerView.NOTEXT);
-        final DatePickerElement datePickerWithPreSelectedDate = po.$(DatePickerElement.class).id(DatePickerView.PRESELECTED);
+        final DatePickerElement datePickerWithPreSelectedDate
+                = po.$(DatePickerElement.class).id(DatePickerView.PRESELECTED);
 
         Assertions.assertNull(datePickerWithText.getDate());
         Assertions.assertNull(datePickerWithNoText.getDate());
@@ -49,7 +50,8 @@ public class DatePickerIT extends AbstractIT {
     public void clear(GenericTestPageObject po) {
         final DatePickerElement datePickerWithText = po.$(DatePickerElement.class).id(DatePickerView.TEXT);
         final DatePickerElement datePickerWithNoText = po.$(DatePickerElement.class).id(DatePickerView.NOTEXT);
-        final DatePickerElement datePickerWithPreSelectedDate = po.$(DatePickerElement.class).id(DatePickerView.PRESELECTED);
+        final DatePickerElement datePickerWithPreSelectedDate
+                = po.$(DatePickerElement.class).id(DatePickerView.PRESELECTED);
 
         datePickerWithText.clear();
         Assertions.assertNull(datePickerWithText.getDate());

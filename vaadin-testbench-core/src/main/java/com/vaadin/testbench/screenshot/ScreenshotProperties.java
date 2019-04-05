@@ -1,14 +1,5 @@
 package com.vaadin.testbench.screenshot;
 
-import com.vaadin.frp.model.Result;
-
-import java.util.function.Function;
-
-import static com.vaadin.frp.SystemProperties.systemProperty;
-import static com.vaadin.frp.SystemProperties.systemPropertyBoolean;
-import static com.vaadin.frp.SystemProperties.systemPropertyDouble;
-import static com.vaadin.frp.SystemProperties.systemPropertyInt;
-
 public final class ScreenshotProperties {
 
     public static final String SCREENSHOT_COMPARISON_CURSOR_DETECTION = "screenshotComparisonCursorDetection";
@@ -18,38 +9,35 @@ public final class ScreenshotProperties {
     public static final String SCREENSHOT_RETRIES_MAX = "maxScreenshotRetries";
     public static final String SCREENSHOT_RETRY_DELAY = "screenshotRetryDelay";
     public static final String IMAGE_FILE_NAME_ENDING = "png";
-    public static final double SCREENSHOT_COMPARISON_TOLERANCE_DEFAULT = 0.01;
-    public static final int SCREENSHOT_RETRIES_MAX_DEFAULT = 2;
+    public static final String SCREENSHOT_COMPARISON_TOLERANCE_DEFAULT = "0.01";
+    public static final String SCREENSHOT_RETRIES_MAX_DEFAULT = "2";
     public static final int SCREENSHOT_RETRY_DELAY_DEFAULT = 500;
     public static final String SCREENSHOT_REFERENCE_DIRECTORY_DEFAULT = "reference-screenshots";
     public static final String SCREENSHOT_ERROR_DIRECTORY_DEFAULT = "target/error-screenshots";
-    private static final Function<String, Result<String>> property = systemProperty(ScreenshotProperties.class);
-    private static final Function<String, Result<Integer>> propertyInt = systemPropertyInt(ScreenshotProperties.class);
-    private static final Function<String, Result<Boolean>> propertyBoolean = systemPropertyBoolean(ScreenshotProperties.class);
-    private static final Function<String, Result<Double>> propertyDouble = systemPropertyDouble(ScreenshotProperties.class);
-    private static boolean isScreenshotComparisonCursorDetection = propertyBoolean
-            .apply(SCREENSHOT_COMPARISON_CURSOR_DETECTION)
-            .getOrElse(() -> false);
 
-    private static String screenshotReferenceDirectory = property
-            .apply(SCREENSHOT_REFERENCE_DIRECTORY)
-            .getOrElse(() -> SCREENSHOT_REFERENCE_DIRECTORY_DEFAULT);
+    private static String qualifiedKey(String key) {
+        return ScreenshotProperties.class.getName() + "." + key;
+    }
 
-    private static String screenshotErrorDirectory = property
-            .apply(SCREENSHOT_ERROR_DIRECTORY)
-            .getOrElse(() -> SCREENSHOT_ERROR_DIRECTORY_DEFAULT);
+    private static boolean isScreenshotComparisonCursorDetection = Boolean.valueOf(
+            System.getProperty(qualifiedKey(SCREENSHOT_COMPARISON_CURSOR_DETECTION),
+                    Boolean.FALSE.toString()));
 
-    private static double screenshotComparisonTolerance = propertyDouble
-            .apply(SCREENSHOT_COMPARISON_TOLERANCE)
-            .getOrElse(() -> SCREENSHOT_COMPARISON_TOLERANCE_DEFAULT);
+    private static String screenshotReferenceDirectory = System.getProperty(
+            qualifiedKey(SCREENSHOT_REFERENCE_DIRECTORY), SCREENSHOT_REFERENCE_DIRECTORY_DEFAULT);
 
-    private static int maxScreenshotRetries = propertyInt
-            .apply(SCREENSHOT_RETRIES_MAX)
-            .getOrElse(() -> SCREENSHOT_RETRIES_MAX_DEFAULT);
+    private static String screenshotErrorDirectory = System.getProperty(
+            qualifiedKey(SCREENSHOT_ERROR_DIRECTORY), SCREENSHOT_ERROR_DIRECTORY_DEFAULT);
 
-    private static int screenshotRetryDelay = propertyInt
-            .apply(SCREENSHOT_RETRY_DELAY)
-            .getOrElse(() -> SCREENSHOT_RETRY_DELAY_DEFAULT);
+    private static double screenshotComparisonTolerance = Double.valueOf(
+            System.getProperty(qualifiedKey(SCREENSHOT_COMPARISON_TOLERANCE),
+                    SCREENSHOT_COMPARISON_TOLERANCE_DEFAULT));
+
+    private static int maxScreenshotRetries = Integer.valueOf(
+            System.getProperty(qualifiedKey(SCREENSHOT_RETRIES_MAX), SCREENSHOT_RETRIES_MAX_DEFAULT));
+
+    private static int screenshotRetryDelay = Integer.valueOf(
+            System.getProperty(qualifiedKey(SCREENSHOT_RETRY_DELAY)), SCREENSHOT_RETRY_DELAY_DEFAULT);
 
     /**
      * Tells whether to treat screen shots with the only difference being a text

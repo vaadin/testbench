@@ -20,7 +20,7 @@ public class ContainerInfoExtension implements BeforeEachCallback {
     @Override
     public void beforeEach(ExtensionContext extensionContext) {
 //    logger().info("ContainerInfoExtension - beforeEach ");
-        containerInfo = containerInfo().apply(extensionContext);
+        containerInfo = containerInfo(extensionContext);
 //    logger().info("ContainerInfoExtension - " + containerInfo);
     }
 }

@@ -9,9 +9,9 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
-import java.util.function.Function;
 
 import static com.github.webdriverextensions.WebDriverProperties.CHROME_BINARY_PROPERTY_NAME;
 import static com.github.webdriverextensions.WebDriverProperties.CHROME_DRIVER_PROPERTY_NAME;
@@ -23,7 +23,6 @@ import static com.github.webdriverextensions.WebDriverProperties.IE_BINARY_PROPE
 import static com.github.webdriverextensions.WebDriverProperties.IE_DRIVER_PROPERTY_NAME;
 import static com.github.webdriverextensions.WebDriverProperties.OPERA_BINARY_PROPERTY_NAME;
 import static com.github.webdriverextensions.WebDriverProperties.OPERA_DRIVER_PROPERTY_NAME;
-import static com.vaadin.frp.model.Result.ofNullable;
 import static com.vaadin.testbench.addons.webdriver.conf.WebdriversConfig.COMPATTESTING_GRID;
 import static java.lang.System.setProperty;
 import static java.util.Arrays.stream;
@@ -42,32 +41,20 @@ public class WebdriversConfigFactory {
     public static final String DEFAULT_PROTO = "http";
 
     public WebdriversConfig createFromProperies(Properties configProperties) {
-        Function<String, String> missingMsg = (param) -> "property " + param + " is not defined in the configuration files.";
+        Optional.ofNullable(configProperties.getProperty(CHROME_BINARY_PROPERTY_NAME, null))
+                .ifPresent(success -> setProperty(CHROME_DRIVER_PROPERTY_NAME, success));
 
-        ofNullable(configProperties.getProperty(CHROME_BINARY_PROPERTY_NAME, null))
-                .ifPresentOrElse(success -> setProperty(CHROME_DRIVER_PROPERTY_NAME, success),
-                        failed -> {
-                        }/*logger().info(missingMsg.apply(CHROME_BINARY_PROPERTY_NAME))*/);
+        Optional.ofNullable(configProperties.getProperty(GECKO_BINARY_PROPERTY_NAME, null))
+                .ifPresent(success -> setProperty(FIREFOX_DRIVER_PROPERTY_NAME, success));
 
-        ofNullable(configProperties.getProperty(GECKO_BINARY_PROPERTY_NAME, null))
-                .ifPresentOrElse(success -> setProperty(FIREFOX_DRIVER_PROPERTY_NAME, success),
-                        failed -> {
-                        }/*logger().info(missingMsg.apply(GECKO_BINARY_PROPERTY_NAME))*/);
+        Optional.ofNullable(configProperties.getProperty(IE_BINARY_PROPERTY_NAME, null))
+                .ifPresent(success -> setProperty(IE_DRIVER_PROPERTY_NAME, success));
 
-        ofNullable(configProperties.getProperty(IE_BINARY_PROPERTY_NAME, null))
-                .ifPresentOrElse(success -> setProperty(IE_DRIVER_PROPERTY_NAME, success),
-                        failed -> {
-                        }/*logger().info(missingMsg.apply(IE_BINARY_PROPERTY_NAME))*/);
+        Optional.ofNullable(configProperties.getProperty(OPERA_BINARY_PROPERTY_NAME, null))
+                .ifPresent(success -> setProperty(OPERA_DRIVER_PROPERTY_NAME, success));
 
-        ofNullable(configProperties.getProperty(OPERA_BINARY_PROPERTY_NAME, null))
-                .ifPresentOrElse(success -> setProperty(OPERA_DRIVER_PROPERTY_NAME, success),
-                        failed -> {
-                        }/*logger().info(missingMsg.apply(OPERA_BINARY_PROPERTY_NAME))*/);
-
-        ofNullable(configProperties.getProperty(EDGE_BINARY_PROPERTY_NAME, null))
-                .ifPresentOrElse(success -> setProperty(EDGE_DRIVER_PROPERTY_NAME, success),
-                        failed -> {
-                        }/*logger().info(missingMsg.apply(EDGE_BINARY_PROPERTY_NAME))*/);
+        Optional.ofNullable(configProperties.getProperty(EDGE_BINARY_PROPERTY_NAME, null))
+                .ifPresent(success -> setProperty(EDGE_DRIVER_PROPERTY_NAME, success));
 
         // TODO(sven): Check if compat test should run on local browser.
         final List<GridConfig> gridConfigs = unmodifiableList(createGridConfigs(configProperties));

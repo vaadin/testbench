@@ -5,7 +5,6 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 
 import java.lang.reflect.Method;
 import java.util.Properties;
-import java.util.function.Function;
 
 import static com.vaadin.testbench.addons.junit5.extensions.ExtensionFunctions.storeMethodPlain;
 import static com.vaadin.testbench.addons.junit5.extensions.container.NetworkFunctions.SERVER_IP;
@@ -19,23 +18,16 @@ public class NoContainerInitializer implements ContainerInitializer {
     public static final String CONTAINER_NONE_PORT = "container.none.port";
     public static final String CONTAINER_NONE_WEBAPP = "container.none.webapp";
 
-    private final Properties props = properties().get();
-    private final Boolean isHostDefined = isKeyDefined().apply(CONTAINER_NONE_HOST);
-    private final Boolean isPortDefined = isKeyDefined().apply(CONTAINER_NONE_PORT);
-    private final Boolean isWebAppDefined = isKeyDefined().apply(CONTAINER_NONE_WEBAPP);
+    private final Properties props = properties();
+    private final boolean isHostDefined = isKeyDefined(CONTAINER_NONE_HOST);
+    private final boolean isPortDefined = isKeyDefined(CONTAINER_NONE_PORT);
+    private final boolean isWebAppDefined = isKeyDefined(CONTAINER_NONE_WEBAPP);
     private final String host = props.getProperty(CONTAINER_NONE_HOST);
     private final Integer port = Integer.parseInt(props.getProperty(CONTAINER_NONE_PORT));
     private final String webapp = props.getProperty(CONTAINER_NONE_WEBAPP);
 
-    private Function<String, Boolean> isKeyDefined() {
-        return (key) -> {
-            if (props.containsKey(key)) {
-                final String property = props.getProperty(key);
-                return !property.isEmpty();
-            } else {
-                return false;
-            }
-        };
+    private boolean isKeyDefined(String key) {
+        return !props.getProperty(key, "").isEmpty();
     }
 
     @Override
@@ -50,7 +42,7 @@ public class NoContainerInitializer implements ContainerInitializer {
 //    if (! isPortDefined) logger().warning("Property " + CONTAINER_NONE_PORT + " is not defined");
 //    if (! isWebAppDefined) logger().warning("Property " + CONTAINER_NONE_WEBAPP + " is not defined");
 
-        final ExtensionContext.Store store = storeMethodPlain().apply(context);
+        final ExtensionContext.Store store = storeMethodPlain(context);
 
         store.put(SERVER_IP, host);
         store.put(SERVER_PORT, port);
@@ -66,5 +58,4 @@ public class NoContainerInitializer implements ContainerInitializer {
     public void afterAll(Class<?> testClass, ExtensionContext context) {
 
     }
-
 }

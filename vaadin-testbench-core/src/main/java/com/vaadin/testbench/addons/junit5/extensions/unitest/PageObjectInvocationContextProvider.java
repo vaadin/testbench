@@ -23,25 +23,16 @@ public class PageObjectInvocationContextProvider implements TestTemplateInvocati
 
     @Override
     public Stream<TestTemplateInvocationContext> provideTestTemplateInvocationContexts(ExtensionContext context) {
-
         final List<BrowserTypes> typesList = context
                 .getTestMethod()
-                .filter(method -> method.getAnnotation(SkipBrowsers.class) != null)
-                .map((method) -> {
-                    final SkipBrowsers annotation = method.getAnnotation(SkipBrowsers.class);
-                    final BrowserTypes[] browserTypes = annotation.value();
-                    return (browserTypes == null)
-                            ? SkipBrowsers.ALL_BROWSERS
-                            : browserTypes;
-                })
+                .filter(method -> method.isAnnotationPresent(SkipBrowsers.class))
+                .map((method) -> method.getAnnotation(SkipBrowsers.class).value())
                 .map(Arrays::asList)
                 .orElse(emptyList());
 
         return webDriverInstances(typesList)
                 .map(e -> new WebDriverTemplateInvocationContextImpl(this, e))
-                .peek(po -> {
-                    storeWebDriver().accept(context, po.webdriver());
-                })
-                .map(e -> e);
+                .peek(po -> storeWebDriver(context, po.webdriver()))
+                .map(TestTemplateInvocationContext.class::cast);
     }
 }

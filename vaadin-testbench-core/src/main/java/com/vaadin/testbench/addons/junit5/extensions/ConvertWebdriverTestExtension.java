@@ -1,52 +1,43 @@
 package com.vaadin.testbench.addons.junit5.extensions;
 
-import com.vaadin.frp.model.Result;
 import com.vaadin.testbench.addons.webdriver.junit5.WebdriverExtensionFunctions;
 import com.vaadin.testbench.proxy.TestBenchDriverProxy;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
+import org.openqa.selenium.WebDriver;
 
 import static com.vaadin.testbench.TestBench.createDriver;
 
 public class ConvertWebdriverTestExtension implements BeforeEachCallback, AfterEachCallback {
 
     @Override
-    public void beforeEach(ExtensionContext context) throws Exception {
-//    logger().info("beforeEach  -> convert WebDriver to VaadinWebDriver");
+    public void beforeEach(ExtensionContext context) {
+//    logger().info("beforeEach  -> convert WebDriver to TestBenchDriverProxy");
+        final WebDriver driver = WebdriverExtensionFunctions.webdriver(context);
+        if (driver == null) {
+//            logger().warning(failed)
+            return;
+        }
 
-        Result
-                .ofNullable(WebdriverExtensionFunctions.webdriver().apply(context))
-                .ifPresentOrElse(
-                        webDriver -> {
-//              logger().info("webDriver will be converted now to TestBenchDriverProxy");
-                            WebdriverExtensionFunctions.removeWebDriver().accept(context);
-                            WebdriverExtensionFunctions.storeWebDriver().accept(context, createDriver(webDriver));
-                        },
-                        failed -> {
-                        }/*logger().warning(failed)*/
-                );
+        WebdriverExtensionFunctions.removeWebDriver(context);
+        WebdriverExtensionFunctions.storeWebDriver(context, createDriver(driver));
     }
 
     @Override
-    public void afterEach(ExtensionContext context) throws Exception {
+    public void afterEach(ExtensionContext context) {
 //    logger().info("afterEach  -> convert VaadinWebDriver to WebDriver");
+        // TODO(sven): Not a clean life cycle -> compat tests.
 
-        Result
-                .ofNullable(WebdriverExtensionFunctions.webdriver().apply(context))
-                .ifPresentOrElse(
-                        webDriver -> {
-                            // TODO(sven): Not a clean life cycle -> compat tests.
-                            if (webDriver instanceof TestBenchDriverProxy) {
-//                logger().info("webDriver is !! instanceof !! TestBenchDriverProxy");
-                                WebdriverExtensionFunctions.removeWebDriver().accept(context);
-                                WebdriverExtensionFunctions.storeWebDriver().accept(context, ((TestBenchDriverProxy) webDriver).getWrappedDriver());
-                            } else {
+        final WebDriver driver = WebdriverExtensionFunctions.webdriver(context);
+        if (!(driver instanceof TestBenchDriverProxy)) {
 //                logger().info("webDriver is NOT instanceof TestBenchDriverProxy");
-                            }
-                        },
-                        failed -> {
-                        } /*logger().warning(failed)*/
-                );
+            return;
+        }
+//            logger().info("webDriver is !! instanceof !! TestBenchDriverProxy");
+
+        WebdriverExtensionFunctions.removeWebDriver(context);
+        WebdriverExtensionFunctions.storeWebDriver(context,
+                ((TestBenchDriverProxy) driver).getWrappedDriver());
     }
 }
