@@ -38,7 +38,6 @@ public class CyclicObjectWorkaround {
     }
 
     /**
-     * /**
      * Produces Javascript which modifies a given object (list) so that it can
      * be returned to the test.
      *
