@@ -20,11 +20,6 @@
     </dependency>
     <dependency>
       <groupId>org.apache.meecrowave</groupId>
-      <artifactId>meecrowave-specs-api</artifactId>
-      <version>${meecrowave.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.meecrowave</groupId>
       <artifactId>meecrowave-core</artifactId>
       <version>${meecrowave.version}</version>
     </dependency>

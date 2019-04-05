@@ -15,12 +15,6 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.meecrowave</groupId>
-      <artifactId>meecrowave-specs-api</artifactId>
-      <version>${meecrowave.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.meecrowave</groupId>
       <artifactId>meecrowave-core</artifactId>
       <version>${meecrowave.version}</version>
       <scope>provided</scope>

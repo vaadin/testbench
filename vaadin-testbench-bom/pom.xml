@@ -17,24 +17,6 @@
     <dependencies>
       <dependency>
         <groupId>com.vaadin</groupId>
-        <artifactId>vaadin-bom</artifactId>
-        <version>${vaadin.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-        <exclusions>
-          <exclusion>
-            <groupId>com.vaadin</groupId>
-            <artifactId>vaadin-testbench</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>com.vaadin</groupId>
-            <artifactId>vaadin-testbench-core</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-
-      <dependency>
-        <groupId>com.vaadin</groupId>
         <artifactId>vaadin-testbench-core</artifactId>
         <version>${project.version}</version>
       </dependency>
