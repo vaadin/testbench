@@ -14,7 +14,8 @@
   <packaging>pom</packaging>
 
   <modules>
-    <module>runtime</module>
+    <module>vaadin-testbench-container-runtime</module>
+    <module>vaadin-testbench-container-test</module>
   </modules>
 
   <dependencyManagement>

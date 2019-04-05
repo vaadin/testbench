@@ -44,10 +44,10 @@
   </licenses>
 
   <modules>
-    <module>bom</module>
-    <module>core</module>
-    <module>container</module>
-    <module>it</module>
+    <module>vaadin-testbench-bom</module>
+    <module>vaadin-testbench-core</module>
+    <module>vaadin-testbench-container</module>
+    <module>vaadin-testbench-it</module>
   </modules>
 
   <repositories>

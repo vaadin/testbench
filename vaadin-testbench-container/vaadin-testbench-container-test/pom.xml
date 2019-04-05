@@ -5,20 +5,19 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <artifactId>vaadin-testbench-container-runtime</artifactId>
+    <artifactId>vaadin-testbench-container</artifactId>
     <groupId>com.vaadin</groupId>
     <version>7.0-SNAPSHOT</version>
-    <relativePath>../runtime/pom.xml</relativePath>
   </parent>
 
-  <artifactId>vaadin-testbench-container-runtime-test</artifactId>
+  <artifactId>vaadin-testbench-container-test</artifactId>
   <packaging>pom</packaging>
 
   <modules>
-    <module>meecrowave</module>
-    <module>springboot-v01</module>
-    <module>springboot-v02</module>
-    <module>none</module>
+    <module>vaadin-testbench-container-test-meecrowave</module>
+    <module>vaadin-testbench-container-test-springboot-v01</module>
+    <module>vaadin-testbench-container-test-springboot-v02</module>
+    <module>vaadin-testbench-container-test-none</module>
   </modules>
 
   <properties>

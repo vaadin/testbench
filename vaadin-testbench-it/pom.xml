@@ -15,8 +15,8 @@
 
   <modules>
     <!-- Test data must come first -->
-    <module>test-data</module>
-    <module>test</module>
+    <module>vaadin-testbench-it-test-data</module>
+    <module>vaadin-testbench-it-test</module>
   </modules>
 
   <dependencyManagement>
