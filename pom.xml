@@ -1,4 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
@@ -8,16 +8,19 @@
     <version>2.0.1</version>
     <relativePath/>
   </parent>
+
   <artifactId>vaadin-testbench</artifactId>
+  <version>7.0-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <version>7.0.0-SNAPSHOT</version>
-  <name>Vaadin TestBench V7</name>
+
+  <name>Vaadin TestBench</name>
 
   <organization>
     <name>Vaadin Ltd</name>
     <url>http://vaadin.com/</url>
   </organization>
-  <url>http://vaadin.com/</url>
+
+  <url>http://vaadin.com/testbench</url>
   <inceptionYear>2019</inceptionYear>
 
   <issueManagement>
@@ -31,16 +34,6 @@
     <developerConnection>scm:git:https://github.com/vaadin/testbench.git</developerConnection>
     <tag>HEAD</tag>
   </scm>
-  <developers>
-    <developer>
-      <name>Sven Ruppert</name>
-      <email>sven@vaadin.com</email>
-      <roles>
-        <role>Developer</role>
-      </roles>
-      <timezone>+1</timezone>
-    </developer>
-  </developers>
 
   <licenses>
     <license>
@@ -49,6 +42,20 @@
       <distribution>manual</distribution>
     </license>
   </licenses>
+
+  <modules>
+    <module>vaadin-testbench-bom</module>
+    <module>vaadin-testbench-core</module>
+    <module>vaadin-testbench-container</module>
+    <module>vaadin-testbench-it</module>
+  </modules>
+
+  <repositories>
+    <repository>
+      <id>vaadin-addons</id>
+      <url>http://maven.vaadin.com/vaadin-addons</url>
+    </repository>
+  </repositories>
 
   <properties>
     <maven.compiler.target>8</maven.compiler.target>
@@ -62,7 +69,6 @@
     <slf4j.version>1.7.25</slf4j.version>
     <log4j-api.version>2.11.2</log4j-api.version>
 
-    <!--TDD jUnit5-->
     <junit.jupiter.version>5.4.0</junit.jupiter.version>
     <junit.platform.version>1.4.0</junit.platform.version>
     <junit-platform-maven-plugin.version>1.0.0-M5</junit-platform-maven-plugin.version>
@@ -75,7 +81,6 @@
 
     <opentracing-api.version>0.31.0</opentracing-api.version>
 
-    <!--Initializer-->
     <meecrowave.version>1.2.6</meecrowave.version>
     <spring-boot01.version>1.5.19.RELEASE</spring-boot01.version>
     <spring-boot02.version>2.1.3.RELEASE</spring-boot02.version>
@@ -84,47 +89,11 @@
 
     <selenium.version>3.141.59</selenium.version>
 
-
-    <!--    VaadinVersions-->
-<!--    <vaadin-v08.version>8.7.0</vaadin-v08.version>-->
-<!--    <vaadin-testbench-v08.version>5.2.0</vaadin-testbench-v08.version>-->
-
     <vaadin.version>13.0.2</vaadin.version>
-<!--    <vaadin-v10-flow-components-testbench.version>1.4.2</vaadin-v10-flow-components-testbench.version>-->
-    <!--    <testbench-v14.version>14.0.0</testbench-v14.version>-->
-<!--    <vaadin-vXX.version>13.0.2</vaadin-vXX.version>-->
-<!--    <vaadin-vXX-flow-components-testbench.version>1.4.2</vaadin-vXX-flow-components-testbench.version>-->
-
   </properties>
-
-  <modules>
-    <module>bom</module>
-    <module>testbench-core</module>
-    <module>junit5</module>
-    <module>tb</module>
-<!--    <module>distribution/core</module>-->
-<!--    <module>distribution/core-v08</module>-->
-<!--    <module>distribution/core-v10</module>-->
-  </modules>
-
-  <repositories>
-    <repository>
-      <id>vaadin-addons</id>
-      <url>http://maven.vaadin.com/vaadin-addons</url>
-      <!--<url>http://maven.vaadin.com/</url>-->
-    </repository>
-  </repositories>
-
 
   <dependencyManagement>
     <dependencies>
-      <!--      Technical Dependencies-->
-      <!--Selenium -->
-      <dependency>
-        <groupId>org.seleniumhq.selenium</groupId>
-        <artifactId>selenium-api</artifactId>
-        <version>${selenium.version}</version>
-      </dependency>
       <dependency>
         <groupId>org.seleniumhq.selenium</groupId>
         <artifactId>selenium-java</artifactId>
@@ -141,20 +110,12 @@
         <version>${selenium.version}</version>
       </dependency>
 
-      <!--      Specs-->
       <dependency>
         <groupId>javax.servlet</groupId>
         <artifactId>javax.servlet-api</artifactId>
-        <version>4.0.1</version>
+        <version>3.1.0</version>
       </dependency>
 
-      <!--jUnit5-->
-      <dependency>
-        <groupId>org.junit.jupiter</groupId>
-        <artifactId>junit-jupiter-api</artifactId>
-        <version>${junit.jupiter.version}</version>
-        <scope>test</scope>
-      </dependency>
       <dependency>
         <groupId>org.junit.jupiter</groupId>
         <artifactId>junit-jupiter-params</artifactId>
@@ -174,11 +135,7 @@
         <scope>test</scope>
         <version>${junit.jupiter.version}</version>
       </dependency>
-<!--      <dependency>-->
-<!--        <groupId>org.hamcrest</groupId>-->
-<!--        <artifactId>hamcrest-all</artifactId>-->
-<!--        <version>1.3</version>-->
-<!--      </dependency>-->
+
       <dependency>
         <groupId>org.assertj</groupId>
         <artifactId>assertj-core</artifactId>
@@ -186,11 +143,6 @@
         <scope>test</scope>
       </dependency>
 
-      <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-api</artifactId>
-        <version>${slf4j.version}</version>
-      </dependency>
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-simple</artifactId>
@@ -207,6 +159,11 @@
         <artifactId>commons-lang3</artifactId>
         <version>3.8.1</version>
       </dependency>
+      <dependency>
+        <groupId>commons-codec</groupId>
+        <artifactId>commons-codec</artifactId>
+        <version>1.11</version>
+      </dependency>
 
       <dependency>
         <groupId>net.vergien.bau</groupId>
@@ -215,19 +172,12 @@
         <version>0.0.9</version>
       </dependency>
 
-<!--Should be removed-->
+      <!--Should be removed-->
       <dependency>
         <groupId>org.javassist</groupId>
         <artifactId>javassist</artifactId>
         <version>3.18.1-GA</version>
       </dependency>
-
-      <dependency>
-        <groupId>commons-codec</groupId>
-        <artifactId>commons-codec</artifactId>
-        <version>1.11</version>
-      </dependency>
-
     </dependencies>
   </dependencyManagement>
 
@@ -386,10 +336,6 @@
         <executions>
           <execution>
             <phase>package</phase>
-            <goals>
-              <!--<goal>jar</goal> do not define it here again !!-->
-<!--              <goal>test-jar</goal>-->
-            </goals>
           </execution>
         </executions>
       </plugin>
@@ -416,9 +362,7 @@
             <configuration>
               <sources>
                 <source>${project.build.directory}/generated-sources/annotations</source>
-                <!--<source>src/main/scala</source>-->
                 <source>src/main/java</source>
-                <!--<source>src/main/kotlin</source>-->
               </sources>
             </configuration>
           </execution>
@@ -431,9 +375,7 @@
             <configuration>
               <sources>
                 <source>${project.build.directory}/generated-sources/annotations</source>
-                <!--<source>src/main/scala</source>-->
                 <source>src/main/java</source>
-                <!--<source>src/main/kotlin</source>-->
               </sources>
             </configuration>
           </execution>
@@ -446,9 +388,7 @@
             <configuration>
               <sources>
                 <source>${project.build.directory}/generated-test-sources/test-annotations</source>
-                <!--<source>src/test/scala</source>-->
                 <source>src/test/java</source>
-                <!--<source>src/test/kotlin</source>-->
               </sources>
             </configuration>
           </execution>
@@ -468,14 +408,9 @@
           <executor>JAVA</executor>
           <javaOptions>
             <additionalOptions>
-              <!--<protools>-Dactivate.testbench.protools=false</protools>-->
               <jacoco>${jacoco.java.option}</jacoco>
             </additionalOptions>
           </javaOptions>
-
-          <!--<tags>-->
-          <!--<tag>testbench-protools</tag>-->
-          <!--</tags>-->
         </configuration>
       </plugin>
       <plugin>
@@ -502,36 +437,34 @@
         </executions>
       </plugin>
 
-
-<!--      <plugin>-->
-<!--        <groupId>com.github.webdriverextensions</groupId>-->
-<!--        <artifactId>webdriverextensions-maven-plugin</artifactId>-->
-<!--        <executions>-->
-<!--          <execution>-->
-<!--            <goals>-->
-<!--              <goal>install-drivers</goal>-->
-<!--            </goals>-->
-<!--          </execution>-->
-<!--        </executions>-->
-<!--        <configuration>-->
-<!--          <keepDownloadedWebdrivers>true</keepDownloadedWebdrivers>-->
-<!--          <installationDirectory>${maven.multiModuleProjectDirectory}/_data/webdrivers</installationDirectory>-->
-<!--          <drivers>-->
-<!--            <driver>-->
-<!--              <name>chromedriver</name>-->
-<!--            </driver>-->
-<!--            &lt;!&ndash;<driver>&ndash;&gt;-->
-<!--            &lt;!&ndash;<name>operadriver</name>&ndash;&gt;-->
-<!--            &lt;!&ndash;</driver>&ndash;&gt;-->
-<!--            <driver>-->
-<!--            <name>geckodriver</name>-->
-<!--            </driver>-->
-<!--          </drivers>-->
-<!--        </configuration>-->
-<!--      </plugin>-->
+      <!--      <plugin>-->
+      <!--        <groupId>com.github.webdriverextensions</groupId>-->
+      <!--        <artifactId>webdriverextensions-maven-plugin</artifactId>-->
+      <!--        <executions>-->
+      <!--          <execution>-->
+      <!--            <goals>-->
+      <!--              <goal>install-drivers</goal>-->
+      <!--            </goals>-->
+      <!--          </execution>-->
+      <!--        </executions>-->
+      <!--        <configuration>-->
+      <!--          <keepDownloadedWebdrivers>true</keepDownloadedWebdrivers>-->
+      <!--          <installationDirectory>${maven.multiModuleProjectDirectory}/_data/webdrivers</installationDirectory>-->
+      <!--          <drivers>-->
+      <!--            <driver>-->
+      <!--              <name>chromedriver</name>-->
+      <!--            </driver>-->
+      <!--            &lt;!&ndash;<driver>&ndash;&gt;-->
+      <!--            &lt;!&ndash;<name>operadriver</name>&ndash;&gt;-->
+      <!--            &lt;!&ndash;</driver>&ndash;&gt;-->
+      <!--            <driver>-->
+      <!--            <name>geckodriver</name>-->
+      <!--            </driver>-->
+      <!--          </drivers>-->
+      <!--        </configuration>-->
+      <!--      </plugin>-->
     </plugins>
   </build>
-
 
   <reporting>
     <plugins>
@@ -542,7 +475,6 @@
         <reportSets>
           <reportSet>
             <reports>
-              <!-- select non-aggregate reports -->
               <report>report</report>
             </reports>
           </reportSet>
@@ -628,8 +560,8 @@
                 <exclude>**/jacoco.exec*</exclude>
                 <exclude>**/LICENSE.txt</exclude>
                 <exclude>**/_data/webdrivers/*</exclude>
-                <!--<exclude>src/test/resources/**</exclude>-->
-                <!--<exclude>src/main/resources/**</exclude>-->
+                <exclude>src/test/resources/**</exclude>
+                <exclude>src/main/resources/**</exclude>
                 <exclude>target/**</exclude>
               </excludes>
             </configuration>
@@ -674,27 +606,12 @@
             <configuration>
               <additionalOptions>
                 <additionalOption>-Xdoclint:none</additionalOption>
-                <!--                <additionalOption>-html5</additionalOption>-->
               </additionalOptions>
               <destDir>target/doc/apidoc/</destDir>
             </configuration>
           </plugin>
-
-          <!--<plugin>-->
-          <!--<groupId>org.owasp</groupId>-->
-          <!--<artifactId>dependency-check-maven</artifactId>-->
-          <!--<executions>-->
-          <!--<execution>-->
-          <!--<goals>-->
-          <!--<goal>check</goal>-->
-          <!--</goals>-->
-          <!--</execution>-->
-          <!--</executions>-->
-          <!--</plugin>-->
         </plugins>
       </build>
     </profile>
   </profiles>
-
-
 </project>
