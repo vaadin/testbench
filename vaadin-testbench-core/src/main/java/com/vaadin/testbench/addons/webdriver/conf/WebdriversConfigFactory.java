@@ -15,13 +15,9 @@ import java.util.Set;
 
 import static com.github.webdriverextensions.WebDriverProperties.CHROME_BINARY_PROPERTY_NAME;
 import static com.github.webdriverextensions.WebDriverProperties.CHROME_DRIVER_PROPERTY_NAME;
-import static com.github.webdriverextensions.WebDriverProperties.EDGE_BINARY_PROPERTY_NAME;
 import static com.github.webdriverextensions.WebDriverProperties.EDGE_DRIVER_PROPERTY_NAME;
 import static com.github.webdriverextensions.WebDriverProperties.FIREFOX_DRIVER_PROPERTY_NAME;
-import static com.github.webdriverextensions.WebDriverProperties.GECKO_BINARY_PROPERTY_NAME;
-import static com.github.webdriverextensions.WebDriverProperties.IE_BINARY_PROPERTY_NAME;
 import static com.github.webdriverextensions.WebDriverProperties.IE_DRIVER_PROPERTY_NAME;
-import static com.github.webdriverextensions.WebDriverProperties.OPERA_BINARY_PROPERTY_NAME;
 import static com.github.webdriverextensions.WebDriverProperties.OPERA_DRIVER_PROPERTY_NAME;
 import static com.vaadin.testbench.addons.webdriver.conf.WebdriversConfig.COMPATTESTING_GRID;
 import static java.lang.System.setProperty;
@@ -39,6 +35,11 @@ public class WebdriversConfigFactory {
     public static final String DEFAULT_PORT = "4444";
     public static final String DEFAULT_PATH = "wd/hub";
     public static final String DEFAULT_PROTO = "http";
+
+    private static String GECKO_BINARY_PROPERTY_NAME = "gecko.binary.path";
+    private static String IE_BINARY_PROPERTY_NAME = "ie.binary.path";
+    private static String OPERA_BINARY_PROPERTY_NAME = "opera.binary.path";
+    private static String EDGE_BINARY_PROPERTY_NAME = "edge.binary.path";
 
     public WebdriversConfig createFromProperies(Properties configProperties) {
         Optional.ofNullable(configProperties.getProperty(CHROME_BINARY_PROPERTY_NAME, null))
