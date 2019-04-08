@@ -613,5 +613,54 @@
         </plugins>
       </build>
     </profile>
+
+    <profile>
+      <id>update-license-headers</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.commonjava.maven.plugins</groupId>
+            <artifactId>directory-maven-plugin</artifactId>
+            <version>0.1</version>
+            <executions>
+              <execution>
+                <id>directories</id>
+                <goals>
+                  <goal>directory-of</goal>
+                </goals>
+                <phase>initialize</phase>
+                <configuration>
+                  <property>projectbase</property>
+                  <project>
+                    <groupId>com.vaadin</groupId>
+                    <artifactId>vaadin-testbench</artifactId>
+                  </project>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>license-maven-plugin</artifactId>
+            <version>1.14</version>
+            <configuration>
+              <licenseName>cval3</licenseName>
+              <licenseResolver>file://${projectbase}/_data/license</licenseResolver>
+              <includes>
+                <include>**/*.java</include>
+              </includes>
+            </configuration>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>update-file-header</goal>
+                </goals>
+                <phase>process-sources</phase>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
   </profiles>
 </project>
