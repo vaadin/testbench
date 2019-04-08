@@ -4,7 +4,7 @@ import com.vaadin.flow.component.radiobutton.testbench.RadioButtonGroupElement;
 import com.vaadin.flow.component.radiobutton.testbench.test.RadioButtonView;
 import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinTest;
 import junit.com.vaadin.testbench.tests.component.common.AbstractIT;
-import junit.com.vaadin.testbench.tests.testUI.GenericTestPageObject;
+import junit.com.vaadin.testbench.tests.testui.GenericTestPageObject;
 import org.junit.jupiter.api.Assertions;
 
 import static com.vaadin.flow.component.radiobutton.testbench.test.RadioButtonView.NAV;

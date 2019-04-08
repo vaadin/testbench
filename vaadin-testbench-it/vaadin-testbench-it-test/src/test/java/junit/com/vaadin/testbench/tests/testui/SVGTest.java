@@ -1,4 +1,4 @@
-package junit.com.vaadin.testbench.tests.testUI;
+package junit.com.vaadin.testbench.tests.testui;
 
 import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinTest;
 import com.vaadin.testbench.addons.webdriver.SkipBrowsers;

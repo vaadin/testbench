@@ -1,4 +1,4 @@
-package com.vaadin.testbench.addons.junit5.extensions.unitest;
+package com.vaadin.testbench.addons.junit5.extensions.unittest;
 
 /*-
  * #%L
@@ -28,14 +28,13 @@ import org.junit.jupiter.api.extension.ParameterResolver;
 import org.openqa.selenium.WebDriver;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import static com.vaadin.testbench.addons.junit5.extensions.ExtensionFunctions.storeMethodPlain;
 import static com.vaadin.testbench.addons.junit5.extensions.container.ExtensionContextFunctions.containerInfo;
-import static com.vaadin.testbench.addons.junit5.extensions.unitest.PageObjectFunctions.PAGE_OBJECT_NAVIGATION_TARGET;
-import static com.vaadin.testbench.addons.junit5.extensions.unitest.PageObjectFunctions.PAGE_OBJECT_PRELOAD;
-import static com.vaadin.testbench.addons.junit5.extensions.unitest.PageObjectFunctions.storePageObject;
+import static com.vaadin.testbench.addons.junit5.extensions.unittest.PageObjectFunctions.PAGE_OBJECT_NAVIGATION_TARGET;
+import static com.vaadin.testbench.addons.junit5.extensions.unittest.PageObjectFunctions.PAGE_OBJECT_PRELOAD;
+import static com.vaadin.testbench.addons.junit5.extensions.unittest.PageObjectFunctions.storePageObject;
 import static com.vaadin.testbench.addons.webdriver.WebDriverFunctions.webdriverName;
 import static java.util.Collections.singletonList;
 import static org.openqa.selenium.support.PageFactory.initElements;

@@ -5,7 +5,7 @@ import com.vaadin.flow.component.notification.testbench.NotificationElement;
 import com.vaadin.flow.component.notification.testbench.test.NotificationView;
 import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinTest;
 import junit.com.vaadin.testbench.tests.component.common.AbstractIT;
-import junit.com.vaadin.testbench.tests.testUI.GenericTestPageObject;
+import junit.com.vaadin.testbench.tests.testui.GenericTestPageObject;
 import org.junit.jupiter.api.Assertions;
 
 import java.util.List;

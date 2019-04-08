@@ -1,8 +1,8 @@
-package junit.com.vaadin.testbench.tests.testUI.elements;
+package junit.com.vaadin.testbench.tests.testui.elements;
 
 import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinTest;
-import junit.com.vaadin.testbench.tests.testUI.GenericTestPageObject;
+import junit.com.vaadin.testbench.tests.testui.GenericTestPageObject;
 import org.junit.jupiter.api.Assertions;
 
 import static com.vaadin.testbench.tests.testUI.ElementQueryView.ROUTE;

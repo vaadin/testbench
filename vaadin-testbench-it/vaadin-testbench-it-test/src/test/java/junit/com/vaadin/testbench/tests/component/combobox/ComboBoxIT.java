@@ -4,7 +4,7 @@ import com.vaadin.flow.component.combobox.testbench.ComboBoxElement;
 import com.vaadin.testbench.addons.junit5.extensions.container.ContainerInfo;
 import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinTest;
 import junit.com.vaadin.testbench.tests.component.common.AbstractIT;
-import junit.com.vaadin.testbench.tests.testUI.GenericTestPageObject;
+import junit.com.vaadin.testbench.tests.testui.GenericTestPageObject;
 import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.WebDriver;
 

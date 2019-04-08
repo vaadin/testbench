@@ -4,7 +4,7 @@ import com.vaadin.flow.component.upload.testbench.UploadElement;
 import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinTest;
 import com.vaadin.testbench.addons.webdriver.SkipBrowsers;
 import junit.com.vaadin.testbench.tests.component.common.AbstractIT;
-import junit.com.vaadin.testbench.tests.testUI.GenericTestPageObject;
+import junit.com.vaadin.testbench.tests.testui.GenericTestPageObject;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 

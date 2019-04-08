@@ -1,4 +1,4 @@
-package junit.com.vaadin.testbench.tests.testUI;
+package junit.com.vaadin.testbench.tests.testui;
 
 import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.testbench.annotations.Attribute;

@@ -1,7 +1,7 @@
-package junit.com.vaadin.testbench.tests.testUI;
+package junit.com.vaadin.testbench.tests.testui;
 
 import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinTest;
-import junit.com.vaadin.testbench.tests.testUI.elements.NativeButtonElement;
+import junit.com.vaadin.testbench.tests.testui.elements.NativeButtonElement;
 import org.junit.jupiter.api.Assertions;
 
 import static com.vaadin.testbench.tests.testUI.PerformanceView.ROUTE;
