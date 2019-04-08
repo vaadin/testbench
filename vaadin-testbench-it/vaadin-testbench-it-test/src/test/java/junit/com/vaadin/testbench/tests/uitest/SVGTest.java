@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.By;
 
 import static com.vaadin.testbench.addons.webdriver.BrowserTypes.SAFARI;
-import static com.vaadin.testbench.tests.testUI.SVGView.ROUTE;
+import static com.vaadin.testbench.tests.uitest.SVGView.ROUTE;
 
 @VaadinTest
 public class SVGTest {

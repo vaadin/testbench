@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Disabled;
 
 import java.util.List;
 
-import static com.vaadin.testbench.tests.testUI.ElementQueryView.ROUTE;
+import static com.vaadin.testbench.tests.uitest.ElementQueryView.ROUTE;
 
 @Disabled
 @VaadinTest

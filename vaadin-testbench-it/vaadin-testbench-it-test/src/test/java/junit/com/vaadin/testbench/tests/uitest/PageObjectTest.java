@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Assertions;
 
 import java.util.List;
 
-import static com.vaadin.testbench.tests.testUI.PageObjectView.ROUTE;
+import static com.vaadin.testbench.tests.uitest.PageObjectView.ROUTE;
 
 @VaadinTest
 public class PageObjectTest {

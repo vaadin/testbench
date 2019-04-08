@@ -8,7 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.openqa.selenium.By;
 import org.openqa.selenium.OutputType;
 
-import static com.vaadin.testbench.tests.testUI.ElementQueryView.ROUTE;
+import static com.vaadin.testbench.tests.uitest.ElementQueryView.ROUTE;
 
 @VaadinTest
 public class ElementScreenCompareTest {

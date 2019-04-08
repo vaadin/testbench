@@ -1,4 +1,4 @@
-package com.vaadin.testbench.tests.testUI;
+package com.vaadin.testbench.tests.uitest;
 
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.dependency.HtmlImport;

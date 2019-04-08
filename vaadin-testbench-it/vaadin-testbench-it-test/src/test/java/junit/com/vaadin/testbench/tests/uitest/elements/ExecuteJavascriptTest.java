@@ -5,7 +5,7 @@ import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinTest;
 import junit.com.vaadin.testbench.tests.uitest.GenericTestPageObject;
 import org.junit.jupiter.api.Assertions;
 
-import static com.vaadin.testbench.tests.testUI.ElementQueryView.ROUTE;
+import static com.vaadin.testbench.tests.uitest.ElementQueryView.ROUTE;
 
 @VaadinTest
 public class ExecuteJavascriptTest {
