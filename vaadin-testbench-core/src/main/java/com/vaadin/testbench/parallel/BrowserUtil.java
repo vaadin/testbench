@@ -6,8 +6,6 @@ package com.vaadin.testbench.parallel;
  * %%
  * Copyright (C) 2019 Vaadin Ltd
  * %%
- * Copyright (C) ${year} Vaadin Ltd
- * 
  * This program is available under Commercial Vaadin Add-On License 3.0
  * (CVALv3).
  * 

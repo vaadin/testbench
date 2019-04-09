@@ -6,8 +6,6 @@ package com.vaadin.testbench;
  * %%
  * Copyright (C) 2019 Vaadin Ltd
  * %%
- * Copyright (C) ${year} Vaadin Ltd
- * 
  * This program is available under Commercial Vaadin Add-On License 3.0
  * (CVALv3).
  * 
@@ -19,7 +17,8 @@ package com.vaadin.testbench;
  * #L%
  */
 
-import java.io.File;
+
+  import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
