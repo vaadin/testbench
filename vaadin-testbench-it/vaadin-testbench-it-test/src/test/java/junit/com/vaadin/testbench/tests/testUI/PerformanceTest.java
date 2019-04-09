@@ -35,7 +35,8 @@ class PerformanceTest {
 
         // Assuming rendering three poll responses is done in 50ms
         Assertions.assertTrue(
-                po.getCommandExecutor().totalTimeSpentRendering() > initialRendering, "totalTimeSpentRendering() > initialRendering");
+                po.getCommandExecutor().totalTimeSpentRendering() > initialRendering,
+                "totalTimeSpentRendering() > initialRendering");
         Assertions.assertEquals(initialRendering,
                 po.getCommandExecutor().totalTimeSpentRendering(), 50);
     }

@@ -4,16 +4,14 @@ import com.vaadin.testbench.addons.webdriver.WebDriverFunctions;
 import com.vaadin.testbench.proxy.TestBenchDriverProxy;
 import org.openqa.selenium.WebDriver;
 
-import java.util.function.Function;
-
 public interface TestbenchFunctions {
 
-    static Function<WebDriver, String> webdrivername() {
-        return webdriver -> unproxy().andThen(WebDriverFunctions.webdriverName()).apply(webdriver);
+    static String webdriverName(WebDriver webDriver) {
+        return WebDriverFunctions.webdriverName(unproxy(webDriver));
     }
 
-    static Function<WebDriver, WebDriver> unproxy() {
-        return proxyedDriver -> (proxyedDriver instanceof TestBenchDriverProxy)
+    static WebDriver unproxy(WebDriver proxyedDriver) {
+        return (proxyedDriver instanceof TestBenchDriverProxy)
                 ? ((TestBenchDriverProxy) proxyedDriver).getWrappedDriver()
                 : proxyedDriver;
     }

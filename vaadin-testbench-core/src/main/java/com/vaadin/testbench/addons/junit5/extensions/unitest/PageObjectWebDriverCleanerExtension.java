@@ -13,12 +13,12 @@ public class PageObjectWebDriverCleanerExtension implements AfterEachCallback {
     @Override
     public void afterEach(ExtensionContext context) throws Exception {
 //    logger().info("PageObjectWebDriverCleanerExtension -> remove PageObject");
-        removePageObject().accept(context);
+        removePageObject(context);
 
 //    logger().info("PageObjectWebDriverCleanerExtension -> remove Webdriver");
-        final WebDriver webDriver = webdriver().apply(context);
+        final WebDriver webDriver = webdriver(context);
 //    logger().info("close webdriver of type " + webdriverName().apply(webDriver));
         webDriver.quit();
-        removeWebDriver().accept(context);
+        removeWebDriver(context);
     }
 }

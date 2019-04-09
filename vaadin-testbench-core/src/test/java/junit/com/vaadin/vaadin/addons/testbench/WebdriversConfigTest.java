@@ -1,6 +1,5 @@
 package junit.com.vaadin.vaadin.addons.testbench;
 
-import com.vaadin.frp.model.Result;
 import com.vaadin.testbench.addons.webdriver.conf.GridConfig;
 import com.vaadin.testbench.addons.webdriver.conf.GridConfig.Type;
 import com.vaadin.testbench.addons.webdriver.conf.WebdriversConfig;
@@ -13,7 +12,7 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import java.util.List;
 import java.util.Properties;
 
-import static com.vaadin.testbench.PropertiesResolver.propertyReader;
+import static com.vaadin.testbench.PropertiesResolver.readProperties;
 import static com.vaadin.testbench.addons.webdriver.BrowserDriverFunctions.CONFIG_FOLDER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -46,10 +45,8 @@ public class WebdriversConfigTest {
     @Test
     @DisplayName("build from properties")
     void test002() {
-        Result<Properties> apply = propertyReader().apply(CONFIG_FOLDER + "config-002");
-        Properties configProperties = apply.get();
-
-        WebdriversConfig config = factory.createFromProperies(configProperties);
+        final Properties configProperties = readProperties(CONFIG_FOLDER + "config-002");
+        final WebdriversConfig config = factory.createFromProperies(configProperties);
 
 //    assertEquals(DesiredCapabilities.firefox(), config.getUnittestingBrowser());
 //    assertEquals("http://localhost:4444/wd/hub", config.getUnittestingTarget());
@@ -83,10 +80,8 @@ public class WebdriversConfigTest {
     @Test
     @DisplayName("build browserstack config")
     void test003() {
-        Result<Properties> apply = propertyReader().apply(CONFIG_FOLDER + "config-003");
-        Properties configProperties = apply.get();
-
-        WebdriversConfig config = factory.createFromProperies(configProperties);
+        final Properties configProperties = readProperties(CONFIG_FOLDER + "config-003");
+        final WebdriversConfig config = factory.createFromProperies(configProperties);
 
         assertEquals(1, config.getGridConfigs().size());
 
@@ -101,10 +96,8 @@ public class WebdriversConfigTest {
     @Test
     @DisplayName("build saucelabs config")
     void test004() {
-        Result<Properties> apply = propertyReader().apply(CONFIG_FOLDER + "config-004");
-        Properties configProperties = apply.get();
-
-        WebdriversConfig config = factory.createFromProperies(configProperties);
+        final Properties configProperties = readProperties(CONFIG_FOLDER + "config-004");
+        final WebdriversConfig config = factory.createFromProperies(configProperties);
 
         assertEquals(1, config.getGridConfigs().size());
 
@@ -119,10 +112,8 @@ public class WebdriversConfigTest {
     @Test
     @DisplayName("build grid config without os and versions")
     void test005() {
-        Result<Properties> apply = propertyReader().apply(CONFIG_FOLDER + "config-005");
-        Properties configProperties = apply.get();
-
-        WebdriversConfig config = factory.createFromProperies(configProperties);
+        final Properties configProperties = readProperties(CONFIG_FOLDER + "config-005");
+        final WebdriversConfig config = factory.createFromProperies(configProperties);
 
         assertEquals(1, config.getGridConfigs().size());
 

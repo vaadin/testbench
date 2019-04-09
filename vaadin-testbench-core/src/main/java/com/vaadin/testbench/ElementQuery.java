@@ -345,7 +345,8 @@ public class ElementQuery<T extends TestBenchElement> {
         } else if (getContext() instanceof WebDriver) {
             // Search the whole document
             script.append("var result = [];" //
-                    + "const queryResult = document.querySelectorAll(arguments[1]+arguments[2]);" + "result = result.concat(Array.prototype.slice.call(queryResult));")
+                    + "const queryResult = document.querySelectorAll(arguments[1]+arguments[2]);"
+                    + "result = result.concat(Array.prototype.slice.call(queryResult));")
                     .append(CyclicObjectWorkaround.get("result") //
                     ).append("return result");
             elementContext = null;

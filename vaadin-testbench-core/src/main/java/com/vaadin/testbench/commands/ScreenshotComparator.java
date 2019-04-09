@@ -18,7 +18,6 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.util.function.BiFunction;
 
 import static com.vaadin.testbench.screenshot.ImageFileUtil.createScreenshotDirectoriesIfNeeded;
 import static com.vaadin.testbench.screenshot.ImageFileUtil.getErrorScreenshotFile;
@@ -33,38 +32,36 @@ public class ScreenshotComparator {
 
     private static Boolean supportsElementScreenshots = null;
 
-    public static BiFunction<String, Capabilities, TestcaseInfo> convert() {
-        return (referenceId, browserCapabilities) -> {
-            Platform platform = browserCapabilities.getPlatform();
-            String platformName;
-            if (platform != null) {
-                platformName = platform.toString().toLowerCase();
-            } else {
-                platformName = PLATFORM_UNKNOWN;
-            }
+    public TestcaseInfo convert(String referenceId, Capabilities browserCapabilities) {
+        Platform platform = browserCapabilities.getPlatform();
+        String platformName;
+        if (platform != null) {
+            platformName = platform.toString().toLowerCase();
+        } else {
+            platformName = PLATFORM_UNKNOWN;
+        }
 
-            String versionString = browserCapabilities.getVersion();
-            if (versionString.equals("")) {
-                Object browserVersion = browserCapabilities.getCapability("browserVersion");
-                if (browserVersion != null) {
-                    versionString = browserVersion.toString();
-                }
+        String versionString = browserCapabilities.getVersion();
+        if (versionString.equals("")) {
+            Object browserVersion = browserCapabilities.getCapability("browserVersion");
+            if (browserVersion != null) {
+                versionString = browserVersion.toString();
             }
-            String browserName = browserCapabilities.getBrowserName();
+        }
+        String browserName = browserCapabilities.getBrowserName();
 
-            return new TestcaseInfo(
-                    referenceId,
-                    browserName,
-                    platformName,
-                    versionString
-            );
-        };
+        return new TestcaseInfo(
+                referenceId,
+                browserName,
+                platformName,
+                versionString
+        );
     }
 
     private static void pause(int delay) {
         try {
             Thread.sleep(delay);
-        } catch (InterruptedException e) {
+        } catch (InterruptedException ignored) {
         }
     }
 
@@ -74,7 +71,7 @@ public class ScreenshotComparator {
 
         Capabilities capabilities = driver.getCapabilities();
 
-        final TestcaseInfo info = convert().apply(referenceId, capabilities);
+        final TestcaseInfo info = convert(referenceId, capabilities);
 
         final ImageComparison imageComparison = new ImageComparison();
         for (int times = 0; times < getScreenshotRetriesMax(); times++) {
@@ -114,7 +111,8 @@ public class ScreenshotComparator {
         final ImageComparison imageComparison = new ImageComparison();
 
         for (int times = 0; times < getScreenshotRetriesMax(); times++) {
-            BufferedImage screenshotImage = ImageIO.read(new ByteArrayInputStream(takesScreenshot.getScreenshotAs(BYTES)));
+            BufferedImage screenshotImage = ImageIO.read(
+                    new ByteArrayInputStream(takesScreenshot.getScreenshotAs(BYTES)));
             if (reference == null) {
                 saveErrorScreenShot(screenshotImage, referenceName);
                 return false;
@@ -130,13 +128,12 @@ public class ScreenshotComparator {
     }
 
     private void saveErrorScreenShot(BufferedImage screenshotImage, String referenceName) {
-        createScreenshotDirectoriesIfNeeded()
-                .apply(null);
+        createScreenshotDirectoriesIfNeeded();
 //        .ifPresentOrElse(aVoid -> getLogger(ScreenshotComparator.class).info("Screenshot Directories are OK.") ,
 //                         failed -> getLogger(ScreenshotComparator.class).warning(failed));
 
         try {
-            ImageIO.write(screenshotImage, IMAGE_FILE_NAME_ENDING, getErrorScreenshotFile().apply(referenceName));
+            ImageIO.write(screenshotImage, IMAGE_FILE_NAME_ENDING, getErrorScreenshotFile(referenceName));
         } catch (IOException e) {
 //      logger().warning(e.getMessage());
         }

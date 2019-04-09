@@ -1,23 +1,21 @@
 package com.vaadin.testbench.screenshot;
 
-import com.vaadin.frp.model.Result;
-
 import javax.imageio.ImageIO;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.function.Function;
 
 import static com.vaadin.testbench.screenshot.ImageFileUtil.getErrorScreenshotFile;
 import static com.vaadin.testbench.screenshot.ImageUtil.encodeImageToBase64;
 import static com.vaadin.testbench.screenshot.ScreenshotProperties.IMAGE_FILE_NAME_ENDING;
 
 public class ScreenShotFailureReporter {
+
     private final BufferedImage referenceImage;
     private final boolean[][] falseBlocks;
     private final int xBlocks;
@@ -34,11 +32,10 @@ public class ScreenShotFailureReporter {
     public void createErrorImageAndHTML(String fileName,
                                         BufferedImage screenshotImage) {
 
-        final Function<String, File> errorFileFunction = getErrorScreenshotFile();
         try {
             // Write the screenshot into the error directory
             ImageIO.write(screenshotImage, IMAGE_FILE_NAME_ENDING,
-                    errorFileFunction.apply(fileName));
+                    getErrorScreenshotFile(fileName));
         } catch (IOException e) {
 //      logger().warning("Error writing screenshot to "
 //                       + errorFileFunction.apply(fileName).getPath());
@@ -223,12 +220,12 @@ public class ScreenShotFailureReporter {
                                 BufferedImage screenshotImage,
                                 BufferedImage referenceImage) {
 
-        Result<String> image = encodeImageToBase64().apply(screenshotImage);
-        Result<String> ref_image = encodeImageToBase64().apply(referenceImage);
+        String image = encodeImageToBase64(screenshotImage);
+        String refImage = encodeImageToBase64(referenceImage);
 
         try {
             PrintWriter writer = new PrintWriter(
-                    getErrorScreenshotFile().apply(fileId + ".html"));
+                    getErrorScreenshotFile(fileId + ".html"));
             // Write head.
             writer.println("<html>");
             writer.println("<head>");
@@ -248,7 +245,7 @@ public class ScreenShotFailureReporter {
                             + "\"/><span style=\"position: absolute; top: 0px; left: 0px; opacity:0.4; filter: alpha(opacity=40); font-weight: bold;\">Image for this run</span></div>");
             writer.println(
                     "<div id=\"reference\" style=\"display: none; position: absolute; top: 0px; left: 0px; z-index: 999;\"><img src=\"data:image/png;base64,"
-                            + ref_image + "\"/></div>");
+                            + refImage + "\"/></div>");
 
             int add = 0;
             for (ErrorBlock error : blocks) {
@@ -277,7 +274,7 @@ public class ScreenShotFailureReporter {
                                 + (error.getY() + (error.getYBlocks() * 16) + 1)
                                 + "px," + (error.getX() - offsetX)
                                 + "px); z-index: " + (99 + add) + ";\">");
-                writer.println("<img src=\"data:image/png;base64," + ref_image
+                writer.println("<img src=\"data:image/png;base64," + refImage
                         + "\" />");
                 // End popup div.
                 writer.println("</div>");

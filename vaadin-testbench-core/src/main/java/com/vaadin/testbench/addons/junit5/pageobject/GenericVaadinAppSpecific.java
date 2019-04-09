@@ -1,26 +1,24 @@
 package com.vaadin.testbench.addons.junit5.pageobject;
 
-import java.util.function.Supplier;
-
 public interface GenericVaadinAppSpecific extends PageObject {
 
-    default Supplier<String> urlRestartApp() {
-        return () -> url().get() + "?restartApplication";
+    default String urlRestartApp() {
+        return url() + "?restartApplication";
     }
 
-    default Supplier<String> urlDebugApp() {
-        return () -> url().get() + "?debug";
+    default String urlDebugApp() {
+        return url() + "?debug";
     }
 
-    default Supplier<String> urlSwitchToDebugApp() {
-        return () -> url().get() + "?debug&restartApplication";
+    default String urlSwitchToDebugApp() {
+        return url() + "?debug&restartApplication";
     }
 
     default void switchToDebugMode() {
-        getDriver().get(urlSwitchToDebugApp().get());
+        getDriver().get(urlSwitchToDebugApp());
     }
 
     default void restartApplication() {
-        getDriver().get(urlRestartApp().get());
+        getDriver().get(urlRestartApp());
     }
 }

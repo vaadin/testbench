@@ -1,19 +1,12 @@
 package com.vaadin.testbench;
 
-import com.vaadin.frp.functions.CheckedFunction;
-
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-
 /**
  * Creates a {@link java.util.Properties} object merged from different sources.
- *
- * @author svenruppert
- * @version $Id: $Id
  */
 public class PropertiesResolver {
 
@@ -21,13 +14,12 @@ public class PropertiesResolver {
      * Constant <code>CONFIG_LOCATION_PROPERTY="rapidpm.configlocation"</code>
      */
     public static final String CONFIG_LOCATION_PROPERTY = "rapidpm.configlocation";
-    public static final String PROPERIES_EXTENSION = ".properties";
+    private static final String PROPERIES_EXTENSION = ".properties";
 
-    public static CheckedFunction<String, Properties> propertyReader() {
-        return (filename) -> {
-            final PropertiesResolver resolver = new PropertiesResolver();
-            return resolver.get(filename);
-        };
+
+    public static Properties readProperties(String filename) {
+        final PropertiesResolver resolver = new PropertiesResolver();
+        return resolver.get(filename);
     }
 
     private String createFileName(String name) {
@@ -78,8 +70,7 @@ public class PropertiesResolver {
         Properties properties = new Properties();
         try (InputStream in = new FileInputStream(file)) {
             properties.load(in);
-        } catch (FileNotFoundException e) {
-        } catch (IOException e) {
+        } catch (IOException ignored) {
         }
 
         return properties;
@@ -100,7 +91,7 @@ public class PropertiesResolver {
             if (in != null) {
                 properties.load(in);
             }
-        } catch (IOException e) {
+        } catch (IOException ignored) {
         }
         return properties;
     }

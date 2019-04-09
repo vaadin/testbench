@@ -1,18 +1,17 @@
 package com.vaadin.testbench.screenshot;
 
-import com.vaadin.frp.model.Result;
 import com.vaadin.testbench.screenshot.ImageFileUtil.ReferenceInfo;
 import com.vaadin.testbench.screenshot.ImageUtil.ImageProperties;
 import com.vaadin.testbench.screenshot.ReferenceNameGenerator.TestcaseInfo;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Function;
+import java.util.Optional;
 
 import static com.vaadin.testbench.screenshot.ImageFileUtil.createScreenshotDirectoriesIfNeeded;
 import static com.vaadin.testbench.screenshot.ImageFileUtil.getErrorScreenshotFile;
@@ -95,9 +94,8 @@ public class ImageComparison {
 
         p.falseBlocks = new boolean[p.xBlocks][p.yBlocks];
 
-        final Function<BufferedImage, ImageProperties> imgProperties = extractImageProperties();
-        p.refProperties = imgProperties.apply(p.refImage);
-        p.ssProperties = imgProperties.apply(p.ssImage);
+        p.refProperties = extractImageProperties(p.refImage);
+        p.ssProperties = extractImageProperties(p.ssImage);
 
         return p;
     }
@@ -115,32 +113,30 @@ public class ImageComparison {
     public boolean imageEqualToReference(BufferedImage screenshotImage,
                                          TestcaseInfo info,
                                          double errorTolerance) throws IOException {
-        createScreenshotDirectoriesIfNeeded()
-                .apply(null);
+        createScreenshotDirectoriesIfNeeded();
 //        .ifPresentOrElse(aVoid -> logger().info("Screenshot Directories are OK.") ,
 //                         failed -> logger().warning(failed));
 
-        final String referenceImageFileName = generateName()
-                .apply(new TestcaseInfo(
+        final String referenceImageFileName = generateName(
+                new TestcaseInfo(
                         info.referenceId(),
                         info.browserName(),
                         info.platformName(),
                         info.version()
                 )) + "." + IMAGE_FILE_NAME_ENDING;
 
-        final List<String> referenceFileNames = getReferenceImageFileNames()
-                .apply(new ReferenceInfo(
-                        referenceImageFileName,
-                        info.browserName(),
-                        info.version()
-                ));
+
+        final ReferenceInfo referenceInfo = new ReferenceInfo(
+                referenceImageFileName,
+                info.browserName(),
+                info.version());
+        final List<String> referenceFileNames = getReferenceImageFileNames(referenceInfo);
 
         if (referenceFileNames.isEmpty()) {
             // We require a reference image to continue
             // Save the screenshot in the error directory.
 
-            final File errorScreenshotFile = getErrorScreenshotFile()
-                    .apply(referenceImageFileName);
+            final File errorScreenshotFile = getErrorScreenshotFile(referenceImageFileName);
 
             ImageIO.write(screenshotImage,
                     IMAGE_FILE_NAME_ENDING,
@@ -154,17 +150,18 @@ public class ImageComparison {
 
             final long count = referenceFileNames
                     .stream()
-                    .map(referenceFileName -> readReferenceImage().apply(referenceFileName))
+                    .map(referenceFileName -> readReferenceImage(referenceFileName))
                     .filter(img -> img
 //              .ifFailed((failed) -> logger().warning(failed))
                             .isPresent())
-                    .map(Result::get)
+                    .map(Optional::get)
                     .map(referenceImage -> createParameters(referenceImage,
                             screenshotImage,
                             errorTolerance))
                     .map(this::compareImages)
                     .filter(Objects::nonNull) // all OK if null
-                    .peek(reporter -> reporter.createErrorImageAndHTML(info.referenceId() + "." + IMAGE_FILE_NAME_ENDING,
+                    .peek(reporter -> reporter.createErrorImageAndHTML(
+                            info.referenceId() + "." + IMAGE_FILE_NAME_ENDING,
                             screenshotImage))
                     .count();
 
@@ -178,8 +175,7 @@ public class ImageComparison {
                                          BufferedImage referenceImage,
                                          String referenceFileName,
                                          double errorTolerance) {
-        createScreenshotDirectoriesIfNeeded()
-                .apply(null);
+        createScreenshotDirectoriesIfNeeded();
 //        .ifPresentOrElse(aVoid -> logger().info("Screenshot Directories are OK.") ,
 //                         failed -> logger().warning(failed));
 
@@ -532,8 +528,8 @@ public class ImageComparison {
 
         // Clone the subImage of the screenshot to avoid accidentally
         // modifying the original screenshot.
-        final BufferedImage screenshotCopy = cloneImage()
-                .apply(params.ssImage.getSubimage(x, y, width, height));
+        final BufferedImage screenshotCopy
+                = cloneImage(params.ssImage.getSubimage(x, y, width, height));
 
         // Copy pixels for cursor position from reference to screenshot
         for (int j = cursorStartY; j <= cursorEndY; ++j) {
@@ -555,8 +551,8 @@ public class ImageComparison {
      * @return
      */
     private boolean isCursorPixel(int pixel1, int pixel2) {
-        double lum1 = rgbToLuminance().apply(pixel1);
-        double lum2 = rgbToLuminance().apply(pixel2);
+        double lum1 = rgbToLuminance(pixel1);
+        double lum2 = rgbToLuminance(pixel2);
 
         int blackMaxLuminance = 80;
         int whiteMinLuminance = 150;

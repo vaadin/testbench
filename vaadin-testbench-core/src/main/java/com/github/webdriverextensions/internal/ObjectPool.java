@@ -80,7 +80,8 @@ public class ObjectPool {
             if (ex.getCause() instanceof NoSuchMethodException) {
                 throw new WebDriverExtensionException("Failed to instantiate WebSite class "
                         + quote(field.getType().getSimpleName()) + " for field " + quote(field.getName())
-                        + " since no args constructor is missing. Remove any other constructor or implement a no args constructor.",
+                        + " since no args constructor is missing. Remove any other constructor " +
+                        "or implement a no args constructor.",
                         ex);
             } else {
                 throw new WebDriverExtensionException("Failed to instantiate WebSite class "
@@ -104,7 +105,8 @@ public class ObjectPool {
             if (ex.getCause() instanceof NoSuchMethodException) {
                 throw new WebDriverExtensionException("Failed to instantiate WebPage class "
                         + quote(field.getType().getSimpleName()) + " for field " + quote(field.getName())
-                        + " since no args constructor is missing. Remove any other constructor or implement a no args constructor.",
+                        + " since no args constructor is missing. Remove any other constructor " +
+                        "or implement a no args constructor.",
                         ex);
             } else {
                 throw new WebDriverExtensionException("Failed to instantiate WebPage class "
@@ -128,7 +130,8 @@ public class ObjectPool {
             if (ex.getCause() instanceof NoSuchMethodException) {
                 throw new WebDriverExtensionException("Failed to instantiate WebRepository class "
                         + quote(field.getType().getSimpleName()) + " for field " + quote(field.getName())
-                        + " since no args constructor is missing. Remove any other constructor or implement a no args constructor.",
+                        + " since no args constructor is missing. Remove any other constructor " +
+                        "or implement a no args constructor.",
                         ex);
             } else {
                 throw new WebDriverExtensionException("Failed to instantiate WebRepository class "

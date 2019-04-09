@@ -79,10 +79,14 @@ public class ComboBoxIT extends AbstractIT {
     @VaadinTest
     public void getSelectedText(PO po) {
 
-        final ComboBoxElement comboBoxWithTextWithPreSelectedValue = po.$(ComboBoxElement.class).id(TEXT_WITH_PRE_SLELECTED_VALUE);
-        final ComboBoxElement comboBoxWithNoTextWithPreSelectedValue = po.$(ComboBoxElement.class).id(NOTEXT_WITH_PRE_SLELECTED_VALUE);
-        final ComboBoxElement comboBoxLazyWithPreSelectedValue = po.$(ComboBoxElement.class).id(LAZY_WITH_PRE_SLELECTED_VALUE);
-        final ComboBoxElement comboBoxWithBeansWithPreSelectedValue = po.$(ComboBoxElement.class).id(BEANS_WITH_PRE_SLELECTED_VALUE);
+        final ComboBoxElement comboBoxWithTextWithPreSelectedValue
+                = po.$(ComboBoxElement.class).id(TEXT_WITH_PRE_SLELECTED_VALUE);
+        final ComboBoxElement comboBoxWithNoTextWithPreSelectedValue
+                = po.$(ComboBoxElement.class).id(NOTEXT_WITH_PRE_SLELECTED_VALUE);
+        final ComboBoxElement comboBoxLazyWithPreSelectedValue
+                = po.$(ComboBoxElement.class).id(LAZY_WITH_PRE_SLELECTED_VALUE);
+        final ComboBoxElement comboBoxWithBeansWithPreSelectedValue
+                = po.$(ComboBoxElement.class).id(BEANS_WITH_PRE_SLELECTED_VALUE);
 
         Assertions.assertEquals(PRE_SELECTED_VALUE_FOR_COMBOBOX_WITHOUT_TEXT,
                 comboBoxWithNoTextWithPreSelectedValue.getSelectedText());

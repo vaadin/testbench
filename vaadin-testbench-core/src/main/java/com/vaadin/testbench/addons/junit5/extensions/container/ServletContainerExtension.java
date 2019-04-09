@@ -68,7 +68,7 @@ public class ServletContainerExtension implements
     public Object resolveParameter(ParameterContext parameterContext,
                                    ExtensionContext extensionContext) throws ParameterResolutionException {
         if (ContainerInfo.class.isAssignableFrom(parameterContext.getParameter().getType())) {
-            return containerInfo().apply(extensionContext);
+            return containerInfo(extensionContext);
         } else {
             throw new ParameterResolutionException("was not able to create ContainerInfo instance");
         }

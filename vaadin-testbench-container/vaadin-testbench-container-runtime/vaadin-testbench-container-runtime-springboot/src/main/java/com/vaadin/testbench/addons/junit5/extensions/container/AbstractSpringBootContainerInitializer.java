@@ -4,7 +4,6 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 
 import java.lang.reflect.Method;
 import java.util.List;
-import java.util.function.Consumer;
 
 import static com.vaadin.testbench.addons.junit5.extensions.ExtensionFunctions.storeClassPlain;
 import static com.vaadin.testbench.addons.junit5.extensions.ExtensionFunctions.storeMethodPlain;
@@ -23,38 +22,32 @@ public abstract class AbstractSpringBootContainerInitializer
     public static final String NOT_ANNOTATED = "No @SpringBootConf annotations at the testclass found";
 
     @Override
-    public void beforeAll(Class<?> testClass, ExtensionContext context) throws Exception {
-
+    public void beforeAll(Class<?> testClass, ExtensionContext context) {
         if (!isAnnotated(testClass, SpringBootConf.class)) {
 //      logger().warning(NOT_ANNOTATED);
             throw new IllegalStateException(NOT_ANNOTATED);
         } else {
             final SpringBootConf conf = testClass.getAnnotation(SpringBootConf.class);
             Class<?> appClass = conf.source();
-            if (appClass == null) {
-//        logger().warning(NO_APP_CLASS_DEFINED);
-                throw new IllegalStateException(NO_APP_CLASS_DEFINED);
-            } else {
-                storeClassPlain().apply(context)
-                        .put(SPRING_BOOT_APP_CLASS, appClass);
+            storeClassPlain(context)
+                    .put(SPRING_BOOT_APP_CLASS, appClass);
 
-                storeClassPlain().apply(context)
-                        .put(SPRING_BOOT_ARGS, asList(conf.args()));
-            }
+            storeClassPlain(context)
+                    .put(SPRING_BOOT_ARGS, asList(conf.args()));
         }
     }
 
-    private Consumer<ExtensionContext> removeApplicationContext() {
-        return context -> storeMethodPlain().apply(context)
+    private void removeApplicationContext(ExtensionContext context) {
+        storeMethodPlain(context)
                 .remove(SPRING_BOOT_APPLICATION_CONTEXT);
     }
 
     @Override
-    public void beforeEach(Method testMethod, ExtensionContext context) throws Exception {
+    public void beforeEach(Method testMethod, ExtensionContext context) {
         int port = preparePort(context);
-        prepareIP(context);
+        prepareIp(context);
 
-        final ExtensionContext.Store store = storeClassPlain().apply(context);
+        final ExtensionContext.Store store = storeClassPlain(context);
 
         List<String> argsWithoutPort =
                 ((List<String>) store.get(SPRING_BOOT_ARGS, List.class)).stream()
@@ -71,18 +64,18 @@ public abstract class AbstractSpringBootContainerInitializer
                                                          List<String> argsWithoutPort);
 
     @Override
-    public void afterEach(Method testMethod, ExtensionContext context) throws Exception {
+    public void afterEach(Method testMethod, ExtensionContext context) {
         stopSpringApplication(context);
-        removeApplicationContext().accept(context);
-        cleanUpPort(context);
-        cleanUpIP(context);
+        removeApplicationContext(context);
+        cleanupPort(context);
+        cleanupIp(context);
     }
 
     public abstract void stopSpringApplication(ExtensionContext context);
 
     @Override
-    public void afterAll(Class<?> testClass, ExtensionContext context) throws Exception {
-        storeClassPlain().apply(context).remove(SPRING_BOOT_APP_CLASS);
-        storeClassPlain().apply(context).remove(SPRING_BOOT_ARGS);
+    public void afterAll(Class<?> testClass, ExtensionContext context) {
+        storeClassPlain(context).remove(SPRING_BOOT_APP_CLASS);
+        storeClassPlain(context).remove(SPRING_BOOT_ARGS);
     }
 }
