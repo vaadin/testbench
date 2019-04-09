@@ -17,7 +17,7 @@ package com.vaadin.testbench.addons.webdriver;
  * #L%
  */
 
-import com.github.webdriverextensions.DriverPathLoader;
+import com.github.webdriverextensions.internal.junitrunner.DriverPathLoader;
 import com.vaadin.testbench.addons.webdriver.conf.WebdriversConfig;
 import com.vaadin.testbench.addons.webdriver.conf.WebdriversConfigFactory;
 import org.openqa.selenium.WebDriver;
@@ -60,7 +60,7 @@ public interface BrowserDriverFunctions {
 
     static Optional<WebDriver> localWebDriverInstance(DesiredCapabilities dc) {
         String browserType = dc.getBrowserName();
-        DriverPathLoader.loadDriverPaths();
+        DriverPathLoader.loadDriverPaths(null);
 
         if (browserType == null || browserType.isEmpty()) {
             return Optional.empty();
@@ -112,7 +112,7 @@ public interface BrowserDriverFunctions {
                             .collect(toSet())
                             .isEmpty();
                 })
-                .map(spec -> createWebDriverInstance(spec));
+                .map(BrowserDriverFunctions::createWebDriverInstance);
     }
 
     static WebDriver createWebDriverInstance(WebDriverSpec spec) {

@@ -51,6 +51,18 @@
     </dependency>
 
     <dependency>
+      <groupId>com.github.webdriverextensions</groupId>
+      <artifactId>webdriverextensions</artifactId>
+      <version>3.10.0</version>
+      <exclusions>
+        <exclusion>
+          <groupId>ch.qos.logback</groupId>
+          <artifactId>logback-classic</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-params</artifactId>
       <scope>compile</scope>
