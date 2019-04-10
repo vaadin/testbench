@@ -1,4 +1,4 @@
-package com.vaadin.testbench.addons.junit5.extensions.unitest;
+package com.vaadin.testbench.addons.junit5.extensions.unittest;
 
 /*-
  * #%L

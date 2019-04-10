@@ -19,8 +19,6 @@ package com.vaadin.testbench.addons.junit5.extensions.unittest;
 
 import com.vaadin.testbench.addons.junit5.extensions.ConvertWebdriverTestExtension;
 import com.vaadin.testbench.addons.junit5.extensions.container.ServletContainerExtension;
-import com.vaadin.testbench.addons.junit5.extensions.unitest.PageObjectInvocationContextProvider;
-import com.vaadin.testbench.addons.junit5.extensions.unitest.PageObjectWebDriverCleanerExtension;
 import com.vaadin.testbench.addons.screenshot.FailedTestScreenhsotExtension;
 import org.junit.jupiter.api.TestTemplate;
 import org.junit.jupiter.api.extension.ExtendWith;

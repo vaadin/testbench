@@ -1,4 +1,4 @@
-package com.vaadin.testbench.addons.junit5.pageobject;
+package com.vaadin.testbench.addons.junit5.extensions.unittest;
 
 /*-
  * #%L
@@ -17,9 +17,9 @@ package com.vaadin.testbench.addons.junit5.pageobject;
  * #L%
  */
 
-import com.vaadin.testbench.TestBenchElement;
+import org.junit.jupiter.api.extension.TestTemplateInvocationContext;
+import org.openqa.selenium.WebDriver;
 
-@FunctionalInterface
-public interface WithID<T extends TestBenchElement> {
-    T id(String id);
+public interface WebDriverTemplateInvocationContext extends TestTemplateInvocationContext {
+    WebDriver webdriver();
 }

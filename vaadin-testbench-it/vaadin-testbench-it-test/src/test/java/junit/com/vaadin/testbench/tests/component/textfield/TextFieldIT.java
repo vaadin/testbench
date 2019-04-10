@@ -3,7 +3,7 @@ package junit.com.vaadin.testbench.tests.component.textfield;
 import com.vaadin.flow.component.textfield.testbench.TextFieldElement;
 import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinTest;
 import junit.com.vaadin.testbench.tests.component.common.AbstractIT;
-import junit.com.vaadin.testbench.tests.testUI.GenericTestPageObject;
+import junit.com.vaadin.testbench.tests.uitest.GenericTestPageObject;
 import org.junit.jupiter.api.Assertions;
 
 import static com.vaadin.flow.component.textfield.testbench.test.TextFieldView.INITIAL_VALUE;

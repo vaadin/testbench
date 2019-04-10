@@ -1,4 +1,4 @@
-package com.vaadin.testbench.addons.junit5.extensions.unitest;
+package com.vaadin.testbench.addons.junit5.extensions.unittest;
 
 /*-
  * #%L
@@ -21,7 +21,7 @@ import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.openqa.selenium.WebDriver;
 
-import static com.vaadin.testbench.addons.junit5.extensions.unitest.PageObjectFunctions.removePageObject;
+import static com.vaadin.testbench.addons.junit5.extensions.unittest.PageObjectFunctions.removePageObject;
 import static com.vaadin.testbench.addons.webdriver.junit5.WebdriverExtensionFunctions.removeWebDriver;
 import static com.vaadin.testbench.addons.webdriver.junit5.WebdriverExtensionFunctions.webdriver;
 

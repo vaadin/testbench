@@ -1,4 +1,4 @@
-package junit.com.vaadin.testbench.tests.testUI;
+package junit.com.vaadin.testbench.tests.uitest;
 
 import com.vaadin.testbench.addons.junit5.extensions.container.ContainerInfo;
 import com.vaadin.testbench.addons.junit5.pageobject.AbstractVaadinPageObject;
