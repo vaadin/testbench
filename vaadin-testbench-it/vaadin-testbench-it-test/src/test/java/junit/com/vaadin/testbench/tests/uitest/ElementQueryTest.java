@@ -1,9 +1,9 @@
-package junit.com.vaadin.testbench.tests.testui;
+package junit.com.vaadin.testbench.tests.uitest;
 
 import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinTest;
-import junit.com.vaadin.testbench.tests.testui.elements.NativeButtonElement;
-import junit.com.vaadin.testbench.tests.testui.elements.PolymerTemplateViewElement;
+import junit.com.vaadin.testbench.tests.uitest.elements.NativeButtonElement;
+import junit.com.vaadin.testbench.tests.uitest.elements.PolymerTemplateViewElement;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 

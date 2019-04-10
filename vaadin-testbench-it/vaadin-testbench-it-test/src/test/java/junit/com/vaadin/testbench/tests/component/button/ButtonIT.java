@@ -3,7 +3,7 @@ package junit.com.vaadin.testbench.tests.component.button;
 import com.vaadin.flow.component.button.testbench.ButtonElement;
 import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinTest;
 import junit.com.vaadin.testbench.tests.component.common.AbstractIT;
-import junit.com.vaadin.testbench.tests.testui.GenericTestPageObject;
+import junit.com.vaadin.testbench.tests.uitest.GenericTestPageObject;
 import org.junit.jupiter.api.Assertions;
 
 import static com.vaadin.flow.component.button.testbench.test.ButtonView.NAV;

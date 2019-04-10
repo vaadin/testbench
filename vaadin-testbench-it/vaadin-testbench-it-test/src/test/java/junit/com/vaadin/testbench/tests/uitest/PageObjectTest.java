@@ -1,4 +1,4 @@
-package junit.com.vaadin.testbench.tests.testui;
+package junit.com.vaadin.testbench.tests.uitest;
 
 import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinTest;
 import org.junit.jupiter.api.Assertions;

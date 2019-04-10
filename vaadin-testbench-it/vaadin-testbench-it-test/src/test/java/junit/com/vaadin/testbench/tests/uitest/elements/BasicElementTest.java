@@ -1,9 +1,9 @@
-package junit.com.vaadin.testbench.tests.testui.elements;
+package junit.com.vaadin.testbench.tests.uitest.elements;
 
 import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinTest;
 import com.vaadin.testbench.tests.testUI.ElementQueryView;
-import junit.com.vaadin.testbench.tests.testui.GenericTestPageObject;
+import junit.com.vaadin.testbench.tests.uitest.GenericTestPageObject;
 import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.TimeoutException;
 
