@@ -96,6 +96,11 @@
     <dependencies>
       <dependency>
         <groupId>org.seleniumhq.selenium</groupId>
+        <artifactId>selenium-api</artifactId>
+        <version>${selenium.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.seleniumhq.selenium</groupId>
         <artifactId>selenium-java</artifactId>
         <version>${selenium.version}</version>
       </dependency>
@@ -394,18 +399,40 @@
         <groupId>de.sormuras.junit</groupId>
         <artifactId>junit-platform-maven-plugin</artifactId>
         <version>${junit-platform-maven-plugin.version}</version>
-        <extensions>true</extensions> <!-- Necessary to execute it in 'test' phase. -->
+
+<!--        This setup makes this plugin runs in the integration test phase and onl if-->
+<!--        skipITs system property is absent. Unit tests are still run by the Surefire plugin.-->
+<!--        It's unfortunate that this plugin then has to run unit tests again in the integration-test-->
+<!--        phase because of difficulties with naming integration tests *.IT-->
+<!--        Should be revisited.-->
+        <executions>
+          <execution>
+            <id>run-it</id>
+            <phase>integration-test</phase>
+            <goals>
+              <goal>launch</goal>
+            </goals>
+
+            <configuration>
+              <skip>${skipITs}</skip>
+              <timeout>10000</timeout>
+            </configuration>
+          </execution>
+        </executions>
 
         <configuration>
-          <tweaks>
-            <failIfNoTests>false</failIfNoTests>
-          </tweaks>
           <executor>JAVA</executor>
+          <isolation>NONE</isolation>
+
           <javaOptions>
             <additionalOptions>
               <jacoco>${jacoco.java.option}</jacoco>
             </additionalOptions>
           </javaOptions>
+
+          <tweaks>
+            <failIfNoTests>false</failIfNoTests>
+          </tweaks>
         </configuration>
       </plugin>
       <plugin>
@@ -423,41 +450,14 @@
             </configuration>
           </execution>
           <execution>
-            <id>post-unit-test</id>
-            <phase>test</phase>
+            <id>post-integration-test</id>
+            <phase>post-integration-test</phase>
             <goals>
               <goal>report</goal>
             </goals>
           </execution>
         </executions>
       </plugin>
-
-      <!--      <plugin>-->
-      <!--        <groupId>com.github.webdriverextensions</groupId>-->
-      <!--        <artifactId>webdriverextensions-maven-plugin</artifactId>-->
-      <!--        <executions>-->
-      <!--          <execution>-->
-      <!--            <goals>-->
-      <!--              <goal>install-drivers</goal>-->
-      <!--            </goals>-->
-      <!--          </execution>-->
-      <!--        </executions>-->
-      <!--        <configuration>-->
-      <!--          <keepDownloadedWebdrivers>true</keepDownloadedWebdrivers>-->
-      <!--          <installationDirectory>${maven.multiModuleProjectDirectory}/_data/webdrivers</installationDirectory>-->
-      <!--          <drivers>-->
-      <!--            <driver>-->
-      <!--              <name>chromedriver</name>-->
-      <!--            </driver>-->
-      <!--            &lt;!&ndash;<driver>&ndash;&gt;-->
-      <!--            &lt;!&ndash;<name>operadriver</name>&ndash;&gt;-->
-      <!--            &lt;!&ndash;</driver>&ndash;&gt;-->
-      <!--            <driver>-->
-      <!--            <name>geckodriver</name>-->
-      <!--            </driver>-->
-      <!--          </drivers>-->
-      <!--        </configuration>-->
-      <!--      </plugin>-->
     </plugins>
   </build>
 
@@ -479,6 +479,36 @@
   </reporting>
 
   <profiles>
+    <profile>
+      <id>install-drivers</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>com.github.webdriverextensions</groupId>
+            <artifactId>webdriverextensions-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>install-drivers</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <keepDownloadedWebdrivers>true</keepDownloadedWebdrivers>
+              <installationDirectory>${maven.multiModuleProjectDirectory}/_data/webdrivers</installationDirectory>
+              <drivers>
+                <driver>
+                  <name>chromedriver</name>
+                </driver>
+                <driver>
+                  <name>geckodriver</name>
+                </driver>
+              </drivers>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
     <profile>
       <id>_release</id>
       <activation>
