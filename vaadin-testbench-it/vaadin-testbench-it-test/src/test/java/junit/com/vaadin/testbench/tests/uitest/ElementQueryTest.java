@@ -2,8 +2,8 @@ package junit.com.vaadin.testbench.tests.uitest;
 
 import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinTest;
+import com.vaadin.testbench.annotations.Element;
 import junit.com.vaadin.testbench.tests.uitest.elements.NativeButtonElement;
-import junit.com.vaadin.testbench.tests.uitest.elements.PolymerTemplateViewElement;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 
@@ -128,5 +128,9 @@ public class ElementQueryTest {
                 PolymerTemplateViewElement.class).first();
 
         Assertions.assertEquals(6, template.getPropertyElements("children").size());
+    }
+
+    @Element("polymer-template-view")
+    public static class PolymerTemplateViewElement extends TestBenchElement {
     }
 }
