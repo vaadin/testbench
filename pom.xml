@@ -190,11 +190,6 @@
           <version>2.7</version>
         </plugin>
         <plugin>
-          <groupId>com.mycila</groupId>
-          <artifactId>license-maven-plugin</artifactId>
-          <version>3.0</version>
-        </plugin>
-        <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-release-plugin</artifactId>
           <version>2.5.3</version>
@@ -547,33 +542,6 @@
           </plugin>
 
           <plugin>
-            <groupId>com.mycila</groupId>
-            <artifactId>license-maven-plugin</artifactId>
-            <configuration>
-              <header>_data/license/cval3/lic-header.txt</header>
-              <properties>
-                <owner>Vaadin</owner>
-              </properties>
-              <excludes>
-                <exclude>**/*.iml</exclude>
-                <exclude>**/README*</exclude>
-                <exclude>**/jacoco.exec*</exclude>
-                <exclude>**/LICENSE.txt</exclude>
-                <exclude>**/_data/webdrivers/*</exclude>
-                <exclude>src/test/resources/**</exclude>
-                <exclude>src/main/resources/**</exclude>
-                <exclude>target/**</exclude>
-              </excludes>
-            </configuration>
-            <executions>
-              <execution>
-                <goals>
-                  <goal>check</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-source-plugin</artifactId>
             <executions>
@@ -609,6 +577,55 @@
               </additionalOptions>
               <destDir>target/doc/apidoc/</destDir>
             </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>update-license-headers</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.commonjava.maven.plugins</groupId>
+            <artifactId>directory-maven-plugin</artifactId>
+            <version>0.1</version>
+            <executions>
+              <execution>
+                <id>directories</id>
+                <goals>
+                  <goal>directory-of</goal>
+                </goals>
+                <phase>initialize</phase>
+                <configuration>
+                  <property>projectbase</property>
+                  <project>
+                    <groupId>com.vaadin</groupId>
+                    <artifactId>vaadin-testbench</artifactId>
+                  </project>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>license-maven-plugin</artifactId>
+            <version>1.14</version>
+            <configuration>
+              <licenseName>cval3</licenseName>
+              <licenseResolver>file://${projectbase}/_data/license</licenseResolver>
+              <includes>
+                <include>**/*.java</include>
+              </includes>
+            </configuration>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>check-file-header</goal>
+                </goals>
+                <phase>process-sources</phase>
+              </execution>
+            </executions>
           </plugin>
         </plugins>
       </build>
