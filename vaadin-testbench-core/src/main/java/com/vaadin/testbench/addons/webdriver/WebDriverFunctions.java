@@ -25,6 +25,8 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 
 public interface WebDriverFunctions {
@@ -48,7 +50,9 @@ public interface WebDriverFunctions {
         try {
             outputStream.write(((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES));
             // Write to target/screenshot-[timestamp].jpg
-            final FileOutputStream out = new FileOutputStream("target/screenshot-"
+            final String directory = "target";
+            Files.createDirectory(Paths.get(directory));
+            final FileOutputStream out = new FileOutputStream(directory + "/screenshot-"
                     + logicalName + "-" + LocalDateTime.now() + ".png");
             out.write(outputStream.toByteArray());
             out.flush();

@@ -27,6 +27,7 @@
 
   <properties>
     <maven.deploy.skip>true</maven.deploy.skip>
+    <operating.system>mac</operating.system>
   </properties>
 
   <dependencyManagement>
@@ -136,6 +137,12 @@
   </dependencies>
 
   <build>
+    <testResources>
+      <testResource>
+        <directory>${project.basedir}/src/test/resources</directory>
+        <filtering>true</filtering>
+      </testResource>
+    </testResources>
     <plugins>
       <plugin>
         <groupId>org.apache.meecrowave</groupId>
@@ -144,4 +151,18 @@
       </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>linux</id>
+      <activation>
+        <os>
+          <family>linux</family>
+        </os>
+      </activation>
+      <properties>
+        <operating.system>linux</operating.system>
+      </properties>
+    </profile>
+  </profiles>
 </project>

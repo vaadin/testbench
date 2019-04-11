@@ -21,6 +21,7 @@ public class VaadinAppPageObject extends AbstractVaadinPageObject {
     }
 
     public SpanElement lbClickCount() {
+        $(SpanElement.class).waitForFirst();
         return $(SpanElement.class).id(LB_CLICK_COUNT);
     }
 

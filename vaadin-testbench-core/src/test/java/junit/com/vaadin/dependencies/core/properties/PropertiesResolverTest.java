@@ -61,7 +61,7 @@ public class PropertiesResolverTest {
 
         assertNotNull(properties);
 
-        assertEquals("20", properties.get("a.a"));
+        assertEquals("10", properties.get("a.a"));
         assertEquals("Hello", properties.getProperty("a.b"));
     }
 
