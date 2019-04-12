@@ -13,7 +13,7 @@ import static com.vaadin.flow.component.button.testbench.test.ButtonView.TEXT;
 @VaadinTest
 class ButtonIT extends AbstractIT {
 
-    @VaadinTest(preLoad = false)
+    @VaadinTest(preload = false)
     void click(GenericTestPageObject po) {
         po.loadPage(NAV);
 

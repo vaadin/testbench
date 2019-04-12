@@ -4,13 +4,13 @@ import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinTest;
 import junit.com.vaadin.testbench.tests.uitest.elements.NativeButtonElement;
 import org.junit.jupiter.api.Assertions;
 
-import static com.vaadin.testbench.tests.testUI.PerformanceView.ROUTE;
+import static com.vaadin.testbench.tests.uitest.PerformanceView.ROUTE;
 
 @VaadinTest
-class PerformanceTest {
+class PerformanceIT {
 
-    @VaadinTest(navigateAsString = ROUTE)
-    public void serverTime(GenericTestPageObject po) {
+    @VaadinTest(navigateTo = ROUTE)
+    void serverTime(GenericTestPageObject po) {
         po.$(NativeButtonElement.class).first().click();
 
         Assertions.assertEquals(1250.0,
@@ -22,8 +22,8 @@ class PerformanceTest {
                 500.0);
     }
 
-    @VaadinTest(navigateAsString = ROUTE)
-    public void renderingTime(GenericTestPageObject po) {
+    @VaadinTest(navigateTo = ROUTE)
+    void renderingTime(GenericTestPageObject po) {
         long initialRendering = po.getCommandExecutor().timeSpentRenderingLastRequest();
         // Assuming initial rendering is done in 5-295ms
         Assertions.assertEquals(150, initialRendering, 145);

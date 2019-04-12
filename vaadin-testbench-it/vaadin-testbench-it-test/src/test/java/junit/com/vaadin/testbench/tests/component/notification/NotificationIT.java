@@ -15,7 +15,7 @@ import static com.vaadin.flow.component.notification.testbench.test.Notification
 @VaadinTest
 public class NotificationIT extends AbstractIT {
 
-    @VaadinTest(navigateAsString = NAV)
+    @VaadinTest(navigateTo = NAV)
     public void getText(GenericTestPageObject po) throws Exception {
         final NotificationElement noText = po.$(NotificationElement.class).id(NotificationView.NOTEXT);
         final NotificationElement text = po.$(NotificationElement.class).id(NotificationView.TEXT);
@@ -24,7 +24,7 @@ public class NotificationIT extends AbstractIT {
         Assertions.assertEquals("Some text", text.getText());
     }
 
-    @VaadinTest(navigateAsString = NAV)
+    @VaadinTest(navigateTo = NAV)
     public void isOpen(GenericTestPageObject po) throws Exception {
         final NotificationElement noText = po.$(NotificationElement.class).id(NotificationView.NOTEXT);
         final NotificationElement text = po.$(NotificationElement.class).id(NotificationView.TEXT);
@@ -37,13 +37,13 @@ public class NotificationIT extends AbstractIT {
         Assertions.assertFalse(components.isOpen());
     }
 
-    @VaadinTest(navigateAsString = NAV)
+    @VaadinTest(navigateTo = NAV)
     public void findAllNotifications(GenericTestPageObject po) throws Exception {
         List<NotificationElement> notifications = po.$(NotificationElement.class).all();
         Assertions.assertEquals(3, notifications.size());
     }
 
-    @VaadinTest(navigateAsString = NAV)
+    @VaadinTest(navigateTo = NAV)
     public void componentInsideNotification(GenericTestPageObject po) {
         final NotificationElement components = po.$(NotificationElement.class).id(NotificationView.COMPONENTS);
 

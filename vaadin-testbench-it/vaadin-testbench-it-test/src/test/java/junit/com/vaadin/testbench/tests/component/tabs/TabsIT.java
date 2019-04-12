@@ -19,7 +19,7 @@ public class TabsIT extends AbstractIT {
     public static final String TEXT = "Text";
     public static final String DISABLED = "Disabled";
 
-    @VaadinTest(navigateAsString = NAV)
+    @VaadinTest(navigateTo = NAV)
     public void selectTabByIndex(GenericTestPageObject po) throws Exception {
         final TabsElement def = po.$(TabsElement.class).id(DEFAULT);
         Assertions.assertEquals(0, def.getSelectedTabIndex());
@@ -35,7 +35,7 @@ public class TabsIT extends AbstractIT {
      * @param po
      * @throws Exception
      */
-    @VaadinTest(navigateAsString = NAV)
+    @VaadinTest(navigateTo = NAV)
     @SkipBrowsers(value = {FIREFOX, IE})
     public void getSelectedTabElement(GenericTestPageObject po) throws Exception {
         final TabsElement def = po.$(TabsElement.class).id(DEFAULT);
@@ -46,7 +46,7 @@ public class TabsIT extends AbstractIT {
         Assertions.assertEquals(TEXT, def.getSelectedTabElement().getText());
     }
 
-    @VaadinTest(navigateAsString = NAV)
+    @VaadinTest(navigateTo = NAV)
     public void getTab(GenericTestPageObject po) throws Exception {
         final TabsElement def = po.$(TabsElement.class).id(DEFAULT);
 
@@ -54,7 +54,7 @@ public class TabsIT extends AbstractIT {
         Assertions.assertEquals(2, def.getTab(TEXT));
     }
 
-    @VaadinTest(navigateAsString = NAV)
+    @VaadinTest(navigateTo = NAV)
     public void isEnabled(GenericTestPageObject po) throws Exception {
         final TabsElement def = po.$(TabsElement.class).id(DEFAULT);
 

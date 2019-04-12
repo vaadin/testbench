@@ -9,22 +9,22 @@ import org.junit.jupiter.api.Disabled;
 import org.openqa.selenium.By;
 import org.openqa.selenium.OutputType;
 
-import static com.vaadin.testbench.tests.testUI.ElementQueryView.ROUTE;
+import static com.vaadin.testbench.tests.uitest.ElementQueryView.ROUTE;
 
 @VaadinTest
 @Disabled("Throws an exception related to file I/O. Should be fixed.")
-public class ElementScreenCompareTest {
+class ElementScreenCompareIT {
 
-    public static final int SCREENSHOT_HEIGHT = 850;
-    public static final int SCREENSHOT_WIDTH = 1500;
+    private static final int SCREENSHOT_HEIGHT = 850;
+    private static final int SCREENSHOT_WIDTH = 1500;
 
     @BeforeEach
     void setUp(GenericTestPageObject po) {
         po.getCommandExecutor().resizeViewPortTo(SCREENSHOT_WIDTH, SCREENSHOT_HEIGHT);
     }
 
-    @VaadinTest(navigateAsString = ROUTE)
-    public void elementCompareScreen(GenericTestPageObject po) throws Exception {
+    @VaadinTest(navigateTo = ROUTE)
+    void elementCompareScreen(GenericTestPageObject po) throws Exception {
         TestBenchElement button4 = po.$(NativeButtonElement.class).get(4);
 
         button4.getScreenshotAs(OutputType.BYTES);

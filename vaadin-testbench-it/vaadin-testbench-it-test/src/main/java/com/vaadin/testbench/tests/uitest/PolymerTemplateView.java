@@ -1,4 +1,4 @@
-package com.vaadin.testbench.tests.testUI;
+package com.vaadin.testbench.tests.uitest;
 
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.dependency.HtmlImport;
@@ -8,10 +8,12 @@ import com.vaadin.flow.component.polymertemplate.PolymerTemplate;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.templatemodel.TemplateModel;
 
-@Route("PolymerTemplateView")
+@Route(PolymerTemplateView.ROUTE)
 @Tag("polymer-template-view")
-@HtmlImport("META-INF/resources/frontend/polymer-template-view.html")
+@HtmlImport("frontend://polymer-template-view.html")
 public class PolymerTemplateView extends PolymerTemplate<TemplateModel> {
+
+    public static final String ROUTE = "PolymerTemplateView";
 
     public PolymerTemplateView() {
         for (int i = 1; i < 6; i++) {

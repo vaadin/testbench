@@ -12,7 +12,7 @@ import static com.vaadin.flow.component.radiobutton.testbench.test.RadioButtonVi
 @VaadinTest
 public class RadioButtonIT extends AbstractIT {
 
-    @VaadinTest(navigateAsString = NAV)
+    @VaadinTest(navigateTo = NAV)
     public void getOptions(GenericTestPageObject po) throws Exception {
         final RadioButtonGroupElement def = po.$(RadioButtonGroupElement.class).id(RadioButtonView.DEFAULT);
         final RadioButtonGroupElement preselected = po.$(RadioButtonGroupElement.class)
@@ -24,7 +24,7 @@ public class RadioButtonIT extends AbstractIT {
                 "Item 3", "Item 4"}, preselected.getOptions().toArray());
     }
 
-    @VaadinTest(navigateAsString = NAV)
+    @VaadinTest(navigateTo = NAV)
     public void getSetByText(GenericTestPageObject po) throws Exception {
         final RadioButtonGroupElement def = po.$(RadioButtonGroupElement.class).id(RadioButtonView.DEFAULT);
         final RadioButtonGroupElement preselected = po.$(RadioButtonGroupElement.class)

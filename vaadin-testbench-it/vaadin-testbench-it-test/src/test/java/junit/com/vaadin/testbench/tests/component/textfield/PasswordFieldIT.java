@@ -15,7 +15,7 @@ import static com.vaadin.flow.component.textfield.testbench.test.PasswordFieldVi
 @VaadinTest
 public class PasswordFieldIT extends AbstractIT {
 
-    @VaadinTest(navigateAsString = NAV)
+    @VaadinTest(navigateTo = NAV)
     public void getSetValue(GenericTestPageObject po) throws Exception {
 
         final PasswordFieldElement labelEager = po.$(PasswordFieldElement.class).id(LABEL_EAGER);
@@ -41,7 +41,7 @@ public class PasswordFieldIT extends AbstractIT {
         assertStringValue(po, placeholder, "Foo");
     }
 
-    @VaadinTest(navigateAsString = NAV)
+    @VaadinTest(navigateTo = NAV)
     public void getLabelEager(GenericTestPageObject po) throws Exception {
 
         final PasswordFieldElement labelEager = po.$(PasswordFieldElement.class).id(LABEL_EAGER);
@@ -55,7 +55,7 @@ public class PasswordFieldIT extends AbstractIT {
         Assertions.assertEquals("Has a placeholder", placeholder.getLabel());
     }
 
-    @VaadinTest(navigateAsString = NAV)
+    @VaadinTest(navigateTo = NAV)
     public void getPlaceholder(GenericTestPageObject po) throws Exception {
 
         final PasswordFieldElement labelEager = po.$(PasswordFieldElement.class).id(LABEL_EAGER);
@@ -69,7 +69,7 @@ public class PasswordFieldIT extends AbstractIT {
         Assertions.assertEquals("Text goes here", placeholder.getPlaceholder());
     }
 
-    @VaadinTest(navigateAsString = NAV)
+    @VaadinTest(navigateTo = NAV)
     public void passwordVisible(GenericTestPageObject po) throws Exception {
 
         final PasswordFieldElement labelEager = po.$(PasswordFieldElement.class).id(LABEL_EAGER);

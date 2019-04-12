@@ -12,7 +12,7 @@ import static com.vaadin.flow.component.ironlist.testbench.test.IronListView.NAV
 @VaadinTest
 public class IronListIT extends AbstractIT {
 
-    @VaadinTest(navigateAsString = NAV)
+    @VaadinTest(navigateTo = NAV)
     public void scrollTo(GenericTestPageObject po) throws Exception {
         final IronListElement def = po.$(IronListElement.class).id(HUNDRED_THOUSAND);
 
@@ -20,14 +20,14 @@ public class IronListIT extends AbstractIT {
         Assertions.assertEquals(1000.0, def.getFirstVisibleRowIndex(), 2);
     }
 
-    @VaadinTest(navigateAsString = NAV)
+    @VaadinTest(navigateTo = NAV)
     public void rowCount(GenericTestPageObject po) {
         final IronListElement def = po.$(IronListElement.class).id(HUNDRED_THOUSAND);
 
         Assertions.assertEquals(100000, def.getRowCount());
     }
 
-    @VaadinTest(navigateAsString = NAV)
+    @VaadinTest(navigateTo = NAV)
     public void firstLastVisibleRow(GenericTestPageObject po) throws Exception {
         final IronListElement def = po.$(IronListElement.class).id(HUNDRED_THOUSAND);
 

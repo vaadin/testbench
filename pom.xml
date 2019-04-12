@@ -474,6 +474,7 @@
         </plugins>
       </build>
     </profile>
+
     <profile>
       <id>_release</id>
       <activation>

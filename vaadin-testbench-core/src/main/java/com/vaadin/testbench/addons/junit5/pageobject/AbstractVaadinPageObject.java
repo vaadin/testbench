@@ -61,4 +61,8 @@ public abstract class AbstractVaadinPageObject
     public List<WebElement> findElements(By by) {
         return testCase.findElements(by);
     }
+
+    public TestBenchTestCase getTestCase() {
+        return testCase;
+    }
 }

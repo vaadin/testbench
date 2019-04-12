@@ -15,7 +15,7 @@ import static com.vaadin.flow.component.textfield.testbench.test.TextAreaView.PL
 @VaadinTest
 public class TextAreaIT extends AbstractIT {
 
-    @VaadinTest(navigateAsString = NAV)
+    @VaadinTest(navigateTo = NAV)
     public void getSetValue(GenericTestPageObject po) throws Exception {
 
         final TextAreaElement labelEager = po.$(TextAreaElement.class).id(LABEL_EAGER);
@@ -41,7 +41,7 @@ public class TextAreaIT extends AbstractIT {
         assertStringValue(po, placeholder, "Foo");
     }
 
-    @VaadinTest(navigateAsString = NAV)
+    @VaadinTest(navigateTo = NAV)
     public void getLabelEager(GenericTestPageObject po) throws Exception {
 
         final TextAreaElement labelEager = po.$(TextAreaElement.class).id(LABEL_EAGER);
@@ -55,7 +55,7 @@ public class TextAreaIT extends AbstractIT {
         Assertions.assertEquals("Has a placeholder", placeholder.getLabel());
     }
 
-    @VaadinTest(navigateAsString = NAV)
+    @VaadinTest(navigateTo = NAV)
     public void getPlaceholder(GenericTestPageObject po) throws Exception {
 
         final TextAreaElement labelEager = po.$(TextAreaElement.class).id(LABEL_EAGER);

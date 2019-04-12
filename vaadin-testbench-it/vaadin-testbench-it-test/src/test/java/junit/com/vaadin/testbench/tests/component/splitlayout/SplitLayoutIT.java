@@ -14,7 +14,7 @@ import static com.vaadin.flow.component.splitlayout.testbench.test.SplitLayoutVi
 @VaadinTest
 public class SplitLayoutIT extends AbstractIT {
 
-    @VaadinTest(navigateAsString = NAV)
+    @VaadinTest(navigateTo = NAV)
     public void findInside(GenericTestPageObject po) throws Exception {
         final SplitLayoutElement splitLayout = po.$(SplitLayoutElement.class).id(DEFAULT);
 
@@ -23,7 +23,7 @@ public class SplitLayoutIT extends AbstractIT {
                 splitLayout.$(TextFieldElement.class).all().size());
     }
 
-    @VaadinTest(navigateAsString = NAV)
+    @VaadinTest(navigateTo = NAV)
     public void findSplitter(GenericTestPageObject po) throws Exception {
         TestBenchElement splitter = po.$(SplitLayoutElement.class).id(DEFAULT).getSplitter();
         Assertions.assertNotNull(splitter);

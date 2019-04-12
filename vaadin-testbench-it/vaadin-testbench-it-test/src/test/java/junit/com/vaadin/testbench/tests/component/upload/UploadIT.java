@@ -32,7 +32,7 @@ public class UploadIT extends AbstractIT {
      * @param po
      * @throws Exception
      */
-    @VaadinTest(navigateAsString = NAV)
+    @VaadinTest(navigateTo = NAV)
     @SkipBrowsers({SAFARI, FIREFOX})
     @Disabled("Can't be tested automatically")
     public void upload(GenericTestPageObject po) throws Exception {
@@ -57,7 +57,7 @@ public class UploadIT extends AbstractIT {
                 getLogRowWithoutNumber(po, 0));
     }
 
-    @VaadinTest(navigateAsString = NAV)
+    @VaadinTest(navigateTo = NAV)
     @Disabled("Can't be tested automatically")
     // The upload finishes so quickly from localhost. Would need a huge file to
     // be created or throttling support
