@@ -2,13 +2,13 @@ package junit.com.vaadin.testbench.tests.uitest.elements;
 
 import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinTest;
-import com.vaadin.testbench.tests.testUI.ElementQueryView;
+import com.vaadin.testbench.tests.uitest.ElementQueryView;
 import junit.com.vaadin.testbench.tests.uitest.GenericTestPageObject;
 import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.TimeoutException;
 
 @VaadinTest
-public class BasicElementTest {
+class BasicElementIT {
 
     private static TestBenchElement fetch(GenericTestPageObject po) {
         po.loadPage(ElementQueryView.ROUTE);
@@ -16,7 +16,7 @@ public class BasicElementTest {
     }
 
     @VaadinTest
-    public void getSetStringProperty(GenericTestPageObject po) {
+    void getSetStringProperty(GenericTestPageObject po) {
         final TestBenchElement buttonElement = fetch(po);
         Assertions.assertNull(buttonElement.getPropertyString("foo"));
         buttonElement.setProperty("foo", "12");
@@ -26,7 +26,7 @@ public class BasicElementTest {
     }
 
     @VaadinTest
-    public void getSetBooleanProperty(GenericTestPageObject po) {
+    void getSetBooleanProperty(GenericTestPageObject po) {
         final TestBenchElement buttonElement = fetch(po);
         Assertions.assertNull(buttonElement.getPropertyBoolean("foo"));
         buttonElement.setProperty("foo", true);
@@ -36,7 +36,7 @@ public class BasicElementTest {
     }
 
     @VaadinTest
-    public void getSetDoubleProperty(GenericTestPageObject po) {
+    void getSetDoubleProperty(GenericTestPageObject po) {
         final TestBenchElement buttonElement = fetch(po);
         Assertions.assertNull(buttonElement.getPropertyDouble("foo"));
         buttonElement.setProperty("foo", 12.5);
@@ -46,7 +46,7 @@ public class BasicElementTest {
     }
 
     @VaadinTest
-    public void getSetIntegerProperty(GenericTestPageObject po) {
+    void getSetIntegerProperty(GenericTestPageObject po) {
         final TestBenchElement buttonElement = fetch(po);
         Assertions.assertNull(buttonElement.getPropertyInteger("foo"));
         buttonElement.setProperty("foo", 12);
@@ -56,7 +56,7 @@ public class BasicElementTest {
     }
 
     @VaadinTest
-    public void getSetPropertyChain(GenericTestPageObject po) {
+    void getSetPropertyChain(GenericTestPageObject po) {
         final TestBenchElement buttonElement = fetch(po);
         po.getCommandExecutor().executeScript("arguments[0].foo = {bar: {baz: 123}};", buttonElement);
 
@@ -65,7 +65,7 @@ public class BasicElementTest {
     }
 
     @VaadinTest
-    public void getSetElementProperty(GenericTestPageObject po) {
+    void getSetElementProperty(GenericTestPageObject po) {
         final TestBenchElement buttonElement = fetch(po);
         Assertions.assertEquals(buttonElement, buttonElement
                 .getPropertyElement("parentElement", "firstElementChild"));
@@ -74,7 +74,7 @@ public class BasicElementTest {
     }
 
     @VaadinTest
-    public void getSetElementsProperty(GenericTestPageObject po) {
+    void getSetElementsProperty(GenericTestPageObject po) {
         final TestBenchElement buttonElement = fetch(po);
         Assertions.assertEquals(0,
                 buttonElement.getPropertyElements("children").size());
@@ -83,14 +83,14 @@ public class BasicElementTest {
     }
 
     @VaadinTest
-    public void getSetPropertyChainMissingValue(GenericTestPageObject po) {
+    void getSetPropertyChainMissingValue(GenericTestPageObject po) {
         final TestBenchElement buttonElement = fetch(po);
         po.getCommandExecutor().executeScript("arguments[0].foo = {bar: {baz: 123}};", buttonElement);
         Assertions.assertNull(buttonElement.getPropertyDouble("foo", "baz", "baz"));
     }
 
     @VaadinTest()
-    public void waitForNonExistant(GenericTestPageObject po) {
+    void waitForNonExistant(GenericTestPageObject po) {
         fetch(po);
         Assertions.assertThrows(TimeoutException.class, () -> {
             po.$(PolymerTemplateViewElement.class).waitForFirst();
@@ -99,7 +99,7 @@ public class BasicElementTest {
     }
 
     @VaadinTest
-    public void hasAttribute(GenericTestPageObject po) {
+    void hasAttribute(GenericTestPageObject po) {
         fetch(po);
         NativeButtonElement withAttributes = po.$(NativeButtonElement.class)
                 .get(5);
@@ -116,7 +116,7 @@ public class BasicElementTest {
     }
 
     @VaadinTest
-    public void dispatchEvent(GenericTestPageObject po) {
+    void dispatchEvent(GenericTestPageObject po) {
         fetch(po);
         NativeButtonElement withAttributes = po.$(NativeButtonElement.class)
                 .get(5);
@@ -125,7 +125,7 @@ public class BasicElementTest {
     }
 
     @VaadinTest
-    public void nativeButtonDisabled(GenericTestPageObject po) {
+    void nativeButtonDisabled(GenericTestPageObject po) {
         fetch(po);
         NativeButtonElement enabled = po.$(NativeButtonElement.class).get(0);
         NativeButtonElement disabled = po.$(NativeButtonElement.class).get(2);

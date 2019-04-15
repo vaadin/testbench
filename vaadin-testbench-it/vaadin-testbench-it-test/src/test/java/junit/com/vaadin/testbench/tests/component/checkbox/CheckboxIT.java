@@ -14,7 +14,7 @@ import static com.vaadin.flow.component.checkbox.testbench.test.CheckboxView.TEX
 @VaadinTest()
 public class CheckboxIT extends AbstractIT {
 
-    @VaadinTest(navigateAsString = NAV)
+    @VaadinTest(navigateTo = NAV)
     public void checkUncheck(GenericTestPageObject po) throws Exception {
 
         final CheckboxElement checkboxWithText = po.$(CheckboxElement.class).id(TEXT);
@@ -40,7 +40,7 @@ public class CheckboxIT extends AbstractIT {
         Assertions.assertTrue(checkboxInitiallyChecked.isChecked());
     }
 
-    @VaadinTest(navigateAsString = NAV)
+    @VaadinTest(navigateTo = NAV)
     public void getLabel(GenericTestPageObject po) throws Exception {
 
         final CheckboxElement checkboxWithText = po.$(CheckboxElement.class).id(TEXT);

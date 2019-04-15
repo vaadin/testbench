@@ -25,6 +25,8 @@ import org.openqa.selenium.Platform;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
@@ -170,6 +172,14 @@ public class WebdriversConfigFactory {
                         if (StringUtils.isNotBlank(build)) {
                             desiredCapability.setCapability("build", build);
                         }
+
+                        final String sauceOptions = getProperty(configProperties, gridName, "options");
+                        if (StringUtils.isNotBlank(sauceOptions)) {
+                            String tunnelId = getTunnelIdentifier(sauceOptions, null);
+                            if (tunnelId != null) {
+                                desiredCapability.setCapability("tunnelIdentifier", tunnelId);
+                            }
+                        }
                     }
                     desiredCapabilites.add(desiredCapability);
                 }
@@ -181,6 +191,31 @@ public class WebdriversConfigFactory {
             desiredCapabilites.add(DesiredCapabilities.chrome());
         }
         return desiredCapabilites;
+    }
+
+    /**
+     * @param options
+     *            the command line options used to launch Sauce Connect
+     * @param defaultValue
+     *            the default value to use for the identifier if none specified
+     *            in the options
+     * @return String representing the tunnel identifier
+     */
+    static String getTunnelIdentifier(String options, String defaultValue) {
+        if (options == null || options.isEmpty()) {
+            return defaultValue;
+        }
+        Iterator<String> tokensIterator = Arrays.asList(options.split(" "))
+                .iterator();
+        while (tokensIterator.hasNext()) {
+            String currentToken = tokensIterator.next();
+            if (tokensIterator.hasNext() && (currentToken.equals("-i")
+                    || currentToken.equals("--tunnel-identifier"))) {
+                // next token is identifier
+                return tokensIterator.next();
+            }
+        }
+        return defaultValue;
     }
 
     private boolean getBoolean(Properties configProperties, String gridName, String propertieName) {

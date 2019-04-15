@@ -87,13 +87,19 @@
     <addon-test-helpers.version>2.0</addon-test-helpers.version>
     <javax.servlet-api.version>4.0.1</javax.servlet-api.version>
 
-    <selenium.version>3.141.59</selenium.version>
+<!--    Not latest because of webdriversextension using old selenium-->
+    <selenium.version>3.10.0</selenium.version>
 
     <vaadin.version>13.0.2</vaadin.version>
   </properties>
 
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <groupId>org.seleniumhq.selenium</groupId>
+        <artifactId>selenium-api</artifactId>
+        <version>${selenium.version}</version>
+      </dependency>
       <dependency>
         <groupId>org.seleniumhq.selenium</groupId>
         <artifactId>selenium-java</artifactId>
@@ -389,24 +395,10 @@
           </execution>
         </executions>
       </plugin>
-
       <plugin>
-        <groupId>de.sormuras.junit</groupId>
-        <artifactId>junit-platform-maven-plugin</artifactId>
-        <version>${junit-platform-maven-plugin.version}</version>
-        <extensions>true</extensions> <!-- Necessary to execute it in 'test' phase. -->
-
-        <configuration>
-          <tweaks>
-            <failIfNoTests>false</failIfNoTests>
-          </tweaks>
-          <executor>JAVA</executor>
-          <javaOptions>
-            <additionalOptions>
-              <jacoco>${jacoco.java.option}</jacoco>
-            </additionalOptions>
-          </javaOptions>
-        </configuration>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.22.0</version>
       </plugin>
       <plugin>
         <groupId>org.jacoco</groupId>
@@ -431,33 +423,6 @@
           </execution>
         </executions>
       </plugin>
-
-      <!--      <plugin>-->
-      <!--        <groupId>com.github.webdriverextensions</groupId>-->
-      <!--        <artifactId>webdriverextensions-maven-plugin</artifactId>-->
-      <!--        <executions>-->
-      <!--          <execution>-->
-      <!--            <goals>-->
-      <!--              <goal>install-drivers</goal>-->
-      <!--            </goals>-->
-      <!--          </execution>-->
-      <!--        </executions>-->
-      <!--        <configuration>-->
-      <!--          <keepDownloadedWebdrivers>true</keepDownloadedWebdrivers>-->
-      <!--          <installationDirectory>${maven.multiModuleProjectDirectory}/_data/webdrivers</installationDirectory>-->
-      <!--          <drivers>-->
-      <!--            <driver>-->
-      <!--              <name>chromedriver</name>-->
-      <!--            </driver>-->
-      <!--            &lt;!&ndash;<driver>&ndash;&gt;-->
-      <!--            &lt;!&ndash;<name>operadriver</name>&ndash;&gt;-->
-      <!--            &lt;!&ndash;</driver>&ndash;&gt;-->
-      <!--            <driver>-->
-      <!--            <name>geckodriver</name>-->
-      <!--            </driver>-->
-      <!--          </drivers>-->
-      <!--        </configuration>-->
-      <!--      </plugin>-->
     </plugins>
   </build>
 
@@ -479,6 +444,37 @@
   </reporting>
 
   <profiles>
+    <profile>
+      <id>install-drivers</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>com.github.webdriverextensions</groupId>
+            <artifactId>webdriverextensions-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>install-drivers</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <keepDownloadedWebdrivers>true</keepDownloadedWebdrivers>
+              <installationDirectory>${maven.multiModuleProjectDirectory}/_data/webdrivers</installationDirectory>
+              <drivers>
+                <driver>
+                  <name>chromedriver</name>
+                </driver>
+                <driver>
+                  <name>geckodriver</name>
+                </driver>
+              </drivers>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
     <profile>
       <id>_release</id>
       <activation>

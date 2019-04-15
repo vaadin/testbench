@@ -39,7 +39,7 @@ import java.lang.annotation.Target;
 @TestTemplate
 public @interface VaadinTest {
 
-    String navigateAsString() default "";
+    String navigateTo() default "";
 
-    boolean preLoad() default true;
+    boolean preload() default true;
 }

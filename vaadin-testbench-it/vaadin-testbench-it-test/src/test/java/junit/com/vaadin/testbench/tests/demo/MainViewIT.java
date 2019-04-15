@@ -6,10 +6,10 @@ import org.junit.jupiter.api.DisplayName;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @VaadinTest
-public class MainViewTest {
+class MainViewIT {
 
     @DisplayName("Hello World - Click twice 001")
-    @VaadinTest(preLoad = false)
+    @VaadinTest(preload = false)
     void test001(VaadinAppPageObject pageObject) {
         pageObject.loadPage();
         assertEquals(0, pageObject.clickCount());
@@ -18,7 +18,7 @@ public class MainViewTest {
     }
 
     @DisplayName("Hello World - Click twice 002")
-    @VaadinTest(navigateAsString = "")
+    @VaadinTest(navigateTo = "")
     void test002(VaadinAppPageObject pageObject) {
         assertEquals(0, pageObject.clickCount());
         pageObject.click();

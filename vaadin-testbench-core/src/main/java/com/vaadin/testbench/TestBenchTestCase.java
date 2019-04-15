@@ -217,7 +217,7 @@ public abstract class TestBenchTestCase
      * @see FluentWait#until
      * @see ExpectedCondition
      */
-    protected <T> T waitUntil(ExpectedCondition<T> condition) {
+    public <T> T waitUntil(ExpectedCondition<T> condition) {
         return waitUntil(condition, 10);
     }
 }

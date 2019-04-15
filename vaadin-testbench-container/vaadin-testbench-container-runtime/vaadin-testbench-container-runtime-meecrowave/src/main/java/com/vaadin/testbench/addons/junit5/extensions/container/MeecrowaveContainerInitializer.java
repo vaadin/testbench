@@ -79,7 +79,12 @@ public class MeecrowaveContainerInitializer implements ContainerInitializer {
 
     private void startAndStore(ExtensionContext ctx, String key) {
         final Meecrowave.Builder builder = new Meecrowave.Builder();
-        builder.randomHttpPort();
+        final String meecrowavePort = "container.meecrowave.port";
+        if (props.containsKey(meecrowavePort)) {
+            builder.setHttpPort(Integer.parseInt(props.getProperty(meecrowavePort)));
+        } else {
+            builder.randomHttpPort();
+        }
         builder.setHost(NetworkFunctions.localIp());
         builder.setHttp2(true);
 

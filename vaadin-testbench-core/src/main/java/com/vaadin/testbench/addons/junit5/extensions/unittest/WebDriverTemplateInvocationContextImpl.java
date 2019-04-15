@@ -95,7 +95,7 @@ public final class WebDriverTemplateInvocationContextImpl implements WebDriverTe
                 // TODO(sven): Check if needed.
                 initElements(new WebDriverExtensionFieldDecorator(webDriver), pageObject);
 
-                // TODO(sven): Work on preLoad feature.
+                // TODO(sven): Work on preload feature.
 
                 final Boolean preLoad = storeMethodPlain(extensionContext).get(PAGE_OBJECT_PRELOAD, Boolean.class);
                 if (preLoad) {

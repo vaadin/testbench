@@ -15,7 +15,7 @@ import static com.vaadin.flow.component.textfield.testbench.test.TextFieldView.P
 @VaadinTest
 public class TextFieldIT extends AbstractIT {
 
-    @VaadinTest(navigateAsString = NAV)
+    @VaadinTest(navigateTo = NAV)
     public void getSetValue(GenericTestPageObject po) throws Exception {
 
         final TextFieldElement labelEager = po.$(TextFieldElement.class).id(LABEL_EAGER);
@@ -41,7 +41,7 @@ public class TextFieldIT extends AbstractIT {
         assertStringValue(po, placeholder, "Foo");
     }
 
-    @VaadinTest(navigateAsString = NAV)
+    @VaadinTest(navigateTo = NAV)
     public void getLabelEager(GenericTestPageObject po) throws Exception {
 
         final TextFieldElement labelEager = po.$(TextFieldElement.class).id(LABEL_EAGER);
@@ -55,7 +55,7 @@ public class TextFieldIT extends AbstractIT {
         Assertions.assertEquals("Has a placeholder", placeholder.getLabel());
     }
 
-    @VaadinTest(navigateAsString = NAV)
+    @VaadinTest(navigateTo = NAV)
     public void getPlaceholder(GenericTestPageObject po) throws Exception {
 
         final TextFieldElement labelEager = po.$(TextFieldElement.class).id(LABEL_EAGER);
