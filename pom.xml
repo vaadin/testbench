@@ -79,7 +79,7 @@
     <pitest.version>1.4.6</pitest.version>
     <pitest-junit5-plugin.version>0.8</pitest-junit5-plugin.version>
     <pitest-prod-classes>com.vaadin.testbench.*</pitest-prod-classes>
-    <pitest-test-classes>junit.com.vaadin.testbench.*</pitest-test-classes>
+    <pitest-test-classes>com.vaadin.testbench.*</pitest-test-classes>
 
     <opentracing-api.version>0.31.0</opentracing-api.version>
 
