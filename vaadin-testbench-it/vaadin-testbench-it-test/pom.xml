@@ -27,6 +27,7 @@
 
   <properties>
     <maven.deploy.skip>true</maven.deploy.skip>
+    <license.check.skip>true</license.check.skip>
     <operating.system>mac</operating.system>
   </properties>
 

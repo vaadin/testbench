@@ -66,6 +66,8 @@
 
     <Implementation-Version>${project.version}</Implementation-Version>
 
+    <license.check.skip>false</license.check.skip>
+
     <slf4j.version>1.7.25</slf4j.version>
     <log4j-api.version>2.11.2</log4j-api.version>
 
@@ -583,6 +585,7 @@
       <activation>
         <activeByDefault>true</activeByDefault>
       </activation>
+
       <build>
         <plugins>
           <plugin>
@@ -626,6 +629,7 @@
                 <configuration>
                   <failOnMissingHeader>true</failOnMissingHeader>
                   <failOnNotUptodateHeader>true</failOnNotUptodateHeader>
+                  <skipCheckLicense>${license.check.skip}</skipCheckLicense>
                 </configuration>
               </execution>
             </executions>

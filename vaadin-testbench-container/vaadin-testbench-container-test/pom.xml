@@ -22,6 +22,7 @@
 
   <properties>
     <maven.deploy.skip>true</maven.deploy.skip>
+    <license.check.skip>true</license.check.skip>
   </properties>
 
   <!-- Just to disable any accidential deployment to maven.central -->
@@ -35,21 +36,4 @@
       <url>file://${basedir}/target/snapshot-repo/</url>
     </snapshotRepository>
   </distributionManagement>
-
-  <profiles>
-    <profile>
-      <id>update-license-headers</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>license-maven-plugin</artifactId>
-            <configuration>
-              <skipUpdateLicense>true</skipUpdateLicense>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
 </project>
