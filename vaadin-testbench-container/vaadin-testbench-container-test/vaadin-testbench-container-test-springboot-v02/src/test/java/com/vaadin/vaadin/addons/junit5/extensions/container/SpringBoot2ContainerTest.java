@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(ServletContainerExtension.class)
 @SpringBootConf(source = DemoApp.class)
-class SpringBootInitializerTest {
+class SpringBoot2ContainerTest {
 
     @Test
     void test_001(ContainerInfo containerInfo) throws IOException {

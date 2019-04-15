@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 @ExtendWith(ServletContainerExtension.class)
 //@MeecrowaveConfig - would start the meecrowave again on beforeAll level
-public class DemoTest {
+public class MeecrowaveContainerTest {
 
     private static OkHttpClient client = new OkHttpClient();
     @RegisterExtension
