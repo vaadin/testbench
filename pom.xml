@@ -66,6 +66,8 @@
 
     <Implementation-Version>${project.version}</Implementation-Version>
 
+    <license.check.skip>false</license.check.skip>
+
     <slf4j.version>1.7.25</slf4j.version>
     <log4j-api.version>2.11.2</log4j-api.version>
 
@@ -579,7 +581,11 @@
     </profile>
 
     <profile>
-      <id>update-license-headers</id>
+      <id>check-license-headers</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+
       <build>
         <plugins>
           <plugin>
@@ -619,7 +625,12 @@
                 <goals>
                   <goal>check-file-header</goal>
                 </goals>
-                <phase>process-sources</phase>
+                <phase>generate-sources</phase> <!-- Check headers before *BeanUtil classes are generate in core module. -->
+                <configuration>
+                  <failOnMissingHeader>true</failOnMissingHeader>
+                  <failOnNotUptodateHeader>true</failOnNotUptodateHeader>
+                  <skipCheckLicense>${license.check.skip}</skipCheckLicense>
+                </configuration>
               </execution>
             </executions>
           </plugin>
