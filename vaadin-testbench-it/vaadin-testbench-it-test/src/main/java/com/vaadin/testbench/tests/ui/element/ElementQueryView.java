@@ -1,4 +1,4 @@
-package com.vaadin.testbench.tests.uitest;
+package com.vaadin.testbench.tests.ui.element;
 
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.NativeButton;

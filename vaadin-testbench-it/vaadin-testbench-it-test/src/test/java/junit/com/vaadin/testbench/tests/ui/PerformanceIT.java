@@ -1,10 +1,10 @@
-package junit.com.vaadin.testbench.tests.uitest;
+package junit.com.vaadin.testbench.tests.ui;
 
 import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinTest;
-import junit.com.vaadin.testbench.tests.uitest.elements.NativeButtonElement;
+import junit.com.vaadin.testbench.tests.ui.element.NativeButtonElement;
 import org.junit.jupiter.api.Assertions;
 
-import static com.vaadin.testbench.tests.uitest.PerformanceView.ROUTE;
+import static com.vaadin.testbench.tests.ui.PerformanceView.ROUTE;
 
 @VaadinTest
 class PerformanceIT {

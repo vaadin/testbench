@@ -307,10 +307,10 @@ public class ElementQuery<T extends TestBenchElement> {
     }
 
     /**
-     * Checks if this ElementQuery describes existing elements. Same as
+     * Checks if this ElementQuery describes existing element. Same as
      * .all().isEmpty().
      *
-     * @return true if elements exists. false if not
+     * @return true if element exists. false if not
      */
     public boolean exists() {
         return !all().isEmpty();
@@ -320,7 +320,7 @@ public class ElementQuery<T extends TestBenchElement> {
      * Search the open Vaadin application for a list of matching components
      * relative to given context.
      *
-     * @return Components as a list of corresponding elements
+     * @return Components as a list of corresponding element
      */
     public List<T> all() {
         return executeSearch(null);
@@ -328,11 +328,11 @@ public class ElementQuery<T extends TestBenchElement> {
 
     /**
      * Executes the search operation with the given conditions and returns a
-     * list of matchin elements.
+     * list of matchin element.
      *
      * @param index the index of the element to return or <code>null</code> to
-     *              return all matching elements
-     * @return a list of macthing elements or an empty list if no matches were
+     *              return all matching element
+     * @return a list of macthing element or an empty list if no matches were
      * found
      */
     private List<T> executeSearch(Integer index) {
@@ -401,7 +401,7 @@ public class ElementQuery<T extends TestBenchElement> {
      *                       a whole document search
      * @param tagName        the tag name to look for
      * @param attributePairs the attribute pairs to match
-     * @return a list of matching elements of the type defined in the
+     * @return a list of matching element of the type defined in the
      * constructor
      */
     List<T> executeSearchScript(String script, Object context, String tagName,

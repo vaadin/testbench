@@ -1,4 +1,4 @@
-package junit.com.vaadin.testbench.tests.demo;
+package junit.com.vaadin.testbench.tests.ui.demo;
 
 import com.vaadin.flow.component.button.testbench.ButtonElement;
 import com.vaadin.flow.component.html.testbench.SpanElement;
@@ -6,8 +6,8 @@ import com.vaadin.testbench.addons.junit5.extensions.container.ContainerInfo;
 import com.vaadin.testbench.addons.junit5.pageobject.AbstractVaadinPageObject;
 import org.openqa.selenium.WebDriver;
 
-import static com.vaadin.testbench.tests.demo.MainView.BTN_CLICK_ME;
-import static com.vaadin.testbench.tests.demo.MainView.LB_CLICK_COUNT;
+import static com.vaadin.testbench.tests.ui.demo.MainView.BTN_CLICK_ME;
+import static com.vaadin.testbench.tests.ui.demo.MainView.LB_CLICK_COUNT;
 import static java.lang.Integer.valueOf;
 
 public class VaadinAppPageObject extends AbstractVaadinPageObject {

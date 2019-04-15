@@ -1,4 +1,4 @@
-package com.vaadin.testbench.tests.uitest;
+package com.vaadin.testbench.tests.ui;
 
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.html.Div;

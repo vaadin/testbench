@@ -232,7 +232,7 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
             // Avoid strange "element not clickable at point" problems
             callFunction("click");
         } catch (Exception e) {
-            // SVG elements and maybe others do not have a 'click' method
+            // SVG element and maybe others do not have a 'click' method
             autoScrollIntoView();
             waitForVaadin();
             wrappedElement.click();

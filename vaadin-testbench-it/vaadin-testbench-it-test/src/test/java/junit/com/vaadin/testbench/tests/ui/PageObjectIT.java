@@ -1,4 +1,4 @@
-package junit.com.vaadin.testbench.tests.uitest;
+package junit.com.vaadin.testbench.tests.ui;
 
 import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinTest;
@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Assertions;
 
 import java.util.List;
 
-import static com.vaadin.testbench.tests.uitest.PageObjectView.ROUTE;
+import static com.vaadin.testbench.tests.ui.PageObjectView.ROUTE;
 
 @VaadinTest
 class PageObjectIT {

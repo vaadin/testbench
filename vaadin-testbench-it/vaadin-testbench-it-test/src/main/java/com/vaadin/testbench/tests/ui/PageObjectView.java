@@ -1,4 +1,4 @@
-package com.vaadin.testbench.tests.uitest;
+package com.vaadin.testbench.tests.ui;
 
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.router.Route;
@@ -19,5 +19,23 @@ public class PageObjectView extends Div {
         anotherDiv.setText("Some div");
 
         add(someDiv, idView, classesView, anotherDiv);
+    }
+
+    public static class MyComponentWithClasses extends Div {
+
+        public MyComponentWithClasses() {
+            addClassName("my-component-first");
+            addClassName("my-component-with-classes");
+            addClassName("my-component-last");
+            setText(getClass().getSimpleName());
+        }
+    }
+
+    public static class MyComponentWithId extends Div {
+
+        public MyComponentWithId() {
+            setId("my-component-with-id");
+            setText(getClass().getSimpleName());
+        }
     }
 }

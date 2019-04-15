@@ -1,4 +1,4 @@
-package com.vaadin.testbench.tests.demo;
+package com.vaadin.testbench.tests.ui.demo;
 
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.button.Button;
