@@ -173,6 +173,17 @@
         <operating.system>linux</operating.system>
       </properties>
     </profile>
+    <profile>
+      <id>windows</id>
+      <activation>
+        <os>
+          <family>windows</family>
+        </os>
+      </activation>
+      <properties>
+        <operating.system>windows</operating.system>
+      </properties>
+    </profile>
 
     <profile>
       <id>it-saucelabs</id>
