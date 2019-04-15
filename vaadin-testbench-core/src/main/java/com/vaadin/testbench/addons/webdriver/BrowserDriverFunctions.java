@@ -52,8 +52,8 @@ public interface BrowserDriverFunctions {
     String PROJECT = "project";
     String TAGS = "tags";
 
-    String SELENIUM_GRID_PROPERTIES_LOCALE_IP = "locale-ip";
-    String SELENIUM_GRID_PROPERTIES_LOCALE_BROWSER = "locale";
+    String SELENIUM_GRID_PROPERTIES_LOCAL_IP = "local-ip";
+    String SELENIUM_GRID_PROPERTIES_LOCAL_BROWSER = "local";
     String SELENIUM_GRID_PROPERTIES_NO_GRID = "nogrid";
 
     String CONFIG_FOLDER = ".testbenchextensions/";
@@ -98,7 +98,7 @@ public interface BrowserDriverFunctions {
                         .getDesiredCapabilities()
                         .stream()
                         .map(dc -> new WebDriverSpec(
-                                gridConfig.getTarget().equals(SELENIUM_GRID_PROPERTIES_LOCALE_BROWSER),
+                                gridConfig.getTarget().equals(SELENIUM_GRID_PROPERTIES_LOCAL_BROWSER),
                                 dc,
                                 gridConfig.getTarget()
                         ))

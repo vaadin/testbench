@@ -254,7 +254,7 @@ public class WebdriversConfigFactory {
     private String getGridTarget(Properties configProperties, String gridName) {
         final String host = getProperty(configProperties, gridName, "target");
         Validate.notBlank(host, "The target for the grid {} may not be blank", gridName);
-        if (host.equals("locale")) {
+        if (host.equals("local")) {
             return host;
         } else {
             final String proto = getProperty(configProperties, gridName, PROTO, DEFAULT_PROTO);
