@@ -43,7 +43,7 @@ public class WebdriversConfigTest {
         WebdriversConfig config = factory.createFromProperies(new Properties());
 
 //    assertEquals(DesiredCapabilities.chrome(), config.getUnittestingBrowser());
-//    assertEquals(SELENIUM_GRID_PROPERTIES_LOCALE_BROWSER, config.getUnittestingTarget());
+//    assertEquals(SELENIUM_GRID_PROPERTIES_LOCAL_BROWSER, config.getUnittestingTarget());
 
         assertEquals(1, config.getGridConfigs().size());
 

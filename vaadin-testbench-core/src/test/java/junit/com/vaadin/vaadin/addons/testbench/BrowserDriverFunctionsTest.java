@@ -41,7 +41,7 @@ public class BrowserDriverFunctionsTest {
 
         final String unittestingTarget = valueOf(properties.get("unittesting.target")).trim();
 
-        final List<String> expected = Arrays.asList("locale", "selenoid.rapidpm.org", "selenoid-server");
+        final List<String> expected = Arrays.asList("local", "selenoid.rapidpm.org", "selenoid-server");
         Assertions.assertTrue(expected.contains(unittestingTarget),
                 "No expected property value found for unittesting.target");
 
