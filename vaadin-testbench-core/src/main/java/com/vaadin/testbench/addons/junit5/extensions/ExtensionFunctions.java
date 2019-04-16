@@ -23,6 +23,8 @@ import org.junit.jupiter.api.extension.ExtensionContext.Store;
 
 import java.util.Optional;
 
+import static com.vaadin.testbench.TestBenchLogger.logger;
+
 public interface ExtensionFunctions {
 
     Namespace NAMESPACE_GLOBAL = Namespace.create("global");
@@ -86,7 +88,7 @@ public interface ExtensionFunctions {
             return Optional.ofNullable(storeGlobalPlain(ctx).get(key, type));
         }
 
-//        logger().info("No key value pair found key -> " + key);
+        logger().info("No value found for key: {}", key);
         return Optional.empty();
     }
 

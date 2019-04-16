@@ -24,6 +24,7 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 import java.lang.reflect.Method;
 import java.util.Properties;
 
+import static com.vaadin.testbench.TestBenchLogger.logger;
 import static com.vaadin.testbench.addons.junit5.extensions.ExtensionFunctions.storeClassPlain;
 import static com.vaadin.testbench.addons.junit5.extensions.ExtensionFunctions.storeMethodPlain;
 import static com.vaadin.testbench.addons.junit5.extensions.container.NetworkFunctions.SERVER_IP;
@@ -48,7 +49,7 @@ public class MeecrowaveContainerInitializer implements ContainerInitializer {
             final String property = props.getProperty(MEECROWAVE_RAMPUP);
             return property.equals(key);
         } else {
-            //logger().info("isActiveNow - property " + MEECROWAVE_RAMPUP + " not set");
+            logger().info("IsActiveNow - property " + MEECROWAVE_RAMPUP + " not set");
             return key.equals(MEECROWAVE_RAMPUP_BEFORE_DEFAULT);
         }
     }

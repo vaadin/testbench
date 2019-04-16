@@ -21,6 +21,8 @@ import net.vergien.beanautoutils.annotation.Bean;
 
 import java.util.List;
 
+import static com.vaadin.testbench.TestBenchLogger.logger;
+
 @Bean
 public class WebdriversConfig {
 
@@ -31,7 +33,7 @@ public class WebdriversConfig {
 
     public WebdriversConfig(List<GridConfig> gridConfigs) {
         this.gridConfigs = gridConfigs;
-//    logger().info("WebdriversConfig was created .. - " + toString());
+        logger().debug("WebdriversConfig was created .. - " + toString());
     }
 
     public List<GridConfig> getGridConfigs() {

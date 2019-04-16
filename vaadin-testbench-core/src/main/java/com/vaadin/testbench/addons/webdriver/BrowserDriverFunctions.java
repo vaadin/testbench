@@ -39,6 +39,7 @@ import java.util.Properties;
 import java.util.stream.Stream;
 
 import static com.vaadin.testbench.PropertiesResolver.readProperties;
+import static com.vaadin.testbench.TestBenchLogger.logger;
 import static java.util.stream.Collectors.toSet;
 
 public interface BrowserDriverFunctions {
@@ -80,9 +81,7 @@ public interface BrowserDriverFunctions {
 
     static WebDriver remoteWebDriverInstance(DesiredCapabilities desiredCapability,
                                                               final String ip) {
-        //      Logger
-//          .getLogger(BrowserDriverFunctions.class)
-//          .info("Create RemoteWebdriver to " + ip + " for browser: " + desiredCapability);
+        logger().debug("Create RemoteWebdriver to " + ip + " for browser: " + desiredCapability);
         try {
             return new RemoteWebDriver(new URL(ip), desiredCapability);
         } catch (MalformedURLException e) {

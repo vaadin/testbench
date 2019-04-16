@@ -20,6 +20,7 @@ package com.vaadin.testbench.addons.junit5.extensions.container;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
+import static com.vaadin.testbench.TestBenchLogger.logger;
 import static com.vaadin.testbench.addons.junit5.extensions.container.ExtensionContextFunctions.containerInfo;
 
 public class ContainerInfoExtension implements BeforeEachCallback {
@@ -36,8 +37,8 @@ public class ContainerInfoExtension implements BeforeEachCallback {
 
     @Override
     public void beforeEach(ExtensionContext extensionContext) {
-//    logger().info("ContainerInfoExtension - beforeEach ");
+        logger().debug("ContainerInfoExtension - beforeEach ");
         containerInfo = containerInfo(extensionContext);
-//    logger().info("ContainerInfoExtension - " + containerInfo);
+        logger().debug("ContainerInfoExtension - " + containerInfo);
     }
 }

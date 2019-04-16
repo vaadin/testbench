@@ -14,6 +14,7 @@ import java.io.IOException;
 
 import static com.vaadin.flow.component.upload.testbench.test.UploadView.NAV;
 import static com.vaadin.flow.component.upload.testbench.test.UploadView.UPLOAD;
+import static com.vaadin.testbench.TestBenchLogger.logger;
 import static com.vaadin.testbench.addons.webdriver.BrowserTypes.FIREFOX;
 import static com.vaadin.testbench.addons.webdriver.BrowserTypes.SAFARI;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -62,9 +63,9 @@ public class UploadIT extends AbstractIT {
     // The upload finishes so quickly from localhost. Would need a huge file to
     // be created or throttling support
     public void abortUpload(GenericTestPageObject po) {
-//    logger().warning(
-//        "To test manually, remove @Ignore and set a breakpoint on the abort() line.
-//        Then start uploading a huge file after hitting the breakpoint and continue with the test");
+        logger().warn("To test manually, remove @Ignore and set a " +
+                "breakpoint on the abort() line. Then start uploading " +
+                "a huge file after hitting the breakpoint and continue with the test");
 
         final UploadElement upload = po.$(UploadElement.class).id(UPLOAD);
         upload.abort();

@@ -66,7 +66,7 @@
 
     <Implementation-Version>${project.version}</Implementation-Version>
 
-    <license.check.skip>false</license.check.skip>
+    <license.skip>false</license.skip>
 
     <slf4j.version>1.7.25</slf4j.version>
     <log4j-api.version>2.11.2</log4j-api.version>
@@ -151,6 +151,11 @@
         <scope>test</scope>
       </dependency>
 
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>${slf4j.version}</version>
+      </dependency>
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-simple</artifactId>
@@ -619,6 +624,8 @@
               <includes>
                 <include>**/*.java</include>
               </includes>
+              <skipCheckLicense>${license.skip}</skipCheckLicense>
+              <skipUpdateLicense>${license.skip}</skipUpdateLicense>
             </configuration>
             <executions>
               <execution>
@@ -629,7 +636,6 @@
                 <configuration>
                   <failOnMissingHeader>true</failOnMissingHeader>
                   <failOnNotUptodateHeader>true</failOnNotUptodateHeader>
-                  <skipCheckLicense>${license.check.skip}</skipCheckLicense>
                 </configuration>
               </execution>
             </executions>
