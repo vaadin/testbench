@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Assertions;
 
 import static com.vaadin.flow.component.dialog.testbench.test.DialogView.NAV;
 
-@VaadinTest
 public class DialogIT extends AbstractIT {
 
     @VaadinTest

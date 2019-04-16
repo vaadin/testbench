@@ -18,21 +18,21 @@ package com.vaadin.testbench.annotations;
  */
 
 import com.vaadin.testbench.ElementQuery;
-
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * Defines the tag name of the element class.
  * <p>
  * Used when looking up elements using {@link ElementQuery}.
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
 @Inherited
+@Target(TYPE)
+@Retention(RUNTIME)
 public @interface Element {
 
     /**

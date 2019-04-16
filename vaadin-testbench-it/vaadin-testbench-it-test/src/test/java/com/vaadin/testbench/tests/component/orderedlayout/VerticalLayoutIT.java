@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Assertions;
 import static com.vaadin.flow.component.orderedlayout.testbench.test.VerticalLayoutView.DEFAULT;
 import static com.vaadin.flow.component.orderedlayout.testbench.test.VerticalLayoutView.NAV;
 
-@VaadinTest
 public class VerticalLayoutIT extends AbstractIT {
 
     @VaadinTest(navigateTo = NAV)

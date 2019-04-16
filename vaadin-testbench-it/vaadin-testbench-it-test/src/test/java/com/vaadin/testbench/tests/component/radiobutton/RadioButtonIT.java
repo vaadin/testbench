@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Assertions;
 
 import static com.vaadin.flow.component.radiobutton.testbench.test.RadioButtonView.NAV;
 
-@VaadinTest
 public class RadioButtonIT extends AbstractIT {
 
     @VaadinTest(navigateTo = NAV)

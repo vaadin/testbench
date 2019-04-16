@@ -12,7 +12,6 @@ import java.util.List;
 
 import static com.vaadin.flow.component.notification.testbench.test.NotificationView.NAV;
 
-@VaadinTest
 public class NotificationIT extends AbstractIT {
 
     @VaadinTest(navigateTo = NAV)

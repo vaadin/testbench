@@ -12,7 +12,6 @@ import static com.vaadin.flow.component.textfield.testbench.test.TextAreaView.NA
 import static com.vaadin.flow.component.textfield.testbench.test.TextAreaView.NOLABEL;
 import static com.vaadin.flow.component.textfield.testbench.test.TextAreaView.PLACEHOLDER;
 
-@VaadinTest
 public class TextAreaIT extends AbstractIT {
 
     @VaadinTest(navigateTo = NAV)

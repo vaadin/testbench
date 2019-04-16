@@ -21,7 +21,6 @@ import java.util.List;
 
 import static com.vaadin.testbench.addons.webdriver.BrowserTypes.IE;
 
-@VaadinTest
 public class GridIT extends AbstractIT {
 
     public static final String FIRST_NAME = "First name";
