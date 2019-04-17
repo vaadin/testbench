@@ -8,10 +8,10 @@ package com.vaadin.testbench.screenshot;
  * %%
  * This program is available under Commercial Vaadin Add-On License 3.0
  * (CVALv3).
- * 
+ *
  * See the file licensing.txt distributed with this software for more
  * information about licensing.
- * 
+ *
  * You should have received a copy of the license along with this program.
  * If not, see <http://vaadin.com/license/cval-3>.
  * #L%
@@ -131,7 +131,7 @@ public class ImageFileUtil {
 
             byte[] data = bao.toByteArray();
             return Optional.of(new ByteArrayInputStream(data));
-        } catch (IOException e) {
+        } catch (Exception e) {
             logger().info("No reference screenshot found for {}", referenceImageFileName, e);
             return Optional.empty();
         }
