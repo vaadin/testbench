@@ -25,6 +25,8 @@ import java.net.SocketException;
 import java.util.Enumeration;
 import java.util.Optional;
 
+import static com.vaadin.testbench.TestBenchLogger.logger;
+
 public interface NetworkFunctions {
 
     String DEFAULT_PROTOCOL = "http";
@@ -69,7 +71,7 @@ public interface NetworkFunctions {
                 }
             }
         } catch (SocketException e) {
-//            logger().info("Unable to enumerate network interfaces");
+            logger().info("Unable to enumerate network interfaces");
         }
 
         return "localhost";

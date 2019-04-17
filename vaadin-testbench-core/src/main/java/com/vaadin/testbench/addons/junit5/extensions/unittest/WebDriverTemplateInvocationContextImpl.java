@@ -30,6 +30,7 @@ import org.openqa.selenium.WebDriver;
 import java.lang.reflect.Constructor;
 import java.util.List;
 
+import static com.vaadin.testbench.TestBenchLogger.logger;
 import static com.vaadin.testbench.addons.junit5.extensions.ExtensionFunctions.storeMethodPlain;
 import static com.vaadin.testbench.addons.junit5.extensions.container.ExtensionContextFunctions.containerInfo;
 import static com.vaadin.testbench.addons.junit5.extensions.unittest.PageObjectFunctions.PAGE_OBJECT_NAVIGATION_TARGET;
@@ -53,7 +54,7 @@ public final class WebDriverTemplateInvocationContextImpl implements WebDriverTe
 
     @Override
     public WebDriver webdriver() {
-//    pageObjectInvocationContextProvider.logger().info("WebDriverTemplateInvocationContextImpl - webdriver() called");
+        logger().debug("WebDriverTemplateInvocationContextImpl - webdriver() called");
         return webDriver;
     }
 
@@ -76,7 +77,7 @@ public final class WebDriverTemplateInvocationContextImpl implements WebDriverTe
             public PageObject resolveParameter(ParameterContext parameterContext,
                                                ExtensionContext extensionContext) {
 
-//        logger().info("resolveParameter called..");
+                logger().debug("ResolveParameter called!");
                 Class<?> pageObjectClass = parameterContext
                         .getParameter()
                         .getType();
@@ -101,17 +102,19 @@ public final class WebDriverTemplateInvocationContextImpl implements WebDriverTe
                 if (preLoad) {
                     final String nav = storeMethodPlain(extensionContext).get(
                             PAGE_OBJECT_NAVIGATION_TARGET, String.class);
-                    if (nav != null) pageObject.loadPage(nav);
-                    else pageObject.loadPage();
-
+                    if (nav != null) {
+                        pageObject.loadPage(nav);
+                    } else {
+                        pageObject.loadPage();
+                    }
+                } else {
+                    logger().info("No preLoading activated for testClass/testMethod "
+                            + extensionContext.getTestClass() + " / "
+                            + extensionContext.getTestMethod());
                 }
-//           else logger()
-//              .info("No preLoading activated for testClass/testMethod "
-//                    + extensionContext.getTestClass() + " / "
-//                    + extensionContext.getTestMethod());
 
-//              pageObjectInvocationContextProvider.logger().fine("pageobject of type " + pageObjectClass.getSimpleName()
-//                                                                + " was created with " + webdriverName().apply(webdriver()));
+                logger().debug("PageObject of type " + pageObjectClass.getSimpleName()
+                      + " was created with " + webdriverName(webDriver));
                 storePageObject(pageObject, extensionContext);
 
                 return pageObject;

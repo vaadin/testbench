@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static com.vaadin.testbench.TestBenchLogger.logger;
 import static com.vaadin.testbench.screenshot.ReferenceNameGenerator.majorVersion;
 import static com.vaadin.testbench.screenshot.ScreenshotProperties.getScreenshotErrorDirectory;
 import static com.vaadin.testbench.screenshot.ScreenshotProperties.getScreenshotReferenceDirectory;
@@ -131,7 +132,7 @@ public class ImageFileUtil {
             byte[] data = bao.toByteArray();
             return Optional.of(new ByteArrayInputStream(data));
         } catch (IOException e) {
-//            logger().info("No reference screenshot found for " + referenceImageFileName);
+            logger().info("No reference screenshot found for {}", referenceImageFileName, e);
             return Optional.empty();
         }
     }

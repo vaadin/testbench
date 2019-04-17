@@ -8,10 +8,10 @@ package com.vaadin.testbench.screenshot;
  * %%
  * This program is available under Commercial Vaadin Add-On License 3.0
  * (CVALv3).
- * 
+ *
  * See the file licensing.txt distributed with this software for more
  * information about licensing.
- * 
+ *
  * You should have received a copy of the license along with this program.
  * If not, see <http://vaadin.com/license/cval-3>.
  * #L%
@@ -30,10 +30,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import static com.vaadin.testbench.TestBenchLogger.logger;
 import static com.vaadin.testbench.screenshot.ImageFileUtil.createScreenshotDirectoriesIfNeeded;
 import static com.vaadin.testbench.screenshot.ImageFileUtil.getErrorScreenshotFile;
 import static com.vaadin.testbench.screenshot.ImageFileUtil.getReferenceImageFileNames;
-import static com.vaadin.testbench.screenshot.ImageFileUtil.readReferenceImage;
 import static com.vaadin.testbench.screenshot.ImageUtil.cloneImage;
 import static com.vaadin.testbench.screenshot.ImageUtil.createSampleBuffer;
 import static com.vaadin.testbench.screenshot.ImageUtil.cropToBeSameSize;
@@ -43,6 +43,7 @@ import static com.vaadin.testbench.screenshot.ImageUtil.imagesSameSize;
 import static com.vaadin.testbench.screenshot.ImageUtil.rgbToLuminance;
 import static com.vaadin.testbench.screenshot.ReferenceNameGenerator.generateName;
 import static com.vaadin.testbench.screenshot.ScreenshotProperties.IMAGE_FILE_NAME_ENDING;
+import static com.vaadin.testbench.screenshot.ScreenshotProperties.getScreenshotReferenceDirectory;
 import static java.lang.Math.abs;
 
 /**
@@ -131,8 +132,6 @@ public class ImageComparison {
                                          TestcaseInfo info,
                                          double errorTolerance) throws IOException {
         createScreenshotDirectoriesIfNeeded();
-//        .ifPresentOrElse(aVoid -> logger().info("Screenshot Directories are OK.") ,
-//                         failed -> logger().warning(failed));
 
         final String referenceImageFileName = generateName(
                 new TestcaseInfo(
@@ -158,8 +157,8 @@ public class ImageComparison {
             ImageIO.write(screenshotImage,
                     IMAGE_FILE_NAME_ENDING,
                     errorScreenshotFile);
-//      logger().warning("No reference found for " + info.referenceId() + " in "
-//                       + getScreenshotReferenceDirectory());
+            logger().warn("No reference found for " + info.referenceId() + " in "
+                    + getScreenshotReferenceDirectory());
             return false;
         } else {
             // This is used to make the final error HTML page based on main
@@ -167,10 +166,8 @@ public class ImageComparison {
 
             final long count = referenceFileNames
                     .stream()
-                    .map(referenceFileName -> readReferenceImage(referenceFileName))
-                    .filter(img -> img
-//              .ifFailed((failed) -> logger().warning(failed))
-                            .isPresent())
+                    .map(ImageFileUtil::readReferenceImage)
+                    .filter(Optional::isPresent)
                     .map(Optional::get)
                     .map(referenceImage -> createParameters(referenceImage,
                             screenshotImage,
@@ -182,7 +179,7 @@ public class ImageComparison {
                             screenshotImage))
                     .count();
 
-//      logger().info("found " + count + " differences for referenceFileId " + count);
+            logger().debug("Found " + count + " differences for referenceFileId " + count);
 
             return count == 0;
         }
@@ -193,8 +190,6 @@ public class ImageComparison {
                                          String referenceFileName,
                                          double errorTolerance) {
         createScreenshotDirectoriesIfNeeded();
-//        .ifPresentOrElse(aVoid -> logger().info("Screenshot Directories are OK.") ,
-//                         failed -> logger().warning(failed));
 
         ComparisonParameters param = createParameters(referenceImage,
                 screenshotImage, errorTolerance);
@@ -221,11 +216,11 @@ public class ImageComparison {
             // image do not match the reference image.
             if (imagesEqual) {
                 // The images are equal but of different size.
-//        logger().info("Images are of different size.");
+                logger().info("Images are of different size.");
             } else {
                 // Neither size nor contents match
-//        logger().info(
-//            "Images differ and are of different size.");
+                logger().info(
+                        "Images differ and are of different size.");
             }
 
             // TODO(sven): Add info about which RC it was run on.
@@ -233,7 +228,7 @@ public class ImageComparison {
         }
 
         if (imagesEqual) {
-//      logger().info("Screenshot matched reference");
+            logger().info("Screenshot matched reference");
 
             // Images match. Nothing else to do.
             return null;
@@ -245,18 +240,18 @@ public class ImageComparison {
             Point possibleCursorPosition = getPossibleCursorPosition(param);
             if (possibleCursorPosition != null) {
                 if (isCursorTheOnlyError(possibleCursorPosition, param)) {
-//          logger().info(
-//              "Screenshot matched reference after removing cursor");
+                    logger().info(
+                            "Screenshot matched reference after removing cursor");
                     // Cursor is the only difference so we are done.
                     return null;
                 } else {
-//          logger().info(
-//              "Screenshot did not match reference after removing cursor");
+                    logger().info(
+                            "Screenshot did not match reference after removing cursor");
                 }
             }
         }
 
-//    logger().info("Screenshot did not match reference");
+        logger().info("Screenshot did not match reference");
         // Make a failure reporter that is used upstream
         return makeFailureReporter(param);
     }
@@ -450,8 +445,8 @@ public class ImageComparison {
             height = MAX_CURSOR_Y_BLOCKS * BLOCK_SIZE;
         }
 
-//    logger().info("Looking for cursor starting from " + x + "," + y
-//                  + " using width=" + width + " and height=" + height);
+        logger().debug("Looking for cursor starting from " + x + "," + y
+                + " using width=" + width + " and height=" + height);
         // getBlock writes the result into the int[] sample parameter, in
         // this case params.refBlock and params.ssBlock. params.sampleBuffer
         // is re-used between calls, and is used for temporary data storage.
@@ -486,15 +481,15 @@ public class ImageComparison {
 
                     cursorX = i;
                     cursorStartY = j;
-//          logger().info("Cursor found at " + cursorX + ","
-//                        + cursorStartY);
+                    logger().debug("Cursor found at " + cursorX + ","
+                            + cursorStartY);
                     break findCursor;
                 }
             }
         }
 
         if (-1 == cursorX) {
-//      logger().info("Cursor not found");
+            logger().info("Cursor not found");
             // No difference found with cursor detection threshold.
             return false;
         }
@@ -527,13 +522,13 @@ public class ImageComparison {
         // image.
         if (cursorEndY - cursorStartY < 5 && cursorStartY > 0
                 && cursorEndY < height - 1) {
-//      logger().info("Cursor rejected at " + cursorX + ","
-//                    + cursorStartY + "-" + cursorEndY);
+            logger().warn("Cursor rejected at " + cursorX + ","
+                    + cursorStartY + "-" + cursorEndY);
             return false;
         }
 
-//    logger().info("Cursor is at " + cursorX + "," + cursorStartY
-//                  + "-" + cursorEndY);
+        logger().debug("Cursor is at " + cursorX + "," + cursorStartY
+                + "-" + cursorEndY);
         // Copy pixels from reference over the possible cursor, then
         // re-compare blocks. Pixels at cursor position are always copied
         // from the reference image regardless of which of the images has

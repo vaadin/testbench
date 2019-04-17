@@ -35,6 +35,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.List;
 
+import static com.vaadin.testbench.TestBenchLogger.logger;
 import static java.net.InetAddress.getLocalHost;
 
 /**
@@ -81,7 +82,7 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
                 ia = getLocalHost();
             }
         } catch (UnknownHostException e) {
-//      logger().warning("Could not find name of remote control" , e);
+            logger().warn("Could not find name of remote control", e);
             return "unknown";
         }
 
@@ -111,8 +112,7 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
             if (finished == null) {
                 // This should never happen but according to
                 // https://dev.vaadin.com/ticket/19703, it happens
-//        logger().fine(
-//            "waitForVaadin returned null, this should never happen");
+                logger().warn("WaitForVaadin returned null, this should never happen");
                 finished = false;
             }
         }

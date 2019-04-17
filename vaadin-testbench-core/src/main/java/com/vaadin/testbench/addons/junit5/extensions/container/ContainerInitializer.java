@@ -23,6 +23,7 @@ import java.lang.reflect.Method;
 import java.util.Properties;
 
 import static com.vaadin.testbench.PropertiesResolver.readProperties;
+import static com.vaadin.testbench.TestBenchLogger.logger;
 import static com.vaadin.testbench.addons.junit5.extensions.ExtensionFunctions.storeMethodPlain;
 import static com.vaadin.testbench.addons.junit5.extensions.container.NetworkFunctions.SERVER_IP;
 import static com.vaadin.testbench.addons.junit5.extensions.container.NetworkFunctions.SERVER_PORT;
@@ -50,17 +51,18 @@ public interface ContainerInitializer {
     default String prepareIp(ExtensionContext context) {
         final String serverIp = localIp();
         storeMethodPlain(context).put(SERVER_IP, serverIp);
-//    logger().info(
-//        "IP ServletContainerExtension - will be -> " + serverIP);
+        logger().debug("ServletContainerExtension - IP will be -> " + serverIp);
         return serverIp;
     }
 
     @Deprecated
     default int preparePort(ExtensionContext context) {
-        final int port = freePort().orElseThrow(() -> new RuntimeException("No free Port available..."));
+        final int port = freePort().orElseThrow(() ->
+                new RuntimeException("No free Port available..."));
+
         storeMethodPlain(context).put(SERVER_PORT, port);
-//    logger().info(
-//        "Port ServletContainerExtension - will be -> " + port);
+
+        logger().debug("ServletContainerExtension - Port will be -> " + port);
         return port;
     }
 

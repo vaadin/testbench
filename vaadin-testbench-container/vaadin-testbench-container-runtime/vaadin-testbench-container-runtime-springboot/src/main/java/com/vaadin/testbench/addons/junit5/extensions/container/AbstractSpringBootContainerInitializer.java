@@ -41,7 +41,6 @@ public abstract class AbstractSpringBootContainerInitializer
     @Override
     public void beforeAll(Class<?> testClass, ExtensionContext context) {
         if (!isAnnotated(testClass, SpringBootConf.class)) {
-//      logger().warning(NOT_ANNOTATED);
             throw new IllegalStateException(NOT_ANNOTATED);
         } else {
             final SpringBootConf conf = testClass.getAnnotation(SpringBootConf.class);

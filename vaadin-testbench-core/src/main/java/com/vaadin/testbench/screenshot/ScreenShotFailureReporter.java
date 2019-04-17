@@ -27,6 +27,7 @@ import java.io.PrintWriter;
 import java.util.LinkedList;
 import java.util.List;
 
+import static com.vaadin.testbench.TestBenchLogger.logger;
 import static com.vaadin.testbench.screenshot.ImageFileUtil.getErrorScreenshotFile;
 import static com.vaadin.testbench.screenshot.ImageUtil.encodeImageToBase64;
 import static com.vaadin.testbench.screenshot.ScreenshotProperties.IMAGE_FILE_NAME_ENDING;
@@ -54,9 +55,7 @@ public class ScreenShotFailureReporter {
             ImageIO.write(screenshotImage, IMAGE_FILE_NAME_ENDING,
                     getErrorScreenshotFile(fileName));
         } catch (IOException e) {
-//      logger().warning("Error writing screenshot to "
-//                       + errorFileFunction.apply(fileName).getPath());
-            e.printStackTrace();
+            logger().warn("Error writing screenshot to {}", fileName, e);
         }
 
         // collect big error blocks of differences

@@ -38,6 +38,7 @@ import static com.github.webdriverextensions.WebDriverProperties.EDGE_DRIVER_PRO
 import static com.github.webdriverextensions.WebDriverProperties.FIREFOX_DRIVER_PROPERTY_NAME;
 import static com.github.webdriverextensions.WebDriverProperties.IE_DRIVER_PROPERTY_NAME;
 import static com.github.webdriverextensions.WebDriverProperties.OPERA_DRIVER_PROPERTY_NAME;
+import static com.vaadin.testbench.TestBenchLogger.logger;
 import static com.vaadin.testbench.addons.webdriver.conf.WebdriversConfig.COMPATTESTING_GRID;
 import static java.lang.System.setProperty;
 import static java.util.Arrays.stream;
@@ -79,7 +80,7 @@ public class WebdriversConfigFactory {
         // TODO(sven): Check if compat test should run on local browser.
         final List<GridConfig> gridConfigs = unmodifiableList(createGridConfigs(configProperties));
 
-//    logger().info("Loaded " + gridConfigs.size() + " grid configuration(s)");
+        logger().debug("Loaded " + gridConfigs.size() + " grid configuration(s)");
         return new WebdriversConfig(gridConfigs);
     }
 
