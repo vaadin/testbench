@@ -19,7 +19,6 @@ import static com.vaadin.testbench.addons.webdriver.BrowserTypes.FIREFOX;
 import static com.vaadin.testbench.addons.webdriver.BrowserTypes.SAFARI;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-@VaadinTest
 public class UploadIT extends AbstractIT {
 
     /**

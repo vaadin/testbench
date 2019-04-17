@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Assertions;
 import static com.vaadin.flow.component.ironlist.testbench.test.IronListView.HUNDRED_THOUSAND;
 import static com.vaadin.flow.component.ironlist.testbench.test.IronListView.NAV;
 
-@VaadinTest
 public class IronListIT extends AbstractIT {
 
     @VaadinTest(navigateTo = NAV)

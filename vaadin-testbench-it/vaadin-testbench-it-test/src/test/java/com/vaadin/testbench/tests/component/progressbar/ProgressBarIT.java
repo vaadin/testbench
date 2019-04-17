@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Assertions;
 
 import static com.vaadin.flow.component.progressbar.testbench.test.ProgressBarView.NAV;
 
-@VaadinTest
 public class ProgressBarIT extends AbstractIT {
 
     @VaadinTest(navigateTo = NAV)

@@ -13,7 +13,6 @@ import static com.vaadin.flow.component.tabs.testbench.test.TabsView.NAV;
 import static com.vaadin.testbench.addons.webdriver.BrowserTypes.FIREFOX;
 import static com.vaadin.testbench.addons.webdriver.BrowserTypes.IE;
 
-@VaadinTest
 public class TabsIT extends AbstractIT {
 
     public static final String TEXT = "Text";

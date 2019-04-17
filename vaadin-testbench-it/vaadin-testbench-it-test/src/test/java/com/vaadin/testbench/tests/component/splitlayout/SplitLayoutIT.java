@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Assertions;
 import static com.vaadin.flow.component.splitlayout.testbench.test.SplitLayoutView.DEFAULT;
 import static com.vaadin.flow.component.splitlayout.testbench.test.SplitLayoutView.NAV;
 
-@VaadinTest
 public class SplitLayoutIT extends AbstractIT {
 
     @VaadinTest(navigateTo = NAV)

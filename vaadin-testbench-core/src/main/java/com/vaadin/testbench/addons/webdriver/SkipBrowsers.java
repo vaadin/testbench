@@ -17,13 +17,17 @@ package com.vaadin.testbench.addons.webdriver;
  * #L%
  */
 
-import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target({ElementType.TYPE, ElementType.METHOD})
-@Retention(RetentionPolicy.RUNTIME)
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
+@Inherited
+@Target({TYPE, METHOD})
+@Retention(RUNTIME)
 public @interface SkipBrowsers {
 
     BrowserTypes[] ALL_BROWSERS = new BrowserTypes[0];

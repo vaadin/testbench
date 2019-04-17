@@ -12,7 +12,6 @@ import static com.vaadin.flow.component.textfield.testbench.test.PasswordFieldVi
 import static com.vaadin.flow.component.textfield.testbench.test.PasswordFieldView.NOLABEL;
 import static com.vaadin.flow.component.textfield.testbench.test.PasswordFieldView.PLACEHOLDER;
 
-@VaadinTest
 public class PasswordFieldIT extends AbstractIT {
 
     @VaadinTest(navigateTo = NAV)

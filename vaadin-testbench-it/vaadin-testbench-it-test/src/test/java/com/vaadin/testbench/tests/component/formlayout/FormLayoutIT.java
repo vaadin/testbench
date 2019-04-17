@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Assertions;
 
 import static com.vaadin.flow.component.formlayout.testbench.test.FormLayoutView.NAV;
 
-@VaadinTest
 public class FormLayoutIT extends AbstractIT {
 
     @VaadinTest(navigateTo = NAV)

@@ -11,7 +11,6 @@ import java.time.LocalDate;
 
 import static com.vaadin.flow.component.datepicker.testbench.test.DatePickerView.NAV;
 
-@VaadinTest
 public class DatePickerIT extends AbstractIT {
 
     @VaadinTest(navigateTo = NAV)

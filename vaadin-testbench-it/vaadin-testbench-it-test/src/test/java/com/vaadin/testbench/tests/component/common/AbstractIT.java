@@ -2,10 +2,12 @@ package com.vaadin.testbench.tests.component.common;
 
 import com.vaadin.flow.component.common.testbench.HasLabel;
 import com.vaadin.testbench.HasStringValueProperty;
+import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinTest;
 import com.vaadin.testbench.addons.junit5.pageobject.AbstractVaadinPageObject;
 import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.By;
 
+@VaadinTest
 public abstract class AbstractIT {
 
     protected String getLogRow(AbstractVaadinPageObject po, int i) {

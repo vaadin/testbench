@@ -23,13 +23,17 @@ import com.vaadin.testbench.addons.screenshot.FailedTestScreenhsotExtension;
 import org.junit.jupiter.api.TestTemplate;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target({ElementType.TYPE, ElementType.METHOD})
-@Retention(RetentionPolicy.RUNTIME)
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
+@Inherited
+@Target({TYPE, METHOD})
+@Retention(RUNTIME)
 @ExtendWith(ServletContainerExtension.class)
 @ExtendWith(PageObjectInvocationContextProvider.class)
 @ExtendWith(ConvertWebdriverTestExtension.class)

@@ -24,7 +24,6 @@ import static com.vaadin.flow.component.combobox.testbench.test.ComboBoxView.PRE
 import static com.vaadin.flow.component.combobox.testbench.test.ComboBoxView.TEXT;
 import static com.vaadin.flow.component.combobox.testbench.test.ComboBoxView.TEXT_WITH_PRE_SLELECTED_VALUE;
 
-@VaadinTest
 public class ComboBoxIT extends AbstractIT {
 
     @VaadinTest
