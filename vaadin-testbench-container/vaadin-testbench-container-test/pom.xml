@@ -22,7 +22,7 @@
 
   <properties>
     <maven.deploy.skip>true</maven.deploy.skip>
-    <license.check.skip>true</license.check.skip>
+    <license.skip>true</license.skip>
   </properties>
 
   <!-- Just to disable any accidential deployment to maven.central -->

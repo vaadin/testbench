@@ -36,11 +36,13 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 
+import static com.vaadin.testbench.TestBenchLogger.logger;
 import static com.vaadin.testbench.screenshot.ImageFileUtil.createScreenshotDirectoriesIfNeeded;
 import static com.vaadin.testbench.screenshot.ImageFileUtil.getErrorScreenshotFile;
 import static com.vaadin.testbench.screenshot.ReferenceNameGenerator.PLATFORM_UNKNOWN;
 import static com.vaadin.testbench.screenshot.ScreenshotProperties.IMAGE_FILE_NAME_ENDING;
 import static com.vaadin.testbench.screenshot.ScreenshotProperties.getScreenshotComparisonTolerance;
+import static com.vaadin.testbench.screenshot.ScreenshotProperties.getScreenshotReferenceDirectory;
 import static com.vaadin.testbench.screenshot.ScreenshotProperties.getScreenshotRetriesMax;
 import static com.vaadin.testbench.screenshot.ScreenshotProperties.getScreenshotRetryDelay;
 import static org.openqa.selenium.OutputType.BYTES;
@@ -146,18 +148,15 @@ public class ScreenshotComparator {
 
     private void saveErrorScreenShot(BufferedImage screenshotImage, String referenceName) {
         createScreenshotDirectoriesIfNeeded();
-//        .ifPresentOrElse(aVoid -> getLogger(ScreenshotComparator.class).info("Screenshot Directories are OK.") ,
-//                         failed -> getLogger(ScreenshotComparator.class).warning(failed));
 
         try {
             ImageIO.write(screenshotImage, IMAGE_FILE_NAME_ENDING, getErrorScreenshotFile(referenceName));
         } catch (IOException e) {
-//      logger().warning(e.getMessage());
+            logger().warn(e.getMessage());
         }
-//    logger()
-//        .warning("No reference found for " + referenceName
-//                 + " in "
-//                 + getScreenshotReferenceDirectory());
+
+        logger().warn("No reference found for " + referenceName
+                + " in " + getScreenshotReferenceDirectory());
     }
 
     /**

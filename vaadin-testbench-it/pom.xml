@@ -19,6 +19,10 @@
     <module>vaadin-testbench-it-test</module>
   </modules>
 
+  <properties>
+    <license.skip>true</license.skip>
+  </properties>
+
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -62,21 +66,4 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
-  <profiles>
-    <profile>
-      <id>update-license-headers</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>license-maven-plugin</artifactId>
-            <configuration>
-              <skipUpdateLicense>true</skipUpdateLicense>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
 </project>

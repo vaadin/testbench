@@ -23,6 +23,7 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 import java.lang.reflect.Method;
 import java.util.Properties;
 
+import static com.vaadin.testbench.TestBenchLogger.logger;
 import static com.vaadin.testbench.addons.junit5.extensions.ExtensionFunctions.storeMethodPlain;
 import static com.vaadin.testbench.addons.junit5.extensions.container.NetworkFunctions.SERVER_IP;
 import static com.vaadin.testbench.addons.junit5.extensions.container.NetworkFunctions.SERVER_PORT;
@@ -31,9 +32,9 @@ import static com.vaadin.testbench.addons.junit5.extensions.container.NetworkFun
 @AutoService(ContainerInitializer.class)
 public class NoContainerInitializer implements ContainerInitializer {
 
-    public static final String CONTAINER_NONE_HOST = "container.none.host";
-    public static final String CONTAINER_NONE_PORT = "container.none.port";
-    public static final String CONTAINER_NONE_WEBAPP = "container.none.webapp";
+    private static final String CONTAINER_NONE_HOST = "container.none.host";
+    private static final String CONTAINER_NONE_PORT = "container.none.port";
+    private static final String CONTAINER_NONE_WEBAPP = "container.none.webapp";
 
     private final Properties props = properties();
     private final boolean isHostDefined = isKeyDefined(CONTAINER_NONE_HOST);
@@ -49,15 +50,21 @@ public class NoContainerInitializer implements ContainerInitializer {
 
     @Override
     public void beforeAll(Class<?> testClass, ExtensionContext context) {
-//    logger()
-//        .info("Running tests from " + testClass.getName() + " against remote deployed application");
+        logger().debug("Running tests from " + testClass.getName()
+                + " against remote deployed application");
     }
 
     @Override
     public void beforeEach(Method testMethod, ExtensionContext context) {
-//    if (! isHostDefined) logger().warning("Property " + CONTAINER_NONE_HOST + " is not defined");
-//    if (! isPortDefined) logger().warning("Property " + CONTAINER_NONE_PORT + " is not defined");
-//    if (! isWebAppDefined) logger().warning("Property " + CONTAINER_NONE_WEBAPP + " is not defined");
+        if (!isHostDefined) {
+            logger().warn("Property " + CONTAINER_NONE_HOST + " is not defined");
+        }
+        if (!isPortDefined) {
+            logger().warn("Property " + CONTAINER_NONE_PORT + " is not defined");
+        }
+        if (!isWebAppDefined) {
+            logger().warn("Property " + CONTAINER_NONE_WEBAPP + " is not defined");
+        }
 
         final ExtensionContext.Store store = storeMethodPlain(context);
 

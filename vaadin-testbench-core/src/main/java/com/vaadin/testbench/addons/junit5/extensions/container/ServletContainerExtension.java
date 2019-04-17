@@ -8,10 +8,10 @@ package com.vaadin.testbench.addons.junit5.extensions.container;
  * %%
  * This program is available under Commercial Vaadin Add-On License 3.0
  * (CVALv3).
- * 
+ *
  * See the file licensing.txt distributed with this software for more
  * information about licensing.
- * 
+ *
  * You should have received a copy of the license along with this program.
  * If not, see <http://vaadin.com/license/cval-3>.
  * #L%
@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ServiceLoader;
 
+import static com.vaadin.testbench.TestBenchLogger.logger;
 import static com.vaadin.testbench.addons.junit5.extensions.container.ExtensionContextFunctions.containerInfo;
 
 public class ServletContainerExtension implements
@@ -51,33 +52,34 @@ public class ServletContainerExtension implements
             throw new IllegalStateException("No implementation of ContainerInitializer found");
         }
         if (initializers.size() != 1) {
-//      logger().warning("More than one implementation of ContainerInitializer found!");
+            logger().warn("More than one implementation of ContainerInitializer found!");
         }
+
         containerIntializer = initializers.get(0);
-//    logger().info("Using ContainerInitializer: " + containerIntializer.getClass().getName());
+        logger().debug("Using ContainerInitializer: " + containerIntializer.getClass().getName());
     }
 
     @Override
     public void beforeEach(ExtensionContext context) throws Exception {
-//    logger().info("ServletContainerExtension - beforeEach");
+        logger().debug("ServletContainerExtension - beforeEach");
         containerIntializer.beforeEach(context.getTestMethod().get(), context);
     }
 
     @Override
     public void afterEach(ExtensionContext context) throws Exception {
-//    logger().info("ServletContainerExtension - afterEach");
+        logger().debug("ServletContainerExtension - afterEach");
         containerIntializer.afterEach(context.getTestMethod().get(), context);
     }
 
     @Override
     public void beforeAll(ExtensionContext context) throws Exception {
-//    logger().info("ServletContainerExtension - beforeAll");
+        logger().debug("ServletContainerExtension - beforeAll");
         containerIntializer.beforeAll(context.getTestClass().get(), context);
     }
 
     @Override
     public void afterAll(ExtensionContext context) throws Exception {
-//    logger().info("ServletContainerExtension - afterAll");
+        logger().debug("ServletContainerExtension - afterAll");
         containerIntializer.afterAll(context.getTestClass().get(), context);
     }
 
