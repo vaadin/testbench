@@ -24,13 +24,11 @@ class ElementScreenCompareIT {
     @VaadinTest(navigateTo = ROUTE)
     void elementCompareScreen(GenericTestPageObject po) throws Exception {
         TestBenchElement button4 = po.$(NativeButtonElement.class).get(4);
-
         button4.getScreenshotAs(OutputType.BYTES);
 
         Assertions.assertTrue(button4.compareScreen("button4"));
 
         TestBenchElement layout = button4.findElement(By.xpath("../.."));
-
         Assertions.assertTrue(layout.compareScreen("layout"));
     }
 }

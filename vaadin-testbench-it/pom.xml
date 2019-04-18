@@ -11,16 +11,24 @@
   </parent>
 
   <artifactId>vaadin-testbench-it</artifactId>
-  <packaging>pom</packaging>
+  <packaging>jar</packaging>
 
-  <modules>
-    <!-- Test data must come first -->
-    <module>vaadin-testbench-it-test-data</module>
-    <module>vaadin-testbench-it-test</module>
-  </modules>
+  <!-- Just to disable any accidental deployment to maven.central -->
+  <distributionManagement>
+    <repository>
+      <id>localhost</id>
+      <url>file://${basedir}/target/repo/</url>
+    </repository>
+    <snapshotRepository>
+      <id>localhost</id>
+      <url>file://${basedir}/target/snapshot-repo/</url>
+    </snapshotRepository>
+  </distributionManagement>
 
   <properties>
+    <maven.deploy.skip>true</maven.deploy.skip>
     <license.skip>true</license.skip>
+    <operating.system>mac</operating.system>
   </properties>
 
   <dependencyManagement>
@@ -32,6 +40,13 @@
         <scope>import</scope>
         <type>pom</type>
       </dependency>
+      <dependency>
+        <groupId>com.vaadin</groupId>
+        <artifactId>vaadin-core</artifactId>
+        <version>${vaadin.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -39,31 +54,191 @@
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-params</artifactId>
+      <version>${junit.jupiter.version}</version>
       <scope>test</scope>
     </dependency>
-
-    <dependency>
-      <groupId>org.junit.platform</groupId>
-      <artifactId>junit-platform-launcher</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <!-- Only required to run tests in an IDE that bundles an older version -->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-engine</artifactId>
+      <version>${junit.jupiter.version}</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>com.vaadin</groupId>
-      <artifactId>vaadin-testbench-core</artifactId>
+      <artifactId>vaadin-testbench-container-runtime-meecrowave</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.meecrowave</groupId>
+      <artifactId>meecrowave-core</artifactId>
+      <version>${meecrowave.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.vaadin</groupId>
+      <artifactId>flow-html-components-testbench</artifactId>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>com.vaadin</groupId>
+          <artifactId>vaadin-testbench-core</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>com.vaadin</groupId>
+      <artifactId>vaadin-components-testbench</artifactId>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>com.vaadin</groupId>
+          <artifactId>vaadin-testbench-core</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>com.vaadin</groupId>
+      <artifactId>vaadin-core</artifactId>
     </dependency>
 
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-simple</artifactId>
-      <version>${slf4j.version}</version>
-      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <version>2.11.2</version>
     </dependency>
   </dependencies>
+
+  <build>
+    <testResources>
+      <testResource>
+        <directory>${project.basedir}/src/test/resources</directory>
+        <filtering>true</filtering>
+      </testResource>
+    </testResources>
+
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <version>2.22.0</version>
+        <executions>
+          <execution>
+            <phase>integration-test</phase>
+            <goals>
+              <goal>integration-test</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <profile>
+      <id>it-saucelabs</id>
+
+      <properties>
+        <sauce.options>--tunnel-identifier ${maven.build.timestamp}</sauce.options>
+        <maven.build.timestamp.format>yyyy-MM-dd'T'HHmmssSSS</maven.build.timestamp.format>
+      </properties>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>com.saucelabs.maven.plugin</groupId>
+            <artifactId>sauce-connect-plugin</artifactId>
+            <version>2.1.25</version>
+
+            <configuration>
+              <sauceUsername>${sauce.user}</sauceUsername>
+              <sauceAccessKey>${sauce.sauceAccessKey}</sauceAccessKey>
+              <options>${sauce.options}</options>
+            </configuration>
+
+            <executions>
+              <execution>
+                <id>start-sauceconnect</id>
+                <phase>pre-integration-test</phase>
+                <goals>
+                  <goal>start-sauceconnect</goal>
+                </goals>
+              </execution>
+
+              <execution>
+                <id>stop-sauceconnect</id>
+                <phase>post-integration-test</phase>
+                <goals>
+                  <goal>stop-sauceconnect</goal>
+                </goals>
+              </execution>
+            </executions>
+
+            <dependencies>
+              <dependency>
+                <groupId>javax.xml.bind</groupId>
+                <artifactId>jaxb-api</artifactId>
+                <version>2.3.0</version>
+              </dependency>
+            </dependencies>
+          </plugin>
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-failsafe-plugin</artifactId>
+            <version>2.22.0</version>
+
+            <executions>
+              <execution>
+                <phase>integration-test</phase>
+                <goals>
+                  <goal>integration-test</goal>
+                </goals>
+              </execution>
+            </executions>
+
+            <configuration>
+              <trimStackTrace>false</trimStackTrace>
+              <systemPropertyVariables>
+                <sauce.user>${sauce.user}</sauce.user>
+                <sauce.sauceAccessKey>${sauce.sauceAccessKey}</sauce.sauceAccessKey>
+                <sauce.options>${sauce.options}</sauce.options>
+              </systemPropertyVariables>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>linux</id>
+      <activation>
+        <os>
+          <family>linux</family>
+        </os>
+      </activation>
+      <properties>
+        <operating.system>linux</operating.system>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>windows</id>
+      <activation>
+        <os>
+          <family>windows</family>
+        </os>
+      </activation>
+      <properties>
+        <operating.system>windows</operating.system>
+      </properties>
+    </profile>
+  </profiles>
 </project>
