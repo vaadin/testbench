@@ -5,7 +5,6 @@ import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinTest;
 import com.vaadin.testbench.tests.ui.GenericTestPageObject;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.openqa.selenium.By;
 import org.openqa.selenium.OutputType;
 
 import static com.vaadin.testbench.tests.ui.element.ElementQueryView.ROUTE;
@@ -28,9 +27,5 @@ class ElementScreenCompareIT {
         button4.getScreenshotAs(OutputType.BYTES);
 
         Assertions.assertTrue(button4.compareScreen("button4"));
-
-        TestBenchElement layout = button4.findElement(By.xpath("../.."));
-
-        Assertions.assertTrue(layout.compareScreen("layout"));
     }
 }
