@@ -133,7 +133,6 @@ public interface BrowserDriverFunctions {
         private final String driver;
 
         public WebDriverSpec(Boolean local, DesiredCapabilities capabilities, String browser) {
-
             this.local = local;
             this.capabilities = capabilities;
             this.driver = browser;

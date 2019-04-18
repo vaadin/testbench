@@ -28,7 +28,7 @@ public final class ScreenshotProperties {
     public static final String IMAGE_FILE_NAME_ENDING = "png";
     public static final String SCREENSHOT_COMPARISON_TOLERANCE_DEFAULT = "0.01";
     public static final String SCREENSHOT_RETRIES_MAX_DEFAULT = "2";
-    public static final int SCREENSHOT_RETRY_DELAY_DEFAULT = 500;
+    public static final String SCREENSHOT_RETRY_DELAY_DEFAULT = "500";
     public static final String SCREENSHOT_REFERENCE_DIRECTORY_DEFAULT = "reference-screenshots";
     public static final String SCREENSHOT_ERROR_DIRECTORY_DEFAULT = "target/error-screenshots";
 
@@ -54,7 +54,7 @@ public final class ScreenshotProperties {
             System.getProperty(qualifiedKey(SCREENSHOT_RETRIES_MAX), SCREENSHOT_RETRIES_MAX_DEFAULT));
 
     private static int screenshotRetryDelay = Integer.valueOf(
-            System.getProperty(qualifiedKey(SCREENSHOT_RETRY_DELAY)), SCREENSHOT_RETRY_DELAY_DEFAULT);
+            System.getProperty(qualifiedKey(SCREENSHOT_RETRY_DELAY), SCREENSHOT_RETRY_DELAY_DEFAULT));
 
     /**
      * Tells whether to treat screen shots with the only difference being a text

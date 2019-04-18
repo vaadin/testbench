@@ -120,6 +120,11 @@ public class ImageFileUtil {
     private static Optional<ByteArrayInputStream> getReferenceScreenshotFile(String referenceImageFileName) {
         final String filename = "/" + getScreenshotReferenceDirectory() + "/" + referenceImageFileName;
         final InputStream resource = ImageFileUtil.class.getResourceAsStream(filename);
+        if (resource == null) {
+            logger().info("No reference screenshot found for {}", referenceImageFileName);
+            return Optional.empty();
+        }
+
         byte[] buff = new byte[8000];
 
         int bytesRead;
@@ -132,7 +137,7 @@ public class ImageFileUtil {
             byte[] data = bao.toByteArray();
             return Optional.of(new ByteArrayInputStream(data));
         } catch (IOException e) {
-            logger().info("No reference screenshot found for {}", referenceImageFileName, e);
+            logger().info("Unable to read reference screenshot for {}", referenceImageFileName, e);
             return Optional.empty();
         }
     }
