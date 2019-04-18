@@ -131,7 +131,7 @@ public class ImageFileUtil {
 
             byte[] data = bao.toByteArray();
             return Optional.of(new ByteArrayInputStream(data));
-        } catch (IOException e) {
+        } catch (Exception e) {
             logger().info("No reference screenshot found for {}", referenceImageFileName, e);
             return Optional.empty();
         }
