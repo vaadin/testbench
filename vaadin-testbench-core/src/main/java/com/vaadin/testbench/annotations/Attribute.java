@@ -1,5 +1,22 @@
 package com.vaadin.testbench.annotations;
 
+/*-
+ * #%L
+ * vaadin-testbench-core
+ * %%
+ * Copyright (C) 2019 Vaadin Ltd
+ * %%
+ * This program is available under Commercial Vaadin Add-On License 3.0
+ * (CVALv3).
+ * 
+ * See the file licensing.txt distributed with this software for more
+ * information about licensing.
+ * 
+ * You should have received a copy of the license along with this program.
+ * If not, see <http://vaadin.com/license/cval-3>.
+ * #L%
+ */
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -13,9 +30,9 @@ import java.lang.annotation.Target;
  * tag name.
  * <p>
  * While custom elements can be uniquely identified using their tag name, e.g.
- * <code>&lt;vaadin-button&gt;</code>. Flow views and server side composites
+ * <code>&lt;testbench-button&gt;</code>. Flow views and server side composites
  * cannot be identified this way but typically needs an additional filter which
- * can be defined using this annotation.
+ * can be defined using this annotations.
  * <p>
  * For instance, given <code>public class MyView extends Div</code> and the
  * corresponding element class
@@ -32,14 +49,14 @@ import java.lang.annotation.Target;
 @Repeatable(Attribute.Container.class)
 public @interface Attribute {
 
-    public static final String DEFAULT_VALUE = "THE_DEFAULT_VALUE_WHICH_YOU_SURELY_NEVER_EVER_WILL_USE_FOR_REAL, RIGHT?!";
+    String DEFAULT_VALUE = "THE_DEFAULT_VALUE_WHICH_YOU_SURELY_NEVER_EVER_WILL_USE_FOR_REAL, RIGHT?!";
     /**
      * Replaced by the simple class name of the element class, with any
      * <code>Element</code> or <code>PageObject</code> suffix removed, and
      * converted to dash-separated-format when used with either
      * {@link #contains()} or {@link #value()},
      */
-    public static final String SIMPLE_CLASS_NAME = "THE_CONVENTION_VALUE_WHICH_YOU_SURELY_NEVER_EVER_WILL_USE_FOR_REAL, RIGHT?!";
+    String SIMPLE_CLASS_NAME = "THE_CONVENTION_VALUE_WHICH_YOU_SURELY_NEVER_EVER_WILL_USE_FOR_REAL, RIGHT?!";
 
     /**
      * The name of the attribute to check.
@@ -75,19 +92,18 @@ public @interface Attribute {
     String contains() default DEFAULT_VALUE;
 
     /**
-     * Internal annotation to enable use of multiple {@link Attribute}
+     * Internal annotations to enable use of multiple {@link Attribute}
      * annotations.
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.TYPE)
     @Documented
     @Inherited
-    public @interface Container {
+    @interface Container {
 
         /**
          * Internally used to enable use of multiple {@link Attribute}
          * annotations.
-         *
          *
          * @return an array of the Attribute annotations
          */

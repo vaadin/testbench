@@ -1,20 +1,25 @@
-/**
- * Copyright (C) 2012 Vaadin Ltd
- *
- * This program is available under Commercial Vaadin Add-On License 3.0
- * (CVALv3).
- *
- * See the file licensing.txt distributed with this software for more
- * information about licensing.
- *
- * You should have received a copy of the license along with this program.
- * If not, see <http://vaadin.com/license/cval-3>.
- */
 package com.vaadin.testbench.screenshot;
 
-import static java.awt.image.BufferedImage.TYPE_INT_ARGB;
-import static java.awt.image.BufferedImage.TYPE_INT_RGB;
+/*-
+ * #%L
+ * vaadin-testbench-core
+ * %%
+ * Copyright (C) 2019 Vaadin Ltd
+ * %%
+ * This program is available under Commercial Vaadin Add-On License 3.0
+ * (CVALv3).
+ * 
+ * See the file licensing.txt distributed with this software for more
+ * information about licensing.
+ * 
+ * You should have received a copy of the license along with this program.
+ * If not, see <http://vaadin.com/license/cval-3>.
+ * #L%
+ */
 
+import org.apache.commons.codec.binary.Base64;
+
+import javax.imageio.ImageIO;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
@@ -23,9 +28,9 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.imageio.ImageIO;
-
-import org.apache.commons.codec.binary.Base64;
+import static com.vaadin.testbench.screenshot.ScreenshotProperties.IMAGE_FILE_NAME_ENDING;
+import static java.awt.image.BufferedImage.TYPE_INT_ARGB;
+import static java.awt.image.BufferedImage.TYPE_INT_RGB;
 
 /**
  * These image utility functions are for internal use only.
@@ -33,56 +38,29 @@ import org.apache.commons.codec.binary.Base64;
 public class ImageUtil {
 
     /**
-     * Contains ImageUtil-internal information about an image. Used by
-     * getBlock() method.
-     */
-    public static class ImageProperties {
-        private BufferedImage image = null;
-        private Raster raster = null;
-        private boolean alpha = false;
-        private boolean fallback = false;
-        private int width = 0;
-        private int height = 0;
-    }
-
-    /**
      * Encodes target image to a Base64 string
      *
-     * @param image
-     *            BufferedImage to encode to String
      * @return Base64 encoded String of image
      */
     public static String encodeImageToBase64(BufferedImage image) {
-        String encodedImage = "";
-        Base64 encoder = new Base64();
-        try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ImageIO.write(image, "png", baos);
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            ImageIO.write(image, IMAGE_FILE_NAME_ENDING, baos);
             baos.flush();
-            byte[] encodedBytes = encoder.encode(baos.toByteArray());
-            encodedImage = new String(encodedBytes);
-            baos.close();
+            return new String(new Base64().encode(baos.toByteArray()));
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
-        return encodedImage;
     }
 
     /**
      * Get luminance value for the given rgb value.
      *
-     * @param rgb
      * @return
      */
-    public static double getLuminance(int rgb) {
+    public static double rgbToLuminance(int rgb) {
         int r = ((rgb >> 16) & 0xFF);
         int g = ((rgb >> 8) & 0xFF);
         int b = (rgb & 0xFF);
-
-        return getLuminance(r, g, b);
-    }
-
-    private static double getLuminance(int r, int g, int b) {
         return .299 * r + .587 * g + .114 * b;
     }
 
@@ -92,7 +70,7 @@ public class ImageUtil {
      * @return true/false
      */
     public static boolean imagesSameSize(BufferedImage image1,
-            BufferedImage image2) {
+                                         BufferedImage image2) {
         return (image1.getWidth() == image2.getWidth()
                 && image1.getHeight() == image2.getHeight());
     }
@@ -101,14 +79,12 @@ public class ImageUtil {
      * Resize images to be same size. The size is determined by the minimum
      * height and minimum width of the images.
      *
-     * @param image1
-     *            an image.
-     * @param image2
-     *            an image.
+     * @param image1 an image.
+     * @param image2 an image.
      * @return a list containing two images with the same dimensions
      */
     public static List<BufferedImage> cropToBeSameSize(BufferedImage image1,
-            BufferedImage image2) {
+                                                       BufferedImage image2) {
         if (imagesSameSize(image1, image2)) {
             return Arrays.asList(image1, image2);
         }
@@ -124,15 +100,14 @@ public class ImageUtil {
     /**
      * Crops the image to the given size starting at (0,0)
      *
-     * @param image
-     *            The image to crop
-     * @param width
-     *            width in pixels
-     * @param height
-     *            height in pixels
+     * @param image  The image to crop
+     * @param width  width in pixels
+     * @param height height in pixels
      */
-    private static BufferedImage cropImage(BufferedImage image, int width,
-            int height) {
+    private static BufferedImage cropImage(BufferedImage image,
+                                           int width,
+                                           int height) {
+
         if (image.getWidth() == width && image.getHeight() == height) {
             return image;
         }
@@ -144,19 +119,16 @@ public class ImageUtil {
      *
      * @return
      */
-    public static final int[] createSampleBuffer() {
+    public static int[] createSampleBuffer() {
         return new int[16 * 16 * 4];
     }
 
     /**
      * Extract magical image properties used by the getBlock function.
      *
-     * @param image
-     *            a BufferedImage
      * @return an ImageProperties descriptor object
      */
-    public static final ImageProperties getImageProperties(
-            final BufferedImage image) {
+    public static ImageProperties extractImageProperties(BufferedImage image) {
         final int imageType = image.getType();
         ImageProperties p = new ImageProperties();
         p.image = image;
@@ -176,54 +148,39 @@ public class ImageUtil {
     /**
      * Returns the 16x16 RGB block starting at (x,y) from the given image
      *
-     * @param properties
-     *            The properties of the image (image + metadata)
-     * @param x
-     *            The x coordinate of the block (in pixels)
-     * @param y
-     *            The y coordinate of the block (in pixels)
-     * @param result
-     *            A sample buffer (32 bits per pixel) for storing the resulting
-     *            block, or null (a new buffer will be created)
-     * @param sample
-     *            A sample buffer for storing intermediate values, or null (a
-     *            new buffer will be created). This parameter is provided mainly
-     *            for speed (providing it eliminates unnecessary block
-     *            allocations).
+     * @param properties The properties of the image (image + metadata)
+     * @param x          The x coordinate of the block (in pixels)
+     * @param y          The y coordinate of the block (in pixels)
+     * @param result     A sample buffer (32 bits per pixel) for storing the resulting
+     *                   block, or null (a new buffer will be created)
+     * @param sample     A sample buffer for storing intermediate values, or null (a
+     *                   new buffer will be created). This parameter is provided mainly
+     *                   for speed (providing it eliminates unnecessary block
+     *                   allocations).
      * @return An array of RGB values for the block
      */
-    public static final int[] getBlock(final ImageProperties properties, int x,
-            int y, int[] result, int[] sample) {
+    public static int[] getBlock(final ImageProperties properties,
+                                 int x, int y,
+                                 int[] result,
+                                 int[] sample) {
 
         final int width;
         final int height;
 
-        if (result == null) {
-            result = new int[16 * 16];
-        }
+        if (result == null) result = new int[16 * 16];
 
-        if (sample == null) {
-            sample = new int[16 * 16 * 4];
-        }
+        if (sample == null) sample = new int[16 * 16 * 4];
 
-        if (x + 16 >= properties.width) {
-            width = properties.width - x;
-        } else {
-            width = 16;
-        }
+        if (x + 16 >= properties.width) width = properties.width - x;
+        else width = 16;
 
-        if (y + 16 >= properties.height) {
-            height = properties.height - y;
-        } else {
-            height = 16;
-        }
+        if (y + 16 >= properties.height) height = properties.height - y;
+        else height = 16;
 
         final int l = width * height;
 
         if (properties.fallback) {
-
             properties.image.getRGB(x, y, width, height, result, 0, width);
-
         } else {
 
             // NOTE: Apparently raster.getPixels() standardises channel
@@ -253,12 +210,10 @@ public class ImageUtil {
                             | sample[p + 2]; // B
                     p += 3;
                 }
-
             }
-
         }
 
-        // Fill the rest with zeros
+        // Fill the rest with zeros.
         for (int i = l, max = result.length; i < max; ++i) {
             result[i] = 0;
         }
@@ -269,8 +224,6 @@ public class ImageUtil {
     /**
      * Clones the given BufferedImage
      *
-     * @param sourceImage
-     *            The image to copy
      * @return A copy of sourceImage
      */
     public static BufferedImage cloneImage(BufferedImage sourceImage) {
@@ -288,4 +241,17 @@ public class ImageUtil {
         return newImage;
     }
 
+    /**
+     * Contains ImageUtil-internal information about an image. Used by
+     * getBlock() method.
+     */
+    public static final class ImageProperties {
+
+        private BufferedImage image = null;
+        private Raster raster = null;
+        private boolean alpha = false;
+        private boolean fallback = false;
+        private int width = 0;
+        private int height = 0;
+    }
 }

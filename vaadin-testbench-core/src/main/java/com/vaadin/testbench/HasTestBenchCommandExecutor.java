@@ -1,16 +1,21 @@
-/**
- * Copyright (C) 2012 Vaadin Ltd
- *
+package com.vaadin.testbench;
+
+/*-
+ * #%L
+ * vaadin-testbench-core
+ * %%
+ * Copyright (C) 2019 Vaadin Ltd
+ * %%
  * This program is available under Commercial Vaadin Add-On License 3.0
  * (CVALv3).
- *
+ * 
  * See the file licensing.txt distributed with this software for more
  * information about licensing.
- *
+ * 
  * You should have received a copy of the license along with this program.
  * If not, see <http://vaadin.com/license/cval-3>.
+ * #L%
  */
-package com.vaadin.testbench;
 
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 
@@ -18,7 +23,6 @@ import com.vaadin.testbench.commands.TestBenchCommandExecutor;
  * Interface for classes that have access to a {@link TestBenchCommandExecutor}
  * instance. TestBenchCommandExecutor provides the implementation of TestBench's
  * client-control code.
- *
  */
 public interface HasTestBenchCommandExecutor {
 
@@ -28,6 +32,5 @@ public interface HasTestBenchCommandExecutor {
      *
      * @return
      */
-    public TestBenchCommandExecutor getCommandExecutor();
-
+    TestBenchCommandExecutor getCommandExecutor();
 }

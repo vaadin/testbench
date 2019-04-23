@@ -1,57 +1,647 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>com.vaadin</groupId>
-        <artifactId>vaadin-parent</artifactId>
-        <version>2.0.0</version>
-        <relativePath />
-    </parent>
-    <artifactId>vaadin-testbench-parent</artifactId>
-    <packaging>pom</packaging>
-    <version>6.1-SNAPSHOT</version>
-    <name>Vaadin TestBench parent</name>
+  <parent>
+    <groupId>com.vaadin</groupId>
+    <artifactId>vaadin-parent</artifactId>
+    <version>2.0.1</version>
+    <relativePath/>
+  </parent>
 
-    <organization>
-        <name>Vaadin Ltd</name>
-        <url>http://vaadin.com/</url>
-    </organization>
+  <artifactId>vaadin-testbench</artifactId>
+  <version>7.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <name>Vaadin TestBench</name>
+
+  <organization>
+    <name>Vaadin Ltd</name>
     <url>http://vaadin.com/</url>
-    <issueManagement>
-        <system>trac</system>
-        <url>http://dev.vaadin.com/</url>
-    </issueManagement>
-    <licenses>
-        <license>
-            <name>Commercial Vaadin Add-On License version 3.0</name>
-            <url>http://vaadin.com/license/cval-3</url>
-            <distribution>manual</distribution>
-        </license>
-    </licenses>
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <Implementation-Version>${project.version}</Implementation-Version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <selenium.version>3.141.59</selenium.version>
-    </properties>
-    <modules>
-        <module>vaadin-testbench-bom</module>
-        <module>vaadin-testbench-core</module>
-        <module>vaadin-testbench-standalone</module>
-        <module>vaadin-testbench-integration-tests</module>
-    </modules>
+  </organization>
 
-    <build>
+  <url>http://vaadin.com/testbench</url>
+  <inceptionYear>2019</inceptionYear>
+
+  <issueManagement>
+    <system>github</system>
+    <url>https://github.com/vaadin/testbench/issues</url>
+  </issueManagement>
+
+  <scm>
+    <url>https://github.com/vaadin/testbench</url>
+    <connection>scm:git:https://github.com/vaadin/testbench.git</connection>
+    <developerConnection>scm:git:https://github.com/vaadin/testbench.git</developerConnection>
+    <tag>HEAD</tag>
+  </scm>
+
+  <licenses>
+    <license>
+      <name>Commercial Vaadin Add-On License version 3.0</name>
+      <url>http://vaadin.com/license/cval-3</url>
+      <distribution>manual</distribution>
+    </license>
+  </licenses>
+
+  <modules>
+    <module>vaadin-testbench-bom</module>
+    <module>vaadin-testbench-core</module>
+    <module>vaadin-testbench-container</module>
+    <module>vaadin-testbench-it</module>
+  </modules>
+
+  <repositories>
+    <repository>
+      <id>vaadin-addons</id>
+      <url>http://maven.vaadin.com/vaadin-addons</url>
+    </repository>
+  </repositories>
+
+  <properties>
+    <maven.compiler.target>8</maven.compiler.target>
+    <maven.compiler.source>8</maven.compiler.source>
+
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+    <Implementation-Version>${project.version}</Implementation-Version>
+
+    <license.skip>false</license.skip>
+
+    <slf4j.version>1.7.25</slf4j.version>
+    <log4j-api.version>2.11.2</log4j-api.version>
+
+    <junit.jupiter.version>5.4.0</junit.jupiter.version>
+    <junit.platform.version>1.4.0</junit.platform.version>
+    <junit-platform-maven-plugin.version>1.0.0-M5</junit-platform-maven-plugin.version>
+
+    <jacoco.version>0.8.3</jacoco.version>
+    <pitest.version>1.4.6</pitest.version>
+    <pitest-junit5-plugin.version>0.8</pitest-junit5-plugin.version>
+    <pitest-prod-classes>com.vaadin.testbench.*</pitest-prod-classes>
+    <pitest-test-classes>com.vaadin.testbench.*</pitest-test-classes>
+
+    <opentracing-api.version>0.31.0</opentracing-api.version>
+
+    <meecrowave.version>1.2.6</meecrowave.version>
+    <spring-boot01.version>1.5.19.RELEASE</spring-boot01.version>
+    <spring-boot02.version>2.1.3.RELEASE</spring-boot02.version>
+    <addon-test-helpers.version>2.0</addon-test-helpers.version>
+    <javax.servlet-api.version>4.0.1</javax.servlet-api.version>
+
+<!--    Not latest because of webdriversextension using old selenium-->
+    <selenium.version>3.10.0</selenium.version>
+
+    <vaadin.version>13.0.2</vaadin.version>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.seleniumhq.selenium</groupId>
+        <artifactId>selenium-api</artifactId>
+        <version>${selenium.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.seleniumhq.selenium</groupId>
+        <artifactId>selenium-java</artifactId>
+        <version>${selenium.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.seleniumhq.selenium</groupId>
+        <artifactId>selenium-server</artifactId>
+        <version>${selenium.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.seleniumhq.selenium</groupId>
+        <artifactId>selenium-remote-driver</artifactId>
+        <version>${selenium.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>javax.servlet-api</artifactId>
+        <version>3.1.0</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter-params</artifactId>
+        <version>${junit.jupiter.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.junit.platform</groupId>
+        <artifactId>junit-platform-launcher</artifactId>
+        <scope>test</scope>
+        <version>${junit.platform.version}</version>
+      </dependency>
+      <!-- Only required to run tests in an IDE that bundles an older version -->
+      <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter-engine</artifactId>
+        <scope>test</scope>
+        <version>${junit.jupiter.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.assertj</groupId>
+        <artifactId>assertj-core</artifactId>
+        <version>3.12.0</version>
+        <scope>test</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>${slf4j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-simple</artifactId>
+        <version>${slf4j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.auto.service</groupId>
+        <artifactId>auto-service</artifactId>
+        <version>1.0-rc4</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-lang3</artifactId>
+        <version>3.8.1</version>
+      </dependency>
+      <dependency>
+        <groupId>commons-codec</groupId>
+        <artifactId>commons-codec</artifactId>
+        <version>1.11</version>
+      </dependency>
+
+      <dependency>
+        <groupId>net.vergien.bau</groupId>
+        <artifactId>bean-auto-utils</artifactId>
+        <optional>true</optional>
+        <version>0.0.9</version>
+      </dependency>
+
+      <!--Should be removed-->
+      <dependency>
+        <groupId>org.javassist</groupId>
+        <artifactId>javassist</artifactId>
+        <version>3.18.1-GA</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>versions-maven-plugin</artifactId>
+          <version>2.7</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-release-plugin</artifactId>
+          <version>2.5.3</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-dependency-plugin</artifactId>
+          <version>3.1.1</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.8.0</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>3.1.0</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-war-plugin</artifactId>
+          <version>3.2.2</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-source-plugin</artifactId>
+          <version>3.0.1</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-resources-plugin</artifactId>
+          <version>3.1.0</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-clean-plugin</artifactId>
+          <version>3.1.0</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-repository-plugin</artifactId>
+          <version>2.4</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-gpg-plugin</artifactId>
+          <version>1.6</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <version>3.0.1</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-checkstyle-plugin</artifactId>
+          <version>3.0.0</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-enforcer-plugin</artifactId>
+          <version>3.0.0-M2</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jdeps-plugin</artifactId>
+          <version>3.1.1</version>
+        </plugin>
+        <plugin>
+          <groupId>org.owasp</groupId>
+          <artifactId>dependency-check-maven</artifactId>
+          <version>3.3.4</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-shade-plugin</artifactId>
+          <version>3.2.0</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.felix</groupId>
+          <artifactId>maven-bundle-plugin</artifactId>
+          <version>4.1.0</version>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>build-helper-maven-plugin</artifactId>
+          <version>3.0.0</version>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>exec-maven-plugin</artifactId>
+          <version>1.6.0</version>
+        </plugin>
+
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>findbugs-maven-plugin</artifactId>
+          <version>3.0.5</version>
+        </plugin>
+        <plugin>
+          <groupId>com.github.webdriverextensions</groupId>
+          <artifactId>webdriverextensions-maven-plugin</artifactId>
+          <version>3.1.3</version>
+        </plugin>
+        <plugin>
+          <groupId>de.sormuras.junit</groupId>
+          <artifactId>junit-platform-maven-plugin</artifactId>
+          <version>${junit-platform-maven-plugin.version}</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <dependencies>
+          <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm</artifactId>
+            <version>7.1</version> <!-- Use newer version of ASM -->
+          </dependency>
+        </dependencies>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>versions-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-repository-plugin</artifactId>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>add sources</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>add-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>${project.build.directory}/generated-sources/annotations</source>
+                <source>src/main/java</source>
+              </sources>
+            </configuration>
+          </execution>
+          <execution>
+            <id>add generated sources</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>add-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>${project.build.directory}/generated-sources/annotations</source>
+                <source>src/main/java</source>
+              </sources>
+            </configuration>
+          </execution>
+          <execution>
+            <id>add generated test sources</id>
+            <phase>generate-test-sources</phase>
+            <goals>
+              <goal>add-test-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>${project.build.directory}/generated-test-sources/test-annotations</source>
+                <source>src/test/java</source>
+              </sources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.22.0</version>
+      </plugin>
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>${jacoco.version}</version>
+        <executions>
+          <execution>
+            <id>pre-unit-test</id>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+            <configuration>
+              <propertyName>jacoco.java.option</propertyName>
+            </configuration>
+          </execution>
+          <execution>
+            <id>post-unit-test</id>
+            <phase>test</phase>
+            <goals>
+              <goal>report</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>${jacoco.version}</version>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>report</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+    </plugins>
+  </reporting>
+
+  <profiles>
+    <profile>
+      <id>install-drivers</id>
+      <build>
         <plugins>
-            <plugin>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <version>2.5</version>
-                <configuration>
-                    <skip>false</skip>
-                </configuration>
-            </plugin>
+          <plugin>
+            <groupId>com.github.webdriverextensions</groupId>
+            <artifactId>webdriverextensions-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>install-drivers</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <keepDownloadedWebdrivers>true</keepDownloadedWebdrivers>
+              <installationDirectory>${maven.multiModuleProjectDirectory}/_data/webdrivers</installationDirectory>
+              <drivers>
+                <driver>
+                  <name>chromedriver</name>
+                </driver>
+                <driver>
+                  <name>geckodriver</name>
+                </driver>
+              </drivers>
+            </configuration>
+          </plugin>
         </plugins>
-    </build>
+      </build>
+    </profile>
+
+    <profile>
+      <id>_release</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+
+      <distributionManagement>
+        <repository>
+          <id>sonatype-nexus</id>
+          <url>${sonatype-nexus-url}</url>
+        </repository>
+        <snapshotRepository>
+          <id>sonatype-nexus-snapshots</id>
+          <url>${sonatype-nexus-snapshots-url}</url>
+        </snapshotRepository>
+      </distributionManagement>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-release-plugin</artifactId>
+            <configuration>
+              <useReleaseProfile>false</useReleaseProfile>
+              <releaseProfiles>extras</releaseProfiles>
+              <autoVersionSubmodules>true</autoVersionSubmodules>
+            </configuration>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-enforcer-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>enforce-no-snapshots</id>
+                <goals>
+                  <goal>enforce</goal>
+                </goals>
+                <configuration>
+                  <rules>
+                    <requireReleaseDeps>
+                      <message>No Snapshots Allowed!</message>
+                    </requireReleaseDeps>
+                  </rules>
+                  <fail>true</fail>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>jar</goal>
+                  <goal>test-jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <dependencies>
+              <dependency>
+                <groupId>org.ow2.asm</groupId>
+                <artifactId>asm</artifactId>
+                <version>7.1</version> <!-- Use newer version of ASM -->
+              </dependency>
+            </dependencies>
+            <executions>
+              <execution>
+                <id>attach-javadocs</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <additionalOptions>
+                <additionalOption>-Xdoclint:none</additionalOption>
+              </additionalOptions>
+              <destDir>target/doc/apidoc/</destDir>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>check-license-headers</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.commonjava.maven.plugins</groupId>
+            <artifactId>directory-maven-plugin</artifactId>
+            <version>0.1</version>
+            <executions>
+              <execution>
+                <id>directories</id>
+                <goals>
+                  <goal>directory-of</goal>
+                </goals>
+                <phase>initialize</phase>
+                <configuration>
+                  <property>projectbase</property>
+                  <project>
+                    <groupId>com.vaadin</groupId>
+                    <artifactId>vaadin-testbench</artifactId>
+                  </project>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>license-maven-plugin</artifactId>
+            <version>1.14</version>
+            <configuration>
+              <licenseName>cval3</licenseName>
+              <licenseResolver>file://${projectbase}/_data/license</licenseResolver>
+              <includes>
+                <include>**/*.java</include>
+              </includes>
+              <skipCheckLicense>${license.skip}</skipCheckLicense>
+              <skipUpdateLicense>${license.skip}</skipUpdateLicense>
+            </configuration>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>check-file-header</goal>
+                </goals>
+                <phase>generate-sources</phase> <!-- Check headers before *BeanUtil classes are generate in core module. -->
+                <configuration>
+                  <failOnMissingHeader>true</failOnMissingHeader>
+                  <failOnNotUptodateHeader>true</failOnNotUptodateHeader>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>

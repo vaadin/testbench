@@ -1,30 +1,29 @@
-/**
- * Copyright (C) 2012 Vaadin Ltd
- *
- * This program is available under Commercial Vaadin Add-On License 3.0
- * (CVALv3).
- *
- * See the file licensing.txt distributed with this software for more
- * information about licensing.
- *
- * You should have received a copy of the license along with this program.
- * If not, see <http://vaadin.com/license/cval-3>.
- */
 package com.vaadin.testbench;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
+/*-
+ * #%L
+ * vaadin-testbench-core
+ * %%
+ * Copyright (C) 2019 Vaadin Ltd
+ * %%
+ * This program is available under Commercial Vaadin Add-On License 3.0
+ * (CVALv3).
+ * 
+ * See the file licensing.txt distributed with this software for more
+ * information about licensing.
+ * 
+ * You should have received a copy of the license along with this program.
+ * If not, see <http://vaadin.com/license/cval-3>.
+ * #L%
+ */
 
+import com.vaadin.testbench.commands.CanCompareScreenshots;
+import com.vaadin.testbench.commands.ScreenshotComparator;
+import com.vaadin.testbench.commands.TestBenchCommandExecutor;
+import com.vaadin.testbench.commands.TestBenchCommands;
+import com.vaadin.testbench.annotations.Element;
+import elemental.json.Json;
+import elemental.json.JsonValue;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.Dimension;
@@ -36,26 +35,30 @@ import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.Rectangle;
 import org.openqa.selenium.SearchContext;
-import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.internal.WrapsElement;
+import org.openqa.selenium.remote.BrowserType;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import com.vaadin.testbench.commands.CanCompareScreenshots;
-import com.vaadin.testbench.commands.ScreenshotComparator;
-import com.vaadin.testbench.commands.TestBenchCommandExecutor;
-import com.vaadin.testbench.commands.TestBenchCommands;
-import com.vaadin.testbench.elementsbase.Element;
-import com.vaadin.testbench.parallel.BrowserUtil;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
-import elemental.json.Json;
-import elemental.json.JsonValue;
+import static com.vaadin.testbench.TestBench.createElement;
 
 /**
  * TestBenchElement is a WebElement wrapper. It provides Vaadin specific helper
@@ -75,8 +78,39 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
     }
 
     protected TestBenchElement(WebElement webElement,
-            TestBenchCommandExecutor commandExecutor) {
+                               TestBenchCommandExecutor commandExecutor) {
         init(webElement, commandExecutor);
+    }
+
+    public static List<TestBenchElement> wrapElements(
+            List<WebElement> elements,
+            TestBenchCommandExecutor commandExecutor) {
+        List<TestBenchElement> wrappedList = new ArrayList<>();
+
+        for (WebElement e : elements) {
+            wrappedList.add(wrapElement(e, commandExecutor));
+        }
+
+        return wrappedList;
+    }
+
+    public static TestBenchElement wrapElement(WebElement element,
+                                               TestBenchCommandExecutor commandExecutor) {
+        if (element instanceof TestBenchElement) {
+            return (TestBenchElement) element;
+        } else {
+            return createElement(element, commandExecutor);
+        }
+    }
+
+    private static String createPropertyChain(String[] propertyNames) {
+        String result = "";
+        for (int i = 0; i < propertyNames.length; i++) {
+            result += "if (typeof value != 'undefined') value = value[arguments["
+                    + (i + 1) + "]];";
+
+        }
+        return result;
     }
 
     /**
@@ -84,13 +118,11 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
      * TestBenchElement needs to run some initialization code, it should
      * override {@link #init()}, not this function.
      *
-     * @param element
-     *            WebElement to wrap
-     * @param commandExecutor
-     *            TestBenchCommandExecutor instance
+     * @param element         WebElement to wrap
+     * @param commandExecutor TestBenchCommandExecutor instance
      */
     protected void init(WebElement element,
-            TestBenchCommandExecutor commandExecutor) {
+                        TestBenchCommandExecutor commandExecutor) {
         if (this.commandExecutor == null) {
             this.commandExecutor = commandExecutor;
             wrappedElement = element;
@@ -102,37 +134,49 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
      * Checks if the current test is running on Chrome.
      *
      * @return <code>true</code> if the test is running on Chrome,
-     *         <code>false</code> otherwise
+     * <code>false</code> otherwise
      */
     protected boolean isChrome() {
-        return BrowserUtil.isChrome(getCapabilities());
+        final Capabilities capabilities = getCapabilities();
+        if (capabilities == null) {
+            return false;
+        }
+        return BrowserType.CHROME.equals(capabilities.getBrowserName());
     }
 
     /**
      * Checks if the current test is running on Internet Explorer.
      *
      * @return <code>true</code> if the test is running on Internet Explorer,
-     *         <code>false</code> otherwise
+     * <code>false</code> otherwise
      */
     protected boolean isIE() {
-        return BrowserUtil.isIE(getCapabilities());
+        final Capabilities capabilities = getCapabilities();
+        if (capabilities == null) {
+            return false;
+        }
+        return BrowserType.IE.equals(capabilities.getBrowserName());
     }
 
     /**
      * Checks if the current test is running on Firefox.
      *
      * @return <code>true</code> if the test is running on Firefox,
-     *         <code>false</code> otherwise
+     * <code>false</code> otherwise
      */
     protected boolean isFirefox() {
-        return BrowserUtil.isFirefox(getCapabilities());
+        final Capabilities capabilities = getCapabilities();
+        if (capabilities == null) {
+            return false;
+        }
+        return BrowserType.FIREFOX.equals(capabilities.getBrowserName());
     }
 
     /**
      * Returns information about current browser used
      *
-     * @see org.openqa.selenium.Capabilities
      * @return information about current browser used
+     * @see org.openqa.selenium.Capabilities
      */
     protected Capabilities getCapabilities() {
         WebDriver driver = getDriver();
@@ -166,8 +210,7 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
      * Sets the number of pixels that an element's content is scrolled from the
      * top.
      *
-     * @param scrollTop
-     *            value set to Element.scroll property
+     * @param scrollTop value set to Element.scroll property
      */
     public void scroll(int scrollTop) {
         setProperty("scrollTop", scrollTop);
@@ -177,8 +220,7 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
      * Sets the number of pixels that an element's content is scrolled to the
      * left.
      *
-     * @param scrollLeft
-     *            value set to Element.scrollLeft property
+     * @param scrollLeft value set to Element.scrollLeft property
      */
     public void scrollLeft(int scrollLeft) {
         setProperty("scrollLeft", scrollLeft);
@@ -231,10 +273,9 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
     /**
      * Checks if the given attribute is present on the element.
      *
-     * @param attribute
-     *            the name of the attribute
+     * @param attribute the name of the attribute
      * @return <code>true</code> if the attribute is present, <code>false</code>
-     *         otherwise
+     * otherwise
      */
     public boolean hasAttribute(String attribute) {
         return (boolean) callFunction("hasAttribute", attribute);
@@ -364,27 +405,6 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
         getCommandExecutor().focusElement(this);
     }
 
-    protected static List<TestBenchElement> wrapElements(
-            List<WebElement> elements,
-            TestBenchCommandExecutor commandExecutor) {
-        List<TestBenchElement> wrappedList = new ArrayList<>();
-
-        for (WebElement e : elements) {
-            wrappedList.add(wrapElement(e, commandExecutor));
-        }
-
-        return wrappedList;
-    }
-
-    protected static TestBenchElement wrapElement(WebElement element,
-            TestBenchCommandExecutor commandExecutor) {
-        if (element instanceof TestBenchElement) {
-            return (TestBenchElement) element;
-        } else {
-            return TestBench.createElement(element, commandExecutor);
-        }
-    }
-
     @Override
     public <X> X getScreenshotAs(OutputType<X> target)
             throws WebDriverException {
@@ -424,10 +444,9 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
      * Matches only full class names, i.e. has ("foo") does not match
      * class="foobar bafoo"
      *
-     * @param className
-     *            the class name to check for
+     * @param className the class name to check for
      * @return <code>true</code> if the element has the given class name,
-     *         <code>false</code> otherwise
+     * <code>false</code> otherwise
      */
     public boolean hasClassName(String className) {
         if (className == null || className.isEmpty()) {
@@ -456,26 +475,23 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
 
     @Override
     public boolean compareScreen(String referenceId) throws IOException {
-        return ScreenshotComparator.compareScreen(referenceId,
-                getCommandExecutor().getReferenceNameGenerator(),
-                getCommandExecutor().getImageComparison(), this,
+        return new ScreenshotComparator().compareScreen(referenceId,
+                this,
                 (HasCapabilities) getDriver());
     }
 
     @Override
     public boolean compareScreen(File reference) throws IOException {
-        return ScreenshotComparator.compareScreen(reference,
-                getCommandExecutor().getImageComparison(),
-                (TakesScreenshot) this, (HasCapabilities) getDriver());
+        return new ScreenshotComparator().compareScreen(reference,
+                this);
 
     }
 
     @Override
     public boolean compareScreen(BufferedImage reference, String referenceName)
             throws IOException {
-        return ScreenshotComparator.compareScreen(reference, referenceName,
-                getCommandExecutor().getImageComparison(),
-                (TakesScreenshot) this, (HasCapabilities) getDriver());
+        return new ScreenshotComparator().compareScreen(reference, referenceName,
+                this);
     }
 
     /***
@@ -509,23 +525,18 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
      * Use e.g. as
      * <code>waitUntil(ExpectedConditions.presenceOfElementLocated(by), 10);</code>
      *
-     * @param condition
-     *            Models a condition that might reasonably be expected to
-     *            eventually evaluate to something that is neither null nor
-     *            false.
-     * @param timeoutInSeconds
-     *            The timeout in seconds for the wait.
+     * @param condition        Models a condition that might reasonably be expected to
+     *                         eventually evaluate to something that is neither null nor
+     *                         false.
+     * @param timeoutInSeconds The timeout in seconds for the wait.
      * @return The condition's return value if it returned something different
-     *         from null or false before the timeout expired.
-     *
-     * @throws TimeoutException
-     *             If the timeout expires.
-     *
+     * from null or false before the timeout expired.
+     * @throws TimeoutException If the timeout expires.
      * @see FluentWait#until
      * @see ExpectedCondition
      */
     protected <T> T waitUntil(ExpectedCondition<T> condition,
-            long timeoutInSeconds) {
+                              long timeoutInSeconds) {
         return new WebDriverWait(getDriver(), timeoutInSeconds)
                 .until(condition);
     }
@@ -537,16 +548,12 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
      * Use e.g. as
      * <code>waitUntil(ExpectedConditions.presenceOfElementLocated(by));</code>
      *
-     * @param condition
-     *            Models a condition that might reasonably be expected to
-     *            eventually evaluate to something that is neither null nor
-     *            false.
+     * @param condition Models a condition that might reasonably be expected to
+     *                  eventually evaluate to something that is neither null nor
+     *                  false.
      * @return The condition's return value if it returned something different
-     *         from null or false before the timeout expired.
-     *
-     * @throws TimeoutException
-     *             If 10 seconds passed.
-     *
+     * from null or false before the timeout expired.
+     * @throws TimeoutException If 10 seconds passed.
      * @see FluentWait#until
      * @see ExpectedCondition
      */
@@ -652,16 +659,6 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
                 jsParameters);
     }
 
-    private static String createPropertyChain(String[] propertyNames) {
-        String result = "";
-        for (int i = 0; i < propertyNames.length; i++) {
-            result += "if (typeof value != 'undefined') value = value[arguments["
-                    + (i + 1) + "]];";
-
-        }
-        return result;
-    }
-
     private JsonValue createJsonValue(Object value) {
         if (value == null) {
             return Json.createNull();
@@ -686,17 +683,14 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
      * This method wraps any returned {@link WebElement} as
      * {@link TestBenchElement}.
      *
-     * @param script
-     *            the script to execute
-     * @param args
-     *            the arguments, available in the script as
-     *            {@code arguments[0]...arguments[N]}
+     * @param script the script to execute
+     * @param args   the arguments, available in the script as
+     *               {@code arguments[0]...arguments[N]}
      * @return whatever
-     *         {@link org.openqa.selenium.JavascriptExecutor#executeScript(String, Object...)}
-     *         returns
-     * @throws UnsupportedOperationException
-     *             if the underlying driver does not support JavaScript
-     *             execution
+     * {@link org.openqa.selenium.JavascriptExecutor#executeScript(String, Object...)}
+     * returns
+     * @throws UnsupportedOperationException if the underlying driver does not support JavaScript
+     *                                       execution
      * @see JavascriptExecutor#executeScript(String, Object...)
      */
     protected Object executeScript(String script, Object... args) {
@@ -721,29 +715,11 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
      * <p>
      * The event is created without any parameters.
      *
-     * @param eventType
-     *            the type of custom event to dispatch
+     * @param eventType the type of custom event to dispatch
      */
     public void dispatchEvent(String eventType) {
         executeScript(
                 "arguments[0].dispatchEvent(new CustomEvent(arguments[1]));",
                 this, eventType);
-    }
-
-    /**
-     * Dispatches (fires) a custom event of the given type on the element with
-     * the given properties
-     *
-     * @param eventType
-     *            the type of custom event to dispatch
-     * @param customEventInit
-     *            map with properties and values that will be used to initialize
-     *            the event
-     */
-    public void dispatchEvent(String eventType,
-            Map<String, Object> customEventInit) {
-        executeScript(
-                "arguments[0].dispatchEvent(new CustomEvent(arguments[1], arguments[2]));",
-                this, eventType, customEventInit);
     }
 }

@@ -1,51 +1,145 @@
-/**
- * Copyright (C) 2012 Vaadin Ltd
- *
- * This program is available under Commercial Vaadin Add-On License 3.0
- * (CVALv3).
- *
- * See the file licensing.txt distributed with this software for more
- * information about licensing.
- *
- * You should have received a copy of the license along with this program.
- * If not, see <http://vaadin.com/license/cval-3>.
- */
 package com.vaadin.testbench.screenshot;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+/*-
+ * #%L
+ * vaadin-testbench-core
+ * %%
+ * Copyright (C) 2019 Vaadin Ltd
+ * %%
+ * This program is available under Commercial Vaadin Add-On License 3.0
+ * (CVALv3).
+ * 
+ * See the file licensing.txt distributed with this software for more
+ * information about licensing.
+ * 
+ * You should have received a copy of the license along with this program.
+ * If not, see <http://vaadin.com/license/cval-3>.
+ * #L%
+ */
 
 import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
-import org.openqa.selenium.Capabilities;
-
-import com.vaadin.testbench.Parameters;
+import static com.vaadin.testbench.TestBenchLogger.logger;
+import static com.vaadin.testbench.screenshot.ReferenceNameGenerator.majorVersion;
+import static com.vaadin.testbench.screenshot.ScreenshotProperties.getScreenshotErrorDirectory;
+import static com.vaadin.testbench.screenshot.ScreenshotProperties.getScreenshotReferenceDirectory;
 
 public class ImageFileUtil {
 
-    private static ImageFileUtilImpl impl = new ImageFileUtilImpl();
+    public static final String DIRECTORY_DIFF = "diff";
+    public static final String DIRECTORY_LOGS = "logs";
 
     /**
-     * Returns the directory used for screenshot references.
+     * Returns the relative file names of reference images. The actual image
+     * file for a relative file name can be retrieved with
      *
-     * @return The screenshot reference directory, ending in a slash.
-     * @return
+     * @return file names of reference images
      */
-    public static String getScreenshotReferenceDirectory() {
-        return impl.getScreenshotReferenceDirectory();
+    public static List<String> getReferenceImageFileNames(ReferenceInfo info) {
+        List<String> referenceImages = new ArrayList<>();
+
+        String nextName = findActualFileName(info);
+        Optional<ByteArrayInputStream> file = getReferenceScreenshotFile(nextName);
+        int i = 1;
+        while (file.isPresent()) {
+            referenceImages.add(nextName);
+            nextName = info.fileName().replace("." + ScreenshotProperties.IMAGE_FILE_NAME_ENDING,
+                    String.format("_%d." + ScreenshotProperties.IMAGE_FILE_NAME_ENDING, i++));
+            file = getReferenceScreenshotFile(nextName);
+        }
+
+        return referenceImages;
+    }
+
+    private static String findActualFileName(ReferenceInfo info) {
+        return info.browserName() == null
+                ? info.fileName()
+                : findOldReferenceScreenshot(info);
     }
 
     /**
-     * Returns the directory used for screenshot error images.
+     * Checks for reference screenshots for older versions of Google Chrome
+     * and use that instead of the generated file name if so.
      *
-     * @return The screenshot error directory, ending in a slash.
+     * @return the generated file name or the file name of a reference image
+     * that actually exists (for an older version of Chrome).
      */
-    public static String getScreenshotErrorDirectory() {
-        return impl.getScreenshotErrorDirectory();
+    private static String findOldReferenceScreenshot(ReferenceInfo info) {
+        // TODO(sven): Check behavior!
+        String newFileName = info.fileName();
 
+        if (!getReferenceScreenshotFile(info.fileName()).isPresent()) {
+            String navigatorId = info.browserName() + "_" + info.browserVersion();
+
+            int nextVersion = Integer.valueOf(majorVersion(info.browserVersion()));
+
+            String fileNameTemplate = info.fileName().replace(navigatorId, "####");
+            do {
+                nextVersion--;
+                newFileName = fileNameTemplate.replace("####",
+                        String.format("%s_%d",
+                                info.browserName(),
+                                nextVersion));
+            } while (!getReferenceScreenshotFile(newFileName)
+                    .isPresent()
+                    && nextVersion > 0);
+            // We didn't find any existing screenshot for any older
+            // versions of the browser.
+            if (nextVersion == 0) {
+                newFileName = info.fileName();
+            }
+        }
+        return newFileName;
+    }
+
+    public static Optional<BufferedImage> readReferenceImage(String referenceImageFileName) {
+        return getReferenceScreenshotFile(referenceImageFileName)
+                .map(e -> {
+                    try {
+                        return ImageIO.read(e);
+                    } catch (IOException ex) {
+                        return null;
+                    }
+                });
+    }
+
+    public static File getErrorScreenshotFile(String errorImageFileName) {
+        return new File(getScreenshotErrorDirectory(),
+                errorImageFileName);
+    }
+
+    private static Optional<ByteArrayInputStream> getReferenceScreenshotFile(String referenceImageFileName) {
+        final String filename = "/" + getScreenshotReferenceDirectory() + "/" + referenceImageFileName;
+        final InputStream resource = ImageFileUtil.class.getResourceAsStream(filename);
+        if (resource == null) {
+            logger().info("No reference screenshot found for {}", referenceImageFileName);
+            return Optional.empty();
+        }
+
+        byte[] buff = new byte[8000];
+
+        int bytesRead;
+        ByteArrayOutputStream bao = new ByteArrayOutputStream();
+        try {
+            while ((bytesRead = resource.read(buff)) != -1) {
+                bao.write(buff, 0, bytesRead);
+            }
+
+            byte[] data = bao.toByteArray();
+            return Optional.of(new ByteArrayInputStream(data));
+        } catch (IOException e) {
+            logger().info("Unable to read reference screenshot for {}", referenceImageFileName, e);
+            return Optional.empty();
+        }
     }
 
     /**
@@ -53,191 +147,48 @@ public class ImageFileUtil {
      * exist.
      */
     public static void createScreenshotDirectoriesIfNeeded() {
-        impl.createScreenshotDirectoriesIfNeeded();
-    }
+        final String errorDir = getScreenshotErrorDirectory();
 
-    /**
-     * Reads the given reference image into a BufferedImage
-     *
-     * @param referenceImageFileName
-     * @return
-     * @throws IOException
-     */
-    public static BufferedImage readReferenceImage(
-            String referenceImageFileName) throws IOException {
-        return impl.readReferenceImage(referenceImageFileName);
-    }
-
-    public static File getErrorScreenshotFile(String errorImageFileName) {
-        return impl.getErrorScreenshotFile(errorImageFileName);
-    }
-
-    public static File getReferenceScreenshotFile(
-            String referenceImageFileName) {
-        return impl.getReferenceScreenshotFile(referenceImageFileName);
-    }
-
-    /**
-     * Returns the relative file names of reference images. The actual image
-     * file for a relative file name can be retrieved with
-     * {@link #getReferenceScreenshotFile(String)}.
-     *
-     * @param referenceImageFileName
-     * @param capabilities
-     * @return file names of reference images
-     */
-    public static List<String> getReferenceImageFileNames(
-            String referenceImageFileName, Capabilities capabilities) {
-        return impl.getReferenceImageFileNames(referenceImageFileName,
-                capabilities);
-    }
-
-    public static class ImageFileUtilImpl {
-        /**
-         * Returns the directory used for screenshot references.
-         *
-         * @return The screenshot reference directory, ending in a slash.
-         * @return
-         */
-        public String getScreenshotReferenceDirectory() {
-            return Parameters.getScreenshotReferenceDirectory();
-        }
-
-        /**
-         * Returns the directory used for screenshot error images.
-         *
-         * @return The screenshot error directory, ending in a slash.
-         */
-        public String getScreenshotErrorDirectory() {
-            return Parameters.getScreenshotErrorDirectory();
-
-        }
-
-        /**
-         * Creates all directories used to store screenshots unless they already
-         * exist.
-         */
-        public void createScreenshotDirectoriesIfNeeded() {
-            if (getScreenshotReferenceDirectory() != null) {
-                // Check directories and create if needed
-                File dir = new File(getScreenshotReferenceDirectory());
-                if (!dir.exists()) {
-                    dir.mkdirs();
-                }
+        if (errorDir != null) {
+            File dir = new File(errorDir);
+            if (!dir.exists()) {
+                dir.mkdirs();
             }
-            if (getScreenshotErrorDirectory() != null) {
-                File dir = new File(getScreenshotErrorDirectory());
-                if (!dir.exists()) {
-                    dir.mkdirs();
-                }
-
-                if (Parameters.isDebug()) {
-                    dir = new File(getScreenshotErrorDirectory(), "diff");
-                    if (!dir.exists()) {
-                        dir.mkdir();
-                    }
-                    dir = new File(getScreenshotErrorDirectory(), "logs");
-                    if (!dir.exists()) {
-                        dir.mkdir();
-                    }
-                }
+            dir = new File(errorDir, DIRECTORY_DIFF);
+            if (!dir.exists()) {
+                dir.mkdir();
+            }
+            dir = new File(errorDir, DIRECTORY_LOGS);
+            if (!dir.exists()) {
+                dir.mkdir();
             }
         }
+    }
 
-        /**
-         * Reads the given reference image into a BufferedImage
-         *
-         * @param referenceImageFileName
-         * @return
-         * @throws IOException
-         */
-        public BufferedImage readReferenceImage(String referenceImageFileName)
-                throws IOException {
-            return ImageIO
-                    .read(getReferenceScreenshotFile(referenceImageFileName));
+    public static final class ReferenceInfo {
+
+        private final String referenceImageFileName;
+        private final String browserName;
+        private final String browserVersion;
+
+        public ReferenceInfo(String referenceImageFileName,
+                             String browserName,
+                             String browserVersion) {
+            this.referenceImageFileName = referenceImageFileName;
+            this.browserName = browserName;
+            this.browserVersion = browserVersion;
         }
 
-        public File getErrorScreenshotFile(String errorImageFileName) {
-            return new File(getScreenshotErrorDirectory(), errorImageFileName);
+        public String fileName() {
+            return referenceImageFileName;
         }
 
-        public File getReferenceScreenshotFile(String referenceImageFileName) {
-            return new File(getScreenshotReferenceDirectory(),
-                    referenceImageFileName);
+        public String browserName() {
+            return browserName;
         }
 
-        /**
-         * Returns the relative file names of reference images. The actual image
-         * file for a relative file name can be retrieved with
-         * {@link #getReferenceScreenshotFile(String)}.
-         *
-         * @param referenceImageFileName
-         * @param capabilities
-         * @return file names of reference images
-         */
-        public List<String> getReferenceImageFileNames(
-                String referenceImageFileName, Capabilities capabilities) {
-            ArrayList<String> referenceImages = new ArrayList<>();
-            String nextName = findActualFileName(referenceImageFileName,
-                    capabilities);
-            File file = getReferenceScreenshotFile(nextName);
-            int i = 1;
-            while (file.exists()) {
-                referenceImages.add(nextName);
-                nextName = referenceImageFileName.replace(".png",
-                        String.format("_%d.png", i++));
-                file = getReferenceScreenshotFile(nextName);
-            }
-
-            return referenceImages;
+        public String browserVersion() {
+            return browserVersion;
         }
-
-        private String findActualFileName(String referenceFileName,
-                Capabilities cap) {
-            if (cap == null) {
-                return referenceFileName;
-            }
-            String fileName = findOldReferenceScreenshot(cap.getBrowserName(),
-                    Integer.valueOf(
-                            ReferenceNameGenerator.getMajorVersion(cap)),
-                    referenceFileName);
-            return fileName;
-        }
-
-        /**
-         * Checks for reference screenshots for older versions of Google Chrome
-         * and use that instead of the generated file name if so.
-         *
-         * @param browserName
-         *            the browser identifier (name + version, e.g. "Chrome_17")
-         * @param browserVersion
-         * @param fileName
-         *            the file name generated from the test name and browser
-         *            name + version.
-         * @return the generated file name or the file name of a reference image
-         *         that actually exists (for an older version of Chrome).
-         */
-        String findOldReferenceScreenshot(String browserName,
-                int browserVersion, String fileName) {
-            String newFileName = new String(fileName);
-            if (!ImageFileUtil.getReferenceScreenshotFile(fileName).exists()) {
-                String navigatorId = browserName + "_" + browserVersion;
-                int nextVersion = browserVersion;
-                String fileNameTemplate = fileName.replace(navigatorId, "####");
-                do {
-                    nextVersion--;
-                    newFileName = fileNameTemplate.replace("####",
-                            String.format("%s_%d", browserName, nextVersion));
-                } while (!ImageFileUtil.getReferenceScreenshotFile(newFileName)
-                        .exists() && nextVersion > 0);
-                // We didn't find any existing screenshot for any older
-                // versions of the browser.
-                if (nextVersion == 0) {
-                    newFileName = fileName;
-                }
-            }
-            return newFileName;
-        }
-
     }
 }

@@ -1,16 +1,30 @@
-/**
- * Copyright (C) 2012 Vaadin Ltd
- *
+package com.vaadin.testbench;
+
+/*-
+ * #%L
+ * vaadin-testbench-core
+ * %%
+ * Copyright (C) 2019 Vaadin Ltd
+ * %%
  * This program is available under Commercial Vaadin Add-On License 3.0
  * (CVALv3).
- *
+ * 
  * See the file licensing.txt distributed with this software for more
  * information about licensing.
- *
+ * 
  * You should have received a copy of the license along with this program.
  * If not, see <http://vaadin.com/license/cval-3>.
+ * #L%
  */
-package com.vaadin.testbench;
+
+import com.vaadin.testbench.commands.TestBenchCommandExecutor;
+import com.vaadin.testbench.proxy.DriverInvocationHandler;
+import com.vaadin.testbench.proxy.TestBenchDriverProxy;
+import javassist.util.proxy.MethodFilter;
+import javassist.util.proxy.MethodHandler;
+import javassist.util.proxy.ProxyFactory;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -19,93 +33,21 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-
-import com.vaadin.pro.licensechecker.LicenseChecker;
-import com.vaadin.testbench.commands.TestBenchCommandExecutor;
-import com.vaadin.testbench.screenshot.ImageComparison;
-import com.vaadin.testbench.screenshot.ReferenceNameGenerator;
-
-import javassist.util.proxy.MethodFilter;
-import javassist.util.proxy.MethodHandler;
-import javassist.util.proxy.ProxyFactory;
-
-/**
- */
 public class TestBench {
 
     private static final Map<Class<?>, MethodFilter> methodFilters = new ConcurrentHashMap<>();
 
-    private static final class ElementMethodFilter implements MethodFilter {
-
-        private Class<?> proxyClass;
-        private Map<Method, Boolean> invocationNeeded;
-
-        public ElementMethodFilter(Class<?> clazz) {
-            proxyClass = clazz;
-            invocationNeeded = new ConcurrentHashMap<>();
-        }
-
-        @Override
-        public boolean isHandled(Method method) {
-            if (!invocationNeeded.containsKey(method)) {
-                try {
-                    proxyClass.getMethod(method.getName(),
-                            method.getParameterTypes());
-                    invocationNeeded.put(method, false);
-                } catch (Exception e) {
-                    invocationNeeded.put(method, true);
-                }
-            }
-
-            return invocationNeeded.get(method);
-        }
-    }
-
-    private static final class ElementInvocationHandler
-            implements MethodHandler {
-
-        private Object actualElement;
-
-        public ElementInvocationHandler(Object actualElement) {
-            this.actualElement = actualElement;
-        }
-
-        @Override
-        public Object invoke(Object self, Method thisMethod, Method proceed,
-                Object[] args) throws Throwable {
-            if (null != proceed) {
-                // This is a protected method
-                try {
-                    return proceed.invoke(self, args);
-                } catch (InvocationTargetException e) {
-                    throw e.getCause();
-                }
-            }
-            return thisMethod.invoke(actualElement, args);
-        }
-
-    }
-
-    static {
-        LicenseChecker.checkLicenseFromStaticBlock("vaadin-testbench",
-                TestBenchTestCase.testbenchVersion);
-    }
-
     public static TestBenchDriverProxy createDriver(WebDriver driver) {
-        TestBenchCommandExecutor commandExecutor = new TestBenchCommandExecutor(
-                new ImageComparison(), new ReferenceNameGenerator());
+        TestBenchCommandExecutor commandExecutor = new TestBenchCommandExecutor();
         return createDriver(driver, commandExecutor);
     }
 
     public static TestBenchDriverProxy createDriver(WebDriver driver,
-            TestBenchCommandExecutor commandExecutor) {
+                                                    TestBenchCommandExecutor commandExecutor) {
         Set<Class<?>> allInterfaces = extractInterfaces(driver);
         Class<TestBenchDriverProxy> driverClass = TestBenchDriverProxy.class;
         allInterfaces.addAll(extractInterfaces(driverClass));
-        final Class<?>[] allInterfacesArray = allInterfaces
-                .toArray(new Class<?>[allInterfaces.size()]);
+        final Class<?>[] allInterfacesArray = allInterfaces.toArray(new Class<?>[0]);
 
         ProxyFactory pFactory = new ProxyFactory();
         pFactory.setInterfaces(allInterfacesArray);
@@ -114,9 +56,9 @@ public class TestBench {
         TestBenchDriverProxy proxy;
         try {
             proxy = (TestBenchDriverProxy) pFactory.create(
-                    new Class[] { WebDriver.class,
-                            TestBenchCommandExecutor.class },
-                    new Object[] { driver, commandExecutor },
+                    new Class[]{WebDriver.class,
+                            TestBenchCommandExecutor.class},
+                    new Object[]{driver, commandExecutor},
                     new DriverInvocationHandler(driver));
         } catch (Exception e) {
             throw new IllegalStateException("Unable to create proxy for driver",
@@ -128,13 +70,13 @@ public class TestBench {
     }
 
     public static <T extends TestBenchElement> T wrap(TestBenchElement element,
-            Class<T> elementType) {
+                                                      Class<T> elementType) {
         return createElement(elementType, element.getWrappedElement(),
                 element.getCommandExecutor());
     }
 
     public static TestBenchElement createElement(WebElement webElement,
-            TestBenchCommandExecutor tbCommandExecutor) {
+                                                 TestBenchCommandExecutor tbCommandExecutor) {
         return createElement(TestBenchElement.class, webElement,
                 tbCommandExecutor);
     }
@@ -144,24 +86,21 @@ public class TestBench {
      * TestBenchCommandExecutor. This feature is advanced and potentially
      * dangerous.
      *
-     * @param clazz
-     *            Class of wanted Element
-     * @param webElement
-     *            Selenium WebElement to be wrapped into given Class
-     * @param tbCommandExecutor
-     *            TestBenchCommandExecutor instance
+     * @param clazz             Class of wanted Element
+     * @param webElement        Selenium WebElement to be wrapped into given Class
+     * @param tbCommandExecutor TestBenchCommandExecutor instance
      * @return an element of the given class wrapping given the given
-     *         WebElement, or <code>null</code> if the element is null
+     * WebElement, or <code>null</code> if the element is null
      */
     public static <T extends TestBenchElement> T createElement(Class<T> clazz,
-            WebElement webElement, TestBenchCommandExecutor tbCommandExecutor) {
+                                                               WebElement webElement,
+                                                               TestBenchCommandExecutor tbCommandExecutor) {
         if (webElement == null) {
             return null;
         }
         Set<Class<?>> allInterfaces = extractInterfaces(webElement);
 
-        final Class<?>[] allInterfacesArray = allInterfaces
-                .toArray(new Class<?>[allInterfaces.size()]);
+        final Class<?>[] allInterfacesArray = allInterfaces.toArray(new Class<?>[0]);
 
         ProxyFactory pFactory = new ProxyFactory();
         pFactory.setSuperclass(clazz);
@@ -205,7 +144,7 @@ public class TestBench {
     }
 
     private static void extractInterfaces(final Set<Class<?>> addTo,
-            final Class<?> clazz) {
+                                          final Class<?> clazz) {
         if (clazz == null || Object.class.equals(clazz)) {
             return; // Done
         }
@@ -219,6 +158,57 @@ public class TestBench {
                 extractInterfaces(addTo, superInterface);
             }
         }
+
         extractInterfaces(addTo, clazz.getSuperclass());
+    }
+
+    private static final class ElementMethodFilter implements MethodFilter {
+
+        private Class<?> proxyClass;
+        private Map<Method, Boolean> invocationNeeded;
+
+        public ElementMethodFilter(Class<?> clazz) {
+            proxyClass = clazz;
+            invocationNeeded = new ConcurrentHashMap<>();
+        }
+
+        @Override
+        public boolean isHandled(Method method) {
+            if (!invocationNeeded.containsKey(method)) {
+                try {
+                    proxyClass.getMethod(method.getName(),
+                            method.getParameterTypes());
+                    invocationNeeded.put(method, false);
+                } catch (Exception e) {
+                    invocationNeeded.put(method, true);
+                }
+            }
+
+            return invocationNeeded.get(method);
+        }
+    }
+
+    private static final class ElementInvocationHandler
+            implements MethodHandler {
+
+        private Object actualElement;
+
+        public ElementInvocationHandler(Object actualElement) {
+            this.actualElement = actualElement;
+        }
+
+        @Override
+        public Object invoke(Object self, Method thisMethod, Method proceed,
+                             Object[] args) throws Throwable {
+            if (null != proceed) {
+                // This is a protected method.
+                try {
+                    return proceed.invoke(self, args);
+                } catch (InvocationTargetException e) {
+                    throw e.getCause();
+                }
+            }
+            return thisMethod.invoke(actualElement, args);
+        }
     }
 }

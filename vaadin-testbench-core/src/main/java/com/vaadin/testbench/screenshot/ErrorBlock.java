@@ -1,24 +1,31 @@
-/**
- * Copyright (C) 2012 Vaadin Ltd
- *
+package com.vaadin.testbench.screenshot;
+
+/*-
+ * #%L
+ * vaadin-testbench-core
+ * %%
+ * Copyright (C) 2019 Vaadin Ltd
+ * %%
  * This program is available under Commercial Vaadin Add-On License 3.0
  * (CVALv3).
- *
+ * 
  * See the file licensing.txt distributed with this software for more
  * information about licensing.
- *
+ * 
  * You should have received a copy of the license along with this program.
  * If not, see <http://vaadin.com/license/cval-3>.
+ * #L%
  */
-package com.vaadin.testbench.screenshot;
 
 /**
  * Class for holding position and size of a error found during image comparison
  */
-public class ErrorBlock {
+public final class ErrorBlock {
 
-    private int x, y;
-    private int xBlocks = 1, yBlocks = 1;
+    private int x;
+    private int y;
+    private int xBlocks = 1;
+    private int yBlocks = 1;
 
     public ErrorBlock() {
         //

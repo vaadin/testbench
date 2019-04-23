@@ -1,28 +1,26 @@
-/**
- * Copyright (C) 2012 Vaadin Ltd
- *
- * This program is available under Commercial Vaadin Add-On License 3.0
- * (CVALv3).
- *
- * See the file licensing.txt distributed with this software for more
- * information about licensing.
- *
- * You should have received a copy of the license along with this program.
- * If not, see <http://vaadin.com/license/cval-3>.
- */
 package com.vaadin.testbench.commands;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+/*-
+ * #%L
+ * vaadin-testbench-core
+ * %%
+ * Copyright (C) 2019 Vaadin Ltd
+ * %%
+ * This program is available under Commercial Vaadin Add-On License 3.0
+ * (CVALv3).
+ * 
+ * See the file licensing.txt distributed with this software for more
+ * information about licensing.
+ * 
+ * You should have received a copy of the license along with this program.
+ * If not, see <http://vaadin.com/license/cval-3>.
+ * #L%
+ */
 
+import com.vaadin.testbench.HasDriver;
+import com.vaadin.testbench.TestBenchElement;
+import com.vaadin.testbench.proxy.TestBenchDriverProxy;
 import org.openqa.selenium.Dimension;
-import org.openqa.selenium.HasCapabilities;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.TakesScreenshot;
@@ -30,56 +28,43 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.HttpCommandExecutor;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
-import com.vaadin.testbench.HasDriver;
-import com.vaadin.testbench.TestBenchDriverProxy;
-import com.vaadin.testbench.TestBenchElement;
-import com.vaadin.testbench.screenshot.ImageComparison;
-import com.vaadin.testbench.screenshot.ReferenceNameGenerator;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.List;
+
+import static com.vaadin.testbench.TestBenchLogger.logger;
+import static java.net.InetAddress.getLocalHost;
 
 /**
  * Provides actual implementation of TestBenchCommands
  */
 public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
 
-    private static Logger getLogger() {
-        return Logger.getLogger(TestBenchCommandExecutor.class.getName());
-    }
-
-    private TestBenchDriverProxy driver;
-    private final ImageComparison imageComparison;
-    private final ReferenceNameGenerator referenceNameGenerator;
-
-    private boolean enableWaitForVaadin = true;
-    private boolean autoScrollIntoView = true;
     // @formatter:off
     String WAIT_FOR_VAADIN_SCRIPT =
             "if (!window.Vaadin || !window.Vaadin.Flow) {"
-            + "  return true;"
-            + "}"
-            + "var clients = window.Vaadin.Flow.clients;"
-            + "if (clients) {"
-            + "  for (var client in clients) {"
-            + "    if (clients[client].isActive()) {"
-            + "      return false;"
-            + "    }"
-            + "  }"
-            + "  return true;"
-            + "} else {" +
-            // A Vaadin connector was found so this is most likely a Vaadin
-            // application. Keep waiting.
-            "  return false;"
-            + "}";
+                    + "  return true;"
+                    + "}"
+                    + "var clients = window.Vaadin.Flow.clients;"
+                    + "if (clients) {"
+                    + "  for (var client in clients) {"
+                    + "    if (clients[client].isActive()) {"
+                    + "      return false;"
+                    + "    }"
+                    + "  }"
+                    + "  return true;"
+                    + "} else {" +
+                    // A Vaadin connector was found so this is most likely a Vaadin
+                    // application. Keep waiting.
+                    "  return false;"
+                    + "}";
+    private TestBenchDriverProxy driver;
+    private boolean enableWaitForVaadin = true;
+    private boolean autoScrollIntoView = true;
     // @formatter:on
-
-    public TestBenchCommandExecutor(ImageComparison imageComparison,
-            ReferenceNameGenerator referenceNameGenerator) {
-        this.imageComparison = imageComparison;
-        this.referenceNameGenerator = referenceNameGenerator;
-    }
-
-    public void setDriver(TestBenchDriverProxy driver) {
-        this.driver = driver;
-    }
 
     @Override
     public String getRemoteControlName() {
@@ -94,11 +79,10 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
                                     .getAddressOfRemoteServer().getHost());
                 }
             } else {
-                ia = InetAddress.getLocalHost();
+                ia = getLocalHost();
             }
         } catch (UnknownHostException e) {
-            getLogger().log(Level.WARNING,
-                    "Could not find name of remote control", e);
+            logger().warn("Could not find name of remote control", e);
             return "unknown";
         }
 
@@ -114,7 +98,6 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
      */
     public void waitForVaadin() {
         if (!enableWaitForVaadin) {
-            // wait for vaadin is disabled, just return.
             return;
         }
 
@@ -124,12 +107,12 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
             // Must use the wrapped driver here to avoid calling waitForVaadin
             // again
             finished = (Boolean) ((JavascriptExecutor) getDriver()
-                    .getWrappedDriver()).executeScript(WAIT_FOR_VAADIN_SCRIPT);
+                    .getWrappedDriver())
+                    .executeScript(WAIT_FOR_VAADIN_SCRIPT);
             if (finished == null) {
                 // This should never happen but according to
                 // https://dev.vaadin.com/ticket/19703, it happens
-                getLogger().fine(
-                        "waitForVaadin returned null, this should never happen");
+                logger().warn("WaitForVaadin returned null, this should never happen");
                 finished = false;
             }
         }
@@ -137,26 +120,25 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
 
     @Override
     public boolean compareScreen(String referenceId) throws IOException {
-        return ScreenshotComparator.compareScreen(referenceId,
-                referenceNameGenerator, imageComparison, driver, getDriver());
+        return new ScreenshotComparator().compareScreen(referenceId,
+                driver,
+                getDriver());
     }
 
     @Override
     public boolean compareScreen(File reference) throws IOException {
         WebDriver driver = getDriver();
-        return ScreenshotComparator.compareScreen(reference, imageComparison,
-                (TakesScreenshot) driver, (HasCapabilities) driver);
-
+        return new ScreenshotComparator().compareScreen(reference,
+                (TakesScreenshot) driver);
     }
 
     @Override
     public boolean compareScreen(BufferedImage reference, String referenceName)
             throws IOException {
         WebDriver driver = getDriver();
-        return ScreenshotComparator.compareScreen(reference, referenceName,
-                imageComparison, (TakesScreenshot) driver,
-                (HasCapabilities) driver);
-
+        return new ScreenshotComparator().compareScreen(reference,
+                referenceName,
+                (TakesScreenshot) driver);
     }
 
     @Override
@@ -270,14 +252,18 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
         return driver;
     }
 
+    public void setDriver(TestBenchDriverProxy driver) {
+        this.driver = driver;
+    }
+
     @Override
     public void resizeViewPortTo(final int desiredWidth,
-            final int desiredHeight) throws UnsupportedOperationException {
+                                 final int desiredHeight) throws UnsupportedOperationException {
         try {
             getDriver().manage().window().setPosition(new Point(0, 0));
 
-            // first try with mac FF, these will change from plat to plat and
-            // browser setup to another
+            // First try with mac FF, these will change from plat to plat and
+            // browser setup to another.
             int extrah = 106;
             int extraw = 0;
             getDriver().manage().window().setSize(new Dimension(
@@ -307,22 +293,22 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
     }
 
     private int detectViewportHeight() {
-        // also check in IE combat mode etc + detect IE9 for extra borders in
-        // combat mode (although vaadin always in std mode, function may be
-        // needed earlier)
+        // Also check in IE combat mode etc + detect IE9 for extra borders in
+        // combat mode (although testbench always in std mode, function may be
+        // needed earlier).
         int height = ((Number) executeScript(
                 "function f() { if(typeof window.innerHeight != 'undefined') { return window.innerHeight; } if(document.documentElement && document.documentElement.offsetHeight) { return document.documentElement.offsetHeight; } w = document.body.clientHeight; if(navigator.userAgent.indexOf('Trident/5') != -1 && document.documentMode < 9) { w += 4; } return w;} return f();"))
-                        .intValue();
+                .intValue();
         return height;
     }
 
     private int detectViewportWidth() {
         // also check in IE combat mode etc + detect IE9 for extra borders in
-        // combat mode (although vaadin always in std mode, function may be
+        // combat mode (although testbench always in std mode, function may be
         // needed earlier)
         int width = ((Number) executeScript(
                 "function f() { if(typeof window.innerWidth != 'undefined') { return window.innerWidth; } if(document.documentElement && document.documentElement.offsetWidth) { return document.documentElement.offsetWidth; } w = document.body.clientWidth; if(navigator.userAgent.indexOf('Trident/5') != -1 && document.documentMode < 9) { w += 4; } return w;} return f();"))
-                        .intValue();
+                .intValue();
         return width;
     }
 
@@ -332,23 +318,4 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
                 testBenchElement);
         assert (ret == null);
     }
-
-    /**
-     * Gets the name generator used for screenshot references.
-     *
-     * @return the name generator for screenshot references
-     */
-    public ReferenceNameGenerator getReferenceNameGenerator() {
-        return referenceNameGenerator;
-    }
-
-    /**
-     * Gets the image comparison implementation used for screenshots.
-     *
-     * @return the image comparison implementation
-     */
-    public ImageComparison getImageComparison() {
-        return imageComparison;
-    }
-
 }

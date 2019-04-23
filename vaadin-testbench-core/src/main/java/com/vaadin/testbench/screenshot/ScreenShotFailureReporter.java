@@ -1,17 +1,23 @@
-/**
- * Copyright (C) 2012 Vaadin Ltd
- *
- * This program is available under Commercial Vaadin Add-On License 3.0
- * (CVALv3).
- *
- * See the file licensing.txt distributed with this software for more
- * information about licensing.
- *
- * You should have received a copy of the license along with this program.
- * If not, see <http://vaadin.com/license/cval-3>.
- */
 package com.vaadin.testbench.screenshot;
 
+/*-
+ * #%L
+ * vaadin-testbench-core
+ * %%
+ * Copyright (C) 2019 Vaadin Ltd
+ * %%
+ * This program is available under Commercial Vaadin Add-On License 3.0
+ * (CVALv3).
+ * 
+ * See the file licensing.txt distributed with this software for more
+ * information about licensing.
+ * 
+ * You should have received a copy of the license along with this program.
+ * If not, see <http://vaadin.com/license/cval-3>.
+ * #L%
+ */
+
+import javax.imageio.ImageIO;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -21,16 +27,20 @@ import java.io.PrintWriter;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.imageio.ImageIO;
+import static com.vaadin.testbench.TestBenchLogger.logger;
+import static com.vaadin.testbench.screenshot.ImageFileUtil.getErrorScreenshotFile;
+import static com.vaadin.testbench.screenshot.ImageUtil.encodeImageToBase64;
+import static com.vaadin.testbench.screenshot.ScreenshotProperties.IMAGE_FILE_NAME_ENDING;
 
 public class ScreenShotFailureReporter {
+
     private final BufferedImage referenceImage;
     private final boolean[][] falseBlocks;
     private final int xBlocks;
     private final int yBlocks;
 
     public ScreenShotFailureReporter(BufferedImage referenceImage,
-            boolean[][] falseBlocks) {
+                                     boolean[][] falseBlocks) {
         this.referenceImage = referenceImage;
         this.falseBlocks = falseBlocks;
         xBlocks = ImageComparisonUtil.getNrBlocks(referenceImage.getWidth());
@@ -38,15 +48,14 @@ public class ScreenShotFailureReporter {
     }
 
     public void createErrorImageAndHTML(String fileName,
-            BufferedImage screenshotImage) {
+                                        BufferedImage screenshotImage) {
+
         try {
             // Write the screenshot into the error directory
-            ImageIO.write(screenshotImage, "png",
-                    ImageFileUtil.getErrorScreenshotFile(fileName));
+            ImageIO.write(screenshotImage, IMAGE_FILE_NAME_ENDING,
+                    getErrorScreenshotFile(fileName));
         } catch (IOException e) {
-            System.err.println("Error writing screenshot to "
-                    + ImageFileUtil.getErrorScreenshotFile(fileName).getPath());
-            e.printStackTrace();
+            logger().warn("Error writing screenshot to {}", fileName, e);
         }
 
         // collect big error blocks of differences
@@ -62,12 +71,8 @@ public class ScreenShotFailureReporter {
      * Runs through the marked false macroblocks and collects them to bigger
      * blocks
      *
-     * @param xBlocks
-     *            Amount of macroblocks in x direction
-     * @param yBlocks
-     *            Amount of macroblocks in y direction
-     * @param falseBlocks
-     *            Map of false blocks
+     * @param xBlocks Amount of macroblocks in x direction
+     * @param yBlocks Amount of macroblocks in y direction
      * @return List of ErrorBlocks
      */
     private List<ErrorBlock> collectErrorsToList(int xBlocks, int yBlocks) {
@@ -83,8 +88,11 @@ public class ScreenShotFailureReporter {
                     ErrorBlock newBlock = new ErrorBlock();
                     newBlock.setX(x * 16);
                     newBlock.setY(y * 16);
-                    int x1 = x, xmin = x, y1 = y, maxSteps = xBlocks * yBlocks,
-                            steps = 0;
+                    int x1 = x;
+                    int xmin = x;
+                    int y1 = y;
+                    int maxSteps = xBlocks * yBlocks;
+                    int steps = 0;
                     falseBlocks[x][y] = false;
 
                     // This'll confirm logic errors.
@@ -149,12 +157,9 @@ public class ScreenShotFailureReporter {
                                 y1 = newBlock.getY() / 16;
                                 // Set all blocks to false
                                 // inside found box
-                                for (int j = 0; j < newBlock
-                                        .getYBlocks(); j++) {
-                                    for (int i = 0; i < newBlock
-                                            .getXBlocks(); i++) {
-                                        if (x1 + i < xBlocks
-                                                && y1 + j < yBlocks) {
+                                for (int j = 0; j < newBlock.getYBlocks(); j++) {
+                                    for (int i = 0; i < newBlock.getXBlocks(); i++) {
+                                        if (x1 + i < xBlocks && y1 + j < yBlocks) {
                                             falseBlocks[x1 + i][y1 + j] = false;
                                         }
                                     }
@@ -177,7 +182,7 @@ public class ScreenShotFailureReporter {
     }
 
     private void drawErrorsToImage(List<ErrorBlock> errorAreas,
-            BufferedImage screenshotImage) {
+                                   BufferedImage screenshotImage) {
         // Draw lines around false ErrorBlocks before saving _diff
         // file.
         Graphics2D drawToPicture = screenshotImage.createGraphics();
@@ -209,7 +214,7 @@ public class ScreenShotFailureReporter {
                     error.getY() - offsetY, toX, toY);
 
         }
-        // release resources
+
         drawToPicture.dispose();
     }
 
@@ -218,23 +223,26 @@ public class ScreenShotFailureReporter {
      * checking of errors and click on picture to switch between reference and
      * diff pictures.
      *
-     * @param blocks
-     *            List of ErrorBlock
-     * @param diff
-     *            diff file
-     * @param reference
-     *            reference image file
-     * @param fileId
-     *            fileName for html file
+     * @param blocks          List of ErrorBlock
+     * @param fileId          fileName for html file
+     * @param screenshotImage screenshot from test
+     * @param referenceImage  reference to compare to...
      */
-    private void createDiffHtml(List<ErrorBlock> blocks, String fileId,
-            BufferedImage screenshotImage, BufferedImage referenceImage) {
-        String image = ImageUtil.encodeImageToBase64(screenshotImage);
-        String ref_image = ImageUtil.encodeImageToBase64(referenceImage);
+    @Deprecated
+    // TODO(sven): Switch to a return type -> remove direct write to disc!!
+    // We need this later for distributed run, to collect infos.
+    private void createDiffHtml(List<ErrorBlock> blocks,
+                                String fileId,
+                                BufferedImage screenshotImage,
+                                BufferedImage referenceImage) {
+
+        String image = encodeImageToBase64(screenshotImage);
+        String refImage = encodeImageToBase64(referenceImage);
+
         try {
             PrintWriter writer = new PrintWriter(
-                    ImageFileUtil.getErrorScreenshotFile(fileId + ".html"));
-            // Write head
+                    getErrorScreenshotFile(fileId + ".html"));
+            // Write head.
             writer.println("<html>");
             writer.println("<head>");
             writer.println(
@@ -253,20 +261,15 @@ public class ScreenShotFailureReporter {
                             + "\"/><span style=\"position: absolute; top: 0px; left: 0px; opacity:0.4; filter: alpha(opacity=40); font-weight: bold;\">Image for this run</span></div>");
             writer.println(
                     "<div id=\"reference\" style=\"display: none; position: absolute; top: 0px; left: 0px; z-index: 999;\"><img src=\"data:image/png;base64,"
-                            + ref_image + "\"/></div>");
+                            + refImage + "\"/></div>");
 
             int add = 0;
             for (ErrorBlock error : blocks) {
                 int offsetX = 0, offsetY = 0;
-                if (error.getX() > 0) {
-                    offsetX = 1;
-                }
-                if (error.getY() > 0) {
-                    offsetY = 1;
-                }
-                String id = "popUpDiv_" + (error.getX() + add) + "_"
-                        + (error.getY() + add);
-                // position stars so that it's not out of screen.
+                if (error.getX() > 0) offsetX = 1;
+                if (error.getY() > 0) offsetY = 1;
+                String id = "popUpDiv_" + (error.getX() + add) + "_" + (error.getY() + add);
+                // Position stars so that it's not out of screen.
                 writer.println("<div  onmouseover=\"document.getElementById('"
                         + id
                         + "').style.display='block'\"  style=\"z-index: 66;position: absolute; top: 0px; left: 0px; clip: rect("
@@ -276,7 +279,7 @@ public class ScreenShotFailureReporter {
                         + (error.getX() - offsetX)
                         + "px);\"><img src=\"data:image/png;base64," + image
                         + "\"/></div>");
-                // Start "popup" div
+                // Start "popup" div.
                 writer.println(
                         "<div class=\"popUpDiv\" onclick=\"document.getElementById('reference').style.display='block'; document.getElementById('diff').style.display='none';\" onmouseout=\"this.style.display='none'\" id=\""
                                 + id
@@ -287,14 +290,14 @@ public class ScreenShotFailureReporter {
                                 + (error.getY() + (error.getYBlocks() * 16) + 1)
                                 + "px," + (error.getX() - offsetX)
                                 + "px); z-index: " + (99 + add) + ";\">");
-                writer.println("<img src=\"data:image/png;base64," + ref_image
+                writer.println("<img src=\"data:image/png;base64," + refImage
                         + "\" />");
-                // End popup div
+                // End popup div.
                 writer.println("</div>");
                 add++;
             }
 
-            // End file
+            // End file.
             writer.println("</body></html>");
             writer.flush();
             writer.close();
@@ -302,5 +305,4 @@ public class ScreenShotFailureReporter {
             e.printStackTrace();
         }
     }
-
 }

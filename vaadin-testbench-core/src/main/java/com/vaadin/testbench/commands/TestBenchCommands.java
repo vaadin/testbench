@@ -1,16 +1,21 @@
-/**
- * Copyright (C) 2012 Vaadin Ltd
- *
+package com.vaadin.testbench.commands;
+
+/*-
+ * #%L
+ * vaadin-testbench-core
+ * %%
+ * Copyright (C) 2019 Vaadin Ltd
+ * %%
  * This program is available under Commercial Vaadin Add-On License 3.0
  * (CVALv3).
- *
+ * 
  * See the file licensing.txt distributed with this software for more
  * information about licensing.
- *
+ * 
  * You should have received a copy of the license along with this program.
  * If not, see <http://vaadin.com/license/cval-3>.
+ * #L%
  */
-package com.vaadin.testbench.commands;
 
 public interface TestBenchCommands extends CanCompareScreenshots {
 
@@ -28,7 +33,7 @@ public interface TestBenchCommands extends CanCompareScreenshots {
      * This method provides performance information of the client-side rendering
      * for the last operation performed. You can use this information to make
      * sure that some operation is executed in a timely fashion.
-     *
+     * <p>
      * If more than one application is running at the same URL, e.g. a portal
      * environment with many portlets on the same page, the value returned will
      * be the sum for all applications.
@@ -48,7 +53,7 @@ public interface TestBenchCommands extends CanCompareScreenshots {
      * for the entire session. The session starts when you navigate to an
      * application and this method returns the amount of time spent rendering up
      * to the point of the call.
-     *
+     * <p>
      * If more than one application is running at the same URL, e.g. a portal
      * environment with many portlets on the same page, the value returned will
      * be the sum for all applications.
@@ -61,7 +66,7 @@ public interface TestBenchCommands extends CanCompareScreenshots {
      * This method provides performance information of the server-side
      * processing for the last request. You can use this information to ensure
      * that an operation is processed in a timely fashion.
-     *
+     * <p>
      * If more than one application is running at the same URL, e.g. a portal
      * environment with many portlets on the same page, the value returned will
      * be the sum for all applications.
@@ -81,7 +86,7 @@ public interface TestBenchCommands extends CanCompareScreenshots {
      * processing for the entire session. The session starts when you navigate
      * to an application and this method returns the amount of time spent
      * processing requests up to the point of the call.
-     *
+     * <p>
      * If more than one application is running at the same URL, e.g. a portal
      * environment with many portlets on the same page, the value returned will
      * be the sum for all applications.
@@ -99,14 +104,14 @@ public interface TestBenchCommands extends CanCompareScreenshots {
     /**
      * Disables implicit waiting for Vaadin to finish processing requests. This
      * is useful if you need to test bombarding an application with events.
-     *
+     * <p>
      * Implicit waiting is enabled by default.
      */
     void disableWaitForVaadin();
 
     /**
      * Enables implicit waiting for Vaadin to finish processing requests.
-     *
+     * <p>
      * Implicit waiting is enabled by default.
      */
     void enableWaitForVaadin();
@@ -138,10 +143,8 @@ public interface TestBenchCommands extends CanCompareScreenshots {
      * screen size). Currently most common desktop browsers support this.
      * <p>
      *
-     * @param width
-     *            the desired width of the viewport
-     * @param height
-     *            the desired height of the viewport
+     * @param width  the desired width of the viewport
+     * @param height the desired height of the viewport
      */
     void resizeViewPortTo(int width, int height)
             throws UnsupportedOperationException;

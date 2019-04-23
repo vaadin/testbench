@@ -1,16 +1,21 @@
-/**
- * Copyright (C) 2012 Vaadin Ltd
- *
+package com.vaadin.testbench.screenshot;
+
+/*-
+ * #%L
+ * vaadin-testbench-core
+ * %%
+ * Copyright (C) 2019 Vaadin Ltd
+ * %%
  * This program is available under Commercial Vaadin Add-On License 3.0
  * (CVALv3).
- *
+ * 
  * See the file licensing.txt distributed with this software for more
  * information about licensing.
- *
+ * 
  * You should have received a copy of the license along with this program.
  * If not, see <http://vaadin.com/license/cval-3>.
+ * #L%
  */
-package com.vaadin.testbench.screenshot;
 
 import java.awt.image.BufferedImage;
 import java.security.MessageDigest;
@@ -22,11 +27,9 @@ public class ImageComparisonUtil {
      * Generates blocks representing an image by dividing the image up in 16x16
      * pixel blocks and calculating a mean value of the color in each block.
      *
-     * @param image
-     *            the image
      * @return the block representation of the image
      */
-    public static String generateImageHash(BufferedImage image) {
+    public static byte[] imageHash(BufferedImage image) {
         int width = image.getWidth();
         int height = image.getHeight();
 
@@ -48,17 +51,18 @@ public class ImageComparisonUtil {
         try {
             MessageDigest md5 = MessageDigest.getInstance("MD5");
             md5.update(data);
-            String hash = byteToHex(md5.digest());
-            return hash;
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("MD5 algorithm provider not found", e);
+            return md5.digest();
+        } catch (NoSuchAlgorithmException ex) {
+            throw new RuntimeException("Unable to compute the MD5 hash of image", ex);
         }
     }
 
-    private static String byteToHex(byte[] bytes) {
+    public static String byteToHex(byte[] bytes) {
         String hex = "";
-        for (int i = 0; i < bytes.length; i++) {
-            hex += Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1);
+        for (byte aByte : bytes) {
+            hex += Integer
+                    .toString((aByte & 0xff) + 0x100, 16)
+                    .substring(1);
         }
         return hex;
     }
@@ -68,8 +72,7 @@ public class ImageComparisonUtil {
      * blocks are full size with the (possible) exception of the bottom and
      * right edges.
      *
-     * @param pixels
-     *            The number of pixels for the dimension.
+     * @param pixels The number of pixels for the dimension.
      * @return The number of blocks used for that dimension
      */
     public static int getNrBlocks(int pixels) {

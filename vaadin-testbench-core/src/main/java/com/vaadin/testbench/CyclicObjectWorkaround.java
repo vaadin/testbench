@@ -1,21 +1,27 @@
-/**
- * Copyright (C) 2012 Vaadin Ltd
- *
+package com.vaadin.testbench;
+
+/*-
+ * #%L
+ * vaadin-testbench-core
+ * %%
+ * Copyright (C) 2019 Vaadin Ltd
+ * %%
  * This program is available under Commercial Vaadin Add-On License 3.0
  * (CVALv3).
- *
+ * 
  * See the file licensing.txt distributed with this software for more
  * information about licensing.
- *
+ * 
  * You should have received a copy of the license along with this program.
  * If not, see <http://vaadin.com/license/cval-3>.
+ * #L%
  */
-package com.vaadin.testbench;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * Provides a workaround to avoid "cyclic object value" when returning an
@@ -25,6 +31,7 @@ import java.nio.charset.StandardCharsets;
 public class CyclicObjectWorkaround {
 
     private static final String TEMPLATE;
+
     static {
         try {
             TEMPLATE = readInputStream(
@@ -43,17 +50,15 @@ public class CyclicObjectWorkaround {
             while ((length = inputStream.read(buffer)) != -1) {
                 result.write(buffer, 0, length);
             }
-            return result.toString(StandardCharsets.UTF_8.name());
+            return result.toString(UTF_8.name());
         }
     }
 
     /**
-    /**
      * Produces Javascript which modifies a given object (list) so that it can
      * be returned to the test.
      *
-     * @param jsObjectName
-     *            the name of the Javascript object to manipulate
+     * @param jsObjectName the name of the Javascript object to manipulate
      * @return JS code which manipulates the object
      */
     public static String get(String jsObjectName) {

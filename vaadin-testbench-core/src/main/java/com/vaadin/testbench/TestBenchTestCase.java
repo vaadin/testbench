@@ -1,23 +1,25 @@
-/**
- * Copyright (C) 2012 Vaadin Ltd
- *
- * This program is available under Commercial Vaadin Add-On License 3.0
- * (CVALv3).
- *
- * See the file licensing.txt distributed with this software for more
- * information about licensing.
- *
- * You should have received a copy of the license along with this program.
- * If not, see <http://vaadin.com/license/cval-3>.
- */
 package com.vaadin.testbench;
 
-import java.util.List;
-import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+/*-
+ * #%L
+ * vaadin-testbench-core
+ * %%
+ * Copyright (C) 2019 Vaadin Ltd
+ * %%
+ * This program is available under Commercial Vaadin Add-On License 3.0
+ * (CVALv3).
+ * 
+ * See the file licensing.txt distributed with this software for more
+ * information about licensing.
+ * 
+ * You should have received a copy of the license along with this program.
+ * If not, see <http://vaadin.com/license/cval-3>.
+ * #L%
+ */
 
-import org.junit.Rule;
+import com.vaadin.testbench.commands.TestBenchCommandExecutor;
+import com.vaadin.testbench.commands.TestBenchCommands;
+import com.vaadin.testbench.proxy.TestBenchDriverProxy;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NotFoundException;
 import org.openqa.selenium.SearchContext;
@@ -29,9 +31,10 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import com.vaadin.pro.licensechecker.LicenseChecker;
-import com.vaadin.testbench.commands.TestBenchCommandExecutor;
-import com.vaadin.testbench.commands.TestBenchCommands;
+import java.util.List;
+import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * A superclass with some helpers to aid TestBench developers.
@@ -40,6 +43,7 @@ public abstract class TestBenchTestCase
         implements HasDriver, HasTestBenchCommandExecutor, HasElementQuery {
 
     public static final String testbenchVersion;
+
     static {
         Properties properties = new Properties();
         try {
@@ -63,20 +67,7 @@ public abstract class TestBenchTestCase
                             + seleniumVersion
                             + " was found. Make sure you do not have multiple versions of Selenium on the classpath.");
         }
-
-        LicenseChecker.checkLicenseFromStaticBlock("vaadin-testbench",
-                TestBenchTestCase.testbenchVersion);
     }
-
-    /**
-     * Specifies retry count, which is used to run same test several times. Can
-     * be changed by setting "com.vaadin.testbench.Parameters.maxAttempts"
-     * system property.
-     *
-     * Default: 1
-     */
-    @Rule
-    public RetryRule maxAttempts = new RetryRule(Parameters.getMaxAttempts());
 
     protected WebDriver driver;
 
@@ -95,10 +86,8 @@ public abstract class TestBenchTestCase
      * possible double slashes if the base URL ends with a slash and the URI
      * begins with a slash.
      *
-     * @param baseUrl
-     *            the base URL
-     * @param uri
-     *            the URI
+     * @param baseUrl the base URL
+     * @param uri     the URI
      * @return the URL resulting from the combination of base URL and URI
      */
     protected String concatUrl(String baseUrl, String uri) {
@@ -110,7 +99,7 @@ public abstract class TestBenchTestCase
 
     /**
      * Returns the {@link WebDriver} instance previously specified by
-     * {@link #setDriver(org.openqa.selenium.WebDriver)}, or (if the previously
+     * {@link #setDriver(WebDriver)}, or (if the previously
      * provided WebDriver instance was not already a
      * {@link TestBenchDriverProxy} instance) a {@link TestBenchDriverProxy}
      * that wraps that driver.
@@ -125,8 +114,7 @@ public abstract class TestBenchTestCase
     /**
      * Sets the active {@link WebDriver} that is used by this this case
      *
-     * @param driver
-     *            The WebDriver instance to set.
+     * @param driver The WebDriver instance to set.
      */
     public void setDriver(WebDriver driver) {
         if (driver != null && !(driver instanceof TestBenchDriverProxy)) {
@@ -158,14 +146,12 @@ public abstract class TestBenchTestCase
      * to use component-specific API on elements found using standard Selenium
      * API.
      *
-     * @param elementType
-     *            The type (class) containing the API to decorate with
-     * @param element
-     *            The element instance to decorate
+     * @param elementType The type (class) containing the API to decorate with
+     * @param element     The element instance to decorate
      * @return The element wrapped in an instance of the specified element type.
      */
     public <T extends TestBenchElement> T wrap(Class<T> elementType,
-            WebElement element) {
+                                               WebElement element) {
         return ((TestBenchElement) element).wrap(elementType);
     }
 
@@ -177,17 +163,14 @@ public abstract class TestBenchTestCase
      * This method wraps any returned {@link WebElement} as
      * {@link TestBenchElement}.
      *
-     * @param script
-     *            the script to execute
-     * @param args
-     *            the arguments, available in the script as
-     *            {@code arguments[0]...arguments[N]}
+     * @param script the script to execute
+     * @param args   the arguments, available in the script as
+     *               {@code arguments[0]...arguments[N]}
      * @return whatever
-     *         {@link org.openqa.selenium.JavascriptExecutor#executeScript(String, Object...)}
-     *         returns
-     * @throws UnsupportedOperationException
-     *             if the underlying driver does not support JavaScript
-     *             execution
+     * {@link JavascriptExecutor#executeScript(String, Object...)}
+     * returns
+     * @throws UnsupportedOperationException if the underlying driver does not support JavaScript
+     *                                       execution
      * @see JavascriptExecutor#executeScript(String, Object...)
      */
     protected Object executeScript(String script, Object... args) {
@@ -202,23 +185,18 @@ public abstract class TestBenchTestCase
      * Use e.g. as
      * <code>waitUntil(ExpectedConditions.presenceOfElementLocated(by), 10);</code>
      *
-     * @param condition
-     *            Models a condition that might reasonably be expected to
-     *            eventually evaluate to something that is neither null nor
-     *            false.
-     * @param timeoutInSeconds
-     *            The timeout in seconds for the wait.
+     * @param condition        Models a condition that might reasonably be expected to
+     *                         eventually evaluate to something that is neither null nor
+     *                         false.
+     * @param timeoutInSeconds The timeout in seconds for the wait.
      * @return The condition's return value if it returned something different
-     *         from null or false before the timeout expired.
-     *
-     * @throws TimeoutException
-     *             If the timeout expires.
-     *
+     * from null or false before the timeout expired.
+     * @throws TimeoutException If the timeout expires.
      * @see FluentWait#until
      * @see ExpectedCondition
      */
     protected <T> T waitUntil(ExpectedCondition<T> condition,
-            long timeoutInSeconds) {
+                              long timeoutInSeconds) {
         return new WebDriverWait(getDriver(), timeoutInSeconds)
                 .until(condition);
     }
@@ -230,21 +208,16 @@ public abstract class TestBenchTestCase
      * Use e.g. as
      * <code>waitUntil(ExpectedConditions.presenceOfElementLocated(by));</code>
      *
-     * @param condition
-     *            Models a condition that might reasonably be expected to
-     *            eventually evaluate to something that is neither null nor
-     *            false.
+     * @param condition Models a condition that might reasonably be expected to
+     *                  eventually evaluate to something that is neither null nor
+     *                  false.
      * @return The condition's return value if it returned something different
-     *         from null or false before the timeout expired.
-     *
-     * @throws TimeoutException
-     *             If 10 seconds passed.
-     *
+     * from null or false before the timeout expired.
+     * @throws TimeoutException If 10 seconds passed.
      * @see FluentWait#until
      * @see ExpectedCondition
      */
-    protected <T> T waitUntil(ExpectedCondition<T> condition) {
+    public <T> T waitUntil(ExpectedCondition<T> condition) {
         return waitUntil(condition, 10);
     }
-
 }
