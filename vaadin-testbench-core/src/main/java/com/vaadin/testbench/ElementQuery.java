@@ -16,13 +16,12 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.SearchContext;
-import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -151,6 +150,18 @@ public class ElementQuery<T extends TestBenchElement> {
      */
     public T id(String id) {
         return attribute("id", id).first();
+    }
+
+    /**
+     * Requires the given attribute to be set.
+     *
+     * @param name
+     *            the attribute name
+     * @return this element query instance for chaining
+     */
+    public ElementQuery<T> hasAttribute(String name) {
+        attributes.add(new AttributeMatch(name));
+        return this;
     }
 
     /**
