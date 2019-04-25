@@ -252,8 +252,6 @@ public class ElementQuery<T extends TestBenchElement> {
      * element is found or if 10 seconds has elapsed.
      *
      * @return The element of the type specified in the constructor
-     * @throws TimeoutException
-     *             if no element is found after 10 seconds has elapsed
      */
     public T waitForFirst() {
         Object result = new WebDriverWait(getDriver(), 10).until(driver -> {
