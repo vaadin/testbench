@@ -192,13 +192,11 @@
                 <groupId>com.saucelabs.maven.plugin</groupId>
                 <artifactId>sauce-connect-plugin</artifactId>
                 <version>2.1.25</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.saucelabs</groupId>
-                        <artifactId>ci-sauce</artifactId>
-                        <version>1.141</version>
-                    </dependency>
-                </dependencies>
+                <configuration>
+                    <sauceUsername>${sauce.user}</sauceUsername>
+                    <sauceAccessKey>${sauce.sauceAccessKey}</sauceAccessKey>
+                    <options>${sauce.options}</options>
+                </configuration>
                 <executions>
                     <!-- Start Sauce Connect prior to running the integration 
                         tests -->
