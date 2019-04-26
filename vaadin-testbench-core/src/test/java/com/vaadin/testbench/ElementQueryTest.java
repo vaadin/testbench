@@ -15,6 +15,7 @@ package com.vaadin.testbench;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.easymock.EasyMock;
@@ -22,7 +23,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -258,6 +258,25 @@ public class ElementQueryTest {
                 query.lastScript.endsWith(SINGLE_RESULT_QUERY_SUFFIX));
         Assert.assertEquals("[foo='bar'][das='boot'][id='theid']",
                 query.lastAttributePairs);
+        Assert.assertEquals(ExampleElement.TAG, query.lastTagName);
+        Assert.assertSame(exampleElement, query.lastContext);
+    }
+
+    @Test
+    public void findInElement_byHasAttribute() {
+        TestElementQuery<ExampleElement> query = createExampleElementQuery();
+        try {
+            query.hasAttribute("nonexistant").first();
+            Assert.fail(
+                    "Search should fail as no element with the attribute exists");
+        } catch (NoSuchElementException e) {
+        }
+        Assert.assertTrue("last query script contains ELEMENT_QUERY_FRAGMENT",
+                query.lastScript.contains(ELEMENT_QUERY_FRAGMENT));
+        Assert.assertTrue(
+                "last query script end with SINGLE_RESULT_QUERY_SUFFIX",
+                query.lastScript.endsWith(SINGLE_RESULT_QUERY_SUFFIX));
+        Assert.assertEquals("[nonexistant]", query.lastAttributePairs);
         Assert.assertEquals(ExampleElement.TAG, query.lastTagName);
         Assert.assertSame(exampleElement, query.lastContext);
     }
