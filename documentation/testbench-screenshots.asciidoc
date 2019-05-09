@@ -39,7 +39,6 @@ public void setUp() throws Exception {
     Parameters.setScreenshotComparisonTolerance(1.0);
     Parameters.setScreenshotRetryDelay(10);
     Parameters.setScreenshotComparisonCursorDetection(true);
-    Parameters.setCaptureScreenshotOnFailure(true);
 }
 ```
 
