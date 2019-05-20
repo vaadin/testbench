@@ -23,8 +23,8 @@
         <node.version>v8.1.2</node.version>
         <yarn.version>v0.27.5</yarn.version>
         <buildtools.directory>build-tools</buildtools.directory>
-
         <sauce.options>--tunnel-identifier ${maven.build.timestamp}</sauce.options>
+        <ci-sauce.version>1.138</ci-sauce.version>
         <maven.build.timestamp.format>yyyy-MM-dd'T'HHmmss.SSSZ</maven.build.timestamp.format>
         <failOnMissingWebXml>false</failOnMissingWebXml>
     </properties>
@@ -181,12 +181,17 @@
             <plugin>
                 <groupId>com.saucelabs.maven.plugin</groupId>
                 <artifactId>sauce-connect-plugin</artifactId>
-                <version>2.1.23</version>
+                <version>2.1.25</version>
+                <configuration>
+                    <sauceUsername>${sauce.user}</sauceUsername>
+                    <sauceAccessKey>${sauce.sauceAccessKey}</sauceAccessKey>
+                    <options>${sauce.options}</options>
+                </configuration>
                 <dependencies>
                     <dependency>
                         <groupId>com.saucelabs</groupId>
                         <artifactId>ci-sauce</artifactId>
-                        <version>1.129</version>
+                        <version>${ci-sauce.version}</version>
                     </dependency>
                 </dependencies>
                 <executions>
