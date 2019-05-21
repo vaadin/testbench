@@ -17,6 +17,7 @@ package com.vaadin.testbench.addons.junit5.extensions.unittest;
  * #L%
  */
 
+import com.vaadin.testbench.LoadMode;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
@@ -33,10 +34,11 @@ public class VaadinPreLoadTargetExtension implements BeforeEachCallback {
                     final VaadinTest annotation = m.getAnnotation(VaadinTest.class);
 
                     if (annotation != null) {
-                        final boolean preLoad = annotation.preload();
+                        final boolean preLoad = annotation.loadMode() != LoadMode.NO_PRELOAD;
                         storeMethodPlain(context).put(PAGE_OBJECT_PRELOAD, preLoad);
+
                         final String target = annotation.navigateTo();
-                        if (!target.isEmpty()) {
+                        if (!"|||DEFAULT_NAVIGATION_TARGET|||".equals(target)) {
                             storeMethodPlain(context).put(PAGE_OBJECT_NAVIGATION_TARGET, target);
                         }
                     }

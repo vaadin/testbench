@@ -471,6 +471,7 @@
               <drivers>
                 <driver>
                   <name>chromedriver</name>
+                  <version>74.0.3729.6</version>
                 </driver>
                 <driver>
                   <name>geckodriver</name>

@@ -9,11 +9,12 @@ import org.junit.jupiter.api.Assertions;
 import static com.vaadin.flow.component.button.testbench.test.ButtonView.NAV;
 import static com.vaadin.flow.component.button.testbench.test.ButtonView.NOTEXT;
 import static com.vaadin.flow.component.button.testbench.test.ButtonView.TEXT;
+import static com.vaadin.testbench.LoadMode.NO_PRELOAD;
 
 @VaadinTest
 class ButtonIT extends AbstractIT {
 
-    @VaadinTest(preload = false)
+    @VaadinTest(loadMode = NO_PRELOAD)
     void click(GenericTestPageObject po) {
         po.loadPage(NAV);
 

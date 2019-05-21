@@ -17,6 +17,7 @@ package com.vaadin.testbench.addons.junit5.extensions.unittest;
  * #L%
  */
 
+import com.vaadin.testbench.LoadMode;
 import com.vaadin.testbench.addons.junit5.extensions.ConvertWebdriverTestExtension;
 import com.vaadin.testbench.addons.junit5.extensions.container.ServletContainerExtension;
 import com.vaadin.testbench.addons.screenshot.FailedTestScreenhsotExtension;
@@ -43,7 +44,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @TestTemplate
 public @interface VaadinTest {
 
-    String navigateTo() default "";
+    String navigateTo() default "|||DEFAULT_NAVIGATION_TARGET|||";
 
-    boolean preload() default true;
+    LoadMode loadMode() default LoadMode.DEFAULT;
 }

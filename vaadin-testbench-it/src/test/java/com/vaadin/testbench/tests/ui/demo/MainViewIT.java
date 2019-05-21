@@ -3,13 +3,14 @@ package com.vaadin.testbench.tests.ui.demo;
 import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinTest;
 import org.junit.jupiter.api.DisplayName;
 
+import static com.vaadin.testbench.LoadMode.NO_PRELOAD;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @VaadinTest
 class MainViewIT {
 
     @DisplayName("Hello World - Click twice 001")
-    @VaadinTest(preload = false)
+    @VaadinTest(loadMode = NO_PRELOAD)
     void test001(VaadinAppPageObject pageObject) {
         pageObject.loadPage();
         assertEquals(0, pageObject.clickCount());

@@ -40,9 +40,6 @@ public class NoContainerInitializer implements ContainerInitializer {
     private final boolean isHostDefined = isKeyDefined(CONTAINER_NONE_HOST);
     private final boolean isPortDefined = isKeyDefined(CONTAINER_NONE_PORT);
     private final boolean isWebAppDefined = isKeyDefined(CONTAINER_NONE_WEBAPP);
-    private final String host = props.getProperty(CONTAINER_NONE_HOST);
-    private final Integer port = Integer.parseInt(props.getProperty(CONTAINER_NONE_PORT));
-    private final String webapp = props.getProperty(CONTAINER_NONE_WEBAPP);
 
     private boolean isKeyDefined(String key) {
         return !props.getProperty(key, "").isEmpty();
@@ -68,9 +65,9 @@ public class NoContainerInitializer implements ContainerInitializer {
 
         final ExtensionContext.Store store = storeMethodPlain(context);
 
-        store.put(SERVER_IP, host);
-        store.put(SERVER_PORT, port);
-        store.put(SERVER_WEBAPP, webapp);
+        store.put(SERVER_IP, props.getProperty(CONTAINER_NONE_HOST));
+        store.put(SERVER_PORT, Integer.parseInt(props.getProperty(CONTAINER_NONE_PORT)));
+        store.put(SERVER_WEBAPP, props.getProperty(CONTAINER_NONE_WEBAPP));
     }
 
     @Override
