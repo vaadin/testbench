@@ -35,8 +35,8 @@ import static com.vaadin.testbench.screenshot.ScreenshotProperties.getScreenshot
 
 public class ImageFileUtil {
 
-    public static final String DIRECTORY_DIFF = "diff";
-    public static final String DIRECTORY_LOGS = "logs";
+    private static final String DIRECTORY_DIFF = "diff";
+    private static final String DIRECTORY_LOGS = "logs";
 
     /**
      * Returns the relative file names of reference images. The actual image
