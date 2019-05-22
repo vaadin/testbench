@@ -6,10 +6,10 @@ import org.junit.jupiter.api.Assertions;
 
 import static com.vaadin.testbench.tests.ui.PerformanceView.ROUTE;
 
-@VaadinTest
+@VaadinTest(navigateTo = ROUTE)
 class PerformanceIT {
 
-    @VaadinTest(navigateTo = ROUTE)
+    @VaadinTest
     void serverTime(GenericTestPageObject po) {
         po.$(NativeButtonElement.class).first().click();
 
@@ -22,7 +22,7 @@ class PerformanceIT {
                 500.0);
     }
 
-    @VaadinTest(navigateTo = ROUTE)
+    @VaadinTest
     void renderingTime(GenericTestPageObject po) {
         long initialRendering = po.getCommandExecutor().timeSpentRenderingLastRequest();
         // Assuming initial rendering is done in 5-295ms

@@ -12,10 +12,8 @@ import static com.vaadin.flow.component.dialog.testbench.test.DialogView.NAV;
 
 public class DialogIT extends AbstractIT {
 
-    @VaadinTest
-    public void openClose(GenericTestPageObject po) throws Exception {
-        po.loadPage(NAV);
-
+    @VaadinTest(navigateTo = NAV)
+    public void openClose(GenericTestPageObject po) {
         final DialogElement dialog = po.$(DialogElement.class).id(DialogView.THE_DIALOG);
         Assertions.assertTrue(dialog.isOpen());
 

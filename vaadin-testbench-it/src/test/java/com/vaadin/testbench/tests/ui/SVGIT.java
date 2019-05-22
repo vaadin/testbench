@@ -8,10 +8,10 @@ import org.openqa.selenium.By;
 import static com.vaadin.testbench.addons.webdriver.BrowserTypes.SAFARI;
 import static com.vaadin.testbench.tests.ui.SVGView.ROUTE;
 
-@VaadinTest
+@VaadinTest(navigateTo = ROUTE)
 class SVGIT {
 
-    @VaadinTest(navigateTo = ROUTE)
+    @VaadinTest
     @SkipBrowsers(SAFARI)
     void click(GenericTestPageObject po) {
         po.findElement(By.id("ball")).click();

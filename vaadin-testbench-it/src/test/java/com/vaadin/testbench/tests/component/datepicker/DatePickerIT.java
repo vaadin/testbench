@@ -11,10 +11,11 @@ import java.time.LocalDate;
 
 import static com.vaadin.flow.component.datepicker.testbench.test.DatePickerView.NAV;
 
+@VaadinTest(navigateTo = NAV)
 public class DatePickerIT extends AbstractIT {
 
-    @VaadinTest(navigateTo = NAV)
-    public void setGetDate(GenericTestPageObject po) throws Exception {
+    @VaadinTest
+    public void setGetDate(GenericTestPageObject po) {
         final DatePickerElement datePickerWithText = po.$(DatePickerElement.class).id(DatePickerView.TEXT);
         final DatePickerElement datePickerWithNoText = po.$(DatePickerElement.class).id(DatePickerView.NOTEXT);
         final DatePickerElement datePickerWithPreSelectedDate
@@ -45,7 +46,7 @@ public class DatePickerIT extends AbstractIT {
 
     }
 
-    @VaadinTest(navigateTo = NAV)
+    @VaadinTest
     public void clear(GenericTestPageObject po) {
         final DatePickerElement datePickerWithText = po.$(DatePickerElement.class).id(DatePickerView.TEXT);
         final DatePickerElement datePickerWithNoText = po.$(DatePickerElement.class).id(DatePickerView.NOTEXT);
@@ -61,8 +62,8 @@ public class DatePickerIT extends AbstractIT {
 
     }
 
-    @VaadinTest(navigateTo = NAV)
-    public void getLabel(GenericTestPageObject po) throws Exception {
+    @VaadinTest
+    public void getLabel(GenericTestPageObject po) {
         final DatePickerElement datePickerWithText = po.$(DatePickerElement.class).id(DatePickerView.TEXT);
         final DatePickerElement datePickerWithNoText = po.$(DatePickerElement.class).id(DatePickerView.NOTEXT);
 

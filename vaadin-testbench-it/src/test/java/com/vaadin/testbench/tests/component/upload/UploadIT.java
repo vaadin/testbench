@@ -19,6 +19,7 @@ import static com.vaadin.testbench.addons.webdriver.BrowserTypes.FIREFOX;
 import static com.vaadin.testbench.addons.webdriver.BrowserTypes.SAFARI;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+@VaadinTest(navigateTo = NAV)
 public class UploadIT extends AbstractIT {
 
     /**
@@ -32,7 +33,7 @@ public class UploadIT extends AbstractIT {
      * @param po
      * @throws Exception
      */
-    @VaadinTest(navigateTo = NAV)
+    @VaadinTest
     @SkipBrowsers({SAFARI, FIREFOX})
     @Disabled("Can't be tested automatically")
     public void upload(GenericTestPageObject po) throws Exception {
@@ -57,7 +58,7 @@ public class UploadIT extends AbstractIT {
                 getLogRowWithoutNumber(po, 0));
     }
 
-    @VaadinTest(navigateTo = NAV)
+    @VaadinTest
     @Disabled("Can't be tested automatically")
     // The upload finishes so quickly from localhost. Would need a huge file to
     // be created or throttling support

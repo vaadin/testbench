@@ -27,6 +27,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import java.util.List;
+import java.util.Optional;
 
 public abstract class AbstractVaadinPageObject
         extends AbstractPageObject
@@ -34,8 +35,9 @@ public abstract class AbstractVaadinPageObject
 
     private TestBenchTestCase testCase = new TestBenchTestCase() { };
 
-    public AbstractVaadinPageObject(WebDriver webdriver, ContainerInfo containerInfo) {
-        super(webdriver, containerInfo);
+    public AbstractVaadinPageObject(WebDriver webdriver, ContainerInfo containerInfo,
+                                    Optional<String> defaultNavigationTarget) {
+        super(webdriver, containerInfo, defaultNavigationTarget);
 
         // Testbench-specific init.
         testCase.setDriver(webdriver);

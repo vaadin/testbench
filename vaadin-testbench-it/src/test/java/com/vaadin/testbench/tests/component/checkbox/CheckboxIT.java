@@ -11,12 +11,11 @@ import static com.vaadin.flow.component.checkbox.testbench.test.CheckboxView.NAV
 import static com.vaadin.flow.component.checkbox.testbench.test.CheckboxView.NOTEXT;
 import static com.vaadin.flow.component.checkbox.testbench.test.CheckboxView.TEXT;
 
-@VaadinTest()
+@VaadinTest(navigateTo = NAV)
 public class CheckboxIT extends AbstractIT {
 
-    @VaadinTest(navigateTo = NAV)
-    public void checkUncheck(GenericTestPageObject po) throws Exception {
-
+    @VaadinTest
+    public void checkUncheck(GenericTestPageObject po) {
         final CheckboxElement checkboxWithText = po.$(CheckboxElement.class).id(TEXT);
         final CheckboxElement checkboxWithNoText = po.$(CheckboxElement.class).id(NOTEXT);
         final CheckboxElement checkboxInitiallyChecked = po.$(CheckboxElement.class).id(CHECKED);
@@ -40,9 +39,8 @@ public class CheckboxIT extends AbstractIT {
         Assertions.assertTrue(checkboxInitiallyChecked.isChecked());
     }
 
-    @VaadinTest(navigateTo = NAV)
-    public void getLabel(GenericTestPageObject po) throws Exception {
-
+    @VaadinTest
+    public void getLabel(GenericTestPageObject po) {
         final CheckboxElement checkboxWithText = po.$(CheckboxElement.class).id(TEXT);
         final CheckboxElement checkboxWithNoText = po.$(CheckboxElement.class).id(NOTEXT);
         final CheckboxElement checkboxInitiallyChecked = po.$(CheckboxElement.class).id(CHECKED);

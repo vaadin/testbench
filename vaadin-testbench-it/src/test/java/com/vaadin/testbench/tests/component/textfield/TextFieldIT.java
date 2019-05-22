@@ -12,10 +12,11 @@ import static com.vaadin.flow.component.textfield.testbench.test.TextFieldView.N
 import static com.vaadin.flow.component.textfield.testbench.test.TextFieldView.NOLABEL;
 import static com.vaadin.flow.component.textfield.testbench.test.TextFieldView.PLACEHOLDER;
 
+@VaadinTest(navigateTo = NAV)
 public class TextFieldIT extends AbstractIT {
 
-    @VaadinTest(navigateTo = NAV)
-    public void getSetValue(GenericTestPageObject po) throws Exception {
+    @VaadinTest
+    public void getSetValue(GenericTestPageObject po) {
 
         final TextFieldElement labelEager = po.$(TextFieldElement.class).id(LABEL_EAGER);
         final TextFieldElement nolabel = po.$(TextFieldElement.class).id(NOLABEL);
@@ -40,8 +41,8 @@ public class TextFieldIT extends AbstractIT {
         assertStringValue(po, placeholder, "Foo");
     }
 
-    @VaadinTest(navigateTo = NAV)
-    public void getLabelEager(GenericTestPageObject po) throws Exception {
+    @VaadinTest
+    public void getLabelEager(GenericTestPageObject po) {
 
         final TextFieldElement labelEager = po.$(TextFieldElement.class).id(LABEL_EAGER);
         final TextFieldElement nolabel = po.$(TextFieldElement.class).id(NOLABEL);
@@ -54,8 +55,8 @@ public class TextFieldIT extends AbstractIT {
         Assertions.assertEquals("Has a placeholder", placeholder.getLabel());
     }
 
-    @VaadinTest(navigateTo = NAV)
-    public void getPlaceholder(GenericTestPageObject po) throws Exception {
+    @VaadinTest
+    public void getPlaceholder(GenericTestPageObject po) {
 
         final TextFieldElement labelEager = po.$(TextFieldElement.class).id(LABEL_EAGER);
         final TextFieldElement nolabel = po.$(TextFieldElement.class).id(NOLABEL);

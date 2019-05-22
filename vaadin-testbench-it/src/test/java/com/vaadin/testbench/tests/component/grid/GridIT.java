@@ -18,6 +18,7 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.vaadin.testbench.addons.webdriver.BrowserTypes.IE;
 
@@ -312,13 +313,9 @@ public class GridIT extends AbstractIT {
 
     public static class PO extends GenericTestPageObject {
 
-        public PO(WebDriver webdriver, ContainerInfo containerInfo) {
-            super(webdriver, containerInfo);
-        }
-
-        @Override
-        public void loadPage() {
-            loadPage(GridView.NAV);
+        public PO(WebDriver webdriver, ContainerInfo containerInfo,
+                  Optional<String> defaultNavigationTarget) {
+            super(webdriver, containerInfo, defaultNavigationTarget);
         }
     }
 }

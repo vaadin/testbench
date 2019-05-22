@@ -11,10 +11,11 @@ import org.junit.jupiter.api.Assertions;
 import static com.vaadin.flow.component.splitlayout.testbench.test.SplitLayoutView.DEFAULT;
 import static com.vaadin.flow.component.splitlayout.testbench.test.SplitLayoutView.NAV;
 
+@VaadinTest(navigateTo = NAV)
 public class SplitLayoutIT extends AbstractIT {
 
-    @VaadinTest(navigateTo = NAV)
-    public void findInside(GenericTestPageObject po) throws Exception {
+    @VaadinTest
+    public void findInside(GenericTestPageObject po) {
         final SplitLayoutElement splitLayout = po.$(SplitLayoutElement.class).id(DEFAULT);
 
         Assertions.assertEquals(3, po.$(TextFieldElement.class).all().size());
@@ -22,8 +23,8 @@ public class SplitLayoutIT extends AbstractIT {
                 splitLayout.$(TextFieldElement.class).all().size());
     }
 
-    @VaadinTest(navigateTo = NAV)
-    public void findSplitter(GenericTestPageObject po) throws Exception {
+    @VaadinTest
+    public void findSplitter(GenericTestPageObject po) {
         TestBenchElement splitter = po.$(SplitLayoutElement.class).id(DEFAULT).getSplitter();
         Assertions.assertNotNull(splitter);
     }

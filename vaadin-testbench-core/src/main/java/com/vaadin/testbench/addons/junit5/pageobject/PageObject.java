@@ -21,6 +21,8 @@ import com.vaadin.testbench.addons.junit5.extensions.container.HasContainerInfo;
 import com.vaadin.testbench.addons.junit5.extensions.container.NetworkFunctions;
 import com.vaadin.testbench.addons.webdriver.HasDriver;
 
+import java.util.Optional;
+
 import static com.vaadin.testbench.addons.webdriver.WebDriverFunctions.takeScreenshot;
 import static com.vaadin.testbench.addons.webdriver.WebDriverFunctions.webdriverName;
 import static java.lang.System.getProperties;
@@ -30,13 +32,15 @@ public interface PageObject extends HasContainerInfo, HasDriver {
     String BACK_SLASH = "/";
 
     default void loadPage() {
-        final String url = url();
-        getDriver().get(url);
+        if (defaultNavigationTarget().isPresent()) {
+            loadPage(defaultNavigationTarget().get());
+        } else {
+            getDriver().get(url());
+        }
     }
 
     default void loadPage(String route) {
-        final String url = url();
-        getDriver().get(url + route);
+        getDriver().get(url() + route);
     }
 
     default String getTitle() {
@@ -91,4 +95,6 @@ public interface PageObject extends HasContainerInfo, HasDriver {
     default String driverName() {
         return webdriverName(getDriver());
     }
+
+    Optional<String> defaultNavigationTarget();
 }

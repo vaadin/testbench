@@ -13,7 +13,7 @@ import static com.vaadin.flow.component.orderedlayout.testbench.test.VerticalLay
 public class VerticalLayoutIT extends AbstractIT {
 
     @VaadinTest(navigateTo = NAV)
-    public void findInside(GenericTestPageObject po) throws Exception {
+    public void findInside(GenericTestPageObject po) {
         final VerticalLayoutElement verticalLayout = po.$(VerticalLayoutElement.class)
                 .id(DEFAULT);
         Assertions.assertEquals(3, po.$(TextFieldElement.class).all().size());

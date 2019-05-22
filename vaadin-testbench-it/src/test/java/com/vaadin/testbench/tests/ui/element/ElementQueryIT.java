@@ -9,16 +9,16 @@ import java.util.List;
 
 import static com.vaadin.testbench.tests.ui.element.PolymerTemplateView.ROUTE;
 
-@VaadinTest
+@VaadinTest(navigateTo = ROUTE)
 class ElementQueryIT {
 
-    @VaadinTest(navigateTo = ROUTE)
+    @VaadinTest
     void ensureElementListWrapped(GenericTestPageObject po) {
         List<PolymerTemplateViewElement> elements = po.$(PolymerTemplateViewElement.class).all();
         Assertions.assertNotNull(elements.get(0));
     }
 
-    @VaadinTest(navigateTo = ROUTE)
+    @VaadinTest
     void ensureElementListFromOnPageWrapped(GenericTestPageObject po) {
         PolymerTemplateViewElement view = po.$(PolymerTemplateViewElement.class)
                 .first();
@@ -29,7 +29,7 @@ class ElementQueryIT {
         Assertions.assertEquals(view, view2);
     }
 
-    @VaadinTest(navigateTo = ROUTE)
+    @VaadinTest
     void findLightDomElementById(GenericTestPageObject po) {
         PolymerTemplateViewElement view = po.$(PolymerTemplateViewElement.class).first();
         NativeButtonElement button = view
@@ -39,7 +39,7 @@ class ElementQueryIT {
         Assertions.assertEquals("Button 1", button.getText());
     }
 
-    @VaadinTest(navigateTo = ROUTE)
+    @VaadinTest
     void findShadowDomElementById(GenericTestPageObject po) {
         PolymerTemplateViewElement view = po.$(PolymerTemplateViewElement.class).waitForFirst();
         NativeButtonElement button = view.$(NativeButtonElement.class)
@@ -54,7 +54,7 @@ class ElementQueryIT {
         Assertions.assertEquals(10, view.$(NativeButtonElement.class).all().size());
     }
 
-    @VaadinTest(navigateTo = ROUTE)
+    @VaadinTest
     void searchShadowDomBeforeLight(GenericTestPageObject po) {
         PolymerTemplateViewElement view = po.$(PolymerTemplateViewElement.class)
                 .waitForFirst();
@@ -63,7 +63,7 @@ class ElementQueryIT {
         Assertions.assertEquals("Special Button (in Shadow DOM)", button.getText());
     }
 
-    @VaadinTest(navigateTo = ROUTE)
+    @VaadinTest
     void mergeLightAndShadowDomResults(GenericTestPageObject po) {
         PolymerTemplateViewElement view = po.$(PolymerTemplateViewElement.class)
                 .waitForFirst();
@@ -72,7 +72,7 @@ class ElementQueryIT {
         Assertions.assertEquals(10, buttons.size());
     }
 
-    @VaadinTest(navigateTo = ROUTE)
+    @VaadinTest
     void findTestBenchElementUsingTag(GenericTestPageObject po) {
         TestBenchElement button = po.$(PolymerTemplateViewElement.class)
                 .waitForFirst().$("button").id("shadow-button-2");
@@ -80,14 +80,14 @@ class ElementQueryIT {
 
     }
 
-    @VaadinTest(navigateTo = ROUTE)
+    @VaadinTest
     void findTestBenchElement(GenericTestPageObject po) {
         TestBenchElement button = po.$(PolymerTemplateViewElement.class)
                 .waitForFirst().$(TestBenchElement.class).id("shadow-button-2");
         Assertions.assertNotNull(button);
     }
 
-    @VaadinTest(navigateTo = ROUTE)
+    @VaadinTest
     void findTestBenchElementChild(GenericTestPageObject po) {
         TestBenchElement button = po.$(PolymerTemplateViewElement.class)
                 .waitForFirst().$(TestBenchElement.class).first()
@@ -95,14 +95,14 @@ class ElementQueryIT {
         Assertions.assertEquals("Shadow Button 1", button.getText());
     }
 
-    @VaadinTest(navigateTo = ROUTE)
+    @VaadinTest
     void specialCharactersInId(GenericTestPageObject po) {
         NativeButtonElement button = po.$(PolymerTemplateViewElement.class)
                 .waitForFirst().$(NativeButtonElement.class).id("foo'*+bar'");
         Assertions.assertEquals("Button with special id", button.getText());
     }
 
-    @VaadinTest(navigateTo = ROUTE)
+    @VaadinTest
     void attributeContains(GenericTestPageObject po) {
         PolymerTemplateViewElement view = po.$(PolymerTemplateViewElement.class)
                 .waitForFirst();
@@ -114,7 +114,7 @@ class ElementQueryIT {
         Assertions.assertEquals(10, allButtons.size());
     }
 
-    @VaadinTest(navigateTo = ROUTE)
+    @VaadinTest
     void getSetElementsProperty(GenericTestPageObject po) {
         PolymerTemplateViewElement template = po.$(
                 PolymerTemplateViewElement.class).first();

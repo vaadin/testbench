@@ -13,13 +13,14 @@ import static com.vaadin.flow.component.tabs.testbench.test.TabsView.NAV;
 import static com.vaadin.testbench.addons.webdriver.BrowserTypes.FIREFOX;
 import static com.vaadin.testbench.addons.webdriver.BrowserTypes.IE;
 
+@VaadinTest(navigateTo = NAV)
 public class TabsIT extends AbstractIT {
 
-    public static final String TEXT = "Text";
-    public static final String DISABLED = "Disabled";
+    private static final String TEXT = "Text";
+    private static final String DISABLED = "Disabled";
 
-    @VaadinTest(navigateTo = NAV)
-    public void selectTabByIndex(GenericTestPageObject po) throws Exception {
+    @VaadinTest
+    public void selectTabByIndex(GenericTestPageObject po) {
         final TabsElement def = po.$(TabsElement.class).id(DEFAULT);
         Assertions.assertEquals(0, def.getSelectedTabIndex());
         def.setSelectedTabIndex(2);
@@ -32,11 +33,10 @@ public class TabsIT extends AbstractIT {
      * https://github.com/vaadin/vaadin-tabs-flow/issues/27
      *
      * @param po
-     * @throws Exception
      */
-    @VaadinTest(navigateTo = NAV)
+    @VaadinTest
     @SkipBrowsers(value = {FIREFOX, IE})
-    public void getSelectedTabElement(GenericTestPageObject po) throws Exception {
+    public void getSelectedTabElement(GenericTestPageObject po) {
         final TabsElement def = po.$(TabsElement.class).id(DEFAULT);
 
         def.getSelectedTabElement().$(ButtonElement.class).first().click();
@@ -45,16 +45,16 @@ public class TabsIT extends AbstractIT {
         Assertions.assertEquals(TEXT, def.getSelectedTabElement().getText());
     }
 
-    @VaadinTest(navigateTo = NAV)
-    public void getTab(GenericTestPageObject po) throws Exception {
+    @VaadinTest
+    public void getTab(GenericTestPageObject po) {
         final TabsElement def = po.$(TabsElement.class).id(DEFAULT);
 
         Assertions.assertEquals(1, def.getTab(DISABLED));
         Assertions.assertEquals(2, def.getTab(TEXT));
     }
 
-    @VaadinTest(navigateTo = NAV)
-    public void isEnabled(GenericTestPageObject po) throws Exception {
+    @VaadinTest
+    public void isEnabled(GenericTestPageObject po) {
         final TabsElement def = po.$(TabsElement.class).id(DEFAULT);
 
         Assertions.assertTrue(def.getTabElement(TEXT).isEnabled());

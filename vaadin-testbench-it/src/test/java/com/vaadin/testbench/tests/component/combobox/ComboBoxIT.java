@@ -8,6 +8,7 @@ import com.vaadin.testbench.tests.ui.GenericTestPageObject;
 import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.WebDriver;
 
+import java.util.Optional;
 import java.util.stream.IntStream;
 
 import static com.vaadin.flow.component.combobox.testbench.test.ComboBoxView.BEANS;
@@ -24,11 +25,11 @@ import static com.vaadin.flow.component.combobox.testbench.test.ComboBoxView.PRE
 import static com.vaadin.flow.component.combobox.testbench.test.ComboBoxView.TEXT;
 import static com.vaadin.flow.component.combobox.testbench.test.ComboBoxView.TEXT_WITH_PRE_SLELECTED_VALUE;
 
+@VaadinTest(navigateTo = NAV)
 public class ComboBoxIT extends AbstractIT {
 
     @VaadinTest
-    public void getLabel(PO po) throws Exception {
-
+    public void getLabel(PO po) {
         final ComboBoxElement comboBoxWithText = po.$(ComboBoxElement.class).id(TEXT);
         final ComboBoxElement comboBoxWithNoText = po.$(ComboBoxElement.class).id(NOTEXT);
         final ComboBoxElement comboBoxWithBeans = po.$(ComboBoxElement.class).id(BEANS);
@@ -41,8 +42,7 @@ public class ComboBoxIT extends AbstractIT {
     }
 
     @VaadinTest
-    public void selectByText(PO po) throws Exception {
-
+    public void selectByText(PO po) {
         final ComboBoxElement comboBoxWithText = po.$(ComboBoxElement.class).id(TEXT);
         final ComboBoxElement comboBoxWithNoText = po.$(ComboBoxElement.class).id(NOTEXT);
         final ComboBoxElement comboBoxWithBeans = po.$(ComboBoxElement.class).id(BEANS);
@@ -77,7 +77,6 @@ public class ComboBoxIT extends AbstractIT {
 
     @VaadinTest
     public void getSelectedText(PO po) {
-
         final ComboBoxElement comboBoxWithTextWithPreSelectedValue
                 = po.$(ComboBoxElement.class).id(TEXT_WITH_PRE_SLELECTED_VALUE);
         final ComboBoxElement comboBoxWithNoTextWithPreSelectedValue
@@ -99,8 +98,7 @@ public class ComboBoxIT extends AbstractIT {
     }
 
     @VaadinTest
-    public void openCloseIsOpenPopup(PO po) throws Exception {
-
+    public void openCloseIsOpenPopup(PO po) {
         final ComboBoxElement comboBoxWithText = po.$(ComboBoxElement.class).id(TEXT);
         comboBoxWithText.openPopup();
         Assertions.assertTrue(comboBoxWithText.isPopupOpen());
@@ -109,8 +107,7 @@ public class ComboBoxIT extends AbstractIT {
     }
 
     @VaadinTest
-    public void getPopupSuggestions(PO po) throws Exception {
-
+    public void getPopupSuggestions(PO po) {
         final ComboBoxElement comboBoxWithText = po.$(ComboBoxElement.class).id(TEXT);
         final ComboBoxElement comboBoxWithNoText = po.$(ComboBoxElement.class).id(NOTEXT);
         final ComboBoxElement comboBoxWithBeans = po.$(ComboBoxElement.class).id(BEANS);
@@ -128,7 +125,6 @@ public class ComboBoxIT extends AbstractIT {
 
     @VaadinTest
     public void filter(PO po) {
-
         final ComboBoxElement comboBoxWithText = po.$(ComboBoxElement.class).id(TEXT);
         final ComboBoxElement comboBoxWithNoText = po.$(ComboBoxElement.class).id(NOTEXT);
         final ComboBoxElement comboBoxWithBeans = po.$(ComboBoxElement.class).id(BEANS);
@@ -150,13 +146,9 @@ public class ComboBoxIT extends AbstractIT {
 
     public static class PO extends GenericTestPageObject {
 
-        public PO(WebDriver webdriver, ContainerInfo containerInfo) {
-            super(webdriver, containerInfo);
-        }
-
-        @Override
-        public void loadPage() {
-            loadPage(NAV);
+        public PO(WebDriver webdriver, ContainerInfo containerInfo,
+                  Optional<String> defaultNavigationTarget) {
+            super(webdriver, containerInfo, defaultNavigationTarget);
         }
     }
 

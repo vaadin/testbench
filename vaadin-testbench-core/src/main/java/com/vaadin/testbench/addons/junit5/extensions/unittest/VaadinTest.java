@@ -38,13 +38,13 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @ExtendWith(ServletContainerExtension.class)
 @ExtendWith(PageObjectInvocationContextProvider.class)
 @ExtendWith(ConvertWebdriverTestExtension.class)
-@ExtendWith(VaadinPreLoadTargetExtension.class)
+@ExtendWith(VaadinPreloadTargetExtension.class)
 @ExtendWith(FailedTestScreenhsotExtension.class)
 @ExtendWith(PageObjectWebDriverCleanerExtension.class)
 @TestTemplate
 public @interface VaadinTest {
 
-    String navigateTo() default "|||DEFAULT_NAVIGATION_TARGET|||";
+    String navigateTo() default VaadinPreloadTargetExtension.DEFAULT_NAVIGATION_TARGET;
 
     LoadMode loadMode() default LoadMode.DEFAULT;
 }

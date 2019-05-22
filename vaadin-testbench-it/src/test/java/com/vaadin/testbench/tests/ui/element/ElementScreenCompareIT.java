@@ -10,7 +10,7 @@ import org.openqa.selenium.OutputType;
 
 import static com.vaadin.testbench.tests.ui.element.ElementQueryView.ROUTE;
 
-@VaadinTest
+@VaadinTest(navigateTo = ROUTE)
 class ElementScreenCompareIT {
 
     private static final int SCREENSHOT_HEIGHT = 600;
@@ -21,7 +21,7 @@ class ElementScreenCompareIT {
         po.getCommandExecutor().resizeViewPortTo(SCREENSHOT_WIDTH, SCREENSHOT_HEIGHT);
     }
 
-    @VaadinTest(navigateTo = ROUTE)
+    @VaadinTest
     void elementCompareScreen(GenericTestPageObject po) throws Exception {
         TestBenchElement button4 = po.$(NativeButtonElement.class).get(4);
         button4.getScreenshotAs(OutputType.BYTES);

@@ -9,10 +9,10 @@ import java.util.List;
 
 import static com.vaadin.testbench.tests.ui.PageObjectView.ROUTE;
 
-@VaadinTest
+@VaadinTest(navigateTo = ROUTE)
 class PageObjectIT {
 
-    @VaadinTest(navigateTo = ROUTE)
+    @VaadinTest
     void findUsingValueAnnotation(GenericTestPageObject po) {
         List<MyComponentWithIdElement> components = po.$(
                 MyComponentWithIdElement.class).all();
@@ -21,7 +21,7 @@ class PageObjectIT {
         Assertions.assertEquals("MyComponentWithId", components.get(0).getText());
     }
 
-    @VaadinTest(navigateTo = ROUTE)
+    @VaadinTest
     void findUsingContainsAnnotation(GenericTestPageObject po) {
         List<MyComponentWithClassesElement> components = po.$(
                 MyComponentWithClassesElement.class).all();

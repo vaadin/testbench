@@ -12,7 +12,7 @@ import static com.vaadin.flow.component.progressbar.testbench.test.ProgressBarVi
 public class ProgressBarIT extends AbstractIT {
 
     @VaadinTest(navigateTo = NAV)
-    public void getValue(GenericTestPageObject po) throws Exception {
+    public void getValue(GenericTestPageObject po) {
         final ProgressBarElement def = po.$(ProgressBarElement.class).id(ProgressBarView.DEFAULT);
         final ProgressBarElement hundred = po.$(ProgressBarElement.class).id(ProgressBarView.HUNDRED);
 

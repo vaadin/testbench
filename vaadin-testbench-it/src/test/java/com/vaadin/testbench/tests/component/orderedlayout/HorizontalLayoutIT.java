@@ -13,7 +13,7 @@ import static com.vaadin.flow.component.orderedlayout.testbench.test.HorizontalL
 public class HorizontalLayoutIT extends AbstractIT {
 
     @VaadinTest(navigateTo = NAV)
-    public void findInside(GenericTestPageObject po) throws Exception {
+    public void findInside(GenericTestPageObject po) {
         final HorizontalLayoutElement horizontalLayout = po.$(HorizontalLayoutElement.class)
                 .id(DEFAULT);
 

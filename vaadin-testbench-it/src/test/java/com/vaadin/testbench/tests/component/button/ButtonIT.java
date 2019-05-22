@@ -9,15 +9,12 @@ import org.junit.jupiter.api.Assertions;
 import static com.vaadin.flow.component.button.testbench.test.ButtonView.NAV;
 import static com.vaadin.flow.component.button.testbench.test.ButtonView.NOTEXT;
 import static com.vaadin.flow.component.button.testbench.test.ButtonView.TEXT;
-import static com.vaadin.testbench.LoadMode.NO_PRELOAD;
 
-@VaadinTest
+@VaadinTest(navigateTo = NAV)
 class ButtonIT extends AbstractIT {
 
-    @VaadinTest(loadMode = NO_PRELOAD)
+    @VaadinTest
     void click(GenericTestPageObject po) {
-        po.loadPage(NAV);
-
         final ButtonElement buttonWithText = po.$(ButtonElement.class).id(TEXT);
         final ButtonElement buttonWithNoText = po.$(ButtonElement.class).id(NOTEXT);
 
@@ -29,8 +26,6 @@ class ButtonIT extends AbstractIT {
 
     @VaadinTest
     void getText(GenericTestPageObject po) {
-        po.loadPage(NAV);
-
         final ButtonElement buttonWithText = po.$(ButtonElement.class).id(TEXT);
         final ButtonElement buttonWithNoText = po.$(ButtonElement.class).id(NOTEXT);
         Assertions.assertEquals("", buttonWithNoText.getText());

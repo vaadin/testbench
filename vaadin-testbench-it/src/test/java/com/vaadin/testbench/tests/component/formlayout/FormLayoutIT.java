@@ -13,7 +13,7 @@ import static com.vaadin.flow.component.formlayout.testbench.test.FormLayoutView
 public class FormLayoutIT extends AbstractIT {
 
     @VaadinTest(navigateTo = NAV)
-    public void findInside(GenericTestPageObject po) throws Exception {
+    public void findInside(GenericTestPageObject po) {
         final FormLayoutElement formLayout = po.$(FormLayoutElement.class).id(FormLayoutView.DEFAULT);
 
         Assertions.assertEquals(3, po.$(TextFieldElement.class).all().size());

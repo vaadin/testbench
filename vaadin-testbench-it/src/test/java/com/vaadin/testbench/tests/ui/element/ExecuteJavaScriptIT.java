@@ -7,11 +7,11 @@ import org.junit.jupiter.api.Assertions;
 
 import static com.vaadin.testbench.tests.ui.element.ElementQueryView.ROUTE;
 
-@VaadinTest
+@VaadinTest(navigateTo = ROUTE)
 class ExecuteJavaScriptIT {
 
-    @VaadinTest(navigateTo = ROUTE)
-    void getProperty(GenericTestPageObject po) throws Exception {
+    @VaadinTest
+    void getProperty(GenericTestPageObject po) {
         TestBenchElement button = po.$(NativeButtonElement.class).first();
         Long offsetTop = button.getPropertyDouble("offsetTop").longValue();
         Assertions.assertEquals(Long.valueOf(0), offsetTop);

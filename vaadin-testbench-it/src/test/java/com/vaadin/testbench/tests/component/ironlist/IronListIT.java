@@ -9,25 +9,26 @@ import org.junit.jupiter.api.Assertions;
 import static com.vaadin.flow.component.ironlist.testbench.test.IronListView.HUNDRED_THOUSAND;
 import static com.vaadin.flow.component.ironlist.testbench.test.IronListView.NAV;
 
+@VaadinTest(navigateTo = NAV)
 public class IronListIT extends AbstractIT {
 
-    @VaadinTest(navigateTo = NAV)
-    public void scrollTo(GenericTestPageObject po) throws Exception {
+    @VaadinTest
+    public void scrollTo(GenericTestPageObject po) {
         final IronListElement def = po.$(IronListElement.class).id(HUNDRED_THOUSAND);
 
         def.scrollToRow(1000);
         Assertions.assertEquals(1000.0, def.getFirstVisibleRowIndex(), 2);
     }
 
-    @VaadinTest(navigateTo = NAV)
+    @VaadinTest
     public void rowCount(GenericTestPageObject po) {
         final IronListElement def = po.$(IronListElement.class).id(HUNDRED_THOUSAND);
 
         Assertions.assertEquals(100000, def.getRowCount());
     }
 
-    @VaadinTest(navigateTo = NAV)
-    public void firstLastVisibleRow(GenericTestPageObject po) throws Exception {
+    @VaadinTest
+    public void firstLastVisibleRow(GenericTestPageObject po) {
         final IronListElement def = po.$(IronListElement.class).id(HUNDRED_THOUSAND);
 
         Assertions.assertEquals(0, def.getFirstVisibleRowIndex());

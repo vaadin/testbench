@@ -9,10 +9,11 @@ import org.junit.jupiter.api.Assertions;
 
 import static com.vaadin.flow.component.radiobutton.testbench.test.RadioButtonView.NAV;
 
+@VaadinTest(navigateTo = NAV)
 public class RadioButtonIT extends AbstractIT {
 
-    @VaadinTest(navigateTo = NAV)
-    public void getOptions(GenericTestPageObject po) throws Exception {
+    @VaadinTest
+    public void getOptions(GenericTestPageObject po) {
         final RadioButtonGroupElement def = po.$(RadioButtonGroupElement.class).id(RadioButtonView.DEFAULT);
         final RadioButtonGroupElement preselected = po.$(RadioButtonGroupElement.class)
                 .id(RadioButtonView.PRESELECTED);
@@ -23,8 +24,8 @@ public class RadioButtonIT extends AbstractIT {
                 "Item 3", "Item 4"}, preselected.getOptions().toArray());
     }
 
-    @VaadinTest(navigateTo = NAV)
-    public void getSetByText(GenericTestPageObject po) throws Exception {
+    @VaadinTest
+    public void getSetByText(GenericTestPageObject po) {
         final RadioButtonGroupElement def = po.$(RadioButtonGroupElement.class).id(RadioButtonView.DEFAULT);
         final RadioButtonGroupElement preselected = po.$(RadioButtonGroupElement.class)
                 .id(RadioButtonView.PRESELECTED);
