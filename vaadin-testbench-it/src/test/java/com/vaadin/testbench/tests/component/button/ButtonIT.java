@@ -2,7 +2,7 @@ package com.vaadin.testbench.tests.component.button;
 
 import com.vaadin.flow.component.button.testbench.ButtonElement;
 import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinTest;
-import com.vaadin.testbench.tests.ui.GenericTestPageObject;
+import com.vaadin.testbench.addons.junit5.pageobject.VaadinPageObject;
 import com.vaadin.testbench.tests.component.common.AbstractIT;
 import org.junit.jupiter.api.Assertions;
 
@@ -14,7 +14,7 @@ import static com.vaadin.flow.component.button.testbench.test.ButtonView.TEXT;
 class ButtonIT extends AbstractIT {
 
     @VaadinTest
-    void click(GenericTestPageObject po) {
+    void click(VaadinPageObject po) {
         final ButtonElement buttonWithText = po.$(ButtonElement.class).id(TEXT);
         final ButtonElement buttonWithNoText = po.$(ButtonElement.class).id(NOTEXT);
 
@@ -25,7 +25,7 @@ class ButtonIT extends AbstractIT {
     }
 
     @VaadinTest
-    void getText(GenericTestPageObject po) {
+    void getText(VaadinPageObject po) {
         final ButtonElement buttonWithText = po.$(ButtonElement.class).id(TEXT);
         final ButtonElement buttonWithNoText = po.$(ButtonElement.class).id(NOTEXT);
         Assertions.assertEquals("", buttonWithNoText.getText());

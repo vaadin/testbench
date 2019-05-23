@@ -2,8 +2,8 @@ package com.vaadin.testbench.tests.component.textfield;
 
 import com.vaadin.flow.component.textfield.testbench.TextFieldElement;
 import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinTest;
+import com.vaadin.testbench.addons.junit5.pageobject.VaadinPageObject;
 import com.vaadin.testbench.tests.component.common.AbstractIT;
-import com.vaadin.testbench.tests.ui.GenericTestPageObject;
 import org.junit.jupiter.api.Assertions;
 
 import static com.vaadin.flow.component.textfield.testbench.test.TextFieldView.INITIAL_VALUE;
@@ -16,7 +16,7 @@ import static com.vaadin.flow.component.textfield.testbench.test.TextFieldView.P
 public class TextFieldIT extends AbstractIT {
 
     @VaadinTest
-    public void getSetValue(GenericTestPageObject po) {
+    public void getSetValue(VaadinPageObject po) {
 
         final TextFieldElement labelEager = po.$(TextFieldElement.class).id(LABEL_EAGER);
         final TextFieldElement nolabel = po.$(TextFieldElement.class).id(NOLABEL);
@@ -42,7 +42,7 @@ public class TextFieldIT extends AbstractIT {
     }
 
     @VaadinTest
-    public void getLabelEager(GenericTestPageObject po) {
+    public void getLabelEager(VaadinPageObject po) {
 
         final TextFieldElement labelEager = po.$(TextFieldElement.class).id(LABEL_EAGER);
         final TextFieldElement nolabel = po.$(TextFieldElement.class).id(NOLABEL);
@@ -56,7 +56,7 @@ public class TextFieldIT extends AbstractIT {
     }
 
     @VaadinTest
-    public void getPlaceholder(GenericTestPageObject po) {
+    public void getPlaceholder(VaadinPageObject po) {
 
         final TextFieldElement labelEager = po.$(TextFieldElement.class).id(LABEL_EAGER);
         final TextFieldElement nolabel = po.$(TextFieldElement.class).id(NOLABEL);

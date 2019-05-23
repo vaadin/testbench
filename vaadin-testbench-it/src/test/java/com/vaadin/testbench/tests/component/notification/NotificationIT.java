@@ -4,7 +4,7 @@ import com.vaadin.flow.component.button.testbench.ButtonElement;
 import com.vaadin.flow.component.notification.testbench.NotificationElement;
 import com.vaadin.flow.component.notification.testbench.test.NotificationView;
 import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinTest;
-import com.vaadin.testbench.tests.ui.GenericTestPageObject;
+import com.vaadin.testbench.addons.junit5.pageobject.VaadinPageObject;
 import com.vaadin.testbench.tests.component.common.AbstractIT;
 import org.junit.jupiter.api.Assertions;
 
@@ -16,7 +16,7 @@ import static com.vaadin.flow.component.notification.testbench.test.Notification
 public class NotificationIT extends AbstractIT {
 
     @VaadinTest
-    public void getText(GenericTestPageObject po) {
+    public void getText(VaadinPageObject po) {
         final NotificationElement noText = po.$(NotificationElement.class).id(NotificationView.NOTEXT);
         final NotificationElement text = po.$(NotificationElement.class).id(NotificationView.TEXT);
 
@@ -25,7 +25,7 @@ public class NotificationIT extends AbstractIT {
     }
 
     @VaadinTest
-    public void isOpen(GenericTestPageObject po) {
+    public void isOpen(VaadinPageObject po) {
         final NotificationElement noText = po.$(NotificationElement.class).id(NotificationView.NOTEXT);
         final NotificationElement text = po.$(NotificationElement.class).id(NotificationView.TEXT);
         final NotificationElement components = po.$(NotificationElement.class).id(NotificationView.COMPONENTS);
@@ -38,13 +38,13 @@ public class NotificationIT extends AbstractIT {
     }
 
     @VaadinTest
-    public void findAllNotifications(GenericTestPageObject po) {
+    public void findAllNotifications(VaadinPageObject po) {
         List<NotificationElement> notifications = po.$(NotificationElement.class).all();
         Assertions.assertEquals(3, notifications.size());
     }
 
     @VaadinTest
-    public void componentInsideNotification(GenericTestPageObject po) {
+    public void componentInsideNotification(VaadinPageObject po) {
         final NotificationElement components = po.$(NotificationElement.class).id(NotificationView.COMPONENTS);
 
         ButtonElement hello = components.$(ButtonElement.class).id("hello");

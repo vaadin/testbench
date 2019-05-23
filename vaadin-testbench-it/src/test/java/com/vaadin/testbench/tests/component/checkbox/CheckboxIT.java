@@ -2,8 +2,8 @@ package com.vaadin.testbench.tests.component.checkbox;
 
 import com.vaadin.flow.component.checkbox.testbench.CheckboxElement;
 import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinTest;
+import com.vaadin.testbench.addons.junit5.pageobject.VaadinPageObject;
 import com.vaadin.testbench.tests.component.common.AbstractIT;
-import com.vaadin.testbench.tests.ui.GenericTestPageObject;
 import org.junit.jupiter.api.Assertions;
 
 import static com.vaadin.flow.component.checkbox.testbench.test.CheckboxView.CHECKED;
@@ -15,7 +15,7 @@ import static com.vaadin.flow.component.checkbox.testbench.test.CheckboxView.TEX
 public class CheckboxIT extends AbstractIT {
 
     @VaadinTest
-    public void checkUncheck(GenericTestPageObject po) {
+    public void checkUncheck(VaadinPageObject po) {
         final CheckboxElement checkboxWithText = po.$(CheckboxElement.class).id(TEXT);
         final CheckboxElement checkboxWithNoText = po.$(CheckboxElement.class).id(NOTEXT);
         final CheckboxElement checkboxInitiallyChecked = po.$(CheckboxElement.class).id(CHECKED);
@@ -40,7 +40,7 @@ public class CheckboxIT extends AbstractIT {
     }
 
     @VaadinTest
-    public void getLabel(GenericTestPageObject po) {
+    public void getLabel(VaadinPageObject po) {
         final CheckboxElement checkboxWithText = po.$(CheckboxElement.class).id(TEXT);
         final CheckboxElement checkboxWithNoText = po.$(CheckboxElement.class).id(NOTEXT);
         final CheckboxElement checkboxInitiallyChecked = po.$(CheckboxElement.class).id(CHECKED);

@@ -3,7 +3,7 @@ package com.vaadin.testbench.tests.component.radiobutton;
 import com.vaadin.flow.component.radiobutton.testbench.RadioButtonGroupElement;
 import com.vaadin.flow.component.radiobutton.testbench.test.RadioButtonView;
 import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinTest;
-import com.vaadin.testbench.tests.ui.GenericTestPageObject;
+import com.vaadin.testbench.addons.junit5.pageobject.VaadinPageObject;
 import com.vaadin.testbench.tests.component.common.AbstractIT;
 import org.junit.jupiter.api.Assertions;
 
@@ -13,7 +13,7 @@ import static com.vaadin.flow.component.radiobutton.testbench.test.RadioButtonVi
 public class RadioButtonIT extends AbstractIT {
 
     @VaadinTest
-    public void getOptions(GenericTestPageObject po) {
+    public void getOptions(VaadinPageObject po) {
         final RadioButtonGroupElement def = po.$(RadioButtonGroupElement.class).id(RadioButtonView.DEFAULT);
         final RadioButtonGroupElement preselected = po.$(RadioButtonGroupElement.class)
                 .id(RadioButtonView.PRESELECTED);
@@ -25,7 +25,7 @@ public class RadioButtonIT extends AbstractIT {
     }
 
     @VaadinTest
-    public void getSetByText(GenericTestPageObject po) {
+    public void getSetByText(VaadinPageObject po) {
         final RadioButtonGroupElement def = po.$(RadioButtonGroupElement.class).id(RadioButtonView.DEFAULT);
         final RadioButtonGroupElement preselected = po.$(RadioButtonGroupElement.class)
                 .id(RadioButtonView.PRESELECTED);

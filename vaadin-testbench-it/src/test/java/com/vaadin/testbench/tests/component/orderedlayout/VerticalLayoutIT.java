@@ -3,8 +3,8 @@ package com.vaadin.testbench.tests.component.orderedlayout;
 import com.vaadin.flow.component.orderedlayout.testbench.VerticalLayoutElement;
 import com.vaadin.flow.component.textfield.testbench.TextFieldElement;
 import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinTest;
+import com.vaadin.testbench.addons.junit5.pageobject.VaadinPageObject;
 import com.vaadin.testbench.tests.component.common.AbstractIT;
-import com.vaadin.testbench.tests.ui.GenericTestPageObject;
 import org.junit.jupiter.api.Assertions;
 
 import static com.vaadin.flow.component.orderedlayout.testbench.test.VerticalLayoutView.DEFAULT;
@@ -13,7 +13,7 @@ import static com.vaadin.flow.component.orderedlayout.testbench.test.VerticalLay
 public class VerticalLayoutIT extends AbstractIT {
 
     @VaadinTest(navigateTo = NAV)
-    public void findInside(GenericTestPageObject po) {
+    public void findInside(VaadinPageObject po) {
         final VerticalLayoutElement verticalLayout = po.$(VerticalLayoutElement.class)
                 .id(DEFAULT);
         Assertions.assertEquals(3, po.$(TextFieldElement.class).all().size());

@@ -7,18 +7,15 @@ import com.vaadin.flow.component.grid.testbench.GridTHTDElement;
 import com.vaadin.flow.component.grid.testbench.GridTRElement;
 import com.vaadin.flow.component.grid.testbench.test.GridView;
 import com.vaadin.testbench.TestBenchElement;
-import com.vaadin.testbench.addons.junit5.extensions.container.ContainerInfo;
 import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinTest;
+import com.vaadin.testbench.addons.junit5.pageobject.VaadinPageObject;
 import com.vaadin.testbench.addons.webdriver.SkipBrowsers;
 import com.vaadin.testbench.tests.component.common.AbstractIT;
-import com.vaadin.testbench.tests.ui.GenericTestPageObject;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebDriver;
 
 import java.util.List;
-import java.util.Optional;
 
 import static com.vaadin.testbench.addons.webdriver.BrowserTypes.IE;
 
@@ -29,7 +26,7 @@ public class GridIT extends AbstractIT {
     public static final String AGE = "Age";
 
     @VaadinTest
-    public void scrollToRow(PO po) {
+    public void scrollToRow(VaadinPageObject po) {
         final GridElement header = po.$(GridElement.class).id(GridView.HEADER_MULTISELECT);
         final GridElement noHeader = po.$(GridElement.class).id(GridView.NO_HEADER);
         final GridElement tenMillion = po.$(GridElement.class).id(GridView.TEN_MILLION);
@@ -49,7 +46,7 @@ public class GridIT extends AbstractIT {
     }
 
     @VaadinTest
-    public void getPageSize(PO po) {
+    public void getPageSize(VaadinPageObject po) {
         final GridElement header = po.$(GridElement.class).id(GridView.HEADER_MULTISELECT);
         final GridElement noHeader = po.$(GridElement.class).id(GridView.NO_HEADER);
         final GridElement tenMillion = po.$(GridElement.class).id(GridView.TEN_MILLION);
@@ -59,7 +56,7 @@ public class GridIT extends AbstractIT {
     }
 
     @VaadinTest
-    public void getFirstVisibleRowIndex(PO po) {
+    public void getFirstVisibleRowIndex(VaadinPageObject po) {
         final GridElement header = po.$(GridElement.class).id(GridView.HEADER_MULTISELECT);
         final GridElement noHeader = po.$(GridElement.class).id(GridView.NO_HEADER);
         final GridElement tenMillion = po.$(GridElement.class).id(GridView.TEN_MILLION);
@@ -78,7 +75,7 @@ public class GridIT extends AbstractIT {
     }
 
     @VaadinTest
-    public void getRowCount(PO po) {
+    public void getRowCount(VaadinPageObject po) {
         final GridElement header = po.$(GridElement.class).id(GridView.HEADER_MULTISELECT);
         final GridElement noHeader = po.$(GridElement.class).id(GridView.NO_HEADER);
         final GridElement tenMillion = po.$(GridElement.class).id(GridView.TEN_MILLION);
@@ -89,7 +86,7 @@ public class GridIT extends AbstractIT {
     }
 
     @VaadinTest
-    public void getAllColumns(PO po) {
+    public void getAllColumns(VaadinPageObject po) {
         final GridElement header = po.$(GridElement.class).id(GridView.HEADER_MULTISELECT);
         final GridElement noHeader = po.$(GridElement.class).id(GridView.NO_HEADER);
         final GridElement tenMillion = po.$(GridElement.class).id(GridView.TEN_MILLION);
@@ -113,7 +110,7 @@ public class GridIT extends AbstractIT {
     }
 
     @VaadinTest
-    public void getHeaderCell(PO po) {
+    public void getHeaderCell(VaadinPageObject po) {
         final GridElement header = po.$(GridElement.class).id(GridView.HEADER_MULTISELECT);
         final GridElement noHeader = po.$(GridElement.class).id(GridView.NO_HEADER);
         final GridElement tenMillion = po.$(GridElement.class).id(GridView.TEN_MILLION);
@@ -132,7 +129,7 @@ public class GridIT extends AbstractIT {
     }
 
     @VaadinTest
-    public void getFooterCell(PO po) {
+    public void getFooterCell(VaadinPageObject po) {
         final GridElement header = po.$(GridElement.class).id(GridView.HEADER_MULTISELECT);
         final GridElement noHeader = po.$(GridElement.class).id(GridView.NO_HEADER);
         final GridElement tenMillion = po.$(GridElement.class).id(GridView.TEN_MILLION);
@@ -152,7 +149,7 @@ public class GridIT extends AbstractIT {
     }
 
     @VaadinTest
-    public void getCell(PO po) {
+    public void getCell(VaadinPageObject po) {
         final GridElement header = po.$(GridElement.class).id(GridView.HEADER_MULTISELECT);
         final GridElement noHeader = po.$(GridElement.class).id(GridView.NO_HEADER);
         final GridElement tenMillion = po.$(GridElement.class).id(GridView.TEN_MILLION);
@@ -171,7 +168,7 @@ public class GridIT extends AbstractIT {
     }
 
     @VaadinTest
-    public void getRow(PO po) {
+    public void getRow(VaadinPageObject po) {
         final GridElement header = po.$(GridElement.class).id(GridView.HEADER_MULTISELECT);
 
         GridTRElement row = header.getRow(5);
@@ -182,7 +179,7 @@ public class GridIT extends AbstractIT {
 
     @VaadinTest
     @Disabled
-    public void singleSelect(PO po) {
+    public void singleSelect(VaadinPageObject po) {
         final GridElement noHeader = po.$(GridElement.class).id(GridView.NO_HEADER);
 
         Assertions.assertFalse(noHeader.getRow(4).isSelected());
@@ -218,7 +215,7 @@ public class GridIT extends AbstractIT {
     }
 
     @VaadinTest
-    public void multiSelect(PO po) {
+    public void multiSelect(VaadinPageObject po) {
         final GridElement header = po.$(GridElement.class).id(GridView.HEADER_MULTISELECT);
 
         header.select(0);
@@ -251,7 +248,7 @@ public class GridIT extends AbstractIT {
     }
 
     @VaadinTest
-    public void getCellByContents(PO po) {
+    public void getCellByContents(VaadinPageObject po) {
         final GridElement header = po.$(GridElement.class).id(GridView.HEADER_MULTISELECT);
         final GridElement noHeader = po.$(GridElement.class).id(GridView.NO_HEADER);
 
@@ -270,7 +267,7 @@ public class GridIT extends AbstractIT {
     }
 
     @VaadinTest
-    public void interactWithComponentsInGrid(PO po) {
+    public void interactWithComponentsInGrid(VaadinPageObject po) {
         GridElement components = po.$(GridElement.class).id(GridView.COMPONENTS);
         GridTHTDElement cell = components.getCell(0, 0);
         ButtonElement button = cell.$(ButtonElement.class).first();
@@ -286,7 +283,7 @@ public class GridIT extends AbstractIT {
      */
     @VaadinTest
     @SkipBrowsers(IE)
-    public void detailsRows(PO po) {
+    public void detailsRows(VaadinPageObject po) {
         GridElement details = po.$(GridElement.class).id(GridView.DETAILS);
         GridTHTDElement cell = details.getCell(9, 0);
         cell.click();
@@ -305,17 +302,9 @@ public class GridIT extends AbstractIT {
     }
 
     @VaadinTest
-    public void getCellByContentsOutsideView(PO po) {
+    public void getCellByContentsOutsideView(VaadinPageObject po) {
         Assertions.assertThrows(NoSuchElementException.class, () -> {
             po.$(GridElement.class).id(GridView.TEN_MILLION).getCell("Last name 2000");
         });
-    }
-
-    public static class PO extends GenericTestPageObject {
-
-        public PO(WebDriver webdriver, ContainerInfo containerInfo,
-                  Optional<String> defaultNavigationTarget) {
-            super(webdriver, containerInfo, defaultNavigationTarget);
-        }
     }
 }

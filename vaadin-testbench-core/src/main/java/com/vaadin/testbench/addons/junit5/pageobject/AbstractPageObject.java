@@ -20,20 +20,11 @@ package com.vaadin.testbench.addons.junit5.pageobject;
 import com.vaadin.testbench.addons.junit5.extensions.container.ContainerInfo;
 import org.openqa.selenium.WebDriver;
 
-import java.util.Optional;
-
 public abstract class AbstractPageObject implements PageObject {
 
     private WebDriver driver;
     private ContainerInfo containerInfo;
-    private final Optional<String> defaultNavigationTarget;
-
-    public AbstractPageObject(WebDriver driver, ContainerInfo containerInfo,
-                              Optional<String> defaultNavigationTarget) {
-        setDriver(driver);
-        setContainerInfo(containerInfo);
-        this.defaultNavigationTarget = defaultNavigationTarget;
-    }
+    private String defaultNavigationTarget;
 
     @Override
     public WebDriver getDriver() {
@@ -50,12 +41,18 @@ public abstract class AbstractPageObject implements PageObject {
         return containerInfo;
     }
 
+    @Override
     public void setContainerInfo(ContainerInfo containerInfo) {
         this.containerInfo = containerInfo;
     }
 
     @Override
-    public Optional<String> defaultNavigationTarget() {
+    public void setDefaultNavigationTarget(String defaultNavigationTarget) {
+        this.defaultNavigationTarget = defaultNavigationTarget;
+    }
+
+    @Override
+    public String getDefaultNavigationTarget() {
         return defaultNavigationTarget;
     }
 }

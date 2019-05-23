@@ -2,22 +2,13 @@ package com.vaadin.testbench.tests.ui.demo;
 
 import com.vaadin.flow.component.button.testbench.ButtonElement;
 import com.vaadin.flow.component.html.testbench.SpanElement;
-import com.vaadin.testbench.addons.junit5.extensions.container.ContainerInfo;
-import com.vaadin.testbench.addons.junit5.pageobject.AbstractVaadinPageObject;
-import org.openqa.selenium.WebDriver;
-
-import java.util.Optional;
+import com.vaadin.testbench.addons.junit5.pageobject.VaadinPageObject;
 
 import static com.vaadin.testbench.tests.ui.demo.MainView.BTN_CLICK_ME;
 import static com.vaadin.testbench.tests.ui.demo.MainView.LB_CLICK_COUNT;
 import static java.lang.Integer.valueOf;
 
-public class VaadinAppPageObject extends AbstractVaadinPageObject {
-
-    public VaadinAppPageObject(WebDriver webdriver, ContainerInfo containerInfo,
-                               Optional<String> defaultNavigationTarget) {
-        super(webdriver, containerInfo, defaultNavigationTarget);
-    }
+public class VaadinAppPageObject extends VaadinPageObject {
 
     public ButtonElement btnClickMe() {
         return $(ButtonElement.class).id(BTN_CLICK_ME);

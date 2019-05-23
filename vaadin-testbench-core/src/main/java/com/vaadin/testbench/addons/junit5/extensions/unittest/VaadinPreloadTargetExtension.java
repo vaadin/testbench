@@ -22,6 +22,7 @@ import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
 import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import static com.vaadin.testbench.addons.junit5.extensions.ExtensionFunctions.storeMethodPlain;
@@ -36,46 +37,43 @@ public class VaadinPreloadTargetExtension implements BeforeEachCallback {
     public void beforeEach(ExtensionContext context)  {
         context.getTestMethod()
                 .ifPresent(method -> {
-                    final LoadMode loadMode = findLoadMode(method);
-                    final boolean preLoad = loadMode != LoadMode.NO_PRELOAD;
-                    storeMethodPlain(context).put(PAGE_OBJECT_PRELOAD, preLoad);
+                    try {
+                        final LoadMode loadMode = findAnnotationParameter(method,
+                                VaadinTest.class.getMethod("loadMode"), LoadMode.DEFAULT);
+                        final boolean preLoad = loadMode != LoadMode.NO_PRELOAD;
+                        storeMethodPlain(context).put(PAGE_OBJECT_PRELOAD, preLoad);
 
-                    final String target = findNavigationTarget(method);
-                    if (!DEFAULT_NAVIGATION_TARGET.equals(target)) {
-                        storeMethodPlain(context).put(PAGE_OBJECT_NAVIGATION_TARGET, target);
+                        final String target = findAnnotationParameter(method,
+                                VaadinTest.class.getMethod("navigateTo"), DEFAULT_NAVIGATION_TARGET);
+                        if (!DEFAULT_NAVIGATION_TARGET.equals(target)) {
+                            storeMethodPlain(context).put(PAGE_OBJECT_NAVIGATION_TARGET, target);
+                        }
+                    } catch (Exception e) {
+                        throw new RuntimeException("Unable to detect test page navigation details", e);
                     }
                 });
     }
 
-    private String findNavigationTarget(AnnotatedElement element) {
+    private <ResultType> ResultType findAnnotationParameter(AnnotatedElement element,
+                                                            Method supplier,
+                                                            ResultType defaultValue)
+            throws InvocationTargetException, IllegalAccessException {
+
         if (element == Object.class) {
-            return DEFAULT_NAVIGATION_TARGET;
+            return defaultValue;
         }
 
         final VaadinTest annotation = element.getAnnotation(VaadinTest.class);
 
-        if (annotation == null || DEFAULT_NAVIGATION_TARGET.equals(annotation.navigateTo())) {
-            return findNavigationTarget(element instanceof Method
+        final ResultType result = (ResultType) supplier.invoke(annotation);
+        if (annotation == null || defaultValue.equals(result)) {
+            final AnnotatedElement parent = element instanceof Method
                     ? ((Method) element).getDeclaringClass()
-                    : ((Class) element).getSuperclass());
+                    : ((Class) element).getSuperclass();
+
+            return findAnnotationParameter(parent, supplier, defaultValue);
         }
 
-        return annotation.navigateTo();
-    }
-
-    private LoadMode findLoadMode(AnnotatedElement element) {
-        if (element == Object.class) {
-            return LoadMode.DEFAULT;
-        }
-
-        final VaadinTest annotation = element.getAnnotation(VaadinTest.class);
-
-        if (annotation == null || LoadMode.DEFAULT == annotation.loadMode()) {
-            return findLoadMode(element instanceof Method
-                    ? ((Method) element).getDeclaringClass()
-                    : ((Class) element).getSuperclass());
-        }
-
-        return annotation.loadMode();
+        return result;
     }
 }

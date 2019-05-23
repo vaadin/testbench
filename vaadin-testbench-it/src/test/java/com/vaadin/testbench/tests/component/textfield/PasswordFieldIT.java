@@ -2,7 +2,7 @@ package com.vaadin.testbench.tests.component.textfield;
 
 import com.vaadin.flow.component.textfield.testbench.PasswordFieldElement;
 import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinTest;
-import com.vaadin.testbench.tests.ui.GenericTestPageObject;
+import com.vaadin.testbench.addons.junit5.pageobject.VaadinPageObject;
 import com.vaadin.testbench.tests.component.common.AbstractIT;
 import org.junit.jupiter.api.Assertions;
 
@@ -16,7 +16,7 @@ import static com.vaadin.flow.component.textfield.testbench.test.PasswordFieldVi
 public class PasswordFieldIT extends AbstractIT {
 
     @VaadinTest
-    public void getSetValue(GenericTestPageObject po) {
+    public void getSetValue(VaadinPageObject po) {
 
         final PasswordFieldElement labelEager = po.$(PasswordFieldElement.class).id(LABEL_EAGER);
         final PasswordFieldElement nolabel = po.$(PasswordFieldElement.class).id(NOLABEL);
@@ -42,7 +42,7 @@ public class PasswordFieldIT extends AbstractIT {
     }
 
     @VaadinTest
-    public void getLabelEager(GenericTestPageObject po) {
+    public void getLabelEager(VaadinPageObject po) {
 
         final PasswordFieldElement labelEager = po.$(PasswordFieldElement.class).id(LABEL_EAGER);
         final PasswordFieldElement nolabel = po.$(PasswordFieldElement.class).id(NOLABEL);
@@ -56,7 +56,7 @@ public class PasswordFieldIT extends AbstractIT {
     }
 
     @VaadinTest
-    public void getPlaceholder(GenericTestPageObject po) {
+    public void getPlaceholder(VaadinPageObject po) {
 
         final PasswordFieldElement labelEager = po.$(PasswordFieldElement.class).id(LABEL_EAGER);
         final PasswordFieldElement nolabel = po.$(PasswordFieldElement.class).id(NOLABEL);
@@ -70,7 +70,7 @@ public class PasswordFieldIT extends AbstractIT {
     }
 
     @VaadinTest
-    public void passwordVisible(GenericTestPageObject po) {
+    public void passwordVisible(VaadinPageObject po) {
 
         final PasswordFieldElement labelEager = po.$(PasswordFieldElement.class).id(LABEL_EAGER);
         final PasswordFieldElement nolabel = po.$(PasswordFieldElement.class).id(NOLABEL);

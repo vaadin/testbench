@@ -2,7 +2,7 @@ package com.vaadin.testbench.tests.ui.element;
 
 import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinTest;
-import com.vaadin.testbench.tests.ui.GenericTestPageObject;
+import com.vaadin.testbench.addons.junit5.pageobject.VaadinPageObject;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.openqa.selenium.By;
@@ -17,12 +17,12 @@ class ElementScreenCompareIT {
     private static final int SCREENSHOT_WIDTH = 600;
 
     @BeforeEach
-    void setUp(GenericTestPageObject po) {
+    void setUp(VaadinPageObject po) {
         po.getCommandExecutor().resizeViewPortTo(SCREENSHOT_WIDTH, SCREENSHOT_HEIGHT);
     }
 
     @VaadinTest
-    void elementCompareScreen(GenericTestPageObject po) throws Exception {
+    void elementCompareScreen(VaadinPageObject po) throws Exception {
         TestBenchElement button4 = po.$(NativeButtonElement.class).get(4);
         button4.getScreenshotAs(OutputType.BYTES);
 

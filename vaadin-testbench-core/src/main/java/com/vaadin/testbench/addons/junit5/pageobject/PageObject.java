@@ -19,21 +19,19 @@ package com.vaadin.testbench.addons.junit5.pageobject;
 
 import com.vaadin.testbench.addons.junit5.extensions.container.HasContainerInfo;
 import com.vaadin.testbench.addons.junit5.extensions.container.NetworkFunctions;
+import com.vaadin.testbench.addons.webdriver.HasDefaultNavigationTarget;
 import com.vaadin.testbench.addons.webdriver.HasDriver;
 
-import java.util.Optional;
-
 import static com.vaadin.testbench.addons.webdriver.WebDriverFunctions.takeScreenshot;
-import static com.vaadin.testbench.addons.webdriver.WebDriverFunctions.webdriverName;
 import static java.lang.System.getProperties;
 
-public interface PageObject extends HasContainerInfo, HasDriver {
+public interface PageObject extends HasContainerInfo, HasDriver, HasDefaultNavigationTarget {
 
     String BACK_SLASH = "/";
 
     default void loadPage() {
-        if (defaultNavigationTarget().isPresent()) {
-            loadPage(defaultNavigationTarget().get());
+        if (getDefaultNavigationTarget() != null) {
+            loadPage(getDefaultNavigationTarget());
         } else {
             getDriver().get(url());
         }
@@ -91,10 +89,4 @@ public interface PageObject extends HasContainerInfo, HasDriver {
     default void screenshot() {
         takeScreenshot(getDriver());
     }
-
-    default String driverName() {
-        return webdriverName(getDriver());
-    }
-
-    Optional<String> defaultNavigationTarget();
 }

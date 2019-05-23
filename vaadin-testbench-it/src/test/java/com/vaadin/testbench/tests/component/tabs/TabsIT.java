@@ -3,9 +3,9 @@ package com.vaadin.testbench.tests.component.tabs;
 import com.vaadin.flow.component.button.testbench.ButtonElement;
 import com.vaadin.flow.component.tabs.testbench.TabsElement;
 import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinTest;
+import com.vaadin.testbench.addons.junit5.pageobject.VaadinPageObject;
 import com.vaadin.testbench.addons.webdriver.SkipBrowsers;
 import com.vaadin.testbench.tests.component.common.AbstractIT;
-import com.vaadin.testbench.tests.ui.GenericTestPageObject;
 import org.junit.jupiter.api.Assertions;
 
 import static com.vaadin.flow.component.tabs.testbench.test.TabsView.DEFAULT;
@@ -20,7 +20,7 @@ public class TabsIT extends AbstractIT {
     private static final String DISABLED = "Disabled";
 
     @VaadinTest
-    public void selectTabByIndex(GenericTestPageObject po) {
+    public void selectTabByIndex(VaadinPageObject po) {
         final TabsElement def = po.$(TabsElement.class).id(DEFAULT);
         Assertions.assertEquals(0, def.getSelectedTabIndex());
         def.setSelectedTabIndex(2);
@@ -36,7 +36,7 @@ public class TabsIT extends AbstractIT {
      */
     @VaadinTest
     @SkipBrowsers(value = {FIREFOX, IE})
-    public void getSelectedTabElement(GenericTestPageObject po) {
+    public void getSelectedTabElement(VaadinPageObject po) {
         final TabsElement def = po.$(TabsElement.class).id(DEFAULT);
 
         def.getSelectedTabElement().$(ButtonElement.class).first().click();
@@ -46,7 +46,7 @@ public class TabsIT extends AbstractIT {
     }
 
     @VaadinTest
-    public void getTab(GenericTestPageObject po) {
+    public void getTab(VaadinPageObject po) {
         final TabsElement def = po.$(TabsElement.class).id(DEFAULT);
 
         Assertions.assertEquals(1, def.getTab(DISABLED));
@@ -54,7 +54,7 @@ public class TabsIT extends AbstractIT {
     }
 
     @VaadinTest
-    public void isEnabled(GenericTestPageObject po) {
+    public void isEnabled(VaadinPageObject po) {
         final TabsElement def = po.$(TabsElement.class).id(DEFAULT);
 
         Assertions.assertTrue(def.getTabElement(TEXT).isEnabled());

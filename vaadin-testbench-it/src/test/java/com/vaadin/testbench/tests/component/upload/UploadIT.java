@@ -2,8 +2,8 @@ package com.vaadin.testbench.tests.component.upload;
 
 import com.vaadin.flow.component.upload.testbench.UploadElement;
 import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinTest;
+import com.vaadin.testbench.addons.junit5.pageobject.VaadinPageObject;
 import com.vaadin.testbench.addons.webdriver.SkipBrowsers;
-import com.vaadin.testbench.tests.ui.GenericTestPageObject;
 import com.vaadin.testbench.tests.component.common.AbstractIT;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
@@ -36,7 +36,7 @@ public class UploadIT extends AbstractIT {
     @VaadinTest
     @SkipBrowsers({SAFARI, FIREFOX})
     @Disabled("Can't be tested automatically")
-    public void upload(GenericTestPageObject po) throws Exception {
+    public void upload(VaadinPageObject po) throws Exception {
         byte[] file1Contents = "This is file 1"
                 .getBytes(UTF_8);
         byte[] file2Contents = "This is another åäö file"
@@ -62,7 +62,7 @@ public class UploadIT extends AbstractIT {
     @Disabled("Can't be tested automatically")
     // The upload finishes so quickly from localhost. Would need a huge file to
     // be created or throttling support
-    public void abortUpload(GenericTestPageObject po) {
+    public void abortUpload(VaadinPageObject po) {
         logger().warn("To test manually, remove @Ignore and set a " +
                 "breakpoint on the abort() line. Then start uploading " +
                 "a huge file after hitting the breakpoint and continue with the test");

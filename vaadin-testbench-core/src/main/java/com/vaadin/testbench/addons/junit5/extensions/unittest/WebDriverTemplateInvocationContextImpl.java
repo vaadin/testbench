@@ -82,17 +82,16 @@ public final class WebDriverTemplateInvocationContextImpl implements WebDriverTe
 
                 PageObject pageObject;
                 try {
-                    final Constructor<?> constructor
-                            = pageObjectClass.getConstructor(WebDriver.class, ContainerInfo.class, Optional.class);
-                    WebDriver webDriver = webdriver();
-                    pageObject = (PageObject) constructor.newInstance(webDriver,
-                            containerInfo(extensionContext),
-                            ExtensionFunctions.valueAsString(
-                                    PAGE_OBJECT_NAVIGATION_TARGET, extensionContext)
-                    );
+                    final Constructor<?> constructor = pageObjectClass.getConstructor();
+                    pageObject = (PageObject) constructor.newInstance();
+                    pageObject.setDriver(webdriver());
+                    pageObject.setContainerInfo(containerInfo(extensionContext));
+                    ExtensionFunctions
+                            .valueAsString(PAGE_OBJECT_NAVIGATION_TARGET, extensionContext)
+                            .ifPresent(pageObject::setDefaultNavigationTarget);
                 } catch (Exception e) {
                     throw new ParameterResolutionException("Unable to create PageObjectInstance of type "
-                            + pageObjectClass, e);
+                            + pageObjectClass + ". Accessible no-arg constructor needed.", e);
                 }
 
                 // TODO(sven): Check if needed.
@@ -100,15 +99,9 @@ public final class WebDriverTemplateInvocationContextImpl implements WebDriverTe
 
                 // TODO(sven): Work on preload feature.
 
-                final Boolean proload = storeMethodPlain(extensionContext).get(PAGE_OBJECT_PRELOAD, Boolean.class);
-                if (proload) {
-                    final String nav = storeMethodPlain(extensionContext).get(
-                            PAGE_OBJECT_NAVIGATION_TARGET, String.class);
-                    if (nav != null) {
-                        pageObject.loadPage(nav);
-                    } else {
-                        pageObject.loadPage();
-                    }
+                final boolean preload = storeMethodPlain(extensionContext).get(PAGE_OBJECT_PRELOAD, Boolean.class);
+                if (preload) {
+                    pageObject.loadPage();
                 } else {
                     logger().info("No preloading activated for testClass/testMethod "
                             + extensionContext.getTestClass() + " / "
