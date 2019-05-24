@@ -2,32 +2,33 @@ package com.vaadin.testbench.tests.component.ironlist;
 
 import com.vaadin.flow.component.ironlist.testbench.IronListElement;
 import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinTest;
+import com.vaadin.testbench.addons.junit5.pageobject.VaadinPageObject;
 import com.vaadin.testbench.tests.component.common.AbstractIT;
-import com.vaadin.testbench.tests.ui.GenericTestPageObject;
 import org.junit.jupiter.api.Assertions;
 
 import static com.vaadin.flow.component.ironlist.testbench.test.IronListView.HUNDRED_THOUSAND;
 import static com.vaadin.flow.component.ironlist.testbench.test.IronListView.NAV;
 
+@VaadinTest(navigateTo = NAV)
 public class IronListIT extends AbstractIT {
 
-    @VaadinTest(navigateTo = NAV)
-    public void scrollTo(GenericTestPageObject po) throws Exception {
+    @VaadinTest
+    public void scrollTo(VaadinPageObject po) {
         final IronListElement def = po.$(IronListElement.class).id(HUNDRED_THOUSAND);
 
         def.scrollToRow(1000);
         Assertions.assertEquals(1000.0, def.getFirstVisibleRowIndex(), 2);
     }
 
-    @VaadinTest(navigateTo = NAV)
-    public void rowCount(GenericTestPageObject po) {
+    @VaadinTest
+    public void rowCount(VaadinPageObject po) {
         final IronListElement def = po.$(IronListElement.class).id(HUNDRED_THOUSAND);
 
         Assertions.assertEquals(100000, def.getRowCount());
     }
 
-    @VaadinTest(navigateTo = NAV)
-    public void firstLastVisibleRow(GenericTestPageObject po) throws Exception {
+    @VaadinTest
+    public void firstLastVisibleRow(VaadinPageObject po) {
         final IronListElement def = po.$(IronListElement.class).id(HUNDRED_THOUSAND);
 
         Assertions.assertEquals(0, def.getFirstVisibleRowIndex());

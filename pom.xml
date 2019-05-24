@@ -71,8 +71,8 @@
     <slf4j.version>1.7.25</slf4j.version>
     <log4j-api.version>2.11.2</log4j-api.version>
 
-    <junit.jupiter.version>5.4.0</junit.jupiter.version>
-    <junit.platform.version>1.4.0</junit.platform.version>
+    <junit.jupiter.version>5.5.0-M1</junit.jupiter.version>
+    <junit.platform.version>1.5.0-M1</junit.platform.version>
     <junit-platform-maven-plugin.version>1.0.0-M5</junit-platform-maven-plugin.version>
 
     <jacoco.version>0.8.3</jacoco.version>

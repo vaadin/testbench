@@ -3,7 +3,7 @@ package com.vaadin.testbench.tests.component.datepicker;
 import com.vaadin.flow.component.datepicker.testbench.DatePickerElement;
 import com.vaadin.flow.component.datepicker.testbench.test.DatePickerView;
 import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinTest;
-import com.vaadin.testbench.tests.ui.GenericTestPageObject;
+import com.vaadin.testbench.addons.junit5.pageobject.VaadinPageObject;
 import com.vaadin.testbench.tests.component.common.AbstractIT;
 import org.junit.jupiter.api.Assertions;
 
@@ -11,10 +11,11 @@ import java.time.LocalDate;
 
 import static com.vaadin.flow.component.datepicker.testbench.test.DatePickerView.NAV;
 
+@VaadinTest(navigateTo = NAV)
 public class DatePickerIT extends AbstractIT {
 
-    @VaadinTest(navigateTo = NAV)
-    public void setGetDate(GenericTestPageObject po) throws Exception {
+    @VaadinTest
+    public void setGetDate(VaadinPageObject po) {
         final DatePickerElement datePickerWithText = po.$(DatePickerElement.class).id(DatePickerView.TEXT);
         final DatePickerElement datePickerWithNoText = po.$(DatePickerElement.class).id(DatePickerView.NOTEXT);
         final DatePickerElement datePickerWithPreSelectedDate
@@ -45,8 +46,8 @@ public class DatePickerIT extends AbstractIT {
 
     }
 
-    @VaadinTest(navigateTo = NAV)
-    public void clear(GenericTestPageObject po) {
+    @VaadinTest
+    public void clear(VaadinPageObject po) {
         final DatePickerElement datePickerWithText = po.$(DatePickerElement.class).id(DatePickerView.TEXT);
         final DatePickerElement datePickerWithNoText = po.$(DatePickerElement.class).id(DatePickerView.NOTEXT);
         final DatePickerElement datePickerWithPreSelectedDate
@@ -61,8 +62,8 @@ public class DatePickerIT extends AbstractIT {
 
     }
 
-    @VaadinTest(navigateTo = NAV)
-    public void getLabel(GenericTestPageObject po) throws Exception {
+    @VaadinTest
+    public void getLabel(VaadinPageObject po) {
         final DatePickerElement datePickerWithText = po.$(DatePickerElement.class).id(DatePickerView.TEXT);
         final DatePickerElement datePickerWithNoText = po.$(DatePickerElement.class).id(DatePickerView.NOTEXT);
 

@@ -18,6 +18,7 @@ package com.vaadin.testbench.addons.junit5.extensions.unittest;
  */
 
 import com.github.webdriverextensions.WebDriverExtensionFieldDecorator;
+import com.vaadin.testbench.addons.junit5.extensions.ExtensionFunctions;
 import com.vaadin.testbench.addons.junit5.extensions.container.ContainerInfo;
 import com.vaadin.testbench.addons.junit5.pageobject.PageObject;
 import org.junit.jupiter.api.extension.Extension;
@@ -29,6 +30,7 @@ import org.openqa.selenium.WebDriver;
 
 import java.lang.reflect.Constructor;
 import java.util.List;
+import java.util.Optional;
 
 import static com.vaadin.testbench.TestBenchLogger.logger;
 import static com.vaadin.testbench.addons.junit5.extensions.ExtensionFunctions.storeMethodPlain;
@@ -43,12 +45,8 @@ import static org.openqa.selenium.support.PageFactory.initElements;
 public final class WebDriverTemplateInvocationContextImpl implements WebDriverTemplateInvocationContext {
 
     private final WebDriver webDriver;
-    private PageObjectInvocationContextProvider pageObjectInvocationContextProvider;
 
-    protected WebDriverTemplateInvocationContextImpl(
-            PageObjectInvocationContextProvider pageObjectInvocationContextProvider,
-            WebDriver webDriver) {
-        this.pageObjectInvocationContextProvider = pageObjectInvocationContextProvider;
+    protected WebDriverTemplateInvocationContextImpl(WebDriver webDriver) {
         this.webDriver = webDriver;
     }
 
@@ -82,15 +80,18 @@ public final class WebDriverTemplateInvocationContextImpl implements WebDriverTe
                         .getParameter()
                         .getType();
 
-                PageObject pageObject = null;
+                PageObject pageObject;
                 try {
-                    final Constructor<?> constructor
-                            = pageObjectClass.getConstructor(WebDriver.class, ContainerInfo.class);
-                    WebDriver webDriver = webdriver();
-                    pageObject = (PageObject) constructor.newInstance(webDriver, containerInfo(extensionContext));
+                    final Constructor<?> constructor = pageObjectClass.getConstructor();
+                    pageObject = (PageObject) constructor.newInstance();
+                    pageObject.setDriver(webdriver());
+                    pageObject.setContainerInfo(containerInfo(extensionContext));
+                    ExtensionFunctions
+                            .valueAsString(PAGE_OBJECT_NAVIGATION_TARGET, extensionContext)
+                            .ifPresent(pageObject::setDefaultNavigationTarget);
                 } catch (Exception e) {
                     throw new ParameterResolutionException("Unable to create PageObjectInstance of type "
-                            + pageObjectClass);
+                            + pageObjectClass + ". Accessible no-arg constructor needed.", e);
                 }
 
                 // TODO(sven): Check if needed.
@@ -98,17 +99,11 @@ public final class WebDriverTemplateInvocationContextImpl implements WebDriverTe
 
                 // TODO(sven): Work on preload feature.
 
-                final Boolean preLoad = storeMethodPlain(extensionContext).get(PAGE_OBJECT_PRELOAD, Boolean.class);
-                if (preLoad) {
-                    final String nav = storeMethodPlain(extensionContext).get(
-                            PAGE_OBJECT_NAVIGATION_TARGET, String.class);
-                    if (nav != null) {
-                        pageObject.loadPage(nav);
-                    } else {
-                        pageObject.loadPage();
-                    }
+                final boolean preload = storeMethodPlain(extensionContext).get(PAGE_OBJECT_PRELOAD, Boolean.class);
+                if (preload) {
+                    pageObject.loadPage();
                 } else {
-                    logger().info("No preLoading activated for testClass/testMethod "
+                    logger().info("No preloading activated for testClass/testMethod "
                             + extensionContext.getTestClass() + " / "
                             + extensionContext.getTestMethod());
                 }

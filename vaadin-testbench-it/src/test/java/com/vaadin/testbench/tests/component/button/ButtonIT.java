@@ -2,22 +2,19 @@ package com.vaadin.testbench.tests.component.button;
 
 import com.vaadin.flow.component.button.testbench.ButtonElement;
 import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinTest;
-import com.vaadin.testbench.tests.ui.GenericTestPageObject;
+import com.vaadin.testbench.addons.junit5.pageobject.VaadinPageObject;
 import com.vaadin.testbench.tests.component.common.AbstractIT;
 import org.junit.jupiter.api.Assertions;
 
 import static com.vaadin.flow.component.button.testbench.test.ButtonView.NAV;
 import static com.vaadin.flow.component.button.testbench.test.ButtonView.NOTEXT;
 import static com.vaadin.flow.component.button.testbench.test.ButtonView.TEXT;
-import static com.vaadin.testbench.LoadMode.NO_PRELOAD;
 
-@VaadinTest
+@VaadinTest(navigateTo = NAV)
 class ButtonIT extends AbstractIT {
 
-    @VaadinTest(loadMode = NO_PRELOAD)
-    void click(GenericTestPageObject po) {
-        po.loadPage(NAV);
-
+    @VaadinTest
+    void click(VaadinPageObject po) {
         final ButtonElement buttonWithText = po.$(ButtonElement.class).id(TEXT);
         final ButtonElement buttonWithNoText = po.$(ButtonElement.class).id(NOTEXT);
 
@@ -28,9 +25,7 @@ class ButtonIT extends AbstractIT {
     }
 
     @VaadinTest
-    void getText(GenericTestPageObject po) {
-        po.loadPage(NAV);
-
+    void getText(VaadinPageObject po) {
         final ButtonElement buttonWithText = po.$(ButtonElement.class).id(TEXT);
         final ButtonElement buttonWithNoText = po.$(ButtonElement.class).id(NOTEXT);
         Assertions.assertEquals("", buttonWithNoText.getText());

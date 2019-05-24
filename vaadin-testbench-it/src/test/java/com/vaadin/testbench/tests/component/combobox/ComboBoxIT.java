@@ -1,12 +1,10 @@
 package com.vaadin.testbench.tests.component.combobox;
 
 import com.vaadin.flow.component.combobox.testbench.ComboBoxElement;
-import com.vaadin.testbench.addons.junit5.extensions.container.ContainerInfo;
 import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinTest;
+import com.vaadin.testbench.addons.junit5.pageobject.VaadinPageObject;
 import com.vaadin.testbench.tests.component.common.AbstractIT;
-import com.vaadin.testbench.tests.ui.GenericTestPageObject;
 import org.junit.jupiter.api.Assertions;
-import org.openqa.selenium.WebDriver;
 
 import java.util.stream.IntStream;
 
@@ -24,11 +22,11 @@ import static com.vaadin.flow.component.combobox.testbench.test.ComboBoxView.PRE
 import static com.vaadin.flow.component.combobox.testbench.test.ComboBoxView.TEXT;
 import static com.vaadin.flow.component.combobox.testbench.test.ComboBoxView.TEXT_WITH_PRE_SLELECTED_VALUE;
 
+@VaadinTest(navigateTo = NAV)
 public class ComboBoxIT extends AbstractIT {
 
     @VaadinTest
-    public void getLabel(PO po) throws Exception {
-
+    public void getLabel(VaadinPageObject po) {
         final ComboBoxElement comboBoxWithText = po.$(ComboBoxElement.class).id(TEXT);
         final ComboBoxElement comboBoxWithNoText = po.$(ComboBoxElement.class).id(NOTEXT);
         final ComboBoxElement comboBoxWithBeans = po.$(ComboBoxElement.class).id(BEANS);
@@ -41,8 +39,7 @@ public class ComboBoxIT extends AbstractIT {
     }
 
     @VaadinTest
-    public void selectByText(PO po) throws Exception {
-
+    public void selectByText(VaadinPageObject po) {
         final ComboBoxElement comboBoxWithText = po.$(ComboBoxElement.class).id(TEXT);
         final ComboBoxElement comboBoxWithNoText = po.$(ComboBoxElement.class).id(NOTEXT);
         final ComboBoxElement comboBoxWithBeans = po.$(ComboBoxElement.class).id(BEANS);
@@ -76,8 +73,7 @@ public class ComboBoxIT extends AbstractIT {
     }
 
     @VaadinTest
-    public void getSelectedText(PO po) {
-
+    public void getSelectedText(VaadinPageObject po) {
         final ComboBoxElement comboBoxWithTextWithPreSelectedValue
                 = po.$(ComboBoxElement.class).id(TEXT_WITH_PRE_SLELECTED_VALUE);
         final ComboBoxElement comboBoxWithNoTextWithPreSelectedValue
@@ -99,8 +95,7 @@ public class ComboBoxIT extends AbstractIT {
     }
 
     @VaadinTest
-    public void openCloseIsOpenPopup(PO po) throws Exception {
-
+    public void openCloseIsOpenPopup(VaadinPageObject po) {
         final ComboBoxElement comboBoxWithText = po.$(ComboBoxElement.class).id(TEXT);
         comboBoxWithText.openPopup();
         Assertions.assertTrue(comboBoxWithText.isPopupOpen());
@@ -109,8 +104,7 @@ public class ComboBoxIT extends AbstractIT {
     }
 
     @VaadinTest
-    public void getPopupSuggestions(PO po) throws Exception {
-
+    public void getPopupSuggestions(VaadinPageObject po) {
         final ComboBoxElement comboBoxWithText = po.$(ComboBoxElement.class).id(TEXT);
         final ComboBoxElement comboBoxWithNoText = po.$(ComboBoxElement.class).id(NOTEXT);
         final ComboBoxElement comboBoxWithBeans = po.$(ComboBoxElement.class).id(BEANS);
@@ -127,8 +121,7 @@ public class ComboBoxIT extends AbstractIT {
     }
 
     @VaadinTest
-    public void filter(PO po) {
-
+    public void filter(VaadinPageObject po) {
         final ComboBoxElement comboBoxWithText = po.$(ComboBoxElement.class).id(TEXT);
         final ComboBoxElement comboBoxWithNoText = po.$(ComboBoxElement.class).id(NOTEXT);
         final ComboBoxElement comboBoxWithBeans = po.$(ComboBoxElement.class).id(BEANS);
@@ -146,18 +139,6 @@ public class ComboBoxIT extends AbstractIT {
         Assertions.assertArrayEquals(new String[]{"Doe, John", "Johnson, Jeff"},
                 comboBoxWithBeans.getOptions().toArray());
 
-    }
-
-    public static class PO extends GenericTestPageObject {
-
-        public PO(WebDriver webdriver, ContainerInfo containerInfo) {
-            super(webdriver, containerInfo);
-        }
-
-        @Override
-        public void loadPage() {
-            loadPage(NAV);
-        }
     }
 
 }

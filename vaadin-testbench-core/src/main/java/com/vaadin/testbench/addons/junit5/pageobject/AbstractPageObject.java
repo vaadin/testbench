@@ -24,11 +24,7 @@ public abstract class AbstractPageObject implements PageObject {
 
     private WebDriver driver;
     private ContainerInfo containerInfo;
-
-    public AbstractPageObject(WebDriver webdriver, ContainerInfo containerInfo) {
-        setDriver(webdriver);
-        setContainerInfo(containerInfo);
-    }
+    private String defaultNavigationTarget;
 
     @Override
     public WebDriver getDriver() {
@@ -45,7 +41,18 @@ public abstract class AbstractPageObject implements PageObject {
         return containerInfo;
     }
 
+    @Override
     public void setContainerInfo(ContainerInfo containerInfo) {
         this.containerInfo = containerInfo;
+    }
+
+    @Override
+    public void setDefaultNavigationTarget(String defaultNavigationTarget) {
+        this.defaultNavigationTarget = defaultNavigationTarget;
+    }
+
+    @Override
+    public String getDefaultNavigationTarget() {
+        return defaultNavigationTarget;
     }
 }

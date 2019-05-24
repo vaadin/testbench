@@ -2,6 +2,7 @@ package com.vaadin.testbench.tests.ui;
 
 import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinTest;
+import com.vaadin.testbench.addons.junit5.pageobject.VaadinPageObject;
 import com.vaadin.testbench.annotations.Attribute;
 import org.junit.jupiter.api.Assertions;
 
@@ -9,11 +10,11 @@ import java.util.List;
 
 import static com.vaadin.testbench.tests.ui.PageObjectView.ROUTE;
 
-@VaadinTest
+@VaadinTest(navigateTo = ROUTE)
 class PageObjectIT {
 
-    @VaadinTest(navigateTo = ROUTE)
-    void findUsingValueAnnotation(GenericTestPageObject po) {
+    @VaadinTest
+    void findUsingValueAnnotation(VaadinPageObject po) {
         List<MyComponentWithIdElement> components = po.$(
                 MyComponentWithIdElement.class).all();
 
@@ -21,8 +22,8 @@ class PageObjectIT {
         Assertions.assertEquals("MyComponentWithId", components.get(0).getText());
     }
 
-    @VaadinTest(navigateTo = ROUTE)
-    void findUsingContainsAnnotation(GenericTestPageObject po) {
+    @VaadinTest
+    void findUsingContainsAnnotation(VaadinPageObject po) {
         List<MyComponentWithClassesElement> components = po.$(
                 MyComponentWithClassesElement.class).all();
 

@@ -17,19 +17,60 @@ package com.vaadin.testbench.addons.junit5.pageobject;
  * #L%
  */
 
+import com.vaadin.testbench.ElementQuery;
+import com.vaadin.testbench.TestBenchElement;
+import com.vaadin.testbench.TestBenchTestCase;
+import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.proxy.TestBenchDriverProxy;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+
+import java.util.List;
 
 import static com.vaadin.testbench.addons.testbench.TestbenchFunctions.unproxy;
 import static com.vaadin.testbench.addons.webdriver.WebDriverFunctions.webdriverName;
 
-public interface VaadinPageObject extends GenericVaadinAppSpecific {
+public class VaadinPageObject extends AbstractPageObject {
 
-    String NO_DRIVER = "NoDriver";
+    private static final String NO_DRIVER = "NoDriver";
 
-    default String driverName() {
+    private TestBenchTestCase testCase = new TestBenchTestCase() { };
+
+    @Override
+    public void setDriver(WebDriver driver) {
+        // Testbench-specific init.
+        testCase.setDriver(driver);
+        super.setDriver(testCase.getDriver());
+    }
+
+    public String driverName() {
         final WebDriver driver = getDriver();
         return driver == null ? NO_DRIVER : webdriverName(
                 driver instanceof TestBenchDriverProxy ? unproxy(driver) : driver);
+    }
+
+    public <T extends TestBenchElement> ElementQuery<T> $(Class<T> clazz) {
+        return testCase.$(clazz);
+    }
+
+    public ElementQuery<TestBenchElement> $(String tagName) {
+        return testCase.$(tagName);
+    }
+
+    public TestBenchCommandExecutor getCommandExecutor() {
+        return testCase.getCommandExecutor();
+    }
+
+    public WebElement findElement(By by) {
+        return testCase.findElement(by);
+    }
+
+    public List<WebElement> findElements(By by) {
+        return testCase.findElements(by);
+    }
+
+    public TestBenchTestCase getTestCase() {
+        return testCase;
     }
 }

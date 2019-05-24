@@ -48,7 +48,7 @@ public class PageObjectInvocationContextProvider implements TestTemplateInvocati
                 .orElse(emptyList());
 
         return webDriverInstances(typesList)
-                .map(e -> new WebDriverTemplateInvocationContextImpl(this, e))
+                .map(WebDriverTemplateInvocationContextImpl::new)
                 .peek(po -> storeWebDriver(context, po.webdriver()))
                 .map(TestTemplateInvocationContext.class::cast);
     }

@@ -2,7 +2,7 @@ package com.vaadin.testbench.tests.component.textfield;
 
 import com.vaadin.flow.component.textfield.testbench.TextAreaElement;
 import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinTest;
-import com.vaadin.testbench.tests.ui.GenericTestPageObject;
+import com.vaadin.testbench.addons.junit5.pageobject.VaadinPageObject;
 import com.vaadin.testbench.tests.component.common.AbstractIT;
 import org.junit.jupiter.api.Assertions;
 
@@ -12,10 +12,11 @@ import static com.vaadin.flow.component.textfield.testbench.test.TextAreaView.NA
 import static com.vaadin.flow.component.textfield.testbench.test.TextAreaView.NOLABEL;
 import static com.vaadin.flow.component.textfield.testbench.test.TextAreaView.PLACEHOLDER;
 
+@VaadinTest(navigateTo = NAV)
 public class TextAreaIT extends AbstractIT {
 
-    @VaadinTest(navigateTo = NAV)
-    public void getSetValue(GenericTestPageObject po) throws Exception {
+    @VaadinTest
+    public void getSetValue(VaadinPageObject po) {
 
         final TextAreaElement labelEager = po.$(TextAreaElement.class).id(LABEL_EAGER);
         final TextAreaElement nolabel = po.$(TextAreaElement.class).id(NOLABEL);
@@ -40,8 +41,8 @@ public class TextAreaIT extends AbstractIT {
         assertStringValue(po, placeholder, "Foo");
     }
 
-    @VaadinTest(navigateTo = NAV)
-    public void getLabelEager(GenericTestPageObject po) throws Exception {
+    @VaadinTest
+    public void getLabelEager(VaadinPageObject po) {
 
         final TextAreaElement labelEager = po.$(TextAreaElement.class).id(LABEL_EAGER);
         final TextAreaElement nolabel = po.$(TextAreaElement.class).id(NOLABEL);
@@ -54,8 +55,8 @@ public class TextAreaIT extends AbstractIT {
         Assertions.assertEquals("Has a placeholder", placeholder.getLabel());
     }
 
-    @VaadinTest(navigateTo = NAV)
-    public void getPlaceholder(GenericTestPageObject po) throws Exception {
+    @VaadinTest
+    public void getPlaceholder(VaadinPageObject po) {
 
         final TextAreaElement labelEager = po.$(TextAreaElement.class).id(LABEL_EAGER);
         final TextAreaElement nolabel = po.$(TextAreaElement.class).id(NOLABEL);

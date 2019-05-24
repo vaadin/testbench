@@ -2,7 +2,7 @@ package com.vaadin.testbench.tests.component.textfield;
 
 import com.vaadin.flow.component.textfield.testbench.PasswordFieldElement;
 import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinTest;
-import com.vaadin.testbench.tests.ui.GenericTestPageObject;
+import com.vaadin.testbench.addons.junit5.pageobject.VaadinPageObject;
 import com.vaadin.testbench.tests.component.common.AbstractIT;
 import org.junit.jupiter.api.Assertions;
 
@@ -12,10 +12,11 @@ import static com.vaadin.flow.component.textfield.testbench.test.PasswordFieldVi
 import static com.vaadin.flow.component.textfield.testbench.test.PasswordFieldView.NOLABEL;
 import static com.vaadin.flow.component.textfield.testbench.test.PasswordFieldView.PLACEHOLDER;
 
+@VaadinTest(navigateTo = NAV)
 public class PasswordFieldIT extends AbstractIT {
 
-    @VaadinTest(navigateTo = NAV)
-    public void getSetValue(GenericTestPageObject po) throws Exception {
+    @VaadinTest
+    public void getSetValue(VaadinPageObject po) {
 
         final PasswordFieldElement labelEager = po.$(PasswordFieldElement.class).id(LABEL_EAGER);
         final PasswordFieldElement nolabel = po.$(PasswordFieldElement.class).id(NOLABEL);
@@ -40,8 +41,8 @@ public class PasswordFieldIT extends AbstractIT {
         assertStringValue(po, placeholder, "Foo");
     }
 
-    @VaadinTest(navigateTo = NAV)
-    public void getLabelEager(GenericTestPageObject po) throws Exception {
+    @VaadinTest
+    public void getLabelEager(VaadinPageObject po) {
 
         final PasswordFieldElement labelEager = po.$(PasswordFieldElement.class).id(LABEL_EAGER);
         final PasswordFieldElement nolabel = po.$(PasswordFieldElement.class).id(NOLABEL);
@@ -54,8 +55,8 @@ public class PasswordFieldIT extends AbstractIT {
         Assertions.assertEquals("Has a placeholder", placeholder.getLabel());
     }
 
-    @VaadinTest(navigateTo = NAV)
-    public void getPlaceholder(GenericTestPageObject po) throws Exception {
+    @VaadinTest
+    public void getPlaceholder(VaadinPageObject po) {
 
         final PasswordFieldElement labelEager = po.$(PasswordFieldElement.class).id(LABEL_EAGER);
         final PasswordFieldElement nolabel = po.$(PasswordFieldElement.class).id(NOLABEL);
@@ -68,8 +69,8 @@ public class PasswordFieldIT extends AbstractIT {
         Assertions.assertEquals("Text goes here", placeholder.getPlaceholder());
     }
 
-    @VaadinTest(navigateTo = NAV)
-    public void passwordVisible(GenericTestPageObject po) throws Exception {
+    @VaadinTest
+    public void passwordVisible(VaadinPageObject po) {
 
         final PasswordFieldElement labelEager = po.$(PasswordFieldElement.class).id(LABEL_EAGER);
         final PasswordFieldElement nolabel = po.$(PasswordFieldElement.class).id(NOLABEL);
@@ -100,7 +101,6 @@ public class PasswordFieldIT extends AbstractIT {
         Assertions.assertFalse(nolabel.isPasswordVisible());
         Assertions.assertFalse(initialValue.isPasswordVisible());
         Assertions.assertFalse(placeholder.isPasswordVisible());
-
     }
 
 }
