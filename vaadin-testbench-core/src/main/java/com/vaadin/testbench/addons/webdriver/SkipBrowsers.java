@@ -30,5 +30,5 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 public @interface SkipBrowsers {
 
-    BrowserTypes[] value();
+    BrowserType[] value();
 }
