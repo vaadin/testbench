@@ -35,15 +35,15 @@ public class VaadinPreloadTargetExtension implements BeforeEachCallback {
 
     @Override
     public void beforeEach(ExtensionContext context)  {
-        context.getTestMethod()
-                .ifPresent(method -> {
-                    final LoadMode loadMode = findAnnotationParameter(method,
-                            VaadinTest::loadMode, LoadMode.DEFAULT);
+        context.getElement()
+                .ifPresent(element -> {
+                    final LoadMode loadMode = findAnnotationParameter(
+                            element, VaadinTest::loadMode, LoadMode.DEFAULT);
                     final boolean preLoad = loadMode != LoadMode.NO_PRELOAD;
                     storeMethodPlain(context).put(PAGE_OBJECT_PRELOAD, preLoad);
 
-                    final String target = findAnnotationParameter(method,
-                            VaadinTest::navigateTo, DEFAULT_NAVIGATION_TARGET);
+                    final String target = findAnnotationParameter(
+                            element, VaadinTest::navigateTo, DEFAULT_NAVIGATION_TARGET);
                     if (!DEFAULT_NAVIGATION_TARGET.equals(target)) {
                         storeMethodPlain(context).put(PAGE_OBJECT_NAVIGATION_TARGET, target);
                     }
@@ -59,9 +59,8 @@ public class VaadinPreloadTargetExtension implements BeforeEachCallback {
         }
 
         final VaadinTest annotation = element.getAnnotation(VaadinTest.class);
-        final ResultType result = supplier.apply(annotation);
 
-        if (annotation == null || defaultValue.equals(result)) {
+        if (annotation == null || defaultValue.equals(supplier.apply(annotation))) {
             final AnnotatedElement parent = element instanceof Method
                     ? ((Method) element).getDeclaringClass()
                     : ((Class) element).getSuperclass();
@@ -69,6 +68,6 @@ public class VaadinPreloadTargetExtension implements BeforeEachCallback {
             return findAnnotationParameter(parent, supplier, defaultValue);
         }
 
-        return result;
+        return supplier.apply(annotation);
     }
 }
