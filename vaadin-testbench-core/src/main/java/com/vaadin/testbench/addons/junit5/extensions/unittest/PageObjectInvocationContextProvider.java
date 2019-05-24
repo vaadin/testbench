@@ -19,15 +19,13 @@ package com.vaadin.testbench.addons.junit5.extensions.unittest;
 
 import com.vaadin.testbench.addons.webdriver.BrowserType;
 import com.vaadin.testbench.addons.webdriver.SkipBrowsers;
+import com.vaadin.testbench.annotations.AnnotationHelper;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.TestTemplateInvocationContext;
 import org.junit.jupiter.api.extension.TestTemplateInvocationContextProvider;
 
-import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Method;
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
-import java.util.Set;
 import java.util.stream.Stream;
 
 import static com.vaadin.testbench.addons.webdriver.BrowserDriverFunctions.webDriverInstances;
@@ -42,32 +40,16 @@ public class PageObjectInvocationContextProvider implements TestTemplateInvocati
 
     @Override
     public Stream<TestTemplateInvocationContext> provideTestTemplateInvocationContexts(ExtensionContext context) {
-        final Set<BrowserType> typesList = context
+        final Collection<BrowserType> typesList = context
                 .getElement()
-                .map(e -> collectSkippedBrowsers(e, new HashSet<>()))
+                .map(e -> AnnotationHelper.mergeSpecifiedParameters(
+                        e, SkipBrowsers.class, SkipBrowsers::value, new HashSet<>()))
+                .map(AnnotationHelper::flatten)
                 .get();
 
         return webDriverInstances(typesList)
                 .map(WebDriverTemplateInvocationContextImpl::new)
                 .peek(po -> storeWebDriver(context, po.webdriver()))
                 .map(TestTemplateInvocationContext.class::cast);
-    }
-
-    private Set<BrowserType> collectSkippedBrowsers(AnnotatedElement element, Set<BrowserType> output) {
-        if (element == null || element == Object.class) {
-            return output;
-        }
-
-        final SkipBrowsers annotation = element.getAnnotation(SkipBrowsers.class);
-
-        if (annotation != null) {
-            output.addAll(Arrays.asList(annotation.value()));
-        }
-
-        final AnnotatedElement parent = element instanceof Method
-                ? ((Method) element).getDeclaringClass()
-                : ((Class) element).getSuperclass();
-
-        return collectSkippedBrowsers(parent, output);
     }
 }
