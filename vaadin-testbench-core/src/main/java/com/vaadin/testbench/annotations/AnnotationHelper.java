@@ -62,7 +62,7 @@ public class AnnotationHelper {
             return defaultValue;
         }
 
-        final AnnotationType annotation = element.getAnnotation(annotationClass);
+        final AnnotationType annotation = element.getDeclaredAnnotation(annotationClass);
 
         if (annotation == null || defaultValue.equals(parameterSupplier.apply(annotation))) {
             final AnnotatedElement parent = element instanceof Method
@@ -101,7 +101,7 @@ public class AnnotationHelper {
             return defaultValue;
         }
 
-        final AnnotationType annotation = element.getAnnotation(annotationClass);
+        final AnnotationType annotation = element.getDeclaredAnnotation(annotationClass);
 
         if (annotation != null) {
             defaultValue.add(parameterSupplier.apply(annotation));
