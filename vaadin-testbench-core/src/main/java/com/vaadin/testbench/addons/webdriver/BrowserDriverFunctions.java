@@ -33,7 +33,7 @@ import org.openqa.selenium.safari.SafariDriver;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.List;
+import java.util.Collection;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.stream.Stream;
@@ -89,7 +89,8 @@ public interface BrowserDriverFunctions {
         }
     }
 
-    static Stream<WebDriver> webDriverInstances(List<BrowserTypes> disabledBrowserTypes) {
+    static Stream<WebDriver> webDriverInstances(
+            Collection<com.vaadin.testbench.addons.webdriver.BrowserType> disabledBrowserTypes) {
         return readConfig()
                 .getGridConfigs()
                 .stream()

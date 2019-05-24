@@ -20,7 +20,7 @@ package com.vaadin.testbench.addons.webdriver;
 /**
  * Enum out of the interface BrowserType from Selenium.
  */
-public enum BrowserTypes {
+public enum BrowserType {
 
     FIREFOX("firefox"),
     FIREFOX_PROXY("firefoxproxy"),
@@ -51,7 +51,7 @@ public enum BrowserTypes {
 
     private String browserName;
 
-    BrowserTypes(String browserName) {
+    BrowserType(String browserName) {
         this.browserName = browserName;
     }
 

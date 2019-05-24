@@ -10,8 +10,8 @@ import org.junit.jupiter.api.Assertions;
 
 import static com.vaadin.flow.component.tabs.testbench.test.TabsView.DEFAULT;
 import static com.vaadin.flow.component.tabs.testbench.test.TabsView.NAV;
-import static com.vaadin.testbench.addons.webdriver.BrowserTypes.FIREFOX;
-import static com.vaadin.testbench.addons.webdriver.BrowserTypes.IE;
+import static com.vaadin.testbench.addons.webdriver.BrowserType.FIREFOX;
+import static com.vaadin.testbench.addons.webdriver.BrowserType.IE;
 
 @VaadinTest(navigateTo = NAV)
 public class TabsIT extends AbstractIT {

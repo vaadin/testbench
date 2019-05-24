@@ -15,8 +15,8 @@ import java.io.IOException;
 import static com.vaadin.flow.component.upload.testbench.test.UploadView.NAV;
 import static com.vaadin.flow.component.upload.testbench.test.UploadView.UPLOAD;
 import static com.vaadin.testbench.TestBenchLogger.logger;
-import static com.vaadin.testbench.addons.webdriver.BrowserTypes.FIREFOX;
-import static com.vaadin.testbench.addons.webdriver.BrowserTypes.SAFARI;
+import static com.vaadin.testbench.addons.webdriver.BrowserType.FIREFOX;
+import static com.vaadin.testbench.addons.webdriver.BrowserType.SAFARI;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 @VaadinTest(navigateTo = NAV)

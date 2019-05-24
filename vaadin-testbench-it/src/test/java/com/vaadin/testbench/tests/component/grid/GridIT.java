@@ -17,7 +17,7 @@ import org.openqa.selenium.NoSuchElementException;
 
 import java.util.List;
 
-import static com.vaadin.testbench.addons.webdriver.BrowserTypes.IE;
+import static com.vaadin.testbench.addons.webdriver.BrowserType.IE;
 
 public class GridIT extends AbstractIT {
 
