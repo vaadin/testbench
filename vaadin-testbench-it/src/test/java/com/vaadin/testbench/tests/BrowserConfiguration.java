@@ -37,7 +37,7 @@ public class BrowserConfiguration implements TargetConfiguration {
     @Override
     public List<Target> getBrowserTargets() {
         return Collections.singletonList(
-                saucelabs(BrowserType.CHROME, "74", Platform.XP)
+                saucelabs(BrowserType.CHROME, "74", Platform.WIN8_1)
         );
     }
 
