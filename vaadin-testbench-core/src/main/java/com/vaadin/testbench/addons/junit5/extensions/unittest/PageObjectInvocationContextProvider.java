@@ -17,6 +17,7 @@ package com.vaadin.testbench.addons.junit5.extensions.unittest;
  * #L%
  */
 
+import com.google.common.annotations.VisibleForTesting;
 import com.vaadin.testbench.addons.webdriver.BrowserType;
 import com.vaadin.testbench.addons.webdriver.SkipBrowsers;
 import com.vaadin.testbench.annotations.AnnotationHelper;
@@ -40,7 +41,19 @@ import static com.vaadin.testbench.addons.webdriver.junit5.WebdriverExtensionFun
 
 public class PageObjectInvocationContextProvider implements TestTemplateInvocationContextProvider {
 
-    private static final String TESTBENCH_TARGET_CONFIGURATION = "testbench.target.configuration";
+    @VisibleForTesting
+    static final String TESTBENCH_TARGET_CONFIGURATION = "testbench.target.configuration";
+
+    private final ClassGraph CLASS_GRAPH;
+
+    public PageObjectInvocationContextProvider() {
+        this(new ClassGraph().enableClassInfo());
+    }
+
+    @VisibleForTesting
+    PageObjectInvocationContextProvider(ClassGraph classGraph) {
+        this.CLASS_GRAPH = classGraph;
+    }
 
     @Override
     public boolean supportsTestTemplate(ExtensionContext context) {
@@ -64,7 +77,8 @@ public class PageObjectInvocationContextProvider implements TestTemplateInvocati
                 .map(TestTemplateInvocationContext.class::cast);
     }
 
-    private List<Target> findBrowserTargets() {
+    @VisibleForTesting
+    List<Target> findBrowserTargets() {
         final String targetConfigurationSystemProperty = System.getProperty(TESTBENCH_TARGET_CONFIGURATION);
         if (targetConfigurationSystemProperty != null) {
             logger().debug("TargetBrowser implementation found via system property: "
@@ -72,7 +86,7 @@ public class PageObjectInvocationContextProvider implements TestTemplateInvocati
             return instantiate(targetConfigurationSystemProperty).getBrowserTargets();
         }
 
-        try (ScanResult scanResult = new ClassGraph().enableClassInfo().scan()) {
+        try (ScanResult scanResult = CLASS_GRAPH.scan()) {
             final ClassInfoList targetConfiguration = scanResult
                     .getClassesImplementing(TargetConfiguration.class.getCanonicalName());
 
@@ -106,7 +120,7 @@ public class PageObjectInvocationContextProvider implements TestTemplateInvocati
             return ((TargetConfiguration) config);
         } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
             throw new IllegalArgumentException(
-                    "The specified " + TESTBENCH_TARGET_CONFIGURATION + " is not instantiatable");
+                    "The specified " + TESTBENCH_TARGET_CONFIGURATION + " is not instantiatable", e);
         }
     }
 }
