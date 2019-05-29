@@ -33,11 +33,10 @@ public class SharedUtil implements Serializable {
      * <p>
      * Examples:
      * <p>
-     * {@literal foo} becomes {@literal foo} {@literal fooBar} becomes
-     * {@literal foo-bar} {@literal MyBeanContainer} becomes
-     * {@literal -my-bean-container} {@literal AwesomeURLFactory} becomes
-     * {@literal -awesome-uRL-factory} {@literal someUriAction} becomes
-     * {@literal some-uri-action}
+     * {@literal foo} becomes {@literal foo} {@literal fooBar} becomes {@literal foo-bar}
+     * {@literal MyBeanContainer} becomes {@literal -my-bean-container}
+     * {@literal AwesomeURLFactory} becomes {@literal -awesome-uRL-factory}
+     * {@literal someUriAction} becomes {@literal some-uri-action}
      *
      * @param camelCaseString The input string in camelCase format
      * @return A human friendly version of the input

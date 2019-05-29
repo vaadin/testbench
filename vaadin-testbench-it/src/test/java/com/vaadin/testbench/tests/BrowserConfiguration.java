@@ -25,6 +25,7 @@ import org.apache.commons.lang3.SystemUtils;
 import org.openqa.selenium.Platform;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static com.vaadin.testbench.configuration.TargetConfiguration.localChrome;
@@ -35,9 +36,8 @@ public class BrowserConfiguration implements TargetConfiguration {
 
     @Override
     public List<Target> getBrowserTargets() {
-        return Arrays.asList(
-                saucelabs(BrowserType.CHROME, "74", Platform.WINDOWS),
-                saucelabs(BrowserType.FIREFOX, null, null)
+        return Collections.singletonList(
+                saucelabs(BrowserType.CHROME, "74", Platform.XP)
         );
     }
 
