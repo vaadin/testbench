@@ -3,7 +3,7 @@ package com.vaadin.testbench.tests.ui.demo;
 import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinTest;
 import org.junit.jupiter.api.DisplayName;
 
-import static com.vaadin.testbench.LoadMode.NO_PRELOAD;
+import static com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinTest.LoadMode.NO_PRELOAD;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @VaadinTest

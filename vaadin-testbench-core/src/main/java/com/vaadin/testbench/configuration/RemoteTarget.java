@@ -1,4 +1,4 @@
-package com.vaadin.testbench;
+package com.vaadin.testbench.configuration;
 
 /*-
  * #%L
@@ -17,14 +17,12 @@ package com.vaadin.testbench;
  * #L%
  */
 
-public enum LoadMode {
+public abstract class RemoteTarget extends Target {
 
-    PRELOAD,
-    NO_PRELOAD,
+    @Override
+    public boolean isLocal() {
+        return false;
+    }
 
-    /**
-     * For internal use only.
-     * The default behavior is to preload.
-     */
-    DEFAULT
+    public abstract String getHubUrl();
 }

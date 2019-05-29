@@ -29,11 +29,10 @@ import java.util.Properties;
 public class PropertiesResolver {
 
     /**
-     * Constant <code>CONFIG_LOCATION_PROPERTY="rapidpm.configlocation"</code>
+     * Constant <code>CONFIG_LOCATION_PROPERTY="testbench.config.location"</code>
      */
-    public static final String CONFIG_LOCATION_PROPERTY = "rapidpm.configlocation";
+    public static final String CONFIG_LOCATION_PROPERTY = "testbench.config.location";
     private static final String PROPERIES_EXTENSION = ".properties";
-
 
     public static Properties readProperties(String filename) {
         final PropertiesResolver resolver = new PropertiesResolver();

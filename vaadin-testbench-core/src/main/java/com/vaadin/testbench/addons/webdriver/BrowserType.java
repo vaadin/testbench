@@ -55,7 +55,7 @@ public enum BrowserType {
         this.browserName = browserName;
     }
 
-    String browserName() {
+    public String browserName() {
         return browserName;
     }
 }

@@ -46,8 +46,6 @@ public class FailedTestScreenhsotExtension implements TestExecutionExceptionHand
                 .replaceAll(":", "_")
                 .replaceAll("/", "_");
 
-        System.out.println("finalName = " + finalName);
-
         takeScreenshot(finalName, webDriver);
 
         throw throwable;

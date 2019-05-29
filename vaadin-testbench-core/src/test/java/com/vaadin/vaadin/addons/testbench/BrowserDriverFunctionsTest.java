@@ -30,7 +30,7 @@ import java.util.Properties;
 import static com.vaadin.testbench.PropertiesResolver.readProperties;
 import static java.lang.String.valueOf;
 
-public class BrowserDriverFunctionsTest {
+class BrowserDriverFunctionsTest {
 
     @Test
     @DisplayName("test reading properties")
