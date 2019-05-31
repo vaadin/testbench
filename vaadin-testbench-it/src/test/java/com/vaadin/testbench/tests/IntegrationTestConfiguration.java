@@ -33,7 +33,14 @@ import static com.vaadin.testbench.configuration.TestConfiguration.localChrome;
 import static com.vaadin.testbench.configuration.TestConfiguration.localFirefox;
 import static com.vaadin.testbench.configuration.TestConfiguration.saucelabs;
 
-public class BrowserConfiguration implements TestConfiguration {
+public class IntegrationTestConfiguration implements TestConfiguration {
+
+    private final ContainerInfo containerInfo;
+
+    public IntegrationTestConfiguration() {
+        containerInfo = TestConfiguration.defaultContainerInfo();
+        containerInfo.setPort(8080);
+    }
 
     @Override
     public List<Target> getBrowserTargets() {
@@ -44,7 +51,7 @@ public class BrowserConfiguration implements TestConfiguration {
 
     @Override
     public ContainerInfo getContainerInfo() {
-        return TestConfiguration.defaultContainerInfo();
+        return containerInfo;
     }
 
     /**
