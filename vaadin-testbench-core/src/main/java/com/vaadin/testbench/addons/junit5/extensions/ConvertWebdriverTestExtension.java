@@ -44,7 +44,7 @@ public class ConvertWebdriverTestExtension implements BeforeEachCallback, AfterE
 
     @Override
     public void afterEach(ExtensionContext context) {
-        logger().debug("WfterEach -> convert VaadinWebDriver to WebDriver");
+        logger().debug("AfterEach -> convert VaadinWebDriver to WebDriver");
         // TODO(sven): Not a clean life cycle -> compat tests.
 
         final WebDriver driver = WebdriverExtensionFunctions.webdriver(context);

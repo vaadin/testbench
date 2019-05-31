@@ -31,6 +31,9 @@ public class ConfigurationFinder {
 
     private static final String TARGET_CONFIGURATION_CLASSNAME = TestConfiguration.class.getSimpleName();
 
+    private ConfigurationFinder() {
+    }
+
     public static TestConfiguration findTestConfiguration() {
         return findTestConfiguration(new ClassGraph().enableClassInfo());
     }
