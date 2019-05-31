@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.ServiceLoader;
 
 import static com.vaadin.testbench.TestBenchLogger.logger;
-import static com.vaadin.testbench.addons.junit5.extensions.container.ExtensionContextFunctions.containerInfo;
+import static com.vaadin.testbench.addons.junit5.extensions.container.ContainerInitializer.containerInfo;
 
 public class ServletContainerExtension implements
         BeforeAllCallback,
@@ -40,6 +40,7 @@ public class ServletContainerExtension implements
         AfterAllCallback,
         ParameterResolver {
 
+    private static final String CONTAINER_INITIALIZER_CLASSNAME = ContainerInitializer.class.getSimpleName();
     private final ContainerInitializer containerIntializer;
 
     public ServletContainerExtension() {
@@ -49,14 +50,18 @@ public class ServletContainerExtension implements
         serviceLoader.forEach(initializers::add);
 
         if (initializers.isEmpty()) {
-            throw new IllegalStateException("No implementation of ContainerInitializer found");
+            throw new IllegalStateException("No implementation of "
+                    + CONTAINER_INITIALIZER_CLASSNAME + " found");
         }
+
         if (initializers.size() != 1) {
-            logger().warn("More than one implementation of ContainerInitializer found!");
+            logger().warn("More than one implementation of "
+                    + CONTAINER_INITIALIZER_CLASSNAME + " found!");
         }
 
         containerIntializer = initializers.get(0);
-        logger().debug("Using ContainerInitializer: " + containerIntializer.getClass().getName());
+        logger().debug("Using " + CONTAINER_INITIALIZER_CLASSNAME
+                + ": " + containerIntializer.getClass().getName());
     }
 
     @Override
@@ -87,9 +92,9 @@ public class ServletContainerExtension implements
     public Object resolveParameter(ParameterContext parameterContext,
                                    ExtensionContext extensionContext) throws ParameterResolutionException {
         if (ContainerInfo.class.isAssignableFrom(parameterContext.getParameter().getType())) {
-            return containerInfo(extensionContext);
+            return containerInfo();
         } else {
-            throw new ParameterResolutionException("was not able to create ContainerInfo instance");
+            throw new ParameterResolutionException("Was not able to create ContainerInfo ");
         }
     }
 

@@ -19,7 +19,6 @@ package com.vaadin.testbench.addons.junit5.extensions.unittest;
 
 import com.github.webdriverextensions.WebDriverExtensionFieldDecorator;
 import com.vaadin.testbench.addons.junit5.extensions.ExtensionFunctions;
-import com.vaadin.testbench.addons.junit5.extensions.container.ContainerInfo;
 import com.vaadin.testbench.addons.junit5.pageobject.PageObject;
 import org.junit.jupiter.api.extension.Extension;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -30,11 +29,10 @@ import org.openqa.selenium.WebDriver;
 
 import java.lang.reflect.Constructor;
 import java.util.List;
-import java.util.Optional;
 
 import static com.vaadin.testbench.TestBenchLogger.logger;
 import static com.vaadin.testbench.addons.junit5.extensions.ExtensionFunctions.storeMethodPlain;
-import static com.vaadin.testbench.addons.junit5.extensions.container.ExtensionContextFunctions.containerInfo;
+import static com.vaadin.testbench.addons.junit5.extensions.container.ContainerInitializer.containerInfo;
 import static com.vaadin.testbench.addons.junit5.extensions.unittest.PageObjectFunctions.PAGE_OBJECT_NAVIGATION_TARGET;
 import static com.vaadin.testbench.addons.junit5.extensions.unittest.PageObjectFunctions.PAGE_OBJECT_PRELOAD;
 import static com.vaadin.testbench.addons.junit5.extensions.unittest.PageObjectFunctions.storePageObject;
@@ -46,7 +44,7 @@ public final class WebDriverTemplateInvocationContextImpl implements WebDriverTe
 
     private final WebDriver webDriver;
 
-    protected WebDriverTemplateInvocationContextImpl(WebDriver webDriver) {
+    WebDriverTemplateInvocationContextImpl(WebDriver webDriver) {
         this.webDriver = webDriver;
     }
 
@@ -85,7 +83,7 @@ public final class WebDriverTemplateInvocationContextImpl implements WebDriverTe
                     final Constructor<?> constructor = pageObjectClass.getConstructor();
                     pageObject = (PageObject) constructor.newInstance();
                     pageObject.setDriver(webdriver());
-                    pageObject.setContainerInfo(containerInfo(extensionContext));
+                    pageObject.setContainerInfo(containerInfo());
                     ExtensionFunctions
                             .valueAsString(PAGE_OBJECT_NAVIGATION_TARGET, extensionContext)
                             .ifPresent(pageObject::setDefaultNavigationTarget);
@@ -96,8 +94,6 @@ public final class WebDriverTemplateInvocationContextImpl implements WebDriverTe
 
                 // TODO(sven): Check if needed.
                 initElements(new WebDriverExtensionFieldDecorator(webDriver), pageObject);
-
-                // TODO(sven): Work on preload feature.
 
                 final boolean preload = storeMethodPlain(extensionContext).get(PAGE_OBJECT_PRELOAD, Boolean.class);
                 if (preload) {

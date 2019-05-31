@@ -18,9 +18,10 @@ package com.vaadin.testbench.tests;
  */
 
 import com.google.common.base.Joiner;
+import com.vaadin.testbench.addons.junit5.extensions.container.ContainerInfo;
 import com.vaadin.testbench.addons.webdriver.BrowserType;
 import com.vaadin.testbench.configuration.Target;
-import com.vaadin.testbench.configuration.TargetConfiguration;
+import com.vaadin.testbench.configuration.TestConfiguration;
 import org.apache.commons.lang3.SystemUtils;
 import org.openqa.selenium.Platform;
 
@@ -28,17 +29,22 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static com.vaadin.testbench.configuration.TargetConfiguration.localChrome;
-import static com.vaadin.testbench.configuration.TargetConfiguration.localFirefox;
-import static com.vaadin.testbench.configuration.TargetConfiguration.saucelabs;
+import static com.vaadin.testbench.configuration.TestConfiguration.localChrome;
+import static com.vaadin.testbench.configuration.TestConfiguration.localFirefox;
+import static com.vaadin.testbench.configuration.TestConfiguration.saucelabs;
 
-public class BrowserConfiguration implements TargetConfiguration {
+public class BrowserConfiguration implements TestConfiguration {
 
     @Override
     public List<Target> getBrowserTargets() {
         return Collections.singletonList(
                 saucelabs(BrowserType.CHROME, "74", Platform.WIN8_1)
         );
+    }
+
+    @Override
+    public ContainerInfo getContainerInfo() {
+        return TestConfiguration.defaultContainerInfo();
     }
 
     /**

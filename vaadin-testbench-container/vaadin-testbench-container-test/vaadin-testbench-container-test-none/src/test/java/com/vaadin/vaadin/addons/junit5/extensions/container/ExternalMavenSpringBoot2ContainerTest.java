@@ -20,12 +20,12 @@ class ExternalMavenSpringBoot2ContainerTest {
     @Disabled
     void test_001(ContainerInfo containerInfo) throws IOException {
         try (InputStream in =
-                     new URL("http://" + containerInfo.host() + ":" + containerInfo.port() + "/demo")
+                     new URL("http://" + containerInfo.getHost() + ":" + containerInfo.getPort() + "/demo")
                              .openStream();
              Scanner scanner = new Scanner(in)) {
             String string = scanner.nextLine();
 
-            assertEquals("Hello World on port " + containerInfo.port(), string);
+            assertEquals("Hello World on port " + containerInfo.getPort(), string);
         }
     }
 }

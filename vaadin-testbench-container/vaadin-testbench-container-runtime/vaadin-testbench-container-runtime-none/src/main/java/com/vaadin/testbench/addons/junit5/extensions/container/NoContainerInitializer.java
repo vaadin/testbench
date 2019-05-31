@@ -21,7 +21,6 @@ import com.google.auto.service.AutoService;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
 import java.lang.reflect.Method;
-import java.util.Properties;
 
 import static com.vaadin.testbench.TestBenchLogger.logger;
 import static com.vaadin.testbench.addons.junit5.extensions.ExtensionFunctions.storeMethodPlain;
@@ -32,19 +31,6 @@ import static com.vaadin.testbench.addons.junit5.extensions.container.NetworkFun
 @AutoService(ContainerInitializer.class)
 public class NoContainerInitializer implements ContainerInitializer {
 
-    private static final String CONTAINER_NONE_HOST = "container.none.host";
-    private static final String CONTAINER_NONE_PORT = "container.none.port";
-    private static final String CONTAINER_NONE_WEBAPP = "container.none.webapp";
-
-    private final Properties props = properties();
-    private final boolean isHostDefined = isKeyDefined(CONTAINER_NONE_HOST);
-    private final boolean isPortDefined = isKeyDefined(CONTAINER_NONE_PORT);
-    private final boolean isWebAppDefined = isKeyDefined(CONTAINER_NONE_WEBAPP);
-
-    private boolean isKeyDefined(String key) {
-        return !props.getProperty(key, "").isEmpty();
-    }
-
     @Override
     public void beforeAll(Class<?> testClass, ExtensionContext context) {
         logger().debug("Running tests from " + testClass.getName()
@@ -53,30 +39,23 @@ public class NoContainerInitializer implements ContainerInitializer {
 
     @Override
     public void beforeEach(Method testMethod, ExtensionContext context) {
-        if (!isHostDefined) {
-            logger().warn("Property " + CONTAINER_NONE_HOST + " is not defined");
-        }
-        if (!isPortDefined) {
-            logger().warn("Property " + CONTAINER_NONE_PORT + " is not defined");
-        }
-        if (!isWebAppDefined) {
-            logger().warn("Property " + CONTAINER_NONE_WEBAPP + " is not defined");
-        }
-
         final ExtensionContext.Store store = storeMethodPlain(context);
+        final ContainerInfo containerInfo = ContainerInitializer.containerInfo();
 
-        store.put(SERVER_IP, props.getProperty(CONTAINER_NONE_HOST));
-        store.put(SERVER_PORT, Integer.parseInt(props.getProperty(CONTAINER_NONE_PORT)));
-        store.put(SERVER_WEBAPP, props.getProperty(CONTAINER_NONE_WEBAPP));
+        store.put(SERVER_IP, containerInfo.getHost());
+        store.put(SERVER_PORT, containerInfo.getPort());
+        store.put(SERVER_WEBAPP, containerInfo.getWebapp());
     }
 
     @Override
     public void afterEach(Method testMethod, ExtensionContext context) {
-
+        final ExtensionContext.Store store = storeMethodPlain(context);
+        store.remove(SERVER_IP);
+        store.remove(SERVER_PORT);
+        store.remove(SERVER_WEBAPP);
     }
 
     @Override
     public void afterAll(Class<?> testClass, ExtensionContext context) {
-
     }
 }
