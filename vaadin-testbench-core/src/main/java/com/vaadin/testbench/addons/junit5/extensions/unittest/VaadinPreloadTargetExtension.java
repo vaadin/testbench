@@ -17,7 +17,7 @@ package com.vaadin.testbench.addons.junit5.extensions.unittest;
  * #L%
  */
 
-import com.vaadin.testbench.LoadMode;
+import com.vaadin.testbench.addons.junit5.extensions.unittest.VaadinTest.LoadMode;
 import com.vaadin.testbench.annotations.AnnotationHelper;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;

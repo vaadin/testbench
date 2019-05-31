@@ -17,7 +17,6 @@ package com.vaadin.testbench.addons.junit5.extensions.unittest;
  * #L%
  */
 
-import com.vaadin.testbench.LoadMode;
 import com.vaadin.testbench.addons.junit5.extensions.ConvertWebdriverTestExtension;
 import com.vaadin.testbench.addons.junit5.extensions.container.ServletContainerExtension;
 import com.vaadin.testbench.addons.screenshot.FailedTestScreenhsotExtension;
@@ -45,4 +44,16 @@ public @interface VaadinTest {
     String navigateTo() default VaadinPreloadTargetExtension.DEFAULT_NAVIGATION_TARGET;
 
     LoadMode loadMode() default LoadMode.DEFAULT;
+
+    enum LoadMode {
+
+        PRELOAD,
+        NO_PRELOAD,
+
+        /**
+         * For internal use only.
+         * The default behavior is to preload.
+         */
+        DEFAULT
+    }
 }

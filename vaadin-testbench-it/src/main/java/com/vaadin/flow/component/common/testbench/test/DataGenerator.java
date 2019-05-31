@@ -20,15 +20,9 @@ public class DataGenerator
         int first = query.getOffset();
         int count = query.getLimit();
 
-        System.out.println("Fetching " + first + " - " + (first + count - 1)
-                + " (" + count + " items)");
-        Stream<Person> data = IntStream.range(first, first + count)
-                .mapToObj(i -> {
-                    return new Person("First Name " + i, "Last name " + i,
-                            i);
-                });
-
-        return data;
+        return IntStream
+                .range(first, first + count)
+                .mapToObj(i -> new Person("First Name " + i, "Last name " + i, i));
     }
 
     @Override

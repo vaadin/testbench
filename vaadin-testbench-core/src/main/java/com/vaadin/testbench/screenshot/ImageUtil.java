@@ -17,8 +17,6 @@ package com.vaadin.testbench.screenshot;
  * #L%
  */
 
-import org.apache.commons.codec.binary.Base64;
-
 import javax.imageio.ImageIO;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -26,6 +24,7 @@ import java.awt.image.Raster;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.List;
 
 import static com.vaadin.testbench.screenshot.ScreenshotProperties.IMAGE_FILE_NAME_ENDING;
@@ -46,7 +45,7 @@ public class ImageUtil {
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
             ImageIO.write(image, IMAGE_FILE_NAME_ENDING, baos);
             baos.flush();
-            return new String(new Base64().encode(baos.toByteArray()));
+            return new String(Base64.getEncoder().encode(baos.toByteArray()));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
