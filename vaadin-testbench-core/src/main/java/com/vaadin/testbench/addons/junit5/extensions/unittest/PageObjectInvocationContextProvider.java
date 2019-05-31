@@ -44,6 +44,8 @@ public class PageObjectInvocationContextProvider implements TestTemplateInvocati
     @VisibleForTesting
     static final String TESTBENCH_TARGET_CONFIGURATION = "testbench.target.configuration";
 
+    private static final String TARGET_CONFIGURATION_CLASSNAME = TargetConfiguration.class.getSimpleName();
+
     private final ClassGraph CLASS_GRAPH;
 
     public PageObjectInvocationContextProvider() {
@@ -91,18 +93,20 @@ public class PageObjectInvocationContextProvider implements TestTemplateInvocati
                     .getClassesImplementing(TargetConfiguration.class.getCanonicalName());
 
             if (targetConfiguration.size() == 0) {
-                throw new IllegalStateException("No implementation of TargetConfiguration found");
+                throw new IllegalStateException("No implementation of "
+                        + TARGET_CONFIGURATION_CLASSNAME + " found");
             }
 
             if (targetConfiguration.size() > 1) {
-                throw new IllegalStateException("Multiple implementations of TargetConfiguration found. " +
-                        "Either ensure that only one implementation exist " +
-                        "or specify the desired implementation by setting the system property '"
+                throw new IllegalStateException("Multiple implementations of "
+                        + TARGET_CONFIGURATION_CLASSNAME
+                        + " found. Either ensure that only one implementation exist "
+                        + "or specify the desired implementation by setting the system property '"
                         + TESTBENCH_TARGET_CONFIGURATION + "'");
             }
 
             final String targetConfigurationClassName = targetConfiguration.get(0).getName();
-            logger().debug("TargetBrowser implementation found by class scanning: "
+            logger().debug(TARGET_CONFIGURATION_CLASSNAME + " implementation found by class scanning: "
                     + targetConfigurationClassName);
 
             return instantiate(targetConfigurationClassName).getBrowserTargets();
@@ -114,7 +118,8 @@ public class PageObjectInvocationContextProvider implements TestTemplateInvocati
             final Object config = Class.forName(fullyQualifiedTargetConfigurationClassName).newInstance();
             if (!(config instanceof TargetConfiguration)) {
                 throw new IllegalArgumentException("The specified "
-                        + TESTBENCH_TARGET_CONFIGURATION + " does not implement TargetConfiguration");
+                        + TESTBENCH_TARGET_CONFIGURATION + " does not implement "
+                        + TARGET_CONFIGURATION_CLASSNAME);
             }
 
             return ((TargetConfiguration) config);
