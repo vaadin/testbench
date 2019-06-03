@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static com.vaadin.testbench.configuration.ConfigurationFinder.TESTBENCH_CONFIG_CLASS_SYSTEM_PROPERTY;
+import static com.vaadin.testbench.configuration.ConfigurationFinder.CONFIG_CLASS_SYSTEM_PROPERTY;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -35,20 +35,20 @@ class ConfigurationFinderTest {
 
     @BeforeEach
     void setup() {
-        configClassPropertyBackup = System.getProperty(TESTBENCH_CONFIG_CLASS_SYSTEM_PROPERTY);
-        System.clearProperty(TESTBENCH_CONFIG_CLASS_SYSTEM_PROPERTY);
+        configClassPropertyBackup = System.getProperty(CONFIG_CLASS_SYSTEM_PROPERTY);
+        System.clearProperty(CONFIG_CLASS_SYSTEM_PROPERTY);
     }
 
     @AfterEach
     void tearDown() {
         if (configClassPropertyBackup != null) {
-            System.setProperty(TESTBENCH_CONFIG_CLASS_SYSTEM_PROPERTY, configClassPropertyBackup);
+            System.setProperty(CONFIG_CLASS_SYSTEM_PROPERTY, configClassPropertyBackup);
         }
     }
 
     @Test
     void findBrowserTargets_systemProperty() {
-        System.setProperty(TESTBENCH_CONFIG_CLASS_SYSTEM_PROPERTY,
+        System.setProperty(CONFIG_CLASS_SYSTEM_PROPERTY,
                 SampleTestConfiguration.class.getCanonicalName());
 
         final List<Target> targets = ConfigurationFinder.findTestConfiguration().getBrowserTargets();
@@ -60,14 +60,14 @@ class ConfigurationFinderTest {
 
     @Test
     void findBrowserTargets_systemProperty_nonExistentClass() {
-        System.setProperty(TESTBENCH_CONFIG_CLASS_SYSTEM_PROPERTY, "NonExistentClass");
+        System.setProperty(CONFIG_CLASS_SYSTEM_PROPERTY, "NonExistentClass");
 
         assertThrows(IllegalArgumentException.class, ConfigurationFinder::findTestConfiguration);
     }
 
     @Test
     void findBrowserTargets_systemProperty_classNotImplementingTargetConfiguration() {
-        System.setProperty(TESTBENCH_CONFIG_CLASS_SYSTEM_PROPERTY,
+        System.setProperty(CONFIG_CLASS_SYSTEM_PROPERTY,
                 InvalidTestConfiguration.class.getCanonicalName());
 
         assertThrows(IllegalArgumentException.class, ConfigurationFinder::findTestConfiguration);
