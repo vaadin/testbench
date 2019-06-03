@@ -33,8 +33,7 @@ public class ConfigurationFinder {
      * This should probably only be used in a CI environment as it might not make sense
      * on a developer machine with multiple projects.
      */
-    @VisibleForTesting
-    static final String TESTBENCH_CONFIG_CLASS_ENVIRONMENT_VARIABLE = "TESTBENCH_CONFIGURATION_CLASS";
+    private static final String TESTBENCH_CONFIG_CLASS_ENVIRONMENT_VARIABLE = "TESTBENCH_CONFIGURATION_CLASS";
 
     private static final String TARGET_CONFIGURATION_CLASSNAME = TestConfiguration.class.getSimpleName();
 
