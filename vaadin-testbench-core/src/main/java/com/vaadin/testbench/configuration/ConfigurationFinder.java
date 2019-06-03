@@ -27,7 +27,14 @@ import static com.vaadin.testbench.TestBenchLogger.logger;
 public class ConfigurationFinder {
 
     @VisibleForTesting
-    static final String TESTBENCH_TARGET_CONFIGURATION = "testbench.target.configuration";
+    static final String TESTBENCH_CONFIG_CLASS_SYSTEM_PROPERTY = "testbench.configuration.class";
+
+    /**
+     * This should probably only be used in a CI environment as it might not make sense
+     * on a developer machine with multiple projects.
+     */
+    @VisibleForTesting
+    static final String TESTBENCH_CONFIG_CLASS_ENVIRONMENT_VARIABLE = "TESTBENCH_CONFIGURATION_CLASS";
 
     private static final String TARGET_CONFIGURATION_CLASSNAME = TestConfiguration.class.getSimpleName();
 
@@ -40,13 +47,24 @@ public class ConfigurationFinder {
 
     @VisibleForTesting
     static TestConfiguration findTestConfiguration(ClassGraph classGraph) {
-        final String targetConfigurationSystemProperty = System.getProperty(TESTBENCH_TARGET_CONFIGURATION);
+        final String targetConfigurationSystemProperty
+                = System.getProperty(TESTBENCH_CONFIG_CLASS_SYSTEM_PROPERTY);
         if (targetConfigurationSystemProperty != null) {
             logger().debug(TARGET_CONFIGURATION_CLASSNAME
-                    + "implementation found via system property: "
+                    + " implementation found via system property: "
                     + targetConfigurationSystemProperty);
 
             return instantiate(targetConfigurationSystemProperty);
+        }
+
+        final String targetConfigurationEnvironmentVariable
+                = System.getenv(TESTBENCH_CONFIG_CLASS_ENVIRONMENT_VARIABLE);
+        if (targetConfigurationEnvironmentVariable != null) {
+            logger().debug(TARGET_CONFIGURATION_CLASSNAME
+                    + " implementation found via environment variable: "
+                    + targetConfigurationEnvironmentVariable);
+
+            return instantiate(targetConfigurationEnvironmentVariable);
         }
 
         try (ScanResult scanResult = classGraph.scan()) {
@@ -63,7 +81,7 @@ public class ConfigurationFinder {
                         + TARGET_CONFIGURATION_CLASSNAME
                         + " found. Either ensure that only one implementation exist "
                         + "or specify the desired implementation by setting the system property '"
-                        + TESTBENCH_TARGET_CONFIGURATION + "'");
+                        + TESTBENCH_CONFIG_CLASS_SYSTEM_PROPERTY + "'");
             }
 
             final String targetConfigurationClassName = targetConfiguration.get(0).getName();
@@ -80,14 +98,14 @@ public class ConfigurationFinder {
             final Object config = Class.forName(fullyQualifiedTargetConfigurationClassName).newInstance();
             if (!(config instanceof TestConfiguration)) {
                 throw new IllegalArgumentException("The specified "
-                        + ConfigurationFinder.TESTBENCH_TARGET_CONFIGURATION + " does not implement "
+                        + ConfigurationFinder.TESTBENCH_CONFIG_CLASS_SYSTEM_PROPERTY + " does not implement "
                         + ConfigurationFinder.TARGET_CONFIGURATION_CLASSNAME);
             }
 
             return ((TestConfiguration) config);
         } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
             throw new IllegalArgumentException(
-                    "The specified " + ConfigurationFinder.TESTBENCH_TARGET_CONFIGURATION
+                    "The specified " + ConfigurationFinder.TESTBENCH_CONFIG_CLASS_SYSTEM_PROPERTY
                             + " is not instantiatable", e);
         }
     }
