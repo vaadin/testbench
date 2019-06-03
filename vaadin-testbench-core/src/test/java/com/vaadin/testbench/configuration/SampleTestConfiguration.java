@@ -1,4 +1,4 @@
-package com.vaadin.testbench.addons.junit5.extensions.unittest;
+package com.vaadin.testbench.configuration;
 
 /*-
  * #%L
@@ -17,15 +17,22 @@ package com.vaadin.testbench.addons.junit5.extensions.unittest;
  * #L%
  */
 
+import com.vaadin.testbench.addons.junit5.extensions.container.ContainerInfo;
 import com.vaadin.testbench.configuration.Target;
-import com.vaadin.testbench.configuration.TargetConfiguration;
+import com.vaadin.testbench.configuration.TestConfiguration;
 
 import java.util.Collections;
 import java.util.List;
 
-public class InvalidTestTargetConfiguration {
+public class SampleTestConfiguration implements TestConfiguration {
 
+    @Override
     public List<Target> getBrowserTargets() {
-        return Collections.singletonList(TargetConfiguration.localSafari());
+        return Collections.singletonList(TestConfiguration.localSafari());
+    }
+
+    @Override
+    public ContainerInfo getContainerInfo() {
+        return TestConfiguration.defaultContainerInfo();
     }
 }

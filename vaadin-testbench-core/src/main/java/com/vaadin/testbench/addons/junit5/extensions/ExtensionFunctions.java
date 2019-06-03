@@ -32,16 +32,12 @@ public interface ExtensionFunctions {
     static Namespace namespaceForMethod(ExtensionContext ctx) {
         String name = ctx.getTestClass().get().getName();
         String methodName = ctx.getTestMethod().get().getName();
-        Namespace namespace = Namespace.create(ExtensionFunctions.class,
-                name, methodName);
-        return namespace;
+        return Namespace.create(ExtensionFunctions.class, name, methodName);
     }
 
     static Namespace namespaceForClass(ExtensionContext ctx) {
         String name = ctx.getTestClass().get().getName();
-        Namespace namespace = Namespace.create(ExtensionFunctions.class,
-                name);
-        return namespace;
+        return Namespace.create(ExtensionFunctions.class, name);
     }
 
     static boolean isMethodCtx(ExtensionContext context) {

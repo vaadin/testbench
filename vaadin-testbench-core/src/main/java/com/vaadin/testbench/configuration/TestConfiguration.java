@@ -17,6 +17,9 @@ package com.vaadin.testbench.configuration;
  * #L%
  */
 
+import com.vaadin.testbench.addons.junit5.extensions.container.ContainerInfo;
+import com.vaadin.testbench.addons.junit5.extensions.container.ContainerInfo.InitializationScope;
+import com.vaadin.testbench.addons.junit5.extensions.container.NetworkFunctions;
 import com.vaadin.testbench.addons.webdriver.BrowserType;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -26,9 +29,19 @@ import org.openqa.selenium.safari.SafariOptions;
 
 import java.util.List;
 
-public interface TargetConfiguration {
+public interface TestConfiguration {
 
     List<Target> getBrowserTargets();
+
+    ContainerInfo getContainerInfo();
+
+    static ContainerInfo defaultContainerInfo() {
+        return new ContainerInfo(NetworkFunctions.localIp(),
+                NetworkFunctions.freePort().orElseThrow(
+                        () -> new IllegalStateException("Unable to obtain a free port")),
+                "/",
+                InitializationScope.BEFORE_EACH);
+    }
 
     static Target localChrome(String driverPath, boolean headless) {
         return new LocalTarget(

@@ -19,7 +19,7 @@ package com.vaadin.testbench.addons.webdriver;
 
 import com.github.webdriverextensions.WebDriverProperties;
 import com.github.webdriverextensions.internal.junitrunner.DriverPathLoader;
-import com.vaadin.testbench.configuration.TargetConfiguration;
+import com.vaadin.testbench.configuration.TestConfiguration;
 import com.vaadin.testbench.configuration.LocalTarget;
 import com.vaadin.testbench.configuration.RemoteTarget;
 import com.vaadin.testbench.configuration.Target;
@@ -55,8 +55,6 @@ public interface BrowserDriverFunctions {
     String ENABLE_VNC = "enableVNC";
     String ENABLE_VIDEO = "enableVideo";
     String PROJECT = "project";
-
-    String CONFIG_FOLDER = ".testbenchextensions/";
 
     static WebDriver createDriver(Target target) {
         if (target.isLocal()) {
@@ -109,13 +107,13 @@ public interface BrowserDriverFunctions {
         }
     }
 
-    static Stream<WebDriver> createDrivers(TargetConfiguration targetConfiguration,
+    static Stream<WebDriver> createDrivers(TestConfiguration testConfiguration,
                                            Collection<com.vaadin.testbench.addons.webdriver.BrowserType> disabledBrowsers) {
         final Set<String> skippedBrowsers = disabledBrowsers.stream()
                 .map(com.vaadin.testbench.addons.webdriver.BrowserType::browserName)
                 .collect(toSet());
 
-        return targetConfiguration.getBrowserTargets()
+        return testConfiguration.getBrowserTargets()
                 .stream()
                 .filter(spec -> !skippedBrowsers.contains(spec.getDesiredCapabilities().getBrowserName()))
                 .map(BrowserDriverFunctions::createDriver);

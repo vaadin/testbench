@@ -1,4 +1,4 @@
-package com.vaadin.testbench.addons.junit5.extensions.unittest;
+package com.vaadin.testbench.configuration;
 
 /*-
  * #%L
@@ -18,7 +18,6 @@ package com.vaadin.testbench.addons.junit5.extensions.unittest;
  */
 
 import com.vaadin.testbench.addons.webdriver.BrowserType;
-import com.vaadin.testbench.configuration.Target;
 import io.github.classgraph.ClassGraph;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,20 +25,18 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static com.vaadin.testbench.addons.junit5.extensions.unittest.PageObjectInvocationContextProvider.TESTBENCH_TARGET_CONFIGURATION;
+import static com.vaadin.testbench.configuration.ConfigurationFinder.TESTBENCH_TARGET_CONFIGURATION;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class PageObjectInvocationContextProviderTest {
+class ConfigurationFinderTest {
 
-    private PageObjectInvocationContextProvider systemUnderTest;
     private String configClassPropertyBackup;
 
     @BeforeEach
     void setup() {
         configClassPropertyBackup = System.getProperty(TESTBENCH_TARGET_CONFIGURATION);
         System.clearProperty(TESTBENCH_TARGET_CONFIGURATION);
-        systemUnderTest = new PageObjectInvocationContextProvider();
     }
 
     @AfterEach
@@ -52,9 +49,9 @@ class PageObjectInvocationContextProviderTest {
     @Test
     void findBrowserTargets_systemProperty() {
         System.setProperty(TESTBENCH_TARGET_CONFIGURATION,
-                TestTargetConfiguration.class.getCanonicalName());
+                SampleTestConfiguration.class.getCanonicalName());
 
-        final List<Target> targets = systemUnderTest.findBrowserTargets();
+        final List<Target> targets = ConfigurationFinder.findTestConfiguration().getBrowserTargets();
 
         assertEquals(1, targets.size());
         assertEquals(BrowserType.SAFARI.browserName(),
@@ -65,25 +62,27 @@ class PageObjectInvocationContextProviderTest {
     void findBrowserTargets_systemProperty_nonExistentClass() {
         System.setProperty(TESTBENCH_TARGET_CONFIGURATION, "NonExistentClass");
 
-        assertThrows(IllegalArgumentException.class, () -> systemUnderTest.findBrowserTargets());
+        assertThrows(IllegalArgumentException.class, ConfigurationFinder::findTestConfiguration);
     }
 
     @Test
     void findBrowserTargets_systemProperty_classNotImplementingTargetConfiguration() {
         System.setProperty(TESTBENCH_TARGET_CONFIGURATION,
-                InvalidTestTargetConfiguration.class.getCanonicalName());
+                InvalidTestConfiguration.class.getCanonicalName());
 
-        assertThrows(IllegalArgumentException.class, () -> systemUnderTest.findBrowserTargets());
+        assertThrows(IllegalArgumentException.class, ConfigurationFinder::findTestConfiguration);
     }
 
     @Test
     void findBrowserTargets_pathScanning() {
-        systemUnderTest = new PageObjectInvocationContextProvider(new ClassGraph()
+        final ClassGraph limitedScopeClassGraph = new ClassGraph()
                 .enableClassInfo()
-                .whitelistPackagesNonRecursive("com.vaadin.testbench.addons.junit5.extensions.unittest"));
+                .whitelistPackagesNonRecursive(getClass().getPackage().getName());
         // There's only one implementation in the specified package tree.
 
-        final List<Target> targets = systemUnderTest.findBrowserTargets();
+        final List<Target> targets = ConfigurationFinder
+                .findTestConfiguration(limitedScopeClassGraph)
+                .getBrowserTargets();
 
         assertEquals(1, targets.size());
         assertEquals(BrowserType.SAFARI.browserName(),
@@ -92,17 +91,18 @@ class PageObjectInvocationContextProviderTest {
 
     @Test
     void findBrowserTargets_pathScanning_none() {
-        systemUnderTest = new PageObjectInvocationContextProvider(new ClassGraph()
+        final ClassGraph tooLimitedScopedClassGraph = new ClassGraph()
                 .enableClassInfo()
-                .whitelistPackagesNonRecursive("com.vaadin.testbench"));
+                .whitelistPackagesNonRecursive("com.vaadin.testbench");
         // There's no implementation in the specified package.
 
-        assertThrows(IllegalStateException.class, () -> systemUnderTest.findBrowserTargets());
+        assertThrows(IllegalStateException.class,
+                () -> ConfigurationFinder.findTestConfiguration(tooLimitedScopedClassGraph));
     }
 
     @Test
     void findBrowserTargets_pathScanning_multiple() {
         // There are multiple implementations on the full classpath.
-        assertThrows(IllegalStateException.class, () -> systemUnderTest.findBrowserTargets());
+        assertThrows(IllegalStateException.class, ConfigurationFinder::findTestConfiguration);
     }
 }

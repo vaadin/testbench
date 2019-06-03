@@ -19,19 +19,56 @@ package com.vaadin.testbench.addons.junit5.extensions.container;
 
 public class ContainerInfo {
 
-    private final Integer port;
-    private final String host;
+    private String host;
+    private Integer port;
+    private String webapp;
+    private InitializationScope initializationScope;
 
-    public ContainerInfo(Integer port, String host) {
+    public ContainerInfo(String host,
+                         Integer port,
+                         String webapp,
+                         InitializationScope initializationScope) {
+        this.host = host;
         this.port = port;
+        this.webapp = webapp;
+        this.initializationScope = initializationScope;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
         this.host = host;
     }
 
-    public int port() {
+    public Integer getPort() {
         return port;
     }
 
-    public String host() {
-        return host;
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+    public String getWebapp() {
+        return  webapp;
+    }
+
+    public void setWebapp(String webapp) {
+        this.webapp = webapp;
+    }
+
+    public InitializationScope getInitializationScope() {
+        return initializationScope;
+    }
+
+    public void setInitializationScope(InitializationScope initializationScope) {
+        this.initializationScope = initializationScope;
+    }
+
+    public enum InitializationScope {
+
+        BEFORE_EACH,
+        BEFORE_ALL
     }
 }

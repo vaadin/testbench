@@ -54,11 +54,11 @@ public interface PageObject extends HasContainerInfo, HasDriver, HasDefaultNavig
     }
 
     default String ip() {
-        return getContainerInfo().host();
+        return getContainerInfo().getHost();
     }
 
     default String port() {
-        return String.valueOf(getContainerInfo().port());
+        return String.valueOf(getContainerInfo().getPort());
     }
 
     // TODO(sven): Per properties.

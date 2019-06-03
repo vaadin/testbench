@@ -24,6 +24,9 @@ import java.util.List;
 
 import static com.vaadin.testbench.addons.junit5.extensions.ExtensionFunctions.storeClassPlain;
 import static com.vaadin.testbench.addons.junit5.extensions.ExtensionFunctions.storeMethodPlain;
+import static com.vaadin.testbench.addons.junit5.extensions.container.NetworkFunctions.SERVER_IP;
+import static com.vaadin.testbench.addons.junit5.extensions.container.NetworkFunctions.freePort;
+import static com.vaadin.testbench.addons.junit5.extensions.container.NetworkFunctions.localIp;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static org.junit.platform.commons.util.AnnotationUtils.isAnnotated;
@@ -31,12 +34,11 @@ import static org.junit.platform.commons.util.AnnotationUtils.isAnnotated;
 public abstract class AbstractSpringBootContainerInitializer
         implements ContainerInitializer {
 
-    public static final String SPRING_BOOT_APPLICATION_CONTEXT = "spring-boot-applicationContext";
-    public static final String SPRING_BOOT_APP_CLASS = "spring-boot-app-class";
-    public static final String SPRING_BOOT_ARGS = "spring-boot-args";
-    public static final String SERVER_PORT = "--server.port=";
-    public static final String NO_APP_CLASS_DEFINED = "No app class defined to define the SpringBoot Application Class";
-    public static final String NOT_ANNOTATED = "No @SpringBootConf annotations at the testclass found";
+    protected static final String SPRING_BOOT_APPLICATION_CONTEXT = "spring-boot-applicationContext";
+    private static final String SPRING_BOOT_APP_CLASS = "spring-boot-app-class";
+    private static final String SPRING_BOOT_ARGS = "spring-boot-args";
+    private static final String SERVER_PORT = "--server.port=";
+    private static final String NOT_ANNOTATED = "No @SpringBootConf annotations found on the test class";
 
     @Override
     public void beforeAll(Class<?> testClass, ExtensionContext context) {
@@ -60,8 +62,9 @@ public abstract class AbstractSpringBootContainerInitializer
 
     @Override
     public void beforeEach(Method testMethod, ExtensionContext context) {
-        int port = preparePort(context);
-        prepareIp(context);
+        final int port = ContainerInitializer.containerInfo().getPort();
+        storeMethodPlain(context).put(SERVER_PORT, port);
+        storeMethodPlain(context).put(SERVER_IP, localIp());
 
         final ExtensionContext.Store store = storeClassPlain(context);
 
@@ -83,8 +86,8 @@ public abstract class AbstractSpringBootContainerInitializer
     public void afterEach(Method testMethod, ExtensionContext context) {
         stopSpringApplication(context);
         removeApplicationContext(context);
-        cleanupPort(context);
-        cleanupIp(context);
+        storeMethodPlain(context).remove(NetworkFunctions.SERVER_PORT);
+        storeMethodPlain(context).remove(SERVER_IP);
     }
 
     public abstract void stopSpringApplication(ExtensionContext context);

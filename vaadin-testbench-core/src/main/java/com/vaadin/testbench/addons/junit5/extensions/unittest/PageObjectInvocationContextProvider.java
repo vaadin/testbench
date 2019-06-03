@@ -17,45 +17,23 @@ package com.vaadin.testbench.addons.junit5.extensions.unittest;
  * #L%
  */
 
-import com.google.common.annotations.VisibleForTesting;
 import com.vaadin.testbench.addons.webdriver.BrowserType;
 import com.vaadin.testbench.addons.webdriver.SkipBrowsers;
 import com.vaadin.testbench.annotations.AnnotationHelper;
-import com.vaadin.testbench.configuration.TargetConfiguration;
-import com.vaadin.testbench.configuration.Target;
-import io.github.classgraph.ClassGraph;
-import io.github.classgraph.ClassInfoList;
-import io.github.classgraph.ScanResult;
+import com.vaadin.testbench.configuration.ConfigurationFinder;
+import com.vaadin.testbench.configuration.TestConfiguration;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.TestTemplateInvocationContext;
 import org.junit.jupiter.api.extension.TestTemplateInvocationContextProvider;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.stream.Stream;
 
-import static com.vaadin.testbench.TestBenchLogger.logger;
 import static com.vaadin.testbench.addons.webdriver.BrowserDriverFunctions.createDrivers;
 import static com.vaadin.testbench.addons.webdriver.junit5.WebdriverExtensionFunctions.storeWebDriver;
 
 public class PageObjectInvocationContextProvider implements TestTemplateInvocationContextProvider {
-
-    @VisibleForTesting
-    static final String TESTBENCH_TARGET_CONFIGURATION = "testbench.target.configuration";
-
-    private static final String TARGET_CONFIGURATION_CLASSNAME = TargetConfiguration.class.getSimpleName();
-
-    private final ClassGraph CLASS_GRAPH;
-
-    public PageObjectInvocationContextProvider() {
-        this(new ClassGraph().enableClassInfo());
-    }
-
-    @VisibleForTesting
-    PageObjectInvocationContextProvider(ClassGraph classGraph) {
-        this.CLASS_GRAPH = classGraph;
-    }
 
     @Override
     public boolean supportsTestTemplate(ExtensionContext context) {
@@ -71,61 +49,11 @@ public class PageObjectInvocationContextProvider implements TestTemplateInvocati
                 .map(AnnotationHelper::flatten)
                 .get();
 
-        final List<Target> targetBrowsers = findBrowserTargets();
+        final TestConfiguration testConfiguration = ConfigurationFinder.findTestConfiguration();
 
-        return createDrivers(() -> targetBrowsers, skippedBrowsers)
+        return createDrivers(testConfiguration, skippedBrowsers)
                 .map(WebDriverTemplateInvocationContextImpl::new)
                 .peek(po -> storeWebDriver(context, po.webdriver()))
                 .map(TestTemplateInvocationContext.class::cast);
-    }
-
-    @VisibleForTesting
-    List<Target> findBrowserTargets() {
-        final String targetConfigurationSystemProperty = System.getProperty(TESTBENCH_TARGET_CONFIGURATION);
-        if (targetConfigurationSystemProperty != null) {
-            logger().debug("TargetBrowser implementation found via system property: "
-                    + targetConfigurationSystemProperty);
-            return instantiate(targetConfigurationSystemProperty).getBrowserTargets();
-        }
-
-        try (ScanResult scanResult = CLASS_GRAPH.scan()) {
-            final ClassInfoList targetConfiguration = scanResult
-                    .getClassesImplementing(TargetConfiguration.class.getCanonicalName());
-
-            if (targetConfiguration.size() == 0) {
-                throw new IllegalStateException("No implementation of "
-                        + TARGET_CONFIGURATION_CLASSNAME + " found");
-            }
-
-            if (targetConfiguration.size() > 1) {
-                throw new IllegalStateException("Multiple implementations of "
-                        + TARGET_CONFIGURATION_CLASSNAME
-                        + " found. Either ensure that only one implementation exist "
-                        + "or specify the desired implementation by setting the system property '"
-                        + TESTBENCH_TARGET_CONFIGURATION + "'");
-            }
-
-            final String targetConfigurationClassName = targetConfiguration.get(0).getName();
-            logger().debug(TARGET_CONFIGURATION_CLASSNAME + " implementation found by class scanning: "
-                    + targetConfigurationClassName);
-
-            return instantiate(targetConfigurationClassName).getBrowserTargets();
-        }
-    }
-
-    private TargetConfiguration instantiate(String fullyQualifiedTargetConfigurationClassName) {
-        try {
-            final Object config = Class.forName(fullyQualifiedTargetConfigurationClassName).newInstance();
-            if (!(config instanceof TargetConfiguration)) {
-                throw new IllegalArgumentException("The specified "
-                        + TESTBENCH_TARGET_CONFIGURATION + " does not implement "
-                        + TARGET_CONFIGURATION_CLASSNAME);
-            }
-
-            return ((TargetConfiguration) config);
-        } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
-            throw new IllegalArgumentException(
-                    "The specified " + TESTBENCH_TARGET_CONFIGURATION + " is not instantiatable", e);
-        }
     }
 }

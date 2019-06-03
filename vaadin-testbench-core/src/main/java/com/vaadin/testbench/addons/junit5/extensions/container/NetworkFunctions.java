@@ -30,8 +30,6 @@ import static com.vaadin.testbench.TestBenchLogger.logger;
 public interface NetworkFunctions {
 
     String DEFAULT_PROTOCOL = "http";
-    String DEFAULT_IP = "127.0.0.1";
-    String DEFAULT_SERVLET_PORT = "80";
     String DEFAULT_SERVLET_WEBAPP = "/";
     String SERVER_PROTOCOL = "server.protocol";
     String SERVER_IP = "server.ip";
