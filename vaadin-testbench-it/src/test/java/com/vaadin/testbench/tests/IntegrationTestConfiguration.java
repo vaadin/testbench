@@ -61,7 +61,8 @@ public class IntegrationTestConfiguration implements TestConfiguration {
 
         private static final String DRIVERS_DIRECTORY = "../_data/webdrivers/";
         private static final String ARCH = "64bit";
-        private static final String OS = SystemUtils.IS_OS_WINDOWS ? "windows"
+        private static final String OS
+                = SystemUtils.IS_OS_WINDOWS ? "windows"
                 : SystemUtils.IS_OS_LINUX ? "linux"
                 : "mac";
 
