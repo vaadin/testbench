@@ -97,16 +97,15 @@ public class ConfigurationFinder {
         try {
             final Object config = Class.forName(fullyQualifiedTargetConfigurationClassName).newInstance();
             if (!(config instanceof TestConfiguration)) {
-                throw new IllegalArgumentException("The specified "
-                        + ConfigurationFinder.TESTBENCH_CONFIG_CLASS_SYSTEM_PROPERTY + " does not implement "
+                throw new IllegalArgumentException(fullyQualifiedTargetConfigurationClassName
+                        + " does not implement "
                         + ConfigurationFinder.TARGET_CONFIGURATION_CLASSNAME);
             }
 
             return ((TestConfiguration) config);
         } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
-            throw new IllegalArgumentException(
-                    "The specified " + ConfigurationFinder.TESTBENCH_CONFIG_CLASS_SYSTEM_PROPERTY
-                            + " is not instantiatable", e);
+            throw new IllegalArgumentException(fullyQualifiedTargetConfigurationClassName
+                    + " is not instantiatable", e);
         }
     }
 }
