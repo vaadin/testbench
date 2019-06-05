@@ -89,7 +89,6 @@
     <addon-test-helpers.version>2.0</addon-test-helpers.version>
     <javax.servlet-api.version>4.0.1</javax.servlet-api.version>
 
-<!--    Not latest because of webdriversextension using old selenium-->
     <selenium.version>3.141.59</selenium.version>
 
     <vaadin.version>13.0.2</vaadin.version>
