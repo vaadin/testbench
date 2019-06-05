@@ -212,5 +212,11 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <!-- Override transitive dependency with Java 11 compatible version -->
+        <dependency>
+            <groupId>net.bytebuddy</groupId>
+            <artifactId>byte-buddy</artifactId>
+            <version>1.9.13</version>
+        </dependency>
     </dependencies>
 </project>
