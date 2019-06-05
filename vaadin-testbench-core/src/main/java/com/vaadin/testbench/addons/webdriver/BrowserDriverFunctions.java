@@ -17,12 +17,10 @@ package com.vaadin.testbench.addons.webdriver;
  * #L%
  */
 
-import com.github.webdriverextensions.WebDriverProperties;
-import com.github.webdriverextensions.internal.junitrunner.DriverPathLoader;
-import com.vaadin.testbench.configuration.TestConfiguration;
 import com.vaadin.testbench.configuration.LocalTarget;
 import com.vaadin.testbench.configuration.RemoteTarget;
 import com.vaadin.testbench.configuration.Target;
+import com.vaadin.testbench.configuration.TestConfiguration;
 import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -45,12 +43,15 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import static com.github.webdriverextensions.WebDriverProperties.CHROME_DRIVER_PROPERTY_NAME;
-import static com.github.webdriverextensions.WebDriverProperties.FIREFOX_DRIVER_PROPERTY_NAME;
 import static com.vaadin.testbench.TestBenchLogger.logger;
 import static java.util.stream.Collectors.toSet;
 
 public interface BrowserDriverFunctions {
+
+    String CHROME_DRIVER_PROPERTY_NAME = "webdriver.chrome.driver";
+    String FIREFOX_DRIVER_PROPERTY_NAME = "webdriver.gecko.driver";
+    String IE_DRIVER_PROPERTY_NAME = "webdriver.ie.driver";
+    String OPERA_DRIVER_PROPERTY_NAME = "webdriver.opera.driver";
 
     String ENABLE_VNC = "enableVNC";
     String ENABLE_VIDEO = "enableVideo";
@@ -67,8 +68,6 @@ public interface BrowserDriverFunctions {
     }
 
     static WebDriver createLocalDriver(DesiredCapabilities dc, MutableCapabilities options, String binaryPath) {
-        DriverPathLoader.loadDriverPaths(null);
-
         final String browserType = dc.getBrowserName();
         if (browserType == null || browserType.isEmpty()) {
             return null;
@@ -84,12 +83,12 @@ public interface BrowserDriverFunctions {
             case BrowserType.SAFARI:
                 return new SafariDriver((SafariOptions) options.merge(dc));
             case BrowserType.OPERA:
-                System.setProperty(WebDriverProperties.OPERA_DRIVER_PROPERTY_NAME, binaryPath);
+                System.setProperty(OPERA_DRIVER_PROPERTY_NAME, binaryPath);
                 return new OperaDriver((OperaOptions) options.merge(dc));
             case BrowserType.OPERA_BLINK:
                 return new OperaDriver(options.merge(dc));
             case BrowserType.IE:
-                System.setProperty(WebDriverProperties.IE_DRIVER_PROPERTY_NAME, binaryPath);
+                System.setProperty(IE_DRIVER_PROPERTY_NAME, binaryPath);
                 return new InternetExplorerDriver((InternetExplorerOptions) options.merge(dc));
             default:
                 return null;

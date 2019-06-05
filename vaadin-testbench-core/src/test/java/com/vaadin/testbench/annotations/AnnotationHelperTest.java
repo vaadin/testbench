@@ -17,11 +17,9 @@ package com.vaadin.testbench.annotations;
  * #L%
  */
 
-import org.junit.Assert;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 import java.lang.reflect.Method;
@@ -33,7 +31,9 @@ import java.util.List;
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class AnnotationHelperTest {
 
@@ -82,7 +82,7 @@ class AnnotationHelperTest {
         final Collection<String> expected = Arrays.asList("a", "b", "c", "d", "e", "f", "g");
         final Collection<String> actual = AnnotationHelper.flatten(input);
 
-        Assert.assertArrayEquals(expected.toArray(), actual.toArray());
+        assertArrayEquals(expected.toArray(), actual.toArray());
     }
 
     @Target({TYPE, METHOD})

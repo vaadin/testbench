@@ -17,7 +17,6 @@ package com.vaadin.testbench.addons.junit5.extensions.unittest;
  * #L%
  */
 
-import com.github.webdriverextensions.WebDriverExtensionFieldDecorator;
 import com.vaadin.testbench.addons.junit5.extensions.ExtensionFunctions;
 import com.vaadin.testbench.addons.junit5.pageobject.PageObject;
 import org.junit.jupiter.api.extension.Extension;
@@ -38,7 +37,6 @@ import static com.vaadin.testbench.addons.junit5.extensions.unittest.PageObjectF
 import static com.vaadin.testbench.addons.junit5.extensions.unittest.PageObjectFunctions.storePageObject;
 import static com.vaadin.testbench.addons.webdriver.WebDriverFunctions.webdriverName;
 import static java.util.Collections.singletonList;
-import static org.openqa.selenium.support.PageFactory.initElements;
 
 public final class WebDriverTemplateInvocationContextImpl implements WebDriverTemplateInvocationContext {
 
@@ -91,9 +89,6 @@ public final class WebDriverTemplateInvocationContextImpl implements WebDriverTe
                     throw new ParameterResolutionException("Unable to create PageObjectInstance of type "
                             + pageObjectClass + ". Accessible no-arg constructor needed.", e);
                 }
-
-                // TODO(sven): Check if needed.
-                initElements(new WebDriverExtensionFieldDecorator(webDriver), pageObject);
 
                 final boolean preload = storeMethodPlain(extensionContext).get(PAGE_OBJECT_PRELOAD, Boolean.class);
                 if (preload) {
