@@ -90,7 +90,7 @@
     <javax.servlet-api.version>4.0.1</javax.servlet-api.version>
 
 <!--    Not latest because of webdriversextension using old selenium-->
-    <selenium.version>3.10.0</selenium.version>
+    <selenium.version>3.141.59</selenium.version>
 
     <vaadin.version>13.0.2</vaadin.version>
   </properties>
