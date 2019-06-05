@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.vaadin</groupId>
         <artifactId>vaadin-testbench-parent</artifactId>
-        <version>6.1-SNAPSHOT</version>
+        <version>6.2-SNAPSHOT</version>
     </parent>
 
     <artifactId>vaadin-testbench-core</artifactId>
@@ -211,6 +211,12 @@
                     <artifactId>gwt-user</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <!-- Override transitive dependency with Java 11 compatible version -->
+        <dependency>
+            <groupId>net.bytebuddy</groupId>
+            <artifactId>byte-buddy</artifactId>
+            <version>1.9.13</version>
         </dependency>
     </dependencies>
 </project>
