@@ -31,6 +31,7 @@ import java.util.List;
 
 import static com.vaadin.testbench.configuration.TestConfiguration.localChrome;
 import static com.vaadin.testbench.configuration.TestConfiguration.localFirefox;
+import static com.vaadin.testbench.configuration.TestConfiguration.localOpera;
 import static com.vaadin.testbench.configuration.TestConfiguration.saucelabs;
 
 public class IntegrationTestConfiguration implements TestConfiguration {
@@ -69,7 +70,8 @@ public class IntegrationTestConfiguration implements TestConfiguration {
         private static List<Target> getLocalBrowserTargets() {
             return Arrays.asList(
                     localChrome(pathFor("chromedriver"), true),
-                    localFirefox(pathFor("geckodriver"), true));
+                    localFirefox(pathFor("geckodriver"), true),
+                    localOpera(pathFor("operadriver") + "/operadriver"));
         }
 
         private static String pathFor(String driverName) {

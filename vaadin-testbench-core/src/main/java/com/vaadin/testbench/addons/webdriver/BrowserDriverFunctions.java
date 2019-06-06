@@ -81,11 +81,9 @@ public interface BrowserDriverFunctions {
                 return new ChromeDriver((ChromeOptions) options.merge(dc));
             case BrowserType.SAFARI:
                 return new SafariDriver((SafariOptions) options.merge(dc));
-            case BrowserType.OPERA:
+            case BrowserType.OPERA_BLINK:
                 System.setProperty(OPERA_DRIVER_EXE_PROPERTY, binaryPath);
                 return new OperaDriver((OperaOptions) options.merge(dc));
-            case BrowserType.OPERA_BLINK:
-                return new OperaDriver(options.merge(dc));
             case BrowserType.IE:
                 System.setProperty(IE_DRIVER_EXE_PROPERTY, binaryPath);
                 return new InternetExplorerDriver((InternetExplorerOptions) options.merge(dc));

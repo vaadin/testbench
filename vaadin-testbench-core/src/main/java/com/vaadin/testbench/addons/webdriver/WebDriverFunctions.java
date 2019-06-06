@@ -8,10 +8,10 @@ package com.vaadin.testbench.addons.webdriver;
  * %%
  * This program is available under Commercial Vaadin Add-On License 3.0
  * (CVALv3).
- * 
+ *
  * See the file licensing.txt distributed with this software for more
  * information about licensing.
- * 
+ *
  * You should have received a copy of the license along with this program.
  * If not, see <http://vaadin.com/license/cval-3>.
  * #L%
@@ -20,6 +20,7 @@ package com.vaadin.testbench.addons.webdriver;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.opera.OperaDriver;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 import java.io.ByteArrayOutputStream;
@@ -33,9 +34,13 @@ import java.time.LocalDateTime;
 public interface WebDriverFunctions {
 
     static String webdriverName(WebDriver driver) {
-        return driver instanceof RemoteWebDriver
+        final String prefix = driver instanceof OperaDriver ? "opera " : "";
+
+        final String name = driver instanceof RemoteWebDriver
                 ? formatRemoteWebDriverName((RemoteWebDriver) driver)
                 : driver.toString();
+
+        return prefix + name;
     }
 
     static String formatRemoteWebDriverName(RemoteWebDriver driver) {
