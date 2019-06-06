@@ -45,13 +45,12 @@ import java.util.stream.Stream;
 
 import static com.vaadin.testbench.TestBenchLogger.logger;
 import static java.util.stream.Collectors.toSet;
+import static org.openqa.selenium.chrome.ChromeDriverService.CHROME_DRIVER_EXE_PROPERTY;
+import static org.openqa.selenium.firefox.GeckoDriverService.GECKO_DRIVER_EXE_PROPERTY;
+import static org.openqa.selenium.ie.InternetExplorerDriverService.IE_DRIVER_EXE_PROPERTY;
+import static org.openqa.selenium.opera.OperaDriverService.OPERA_DRIVER_EXE_PROPERTY;
 
 public interface BrowserDriverFunctions {
-
-    String CHROME_DRIVER_PROPERTY_NAME = "webdriver.chrome.driver";
-    String FIREFOX_DRIVER_PROPERTY_NAME = "webdriver.gecko.driver";
-    String IE_DRIVER_PROPERTY_NAME = "webdriver.ie.driver";
-    String OPERA_DRIVER_PROPERTY_NAME = "webdriver.opera.driver";
 
     String ENABLE_VNC = "enableVNC";
     String ENABLE_VIDEO = "enableVideo";
@@ -75,20 +74,18 @@ public interface BrowserDriverFunctions {
 
         switch (browserType) {
             case BrowserType.FIREFOX:
-                System.setProperty(FIREFOX_DRIVER_PROPERTY_NAME, binaryPath);
+                System.setProperty(GECKO_DRIVER_EXE_PROPERTY, binaryPath);
                 return new FirefoxDriver((FirefoxOptions) options.merge(dc));
             case BrowserType.CHROME:
-                System.setProperty(CHROME_DRIVER_PROPERTY_NAME, binaryPath);
+                System.setProperty(CHROME_DRIVER_EXE_PROPERTY, binaryPath);
                 return new ChromeDriver((ChromeOptions) options.merge(dc));
             case BrowserType.SAFARI:
                 return new SafariDriver((SafariOptions) options.merge(dc));
-            case BrowserType.OPERA:
-                System.setProperty(OPERA_DRIVER_PROPERTY_NAME, binaryPath);
-                return new OperaDriver((OperaOptions) options.merge(dc));
             case BrowserType.OPERA_BLINK:
-                return new OperaDriver(options.merge(dc));
+                System.setProperty(OPERA_DRIVER_EXE_PROPERTY, binaryPath);
+                return new OperaDriver((OperaOptions) options.merge(dc));
             case BrowserType.IE:
-                System.setProperty(IE_DRIVER_PROPERTY_NAME, binaryPath);
+                System.setProperty(IE_DRIVER_EXE_PROPERTY, binaryPath);
                 return new InternetExplorerDriver((InternetExplorerOptions) options.merge(dc));
             default:
                 return null;

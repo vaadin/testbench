@@ -24,6 +24,8 @@ import com.vaadin.testbench.addons.webdriver.BrowserType;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.ie.InternetExplorerOptions;
+import org.openqa.selenium.opera.OperaOptions;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.safari.SafariOptions;
 
@@ -54,6 +56,20 @@ public interface TestConfiguration {
         return new LocalTarget(
                 new DesiredCapabilities(BrowserType.FIREFOX.browserName(), null, null),
                 new FirefoxOptions().setHeadless(headless),
+                driverPath);
+    }
+
+    static Target localOpera(String driverPath) {
+        return new LocalTarget(
+                new DesiredCapabilities(BrowserType.OPERA_BLINK.browserName(), null, null),
+                new OperaOptions(),
+                driverPath);
+    }
+
+    static Target localInternetExplorer(String driverPath) {
+        return new LocalTarget(
+                new DesiredCapabilities(BrowserType.IE.browserName(), null, null),
+                new InternetExplorerOptions(),
                 driverPath);
     }
 
