@@ -470,10 +470,6 @@
                 <driver>
                   <name>geckodriver</name>
                 </driver>
-                <driver>
-                  <name>operadriver-mac-64bit</name>
-                  <url>https://github.com/operasoftware/operachromiumdriver/releases/download/v.2.45/operadriver_mac64.zip</url>
-                </driver>
               </drivers>
             </configuration>
           </plugin>
