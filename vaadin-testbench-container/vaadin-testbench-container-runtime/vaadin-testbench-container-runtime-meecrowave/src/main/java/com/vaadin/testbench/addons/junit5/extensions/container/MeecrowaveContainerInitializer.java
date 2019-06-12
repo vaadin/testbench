@@ -20,10 +20,12 @@ package com.vaadin.testbench.addons.junit5.extensions.container;
 import com.google.auto.service.AutoService;
 import com.vaadin.testbench.addons.junit5.extensions.container.ContainerInfo.InitializationScope;
 import org.apache.meecrowave.Meecrowave;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
 import java.lang.reflect.Method;
 
+import static com.vaadin.testbench.TestBenchLogger.logger;
 import static com.vaadin.testbench.addons.junit5.extensions.ExtensionFunctions.storeClassPlain;
 import static com.vaadin.testbench.addons.junit5.extensions.ExtensionFunctions.storeMethodPlain;
 import static com.vaadin.testbench.addons.junit5.extensions.container.ContainerInfo.InitializationScope.BEFORE_ALL;
@@ -40,26 +42,40 @@ public class MeecrowaveContainerInitializer implements ContainerInitializer {
 
     @Override
     public void beforeAll(Class<?> testClass, ExtensionContext context) {
-        if (containerInfo().getInitializationScope() == BEFORE_ALL)
+        if (containerInfo().getInitializationScope() == BEFORE_ALL) {
             startAndStore(context, BEFORE_ALL);
+        }
     }
 
     @Override
     public void beforeEach(Method testMethod, ExtensionContext context) {
-        if (containerInfo().getInitializationScope() == BEFORE_EACH)
+        if (containerInfo().getInitializationScope() == BEFORE_EACH) {
             startAndStore(context, BEFORE_EACH);
+        } else if (containerInfo().getInitializationScope() == BEFORE_ALL
+                && storeClassPlain(context).get(MEECROWAVE_INSTANCE) == null) {
+            logger().warn("Container configuration set to InitializationScope.BEFORE_ALL " +
+                    "but beforeAll callback is not yet executed. This might be because the " +
+                    "test class itself (or any of its parents) is not annotated with @VaadinTest. " +
+                    "This means the container might not be properly shutdown after test run " +
+                    "is complete. Consider annotating the test class too or use InitializationScope.BEFORE_EACH");
+
+            // Best effort to support BEFORE_ALL when test class is not annotated.
+            startAndStore(context, BEFORE_ALL);
+        }
     }
 
     @Override
     public void afterEach(Method testMethod, ExtensionContext context) {
-        if (containerInfo().getInitializationScope() == BEFORE_EACH)
+        if (containerInfo().getInitializationScope() == BEFORE_EACH) {
             stopAndRemove(context, BEFORE_EACH);
+        }
     }
 
     @Override
     public void afterAll(Class<?> testClass, ExtensionContext context) {
-        if (containerInfo().getInitializationScope() == BEFORE_ALL)
+        if (containerInfo().getInitializationScope() == BEFORE_ALL) {
             stopAndRemove(context, BEFORE_ALL);
+        }
     }
 
     private void startAndStore(ExtensionContext ctx, InitializationScope scope) {
@@ -83,7 +99,6 @@ public class MeecrowaveContainerInitializer implements ContainerInitializer {
         store.put(SERVER_PORT, meecrowave.getConfiguration().getHttpPort());
         store.put(SERVER_WEBAPP, containerInfo().getWebapp());
         store.put(MEECROWAVE_INSTANCE, meecrowave);
-
     }
 
     private void stopAndRemove(ExtensionContext ctx, InitializationScope scope) {
