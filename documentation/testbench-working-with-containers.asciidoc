@@ -1,0 +1,44 @@
+---
+title: Working with Test Containers
+order: 109
+layout: page
+---
+
+= Starting the Server Automatically
+
+Testbench can start containers automatically before running tests. The supported containers are Meecrowave, Spring-boot 1.x and Spring-boot 2.x. To use those, add the dependency in the project's pom.xml.
+
+* Meecrowave
+```xml
+<dependency>
+    <groupId>com.vaadin</groupId>
+    <artifactId>vaadin-testbench-container-runtime-meecrowave</artifactId>
+</dependency>
+```
+
+* Spring-boot 1.x
+```xml
+<dependency>
+    <groupId>com.vaadin</groupId>
+    <artifactId>vaadin-testbench-container-runtime-springboot-v01</artifactId>
+</dependency>
+```
+
+* Spring-boot 2.x
+```xml
+<dependency>
+    <groupId>com.vaadin</groupId>
+    <artifactId>vaadin-testbench-container-runtime-springboot-v02</artifactId>
+</dependency>
+```
+
+In case of spring-boot, you should also annotate your test classes with the `@SpringBootConf` annotation, specifying the application's entry point class (the class with the `main` method).
+
+If you do not want to start the application, include the `runtime-none` dependency. This is useful if you are running tests against a already running instance or starting it in some other fashion, like using maven plugins.
+```xml
+<dependency>
+    <groupId>com.vaadin</groupId>
+    <artifactId>vaadin-testbench-container-runtime-none</artifactId>
+</dependency>
+```
+

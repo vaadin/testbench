@@ -1,0 +1,134 @@
+---
+title: Getting Started
+order: 20
+layout: page
+---
+
+[[testbench.quickstart]]
+= Getting Started
+
+[TIP]
+If you just want to test out TestBench and see how tests are run, the easiest way is to clone the example project at https://github.com/vaadin/testbench-demo. The tests are automatically executed on your local Chrome when you run `mvn verify`.
+
+[[testbench.quickstart.overview]]
+== Overview
+In this chapter we are going to discuss how to create a basic test. We shall:
+
+1. Download a Vaadin starter project
+2. Add web drivers
+3. Add the required TestBench dependencies
+4. Configure TestBench
+5. Create a simple test
+
+[[testbench.quickstart.download]]
+=== Download a Vaadin starter project
+- Go to https://vaadin.com/start/latest/project-base
+- Select "Plain Java"
+- Type in a project name
+- Click `Download`
+
+Now you should find a minimal Vaadin project downloaded by your browser. Extract and open it in your favorite IDE.
+
+[[testbench.quickstart.drivers]]
+=== Add web drivers
+After opening the downloaded project in your IDE, you need to add a web driver to the project. TestBench communicates with browsers through web drivers. To setup the Chrome driver for example:
+
+- Go to http://chromedriver.chromium.org/downloads
+- Select the driver for your Chrome version
+- Select the package for your operating system
+- Extract the downloaded zip file and copy the driver to your project
+
+[TIP]
+Although we downloaded the Chrome driver manually, it is more efficient to to have it downloaded automatically by Maven. This is especially useful in CI environments or downloading multiple drivers for different browsers. See <<dummy/../testbench-running-with-maven#, Running with Maven>> for more information.
+
+[[testbench.quickstart.dependency]]
+To start using TestBench you need to add two dependencies in the `<dependencies>` section of the `pom.xml` file:
+
+1. The TestBench core dependency (`com.vaadin` : `vaadin-testbench-core`)
+2. A test container dependency. In this tutorial we shall use the Meecrowave container. See <<dummy/../testbench-working-with-containers#,Working with Containers>> for more information.
+
+```xml
+<dependency>
+    <groupId>com.vaadin</groupId>
+    <artifactId>vaadin-testbench-core</artifactId>
+</dependency>
+<dependency>
+    <groupId>com.vaadin</groupId>
+    <artifactId>vaadin-testbench-container-runtime-meecrowave</artifactId>
+</dependency>
+```
+The `test` scope and version number are predefined by the Vaadin BOM.
+
+[[testbench.quickstart.configure-testbench]]
+=== Configure TestBench
+Now we have to configure TestBench to specify the browsers we want to test on, where their drivers are, how the application is supposed to be bootstrapped. To do this we shall create a class implementing `TestConfiguration` in an appropriate package under our test root. In Maven the test root is usually `src/test/java`.
+```java
+public class MyConfiguration implements TestConfiguration {
+
+	@Override
+	public List<Target> getBrowserTargets() {
+            return Collections.singletonList(TestConfiguration.localChrome(
+                "path/to/driver/in/project/chromedriver", true));
+	}
+}
+```
+
+[TIP]
+TestBench will automatically discover this class and make use of it. If you have multiple such classes at the same time then TestBench would not know which one to use. In that case the "testbench.configuration.class" system property or "TESTBENCH_CONFIGURATION_CLASS" environment variable.
+
+[[testbench.quickstart.create-a-test-class]]
+=== Creating a Simple Test
+TestBench tests are standard JUnit 5 tests with the exception that instead of annotating test classes and methods with `@Test`, they are annotated with `@VaadinTest`.
+
+Testbench handles the browser and navigation.
+
+In the Maven world, all test classes live in the `src/test/java` directory. Create a new class called `SimpleIT` in that directory (`IT` stands for *integration test* and Maven will automatically run all `*IT` classes):
+
+```java
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+
+@VaadinTest
+public class SimpleIT {
+
+    @VaadinTest
+    public void clickButton(VaadinPageObject po) {
+        // Find the first button (<vaadin-button>) on the page
+        ButtonElement button = po.$(ButtonElement.class).first();
+
+        // Click it
+        button.click();
+
+        // Check the the value of the button is "Clicked"
+        Assertions.assertEquals("Clicked", button.getText());
+    }
+
+}
+```
+
+This is all you need to verify that the text of the button is "Clicked" after clicking on it.
+
+[NOTE]
+WebComponents hide their content in the Shadow DOM, that's why elements inside a WebComponent cannot be found without specifying a search context. For example, `po.$(TestBenchElement.class).id("content").$(LabelElement.class).first()`, which means label should be found inside the element with `id="content"`, which should be found on the page or current context. For writing real tests use the <<dummy/../testbench-maintainable-tests-using-page-objects#,Page or View Objects>>, which will improve code readability.
+
+[TIP]
+Don't place your tests in the root package as in this example. Structure them logically according to your application structure.
+
+== Running Tests
+You can run the test by clicking the Run button on the class in your favorite IDE or using Maven:
+```
+mvn verify
+```
+
+You should see a browser window opening, doing something and then closing. If the test fails, put a breakpoint in the `clickButton` method so you can see what happens in the browser before it closes.
+
+[TIP]
+Specify address of the test web application by providing an appropriate implementation of TestConfiguration.getContainerInfo
+
+[TIP]
+By ending the test name in `IT`, the Maven failsafe plugin will recognize the test as an integration test and is able to automatically start and deploy your application before the test and shut down the server after all tests have been run (tie the server to the `pre-integration-test` and `post-integration-test` phases). See https://github.com/vaadin/testbench-demo for an example. This is only necessary if using the `None` container. In other cases, testbench will initialize the container by itself.
+
+[TIP]
+Running `mvn test` will only run unit tests (`*Test`) by default while `mvn verify` will also run integration tests (`*IT`)
