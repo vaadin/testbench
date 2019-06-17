@@ -21,7 +21,7 @@ import com.vaadin.testbench.commands.CanCompareScreenshots;
 import com.vaadin.testbench.commands.ScreenshotComparator;
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.commands.TestBenchCommands;
-import com.vaadin.testbench.annotations.Element;
+import com.vaadin.testbench.elementsbase.Element;
 import elemental.json.Json;
 import elemental.json.JsonValue;
 import org.openqa.selenium.By;
