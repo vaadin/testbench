@@ -1,4 +1,4 @@
-package com.vaadin.testbench.annotations;
+package com.vaadin.testbench.elementsbase;
 
 /*-
  * #%L

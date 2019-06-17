@@ -18,7 +18,7 @@ package com.vaadin.testbench;
  */
 
 import com.vaadin.testbench.annotations.Attribute;
-import com.vaadin.testbench.annotations.Element;
+import com.vaadin.testbench.elementsbase.Element;
 import com.vaadin.testbench.internal.SharedUtil;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
