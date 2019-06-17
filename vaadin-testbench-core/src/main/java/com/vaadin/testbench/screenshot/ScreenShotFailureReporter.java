@@ -21,6 +21,7 @@ import javax.imageio.ImageIO;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -52,8 +53,10 @@ public class ScreenShotFailureReporter {
 
         try {
             // Write the screenshot into the error directory
+            final File errorScreenshotFile = getErrorScreenshotFile(fileName);
             ImageIO.write(screenshotImage, IMAGE_FILE_NAME_ENDING,
-                    getErrorScreenshotFile(fileName));
+                    errorScreenshotFile);
+            logger().info("Error screenshot written to: {}", errorScreenshotFile.getAbsolutePath());
         } catch (IOException e) {
             logger().warn("Error writing screenshot to {}", fileName, e);
         }
