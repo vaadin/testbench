@@ -31,6 +31,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 
+import static com.vaadin.testbench.TestBenchLogger.logger;
+
 public interface WebDriverFunctions {
 
     static String webdriverName(WebDriver driver) {
@@ -52,8 +54,7 @@ public interface WebDriverFunctions {
     }
 
     static void takeScreenshot(String logicalName, WebDriver driver) {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        try {
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             outputStream.write(((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES));
             // Write to target/screenshot-[timestamp].jpg
             final String directory = "target";
@@ -61,11 +62,15 @@ public interface WebDriverFunctions {
             if (!Files.exists(directoryPath)) {
                 Files.createDirectory(directoryPath);
             }
-            final FileOutputStream out = new FileOutputStream(directory + "/screenshot-"
-                    + logicalName + "-" + LocalDateTime.now() + ".png");
-            out.write(outputStream.toByteArray());
-            out.flush();
-            out.close();
+
+            final String filename = directory + "/screenshot-"
+                    + logicalName + "-" + LocalDateTime.now() + ".png";
+
+            try (FileOutputStream out = new FileOutputStream(filename)) {
+                out.write(outputStream.toByteArray());
+                out.flush();
+                logger().info("Error screenshot written to: {}", filename);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
