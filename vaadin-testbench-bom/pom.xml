@@ -23,13 +23,6 @@
 
       <dependency>
         <groupId>com.vaadin</groupId>
-        <artifactId>vaadin-testbench-it-test-data</artifactId>
-        <scope>test</scope>
-        <version>${project.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>com.vaadin</groupId>
         <artifactId>vaadin-testbench-container-runtime-none</artifactId>
         <version>${project.version}</version>
       </dependency>
