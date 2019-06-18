@@ -126,11 +126,9 @@ To be able to use the helper methods from a page object, you need to get an inst
 @VaadinTest
 public void LoginIT {
 
-   // Driver setup and teardown omitted
-
-    @VaadinTest
-    public void loginAsAdmin() {
-        LoginViewElement loginView = $(LoginViewElement.class).first();
+    @VaadinTest(navigateTo = "/login")
+    public void loginAsAdmin(VaadinPageObject po) {
+        LoginViewElement loginView = po.$(LoginViewElement.class).first();
         loginView.login("admin@vaadin.com", "admin");
         // TODO Assert that login actually happened
     }
