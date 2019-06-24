@@ -53,11 +53,6 @@ public class ITConfiguration implements TestConfiguration {
 	public List<Target> getBrowserTargets() {
         return Collections.singletonList(TestConfiguration.localChrome("drivers/driver/linux/googlechrome/64bit/chromedriver", true));
 	}
-
-	@Override
-	public ContainerInfo getContainerInfo() {
-		return TestConfiguration.defaultContainerInfo();
-	}
 }
 ```
 ```java
@@ -104,7 +99,7 @@ If you are using a Spring Boot based starter, you can launch Spring Boot using
 mvn spring-boot:run
 ```
 
-You can now launch your test in your IDE (run as JUnit test) or in another terminal:
+You can now launch your test in your IDE (run as JUnit test) or on the terminal with:
 ```
 mvn verify
 ```
