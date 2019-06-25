@@ -42,7 +42,6 @@ After opening the downloaded project in your IDE, you need to add a web driver t
 Although we downloaded the Chrome driver manually, it is more efficient to to have it downloaded automatically by Maven. This is especially useful in CI environments or downloading multiple drivers for different browsers. See <<dummy/../testbench-running-with-maven#, Running with Maven>> for more information.
 
 [[testbench.quickstart.dependency]]
-=== Add TestBench dependencies
 To start using TestBench you need to add two dependencies in the `<dependencies>` section of the `pom.xml` file:
 
 1. The TestBench core dependency (`com.vaadin` : `vaadin-testbench-core`)
@@ -58,7 +57,6 @@ To start using TestBench you need to add two dependencies in the `<dependencies>
     <artifactId>vaadin-testbench-container-runtime-meecrowave</artifactId>
 </dependency>
 ```
-
 The `test` scope and version number are predefined by the Vaadin BOM.
 
 [[testbench.quickstart.configure-testbench]]
