@@ -19,11 +19,9 @@
     </issueManagement>
     <developers>
         <developer>
-            <name>Jonatan Kronqvist</name>
-            <id>jonatan</id>
-            <email>jonatan at vaadin.com</email>
-            <organization>Vaadin Ltd</organization>
-            <timezone>+2</timezone>
+            <id>vaadin</id>
+            <organization>Vaadin</organization>
+            <organizationUrl>http://vaadin.com</organizationUrl>
         </developer>
     </developers>
     <licenses>
