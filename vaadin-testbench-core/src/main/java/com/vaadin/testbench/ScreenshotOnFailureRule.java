@@ -16,6 +16,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 
@@ -50,6 +51,9 @@ import com.vaadin.testbench.screenshot.ImageFileUtil;
  * </p>
  */
 public class ScreenshotOnFailureRule extends TestWatcher {
+
+    private static final Logger logger = Logger
+            .getLogger(ScreenshotOnFailureRule.class.getName());
 
     private HasDriver driverHolder;
     private boolean quitDriverOnFinish = false;
@@ -109,8 +113,10 @@ public class ScreenshotOnFailureRule extends TestWatcher {
                                     .getScreenshotAs(OutputType.BYTES)));
             // Store the screenshot in the errors directory
             ImageFileUtil.createScreenshotDirectoriesIfNeeded();
+            final File errorScreenshotFile = getErrorScreenshotFile(description);
             ImageIO.write(screenshotImage, "png",
-                    getErrorScreenshotFile(description));
+                    errorScreenshotFile);
+            logger.info("Error screenshot written to: " + errorScreenshotFile.getAbsolutePath());
         } catch (IOException e1) {
             throw new RuntimeException(
                     "There was a problem grabbing and writing a screen shot of a test failure.",
