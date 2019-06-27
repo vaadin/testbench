@@ -35,7 +35,9 @@ public interface TestConfiguration {
 
     List<Target> getBrowserTargets();
 
-    ContainerInfo getContainerInfo();
+    default ContainerInfo getContainerInfo() {
+        return defaultContainerInfo();
+    }
 
     static ContainerInfo defaultContainerInfo() {
         return new ContainerInfo(NetworkFunctions.localIp(),
