@@ -17,10 +17,6 @@ package com.vaadin.testbench.configuration;
  * #L%
  */
 
-import com.vaadin.testbench.addons.junit5.extensions.container.ContainerInfo;
-import com.vaadin.testbench.configuration.Target;
-import com.vaadin.testbench.configuration.TestConfiguration;
-
 import java.util.Collections;
 import java.util.List;
 
@@ -29,10 +25,5 @@ public class SampleTestConfiguration implements TestConfiguration {
     @Override
     public List<Target> getBrowserTargets() {
         return Collections.singletonList(TestConfiguration.localSafari());
-    }
-
-    @Override
-    public ContainerInfo getContainerInfo() {
-        return TestConfiguration.defaultContainerInfo();
     }
 }
