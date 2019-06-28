@@ -51,9 +51,9 @@ public interface WebDriverFunctions {
                 + driver.getCapabilities().getPlatform();
     }
 
-    static void takeScreenshot(String logicalName, WebDriver driver) {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        try {
+    static String takeScreenshot(String logicalName, WebDriver driver) {
+        String filename = null;
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             outputStream.write(((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES));
             // Write to target/screenshot-[timestamp].jpg
             final String directory = "target";
@@ -61,14 +61,19 @@ public interface WebDriverFunctions {
             if (!Files.exists(directoryPath)) {
                 Files.createDirectory(directoryPath);
             }
-            final FileOutputStream out = new FileOutputStream(directory + "/screenshot-"
-                    + logicalName + "-" + LocalDateTime.now() + ".png");
-            out.write(outputStream.toByteArray());
-            out.flush();
-            out.close();
+
+            filename = directory + "/screenshot-"
+                    + logicalName + "-" + LocalDateTime.now() + ".png";
+
+            try (FileOutputStream out = new FileOutputStream(filename)) {
+                out.write(outputStream.toByteArray());
+                out.flush();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        return filename;
     }
 
     static void takeScreenshot(WebDriver driver) {
