@@ -24,6 +24,7 @@ import org.openqa.selenium.WebDriver;
 import java.lang.reflect.Method;
 import java.util.Optional;
 
+import static com.vaadin.testbench.TestBenchLogger.logger;
 import static com.vaadin.testbench.addons.webdriver.WebDriverFunctions.takeScreenshot;
 import static com.vaadin.testbench.addons.webdriver.junit5.WebdriverExtensionFunctions.webdriver;
 
@@ -46,7 +47,8 @@ public class FailedTestScreenhsotExtension implements TestExecutionExceptionHand
                 .replaceAll(":", "_")
                 .replaceAll("/", "_");
 
-        takeScreenshot(finalName, webDriver);
+        final String errorScreenshotFilename = takeScreenshot(finalName, webDriver);
+        logger().info("Error screenshot written to: {}", errorScreenshotFilename);
 
         throw throwable;
     }
