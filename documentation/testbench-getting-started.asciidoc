@@ -125,7 +125,10 @@ mvn verify
 You should see a browser window opening, doing something and then closing. If the test fails, put a breakpoint in the `clickButton` method so you can see what happens in the browser before it closes.
 
 [TIP]
-By ending the test name in `IT`, the Maven failsafe plugin will recognize the test as an integration test and is able to automatically start and deploy your application before the test and shut down the server after all tests have been run (tie the server to the `pre-integration-test` and `post-integration-test` phases). See https://github.com/vaadin/testbench-demo for an example.
+Specify address of the test web application by providing an appropriate implementation of TestConfiguration.getContainerInfo
+
+[TIP]
+By ending the test name in `IT`, the Maven failsafe plugin will recognize the test as an integration test and is able to automatically start and deploy your application before the test and shut down the server after all tests have been run (tie the server to the `pre-integration-test` and `post-integration-test` phases). See https://github.com/vaadin/testbench-demo for an example. This is only necessary if using the `None` container. In other cases, testbench will initialize the container by itself.
 
 [TIP]
 Running `mvn test` will only run unit tests (`*Test`) by default while `mvn verify` will also run integration tests (`*IT`)

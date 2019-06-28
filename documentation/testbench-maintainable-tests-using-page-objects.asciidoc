@@ -150,6 +150,15 @@ public MainViewElement login(String username, String password) {
     // onPage() is needed as MainViewElement is not a child of LoginViewElement.
     return $(MainViewElement.class).onPage().first();
 }
+
+public class VaadinAppPageObject extends VaadinPageObject {
+
+    public MainViewElement login(String username, String password) {
+        LoginViewElement loginView = $(LoginViewElement.class).first();
+        return loginView.login("admin@vaadin.com", "admin");
+    }
+
+}
 ```
 
 [TIP]
@@ -158,9 +167,8 @@ When the login view finds the main view element, it automatically validates that
 A test method can now do:
 ```java
 @VaadinTest
-public void mainViewSaysHello(VaadinPageObject po) {
-    LoginViewElement loginView = po.$(LoginViewElement.class).first();
-    MainViewElement mainView = loginView.login("admin@vaadin.com", "admin");
+public void mainViewSaysHello(VaadinAppPageObject po) {
+    MainViewElement mainView = po.login("admin@vaadin.com", "admin");
     Assertions.assertEquals("Hello", mainView.getBanner());
 }
 ```
