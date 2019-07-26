@@ -33,7 +33,7 @@ When creating a page object for your view, you should use the root tag of the vi
 A page object for a template based login view can look like:
 ```java
 @Element("login-view") // map to <login-view>
-public void LoginViewElement extends TestBenchElement {
+public class LoginViewElement extends TestBenchElement {
 
     protected TextFieldElement getUsernameField() {
         return $(TextFieldElement.class).id("username");
@@ -70,7 +70,7 @@ public class LoginView extends Div {
 and a login view element:
 ```java
 @Element("div")
-public void LoginViewElement extends TestBenchElement {
+public class LoginViewElement extends TestBenchElement {
 ```
 
 A query such as `$(LoginViewElement.class).first()` would find the first `<div>` on the page. To make the page object find only the `LoginView`, you can either define an `id`:
@@ -95,7 +95,7 @@ The page object can then use the `id` as:
 ```java
 @Element("div")
 @Attribute(name = "id", value = "login-view")
-public void LoginViewElement extends TestBenchElement {
+public class LoginViewElement extends TestBenchElement {
 ```
 
 or the `class name` as:
@@ -103,7 +103,7 @@ or the `class name` as:
 ```java
 @Element("div")
 @Attribute(name = "class", contains = "login-view")
-public void LoginViewElement extends TestBenchElement {
+public class LoginViewElement extends TestBenchElement {
 ```
 
 The rest of the page object would be the same in both cases (Template and Java class), the only difference is how you find the element you want to interact with.
@@ -123,7 +123,7 @@ All Vaadin component integrations for TestBench can also be considered __page ob
 To be able to use the helper methods from a page object, you need to get an instance of the page object. You use the standard `ElementQuery` methods to retrieve an instance of your page object, e.g. to handle login in a test you can do:
 
 ```java
-public void LoginIT extends TestBenchTestCase {
+public class LoginIT extends TestBenchTestCase {
 
    // Driver setup and teardown omitted
 
