@@ -9,8 +9,9 @@
     <relativePath/>
   </parent>
 
-  <artifactId>vaadin-testbench</artifactId>
-  <version>7.0-SNAPSHOT</version>
+  <groupId>org.vaadin.labs</groupId>
+  <artifactId>vaadin-testbench-next-parent</artifactId>
+  <version>1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Vaadin TestBench</name>
@@ -78,8 +79,8 @@
     <jacoco.version>0.8.3</jacoco.version>
     <pitest.version>1.4.6</pitest.version>
     <pitest-junit5-plugin.version>0.8</pitest-junit5-plugin.version>
-    <pitest-prod-classes>com.vaadin.testbench.*</pitest-prod-classes>
-    <pitest-test-classes>com.vaadin.testbench.*</pitest-test-classes>
+    <pitest-prod-classes>org.vaadin.labs.testbench.*</pitest-prod-classes>
+    <pitest-test-classes>org.vaadin.labs.testbench.*</pitest-test-classes>
 
     <opentracing-api.version>0.31.0</opentracing-api.version>
 
@@ -602,8 +603,8 @@
                 <configuration>
                   <property>projectbase</property>
                   <project>
-                    <groupId>com.vaadin</groupId>
-                    <artifactId>vaadin-testbench</artifactId>
+                    <groupId>org.vaadin.labs</groupId>
+                    <artifactId>vaadin-testbench-next-parent</artifactId>
                   </project>
                 </configuration>
               </execution>

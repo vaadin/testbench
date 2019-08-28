@@ -5,9 +5,9 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <artifactId>vaadin-testbench</artifactId>
-    <groupId>com.vaadin</groupId>
-    <version>7.0-SNAPSHOT</version>
+    <artifactId>vaadin-testbench-next-parent</artifactId>
+    <groupId>org.vaadin.labs</groupId>
+    <version>1.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>vaadin-testbench-bom</artifactId>
@@ -16,33 +16,33 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>com.vaadin</groupId>
-        <artifactId>vaadin-testbench-core</artifactId>
+        <groupId>org.vaadin.labs</groupId>
+        <artifactId>vaadin-testbench-next-core</artifactId>
         <version>${project.version}</version>
       </dependency>
 
       <dependency>
-        <groupId>com.vaadin</groupId>
+        <groupId>org.vaadin.labs</groupId>
         <artifactId>vaadin-testbench-container-runtime-none</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>com.vaadin</groupId>
+        <groupId>org.vaadin.labs</groupId>
         <artifactId>vaadin-testbench-container-runtime-meecrowave</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>com.vaadin</groupId>
+        <groupId>org.vaadin.labs</groupId>
         <artifactId>vaadin-testbench-container-runtime-springboot</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>com.vaadin</groupId>
+        <groupId>org.vaadin.labs</groupId>
         <artifactId>vaadin-testbench-container-runtime-springboot-v01</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>com.vaadin</groupId>
+        <groupId>org.vaadin.labs</groupId>
         <artifactId>vaadin-testbench-container-runtime-springboot-v02</artifactId>
         <version>${project.version}</version>
       </dependency>
