@@ -5,9 +5,9 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <artifactId>vaadin-testbench</artifactId>
-    <groupId>com.vaadin</groupId>
-    <version>7.0-SNAPSHOT</version>
+    <artifactId>vaadin-testbench-next-parent</artifactId>
+    <groupId>org.vaadin.labs</groupId>
+    <version>1.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>vaadin-testbench-it</artifactId>
@@ -34,7 +34,7 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>com.vaadin</groupId>
+        <groupId>org.vaadin.labs</groupId>
         <artifactId>vaadin-testbench-bom</artifactId>
         <version>${project.version}</version>
         <scope>import</scope>
@@ -54,18 +54,16 @@
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-params</artifactId>
-      <version>${junit.jupiter.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-engine</artifactId>
-      <version>${junit.jupiter.version}</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
-      <groupId>com.vaadin</groupId>
+      <groupId>org.vaadin.labs</groupId>
       <artifactId>vaadin-testbench-container-runtime-meecrowave</artifactId>
       <scope>test</scope>
     </dependency>
