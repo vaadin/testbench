@@ -9,8 +9,9 @@
     <relativePath/>
   </parent>
 
-  <artifactId>vaadin-testbench</artifactId>
-  <version>7.0-SNAPSHOT</version>
+  <groupId>org.vaadin.labs</groupId>
+  <artifactId>vaadin-testbench-next-parent</artifactId>
+  <version>1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Vaadin TestBench</name>
@@ -602,8 +603,8 @@
                 <configuration>
                   <property>projectbase</property>
                   <project>
-                    <groupId>com.vaadin</groupId>
-                    <artifactId>vaadin-testbench</artifactId>
+                    <groupId>org.vaadin.labs</groupId>
+                    <artifactId>vaadin-testbench-next-parent</artifactId>
                   </project>
                 </configuration>
               </execution>
