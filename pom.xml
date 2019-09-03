@@ -48,6 +48,7 @@
     <module>vaadin-testbench-bom</module>
     <module>vaadin-testbench-core</module>
     <module>vaadin-testbench-container</module>
+    <module>vaadin-testbench-next</module>
     <module>vaadin-testbench-it</module>
   </modules>
 
@@ -92,7 +93,7 @@
 
     <selenium.version>3.141.59</selenium.version>
 
-    <vaadin.version>13.0.2</vaadin.version>
+    <vaadin.version>14.0.2</vaadin.version>
   </properties>
 
   <dependencyManagement>
