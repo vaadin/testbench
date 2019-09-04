@@ -24,95 +24,9 @@
       	<exclusions>
       		<exclusion>
           		<groupId>com.vaadin</groupId>
-          		<artifactId>vaadin-components-testbench</artifactId>
-        	</exclusion>
-      		<exclusion>
-          		<groupId>com.vaadin</groupId>
           		<artifactId>vaadin-testbench-core</artifactId>
         	</exclusion>
       	</exclusions>
 	  </dependency>
-	  <!--  
-	  <dependency>
-	    <groupId>com.vaadin</groupId>
-	    <artifactId>vaadin-checkbox-flow-testbench</artifactId>
-	  </dependency>
-	  <dependency>
-	    <groupId>com.vaadin</groupId>
-	    <artifactId>vaadin-combo-box-flow-testbench</artifactId>
-	  </dependency>
-	  <dependency>
-	    <groupId>com.vaadin</groupId>
-	    <artifactId>vaadin-context-menu-flow-testbench</artifactId>
-	  </dependency>
-	  <dependency>
-	    <groupId>com.vaadin</groupId>
-	    <artifactId>vaadin-date-picker-flow-testbench</artifactId>
-	  </dependency>
-	  <dependency>
-	    <groupId>com.vaadin</groupId>
-	    <artifactId>vaadin-dialog-flow-testbench</artifactId>
-	  </dependency>
-	  <dependency>
-	    <groupId>com.vaadin</groupId>
-	    <artifactId>vaadin-form-layout-flow-testbench</artifactId>
-	  </dependency>
-	  <dependency>
-	    <groupId>com.vaadin</groupId>
-	    <artifactId>vaadin-grid-flow-testbench</artifactId>
-	  </dependency>
-	  <dependency>
-	    <groupId>com.vaadin</groupId>
-	    <artifactId>vaadin-icons-flow-testbench</artifactId>
-	  </dependency>
-	  <dependency>
-	    <groupId>com.vaadin</groupId>
-	    <artifactId>vaadin-iron-list-flow-testbench</artifactId>
-	  </dependency>
-	  <dependency>
-	    <groupId>com.vaadin</groupId>
-	    <artifactId>vaadin-list-box-flow-testbench</artifactId>
-	  </dependency>
-	  <dependency>
-	    <groupId>com.vaadin</groupId>
-	    <artifactId>vaadin-notification-flow-testbench</artifactId>
-	  </dependency>
-	  <dependency>
-	    <groupId>com.vaadin</groupId>
-	    <artifactId>vaadin-ordered-layout-flow-testbench</artifactId>
-	  </dependency>
-	  <dependency>
-	    <groupId>com.vaadin</groupId>
-	    <artifactId>vaadin-progress-bar-flow-testbench</artifactId>
-	  </dependency>
-	  <dependency>
-	    <groupId>com.vaadin</groupId>
-	    <artifactId>vaadin-radio-button-flow-testbench</artifactId>
-	  </dependency>
-	  <dependency>
-	    <groupId>com.vaadin</groupId>
-	    <artifactId>vaadin-select-flow-testbench</artifactId>
-	  </dependency>
-	  <dependency>
-	    <groupId>com.vaadin</groupId>
-	    <artifactId>vaadin-split-layout-flow-testbench</artifactId>
-	  </dependency>
-	  <dependency>
-	    <groupId>com.vaadin</groupId>
-	    <artifactId>vaadin-tabs-flow-testbench</artifactId>
-	  </dependency>
-	  <dependency>
-	    <groupId>com.vaadin</groupId>
-	    <artifactId>vaadin-text-field-flow-testbench</artifactId>
-	  </dependency>
-	  <dependency>
-	    <groupId>com.vaadin</groupId>
-	    <artifactId>vaadin-time-picker-flow-testbench</artifactId>
-	  </dependency>
-	  <dependency>
-	    <groupId>com.vaadin</groupId>
-	    <artifactId>vaadin-upload-flow-testbench</artifactId>
-	  </dependency>
-	  -->
   </dependencies>
 </project>
