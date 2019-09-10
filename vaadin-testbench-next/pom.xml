@@ -17,16 +17,16 @@
       <artifactId>vaadin-testbench-next-core</artifactId>
       <version>${project.version}</version>
     </dependency>
-	  <dependency>
-	    <groupId>com.vaadin</groupId>
-	    <artifactId>vaadin-testbench</artifactId>
-      	<version>${vaadin.version}</version>
-      	<exclusions>
-      		<exclusion>
-          		<groupId>com.vaadin</groupId>
-          		<artifactId>vaadin-testbench-core</artifactId>
-        	</exclusion>
-      	</exclusions>
-	  </dependency>
+    <dependency>
+      <groupId>com.vaadin</groupId>
+      <artifactId>vaadin-testbench</artifactId>
+      <version>${vaadin.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>com.vaadin</groupId>
+          <artifactId>vaadin-testbench-core</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
   </dependencies>
 </project>
