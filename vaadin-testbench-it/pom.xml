@@ -87,11 +87,11 @@
       </exclusions>
     </dependency>
 
-	<dependency>
-	<groupId>org.vaadin.labs</groupId>
-	<artifactId>vaadin-testbench-next</artifactId>
-	<version>${project.version}</version>
-	</dependency>
+    <dependency>
+      <groupId>org.vaadin.labs</groupId>
+      <artifactId>vaadin-testbench-next</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
     <dependency>
       <groupId>com.vaadin</groupId>
