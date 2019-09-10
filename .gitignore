@@ -5,6 +5,7 @@ _data/webdrivers/*
 .project
 .settings
 .idea
+package-lock.json
 *.iml
 **/target/
 
