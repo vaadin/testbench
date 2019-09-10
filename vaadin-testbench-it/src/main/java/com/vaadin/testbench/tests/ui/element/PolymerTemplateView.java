@@ -1,7 +1,7 @@
 package com.vaadin.testbench.tests.ui.element;
 
 import com.vaadin.flow.component.Tag;
-import com.vaadin.flow.component.dependency.HtmlImport;
+import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.NativeButton;
 import com.vaadin.flow.component.polymertemplate.PolymerTemplate;
@@ -10,7 +10,7 @@ import com.vaadin.flow.templatemodel.TemplateModel;
 
 @Route(PolymerTemplateView.ROUTE)
 @Tag("polymer-template-view")
-@HtmlImport("frontend://polymer-template-view.html")
+@JsModule("./polymer-template-view.js")
 public class PolymerTemplateView extends PolymerTemplate<TemplateModel> {
 
     public static final String ROUTE = "PolymerTemplateView";

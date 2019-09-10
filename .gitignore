@@ -5,6 +5,10 @@ _data/webdrivers/*
 .project
 .settings
 .idea
+package.json
+package-lock.json
+webpack.*
+node_modules
 *.iml
 **/target/
 

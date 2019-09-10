@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <artifactId>vaadin-testbench-next-parent</artifactId>
+    <groupId>org.vaadin.labs</groupId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>vaadin-testbench-next</artifactId>
+  <dependencies>
+    <dependency>
+      <groupId>org.vaadin.labs</groupId>
+      <artifactId>vaadin-testbench-next-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.vaadin</groupId>
+      <artifactId>vaadin-testbench</artifactId>
+      <version>${vaadin.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>com.vaadin</groupId>
+          <artifactId>vaadin-testbench-core</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+  </dependencies>
+</project>

@@ -86,16 +86,11 @@
         </exclusion>
       </exclusions>
     </dependency>
+
     <dependency>
-      <groupId>com.vaadin</groupId>
-      <artifactId>vaadin-components-testbench</artifactId>
-      <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>com.vaadin</groupId>
-          <artifactId>vaadin-testbench-core</artifactId>
-        </exclusion>
-      </exclusions>
+      <groupId>org.vaadin.labs</groupId>
+      <artifactId>vaadin-testbench-next</artifactId>
+      <version>${project.version}</version>
     </dependency>
 
     <dependency>
@@ -136,6 +131,17 @@
             </goals>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+          <groupId>com.vaadin</groupId>
+          <artifactId>vaadin-maven-plugin</artifactId>
+          <executions>
+              <execution>
+                  <goals>
+                      <goal>prepare-frontend</goal>
+                  </goals>
+              </execution>
+          </executions>
       </plugin>
     </plugins>
   </build>
