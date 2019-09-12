@@ -46,6 +46,15 @@ public class BasicElementIT extends AbstractTB6Test {
     }
 
     @Test
+    public void getSetFalseBooleanProperty() {
+        Assert.assertNull(buttonElement.getPropertyBoolean("foo"));
+        buttonElement.setProperty("foo", false);
+        Assert.assertEquals("false", buttonElement.getPropertyString("foo"));
+        Assert.assertEquals(0.0, buttonElement.getPropertyDouble("foo"), 0);
+        Assert.assertFalse(buttonElement.getPropertyBoolean("foo"));
+    }
+
+    @Test
     public void getSetDoubleProperty() {
         Assert.assertNull(buttonElement.getPropertyDouble("foo"));
         buttonElement.setProperty("foo", 12.5);
