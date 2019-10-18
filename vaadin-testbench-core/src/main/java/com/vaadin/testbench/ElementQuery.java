@@ -48,6 +48,8 @@ import com.vaadin.testbench.internal.SharedUtil;
  */
 public class ElementQuery<T extends TestBenchElement> {
 
+    private static final int DEFAULT_WAIT_TIME_OUT_IN_SECONDS = 10;
+
     public static class AttributeMatch {
         private final String name;
         private final String operator;
@@ -254,7 +256,23 @@ public class ElementQuery<T extends TestBenchElement> {
      * @return The element of the type specified in the constructor
      */
     public T waitForFirst() {
-        Object result = new WebDriverWait(getDriver(), 10).until(driver -> {
+        return waitForFirst(DEFAULT_WAIT_TIME_OUT_IN_SECONDS);
+    }
+
+    /**
+     * Executes the search and returns the first result once at least once
+     * result is available.
+     * <p>
+     * This method is identical to {@link #first()} if at least one element is
+     * present. If no element is found, this method will keep searching until an
+     * element is found or if <tt>timeOutInSeconds</tt> seconds has elapsed.
+     *
+     * @param timeOutInSeconds timeout in seconds before this method throws a
+     *                         {@link NoSuchElementException} exception
+     * @return The element of the type specified in the constructor
+     */
+    public T waitForFirst(long timeOutInSeconds) {
+        Object result = new WebDriverWait(getDriver(), timeOutInSeconds).until(driver -> {
             try {
                 return first();
             } catch (NoSuchElementException e) {
