@@ -34,6 +34,7 @@ public class Parameters {
     private static int testSuitesInParallel;
     private static int maxAttempts;
     private static String testbenchGridBrowsers;
+    private static boolean headless;
     static {
         isDebug = getSystemPropertyBoolean("debug", false);
 
@@ -60,6 +61,7 @@ public class Parameters {
         }
         testbenchGridBrowsers = getSystemPropertyString("gridBrowsers",
                 System.getenv("TESTBENCH_GRID_BROWSERS"));
+        headless = getSystemPropertyBoolean("headless", false);
     }
 
     /**
@@ -494,5 +496,25 @@ public class Parameters {
      */
     public static void setGridBrowsers(String browsers) {
         testbenchGridBrowsers = browsers;
+    }
+
+    /**
+     * Checks if requested to run browsers in headless mode when runnning on a local machine using a browser supporting it (currently Chrome and Firefox).
+     *
+     * @return <code>true</code>, if requested to run in headless mode,
+     *         <code>false</code> otherwise
+     */
+    public static boolean isHeadless() {
+        return headless;
+    }
+
+    /**
+     * Sets whether to run browsers in headless mode when runnning on a local machine using a browser supporting it (currently Chrome and Firefox).
+     *
+     * @param headless <code>true</code>, to run in headless mode,
+     *                 <code>false</code> otherwise
+     */
+    public static void setHeadless(boolean headless) {
+        Parameters.headless = headless;
     }
 }

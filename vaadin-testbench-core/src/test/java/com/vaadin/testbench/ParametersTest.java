@@ -20,6 +20,7 @@ public class ParametersTest {
         Assert.assertEquals(false, Parameters.isDebug());
         Assert.assertEquals(false,
                 Parameters.isScreenshotComparisonCursorDetection());
+        Assert.assertFalse(Parameters.isHeadless());
     }
 
     @Test
