@@ -17,7 +17,7 @@
     <url>http://maven.apache.org</url>
     <properties>
         <jetty.version>9.4.11.v20180605</jetty.version>
-        <flow.version>2.0.0.rc2</flow.version>
+        <flow.version>2.0.18</flow.version>
 
         <!-- Frontend -->
         <node.version>v8.1.2</node.version>
@@ -108,6 +108,9 @@
                 <groupId>com.vaadin</groupId>
                 <artifactId>flow-maven-plugin</artifactId>
                 <version>${flow.version}</version>
+                <configuration>
+                    <bowerMode>true</bowerMode>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>
@@ -220,6 +223,19 @@
                 <artifactId>properties-maven-plugin</artifactId>
                 <version>1.0.0</version>
                 <executions>
+                    <execution>
+                        <goals>
+                            <goal>set-system-properties</goal>
+                        </goals>
+                        <configuration>
+                            <properties>
+                                <property>
+                                    <name>vaadin.bowerMode</name>
+                                    <value>true</value>
+                                </property>
+                            </properties>
+                        </configuration>
+                    </execution>
                     <execution>
                         <id>read-local-properties-if-present</id>
                         <phase>initialize</phase>
