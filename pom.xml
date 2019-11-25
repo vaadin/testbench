@@ -10,7 +10,7 @@
     </parent>
     <artifactId>vaadin-testbench-parent</artifactId>
     <packaging>pom</packaging>
-    <version>6.2-SNAPSHOT</version>
+    <version>6.3-SNAPSHOT</version>
     <name>Vaadin TestBench parent</name>
 
     <organization>
