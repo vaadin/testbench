@@ -119,7 +119,9 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
         }
 
         long timeoutTime = System.currentTimeMillis() + 20000;
+
         Boolean finished = false;
+        boolean waitGracePeriod = false;
         while (System.currentTimeMillis() < timeoutTime && !finished) {
             // Must use the wrapped driver here to avoid calling waitForVaadin
             // again
@@ -131,6 +133,18 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
                 getLogger().fine(
                         "waitForVaadin returned null, this should never happen");
                 finished = false;
+            }
+            waitGracePeriod = waitGracePeriod || !finished;
+        }
+
+        // In CCDM after flow client has been loaded, UIDL might take a while
+        // to be rendered, waiting for a grace time mitigates the issue.
+        if (waitGracePeriod) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                getLogger().log(Level.SEVERE,
+                        "interrupted, this should never happen", e);
             }
         }
     }
