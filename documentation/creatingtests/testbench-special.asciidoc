@@ -58,7 +58,8 @@ the web page.
 
 
 ----
-waitUntil(ExpectedConditions.presenceOfElementLocated(By.xpath("//button[@title='Debug message log']"));
+waitUntil(ExpectedConditions.presenceOfElementLocated(
+        By.xpath("//button[@title='Debug message log']")));
 ----
 
 The above waits until the specified element is present or times out after
