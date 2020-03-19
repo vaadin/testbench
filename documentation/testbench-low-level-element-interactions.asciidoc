@@ -14,7 +14,8 @@ Typically you use the provided, high level element API to interact with componen
 == Getting or Setting Properties
 Many interactions with web components can be done by reading or modifying element properties. For this, the following helpers are provided in `TestBenchElement`:
 
-```java
+[source, java]
+----
 String getPropertyString(String... propertyNames)
 Boolean getPropertyBoolean(String... propertyNames)
 Integer getPropertyInteger(String... propertyNames)
@@ -22,7 +23,7 @@ Double getPropertyDouble(String... propertyNames)
 Object getProperty(String... propertyNames)
 TestBenchElement getPropertyElement(String... propertyNames)
 List<TestBenchElement> getPropertyElements(String... propertyNames)
-```
+----
 
 These methods are typically meant for creating __page objects__ or TestBench elements but can also be handy as a workaround when a needed method is not available.
 
@@ -30,9 +31,10 @@ Typically you should use the correct `getPropertyXYZ` depending on the type of t
 
 == Calling Functions
 If you need to call a function on an element, you can use `Object callFunction(String methodName, Object... args)` available in `TestBenchElement`, e.g.
-```java
+[source, java]
+----
 divElement.callFunction("setAttribute", "title", "Hello");
-```
+----
 
 
 == Executing JavaScript
@@ -41,10 +43,11 @@ to execute a JavaScript snippet to accomplish your task. You can excute any Java
 method are available through the `arguments` array in JavaScript.
 
 For example to return the `offsetHeight` property of an element you could do
-```java
+[source, java]
+----
 TestBenchElement element = ...; // find the element somehow
 Long offsetHeight = (Long)executeScript("return arguments[0].offsetHeight", element);
-```
+----
 
 [NOTE]
 The above `executeScript` call would be the same as using `element.getPropertyInteger("offsetHeight");`.
