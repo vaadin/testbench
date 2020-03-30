@@ -35,7 +35,8 @@ link:https://github.com/vaadin/testbench-demo/blob/master/src/test/java/com/vaad
 test class]:
 
 
-```java
+[source, java]
+----
 public class CalculatorSteps extends TestBenchTestCase {
     private WebDriver driver;
     private CalculatorPageObject calculator;
@@ -67,7 +68,7 @@ public class CalculatorSteps extends TestBenchTestCase {
         assertEquals(result, calculator.getResult());
     }
 }
-```
+----
 
 The demo employs the page object defined for the application UI, as described in
 <<dummy/../testbench-maintainable-tests-using-page-objects#,Creating Maintainble Tests using Page Objects>>.

@@ -27,7 +27,8 @@ A typical test can look like:
 
 In Java code, this could be:
 
-```java
+[source, java]
+----
 @Test
 public void fillForm() {
    setDriver(new ChromeDriver());
@@ -40,7 +41,7 @@ public void fillForm() {
    formView.clickSave();
    Assert.assertEquals("John Doe was added", formView.getMessage());
 }
-```
+----
 
 The code above uses the page object pattern to hide the implementation details of the view from the main test logic. For more information, see <<dummy/../testbench-maintainable-tests-using-page-objects#, Creating Maintanable Test using Page Objects>>.
 
