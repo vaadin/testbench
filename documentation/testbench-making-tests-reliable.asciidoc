@@ -52,7 +52,8 @@ When the point of failure is outside your control, e.g. a temporary network fail
 
 `RetryRule` is used as a JUnit 4 `@Rule`, with an parameter describing the maximum number of times the test should be run, e.g:
 
-```java
+[source, java]
+----
 public class RandomFailureTest extends TestBenchTestCase {
 
     // Run the test max two times
@@ -65,7 +66,7 @@ public class RandomFailureTest extends TestBenchTestCase {
     }
 
 }
-```
+----
 If the test passes on the first attempt, it will not be re-run. Only if the first attempt fails, it will try again until either the test passes or the maximum number of attempst has been reached.
 
 [NOTE]

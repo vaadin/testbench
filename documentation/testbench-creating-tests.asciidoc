@@ -26,32 +26,36 @@ An `ElementQuery` is what is used to find a given `Element` (component) on the p
 
 Consider the following query:
 
-```java
+[source, java]
+----
 List<ButtonElement> buttons = $(ButtonElement.class).all();
-```
+----
 
 The query returns a list of HTML elements of all the `Button` components in the UI. The buttons found by the query could be controlled, for example, by clicking them as:
 
-```java
+[source, java]
+----
 for (ButtonElement button : buttons)
     button.click();
-```
+----
 
 [[testbench.creatingtests.elementquerymethods]]
 == Element Query Methods
 
 The `$` method creates an `ElementQuery` that looks for the given element class. The method is available both for `TestBenchTestCase` (searches the whole current page) and in `TestBenchElement` (searches inside the given element).
 
-```java
+[source, java]
+----
 // Find the button with id="ok"
 ButtonElement button = $(ButtonElement.class).id("ok");
-```
+----
 
-```java
+[source, java]
+----
 // Find the first label inside the layout with id="content"
 VerticalLayoutElement layout = $(VerticalLayoutElement.class).id("content");
 LabelElement label = layout.$(LabelElement.class).first();
-```
+----
 
 [NOTE]
 If there is no suitable element class available, you can also use the `$("tag-name")` method to find an element of a given type.
@@ -73,7 +77,8 @@ You can use the `ElementQuery` instance returned by `$()` to refine the search q
 
 Using Element Queries and Elements you can now compose test methods like:
 
-```java
+[source, java]
+----
 @Test
 public void fillForm() {
     $(TextFieldElement.class).id("firstName").setValue("John");
@@ -81,7 +86,7 @@ public void fillForm() {
     $(ButtonElement.class).id("ok").click();
     Assert.assertEquals("Thank you for submitting the form", $(DivElement.class).id("result"))
 }
-```
+----
 
 Do be aware that if you write tests in this manner, you will have a hard time maintaining the tests. A good way to stucture tests is to have only the high level logic in the test itself (your manager should be able to read and understand the test method) and extract the `ElementQuery` parts to a separate *Page Object* class. See <<dummy/../testbench-maintainable-tests-using-page-objects.asciidoc#
 ,Creating Maintainble Tests using Page Objects>> for more information.

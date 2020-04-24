@@ -13,7 +13,8 @@ TestBench is based on Selenium and does not contain any modifications to the gri
 There are ready made Docker images for setting up a Selenium Grid available at https://github.com/SeleniumHQ/docker-selenium. To use the images, you first need to install https://www.docker.com/[Docker]. Once you have Docker installed, you can create your own test grid e.g. using `docker-compose`. 
 
 First create the following `docker-compose.yaml` in an empty folder:
-```yaml
+[source, yaml]
+----
 version: '2'
 services:
   firefox:
@@ -38,13 +39,13 @@ services:
     image: selenium/hub:3.9.1-actinium
     ports:
       - "4444:4444"
-```
+----
 This defines a grid with one Chrome node and one Firefox node in addition to the hub.
 
 The whole grid can then be started as
-```
+----
 docker-compose up
-```
+----
 This will start a grid on http://localhost:4444, with the console at http://localhost:4444/grid/console so you can run your tests on the hub using `@RunOnHub("localhost")`.
 
 [NOTE]
