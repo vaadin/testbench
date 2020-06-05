@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -28,7 +29,7 @@ import com.vaadin.testbench.screenshot.ReferenceNameGenerator;
 
 public class ScreenshotComparator {
 
-    private static Set<String> browsersWithoutElementScreenshot = new HashSet<>();
+    private static Set<String> browsersWithoutElementScreenshot = Collections.synchronizedSet(new HashSet<>());
 
     public static boolean compareScreen(String referenceId,
             ReferenceNameGenerator referenceNameGenerator,
