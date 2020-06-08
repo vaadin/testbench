@@ -4,6 +4,9 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.imageio.IIOException;
@@ -26,7 +29,7 @@ import com.vaadin.testbench.screenshot.ReferenceNameGenerator;
 
 public class ScreenshotComparator {
 
-    private static Boolean supportsElementScreenshots = null;
+    private static Set<String> browsersWithoutElementScreenshot = Collections.synchronizedSet(new HashSet<>());
 
     public static boolean compareScreen(String referenceId,
             ReferenceNameGenerator referenceNameGenerator,
@@ -39,7 +42,8 @@ public class ScreenshotComparator {
         for (int times = 0; times < Parameters
                 .getMaxScreenshotRetries(); times++) {
             boolean equal = imageComparison.imageEqualToReference(
-                    getScreenshot((TakesScreenshot) driver, takesScreenshot),
+                    getScreenshot((TakesScreenshot) driver, takesScreenshot,
+                            capabilities),
                     referenceName,
                     Parameters.getScreenshotComparisonTolerance(),
                     capabilities);
@@ -60,32 +64,35 @@ public class ScreenshotComparator {
      * @param screenshotContext
      *            The context of the screenshot, either a driver for a full page
      *            screenshot or an element for a screenshot of only that element
+     * @param capabilities
+     *            Browser capabilities
      * @return a captured image
      * @throws IOException
      */
     private static BufferedImage getScreenshot(TakesScreenshot driver,
-            TakesScreenshot screenshotContext) throws IOException {
+            TakesScreenshot screenshotContext, Capabilities capabilities)
+            throws IOException {
         boolean elementScreenshot = (screenshotContext instanceof WebElement);
+        String browserName = capabilities.getBrowserName();
 
-        if (elementScreenshot && supportsElementScreenshots == null) {
+        if (elementScreenshot && !browsersWithoutElementScreenshot.contains(browserName)) {
             // Detect if the driver supports element screenshots or not
             try {
                 byte[] screenshotBytes = screenshotContext
                         .getScreenshotAs(OutputType.BYTES);
-                supportsElementScreenshots = true;
                 return ImageIO.read(new ByteArrayInputStream(screenshotBytes));
             } catch (UnsupportedCommandException e) {
-                supportsElementScreenshots = false;
+                browsersWithoutElementScreenshot.add(browserName);
             } catch (WebDriverException e) {
                 if (e.getCause() instanceof UnsupportedCommandException) {
-                    supportsElementScreenshots = false;
+                    browsersWithoutElementScreenshot.add(browserName);
                 } else {
                     throw e;
                 }
             }
         }
 
-        if (elementScreenshot && !supportsElementScreenshots) {
+        if (elementScreenshot && browsersWithoutElementScreenshot.contains(browserName)) {
             // Driver does not support element screenshots, get whole screen
             // and crop
             BufferedImage image = ImageIO.read(new ByteArrayInputStream(
