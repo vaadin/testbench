@@ -41,10 +41,9 @@ public interface HasHelper extends HasPropertySettersGetters, HasElementQuery {
         if (query.exists()) {
             TestBenchElement last = query.last();
             // To avoid getting the "slot" element, for components with slotted slots
-            if ("slot".equals(last.getTagName())) {
-                return null;
+            if (!"slot".equals(last.getTagName())) {
+                return last;
             }
-            return last;
         }
         return null;
     }
