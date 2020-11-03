@@ -1,17 +1,14 @@
-/*
- * Copyright 2000-2017 Vaadin Ltd.
+/**
+ * Copyright (C) 2012 Vaadin Ltd
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
+ * This program is available under Commercial Vaadin Developer License
+ * 4.0 (CVDLv4).
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * See the file licensing.txt distributed with this software for more
+ * information about licensing.
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * You should have received a copy of the license along with this program.
+ * If not, see <https://vaadin.com/license/cvdl-4.0>.
  */
 package com.vaadin.testbench.internal;
 
