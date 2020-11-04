@@ -39,6 +39,7 @@
                 <configuration>
                     <skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>
                 </configuration>
+                <version>1.6.8</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
