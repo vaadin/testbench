@@ -12,12 +12,12 @@
     <artifactId>vaadin-testbench-core</artifactId>
     <packaging>jar</packaging>
     <name>Vaadin TestBench</name>
-    <inceptionYear>2012</inceptionYear>
+    <inceptionYear>2020</inceptionYear>
 
     <licenses>
         <license>
-          <name>Commercial Vaadin Developer License version 4.0</name>
-          <url>https://vaadin.com/license/cvdl-4.0</url>
+            <name>Commercial Vaadin Developer License version 4.0</name>
+            <url>https://vaadin.com/license/cvdl-4.0</url>
             <distribution>manual</distribution>
         </license>
     </licenses>
