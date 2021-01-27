@@ -1,3 +1,12 @@
+/*
+ * Copyright (C) 2020 Vaadin Ltd
+ *
+ * This program is available under Commercial Vaadin Developer License
+ * 4.0 (CVDLv4).
+ *
+ *
+ * For the full License, see <https://vaadin.com/license/cvdl-4.0>.
+ */
 if(navigator.userAgent.toLowerCase().indexOf('firefox') > -1){
 	if (jsObject && jsObject.forEach) {
 		jsObject.forEach(function(e) {

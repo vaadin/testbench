@@ -10,7 +10,7 @@
     </parent>
     <artifactId>vaadin-testbench-parent</artifactId>
     <packaging>pom</packaging>
-    <version>6.4-SNAPSHOT</version>
+    <version>7.0-SNAPSHOT</version>
     <name>Vaadin TestBench parent</name>
 
     <organization>
@@ -24,8 +24,8 @@
     </issueManagement>
     <licenses>
         <license>
-            <name>Commercial Vaadin Add-On License version 3.0</name>
-            <url>http://vaadin.com/license/cval-3</url>
+            <name>Commercial Vaadin Developer License version 4.0</name>
+            <url>https://vaadin.com/license/cvdl-4.0</url>
             <distribution>manual</distribution>
         </license>
     </licenses>

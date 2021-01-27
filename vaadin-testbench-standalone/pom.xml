@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.vaadin</groupId>
         <artifactId>vaadin-testbench-parent</artifactId>
-        <version>6.4-SNAPSHOT</version>
+        <version>7.0-SNAPSHOT</version>
     </parent>
 
 
@@ -16,8 +16,8 @@
 
     <licenses>
         <license>
-            <name>Commercial Vaadin Add-On License version 3.0</name>
-            <url>http://vaadin.com/license/cval-3</url>
+            <name>Commercial Vaadin Developer License version 4.0</name>
+            <url>https://vaadin.com/license/cvdl-4.0</url>
             <distribution>manual</distribution>
         </license>
     </licenses>
@@ -39,6 +39,7 @@
                 <configuration>
                     <skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>
                 </configuration>
+                <version>1.6.8</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

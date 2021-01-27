@@ -24,4 +24,4 @@ Please report bugs and submit feature requests as [GitHub issues](https://github
 
 ## License
 
-This add-on is distributed under [CVAL 3.0](https://vaadin.com/license/cval-3).
+This add-on is distributed under [CVDL 4.0](https://vaadin.com/license/cvdl-4.0).
