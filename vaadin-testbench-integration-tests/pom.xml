@@ -24,7 +24,7 @@
         <yarn.version>v0.27.5</yarn.version>
         <buildtools.directory>build-tools</buildtools.directory>
         <sauce.options>--tunnel-identifier ${maven.build.timestamp}</sauce.options>
-        <ci-sauce.version>1.138</ci-sauce.version>
+        <ci-sauce.version>1.151</ci-sauce.version>
         <maven.build.timestamp.format>yyyy-MM-dd'T'HHmmss.SSSZ</maven.build.timestamp.format>
         <failOnMissingWebXml>false</failOnMissingWebXml>
     </properties>
