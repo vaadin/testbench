@@ -17,12 +17,15 @@ import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 
+import com.vaadin.testbench.screenshot.ImageFileUtil;
+
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
-
-import com.vaadin.testbench.screenshot.ImageFileUtil;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WrapsDriver;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
 /**
  * This JUnit {@link org.junit.Rule} grabs a screenshot when a test fails.
@@ -99,6 +102,15 @@ public class ScreenshotOnFailureRule extends TestWatcher {
         super.failed(throwable, description);
 
         if (driverHolder.getDriver() == null) {
+            return;
+        }
+
+        WebDriver realDriver = driverHolder.getDriver();
+        while (realDriver instanceof WrapsDriver) {
+            realDriver = ((WrapsDriver)realDriver).getWrappedDriver();
+        }
+        if (realDriver instanceof RemoteWebDriver &&  ((RemoteWebDriver)realDriver).getSessionId() == null) {
+            logger.warning("Unable capture failure screenshot: web driver is no longer available");
             return;
         }
 
