@@ -25,6 +25,9 @@ import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WrapsDriver;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -104,6 +107,17 @@ public class ScreenshotOnFailureRule extends TestWatcher {
         super.failed(throwable, description);
 
         if (driverHolder.getDriver() == null) {
+            return;
+        }
+
+        WebDriver realDriver = driverHolder.getDriver();
+        while (realDriver instanceof WrapsDriver) {
+            realDriver = ((WrapsDriver) realDriver).getWrappedDriver();
+        }
+        if (realDriver instanceof RemoteWebDriver
+                && ((RemoteWebDriver) realDriver).getSessionId() == null) {
+            getLogger().warn(
+                    "Unable capture failure screenshot: web driver is no longer available");
             return;
         }
 
