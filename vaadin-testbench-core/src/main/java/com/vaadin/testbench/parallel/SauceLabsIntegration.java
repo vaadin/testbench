@@ -43,7 +43,7 @@ public class SauceLabsIntegration {
             DesiredCapabilities desiredCapabilities) {
         String sauceOptions = System.getProperty("sauce.options");
         if (sauceOptions == null || sauceOptions.isEmpty()) {
-            logger.log(Level.WARNING,
+            logger.log(Level.FINE,
                     "Null or empty sauce.options given. Ignoring.");
             return;
         }
