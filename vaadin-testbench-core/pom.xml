@@ -225,5 +225,11 @@
             <artifactId>byte-buddy</artifactId>
             <version>1.9.13</version>
         </dependency>
+        <!-- Override outdated transitive dependency of selenium-remote-driver -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>31.1-jre</version>
+        </dependency>
     </dependencies>
 </project>
