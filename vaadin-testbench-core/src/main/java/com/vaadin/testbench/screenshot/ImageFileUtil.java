@@ -32,7 +32,6 @@ public class ImageFileUtil {
      * Returns the directory used for screenshot references.
      *
      * @return The screenshot reference directory, ending in a slash.
-     * @return
      */
     public static String getScreenshotReferenceDirectory() {
         return impl.getScreenshotReferenceDirectory();
@@ -60,8 +59,10 @@ public class ImageFileUtil {
      * Reads the given reference image into a BufferedImage
      *
      * @param referenceImageFileName
-     * @return
+     *            The name of the reference image file.
+     * @return a BufferedImage containing the reference image.
      * @throws IOException
+     *             if an error occurs during reading.
      */
     public static BufferedImage readReferenceImage(
             String referenceImageFileName) throws IOException {
@@ -83,7 +84,9 @@ public class ImageFileUtil {
      * {@link #getReferenceScreenshotFile(String)}.
      *
      * @param referenceImageFileName
+     *            id part of the reference image file name
      * @param capabilities
+     *            used to compute the full name of the alternative references
      * @return file names of reference images
      */
     public static List<String> getReferenceImageFileNames(
@@ -97,7 +100,6 @@ public class ImageFileUtil {
          * Returns the directory used for screenshot references.
          *
          * @return The screenshot reference directory, ending in a slash.
-         * @return
          */
         public String getScreenshotReferenceDirectory() {
             return Parameters.getScreenshotReferenceDirectory();
@@ -148,8 +150,10 @@ public class ImageFileUtil {
          * Reads the given reference image into a BufferedImage
          *
          * @param referenceImageFileName
-         * @return
+         *            The name of the reference image file.
+         * @return a BufferedImage containing the reference image.
          * @throws IOException
+         *             if an error occurs during reading.
          */
         public BufferedImage readReferenceImage(String referenceImageFileName)
                 throws IOException {
@@ -172,21 +176,40 @@ public class ImageFileUtil {
          * {@link #getReferenceScreenshotFile(String)}.
          *
          * @param referenceImageFileName
+         *            id part of the reference image file name
          * @param capabilities
+         *            used to compute the full name of the alternative
+         *            references
          * @return file names of reference images
          */
         public List<String> getReferenceImageFileNames(
                 String referenceImageFileName, Capabilities capabilities) {
             ArrayList<String> referenceImages = new ArrayList<>();
-            String nextName = findActualFileName(referenceImageFileName,
+            String actualName = findActualFileName(referenceImageFileName,
                     capabilities);
-            File file = getReferenceScreenshotFile(nextName);
-            int i = 1;
-            while (file.exists()) {
-                referenceImages.add(nextName);
-                nextName = referenceImageFileName.replace(".png",
-                        String.format("_%d.png", i++));
-                file = getReferenceScreenshotFile(nextName);
+            if (getReferenceScreenshotFile(actualName).exists()) {
+                referenceImages.add(actualName);
+            }
+
+            for (int alternativeId = 1; alternativeId < 100; alternativeId++) {
+                String originalNameAlternative = referenceImageFileName.replace(
+                        ".png", String.format("_%d.png", alternativeId));
+                String actualNameAlternative = actualName.replace(".png",
+                        String.format("_%d.png", alternativeId));
+
+                boolean origAlternativeFound = getReferenceScreenshotFile(
+                        originalNameAlternative).exists();
+                boolean actualAlternativeFound = getReferenceScreenshotFile(
+                        actualNameAlternative).exists();
+                if (origAlternativeFound) {
+                    referenceImages.add(originalNameAlternative);
+                }
+                if (actualAlternativeFound) {
+                    referenceImages.add(actualNameAlternative);
+                }
+                if (!origAlternativeFound && !actualAlternativeFound) {
+                    break;
+                }
             }
 
             return referenceImages;
