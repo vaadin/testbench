@@ -175,15 +175,27 @@ public class ImageFileUtil {
         public List<String> getReferenceImageFileNames(
                 String referenceImageFileName, Capabilities capabilities) {
             ArrayList<String> referenceImages = new ArrayList<>();
-            String nextName = findActualFileName(referenceImageFileName,
-                    capabilities);
-            File file = getReferenceScreenshotFile(nextName);
-            int i = 1;
-            while (file.exists()) {
-                referenceImages.add(nextName);
-                nextName = referenceImageFileName.replace(".png",
-                        String.format("_%d.png", i++));
-                file = getReferenceScreenshotFile(nextName);
+            String actualName = findActualFileName(referenceImageFileName, capabilities);
+            if (getReferenceScreenshotFile(actualName).exists()) {
+                referenceImages.add(actualName);
+            }
+
+            for (int alternativeId = 1; alternativeId < 100; alternativeId++) {
+                String originalNameAlternative = referenceImageFileName.replace(".png",
+                        String.format("_%d.png", alternativeId));
+                String actualNameAlternative = actualName.replace(".png", String.format("_%d.png", alternativeId));
+
+                boolean origAlternativeFound = getReferenceScreenshotFile(originalNameAlternative).exists();
+                boolean actualAlternativeFound = getReferenceScreenshotFile(actualNameAlternative).exists();
+                if (origAlternativeFound) {
+                    referenceImages.add(originalNameAlternative);
+                }
+                if (actualAlternativeFound) {
+                    referenceImages.add(actualNameAlternative);
+                }
+                if (!origAlternativeFound && !actualAlternativeFound) {
+                    break;
+                }
             }
 
             return referenceImages;
