@@ -32,6 +32,7 @@ public class LicenseCheckerTest {
     }
 
     @Test
+    @Ignore
     public void testDeveloperLicense() {
         Properties props = System.getProperties();
         props.setProperty("vaadin.testbench.developer.license", DEVELOPER_KEY);
