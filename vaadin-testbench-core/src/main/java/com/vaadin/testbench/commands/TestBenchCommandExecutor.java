@@ -50,21 +50,16 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
     private boolean autoScrollIntoView = true;
     // @formatter:off
     String WAIT_FOR_VAADIN_SCRIPT =
-            "if (!window.Vaadin || !window.Vaadin.Flow) {"
-            + "  return true;"
-            + "}"
-            + "var clients = window.Vaadin.Flow.clients;"
-            + "if (clients) {"
+            "if (window.Vaadin && window.Vaadin.Flow && window.Vaadin.Flow.clients) {"
+            + "  var clients = window.Vaadin.Flow.clients;"
             + "  for (var client in clients) {"
             + "    if (clients[client].isActive()) {"
             + "      return false;"
             + "    }"
             + "  }"
             + "  return true;"
-            + "} else {" +
-            // A Vaadin connector was found so this is most likely a Vaadin
-            // application. Keep waiting.
-            "  return false;"
+            + "} else {"
+            + "  return true;"
             + "}";
     // @formatter:on
 
