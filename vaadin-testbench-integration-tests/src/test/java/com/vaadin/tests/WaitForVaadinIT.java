@@ -62,7 +62,7 @@ public class WaitForVaadinIT extends AbstractTB6Test {
 
         getCommandExecutor().executeScript(
                 "window.Vaadin = {Flow: {devServerIsNotLoaded: true}};");
-        assertExecutionNoLonger(() -> getCommandExecutor().waitForVaadin());
+        assertExecutionBlocked(() -> getCommandExecutor().waitForVaadin());
     }
 
     private void assertExecutionNoLonger(Runnable command) {
