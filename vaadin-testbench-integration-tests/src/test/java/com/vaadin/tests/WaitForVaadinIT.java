@@ -56,6 +56,15 @@ public class WaitForVaadinIT extends AbstractTB6Test {
         assertExecutionNoLonger(() -> getCommandExecutor().waitForVaadin());
     }
 
+    @Test
+    public void waitForVaadin_devModeNotReady_waits() {
+        openTestURL();
+
+        getCommandExecutor().executeScript(
+                "window.Vaadin = {Flow: {devServerIsNotLoaded: true}};");
+        assertExecutionBlocked(() -> getCommandExecutor().waitForVaadin());
+    }
+
     private void assertExecutionNoLonger(Runnable command) {
         long before = System.currentTimeMillis();
         command.run();

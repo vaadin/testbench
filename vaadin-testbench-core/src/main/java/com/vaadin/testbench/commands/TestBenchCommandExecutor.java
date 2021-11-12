@@ -58,6 +58,8 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
             + "    }"
             + "  }"
             + "  return true;"
+            + "} else if (window.Vaadin && window.Vaadin.Flow && window.Vaadin.Flow.devServerIsNotLoaded) {"
+            + "  return false;"
             + "} else {"
             + "  return true;"
             + "}";
