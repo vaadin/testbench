@@ -15,8 +15,6 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.HasCapabilities;
@@ -26,6 +24,8 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.HttpCommandExecutor;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.vaadin.testbench.HasDriver;
 import com.vaadin.testbench.TestBenchDriverProxy;
@@ -39,7 +39,7 @@ import com.vaadin.testbench.screenshot.ReferenceNameGenerator;
 public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
 
     private static Logger getLogger() {
-        return Logger.getLogger(TestBenchCommandExecutor.class.getName());
+        return LoggerFactory.getLogger(TestBenchCommandExecutor.class);
     }
 
     private TestBenchDriverProxy driver;
@@ -91,7 +91,7 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
                 ia = InetAddress.getLocalHost();
             }
         } catch (UnknownHostException e) {
-            getLogger().log(Level.WARNING,
+            getLogger().warn(
                     "Could not find name of remote control", e);
             return "unknown";
         }
@@ -122,7 +122,7 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
             if (finished == null) {
                 // This should never happen but according to
                 // https://dev.vaadin.com/ticket/19703, it happens
-                getLogger().fine(
+                getLogger().debug(
                         "waitForVaadin returned null, this should never happen");
                 finished = false;
             }
