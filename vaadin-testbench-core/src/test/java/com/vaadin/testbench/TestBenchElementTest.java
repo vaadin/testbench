@@ -9,10 +9,6 @@
  */
 package com.vaadin.testbench;
 
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -22,31 +18,27 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.easymock.EasyMock;
-import org.junit.Assert;
-import org.junit.Test;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.remote.RemoteWebElement;
-
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.screenshot.ImageComparison;
 import com.vaadin.testbench.screenshot.ReferenceNameGenerator;
+
+import org.junit.Assert;
+import org.junit.Test;
+import org.mockito.Mockito;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.remote.RemoteWebElement;
 
 public class TestBenchElementTest {
 
     @Test
     public void testIsEnabled_VaadinComponentDisabled_returnsFalse()
             throws Exception {
-        WebElement webElement = createMock(WebElement.class);
-        expect(webElement.getAttribute("class"))
-                .andStubReturn("v-button v-disabled");
-        replay(webElement);
+        WebElement webElement = Mockito.mock(WebElement.class);
+        Mockito.when(webElement.getAttribute("class")).thenReturn("v-button v-disabled");
 
         TestBenchElement element = TestBenchElement.wrapElement(webElement,
                 null);
         assertFalse(element.isEnabled());
-
-        verify(webElement);
     }
 
     @Test
@@ -122,9 +114,8 @@ public class TestBenchElementTest {
     }
 
     private TestBenchElement createElementWithClass(String className) {
-        WebElement webElement = createMock(WebElement.class);
-        expect(webElement.getAttribute("class")).andStubReturn(className);
-        replay(webElement);
+        WebElement webElement = Mockito.mock(WebElement.class);
+        Mockito.when(webElement.getAttribute("class")).thenReturn(className);
 
         return TestBenchElement.wrapElement(webElement, null);
     }
@@ -137,8 +128,7 @@ public class TestBenchElementTest {
     @Test
     public void wrapElementOrElementsEmptyList() {
         List<Object> execJsResult = new ArrayList<>();
-        TestBenchCommandExecutor tbCommandExecutor = EasyMock
-                .createMock(TestBenchCommandExecutor.class);
+        TestBenchCommandExecutor tbCommandExecutor = Mockito.mock(TestBenchCommandExecutor.class);
         PublicTestBenchCommandExecutor.wrapElementOrElements(execJsResult,
                 tbCommandExecutor);
     }
@@ -147,8 +137,7 @@ public class TestBenchElementTest {
     public void wrapElementOrElementsNull() {
         Object execJsResult = null;
 
-        TestBenchCommandExecutor tbCommandExecutor = EasyMock
-                .createMock(TestBenchCommandExecutor.class);
+        TestBenchCommandExecutor tbCommandExecutor = Mockito.mock(TestBenchCommandExecutor.class);
         Assert.assertNull(PublicTestBenchCommandExecutor
                 .wrapElementOrElements(execJsResult, tbCommandExecutor));
     }
@@ -174,11 +163,11 @@ public class TestBenchElementTest {
 
     @Test
     public void wrapElementOrElementsMixed() {
-        WebElement element1 = EasyMock.createMock(WebElement.class);
-        WebElement element2 = EasyMock.createMock(WebElement.class);
-        WebElement element3 = EasyMock.createMock(WebElement.class);
-        WebElement element4 = EasyMock.createMock(WebElement.class);
-        WebElement element5 = EasyMock.createMock(WebElement.class);
+        WebElement element1 = Mockito.mock(WebElement.class);
+        WebElement element2 = Mockito.mock(WebElement.class);
+        WebElement element3 = Mockito.mock(WebElement.class);
+        WebElement element4 = Mockito.mock(WebElement.class);
+        WebElement element5 = Mockito.mock(WebElement.class);
 
         List<Object> execJsResult = new ArrayList<>();
         execJsResult.add(element1);
@@ -192,8 +181,7 @@ public class TestBenchElementTest {
         execJsResult.add(sublist);
         execJsResult.add(element3);
 
-        TestBenchCommandExecutor tbCommandExecutor = EasyMock
-                .createMock(TestBenchCommandExecutor.class);
+        TestBenchCommandExecutor tbCommandExecutor = Mockito.mock(TestBenchCommandExecutor.class);
         List<Object> wrappedResult = (List<Object>) PublicTestBenchCommandExecutor
                 .wrapElementOrElements(execJsResult, tbCommandExecutor);
 
@@ -264,14 +252,12 @@ public class TestBenchElementTest {
 
     @Test
     public void doesNotWrapExceptions() {
-        WebElement webElement = createMock(WebElement.class);
-        replay(webElement);
+        WebElement webElement = Mockito.mock(WebElement.class);
 
-        TestBenchCommandExecutor executor = createMock(
+        TestBenchCommandExecutor executor = Mockito.mock(
                 TestBenchCommandExecutor.class);
-        expect(executor.executeScript(EasyMock.anyObject()))
-                .andThrow(new RuntimeException("foobar"));
-        replay(executor);
+        Mockito.when(executor.executeScript(Mockito.any()))
+                .thenThrow(new RuntimeException("foobar"));
         TestBenchElement element = TestBenchElement.wrapElement(webElement,
                 executor);
         RuntimeException exceptionReceived = null;

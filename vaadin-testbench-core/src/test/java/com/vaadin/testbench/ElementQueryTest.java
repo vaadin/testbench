@@ -14,19 +14,19 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.easymock.EasyMock;
+import com.vaadin.testbench.ElementQuery.AttributeMatch;
+import com.vaadin.testbench.annotations.Attribute;
+import com.vaadin.testbench.elementsbase.Element;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-
-import com.vaadin.testbench.ElementQuery.AttributeMatch;
-import com.vaadin.testbench.annotations.Attribute;
-import com.vaadin.testbench.elementsbase.Element;
 
 public class ElementQueryTest {
 
@@ -57,9 +57,9 @@ public class ElementQueryTest {
     @Before
     public void setup() {
         mockDriver = TestBench
-                .createDriver(EasyMock.createMock(WebDriverWithJS.class));
+                .createDriver(Mockito.mock(WebDriverWithJS.class));
         exampleElement = TestBenchElement.wrapElement(
-                EasyMock.createMock(WebElement.class),
+                Mockito.mock(WebElement.class),
                 mockDriver.getCommandExecutor());
 
     }
