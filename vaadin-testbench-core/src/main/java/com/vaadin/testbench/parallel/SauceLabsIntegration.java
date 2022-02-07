@@ -11,18 +11,19 @@ package com.vaadin.testbench.parallel;
 
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Integration methods for Sauce Labs testing used by {@link ParallelTest}
  *
  */
 public class SauceLabsIntegration {
-    private static final Logger logger = Logger
-            .getLogger(SauceLabsIntegration.class.getName());
+    private static Logger getLogger() {
+        return LoggerFactory.getLogger(SauceLabsIntegration.class);
+    }
 
     private static final String SAUCE_USERNAME_ENV = "SAUCE_USERNAME";
     private static final String SAUCE_USERNAME_PROP = "sauce.user";
@@ -34,16 +35,18 @@ public class SauceLabsIntegration {
      * given sauce.options String.
      * 
      * @param desiredCapabilities
-     *            DesiredCapabilities for RemoteWebDriver. Must not be null.
+     *                            DesiredCapabilities for RemoteWebDriver. Must not
+     *                            be null.
      * @param sauceOptions
-     *            options to be parsed and added as capabilities to the given
-     *            DesiredCapabilities object
+     *                            options to be parsed and added as capabilities to
+     *                            the given
+     *                            DesiredCapabilities object
      */
     static void setDesiredCapabilities(
             DesiredCapabilities desiredCapabilities) {
         String sauceOptions = System.getProperty("sauce.options");
         if (sauceOptions == null || sauceOptions.isEmpty()) {
-            logger.log(Level.FINE,
+            getLogger().debug(
                     "Null or empty sauce.options given. Ignoring.");
             return;
         }
@@ -55,10 +58,11 @@ public class SauceLabsIntegration {
 
     /**
      * @param options
-     *            the command line options used to launch Sauce Connect
+     *                     the command line options used to launch Sauce Connect
      * @param defaultValue
-     *            the default value to use for the identifier if none specified
-     *            in the options
+     *                     the default value to use for the identifier if none
+     *                     specified
+     *                     in the options
      * @return String representing the tunnel identifier
      */
     static String getTunnelIdentifier(String options, String defaultValue) {
@@ -91,13 +95,13 @@ public class SauceLabsIntegration {
         String accessKey = getSauceAccessKey();
 
         if (username == null) {
-            logger.log(Level.FINE,
+            getLogger().debug(
                     "You can give a Sauce Labs user name using -D"
                             + SAUCE_USERNAME_PROP + "=<username> or by "
                             + SAUCE_USERNAME_ENV + " environment variable.");
         }
         if (accessKey == null) {
-            logger.log(Level.FINE,
+            getLogger().debug(
                     "You can give a Sauce Labs access key using -D"
                             + SAUCE_ACCESS_KEY_PROP + "=<accesskey> or by "
                             + SAUCE_ACCESS_KEY_ENV + " environment variable.");

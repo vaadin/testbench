@@ -18,8 +18,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import com.vaadin.testbench.Parameters;
+import com.vaadin.testbench.annotations.BrowserConfiguration;
+import com.vaadin.testbench.annotations.BrowserFactory;
+import com.vaadin.testbench.annotations.RunLocally;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -30,11 +33,8 @@ import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.remote.DesiredCapabilities;
-
-import com.vaadin.testbench.Parameters;
-import com.vaadin.testbench.annotations.BrowserConfiguration;
-import com.vaadin.testbench.annotations.BrowserFactory;
-import com.vaadin.testbench.annotations.RunLocally;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This runner is loosely based on FactoryTestRunner by Ted Young
@@ -44,8 +44,9 @@ import com.vaadin.testbench.annotations.RunLocally;
  */
 public class ParallelRunner extends BlockJUnit4ClassRunner {
 
-    private static Logger logger = Logger
-            .getLogger(ParallelRunner.class.getName());
+    private static Logger getLogger() {
+        return LoggerFactory.getLogger(ParallelRunner.class);
+    }
 
     /**
      * This is the total limit of actual JUnit test instances run in parallel
@@ -322,7 +323,7 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
                                 "Error occurred while invoking BrowserConfiguration method %s.%s(). Method was ignored, searching BrowserConfiguration method in superclasses",
                                 method.getDeclaringClass().getName(),
                                 method.getName());
-                        logger.log(Level.INFO, errMsg, e);
+                        getLogger().info(errMsg, e);
 
                         /*
                          * ignore this method and searches for another
@@ -344,7 +345,7 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
      * Validates the signature of a BrowserConfiguration annotated method.
      *
      * @param method
-     *            BrowserConfiguration annotated method
+     *               BrowserConfiguration annotated method
      * @return true if method signature is valid. false otherwise.
      */
     private boolean validateBrowserConfigurationAnnotatedSignature(
@@ -356,7 +357,7 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
             String errMsg = String.format(genericErrorMessage,
                     method.getDeclaringClass().getName(), method.getName(),
                     "BrowserConfiguration annotated method must not require any arguments");
-            logger.info(errMsg);
+            getLogger().info(errMsg);
             return false;
         }
         if (!Collection.class.isAssignableFrom(method.getReturnType())) {
@@ -368,7 +369,7 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
             String errMsg = String.format(genericErrorMessage,
                     method.getDeclaringClass().getName(), method.getName(),
                     "BrowserConfiguration annotated method must return a Collection<DesiredCapabilities>");
-            logger.info(errMsg);
+            getLogger().info(errMsg);
             return false;
         }
         return true;

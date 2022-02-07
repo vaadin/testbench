@@ -262,7 +262,7 @@ public class ElementQuery<T extends TestBenchElement> {
      * <p>
      * This method is identical to {@link #first()} if at least one element is
      * present. If no element is found, this method will keep searching until an
-     * element is found or if <tt>timeOutInSeconds</tt> seconds has elapsed.
+     * element is found or {@code timeOutInSeconds} seconds has elapsed.
      *
      * @param timeOutInSeconds timeout in seconds before this method throws a
      *                         {@link NoSuchElementException} exception

@@ -9,18 +9,8 @@
  */
 package com.vaadin.testbench.parallel;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.runner.RunWith;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.remote.DesiredCapabilities;
 
 import com.vaadin.testbench.Parameters;
 import com.vaadin.testbench.ScreenshotOnFailureRule;
@@ -29,6 +19,14 @@ import com.vaadin.testbench.annotations.BrowserConfiguration;
 import com.vaadin.testbench.annotations.RunLocally;
 import com.vaadin.testbench.annotations.RunOnHub;
 import com.vaadin.testbench.parallel.setup.SetupDriver;
+
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.runner.RunWith;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Unit tests should extend {@link ParallelTest} if they are to be run in
@@ -48,8 +46,9 @@ public class ParallelTest extends TestBenchTestCase {
     public ScreenshotOnFailureRule screenshotOnFailure = new ScreenshotOnFailureRule(
             this, true);
 
-    private static final Logger logger = Logger
-            .getLogger(ParallelTest.class.getName());
+    private static Logger getLogger() {
+        return LoggerFactory.getLogger(ParallelTest.class);
+    }
 
     private SetupDriver driverConfiguration = new SetupDriver();
 
@@ -126,7 +125,7 @@ public class ParallelTest extends TestBenchTestCase {
      * </p>
      *
      * @throws Exception
-     *             if unable to instantiate {@link WebDriver}
+     *                   if unable to instantiate {@link WebDriver}
      */
     @Before
     public void setup() throws Exception {
@@ -149,7 +148,7 @@ public class ParallelTest extends TestBenchTestCase {
                     .setupRemoteDriver(getHubURL());
             setDriver(driver);
         } else {
-            logger.log(Level.INFO,
+            getLogger().info(
                     "Did not find a configuration to run locally, on Sauce Labs or on other test grid. Falling back to running locally on Chrome.");
             WebDriver driver = driverConfiguration
                     .setupLocalDriver(Browser.CHROME);

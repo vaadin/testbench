@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.logging.Logger;
 
 import javax.imageio.IIOException;
 import javax.imageio.ImageIO;
@@ -30,6 +29,8 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.UnsupportedCommandException;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.vaadin.testbench.Parameters;
 import com.vaadin.testbench.screenshot.ImageComparison;
@@ -183,7 +184,7 @@ public class ScreenshotComparator {
                 ImageFileUtil.createScreenshotDirectoriesIfNeeded();
                 ImageIO.write(screenshotImage, "png",
                         ImageFileUtil.getErrorScreenshotFile(referenceName));
-                getLogger().severe("No reference found for " + referenceName
+                getLogger().error("No reference found for " + referenceName
                         + " in "
                         + ImageFileUtil.getScreenshotReferenceDirectory());
                 return false;
@@ -199,7 +200,7 @@ public class ScreenshotComparator {
     }
 
     private static Logger getLogger() {
-        return Logger.getLogger(ScreenshotComparator.class.getName());
+        return LoggerFactory.getLogger(ScreenshotComparator.class);
     }
 
     private static void pause(int delay) {
