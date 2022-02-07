@@ -9,15 +9,12 @@
  */
 package com.vaadin.testbench.screenshot;
 
-import static org.easymock.EasyMock.createNiceMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.Platform;
 
@@ -37,49 +34,41 @@ public class ReferenceNameGeneratorTest {
 
     @Test
     public void testGenerateName_shotFirefox11inCapabilities_returnsGeneratedName() {
-        Capabilities ffcaps = createNiceMock(Capabilities.class);
-        expect(ffcaps.getPlatform()).andReturn(Platform.XP);
-        expect(ffcaps.getBrowserName()).andReturn("Firefox");
-        expect(ffcaps.getVersion()).andReturn("13.0.1");
-        replay(ffcaps);
+        Capabilities ffcaps = Mockito.mock(Capabilities.class);
+        Mockito.when(ffcaps.getPlatform()).thenReturn(Platform.XP);
+        Mockito.when(ffcaps.getBrowserName()).thenReturn("Firefox");
+        Mockito.when(ffcaps.getVersion()).thenReturn("13.0.1");
         String name = rng.generateName("shot", ffcaps);
         assertEquals("shot_xp_Firefox_13", name);
-        verify(ffcaps);
     }
 
     @Test
     public void testGenerateName_shotNoPlatformInCapabilities_returnsGeneratedName() {
-        Capabilities someBrowser = createNiceMock(Capabilities.class);
-        expect(someBrowser.getBrowserName()).andReturn("SomeBrowser");
-        expect(someBrowser.getVersion()).andReturn("12.3");
-        replay(someBrowser);
+        Capabilities someBrowser = Mockito.mock(Capabilities.class);
+        Mockito.when(someBrowser.getBrowserName()).thenReturn("SomeBrowser");
+        Mockito.when(someBrowser.getVersion()).thenReturn("12.3");
         String name = rng.generateName("shot", someBrowser);
         assertEquals("shot_unknown_SomeBrowser_12", name);
-        verify(someBrowser);
     }
 
     @Test
     public void testGenerateName_fooSafari5inCapabilities_returnsGeneratedName() {
-        Capabilities safari = createNiceMock(Capabilities.class);
-        expect(safari.getPlatform()).andReturn(Platform.MAC);
-        expect(safari.getBrowserName()).andReturn("Safari");
-        expect(safari.getVersion()).andReturn("5");
-        replay(safari);
+        Capabilities safari = Mockito.mock(Capabilities.class);
+        Mockito.when(safari.getPlatform()).thenReturn(Platform.MAC);
+        Mockito.when(safari.getBrowserName()).thenReturn("Safari");
+        Mockito.when(safari.getVersion()).thenReturn("5");
         String name = rng.generateName("foo", safari);
         assertEquals("foo_mac_Safari_5", name);
-        verify(safari);
     }
 
     @Test
     public void testGenerateName_shotEdgeinCapabilities_returnsGeneratedName() {
-        Capabilities chrome = createNiceMock(Capabilities.class);
-        expect(chrome.getPlatform()).andReturn(Platform.XP);
-        expect(chrome.getBrowserName()).andReturn("MicrosoftEdge");
-        expect(chrome.getVersion()).andReturn("");
-        expect(chrome.getCapability("browserVersion")).andReturn("25");
-        replay(chrome);
+        Capabilities chrome = Mockito.mock(Capabilities.class);
+        Mockito.when(chrome.getPlatform()).thenReturn(Platform.XP);
+        Mockito.when(chrome.getBrowserName()).thenReturn("MicrosoftEdge");
+        Mockito.when(chrome.getVersion()).thenReturn("");
+        Mockito.when(chrome.getCapability("browserVersion")).thenReturn("25");
         String name = rng.generateName("shot", chrome);
         assertEquals("shot_xp_MicrosoftEdge_25", name);
-        verify(chrome);
     }
 }

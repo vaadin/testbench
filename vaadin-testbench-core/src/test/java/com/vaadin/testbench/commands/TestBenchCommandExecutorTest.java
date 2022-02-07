@@ -9,14 +9,6 @@
  */
 package com.vaadin.testbench.commands;
 
-import static org.easymock.EasyMock.contains;
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.createNiceMock;
-import static org.easymock.EasyMock.eq;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.isA;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -28,6 +20,7 @@ import java.util.Arrays;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.WebDriver;
@@ -54,9 +47,9 @@ public class TestBenchCommandExecutorTest {
     @Test
     public void testTestBenchCommandExecutorIsATestBenchCommands() {
         TestBenchCommandExecutor tbce = new TestBenchCommandExecutor(
-                createNiceMock(ImageComparison.class),
-                createNiceMock(ReferenceNameGenerator.class));
-        tbce.setDriver(createNiceMock(TestBenchDriverProxy.class));
+                Mockito.mock(ImageComparison.class),
+                Mockito.mock(ReferenceNameGenerator.class));
+        tbce.setDriver(Mockito.mock(TestBenchDriverProxy.class));
         assertTrue(tbce instanceof TestBenchCommands);
     }
 
@@ -67,14 +60,11 @@ public class TestBenchCommandExecutorTest {
         ReferenceNameGenerator rngMock = mockReferenceNameGenerator("foo",
                 "foo_bar_11");
         ImageComparison icMock = mockImageComparison(1, "foo_bar_11", true);
-        replay(driver, icMock, rngMock);
 
         TestBenchCommandExecutor tbce = new TestBenchCommandExecutor(icMock,
                 rngMock);
         tbce.setDriver(TestBench.createDriver(driver, tbce));
         assertTrue(tbce.compareScreen("foo"));
-
-        verify(driver, icMock, rngMock);
     }
 
     @Test
@@ -84,14 +74,12 @@ public class TestBenchCommandExecutorTest {
         ReferenceNameGenerator rngMock = mockReferenceNameGenerator("foo",
                 "foo_bar_11");
         ImageComparison icMock = mockImageComparison(1, "foo_bar_11", true);
-        replay(driver, icMock, rngMock);
 
         TestBenchCommandExecutor tbce = new TestBenchCommandExecutor(icMock,
                 rngMock);
         tbce.setDriver(TestBench.createDriver(driver, tbce));
         assertTrue(tbce.compareScreen("foo"));
 
-        verify(driver, icMock, rngMock);
     }
 
     @Test
@@ -101,14 +89,12 @@ public class TestBenchCommandExecutorTest {
         ReferenceNameGenerator rngMock = mockReferenceNameGenerator("foo",
                 "foo_bar_11");
         ImageComparison icMock = mockImageComparison(2, "foo_bar_11", false);
-        replay(driver, icMock, rngMock);
 
         TestBenchCommandExecutor tbce = new TestBenchCommandExecutor(icMock,
                 rngMock);
         tbce.setDriver(TestBench.createDriver(driver, tbce));
         assertFalse(tbce.compareScreen("foo"));
 
-        verify(driver, icMock, rngMock);
     }
 
     @Test
@@ -121,14 +107,12 @@ public class TestBenchCommandExecutorTest {
                     "foo_bar_11");
             ImageComparison icMock = mockImageComparison(4, "foo_bar_11",
                     false);
-            replay(driver, icMock, rngMock);
 
             TestBenchCommandExecutor tbce = new TestBenchCommandExecutor(icMock,
                     rngMock);
             tbce.setDriver(TestBench.createDriver(driver, tbce));
             assertFalse(tbce.compareScreen("foo"));
 
-            verify(driver, icMock, rngMock);
         } finally {
             Parameters.setMaxScreenshotRetries(2);
         }
@@ -140,19 +124,17 @@ public class TestBenchCommandExecutorTest {
                 "cursor-bottom-edge-off.png");
 
         WebDriver driver = mockScreenshotDriver(1, false);
-        ImageComparison icMock = createMock(ImageComparison.class);
-        expect(icMock.imageEqualToReference(isA(BufferedImage.class),
-                isA(BufferedImage.class), eq("cursor-bottom-edge-off.png"),
-                eq(Parameters.getScreenshotComparisonTolerance())))
-                        .andReturn(true);
-        replay(driver, icMock);
+        ImageComparison icMock = Mockito.mock(ImageComparison.class);
+        Mockito.when(icMock.imageEqualToReference(Mockito.any(BufferedImage.class),
+                Mockito.any(BufferedImage.class), Mockito.matches("cursor-bottom-edge-off.png"),
+                Mockito.eq(Parameters.getScreenshotComparisonTolerance())))
+                .thenReturn(true);
 
         TestBenchCommandExecutor tbce = new TestBenchCommandExecutor(icMock,
                 null);
         tbce.setDriver(TestBench.createDriver(driver, tbce));
         assertTrue(tbce.compareScreen(referenceFile));
 
-        verify(driver, icMock);
     }
 
     @Test
@@ -163,19 +145,17 @@ public class TestBenchCommandExecutorTest {
                     "cursor-bottom-edge-off.png");
 
             WebDriver driver = mockScreenshotDriver(4, false);
-            ImageComparison icMock = createMock(ImageComparison.class);
-            expect(icMock.imageEqualToReference(isA(BufferedImage.class),
-                    isA(BufferedImage.class), eq("cursor-bottom-edge-off.png"),
-                    eq(Parameters.getScreenshotComparisonTolerance())))
-                            .andReturn(false).times(4);
-            replay(driver, icMock);
+            ImageComparison icMock = Mockito.mock(ImageComparison.class);
+            Mockito.when(icMock.imageEqualToReference(Mockito.any(BufferedImage.class),
+                    Mockito.any(BufferedImage.class), Mockito.eq("cursor-bottom-edge-off.png"),
+                    Mockito.eq(Parameters.getScreenshotComparisonTolerance())))
+                    .thenReturn(false);
 
             TestBenchCommandExecutor tbce = new TestBenchCommandExecutor(icMock,
                     null);
             tbce.setDriver(TestBench.createDriver(driver, tbce));
             assertFalse(tbce.compareScreen(referenceFile));
 
-            verify(driver, icMock);
         } finally {
             Parameters.setMaxScreenshotRetries(2);
         }
@@ -183,22 +163,20 @@ public class TestBenchCommandExecutorTest {
 
     @Test
     public void testCompareScreen_acceptsBufferedImage() throws IOException {
-        BufferedImage mockImg = createNiceMock(BufferedImage.class);
+        BufferedImage mockImg = Mockito.mock(BufferedImage.class);
 
         WebDriver driver = mockScreenshotDriver(1, false);
-        ImageComparison icMock = createMock(ImageComparison.class);
-        expect(icMock.imageEqualToReference(isA(BufferedImage.class),
-                isA(BufferedImage.class), eq("bar name"),
-                eq(Parameters.getScreenshotComparisonTolerance())))
-                        .andReturn(true);
-        replay(driver, icMock);
+        ImageComparison icMock = Mockito.mock(ImageComparison.class);
+        Mockito.when(icMock.imageEqualToReference(Mockito.any(BufferedImage.class),
+                Mockito.any(BufferedImage.class), Mockito.eq("bar name"),
+                Mockito.eq(Parameters.getScreenshotComparisonTolerance())))
+                .thenReturn(true);
 
         TestBenchCommandExecutor tbce = new TestBenchCommandExecutor(icMock,
                 null);
         tbce.setDriver(TestBench.createDriver(driver, tbce));
         assertTrue(tbce.compareScreen(mockImg, "bar name"));
 
-        verify(driver, icMock);
     }
 
     @Test
@@ -206,22 +184,20 @@ public class TestBenchCommandExecutorTest {
             throws IOException {
         Parameters.setMaxScreenshotRetries(4);
         try {
-            BufferedImage mockImg = createNiceMock(BufferedImage.class);
+            BufferedImage mockImg = Mockito.mock(BufferedImage.class);
 
             WebDriver driver = mockScreenshotDriver(4, false);
-            ImageComparison icMock = createMock(ImageComparison.class);
-            expect(icMock.imageEqualToReference(isA(BufferedImage.class),
-                    isA(BufferedImage.class), eq("bar name"),
-                    eq(Parameters.getScreenshotComparisonTolerance())))
-                            .andReturn(false).times(4);
-            replay(driver, icMock);
+            ImageComparison icMock = Mockito.mock(ImageComparison.class);
+            Mockito.when(icMock.imageEqualToReference(Mockito.any(BufferedImage.class),
+                    Mockito.any(BufferedImage.class), Mockito.eq("bar name"),
+                    Mockito.eq(Parameters.getScreenshotComparisonTolerance())))
+                    .thenReturn(false);
 
             TestBenchCommandExecutor tbce = new TestBenchCommandExecutor(icMock,
                     null);
             tbce.setDriver(TestBench.createDriver(driver, tbce));
             assertFalse(tbce.compareScreen(mockImg, "bar name"));
 
-            verify(driver, icMock);
         } finally {
             Parameters.setMaxScreenshotRetries(2);
         }
@@ -229,47 +205,44 @@ public class TestBenchCommandExecutorTest {
 
     private WebDriver mockScreenshotDriver(int nrScreenshotsGrabbed,
             boolean expectGetCapabilities) throws IOException {
-        RemoteWebDriver driver = createMock(FirefoxDriver.class);
+        RemoteWebDriver driver = Mockito.mock(FirefoxDriver.class);
         byte[] screenshotBytes = ImageLoader.loadImageBytes(IMG_FOLDER,
                 "cursor-bottom-edge-off.png");
-        expect(driver.getScreenshotAs(OutputType.BYTES))
-                .andReturn(screenshotBytes).times(nrScreenshotsGrabbed);
-        expect(driver.executeScript(contains("window.Vaadin.Flow")))
-                .andReturn(Boolean.TRUE).anyTimes();
+        Mockito.when(driver.getScreenshotAs(OutputType.BYTES))
+                .thenReturn(screenshotBytes);
+        Mockito.when(driver.executeScript(Mockito.contains("window.Vaadin.Flow")))
+                .thenReturn(Boolean.TRUE);
         if (expectGetCapabilities) {
-            Capabilities mockedCapabilities = createNiceMock(Capabilities.class);
-            expect(mockedCapabilities.getBrowserName()).andReturn("Firefox");
-            replay(mockedCapabilities);
-            expect(driver.getCapabilities())
-                    .andReturn(mockedCapabilities).once();
+            Capabilities mockedCapabilities = Mockito.mock(Capabilities.class);
+            Mockito.when(mockedCapabilities.getBrowserName()).thenReturn("Firefox");
+            Mockito.when(driver.getCapabilities())
+                    .thenReturn(mockedCapabilities);
         }
         return driver;
     }
 
     private ReferenceNameGenerator mockReferenceNameGenerator(String refId,
             String expected) {
-        ReferenceNameGenerator rngMock = createMock(
+        ReferenceNameGenerator rngMock = Mockito.mock(
                 ReferenceNameGenerator.class);
-        expect(rngMock.generateName(eq(refId), isA(Capabilities.class)))
-                .andReturn(expected);
+        Mockito.when(rngMock.generateName(Mockito.eq(refId), Mockito.any(Capabilities.class)))
+                .thenReturn(expected);
         return rngMock;
     }
 
     private ImageComparison mockImageComparison(int timesCalled,
             String referenceName, boolean expected) throws IOException {
-        ImageComparison icMock = createMock(ImageComparison.class);
-        expect(icMock.imageEqualToReference(isA(BufferedImage.class),
-                eq(referenceName),
-                eq(Parameters.getScreenshotComparisonTolerance()),
-                isA(Capabilities.class))).andReturn(expected)
-                        .times(timesCalled);
+        ImageComparison icMock = Mockito.mock(ImageComparison.class);
+        Mockito.when(icMock.imageEqualToReference(Mockito.any(BufferedImage.class),
+                Mockito.eq(referenceName),
+                Mockito.eq(Parameters.getScreenshotComparisonTolerance()),
+                Mockito.any(Capabilities.class))).thenReturn(expected);
         return icMock;
     }
 
     @Test
     public void testTimeSpentRenderingLastRequest_callsJavaScript_returnsValueFetchedFromVaadinClient() {
         FirefoxDriver jse = mockJSExecutor(false);
-        replay(jse);
 
         TestBenchCommandExecutor tbce = new TestBenchCommandExecutor(null,
                 null);
@@ -277,13 +250,11 @@ public class TestBenchCommandExecutorTest {
         long milliseconds = tbce.timeSpentRenderingLastRequest();
         assertEquals(1000, milliseconds);
 
-        verify(jse);
     }
 
     @Test
     public void testTotalTimeSpentRendering() {
         FirefoxDriver jse = mockJSExecutor(false);
-        replay(jse);
 
         TestBenchCommandExecutor tbce = new TestBenchCommandExecutor(null,
                 null);
@@ -291,13 +262,11 @@ public class TestBenchCommandExecutorTest {
         long milliseconds = tbce.totalTimeSpentRendering();
         assertEquals(2000, milliseconds);
 
-        verify(jse);
     }
 
     @Test
     public void testTotalTimeSpentServicingRequests() {
         FirefoxDriver jse = mockJSExecutor(true);
-        replay(jse);
 
         TestBenchCommandExecutor tbce = new TestBenchCommandExecutor(null,
                 null);
@@ -305,15 +274,14 @@ public class TestBenchCommandExecutorTest {
         long milliseconds = tbce.totalTimeSpentServicingRequests();
         assertEquals(3000, milliseconds);
 
-        verify(jse);
     }
 
     private FirefoxDriver mockJSExecutor(boolean forcesSync) {
-        FirefoxDriver jse = createNiceMock(FirefoxDriver.class);
-        expect(jse.executeScript(contains("getProfilingData()")))
-                .andReturn(Arrays.asList(1000L, 2000L, 3000L));
-        expect(jse.executeScript(contains("window.Vaadin.Flow.client")))
-                .andReturn(Boolean.TRUE).anyTimes();
+        FirefoxDriver jse = Mockito.mock(FirefoxDriver.class);
+        Mockito.when(jse.executeScript(Mockito.contains("window.Vaadin.Flow.client")))
+                .thenReturn(Boolean.TRUE);
+        Mockito.when(jse.executeScript(Mockito.contains("getProfilingData()")))
+                .thenReturn(Arrays.asList(1000L, 2000L, 3000L));
         return jse;
     }
 }
