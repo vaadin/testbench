@@ -16,16 +16,18 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
+
+import com.vaadin.testbench.screenshot.ImageFileUtil;
 
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.vaadin.testbench.screenshot.ImageFileUtil;
 
 /**
  * This JUnit {@link org.junit.Rule} grabs a screenshot when a test fails.
@@ -52,11 +54,12 @@ import com.vaadin.testbench.screenshot.ImageFileUtil;
  */
 public class ScreenshotOnFailureRule extends TestWatcher {
 
-    private static final Logger logger = Logger
-            .getLogger(ScreenshotOnFailureRule.class.getName());
-
     private HasDriver driverHolder;
     private boolean quitDriverOnFinish = false;
+
+    private static Logger getLogger() {
+        return LoggerFactory.getLogger(ScreenshotOnFailureRule.class);
+    }
 
     /**
      * Creates a new ScreenshotOnFailureRule in the provided test case.
@@ -116,7 +119,7 @@ public class ScreenshotOnFailureRule extends TestWatcher {
             final File errorScreenshotFile = getErrorScreenshotFile(description);
             ImageIO.write(screenshotImage, "png",
                     errorScreenshotFile);
-            logger.info("Error screenshot written to: " + errorScreenshotFile.getAbsolutePath());
+            getLogger().info("Error screenshot written to: " + errorScreenshotFile.getAbsolutePath());
         } catch (IOException e1) {
             throw new RuntimeException(
                     "There was a problem grabbing and writing a screen shot of a test failure.",
