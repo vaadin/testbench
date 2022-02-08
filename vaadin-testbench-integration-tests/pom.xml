@@ -18,10 +18,6 @@
     <properties>
         <jetty.version>9.4.43.v20210629</jetty.version>
         <flow.version>9.0.5</flow.version>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <!-- Frontend -->
         <sauce.options>--tunnel-identifier ${maven.build.timestamp}</sauce.options>
