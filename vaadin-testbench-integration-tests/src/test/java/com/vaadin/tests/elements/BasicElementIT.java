@@ -106,7 +106,7 @@ public class BasicElementIT extends AbstractTB6Test {
 
     @Test(expected = TimeoutException.class)
     public void waitForNonExistant() {
-        $(PolymerTemplateViewElement.class).waitForFirst();
+        $(TemplateViewElement.class).waitForFirst();
         Assert.fail("Should not have found an element which does not exist");
     }
 

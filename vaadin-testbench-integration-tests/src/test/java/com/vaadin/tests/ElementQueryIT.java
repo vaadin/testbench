@@ -2,38 +2,38 @@ package com.vaadin.tests;
 
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.Test;
-
 import com.vaadin.flow.component.Component;
-import com.vaadin.testUI.PolymerTemplateView;
+import com.vaadin.testUI.TemplateView;
 import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.tests.elements.NativeButtonElement;
-import com.vaadin.tests.elements.PolymerTemplateViewElement;
+import com.vaadin.tests.elements.TemplateViewElement;
+
+import org.junit.Assert;
+import org.junit.Test;
 
 public class ElementQueryIT extends AbstractTB6Test {
 
     @Override
     protected Class<? extends Component> getTestView() {
-        return PolymerTemplateView.class;
+        return TemplateView.class;
     }
 
     @Test
     public void ensureElementListWrapped() {
         openTestURL();
-        List<PolymerTemplateViewElement> elements = $(
-                PolymerTemplateViewElement.class).all();
+        List<TemplateViewElement> elements = $(
+                TemplateViewElement.class).all();
         Assert.assertTrue(
-                elements.get(0) instanceof PolymerTemplateViewElement);
+                elements.get(0) instanceof TemplateViewElement);
     }
 
     @Test
     public void ensureElementListFromOnPageWrapped() {
         openTestURL();
-        PolymerTemplateViewElement view = $(PolymerTemplateViewElement.class)
+        TemplateViewElement view = $(TemplateViewElement.class)
                 .first();
-        PolymerTemplateViewElement view2 = view
-                .$(PolymerTemplateViewElement.class).onPage().first();
+        TemplateViewElement view2 = view
+                .$(TemplateViewElement.class).onPage().first();
         Assert.assertEquals(view, view2);
     }
 
@@ -41,7 +41,7 @@ public class ElementQueryIT extends AbstractTB6Test {
     public void findLightDomElementById() throws Exception {
         openTestURL();
 
-        PolymerTemplateViewElement view = $(PolymerTemplateViewElement.class)
+        TemplateViewElement view = $(TemplateViewElement.class)
                 .first();
         NativeButtonElement button = view.$(NativeButtonElement.class)
                 .id("light-button-1");
@@ -52,7 +52,7 @@ public class ElementQueryIT extends AbstractTB6Test {
     public void findShadowDomElementById() throws Exception {
         openTestURL();
 
-        PolymerTemplateViewElement view = $(PolymerTemplateViewElement.class)
+        TemplateViewElement view = $(TemplateViewElement.class)
                 .waitForFirst();
         NativeButtonElement button = view.$(NativeButtonElement.class)
                 .id("shadow-button-1");
@@ -63,7 +63,7 @@ public class ElementQueryIT extends AbstractTB6Test {
     public void findAllShadowDomElements() throws Exception {
         openTestURL();
 
-        PolymerTemplateViewElement view = $(PolymerTemplateViewElement.class)
+        TemplateViewElement view = $(TemplateViewElement.class)
                 .waitForFirst();
         Assert.assertEquals(10, view.$(NativeButtonElement.class).all().size());
     }
@@ -72,7 +72,7 @@ public class ElementQueryIT extends AbstractTB6Test {
     public void searchShadowDomBeforeLight() throws Exception {
         openTestURL();
 
-        PolymerTemplateViewElement view = $(PolymerTemplateViewElement.class)
+        TemplateViewElement view = $(TemplateViewElement.class)
                 .waitForFirst();
         NativeButtonElement button = view.$(NativeButtonElement.class)
                 .id("special-button");
@@ -83,7 +83,7 @@ public class ElementQueryIT extends AbstractTB6Test {
     public void mergeLightAndShadowDomResults() throws Exception {
         openTestURL();
 
-        PolymerTemplateViewElement view = $(PolymerTemplateViewElement.class)
+        TemplateViewElement view = $(TemplateViewElement.class)
                 .waitForFirst();
         List<NativeButtonElement> buttons = view.$(NativeButtonElement.class)
                 .all();
@@ -94,7 +94,7 @@ public class ElementQueryIT extends AbstractTB6Test {
     public void findTestBenchElementUsingTag() throws Exception {
         openTestURL();
 
-        TestBenchElement button = $(PolymerTemplateViewElement.class)
+        TestBenchElement button = $(TemplateViewElement.class)
                 .waitForFirst().$("button").id("shadow-button-2");
         Assert.assertEquals("Shadow Button 2", button.getText());
 
@@ -104,7 +104,7 @@ public class ElementQueryIT extends AbstractTB6Test {
     public void findTestBenchElement() throws Exception {
         openTestURL();
 
-        TestBenchElement button = $(PolymerTemplateViewElement.class)
+        TestBenchElement button = $(TemplateViewElement.class)
                 .waitForFirst().$(TestBenchElement.class).id("shadow-button-2");
         Assert.assertNotNull(button);
     }
@@ -113,7 +113,7 @@ public class ElementQueryIT extends AbstractTB6Test {
     public void findTestBenchElementChild() throws Exception {
         openTestURL();
 
-        TestBenchElement button = $(PolymerTemplateViewElement.class)
+        TestBenchElement button = $(TemplateViewElement.class)
                 .waitForFirst().$(TestBenchElement.class).first()
                 .$(TestBenchElement.class).first();
         Assert.assertEquals("Shadow Button 1", button.getText());
@@ -122,7 +122,7 @@ public class ElementQueryIT extends AbstractTB6Test {
     @Test
     public void specialCharactersInId() {
         openTestURL();
-        NativeButtonElement button = $(PolymerTemplateViewElement.class)
+        NativeButtonElement button = $(TemplateViewElement.class)
                 .waitForFirst().$(NativeButtonElement.class).id("foo'*+bar'");
         Assert.assertEquals("Button with special id", button.getText());
     }
@@ -130,7 +130,7 @@ public class ElementQueryIT extends AbstractTB6Test {
     @Test
     public void attributeContains() {
         openTestURL();
-        PolymerTemplateViewElement view = $(PolymerTemplateViewElement.class)
+        TemplateViewElement view = $(TemplateViewElement.class)
                 .waitForFirst();
         List<NativeButtonElement> button1s = view.$(NativeButtonElement.class)
                 .attributeContains("class", "button-1").all();
@@ -143,8 +143,8 @@ public class ElementQueryIT extends AbstractTB6Test {
     @Test
     public void getSetElementsProperty() {
         openTestURL();
-        PolymerTemplateViewElement template = $(
-                PolymerTemplateViewElement.class).first();
+        TemplateViewElement template = $(
+                TemplateViewElement.class).first();
 
         Assert.assertEquals(6, template.getPropertyElements("children").size());
     }

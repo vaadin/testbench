@@ -29,6 +29,7 @@ public class PerformanceIT extends AbstractTB6Test {
     }
 
     @Test
+    @Ignore("timeSpentServicingLastRequest does not work: https://github.com/vaadin/testbench/issues/1316")
     public void renderingTime() {
         openTestURL();
         long initialRendering = testBench().timeSpentRenderingLastRequest();
