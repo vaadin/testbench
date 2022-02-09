@@ -87,7 +87,7 @@ public class TestBench {
 
     static {
         LicenseChecker.checkLicenseFromStaticBlock("vaadin-testbench",
-                TestBenchTestCase.testbenchVersion);
+                TestBenchVersion.testbenchVersion);
     }
 
     public static TestBenchDriverProxy createDriver(WebDriver driver) {

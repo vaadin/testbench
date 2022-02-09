@@ -11,6 +11,10 @@ package com.vaadin.testbench.parallel.setup;
 
 import java.io.File;
 
+import com.vaadin.testbench.Parameters;
+import com.vaadin.testbench.TestBench;
+import com.vaadin.testbench.parallel.BrowserUtil;
+
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -23,11 +27,6 @@ import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.safari.SafariDriver;
 
-import com.vaadin.testbench.Parameters;
-import com.vaadin.testbench.TestBench;
-import com.vaadin.testbench.parallel.BrowserUtil;
-import com.vaadin.testbench.parallel.ParallelTest;
-
 public class LocalDriver {
 
     /**
@@ -36,10 +35,10 @@ public class LocalDriver {
 
     /**
      * Creates a {@link WebDriver} instance used for running the test locally
-     * for debug purposes. Uses firefoxDriver as WebDriver.
+     * for debug purposes.
      */
     static public WebDriver createDriver() {
-        return createDriver(ParallelTest.getDefaultCapabilities().get(0));
+        return createDriver(BrowserUtil.chrome());
     }
 
     /**

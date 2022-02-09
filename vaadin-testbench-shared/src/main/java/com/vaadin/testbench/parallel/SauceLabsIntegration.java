@@ -17,7 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Integration methods for Sauce Labs testing used by {@link ParallelTest}
+ * Integration methods for Sauce Labs testing used by {@code ParallelTest}.
  *
  */
 public class SauceLabsIntegration {
