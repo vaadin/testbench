@@ -220,31 +220,6 @@ public class Parameters {
     }
 
     /**
-     * Sets whether to capture a screen shot when a test fails or not.
-     *
-     * @param isCaptureScreenshotOnFailure
-     * @throws UnsupportedOperationException
-     * @deprecated This does nothing, use {@link ScreenshotOnFailureRule}
-     */
-    @Deprecated
-    public static void setCaptureScreenshotOnFailure(
-            boolean isCaptureScreenshotOnFailure) {
-        throw new UnsupportedOperationException(
-                "Deprecated, this method no longer does anything.");
-    }
-
-    /**
-     * @return whether to capture a screen shot when a test fails or not.
-     * @throws UnsupportedOperationException
-     * @deprecated This does nothing, use {@link ScreenshotOnFailureRule}
-     */
-    @Deprecated
-    public static boolean isCaptureScreenshotOnFailure() {
-        throw new UnsupportedOperationException(
-                "Deprecated, this method no longer does anything.");
-    }
-
-    /**
      * Sets the maximum allowed retries when comparing screen shots. This is
      * useful since in some situations it might take a little bit longer for all
      * the elements to settle into place.
@@ -278,28 +253,6 @@ public class Parameters {
      */
     public static int getScreenshotRetryDelay() {
         return screenshotRetryDelay;
-    }
-
-    /**
-     *
-     * @return maximum number of tests to run in parallel.
-     * @deprecated Use {@link #getTestsInParallel()}
-     */
-    @Deprecated
-    public static int getMaxThreads() {
-        return getTestsInParallel();
-    }
-
-    /**
-     * Sets the maximum number of tests to run in parallel.
-     *
-     * @param maxThreads
-     *            maximum number of tests to run in parallel.
-     * @deprecated Use {@link #setTestsInParallel(int)}
-     */
-    @Deprecated
-    public static void setMaxThreads(int maxThreads) {
-        setTestsInParallel(maxThreads);
     }
 
     /**
