@@ -1,22 +1,35 @@
-.DS_Store
+# /
 .classpath
-.project
-.settings
+*.project
+*.settings
+**/bin
+**/target
+**/error-screenshots
+
+# Mac
+*.DS_Store
+
+# Intellij Idea files
 .idea
 *.iml
-*/target/
-vaadin-testbench-standalone/dependency-reduced-pom.xml
-vaadin-testbench-recorder/selenium-extensions/core/user-extensions.js
-vaadin-testbench-recorder/chrome/content/selenium/scripts/selenium-api.js
-vaadin-testbench-recorder/chrome/content/selenium/scripts/selenium-browserbot.js
-vaadin-testbench-recorder/chrome/testbench-recorder.jar
-vaadin-testbench-recorder/extension/
-vaadin-testbench-recorder/install.rdf
-vaadin-testbench-playground
-vaadin-testbench-integration-tests/error-screenshots/
-vaadin-testbench-integration-tests/config/testbench.properties
-chromedriver.log
-phantomjsdriver.log
-error-screenshots/
-test/temp/
 
+# VS Code
+.vscode
+
+# Selenium driver folders
+selenium_standalone_zips
+driver_zips
+driver
+
+types.d.ts
+tsconfig.json
+webpack.*
+node_modules
+.driver
+package*json
+pnpm*
+error-screenshots
+.npmrc
+
+**/frontend/generated
+**/frontend/index.html

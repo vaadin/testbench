@@ -15,11 +15,8 @@
  */
 package com.vaadin.tests;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.openqa.selenium.Platform;
-import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxDriver.Capability;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import com.vaadin.testbench.parallel.Browser;
@@ -31,25 +28,14 @@ import com.vaadin.testbench.parallel.DefaultBrowserFactory;
  */
 public class TB6TestBrowserFactory extends DefaultBrowserFactory {
 
-    private static Map<Browser, String> defaultBrowserVersion = new HashMap<>();
-    static {
-        defaultBrowserVersion.put(Browser.CHROME, "");
-        defaultBrowserVersion.put(Browser.SAFARI, "11");
-        defaultBrowserVersion.put(Browser.IE11, "11");
-        defaultBrowserVersion.put(Browser.FIREFOX, "");
-    }
-
     @Override
     public DesiredCapabilities create(Browser browser, String version,
             Platform platform) {
         DesiredCapabilities desiredCapabilities = super.create(browser,
                 version, platform);
 
-        if ("".equals(version) && defaultBrowserVersion.containsKey(browser)) {
-            desiredCapabilities.setVersion(defaultBrowserVersion.get(browser));
-        }
         if(browser.equals(Browser.FIREFOX)) {
-            desiredCapabilities.setCapability(FirefoxDriver.MARIONETTE, false);
+            desiredCapabilities.setCapability(Capability.MARIONETTE, false);
         }
         desiredCapabilities.setCapability("screenResolution", "1600x1200");
         return desiredCapabilities;
