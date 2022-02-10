@@ -60,7 +60,7 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
     private static final ExecutorService service;
 
     static {
-        MAX_CONCURRENT_TESTS = Parameters.getMaxThreads();
+        MAX_CONCURRENT_TESTS = Parameters.getTestsInParallel();
         service = Executors.newFixedThreadPool(MAX_CONCURRENT_TESTS);
     }
 
