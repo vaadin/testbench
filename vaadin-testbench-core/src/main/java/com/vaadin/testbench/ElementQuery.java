@@ -9,6 +9,7 @@
  */
 package com.vaadin.testbench;
 
+import java.time.Duration;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -269,7 +270,7 @@ public class ElementQuery<T extends TestBenchElement> {
      * @return The element of the type specified in the constructor
      */
     public T waitForFirst(long timeOutInSeconds) {
-        Object result = new WebDriverWait(getDriver(), timeOutInSeconds).until(driver -> {
+        Object result = new WebDriverWait(getDriver(), Duration.ofSeconds(timeOutInSeconds)).until(driver -> {
             try {
                 return first();
             } catch (NoSuchElementException e) {

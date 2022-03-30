@@ -9,6 +9,7 @@
  */
 package com.vaadin.testbench;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Properties;
 import org.slf4j.Logger;
@@ -219,7 +220,7 @@ public abstract class TestBenchTestCase
      */
     protected <T> T waitUntil(ExpectedCondition<T> condition,
             long timeoutInSeconds) {
-        return new WebDriverWait(getDriver(), timeoutInSeconds)
+        return new WebDriverWait(getDriver(), Duration.ofSeconds(timeoutInSeconds))
                 .until(condition);
     }
 
