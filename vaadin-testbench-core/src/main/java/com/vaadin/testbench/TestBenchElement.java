@@ -12,6 +12,7 @@ package com.vaadin.testbench;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -523,7 +524,7 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
      */
     protected <T> T waitUntil(ExpectedCondition<T> condition,
             long timeoutInSeconds) {
-        return new WebDriverWait(getDriver(), timeoutInSeconds)
+        return new WebDriverWait(getDriver(), Duration.ofSeconds(timeoutInSeconds))
                 .until(condition);
     }
 
