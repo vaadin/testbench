@@ -34,6 +34,9 @@ public class ReferenceNameGenerator {
         String platformString;
 
         Platform platform = browserCapabilities.getPlatform();
+        if (platform != null && platform.family() != null) {
+            platform = platform.family();
+        }
         if (platform != null) {
             platformString = platform.toString().toLowerCase();
         } else {

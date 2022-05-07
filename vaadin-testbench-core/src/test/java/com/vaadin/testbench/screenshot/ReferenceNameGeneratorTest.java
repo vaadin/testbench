@@ -39,7 +39,7 @@ public class ReferenceNameGeneratorTest {
         Mockito.when(ffcaps.getBrowserName()).thenReturn("Firefox");
         Mockito.when(ffcaps.getVersion()).thenReturn("13.0.1");
         String name = rng.generateName("shot", ffcaps);
-        assertEquals("shot_xp_Firefox_13", name);
+        assertEquals("shot_windows_Firefox_13", name);
     }
 
     @Test
@@ -69,6 +69,6 @@ public class ReferenceNameGeneratorTest {
         Mockito.when(chrome.getVersion()).thenReturn("");
         Mockito.when(chrome.getCapability("browserVersion")).thenReturn("25");
         String name = rng.generateName("shot", chrome);
-        assertEquals("shot_xp_MicrosoftEdge_25", name);
+        assertEquals("shot_windows_MicrosoftEdge_25", name);
     }
 }

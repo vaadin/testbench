@@ -19,14 +19,6 @@ import com.vaadin.testbench.parallel.BrowserUtil;
 public class BrowserUtilTest {
 
     @Test
-    public void platformFromEnum() {
-        DesiredCapabilities dc = new DesiredCapabilities();
-        dc.setPlatform(Platform.WIN8_1);
-        Assert.assertEquals(Platform.WIN8_1.name(),
-                BrowserUtil.getPlatform(dc));
-    }
-
-    @Test
     public void supportedPlatformFromEnum() {
         DesiredCapabilities dc = new DesiredCapabilities();
         dc.setPlatform(Platform.WIN8);
