@@ -12,6 +12,7 @@ package com.vaadin.testbench;
 import org.junit.Assert;
 import org.junit.Test;
 import org.openqa.selenium.Platform;
+import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import com.vaadin.testbench.parallel.BrowserUtil;
@@ -39,7 +40,7 @@ public class BrowserUtilTest {
     @Test
     public void platformWithoutEnum() {
         DesiredCapabilities dc = new DesiredCapabilities();
-        dc.setCapability("platform", "foobar");
+        dc.setCapability(CapabilityType.PLATFORM_NAME, "foobar");
         Assert.assertEquals("foobar", BrowserUtil.getPlatform(dc));
     }
 }

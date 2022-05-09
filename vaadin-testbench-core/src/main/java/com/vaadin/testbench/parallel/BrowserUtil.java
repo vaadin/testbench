@@ -11,7 +11,6 @@ package com.vaadin.testbench.parallel;
 
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.Platform;
-import org.openqa.selenium.remote.BrowserType;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
@@ -87,7 +86,7 @@ public class BrowserUtil {
         if (capabilities == null) {
             return false;
         }
-        return BrowserType.IE.equals(capabilities.getBrowserName());
+        return Browser.IE11.name().equals(capabilities.getBrowserName());
     }
 
     /**
@@ -103,7 +102,7 @@ public class BrowserUtil {
             return false;
         }
         return isIE(capabilities)
-                && ("" + version).equals(capabilities.getVersion());
+                && ("" + version).equals(capabilities.getBrowserVersion());
     }
 
     /**
@@ -115,7 +114,7 @@ public class BrowserUtil {
         if (capabilities == null) {
             return false;
         }
-        return BrowserType.EDGE.equals(capabilities.getBrowserName());
+        return Browser.EDGE.name().equals(capabilities.getBrowserName());
     }
 
     /**
@@ -127,7 +126,7 @@ public class BrowserUtil {
         if (capabilities == null) {
             return false;
         }
-        return BrowserType.CHROME.equals(capabilities.getBrowserName());
+        return Browser.CHROME.name().equals(capabilities.getBrowserName());
     }
 
     /**
@@ -139,7 +138,7 @@ public class BrowserUtil {
         if (capabilities == null) {
             return false;
         }
-        return BrowserType.SAFARI.equals(capabilities.getBrowserName());
+        return Browser.SAFARI.name().equals(capabilities.getBrowserName());
     }
 
     /**
@@ -151,7 +150,7 @@ public class BrowserUtil {
         if (capabilities == null) {
             return false;
         }
-        return BrowserType.FIREFOX.equals(capabilities.getBrowserName());
+        return Browser.FIREFOX.name().equals(capabilities.getBrowserName());
     }
 
     /**
@@ -191,7 +190,7 @@ public class BrowserUtil {
             return "Unknown";
         }
         try {
-            Platform p = capabilities.getPlatform();
+            Platform p = capabilities.getPlatformName();
             Platform family = p != null ? p.family():null;
             if (family == Platform.WINDOWS || p == Platform.WINDOWS) {
                 return "Windows";
@@ -202,7 +201,7 @@ public class BrowserUtil {
         } catch (Exception e) {
         }
         Object rawPlatform = capabilities
-                .getCapability(CapabilityType.PLATFORM);
+                .getCapability(CapabilityType.PLATFORM_NAME);
         if (rawPlatform == null) {
             return "Unknown";
         }
