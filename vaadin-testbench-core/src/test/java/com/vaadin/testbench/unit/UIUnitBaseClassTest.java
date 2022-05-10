@@ -9,18 +9,15 @@
  */
 package com.vaadin.testbench.unit;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.example.SingleParam;
 import com.example.TemplatedParam;
-import com.example.base.About;
-import com.example.base.Home;
-import com.example.base.sub.SubView;
-import org.junit.Assert;
-import org.junit.jupiter.api.AfterEach;
+import com.example.base.WelcomeView;
+import com.example.base.child.ChildView;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -52,7 +49,7 @@ class UIUnitBaseClassTest {
 
         @Test
         void extendingBaseClass_runTest_defaultRouteActive() {
-            Assertions.assertInstanceOf(Home.class, getCurrentView(),
+            Assertions.assertInstanceOf(WelcomeView.class, getCurrentView(),
                     "Expecting default route to be active, but was not");
         }
 
@@ -67,10 +64,11 @@ class UIUnitBaseClassTest {
                     .getRouter().getRegistry().getRegisteredRoutes().stream()
                     .map(RouteBaseData::getNavigationTarget)
                     .collect(Collectors.toSet());
-            Assertions.assertEquals(5, routes.size());
-            Assertions.assertTrue(routes.containsAll(
-                    Set.of(Home.class, About.class, SubView.class,
-                            SingleParam.class, TemplatedParam.class)));
+            Set<Class<? extends Component>> allViews = new HashSet<>(TestRoutes.INSTANCE.getViews());
+            allViews.add(SingleParam.class);
+            allViews.add(TemplatedParam.class);
+            Assertions.assertEquals(allViews.size(), routes.size());
+            Assertions.assertTrue(routes.containsAll(allViews));
         }
     }
 
@@ -79,7 +77,7 @@ class UIUnitBaseClassTest {
 
         @Override
         protected String scanPackage() {
-            return SubView.class.getPackageName();
+            return ChildView.class.getPackageName();
         }
 
         @Test
@@ -89,7 +87,7 @@ class UIUnitBaseClassTest {
                     .map(RouteBaseData::getNavigationTarget)
                     .collect(Collectors.toSet());
             Assertions.assertEquals(1, routes.size());
-            Assertions.assertTrue(routes.contains(SubView.class));
+            Assertions.assertTrue(routes.contains(ChildView.class));
         }
     }
 

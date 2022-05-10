@@ -9,7 +9,7 @@
  */
 package com.vaadin.testbench.unit;
 
-import com.example.base.Home;
+import com.example.base.WelcomeView;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,7 +21,7 @@ import com.vaadin.flow.component.UI;
 
 public class ComponentWrapTest extends UIUnitTest {
 
-    private Home home;
+    private WelcomeView home;
 
     @BeforeEach
     public void initHome() {
@@ -35,7 +35,7 @@ public class ComponentWrapTest extends UIUnitTest {
 
     @Test
     public void canGetWrapperForView_viewIsUsable() {
-        final ComponentWrap<Home> home_ = $(home);
+        final ComponentWrap<WelcomeView> home_ = $(home);
         Assertions.assertTrue(home_.isUsable(),
                 "Home should be visible and interactable");
     }
@@ -44,7 +44,7 @@ public class ComponentWrapTest extends UIUnitTest {
     public void componentIsDisabled_isUsableReturnsFalse() {
         home.getElement().setEnabled(false);
 
-        final ComponentWrap<Home> home_ = $(home);
+        final ComponentWrap<WelcomeView> home_ = $(home);
         Assertions.assertFalse(home_.isUsable(),
                 "Home should be visible but not interactable");
     }
@@ -53,14 +53,14 @@ public class ComponentWrapTest extends UIUnitTest {
     public void componentIsHidden_isUsableReturnsFalse() {
         home.setVisible(false);
 
-        final ComponentWrap<Home> home_ = $(home);
+        final ComponentWrap<WelcomeView> home_ = $(home);
         Assertions.assertFalse(home_.isUsable(),
                 "Home should not be interactable when component is not visible");
     }
 
     @Test
     public void componentModality_componentIsUsableReturnsCorrectly() {
-        final ComponentWrap<Home> home_ = $(home);
+        final ComponentWrap<WelcomeView> home_ = $(home);
 
         final Span span = new Span();
         home.add(span);
@@ -84,7 +84,7 @@ public class ComponentWrapTest extends UIUnitTest {
 
     @Test
     public void componentModality_modalityDropsOnComponentRemoval() {
-        final ComponentWrap<Home> home_ = $(home);
+        final ComponentWrap<WelcomeView> home_ = $(home);
 
         final Span span = new Span();
         home.add(span);
@@ -126,11 +126,11 @@ public class ComponentWrapTest extends UIUnitTest {
                 "Span should not be interactable when parent is hidden");
     }
 
-    private Home getHome() {
+    private WelcomeView getHome() {
         final HasElement view = getCurrentView();
-        Assertions.assertTrue(view instanceof Home,
+        Assertions.assertTrue(view instanceof WelcomeView,
                 "Home should be navigated to by default");
-        return (Home) view;
+        return (WelcomeView) view;
     }
 
     @Tag("span")
