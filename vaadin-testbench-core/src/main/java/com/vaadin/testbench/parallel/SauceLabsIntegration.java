@@ -52,7 +52,7 @@ public class SauceLabsIntegration {
         }
         String tunnelId = getTunnelIdentifier(sauceOptions, null);
         if (tunnelId != null) {
-            desiredCapabilities.setCapability("tunnelIdentifier", tunnelId);
+            desiredCapabilities.setCapability("sauce:tunnelIdentifier", tunnelId);
         }
     }
 
