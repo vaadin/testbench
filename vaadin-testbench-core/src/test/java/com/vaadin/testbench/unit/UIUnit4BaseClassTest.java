@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2020 Vaadin Ltd
+ * Copyright (C) 2022 Vaadin Ltd
  *
  * This program is available under Commercial Vaadin Developer License
  * 4.0 (CVDLv4).
@@ -7,9 +7,10 @@
  *
  * For the full License, see <https://vaadin.com/license/cvdl-4.0>.
  */
-package com.vaadin.karibu;
+package com.vaadin.testbench.unit;
 
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import com.example.base.About;
@@ -29,9 +30,9 @@ import com.vaadin.flow.server.VaadinService;
 import com.vaadin.flow.server.VaadinSession;
 
 @RunWith(Enclosed.class)
-public class KaribuBaseClassTest {
+public class UIUnit4BaseClassTest {
 
-    public static class TestMethodExecutionTest extends KaribuTest {
+    public static class TestMethodExecutionTest extends UIUnit4Test {
 
         @Test
         public void extendingBaseClass_runTest_vaadinInstancesAvailable() {
@@ -62,7 +63,7 @@ public class KaribuBaseClassTest {
 
     }
 
-    public static class DiscoverAllRoutesTest extends KaribuTest {
+    public static class DiscoverAllRoutesTest extends UIUnit4Test {
         @Test
         public void extendingBaseClass_runTest_routesAreDiscovered() {
             Set<Class<? extends Component>> routes = VaadinService.getCurrent()
@@ -75,7 +76,7 @@ public class KaribuBaseClassTest {
         }
     }
 
-    public static class DiscoverRoutesInPackageTest extends KaribuTest {
+    public static class DiscoverRoutesInPackageTest extends UIUnit4Test {
 
         @Override
         protected String scanPackage() {

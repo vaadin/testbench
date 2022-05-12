@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2020 Vaadin Ltd
+ * Copyright (C) 2022 Vaadin Ltd
  *
  * This program is available under Commercial Vaadin Developer License
  * 4.0 (CVDLv4).
@@ -7,7 +7,7 @@
  *
  * For the full License, see <https://vaadin.com/license/cvdl-4.0>.
  */
-package com.vaadin.karibu;
+package com.vaadin.testbench.unit;
 
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -26,7 +26,7 @@ import com.vaadin.flow.component.UI;
  *
  * For internal use only. May be renamed or removed in a future release.
  */
-class BaseKaribuTest {
+class BaseUIUnitTest {
 
     private static final ConcurrentHashMap<String, Routes> routesCache = new ConcurrentHashMap<>();
 
