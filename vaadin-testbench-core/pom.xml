@@ -86,14 +86,12 @@
                                     <addClasspath>true</addClasspath>
                                     <!-- Implementation-Title and Implementation-Version 
                                         come from the POM by default -->
-                                    <addDefaultImplementationEntries>true
-                                    </addDefaultImplementationEntries>
+                                    <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                                 </manifest>
                                 <manifestEntries>
                                     <!-- Package format version - do not 
                                         change -->
-                                    <Vaadin-Package-Version>1
-                                    </Vaadin-Package-Version>
+                                    <Vaadin-Package-Version>1</Vaadin-Package-Version>
                                 </manifestEntries>
                             </archive>
                             <excludes>
@@ -117,6 +115,11 @@
         </resources>
 
         <plugins>
+            <!--
+                To compile projects that include Kotlin and Java source code, the Kotlin compiler should run before
+                the Java compiler.
+                That means that kotlin-maven-plugin definition must be placed before maven-compiler-plugin
+            -->
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
@@ -129,10 +132,8 @@
                         </goals>
                         <configuration>
                             <sourceDirs>
-                                <sourceDir>${project.basedir}/src/main/kotlin
-                                </sourceDir>
-                                <sourceDir>${project.basedir}/src/main/java
-                                </sourceDir>
+                                <sourceDir>${project.basedir}/src/main/kotlin</sourceDir>
+                                <sourceDir>${project.basedir}/src/main/java</sourceDir>
                             </sourceDirs>
                         </configuration>
                     </execution>
@@ -143,10 +144,8 @@
                         </goals>
                         <configuration>
                             <sourceDirs>
-                                <sourceDir>${project.basedir}/src/test/kotlin
-                                </sourceDir>
-                                <sourceDir>${project.basedir}/src/test/java
-                                </sourceDir>
+                                <sourceDir>${project.basedir}/src/test/kotlin</sourceDir>
+                                <sourceDir>${project.basedir}/src/test/java</sourceDir>
                             </sourceDirs>
                         </configuration>
                     </execution>
@@ -190,11 +189,8 @@
                 <configuration>
                     <jdkVersion>${maven.compiler.source}</jdkVersion>
                     <sourceDirectories>
-                        <sourceDirectory>${project.basedir}/src/main/java
-                        </sourceDirectory>
-                        <sourceDirectory>
-                            ${project.basedir}/src/main/kotlin
-                        </sourceDirectory>
+                        <sourceDirectory>${project.basedir}/src/main/java</sourceDirectory>
+                        <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
                     </sourceDirectories>
                 </configuration>
             </plugin>
