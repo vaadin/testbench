@@ -17,4 +17,15 @@ import com.vaadin.flow.router.RouteAlias;
 @Tag("div")
 @Route("about")
 public class About extends Component {
+    long id = System.currentTimeMillis();
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof About && this.id == ((About) obj).id;
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 }

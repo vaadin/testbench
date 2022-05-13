@@ -51,8 +51,7 @@ class UIUnitBaseClassTest {
         @Test
         void extendingBaseClass_runTest_defaultRouteActive() {
             Assertions.assertInstanceOf(Home.class,
-                    UI.getCurrent().getInternals().getActiveRouterTargetsChain()
-                            .get(0),
+                    getCurrentView(),
                     "Expecting default route to be active, but was not");
         }
 
@@ -60,6 +59,11 @@ class UIUnitBaseClassTest {
 
     @Nested
     class DiscoverAllRoutesTest extends UIUnitTest {
+        @Override
+        protected String scanPackage() {
+            return "com.example.base";
+        }
+
         @Test
         void extendingBaseClass_runTest_routesAreDiscovered() {
             Set<Class<? extends Component>> routes = VaadinService.getCurrent()
