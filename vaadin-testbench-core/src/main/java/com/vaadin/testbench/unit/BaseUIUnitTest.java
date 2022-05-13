@@ -10,10 +10,13 @@
 package com.vaadin.testbench.unit;
 
 import java.util.Map;
+import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Stream;
 
 import com.github.mvysny.kaributesting.v10.MockVaadin;
 import com.github.mvysny.kaributesting.v10.Routes;
+import com.googlecode.gentyref.GenericTypeReflector;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasElement;
@@ -109,7 +112,8 @@ class BaseUIUnitTest {
      */
     public <T extends Component> T navigate(Class<T> navigationTarget,
             Map<String, String> parameters) {
-        UI.getCurrent().navigate(navigationTarget, new RouteParameters(parameters));
+        UI.getCurrent()
+                .navigate(navigationTarget, new RouteParameters(parameters));
         return navigationTarget.cast(getCurrentView());
     }
 
@@ -146,5 +150,51 @@ class BaseUIUnitTest {
     public HasElement getCurrentView() {
         return UI.getCurrent().getInternals().getActiveRouterTargetsChain()
                 .get(0);
+    }
+
+    /**
+     * Wrap component with wrapper best matching component type.
+     *
+     * @param component
+     *         component to get test wrapper for
+     * @param <T>
+     *         wrapper type
+     * @param <Y>
+     *         component type
+     * @return component in wrapper with test helpers
+     */
+    public <T extends ComponentWrap<Y>, Y extends Component> T $(Y component) {
+        // TODO: add handler resolution by component
+        return (T) initialize(ComponentWrap.class, component);
+    }
+
+    /**
+     * Private initializer for wrapper classes.
+     *
+     * @param clazz
+     *         wrapper class to initialize
+     * @param component
+     *         component used with wrapper class
+     * @param <T>
+     *         component wrapper type
+     * @param <Y>
+     *         component type
+     * @return wrapper with component set
+     */
+    private <T extends ComponentWrap<Y>, Y extends Component> T initialize(
+            Class<T> clazz, Y component) {
+        try {
+            // Get the generic class for given wrapper. Component should be an instance of this.
+            final Class<?> aClass = Stream.of(clazz.getTypeParameters())
+                    .map(type -> GenericTypeReflector.erase(type)).findFirst()
+                    .get();
+            return clazz.getConstructor(aClass).newInstance(component);
+        } catch (InstantiationException | IllegalAccessException |
+                 InvocationTargetException | NoSuchMethodException e) {
+            throw new RuntimeException(
+                    "Could not instantiate " + clazz.getSimpleName()
+                            + " for component " + component.getClass()
+                            .getSimpleName());
+        }
     }
 }
