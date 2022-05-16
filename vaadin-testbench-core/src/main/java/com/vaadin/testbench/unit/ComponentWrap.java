@@ -25,7 +25,7 @@ import com.vaadin.flow.component.UI;
  */
 public class ComponentWrap<T extends Component> {
 
-    private T component;
+    private final T component;
 
     /**
      * Wrap given component for testing.
