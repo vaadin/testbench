@@ -14,13 +14,13 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
-import com.github.mvysny.kaributesting.v10.MockVaadin;
-import com.github.mvysny.kaributesting.v10.Routes;
 import com.googlecode.gentyref.GenericTypeReflector;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.UI;
+import com.vaadin.testbench.unit.internal.MockVaadin;
+import com.vaadin.testbench.unit.internal.Routes;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.RouteParameters;
 

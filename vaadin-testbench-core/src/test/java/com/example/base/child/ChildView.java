@@ -7,13 +7,14 @@
  *
  * For the full License, see <https://vaadin.com/license/cvdl-4.0>.
  */
-package com.example.base.sub;
+package com.example.base.child;
 
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.Tag;
+import com.example.base.ParentView;
+
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
 
-@Tag("div")
-@Route("sub")
-public class SubView extends Component {
+@Route(value = "child", layout = ParentView.class)
+public class ChildView extends VerticalLayout {
+
 }

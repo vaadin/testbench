@@ -4,9 +4,8 @@ import java.util.Collections;
 
 import com.example.SingleParam;
 import com.example.TemplatedParam;
-import com.example.base.About;
-import com.example.base.Home;
-import com.example.base.sub.SubView;
+import com.example.base.HelloWorldView;
+import com.example.base.WelcomeView;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -21,21 +20,21 @@ public class UIUnitNavigationTest extends UIUnitTest {
 
     @Test
     public void getCurrentView_returnsExpectedView() {
-        Assertions.assertTrue(getCurrentView() instanceof Home,
-                "Home has the empty RouteAlias so it should be served as default view");
+        Assertions.assertTrue(getCurrentView() instanceof WelcomeView,
+                "WelcomeView has the empty RouteAlias so it should be served as default view");
 
-        About about = navigate(About.class);
+        HelloWorldView helloWorldView = navigate(HelloWorldView.class);
 
-        Assertions.assertTrue(getCurrentView().equals(about),
+        Assertions.assertTrue(getCurrentView().equals(helloWorldView),
                 "getCurrentView should return the same instance as gotten on navigation");
     }
 
     @Test
     public void navigationWithLocation_checksGeneratedViewType() {
-        navigate("about", About.class);
+        navigate("helloworld", HelloWorldView.class);
 
         Assertions.assertThrows(IllegalArgumentException.class,
-                () -> navigate("home", About.class),
+                () -> navigate("welcome", HelloWorldView.class),
                 "Navigation to path not returning given class should throw");
 
     }

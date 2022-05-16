@@ -9,13 +9,13 @@
  */
 package com.example.base;
 
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.Tag;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.router.RouteAlias;
 
-@Tag("div")
-@Route("about")
-public class About extends Component {
-    
+@Route("helloworld")
+public class HelloWorldView extends VerticalLayout {
+    public HelloWorldView() {
+        add(new Button("Hello, World!"));
+    }
 }
