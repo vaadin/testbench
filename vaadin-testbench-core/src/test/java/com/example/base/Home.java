@@ -10,6 +10,7 @@
 package com.example.base;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
@@ -17,5 +18,5 @@ import com.vaadin.flow.router.RouteAlias;
 @Tag("div")
 @Route("home")
 @RouteAlias("")
-public class Home extends Component {
+public class Home extends Component implements HasComponents {
 }
