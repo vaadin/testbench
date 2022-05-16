@@ -12,6 +12,8 @@ package com.vaadin.testbench.unit;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.example.SingleParam;
+import com.example.TemplatedParam;
 import com.example.base.About;
 import com.example.base.Home;
 import com.example.base.sub.SubView;
@@ -50,8 +52,7 @@ class UIUnitBaseClassTest {
 
         @Test
         void extendingBaseClass_runTest_defaultRouteActive() {
-            Assertions.assertInstanceOf(Home.class,
-                    getCurrentView(),
+            Assertions.assertInstanceOf(Home.class, getCurrentView(),
                     "Expecting default route to be active, but was not");
         }
 
@@ -59,10 +60,6 @@ class UIUnitBaseClassTest {
 
     @Nested
     class DiscoverAllRoutesTest extends UIUnitTest {
-        @Override
-        protected String scanPackage() {
-            return "com.example.base";
-        }
 
         @Test
         void extendingBaseClass_runTest_routesAreDiscovered() {
@@ -70,9 +67,10 @@ class UIUnitBaseClassTest {
                     .getRouter().getRegistry().getRegisteredRoutes().stream()
                     .map(RouteBaseData::getNavigationTarget)
                     .collect(Collectors.toSet());
-            Assertions.assertEquals(3, routes.size());
+            Assertions.assertEquals(5, routes.size());
             Assertions.assertTrue(routes.containsAll(
-                    Set.of(Home.class, About.class, SubView.class)));
+                    Set.of(Home.class, About.class, SubView.class,
+                            SingleParam.class, TemplatedParam.class)));
         }
     }
 
