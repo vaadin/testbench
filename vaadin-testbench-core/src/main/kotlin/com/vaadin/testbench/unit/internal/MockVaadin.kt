@@ -32,7 +32,6 @@ import com.vaadin.flow.server.VaadinService
 import com.vaadin.flow.server.VaadinServlet
 import com.vaadin.flow.server.VaadinServletService
 import com.vaadin.flow.server.VaadinSession
-import com.vaadin.flow.server.WebBrowser
 import com.vaadin.flow.server.WrappedHttpSession
 import com.vaadin.flow.shared.communication.PushMode
 import com.vaadin.testbench.unit.mocks.MockHttpSession
@@ -101,7 +100,7 @@ object MockVaadin {
      * @param servlet allows you to provide your own implementation of [VaadinServlet].
      * You MUST override [VaadinServlet.createServletService]
      * and construct a custom service which overrides important methods.
-     * Please consult [com.github.mvysny.kaributesting.v10.mock.MockService]
+     * Please consult [com.vaadin.testbench.unit.mocks.MockService]
      * on what methods you must override in your custom service.
      */
     @JvmStatic
@@ -207,7 +206,7 @@ object MockVaadin {
 
         // init Session.
         // Use the underlying Service to create the Vaadin Session; however
-        // you MUST mock certain things in order for Karibu to work.
+        // you MUST mock certain things in order for UI Unit testing to work.
         // See MockSession for more details. By default the service is a MockService
         // which creates MockSession.
         val session: VaadinSession = service._createVaadinSession(VaadinRequest.getCurrent())
@@ -274,12 +273,12 @@ object MockVaadin {
     }
 
     /**
-     * Since Karibu-Testing runs in the same JVM as the server and there is no browser, the boundaries between the client and
+     * Since UI Unit Testing runs in the same JVM as the server and there is no browser, the boundaries between the client and
      * the server become unclear. When looking into sources of any test method, it's really hard to tell where exactly the server request ends, and
      * where another request starts.
      *
      * You can establish an explicit client boundary in your test, by explicitly calling this method. However, since that
-     * would be both laborous and error-prone, the default operation is that Karibu Testing pretends as if there was a client-server
+     * would be both laborous and error-prone, the default operation is that UI Unit Testing pretends as if there was a client-server
      * roundtrip before every component lookup
      * via the [_get]/[_find]/[_expectNone]/[_expectOne] call. See [TestingLifecycleHook] for more details.
      *

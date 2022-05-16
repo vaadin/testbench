@@ -206,9 +206,9 @@ open class MockContext : ServletContext, Serializable {
 
     override fun getVirtualServerName(): String = "mock/localhost" // Tomcat returns "Catalina/localhost"
 
+    /* TODO: Servlet 4 API
     private var sessionTimeout: Int = 30
 
-    /*
     override fun getSessionTimeout(): Int = sessionTimeout
 
     override fun setSessionTimeout(sessionTimeout: Int) {
@@ -266,7 +266,7 @@ open class MockContext : ServletContext, Serializable {
         throw UnsupportedOperationException("not implemented")
     }
 
-    /*
+    /* TODO: Servlet 4 API
     override fun addJspFile(servletName: String, jspFile: String): ServletRegistration.Dynamic {
         throw UnsupportedOperationException("not implemented")
     }
@@ -296,8 +296,8 @@ open class MockContext : ServletContext, Serializable {
 internal val moduleDir: File get() {
     var dir = File("").absoluteFile
     // Workaround for https://youtrack.jetbrains.com/issue/IDEA-188466
-    // When using $MODULE_DIR$, IDEA will set CWD to, say, karibu-testing/.idea/modules/karibu-testing-v8
-    // We need to revert that back to karibu-testing/karibu-testing-v8
+    // When using $MODULE_DIR$, IDEA will set CWD to, say, ui-testing/.idea/modules/ui-testing-module
+    // We need to revert that back to ui-testing/ui-testing-module
     if (dir.absolutePath.contains("/.idea/modules")) {
         dir = File(dir.absolutePath.replace("/.idea/modules", ""))
     }
