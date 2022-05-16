@@ -46,7 +46,7 @@ public class ComponentWrapTest extends UIUnitTest {
 
         final ComponentWrap<Home> home_ = $(home);
         Assertions.assertFalse(home_.isUsable(),
-                "Home should be visible and interactable");
+                "Home should be visible but not interactable");
     }
 
     @Test
@@ -55,7 +55,7 @@ public class ComponentWrapTest extends UIUnitTest {
 
         final ComponentWrap<Home> home_ = $(home);
         Assertions.assertFalse(home_.isUsable(),
-                "Home should be visible and interactable");
+                "Home should not be interactable when component is not visible");
     }
 
     @Test
@@ -96,7 +96,7 @@ public class ComponentWrapTest extends UIUnitTest {
         span_.setModal(true);
 
         Assertions.assertTrue(span_.isUsable(),
-                "Span should interactable when it is modal");
+                "Span should be interactable when it is modal");
         Assertions.assertFalse(home_.isUsable(),
                 "Home should not be interactable when Span is modal");
 
