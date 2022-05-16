@@ -73,7 +73,7 @@ class BaseUIUnitTest {
      */
     public <T extends Component> T navigate(Class<T> navigationTarget) {
         UI.getCurrent().navigate(navigationTarget);
-        return (T) getCurrentView();
+        return navigationTarget.cast(getCurrentView());
     }
 
     /**
@@ -92,7 +92,7 @@ class BaseUIUnitTest {
     public <C, T extends Component & HasUrlParameter<C>> T navigate(
             Class<T> navigationTarget, C parameter) {
         UI.getCurrent().navigate(navigationTarget, parameter);
-        return (T) getCurrentView();
+        return navigationTarget.cast(getCurrentView());
     }
 
     /**
@@ -110,7 +110,7 @@ class BaseUIUnitTest {
     public <T extends Component> T navigate(Class<T> navigationTarget,
             Map<String, String> parameters) {
         UI.getCurrent().navigate(navigationTarget, new RouteParameters(parameters));
-        return (T) getCurrentView();
+        return navigationTarget.cast(getCurrentView());
     }
 
     /**
@@ -135,7 +135,7 @@ class BaseUIUnitTest {
                             + currentView.getClass().getName() + " instead of "
                             + expectedTarget.getName());
         }
-        return (T) currentView;
+        return expectedTarget.cast(currentView);
     }
 
     /**
