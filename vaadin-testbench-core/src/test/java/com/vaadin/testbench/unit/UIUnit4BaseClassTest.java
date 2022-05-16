@@ -13,12 +13,15 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
+import com.example.SingleParam;
+import com.example.TemplatedParam;
 import com.example.base.About;
 import com.example.base.Home;
 import com.example.base.sub.SubView;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
+import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;
 
 import com.vaadin.flow.component.Component;
@@ -57,22 +60,23 @@ public class UIUnit4BaseClassTest {
         public void extendingBaseClass_runTest_defaultRouteActive() {
             Assert.assertTrue(
                     "Expecting default route to be active, but was not",
-                    UI.getCurrent().getInternals().getActiveRouterTargetsChain()
-                            .get(0) instanceof Home);
+                    getCurrentView() instanceof Home);
         }
 
     }
 
     public static class DiscoverAllRoutesTest extends UIUnit4Test {
+
         @Test
         public void extendingBaseClass_runTest_routesAreDiscovered() {
             Set<Class<? extends Component>> routes = VaadinService.getCurrent()
                     .getRouter().getRegistry().getRegisteredRoutes().stream()
                     .map(RouteBaseData::getNavigationTarget)
                     .collect(Collectors.toSet());
-            Assert.assertEquals(3, routes.size());
-            Assert.assertTrue(routes.containsAll(
-                    Set.of(Home.class, About.class, SubView.class)));
+            Assertions.assertEquals(5, routes.size());
+            Assertions.assertTrue(routes.containsAll(
+                    Set.of(Home.class, About.class, SubView.class,
+                            SingleParam.class, TemplatedParam.class)));
         }
     }
 

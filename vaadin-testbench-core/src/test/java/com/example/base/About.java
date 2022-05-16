@@ -17,4 +17,5 @@ import com.vaadin.flow.router.RouteAlias;
 @Tag("div")
 @Route("about")
 public class About extends Component {
+    
 }
