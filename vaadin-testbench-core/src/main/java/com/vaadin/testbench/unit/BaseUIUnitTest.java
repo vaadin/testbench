@@ -169,6 +169,24 @@ class BaseUIUnitTest {
     }
 
     /**
+     * Wrap component in given test wrapper.
+     *
+     * @param wrap
+     *         test wrapper to use
+     * @param component
+     *         component to wrap
+     * @param <T>
+     *         wrapper type
+     * @param <Y>
+     *         component type
+     * @return initialized test wrapper for component
+     */
+    public <T extends ComponentWrap<Y>, Y extends Component> T $(Class<T> wrap,
+            Y component) {
+        return (T) initialize(wrap, component);
+    }
+
+    /**
      * Private initializer for wrapper classes.
      *
      * @param clazz
