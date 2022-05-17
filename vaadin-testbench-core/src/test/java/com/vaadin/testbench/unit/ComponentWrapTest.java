@@ -17,7 +17,6 @@ import org.junit.jupiter.api.Test;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.Tag;
-import com.vaadin.flow.component.UI;
 
 public class ComponentWrapTest extends UIUnitTest {
 
@@ -103,9 +102,7 @@ public class ComponentWrapTest extends UIUnitTest {
         home.remove(span);
 
         // TODO: can we have this automated?
-        UI.getCurrent().getInternals().getStateTree()
-                .collectChanges(nodeChange -> {
-                });
+        ComponentWrap.flushChanges();
 
         Assertions.assertTrue(home_.isUsable(),
                 "Home should be interactable when Span is removed");
