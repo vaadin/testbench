@@ -91,7 +91,7 @@ fun Component.toPrettyString(): String {
     if (this is HasValue<*, *> && (this as HasValue<HasValue.ValueChangeEvent<Any?>, Any?>).isReadOnly) {
         list.add("RO")
     }
-    if (!isEnabled) {
+    if (!element.isEnabled) {
         list.add("DISABLED")
     }
     if (label.isNotBlank()) {

@@ -91,7 +91,7 @@ fun Component.checkEditableByUser() {
     check(isEffectivelyVisible()) { "The ${toPrettyString()} is not effectively visible - either it is hidden, or its ascendant is hidden" }
     val parentNullOrEnabled = !parent.isPresent || parent.get().isEffectivelyEnabled()
     if (parentNullOrEnabled) {
-        check(isEnabled) { "The ${toPrettyString()} is not enabled" }
+        check(element.isEnabled) { "The ${toPrettyString()} is not enabled" }
     }
     check(isEffectivelyEnabled()) { "The ${toPrettyString()} is nested in a disabled component" }
     if (this is HasValue<*, *>) {
@@ -99,6 +99,7 @@ fun Component.checkEditableByUser() {
         val hasValue = this as HasValue<HasValue.ValueChangeEvent<Any?>, Any?>
         check(!hasValue.isReadOnly) { "The ${toPrettyString()} is read-only" }
     }
+    check(isAttached) { " The ${toPrettyString()} is not attached" }
 }
 
 /**
@@ -119,20 +120,14 @@ internal fun Component.isEffectivelyVisible(): Boolean = _isVisible && (!parent.
 /**
  * Computes whether this component and all of its parents are enabled.
  *
- * Effectively a shortcut for [isEnabled] since it recursively checks that all ancestors
- * are also enabled (the "implicitly disabled" effect, see [HasEnabled.isEnabled] javadoc for more details).
- * @return false if this component or any of its parent is disabled.
+ * Recursively checks that all ancestors are also enabled (the "implicitly disabled" effect, see [HasEnabled.isEnabled]
+ * javadoc for more details).
+ *
+ * Also check that the component is not inert due to there being a modal component.
+ *
+ * @return false if this component or any of its parent is disabled or is inert.
  */
-fun Component.isEffectivelyEnabled(): Boolean = isEnabled
-
-/**
- * Checks whether this component is [HasEnabled.isEnabled]. All components not implementing [HasEnabled] are considered enabled.
- */
-val Component.isEnabled: Boolean
-    get() = when (this) {
-        is HasEnabled -> isEnabled
-        else -> true
-    }
+fun Component.isEffectivelyEnabled(): Boolean = element.isEnabled && !element.node.isInert
 
 /**
  * Checks whether this component matches given spec. All rules are matched except the [count] rule. The
