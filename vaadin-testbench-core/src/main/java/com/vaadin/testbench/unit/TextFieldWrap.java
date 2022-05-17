@@ -9,9 +9,6 @@
  */
 package com.vaadin.testbench.unit;
 
-import com.vaadin.flow.component.AbstractField;
-import com.vaadin.flow.component.ComponentUtil;
-import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.textfield.GeneratedVaadinTextField;
 import com.vaadin.testbench.unit.internal.PrettyPrintTreeKt;
 
