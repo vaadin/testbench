@@ -50,28 +50,31 @@ public class NotificationWrap<T extends Notification> extends ComponentWrap<T> {
     }
 
     /**
-     * Closes the notification.
+     * Simulates auto-close of the notification, because of show duration
+     * timeout.
      *
-     * Test methods should always use this method instead of
-     * {@link Notification#close()} to simulate the user closing a notification,
-     * so that all changes are correctly flushed on server side UI components.
-     * 
-     * If notification is not displayed an {@link IllegalStateException} is
-     * thrown.
+     * If notification is not displayed or auto-close is disabled setting
+     * duration to 0 or negative, an {@link IllegalStateException} is thrown.
      *
      * @throws IllegalStateException
-     *             if the notification is not displayed.
+     *             if the notification is not displayed or has auto-close
+     *             disabled.
      */
-    public void close() {
+    public void autoClose() {
         ensureComponentIsUsable();
+        if (getComponent().getDuration() <= 0) {
+            throw new IllegalStateException("Auto-close is not enabled");
+        }
         getComponent().close();
         fireOpenChangedDomEvent();
-        flushChanges();
+        roundTrip();
     }
 
     @Override
     public boolean isUsable() {
-        return super.isUsable() && getComponent().isOpened();
+        T component = getComponent();
+        return component.isVisible() && component.isAttached()
+                && component.isOpened();
     }
 
     // Simulate browser event fired when notification is closed

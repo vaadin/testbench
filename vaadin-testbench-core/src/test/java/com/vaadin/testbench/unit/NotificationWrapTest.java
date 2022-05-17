@@ -36,7 +36,7 @@ class NotificationWrapTest extends UIUnitTest {
     void openedNotification_isUsable() {
         String notificationText = "Opened notification";
         Notification notification = Notification.show(notificationText);
-        ComponentWrap.flushChanges();
+        roundTrip();
 
         NotificationWrap<?> notification_ = $(NotificationWrap.class,
                 notification);
@@ -45,10 +45,36 @@ class NotificationWrapTest extends UIUnitTest {
     }
 
     @Test
+    void disabledNotification_isUsable() {
+        String notificationText = "Opened disabled notification";
+        Notification notification = Notification.show(notificationText);
+        notification.setEnabled(false);
+        roundTrip();
+
+        NotificationWrap<?> notification_ = $(NotificationWrap.class,
+                notification);
+        Assertions.assertTrue(notification_.isUsable(),
+                "Disabled Notification should be usable");
+    }
+
+    @Test
+    void hiddenNotification_isNotUsable() {
+        String notificationText = "Opened hidden notification";
+        Notification notification = Notification.show(notificationText);
+        notification.setVisible(false);
+        roundTrip();
+
+        NotificationWrap<?> notification_ = $(NotificationWrap.class,
+                notification);
+        Assertions.assertFalse(notification_.isUsable(),
+                "Hidden Notification should not be usable");
+    }
+
+    @Test
     void closedNotification_notFlushed_isNotUsable() {
         String notificationText = "Opened notification";
         Notification notification = Notification.show(notificationText);
-        ComponentWrap.flushChanges();
+        roundTrip();
         notification.close();
 
         NotificationWrap<?> notification_ = $(NotificationWrap.class,
@@ -58,47 +84,60 @@ class NotificationWrapTest extends UIUnitTest {
     }
 
     @Test
-    void close_displayedNotification_isNotUsable() {
+    void autoClose_displayedNotification_isNotUsable() {
         Notification notification = Notification.show("Some text");
-        ComponentWrap.flushChanges();
+        roundTrip();
 
         NotificationWrap<?> notification_ = $(NotificationWrap.class,
                 notification);
-        notification_.close();
+        notification_.autoClose();
 
         Assertions.assertFalse(notification_.isUsable(),
-                "Closed Notification should be usable");
+                "Notification should not be usable after auto-close");
     }
 
     @Test
-    void close_notOpenedNotification_throws() {
+    void autoClose_notOpenedNotification_throws() {
         Notification notification = new Notification("Some text");
         NotificationWrap<?> notification_ = $(NotificationWrap.class,
                 notification);
 
         Assertions.assertThrows(IllegalStateException.class,
-                notification_::close,
-                "Closing not opened notification should fail");
+                notification_::autoClose,
+                "Auto-close not opened notification should fail");
     }
 
     @Test
-    void close_closedNotification_throws() {
+    void autoClose_closedNotification_throws() {
         Notification notification = Notification.show("Some text");
-        ComponentWrap.flushChanges();
+        roundTrip();
 
         NotificationWrap<?> notification_ = $(NotificationWrap.class,
                 notification);
-        notification_.close();
+        notification_.autoClose();
         Assertions.assertThrows(IllegalStateException.class,
-                notification_::close,
-                "Closing already closed notification should fail");
+                notification_::autoClose,
+                "Auto-close already closed notification should fail");
+    }
+
+    @Test
+    void autoClose_notificationWithDisabledAutoClose_throws() {
+        Notification notification = Notification.show("Some text");
+        notification.setDuration(0);
+        roundTrip();
+
+        NotificationWrap<?> notification_ = $(NotificationWrap.class,
+                notification);
+        Assertions.assertThrows(IllegalStateException.class,
+                notification_::autoClose,
+                "Auto-close notification with auto-close disabled should fail");
     }
 
     @Test
     void getText_displayedNotification_textContentAvailable() {
         String notificationText = "Opened notification";
         Notification notification = Notification.show(notificationText);
-        ComponentWrap.flushChanges();
+        roundTrip();
 
         NotificationWrap<?> notification_ = $(NotificationWrap.class,
                 notification);
@@ -122,7 +161,7 @@ class NotificationWrapTest extends UIUnitTest {
     void getText_closedNotification_throws() {
         Notification notification = Notification.show("Some text");
         notification.close();
-        ComponentWrap.flushChanges();
+        roundTrip();
 
         NotificationWrap<?> notification_ = $(NotificationWrap.class,
                 notification);

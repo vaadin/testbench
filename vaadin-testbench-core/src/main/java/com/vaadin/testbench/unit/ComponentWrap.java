@@ -81,7 +81,7 @@ public class ComponentWrap<T extends Component> {
      */
     public void setModal(boolean modal) {
         UI.getCurrent().setChildComponentModal(component, modal);
-        flushChanges();
+        roundTrip();
     }
 
     /**
@@ -100,12 +100,8 @@ public class ComponentWrap<T extends Component> {
     /**
      * Simulates a server round-trip, flushing pending component changes.
      */
-    static void flushChanges() {
-        UI.getCurrent().getInternals().getStateTree()
-                .collectChanges(nodeChange -> {
-                });
-        UI.getCurrent().getInternals().getStateTree()
-                .runExecutionsBeforeClientResponse();
+    protected void roundTrip() {
+        BaseUIUnitTest.roundTrip();
     }
 
 }
