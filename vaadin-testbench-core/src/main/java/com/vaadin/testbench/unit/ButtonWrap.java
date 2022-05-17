@@ -33,14 +33,14 @@ public class ButtonWrap<T extends Button> extends ComponentWrap<T> {
     }
 
     /**
-     * If the component is usable send click to component asi fit was from the client.
+     * If the component is usable send click to component as if it was from the client.
      */
     public void click() {
         click(0, new MetaKeys());
     }
 
     /**
-     * If the component is usable send click to component asi fit was from the client
+     * If the component is usable send click to component as if it was from the client
      * with defined meta keys pressed.
      */
     public void click(MetaKeys metaKeys) {
