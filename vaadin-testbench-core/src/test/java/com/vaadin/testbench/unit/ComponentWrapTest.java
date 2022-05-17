@@ -126,6 +126,16 @@ public class ComponentWrapTest extends UIUnitTest {
                 "Span should not be interactable when parent is hidden");
     }
 
+    @Test
+    public void nonAttachedComponent_isNotInteractable() {
+        Span span = new Span();
+
+        ComponentWrap<Span> span_ = $(span);
+
+        Assertions.assertFalse(span_.isUsable(),
+                "Span is not attached so it is not usable.");
+    }
+
     private WelcomeView getHome() {
         final HasElement view = getCurrentView();
         Assertions.assertTrue(view instanceof WelcomeView,
