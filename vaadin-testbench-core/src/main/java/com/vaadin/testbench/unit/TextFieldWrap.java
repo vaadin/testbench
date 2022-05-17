@@ -16,7 +16,7 @@ import com.vaadin.flow.component.textfield.GeneratedVaadinTextField;
 import com.vaadin.testbench.unit.internal.PrettyPrintTreeKt;
 
 /**
- * TestWrapper for TextField components.
+ * Test wrapper for TextField components.
  *
  * @param <T>
  *         component type
@@ -39,7 +39,7 @@ public class TextFieldWrap<T extends GeneratedVaadinTextField<T, V>, V>
     /**
      * Set the value to the component if it is usable.
      * <p>
-     * For a non interactable component a IllegalStateException will be thrown
+     * For a non interactable component an IllegalStateException will be thrown
      * as the end user would not be able to set a value.
      *
      * @param value
