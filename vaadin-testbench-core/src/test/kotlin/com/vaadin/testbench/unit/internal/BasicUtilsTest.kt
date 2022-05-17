@@ -18,10 +18,6 @@ import com.vaadin.flow.component.html.Div
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.component.textfield.TextField
 import com.vaadin.flow.dom.DomEvent
-import com.vaadin.flow.router.BeforeEnterEvent
-import com.vaadin.flow.router.ErrorParameter
-import com.vaadin.flow.router.HasErrorParameter
-import com.vaadin.flow.router.Route
 import elemental.json.Json
 import kotlin.test.expect
 
@@ -30,13 +26,24 @@ internal fun DynaNodeGroup.basicUtilsTestbatch() {
 
     group("checkEditableByUser") {
         test("disabled textfield fails") {
-            expectThrows(java.lang.IllegalStateException::class, "The TextField[DISABLED, value=''] is not enabled") {
-                TextField().apply { isEnabled = false }.checkEditableByUser()
+            expectThrows(java.lang.IllegalStateException::class, "The AttachedTextField[DISABLED, value=''] is not enabled") {
+                AttachedTextField().apply { isEnabled = false }.checkEditableByUser()
             }
         }
         test("invisible textfield fails") {
-            expectThrows(java.lang.IllegalStateException::class, "The TextField[INVIS, value=''] is not effectively visible") {
-                TextField().apply { isVisible = false }.checkEditableByUser()
+            expectThrows(
+                java.lang.IllegalStateException::class,
+                "The AttachedTextField[INVIS, value=''] is not effectively visible"
+            ) {
+                AttachedTextField().apply { isVisible = false }.checkEditableByUser()
+            }
+        }
+        test("non attached textfield fails") {
+            expectThrows(
+                java.lang.IllegalStateException::class,
+                "The TextField[value=''] is not attached"
+            ) {
+                TextField().checkEditableByUser()
             }
         }
         test("textfield in invisible layout fails") {
@@ -48,16 +55,16 @@ internal fun DynaNodeGroup.basicUtilsTestbatch() {
             }
         }
         test("textfield succeeds") {
-            TextField().checkEditableByUser()
+            AttachedTextField().checkEditableByUser()
         }
     }
 
     group("expectNotEditableByUser") {
         test("disabled textfield fails") {
-            TextField().apply { isEnabled = false }.expectNotEditableByUser()
+            AttachedTextField().apply { isEnabled = false }.expectNotEditableByUser()
         }
         test("invisible textfield fails") {
-            TextField().apply { isVisible = false }.expectNotEditableByUser()
+            AttachedTextField().apply { isVisible = false }.expectNotEditableByUser()
         }
         test("textfield in invisible layout fails") {
             VerticalLayout().apply {
@@ -66,8 +73,8 @@ internal fun DynaNodeGroup.basicUtilsTestbatch() {
             }
         }
         test("textfield succeeds") {
-            expectThrows(AssertionError::class, "The TextField[value=''] is editable") {
-                TextField().expectNotEditableByUser()
+            expectThrows(AssertionError::class, "The AttachedTextField[value=''] is editable") {
+                AttachedTextField().expectNotEditableByUser()
             }
         }
     }
@@ -93,7 +100,7 @@ internal fun DynaNodeGroup.basicUtilsTestbatch() {
     }
 
     test("_focus") {
-        val f = TextField()
+        val f = AttachedTextField()
         var called = false
         f.addFocusListener { called = true }
         f._focus()
@@ -101,7 +108,7 @@ internal fun DynaNodeGroup.basicUtilsTestbatch() {
     }
 
     test("_blur") {
-        val f = TextField()
+        val f = AttachedTextField()
         var called = false
         f.addBlurListener { called = true }
         f._blur()
