@@ -125,9 +125,12 @@ public class TestBenchCommandExecutorTest {
 
         WebDriver driver = mockScreenshotDriver(1, false);
         ImageComparison icMock = Mockito.mock(ImageComparison.class);
-        Mockito.when(icMock.imageEqualToReference(Mockito.any(BufferedImage.class),
-                Mockito.any(BufferedImage.class), Mockito.matches("cursor-bottom-edge-off.png"),
-                Mockito.eq(Parameters.getScreenshotComparisonTolerance())))
+        Mockito.when(
+                icMock.imageEqualToReference(Mockito.any(BufferedImage.class),
+                        Mockito.any(BufferedImage.class),
+                        Mockito.matches("cursor-bottom-edge-off.png"),
+                        Mockito.eq(
+                                Parameters.getScreenshotComparisonTolerance())))
                 .thenReturn(true);
 
         TestBenchCommandExecutor tbce = new TestBenchCommandExecutor(icMock,
@@ -146,8 +149,10 @@ public class TestBenchCommandExecutorTest {
 
             WebDriver driver = mockScreenshotDriver(4, false);
             ImageComparison icMock = Mockito.mock(ImageComparison.class);
-            Mockito.when(icMock.imageEqualToReference(Mockito.any(BufferedImage.class),
-                    Mockito.any(BufferedImage.class), Mockito.eq("cursor-bottom-edge-off.png"),
+            Mockito.when(icMock.imageEqualToReference(
+                    Mockito.any(BufferedImage.class),
+                    Mockito.any(BufferedImage.class),
+                    Mockito.eq("cursor-bottom-edge-off.png"),
                     Mockito.eq(Parameters.getScreenshotComparisonTolerance())))
                     .thenReturn(false);
 
@@ -167,7 +172,8 @@ public class TestBenchCommandExecutorTest {
 
         WebDriver driver = mockScreenshotDriver(1, false);
         ImageComparison icMock = Mockito.mock(ImageComparison.class);
-        Mockito.when(icMock.imageEqualToReference(Mockito.any(BufferedImage.class),
+        Mockito.when(icMock.imageEqualToReference(
+                Mockito.any(BufferedImage.class),
                 Mockito.any(BufferedImage.class), Mockito.eq("bar name"),
                 Mockito.eq(Parameters.getScreenshotComparisonTolerance())))
                 .thenReturn(true);
@@ -188,7 +194,8 @@ public class TestBenchCommandExecutorTest {
 
             WebDriver driver = mockScreenshotDriver(4, false);
             ImageComparison icMock = Mockito.mock(ImageComparison.class);
-            Mockito.when(icMock.imageEqualToReference(Mockito.any(BufferedImage.class),
+            Mockito.when(icMock.imageEqualToReference(
+                    Mockito.any(BufferedImage.class),
                     Mockito.any(BufferedImage.class), Mockito.eq("bar name"),
                     Mockito.eq(Parameters.getScreenshotComparisonTolerance())))
                     .thenReturn(false);
@@ -210,11 +217,13 @@ public class TestBenchCommandExecutorTest {
                 "cursor-bottom-edge-off.png");
         Mockito.when(driver.getScreenshotAs(OutputType.BYTES))
                 .thenReturn(screenshotBytes);
-        Mockito.when(driver.executeScript(Mockito.contains("window.Vaadin.Flow")))
+        Mockito.when(
+                driver.executeScript(Mockito.contains("window.Vaadin.Flow")))
                 .thenReturn(Boolean.TRUE);
         if (expectGetCapabilities) {
             Capabilities mockedCapabilities = Mockito.mock(Capabilities.class);
-            Mockito.when(mockedCapabilities.getBrowserName()).thenReturn("Firefox");
+            Mockito.when(mockedCapabilities.getBrowserName())
+                    .thenReturn("Firefox");
             Mockito.when(driver.getCapabilities())
                     .thenReturn(mockedCapabilities);
         }
@@ -223,18 +232,18 @@ public class TestBenchCommandExecutorTest {
 
     private ReferenceNameGenerator mockReferenceNameGenerator(String refId,
             String expected) {
-        ReferenceNameGenerator rngMock = Mockito.mock(
-                ReferenceNameGenerator.class);
-        Mockito.when(rngMock.generateName(Mockito.eq(refId), Mockito.any(Capabilities.class)))
-                .thenReturn(expected);
+        ReferenceNameGenerator rngMock = Mockito
+                .mock(ReferenceNameGenerator.class);
+        Mockito.when(rngMock.generateName(Mockito.eq(refId),
+                Mockito.any(Capabilities.class))).thenReturn(expected);
         return rngMock;
     }
 
     private ImageComparison mockImageComparison(int timesCalled,
             String referenceName, boolean expected) throws IOException {
         ImageComparison icMock = Mockito.mock(ImageComparison.class);
-        Mockito.when(icMock.imageEqualToReference(Mockito.any(BufferedImage.class),
-                Mockito.eq(referenceName),
+        Mockito.when(icMock.imageEqualToReference(
+                Mockito.any(BufferedImage.class), Mockito.eq(referenceName),
                 Mockito.eq(Parameters.getScreenshotComparisonTolerance()),
                 Mockito.any(Capabilities.class))).thenReturn(expected);
         return icMock;
@@ -278,7 +287,8 @@ public class TestBenchCommandExecutorTest {
 
     private FirefoxDriver mockJSExecutor(boolean forcesSync) {
         FirefoxDriver jse = Mockito.mock(FirefoxDriver.class);
-        Mockito.when(jse.executeScript(Mockito.contains("window.Vaadin.Flow.client")))
+        Mockito.when(jse
+                .executeScript(Mockito.contains("window.Vaadin.Flow.client")))
                 .thenReturn(Boolean.TRUE);
         Mockito.when(jse.executeScript(Mockito.contains("getProfilingData()")))
                 .thenReturn(Arrays.asList(1000L, 2000L, 3000L));

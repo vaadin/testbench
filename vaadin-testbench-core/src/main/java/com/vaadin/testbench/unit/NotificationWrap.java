@@ -39,7 +39,7 @@ public class NotificationWrap<T extends Notification> extends ComponentWrap<T> {
      *
      * If the notification is not displayed an IllegalStateException will be
      * thrown as the end user would not be able to see the contents.
-     * 
+     *
      * @return the text of the notification
      * @throws IllegalStateException
      *             is notification is not displayed

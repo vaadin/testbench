@@ -21,7 +21,7 @@ public class ErrorView extends VerticalLayout
     public int setErrorParameter(BeforeEnterEvent event,
             ErrorParameter<Exception> parameter) {
         if (parameter.getException() instanceof NotFoundException) {
-            throw (NotFoundException)parameter.getException();
+            throw (NotFoundException) parameter.getException();
         }
         throw new RuntimeException(parameter.getCaughtException());
     }

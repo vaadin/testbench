@@ -6,4 +6,3 @@ import com.vaadin.testbench.elementsbase.Element;
 @Element("template-view")
 public class TemplateViewElement extends TestBenchElement {
 }
-

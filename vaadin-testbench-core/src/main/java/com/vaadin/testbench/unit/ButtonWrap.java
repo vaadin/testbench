@@ -19,29 +19,30 @@ import com.vaadin.testbench.unit.internal.PrettyPrintTreeKt;
  * Test wrapper for Button components.
  *
  * @param <T>
- *         component type
+ *            component type
  */
 public class ButtonWrap<T extends Button> extends ComponentWrap<T> {
     /**
      * Wrap given button for testing.
      *
      * @param component
-     *         target button
+     *            target button
      */
     public ButtonWrap(T component) {
         super(component);
     }
 
     /**
-     * If the component is usable send click to component as if it was from the client.
+     * If the component is usable send click to component as if it was from the
+     * client.
      */
     public void click() {
         click(0, new MetaKeys());
     }
 
     /**
-     * If the component is usable send click to component as if it was from the client
-     * with defined meta keys pressed.
+     * If the component is usable send click to component as if it was from the
+     * client with defined meta keys pressed.
      */
     public void click(MetaKeys metaKeys) {
         click(0, metaKeys);

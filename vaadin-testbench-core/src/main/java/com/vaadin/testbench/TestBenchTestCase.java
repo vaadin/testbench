@@ -44,8 +44,7 @@ public abstract class TestBenchTestCase
             properties.load(TestBenchTestCase.class
                     .getResourceAsStream("testbench.properties"));
         } catch (Exception e) {
-            getLogger().warn("Unable to read TestBench properties file",
-                    e);
+            getLogger().warn("Unable to read TestBench properties file", e);
             throw new ExceptionInInitializerError(e);
         }
 
@@ -220,8 +219,8 @@ public abstract class TestBenchTestCase
      */
     protected <T> T waitUntil(ExpectedCondition<T> condition,
             long timeoutInSeconds) {
-        return new WebDriverWait(getDriver(), Duration.ofSeconds(timeoutInSeconds))
-                .until(condition);
+        return new WebDriverWait(getDriver(),
+                Duration.ofSeconds(timeoutInSeconds)).until(condition);
     }
 
     /**
