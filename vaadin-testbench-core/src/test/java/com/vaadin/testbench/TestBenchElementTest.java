@@ -34,7 +34,8 @@ public class TestBenchElementTest {
     public void testIsEnabled_VaadinComponentDisabled_returnsFalse()
             throws Exception {
         WebElement webElement = Mockito.mock(WebElement.class);
-        Mockito.when(webElement.getAttribute("class")).thenReturn("v-button v-disabled");
+        Mockito.when(webElement.getAttribute("class"))
+                .thenReturn("v-button v-disabled");
 
         TestBenchElement element = TestBenchElement.wrapElement(webElement,
                 null);
@@ -128,7 +129,8 @@ public class TestBenchElementTest {
     @Test
     public void wrapElementOrElementsEmptyList() {
         List<Object> execJsResult = new ArrayList<>();
-        TestBenchCommandExecutor tbCommandExecutor = Mockito.mock(TestBenchCommandExecutor.class);
+        TestBenchCommandExecutor tbCommandExecutor = Mockito
+                .mock(TestBenchCommandExecutor.class);
         PublicTestBenchCommandExecutor.wrapElementOrElements(execJsResult,
                 tbCommandExecutor);
     }
@@ -137,7 +139,8 @@ public class TestBenchElementTest {
     public void wrapElementOrElementsNull() {
         Object execJsResult = null;
 
-        TestBenchCommandExecutor tbCommandExecutor = Mockito.mock(TestBenchCommandExecutor.class);
+        TestBenchCommandExecutor tbCommandExecutor = Mockito
+                .mock(TestBenchCommandExecutor.class);
         Assert.assertNull(PublicTestBenchCommandExecutor
                 .wrapElementOrElements(execJsResult, tbCommandExecutor));
     }
@@ -181,7 +184,8 @@ public class TestBenchElementTest {
         execJsResult.add(sublist);
         execJsResult.add(element3);
 
-        TestBenchCommandExecutor tbCommandExecutor = Mockito.mock(TestBenchCommandExecutor.class);
+        TestBenchCommandExecutor tbCommandExecutor = Mockito
+                .mock(TestBenchCommandExecutor.class);
         List<Object> wrappedResult = (List<Object>) PublicTestBenchCommandExecutor
                 .wrapElementOrElements(execJsResult, tbCommandExecutor);
 
@@ -254,8 +258,8 @@ public class TestBenchElementTest {
     public void doesNotWrapExceptions() {
         WebElement webElement = Mockito.mock(WebElement.class);
 
-        TestBenchCommandExecutor executor = Mockito.mock(
-                TestBenchCommandExecutor.class);
+        TestBenchCommandExecutor executor = Mockito
+                .mock(TestBenchCommandExecutor.class);
         Mockito.when(executor.executeScript(Mockito.any()))
                 .thenThrow(new RuntimeException("foobar"));
         TestBenchElement element = TestBenchElement.wrapElement(webElement,

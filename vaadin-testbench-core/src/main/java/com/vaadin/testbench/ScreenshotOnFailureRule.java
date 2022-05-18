@@ -109,10 +109,12 @@ public class ScreenshotOnFailureRule extends TestWatcher {
 
         WebDriver realDriver = driverHolder.getDriver();
         while (realDriver instanceof WrapsDriver) {
-            realDriver = ((WrapsDriver)realDriver).getWrappedDriver();
+            realDriver = ((WrapsDriver) realDriver).getWrappedDriver();
         }
-        if (realDriver instanceof RemoteWebDriver &&  ((RemoteWebDriver)realDriver).getSessionId() == null) {
-            getLogger().warn("Unable capture failure screenshot: web driver is no longer available");
+        if (realDriver instanceof RemoteWebDriver
+                && ((RemoteWebDriver) realDriver).getSessionId() == null) {
+            getLogger().warn(
+                    "Unable capture failure screenshot: web driver is no longer available");
             return;
         }
 
@@ -124,10 +126,11 @@ public class ScreenshotOnFailureRule extends TestWatcher {
                                     .getScreenshotAs(OutputType.BYTES)));
             // Store the screenshot in the errors directory
             ImageFileUtil.createScreenshotDirectoriesIfNeeded();
-            final File errorScreenshotFile = getErrorScreenshotFile(description);
-            ImageIO.write(screenshotImage, "png",
-                    errorScreenshotFile);
-            getLogger().info("Error screenshot written to: " + errorScreenshotFile.getAbsolutePath());
+            final File errorScreenshotFile = getErrorScreenshotFile(
+                    description);
+            ImageIO.write(screenshotImage, "png", errorScreenshotFile);
+            getLogger().info("Error screenshot written to: "
+                    + errorScreenshotFile.getAbsolutePath());
         } catch (IOException e1) {
             throw new RuntimeException(
                     "There was a problem grabbing and writing a screen shot of a test failure.",

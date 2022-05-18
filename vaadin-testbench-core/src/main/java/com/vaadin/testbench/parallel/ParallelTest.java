@@ -125,7 +125,7 @@ public class ParallelTest extends TestBenchTestCase {
      * </p>
      *
      * @throws Exception
-     *                   if unable to instantiate {@link WebDriver}
+     *             if unable to instantiate {@link WebDriver}
      */
     @Before
     public void setup() throws Exception {

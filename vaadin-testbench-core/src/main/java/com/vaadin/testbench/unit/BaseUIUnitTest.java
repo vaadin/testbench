@@ -69,9 +69,9 @@ class BaseUIUnitTest {
      * Navigate to the given view class if it is registered.
      *
      * @param navigationTarget
-     *         view class to navigate to
+     *            view class to navigate to
      * @param <T>
-     *         view type
+     *            view type
      * @return instantiated view
      */
     public <T extends Component> T navigate(Class<T> navigationTarget) {
@@ -83,13 +83,13 @@ class BaseUIUnitTest {
      * Navigate to view with url parameter.
      *
      * @param navigationTarget
-     *         view class to navigate to
+     *            view class to navigate to
      * @param parameter
-     *         parameter to send to view
+     *            parameter to send to view
      * @param <T>
-     *         view type
+     *            view type
      * @param <C>
-     *         parameter type
+     *            parameter type
      * @return instantiated view
      */
     public <C, T extends Component & HasUrlParameter<C>> T navigate(
@@ -103,30 +103,30 @@ class BaseUIUnitTest {
      * specified parameters.
      *
      * @param navigationTarget
-     *         view class to navigate to
+     *            view class to navigate to
      * @param parameters
-     *         parameters to pass to view.
+     *            parameters to pass to view.
      * @param <T>
-     *         view type
+     *            view type
      * @return instantiated view
      */
     public <T extends Component> T navigate(Class<T> navigationTarget,
             Map<String, String> parameters) {
-        UI.getCurrent()
-                .navigate(navigationTarget, new RouteParameters(parameters));
+        UI.getCurrent().navigate(navigationTarget,
+                new RouteParameters(parameters));
         return navigationTarget.cast(getCurrentView());
     }
 
     /**
-     * Navigate to given location string.
-     * Check that location navigated to is the expected view or throw exception.
+     * Navigate to given location string. Check that location navigated to is
+     * the expected view or throw exception.
      *
      * @param location
-     *         location string for navigating
+     *            location string for navigating
      * @param expectedTarget
-     *         class that is expected for navigation
+     *            class that is expected for navigation
      * @param <T>
-     *         view type
+     *            view type
      * @return instantiated view
      */
     public <T extends Component> T navigate(String location,
@@ -156,11 +156,11 @@ class BaseUIUnitTest {
      * Wrap component with wrapper best matching component type.
      *
      * @param component
-     *         component to get test wrapper for
+     *            component to get test wrapper for
      * @param <T>
-     *         wrapper type
+     *            wrapper type
      * @param <Y>
-     *         component type
+     *            component type
      * @return component in wrapper with test helpers
      */
     public <T extends ComponentWrap<Y>, Y extends Component> T $(Y component) {
@@ -172,13 +172,13 @@ class BaseUIUnitTest {
      * Wrap component in given test wrapper.
      *
      * @param wrap
-     *         test wrapper to use
+     *            test wrapper to use
      * @param component
-     *         component to wrap
+     *            component to wrap
      * @param <T>
-     *         wrapper type
+     *            wrapper type
      * @param <Y>
-     *         component type
+     *            component type
      * @return initialized test wrapper for component
      */
     public <T extends ComponentWrap<Y>, Y extends Component> T $(Class<T> wrap,
@@ -190,29 +190,29 @@ class BaseUIUnitTest {
      * Private initializer for wrapper classes.
      *
      * @param clazz
-     *         wrapper class to initialize
+     *            wrapper class to initialize
      * @param component
-     *         component used with wrapper class
+     *            component used with wrapper class
      * @param <T>
-     *         component wrapper type
+     *            component wrapper type
      * @param <Y>
-     *         component type
+     *            component type
      * @return wrapper with component set
      */
     private <T extends ComponentWrap<Y>, Y extends Component> T initialize(
             Class<T> clazz, Y component) {
         try {
-            // Get the generic class for given wrapper. Component should be an instance of this.
+            // Get the generic class for given wrapper. Component should be an
+            // instance of this.
             final Class<?> aClass = Stream.of(clazz.getTypeParameters())
                     .map(type -> GenericTypeReflector.erase(type)).findFirst()
                     .get();
             return clazz.getConstructor(aClass).newInstance(component);
-        } catch (InstantiationException | IllegalAccessException |
-                 InvocationTargetException | NoSuchMethodException e) {
-            throw new RuntimeException(
-                    "Could not instantiate " + clazz.getSimpleName()
-                            + " for component " + component.getClass()
-                            .getSimpleName());
+        } catch (InstantiationException | IllegalAccessException
+                | InvocationTargetException | NoSuchMethodException e) {
+            throw new RuntimeException("Could not instantiate "
+                    + clazz.getSimpleName() + " for component "
+                    + component.getClass().getSimpleName());
         }
     }
 

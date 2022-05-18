@@ -15,9 +15,9 @@ import com.vaadin.flow.component.textfield.GeneratedVaadinTextField;
  * Test wrapper for TextField components.
  *
  * @param <T>
- *         component type
+ *            component type
  * @param <V>
- *         value type
+ *            value type
  */
 public class TextFieldWrap<T extends GeneratedVaadinTextField<T, V>, V>
         extends ComponentWrap<T> {
@@ -26,7 +26,7 @@ public class TextFieldWrap<T extends GeneratedVaadinTextField<T, V>, V>
      * Wrap given component for testing.
      *
      * @param component
-     *         target component
+     *            target component
      */
     public TextFieldWrap(T component) {
         super(component);
@@ -39,7 +39,7 @@ public class TextFieldWrap<T extends GeneratedVaadinTextField<T, V>, V>
      * as the end user would not be able to set a value.
      *
      * @param value
-     *         value to set
+     *            value to set
      */
     public void setValue(V value) {
         ensureComponentIsUsable();
