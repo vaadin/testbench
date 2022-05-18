@@ -21,19 +21,16 @@ public class ElementQueryIT extends AbstractTB6Test {
     @Test
     public void ensureElementListWrapped() {
         openTestURL();
-        List<TemplateViewElement> elements = $(
-                TemplateViewElement.class).all();
-        Assert.assertTrue(
-                elements.get(0) instanceof TemplateViewElement);
+        List<TemplateViewElement> elements = $(TemplateViewElement.class).all();
+        Assert.assertTrue(elements.get(0) instanceof TemplateViewElement);
     }
 
     @Test
     public void ensureElementListFromOnPageWrapped() {
         openTestURL();
-        TemplateViewElement view = $(TemplateViewElement.class)
+        TemplateViewElement view = $(TemplateViewElement.class).first();
+        TemplateViewElement view2 = view.$(TemplateViewElement.class).onPage()
                 .first();
-        TemplateViewElement view2 = view
-                .$(TemplateViewElement.class).onPage().first();
         Assert.assertEquals(view, view2);
     }
 
@@ -41,8 +38,7 @@ public class ElementQueryIT extends AbstractTB6Test {
     public void findLightDomElementById() throws Exception {
         openTestURL();
 
-        TemplateViewElement view = $(TemplateViewElement.class)
-                .first();
+        TemplateViewElement view = $(TemplateViewElement.class).first();
         NativeButtonElement button = view.$(NativeButtonElement.class)
                 .id("light-button-1");
         Assert.assertEquals("Button 1", button.getText());
@@ -52,8 +48,7 @@ public class ElementQueryIT extends AbstractTB6Test {
     public void findShadowDomElementById() throws Exception {
         openTestURL();
 
-        TemplateViewElement view = $(TemplateViewElement.class)
-                .waitForFirst();
+        TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
         NativeButtonElement button = view.$(NativeButtonElement.class)
                 .id("shadow-button-1");
         Assert.assertEquals("Shadow Button 1", button.getText());
@@ -63,8 +58,7 @@ public class ElementQueryIT extends AbstractTB6Test {
     public void findAllShadowDomElements() throws Exception {
         openTestURL();
 
-        TemplateViewElement view = $(TemplateViewElement.class)
-                .waitForFirst();
+        TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
         Assert.assertEquals(10, view.$(NativeButtonElement.class).all().size());
     }
 
@@ -72,8 +66,7 @@ public class ElementQueryIT extends AbstractTB6Test {
     public void searchShadowDomBeforeLight() throws Exception {
         openTestURL();
 
-        TemplateViewElement view = $(TemplateViewElement.class)
-                .waitForFirst();
+        TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
         NativeButtonElement button = view.$(NativeButtonElement.class)
                 .id("special-button");
         Assert.assertEquals("Special Button (in Shadow DOM)", button.getText());
@@ -83,8 +76,7 @@ public class ElementQueryIT extends AbstractTB6Test {
     public void mergeLightAndShadowDomResults() throws Exception {
         openTestURL();
 
-        TemplateViewElement view = $(TemplateViewElement.class)
-                .waitForFirst();
+        TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
         List<NativeButtonElement> buttons = view.$(NativeButtonElement.class)
                 .all();
         Assert.assertEquals(10, buttons.size());
@@ -94,8 +86,8 @@ public class ElementQueryIT extends AbstractTB6Test {
     public void findTestBenchElementUsingTag() throws Exception {
         openTestURL();
 
-        TestBenchElement button = $(TemplateViewElement.class)
-                .waitForFirst().$("button").id("shadow-button-2");
+        TestBenchElement button = $(TemplateViewElement.class).waitForFirst()
+                .$("button").id("shadow-button-2");
         Assert.assertEquals("Shadow Button 2", button.getText());
 
     }
@@ -104,8 +96,8 @@ public class ElementQueryIT extends AbstractTB6Test {
     public void findTestBenchElement() throws Exception {
         openTestURL();
 
-        TestBenchElement button = $(TemplateViewElement.class)
-                .waitForFirst().$(TestBenchElement.class).id("shadow-button-2");
+        TestBenchElement button = $(TemplateViewElement.class).waitForFirst()
+                .$(TestBenchElement.class).id("shadow-button-2");
         Assert.assertNotNull(button);
     }
 
@@ -113,25 +105,24 @@ public class ElementQueryIT extends AbstractTB6Test {
     public void findTestBenchElementChild() throws Exception {
         openTestURL();
 
-        TestBenchElement button = $(TemplateViewElement.class)
-                .waitForFirst().$(TestBenchElement.class).first()
-                .$(TestBenchElement.class).first();
+        TestBenchElement button = $(TemplateViewElement.class).waitForFirst()
+                .$(TestBenchElement.class).first().$(TestBenchElement.class)
+                .first();
         Assert.assertEquals("Shadow Button 1", button.getText());
     }
 
     @Test
     public void specialCharactersInId() {
         openTestURL();
-        NativeButtonElement button = $(TemplateViewElement.class)
-                .waitForFirst().$(NativeButtonElement.class).id("foo'*+bar'");
+        NativeButtonElement button = $(TemplateViewElement.class).waitForFirst()
+                .$(NativeButtonElement.class).id("foo'*+bar'");
         Assert.assertEquals("Button with special id", button.getText());
     }
 
     @Test
     public void attributeContains() {
         openTestURL();
-        TemplateViewElement view = $(TemplateViewElement.class)
-                .waitForFirst();
+        TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
         List<NativeButtonElement> button1s = view.$(NativeButtonElement.class)
                 .attributeContains("class", "button-1").all();
         Assert.assertEquals(1, button1s.size());
@@ -143,8 +134,7 @@ public class ElementQueryIT extends AbstractTB6Test {
     @Test
     public void getSetElementsProperty() {
         openTestURL();
-        TemplateViewElement template = $(
-                TemplateViewElement.class).first();
+        TemplateViewElement template = $(TemplateViewElement.class).first();
 
         Assert.assertEquals(6, template.getPropertyElements("children").size());
     }

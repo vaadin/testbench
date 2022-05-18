@@ -64,7 +64,8 @@ class UIUnitBaseClassTest {
                     .getRouter().getRegistry().getRegisteredRoutes().stream()
                     .map(RouteBaseData::getNavigationTarget)
                     .collect(Collectors.toSet());
-            Set<Class<? extends Component>> allViews = new HashSet<>(TestRoutes.INSTANCE.getViews());
+            Set<Class<? extends Component>> allViews = new HashSet<>(
+                    TestRoutes.INSTANCE.getViews());
             allViews.add(SingleParam.class);
             allViews.add(TemplatedParam.class);
             Assertions.assertEquals(allViews.size(), routes.size());

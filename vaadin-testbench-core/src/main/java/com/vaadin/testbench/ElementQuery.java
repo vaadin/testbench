@@ -265,18 +265,20 @@ public class ElementQuery<T extends TestBenchElement> {
      * present. If no element is found, this method will keep searching until an
      * element is found or {@code timeOutInSeconds} seconds has elapsed.
      *
-     * @param timeOutInSeconds timeout in seconds before this method throws a
-     *                         {@link NoSuchElementException} exception
+     * @param timeOutInSeconds
+     *            timeout in seconds before this method throws a
+     *            {@link NoSuchElementException} exception
      * @return The element of the type specified in the constructor
      */
     public T waitForFirst(long timeOutInSeconds) {
-        Object result = new WebDriverWait(getDriver(), Duration.ofSeconds(timeOutInSeconds)).until(driver -> {
-            try {
-                return first();
-            } catch (NoSuchElementException e) {
-                return null;
-            }
-        });
+        Object result = new WebDriverWait(getDriver(),
+                Duration.ofSeconds(timeOutInSeconds)).until(driver -> {
+                    try {
+                        return first();
+                    } catch (NoSuchElementException e) {
+                        return null;
+                    }
+                });
         if (result == null) {
             throw new NoSuchElementException(getNoSuchElementMessage(null));
         } else {

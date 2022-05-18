@@ -23,18 +23,17 @@ import com.vaadin.testbench.parallel.Browser;
 import com.vaadin.testbench.parallel.DefaultBrowserFactory;
 
 /**
- * Specifies default browser configuration for {@link AbstractTB6Test}
- * tests.
+ * Specifies default browser configuration for {@link AbstractTB6Test} tests.
  */
 public class TB6TestBrowserFactory extends DefaultBrowserFactory {
 
     @Override
     public DesiredCapabilities create(Browser browser, String version,
             Platform platform) {
-        DesiredCapabilities desiredCapabilities = super.create(browser,
-                version, platform);
+        DesiredCapabilities desiredCapabilities = super.create(browser, version,
+                platform);
 
-        if(browser.equals(Browser.FIREFOX)) {
+        if (browser.equals(Browser.FIREFOX)) {
             desiredCapabilities.setCapability(Capability.MARIONETTE, false);
         }
         desiredCapabilities.setCapability("screenResolution", "1600x1200");

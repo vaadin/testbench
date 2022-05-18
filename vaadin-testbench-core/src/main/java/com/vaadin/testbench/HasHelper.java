@@ -8,6 +8,7 @@
  * For the full License, see <https://vaadin.com/license/cvdl-4.0>.
  */
 package com.vaadin.testbench;
+
 /**
  * Implement by elements which support a label, i.e. text shown typically inside
  * (when field is empty) or above the field (when the field has a value).
@@ -30,14 +31,16 @@ public interface HasHelper extends HasPropertySettersGetters, HasElementQuery {
 
     /**
      * Gets the slotted helper component for the element.
-     * 
+     *
      * @return the slotted component or {@code null} if there is no component
      */
     default public TestBenchElement getHelperComponent() {
-        final ElementQuery<TestBenchElement> query = $(TestBenchElement.class).attribute("slot", "helper");
+        final ElementQuery<TestBenchElement> query = $(TestBenchElement.class)
+                .attribute("slot", "helper");
         if (query.exists()) {
             TestBenchElement last = query.last();
-            // To avoid getting the "slot" element, for components with slotted slots
+            // To avoid getting the "slot" element, for components with slotted
+            // slots
             if (!"slot".equals(last.getTagName())) {
                 return last;
             }

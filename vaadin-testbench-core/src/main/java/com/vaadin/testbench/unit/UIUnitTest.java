@@ -14,7 +14,7 @@ import org.junit.jupiter.api.BeforeEach;
 
 /**
  * Base JUnit 5 class for UI unit tests.
- * 
+ *
  * Subclasses should typically restrict classpath scanning to a specific package
  * for faster bootstrap by overriding {@link #scanPackage()} method.
  *
