@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -224,6 +225,53 @@ class ComponentQueryTest extends UIUnitTest {
         List<TextField> result = select(TextField.class).from(context)
                 .allComponents();
         Assertions.assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void id_matchingComponent_getsComponent() {
+        Element rootElement = getCurrentView().getElement();
+        List<TextField> textFields = IntStream.rangeClosed(1, 5)
+                .mapToObj(idx -> {
+                    TextField field = new TextField();
+                    field.setId("field-" + idx);
+                    return field;
+                }).peek(field -> rootElement.appendChild(field.getElement()))
+                .collect(Collectors.toList());
+
+        ComponentQuery<TextField> query = selectFromCurrentView(
+                TextField.class);
+
+        textFields.forEach(field -> Assertions.assertSame(field,
+                query.id(field.getId().orElse("")).getComponent()));
+    }
+
+    @Test
+    void id_noMatchingComponent_throws() {
+        Element rootElement = getCurrentView().getElement();
+        rootElement.appendChild(new TextField().getElement());
+        TextField textField = new TextField();
+        textField.setId("myId");
+        rootElement.appendChild(textField.getElement());
+
+        ComponentQuery<TextField> query = selectFromCurrentView(
+                TextField.class);
+        Assertions.assertThrows(NoSuchElementException.class,
+                () -> query.id("test"));
+    }
+
+    @Test
+    void id_matchingDifferentComponentType_throws() {
+
+        Element rootElement = getCurrentView().getElement();
+        rootElement.appendChild(new TextField().getElement());
+        Button button = new Button();
+        button.setId("myId");
+        rootElement.appendChild(button.getElement());
+
+        ComponentQuery<TextField> query = selectFromCurrentView(
+                TextField.class);
+        Assertions.assertThrows(NoSuchElementException.class,
+                () -> query.id("myId"));
     }
 
 }
