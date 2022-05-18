@@ -11,6 +11,7 @@ package com.vaadin.testbench.unit;
 
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentUtil;
+import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.testbench.unit.internal.PrettyPrintTreeKt;
 
@@ -21,6 +22,7 @@ import com.vaadin.testbench.unit.internal.PrettyPrintTreeKt;
  * @param <T>
  *            component type
  */
+@Wraps(Button.class)
 public class ButtonWrap<T extends Button> extends ComponentWrap<T> {
     /**
      * Wrap given button for testing.

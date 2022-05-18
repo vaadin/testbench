@@ -9,7 +9,11 @@
  */
 package com.vaadin.testbench.unit;
 
+import com.vaadin.flow.component.textfield.BigDecimalField;
+import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.GeneratedVaadinTextField;
+import com.vaadin.flow.component.textfield.PasswordField;
+import com.vaadin.flow.component.textfield.TextField;
 
 /**
  * Test wrapper for TextField components.
@@ -19,6 +23,8 @@ import com.vaadin.flow.component.textfield.GeneratedVaadinTextField;
  * @param <V>
  *            value type
  */
+@Wraps({ TextField.class, PasswordField.class, EmailField.class,
+        BigDecimalField.class })
 public class TextFieldWrap<T extends GeneratedVaadinTextField<T, V>, V>
         extends ComponentWrap<T> {
 

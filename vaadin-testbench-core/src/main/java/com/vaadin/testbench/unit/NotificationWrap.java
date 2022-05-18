@@ -22,6 +22,7 @@ import elemental.json.Json;
  * @param <T>
  *            component type
  */
+@Wraps(Notification.class)
 public class NotificationWrap<T extends Notification> extends ComponentWrap<T> {
 
     /**

@@ -38,6 +38,16 @@ public class TextFieldWrapTest extends UIUnitTest {
     }
 
     @Test
+    public void readOnlyTextField_automaticWrapper_readOnlyIsCheckedInUsable() {
+        TextField tf = new TextField();
+        tf.setReadOnly(true);
+        getCurrentView().getElement().appendChild(tf.getElement());
+
+        Assertions.assertFalse($(tf).isUsable(),
+                "Read only TextField shouldn't be usable");
+    }
+
+    @Test
     public void setTextFieldValue_eventIsFired_valueIsSet() {
         TextField tf = new TextField();
         getCurrentView().getElement().appendChild(tf.getElement());

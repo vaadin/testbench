@@ -9,12 +9,20 @@
  */
 package com.vaadin.testbench.unit;
 
+import javax.servlet.annotation.HandlesTypes;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Map;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
 import com.googlecode.gentyref.GenericTypeReflector;
+import io.github.classgraph.ClassGraph;
+import io.github.classgraph.ClassInfoList;
+import io.github.classgraph.ScanResult;
+import org.apache.commons.collections4.map.HashedMap;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasElement;
@@ -37,6 +45,37 @@ import com.vaadin.flow.router.RouteParameters;
 class BaseUIUnitTest {
 
     private static final ConcurrentHashMap<String, Routes> routesCache = new ConcurrentHashMap<>();
+
+    protected static final Map<Class<?>, Class<? extends ComponentWrap>> wrappers;
+
+    static {
+        try (ScanResult scan = new ClassGraph().enableClassInfo()
+                .enableAnnotationInfo().acceptPackages("com.vaadin.testbench")
+                .scan(2)) {
+            ClassInfoList wrapperList = scan
+                    .getClassesWithAnnotation(Wraps.class.getName());
+            Map<Class<?>, Class<? extends ComponentWrap>> wrapperMap = new HashedMap<>();
+            wrapperList
+                    .filter(classInfo -> classInfo
+                            .extendsSuperclass(ComponentWrap.class))
+                    .forEach(classInfo -> {
+                        try {
+                            final Class<?> wrapper = Class
+                                    .forName(classInfo.getName());
+                            final Class<? extends Component>[] annotation = wrapper
+                                    .getAnnotation(Wraps.class).value();
+                            for (Class<? extends Component> component : annotation) {
+                                wrapperMap.put(component,
+                                        (Class<? extends ComponentWrap>) wrapper);
+                            }
+
+                        } catch (ClassNotFoundException e) {
+                            throw new RuntimeException(e);
+                        }
+                    });
+            wrappers = Collections.unmodifiableMap(wrapperMap);
+        }
+    }
 
     private static synchronized Routes discoverRoutes(String packageName) {
         packageName = packageName == null ? "" : packageName;
@@ -164,8 +203,7 @@ class BaseUIUnitTest {
      * @return component in wrapper with test helpers
      */
     public <T extends ComponentWrap<Y>, Y extends Component> T $(Y component) {
-        // TODO: add handler resolution by component
-        return (T) initialize(ComponentWrap.class, component);
+        return (T) initialize(getWrapper(component.getClass()), component);
     }
 
     /**
@@ -184,6 +222,18 @@ class BaseUIUnitTest {
     public <T extends ComponentWrap<Y>, Y extends Component> T $(Class<T> wrap,
             Y component) {
         return (T) initialize(wrap, component);
+    }
+
+    private <Y extends Component> Class<? extends ComponentWrap> getWrapper(
+            Class<Y> component) {
+        Class<?> latest = component;
+        do {
+            if (wrappers.containsKey(latest)) {
+                return wrappers.get(latest);
+            }
+            latest = latest.getSuperclass();
+        } while (!Component.class.equals(latest));
+        return ComponentWrap.class;
     }
 
     /**
