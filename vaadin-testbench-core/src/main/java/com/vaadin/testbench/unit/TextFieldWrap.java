@@ -10,7 +10,6 @@
 package com.vaadin.testbench.unit;
 
 import com.vaadin.flow.component.textfield.GeneratedVaadinTextField;
-import com.vaadin.testbench.unit.internal.PrettyPrintTreeKt;
 
 /**
  * Test wrapper for TextField components.
@@ -43,11 +42,7 @@ public class TextFieldWrap<T extends GeneratedVaadinTextField<T, V>, V>
      *         value to set
      */
     public void setValue(V value) {
-        if (!isUsable()) {
-            throw new IllegalStateException(
-                    PrettyPrintTreeKt.toPrettyString(getComponent())
-                            + " is not usable");
-        }
+        ensureComponentIsUsable();
 
         getComponent().setValue(value);
     }

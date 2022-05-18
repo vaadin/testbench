@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
+import com.vaadin.testbench.unit.internal.PrettyPrintTreeKt;
 
 /**
  * Test wrapper for components with helpful methods for testing a component.
@@ -21,7 +22,7 @@ import com.vaadin.flow.component.UI;
  * wrappers.
  *
  * @param <T>
- *         component type
+ *            component type
  */
 public class ComponentWrap<T extends Component> {
 
@@ -31,14 +32,14 @@ public class ComponentWrap<T extends Component> {
      * Wrap given component for testing.
      *
      * @param component
-     *         target component
+     *            target component
      */
     public ComponentWrap(T component) {
         this.component = component;
         if (!isUsable()) {
-            LoggerFactory.getLogger("Test wrap")
-                    .debug("Wrapped component '{}' that is not interactable",
-                            component.getClass().getSimpleName());
+            LoggerFactory.getLogger("Test wrap").debug(
+                    "Wrapped component '{}' that is not interactable",
+                    component.getClass().getSimpleName());
         }
     }
 
@@ -60,8 +61,8 @@ public class ComponentWrap<T extends Component> {
     public boolean isUsable() {
         Component component = getComponent();
         return component.getElement().isEnabled() && component.isAttached()
-                && isEffectivelyVisible(component) && !component.getElement()
-                .getNode().isInert();
+                && isEffectivelyVisible(component)
+                && !component.getElement().getNode().isInert();
     }
 
     private boolean isEffectivelyVisible(Component component) {
@@ -75,14 +76,32 @@ public class ComponentWrap<T extends Component> {
      * Automatically generates a client side change to propagate modality.
      *
      * @param modal
-     *         {@code true} to make component modal, {@code false} to remove
-     *         modality
+     *            {@code true} to make component modal, {@code false} to remove
+     *            modality
      */
     public void setModal(boolean modal) {
         UI.getCurrent().setChildComponentModal(component, modal);
-
-        UI.getCurrent().getInternals().getStateTree()
-                .collectChanges(nodeChange -> {
-                });
+        roundTrip();
     }
+
+    /**
+     * Checks that wrapped component is usable, otherwise throws an
+     * {@link IllegalStateException} with details on the current state of the
+     * component.
+     */
+    protected final void ensureComponentIsUsable() {
+        if (!isUsable()) {
+            throw new IllegalStateException(
+                    PrettyPrintTreeKt.toPrettyString(component)
+                            + " is not usable");
+        }
+    }
+
+    /**
+     * Simulates a server round-trip, flushing pending component changes.
+     */
+    protected void roundTrip() {
+        BaseUIUnitTest.roundTrip();
+    }
+
 }

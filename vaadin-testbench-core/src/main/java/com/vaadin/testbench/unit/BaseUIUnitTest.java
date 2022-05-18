@@ -215,4 +215,16 @@ class BaseUIUnitTest {
                             .getSimpleName());
         }
     }
+
+    /**
+     * Simulates a server round-trip, flushing pending component changes.
+     */
+    protected static void roundTrip() {
+        UI.getCurrent().getInternals().getStateTree()
+                .collectChanges(nodeChange -> {
+                });
+        UI.getCurrent().getInternals().getStateTree()
+                .runExecutionsBeforeClientResponse();
+    }
+
 }
