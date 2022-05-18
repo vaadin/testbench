@@ -59,6 +59,25 @@ public class ComponentQuery<T extends Component> {
     }
 
     /**
+     * Requires the given property to have expected value.
+     *
+     * @param getter
+     *            the function to get the value of the property of the field,
+     *            not null
+     * @param expectedValue
+     *            value to be compared with the one obtained by applying the
+     *            getter function to a component instance
+     * @return this element query instance for chaining
+     */
+    public <V> ComponentQuery<T> withPropertyValue(Function<T, V> getter,
+            V expectedValue) {
+        Objects.requireNonNull(getter, "getter function must not be null");
+        locatorSpec.predicates
+                .add(c -> Objects.equals(getter.apply(c), expectedValue));
+        return this;
+    }
+
+    /**
      * Executes the search against current context and returns the test wrapper
      * for first result.
      * 
@@ -132,9 +151,9 @@ public class ComponentQuery<T extends Component> {
     public List<T> allComponents() {
         if (context != null) {
             return LocatorKt._find(context, componentType,
-                    spec -> Unit.INSTANCE);
+                    locatorSpec::populate);
         }
-        return LocatorKt._find(componentType, spec -> Unit.INSTANCE);
+        return LocatorKt._find(componentType, locatorSpec::populate);
     }
 
     /**

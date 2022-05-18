@@ -254,7 +254,6 @@ class ComponentQueryTest extends UIUnitTest {
 
     @Test
     void id_matchingDifferentComponentType_throws() {
-
         Element rootElement = getCurrentView().getElement();
         rootElement.appendChild(new TextField().getElement());
         Button button = new Button();
@@ -265,6 +264,53 @@ class ComponentQueryTest extends UIUnitTest {
                 TextField.class);
         Assertions.assertThrows(NoSuchElementException.class,
                 () -> query.id("myId"));
+    }
+
+    @Test
+    void withPropertyValue_matchingValue_findsComponent() {
+        Element rootElement = getCurrentView().getElement();
+        TextField textField = new TextField();
+        String label = "field label";
+        textField.setLabel(label);
+        rootElement.appendChild(textField.getElement());
+        TextField textField2 = new TextField();
+        textField2.setLabel("Another label");
+        rootElement.appendChild(textField2.getElement());
+        rootElement.appendChild(new TextField().getElement());
+
+        Assertions.assertSame(textField,
+                select(TextField.class)
+                        .withPropertyValue(TextField::getLabel, label).first()
+                        .getComponent());
+    }
+
+    @Test
+    void withPropertyValue_expectedNull_findsComponent() {
+        Element rootElement = getCurrentView().getElement();
+        TextField textField = new TextField();
+        rootElement.appendChild(textField.getElement());
+        TextField textField2 = new TextField();
+        textField2.setLabel("Another label");
+        rootElement.appendChild(textField2.getElement());
+
+        Assertions.assertSame(textField,
+                select(TextField.class)
+                        .withPropertyValue(TextField::getLabel, null).first()
+                        .getComponent());
+    }
+
+    @Test
+    void withPropertyValue_noMatchingValue_doesNotFindComponent() {
+        Element rootElement = getCurrentView().getElement();
+        TextField textField = new TextField();
+        rootElement.appendChild(textField.getElement());
+        TextField textField2 = new TextField();
+        textField2.setLabel("Another label");
+        rootElement.appendChild(textField2.getElement());
+
+        Assertions.assertTrue(select(TextField.class)
+                .withPropertyValue(TextField::getLabel, "The label").all()
+                .isEmpty());
     }
 
 }
