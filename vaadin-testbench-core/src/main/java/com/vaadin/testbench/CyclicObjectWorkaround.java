@@ -44,8 +44,8 @@ public class CyclicObjectWorkaround {
     }
 
     /**
-     * Produces Javascript which modifies a given object (list) so that it
-     * can be returned to the test.
+     * Produces Javascript which modifies a given object (list) so that it can
+     * be returned to the test.
      *
      * @param jsObjectName
      *            the name of the Javascript object to manipulate

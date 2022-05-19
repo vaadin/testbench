@@ -21,6 +21,7 @@ import com.vaadin.testbench.unit.internal.PrettyPrintTreeKt;
  * @param <T>
  *            component type
  */
+@Wraps(Button.class)
 public class ButtonWrap<T extends Button> extends ComponentWrap<T> {
     /**
      * Wrap given button for testing.
