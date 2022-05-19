@@ -10,6 +10,7 @@
 package com.vaadin.testbench.unit;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.ConcurrentHashMap;
@@ -19,7 +20,6 @@ import com.googlecode.gentyref.GenericTypeReflector;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfoList;
 import io.github.classgraph.ScanResult;
-import org.apache.commons.collections4.map.HashedMap;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasElement;
@@ -51,7 +51,7 @@ class BaseUIUnitTest {
                 .scan(2)) {
             ClassInfoList wrapperList = scan
                     .getClassesWithAnnotation(Wraps.class.getName());
-            Map<Class<?>, Class<? extends ComponentWrap>> wrapperMap = new HashedMap<>();
+            Map<Class<?>, Class<? extends ComponentWrap>> wrapperMap = new HashMap<>();
             wrapperList
                     .filter(classInfo -> classInfo
                             .extendsSuperclass(ComponentWrap.class))
