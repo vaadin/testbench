@@ -11,7 +11,6 @@ package com.vaadin.testbench.unit;
 
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentUtil;
-import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.testbench.unit.internal.PrettyPrintTreeKt;
 

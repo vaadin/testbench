@@ -9,12 +9,9 @@
  */
 package com.vaadin.testbench.unit;
 
-import javax.servlet.annotation.HandlesTypes;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
