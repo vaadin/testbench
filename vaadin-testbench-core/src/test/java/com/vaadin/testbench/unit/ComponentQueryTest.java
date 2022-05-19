@@ -338,4 +338,27 @@ class ComponentQueryTest extends UIUnitTest {
                 .isEmpty());
     }
 
+    @Test
+    void withCondition_predicateMatched_getsComponents() {
+        Div div1 = new Div();
+        div1.getElement().setProperty("numeric-prop", 4.5);
+        Div div2 = new Div(new Div(), new Div());
+        div2.getElement().setProperty("numeric-prop", 2.0);
+        Div div3 = new Div();
+        div3.getElement().setProperty("numeric-prop", 1.5);
+        UI.getCurrent().getElement().appendChild(div1.getElement(),
+                div2.getElement(), div3.getElement());
+
+        List<Div> result = select(Div.class)
+                .withCondition(div -> div.getChildren().findAny().isPresent())
+                .allComponents();
+        Assertions.assertIterableEquals(Collections.singleton(div2), result);
+
+        result = select(Div.class).withCondition(div -> {
+            double value = div.getElement().getProperty("numeric-prop", 0.0);
+            return value > 1 && value < 3;
+        }).allComponents();
+        Assertions.assertIterableEquals(List.of(div2, div3), result);
+    }
+
 }

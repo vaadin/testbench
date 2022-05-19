@@ -78,6 +78,19 @@ public class ComponentQuery<T extends Component> {
     }
 
     /**
+     * Requires the components to satisfy the given condition.
+     *
+     * @param condition
+     *            the condition to check against the components.
+     * @return this element query instance for chaining
+     */
+    public ComponentQuery<T> withCondition(Predicate<T> condition) {
+        Objects.requireNonNull(condition, "condition must not be null");
+        locatorSpec.predicates.add(condition);
+        return this;
+    }
+
+    /**
      * Executes the search against current context and returns the test wrapper
      * for first result.
      * 
@@ -182,7 +195,8 @@ public class ComponentQuery<T extends Component> {
 
     protected T findComponent() {
         if (context != null) {
-            return LocatorKt._get(context, componentType, locatorSpec::populate);
+            return LocatorKt._get(context, componentType,
+                    locatorSpec::populate);
         }
         return LocatorKt._get(componentType, locatorSpec::populate);
     }
