@@ -136,7 +136,7 @@ public class ComponentQuery<T extends Component> {
      * the context of the matching component at given index for current query.
      *
      * Index is 1-based. Given a zero or negative index or an index higher than
-     * the actual number of components found results in an At
+     * the actual number of components found results in an
      * {@link IndexOutOfBoundsException}.
      *
      * @param componentType
@@ -196,7 +196,7 @@ public class ComponentQuery<T extends Component> {
      * for the component at given index.
      *
      * Index is 1-based. Given a zero or negative index or an index higher than
-     * the actual number of components found results in an At
+     * the actual number of components found results in an
      * {@link IndexOutOfBoundsException}.
      *
      * @return a test wrapper for the component of the type specified in the
