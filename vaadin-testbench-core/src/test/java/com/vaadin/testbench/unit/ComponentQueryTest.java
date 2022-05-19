@@ -589,4 +589,175 @@ class ComponentQueryTest extends UIUnitTest {
                 .withoutTheme("custom-theme").findComponent());
     }
 
+    @Test
+    void withClass_singleClassName_getsComponents() {
+        Div div1 = new Div();
+        div1.setClassName("test-class");
+        Div div2 = new Div();
+        div2.addClassName("test-class");
+        div2.addClassName("other-class");
+        Div div3 = new Div();
+        div3.addClassName("other-class");
+        Div div4 = new Div();
+        div4.setClassName("different-class");
+        UI.getCurrent().getElement().appendChild(div1.getElement(),
+                new Div().getElement(), div2.getElement(), div3.getElement(),
+                div4.getElement());
+
+        List<Div> result = select(Div.class).withClassName("test-class")
+                .allComponents();
+        Assertions.assertIterableEquals(List.of(div1, div2), result);
+
+        result = select(Div.class).withClassName("other-class").allComponents();
+        Assertions.assertIterableEquals(List.of(div2, div3), result);
+
+        result = select(Div.class).withClassName("different-class")
+                .allComponents();
+        Assertions.assertIterableEquals(List.of(div4), result);
+    }
+
+    @Test
+    void withClass_multipleClassNames_getsComponents() {
+        Div div1 = new Div();
+        div1.setClassName("test-class");
+        Div div2 = new Div();
+        div2.addClassName("test-class");
+        div2.addClassName("other-class");
+        Div div3 = new Div();
+        div3.addClassName("other-class");
+        Div div4 = new Div();
+        div4.setClassName("different-class");
+        UI.getCurrent().getElement().appendChild(div1.getElement(),
+                new Div().getElement(), div2.getElement(), div3.getElement(),
+                div4.getElement());
+
+        List<Div> result = select(Div.class)
+                .withClassName("test-class", "other-class").allComponents();
+        Assertions.assertIterableEquals(List.of(div2), result);
+
+        result = select(Div.class).withClassName("test-class")
+                .withClassName("other-class").allComponents();
+        Assertions.assertIterableEquals(List.of(div2), result);
+    }
+
+    @Test
+    void withClass_notAllClassApplied_doesNotFindComponents() {
+        Div div1 = new Div();
+        div1.setClassName("test-class");
+        Div div2 = new Div();
+        div2.addClassName("test-class");
+        div2.addClassName("other-class");
+        Div div3 = new Div();
+        div3.addClassName("other-class");
+        Div div4 = new Div();
+        div4.setClassName("different-class");
+        UI.getCurrent().getElement().appendChild(div1.getElement(),
+                new Div().getElement(), div2.getElement(), div3.getElement(),
+                div4.getElement());
+
+        List<Div> result = select(Div.class)
+                .withClassName("test-class", "different-class").allComponents();
+        Assertions.assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void withClass_nullClassNames_throws() {
+        ComponentQuery<Div> query = select(Div.class);
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> query.withClassName(null));
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> query.withClassName("c1", (String) null));
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> query.withClassName("c1", "c2", null, "c3"));
+    }
+
+    @Test
+    void withoutClass_singleClassName_getsComponents() {
+        Div div1 = new Div();
+        div1.setClassName("test-class");
+        Div div2 = new Div();
+        div2.addClassName("test-class");
+        div2.addClassName("other-class");
+        Div div3 = new Div();
+        div3.addClassName("other-class");
+        Div div4 = new Div();
+        div4.setClassName("different-class");
+        Div divWithotClasses = new Div();
+        UI.getCurrent().getElement().appendChild(div1.getElement(),
+                divWithotClasses.getElement(), div2.getElement(),
+                div3.getElement(), div4.getElement());
+
+        List<Div> result = select(Div.class).withoutClassName("test-class")
+                .allComponents();
+        Assertions.assertIterableEquals(List.of(divWithotClasses, div3, div4),
+                result);
+
+        result = select(Div.class).withoutClassName("other-class")
+                .allComponents();
+        Assertions.assertIterableEquals(List.of(div1, divWithotClasses, div4),
+                result);
+
+        result = select(Div.class).withoutClassName("different-class")
+                .allComponents();
+        Assertions.assertIterableEquals(
+                List.of(div1, divWithotClasses, div2, div3), result);
+    }
+
+    @Test
+    void withoutClass_multipleClassNames_getsComponents() {
+        Div div1 = new Div();
+        div1.setClassName("test-class");
+        Div div2 = new Div();
+        div2.addClassName("test-class");
+        div2.addClassName("other-class");
+        Div div3 = new Div();
+        div3.addClassName("other-class");
+        Div div4 = new Div();
+        div4.setClassName("different-class");
+        Div divWithoutClasses = new Div();
+        UI.getCurrent().getElement().appendChild(div1.getElement(),
+                divWithoutClasses.getElement(), div2.getElement(),
+                div3.getElement(), div4.getElement());
+
+        List<Div> result = select(Div.class)
+                .withoutClassName("test-class", "other-class").allComponents();
+        Assertions.assertIterableEquals(List.of(divWithoutClasses, div4),
+                result);
+
+        result = select(Div.class).withoutClassName("test-class")
+                .withoutClassName("other-class").allComponents();
+        Assertions.assertIterableEquals(List.of(divWithoutClasses, div4),
+                result);
+    }
+
+    @Test
+    void withoutClass_allClassApplied_doesNotFindComponents() {
+        Div div1 = new Div();
+        div1.setClassName("test-class");
+        Div div2 = new Div();
+        div2.addClassName("test-class");
+        div2.addClassName("other-class");
+        Div div3 = new Div();
+        div3.addClassName("other-class");
+        Div div4 = new Div();
+        div4.setClassName("different-class");
+        UI.getCurrent().getElement().appendChild(div1.getElement(),
+                div2.getElement(), div3.getElement(), div4.getElement());
+
+        List<Div> result = select(Div.class).withoutClassName("test-class",
+                "other-class", "different-class").allComponents();
+        Assertions.assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void withoutClass_nullClassNames_throws() {
+        ComponentQuery<Div> query = select(Div.class);
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> query.withoutClassName(null));
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> query.withoutClassName("c1", (String) null));
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> query.withoutClassName("c1", "c2", null, "c3"));
+    }
+
 }
