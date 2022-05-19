@@ -107,6 +107,67 @@ class ComponentQueryTest extends UIUnitTest {
     }
 
     @Test
+    void atIndex_exactMatch_getsComponent() {
+        Element root = getCurrentView().getElement();
+
+        TextField textField = new TextField();
+        root.appendChild(textField.getElement());
+        Button button = new Button();
+        root.appendChild(button.getElement());
+
+        ComponentQuery<TextField> textFieldQuery = select(TextField.class);
+        Assertions.assertSame(textField,
+                textFieldQuery.atIndex(1).getComponent(),
+                "Expecting query to find TextField component, but got different instance");
+
+        ComponentQuery<Button> buttonQuery = select(Button.class);
+        Assertions.assertSame(button, buttonQuery.atIndex(1).getComponent(),
+                "Expecting query to find Button component, but got different instance");
+
+    }
+
+    @Test
+    void atIndex_multipleMatching_getsFirstComponent() {
+        TextField last = new TextField();
+        Element rootElement = getCurrentView().getElement();
+        rootElement.appendChild(new TextField().getElement(),
+                new TextField().getElement(), new TextField().getElement(),
+                last.getElement());
+
+        ComponentQuery<TextField> query = select(TextField.class);
+        Assertions.assertSame(last, query.atIndex(4).getComponent(),
+                "Expecting query to find TextField component, but got different instance");
+    }
+
+    @Test
+    void atIndex_negativeOrZeroIndex_throws() {
+        ComponentQuery<TextField> query = select(TextField.class);
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> query.atIndex(-10));
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> query.atIndex(0));
+    }
+
+    @Test
+    void atIndex_outOfUpperBound_throws() {
+        Element rootElement = getCurrentView().getElement();
+        rootElement.appendChild(new TextField().getElement(),
+                new TextField().getElement(), new TextField().getElement());
+        ComponentQuery<TextField> query = select(TextField.class);
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> query.atIndex(4));
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> query.atIndex(100));
+    }
+
+    @Test
+    void atIndex_noMatching_throws() {
+        ComponentQuery<TextField> query = select(TextField.class);
+        Assertions.assertThrows(NoSuchElementException.class,
+                () -> query.atIndex(1));
+    }
+
+    @Test
     void all_noMatching_getsEmptyList() {
         ComponentQuery<TextField> query = select(TextField.class);
         List<ComponentWrap<TextField>> result = query.all();
@@ -292,6 +353,55 @@ class ComponentQueryTest extends UIUnitTest {
     }
 
     @Test
+    void withId_matchingComponent_getsComponent() {
+        Element rootElement = getCurrentView().getElement();
+        List<TextField> textFields = IntStream.rangeClosed(1, 5)
+                .mapToObj(idx -> {
+                    TextField field = new TextField();
+                    field.setId("field-" + idx);
+                    return field;
+                }).peek(field -> rootElement.appendChild(field.getElement()))
+                .collect(Collectors.toList());
+
+        ComponentQuery<TextField> query = selectFromCurrentView(
+                TextField.class);
+
+        for (TextField expected : textFields) {
+            List<TextField> result = query.withId(expected.getId().orElse(""))
+                    .allComponents();
+            Assertions.assertIterableEquals(Collections.singleton(expected),
+                    result);
+        }
+    }
+
+    @Test
+    void withId_noMatchingComponent_emptyList() {
+        Element rootElement = getCurrentView().getElement();
+        rootElement.appendChild(new TextField().getElement());
+        TextField textField = new TextField();
+        textField.setId("myId");
+        rootElement.appendChild(textField.getElement());
+
+        ComponentQuery<TextField> query = selectFromCurrentView(
+                TextField.class);
+        Assertions
+                .assertTrue(query.withId("wrongId").allComponents().isEmpty());
+    }
+
+    @Test
+    void withId_matchingDifferentComponentType_emptyList() {
+        Element rootElement = getCurrentView().getElement();
+        rootElement.appendChild(new TextField().getElement());
+        Button button = new Button();
+        button.setId("myId");
+        rootElement.appendChild(button.getElement());
+
+        ComponentQuery<TextField> query = selectFromCurrentView(
+                TextField.class);
+        Assertions.assertTrue(query.withId("myId").allComponents().isEmpty());
+    }
+
+    @Test
     void withPropertyValue_matchingValue_findsComponent() {
         Element rootElement = getCurrentView().getElement();
         TextField textField = new TextField();
@@ -359,6 +469,55 @@ class ComponentQueryTest extends UIUnitTest {
             return value > 1 && value < 3;
         }).allComponents();
         Assertions.assertIterableEquals(List.of(div2, div3), result);
+    }
+
+    @Test
+    void thenOnFirst_chainedQuery_getsNestedComponents() {
+        TextField deepNested = new TextField();
+        Div nestedDiv = new Div(deepNested);
+        nestedDiv.setId("nestedDiv");
+        TextField nested1 = new TextField();
+        TextField nested2 = new TextField();
+        Div firstMatch = new Div(new Div(nestedDiv), nested1, new Div(nested2));
+        firstMatch.setId("myId");
+        UI.getCurrent().getElement().appendChild(
+                new Div(firstMatch).getElement(), new TextField().getElement());
+
+        List<TextField> result = select(Div.class).withId("myId")
+                .thenOnFirst(TextField.class).allComponents();
+        Assertions.assertIterableEquals(List.of(deepNested, nested1, nested2),
+                result);
+
+        result = select(Div.class).withId("myId").thenOnFirst(Div.class)
+                .withId("nestedDiv").thenOnFirst(TextField.class)
+                .allComponents();
+        Assertions.assertIterableEquals(List.of(deepNested), result);
+    }
+
+    @Test
+    void thenOnFirst_firstNotFound_throws() {
+        Div div = new Div(new TextField());
+        div.setVisible(false);
+        UI.getCurrent().getElement().appendChild(div.getElement());
+
+        ComponentQuery<Div> query = select(Div.class);
+        Assertions.assertThrows(NoSuchElementException.class,
+                () -> query.thenOnFirst(TextField.class));
+    }
+
+    @Test
+    void thenOn_chainedQuery_getsNestedComponents() {
+        TextField nested = new TextField();
+        UI.getCurrent().getElement().appendChild(
+                new Div(new TextField()).getElement(),
+                new Div(new TextField()).getElement(),
+                new Div(nested).getElement(),
+                new Div(new TextField()).getElement(),
+                new Div(new TextField()).getElement());
+
+        List<TextField> result = select(Div.class).thenOn(3, TextField.class)
+                .allComponents();
+        Assertions.assertIterableEquals(List.of(nested), result);
     }
 
 }

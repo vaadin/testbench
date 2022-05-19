@@ -26,7 +26,7 @@ import com.vaadin.testbench.unit.internal.SearchSpec;
 
 /**
  * Query class used for finding a component inside a given search context.
- * 
+ *
  * The search context is either the current {@link com.vaadin.flow.component.UI}
  * instance which searches through the whole components tree, or a
  * {@link com.vaadin.flow.component.Component} instance, which limits the search
@@ -34,7 +34,7 @@ import com.vaadin.testbench.unit.internal.SearchSpec;
  *
  * Depending on the used terminal operator, the result of the search can be
  * either a UI component (single or list) or a component wrapper.
- * 
+ *
  * The component type specified in the constructor defines the type of the
  * component which is searched for and also the type for the component wrapper.
  *
@@ -45,13 +45,23 @@ import com.vaadin.testbench.unit.internal.SearchSpec;
 public class ComponentQuery<T extends Component> {
 
     private final Class<T> componentType;
-    private final Function<T, ? extends ComponentWrap<T>> wrapperFactory;
+    private final Function<Component, ? extends ComponentWrap<?>> wrapperFactory;
     private final LocatorSpec<T> locatorSpec = new LocatorSpec<>();
 
     private Component context;
 
+    /**
+     * Creates a new instance of {@link ComponentQuery} to search for components
+     * of given type.
+     *
+     * @param componentType
+     *            the type of the component(s) to search for
+     * @param wrapperFactory
+     *            function to create a component wrapper for found components
+     * @see ComponentWrap
+     */
     public ComponentQuery(Class<T> componentType,
-            Function<T, ComponentWrap<T>> wrapperFactory) {
+            Function<Component, ? extends ComponentWrap<?>> wrapperFactory) {
         this.componentType = Objects.requireNonNull(componentType,
                 "Component type must not be null");
         this.wrapperFactory = Objects.requireNonNull(wrapperFactory,
@@ -78,6 +88,20 @@ public class ComponentQuery<T extends Component> {
     }
 
     /**
+     * Requires the component to have the given id
+     *
+     * @param id
+     *            the id to look up
+     * @return this element query instance for chaining
+     */
+    public ComponentQuery<T> withId(String id) {
+        locatorSpec.id = id;
+        // At most one element with given id is expected
+        locatorSpec.count = new IntRange(0, 1);
+        return this;
+    }
+
+    /**
      * Requires the components to satisfy the given condition.
      *
      * @param condition
@@ -91,9 +115,53 @@ public class ComponentQuery<T extends Component> {
     }
 
     /**
+     * Gets a new {@link ComponentQuery} to search for given component type on
+     * the context of first matching component for current query.
+     *
+     * @param componentType
+     *            the type of the component(s) to search for
+     * @param <E>
+     *            the type of the component(s) to search for
+     * @return a new query object, to search for nested components.
+     * @throws java.util.NoSuchElementException
+     *             if first component is found
+     */
+    public <E extends Component> ComponentQuery<E> thenOnFirst(
+            Class<E> componentType) {
+        return thenOn(1, componentType);
+    }
+
+    /**
+     * Gets a new {@link ComponentQuery} to search for given component type on
+     * the context of the matching component at given index for current query.
+     *
+     * Index is 1-based. Given a zero or negative index or an index higher than
+     * the actual number of components found results in an At
+     * {@link IndexOutOfBoundsException}.
+     *
+     * @param componentType
+     *            the type of the component(s) to search for
+     * @param <E>
+     *            the type of the component(s) to search for
+     * @return a new query object, to search for nested components.
+     * @see #atIndex(int)
+     * @throws IllegalArgumentException
+     *             if index is zero or negative
+     * @throws IndexOutOfBoundsException
+     *             if index is greater than the number of found components
+     * @throws java.util.NoSuchElementException
+     *             if current query does not produce results
+     */
+    public <E extends Component> ComponentQuery<E> thenOn(int index,
+            Class<E> componentType) {
+        return new ComponentQuery<>(componentType, wrapperFactory)
+                .from(atIndex(index).getComponent());
+    }
+
+    /**
      * Executes the search against current context and returns the test wrapper
      * for first result.
-     * 
+     *
      * @return a test wrapper for the component of the type specified in the
      *         constructor.
      * @throws java.util.NoSuchElementException
@@ -124,6 +192,42 @@ public class ComponentQuery<T extends Component> {
     }
 
     /**
+     * Executes the search against current context and returns the test wrapper
+     * for the component at given index.
+     *
+     * Index is 1-based. Given a zero or negative index or an index higher than
+     * the actual number of components found results in an At
+     * {@link IndexOutOfBoundsException}.
+     *
+     * @return a test wrapper for the component of the type specified in the
+     *         constructor.
+     * @throws IllegalArgumentException
+     *             if index is zero or negative
+     * @throws IndexOutOfBoundsException
+     *             if index is greater than the number of found components
+     * @throws java.util.NoSuchElementException
+     *             if no component is found
+     */
+    @SuppressWarnings("unchecked")
+    public <X extends ComponentWrap<T>> X atIndex(int index) {
+        if (index <= 0) {
+            throw new IllegalArgumentException(
+                    "Index must be greater than zero, but was " + index);
+        }
+        List<T> result = allComponents();
+        if (result.isEmpty()) {
+            throw new NoSuchElementException(
+                    "Cannot find component for current query");
+        }
+        int resultSize = result.size();
+        if (index > resultSize) {
+            throw new IndexOutOfBoundsException("Index out of range: " + index
+                    + ". Current query produces " + resultSize + " results");
+        }
+        return (X) wrapperFactory.apply(result.get(index - 1));
+    }
+
+    /**
      * Executes a search for a component with the given id.
      *
      * @param id
@@ -135,7 +239,8 @@ public class ComponentQuery<T extends Component> {
      */
     public <X extends ComponentWrap<T>> X id(String id) {
         Objects.requireNonNull(id, "id must not be null");
-        locatorSpec.id = id;
+        withId(id);
+        // Exactly one element with given id is expected
         locatorSpec.count = new IntRange(1, 1);
         return find();
     }
