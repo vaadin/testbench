@@ -31,6 +31,17 @@ import static java.util.Arrays.asList;
 class ComponentQueryTest extends UIUnitTest {
 
     @Test
+    void find_invisibleComponents_noResults() {
+        Element rootElement = getCurrentView().getElement();
+        rootElement.appendChild(new Div().getElement(), new Div().getElement(),
+                new Div().getElement());
+        rootElement.getChildren().filter(el -> !el.isTextNode())
+                .forEach(el -> el.setVisible(false));
+
+        Assertions.assertTrue(select(Div.class).allComponents().isEmpty());
+    }
+
+    @Test
     void first_exactMatch_getsComponent() {
         Element root = getCurrentView().getElement();
 
