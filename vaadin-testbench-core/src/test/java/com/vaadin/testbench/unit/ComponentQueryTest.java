@@ -555,6 +555,246 @@ class ComponentQueryTest extends UIUnitTest {
     }
 
     @Test
+    void withResultsSize_zeroMatchingResultsSize_emptyResult() {
+        Div div1 = new Div();
+        Div div2 = new Div();
+        Div div3 = new Div();
+        Div div4 = new Div();
+        UI.getCurrent().getElement().appendChild(div1.getElement(),
+                div2.getElement(), div3.getElement(), div4.getElement());
+
+        Assertions.assertTrue(select(TestComponent.class).withResultsSize(0)
+                .allComponents().isEmpty());
+    }
+
+    @Test
+    void withResultsSize_matchingResultsSize_getsComponents() {
+        Div div1 = new Div();
+        Div div2 = new Div();
+        Div div3 = new Div();
+        Div div4 = new Div();
+        UI.getCurrent().getElement().appendChild(div1.getElement(),
+                div2.getElement(), div3.getElement(), div4.getElement());
+
+        List<Div> result = select(Div.class).withResultsSize(4).allComponents();
+        Assertions.assertIterableEquals(List.of(div1, div2, div3, div4),
+                result);
+    }
+
+    @Test
+    void withResultsSize_notMatchingResultsSize_throws() {
+        Div div1 = new Div();
+        Div div2 = new Div();
+        Div div3 = new Div();
+        Div div4 = new Div();
+        UI.getCurrent().getElement().appendChild(div1.getElement(),
+                div2.getElement(), div3.getElement(), div4.getElement());
+
+        IntStream.rangeClosed(0, 10).filter(i -> i != 4).forEach(i -> {
+            ComponentQuery<Div> query = select(Div.class).withResultsSize(i);
+            Assertions.assertThrows(AssertionError.class, query::allComponents);
+        });
+    }
+
+    @Test
+    void withResultsSize_negative_throws() {
+        ComponentQuery<Div> query = select(Div.class);
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> query.withResultsSize(-1));
+    }
+
+    @Test
+    void withResultsSize_afterWithMaxResults_overwritesRange() {
+        ComponentQuery<Div> query = select(Div.class);
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> query.withResultsSize(-1));
+    }
+
+    @Test
+    void withResultsSize_afterWithMinResults_overwritesRange() {
+        ComponentQuery<Div> query = select(Div.class);
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> query.withResultsSize(-1));
+    }
+
+    @Test
+    void withResultsSize_afterWithResults_overwritesRange() {
+        ComponentQuery<Div> query = select(Div.class);
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> query.withResultsSize(-1));
+    }
+
+    @Test
+    void withMaxResults_resultsSizeWithinUpperBound_getsComponents() {
+        Div div1 = new Div();
+        Div div2 = new Div();
+        Div div3 = new Div();
+        Div div4 = new Div();
+        UI.getCurrent().getElement().appendChild(div1.getElement(),
+                div2.getElement(), div3.getElement(), div4.getElement());
+
+        List<Div> result = select(Div.class).withMaxResults(10).allComponents();
+        Assertions.assertIterableEquals(List.of(div1, div2, div3, div4),
+                result);
+        result = select(Div.class).withMaxResults(4).allComponents();
+        Assertions.assertIterableEquals(List.of(div1, div2, div3, div4),
+                result);
+    }
+
+    @Test
+    void withMaxResults_resultsSizeExceededUpperBound_throws() {
+        Div div1 = new Div();
+        Div div2 = new Div();
+        Div div3 = new Div();
+        Div div4 = new Div();
+        UI.getCurrent().getElement().appendChild(div1.getElement(),
+                div2.getElement(), div3.getElement(), div4.getElement());
+
+        IntStream.rangeClosed(1, 3).forEach(count -> {
+            ComponentQuery<Div> query = select(Div.class).withMaxResults(count);
+            Assertions.assertThrows(AssertionError.class, query::allComponents);
+        });
+    }
+
+    @Test
+    void withMaxResults_negative_throws() {
+        ComponentQuery<Div> query = select(Div.class);
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> query.withMaxResults(-1));
+    }
+
+    @Test
+    void withMaxResults_lowerThanMin_throws() {
+        ComponentQuery<Div> query = select(Div.class).withMinResults(4);
+        query.withMaxResults(4); // same as min is OK, must not throw
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> query.withMaxResults(2));
+    }
+
+    @Test
+    void withMaxResults_afterResultsSize_overwritesRange() {
+        Div div1 = new Div();
+        Div div2 = new Div();
+        Div div3 = new Div();
+        Div div4 = new Div();
+        UI.getCurrent().getElement().appendChild(div1.getElement(),
+                div2.getElement(), div3.getElement(), div4.getElement());
+        List<Div> result = select(Div.class).withResultsSize(1)
+                .withMaxResults(4).allComponents();
+        Assertions.assertIterableEquals(List.of(div1, div2, div3, div4),
+                result);
+    }
+
+    @Test
+    void withMinResults_resultsSizeWithinLowerBound_getsComponents() {
+        Div div1 = new Div();
+        Div div2 = new Div();
+        Div div3 = new Div();
+        Div div4 = new Div();
+        UI.getCurrent().getElement().appendChild(div1.getElement(),
+                div2.getElement(), div3.getElement(), div4.getElement());
+
+        IntStream.rangeClosed(0, 4).forEach(count -> {
+            List<Div> result = select(Div.class).withMinResults(count)
+                    .allComponents();
+            Assertions.assertIterableEquals(List.of(div1, div2, div3, div4),
+                    result);
+        });
+    }
+
+    @Test
+    void withMinResults_resultsSizeLessThanLowerBound_throws() {
+        Div div1 = new Div();
+        Div div2 = new Div();
+        UI.getCurrent().getElement().appendChild(div1.getElement(),
+                div2.getElement());
+
+        IntStream.rangeClosed(3, 10).forEach(count -> {
+            ComponentQuery<Div> query = select(Div.class).withMinResults(count);
+            Assertions.assertThrows(AssertionError.class, query::allComponents);
+        });
+    }
+
+    @Test
+    void withMinResults_negative_throws() {
+        ComponentQuery<Div> query = select(Div.class);
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> query.withMinResults(-1));
+    }
+
+    @Test
+    void withMinResults_greaterThanMax_throws() {
+        ComponentQuery<Div> query = select(Div.class).withMaxResults(2);
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> query.withMinResults(10));
+    }
+
+    @Test
+    void withMinResults_afterResultsSize_overwritesLowerRange() {
+        Div div1 = new Div();
+        Div div2 = new Div();
+        Div div3 = new Div();
+        UI.getCurrent().getElement().appendChild(div1.getElement(),
+                div2.getElement(), div3.getElement());
+
+        List<Div> result = select(Div.class).withResultsSize(4)
+                .withMinResults(1).allComponents();
+        Assertions.assertIterableEquals(List.of(div1, div2, div3), result);
+    }
+
+    @Test
+    void withResults_resultsSizeOutOfBounds_throws() {
+        Div div1 = new Div();
+        Div div2 = new Div();
+        Div div3 = new Div();
+        Div div4 = new Div();
+        UI.getCurrent().getElement().appendChild(div1.getElement(),
+                div2.getElement(), div3.getElement(), div4.getElement());
+
+        ComponentQuery<Div> query = select(Div.class).withResultsSize(5, 10);
+        Assertions.assertThrows(AssertionError.class, query::allComponents);
+
+        query = select(Div.class).withResultsSize(1, 3);
+        Assertions.assertThrows(AssertionError.class, query::allComponents);
+
+    }
+
+    @Test
+    void withResultsSize_minNegative_throws() {
+        ComponentQuery<Div> query = select(Div.class);
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> query.withResultsSize(-1, 10));
+    }
+
+    @Test
+    void withResultsSize_maxNegative_throws() {
+        ComponentQuery<Div> query = select(Div.class);
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> query.withResultsSize(2, -1));
+    }
+
+    @Test
+    void withResultsSize_maxLowerThanMin_throws() {
+        ComponentQuery<Div> query = select(Div.class);
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> query.withResultsSize(5, 2));
+    }
+
+    @Test
+    void withResultsSize_afterResultsSize_overwritesRange() {
+        Div div1 = new Div();
+        Div div2 = new Div();
+        Div div3 = new Div();
+        Div div4 = new Div();
+        UI.getCurrent().getElement().appendChild(div1.getElement(),
+                div2.getElement(), div3.getElement(), div4.getElement());
+        List<Div> result = select(Div.class).withResultsSize(5)
+                .withResultsSize(2, 5).allComponents();
+        Assertions.assertIterableEquals(List.of(div1, div2, div3, div4),
+                result);
+    }
+
+    @Test
     void thenOnFirst_chainedQuery_getsNestedComponents() {
         TextField deepNested = new TextField();
         Div nestedDiv = new Div(deepNested);

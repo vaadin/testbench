@@ -240,6 +240,87 @@ public class ComponentQuery<T extends Component> {
     }
 
     /**
+     * Requires the search to find exactly the given number of components
+     *
+     * @param count
+     *            the expected number of component retrieved by the search
+     *
+     * @return this element query instance for chaining
+     * @throws IllegalArgumentException
+     *             if {@code count} is negative
+     */
+    public ComponentQuery<T> withResultsSize(int count) {
+        if (count < 0) {
+            throw new IllegalArgumentException(
+                    "count must be greater or equal than zero, but was "
+                            + count);
+        }
+        locatorSpec.count = new IntRange(count, count);
+        return this;
+    }
+
+    /**
+     * Requires the search to find a number of components within given range
+     *
+     * @param min
+     *            minimum number of components that should be found (inclusive)
+     * @param max
+     *            maximum number of components that should be found (inclusive)
+     *
+     * @return this element query instance for chaining
+     * @throws IllegalArgumentException
+     *             if {@code min} or {@code max} are negative, or if {@code min}
+     *             is greater than {@code max}
+     */
+    public ComponentQuery<T> withResultsSize(int min, int max) {
+        if (min < 0) {
+            throw new IllegalArgumentException(
+                    "min must be greater or equal than zero, but was " + min);
+        }
+        if (max < 0) {
+            throw new IllegalArgumentException(
+                    "max must be greater or equal than zero, but was " + max);
+        }
+        if (min > max) {
+            throw new IllegalArgumentException(
+                    "max must be greater or equal than min, but was min=" + min
+                            + ", max=" + max + "");
+        }
+        locatorSpec.count = new IntRange(min, max);
+        return this;
+    }
+
+    /**
+     * Requires the search to find at least the given number of components
+     *
+     * @param min
+     *            minimum number of components that should be found (inclusive)
+     *
+     * @return this element query instance for chaining
+     * @throws IllegalArgumentException
+     *             if {@code min} or {@code max} are negative, or if {@code min}
+     *             is greater than {@code max}
+     */
+    public ComponentQuery<T> withMinResults(int min) {
+        return withResultsSize(min, locatorSpec.count.getEndInclusive());
+    }
+
+    /**
+     * Requires the search to find at most the given number of components
+     *
+     * @param max
+     *            maximum number of components that should be found (inclusive)
+     *
+     * @return this element query instance for chaining
+     * @throws IllegalArgumentException
+     *             if {@code min} or {@code max} are negative, or if {@code min}
+     *             is greater than {@code max}
+     */
+    public ComponentQuery<T> withMaxResults(int max) {
+        return withResultsSize(locatorSpec.count.getStart(), max);
+    }
+
+    /**
      * Gets a new {@link ComponentQuery} to search for given component type on
      * the context of first matching component for current query.
      *
