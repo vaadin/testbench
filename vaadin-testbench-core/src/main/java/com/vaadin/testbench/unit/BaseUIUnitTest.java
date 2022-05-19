@@ -234,6 +234,37 @@ class BaseUIUnitTest {
     }
 
     /**
+     * Gets a query object for finding a component inside the UI
+     *
+     * @param componentType
+     *            the type of the component(s) to search for
+     * @param <T>
+     *            the type of the component(s) to search for
+     * @return a query object for finding components
+     */
+    public <T extends Component> ComponentQuery<T> select(
+            Class<T> componentType) {
+        return new ComponentQuery<>(componentType, this::$);
+    }
+
+    /**
+     * Gets a query object for finding a component inside the current view
+     *
+     * @param componentType
+     *            the type of the component(s) to search for
+     * @param <T>
+     *            the type of the component(s) to search for
+     * @return a query object for finding components
+     */
+    public <T extends Component> ComponentQuery<T> selectFromCurrentView(
+            Class<T> componentType) {
+        Component viewComponent = getCurrentView().getElement().getComponent()
+                .orElseThrow(() -> new AssertionError(
+                        "Cannot get Component instance for current view"));
+        return new ComponentQuery<>(componentType, this::$).from(viewComponent);
+    }
+
+    /**
      * Private initializer for wrapper classes.
      *
      * @param clazz
