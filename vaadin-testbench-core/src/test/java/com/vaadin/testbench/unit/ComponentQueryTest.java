@@ -88,7 +88,7 @@ class ComponentQueryTest extends UIUnitTest {
     }
 
     @Test
-    void last_multipleMatching_getsFirstComponent() {
+    void last_multipleMatching_getsLastComponent() {
         TextField last = new TextField();
         Element rootElement = getCurrentView().getElement();
         rootElement.appendChild(new TextField().getElement(),

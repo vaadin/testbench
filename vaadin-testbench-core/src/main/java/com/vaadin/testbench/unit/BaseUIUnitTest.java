@@ -235,7 +235,7 @@ class BaseUIUnitTest {
 
     /**
      * Gets a query object for finding a component inside the UI
-     * 
+     *
      * @param componentType
      *            the type of the component(s) to search for
      * @param <T>

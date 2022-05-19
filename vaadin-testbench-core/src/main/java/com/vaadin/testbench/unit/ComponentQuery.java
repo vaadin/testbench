@@ -28,7 +28,7 @@ import com.vaadin.testbench.unit.internal.SearchSpec;
  * Query class used for finding a component inside a given search context.
  *
  * The search context is either the current {@link com.vaadin.flow.component.UI}
- * instance which searches through the whole components tree, or a
+ * instance which searches through the whole component tree, or a
  * {@link com.vaadin.flow.component.Component} instance, which limits the search
  * to the component subtree.
  *
