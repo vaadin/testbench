@@ -7,11 +7,14 @@
  *
  * For the full License, see <https://vaadin.com/license/cvdl-4.0>.
  */
-package com.vaadin.testbench.unit;
+package com.vaadin.flow.component.button;
 
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentUtil;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.testbench.unit.ComponentWrap;
+import com.vaadin.testbench.unit.MetaKeys;
+import com.vaadin.testbench.unit.Wraps;
 import com.vaadin.testbench.unit.internal.PrettyPrintTreeKt;
 
 /**

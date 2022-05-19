@@ -7,7 +7,11 @@
  *
  * For the full License, see <https://vaadin.com/license/cvdl-4.0>.
  */
-package com.vaadin.testbench.unit;
+package com.vaadin.flow.component;
+
+import com.vaadin.testbench.unit.ComponentWrap;
+import com.vaadin.testbench.unit.TestComponent;
+import com.vaadin.testbench.unit.Wraps;
 
 @Wraps(TestComponent.class)
 public class TestWrap<T extends TestComponent> extends ComponentWrap<T> {

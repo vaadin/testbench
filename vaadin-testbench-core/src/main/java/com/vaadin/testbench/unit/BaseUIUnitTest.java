@@ -47,7 +47,7 @@ class BaseUIUnitTest {
 
     static {
         try (ScanResult scan = new ClassGraph().enableClassInfo()
-                .enableAnnotationInfo().acceptPackages("com.vaadin.testbench")
+                .enableAnnotationInfo().acceptPackages("com.vaadin.flow.component")
                 .scan(2)) {
             ClassInfoList wrapperList = scan
                     .getClassesWithAnnotation(Wraps.class.getName());

@@ -12,6 +12,7 @@ package com.vaadin.testbench.unit;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import com.vaadin.flow.component.notification.NotificationWrap;
 import com.vaadin.flow.component.notification.Notification;
 
 class NotificationWrapTest extends UIUnitTest {
