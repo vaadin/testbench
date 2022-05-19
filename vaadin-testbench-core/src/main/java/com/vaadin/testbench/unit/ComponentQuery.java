@@ -182,7 +182,7 @@ public class ComponentQuery<T extends Component> {
 
     protected T findComponent() {
         if (context != null) {
-            LocatorKt._get(context, componentType, locatorSpec::populate);
+            return LocatorKt._get(context, componentType, locatorSpec::populate);
         }
         return LocatorKt._get(componentType, locatorSpec::populate);
     }

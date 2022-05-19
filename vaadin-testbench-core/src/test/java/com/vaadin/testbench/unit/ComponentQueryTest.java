@@ -20,6 +20,7 @@ import org.junit.jupiter.api.Test;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Text;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.textfield.TextField;
@@ -218,6 +219,30 @@ class ComponentQueryTest extends UIUnitTest {
         List<TextField> result = select(TextField.class).from(context)
                 .allComponents();
         Assertions.assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void from_withCriteria_getsComponentInContext() {
+        TextField notInViewTextField = new TextField();
+        notInViewTextField.setId("myId");
+        UI.getCurrent().getElement()
+                .appendChild(notInViewTextField.getElement());
+
+        TextField inViewTextField = new TextField();
+        inViewTextField.setId("myId");
+        Div context = new Div(inViewTextField);
+        Element rootElement = getCurrentView().getElement();
+        rootElement.appendChild(context.getElement());
+
+        List<TextField> result = select(TextField.class).from(context)
+                .allComponents();
+        Assertions.assertIterableEquals(Collections.singleton(inViewTextField),
+                result);
+
+        ComponentWrap<TextField> foundTextField = select(TextField.class)
+                .from(context).id("myId");
+        Assertions.assertSame(inViewTextField, foundTextField.getComponent());
+
     }
 
     @Test
