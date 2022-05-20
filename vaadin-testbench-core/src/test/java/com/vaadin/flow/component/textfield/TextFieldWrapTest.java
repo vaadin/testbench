@@ -7,17 +7,16 @@
  *
  * For the full License, see <https://vaadin.com/license/cvdl-4.0>.
  */
-package com.vaadin.testbench.unit;
+package com.vaadin.flow.component.textfield;
 
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import com.vaadin.flow.component.textfield.TextFieldWrap;
 import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent;
 import com.vaadin.flow.component.HasValue.ValueChangeListener;
-import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.testbench.unit.UIUnitTest;
 
 public class TextFieldWrapTest extends UIUnitTest {
 

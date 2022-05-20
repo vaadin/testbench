@@ -9,11 +9,6 @@
  */
 package com.vaadin.flow.component.textfield;
 
-import com.vaadin.flow.component.textfield.BigDecimalField;
-import com.vaadin.flow.component.textfield.EmailField;
-import com.vaadin.flow.component.textfield.GeneratedVaadinTextField;
-import com.vaadin.flow.component.textfield.PasswordField;
-import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.testbench.unit.ComponentWrap;
 import com.vaadin.testbench.unit.Wraps;
 

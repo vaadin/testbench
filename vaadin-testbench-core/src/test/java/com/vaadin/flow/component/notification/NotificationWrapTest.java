@@ -7,13 +7,12 @@
  *
  * For the full License, see <https://vaadin.com/license/cvdl-4.0>.
  */
-package com.vaadin.testbench.unit;
+package com.vaadin.flow.component.notification;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import com.vaadin.flow.component.notification.NotificationWrap;
-import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.testbench.unit.UIUnitTest;
 
 class NotificationWrapTest extends UIUnitTest {
 

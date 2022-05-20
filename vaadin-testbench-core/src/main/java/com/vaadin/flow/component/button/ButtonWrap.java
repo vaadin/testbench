@@ -11,7 +11,6 @@ package com.vaadin.flow.component.button;
 
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentUtil;
-import com.vaadin.flow.component.button.Button;
 import com.vaadin.testbench.unit.ComponentWrap;
 import com.vaadin.testbench.unit.MetaKeys;
 import com.vaadin.testbench.unit.Wraps;

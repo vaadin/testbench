@@ -9,7 +9,6 @@
  */
 package com.vaadin.flow.component.notification;
 
-import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.dom.DomEvent;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.internal.nodefeature.ElementListenerMap;

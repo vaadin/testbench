@@ -7,7 +7,7 @@
  *
  * For the full License, see <https://vaadin.com/license/cvdl-4.0>.
  */
-package com.vaadin.testbench.unit;
+package com.vaadin.flow.component.button;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -15,9 +15,9 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import com.vaadin.flow.component.button.ButtonWrap;
 import com.vaadin.flow.component.ClickEvent;
-import com.vaadin.flow.component.button.Button;
+import com.vaadin.testbench.unit.MetaKeys;
+import com.vaadin.testbench.unit.UIUnitTest;
 
 public class ButtonWrapTest extends UIUnitTest {
 
