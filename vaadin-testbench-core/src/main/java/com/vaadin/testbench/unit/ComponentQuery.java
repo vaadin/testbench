@@ -10,7 +10,6 @@
 package com.vaadin.testbench.unit;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -198,6 +197,45 @@ public class ComponentQuery<T extends Component> {
         } else {
             locatorSpec.withoutThemes = locatorSpec.withoutThemes + " " + theme;
         }
+        return this;
+    }
+
+    /**
+     * Requires the component to have a caption equal to the given text
+     *
+     * Concept of caption vary based on the component type. The check is usually
+     * made against the {@link com.vaadin.flow.dom.Element} {@literal label}
+     * property, but for some component (e.g. Button) the text content may be
+     * used.
+     *
+     * @param caption
+     *            the text the component is expected to have as its caption
+     * @return this element query instance for chaining
+     */
+    public ComponentQuery<T> withCaption(String caption) {
+        locatorSpec.caption = caption;
+        locatorSpec.captionExactMatch = true;
+        return this;
+    }
+
+    /**
+     * Requires the component to have a caption containing the given text
+     *
+     * Concept of caption vary based on the component type. The check is usually
+     * made against the {@link com.vaadin.flow.dom.Element} {@literal label}
+     * property, but for some component (e.g. Button) the text content may be
+     * used.
+     *
+     * @param text
+     *            the text the component is expected to have as its caption
+     * @return this element query instance for chaining
+     */
+    public ComponentQuery<T> withCaptionContaining(String text) {
+        if (text == null) {
+            throw new IllegalArgumentException("text must not be null");
+        }
+        locatorSpec.caption = text;
+        locatorSpec.captionExactMatch = false;
         return this;
     }
 
@@ -404,6 +442,7 @@ public class ComponentQuery<T extends Component> {
 
         String id;
         String caption;
+        boolean captionExactMatch = false;
         String placeholder;
         String text;
         IntRange count = new IntRange(0, Integer.MAX_VALUE);
@@ -412,13 +451,15 @@ public class ComponentQuery<T extends Component> {
         final Set<String> withoutClasses = new HashSet<>();
         String themes;
         String withoutThemes;
-        final List<Predicate<T>> predicates = new ArrayList<>(0);
+        List<Predicate<T>> predicates = new ArrayList<>(0);
 
         public Unit populate(SearchSpec<T> spec) {
             if (id != null)
                 spec.setId(id);
-            if (caption != null)
+            if (caption != null && captionExactMatch)
                 spec.setCaption(caption);
+            else if (caption != null)
+                spec.captionContains(caption);
             if (placeholder != null)
                 spec.setPlaceholder(placeholder);
             if (text != null)
