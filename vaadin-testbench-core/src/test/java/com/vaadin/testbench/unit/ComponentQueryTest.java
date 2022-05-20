@@ -604,14 +604,14 @@ class ComponentQueryTest extends UIUnitTest {
                 new Div().getElement(), div2.getElement(), div3.getElement(),
                 div4.getElement());
 
-        List<Div> result = select(Div.class).withClassName("test-class")
+        List<Div> result = $(Div.class).withClassName("test-class")
                 .allComponents();
         Assertions.assertIterableEquals(List.of(div1, div2), result);
 
-        result = select(Div.class).withClassName("other-class").allComponents();
+        result = $(Div.class).withClassName("other-class").allComponents();
         Assertions.assertIterableEquals(List.of(div2, div3), result);
 
-        result = select(Div.class).withClassName("different-class")
+        result = $(Div.class).withClassName("different-class")
                 .allComponents();
         Assertions.assertIterableEquals(List.of(div4), result);
     }
@@ -631,11 +631,11 @@ class ComponentQueryTest extends UIUnitTest {
                 new Div().getElement(), div2.getElement(), div3.getElement(),
                 div4.getElement());
 
-        List<Div> result = select(Div.class)
+        List<Div> result = $(Div.class)
                 .withClassName("test-class", "other-class").allComponents();
         Assertions.assertIterableEquals(List.of(div2), result);
 
-        result = select(Div.class).withClassName("test-class")
+        result = $(Div.class).withClassName("test-class")
                 .withClassName("other-class").allComponents();
         Assertions.assertIterableEquals(List.of(div2), result);
     }
@@ -655,11 +655,11 @@ class ComponentQueryTest extends UIUnitTest {
                 new Div().getElement(), div2.getElement(), div3.getElement(),
                 div4.getElement());
 
-        List<Div> result = select(Div.class)
+        List<Div> result = $(Div.class)
                 .withClassName("test-class other-class").allComponents();
         Assertions.assertIterableEquals(List.of(div2), result);
         // order doesn't matter
-        result = select(Div.class)
+        result = $(Div.class)
                 .withClassName("other-class test-class").allComponents();
         Assertions.assertIterableEquals(List.of(div2), result);
     }
@@ -680,14 +680,14 @@ class ComponentQueryTest extends UIUnitTest {
                 new Div().getElement(), div2.getElement(), div3.getElement(),
                 div4.getElement());
 
-        List<Div> result = select(Div.class)
+        List<Div> result = $(Div.class)
                 .withClassName("test-class", "different-class").allComponents();
         Assertions.assertTrue(result.isEmpty());
     }
 
     @Test
     void withClass_nullClassNames_throws() {
-        ComponentQuery<Div> query = select(Div.class);
+        ComponentQuery<Div> query = $(Div.class);
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> query.withClassName(null));
         Assertions.assertThrows(IllegalArgumentException.class,
@@ -712,17 +712,17 @@ class ComponentQueryTest extends UIUnitTest {
                 divWithotClasses.getElement(), div2.getElement(),
                 div3.getElement(), div4.getElement());
 
-        List<Div> result = select(Div.class).withoutClassName("test-class")
+        List<Div> result = $(Div.class).withoutClassName("test-class")
                 .allComponents();
         Assertions.assertIterableEquals(List.of(divWithotClasses, div3, div4),
                 result);
 
-        result = select(Div.class).withoutClassName("other-class")
+        result = $(Div.class).withoutClassName("other-class")
                 .allComponents();
         Assertions.assertIterableEquals(List.of(div1, divWithotClasses, div4),
                 result);
 
-        result = select(Div.class).withoutClassName("different-class")
+        result = $(Div.class).withoutClassName("different-class")
                 .allComponents();
         Assertions.assertIterableEquals(
                 List.of(div1, divWithotClasses, div2, div3), result);
@@ -744,12 +744,12 @@ class ComponentQueryTest extends UIUnitTest {
                 divWithoutClasses.getElement(), div2.getElement(),
                 div3.getElement(), div4.getElement());
 
-        List<Div> result = select(Div.class)
+        List<Div> result = $(Div.class)
                 .withoutClassName("test-class", "other-class").allComponents();
         Assertions.assertIterableEquals(List.of(divWithoutClasses, div4),
                 result);
 
-        result = select(Div.class).withoutClassName("test-class")
+        result = $(Div.class).withoutClassName("test-class")
                 .withoutClassName("other-class").allComponents();
         Assertions.assertIterableEquals(List.of(divWithoutClasses, div4),
                 result);
@@ -771,11 +771,11 @@ class ComponentQueryTest extends UIUnitTest {
                 divWithoutClasses.getElement(), div2.getElement(),
                 div3.getElement(), div4.getElement());
 
-        List<Div> result = select(Div.class)
+        List<Div> result = $(Div.class)
                 .withoutClassName("test-class other-class").allComponents();
         Assertions.assertIterableEquals(List.of(divWithoutClasses, div4),
                 result);
-        result = select(Div.class)
+        result = $(Div.class)
                 .withoutClassName("other-class test-class").allComponents();
         Assertions.assertIterableEquals(List.of(divWithoutClasses, div4),
                 result);
@@ -796,14 +796,14 @@ class ComponentQueryTest extends UIUnitTest {
         UI.getCurrent().getElement().appendChild(div1.getElement(),
                 div2.getElement(), div3.getElement(), div4.getElement());
 
-        List<Div> result = select(Div.class).withoutClassName("test-class",
+        List<Div> result = $(Div.class).withoutClassName("test-class",
                 "other-class", "different-class").allComponents();
         Assertions.assertTrue(result.isEmpty());
     }
 
     @Test
     void withoutClass_nullClassNames_throws() {
-        ComponentQuery<Div> query = select(Div.class);
+        ComponentQuery<Div> query = $(Div.class);
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> query.withoutClassName(null));
         Assertions.assertThrows(IllegalArgumentException.class,
