@@ -14,6 +14,7 @@ package com.vaadin.testbench.unit.internal
 import java.util.function.Predicate
 import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.HasStyle
+import com.vaadin.flow.component.HasTheme
 import com.vaadin.flow.component.HasValue
 import com.vaadin.flow.component.UI
 import com.vaadin.flow.component.dialog.Dialog
@@ -47,7 +48,9 @@ class SearchSpec<T : Component>(
         var value: Any? = null,
         var classes: String? = null,
         var withoutClasses: String? = null,
-        var predicates: MutableList<Predicate<T>> = mutableListOf()
+        var predicates: MutableList<Predicate<T>> = mutableListOf(),
+        var themes: String? = null,
+        var withoutThemes: String? = null
 ) {
 
     override fun toString(): String {
@@ -58,6 +61,8 @@ class SearchSpec<T : Component>(
         if (text != null) list.add("text='$text'")
         if (!classes.isNullOrBlank()) list.add("classes='$classes'")
         if (!withoutClasses.isNullOrBlank()) list.add("withoutClasses='$withoutClasses'")
+        if (!themes.isNullOrBlank()) list.add("themes='$themes'")
+        if (!withoutThemes.isNullOrBlank()) list.add("withoutThemes='$withoutThemes'")
         if (value != null) list.add("value=$value")
         if (count != (0..Int.MAX_VALUE) && count != 1..1) list.add("count=$count")
         list.addAll(predicates.map { it.toString() })
@@ -77,6 +82,8 @@ class SearchSpec<T : Component>(
         if (placeholder != null) p.add { component -> component.placeholder == placeholder }
         if (!classes.isNullOrBlank()) p.add { component -> component.hasAllClasses(classes!!) }
         if (!withoutClasses.isNullOrBlank()) p.add { component -> component.doesntHaveAnyClasses(withoutClasses!!) }
+        if (!themes.isNullOrBlank()) p.add { component -> component.hasAllThemes(themes!!) }
+        if (!withoutThemes.isNullOrBlank()) p.add { component -> component.notContainsThemes(withoutThemes!!) }
         if (text != null) p.add { component -> component.element.text == text }
         if (value != null) p.add { component -> (component as? HasValue<*, *>)?.getValue() == value }
         p.addAll(predicates.map { predicate -> { component: Component -> clazz.isInstance(component) && predicate.test(component as T) } })
@@ -95,6 +102,14 @@ private fun Component.doesntHaveAnyClasses(classes: String): Boolean {
     if (classes.contains(' ')) return classes.split(' ').filterNotBlank().all { !hasAllClasses(it) }
     if (this !is HasStyle) return true
     return !classNames.contains(classes)
+}
+
+private fun Component.hasAllThemes(themes: String): Boolean {
+    return themes.split(' ').filterNotBlank().all { element.themeList.contains(it) }
+}
+
+private fun Component.notContainsThemes(themes: String): Boolean {
+    return themes.split(' ').filterNotBlank().all { !element.themeList.contains(it) }
 }
 
 /**
