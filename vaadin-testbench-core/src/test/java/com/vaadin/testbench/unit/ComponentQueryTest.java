@@ -641,6 +641,31 @@ class ComponentQueryTest extends UIUnitTest {
     }
 
     @Test
+    void withClass_multipleSpaceSeparatedClassNames_getsComponents() {
+        Div div1 = new Div();
+        div1.setClassName("test-class");
+        Div div2 = new Div();
+        div2.addClassName("test-class");
+        div2.addClassName("other-class");
+        Div div3 = new Div();
+        div3.addClassName("other-class");
+        Div div4 = new Div();
+        div4.setClassName("different-class");
+        UI.getCurrent().getElement().appendChild(div1.getElement(),
+                new Div().getElement(), div2.getElement(), div3.getElement(),
+                div4.getElement());
+
+        List<Div> result = select(Div.class)
+                .withClassName("test-class other-class").allComponents();
+        Assertions.assertIterableEquals(List.of(div2), result);
+        // order doesn't matter
+        result = select(Div.class)
+                .withClassName("other-class test-class").allComponents();
+        Assertions.assertIterableEquals(List.of(div2), result);
+    }
+
+
+    @Test
     void withClass_notAllClassApplied_doesNotFindComponents() {
         Div div1 = new Div();
         div1.setClassName("test-class");
@@ -728,6 +753,33 @@ class ComponentQueryTest extends UIUnitTest {
                 .withoutClassName("other-class").allComponents();
         Assertions.assertIterableEquals(List.of(divWithoutClasses, div4),
                 result);
+    }
+
+    @Test
+    void withoutClass_multipleSpaceSeparatedClassNames_getsComponents() {
+        Div div1 = new Div();
+        div1.setClassName("test-class");
+        Div div2 = new Div();
+        div2.addClassName("test-class");
+        div2.addClassName("other-class");
+        Div div3 = new Div();
+        div3.addClassName("other-class");
+        Div div4 = new Div();
+        div4.setClassName("different-class");
+        Div divWithoutClasses = new Div();
+        UI.getCurrent().getElement().appendChild(div1.getElement(),
+                divWithoutClasses.getElement(), div2.getElement(),
+                div3.getElement(), div4.getElement());
+
+        List<Div> result = select(Div.class)
+                .withoutClassName("test-class other-class").allComponents();
+        Assertions.assertIterableEquals(List.of(divWithoutClasses, div4),
+                result);
+        result = select(Div.class)
+                .withoutClassName("other-class test-class").allComponents();
+        Assertions.assertIterableEquals(List.of(divWithoutClasses, div4),
+                result);
+
     }
 
     @Test
