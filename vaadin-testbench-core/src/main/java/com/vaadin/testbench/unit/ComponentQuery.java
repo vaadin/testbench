@@ -24,6 +24,7 @@ import kotlin.Unit;
 import kotlin.ranges.IntRange;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.dom.Element;
 import com.vaadin.testbench.unit.internal.LocatorKt;
 import com.vaadin.testbench.unit.internal.SearchSpec;
 
@@ -236,6 +237,37 @@ public class ComponentQuery<T extends Component> {
         }
         locatorSpec.caption = text;
         locatorSpec.captionExactMatch = false;
+        return this;
+    }
+
+    /**
+     * Requires the text content of the component to be equal to the given text
+     *
+     * @param text
+     *            the text the component is expected to have as its content
+     * @return this element query instance for chaining
+     * @see Element#getText()
+     */
+    public ComponentQuery<T> withText(String text) {
+        locatorSpec.text = text;
+        locatorSpec.textExactMatch = true;
+        return this;
+    }
+
+    /**
+     * Requires the text content of the component to contain the given text
+     *
+     * @param text
+     *            the text the component is expected to have as its caption
+     * @return this element query instance for chaining
+     * @see Element#getText()
+     */
+    public ComponentQuery<T> withTextContaining(String text) {
+        if (text == null) {
+            throw new IllegalArgumentException("text must not be null");
+        }
+        locatorSpec.text = text;
+        locatorSpec.textExactMatch = false;
         return this;
     }
 
@@ -526,6 +558,7 @@ public class ComponentQuery<T extends Component> {
         boolean captionExactMatch = false;
         String placeholder;
         String text;
+        public boolean textExactMatch = true;
         IntRange count = new IntRange(0, Integer.MAX_VALUE);
         Object value;
         final Set<String> classes = new HashSet<>();
@@ -543,8 +576,10 @@ public class ComponentQuery<T extends Component> {
                 spec.captionContains(caption);
             if (placeholder != null)
                 spec.setPlaceholder(placeholder);
-            if (text != null)
+            if (text != null && textExactMatch)
                 spec.setText(text);
+            else if (text != null)
+                spec.getPredicates().add(ElementConditions.containsText(text));
             if (value != null)
                 spec.setValue(value);
             if (!classes.isEmpty())

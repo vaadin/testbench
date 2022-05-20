@@ -28,6 +28,7 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.testbench.unit.ComponentWrapTest.Span;
+import com.vaadin.testbench.unit.ElementConditionsTest.TextComponent;
 
 import static java.util.Arrays.asList;
 
@@ -552,6 +553,73 @@ class ComponentQueryTest extends UIUnitTest {
         ComponentQuery<TestComponent> query = $(TestComponent.class);
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> query.withCaptionContaining(null));
+    }
+
+    @Test
+    void withText_exactMatch_getsCorrectComponent() {
+        TextComponent span1 = new TextComponent("sample text");
+        TextComponent span2 = new TextComponent("other text");
+        TextComponent span3 = new TextComponent(null);
+
+        UI.getCurrent().getElement().appendChild(span1.getElement(),
+                span2.getElement(), span3.getElement());
+
+        Assertions.assertSame(span1,
+                $(TextComponent.class).withText("sample text").findComponent());
+        Assertions.assertSame(span2,
+                $(TextComponent.class).withText("other text").findComponent());
+
+        Assertions.assertTrue($(TextComponent.class).withText("text")
+                .allComponents().isEmpty());
+        Assertions.assertTrue($(TextComponent.class).withText("SAMPLE TEXT")
+                .allComponents().isEmpty());
+        Assertions.assertTrue($(TextComponent.class).withText("other TEXT")
+                .allComponents().isEmpty());
+    }
+
+    @Test
+    void withText_null_getsAllComponent() {
+        TextComponent span1 = new TextComponent("sample text");
+        TextComponent span2 = new TextComponent("other text");
+
+        UI.getCurrent().getElement().appendChild(span1.getElement(),
+                span2.getElement());
+
+        Assertions.assertIterableEquals(List.of(span1, span2),
+                $(TextComponent.class).withText(null).allComponents());
+    }
+
+    @Test
+    void withTextContaining_getsCorrectComponent() {
+        TextComponent span1 = new TextComponent(
+                "this is sample text for first span");
+        TextComponent span2 = new TextComponent(
+                "this is other text second span");
+        TextComponent span3 = new TextComponent(null);
+
+        UI.getCurrent().getElement().appendChild(span1.getElement(),
+                span2.getElement(), span3.getElement());
+
+        Assertions.assertIterableEquals(List.of(span1, span2),
+                $(TextComponent.class).withTextContaining("text")
+                        .allComponents());
+        Assertions.assertIterableEquals(List.of(span1, span2),
+                $(TextComponent.class).withTextContaining("span")
+                        .allComponents());
+        Assertions.assertIterableEquals(List.of(span1, span2),
+                $(TextComponent.class).withTextContaining("this")
+                        .allComponents());
+        Assertions.assertIterableEquals(List.of(span1, span2, span3),
+                $(TextComponent.class).withTextContaining("").allComponents());
+        Assertions.assertTrue($(TextComponent.class)
+                .withTextContaining("textual").allComponents().isEmpty());
+    }
+
+    @Test
+    void withTextContaining_null_throws() {
+        ComponentQuery<Span> query = $(Span.class);
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> query.withTextContaining(null));
     }
 
     @Test
