@@ -47,8 +47,8 @@ class BaseUIUnitTest {
 
     static {
         try (ScanResult scan = new ClassGraph().enableClassInfo()
-                .enableAnnotationInfo().acceptPackages("com.vaadin.flow.component")
-                .scan(2)) {
+                .enableAnnotationInfo()
+                .acceptPackages("com.vaadin.flow.component").scan(2)) {
             ClassInfoList wrapperList = scan
                     .getClassesWithAnnotation(Wraps.class.getName());
             Map<Class<?>, Class<? extends ComponentWrap>> wrapperMap = new HashMap<>();
@@ -199,7 +199,8 @@ class BaseUIUnitTest {
      *            component type
      * @return component in wrapper with test helpers
      */
-    public <T extends ComponentWrap<Y>, Y extends Component> T $(Y component) {
+    public <T extends ComponentWrap<Y>, Y extends Component> T wrap(
+            Y component) {
         return (T) initialize(getWrapper(component.getClass()), component);
     }
 
@@ -216,8 +217,8 @@ class BaseUIUnitTest {
      *            component type
      * @return initialized test wrapper for component
      */
-    public <T extends ComponentWrap<Y>, Y extends Component> T $(Class<T> wrap,
-            Y component) {
+    public <T extends ComponentWrap<Y>, Y extends Component> T wrap(
+            Class<T> wrap, Y component) {
         return (T) initialize(wrap, component);
     }
 
@@ -242,9 +243,8 @@ class BaseUIUnitTest {
      *            the type of the component(s) to search for
      * @return a query object for finding components
      */
-    public <T extends Component> ComponentQuery<T> select(
-            Class<T> componentType) {
-        return new ComponentQuery<>(componentType, this::$);
+    public <T extends Component> ComponentQuery<T> $(Class<T> componentType) {
+        return new ComponentQuery<>(componentType, this::wrap);
     }
 
     /**
@@ -256,12 +256,13 @@ class BaseUIUnitTest {
      *            the type of the component(s) to search for
      * @return a query object for finding components
      */
-    public <T extends Component> ComponentQuery<T> selectFromCurrentView(
+    public <T extends Component> ComponentQuery<T> $view(
             Class<T> componentType) {
         Component viewComponent = getCurrentView().getElement().getComponent()
                 .orElseThrow(() -> new AssertionError(
                         "Cannot get Component instance for current view"));
-        return new ComponentQuery<>(componentType, this::$).from(viewComponent);
+        return new ComponentQuery<>(componentType, this::wrap)
+                .from(viewComponent);
     }
 
     /**

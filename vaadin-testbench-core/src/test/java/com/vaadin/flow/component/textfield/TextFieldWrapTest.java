@@ -31,7 +31,7 @@ public class TextFieldWrapTest extends UIUnitTest {
         tf.setReadOnly(true);
         getCurrentView().getElement().appendChild(tf.getElement());
 
-        final TextFieldWrap tf_ = $(TextFieldWrap.class, tf);
+        final TextFieldWrap tf_ = wrap(TextFieldWrap.class, tf);
 
         Assertions.assertFalse(tf_.isUsable(),
                 "Read only TextField shouldn't be usable");
@@ -43,7 +43,7 @@ public class TextFieldWrapTest extends UIUnitTest {
         tf.setReadOnly(true);
         getCurrentView().getElement().appendChild(tf.getElement());
 
-        Assertions.assertFalse($(tf).isUsable(),
+        Assertions.assertFalse(wrap(tf).isUsable(),
                 "Read only TextField shouldn't be usable");
     }
 
@@ -59,7 +59,7 @@ public class TextFieldWrapTest extends UIUnitTest {
                     value.compareAndSet(null, event.getValue());
                 });
 
-        final TextFieldWrap tf_ = $(TextFieldWrap.class, tf);
+        final TextFieldWrap tf_ = wrap(TextFieldWrap.class, tf);
         final String newValue = "Test";
         tf_.setValue(newValue);
 
@@ -72,7 +72,7 @@ public class TextFieldWrapTest extends UIUnitTest {
         getCurrentView().getElement().appendChild(tf.getElement());
 
         tf.getElement().setEnabled(false);
-        final TextFieldWrap tf_ = $(TextFieldWrap.class, tf);
+        final TextFieldWrap tf_ = wrap(TextFieldWrap.class, tf);
 
         Assertions.assertThrows(IllegalStateException.class,
                 () -> tf_.setValue("fail"),

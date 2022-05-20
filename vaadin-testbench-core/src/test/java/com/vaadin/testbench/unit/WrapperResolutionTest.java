@@ -27,20 +27,20 @@ public class WrapperResolutionTest extends UIUnitTest {
     public void wrapTest_returnsTestWrap() {
         TestComponent tc = new TestComponent();
 
-        Assertions.assertTrue($(tc) instanceof TestWrap);
+        Assertions.assertTrue(wrap(tc) instanceof TestWrap);
     }
 
     @Test
     public void wrapComponentExtendingTest_returnsTestWrap() {
         MyTest mt = new MyTest();
 
-        Assertions.assertTrue($(mt) instanceof TestWrap);
+        Assertions.assertTrue(wrap(mt) instanceof TestWrap);
     }
 
     @Test
     public void wrapOtherComponent_returnsGenericComponentWrap() {
         SpecialComponent sc = new SpecialComponent();
-        Assertions.assertTrue($(sc).getClass().equals(ComponentWrap.class));
+        Assertions.assertTrue(wrap(sc).getClass().equals(ComponentWrap.class));
     }
 
     public static class MyTest extends TestComponent {

@@ -34,7 +34,7 @@ public class ComponentWrapTest extends UIUnitTest {
 
     @Test
     public void canGetWrapperForView_viewIsUsable() {
-        final ComponentWrap<WelcomeView> home_ = $(home);
+        final ComponentWrap<WelcomeView> home_ = wrap(home);
         Assertions.assertTrue(home_.isUsable(),
                 "Home should be visible and interactable");
     }
@@ -43,7 +43,7 @@ public class ComponentWrapTest extends UIUnitTest {
     public void componentIsDisabled_isUsableReturnsFalse() {
         home.getElement().setEnabled(false);
 
-        final ComponentWrap<WelcomeView> home_ = $(home);
+        final ComponentWrap<WelcomeView> home_ = wrap(home);
         Assertions.assertFalse(home_.isUsable(),
                 "Home should be visible but not interactable");
     }
@@ -52,18 +52,18 @@ public class ComponentWrapTest extends UIUnitTest {
     public void componentIsHidden_isUsableReturnsFalse() {
         home.setVisible(false);
 
-        final ComponentWrap<WelcomeView> home_ = $(home);
+        final ComponentWrap<WelcomeView> home_ = wrap(home);
         Assertions.assertFalse(home_.isUsable(),
                 "Home should not be interactable when component is not visible");
     }
 
     @Test
     public void componentModality_componentIsUsableReturnsCorrectly() {
-        final ComponentWrap<WelcomeView> home_ = $(home);
+        final ComponentWrap<WelcomeView> home_ = wrap(home);
 
         final Span span = new Span();
         home.add(span);
-        final ComponentWrap<Span> span_ = $(span);
+        final ComponentWrap<Span> span_ = wrap(span);
 
         Assertions.assertTrue(span_.isUsable(),
                 "Span should be attached to the ui");
@@ -83,11 +83,11 @@ public class ComponentWrapTest extends UIUnitTest {
 
     @Test
     public void componentModality_modalityDropsOnComponentRemoval() {
-        final ComponentWrap<WelcomeView> home_ = $(home);
+        final ComponentWrap<WelcomeView> home_ = wrap(home);
 
         final Span span = new Span();
         home.add(span);
-        final ComponentWrap<Span> span_ = $(span);
+        final ComponentWrap<Span> span_ = wrap(span);
 
         Assertions.assertTrue(span_.isUsable(),
                 "Span should be attached to the ui");
@@ -112,7 +112,7 @@ public class ComponentWrapTest extends UIUnitTest {
     public void parentNotVisible_childIsNotInteractable() {
         final Span span = new Span();
         home.add(span);
-        final ComponentWrap<Span> span_ = $(span);
+        final ComponentWrap<Span> span_ = wrap(span);
 
         Assertions.assertTrue(span_.isUsable(),
                 "Span should be attached to the ui");
@@ -127,7 +127,7 @@ public class ComponentWrapTest extends UIUnitTest {
     public void nonAttachedComponent_isNotInteractable() {
         Span span = new Span();
 
-        ComponentWrap<Span> span_ = $(span);
+        ComponentWrap<Span> span_ = wrap(span);
 
         Assertions.assertFalse(span_.isUsable(),
                 "Span is not attached so it is not usable.");

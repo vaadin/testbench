@@ -32,7 +32,7 @@ public class ButtonWrapTest extends UIUnitTest {
         button.setDisableOnClick(true);
         getCurrentView().getElement().appendChild(button.getElement());
 
-        final ButtonWrap button_ = $(ButtonWrap.class, button);
+        final ButtonWrap button_ = wrap(ButtonWrap.class, button);
 
         Assertions.assertTrue(button_.isUsable(),
                 "Button should be usable before click");
@@ -55,7 +55,7 @@ public class ButtonWrapTest extends UIUnitTest {
 
         getCurrentView().getElement().appendChild(button.getElement());
 
-        final ButtonWrap button_ = $(ButtonWrap.class, button);
+        final ButtonWrap button_ = wrap(ButtonWrap.class, button);
         button_.middleClick();
 
         Assertions.assertEquals(1, mouseButton.get(),
@@ -70,7 +70,7 @@ public class ButtonWrapTest extends UIUnitTest {
 
         getCurrentView().getElement().appendChild(button.getElement());
 
-        final ButtonWrap button_ = $(ButtonWrap.class, button);
+        final ButtonWrap button_ = wrap(ButtonWrap.class, button);
         button_.rightClick();
 
         Assertions.assertEquals(2, mouseButton.get(),
@@ -85,7 +85,7 @@ public class ButtonWrapTest extends UIUnitTest {
                 clickEvent -> event.compareAndSet(null, clickEvent));
         getCurrentView().getElement().appendChild(button.getElement());
 
-        final ButtonWrap button_ = $(ButtonWrap.class, button);
+        final ButtonWrap button_ = wrap(ButtonWrap.class, button);
         button_.click();
 
         Assertions.assertNotNull(event.get(),
@@ -107,7 +107,7 @@ public class ButtonWrapTest extends UIUnitTest {
         button.addClickListener(clickEvent -> event.set(clickEvent));
         getCurrentView().getElement().appendChild(button.getElement());
 
-        final ButtonWrap button_ = $(ButtonWrap.class, button);
+        final ButtonWrap button_ = wrap(ButtonWrap.class, button);
         button_.click(new MetaKeys(true, true, true, true));
 
         Assertions.assertNotNull(event.get(),
