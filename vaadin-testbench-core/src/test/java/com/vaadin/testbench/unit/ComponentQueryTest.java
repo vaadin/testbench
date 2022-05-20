@@ -25,6 +25,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.dom.Element;
+import com.vaadin.testbench.unit.ComponentWrapTest.Span;
 
 import static java.util.Arrays.asList;
 
@@ -521,6 +522,71 @@ class ComponentQueryTest extends UIUnitTest {
         List<TextField> result = $(Div.class).thenOn(3, TextField.class)
                 .allComponents();
         Assertions.assertIterableEquals(List.of(nested), result);
+    }
+
+    @Test
+    void withTheme_getsCorrectComponent() {
+        Span target = new Span();
+        target.getElement().getThemeList().add("my-theme");
+        UI.getCurrent().getElement().appendChild(new Span().getElement(),
+                target.getElement(), new Span().getElement());
+
+        Assertions.assertEquals(target,
+                $(Span.class).withTheme("my-theme").findComponent());
+    }
+
+    @Test
+    void withThemeMultipleThemes_getsCorrectComponent() {
+        Span target = new Span();
+        target.getElement().getThemeList().add("my-theme");
+        target.getElement().getThemeList().add("custom-theme");
+
+        final Span first = new Span();
+        first.getElement().getThemeList().add("my-theme");
+        final Span last = new Span();
+        last.getElement().getThemeList().add("my-theme");
+
+        UI.getCurrent().getElement().appendChild(first.getElement(),
+                target.getElement(), last.getElement());
+
+        Assertions.assertEquals(target, $(Span.class).withTheme("my-theme")
+                .withTheme("custom-theme").findComponent());
+    }
+
+    @Test
+    void withoutTheme_getsCorrectComponent() {
+        Span target = new Span();
+        target.getElement().getThemeList().add("my-theme");
+
+        final Span first = new Span();
+        first.getElement().getThemeList().add("custom-theme");
+        final Span last = new Span();
+        last.getElement().getThemeList().add("custom-theme");
+
+        UI.getCurrent().getElement().appendChild(first.getElement(),
+                target.getElement(), last.getElement());
+
+        Assertions.assertEquals(target,
+                $(Span.class).withoutTheme("custom-theme").findComponent());
+    }
+
+    @Test
+    void withoutThemeMultipleThemes_getsCorrectComponent() {
+        Span target = new Span();
+        target.getElement().getThemeList().add("selection-theme");
+
+        final Span first = new Span();
+        first.getElement().getThemeList().add("selection-theme");
+        first.getElement().getThemeList().add("my-theme");
+        final Span last = new Span();
+        last.getElement().getThemeList().add("selection-theme");
+        last.getElement().getThemeList().add("custom-theme");
+
+        UI.getCurrent().getElement().appendChild(first.getElement(),
+                target.getElement(), last.getElement());
+
+        Assertions.assertEquals(target, $(Span.class).withoutTheme("my-theme")
+                .withoutTheme("custom-theme").findComponent());
     }
 
 }

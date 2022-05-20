@@ -115,6 +115,39 @@ public class ComponentQuery<T extends Component> {
     }
 
     /**
+     * Add theme that should be set on the target component.
+     *
+     * @param theme
+     *            theme that should exist on the component.
+     * @return this element query instance for chaining
+     */
+    public ComponentQuery<T> withTheme(String theme) {
+        if (locatorSpec.themes == null || locatorSpec.themes.isEmpty()) {
+            locatorSpec.themes = theme;
+        } else {
+            locatorSpec.themes = locatorSpec.themes + " " + theme;
+        }
+        return this;
+    }
+
+    /**
+     * Add theme that should not be available on the target component.
+     *
+     * @param theme
+     *            theme that should not exist on the component.
+     * @return this element query instance for chaining
+     */
+    public ComponentQuery<T> withoutTheme(String theme) {
+        if (locatorSpec.withoutThemes == null
+                || locatorSpec.withoutThemes.isEmpty()) {
+            locatorSpec.withoutThemes = theme;
+        } else {
+            locatorSpec.withoutThemes = locatorSpec.withoutThemes + " " + theme;
+        }
+        return this;
+    }
+
+    /**
      * Gets a new {@link ComponentQuery} to search for given component type on
      * the context of first matching component for current query.
      *
@@ -299,6 +332,7 @@ public class ComponentQuery<T extends Component> {
     }
 
     protected T findComponent() {
+        locatorSpec.count = new IntRange(1, 1);
         if (context != null) {
             return LocatorKt._get(context, componentType,
                     locatorSpec::populate);
@@ -322,6 +356,8 @@ public class ComponentQuery<T extends Component> {
         public Object value;
         public String classes;
         public String withoutClasses;
+        public String themes;
+        public String withoutThemes;
         public List<Predicate<T>> predicates = new ArrayList<>(0);
 
         public Unit populate(SearchSpec<T> spec) {
@@ -339,6 +375,10 @@ public class ComponentQuery<T extends Component> {
                 spec.setClasses(classes);
             if (withoutClasses != null)
                 spec.setWithoutClasses(withoutClasses);
+            if (themes != null)
+                spec.setThemes(themes);
+            if (withoutThemes != null)
+                spec.setWithoutThemes(withoutThemes);
             spec.setCount(count);
             spec.getPredicates().addAll(predicates);
 
