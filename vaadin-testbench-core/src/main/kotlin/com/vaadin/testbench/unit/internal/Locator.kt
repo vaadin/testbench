@@ -105,13 +105,11 @@ private fun Component.doesntHaveAnyClasses(classes: String): Boolean {
 }
 
 private fun Component.hasAllThemes(themes: String): Boolean {
-    if (themes.contains(' ')) return themes.split(' ').filterNotBlank().all { hasAllThemes(it) }
-    return element.themeList.contains(themes)
+    return themes.split(' ').filterNotBlank().all { element.themeList.contains(it) }
 }
 
 private fun Component.notContainsThemes(themes: String): Boolean {
-    if (themes.contains(' ')) return themes.split(' ').filterNotBlank().all { notContainsThemes(it) }
-    return !element.themeList.contains(themes)
+    return themes.split(' ').filterNotBlank().all { !element.themeList.contains(it) }
 }
 
 /**
