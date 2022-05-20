@@ -7,12 +7,13 @@
  *
  * For the full License, see <https://vaadin.com/license/cvdl-4.0>.
  */
-package com.vaadin.testbench.unit;
+package com.vaadin.flow.component.notification;
 
-import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.dom.DomEvent;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.internal.nodefeature.ElementListenerMap;
+import com.vaadin.testbench.unit.ComponentWrap;
+import com.vaadin.testbench.unit.Wraps;
 
 import elemental.json.Json;
 
