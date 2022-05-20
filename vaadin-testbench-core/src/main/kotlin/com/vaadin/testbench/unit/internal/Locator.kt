@@ -37,6 +37,8 @@ import com.vaadin.flow.router.InternalServerError
  * @property classes if not null, the component must match all of these class names. Space-separated.
  * @property withoutClasses if not null, the component must NOT match any of these class names. Space-separated.
  * @property predicates the predicates the component needs to match, not null. May be empty - in such case it is ignored. By default empty.
+ * @property themes if not null, the component must have all theme names defined. Space-separated
+ * @property withoutThemes if not null, the component must NOT have any of the theme names defined. Space-separated
  */
 class SearchSpec<T : Component>(
         val clazz: Class<T>,
