@@ -563,7 +563,7 @@ class ComponentQueryTest extends UIUnitTest {
         UI.getCurrent().getElement().appendChild(div1.getElement(),
                 div2.getElement(), div3.getElement(), div4.getElement());
 
-        Assertions.assertTrue(select(TestComponent.class).withResultsSize(0)
+        Assertions.assertTrue($(TestComponent.class).withResultsSize(0)
                 .allComponents().isEmpty());
     }
 
@@ -576,7 +576,7 @@ class ComponentQueryTest extends UIUnitTest {
         UI.getCurrent().getElement().appendChild(div1.getElement(),
                 div2.getElement(), div3.getElement(), div4.getElement());
 
-        List<Div> result = select(Div.class).withResultsSize(4).allComponents();
+        List<Div> result = $(Div.class).withResultsSize(4).allComponents();
         Assertions.assertIterableEquals(List.of(div1, div2, div3, div4),
                 result);
     }
@@ -591,35 +591,35 @@ class ComponentQueryTest extends UIUnitTest {
                 div2.getElement(), div3.getElement(), div4.getElement());
 
         IntStream.rangeClosed(0, 10).filter(i -> i != 4).forEach(i -> {
-            ComponentQuery<Div> query = select(Div.class).withResultsSize(i);
+            ComponentQuery<Div> query = $(Div.class).withResultsSize(i);
             Assertions.assertThrows(AssertionError.class, query::allComponents);
         });
     }
 
     @Test
     void withResultsSize_negative_throws() {
-        ComponentQuery<Div> query = select(Div.class);
+        ComponentQuery<Div> query = $(Div.class);
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> query.withResultsSize(-1));
     }
 
     @Test
     void withResultsSize_afterWithMaxResults_overwritesRange() {
-        ComponentQuery<Div> query = select(Div.class);
+        ComponentQuery<Div> query = $(Div.class);
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> query.withResultsSize(-1));
     }
 
     @Test
     void withResultsSize_afterWithMinResults_overwritesRange() {
-        ComponentQuery<Div> query = select(Div.class);
+        ComponentQuery<Div> query = $(Div.class);
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> query.withResultsSize(-1));
     }
 
     @Test
     void withResultsSize_afterWithResults_overwritesRange() {
-        ComponentQuery<Div> query = select(Div.class);
+        ComponentQuery<Div> query = $(Div.class);
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> query.withResultsSize(-1));
     }
@@ -633,10 +633,10 @@ class ComponentQueryTest extends UIUnitTest {
         UI.getCurrent().getElement().appendChild(div1.getElement(),
                 div2.getElement(), div3.getElement(), div4.getElement());
 
-        List<Div> result = select(Div.class).withMaxResults(10).allComponents();
+        List<Div> result = $(Div.class).withMaxResults(10).allComponents();
         Assertions.assertIterableEquals(List.of(div1, div2, div3, div4),
                 result);
-        result = select(Div.class).withMaxResults(4).allComponents();
+        result = $(Div.class).withMaxResults(4).allComponents();
         Assertions.assertIterableEquals(List.of(div1, div2, div3, div4),
                 result);
     }
@@ -651,21 +651,21 @@ class ComponentQueryTest extends UIUnitTest {
                 div2.getElement(), div3.getElement(), div4.getElement());
 
         IntStream.rangeClosed(1, 3).forEach(count -> {
-            ComponentQuery<Div> query = select(Div.class).withMaxResults(count);
+            ComponentQuery<Div> query = $(Div.class).withMaxResults(count);
             Assertions.assertThrows(AssertionError.class, query::allComponents);
         });
     }
 
     @Test
     void withMaxResults_negative_throws() {
-        ComponentQuery<Div> query = select(Div.class);
+        ComponentQuery<Div> query = $(Div.class);
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> query.withMaxResults(-1));
     }
 
     @Test
     void withMaxResults_lowerThanMin_throws() {
-        ComponentQuery<Div> query = select(Div.class).withMinResults(4);
+        ComponentQuery<Div> query = $(Div.class).withMinResults(4);
         query.withMaxResults(4); // same as min is OK, must not throw
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> query.withMaxResults(2));
@@ -679,7 +679,7 @@ class ComponentQueryTest extends UIUnitTest {
         Div div4 = new Div();
         UI.getCurrent().getElement().appendChild(div1.getElement(),
                 div2.getElement(), div3.getElement(), div4.getElement());
-        List<Div> result = select(Div.class).withResultsSize(1)
+        List<Div> result = $(Div.class).withResultsSize(1)
                 .withMaxResults(4).allComponents();
         Assertions.assertIterableEquals(List.of(div1, div2, div3, div4),
                 result);
@@ -695,7 +695,7 @@ class ComponentQueryTest extends UIUnitTest {
                 div2.getElement(), div3.getElement(), div4.getElement());
 
         IntStream.rangeClosed(0, 4).forEach(count -> {
-            List<Div> result = select(Div.class).withMinResults(count)
+            List<Div> result = $(Div.class).withMinResults(count)
                     .allComponents();
             Assertions.assertIterableEquals(List.of(div1, div2, div3, div4),
                     result);
@@ -710,21 +710,21 @@ class ComponentQueryTest extends UIUnitTest {
                 div2.getElement());
 
         IntStream.rangeClosed(3, 10).forEach(count -> {
-            ComponentQuery<Div> query = select(Div.class).withMinResults(count);
+            ComponentQuery<Div> query = $(Div.class).withMinResults(count);
             Assertions.assertThrows(AssertionError.class, query::allComponents);
         });
     }
 
     @Test
     void withMinResults_negative_throws() {
-        ComponentQuery<Div> query = select(Div.class);
+        ComponentQuery<Div> query = $(Div.class);
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> query.withMinResults(-1));
     }
 
     @Test
     void withMinResults_greaterThanMax_throws() {
-        ComponentQuery<Div> query = select(Div.class).withMaxResults(2);
+        ComponentQuery<Div> query = $(Div.class).withMaxResults(2);
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> query.withMinResults(10));
     }
@@ -737,7 +737,7 @@ class ComponentQueryTest extends UIUnitTest {
         UI.getCurrent().getElement().appendChild(div1.getElement(),
                 div2.getElement(), div3.getElement());
 
-        List<Div> result = select(Div.class).withResultsSize(4)
+        List<Div> result = $(Div.class).withResultsSize(4)
                 .withMinResults(1).allComponents();
         Assertions.assertIterableEquals(List.of(div1, div2, div3), result);
     }
@@ -751,31 +751,31 @@ class ComponentQueryTest extends UIUnitTest {
         UI.getCurrent().getElement().appendChild(div1.getElement(),
                 div2.getElement(), div3.getElement(), div4.getElement());
 
-        ComponentQuery<Div> query = select(Div.class).withResultsSize(5, 10);
+        ComponentQuery<Div> query = $(Div.class).withResultsSize(5, 10);
         Assertions.assertThrows(AssertionError.class, query::allComponents);
 
-        query = select(Div.class).withResultsSize(1, 3);
+        query = $(Div.class).withResultsSize(1, 3);
         Assertions.assertThrows(AssertionError.class, query::allComponents);
 
     }
 
     @Test
     void withResultsSize_minNegative_throws() {
-        ComponentQuery<Div> query = select(Div.class);
+        ComponentQuery<Div> query = $(Div.class);
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> query.withResultsSize(-1, 10));
     }
 
     @Test
     void withResultsSize_maxNegative_throws() {
-        ComponentQuery<Div> query = select(Div.class);
+        ComponentQuery<Div> query = $(Div.class);
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> query.withResultsSize(2, -1));
     }
 
     @Test
     void withResultsSize_maxLowerThanMin_throws() {
-        ComponentQuery<Div> query = select(Div.class);
+        ComponentQuery<Div> query = $(Div.class);
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> query.withResultsSize(5, 2));
     }
@@ -788,7 +788,7 @@ class ComponentQueryTest extends UIUnitTest {
         Div div4 = new Div();
         UI.getCurrent().getElement().appendChild(div1.getElement(),
                 div2.getElement(), div3.getElement(), div4.getElement());
-        List<Div> result = select(Div.class).withResultsSize(5)
+        List<Div> result = $(Div.class).withResultsSize(5)
                 .withResultsSize(2, 5).allComponents();
         Assertions.assertIterableEquals(List.of(div1, div2, div3, div4),
                 result);
