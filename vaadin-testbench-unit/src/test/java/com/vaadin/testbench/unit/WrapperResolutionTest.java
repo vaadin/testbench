@@ -62,11 +62,32 @@ public class WrapperResolutionTest extends UIUnitTest {
                 detectComponentType(NonGenericTestWrap.class));
     }
 
+    @Test
+    public void wrapTest_requireExtendedWrapper_returnsExtendedTestWrap() {
+        TestComponent tc = new TestComponent();
+        Assertions.assertInstanceOf(ExtendedTestWrap.class,
+                wrap(ExtendedTestWrap.class, tc));
+    }
+
+    @Test
+    public void wrapTest_requireLessSpecificWrapper_returnsTestWrap() {
+        TestComponent tc = new TestComponent();
+        Assertions.assertInstanceOf(TestWrap.class,
+                wrap(ComponentWrap.class, tc));
+    }
+
     public static class MyTest extends TestComponent {
     }
 
     @Tag("div")
     public static class SpecialComponent extends Component {
+    }
+
+    public static class ExtendedTestWrap<T extends TestComponent>
+            extends TestWrap<TestComponent> {
+        public ExtendedTestWrap(TestComponent component) {
+            super(component);
+        }
     }
 
     static class MyWrap<Y, Z extends TestComponent> extends ComponentWrap<Z> {

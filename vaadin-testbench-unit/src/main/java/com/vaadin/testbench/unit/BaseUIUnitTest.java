@@ -287,7 +287,14 @@ class BaseUIUnitTest implements ComponentWrap.Discover {
      */
     public <T extends ComponentWrap<Y>, Y extends Component> T wrap(
             Class<T> wrap, Y component) {
-        return (T) initialize(wrap, component);
+        Class<? extends ComponentWrap> bestMatch = getWrapper(
+                component.getClass());
+        // Always use the best wrapper candidate, unless required wrapper type
+        // is completely unrelated to the one discovered
+        if (!wrap.isAssignableFrom(bestMatch)) {
+            bestMatch = wrap;
+        }
+        return (T) initialize(bestMatch, component);
     }
 
     private <Y extends Component> Class<? extends ComponentWrap> getWrapper(
