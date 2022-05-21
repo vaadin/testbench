@@ -188,4 +188,23 @@ public class ComponentWrap<T extends Component> {
             throw new RuntimeException(e);
         }
     }
+    /**
+     * Discovers and instantiates the best matching test wrapper for a specific
+     * component type.
+     */
+    public interface Discover {
+        /**
+         * Wrap component with wrapper best matching component type.
+         *
+         * @param component
+         *            component to get test wrapper for
+         * @param <T>
+         *            wrapper type
+         * @param <Y>
+         *            component type
+         * @return component in wrapper with test helpers
+         */
+        <T extends ComponentWrap<Y>, Y extends Component> T wrap(Class<T> wrap,
+                Y component);
+    }
 }

@@ -11,6 +11,7 @@ package com.vaadin.flow.component.textfield;
 
 import org.slf4j.LoggerFactory;
 
+import com.vaadin.flow.component.Component;
 import com.vaadin.testbench.unit.ComponentWrap;
 import com.vaadin.testbench.unit.Wraps;
 
@@ -87,4 +88,49 @@ public class TextFieldWrap<T extends GeneratedVaadinTextField<T, V>, V>
         // TextFields can be read only so the usable check needs extending
         return super.isUsable() && !getComponent().isReadOnly();
     }
+
+    /**
+     * Mixin interface to simplify creation of {@link TextFieldWrap} wrappers
+     * for component instances, avoiding explicit casts.
+     *
+     * Wrapper creation is based on {@link ComponentWrap.Discover}
+     * functionality, so this mixin requires to be applied on a class already
+     * implementing the {@link ComponentWrap.Discover#wrap(Class, Component)}
+     * method.
+     *
+     * Usually used with test classes extending
+     * {@link com.vaadin.testbench.unit.UIUnitTest}.
+     *
+     *
+     * <pre>
+     * {@code
+     * class ViewTest extends UIUnitTest implements TextFieldWrap.Mapper {
+     *
+     *     &#64;Test
+     *     void useCaseTest() {
+     *         ...
+     *         // given view.firstName is a TextField
+     *         TheView view = navigate(TheView.class);
+     *
+     *         // without mapper mixin
+     *         TextFieldWrap tf_ = wrap(TextFieldWrapper.class, view.firstName);
+     *         tf_.setValue("John");
+     *
+     *         // with mixin
+     *         wrap(view.firstName).setValue("John");
+     *         ...
+     *     }
+     * }
+     * }
+     * </pre>
+     */
+    public interface Mixin extends ComponentWrap.Discover {
+
+        @SuppressWarnings("unchecked")
+        default <T extends GeneratedVaadinTextField<T, V>, V> TextFieldWrap<T, V> wrap(
+                T textField) {
+            return wrap(TextFieldWrap.class, textField);
+        }
+    }
+
 }

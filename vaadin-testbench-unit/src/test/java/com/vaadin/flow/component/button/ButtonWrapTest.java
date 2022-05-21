@@ -19,7 +19,7 @@ import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.testbench.unit.MetaKeys;
 import com.vaadin.testbench.unit.UIUnitTest;
 
-public class ButtonWrapTest extends UIUnitTest {
+public class ButtonWrapTest extends UIUnitTest implements ButtonWrap.Mixin {
 
     @Override
     protected String scanPackage() {
@@ -32,7 +32,7 @@ public class ButtonWrapTest extends UIUnitTest {
         button.setDisableOnClick(true);
         getCurrentView().getElement().appendChild(button.getElement());
 
-        final ButtonWrap button_ = wrap(ButtonWrap.class, button);
+        final ButtonWrap button_ = wrap(button);
 
         Assertions.assertTrue(button_.isUsable(),
                 "Button should be usable before click");
@@ -55,8 +55,7 @@ public class ButtonWrapTest extends UIUnitTest {
 
         getCurrentView().getElement().appendChild(button.getElement());
 
-        final ButtonWrap button_ = wrap(ButtonWrap.class, button);
-        button_.middleClick();
+        wrap(button).middleClick();
 
         Assertions.assertEquals(1, mouseButton.get(),
                 "Click event should have sent with middle click");
@@ -70,8 +69,7 @@ public class ButtonWrapTest extends UIUnitTest {
 
         getCurrentView().getElement().appendChild(button.getElement());
 
-        final ButtonWrap button_ = wrap(ButtonWrap.class, button);
-        button_.rightClick();
+        wrap(button).rightClick();
 
         Assertions.assertEquals(2, mouseButton.get(),
                 "Click event should have sent with right click");
@@ -85,8 +83,7 @@ public class ButtonWrapTest extends UIUnitTest {
                 clickEvent -> event.compareAndSet(null, clickEvent));
         getCurrentView().getElement().appendChild(button.getElement());
 
-        final ButtonWrap button_ = wrap(ButtonWrap.class, button);
-        button_.click();
+        wrap(button).click();
 
         Assertions.assertNotNull(event.get(),
                 "event should have fired and recorded");
@@ -107,7 +104,7 @@ public class ButtonWrapTest extends UIUnitTest {
         button.addClickListener(clickEvent -> event.set(clickEvent));
         getCurrentView().getElement().appendChild(button.getElement());
 
-        final ButtonWrap button_ = wrap(ButtonWrap.class, button);
+        ButtonWrap<Button> button_ = wrap(button);
         button_.click(new MetaKeys(true, true, true, true));
 
         Assertions.assertNotNull(event.get(),

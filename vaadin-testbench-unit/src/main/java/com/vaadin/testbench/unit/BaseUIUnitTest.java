@@ -48,7 +48,7 @@ import com.vaadin.testbench.unit.mocks.MockedUI;
  *
  * For internal use only. May be renamed or removed in a future release.
  */
-class BaseUIUnitTest {
+class BaseUIUnitTest implements ComponentWrap.Discover {
 
     private static final ConcurrentHashMap<String, Routes> routesCache = new ConcurrentHashMap<>();
 

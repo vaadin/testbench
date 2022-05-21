@@ -16,10 +16,12 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasValue.ValueChangeListener;
 import com.vaadin.testbench.unit.UIUnitTest;
 
-public class TextFieldWrapTest extends UIUnitTest {
+public class TextFieldWrapTest extends UIUnitTest
+        implements TextFieldWrap.Mixin {
 
     @Override
     protected String scanPackage() {
@@ -32,9 +34,7 @@ public class TextFieldWrapTest extends UIUnitTest {
         tf.setReadOnly(true);
         getCurrentView().getElement().appendChild(tf.getElement());
 
-        final TextFieldWrap tf_ = wrap(TextFieldWrap.class, tf);
-
-        Assertions.assertFalse(tf_.isUsable(),
+        Assertions.assertFalse(wrap(tf).isUsable(),
                 "Read only TextField shouldn't be usable");
     }
 
@@ -44,7 +44,9 @@ public class TextFieldWrapTest extends UIUnitTest {
         tf.setReadOnly(true);
         getCurrentView().getElement().appendChild(tf.getElement());
 
-        Assertions.assertFalse(wrap(tf).isUsable(),
+        // Force cast to Component to bypass specific wrapper and test automatic
+        // wrapper discovery
+        Assertions.assertFalse(wrap((Component) tf).isUsable(),
                 "Read only TextField shouldn't be usable");
     }
 
@@ -60,9 +62,8 @@ public class TextFieldWrapTest extends UIUnitTest {
                     value.compareAndSet(null, event.getValue());
                 });
 
-        final TextFieldWrap tf_ = wrap(TextFieldWrap.class, tf);
         final String newValue = "Test";
-        tf_.setValue(newValue);
+        wrap(tf).setValue(newValue);
 
         Assertions.assertEquals(newValue, value.get());
     }
@@ -73,7 +74,7 @@ public class TextFieldWrapTest extends UIUnitTest {
         getCurrentView().getElement().appendChild(tf.getElement());
 
         tf.getElement().setEnabled(false);
-        final TextFieldWrap tf_ = wrap(TextFieldWrap.class, tf);
+        final TextFieldWrap tf_ = wrap(tf);
 
         Assertions.assertThrows(IllegalStateException.class,
                 () -> tf_.setValue("fail"),

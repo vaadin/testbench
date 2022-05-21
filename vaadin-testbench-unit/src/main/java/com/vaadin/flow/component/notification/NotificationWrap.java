@@ -9,6 +9,8 @@
  */
 package com.vaadin.flow.component.notification;
 
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.textfield.TextFieldWrap;
 import com.vaadin.flow.dom.DomEvent;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.internal.nodefeature.ElementListenerMap;
@@ -85,4 +87,48 @@ public class NotificationWrap<T extends Notification> extends ComponentWrap<T> {
         element.getNode().getFeature(ElementListenerMap.class).fireEvent(
                 new DomEvent(element, "open-changed", Json.createObject()));
     }
+
+    /**
+     * Mixin interface to simplify creation of {@link TextFieldWrap} wrappers
+     * for component instances, avoiding explicit casts.
+     *
+     * Wrapper creation is based on {@link ComponentWrap.Discover}
+     * functionality, so this mixin requires to be applied on a class already
+     * implementing the {@link ComponentWrap.Discover#wrap(Class, Component)}
+     * method.
+     *
+     * Usually used with test classes extending
+     * {@link com.vaadin.testbench.unit.UIUnitTest}.
+     *
+     *
+     * <pre>
+     * {@code
+     * class ViewTest extends UIUnitTest implements TextFieldWrap.Mapper {
+     *
+     *     &#64;Test
+     *     void useCaseTest() {
+     *         ...
+     *         TheView view = navigate(TheView.class);
+     *         Notification notification = getNotifications().get(0);
+     *
+     *         NotificationWrap notification_ = wrap(NotificationWrap.class, notification);
+     *         Assertions.assertEquals("Job completed", notification_.getText());
+     *
+     *         // with mixin
+     *         Assertions.assertEquals("Job completed", wrap(view.notification).getText());
+     *         ...
+     *     }
+     * }
+     * }
+     * </pre>
+     */
+    public interface Mixin extends ComponentWrap.Discover {
+
+        @SuppressWarnings("unchecked")
+        default <T extends Notification> NotificationWrap<T> wrap(
+                T notification) {
+            return wrap(NotificationWrap.class, notification);
+        }
+    }
+
 }

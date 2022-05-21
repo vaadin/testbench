@@ -10,6 +10,7 @@
 package com.vaadin.flow.component.button;
 
 import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentUtil;
 import com.vaadin.testbench.unit.ComponentWrap;
 import com.vaadin.testbench.unit.MetaKeys;
@@ -90,4 +91,48 @@ public class ButtonWrap<T extends Button> extends ComponentWrap<T> {
                         metaKeys.isCtrl(), metaKeys.isShift(), metaKeys.isAlt(),
                         metaKeys.isMeta()));
     }
+
+    /**
+     * Mixin interface to simplify creation of {@link ButtonWrap} wrappers for
+     * component instances, avoiding explicit casts.
+     *
+     * Wrapper creation is based on {@link ComponentWrap.Discover}
+     * functionality, so this mixin requires to be applied on a class already
+     * implementing the {@link ComponentWrap.Discover#wrap(Class, Component)}
+     * method.
+     *
+     * Usually used with test classes extending
+     * {@link com.vaadin.testbench.unit.UIUnitTest}.
+     *
+     *
+     * <pre>
+     * {@code
+     * class ViewTest extends UIUnitTest implements ButtonWrap.Mapper {
+     *
+     *     &#64;Test
+     *     void useCaseTest() {
+     *         ...
+     *         // given view.save is a Button
+     *         TheView view = navigate(TheView.class);
+     *
+     *         // without mapper mixin
+     *         ButtonWrap button_ = wrap(ButtonWrap.class, view.save);
+     *         button_.click();
+     *
+     *         // with mixin
+     *         wrap(view.save).click();
+     *         ...
+     *     }
+     * }
+     * }
+     * </pre>
+     */
+    public interface Mixin extends ComponentWrap.Discover {
+
+        @SuppressWarnings("unchecked")
+        default <T extends Button> ButtonWrap<T> wrap(T textField) {
+            return wrap(ButtonWrap.class, textField);
+        }
+    }
+
 }
