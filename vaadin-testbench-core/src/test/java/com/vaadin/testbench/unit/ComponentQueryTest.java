@@ -605,23 +605,47 @@ class ComponentQueryTest extends UIUnitTest {
 
     @Test
     void withResultsSize_afterWithMaxResults_overwritesRange() {
-        ComponentQuery<Div> query = $(Div.class);
-        Assertions.assertThrows(IllegalArgumentException.class,
-                () -> query.withResultsSize(-1));
+        Div div1 = new Div();
+        Div div2 = new Div();
+        Div div3 = new Div();
+        Div div4 = new Div();
+        UI.getCurrent().getElement().appendChild(div1.getElement(),
+                div2.getElement(), div3.getElement(), div4.getElement());
+
+        List<Div> result = $(Div.class).withMaxResults(2).withResultsSize(4)
+                .allComponents();
+        Assertions.assertIterableEquals(List.of(div1, div2, div3, div4),
+                result);
     }
 
     @Test
     void withResultsSize_afterWithMinResults_overwritesRange() {
-        ComponentQuery<Div> query = $(Div.class);
-        Assertions.assertThrows(IllegalArgumentException.class,
-                () -> query.withResultsSize(-1));
+        Div div1 = new Div();
+        Div div2 = new Div();
+        Div div3 = new Div();
+        Div div4 = new Div();
+        UI.getCurrent().getElement().appendChild(div1.getElement(),
+                div2.getElement(), div3.getElement(), div4.getElement());
+
+        List<Div> result = $(Div.class).withMinResults(10).withResultsSize(4)
+                .allComponents();
+        Assertions.assertIterableEquals(List.of(div1, div2, div3, div4),
+                result);
     }
 
     @Test
-    void withResultsSize_afterWithResults_overwritesRange() {
-        ComponentQuery<Div> query = $(Div.class);
-        Assertions.assertThrows(IllegalArgumentException.class,
-                () -> query.withResultsSize(-1));
+    void withResultsSize_afterWithResultSizeRange_overwritesRange() {
+        Div div1 = new Div();
+        Div div2 = new Div();
+        Div div3 = new Div();
+        Div div4 = new Div();
+        UI.getCurrent().getElement().appendChild(div1.getElement(),
+                div2.getElement(), div3.getElement(), div4.getElement());
+
+        List<Div> result = $(Div.class).withResultsSize(2, 3).withResultsSize(4)
+                .allComponents();
+        Assertions.assertIterableEquals(List.of(div1, div2, div3, div4),
+                result);
     }
 
     @Test
@@ -679,8 +703,8 @@ class ComponentQueryTest extends UIUnitTest {
         Div div4 = new Div();
         UI.getCurrent().getElement().appendChild(div1.getElement(),
                 div2.getElement(), div3.getElement(), div4.getElement());
-        List<Div> result = $(Div.class).withResultsSize(1)
-                .withMaxResults(4).allComponents();
+        List<Div> result = $(Div.class).withResultsSize(1).withMaxResults(4)
+                .allComponents();
         Assertions.assertIterableEquals(List.of(div1, div2, div3, div4),
                 result);
     }
@@ -737,8 +761,8 @@ class ComponentQueryTest extends UIUnitTest {
         UI.getCurrent().getElement().appendChild(div1.getElement(),
                 div2.getElement(), div3.getElement());
 
-        List<Div> result = $(Div.class).withResultsSize(4)
-                .withMinResults(1).allComponents();
+        List<Div> result = $(Div.class).withResultsSize(4).withMinResults(1)
+                .allComponents();
         Assertions.assertIterableEquals(List.of(div1, div2, div3), result);
     }
 
@@ -788,8 +812,8 @@ class ComponentQueryTest extends UIUnitTest {
         Div div4 = new Div();
         UI.getCurrent().getElement().appendChild(div1.getElement(),
                 div2.getElement(), div3.getElement(), div4.getElement());
-        List<Div> result = $(Div.class).withResultsSize(5)
-                .withResultsSize(2, 5).allComponents();
+        List<Div> result = $(Div.class).withResultsSize(5).withResultsSize(2, 5)
+                .allComponents();
         Assertions.assertIterableEquals(List.of(div1, div2, div3, div4),
                 result);
     }
