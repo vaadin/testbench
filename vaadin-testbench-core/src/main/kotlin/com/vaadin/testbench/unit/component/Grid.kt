@@ -644,7 +644,7 @@ public fun <T : Any> Grid<T>._doubleClickItem(rowIndex: Int, button: Int = 1, ct
                                         shiftKey: Boolean = false, altKey: Boolean = false, metaKey: Boolean = false) {
     checkEditableByUser()
     val itemKey: String = dataCommunicator.keyMapper.key(_get(rowIndex))
-    val event = ItemDoubleClickEvent<T>(this, true, itemKey, null, -1, -1, -1, -1, 1, button, ctrlKey, shiftKey, altKey, metaKey)
+    val event = ItemDoubleClickEvent<T>(this, true, itemKey, null, -1, -1, -1, -1, 2, button, ctrlKey, shiftKey, altKey, metaKey)
     _fireEvent(event)
 }
 

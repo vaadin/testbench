@@ -13,12 +13,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
 
-import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.checkbox.Checkbox;
-import com.vaadin.flow.component.gridpro.GridPro;
-import com.vaadin.flow.component.progressbar.ProgressBar;
-import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
-import com.vaadin.flow.component.treegrid.TreeGrid;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.function.ValueProvider;
 import com.vaadin.testbench.unit.ComponentWrap;
@@ -128,6 +122,67 @@ public class GridWrap<T extends Grid<Y>, Y> extends ComponentWrap<T> {
     public void clickRow(int row, MouseButton button, MetaKeys metaKeys) {
         ensureComponentIsUsable();
         GridKt._clickItem(getComponent(), row, button.getButton(),
+                metaKeys.isCtrl(), metaKeys.isShift(), metaKeys.isAlt(),
+                metaKeys.isMeta());
+    }
+
+    /**
+     * Double click on grid row.
+     * <p/>
+     * The index is 0 based.
+     *
+     * @param row
+     *            row to click
+     */
+    public void doubleClickRow(int row) {
+        doubleClickRow(row, MouseButton.LEFT);
+    }
+
+    /**
+     * Double click on grid row with given button.
+     * <p/>
+     * The index is 0 based.
+     *
+     * @param row
+     *            row to click
+     * @param button
+     *            MouseButton that was clicked
+     * @see {@link com.vaadin.flow.component.ClickEvent#getButton()}
+     */
+    public void doubleClickRow(int row, MouseButton button) {
+        doubleClickRow(row, button, new MetaKeys());
+    }
+
+    /**
+     * Double click on grid row with given meta keys pressed.
+     * <p/>
+     * The index is 0 based.
+     *
+     * @param row
+     *            row to click
+     * @param metaKeys
+     *            meta key statuses for click
+     */
+    public void doubleClickRow(int row, MetaKeys metaKeys) {
+        doubleClickRow(row, MouseButton.LEFT, metaKeys);
+    }
+
+    /**
+     * Double click on grid row with given button and meta keys pressed.
+     * <p/>
+     * The index is 0 based.
+     *
+     * @param row
+     *            row to click
+     * @param button
+     *            MouseButton that was clicked
+     * @param metaKeys
+     *            meta key statuses for click
+     * @see {@link com.vaadin.flow.component.ClickEvent#getButton()}
+     */
+    public void doubleClickRow(int row, MouseButton button, MetaKeys metaKeys) {
+        ensureComponentIsUsable();
+        GridKt._doubleClickItem(getComponent(), row, button.getButton(),
                 metaKeys.isCtrl(), metaKeys.isShift(), metaKeys.isAlt(),
                 metaKeys.isMeta());
     }

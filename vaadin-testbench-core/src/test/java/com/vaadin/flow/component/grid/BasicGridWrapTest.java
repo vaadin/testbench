@@ -9,6 +9,8 @@
  */
 package com.vaadin.flow.component.grid;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,7 +30,7 @@ public class BasicGridWrapTest extends UIUnitTest {
     @BeforeEach
     void init() {
         view = navigate(BasicGridView.class);
-        grid_ = wrap(view.basicGrid);
+        grid_ = wrap(GridWrap.class, view.basicGrid);
     }
 
     @Test
@@ -142,5 +144,20 @@ public class BasicGridWrapTest extends UIUnitTest {
         Assertions.assertThrows(IllegalStateException.class,
                 () -> grid_.getCellText(0, 0),
                 "Cell content shouldn't be available for hidden grid");
+    }
+
+    @Test
+    void basicGrid_doubleClick() {
+        AtomicInteger doubleClicks = new AtomicInteger(0);
+        view.basicGrid.addItemDoubleClickListener(event -> doubleClicks.incrementAndGet());
+
+        grid_.clickRow(0);
+
+        Assertions.assertEquals(0, doubleClicks.get(), "Click should not generate a double click event");
+
+        grid_.doubleClickRow(0);
+
+        Assertions.assertEquals(1, doubleClicks.get(), "Double click event should have fired");
+
     }
 }
