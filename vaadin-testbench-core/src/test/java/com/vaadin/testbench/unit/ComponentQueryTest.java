@@ -25,6 +25,8 @@ import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.textfield.GeneratedVaadinTextField;
+import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.testbench.unit.ComponentWrapTest.Span;
@@ -453,6 +455,59 @@ class ComponentQueryTest extends UIUnitTest {
         Assertions.assertTrue($(TextField.class)
                 .withPropertyValue(TextField::getLabel, "The label").all()
                 .isEmpty());
+    }
+
+    @Test
+    void withValue_matchingValue_findsComponent() {
+        Element rootElement = getCurrentView().getElement();
+        TextField targetField = new TextField();
+        String targetValue = "expected value";
+        targetField.setValue(targetValue);
+        rootElement.appendChild(targetField.getElement());
+        TextField otherField = new TextField();
+        otherField.setValue("Another value");
+        int targetNumericValue = 33;
+        IntegerField numericField = new IntegerField();
+        numericField.setValue(targetNumericValue);
+
+        rootElement.appendChild(otherField.getElement());
+        rootElement.appendChild(numericField.getElement());
+        rootElement.appendChild(new TextField().getElement());
+
+        Assertions.assertSame(targetField, $(Component.class)
+                .withValue(targetValue).first().getComponent());
+        Assertions.assertSame(numericField, $(Component.class)
+                .withValue(targetNumericValue).first().getComponent());
+
+    }
+
+    @Test
+    void withValue_expectedNull_findsAllComponent() {
+        Element rootElement = getCurrentView().getElement();
+        TextField targetField = new TextField();
+        rootElement.appendChild(targetField.getElement());
+        TextField otherField = new TextField();
+        otherField.setValue("A value");
+        rootElement.appendChild(otherField.getElement());
+
+        Assertions.assertIterableEquals(List.of(targetField, otherField),
+                $(GeneratedVaadinTextField.class).withValue(null)
+                        .allComponents());
+    }
+
+    @Test
+    void withValue_noMatchingValue_doesNotFindComponent() {
+        Element rootElement = getCurrentView().getElement();
+        TextField textField = new TextField();
+        rootElement.appendChild(textField.getElement());
+        TextField textField2 = new TextField();
+        textField2.setLabel("Another value");
+        rootElement.appendChild(textField2.getElement());
+
+        Assertions.assertTrue(
+                $(TextField.class).withValue("The value").all().isEmpty());
+
+        Assertions.assertTrue($(TextField.class).withValue(35).all().isEmpty());
     }
 
     @Test
