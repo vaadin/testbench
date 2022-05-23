@@ -1,7 +1,11 @@
 package com.vaadin.testbench.unit.internal
 
 import com.vaadin.flow.component.Component
-import com.vaadin.flow.data.renderer.*
+import com.vaadin.flow.data.renderer.BasicRenderer
+import com.vaadin.flow.data.renderer.ComponentRenderer
+import com.vaadin.flow.data.renderer.Renderer
+import com.vaadin.flow.data.renderer.TemplateRenderer
+import com.vaadin.flow.data.renderer.TextRenderer
 import com.vaadin.flow.function.ValueProvider
 import org.jsoup.Jsoup
 import java.lang.reflect.Field

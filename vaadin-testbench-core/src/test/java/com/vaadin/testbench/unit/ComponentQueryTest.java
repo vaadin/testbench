@@ -690,8 +690,7 @@ class ComponentQueryTest extends UIUnitTest {
         result = $(Div.class).withClassName("other-class").allComponents();
         Assertions.assertIterableEquals(List.of(div2, div3), result);
 
-        result = $(Div.class).withClassName("different-class")
-                .allComponents();
+        result = $(Div.class).withClassName("different-class").allComponents();
         Assertions.assertIterableEquals(List.of(div4), result);
     }
 
@@ -734,15 +733,14 @@ class ComponentQueryTest extends UIUnitTest {
                 new Div().getElement(), div2.getElement(), div3.getElement(),
                 div4.getElement());
 
-        List<Div> result = $(Div.class)
-                .withClassName("test-class other-class").allComponents();
+        List<Div> result = $(Div.class).withClassName("test-class other-class")
+                .allComponents();
         Assertions.assertIterableEquals(List.of(div2), result);
         // order doesn't matter
-        result = $(Div.class)
-                .withClassName("other-class test-class").allComponents();
+        result = $(Div.class).withClassName("other-class test-class")
+                .allComponents();
         Assertions.assertIterableEquals(List.of(div2), result);
     }
-
 
     @Test
     void withClass_notAllClassApplied_doesNotFindComponents() {
@@ -796,8 +794,7 @@ class ComponentQueryTest extends UIUnitTest {
         Assertions.assertIterableEquals(List.of(divWithotClasses, div3, div4),
                 result);
 
-        result = $(Div.class).withoutClassName("other-class")
-                .allComponents();
+        result = $(Div.class).withoutClassName("other-class").allComponents();
         Assertions.assertIterableEquals(List.of(div1, divWithotClasses, div4),
                 result);
 
@@ -854,8 +851,8 @@ class ComponentQueryTest extends UIUnitTest {
                 .withoutClassName("test-class other-class").allComponents();
         Assertions.assertIterableEquals(List.of(divWithoutClasses, div4),
                 result);
-        result = $(Div.class)
-                .withoutClassName("other-class test-class").allComponents();
+        result = $(Div.class).withoutClassName("other-class test-class")
+                .allComponents();
         Assertions.assertIterableEquals(List.of(divWithoutClasses, div4),
                 result);
 

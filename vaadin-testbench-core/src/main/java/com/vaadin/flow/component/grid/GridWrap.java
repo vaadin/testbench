@@ -13,6 +13,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
 
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.checkbox.Checkbox;
+import com.vaadin.flow.component.gridpro.GridPro;
+import com.vaadin.flow.component.progressbar.ProgressBar;
+import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
+import com.vaadin.flow.component.treegrid.TreeGrid;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.function.ValueProvider;
 import com.vaadin.testbench.unit.ComponentWrap;
@@ -22,7 +28,16 @@ import com.vaadin.testbench.unit.Wraps;
 import com.vaadin.testbench.unit.component.GridKt;
 import com.vaadin.testbench.unit.internal.PrettyPrintTreeKt;
 
-@Wraps(Grid.class)
+/**
+ *
+ * Test wrapper for Grid components.
+ *
+ * @param <T>
+ *            component type
+ * @param <Y>
+ *            item type
+ */
+//@Wraps(Grid.class) // TODO: Having Grid in the annotation fails dokka:javadoc
 public class GridWrap<T extends Grid<Y>, Y> extends ComponentWrap<T> {
     /**
      * Wrap grid for testing.

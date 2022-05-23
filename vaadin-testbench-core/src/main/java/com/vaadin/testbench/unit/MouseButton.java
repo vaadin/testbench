@@ -12,11 +12,16 @@ package com.vaadin.testbench.unit;
 /**
  * Enums for mouse button values in click events.
  * <p/>
- * Default button values are as follows: -1: No button 0: The primary button,
- * typically the left mouse button 1: The middle button, 2: The secondary
- * button, typically the right mouse button 3: The first additional button,
- * typically the back button 4: The second additional button, typically the
- * forward button 5+: More additional buttons without any typical meanings
+ * Default button values are as follows:
+ * <dl>
+ * <dt>-1: No button</dt>
+ * <dt>0: The primary button, typically the left mouse button</dt>
+ * <dt>1: The middle button,</dt>
+ * <dt>2: The secondary button, typically the right mouse button</dt>
+ * <dt>3: The first additional button, typically the back button</dt>
+ * <dt>4: The second additional button, typically the forward button</dt>
+ * <dt>5+: More additional buttons without any typical meanings</dt>
+ * </dl>
  */
 public enum MouseButton {
 
