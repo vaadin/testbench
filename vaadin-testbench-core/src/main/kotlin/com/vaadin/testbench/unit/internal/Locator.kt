@@ -72,6 +72,13 @@ class SearchSpec<T : Component>(
     }
 
     /**
+     * Makes sure that the component's [Component.caption] contains given [substring].
+     */
+    fun captionContains(substring: String) {
+        predicates.add(CaptionContainsPredicate(substring))
+    }
+
+    /**
      * Returns a predicate which matches components based on this spec. All rules are matched except the [count] rule. The
      * rules are matched against given component only (not against its children).
      */
@@ -91,6 +98,12 @@ class SearchSpec<T : Component>(
         p.addAll(predicates.map { predicate -> { component: Component -> clazz.isInstance(component) && predicate.test(component as T) } })
         return p.and()
     }
+}
+
+
+private data class CaptionContainsPredicate<T : Component>(val substring: String) : Predicate<T> {
+    override fun test(t: T): Boolean = t.caption.contains(substring)
+    override fun toString() = "captionContains('$substring')"
 }
 
 fun Iterable<String?>.filterNotBlank(): List<String> = filterNotNull().filter { it.isNotBlank() }
@@ -404,3 +417,4 @@ fun _expectInternalServerError(expectedErrorMessage: String = "") {
 val currentPath: String? get() {
     return UI.getCurrent()?.internals?.activeViewLocation?.pathWithQueryParameters
 }
+

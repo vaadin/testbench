@@ -10,12 +10,15 @@
 package com.vaadin.testbench.unit;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import kotlin.Unit;
 import kotlin.ranges.IntRange;
@@ -115,6 +118,56 @@ public class ComponentQuery<T extends Component> {
     }
 
     /**
+     * Requires the components to have all the given CSS class names
+     *
+     * @param className
+     *            required CSS class name, not {@literal null}
+     * @param other
+     *            additional required CSS class names
+     *
+     * @return this element query instance for chaining
+     */
+    public ComponentQuery<T> withClassName(String className, String... other) {
+        if (className == null) {
+            throw new IllegalArgumentException("className must not be null");
+        }
+        if (Stream.of(other).anyMatch(Objects::isNull)) {
+            throw new IllegalArgumentException("class names must not be null");
+        }
+        locatorSpec.classes.add(className);
+        if (other.length > 0) {
+            locatorSpec.classes.addAll(List.of(other));
+        }
+        return this;
+    }
+
+    /**
+     * Requires the components to have none of the given CSS class names
+     *
+     * @param className
+     *            CSS class name that component should not have, not
+     *            {@literal null}
+     * @param other
+     *            additional CSS class names that component should not have
+     *
+     * @return this element query instance for chaining
+     */
+    public ComponentQuery<T> withoutClassName(String className,
+            String... other) {
+        if (className == null) {
+            throw new IllegalArgumentException("className must not be null");
+        }
+        if (Stream.of(other).anyMatch(Objects::isNull)) {
+            throw new IllegalArgumentException("class names must not be null");
+        }
+        locatorSpec.withoutClasses.add(className);
+        if (other.length > 0) {
+            locatorSpec.withoutClasses.addAll(List.of(other));
+        }
+        return this;
+    }
+
+    /**
      * Add theme that should be set on the target component.
      *
      * @param theme
@@ -144,6 +197,45 @@ public class ComponentQuery<T extends Component> {
         } else {
             locatorSpec.withoutThemes = locatorSpec.withoutThemes + " " + theme;
         }
+        return this;
+    }
+
+    /**
+     * Requires the component to have a caption equal to the given text
+     *
+     * Concept of caption vary based on the component type. The check is usually
+     * made against the {@link com.vaadin.flow.dom.Element} {@literal label}
+     * property, but for some component (e.g. Button) the text content may be
+     * used.
+     *
+     * @param caption
+     *            the text the component is expected to have as its caption
+     * @return this element query instance for chaining
+     */
+    public ComponentQuery<T> withCaption(String caption) {
+        locatorSpec.caption = caption;
+        locatorSpec.captionExactMatch = true;
+        return this;
+    }
+
+    /**
+     * Requires the component to have a caption containing the given text
+     *
+     * Concept of caption vary based on the component type. The check is usually
+     * made against the {@link com.vaadin.flow.dom.Element} {@literal label}
+     * property, but for some component (e.g. Button) the text content may be
+     * used.
+     *
+     * @param text
+     *            the text the component is expected to have as its caption
+     * @return this element query instance for chaining
+     */
+    public ComponentQuery<T> withCaptionContaining(String text) {
+        if (text == null) {
+            throw new IllegalArgumentException("text must not be null");
+        }
+        locatorSpec.caption = text;
+        locatorSpec.captionExactMatch = false;
         return this;
     }
 
@@ -348,33 +440,36 @@ public class ComponentQuery<T extends Component> {
      */
     private static class LocatorSpec<T extends Component> {
 
-        public String id;
-        public String caption;
-        public String placeholder;
-        public String text;
-        public IntRange count = new IntRange(0, Integer.MAX_VALUE);
-        public Object value;
-        public String classes;
-        public String withoutClasses;
-        public String themes;
-        public String withoutThemes;
-        public List<Predicate<T>> predicates = new ArrayList<>(0);
+        String id;
+        String caption;
+        boolean captionExactMatch = false;
+        String placeholder;
+        String text;
+        IntRange count = new IntRange(0, Integer.MAX_VALUE);
+        Object value;
+        final Set<String> classes = new HashSet<>();
+        final Set<String> withoutClasses = new HashSet<>();
+        String themes;
+        String withoutThemes;
+        List<Predicate<T>> predicates = new ArrayList<>(0);
 
         public Unit populate(SearchSpec<T> spec) {
             if (id != null)
                 spec.setId(id);
-            if (caption != null)
+            if (caption != null && captionExactMatch)
                 spec.setCaption(caption);
+            else if (caption != null)
+                spec.captionContains(caption);
             if (placeholder != null)
                 spec.setPlaceholder(placeholder);
             if (text != null)
                 spec.setText(text);
             if (value != null)
                 spec.setValue(value);
-            if (classes != null)
-                spec.setClasses(classes);
-            if (withoutClasses != null)
-                spec.setWithoutClasses(withoutClasses);
+            if (!classes.isEmpty())
+                spec.setClasses(String.join(" ", classes));
+            if (!withoutClasses.isEmpty())
+                spec.setWithoutClasses(String.join(" ", withoutClasses));
             if (themes != null)
                 spec.setThemes(themes);
             if (withoutThemes != null)
