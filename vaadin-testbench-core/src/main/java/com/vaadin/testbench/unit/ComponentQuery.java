@@ -10,17 +10,21 @@
 package com.vaadin.testbench.unit;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import kotlin.Unit;
 import kotlin.ranges.IntRange;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.dom.Element;
 import com.vaadin.testbench.unit.internal.LocatorKt;
 import com.vaadin.testbench.unit.internal.SearchSpec;
 
@@ -134,6 +138,56 @@ public class ComponentQuery<T extends Component> {
     }
 
     /**
+     * Requires the components to have all the given CSS class names
+     *
+     * @param className
+     *            required CSS class name, not {@literal null}
+     * @param other
+     *            additional required CSS class names
+     *
+     * @return this element query instance for chaining
+     */
+    public ComponentQuery<T> withClassName(String className, String... other) {
+        if (className == null) {
+            throw new IllegalArgumentException("className must not be null");
+        }
+        if (Stream.of(other).anyMatch(Objects::isNull)) {
+            throw new IllegalArgumentException("class names must not be null");
+        }
+        locatorSpec.classes.add(className);
+        if (other.length > 0) {
+            locatorSpec.classes.addAll(List.of(other));
+        }
+        return this;
+    }
+
+    /**
+     * Requires the components to have none of the given CSS class names
+     *
+     * @param className
+     *            CSS class name that component should not have, not
+     *            {@literal null}
+     * @param other
+     *            additional CSS class names that component should not have
+     *
+     * @return this element query instance for chaining
+     */
+    public ComponentQuery<T> withoutClassName(String className,
+            String... other) {
+        if (className == null) {
+            throw new IllegalArgumentException("className must not be null");
+        }
+        if (Stream.of(other).anyMatch(Objects::isNull)) {
+            throw new IllegalArgumentException("class names must not be null");
+        }
+        locatorSpec.withoutClasses.add(className);
+        if (other.length > 0) {
+            locatorSpec.withoutClasses.addAll(List.of(other));
+        }
+        return this;
+    }
+
+    /**
      * Add theme that should be set on the target component.
      *
      * @param theme
@@ -164,6 +218,157 @@ public class ComponentQuery<T extends Component> {
             locatorSpec.withoutThemes = locatorSpec.withoutThemes + " " + theme;
         }
         return this;
+    }
+
+    /**
+     * Requires the component to have a caption equal to the given text
+     *
+     * Concept of caption vary based on the component type. The check is usually
+     * made against the {@link com.vaadin.flow.dom.Element} {@literal label}
+     * property, but for some component (e.g. Button) the text content may be
+     * used.
+     *
+     * @param caption
+     *            the text the component is expected to have as its caption
+     * @return this element query instance for chaining
+     */
+    public ComponentQuery<T> withCaption(String caption) {
+        locatorSpec.caption = caption;
+        locatorSpec.captionExactMatch = true;
+        return this;
+    }
+
+    /**
+     * Requires the component to have a caption containing the given text
+     *
+     * Concept of caption vary based on the component type. The check is usually
+     * made against the {@link com.vaadin.flow.dom.Element} {@literal label}
+     * property, but for some component (e.g. Button) the text content may be
+     * used.
+     *
+     * @param text
+     *            the text the component is expected to have as its caption
+     * @return this element query instance for chaining
+     */
+    public ComponentQuery<T> withCaptionContaining(String text) {
+        if (text == null) {
+            throw new IllegalArgumentException("text must not be null");
+        }
+        locatorSpec.caption = text;
+        locatorSpec.captionExactMatch = false;
+        return this;
+    }
+
+    /**
+     * Requires the text content of the component to be equal to the given text
+     *
+     * @param text
+     *            the text the component is expected to have as its content
+     * @return this element query instance for chaining
+     * @see Element#getText()
+     */
+    public ComponentQuery<T> withText(String text) {
+        locatorSpec.text = text;
+        locatorSpec.textExactMatch = true;
+        return this;
+    }
+
+    /**
+     * Requires the text content of the component to contain the given text
+     *
+     * @param text
+     *            the text the component is expected to have as its caption
+     * @return this element query instance for chaining
+     * @see Element#getText()
+     */
+    public ComponentQuery<T> withTextContaining(String text) {
+        if (text == null) {
+            throw new IllegalArgumentException("text must not be null");
+        }
+        locatorSpec.text = text;
+        locatorSpec.textExactMatch = false;
+        return this;
+    }
+
+    /**
+     * Requires the search to find exactly the given number of components
+     *
+     * @param count
+     *            the expected number of component retrieved by the search
+     *
+     * @return this element query instance for chaining
+     * @throws IllegalArgumentException
+     *             if {@code count} is negative
+     */
+    public ComponentQuery<T> withResultsSize(int count) {
+        if (count < 0) {
+            throw new IllegalArgumentException(
+                    "count must be greater or equal than zero, but was "
+                            + count);
+        }
+        locatorSpec.count = new IntRange(count, count);
+        return this;
+    }
+
+    /**
+     * Requires the search to find a number of components within given range
+     *
+     * @param min
+     *            minimum number of components that should be found (inclusive)
+     * @param max
+     *            maximum number of components that should be found (inclusive)
+     *
+     * @return this element query instance for chaining
+     * @throws IllegalArgumentException
+     *             if {@code min} or {@code max} are negative, or if {@code min}
+     *             is greater than {@code max}
+     */
+    public ComponentQuery<T> withResultsSize(int min, int max) {
+        if (min < 0) {
+            throw new IllegalArgumentException(
+                    "min must be greater or equal than zero, but was " + min);
+        }
+        if (max < 0) {
+            throw new IllegalArgumentException(
+                    "max must be greater or equal than zero, but was " + max);
+        }
+        if (min > max) {
+            throw new IllegalArgumentException(
+                    "max must be greater or equal than min, but was min=" + min
+                            + ", max=" + max + "");
+        }
+        locatorSpec.count = new IntRange(min, max);
+        return this;
+    }
+
+    /**
+     * Requires the search to find at least the given number of components
+     *
+     * @param min
+     *            minimum number of components that should be found (inclusive)
+     *
+     * @return this element query instance for chaining
+     * @throws IllegalArgumentException
+     *             if {@code min} or {@code max} are negative, or if {@code min}
+     *             is greater than {@code max}
+     */
+    public ComponentQuery<T> withMinResults(int min) {
+        return withResultsSize(min, locatorSpec.count.getEndInclusive());
+    }
+
+    /**
+     * Requires the search to find at most the given number of components
+     *
+     * @param max
+     *            maximum number of components that should be found (inclusive)
+     *
+     * @return this element query instance for chaining
+     * @throws IllegalArgumentException
+     *             if {@code min} or {@code max} are negative, or if {@code min}
+     *             is greater than {@code max}
+     */
+    public ComponentQuery<T> withMaxResults(int max) {
+        return withResultsSize(locatorSpec.count.getStart(), max);
     }
 
     /**
@@ -367,33 +572,39 @@ public class ComponentQuery<T extends Component> {
      */
     private static class LocatorSpec<T extends Component> {
 
-        public String id;
-        public String caption;
-        public String placeholder;
-        public String text;
-        public IntRange count = new IntRange(0, Integer.MAX_VALUE);
-        public Object value;
-        public String classes;
-        public String withoutClasses;
-        public String themes;
-        public String withoutThemes;
-        public List<Predicate<T>> predicates = new ArrayList<>(0);
+        String id;
+        String caption;
+        boolean captionExactMatch = false;
+        String placeholder;
+        String text;
+        public boolean textExactMatch = true;
+        IntRange count = new IntRange(0, Integer.MAX_VALUE);
+        Object value;
+        final Set<String> classes = new HashSet<>();
+        final Set<String> withoutClasses = new HashSet<>();
+        String themes;
+        String withoutThemes;
+        List<Predicate<T>> predicates = new ArrayList<>(0);
 
         public Unit populate(SearchSpec<T> spec) {
             if (id != null)
                 spec.setId(id);
-            if (caption != null)
+            if (caption != null && captionExactMatch)
                 spec.setCaption(caption);
+            else if (caption != null)
+                spec.captionContains(caption);
             if (placeholder != null)
                 spec.setPlaceholder(placeholder);
-            if (text != null)
+            if (text != null && textExactMatch)
                 spec.setText(text);
+            else if (text != null)
+                spec.getPredicates().add(ElementConditions.containsText(text));
             if (value != null)
                 spec.setValue(value);
-            if (classes != null)
-                spec.setClasses(classes);
-            if (withoutClasses != null)
-                spec.setWithoutClasses(withoutClasses);
+            if (!classes.isEmpty())
+                spec.setClasses(String.join(" ", classes));
+            if (!withoutClasses.isEmpty())
+                spec.setWithoutClasses(String.join(" ", withoutClasses));
             if (themes != null)
                 spec.setThemes(themes);
             if (withoutThemes != null)

@@ -19,6 +19,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.HasLabel;
+import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
@@ -28,6 +30,7 @@ import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.testbench.unit.ComponentWrapTest.Span;
+import com.vaadin.testbench.unit.ElementConditionsTest.TextComponent;
 
 import static java.util.Arrays.asList;
 
@@ -531,6 +534,402 @@ class ComponentQueryTest extends UIUnitTest {
     }
 
     @Test
+    void withCaption_exactMatch_getsCorrectComponent() {
+        ComponentWithLabel hasLabelCmp = new ComponentWithLabel();
+        hasLabelCmp.setLabel("has-label");
+
+        TestComponent propertyCmp = new TestComponent();
+        propertyCmp.getElement().setProperty("label", "property-label");
+
+        TestComponent noLabel = new TestComponent();
+
+        UI.getCurrent().getElement().appendChild(hasLabelCmp.getElement(),
+                propertyCmp.getElement(), noLabel.getElement());
+
+        Assertions.assertSame(hasLabelCmp, $(TestComponent.class)
+                .withCaption("has-label").findComponent());
+        Assertions.assertSame(propertyCmp, $(TestComponent.class)
+                .withCaption("property-label").findComponent());
+
+        Assertions.assertTrue($(TestComponent.class).withCaption("label")
+                .allComponents().isEmpty());
+    }
+
+    @Test
+    void withCaption_null_getsAllComponent() {
+        ComponentWithLabel hasLabelCmp = new ComponentWithLabel();
+        hasLabelCmp.setLabel("has-label");
+
+        TestComponent propertyCmp = new TestComponent();
+        propertyCmp.getElement().setProperty("label", "property-label");
+
+        TestComponent noLabel = new TestComponent();
+
+        UI.getCurrent().getElement().appendChild(hasLabelCmp.getElement(),
+                propertyCmp.getElement(), noLabel.getElement());
+
+        Assertions.assertIterableEquals(
+                List.of(hasLabelCmp, propertyCmp, noLabel),
+                $(TestComponent.class).withCaption(null).allComponents());
+    }
+
+    @Test
+    void withCaptionContaining_getsCorrectComponent() {
+        ComponentWithLabel hasLabelCmp = new ComponentWithLabel();
+        hasLabelCmp.setLabel("cmp-has-label");
+
+        TestComponent propertyCmp = new TestComponent();
+        propertyCmp.getElement().setProperty("label", "cmp-property-label");
+
+        TestComponent noLabel = new TestComponent();
+
+        UI.getCurrent().getElement().appendChild(hasLabelCmp.getElement(),
+                propertyCmp.getElement(), noLabel.getElement());
+
+        Assertions.assertIterableEquals(List.of(hasLabelCmp, propertyCmp),
+                $(TestComponent.class).withCaptionContaining("-lab")
+                        .allComponents());
+        Assertions.assertIterableEquals(List.of(hasLabelCmp, propertyCmp),
+                $(TestComponent.class).withCaptionContaining("-label")
+                        .allComponents());
+        Assertions.assertIterableEquals(List.of(hasLabelCmp, propertyCmp),
+                $(TestComponent.class).withCaptionContaining("cmp-")
+                        .allComponents());
+        Assertions.assertIterableEquals(
+                List.of(hasLabelCmp, propertyCmp, noLabel),
+                $(TestComponent.class).withCaptionContaining("")
+                        .allComponents());
+        Assertions.assertTrue($(TestComponent.class)
+                .withCaptionContaining("sometext").allComponents().isEmpty());
+    }
+
+    @Test
+    void withCaptionContaining_null_throws() {
+        ComponentQuery<TestComponent> query = $(TestComponent.class);
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> query.withCaptionContaining(null));
+    }
+
+    @Test
+    void withText_exactMatch_getsCorrectComponent() {
+        TextComponent span1 = new TextComponent("sample text");
+        TextComponent span2 = new TextComponent("other text");
+        TextComponent span3 = new TextComponent(null);
+
+        UI.getCurrent().getElement().appendChild(span1.getElement(),
+                span2.getElement(), span3.getElement());
+
+        Assertions.assertSame(span1,
+                $(TextComponent.class).withText("sample text").findComponent());
+        Assertions.assertSame(span2,
+                $(TextComponent.class).withText("other text").findComponent());
+
+        Assertions.assertTrue($(TextComponent.class).withText("text")
+                .allComponents().isEmpty());
+        Assertions.assertTrue($(TextComponent.class).withText("SAMPLE TEXT")
+                .allComponents().isEmpty());
+        Assertions.assertTrue($(TextComponent.class).withText("other TEXT")
+                .allComponents().isEmpty());
+    }
+
+    @Test
+    void withTextContaining_getsCorrectComponent() {
+        TextComponent span1 = new TextComponent(
+                "this is sample text for first span");
+        TextComponent span2 = new TextComponent(
+                "this is other text second span");
+        TextComponent span3 = new TextComponent(null);
+
+        UI.getCurrent().getElement().appendChild(span1.getElement(),
+                span2.getElement(), span3.getElement());
+
+        Assertions.assertIterableEquals(List.of(span1, span2),
+                $(TextComponent.class).withTextContaining("text")
+                        .allComponents());
+        Assertions.assertIterableEquals(List.of(span1, span2),
+                $(TextComponent.class).withTextContaining("span")
+                        .allComponents());
+        Assertions.assertIterableEquals(List.of(span1, span2),
+                $(TextComponent.class).withTextContaining("this")
+                        .allComponents());
+        Assertions.assertIterableEquals(List.of(span1, span2, span3),
+                $(TextComponent.class).withTextContaining("").allComponents());
+        Assertions.assertTrue($(TextComponent.class)
+                .withTextContaining("textual").allComponents().isEmpty());
+    }
+
+    @Test
+    void withTextContaining_null_throws() {
+        ComponentQuery<Span> query = $(Span.class);
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> query.withTextContaining(null));
+    }
+
+    @Test
+    void withResultsSize_zeroMatchingResultsSize_emptyResult() {
+        Div div1 = new Div();
+        Div div2 = new Div();
+        Div div3 = new Div();
+        Div div4 = new Div();
+        UI.getCurrent().getElement().appendChild(div1.getElement(),
+                div2.getElement(), div3.getElement(), div4.getElement());
+
+        Assertions.assertTrue($(TestComponent.class).withResultsSize(0)
+                .allComponents().isEmpty());
+    }
+
+    @Test
+    void withResultsSize_matchingResultsSize_getsComponents() {
+        Div div1 = new Div();
+        Div div2 = new Div();
+        Div div3 = new Div();
+        Div div4 = new Div();
+        UI.getCurrent().getElement().appendChild(div1.getElement(),
+                div2.getElement(), div3.getElement(), div4.getElement());
+
+        List<Div> result = $(Div.class).withResultsSize(4).allComponents();
+        Assertions.assertIterableEquals(List.of(div1, div2, div3, div4),
+                result);
+    }
+
+    @Test
+    void withResultsSize_notMatchingResultsSize_throws() {
+        Div div1 = new Div();
+        Div div2 = new Div();
+        Div div3 = new Div();
+        Div div4 = new Div();
+        UI.getCurrent().getElement().appendChild(div1.getElement(),
+                div2.getElement(), div3.getElement(), div4.getElement());
+
+        IntStream.rangeClosed(0, 10).filter(i -> i != 4).forEach(i -> {
+            ComponentQuery<Div> query = $(Div.class).withResultsSize(i);
+            Assertions.assertThrows(AssertionError.class, query::allComponents);
+        });
+    }
+
+    @Test
+    void withResultsSize_negative_throws() {
+        ComponentQuery<Div> query = $(Div.class);
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> query.withResultsSize(-1));
+    }
+
+    @Test
+    void withResultsSize_afterWithMaxResults_overwritesRange() {
+        Div div1 = new Div();
+        Div div2 = new Div();
+        Div div3 = new Div();
+        Div div4 = new Div();
+        UI.getCurrent().getElement().appendChild(div1.getElement(),
+                div2.getElement(), div3.getElement(), div4.getElement());
+
+        List<Div> result = $(Div.class).withMaxResults(2).withResultsSize(4)
+                .allComponents();
+        Assertions.assertIterableEquals(List.of(div1, div2, div3, div4),
+                result);
+    }
+
+    @Test
+    void withResultsSize_afterWithMinResults_overwritesRange() {
+        Div div1 = new Div();
+        Div div2 = new Div();
+        Div div3 = new Div();
+        Div div4 = new Div();
+        UI.getCurrent().getElement().appendChild(div1.getElement(),
+                div2.getElement(), div3.getElement(), div4.getElement());
+
+        List<Div> result = $(Div.class).withMinResults(10).withResultsSize(4)
+                .allComponents();
+        Assertions.assertIterableEquals(List.of(div1, div2, div3, div4),
+                result);
+    }
+
+    @Test
+    void withResultsSize_afterWithResultSizeRange_overwritesRange() {
+        Div div1 = new Div();
+        Div div2 = new Div();
+        Div div3 = new Div();
+        Div div4 = new Div();
+        UI.getCurrent().getElement().appendChild(div1.getElement(),
+                div2.getElement(), div3.getElement(), div4.getElement());
+
+        List<Div> result = $(Div.class).withResultsSize(2, 3).withResultsSize(4)
+                .allComponents();
+        Assertions.assertIterableEquals(List.of(div1, div2, div3, div4),
+                result);
+    }
+
+    @Test
+    void withMaxResults_resultsSizeWithinUpperBound_getsComponents() {
+        Div div1 = new Div();
+        Div div2 = new Div();
+        Div div3 = new Div();
+        Div div4 = new Div();
+        UI.getCurrent().getElement().appendChild(div1.getElement(),
+                div2.getElement(), div3.getElement(), div4.getElement());
+
+        List<Div> result = $(Div.class).withMaxResults(10).allComponents();
+        Assertions.assertIterableEquals(List.of(div1, div2, div3, div4),
+                result);
+        result = $(Div.class).withMaxResults(4).allComponents();
+        Assertions.assertIterableEquals(List.of(div1, div2, div3, div4),
+                result);
+    }
+
+    @Test
+    void withMaxResults_resultsSizeExceededUpperBound_throws() {
+        Div div1 = new Div();
+        Div div2 = new Div();
+        Div div3 = new Div();
+        Div div4 = new Div();
+        UI.getCurrent().getElement().appendChild(div1.getElement(),
+                div2.getElement(), div3.getElement(), div4.getElement());
+
+        IntStream.rangeClosed(1, 3).forEach(count -> {
+            ComponentQuery<Div> query = $(Div.class).withMaxResults(count);
+            Assertions.assertThrows(AssertionError.class, query::allComponents);
+        });
+    }
+
+    @Test
+    void withMaxResults_negative_throws() {
+        ComponentQuery<Div> query = $(Div.class);
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> query.withMaxResults(-1));
+    }
+
+    @Test
+    void withMaxResults_lowerThanMin_throws() {
+        ComponentQuery<Div> query = $(Div.class).withMinResults(4);
+        query.withMaxResults(4); // same as min is OK, must not throw
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> query.withMaxResults(2));
+    }
+
+    @Test
+    void withMaxResults_afterResultsSize_overwritesRange() {
+        Div div1 = new Div();
+        Div div2 = new Div();
+        Div div3 = new Div();
+        Div div4 = new Div();
+        UI.getCurrent().getElement().appendChild(div1.getElement(),
+                div2.getElement(), div3.getElement(), div4.getElement());
+        List<Div> result = $(Div.class).withResultsSize(1).withMaxResults(4)
+                .allComponents();
+        Assertions.assertIterableEquals(List.of(div1, div2, div3, div4),
+                result);
+    }
+
+    @Test
+    void withMinResults_resultsSizeWithinLowerBound_getsComponents() {
+        Div div1 = new Div();
+        Div div2 = new Div();
+        Div div3 = new Div();
+        Div div4 = new Div();
+        UI.getCurrent().getElement().appendChild(div1.getElement(),
+                div2.getElement(), div3.getElement(), div4.getElement());
+
+        IntStream.rangeClosed(0, 4).forEach(count -> {
+            List<Div> result = $(Div.class).withMinResults(count)
+                    .allComponents();
+            Assertions.assertIterableEquals(List.of(div1, div2, div3, div4),
+                    result);
+        });
+    }
+
+    @Test
+    void withMinResults_resultsSizeLessThanLowerBound_throws() {
+        Div div1 = new Div();
+        Div div2 = new Div();
+        UI.getCurrent().getElement().appendChild(div1.getElement(),
+                div2.getElement());
+
+        IntStream.rangeClosed(3, 10).forEach(count -> {
+            ComponentQuery<Div> query = $(Div.class).withMinResults(count);
+            Assertions.assertThrows(AssertionError.class, query::allComponents);
+        });
+    }
+
+    @Test
+    void withMinResults_negative_throws() {
+        ComponentQuery<Div> query = $(Div.class);
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> query.withMinResults(-1));
+    }
+
+    @Test
+    void withMinResults_greaterThanMax_throws() {
+        ComponentQuery<Div> query = $(Div.class).withMaxResults(2);
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> query.withMinResults(10));
+    }
+
+    @Test
+    void withMinResults_afterResultsSize_overwritesLowerRange() {
+        Div div1 = new Div();
+        Div div2 = new Div();
+        Div div3 = new Div();
+        UI.getCurrent().getElement().appendChild(div1.getElement(),
+                div2.getElement(), div3.getElement());
+
+        List<Div> result = $(Div.class).withResultsSize(4).withMinResults(1)
+                .allComponents();
+        Assertions.assertIterableEquals(List.of(div1, div2, div3), result);
+    }
+
+    @Test
+    void withResults_resultsSizeOutOfBounds_throws() {
+        Div div1 = new Div();
+        Div div2 = new Div();
+        Div div3 = new Div();
+        Div div4 = new Div();
+        UI.getCurrent().getElement().appendChild(div1.getElement(),
+                div2.getElement(), div3.getElement(), div4.getElement());
+
+        ComponentQuery<Div> query = $(Div.class).withResultsSize(5, 10);
+        Assertions.assertThrows(AssertionError.class, query::allComponents);
+
+        query = $(Div.class).withResultsSize(1, 3);
+        Assertions.assertThrows(AssertionError.class, query::allComponents);
+
+    }
+
+    @Test
+    void withResultsSize_minNegative_throws() {
+        ComponentQuery<Div> query = $(Div.class);
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> query.withResultsSize(-1, 10));
+    }
+
+    @Test
+    void withResultsSize_maxNegative_throws() {
+        ComponentQuery<Div> query = $(Div.class);
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> query.withResultsSize(2, -1));
+    }
+
+    @Test
+    void withResultsSize_maxLowerThanMin_throws() {
+        ComponentQuery<Div> query = $(Div.class);
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> query.withResultsSize(5, 2));
+    }
+
+    @Test
+    void withResultsSize_afterResultsSize_overwritesRange() {
+        Div div1 = new Div();
+        Div div2 = new Div();
+        Div div3 = new Div();
+        Div div4 = new Div();
+        UI.getCurrent().getElement().appendChild(div1.getElement(),
+                div2.getElement(), div3.getElement(), div4.getElement());
+        List<Div> result = $(Div.class).withResultsSize(5).withResultsSize(2, 5)
+                .allComponents();
+        Assertions.assertIterableEquals(List.of(div1, div2, div3, div4),
+                result);
+    }
+
+    @Test
     void thenOnFirst_chainedQuery_getsNestedComponents() {
         TextField deepNested = new TextField();
         Div nestedDiv = new Div(deepNested);
@@ -644,4 +1043,231 @@ class ComponentQueryTest extends UIUnitTest {
                 .withoutTheme("custom-theme").findComponent());
     }
 
+    @Test
+    void withClass_singleClassName_getsComponents() {
+        Div div1 = new Div();
+        div1.setClassName("test-class");
+        Div div2 = new Div();
+        div2.addClassName("test-class");
+        div2.addClassName("other-class");
+        Div div3 = new Div();
+        div3.addClassName("other-class");
+        Div div4 = new Div();
+        div4.setClassName("different-class");
+        UI.getCurrent().getElement().appendChild(div1.getElement(),
+                new Div().getElement(), div2.getElement(), div3.getElement(),
+                div4.getElement());
+
+        List<Div> result = $(Div.class).withClassName("test-class")
+                .allComponents();
+        Assertions.assertIterableEquals(List.of(div1, div2), result);
+
+        result = $(Div.class).withClassName("other-class").allComponents();
+        Assertions.assertIterableEquals(List.of(div2, div3), result);
+
+        result = $(Div.class).withClassName("different-class")
+                .allComponents();
+        Assertions.assertIterableEquals(List.of(div4), result);
+    }
+
+    @Test
+    void withClass_multipleClassNames_getsComponents() {
+        Div div1 = new Div();
+        div1.setClassName("test-class");
+        Div div2 = new Div();
+        div2.addClassName("test-class");
+        div2.addClassName("other-class");
+        Div div3 = new Div();
+        div3.addClassName("other-class");
+        Div div4 = new Div();
+        div4.setClassName("different-class");
+        UI.getCurrent().getElement().appendChild(div1.getElement(),
+                new Div().getElement(), div2.getElement(), div3.getElement(),
+                div4.getElement());
+
+        List<Div> result = $(Div.class)
+                .withClassName("test-class", "other-class").allComponents();
+        Assertions.assertIterableEquals(List.of(div2), result);
+
+        result = $(Div.class).withClassName("test-class")
+                .withClassName("other-class").allComponents();
+        Assertions.assertIterableEquals(List.of(div2), result);
+    }
+
+    @Test
+    void withClass_multipleSpaceSeparatedClassNames_getsComponents() {
+        Div div1 = new Div();
+        div1.setClassName("test-class");
+        Div div2 = new Div();
+        div2.addClassName("test-class");
+        div2.addClassName("other-class");
+        Div div3 = new Div();
+        div3.addClassName("other-class");
+        Div div4 = new Div();
+        div4.setClassName("different-class");
+        UI.getCurrent().getElement().appendChild(div1.getElement(),
+                new Div().getElement(), div2.getElement(), div3.getElement(),
+                div4.getElement());
+
+        List<Div> result = $(Div.class)
+                .withClassName("test-class other-class").allComponents();
+        Assertions.assertIterableEquals(List.of(div2), result);
+        // order doesn't matter
+        result = $(Div.class)
+                .withClassName("other-class test-class").allComponents();
+        Assertions.assertIterableEquals(List.of(div2), result);
+    }
+
+
+    @Test
+    void withClass_notAllClassApplied_doesNotFindComponents() {
+        Div div1 = new Div();
+        div1.setClassName("test-class");
+        Div div2 = new Div();
+        div2.addClassName("test-class");
+        div2.addClassName("other-class");
+        Div div3 = new Div();
+        div3.addClassName("other-class");
+        Div div4 = new Div();
+        div4.setClassName("different-class");
+        UI.getCurrent().getElement().appendChild(div1.getElement(),
+                new Div().getElement(), div2.getElement(), div3.getElement(),
+                div4.getElement());
+
+        List<Div> result = $(Div.class)
+                .withClassName("test-class", "different-class").allComponents();
+        Assertions.assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void withClass_nullClassNames_throws() {
+        ComponentQuery<Div> query = $(Div.class);
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> query.withClassName(null));
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> query.withClassName("c1", (String) null));
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> query.withClassName("c1", "c2", null, "c3"));
+    }
+
+    @Test
+    void withoutClass_singleClassName_getsComponents() {
+        Div div1 = new Div();
+        div1.setClassName("test-class");
+        Div div2 = new Div();
+        div2.addClassName("test-class");
+        div2.addClassName("other-class");
+        Div div3 = new Div();
+        div3.addClassName("other-class");
+        Div div4 = new Div();
+        div4.setClassName("different-class");
+        Div divWithotClasses = new Div();
+        UI.getCurrent().getElement().appendChild(div1.getElement(),
+                divWithotClasses.getElement(), div2.getElement(),
+                div3.getElement(), div4.getElement());
+
+        List<Div> result = $(Div.class).withoutClassName("test-class")
+                .allComponents();
+        Assertions.assertIterableEquals(List.of(divWithotClasses, div3, div4),
+                result);
+
+        result = $(Div.class).withoutClassName("other-class")
+                .allComponents();
+        Assertions.assertIterableEquals(List.of(div1, divWithotClasses, div4),
+                result);
+
+        result = $(Div.class).withoutClassName("different-class")
+                .allComponents();
+        Assertions.assertIterableEquals(
+                List.of(div1, divWithotClasses, div2, div3), result);
+    }
+
+    @Test
+    void withoutClass_multipleClassNames_getsComponents() {
+        Div div1 = new Div();
+        div1.setClassName("test-class");
+        Div div2 = new Div();
+        div2.addClassName("test-class");
+        div2.addClassName("other-class");
+        Div div3 = new Div();
+        div3.addClassName("other-class");
+        Div div4 = new Div();
+        div4.setClassName("different-class");
+        Div divWithoutClasses = new Div();
+        UI.getCurrent().getElement().appendChild(div1.getElement(),
+                divWithoutClasses.getElement(), div2.getElement(),
+                div3.getElement(), div4.getElement());
+
+        List<Div> result = $(Div.class)
+                .withoutClassName("test-class", "other-class").allComponents();
+        Assertions.assertIterableEquals(List.of(divWithoutClasses, div4),
+                result);
+
+        result = $(Div.class).withoutClassName("test-class")
+                .withoutClassName("other-class").allComponents();
+        Assertions.assertIterableEquals(List.of(divWithoutClasses, div4),
+                result);
+    }
+
+    @Test
+    void withoutClass_multipleSpaceSeparatedClassNames_getsComponents() {
+        Div div1 = new Div();
+        div1.setClassName("test-class");
+        Div div2 = new Div();
+        div2.addClassName("test-class");
+        div2.addClassName("other-class");
+        Div div3 = new Div();
+        div3.addClassName("other-class");
+        Div div4 = new Div();
+        div4.setClassName("different-class");
+        Div divWithoutClasses = new Div();
+        UI.getCurrent().getElement().appendChild(div1.getElement(),
+                divWithoutClasses.getElement(), div2.getElement(),
+                div3.getElement(), div4.getElement());
+
+        List<Div> result = $(Div.class)
+                .withoutClassName("test-class other-class").allComponents();
+        Assertions.assertIterableEquals(List.of(divWithoutClasses, div4),
+                result);
+        result = $(Div.class)
+                .withoutClassName("other-class test-class").allComponents();
+        Assertions.assertIterableEquals(List.of(divWithoutClasses, div4),
+                result);
+
+    }
+
+    @Test
+    void withoutClass_allClassApplied_doesNotFindComponents() {
+        Div div1 = new Div();
+        div1.setClassName("test-class");
+        Div div2 = new Div();
+        div2.addClassName("test-class");
+        div2.addClassName("other-class");
+        Div div3 = new Div();
+        div3.addClassName("other-class");
+        Div div4 = new Div();
+        div4.setClassName("different-class");
+        UI.getCurrent().getElement().appendChild(div1.getElement(),
+                div2.getElement(), div3.getElement(), div4.getElement());
+
+        List<Div> result = $(Div.class).withoutClassName("test-class",
+                "other-class", "different-class").allComponents();
+        Assertions.assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void withoutClass_nullClassNames_throws() {
+        ComponentQuery<Div> query = $(Div.class);
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> query.withoutClassName(null));
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> query.withoutClassName("c1", (String) null));
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> query.withoutClassName("c1", "c2", null, "c3"));
+    }
+
+    @Tag("span")
+    private static class ComponentWithLabel extends TestComponent
+            implements HasLabel {
+    }
 }
