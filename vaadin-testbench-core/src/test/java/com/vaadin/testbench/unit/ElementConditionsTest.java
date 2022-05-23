@@ -19,6 +19,8 @@ import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.dom.Element;
 
 import static com.vaadin.testbench.unit.ElementConditions.containsText;
+import static com.vaadin.testbench.unit.ElementConditions.hasAttribute;
+import static com.vaadin.testbench.unit.ElementConditions.hasNotAttribute;
 
 class ElementConditionsTest {
 
@@ -102,7 +104,121 @@ class ElementConditionsTest {
                 containsText("this IS the CONTENT", true).test(component));
         Assertions.assertTrue(
                 containsText("THIS is THE content", true).test(component));
+    }
 
+    @Test
+    void hasAttribute_checksAttributePresence() {
+        TestComponent component = new TestComponent();
+        component.getElement().setAttribute("string-attribute", "primary");
+        component.getElement().setAttribute("empty-attribute", "");
+        component.getElement().setAttribute("true-attribute", true);
+        component.getElement().setAttribute("false-attribute", false);
+
+        Assertions.assertTrue(hasAttribute("string-attribute").test(component));
+        Assertions.assertTrue(hasAttribute("empty-attribute").test(component));
+        Assertions.assertTrue(hasAttribute("true-attribute").test(component));
+
+        Assertions.assertFalse(hasAttribute("false-attribute").test(component));
+
+        Assertions
+                .assertFalse(hasAttribute("not-set-attribute").test(component));
+
+    }
+
+    @Test
+    void hasAttribute_expectedValue_checksAttributeHasExactlyExpectedValue() {
+        TestComponent component = new TestComponent();
+        component.getElement().setAttribute("string-attribute", "primary");
+        component.getElement().setAttribute("empty-attribute", "");
+        component.getElement().setAttribute("true-attribute", true);
+        component.getElement().setAttribute("false-attribute", false);
+
+        Assertions.assertTrue(
+                hasAttribute("string-attribute", "primary").test(component));
+        Assertions.assertFalse(
+                hasAttribute("string-attribute", "PRIMARY").test(component));
+        Assertions.assertFalse(
+                hasAttribute("string-attribute", "").test(component));
+
+        Assertions.assertTrue(
+                hasAttribute("empty-attribute", "").test(component));
+
+        Assertions
+                .assertTrue(hasAttribute("true-attribute", "").test(component));
+        Assertions.assertFalse(
+                hasAttribute("true-attribute", "true").test(component));
+        Assertions.assertFalse(
+                hasAttribute("false-attribute", "").test(component));
+
+        Assertions.assertFalse(
+                hasAttribute("not-set-attribute", "").test(component));
+        Assertions.assertFalse(
+                hasAttribute("not-set-attribute", "test").test(component));
+    }
+
+    @Test
+    void hasAttribute_nullExpectedValue_throws() {
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> hasAttribute("attr", null));
+    }
+
+    @Test
+    void hasNotAttribute_checksAttributeAbsence() {
+        TestComponent component = new TestComponent();
+        component.getElement().setAttribute("string-attribute", "primary");
+        component.getElement().setAttribute("empty-attribute", "");
+        component.getElement().setAttribute("true-attribute", true);
+        component.getElement().setAttribute("false-attribute", false);
+
+        Assertions.assertFalse(
+                hasNotAttribute("string-attribute").test(component));
+        Assertions.assertFalse(
+                hasNotAttribute("empty-attribute").test(component));
+        Assertions
+                .assertFalse(hasNotAttribute("true-attribute").test(component));
+
+        Assertions
+                .assertTrue(hasNotAttribute("false-attribute").test(component));
+        Assertions.assertTrue(
+                hasNotAttribute("not-set-attribute").test(component));
+
+    }
+
+    @Test
+    void hasNotAttribute_expectedValue_checksAttributeValueIsDifferentFromGiven() {
+        TestComponent component = new TestComponent();
+        component.getElement().setAttribute("string-attribute", "primary");
+        component.getElement().setAttribute("empty-attribute", "");
+        component.getElement().setAttribute("true-attribute", true);
+        component.getElement().setAttribute("false-attribute", false);
+
+        Assertions.assertFalse(
+                hasNotAttribute("string-attribute", "primary").test(component));
+        Assertions.assertTrue(
+                hasNotAttribute("string-attribute", "PRIMARY").test(component));
+        Assertions.assertTrue(
+                hasNotAttribute("string-attribute", "").test(component));
+
+        Assertions.assertFalse(
+                hasNotAttribute("empty-attribute", "").test(component));
+
+        Assertions.assertFalse(
+                hasNotAttribute("true-attribute", "").test(component));
+        Assertions.assertTrue(
+                hasNotAttribute("true-attribute", "true").test(component));
+        Assertions.assertTrue(
+                hasNotAttribute("false-attribute", "").test(component));
+
+        Assertions.assertTrue(
+                hasNotAttribute("not-set-attribute", "").test(component));
+        Assertions.assertTrue(
+                hasNotAttribute("not-set-attribute", "test").test(component));
+    }
+
+    @Test
+    void hasNotAttribute_nullExpectedValue_throws() {
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> hasNotAttribute("attr", null));
     }
 
     @Tag("span")

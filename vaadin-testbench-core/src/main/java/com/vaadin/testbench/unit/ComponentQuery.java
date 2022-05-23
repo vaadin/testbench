@@ -372,6 +372,68 @@ public class ComponentQuery<T extends Component> {
     }
 
     /**
+     * Requires the search to find components with the given attribute set,
+     * independently of its value.
+     *
+     * @param attribute
+     *            the name of the attribute, not {@literal null}
+     *
+     * @return this element query instance for chaining
+     */
+    public ComponentQuery<T> withAttribute(String attribute) {
+        locatorSpec.predicates.add(ElementConditions.hasAttribute(attribute));
+        return this;
+    }
+
+    /**
+     * Requires the search to find components having the given attribute with
+     * exactly the expected value.
+     *
+     * @param attribute
+     *            the name of the attribute, not {@literal null}
+     * @param value
+     *            value expected to be set on attribute, not {@literal null}
+     *
+     * @return this element query instance for chaining
+     */
+    public ComponentQuery<T> withAttribute(String attribute, String value) {
+        locatorSpec.predicates
+                .add(ElementConditions.hasAttribute(attribute, value));
+        return this;
+    }
+
+    /**
+     * Requires the search to find components without the given attribute.
+     *
+     * @param attribute
+     *            the name of the attribute, not {@literal null}
+     *
+     * @return this element query instance for chaining
+     */
+    public ComponentQuery<T> withoutAttribute(String attribute) {
+        locatorSpec.predicates
+                .add(ElementConditions.hasNotAttribute(attribute));
+        return this;
+    }
+
+    /**
+     * Requires the search to find components having the given attribute value
+     * different from the provided one, or to not have the attribute at all.
+     *
+     * @param attribute
+     *            the name of the attribute, not {@literal null}
+     * @param value
+     *            value expected not to be set on attribute, not {@literal null}
+     *
+     * @return this element query instance for chaining
+     */
+    public ComponentQuery<T> withoutAttribute(String attribute, String value) {
+        locatorSpec.predicates
+                .add(ElementConditions.hasNotAttribute(attribute, value));
+        return this;
+    }
+
+    /**
      * Gets a new {@link ComponentQuery} to search for given component type on
      * the context of first matching component for current query.
      *
