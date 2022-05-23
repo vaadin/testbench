@@ -19,6 +19,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.HasLabel;
+import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
@@ -476,6 +478,83 @@ class ComponentQueryTest extends UIUnitTest {
     }
 
     @Test
+    void withCaption_exactMatch_getsCorrectComponent() {
+        ComponentWithLabel hasLabelCmp = new ComponentWithLabel();
+        hasLabelCmp.setLabel("has-label");
+
+        TestComponent propertyCmp = new TestComponent();
+        propertyCmp.getElement().setProperty("label", "property-label");
+
+        TestComponent noLabel = new TestComponent();
+
+        UI.getCurrent().getElement().appendChild(hasLabelCmp.getElement(),
+                propertyCmp.getElement(), noLabel.getElement());
+
+        Assertions.assertSame(hasLabelCmp, $(TestComponent.class)
+                .withCaption("has-label").findComponent());
+        Assertions.assertSame(propertyCmp, $(TestComponent.class)
+                .withCaption("property-label").findComponent());
+
+        Assertions.assertTrue($(TestComponent.class).withCaption("label")
+                .allComponents().isEmpty());
+    }
+
+    @Test
+    void withCaption_null_getsAllComponent() {
+        ComponentWithLabel hasLabelCmp = new ComponentWithLabel();
+        hasLabelCmp.setLabel("has-label");
+
+        TestComponent propertyCmp = new TestComponent();
+        propertyCmp.getElement().setProperty("label", "property-label");
+
+        TestComponent noLabel = new TestComponent();
+
+        UI.getCurrent().getElement().appendChild(hasLabelCmp.getElement(),
+                propertyCmp.getElement(), noLabel.getElement());
+
+        Assertions.assertIterableEquals(
+                List.of(hasLabelCmp, propertyCmp, noLabel),
+                $(TestComponent.class).withCaption(null).allComponents());
+    }
+
+    @Test
+    void withCaptionContaining_getsCorrectComponent() {
+        ComponentWithLabel hasLabelCmp = new ComponentWithLabel();
+        hasLabelCmp.setLabel("cmp-has-label");
+
+        TestComponent propertyCmp = new TestComponent();
+        propertyCmp.getElement().setProperty("label", "cmp-property-label");
+
+        TestComponent noLabel = new TestComponent();
+
+        UI.getCurrent().getElement().appendChild(hasLabelCmp.getElement(),
+                propertyCmp.getElement(), noLabel.getElement());
+
+        Assertions.assertIterableEquals(List.of(hasLabelCmp, propertyCmp),
+                $(TestComponent.class).withCaptionContaining("-lab")
+                        .allComponents());
+        Assertions.assertIterableEquals(List.of(hasLabelCmp, propertyCmp),
+                $(TestComponent.class).withCaptionContaining("-label")
+                        .allComponents());
+        Assertions.assertIterableEquals(List.of(hasLabelCmp, propertyCmp),
+                $(TestComponent.class).withCaptionContaining("cmp-")
+                        .allComponents());
+        Assertions.assertIterableEquals(
+                List.of(hasLabelCmp, propertyCmp, noLabel),
+                $(TestComponent.class).withCaptionContaining("")
+                        .allComponents());
+        Assertions.assertTrue($(TestComponent.class)
+                .withCaptionContaining("sometext").allComponents().isEmpty());
+    }
+
+    @Test
+    void withCaptionContaining_null_throws() {
+        ComponentQuery<TestComponent> query = $(TestComponent.class);
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> query.withCaptionContaining(null));
+    }
+
+    @Test
     void thenOnFirst_chainedQuery_getsNestedComponents() {
         TextField deepNested = new TextField();
         Div nestedDiv = new Div(deepNested);
@@ -812,4 +891,8 @@ class ComponentQueryTest extends UIUnitTest {
                 () -> query.withoutClassName("c1", "c2", null, "c3"));
     }
 
+    @Tag("span")
+    private static class ComponentWithLabel extends TestComponent
+            implements HasLabel {
+    }
 }
