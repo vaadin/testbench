@@ -88,6 +88,25 @@ public class ComponentQuery<T extends Component> {
     }
 
     /**
+     * Requires the component to be an implementation of
+     * {@link com.vaadin.flow.component.HasValue} interface and to have exactly
+     * the given value.
+     *
+     * Providing a {@literal null} value as {@code expectedValue} has no effects
+     * since the filter will not be applied.
+     *
+     * @param expectedValue
+     *            value to be compared with the one obtained by
+     *            {@link com.vaadin.flow.component.HasValue#getValue()}
+     * @return this element query instance for chaining
+     * @see com.vaadin.flow.component.HasValue#getValue()
+     */
+    public <V> ComponentQuery<T> withValue(V expectedValue) {
+        locatorSpec.value = expectedValue;
+        return this;
+    }
+
+    /**
      * Requires the component to have the given id
      *
      * @param id
