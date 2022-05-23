@@ -25,9 +25,12 @@ import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.textfield.GeneratedVaadinTextField;
+import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.testbench.unit.ComponentWrapTest.Span;
+import com.vaadin.testbench.unit.ElementConditionsTest.TextComponent;
 
 import static java.util.Arrays.asList;
 
@@ -455,6 +458,59 @@ class ComponentQueryTest extends UIUnitTest {
     }
 
     @Test
+    void withValue_matchingValue_findsComponent() {
+        Element rootElement = getCurrentView().getElement();
+        TextField targetField = new TextField();
+        String targetValue = "expected value";
+        targetField.setValue(targetValue);
+        rootElement.appendChild(targetField.getElement());
+        TextField otherField = new TextField();
+        otherField.setValue("Another value");
+        int targetNumericValue = 33;
+        IntegerField numericField = new IntegerField();
+        numericField.setValue(targetNumericValue);
+
+        rootElement.appendChild(otherField.getElement());
+        rootElement.appendChild(numericField.getElement());
+        rootElement.appendChild(new TextField().getElement());
+
+        Assertions.assertSame(targetField, $(Component.class)
+                .withValue(targetValue).first().getComponent());
+        Assertions.assertSame(numericField, $(Component.class)
+                .withValue(targetNumericValue).first().getComponent());
+
+    }
+
+    @Test
+    void withValue_expectedNull_findsAllComponent() {
+        Element rootElement = getCurrentView().getElement();
+        TextField targetField = new TextField();
+        rootElement.appendChild(targetField.getElement());
+        TextField otherField = new TextField();
+        otherField.setValue("A value");
+        rootElement.appendChild(otherField.getElement());
+
+        Assertions.assertIterableEquals(List.of(targetField, otherField),
+                $(GeneratedVaadinTextField.class).withValue(null)
+                        .allComponents());
+    }
+
+    @Test
+    void withValue_noMatchingValue_doesNotFindComponent() {
+        Element rootElement = getCurrentView().getElement();
+        TextField textField = new TextField();
+        rootElement.appendChild(textField.getElement());
+        TextField textField2 = new TextField();
+        textField2.setLabel("Another value");
+        rootElement.appendChild(textField2.getElement());
+
+        Assertions.assertTrue(
+                $(TextField.class).withValue("The value").all().isEmpty());
+
+        Assertions.assertTrue($(TextField.class).withValue(35).all().isEmpty());
+    }
+
+    @Test
     void withCondition_predicateMatched_getsComponents() {
         Div div1 = new Div();
         div1.getElement().setProperty("numeric-prop", 4.5);
@@ -552,6 +608,325 @@ class ComponentQueryTest extends UIUnitTest {
         ComponentQuery<TestComponent> query = $(TestComponent.class);
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> query.withCaptionContaining(null));
+    }
+
+    @Test
+    void withText_exactMatch_getsCorrectComponent() {
+        TextComponent span1 = new TextComponent("sample text");
+        TextComponent span2 = new TextComponent("other text");
+        TextComponent span3 = new TextComponent(null);
+
+        UI.getCurrent().getElement().appendChild(span1.getElement(),
+                span2.getElement(), span3.getElement());
+
+        Assertions.assertSame(span1,
+                $(TextComponent.class).withText("sample text").findComponent());
+        Assertions.assertSame(span2,
+                $(TextComponent.class).withText("other text").findComponent());
+
+        Assertions.assertTrue($(TextComponent.class).withText("text")
+                .allComponents().isEmpty());
+        Assertions.assertTrue($(TextComponent.class).withText("SAMPLE TEXT")
+                .allComponents().isEmpty());
+        Assertions.assertTrue($(TextComponent.class).withText("other TEXT")
+                .allComponents().isEmpty());
+    }
+
+    @Test
+    void withTextContaining_getsCorrectComponent() {
+        TextComponent span1 = new TextComponent(
+                "this is sample text for first span");
+        TextComponent span2 = new TextComponent(
+                "this is other text second span");
+        TextComponent span3 = new TextComponent(null);
+
+        UI.getCurrent().getElement().appendChild(span1.getElement(),
+                span2.getElement(), span3.getElement());
+
+        Assertions.assertIterableEquals(List.of(span1, span2),
+                $(TextComponent.class).withTextContaining("text")
+                        .allComponents());
+        Assertions.assertIterableEquals(List.of(span1, span2),
+                $(TextComponent.class).withTextContaining("span")
+                        .allComponents());
+        Assertions.assertIterableEquals(List.of(span1, span2),
+                $(TextComponent.class).withTextContaining("this")
+                        .allComponents());
+        Assertions.assertIterableEquals(List.of(span1, span2, span3),
+                $(TextComponent.class).withTextContaining("").allComponents());
+        Assertions.assertTrue($(TextComponent.class)
+                .withTextContaining("textual").allComponents().isEmpty());
+    }
+
+    @Test
+    void withTextContaining_null_throws() {
+        ComponentQuery<Span> query = $(Span.class);
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> query.withTextContaining(null));
+    }
+
+    @Test
+    void withResultsSize_zeroMatchingResultsSize_emptyResult() {
+        Div div1 = new Div();
+        Div div2 = new Div();
+        Div div3 = new Div();
+        Div div4 = new Div();
+        UI.getCurrent().getElement().appendChild(div1.getElement(),
+                div2.getElement(), div3.getElement(), div4.getElement());
+
+        Assertions.assertTrue($(TestComponent.class).withResultsSize(0)
+                .allComponents().isEmpty());
+    }
+
+    @Test
+    void withResultsSize_matchingResultsSize_getsComponents() {
+        Div div1 = new Div();
+        Div div2 = new Div();
+        Div div3 = new Div();
+        Div div4 = new Div();
+        UI.getCurrent().getElement().appendChild(div1.getElement(),
+                div2.getElement(), div3.getElement(), div4.getElement());
+
+        List<Div> result = $(Div.class).withResultsSize(4).allComponents();
+        Assertions.assertIterableEquals(List.of(div1, div2, div3, div4),
+                result);
+    }
+
+    @Test
+    void withResultsSize_notMatchingResultsSize_throws() {
+        Div div1 = new Div();
+        Div div2 = new Div();
+        Div div3 = new Div();
+        Div div4 = new Div();
+        UI.getCurrent().getElement().appendChild(div1.getElement(),
+                div2.getElement(), div3.getElement(), div4.getElement());
+
+        IntStream.rangeClosed(0, 10).filter(i -> i != 4).forEach(i -> {
+            ComponentQuery<Div> query = $(Div.class).withResultsSize(i);
+            Assertions.assertThrows(AssertionError.class, query::allComponents);
+        });
+    }
+
+    @Test
+    void withResultsSize_negative_throws() {
+        ComponentQuery<Div> query = $(Div.class);
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> query.withResultsSize(-1));
+    }
+
+    @Test
+    void withResultsSize_afterWithMaxResults_overwritesRange() {
+        Div div1 = new Div();
+        Div div2 = new Div();
+        Div div3 = new Div();
+        Div div4 = new Div();
+        UI.getCurrent().getElement().appendChild(div1.getElement(),
+                div2.getElement(), div3.getElement(), div4.getElement());
+
+        List<Div> result = $(Div.class).withMaxResults(2).withResultsSize(4)
+                .allComponents();
+        Assertions.assertIterableEquals(List.of(div1, div2, div3, div4),
+                result);
+    }
+
+    @Test
+    void withResultsSize_afterWithMinResults_overwritesRange() {
+        Div div1 = new Div();
+        Div div2 = new Div();
+        Div div3 = new Div();
+        Div div4 = new Div();
+        UI.getCurrent().getElement().appendChild(div1.getElement(),
+                div2.getElement(), div3.getElement(), div4.getElement());
+
+        List<Div> result = $(Div.class).withMinResults(10).withResultsSize(4)
+                .allComponents();
+        Assertions.assertIterableEquals(List.of(div1, div2, div3, div4),
+                result);
+    }
+
+    @Test
+    void withResultsSize_afterWithResultSizeRange_overwritesRange() {
+        Div div1 = new Div();
+        Div div2 = new Div();
+        Div div3 = new Div();
+        Div div4 = new Div();
+        UI.getCurrent().getElement().appendChild(div1.getElement(),
+                div2.getElement(), div3.getElement(), div4.getElement());
+
+        List<Div> result = $(Div.class).withResultsSize(2, 3).withResultsSize(4)
+                .allComponents();
+        Assertions.assertIterableEquals(List.of(div1, div2, div3, div4),
+                result);
+    }
+
+    @Test
+    void withMaxResults_resultsSizeWithinUpperBound_getsComponents() {
+        Div div1 = new Div();
+        Div div2 = new Div();
+        Div div3 = new Div();
+        Div div4 = new Div();
+        UI.getCurrent().getElement().appendChild(div1.getElement(),
+                div2.getElement(), div3.getElement(), div4.getElement());
+
+        List<Div> result = $(Div.class).withMaxResults(10).allComponents();
+        Assertions.assertIterableEquals(List.of(div1, div2, div3, div4),
+                result);
+        result = $(Div.class).withMaxResults(4).allComponents();
+        Assertions.assertIterableEquals(List.of(div1, div2, div3, div4),
+                result);
+    }
+
+    @Test
+    void withMaxResults_resultsSizeExceededUpperBound_throws() {
+        Div div1 = new Div();
+        Div div2 = new Div();
+        Div div3 = new Div();
+        Div div4 = new Div();
+        UI.getCurrent().getElement().appendChild(div1.getElement(),
+                div2.getElement(), div3.getElement(), div4.getElement());
+
+        IntStream.rangeClosed(1, 3).forEach(count -> {
+            ComponentQuery<Div> query = $(Div.class).withMaxResults(count);
+            Assertions.assertThrows(AssertionError.class, query::allComponents);
+        });
+    }
+
+    @Test
+    void withMaxResults_negative_throws() {
+        ComponentQuery<Div> query = $(Div.class);
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> query.withMaxResults(-1));
+    }
+
+    @Test
+    void withMaxResults_lowerThanMin_throws() {
+        ComponentQuery<Div> query = $(Div.class).withMinResults(4);
+        query.withMaxResults(4); // same as min is OK, must not throw
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> query.withMaxResults(2));
+    }
+
+    @Test
+    void withMaxResults_afterResultsSize_overwritesRange() {
+        Div div1 = new Div();
+        Div div2 = new Div();
+        Div div3 = new Div();
+        Div div4 = new Div();
+        UI.getCurrent().getElement().appendChild(div1.getElement(),
+                div2.getElement(), div3.getElement(), div4.getElement());
+        List<Div> result = $(Div.class).withResultsSize(1).withMaxResults(4)
+                .allComponents();
+        Assertions.assertIterableEquals(List.of(div1, div2, div3, div4),
+                result);
+    }
+
+    @Test
+    void withMinResults_resultsSizeWithinLowerBound_getsComponents() {
+        Div div1 = new Div();
+        Div div2 = new Div();
+        Div div3 = new Div();
+        Div div4 = new Div();
+        UI.getCurrent().getElement().appendChild(div1.getElement(),
+                div2.getElement(), div3.getElement(), div4.getElement());
+
+        IntStream.rangeClosed(0, 4).forEach(count -> {
+            List<Div> result = $(Div.class).withMinResults(count)
+                    .allComponents();
+            Assertions.assertIterableEquals(List.of(div1, div2, div3, div4),
+                    result);
+        });
+    }
+
+    @Test
+    void withMinResults_resultsSizeLessThanLowerBound_throws() {
+        Div div1 = new Div();
+        Div div2 = new Div();
+        UI.getCurrent().getElement().appendChild(div1.getElement(),
+                div2.getElement());
+
+        IntStream.rangeClosed(3, 10).forEach(count -> {
+            ComponentQuery<Div> query = $(Div.class).withMinResults(count);
+            Assertions.assertThrows(AssertionError.class, query::allComponents);
+        });
+    }
+
+    @Test
+    void withMinResults_negative_throws() {
+        ComponentQuery<Div> query = $(Div.class);
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> query.withMinResults(-1));
+    }
+
+    @Test
+    void withMinResults_greaterThanMax_throws() {
+        ComponentQuery<Div> query = $(Div.class).withMaxResults(2);
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> query.withMinResults(10));
+    }
+
+    @Test
+    void withMinResults_afterResultsSize_overwritesLowerRange() {
+        Div div1 = new Div();
+        Div div2 = new Div();
+        Div div3 = new Div();
+        UI.getCurrent().getElement().appendChild(div1.getElement(),
+                div2.getElement(), div3.getElement());
+
+        List<Div> result = $(Div.class).withResultsSize(4).withMinResults(1)
+                .allComponents();
+        Assertions.assertIterableEquals(List.of(div1, div2, div3), result);
+    }
+
+    @Test
+    void withResults_resultsSizeOutOfBounds_throws() {
+        Div div1 = new Div();
+        Div div2 = new Div();
+        Div div3 = new Div();
+        Div div4 = new Div();
+        UI.getCurrent().getElement().appendChild(div1.getElement(),
+                div2.getElement(), div3.getElement(), div4.getElement());
+
+        ComponentQuery<Div> query = $(Div.class).withResultsSize(5, 10);
+        Assertions.assertThrows(AssertionError.class, query::allComponents);
+
+        query = $(Div.class).withResultsSize(1, 3);
+        Assertions.assertThrows(AssertionError.class, query::allComponents);
+
+    }
+
+    @Test
+    void withResultsSize_minNegative_throws() {
+        ComponentQuery<Div> query = $(Div.class);
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> query.withResultsSize(-1, 10));
+    }
+
+    @Test
+    void withResultsSize_maxNegative_throws() {
+        ComponentQuery<Div> query = $(Div.class);
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> query.withResultsSize(2, -1));
+    }
+
+    @Test
+    void withResultsSize_maxLowerThanMin_throws() {
+        ComponentQuery<Div> query = $(Div.class);
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> query.withResultsSize(5, 2));
+    }
+
+    @Test
+    void withResultsSize_afterResultsSize_overwritesRange() {
+        Div div1 = new Div();
+        Div div2 = new Div();
+        Div div3 = new Div();
+        Div div4 = new Div();
+        UI.getCurrent().getElement().appendChild(div1.getElement(),
+                div2.getElement(), div3.getElement(), div4.getElement());
+        List<Div> result = $(Div.class).withResultsSize(5).withResultsSize(2, 5)
+                .allComponents();
+        Assertions.assertIterableEquals(List.of(div1, div2, div3, div4),
+                result);
     }
 
     @Test

@@ -24,6 +24,7 @@ import kotlin.Unit;
 import kotlin.ranges.IntRange;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.dom.Element;
 import com.vaadin.testbench.unit.internal.LocatorKt;
 import com.vaadin.testbench.unit.internal.SearchSpec;
 
@@ -87,6 +88,25 @@ public class ComponentQuery<T extends Component> {
         Objects.requireNonNull(getter, "getter function must not be null");
         locatorSpec.predicates
                 .add(c -> Objects.equals(getter.apply(c), expectedValue));
+        return this;
+    }
+
+    /**
+     * Requires the component to be an implementation of
+     * {@link com.vaadin.flow.component.HasValue} interface and to have exactly
+     * the given value.
+     *
+     * Providing a {@literal null} value as {@code expectedValue} has no effects
+     * since the filter will not be applied.
+     *
+     * @param expectedValue
+     *            value to be compared with the one obtained by
+     *            {@link com.vaadin.flow.component.HasValue#getValue()}
+     * @return this element query instance for chaining
+     * @see com.vaadin.flow.component.HasValue#getValue()
+     */
+    public <V> ComponentQuery<T> withValue(V expectedValue) {
+        locatorSpec.value = expectedValue;
         return this;
     }
 
@@ -237,6 +257,118 @@ public class ComponentQuery<T extends Component> {
         locatorSpec.caption = text;
         locatorSpec.captionExactMatch = false;
         return this;
+    }
+
+    /**
+     * Requires the text content of the component to be equal to the given text
+     *
+     * @param text
+     *            the text the component is expected to have as its content
+     * @return this element query instance for chaining
+     * @see Element#getText()
+     */
+    public ComponentQuery<T> withText(String text) {
+        locatorSpec.text = text;
+        locatorSpec.textExactMatch = true;
+        return this;
+    }
+
+    /**
+     * Requires the text content of the component to contain the given text
+     *
+     * @param text
+     *            the text the component is expected to have as its caption
+     * @return this element query instance for chaining
+     * @see Element#getText()
+     */
+    public ComponentQuery<T> withTextContaining(String text) {
+        if (text == null) {
+            throw new IllegalArgumentException("text must not be null");
+        }
+        locatorSpec.text = text;
+        locatorSpec.textExactMatch = false;
+        return this;
+    }
+
+    /**
+     * Requires the search to find exactly the given number of components
+     *
+     * @param count
+     *            the expected number of component retrieved by the search
+     *
+     * @return this element query instance for chaining
+     * @throws IllegalArgumentException
+     *             if {@code count} is negative
+     */
+    public ComponentQuery<T> withResultsSize(int count) {
+        if (count < 0) {
+            throw new IllegalArgumentException(
+                    "count must be greater or equal than zero, but was "
+                            + count);
+        }
+        locatorSpec.count = new IntRange(count, count);
+        return this;
+    }
+
+    /**
+     * Requires the search to find a number of components within given range
+     *
+     * @param min
+     *            minimum number of components that should be found (inclusive)
+     * @param max
+     *            maximum number of components that should be found (inclusive)
+     *
+     * @return this element query instance for chaining
+     * @throws IllegalArgumentException
+     *             if {@code min} or {@code max} are negative, or if {@code min}
+     *             is greater than {@code max}
+     */
+    public ComponentQuery<T> withResultsSize(int min, int max) {
+        if (min < 0) {
+            throw new IllegalArgumentException(
+                    "min must be greater or equal than zero, but was " + min);
+        }
+        if (max < 0) {
+            throw new IllegalArgumentException(
+                    "max must be greater or equal than zero, but was " + max);
+        }
+        if (min > max) {
+            throw new IllegalArgumentException(
+                    "max must be greater or equal than min, but was min=" + min
+                            + ", max=" + max + "");
+        }
+        locatorSpec.count = new IntRange(min, max);
+        return this;
+    }
+
+    /**
+     * Requires the search to find at least the given number of components
+     *
+     * @param min
+     *            minimum number of components that should be found (inclusive)
+     *
+     * @return this element query instance for chaining
+     * @throws IllegalArgumentException
+     *             if {@code min} or {@code max} are negative, or if {@code min}
+     *             is greater than {@code max}
+     */
+    public ComponentQuery<T> withMinResults(int min) {
+        return withResultsSize(min, locatorSpec.count.getEndInclusive());
+    }
+
+    /**
+     * Requires the search to find at most the given number of components
+     *
+     * @param max
+     *            maximum number of components that should be found (inclusive)
+     *
+     * @return this element query instance for chaining
+     * @throws IllegalArgumentException
+     *             if {@code min} or {@code max} are negative, or if {@code min}
+     *             is greater than {@code max}
+     */
+    public ComponentQuery<T> withMaxResults(int max) {
+        return withResultsSize(locatorSpec.count.getStart(), max);
     }
 
     /**
@@ -445,6 +577,7 @@ public class ComponentQuery<T extends Component> {
         boolean captionExactMatch = false;
         String placeholder;
         String text;
+        public boolean textExactMatch = true;
         IntRange count = new IntRange(0, Integer.MAX_VALUE);
         Object value;
         final Set<String> classes = new HashSet<>();
@@ -462,8 +595,10 @@ public class ComponentQuery<T extends Component> {
                 spec.captionContains(caption);
             if (placeholder != null)
                 spec.setPlaceholder(placeholder);
-            if (text != null)
+            if (text != null && textExactMatch)
                 spec.setText(text);
+            else if (text != null)
+                spec.getPredicates().add(ElementConditions.containsText(text));
             if (value != null)
                 spec.setValue(value);
             if (!classes.isEmpty())
