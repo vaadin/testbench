@@ -578,18 +578,6 @@ class ComponentQueryTest extends UIUnitTest {
     }
 
     @Test
-    void withText_null_getsAllComponent() {
-        TextComponent span1 = new TextComponent("sample text");
-        TextComponent span2 = new TextComponent("other text");
-
-        UI.getCurrent().getElement().appendChild(span1.getElement(),
-                span2.getElement());
-
-        Assertions.assertIterableEquals(List.of(span1, span2),
-                $(TextComponent.class).withText(null).allComponents());
-    }
-
-    @Test
     void withTextContaining_getsCorrectComponent() {
         TextComponent span1 = new TextComponent(
                 "this is sample text for first span");
