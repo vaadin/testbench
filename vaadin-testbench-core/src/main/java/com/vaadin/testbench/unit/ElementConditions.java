@@ -10,6 +10,7 @@
 
 package com.vaadin.testbench.unit;
 
+import java.util.Locale;
 import java.util.function.Predicate;
 
 import com.vaadin.flow.component.Component;
@@ -99,7 +100,8 @@ public final class ElementConditions {
             }
             // WARN: may not work correctly with unicode chars
             if (ignoreCase) {
-                return componentText.toLowerCase().contains(text.toLowerCase());
+                return componentText.toLowerCase(Locale.ROOT)
+                        .contains(text.toLowerCase(Locale.ROOT));
             }
             return componentText.contains(text);
         }
