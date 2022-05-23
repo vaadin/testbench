@@ -50,14 +50,14 @@ public class BasicGridWrapTest extends UIUnitTest {
 
         grid_.clickRow(0);
 
-        Assertions.assertSame(1, grid_.getSelected().size());
-        Assertions.assertEquals(view.first,
+        Assertions.assertEquals(1, grid_.getSelected().size());
+        Assertions.assertSame(view.first,
                 grid_.getSelected().iterator().next());
 
         grid_.clickRow(1);
 
-        Assertions.assertSame(1, grid_.getSelected().size());
-        Assertions.assertEquals(view.second,
+        Assertions.assertEquals(1, grid_.getSelected().size());
+        Assertions.assertSame(view.second,
                 grid_.getSelected().iterator().next());
     }
 
@@ -68,8 +68,8 @@ public class BasicGridWrapTest extends UIUnitTest {
 
         grid_.clickRow(0);
 
-        Assertions.assertSame(1, grid_.getSelected().size());
-        Assertions.assertEquals(view.first,
+        Assertions.assertEquals(1, grid_.getSelected().size());
+        Assertions.assertSame(view.first,
                 grid_.getSelected().iterator().next());
 
         grid_.clickRow(0);
@@ -82,14 +82,14 @@ public class BasicGridWrapTest extends UIUnitTest {
     void basicGrid_selectWillChangeSelection() {
         grid_.select(1);
 
-        Assertions.assertSame(1, grid_.getSelected().size());
-        Assertions.assertEquals(view.second,
+        Assertions.assertEquals(1, grid_.getSelected().size());
+        Assertions.assertSame(view.second,
                 grid_.getSelected().iterator().next());
 
         grid_.select(0);
-        Assertions.assertSame(1, grid_.getSelected().size(),
+        Assertions.assertEquals(1, grid_.getSelected().size(),
                 "Single select should only change selection.");
-        Assertions.assertEquals(view.first,
+        Assertions.assertSame(view.first,
                 grid_.getSelected().iterator().next());
     }
 
