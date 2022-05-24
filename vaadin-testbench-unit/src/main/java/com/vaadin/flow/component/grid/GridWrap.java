@@ -31,7 +31,7 @@ import com.vaadin.testbench.unit.internal.PrettyPrintTreeKt;
  * @param <Y>
  *            item type
  */
-//@Wraps(Grid.class) // TODO: Having Grid in the annotation fails dokka:javadoc
+@Wraps(fqn = { "com.vaadin.flow.component.grid.Grid" })
 public class GridWrap<T extends Grid<Y>, Y> extends ComponentWrap<T> {
     /**
      * Wrap grid for testing.

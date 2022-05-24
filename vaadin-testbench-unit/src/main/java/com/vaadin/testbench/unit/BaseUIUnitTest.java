@@ -9,6 +9,7 @@
  */
 package com.vaadin.testbench.unit;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -65,6 +66,19 @@ class BaseUIUnitTest {
                                 wrapperMap.put(component,
                                         (Class<? extends ComponentWrap>) wrapper);
                             }
+                            // -- Enable annotation with fqn for components with
+                            // generics
+                            final String[] classes = wrapper
+                                    .getAnnotation(Wraps.class).fqn();
+
+                            Arrays.stream(classes).map(clazz -> {
+                                try {
+                                    return Class.forName(clazz);
+                                } catch (ClassNotFoundException e) {
+                                    throw new RuntimeException(e);
+                                }
+                            }).forEach(clazz -> wrapperMap.put(clazz,
+                                    (Class<? extends ComponentWrap>) wrapper));
 
                         } catch (ClassNotFoundException e) {
                             throw new RuntimeException(e);
