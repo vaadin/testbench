@@ -11,6 +11,7 @@
 package com.vaadin.testbench.unit;
 
 import java.util.Locale;
+import java.util.Objects;
 import java.util.function.Predicate;
 
 import com.vaadin.flow.component.Component;
@@ -72,6 +73,84 @@ public final class ElementConditions {
             throw new IllegalArgumentException("text cannot be null");
         }
         return new TextContainsPredicate<>(text, ignoreCase);
+    }
+
+    /**
+     * Checks if the given attribute has been set on the component.
+     *
+     * Attribute names are considered case-insensitive and all names will be
+     * converted to lower case automatically.
+     *
+     * @param attribute
+     *            the name of the attribute, not {@literal null}
+     * @return {@literal true} if the attribute has been set, {@literal false}
+     *         otherwise
+     */
+    public static <T extends Component> Predicate<T> hasAttribute(
+            String attribute) {
+        return component -> component.getElement().hasAttribute(attribute);
+    }
+
+    /**
+     * Checks if the given attribute has been set on the component and has
+     * exactly the given value.
+     *
+     * Attribute names are considered case-insensitive and all names will be
+     * converted to lower case automatically.
+     *
+     * @param attribute
+     *            the name of the attribute, not {@literal null}
+     * @param value
+     *            expected value, not {@literal null}
+     * @return {@literal true} if the attribute has been set, {@literal false}
+     *         otherwise
+     */
+    public static <T extends Component> Predicate<T> hasAttribute(
+            String attribute, String value) {
+        if (value == null) {
+            throw new IllegalArgumentException("Value cannot be null");
+        }
+        return component -> Objects
+                .equals(component.getElement().getAttribute(attribute), value);
+    }
+
+    /**
+     * Checks if the given attribute has not been set on the component.
+     *
+     * Attribute names are considered case-insensitive and all names will be
+     * converted to lower case automatically.
+     *
+     * @param attribute
+     *            the name of the attribute, not {@literal null}
+     * @return {@literal true} if the attribute has not been set,
+     *         {@literal false} otherwise
+     */
+    public static <T extends Component> Predicate<T> hasNotAttribute(
+            String attribute) {
+        return component -> !component.getElement().hasAttribute(attribute);
+    }
+
+    /**
+     * Checks if the given attribute has been set on the component or has a
+     * value different from given one.
+     *
+     * Attribute names are considered case-insensitive and all names will be
+     * converted to lower case automatically.
+     *
+     * @param attribute
+     *            the name of the attribute, not {@literal null}
+     * @param value
+     *            value expected not to be set on attribute, not {@literal null}
+     * @return {@literal true} if the attribute is not set or has a value
+     *         different from given one, {@literal false} otherwise
+     */
+    public static <T extends Component> Predicate<T> hasNotAttribute(
+            String attribute, String value) {
+        if (value == null) {
+            throw new IllegalArgumentException("Value cannot be null");
+        }
+        return component -> !Objects
+                .equals(component.getElement().getAttribute(attribute), value);
     }
 
     private static class TextContainsPredicate<T extends Component>

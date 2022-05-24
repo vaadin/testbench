@@ -1263,6 +1263,118 @@ class ComponentQueryTest extends UIUnitTest {
                 () -> query.withoutClassName("c1", "c2", null, "c3"));
     }
 
+    @Test
+    void withAttribute_present_getsCorrectComponents() {
+        Span target = new Span();
+        target.getElement().setAttribute("my-attr", "value");
+        Span other = new Span();
+        other.getElement().setAttribute("other-attr", "value");
+        UI.getCurrent().getElement().appendChild(new Span().getElement(),
+                target.getElement(), new Span().getElement(),
+                other.getElement());
+
+        Assertions.assertSame(target,
+                $(Span.class).withAttribute("my-attr").findComponent());
+        Assertions.assertSame(other,
+                $(Span.class).withAttribute("other-attr").findComponent());
+        Assertions.assertTrue(
+                $(Span.class).withAttribute("nope").allComponents().isEmpty());
+
+    }
+
+    @Test
+    void withAttribute_value_getsCorrectComponents() {
+        Span target = new Span();
+        target.getElement().setAttribute("my-attr", "value");
+        Span other = new Span();
+        other.getElement().setAttribute("my-attr", "something else");
+        UI.getCurrent().getElement().appendChild(new Span().getElement(),
+                target.getElement(), new Span().getElement(),
+                other.getElement());
+
+        Assertions.assertSame(target, $(Span.class)
+                .withAttribute("my-attr", "value").findComponent());
+        Assertions.assertSame(other, $(Span.class)
+                .withAttribute("my-attr", "something else").findComponent());
+        Assertions.assertTrue($(Span.class).withAttribute("my-attr", "nope")
+                .allComponents().isEmpty());
+    }
+
+    @Test
+    void withAttribute_multipleAttributes_getsCorrectComponents() {
+        Span target = new Span();
+        target.getElement().setAttribute("role", "tooltip");
+        target.getElement().setAttribute("aria-label", "some text");
+        Span other = new Span();
+        other.getElement().setAttribute("role", "something");
+        other.getElement().setAttribute("aria-label", "some other text");
+
+        UI.getCurrent().getElement().appendChild(new Span().getElement(),
+                target.getElement(), new Span().getElement(),
+                other.getElement());
+
+        Assertions.assertSame(target, $(Span.class).withAttribute("aria-label")
+                .withAttribute("role", "tooltip").findComponent());
+    }
+
+    @Test
+    void withoutAttribute_absent_getsCorrectComponents() {
+        Span target = new Span();
+        target.getElement().setAttribute("my-attr", "value");
+        Span other = new Span();
+        other.getElement().setAttribute("other-attr", "value");
+        Span noAttributes = new Span();
+        UI.getCurrent().getElement().appendChild(target.getElement(),
+                noAttributes.getElement(), other.getElement());
+
+        Assertions.assertIterableEquals(List.of(noAttributes, other),
+                $(Span.class).withoutAttribute("my-attr").allComponents());
+        Assertions.assertIterableEquals(List.of(target, noAttributes),
+                $(Span.class).withoutAttribute("other-attr").allComponents());
+
+        Assertions.assertIterableEquals(List.of(target, noAttributes, other),
+                $(Span.class).withoutAttribute("role").allComponents());
+    }
+
+    @Test
+    void withoutAttribute_value_getsCorrectComponents() {
+        Span target = new Span();
+        target.getElement().setAttribute("my-attr", "value");
+        Span other = new Span();
+        other.getElement().setAttribute("my-attr", "something else");
+        Span noAttributes = new Span();
+        UI.getCurrent().getElement().appendChild(target.getElement(),
+                noAttributes.getElement(), other.getElement());
+
+        Assertions.assertIterableEquals(List.of(noAttributes, other),
+                $(Span.class).withoutAttribute("my-attr", "value")
+                        .allComponents());
+        Assertions.assertIterableEquals(List.of(target, noAttributes),
+                $(Span.class).withoutAttribute("my-attr", "something else")
+                        .allComponents());
+        Assertions.assertIterableEquals(List.of(target, noAttributes, other),
+                $(Span.class).withoutAttribute("my-attr", "nope")
+                        .allComponents());
+    }
+
+    @Test
+    void withoutAttribute_multipleAttributes_getsCorrectComponents() {
+        Span span1 = new Span();
+        span1.getElement().setAttribute("role", "tooltip");
+        Span span2 = new Span();
+        span2.getElement().setAttribute("role", "something");
+        span2.getElement().setAttribute("aria-label", "some other text");
+        Span target = new Span();
+        target.getElement().setAttribute("role", "something");
+
+        UI.getCurrent().getElement().appendChild(span1.getElement(),
+                target.getElement(), span2.getElement());
+
+        Assertions.assertSame(target,
+                $(Span.class).withoutAttribute("aria-label")
+                        .withoutAttribute("role", "tooltip").findComponent());
+    }
+
     @Tag("span")
     private static class ComponentWithLabel extends TestComponent
             implements HasLabel {
