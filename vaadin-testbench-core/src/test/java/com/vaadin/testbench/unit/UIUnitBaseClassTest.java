@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Test;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.grid.BasicGridView;
 import com.vaadin.flow.router.RouteBaseData;
 import com.vaadin.flow.server.VaadinRequest;
 import com.vaadin.flow.server.VaadinResponse;
@@ -68,6 +69,7 @@ class UIUnitBaseClassTest {
                     TestRoutes.INSTANCE.getViews());
             allViews.add(SingleParam.class);
             allViews.add(TemplatedParam.class);
+            allViews.add(BasicGridView.class); // TODO: should not be
             Assertions.assertEquals(allViews.size(), routes.size());
             Assertions.assertTrue(routes.containsAll(allViews));
         }
