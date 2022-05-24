@@ -487,7 +487,7 @@ public class ComponentQuery<T extends Component> {
      *             if no component is found
      */
     @SuppressWarnings("unchecked")
-    public <X extends ComponentWrap<T>> X first() {
+    public <X extends ComponentWrap<? extends T>> X first() {
         return (X) allComponents().stream().findFirst().map(wrapperFactory)
                 .orElseThrow(() -> new NoSuchElementException(
                         "Cannot find component for current query"));
@@ -503,7 +503,7 @@ public class ComponentQuery<T extends Component> {
      *             if no component is found
      */
     @SuppressWarnings("unchecked")
-    public <X extends ComponentWrap<T>> X last() {
+    public <X extends ComponentWrap<? extends T>> X last() {
         return (X) allComponents().stream().reduce((first, second) -> second)
                 .map(wrapperFactory)
                 .orElseThrow(() -> new NoSuchElementException(
@@ -528,7 +528,7 @@ public class ComponentQuery<T extends Component> {
      *             if no component is found
      */
     @SuppressWarnings("unchecked")
-    public <X extends ComponentWrap<T>> X atIndex(int index) {
+    public <X extends ComponentWrap<? extends T>> X atIndex(int index) {
         if (index <= 0) {
             throw new IllegalArgumentException(
                     "Index must be greater than zero, but was " + index);
@@ -556,7 +556,7 @@ public class ComponentQuery<T extends Component> {
      * @throws NoSuchElementException
      *             if no component is found
      */
-    public <X extends ComponentWrap<T>> X id(String id) {
+    public <X extends ComponentWrap<? extends T>> X id(String id) {
         Objects.requireNonNull(id, "id must not be null");
         withId(id);
         // Exactly one element with given id is expected
@@ -572,7 +572,7 @@ public class ComponentQuery<T extends Component> {
      *         search does not produce results. Never {@literal null}.
      */
     @SuppressWarnings("unchecked")
-    public <X extends ComponentWrap<T>> List<X> all() {
+    public <X extends ComponentWrap<? extends T>> List<X> all() {
         return allComponents().stream()
                 .map(component -> (X) wrapperFactory.apply(component))
                 .collect(Collectors.toList());
@@ -585,12 +585,13 @@ public class ComponentQuery<T extends Component> {
      * @return a list of found components, or an empty list if search does not
      *         produce results. Never {@literal null}.
      */
-    public List<T> allComponents() {
+    @SuppressWarnings("unchecked")
+    public <X extends T> List<X> allComponents() {
         if (context != null) {
-            return LocatorKt._find(context, componentType,
+            return (List<X>) LocatorKt._find(context, componentType,
                     locatorSpec::populate);
         }
-        return LocatorKt._find(componentType, locatorSpec::populate);
+        return (List<X>) LocatorKt._find(componentType, locatorSpec::populate);
     }
 
     /**
@@ -609,7 +610,7 @@ public class ComponentQuery<T extends Component> {
     }
 
     @SuppressWarnings("unchecked")
-    protected <X extends ComponentWrap<T>> X find() {
+    protected <X extends ComponentWrap<? extends T>> X find() {
         try {
             return (X) wrapperFactory.apply(findComponent());
         } catch (AssertionError e) {
@@ -639,7 +640,7 @@ public class ComponentQuery<T extends Component> {
         boolean captionExactMatch = false;
         String placeholder;
         String text;
-        public boolean textExactMatch = true;
+        boolean textExactMatch = true;
         IntRange count = new IntRange(0, Integer.MAX_VALUE);
         Object value;
         final Set<String> classes = new HashSet<>();
