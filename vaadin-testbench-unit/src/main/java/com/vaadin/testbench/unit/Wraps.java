@@ -33,5 +33,7 @@ public @interface Wraps {
      *
      * @return {@link Component} classes that can be wrapped
      */
-    Class<? extends Component>[] value();
+    Class<? extends Component>[] value() default {};
+
+    String[] fqn() default {};
 }

@@ -30,7 +30,7 @@ public class BasicGridWrapTest extends UIUnitTest {
     @BeforeEach
     void init() {
         view = navigate(BasicGridView.class);
-        grid_ = wrap(GridWrap.class, view.basicGrid);
+        grid_ = wrap(view.basicGrid);
     }
 
     @Test
@@ -149,15 +149,18 @@ public class BasicGridWrapTest extends UIUnitTest {
     @Test
     void basicGrid_doubleClick() {
         AtomicInteger doubleClicks = new AtomicInteger(0);
-        view.basicGrid.addItemDoubleClickListener(event -> doubleClicks.incrementAndGet());
+        view.basicGrid.addItemDoubleClickListener(
+                event -> doubleClicks.incrementAndGet());
 
         grid_.clickRow(0);
 
-        Assertions.assertEquals(0, doubleClicks.get(), "Click should not generate a double click event");
+        Assertions.assertEquals(0, doubleClicks.get(),
+                "Click should not generate a double click event");
 
         grid_.doubleClickRow(0);
 
-        Assertions.assertEquals(1, doubleClicks.get(), "Double click event should have fired");
+        Assertions.assertEquals(1, doubleClicks.get(),
+                "Double click event should have fired");
 
     }
 }
