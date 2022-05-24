@@ -15,7 +15,7 @@ import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.router.Route;
 
 @Tag("div")
-@Route("basic-grid")
+@Route(value = "basic-grid", registerAtStartup = false)
 public class BasicGridView extends Component implements HasComponents {
 
     Grid<Person> basicGrid = new Grid<>();

@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.testbench.unit.UIUnitTest;
 
 public class BasicGridWrapTest extends UIUnitTest {
@@ -29,6 +30,9 @@ public class BasicGridWrapTest extends UIUnitTest {
 
     @BeforeEach
     void init() {
+        RouteConfiguration.forApplicationScope()
+                .setAnnotatedRoute(BasicGridView.class);
+
         view = navigate(BasicGridView.class);
         grid_ = wrap(view.basicGrid);
     }
