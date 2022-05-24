@@ -29,11 +29,25 @@ import org.junit.jupiter.api.BeforeEach;
  * mandatory to add the {@code @BeforeEach} and {@code @AfterEach} annotations
  * in the subclass, in order to have hooks handled by testing framework.
  *
+ * A use case for overriding {@link #initVaadinEnvironment()} is to provide
+ * custom Flow service implementations supported by
+ * {@link com.vaadin.flow.di.Lookup} SPI. Implementations can be provided
+ * overriding {@link #initVaadinEnvironment()} and passing to super
+ * implementation the service classes that should be initialized during setup.
+ *
+ * <pre>
+ * {@code
+ * &#64;BeforeEach
+ * &#64;Override
+ * void initVaadinEnvironment() {
+ *     super.initVaadinEnvironment(CustomInstantiatorFactory.class);
+ * }
+ * }
+ * </pre>
  */
 public abstract class UIUnitTest extends BaseUIUnitTest {
 
     @BeforeEach
-    @Override
     protected void initVaadinEnvironment() {
         super.initVaadinEnvironment();
     }

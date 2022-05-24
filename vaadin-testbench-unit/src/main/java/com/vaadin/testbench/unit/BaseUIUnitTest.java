@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
@@ -94,8 +95,9 @@ class BaseUIUnitTest {
                 pn -> new Routes().autoDiscoverViews(pn));
     }
 
-    protected void initVaadinEnvironment() {
-        MockVaadin.setup(discoverRoutes(scanPackage()), UI::new);
+    protected void initVaadinEnvironment(Class<?>... lookupService) {
+        MockVaadin.setup(discoverRoutes(scanPackage()), UI::new,
+                Set.of(lookupService));
     }
 
     protected void cleanVaadinEnvironment() {
