@@ -89,7 +89,7 @@ class BaseUIUnitTest {
         }
     }
 
-    private static synchronized Routes discoverRoutes(String packageName) {
+    static synchronized Routes discoverRoutes(String packageName) {
         packageName = packageName == null ? "" : packageName;
         return routesCache.computeIfAbsent(packageName,
                 pn -> new Routes().autoDiscoverViews(pn));
