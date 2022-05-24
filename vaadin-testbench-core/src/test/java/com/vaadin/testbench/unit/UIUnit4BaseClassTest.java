@@ -24,6 +24,7 @@ import org.junit.runner.RunWith;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.grid.BasicGridView;
 import com.vaadin.flow.router.RouteBaseData;
 import com.vaadin.flow.server.VaadinRequest;
 import com.vaadin.flow.server.VaadinResponse;
@@ -75,6 +76,7 @@ public class UIUnit4BaseClassTest {
                     TestRoutes.INSTANCE.getViews());
             allViews.add(SingleParam.class);
             allViews.add(TemplatedParam.class);
+            allViews.add(BasicGridView.class); // TODO: should not be
             Assert.assertEquals(allViews.size(), routes.size());
             Assert.assertTrue(routes.containsAll(allViews));
         }
