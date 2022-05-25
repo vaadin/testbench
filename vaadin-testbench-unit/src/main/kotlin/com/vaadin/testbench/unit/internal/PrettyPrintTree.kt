@@ -102,7 +102,7 @@ fun Component.toPrettyString(): String {
     if (label != caption && caption.isNotBlank()) {
         list.add("caption='$caption'")
     }
-    if (!_text.isNullOrBlank()) {
+    if (!_text.isNullOrBlank() && _text != caption) {
         list.add("text='$_text'")
     }
     if (this is HasValue<*, *>) {
@@ -135,10 +135,13 @@ fun Component.toPrettyString(): String {
     // Any component with href should output it not only Anchor
     if (this.javaClass.kotlin.members.any { it.name == "href"}) {
         val f = this.javaClass.kotlin.members.find { it.name == "href" }
-        list.add("href='${f?.let {
+        val href = f?.let {
             it.isAccessible = true
             it.call(this)
-        }}'")
+        }
+        if (href != null) {
+            list.add("href='$href'")
+        }
     }
     if (this is Button && icon is Icon) {
         list.add("icon='${(icon as Icon).element.getAttribute("icon")}'")

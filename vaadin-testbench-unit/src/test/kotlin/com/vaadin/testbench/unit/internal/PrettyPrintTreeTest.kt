@@ -50,15 +50,42 @@ internal fun DynaNodeGroup.prettyPrintTreeTest() {
 """.trim()) { div.toPrettyTree().trim() }
     }
 
-    test("toPrettyString()") {
+    test("toPrettyStringHtmlComponent()") {
         expect("Text[text='foo']") { Text("foo").toPrettyString() }
         expect("Div[INVIS]") { Div().apply { isVisible = false }.toPrettyString() }
+        expect("Html[<b>foo bar baz <i>foobar</i></b>]") {
+            Html("\n    <b>foo\nbar\n    baz\n<i>foobar</i></b>").toPrettyString()
+        }
+        expect("HtmlSpan[innerHTML='aaa<b>bbbb</b>ccc']") {
+            HtmlSpan("aaa<b>bbbb</b>ccc").toPrettyString()
+        }
+        expect("Div[@title='foobar']") {
+            Div().apply { tooltip = "foobar" }.toPrettyString()
+        }
+        expect("Span[text='hi', @slot='prefix']") {
+            val testSpan = Span("hi")
+            TextField().prefixComponent = testSpan
+            testSpan.toPrettyString()
+        }
+    }
+    test("toPrettyStringTextField()") {
         expect("TextField[#25, value='']") {
             TextField().apply { id_ = "25" }.toPrettyString()
         }
-        expect("Button[caption='click me']") { Button("click me").toPrettyString() }
         expect("TextArea[label='label', value='some text']") { TextArea("label").apply { value = "some text" }.toPrettyString() }
+        expect("TextField[#25, value='', errorMessage='failed validation']") {
+            TextField().apply { id_ = "25"; errorMessage = "failed validation" }.toPrettyString()
+        }
+        expect("TextField[label='foobar', value='']") {
+            TextField("foobar").toPrettyString()
+        }
+    }
+    test("toPrettyStringButton()") {
+        expect("Button[caption='click me']") { Button("click me").toPrettyString() }
+        expect("Button[icon='vaadin:abacus', @theme='icon']") { Button(VaadinIcon.ABACUS.create()).toPrettyString() }
 
+    }
+//    test("toPrettyStringGrid()") {
         /* TODO: uncomment when importing Grid stuff
         expect("Grid[<String>, dataprovider='ListDataProvider2{0 items}']") { Grid<String>(String::class.java).apply { setItems2(listOf()) }.toPrettyString() }
         expect("Column[header='My Header']") {
@@ -68,35 +95,24 @@ internal fun DynaNodeGroup.prettyPrintTreeTest() {
             Grid<Any>().run { addColumn { it }.apply { header2 = "My Header"; key = "foo" } }.toPrettyString()
         }
          */
-        expect("Anchor[href='']") { Anchor().toPrettyString() }
+//    }
+    test("toPrettyStringAnchor()") {
+        expect("Anchor[]") { Anchor().toPrettyString() }
         expect("Anchor[href='vaadin.com']") { Anchor("vaadin.com").toPrettyString() }
+    }
+    test("toPrettyStringImage()") {
         expect("Image[]") { Image().toPrettyString() }
         expect("Image[@src='vaadin.com']") { Image("vaadin.com", "").toPrettyString() }
-        expect("TextField[#25, value='', errorMessage='failed validation']") {
-            TextField().apply { id_ = "25"; errorMessage = "failed validation" }.toPrettyString()
-        }
-        expect("TextField[label='foobar', value='']") {
-            TextField("foobar").toPrettyString()
-        }
+    }
+    test("toPrettyStringIcon()") {
         expect("Icon[@icon='vaadin:abacus']") { VaadinIcon.ABACUS.create().toPrettyString() }
-        expect("Button[icon='vaadin:abacus', @theme='icon']") { Button(VaadinIcon.ABACUS.create()).toPrettyString() }
+    }
+    test("toPrettyStringForm()") {
         expect("FormItem[label='foo']") { FormLayout().addFormItem(TextField(), "foo").toPrettyString() }
-        expect("Html[<b>foo bar baz <i>foobar</i></b>]") {
-            Html("\n    <b>foo\nbar\n    baz\n<i>foobar</i></b>").toPrettyString()
-        }
-        expect("HtmlSpan[innerHTML='aaa<b>bbbb</b>ccc']") {
-            HtmlSpan("aaa<b>bbbb</b>ccc").toPrettyString()
-        }
+    }
+    test("toPrettyStringCustomComponent()") {
         expect("MyComponentWithToString[my-div(25)]") {
             MyComponentWithToString().toPrettyString()
-        }
-        expect("Div[@title='foobar']") {
-            Div().apply { tooltip = "foobar" }.toPrettyString()
-        }
-        expect("Span[text='hi', @slot='prefix']") {
-            val testSpan = Span("hi")
-            TextField().prefixComponent = testSpan
-            testSpan.toPrettyString()
         }
     }
 
@@ -121,7 +137,7 @@ internal fun DynaNodeGroup.prettyPrintTreeTest() {
             }
         }
         expect("""
-└── ContextMenu[]
+└── ContextMenu[opened='false']
     ├── MenuItem[DISABLED, text='menu']
     │   └── MenuItem[text='click me']
     └── MenuItem[text='save as']""".trim()) { cm.toPrettyTree().trim() }
