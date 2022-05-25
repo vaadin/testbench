@@ -18,11 +18,6 @@ import com.vaadin.testbench.unit.UIUnitTest;
 
 class AccordionWrapTest extends UIUnitTest {
 
-    @Override
-    protected String scanPackage() {
-        return "com.vaadin.flow.component.accordion";
-    }
-
     AccordionView view;
 
     @BeforeEach

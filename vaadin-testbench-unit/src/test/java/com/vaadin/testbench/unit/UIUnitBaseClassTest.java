@@ -37,6 +37,12 @@ class UIUnitBaseClassTest {
 
     @Nested
     class TestMethodExecutionTest extends UIUnitTest {
+
+        @Override
+        protected String scanPackage() {
+            return "com.example.base";
+        }
+
         @Test
         void extendingBaseClass_runTest_vaadinInstancesAvailable() {
             Assertions.assertNotNull(UI.getCurrent(),
@@ -61,6 +67,11 @@ class UIUnitBaseClassTest {
 
     @Nested
     class DiscoverAllRoutesTest extends UIUnitTest {
+
+        @Override
+        protected String scanPackage() {
+            return null;
+        }
 
         @Test
         void extendingBaseClass_runTest_routesAreDiscovered() {

@@ -20,11 +20,6 @@ import com.vaadin.testbench.unit.UIUnitTest;
 
 public class BasicGridWrapTest extends UIUnitTest {
 
-    @Override
-    protected String scanPackage() {
-        return "com.vaadin.flow.component.grid";
-    }
-
     BasicGridView view;
     GridWrap<Grid<Person>, Person> grid_;
 

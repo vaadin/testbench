@@ -9,13 +9,11 @@
  */
 package com.vaadin.testbench.unit;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.TestRule;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
-import org.slf4j.LoggerFactory;
 
 import com.vaadin.flow.component.UI;
 import com.vaadin.testbench.unit.internal.PrettyPrintTree;
@@ -23,8 +21,10 @@ import com.vaadin.testbench.unit.internal.PrettyPrintTree;
 /**
  * Base JUnit 4 class for UI unit tests.
  *
- * Subclasses should typically restrict classpath scanning to a specific package
- * for faster bootstrap by overriding {@link #scanPackage()} method.
+ * For faster bootstrap, classpath scanning for routes and error views is
+ * restricted by default to the test class package and its subpackages, but
+ * surface can be widened or narrowed by subclasses overriding
+ * {@link #scanPackage()} method.
  *
  * Set up of Vaadin environment is performed before each test by
  * {@link #initVaadinEnvironment()} method, and will be executed before

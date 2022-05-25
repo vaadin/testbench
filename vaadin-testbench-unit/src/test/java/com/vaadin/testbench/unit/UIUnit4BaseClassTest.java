@@ -42,6 +42,11 @@ public class UIUnit4BaseClassTest {
 
     public static class TestMethodExecutionTest extends UIUnit4Test {
 
+        @Override
+        protected String scanPackage() {
+            return "com.example.base";
+        }
+
         @Test
         public void extendingBaseClass_runTest_vaadinInstancesAvailable() {
             Assert.assertNotNull(
@@ -71,6 +76,11 @@ public class UIUnit4BaseClassTest {
     }
 
     public static class DiscoverAllRoutesTest extends UIUnit4Test {
+
+        @Override
+        protected String scanPackage() {
+            return null;
+        }
 
         @Test
         public void extendingBaseClass_runTest_routesAreDiscovered() {

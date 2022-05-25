@@ -36,6 +36,11 @@ import static java.util.Arrays.asList;
 
 class ComponentQueryTest extends UIUnitTest {
 
+    @Override
+    protected String scanPackage() {
+        return "com.example.base";
+    }
+
     @Test
     void find_invisibleComponents_noResults() {
         Element rootElement = getCurrentView().getElement();

@@ -36,8 +36,9 @@ import com.vaadin.flow.router.RouteParameters;
  *
  * Provides methods to set up and clean a mocked Vaadin environment.
  *
- * Subclasses should typically restrict classpath scanning to a specific package
- * for faster bootstrap, by overriding {@link #scanPackage()} method.
+ * Classpath scanning is restricted to test class package and its subpackages
+ * for faster bootstrap, but surface can be widened or narrowed by overriding
+ * {@link #scanPackage()} method.
  *
  * For internal use only. May be renamed or removed in a future release.
  */
@@ -111,10 +112,12 @@ class BaseUIUnitTest {
      * Provide {@literal null} or empty string to scan the whole classpath, but
      * note that this may be quite slow.
      *
+     * Default is to scan the test class package and subpackages.
+     *
      * @return package name for classpath scanning.
      */
     protected String scanPackage() {
-        return null;
+        return getClass().getPackageName();
     }
 
     /**
