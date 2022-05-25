@@ -33,7 +33,7 @@ class AccordionWrapTest extends UIUnitTest {
     }
 
     @Test
-    void bySummary_returnsCorrectPanel() {
+    void getPanelBySummary_returnsCorrectPanel() {
         final AccordionWrap<Accordion> wrap = wrap(view.accordion);
         wrap.openDetails("Red");
         Assertions.assertSame(view.redPanel, wrap.getPanel("Red"));
@@ -70,5 +70,4 @@ class AccordionWrapTest extends UIUnitTest {
         Assertions.assertFalse(wrap.hasPanel("Orange"),
                 "No Orange panel is added");
     }
-
 }
