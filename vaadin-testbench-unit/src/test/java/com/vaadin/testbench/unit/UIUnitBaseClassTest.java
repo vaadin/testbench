@@ -69,7 +69,6 @@ class UIUnitBaseClassTest {
                     TestRoutes.INSTANCE.getViews());
             allViews.add(SingleParam.class);
             allViews.add(TemplatedParam.class);
-            allViews.add(BasicGridView.class); // TODO: should not be
             Assertions.assertEquals(allViews.size(), routes.size());
             Assertions.assertTrue(routes.containsAll(allViews));
         }
