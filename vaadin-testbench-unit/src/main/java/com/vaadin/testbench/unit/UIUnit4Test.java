@@ -45,12 +45,15 @@ import com.vaadin.testbench.unit.internal.PrettyPrintTree;
  * }
  * }
  * </pre>
+ * <p/>
+ * To get a graphical ascii representation of the UI tree on failure override
+ * the {@link #printTree()} method to return true.
  */
 public abstract class UIUnit4Test extends BaseUIUnitTest {
 
     /**
-     * Override to return true to get component tree output into log
-     * on test failure.
+     * Override to return true to get component tree output into log on test
+     * failure.
      *
      * @return {@code true} to print component tree
      */
@@ -63,19 +66,16 @@ public abstract class UIUnit4Test extends BaseUIUnitTest {
         super.initVaadinEnvironment();
     }
 
-
     @Rule
     public TestRule treeOnFailure = new TestWatcher() {
         @Override
         protected void failed(Throwable e, Description description) {
             if (printTree()) {
-                            final String prettyPrintTree = PrettyPrintTree.Companion.ofVaadin(
-                                    UI.getCurrent()).print();
-//                String prettyPrintTree = new UITree(UI.getCurrent()).print();
-                LoggerFactory.getLogger("UIUnitTest")
-                        .error("Test {}::{} failed with the tree:\n{}",
-                                description.getTestClass(),
-                                description.getMethodName(), prettyPrintTree);
+                final String prettyPrintTree = PrettyPrintTree.Companion
+                        .ofVaadin(UI.getCurrent()).print();
+                System.out.println("Test " + description.getTestClass() + "::"
+                        + description.getMethodName()
+                        + " failed with the tree:\n" + prettyPrintTree);
             }
         }
 

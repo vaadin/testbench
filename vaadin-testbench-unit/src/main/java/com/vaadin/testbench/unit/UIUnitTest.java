@@ -44,8 +44,8 @@ import org.junit.jupiter.api.BeforeEach;
  * }
  * }
  * </pre>
- * <p>
- * To get a graphical ascii representation of the ui tree on failure add the
+ * <p/>
+ * To get a graphical ascii representation of the UI tree on failure add the
  * annotation {@code @ExtendWith(TreeOnFailureExtension.class)} to the test
  * class.
  */

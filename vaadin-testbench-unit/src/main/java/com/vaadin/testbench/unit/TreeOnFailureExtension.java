@@ -20,8 +20,8 @@ import com.vaadin.testbench.unit.internal.PrettyPrintTree;
  * JUnit5 extension that will collect and output the component tree for the
  * failing test UI.
  * <p>
- * This can help with identifying a problem that has happened
- * in the test where a component is missing or has faulty data.
+ * This can help with identifying a problem that has happened in the test where
+ * a component is missing or has faulty data.
  */
 public class TreeOnFailureExtension implements AfterTestExecutionCallback {
 
@@ -30,14 +30,12 @@ public class TreeOnFailureExtension implements AfterTestExecutionCallback {
         boolean testFailed = extensionContext.getExecutionException()
                 .isPresent();
         if (testFailed) {
-            final String prettyPrintTree = PrettyPrintTree.Companion.ofVaadin(
-                    UI.getCurrent()).print();
-            LoggerFactory.getLogger(TreeOnFailureExtension.class)
-                    .error("Test {}::{} failed with the tree:\n{}",
-                            extensionContext.getTestClass().get()
-                                    .getSimpleName(),
-                            extensionContext.getTestMethod().get().getName(),
-                            prettyPrintTree);
+            final String prettyPrintTree = PrettyPrintTree.Companion
+                    .ofVaadin(UI.getCurrent()).print();
+            extensionContext.publishReportEntry("Test "
+                    + extensionContext.getTestClass().get().getSimpleName()
+                    + "::" + extensionContext.getTestMethod().get().getName()
+                    + " failed with the tree:\n" + prettyPrintTree);
         }
     }
 }
