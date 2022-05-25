@@ -98,6 +98,18 @@ public class ComponentWrap<T extends Component> {
     }
 
     /**
+     * Check that the component is visible for the user. Else throw an
+     * {@link IllegalStateException}
+     */
+    protected void ensureVisible() {
+        if (!getComponent().isVisible() || !getComponent().isAttached()) {
+            throw new IllegalStateException(
+                    PrettyPrintTreeKt.toPrettyString(component)
+                            + " is not visible!");
+        }
+    }
+
+    /**
      * Simulates a server round-trip, flushing pending component changes.
      */
     protected void roundTrip() {

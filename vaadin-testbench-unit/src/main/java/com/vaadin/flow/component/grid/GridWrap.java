@@ -290,12 +290,6 @@ public class GridWrap<T extends Grid<Y>, Y> extends ComponentWrap<T> {
                 .get(getColumnInternalId(targetColumn));
     }
 
-    private void ensureVisible() {
-        if (!getComponent().isVisible()) {
-            throw new IllegalStateException("Grid is not visible!");
-        }
-    }
-
     /**
      * Get selected items.
      *
