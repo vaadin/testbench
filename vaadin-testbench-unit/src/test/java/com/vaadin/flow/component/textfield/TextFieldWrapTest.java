@@ -12,24 +12,29 @@ package com.vaadin.flow.component.textfield;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent;
 import com.vaadin.flow.component.HasValue.ValueChangeListener;
+import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.testbench.unit.UIUnitTest;
 
 public class TextFieldWrapTest extends UIUnitTest {
 
-    @Override
-    protected String scanPackage() {
-        return "com.example";
+    TextFieldView view;
+
+    @BeforeEach
+    public void registerView() {
+        RouteConfiguration.forApplicationScope()
+                .setAnnotatedRoute(TextFieldView.class);
+        view = navigate(TextFieldView.class);
     }
 
     @Test
     public void readOnlyTextField_isNotUsable() {
-        TextField tf = new TextField();
+        TextField tf = view.textField;
         tf.setReadOnly(true);
-        getCurrentView().getElement().appendChild(tf.getElement());
 
         final TextFieldWrap tf_ = wrap(TextFieldWrap.class, tf);
 
@@ -39,9 +44,8 @@ public class TextFieldWrapTest extends UIUnitTest {
 
     @Test
     public void readOnlyTextField_automaticWrapper_readOnlyIsCheckedInUsable() {
-        TextField tf = new TextField();
+        TextField tf = view.textField;
         tf.setReadOnly(true);
-        getCurrentView().getElement().appendChild(tf.getElement());
 
         Assertions.assertFalse(wrap(tf).isUsable(),
                 "Read only TextField shouldn't be usable");
@@ -49,8 +53,7 @@ public class TextFieldWrapTest extends UIUnitTest {
 
     @Test
     public void setTextFieldValue_eventIsFired_valueIsSet() {
-        TextField tf = new TextField();
-        getCurrentView().getElement().appendChild(tf.getElement());
+        TextField tf = view.textField;
 
         AtomicReference<String> value = new AtomicReference<>(null);
 
@@ -68,8 +71,7 @@ public class TextFieldWrapTest extends UIUnitTest {
 
     @Test
     public void nonInteractableField_throwsOnSetValue() {
-        TextField tf = new TextField();
-        getCurrentView().getElement().appendChild(tf.getElement());
+        TextField tf = view.textField;
 
         tf.getElement().setEnabled(false);
         final TextFieldWrap tf_ = wrap(TextFieldWrap.class, tf);

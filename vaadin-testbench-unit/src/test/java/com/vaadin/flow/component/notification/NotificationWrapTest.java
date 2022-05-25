@@ -10,15 +10,20 @@
 package com.vaadin.flow.component.notification;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.vaadin.flow.component.accordion.AccordionView;
+import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.testbench.unit.UIUnitTest;
 
 class NotificationWrapTest extends UIUnitTest {
 
-    @Override
-    protected String scanPackage() {
-        return "com.example";
+    @BeforeEach
+    public void registerView() {
+        RouteConfiguration.forApplicationScope()
+                .setAnnotatedRoute(NotificationView.class);
+        navigate(NotificationView.class);
     }
 
     @Test

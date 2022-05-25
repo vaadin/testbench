@@ -13,22 +13,28 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.testbench.unit.MetaKeys;
 import com.vaadin.testbench.unit.UIUnitTest;
 
 public class ButtonWrapTest extends UIUnitTest {
 
-    @Override
-    protected String scanPackage() {
-        return "com.example";
+    ButtonView view;
+
+    @BeforeEach
+    public void registerView() {
+        RouteConfiguration.forApplicationScope()
+                .setAnnotatedRoute(ButtonView.class);
+        view = navigate(ButtonView.class);
     }
 
     @Test
     public void buttonWithDisableOnClick_notUsableAfterClick() {
-        Button button = new Button();
+        Button button = view.button;
         button.setDisableOnClick(true);
         getCurrentView().getElement().appendChild(button.getElement());
 
@@ -49,11 +55,9 @@ public class ButtonWrapTest extends UIUnitTest {
 
     @Test
     public void clickWithMiddleButton_middleButtonClickShouldBeRegistered() {
-        Button button = new Button();
+        Button button = view.button;
         AtomicInteger mouseButton = new AtomicInteger(-1);
         button.addClickListener(event -> mouseButton.set(event.getButton()));
-
-        getCurrentView().getElement().appendChild(button.getElement());
 
         final ButtonWrap button_ = wrap(ButtonWrap.class, button);
         button_.middleClick();
@@ -64,11 +68,9 @@ public class ButtonWrapTest extends UIUnitTest {
 
     @Test
     public void clickWithRightButton_rightButtonClickShouldBeRegistered() {
-        Button button = new Button();
+        Button button = view.button;
         AtomicInteger mouseButton = new AtomicInteger(-1);
         button.addClickListener(event -> mouseButton.set(event.getButton()));
-
-        getCurrentView().getElement().appendChild(button.getElement());
 
         final ButtonWrap button_ = wrap(ButtonWrap.class, button);
         button_.rightClick();
@@ -79,11 +81,10 @@ public class ButtonWrapTest extends UIUnitTest {
 
     @Test
     public void normalClick_noMetaKeysMarkedAsUsed() {
-        Button button = new Button();
+        Button button = view.button;
         AtomicReference<ClickEvent> event = new AtomicReference<>(null);
         button.addClickListener(
                 clickEvent -> event.compareAndSet(null, clickEvent));
-        getCurrentView().getElement().appendChild(button.getElement());
 
         final ButtonWrap button_ = wrap(ButtonWrap.class, button);
         button_.click();
@@ -102,10 +103,9 @@ public class ButtonWrapTest extends UIUnitTest {
 
     @Test
     public void clickWithMeta_metaKeysMarkedAsUsed() {
-        Button button = new Button();
+        Button button = view.button;
         AtomicReference<ClickEvent> event = new AtomicReference<>(null);
         button.addClickListener(clickEvent -> event.set(clickEvent));
-        getCurrentView().getElement().appendChild(button.getElement());
 
         final ButtonWrap button_ = wrap(ButtonWrap.class, button);
         button_.click(new MetaKeys(true, true, true, true));
