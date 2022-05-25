@@ -20,6 +20,8 @@ import com.vaadin.flow.component.grid.Grid
 import com.vaadin.flow.component.html.Anchor
 import com.vaadin.flow.component.icon.Icon
 import com.vaadin.testbench.unit.internal.PrettyPrintTree.Companion.ofVaadin
+import kotlin.reflect.jvm.isAccessible
+
 
 /**
  * If true, [PrettyPrintTree] will use `\--` instead of `└──` which tend to render on some terminals as `???`.
@@ -100,7 +102,7 @@ fun Component.toPrettyString(): String {
     if (label != caption && caption.isNotBlank()) {
         list.add("caption='$caption'")
     }
-    if (!_text.isNullOrBlank() && this !is Button) {
+    if (!_text.isNullOrBlank() && _text != caption) {
         list.add("text='$_text'")
     }
     if (this is HasValue<*, *>) {
@@ -124,17 +126,24 @@ fun Component.toPrettyString(): String {
         }
     }
      */
-    if (!placeholder.isNullOrBlank()) {
-        list.add("placeholder='$placeholder'")
+    val ignoredAttr = mutableListOf("value", "invalid", "openOn", "label", "errorMessage", "innerHTML")
+    this.element.propertyNames.forEach {
+        if(!ignoredAttr.contains(it) && this.element.getProperty(it).isNotEmpty()) {
+            list.add("${it}='${this.element.getProperty(it)}'")
+        }
     }
-    if (this is Anchor) {
-        // TODO: FIX after importing Anchors
-        // list.add("href='$_href'")
-        list.add("href='${this.href}'")
+    // Any component with href should output it not only Anchor
+    if (this.javaClass.kotlin.members.any { it.name == "href"}) {
+        val f = this.javaClass.kotlin.members.find { it.name == "href" }
+        val href = f?.let {
+            it.isAccessible = true
+            it.call(this)
+        }
+        if (href != null) {
+            list.add("href='$href'")
+        }
     }
     if (this is Button && icon is Icon) {
-        // TODO: FIX after importing IconUtils
-        //list.add("icon='${(icon as Icon).iconName}'")
         list.add("icon='${(icon as Icon).element.getAttribute("icon")}'")
     }
     if (this is Html) {

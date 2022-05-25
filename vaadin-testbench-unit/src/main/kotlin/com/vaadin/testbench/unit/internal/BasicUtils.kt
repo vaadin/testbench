@@ -74,7 +74,6 @@ val Component._isVisible: Boolean
 val Component._text: String?
     get() = when (this) {
         is HasText -> text
-        is Text -> text   // workaround for https://github.com/vaadin/flow/issues/3606
         else -> null
     }
 
