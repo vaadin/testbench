@@ -24,11 +24,23 @@ import org.junit.Before;
  * operated by {@link #cleanVaadinEnvironment()} are executed after each test,
  * and after all {@code @After} annotated methods in subclasses.
  *
+ * Custom Flow service implementations supported by
+ * {@link com.vaadin.flow.di.Lookup} SPI can be provided overriding
+ * {@link #initVaadinEnvironment()} and passing to super implementation the
+ * service classes that should be initialized during setup.
+ *
+ * <pre>
+ * {@code
+ * &#64;Override
+ * public void initVaadinEnvironment() {
+ *     super.initVaadinEnvironment(CustomInstantiatorFactory.class);
+ * }
+ * }
+ * </pre>
  */
 public abstract class UIUnit4Test extends BaseUIUnitTest {
 
     @Before
-    @Override
     public void initVaadinEnvironment() {
         super.initVaadinEnvironment();
     }

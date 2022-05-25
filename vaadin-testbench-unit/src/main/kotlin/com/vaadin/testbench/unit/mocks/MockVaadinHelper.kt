@@ -41,9 +41,9 @@ object MockVaadinHelper {
         servlet.servletContext.setInitParameter("compatibilityMode", "false")
     }
 
-    fun createMockContext(): ServletContext {
+    fun createMockContext(lookupServices: Set<Class<*>> = emptySet()): ServletContext {
         val ctx = MockContext()
-        init(ctx)
+        init(ctx, lookupServices)
         return ctx
     }
 
@@ -90,11 +90,12 @@ object MockVaadinHelper {
     private fun verifyHasLookup(ctx: VaadinContext): Lookup =
             verifyHasLookup((ctx as VaadinServletContext).context)
 
-    private fun init(ctx: ServletContext) {
+    private fun init(ctx: ServletContext, lookupServices: Set<Class<*>> = emptySet()) {
 
         val loaderInitializer = LookupServletContainerInitializer()
 
         val loaders = mutableSetOf<Class<*>>(
+                *lookupServices.toTypedArray(),
                 LookupInitializer::class.java,
                 Class.forName("com.vaadin.flow.di.LookupInitializer${'$'}ResourceProviderImpl")
         )

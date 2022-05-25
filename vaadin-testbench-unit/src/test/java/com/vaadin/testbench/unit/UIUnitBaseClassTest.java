@@ -18,12 +18,15 @@ import com.example.TemplatedParam;
 import com.example.base.WelcomeView;
 import com.example.base.child.ChildView;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.grid.BasicGridView;
+import com.vaadin.flow.di.InstantiatorFactory;
+import com.vaadin.flow.di.Lookup;
 import com.vaadin.flow.router.RouteBaseData;
 import com.vaadin.flow.server.VaadinRequest;
 import com.vaadin.flow.server.VaadinResponse;
@@ -90,6 +93,35 @@ class UIUnitBaseClassTest {
                     .collect(Collectors.toSet());
             Assertions.assertEquals(1, routes.size());
             Assertions.assertTrue(routes.contains(ChildView.class));
+        }
+    }
+
+    @Nested
+    class CustomLookupServicesTest extends UIUnitTest {
+
+        @BeforeEach
+        @Override
+        protected void initVaadinEnvironment() {
+            super.initVaadinEnvironment(TestCustomInstantiatorFactory.class);
+        }
+
+        @Test
+        void customService_availableInLookup() {
+            Lookup lookup = VaadinService.getCurrent().getContext()
+                    .getAttribute(Lookup.class);
+            Assertions.assertNotNull(lookup,
+                    "Expecting Lookup to be initialized");
+
+            InstantiatorFactory service = lookup
+                    .lookup(InstantiatorFactory.class);
+            Assertions.assertNotNull(service,
+                    "Expecting service to be available through Lookup");
+            Assertions.assertInstanceOf(TestCustomInstantiatorFactory.class,
+                    service,
+                    "Expecting service to be "
+                            + TestCustomInstantiatorFactory.class
+                                    .getSimpleName()
+                            + " but was " + service.getClass().getSimpleName());
         }
     }
 

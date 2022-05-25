@@ -77,14 +77,16 @@ object MockVaadin {
      * provide all necessary mocking code.
      * @param routes all classes annotated with [com.vaadin.flow.router.Route]; use [Routes.autoDiscoverViews] to auto-discover all such classes.
      * @param uiFactory produces [UI] instances and sets them as current, by default simply instantiates [MockedUI] class.
+     * @param lookupServices service classes to be provided to the lookup initializer
      */
     @JvmStatic
     @JvmOverloads
     fun setup(routes: Routes = Routes(),
-              uiFactory: () -> UI = { MockedUI() }) {
+              uiFactory: () -> UI = { MockedUI() },
+              lookupServices: Set<Class<*>> = emptySet()) {
         // init servlet
         val servlet = MockVaadinServlet(routes)
-        setup(uiFactory, servlet)
+        setup(uiFactory, servlet, lookupServices)
     }
 
     /**
@@ -102,11 +104,14 @@ object MockVaadin {
      * and construct a custom service which overrides important methods.
      * Please consult [com.vaadin.testbench.unit.mocks.MockService]
      * on what methods you must override in your custom service.
+     * @param lookupServices service classes to be provided to the lookup initializer
      */
     @JvmStatic
-    fun setup(uiFactory: () -> UI = { MockedUI() }, servlet: VaadinServlet) {
+    fun setup(uiFactory: () -> UI = { MockedUI() }, servlet: VaadinServlet,
+              lookupServices: Set<Class<*>> = emptySet()
+              ) {
         if (!servlet.isInitialized) {
-            val ctx: ServletContext = MockVaadinHelper.createMockContext()
+            val ctx: ServletContext = MockVaadinHelper.createMockContext(lookupServices)
             servlet.init(MockServletConfig(ctx))
         }
         val service: VaadinServletService = checkNotNull(servlet.serviceSafe)
