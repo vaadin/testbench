@@ -124,7 +124,7 @@ public class UIUnit4BaseClassTest {
                     "Expecting service to be available through Lookup",
                     service);
             Assert.assertTrue(
-                    "Expecting service to "
+                    "Expecting service to be "
                             + TestCustomInstantiatorFactory.class
                                     .getSimpleName()
                             + " but was " + service.getClass().getSimpleName(),

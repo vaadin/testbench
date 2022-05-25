@@ -19,7 +19,7 @@ import org.junit.Before;
  * for faster bootstrap by overriding {@link #scanPackage()} method.
  *
  * Set up of Vaadin environment is performed before each test by
- * {@link #initVaadinEnvironment()}} method, and will be executed before
+ * {@link #initVaadinEnvironment()} method, and will be executed before
  * {@code @Before} methods defined in subclasses. At the same way, cleanup tasks
  * operated by {@link #cleanVaadinEnvironment()} are executed after each test,
  * and after all {@code @After} annotated methods in subclasses.

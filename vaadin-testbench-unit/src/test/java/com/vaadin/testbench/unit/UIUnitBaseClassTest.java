@@ -118,7 +118,7 @@ class UIUnitBaseClassTest {
                     "Expecting service to be available through Lookup");
             Assertions.assertInstanceOf(TestCustomInstantiatorFactory.class,
                     service,
-                    "Expecting service to "
+                    "Expecting service to be "
                             + TestCustomInstantiatorFactory.class
                                     .getSimpleName()
                             + " but was " + service.getClass().getSimpleName());
