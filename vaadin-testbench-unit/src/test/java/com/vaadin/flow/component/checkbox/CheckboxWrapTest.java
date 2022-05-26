@@ -80,6 +80,12 @@ class CheckboxWrapTest extends UIUnitTest {
     }
 
     @Test
+    void click_disabledByProperty_throws() {
+        view.checkbox.setDisabled(true);
+        Assertions.assertThrows(IllegalStateException.class, checkbox_::click);
+    }
+
+    @Test
     void click_invisible_throws() {
         view.checkbox.setVisible(false);
         Assertions.assertThrows(IllegalStateException.class, checkbox_::click);

@@ -36,7 +36,8 @@ public class CheckboxWrap<T extends Checkbox> extends ComponentWrap<T> {
 
     @Override
     public boolean isUsable() {
-        return super.isUsable() && !getComponent().isReadOnly();
+        return super.isUsable() && !getComponent().isReadOnly()
+                && !getComponent().isDisabledBoolean();
     }
 
     /**
