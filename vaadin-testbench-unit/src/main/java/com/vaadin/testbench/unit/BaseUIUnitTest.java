@@ -9,14 +9,15 @@
  */
 package com.vaadin.testbench.unit;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Stream;
 
 import com.googlecode.gentyref.GenericTypeReflector;
 import io.github.classgraph.ClassGraph;
@@ -26,10 +27,10 @@ import io.github.classgraph.ScanResult;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.UI;
-import com.vaadin.testbench.unit.internal.MockVaadin;
-import com.vaadin.testbench.unit.internal.Routes;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.RouteParameters;
+import com.vaadin.testbench.unit.internal.MockVaadin;
+import com.vaadin.testbench.unit.internal.Routes;
 
 /**
  * Base class for UI unit tests.
@@ -299,9 +300,7 @@ class BaseUIUnitTest {
         try {
             // Get the generic class for given wrapper. Component should be an
             // instance of this.
-            final Class<?> aClass = Stream.of(clazz.getTypeParameters())
-                    .map(type -> GenericTypeReflector.erase(type)).findFirst()
-                    .get();
+            final Class<?> aClass = detectComponentType(clazz);
             return clazz.getConstructor(aClass).newInstance(component);
         } catch (InstantiationException | IllegalAccessException
                 | InvocationTargetException | NoSuchMethodException e) {
@@ -320,6 +319,59 @@ class BaseUIUnitTest {
                 });
         UI.getCurrent().getInternals().getStateTree()
                 .runExecutionsBeforeClientResponse();
+    }
+
+    /**
+     * Detects the component type for the given wrapper from generic
+     * declaration, by inspecting class hierarchy to resolve the concrete type
+     * for {@link ComponentWrap} defined type variable.
+     *
+     * @param wrapperType
+     *            the wrapper type
+     * @return the component type the wrapper defines
+     */
+    @SuppressWarnings("rawtypes")
+    static Class<?> detectComponentType(
+            Class<? extends ComponentWrap> wrapperType) {
+        if (wrapperType == ComponentWrap.class) {
+            return Component.class;
+        }
+        Map<Type, Type> typeMap = new HashMap<>();
+        Class<?> clazz = wrapperType;
+        while (!clazz.equals(ComponentWrap.class)) {
+            extractTypeArguments(typeMap, clazz);
+            clazz = clazz.getSuperclass();
+        }
+        return GenericTypeReflector
+                .erase(typeMap.get(ComponentWrap.class.getTypeParameters()[0]));
+    }
+
+    /**
+     * Collects actual type for type variables declared by the generic
+     * declaration of given clazz.
+     *
+     * @param typeMap
+     *            map associating type variables to actual type
+     * @param clazz
+     *            the class to inspect for generic types
+     */
+    private static void extractTypeArguments(Map<Type, Type> typeMap,
+            Class<?> clazz) {
+        Type genericSuperclass = clazz.getGenericSuperclass();
+        if (!(genericSuperclass instanceof ParameterizedType)) {
+            return;
+        }
+
+        ParameterizedType parameterizedType = (ParameterizedType) genericSuperclass;
+        Type[] typeParameter = ((Class<?>) parameterizedType.getRawType())
+                .getTypeParameters();
+        Type[] actualTypeArgument = parameterizedType.getActualTypeArguments();
+        for (int i = 0; i < typeParameter.length; i++) {
+            if (typeMap.containsKey(actualTypeArgument[i])) {
+                actualTypeArgument[i] = typeMap.get(actualTypeArgument[i]);
+            }
+            typeMap.put(typeParameter[i], actualTypeArgument[i]);
+        }
     }
 
 }
