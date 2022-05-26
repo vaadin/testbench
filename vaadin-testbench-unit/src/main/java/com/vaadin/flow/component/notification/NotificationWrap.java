@@ -92,10 +92,9 @@ public class NotificationWrap<T extends Notification> extends ComponentWrap<T> {
      * Mixin interface to simplify creation of {@link TextFieldWrap} wrappers
      * for component instances, avoiding explicit casts.
      *
-     * Wrapper creation is based on {@link ComponentWrap.Discover}
-     * functionality, so this mixin requires to be applied on a class already
-     * implementing the {@link ComponentWrap.Discover#wrap(Class, Component)}
-     * method.
+     * Wrapper creation is based on {@link Mixable} functionality, so this mixin
+     * requires to be applied on a class already implementing the
+     * {@link Mixable#wrap(Class, Component)} method.
      *
      * Usually used with test classes extending
      * {@link com.vaadin.testbench.unit.UIUnitTest}.
@@ -122,7 +121,7 @@ public class NotificationWrap<T extends Notification> extends ComponentWrap<T> {
      * }
      * </pre>
      */
-    public interface Mixin extends ComponentWrap.Discover {
+    public interface Mixin extends Mixable {
 
         @SuppressWarnings("unchecked")
         default <T extends Notification> NotificationWrap<T> wrap(

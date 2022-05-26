@@ -12,6 +12,9 @@ package com.vaadin.flow.component.textfield;
 import org.slf4j.LoggerFactory;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonWrap;
+import com.vaadin.testbench.unit.ComponentQuery;
 import com.vaadin.testbench.unit.ComponentWrap;
 import com.vaadin.testbench.unit.Wraps;
 
@@ -93,10 +96,9 @@ public class TextFieldWrap<T extends GeneratedVaadinTextField<T, V>, V>
      * Mixin interface to simplify creation of {@link TextFieldWrap} wrappers
      * for component instances, avoiding explicit casts.
      *
-     * Wrapper creation is based on {@link ComponentWrap.Discover}
-     * functionality, so this mixin requires to be applied on a class already
-     * implementing the {@link ComponentWrap.Discover#wrap(Class, Component)}
-     * method.
+     * Wrapper creation is based on {@link Mixable} functionality, so this mixin
+     * requires to be applied on a class already implementing the
+     * {@link Mixable#wrap(Class, Component)} method.
      *
      * Usually used with test classes extending
      * {@link com.vaadin.testbench.unit.UIUnitTest}.
@@ -124,13 +126,49 @@ public class TextFieldWrap<T extends GeneratedVaadinTextField<T, V>, V>
      * }
      * </pre>
      */
-    public interface Mixin extends ComponentWrap.Discover {
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public interface Mixin extends Mixable {
 
-        @SuppressWarnings("unchecked")
+        TextFieldKind<String, TextField> TEXTFIELD = new TextFieldKind<>(
+                TextField.class);
+
         default <T extends GeneratedVaadinTextField<T, V>, V> TextFieldWrap<T, V> wrap(
                 T textField) {
             return wrap(TextFieldWrap.class, textField);
         }
+
+        default ComponentQuery<TextField, TextFieldWrap<TextField, String>> $textField() {
+            return $(TextField.class);
+        }
+
+        default <V, T extends GeneratedVaadinTextField<T, V>> ComponentQuery<T, TextFieldWrap<T, V>> $textField(
+                Class<T> componentType) {
+            return $(componentType);
+        }
+
+        default <V, T extends GeneratedVaadinTextField<T, V>, W extends TextFieldWrap<? extends T, V>, Q extends ComponentQuery<T, W>> Q $(
+                TextFieldKind<V, T> kind) {
+            return $(kind.componentType);
+        }
+
+        default <V, T extends GeneratedVaadinTextField<T, V>, W extends TextFieldWrap<? extends T, V>, Q extends ComponentQuery<T, W>> Q $(
+                TextFieldKind kind, Class<V> valueType) {
+            return (Q) $(kind.componentType);
+        }
+    }
+
+    public static class TextFieldKind<V, C extends GeneratedVaadinTextField<C, V>>
+            extends Mixable.TypedKind<V, C, TextFieldWrap<C, V>> {
+
+        private TextFieldKind(Class<C> componentType) {
+            super(componentType, (Class) TextFieldWrap.class);
+        }
+
+        public <X, Y extends GeneratedVaadinTextField<Y, X>> TextFieldKind<X, Y> as(
+                Class<Y> ct) {
+            return new TextFieldKind<>(ct);
+        }
+
     }
 
 }

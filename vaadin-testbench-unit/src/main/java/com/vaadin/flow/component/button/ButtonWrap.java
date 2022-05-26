@@ -12,6 +12,9 @@ package com.vaadin.flow.component.button;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentUtil;
+import com.vaadin.flow.component.textfield.GeneratedVaadinTextField;
+import com.vaadin.flow.component.textfield.TextFieldWrap;
+import com.vaadin.testbench.unit.ComponentQuery;
 import com.vaadin.testbench.unit.ComponentWrap;
 import com.vaadin.testbench.unit.MetaKeys;
 import com.vaadin.testbench.unit.Wraps;
@@ -96,10 +99,9 @@ public class ButtonWrap<T extends Button> extends ComponentWrap<T> {
      * Mixin interface to simplify creation of {@link ButtonWrap} wrappers for
      * component instances, avoiding explicit casts.
      *
-     * Wrapper creation is based on {@link ComponentWrap.Discover}
-     * functionality, so this mixin requires to be applied on a class already
-     * implementing the {@link ComponentWrap.Discover#wrap(Class, Component)}
-     * method.
+     * Wrapper creation is based on {@link Mixable} functionality, so this mixin
+     * requires to be applied on a class already implementing the
+     * {@link Mixable#wrap(Class, Component)} method.
      *
      * Usually used with test classes extending
      * {@link com.vaadin.testbench.unit.UIUnitTest}.
@@ -127,11 +129,23 @@ public class ButtonWrap<T extends Button> extends ComponentWrap<T> {
      * }
      * </pre>
      */
-    public interface Mixin extends ComponentWrap.Discover {
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public interface Mixin extends Mixable {
 
-        @SuppressWarnings("unchecked")
+        Kind<Button, ButtonWrap<Button>> BUTTON = new Kind<>(Button.class,
+                (Class) ButtonWrap.class);
+
         default <T extends Button> ButtonWrap<T> wrap(T textField) {
             return wrap(ButtonWrap.class, textField);
+        }
+
+        default ComponentQuery<Button, ButtonWrap<Button>> $button() {
+            return $(Button.class);
+        }
+
+        default <T extends Button> ComponentQuery<T, ButtonWrap<T>> $button(
+                Class<T> componentType) {
+            return $(componentType);
         }
     }
 

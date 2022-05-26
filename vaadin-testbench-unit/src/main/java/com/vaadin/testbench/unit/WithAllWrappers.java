@@ -11,6 +11,7 @@
 package com.vaadin.testbench.unit;
 
 import com.vaadin.flow.component.button.ButtonWrap;
+import com.vaadin.flow.component.grid.GridWrap;
 import com.vaadin.flow.component.notification.NotificationWrap;
 import com.vaadin.flow.component.textfield.TextFieldWrap;
 
@@ -21,6 +22,6 @@ import com.vaadin.flow.component.textfield.TextFieldWrap;
  * To be used with {@link UIUnitTest} to reduce the need for explicit casts when
  * getting test wrapper for component instances.
  */
-public interface WithAllWrappers
-        extends TextFieldWrap.Mixin, ButtonWrap.Mixin, NotificationWrap.Mixin {
+public interface WithAllWrappers extends TextFieldWrap.Mixin, ButtonWrap.Mixin,
+        NotificationWrap.Mixin, GridWrap.Mixin {
 }

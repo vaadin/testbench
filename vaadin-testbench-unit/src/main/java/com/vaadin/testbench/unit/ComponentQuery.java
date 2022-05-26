@@ -44,9 +44,11 @@ import com.vaadin.testbench.unit.internal.SearchSpec;
  *
  * @param <T>
  *            the type of the component(s) to search for
+ * @param <W>
+ *            the type of the wrapper for the target component
  * @see ComponentWrap
  */
-public class ComponentQuery<T extends Component> {
+public class ComponentQuery<T extends Component, W extends ComponentWrap<? extends T>> {
 
     private final Class<T> componentType;
     private final Function<Component, ? extends ComponentWrap<?>> wrapperFactory;
@@ -83,7 +85,7 @@ public class ComponentQuery<T extends Component> {
      *            getter function to a component instance
      * @return this element query instance for chaining
      */
-    public <V> ComponentQuery<T> withPropertyValue(Function<T, V> getter,
+    public <V> ComponentQuery<T, W> withPropertyValue(Function<T, V> getter,
             V expectedValue) {
         Objects.requireNonNull(getter, "getter function must not be null");
         locatorSpec.predicates
@@ -105,7 +107,7 @@ public class ComponentQuery<T extends Component> {
      * @return this element query instance for chaining
      * @see com.vaadin.flow.component.HasValue#getValue()
      */
-    public <V> ComponentQuery<T> withValue(V expectedValue) {
+    public <V> ComponentQuery<T, W> withValue(V expectedValue) {
         locatorSpec.value = expectedValue;
         return this;
     }
@@ -117,7 +119,7 @@ public class ComponentQuery<T extends Component> {
      *            the id to look up
      * @return this element query instance for chaining
      */
-    public ComponentQuery<T> withId(String id) {
+    public ComponentQuery<T, W> withId(String id) {
         locatorSpec.id = id;
         // At most one element with given id is expected
         locatorSpec.count = new IntRange(0, 1);
@@ -131,7 +133,7 @@ public class ComponentQuery<T extends Component> {
      *            the condition to check against the components.
      * @return this element query instance for chaining
      */
-    public ComponentQuery<T> withCondition(Predicate<T> condition) {
+    public ComponentQuery<T, W> withCondition(Predicate<T> condition) {
         Objects.requireNonNull(condition, "condition must not be null");
         locatorSpec.predicates.add(condition);
         return this;
@@ -147,7 +149,8 @@ public class ComponentQuery<T extends Component> {
      *
      * @return this element query instance for chaining
      */
-    public ComponentQuery<T> withClassName(String className, String... other) {
+    public ComponentQuery<T, W> withClassName(String className,
+            String... other) {
         if (className == null) {
             throw new IllegalArgumentException("className must not be null");
         }
@@ -172,7 +175,7 @@ public class ComponentQuery<T extends Component> {
      *
      * @return this element query instance for chaining
      */
-    public ComponentQuery<T> withoutClassName(String className,
+    public ComponentQuery<T, W> withoutClassName(String className,
             String... other) {
         if (className == null) {
             throw new IllegalArgumentException("className must not be null");
@@ -194,7 +197,7 @@ public class ComponentQuery<T extends Component> {
      *            theme that should exist on the component.
      * @return this element query instance for chaining
      */
-    public ComponentQuery<T> withTheme(String theme) {
+    public ComponentQuery<T, W> withTheme(String theme) {
         if (locatorSpec.themes == null || locatorSpec.themes.isEmpty()) {
             locatorSpec.themes = theme;
         } else {
@@ -210,7 +213,7 @@ public class ComponentQuery<T extends Component> {
      *            theme that should not exist on the component.
      * @return this element query instance for chaining
      */
-    public ComponentQuery<T> withoutTheme(String theme) {
+    public ComponentQuery<T, W> withoutTheme(String theme) {
         if (locatorSpec.withoutThemes == null
                 || locatorSpec.withoutThemes.isEmpty()) {
             locatorSpec.withoutThemes = theme;
@@ -232,7 +235,7 @@ public class ComponentQuery<T extends Component> {
      *            the text the component is expected to have as its caption
      * @return this element query instance for chaining
      */
-    public ComponentQuery<T> withCaption(String caption) {
+    public ComponentQuery<T, W> withCaption(String caption) {
         locatorSpec.caption = caption;
         locatorSpec.captionExactMatch = true;
         return this;
@@ -250,7 +253,7 @@ public class ComponentQuery<T extends Component> {
      *            the text the component is expected to have as its caption
      * @return this element query instance for chaining
      */
-    public ComponentQuery<T> withCaptionContaining(String text) {
+    public ComponentQuery<T, W> withCaptionContaining(String text) {
         if (text == null) {
             throw new IllegalArgumentException("text must not be null");
         }
@@ -267,7 +270,7 @@ public class ComponentQuery<T extends Component> {
      * @return this element query instance for chaining
      * @see Element#getText()
      */
-    public ComponentQuery<T> withText(String text) {
+    public ComponentQuery<T, W> withText(String text) {
         locatorSpec.text = text;
         locatorSpec.textExactMatch = true;
         return this;
@@ -281,7 +284,7 @@ public class ComponentQuery<T extends Component> {
      * @return this element query instance for chaining
      * @see Element#getText()
      */
-    public ComponentQuery<T> withTextContaining(String text) {
+    public ComponentQuery<T, W> withTextContaining(String text) {
         if (text == null) {
             throw new IllegalArgumentException("text must not be null");
         }
@@ -300,7 +303,7 @@ public class ComponentQuery<T extends Component> {
      * @throws IllegalArgumentException
      *             if {@code count} is negative
      */
-    public ComponentQuery<T> withResultsSize(int count) {
+    public ComponentQuery<T, W> withResultsSize(int count) {
         if (count < 0) {
             throw new IllegalArgumentException(
                     "count must be greater or equal than zero, but was "
@@ -323,7 +326,7 @@ public class ComponentQuery<T extends Component> {
      *             if {@code min} or {@code max} are negative, or if {@code min}
      *             is greater than {@code max}
      */
-    public ComponentQuery<T> withResultsSize(int min, int max) {
+    public ComponentQuery<T, W> withResultsSize(int min, int max) {
         if (min < 0) {
             throw new IllegalArgumentException(
                     "min must be greater or equal than zero, but was " + min);
@@ -352,7 +355,7 @@ public class ComponentQuery<T extends Component> {
      *             if {@code min} or {@code max} are negative, or if {@code min}
      *             is greater than {@code max}
      */
-    public ComponentQuery<T> withMinResults(int min) {
+    public ComponentQuery<T, W> withMinResults(int min) {
         return withResultsSize(min, locatorSpec.count.getEndInclusive());
     }
 
@@ -367,7 +370,7 @@ public class ComponentQuery<T extends Component> {
      *             if {@code min} or {@code max} are negative, or if {@code min}
      *             is greater than {@code max}
      */
-    public ComponentQuery<T> withMaxResults(int max) {
+    public ComponentQuery<T, W> withMaxResults(int max) {
         return withResultsSize(locatorSpec.count.getStart(), max);
     }
 
@@ -380,7 +383,7 @@ public class ComponentQuery<T extends Component> {
      *
      * @return this element query instance for chaining
      */
-    public ComponentQuery<T> withAttribute(String attribute) {
+    public ComponentQuery<T, W> withAttribute(String attribute) {
         locatorSpec.predicates.add(ElementConditions.hasAttribute(attribute));
         return this;
     }
@@ -396,7 +399,7 @@ public class ComponentQuery<T extends Component> {
      *
      * @return this element query instance for chaining
      */
-    public ComponentQuery<T> withAttribute(String attribute, String value) {
+    public ComponentQuery<T, W> withAttribute(String attribute, String value) {
         locatorSpec.predicates
                 .add(ElementConditions.hasAttribute(attribute, value));
         return this;
@@ -410,7 +413,7 @@ public class ComponentQuery<T extends Component> {
      *
      * @return this element query instance for chaining
      */
-    public ComponentQuery<T> withoutAttribute(String attribute) {
+    public ComponentQuery<T, W> withoutAttribute(String attribute) {
         locatorSpec.predicates
                 .add(ElementConditions.hasNotAttribute(attribute));
         return this;
@@ -427,7 +430,8 @@ public class ComponentQuery<T extends Component> {
      *
      * @return this element query instance for chaining
      */
-    public ComponentQuery<T> withoutAttribute(String attribute, String value) {
+    public ComponentQuery<T, W> withoutAttribute(String attribute,
+            String value) {
         locatorSpec.predicates
                 .add(ElementConditions.hasNotAttribute(attribute, value));
         return this;
@@ -445,7 +449,7 @@ public class ComponentQuery<T extends Component> {
      * @throws java.util.NoSuchElementException
      *             if first component is found
      */
-    public <E extends Component> ComponentQuery<E> thenOnFirst(
+    public <E extends Component, F extends ComponentWrap<E>> ComponentQuery<E, F> thenOnFirst(
             Class<E> componentType) {
         return thenOn(1, componentType);
     }
@@ -471,9 +475,9 @@ public class ComponentQuery<T extends Component> {
      * @throws java.util.NoSuchElementException
      *             if current query does not produce results
      */
-    public <E extends Component> ComponentQuery<E> thenOn(int index,
-            Class<E> componentType) {
-        return new ComponentQuery<>(componentType, wrapperFactory)
+    public <E extends Component, F extends ComponentWrap<? extends E>> ComponentQuery<E, F> thenOn(
+            int index, Class<E> componentType) {
+        return new ComponentQuery<E, F>(componentType, wrapperFactory)
                 .from(atIndex(index).getComponent());
     }
 
@@ -504,7 +508,7 @@ public class ComponentQuery<T extends Component> {
      *             if no component is found
      */
     @SuppressWarnings("unchecked")
-    public <X extends ComponentWrap<? extends T>> X first() {
+    public <X extends W> X first() {
         return (X) allComponents().stream().findFirst().map(wrapperFactory)
                 .orElseThrow(() -> new NoSuchElementException(
                         "Cannot find component for current query"));
@@ -631,7 +635,7 @@ public class ComponentQuery<T extends Component> {
      *            a component used as starting element for search.
      * @return this component query instance for chaining.
      */
-    public ComponentQuery<T> from(Component context) {
+    public ComponentQuery<T, W> from(Component context) {
         this.context = context;
         return this;
     }

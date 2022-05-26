@@ -48,7 +48,7 @@ import com.vaadin.testbench.unit.mocks.MockedUI;
  *
  * For internal use only. May be renamed or removed in a future release.
  */
-class BaseUIUnitTest implements ComponentWrap.Discover {
+class BaseUIUnitTest implements ComponentWrap.Mixable {
 
     private static final ConcurrentHashMap<String, Routes> routesCache = new ConcurrentHashMap<>();
 
@@ -267,7 +267,7 @@ class BaseUIUnitTest implements ComponentWrap.Discover {
      *            component type
      * @return component in wrapper with test helpers
      */
-    public <T extends ComponentWrap<Y>, Y extends Component> T wrap(
+    public <T extends ComponentWrap<? extends Y>, Y extends Component> T wrap(
             Y component) {
         return (T) initialize(getWrapper(component.getClass()), component);
     }
@@ -318,8 +318,10 @@ class BaseUIUnitTest implements ComponentWrap.Discover {
      *            the type of the component(s) to search for
      * @return a query object for finding components
      */
-    public <T extends Component> ComponentQuery<T> $(Class<T> componentType) {
-        return new ComponentQuery<>(componentType, this::wrap);
+    @SuppressWarnings("unchecked")
+    public <T extends Component, W extends ComponentWrap<? extends T>, Q extends ComponentQuery<T, W>> Q $(
+            Class<T> componentType) {
+        return (Q) new ComponentQuery<>(componentType, this::wrap);
     }
 
     /**
@@ -331,13 +333,17 @@ class BaseUIUnitTest implements ComponentWrap.Discover {
      *            the type of the component(s) to search for
      * @return a query object for finding components
      */
-    public <T extends Component> ComponentQuery<T> $view(
+    public <T extends Component, W extends ComponentWrap<? extends T>> ComponentQuery<T, W> $view(
             Class<T> componentType) {
+        return $view($(componentType));
+    }
+
+    public <T extends Component, W extends ComponentWrap<? extends T>> ComponentQuery<T, W> $view(
+            ComponentQuery<T, W> query) {
         Component viewComponent = getCurrentView().getElement().getComponent()
                 .orElseThrow(() -> new AssertionError(
                         "Cannot get Component instance for current view"));
-        return new ComponentQuery<>(componentType, this::wrap)
-                .from(viewComponent);
+        return query.from(viewComponent);
     }
 
     /**

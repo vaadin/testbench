@@ -13,8 +13,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
 
+import com.vaadin.flow.component.textfield.GeneratedVaadinTextField;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.textfield.TextFieldWrap;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.function.ValueProvider;
+import com.vaadin.testbench.unit.ComponentQuery;
 import com.vaadin.testbench.unit.ComponentWrap;
 import com.vaadin.testbench.unit.MetaKeys;
 import com.vaadin.testbench.unit.MouseButton;
@@ -320,6 +324,35 @@ public class GridWrap<T extends Grid<Y>, Y> extends ComponentWrap<T> {
             throw new RuntimeException("Failed to get internal id for column",
                     e);
         }
+    }
+
+    public interface Mixin extends Mixable {
+
+        GridKind<Object, Grid<Object>> GRID = new GridKind<>(
+                (Class) Grid.class);
+
+        default <T extends Grid<V>, V> GridWrap<T, V> wrap(T grid) {
+            return wrap(GridWrap.class, grid);
+        }
+
+        default <V, T extends Grid<V>, W extends GridWrap<? extends T, V>, Q extends ComponentQuery<T, W>> Q $(
+                GridKind<V, T> kind) {
+            return $(kind.componentType);
+        }
+
+        default <V, T extends Grid<V>, W extends GridWrap<? extends T, V>, Q extends ComponentQuery<T, W>> Q $(
+                GridKind kind, Class<V> valueType) {
+            return (Q) $(kind.componentType);
+        }
+    }
+
+    public static class GridKind<V, C extends Grid<V>>
+            extends Mixable.TypedKind<V, C, GridWrap<C, V>> {
+
+        private GridKind(Class<C> componentType) {
+            super(componentType, (Class) GridWrap.class);
+        }
+
     }
 
 }

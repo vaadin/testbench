@@ -188,11 +188,35 @@ public class ComponentWrap<T extends Component> {
             throw new RuntimeException(e);
         }
     }
+
     /**
      * Discovers and instantiates the best matching test wrapper for a specific
      * component type.
      */
-    public interface Discover {
+    public interface Mixable {
+
+        class Kind<C extends Component, W extends ComponentWrap<? extends C>> {
+            public final Class<W> wrapperType;
+            public final Class<C> componentType;
+
+            public Kind(Class<C> componentType, Class<W> wrapperType) {
+                this.wrapperType = wrapperType;
+                this.componentType = componentType;
+            }
+
+            public <V> TypedKind<V, C, W> typed(Class<V> type) {
+                return new TypedKind<>(componentType, wrapperType);
+            }
+        }
+
+        class TypedKind<V, C extends Component, W extends ComponentWrap<? extends C>>
+                extends Kind<C, W> {
+            public TypedKind(Class<C> componentType, Class<W> wrapperType) {
+                super(componentType, wrapperType);
+            }
+
+        }
+
         /**
          * Wrap component with wrapper best matching component type.
          *
@@ -206,5 +230,14 @@ public class ComponentWrap<T extends Component> {
          */
         <T extends ComponentWrap<Y>, Y extends Component> T wrap(Class<T> wrap,
                 Y component);
+
+        <T extends Component, W extends ComponentWrap<? extends T>, Q extends ComponentQuery<T, W>> Q $(
+                Class<T> componentType);
+
+        default <T extends Component, W extends ComponentWrap<? extends T>, Q extends ComponentQuery<T, W>> Q $(
+                Kind<T, W> kind) {
+            return $(kind.componentType);
+        }
+
     }
 }

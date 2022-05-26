@@ -128,4 +128,5 @@ public class ButtonWrapTest extends UIUnitTest implements ButtonWrap.Mixin {
         Assertions.assertFalse(event.get().isMetaKey(),
                 "Meta should not have been used");
     }
+
 }
