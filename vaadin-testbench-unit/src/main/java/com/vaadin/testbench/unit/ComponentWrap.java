@@ -9,10 +9,14 @@
  */
 package com.vaadin.testbench.unit;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+
 import org.slf4j.LoggerFactory;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.testbench.unit.internal.PrettyPrintTreeKt;
 
 /**
@@ -116,4 +120,69 @@ public class ComponentWrap<T extends Component> {
         BaseUIUnitTest.roundTrip();
     }
 
+    /**
+     * Get field with given name in the wrapped component.
+     *
+     * @param fieldName
+     *            field name
+     * @return accessible field
+     */
+    protected Field getField(String fieldName) {
+        return getField(getComponent().getClass(), fieldName);
+    }
+
+    /**
+     * Get field with given name in the given class.
+     *
+     * @param target
+     *            class to get field from
+     * @param fieldName
+     *            field name
+     * @return accessible field
+     */
+    protected Field getField(Class target, String fieldName) {
+        try {
+            final Field field = target.getDeclaredField(fieldName);
+            field.setAccessible(true);
+            return field;
+        } catch (NoSuchFieldException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Get method with given name and parameters in the wrapped component.
+     *
+     * @param methodName
+     *            method name
+     * @param parameterTypes
+     *            parameter types the method has
+     * @return accessible method
+     */
+    protected Method getMethod(String methodName, Class<?>... parameterTypes) {
+        return getMethod(getComponent().getClass(), methodName, parameterTypes);
+    }
+
+    /**
+     * Get method with given name and parameters in the given class.
+     *
+     * @param target
+     *            class to get method from
+     * @param methodName
+     *            method name
+     * @param parameterTypes
+     *            parameter types the method has
+     * @return accessible method
+     */
+    protected Method getMethod(Class target, String methodName,
+            Class<?>... parameterTypes) {
+        try {
+            final Method method = target.getDeclaredMethod(methodName,
+                    parameterTypes);
+            method.setAccessible(true);
+            return method;
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
