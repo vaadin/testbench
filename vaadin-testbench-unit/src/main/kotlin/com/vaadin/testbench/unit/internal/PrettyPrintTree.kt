@@ -126,9 +126,9 @@ fun Component.toPrettyString(): String {
         }
     }
      */
-    val ignoredAttr = mutableListOf("value", "invalid", "openOn", "label", "errorMessage", "innerHTML")
+    val ignoredAttr = mutableListOf("value", "invalid", "openOn", "label", "errorMessage", "innerHTML", "i18n","error")
     this.element.propertyNames.forEach {
-        if(!ignoredAttr.contains(it) && this.element.getProperty(it).isNotEmpty()) {
+        if(!ignoredAttr.contains(it) && this.element.getProperty(it).isNotEmpty() && !it.startsWith("_")) {
             list.add("${it}='${this.element.getProperty(it)}'")
         }
     }
