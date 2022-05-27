@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.NonGenericTestWrap;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.TestWrap;
 
@@ -43,10 +44,42 @@ public class WrapperResolutionTest extends UIUnitTest {
         Assertions.assertTrue(wrap(sc).getClass().equals(ComponentWrap.class));
     }
 
+    @Test
+    public void wrapTestComponentForConcreteWrapper_returnsNonGenericTestWrap() {
+        TestComponentForConcreteWrapper component = new TestComponentForConcreteWrapper();
+        Assertions.assertEquals(wrap(component).getClass(),
+                NonGenericTestWrap.class);
+    }
+
+    @Test
+    void detectComponentType_resolvesComponentTypeThroughHierarchy() {
+        Assertions.assertEquals(Component.class,
+                detectComponentType(ComponentWrap.class));
+        Assertions.assertEquals(TestComponent.class,
+                detectComponentType(MyWrap.class));
+        Assertions.assertEquals(MyTest.class,
+                detectComponentType(MyExtendedWrap.class));
+        Assertions.assertEquals(TestComponentForConcreteWrapper.class,
+                detectComponentType(NonGenericTestWrap.class));
+    }
+
     public static class MyTest extends TestComponent {
     }
 
     @Tag("div")
     public static class SpecialComponent extends Component {
     }
+
+    static class MyWrap<Y, Z extends TestComponent> extends ComponentWrap<Z> {
+        public MyWrap(Z component) {
+            super(component);
+        }
+    }
+
+    static class MyExtendedWrap<Y> extends MyWrap<Y, MyTest> {
+        public MyExtendedWrap(MyTest component) {
+            super(component);
+        }
+    }
+
 }
