@@ -53,16 +53,16 @@ class CheckboxGroupWrapTest extends UIUnitTest {
     }
 
     @Test
-    void selectItem_multipleItems_itemsSelected() {
-        checkboxGroup_.selectItem("test-bar", "test-jay");
+    void selectItems_multipleItems_itemsSelected() {
+        checkboxGroup_.selectItems("test-bar", "test-jay");
         assertContainsExactlyInAnyOrder(
                 Set.of(view.items.get("bar"), view.items.get("jay")),
                 checkboxGroup_.getSelected());
     }
 
     @Test
-    void selectItem_collectionOfItems_itemsSelected() {
-        checkboxGroup_.selectItem(List.of("test-bar", "test-jay"));
+    void selectItems_collectionOfItems_itemsSelected() {
+        checkboxGroup_.selectItems(List.of("test-bar", "test-jay"));
         assertContainsExactlyInAnyOrder(
                 Set.of(view.items.get("bar"), view.items.get("jay")),
                 checkboxGroup_.getSelected());
@@ -76,14 +76,6 @@ class CheckboxGroupWrapTest extends UIUnitTest {
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    private void assertContainsExactlyInAnyOrder(Collection expected,
-            Collection actual) {
-        Assertions.assertEquals(expected.size(), actual.size(), "Expected "
-                + expected.size() + " elements, but got " + actual.size());
-        Assertions.assertTrue(
-                expected.containsAll(actual) && actual.containsAll(expected));
-    }
-
     @Test
     void deselectItem_deselectCorrectItem() {
         view.checkboxGroup.setValue(new HashSet<>(view.items.values()));
@@ -103,20 +95,20 @@ class CheckboxGroupWrapTest extends UIUnitTest {
     }
 
     @Test
-    void deselectItem_multipleItems_itemsDeselected() {
+    void deselectItems_multipleItems_itemsDeselected() {
         view.checkboxGroup.setValue(new HashSet<>(view.items.values()));
 
-        checkboxGroup_.deselectItem("test-jay", "test-bar");
+        checkboxGroup_.deselectItems("test-jay", "test-bar");
         assertContainsExactlyInAnyOrder(
                 Set.of(view.items.get("foo"), view.items.get("baz")),
                 checkboxGroup_.getSelected());
     }
 
     @Test
-    void deselectItem_collectionOfItems_itemsDeselected() {
+    void deselectItems_collectionOfItems_itemsDeselected() {
         view.checkboxGroup.setValue(new HashSet<>(view.items.values()));
 
-        checkboxGroup_.deselectItem(List.of("test-jay", "test-bar"));
+        checkboxGroup_.deselectItems(List.of("test-jay", "test-bar"));
         assertContainsExactlyInAnyOrder(
                 Set.of(view.items.get("foo"), view.items.get("baz")),
                 checkboxGroup_.getSelected());
@@ -188,6 +180,15 @@ class CheckboxGroupWrapTest extends UIUnitTest {
         Assertions.assertThrows(IllegalStateException.class,
                 () -> checkboxGroup_.deselectAll());
 
+    }
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private void assertContainsExactlyInAnyOrder(Collection expected,
+            Collection actual) {
+        Assertions.assertEquals(expected.size(), actual.size(), "Expected "
+                + expected.size() + " elements, but got " + actual.size());
+        Assertions.assertTrue(
+                expected.containsAll(actual) && actual.containsAll(expected));
     }
 
 }

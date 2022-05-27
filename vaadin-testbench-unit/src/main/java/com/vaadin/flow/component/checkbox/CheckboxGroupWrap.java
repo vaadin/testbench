@@ -10,7 +10,6 @@
 
 package com.vaadin.flow.component.checkbox;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -53,25 +52,34 @@ public class CheckboxGroupWrap<T extends CheckboxGroup<V>, V>
     }
 
     /**
-     * Select items by client string representation.
+     * Selects an item by its client string representation.
      *
      * @param selection
      *            item string representation
-     * @param others
-     *            other items string representation
      */
-    public void selectItem(String selection, String... others) {
+    public void selectItem(String selection) {
         ensureComponentIsUsable();
-        selectItem(toCollection(selection, others));
+        selectItems(List.of(selection));
     }
 
     /**
-     * Select items by client string representation.
+     * Selects multiple items by client string representation.
      *
      * @param selection
      *            items string representation
      */
-    public void selectItem(Collection<String> selection) {
+    public void selectItems(String... selection) {
+        ensureComponentIsUsable();
+        selectItems(List.of(selection));
+    }
+
+    /**
+     * Selects multiple items by client string representation.
+     *
+     * @param selection
+     *            items string representation
+     */
+    public void selectItems(Collection<String> selection) {
         ensureComponentIsUsable();
         updateSelection(selection, Collection::addAll);
     }
@@ -88,25 +96,34 @@ public class CheckboxGroupWrap<T extends CheckboxGroup<V>, V>
     }
 
     /**
-     * Deselect items by client string representation.
+     * Deselects an item by its client string representation.
      *
      * @param selection
      *            item string representation
-     * @param others
-     *            other items string representation
      */
-    public void deselectItem(String selection, String... others) {
+    public void deselectItem(String selection) {
         ensureComponentIsUsable();
-        deselectItem(toCollection(selection, others));
+        deselectItems(List.of(selection));
     }
 
     /**
-     * Deselect items by client string representation.
+     * Deselects multiple items by client string representation.
      *
      * @param selection
      *            items string representation
      */
-    public void deselectItem(Collection<String> selection) {
+    public void deselectItems(String... selection) {
+        ensureComponentIsUsable();
+        deselectItems(List.of(selection));
+    }
+
+    /**
+     * Deselects items by client string representation.
+     *
+     * @param selection
+     *            items string representation
+     */
+    public void deselectItems(Collection<String> selection) {
         ensureComponentIsUsable();
         updateSelection(selection, Collection::removeAll);
     }
@@ -156,15 +173,6 @@ public class CheckboxGroupWrap<T extends CheckboxGroup<V>, V>
                     "Item " + checkbox.getLabel() + " is not usable");
         }
         return usable;
-    }
-
-    private Collection<String> toCollection(String first, String... others) {
-        ArrayList<String> list = new ArrayList<>();
-        list.add(first);
-        if (others.length > 0) {
-            list.addAll(List.of(others));
-        }
-        return list;
     }
 
     public void updateSelection(Collection<String> selection,
