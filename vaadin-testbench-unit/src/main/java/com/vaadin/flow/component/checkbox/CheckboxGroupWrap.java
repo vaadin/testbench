@@ -33,7 +33,7 @@ import com.vaadin.testbench.unit.Wraps;
  * @param <T>
  *            component type
  */
-@Wraps(CheckboxGroup.class)
+@Wraps(fqn = "com.vaadin.flow.component.checkbox.CheckboxGroup")
 public class CheckboxGroupWrap<T extends CheckboxGroup<V>, V>
         extends ComponentWrap<T> {
 
