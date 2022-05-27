@@ -64,6 +64,7 @@ public abstract class SpringUIUnitTest extends UIUnitTest {
         MockSpringServlet servlet = new MockSpringServlet(
                 discoverRoutes(scanPackage()), springContext, UI::new);
         MockVaadin.setup(UI::new, servlet, Collections.emptySet());
+        MockSpringServlet.applySpringSecurityIfPresent();
     }
 
 }

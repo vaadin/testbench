@@ -12,7 +12,6 @@ package com.vaadin.testbench.unit;
 
 import java.util.Collections;
 
-import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -64,6 +63,7 @@ public abstract class SpringUIUnit4Test extends UIUnit4Test {
         MockSpringServlet servlet = new MockSpringServlet(
                 discoverRoutes(scanPackage()), springContext, UI::new);
         MockVaadin.setup(UI::new, servlet, Collections.emptySet());
+        MockSpringServlet.applySpringSecurityIfPresent();
     }
 
 }
