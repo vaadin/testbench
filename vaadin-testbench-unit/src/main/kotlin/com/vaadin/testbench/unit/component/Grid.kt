@@ -51,6 +51,7 @@ import com.vaadin.testbench.unit.internal.MockVaadin
 import com.vaadin.testbench.unit.internal.PrettyPrintTree
 import com.vaadin.testbench.unit.internal._fireEvent
 import com.vaadin.testbench.unit.internal._getPresentationValue
+import com.vaadin.testbench.unit.internal._saneFetchLimit
 import com.vaadin.testbench.unit.internal.checkEditableByUser
 import com.vaadin.testbench.unit.internal.filterNotBlank
 import com.vaadin.testbench.unit.internal.size
@@ -158,13 +159,6 @@ public fun <T> Grid<T>._fetch(offset: Int, limit: Int): List<T> = when(this) {
     is TreeGrid<T> -> this._rowSequence().drop(offset).take(limit).toList()
     else -> dataCommunicator.fetch(offset, limit)
 }
-
-public val DataCommunicator<*>._saneFetchLimit: Int get() =
-        // don't use high value otherwise Vaadin 19+ will calculate negative limit and will pass it to SizeVerifier,
-        // failing instantly.
-        Int.MAX_VALUE / 1000
-
-public val Grid<*>._saneFetchLimit: Int get() = dataCommunicator._saneFetchLimit
 
 private val _DataCommunicator_fetchFromProvider: Method =
     DataCommunicator::class.java.getDeclaredMethod("fetchFromProvider", Int::class.java, Int::class.java).apply {
