@@ -9,6 +9,7 @@
  */
 package com.vaadin.flow.component.combobox;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.Assertions;
@@ -38,21 +39,22 @@ public class ComboBoxWrapTest extends UIUnitTest {
     @Test
     void getSuggestionItems_noFilter_allItemsReturned() {
         final List<ComboBoxView.Name> suggestions = combo_.getSuggestionItems();
-        Assertions.assertIterableEquals(view.items,suggestions);
+        Assertions.assertIterableEquals(view.items, suggestions);
     }
 
     @Test
     void getSuggestions_noFilter_allItemsReturned() {
-        final List<ComboBoxView.Name> suggestions = combo_.getSuggestionItems();
-        Assertions.assertIterableEquals(view.items,suggestions);
+        final List<String> suggestions = combo_.getSuggestions();
+        Assertions.assertIterableEquals(Arrays.asList("test-foo", "test-bar"),
+                suggestions);
     }
 
     @Test
     void setFilter_getSuggestions_filterIsApplied() {
         combo_.setFilter("fo");
         final List<String> suggestions = combo_.getSuggestions();
-        Assertions.assertEquals(1,suggestions.size());
-        Assertions.assertEquals("test-foo",suggestions.get(0));
+        Assertions.assertEquals(1, suggestions.size());
+        Assertions.assertEquals("test-foo", suggestions.get(0));
     }
 
     @Test
@@ -62,5 +64,10 @@ public class ComboBoxWrapTest extends UIUnitTest {
         combo_.selectItem("test-foo");
 
         Assertions.assertSame(view.items.get(0), combo_.getSelected());
+
+        combo_.selectItem(null);
+
+        Assertions.assertNull(combo_.getSelected(),
+                "Selecting null should clear selection");
     }
 }

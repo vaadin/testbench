@@ -31,7 +31,7 @@ public class ComboBoxWrap<T extends ComboBox<Y>, Y> extends ComponentWrap<T> {
      * Wrap given component for testing.
      *
      * @param component
-     *         target component
+     *            target component
      */
     public ComboBoxWrap(T component) {
         super(component);
@@ -41,23 +41,19 @@ public class ComboBoxWrap<T extends ComboBox<Y>, Y> extends ComponentWrap<T> {
      * Simulate writing a filter to the combobox.
      * <p/>
      * Use {@link #getSuggestions()} to get the string values show in the
-     * dropdown or
-     * {@link #getSuggestionItems()} to get the actual items in the suggestion.
+     * dropdown or {@link #getSuggestionItems()} to get the actual items in the
+     * suggestion.
      *
      * @param filter
-     *         string to use for filtering
+     *            string to use for filtering
      */
     public void setFilter(String filter) {
         ensureComponentIsUsable();
         try {
-            final Field filterSlot = ComboBox.class.getDeclaredField(
-                    "filterSlot");
-            final boolean state = filterSlot.canAccess(getComponent());
-            filterSlot.setAccessible(true);
-            ((SerializableConsumer<String>) filterSlot.get(
-                    getComponent())).accept(filter);
-            filterSlot.setAccessible(state);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
+            final Field filterSlot = getField("filterSlot");
+            ((SerializableConsumer<String>) filterSlot.get(getComponent()))
+                    .accept(filter);
+        } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
     }
@@ -66,14 +62,18 @@ public class ComboBoxWrap<T extends ComboBox<Y>, Y> extends ComponentWrap<T> {
      * Select item by client string representation.
      *
      * @param selection
-     *         item representation string
+     *            item representation string
      */
     public void selectItem(String selection) {
+        if (selection == null) {
+            getComponent().setValue(null);
+            return;
+        }
         final List<Y> suggestionItems = getSuggestionItems();
-        final ItemLabelGenerator<Y> itemLabelGenerator = getComponent().getItemLabelGenerator();
-        final List<Y> filtered = suggestionItems.stream()
-                .filter(item -> selection.equals(
-                        itemLabelGenerator.apply(item)))
+        final ItemLabelGenerator<Y> itemLabelGenerator = getComponent()
+                .getItemLabelGenerator();
+        final List<Y> filtered = suggestionItems.stream().filter(
+                item -> selection.equals(itemLabelGenerator.apply(item)))
                 .collect(Collectors.toList());
         if (filtered.size() > 1 || filtered.isEmpty()) {
             throw new IllegalArgumentException(
@@ -99,7 +99,8 @@ public class ComboBoxWrap<T extends ComboBox<Y>, Y> extends ComponentWrap<T> {
      */
     public List<String> getSuggestions() {
         final List<Y> suggestionItems = getSuggestionItems();
-        final ItemLabelGenerator<Y> itemLabelGenerator = getComponent().getItemLabelGenerator();
+        final ItemLabelGenerator<Y> itemLabelGenerator = getComponent()
+                .getItemLabelGenerator();
 
         return suggestionItems.stream()
                 .map(item -> itemLabelGenerator.apply(item))
@@ -107,33 +108,24 @@ public class ComboBoxWrap<T extends ComboBox<Y>, Y> extends ComponentWrap<T> {
     }
 
     /**
-     * Get the actual items for the dropdown as a List.
-     * any filter that is set is taken into account.
+     * Get the actual items for the dropdown as a List. any filter that is set
+     * is taken into account.
      *
      * @return List of items
      */
     public List<Y> getSuggestionItems() {
         try {
-            final Field filterSlot = ComboBox.class.getDeclaredField(
-                    "dataCommunicator");
-            boolean state = filterSlot.canAccess(getComponent());
-            filterSlot.setAccessible(true);
-            final DataCommunicator<T> dataCommunicator = (DataCommunicator) filterSlot.get(
-                    getComponent());
-            filterSlot.setAccessible(state);
+            final Field dataCommunicatorField = getField("dataCommunicator");
+            final DataCommunicator<T> dataCommunicator = (DataCommunicator) dataCommunicatorField
+                    .get(getComponent());
 
-            final Method fetchFromProvider = DataCommunicator.class.getDeclaredMethod(
+            final Method fetchFromProvider = getMethod(DataCommunicator.class,
                     "fetchFromProvider", int.class, int.class);
-            state = fetchFromProvider.canAccess(dataCommunicator);
-            fetchFromProvider.setAccessible(true);
             List<Y> result = ((Stream<Y>) fetchFromProvider.invoke(
-                    dataCommunicator, 0,
-                    BasicUtilsKt.get_saneFetchLimit())).collect(
-                    Collectors.toList());
-            fetchFromProvider.setAccessible(state);
+                    dataCommunicator, 0, BasicUtilsKt.get_saneFetchLimit()))
+                            .collect(Collectors.toList());
             return result;
-        } catch (NoSuchFieldException | IllegalAccessException |
-                 NoSuchMethodException | InvocationTargetException e) {
+        } catch (IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
     }

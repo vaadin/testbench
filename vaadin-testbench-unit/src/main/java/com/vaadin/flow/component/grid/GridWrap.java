@@ -312,16 +312,11 @@ public class GridWrap<T extends Grid<Y>, Y> extends ComponentWrap<T> {
 
     private String getColumnInternalId(Grid.Column targetColumn) {
         try {
-            final Method getInternalId = Grid.Column.class
-                    .getDeclaredMethod("getInternalId");
-            boolean state = getInternalId.canAccess(targetColumn);
-            getInternalId.setAccessible(true);
+            final Method getInternalId = getMethod(Grid.Column.class,
+                    "getInternalId");
             final String columnId = (String) getInternalId.invoke(targetColumn);
-            getInternalId.setAccessible(state);
             return columnId;
-
-        } catch (NoSuchMethodException | InvocationTargetException
-                | IllegalAccessException e) {
+        } catch (InvocationTargetException | IllegalAccessException e) {
             throw new RuntimeException("Failed to get internal id for column",
                     e);
         }

@@ -22,12 +22,12 @@ import com.vaadin.flow.router.Route;
 public class ComboBoxView extends Component implements HasComponents {
 
     ComboBox<Name> combo;
-    List<Name> items =Arrays.asList(new Name("foo"), new Name("bar"));
+    List<Name> items = Arrays.asList(new Name("foo"), new Name("bar"));
 
     public ComboBoxView() {
         combo = new ComboBox<>("TestBox");
         combo.setItems(items);
-        combo.setItemLabelGenerator(item -> "test-"+item.toString());
+        combo.setItemLabelGenerator(item -> "test-" + item.toString());
         add(combo);
     }
 
