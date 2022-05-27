@@ -32,6 +32,8 @@ import com.vaadin.flow.spring.SpringVaadinServletService;
  * {@link com.vaadin.flow.spring.SpringVaadinSession}.</li>
  * </ul>
  * The class is intentionally opened, to be extensible in user's library.
+ *
+ * @author mavi
  */
 public class MockSpringServletService extends SpringVaadinServletService {
     @NotNull

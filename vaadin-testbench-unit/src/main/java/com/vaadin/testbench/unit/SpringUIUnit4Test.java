@@ -59,7 +59,7 @@ public abstract class SpringUIUnit4Test extends UIUnit4Test {
     @Autowired
     private ApplicationContext springContext;
 
-    @Before
+    @Override
     public void initVaadinEnvironment() {
         MockSpringServlet servlet = new MockSpringServlet(
                 discoverRoutes(scanPackage()), springContext, UI::new);

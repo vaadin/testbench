@@ -28,6 +28,8 @@ import com.vaadin.testbench.unit.internal.MockVaadin;
  * {@link #close()}, call `super.close()` then call
  * {@link MockVaadin#afterSessionClose}.</li>
  * </ul>
+ *
+ * @author mavi
  */
 public class MockSpringVaadinSession extends SpringVaadinSession {
     @NotNull
