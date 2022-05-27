@@ -11,18 +11,11 @@
 package com.vaadin.testbench.unit;
 
 import java.security.Principal;
-import java.util.List;
-import java.util.UUID;
 
+import com.testapp.security.LoginView;
+import com.testapp.security.ProtectedView;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithUserDetails;
@@ -30,8 +23,13 @@ import org.springframework.test.context.ContextConfiguration;
 
 import com.vaadin.flow.server.VaadinRequest;
 
-@ContextConfiguration(classes = SpringUnitSecurityTest.TestConfig.class)
+@ContextConfiguration(classes = SecurityTestConfig.class)
 class SpringUnitSecurityTest extends SpringUIUnitTest {
+
+    @Override
+    protected String scanPackage() {
+        return "com.testapp.security";
+    }
 
     @Test
     @WithMockUser(username = "john", roles = { "DEV", "PO" })
@@ -95,30 +93,18 @@ class SpringUnitSecurityTest extends SpringUIUnitTest {
                 "Principal should not have ADMIN role");
     }
 
-    // Empty configuration class used only to be able to bootstrap spring
-    // ApplicationContext
-    @Configuration
-    static class TestConfig {
+    @Test
+    @WithMockUser(username = "john", roles = { "DEV", "PO" })
+    void withMockUser_landOnProtectedHomeView() {
+        Assertions.assertInstanceOf(ProtectedView.class, getCurrentView(),
+                "Logged user should land to protected home view");
+    }
 
-        @Bean
-        UserDetailsService mockUserDetailsService() {
-
-            return new UserDetailsService() {
-                @Override
-                public UserDetails loadUserByUsername(String username)
-                        throws UsernameNotFoundException {
-                    if ("user".equals(username)) {
-                        return new User(username, UUID.randomUUID().toString(),
-                                List.of(new SimpleGrantedAuthority(
-                                        "ROLE_SUPERUSER"),
-                                        new SimpleGrantedAuthority(
-                                                "ROLE_DEV")));
-                    }
-                    throw new UsernameNotFoundException(
-                            "User " + username + " not exists");
-                }
-            };
-        }
+    @Test
+    @WithAnonymousUser
+    void withAnonymousUser_redirectToLogin() {
+        Assertions.assertInstanceOf(LoginView.class, getCurrentView(),
+                "Anonymous user should be redirect to login view");
     }
 
 }

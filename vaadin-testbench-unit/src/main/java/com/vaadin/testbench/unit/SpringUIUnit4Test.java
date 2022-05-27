@@ -15,6 +15,7 @@ import java.util.Collections;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.vaadin.flow.component.UI;
@@ -53,17 +54,25 @@ import com.vaadin.testbench.unit.mocks.MockSpringServlet;
  * </pre>
  */
 @RunWith(SpringRunner.class)
+@ContextConfiguration(classes = SpringSupport.class)
 public abstract class SpringUIUnit4Test extends UIUnit4Test {
 
     @Autowired
-    private ApplicationContext springContext;
+    private ApplicationContext applicationContext;
 
     @Override
     public void initVaadinEnvironment() {
+        TestSpringLookupInitializer.setApplicationContext(applicationContext);
         MockSpringServlet servlet = new MockSpringServlet(
-                discoverRoutes(scanPackage()), springContext, UI::new);
+                discoverRoutes(scanPackage()), applicationContext, UI::new);
         MockVaadin.setup(UI::new, servlet, Collections.emptySet());
         MockSpringServlet.applySpringSecurityIfPresent();
     }
 
+    @Override
+    protected void cleanVaadinEnvironment() {
+        // Ensure ThreadLocal is cleaned
+        TestSpringLookupInitializer.setApplicationContext(null);
+        super.cleanVaadinEnvironment();
+    }
 }
