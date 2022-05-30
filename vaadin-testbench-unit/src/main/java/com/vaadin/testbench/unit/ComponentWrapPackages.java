@@ -16,7 +16,7 @@ import java.lang.annotation.Target;
 
 /**
  * Annotation to use to scan given packages for component wrappers outside the
- * default "com.vaadin.flow.component`.
+ * default {@code com.vaadin.flow.component}.
  * <p/>
  * This makes adding custom component wrappers simpler as they can then use
  * package protected fields and methods.
