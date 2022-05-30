@@ -9,6 +9,7 @@
  */
 package com.vaadin.flow.component.textfield;
 
+import java.math.BigDecimal;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.junit.jupiter.api.Assertions;
@@ -78,4 +79,106 @@ public class TextFieldWrapTest extends UIUnitTest {
                 () -> tf_.setValue("fail"),
                 "Setting value to a non interactable field should fail");
     }
+
+    @Test
+    void textFieldWithValidation_doNotPreventInvalid_doNotThrow() {
+        TextField tf = new TextField();
+        // Only accept numbers
+        tf.setPattern("\\d*");
+        getCurrentView().getElement().appendChild(tf.getElement());
+
+        final TextFieldWrap<TextField, String> tf_ = wrap(tf);
+        final String faultyValue = "Invalid value, but doesn't throw";
+        tf_.setValue(faultyValue);
+        Assertions.assertEquals(faultyValue, tf.getValue(),
+                "Value should have been set.");
+    }
+
+    @Test
+    public void textFieldWithPattern_patternIsValidated() {
+        TextField tf = new TextField();
+        tf.setPreventInvalidInput(true);
+        // Only accept numbers
+        tf.setPattern("\\d*");
+        getCurrentView().getElement().appendChild(tf.getElement());
+
+        final TextFieldWrap<TextField, String> tf_ = wrap(tf);
+        tf_.setValue("1234");
+
+        Assertions.assertEquals("1234", tf.getValue());
+
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> tf_.setValue("hello"),
+                "Value should have been validated against pattern");
+    }
+
+    @Test
+    public void textFieldWithMinLength_lengthIsChecked() {
+        TextField tf = new TextField();
+        tf.setPreventInvalidInput(true);
+        // Only accept numbers
+        tf.setMinLength(5);
+        getCurrentView().getElement().appendChild(tf.getElement());
+
+        final TextFieldWrap<TextField, String> tf_ = wrap(tf);
+
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> tf_.setValue("1234"),
+                "Value should have been validated against minLength");
+    }
+
+    @Test
+    public void textFieldWithMaxLength_lengthIsChecked() {
+        TextField tf = new TextField();
+        tf.setPreventInvalidInput(true);
+        // Only accept numbers
+        tf.setMaxLength(3);
+        getCurrentView().getElement().appendChild(tf.getElement());
+
+        final TextFieldWrap<TextField, String> tf_ = wrap(tf);
+
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> tf_.setValue("1234"),
+                "Value should have been validated against maxLength");
+    }
+
+    @Test
+    public void textFieldWithRequired_valueIsChecked() {
+        TextField tf = new TextField();
+        tf.setPreventInvalidInput(true);
+        // Only accept numbers
+        tf.setRequired(true);
+        getCurrentView().getElement().appendChild(tf.getElement());
+
+        final TextFieldWrap<TextField, String> tf_ = wrap(tf);
+
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> tf_.setValue(""),
+                "Required field should not accept empty");
+    }
+
+    @Test
+    void testFieldsNullValue() {
+        TextField tf = new TextField();
+        EmailField ef = new EmailField();
+        PasswordField pf = new PasswordField();
+        BigDecimalField bdf = new BigDecimalField();
+
+        getCurrentView().getElement().appendChild(tf.getElement(),
+                ef.getElement(), pf.getElement(), bdf.getElement());
+
+        TextFieldWrap<TextField, String> tf_ = wrap(tf);
+        TextFieldWrap<EmailField, String> ef_ = wrap(ef);
+        TextFieldWrap<PasswordField, String> pf_ = wrap(pf);
+        TextFieldWrap<BigDecimalField, BigDecimal> bdf_ = wrap(bdf);
+
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> tf_.setValue(null));
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> ef_.setValue(null));
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> pf_.setValue(null));
+        bdf_.setValue(null);
+    }
+
 }
