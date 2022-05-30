@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
 
+import com.vaadin.flow.server.VaadinRequest;
 import com.vaadin.flow.server.VaadinService;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.testbench.unit.mocks.MockSpringServletService;
@@ -36,6 +37,13 @@ class SpringUIUnitBaseClassTest extends SpringUIUnitTest {
         Assertions.assertInstanceOf(MockSpringVaadinSession.class,
                 VaadinSession.getCurrent(), "Expecting VaadinService to be "
                         + MockSpringVaadinSession.class);
+
+        Assertions.assertNotNull(VaadinRequest.getCurrent(),
+                "Expecting VaadinSession to be available up, but was not");
+        Assertions.assertInstanceOf(MockSpringVaadinSession.class,
+                VaadinSession.getCurrent(), "Expecting VaadinService to be "
+                        + MockSpringVaadinSession.class);
+
     }
 
     // Empty configuration class used only to be able to bootstrap spring

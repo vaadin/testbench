@@ -103,10 +103,10 @@ class BaseUIUnitTest {
                 pn -> new Routes().autoDiscoverViews(pn));
     }
 
-    protected void initVaadinEnvironment(Class<?>... lookupService) {
+    protected void initVaadinEnvironment() {
         scanForWrappers();
         MockVaadin.setup(discoverRoutes(scanPackage()), UI::new,
-                Set.of(lookupService));
+                lookupServices());
     }
 
     void scanForWrappers() {
@@ -123,6 +123,21 @@ class BaseUIUnitTest {
 
     protected void cleanVaadinEnvironment() {
         MockVaadin.tearDown();
+    }
+
+    /**
+     * Gets the services implementations to be used to initialized Vaadin
+     * {@link com.vaadin.flow.di.Lookup}.
+     *
+     * Default implementation returns an empty Set. Override this method to
+     * provide custom Vaadin services, such as
+     * {@link com.vaadin.flow.di.InstantiatorFactory},
+     * {@link com.vaadin.flow.di.ResourceProvider}, etc.
+     *
+     * @return set of services implementation classes, never {@literal null}.
+     */
+    protected Set<Class<?>> lookupServices() {
+        return Collections.emptySet();
     }
 
     /**

@@ -10,17 +10,18 @@
 
 package com.vaadin.testbench.unit;
 
-import java.util.Collections;
+import java.util.Set;
 
-import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.vaadin.flow.component.UI;
 import com.vaadin.testbench.unit.internal.MockVaadin;
 import com.vaadin.testbench.unit.mocks.MockSpringServlet;
+import com.vaadin.testbench.unit.mocks.SpringSecurityRequestCustomizer;
 
 /**
  * Base JUnit 4 class for UI unit testing applications based on Spring
@@ -54,17 +55,24 @@ import com.vaadin.testbench.unit.mocks.MockSpringServlet;
  * </pre>
  */
 @RunWith(SpringRunner.class)
+@TestExecutionListeners(listeners = UITestSpringLookupInitializer.class, mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 public abstract class SpringUIUnit4Test extends UIUnit4Test {
 
     @Autowired
-    private ApplicationContext springContext;
+    private ApplicationContext applicationContext;
+
+    @Override
+    protected Set<Class<?>> lookupServices() {
+        return Set.of(UITestSpringLookupInitializer.class,
+                SpringSecurityRequestCustomizer.class);
+    }
 
     @Override
     public void initVaadinEnvironment() {
         scanForWrappers();
         MockSpringServlet servlet = new MockSpringServlet(
-                discoverRoutes(scanPackage()), springContext, UI::new);
-        MockVaadin.setup(UI::new, servlet, Collections.emptySet());
+                discoverRoutes(scanPackage()), applicationContext, UI::new);
+        MockVaadin.setup(UI::new, servlet, lookupServices());
     }
 
 }
