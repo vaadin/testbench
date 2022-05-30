@@ -30,8 +30,8 @@ import org.springframework.core.io.Resource;
 import org.springframework.web.context.WebApplicationContext;
 
 /**
- * An adapter to make a generic Spring ApplicationContext act like
- * anWebApplicationContext.
+ * An adapter to make a generic Spring ApplicationContext act like a
+ * WebApplicationContext.
  *
  * For internal use only.
  */
