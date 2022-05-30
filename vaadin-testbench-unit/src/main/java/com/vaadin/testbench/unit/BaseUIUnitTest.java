@@ -110,13 +110,13 @@ class BaseUIUnitTest {
     }
 
     void scanForWrappers() {
-        if (getClass().isAnnotationPresent(Scan.class)) {
-            final List<String> packages = Arrays
-                    .asList(getClass().getAnnotation(Scan.class).value());
+        if (getClass().isAnnotationPresent(ComponentWrapPackages.class)) {
+            final List<String> packages = Arrays.asList(getClass()
+                    .getAnnotation(ComponentWrapPackages.class).value());
             if (!scanned.containsAll((packages))) {
                 scanned.addAll(packages);
-                wrappers.putAll(scanWrappers(
-                        getClass().getAnnotation(Scan.class).value()));
+                wrappers.putAll(scanWrappers(getClass()
+                        .getAnnotation(ComponentWrapPackages.class).value()));
             }
         }
     }
