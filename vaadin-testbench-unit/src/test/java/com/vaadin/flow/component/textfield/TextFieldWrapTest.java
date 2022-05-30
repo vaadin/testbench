@@ -9,6 +9,7 @@
  */
 package com.vaadin.flow.component.textfield;
 
+import java.math.BigDecimal;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.junit.jupiter.api.Assertions;
@@ -87,7 +88,10 @@ public class TextFieldWrapTest extends UIUnitTest {
         getCurrentView().getElement().appendChild(tf.getElement());
 
         final TextFieldWrap<TextField, String> tf_ = wrap(tf);
-        tf_.setValue("Invalid value, but doesn't throw");
+        final String faultyValue = "Invalid value, but doesn't throw";
+        tf_.setValue(faultyValue);
+        Assertions.assertEquals(faultyValue, tf.getValue(),
+                "Value should have been set.");
     }
 
     @Test
@@ -151,6 +155,30 @@ public class TextFieldWrapTest extends UIUnitTest {
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> tf_.setValue(""),
                 "Required field should not accept empty");
+    }
+
+    @Test
+    void testFieldsNullValue() {
+        TextField tf = new TextField();
+        EmailField ef = new EmailField();
+        PasswordField pf = new PasswordField();
+        BigDecimalField bdf = new BigDecimalField();
+
+        getCurrentView().getElement().appendChild(tf.getElement(),
+                ef.getElement(), pf.getElement(), bdf.getElement());
+
+        TextFieldWrap<TextField, String> tf_ = wrap(tf);
+        TextFieldWrap<EmailField, String> ef_ = wrap(ef);
+        TextFieldWrap<PasswordField, String> pf_ = wrap(pf);
+        TextFieldWrap<BigDecimalField, BigDecimal> bdf_ = wrap(bdf);
+
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> tf_.setValue(null));
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> ef_.setValue(null));
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> pf_.setValue(null));
+        bdf_.setValue(null);
     }
 
 }

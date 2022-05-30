@@ -49,7 +49,12 @@ public class TextFieldWrap<T extends GeneratedVaadinTextField<T, V>, V>
     public void setValue(V value) {
         ensureComponentIsUsable();
 
-        if (hasValidation()
+        if (value == null && getComponent().getEmptyValue() != null) {
+            throw new IllegalArgumentException(
+                    "Field doesn't allow null values");
+        }
+
+        if (hasValidation() && value != null
                 && getValidationSupport().isInvalid(value.toString())) {
             if (getComponent().isPreventInvalidInputBoolean()) {
                 throw new IllegalArgumentException(
@@ -70,7 +75,7 @@ public class TextFieldWrap<T extends GeneratedVaadinTextField<T, V>, V>
         try {
             return (TextFieldValidationSupport) getField("validationSupport")
                     .get(getComponent());
-        } catch (IllegalAccessException e) {
+        } catch (IllegalAccessException | IllegalArgumentException e) {
             // NO-OP Field didn't exist for given GeneratedVaadinTextField
             // implementation
         }
