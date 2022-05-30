@@ -10,13 +10,9 @@
 
 package com.vaadin.testbench.unit;
 
-import java.security.Principal;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.test.context.support.WithAnonymousUser;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 
 import com.vaadin.flow.server.VaadinRequest;

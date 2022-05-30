@@ -16,6 +16,7 @@ import javax.servlet.ServletContext
 import com.vaadin.flow.component.ComponentUtil
 import com.vaadin.flow.component.UI
 import com.vaadin.flow.component.page.Page
+import com.vaadin.flow.di.Lookup
 import com.vaadin.flow.internal.CurrentInstance
 import com.vaadin.flow.internal.StateTree
 import com.vaadin.flow.router.Location
@@ -109,7 +110,7 @@ object MockVaadin {
     @JvmStatic
     fun setup(uiFactory: () -> UI = { MockedUI() }, servlet: VaadinServlet,
               lookupServices: Set<Class<*>> = emptySet()
-              ) {
+    ) {
         if (!servlet.isInitialized) {
             val ctx: ServletContext = MockVaadinHelper.createMockContext(lookupServices)
             servlet.init(MockServletConfig(ctx))
@@ -205,6 +206,8 @@ object MockVaadin {
         val mockRequest = mockRequestFactory(httpSession)
         // so that session.browser.updateRequestDetails() also creates browserDetails
         mockRequest.headers["User-Agent"] = listOf(userAgent)
+        service.context.getAttribute(Lookup::class.java)
+                .lookup(MockRequestCustomizer::class.java)?.apply(mockRequest)
         val request = createVaadinServletRequest(mockRequest, service)
         strongRefReq.set(request)
         CurrentInstance.set(VaadinRequest::class.java, request)
@@ -436,4 +439,8 @@ private class MockPage(ui: UI, private val uiFactory: () -> UI, private val sess
         MockVaadin.closeCurrentUI(true)
         MockVaadin.createUI(uiFactory, session)
     }
+}
+
+fun interface MockRequestCustomizer {
+    fun apply(request: MockRequest)
 }

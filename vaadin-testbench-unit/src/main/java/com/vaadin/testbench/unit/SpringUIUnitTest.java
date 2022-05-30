@@ -12,17 +12,23 @@ package com.vaadin.testbench.unit;
 
 import java.util.Set;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ApplicationContext;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.test.context.TestContext;
+import org.springframework.test.context.TestExecutionListener;
+import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.vaadin.flow.component.UI;
 import com.vaadin.testbench.unit.internal.MockVaadin;
 import com.vaadin.testbench.unit.mocks.MockSpringServlet;
+import com.vaadin.testbench.unit.mocks.SpringSecurityRequestCustomizer;
 
 /**
  * Base JUnit 5 class for UI unit testing applications based on Spring
@@ -56,25 +62,22 @@ import com.vaadin.testbench.unit.mocks.MockSpringServlet;
  * </pre>
  */
 @ExtendWith({ SpringExtension.class })
-@ContextConfiguration(classes = SpringSupport.class)
+@TestExecutionListeners(listeners = UITestSpringLookupInitializer.class, mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 public abstract class SpringUIUnitTest extends UIUnitTest {
 
     @Autowired
     private ApplicationContext applicationContext;
 
-    @BeforeEach
-    protected void initVaadinEnvironment() {
-        TestSpringLookupInitializer.setApplicationContext(applicationContext);
-        MockSpringServlet servlet = new MockSpringServlet(
-                discoverRoutes(scanPackage()), applicationContext, UI::new);
-        MockVaadin.setup(UI::new, servlet,
-                Set.of(TestSpringLookupInitializer.class));
+    @Override
+    protected Set<Class<?>> lookupServices() {
+        return Set.of(UITestSpringLookupInitializer.class,
+                SpringSecurityRequestCustomizer.class);
     }
 
-    @AfterEach
-    protected void cleanVaadinEnvironment() {
-        // Ensure ThreadLocal is cleaned
-        TestSpringLookupInitializer.setApplicationContext(null);
-        super.cleanVaadinEnvironment();
+    @BeforeEach
+    protected void initVaadinEnvironment() {
+        MockSpringServlet servlet = new MockSpringServlet(
+                discoverRoutes(scanPackage()), applicationContext, UI::new);
+        MockVaadin.setup(UI::new, servlet, lookupServices());
     }
 }

@@ -105,10 +105,12 @@ public class MockSpringServlet extends SpringServlet {
      * authentication information provided by Spring Security framework.
      *
      * Nothing is done if Spring Security is not present on classpath.
+     *
+     * @param request
+     *            the mock request instance
      */
-    public static void applySpringSecurityIfPresent() {
+    public static void applySpringSecurityIfPresent(MockRequest request) {
         if (SpringSecuritySupport.SPRING_SECURITY_PRESENT) {
-            MockRequest request = UtilsKt.getMock(VaadinRequest.getCurrent());
             HttpServletRequest wrappedRequest = SpringSecuritySupport.springSecurityRequestWrapper
                     .apply(request);
             if (wrappedRequest instanceof MockRequest) {
