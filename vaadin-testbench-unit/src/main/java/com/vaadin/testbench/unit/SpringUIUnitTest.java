@@ -61,6 +61,7 @@ public abstract class SpringUIUnitTest extends UIUnitTest {
 
     @BeforeEach
     protected void initVaadinEnvironment() {
+        scanForWrappers();
         MockSpringServlet servlet = new MockSpringServlet(
                 discoverRoutes(scanPackage()), springContext, UI::new);
         MockVaadin.setup(UI::new, servlet, Collections.emptySet());

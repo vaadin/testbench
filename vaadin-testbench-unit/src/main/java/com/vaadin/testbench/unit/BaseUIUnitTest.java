@@ -15,6 +15,8 @@ import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -46,12 +48,17 @@ class BaseUIUnitTest {
 
     private static final ConcurrentHashMap<String, Routes> routesCache = new ConcurrentHashMap<>();
 
-    protected static final Map<Class<?>, Class<? extends ComponentWrap>> wrappers;
+    protected static final Map<Class<?>, Class<? extends ComponentWrap>> wrappers = new HashMap<>();
+    protected static final Set<String> scanned = new HashSet<>();
 
     static {
+        wrappers.putAll(scanWrappers("com.vaadin.flow.component"));
+    }
+
+    private static Map<Class<?>, Class<? extends ComponentWrap>> scanWrappers(
+            String... packages) {
         try (ScanResult scan = new ClassGraph().enableClassInfo()
-                .enableAnnotationInfo()
-                .acceptPackages("com.vaadin.flow.component").scan(2)) {
+                .enableAnnotationInfo().acceptPackages(packages).scan(2)) {
             ClassInfoList wrapperList = scan
                     .getClassesWithAnnotation(Wraps.class.getName());
             Map<Class<?>, Class<? extends ComponentWrap>> wrapperMap = new HashMap<>();
@@ -86,7 +93,7 @@ class BaseUIUnitTest {
                             throw new RuntimeException(e);
                         }
                     });
-            wrappers = Collections.unmodifiableMap(wrapperMap);
+            return Collections.unmodifiableMap(wrapperMap);
         }
     }
 
@@ -97,8 +104,21 @@ class BaseUIUnitTest {
     }
 
     protected void initVaadinEnvironment(Class<?>... lookupService) {
+        scanForWrappers();
         MockVaadin.setup(discoverRoutes(scanPackage()), UI::new,
                 Set.of(lookupService));
+    }
+
+    void scanForWrappers() {
+        if (getClass().isAnnotationPresent(ComponentWrapPackages.class)) {
+            final List<String> packages = Arrays.asList(getClass()
+                    .getAnnotation(ComponentWrapPackages.class).value());
+            if (!scanned.containsAll((packages))) {
+                scanned.addAll(packages);
+                wrappers.putAll(scanWrappers(getClass()
+                        .getAnnotation(ComponentWrapPackages.class).value()));
+            }
+        }
     }
 
     protected void cleanVaadinEnvironment() {
