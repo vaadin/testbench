@@ -78,4 +78,79 @@ public class TextFieldWrapTest extends UIUnitTest {
                 () -> tf_.setValue("fail"),
                 "Setting value to a non interactable field should fail");
     }
+
+    @Test
+    void textFieldWithValidation_doNotPreventInvalid_doNotThrow() {
+        TextField tf = new TextField();
+        // Only accept numbers
+        tf.setPattern("\\d*");
+        getCurrentView().getElement().appendChild(tf.getElement());
+
+        final TextFieldWrap<TextField, String> tf_ = wrap(tf);
+        tf_.setValue("Invalid value, but doesn't throw");
+    }
+
+    @Test
+    public void textFieldWithPattern_patternIsValidated() {
+        TextField tf = new TextField();
+        tf.setPreventInvalidInput(true);
+        // Only accept numbers
+        tf.setPattern("\\d*");
+        getCurrentView().getElement().appendChild(tf.getElement());
+
+        final TextFieldWrap<TextField, String> tf_ = wrap(tf);
+        tf_.setValue("1234");
+
+        Assertions.assertEquals("1234", tf.getValue());
+
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> tf_.setValue("hello"),
+                "Value should have been validated against pattern");
+    }
+
+    @Test
+    public void textFieldWithMinLength_lengthIsChecked() {
+        TextField tf = new TextField();
+        tf.setPreventInvalidInput(true);
+        // Only accept numbers
+        tf.setMinLength(5);
+        getCurrentView().getElement().appendChild(tf.getElement());
+
+        final TextFieldWrap<TextField, String> tf_ = wrap(tf);
+
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> tf_.setValue("1234"),
+                "Value should have been validated against minLength");
+    }
+
+    @Test
+    public void textFieldWithMaxLength_lengthIsChecked() {
+        TextField tf = new TextField();
+        tf.setPreventInvalidInput(true);
+        // Only accept numbers
+        tf.setMaxLength(3);
+        getCurrentView().getElement().appendChild(tf.getElement());
+
+        final TextFieldWrap<TextField, String> tf_ = wrap(tf);
+
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> tf_.setValue("1234"),
+                "Value should have been validated against maxLength");
+    }
+
+    @Test
+    public void textFieldWithRequired_valueIsChecked() {
+        TextField tf = new TextField();
+        tf.setPreventInvalidInput(true);
+        // Only accept numbers
+        tf.setRequired(true);
+        getCurrentView().getElement().appendChild(tf.getElement());
+
+        final TextFieldWrap<TextField, String> tf_ = wrap(tf);
+
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> tf_.setValue(""),
+                "Required field should not accept empty");
+    }
+
 }

@@ -9,6 +9,8 @@
  */
 package com.vaadin.flow.component.textfield;
 
+import org.slf4j.LoggerFactory;
+
 import com.vaadin.testbench.unit.ComponentWrap;
 import com.vaadin.testbench.unit.Wraps;
 
@@ -47,7 +49,32 @@ public class TextFieldWrap<T extends GeneratedVaadinTextField<T, V>, V>
     public void setValue(V value) {
         ensureComponentIsUsable();
 
+        if (hasValidation()
+                && getValidationSupport().isInvalid(value.toString())) {
+            if (getComponent().isPreventInvalidInputBoolean()) {
+                throw new IllegalArgumentException(
+                        "Given value doesn't pass field value validation. Check validation settings for field.");
+            }
+            LoggerFactory.getLogger(TextFieldWrap.class).warn(
+                    "Gave invalid input, but value set as invalid input is not prevented.");
+        }
+
         getComponent().setValue(value);
+    }
+
+    private boolean hasValidation() {
+        return getValidationSupport() != null;
+    }
+
+    private TextFieldValidationSupport getValidationSupport() {
+        try {
+            return (TextFieldValidationSupport) getField("validationSupport")
+                    .get(getComponent());
+        } catch (IllegalAccessException e) {
+            // NO-OP Field didn't exist for given GeneratedVaadinTextField
+            // implementation
+        }
+        return null;
     }
 
     @Override
