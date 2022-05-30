@@ -104,7 +104,7 @@ class BaseUIUnitTest {
     }
 
     protected void initVaadinEnvironment() {
-        scanForWrappers()
+        scanForWrappers();
         MockVaadin.setup(discoverRoutes(scanPackage()), UI::new,
                 lookupServices());
     }
