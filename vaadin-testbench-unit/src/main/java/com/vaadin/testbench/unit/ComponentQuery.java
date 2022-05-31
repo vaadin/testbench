@@ -479,6 +479,23 @@ public class ComponentQuery<T extends Component> {
 
     /**
      * Executes the search against current context and returns the test wrapper
+     * for the result, expecting to find exactly one component.
+     *
+     * Exceptions are thrown if the search produces zero or more than one
+     * result.
+     *
+     * @return a test wrapper for the component of the type specified in the
+     *         constructor.
+     * @throws java.util.NoSuchElementException
+     *             if not exactly one component is found
+     */
+    @SuppressWarnings("unchecked")
+    public <X extends ComponentWrap<? extends T>> X single() {
+        return (X) find();
+    }
+
+    /**
+     * Executes the search against current context and returns the test wrapper
      * for first result.
      *
      * @return a test wrapper for the component of the type specified in the
