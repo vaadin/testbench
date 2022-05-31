@@ -33,6 +33,7 @@ import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.RouteParameters;
 import com.vaadin.testbench.unit.internal.MockVaadin;
 import com.vaadin.testbench.unit.internal.Routes;
+import com.vaadin.testbench.unit.mocks.MockedUI;
 
 /**
  * Base class for UI unit tests.
@@ -105,7 +106,7 @@ class BaseUIUnitTest {
 
     protected void initVaadinEnvironment() {
         scanForWrappers();
-        MockVaadin.setup(discoverRoutes(scanPackage()), UI::new,
+        MockVaadin.setup(discoverRoutes(scanPackage()), MockedUI::new,
                 lookupServices());
     }
 

@@ -21,6 +21,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.vaadin.flow.component.UI;
 import com.vaadin.testbench.unit.internal.MockVaadin;
 import com.vaadin.testbench.unit.mocks.MockSpringServlet;
+import com.vaadin.testbench.unit.mocks.MockedUI;
 import com.vaadin.testbench.unit.mocks.SpringSecurityRequestCustomizer;
 
 /**
@@ -71,8 +72,9 @@ public abstract class SpringUIUnit4Test extends UIUnit4Test {
     public void initVaadinEnvironment() {
         scanForWrappers();
         MockSpringServlet servlet = new MockSpringServlet(
-                discoverRoutes(scanPackage()), applicationContext, UI::new);
-        MockVaadin.setup(UI::new, servlet, lookupServices());
+                discoverRoutes(scanPackage()), applicationContext,
+                MockedUI::new);
+        MockVaadin.setup(MockedUI::new, servlet, lookupServices());
     }
 
 }
