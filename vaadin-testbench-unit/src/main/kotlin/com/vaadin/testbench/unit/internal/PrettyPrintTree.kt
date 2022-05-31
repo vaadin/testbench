@@ -127,7 +127,8 @@ fun Component.toPrettyString(): String {
         }
     }
      */
-    val ignoredAttr = mutableListOf("value", "invalid", "openOn", "label", "errorMessage", "innerHTML", "i18n","error")
+    // TODO: add a system property to allow verbose pretty print with ignored attributes
+    val ignoredAttr = mutableListOf("value", "invalid", "openOn", "label", "errorMessage", "innerHTML", "i18n","error", "stackTrace")
     this.element.propertyNames.forEach {
         if(!ignoredAttr.contains(it) && this.element.getProperty(it).isNotEmpty() && !it.startsWith("_")) {
             list.add("${it}='${this.element.getProperty(it)}'")
@@ -150,17 +151,6 @@ fun Component.toPrettyString(): String {
     if (this is Html) {
         val outerHtml: String = this.element.outerHTML.trim().replace(Regex("\\s+"), " ")
         list.add(outerHtml.ellipsize(100))
-    }
-    if (this is InternalServerError) {
-        println(this.element.outerHTML)
-        val view = this.element.getChild(0).outerHTML.replace(Regex("(?s).* trying to navigate to '([^']+).*"), "$1")
-        val errorMessage = this.element.getChild(0).outerHTML.
-            replace(Regex("(?s).* with the (?:root cause|exception message) '([^']+).*"), "$1")
-        val stackTrace: String = this.element.outerHTML.trim().substringAfter("<pre>").substringBefore("</pre>")
-        //list.add(outerHtml.ellipsize(100))
-        list.add("targetView='$view'")
-        list.add("error='$errorMessage'")
-        list.add("stacktrace='${stackTrace.substringAfter("\n")}'")
     }
     if (this is Grid<*> && this.beanType != null) {
         list.add("<${this.beanType.simpleName}>")

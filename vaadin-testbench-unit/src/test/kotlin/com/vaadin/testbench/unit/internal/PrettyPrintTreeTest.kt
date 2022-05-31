@@ -9,6 +9,8 @@
  */
 package com.vaadin.testbench.unit.internal
 
+import kotlin.test.assertContains
+import kotlin.test.assertTrue
 import kotlin.test.expect
 import kotlin.test.fail
 import com.vaadin.flow.component.Html
@@ -226,31 +228,24 @@ internal fun DynaNodeGroup.prettyPrintTreeTest() {
         }
 
         fun createErrorComponent(error: Exception?, message: String? = null): InternalServerError {
-            val errorView = InternalServerError()
+            val errorView = MockInternalSeverError()
             val errorParam = ErrorParameter(Exception::class.java, error, message)
             errorView.setErrorParameter(createEvent(), errorParam)
             return errorView;
         }
         test("no cause exception") {
-            expect("InternalServerError[targetView='helloworld', error='There was an exception while trying to navigate to 'helloworld'']") {
-                val error = createErrorComponent(RuntimeException("OOPS!"))
-                error.toPrettyString().trim()
-                        .replace(Regex("(?s), stacktrace.*]"), "]")
-            }
-        }
-        test("root cause exception") {
-            expect("InternalServerError[targetView='helloworld', error='java.lang.Exception: BOOM!']") {
-                val error = createErrorComponent(RuntimeException("OOPS!", Exception("BOOM!")))
-                error.toPrettyString().trim()
-                        .replace(Regex("(?s), stacktrace.*]"), "]")
-            }
+            val error = createErrorComponent(RuntimeException("OOPS!"))
+            val pretty = error.toPrettyString().trim()
+            assertContains(pretty, "targetView='helloworld'")
+            assertContains(pretty, "failureMessage='OOPS!'")
+            assertContains(pretty, "exceptionType='java.lang.RuntimeException'")
         }
         test("custom message") {
-            expect("InternalServerError[targetView='helloworld', error='Something failed']") {
-                val error = createErrorComponent(RuntimeException("BOOM!"), "Something failed")
-                error.toPrettyString().trim()
-                        .replace(Regex("(?s), stacktrace.*]"), "]")
-            }
+            val error = createErrorComponent(RuntimeException("BOOM!"), "Something failed")
+            val pretty = error.toPrettyString().trim()
+            assertContains(pretty, "targetView='helloworld'")
+            assertContains(pretty, "failureMessage='Something failed'")
+            assertContains(pretty, "exceptionType='java.lang.RuntimeException'")
         }
     }
 
