@@ -1375,6 +1375,30 @@ class ComponentQueryTest extends UIUnitTest {
                         .withoutAttribute("role", "tooltip").findComponent());
     }
 
+    @Test
+    void exists_matchingComponents_true() {
+        Element root = getCurrentView().getElement();
+
+        root.appendChild(new TextField().getElement());
+        root.appendChild(new TextField().getElement());
+        root.appendChild(new TextField().getElement());
+        root.appendChild(new TextField().getElement());
+        root.appendChild(new Button().getElement());
+
+        Assertions.assertTrue($(TextField.class).exists(),
+                "Expecting components to be found, but exists is false");
+
+        Assertions.assertTrue($(Button.class).exists(),
+                "Expecting components to be found, but exists is false");
+    }
+
+    @Test
+    void exists_noMatching_false() {
+        ComponentQuery<TextField> query = $(TextField.class);
+        Assertions.assertFalse(query.exists(),
+                "Expecting no components to be found, but exists is true");
+    }
+
     @Tag("span")
     private static class ComponentWithLabel extends TestComponent
             implements HasLabel {
