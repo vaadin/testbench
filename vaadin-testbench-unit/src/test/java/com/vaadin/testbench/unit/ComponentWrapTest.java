@@ -101,9 +101,6 @@ public class ComponentWrapTest extends UIUnitTest {
 
         home.remove(span);
 
-        // TODO: can we have this automated?
-        roundTrip();
-
         Assertions.assertTrue(home_.isUsable(),
                 "Home should be interactable when Span is removed");
     }
