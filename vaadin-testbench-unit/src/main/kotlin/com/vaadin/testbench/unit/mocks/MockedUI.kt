@@ -26,10 +26,15 @@ open class MockedUI : UI() {
         if (modal) {
             val registrationCombination: AtomicReference<Registration?> = AtomicReference<Registration?>()
             registrationCombination.set(childComponent?.addDetachListener(ComponentEventListener {
-                internals.stateTree.collectChanges { }
-                internals.stateTree.runExecutionsBeforeClientResponse()
+                roundTrip()
                 registrationCombination.getAndSet(null)?.remove()
             }))
         }
+        roundTrip();
+    }
+
+    private fun roundTrip() {
+        internals.stateTree.collectChanges { }
+        internals.stateTree.runExecutionsBeforeClientResponse()
     }
 }

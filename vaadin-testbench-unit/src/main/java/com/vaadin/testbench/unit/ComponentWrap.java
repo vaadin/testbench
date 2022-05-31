@@ -85,7 +85,6 @@ public class ComponentWrap<T extends Component> {
      */
     public void setModal(boolean modal) {
         UI.getCurrent().setChildComponentModal(component, modal);
-        roundTrip();
     }
 
     /**
