@@ -565,6 +565,16 @@ public class ComponentQuery<T extends Component> {
     }
 
     /**
+     * Checks if this {@link ComponentQuery} describes existing components.
+     *
+     * @return {@literal true} if components are found, otherwise
+     *         {@literal false}.
+     */
+    public boolean exists() {
+        return !all().isEmpty();
+    }
+
+    /**
      * Executes the search against current context and returns a list of test
      * wrappers for matching components.
      *
