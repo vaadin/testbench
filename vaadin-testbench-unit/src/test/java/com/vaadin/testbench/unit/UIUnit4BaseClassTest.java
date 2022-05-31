@@ -18,17 +18,12 @@ import com.example.TemplatedParam;
 import com.example.base.WelcomeView;
 import com.example.base.child.ChildView;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Nested;
 import org.junit.runner.RunWith;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.grid.BasicGridView;
 import com.vaadin.flow.di.InstantiatorFactory;
 import com.vaadin.flow.di.Lookup;
 import com.vaadin.flow.router.RouteBaseData;
@@ -108,8 +103,8 @@ public class UIUnit4BaseClassTest {
     public static class CustomLookupServicesTest extends UIUnit4Test {
 
         @Override
-        public void initVaadinEnvironment() {
-            super.initVaadinEnvironment(TestCustomInstantiatorFactory.class);
+        protected Set<Class<?>> lookupServices() {
+            return Set.of(TestCustomInstantiatorFactory.class);
         }
 
         @Test

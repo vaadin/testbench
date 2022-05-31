@@ -99,10 +99,9 @@ class UIUnitBaseClassTest {
     @Nested
     class CustomLookupServicesTest extends UIUnitTest {
 
-        @BeforeEach
         @Override
-        protected void initVaadinEnvironment() {
-            super.initVaadinEnvironment(TestCustomInstantiatorFactory.class);
+        protected Set<Class<?>> lookupServices() {
+            return Set.of(TestCustomInstantiatorFactory.class);
         }
 
         @Test

@@ -126,6 +126,8 @@ public class ComponentWrap<T extends Component> {
      * @param fieldName
      *            field name
      * @return accessible field
+     * @throws IllegalArgumentException
+     *             if field doesn't exist
      */
     protected Field getField(String fieldName) {
         return getField(getComponent().getClass(), fieldName);
@@ -139,6 +141,8 @@ public class ComponentWrap<T extends Component> {
      * @param fieldName
      *            field name
      * @return accessible field
+     * @throws IllegalArgumentException
+     *             if field doesn't exist
      */
     protected Field getField(Class target, String fieldName) {
         try {
@@ -146,7 +150,7 @@ public class ComponentWrap<T extends Component> {
             field.setAccessible(true);
             return field;
         } catch (NoSuchFieldException e) {
-            throw new RuntimeException(e);
+            throw new IllegalArgumentException(e);
         }
     }
 

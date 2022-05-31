@@ -7,14 +7,18 @@
  *
  * For the full License, see <https://vaadin.com/license/cvdl-4.0>.
  */
-package com.vaadin.flow.component;
+package com.vaadin.flow.component.login;
 
-import com.vaadin.testbench.unit.ComponentWrap;
-import com.vaadin.testbench.unit.TestComponent;
 import com.vaadin.testbench.unit.Wraps;
 
-@Wraps(TestComponent.class)
-public class TestWrap<T extends TestComponent> extends ComponentWrap<T> {
+/**
+ * Test wrapper for LoginForm components.
+ *
+ * @param <T>
+ *            component type
+ */
+@Wraps(LoginForm.class)
+public class LoginFormWrap<T extends LoginForm> extends AbstractLoginWrap<T> {
 
     /**
      * Wrap given component for testing.
@@ -22,7 +26,7 @@ public class TestWrap<T extends TestComponent> extends ComponentWrap<T> {
      * @param component
      *            target component
      */
-    public TestWrap(T component) {
+    public LoginFormWrap(T component) {
         super(component);
     }
 }
