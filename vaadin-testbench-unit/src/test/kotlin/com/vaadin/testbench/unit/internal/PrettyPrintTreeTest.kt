@@ -24,6 +24,14 @@ import com.vaadin.flow.component.html.Span
 import com.vaadin.flow.component.icon.VaadinIcon
 import com.vaadin.flow.component.textfield.TextArea
 import com.vaadin.flow.component.textfield.TextField
+import com.vaadin.flow.router.BeforeEnterEvent
+import com.vaadin.flow.router.ErrorParameter
+import com.vaadin.flow.router.InternalServerError
+import com.vaadin.flow.router.Location
+import com.vaadin.flow.router.NavigationEvent
+import com.vaadin.flow.router.NavigationTrigger
+import com.vaadin.flow.server.VaadinService
+import com.example.base.HelloWorldView
 import com.github.mvysny.dynatest.DynaNodeGroup
 import com.github.mvysny.dynatest.DynaTestDsl
 import com.github.mvysny.karibudsl.v10.contextMenu
@@ -208,6 +216,44 @@ internal fun DynaNodeGroup.prettyPrintTreeTest() {
         }
     }
          */
+
+    group("toPrettyStringInternalServerError()") {
+        fun createEvent(): BeforeEnterEvent {
+            val router = VaadinService.getCurrent().router
+            val navigationEvent = NavigationEvent(router, Location("helloworld"), UI.getCurrent(), NavigationTrigger.UI_NAVIGATE)
+            val event = BeforeEnterEvent(navigationEvent, HelloWorldView::class.java, emptyList())
+            return event
+        }
+
+        fun createErrorComponent(error: Exception?, message: String? = null): InternalServerError {
+            val errorView = InternalServerError()
+            val errorParam = ErrorParameter(Exception::class.java, error, message)
+            errorView.setErrorParameter(createEvent(), errorParam)
+            return errorView;
+        }
+        test("no cause exception") {
+            expect("InternalServerError[targetView='helloworld', error='There was an exception while trying to navigate to 'helloworld'']") {
+                val error = createErrorComponent(RuntimeException("OOPS!"))
+                error.toPrettyString().trim()
+                        .replace(Regex("(?s), stacktrace.*]"), "]")
+            }
+        }
+        test("root cause exception") {
+            expect("InternalServerError[targetView='helloworld', error='java.lang.Exception: BOOM!']") {
+                val error = createErrorComponent(RuntimeException("OOPS!", Exception("BOOM!")))
+                error.toPrettyString().trim()
+                        .replace(Regex("(?s), stacktrace.*]"), "]")
+            }
+        }
+        test("custom message") {
+            expect("InternalServerError[targetView='helloworld', error='Something failed']") {
+                val error = createErrorComponent(RuntimeException("BOOM!"), "Something failed")
+                error.toPrettyString().trim()
+                        .replace(Regex("(?s), stacktrace.*]"), "]")
+            }
+        }
+    }
+
 }
 
 class MyComponentWithToString : Div() {
