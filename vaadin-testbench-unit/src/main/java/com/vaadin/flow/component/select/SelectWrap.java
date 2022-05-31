@@ -61,7 +61,7 @@ public class SelectWrap<T extends Select<Y>, Y> extends ComponentWrap<T> {
         final List<Y> filtered = getSuggestionItems().stream()
                 .filter(item -> selection.equals(getItemLabel(item)))
                 .collect(Collectors.toList());
-        if (filtered.size() != 1 || filtered.isEmpty()) {
+        if (filtered.size() != 1) {
             throw new IllegalArgumentException(
                     "No item found for '" + selection + "'");
         }

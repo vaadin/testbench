@@ -75,7 +75,7 @@ public class ComboBoxWrap<T extends ComboBox<Y>, Y> extends ComponentWrap<T> {
         final List<Y> filtered = suggestionItems.stream().filter(
                 item -> selection.equals(itemLabelGenerator.apply(item)))
                 .collect(Collectors.toList());
-        if (filtered.size() != 1 || filtered.isEmpty()) {
+        if (filtered.size() != 1) {
             throw new IllegalArgumentException(
                     "No item found for '" + selection + "'");
         }
