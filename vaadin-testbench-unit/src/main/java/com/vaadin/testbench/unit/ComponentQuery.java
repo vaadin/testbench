@@ -565,8 +565,7 @@ public class ComponentQuery<T extends Component> {
     }
 
     /**
-     * Checks if this {@link ComponentQuery} describes existing components. Same
-     * as {@code !all().isEmpty() }.
+     * Checks if this {@link ComponentQuery} describes existing components.
      *
      * @return {@literal true} if components are found, otherwise
      *         {@literal false}.
