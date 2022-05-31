@@ -75,7 +75,7 @@ public class ComboBoxWrap<T extends ComboBox<Y>, Y> extends ComponentWrap<T> {
         final List<Y> filtered = suggestionItems.stream().filter(
                 item -> selection.equals(itemLabelGenerator.apply(item)))
                 .collect(Collectors.toList());
-        if (filtered.size() > 1 || filtered.isEmpty()) {
+        if (filtered.size() != 1) {
             throw new IllegalArgumentException(
                     "No item found for '" + selection + "'");
         }
@@ -93,7 +93,7 @@ public class ComboBoxWrap<T extends ComboBox<Y>, Y> extends ComponentWrap<T> {
 
     /**
      * Get dropdown suggestions as String representations sent to the client.
-     * any filter that is set is taken into account.
+     * Any filter that is set is taken into account.
      *
      * @return List of item representation strings
      */
@@ -108,7 +108,7 @@ public class ComboBoxWrap<T extends ComboBox<Y>, Y> extends ComponentWrap<T> {
     }
 
     /**
-     * Get the actual items for the dropdown as a List. any filter that is set
+     * Get the actual items for the dropdown as a List. Any filter that is set
      * is taken into account.
      *
      * @return List of items
