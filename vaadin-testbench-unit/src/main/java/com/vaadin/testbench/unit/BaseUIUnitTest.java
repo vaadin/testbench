@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -25,12 +26,14 @@ import com.googlecode.gentyref.GenericTypeReflector;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfoList;
 import io.github.classgraph.ScanResult;
+import org.slf4j.LoggerFactory;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.RouteParameters;
+import com.vaadin.pro.licensechecker.LicenseChecker;
 import com.vaadin.testbench.unit.internal.MockVaadin;
 import com.vaadin.testbench.unit.internal.Routes;
 import com.vaadin.testbench.unit.mocks.MockedUI;
@@ -54,6 +57,18 @@ class BaseUIUnitTest {
 
     static {
         wrappers.putAll(scanWrappers("com.vaadin.flow.component"));
+        Properties properties = new Properties();
+        try {
+            properties.load(BaseUIUnitTest.class
+                    .getResourceAsStream("testbench.properties"));
+        } catch (Exception e) {
+            LoggerFactory.getLogger(BaseUIUnitTest.class)
+                    .warn("Unable to read TestBench properties file", e);
+            throw new ExceptionInInitializerError(e);
+        }
+
+        LicenseChecker.checkLicenseFromStaticBlock("vaadin-testbench",
+                properties.getProperty("testbench.version"));
     }
 
     private static Map<Class<?>, Class<? extends ComponentWrap>> scanWrappers(
