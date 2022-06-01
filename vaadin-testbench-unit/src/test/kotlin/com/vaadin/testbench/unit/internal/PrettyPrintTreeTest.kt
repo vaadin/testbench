@@ -249,6 +249,16 @@ internal fun DynaNodeGroup.prettyPrintTreeTest() {
         }
     }
 
+    test("Handle null properties") {
+        val div = Div().apply {
+            element.setProperty("null-property", null)
+            element.setProperty("nonnull-property", "OK")
+        }
+        expect("""
+└── Div[nonnull-property='OK']
+""".trim()) { div.toPrettyTree().trim() }
+    }
+
 }
 
 class MyComponentWithToString : Div() {

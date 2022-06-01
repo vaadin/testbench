@@ -129,8 +129,9 @@ fun Component.toPrettyString(): String {
     // TODO: add a system property to allow verbose pretty print with ignored attributes
     val ignoredAttr = mutableListOf("value", "invalid", "openOn", "label", "errorMessage", "innerHTML", "i18n","error", "stackTrace")
     this.element.propertyNames.forEach {
-        if(!ignoredAttr.contains(it) && this.element.getProperty(it).isNotEmpty() && !it.startsWith("_")) {
-            list.add("${it}='${this.element.getProperty(it)}'")
+        val propertyValue = this.element.getProperty(it)
+        if(propertyValue != null && !ignoredAttr.contains(it) && propertyValue.isNotEmpty() && !it.startsWith("_")) {
+            list.add("${it}='${propertyValue}'")
         }
     }
     // Any component with href should output it not only Anchor
