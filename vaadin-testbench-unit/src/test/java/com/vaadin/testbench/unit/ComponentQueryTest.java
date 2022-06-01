@@ -1399,6 +1399,53 @@ class ComponentQueryTest extends UIUnitTest {
                 "Expecting no components to be found, but exists is true");
     }
 
+    @Test
+    void single_matchingExactlyOne_getsComponent() {
+        Span span = new Span();
+        Div div1 = new Div();
+        Div target = new Div();
+        target.setClassName("my-test");
+        Div div3 = new Div();
+        Div div4 = new Div();
+        UI.getCurrent().getElement().appendChild(div1.getElement(),
+                target.getElement(), span.getElement(), div3.getElement(),
+                div4.getElement());
+
+        Assertions.assertSame(span, $(Span.class).single().getComponent());
+        Assertions.assertSame(target,
+                $(Div.class).withClassName("my-test").single().getComponent());
+    }
+
+    @Test
+    void single_noMatching_throws() {
+        Div div1 = new Div();
+        Div div2 = new Div();
+        Div div3 = new Div();
+        Div div4 = new Div();
+        UI.getCurrent().getElement().appendChild(div1.getElement(),
+                div2.getElement(), div3.getElement(), div4.getElement());
+
+        ComponentQuery<Span> queryNonExistent = $(Span.class);
+        Assertions.assertThrows(NoSuchElementException.class,
+                queryNonExistent::single);
+
+        ComponentQuery<Div> query = $(Div.class).withClassName("my-test");
+        Assertions.assertThrows(NoSuchElementException.class, query::single);
+    }
+
+    @Test
+    void single_matchingMultipleComponents_throws() {
+        Div div1 = new Div();
+        Div div2 = new Div();
+        Div div3 = new Div();
+        Div div4 = new Div();
+        UI.getCurrent().getElement().appendChild(div1.getElement(),
+                div2.getElement(), div3.getElement(), div4.getElement());
+
+        ComponentQuery<Div> query = $(Div.class);
+        Assertions.assertThrows(NoSuchElementException.class, query::single);
+    }
+
     @Tag("span")
     private static class ComponentWithLabel extends TestComponent
             implements HasLabel {
