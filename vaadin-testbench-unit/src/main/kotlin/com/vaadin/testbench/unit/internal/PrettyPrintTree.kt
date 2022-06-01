@@ -11,6 +11,7 @@ package com.vaadin.testbench.unit.internal
 
 
 import java.util.*
+import kotlin.reflect.jvm.isAccessible
 import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.HasValidation
 import com.vaadin.flow.component.HasValue
@@ -20,7 +21,6 @@ import com.vaadin.flow.component.grid.Grid
 import com.vaadin.flow.component.html.Anchor
 import com.vaadin.flow.component.icon.Icon
 import com.vaadin.testbench.unit.internal.PrettyPrintTree.Companion.ofVaadin
-import kotlin.reflect.jvm.isAccessible
 
 
 /**
@@ -126,7 +126,8 @@ fun Component.toPrettyString(): String {
         }
     }
      */
-    val ignoredAttr = mutableListOf("value", "invalid", "openOn", "label", "errorMessage", "innerHTML", "i18n","error")
+    // TODO: add a system property to allow verbose pretty print with ignored attributes
+    val ignoredAttr = mutableListOf("value", "invalid", "openOn", "label", "errorMessage", "innerHTML", "i18n","error", "stackTrace")
     this.element.propertyNames.forEach {
         if(!ignoredAttr.contains(it) && this.element.getProperty(it).isNotEmpty() && !it.startsWith("_")) {
             list.add("${it}='${this.element.getProperty(it)}'")

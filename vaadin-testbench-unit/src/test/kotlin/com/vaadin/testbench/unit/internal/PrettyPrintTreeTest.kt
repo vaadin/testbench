@@ -9,6 +9,8 @@
  */
 package com.vaadin.testbench.unit.internal
 
+import kotlin.test.assertContains
+import kotlin.test.assertTrue
 import kotlin.test.expect
 import kotlin.test.fail
 import com.vaadin.flow.component.Html
@@ -24,6 +26,14 @@ import com.vaadin.flow.component.html.Span
 import com.vaadin.flow.component.icon.VaadinIcon
 import com.vaadin.flow.component.textfield.TextArea
 import com.vaadin.flow.component.textfield.TextField
+import com.vaadin.flow.router.BeforeEnterEvent
+import com.vaadin.flow.router.ErrorParameter
+import com.vaadin.flow.router.InternalServerError
+import com.vaadin.flow.router.Location
+import com.vaadin.flow.router.NavigationEvent
+import com.vaadin.flow.router.NavigationTrigger
+import com.vaadin.flow.server.VaadinService
+import com.example.base.HelloWorldView
 import com.github.mvysny.dynatest.DynaNodeGroup
 import com.github.mvysny.dynatest.DynaTestDsl
 import com.github.mvysny.karibudsl.v10.contextMenu
@@ -208,6 +218,37 @@ internal fun DynaNodeGroup.prettyPrintTreeTest() {
         }
     }
          */
+
+    group("toPrettyStringInternalServerError()") {
+        fun createEvent(): BeforeEnterEvent {
+            val router = VaadinService.getCurrent().router
+            val navigationEvent = NavigationEvent(router, Location("helloworld"), UI.getCurrent(), NavigationTrigger.UI_NAVIGATE)
+            val event = BeforeEnterEvent(navigationEvent, HelloWorldView::class.java, emptyList())
+            return event
+        }
+
+        fun createErrorComponent(error: Exception?, message: String? = null): InternalServerError {
+            val errorView = MockInternalSeverError()
+            val errorParam = ErrorParameter(Exception::class.java, error, message)
+            errorView.setErrorParameter(createEvent(), errorParam)
+            return errorView;
+        }
+        test("no cause exception") {
+            val error = createErrorComponent(RuntimeException("OOPS!"))
+            val pretty = error.toPrettyString().trim()
+            assertContains(pretty, "targetView='helloworld'")
+            assertContains(pretty, "failureMessage='OOPS!'")
+            assertContains(pretty, "exceptionType='java.lang.RuntimeException'")
+        }
+        test("custom message") {
+            val error = createErrorComponent(RuntimeException("BOOM!"), "Something failed")
+            val pretty = error.toPrettyString().trim()
+            assertContains(pretty, "targetView='helloworld'")
+            assertContains(pretty, "failureMessage='Something failed'")
+            assertContains(pretty, "exceptionType='java.lang.RuntimeException'")
+        }
+    }
+
 }
 
 class MyComponentWithToString : Div() {

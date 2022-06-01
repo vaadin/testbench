@@ -17,9 +17,12 @@ import com.vaadin.flow.component.Tag
 import com.vaadin.flow.router.BeforeEnterEvent
 import com.vaadin.flow.router.ErrorParameter
 import com.vaadin.flow.router.HasErrorParameter
+import com.vaadin.flow.router.InternalServerError
+import com.vaadin.flow.router.Location
 import com.vaadin.flow.router.NotFoundException
 import com.vaadin.flow.router.Route
 import com.vaadin.flow.router.RouteData
+import com.vaadin.flow.router.internal.DefaultErrorHandler
 import com.vaadin.flow.server.VaadinContext
 import com.vaadin.flow.server.startup.ApplicationRouteRegistry
 import com.vaadin.flow.server.startup.RouteRegistryInitializer
@@ -88,6 +91,11 @@ data class Routes(
             errorRoutes.remove(MockRouteNotFoundError::class.java)
         }
 
+        // Replace default InternalServeError exception handler with an
+        // implementation that exposes error details for PrettyPrinter
+        errorRoutes.remove(InternalServerError::class.java)
+        errorRoutes.add(MockInternalSeverError::class.java)
+
         println("Auto-discovered views: $this")
     }
 
@@ -113,7 +121,7 @@ fun ApplicationRouteRegistry.clearPwaClass() {
  * any navigation to a missing route and can respond with an informative exception.
  */
 @Tag(Tag.DIV)
-open class MockRouteNotFoundError: Component(), HasErrorParameter<NotFoundException> {
+open class MockRouteNotFoundError : Component(), HasErrorParameter<NotFoundException> {
     override fun setErrorParameter(event: BeforeEnterEvent, parameter: ErrorParameter<NotFoundException>): Int {
         val message: String = buildString {
             val path: String = event.location.path
@@ -133,5 +141,21 @@ open class MockRouteNotFoundError: Component(), HasErrorParameter<NotFoundExcept
         val template = template
         val path: String = if (template.isNullOrBlank()) "<root>" else "/$template"
         return "${navigationTarget.simpleName} at '$path'"
+    }
+}
+
+@DefaultErrorHandler
+open class MockInternalSeverError : InternalServerError() {
+
+    override fun setErrorParameter(event: BeforeEnterEvent, parameter: ErrorParameter<Exception>): Int {
+        element.setProperty("targetView", event.location.path)
+        if (parameter.hasCustomMessage()) {
+            element.setProperty("failureMessage", parameter.customMessage)
+        } else {
+            element.setProperty("failureMessage", parameter.exception.message)
+        }
+        element.setProperty("exceptionType", parameter.exception::class.java.name)
+        element.setProperty("stackTrace", parameter.exception.stackTraceToString())
+        return super.setErrorParameter(event, parameter)
     }
 }
