@@ -286,7 +286,7 @@ public class GridWrap<T extends Grid<Y>, Y> extends ComponentWrap<T> {
     }
 
     /**
-     * Get the column position by column property.
+     * Gets the grid column by column property.
      *
      * @param property
      *            the property name of the column, not null
