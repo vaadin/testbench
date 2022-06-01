@@ -181,4 +181,62 @@ public class TextFieldWrapTest extends UIUnitTest {
         bdf_.setValue(null);
     }
 
+    @Test
+    void textFieldWithClearButton_clear_valueIsCleared() {
+        TextField tf = new TextField();
+        tf.setClearButtonVisible(true);
+        tf.setValue("Some value");
+        getCurrentView().getElement().appendChild(tf.getElement());
+
+        TextFieldWrap<TextField, String> tf_ = wrap(tf);
+        tf_.clear();
+
+        Assertions.assertTrue(tf.isEmpty(), "Value should have cleared");
+    }
+
+    @Test
+    void textFieldWithCustomEmptyValue_clear_valueIsCleared() {
+        TextField tf = new TextField() {
+            @Override
+            public String getEmptyValue() {
+                return "EMPTY";
+            }
+        };
+        tf.setValue("Some value");
+        tf.setClearButtonVisible(true);
+        getCurrentView().getElement().appendChild(tf.getElement());
+
+        TextFieldWrap<TextField, String> tf_ = wrap(tf);
+        tf_.clear();
+
+        Assertions.assertTrue(tf.isEmpty(), "Value should have cleared");
+        Assertions.assertEquals("EMPTY", tf.getValue(),
+                "Value should have cleared");
+    }
+
+    @Test
+    void textFieldWithoutClearButton_clear_throws() {
+        TextField tf = new TextField();
+        tf.setClearButtonVisible(false);
+        getCurrentView().getElement().appendChild(tf.getElement());
+
+        TextFieldWrap<TextField, String> tf_ = wrap(tf);
+
+        Assertions.assertThrows(IllegalStateException.class, tf_::clear,
+                "Clear should not be usable when clear button is not visible");
+    }
+
+    @Test
+    void notUsableTextField_clear_throws() {
+        TextField tf = new TextField();
+        tf.setClearButtonVisible(true);
+        tf.setEnabled(false);
+        getCurrentView().getElement().appendChild(tf.getElement());
+
+        TextFieldWrap<TextField, String> tf_ = wrap(tf);
+
+        Assertions.assertThrows(IllegalStateException.class, tf_::clear,
+                "Clear should not be usable when text field is not usable");
+    }
+
 }

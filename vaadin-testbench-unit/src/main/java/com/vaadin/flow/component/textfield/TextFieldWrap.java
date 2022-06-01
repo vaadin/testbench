@@ -11,6 +11,7 @@ package com.vaadin.flow.component.textfield;
 
 import org.slf4j.LoggerFactory;
 
+import com.vaadin.flow.component.shared.HasClearButton;
 import com.vaadin.testbench.unit.ComponentWrap;
 import com.vaadin.testbench.unit.Wraps;
 
@@ -65,6 +66,28 @@ public class TextFieldWrap<T extends GeneratedVaadinTextField<T, V>, V>
         }
 
         getComponent().setValue(value);
+    }
+
+    /**
+     * Resets the value to the empty one, as when clicking on component clear
+     * button on the browser.
+     *
+     * An {@link IllegalStateException} is thrown if the clear button is not
+     * visible.
+     *
+     * @throws IllegalStateException
+     *             if the text field is not usable or the clear button is not
+     *             visible.
+     */
+    public void clear() {
+        ensureComponentIsUsable();
+
+        if (getComponent() instanceof HasClearButton
+                && ((HasClearButton) getComponent()).isClearButtonVisible()) {
+            setValue(getComponent().getEmptyValue());
+        } else {
+            throw new IllegalStateException("Clear button is not visible");
+        }
     }
 
     private boolean hasValidation() {
