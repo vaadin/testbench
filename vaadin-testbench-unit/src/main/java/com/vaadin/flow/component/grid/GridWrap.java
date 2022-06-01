@@ -12,6 +12,7 @@ package com.vaadin.flow.component.grid;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
+import java.util.Objects;
 
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.function.ValueProvider;
@@ -270,6 +271,30 @@ public class GridWrap<T extends Grid<Y>, Y> extends ComponentWrap<T> {
         final Grid.Column<Y> targetColumn = getComponent().getColumns()
                 .get(column);
         return GridKt.getHeader2(targetColumn);
+    }
+
+    /**
+     * Get the column position by column property.
+     *
+     * @param property
+     *            the property name of the column, not null
+     * @return int position of column
+     */
+    public int getColumnPosition(String property) {
+        Objects.requireNonNull(property, "property name must not be null");
+        return getComponent().getColumns().indexOf(getColumn(property));
+    }
+
+    /**
+     * Gets the grid column by column property.
+     *
+     * @param property
+     *            the property name of the column, not null
+     * @return Grid.Column for property
+     */
+    public Grid.Column<Y> getColumn(String property) {
+        Objects.requireNonNull(property, "property name must not be null");
+        return getComponent().getColumnByKey(property);
     }
 
     /**
