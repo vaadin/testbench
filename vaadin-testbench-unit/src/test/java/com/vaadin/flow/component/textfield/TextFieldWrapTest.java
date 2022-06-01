@@ -20,15 +20,12 @@ import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent;
 import com.vaadin.flow.component.HasValue.ValueChangeListener;
 import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.testbench.unit.UIUnitTest;
+import com.vaadin.testbench.unit.ViewPackages;
 
+@ViewPackages
 public class TextFieldWrapTest extends UIUnitTest {
 
     TextFieldView view;
-
-    @Override
-    protected String scanPackage() {
-        return getClass().getPackageName();
-    }
 
     @BeforeEach
     public void registerView() {

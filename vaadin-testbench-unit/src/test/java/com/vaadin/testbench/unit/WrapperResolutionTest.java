@@ -16,12 +16,8 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Tag;
 
 @ComponentWrapPackages("com.vaadin.testbench.unit")
+@ViewPackages(packages = "com.vaadin.testbench")
 public class WrapperResolutionTest extends UIUnitTest {
-
-    @Override
-    protected String scanPackage() {
-        return "com.vaadin.testbench";
-    }
 
     @Test
     public void wrapTest_returnsTestWrap() {

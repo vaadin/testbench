@@ -18,16 +18,13 @@ import org.junit.jupiter.api.Test;
 
 import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.testbench.unit.UIUnitTest;
+import com.vaadin.testbench.unit.ViewPackages;
 
+@ViewPackages
 class CheckboxWrapTest extends UIUnitTest {
 
     CheckboxView view;
     CheckboxWrap<Checkbox> checkbox_;
-
-    @Override
-    protected String scanPackage() {
-        return getClass().getPackageName();
-    }
 
     @BeforeEach
     public void registerView() {

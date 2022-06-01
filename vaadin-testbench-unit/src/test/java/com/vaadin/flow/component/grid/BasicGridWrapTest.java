@@ -17,13 +17,10 @@ import org.junit.jupiter.api.Test;
 
 import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.testbench.unit.UIUnitTest;
+import com.vaadin.testbench.unit.ViewPackages;
 
+@ViewPackages
 public class BasicGridWrapTest extends UIUnitTest {
-
-    @Override
-    protected String scanPackage() {
-        return "com.vaadin.flow.component.grid";
-    }
 
     BasicGridView view;
     GridWrap<Grid<Person>, Person> grid_;

@@ -15,13 +15,10 @@ import org.junit.jupiter.api.Test;
 
 import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.testbench.unit.UIUnitTest;
+import com.vaadin.testbench.unit.ViewPackages;
 
+@ViewPackages(packages = "com.vaadin.flow.component.accordion")
 class AccordionWrapTest extends UIUnitTest {
-
-    @Override
-    protected String scanPackage() {
-        return "com.vaadin.flow.component.accordion";
-    }
 
     AccordionView view;
 

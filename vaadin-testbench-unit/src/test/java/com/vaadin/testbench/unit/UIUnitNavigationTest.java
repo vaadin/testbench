@@ -11,12 +11,8 @@ import org.junit.jupiter.api.Test;
 
 import com.vaadin.flow.router.NotFoundException;
 
+@ViewPackages(packages = "com.example")
 public class UIUnitNavigationTest extends UIUnitTest {
-
-    @Override
-    protected String scanPackage() {
-        return "com.example";
-    }
 
     @Test
     public void getCurrentView_returnsExpectedView() {

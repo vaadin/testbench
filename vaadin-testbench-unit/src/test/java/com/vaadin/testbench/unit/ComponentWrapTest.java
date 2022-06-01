@@ -18,6 +18,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.Tag;
 
+@ViewPackages(packages = "com.example")
 public class ComponentWrapTest extends UIUnitTest {
 
     private WelcomeView home;
@@ -25,11 +26,6 @@ public class ComponentWrapTest extends UIUnitTest {
     @BeforeEach
     public void initHome() {
         home = getHome();
-    }
-
-    @Override
-    protected String scanPackage() {
-        return "com.example";
     }
 
     @Test

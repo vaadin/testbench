@@ -24,12 +24,8 @@ import org.springframework.test.context.ContextConfiguration;
 import com.vaadin.flow.server.VaadinRequest;
 
 @ContextConfiguration(classes = SecurityTestConfig.class)
+@ViewPackages(packages = "com.testapp.security")
 public class SpringUnit4SecurityTest extends SpringUIUnit4Test {
-
-    @Override
-    protected String scanPackage() {
-        return "com.testapp.security";
-    }
 
     @Test
     @WithMockUser(username = "john", roles = { "DEV", "PO" })

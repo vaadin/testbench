@@ -15,9 +15,11 @@ import org.junit.jupiter.api.Test;
 
 import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.testbench.unit.UIUnitTest;
+import com.vaadin.testbench.unit.ViewPackages;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@ViewPackages
 class SelectWrapTest extends UIUnitTest {
     SelectView view;
 
@@ -26,11 +28,6 @@ class SelectWrapTest extends UIUnitTest {
         RouteConfiguration.forApplicationScope()
                 .setAnnotatedRoute(SelectView.class);
         view = navigate(SelectView.class);
-    }
-
-    @Override
-    protected String scanPackage() {
-        return this.getClass().getPackageName();
     }
 
     @Test

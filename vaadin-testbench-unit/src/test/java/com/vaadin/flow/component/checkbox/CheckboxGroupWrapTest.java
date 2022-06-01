@@ -21,16 +21,13 @@ import org.junit.jupiter.api.Test;
 
 import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.testbench.unit.UIUnitTest;
+import com.vaadin.testbench.unit.ViewPackages;
 
+@ViewPackages
 class CheckboxGroupWrapTest extends UIUnitTest {
 
     CheckboxView view;
     CheckboxGroupWrap<CheckboxGroup<CheckboxView.Name>, CheckboxView.Name> checkboxGroup_;
-
-    @Override
-    protected String scanPackage() {
-        return getClass().getPackageName();
-    }
 
     @BeforeEach
     public void registerView() {

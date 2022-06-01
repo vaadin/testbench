@@ -9,21 +9,16 @@
  */
 package com.vaadin.flow.component.grid;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.testbench.unit.UIUnitTest;
+import com.vaadin.testbench.unit.ViewPackages;
 
+@ViewPackages
 public class BeanGridWrapTest extends UIUnitTest {
-
-    @Override
-    protected String scanPackage() {
-        return "com.vaadin.flow.component.grid";
-    }
 
     BeanGridView view;
     GridWrap<Grid<Person>, Person> grid_;

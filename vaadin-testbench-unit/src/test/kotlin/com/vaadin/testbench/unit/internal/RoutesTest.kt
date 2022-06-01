@@ -18,6 +18,8 @@ import com.vaadin.flow.router.RouteNotFoundError
 import com.vaadin.flow.server.VaadinContext
 import com.vaadin.flow.server.startup.ApplicationRouteRegistry
 import com.vaadin.testbench.unit.mocks.MockVaadinHelper
+import com.vaadin.testbench.unit.viewscan.byannotatedclass.ViewPackagesTestView
+import com.vaadin.testbench.unit.viewscan4.byannotatedclass.ViewPackagesTest4View
 import com.example.base.ErrorView
 import com.example.base.HelloWorldView
 import com.example.base.ParametrizedView
@@ -32,22 +34,27 @@ import com.testapp.MyRouteNotFoundError
 
 val allViews: Set<Class<out Component>> = setOf<Class<out Component>>(
         HelloWorldView::class.java, WelcomeView::class.java,
-        ParametrizedView::class.java, ChildView::class.java, NavigationPostponeView::class.java)
+        ParametrizedView::class.java, ChildView::class.java, NavigationPostponeView::class.java,
+        ViewPackagesTest4View::class.java, ViewPackagesTestView::class.java)
 val allErrorRoutes: Set<Class<out HasErrorParameter<*>>> = setOf(ErrorView::class.java, MockRouteNotFoundError::class.java, MockInternalSeverError::class.java)
 
 @DynaTestDsl
 fun DynaNodeGroup.routesTestBatch() {
     afterEach { MockVaadin.tearDown() }
 
+    // TODO: restrict scan until we have component wrapper test views on this codebase
+    val packagesToScan = arrayOf("com.example.base", "com.vaadin.testbench.unit.viewscan",
+            "com.vaadin.testbench.unit.viewscan4")
+
     test("All views discovered") {
-        val routes: Routes = Routes().autoDiscoverViews("com.example.base")
+        val routes: Routes = Routes().autoDiscoverViews(*packagesToScan)
         expect(allViews) { routes.routes.toSet() }
         expect(allErrorRoutes) { routes.errorRoutes.toSet() }
     }
 
     test("calling autoDiscoverViews() multiple times won't fail") {
-        expect(allViews) { Routes().autoDiscoverViews("com.example.base").routes }
-        expect(allViews) { Routes().autoDiscoverViews("com.example.base").routes }
+        expect(allViews) { Routes().autoDiscoverViews(*packagesToScan).routes }
+        expect(allViews) { Routes().autoDiscoverViews(*packagesToScan).routes }
     }
 
     // https://github.com/mvysny/karibu-testing/issues/50

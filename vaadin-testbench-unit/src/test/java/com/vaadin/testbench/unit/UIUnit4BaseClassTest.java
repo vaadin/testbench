@@ -17,6 +17,9 @@ import com.example.SingleParam;
 import com.example.TemplatedParam;
 import com.example.base.WelcomeView;
 import com.example.base.child.ChildView;
+import com.example.base.navigation.NavigationPostponeView;
+import com.testapp.security.LoginView;
+import com.testapp.security.ProtectedView;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
@@ -79,24 +82,6 @@ public class UIUnit4BaseClassTest {
             allViews.add(TemplatedParam.class);
             Assert.assertEquals(allViews.size(), routes.size());
             Assert.assertTrue(routes.containsAll(allViews));
-        }
-    }
-
-    public static class DiscoverRoutesInPackageTest extends UIUnit4Test {
-
-        @Override
-        protected String scanPackage() {
-            return ChildView.class.getPackageName();
-        }
-
-        @Test
-        public void extendingBaseClass_runTest_routesAreDiscovered() {
-            Set<Class<? extends Component>> routes = VaadinService.getCurrent()
-                    .getRouter().getRegistry().getRegisteredRoutes().stream()
-                    .map(RouteBaseData::getNavigationTarget)
-                    .collect(Collectors.toSet());
-            Assert.assertEquals(1, routes.size());
-            Assert.assertTrue(routes.contains(ChildView.class));
         }
     }
 

@@ -14,18 +14,11 @@ import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.test.context.TestContext;
-import org.springframework.test.context.TestExecutionListener;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import com.vaadin.flow.component.UI;
 import com.vaadin.testbench.unit.internal.MockVaadin;
 import com.vaadin.testbench.unit.mocks.MockSpringServlet;
 import com.vaadin.testbench.unit.mocks.MockedUI;
@@ -78,9 +71,8 @@ public abstract class SpringUIUnitTest extends UIUnitTest {
     @BeforeEach
     protected void initVaadinEnvironment() {
         scanForWrappers();
-        MockSpringServlet servlet = new MockSpringServlet(
-                discoverRoutes(scanPackage()), applicationContext,
-                MockedUI::new);
+        MockSpringServlet servlet = new MockSpringServlet(discoverRoutes(),
+                applicationContext, MockedUI::new);
         MockVaadin.setup(MockedUI::new, servlet, lookupServices());
     }
 }
