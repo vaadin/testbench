@@ -28,6 +28,7 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.textfield.GeneratedVaadinTextField;
 import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.textfield.TextFieldWrap;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.testbench.unit.ComponentWrapTest.Span;
 import com.vaadin.testbench.unit.ElementConditionsTest.TextComponent;
@@ -1394,7 +1395,7 @@ class ComponentQueryTest extends UIUnitTest {
 
     @Test
     void exists_noMatching_false() {
-        ComponentQuery<TextField> query = $(TextField.class);
+        ComponentQuery<?, ?> query = $(TextField.class);
         Assertions.assertFalse(query.exists(),
                 "Expecting no components to be found, but exists is true");
     }
@@ -1425,11 +1426,11 @@ class ComponentQueryTest extends UIUnitTest {
         UI.getCurrent().getElement().appendChild(div1.getElement(),
                 div2.getElement(), div3.getElement(), div4.getElement());
 
-        ComponentQuery<Span> queryNonExistent = $(Span.class);
+        ComponentQuery<?, ?> queryNonExistent = $(Span.class);
         Assertions.assertThrows(NoSuchElementException.class,
                 queryNonExistent::single);
 
-        ComponentQuery<Div> query = $(Div.class).withClassName("my-test");
+        ComponentQuery<?, ?> query = $(Div.class).withClassName("my-test");
         Assertions.assertThrows(NoSuchElementException.class, query::single);
     }
 
@@ -1442,7 +1443,7 @@ class ComponentQueryTest extends UIUnitTest {
         UI.getCurrent().getElement().appendChild(div1.getElement(),
                 div2.getElement(), div3.getElement(), div4.getElement());
 
-        ComponentQuery<Div> query = $(Div.class);
+        ComponentQuery<?, ?> query = $(Div.class);
         Assertions.assertThrows(NoSuchElementException.class, query::single);
     }
 

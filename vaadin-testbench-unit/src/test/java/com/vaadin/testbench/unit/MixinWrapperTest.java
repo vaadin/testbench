@@ -14,23 +14,42 @@ import java.math.BigDecimal;
 
 import org.junit.jupiter.api.Test;
 
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.textfield.BigDecimalField;
 import com.vaadin.flow.component.textfield.IntegerField;
+import com.vaadin.flow.component.textfield.TextField;
 
-public class MixinWrapperTest extends UIUnitTest implements WithAllWrappers {
+class MixinWrapperTest extends UIUnitTest implements WithAllWrappers {
 
     @Test
     void kind_getsCorrectWrapper() {
+
+        Grid<Address> grid = new Grid<>(Address.class);
+        grid.setItems(new Address("Udine"), new Address("Vicenza"));
+        getCurrentView().getElement().appendChild(new Button().getElement(),
+                new TextField().getElement(), new IntegerField().getElement(),
+                new BigDecimalField().getElement(), grid.getElement());
+
         $(BUTTON).first().click();
         $(TEXTFIELD).first().setValue("xx");
         $(TEXTFIELD.as(IntegerField.class)).first().setValue(12);
-        $(TEXTFIELD, BigDecimal.class).first().setValue(new BigDecimal(10));
+        $(TEXTFIELD.as(BigDecimalField.class)).first()
+                .setValue(new BigDecimal(10));
         $(GRID).first().select(1);
-        $(GRID, Address.class).first().getSelected().iterator().next().city();
+        $(GRID, Address.class).first().getSelected().iterator().next()
+                .getCity();
     }
 
     static class Address {
-        String city() {
-            return null;
+        private String city;
+
+        public Address(String city) {
+            this.city = city;
+        }
+
+        String getCity() {
+            return city;
         }
     }
 

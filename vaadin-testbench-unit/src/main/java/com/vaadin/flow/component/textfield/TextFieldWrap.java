@@ -27,7 +27,7 @@ import com.vaadin.testbench.unit.Wraps;
  *            value type
  */
 @Wraps({ TextField.class, PasswordField.class, EmailField.class,
-        BigDecimalField.class })
+        BigDecimalField.class, IntegerField.class })
 public class TextFieldWrap<T extends GeneratedVaadinTextField<T, V>, V>
         extends ComponentWrap<T> {
 
@@ -147,14 +147,15 @@ public class TextFieldWrap<T extends GeneratedVaadinTextField<T, V>, V>
         }
 
         default <V, T extends GeneratedVaadinTextField<T, V>, W extends TextFieldWrap<? extends T, V>, Q extends ComponentQuery<T, W>> Q $(
-                TextFieldKind<V, T> kind) {
-            return $(kind.componentType);
+                TextFieldKind kind) {
+            return (Q) $(kind.componentType);
         }
 
         default <V, T extends GeneratedVaadinTextField<T, V>, W extends TextFieldWrap<? extends T, V>, Q extends ComponentQuery<T, W>> Q $(
                 TextFieldKind kind, Class<V> valueType) {
             return (Q) $(kind.componentType);
         }
+
     }
 
     public static class TextFieldKind<V, C extends GeneratedVaadinTextField<C, V>>

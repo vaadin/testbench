@@ -12,8 +12,6 @@ package com.vaadin.flow.component.button;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentUtil;
-import com.vaadin.flow.component.textfield.GeneratedVaadinTextField;
-import com.vaadin.flow.component.textfield.TextFieldWrap;
 import com.vaadin.testbench.unit.ComponentQuery;
 import com.vaadin.testbench.unit.ComponentWrap;
 import com.vaadin.testbench.unit.MetaKeys;
@@ -132,8 +130,8 @@ public class ButtonWrap<T extends Button> extends ComponentWrap<T> {
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public interface Mixin extends Mixable {
 
-        Kind<Button, ButtonWrap<Button>> BUTTON = new Kind<>(Button.class,
-                (Class) ButtonWrap.class);
+        GenericKind<Button, ButtonWrap<Button>> BUTTON = new GenericKind<>(
+                Button.class, (Class) ButtonWrap.class);
 
         default <T extends Button> ButtonWrap<T> wrap(T textField) {
             return wrap(ButtonWrap.class, textField);

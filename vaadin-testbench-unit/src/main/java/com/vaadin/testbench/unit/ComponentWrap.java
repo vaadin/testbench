@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.testbench.unit.internal.PrettyPrintTreeKt;
 
 /**
@@ -195,13 +194,20 @@ public class ComponentWrap<T extends Component> {
      */
     public interface Mixable {
 
-        class Kind<C extends Component, W extends ComponentWrap<? extends C>> {
+        abstract class Kind<C extends Component, W extends ComponentWrap<? extends C>> {
             public final Class<W> wrapperType;
             public final Class<C> componentType;
 
-            public Kind(Class<C> componentType, Class<W> wrapperType) {
+            protected Kind(Class<C> componentType, Class<W> wrapperType) {
                 this.wrapperType = wrapperType;
                 this.componentType = componentType;
+            }
+        }
+
+        class GenericKind<C extends Component, W extends ComponentWrap<? extends C>>
+                extends Kind<C, W> {
+            public GenericKind(Class<C> componentType, Class<W> wrapperType) {
+                super(componentType, wrapperType);
             }
 
             public <V> TypedKind<V, C, W> typed(Class<V> type) {
@@ -235,7 +241,7 @@ public class ComponentWrap<T extends Component> {
                 Class<T> componentType);
 
         default <T extends Component, W extends ComponentWrap<? extends T>, Q extends ComponentQuery<T, W>> Q $(
-                Kind<T, W> kind) {
+                GenericKind<T, W> kind) {
             return $(kind.componentType);
         }
 
