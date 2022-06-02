@@ -13,26 +13,35 @@ import java.math.BigDecimal;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent;
 import com.vaadin.flow.component.HasValue.ValueChangeListener;
+import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.testbench.unit.UIUnitTest;
 
 public class TextFieldWrapTest extends UIUnitTest {
 
+    TextFieldView view;
+
     @Override
     protected String scanPackage() {
-        return "com.example";
+        return getClass().getPackageName();
+    }
+
+    @BeforeEach
+    public void registerView() {
+        RouteConfiguration.forApplicationScope()
+                .setAnnotatedRoute(TextFieldView.class);
+        view = navigate(TextFieldView.class);
     }
 
     @Test
     public void readOnlyTextField_isNotUsable() {
-        TextField tf = new TextField();
-        tf.setReadOnly(true);
-        getCurrentView().getElement().appendChild(tf.getElement());
+        view.textField.setReadOnly(true);
 
-        final TextFieldWrap tf_ = wrap(TextFieldWrap.class, tf);
+        final TextFieldWrap<TextField, String> tf_ = wrap(view.textField);
 
         Assertions.assertFalse(tf_.isUsable(),
                 "Read only TextField shouldn't be usable");
@@ -40,27 +49,23 @@ public class TextFieldWrapTest extends UIUnitTest {
 
     @Test
     public void readOnlyTextField_automaticWrapper_readOnlyIsCheckedInUsable() {
-        TextField tf = new TextField();
-        tf.setReadOnly(true);
-        getCurrentView().getElement().appendChild(tf.getElement());
+        view.textField.setReadOnly(true);
 
-        Assertions.assertFalse(wrap(tf).isUsable(),
+        Assertions.assertFalse(wrap(view.textField).isUsable(),
                 "Read only TextField shouldn't be usable");
     }
 
     @Test
     public void setTextFieldValue_eventIsFired_valueIsSet() {
-        TextField tf = new TextField();
-        getCurrentView().getElement().appendChild(tf.getElement());
 
         AtomicReference<String> value = new AtomicReference<>(null);
 
-        tf.addValueChangeListener(
+        view.textField.addValueChangeListener(
                 (ValueChangeListener<ComponentValueChangeEvent<TextField, String>>) event -> {
                     value.compareAndSet(null, event.getValue());
                 });
 
-        final TextFieldWrap tf_ = wrap(TextFieldWrap.class, tf);
+        final TextFieldWrap<TextField, String> tf_ = wrap(view.textField);
         final String newValue = "Test";
         tf_.setValue(newValue);
 
@@ -69,11 +74,9 @@ public class TextFieldWrapTest extends UIUnitTest {
 
     @Test
     public void nonInteractableField_throwsOnSetValue() {
-        TextField tf = new TextField();
-        getCurrentView().getElement().appendChild(tf.getElement());
 
-        tf.getElement().setEnabled(false);
-        final TextFieldWrap tf_ = wrap(TextFieldWrap.class, tf);
+        view.textField.getElement().setEnabled(false);
+        final TextFieldWrap<TextField, String> tf_ = wrap(view.textField);
 
         Assertions.assertThrows(IllegalStateException.class,
                 () -> tf_.setValue("fail"),
@@ -82,25 +85,22 @@ public class TextFieldWrapTest extends UIUnitTest {
 
     @Test
     void textFieldWithValidation_doNotPreventInvalid_doNotThrow() {
-        TextField tf = new TextField();
         // Only accept numbers
-        tf.setPattern("\\d*");
-        getCurrentView().getElement().appendChild(tf.getElement());
+        view.textField.setPattern("\\d*");
 
-        final TextFieldWrap<TextField, String> tf_ = wrap(tf);
+        final TextFieldWrap<TextField, String> tf_ = wrap(view.textField);
         final String faultyValue = "Invalid value, but doesn't throw";
         tf_.setValue(faultyValue);
-        Assertions.assertEquals(faultyValue, tf.getValue(),
+        Assertions.assertEquals(faultyValue, view.textField.getValue(),
                 "Value should have been set.");
     }
 
     @Test
     public void textFieldWithPattern_patternIsValidated() {
-        TextField tf = new TextField();
+        TextField tf = view.textField;
         tf.setPreventInvalidInput(true);
         // Only accept numbers
         tf.setPattern("\\d*");
-        getCurrentView().getElement().appendChild(tf.getElement());
 
         final TextFieldWrap<TextField, String> tf_ = wrap(tf);
         tf_.setValue("1234");
@@ -114,11 +114,9 @@ public class TextFieldWrapTest extends UIUnitTest {
 
     @Test
     public void textFieldWithMinLength_lengthIsChecked() {
-        TextField tf = new TextField();
+        TextField tf = view.textField;
         tf.setPreventInvalidInput(true);
-        // Only accept numbers
         tf.setMinLength(5);
-        getCurrentView().getElement().appendChild(tf.getElement());
 
         final TextFieldWrap<TextField, String> tf_ = wrap(tf);
 
@@ -129,11 +127,9 @@ public class TextFieldWrapTest extends UIUnitTest {
 
     @Test
     public void textFieldWithMaxLength_lengthIsChecked() {
-        TextField tf = new TextField();
+        TextField tf = view.textField;
         tf.setPreventInvalidInput(true);
-        // Only accept numbers
         tf.setMaxLength(3);
-        getCurrentView().getElement().appendChild(tf.getElement());
 
         final TextFieldWrap<TextField, String> tf_ = wrap(tf);
 
@@ -144,11 +140,9 @@ public class TextFieldWrapTest extends UIUnitTest {
 
     @Test
     public void textFieldWithRequired_valueIsChecked() {
-        TextField tf = new TextField();
+        TextField tf = view.textField;
         tf.setPreventInvalidInput(true);
-        // Only accept numbers
         tf.setRequired(true);
-        getCurrentView().getElement().appendChild(tf.getElement());
 
         final TextFieldWrap<TextField, String> tf_ = wrap(tf);
 
