@@ -524,8 +524,8 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
      */
     protected <T> T waitUntil(ExpectedCondition<T> condition,
             long timeoutInSeconds) {
-        return new WebDriverWait(getDriver(), Duration.ofSeconds(timeoutInSeconds))
-                .until(condition);
+        return new WebDriverWait(getDriver(),
+                Duration.ofSeconds(timeoutInSeconds)).until(condition);
     }
 
     /**

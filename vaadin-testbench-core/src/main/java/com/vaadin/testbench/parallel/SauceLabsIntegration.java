@@ -33,21 +33,18 @@ public class SauceLabsIntegration {
     /**
      * Sets needed desired capabilities, mainly tunnel identifier, based on the
      * given sauce.options String.
-     * 
+     *
      * @param desiredCapabilities
-     *                            DesiredCapabilities for RemoteWebDriver. Must not
-     *                            be null.
+     *            DesiredCapabilities for RemoteWebDriver. Must not be null.
      * @param sauceOptions
-     *                            options to be parsed and added as capabilities to
-     *                            the given
-     *                            DesiredCapabilities object
+     *            options to be parsed and added as capabilities to the given
+     *            DesiredCapabilities object
      */
     static void setDesiredCapabilities(
             DesiredCapabilities desiredCapabilities) {
         String sauceOptions = System.getProperty("sauce.options");
         if (sauceOptions == null || sauceOptions.isEmpty()) {
-            getLogger().debug(
-                    "Null or empty sauce.options given. Ignoring.");
+            getLogger().debug("Null or empty sauce.options given. Ignoring.");
             return;
         }
         String tunnelId = getTunnelIdentifier(sauceOptions, null);
@@ -58,11 +55,10 @@ public class SauceLabsIntegration {
 
     /**
      * @param options
-     *                     the command line options used to launch Sauce Connect
+     *            the command line options used to launch Sauce Connect
      * @param defaultValue
-     *                     the default value to use for the identifier if none
-     *                     specified
-     *                     in the options
+     *            the default value to use for the identifier if none specified
+     *            in the options
      * @return String representing the tunnel identifier
      */
     static String getTunnelIdentifier(String options, String defaultValue) {
@@ -87,7 +83,7 @@ public class SauceLabsIntegration {
      * credentials from sauce.user and sauce.sauceAccessKey or environment
      * variables SAUCE_USERNAME and SAUCE_ACCESS_KEY. If both system property
      * and environment variable are defined, the system property is used.
-     * 
+     *
      * @return url String to be used in Sauce Labs test run
      */
     static String getHubUrl() {
@@ -95,16 +91,14 @@ public class SauceLabsIntegration {
         String accessKey = getSauceAccessKey();
 
         if (username == null) {
-            getLogger().debug(
-                    "You can give a Sauce Labs user name using -D"
-                            + SAUCE_USERNAME_PROP + "=<username> or by "
-                            + SAUCE_USERNAME_ENV + " environment variable.");
+            getLogger().debug("You can give a Sauce Labs user name using -D"
+                    + SAUCE_USERNAME_PROP + "=<username> or by "
+                    + SAUCE_USERNAME_ENV + " environment variable.");
         }
         if (accessKey == null) {
-            getLogger().debug(
-                    "You can give a Sauce Labs access key using -D"
-                            + SAUCE_ACCESS_KEY_PROP + "=<accesskey> or by "
-                            + SAUCE_ACCESS_KEY_ENV + " environment variable.");
+            getLogger().debug("You can give a Sauce Labs access key using -D"
+                    + SAUCE_ACCESS_KEY_PROP + "=<accesskey> or by "
+                    + SAUCE_ACCESS_KEY_ENV + " environment variable.");
         }
         return "http://" + username + ":" + accessKey
                 + "@localhost:4445/wd/hub";
@@ -113,7 +107,8 @@ public class SauceLabsIntegration {
     static boolean isConfiguredForSauceLabs() {
         String user = getSauceUser();
         String accessKey = getSauceAccessKey();
-        return user != null && !user.isEmpty() && accessKey != null && !accessKey.isEmpty();
+        return user != null && !user.isEmpty() && accessKey != null
+                && !accessKey.isEmpty();
     }
 
     static String getSauceUser() {

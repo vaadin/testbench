@@ -46,9 +46,11 @@ public class TestBenchDriverTest {
         FirefoxDriver mockDriver = Mockito.mock(FirefoxDriver.class);
         mockDriver.close();
         WebElement mockElement = Mockito.mock(WebElement.class);
-        Mockito.when(mockDriver.findElement(isA(By.class))).thenReturn(mockElement);
+        Mockito.when(mockDriver.findElement(isA(By.class)))
+                .thenReturn(mockElement);
         List<WebElement> elements = Arrays.asList(mockElement);
-        Mockito.when(mockDriver.findElements(isA(By.class))).thenReturn(elements);
+        Mockito.when(mockDriver.findElements(isA(By.class)))
+                .thenReturn(elements);
         mockDriver.get("foo");
 
         Mockito.when(mockDriver.getCurrentUrl()).thenReturn("foo");
@@ -102,7 +104,8 @@ public class TestBenchDriverTest {
 
         FirefoxDriver mockFF = Mockito.mock(FirefoxDriver.class);
         Mockito.when(mockFF.getCapabilities()).thenReturn(mockCapabilities);
-        Mockito.when(mockFF.executeScript(contains("clients[client].isActive()")))
+        Mockito.when(
+                mockFF.executeScript(contains("clients[client].isActive()")))
                 .thenReturn(true);
         WebElement mockElement = Mockito.mock(WebElement.class);
         Mockito.when(mockFF.findElement(isA(By.class))).thenReturn(mockElement);

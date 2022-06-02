@@ -8,6 +8,7 @@
  * For the full License, see <https://vaadin.com/license/cvdl-4.0>.
  */
 package com.vaadin.testbench;
+
 /**
  * Implement by elements which support a placeholder, i.e. text shown when the
  * field is empty.

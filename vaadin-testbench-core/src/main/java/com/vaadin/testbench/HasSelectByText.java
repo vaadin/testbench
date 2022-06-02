@@ -8,6 +8,7 @@
  * For the full License, see <https://vaadin.com/license/cvdl-4.0>.
  */
 package com.vaadin.testbench;
+
 /**
  * Implemented by elements which support selecting an option by matching the
  * text shown to the user.

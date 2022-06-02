@@ -24,9 +24,8 @@ public class CyclicObjectWorkaround {
     private static final String TEMPLATE;
     static {
         try {
-            TEMPLATE = readInputStream(
-                    CyclicObjectWorkaround.class
-                            .getResourceAsStream("cyclic-object-workaround.js"));
+            TEMPLATE = readInputStream(CyclicObjectWorkaround.class
+                    .getResourceAsStream("cyclic-object-workaround.js"));
         } catch (IOException e) {
             throw new ExceptionInInitializerError(e);
         }
@@ -44,7 +43,6 @@ public class CyclicObjectWorkaround {
         }
     }
 
-    /**
     /**
      * Produces Javascript which modifies a given object (list) so that it can
      * be returned to the test.

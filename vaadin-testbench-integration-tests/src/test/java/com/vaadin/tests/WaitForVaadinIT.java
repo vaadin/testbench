@@ -42,8 +42,8 @@ public class WaitForVaadinIT extends AbstractTB6Test {
     @Test
     public void waitForVaadin_noConnectors_returnsImmediately() {
         openTestURL();
-        getCommandExecutor().executeScript(
-                "window.Vaadin.Flow.clients = undefined;");
+        getCommandExecutor()
+                .executeScript("window.Vaadin.Flow.clients = undefined;");
         assertExecutionNoLonger(() -> getCommandExecutor().waitForVaadin());
     }
 
@@ -51,8 +51,7 @@ public class WaitForVaadinIT extends AbstractTB6Test {
     public void waitForVaadin_noFlow_returnsImmediately() {
         openTestURL();
 
-        getCommandExecutor().executeScript(
-                "window.Vaadin.Flow = undefined;");
+        getCommandExecutor().executeScript("window.Vaadin.Flow = undefined;");
         assertExecutionNoLonger(() -> getCommandExecutor().waitForVaadin());
     }
 
@@ -71,8 +70,8 @@ public class WaitForVaadinIT extends AbstractTB6Test {
         long after = System.currentTimeMillis();
         long timeout = after - before;
         Assert.assertTrue(
-                "Unexpected execution time, waiting time = " +
-                timeout, timeout < NON_BLOCKING_EXECUTION_TIMEOUT);
+                "Unexpected execution time, waiting time = " + timeout,
+                timeout < NON_BLOCKING_EXECUTION_TIMEOUT);
     }
 
     private void assertExecutionBlocked(Runnable command) {
@@ -81,7 +80,7 @@ public class WaitForVaadinIT extends AbstractTB6Test {
         long after = System.currentTimeMillis();
         long timeout = after - before;
         Assert.assertTrue(
-                "Unexpected blocked execution time, waiting time = " +
-                timeout, timeout >= BLOCKING_EXECUTION_TIMEOUT);
+                "Unexpected blocked execution time, waiting time = " + timeout,
+                timeout >= BLOCKING_EXECUTION_TIMEOUT);
     }
 }

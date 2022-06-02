@@ -39,7 +39,8 @@ import com.vaadin.testbench.screenshot.ReferenceNameGenerator;
 
 public class ScreenshotComparator {
 
-    private static Set<String> browsersWithoutElementScreenshot = Collections.synchronizedSet(new HashSet<>());
+    private static Set<String> browsersWithoutElementScreenshot = Collections
+            .synchronizedSet(new HashSet<>());
 
     public static boolean compareScreen(String referenceId,
             ReferenceNameGenerator referenceNameGenerator,
@@ -85,7 +86,8 @@ public class ScreenshotComparator {
         boolean elementScreenshot = (screenshotContext instanceof WebElement);
         String browserName = capabilities.getBrowserName();
 
-        if (elementScreenshot && !browsersWithoutElementScreenshot.contains(browserName)) {
+        if (elementScreenshot
+                && !browsersWithoutElementScreenshot.contains(browserName)) {
             // Detect if the driver supports element screenshots or not
             try {
                 byte[] screenshotBytes = screenshotContext
@@ -102,7 +104,8 @@ public class ScreenshotComparator {
             }
         }
 
-        if (elementScreenshot && browsersWithoutElementScreenshot.contains(browserName)) {
+        if (elementScreenshot
+                && browsersWithoutElementScreenshot.contains(browserName)) {
             // Driver does not support element screenshots, get whole screen
             // and crop
             BufferedImage image = ImageIO.read(new ByteArrayInputStream(

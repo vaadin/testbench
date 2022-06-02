@@ -91,8 +91,7 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
                 ia = InetAddress.getLocalHost();
             }
         } catch (UnknownHostException e) {
-            getLogger().warn(
-                    "Could not find name of remote control", e);
+            getLogger().warn("Could not find name of remote control", e);
             return "unknown";
         }
 
@@ -292,7 +291,9 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
             actualHeight = detectViewportHeight();
             if (desiredWidth != actualWidth || desiredHeight != actualHeight) {
                 throw new Exception(
-                        "Viewport size couldn't be set to desired.");
+                        "Viewport size couldn't be set to the desired '"
+                                + desiredWidth + "," + desiredHeight + "' got '"
+                                + actualWidth + "," + actualHeight + "'.");
             }
         } catch (Exception e) {
             throw new UnsupportedOperationException(

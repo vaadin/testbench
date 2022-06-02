@@ -1,0 +1,242 @@
+/*
+ * Copyright (C) 2022 Vaadin Ltd
+ *
+ * This program is available under Commercial Vaadin Developer License
+ * 4.0 (CVDLv4).
+ *
+ *
+ * For the full License, see <https://vaadin.com/license/cvdl-4.0>.
+ */
+package com.vaadin.flow.component.textfield;
+
+import java.math.BigDecimal;
+import java.util.concurrent.atomic.AtomicReference;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent;
+import com.vaadin.flow.component.HasValue.ValueChangeListener;
+import com.vaadin.testbench.unit.UIUnitTest;
+
+public class TextFieldWrapTest extends UIUnitTest {
+
+    @Override
+    protected String scanPackage() {
+        return "com.example";
+    }
+
+    @Test
+    public void readOnlyTextField_isNotUsable() {
+        TextField tf = new TextField();
+        tf.setReadOnly(true);
+        getCurrentView().getElement().appendChild(tf.getElement());
+
+        final TextFieldWrap tf_ = wrap(TextFieldWrap.class, tf);
+
+        Assertions.assertFalse(tf_.isUsable(),
+                "Read only TextField shouldn't be usable");
+    }
+
+    @Test
+    public void readOnlyTextField_automaticWrapper_readOnlyIsCheckedInUsable() {
+        TextField tf = new TextField();
+        tf.setReadOnly(true);
+        getCurrentView().getElement().appendChild(tf.getElement());
+
+        Assertions.assertFalse(wrap(tf).isUsable(),
+                "Read only TextField shouldn't be usable");
+    }
+
+    @Test
+    public void setTextFieldValue_eventIsFired_valueIsSet() {
+        TextField tf = new TextField();
+        getCurrentView().getElement().appendChild(tf.getElement());
+
+        AtomicReference<String> value = new AtomicReference<>(null);
+
+        tf.addValueChangeListener(
+                (ValueChangeListener<ComponentValueChangeEvent<TextField, String>>) event -> {
+                    value.compareAndSet(null, event.getValue());
+                });
+
+        final TextFieldWrap tf_ = wrap(TextFieldWrap.class, tf);
+        final String newValue = "Test";
+        tf_.setValue(newValue);
+
+        Assertions.assertEquals(newValue, value.get());
+    }
+
+    @Test
+    public void nonInteractableField_throwsOnSetValue() {
+        TextField tf = new TextField();
+        getCurrentView().getElement().appendChild(tf.getElement());
+
+        tf.getElement().setEnabled(false);
+        final TextFieldWrap tf_ = wrap(TextFieldWrap.class, tf);
+
+        Assertions.assertThrows(IllegalStateException.class,
+                () -> tf_.setValue("fail"),
+                "Setting value to a non interactable field should fail");
+    }
+
+    @Test
+    void textFieldWithValidation_doNotPreventInvalid_doNotThrow() {
+        TextField tf = new TextField();
+        // Only accept numbers
+        tf.setPattern("\\d*");
+        getCurrentView().getElement().appendChild(tf.getElement());
+
+        final TextFieldWrap<TextField, String> tf_ = wrap(tf);
+        final String faultyValue = "Invalid value, but doesn't throw";
+        tf_.setValue(faultyValue);
+        Assertions.assertEquals(faultyValue, tf.getValue(),
+                "Value should have been set.");
+    }
+
+    @Test
+    public void textFieldWithPattern_patternIsValidated() {
+        TextField tf = new TextField();
+        tf.setPreventInvalidInput(true);
+        // Only accept numbers
+        tf.setPattern("\\d*");
+        getCurrentView().getElement().appendChild(tf.getElement());
+
+        final TextFieldWrap<TextField, String> tf_ = wrap(tf);
+        tf_.setValue("1234");
+
+        Assertions.assertEquals("1234", tf.getValue());
+
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> tf_.setValue("hello"),
+                "Value should have been validated against pattern");
+    }
+
+    @Test
+    public void textFieldWithMinLength_lengthIsChecked() {
+        TextField tf = new TextField();
+        tf.setPreventInvalidInput(true);
+        // Only accept numbers
+        tf.setMinLength(5);
+        getCurrentView().getElement().appendChild(tf.getElement());
+
+        final TextFieldWrap<TextField, String> tf_ = wrap(tf);
+
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> tf_.setValue("1234"),
+                "Value should have been validated against minLength");
+    }
+
+    @Test
+    public void textFieldWithMaxLength_lengthIsChecked() {
+        TextField tf = new TextField();
+        tf.setPreventInvalidInput(true);
+        // Only accept numbers
+        tf.setMaxLength(3);
+        getCurrentView().getElement().appendChild(tf.getElement());
+
+        final TextFieldWrap<TextField, String> tf_ = wrap(tf);
+
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> tf_.setValue("1234"),
+                "Value should have been validated against maxLength");
+    }
+
+    @Test
+    public void textFieldWithRequired_valueIsChecked() {
+        TextField tf = new TextField();
+        tf.setPreventInvalidInput(true);
+        // Only accept numbers
+        tf.setRequired(true);
+        getCurrentView().getElement().appendChild(tf.getElement());
+
+        final TextFieldWrap<TextField, String> tf_ = wrap(tf);
+
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> tf_.setValue(""),
+                "Required field should not accept empty");
+    }
+
+    @Test
+    void testFieldsNullValue() {
+        TextField tf = new TextField();
+        EmailField ef = new EmailField();
+        PasswordField pf = new PasswordField();
+        BigDecimalField bdf = new BigDecimalField();
+
+        getCurrentView().getElement().appendChild(tf.getElement(),
+                ef.getElement(), pf.getElement(), bdf.getElement());
+
+        TextFieldWrap<TextField, String> tf_ = wrap(tf);
+        TextFieldWrap<EmailField, String> ef_ = wrap(ef);
+        TextFieldWrap<PasswordField, String> pf_ = wrap(pf);
+        TextFieldWrap<BigDecimalField, BigDecimal> bdf_ = wrap(bdf);
+
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> tf_.setValue(null));
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> ef_.setValue(null));
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> pf_.setValue(null));
+        bdf_.setValue(null);
+    }
+
+    @Test
+    void textFieldWithClearButton_clear_valueIsCleared() {
+        TextField tf = new TextField();
+        tf.setClearButtonVisible(true);
+        tf.setValue("Some value");
+        getCurrentView().getElement().appendChild(tf.getElement());
+
+        TextFieldWrap<TextField, String> tf_ = wrap(tf);
+        tf_.clear();
+
+        Assertions.assertTrue(tf.isEmpty(), "Value should have cleared");
+    }
+
+    @Test
+    void textFieldWithCustomEmptyValue_clear_valueIsCleared() {
+        TextField tf = new TextField() {
+            @Override
+            public String getEmptyValue() {
+                return "EMPTY";
+            }
+        };
+        tf.setValue("Some value");
+        tf.setClearButtonVisible(true);
+        getCurrentView().getElement().appendChild(tf.getElement());
+
+        TextFieldWrap<TextField, String> tf_ = wrap(tf);
+        tf_.clear();
+
+        Assertions.assertTrue(tf.isEmpty(), "Value should have cleared");
+        Assertions.assertEquals("EMPTY", tf.getValue(),
+                "Value should have cleared");
+    }
+
+    @Test
+    void textFieldWithoutClearButton_clear_throws() {
+        TextField tf = new TextField();
+        tf.setClearButtonVisible(false);
+        getCurrentView().getElement().appendChild(tf.getElement());
+
+        TextFieldWrap<TextField, String> tf_ = wrap(tf);
+
+        Assertions.assertThrows(IllegalStateException.class, tf_::clear,
+                "Clear should not be usable when clear button is not visible");
+    }
+
+    @Test
+    void notUsableTextField_clear_throws() {
+        TextField tf = new TextField();
+        tf.setClearButtonVisible(true);
+        tf.setEnabled(false);
+        getCurrentView().getElement().appendChild(tf.getElement());
+
+        TextFieldWrap<TextField, String> tf_ = wrap(tf);
+
+        Assertions.assertThrows(IllegalStateException.class, tf_::clear,
+                "Clear should not be usable when text field is not usable");
+    }
+
+}
