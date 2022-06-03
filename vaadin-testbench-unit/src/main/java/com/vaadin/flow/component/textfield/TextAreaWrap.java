@@ -44,7 +44,7 @@ public class TextAreaWrap<T extends TextArea> extends ComponentWrap<T> {
     public void setValue(String value) {
         ensureComponentIsUsable();
 
-        if (hasValidation() && value != null
+        if (value != null && hasValidation()
                 && getValidationSupport().isInvalid(value)) {
             if (getComponent().isPreventInvalidInputBoolean()) {
                 throw new IllegalArgumentException(
