@@ -74,4 +74,17 @@ class MultiSelectListBoxWrapTest extends UIUnitTest {
         Assertions.assertIterableEquals(view.selection, list_.getSelected());
     }
 
+    @Test
+    void clearSelection_selectItems_addsToSelection() {
+        Assertions.assertTrue(list_.getSelected().isEmpty());
+
+        list_.selectItems("two", "one");
+
+        Assertions.assertIterableEquals(view.selection, list_.getSelected());
+
+        list_.clearSelection();
+
+        Assertions.assertTrue(list_.getSelected().isEmpty());
+    }
+
 }

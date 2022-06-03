@@ -11,6 +11,7 @@ package com.vaadin.flow.component.listbox;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -52,39 +53,33 @@ public class MultiSelectListBoxWrap<T extends MultiSelectListBox<V>, V>
      * Select item(s) by client string representation.
      *
      * @param selection
-     *            item representation string
+     *            item representation string, not null
      */
     public void selectItems(String... selection) {
+        Objects.requireNonNull(selection, "Can not select null");
+
         ensureComponentIsUsable();
-        if (selection == null) {
-            getComponent().setValue(null);
-            return;
-        }
-        List<String> items = Arrays.asList(selection);
-        final List<V> filtered = getSuggestionItems().stream()
-                .filter(item -> items.contains(getItemLabel(item)))
-                .collect(Collectors.toList());
-        if (filtered.size() != items.size()) {
-            throw new IllegalArgumentException(
-                    "Selection contained items that didn't have a selection");
-        }
-        getComponent().select(filtered);
+
+        getComponent().select(getItemsForSelection(selection));
     }
 
     /**
      * Deselect item(s) by client string representation.
      *
      * @param selection
-     *            item representation string
+     *            item representation string, not null
      * @throws IllegalArgumentException
      *             if selection contained item not available for selection
      */
     public void deselectItems(String... selection) {
+        Objects.requireNonNull(selection, "Can not deselect null");
+
         ensureComponentIsUsable();
-        if (selection == null) {
-            getComponent().setValue(null);
-            return;
-        }
+
+        getComponent().deselect(getItemsForSelection(selection));
+    }
+
+    private List<V> getItemsForSelection(String[] selection) {
         List<String> items = Arrays.asList(selection);
         final List<V> filtered = getSuggestionItems().stream()
                 .filter(item -> items.contains(getItemLabel(item)))
@@ -93,7 +88,14 @@ public class MultiSelectListBoxWrap<T extends MultiSelectListBox<V>, V>
             throw new IllegalArgumentException(
                     "Selection contained items that didn't have a selection");
         }
-        getComponent().deselect(filtered);
+        return filtered;
+    }
+
+    /**
+     * Clear all selected items from the component.
+     */
+    public void clearSelection() {
+        getComponent().clear();
     }
 
     /**
