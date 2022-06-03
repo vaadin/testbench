@@ -40,7 +40,7 @@ public class MultiSelectListBoxWrap<T extends MultiSelectListBox<V>, V>
     }
 
     /**
-     * Get the currently selected item.
+     * Get the currently selected items.
      *
      * @return current selection
      */

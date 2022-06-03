@@ -57,7 +57,7 @@ class MultiSelectListBoxWrapTest extends UIUnitTest {
         list_.deselectItems("two");
 
         Assertions.assertTrue(list_.getSelected().isEmpty(),
-                "Selecting null should clear selection");
+                "Deselecting item should clear selection");
     }
 
     @Test
