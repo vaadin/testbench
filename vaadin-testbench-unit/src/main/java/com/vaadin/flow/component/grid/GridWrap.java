@@ -11,9 +11,13 @@ package com.vaadin.flow.component.grid;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
+import com.vaadin.flow.data.provider.SortDirection;
+import com.vaadin.flow.data.provider.SortOrder;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.function.ValueProvider;
 import com.vaadin.testbench.unit.ComponentWrap;
@@ -323,6 +327,173 @@ public class GridWrap<T extends Grid<Y>, Y> extends ComponentWrap<T> {
     public Collection<Y> getSelected() {
         ensureComponentIsUsable();
         return getComponent().getSelectedItems();
+    }
+
+    /**
+     * Checks if the column at the given index is sortable.
+     * <p/>
+     * The index is 0 based.
+     *
+     * @param column
+     *            column index to check for sort feature
+     * @return {@literal true} if the column is sortable, otherwise
+     *         {@literal false}
+     * @throws IndexOutOfBoundsException
+     *             if column index is invalid
+     */
+    public boolean isColumnSortable(int column) {
+        return getComponent().getColumns().get(column).isSortable();
+    }
+
+    /**
+     * Checks if the column for the given property is sortable.
+     *
+     * @param property
+     *            the property name of the column, not null
+     * @return {@literal true} if the column is sortable, otherwise
+     *         {@literal false}
+     * @throws IllegalArgumentException
+     *             if property name does not identify a column
+     */
+    public boolean isColumnSortable(String property) {
+        Grid.Column<Y> column = getColumn(property);
+        if (column == null) {
+            throw new IllegalArgumentException(
+                    "No column found for property " + property);
+        }
+        return column.isSortable();
+    }
+
+    /**
+     * Gets the current sort direction for column at the given index.
+     *
+     * Throws an exception if the column does not exists or is not sortable.
+     *
+     * @param column
+     *            column index to get sort direction
+     * @return sort direction for the column, or {@literal null} if grid is not
+     *         sorted by given column
+     * @throws IllegalArgumentException
+     *             if the column at given index is not sortable
+     * @throws IndexOutOfBoundsException
+     *             if column index is invalid
+     */
+    public SortDirection getSortDirection(int column) {
+        if (isColumnSortable(column)) {
+            Grid.Column<Y> col = getComponent().getColumns().get(column);
+            return getComponent().getSortOrder().stream()
+                    .filter(order -> col.equals(order.getSorted()))
+                    .map(SortOrder::getDirection).findFirst().orElse(null);
+        }
+        throw new IllegalArgumentException(
+                "Column at index " + column + " is not sortable");
+    }
+
+    /**
+     * Gets the current sort direction for column corresponding to the at the
+     * given property.
+     *
+     * Throws an exception if the column does not exist or is not sortable.
+     *
+     * @param property
+     *            the property name of the column, not null
+     * @return sort direction for the column, or {@literal null} if grid is not
+     *         sorted by given column
+     * @throws IllegalArgumentException
+     *             if property name does not identify a column or if the column
+     *             is not sortable
+     */
+    public SortDirection getSortDirection(String property) {
+        if (isColumnSortable(property)) {
+            Grid.Column<Y> col = getColumn(property);
+            return getComponent().getSortOrder().stream()
+                    .filter(order -> col.equals(order.getSorted()))
+                    .map(SortOrder::getDirection).findFirst().orElse(null);
+        }
+        throw new IllegalArgumentException(
+                "Column for property " + property + " is not sortable");
+    }
+
+    /**
+     * Sorts the grid by the given column and sort direction, as if the column
+     * header is pressed in the browser until the requested direction is
+     * reached.
+     *
+     * Throws an exception if the column is not sortable or not visible.
+     *
+     * @param column
+     *            column index
+     * @param direction
+     *            sort direction
+     */
+    public void sortByColumn(int column, SortDirection direction) {
+        while (getSortDirection(column) != direction) {
+            sortByColumn(column);
+        }
+    }
+
+    /**
+     * Sorts the grid according to the given column sort status, as if the
+     * column header is pressed in the browser.
+     *
+     * Throws an exception if the column is not sortable or not visible.
+     *
+     * @param column
+     *            column index
+     */
+    public void sortByColumn(int column) {
+        SortDirection currentDirection = getSortDirection(column);
+        Grid.Column<Y> col = getComponent().getColumns().get(column);
+        doSort(currentDirection, col);
+    }
+
+    /**
+     * Sorts the grid according to sort status ot the column identified by the
+     * given property, as if the column header is pressed in the browser.
+     *
+     * Throws an exception if the column is not sortable or not visible.
+     *
+     * @param property
+     *            the property name of the column, not null
+     */
+    public void sortByColumn(String property) {
+        SortDirection currentDirection = getSortDirection(property);
+        Grid.Column<Y> col = getColumn(property);
+        doSort(currentDirection, col);
+    }
+
+    /**
+     * Sorts the grid by the given column and sort direction, as if the column
+     * header is pressed in the browser until the requested direction is
+     * reached.
+     *
+     * Throws an exception if the column is not sortable or not visible.
+     *
+     * @param property
+     *            the property name of the column, not null
+     * @param direction
+     *            sort direction
+     */
+    public void sortByColumn(String property, SortDirection direction) {
+        while (getSortDirection(property) != direction) {
+            sortByColumn(property);
+        }
+    }
+
+    private void doSort(SortDirection currentDirection, Grid.Column<Y> col) {
+        List<GridSortOrder<Y>> sortOrders = new ArrayList<>(
+                getComponent().getSortOrder());
+        if (getComponent().isMultiSort()) {
+            sortOrders.removeIf(so -> so.getSorted() == col);
+        } else {
+            sortOrders.clear();
+        }
+        if (currentDirection == null) {
+            sortOrders.add(0, GridSortOrder.asc(col).build().get(0));
+        } else if (currentDirection == SortDirection.ASCENDING) {
+            sortOrders.add(0, GridSortOrder.desc(col).build().get(0));
+        }
+        getComponent().sort(sortOrders);
     }
 
     private String getValueProviderString(int row, Grid.Column targetColumn)
