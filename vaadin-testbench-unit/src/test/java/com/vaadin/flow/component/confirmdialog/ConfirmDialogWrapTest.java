@@ -60,11 +60,27 @@ class ConfirmDialogWrapTest extends UIUnitTest {
     }
 
     @Test
+    void rejectAvailable_cancelEventClosesDialog() {
+        AtomicInteger rejects = new AtomicInteger(0);
+        view.dialog.setRejectButton("reject",
+                event -> rejects.incrementAndGet());
+        wrap.open();
+
+        wrap.reject();
+
+        Assertions.assertEquals(1, rejects.get());
+        Assertions.assertFalse(view.dialog.isOpened());
+    }
+
+    @Test
     void confirmButton_ClosesDialog() {
+        AtomicInteger confirm = new AtomicInteger(0);
+        view.dialog.addConfirmListener(event -> confirm.incrementAndGet());
         wrap.open();
 
         wrap.confirm();
 
+        Assertions.assertEquals(1, confirm.get());
         Assertions.assertFalse(view.dialog.isOpened());
     }
 
