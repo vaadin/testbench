@@ -17,16 +17,19 @@ import com.example.SingleParam;
 import com.example.TemplatedParam;
 import com.example.base.WelcomeView;
 import com.example.base.child.ChildView;
+import com.example.base.navigation.NavigationPostponeView;
+import io.github.classgraph.ClassGraph;
+import io.github.classgraph.ScanResult;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.grid.BasicGridView;
 import com.vaadin.flow.di.InstantiatorFactory;
 import com.vaadin.flow.di.Lookup;
+import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteBaseData;
 import com.vaadin.flow.server.VaadinRequest;
 import com.vaadin.flow.server.VaadinResponse;
@@ -74,25 +77,6 @@ class UIUnitBaseClassTest {
             allViews.add(TemplatedParam.class);
             Assertions.assertEquals(allViews.size(), routes.size());
             Assertions.assertTrue(routes.containsAll(allViews));
-        }
-    }
-
-    @Nested
-    class DiscoverRoutesInPackageTest extends UIUnitTest {
-
-        @Override
-        protected String scanPackage() {
-            return ChildView.class.getPackageName();
-        }
-
-        @Test
-        void extendingBaseClass_runTest_routesAreDiscovered() {
-            Set<Class<? extends Component>> routes = VaadinService.getCurrent()
-                    .getRouter().getRegistry().getRegisteredRoutes().stream()
-                    .map(RouteBaseData::getNavigationTarget)
-                    .collect(Collectors.toSet());
-            Assertions.assertEquals(1, routes.size());
-            Assertions.assertTrue(routes.contains(ChildView.class));
         }
     }
 

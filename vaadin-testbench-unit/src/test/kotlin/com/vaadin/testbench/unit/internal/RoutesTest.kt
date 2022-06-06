@@ -17,7 +17,10 @@ import com.vaadin.flow.router.NotFoundException
 import com.vaadin.flow.router.RouteNotFoundError
 import com.vaadin.flow.server.VaadinContext
 import com.vaadin.flow.server.startup.ApplicationRouteRegistry
+import com.vaadin.testbench.unit.expectList
 import com.vaadin.testbench.unit.mocks.MockVaadinHelper
+import com.vaadin.testbench.unit.viewscan.byannotatedclass.ViewPackagesTestView
+import com.vaadin.testbench.unit.viewscan4.byannotatedclass.ViewPackagesTest4View
 import com.example.base.ErrorView
 import com.example.base.HelloWorldView
 import com.example.base.ParametrizedView
@@ -32,22 +35,27 @@ import com.testapp.MyRouteNotFoundError
 
 val allViews: Set<Class<out Component>> = setOf<Class<out Component>>(
         HelloWorldView::class.java, WelcomeView::class.java,
-        ParametrizedView::class.java, ChildView::class.java, NavigationPostponeView::class.java)
+        ParametrizedView::class.java, ChildView::class.java, NavigationPostponeView::class.java,
+        ViewPackagesTest4View::class.java, ViewPackagesTestView::class.java)
 val allErrorRoutes: Set<Class<out HasErrorParameter<*>>> = setOf(ErrorView::class.java, MockRouteNotFoundError::class.java, MockInternalSeverError::class.java)
 
 @DynaTestDsl
 fun DynaNodeGroup.routesTestBatch() {
     afterEach { MockVaadin.tearDown() }
 
+    // TODO: restrict scan until we have component wrapper test views on this codebase
+    val packagesToScan = arrayOf("com.example.base", "com.vaadin.testbench.unit.viewscan",
+            "com.vaadin.testbench.unit.viewscan4")
+
     test("All views discovered") {
-        val routes: Routes = Routes().autoDiscoverViews("com.example.base")
+        val routes: Routes = Routes().autoDiscoverViews(*packagesToScan)
         expect(allViews) { routes.routes.toSet() }
         expect(allErrorRoutes) { routes.errorRoutes.toSet() }
     }
 
     test("calling autoDiscoverViews() multiple times won't fail") {
-        expect(allViews) { Routes().autoDiscoverViews("com.example.base").routes }
-        expect(allViews) { Routes().autoDiscoverViews("com.example.base").routes }
+        expect(allViews) { Routes().autoDiscoverViews(*packagesToScan).routes }
+        expect(allViews) { Routes().autoDiscoverViews(*packagesToScan).routes }
     }
 
     // https://github.com/mvysny/karibu-testing/issues/50
@@ -85,5 +93,16 @@ fun DynaNodeGroup.routesTestBatch() {
         expectThrows(NotFoundException::class, "No route found for 'A_VIEW_THAT_DOESNT_EXIST': Couldn't find route for 'A_VIEW_THAT_DOESNT_EXIST'\nAvailable routes:") {
             UI.getCurrent().navigate("A_VIEW_THAT_DOESNT_EXIST")
         }
+    }
+
+    test("merge routes") {
+        val routes1 = Routes(mutableSetOf(HelloWorldView::class.java, WelcomeView::class.java, ViewPackagesTest4View::class.java,
+                ViewPackagesTestView::class.java),
+                mutableSetOf(ErrorView::class.java))
+        val routes2 = Routes(mutableSetOf(ParametrizedView::class.java, ChildView::class.java, NavigationPostponeView::class.java),
+                mutableSetOf(MockRouteNotFoundError::class.java, MockInternalSeverError::class.java))
+        val merged = routes1.merge(routes2);
+        expect(allViews) { merged.routes.toSet() }
+        expect(allErrorRoutes) { merged.errorRoutes.toSet() }
     }
 }

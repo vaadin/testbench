@@ -18,12 +18,10 @@ import org.junit.jupiter.api.Test;
 
 import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.testbench.unit.UIUnitTest;
+import com.vaadin.testbench.unit.ViewPackages;
 
+@ViewPackages
 public class ComboBoxWrapTest extends UIUnitTest {
-    @Override
-    protected String scanPackage() {
-        return this.getClass().getPackageName();
-    }
 
     ComboBoxView view;
     ComboBoxWrap<ComboBox<ComboBoxView.Name>, ComboBoxView.Name> combo_;

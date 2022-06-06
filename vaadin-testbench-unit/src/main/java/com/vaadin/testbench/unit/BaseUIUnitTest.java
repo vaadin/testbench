@@ -18,9 +18,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.googlecode.gentyref.GenericTypeReflector;
 import io.github.classgraph.ClassGraph;
@@ -43,10 +46,14 @@ import com.vaadin.testbench.unit.mocks.MockedUI;
  *
  * Provides methods to set up and clean a mocked Vaadin environment.
  *
- * Subclasses should typically restrict classpath scanning to a specific package
- * for faster bootstrap, by overriding {@link #scanPackage()} method.
+ * The class allows scan classpath for routes and error views. Subclasses should
+ * typically restrict classpath scanning to a specific packages for faster
+ * bootstrap, by using {@link ViewPackages} annotation. If the annotation is not
+ * present a full classpath scan is performed
  *
  * For internal use only. May be renamed or removed in a future release.
+ *
+ * @see ViewPackages
  */
 class BaseUIUnitTest {
 
@@ -113,16 +120,24 @@ class BaseUIUnitTest {
         }
     }
 
-    static synchronized Routes discoverRoutes(String packageName) {
-        packageName = packageName == null ? "" : packageName;
-        return routesCache.computeIfAbsent(packageName,
-                pn -> new Routes().autoDiscoverViews(pn));
+    synchronized Routes discoverRoutes() {
+        return discoverRoutes(scanPackages());
+    }
+
+    static synchronized Routes discoverRoutes(Set<String> packageNames) {
+        packageNames = packageNames == null || packageNames.isEmpty()
+                ? Set.of("")
+                : packageNames;
+
+        return packageNames.stream()
+                .map(pkg -> routesCache.computeIfAbsent(pkg,
+                        p -> new Routes().autoDiscoverViews(p)))
+                .reduce(new Routes(), Routes::merge);
     }
 
     protected void initVaadinEnvironment() {
         scanForWrappers();
-        MockVaadin.setup(discoverRoutes(scanPackage()), MockedUI::new,
-                lookupServices());
+        MockVaadin.setup(discoverRoutes(), MockedUI::new, lookupServices());
     }
 
     void scanForWrappers() {
@@ -135,6 +150,25 @@ class BaseUIUnitTest {
                         .getAnnotation(ComponentWrapPackages.class).value()));
             }
         }
+    }
+
+    Set<String> scanPackages() {
+        Set<String> packagesToScan = new HashSet<>();
+
+        if (getClass().isAnnotationPresent(ViewPackages.class)) {
+            ViewPackages packages = getClass()
+                    .getAnnotation(ViewPackages.class);
+            Stream.of(packages.classes()).map(Class::getPackageName)
+                    .collect(Collectors.toCollection(() -> packagesToScan));
+            packagesToScan.addAll(Set.of(packages.packages()));
+            // Assume current class package scan if annotation exist but does
+            // not provide any restriction
+            if (packagesToScan.isEmpty()) {
+                packagesToScan.add(getClass().getPackageName());
+            }
+        }
+        packagesToScan.removeIf(Objects::isNull);
+        return packagesToScan;
     }
 
     protected void cleanVaadinEnvironment() {
@@ -154,19 +188,6 @@ class BaseUIUnitTest {
      */
     protected Set<Class<?>> lookupServices() {
         return Collections.emptySet();
-    }
-
-    /**
-     * Gets the name of the package that should be used as root to scan for
-     * routes and error views.
-     *
-     * Provide {@literal null} or empty string to scan the whole classpath, but
-     * note that this may be quite slow.
-     *
-     * @return package name for classpath scanning.
-     */
-    protected String scanPackage() {
-        return null;
     }
 
     /**

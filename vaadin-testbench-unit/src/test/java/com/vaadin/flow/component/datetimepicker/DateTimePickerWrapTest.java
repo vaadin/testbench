@@ -20,21 +20,17 @@ import org.junit.jupiter.api.Test;
 
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.HasValue;
-import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.testbench.unit.UIUnitTest;
+import com.vaadin.testbench.unit.ViewPackages;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@ViewPackages
 class DateTimePickerWrapTest extends UIUnitTest {
 
     DateTimePickerView view;
     DateTimePickerWrap<DateTimePicker> pick_;
-
-    @Override
-    protected String scanPackage() {
-        return getClass().getPackageName();
-    }
 
     @BeforeEach
     public void registerView() {

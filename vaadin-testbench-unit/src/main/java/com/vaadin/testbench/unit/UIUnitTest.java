@@ -15,11 +15,31 @@ import org.junit.jupiter.api.BeforeEach;
 /**
  * Base JUnit 5 class for UI unit tests.
  *
- * Subclasses should typically restrict classpath scanning to a specific package
- * for faster bootstrap by overriding {@link #scanPackage()} method.
+ * The class automatically scans classpath for routes and error views.
+ * Subclasses should typically restrict classpath scanning to a specific
+ * packages for faster bootstrap, by using {@link ViewPackages} annotation. If
+ * the annotation is not present a full classpath scan is performed
  *
- * Set up of Vaadin environment is performed before each test by
- * {@link #initVaadinEnvironment()} method, and will be executed before
+ * <pre>
+ * {@code
+ * &#64;ViewPackages(classes = {CartView.class, CheckoutView.class})
+ * class CartViewTest extends UIUnitTest {
+ * }
+ *
+ * &#64;ViewPackages(packages = {"com.example.shop.cart", "com.example.security"})
+ * class CartViewTest extends UIUnitTest {
+ * }
+ *
+ * &#64;ViewPackages(
+ *    classes = {CartView.class, CheckoutView.class},
+ *    packages = {"com.example.security"}
+ * )
+ * class CartViewTest extends UIUnitTest {
+ * }
+ * </pre>
+ *
+ * Set up of Vaadin environment is performed before each test by {@link
+ * #initVaadinEnvironment()} method, and will be executed before
  * {@code @BeforeEach} methods defined in subclasses. At the same way, cleanup
  * tasks operated by {@link #cleanVaadinEnvironment()} are executed after each
  * test, and after all {@code @AfterEach} annotated methods in subclasses.
@@ -30,10 +50,10 @@ import org.junit.jupiter.api.BeforeEach;
  * in the subclass, in order to have hooks handled by testing framework.
  *
  * A use case for overriding {@link #initVaadinEnvironment()} is to provide
- * custom Flow service implementations supported by
- * {@link com.vaadin.flow.di.Lookup} SPI. Implementations can be provided
- * overriding {@link #initVaadinEnvironment()} and passing to super
- * implementation the service classes that should be initialized during setup.
+ * custom Flow service implementations supported by {@link
+ * com.vaadin.flow.di.Lookup} SPI. Implementations can be provided overriding
+ * {@link #initVaadinEnvironment()} and passing to super implementation the
+ * service classes that should be initialized during setup.
  *
  * <pre>
  * {@code
@@ -48,6 +68,8 @@ import org.junit.jupiter.api.BeforeEach;
  * To get a graphical ascii representation of the UI tree on failure add the
  * annotation {@code @ExtendWith(TreeOnFailureExtension.class)} to the test
  * class.
+ *
+ * @see ViewPackages
  */
 public abstract class UIUnitTest extends BaseUIUnitTest {
 

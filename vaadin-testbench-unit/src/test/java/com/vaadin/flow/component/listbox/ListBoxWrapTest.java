@@ -15,17 +15,14 @@ import org.junit.jupiter.api.Test;
 
 import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.testbench.unit.UIUnitTest;
+import com.vaadin.testbench.unit.ViewPackages;
 
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
+@ViewPackages
 class ListBoxWrapTest extends UIUnitTest {
     ListBoxView view;
     ListBoxWrap<ListBox<String>, String> list_;
-
-    @Override
-    protected String scanPackage() {
-        return getClass().getPackageName();
-    }
 
     @BeforeEach
     public void registerView() {

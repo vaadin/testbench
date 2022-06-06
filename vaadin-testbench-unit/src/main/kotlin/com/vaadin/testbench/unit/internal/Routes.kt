@@ -85,6 +85,24 @@ data class Routes(
             }
         }
 
+        cleanupErrorRoutes()
+
+        println("Auto-discovered views: $this")
+    }
+
+    fun merge(other: Routes): Routes {
+        return Routes(LinkedHashSet(this.routes), LinkedHashSet(this.errorRoutes), this.skipPwaInit).apply {
+            routes.addAll(other.routes)
+            errorRoutes.addAll(other.errorRoutes)
+            cleanupErrorRoutes()
+        }
+    }
+
+    override fun toString(): String =
+            "Routes(routes=${routes.joinToString { it.simpleName }}, errorRoutes=${errorRoutes.joinToString { it.simpleName }})"
+
+
+    private fun cleanupErrorRoutes() {
         // https://github.com/mvysny/karibu-testing/issues/50
         // if the app defines its own NotFoundException handler, remove MockRouteNotFoundError
         if (errorRoutes.any { it != MockRouteNotFoundError::class.java && it.isRouteNotFound }) {
@@ -95,12 +113,7 @@ data class Routes(
         // implementation that exposes error details for PrettyPrinter
         errorRoutes.remove(InternalServerError::class.java)
         errorRoutes.add(MockInternalSeverError::class.java)
-
-        println("Auto-discovered views: $this")
     }
-
-    override fun toString(): String =
-            "Routes(routes=${routes.joinToString { it.simpleName }}, errorRoutes=${errorRoutes.joinToString { it.simpleName }})"
 }
 
 /**

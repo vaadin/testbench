@@ -9,13 +9,11 @@
  */
 package com.vaadin.testbench.unit;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.TestRule;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
-import org.slf4j.LoggerFactory;
 
 import com.vaadin.flow.component.UI;
 import com.vaadin.testbench.unit.internal.PrettyPrintTree;
@@ -23,19 +21,40 @@ import com.vaadin.testbench.unit.internal.PrettyPrintTree;
 /**
  * Base JUnit 4 class for UI unit tests.
  *
- * Subclasses should typically restrict classpath scanning to a specific package
- * for faster bootstrap by overriding {@link #scanPackage()} method.
+ * The class automatically scans classpath for routes and error views.
+ * Subclasses should typically restrict classpath scanning to a specific
+ * packages for faster bootstrap, by using {@link ViewPackages} annotation. If
+ * the annotation is not present a full classpath scan is performed
  *
- * Set up of Vaadin environment is performed before each test by
- * {@link #initVaadinEnvironment()} method, and will be executed before
- * {@code @Before} methods defined in subclasses. At the same way, cleanup tasks
- * operated by {@link #cleanVaadinEnvironment()} are executed after each test,
- * and after all {@code @After} annotated methods in subclasses.
+ * <pre>
+ * {@code
+ * &#64;ViewPackages(classes = {CartView.class, CheckoutView.class})
+ * public class CartViewTest extends UIUnit4Test {
+ * }
  *
- * Custom Flow service implementations supported by
- * {@link com.vaadin.flow.di.Lookup} SPI can be provided overriding
- * {@link #initVaadinEnvironment()} and passing to super implementation the
- * service classes that should be initialized during setup.
+ * &#64;ViewPackages(packages = {"com.example.shop.cart", "com.example.security"})
+ * public class CartViewTest extends UIUnit4Test {
+ * }
+ *
+ * &#64;ViewPackages(
+ *    classes = {CartView.class, CheckoutView.class},
+ *    packages = {"com.example.security"}
+ * )
+ * public class CartViewTest extends UIUnit4Test {
+ * }
+ * </pre>
+ *
+ *
+ * Set up of Vaadin environment is performed before each test by {@link
+ * #initVaadinEnvironment()} method, and will be executed before {@code @Before}
+ * methods defined in subclasses. At the same way, cleanup tasks operated by
+ * {@link #cleanVaadinEnvironment()} are executed after each test, and after all
+ * {@code @After} annotated methods in subclasses.
+ *
+ * Custom Flow service implementations supported by {@link
+ * com.vaadin.flow.di.Lookup} SPI can be provided overriding {@link
+ * #initVaadinEnvironment()} and passing to super implementation the service
+ * classes that should be initialized during setup.
  *
  * <pre>
  * {@code

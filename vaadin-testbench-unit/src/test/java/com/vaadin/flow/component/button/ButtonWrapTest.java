@@ -17,19 +17,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.vaadin.flow.component.ClickEvent;
-import com.vaadin.flow.component.checkbox.CheckboxView;
 import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.testbench.unit.MetaKeys;
 import com.vaadin.testbench.unit.UIUnitTest;
+import com.vaadin.testbench.unit.ViewPackages;
 
+@ViewPackages
 public class ButtonWrapTest extends UIUnitTest {
 
     private ButtonView view;
-
-    @Override
-    protected String scanPackage() {
-        return getClass().getPackageName();
-    }
 
     @BeforeEach
     public void registerView() {
