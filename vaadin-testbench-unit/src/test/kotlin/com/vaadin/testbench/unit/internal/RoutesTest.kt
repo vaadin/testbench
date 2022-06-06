@@ -17,6 +17,7 @@ import com.vaadin.flow.router.NotFoundException
 import com.vaadin.flow.router.RouteNotFoundError
 import com.vaadin.flow.server.VaadinContext
 import com.vaadin.flow.server.startup.ApplicationRouteRegistry
+import com.vaadin.testbench.unit.expectList
 import com.vaadin.testbench.unit.mocks.MockVaadinHelper
 import com.vaadin.testbench.unit.viewscan.byannotatedclass.ViewPackagesTestView
 import com.vaadin.testbench.unit.viewscan4.byannotatedclass.ViewPackagesTest4View
@@ -92,5 +93,16 @@ fun DynaNodeGroup.routesTestBatch() {
         expectThrows(NotFoundException::class, "No route found for 'A_VIEW_THAT_DOESNT_EXIST': Couldn't find route for 'A_VIEW_THAT_DOESNT_EXIST'\nAvailable routes:") {
             UI.getCurrent().navigate("A_VIEW_THAT_DOESNT_EXIST")
         }
+    }
+
+    test("merge routes") {
+        val routes1 = Routes(mutableSetOf(HelloWorldView::class.java, WelcomeView::class.java, ViewPackagesTest4View::class.java,
+                ViewPackagesTestView::class.java),
+                mutableSetOf(ErrorView::class.java))
+        val routes2 = Routes(mutableSetOf(ParametrizedView::class.java, ChildView::class.java, NavigationPostponeView::class.java),
+                mutableSetOf(MockRouteNotFoundError::class.java, MockInternalSeverError::class.java))
+        val merged = routes1.merge(routes2);
+        expect(allViews) { merged.routes.toSet() }
+        expect(allErrorRoutes) { merged.errorRoutes.toSet() }
     }
 }

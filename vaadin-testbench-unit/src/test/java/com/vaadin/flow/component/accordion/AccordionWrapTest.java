@@ -17,7 +17,7 @@ import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.testbench.unit.UIUnitTest;
 import com.vaadin.testbench.unit.ViewPackages;
 
-@ViewPackages(packages = "com.vaadin.flow.component.accordion")
+@ViewPackages
 class AccordionWrapTest extends UIUnitTest {
 
     AccordionView view;

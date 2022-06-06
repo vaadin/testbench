@@ -57,7 +57,7 @@ import com.vaadin.testbench.unit.mocks.MockedUI;
  */
 class BaseUIUnitTest {
 
-    private static final ConcurrentHashMap<Set<String>, Routes> routesCache = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<String, Routes> routesCache = new ConcurrentHashMap<>();
 
     protected static final Map<Class<?>, Class<? extends ComponentWrap>> wrappers = new HashMap<>();
     protected static final Set<String> scanned = new HashSet<>();
@@ -125,9 +125,14 @@ class BaseUIUnitTest {
     }
 
     static synchronized Routes discoverRoutes(Set<String> packageNames) {
-        packageNames = packageNames == null ? Set.of() : packageNames;
-        return routesCache.computeIfAbsent(packageNames, pn -> new Routes()
-                .autoDiscoverViews(pn.toArray(String[]::new)));
+        packageNames = packageNames == null || packageNames.isEmpty()
+                ? Set.of("")
+                : packageNames;
+
+        return packageNames.stream()
+                .map(pkg -> routesCache.computeIfAbsent(pkg,
+                        p -> new Routes().autoDiscoverViews(p)))
+                .reduce(new Routes(), Routes::merge);
     }
 
     protected void initVaadinEnvironment() {
@@ -149,8 +154,10 @@ class BaseUIUnitTest {
 
     Set<String> scanPackages() {
         Set<String> packagesToScan = new HashSet<>();
-        ViewPackages packages = getClass().getAnnotation(ViewPackages.class);
-        if (packages != null) {
+
+        if (getClass().isAnnotationPresent(ViewPackages.class)) {
+            ViewPackages packages = getClass()
+                    .getAnnotation(ViewPackages.class);
             Stream.of(packages.classes()).map(Class::getPackageName)
                     .collect(Collectors.toCollection(() -> packagesToScan));
             packagesToScan.addAll(Set.of(packages.packages()));
