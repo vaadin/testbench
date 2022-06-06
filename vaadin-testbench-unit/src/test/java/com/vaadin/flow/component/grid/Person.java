@@ -176,4 +176,10 @@ public class Person implements Serializable, Cloneable {
                 new Address("Red street", 12, "Amsterdam",
                         Country.NETHERLANDS));
     }
+
+    public static Person createTestPerson3() {
+        return new Person("Richard", "Johnson", "rt@bar.com", 30,
+                new Address("1st Avenue", 12, "Dallas", Country.USA));
+    }
+
 }
