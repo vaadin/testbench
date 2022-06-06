@@ -102,7 +102,7 @@ public class ConfirmDialogWrap extends ComponentWrap<ConfirmDialog> {
     }
 
     /**
-     * Get the header element se to the confirm dialog.
+     * Get the header element set to the confirm dialog.
      *
      * @return header element
      * @throws NoSuchElementException
