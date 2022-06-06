@@ -17,9 +17,9 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonWrap;
 import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.testbench.unit.UIUnitTest;
+import com.vaadin.testbench.unit.ViewPackages;
 
-import static org.junit.jupiter.api.Assertions.*;
-
+@ViewPackages
 class DialogWrapTest extends UIUnitTest {
 
     DialogView view;

@@ -19,9 +19,11 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.testbench.unit.UIUnitTest;
+import com.vaadin.testbench.unit.ViewPackages;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@ViewPackages
 class ConfirmDialogWrapTest extends UIUnitTest {
 
     ConfirmDialogView view;
