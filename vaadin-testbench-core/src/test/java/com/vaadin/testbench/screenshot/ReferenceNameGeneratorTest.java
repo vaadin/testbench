@@ -14,6 +14,7 @@ import static org.junit.Assert.assertNotNull;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.Platform;
@@ -70,5 +71,17 @@ public class ReferenceNameGeneratorTest {
         Mockito.when(chrome.getCapability("browserVersion")).thenReturn("25");
         String name = rng.generateName("shot", chrome);
         assertEquals("shot_windows_MicrosoftEdge_25", name);
+    }
+    
+    @Test
+    public void linuxUsedInScreenshotName() {
+        Capabilities chrome = Mockito.mock(Capabilities.class);
+        Mockito.when(chrome.getPlatform()).thenReturn(Platform.LINUX);
+        Mockito.when(chrome.getBrowserName()).thenReturn("Chrome");
+        Mockito.when(chrome.getVersion()).thenReturn("");
+        Mockito.when(chrome.getCapability("browserVersion")).thenReturn("25");
+        String name = rng.generateName("shot", chrome);
+        assertEquals("shot_linux_Chrome_25", name);
+
     }
 }
