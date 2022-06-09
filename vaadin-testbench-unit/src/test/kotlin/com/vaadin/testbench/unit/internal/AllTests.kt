@@ -68,5 +68,9 @@ class AllTests : DynaTest({
     group("search spec") {
         searchSpecTest()
     }
+    group("shortcuts") {
+        shortcutsTestBatch()
+    }
+
 
 })
