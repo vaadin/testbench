@@ -28,20 +28,24 @@ public class MetaKeys {
         this.meta = meta;
     }
 
-    public void setCtrl(boolean ctrl) {
+    public MetaKeys setCtrl(boolean ctrl) {
         this.ctrl = ctrl;
+        return this;
     }
 
-    public void setShift(boolean shift) {
+    public MetaKeys setShift(boolean shift) {
         this.shift = shift;
+        return this;
     }
 
-    public void setAlt(boolean alt) {
+    public MetaKeys setAlt(boolean alt) {
         this.alt = alt;
+        return this;
     }
 
-    public void setMeta(boolean meta) {
+    public MetaKeys setMeta(boolean meta) {
         this.meta = meta;
+        return this;
     }
 
     public boolean isCtrl() {
