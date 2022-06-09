@@ -33,12 +33,15 @@ import org.slf4j.LoggerFactory;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasElement;
+import com.vaadin.flow.component.Key;
+import com.vaadin.flow.component.KeyModifier;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.RouteParameters;
 import com.vaadin.pro.licensechecker.LicenseChecker;
 import com.vaadin.testbench.unit.internal.MockVaadin;
 import com.vaadin.testbench.unit.internal.Routes;
+import com.vaadin.testbench.unit.internal.ShortcutsKt;
 import com.vaadin.testbench.unit.mocks.MockedUI;
 
 /**
@@ -265,6 +268,27 @@ class BaseUIUnitTest {
                             + expectedTarget.getName());
         }
         return expectedTarget.cast(currentView);
+    }
+
+    /**
+     * Simulates a keyboard shortcut performed on the browser.
+     *
+     * @param key
+     *            Primary key of the shortcut. This must not be a
+     *            {@link KeyModifier}.
+     * @param modifiers
+     *            Key modifiers. Can be empty.
+     */
+    public void fireShortcut(Key key, KeyModifier... modifiers) {
+        UI ui = UI.getCurrent();
+        // TODO: should this logic be moved to ShortcutsKt.fireShortcut?
+        if (ui.hasModalComponent()) {
+            ShortcutsKt._fireShortcut(
+                    ui.getInternals().getActiveModalComponent(), key,
+                    modifiers);
+        } else {
+            ShortcutsKt.fireShortcut(key, modifiers);
+        }
     }
 
     /**
