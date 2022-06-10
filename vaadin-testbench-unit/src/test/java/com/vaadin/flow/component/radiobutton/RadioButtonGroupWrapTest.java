@@ -42,7 +42,7 @@ class RadioButtonGroupWrapTest extends UIUnitTest {
     void deselectAll_noItemsSelected() {
         view.radioButtonGroup.setValue(view.items.get(0));
 
-        buttonGroup_.deselectAll();
+        buttonGroup_.deselectItem();
         RadioButtonView.Name selectedItem = buttonGroup_.getSelected();
         Assertions.assertNull(selectedItem,
                 "Expecting no selection, but got " + selectedItem);
@@ -77,8 +77,6 @@ class RadioButtonGroupWrapTest extends UIUnitTest {
                 () -> buttonGroup_.selectItem("test-foo"));
         Assertions.assertThrows(IllegalStateException.class,
                 () -> buttonGroup_.deselectItem());
-        Assertions.assertThrows(IllegalStateException.class,
-                () -> buttonGroup_.deselectAll());
 
     }
 

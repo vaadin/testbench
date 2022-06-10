@@ -63,14 +63,6 @@ public class RadioButtonGroupWrap<T extends RadioButtonGroup<V>, V>
      */
     public void deselectItem() {
         ensureComponentIsUsable();
-        deselectAll();
-    }
-
-    /**
-     * Deselects all client usable items.
-     */
-    public void deselectAll() {
-        ensureComponentIsUsable();
         getComponent().setValue(getComponent().getEmptyValue());
     }
 
@@ -109,7 +101,7 @@ public class RadioButtonGroupWrap<T extends RadioButtonGroup<V>, V>
         return usable;
     }
 
-    public void updateSelection(String selection) {
+    private void updateSelection(String selection) {
         final ItemLabelGenerator<V> itemLabelGenerator = getComponent()
                 .getItemLabelGenerator();
         Map<String, V> selectedItems = getRadioButtons(
