@@ -50,8 +50,14 @@ public class ComboBoxWrap<T extends ComboBox<Y>, Y> extends ComponentWrap<T> {
     public void setFilter(String filter) {
         ensureComponentIsUsable();
         try {
-            final Field filterSlot = getField("filterSlot");
-            ((SerializableConsumer<String>) filterSlot.get(getComponent()))
+
+            final Field dataControllerField = getField(ComboBoxBase.class,
+                    "dataController");
+            ComboBoxDataController<T> dataController = (ComboBoxDataController) dataControllerField
+                    .get(getComponent());
+            final Field filterSlot = getField(ComboBoxDataController.class,
+                    "filterSlot");
+            ((SerializableConsumer<String>) filterSlot.get(dataController))
                     .accept(filter);
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
@@ -115,9 +121,14 @@ public class ComboBoxWrap<T extends ComboBox<Y>, Y> extends ComponentWrap<T> {
      */
     public List<Y> getSuggestionItems() {
         try {
-            final Field dataCommunicatorField = getField("dataCommunicator");
-            final DataCommunicator<T> dataCommunicator = (DataCommunicator) dataCommunicatorField
+            final Field dataControllerField = getField(ComboBoxBase.class,
+                    "dataController");
+            ComboBoxDataController<T> dataController = (ComboBoxDataController) dataControllerField
                     .get(getComponent());
+            final Field dataCommunicatorField = getField(
+                    ComboBoxDataController.class, "dataCommunicator");
+            final DataCommunicator<T> dataCommunicator = (DataCommunicator) dataCommunicatorField
+                    .get(dataController);
 
             final Method fetchFromProvider = getMethod(DataCommunicator.class,
                     "fetchFromProvider", int.class, int.class);
