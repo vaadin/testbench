@@ -39,6 +39,8 @@ class TabsWrapTest extends UIUnitTest {
         view.tabs.setEnabled(false);
         Assertions.assertThrows(IllegalStateException.class,
                 () -> tabs_.select("Details"));
+        Assertions.assertThrows(IllegalStateException.class,
+                () -> tabs_.select(0));
     }
 
     @Test
