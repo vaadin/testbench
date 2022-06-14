@@ -14,8 +14,12 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.function.Predicate;
 
+import org.jsoup.Jsoup;
+
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasText;
+import com.vaadin.flow.component.Html;
+import com.vaadin.flow.component.HtmlComponent;
 import com.vaadin.flow.dom.Element;
 
 /**
@@ -34,9 +38,23 @@ public final class ElementConditions {
      * Checks if text content of the component contains the given text.
      *
      * Input text is compared with value obtained either by
-     * {@link HasText#getText()} or {@link Element#getText()}, if element is a
-     * text node. In all other cases the predicate returns {@literal false}.
-     * Comparison is case-sensitive.
+     * {@link HasText#getText()}, {@link Element#getText()} if element is a text
+     * node, or the normalized version of {@link Html#getInnerHtml()}. In all
+     * other cases the predicate returns {@literal false}. The only Comparison
+     * is case-sensitive.
+     *
+     * For {@link Html} components the {@literal innerHTML} tags are stripped
+     * and whitespace is normalized and trimmed.
+     *
+     * For example, given HTML
+     *
+     * <pre>
+     * <p>
+     * Hello  <b>there</b> now!
+     * </p>
+     * </pre>
+     *
+     * the text that will be checked will be {@literal  Hello there now!}.
      *
      * @param text
      *            the text the component is expected to have as its content. Not
@@ -45,6 +63,7 @@ public final class ElementConditions {
      * @see HasText#getText()
      * @see Element#getText()
      * @see Element#isTextNode()
+     * @see Html#getInnerHtml()
      */
     public static <T extends Component> Predicate<T> containsText(String text) {
         return containsText(text, false);
@@ -54,8 +73,22 @@ public final class ElementConditions {
      * Checks if text content of the component contains the given text.
      *
      * Input text is compared with value obtained either by
-     * {@link HasText#getText()} or {@link Element#getText()}, if element is a
-     * text node. In all other cases the predicate returns {@literal false}.
+     * {@link HasText#getText()}, {@link Element#getText()} if element is a text
+     * node, or {@link Html#getInnerHtml()}. In all other cases the predicate
+     * returns {@literal false}.
+     *
+     * For {@link Html} components the {@literal innerHTML} tags are stripped
+     * and whitespace is normalized and trimmed.
+     *
+     * For example, given HTML
+     *
+     * <pre>
+     * <p>
+     * Hello  <b>there</b> now!
+     * </p>
+     * </pre>
+     *
+     * the text that will be checked will be {@literal  Hello there now!}.
      *
      * @param text
      *            the text the component is expected to have as its content. Not
@@ -66,6 +99,7 @@ public final class ElementConditions {
      * @see HasText#getText()
      * @see Element#getText()
      * @see Element#isTextNode()
+     * @see Html#getInnerHtml()
      */
     public static <T extends Component> Predicate<T> containsText(String text,
             boolean ignoreCase) {
@@ -169,6 +203,14 @@ public final class ElementConditions {
             String componentText;
             if (component instanceof HasText) {
                 componentText = ((HasText) component).getText();
+            } else if (component instanceof HtmlComponent) {
+                componentText = component.getElement().getTextRecursively();
+            } else if (component instanceof Html) {
+                // Strip tags and normalize text
+                componentText = ((Html) component).getInnerHtml();
+                if (componentText != null) {
+                    componentText = Jsoup.parse(componentText).text();
+                }
             } else if (component.getElement().isTextNode()) {
                 componentText = component.getElement().getText();
             } else {
