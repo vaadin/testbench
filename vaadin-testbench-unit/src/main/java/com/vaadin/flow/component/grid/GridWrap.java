@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import com.vaadin.flow.data.provider.SortDirection;
 import com.vaadin.flow.data.provider.SortOrder;
@@ -248,8 +249,7 @@ public class GridWrap<T extends Grid<Y>, Y> extends ComponentWrap<T> {
      */
     public String getCellText(int row, int column) {
         ensureVisible();
-        final Grid.Column targetColumn = getComponent().getColumns()
-                .get(column);
+        final Grid.Column targetColumn = getColumns().get(column);
         if (targetColumn.getRenderer() instanceof ComponentRenderer) {
             return PrettyPrintTreeKt.toPrettyString(
                     ((ComponentRenderer<?, Y>) targetColumn.getRenderer())
@@ -272,9 +272,13 @@ public class GridWrap<T extends Grid<Y>, Y> extends ComponentWrap<T> {
      */
     public String getHeaderCell(int column) {
         ensureVisible();
-        final Grid.Column<Y> targetColumn = getComponent().getColumns()
-                .get(column);
+        final Grid.Column<Y> targetColumn = getColumns().get(column);
         return GridKt.getHeader2(targetColumn);
+    }
+
+    private List<Grid.Column<Y>> getColumns() {
+        return getComponent().getColumns().stream()
+                .filter(col -> col.isVisible()).collect(Collectors.toList());
     }
 
     /**
@@ -286,7 +290,7 @@ public class GridWrap<T extends Grid<Y>, Y> extends ComponentWrap<T> {
      */
     public int getColumnPosition(String property) {
         Objects.requireNonNull(property, "property name must not be null");
-        return getComponent().getColumns().indexOf(getColumn(property));
+        return getColumns().indexOf(getColumn(property));
     }
 
     /**
@@ -313,8 +317,7 @@ public class GridWrap<T extends Grid<Y>, Y> extends ComponentWrap<T> {
      */
     public ValueProvider<?, ?> getFooterCell(int column) {
         ensureVisible();
-        final Grid.Column<Y> targetColumn = getComponent().getColumns()
-                .get(column);
+        final Grid.Column<Y> targetColumn = getColumns().get(column);
         return targetColumn.getFooterRenderer().getValueProviders()
                 .get(getColumnInternalId(targetColumn));
     }
@@ -342,7 +345,7 @@ public class GridWrap<T extends Grid<Y>, Y> extends ComponentWrap<T> {
      *             if column index is invalid
      */
     public boolean isColumnSortable(int column) {
-        return getComponent().getColumns().get(column).isSortable();
+        return getColumns().get(column).isSortable();
     }
 
     /**
@@ -380,7 +383,7 @@ public class GridWrap<T extends Grid<Y>, Y> extends ComponentWrap<T> {
      */
     public SortDirection getSortDirection(int column) {
         if (isColumnSortable(column)) {
-            Grid.Column<Y> col = getComponent().getColumns().get(column);
+            Grid.Column<Y> col = getColumns().get(column);
             return getComponent().getSortOrder().stream()
                     .filter(order -> col.equals(order.getSorted()))
                     .map(SortOrder::getDirection).findFirst().orElse(null);
@@ -443,7 +446,7 @@ public class GridWrap<T extends Grid<Y>, Y> extends ComponentWrap<T> {
      */
     public void sortByColumn(int column) {
         SortDirection currentDirection = getSortDirection(column);
-        Grid.Column<Y> col = getComponent().getColumns().get(column);
+        Grid.Column<Y> col = getColumns().get(column);
         doSort(currentDirection, col);
     }
 
