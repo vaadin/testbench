@@ -11,8 +11,6 @@ package com.vaadin.testbench.unit;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -21,7 +19,12 @@ import org.slf4j.LoggerFactory;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.dom.DomEvent;
+import com.vaadin.flow.internal.nodefeature.ElementListenerMap;
 import com.vaadin.testbench.unit.internal.PrettyPrintTreeKt;
+
+import elemental.json.Json;
+import elemental.json.JsonObject;
 
 /**
  * Test wrapper for components with helpful methods for testing a component.
@@ -229,5 +232,41 @@ public class ComponentWrap<T extends Component> {
         } catch (NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * Fires a DOM event of the given type on the wrapped component.
+     *
+     * @param eventType
+     *            the type of the event, not null.
+     */
+    protected void fireDomEvent(String eventType) {
+        fireDomEvent(eventType, Json.createObject());
+    }
+
+    /**
+     * Fires a DOM event with the given type and payload on the wrapped
+     * component.
+     *
+     * @param eventType
+     *            the type of the event, not null.
+     * @param eventData
+     *            additional data related to the event, not null
+     */
+    protected void fireDomEvent(String eventType, JsonObject eventData) {
+        DomEvent event = new DomEvent(getComponent().getElement(), eventType,
+                eventData);
+        fireDomEvent(event);
+    }
+
+    /**
+     * Fires a DOM event on the wrapped component.
+     *
+     * @param event
+     *            the event that should be fired.
+     */
+    protected void fireDomEvent(DomEvent event) {
+        event.getSource().getNode().getFeature(ElementListenerMap.class)
+                .fireEvent(event);
     }
 }
