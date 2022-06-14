@@ -9,6 +9,9 @@
  */
 package com.vaadin.flow.component.notification;
 
+import java.util.function.Consumer;
+
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.dom.DomEvent;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.internal.nodefeature.ElementListenerMap;
@@ -77,6 +80,20 @@ public class NotificationWrap<T extends Notification> extends ComponentWrap<T> {
         T component = getComponent();
         return component.isVisible() && component.isAttached()
                 && component.isOpened();
+    }
+
+    @Override
+    protected void notUsableReasons(Consumer<String> collector) {
+        T component = getComponent();
+        if (!component.isAttached()) {
+            collector.accept("not attached");
+        }
+        if (!component.isVisible()) {
+            collector.accept("not visible");
+        }
+        if (component.isOpened()) {
+            collector.accept("not opened");
+        }
     }
 
     // Simulate browser event fired when notification is closed
