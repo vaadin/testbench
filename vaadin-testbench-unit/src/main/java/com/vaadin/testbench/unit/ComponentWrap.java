@@ -11,6 +11,8 @@ package com.vaadin.testbench.unit;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -269,4 +271,67 @@ public class ComponentWrap<T extends Component> {
         event.getSource().getNode().getFeature(ElementListenerMap.class)
                 .fireEvent(event);
     }
+
+    /**
+     * Searches for a nested component of the given type that matches the
+     * conditions set on the component query.
+     *
+     * Query is expected to return zero or one component. An exception is thrown
+     * if more than one component matches the specifications.
+     *
+     * Usually the {@link ComponentQuery} consumer should only define
+     * conditions, not invoke any terminal operator.
+     *
+     * @param componentType
+     *            the type of the component to search for
+     * @param queryBuilder
+     *            the function that sets query condition
+     * @param <R>
+     *            the type of the component to search for
+     * @return the component found by query execution, wrapped into an
+     *         {@link Optional}, or empty if the query does not produce results.
+     */
+    protected <R extends Component> Optional<R> findByQuery(
+            Class<R> componentType, Consumer<ComponentQuery<R>> queryBuilder) {
+
+        List<R> result = findAllByQuery(componentType, queryBuilder);
+        if (result.isEmpty()) {
+            return Optional.empty();
+        } else if (result.size() > 1) {
+            StringBuilder message = new StringBuilder(
+                    "Expecting the query to produce at most one result, but got ")
+                            .append(result.size()).append(": ");
+            message.append(
+                    result.stream().map(PrettyPrintTreeKt::toPrettyString)
+                            .collect(Collectors.joining(", ")));
+            throw new IllegalArgumentException(message.toString());
+        }
+        return Optional.of(result.get(0));
+    }
+
+    /**
+     * Searches for nested components of the given type that matches the
+     * conditions set on the component query.
+     *
+     * Usually the {@link ComponentQuery} consumer should only define
+     * conditions, not invoke any terminal operator.
+     *
+     * @param componentType
+     *            the type of the component to search for
+     * @param queryBuilder
+     *            the function that sets query condition
+     * @param <R>
+     *            the type of the component to search for
+     * @return the components found by query execution, or an empty list.
+     */
+    protected <R extends Component> List<R> findAllByQuery(
+            Class<R> componentType, Consumer<ComponentQuery<R>> queryBuilder) {
+        ComponentQuery<R> query = BaseUIUnitTest.internalQuery(componentType)
+                .from(component);
+        queryBuilder.accept(query);
+        // Make sure consumer didn't change the starting component
+        query.from(component);
+        return query.allComponents();
+    }
+
 }
