@@ -1,0 +1,112 @@
+/*
+ * Copyright (C) 2022 Vaadin Ltd
+ *
+ * This program is available under Commercial Vaadin Developer License
+ * 4.0 (CVDLv4).
+ *
+ *
+ * For the full License, see <https://vaadin.com/license/cvdl-4.0>.
+ */
+package com.vaadin.flow.component.messages;
+
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.Arrays;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.extension.Extensions;
+
+import com.vaadin.flow.router.RouteConfiguration;
+import com.vaadin.testbench.unit.TreeOnFailureExtension;
+import com.vaadin.testbench.unit.UIUnitTest;
+import com.vaadin.testbench.unit.ViewPackages;
+
+@ViewPackages
+@ExtendWith(TreeOnFailureExtension.class)
+class MessageListWrapTest extends UIUnitTest {
+
+    MessagesView view;
+    MessageListWrap<MessageList> list_;
+
+    @BeforeEach
+    void init() {
+        RouteConfiguration.forApplicationScope()
+                .setAnnotatedRoute(MessagesView.class);
+        view = navigate(MessagesView.class);
+        list_ = wrap(view.list);
+    }
+
+    @Test
+    void size_returnsCorrectSize() {
+        Assertions.assertEquals(3, list_.size());
+
+        list_.addItem(new MessageListItem("Added message"));
+
+        Assertions.assertEquals(4, list_.size(),
+                "Message should have been added to the list");
+    }
+
+    @Test
+    void getMessages_allMessagesReturned() {
+        Assertions.assertIterableEquals(
+                Arrays.asList(view.one, view.two, view.three),
+                list_.getMessages());
+    }
+
+    @Test
+    void getMessageByIndex_correctMessageReturned() {
+        Assertions.assertEquals(view.two, list_.getMessage(1));
+        Assertions.assertEquals(view.three, list_.getMessage(2));
+        Assertions.assertEquals(view.one, list_.getMessage(0));
+    }
+
+    @Test
+    void getMessageFromTime_messagesAfterAreReturned() {
+        Assertions.assertIterableEquals(Arrays.asList(view.two, view.three),
+                list_.getMessagesAfter(LocalDateTime.now().withHour(11)
+                        .toInstant(ZoneOffset.UTC)));
+        Assertions.assertIterableEquals(Arrays.asList(view.three),
+                list_.getMessagesAfter(LocalDateTime.now().withHour(12)
+                        .toInstant(ZoneOffset.UTC)));
+    }
+
+    @Test
+    void getMessageUpToTime_messagesBeforeAreReturned() {
+        Assertions.assertIterableEquals(Arrays.asList(view.one, view.two),
+                list_.getMessagesBefore(LocalDateTime.now().withHour(13)
+                        .toInstant(ZoneOffset.UTC)));
+        Assertions.assertIterableEquals(Arrays.asList(view.one),
+                list_.getMessagesBefore(LocalDateTime.now().withHour(11)
+                        .toInstant(ZoneOffset.UTC)));
+    }
+
+    @Test
+    void getMessageBetweenTime_matchingMessagesReturned() {
+        Assertions.assertIterableEquals(Arrays.asList(view.two),
+                list_.getMessages(
+                        LocalDateTime.now().withHour(1)
+                                .toInstant(ZoneOffset.UTC),
+                        LocalDateTime.now().withHour(13)
+                                .toInstant(ZoneOffset.UTC)));
+    }
+
+    @Test
+    void getMessageForUser_messagesForUserReturned() {
+        Assertions.assertIterableEquals(Arrays.asList(view.one, view.three),
+                list_.getMessages("Joe"));
+        Assertions.assertIterableEquals(Arrays.asList(view.two),
+                list_.getMessages("Jane"));
+
+        Assertions.assertTrue(list_.getMessages(null).isEmpty());
+
+        final MessageListItem nullUser = new MessageListItem("hi");
+        list_.addItem(nullUser);
+
+        Assertions.assertIterableEquals(Arrays.asList(nullUser),
+                list_.getMessages(null));
+    }
+
+}
