@@ -371,6 +371,23 @@ class BaseUIUnitTest {
     }
 
     /**
+     * Gets a query object for finding a component nested inside the given
+     * component.
+     *
+     * @param componentType
+     *            the type of the component(s) to search for
+     * @param fromThis
+     *            component used as starting element for search.
+     * @param <T>
+     *            the type of the component(s) to search for
+     * @return a query object for finding components
+     */
+    public <T extends Component> ComponentQuery<T> $(Class<T> componentType,
+            Component fromThis) {
+        return new ComponentQuery<>(componentType, this::wrap).from(fromThis);
+    }
+
+    /**
      * Gets a query object for finding a component inside the current view
      *
      * @param componentType

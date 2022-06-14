@@ -284,6 +284,11 @@ class ComponentQueryTest extends UIUnitTest {
         List<TextField> result = $(TextField.class).from(context)
                 .allComponents();
         Assertions.assertTrue(result.isEmpty());
+
+        // shorthand for from
+        result = $(TextField.class, context).allComponents();
+        Assertions.assertTrue(result.isEmpty());
+
     }
 
     @Test
@@ -296,6 +301,10 @@ class ComponentQueryTest extends UIUnitTest {
 
         List<TextField> result = $(TextField.class).from(context)
                 .allComponents();
+        Assertions.assertTrue(result.isEmpty());
+
+        // shorthand for from
+        result = $(TextField.class, context).allComponents();
         Assertions.assertTrue(result.isEmpty());
     }
 
@@ -321,6 +330,13 @@ class ComponentQueryTest extends UIUnitTest {
                 .from(context).id("myId");
         Assertions.assertSame(inViewTextField, foundTextField.getComponent());
 
+        // shorthand for from
+        result = $(TextField.class, context).allComponents();
+        Assertions.assertIterableEquals(Collections.singleton(inViewTextField),
+                result);
+
+        foundTextField = $(TextField.class, context).id("myId");
+        Assertions.assertSame(inViewTextField, foundTextField.getComponent());
     }
 
     @Test
