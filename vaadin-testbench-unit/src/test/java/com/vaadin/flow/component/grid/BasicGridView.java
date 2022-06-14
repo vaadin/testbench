@@ -30,6 +30,8 @@ public class BasicGridView extends Component implements HasComponents {
         basicGrid.setItems(first, second);
 
         basicGrid.addColumn(Person::getFirstName).setHeader(firstHeader);
+        basicGrid.addColumn(Person::getLastName).setHeader(firstHeader)
+                .setVisible(false);
         basicGrid.addColumn(Person::getAge).setHeader(secondHeader);
         add(basicGrid);
     }
