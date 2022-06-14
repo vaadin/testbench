@@ -107,7 +107,7 @@ class ContextMenuWrapTest extends UIUnitTest {
         Assertions.assertIterableEquals(List.of("Checkable", "Checkable"),
                 view.clickedItems);
         Assertions.assertFalse(view.checkableItem.isChecked(),
-                "Item should be checked but was not");
+                "Item should not be checked but was");
     }
 
     @Test
