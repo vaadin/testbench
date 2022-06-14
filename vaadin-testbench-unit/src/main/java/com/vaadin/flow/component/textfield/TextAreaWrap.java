@@ -9,6 +9,8 @@
  */
 package com.vaadin.flow.component.textfield;
 
+import java.util.function.Consumer;
+
 import org.slf4j.LoggerFactory;
 
 import com.vaadin.testbench.unit.ComponentWrap;
@@ -76,5 +78,13 @@ public class TextAreaWrap<T extends TextArea> extends ComponentWrap<T> {
     public boolean isUsable() {
         // TextFields can be read only so the usable check needs extending
         return super.isUsable() && !getComponent().isReadOnly();
+    }
+
+    @Override
+    protected void notUsableReasons(Consumer<String> collector) {
+        super.notUsableReasons(collector);
+        if (getComponent().isReadOnly()) {
+            collector.accept("read only");
+        }
     }
 }

@@ -9,6 +9,8 @@
  */
 package com.vaadin.flow.component.login;
 
+import java.util.function.Consumer;
+
 import com.vaadin.testbench.unit.Wraps;
 
 /**
@@ -34,6 +36,14 @@ public class LoginOverlayWrap<T extends LoginOverlay>
     @Override
     public boolean isUsable() {
         return super.isUsable() && getComponent().isOpened();
+    }
+
+    @Override
+    protected void notUsableReasons(Consumer<String> collector) {
+        super.notUsableReasons(collector);
+        if (getComponent().isOpened()) {
+            collector.accept("not opened");
+        }
     }
 
     /**
