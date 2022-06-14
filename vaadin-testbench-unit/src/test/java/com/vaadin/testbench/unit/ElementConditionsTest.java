@@ -14,7 +14,11 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.HasText;
+import com.vaadin.flow.component.Html;
+import com.vaadin.flow.component.HtmlComponent;
+import com.vaadin.flow.component.HtmlContainer;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.dom.Element;
 
@@ -67,6 +71,41 @@ class ElementConditionsTest {
     }
 
     @Test
+    void containsText_Html_checksHasTextInInnerHtml() {
+        Html component = new Html("<p>this is <b>the content</b></p>");
+        Assertions.assertTrue(containsText("").test(component));
+
+        Assertions.assertTrue(containsText("").test(component));
+        Assertions.assertTrue(containsText("is").test(component));
+        Assertions.assertTrue(containsText("this").test(component));
+        Assertions.assertTrue(containsText("content").test(component));
+        Assertions.assertTrue(containsText(" is the ").test(component));
+        Assertions.assertTrue(
+                containsText("this is the content").test(component));
+
+        Assertions.assertFalse(containsText("some text").test(component));
+        Assertions.assertFalse(containsText("CONTENT").test(component));
+    }
+
+    @Test
+    void containsText_HtmlContainer_checksHasTextInInnerHtml() {
+        Article component = new Article(new TextComponent("this is"),
+                new NonTextComponent(" the "), new TextComponent("content"));
+        Assertions.assertTrue(containsText("").test(component));
+
+        Assertions.assertTrue(containsText("").test(component));
+        Assertions.assertTrue(containsText("is").test(component));
+        Assertions.assertTrue(containsText("this").test(component));
+        Assertions.assertTrue(containsText("content").test(component));
+        Assertions.assertTrue(containsText("is the").test(component));
+        Assertions.assertTrue(
+                containsText("this is the content").test(component));
+
+        Assertions.assertFalse(containsText("some text").test(component));
+        Assertions.assertFalse(containsText("CONTENT").test(component));
+    }
+
+    @Test
     void containsText_nonTextNode_alwaysFalse() {
         NonTextComponent component = new NonTextComponent(
                 "this is the content");
@@ -104,6 +143,10 @@ class ElementConditionsTest {
                 containsText("this IS the CONTENT", true).test(component));
         Assertions.assertTrue(
                 containsText("THIS is THE content", true).test(component));
+
+        Assertions.assertTrue(containsText("THIS is THE content", true)
+                .test(new Html("<p>this <b>IS</b> the <b>CONTENT</b></p>")));
+
     }
 
     @Test
@@ -253,6 +296,13 @@ class ElementConditionsTest {
         @Override
         public String getText() {
             return HasText.super.getText().toUpperCase();
+        }
+    }
+
+    @Tag("article")
+    public static class Article extends HtmlComponent implements HasComponents {
+        public Article(Component... components) {
+            add(components);
         }
     }
 }
