@@ -200,8 +200,10 @@ class ContextMenuWrapTest extends UIUnitTest {
     @Test
     void clickItem_byNestedIndexNotUsableParent_throws() {
         // Hierarchical / NestedDisabled / Level3
+        menu_.open();
+
         Assertions.assertThrows(IllegalStateException.class,
-                () -> menu_.clickItem(7, 2, 0));
+                () -> menu_.clickItem(7, 3, 0));
     }
 
     @Test
