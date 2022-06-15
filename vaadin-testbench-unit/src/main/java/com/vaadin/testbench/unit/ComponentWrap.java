@@ -103,6 +103,22 @@ public class ComponentWrap<T extends Component> {
     }
 
     /**
+     * Gets a {@link ComponentQuery} to search for component of the given type
+     * nested inside the wrapped component.
+     *
+     * @param componentType
+     *            type of the component to search.
+     * @param <R>
+     *            type of the component to search.
+     * @return a {@link ComponentQuery} instance, searching for wrapped
+     *         component children.
+     */
+    public <R extends Component> ComponentQuery<R> find(
+            Class<R> componentType) {
+        return BaseUIUnitTest.internalQuery(componentType).from(component);
+    }
+
+    /**
      * Checks that wrapped component is usable, otherwise throws an
      * {@link IllegalStateException} with details on the current state of the
      * component.
