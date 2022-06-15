@@ -573,14 +573,4 @@ public class GridWrap<T extends Grid<Y>, Y> extends ComponentWrap<T> {
         }
     }
 
-    private String getColumnKey(Grid.Column targetColumn) {
-        try {
-            final Field getColumnKey = getField(Grid.Column.class, "columnKey");
-            final String columnKey = (String) getColumnKey.get(targetColumn);
-            return columnKey;
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException("Failed to get key for column", e);
-        }
-    }
-
 }
