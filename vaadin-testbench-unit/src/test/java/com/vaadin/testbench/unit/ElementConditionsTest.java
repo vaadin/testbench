@@ -106,16 +106,32 @@ class ElementConditionsTest {
     }
 
     @Test
-    void containsText_nonTextNode_alwaysFalse() {
+    void containsText_nonTextNode_checksTextRecursively() {
         NonTextComponent component = new NonTextComponent(
                 "this is the content");
-        Assertions.assertFalse(containsText("").test(component));
-        Assertions.assertFalse(containsText("is").test(component));
-        Assertions.assertFalse(containsText("this").test(component));
-        Assertions.assertFalse(containsText("content").test(component));
-        Assertions.assertFalse(containsText(" is the ").test(component));
-        Assertions.assertFalse(
+        Assertions.assertTrue(containsText("").test(component));
+        Assertions.assertTrue(containsText("is").test(component));
+        Assertions.assertTrue(containsText("this").test(component));
+        Assertions.assertTrue(containsText("content").test(component));
+        Assertions.assertTrue(containsText(" is the ").test(component));
+        Assertions.assertTrue(
                 containsText("this is the content").test(component));
+        Assertions.assertFalse(containsText("some text").test(component));
+        Assertions.assertFalse(containsText("CONTENT").test(component));
+    }
+
+    @Test
+    void containsText_nonTextNodeWithChildren_checksTextRecursively() {
+        NonTextComponent component = new NonTextComponent(
+                new NonTextComponent("this is"),
+                new TextComponent("the content"));
+        Assertions.assertTrue(containsText("").test(component));
+        Assertions.assertTrue(containsText("is").test(component));
+        Assertions.assertTrue(containsText("this").test(component));
+        Assertions.assertTrue(containsText("content").test(component));
+        Assertions.assertTrue(containsText("isthe").test(component));
+        Assertions
+                .assertTrue(containsText("this isthe content").test(component));
         Assertions.assertFalse(containsText("some text").test(component));
         Assertions.assertFalse(containsText("CONTENT").test(component));
     }
@@ -265,9 +281,13 @@ class ElementConditionsTest {
     }
 
     @Tag("span")
-    static class NonTextComponent extends Component {
+    static class NonTextComponent extends Component implements HasComponents {
         public NonTextComponent(String text) {
             getElement().setText(text);
+        }
+
+        public NonTextComponent(Component... components) {
+            add(components);
         }
     }
 
