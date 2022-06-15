@@ -130,7 +130,6 @@ class NotificationWrapTest extends UIUnitTest {
         Notification notification = Notification.show(notificationText);
         roundTrip();
 
-
         Assertions.assertEquals(notificationText, test(notification).getText());
     }
 
