@@ -141,22 +141,18 @@ public class ComponentQuery<T extends Component> {
      * Requires the components to have all the given CSS class names
      *
      * @param className
-     *            required CSS class name, not {@literal null}
-     * @param other
-     *            additional required CSS class names
-     *
+     *            required CSS class names, not {@literal null}
      * @return this element query instance for chaining
      */
-    public ComponentQuery<T> withClassName(String className, String... other) {
+    public ComponentQuery<T> withClassName(String... className) {
         if (className == null) {
             throw new IllegalArgumentException("className must not be null");
         }
-        if (Stream.of(other).anyMatch(Objects::isNull)) {
+        if (Stream.of(className).anyMatch(Objects::isNull)) {
             throw new IllegalArgumentException("class names must not be null");
         }
-        locatorSpec.classes.add(className);
-        if (other.length > 0) {
-            locatorSpec.classes.addAll(List.of(other));
+        if (className.length > 0) {
+            locatorSpec.classes.addAll(List.of(className));
         }
         return this;
     }
@@ -165,24 +161,20 @@ public class ComponentQuery<T extends Component> {
      * Requires the components to have none of the given CSS class names
      *
      * @param className
-     *            CSS class name that component should not have, not
+     *            CSS class names that component should not have, not
      *            {@literal null}
-     * @param other
-     *            additional CSS class names that component should not have
      *
      * @return this element query instance for chaining
      */
-    public ComponentQuery<T> withoutClassName(String className,
-            String... other) {
+    public ComponentQuery<T> withoutClassName(String... className) {
         if (className == null) {
             throw new IllegalArgumentException("className must not be null");
         }
-        if (Stream.of(other).anyMatch(Objects::isNull)) {
+        if (Stream.of(className).anyMatch(Objects::isNull)) {
             throw new IllegalArgumentException("class names must not be null");
         }
-        locatorSpec.withoutClasses.add(className);
-        if (other.length > 0) {
-            locatorSpec.withoutClasses.addAll(List.of(other));
+        if (className.length > 0) {
+            locatorSpec.withoutClasses.addAll(List.of(className));
         }
         return this;
     }
