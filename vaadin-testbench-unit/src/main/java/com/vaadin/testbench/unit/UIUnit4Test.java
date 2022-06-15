@@ -85,6 +85,11 @@ public abstract class UIUnit4Test extends BaseUIUnitTest {
         super.initVaadinEnvironment();
     }
 
+    @Override
+    protected final String testingEngine() {
+        return "JUnit 4";
+    }
+
     @Rule
     public TestRule treeOnFailure = new TestWatcher() {
         @Override
