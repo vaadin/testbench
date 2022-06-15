@@ -40,8 +40,9 @@ public final class ElementConditions {
      * Input text is compared with value obtained either by
      * {@link HasText#getText()}, {@link Element#getText()} if element is a text
      * node, or the normalized version of {@link Html#getInnerHtml()}. In all
-     * other cases the predicate returns {@literal false}. The only Comparison
-     * is case-sensitive.
+     * other cases {@link Element#getTextRecursively()} is used, but in this
+     * case text from nested elements is concatenated without space separators.
+     * The comparison is case-sensitive.
      *
      * For {@link Html} components the {@literal innerHTML} tags are stripped
      * and whitespace is normalized and trimmed.
@@ -61,8 +62,9 @@ public final class ElementConditions {
      *            {@literal null}.
      * @return this element query instance for chaining
      * @see HasText#getText()
-     * @see Element#getText()
      * @see Element#isTextNode()
+     * @see Element#getText()
+     * @see Element#getTextRecursively()
      * @see Html#getInnerHtml()
      */
     public static <T extends Component> Predicate<T> containsText(String text) {
@@ -74,8 +76,9 @@ public final class ElementConditions {
      *
      * Input text is compared with value obtained either by
      * {@link HasText#getText()}, {@link Element#getText()} if element is a text
-     * node, or {@link Html#getInnerHtml()}. In all other cases the predicate
-     * returns {@literal false}.
+     * node, or {@link Html#getInnerHtml()}. In all other cases
+     * {@link Element#getTextRecursively()} is used, but in this case text from
+     * nested elements is concatenated without space separators.
      *
      * For {@link Html} components the {@literal innerHTML} tags are stripped
      * and whitespace is normalized and trimmed.
@@ -97,8 +100,9 @@ public final class ElementConditions {
      *            flag to indicate if comparison must be case-insensitive.
      * @return this element query instance for chaining
      * @see HasText#getText()
-     * @see Element#getText()
      * @see Element#isTextNode()
+     * @see Element#getText()
+     * @see Element#getTextRecursively()
      * @see Html#getInnerHtml()
      */
     public static <T extends Component> Predicate<T> containsText(String text,
@@ -214,7 +218,7 @@ public final class ElementConditions {
             } else if (component.getElement().isTextNode()) {
                 componentText = component.getElement().getText();
             } else {
-                return false;
+                componentText = component.getElement().getTextRecursively();
             }
             if (componentText == null) {
                 return false;
