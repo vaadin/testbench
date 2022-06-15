@@ -12,6 +12,7 @@ package com.vaadin.flow.component.grid;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.Tag;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.Route;
 
 @Tag("div")
@@ -24,6 +25,7 @@ public class BasicGridView extends Component implements HasComponents {
 
     final String firstHeader = "Name";
     final String secondHeader = "Age";
+    final String subscriber = "Subscriber";
 
     public BasicGridView() {
 
@@ -33,6 +35,10 @@ public class BasicGridView extends Component implements HasComponents {
         basicGrid.addColumn(Person::getLastName).setHeader(firstHeader)
                 .setVisible(false);
         basicGrid.addColumn(Person::getAge).setHeader(secondHeader);
+        basicGrid
+                .addColumn(new ComponentRenderer<>(
+                        person -> new CheckBox(person.isSubscriber())))
+                .setHeader(subscriber).setKey(subscriber);
         add(basicGrid);
     }
 

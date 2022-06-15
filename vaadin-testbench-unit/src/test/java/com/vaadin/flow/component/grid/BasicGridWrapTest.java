@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.testbench.unit.UIUnitTest;
 import com.vaadin.testbench.unit.ViewPackages;
@@ -163,5 +164,32 @@ public class BasicGridWrapTest extends UIUnitTest {
         Assertions.assertEquals(1, doubleClicks.get(),
                 "Double click event should have fired");
 
+    }
+
+    @Test
+    void getCellComponent_columnByKey_returnsInstantiatedComponent() {
+        final Component cellComponent = grid_.getCellComponent(1,
+                view.subscriber);
+        Assertions.assertTrue(cellComponent instanceof CheckBox);
+        Assertions.assertFalse(((CheckBox) cellComponent).isChecked());
+    }
+
+    @Test
+    void getCellComponentByFaultyKey_throwsException() {
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> grid_.getCellComponent(1, "property"));
+    }
+
+    @Test
+    void getCellComponent_columnByPosition_returnsInstantiatedComponent() {
+        final Component cellComponent = grid_.getCellComponent(1, 2);
+        Assertions.assertTrue(cellComponent instanceof CheckBox);
+        Assertions.assertFalse(((CheckBox) cellComponent).isChecked());
+    }
+
+    @Test
+    void getCellComponent_columnByPosition_stringColumnThrows() {
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> grid_.getCellComponent(1, 1));
     }
 }

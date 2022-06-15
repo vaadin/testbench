@@ -9,6 +9,7 @@
  */
 package com.vaadin.flow.component.grid;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.data.provider.SortDirection;
 import com.vaadin.flow.data.provider.SortOrder;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
@@ -29,7 +31,6 @@ import com.vaadin.testbench.unit.component.GridKt;
 import com.vaadin.testbench.unit.internal.PrettyPrintTreeKt;
 
 /**
- *
  * Test wrapper for Grid components.
  *
  * @param <T>
@@ -259,6 +260,57 @@ public class GridWrap<T extends Grid<Y>, Y> extends ComponentWrap<T> {
             return getValueProviderString(row, targetColumn);
         }
         return null;
+    }
+
+    /**
+     * Get component for item in cell.
+     *
+     * @param row
+     *            item row
+     * @param column
+     *            column to get
+     * @return initialized component for the targeted cell
+     * @throws IllegalArgumentException
+     *             when the target colum of the cell is not a component renderer
+     */
+    public Component getCellComponent(int row, int column) {
+        ensureVisible();
+        final Grid.Column<Y> yColumn = getColumns().get(column);
+        return getRendererItem(row, yColumn);
+    }
+
+    /**
+     * Get component for item in column.
+     *
+     * @param row
+     *            item row
+     * @param columnName
+     *            key/property of column
+     * @return initialized component for the target cell
+     * @throws IllegalArgumentException
+     *             when column for property doesn't exist or the target colum of
+     *             the cell is not a component renderer
+     */
+    public Component getCellComponent(int row, String columnName) {
+        ensureVisible();
+        if (getComponent().getColumnByKey(columnName) == null) {
+            throw new IllegalArgumentException(
+                    "No column for property '" + columnName + "' exists");
+        }
+
+        final Grid.Column<Y> yColumn = getComponent()
+                .getColumnByKey(columnName);
+        return getRendererItem(row, yColumn);
+    }
+
+    private Component getRendererItem(int row, Grid.Column<Y> yColumn) {
+        if (yColumn.getRenderer() instanceof ComponentRenderer) {
+            final Y item = getRow(row);
+            return ((ComponentRenderer<?, Y>) yColumn.getRenderer())
+                    .createComponent(item);
+        }
+        throw new IllegalArgumentException(
+                "Target column doesn't have a ComponentRenderer.");
     }
 
     /**
