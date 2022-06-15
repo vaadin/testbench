@@ -311,6 +311,20 @@ class BaseUIUnitTest {
                 .get(0);
     }
 
+    // Visible to ComponentWrap
+    @SuppressWarnings("unchecked")
+    static <T extends ComponentWrap<Y>, Y extends Component> T internalWrap(
+            Y component) {
+        return (T) initialize(getWrapper(component.getClass()), component);
+    }
+
+    // Visible to ComponentWrap
+    static <T extends Component> ComponentQuery<T> internalQuery(
+            Class<T> componentType) {
+        return new ComponentQuery<>(componentType,
+                BaseUIUnitTest::internalWrap);
+    }
+
     /**
      * Wrap component with wrapper best matching component type.
      *
@@ -324,7 +338,7 @@ class BaseUIUnitTest {
      */
     public <T extends ComponentWrap<Y>, Y extends Component> T wrap(
             Y component) {
-        return (T) initialize(getWrapper(component.getClass()), component);
+        return internalWrap(component);
     }
 
     /**
@@ -345,7 +359,7 @@ class BaseUIUnitTest {
         return (T) initialize(wrap, component);
     }
 
-    private <Y extends Component> Class<? extends ComponentWrap> getWrapper(
+    private static <Y extends Component> Class<? extends ComponentWrap> getWrapper(
             Class<Y> component) {
         Class<?> latest = component;
         do {
@@ -367,7 +381,7 @@ class BaseUIUnitTest {
      * @return a query object for finding components
      */
     public <T extends Component> ComponentQuery<T> $(Class<T> componentType) {
-        return new ComponentQuery<>(componentType, this::wrap);
+        return internalQuery(componentType);
     }
 
     /**
@@ -418,7 +432,7 @@ class BaseUIUnitTest {
      *            component type
      * @return wrapper with component set
      */
-    private <T extends ComponentWrap<Y>, Y extends Component> T initialize(
+    private static <T extends ComponentWrap<Y>, Y extends Component> T initialize(
             Class<T> clazz, Y component) {
         try {
             // Get the generic class for given wrapper. Component should be an
