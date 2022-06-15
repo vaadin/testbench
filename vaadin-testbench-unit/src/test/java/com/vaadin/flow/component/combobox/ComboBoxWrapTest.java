@@ -24,48 +24,48 @@ import com.vaadin.testbench.unit.ViewPackages;
 public class ComboBoxWrapTest extends UIUnitTest {
 
     ComboBoxView view;
-    ComboBoxWrap<ComboBox<ComboBoxView.Name>, ComboBoxView.Name> combo_;
 
     @BeforeEach
     void init() {
         RouteConfiguration.forApplicationScope()
                 .setAnnotatedRoute(ComboBoxView.class);
         view = navigate(ComboBoxView.class);
-        combo_ = wrap(view.combo);
     }
 
     @Test
     void getSuggestionItems_noFilter_allItemsReturned() {
-        final List<ComboBoxView.Name> suggestions = combo_.getSuggestionItems();
+        final List<ComboBoxView.Name> suggestions = wrap(view.combo)
+                .getSuggestionItems();
         Assertions.assertIterableEquals(view.items, suggestions);
     }
 
     @Test
     void getSuggestions_noFilter_allItemsReturned() {
-        final List<String> suggestions = combo_.getSuggestions();
+        final List<String> suggestions = wrap(view.combo).getSuggestions();
         Assertions.assertIterableEquals(Arrays.asList("test-foo", "test-bar"),
                 suggestions);
     }
 
     @Test
     void setFilter_getSuggestions_filterIsApplied() {
-        combo_.setFilter("fo");
-        final List<String> suggestions = combo_.getSuggestions();
+        wrap(view.combo).setFilter("fo");
+        final List<String> suggestions = wrap(view.combo).getSuggestions();
         Assertions.assertEquals(1, suggestions.size());
         Assertions.assertEquals("test-foo", suggestions.get(0));
     }
 
     @Test
     void selectItem_selectsCorrectItem() {
-        Assertions.assertNull(combo_.getSelected());
+        Assertions.assertNull(wrap(view.combo).getSelected());
 
-        combo_.selectItem("test-foo");
+        wrap(view.combo).selectItem("test-foo");
 
-        Assertions.assertSame(view.items.get(0), combo_.getSelected());
+        Assertions.assertSame(view.items.get(0),
+                wrap(view.combo).getSelected());
 
-        combo_.selectItem(null);
+        wrap(view.combo).selectItem(null);
 
-        Assertions.assertNull(combo_.getSelected(),
+        Assertions.assertNull(wrap(view.combo).getSelected(),
                 "Selecting null should clear selection");
     }
 }

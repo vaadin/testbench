@@ -22,19 +22,17 @@ import com.vaadin.testbench.unit.ViewPackages;
 public class LoginFormWrapTest extends UIUnitTest {
 
     LoginFormView view;
-    LoginFormWrap<LoginForm> login_;
 
     @BeforeEach
     void init() {
         RouteConfiguration.forApplicationScope()
                 .setAnnotatedRoute(LoginFormView.class);
         view = navigate(LoginFormView.class);
-        login_ = wrap(view.login);
     }
 
     @Test
     void login_generatesLoginEvent() {
-        login_.login("user", "pwd");
+        wrap(view.login).login("user", "pwd");
         Assertions.assertEquals(1, $(Span.class).from(view).all().size());
         Span message = $(Span.class).from(view).withId("m1").first()
                 .getComponent();
@@ -44,19 +42,19 @@ public class LoginFormWrapTest extends UIUnitTest {
 
     @Test
     void login_disablesLoginComponent() {
-        login_.login("admin", "adm");
+        wrap(view.login).login("admin", "adm");
 
-        Assertions.assertFalse(login_.isUsable(),
+        Assertions.assertFalse(wrap(view.login).isUsable(),
                 "Login should be disabled after a login event.");
 
         Assertions.assertThrows(IllegalStateException.class,
-                () -> login_.login("us", "er"),
+                () -> wrap(view.login).login("us", "er"),
                 "Disabled login should not accept login event");
     }
 
     @Test
     void forgotPassword_generatesEvent() {
-        login_.forgotPassword();
+        wrap(view.login).forgotPassword();
 
         Assertions.assertEquals(1, $(Span.class).from(view).all().size());
         Span message = $(Span.class).from(view).withId("m1").first()
@@ -69,7 +67,7 @@ public class LoginFormWrapTest extends UIUnitTest {
         view.login.setForgotPasswordButtonVisible(false);
 
         Assertions.assertThrows(IllegalStateException.class,
-                () -> login_.forgotPassword(),
+                () -> wrap(view.login).forgotPassword(),
                 "Hidden forgot password button should not be usable.");
     }
 

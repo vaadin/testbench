@@ -318,6 +318,11 @@ class BaseUIUnitTest {
         return (T) initialize(getWrapper(component.getClass()), component);
     }
 
+    static <T extends ComponentWrap<Y>, Y extends Component> T internalWrap(
+            Class<T> wrap, Y component) {
+        return initialize(wrap, component);
+    }
+
     // Visible to ComponentWrap
     static <T extends Component> ComponentQuery<T> internalQuery(
             Class<T> componentType) {
