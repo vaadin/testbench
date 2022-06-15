@@ -10,11 +10,8 @@
 package com.vaadin.flow.component.messages;
 
 import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.vaadin.testbench.unit.ComponentWrap;
@@ -36,21 +33,6 @@ public class MessageListWrap<T extends MessageList> extends ComponentWrap<T> {
      */
     public MessageListWrap(T component) {
         super(component);
-    }
-
-    /**
-     * Add a new message item to the MessageList.
-     *
-     * @param item
-     *            item to add
-     */
-    public void addItem(MessageListItem item) {
-        ensureComponentIsUsable();
-
-        final ArrayList<MessageListItem> messageListItems = new ArrayList<>(
-                getComponent().getItems());
-        messageListItems.add(item);
-        getComponent().setItems(messageListItems);
     }
 
     /**
@@ -88,13 +70,13 @@ public class MessageListWrap<T extends MessageList> extends ComponentWrap<T> {
     }
 
     /**
-     * Get messages between given Instances (excluding).
+     * Get messages between given Instant (excluding).
      *
      * @param start
      *            start time
      * @param end
      *            end time
-     * @return massages falling between start an end time
+     * @return messages falling between start an end time
      */
     public List<MessageListItem> getMessages(Instant start, Instant end) {
         ensureComponentIsUsable();
@@ -106,7 +88,7 @@ public class MessageListWrap<T extends MessageList> extends ComponentWrap<T> {
     }
 
     /**
-     * Get messages after given Instance (excluding).
+     * Get messages after given Instant (excluding).
      *
      * @param start
      *            start time
@@ -121,7 +103,7 @@ public class MessageListWrap<T extends MessageList> extends ComponentWrap<T> {
     }
 
     /**
-     * Get messages before given Instance (excluding).
+     * Get messages before given Instant (excluding).
      *
      * @param end
      *            end time

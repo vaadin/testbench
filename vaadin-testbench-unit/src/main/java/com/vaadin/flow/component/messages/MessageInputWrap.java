@@ -39,6 +39,9 @@ public class MessageInputWrap<T extends MessageInput> extends ComponentWrap<T> {
      */
     public void send(String message) {
         ensureComponentIsUsable();
+        if (message == null || message.isEmpty()) {
+            return;
+        }
         ComponentUtil.fireEvent(getComponent(),
                 new MessageInput.SubmitEvent(getComponent(), true, message));
     }

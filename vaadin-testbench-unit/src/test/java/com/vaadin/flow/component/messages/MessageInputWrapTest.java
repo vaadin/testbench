@@ -34,6 +34,18 @@ class MessageInputWrapTest extends UIUnitTest {
     }
 
     @Test
+    void emptyMessage_noEventIsFired() {
+        AtomicReference<String> message = new AtomicReference<>();
+
+        view.input.addSubmitListener(submitEvent -> message.compareAndSet(null,
+                submitEvent.getValue()));
+
+        final String testMessage = "";
+        input_.send(testMessage);
+        Assertions.assertNull(message.get());
+    }
+
+    @Test
     void sendMessage_eventIsReceived() {
         AtomicReference<String> message = new AtomicReference<>();
 

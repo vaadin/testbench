@@ -11,13 +11,13 @@ package com.vaadin.flow.component.messages;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.extension.Extensions;
 
 import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.testbench.unit.TreeOnFailureExtension;
@@ -43,7 +43,7 @@ class MessageListWrapTest extends UIUnitTest {
     void size_returnsCorrectSize() {
         Assertions.assertEquals(3, list_.size());
 
-        list_.addItem(new MessageListItem("Added message"));
+        addItem(view.list, new MessageListItem("Added message"));
 
         Assertions.assertEquals(4, list_.size(),
                 "Message should have been added to the list");
@@ -103,10 +103,23 @@ class MessageListWrapTest extends UIUnitTest {
         Assertions.assertTrue(list_.getMessages(null).isEmpty());
 
         final MessageListItem nullUser = new MessageListItem("hi");
-        list_.addItem(nullUser);
+        addItem(view.list, nullUser);
 
         Assertions.assertIterableEquals(Arrays.asList(nullUser),
                 list_.getMessages(null));
     }
 
+    /**
+     * Add a new message item to the MessageList.
+     *
+     * @param item
+     *            item to add
+     */
+    private void addItem(MessageList list, MessageListItem item) {
+
+        final ArrayList<MessageListItem> messageListItems = new ArrayList<>(
+                list.getItems());
+        messageListItems.add(item);
+        list.setItems(messageListItems);
+    }
 }

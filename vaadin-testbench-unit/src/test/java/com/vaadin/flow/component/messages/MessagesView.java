@@ -9,7 +9,6 @@
  */
 package com.vaadin.flow.component.messages;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
