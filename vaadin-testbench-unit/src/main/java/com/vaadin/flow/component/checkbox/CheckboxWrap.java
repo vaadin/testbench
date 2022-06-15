@@ -10,6 +10,8 @@
 
 package com.vaadin.flow.component.checkbox;
 
+import java.util.function.Consumer;
+
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentUtil;
 import com.vaadin.testbench.unit.ComponentWrap;
@@ -38,6 +40,17 @@ public class CheckboxWrap<T extends Checkbox> extends ComponentWrap<T> {
     public boolean isUsable() {
         return super.isUsable() && !getComponent().isReadOnly()
                 && !getComponent().isDisabledBoolean();
+    }
+
+    @Override
+    protected void notUsableReasons(Consumer<String> collector) {
+        super.notUsableReasons(collector);
+        if (getComponent().isReadOnly()) {
+            collector.accept("read only");
+        }
+        if (getComponent().isDisabledBoolean()) {
+            collector.accept("disabled");
+        }
     }
 
     /**

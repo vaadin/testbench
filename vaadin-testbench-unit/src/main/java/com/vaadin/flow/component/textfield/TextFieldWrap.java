@@ -9,6 +9,8 @@
  */
 package com.vaadin.flow.component.textfield;
 
+import java.util.function.Consumer;
+
 import org.slf4j.LoggerFactory;
 
 import com.vaadin.flow.component.shared.HasClearButton;
@@ -109,5 +111,13 @@ public class TextFieldWrap<T extends GeneratedVaadinTextField<T, V>, V>
     public boolean isUsable() {
         // TextFields can be read only so the usable check needs extending
         return super.isUsable() && !getComponent().isReadOnly();
+    }
+
+    @Override
+    protected void notUsableReasons(Consumer<String> collector) {
+        super.notUsableReasons(collector);
+        if (getComponent().isReadOnly()) {
+            collector.accept("read only");
+        }
     }
 }

@@ -10,6 +10,7 @@
 package com.vaadin.flow.component.radiobutton;
 
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -45,6 +46,14 @@ public class RadioButtonGroupWrap<T extends RadioButtonGroup<V>, V>
     @Override
     public boolean isUsable() {
         return super.isUsable() && !getComponent().isReadOnly();
+    }
+
+    @Override
+    protected void notUsableReasons(Consumer<String> collector) {
+        super.notUsableReasons(collector);
+        if (getComponent().isReadOnly()) {
+            collector.accept("read only");
+        }
     }
 
     /**

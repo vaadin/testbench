@@ -11,13 +11,20 @@ package com.vaadin.testbench.unit;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.slf4j.LoggerFactory;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.dom.DomEvent;
+import com.vaadin.flow.internal.nodefeature.ElementListenerMap;
 import com.vaadin.testbench.unit.internal.PrettyPrintTreeKt;
+
+import elemental.json.Json;
+import elemental.json.JsonObject;
 
 /**
  * Test wrapper for components with helpful methods for testing a component.
@@ -60,7 +67,13 @@ public class ComponentWrap<T extends Component> {
      * Validate that component can be interacted with and should be visible in
      * the UI.
      *
+     * Subclasses overriding this method should also override
+     * {@link #notUsableReasons(Consumer)} to provide additional details to the
+     * potential exception thrown by {@link #ensureComponentIsUsable()}.
+     *
      * @return {@code true} if component can be interacted with by the user
+     * @see #notUsableReasons(Consumer)
+     * @see #ensureComponentIsUsable()
      */
     public boolean isUsable() {
         Component component = getComponent();
@@ -94,9 +107,41 @@ public class ComponentWrap<T extends Component> {
      */
     protected final void ensureComponentIsUsable() {
         if (!isUsable()) {
-            throw new IllegalStateException(
+            StringBuilder message = new StringBuilder(
                     PrettyPrintTreeKt.toPrettyString(component)
                             + " is not usable");
+            Stream.Builder<String> reasons = Stream.builder();
+            notUsableReasons(reasons::add);
+            message.append(reasons.build()
+                    .collect(Collectors.joining(", ", " because it is ", ".")));
+            throw new IllegalStateException(message.toString());
+        }
+    }
+
+    /**
+     * Provides messages explaining why the component is actually not usable.
+     *
+     * Subclasses overriding {@link #isUsable()} should also override this
+     * method to provide additional details to the potential exception throw by
+     * {@link #ensureComponentIsUsable()}.
+     *
+     * @see #isUsable()
+     * @see #ensureComponentIsUsable()
+     */
+    protected void notUsableReasons(Consumer<String> collector) {
+        if (!component.getElement().isEnabled()) {
+            collector.accept("not enabled");
+        }
+        if (!component.isAttached()) {
+            collector.accept("not attached");
+        }
+        if (!component.isVisible()) {
+            collector.accept("not visible");
+        } else if (!isEffectivelyVisible(component)) {
+            collector.accept("part of a not visible subtree");
+        }
+        if (component.getElement().getNode().isInert()) {
+            collector.accept("behind a modality curtain");
         }
     }
 
@@ -187,5 +232,41 @@ public class ComponentWrap<T extends Component> {
         } catch (NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * Fires a DOM event of the given type on the wrapped component.
+     *
+     * @param eventType
+     *            the type of the event, not null.
+     */
+    protected void fireDomEvent(String eventType) {
+        fireDomEvent(eventType, Json.createObject());
+    }
+
+    /**
+     * Fires a DOM event with the given type and payload on the wrapped
+     * component.
+     *
+     * @param eventType
+     *            the type of the event, not null.
+     * @param eventData
+     *            additional data related to the event, not null
+     */
+    protected void fireDomEvent(String eventType, JsonObject eventData) {
+        DomEvent event = new DomEvent(getComponent().getElement(), eventType,
+                eventData);
+        fireDomEvent(event);
+    }
+
+    /**
+     * Fires a DOM event on the wrapped component.
+     *
+     * @param event
+     *            the event that should be fired.
+     */
+    protected void fireDomEvent(DomEvent event) {
+        event.getSource().getNode().getFeature(ElementListenerMap.class)
+                .fireEvent(event);
     }
 }

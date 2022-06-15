@@ -39,6 +39,7 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.RouteParameters;
 import com.vaadin.pro.licensechecker.LicenseChecker;
+import com.vaadin.testbench.unit.internal.MockInternalSeverError;
 import com.vaadin.testbench.unit.internal.MockVaadin;
 import com.vaadin.testbench.unit.internal.Routes;
 import com.vaadin.testbench.unit.internal.ShortcutsKt;
@@ -204,7 +205,23 @@ class BaseUIUnitTest {
      */
     public <T extends Component> T navigate(Class<T> navigationTarget) {
         UI.getCurrent().navigate(navigationTarget);
-        return navigationTarget.cast(getCurrentView());
+        return validateNavigationTarget(navigationTarget);
+    }
+
+    private <T extends Component> T validateNavigationTarget(
+            Class<T> navigationTarget) {
+        final HasElement currentView = getCurrentView();
+        if (!navigationTarget.isAssignableFrom(currentView.getClass())) {
+            if (currentView instanceof MockInternalSeverError) {
+                System.err.println(
+                        currentView.getElement().getProperty("stackTrace"));
+            }
+            throw new IllegalArgumentException(
+                    "Navigation resulted in unexpected class "
+                            + currentView.getClass().getName() + " instead of "
+                            + navigationTarget.getName());
+        }
+        return navigationTarget.cast(currentView);
     }
 
     /**
@@ -223,7 +240,7 @@ class BaseUIUnitTest {
     public <C, T extends Component & HasUrlParameter<C>> T navigate(
             Class<T> navigationTarget, C parameter) {
         UI.getCurrent().navigate(navigationTarget, parameter);
-        return navigationTarget.cast(getCurrentView());
+        return validateNavigationTarget(navigationTarget);
     }
 
     /**
@@ -242,7 +259,7 @@ class BaseUIUnitTest {
             Map<String, String> parameters) {
         UI.getCurrent().navigate(navigationTarget,
                 new RouteParameters(parameters));
-        return navigationTarget.cast(getCurrentView());
+        return validateNavigationTarget(navigationTarget);
     }
 
     /**
@@ -260,14 +277,7 @@ class BaseUIUnitTest {
     public <T extends Component> T navigate(String location,
             Class<T> expectedTarget) {
         UI.getCurrent().navigate(location);
-        final HasElement currentView = getCurrentView();
-        if (!expectedTarget.equals(currentView.getClass())) {
-            throw new IllegalArgumentException(
-                    "Navigation resulted in unexpected class "
-                            + currentView.getClass().getName() + " instead of "
-                            + expectedTarget.getName());
-        }
-        return expectedTarget.cast(currentView);
+        return validateNavigationTarget(expectedTarget);
     }
 
     /**
@@ -358,6 +368,23 @@ class BaseUIUnitTest {
      */
     public <T extends Component> ComponentQuery<T> $(Class<T> componentType) {
         return new ComponentQuery<>(componentType, this::wrap);
+    }
+
+    /**
+     * Gets a query object for finding a component nested inside the given
+     * component.
+     *
+     * @param componentType
+     *            the type of the component(s) to search for
+     * @param fromThis
+     *            component used as starting element for search.
+     * @param <T>
+     *            the type of the component(s) to search for
+     * @return a query object for finding components
+     */
+    public <T extends Component> ComponentQuery<T> $(Class<T> componentType,
+            Component fromThis) {
+        return new ComponentQuery<>(componentType, this::wrap).from(fromThis);
     }
 
     /**

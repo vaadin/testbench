@@ -10,6 +10,7 @@
 package com.vaadin.flow.component.textfield;
 
 import java.util.Objects;
+import java.util.function.Consumer;
 
 import com.vaadin.testbench.unit.ComponentWrap;
 import com.vaadin.testbench.unit.Wraps;
@@ -74,5 +75,13 @@ public class NumberFieldWrap<T extends AbstractNumberField<T, V>, V extends Numb
     public boolean isUsable() {
         // TextFields can be read only so the usable check needs extending
         return super.isUsable() && !getComponent().isReadOnly();
+    }
+
+    @Override
+    protected void notUsableReasons(Consumer<String> collector) {
+        super.notUsableReasons(collector);
+        if (getComponent().isReadOnly()) {
+            collector.accept("read only");
+        }
     }
 }

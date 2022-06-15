@@ -9,6 +9,8 @@
  */
 package com.vaadin.flow.component.radiobutton;
 
+import java.util.function.Consumer;
+
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentUtil;
 import com.vaadin.testbench.unit.ComponentWrap;
@@ -38,6 +40,14 @@ public class RadioButtonWrap<T extends RadioButton<V>, V>
     @Override
     public boolean isUsable() {
         return super.isUsable() && !getComponent().isDisabledBoolean();
+    }
+
+    @Override
+    protected void notUsableReasons(Consumer<String> collector) {
+        super.notUsableReasons(collector);
+        if (getComponent().isDisabledBoolean()) {
+            collector.accept("disabled");
+        }
     }
 
     /**
