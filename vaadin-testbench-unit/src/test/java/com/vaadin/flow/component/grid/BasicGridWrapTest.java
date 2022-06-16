@@ -205,10 +205,11 @@ public class BasicGridWrapTest extends UIUnitTest {
         Collections.reverse(columns);
         view.basicGrid.setColumnOrder(columns);
 
-        Assertions.assertEquals("Jorma", grid_.getCellText(0, 2));
-        Assertions.assertEquals("46", grid_.getCellText(0, 1));
-        Assertions.assertEquals("Maya", grid_.getCellText(1, 2));
-        Assertions.assertEquals("18", grid_.getCellText(1, 1));
+        Assertions.assertEquals("Jorma",
+                wrap(view.basicGrid).getCellText(0, 2));
+        Assertions.assertEquals("46", wrap(view.basicGrid).getCellText(0, 1));
+        Assertions.assertEquals("Maya", wrap(view.basicGrid).getCellText(1, 2));
+        Assertions.assertEquals("18", wrap(view.basicGrid).getCellText(1, 1));
     }
 
 }
