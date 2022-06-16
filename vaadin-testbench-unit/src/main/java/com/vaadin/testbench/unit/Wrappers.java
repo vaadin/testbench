@@ -121,11 +121,11 @@ public interface Wrappers {
         return BaseUIUnitTest.internalWrap(DialogWrap.class, dialog);
     }
 
-    default <V> GridWrap<Grid<V>, V> wrap(Grid grid) {
+    default <V> GridWrap<Grid<V>, V> wrap(Grid<V> grid) {
         return BaseUIUnitTest.internalWrap(GridWrap.class, grid);
     }
 
-    default <V> ListBoxWrap<ListBox<V>, V> wrap(ListBox listBox) {
+    default <V> ListBoxWrap<ListBox<V>, V> wrap(ListBox<V> listBox) {
         return BaseUIUnitTest.internalWrap(ListBoxWrap.class, listBox);
     }
 
@@ -159,13 +159,13 @@ public interface Wrappers {
     }
 
     default <V> RadioButtonGroupWrap<RadioButtonGroup<V>, V> wrap(
-            RadioButtonGroup radioButtonGroup) {
+            RadioButtonGroup<V> radioButtonGroup) {
         return BaseUIUnitTest.internalWrap(RadioButtonGroupWrap.class,
                 radioButtonGroup);
     }
     // RadioButton is package protected so no autowrap.
 
-    default <V> SelectWrap<Select<V>, V> wrap(Select select) {
+    default <V> SelectWrap<Select<V>, V> wrap(Select<V> select) {
         return BaseUIUnitTest.internalWrap(SelectWrap.class, select);
     }
 
