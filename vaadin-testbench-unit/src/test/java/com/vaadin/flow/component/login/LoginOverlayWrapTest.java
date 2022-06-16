@@ -15,11 +15,11 @@ import org.junit.jupiter.api.Test;
 
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.router.RouteConfiguration;
-import com.vaadin.testbench.unit.TestBenchUnit;
+import com.vaadin.testbench.unit.UIUnitTest;
 import com.vaadin.testbench.unit.ViewPackages;
 
 @ViewPackages
-public class LoginOverlayWrapTest extends TestBenchUnit {
+public class LoginOverlayWrapTest extends UIUnitTest {
 
     LoginOverlayView view;
     LoginOverlayWrap<LoginOverlay> login_;

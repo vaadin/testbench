@@ -14,12 +14,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.vaadin.flow.router.RouteConfiguration;
-import com.vaadin.testbench.unit.TestBenchUnit;
-import com.vaadin.testbench.unit.TestBenchUnit;
+import com.vaadin.testbench.unit.UIUnitTest;
 import com.vaadin.testbench.unit.ViewPackages;
 
 @ViewPackages
-class NotificationWrapTest extends TestBenchUnit {
+class NotificationWrapTest extends UIUnitTest {
 
     @BeforeEach
     public void registerView() {
@@ -130,6 +129,7 @@ class NotificationWrapTest extends TestBenchUnit {
         String notificationText = "Opened notification";
         Notification notification = Notification.show(notificationText);
         roundTrip();
+
 
         Assertions.assertEquals(notificationText, wrap(notification).getText());
     }

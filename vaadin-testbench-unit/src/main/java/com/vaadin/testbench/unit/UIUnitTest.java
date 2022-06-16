@@ -71,7 +71,7 @@ import org.junit.jupiter.api.BeforeEach;
  *
  * @see ViewPackages
  */
-public abstract class UIUnitTest extends BaseUIUnitTest {
+public abstract class UIUnitTest extends BaseUIUnitTest implements Wrappers {
 
     @BeforeEach
     protected void initVaadinEnvironment() {

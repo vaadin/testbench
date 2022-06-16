@@ -18,11 +18,11 @@ import org.junit.jupiter.api.Test;
 
 import com.vaadin.flow.component.checkbox.CheckboxView;
 import com.vaadin.flow.router.RouteConfiguration;
-import com.vaadin.testbench.unit.TestBenchUnit;
+import com.vaadin.testbench.unit.UIUnitTest;
 import com.vaadin.testbench.unit.ViewPackages;
 
 @ViewPackages
-class RadioButtonWrapTest extends TestBenchUnit {
+class RadioButtonWrapTest extends UIUnitTest {
 
     RadioButtonView view;
     RadioButtonWrap<RadioButton<String>, String> radioButton_;

@@ -16,11 +16,11 @@ import org.junit.jupiter.api.Test;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonWrap;
 import com.vaadin.flow.router.RouteConfiguration;
-import com.vaadin.testbench.unit.TestBenchUnit;
+import com.vaadin.testbench.unit.UIUnitTest;
 import com.vaadin.testbench.unit.ViewPackages;
 
 @ViewPackages
-class DialogWrapTest extends TestBenchUnit {
+class DialogWrapTest extends UIUnitTest {
 
     DialogView view;
     DialogWrap dialog_;
