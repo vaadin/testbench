@@ -19,7 +19,7 @@ import com.vaadin.testbench.unit.UIUnitTest;
 import com.vaadin.testbench.unit.ViewPackages;
 
 @ViewPackages
-public class LoginFormWrapTest extends UIUnitTest {
+public class LoginFormTesterTest extends UIUnitTest {
 
     LoginFormView view;
 

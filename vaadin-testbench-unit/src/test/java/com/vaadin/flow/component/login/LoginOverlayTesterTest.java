@@ -19,7 +19,7 @@ import com.vaadin.testbench.unit.UIUnitTest;
 import com.vaadin.testbench.unit.ViewPackages;
 
 @ViewPackages
-public class LoginOverlayWrapTest extends UIUnitTest {
+public class LoginOverlayTesterTest extends UIUnitTest {
 
     LoginOverlayView view;
     LoginOverlayTester<LoginOverlay> login_;

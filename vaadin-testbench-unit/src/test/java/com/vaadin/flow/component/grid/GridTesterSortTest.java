@@ -25,7 +25,7 @@ import com.vaadin.testbench.unit.UIUnitTest;
 import com.vaadin.testbench.unit.ViewPackages;
 
 @ViewPackages
-class GridWrapSortTest extends UIUnitTest {
+class GridTesterSortTest extends UIUnitTest {
 
     SortGridView view;
     GridTester<Grid<Person>, Person> grid_;

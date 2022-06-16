@@ -70,6 +70,7 @@ import com.vaadin.flow.component.timepicker.TimePickerTester;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.UploadTester;
 
+@SuppressWarnings("unchecked")
 public interface TesterWrappers {
 
     default AccordionTester<Accordion> test(Accordion accordion) {
@@ -100,7 +101,8 @@ public interface TesterWrappers {
     }
 
     default ContextMenuTester<ContextMenu> test(ContextMenu contextMenu) {
-        return BaseUIUnitTest.internalWrap(ContextMenuTester.class, contextMenu);
+        return BaseUIUnitTest.internalWrap(ContextMenuTester.class,
+                contextMenu);
     }
 
     default DatePickerTester<DatePicker> test(DatePicker datePicker) {
@@ -150,7 +152,8 @@ public interface TesterWrappers {
     }
 
     default MessageListTester<MessageList> test(MessageList messageList) {
-        return BaseUIUnitTest.internalWrap(MessageListTester.class, messageList);
+        return BaseUIUnitTest.internalWrap(MessageListTester.class,
+                messageList);
     }
 
     default NotificationTester<Notification> test(Notification notification) {
@@ -175,11 +178,14 @@ public interface TesterWrappers {
 
     default NumberFieldTester<IntegerField, Integer> test(
             IntegerField integerField) {
-        return BaseUIUnitTest.internalWrap(NumberFieldTester.class, integerField);
+        return BaseUIUnitTest.internalWrap(NumberFieldTester.class,
+                integerField);
     }
 
-    default NumberFieldTester<NumberField, Double> test(NumberField numberField) {
-        return BaseUIUnitTest.internalWrap(NumberFieldTester.class, numberField);
+    default NumberFieldTester<NumberField, Double> test(
+            NumberField numberField) {
+        return BaseUIUnitTest.internalWrap(NumberFieldTester.class,
+                numberField);
     }
 
     default TextAreaTester<TextArea> test(TextArea textArea) {
@@ -192,7 +198,8 @@ public interface TesterWrappers {
 
     default TextFieldTester<PasswordField, String> test(
             PasswordField passwordField) {
-        return BaseUIUnitTest.internalWrap(TextFieldTester.class, passwordField);
+        return BaseUIUnitTest.internalWrap(TextFieldTester.class,
+                passwordField);
     }
 
     default TextFieldTester<EmailField, String> test(EmailField emailField) {

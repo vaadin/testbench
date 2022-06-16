@@ -23,7 +23,7 @@ import com.vaadin.testbench.unit.UIUnitTest;
 import com.vaadin.testbench.unit.ViewPackages;
 
 @ViewPackages
-public class TextFieldWrapTest extends UIUnitTest {
+public class TextFieldTesterTest extends UIUnitTest {
 
     TextFieldView view;
 

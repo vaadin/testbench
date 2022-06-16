@@ -18,7 +18,7 @@ import com.vaadin.testbench.unit.UIUnitTest;
 import com.vaadin.testbench.unit.ViewPackages;
 
 @ViewPackages
-public class BeanGridWrapTest extends UIUnitTest {
+public class BeanGridTesterTest extends UIUnitTest {
 
     BeanGridView view;
     GridTester<Grid<Person>, Person> grid_;

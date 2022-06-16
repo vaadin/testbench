@@ -23,7 +23,7 @@ import com.vaadin.testbench.unit.UIUnitTest;
 import com.vaadin.testbench.unit.ViewPackages;
 
 @ViewPackages
-public class ButtonWrapTest extends UIUnitTest {
+public class ButtonTesterTest extends UIUnitTest {
 
     private ButtonView view;
 

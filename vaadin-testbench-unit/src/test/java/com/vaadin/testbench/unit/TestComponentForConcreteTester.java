@@ -13,5 +13,5 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Tag;
 
 @Tag("span")
-public class TestComponentForConcreteWrapper extends Component {
+public class TestComponentForConcreteTester extends Component {
 }

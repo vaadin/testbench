@@ -9,9 +9,9 @@
  */
 package com.vaadin.testbench.unit;
 
-@Tests(TestComponentForConcreteWrapper.class)
+@Tests(TestComponentForConcreteTester.class)
 public class NonGenericTestTester
-        extends ComponentTester<TestComponentForConcreteWrapper> {
+        extends ComponentTester<TestComponentForConcreteTester> {
 
     /**
      * Wrap given component for testing.
@@ -19,7 +19,7 @@ public class NonGenericTestTester
      * @param component
      *            target component
      */
-    public NonGenericTestTester(TestComponentForConcreteWrapper component) {
+    public NonGenericTestTester(TestComponentForConcreteTester component) {
         super(component);
     }
 }

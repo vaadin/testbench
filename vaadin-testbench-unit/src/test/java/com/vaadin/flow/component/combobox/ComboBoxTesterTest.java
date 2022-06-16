@@ -21,7 +21,7 @@ import com.vaadin.testbench.unit.UIUnitTest;
 import com.vaadin.testbench.unit.ViewPackages;
 
 @ViewPackages
-public class ComboBoxWrapTest extends UIUnitTest {
+public class ComboBoxTesterTest extends UIUnitTest {
 
     ComboBoxView view;
 

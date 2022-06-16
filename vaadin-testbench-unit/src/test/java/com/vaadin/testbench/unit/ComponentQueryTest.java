@@ -29,7 +29,7 @@ import com.vaadin.flow.component.textfield.GeneratedVaadinTextField;
 import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.dom.Element;
-import com.vaadin.testbench.unit.ComponentWrapTest.Span;
+import com.vaadin.testbench.unit.ComponentTesterTest.Span;
 import com.vaadin.testbench.unit.ElementConditionsTest.TextComponent;
 
 import static java.util.Arrays.asList;

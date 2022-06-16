@@ -24,7 +24,7 @@ import com.vaadin.flow.component.HasText;
 import com.vaadin.flow.component.Tag;
 
 @ViewPackages(packages = "com.example")
-public class ComponentWrapTest extends UIUnitTest {
+public class ComponentTesterTest extends UIUnitTest {
 
     private WelcomeView home;
 

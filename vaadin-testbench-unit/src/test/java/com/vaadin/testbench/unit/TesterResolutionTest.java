@@ -17,7 +17,7 @@ import com.vaadin.flow.component.Tag;
 
 @ComponentTesterPackages("com.vaadin.testbench.unit")
 @ViewPackages(packages = "com.vaadin.testbench")
-public class WrapperResolutionTest extends UIUnitTest {
+public class TesterResolutionTest extends UIUnitTest {
 
     @Test
     public void wrapTest_returnsTestWrap() {
@@ -42,7 +42,7 @@ public class WrapperResolutionTest extends UIUnitTest {
 
     @Test
     public void wrapTestComponentForConcreteWrapper_returnsNonGenericTestWrap() {
-        TestComponentForConcreteWrapper component = new TestComponentForConcreteWrapper();
+        TestComponentForConcreteTester component = new TestComponentForConcreteTester();
         Assertions.assertEquals(test(component).getClass(),
                 NonGenericTestTester.class);
     }
@@ -55,7 +55,7 @@ public class WrapperResolutionTest extends UIUnitTest {
                 detectComponentType(MyTester.class));
         Assertions.assertEquals(MyTest.class,
                 detectComponentType(MyExtendedTester.class));
-        Assertions.assertEquals(TestComponentForConcreteWrapper.class,
+        Assertions.assertEquals(TestComponentForConcreteTester.class,
                 detectComponentType(NonGenericTestTester.class));
     }
 
