@@ -465,9 +465,8 @@ public class ComponentQuery<T extends Component> {
      * @throws java.util.NoSuchElementException
      *             if not exactly one component is found
      */
-    @SuppressWarnings("unchecked")
-    public <X extends T> X single() {
-        return (X) find();
+    public T single() {
+        return find();
     }
 
     /**
@@ -477,9 +476,8 @@ public class ComponentQuery<T extends Component> {
      * @throws java.util.NoSuchElementException
      *             if no component is found
      */
-    @SuppressWarnings("unchecked")
-    public <X extends T> X first() {
-        return (X) all().stream().findFirst()
+    public T first() {
+        return all().stream().findFirst()
                 .orElseThrow(() -> new NoSuchElementException(
                         "Cannot find component for current query"));
     }
@@ -491,9 +489,8 @@ public class ComponentQuery<T extends Component> {
      * @throws java.util.NoSuchElementException
      *             if no component is found
      */
-    @SuppressWarnings("unchecked")
-    public <X extends T> X last() {
-        return (X) all().stream().reduce((first, second) -> second)
+    public T last() {
+        return all().stream().reduce((first, second) -> second)
                 .orElseThrow(() -> new NoSuchElementException(
                         "Cannot find component for current query"));
     }
@@ -514,8 +511,7 @@ public class ComponentQuery<T extends Component> {
      * @throws java.util.NoSuchElementException
      *             if no component is found
      */
-    @SuppressWarnings("unchecked")
-    public <X extends T> X atIndex(int index) {
+    public T atIndex(int index) {
         if (index <= 0) {
             throw new IllegalArgumentException(
                     "Index must be greater than zero, but was " + index);
@@ -530,7 +526,7 @@ public class ComponentQuery<T extends Component> {
             throw new IndexOutOfBoundsException("Index out of range: " + index
                     + ". Current query produces " + resultSize + " results");
         }
-        return (X) result.get(index - 1);
+        return result.get(index - 1);
     }
 
     /**
@@ -543,12 +539,12 @@ public class ComponentQuery<T extends Component> {
      * @throws NoSuchElementException
      *             if no component is found
      */
-    public <X extends T> X id(String id) {
+    public T id(String id) {
         Objects.requireNonNull(id, "id must not be null");
         withId(id);
         // Exactly one element with given id is expected
         locatorSpec.count = new IntRange(1, 1);
-        return (X) find();
+        return find();
     }
 
     /**
@@ -568,13 +564,12 @@ public class ComponentQuery<T extends Component> {
      * @return a list of found components, or an empty list if search does not
      *         produce results. Never {@literal null}.
      */
-    @SuppressWarnings("unchecked")
-    public <X extends T> List<X> all() {
+    public List<T> all() {
         if (context != null) {
-            return (List<X>) LocatorKt._find(context, componentType,
+            return LocatorKt._find(context, componentType,
                     locatorSpec::populate);
         }
-        return (List<X>) LocatorKt._find(componentType, locatorSpec::populate);
+        return LocatorKt._find(componentType, locatorSpec::populate);
     }
 
     /**
