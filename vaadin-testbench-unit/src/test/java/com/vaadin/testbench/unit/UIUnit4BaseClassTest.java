@@ -136,16 +136,16 @@ public class UIUnit4BaseClassTest {
 
         @Test
         public void wrap_fails() {
-            assertExecutionFails(() -> wrap(new ComponentWrapTest.Span()));
-            assertExecutionFails(() -> wrap(ComponentWrap.class,
-                    new ComponentWrapTest.Span()));
+            assertExecutionFails(() -> test(new ComponentTesterTest.Span()));
+            assertExecutionFails(() -> test(ComponentTester.class,
+                    new ComponentTesterTest.Span()));
         }
 
         @Test
         public void query_fails() {
             assertExecutionFails(() -> $(Component.class));
             assertExecutionFails(
-                    () -> $(Component.class, new ComponentWrapTest.Span()));
+                    () -> $(Component.class, new ComponentTesterTest.Span()));
             assertExecutionFails(() -> $view(Component.class));
         }
 

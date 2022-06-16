@@ -44,12 +44,12 @@ import com.vaadin.testbench.unit.internal.SearchSpec;
  *
  * @param <T>
  *            the type of the component(s) to search for
- * @see ComponentWrap
+ * @see ComponentTester
  */
 public class ComponentQuery<T extends Component> {
 
     private final Class<T> componentType;
-    private final Function<Component, ? extends ComponentWrap<?>> wrapperFactory;
+    private final Function<Component, ? extends ComponentTester<?>> wrapperFactory;
     private final LocatorSpec<T> locatorSpec = new LocatorSpec<>();
 
     private Component context;
@@ -62,10 +62,10 @@ public class ComponentQuery<T extends Component> {
      *            the type of the component(s) to search for
      * @param wrapperFactory
      *            function to create a component wrapper for found components
-     * @see ComponentWrap
+     * @see ComponentTester
      */
     public ComponentQuery(Class<T> componentType,
-            Function<Component, ? extends ComponentWrap<?>> wrapperFactory) {
+            Function<Component, ? extends ComponentTester<?>> wrapperFactory) {
         this.componentType = Objects.requireNonNull(componentType,
                 "Component type must not be null");
         this.wrapperFactory = Objects.requireNonNull(wrapperFactory,
@@ -482,7 +482,7 @@ public class ComponentQuery<T extends Component> {
      *             if not exactly one component is found
      */
     @SuppressWarnings("unchecked")
-    public <X extends ComponentWrap<? extends T>> X single() {
+    public <X extends ComponentTester<? extends T>> X single() {
         return (X) find();
     }
 
@@ -496,7 +496,7 @@ public class ComponentQuery<T extends Component> {
      *             if no component is found
      */
     @SuppressWarnings("unchecked")
-    public <X extends ComponentWrap<? extends T>> X first() {
+    public <X extends ComponentTester<? extends T>> X first() {
         return (X) allComponents().stream().findFirst().map(wrapperFactory)
                 .orElseThrow(() -> new NoSuchElementException(
                         "Cannot find component for current query"));
@@ -512,7 +512,7 @@ public class ComponentQuery<T extends Component> {
      *             if no component is found
      */
     @SuppressWarnings("unchecked")
-    public <X extends ComponentWrap<? extends T>> X last() {
+    public <X extends ComponentTester<? extends T>> X last() {
         return (X) allComponents().stream().reduce((first, second) -> second)
                 .map(wrapperFactory)
                 .orElseThrow(() -> new NoSuchElementException(
@@ -537,7 +537,7 @@ public class ComponentQuery<T extends Component> {
      *             if no component is found
      */
     @SuppressWarnings("unchecked")
-    public <X extends ComponentWrap<? extends T>> X atIndex(int index) {
+    public <X extends ComponentTester<? extends T>> X atIndex(int index) {
         if (index <= 0) {
             throw new IllegalArgumentException(
                     "Index must be greater than zero, but was " + index);
@@ -565,7 +565,7 @@ public class ComponentQuery<T extends Component> {
      * @throws NoSuchElementException
      *             if no component is found
      */
-    public <X extends ComponentWrap<? extends T>> X id(String id) {
+    public <X extends ComponentTester<? extends T>> X id(String id) {
         Objects.requireNonNull(id, "id must not be null");
         withId(id);
         // Exactly one element with given id is expected
@@ -591,7 +591,7 @@ public class ComponentQuery<T extends Component> {
      *         search does not produce results. Never {@literal null}.
      */
     @SuppressWarnings("unchecked")
-    public <X extends ComponentWrap<? extends T>> List<X> all() {
+    public <X extends ComponentTester<? extends T>> List<X> all() {
         return allComponents().stream()
                 .map(component -> (X) wrapperFactory.apply(component))
                 .collect(Collectors.toList());
@@ -629,7 +629,7 @@ public class ComponentQuery<T extends Component> {
     }
 
     @SuppressWarnings("unchecked")
-    protected <X extends ComponentWrap<? extends T>> X find() {
+    protected <X extends ComponentTester<? extends T>> X find() {
         try {
             return (X) wrapperFactory.apply(findComponent());
         } catch (AssertionError e) {

@@ -68,7 +68,8 @@ import com.vaadin.testbench.unit.internal.PrettyPrintTree;
  * To get a graphical ascii representation of the UI tree on failure override
  * the {@link #printTree()} method to return true.
  */
-public abstract class UIUnit4Test extends BaseUIUnitTest implements Wrappers {
+public abstract class UIUnit4Test extends BaseUIUnitTest implements
+        TesterWrappers {
 
     /**
      * Override to return true to get component tree output into log on test
