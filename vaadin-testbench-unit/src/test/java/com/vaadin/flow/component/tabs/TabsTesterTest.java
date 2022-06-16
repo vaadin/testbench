@@ -21,7 +21,7 @@ import com.vaadin.testbench.unit.UIUnitTest;
 import com.vaadin.testbench.unit.ViewPackages;
 
 @ViewPackages
-class TabsWrapTest extends UIUnitTest {
+class TabsTesterTest extends UIUnitTest {
 
     TabsView view;
     TabsTester<Tabs> tabs_;

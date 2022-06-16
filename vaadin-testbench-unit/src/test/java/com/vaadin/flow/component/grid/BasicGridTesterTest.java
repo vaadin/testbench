@@ -24,7 +24,7 @@ import com.vaadin.testbench.unit.UIUnitTest;
 import com.vaadin.testbench.unit.ViewPackages;
 
 @ViewPackages
-public class BasicGridWrapTest extends UIUnitTest {
+public class BasicGridTesterTest extends UIUnitTest {
 
     BasicGridView view;
 

@@ -20,7 +20,7 @@ import com.vaadin.testbench.unit.ViewPackages;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
 @ViewPackages
-class ListBoxWrapTest extends UIUnitTest {
+class ListBoxTesterTest extends UIUnitTest {
     ListBoxView view;
 
     @BeforeEach

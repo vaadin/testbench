@@ -20,7 +20,7 @@ import com.vaadin.testbench.unit.ViewPackages;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ViewPackages
-class SelectWrapTest extends UIUnitTest {
+class SelectTesterTest extends UIUnitTest {
     SelectView view;
 
     @BeforeEach

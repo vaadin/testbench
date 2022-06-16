@@ -21,7 +21,7 @@ import com.vaadin.testbench.unit.UIUnitTest;
 import com.vaadin.testbench.unit.ViewPackages;
 
 @ViewPackages
-class ContextMenuWrapTest extends UIUnitTest {
+class ContextMenuTesterTest extends UIUnitTest {
 
     ContextMenuView view;
 

@@ -24,7 +24,7 @@ import com.vaadin.testbench.unit.UIUnitTest;
 import com.vaadin.testbench.unit.ViewPackages;
 
 @ViewPackages
-class CheckboxGroupWrapTest extends UIUnitTest {
+class CheckboxGroupTesterTest extends UIUnitTest {
 
     CheckboxView view;
 
