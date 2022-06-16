@@ -50,7 +50,9 @@ class ContextMenuWrapTest extends UIUnitTest {
     @Test
     void openMenu_alreadyOpen_throws() {
         menu_.open();
-        Assertions.assertThrows(IllegalStateException.class, menu_::open);
+        IllegalStateException exception = Assertions
+                .assertThrows(IllegalStateException.class, menu_::open);
+        Assertions.assertTrue(exception.getMessage().contains("already open"));
     }
 
     @Test
@@ -89,8 +91,11 @@ class ContextMenuWrapTest extends UIUnitTest {
     void clickItem_multipleMatches_throws() {
         menu_.open();
 
-        Assertions.assertThrows(IllegalStateException.class,
+        IllegalStateException exception = Assertions.assertThrows(
+                IllegalStateException.class,
                 () -> menu_.clickItem("Duplicated"));
+        Assertions.assertTrue(exception.getMessage()
+                .contains("Expecting a single menu item"));
     }
 
     @Test
@@ -114,8 +119,11 @@ class ContextMenuWrapTest extends UIUnitTest {
     void clickItem_disabled_throws() {
         menu_.open();
 
-        Assertions.assertThrows(IllegalStateException.class,
-                () -> menu_.clickItem("Disabled"));
+        IllegalStateException exception = Assertions.assertThrows(
+                IllegalStateException.class, () -> menu_.clickItem("Disabled"));
+        Assertions.assertTrue(exception.getMessage().contains("Menu item"));
+        Assertions.assertTrue(exception.getMessage().contains("is not usable"));
+
         Assertions.assertTrue(view.clickedItems.isEmpty(),
                 "Listener should not have been notified");
     }
@@ -124,8 +132,10 @@ class ContextMenuWrapTest extends UIUnitTest {
     void clickItem_hidden_throws() {
         menu_.open();
 
-        Assertions.assertThrows(IllegalStateException.class,
-                () -> menu_.clickItem("Hidden"));
+        IllegalStateException exception = Assertions.assertThrows(
+                IllegalStateException.class, () -> menu_.clickItem("Hidden"));
+        Assertions.assertTrue(exception.getMessage().contains("Menu item"));
+        Assertions.assertTrue(exception.getMessage().contains("is not usable"));
         Assertions.assertTrue(view.clickedItems.isEmpty(),
                 "Listener should not have been notified");
     }
@@ -162,11 +172,19 @@ class ContextMenuWrapTest extends UIUnitTest {
 
     @Test
     void clickItem_nestedNotUsableParent_throws() {
-        Assertions.assertThrows(IllegalStateException.class, () -> menu_
-                .clickItem("Hierarchical", "NestedDisabled", "Level3"));
-        Assertions.assertThrows(IllegalStateException.class, () -> menu_
-                .clickItem("Hierarchical", "NestedInvisible", "Level3"));
+        menu_.open();
 
+        IllegalStateException exception = Assertions
+                .assertThrows(IllegalStateException.class, () -> menu_
+                        .clickItem("Hierarchical", "NestedDisabled", "Level3"));
+        Assertions.assertTrue(exception.getMessage().contains("Menu item"));
+        Assertions.assertTrue(exception.getMessage().contains("is not usable"));
+
+        exception = Assertions.assertThrows(IllegalStateException.class,
+                () -> menu_.clickItem("Hierarchical", "NestedInvisible",
+                        "Level3"));
+        Assertions.assertTrue(exception.getMessage().contains("Menu item"));
+        Assertions.assertTrue(exception.getMessage().contains("is not usable"));
     }
 
     @Test
@@ -200,8 +218,12 @@ class ContextMenuWrapTest extends UIUnitTest {
     @Test
     void clickItem_byNestedIndexNotUsableParent_throws() {
         // Hierarchical / NestedDisabled / Level3
-        Assertions.assertThrows(IllegalStateException.class,
-                () -> menu_.clickItem(7, 2, 0));
+        menu_.open();
+
+        IllegalStateException exception = Assertions.assertThrows(
+                IllegalStateException.class, () -> menu_.clickItem(7, 3, 0));
+        Assertions.assertTrue(exception.getMessage().contains("Menu item"));
+        Assertions.assertTrue(exception.getMessage().contains("is not usable"));
     }
 
     @Test
