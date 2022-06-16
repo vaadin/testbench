@@ -145,13 +145,13 @@ abstract class BaseUIUnitTest {
     }
 
     void scanTesters() {
-        if (getClass().isAnnotationPresent(ComponentWrapPackages.class)) {
+        if (getClass().isAnnotationPresent(ComponentTesterPackages.class)) {
             final List<String> packages = Arrays.asList(getClass()
-                    .getAnnotation(ComponentWrapPackages.class).value());
+                    .getAnnotation(ComponentTesterPackages.class).value());
             if (!scanned.containsAll((packages))) {
                 scanned.addAll(packages);
                 testers.putAll(scanForTesters(getClass()
-                        .getAnnotation(ComponentWrapPackages.class).value()));
+                        .getAnnotation(ComponentTesterPackages.class).value()));
             }
         }
     }

@@ -23,7 +23,7 @@ import java.lang.annotation.Target;
  */
 @Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ComponentWrapPackages {
+public @interface ComponentTesterPackages {
 
     /**
      * Array of packages to scan for {@link ComponentTester} implementations.

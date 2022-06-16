@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Tag;
 
-@ComponentWrapPackages("com.vaadin.testbench.unit")
+@ComponentTesterPackages("com.vaadin.testbench.unit")
 @ViewPackages(packages = "com.vaadin.testbench")
 public class WrapperResolutionTest extends UIUnitTest {
 
