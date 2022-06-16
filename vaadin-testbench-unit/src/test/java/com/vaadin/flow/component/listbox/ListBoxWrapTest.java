@@ -22,37 +22,38 @@ import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 @ViewPackages
 class ListBoxWrapTest extends UIUnitTest {
     ListBoxView view;
-    ListBoxWrap<ListBox<String>, String> list_;
 
     @BeforeEach
     public void registerView() {
         RouteConfiguration.forApplicationScope()
                 .setAnnotatedRoute(ListBoxView.class);
         view = navigate(ListBoxView.class);
-        list_ = wrap(view.listBox);
     }
 
     @Test
     void getSuggestionItems_returnsAllItems() {
-        assertIterableEquals(view.selection, list_.getSuggestionItems());
+        assertIterableEquals(view.selection,
+                wrap(view.listBox).getSuggestionItems());
     }
 
     @Test
     void stringSelect_getSuggestions_valuesEqualItems() {
-        assertIterableEquals(view.selection, list_.getSuggestions());
+        assertIterableEquals(view.selection,
+                wrap(view.listBox).getSuggestions());
     }
 
     @Test
     void stringSelect_selectItem_selectsCorrectItem() {
-        Assertions.assertNull(list_.getSelected());
+        Assertions.assertNull(wrap(view.listBox).getSelected());
 
-        list_.selectItem("two");
+        wrap(view.listBox).selectItem("two");
 
-        Assertions.assertSame(view.selection.get(1), list_.getSelected());
+        Assertions.assertSame(view.selection.get(1),
+                wrap(view.listBox).getSelected());
 
-        list_.selectItem(null);
+        wrap(view.listBox).selectItem(null);
 
-        Assertions.assertNull(list_.getSelected(),
+        Assertions.assertNull(wrap(view.listBox).getSelected(),
                 "Selecting null should clear selection");
     }
 }

@@ -28,14 +28,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class DatePickerWrapTest extends UIUnitTest {
 
     DatePickerView view;
-    DatePickerWrap<DatePicker> pick_;
 
     @BeforeEach
     public void registerView() {
         RouteConfiguration.forApplicationScope()
                 .setAnnotatedRoute(DatePickerView.class);
         view = navigate(DatePickerView.class);
-        pick_ = wrap(view.picker);
     }
 
     @Test
@@ -43,7 +41,7 @@ class DatePickerWrapTest extends UIUnitTest {
         view.picker.setMax(LocalDate.of(1995, 1, 1));
 
         assertThrows(IllegalArgumentException.class,
-                () -> pick_.setValue(LocalDate.of(1995, 1, 5)));
+                () -> wrap(view.picker).setValue(LocalDate.of(1995, 1, 5)));
     }
 
     @Test
@@ -51,7 +49,7 @@ class DatePickerWrapTest extends UIUnitTest {
         view.picker.setMin(LocalDate.of(1995, 1, 5));
 
         assertThrows(IllegalArgumentException.class,
-                () -> pick_.setValue(LocalDate.of(1995, 1, 1)));
+                () -> wrap(view.picker).setValue(LocalDate.of(1995, 1, 1)));
     }
 
     @Test
@@ -65,7 +63,7 @@ class DatePickerWrapTest extends UIUnitTest {
                 });
 
         final LocalDate newValue = LocalDate.of(1995, 1, 5);
-        pick_.setValue(newValue);
+        wrap(view.picker).setValue(newValue);
 
         Assertions.assertEquals(newValue, value.get());
     }

@@ -24,31 +24,30 @@ import com.vaadin.testbench.unit.ViewPackages;
 class ContextMenuWrapTest extends UIUnitTest {
 
     ContextMenuView view;
-    ContextMenuWrap<ContextMenu> menu_;
 
     @BeforeEach
     void init() {
         RouteConfiguration.forApplicationScope()
                 .setAnnotatedRoute(ContextMenuView.class);
         view = navigate(ContextMenuView.class);
-        menu_ = wrap(view.menu);
     }
 
     @Test
     void openCloseMenu_menuIsAttachedAndDetached() {
         Assertions.assertFalse(view.menu.isAttached(),
                 "closed context menu should not be attached to the UI");
-        menu_.open();
+        wrap(view.menu).open();
         Assertions.assertTrue(view.menu.isAttached(),
                 "context menu should be attached to the UI, but was not");
 
-        menu_.close();
+        wrap(view.menu).close();
         Assertions.assertFalse(view.menu.isAttached(),
                 "context menu should be detached from the UI, but was not");
     }
 
     @Test
     void openMenu_alreadyOpen_throws() {
+        ContextMenuWrap<ContextMenu> menu_ = wrap(view.menu);
         menu_.open();
         IllegalStateException exception = Assertions
                 .assertThrows(IllegalStateException.class, menu_::open);
@@ -57,11 +56,13 @@ class ContextMenuWrapTest extends UIUnitTest {
 
     @Test
     void closeMenu_menuNotOpened_throws() {
-        Assertions.assertThrows(IllegalStateException.class, menu_::close);
+        Assertions.assertThrows(IllegalStateException.class,
+                wrap(view.menu)::close);
     }
 
     @Test
     void clickItem_byText_actionExecuted() {
+        ContextMenuWrap<ContextMenu> menu_ = wrap(view.menu);
         menu_.open();
 
         menu_.clickItem("Foo");
@@ -75,6 +76,7 @@ class ContextMenuWrapTest extends UIUnitTest {
 
     @Test
     void clickItem_notExisting_throws() {
+        ContextMenuWrap<ContextMenu> menu_ = wrap(view.menu);
         menu_.open();
 
         Assertions.assertThrows(IllegalArgumentException.class,
@@ -84,11 +86,12 @@ class ContextMenuWrapTest extends UIUnitTest {
     @Test
     void clickItem_menuNotOpened_throws() {
         Assertions.assertThrows(IllegalStateException.class,
-                () -> menu_.clickItem("Bar"));
+                () -> wrap(view.menu).clickItem("Bar"));
     }
 
     @Test
     void clickItem_multipleMatches_throws() {
+        ContextMenuWrap<ContextMenu> menu_ = wrap(view.menu);
         menu_.open();
 
         IllegalStateException exception = Assertions.assertThrows(
@@ -100,6 +103,7 @@ class ContextMenuWrapTest extends UIUnitTest {
 
     @Test
     void clickItem_checkable_checkStatusChanges() {
+        ContextMenuWrap<ContextMenu> menu_ = wrap(view.menu);
         menu_.open();
 
         menu_.clickItem("Checkable");
@@ -117,6 +121,7 @@ class ContextMenuWrapTest extends UIUnitTest {
 
     @Test
     void clickItem_disabled_throws() {
+        ContextMenuWrap<ContextMenu> menu_ = wrap(view.menu);
         menu_.open();
 
         IllegalStateException exception = Assertions.assertThrows(
@@ -130,6 +135,7 @@ class ContextMenuWrapTest extends UIUnitTest {
 
     @Test
     void clickItem_hidden_throws() {
+        ContextMenuWrap<ContextMenu> menu_ = wrap(view.menu);
         menu_.open();
 
         IllegalStateException exception = Assertions.assertThrows(
@@ -142,6 +148,7 @@ class ContextMenuWrapTest extends UIUnitTest {
 
     @Test
     void clickItem_nested_executeAction() {
+        ContextMenuWrap<ContextMenu> menu_ = wrap(view.menu);
         menu_.open();
 
         menu_.clickItem("Hierarchical", "Level2");
@@ -157,6 +164,7 @@ class ContextMenuWrapTest extends UIUnitTest {
 
     @Test
     void clickItem_nestedWrongPath_throws() {
+        ContextMenuWrap<ContextMenu> menu_ = wrap(view.menu);
         menu_.open();
 
         Assertions.assertThrows(IllegalArgumentException.class,
@@ -172,6 +180,7 @@ class ContextMenuWrapTest extends UIUnitTest {
 
     @Test
     void clickItem_nestedNotUsableParent_throws() {
+        ContextMenuWrap<ContextMenu> menu_ = wrap(view.menu);
         menu_.open();
 
         IllegalStateException exception = Assertions
@@ -189,6 +198,7 @@ class ContextMenuWrapTest extends UIUnitTest {
 
     @Test
     void clickItem_byIndex_executesAction() {
+        ContextMenuWrap<ContextMenu> menu_ = wrap(view.menu);
         menu_.open();
 
         menu_.clickItem(0);
@@ -203,6 +213,7 @@ class ContextMenuWrapTest extends UIUnitTest {
 
     @Test
     void clickItem_byInvalidIndexes_throws() {
+        ContextMenuWrap<ContextMenu> menu_ = wrap(view.menu);
         menu_.open();
 
         Assertions.assertThrows(IllegalArgumentException.class,
@@ -218,16 +229,17 @@ class ContextMenuWrapTest extends UIUnitTest {
     @Test
     void clickItem_byNestedIndexNotUsableParent_throws() {
         // Hierarchical / NestedDisabled / Level3
-        menu_.open();
+        wrap(view.menu).open();
 
         IllegalStateException exception = Assertions.assertThrows(
-                IllegalStateException.class, () -> menu_.clickItem(7, 3, 0));
+                IllegalStateException.class, () -> wrap(view.menu).clickItem(7, 3, 0));
         Assertions.assertTrue(exception.getMessage().contains("Menu item"));
         Assertions.assertTrue(exception.getMessage().contains("is not usable"));
     }
 
     @Test
     void clickItem_byNestedIndexes_executesAction() {
+        ContextMenuWrap<ContextMenu> menu_ = wrap(view.menu);
         menu_.open();
 
         menu_.clickItem(7, 0);
@@ -244,6 +256,7 @@ class ContextMenuWrapTest extends UIUnitTest {
 
     @Test
     void isItemChecked_byText_getCheckedStatus() {
+        ContextMenuWrap<ContextMenu> menu_ = wrap(view.menu);
         menu_.open();
 
         Assertions.assertFalse(menu_.isItemChecked("Checkable"),
@@ -260,6 +273,7 @@ class ContextMenuWrapTest extends UIUnitTest {
 
     @Test
     void isItemChecked_byIndex_getCheckedStatus() {
+        ContextMenuWrap<ContextMenu> menu_ = wrap(view.menu);
         menu_.open();
 
         Assertions.assertFalse(menu_.isItemChecked(5),
@@ -276,6 +290,7 @@ class ContextMenuWrapTest extends UIUnitTest {
 
     @Test
     void isItemChecked_nestedByText_getCheckedStatus() {
+        ContextMenuWrap<ContextMenu> menu_ = wrap(view.menu);
         menu_.open();
 
         Assertions.assertTrue(
@@ -295,6 +310,7 @@ class ContextMenuWrapTest extends UIUnitTest {
 
     @Test
     void isItemChecked_nestedByIndex_getCheckedStatus() {
+        ContextMenuWrap<ContextMenu> menu_ = wrap(view.menu);
         menu_.open();
 
         Assertions.assertTrue(menu_.isItemChecked(7, 2),
@@ -311,6 +327,7 @@ class ContextMenuWrapTest extends UIUnitTest {
 
     @Test
     void isItemChecked_notCheckableItem_throws() {
+        ContextMenuWrap<ContextMenu> menu_ = wrap(view.menu);
         menu_.open();
 
         Assertions.assertThrows(IllegalArgumentException.class,
@@ -326,13 +343,14 @@ class ContextMenuWrapTest extends UIUnitTest {
     @Test
     void isItemChecked_menuNotOpened_throws() {
         Assertions.assertThrows(IllegalStateException.class,
-                () -> menu_.isItemChecked("Checkable"));
+                () -> wrap(view.menu).isItemChecked("Checkable"));
         Assertions.assertThrows(IllegalStateException.class,
-                () -> menu_.isItemChecked(5));
+                () -> wrap(view.menu).isItemChecked(5));
     }
 
     @Test
     void isItemChecked_notExisting_throws() {
+        ContextMenuWrap<ContextMenu> menu_ = wrap(view.menu);
         menu_.open();
 
         Assertions.assertThrows(IllegalArgumentException.class,

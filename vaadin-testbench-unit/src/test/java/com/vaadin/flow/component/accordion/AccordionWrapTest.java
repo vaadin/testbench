@@ -41,8 +41,7 @@ class AccordionWrapTest extends UIUnitTest {
     @Test
     void closedPanel_getPanelThrows() {
         Assertions.assertThrows(IllegalStateException.class,
-                () -> ((AccordionWrap<Accordion>) wrap(view.accordion))
-                        .getPanel("Green"));
+                () -> wrap(view.accordion).getPanel("Green"));
     }
 
     @Test

@@ -27,49 +27,47 @@ import com.vaadin.testbench.unit.ViewPackages;
 class CheckboxGroupWrapTest extends UIUnitTest {
 
     CheckboxView view;
-    CheckboxGroupWrap<CheckboxGroup<CheckboxView.Name>, CheckboxView.Name> checkboxGroup_;
 
     @BeforeEach
     public void registerView() {
         RouteConfiguration.forApplicationScope()
                 .setAnnotatedRoute(CheckboxView.class);
         view = navigate(CheckboxView.class);
-        checkboxGroup_ = wrap(view.checkboxGroup);
     }
 
     @Test
     void selectItem_selectCorrectItem() {
-        checkboxGroup_.selectItem("test-bar");
+        wrap(view.checkboxGroup).selectItem("test-bar");
         assertContainsExactlyInAnyOrder(Set.of(view.items.get("bar")),
-                checkboxGroup_.getSelected());
+                wrap(view.checkboxGroup).getSelected());
 
-        checkboxGroup_.selectItem("test-jay");
+        wrap(view.checkboxGroup).selectItem("test-jay");
         assertContainsExactlyInAnyOrder(
                 Set.of(view.items.get("bar"), view.items.get("jay")),
-                checkboxGroup_.getSelected());
+                wrap(view.checkboxGroup).getSelected());
     }
 
     @Test
     void selectItems_multipleItems_itemsSelected() {
-        checkboxGroup_.selectItems("test-bar", "test-jay");
+        wrap(view.checkboxGroup).selectItems("test-bar", "test-jay");
         assertContainsExactlyInAnyOrder(
                 Set.of(view.items.get("bar"), view.items.get("jay")),
-                checkboxGroup_.getSelected());
+                wrap(view.checkboxGroup).getSelected());
     }
 
     @Test
     void selectItems_collectionOfItems_itemsSelected() {
-        checkboxGroup_.selectItems(List.of("test-bar", "test-jay"));
+        wrap(view.checkboxGroup).selectItems(List.of("test-bar", "test-jay"));
         assertContainsExactlyInAnyOrder(
                 Set.of(view.items.get("bar"), view.items.get("jay")),
-                checkboxGroup_.getSelected());
+                wrap(view.checkboxGroup).getSelected());
     }
 
     @Test
     void selectAll_allItemSelected() {
-        checkboxGroup_.selectAll();
+        wrap(view.checkboxGroup).selectAll();
         assertContainsExactlyInAnyOrder(view.items.values(),
-                checkboxGroup_.getSelected());
+                wrap(view.checkboxGroup).getSelected());
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -77,17 +75,16 @@ class CheckboxGroupWrapTest extends UIUnitTest {
     void deselectItem_deselectCorrectItem() {
         view.checkboxGroup.setValue(new HashSet<>(view.items.values()));
 
-        checkboxGroup_.deselectItem("test-bar");
-        Assertions
-                .assertEquals(
-                        Set.of(view.items.get("foo"), view.items.get("baz"),
-                                view.items.get("jay")),
-                        checkboxGroup_.getSelected());
+        wrap(view.checkboxGroup).deselectItem("test-bar");
+        Assertions.assertEquals(
+                Set.of(view.items.get("foo"), view.items.get("baz"),
+                        view.items.get("jay")),
+                wrap(view.checkboxGroup).getSelected());
 
-        checkboxGroup_.deselectItem("test-jay");
+        wrap(view.checkboxGroup).deselectItem("test-jay");
         assertContainsExactlyInAnyOrder(
                 Set.of(view.items.get("foo"), view.items.get("baz")),
-                checkboxGroup_.getSelected());
+                wrap(view.checkboxGroup).getSelected());
 
     }
 
@@ -95,28 +92,29 @@ class CheckboxGroupWrapTest extends UIUnitTest {
     void deselectItems_multipleItems_itemsDeselected() {
         view.checkboxGroup.setValue(new HashSet<>(view.items.values()));
 
-        checkboxGroup_.deselectItems("test-jay", "test-bar");
+        wrap(view.checkboxGroup).deselectItems("test-jay", "test-bar");
         assertContainsExactlyInAnyOrder(
                 Set.of(view.items.get("foo"), view.items.get("baz")),
-                checkboxGroup_.getSelected());
+                wrap(view.checkboxGroup).getSelected());
     }
 
     @Test
     void deselectItems_collectionOfItems_itemsDeselected() {
         view.checkboxGroup.setValue(new HashSet<>(view.items.values()));
 
-        checkboxGroup_.deselectItems(List.of("test-jay", "test-bar"));
+        wrap(view.checkboxGroup).deselectItems(List.of("test-jay", "test-bar"));
         assertContainsExactlyInAnyOrder(
                 Set.of(view.items.get("foo"), view.items.get("baz")),
-                checkboxGroup_.getSelected());
+                wrap(view.checkboxGroup).getSelected());
     }
 
     @Test
     void deselectAll_noItemsSelected() {
         view.checkboxGroup.setValue(new HashSet<>(view.items.values()));
 
-        checkboxGroup_.deselectAll();
-        Set<CheckboxView.Name> selectedItems = checkboxGroup_.getSelected();
+        wrap(view.checkboxGroup).deselectAll();
+        Set<CheckboxView.Name> selectedItems = wrap(view.checkboxGroup)
+                .getSelected();
         Assertions.assertTrue(selectedItems.isEmpty(),
                 "Expecting no elements to be selected, but got "
                         + selectedItems);
@@ -125,13 +123,13 @@ class CheckboxGroupWrapTest extends UIUnitTest {
     @Test
     void selectItem_notExisting_throws() {
         Assertions.assertThrows(IllegalArgumentException.class,
-                () -> checkboxGroup_.selectItem("jay"));
+                () -> wrap(view.checkboxGroup).selectItem("jay"));
     }
 
     @Test
     void deselectItem_notExisting_throws() {
         Assertions.assertThrows(IllegalArgumentException.class,
-                () -> checkboxGroup_.deselectItem("jay"));
+                () -> wrap(view.checkboxGroup).deselectItem("jay"));
     }
 
     @Test
@@ -140,13 +138,13 @@ class CheckboxGroupWrapTest extends UIUnitTest {
                 .setItemEnabledProvider(n -> n.getName().startsWith("b"));
 
         // Items enabled, should work
-        checkboxGroup_.selectItem("test-bar");
-        checkboxGroup_.selectItem("test-baz");
+        wrap(view.checkboxGroup).selectItem("test-bar");
+        wrap(view.checkboxGroup).selectItem("test-baz");
 
         Assertions.assertThrows(IllegalStateException.class,
-                () -> checkboxGroup_.selectItem("test-foo"));
+                () -> wrap(view.checkboxGroup).selectItem("test-foo"));
         Assertions.assertThrows(IllegalStateException.class,
-                () -> checkboxGroup_.selectItem("test-jay"));
+                () -> wrap(view.checkboxGroup).selectItem("test-jay"));
     }
 
     @Test
@@ -155,13 +153,13 @@ class CheckboxGroupWrapTest extends UIUnitTest {
                 .setItemEnabledProvider(n -> n.getName().startsWith("b"));
 
         // Items enabled, should work
-        checkboxGroup_.deselectItem("test-bar");
-        checkboxGroup_.deselectItem("test-baz");
+        wrap(view.checkboxGroup).deselectItem("test-bar");
+        wrap(view.checkboxGroup).deselectItem("test-baz");
 
         Assertions.assertThrows(IllegalStateException.class,
-                () -> checkboxGroup_.deselectItem("test-foo"));
+                () -> wrap(view.checkboxGroup).deselectItem("test-foo"));
         Assertions.assertThrows(IllegalStateException.class,
-                () -> checkboxGroup_.deselectItem("test-jay"));
+                () -> wrap(view.checkboxGroup).deselectItem("test-jay"));
     }
 
     @Test
@@ -169,13 +167,13 @@ class CheckboxGroupWrapTest extends UIUnitTest {
         view.checkboxGroup.setReadOnly(true);
 
         Assertions.assertThrows(IllegalStateException.class,
-                () -> checkboxGroup_.selectItem("test-foo"));
+                () -> wrap(view.checkboxGroup).selectItem("test-foo"));
         Assertions.assertThrows(IllegalStateException.class,
-                () -> checkboxGroup_.deselectItem("test-foo"));
+                () -> wrap(view.checkboxGroup).deselectItem("test-foo"));
         Assertions.assertThrows(IllegalStateException.class,
-                () -> checkboxGroup_.selectAll());
+                () -> wrap(view.checkboxGroup).selectAll());
         Assertions.assertThrows(IllegalStateException.class,
-                () -> checkboxGroup_.deselectAll());
+                () -> wrap(view.checkboxGroup).deselectAll());
 
     }
 

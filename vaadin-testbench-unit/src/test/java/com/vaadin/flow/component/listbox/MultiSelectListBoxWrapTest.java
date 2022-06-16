@@ -22,28 +22,30 @@ import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 @ViewPackages
 class MultiSelectListBoxWrapTest extends UIUnitTest {
     ListBoxView view;
-    MultiSelectListBoxWrap<MultiSelectListBox<String>, String> list_;
 
     @BeforeEach
     public void registerView() {
         RouteConfiguration.forApplicationScope()
                 .setAnnotatedRoute(ListBoxView.class);
         view = navigate(ListBoxView.class);
-        list_ = wrap(view.multiSelectListBox);
     }
 
     @Test
     void getSuggestionItems_returnsAllItems() {
-        assertIterableEquals(view.selection, list_.getSuggestionItems());
+        assertIterableEquals(view.selection,
+                wrap(view.multiSelectListBox).getSuggestionItems());
     }
 
     @Test
     void stringSelect_getSuggestions_valuesEqualItems() {
-        assertIterableEquals(view.selection, list_.getSuggestions());
+        assertIterableEquals(view.selection,
+                wrap(view.multiSelectListBox).getSuggestions());
     }
 
     @Test
     void stringSelect_selectItemsDeselectItems_selectsCorrectItem() {
+        final MultiSelectListBoxWrap<MultiSelectListBox<String>, String> list_ = wrap(
+                view.multiSelectListBox);
         Assertions.assertTrue(list_.getSelected().isEmpty());
 
         list_.selectItems("two");
@@ -59,6 +61,8 @@ class MultiSelectListBoxWrapTest extends UIUnitTest {
 
     @Test
     void stringSelect_selectItems_addsToSelection() {
+        final MultiSelectListBoxWrap<MultiSelectListBox<String>, String> list_ = wrap(
+                view.multiSelectListBox);
         Assertions.assertTrue(list_.getSelected().isEmpty());
 
         list_.selectItems("two");
@@ -73,6 +77,8 @@ class MultiSelectListBoxWrapTest extends UIUnitTest {
 
     @Test
     void clearSelection_selectItems_addsToSelection() {
+        final MultiSelectListBoxWrap<MultiSelectListBox<String>, String> list_ = wrap(
+                view.multiSelectListBox);
         Assertions.assertTrue(list_.getSelected().isEmpty());
 
         list_.selectItems("two", "one");

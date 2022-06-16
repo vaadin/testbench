@@ -23,14 +23,12 @@ import com.vaadin.testbench.unit.ViewPackages;
 class MessageInputWrapTest extends UIUnitTest {
 
     MessagesView view;
-    MessageInputWrap<MessageInput> input_;
 
     @BeforeEach
     void init() {
         RouteConfiguration.forApplicationScope()
                 .setAnnotatedRoute(MessagesView.class);
         view = navigate(MessagesView.class);
-        input_ = wrap(view.input);
     }
 
     @Test
@@ -41,7 +39,7 @@ class MessageInputWrapTest extends UIUnitTest {
                 submitEvent.getValue()));
 
         final String testMessage = "";
-        input_.send(testMessage);
+        wrap(view.input).send(testMessage);
         Assertions.assertNull(message.get());
     }
 
@@ -53,7 +51,7 @@ class MessageInputWrapTest extends UIUnitTest {
                 submitEvent.getValue()));
 
         final String testMessage = "Hello";
-        input_.send(testMessage);
+        wrap(view.input).send(testMessage);
         Assertions.assertEquals(testMessage, message.get());
     }
 
@@ -67,6 +65,6 @@ class MessageInputWrapTest extends UIUnitTest {
 
         final String testMessage = "Hello";
         Assertions.assertThrows(IllegalStateException.class,
-                () -> input_.send(testMessage));
+                () -> wrap(view.input).send(testMessage));
     }
 }
