@@ -9,7 +9,6 @@
  */
 package com.vaadin.flow.component.grid;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -28,7 +27,6 @@ import com.vaadin.testbench.unit.MetaKeys;
 import com.vaadin.testbench.unit.MouseButton;
 import com.vaadin.testbench.unit.Wraps;
 import com.vaadin.testbench.unit.component.GridKt;
-import com.vaadin.testbench.unit.internal.PrettyPrintTreeKt;
 
 /**
  * Test wrapper for Grid components.
@@ -252,9 +250,11 @@ public class GridWrap<T extends Grid<Y>, Y> extends ComponentWrap<T> {
         ensureVisible();
         final Grid.Column targetColumn = getColumns().get(column);
         if (targetColumn.getRenderer() instanceof ComponentRenderer) {
-            return PrettyPrintTreeKt.toPrettyString(
-                    ((ComponentRenderer<?, Y>) targetColumn.getRenderer())
-                            .createComponent(getRow(row)));
+            Component component = getCellComponent(row, column);
+            if (component == null) {
+                return null;
+            }
+            return component.getElement().getTextRecursively();
         } else if (targetColumn.getRenderer() instanceof ColumnPathRenderer) {
             // This renderer just writes the object text using a path
             return getValueProviderString(row, targetColumn);
