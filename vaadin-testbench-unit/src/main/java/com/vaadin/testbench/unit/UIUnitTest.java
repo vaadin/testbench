@@ -83,4 +83,9 @@ public abstract class UIUnitTest extends BaseUIUnitTest {
     protected void cleanVaadinEnvironment() {
         super.cleanVaadinEnvironment();
     }
+
+    @Override
+    protected final String testingEngine() {
+        return "JUnit 5";
+    }
 }
