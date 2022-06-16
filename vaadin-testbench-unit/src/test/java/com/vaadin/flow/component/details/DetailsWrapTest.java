@@ -20,11 +20,11 @@ import org.junit.jupiter.api.Test;
 
 import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.testbench.unit.ComponentWrap;
-import com.vaadin.testbench.unit.UIUnitTest;
+import com.vaadin.testbench.unit.TestBenchUnit;
 import com.vaadin.testbench.unit.ViewPackages;
 
 @ViewPackages
-class DetailsWrapTest extends UIUnitTest {
+class DetailsWrapTest extends TestBenchUnit {
 
     DetailsView view;
 

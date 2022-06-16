@@ -16,11 +16,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.vaadin.flow.router.RouteConfiguration;
-import com.vaadin.testbench.unit.UIUnitTest;
+import com.vaadin.testbench.unit.TestBenchUnit;
 import com.vaadin.testbench.unit.ViewPackages;
 
 @ViewPackages
-class MessageInputWrapTest extends UIUnitTest {
+class MessageInputWrapTest extends TestBenchUnit {
 
     MessagesView view;
 

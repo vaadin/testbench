@@ -14,9 +14,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.vaadin.flow.router.RouteConfiguration;
-import com.vaadin.testbench.unit.UIUnitTest;
+import com.vaadin.testbench.unit.TestBenchUnit;
 
-class RadioButtonGroupWrapTest extends UIUnitTest {
+class RadioButtonGroupWrapTest extends TestBenchUnit {
 
     RadioButtonView view;
     RadioButtonGroupWrap<RadioButtonGroup<RadioButtonView.Name>, RadioButtonView.Name> buttonGroup_;

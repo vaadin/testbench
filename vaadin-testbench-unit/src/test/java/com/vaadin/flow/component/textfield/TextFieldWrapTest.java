@@ -19,11 +19,11 @@ import org.junit.jupiter.api.Test;
 import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent;
 import com.vaadin.flow.component.HasValue.ValueChangeListener;
 import com.vaadin.flow.router.RouteConfiguration;
-import com.vaadin.testbench.unit.UIUnitTest;
+import com.vaadin.testbench.unit.TestBenchUnit;
 import com.vaadin.testbench.unit.ViewPackages;
 
 @ViewPackages
-public class TextFieldWrapTest extends UIUnitTest {
+public class TextFieldWrapTest extends TestBenchUnit {
 
     TextFieldView view;
 

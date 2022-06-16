@@ -14,13 +14,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.vaadin.flow.router.RouteConfiguration;
-import com.vaadin.testbench.unit.UIUnitTest;
+import com.vaadin.testbench.unit.TestBenchUnit;
 import com.vaadin.testbench.unit.ViewPackages;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @ViewPackages
-class SelectWrapTest extends UIUnitTest {
+class SelectWrapTest extends TestBenchUnit {
     SelectView view;
 
     @BeforeEach

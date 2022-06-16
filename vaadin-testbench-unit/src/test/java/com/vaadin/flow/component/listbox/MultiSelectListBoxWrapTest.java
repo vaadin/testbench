@@ -14,13 +14,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.vaadin.flow.router.RouteConfiguration;
-import com.vaadin.testbench.unit.UIUnitTest;
+import com.vaadin.testbench.unit.TestBenchUnit;
 import com.vaadin.testbench.unit.ViewPackages;
 
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
 @ViewPackages
-class MultiSelectListBoxWrapTest extends UIUnitTest {
+class MultiSelectListBoxWrapTest extends TestBenchUnit {
     ListBoxView view;
 
     @BeforeEach

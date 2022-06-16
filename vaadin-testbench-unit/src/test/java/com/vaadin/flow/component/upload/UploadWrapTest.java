@@ -29,11 +29,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import com.vaadin.flow.router.RouteConfiguration;
-import com.vaadin.testbench.unit.UIUnitTest;
+import com.vaadin.testbench.unit.TestBenchUnit;
 import com.vaadin.testbench.unit.ViewPackages;
 
 @ViewPackages
-class UploadWrapTest extends UIUnitTest {
+class UploadWrapTest extends TestBenchUnit {
 
     private static final String FIRST_FILE_CONTENTS = "First file";
     private static final String SECOND_FILE_CONTENTS = "Second file";

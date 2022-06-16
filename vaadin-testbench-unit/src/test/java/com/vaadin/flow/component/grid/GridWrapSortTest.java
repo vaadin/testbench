@@ -21,11 +21,11 @@ import org.junit.jupiter.api.Test;
 import com.vaadin.flow.data.provider.SortDirection;
 import com.vaadin.flow.data.provider.SortOrder;
 import com.vaadin.flow.router.RouteConfiguration;
-import com.vaadin.testbench.unit.UIUnitTest;
+import com.vaadin.testbench.unit.TestBenchUnit;
 import com.vaadin.testbench.unit.ViewPackages;
 
 @ViewPackages
-class GridWrapSortTest extends UIUnitTest {
+class GridWrapSortTest extends TestBenchUnit {
 
     SortGridView view;
     GridWrap<Grid<Person>, Person> grid_;

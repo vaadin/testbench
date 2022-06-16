@@ -17,11 +17,11 @@ import org.junit.jupiter.api.Test;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.router.RouteConfiguration;
-import com.vaadin.testbench.unit.UIUnitTest;
+import com.vaadin.testbench.unit.TestBenchUnit;
 import com.vaadin.testbench.unit.ViewPackages;
 
 @ViewPackages
-public class BasicGridWrapTest extends UIUnitTest {
+public class BasicGridWrapTest extends TestBenchUnit {
 
     BasicGridView view;
 

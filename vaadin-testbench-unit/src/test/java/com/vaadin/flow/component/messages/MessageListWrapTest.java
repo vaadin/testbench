@@ -21,12 +21,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.testbench.unit.TreeOnFailureExtension;
-import com.vaadin.testbench.unit.UIUnitTest;
+import com.vaadin.testbench.unit.TestBenchUnit;
 import com.vaadin.testbench.unit.ViewPackages;
 
 @ViewPackages
 @ExtendWith(TreeOnFailureExtension.class)
-class MessageListWrapTest extends UIUnitTest {
+class MessageListWrapTest extends TestBenchUnit {
 
     MessagesView view;
 

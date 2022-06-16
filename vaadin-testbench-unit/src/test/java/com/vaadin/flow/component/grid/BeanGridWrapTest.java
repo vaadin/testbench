@@ -14,11 +14,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.vaadin.flow.router.RouteConfiguration;
-import com.vaadin.testbench.unit.UIUnitTest;
+import com.vaadin.testbench.unit.TestBenchUnit;
 import com.vaadin.testbench.unit.ViewPackages;
 
 @ViewPackages
-public class BeanGridWrapTest extends UIUnitTest {
+public class BeanGridWrapTest extends TestBenchUnit {
 
     BeanGridView view;
     GridWrap<Grid<Person>, Person> grid_;

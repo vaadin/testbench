@@ -18,13 +18,13 @@ import org.junit.jupiter.api.Test;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.router.RouteConfiguration;
-import com.vaadin.testbench.unit.UIUnitTest;
+import com.vaadin.testbench.unit.TestBenchUnit;
 import com.vaadin.testbench.unit.ViewPackages;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ViewPackages
-class ConfirmDialogWrapTest extends UIUnitTest {
+class ConfirmDialogWrapTest extends TestBenchUnit {
 
     ConfirmDialogView view;
     ConfirmDialogWrap wrap;

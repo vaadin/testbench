@@ -18,13 +18,13 @@ import org.junit.jupiter.api.Test;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.router.RouteConfiguration;
-import com.vaadin.testbench.unit.UIUnitTest;
+import com.vaadin.testbench.unit.TestBenchUnit;
 import com.vaadin.testbench.unit.ViewPackages;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @ViewPackages
-class TextAreaWrapTest extends UIUnitTest {
+class TextAreaWrapTest extends TestBenchUnit {
 
     private TextAreaView view;
 

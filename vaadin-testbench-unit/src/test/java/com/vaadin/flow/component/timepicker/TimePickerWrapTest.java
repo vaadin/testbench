@@ -19,13 +19,13 @@ import org.junit.jupiter.api.Test;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.router.RouteConfiguration;
-import com.vaadin.testbench.unit.UIUnitTest;
+import com.vaadin.testbench.unit.TestBenchUnit;
 import com.vaadin.testbench.unit.ViewPackages;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @ViewPackages
-class TimePickerWrapTest extends UIUnitTest {
+class TimePickerWrapTest extends TestBenchUnit {
 
     TimePickerView view;
     TimePickerWrap<TimePicker> pick_;
