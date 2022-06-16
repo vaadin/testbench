@@ -35,7 +35,7 @@ public class ComponentWrapTest extends UIUnitTest {
 
     @Test
     public void canGetWrapperForView_viewIsUsable() {
-        final ComponentWrap<WelcomeView> home_ = wrap(home);
+        final ComponentTester<WelcomeView> home_ = test(home);
         Assertions.assertTrue(home_.isUsable(),
                 "Home should be visible and interactable");
     }
@@ -44,7 +44,7 @@ public class ComponentWrapTest extends UIUnitTest {
     public void componentIsDisabled_isUsableReturnsFalse() {
         home.getElement().setEnabled(false);
 
-        final ComponentWrap<WelcomeView> home_ = wrap(home);
+        final ComponentTester<WelcomeView> home_ = test(home);
         Assertions.assertFalse(home_.isUsable(),
                 "Home should be visible but not interactable");
     }
@@ -53,18 +53,18 @@ public class ComponentWrapTest extends UIUnitTest {
     public void componentIsHidden_isUsableReturnsFalse() {
         home.setVisible(false);
 
-        final ComponentWrap<WelcomeView> home_ = wrap(home);
+        final ComponentTester<WelcomeView> home_ = test(home);
         Assertions.assertFalse(home_.isUsable(),
                 "Home should not be interactable when component is not visible");
     }
 
     @Test
     public void componentModality_componentIsUsableReturnsCorrectly() {
-        final ComponentWrap<WelcomeView> home_ = wrap(home);
+        final ComponentTester<WelcomeView> home_ = test(home);
 
         final Span span = new Span();
         home.add(span);
-        final ComponentWrap<Span> span_ = wrap(span);
+        final ComponentTester<Span> span_ = test(span);
 
         Assertions.assertTrue(span_.isUsable(),
                 "Span should be attached to the ui");
@@ -84,11 +84,11 @@ public class ComponentWrapTest extends UIUnitTest {
 
     @Test
     public void componentModality_modalityDropsOnComponentRemoval() {
-        final ComponentWrap<WelcomeView> home_ = wrap(home);
+        final ComponentTester<WelcomeView> home_ = test(home);
 
         final Span span = new Span();
         home.add(span);
-        final ComponentWrap<Span> span_ = wrap(span);
+        final ComponentTester<Span> span_ = test(span);
 
         Assertions.assertTrue(span_.isUsable(),
                 "Span should be attached to the ui");
@@ -110,7 +110,7 @@ public class ComponentWrapTest extends UIUnitTest {
     public void parentNotVisible_childIsNotInteractable() {
         final Span span = new Span();
         home.add(span);
-        final ComponentWrap<Span> span_ = wrap(span);
+        final ComponentTester<Span> span_ = test(span);
 
         Assertions.assertTrue(span_.isUsable(),
                 "Span should be attached to the ui");
@@ -125,7 +125,7 @@ public class ComponentWrapTest extends UIUnitTest {
     public void nonAttachedComponent_isNotInteractable() {
         Span span = new Span();
 
-        ComponentWrap<Span> span_ = wrap(span);
+        ComponentTester<Span> span_ = test(span);
 
         Assertions.assertFalse(span_.isUsable(),
                 "Span is not attached so it is not usable.");
@@ -137,7 +137,7 @@ public class ComponentWrapTest extends UIUnitTest {
         Span two = new Span("Two");
         Div container = new Div(new Div(new Div(one)), new Div(two), new Div());
 
-        ComponentWrap<Div> wrapper_ = wrap(container);
+        ComponentTester<Div> wrapper_ = test(container);
 
         Optional<Span> result = wrapper_.findByQuery(Span.class,
                 query -> query.withText("One"));
@@ -156,7 +156,7 @@ public class ComponentWrapTest extends UIUnitTest {
         Span two = new Span("Two");
         Div container = new Div(new Div(new Div(one)), new Div(two), new Div());
 
-        ComponentWrap<Div> wrapper_ = wrap(container);
+        ComponentTester<Div> wrapper_ = test(container);
 
         Optional<Span> result = wrapper_.findByQuery(Span.class,
                 query -> query.withText("Three"));
@@ -169,7 +169,7 @@ public class ComponentWrapTest extends UIUnitTest {
         Span two = new Span("Span Two");
         Div container = new Div(new Div(new Div(one)), new Div(two), new Div());
 
-        ComponentWrap<Div> wrapper_ = wrap(container);
+        ComponentTester<Div> wrapper_ = test(container);
 
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> wrapper_.findByQuery(Span.class,
@@ -184,7 +184,7 @@ public class ComponentWrapTest extends UIUnitTest {
         Div container = new Div(new Div(new Div(one)), new Div(two),
                 new Div(three));
 
-        ComponentWrap<Div> wrapper_ = wrap(container);
+        ComponentTester<Div> wrapper_ = test(container);
 
         List<Span> result = wrapper_.findAllByQuery(Span.class,
                 query -> query.withTextContaining("One"));
@@ -207,7 +207,7 @@ public class ComponentWrapTest extends UIUnitTest {
         Div container = new Div(new Div(new Div(one)), new Div(two),
                 new Div(three));
 
-        ComponentWrap<Div> wrapper_ = wrap(container);
+        ComponentTester<Div> wrapper_ = test(container);
 
         List<Span> result = wrapper_.findAllByQuery(Span.class,
                 query -> query.withTextContaining("Three"));

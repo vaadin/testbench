@@ -33,27 +33,27 @@ class ListBoxWrapTest extends UIUnitTest {
     @Test
     void getSuggestionItems_returnsAllItems() {
         assertIterableEquals(view.selection,
-                wrap(view.listBox).getSuggestionItems());
+                test(view.listBox).getSuggestionItems());
     }
 
     @Test
     void stringSelect_getSuggestions_valuesEqualItems() {
         assertIterableEquals(view.selection,
-                wrap(view.listBox).getSuggestions());
+                test(view.listBox).getSuggestions());
     }
 
     @Test
     void stringSelect_selectItem_selectsCorrectItem() {
-        Assertions.assertNull(wrap(view.listBox).getSelected());
+        Assertions.assertNull(test(view.listBox).getSelected());
 
-        wrap(view.listBox).selectItem("two");
+        test(view.listBox).selectItem("two");
 
         Assertions.assertSame(view.selection.get(1),
-                wrap(view.listBox).getSelected());
+                test(view.listBox).getSelected());
 
-        wrap(view.listBox).selectItem(null);
+        test(view.listBox).selectItem(null);
 
-        Assertions.assertNull(wrap(view.listBox).getSelected(),
+        Assertions.assertNull(test(view.listBox).getSelected(),
                 "Selecting null should clear selection");
     }
 }

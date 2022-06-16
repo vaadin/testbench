@@ -136,8 +136,8 @@ public class UIUnit4BaseClassTest {
 
         @Test
         public void wrap_fails() {
-            assertExecutionFails(() -> wrap(new ComponentWrapTest.Span()));
-            assertExecutionFails(() -> wrap(ComponentWrap.class,
+            assertExecutionFails(() -> test(new ComponentWrapTest.Span()));
+            assertExecutionFails(() -> test(ComponentTester.class,
                     new ComponentWrapTest.Span()));
         }
 

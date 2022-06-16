@@ -16,7 +16,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.vaadin.flow.component.checkbox.CheckboxView;
 import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.testbench.unit.UIUnitTest;
 import com.vaadin.testbench.unit.ViewPackages;
@@ -25,14 +24,14 @@ import com.vaadin.testbench.unit.ViewPackages;
 class RadioButtonWrapTest extends UIUnitTest {
 
     RadioButtonView view;
-    RadioButtonWrap<RadioButton<String>, String> radioButton_;
+    RadioButtonTester<RadioButton<String>, String> radioButton_;
 
     @BeforeEach
     public void registerView() {
         RouteConfiguration.forApplicationScope()
                 .setAnnotatedRoute(RadioButtonView.class);
         view = navigate(RadioButtonView.class);
-        radioButton_ = wrap(view.radioButton);
+        radioButton_ = test(view.radioButton);
     }
 
     @Test

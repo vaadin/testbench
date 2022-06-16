@@ -44,7 +44,7 @@ class DateTimePickerWrapTest extends UIUnitTest {
                 LocalDateTime.of(LocalDate.of(1995, 1, 1), LocalTime.NOON));
 
         assertThrows(IllegalArgumentException.class,
-                () -> wrap(view.picker).setValue(LocalDateTime
+                () -> test(view.picker).setValue(LocalDateTime
                         .of(LocalDate.of(1995, 1, 5), LocalTime.MIDNIGHT)));
     }
 
@@ -54,7 +54,7 @@ class DateTimePickerWrapTest extends UIUnitTest {
                 LocalDateTime.of(LocalDate.of(1995, 1, 5), LocalTime.NOON));
 
         assertThrows(IllegalArgumentException.class,
-                () -> wrap(view.picker).setValue(LocalDateTime
+                () -> test(view.picker).setValue(LocalDateTime
                         .of(LocalDate.of(1995, 1, 1), LocalTime.MIDNIGHT)));
     }
 
@@ -70,7 +70,7 @@ class DateTimePickerWrapTest extends UIUnitTest {
 
         final LocalDateTime newValue = LocalDateTime
                 .of(LocalDate.of(1995, 1, 5), LocalTime.NOON);
-        wrap(view.picker).setValue(newValue);
+        test(view.picker).setValue(newValue);
 
         Assertions.assertEquals(newValue, value.get());
     }

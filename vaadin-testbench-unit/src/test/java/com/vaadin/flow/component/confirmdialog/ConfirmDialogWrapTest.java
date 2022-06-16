@@ -27,14 +27,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class ConfirmDialogWrapTest extends UIUnitTest {
 
     ConfirmDialogView view;
-    ConfirmDialogWrap wrap;
+    ConfirmDialogTester wrap;
 
     @BeforeEach
     void init() {
         RouteConfiguration.forApplicationScope()
                 .setAnnotatedRoute(ConfirmDialogView.class);
         view = navigate(ConfirmDialogView.class);
-        wrap = wrap(view.dialog);
+        wrap = test(view.dialog);
     }
 
     @Test

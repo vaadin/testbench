@@ -22,7 +22,7 @@ import com.vaadin.testbench.unit.ViewPackages;
 class GetTextCellRendererTest extends UIUnitTest {
 
     RendererGridView view;
-    GridWrap<Grid<Person>, Person> grid_;
+    GridTester<Grid<Person>, Person> grid_;
 
     @BeforeEach
     void init() {
@@ -30,7 +30,7 @@ class GetTextCellRendererTest extends UIUnitTest {
                 .setAnnotatedRoute(RendererGridView.class);
 
         view = navigate(RendererGridView.class);
-        grid_ = wrap(view.grid);
+        grid_ = test(view.grid);
     }
 
     @Test

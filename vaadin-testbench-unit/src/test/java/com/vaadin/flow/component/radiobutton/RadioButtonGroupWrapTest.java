@@ -19,14 +19,14 @@ import com.vaadin.testbench.unit.UIUnitTest;
 class RadioButtonGroupWrapTest extends UIUnitTest {
 
     RadioButtonView view;
-    RadioButtonGroupWrap<RadioButtonGroup<RadioButtonView.Name>, RadioButtonView.Name> buttonGroup_;
+    RadioButtonGroupTester<RadioButtonGroup<RadioButtonView.Name>, RadioButtonView.Name> buttonGroup_;
 
     @BeforeEach
     public void registerView() {
         RouteConfiguration.forApplicationScope()
                 .setAnnotatedRoute(RadioButtonView.class);
         view = navigate(RadioButtonView.class);
-        buttonGroup_ = wrap(view.radioButtonGroup);
+        buttonGroup_ = test(view.radioButtonGroup);
     }
 
     @Test

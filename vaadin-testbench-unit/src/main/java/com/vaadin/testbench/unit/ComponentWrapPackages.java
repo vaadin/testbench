@@ -26,9 +26,9 @@ import java.lang.annotation.Target;
 public @interface ComponentWrapPackages {
 
     /**
-     * Array of packages to scan for {@link ComponentWrap} implementations.
+     * Array of packages to scan for {@link ComponentTester} implementations.
      * <p/>
-     * Implementation should use the {@link Wraps} annotation to be used
+     * Implementation should use the {@link Tests} annotation to be used
      * automatically in the {@code wraps(Component)} method.
      *
      * @return String array of packages to scan

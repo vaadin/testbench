@@ -32,23 +32,23 @@ class SelectWrapTest extends UIUnitTest {
 
     @Test
     void getSuggestionItems_returnsAllItems() {
-        final SelectWrap<Select<String>, String> select_ = wrap(view.select);
+        final SelectTester<Select<String>, String> select_ = test(view.select);
         assertIterableEquals(view.items, select_.getSuggestionItems());
 
-        final SelectWrap<Select<SelectView.Person>, SelectView.Person> person_ = wrap(
+        final SelectTester<Select<SelectView.Person>, SelectView.Person> person_ = test(
                 view.personSelect);
         assertIterableEquals(view.people, person_.getSuggestionItems());
     }
 
     @Test
     void stringSelect_getSuggestions_valuesEqualItems() {
-        final SelectWrap<Select<String>, String> select_ = wrap(view.select);
+        final SelectTester<Select<String>, String> select_ = test(view.select);
         assertIterableEquals(view.items, select_.getSuggestions());
     }
 
     @Test
     void stringSelect_selectItem_selectsCorrectItem() {
-        final SelectWrap<Select<String>, String> select_ = wrap(view.select);
+        final SelectTester<Select<String>, String> select_ = test(view.select);
         Assertions.assertNull(select_.getSelected());
 
         select_.selectItem("Fantasy");
@@ -63,7 +63,7 @@ class SelectWrapTest extends UIUnitTest {
 
     @Test
     void beanSelect_selectItem_selectsCorrectItem() {
-        final SelectWrap<Select<SelectView.Person>, SelectView.Person> select_ = wrap(
+        final SelectTester<Select<SelectView.Person>, SelectView.Person> select_ = test(
                 view.personSelect);
         Assertions.assertNull(select_.getSelected());
 

@@ -39,17 +39,18 @@ class NumberFieldWrapTest extends UIUnitTest {
     public void readOnlyNumberField_isNotUsable() {
         view.numberField.setReadOnly(true);
 
-        final NumberFieldWrap<NumberField, Double> nf_ = wrap(view.numberField);
+        final NumberFieldTester<NumberField, Double> nf_ = test(
+                view.numberField);
 
         Assertions.assertFalse(nf_.isUsable(),
                 "Read only NumberField shouldn't be usable");
     }
 
     @Test
-    public void readOnlyNumberField_automaticWrapper_readOnlyIsCheckedInUsable() {
+    public void readOnlyNumberField_automatictester_readOnlyIsCheckedInUsable() {
         view.numberField.setReadOnly(true);
 
-        Assertions.assertFalse(wrap(view.numberField).isUsable(),
+        Assertions.assertFalse(test(view.numberField).isUsable(),
                 "Read only NumberField shouldn't be usable");
     }
 
@@ -63,7 +64,8 @@ class NumberFieldWrapTest extends UIUnitTest {
                     value.compareAndSet(null, event.getValue());
                 });
 
-        final NumberFieldWrap<NumberField, Double> nf_ = wrap(view.numberField);
+        final NumberFieldTester<NumberField, Double> nf_ = test(
+                view.numberField);
         final Double newValue = 15d;
         nf_.setValue(newValue);
 
@@ -80,7 +82,7 @@ class NumberFieldWrapTest extends UIUnitTest {
                     value.compareAndSet(null, event.getValue());
                 });
 
-        final NumberFieldWrap<IntegerField, Integer> inf_ = wrap(
+        final NumberFieldTester<IntegerField, Integer> inf_ = test(
                 view.integerField);
         final Integer newValue = 15;
         inf_.setValue(newValue);
@@ -93,8 +95,9 @@ class NumberFieldWrapTest extends UIUnitTest {
 
         view.numberField.getElement().setEnabled(false);
         view.integerField.getElement().setEnabled(false);
-        final NumberFieldWrap<NumberField, Double> nf_ = wrap(view.numberField);
-        final NumberFieldWrap<IntegerField, Integer> inf_ = wrap(
+        final NumberFieldTester<NumberField, Double> nf_ = test(
+                view.numberField);
+        final NumberFieldTester<IntegerField, Integer> inf_ = test(
                 view.integerField);
 
         Assertions.assertThrows(IllegalStateException.class,
@@ -109,7 +112,8 @@ class NumberFieldWrapTest extends UIUnitTest {
     public void maxValue_throwsExceptionForTooSmallValue() {
         view.numberField.setMax(10.0);
 
-        final NumberFieldWrap<NumberField, Double> nf_ = wrap(view.numberField);
+        final NumberFieldTester<NumberField, Double> nf_ = test(
+                view.numberField);
         final Double newValue = 15d;
 
         assertThrows(IllegalArgumentException.class,
@@ -120,7 +124,8 @@ class NumberFieldWrapTest extends UIUnitTest {
     public void minValue_throwsExceptionForTooSmallValue() {
         view.numberField.setMin(20.0);
 
-        final NumberFieldWrap<NumberField, Double> nf_ = wrap(view.numberField);
+        final NumberFieldTester<NumberField, Double> nf_ = test(
+                view.numberField);
         final Double newValue = 15d;
 
         assertThrows(IllegalArgumentException.class,

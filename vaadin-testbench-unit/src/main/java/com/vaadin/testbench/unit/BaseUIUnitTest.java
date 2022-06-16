@@ -63,11 +63,11 @@ abstract class BaseUIUnitTest {
 
     private static final ConcurrentHashMap<String, Routes> routesCache = new ConcurrentHashMap<>();
 
-    protected static final Map<Class<?>, Class<? extends ComponentWrap>> wrappers = new HashMap<>();
+    protected static final Map<Class<?>, Class<? extends ComponentTester>> testers = new HashMap<>();
     protected static final Set<String> scanned = new HashSet<>();
 
     static {
-        wrappers.putAll(scanWrappers("com.vaadin.flow.component"));
+        testers.putAll(scanForTesters("com.vaadin.flow.component"));
         Properties properties = new Properties();
         try {
             properties.load(BaseUIUnitTest.class
@@ -82,30 +82,30 @@ abstract class BaseUIUnitTest {
                 properties.getProperty("testbench.version"));
     }
 
-    private static Map<Class<?>, Class<? extends ComponentWrap>> scanWrappers(
+    private static Map<Class<?>, Class<? extends ComponentTester>> scanForTesters(
             String... packages) {
         try (ScanResult scan = new ClassGraph().enableClassInfo()
                 .enableAnnotationInfo().acceptPackages(packages).scan(2)) {
-            ClassInfoList wrapperList = scan
-                    .getClassesWithAnnotation(Wraps.class.getName());
-            Map<Class<?>, Class<? extends ComponentWrap>> wrapperMap = new HashMap<>();
-            wrapperList
+            ClassInfoList testerList = scan
+                    .getClassesWithAnnotation(Tests.class.getName());
+            Map<Class<?>, Class<? extends ComponentTester>> testerMap = new HashMap<>();
+            testerList
                     .filter(classInfo -> classInfo
-                            .extendsSuperclass(ComponentWrap.class))
+                            .extendsSuperclass(ComponentTester.class))
                     .forEach(classInfo -> {
                         try {
-                            final Class<?> wrapper = Class
+                            final Class<?> tester = Class
                                     .forName(classInfo.getName());
-                            final Class<? extends Component>[] annotation = wrapper
-                                    .getAnnotation(Wraps.class).value();
+                            final Class<? extends Component>[] annotation = tester
+                                    .getAnnotation(Tests.class).value();
                             for (Class<? extends Component> component : annotation) {
-                                wrapperMap.put(component,
-                                        (Class<? extends ComponentWrap>) wrapper);
+                                testerMap.put(component,
+                                        (Class<? extends ComponentTester>) tester);
                             }
                             // -- Enable annotation with fqn for components with
                             // generics
-                            final String[] classes = wrapper
-                                    .getAnnotation(Wraps.class).fqn();
+                            final String[] classes = tester
+                                    .getAnnotation(Tests.class).fqn();
 
                             Arrays.stream(classes).map(clazz -> {
                                 try {
@@ -113,14 +113,14 @@ abstract class BaseUIUnitTest {
                                 } catch (ClassNotFoundException e) {
                                     throw new RuntimeException(e);
                                 }
-                            }).forEach(clazz -> wrapperMap.put(clazz,
-                                    (Class<? extends ComponentWrap>) wrapper));
+                            }).forEach(clazz -> testerMap.put(clazz,
+                                    (Class<? extends ComponentTester>) tester));
 
                         } catch (ClassNotFoundException e) {
                             throw new RuntimeException(e);
                         }
                     });
-            return Collections.unmodifiableMap(wrapperMap);
+            return Collections.unmodifiableMap(testerMap);
         }
     }
 
@@ -140,17 +140,17 @@ abstract class BaseUIUnitTest {
     }
 
     protected void initVaadinEnvironment() {
-        scanForWrappers();
+        scanTesters();
         MockVaadin.setup(discoverRoutes(), MockedUI::new, lookupServices());
     }
 
-    void scanForWrappers() {
+    void scanTesters() {
         if (getClass().isAnnotationPresent(ComponentWrapPackages.class)) {
             final List<String> packages = Arrays.asList(getClass()
                     .getAnnotation(ComponentWrapPackages.class).value());
             if (!scanned.containsAll((packages))) {
                 scanned.addAll(packages);
-                wrappers.putAll(scanWrappers(getClass()
+                testers.putAll(scanForTesters(getClass()
                         .getAnnotation(ComponentWrapPackages.class).value()));
             }
         }
@@ -313,12 +313,12 @@ abstract class BaseUIUnitTest {
 
     // Visible to ComponentWrap
     @SuppressWarnings("unchecked")
-    static <T extends ComponentWrap<Y>, Y extends Component> T internalWrap(
+    static <T extends ComponentTester<Y>, Y extends Component> T internalWrap(
             Y component) {
-        return (T) initialize(getWrapper(component.getClass()), component);
+        return (T) initialize(getTester(component.getClass()), component);
     }
 
-    static <T extends ComponentWrap<Y>, Y extends Component> T internalWrap(
+    static <T extends ComponentTester<Y>, Y extends Component> T internalWrap(
             Class<T> wrap, Y component) {
         return initialize(wrap, component);
     }
@@ -331,51 +331,51 @@ abstract class BaseUIUnitTest {
     }
 
     /**
-     * Wrap component with wrapper best matching component type.
+     * Wrap component with ComponentTester best matching component type.
      *
      * @param component
      *            component to get test wrapper for
      * @param <T>
-     *            wrapper type
+     *            tester type
      * @param <Y>
      *            component type
      * @return component in wrapper with test helpers
      */
-    public <T extends ComponentWrap<Y>, Y extends Component> T wrap(
+    public <T extends ComponentTester<Y>, Y extends Component> T test(
             Y component) {
         verifyAndGetUI();
         return internalWrap(component);
     }
 
     /**
-     * Wrap component in given test wrapper.
+     * Wrap component in given ComponentTester.
      *
-     * @param wrap
+     * @param tester
      *            test wrapper to use
      * @param component
      *            component to wrap
      * @param <T>
-     *            wrapper type
+     *            tester type
      * @param <Y>
      *            component type
      * @return initialized test wrapper for component
      */
-    public <T extends ComponentWrap<Y>, Y extends Component> T wrap(
-            Class<T> wrap, Y component) {
+    public <T extends ComponentTester<Y>, Y extends Component> T test(
+            Class<T> tester, Y component) {
         verifyAndGetUI();
-        return (T) initialize(wrap, component);
+        return (T) initialize(tester, component);
     }
 
-    private static <Y extends Component> Class<? extends ComponentWrap> getWrapper(
+    private static <Y extends Component> Class<? extends ComponentTester> getTester(
             Class<Y> component) {
         Class<?> latest = component;
         do {
-            if (wrappers.containsKey(latest)) {
-                return wrappers.get(latest);
+            if (testers.containsKey(latest)) {
+                return testers.get(latest);
             }
             latest = latest.getSuperclass();
         } while (!Component.class.equals(latest));
-        return ComponentWrap.class;
+        return ComponentTester.class;
     }
 
     /**
@@ -407,7 +407,7 @@ abstract class BaseUIUnitTest {
     public <T extends Component> ComponentQuery<T> $(Class<T> componentType,
             Component fromThis) {
         verifyAndGetUI();
-        return new ComponentQuery<>(componentType, this::wrap).from(fromThis);
+        return new ComponentQuery<>(componentType, this::test).from(fromThis);
     }
 
     /**
@@ -424,24 +424,24 @@ abstract class BaseUIUnitTest {
         Component viewComponent = getCurrentView().getElement().getComponent()
                 .orElseThrow(() -> new AssertionError(
                         "Cannot get Component instance for current view"));
-        return new ComponentQuery<>(componentType, this::wrap)
+        return new ComponentQuery<>(componentType, this::test)
                 .from(viewComponent);
     }
 
     /**
-     * Private initializer for wrapper classes.
+     * Private initializer for tester classes.
      *
      * @param clazz
-     *            wrapper class to initialize
+     *            tester class to initialize
      * @param component
-     *            component used with wrapper class
+     *            component used with tester class
      * @param <T>
-     *            component wrapper type
+     *            component tester type
      * @param <Y>
      *            component type
-     * @return wrapper with component set
+     * @return tester with component set
      */
-    private static <T extends ComponentWrap<Y>, Y extends Component> T initialize(
+    private static <T extends ComponentTester<Y>, Y extends Component> T initialize(
             Class<T> clazz, Y component) {
         try {
             // Get the generic class for given wrapper. Component should be an
@@ -468,28 +468,28 @@ abstract class BaseUIUnitTest {
     }
 
     /**
-     * Detects the component type for the given wrapper from generic
-     * declaration, by inspecting class hierarchy to resolve the concrete type
-     * for {@link ComponentWrap} defined type variable.
+     * Detects the component type for the given tester from generic declaration,
+     * by inspecting class hierarchy to resolve the concrete type for
+     * {@link ComponentTester} defined type variable.
      *
-     * @param wrapperType
-     *            the wrapper type
-     * @return the component type the wrapper defines
+     * @param testerType
+     *            the tester type
+     * @return the component type the tester defines
      */
     @SuppressWarnings("rawtypes")
     static Class<?> detectComponentType(
-            Class<? extends ComponentWrap> wrapperType) {
-        if (wrapperType == ComponentWrap.class) {
+            Class<? extends ComponentTester> testerType) {
+        if (testerType == ComponentTester.class) {
             return Component.class;
         }
         Map<Type, Type> typeMap = new HashMap<>();
-        Class<?> clazz = wrapperType;
-        while (!clazz.equals(ComponentWrap.class)) {
+        Class<?> clazz = testerType;
+        while (!clazz.equals(ComponentTester.class)) {
             extractTypeArguments(typeMap, clazz);
             clazz = clazz.getSuperclass();
         }
-        return GenericTypeReflector
-                .erase(typeMap.get(ComponentWrap.class.getTypeParameters()[0]));
+        return GenericTypeReflector.erase(
+                typeMap.get(ComponentTester.class.getTypeParameters()[0]));
     }
 
     /**

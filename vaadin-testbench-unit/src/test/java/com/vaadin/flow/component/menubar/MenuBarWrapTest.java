@@ -16,8 +16,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.vaadin.flow.component.contextmenu.ContextMenu;
-import com.vaadin.flow.component.contextmenu.ContextMenuWrap;
 import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.testbench.unit.UIUnitTest;
 import com.vaadin.testbench.unit.ViewPackages;
@@ -26,14 +24,14 @@ import com.vaadin.testbench.unit.ViewPackages;
 class MenuBarWrapTest extends UIUnitTest {
 
     MenuBarView view;
-    MenuBarWrap<MenuBar> menu_;
+    MenuBarTester<MenuBar> menu_;
 
     @BeforeEach
     void init() {
         RouteConfiguration.forApplicationScope()
                 .setAnnotatedRoute(MenuBarView.class);
         view = navigate(MenuBarView.class);
-        menu_ = wrap(view.menu);
+        menu_ = test(view.menu);
     }
 
     @Test

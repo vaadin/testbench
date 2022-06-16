@@ -34,38 +34,38 @@ public class ComboBoxWrapTest extends UIUnitTest {
 
     @Test
     void getSuggestionItems_noFilter_allItemsReturned() {
-        final List<ComboBoxView.Name> suggestions = wrap(view.combo)
+        final List<ComboBoxView.Name> suggestions = test(view.combo)
                 .getSuggestionItems();
         Assertions.assertIterableEquals(view.items, suggestions);
     }
 
     @Test
     void getSuggestions_noFilter_allItemsReturned() {
-        final List<String> suggestions = wrap(view.combo).getSuggestions();
+        final List<String> suggestions = test(view.combo).getSuggestions();
         Assertions.assertIterableEquals(Arrays.asList("test-foo", "test-bar"),
                 suggestions);
     }
 
     @Test
     void setFilter_getSuggestions_filterIsApplied() {
-        wrap(view.combo).setFilter("fo");
-        final List<String> suggestions = wrap(view.combo).getSuggestions();
+        test(view.combo).setFilter("fo");
+        final List<String> suggestions = test(view.combo).getSuggestions();
         Assertions.assertEquals(1, suggestions.size());
         Assertions.assertEquals("test-foo", suggestions.get(0));
     }
 
     @Test
     void selectItem_selectsCorrectItem() {
-        Assertions.assertNull(wrap(view.combo).getSelected());
+        Assertions.assertNull(test(view.combo).getSelected());
 
-        wrap(view.combo).selectItem("test-foo");
+        test(view.combo).selectItem("test-foo");
 
         Assertions.assertSame(view.items.get(0),
-                wrap(view.combo).getSelected());
+                test(view.combo).getSelected());
 
-        wrap(view.combo).selectItem(null);
+        test(view.combo).selectItem(null);
 
-        Assertions.assertNull(wrap(view.combo).getSelected(),
+        Assertions.assertNull(test(view.combo).getSelected(),
                 "Selecting null should clear selection");
     }
 }

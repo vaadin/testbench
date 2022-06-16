@@ -28,8 +28,8 @@ import com.vaadin.testbench.unit.ViewPackages;
 class GridWrapSortTest extends UIUnitTest {
 
     SortGridView view;
-    GridWrap<Grid<Person>, Person> grid_;
-    GridWrap<Grid<Person>, Person> beanGrid_;
+    GridTester<Grid<Person>, Person> grid_;
+    GridTester<Grid<Person>, Person> beanGrid_;
 
     @BeforeEach
     void init() {
@@ -37,8 +37,8 @@ class GridWrapSortTest extends UIUnitTest {
                 .setAnnotatedRoute(SortGridView.class);
 
         view = navigate(SortGridView.class);
-        grid_ = wrap(view.grid);
-        beanGrid_ = wrap(view.beanGrid);
+        grid_ = test(view.grid);
+        beanGrid_ = test(view.beanGrid);
     }
 
     @Test

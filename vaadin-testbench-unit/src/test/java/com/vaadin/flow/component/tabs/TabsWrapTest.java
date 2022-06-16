@@ -24,14 +24,14 @@ import com.vaadin.testbench.unit.ViewPackages;
 class TabsWrapTest extends UIUnitTest {
 
     TabsView view;
-    TabsWrap<Tabs> tabs_;
+    TabsTester<Tabs> tabs_;
 
     @BeforeEach
     void init() {
         RouteConfiguration.forApplicationScope()
                 .setAnnotatedRoute(TabsView.class);
         view = navigate(TabsView.class);
-        tabs_ = wrap(view.tabs);
+        tabs_ = test(view.tabs);
     }
 
     @Test

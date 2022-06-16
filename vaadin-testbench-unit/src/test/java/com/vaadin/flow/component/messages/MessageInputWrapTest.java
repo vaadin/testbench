@@ -39,7 +39,7 @@ class MessageInputWrapTest extends UIUnitTest {
                 submitEvent.getValue()));
 
         final String testMessage = "";
-        wrap(view.input).send(testMessage);
+        test(view.input).send(testMessage);
         Assertions.assertNull(message.get());
     }
 
@@ -51,7 +51,7 @@ class MessageInputWrapTest extends UIUnitTest {
                 submitEvent.getValue()));
 
         final String testMessage = "Hello";
-        wrap(view.input).send(testMessage);
+        test(view.input).send(testMessage);
         Assertions.assertEquals(testMessage, message.get());
     }
 
@@ -65,6 +65,6 @@ class MessageInputWrapTest extends UIUnitTest {
 
         final String testMessage = "Hello";
         Assertions.assertThrows(IllegalStateException.class,
-                () -> wrap(view.input).send(testMessage));
+                () -> test(view.input).send(testMessage));
     }
 }

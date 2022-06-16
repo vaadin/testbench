@@ -31,7 +31,7 @@ class NotificationWrapTest extends UIUnitTest {
     void notOpenedNotification_isNotUsable() {
         Notification notification = new Notification("Not Opened");
 
-        Assertions.assertFalse(wrap(notification).isUsable(),
+        Assertions.assertFalse(test(notification).isUsable(),
                 "Not opened Notification shouldn't be usable");
     }
 
@@ -41,7 +41,7 @@ class NotificationWrapTest extends UIUnitTest {
         Notification notification = Notification.show(notificationText);
         roundTrip();
 
-        Assertions.assertTrue(wrap(notification).isUsable(),
+        Assertions.assertTrue(test(notification).isUsable(),
                 "Opened Notification should be usable");
     }
 
@@ -52,7 +52,7 @@ class NotificationWrapTest extends UIUnitTest {
         notification.setEnabled(false);
         roundTrip();
 
-        Assertions.assertTrue(wrap(notification).isUsable(),
+        Assertions.assertTrue(test(notification).isUsable(),
                 "Disabled Notification should be usable");
     }
 
@@ -63,7 +63,7 @@ class NotificationWrapTest extends UIUnitTest {
         notification.setVisible(false);
         roundTrip();
 
-        Assertions.assertFalse(wrap(notification).isUsable(),
+        Assertions.assertFalse(test(notification).isUsable(),
                 "Hidden Notification should not be usable");
     }
 
@@ -74,7 +74,7 @@ class NotificationWrapTest extends UIUnitTest {
         roundTrip();
         notification.close();
 
-        Assertions.assertFalse(wrap(notification).isUsable(),
+        Assertions.assertFalse(test(notification).isUsable(),
                 "Closed Notification should not be usable");
     }
 
@@ -83,7 +83,7 @@ class NotificationWrapTest extends UIUnitTest {
         Notification notification = Notification.show("Some text");
         roundTrip();
 
-        NotificationWrap<?> notification_ = wrap(NotificationWrap.class,
+        NotificationTester<?> notification_ = test(NotificationTester.class,
                 notification);
         notification_.autoClose();
 
@@ -96,7 +96,7 @@ class NotificationWrapTest extends UIUnitTest {
         Notification notification = new Notification("Some text");
 
         Assertions.assertThrows(IllegalStateException.class,
-                wrap(notification)::autoClose,
+                test(notification)::autoClose,
                 "Auto-close not opened notification should fail");
     }
 
@@ -105,7 +105,7 @@ class NotificationWrapTest extends UIUnitTest {
         Notification notification = Notification.show("Some text");
         roundTrip();
 
-        NotificationWrap<?> notification_ = wrap(NotificationWrap.class,
+        NotificationTester<?> notification_ = test(NotificationTester.class,
                 notification);
         notification_.autoClose();
         Assertions.assertThrows(IllegalStateException.class,
@@ -120,7 +120,7 @@ class NotificationWrapTest extends UIUnitTest {
         roundTrip();
 
         Assertions.assertThrows(IllegalStateException.class,
-                wrap(notification)::autoClose,
+                test(notification)::autoClose,
                 "Auto-close notification with auto-close disabled should fail");
     }
 
@@ -131,7 +131,7 @@ class NotificationWrapTest extends UIUnitTest {
         roundTrip();
 
 
-        Assertions.assertEquals(notificationText, wrap(notification).getText());
+        Assertions.assertEquals(notificationText, test(notification).getText());
     }
 
     @Test
@@ -139,7 +139,7 @@ class NotificationWrapTest extends UIUnitTest {
         Notification notification = new Notification("Some text");
 
         Assertions.assertThrows(IllegalStateException.class,
-                wrap(notification)::getText,
+                test(notification)::getText,
                 "Getting text from not opened notification should fail");
     }
 
@@ -150,7 +150,7 @@ class NotificationWrapTest extends UIUnitTest {
         roundTrip();
 
         Assertions.assertThrows(IllegalStateException.class,
-                wrap(notification)::getText,
+                test(notification)::getText,
                 "Getting text from closed notification should fail");
     }
 

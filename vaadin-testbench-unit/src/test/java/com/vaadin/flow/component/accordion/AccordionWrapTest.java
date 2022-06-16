@@ -31,7 +31,7 @@ class AccordionWrapTest extends UIUnitTest {
 
     @Test
     void getPanelBySummary_returnsCorrectPanel() {
-        final AccordionWrap<Accordion> wrap = wrap(view.accordion);
+        final AccordionTester<Accordion> wrap = test(view.accordion);
         wrap.openDetails("Red");
         Assertions.assertSame(view.redPanel, wrap.getPanel("Red"));
         wrap.openDetails("Disabled");
@@ -41,14 +41,14 @@ class AccordionWrapTest extends UIUnitTest {
     @Test
     void closedPanel_getPanelThrows() {
         Assertions.assertThrows(IllegalStateException.class,
-                () -> wrap(view.accordion).getPanel("Green"));
+                () -> test(view.accordion).getPanel("Green"));
     }
 
     @Test
     void isOpen_seesCorrectPanel() {
         view.accordion.open(view.redPanel);
 
-        final AccordionWrap<Accordion> wrap = wrap(view.accordion);
+        final AccordionTester<Accordion> wrap = test(view.accordion);
         Assertions.assertTrue(wrap.isOpen("Red"), "Red should be open");
         Assertions.assertFalse(wrap.isOpen("Green"), "Only red should be open");
 
@@ -60,7 +60,7 @@ class AccordionWrapTest extends UIUnitTest {
 
     @Test
     void hasPanel_returnsTrueForExistingPanel() {
-        final AccordionWrap<Accordion> wrap = wrap(view.accordion);
+        final AccordionTester<Accordion> wrap = test(view.accordion);
         Assertions.assertTrue(wrap.hasPanel("Green"),
                 "Green panel should exist");
         Assertions.assertFalse(wrap.hasPanel("Orange"),

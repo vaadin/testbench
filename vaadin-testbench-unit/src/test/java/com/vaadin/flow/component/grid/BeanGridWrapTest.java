@@ -21,7 +21,7 @@ import com.vaadin.testbench.unit.ViewPackages;
 public class BeanGridWrapTest extends UIUnitTest {
 
     BeanGridView view;
-    GridWrap<Grid<Person>, Person> grid_;
+    GridTester<Grid<Person>, Person> grid_;
 
     @BeforeEach
     void init() {
@@ -29,7 +29,7 @@ public class BeanGridWrapTest extends UIUnitTest {
                 .setAnnotatedRoute(BeanGridView.class);
 
         view = navigate(BeanGridView.class);
-        grid_ = wrap(view.beanGrid);
+        grid_ = test(view.beanGrid);
     }
 
     @Test

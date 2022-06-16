@@ -38,73 +38,73 @@ public class BasicGridWrapTest extends UIUnitTest {
 
     @Test
     void basicGrid_verifyColumnContent() {
-        Assertions.assertEquals(2, wrap(view.basicGrid).size());
+        Assertions.assertEquals(2, test(view.basicGrid).size());
 
-        Assertions.assertTrue(wrap(view.basicGrid).getSelected().isEmpty());
+        Assertions.assertTrue(test(view.basicGrid).getSelected().isEmpty());
 
         Assertions.assertEquals("Jorma",
-                wrap(view.basicGrid).getCellText(0, 0));
-        Assertions.assertEquals("46", wrap(view.basicGrid).getCellText(0, 1));
-        Assertions.assertEquals("Maya", wrap(view.basicGrid).getCellText(1, 0));
-        Assertions.assertEquals("18", wrap(view.basicGrid).getCellText(1, 1));
+                test(view.basicGrid).getCellText(0, 0));
+        Assertions.assertEquals("46", test(view.basicGrid).getCellText(0, 1));
+        Assertions.assertEquals("Maya", test(view.basicGrid).getCellText(1, 0));
+        Assertions.assertEquals("18", test(view.basicGrid).getCellText(1, 1));
     }
 
     @Test
     void basicGrid_selectionOnClick() {
 
-        Assertions.assertTrue(wrap(view.basicGrid).getSelected().isEmpty());
+        Assertions.assertTrue(test(view.basicGrid).getSelected().isEmpty());
 
-        wrap(view.basicGrid).clickRow(0);
+        test(view.basicGrid).clickRow(0);
 
-        Assertions.assertEquals(1, wrap(view.basicGrid).getSelected().size());
+        Assertions.assertEquals(1, test(view.basicGrid).getSelected().size());
         Assertions.assertSame(view.first,
-                wrap(view.basicGrid).getSelected().iterator().next());
+                test(view.basicGrid).getSelected().iterator().next());
 
-        wrap(view.basicGrid).clickRow(1);
+        test(view.basicGrid).clickRow(1);
 
-        Assertions.assertEquals(1, wrap(view.basicGrid).getSelected().size());
+        Assertions.assertEquals(1, test(view.basicGrid).getSelected().size());
         Assertions.assertSame(view.second,
-                wrap(view.basicGrid).getSelected().iterator().next());
+                test(view.basicGrid).getSelected().iterator().next());
     }
 
     @Test
     void basicGrid_deselectSelectedOnClick() {
 
-        Assertions.assertTrue(wrap(view.basicGrid).getSelected().isEmpty());
+        Assertions.assertTrue(test(view.basicGrid).getSelected().isEmpty());
 
-        wrap(view.basicGrid).clickRow(0);
+        test(view.basicGrid).clickRow(0);
 
-        Assertions.assertEquals(1, wrap(view.basicGrid).getSelected().size());
+        Assertions.assertEquals(1, test(view.basicGrid).getSelected().size());
         Assertions.assertSame(view.first,
-                wrap(view.basicGrid).getSelected().iterator().next());
+                test(view.basicGrid).getSelected().iterator().next());
 
-        wrap(view.basicGrid).clickRow(0);
+        test(view.basicGrid).clickRow(0);
 
-        Assertions.assertTrue(wrap(view.basicGrid).getSelected().isEmpty(),
+        Assertions.assertTrue(test(view.basicGrid).getSelected().isEmpty(),
                 "Clicking selected row should deselect");
     }
 
     @Test
     void basicGrid_selectWillChangeSelection() {
-        wrap(view.basicGrid).select(1);
+        test(view.basicGrid).select(1);
 
-        Assertions.assertEquals(1, wrap(view.basicGrid).getSelected().size());
+        Assertions.assertEquals(1, test(view.basicGrid).getSelected().size());
         Assertions.assertSame(view.second,
-                wrap(view.basicGrid).getSelected().iterator().next());
+                test(view.basicGrid).getSelected().iterator().next());
 
-        wrap(view.basicGrid).select(0);
-        Assertions.assertEquals(1, wrap(view.basicGrid).getSelected().size(),
+        test(view.basicGrid).select(0);
+        Assertions.assertEquals(1, test(view.basicGrid).getSelected().size(),
                 "Single select should only change selection.");
         Assertions.assertSame(view.first,
-                wrap(view.basicGrid).getSelected().iterator().next());
+                test(view.basicGrid).getSelected().iterator().next());
     }
 
     @Test
     void basicGrid_headerContent() {
         Assertions.assertEquals(view.firstHeader,
-                wrap(view.basicGrid).getHeaderCell(0));
+                test(view.basicGrid).getHeaderCell(0));
         Assertions.assertEquals(view.secondHeader,
-                wrap(view.basicGrid).getHeaderCell(1));
+                test(view.basicGrid).getHeaderCell(1));
     }
 
     @Test
@@ -112,15 +112,15 @@ public class BasicGridWrapTest extends UIUnitTest {
         // This is not right for a test, but we are testing features.
         view.basicGrid.setSelectionMode(Grid.SelectionMode.MULTI);
 
-        wrap(view.basicGrid).clickRow(0);
+        test(view.basicGrid).clickRow(0);
 
-        Assertions.assertTrue(wrap(view.basicGrid).getSelected().isEmpty(),
+        Assertions.assertTrue(test(view.basicGrid).getSelected().isEmpty(),
                 "Multiselect doesn't select for row click!");
 
-        wrap(view.basicGrid).select(0);
-        wrap(view.basicGrid).select(1);
+        test(view.basicGrid).select(0);
+        test(view.basicGrid).select(1);
 
-        Assertions.assertSame(2, wrap(view.basicGrid).getSelected().size());
+        Assertions.assertSame(2, test(view.basicGrid).getSelected().size());
     }
 
     @Test
@@ -128,15 +128,15 @@ public class BasicGridWrapTest extends UIUnitTest {
         // This is not right for a test, but we are testing features.
         view.basicGrid.setSelectionMode(Grid.SelectionMode.MULTI);
 
-        wrap(view.basicGrid).selectAll();
+        test(view.basicGrid).selectAll();
 
-        Assertions.assertSame(2, wrap(view.basicGrid).getSelected().size());
+        Assertions.assertSame(2, test(view.basicGrid).getSelected().size());
     }
 
     @Test
     void basicGrid_singleSelectThrowsForSelectAll() {
         Assertions.assertThrows(IllegalStateException.class,
-                () -> wrap(view.basicGrid).selectAll(),
+                () -> test(view.basicGrid).selectAll(),
                 "Select all should throw for single select");
     }
 
@@ -145,10 +145,10 @@ public class BasicGridWrapTest extends UIUnitTest {
         view.basicGrid.setVisible(false);
 
         Assertions.assertThrows(IllegalStateException.class,
-                () -> wrap(view.basicGrid).getHeaderCell(0),
+                () -> test(view.basicGrid).getHeaderCell(0),
                 "Header cell shouldn't be available for hidden grid");
         Assertions.assertThrows(IllegalStateException.class,
-                () -> wrap(view.basicGrid).getCellText(0, 0),
+                () -> test(view.basicGrid).getCellText(0, 0),
                 "Cell content shouldn't be available for hidden grid");
     }
 
@@ -158,12 +158,12 @@ public class BasicGridWrapTest extends UIUnitTest {
         view.basicGrid.addItemDoubleClickListener(
                 event -> doubleClicks.incrementAndGet());
 
-        wrap(view.basicGrid).clickRow(0);
+        test(view.basicGrid).clickRow(0);
 
         Assertions.assertEquals(0, doubleClicks.get(),
                 "Click should not generate a double click event");
 
-        wrap(view.basicGrid).doubleClickRow(0);
+        test(view.basicGrid).doubleClickRow(0);
 
         Assertions.assertEquals(1, doubleClicks.get(),
                 "Double click event should have fired");
@@ -172,7 +172,7 @@ public class BasicGridWrapTest extends UIUnitTest {
 
     @Test
     void getCellComponent_columnByKey_returnsInstantiatedComponent() {
-        final Component cellComponent = wrap(view.basicGrid).getCellComponent(1,
+        final Component cellComponent = test(view.basicGrid).getCellComponent(1,
                 view.subscriber);
         Assertions.assertTrue(cellComponent instanceof CheckBox);
         Assertions.assertFalse(((CheckBox) cellComponent).isChecked());
@@ -181,12 +181,12 @@ public class BasicGridWrapTest extends UIUnitTest {
     @Test
     void getCellComponentByFaultyKey_throwsException() {
         Assertions.assertThrows(IllegalArgumentException.class,
-                () -> wrap(view.basicGrid).getCellComponent(1, "property"));
+                () -> test(view.basicGrid).getCellComponent(1, "property"));
     }
 
     @Test
     void getCellComponent_columnByPosition_returnsInstantiatedComponent() {
-        final Component cellComponent = wrap(view.basicGrid).getCellComponent(1,
+        final Component cellComponent = test(view.basicGrid).getCellComponent(1,
                 2);
         Assertions.assertTrue(cellComponent instanceof CheckBox);
         Assertions.assertFalse(((CheckBox) cellComponent).isChecked());
@@ -195,7 +195,7 @@ public class BasicGridWrapTest extends UIUnitTest {
     @Test
     void getCellComponent_columnByPosition_stringColumnThrows() {
         Assertions.assertThrows(IllegalArgumentException.class,
-                () -> wrap(view.basicGrid).getCellComponent(1, 1));
+                () -> test(view.basicGrid).getCellComponent(1, 1));
     }
 
     @Test
@@ -206,10 +206,10 @@ public class BasicGridWrapTest extends UIUnitTest {
         view.basicGrid.setColumnOrder(columns);
 
         Assertions.assertEquals("Jorma",
-                wrap(view.basicGrid).getCellText(0, 2));
-        Assertions.assertEquals("46", wrap(view.basicGrid).getCellText(0, 1));
-        Assertions.assertEquals("Maya", wrap(view.basicGrid).getCellText(1, 2));
-        Assertions.assertEquals("18", wrap(view.basicGrid).getCellText(1, 1));
+                test(view.basicGrid).getCellText(0, 2));
+        Assertions.assertEquals("46", test(view.basicGrid).getCellText(0, 1));
+        Assertions.assertEquals("Maya", test(view.basicGrid).getCellText(1, 2));
+        Assertions.assertEquals("18", test(view.basicGrid).getCellText(1, 1));
     }
 
 }

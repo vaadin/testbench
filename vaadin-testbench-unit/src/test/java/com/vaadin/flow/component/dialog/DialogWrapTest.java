@@ -14,7 +14,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.button.ButtonWrap;
+import com.vaadin.flow.component.button.ButtonTester;
 import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.testbench.unit.UIUnitTest;
 import com.vaadin.testbench.unit.ViewPackages;
@@ -23,14 +23,14 @@ import com.vaadin.testbench.unit.ViewPackages;
 class DialogWrapTest extends UIUnitTest {
 
     DialogView view;
-    DialogWrap dialog_;
+    DialogTester dialog_;
 
     @BeforeEach
     void init() {
         RouteConfiguration.forApplicationScope()
                 .setAnnotatedRoute(DialogView.class);
         view = navigate(DialogView.class);
-        dialog_ = wrap(view.dialog);
+        dialog_ = test(view.dialog);
     }
 
     @Test
@@ -43,7 +43,7 @@ class DialogWrapTest extends UIUnitTest {
     @Test
     void modalDialog_blocksUIComponents() {
         dialog_.open();
-        ButtonWrap<Button> button_ = wrap(view.button);
+        ButtonTester<Button> button_ = test(view.button);
         Assertions.assertFalse(button_.isUsable(),
                 "Dialog should be modal by default blocking button");
 
@@ -57,7 +57,7 @@ class DialogWrapTest extends UIUnitTest {
     void nonModalDialog_UIComponentsUsable() {
         view.dialog.setModal(false);
         dialog_.open();
-        ButtonWrap<Button> button_ = wrap(view.button);
+        ButtonTester<Button> button_ = test(view.button);
         Assertions.assertTrue(button_.isUsable(),
                 "Non-modal dialog should not block button");
     }

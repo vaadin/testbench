@@ -187,7 +187,7 @@ class ComponentQueryTest extends UIUnitTest {
     @Test
     void all_noMatching_getsEmptyList() {
         ComponentQuery<TextField> query = $(TextField.class);
-        List<ComponentWrap<TextField>> result = query.all();
+        List<ComponentTester<TextField>> result = query.all();
         Assertions.assertNotNull(result);
         Assertions.assertTrue(result.isEmpty(),
                 "Expecting no results from search, but got " + result);
@@ -203,10 +203,11 @@ class ComponentQueryTest extends UIUnitTest {
                 .forEach(text -> rootElement.appendChild(text.getElement()));
 
         ComponentQuery<TextField> query = $(TextField.class);
-        List<ComponentWrap<TextField>> result = query.all();
+        List<ComponentTester<TextField>> result = query.all();
         Assertions.assertNotNull(result);
         List<TextField> foundComponents = result.stream()
-                .map(ComponentWrap::getComponent).collect(Collectors.toList());
+                .map(ComponentTester::getComponent)
+                .collect(Collectors.toList());
         Assertions.assertIterableEquals(expectedComponents, foundComponents);
 
         Assertions.assertIterableEquals(
@@ -326,7 +327,7 @@ class ComponentQueryTest extends UIUnitTest {
         Assertions.assertIterableEquals(Collections.singleton(inViewTextField),
                 result);
 
-        ComponentWrap<TextField> foundTextField = $(TextField.class)
+        ComponentTester<TextField> foundTextField = $(TextField.class)
                 .from(context).id("myId");
         Assertions.assertSame(inViewTextField, foundTextField.getComponent());
 

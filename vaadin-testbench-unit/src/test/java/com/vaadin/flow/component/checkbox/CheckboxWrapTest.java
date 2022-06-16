@@ -35,7 +35,7 @@ class CheckboxWrapTest extends UIUnitTest {
     @Test
     void readOnlyCheckbox_isNotUsable() {
         view.checkbox.setReadOnly(true);
-        Assertions.assertFalse(wrap(view.checkbox).isUsable(),
+        Assertions.assertFalse(test(view.checkbox).isUsable(),
                 "Readonly checkbox should not be usable");
     }
 
@@ -44,11 +44,11 @@ class CheckboxWrapTest extends UIUnitTest {
         Assertions.assertFalse(view.checkbox.getValue(),
                 "Expecting checkbox initial state not to be checked");
 
-        wrap(view.checkbox).click();
+        test(view.checkbox).click();
         Assertions.assertTrue(view.checkbox.getValue(),
                 "Expecting checkbox to be checked, but was not");
 
-        wrap(view.checkbox).click();
+        test(view.checkbox).click();
         Assertions.assertFalse(view.checkbox.getValue(),
                 "Expecting checkbox not to be checked, but was");
 
@@ -61,7 +61,7 @@ class CheckboxWrapTest extends UIUnitTest {
         Assertions.assertFalse(view.checkbox.getValue(),
                 "Expecting checkbox not to be checked, but was");
 
-        wrap(view.checkbox).click();
+        test(view.checkbox).click();
         Assertions.assertTrue(checkedChange.get(),
                 "Expected checked change event to be fired, but was not");
         Assertions.assertTrue(view.checkbox.getValue(),
@@ -72,28 +72,28 @@ class CheckboxWrapTest extends UIUnitTest {
     void click_disabled_throws() {
         view.checkbox.setEnabled(false);
         Assertions.assertThrows(IllegalStateException.class,
-                wrap(view.checkbox)::click);
+                test(view.checkbox)::click);
     }
 
     @Test
     void click_disabledByProperty_throws() {
         view.checkbox.setDisabled(true);
         Assertions.assertThrows(IllegalStateException.class,
-                wrap(view.checkbox)::click);
+                test(view.checkbox)::click);
     }
 
     @Test
     void click_invisible_throws() {
         view.checkbox.setVisible(false);
         Assertions.assertThrows(IllegalStateException.class,
-                wrap(view.checkbox)::click);
+                test(view.checkbox)::click);
     }
 
     @Test
     void click_readOnly_throws() {
         view.checkbox.setReadOnly(true);
         Assertions.assertThrows(IllegalStateException.class,
-                wrap(view.checkbox)::click);
+                test(view.checkbox)::click);
     }
 
 }

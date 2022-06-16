@@ -32,7 +32,7 @@ public class LoginFormWrapTest extends UIUnitTest {
 
     @Test
     void login_generatesLoginEvent() {
-        wrap(view.login).login("user", "pwd");
+        test(view.login).login("user", "pwd");
         Assertions.assertEquals(1, $(Span.class).from(view).all().size());
         Span message = $(Span.class).from(view).withId("m1").first()
                 .getComponent();
@@ -42,19 +42,19 @@ public class LoginFormWrapTest extends UIUnitTest {
 
     @Test
     void login_disablesLoginComponent() {
-        wrap(view.login).login("admin", "adm");
+        test(view.login).login("admin", "adm");
 
-        Assertions.assertFalse(wrap(view.login).isUsable(),
+        Assertions.assertFalse(test(view.login).isUsable(),
                 "Login should be disabled after a login event.");
 
         Assertions.assertThrows(IllegalStateException.class,
-                () -> wrap(view.login).login("us", "er"),
+                () -> test(view.login).login("us", "er"),
                 "Disabled login should not accept login event");
     }
 
     @Test
     void forgotPassword_generatesEvent() {
-        wrap(view.login).forgotPassword();
+        test(view.login).forgotPassword();
 
         Assertions.assertEquals(1, $(Span.class).from(view).all().size());
         Span message = $(Span.class).from(view).withId("m1").first()
@@ -67,7 +67,7 @@ public class LoginFormWrapTest extends UIUnitTest {
         view.login.setForgotPasswordButtonVisible(false);
 
         Assertions.assertThrows(IllegalStateException.class,
-                () -> wrap(view.login).forgotPassword(),
+                () -> test(view.login).forgotPassword(),
                 "Hidden forgot password button should not be usable.");
     }
 

@@ -46,8 +46,8 @@ class UploadWrapTest extends UIUnitTest {
     private static File file3;
 
     UploadView view;
-    UploadWrap<Upload> single_;
-    UploadWrap<Upload> multi_;
+    UploadTester<Upload> single_;
+    UploadTester<Upload> multi_;
 
     @BeforeAll
     static void setupTestFiles() throws IOException {
@@ -64,8 +64,8 @@ class UploadWrapTest extends UIUnitTest {
         RouteConfiguration.forApplicationScope()
                 .setAnnotatedRoute(UploadView.class);
         view = navigate(UploadView.class);
-        single_ = wrap(view.uploadSingle);
-        multi_ = wrap(view.uploadMulti);
+        single_ = test(view.uploadSingle);
+        multi_ = test(view.uploadMulti);
     }
 
     @Test

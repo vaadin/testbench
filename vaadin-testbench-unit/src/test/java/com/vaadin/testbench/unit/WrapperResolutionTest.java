@@ -23,39 +23,40 @@ public class WrapperResolutionTest extends UIUnitTest {
     public void wrapTest_returnsTestWrap() {
         TestComponent tc = new TestComponent();
 
-        Assertions.assertTrue(wrap(tc) instanceof TestWrap);
+        Assertions.assertTrue(test(tc) instanceof TestTester);
     }
 
     @Test
     public void wrapComponentExtendingTest_returnsTestWrap() {
         MyTest mt = new MyTest();
 
-        Assertions.assertTrue(wrap(mt) instanceof TestWrap);
+        Assertions.assertTrue(test(mt) instanceof TestTester);
     }
 
     @Test
     public void wrapOtherComponent_returnsGenericComponentWrap() {
         SpecialComponent sc = new SpecialComponent();
-        Assertions.assertTrue(wrap(sc).getClass().equals(ComponentWrap.class));
+        Assertions
+                .assertTrue(test(sc).getClass().equals(ComponentTester.class));
     }
 
     @Test
     public void wrapTestComponentForConcreteWrapper_returnsNonGenericTestWrap() {
         TestComponentForConcreteWrapper component = new TestComponentForConcreteWrapper();
-        Assertions.assertEquals(wrap(component).getClass(),
-                NonGenericTestWrap.class);
+        Assertions.assertEquals(test(component).getClass(),
+                NonGenericTestTester.class);
     }
 
     @Test
     void detectComponentType_resolvesComponentTypeThroughHierarchy() {
         Assertions.assertEquals(Component.class,
-                detectComponentType(ComponentWrap.class));
+                detectComponentType(ComponentTester.class));
         Assertions.assertEquals(TestComponent.class,
-                detectComponentType(MyWrap.class));
+                detectComponentType(MyTester.class));
         Assertions.assertEquals(MyTest.class,
-                detectComponentType(MyExtendedWrap.class));
+                detectComponentType(MyExtendedTester.class));
         Assertions.assertEquals(TestComponentForConcreteWrapper.class,
-                detectComponentType(NonGenericTestWrap.class));
+                detectComponentType(NonGenericTestTester.class));
     }
 
     public static class MyTest extends TestComponent {
@@ -65,14 +66,15 @@ public class WrapperResolutionTest extends UIUnitTest {
     public static class SpecialComponent extends Component {
     }
 
-    static class MyWrap<Y, Z extends TestComponent> extends ComponentWrap<Z> {
-        public MyWrap(Z component) {
+    static class MyTester<Y, Z extends TestComponent>
+            extends ComponentTester<Z> {
+        public MyTester(Z component) {
             super(component);
         }
     }
 
-    static class MyExtendedWrap<Y> extends MyWrap<Y, MyTest> {
-        public MyExtendedWrap(MyTest component) {
+    static class MyExtendedTester<Y> extends MyTester<Y, MyTest> {
+        public MyExtendedTester(MyTest component) {
             super(component);
         }
     }

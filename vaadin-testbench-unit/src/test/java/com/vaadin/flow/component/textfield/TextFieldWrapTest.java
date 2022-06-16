@@ -38,7 +38,7 @@ public class TextFieldWrapTest extends UIUnitTest {
     public void readOnlyTextField_isNotUsable() {
         view.textField.setReadOnly(true);
 
-        final TextFieldWrap<TextField, String> tf_ = wrap(view.textField);
+        final TextFieldTester<TextField, String> tf_ = test(view.textField);
 
         Assertions.assertFalse(tf_.isUsable(),
                 "Read only TextField shouldn't be usable");
@@ -48,7 +48,7 @@ public class TextFieldWrapTest extends UIUnitTest {
     public void readOnlyTextField_automaticWrapper_readOnlyIsCheckedInUsable() {
         view.textField.setReadOnly(true);
 
-        Assertions.assertFalse(wrap(view.textField).isUsable(),
+        Assertions.assertFalse(test(view.textField).isUsable(),
                 "Read only TextField shouldn't be usable");
     }
 
@@ -62,7 +62,7 @@ public class TextFieldWrapTest extends UIUnitTest {
                     value.compareAndSet(null, event.getValue());
                 });
 
-        final TextFieldWrap<TextField, String> tf_ = wrap(view.textField);
+        final TextFieldTester<TextField, String> tf_ = test(view.textField);
         final String newValue = "Test";
         tf_.setValue(newValue);
 
@@ -73,7 +73,7 @@ public class TextFieldWrapTest extends UIUnitTest {
     public void nonInteractableField_throwsOnSetValue() {
 
         view.textField.getElement().setEnabled(false);
-        final TextFieldWrap<TextField, String> tf_ = wrap(view.textField);
+        final TextFieldTester<TextField, String> tf_ = test(view.textField);
 
         Assertions.assertThrows(IllegalStateException.class,
                 () -> tf_.setValue("fail"),
@@ -85,7 +85,7 @@ public class TextFieldWrapTest extends UIUnitTest {
         // Only accept numbers
         view.textField.setPattern("\\d*");
 
-        final TextFieldWrap<TextField, String> tf_ = wrap(view.textField);
+        final TextFieldTester<TextField, String> tf_ = test(view.textField);
         final String faultyValue = "Invalid value, but doesn't throw";
         tf_.setValue(faultyValue);
         Assertions.assertEquals(faultyValue, view.textField.getValue(),
@@ -99,7 +99,7 @@ public class TextFieldWrapTest extends UIUnitTest {
         // Only accept numbers
         tf.setPattern("\\d*");
 
-        final TextFieldWrap<TextField, String> tf_ = wrap(tf);
+        final TextFieldTester<TextField, String> tf_ = test(tf);
         tf_.setValue("1234");
 
         Assertions.assertEquals("1234", tf.getValue());
@@ -115,7 +115,7 @@ public class TextFieldWrapTest extends UIUnitTest {
         tf.setPreventInvalidInput(true);
         tf.setMinLength(5);
 
-        final TextFieldWrap<TextField, String> tf_ = wrap(tf);
+        final TextFieldTester<TextField, String> tf_ = test(tf);
 
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> tf_.setValue("1234"),
@@ -128,7 +128,7 @@ public class TextFieldWrapTest extends UIUnitTest {
         tf.setPreventInvalidInput(true);
         tf.setMaxLength(3);
 
-        final TextFieldWrap<TextField, String> tf_ = wrap(tf);
+        final TextFieldTester<TextField, String> tf_ = test(tf);
 
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> tf_.setValue("1234"),
@@ -141,7 +141,7 @@ public class TextFieldWrapTest extends UIUnitTest {
         tf.setPreventInvalidInput(true);
         tf.setRequired(true);
 
-        final TextFieldWrap<TextField, String> tf_ = wrap(tf);
+        final TextFieldTester<TextField, String> tf_ = test(tf);
 
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> tf_.setValue(""),
@@ -158,10 +158,10 @@ public class TextFieldWrapTest extends UIUnitTest {
         getCurrentView().getElement().appendChild(tf.getElement(),
                 ef.getElement(), pf.getElement(), bdf.getElement());
 
-        TextFieldWrap<TextField, String> tf_ = wrap(tf);
-        TextFieldWrap<EmailField, String> ef_ = wrap(ef);
-        TextFieldWrap<PasswordField, String> pf_ = wrap(pf);
-        TextFieldWrap<BigDecimalField, BigDecimal> bdf_ = wrap(bdf);
+        TextFieldTester<TextField, String> tf_ = test(tf);
+        TextFieldTester<EmailField, String> ef_ = test(ef);
+        TextFieldTester<PasswordField, String> pf_ = test(pf);
+        TextFieldTester<BigDecimalField, BigDecimal> bdf_ = test(bdf);
 
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> tf_.setValue(null));
@@ -179,7 +179,7 @@ public class TextFieldWrapTest extends UIUnitTest {
         tf.setValue("Some value");
         getCurrentView().getElement().appendChild(tf.getElement());
 
-        TextFieldWrap<TextField, String> tf_ = wrap(tf);
+        TextFieldTester<TextField, String> tf_ = test(tf);
         tf_.clear();
 
         Assertions.assertTrue(tf.isEmpty(), "Value should have cleared");
@@ -197,7 +197,7 @@ public class TextFieldWrapTest extends UIUnitTest {
         tf.setClearButtonVisible(true);
         getCurrentView().getElement().appendChild(tf.getElement());
 
-        TextFieldWrap<TextField, String> tf_ = wrap(tf);
+        TextFieldTester<TextField, String> tf_ = test(tf);
         tf_.clear();
 
         Assertions.assertTrue(tf.isEmpty(), "Value should have cleared");
@@ -211,7 +211,7 @@ public class TextFieldWrapTest extends UIUnitTest {
         tf.setClearButtonVisible(false);
         getCurrentView().getElement().appendChild(tf.getElement());
 
-        TextFieldWrap<TextField, String> tf_ = wrap(tf);
+        TextFieldTester<TextField, String> tf_ = test(tf);
 
         Assertions.assertThrows(IllegalStateException.class, tf_::clear,
                 "Clear should not be usable when clear button is not visible");
@@ -224,7 +224,7 @@ public class TextFieldWrapTest extends UIUnitTest {
         tf.setEnabled(false);
         getCurrentView().getElement().appendChild(tf.getElement());
 
-        TextFieldWrap<TextField, String> tf_ = wrap(tf);
+        TextFieldTester<TextField, String> tf_ = test(tf);
 
         Assertions.assertThrows(IllegalStateException.class, tf_::clear,
                 "Clear should not be usable when text field is not usable");

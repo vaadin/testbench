@@ -33,18 +33,18 @@ class MultiSelectListBoxWrapTest extends UIUnitTest {
     @Test
     void getSuggestionItems_returnsAllItems() {
         assertIterableEquals(view.selection,
-                wrap(view.multiSelectListBox).getSuggestionItems());
+                test(view.multiSelectListBox).getSuggestionItems());
     }
 
     @Test
     void stringSelect_getSuggestions_valuesEqualItems() {
         assertIterableEquals(view.selection,
-                wrap(view.multiSelectListBox).getSuggestions());
+                test(view.multiSelectListBox).getSuggestions());
     }
 
     @Test
     void stringSelect_selectItemsDeselectItems_selectsCorrectItem() {
-        final MultiSelectListBoxWrap<MultiSelectListBox<String>, String> list_ = wrap(
+        final MultiSelectListBoxTester<MultiSelectListBox<String>, String> list_ = test(
                 view.multiSelectListBox);
         Assertions.assertTrue(list_.getSelected().isEmpty());
 
@@ -61,7 +61,7 @@ class MultiSelectListBoxWrapTest extends UIUnitTest {
 
     @Test
     void stringSelect_selectItems_addsToSelection() {
-        final MultiSelectListBoxWrap<MultiSelectListBox<String>, String> list_ = wrap(
+        final MultiSelectListBoxTester<MultiSelectListBox<String>, String> list_ = test(
                 view.multiSelectListBox);
         Assertions.assertTrue(list_.getSelected().isEmpty());
 
@@ -77,7 +77,7 @@ class MultiSelectListBoxWrapTest extends UIUnitTest {
 
     @Test
     void clearSelection_selectItems_addsToSelection() {
-        final MultiSelectListBoxWrap<MultiSelectListBox<String>, String> list_ = wrap(
+        final MultiSelectListBoxTester<MultiSelectListBox<String>, String> list_ = test(
                 view.multiSelectListBox);
         Assertions.assertTrue(list_.getSelected().isEmpty());
 

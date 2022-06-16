@@ -22,14 +22,14 @@ import com.vaadin.testbench.unit.ViewPackages;
 public class LoginOverlayWrapTest extends UIUnitTest {
 
     LoginOverlayView view;
-    LoginOverlayWrap<LoginOverlay> login_;
+    LoginOverlayTester<LoginOverlay> login_;
 
     @BeforeEach
     void init() {
         RouteConfiguration.forApplicationScope()
                 .setAnnotatedRoute(LoginOverlayView.class);
         view = navigate(LoginOverlayView.class);
-        login_ = wrap(view.login);
+        login_ = test(view.login);
     }
 
     @Test

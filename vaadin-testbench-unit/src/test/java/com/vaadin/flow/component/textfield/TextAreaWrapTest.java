@@ -21,8 +21,6 @@ import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.testbench.unit.UIUnitTest;
 import com.vaadin.testbench.unit.ViewPackages;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @ViewPackages
 class TextAreaWrapTest extends UIUnitTest {
 
@@ -39,7 +37,7 @@ class TextAreaWrapTest extends UIUnitTest {
     public void readOnlyTextArea_isNotUsable() {
         view.textArea.setReadOnly(true);
 
-        final TextAreaWrap<TextArea> ta_ = wrap(view.textArea);
+        final TextAreaTester<TextArea> ta_ = test(view.textArea);
 
         Assertions.assertFalse(ta_.isUsable(),
                 "Read only TextArea shouldn't be usable");
@@ -49,7 +47,7 @@ class TextAreaWrapTest extends UIUnitTest {
     public void readOnlyTextArea_automaticWrapper_readOnlyIsCheckedInUsable() {
         view.textArea.setReadOnly(true);
 
-        Assertions.assertFalse(wrap(view.textArea).isUsable(),
+        Assertions.assertFalse(test(view.textArea).isUsable(),
                 "Read only TextArea shouldn't be usable");
     }
 
@@ -63,7 +61,7 @@ class TextAreaWrapTest extends UIUnitTest {
                     value.compareAndSet(null, event.getValue());
                 });
 
-        final TextAreaWrap<TextArea> ta_ = wrap(view.textArea);
+        final TextAreaTester<TextArea> ta_ = test(view.textArea);
         final String newValue = "Test";
         ta_.setValue(newValue);
 
@@ -74,7 +72,7 @@ class TextAreaWrapTest extends UIUnitTest {
     public void nonInteractableField_throwsOnSetValue() {
 
         view.textArea.getElement().setEnabled(false);
-        final TextAreaWrap<TextArea> ta_ = wrap(view.textArea);
+        final TextAreaTester<TextArea> ta_ = test(view.textArea);
 
         Assertions.assertThrows(IllegalStateException.class,
                 () -> ta_.setValue("fail"),
@@ -86,7 +84,7 @@ class TextAreaWrapTest extends UIUnitTest {
         // Only accept numbers
         view.textArea.setPattern("\\d*");
 
-        final TextAreaWrap<TextArea> ta_ = wrap(view.textArea);
+        final TextAreaTester<TextArea> ta_ = test(view.textArea);
         final String faultyValue = "Invalid value, but doesn't throw";
         ta_.setValue(faultyValue);
         Assertions.assertEquals(faultyValue, view.textArea.getValue(),
@@ -100,7 +98,7 @@ class TextAreaWrapTest extends UIUnitTest {
         // Only accept numbers
         tf.setPattern("\\d*");
 
-        final TextAreaWrap<TextArea> ta_ = wrap(tf);
+        final TextAreaTester<TextArea> ta_ = test(tf);
         ta_.setValue("1234");
 
         Assertions.assertEquals("1234", tf.getValue());
@@ -116,7 +114,7 @@ class TextAreaWrapTest extends UIUnitTest {
         tf.setPreventInvalidInput(true);
         tf.setMinLength(5);
 
-        final TextAreaWrap<TextArea> ta_ = wrap(tf);
+        final TextAreaTester<TextArea> ta_ = test(tf);
 
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> ta_.setValue("1234"),
@@ -129,7 +127,7 @@ class TextAreaWrapTest extends UIUnitTest {
         tf.setPreventInvalidInput(true);
         tf.setMaxLength(3);
 
-        final TextAreaWrap<TextArea> ta_ = wrap(tf);
+        final TextAreaTester<TextArea> ta_ = test(tf);
 
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> ta_.setValue("1234"),
@@ -142,7 +140,7 @@ class TextAreaWrapTest extends UIUnitTest {
         tf.setPreventInvalidInput(true);
         tf.setRequired(true);
 
-        final TextAreaWrap<TextArea> ta_ = wrap(tf);
+        final TextAreaTester<TextArea> ta_ = test(tf);
 
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> ta_.setValue(""),

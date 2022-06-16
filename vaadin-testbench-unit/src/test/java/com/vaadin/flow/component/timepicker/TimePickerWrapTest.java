@@ -28,14 +28,14 @@ import static org.junit.jupiter.api.Assertions.*;
 class TimePickerWrapTest extends UIUnitTest {
 
     TimePickerView view;
-    TimePickerWrap<TimePicker> pick_;
+    TimePickerTester<TimePicker> pick_;
 
     @BeforeEach
     public void registerView() {
         RouteConfiguration.forApplicationScope()
                 .setAnnotatedRoute(TimePickerView.class);
         view = navigate(TimePickerView.class);
-        pick_ = wrap(view.picker);
+        pick_ = test(view.picker);
     }
 
     @Test

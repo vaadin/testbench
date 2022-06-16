@@ -38,7 +38,7 @@ public class ButtonWrapTest extends UIUnitTest {
     public void buttonWithDisableOnClick_notUsableAfterClick() {
         view.button.setDisableOnClick(true);
 
-        final ButtonWrap button_ = wrap(ButtonWrap.class, view.button);
+        final ButtonTester button_ = test(ButtonTester.class, view.button);
 
         Assertions.assertTrue(button_.isUsable(),
                 "Button should be usable before click");
@@ -59,7 +59,7 @@ public class ButtonWrapTest extends UIUnitTest {
         view.button
                 .addClickListener(event -> mouseButton.set(event.getButton()));
 
-        final ButtonWrap button_ = wrap(ButtonWrap.class, view.button);
+        final ButtonTester button_ = test(ButtonTester.class, view.button);
         button_.middleClick();
 
         Assertions.assertEquals(1, mouseButton.get(),
@@ -72,7 +72,7 @@ public class ButtonWrapTest extends UIUnitTest {
         view.button
                 .addClickListener(event -> mouseButton.set(event.getButton()));
 
-        final ButtonWrap button_ = wrap(ButtonWrap.class, view.button);
+        final ButtonTester button_ = test(ButtonTester.class, view.button);
         button_.rightClick();
 
         Assertions.assertEquals(2, mouseButton.get(),
@@ -85,7 +85,7 @@ public class ButtonWrapTest extends UIUnitTest {
         view.button.addClickListener(
                 clickEvent -> event.compareAndSet(null, clickEvent));
 
-        final ButtonWrap button_ = wrap(ButtonWrap.class, view.button);
+        final ButtonTester button_ = test(ButtonTester.class, view.button);
         button_.click();
 
         Assertions.assertNotNull(event.get(),
@@ -105,7 +105,7 @@ public class ButtonWrapTest extends UIUnitTest {
         AtomicReference<ClickEvent> event = new AtomicReference<>(null);
         view.button.addClickListener(clickEvent -> event.set(clickEvent));
 
-        final ButtonWrap button_ = wrap(ButtonWrap.class, view.button);
+        final ButtonTester button_ = test(ButtonTester.class, view.button);
         button_.click(new MetaKeys(true, true, true, true));
 
         Assertions.assertNotNull(event.get(),

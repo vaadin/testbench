@@ -41,7 +41,7 @@ class DatePickerWrapTest extends UIUnitTest {
         view.picker.setMax(LocalDate.of(1995, 1, 1));
 
         assertThrows(IllegalArgumentException.class,
-                () -> wrap(view.picker).setValue(LocalDate.of(1995, 1, 5)));
+                () -> test(view.picker).setValue(LocalDate.of(1995, 1, 5)));
     }
 
     @Test
@@ -49,7 +49,7 @@ class DatePickerWrapTest extends UIUnitTest {
         view.picker.setMin(LocalDate.of(1995, 1, 5));
 
         assertThrows(IllegalArgumentException.class,
-                () -> wrap(view.picker).setValue(LocalDate.of(1995, 1, 1)));
+                () -> test(view.picker).setValue(LocalDate.of(1995, 1, 1)));
     }
 
     @Test
@@ -63,7 +63,7 @@ class DatePickerWrapTest extends UIUnitTest {
                 });
 
         final LocalDate newValue = LocalDate.of(1995, 1, 5);
-        wrap(view.picker).setValue(newValue);
+        test(view.picker).setValue(newValue);
 
         Assertions.assertEquals(newValue, value.get());
     }
