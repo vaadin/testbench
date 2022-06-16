@@ -9,6 +9,9 @@
  */
 package com.vaadin.flow.component.grid;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.jupiter.api.Assertions;
@@ -192,4 +195,18 @@ public class BasicGridWrapTest extends UIUnitTest {
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> grid_.getCellComponent(1, 1));
     }
+
+    @Test
+    void basicGrid_reorderColumns() {
+        List<Grid.Column<Person>> columns = new ArrayList<>(
+                view.basicGrid.getColumns());
+        Collections.reverse(columns);
+        view.basicGrid.setColumnOrder(columns);
+
+        Assertions.assertEquals("Jorma", grid_.getCellText(0, 2));
+        Assertions.assertEquals("46", grid_.getCellText(0, 1));
+        Assertions.assertEquals("Maya", grid_.getCellText(1, 2));
+        Assertions.assertEquals("18", grid_.getCellText(1, 1));
+    }
+
 }
