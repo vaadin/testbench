@@ -17,7 +17,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import kotlin.Unit;
@@ -36,12 +35,6 @@ import com.vaadin.testbench.unit.internal.SearchSpec;
  * {@link com.vaadin.flow.component.Component} instance, which limits the search
  * to the component subtree.
  *
- * Depending on the used terminal operator, the result of the search can be
- * either a UI component (single or list) or a component wrapper.
- *
- * The component type specified in the constructor defines the type of the
- * component which is searched for and also the type for the component wrapper.
- *
  * @param <T>
  *            the type of the component(s) to search for
  * @see ComponentTester
@@ -49,7 +42,6 @@ import com.vaadin.testbench.unit.internal.SearchSpec;
 public class ComponentQuery<T extends Component> {
 
     private final Class<T> componentType;
-    private final Function<Component, ? extends ComponentTester<?>> wrapperFactory;
     private final LocatorSpec<T> locatorSpec = new LocatorSpec<>();
 
     private Component context;
@@ -60,16 +52,10 @@ public class ComponentQuery<T extends Component> {
      *
      * @param componentType
      *            the type of the component(s) to search for
-     * @param wrapperFactory
-     *            function to create a component wrapper for found components
-     * @see ComponentTester
      */
-    public ComponentQuery(Class<T> componentType,
-            Function<Component, ? extends ComponentTester<?>> wrapperFactory) {
+    public ComponentQuery(Class<T> componentType) {
         this.componentType = Objects.requireNonNull(componentType,
                 "Component type must not be null");
-        this.wrapperFactory = Objects.requireNonNull(wrapperFactory,
-                "Component Wrapper Factory type must not be null");
     }
 
     /**
@@ -465,70 +451,62 @@ public class ComponentQuery<T extends Component> {
      */
     public <E extends Component> ComponentQuery<E> thenOn(int index,
             Class<E> componentType) {
-        return new ComponentQuery<>(componentType, wrapperFactory)
-                .from(atIndex(index).getComponent());
+        return new ComponentQuery<>(componentType).from(atIndex(index));
     }
 
     /**
-     * Executes the search against current context and returns the test wrapper
-     * for the result, expecting to find exactly one component.
+     * Executes the search against current context and returns the component,
+     * expecting to find exactly one.
      *
      * Exceptions are thrown if the search produces zero or more than one
      * result.
      *
-     * @return a test wrapper for the component of the type specified in the
-     *         constructor.
+     * @return the component of the type specified in the constructor.
      * @throws java.util.NoSuchElementException
      *             if not exactly one component is found
      */
     @SuppressWarnings("unchecked")
-    public <X extends ComponentTester<? extends T>> X single() {
+    public <X extends T> X single() {
         return (X) find();
     }
 
     /**
-     * Executes the search against current context and returns the test wrapper
-     * for first result.
+     * Executes the search against current context and returns the first result.
      *
-     * @return a test wrapper for the component of the type specified in the
-     *         constructor.
+     * @return a component of the type specified in the constructor.
      * @throws java.util.NoSuchElementException
      *             if no component is found
      */
     @SuppressWarnings("unchecked")
-    public <X extends ComponentTester<? extends T>> X first() {
-        return (X) allComponents().stream().findFirst().map(wrapperFactory)
+    public <X extends T> X first() {
+        return (X) all().stream().findFirst()
                 .orElseThrow(() -> new NoSuchElementException(
                         "Cannot find component for current query"));
     }
 
     /**
-     * Executes the search against current context and returns the test wrapper
-     * for last result.
+     * Executes the search against current context and returns the last result.
      *
-     * @return a test wrapper for the component of the type specified in the
-     *         constructor.
+     * @return a component of the type specified in the constructor.
      * @throws java.util.NoSuchElementException
      *             if no component is found
      */
     @SuppressWarnings("unchecked")
-    public <X extends ComponentTester<? extends T>> X last() {
-        return (X) allComponents().stream().reduce((first, second) -> second)
-                .map(wrapperFactory)
+    public <X extends T> X last() {
+        return (X) all().stream().reduce((first, second) -> second)
                 .orElseThrow(() -> new NoSuchElementException(
                         "Cannot find component for current query"));
     }
 
     /**
-     * Executes the search against current context and returns the test wrapper
-     * for the component at given index.
+     * Executes the search against current context and returns the component at
+     * given index.
      *
      * Index is 1-based. Given a zero or negative index or an index higher than
      * the actual number of components found results in an
      * {@link IndexOutOfBoundsException}.
      *
-     * @return a test wrapper for the component of the type specified in the
-     *         constructor.
+     * @return the component of the type specified in the constructor.
      * @throws IllegalArgumentException
      *             if index is zero or negative
      * @throws IndexOutOfBoundsException
@@ -537,12 +515,12 @@ public class ComponentQuery<T extends Component> {
      *             if no component is found
      */
     @SuppressWarnings("unchecked")
-    public <X extends ComponentTester<? extends T>> X atIndex(int index) {
+    public <X extends T> X atIndex(int index) {
         if (index <= 0) {
             throw new IllegalArgumentException(
                     "Index must be greater than zero, but was " + index);
         }
-        List<T> result = allComponents();
+        List<T> result = all();
         if (result.isEmpty()) {
             throw new NoSuchElementException(
                     "Cannot find component for current query");
@@ -552,7 +530,7 @@ public class ComponentQuery<T extends Component> {
             throw new IndexOutOfBoundsException("Index out of range: " + index
                     + ". Current query produces " + resultSize + " results");
         }
-        return (X) wrapperFactory.apply(result.get(index - 1));
+        return (X) result.get(index - 1);
     }
 
     /**
@@ -560,17 +538,17 @@ public class ComponentQuery<T extends Component> {
      *
      * @param id
      *            the id to look up
-     * @return the wrapper for the component with the given id
+     * @return the component with the given id
      *
      * @throws NoSuchElementException
      *             if no component is found
      */
-    public <X extends ComponentTester<? extends T>> X id(String id) {
+    public <X extends T> X id(String id) {
         Objects.requireNonNull(id, "id must not be null");
         withId(id);
         // Exactly one element with given id is expected
         locatorSpec.count = new IntRange(1, 1);
-        return find();
+        return (X) find();
     }
 
     /**
@@ -584,20 +562,6 @@ public class ComponentQuery<T extends Component> {
     }
 
     /**
-     * Executes the search against current context and returns a list of test
-     * wrappers for matching components.
-     *
-     * @return a list of test wrappers for found components, or an empty list if
-     *         search does not produce results. Never {@literal null}.
-     */
-    @SuppressWarnings("unchecked")
-    public <X extends ComponentTester<? extends T>> List<X> all() {
-        return allComponents().stream()
-                .map(component -> (X) wrapperFactory.apply(component))
-                .collect(Collectors.toList());
-    }
-
-    /**
      * Executes the search against current context and returns a list of
      * matching components.
      *
@@ -605,7 +569,7 @@ public class ComponentQuery<T extends Component> {
      *         produce results. Never {@literal null}.
      */
     @SuppressWarnings("unchecked")
-    public <X extends T> List<X> allComponents() {
+    public <X extends T> List<X> all() {
         if (context != null) {
             return (List<X>) LocatorKt._find(context, componentType,
                     locatorSpec::populate);
@@ -628,22 +592,18 @@ public class ComponentQuery<T extends Component> {
         return this;
     }
 
-    @SuppressWarnings("unchecked")
-    protected <X extends ComponentTester<? extends T>> X find() {
+    protected T find() {
+        locatorSpec.count = new IntRange(1, 1);
         try {
-            return (X) wrapperFactory.apply(findComponent());
+            if (context != null) {
+                return LocatorKt._get(context, componentType,
+                        locatorSpec::populate);
+            }
+            return LocatorKt._get(componentType, locatorSpec::populate);
         } catch (AssertionError e) {
+            // Happens when found component(s) are not of the expected type
             throw new NoSuchElementException(e.getMessage());
         }
-    }
-
-    protected T findComponent() {
-        locatorSpec.count = new IntRange(1, 1);
-        if (context != null) {
-            return LocatorKt._get(context, componentType,
-                    locatorSpec::populate);
-        }
-        return LocatorKt._get(componentType, locatorSpec::populate);
     }
 
     /**

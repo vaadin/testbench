@@ -326,8 +326,7 @@ abstract class BaseUIUnitTest {
     // Visible to ComponentWrap
     static <T extends Component> ComponentQuery<T> internalQuery(
             Class<T> componentType) {
-        return new ComponentQuery<>(componentType,
-                BaseUIUnitTest::internalWrap);
+        return new ComponentQuery<>(componentType);
     }
 
     /**
@@ -407,7 +406,7 @@ abstract class BaseUIUnitTest {
     public <T extends Component> ComponentQuery<T> $(Class<T> componentType,
             Component fromThis) {
         verifyAndGetUI();
-        return new ComponentQuery<>(componentType, this::test).from(fromThis);
+        return new ComponentQuery<>(componentType).from(fromThis);
     }
 
     /**
@@ -424,8 +423,7 @@ abstract class BaseUIUnitTest {
         Component viewComponent = getCurrentView().getElement().getComponent()
                 .orElseThrow(() -> new AssertionError(
                         "Cannot get Component instance for current view"));
-        return new ComponentQuery<>(componentType, this::test)
-                .from(viewComponent);
+        return new ComponentQuery<>(componentType).from(viewComponent);
     }
 
     /**

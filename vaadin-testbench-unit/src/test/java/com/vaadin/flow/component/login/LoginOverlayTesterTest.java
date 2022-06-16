@@ -44,8 +44,7 @@ public class LoginOverlayTesterTest extends UIUnitTest {
 
         login_.login("user", "pwd");
         Assertions.assertEquals(1, $(Span.class).from(view).all().size());
-        Span message = $(Span.class).from(view).withId("m1").first()
-                .getComponent();
+        Span message = $(Span.class).from(view).withId("m1").first();
         Assertions.assertEquals(view.generateLoginMessage("user", "pwd"),
                 message.getText());
     }
@@ -69,8 +68,7 @@ public class LoginOverlayTesterTest extends UIUnitTest {
         login_.forgotPassword();
 
         Assertions.assertEquals(1, $(Span.class).from(view).all().size());
-        Span message = $(Span.class).from(view).withId("m1").first()
-                .getComponent();
+        Span message = $(Span.class).from(view).withId("m1").first();
         Assertions.assertEquals("forgot", message.getText());
     }
 

@@ -347,7 +347,7 @@ public class ComponentTester<T extends Component> {
         queryBuilder.accept(query);
         // Make sure consumer didn't change the starting component
         query.from(component);
-        return query.allComponents();
+        return query.all();
     }
 
 }
