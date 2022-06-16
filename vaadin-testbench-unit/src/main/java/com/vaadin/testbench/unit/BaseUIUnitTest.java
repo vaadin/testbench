@@ -59,7 +59,7 @@ import com.vaadin.testbench.unit.mocks.MockedUI;
  *
  * @see ViewPackages
  */
-class BaseUIUnitTest {
+abstract class BaseUIUnitTest {
 
     private static final ConcurrentHashMap<String, Routes> routesCache = new ConcurrentHashMap<>();
 
@@ -204,7 +204,7 @@ class BaseUIUnitTest {
      * @return instantiated view
      */
     public <T extends Component> T navigate(Class<T> navigationTarget) {
-        UI.getCurrent().navigate(navigationTarget);
+        verifyAndGetUI().navigate(navigationTarget);
         return validateNavigationTarget(navigationTarget);
     }
 
@@ -239,7 +239,7 @@ class BaseUIUnitTest {
      */
     public <C, T extends Component & HasUrlParameter<C>> T navigate(
             Class<T> navigationTarget, C parameter) {
-        UI.getCurrent().navigate(navigationTarget, parameter);
+        verifyAndGetUI().navigate(navigationTarget, parameter);
         return validateNavigationTarget(navigationTarget);
     }
 
@@ -257,7 +257,7 @@ class BaseUIUnitTest {
      */
     public <T extends Component> T navigate(Class<T> navigationTarget,
             Map<String, String> parameters) {
-        UI.getCurrent().navigate(navigationTarget,
+        verifyAndGetUI().navigate(navigationTarget,
                 new RouteParameters(parameters));
         return validateNavigationTarget(navigationTarget);
     }
@@ -276,7 +276,7 @@ class BaseUIUnitTest {
      */
     public <T extends Component> T navigate(String location,
             Class<T> expectedTarget) {
-        UI.getCurrent().navigate(location);
+        verifyAndGetUI().navigate(location);
         return validateNavigationTarget(expectedTarget);
     }
 
@@ -290,7 +290,7 @@ class BaseUIUnitTest {
      *            Key modifiers. Can be empty.
      */
     public void fireShortcut(Key key, KeyModifier... modifiers) {
-        UI ui = UI.getCurrent();
+        UI ui = verifyAndGetUI();
         // TODO: should this logic be moved to ShortcutsKt.fireShortcut?
         if (ui.hasModalComponent()) {
             ShortcutsKt._fireShortcut(
@@ -307,7 +307,7 @@ class BaseUIUnitTest {
      * @return current view
      */
     public HasElement getCurrentView() {
-        return UI.getCurrent().getInternals().getActiveRouterTargetsChain()
+        return verifyAndGetUI().getInternals().getActiveRouterTargetsChain()
                 .get(0);
     }
 
@@ -343,6 +343,7 @@ class BaseUIUnitTest {
      */
     public <T extends ComponentWrap<Y>, Y extends Component> T wrap(
             Y component) {
+        verifyAndGetUI();
         return internalWrap(component);
     }
 
@@ -361,6 +362,7 @@ class BaseUIUnitTest {
      */
     public <T extends ComponentWrap<Y>, Y extends Component> T wrap(
             Class<T> wrap, Y component) {
+        verifyAndGetUI();
         return (T) initialize(wrap, component);
     }
 
@@ -386,6 +388,7 @@ class BaseUIUnitTest {
      * @return a query object for finding components
      */
     public <T extends Component> ComponentQuery<T> $(Class<T> componentType) {
+        verifyAndGetUI();
         return internalQuery(componentType);
     }
 
@@ -403,6 +406,7 @@ class BaseUIUnitTest {
      */
     public <T extends Component> ComponentQuery<T> $(Class<T> componentType,
             Component fromThis) {
+        verifyAndGetUI();
         return new ComponentQuery<>(componentType, this::wrap).from(fromThis);
     }
 
@@ -515,5 +519,37 @@ class BaseUIUnitTest {
             typeMap.put(typeParameter[i], actualTypeArgument[i]);
         }
     }
+
+    /*
+     * Checks that the mock UI is available, otherwise fails fast with an
+     * exception giving advices on possible causes of the problem.
+     *
+     * Principal cause for having a null UI is that the test extends the wrong
+     * base class for the current configuration, e.g. using UIUnit4Test with
+     * JUnit 5 or the opposite.
+     *
+     */
+    private UI verifyAndGetUI() {
+        UI ui = UI.getCurrent();
+        if (ui == null) {
+            String message = "Test Vaadin environment is not initialized correctly. "
+                    + "This may happen when the test is extending the wrong base class for the testing engine in use. "
+                    + "Current test class is expected to run with "
+                    + testingEngine() + ".";
+            throw new UIUnitTestSetupException(message);
+        }
+        return ui;
+    }
+
+    /**
+     * Gets the name of the Test Engine that is able to run the base class
+     * implementation.
+     *
+     * The Test Engine name is reported in the exception thrown when the Vaadin
+     * environment is not set up correctly.
+     *
+     * @return name of the Test Engine.
+     */
+    protected abstract String testingEngine();
 
 }
