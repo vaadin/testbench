@@ -232,7 +232,8 @@ class ContextMenuTesterTest extends UIUnitTest {
         test(view.menu).open();
 
         IllegalStateException exception = Assertions.assertThrows(
-                IllegalStateException.class, () -> test(view.menu).clickItem(7, 3, 0));
+                IllegalStateException.class,
+                () -> test(view.menu).clickItem(7, 3, 0));
         Assertions.assertTrue(exception.getMessage().contains("Menu item"));
         Assertions.assertTrue(exception.getMessage().contains("is not usable"));
     }
