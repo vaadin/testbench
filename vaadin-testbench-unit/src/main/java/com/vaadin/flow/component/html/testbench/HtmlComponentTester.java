@@ -38,4 +38,16 @@ public class HtmlComponentTester<T extends HtmlComponent>
                         "No title set for " + getComponent().getClassName()));
     }
 
+    /**
+     * Get the recursive text for target element.
+     *
+     * @return recursive text of component
+     * @throws IllegalStateException
+     *             if component not visible
+     */
+    public String getText() {
+        ensureVisible();
+        return getComponent().getElement().getTextRecursively();
+    }
+
 }

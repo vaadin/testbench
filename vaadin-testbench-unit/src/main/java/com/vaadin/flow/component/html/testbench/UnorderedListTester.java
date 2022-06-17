@@ -34,6 +34,7 @@ public class UnorderedListTester extends HtmlClickContainer<UnorderedList> {
      * @return list of items
      */
     public List<ListItem> getItems() {
+        ensureVisible();
         return getComponent().getChildren().filter(ListItem.class::isInstance)
                 .map(ListItem.class::cast).collect(Collectors.toList());
     }
@@ -44,6 +45,7 @@ public class UnorderedListTester extends HtmlClickContainer<UnorderedList> {
      * @return list of pre-wrapped items
      */
     public List<ListItemTester> getWrappedItems() {
+        ensureVisible();
         return getComponent().getChildren().filter(ListItem.class::isInstance)
                 .map(ListItem.class::cast).map(ListItemTester::new)
                 .collect(Collectors.toList());

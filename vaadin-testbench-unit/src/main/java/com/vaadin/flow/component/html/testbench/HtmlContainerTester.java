@@ -30,6 +30,7 @@ public class HtmlContainerTester<T extends HtmlContainer>
      * @throws IllegalStateException
      *             if component not visible
      */
+    @Override
     public String getText() {
         ensureVisible();
         return getComponent().getText();
