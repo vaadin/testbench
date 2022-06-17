@@ -87,11 +87,19 @@ fun DynaNodeGroup.routesTestBatch() {
         }
     }
 
-    test("MockRouteNotFoundError is called when the route doesn't exist, and it fails immediately with an informative error message") {
+    test("MockRouteNotFoundError is called when the route doesn't exist and it contains informative error message") {
         val routes: Routes = Routes().autoDiscoverViews("com.example.base")
         MockVaadin.setup(routes)
+        UI.getCurrent().navigate("A_VIEW_THAT_DOESNT_EXIST")
+        val view = UI.getCurrent().internals.activeRouterTargetsChain.first();
+        expect(MockRouteNotFoundError::class.java) {
+            view::class.java
+        }
         expectThrows(NotFoundException::class, "No route found for 'A_VIEW_THAT_DOESNT_EXIST': Couldn't find route for 'A_VIEW_THAT_DOESNT_EXIST'\nAvailable routes:") {
-            UI.getCurrent().navigate("A_VIEW_THAT_DOESNT_EXIST")
+            throw (view as MockRouteNotFoundError).cause!!
+        }
+        expect(true) {
+            view.element.text.contains("No route found for 'A_VIEW_THAT_DOESNT_EXIST': Couldn't find route for 'A_VIEW_THAT_DOESNT_EXIST'\nAvailable routes:")
         }
     }
 
