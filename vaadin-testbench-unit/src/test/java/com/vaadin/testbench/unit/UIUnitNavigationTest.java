@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import com.vaadin.flow.router.NotFoundException;
+import com.vaadin.testbench.unit.internal.MockRouteNotFoundError;
 
 @ViewPackages(packages = "com.example")
 public class UIUnitNavigationTest extends UIUnitTest {
@@ -40,9 +41,14 @@ public class UIUnitNavigationTest extends UIUnitTest {
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> navigate(SingleParam.class),
                 "Illegal argument should be thrown for missing parameter");
-        Assertions.assertThrows(NotFoundException.class,
+        IllegalArgumentException exception = Assertions.assertThrows(
+                IllegalArgumentException.class,
                 () -> navigate("param", SingleParam.class),
                 "No matching route should be found for string without parameter");
+        Assertions.assertTrue(exception.getMessage()
+                .contains("Navigation resulted in unexpected class"));
+        Assertions.assertTrue(exception.getMessage()
+                .contains(MockRouteNotFoundError.class.getName()));
     }
 
     @Test
