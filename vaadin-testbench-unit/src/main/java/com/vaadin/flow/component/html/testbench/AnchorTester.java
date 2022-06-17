@@ -49,7 +49,7 @@ public class AnchorTester extends HtmlContainerTester<Anchor> {
         try {
             if (href.get(getComponent()) instanceof String) {
                 if (RouteConfiguration.forSessionScope()
-                        .isPathAvailable(getComponent().getHref())) {
+                        .getRoute(getComponent().getHref()).isPresent()) {
                     UI.getCurrent().navigate(getComponent().getHref());
                     return UI.getCurrent().getInternals()
                             .getActiveRouterTargetsChain().get(0);
@@ -61,7 +61,7 @@ public class AnchorTester extends HtmlContainerTester<Anchor> {
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
-        throw new IllegalStateException("Anchor target is not a String");
+        throw new IllegalStateException("Anchor target seems to be a resource");
     }
 
 }
