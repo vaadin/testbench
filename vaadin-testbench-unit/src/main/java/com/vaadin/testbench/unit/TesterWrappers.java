@@ -35,6 +35,50 @@ import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.dialog.DialogTester;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridTester;
+import com.vaadin.flow.component.html.Anchor;
+import com.vaadin.flow.component.html.DescriptionList;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Emphasis;
+import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.html.H3;
+import com.vaadin.flow.component.html.H4;
+import com.vaadin.flow.component.html.H5;
+import com.vaadin.flow.component.html.H6;
+import com.vaadin.flow.component.html.Hr;
+import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.html.Input;
+import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.html.ListItem;
+import com.vaadin.flow.component.html.NativeButton;
+import com.vaadin.flow.component.html.NativeDetails;
+import com.vaadin.flow.component.html.OrderedList;
+import com.vaadin.flow.component.html.Paragraph;
+import com.vaadin.flow.component.html.Pre;
+import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.html.UnorderedList;
+import com.vaadin.flow.component.html.testbench.AnchorTester;
+import com.vaadin.flow.component.html.testbench.DescriptionListTester;
+import com.vaadin.flow.component.html.testbench.DivTester;
+import com.vaadin.flow.component.html.testbench.EmphasisTester;
+import com.vaadin.flow.component.html.testbench.H1Tester;
+import com.vaadin.flow.component.html.testbench.H2Tester;
+import com.vaadin.flow.component.html.testbench.H3Tester;
+import com.vaadin.flow.component.html.testbench.H4Tester;
+import com.vaadin.flow.component.html.testbench.H5Tester;
+import com.vaadin.flow.component.html.testbench.H6Tester;
+import com.vaadin.flow.component.html.testbench.HrTester;
+import com.vaadin.flow.component.html.testbench.ImageTester;
+import com.vaadin.flow.component.html.testbench.InputTester;
+import com.vaadin.flow.component.html.testbench.LabelTester;
+import com.vaadin.flow.component.html.testbench.ListItemTester;
+import com.vaadin.flow.component.html.testbench.NativeButtonTester;
+import com.vaadin.flow.component.html.testbench.NativeDetailsTester;
+import com.vaadin.flow.component.html.testbench.OrderedListTester;
+import com.vaadin.flow.component.html.testbench.ParagraphTester;
+import com.vaadin.flow.component.html.testbench.PreTester;
+import com.vaadin.flow.component.html.testbench.SpanTester;
+import com.vaadin.flow.component.html.testbench.UnorderedListTester;
 import com.vaadin.flow.component.listbox.ListBox;
 import com.vaadin.flow.component.listbox.ListBoxTester;
 import com.vaadin.flow.component.listbox.MultiSelectListBox;
@@ -220,4 +264,97 @@ public interface TesterWrappers {
         return BaseUIUnitTest.internalWrap(UploadTester.class, upload);
     }
 
+    /* HTML components */
+    default AnchorTester test(Anchor anchor) {
+        return BaseUIUnitTest.internalWrap(AnchorTester.class, anchor);
+    }
+
+    default DescriptionListTester test(DescriptionList descriptionList) {
+        return BaseUIUnitTest.internalWrap(DescriptionListTester.class,
+                descriptionList);
+    }
+
+    default DivTester test(Div div) {
+        return BaseUIUnitTest.internalWrap(DivTester.class, div);
+    }
+
+    default EmphasisTester test(Emphasis emphasis) {
+        return BaseUIUnitTest.internalWrap(EmphasisTester.class, emphasis);
+    }
+
+    default H1Tester test(H1 h1) {
+        return BaseUIUnitTest.internalWrap(H1Tester.class, h1);
+    }
+
+    default H2Tester test(H2 h2) {
+        return BaseUIUnitTest.internalWrap(H2Tester.class, h2);
+    }
+
+    default H3Tester test(H3 h3) {
+        return BaseUIUnitTest.internalWrap(H3Tester.class, h3);
+    }
+
+    default H4Tester test(H4 h4) {
+        return BaseUIUnitTest.internalWrap(H4Tester.class, h4);
+    }
+
+    default H5Tester test(H5 h5) {
+        return BaseUIUnitTest.internalWrap(H5Tester.class, h5);
+    }
+
+    default H6Tester test(H6 h6) {
+        return BaseUIUnitTest.internalWrap(H6Tester.class, h6);
+    }
+
+    default HrTester test(Hr hr) {
+        return BaseUIUnitTest.internalWrap(HrTester.class, hr);
+    }
+
+    default ImageTester test(Image image) {
+        return BaseUIUnitTest.internalWrap(ImageTester.class, image);
+    }
+
+    default InputTester test(Input input) {
+        return BaseUIUnitTest.internalWrap(InputTester.class, input);
+    }
+
+    default LabelTester test(Label label) {
+        return BaseUIUnitTest.internalWrap(LabelTester.class, label);
+    }
+
+    default ListItemTester test(ListItem listItem) {
+        return BaseUIUnitTest.internalWrap(ListItemTester.class, listItem);
+    }
+
+    default NativeButtonTester test(NativeButton nativeButton) {
+        return BaseUIUnitTest.internalWrap(NativeButtonTester.class,
+                nativeButton);
+    }
+
+    default NativeDetailsTester test(NativeDetails nativeDetails) {
+        return BaseUIUnitTest.internalWrap(NativeDetailsTester.class,
+                nativeDetails);
+    }
+
+    default OrderedListTester test(OrderedList orderedList) {
+        return BaseUIUnitTest.internalWrap(OrderedListTester.class,
+                orderedList);
+    }
+
+    default ParagraphTester test(Paragraph paragraph) {
+        return BaseUIUnitTest.internalWrap(ParagraphTester.class, paragraph);
+    }
+
+    default PreTester test(Pre pre) {
+        return BaseUIUnitTest.internalWrap(PreTester.class, pre);
+    }
+
+    default SpanTester test(Span span) {
+        return BaseUIUnitTest.internalWrap(SpanTester.class, span);
+    }
+
+    default UnorderedListTester test(UnorderedList unorderedList) {
+        return BaseUIUnitTest.internalWrap(UnorderedListTester.class,
+                unorderedList);
+    }
 }
