@@ -9,11 +9,7 @@
  */
 package com.vaadin.flow.component.html.testbench;
 
-import org.slf4j.LoggerFactory;
-
 import com.vaadin.flow.component.html.Input;
-import com.vaadin.flow.component.shared.HasClearButton;
-import com.vaadin.flow.component.textfield.TextFieldTester;
 import com.vaadin.testbench.unit.ComponentTester;
 import com.vaadin.testbench.unit.Tests;
 

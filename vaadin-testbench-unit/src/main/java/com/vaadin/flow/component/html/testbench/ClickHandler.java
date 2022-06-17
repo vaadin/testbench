@@ -9,8 +9,6 @@
  */
 package com.vaadin.flow.component.html.testbench;
 
-import com.vaadin.flow.component.ClickEvent;
-import com.vaadin.flow.component.ComponentUtil;
 import com.vaadin.testbench.unit.MetaKeys;
 
 public interface ClickHandler {

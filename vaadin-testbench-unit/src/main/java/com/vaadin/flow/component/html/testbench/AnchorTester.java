@@ -15,7 +15,6 @@ import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.router.RouteConfiguration;
-import com.vaadin.flow.server.AbstractStreamResource;
 import com.vaadin.testbench.unit.Tests;
 
 @Tests(Anchor.class)
@@ -30,6 +29,11 @@ public class AnchorTester extends HtmlContainerTester<Anchor> {
         super(component);
     }
 
+    /**
+     * Gets the URL that the anchor links to.
+     *
+     * @return the href value, or <code>""</code> if no href has been set
+     */
     public String getHref() {
         ensureComponentIsUsable();
         return getComponent().getHref();

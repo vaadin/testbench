@@ -30,7 +30,7 @@ public class DescriptionListTester extends HtmlClickContainer<DescriptionList> {
     /**
      * Get all descriptions of DescriptionList.
      *
-     * @return
+     * @return the list of descriptions for this description list
      */
     public List<DescriptionList.Description> getDesciptions() {
         return getComponent().getChildren()
@@ -39,7 +39,12 @@ public class DescriptionListTester extends HtmlClickContainer<DescriptionList> {
                 .collect(Collectors.toList());
     }
 
-    public List<DescriptionList.Term> getTerms() {
+    /**
+     * Get all terms of DescriptionList.
+     *
+     * @return the list of terms for this description list
+     */
+     public List<DescriptionList.Term> getTerms() {
         return getComponent().getChildren()
                 .filter(DescriptionList.Term.class::isInstance)
                 .map(DescriptionList.Term.class::cast)
