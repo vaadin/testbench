@@ -18,7 +18,6 @@ import com.vaadin.flow.router.BeforeEnterEvent
 import com.vaadin.flow.router.ErrorParameter
 import com.vaadin.flow.router.HasErrorParameter
 import com.vaadin.flow.router.InternalServerError
-import com.vaadin.flow.router.Location
 import com.vaadin.flow.router.NotFoundException
 import com.vaadin.flow.router.Route
 import com.vaadin.flow.router.RouteData
