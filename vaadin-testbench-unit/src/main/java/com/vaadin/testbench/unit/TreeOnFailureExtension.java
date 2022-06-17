@@ -11,7 +11,6 @@ package com.vaadin.testbench.unit;
 
 import org.junit.jupiter.api.extension.AfterTestExecutionCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
-import org.slf4j.LoggerFactory;
 
 import com.vaadin.flow.component.UI;
 import com.vaadin.testbench.unit.internal.PrettyPrintTree;

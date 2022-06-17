@@ -28,12 +28,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.function.DeploymentConfiguration;
 import com.vaadin.flow.server.ServiceException;
-import com.vaadin.flow.server.VaadinRequest;
 import com.vaadin.flow.server.VaadinServletRequest;
 import com.vaadin.flow.server.VaadinServletService;
 import com.vaadin.flow.spring.SpringServlet;
 import com.vaadin.testbench.unit.internal.Routes;
-import com.vaadin.testbench.unit.internal.UtilsKt;
 
 /**
  * Makes sure that the {@link #routes} are properly registered, and that

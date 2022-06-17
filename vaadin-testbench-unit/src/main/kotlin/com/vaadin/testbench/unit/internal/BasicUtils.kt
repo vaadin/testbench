@@ -22,7 +22,6 @@ import com.vaadin.flow.component.HasText
 import com.vaadin.flow.component.HasValue
 import com.vaadin.flow.component.Text
 import com.vaadin.flow.component.UI
-import com.vaadin.flow.data.provider.DataCommunicator
 import com.vaadin.flow.dom.DomEvent
 import com.vaadin.flow.router.InternalServerError
 import com.vaadin.flow.server.VaadinSession
