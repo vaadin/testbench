@@ -21,6 +21,7 @@ import com.vaadin.flow.router.InternalServerError
 import com.vaadin.flow.router.NotFoundException
 import com.vaadin.flow.router.Route
 import com.vaadin.flow.router.RouteData
+import com.vaadin.flow.router.RouteNotFoundError
 import com.vaadin.flow.router.internal.DefaultErrorHandler
 import com.vaadin.flow.server.HttpStatusCode
 import com.vaadin.flow.server.VaadinContext
@@ -134,11 +135,13 @@ fun ApplicationRouteRegistry.clearPwaClass() {
  * any navigation to a missing route and can respond with an informative exception.
  */
 @Tag(Tag.DIV)
-open class MockRouteNotFoundError : Component(), HasErrorParameter<NotFoundException> {
+@DefaultErrorHandler
+open class MockRouteNotFoundError : RouteNotFoundError() {
 
     var cause: NotFoundException? = null;
 
     override fun setErrorParameter(event: BeforeEnterEvent, parameter: ErrorParameter<NotFoundException>): Int {
+
         val message: String = buildString {
             val path: String = event.location.path
             append("No route found for '").append(path).append("'")
@@ -151,8 +154,7 @@ open class MockRouteNotFoundError : Component(), HasErrorParameter<NotFoundExcep
             append("\nIf you'd like to revert back to the original Vaadin RouteNotFoundError, please remove the ${MockRouteNotFoundError::class.java} from Routes.errorRoutes")
         }
         cause = NotFoundException(message).apply { initCause(parameter.caughtException) }
-        element.text = message;
-        return HttpStatusCode.NOT_FOUND.code
+        return super.setErrorParameter(event, parameter)
     }
 
     private fun RouteData.toPrettyString(): String {
