@@ -135,7 +135,18 @@ public interface TesterWrappers {
                 checkboxGroup);
     }
 
+    default <V> CheckboxGroupTester<CheckboxGroup<V>, V> test(
+            CheckboxGroup checkboxGroup, Class<V> valueType) {
+        return BaseUIUnitTest.internalWrap(CheckboxGroupTester.class,
+                checkboxGroup);
+    }
+
     default <V> ComboBoxTester<ComboBox<V>, V> test(ComboBox<V> comboBox) {
+        return BaseUIUnitTest.internalWrap(ComboBoxTester.class, comboBox);
+    }
+
+    default <V> ComboBoxTester<ComboBox<V>, V> test(ComboBox comboBox,
+            Class<V> valueType) {
         return BaseUIUnitTest.internalWrap(ComboBoxTester.class, comboBox);
     }
 
@@ -171,12 +182,22 @@ public interface TesterWrappers {
         return BaseUIUnitTest.internalWrap(GridTester.class, grid);
     }
 
+    default <V> GridTester<Grid<V>, V> test(Grid grid, Class<V> itemType) {
+        return BaseUIUnitTest.internalWrap(GridTester.class, grid);
+    }
+
     default <V> ListBoxTester<ListBox<V>, V> test(ListBox<V> listBox) {
         return BaseUIUnitTest.internalWrap(ListBoxTester.class, listBox);
     }
 
     default <V> MultiSelectListBoxTester<MultiSelectListBox<V>, V> test(
-            MultiSelectListBox multiSelectListBox) {
+            MultiSelectListBox<V> multiSelectListBox) {
+        return BaseUIUnitTest.internalWrap(MultiSelectListBoxTester.class,
+                multiSelectListBox);
+    }
+
+    default <V> MultiSelectListBoxTester<MultiSelectListBox<V>, V> test(
+            MultiSelectListBox multiSelectListBox, Class<V> valueType) {
         return BaseUIUnitTest.internalWrap(MultiSelectListBoxTester.class,
                 multiSelectListBox);
     }
@@ -210,9 +231,21 @@ public interface TesterWrappers {
         return BaseUIUnitTest.internalWrap(RadioButtonGroupTester.class,
                 radioButtonGroup);
     }
+
+    default <V> RadioButtonGroupTester<RadioButtonGroup<V>, V> test(
+            RadioButtonGroup radioButtonGroup, Class<V> valueType) {
+        return BaseUIUnitTest.internalWrap(RadioButtonGroupTester.class,
+                radioButtonGroup);
+    }
+
     // RadioButton is package protected so no autowrap.
 
     default <V> SelectTester<Select<V>, V> test(Select<V> select) {
+        return BaseUIUnitTest.internalWrap(SelectTester.class, select);
+    }
+
+    default <V> SelectTester<Select<V>, V> test(Select select,
+            Class<V> valueType) {
         return BaseUIUnitTest.internalWrap(SelectTester.class, select);
     }
 
