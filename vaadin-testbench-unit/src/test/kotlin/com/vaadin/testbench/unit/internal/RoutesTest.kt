@@ -99,7 +99,9 @@ fun DynaNodeGroup.routesTestBatch() {
             throw (view as MockRouteNotFoundError).cause!!
         }
         expect(true) {
-            view.element.text.contains("No route found for 'A_VIEW_THAT_DOESNT_EXIST': Couldn't find route for 'A_VIEW_THAT_DOESNT_EXIST'\nAvailable routes:")
+            val errorMessage = view.element.textRecursively2
+            errorMessage.contains("Could not navigate to 'A_VIEW_THAT_DOESNT_EXIST'")
+            errorMessage.contains("Reason: Couldn't find route for 'A_VIEW_THAT_DOESNT_EXIST'")
         }
     }
 
