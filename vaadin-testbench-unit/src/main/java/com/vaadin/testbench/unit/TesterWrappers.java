@@ -15,6 +15,8 @@ import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.accordion.AccordionTester;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonTester;
+import com.vaadin.flow.component.charts.Chart;
+import com.vaadin.flow.component.charts.ChartTester;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.checkbox.CheckboxGroup;
 import com.vaadin.flow.component.checkbox.CheckboxGroupTester;
@@ -389,5 +391,9 @@ public interface TesterWrappers {
     default UnorderedListTester test(UnorderedList unorderedList) {
         return BaseUIUnitTest.internalWrap(UnorderedListTester.class,
                 unorderedList);
+    }
+
+    default ChartTester<Chart> test(Chart chart) {
+        return BaseUIUnitTest.internalWrap(ChartTester.class, chart);
     }
 }
