@@ -36,7 +36,7 @@ public class ReferenceNameGeneratorTest {
     @Test
     public void testGenerateName_shotFirefox11inCapabilities_returnsGeneratedName() {
         Capabilities ffcaps = Mockito.mock(Capabilities.class);
-        Mockito.when(ffcaps.getPlatform()).thenReturn(Platform.XP);
+        Mockito.when(ffcaps.getPlatformName()).thenReturn(Platform.XP);
         Mockito.when(ffcaps.getBrowserName()).thenReturn("Firefox");
         Mockito.when(ffcaps.getVersion()).thenReturn("13.0.1");
         String name = rng.generateName("shot", ffcaps);
@@ -55,7 +55,7 @@ public class ReferenceNameGeneratorTest {
     @Test
     public void testGenerateName_fooSafari5inCapabilities_returnsGeneratedName() {
         Capabilities safari = Mockito.mock(Capabilities.class);
-        Mockito.when(safari.getPlatform()).thenReturn(Platform.MAC);
+        Mockito.when(safari.getPlatformName()).thenReturn(Platform.MAC);
         Mockito.when(safari.getBrowserName()).thenReturn("Safari");
         Mockito.when(safari.getVersion()).thenReturn("5");
         String name = rng.generateName("foo", safari);
@@ -65,7 +65,7 @@ public class ReferenceNameGeneratorTest {
     @Test
     public void testGenerateName_shotEdgeinCapabilities_returnsGeneratedName() {
         Capabilities chrome = Mockito.mock(Capabilities.class);
-        Mockito.when(chrome.getPlatform()).thenReturn(Platform.XP);
+        Mockito.when(chrome.getPlatformName()).thenReturn(Platform.XP);
         Mockito.when(chrome.getBrowserName()).thenReturn("MicrosoftEdge");
         Mockito.when(chrome.getVersion()).thenReturn("");
         Mockito.when(chrome.getCapability("browserVersion")).thenReturn("25");
@@ -76,7 +76,7 @@ public class ReferenceNameGeneratorTest {
     @Test
     public void linuxUsedInScreenshotName() {
         Capabilities chrome = Mockito.mock(Capabilities.class);
-        Mockito.when(chrome.getPlatform()).thenReturn(Platform.LINUX);
+        Mockito.when(chrome.getPlatformName()).thenReturn(Platform.LINUX);
         Mockito.when(chrome.getBrowserName()).thenReturn("Chrome");
         Mockito.when(chrome.getVersion()).thenReturn("");
         Mockito.when(chrome.getCapability("browserVersion")).thenReturn("25");

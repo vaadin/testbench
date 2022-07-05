@@ -40,8 +40,8 @@ public class DefaultBrowserConfigurationTest {
                     method.getCapabilities().getBrowserName());
             Assert.assertEquals(caps.getVersion(),
                     method.getCapabilities().getVersion());
-            Assert.assertEquals(caps.getPlatform(),
-                    method.getCapabilities().getPlatform());
+            Assert.assertEquals(caps.getPlatformName(),
+                    method.getCapabilities().getPlatformName());
         } finally {
             Parameters.setGridBrowsers(oldBrowsers);
         }
@@ -68,14 +68,14 @@ public class DefaultBrowserConfigurationTest {
                     method1.getCapabilities().getBrowserName());
             Assert.assertEquals(caps1.getVersion(),
                     method1.getCapabilities().getVersion());
-            Assert.assertEquals(caps1.getPlatform(),
-                    method1.getCapabilities().getPlatform());
+            Assert.assertEquals(caps1.getPlatformName(),
+                    method1.getCapabilities().getPlatformName());
             Assert.assertEquals(caps2.getBrowserName(),
                     method2.getCapabilities().getBrowserName());
             Assert.assertEquals(caps2.getVersion(),
                     method2.getCapabilities().getVersion());
-            Assert.assertEquals(caps2.getPlatform(),
-                    method2.getCapabilities().getPlatform());
+            Assert.assertEquals(caps2.getPlatformName(),
+                    method2.getCapabilities().getPlatformName());
         } finally {
             Parameters.setGridBrowsers(oldBrowsers);
         }
@@ -97,8 +97,8 @@ public class DefaultBrowserConfigurationTest {
                     method.getCapabilities().getBrowserName());
             Assert.assertEquals(caps.getVersion(),
                     method.getCapabilities().getVersion());
-            Assert.assertEquals(caps.getPlatform(),
-                    method.getCapabilities().getPlatform());
+            Assert.assertEquals(caps.getPlatformName(),
+                    method.getCapabilities().getPlatformName());
         } finally {
             Parameters.setGridBrowsers(oldBrowsers);
         }
