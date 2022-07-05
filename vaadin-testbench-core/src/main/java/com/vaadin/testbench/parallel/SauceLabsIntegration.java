@@ -10,8 +10,11 @@
 package com.vaadin.testbench.parallel;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
+import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,8 +52,26 @@ public class SauceLabsIntegration {
         }
         String tunnelId = getTunnelIdentifier(sauceOptions, null);
         if (tunnelId != null) {
-            desiredCapabilities.setCapability("tunnelIdentifier", tunnelId);
+            setSauceLabsOption(desiredCapabilities, "tunnelIdentifier", tunnelId);
         }
+    }
+
+    public static void setSauceLabsOption(DesiredCapabilities desiredCapabilities, String sauceOptionKey,
+            String sauceOptionValue) {
+        Map<String,Object> sauceOptions = (Map<String, Object>) desiredCapabilities.getCapability("sauce:options");
+        if (sauceOptions == null) {
+            sauceOptions = new HashMap<>();
+            desiredCapabilities.setCapability("sauce:options", sauceOptions);
+        }
+        sauceOptions.put(sauceOptionKey, sauceOptionValue);
+    }
+
+    public static Object getSauceLabsOption(DesiredCapabilities desiredCapabilities, String sauceOptionKey) {
+        Map<String,Object> sauceOptions = (Map<String, Object>) desiredCapabilities.getCapability("sauce:options");
+        if (sauceOptions == null) {
+            return null;
+        }
+        return sauceOptions.get(sauceOptionKey);
     }
 
     /**

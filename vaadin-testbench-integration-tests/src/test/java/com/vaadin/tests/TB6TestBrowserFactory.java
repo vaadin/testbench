@@ -21,6 +21,7 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 
 import com.vaadin.testbench.parallel.Browser;
 import com.vaadin.testbench.parallel.DefaultBrowserFactory;
+import com.vaadin.testbench.parallel.SauceLabsIntegration;
 
 /**
  * Specifies default browser configuration for {@link AbstractTB6Test} tests.
@@ -33,10 +34,7 @@ public class TB6TestBrowserFactory extends DefaultBrowserFactory {
         DesiredCapabilities desiredCapabilities = super.create(browser, version,
                 platform);
 
-        if (browser.equals(Browser.FIREFOX)) {
-            desiredCapabilities.setCapability(Capability.MARIONETTE, false);
-        }
-        desiredCapabilities.setCapability("screenResolution", "1600x1200");
+        SauceLabsIntegration.setSauceLabsOption(desiredCapabilities, "screenResolution", "1600x1200");
         return desiredCapabilities;
     }
 }
