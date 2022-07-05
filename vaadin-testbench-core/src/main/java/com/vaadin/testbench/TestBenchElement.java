@@ -107,16 +107,6 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
     }
 
     /**
-     * Checks if the current test is running on Internet Explorer.
-     *
-     * @return <code>true</code> if the test is running on Internet Explorer,
-     *         <code>false</code> otherwise
-     */
-    protected boolean isIE() {
-        return BrowserUtil.isIE(getCapabilities());
-    }
-
-    /**
      * Checks if the current test is running on Firefox.
      *
      * @return <code>true</code> if the test is running on Firefox,
@@ -616,9 +606,7 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
     }
 
     private void internalSetProperty(String name, Object value) {
-        if ((isIE() || isFirefox()) && value instanceof Double) {
-            // IE 11 fails with java.lang.NumberFormatException
-            // if we try to send a double...
+        if (isFirefox() && value instanceof Double) {
             executeScript("arguments[0][arguments[1]]=Number(arguments[2])",
                     this, name, String.valueOf((value)));
         } else {
@@ -634,7 +622,7 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
         Object[] jsParameters = Stream
                 .concat(Stream.of(this), Stream.of(propertyNames)).toArray();
 
-        if (isIE() || isFirefox()) {
+        if (isFirefox()) {
             String isNumberScript = script + "return typeof value == 'number';";
             boolean number = (boolean) executeScript(isNumberScript,
                     jsParameters);
