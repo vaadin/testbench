@@ -11,7 +11,7 @@ package com.vaadin.testbench.parallel;
 
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.Platform;
-import org.openqa.selenium.remote.BrowserType;
+import org.openqa.selenium.remote.Browser;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
@@ -29,7 +29,7 @@ public class BrowserUtil {
      *         on Safari
      */
     public static DesiredCapabilities safari() {
-        DesiredCapabilities c = browserFactory.create(Browser.SAFARI);
+        DesiredCapabilities c = browserFactory.create(com.vaadin.testbench.parallel.Browser.SAFARI);
         return c;
     }
 
@@ -40,7 +40,7 @@ public class BrowserUtil {
      *         on Chrome
      */
     public static DesiredCapabilities chrome() {
-        DesiredCapabilities c = browserFactory.create(Browser.CHROME);
+        DesiredCapabilities c = browserFactory.create(com.vaadin.testbench.parallel.Browser.CHROME);
         return c;
     }
 
@@ -51,7 +51,7 @@ public class BrowserUtil {
      *         on Firefox
      */
     public static DesiredCapabilities firefox() {
-        DesiredCapabilities c = browserFactory.create(Browser.FIREFOX);
+        DesiredCapabilities c = browserFactory.create(com.vaadin.testbench.parallel.Browser.FIREFOX);
         return c;
     }
 
@@ -73,7 +73,7 @@ public class BrowserUtil {
      *         on Edge
      */
     public static DesiredCapabilities edge() {
-        DesiredCapabilities c = browserFactory.create(Browser.EDGE);
+        DesiredCapabilities c = browserFactory.create(com.vaadin.testbench.parallel.Browser.EDGE);
         return c;
     }
 
@@ -115,7 +115,7 @@ public class BrowserUtil {
         if (capabilities == null) {
             return false;
         }
-        return BrowserType.EDGE.equals(capabilities.getBrowserName());
+        return Browser.EDGE.is(capabilities);
     }
 
     /**
@@ -127,7 +127,7 @@ public class BrowserUtil {
         if (capabilities == null) {
             return false;
         }
-        return BrowserType.CHROME.equals(capabilities.getBrowserName());
+        return Browser.CHROME.is(capabilities);
     }
 
     /**
@@ -139,7 +139,7 @@ public class BrowserUtil {
         if (capabilities == null) {
             return false;
         }
-        return BrowserType.SAFARI.equals(capabilities.getBrowserName());
+        return Browser.SAFARI.is(capabilities);
     }
 
     /**
@@ -151,7 +151,7 @@ public class BrowserUtil {
         if (capabilities == null) {
             return false;
         }
-        return BrowserType.FIREFOX.equals(capabilities.getBrowserName());
+        return Browser.FIREFOX.is(capabilities);
     }
 
     /**
