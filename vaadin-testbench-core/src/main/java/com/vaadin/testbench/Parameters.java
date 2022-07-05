@@ -442,7 +442,7 @@ public class Parameters {
      *
      * @param browsers
      *            comma separated list of browsers e.g.
-     *            "ie11,chrome,safari-9,firefox-53"
+     *            "chrome,safari-9,firefox-53"
      */
     public static void setGridBrowsers(String browsers) {
         testbenchGridBrowsers = browsers;

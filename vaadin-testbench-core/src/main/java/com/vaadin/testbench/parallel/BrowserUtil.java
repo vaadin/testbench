@@ -56,17 +56,6 @@ public class BrowserUtil {
     }
 
     /**
-     * Gets the capabilities for Internet Explorer 11
-     *
-     * @return an object describing the capabilities required for running a test
-     *         on Internet Explorer 11
-     */
-    public static DesiredCapabilities ie11() {
-        DesiredCapabilities c = browserFactory.create(Browser.IE11);
-        return c;
-    }
-
-    /**
      * Gets the capabilities for Edge
      *
      * @return an object describing the capabilities required for running a test
@@ -75,35 +64,6 @@ public class BrowserUtil {
     public static DesiredCapabilities edge() {
         DesiredCapabilities c = browserFactory.create(com.vaadin.testbench.parallel.Browser.EDGE);
         return c;
-    }
-
-    /**
-     * @param capabilities
-     *            The capabilities to check
-     * @return true if the capabilities refer to Internet Explorer, false
-     *         otherwise
-     */
-    public static boolean isIE(Capabilities capabilities) {
-        if (capabilities == null) {
-            return false;
-        }
-        return BrowserType.IE.equals(capabilities.getBrowserName());
-    }
-
-    /**
-     * @param capabilities
-     *            The capabilities to check
-     * @param version
-     *            Version number as an integer
-     * @return true if the capabilities refer to correct version of Internet
-     *         Explorer, false otherwise
-     */
-    public static boolean isIE(Capabilities capabilities, int version) {
-        if (capabilities == null) {
-            return false;
-        }
-        return isIE(capabilities)
-                && ("" + version).equals(capabilities.getVersion());
     }
 
     /**
@@ -162,9 +122,7 @@ public class BrowserUtil {
      * @return a human readable string describing the capabilities
      */
     public static String getBrowserIdentifier(Capabilities capabilities) {
-        if (isIE(capabilities)) {
-            return "InternetExplorer";
-        } else if (isFirefox(capabilities)) {
+        if (isFirefox(capabilities)) {
             return "Firefox";
         } else if (isChrome(capabilities)) {
             return "Chrome";

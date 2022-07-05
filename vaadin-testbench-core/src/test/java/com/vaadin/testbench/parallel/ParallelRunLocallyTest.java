@@ -33,11 +33,6 @@ public class ParallelRunLocallyTest extends ParallelTest {
         Assert.assertEquals("", getRunLocallyBrowserVersion());
 
         System.setProperty("com.vaadin.testbench.Parameters.runLocally",
-                "ie11");
-        Assert.assertEquals(Browser.IE11, getRunLocallyBrowser());
-        Assert.assertEquals("", getRunLocallyBrowserVersion());
-
-        System.setProperty("com.vaadin.testbench.Parameters.runLocally",
                 "edge-14");
         Assert.assertEquals(Browser.EDGE, getRunLocallyBrowser());
         Assert.assertEquals("14", getRunLocallyBrowserVersion());
