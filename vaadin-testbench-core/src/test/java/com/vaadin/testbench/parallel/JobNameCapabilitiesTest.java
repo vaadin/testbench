@@ -31,7 +31,8 @@ public class JobNameCapabilitiesTest {
         Assert.assertEquals(4, testMethods.size());
         for (FrameworkMethod testMethod : testMethods) {
             Assert.assertEquals(testMethod.getName(),
-                    SauceLabsIntegration.getSauceLabsOption(((TBMethod) testMethod).getCapabilities(),
+                    SauceLabsIntegration.getSauceLabsOption(
+                            ((TBMethod) testMethod).getCapabilities(),
                             SauceLabsIntegration.CapabilityType.NAME));
         }
     }

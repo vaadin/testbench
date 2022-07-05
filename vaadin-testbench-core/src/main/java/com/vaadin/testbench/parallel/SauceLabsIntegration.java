@@ -52,26 +52,55 @@ public class SauceLabsIntegration {
         }
         String tunnelId = getTunnelIdentifier(sauceOptions, null);
         if (tunnelId != null) {
-            setSauceLabsOption(desiredCapabilities, "tunnelIdentifier", tunnelId);
+            setSauceLabsOption(desiredCapabilities, "tunnelIdentifier",
+                    tunnelId);
         }
     }
 
-    public static void setSauceLabsOption(DesiredCapabilities desiredCapabilities, String sauceOptionKey,
-            String sauceOptionValue) {
-        Map<String,Object> sauceOptions = (Map<String, Object>) desiredCapabilities.getCapability("sauce:options");
+    /**
+     * Sets the given SauceLabs option to the given value.
+     *
+     * The available SauceLabs options are listed at
+     * https://docs.saucelabs.com/dev/test-configuration-options/.
+     *
+     * @param desiredCapabilities
+     *            the desired capabilities object
+     * @param key
+     *            the option key
+     * @param value
+     *            the option value
+     */
+    public static void setSauceLabsOption(
+            DesiredCapabilities desiredCapabilities, String key, Object value) {
+        Map<String, Object> sauceOptions = (Map<String, Object>) desiredCapabilities
+                .getCapability("sauce:options");
         if (sauceOptions == null) {
             sauceOptions = new HashMap<>();
             desiredCapabilities.setCapability("sauce:options", sauceOptions);
         }
-        sauceOptions.put(sauceOptionKey, sauceOptionValue);
+        sauceOptions.put(key, value);
     }
 
-    public static Object getSauceLabsOption(DesiredCapabilities desiredCapabilities, String sauceOptionKey) {
-        Map<String,Object> sauceOptions = (Map<String, Object>) desiredCapabilities.getCapability("sauce:options");
+    /**
+     * Gets the given SauceLabs option.
+     *
+     * The available SauceLabs options are listed at
+     * https://docs.saucelabs.com/dev/test-configuration-options/.
+     *
+     * @param desiredCapabilities
+     *            the desired capabilities object
+     * @param key
+     *            the option key
+     * @return the option value that was set or null
+     */
+    public static Object getSauceLabsOption(
+            DesiredCapabilities desiredCapabilities, String key) {
+        Map<String, Object> sauceOptions = (Map<String, Object>) desiredCapabilities
+                .getCapability("sauce:options");
         if (sauceOptions == null) {
             return null;
         }
-        return sauceOptions.get(sauceOptionKey);
+        return sauceOptions.get(key);
     }
 
     /**

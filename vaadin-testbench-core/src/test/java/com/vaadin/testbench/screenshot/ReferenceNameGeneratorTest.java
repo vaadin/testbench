@@ -71,7 +71,7 @@ public class ReferenceNameGeneratorTest {
         String name = rng.generateName("shot", chrome);
         assertEquals("shot_windows_MicrosoftEdge_25", name);
     }
-    
+
     @Test
     public void linuxUsedInScreenshotName() {
         Capabilities chrome = Mockito.mock(Capabilities.class);

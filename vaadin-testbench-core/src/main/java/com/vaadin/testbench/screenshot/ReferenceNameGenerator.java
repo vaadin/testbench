@@ -34,7 +34,8 @@ public class ReferenceNameGenerator {
         String platformString;
 
         Platform platform = browserCapabilities.getPlatformName();
-        if (platform != null && platform.family() != null && platform != Platform.LINUX) {
+        if (platform != null && platform.family() != null
+                && platform != Platform.LINUX) {
             platform = platform.family();
         }
         if (platform != null) {

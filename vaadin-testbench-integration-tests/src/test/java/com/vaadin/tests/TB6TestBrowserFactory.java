@@ -34,7 +34,8 @@ public class TB6TestBrowserFactory extends DefaultBrowserFactory {
         DesiredCapabilities desiredCapabilities = super.create(browser, version,
                 platform);
 
-        SauceLabsIntegration.setSauceLabsOption(desiredCapabilities, "screenResolution", "1600x1200");
+        SauceLabsIntegration.setSauceLabsOption(desiredCapabilities,
+                "screenResolution", "1600x1200");
         return desiredCapabilities;
     }
 }
