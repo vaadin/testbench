@@ -149,7 +149,7 @@ public class BrowserUtil {
             return "Unknown";
         }
         try {
-            Platform p = capabilities.getPlatform();
+            Platform p = capabilities.getPlatformName();
             Platform family = p != null ? p.family() : null;
             if (family == Platform.WINDOWS || p == Platform.WINDOWS) {
                 return "Windows";
@@ -160,7 +160,7 @@ public class BrowserUtil {
         } catch (Exception e) {
         }
         Object rawPlatform = capabilities
-                .getCapability(CapabilityType.PLATFORM);
+                .getCapability(CapabilityType.PLATFORM_NAME);
         if (rawPlatform == null) {
             return "Unknown";
         }

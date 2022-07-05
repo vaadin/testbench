@@ -33,7 +33,7 @@ public class ReferenceNameGenerator {
             Capabilities browserCapabilities) {
         String platformString;
 
-        Platform platform = browserCapabilities.getPlatform();
+        Platform platform = browserCapabilities.getPlatformName();
         if (platform != null && platform.family() != null && platform != Platform.LINUX) {
             platform = platform.family();
         }
@@ -56,7 +56,7 @@ public class ReferenceNameGenerator {
      * @return the major version of the browser.
      */
     public static String getMajorVersion(Capabilities browserCapabilities) {
-        String versionString = browserCapabilities.getVersion();
+        String versionString = browserCapabilities.getBrowserVersion();
         if (versionString.equals("")) {
             Object browserVersion = browserCapabilities
                     .getCapability("browserVersion");
