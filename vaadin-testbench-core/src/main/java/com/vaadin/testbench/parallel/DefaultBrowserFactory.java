@@ -16,7 +16,6 @@ import org.openqa.selenium.Platform;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeOptions;
 import org.openqa.selenium.firefox.FirefoxOptions;
-import org.openqa.selenium.ie.InternetExplorerOptions;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.safari.SafariOptions;
@@ -52,13 +51,6 @@ public class DefaultBrowserFactory implements TestBenchBrowserFactory {
             break;
         case SAFARI:
             desiredCapabilities = new SafariOptions();
-            break;
-        case IE11:
-            desiredCapabilities = new InternetExplorerOptions();
-            // There are 2 capabilities ie.ensureCleanSession and
-            // ensureCleanSession in Selenium
-            // IE 11 uses ie.ensureCleanSession
-            desiredCapabilities.setCapability("ie.ensureCleanSession", true);
             break;
         case EDGE:
             desiredCapabilities = new EdgeOptions();

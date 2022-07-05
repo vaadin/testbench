@@ -34,7 +34,7 @@ public class DefaultBrowserConfigurationTest {
             List<FrameworkMethod> testMethods = parallelRunner
                     .computeTestMethods();
             Assert.assertEquals(1, testMethods.size());
-            DesiredCapabilities caps = Browser.IE11.getDesiredCapabilities();
+            DesiredCapabilities caps = Browser.FIREFOX.getDesiredCapabilities();
             TBMethod method = (TBMethod) testMethods.get(0);
             Assert.assertEquals(caps.getBrowserName(),
                     method.getCapabilities().getBrowserName());
@@ -122,7 +122,7 @@ public class DefaultBrowserConfigurationTest {
 
         @BrowserConfiguration
         public List<DesiredCapabilities> getBrowserConfiguration() {
-            return Arrays.asList(Browser.IE11.getDesiredCapabilities());
+            return Arrays.asList(Browser.FIREFOX.getDesiredCapabilities());
         }
     }
 

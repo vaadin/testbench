@@ -19,7 +19,6 @@ import org.openqa.selenium.firefox.FirefoxBinary;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.firefox.FirefoxProfile;
-import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.safari.SafariDriver;
 
@@ -78,8 +77,6 @@ public class LocalDriver {
             driver = new SafariDriver();
         } else if (BrowserUtil.isEdge(desiredCapabilities)) {
             driver = new EdgeDriver();
-        } else if (BrowserUtil.isIE(desiredCapabilities)) {
-            driver = new InternetExplorerDriver();
         } else {
             throw new RuntimeException(
                     "Not implemented support for running locally on "
