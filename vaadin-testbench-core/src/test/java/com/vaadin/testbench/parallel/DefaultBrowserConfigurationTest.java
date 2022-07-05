@@ -38,8 +38,8 @@ public class DefaultBrowserConfigurationTest {
             TBMethod method = (TBMethod) testMethods.get(0);
             Assert.assertEquals(caps.getBrowserName(),
                     method.getCapabilities().getBrowserName());
-            Assert.assertEquals(caps.getVersion(),
-                    method.getCapabilities().getVersion());
+            Assert.assertEquals(caps.getBrowserVersion(),
+                    method.getCapabilities().getBrowserVersion());
             Assert.assertEquals(caps.getPlatform(),
                     method.getCapabilities().getPlatform());
         } finally {
@@ -66,14 +66,14 @@ public class DefaultBrowserConfigurationTest {
             TBMethod method2 = (TBMethod) testMethods.get(1);
             Assert.assertEquals(caps1.getBrowserName(),
                     method1.getCapabilities().getBrowserName());
-            Assert.assertEquals(caps1.getVersion(),
-                    method1.getCapabilities().getVersion());
+            Assert.assertEquals(caps1.getBrowserVersion(),
+                    method1.getCapabilities().getBrowserVersion());
             Assert.assertEquals(caps1.getPlatform(),
                     method1.getCapabilities().getPlatform());
             Assert.assertEquals(caps2.getBrowserName(),
                     method2.getCapabilities().getBrowserName());
-            Assert.assertEquals(caps2.getVersion(),
-                    method2.getCapabilities().getVersion());
+            Assert.assertEquals(caps2.getBrowserVersion(),
+                    method2.getCapabilities().getBrowserVersion());
             Assert.assertEquals(caps2.getPlatform(),
                     method2.getCapabilities().getPlatform());
         } finally {
@@ -95,8 +95,8 @@ public class DefaultBrowserConfigurationTest {
             TBMethod method = (TBMethod) testMethods.get(0);
             Assert.assertEquals(caps.getBrowserName(),
                     method.getCapabilities().getBrowserName());
-            Assert.assertEquals(caps.getVersion(),
-                    method.getCapabilities().getVersion());
+            Assert.assertEquals(caps.getBrowserVersion(),
+                    method.getCapabilities().getBrowserVersion());
             Assert.assertEquals(caps.getPlatform(),
                     method.getCapabilities().getPlatform());
         } finally {

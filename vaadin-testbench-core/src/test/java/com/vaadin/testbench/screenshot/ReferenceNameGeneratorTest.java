@@ -14,7 +14,6 @@ import static org.junit.Assert.assertNotNull;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.Platform;
@@ -38,7 +37,7 @@ public class ReferenceNameGeneratorTest {
         Capabilities ffcaps = Mockito.mock(Capabilities.class);
         Mockito.when(ffcaps.getPlatform()).thenReturn(Platform.XP);
         Mockito.when(ffcaps.getBrowserName()).thenReturn("Firefox");
-        Mockito.when(ffcaps.getVersion()).thenReturn("13.0.1");
+        Mockito.when(ffcaps.getBrowserVersion()).thenReturn("13.0.1");
         String name = rng.generateName("shot", ffcaps);
         assertEquals("shot_windows_Firefox_13", name);
     }
@@ -47,7 +46,7 @@ public class ReferenceNameGeneratorTest {
     public void testGenerateName_shotNoPlatformInCapabilities_returnsGeneratedName() {
         Capabilities someBrowser = Mockito.mock(Capabilities.class);
         Mockito.when(someBrowser.getBrowserName()).thenReturn("SomeBrowser");
-        Mockito.when(someBrowser.getVersion()).thenReturn("12.3");
+        Mockito.when(someBrowser.getBrowserVersion()).thenReturn("12.3");
         String name = rng.generateName("shot", someBrowser);
         assertEquals("shot_unknown_SomeBrowser_12", name);
     }
@@ -57,7 +56,7 @@ public class ReferenceNameGeneratorTest {
         Capabilities safari = Mockito.mock(Capabilities.class);
         Mockito.when(safari.getPlatform()).thenReturn(Platform.MAC);
         Mockito.when(safari.getBrowserName()).thenReturn("Safari");
-        Mockito.when(safari.getVersion()).thenReturn("5");
+        Mockito.when(safari.getBrowserVersion()).thenReturn("5");
         String name = rng.generateName("foo", safari);
         assertEquals("foo_mac_Safari_5", name);
     }
@@ -67,7 +66,7 @@ public class ReferenceNameGeneratorTest {
         Capabilities chrome = Mockito.mock(Capabilities.class);
         Mockito.when(chrome.getPlatform()).thenReturn(Platform.XP);
         Mockito.when(chrome.getBrowserName()).thenReturn("MicrosoftEdge");
-        Mockito.when(chrome.getVersion()).thenReturn("");
+        Mockito.when(chrome.getBrowserVersion()).thenReturn("");
         Mockito.when(chrome.getCapability("browserVersion")).thenReturn("25");
         String name = rng.generateName("shot", chrome);
         assertEquals("shot_windows_MicrosoftEdge_25", name);
@@ -78,7 +77,7 @@ public class ReferenceNameGeneratorTest {
         Capabilities chrome = Mockito.mock(Capabilities.class);
         Mockito.when(chrome.getPlatform()).thenReturn(Platform.LINUX);
         Mockito.when(chrome.getBrowserName()).thenReturn("Chrome");
-        Mockito.when(chrome.getVersion()).thenReturn("");
+        Mockito.when(chrome.getBrowserVersion()).thenReturn("");
         Mockito.when(chrome.getCapability("browserVersion")).thenReturn("25");
         String name = rng.generateName("shot", chrome);
         assertEquals("shot_linux_Chrome_25", name);
