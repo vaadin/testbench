@@ -10,10 +10,10 @@
 package com.vaadin.testbench.parallel;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,13 +96,19 @@ public class SauceLabsIntegration {
      */
     public static void setSauceLabsOption(
             DesiredCapabilities desiredCapabilities, String key, Object value) {
-        Map<String, Object> sauceOptions = (Map<String, Object>) desiredCapabilities
-                .getCapability("sauce:options");
+        MutableCapabilities sauceOptions = getSauceLabsCapabilities(
+                desiredCapabilities);
         if (sauceOptions == null) {
-            sauceOptions = new HashMap<>();
+            sauceOptions = new MutableCapabilities();
             desiredCapabilities.setCapability("sauce:options", sauceOptions);
         }
-        sauceOptions.put(key, value);
+        sauceOptions.setCapability(key, value);
+    }
+
+    private static MutableCapabilities getSauceLabsCapabilities(
+            DesiredCapabilities desiredCapabilities) {
+        return (MutableCapabilities) desiredCapabilities
+                .getCapability("sauce:options");
     }
 
     /**
@@ -119,12 +125,12 @@ public class SauceLabsIntegration {
      */
     public static Object getSauceLabsOption(
             DesiredCapabilities desiredCapabilities, String key) {
-        Map<String, Object> sauceOptions = (Map<String, Object>) desiredCapabilities
-                .getCapability("sauce:options");
+        MutableCapabilities sauceOptions = getSauceLabsCapabilities(
+                desiredCapabilities);
         if (sauceOptions == null) {
             return null;
         }
-        return sauceOptions.get(key);
+        return sauceOptions.getCapability(key);
     }
 
     static String getTunnelIdentifier() {
