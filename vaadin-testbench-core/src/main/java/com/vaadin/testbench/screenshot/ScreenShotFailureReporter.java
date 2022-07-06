@@ -23,6 +23,9 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class ScreenShotFailureReporter {
     private final BufferedImage referenceImage;
     private final boolean[][] falseBlocks;
@@ -44,9 +47,9 @@ public class ScreenShotFailureReporter {
             ImageIO.write(screenshotImage, "png",
                     ImageFileUtil.getErrorScreenshotFile(fileName));
         } catch (IOException e) {
-            System.err.println("Error writing screenshot to "
-                    + ImageFileUtil.getErrorScreenshotFile(fileName).getPath());
-            e.printStackTrace();
+            getLogger().error("Error writing screenshot to "
+                    + ImageFileUtil.getErrorScreenshotFile(fileName).getPath(),
+                    e);
         }
 
         // collect big error blocks of differences
@@ -56,6 +59,10 @@ public class ScreenShotFailureReporter {
         drawErrorsToImage(errorAreas, screenshotImage);
 
         createDiffHtml(errorAreas, fileName, screenshotImage, referenceImage);
+    }
+
+    private Logger getLogger() {
+        return LoggerFactory.getLogger(getClass());
     }
 
     /**
