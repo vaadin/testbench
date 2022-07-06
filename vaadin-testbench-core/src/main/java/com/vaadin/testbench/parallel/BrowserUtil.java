@@ -29,7 +29,8 @@ public class BrowserUtil {
      *         on Safari
      */
     public static DesiredCapabilities safari() {
-        DesiredCapabilities c = browserFactory.create(com.vaadin.testbench.parallel.Browser.SAFARI);
+        DesiredCapabilities c = browserFactory
+                .create(com.vaadin.testbench.parallel.Browser.SAFARI);
         return c;
     }
 
@@ -40,7 +41,8 @@ public class BrowserUtil {
      *         on Chrome
      */
     public static DesiredCapabilities chrome() {
-        DesiredCapabilities c = browserFactory.create(com.vaadin.testbench.parallel.Browser.CHROME);
+        DesiredCapabilities c = browserFactory
+                .create(com.vaadin.testbench.parallel.Browser.CHROME);
         return c;
     }
 
@@ -51,7 +53,8 @@ public class BrowserUtil {
      *         on Firefox
      */
     public static DesiredCapabilities firefox() {
-        DesiredCapabilities c = browserFactory.create(com.vaadin.testbench.parallel.Browser.FIREFOX);
+        DesiredCapabilities c = browserFactory
+                .create(com.vaadin.testbench.parallel.Browser.FIREFOX);
         return c;
     }
 
@@ -62,7 +65,8 @@ public class BrowserUtil {
      *         on Edge
      */
     public static DesiredCapabilities edge() {
-        DesiredCapabilities c = browserFactory.create(com.vaadin.testbench.parallel.Browser.EDGE);
+        DesiredCapabilities c = browserFactory
+                .create(com.vaadin.testbench.parallel.Browser.EDGE);
         return c;
     }
 
