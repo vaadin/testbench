@@ -9,8 +9,6 @@
  */
 package com.vaadin.testbench.parallel;
 
-import static org.openqa.selenium.remote.CapabilityType.PLATFORM;
-
 import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -59,8 +57,10 @@ public class DefaultBrowserFactory implements TestBenchBrowserFactory {
         default:
             desiredCapabilities = new FirefoxOptions();
         }
-        desiredCapabilities.setCapability(CapabilityType.VERSION, version);
-        desiredCapabilities.setCapability(PLATFORM, platform);
+        desiredCapabilities.setCapability(CapabilityType.BROWSER_VERSION,
+                version);
+        desiredCapabilities.setCapability(CapabilityType.PLATFORM_NAME,
+                platform);
 
         return new DesiredCapabilities(desiredCapabilities);
     }

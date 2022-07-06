@@ -44,7 +44,7 @@ public class DescriptionListTester extends HtmlClickContainer<DescriptionList> {
      *
      * @return the list of terms for this description list
      */
-     public List<DescriptionList.Term> getTerms() {
+    public List<DescriptionList.Term> getTerms() {
         return getComponent().getChildren()
                 .filter(DescriptionList.Term.class::isInstance)
                 .map(DescriptionList.Term.class::cast)

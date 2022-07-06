@@ -105,7 +105,8 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
                         }
 
                         if (SauceLabsIntegration.isConfiguredForSauceLabs()) {
-                            methodCapabilities.setCapability(
+                            SauceLabsIntegration.setSauceLabsOption(
+                                    methodCapabilities,
                                     SauceLabsIntegration.CapabilityType.NAME,
                                     method.getName());
                         }
@@ -270,7 +271,7 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
         String exclude = System.getProperty("browsers.exclude");
 
         for (DesiredCapabilities d : desiredCapabilites) {
-            String browserName = (d.getBrowserName() + d.getVersion())
+            String browserName = (d.getBrowserName() + d.getBrowserVersion())
                     .toLowerCase();
             if (include != null && include.trim().length() > 0) {
                 if (include.trim().toLowerCase().contains(browserName)) {
@@ -519,7 +520,7 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
             if (capabilities == null) {
                 version = "Unknown";
             } else {
-                version = capabilities.getVersion();
+                version = capabilities.getBrowserVersion();
             }
             return platform + "_" + browser + "_" + version;
         }

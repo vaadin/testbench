@@ -10,8 +10,11 @@
 package com.vaadin.testbench.parallel;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
+import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,8 +52,55 @@ public class SauceLabsIntegration {
         }
         String tunnelId = getTunnelIdentifier(sauceOptions, null);
         if (tunnelId != null) {
-            desiredCapabilities.setCapability("tunnelIdentifier", tunnelId);
+            setSauceLabsOption(desiredCapabilities, "tunnelIdentifier",
+                    tunnelId);
         }
+    }
+
+    /**
+     * Sets the given SauceLabs option to the given value.
+     *
+     * The available SauceLabs options are listed at
+     * https://docs.saucelabs.com/dev/test-configuration-options/.
+     *
+     * @param desiredCapabilities
+     *            the desired capabilities object
+     * @param key
+     *            the option key
+     * @param value
+     *            the option value
+     */
+    public static void setSauceLabsOption(
+            DesiredCapabilities desiredCapabilities, String key, Object value) {
+        Map<String, Object> sauceOptions = (Map<String, Object>) desiredCapabilities
+                .getCapability("sauce:options");
+        if (sauceOptions == null) {
+            sauceOptions = new HashMap<>();
+            desiredCapabilities.setCapability("sauce:options", sauceOptions);
+        }
+        sauceOptions.put(key, value);
+    }
+
+    /**
+     * Gets the given SauceLabs option.
+     *
+     * The available SauceLabs options are listed at
+     * https://docs.saucelabs.com/dev/test-configuration-options/.
+     *
+     * @param desiredCapabilities
+     *            the desired capabilities object
+     * @param key
+     *            the option key
+     * @return the option value that was set or null
+     */
+    public static Object getSauceLabsOption(
+            DesiredCapabilities desiredCapabilities, String key) {
+        Map<String, Object> sauceOptions = (Map<String, Object>) desiredCapabilities
+                .getCapability("sauce:options");
+        if (sauceOptions == null) {
+            return null;
+        }
+        return sauceOptions.get(key);
     }
 
     /**

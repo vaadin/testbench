@@ -39,7 +39,7 @@ public class BrowserUtilTest {
     @Test
     public void platformWithoutEnum() {
         DesiredCapabilities dc = new DesiredCapabilities();
-        dc.setCapability("platform", "foobar");
+        dc.setCapability("platformName", "foobar");
         Assert.assertEquals("foobar", BrowserUtil.getPlatform(dc));
     }
 }
