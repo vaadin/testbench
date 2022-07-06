@@ -16,7 +16,6 @@
 package com.vaadin.tests;
 
 import org.openqa.selenium.Platform;
-import org.openqa.selenium.firefox.FirefoxDriver.Capability;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import com.vaadin.testbench.parallel.Browser;

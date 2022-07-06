@@ -14,6 +14,8 @@ import java.net.URL;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.vaadin.testbench.TestBench;
 
@@ -37,7 +39,7 @@ public class RemoteDriver {
                         new RemoteWebDriver(new URL(hubURL), capabilities));
                 return dr;
             } catch (Exception e) {
-                System.err.println("Browser startup for " + capabilities
+                getLogger().error("Browser startup for " + capabilities
                         + " failed on attempt " + i + ": " + e.getMessage());
                 if (i == BROWSER_INIT_ATTEMPTS) {
                     throw e;
@@ -47,5 +49,10 @@ public class RemoteDriver {
 
         // should never happen
         return null;
+    }
+
+    private Logger getLogger() {
+        return LoggerFactory.getLogger(getClass());
+
     }
 }
