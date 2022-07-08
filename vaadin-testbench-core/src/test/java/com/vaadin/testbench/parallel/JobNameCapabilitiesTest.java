@@ -59,8 +59,12 @@ public class JobNameCapabilitiesTest {
 
         @BrowserConfiguration
         public List<DesiredCapabilities> getBrowsers() {
-            return Arrays.asList(Browser.CHROME.getDesiredCapabilities(),
+            List<DesiredCapabilities> caps = Arrays.asList(Browser.CHROME.getDesiredCapabilities(),
                     Browser.FIREFOX.getDesiredCapabilities());
+            for (DesiredCapabilities cap : caps) {
+                SauceLabsIntegration.setSauceLabsOption(cap, "foo", "bar");
+            }
+            return caps;
         }
     }
 }
