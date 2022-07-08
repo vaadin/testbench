@@ -96,16 +96,21 @@ public class SauceLabsIntegration {
      */
     public static void setSauceLabsOption(
             DesiredCapabilities desiredCapabilities, String key, Object value) {
-        Map<String, Object> sauceOptions = getSauceLabsCapabilities(
+        // We always make a copy of the options because all clone/merge
+        // operations in
+        // DesiredCapability do a shallow clone
+        Map<String, Object> sauceOptions = new HashMap<>();
+        Map<String, Object> currentOptions = getSauceLabsOptions(
                 desiredCapabilities);
-        if (sauceOptions == null) {
-            sauceOptions = new HashMap<>();
-            desiredCapabilities.setCapability("sauce:options", sauceOptions);
+        if (currentOptions != null) {
+            sauceOptions.putAll(currentOptions);
         }
         sauceOptions.put(key, value);
+
+        desiredCapabilities.setCapability("sauce:options", sauceOptions);
     }
 
-    private static Map<String, Object> getSauceLabsCapabilities(
+    private static Map<String, Object> getSauceLabsOptions(
             DesiredCapabilities desiredCapabilities) {
         return (Map<String, Object>) desiredCapabilities
                 .getCapability("sauce:options");
@@ -125,7 +130,7 @@ public class SauceLabsIntegration {
      */
     public static Object getSauceLabsOption(
             DesiredCapabilities desiredCapabilities, String key) {
-        Map<String, Object> sauceOptions = getSauceLabsCapabilities(
+        Map<String, Object> sauceOptions = getSauceLabsOptions(
                 desiredCapabilities);
         if (sauceOptions == null) {
             return null;
