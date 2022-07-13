@@ -27,6 +27,7 @@ public class SauceLabsIntegration {
         return LoggerFactory.getLogger(SauceLabsIntegration.class);
     }
 
+    private static final String SAUCE_DEFAULT_HUB_URL = "https://ondemand.us-west-1.saucelabs.com/wd/hub";
     private static final String SAUCE_USERNAME_ENV = "SAUCE_USERNAME";
     private static final String SAUCE_USERNAME_PROP = "sauce.user";
     private static final String SAUCE_ACCESS_KEY_ENV = "SAUCE_ACCESS_KEY";
@@ -172,12 +173,16 @@ public class SauceLabsIntegration {
     /**
      * Returns the HubUrl for running tests in Sauce Labs.
      *
+     * The available SauceLabs URLs are listed at
+     * https://docs.saucelabs.com/basics/data-center-endpoints/#data-center-endpoints.
+     * 
      * @return url String to be used in Sauce Labs test run
      */
     static String getHubUrl() {
-        String hubUrl = getSystemPropertyOrEnv(SAUCE_HUB_URL_PROP, SAUCE_HUB_URL_ENV);
+        String hubUrl = getSystemPropertyOrEnv(SAUCE_HUB_URL_PROP,
+                SAUCE_HUB_URL_ENV);
         if (hubUrl == null) {
-            hubUrl = "https://ondemand.us-west-1.saucelabs.com/wd/hub";
+            hubUrl = SAUCE_DEFAULT_HUB_URL;
         }
         return hubUrl;
     }
