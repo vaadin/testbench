@@ -173,7 +173,7 @@ public class SauceLabsIntegration {
      * @return url String to be used in Sauce Labs test run
      */
     static String getHubUrl() {
-        return "https://ondemand.saucelabs.com/wd/hub";
+        return "https://ondemand.us-west-1.saucelabs.com/wd/hub";
     }
 
     static boolean isConfiguredForSauceLabs() {
