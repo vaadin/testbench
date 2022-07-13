@@ -33,6 +33,8 @@ public class SauceLabsIntegration {
     private static final String SAUCE_ACCESS_KEY_PROP = "sauce.sauceAccessKey";
     private static final String SAUCE_TUNNELID_PROP = "sauce.tunnelId";
     private static final String SAUCE_TUNNELID_ENV = "SAUCE_TUNNEL_ID";
+    private static final String SAUCE_HUB_URL_PROP = "sauce.hubUrl";
+    private static final String SAUCE_HUB_URL_ENV = "SAUCE_HUB_URL";
 
     /**
      * Sets needed desired capabilities for authentication and using the correct
@@ -173,7 +175,11 @@ public class SauceLabsIntegration {
      * @return url String to be used in Sauce Labs test run
      */
     static String getHubUrl() {
-        return "https://ondemand.us-west-1.saucelabs.com/wd/hub";
+        String hubUrl = getSystemPropertyOrEnv(SAUCE_HUB_URL_PROP, SAUCE_HUB_URL_ENV);
+        if (hubUrl == null) {
+            hubUrl = "https://ondemand.us-west-1.saucelabs.com/wd/hub";
+        }
+        return hubUrl;
     }
 
     static boolean isConfiguredForSauceLabs() {
