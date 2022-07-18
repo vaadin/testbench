@@ -30,6 +30,9 @@ public class TB6TestBrowserFactory extends DefaultBrowserFactory {
     @Override
     public DesiredCapabilities create(Browser browser, String version,
             Platform platform) {
+        if (browser != Browser.SAFARI) {
+                platform = Platform.WIN10;
+        }
         DesiredCapabilities desiredCapabilities = super.create(browser, version,
                 platform);
 
