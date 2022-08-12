@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Locale;
 
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.http.ClientConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,6 +35,7 @@ public class Parameters {
     private static int maxAttempts;
     private static String testbenchGridBrowsers;
     private static boolean headless;
+    private static int readTimeout;
     static {
         isDebug = getSystemPropertyBoolean("debug", false);
 
@@ -61,6 +63,8 @@ public class Parameters {
         testbenchGridBrowsers = getSystemPropertyString("gridBrowsers",
                 System.getenv("TESTBENCH_GRID_BROWSERS"));
         headless = getSystemPropertyBoolean("headless", false);
+        readTimeout = getSystemPropertyInt("readTimeout",
+                (int) ClientConfig.defaultConfig().readTimeout().toSeconds());
     }
 
     /**
@@ -476,5 +480,34 @@ public class Parameters {
      */
     public static void setHeadless(boolean headless) {
         Parameters.headless = headless;
+    }
+
+    /**
+     * Sets the time to wait for a response to a command sent to a remote web
+     * driver.
+     * <p>
+     * If you are running on a hub that limits the number of concurrent sessions
+     * and you are requesting more sessions than that, your session request
+     * might time out before the hub responds with a new session. In this case,
+     * you can increase this timeout to make it wait longer.
+     * <p>
+     * Note that this value must be set before a remote web driver is created,
+     * which typically happens during the "before" phase of a unit test.
+     *
+     * @param readTimeout
+     *            the timeout in seconds
+     */
+    public static void setReadTimeout(int readTimeout) {
+        Parameters.readTimeout = readTimeout;
+    }
+
+    /**
+     * Gets the time to wait for a response to a command sent to a remote web
+     * driver.
+     *
+     * @return the timeout in seconds
+     */
+    public static int getReadTimeout() {
+        return readTimeout;
     }
 }
