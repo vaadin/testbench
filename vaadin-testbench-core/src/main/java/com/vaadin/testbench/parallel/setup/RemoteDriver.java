@@ -13,13 +13,16 @@
 package com.vaadin.testbench.parallel.setup;
 
 import java.net.URL;
+import java.time.Duration;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.remote.http.ClientConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.vaadin.testbench.Parameters;
 import com.vaadin.testbench.TestBench;
 
 public class RemoteDriver {
@@ -36,11 +39,14 @@ public class RemoteDriver {
      */
     public WebDriver createDriver(String hubURL,
             DesiredCapabilities capabilities) throws Exception {
+        ClientConfig config = ClientConfig.defaultConfig()
+                .readTimeout(Duration.ofSeconds(Parameters.getReadTimeout()));
         for (int i = 1; i <= BROWSER_INIT_ATTEMPTS; i++) {
             try {
-                WebDriver dr = TestBench.createDriver(
-                        new RemoteWebDriver(new URL(hubURL), capabilities));
-                return dr;
+                WebDriver driver = RemoteWebDriver.builder()
+                        .address(new URL(hubURL)).oneOf(capabilities)
+                        .config(config).build();
+                return TestBench.createDriver(driver);
             } catch (Exception e) {
                 getLogger().error("Browser startup for " + capabilities
                         + " failed on attempt " + i + ": " + e.getMessage());

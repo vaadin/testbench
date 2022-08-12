@@ -2,6 +2,7 @@ package com.vaadin.testbench;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.openqa.selenium.remote.http.ClientConfig;
 
 public class ParametersTest {
 
@@ -21,6 +22,9 @@ public class ParametersTest {
         Assert.assertEquals(false,
                 Parameters.isScreenshotComparisonCursorDetection());
         Assert.assertFalse(Parameters.isHeadless());
+        Assert.assertEquals(
+                ClientConfig.defaultConfig().readTimeout().toSeconds(),
+                Parameters.getReadTimeout());
     }
 
     @Test
