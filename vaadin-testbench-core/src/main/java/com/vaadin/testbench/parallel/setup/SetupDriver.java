@@ -144,6 +144,7 @@ public class SetupDriver {
      * version)
      *
      * @param desiredCapabilities
+     *            to be set
      */
     public void setDesiredCapabilities(
             DesiredCapabilities desiredCapabilities) {

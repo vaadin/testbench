@@ -157,8 +157,10 @@ public class ParallelTest extends TestBenchTestCase {
     }
 
     /**
-     * @return Value of the {@link RunOnHub} annotation of current Class, or
-     *         null if annotation is not present.
+     * @param klass
+     *            the test class to get the {@link RunOnHub} annotation from
+     * @return Value of the {@link RunOnHub} annotation of passed Class, or null
+     *         if annotation is not present.
      */
     protected RunOnHub getRunOnHub(Class<?> klass) {
         if (klass == null) {
@@ -185,7 +187,6 @@ public class ParallelTest extends TestBenchTestCase {
     }
 
     /**
-     *
      * @return default capabilities, used if no {@link BrowserConfiguration}
      *         method was found
      */
@@ -198,6 +199,7 @@ public class ParallelTest extends TestBenchTestCase {
      * version)
      *
      * @param desiredCapabilities
+     *            to be set
      */
     public void setDesiredCapabilities(
             DesiredCapabilities desiredCapabilities) {
@@ -219,7 +221,7 @@ public class ParallelTest extends TestBenchTestCase {
     /**
      * Gets the {@link DesiredCapabilities} (usually browser name and version)
      *
-     * @return
+     * @return the {@link DesiredCapabilities}
      */
     protected DesiredCapabilities getDesiredCapabilities() {
         return driverConfiguration.getDesiredCapabilities();

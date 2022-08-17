@@ -31,10 +31,13 @@ public class RemoteDriver {
     /**
      * Creates a {@link WebDriver} instance used for running the test remotely.
      *
-     * @since
+     * @param hubURL
+     *            the URL of the hub
      * @param capabilities
      *            the type of browser needed
+     * @return a driver instance
      * @throws Exception
+     *             if the driver could not be created
      */
     public WebDriver createDriver(String hubURL,
             DesiredCapabilities capabilities) throws Exception {

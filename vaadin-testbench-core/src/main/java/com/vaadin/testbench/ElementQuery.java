@@ -226,7 +226,9 @@ public class ElementQuery<T extends TestBenchElement> {
     }
 
     /**
-     * Return the context (element or driver) to search inside.
+     * Returns the context (element or driver) to search inside.
+     *
+     * @return a {@link SearchContext} instance
      */
     protected SearchContext getContext() {
         return searchContext;
@@ -311,6 +313,8 @@ public class ElementQuery<T extends TestBenchElement> {
     /**
      * Executes the search and returns the requested element.
      *
+     * @param index
+     *            the index of the element to return
      * @return The element of the type specified in the constructor
      * @throws NoSuchElementException
      *             if no element is found

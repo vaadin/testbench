@@ -497,6 +497,9 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
      * Use e.g. as
      * <code>waitUntil(ExpectedConditions.presenceOfElementLocated(by), 10);</code>
      *
+     * @param <T>
+     *            The return type of the {@link ExpectedCondition} and this
+     *            method
      * @param condition
      *            Models a condition that might reasonably be expected to
      *            eventually evaluate to something that is neither null nor
@@ -525,6 +528,9 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
      * Use e.g. as
      * <code>waitUntil(ExpectedConditions.presenceOfElementLocated(by));</code>
      *
+     * @param <T>
+     *            The return type of the {@link ExpectedCondition} and this
+     *            method
      * @param condition
      *            Models a condition that might reasonably be expected to
      *            eventually evaluate to something that is neither null nor

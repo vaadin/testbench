@@ -60,6 +60,7 @@ public interface HasPropertySettersGetters extends WebElement {
      * @param propertyNames
      *            the name of on or more properties, forming a property chain of
      *            type <code>property1.property2.property3</code>
+     * @return the value of the property
      */
     public String getPropertyString(String... propertyNames);
 
@@ -69,6 +70,7 @@ public interface HasPropertySettersGetters extends WebElement {
      * @param propertyNames
      *            the name of on or more properties, forming a property chain of
      *            type <code>property1.property2.property3</code>
+     * @return the value of the property
      */
     public Boolean getPropertyBoolean(String... propertyNames);
 
@@ -78,6 +80,7 @@ public interface HasPropertySettersGetters extends WebElement {
      * @param propertyNames
      *            the name of on or more properties, forming a property chain of
      *            type <code>property1.property2.property3</code>
+     * @return the value of the property
      */
     public TestBenchElement getPropertyElement(String... propertyNames);
 
@@ -88,6 +91,7 @@ public interface HasPropertySettersGetters extends WebElement {
      * @param propertyNames
      *            the name of on or more properties, forming a property chain of
      *            type <code>property1.property2.property3</code>
+     * @return the value of the property
      */
     public List<TestBenchElement> getPropertyElements(String... propertyNames);
 
@@ -97,6 +101,7 @@ public interface HasPropertySettersGetters extends WebElement {
      * @param propertyNames
      *            the name of on or more properties, forming a property chain of
      *            type <code>property1.property2.property3</code>
+     * @return the value of the property
      */
     public Double getPropertyDouble(String... propertyNames);
 
@@ -106,6 +111,7 @@ public interface HasPropertySettersGetters extends WebElement {
      * @param propertyNames
      *            the name of on or more properties, forming a property chain of
      *            type <code>property1.property2.property3</code>
+     * @return the value of the property
      */
     public Integer getPropertyInteger(String... propertyNames);
 
@@ -117,6 +123,7 @@ public interface HasPropertySettersGetters extends WebElement {
      * @param propertyNames
      *            the name of on or more properties, forming a property chain of
      *            type <code>property1.property2.property3</code>
+     * @return the value of the property
      */
     public Object getProperty(String... propertyNames);
 

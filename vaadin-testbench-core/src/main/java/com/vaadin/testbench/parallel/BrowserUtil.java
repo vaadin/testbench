@@ -123,6 +123,7 @@ public class BrowserUtil {
      * naming and screenshots
      *
      * @param capabilities
+     *            to obtain the browser identifier from
      * @return a human readable string describing the capabilities
      */
     public static String getBrowserIdentifier(Capabilities capabilities) {
@@ -146,6 +147,7 @@ public class BrowserUtil {
      * given capabilities. Used mainly for screenshots
      *
      * @param capabilities
+     *            to obtain the platform from
      * @return a human readable string describing the platform
      */
     public static String getPlatform(Capabilities capabilities) {
