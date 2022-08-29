@@ -36,6 +36,8 @@ public class LocalDriver {
     /**
      * Creates a {@link WebDriver} instance used for running the test locally
      * for debug purposes. Uses firefoxDriver as WebDriver.
+     *
+     * @return a driver instance
      */
     static public WebDriver createDriver() {
         return createDriver(ParallelTest.getDefaultCapabilities().get(0));
@@ -44,6 +46,10 @@ public class LocalDriver {
     /**
      * Creates a {@link WebDriver} instance used for running the test locally
      * for debug purposes.
+     *
+     * @param desiredCapabilities
+     *            the capabilities to use for the driver
+     * @return a driver instance
      */
     static public WebDriver createDriver(
             DesiredCapabilities desiredCapabilities) {

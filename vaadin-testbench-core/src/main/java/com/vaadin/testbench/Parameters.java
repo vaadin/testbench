@@ -71,6 +71,8 @@ public class Parameters {
      * Turns debugging info on/off
      *
      * @param isDebug
+     *            {@code true} if debugging info should be turned on,
+     *            {@code false} otherwise
      */
     public static void setDebug(boolean isDebug) {
         Parameters.isDebug = isDebug;
@@ -146,7 +148,8 @@ public class Parameters {
     }
 
     /**
-     * @return true if debugging info is to be shown
+     * @return {@code true} if debugging info should be shown, {@code false}
+     *         otherwise
      */
     public static boolean isDebug() {
         return isDebug;
@@ -158,7 +161,7 @@ public class Parameters {
      * cursor.
      *
      * @param isScreenshotComparisonCursorDetection
-     *
+     *            {@code true} to enable cursor detection
      */
     public static void setScreenshotComparisonCursorDetection(
             boolean isScreenshotComparisonCursorDetection) {
@@ -169,7 +172,7 @@ public class Parameters {
      * Tells whether to treat screen shots with the only difference being a text
      * input cursor as equal or not. If true, they will be treated as equal.
      *
-     * @return true if cursor detection is used
+     * @return {@code true} if cursor detection is used, {@code false} otherwise
      */
     public static boolean isScreenshotComparisonCursorDetection() {
         return isScreenshotComparisonCursorDetection;
@@ -179,6 +182,7 @@ public class Parameters {
      * Sets the directory to search for reference images.
      *
      * @param screenshotReferenceDirectory
+     *            the directory to search for reference images
      */
     public static void setScreenshotReferenceDirectory(
             String screenshotReferenceDirectory) {
@@ -196,6 +200,7 @@ public class Parameters {
      * Sets the directory where error screen shots are stored.
      *
      * @param screenshotErrorDirectory
+     *            the directory path
      */
     public static void setScreenshotErrorDirectory(
             String screenshotErrorDirectory) {
@@ -235,6 +240,7 @@ public class Parameters {
      * the elements to settle into place.
      *
      * @param maxRetries
+     *            the maximum number of retries for screenshot comparisons
      */
     public static void setMaxScreenshotRetries(int maxRetries) {
         maxScreenshotRetries = maxRetries;

@@ -90,8 +90,10 @@ public class ImageComparison {
      *            0.025 == 2.5%)
      * @param capabilities
      *            browser capabilities
-     * @return true if images are the same
+     * @return {@code true} if images are the same
      * @throws IOException
+     *             if the reference image cannot be read or error screenshot
+     *             cannot be written
      */
     public boolean imageEqualToReference(BufferedImage screenshotImage,
             String referenceFileId, double errorTolerance,

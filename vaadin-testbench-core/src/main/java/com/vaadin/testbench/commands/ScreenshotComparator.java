@@ -126,8 +126,9 @@ public class ScreenshotComparator {
      *            the element to retain in the screenshot
      * @param fullScreen
      *            the full screen image
-     * @return
+     * @return the cropped image
      * @throws IOException
+     *             if element outside of the screenshot
      */
     public static BufferedImage cropToElement(WebElement element,
             BufferedImage fullScreen) throws IOException {

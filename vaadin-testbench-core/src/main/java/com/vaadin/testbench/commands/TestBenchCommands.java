@@ -121,6 +121,7 @@ public interface TestBenchCommands extends CanCompareScreenshots {
      * browser window before interacting with them
      *
      * @param autoScrollIntoView
+     *            {@code true} if elements should be scrolled
      */
     void setAutoScrollIntoView(boolean autoScrollIntoView);
 

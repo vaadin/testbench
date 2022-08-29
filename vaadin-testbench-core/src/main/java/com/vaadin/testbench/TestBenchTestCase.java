@@ -158,6 +158,8 @@ public abstract class TestBenchTestCase
      * to use component-specific API on elements found using standard Selenium
      * API.
      *
+     * @param <T>
+     *            the type of the {@link TestBenchElement} to return
      * @param elementType
      *            The type (class) containing the API to decorate with
      * @param element
@@ -202,6 +204,9 @@ public abstract class TestBenchTestCase
      * Use e.g. as
      * <code>waitUntil(ExpectedConditions.presenceOfElementLocated(by), 10);</code>
      *
+     * @param <T>
+     *            The return type of the {@link ExpectedCondition} and this
+     *            method
      * @param condition
      *            Models a condition that might reasonably be expected to
      *            eventually evaluate to something that is neither null nor
@@ -230,6 +235,9 @@ public abstract class TestBenchTestCase
      * Use e.g. as
      * <code>waitUntil(ExpectedConditions.presenceOfElementLocated(by));</code>
      *
+     * @param <T>
+     *            The return type of the {@link ExpectedCondition} and this
+     *            method
      * @param condition
      *            Models a condition that might reasonably be expected to
      *            eventually evaluate to something that is neither null nor

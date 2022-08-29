@@ -141,6 +141,8 @@ public class TestBench {
      * TestBenchCommandExecutor. This feature is advanced and potentially
      * dangerous.
      *
+     * @param <T>
+     *            the type of the {@link TestBenchElement} to return
      * @param clazz
      *            Class of wanted Element
      * @param webElement

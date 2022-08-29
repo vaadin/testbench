@@ -23,7 +23,7 @@ public interface HasTestBenchCommandExecutor {
      * Return a reference to the related {@link TestBenchCommandExecutor}
      * instance.
      *
-     * @return
+     * @return the {@link TestBenchCommandExecutor} instance
      */
     public TestBenchCommandExecutor getCommandExecutor();
 

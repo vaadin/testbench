@@ -147,6 +147,8 @@ public class TestBenchDriverProxy
      * @param tbCommandExecutor
      *            the {@link TestBenchCommandExecutor} related to the driver
      *            instance
+     * @return a new object containing the wrapped elements and other possible
+     *         values
      */
     protected static Object wrapElementOrElements(
             Object elementElementsOrValues,

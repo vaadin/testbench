@@ -18,6 +18,8 @@ public interface HasElementQuery extends HasSearchContext {
      * it uses the element as its search context. Otherwise the search context
      * is the driver.
      *
+     * @param <T>
+     *            the type of the queried {@link TestBenchElement}
      * @param clazz
      *            the type of element to find, with the tag name defined using
      *            <code>@Element</code> on the class
