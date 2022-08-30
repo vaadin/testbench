@@ -221,7 +221,7 @@
         <dependency>
             <groupId>com.vaadin</groupId>
             <artifactId>license-checker</artifactId>
-            <version>1.5.1</version>
+            <version>${license.checker.version}</version>
         </dependency>
         <dependency>
             <groupId>com.vaadin.external.gwt</groupId>
