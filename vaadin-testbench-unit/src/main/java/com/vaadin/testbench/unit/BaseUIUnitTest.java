@@ -79,7 +79,7 @@ abstract class BaseUIUnitTest {
         }
 
         LicenseChecker.checkLicenseFromStaticBlock("vaadin-testbench",
-                properties.getProperty("testbench.version"));
+                properties.getProperty("testbench.version"), null);
     }
 
     private static Map<Class<?>, Class<? extends ComponentTester>> scanForTesters(
