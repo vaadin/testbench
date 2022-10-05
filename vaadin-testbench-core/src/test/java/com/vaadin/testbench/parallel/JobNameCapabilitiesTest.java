@@ -1,3 +1,12 @@
+/**
+ * Copyright (C) 2020 Vaadin Ltd
+ *
+ * This program is available under Commercial Vaadin Developer License
+ * 4.0 (CVDLv4).
+ *
+ *
+ * For the full License, see <https://vaadin.com/license/cvdl-4.0>.
+ */
 package com.vaadin.testbench.parallel;
 
 import java.util.Arrays;
@@ -21,8 +30,11 @@ public class JobNameCapabilitiesTest {
         List<FrameworkMethod> testMethods = parallelRunner.computeTestMethods();
         Assert.assertEquals(4, testMethods.size());
         for (FrameworkMethod testMethod : testMethods) {
+            DesiredCapabilities cap = ((TBMethod) testMethod).getCapabilities();
+            Assert.assertEquals("bar",
+                    SauceLabsIntegration.getSauceLabsOption(cap, "foo"));
             Assert.assertEquals(testMethod.getName(),
-                    ((TBMethod) testMethod).getCapabilities().getCapability(
+                    SauceLabsIntegration.getSauceLabsOption(cap,
                             SauceLabsIntegration.CapabilityType.NAME));
         }
     }
@@ -49,8 +61,13 @@ public class JobNameCapabilitiesTest {
 
         @BrowserConfiguration
         public List<DesiredCapabilities> getBrowsers() {
-            return Arrays.asList(Browser.CHROME.getDesiredCapabilities(),
+            List<DesiredCapabilities> caps = Arrays.asList(
+                    Browser.CHROME.getDesiredCapabilities(),
                     Browser.FIREFOX.getDesiredCapabilities());
+            for (DesiredCapabilities cap : caps) {
+                SauceLabsIntegration.setSauceLabsOption(cap, "foo", "bar");
+            }
+            return caps;
         }
     }
 }
