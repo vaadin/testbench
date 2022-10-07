@@ -195,7 +195,7 @@ public class BrowserUtil {
         }
         try {
             Platform p = capabilities.getPlatform();
-            if (p == Platform.WIN8 || p == Platform.WINDOWS
+            if (p == Platform.WIN8 || p == Platform.WIN8_1 || p == Platform.WINDOWS
                     || p == Platform.VISTA || p == Platform.XP) {
                 return "Windows";
             } else if (p == Platform.MAC) {
@@ -205,7 +205,7 @@ public class BrowserUtil {
         } catch (Exception e) {
         }
         Object rawPlatform = capabilities
-                .getCapability(CapabilityType.PLATFORM);
+                .getCapability(CapabilityType.PLATFORM_NAME);
         if (rawPlatform == null) {
             return "Unknown";
         }
