@@ -27,8 +27,7 @@ import com.vaadin.testbench.parallel.DefaultBrowserFactory;
 import com.vaadin.testbench.parallel.SauceLabsIntegration;
 
 /**
- * Specifies default browser configuration for {@link AbstractTB6Test}
- * tests.
+ * Specifies default browser configuration for {@link AbstractTB6Test} tests.
  */
 public class TB6TestBrowserFactory extends DefaultBrowserFactory {
 
@@ -44,15 +43,15 @@ public class TB6TestBrowserFactory extends DefaultBrowserFactory {
     public DesiredCapabilities create(Browser browser, String version,
             Platform platform) {
         if (browser != Browser.SAFARI) {
-                platform = Platform.WIN10;
+            platform = Platform.WIN10;
         }
-        DesiredCapabilities desiredCapabilities = super.create(browser,
-                version, platform);
+        DesiredCapabilities desiredCapabilities = super.create(browser, version,
+                platform);
 
         if ("".equals(version) && defaultBrowserVersion.containsKey(browser)) {
             desiredCapabilities.setVersion(defaultBrowserVersion.get(browser));
         }
-        if(browser.equals(Browser.FIREFOX)) {
+        if (browser.equals(Browser.FIREFOX)) {
             desiredCapabilities.setCapability(FirefoxDriver.MARIONETTE, false);
         }
         SauceLabsIntegration.setSauceLabsOption(desiredCapabilities,

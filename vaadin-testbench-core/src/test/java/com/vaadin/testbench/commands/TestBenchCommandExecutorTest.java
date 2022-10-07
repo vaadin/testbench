@@ -240,11 +240,12 @@ public class TestBenchCommandExecutorTest {
         expect(driver.executeScript(contains("window.Vaadin.Flow")))
                 .andReturn(Boolean.TRUE).anyTimes();
         if (expectGetCapabilities) {
-            Capabilities mockedCapabilities = createNiceMock(Capabilities.class);
+            Capabilities mockedCapabilities = createNiceMock(
+                    Capabilities.class);
             expect(mockedCapabilities.getBrowserName()).andReturn("Firefox");
             replay(mockedCapabilities);
-            expect(driver.getCapabilities())
-                    .andReturn(mockedCapabilities).once();
+            expect(driver.getCapabilities()).andReturn(mockedCapabilities)
+                    .once();
         }
         return driver;
     }

@@ -452,9 +452,9 @@ public class Parameters {
     }
 
     /**
-     * 
-     * @return The configuration string of browsers (and their versions) as
-     *         a comma separated list. Defaults to null string.
+     *
+     * @return The configuration string of browsers (and their versions) as a
+     *         comma separated list. Defaults to null string.
      */
     public static String getGridBrowsersString() {
         return testbenchGridBrowsers;
@@ -463,7 +463,7 @@ public class Parameters {
     /**
      * Parses the grid browsers string and returns a new List of
      * DesiredCapabilities
-     * 
+     *
      * @return a list of DesiredCapabilities based on getGridBrowsersString.
      *         Empty list if nothing configured.
      */
@@ -489,7 +489,7 @@ public class Parameters {
     /**
      * Sets the default browsers used in test grid if not overridden in a
      * ParallelTest
-     * 
+     *
      * @param browsers
      *            comma separated list of browsers e.g.
      *            "ie11,chrome,safari-9,firefox-53"
@@ -499,7 +499,9 @@ public class Parameters {
     }
 
     /**
-     * Checks if requested to run browsers in headless mode when runnning on a local machine using a browser supporting it (currently Chrome and Firefox).
+     * Checks if requested to run browsers in headless mode when runnning on a
+     * local machine using a browser supporting it (currently Chrome and
+     * Firefox).
      *
      * @return <code>true</code>, if requested to run in headless mode,
      *         <code>false</code> otherwise
@@ -509,10 +511,12 @@ public class Parameters {
     }
 
     /**
-     * Sets whether to run browsers in headless mode when runnning on a local machine using a browser supporting it (currently Chrome and Firefox).
+     * Sets whether to run browsers in headless mode when runnning on a local
+     * machine using a browser supporting it (currently Chrome and Firefox).
      *
-     * @param headless <code>true</code>, to run in headless mode,
-     *                 <code>false</code> otherwise
+     * @param headless
+     *            <code>true</code>, to run in headless mode, <code>false</code>
+     *            otherwise
      */
     public static void setHeadless(boolean headless) {
         Parameters.headless = headless;

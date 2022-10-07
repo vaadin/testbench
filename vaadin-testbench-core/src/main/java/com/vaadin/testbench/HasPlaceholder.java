@@ -11,6 +11,7 @@
  * If not, see <http://vaadin.com/license/cval-3>.
  */
 package com.vaadin.testbench;
+
 /**
  * Implement by elements which support a placeholder, i.e. text shown when the
  * field is empty.

@@ -433,8 +433,8 @@ public class ImageComparison {
         // Find first different pixel in the block of possibleCursorPosition
         int cursorX = -1;
         int cursorStartY = -1;
-        findCursor: for (int j = 0, l = (height > BLOCK_SIZE ? BLOCK_SIZE
-                : height); j < l; j++) {
+        findCursor: for (int j = 0,
+                l = (height > BLOCK_SIZE ? BLOCK_SIZE : height); j < l; j++) {
             for (int i = 0; i < width; i++) {
 
                 // If found differing pixel
