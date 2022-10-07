@@ -11,6 +11,7 @@
  * If not, see <http://vaadin.com/license/cval-3>.
  */
 package com.vaadin.testbench;
+
 /**
  * Implemented by elements which support selecting an option by matching the
  * text shown to the user.

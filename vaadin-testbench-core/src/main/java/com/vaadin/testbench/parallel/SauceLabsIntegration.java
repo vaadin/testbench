@@ -17,6 +17,7 @@ import java.util.Map;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 /**
  * Integration methods for Sauce Labs testing used by {@link ParallelTest}
  *
@@ -24,7 +25,6 @@ import java.util.logging.Logger;
 public class SauceLabsIntegration {
     private static final Logger logger = Logger
             .getLogger(SauceLabsIntegration.class.getName());
-
 
     private static final String SAUCE_DEFAULT_HUB_URL = "https://ondemand.us-west-1.saucelabs.com/wd/hub";
     private static final String SAUCE_USERNAME_ENV = "SAUCE_USERNAME";
@@ -58,16 +58,18 @@ public class SauceLabsIntegration {
         if (username != null) {
             setSauceLabsOption(desiredCapabilities, "username", username);
         } else {
-            logger.log(Level.FINE, "You can give a Sauce Labs user name using -D"
-                    + SAUCE_USERNAME_PROP + "=<username> or by "
-                    + SAUCE_USERNAME_ENV + " environment variable.");
+            logger.log(Level.FINE,
+                    "You can give a Sauce Labs user name using -D"
+                            + SAUCE_USERNAME_PROP + "=<username> or by "
+                            + SAUCE_USERNAME_ENV + " environment variable.");
         }
         if (accessKey != null) {
             setSauceLabsOption(desiredCapabilities, "access_key", accessKey);
         } else {
-            logger.log(Level.FINE, "You can give a Sauce Labs access key using -D"
-                    + SAUCE_ACCESS_KEY_PROP + "=<accesskey> or by "
-                    + SAUCE_ACCESS_KEY_ENV + " environment variable.");
+            logger.log(Level.FINE,
+                    "You can give a Sauce Labs access key using -D"
+                            + SAUCE_ACCESS_KEY_PROP + "=<accesskey> or by "
+                            + SAUCE_ACCESS_KEY_ENV + " environment variable.");
         }
 
         if (tunnelId != null) {

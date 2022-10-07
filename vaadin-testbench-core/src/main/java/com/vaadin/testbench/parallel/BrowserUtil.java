@@ -195,8 +195,9 @@ public class BrowserUtil {
         }
         try {
             Platform p = capabilities.getPlatform();
-            if (p == Platform.WIN8 || p == Platform.WIN8_1 || p == Platform.WINDOWS
-                    || p == Platform.VISTA || p == Platform.XP) {
+            if (p == Platform.WIN8 || p == Platform.WIN8_1
+                    || p == Platform.WINDOWS || p == Platform.VISTA
+                    || p == Platform.XP) {
                 return "Windows";
             } else if (p == Platform.MAC) {
                 return "Mac";

@@ -11,6 +11,7 @@
  * If not, see <http://vaadin.com/license/cval-3>.
  */
 package com.vaadin.testbench;
+
 /**
  * Implement by elements which support a label, i.e. text shown typically inside
  * (when field is empty) or above the field (when the field has a value).
