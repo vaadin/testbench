@@ -65,7 +65,7 @@ public abstract class TestBenchTestCase
         }
 
         LicenseChecker.checkLicenseFromStaticBlock("vaadin-testbench",
-                TestBenchTestCase.testbenchVersion);
+                TestBenchTestCase.testbenchVersion, null);
     }
 
     /**
