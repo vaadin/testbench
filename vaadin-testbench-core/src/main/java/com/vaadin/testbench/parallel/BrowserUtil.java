@@ -202,7 +202,7 @@ public class BrowserUtil {
         } catch (Exception e) {
         }
         Object rawPlatform = capabilities
-                .getCapability(CapabilityType.PLATFORM);
+                .getCapability(CapabilityType.PLATFORM_NAME);
         if (rawPlatform == null) {
             return "Unknown";
         }

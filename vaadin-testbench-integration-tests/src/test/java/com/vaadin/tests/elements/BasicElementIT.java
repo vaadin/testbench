@@ -24,7 +24,7 @@ public class BasicElementIT extends AbstractTB6Test {
     @Before
     public void openAndFindElement() {
         openTestURL();
-        buttonElement = $(NativeButtonElement.class).first();
+        buttonElement = $(NativeButtonElement.class).waitForFirst();
     }
 
     @Test
