@@ -176,10 +176,10 @@ public class ImageComparison {
             if (Parameters.isDebug()) {
                 if (imagesEqual) {
                     // The images are equal but of different size
-                    System.out.println("Images are of different size.");
+                    getLogger().debug("Images are of different size.");
                 } else {
                     // Neither size nor contents match
-                    System.out.println(
+                    getLogger().debug(
                             "Images differ and are of different size.");
                 }
             }
@@ -191,7 +191,7 @@ public class ImageComparison {
 
         if (imagesEqual) {
             if (Parameters.isDebug()) {
-                System.out.println("Screenshot matched reference");
+                getLogger().debug("Screenshot matched reference");
             }
 
             // Images match. Nothing else to do.
@@ -205,20 +205,20 @@ public class ImageComparison {
             if (possibleCursorPosition != null) {
                 if (isCursorTheOnlyError(possibleCursorPosition, param)) {
                     if (Parameters.isDebug()) {
-                        System.out.println(
+                        getLogger().debug(
                                 "Screenshot matched reference after removing cursor");
                     }
                     // Cursor is the only difference so we are done.
                     return null;
                 } else if (Parameters.isDebug()) {
-                    System.out.println(
+                    getLogger().debug(
                             "Screenshot did not match reference after removing cursor");
                 }
             }
         }
 
         if (Parameters.isDebug()) {
-            System.out.println("Screenshot did not match reference");
+            getLogger().debug("Screenshot did not match reference");
         }
 
         // Make a failure reporter that is used upstream
@@ -420,7 +420,7 @@ public class ImageComparison {
         }
 
         if (Parameters.isDebug()) {
-            System.out.println("Looking for cursor starting from " + x + "," + y
+            getLogger().debug("Looking for cursor starting from " + x + "," + y
                     + " using width=" + width + " and height=" + height);
         }
         // getBlock writes the result into the int[] sample parameter, in
@@ -457,7 +457,7 @@ public class ImageComparison {
                     cursorX = i;
                     cursorStartY = j;
                     if (Parameters.isDebug()) {
-                        System.out.println("Cursor found at " + cursorX + ","
+                        getLogger().debug("Cursor found at " + cursorX + ","
                                 + cursorStartY);
                     }
                     break findCursor;
@@ -467,7 +467,7 @@ public class ImageComparison {
 
         if (-1 == cursorX) {
             if (Parameters.isDebug()) {
-                System.out.println("Cursor not found");
+                getLogger().debug("Cursor not found");
             }
             // No difference found with cursor detection threshold
             return false;
@@ -502,14 +502,14 @@ public class ImageComparison {
         if (cursorEndY - cursorStartY < 5 && cursorStartY > 0
                 && cursorEndY < height - 1) {
             if (Parameters.isDebug()) {
-                System.out.println("Cursor rejected at " + cursorX + ","
+                getLogger().debug("Cursor rejected at " + cursorX + ","
                         + cursorStartY + "-" + cursorEndY);
             }
             return false;
         }
 
         if (Parameters.isDebug()) {
-            System.out.println("Cursor is at " + cursorX + "," + cursorStartY
+            getLogger().debug("Cursor is at " + cursorX + "," + cursorStartY
                     + "-" + cursorEndY);
         }
         // Copy pixels from reference over the possible cursor, then
