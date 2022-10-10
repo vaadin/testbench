@@ -350,7 +350,7 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
      * Validates the signature of a BrowserConfiguration annotated method.
      *
      * @param method
-     *               BrowserConfiguration annotated method
+     *            BrowserConfiguration annotated method
      * @return true if method signature is valid. false otherwise.
      */
     private boolean validateBrowserConfigurationAnnotatedSignature(

@@ -85,15 +85,14 @@ public class ImageComparison {
      * hues 0.1% (default) per macroblock of 16x16
      *
      * @param screenshotImage
-     *                        Image of canvas (must have proper dimensions)
+     *            Image of canvas (must have proper dimensions)
      * @param referenceFileId
-     *                        File id for this image without .png extension
+     *            File id for this image without .png extension
      * @param errorTolerance
-     *                        Allowed RGB error for a macroblock (value range 0-1
-     *                        default
-     *                        0.025 == 2.5%)
+     *            Allowed RGB error for a macroblock (value range 0-1 default
+     *            0.025 == 2.5%)
      * @param capabilities
-     *                        browser capabilities
+     *            browser capabilities
      * @return true if images are the same
      * @throws IOException
      */
@@ -111,8 +110,8 @@ public class ImageComparison {
             // Save the screenshot in the error directory.
             ImageIO.write(screenshotImage, "png", ImageFileUtil
                     .getErrorScreenshotFile(referenceFileId + ".png"));
-            getLogger().error("No reference found for " + referenceFileId + " in "
-                    + ImageFileUtil.getScreenshotReferenceDirectory());
+            getLogger().error("No reference found for " + referenceFileId
+                    + " in " + ImageFileUtil.getScreenshotReferenceDirectory());
             return false;
         }
 
@@ -164,7 +163,7 @@ public class ImageComparison {
     /**
      *
      * @param params
-     *               a ComparisonParameters object. See {@link createParameters}.
+     *            a ComparisonParameters object. See {@link createParameters}.
      * @return
      */
     private ScreenShotFailureReporter compareImages(
@@ -179,8 +178,8 @@ public class ImageComparison {
                     getLogger().debug("Images are of different size.");
                 } else {
                     // Neither size nor contents match
-                    getLogger().debug(
-                            "Images differ and are of different size.");
+                    getLogger()
+                            .debug("Images differ and are of different size.");
                 }
             }
 
@@ -329,7 +328,7 @@ public class ImageComparison {
      * the screenshot.
      *
      * @param params
-     *               a ComparisonParameters object. See {@link createParameters}.
+     *            a ComparisonParameters object. See {@link createParameters}.
      *
      * @return A Point referring to the x and y coordinates in the image where
      *         the cursor might be (actually might be inside a 16x32 block
@@ -391,13 +390,10 @@ public class ImageComparison {
      * Check if failure is because of a blinking text cursor.
      *
      * @param possibleCursorPosition
-     *                               The position in the image where a cursor
-     *                               possibly can be found
-     *                               (pixel coordinates of the top left corner of a
-     *                               block)
+     *            The position in the image where a cursor possibly can be found
+     *            (pixel coordinates of the top left corner of a block)
      * @param params
-     *                               a ComparisonParameters object. See
-     *                               {@link createParameters}.
+     *            a ComparisonParameters object. See {@link createParameters}.
      * @return true If cursor (vertical line of at least 5 pixels if not at the
      *         top or bottom) is the only difference between the images.
      */
@@ -568,11 +564,11 @@ public class ImageComparison {
      * maintainable).
      *
      * @param reference
-     *                   a BufferedImage
+     *            a BufferedImage
      * @param screenshot
-     *                   a BufferedImage
+     *            a BufferedImage
      * @param tolerance
-     *                   error tolerance value
+     *            error tolerance value
      * @return a ComparisonParameters descriptor object
      */
     private static final ComparisonParameters createParameters(

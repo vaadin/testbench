@@ -46,8 +46,7 @@ public abstract class TestBenchTestCase
             properties.load(TestBenchTestCase.class
                     .getResourceAsStream("testbench.properties"));
         } catch (Exception e) {
-            getLogger().warn("Unable to read TestBench properties file",
-                    e);
+            getLogger().warn("Unable to read TestBench properties file", e);
             throw new ExceptionInInitializerError(e);
         }
 
