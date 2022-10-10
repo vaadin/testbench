@@ -131,7 +131,8 @@ public class BasicElementIT extends AbstractTB6Test {
         NativeButtonElement withAttributes = $(NativeButtonElement.class)
                 .get(5);
         withAttributes.dispatchEvent("custom123");
-        Assert.assertEquals("Event on Button 5 bubbles: false", $("div").id("msg").getText());
+        Assert.assertEquals("Event on Button 5 bubbles: false",
+                $("div").id("msg").getText());
     }
 
     @Test
@@ -140,7 +141,8 @@ public class BasicElementIT extends AbstractTB6Test {
                 .get(5);
         withAttributes.dispatchEvent("custom123",
                 Collections.singletonMap("bubbles", "true"));
-        Assert.assertEquals("Event on Button 5 bubbles: true", $("div").id("msg").getText());
+        Assert.assertEquals("Event on Button 5 bubbles: true",
+                $("div").id("msg").getText());
     }
 
     @Test

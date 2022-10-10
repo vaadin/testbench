@@ -70,7 +70,6 @@ public class SauceLabsIntegration {
                     + SAUCE_ACCESS_KEY_PROP + "=<accesskey> or by "
                     + SAUCE_ACCESS_KEY_ENV + " environment variable.");
         }
-
         if (tunnelId != null) {
             setSauceLabsOption(desiredCapabilities, "tunnelIdentifier",
                     tunnelId);
