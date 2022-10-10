@@ -14,8 +14,8 @@ package com.vaadin.testbench;
 
 import java.util.List;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.junit.Rule;
 import org.openqa.selenium.JavascriptExecutor;
@@ -46,8 +46,7 @@ public abstract class TestBenchTestCase
             properties.load(TestBenchTestCase.class
                     .getResourceAsStream("testbench.properties"));
         } catch (Exception e) {
-            Logger.getLogger(TestBenchTestCase.class.getName()).log(
-                    Level.WARNING, "Unable to read TestBench properties file",
+            getLogger().warn("Unable to read TestBench properties file",
                     e);
             throw new ExceptionInInitializerError(e);
         }
@@ -57,7 +56,7 @@ public abstract class TestBenchTestCase
         String expectedVersion = properties.getProperty("selenium.version");
         if (seleniumVersion == null
                 || !seleniumVersion.equals(expectedVersion)) {
-            Logger.getLogger(TestBenchTestCase.class.getName()).warning(
+            getLogger().warn(
                     "This version of TestBench depends on Selenium version "
                             + expectedVersion + " but version "
                             + seleniumVersion
@@ -79,6 +78,10 @@ public abstract class TestBenchTestCase
     public RetryRule maxAttempts = new RetryRule(Parameters.getMaxAttempts());
 
     protected WebDriver driver;
+
+    private static Logger getLogger() {
+        return LoggerFactory.getLogger(TestBenchTestCase.class);
+    }
 
     /**
      * Convenience method the return {@link TestBenchCommands} for the default

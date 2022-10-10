@@ -15,16 +15,17 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.openqa.selenium.remote.DesiredCapabilities;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Integration methods for Sauce Labs testing used by {@link ParallelTest}
  *
  */
 public class SauceLabsIntegration {
-    private static final Logger logger = Logger
-            .getLogger(SauceLabsIntegration.class.getName());
+    private static Logger getLogger() {
+        return LoggerFactory.getLogger(SauceLabsIntegration.class);
+    }
 
     private static final String SAUCE_DEFAULT_HUB_URL = "https://ondemand.us-west-1.saucelabs.com/wd/hub";
     private static final String SAUCE_USERNAME_ENV = "SAUCE_USERNAME";
@@ -58,20 +59,17 @@ public class SauceLabsIntegration {
         if (username != null) {
             setSauceLabsOption(desiredCapabilities, "username", username);
         } else {
-            logger.log(Level.FINE,
-                    "You can give a Sauce Labs user name using -D"
-                            + SAUCE_USERNAME_PROP + "=<username> or by "
-                            + SAUCE_USERNAME_ENV + " environment variable.");
+            getLogger().debug("You can give a Sauce Labs user name using -D"
+                    + SAUCE_USERNAME_PROP + "=<username> or by "
+                    + SAUCE_USERNAME_ENV + " environment variable.");
         }
         if (accessKey != null) {
             setSauceLabsOption(desiredCapabilities, "access_key", accessKey);
         } else {
-            logger.log(Level.FINE,
-                    "You can give a Sauce Labs access key using -D"
-                            + SAUCE_ACCESS_KEY_PROP + "=<accesskey> or by "
-                            + SAUCE_ACCESS_KEY_ENV + " environment variable.");
+            getLogger().debug("You can give a Sauce Labs access key using -D"
+                    + SAUCE_ACCESS_KEY_PROP + "=<accesskey> or by "
+                    + SAUCE_ACCESS_KEY_ENV + " environment variable.");
         }
-
         if (tunnelId != null) {
             setSauceLabsOption(desiredCapabilities, "tunnelIdentifier",
                     tunnelId);

@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.Locale;
 
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.vaadin.testbench.annotations.RunLocally;
 import com.vaadin.testbench.annotations.RunOnHub;
@@ -110,12 +112,16 @@ public class Parameters {
             try {
                 return Integer.parseInt(str);
             } catch (Exception e) {
-                System.err.println("Unable to parse parameter '"
+                getLogger().error("Unable to parse parameter '"
                         + getQualifiedParameter(unqualifiedName) + "' value "
                         + str + " to an integer");
             }
         }
         return defaultValue;
+    }
+
+    private static Logger getLogger() {
+        return LoggerFactory.getLogger(Parameters.class);
     }
 
     private static double getSystemPropertyDouble(String unqualifiedName,
@@ -126,7 +132,7 @@ public class Parameters {
             try {
                 return Double.parseDouble(str);
             } catch (Exception e) {
-                System.err.println("Unable to parse parameter '"
+                getLogger().error("Unable to parse parameter '"
                         + getQualifiedParameter(unqualifiedName) + "' value "
                         + str + " to a double");
             }
