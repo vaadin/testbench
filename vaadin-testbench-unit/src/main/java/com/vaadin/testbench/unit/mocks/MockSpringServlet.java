@@ -10,8 +10,8 @@
 
 package com.vaadin.testbench.unit.mocks;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.lang.reflect.Constructor;
 import java.security.Principal;
