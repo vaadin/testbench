@@ -10,7 +10,7 @@
 package com.vaadin.testbench.unit.mocks
 
 import java.io.Serializable
-import javax.servlet.http.HttpSession
+import jakarta.servlet.http.HttpSession
 import kotlin.test.expect
 import com.github.mvysny.dynatest.DynaTest
 import com.github.mvysny.dynatest.cloneBySerialization

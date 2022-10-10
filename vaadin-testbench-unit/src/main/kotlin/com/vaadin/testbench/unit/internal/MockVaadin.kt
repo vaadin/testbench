@@ -12,7 +12,7 @@ package com.vaadin.testbench.unit.internal
 import java.lang.reflect.Field
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.locks.ReentrantLock
-import javax.servlet.ServletContext
+import jakarta.servlet.ServletContext
 import com.vaadin.flow.component.ComponentUtil
 import com.vaadin.flow.component.UI
 import com.vaadin.flow.component.page.Page

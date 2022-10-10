@@ -10,7 +10,7 @@
 package com.vaadin.testbench.unit.mocks
 
 import java.util.AbstractMap
-import javax.servlet.http.HttpSession
+import jakarta.servlet.http.HttpSession
 
 /**
  * A live map of all attributes in this session. Modifications to the map will be

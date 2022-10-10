@@ -11,8 +11,8 @@ package com.vaadin.testbench.unit.mocks
 
 import java.util.Collections
 import java.util.Enumeration
-import javax.servlet.ServletConfig
-import javax.servlet.ServletContext
+import jakarta.servlet.ServletConfig
+import jakarta.servlet.ServletContext
 
 
 open class MockServletConfig(val context: ServletContext) : ServletConfig {
