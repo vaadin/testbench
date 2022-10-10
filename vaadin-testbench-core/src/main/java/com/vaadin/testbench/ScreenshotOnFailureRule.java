@@ -28,7 +28,6 @@ import org.openqa.selenium.TakesScreenshot;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * This JUnit {@link org.junit.Rule} grabs a screenshot when a test fails.
  * Usage:
@@ -116,10 +115,11 @@ public class ScreenshotOnFailureRule extends TestWatcher {
                                     .getScreenshotAs(OutputType.BYTES)));
             // Store the screenshot in the errors directory
             ImageFileUtil.createScreenshotDirectoriesIfNeeded();
-            final File errorScreenshotFile = getErrorScreenshotFile(description);
-            ImageIO.write(screenshotImage, "png",
-                    errorScreenshotFile);
-            getLogger().info("Error screenshot written to: " + errorScreenshotFile.getAbsolutePath());
+            final File errorScreenshotFile = getErrorScreenshotFile(
+                    description);
+            ImageIO.write(screenshotImage, "png", errorScreenshotFile);
+            getLogger().info("Error screenshot written to: "
+                    + errorScreenshotFile.getAbsolutePath());
         } catch (IOException e1) {
             throw new RuntimeException(
                     "There was a problem grabbing and writing a screen shot of a test failure.",
