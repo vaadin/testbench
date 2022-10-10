@@ -52,7 +52,7 @@ public class RemoteDriver {
                 return TestBench.createDriver(driver);
             } catch (Exception e) {
                 getLogger().error("Browser startup for " + capabilities
-                        + " failed on attempt " + i + ": " + e.getMessage());
+                        + " failed on attempt " + i, e);
                 if (i == BROWSER_INIT_ATTEMPTS) {
                     throw e;
                 }
