@@ -97,8 +97,7 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
                 ia = InetAddress.getLocalHost();
             }
         } catch (UnknownHostException e) {
-            getLogger().warn(
-                    "Could not find name of remote control", e);
+            getLogger().warn("Could not find name of remote control", e);
             return "unknown";
         }
 
