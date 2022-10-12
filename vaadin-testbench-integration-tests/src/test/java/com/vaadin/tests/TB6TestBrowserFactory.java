@@ -23,7 +23,8 @@ import com.vaadin.testbench.parallel.DefaultBrowserFactory;
 import com.vaadin.testbench.parallel.SauceLabsIntegration;
 
 /**
- * Specifies default browser configuration for {@link AbstractTB6Test} tests.
+ * Specifies default browser configuration for {@link AbstractTB6TestJUnit5}
+ * tests.
  */
 public class TB6TestBrowserFactory extends DefaultBrowserFactory {
 

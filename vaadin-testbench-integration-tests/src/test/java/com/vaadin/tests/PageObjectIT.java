@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import com.vaadin.flow.component.Component;
 import com.vaadin.testUI.PageObjectView;
 
-public class PageObjectIT extends AbstractTB6Test {
+public class PageObjectIT extends AbstractTB6TestJUnit5 {
 
     @Override
     protected Class<? extends Component> getTestView() {

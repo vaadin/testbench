@@ -6,9 +6,9 @@ import org.openqa.selenium.By;
 
 import com.vaadin.testUI.ElementQueryView;
 import com.vaadin.testbench.TestBenchElement;
-import com.vaadin.tests.AbstractTB6Test;
+import com.vaadin.tests.AbstractTB6TestJUnit5;
 
-public class ElementScreenCompareIT extends AbstractTB6Test {
+public class ElementScreenCompareIT extends AbstractTB6TestJUnit5 {
 
     @Override
     protected Class<ElementQueryView> getTestView() {

@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -28,7 +29,7 @@ import com.vaadin.testbench.annotations.RunOnHub;
 import com.vaadin.testbench.parallel.setup.SetupDriver;
 
 /**
- * Unit tests should extend {@link ParallelTest} if they are to be run in
+ * Unit tests should extend {@link ParallelTestJUnit5} if they are to be run in
  * several browser configurations. For each browser configuration, a
  * {@link WebDriver} is properly created with the desired configuration.
  * <p>
@@ -38,14 +39,15 @@ import com.vaadin.testbench.parallel.setup.SetupDriver;
  * "https://github.com/vaadin/testbench-demo">https://github.com/vaadin/testbench-demo</a>.
  * </p>
  */
-public class ParallelTest extends TestBenchTestCase {
+@ExtendWith(ParallelExtension.class)
+public class ParallelTestJUnit5 extends TestBenchTestCase {
 
     @RegisterExtension
     public ScreenshotOnFailureExtension screenshotOnFailure = new ScreenshotOnFailureExtension(
             this, true);
 
     private static Logger getLogger() {
-        return LoggerFactory.getLogger(ParallelTest.class);
+        return LoggerFactory.getLogger(ParallelTestJUnit5.class);
     }
 
     private SetupDriver driverConfiguration = new SetupDriver();
@@ -173,7 +175,7 @@ public class ParallelTest extends TestBenchTestCase {
      *         Class, or null if annotation is not present.
      */
     protected Browser getRunLocallyBrowser() {
-        return ParallelRunner.getRunLocallyBrowserName(getClass());
+        return ParallelExtension.getRunLocallyBrowserName(getClass());
     }
 
     /**
@@ -181,7 +183,7 @@ public class ParallelTest extends TestBenchTestCase {
      *         Class, or empty empty String if annotation is not present.
      */
     protected String getRunLocallyBrowserVersion() {
-        return ParallelRunner.getRunLocallyBrowserVersion(getClass());
+        return ParallelExtension.getRunLocallyBrowserVersion(getClass());
     }
 
     /**

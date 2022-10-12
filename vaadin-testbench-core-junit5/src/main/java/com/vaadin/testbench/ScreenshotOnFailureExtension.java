@@ -149,8 +149,12 @@ public class ScreenshotOnFailureExtension implements TestWatcher {
      * @return Failure screenshot file.
      */
     protected File getErrorScreenshotFile(ExtensionContext context) {
-        return ImageFileUtil
-                .getErrorScreenshotFile(context.getDisplayName() + ".png");
+        String fileName = (String) context
+                .getStore(ExtensionContext.Namespace.GLOBAL).get("displayName");
+        if (fileName == null) {
+            fileName = context.getDisplayName();
+        }
+        return ImageFileUtil.getErrorScreenshotFile(fileName + ".png");
     }
 
 }

@@ -8,7 +8,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.testUI.PerformanceView;
 import com.vaadin.tests.elements.NativeButtonElement;
 
-public class PerformanceIT extends AbstractTB6Test {
+public class PerformanceIT extends AbstractTB6TestJUnit5 {
 
     @Override
     protected Class<? extends Component> getTestView() {

@@ -6,9 +6,9 @@ import org.junit.jupiter.api.Test;
 import com.vaadin.flow.component.Component;
 import com.vaadin.testUI.ElementQueryView;
 import com.vaadin.testbench.TestBenchElement;
-import com.vaadin.tests.AbstractTB6Test;
+import com.vaadin.tests.AbstractTB6TestJUnit5;
 
-public class ExecuteJavascriptIT extends AbstractTB6Test {
+public class ExecuteJavascriptIT extends AbstractTB6TestJUnit5 {
 
     @Override
     protected Class<? extends Component> getTestView() {
