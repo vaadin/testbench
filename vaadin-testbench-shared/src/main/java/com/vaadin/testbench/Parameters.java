@@ -398,7 +398,7 @@ public class Parameters {
     /**
      *
      * Gets the maximum number of times to run the test in case of a random
-     * failure. See {@link RetryRule} for details.
+     * failure.
      *
      * @return maximum attempts the test can be run.
      */

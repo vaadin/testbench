@@ -160,8 +160,8 @@ public class ImageComparison {
 
     /**
      *
-     * @param params
-     *            a ComparisonParameters object. See {@link createParameters}.
+     * @param param
+     *            a ComparisonParameters object.
      * @return
      */
     private ScreenShotFailureReporter compareImages(
@@ -326,7 +326,7 @@ public class ImageComparison {
      * the screenshot.
      *
      * @param params
-     *            a ComparisonParameters object. See {@link createParameters}.
+     *            a ComparisonParameters object.
      *
      * @return A Point referring to the x and y coordinates in the image where
      *         the cursor might be (actually might be inside a 16x32 block
@@ -391,7 +391,7 @@ public class ImageComparison {
      *            The position in the image where a cursor possibly can be found
      *            (pixel coordinates of the top left corner of a block)
      * @param params
-     *            a ComparisonParameters object. See {@link createParameters}.
+     *            a ComparisonParameters object.
      * @return true If cursor (vertical line of at least 5 pixels if not at the
      *         top or bottom) is the only difference between the images.
      */
