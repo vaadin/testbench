@@ -1,7 +1,7 @@
 package com.vaadin.tests.elements;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.testUI.ElementQueryView;
@@ -21,6 +21,6 @@ public class ExecuteJavascriptIT extends AbstractTB6Test {
 
         TestBenchElement button = $(NativeButtonElement.class).first();
         Long offsetTop = button.getPropertyDouble("offsetTop").longValue();
-        Assert.assertEquals(Long.valueOf(0), offsetTop);
+        Assertions.assertEquals(Long.valueOf(0), offsetTop);
     }
 }

@@ -16,6 +16,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javassist.util.proxy.MethodFilter;
+import javassist.util.proxy.MethodHandler;
+import javassist.util.proxy.ProxyFactory;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
@@ -23,10 +26,6 @@ import com.vaadin.pro.licensechecker.LicenseChecker;
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.screenshot.ImageComparison;
 import com.vaadin.testbench.screenshot.ReferenceNameGenerator;
-
-import javassist.util.proxy.MethodFilter;
-import javassist.util.proxy.MethodHandler;
-import javassist.util.proxy.ProxyFactory;
 
 /**
  */
@@ -87,7 +86,7 @@ public class TestBench {
 
     static {
         LicenseChecker.checkLicenseFromStaticBlock("vaadin-testbench",
-                TestBenchTestCase.testbenchVersion, null);
+                TestBenchVersion.testbenchVersion, null);
     }
 
     public static TestBenchDriverProxy createDriver(WebDriver driver) {

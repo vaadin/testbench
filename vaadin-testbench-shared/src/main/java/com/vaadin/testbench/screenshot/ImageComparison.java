@@ -9,24 +9,23 @@
  */
 package com.vaadin.testbench.screenshot;
 
-import static com.vaadin.testbench.screenshot.ImageUtil.getBlock;
-import static com.vaadin.testbench.screenshot.ImageUtil.getImageProperties;
-import static com.vaadin.testbench.screenshot.ImageUtil.getLuminance;
-import static java.lang.Math.abs;
-
+import javax.imageio.ImageIO;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.List;
 
-import javax.imageio.ImageIO;
+import org.openqa.selenium.Capabilities;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.vaadin.testbench.Parameters;
 import com.vaadin.testbench.screenshot.ImageUtil.ImageProperties;
 
-import org.openqa.selenium.Capabilities;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static com.vaadin.testbench.screenshot.ImageUtil.getBlock;
+import static com.vaadin.testbench.screenshot.ImageUtil.getImageProperties;
+import static com.vaadin.testbench.screenshot.ImageUtil.getLuminance;
+import static java.lang.Math.abs;
 
 /**
  * Class with features for comparing 2 images.

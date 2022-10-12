@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -10,9 +10,9 @@
         <version>9.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>vaadin-testbench-core</artifactId>
+    <artifactId>vaadin-testbench-core-junit5</artifactId>
     <packaging>jar</packaging>
-    <name>Vaadin TestBench</name>
+    <name>Vaadin TestBench JUnit5</name>
     <inceptionYear>2020</inceptionYear>
 
     <licenses>
@@ -29,6 +29,10 @@
             <url>https://maven.vaadin.com/vaadin-prereleases</url>
         </repository>
     </repositories>
+
+    <properties>
+        <junit5.version>5.8.2</junit5.version>
+    </properties>
 
     <profiles>
         <profile>
@@ -57,18 +61,18 @@
                                 <index>true</index>
                                 <manifest>
                                     <addClasspath>true</addClasspath>
-                                    <!-- Implementation-Title and Implementation-Version 
+                                    <!-- Implementation-Title and Implementation-Version
                                         come from the POM by default -->
                                     <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                                 </manifest>
                                 <manifestEntries>
-                                    <!-- Package format version - do not 
+                                    <!-- Package format version - do not
                                         change -->
                                     <Vaadin-Package-Version>1</Vaadin-Package-Version>
                                 </manifestEntries>
                             </archive>
                             <excludes>
-                                <!-- Remove resources included due to gwt 
+                                <!-- Remove resources included due to gwt
                                     compilation -->
                                 <exclude>**/demoandtestapp/*</exclude>
                             </excludes>
@@ -196,9 +200,15 @@
         </dependency>
 
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.13.2</version>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>${junit5.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${junit5.version}</version>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -239,5 +249,14 @@
             <artifactId>vaadin-testbench-shared</artifactId>
             <version>${project.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>io.github.artsok</groupId>
+            <artifactId>rerunner-jupiter</artifactId>
+            <version>2.1.6</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
+
 </project>

@@ -78,7 +78,7 @@
         </dependency>
         <dependency>
             <groupId>com.vaadin</groupId>
-            <artifactId>vaadin-testbench-core</artifactId>
+            <artifactId>vaadin-testbench-core-junit5</artifactId>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -127,12 +127,12 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.22.2</version>
+                <version>3.0.0-M7</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <version>2.22.2</version>
+                <version>3.0.0-M5</version>
                 <executions>
                     <execution>
                         <id>integration-test</id>

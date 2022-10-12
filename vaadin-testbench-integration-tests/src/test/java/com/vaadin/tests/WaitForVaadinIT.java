@@ -9,8 +9,8 @@
  */
 package com.vaadin.tests;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.testUI.PageObjectView;
@@ -69,9 +69,8 @@ public class WaitForVaadinIT extends AbstractTB6Test {
         command.run();
         long after = System.currentTimeMillis();
         long timeout = after - before;
-        Assert.assertTrue(
-                "Unexpected execution time, waiting time = " + timeout,
-                timeout < NON_BLOCKING_EXECUTION_TIMEOUT);
+        Assertions.assertTrue(timeout < NON_BLOCKING_EXECUTION_TIMEOUT,
+                "Unexpected execution time, waiting time = " + timeout);
     }
 
     private void assertExecutionBlocked(Runnable command) {
@@ -79,8 +78,7 @@ public class WaitForVaadinIT extends AbstractTB6Test {
         command.run();
         long after = System.currentTimeMillis();
         long timeout = after - before;
-        Assert.assertTrue(
-                "Unexpected blocked execution time, waiting time = " + timeout,
-                timeout >= BLOCKING_EXECUTION_TIMEOUT);
+        Assertions.assertTrue(timeout >= BLOCKING_EXECUTION_TIMEOUT,
+                "Unexpected execution time, waiting time = " + timeout);
     }
 }

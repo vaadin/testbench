@@ -10,9 +10,9 @@
         <version>9.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>vaadin-testbench-core</artifactId>
+    <artifactId>vaadin-testbench-shared</artifactId>
     <packaging>jar</packaging>
-    <name>Vaadin TestBench</name>
+    <name>Vaadin TestBench Shared</name>
     <inceptionYear>2020</inceptionYear>
 
     <licenses>
@@ -196,12 +196,6 @@
         </dependency>
 
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.13.2</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
             <version>4.3.1</version>
@@ -229,15 +223,10 @@
             <version>2.8.2.vaadin2</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.vaadin</groupId>
-            <artifactId>vaadin-testbench-unit</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.vaadin</groupId>
-            <artifactId>vaadin-testbench-shared</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.vaadin</groupId>-->
+<!--            <artifactId>vaadin-testbench-unit</artifactId>-->
+<!--            <version>${project.version}</version>-->
+<!--        </dependency>-->
     </dependencies>
 </project>

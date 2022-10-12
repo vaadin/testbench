@@ -2,8 +2,8 @@ package com.vaadin.tests;
 
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.testUI.PageObjectView;
@@ -21,8 +21,9 @@ public class PageObjectIT extends AbstractTB6Test {
         List<MyComponentWithIdElement> components = $(
                 MyComponentWithIdElement.class).all();
 
-        Assert.assertEquals(1, components.size());
-        Assert.assertEquals("MyComponentWithId", components.get(0).getText());
+        Assertions.assertEquals(1, components.size());
+        Assertions.assertEquals("MyComponentWithId",
+                components.get(0).getText());
     }
 
     @Test
@@ -31,8 +32,8 @@ public class PageObjectIT extends AbstractTB6Test {
         List<MyComponentWithClassesElement> components = $(
                 MyComponentWithClassesElement.class).all();
 
-        Assert.assertEquals(1, components.size());
-        Assert.assertEquals("MyComponentWithClasses",
+        Assertions.assertEquals(1, components.size());
+        Assertions.assertEquals("MyComponentWithClasses",
                 components.get(0).getText());
     }
 

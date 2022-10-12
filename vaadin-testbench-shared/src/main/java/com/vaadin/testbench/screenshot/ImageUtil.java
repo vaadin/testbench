@@ -9,9 +9,7 @@
  */
 package com.vaadin.testbench.screenshot;
 
-import static java.awt.image.BufferedImage.TYPE_INT_ARGB;
-import static java.awt.image.BufferedImage.TYPE_INT_RGB;
-
+import javax.imageio.ImageIO;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
@@ -20,9 +18,10 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.imageio.ImageIO;
-
 import org.apache.commons.codec.binary.Base64;
+
+import static java.awt.image.BufferedImage.TYPE_INT_ARGB;
+import static java.awt.image.BufferedImage.TYPE_INT_RGB;
 
 /**
  * These image utility functions are for internal use only.
