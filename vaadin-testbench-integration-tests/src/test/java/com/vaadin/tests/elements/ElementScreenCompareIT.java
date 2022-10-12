@@ -1,6 +1,7 @@
 package com.vaadin.tests.elements;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 
@@ -15,6 +16,7 @@ public class ElementScreenCompareIT extends AbstractTB6TestJUnit5 {
         return ElementQueryView.class;
     }
 
+    @BeforeEach
     @Override
     public void setup() throws Exception {
         super.setup();
