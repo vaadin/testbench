@@ -30,7 +30,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.testbench.annotations.BrowserConfiguration;
 import com.vaadin.testbench.annotations.BrowserFactory;
 import com.vaadin.testbench.parallel.BrowserUtil;
-import com.vaadin.testbench.parallel.ParallelTestJUnit5;
+import com.vaadin.testbench.capabilities.CapabilitiesTest;
 
 /**
  * Base class for TestBench 6+ tests. All TB6+ tests in the project should
@@ -49,7 +49,7 @@ import com.vaadin.testbench.parallel.ParallelTestJUnit5;
  * @author Vaadin Ltd
  */
 @BrowserFactory(TB6TestBrowserFactory.class)
-public abstract class AbstractTB6TestJUnit5 extends ParallelTestJUnit5 {
+public abstract class AbstractJUnit5TB6Test extends CapabilitiesTest {
 
     /**
      * Height of the screenshots we want to capture

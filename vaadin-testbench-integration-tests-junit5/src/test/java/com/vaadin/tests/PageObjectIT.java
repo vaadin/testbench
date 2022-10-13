@@ -3,19 +3,19 @@ package com.vaadin.tests;
 import java.util.List;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.testUI.PageObjectView;
+import com.vaadin.testbench.TestBenchTest;
 
-public class PageObjectIT extends AbstractTB6TestJUnit5 {
+public class PageObjectIT extends AbstractJUnit5TB6Test {
 
     @Override
     protected Class<? extends Component> getTestView() {
         return PageObjectView.class;
     }
 
-    @Test
+    @TestBenchTest
     public void findUsingValueAnnotation() {
         openTestURL();
         List<MyComponentWithIdElement> components = $(
@@ -26,7 +26,7 @@ public class PageObjectIT extends AbstractTB6TestJUnit5 {
                 components.get(0).getText());
     }
 
-    @Test
+    @TestBenchTest
     public void findUsingContainsAnnotation() {
         openTestURL();
         List<MyComponentWithClassesElement> components = $(

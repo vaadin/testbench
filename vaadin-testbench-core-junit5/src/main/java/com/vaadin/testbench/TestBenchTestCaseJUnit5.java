@@ -33,14 +33,14 @@ import com.vaadin.testbench.commands.TestBenchCommands;
 /**
  * A superclass with some helpers to aid TestBench developers.
  */
-public abstract class TestBenchTestCase
+public abstract class TestBenchTestCaseJUnit5
         implements HasDriver, HasTestBenchCommandExecutor, HasElementQuery {
 
     public static final String testbenchVersion;
     static {
         Properties properties = new Properties();
         try {
-            properties.load(TestBenchTestCase.class
+            properties.load(TestBenchTestCaseJUnit5.class
                     .getResourceAsStream("testbench.properties"));
         } catch (Exception e) {
             getLogger().warn("Unable to read TestBench properties file", e);
@@ -60,13 +60,13 @@ public abstract class TestBenchTestCase
         }
 
         LicenseChecker.checkLicenseFromStaticBlock("vaadin-testbench",
-                TestBenchTestCase.testbenchVersion, null);
+                TestBenchTestCaseJUnit5.testbenchVersion, null);
     }
 
     protected WebDriver driver;
 
     private static Logger getLogger() {
-        return LoggerFactory.getLogger(TestBenchTestCase.class);
+        return LoggerFactory.getLogger(TestBenchTestCaseJUnit5.class);
     }
 
     /**

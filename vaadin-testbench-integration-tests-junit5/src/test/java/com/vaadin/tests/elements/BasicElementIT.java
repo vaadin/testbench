@@ -10,9 +10,9 @@ import org.openqa.selenium.TimeoutException;
 import com.vaadin.flow.component.Component;
 import com.vaadin.testUI.ElementQueryView;
 import com.vaadin.testbench.TestBenchElement;
-import com.vaadin.tests.AbstractTB6TestJUnit5;
+import com.vaadin.tests.AbstractJUnit5TB6Test;
 
-public class BasicElementIT extends AbstractTB6TestJUnit5 {
+public class BasicElementIT extends AbstractJUnit5TB6Test {
 
     private TestBenchElement buttonElement;
 

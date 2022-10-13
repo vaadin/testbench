@@ -11,7 +11,7 @@ import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.tests.elements.NativeButtonElement;
 import com.vaadin.tests.elements.TemplateViewElement;
 
-public class ElementQueryIT extends AbstractTB6TestJUnit5 {
+public class ElementQueryIT extends AbstractJUnit5TB6Test {
 
     @Override
     protected Class<? extends Component> getTestView() {

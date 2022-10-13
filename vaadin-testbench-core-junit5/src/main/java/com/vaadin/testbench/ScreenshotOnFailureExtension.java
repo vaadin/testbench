@@ -34,7 +34,7 @@ import com.vaadin.testbench.screenshot.ImageFileUtil;
  * <code>
  * public class MyTestCase extends TestBenchTestCase {
  *
- *      \@Rule public ScreenshotOnFailureRule screenshotOnFailure = new ScreenshotOnFailureRule(this, true);
+ *      \@RegisterExtension public ScreenshotOnFailureRule screenshotOnFailure = new ScreenshotOnFailureRule(this, true);
  *
  *      \@Test public void myTest() throws Exception {
  *          ...
@@ -64,7 +64,7 @@ public class ScreenshotOnFailureExtension implements TestWatcher {
      *
      * @param driverHolder
      *            The {@link HasDriver} instance that holds the active WebDriver
-     *            instance. Commonly this is the {@link TestBenchTestCase}.
+     *            instance. Commonly this is the {@link TestBenchTestCaseJUnit5}.
      */
     public ScreenshotOnFailureExtension(HasDriver driverHolder) {
         this.driverHolder = driverHolder;
@@ -75,7 +75,7 @@ public class ScreenshotOnFailureExtension implements TestWatcher {
      *
      * @param driverHolder
      *            The {@link HasDriver} instance that holds the active WebDriver
-     *            instance. Commonly this is the {@link TestBenchTestCase}.
+     *            instance. Commonly this is the {@link TestBenchTestCaseJUnit5}.
      * @param quitDriverOnFinish
      *            Tells the rule whether to quit the driver when a single test
      *            has finished or not.
@@ -149,12 +149,7 @@ public class ScreenshotOnFailureExtension implements TestWatcher {
      * @return Failure screenshot file.
      */
     protected File getErrorScreenshotFile(ExtensionContext context) {
-        String fileName = (String) context
-                .getStore(ExtensionContext.Namespace.GLOBAL).get("displayName");
-        if (fileName == null) {
-            fileName = context.getDisplayName();
-        }
-        return ImageFileUtil.getErrorScreenshotFile(fileName + ".png");
+        return ImageFileUtil.getErrorScreenshotFile(context.getDisplayName() + ".png");
     }
 
 }

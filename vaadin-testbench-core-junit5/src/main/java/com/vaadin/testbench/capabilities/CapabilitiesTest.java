@@ -7,13 +7,12 @@
  *
  * For the full License, see <https://vaadin.com/license/cvdl-4.0>.
  */
-package com.vaadin.testbench.parallel;
+package com.vaadin.testbench.capabilities;
 
 import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -22,14 +21,18 @@ import org.slf4j.LoggerFactory;
 
 import com.vaadin.testbench.Parameters;
 import com.vaadin.testbench.ScreenshotOnFailureExtension;
-import com.vaadin.testbench.TestBenchTestCase;
+import com.vaadin.testbench.TestBenchTest;
+import com.vaadin.testbench.TestBenchTestCaseJUnit5;
 import com.vaadin.testbench.annotations.BrowserConfiguration;
 import com.vaadin.testbench.annotations.RunLocally;
 import com.vaadin.testbench.annotations.RunOnHub;
+import com.vaadin.testbench.parallel.Browser;
+import com.vaadin.testbench.parallel.BrowserUtil;
+import com.vaadin.testbench.parallel.SauceLabsIntegration;
 import com.vaadin.testbench.parallel.setup.SetupDriver;
 
 /**
- * Unit tests should extend {@link ParallelTestJUnit5} if they are to be run in
+ * Unit tests should extend {@link CapabilitiesTest} and each test should be annotated with {@literal @}{@link TestBenchTest} if they are to be run in
  * several browser configurations. For each browser configuration, a
  * {@link WebDriver} is properly created with the desired configuration.
  * <p>
@@ -39,15 +42,14 @@ import com.vaadin.testbench.parallel.setup.SetupDriver;
  * "https://github.com/vaadin/testbench-demo">https://github.com/vaadin/testbench-demo</a>.
  * </p>
  */
-@ExtendWith(ParallelExtension.class)
-public class ParallelTestJUnit5 extends TestBenchTestCase {
+public class CapabilitiesTest extends TestBenchTestCaseJUnit5 {
 
     @RegisterExtension
     public ScreenshotOnFailureExtension screenshotOnFailure = new ScreenshotOnFailureExtension(
             this, true);
 
     private static Logger getLogger() {
-        return LoggerFactory.getLogger(ParallelTestJUnit5.class);
+        return LoggerFactory.getLogger(CapabilitiesTest.class);
     }
 
     private SetupDriver driverConfiguration = new SetupDriver();
@@ -175,7 +177,7 @@ public class ParallelTestJUnit5 extends TestBenchTestCase {
      *         Class, or null if annotation is not present.
      */
     protected Browser getRunLocallyBrowser() {
-        return ParallelExtension.getRunLocallyBrowserName(getClass());
+        return DesiredCapabilitiesUtil.getRunLocallyBrowserName(getClass());
     }
 
     /**
@@ -183,7 +185,7 @@ public class ParallelTestJUnit5 extends TestBenchTestCase {
      *         Class, or empty empty String if annotation is not present.
      */
     protected String getRunLocallyBrowserVersion() {
-        return ParallelExtension.getRunLocallyBrowserVersion(getClass());
+        return DesiredCapabilitiesUtil.getRunLocallyBrowserVersion(getClass());
     }
 
     /**

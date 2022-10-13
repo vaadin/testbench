@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
 import com.vaadin.flow.component.Component;
 import com.vaadin.testUI.PageObjectView;
 
-public class WaitForVaadinIT extends AbstractTB6TestJUnit5 {
+public class WaitForVaadinIT extends AbstractJUnit5TB6Test {
 
     private static final long NON_BLOCKING_EXECUTION_TIMEOUT = 5000;
     private static final long BLOCKING_EXECUTION_TIMEOUT = 20000;

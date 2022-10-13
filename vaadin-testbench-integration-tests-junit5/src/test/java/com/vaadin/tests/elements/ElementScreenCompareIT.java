@@ -2,14 +2,14 @@ package com.vaadin.tests.elements;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 
 import com.vaadin.testUI.ElementQueryView;
 import com.vaadin.testbench.TestBenchElement;
-import com.vaadin.tests.AbstractTB6TestJUnit5;
+import com.vaadin.testbench.TestBenchTest;
+import com.vaadin.tests.AbstractJUnit5TB6Test;
 
-public class ElementScreenCompareIT extends AbstractTB6TestJUnit5 {
+public class ElementScreenCompareIT extends AbstractJUnit5TB6Test {
 
     @Override
     protected Class<ElementQueryView> getTestView() {
@@ -23,7 +23,7 @@ public class ElementScreenCompareIT extends AbstractTB6TestJUnit5 {
         testBench().resizeViewPortTo(SCREENSHOT_WIDTH, SCREENSHOT_HEIGHT);
     }
 
-    @Test
+    @TestBenchTest
     public void elementCompareScreen() throws Exception {
         openTestURL();
         TestBenchElement button4 = $(NativeButtonElement.class).get(4);

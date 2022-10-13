@@ -45,7 +45,7 @@
         <module>vaadin-testbench-core</module>
         <module>vaadin-testbench-core-junit5</module>
         <module>vaadin-testbench-shared</module>
-        <module>vaadin-testbench-integration-tests</module>
+        <module>vaadin-testbench-integration-tests-junit5</module>
     </modules>
     <repositories>
         <repository>
