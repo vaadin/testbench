@@ -1,6 +1,7 @@
 package com.vaadin.tests.elements;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.By;
 
@@ -22,6 +23,7 @@ public class ElementScreenCompareIT extends AbstractTB6Test {
     }
 
     @Test
+    @Ignore("Possible flaky test")
     public void elementCompareScreen() throws Exception {
         openTestURL();
         TestBenchElement button4 = $(NativeButtonElement.class).get(4);
