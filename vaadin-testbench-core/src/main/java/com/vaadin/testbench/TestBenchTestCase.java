@@ -27,7 +27,6 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import com.vaadin.pro.licensechecker.BuildType;
 import com.vaadin.pro.licensechecker.LicenseChecker;
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.commands.TestBenchCommands;
@@ -62,7 +61,7 @@ public abstract class TestBenchTestCase
         }
 
         LicenseChecker.checkLicenseFromStaticBlock("vaadin-testbench",
-                TestBenchTestCase.testbenchVersion, BuildType.DEVELOPMENT);
+                TestBenchTestCase.testbenchVersion, null);
     }
 
     /**

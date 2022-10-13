@@ -38,7 +38,6 @@ import com.vaadin.flow.component.KeyModifier;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.RouteParameters;
-import com.vaadin.pro.licensechecker.BuildType;
 import com.vaadin.pro.licensechecker.LicenseChecker;
 import com.vaadin.testbench.unit.internal.MockInternalSeverError;
 import com.vaadin.testbench.unit.internal.MockVaadin;
@@ -80,8 +79,7 @@ abstract class BaseUIUnitTest {
         }
 
         LicenseChecker.checkLicenseFromStaticBlock("vaadin-testbench",
-                properties.getProperty("testbench.version"),
-                BuildType.DEVELOPMENT);
+                properties.getProperty("testbench.version"), null);
     }
 
     private static Map<Class<?>, Class<? extends ComponentTester>> scanForTesters(

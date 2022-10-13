@@ -6,7 +6,6 @@ import org.openqa.selenium.BuildInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.vaadin.pro.licensechecker.BuildType;
 import com.vaadin.pro.licensechecker.LicenseChecker;
 
 public class TestBenchVersion {
@@ -35,7 +34,7 @@ public class TestBenchVersion {
         }
 
         LicenseChecker.checkLicenseFromStaticBlock("vaadin-testbench",
-                testbenchVersion, BuildType.DEVELOPMENT);
+                testbenchVersion, null);
     }
 
     private static Logger getLogger() {
