@@ -22,6 +22,7 @@ import javassist.util.proxy.ProxyFactory;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import com.vaadin.pro.licensechecker.BuildType;
 import com.vaadin.pro.licensechecker.LicenseChecker;
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.screenshot.ImageComparison;
@@ -86,7 +87,7 @@ public class TestBench {
 
     static {
         LicenseChecker.checkLicenseFromStaticBlock("vaadin-testbench",
-                TestBenchVersion.testbenchVersion, null);
+                TestBenchVersion.testbenchVersion, BuildType.DEVELOPMENT);
     }
 
     public static TestBenchDriverProxy createDriver(WebDriver driver) {

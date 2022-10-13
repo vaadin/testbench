@@ -61,7 +61,8 @@ public abstract class TestBenchTestCaseJUnit5
         }
 
         LicenseChecker.checkLicenseFromStaticBlock("vaadin-testbench",
-                TestBenchTestCaseJUnit5.testbenchVersion, BuildType.DEVELOPMENT);
+                TestBenchTestCaseJUnit5.testbenchVersion,
+                BuildType.DEVELOPMENT);
     }
 
     protected WebDriver driver;
