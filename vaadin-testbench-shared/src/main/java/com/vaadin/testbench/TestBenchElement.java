@@ -39,8 +39,8 @@ import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.WrapsElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -119,7 +119,7 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
     /**
      * Returns information about current browser used
      *
-     * @see org.openqa.selenium.Capabilities
+     * @see Capabilities
      * @return information about current browser used
      */
     protected Capabilities getCapabilities() {
@@ -684,7 +684,7 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
      *            the arguments, available in the script as
      *            {@code arguments[0]...arguments[N]}
      * @return whatever
-     *         {@link org.openqa.selenium.JavascriptExecutor#executeScript(String, Object...)}
+     *         {@link JavascriptExecutor#executeScript(String, Object...)}
      *         returns
      * @throws UnsupportedOperationException
      *             if the underlying driver does not support JavaScript

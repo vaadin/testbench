@@ -44,6 +44,7 @@
         <module>vaadin-testbench-unit</module>
         <module>vaadin-testbench-core</module>
         <module>vaadin-testbench-integration-tests</module>
+        <module>vaadin-testbench-shared</module>
     </modules>
     <repositories>
         <repository>
