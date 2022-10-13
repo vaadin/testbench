@@ -64,7 +64,8 @@ public class ScreenshotOnFailureExtension implements TestWatcher {
      *
      * @param driverHolder
      *            The {@link HasDriver} instance that holds the active WebDriver
-     *            instance. Commonly this is the {@link TestBenchTestCaseJUnit5}.
+     *            instance. Commonly this is the
+     *            {@link TestBenchTestCaseJUnit5}.
      */
     public ScreenshotOnFailureExtension(HasDriver driverHolder) {
         this.driverHolder = driverHolder;
@@ -75,7 +76,8 @@ public class ScreenshotOnFailureExtension implements TestWatcher {
      *
      * @param driverHolder
      *            The {@link HasDriver} instance that holds the active WebDriver
-     *            instance. Commonly this is the {@link TestBenchTestCaseJUnit5}.
+     *            instance. Commonly this is the
+     *            {@link TestBenchTestCaseJUnit5}.
      * @param quitDriverOnFinish
      *            Tells the rule whether to quit the driver when a single test
      *            has finished or not.
@@ -149,7 +151,8 @@ public class ScreenshotOnFailureExtension implements TestWatcher {
      * @return Failure screenshot file.
      */
     protected File getErrorScreenshotFile(ExtensionContext context) {
-        return ImageFileUtil.getErrorScreenshotFile(context.getDisplayName() + ".png");
+        return ImageFileUtil
+                .getErrorScreenshotFile(context.getDisplayName() + ".png");
     }
 
 }

@@ -32,7 +32,8 @@ import com.vaadin.testbench.parallel.SauceLabsIntegration;
 import com.vaadin.testbench.parallel.setup.SetupDriver;
 
 /**
- * Unit tests should extend {@link CapabilitiesTest} and each test should be annotated with {@literal @}{@link TestBenchTest} if they are to be run in
+ * Unit tests should extend {@link CapabilitiesTest} and each test should be
+ * annotated with {@literal @}{@link TestBenchTest} if they are to be run in
  * several browser configurations. For each browser configuration, a
  * {@link WebDriver} is properly created with the desired configuration.
  * <p>

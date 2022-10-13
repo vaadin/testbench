@@ -16,5 +16,4 @@ import com.vaadin.testbench.capabilities.DesiredCapabilitiesInvocationContextPro
 @ExtendWith(DesiredCapabilitiesInvocationContextProvider.class)
 public @interface TestBenchTest {
 
-
 }

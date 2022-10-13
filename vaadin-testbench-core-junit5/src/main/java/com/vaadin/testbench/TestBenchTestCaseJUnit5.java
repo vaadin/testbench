@@ -26,6 +26,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.vaadin.pro.licensechecker.BuildType;
 import com.vaadin.pro.licensechecker.LicenseChecker;
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.commands.TestBenchCommands;
@@ -60,7 +61,7 @@ public abstract class TestBenchTestCaseJUnit5
         }
 
         LicenseChecker.checkLicenseFromStaticBlock("vaadin-testbench",
-                TestBenchTestCaseJUnit5.testbenchVersion, null);
+                TestBenchTestCaseJUnit5.testbenchVersion, BuildType.DEVELOPMENT);
     }
 
     protected WebDriver driver;

@@ -45,15 +45,21 @@ public class DesiredCapabilitiesUtil {
     }
 
     /**
-     * Evaluates if test can be executed in terms of current {@link ExtensionContext}.
-     * @param context ExtensionContext appropriate for current test method
-     * @return {@link ConditionEvaluationResult} enabled if test fulfills requirements, disabled otherwise
+     * Evaluates if test can be executed in terms of current
+     * {@link ExtensionContext}.
+     *
+     * @param context
+     *            ExtensionContext appropriate for current test method
+     * @return {@link ConditionEvaluationResult} enabled if test fulfills
+     *         requirements, disabled otherwise
      */
-    public static ConditionEvaluationResult evaluateExecutionCondition(ExtensionContext context) {
+    public static ConditionEvaluationResult evaluateExecutionCondition(
+            ExtensionContext context) {
         if (!CapabilitiesTest.class
                 .isAssignableFrom(context.getRequiredTestClass())) {
-            return ConditionEvaluationResult.disabled(context.getRequiredTestClass().getName() + " only supports "
-                    + CapabilitiesTest.class.getName());
+            return ConditionEvaluationResult.disabled(
+                    context.getRequiredTestClass().getName() + " only supports "
+                            + CapabilitiesTest.class.getName());
         }
 
         Collection<DesiredCapabilities> desiredCapabilities = getDesiredCapabilities(
@@ -285,7 +291,8 @@ public class DesiredCapabilitiesUtil {
         return true;
     }
 
-    private static CapabilitiesTest getTestClassInstance(ExtensionContext context)
+    private static CapabilitiesTest getTestClassInstance(
+            ExtensionContext context)
             throws InstantiationException, IllegalAccessException,
             InvocationTargetException, NoSuchMethodException {
         CapabilitiesTest testClassInstance = (CapabilitiesTest) context

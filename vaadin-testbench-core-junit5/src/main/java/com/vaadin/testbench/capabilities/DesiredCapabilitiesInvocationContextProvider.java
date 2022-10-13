@@ -17,9 +17,11 @@ import com.vaadin.testbench.parallel.BrowserUtil;
 import com.vaadin.testbench.parallel.TestNameSuffix;
 
 /**
- * Provides support for running test method for each defined {@link DesiredCapabilities}.
+ * Provides support for running test method for each defined
+ * {@link DesiredCapabilities}.
  */
-public class DesiredCapabilitiesInvocationContextProvider implements TestTemplateInvocationContextProvider {
+public class DesiredCapabilitiesInvocationContextProvider
+        implements TestTemplateInvocationContextProvider {
 
     @Override
     public boolean supportsTestTemplate(ExtensionContext context) {
@@ -27,23 +29,30 @@ public class DesiredCapabilitiesInvocationContextProvider implements TestTemplat
     }
 
     @Override
-    public Stream<TestTemplateInvocationContext> provideTestTemplateInvocationContexts(ExtensionContext context) {
-        Collection<DesiredCapabilities> desiredCapabilitiesCollection = DesiredCapabilitiesUtil.getDesiredCapabilities(context);
-        return desiredCapabilitiesCollection.stream().map(dc -> createTestTemplateInvocationContext(dc, context));
+    public Stream<TestTemplateInvocationContext> provideTestTemplateInvocationContexts(
+            ExtensionContext context) {
+        Collection<DesiredCapabilities> desiredCapabilitiesCollection = DesiredCapabilitiesUtil
+                .getDesiredCapabilities(context);
+        return desiredCapabilitiesCollection.stream()
+                .map(dc -> createTestTemplateInvocationContext(dc, context));
     }
 
-    private TestTemplateInvocationContext createTestTemplateInvocationContext(DesiredCapabilities desiredCapabilities, ExtensionContext context) {
+    private TestTemplateInvocationContext createTestTemplateInvocationContext(
+            DesiredCapabilities desiredCapabilities, ExtensionContext context) {
         return new TestTemplateInvocationContext() {
             @Override
             public String getDisplayName(int invocationIndex) {
-                return String.format("%s[%s]", context.getRequiredTestMethod().getName() + getTestNameSuffix(context),
+                return String.format("%s[%s]",
+                        context.getRequiredTestMethod().getName()
+                                + getTestNameSuffix(context),
                         getUniqueIdentifier(desiredCapabilities));
             }
 
             @Override
             public List<Extension> getAdditionalExtensions() {
                 List<Extension> extensions = new ArrayList<>();
-                extensions.add(new DesiredCapabilitiesExtension(desiredCapabilities));
+                extensions.add(
+                        new DesiredCapabilitiesExtension(desiredCapabilities));
                 return extensions;
             }
         };
@@ -60,8 +69,8 @@ public class DesiredCapabilitiesInvocationContextProvider implements TestTemplat
     }
 
     /**
-     * Returns a string which uniquely (enough) identifies this browser.
-     * Used mainly in screenshot names.
+     * Returns a string which uniquely (enough) identifies this browser. Used
+     * mainly in screenshot names.
      */
     private static String getUniqueIdentifier(Capabilities capabilities) {
         String platform = BrowserUtil.getPlatform(capabilities);
@@ -84,7 +93,7 @@ public class DesiredCapabilitiesInvocationContextProvider implements TestTemplat
      * @return
      */
     private <T extends Annotation> T findAnnotation(Class<?> searchClass,
-                                                    Class<T> annotationClass) {
+            Class<T> annotationClass) {
         if (searchClass == Object.class) {
             return null;
         }

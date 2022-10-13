@@ -7,16 +7,19 @@ import org.junit.jupiter.api.extension.Extension;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
-public class DesiredCapabilitiesExtension implements Extension, BeforeEachCallback, ExecutionCondition {
+public class DesiredCapabilitiesExtension
+        implements Extension, BeforeEachCallback, ExecutionCondition {
 
     private final DesiredCapabilities desiredCapabilities;
 
-    public DesiredCapabilitiesExtension(DesiredCapabilities desiredCapabilities) {
+    public DesiredCapabilitiesExtension(
+            DesiredCapabilities desiredCapabilities) {
         this.desiredCapabilities = desiredCapabilities;
     }
 
     @Override
-    public ConditionEvaluationResult evaluateExecutionCondition(ExtensionContext context) {
+    public ConditionEvaluationResult evaluateExecutionCondition(
+            ExtensionContext context) {
         return DesiredCapabilitiesUtil.evaluateExecutionCondition(context);
     }
 
