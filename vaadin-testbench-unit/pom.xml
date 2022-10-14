@@ -361,7 +361,7 @@
         <dependency>
             <groupId>com.vaadin</groupId>
             <artifactId>vaadin-spring</artifactId>
-            <version>24.0.0.alpha2</version>
+            <version>${vaadin.version}</version>
             <scope>provided</scope>
             <optional>true</optional>
         </dependency>
