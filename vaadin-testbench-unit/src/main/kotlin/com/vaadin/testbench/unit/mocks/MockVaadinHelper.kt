@@ -10,7 +10,7 @@
 package com.vaadin.testbench.unit.mocks
 
 import java.io.File
-import javax.servlet.ServletContext
+import jakarta.servlet.ServletContext
 import com.vaadin.flow.di.Lookup
 import com.vaadin.flow.di.LookupInitializer
 import com.vaadin.flow.server.VaadinContext

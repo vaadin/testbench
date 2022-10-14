@@ -14,9 +14,9 @@ import java.io.PrintWriter
 import java.util.Locale
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
-import javax.servlet.ServletOutputStream
-import javax.servlet.http.Cookie
-import javax.servlet.http.HttpServletResponse
+import jakarta.servlet.ServletOutputStream
+import jakarta.servlet.http.Cookie
+import jakarta.servlet.http.HttpServletResponse
 
 open class MockResponse : HttpServletResponse {
     override fun encodeURL(url: String): String = url
