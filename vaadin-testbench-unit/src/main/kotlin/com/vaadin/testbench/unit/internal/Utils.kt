@@ -13,8 +13,8 @@ import java.io.ByteArrayOutputStream
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 import java.io.Serializable
-import javax.servlet.Servlet
-import javax.servlet.ServletContext
+import jakarta.servlet.Servlet
+import jakarta.servlet.ServletContext
 import com.vaadin.flow.component.UI
 import com.vaadin.flow.internal.ReflectTools
 import com.vaadin.flow.router.HasErrorParameter
