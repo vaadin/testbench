@@ -9,7 +9,7 @@ import com.vaadin.flow.router.Route;
 
 @Route("TemplateView")
 @Tag("template-view")
-@JsModule("template-view.ts")
+@JsModule("./template-view.ts")
 public class TemplateView extends LitTemplate {
 
     public TemplateView() {

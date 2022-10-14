@@ -4,12 +4,12 @@ import java.util.Collections;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.openqa.selenium.TimeoutException;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.testUI.ElementQueryView;
 import com.vaadin.testbench.TestBenchElement;
+import com.vaadin.testbench.TestBenchTest;
 import com.vaadin.tests.AbstractJUnit5TB6Test;
 
 public class BasicElementIT extends AbstractJUnit5TB6Test {
@@ -27,7 +27,7 @@ public class BasicElementIT extends AbstractJUnit5TB6Test {
         buttonElement = $(NativeButtonElement.class).waitForFirst();
     }
 
-    @Test
+    @TestBenchTest
     public void getSetStringProperty() {
         Assertions.assertNull(buttonElement.getPropertyString("foo"));
         buttonElement.setProperty("foo", "12");
@@ -37,7 +37,7 @@ public class BasicElementIT extends AbstractJUnit5TB6Test {
         Assertions.assertTrue(buttonElement.getPropertyBoolean("foo"));
     }
 
-    @Test
+    @TestBenchTest
     public void getSetBooleanProperty() {
         Assertions.assertNull(buttonElement.getPropertyBoolean("foo"));
         buttonElement.setProperty("foo", true);
@@ -46,7 +46,7 @@ public class BasicElementIT extends AbstractJUnit5TB6Test {
         Assertions.assertTrue(buttonElement.getPropertyBoolean("foo"));
     }
 
-    @Test
+    @TestBenchTest
     public void getSetFalseBooleanProperty() {
         Assertions.assertNull(buttonElement.getPropertyBoolean("foo"));
         buttonElement.setProperty("foo", false);
@@ -56,7 +56,7 @@ public class BasicElementIT extends AbstractJUnit5TB6Test {
         Assertions.assertFalse(buttonElement.getPropertyBoolean("foo"));
     }
 
-    @Test
+    @TestBenchTest
     public void getSetDoubleProperty() {
         Assertions.assertNull(buttonElement.getPropertyDouble("foo"));
         buttonElement.setProperty("foo", 12.5);
@@ -66,7 +66,7 @@ public class BasicElementIT extends AbstractJUnit5TB6Test {
         Assertions.assertTrue(buttonElement.getPropertyBoolean("foo"));
     }
 
-    @Test
+    @TestBenchTest
     public void getSetIntegerProperty() {
         Assertions.assertNull(buttonElement.getPropertyInteger("foo"));
         buttonElement.setProperty("foo", 12);
@@ -75,7 +75,7 @@ public class BasicElementIT extends AbstractJUnit5TB6Test {
         Assertions.assertTrue(buttonElement.getPropertyBoolean("foo"));
     }
 
-    @Test
+    @TestBenchTest
     public void getSetPropertyChain() {
         executeScript("arguments[0].foo = {bar: {baz: 123}};", buttonElement);
 
@@ -83,7 +83,7 @@ public class BasicElementIT extends AbstractJUnit5TB6Test {
                 .getPropertyDouble("foo", "bar", "baz").longValue());
     }
 
-    @Test
+    @TestBenchTest
     public void getSetElementProperty() {
         Assertions.assertEquals(buttonElement, buttonElement
                 .getPropertyElement("parentElement", "firstElementChild"));
@@ -92,7 +92,7 @@ public class BasicElementIT extends AbstractJUnit5TB6Test {
 
     }
 
-    @Test
+    @TestBenchTest
     public void getSetElementsProperty() {
         Assertions.assertEquals(0,
                 buttonElement.getPropertyElements("children").size());
@@ -101,14 +101,14 @@ public class BasicElementIT extends AbstractJUnit5TB6Test {
 
     }
 
-    @Test
+    @TestBenchTest
     public void getSetPropertyChainMissingValue() {
         executeScript("arguments[0].foo = {bar: {baz: 123}};", buttonElement);
         Assertions.assertNull(
                 buttonElement.getPropertyDouble("foo", "baz", "baz"));
     }
 
-    @Test
+    @TestBenchTest
     public void waitForNonExistant() {
         Assertions.assertThrows(TimeoutException.class, () -> {
             $(TemplateViewElement.class).waitForFirst();
@@ -117,7 +117,7 @@ public class BasicElementIT extends AbstractJUnit5TB6Test {
         });
     }
 
-    @Test
+    @TestBenchTest
     public void hasAttribute() {
         NativeButtonElement withAttributes = $(NativeButtonElement.class)
                 .get(5);
@@ -133,7 +133,7 @@ public class BasicElementIT extends AbstractJUnit5TB6Test {
         Assertions.assertFalse(withoutAttributes.hasAttribute("nonexistant"));
     }
 
-    @Test
+    @TestBenchTest
     public void dispatchEvent() {
         NativeButtonElement withAttributes = $(NativeButtonElement.class)
                 .get(5);
@@ -142,7 +142,7 @@ public class BasicElementIT extends AbstractJUnit5TB6Test {
                 $("div").id("msg").getText());
     }
 
-    @Test
+    @TestBenchTest
     public void dispatchEventWithDetails() {
         NativeButtonElement withAttributes = $(NativeButtonElement.class)
                 .get(5);
@@ -152,7 +152,7 @@ public class BasicElementIT extends AbstractJUnit5TB6Test {
                 $("div").id("msg").getText());
     }
 
-    @Test
+    @TestBenchTest
     public void nativeButtonDisabled() {
         NativeButtonElement enabled = $(NativeButtonElement.class).get(0);
         NativeButtonElement disabled = $(NativeButtonElement.class).get(2);

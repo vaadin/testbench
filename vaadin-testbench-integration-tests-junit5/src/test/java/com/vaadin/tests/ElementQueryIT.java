@@ -3,11 +3,11 @@ package com.vaadin.tests;
 import java.util.List;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.testUI.TemplateView;
 import com.vaadin.testbench.TestBenchElement;
+import com.vaadin.testbench.TestBenchTest;
 import com.vaadin.tests.elements.NativeButtonElement;
 import com.vaadin.tests.elements.TemplateViewElement;
 
@@ -18,14 +18,14 @@ public class ElementQueryIT extends AbstractJUnit5TB6Test {
         return TemplateView.class;
     }
 
-    @Test
+    @TestBenchTest
     public void ensureElementListWrapped() {
         openTestURL();
         List<TemplateViewElement> elements = $(TemplateViewElement.class).all();
         Assertions.assertTrue(elements.get(0) instanceof TemplateViewElement);
     }
 
-    @Test
+    @TestBenchTest
     public void ensureElementListFromOnPageWrapped() {
         openTestURL();
         TemplateViewElement view = $(TemplateViewElement.class).first();
@@ -34,7 +34,7 @@ public class ElementQueryIT extends AbstractJUnit5TB6Test {
         Assertions.assertEquals(view, view2);
     }
 
-    @Test
+    @TestBenchTest
     public void findLightDomElementById() throws Exception {
         openTestURL();
 
@@ -44,7 +44,7 @@ public class ElementQueryIT extends AbstractJUnit5TB6Test {
         Assertions.assertEquals("Button 1", button.getText());
     }
 
-    @Test
+    @TestBenchTest
     public void findShadowDomElementById() throws Exception {
         openTestURL();
 
@@ -54,7 +54,7 @@ public class ElementQueryIT extends AbstractJUnit5TB6Test {
         Assertions.assertEquals("Shadow Button 1", button.getText());
     }
 
-    @Test
+    @TestBenchTest
     public void findAllShadowDomElements() throws Exception {
         openTestURL();
 
@@ -63,7 +63,7 @@ public class ElementQueryIT extends AbstractJUnit5TB6Test {
                 view.$(NativeButtonElement.class).all().size());
     }
 
-    @Test
+    @TestBenchTest
     public void searchShadowDomBeforeLight() throws Exception {
         openTestURL();
 
@@ -74,7 +74,7 @@ public class ElementQueryIT extends AbstractJUnit5TB6Test {
                 button.getText());
     }
 
-    @Test
+    @TestBenchTest
     public void mergeLightAndShadowDomResults() throws Exception {
         openTestURL();
 
@@ -84,7 +84,7 @@ public class ElementQueryIT extends AbstractJUnit5TB6Test {
         Assertions.assertEquals(10, buttons.size());
     }
 
-    @Test
+    @TestBenchTest
     public void findTestBenchElementUsingTag() throws Exception {
         openTestURL();
 
@@ -94,7 +94,7 @@ public class ElementQueryIT extends AbstractJUnit5TB6Test {
 
     }
 
-    @Test
+    @TestBenchTest
     public void findTestBenchElement() throws Exception {
         openTestURL();
 
@@ -103,7 +103,7 @@ public class ElementQueryIT extends AbstractJUnit5TB6Test {
         Assertions.assertNotNull(button);
     }
 
-    @Test
+    @TestBenchTest
     public void findTestBenchElementChild() throws Exception {
         openTestURL();
 
@@ -113,7 +113,7 @@ public class ElementQueryIT extends AbstractJUnit5TB6Test {
         Assertions.assertEquals("Shadow Button 1", button.getText());
     }
 
-    @Test
+    @TestBenchTest
     public void specialCharactersInId() {
         openTestURL();
         NativeButtonElement button = $(TemplateViewElement.class).waitForFirst()
@@ -121,7 +121,7 @@ public class ElementQueryIT extends AbstractJUnit5TB6Test {
         Assertions.assertEquals("Button with special id", button.getText());
     }
 
-    @Test
+    @TestBenchTest
     public void attributeContains() {
         openTestURL();
         TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
@@ -133,7 +133,7 @@ public class ElementQueryIT extends AbstractJUnit5TB6Test {
         Assertions.assertEquals(10, allButtons.size());
     }
 
-    @Test
+    @TestBenchTest
     public void getSetElementsProperty() {
         openTestURL();
         TemplateViewElement template = $(TemplateViewElement.class).first();

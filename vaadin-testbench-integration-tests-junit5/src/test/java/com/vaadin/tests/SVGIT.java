@@ -1,11 +1,11 @@
 package com.vaadin.tests;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.testUI.SVGView;
+import com.vaadin.testbench.TestBenchTest;
 import com.vaadin.testbench.parallel.BrowserUtil;
 
 public class SVGIT extends AbstractJUnit5TB6Test {
@@ -15,7 +15,7 @@ public class SVGIT extends AbstractJUnit5TB6Test {
         return SVGView.class;
     }
 
-    @Test
+    @TestBenchTest
     public void click() {
         if (BrowserUtil.isSafari(this.getDesiredCapabilities())) {
             return; // Skip for Safari 11.

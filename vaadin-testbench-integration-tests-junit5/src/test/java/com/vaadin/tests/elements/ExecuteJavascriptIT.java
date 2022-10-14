@@ -1,11 +1,11 @@
 package com.vaadin.tests.elements;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.testUI.ElementQueryView;
 import com.vaadin.testbench.TestBenchElement;
+import com.vaadin.testbench.TestBenchTest;
 import com.vaadin.tests.AbstractJUnit5TB6Test;
 
 public class ExecuteJavascriptIT extends AbstractJUnit5TB6Test {
@@ -15,7 +15,7 @@ public class ExecuteJavascriptIT extends AbstractJUnit5TB6Test {
         return ElementQueryView.class;
     }
 
-    @Test
+    @TestBenchTest
     public void getProperty() throws Exception {
         openTestURL();
 

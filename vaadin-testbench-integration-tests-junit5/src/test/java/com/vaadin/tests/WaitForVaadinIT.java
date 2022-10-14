@@ -10,10 +10,10 @@
 package com.vaadin.tests;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.testUI.PageObjectView;
+import com.vaadin.testbench.TestBenchTest;
 
 public class WaitForVaadinIT extends AbstractJUnit5TB6Test {
 
@@ -25,13 +25,13 @@ public class WaitForVaadinIT extends AbstractJUnit5TB6Test {
         return PageObjectView.class;
     }
 
-    @Test
+    @TestBenchTest
     public void waitForVaadin_connectorsInitialised_returnsImmediately() {
         openTestURL();
         assertExecutionNoLonger(() -> getCommandExecutor().waitForVaadin());
     }
 
-    @Test
+    @TestBenchTest
     public void waitForVaadin_activeConnector_waits() {
         openTestURL();
         getCommandExecutor().executeScript(
@@ -39,7 +39,7 @@ public class WaitForVaadinIT extends AbstractJUnit5TB6Test {
         assertExecutionBlocked(() -> getCommandExecutor().waitForVaadin());
     }
 
-    @Test
+    @TestBenchTest
     public void waitForVaadin_noConnectors_returnsImmediately() {
         openTestURL();
         getCommandExecutor()
@@ -47,7 +47,7 @@ public class WaitForVaadinIT extends AbstractJUnit5TB6Test {
         assertExecutionNoLonger(() -> getCommandExecutor().waitForVaadin());
     }
 
-    @Test
+    @TestBenchTest
     public void waitForVaadin_noFlow_returnsImmediately() {
         openTestURL();
 
@@ -55,7 +55,7 @@ public class WaitForVaadinIT extends AbstractJUnit5TB6Test {
         assertExecutionNoLonger(() -> getCommandExecutor().waitForVaadin());
     }
 
-    @Test
+    @TestBenchTest
     public void waitForVaadin_devModeNotReady_waits() {
         openTestURL();
 
