@@ -9,7 +9,7 @@
  */
 package com.vaadin.testbench.unit.mocks
 
-import javax.servlet.http.Cookie
+import jakarta.servlet.http.Cookie
 import kotlin.test.expect
 import com.github.mvysny.dynatest.DynaTest
 import com.github.mvysny.dynatest.expectList

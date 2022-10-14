@@ -12,7 +12,7 @@
 package com.vaadin.testbench.unit.internal
 
 import java.util.concurrent.atomic.AtomicReference
-import javax.servlet.http.Cookie
+import jakarta.servlet.http.Cookie
 import kotlin.concurrent.thread
 import kotlin.test.expect
 import com.vaadin.flow.component.AttachEvent
