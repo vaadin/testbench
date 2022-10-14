@@ -7,6 +7,8 @@ import org.junit.jupiter.api.extension.Extension;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
+import com.vaadin.testbench.parallel.SauceLabsIntegration;
+
 public class DesiredCapabilitiesExtension
         implements Extension, BeforeEachCallback, ExecutionCondition {
 
@@ -25,6 +27,11 @@ public class DesiredCapabilitiesExtension
 
     @Override
     public void beforeEach(ExtensionContext context) throws Exception {
+        if (SauceLabsIntegration.isConfiguredForSauceLabs()) {
+            SauceLabsIntegration.setSauceLabsOption(desiredCapabilities,
+                    SauceLabsIntegration.CapabilityType.NAME,
+                    context.getDisplayName());
+        }
         ((CapabilitiesTest) context.getRequiredTestInstance())
                 .setDesiredCapabilities(desiredCapabilities);
     }
