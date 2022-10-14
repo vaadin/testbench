@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
 
+import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.Extension;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.TestTemplateInvocationContext;
@@ -13,7 +14,10 @@ import org.junit.jupiter.api.extension.TestTemplateInvocationContextProvider;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
+import com.vaadin.testbench.annotations.BrowserFactory;
 import com.vaadin.testbench.parallel.BrowserUtil;
+import com.vaadin.testbench.parallel.DefaultBrowserFactory;
+import com.vaadin.testbench.parallel.TestBenchBrowserFactory;
 import com.vaadin.testbench.parallel.TestNameSuffix;
 
 /**
@@ -21,11 +25,16 @@ import com.vaadin.testbench.parallel.TestNameSuffix;
  * {@link DesiredCapabilities}.
  */
 public class DesiredCapabilitiesInvocationContextProvider
-        implements TestTemplateInvocationContextProvider {
+        implements TestTemplateInvocationContextProvider, BeforeAllCallback {
 
     @Override
     public boolean supportsTestTemplate(ExtensionContext context) {
         return true;
+    }
+
+    @Override
+    public void beforeAll(ExtensionContext context) {
+        BrowserUtil.setBrowserFactory(getBrowserFactory(context));
     }
 
     @Override
@@ -105,4 +114,21 @@ public class DesiredCapabilitiesInvocationContextProvider
         return findAnnotation(searchClass.getSuperclass(), annotationClass);
     }
 
+    private TestBenchBrowserFactory getBrowserFactory(
+            ExtensionContext context) {
+        BrowserFactory browserFactoryAnnotation = context.getRequiredTestClass()
+                .getAnnotation(BrowserFactory.class);
+
+        try {
+            if (browserFactoryAnnotation != null
+                    && TestBenchBrowserFactory.class.isAssignableFrom(
+                            browserFactoryAnnotation.value())) {
+                return (TestBenchBrowserFactory) browserFactoryAnnotation
+                        .value().getConstructor().newInstance();
+            }
+        } catch (Exception e) {
+        }
+
+        return new DefaultBrowserFactory();
+    }
 }
