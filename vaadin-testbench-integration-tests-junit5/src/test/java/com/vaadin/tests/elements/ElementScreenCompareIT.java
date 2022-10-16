@@ -2,6 +2,7 @@ package com.vaadin.tests.elements;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.openqa.selenium.By;
 
 import com.vaadin.testUI.ElementQueryView;
@@ -9,6 +10,7 @@ import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.testbench.TestBenchTest;
 import com.vaadin.tests.AbstractJUnit5TB6Test;
 
+@Disabled
 public class ElementScreenCompareIT extends AbstractJUnit5TB6Test {
 
     @Override
