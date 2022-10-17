@@ -17,8 +17,8 @@ import com.vaadin.testbench.TestBenchTest;
 
 public class WaitForVaadinIT extends AbstractJUnit5TB6Test {
 
-    private static final long NON_BLOCKING_EXECUTION_TIMEOUT = 5000;
-    private static final long BLOCKING_EXECUTION_TIMEOUT = 20000;
+    private static final long NON_BLOCKING_EXECUTION_TIMEOUT = 10000;
+    private static final long BLOCKING_EXECUTION_TIMEOUT = 40000;
 
     @Override
     protected Class<? extends Component> getTestView() {

@@ -111,7 +111,7 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
             return;
         }
 
-        long timeoutTime = System.currentTimeMillis() + 20000;
+        long timeoutTime = System.currentTimeMillis() + 40000;
         Boolean finished = false;
         while (System.currentTimeMillis() < timeoutTime && !finished) {
             // Must use the wrapped driver here to avoid calling waitForVaadin
