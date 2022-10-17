@@ -9,24 +9,23 @@
  */
 package com.vaadin.testbench.screenshot;
 
-import static com.vaadin.testbench.screenshot.ImageUtil.getBlock;
-import static com.vaadin.testbench.screenshot.ImageUtil.getImageProperties;
-import static com.vaadin.testbench.screenshot.ImageUtil.getLuminance;
-import static java.lang.Math.abs;
-
+import javax.imageio.ImageIO;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.List;
 
-import javax.imageio.ImageIO;
+import org.openqa.selenium.Capabilities;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.vaadin.testbench.Parameters;
 import com.vaadin.testbench.screenshot.ImageUtil.ImageProperties;
 
-import org.openqa.selenium.Capabilities;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static com.vaadin.testbench.screenshot.ImageUtil.getBlock;
+import static com.vaadin.testbench.screenshot.ImageUtil.getImageProperties;
+import static com.vaadin.testbench.screenshot.ImageUtil.getLuminance;
+import static java.lang.Math.abs;
 
 /**
  * Class with features for comparing 2 images.
@@ -161,8 +160,8 @@ public class ImageComparison {
 
     /**
      *
-     * @param params
-     *            a ComparisonParameters object. See {@link createParameters}.
+     * @param param
+     *            a ComparisonParameters object.
      * @return
      */
     private ScreenShotFailureReporter compareImages(
@@ -327,7 +326,7 @@ public class ImageComparison {
      * the screenshot.
      *
      * @param params
-     *            a ComparisonParameters object. See {@link createParameters}.
+     *            a ComparisonParameters object.
      *
      * @return A Point referring to the x and y coordinates in the image where
      *         the cursor might be (actually might be inside a 16x32 block
@@ -392,7 +391,7 @@ public class ImageComparison {
      *            The position in the image where a cursor possibly can be found
      *            (pixel coordinates of the top left corner of a block)
      * @param params
-     *            a ComparisonParameters object. See {@link createParameters}.
+     *            a ComparisonParameters object.
      * @return true If cursor (vertical line of at least 5 pixels if not at the
      *         top or bottom) is the only difference between the images.
      */

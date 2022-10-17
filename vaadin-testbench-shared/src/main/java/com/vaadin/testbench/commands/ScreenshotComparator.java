@@ -9,6 +9,8 @@
  */
 package com.vaadin.testbench.commands;
 
+import javax.imageio.IIOException;
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -16,9 +18,6 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-
-import javax.imageio.IIOException;
-import javax.imageio.ImageIO;
 
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.Dimension;

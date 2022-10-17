@@ -12,7 +12,6 @@ package com.vaadin.testbench.parallel.setup;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
-import com.vaadin.testbench.TestBenchTestCase;
 import com.vaadin.testbench.annotations.RunLocally;
 import com.vaadin.testbench.parallel.Browser;
 import com.vaadin.testbench.parallel.BrowserUtil;
@@ -31,9 +30,7 @@ public class SetupDriver {
 
     /**
      * <p>
-     * Sets up and returns a {@link WebDriver} to run test on hubURL. <br>
-     * The test must set the driver through
-     * {@link TestBenchTestCase#setDriver(org.openqa.selenium.WebDriver)}
+     * Sets up and returns a {@link WebDriver} to run test on hubURL.
      * </p>
      *
      * @param remoteDriver
@@ -55,9 +52,7 @@ public class SetupDriver {
     }
 
     /**
-     * Sets up and returns a {@link WebDriver} to run test on hubURL. <br>
-     * The test must set the driver through
-     * {@link TestBenchTestCase#setDriver(org.openqa.selenium.WebDriver)}
+     * Sets up and returns a {@link WebDriver} to run test on hubURL.
      *
      * @param hubURL
      *            URL of the Hub to run the tests on
@@ -75,9 +70,7 @@ public class SetupDriver {
      * </p>
      * <p>
      * The test will run on browser specified by
-     * {@link #getDesiredCapabilities()}<br>
-     * The test must set the driver through
-     * {@link TestBenchTestCase#setDriver(org.openqa.selenium.WebDriver)}
+     * {@link #getDesiredCapabilities()}
      * </p>
      *
      * @return {@link WebDriver} properly setup

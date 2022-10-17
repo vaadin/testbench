@@ -9,6 +9,7 @@
  */
 package com.vaadin.testbench.screenshot;
 
+import javax.imageio.ImageIO;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -17,8 +18,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.LinkedList;
 import java.util.List;
-
-import javax.imageio.ImageIO;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,8 +69,6 @@ public class ScreenShotFailureReporter {
      *            Amount of macroblocks in x direction
      * @param yBlocks
      *            Amount of macroblocks in y direction
-     * @param falseBlocks
-     *            Map of false blocks
      * @return List of ErrorBlocks
      */
     private List<ErrorBlock> collectErrorsToList(int xBlocks, int yBlocks) {
@@ -224,10 +221,6 @@ public class ScreenShotFailureReporter {
      *
      * @param blocks
      *            List of ErrorBlock
-     * @param diff
-     *            diff file
-     * @param reference
-     *            reference image file
      * @param fileId
      *            fileName for html file
      */

@@ -25,7 +25,6 @@ import org.openqa.selenium.safari.SafariDriver;
 import com.vaadin.testbench.Parameters;
 import com.vaadin.testbench.TestBench;
 import com.vaadin.testbench.parallel.BrowserUtil;
-import com.vaadin.testbench.parallel.ParallelTest;
 
 public class LocalDriver {
 
@@ -40,7 +39,7 @@ public class LocalDriver {
      * @return a driver instance
      */
     static public WebDriver createDriver() {
-        return createDriver(ParallelTest.getDefaultCapabilities().get(0));
+        return createDriver(BrowserUtil.chrome());
     }
 
     /**
