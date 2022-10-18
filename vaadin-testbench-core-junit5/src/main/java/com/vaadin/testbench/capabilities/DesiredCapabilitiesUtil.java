@@ -4,18 +4,24 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import org.junit.jupiter.api.extension.ConditionEvaluationResult;
 import org.junit.jupiter.api.extension.ExtensionContext;
+import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.vaadin.testbench.Parameters;
 import com.vaadin.testbench.annotations.BrowserConfiguration;
+import com.vaadin.testbench.annotations.BrowserFactory;
 import com.vaadin.testbench.annotations.RunLocally;
 import com.vaadin.testbench.parallel.Browser;
 import com.vaadin.testbench.parallel.BrowserUtil;
+import com.vaadin.testbench.parallel.DefaultBrowserFactory;
+import com.vaadin.testbench.parallel.TestBenchBrowserFactory;
 import com.vaadin.testbench.parallel.TestCategory;
 
 public class DesiredCapabilitiesUtil {
@@ -55,12 +61,6 @@ public class DesiredCapabilitiesUtil {
      */
     public static ConditionEvaluationResult evaluateExecutionCondition(
             ExtensionContext context) {
-        if (!CapabilitiesTest.class
-                .isAssignableFrom(context.getRequiredTestClass())) {
-            return ConditionEvaluationResult.disabled(
-                    context.getRequiredTestClass().getName() + " only supports "
-                            + CapabilitiesTest.class.getName());
-        }
 
         Collection<DesiredCapabilities> desiredCapabilities = getDesiredCapabilities(
                 context);
@@ -162,10 +162,7 @@ public class DesiredCapabilitiesUtil {
 
         RunLocally runLocally = context.getRequiredTestClass()
                 .getAnnotation(RunLocally.class);
-        if (runLocally == null) {
-            return false;
-        }
-        return true;
+        return runLocally != null;
     }
 
     /*
@@ -254,7 +251,23 @@ public class DesiredCapabilitiesUtil {
         }
 
         // No valid BrowserConfiguration annotated method was found
-        return CapabilitiesTest.getDefaultCapabilities();
+        return getBrowserConfigurationFromParameterOrDefault();
+    }
+
+    private static List<DesiredCapabilities> getBrowserConfigurationFromParameterOrDefault() {
+        if (Parameters.getGridBrowsers().isEmpty()) {
+            return getDefaultCapabilities();
+        } else {
+            return Parameters.getGridBrowsers();
+        }
+    }
+
+    /**
+     * @return default capabilities, used if no {@link BrowserConfiguration}
+     *         method was found
+     */
+    public static List<DesiredCapabilities> getDefaultCapabilities() {
+        return Collections.singletonList(BrowserUtil.chrome());
     }
 
     /**
@@ -291,13 +304,46 @@ public class DesiredCapabilitiesUtil {
         return true;
     }
 
-    private static CapabilitiesTest getTestClassInstance(
-            ExtensionContext context)
+    private static Object getTestClassInstance(ExtensionContext context)
             throws InstantiationException, IllegalAccessException,
             InvocationTargetException, NoSuchMethodException {
-        CapabilitiesTest testClassInstance = (CapabilitiesTest) context
-                .getRequiredTestClass().getConstructor().newInstance();
-        return testClassInstance;
+
+        return context.getTestInstance().orElse(
+                context.getRequiredTestClass().getConstructor().newInstance());
+    }
+
+    /**
+     * Returns a string which uniquely (enough) identifies this browser. Used
+     * mainly in screenshot names.
+     */
+    public static String getUniqueIdentifier(Capabilities capabilities) {
+        String platform = BrowserUtil.getPlatform(capabilities);
+        String browser = BrowserUtil.getBrowserIdentifier(capabilities);
+        String version;
+        if (capabilities == null) {
+            version = "Unknown";
+        } else {
+            version = capabilities.getBrowserVersion();
+        }
+        return platform + "_" + browser + "_" + version;
+    }
+
+    public static TestBenchBrowserFactory getBrowserFactory(
+            ExtensionContext context) {
+        BrowserFactory browserFactoryAnnotation = context.getRequiredTestClass()
+                .getAnnotation(BrowserFactory.class);
+
+        try {
+            if (browserFactoryAnnotation != null
+                    && TestBenchBrowserFactory.class.isAssignableFrom(
+                            browserFactoryAnnotation.value())) {
+                return (TestBenchBrowserFactory) browserFactoryAnnotation
+                        .value().getConstructor().newInstance();
+            }
+        } catch (Exception e) {
+        }
+
+        return new DefaultBrowserFactory();
     }
 
 }

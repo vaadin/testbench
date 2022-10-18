@@ -77,7 +77,8 @@ public class BasicElementIT extends AbstractJUnit5TB6Test {
 
     @TestBenchTest
     public void getSetPropertyChain() {
-        executeScript("arguments[0].foo = {bar: {baz: 123}};", buttonElement);
+        testBenchUtil.executeScript("arguments[0].foo = {bar: {baz: 123}};",
+                buttonElement);
 
         Assertions.assertEquals(123L, buttonElement
                 .getPropertyDouble("foo", "bar", "baz").longValue());
@@ -103,7 +104,8 @@ public class BasicElementIT extends AbstractJUnit5TB6Test {
 
     @TestBenchTest
     public void getSetPropertyChainMissingValue() {
-        executeScript("arguments[0].foo = {bar: {baz: 123}};", buttonElement);
+        testBenchUtil.executeScript("arguments[0].foo = {bar: {baz: 123}};",
+                buttonElement);
         Assertions.assertNull(
                 buttonElement.getPropertyDouble("foo", "baz", "baz"));
     }

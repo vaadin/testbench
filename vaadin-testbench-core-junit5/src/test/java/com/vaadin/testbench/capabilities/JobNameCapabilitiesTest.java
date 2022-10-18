@@ -13,43 +13,44 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInfo;
+import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
+import com.vaadin.testbench.DriverSupplier;
+import com.vaadin.testbench.SetCapabilities;
 import com.vaadin.testbench.TestBenchTest;
 import com.vaadin.testbench.annotations.BrowserConfiguration;
 import com.vaadin.testbench.parallel.Browser;
 import com.vaadin.testbench.parallel.SauceLabsIntegration;
 
-public class InvocationContextProviderTest extends CapabilitiesTest {
+public class JobNameCapabilitiesTest
+        implements SetCapabilities, DriverSupplier {
 
-    @Override
-    @BeforeEach
-    public void setup() {
-        // Do not actually start a session, just test the class methods
-    }
+    private DesiredCapabilities capabilities;
 
     @TestBenchTest
     public void tbMethodNameInCapabilities(TestInfo testInfo) {
-        Assertions.assertEquals("bar", SauceLabsIntegration
-                .getSauceLabsOption(getDesiredCapabilities(), "foo"));
-        if (SauceLabsIntegration.isConfiguredForSauceLabs()) {
-            Assertions.assertEquals(testInfo.getDisplayName(),
-                    SauceLabsIntegration.getSauceLabsOption(
-                            getDesiredCapabilities(),
-                            SauceLabsIntegration.CapabilityType.NAME));
-        }
+        Assertions.assertEquals("bar",
+                SauceLabsIntegration.getSauceLabsOption(capabilities, "foo"));
+        Assertions.assertEquals(testInfo.getDisplayName(),
+                SauceLabsIntegration.getSauceLabsOption(capabilities,
+                        SauceLabsIntegration.CapabilityType.NAME));
     }
 
     @BrowserConfiguration
     public List<DesiredCapabilities> getBrowsers() {
-        List<DesiredCapabilities> caps = Arrays.asList(
-                Browser.CHROME.getDesiredCapabilities(),
-                Browser.FIREFOX.getDesiredCapabilities());
+        List<DesiredCapabilities> caps = Arrays
+                .asList(Browser.CHROME.getDesiredCapabilities());
         for (DesiredCapabilities cap : caps) {
             SauceLabsIntegration.setSauceLabsOption(cap, "foo", "bar");
         }
         return caps;
     }
+
+    @Override
+    public void setCapabilities(Capabilities capabilities) {
+        this.capabilities = new DesiredCapabilities(capabilities);
+    }
+
 }

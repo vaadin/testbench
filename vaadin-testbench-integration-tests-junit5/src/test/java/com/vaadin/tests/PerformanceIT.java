@@ -22,31 +22,35 @@ public class PerformanceIT extends AbstractJUnit5TB6Test {
         $(NativeButtonElement.class).first().click();
 
         Assertions.assertEquals(1250.0,
-                testBench().timeSpentServicingLastRequest(), 250.0);
+                testBenchUtil.testBench().timeSpentServicingLastRequest(),
+                250.0);
         $(NativeButtonElement.class).first().click();
         Assertions.assertEquals(2500,
-                testBench().totalTimeSpentServicingRequests(), 500.0);
+                testBenchUtil.testBench().totalTimeSpentServicingRequests(),
+                500.0);
     }
 
     @TestBenchTest
     @Disabled("timeSpentServicingLastRequest does not work: https://github.com/vaadin/testbench/issues/1316")
     public void renderingTime() {
         openTestURL();
-        long initialRendering = testBench().timeSpentRenderingLastRequest();
+        long initialRendering = testBenchUtil.testBench()
+                .timeSpentRenderingLastRequest();
         // Assuming initial rendering is done in 1-299ms
         Assertions.assertEquals(150, initialRendering, 149);
         Assertions.assertEquals(initialRendering,
-                testBench().totalTimeSpentRendering());
+                testBenchUtil.testBench().totalTimeSpentRendering());
         $(NativeButtonElement.class).first().click();
         $(NativeButtonElement.class).first().click();
         $(NativeButtonElement.class).first().click();
 
         // Assuming rendering three poll responses is done in 50ms
         Assertions.assertTrue(
-                testBench().totalTimeSpentRendering() > initialRendering,
+                testBenchUtil.testBench()
+                        .totalTimeSpentRendering() > initialRendering,
                 "totalTimeSpentRendering() > initialRendering");
         Assertions.assertEquals(initialRendering,
-                testBench().totalTimeSpentRendering(), 50);
+                testBenchUtil.testBench().totalTimeSpentRendering(), 50);
     }
 
 }

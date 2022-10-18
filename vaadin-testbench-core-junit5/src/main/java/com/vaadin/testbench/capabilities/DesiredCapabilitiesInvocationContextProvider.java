@@ -1,9 +1,8 @@
 package com.vaadin.testbench.capabilities;
 
-import java.lang.annotation.Annotation;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.extension.BeforeAllCallback;
@@ -11,18 +10,14 @@ import org.junit.jupiter.api.extension.Extension;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.TestTemplateInvocationContext;
 import org.junit.jupiter.api.extension.TestTemplateInvocationContextProvider;
-import org.openqa.selenium.Capabilities;
+import org.junit.platform.commons.util.AnnotationUtils;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
-import com.vaadin.testbench.annotations.BrowserFactory;
 import com.vaadin.testbench.parallel.BrowserUtil;
-import com.vaadin.testbench.parallel.DefaultBrowserFactory;
-import com.vaadin.testbench.parallel.TestBenchBrowserFactory;
 import com.vaadin.testbench.parallel.TestNameSuffix;
 
 /**
- * Provides support for running test method for each defined
- * {@link DesiredCapabilities}.
+ * Provides support for running test against multiple browser capabilities.
  */
 public class DesiredCapabilitiesInvocationContextProvider
         implements TestTemplateInvocationContextProvider, BeforeAllCallback {
@@ -34,101 +29,55 @@ public class DesiredCapabilitiesInvocationContextProvider
 
     @Override
     public void beforeAll(ExtensionContext context) {
-        BrowserUtil.setBrowserFactory(getBrowserFactory(context));
+        BrowserUtil.setBrowserFactory(
+                DesiredCapabilitiesUtil.getBrowserFactory(context));
     }
 
     @Override
     public Stream<TestTemplateInvocationContext> provideTestTemplateInvocationContexts(
             ExtensionContext context) {
-        Collection<DesiredCapabilities> desiredCapabilitiesCollection = DesiredCapabilitiesUtil
-                .getDesiredCapabilities(context);
-        return desiredCapabilitiesCollection.stream()
-                .map(dc -> createTestTemplateInvocationContext(dc, context));
+        return DesiredCapabilitiesUtil.getDesiredCapabilities(context).stream()
+                .map(dc -> new DesireCapabilitiesTestTemplateInvocationContext(
+                        context, dc));
     }
 
-    private TestTemplateInvocationContext createTestTemplateInvocationContext(
-            DesiredCapabilities desiredCapabilities, ExtensionContext context) {
-        return new TestTemplateInvocationContext() {
-            @Override
-            public String getDisplayName(int invocationIndex) {
-                return String.format("%s[%s]",
-                        context.getRequiredTestMethod().getName()
-                                + getTestNameSuffix(context),
-                        getUniqueIdentifier(desiredCapabilities));
-            }
+    private class DesireCapabilitiesTestTemplateInvocationContext
+            implements TestTemplateInvocationContext {
 
-            @Override
-            public List<Extension> getAdditionalExtensions() {
-                List<Extension> extensions = new ArrayList<>();
-                extensions.add(
-                        new DesiredCapabilitiesExtension(desiredCapabilities));
-                return extensions;
-            }
-        };
-    }
+        private final ExtensionContext context;
 
-    private String getTestNameSuffix(ExtensionContext context) {
-        TestNameSuffix testNameSuffixProperty = findAnnotation(
-                context.getRequiredTestClass(), TestNameSuffix.class);
-        if (testNameSuffixProperty != null) {
-            return "-" + System.getProperty(testNameSuffixProperty.property());
-        } else {
-            return "";
-        }
-    }
+        private final DesiredCapabilities desiredCapabilities;
 
-    /**
-     * Returns a string which uniquely (enough) identifies this browser. Used
-     * mainly in screenshot names.
-     */
-    private static String getUniqueIdentifier(Capabilities capabilities) {
-        String platform = BrowserUtil.getPlatform(capabilities);
-        String browser = BrowserUtil.getBrowserIdentifier(capabilities);
-        String version;
-        if (capabilities == null) {
-            version = "Unknown";
-        } else {
-            version = capabilities.getBrowserVersion();
-        }
-        return platform + "_" + browser + "_" + version;
-    }
-
-    /**
-     * Finds the given annotation in the given class or one of its super
-     * classes. Return the first found annotation
-     *
-     * @param searchClass
-     * @param annotationClass
-     * @return
-     */
-    private <T extends Annotation> T findAnnotation(Class<?> searchClass,
-            Class<T> annotationClass) {
-        if (searchClass == Object.class) {
-            return null;
+        public DesireCapabilitiesTestTemplateInvocationContext(
+                ExtensionContext context,
+                DesiredCapabilities desiredCapabilities) {
+            this.context = context;
+            this.desiredCapabilities = desiredCapabilities;
         }
 
-        if (searchClass.getAnnotation(annotationClass) != null) {
-            return searchClass.getAnnotation(annotationClass);
+        @Override
+        public String getDisplayName(int invocationIndex) {
+            return String.format("%s[%s]",
+                    context.getRequiredTestMethod().getName()
+                            + getTestNameSuffix(context),
+                    DesiredCapabilitiesUtil
+                            .getUniqueIdentifier(desiredCapabilities));
         }
 
-        return findAnnotation(searchClass.getSuperclass(), annotationClass);
-    }
-
-    private TestBenchBrowserFactory getBrowserFactory(
-            ExtensionContext context) {
-        BrowserFactory browserFactoryAnnotation = context.getRequiredTestClass()
-                .getAnnotation(BrowserFactory.class);
-
-        try {
-            if (browserFactoryAnnotation != null
-                    && TestBenchBrowserFactory.class.isAssignableFrom(
-                            browserFactoryAnnotation.value())) {
-                return (TestBenchBrowserFactory) browserFactoryAnnotation
-                        .value().getConstructor().newInstance();
-            }
-        } catch (Exception e) {
+        @Override
+        public List<Extension> getAdditionalExtensions() {
+            return Collections.singletonList(
+                    new DesiredCapabilitiesExtension(desiredCapabilities));
         }
 
-        return new DefaultBrowserFactory();
+        private String getTestNameSuffix(ExtensionContext context) {
+            Optional<TestNameSuffix> testNameSuffixProperty = AnnotationUtils
+                    .findAnnotation(context.getRequiredTestClass(),
+                            TestNameSuffix.class);
+            return testNameSuffixProperty.map(testNameSuffix -> "-" + System
+                    .getProperty(testNameSuffix.property())).orElse("");
+        }
+
     }
+
 }

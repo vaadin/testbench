@@ -1,19 +1,8 @@
-/**
- * Copyright (C) 2020 Vaadin Ltd
- *
- * This program is available under Commercial Vaadin Developer License
- * 4.0 (CVDLv4).
- *
- *
- * For the full License, see <https://vaadin.com/license/cvdl-4.0>.
- */
 package com.vaadin.testbench;
 
 import java.time.Duration;
 import java.util.List;
-import java.util.Properties;
 
-import org.openqa.selenium.BuildInfo;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NotFoundException;
 import org.openqa.selenium.SearchContext;
@@ -23,83 +12,30 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import com.vaadin.pro.licensechecker.LicenseChecker;
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.commands.TestBenchCommands;
 
-/**
- * A superclass with some helpers to aid TestBench developers.
- */
-public abstract class TestBenchTestCaseJUnit5
+public class TestBenchUtil
         implements HasDriver, HasTestBenchCommandExecutor, HasElementQuery {
 
-    public static final String testbenchVersion;
-    static {
-        Properties properties = new Properties();
-        try {
-            properties.load(TestBenchTestCaseJUnit5.class
-                    .getResourceAsStream("testbench.properties"));
-        } catch (Exception e) {
-            getLogger().warn("Unable to read TestBench properties file", e);
-            throw new ExceptionInInitializerError(e);
-        }
+    private WebDriver driver;
 
-        String seleniumVersion = new BuildInfo().getReleaseLabel();
-        testbenchVersion = properties.getProperty("testbench.version");
-        String expectedVersion = properties.getProperty("selenium.version");
-        if (seleniumVersion == null
-                || !seleniumVersion.equals(expectedVersion)) {
-            getLogger().warn(
-                    "This version of TestBench depends on Selenium version "
-                            + expectedVersion + " but version "
-                            + seleniumVersion
-                            + " was found. Make sure you do not have multiple versions of Selenium on the classpath.");
-        }
+    private TestBenchUtil() {
 
-        LicenseChecker.checkLicenseFromStaticBlock("vaadin-testbench",
-                TestBenchTestCaseJUnit5.testbenchVersion, null);
     }
 
-    protected WebDriver driver;
-
-    private static Logger getLogger() {
-        return LoggerFactory.getLogger(TestBenchTestCaseJUnit5.class);
+    private TestBenchUtil(WebDriver driver) {
+        this.driver = driver;
     }
 
-    /**
-     * Convenience method the return {@link TestBenchCommands} for the default
-     * {@link WebDriver} instance.
-     *
-     * @return The driver cast to a TestBenchCommands instance.
-     */
-    public TestBenchCommands testBench() {
-        return ((TestBenchDriverProxy) getDriver()).getCommandExecutor();
-    }
-
-    /**
-     * Combines a base URL with an URI to create a final URL. This removes
-     * possible double slashes if the base URL ends with a slash and the URI
-     * begins with a slash.
-     *
-     * @param baseUrl
-     *            the base URL
-     * @param uri
-     *            the URI
-     * @return the URL resulting from the combination of base URL and URI
-     */
-    protected String concatUrl(String baseUrl, String uri) {
-        if (baseUrl.endsWith("/") && uri.startsWith("/")) {
-            return baseUrl + uri.substring(1);
-        }
-        return baseUrl + uri;
+    public static TestBenchUtil forDriver(WebDriver driver) {
+        return new TestBenchUtil(driver);
     }
 
     /**
      * Returns the {@link WebDriver} instance previously specified by
-     * {@link #setDriver(WebDriver)}, or (if the previously provided WebDriver
+     * {@link #forDriver(WebDriver)}, or (if the previously provided WebDriver
      * instance was not already a {@link TestBenchDriverProxy} instance) a
      * {@link TestBenchDriverProxy} that wraps that driver.
      *
@@ -108,29 +44,6 @@ public abstract class TestBenchTestCaseJUnit5
     @Override
     public WebDriver getDriver() {
         return driver;
-    }
-
-    /**
-     * Sets the active {@link WebDriver} that is used by this this case
-     *
-     * @param driver
-     *            The WebDriver instance to set.
-     */
-    public void setDriver(WebDriver driver) {
-        if (driver != null && !(driver instanceof TestBenchDriverProxy)) {
-            driver = TestBench.createDriver(driver);
-        }
-        this.driver = driver;
-    }
-
-    @Override
-    public SearchContext getContext() {
-        return getDriver();
-    }
-
-    @Override
-    public TestBenchCommandExecutor getCommandExecutor() {
-        return ((HasTestBenchCommandExecutor) getDriver()).getCommandExecutor();
     }
 
     public WebElement findElement(org.openqa.selenium.By by) {
@@ -180,7 +93,7 @@ public abstract class TestBenchTestCaseJUnit5
      *             execution
      * @see JavascriptExecutor#executeScript(String, Object...)
      */
-    protected Object executeScript(String script, Object... args) {
+    public Object executeScript(String script, Object... args) {
         return getCommandExecutor().executeScript(script, args);
     }
 
@@ -210,10 +123,10 @@ public abstract class TestBenchTestCaseJUnit5
      * @see FluentWait#until
      * @see ExpectedCondition
      */
-    protected <T> T waitUntil(ExpectedCondition<T> condition,
+    public <T> T waitUntil(ExpectedCondition<T> condition,
             long timeoutInSeconds) {
-        return new WebDriverWait(getDriver(),
-                Duration.ofSeconds(timeoutInSeconds)).until(condition);
+        return new WebDriverWait(driver, Duration.ofSeconds(timeoutInSeconds))
+                .until(condition);
     }
 
     /**
@@ -239,8 +152,46 @@ public abstract class TestBenchTestCaseJUnit5
      * @see FluentWait#until
      * @see ExpectedCondition
      */
-    protected <T> T waitUntil(ExpectedCondition<T> condition) {
+    public <T> T waitUntil(ExpectedCondition<T> condition) {
         return waitUntil(condition, 10);
+    }
+
+    @Override
+    public SearchContext getContext() {
+        return driver;
+    }
+
+    @Override
+    public TestBenchCommandExecutor getCommandExecutor() {
+        return ((HasTestBenchCommandExecutor) driver).getCommandExecutor();
+    }
+
+    /**
+     * Convenience method the return {@link TestBenchCommands} for the default
+     * {@link WebDriver} instance.
+     *
+     * @return The driver cast to a TestBenchCommands instance.
+     */
+    public TestBenchCommands testBench() {
+        return ((TestBenchDriverProxy) driver).getCommandExecutor();
+    }
+
+    /**
+     * Combines a base URL with an URI to create a final URL. This removes
+     * possible double slashes if the base URL ends with a slash and the URI
+     * begins with a slash.
+     *
+     * @param baseUrl
+     *            the base URL
+     * @param uri
+     *            the URI
+     * @return the URL resulting from the combination of base URL and URI
+     */
+    public static String concatUrl(String baseUrl, String uri) {
+        if (baseUrl.endsWith("/") && uri.startsWith("/")) {
+            return baseUrl + uri.substring(1);
+        }
+        return baseUrl + uri;
     }
 
 }

@@ -11,32 +11,38 @@ package com.vaadin.testbench.capabilities;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.mockito.Mockito;
 
 import com.vaadin.testbench.annotations.RunOnHub;
 
 @RunOnHub("hub-in-annotation")
-public class CapabilitiesHubTest extends CapabilitiesTest {
+public class CapabilitiesHubTest extends DesiredCapabilitiesExtension {
 
     private static final String HUB_HOSTNAME_PROPERTY = "com.vaadin.testbench.Parameters.hubHostname";
-    private static final String SAUCE_USER_PROPERTY = "sauce.user";
-    private static final String SAUCE_ACCESS_KEY_PROPERTY = "sauce.sauceAccessKey";
 
-    @Override
-    public void setup() throws Exception {
-        // Do not actually start a session, just test the class methods
+    public CapabilitiesHubTest() {
+        super(null);
     }
 
     @Test
     public void hubFromAnnotationOrSystemProperty() {
+        ExtensionContext context = Mockito.mock(ExtensionContext.class);
+        Class clazz = CapabilitiesHubTest.class;
+        Mockito.when(context.getRequiredTestClass()).thenReturn(clazz);
+
         String oldProperty = System.getProperty(HUB_HOSTNAME_PROPERTY);
         try {
             System.clearProperty(HUB_HOSTNAME_PROPERTY);
 
-            Assertions.assertEquals("hub-in-annotation", getHubHostname());
+            Assertions.assertEquals("hub-in-annotation",
+                    getHubHostname(context));
             System.setProperty(HUB_HOSTNAME_PROPERTY, "hub-system-property");
-            Assertions.assertEquals("hub-system-property", getHubHostname());
+            Assertions.assertEquals("hub-system-property",
+                    getHubHostname(context));
             System.clearProperty(HUB_HOSTNAME_PROPERTY);
-            Assertions.assertEquals("hub-in-annotation", getHubHostname());
+            Assertions.assertEquals("hub-in-annotation",
+                    getHubHostname(context));
         } finally {
             if (oldProperty != null) {
                 System.setProperty(HUB_HOSTNAME_PROPERTY, oldProperty);

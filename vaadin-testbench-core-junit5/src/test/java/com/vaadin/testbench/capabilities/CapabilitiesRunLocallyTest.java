@@ -16,11 +16,10 @@ import com.vaadin.testbench.annotations.RunLocally;
 import com.vaadin.testbench.parallel.Browser;
 
 @RunLocally(value = Browser.CHROME, version = "34")
-public class CapabilitiesRunLocallyTest extends CapabilitiesTest {
+public class CapabilitiesRunLocallyTest extends DesiredCapabilitiesExtension {
 
-    @Override
-    public void setup() throws Exception {
-        // Do not actually start a session, just test the class methods
+    public CapabilitiesRunLocallyTest() {
+        super(null);
     }
 
     @Test

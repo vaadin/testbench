@@ -24,13 +24,22 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
 
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.openqa.selenium.Capabilities;
+import org.openqa.selenium.SearchContext;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.testbench.HasDriver;
+import com.vaadin.testbench.HasElementQuery;
+import com.vaadin.testbench.ScreenshotOnFailureExtension;
+import com.vaadin.testbench.SetCapabilities;
+import com.vaadin.testbench.SetDriver;
+import com.vaadin.testbench.TestBenchUtil;
 import com.vaadin.testbench.annotations.BrowserConfiguration;
 import com.vaadin.testbench.annotations.BrowserFactory;
 import com.vaadin.testbench.parallel.BrowserUtil;
-import com.vaadin.testbench.capabilities.CapabilitiesTest;
 
 /**
  * Base class for TestBench 6+ tests. All TB6+ tests in the project should
@@ -49,7 +58,12 @@ import com.vaadin.testbench.capabilities.CapabilitiesTest;
  * @author Vaadin Ltd
  */
 @BrowserFactory(TB6TestBrowserFactory.class)
-public abstract class AbstractJUnit5TB6Test extends CapabilitiesTest {
+public abstract class AbstractJUnit5TB6Test
+        implements SetDriver, HasDriver, SetCapabilities, HasElementQuery {
+
+    @RegisterExtension
+    public ScreenshotOnFailureExtension screenshotOnFailureExtension = new ScreenshotOnFailureExtension(
+            this, true);
 
     /**
      * Height of the screenshots we want to capture
@@ -79,6 +93,31 @@ public abstract class AbstractJUnit5TB6Test extends CapabilitiesTest {
         }
     }
 
+    protected TestBenchUtil testBenchUtil;
+
+    protected Capabilities capabilities;
+
+    @Override
+    public void setDriver(WebDriver driver) {
+        this.testBenchUtil = TestBenchUtil.forDriver(driver);
+    }
+
+    @Override
+    public WebDriver getDriver() {
+        return testBenchUtil.getDriver();
+    }
+
+    @Override
+    public void setCapabilities(Capabilities capabilities) {
+        this.capabilities = capabilities;
+    }
+
+    // wrapper used to expose {@link HasElementQuery} methods
+    @Override
+    public SearchContext getContext() {
+        return testBenchUtil.getContext();
+    }
+
     @BrowserConfiguration
     public List<DesiredCapabilities> getBrowserConfiguration() {
         return Arrays.asList(BrowserUtil.firefox(), BrowserUtil.chrome(),
@@ -103,7 +142,7 @@ public abstract class AbstractJUnit5TB6Test extends CapabilitiesTest {
         } else {
             url = url + "?" + extraParameters;
         }
-        driver.get(url);
+        testBenchUtil.getDriver().get(url);
     }
 
     /**

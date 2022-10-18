@@ -17,12 +17,12 @@ public class SVGIT extends AbstractJUnit5TB6Test {
 
     @TestBenchTest
     public void click() {
-        if (BrowserUtil.isSafari(this.getDesiredCapabilities())) {
+        if (BrowserUtil.isSafari(capabilities)) {
             return; // Skip for Safari 11.
         }
         openTestURL();
-        findElement(By.id("ball")).click();
+        testBenchUtil.findElement(By.id("ball")).click();
         Assertions.assertEquals("clicked",
-                findElement(By.tagName("body")).getText());
+                testBenchUtil.findElement(By.tagName("body")).getText());
     }
 }

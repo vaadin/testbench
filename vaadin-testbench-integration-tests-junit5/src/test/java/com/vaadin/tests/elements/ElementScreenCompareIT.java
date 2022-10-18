@@ -10,7 +10,7 @@ import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.testbench.TestBenchTest;
 import com.vaadin.tests.AbstractJUnit5TB6Test;
 
-@Disabled
+@Disabled("Viewport resize does not work")
 public class ElementScreenCompareIT extends AbstractJUnit5TB6Test {
 
     @Override
@@ -19,10 +19,9 @@ public class ElementScreenCompareIT extends AbstractJUnit5TB6Test {
     }
 
     @BeforeEach
-    @Override
-    public void setup() throws Exception {
-        super.setup();
-        testBench().resizeViewPortTo(SCREENSHOT_WIDTH, SCREENSHOT_HEIGHT);
+    public void setup() {
+        testBenchUtil.testBench().resizeViewPortTo(SCREENSHOT_WIDTH,
+                SCREENSHOT_HEIGHT);
     }
 
     @TestBenchTest
