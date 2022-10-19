@@ -3,6 +3,7 @@ package com.vaadin.testbench;
 import java.time.Duration;
 import java.util.List;
 
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NotFoundException;
@@ -20,20 +21,21 @@ import com.vaadin.testbench.commands.TestBenchCommands;
 public abstract class TestBenchTestBase implements HasDriver, SetDriver,
         SetCapabilities, HasTestBenchCommandExecutor, HasElementQuery {
 
+    @RegisterExtension
+    public ScreenshotOnFailureExtension screenshotOnFailureExtension = new ScreenshotOnFailureExtension(this, true);
+
     protected WebDriver driver;
 
     protected Capabilities capabilities;
 
     /**
-     * Sets the active {@link WebDriver} that is used by this this case
+     * Sets the active {@link WebDriver} that is used by this test case
      *
      * @param driver
      *            The WebDriver instance to set.
      */
+    @Override
     public void setDriver(WebDriver driver) {
-        if (driver != null && !(driver instanceof TestBenchDriverProxy)) {
-            driver = TestBench.createDriver(driver);
-        }
         this.driver = driver;
     }
 
@@ -45,7 +47,6 @@ public abstract class TestBenchTestBase implements HasDriver, SetDriver,
      *
      * @return the active WebDriver instance
      */
-    @Override
     public WebDriver getDriver() {
         return driver;
     }

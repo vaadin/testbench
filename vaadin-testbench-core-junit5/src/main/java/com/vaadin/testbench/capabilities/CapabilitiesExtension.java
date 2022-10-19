@@ -36,14 +36,14 @@ public class CapabilitiesExtension
 
     protected WebDriver driver;
 
-    public CapabilitiesExtension(Capabilities desiredCapabilities) {
-
-        this.desiredCapabilities = new DesiredCapabilities(desiredCapabilities);
-
+    public CapabilitiesExtension(Capabilities capabilities) {
+        desiredCapabilities = new DesiredCapabilities(capabilities);
         if (SauceLabsIntegration.isConfiguredForSauceLabs()) {
             SauceLabsIntegration
-                    .setDesiredCapabilities(this.desiredCapabilities);
+                    .setDesiredCapabilities(desiredCapabilities);
         }
+
+        driverConfiguration.setDesiredCapabilities(desiredCapabilities);
     }
 
     /**
@@ -151,8 +151,6 @@ public class CapabilitiesExtension
         SauceLabsIntegration.setSauceLabsOption(desiredCapabilities,
                 SauceLabsIntegration.CapabilityType.NAME,
                 context.getDisplayName());
-
-        driverConfiguration.setDesiredCapabilities(desiredCapabilities);
 
         Object testInstance = context.getRequiredTestInstance();
         if (testInstance instanceof DriverSupplier) {
