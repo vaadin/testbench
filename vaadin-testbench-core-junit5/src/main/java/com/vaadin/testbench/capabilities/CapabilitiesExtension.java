@@ -24,6 +24,7 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.vaadin.testbench.HasCustomDriver;
 import com.vaadin.testbench.HasDriver;
 import com.vaadin.testbench.Parameters;
 import com.vaadin.testbench.TestBench;
@@ -186,11 +187,12 @@ public class CapabilitiesExtension implements Extension, BeforeEachCallback,
         Object testInstance = context.getRequiredTestInstance();
 
         // use WebDriver provided by test instance
-        if (testInstance instanceof HasDriver) {
-            setDriver(((HasDriver) testInstance).getDriver());
+        if (testInstance instanceof HasCustomDriver) {
+            setDriver(((HasCustomDriver) testInstance).getCustomDriver());
         }
 
-        // if no WebDriver is provided, setup driver and inject to test instance
+        // if no custom WebDriver is provided, setup driver and inject to test
+        // instance
         if (driver == null) {
             setupDriver(context);
         }

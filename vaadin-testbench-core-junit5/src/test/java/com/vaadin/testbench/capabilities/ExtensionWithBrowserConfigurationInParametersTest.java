@@ -18,13 +18,13 @@ import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
-import com.vaadin.testbench.HasDriver;
+import com.vaadin.testbench.HasCustomDriver;
 import com.vaadin.testbench.Parameters;
 import com.vaadin.testbench.TestBenchTest;
 import com.vaadin.testbench.parallel.Browser;
 
 public class ExtensionWithBrowserConfigurationInParametersTest
-        implements HasDriver {
+        implements HasCustomDriver {
 
     private static String oldBrowsers;
 
@@ -40,7 +40,7 @@ public class ExtensionWithBrowserConfigurationInParametersTest
     }
 
     @Override
-    public WebDriver getDriver() {
+    public WebDriver getCustomDriver() {
         return Mockito.mock(WebDriver.class);
     }
 

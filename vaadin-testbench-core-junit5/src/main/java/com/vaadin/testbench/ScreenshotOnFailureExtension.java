@@ -46,8 +46,8 @@ import com.vaadin.testbench.screenshot.ImageFileUtil;
  * <em>NOTE!</em> Do <b>NOT</b> call <code>driver.quit()</code> in your
  * <code>tearDown()</code> method (annotated with
  * {@link org.junit.jupiter.api.AfterEach}). The tear down method will be run
- * before this rule is run and if the driver is closed it is no longer possible
- * to grab a screen shot of the situation.
+ * before this extension is run and if the driver is closed it is no longer
+ * possible to grab a screen shot of the situation.
  * </p>
  */
 public class ScreenshotOnFailureExtension implements TestWatcher {
@@ -77,8 +77,8 @@ public class ScreenshotOnFailureExtension implements TestWatcher {
      *            The {@link HasDriver} instance that holds the active WebDriver
      *            instance.
      * @param quitDriverOnFinish
-     *            Tells the rule whether to quit the driver when a single test
-     *            has finished or not.
+     *            Tells the extension whether to quit the driver when a single
+     *            test has finished or not.
      */
     public ScreenshotOnFailureExtension(HasDriver driverHolder,
             boolean quitDriverOnFinish) {
@@ -87,7 +87,7 @@ public class ScreenshotOnFailureExtension implements TestWatcher {
     }
 
     /**
-     * Tells the rule whether to quit the driver when the test has finished
+     * Tells the extension whether to quit the driver when the test has finished
      * executing or to allow the user to specify this.
      *
      * @param quitDriverOnFinish

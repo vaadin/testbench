@@ -19,13 +19,13 @@ import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
-import com.vaadin.testbench.HasDriver;
+import com.vaadin.testbench.HasCustomDriver;
 import com.vaadin.testbench.TestBenchTest;
 import com.vaadin.testbench.annotations.BrowserConfiguration;
 import com.vaadin.testbench.parallel.Browser;
 import com.vaadin.testbench.parallel.SauceLabsIntegration;
 
-public class JobNameCapabilitiesTest implements HasDriver {
+public class JobNameCapabilitiesTest implements HasCustomDriver {
 
     @TestBenchTest
     public void tbMethodNameInCapabilities(TestInfo testInfo,
@@ -40,7 +40,7 @@ public class JobNameCapabilitiesTest implements HasDriver {
     }
 
     @Override
-    public WebDriver getDriver() {
+    public WebDriver getCustomDriver() {
         return Mockito.mock(WebDriver.class);
     }
 

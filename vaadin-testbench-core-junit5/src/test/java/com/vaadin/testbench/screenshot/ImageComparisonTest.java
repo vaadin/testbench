@@ -26,9 +26,6 @@ public class ImageComparisonTest {
     private static final String FOLDER = ImageComparisonTest.class.getPackage()
             .getName().replace('.', '/');
 
-    // @Rule
-    // public TestName testName = new TestName();
-
     private String previousScreenshotErrorDirectory;
     private String previousScreenshotReferenceDirectory;
     private boolean previousScreenshotComparisonCursorDetection;
