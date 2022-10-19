@@ -19,7 +19,7 @@ import com.vaadin.testbench.parallel.TestNameSuffix;
 /**
  * Provides support for running test against multiple browser capabilities.
  */
-public class DesiredCapabilitiesInvocationContextProvider
+public class CapabilitiesInvocationContextProvider
         implements TestTemplateInvocationContextProvider, BeforeAllCallback {
 
     @Override
@@ -29,19 +29,19 @@ public class DesiredCapabilitiesInvocationContextProvider
 
     @Override
     public void beforeAll(ExtensionContext context) {
-        BrowserUtil.setBrowserFactory(
-                DesiredCapabilitiesUtil.getBrowserFactory(context));
+        BrowserUtil
+                .setBrowserFactory(CapabilitiesUtil.getBrowserFactory(context));
     }
 
     @Override
     public Stream<TestTemplateInvocationContext> provideTestTemplateInvocationContexts(
             ExtensionContext context) {
-        return DesiredCapabilitiesUtil.getDesiredCapabilities(context).stream()
+        return CapabilitiesUtil.getDesiredCapabilities(context).stream()
                 .map(dc -> new DesireCapabilitiesTestTemplateInvocationContext(
                         context, dc));
     }
 
-    private class DesireCapabilitiesTestTemplateInvocationContext
+    private static class DesireCapabilitiesTestTemplateInvocationContext
             implements TestTemplateInvocationContext {
 
         private final ExtensionContext context;
@@ -60,22 +60,23 @@ public class DesiredCapabilitiesInvocationContextProvider
             return String.format("%s[%s]",
                     context.getRequiredTestMethod().getName()
                             + getTestNameSuffix(context),
-                    DesiredCapabilitiesUtil
-                            .getUniqueIdentifier(desiredCapabilities));
+                    CapabilitiesUtil.getUniqueIdentifier(desiredCapabilities));
         }
 
         @Override
         public List<Extension> getAdditionalExtensions() {
             return Collections.singletonList(
-                    new DesiredCapabilitiesExtension(desiredCapabilities));
+                    new CapabilitiesExtension(desiredCapabilities));
         }
 
         private String getTestNameSuffix(ExtensionContext context) {
             Optional<TestNameSuffix> testNameSuffixProperty = AnnotationUtils
                     .findAnnotation(context.getRequiredTestClass(),
                             TestNameSuffix.class);
-            return testNameSuffixProperty.map(testNameSuffix -> "-" + System
-                    .getProperty(testNameSuffix.property())).orElse("");
+            return testNameSuffixProperty
+                    .map(testNameSuffix -> "-"
+                            + System.getProperty(testNameSuffix.property()))
+                    .orElse("");
         }
 
     }

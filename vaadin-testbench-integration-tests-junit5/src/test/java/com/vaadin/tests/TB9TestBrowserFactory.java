@@ -23,10 +23,9 @@ import com.vaadin.testbench.parallel.DefaultBrowserFactory;
 import com.vaadin.testbench.parallel.SauceLabsIntegration;
 
 /**
- * Specifies default browser configuration for {@link AbstractJUnit5TB6Test}
- * tests.
+ * Specifies default browser configuration for {@link AbstractTB9Test} tests.
  */
-public class TB6TestBrowserFactory extends DefaultBrowserFactory {
+public class TB9TestBrowserFactory extends DefaultBrowserFactory {
 
     @Override
     public DesiredCapabilities create(Browser browser, String version,

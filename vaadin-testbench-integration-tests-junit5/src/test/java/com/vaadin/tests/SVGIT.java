@@ -8,7 +8,7 @@ import com.vaadin.testUI.SVGView;
 import com.vaadin.testbench.TestBenchTest;
 import com.vaadin.testbench.parallel.BrowserUtil;
 
-public class SVGIT extends AbstractJUnit5TB6Test {
+public class SVGIT extends AbstractTB9Test {
 
     @Override
     protected Class<? extends Component> getTestView() {
@@ -21,8 +21,8 @@ public class SVGIT extends AbstractJUnit5TB6Test {
             return; // Skip for Safari 11.
         }
         openTestURL();
-        testBenchUtil.findElement(By.id("ball")).click();
+        findElement(By.id("ball")).click();
         Assertions.assertEquals("clicked",
-                testBenchUtil.findElement(By.tagName("body")).getText());
+                findElement(By.tagName("body")).getText());
     }
 }

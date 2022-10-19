@@ -17,7 +17,7 @@ import org.mockito.Mockito;
 import com.vaadin.testbench.annotations.RunOnHub;
 
 @RunOnHub("hub-in-annotation")
-public class CapabilitiesHubTest extends DesiredCapabilitiesExtension {
+public class CapabilitiesHubTest extends CapabilitiesExtension {
 
     private static final String HUB_HOSTNAME_PROPERTY = "com.vaadin.testbench.Parameters.hubHostname";
 

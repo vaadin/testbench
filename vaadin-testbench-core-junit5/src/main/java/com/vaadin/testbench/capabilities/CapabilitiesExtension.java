@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ConditionEvaluationResult;
 import org.junit.jupiter.api.extension.ExecutionCondition;
 import org.junit.jupiter.api.extension.Extension;
 import org.junit.jupiter.api.extension.ExtensionContext;
+import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.slf4j.Logger;
@@ -22,21 +23,20 @@ import com.vaadin.testbench.parallel.Browser;
 import com.vaadin.testbench.parallel.SauceLabsIntegration;
 import com.vaadin.testbench.parallel.setup.SetupDriver;
 
-public class DesiredCapabilitiesExtension
+public class CapabilitiesExtension
         implements Extension, BeforeEachCallback, ExecutionCondition {
 
     private static Logger getLogger() {
-        return LoggerFactory.getLogger(DesiredCapabilitiesExtension.class);
+        return LoggerFactory.getLogger(CapabilitiesExtension.class);
     }
 
-    private SetupDriver driverConfiguration = new SetupDriver();
+    private final SetupDriver driverConfiguration = new SetupDriver();
 
     private final DesiredCapabilities desiredCapabilities;
 
     protected WebDriver driver;
 
-    public DesiredCapabilitiesExtension(
-            DesiredCapabilities desiredCapabilities) {
+    public CapabilitiesExtension(Capabilities desiredCapabilities) {
 
         this.desiredCapabilities = new DesiredCapabilities(desiredCapabilities);
 
@@ -62,7 +62,7 @@ public class DesiredCapabilitiesExtension
     @Override
     public ConditionEvaluationResult evaluateExecutionCondition(
             ExtensionContext context) {
-        return DesiredCapabilitiesUtil.evaluateExecutionCondition(context);
+        return CapabilitiesUtil.evaluateExecutionCondition(context);
     }
 
     /**
@@ -219,7 +219,7 @@ public class DesiredCapabilitiesExtension
      *         Class, or null if annotation is not present.
      */
     protected Browser getRunLocallyBrowser() {
-        return DesiredCapabilitiesUtil.getRunLocallyBrowserName(getClass());
+        return CapabilitiesUtil.getRunLocallyBrowserName(getClass());
     }
 
     /**
@@ -227,7 +227,7 @@ public class DesiredCapabilitiesExtension
      *         Class, or empty String if annotation is not present.
      */
     protected String getRunLocallyBrowserVersion() {
-        return DesiredCapabilitiesUtil.getRunLocallyBrowserVersion(getClass());
+        return CapabilitiesUtil.getRunLocallyBrowserVersion(getClass());
     }
 
 }

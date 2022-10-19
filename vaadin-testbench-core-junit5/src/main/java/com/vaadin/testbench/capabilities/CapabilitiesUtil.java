@@ -24,10 +24,10 @@ import com.vaadin.testbench.parallel.DefaultBrowserFactory;
 import com.vaadin.testbench.parallel.TestBenchBrowserFactory;
 import com.vaadin.testbench.parallel.TestCategory;
 
-public class DesiredCapabilitiesUtil {
+public class CapabilitiesUtil {
 
     private static Logger getLogger() {
-        return LoggerFactory.getLogger(DesiredCapabilitiesUtil.class);
+        return LoggerFactory.getLogger(CapabilitiesUtil.class);
     }
 
     /*

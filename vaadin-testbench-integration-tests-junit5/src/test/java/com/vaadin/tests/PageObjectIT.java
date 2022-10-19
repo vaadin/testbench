@@ -8,7 +8,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.testUI.PageObjectView;
 import com.vaadin.testbench.TestBenchTest;
 
-public class PageObjectIT extends AbstractJUnit5TB6Test {
+public class PageObjectIT extends AbstractTB9Test {
 
     @Override
     protected Class<? extends Component> getTestView() {

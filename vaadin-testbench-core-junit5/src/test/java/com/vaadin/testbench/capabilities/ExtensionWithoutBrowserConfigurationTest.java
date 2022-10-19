@@ -31,8 +31,8 @@ public class ExtensionWithoutBrowserConfigurationTest
 
     @TestBenchTest
     public void withoutBrowsersConfiguration() {
-        DesiredCapabilities caps = DesiredCapabilitiesUtil
-                .getDefaultCapabilities().get(0);
+        DesiredCapabilities caps = CapabilitiesUtil.getDefaultCapabilities()
+                .get(0);
         Assertions.assertEquals(caps.getBrowserName(),
                 capabilities.getBrowserName());
         Assertions.assertEquals(caps.getBrowserVersion(),

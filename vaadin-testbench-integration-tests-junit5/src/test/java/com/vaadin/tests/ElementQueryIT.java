@@ -11,7 +11,7 @@ import com.vaadin.testbench.TestBenchTest;
 import com.vaadin.tests.elements.NativeButtonElement;
 import com.vaadin.tests.elements.TemplateViewElement;
 
-public class ElementQueryIT extends AbstractJUnit5TB6Test {
+public class ElementQueryIT extends AbstractTB9Test {
 
     @Override
     protected Class<? extends Component> getTestView() {
@@ -35,7 +35,7 @@ public class ElementQueryIT extends AbstractJUnit5TB6Test {
     }
 
     @TestBenchTest
-    public void findLightDomElementById() throws Exception {
+    public void findLightDomElementById() {
         openTestURL();
 
         TemplateViewElement view = $(TemplateViewElement.class).first();
@@ -45,7 +45,7 @@ public class ElementQueryIT extends AbstractJUnit5TB6Test {
     }
 
     @TestBenchTest
-    public void findShadowDomElementById() throws Exception {
+    public void findShadowDomElementById() {
         openTestURL();
 
         TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
@@ -55,7 +55,7 @@ public class ElementQueryIT extends AbstractJUnit5TB6Test {
     }
 
     @TestBenchTest
-    public void findAllShadowDomElements() throws Exception {
+    public void findAllShadowDomElements() {
         openTestURL();
 
         TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
@@ -64,7 +64,7 @@ public class ElementQueryIT extends AbstractJUnit5TB6Test {
     }
 
     @TestBenchTest
-    public void searchShadowDomBeforeLight() throws Exception {
+    public void searchShadowDomBeforeLight() {
         openTestURL();
 
         TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
@@ -75,7 +75,7 @@ public class ElementQueryIT extends AbstractJUnit5TB6Test {
     }
 
     @TestBenchTest
-    public void mergeLightAndShadowDomResults() throws Exception {
+    public void mergeLightAndShadowDomResults() {
         openTestURL();
 
         TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
@@ -85,7 +85,7 @@ public class ElementQueryIT extends AbstractJUnit5TB6Test {
     }
 
     @TestBenchTest
-    public void findTestBenchElementUsingTag() throws Exception {
+    public void findTestBenchElementUsingTag() {
         openTestURL();
 
         TestBenchElement button = $(TemplateViewElement.class).waitForFirst()
@@ -95,7 +95,7 @@ public class ElementQueryIT extends AbstractJUnit5TB6Test {
     }
 
     @TestBenchTest
-    public void findTestBenchElement() throws Exception {
+    public void findTestBenchElement() {
         openTestURL();
 
         TestBenchElement button = $(TemplateViewElement.class).waitForFirst()
@@ -104,7 +104,7 @@ public class ElementQueryIT extends AbstractJUnit5TB6Test {
     }
 
     @TestBenchTest
-    public void findTestBenchElementChild() throws Exception {
+    public void findTestBenchElementChild() {
         openTestURL();
 
         TestBenchElement button = $(TemplateViewElement.class).waitForFirst()

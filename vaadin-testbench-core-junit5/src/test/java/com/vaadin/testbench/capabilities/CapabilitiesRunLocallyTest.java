@@ -16,7 +16,7 @@ import com.vaadin.testbench.annotations.RunLocally;
 import com.vaadin.testbench.parallel.Browser;
 
 @RunLocally(value = Browser.CHROME, version = "34")
-public class CapabilitiesRunLocallyTest extends DesiredCapabilitiesExtension {
+public class CapabilitiesRunLocallyTest extends CapabilitiesExtension {
 
     public CapabilitiesRunLocallyTest() {
         super(null);

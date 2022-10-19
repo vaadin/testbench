@@ -6,9 +6,9 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.testUI.ElementQueryView;
 import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.testbench.TestBenchTest;
-import com.vaadin.tests.AbstractJUnit5TB6Test;
+import com.vaadin.tests.AbstractTB9Test;
 
-public class ExecuteJavascriptIT extends AbstractJUnit5TB6Test {
+public class ExecuteJavascriptIT extends AbstractTB9Test {
 
     @Override
     protected Class<? extends Component> getTestView() {
@@ -16,7 +16,7 @@ public class ExecuteJavascriptIT extends AbstractJUnit5TB6Test {
     }
 
     @TestBenchTest
-    public void getProperty() throws Exception {
+    public void getProperty() {
         openTestURL();
 
         TestBenchElement button = $(NativeButtonElement.class).first();

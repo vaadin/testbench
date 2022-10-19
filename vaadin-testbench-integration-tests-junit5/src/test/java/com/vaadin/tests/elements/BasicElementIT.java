@@ -10,9 +10,9 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.testUI.ElementQueryView;
 import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.testbench.TestBenchTest;
-import com.vaadin.tests.AbstractJUnit5TB6Test;
+import com.vaadin.tests.AbstractTB9Test;
 
-public class BasicElementIT extends AbstractJUnit5TB6Test {
+public class BasicElementIT extends AbstractTB9Test {
 
     private TestBenchElement buttonElement;
 
@@ -77,8 +77,7 @@ public class BasicElementIT extends AbstractJUnit5TB6Test {
 
     @TestBenchTest
     public void getSetPropertyChain() {
-        testBenchUtil.executeScript("arguments[0].foo = {bar: {baz: 123}};",
-                buttonElement);
+        executeScript("arguments[0].foo = {bar: {baz: 123}};", buttonElement);
 
         Assertions.assertEquals(123L, buttonElement
                 .getPropertyDouble("foo", "bar", "baz").longValue());
@@ -104,8 +103,7 @@ public class BasicElementIT extends AbstractJUnit5TB6Test {
 
     @TestBenchTest
     public void getSetPropertyChainMissingValue() {
-        testBenchUtil.executeScript("arguments[0].foo = {bar: {baz: 123}};",
-                buttonElement);
+        executeScript("arguments[0].foo = {bar: {baz: 123}};", buttonElement);
         Assertions.assertNull(
                 buttonElement.getPropertyDouble("foo", "baz", "baz"));
     }

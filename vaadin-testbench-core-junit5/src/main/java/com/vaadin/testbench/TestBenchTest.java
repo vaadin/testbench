@@ -8,12 +8,12 @@ import java.lang.annotation.Target;
 import org.junit.jupiter.api.TestTemplate;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import com.vaadin.testbench.capabilities.DesiredCapabilitiesInvocationContextProvider;
+import com.vaadin.testbench.capabilities.CapabilitiesInvocationContextProvider;
 
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @TestTemplate
-@ExtendWith(DesiredCapabilitiesInvocationContextProvider.class)
+@ExtendWith(CapabilitiesInvocationContextProvider.class)
 public @interface TestBenchTest {
 
 }

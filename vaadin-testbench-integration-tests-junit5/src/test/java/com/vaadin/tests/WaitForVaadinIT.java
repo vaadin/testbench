@@ -15,7 +15,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.testUI.PageObjectView;
 import com.vaadin.testbench.TestBenchTest;
 
-public class WaitForVaadinIT extends AbstractJUnit5TB6Test {
+public class WaitForVaadinIT extends AbstractTB9Test {
 
     private static final long NON_BLOCKING_EXECUTION_TIMEOUT = 10000;
     private static final long BLOCKING_EXECUTION_TIMEOUT = 40000;
@@ -28,46 +28,40 @@ public class WaitForVaadinIT extends AbstractJUnit5TB6Test {
     @TestBenchTest
     public void waitForVaadin_connectorsInitialised_returnsImmediately() {
         openTestURL();
-        assertExecutionNoLonger(
-                () -> testBenchUtil.getCommandExecutor().waitForVaadin());
+        assertExecutionNoLonger(() -> getCommandExecutor().waitForVaadin());
     }
 
     @TestBenchTest
     public void waitForVaadin_activeConnector_waits() {
         openTestURL();
-        testBenchUtil.getCommandExecutor().executeScript(
+        getCommandExecutor().executeScript(
                 "window.Vaadin.Flow.clients[\"blocker\"] = {isActive: () => true};");
-        assertExecutionBlocked(
-                () -> testBenchUtil.getCommandExecutor().waitForVaadin());
+        assertExecutionBlocked(() -> getCommandExecutor().waitForVaadin());
     }
 
     @TestBenchTest
     public void waitForVaadin_noConnectors_returnsImmediately() {
         openTestURL();
-        testBenchUtil.getCommandExecutor()
+        getCommandExecutor()
                 .executeScript("window.Vaadin.Flow.clients = undefined;");
-        assertExecutionNoLonger(
-                () -> testBenchUtil.getCommandExecutor().waitForVaadin());
+        assertExecutionNoLonger(() -> getCommandExecutor().waitForVaadin());
     }
 
     @TestBenchTest
     public void waitForVaadin_noFlow_returnsImmediately() {
         openTestURL();
 
-        testBenchUtil.getCommandExecutor()
-                .executeScript("window.Vaadin.Flow = undefined;");
-        assertExecutionNoLonger(
-                () -> testBenchUtil.getCommandExecutor().waitForVaadin());
+        getCommandExecutor().executeScript("window.Vaadin.Flow = undefined;");
+        assertExecutionNoLonger(() -> getCommandExecutor().waitForVaadin());
     }
 
     @TestBenchTest
     public void waitForVaadin_devModeNotReady_waits() {
         openTestURL();
 
-        testBenchUtil.getCommandExecutor().executeScript(
+        getCommandExecutor().executeScript(
                 "window.Vaadin = {Flow: {devServerIsNotLoaded: true}};");
-        assertExecutionBlocked(
-                () -> testBenchUtil.getCommandExecutor().waitForVaadin());
+        assertExecutionBlocked(() -> getCommandExecutor().waitForVaadin());
     }
 
     private void assertExecutionNoLonger(Runnable command) {

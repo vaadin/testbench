@@ -3,6 +3,7 @@ package com.vaadin.testbench;
 import java.time.Duration;
 import java.util.List;
 
+import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NotFoundException;
 import org.openqa.selenium.SearchContext;
@@ -16,26 +17,29 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.commands.TestBenchCommands;
 
-public class TestBenchUtil
-        implements HasDriver, HasTestBenchCommandExecutor, HasElementQuery {
+public abstract class TestBenchTestBase implements HasDriver, SetDriver,
+        SetCapabilities, HasTestBenchCommandExecutor, HasElementQuery {
 
-    private WebDriver driver;
+    protected WebDriver driver;
 
-    private TestBenchUtil() {
+    protected Capabilities capabilities;
 
-    }
-
-    private TestBenchUtil(WebDriver driver) {
+    /**
+     * Sets the active {@link WebDriver} that is used by this this case
+     *
+     * @param driver
+     *            The WebDriver instance to set.
+     */
+    public void setDriver(WebDriver driver) {
+        if (driver != null && !(driver instanceof TestBenchDriverProxy)) {
+            driver = TestBench.createDriver(driver);
+        }
         this.driver = driver;
-    }
-
-    public static TestBenchUtil forDriver(WebDriver driver) {
-        return new TestBenchUtil(driver);
     }
 
     /**
      * Returns the {@link WebDriver} instance previously specified by
-     * {@link #forDriver(WebDriver)}, or (if the previously provided WebDriver
+     * {@link #setDriver(WebDriver)}, or (if the previously provided WebDriver
      * instance was not already a {@link TestBenchDriverProxy} instance) a
      * {@link TestBenchDriverProxy} that wraps that driver.
      *
@@ -194,4 +198,12 @@ public class TestBenchUtil
         return baseUrl + uri;
     }
 
+    public Capabilities getCapabilities() {
+        return capabilities;
+    }
+
+    @Override
+    public void setCapabilities(Capabilities capabilities) {
+        this.capabilities = capabilities;
+    }
 }

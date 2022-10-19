@@ -8,10 +8,10 @@ import org.openqa.selenium.By;
 import com.vaadin.testUI.ElementQueryView;
 import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.testbench.TestBenchTest;
-import com.vaadin.tests.AbstractJUnit5TB6Test;
+import com.vaadin.tests.AbstractTB9Test;
 
 @Disabled("Viewport resize does not work")
-public class ElementScreenCompareIT extends AbstractJUnit5TB6Test {
+public class ElementScreenCompareIT extends AbstractTB9Test {
 
     @Override
     protected Class<ElementQueryView> getTestView() {
@@ -20,8 +20,7 @@ public class ElementScreenCompareIT extends AbstractJUnit5TB6Test {
 
     @BeforeEach
     public void setup() {
-        testBenchUtil.testBench().resizeViewPortTo(SCREENSHOT_WIDTH,
-                SCREENSHOT_HEIGHT);
+        testBench().resizeViewPortTo(SCREENSHOT_WIDTH, SCREENSHOT_HEIGHT);
     }
 
     @TestBenchTest
