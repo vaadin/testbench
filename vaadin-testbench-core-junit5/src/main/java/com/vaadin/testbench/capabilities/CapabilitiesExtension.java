@@ -32,6 +32,16 @@ import com.vaadin.testbench.parallel.Browser;
 import com.vaadin.testbench.parallel.SauceLabsIntegration;
 import com.vaadin.testbench.parallel.setup.SetupDriver;
 
+/**
+ * <p>
+ * TestBench {@link Extension} that provides {@link WebDriver} configuration and
+ * startup according to given test configuration and desired capabilities.
+ * </p>
+ * <p>
+ * See {@link #beforeEach(ExtensionContext)} for more detailed information about
+ * test preparation.
+ * </p>
+ */
 public class CapabilitiesExtension
         implements Extension, BeforeEachCallback, ExecutionCondition {
 
@@ -136,7 +146,9 @@ public class CapabilitiesExtension
 
     /**
      * <p>
-     * Sets the driver for this test instance. Uses
+     * Sets test name while using SauceLabs integration, injects
+     * {@link WebDriver} and {@link Capabilities} references and sets the driver
+     * for this test instance. Uses
      * {@link SetupDriver#setupRemoteDriver(String)} or
      * {@link SetupDriver#setupLocalDriver(Browser)} according to the
      * annotations found in current test case.
@@ -152,7 +164,6 @@ public class CapabilitiesExtension
      * @throws Exception
      *             if unable to instantiate {@link WebDriver}
      */
-
     @Override
     public void beforeEach(ExtensionContext context) throws Exception {
 

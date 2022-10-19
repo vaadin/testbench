@@ -27,6 +27,9 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.commands.TestBenchCommands;
 
+/**
+ * A superclass with some helpers to aid TestBench developers.
+ */
 public abstract class TestBenchTestBase implements HasDriver, SetDriver,
         SetCapabilities, HasTestBenchCommandExecutor, HasElementQuery {
 
