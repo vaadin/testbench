@@ -15,27 +15,31 @@ import java.util.List;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.mockito.Mockito;
 import org.openqa.selenium.Capabilities;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
-import com.vaadin.testbench.DriverSupplier;
+import com.vaadin.testbench.HasDriver;
 import com.vaadin.testbench.Parameters;
-import com.vaadin.testbench.SetCapabilities;
 import com.vaadin.testbench.TestBenchTest;
 import com.vaadin.testbench.annotations.BrowserConfiguration;
 import com.vaadin.testbench.parallel.Browser;
+import com.vaadin.testbench.parameters.TestBenchTestInfo;
 
-public class ExtensionWithBrowserConfigurationTest
-        implements SetCapabilities, DriverSupplier {
+public class ExtensionWithBrowserConfigurationTest implements HasDriver {
 
     private static String oldBrowsers;
-
-    private Capabilities capabilities;
 
     @BeforeAll
     public static void setParameters() {
         oldBrowsers = Parameters.getGridBrowsersString();
         Parameters.setGridBrowsers("firefox,safari-9");
+    }
+
+    @Override
+    public WebDriver getDriver() {
+        return Mockito.mock(WebDriver.class);
     }
 
     @AfterAll
@@ -44,7 +48,9 @@ public class ExtensionWithBrowserConfigurationTest
     }
 
     @TestBenchTest
-    public void withBrowserConfigurationInClass() {
+    public void withBrowserConfigurationInClass(
+            TestBenchTestInfo testBenchTestInfo) {
+        Capabilities capabilities = testBenchTestInfo.getCapabilities();
         DesiredCapabilities caps = Browser.FIREFOX.getDesiredCapabilities();
         Assertions.assertEquals(caps.getBrowserName(),
                 capabilities.getBrowserName());
@@ -57,11 +63,6 @@ public class ExtensionWithBrowserConfigurationTest
     @BrowserConfiguration
     public List<DesiredCapabilities> getBrowserConfiguration() {
         return Arrays.asList(Browser.FIREFOX.getDesiredCapabilities());
-    }
-
-    @Override
-    public void setCapabilities(Capabilities capabilities) {
-        this.capabilities = capabilities;
     }
 
 }

@@ -13,21 +13,21 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInfo;
+import org.mockito.Mockito;
 import org.openqa.selenium.Capabilities;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
-import com.vaadin.testbench.DriverSupplier;
+import com.vaadin.testbench.HasDriver;
 import com.vaadin.testbench.Parameters;
-import com.vaadin.testbench.SetCapabilities;
 import com.vaadin.testbench.TestBenchTest;
 import com.vaadin.testbench.parallel.Browser;
+import com.vaadin.testbench.parameters.TestBenchTestInfo;
 
 public class ExtensionWithBrowserConfigurationInParametersTest
-        implements SetCapabilities, DriverSupplier {
+        implements HasDriver {
 
     private static String oldBrowsers;
-
-    private Capabilities capabilities;
 
     @BeforeAll
     public static void setParameters() {
@@ -40,8 +40,15 @@ public class ExtensionWithBrowserConfigurationInParametersTest
         Parameters.setGridBrowsers(oldBrowsers);
     }
 
+    @Override
+    public WebDriver getDriver() {
+        return Mockito.mock(WebDriver.class);
+    }
+
     @TestBenchTest
-    public void withBrowsersConfigurationInParameters(TestInfo testInfo) {
+    public void withBrowsersConfigurationInParameters(TestInfo testInfo,
+            TestBenchTestInfo testBenchTestInfo) {
+        Capabilities capabilities = testBenchTestInfo.getCapabilities();
         DesiredCapabilities caps1 = Browser.FIREFOX.getDesiredCapabilities();
         DesiredCapabilities caps2 = Browser.SAFARI.getDesiredCapabilities();
         caps2.setVersion("9");
@@ -60,11 +67,6 @@ public class ExtensionWithBrowserConfigurationInParametersTest
             Assertions.assertEquals(caps2.getPlatformName(),
                     capabilities.getPlatformName());
         }
-    }
-
-    @Override
-    public void setCapabilities(Capabilities capabilities) {
-        this.capabilities = capabilities;
     }
 
 }

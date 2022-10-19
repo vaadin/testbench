@@ -12,6 +12,7 @@ package com.vaadin.testbench;
 import java.time.Duration;
 import java.util.List;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.JavascriptExecutor;
@@ -26,12 +27,13 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.commands.TestBenchCommands;
+import com.vaadin.testbench.parameters.TestBenchTestInfo;
 
 /**
  * A superclass with some helpers to aid TestBench developers.
  */
-public abstract class TestBenchTestBase implements HasDriver, SetDriver,
-        SetCapabilities, HasTestBenchCommandExecutor, HasElementQuery {
+public abstract class TestBenchTestBase
+        implements HasDriver, HasTestBenchCommandExecutor, HasElementQuery {
 
     @RegisterExtension
     public ScreenshotOnFailureExtension screenshotOnFailureExtension = new ScreenshotOnFailureExtension(
@@ -41,22 +43,18 @@ public abstract class TestBenchTestBase implements HasDriver, SetDriver,
 
     protected Capabilities capabilities;
 
-    /**
-     * Sets the active {@link WebDriver} that is used by this test case
-     *
-     * @param driver
-     *            The WebDriver instance to set.
-     */
-    @Override
-    public void setDriver(WebDriver driver) {
-        this.driver = driver;
+    @BeforeEach
+    public void readTestBenchTestInfo(TestBenchTestInfo testInfo) {
+        this.driver = testInfo.getDriver();
+        this.capabilities = testInfo.getCapabilities();
     }
 
     /**
-     * Returns the {@link WebDriver} instance previously specified by
-     * {@link #setDriver(WebDriver)}, or (if the previously provided WebDriver
-     * instance was not already a {@link TestBenchDriverProxy} instance) a
-     * {@link TestBenchDriverProxy} that wraps that driver.
+     * Returns the {@link WebDriver} instance previously specified within
+     * {@link #readTestBenchTestInfo(TestBenchTestInfo)}, or (if the previously
+     * provided WebDriver instance was not already a
+     * {@link TestBenchDriverProxy} instance) a {@link TestBenchDriverProxy}
+     * that wraps that driver.
      *
      * @return the active WebDriver instance
      */
@@ -212,12 +210,4 @@ public abstract class TestBenchTestBase implements HasDriver, SetDriver,
         return baseUrl + uri;
     }
 
-    public Capabilities getCapabilities() {
-        return capabilities;
-    }
-
-    @Override
-    public void setCapabilities(Capabilities capabilities) {
-        this.capabilities = capabilities;
-    }
 }

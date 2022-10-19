@@ -20,10 +20,8 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.vaadin.testbench.DriverSupplier;
+import com.vaadin.testbench.HasDriver;
 import com.vaadin.testbench.Parameters;
-import com.vaadin.testbench.SetCapabilities;
-import com.vaadin.testbench.SetDriver;
 import com.vaadin.testbench.TestBench;
 import com.vaadin.testbench.TestBenchDriverProxy;
 import com.vaadin.testbench.annotations.RunLocally;
@@ -42,8 +40,8 @@ import com.vaadin.testbench.parallel.setup.SetupDriver;
  * test preparation.
  * </p>
  */
-public class CapabilitiesExtension
-        implements Extension, BeforeEachCallback, ExecutionCondition {
+public class CapabilitiesExtension implements Extension, BeforeEachCallback,
+        ExecutionCondition, HasDriver {
 
     private static Logger getLogger() {
         return LoggerFactory.getLogger(CapabilitiesExtension.class);
@@ -75,6 +73,16 @@ public class CapabilitiesExtension
             driver = TestBench.createDriver(driver);
         }
         this.driver = driver;
+    }
+
+    /**
+     * Returns active {@link WebDriver} that used by this test case.
+     *
+     * @return currently used {@link WebDriver}
+     */
+    @Override
+    public WebDriver getDriver() {
+        return driver;
     }
 
     @Override
@@ -172,19 +180,15 @@ public class CapabilitiesExtension
                 context.getDisplayName());
 
         Object testInstance = context.getRequiredTestInstance();
-        if (testInstance instanceof DriverSupplier) {
-            setDriver(((DriverSupplier) testInstance).driverSupplier().get());
-        } else {
+
+        // use WebDriver provided by test instance
+        if (testInstance instanceof HasDriver) {
+            setDriver(((HasDriver) testInstance).getDriver());
+        }
+
+        // if no WebDriver is provided, setup driver and inject to test instance
+        if (driver == null) {
             setupDriver(context);
-        }
-
-        if (testInstance instanceof SetDriver) {
-            ((SetDriver) testInstance).setDriver(driver);
-        }
-
-        if (testInstance instanceof SetCapabilities) {
-            ((SetCapabilities) testInstance)
-                    .setCapabilities(desiredCapabilities);
         }
 
     }
@@ -247,4 +251,10 @@ public class CapabilitiesExtension
         return CapabilitiesUtil.getRunLocallyBrowserVersion(getClass());
     }
 
+    /**
+     * @return Current instance of {@link DesiredCapabilities}.
+     */
+    public DesiredCapabilities getDesiredCapabilities() {
+        return desiredCapabilities;
+    }
 }

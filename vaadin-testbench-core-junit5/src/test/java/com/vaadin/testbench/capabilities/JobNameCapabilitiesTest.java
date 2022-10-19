@@ -14,28 +14,34 @@ import java.util.List;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.TestInfo;
-import org.openqa.selenium.Capabilities;
+import org.mockito.Mockito;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
-import com.vaadin.testbench.DriverSupplier;
-import com.vaadin.testbench.SetCapabilities;
+import com.vaadin.testbench.HasDriver;
 import com.vaadin.testbench.TestBenchTest;
 import com.vaadin.testbench.annotations.BrowserConfiguration;
 import com.vaadin.testbench.parallel.Browser;
 import com.vaadin.testbench.parallel.SauceLabsIntegration;
+import com.vaadin.testbench.parameters.TestBenchTestInfo;
 
-public class JobNameCapabilitiesTest
-        implements SetCapabilities, DriverSupplier {
-
-    private DesiredCapabilities capabilities;
+public class JobNameCapabilitiesTest implements HasDriver {
 
     @TestBenchTest
-    public void tbMethodNameInCapabilities(TestInfo testInfo) {
+    public void tbMethodNameInCapabilities(TestInfo testInfo,
+            TestBenchTestInfo testBenchTestInfo) {
+        DesiredCapabilities capabilities = new DesiredCapabilities(
+                testBenchTestInfo.getCapabilities());
         Assertions.assertEquals("bar",
                 SauceLabsIntegration.getSauceLabsOption(capabilities, "foo"));
         Assertions.assertEquals(testInfo.getDisplayName(),
                 SauceLabsIntegration.getSauceLabsOption(capabilities,
                         SauceLabsIntegration.CapabilityType.NAME));
+    }
+
+    @Override
+    public WebDriver getDriver() {
+        return Mockito.mock(WebDriver.class);
     }
 
     @BrowserConfiguration
@@ -46,11 +52,6 @@ public class JobNameCapabilitiesTest
             SauceLabsIntegration.setSauceLabsOption(cap, "foo", "bar");
         }
         return caps;
-    }
-
-    @Override
-    public void setCapabilities(Capabilities capabilities) {
-        this.capabilities = new DesiredCapabilities(capabilities);
     }
 
 }
