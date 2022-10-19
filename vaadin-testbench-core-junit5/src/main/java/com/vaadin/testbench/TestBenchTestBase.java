@@ -1,3 +1,12 @@
+/**
+ * Copyright (C) 2022 Vaadin Ltd
+ *
+ * This program is available under Commercial Vaadin Developer License
+ * 4.0 (CVDLv4).
+ *
+ *
+ * For the full License, see <https://vaadin.com/license/cvdl-4.0>.
+ */
 package com.vaadin.testbench;
 
 import java.time.Duration;
@@ -22,7 +31,8 @@ public abstract class TestBenchTestBase implements HasDriver, SetDriver,
         SetCapabilities, HasTestBenchCommandExecutor, HasElementQuery {
 
     @RegisterExtension
-    public ScreenshotOnFailureExtension screenshotOnFailureExtension = new ScreenshotOnFailureExtension(this, true);
+    public ScreenshotOnFailureExtension screenshotOnFailureExtension = new ScreenshotOnFailureExtension(
+            this, true);
 
     protected WebDriver driver;
 

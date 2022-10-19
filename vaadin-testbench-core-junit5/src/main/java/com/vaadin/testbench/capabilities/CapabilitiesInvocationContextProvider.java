@@ -1,3 +1,12 @@
+/**
+ * Copyright (C) 2022 Vaadin Ltd
+ *
+ * This program is available under Commercial Vaadin Developer License
+ * 4.0 (CVDLv4).
+ *
+ *
+ * For the full License, see <https://vaadin.com/license/cvdl-4.0>.
+ */
 package com.vaadin.testbench.capabilities;
 
 import java.util.Collections;
@@ -11,7 +20,7 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.TestTemplateInvocationContext;
 import org.junit.jupiter.api.extension.TestTemplateInvocationContextProvider;
 import org.junit.platform.commons.util.AnnotationUtils;
-import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.Capabilities;
 
 import com.vaadin.testbench.parallel.BrowserUtil;
 import com.vaadin.testbench.parallel.TestNameSuffix;
@@ -36,23 +45,22 @@ public class CapabilitiesInvocationContextProvider
     @Override
     public Stream<TestTemplateInvocationContext> provideTestTemplateInvocationContexts(
             ExtensionContext context) {
-        return CapabilitiesUtil.getDesiredCapabilities(context).stream()
-                .map(dc -> new DesireCapabilitiesTestTemplateInvocationContext(
-                        context, dc));
+        return CapabilitiesUtil.getDesiredCapabilities(context).stream().map(
+                dc -> new CapabilitiesTestTemplateInvocationContext(context,
+                        dc));
     }
 
-    private static class DesireCapabilitiesTestTemplateInvocationContext
+    private static class CapabilitiesTestTemplateInvocationContext
             implements TestTemplateInvocationContext {
 
         private final ExtensionContext context;
 
-        private final DesiredCapabilities desiredCapabilities;
+        private final Capabilities capabilities;
 
-        public DesireCapabilitiesTestTemplateInvocationContext(
-                ExtensionContext context,
-                DesiredCapabilities desiredCapabilities) {
+        public CapabilitiesTestTemplateInvocationContext(
+                ExtensionContext context, Capabilities capabilities) {
             this.context = context;
-            this.desiredCapabilities = desiredCapabilities;
+            this.capabilities = capabilities;
         }
 
         @Override
@@ -60,13 +68,13 @@ public class CapabilitiesInvocationContextProvider
             return String.format("%s[%s]",
                     context.getRequiredTestMethod().getName()
                             + getTestNameSuffix(context),
-                    CapabilitiesUtil.getUniqueIdentifier(desiredCapabilities));
+                    CapabilitiesUtil.getUniqueIdentifier(capabilities));
         }
 
         @Override
         public List<Extension> getAdditionalExtensions() {
-            return Collections.singletonList(
-                    new CapabilitiesExtension(desiredCapabilities));
+            return Collections
+                    .singletonList(new CapabilitiesExtension(capabilities));
         }
 
         private String getTestNameSuffix(ExtensionContext context) {
