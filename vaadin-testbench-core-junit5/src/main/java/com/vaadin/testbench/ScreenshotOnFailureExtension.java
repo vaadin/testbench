@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2020 Vaadin Ltd
+ * Copyright (C) 2022 Vaadin Ltd
  *
  * This program is available under Commercial Vaadin Developer License
  * 4.0 (CVDLv4).
@@ -32,9 +32,9 @@ import com.vaadin.testbench.screenshot.ImageFileUtil;
  *
  * <pre>
  * <code>
- * public class MyTestCase extends TestBenchTestCase {
+ * public class MyTestCase extends TestBenchTestCaseJUnit5 {
  *
- *      \@RegisterExtension public ScreenshotOnFailureRule screenshotOnFailure = new ScreenshotOnFailureRule(this, true);
+ *      \@RegisterExtension public ScreenshotOnFailureExtension screenshotOnFailure = new ScreenshotOnFailureExtension(this, true);
  *
  *      \@Test public void myTest() throws Exception {
  *          ...
@@ -60,7 +60,7 @@ public class ScreenshotOnFailureExtension implements TestWatcher {
     }
 
     /**
-     * Creates a new ScreenshotOnFailureRule in the provided test case.
+     * Creates a new ScreenshotOnFailureExtension in the provided test case.
      *
      * @param driverHolder
      *            The {@link HasDriver} instance that holds the active WebDriver
@@ -71,7 +71,7 @@ public class ScreenshotOnFailureExtension implements TestWatcher {
     }
 
     /**
-     * Creates a new ScreenshotOnFailureRule in the provided test case.
+     * Creates a new ScreenshotOnFailureExtension in the provided test case.
      *
      * @param driverHolder
      *            The {@link HasDriver} instance that holds the active WebDriver

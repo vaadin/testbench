@@ -31,7 +31,7 @@
     </repositories>
 
     <properties>
-        <junit5.version>5.8.2</junit5.version>
+        <junit5.version>5.9.1</junit5.version>
     </properties>
 
     <profiles>
