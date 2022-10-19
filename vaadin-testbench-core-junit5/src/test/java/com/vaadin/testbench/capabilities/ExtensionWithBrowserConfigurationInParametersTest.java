@@ -22,7 +22,6 @@ import com.vaadin.testbench.HasDriver;
 import com.vaadin.testbench.Parameters;
 import com.vaadin.testbench.TestBenchTest;
 import com.vaadin.testbench.parallel.Browser;
-import com.vaadin.testbench.parameters.TestBenchTestInfo;
 
 public class ExtensionWithBrowserConfigurationInParametersTest
         implements HasDriver {
@@ -47,8 +46,7 @@ public class ExtensionWithBrowserConfigurationInParametersTest
 
     @TestBenchTest
     public void withBrowsersConfigurationInParameters(TestInfo testInfo,
-            TestBenchTestInfo testBenchTestInfo) {
-        Capabilities capabilities = testBenchTestInfo.getCapabilities();
+            Capabilities capabilities) {
         DesiredCapabilities caps1 = Browser.FIREFOX.getDesiredCapabilities();
         DesiredCapabilities caps2 = Browser.SAFARI.getDesiredCapabilities();
         caps2.setVersion("9");

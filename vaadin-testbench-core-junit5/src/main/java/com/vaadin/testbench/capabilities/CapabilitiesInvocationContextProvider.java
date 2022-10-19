@@ -9,7 +9,7 @@
  */
 package com.vaadin.testbench.capabilities;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -24,7 +24,6 @@ import org.openqa.selenium.Capabilities;
 
 import com.vaadin.testbench.parallel.BrowserUtil;
 import com.vaadin.testbench.parallel.TestNameSuffix;
-import com.vaadin.testbench.parameters.TestBenchTestInfoParameterResolver;
 
 /**
  * Provides support for running test against multiple browser capabilities.
@@ -74,15 +73,8 @@ public class CapabilitiesInvocationContextProvider
 
         @Override
         public List<Extension> getAdditionalExtensions() {
-            CapabilitiesExtension capabilitiesExtension = new CapabilitiesExtension(
-                    capabilities);
-            TestBenchTestInfoParameterResolver testBenchTestInfoParameterResolver = new TestBenchTestInfoParameterResolver(
-                    () -> capabilitiesExtension.getDesiredCapabilities(),
-                    () -> capabilitiesExtension.getDriver());
-            List<Extension> extensions = new ArrayList<>();
-            extensions.add(capabilitiesExtension);
-            extensions.add(testBenchTestInfoParameterResolver);
-            return extensions;
+            return Collections
+                    .singletonList(new CapabilitiesExtension(capabilities));
         }
 
         private String getTestNameSuffix(ExtensionContext context) {

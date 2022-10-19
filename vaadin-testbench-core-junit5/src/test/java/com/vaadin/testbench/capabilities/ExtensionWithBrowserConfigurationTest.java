@@ -25,7 +25,6 @@ import com.vaadin.testbench.Parameters;
 import com.vaadin.testbench.TestBenchTest;
 import com.vaadin.testbench.annotations.BrowserConfiguration;
 import com.vaadin.testbench.parallel.Browser;
-import com.vaadin.testbench.parameters.TestBenchTestInfo;
 
 public class ExtensionWithBrowserConfigurationTest implements HasDriver {
 
@@ -48,9 +47,7 @@ public class ExtensionWithBrowserConfigurationTest implements HasDriver {
     }
 
     @TestBenchTest
-    public void withBrowserConfigurationInClass(
-            TestBenchTestInfo testBenchTestInfo) {
-        Capabilities capabilities = testBenchTestInfo.getCapabilities();
+    public void withBrowserConfigurationInClass(Capabilities capabilities) {
         DesiredCapabilities caps = Browser.FIREFOX.getDesiredCapabilities();
         Assertions.assertEquals(caps.getBrowserName(),
                 capabilities.getBrowserName());

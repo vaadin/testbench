@@ -14,7 +14,11 @@ import org.junit.jupiter.api.extension.ConditionEvaluationResult;
 import org.junit.jupiter.api.extension.ExecutionCondition;
 import org.junit.jupiter.api.extension.Extension;
 import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.api.extension.ParameterContext;
+import org.junit.jupiter.api.extension.ParameterResolutionException;
+import org.junit.jupiter.api.extension.ParameterResolver;
 import org.openqa.selenium.Capabilities;
+import org.openqa.selenium.ImmutableCapabilities;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.slf4j.Logger;
@@ -41,7 +45,7 @@ import com.vaadin.testbench.parallel.setup.SetupDriver;
  * </p>
  */
 public class CapabilitiesExtension implements Extension, BeforeEachCallback,
-        ExecutionCondition, HasDriver {
+        ExecutionCondition, HasDriver, ParameterResolver {
 
     private static Logger getLogger() {
         return LoggerFactory.getLogger(CapabilitiesExtension.class);
@@ -256,5 +260,25 @@ public class CapabilitiesExtension implements Extension, BeforeEachCallback,
      */
     public DesiredCapabilities getDesiredCapabilities() {
         return desiredCapabilities;
+    }
+
+    @Override
+    public boolean supportsParameter(ParameterContext parameterContext,
+            ExtensionContext extensionContext)
+            throws ParameterResolutionException {
+        Class parameterType = parameterContext.getParameter().getType();
+        return parameterType == WebDriver.class
+                || parameterType == Capabilities.class;
+    }
+
+    @Override
+    public Object resolveParameter(ParameterContext parameterContext,
+            ExtensionContext extensionContext)
+            throws ParameterResolutionException {
+        if (parameterContext.getParameter().getType() == WebDriver.class) {
+            return driver;
+        } else {
+            return new ImmutableCapabilities(desiredCapabilities);
+        }
     }
 }

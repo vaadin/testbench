@@ -20,7 +20,6 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import com.vaadin.testbench.HasDriver;
 import com.vaadin.testbench.Parameters;
 import com.vaadin.testbench.TestBenchTest;
-import com.vaadin.testbench.parameters.TestBenchTestInfo;
 
 public class ExtensionWithoutBrowserConfigurationTest implements HasDriver {
 
@@ -43,9 +42,7 @@ public class ExtensionWithoutBrowserConfigurationTest implements HasDriver {
     }
 
     @TestBenchTest
-    public void withoutBrowsersConfiguration(
-            TestBenchTestInfo testBenchTestInfo) {
-        Capabilities capabilities = testBenchTestInfo.getCapabilities();
+    public void withoutBrowsersConfiguration(Capabilities capabilities) {
         DesiredCapabilities caps = CapabilitiesUtil.getDefaultCapabilities()
                 .get(0);
         Assertions.assertEquals(caps.getBrowserName(),

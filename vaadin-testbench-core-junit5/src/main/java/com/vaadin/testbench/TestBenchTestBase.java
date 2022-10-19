@@ -27,7 +27,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.commands.TestBenchCommands;
-import com.vaadin.testbench.parameters.TestBenchTestInfo;
 
 /**
  * A superclass with some helpers to aid TestBench developers.
@@ -44,15 +43,16 @@ public abstract class TestBenchTestBase
     protected Capabilities capabilities;
 
     @BeforeEach
-    public void readTestBenchTestInfo(TestBenchTestInfo testInfo) {
-        this.driver = testInfo.getDriver();
-        this.capabilities = testInfo.getCapabilities();
+    public void initializeWebDriveAndCapabilities(WebDriver driver,
+            Capabilities capabilities) {
+        this.driver = driver;
+        this.capabilities = capabilities;
     }
 
     /**
      * Returns the {@link WebDriver} instance previously specified within
-     * {@link #readTestBenchTestInfo(TestBenchTestInfo)}, or (if the previously
-     * provided WebDriver instance was not already a
+     * {@link #initializeWebDriveAndCapabilities(WebDriver, Capabilities)}, or
+     * (if the previously provided WebDriver instance was not already a
      * {@link TestBenchDriverProxy} instance) a {@link TestBenchDriverProxy}
      * that wraps that driver.
      *

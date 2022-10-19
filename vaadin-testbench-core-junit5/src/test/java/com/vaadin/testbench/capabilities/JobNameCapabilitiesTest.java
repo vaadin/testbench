@@ -15,6 +15,7 @@ import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.TestInfo;
 import org.mockito.Mockito;
+import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
@@ -23,19 +24,18 @@ import com.vaadin.testbench.TestBenchTest;
 import com.vaadin.testbench.annotations.BrowserConfiguration;
 import com.vaadin.testbench.parallel.Browser;
 import com.vaadin.testbench.parallel.SauceLabsIntegration;
-import com.vaadin.testbench.parameters.TestBenchTestInfo;
 
 public class JobNameCapabilitiesTest implements HasDriver {
 
     @TestBenchTest
     public void tbMethodNameInCapabilities(TestInfo testInfo,
-            TestBenchTestInfo testBenchTestInfo) {
-        DesiredCapabilities capabilities = new DesiredCapabilities(
-                testBenchTestInfo.getCapabilities());
-        Assertions.assertEquals("bar",
-                SauceLabsIntegration.getSauceLabsOption(capabilities, "foo"));
+            Capabilities capabilities) {
+        DesiredCapabilities desiredCapabilities = new DesiredCapabilities(
+                capabilities);
+        Assertions.assertEquals("bar", SauceLabsIntegration
+                .getSauceLabsOption(desiredCapabilities, "foo"));
         Assertions.assertEquals(testInfo.getDisplayName(),
-                SauceLabsIntegration.getSauceLabsOption(capabilities,
+                SauceLabsIntegration.getSauceLabsOption(desiredCapabilities,
                         SauceLabsIntegration.CapabilityType.NAME));
     }
 
