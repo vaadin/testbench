@@ -29,7 +29,7 @@ import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.commands.TestBenchCommands;
 
 /**
- * A superclass with some helpers to aid TestBench developers.
+ * A superclass with helper methods to aid TestBench developers create a JUnit 5 based tests.
  */
 public abstract class TestBenchTestBase
         implements HasDriver, HasTestBenchCommandExecutor, HasElementQuery {

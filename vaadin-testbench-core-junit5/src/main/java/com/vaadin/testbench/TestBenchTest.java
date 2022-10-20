@@ -20,7 +20,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import com.vaadin.testbench.capabilities.CapabilitiesInvocationContextProvider;
 
 /**
- * Shorthand annotation that combines {@code @TestTemplate} together with
+ * Shorthand annotation for marking test methods in test class.
+ * <p>
+ * Combines JUnit 5 {@code @TestTemplate} together with
  * {@code @ExtendWith(CapabilitiesInvocationContextProvider.class)}.
  */
 @Target(ElementType.METHOD)
