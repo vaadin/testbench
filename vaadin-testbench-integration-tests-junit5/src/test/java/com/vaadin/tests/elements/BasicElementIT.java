@@ -14,8 +14,6 @@ import com.vaadin.tests.AbstractTB9Test;
 
 public class BasicElementIT extends AbstractTB9Test {
 
-    private TestBenchElement buttonElement;
-
     @Override
     protected Class<? extends Component> getTestView() {
         return ElementQueryView.class;
@@ -24,11 +22,11 @@ public class BasicElementIT extends AbstractTB9Test {
     @BeforeEach
     public void openAndFindElement() {
         openTestURL();
-        buttonElement = $(NativeButtonElement.class).waitForFirst();
     }
 
     @TestBenchTest
     public void getSetStringProperty() {
+        TestBenchElement buttonElement = $(NativeButtonElement.class).waitForFirst();
         Assertions.assertNull(buttonElement.getPropertyString("foo"));
         buttonElement.setProperty("foo", "12");
         Assertions.assertEquals("12", buttonElement.getPropertyString("foo"));
@@ -39,6 +37,7 @@ public class BasicElementIT extends AbstractTB9Test {
 
     @TestBenchTest
     public void getSetBooleanProperty() {
+        TestBenchElement buttonElement = $(NativeButtonElement.class).waitForFirst();
         Assertions.assertNull(buttonElement.getPropertyBoolean("foo"));
         buttonElement.setProperty("foo", true);
         Assertions.assertEquals("true", buttonElement.getPropertyString("foo"));
@@ -48,6 +47,7 @@ public class BasicElementIT extends AbstractTB9Test {
 
     @TestBenchTest
     public void getSetFalseBooleanProperty() {
+        TestBenchElement buttonElement = $(NativeButtonElement.class).waitForFirst();
         Assertions.assertNull(buttonElement.getPropertyBoolean("foo"));
         buttonElement.setProperty("foo", false);
         Assertions.assertEquals("false",
@@ -58,6 +58,7 @@ public class BasicElementIT extends AbstractTB9Test {
 
     @TestBenchTest
     public void getSetDoubleProperty() {
+        TestBenchElement buttonElement = $(NativeButtonElement.class).waitForFirst();
         Assertions.assertNull(buttonElement.getPropertyDouble("foo"));
         buttonElement.setProperty("foo", 12.5);
         Assertions.assertEquals("12.5", buttonElement.getPropertyString("foo"));
@@ -68,6 +69,7 @@ public class BasicElementIT extends AbstractTB9Test {
 
     @TestBenchTest
     public void getSetIntegerProperty() {
+        TestBenchElement buttonElement = $(NativeButtonElement.class).waitForFirst();
         Assertions.assertNull(buttonElement.getPropertyInteger("foo"));
         buttonElement.setProperty("foo", 12);
         Assertions.assertEquals("12", buttonElement.getPropertyString("foo"));
@@ -77,6 +79,7 @@ public class BasicElementIT extends AbstractTB9Test {
 
     @TestBenchTest
     public void getSetPropertyChain() {
+        TestBenchElement buttonElement = $(NativeButtonElement.class).waitForFirst();
         executeScript("arguments[0].foo = {bar: {baz: 123}};", buttonElement);
 
         Assertions.assertEquals(123L, buttonElement
@@ -85,6 +88,7 @@ public class BasicElementIT extends AbstractTB9Test {
 
     @TestBenchTest
     public void getSetElementProperty() {
+        TestBenchElement buttonElement = $(NativeButtonElement.class).waitForFirst();
         Assertions.assertEquals(buttonElement, buttonElement
                 .getPropertyElement("parentElement", "firstElementChild"));
         Assertions.assertNull(
@@ -94,6 +98,7 @@ public class BasicElementIT extends AbstractTB9Test {
 
     @TestBenchTest
     public void getSetElementsProperty() {
+        TestBenchElement buttonElement = $(NativeButtonElement.class).waitForFirst();
         Assertions.assertEquals(0,
                 buttonElement.getPropertyElements("children").size());
         Assertions.assertEquals(1, buttonElement
@@ -103,6 +108,7 @@ public class BasicElementIT extends AbstractTB9Test {
 
     @TestBenchTest
     public void getSetPropertyChainMissingValue() {
+        TestBenchElement buttonElement = $(NativeButtonElement.class).waitForFirst();
         executeScript("arguments[0].foo = {bar: {baz: 123}};", buttonElement);
         Assertions.assertNull(
                 buttonElement.getPropertyDouble("foo", "baz", "baz"));

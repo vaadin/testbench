@@ -11,8 +11,6 @@ package com.vaadin.testbench.capabilities;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtensionContext;
-import org.mockito.Mockito;
 
 import com.vaadin.testbench.annotations.RunOnHub;
 
@@ -27,22 +25,18 @@ public class CapabilitiesHubTest extends CapabilitiesExtension {
 
     @Test
     public void hubFromAnnotationOrSystemProperty() {
-        ExtensionContext context = Mockito.mock(ExtensionContext.class);
-        Class clazz = CapabilitiesHubTest.class;
-        Mockito.when(context.getRequiredTestClass()).thenReturn(clazz);
-
         String oldProperty = System.getProperty(HUB_HOSTNAME_PROPERTY);
         try {
             System.clearProperty(HUB_HOSTNAME_PROPERTY);
 
             Assertions.assertEquals("hub-in-annotation",
-                    getHubHostname(context));
+                    getHubHostname(getClass()));
             System.setProperty(HUB_HOSTNAME_PROPERTY, "hub-system-property");
             Assertions.assertEquals("hub-system-property",
-                    getHubHostname(context));
+                    getHubHostname(getClass()));
             System.clearProperty(HUB_HOSTNAME_PROPERTY);
             Assertions.assertEquals("hub-in-annotation",
-                    getHubHostname(context));
+                    getHubHostname(getClass()));
         } finally {
             if (oldProperty != null) {
                 System.setProperty(HUB_HOSTNAME_PROPERTY, oldProperty);

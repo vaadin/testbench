@@ -24,22 +24,25 @@ public class CapabilitiesRunLocallyTest extends CapabilitiesExtension {
 
     @Test
     public void runLocallyFromAnnotationOrSystemProperty() {
-        Assertions.assertEquals(Browser.CHROME, getRunLocallyBrowser());
-        Assertions.assertEquals("34", getRunLocallyBrowserVersion());
+        Assertions.assertEquals(Browser.CHROME,
+                getRunLocallyBrowser(getClass()));
+        Assertions.assertEquals("34", getRunLocallyBrowserVersion(getClass()));
 
         System.setProperty("com.vaadin.testbench.Parameters.runLocally",
                 "firefox");
-        Assertions.assertEquals(Browser.FIREFOX, getRunLocallyBrowser());
-        Assertions.assertEquals("", getRunLocallyBrowserVersion());
+        Assertions.assertEquals(Browser.FIREFOX,
+                getRunLocallyBrowser(getClass()));
+        Assertions.assertEquals("", getRunLocallyBrowserVersion(getClass()));
 
         System.setProperty("com.vaadin.testbench.Parameters.runLocally",
                 "edge-14");
-        Assertions.assertEquals(Browser.EDGE, getRunLocallyBrowser());
-        Assertions.assertEquals("14", getRunLocallyBrowserVersion());
+        Assertions.assertEquals(Browser.EDGE, getRunLocallyBrowser(getClass()));
+        Assertions.assertEquals("14", getRunLocallyBrowserVersion(getClass()));
 
         System.clearProperty("com.vaadin.testbench.Parameters.runLocally");
-        Assertions.assertEquals(Browser.CHROME, getRunLocallyBrowser());
-        Assertions.assertEquals("34", getRunLocallyBrowserVersion());
+        Assertions.assertEquals(Browser.CHROME,
+                getRunLocallyBrowser(getClass()));
+        Assertions.assertEquals("34", getRunLocallyBrowserVersion(getClass()));
     }
 
 }

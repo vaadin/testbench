@@ -103,8 +103,8 @@ public class CapabilitiesExtension implements Extension, BeforeEachCallback,
      * {@link WebDriver}.
      * </p>
      * <p>
-     * This method uses {@link #getHubHostname(ExtensionContext)} to build the
-     * complete address of the Hub. Override in order to define a different hub
+     * This method uses {@link #getHubHostname(Class)} to build the complete
+     * address of the Hub. Override in order to define a different hub
      * address.<br>
      * </p>
      * <p>
@@ -118,11 +118,11 @@ public class CapabilitiesExtension implements Extension, BeforeEachCallback,
      *         by {@link #beforeEach(ExtensionContext)} ()}, for the creation of
      *         the {@link WebDriver}.
      */
-    protected String getHubURL(ExtensionContext context) {
+    protected String getHubURL(Class<?> testClass) {
         if (SauceLabsIntegration.isConfiguredForSauceLabs()) {
             return SauceLabsIntegration.getHubUrl();
         } else {
-            return "http://" + getHubHostname(context) + ":4444/wd/hub";
+            return "http://" + getHubHostname(testClass) + ":4444/wd/hub";
         }
     }
 
@@ -135,25 +135,24 @@ public class CapabilitiesExtension implements Extension, BeforeEachCallback,
      * the host defined using a {@link RunOnHub} annotation.
      * </p>
      * <p>
-     * This method is used by {@link #getHubURL(ExtensionContext)} to get the
-     * full URL of the hub to run tests on.
+     * This method is used by {@link #getHubURL(Class)} to get the full URL of
+     * the hub to run tests on.
      * </p>
      *
      * @return the hostname of the hub where test is to be run on.
      */
-    protected String getHubHostname(ExtensionContext context) {
+    protected String getHubHostname(Class<?> testClass) {
         String hubSystemProperty = Parameters.getHubHostname();
         if (hubSystemProperty != null) {
             return hubSystemProperty;
         }
 
-        RunLocally runLocally = context.getRequiredTestClass()
-                .getAnnotation(RunLocally.class);
+        RunLocally runLocally = testClass.getAnnotation(RunLocally.class);
         if (runLocally != null) {
             return "localhost";
         }
 
-        RunOnHub runOnHub = getRunOnHub(context.getRequiredTestClass());
+        RunOnHub runOnHub = getRunOnHub(testClass);
         return runOnHub.value();
     }
 
@@ -200,23 +199,25 @@ public class CapabilitiesExtension implements Extension, BeforeEachCallback,
     }
 
     private void setupDriver(ExtensionContext context) throws Exception {
+        Class testClass = context.getRequiredTestClass();
         // Always give priority to @RunLocally annotation
-        if ((getRunLocallyBrowser() != null)) {
+        if ((getRunLocallyBrowser(testClass) != null)) {
             WebDriver driver = driverConfiguration.setupLocalDriver(
-                    getRunLocallyBrowser(), getRunLocallyBrowserVersion());
+                    getRunLocallyBrowser(testClass),
+                    getRunLocallyBrowserVersion(testClass));
             setDriver(driver);
         } else if (Parameters.isLocalWebDriverUsed()) {
             WebDriver driver = driverConfiguration.setupLocalDriver();
             setDriver(driver);
         } else if (SauceLabsIntegration.isConfiguredForSauceLabs()) {
             WebDriver driver = driverConfiguration
-                    .setupRemoteDriver(getHubURL(context));
+                    .setupRemoteDriver(getHubURL(testClass));
             setDriver(driver);
 
-        } else if (getRunOnHub(getClass()) != null
+        } else if (getRunOnHub(testClass) != null
                 || Parameters.getHubHostname() != null) {
             WebDriver driver = driverConfiguration
-                    .setupRemoteDriver(getHubURL(context));
+                    .setupRemoteDriver(getHubURL(testClass));
             setDriver(driver);
         } else {
             getLogger().info(
@@ -228,33 +229,33 @@ public class CapabilitiesExtension implements Extension, BeforeEachCallback,
     }
 
     /**
-     * @param klass
+     * @param testClass
      *            the test class to get the {@link RunOnHub} annotation from
      * @return Value of the {@link RunOnHub} annotation of passed Class, or null
      *         if annotation is not present.
      */
-    protected RunOnHub getRunOnHub(Class<?> klass) {
-        if (klass == null) {
+    protected RunOnHub getRunOnHub(Class<?> testClass) {
+        if (testClass == null) {
             return null;
         }
 
-        return klass.getAnnotation(RunOnHub.class);
+        return testClass.getAnnotation(RunOnHub.class);
     }
 
     /**
      * @return Browser value of the {@link RunLocally} annotation of current
      *         Class, or null if annotation is not present.
      */
-    protected Browser getRunLocallyBrowser() {
-        return CapabilitiesUtil.getRunLocallyBrowserName(getClass());
+    protected Browser getRunLocallyBrowser(Class<?> testClass) {
+        return CapabilitiesUtil.getRunLocallyBrowserName(testClass);
     }
 
     /**
      * @return Version value of the {@link RunLocally} annotation of current
      *         Class, or empty String if annotation is not present.
      */
-    protected String getRunLocallyBrowserVersion() {
-        return CapabilitiesUtil.getRunLocallyBrowserVersion(getClass());
+    protected String getRunLocallyBrowserVersion(Class<?> testClass) {
+        return CapabilitiesUtil.getRunLocallyBrowserVersion(testClass);
     }
 
     /**
