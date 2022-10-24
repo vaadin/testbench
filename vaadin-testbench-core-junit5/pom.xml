@@ -242,14 +242,8 @@
 
         <dependency>
             <groupId>com.vaadin</groupId>
-            <artifactId>vaadin-testbench-unit</artifactId>
+            <artifactId>vaadin-testbench-unit-junit5</artifactId>
             <version>${project.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>junit</groupId>
-                    <artifactId>junit</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.vaadin</groupId>

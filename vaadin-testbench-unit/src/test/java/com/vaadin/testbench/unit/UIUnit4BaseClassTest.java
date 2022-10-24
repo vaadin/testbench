@@ -22,7 +22,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.function.ThrowingRunnable;
-import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;
 
 import com.vaadin.flow.component.Component;
@@ -35,6 +34,8 @@ import com.vaadin.flow.server.VaadinRequest;
 import com.vaadin.flow.server.VaadinResponse;
 import com.vaadin.flow.server.VaadinService;
 import com.vaadin.flow.server.VaadinSession;
+
+import static org.junit.Assert.assertTrue;
 
 @RunWith(Enclosed.class)
 public class UIUnit4BaseClassTest {
@@ -62,8 +63,7 @@ public class UIUnit4BaseClassTest {
 
         @Test
         public void extendingBaseClass_runTest_defaultRouteActive() {
-            Assert.assertTrue(
-                    "Expecting default route to be active, but was not",
+            assertTrue("Expecting default route to be active, but was not",
                     getCurrentView() instanceof WelcomeView);
         }
 
@@ -82,7 +82,7 @@ public class UIUnit4BaseClassTest {
             allViews.add(SingleParam.class);
             allViews.add(TemplatedParam.class);
             Assert.assertEquals(allViews.size(), routes.size());
-            Assert.assertTrue(routes.containsAll(allViews));
+            assertTrue(routes.containsAll(allViews));
         }
     }
 
@@ -104,7 +104,7 @@ public class UIUnit4BaseClassTest {
             Assert.assertNotNull(
                     "Expecting service to be available through Lookup",
                     service);
-            Assert.assertTrue(
+            assertTrue(
                     "Expecting service to be "
                             + TestCustomInstantiatorFactory.class
                                     .getSimpleName()
@@ -113,7 +113,7 @@ public class UIUnit4BaseClassTest {
         }
     }
 
-    public static class WrongBaseClassTest extends UIUnitTest {
+    public static class WrongBaseClassTest extends UIUnit4Test {
 
         @Test
         public void navigate_fails() {
@@ -152,7 +152,7 @@ public class UIUnit4BaseClassTest {
         private void assertExecutionFails(ThrowingRunnable executable) {
             UIUnitTestSetupException exception = Assert
                     .assertThrows(UIUnitTestSetupException.class, executable);
-            Assertions.assertTrue(exception.getMessage().contains("JUnit 5"));
+            assertTrue(exception.getMessage().contains("JUnit 5"));
         }
     }
 

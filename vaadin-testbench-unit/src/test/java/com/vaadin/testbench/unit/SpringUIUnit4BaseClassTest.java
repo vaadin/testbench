@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (C) 2022 Vaadin Ltd
  *
  * This program is available under Commercial Vaadin Developer License
@@ -7,7 +7,6 @@
  *
  * For the full License, see <https://vaadin.com/license/cvdl-4.0>.
  */
-
 package com.vaadin.testbench.unit;
 
 import org.junit.Assert;

@@ -9,18 +9,6 @@
  */
 package com.vaadin.testbench.unit.internal
 
-import kotlin.test.expect
-import com.vaadin.flow.component.Component
-import com.vaadin.flow.component.UI
-import com.vaadin.flow.router.HasErrorParameter
-import com.vaadin.flow.router.NotFoundException
-import com.vaadin.flow.router.RouteNotFoundError
-import com.vaadin.flow.server.VaadinContext
-import com.vaadin.flow.server.startup.ApplicationRouteRegistry
-import com.vaadin.testbench.unit.expectList
-import com.vaadin.testbench.unit.mocks.MockVaadinHelper
-import com.vaadin.testbench.unit.viewscan.byannotatedclass.ViewPackagesTestView
-import com.vaadin.testbench.unit.viewscan4.byannotatedclass.ViewPackagesTest4View
 import com.example.base.ErrorView
 import com.example.base.HelloWorldView
 import com.example.base.ParametrizedView
@@ -31,12 +19,22 @@ import com.github.mvysny.dynatest.DynaNodeGroup
 import com.github.mvysny.dynatest.DynaTestDsl
 import com.github.mvysny.dynatest.expectThrows
 import com.testapp.MyRouteNotFoundError
+import com.vaadin.flow.component.Component
+import com.vaadin.flow.component.UI
+import com.vaadin.flow.router.HasErrorParameter
+import com.vaadin.flow.router.NotFoundException
+import com.vaadin.flow.router.RouteNotFoundError
+import com.vaadin.flow.server.VaadinContext
+import com.vaadin.flow.server.startup.ApplicationRouteRegistry
+import com.vaadin.testbench.unit.mocks.MockVaadinHelper
+import com.vaadin.testbench.unit.viewscan4.byannotatedclass.ViewPackagesTest4View
+import kotlin.test.expect
 
 
 val allViews: Set<Class<out Component>> = setOf<Class<out Component>>(
         HelloWorldView::class.java, WelcomeView::class.java,
         ParametrizedView::class.java, ChildView::class.java, NavigationPostponeView::class.java,
-        ViewPackagesTest4View::class.java, ViewPackagesTestView::class.java)
+        ViewPackagesTest4View::class.java)
 val allErrorRoutes: Set<Class<out HasErrorParameter<*>>> = setOf(ErrorView::class.java, MockRouteNotFoundError::class.java, MockInternalSeverError::class.java)
 
 @DynaTestDsl
@@ -106,8 +104,8 @@ fun DynaNodeGroup.routesTestBatch() {
     }
 
     test("merge routes") {
-        val routes1 = Routes(mutableSetOf(HelloWorldView::class.java, WelcomeView::class.java, ViewPackagesTest4View::class.java,
-                ViewPackagesTestView::class.java),
+        val routes1 = Routes(mutableSetOf(HelloWorldView::class.java, WelcomeView::class.java,
+                ViewPackagesTest4View::class.java),
                 mutableSetOf(ErrorView::class.java))
         val routes2 = Routes(mutableSetOf(ParametrizedView::class.java, ChildView::class.java, NavigationPostponeView::class.java),
                 mutableSetOf(MockRouteNotFoundError::class.java, MockInternalSeverError::class.java))
