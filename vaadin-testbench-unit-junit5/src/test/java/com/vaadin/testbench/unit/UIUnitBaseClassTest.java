@@ -102,48 +102,4 @@ class UIUnitBaseClassTest {
         }
     }
 
-    // @Nested
-    // class WrongBaseClassTest extends UIUnit4Test {
-    //
-    // @Test
-    // void navigate_fails() {
-    // assertExecutionFails(() -> navigate(WelcomeView.class));
-    // assertExecutionFails(() -> navigate("welcome", WelcomeView.class));
-    // assertExecutionFails(() -> navigate(ParametrizedView.class, 12));
-    // assertExecutionFails(
-    // () -> navigate(ParametrizedView.class, Map.of()));
-    // }
-    //
-    // @Test
-    // void getCurrentView_fails() {
-    // assertExecutionFails(this::getCurrentView);
-    // }
-    //
-    // @Test
-    // void fireShortcut_fails() {
-    // assertExecutionFails(() -> fireShortcut(Key.ENTER));
-    // }
-    //
-    // @Test
-    // void wrap_fails() {
-    // assertExecutionFails(() -> test(new ComponentTesterTest.Span()));
-    // assertExecutionFails(() -> test(ComponentTester.class,
-    // new ComponentTesterTest.Span()));
-    // }
-    //
-    // @Test
-    // void query_fails() {
-    // assertExecutionFails(() -> $(Component.class));
-    // assertExecutionFails(
-    // () -> $(Component.class, new ComponentTesterTest.Span()));
-    // assertExecutionFails(() -> $view(Component.class));
-    // }
-    //
-    // private void assertExecutionFails(Executable executable) {
-    // UIUnitTestSetupException exception = Assertions
-    // .assertThrows(UIUnitTestSetupException.class, executable);
-    // Assertions.assertTrue(exception.getMessage().contains("JUnit 4"));
-    // }
-    // }
-
 }
