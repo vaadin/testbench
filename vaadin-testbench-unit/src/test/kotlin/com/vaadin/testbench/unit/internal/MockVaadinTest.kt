@@ -11,10 +11,13 @@
 
 package com.vaadin.testbench.unit.internal
 
-import java.util.concurrent.atomic.AtomicReference
-import jakarta.servlet.http.Cookie
-import kotlin.concurrent.thread
-import kotlin.test.expect
+import com.example.base.HelloWorldView
+import com.example.base.ParametrizedView
+import com.example.base.child.ChildView
+import com.github.mvysny.dynatest.DynaNodeGroup
+import com.github.mvysny.dynatest.DynaTestDsl
+import com.github.mvysny.dynatest.cloneBySerialization
+import com.github.mvysny.dynatest.expectThrows
 import com.vaadin.flow.component.AttachEvent
 import com.vaadin.flow.component.DetachEvent
 import com.vaadin.flow.component.Text
@@ -24,26 +27,17 @@ import com.vaadin.flow.component.html.Div
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.function.DeploymentConfiguration
 import com.vaadin.flow.router.RouteConfiguration
-import com.vaadin.flow.server.VaadinRequest
-import com.vaadin.flow.server.VaadinResponse
-import com.vaadin.flow.server.VaadinService
-import com.vaadin.flow.server.VaadinServlet
-import com.vaadin.flow.server.VaadinServletService
-import com.vaadin.flow.server.VaadinSession
+import com.vaadin.flow.server.*
 import com.vaadin.testbench.unit.TestInitListener
 import com.vaadin.testbench.unit.expectList
 import com.vaadin.testbench.unit.mocks.MockService
 import com.vaadin.testbench.unit.mocks.MockVaadinServlet
 import com.vaadin.testbench.unit.mocks.MockVaadinSession
 import com.vaadin.testbench.unit.mocks.MockedUI
-import com.vaadin.testbench.unit.internal.removeFromParent
-import com.example.base.HelloWorldView
-import com.example.base.ParametrizedView
-import com.example.base.child.ChildView
-import com.github.mvysny.dynatest.DynaNodeGroup
-import com.github.mvysny.dynatest.DynaTestDsl
-import com.github.mvysny.dynatest.cloneBySerialization
-import com.github.mvysny.dynatest.expectThrows
+import jakarta.servlet.http.Cookie
+import java.util.concurrent.atomic.AtomicReference
+import kotlin.concurrent.thread
+import kotlin.test.expect
 
 @DynaTestDsl
 internal fun DynaNodeGroup.mockVaadinTest() {
@@ -294,7 +288,7 @@ internal fun DynaNodeGroup.mockVaadinTest() {
             val dialog = Dialog(Div(Text("Dialog Text")))
             dialog.open()
             dialog.close()
-            cleanupDialogs()
+//            cleanupDialogs()
             expect(
                     """
 └── MockedUI[]
