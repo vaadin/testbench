@@ -40,6 +40,7 @@
         <license.checker.version>1.10.1</license.checker.version>
         <spring.version>6.0.0-M6</spring.version>
         <spring.security.version>6.0.0-M7</spring.security.version>
+        <slf4j.version>2.0.3</slf4j.version>
     </properties>
     <modules>
         <module>vaadin-testbench-bom</module>
