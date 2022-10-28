@@ -19,36 +19,18 @@ package com.vaadin.tests;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Enumeration;
-import java.util.List;
 import java.util.Properties;
-
-import org.openqa.selenium.remote.DesiredCapabilities;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.testbench.BrowserTestBase;
-import com.vaadin.testbench.annotations.BrowserConfiguration;
-import com.vaadin.testbench.annotations.BrowserFactory;
-import com.vaadin.testbench.parallel.BrowserUtil;
 
 /**
  * Base class for TestBench 9+ tests. All TB9+ tests in the project should
  * extend this class.
- * <p>
- * Sub classes can, but typically should not, restrict the browsers used by
- * overriding the {@link #getBrowserConfiguration()} method:
- *
- * <pre>
- * &#064;Override
- * &#064;BrowserConfiguration
- * public List&lt;DesiredCapabilities&gt; getBrowserConfiguration() {
- * }
- * </pre>
  *
  * @author Vaadin Ltd
  */
-@BrowserFactory(TB9TestBrowserFactory.class)
 public abstract class AbstractTB9Test extends BrowserTestBase {
 
     /**
@@ -77,12 +59,6 @@ public abstract class AbstractTB9Test extends BrowserTestBase {
                 throw new RuntimeException(e);
             }
         }
-    }
-
-    @BrowserConfiguration
-    public List<DesiredCapabilities> getBrowserConfiguration() {
-        return Arrays.asList(BrowserUtil.firefox(), BrowserUtil.chrome(),
-                BrowserUtil.safari(), BrowserUtil.edge());
     }
 
     /**

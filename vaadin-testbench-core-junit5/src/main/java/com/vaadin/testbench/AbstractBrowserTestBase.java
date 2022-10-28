@@ -12,8 +12,6 @@ package com.vaadin.testbench;
 import java.time.Duration;
 import java.util.List;
 
-import org.junit.jupiter.api.extension.RegisterExtension;
-import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NotFoundException;
 import org.openqa.selenium.SearchContext;
@@ -29,15 +27,10 @@ import com.vaadin.testbench.commands.TestBenchCommands;
 
 /**
  * A superclass with helper methods to aid TestBench developers create a JUnit 5
- * based tests. Does not contain {@link WebDriver} and {@link Capabilities}
- * injection.
+ * based tests.
  */
 public abstract class AbstractBrowserTestBase
         implements HasDriver, HasTestBenchCommandExecutor, HasElementQuery {
-
-    @RegisterExtension
-    public ScreenshotOnFailureExtension screenshotOnFailureExtension = new ScreenshotOnFailureExtension(
-            this, true);
 
     /**
      * Returns the {@link WebDriver} instance or (if the previously provided
