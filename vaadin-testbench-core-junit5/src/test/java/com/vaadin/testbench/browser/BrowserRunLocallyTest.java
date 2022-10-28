@@ -7,7 +7,7 @@
  *
  * For the full License, see <https://vaadin.com/license/cvdl-4.0>.
  */
-package com.vaadin.testbench.capabilities;
+package com.vaadin.testbench.browser;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -16,9 +16,9 @@ import com.vaadin.testbench.annotations.RunLocally;
 import com.vaadin.testbench.parallel.Browser;
 
 @RunLocally(value = Browser.CHROME, version = "34")
-public class CapabilitiesRunLocallyTest extends CapabilitiesExtension {
+public class BrowserRunLocallyTest extends BrowserExtension {
 
-    public CapabilitiesRunLocallyTest() {
+    public BrowserRunLocallyTest() {
         super(null);
     }
 

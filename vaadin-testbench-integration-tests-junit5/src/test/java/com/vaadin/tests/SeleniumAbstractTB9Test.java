@@ -24,12 +24,14 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
 
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.testbench.BrowserTestBase;
+import com.vaadin.testbench.AbstractBrowserTestBase;
+import com.vaadin.testbench.TestBench;
+import com.vaadin.testbench.TestBenchDriverProxy;
 import com.vaadin.testbench.annotations.BrowserConfiguration;
-import com.vaadin.testbench.annotations.BrowserFactory;
 import com.vaadin.testbench.parallel.BrowserUtil;
 
 /**
@@ -48,8 +50,9 @@ import com.vaadin.testbench.parallel.BrowserUtil;
  *
  * @author Vaadin Ltd
  */
-@BrowserFactory(TB9TestBrowserFactory.class)
-public abstract class AbstractTB9Test extends BrowserTestBase {
+public abstract class SeleniumAbstractTB9Test extends AbstractBrowserTestBase {
+
+    private WebDriver driver;
 
     /**
      * Height of the screenshots we want to capture
@@ -83,6 +86,19 @@ public abstract class AbstractTB9Test extends BrowserTestBase {
     public List<DesiredCapabilities> getBrowserConfiguration() {
         return Arrays.asList(BrowserUtil.firefox(), BrowserUtil.chrome(),
                 BrowserUtil.safari(), BrowserUtil.edge());
+    }
+
+    @Override
+    public WebDriver getDriver() {
+        return driver;
+    }
+
+    // important to wrap a driver!
+    public void setDriver(WebDriver driver) {
+        if (driver != null && !(driver instanceof TestBenchDriverProxy)) {
+            driver = TestBench.createDriver(driver);
+        }
+        this.driver = driver;
     }
 
     /**

@@ -8,8 +8,8 @@ import org.openqa.selenium.TimeoutException;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.testUI.ElementQueryView;
+import com.vaadin.testbench.BrowserTest;
 import com.vaadin.testbench.TestBenchElement;
-import com.vaadin.testbench.TestBenchTest;
 import com.vaadin.tests.AbstractTB9Test;
 
 public class BasicElementIT extends AbstractTB9Test {
@@ -24,9 +24,10 @@ public class BasicElementIT extends AbstractTB9Test {
         openTestURL();
     }
 
-    @TestBenchTest
+    @BrowserTest
     public void getSetStringProperty() {
-        TestBenchElement buttonElement = $(NativeButtonElement.class).waitForFirst();
+        TestBenchElement buttonElement = $(NativeButtonElement.class)
+                .waitForFirst();
         Assertions.assertNull(buttonElement.getPropertyString("foo"));
         buttonElement.setProperty("foo", "12");
         Assertions.assertEquals("12", buttonElement.getPropertyString("foo"));
@@ -35,9 +36,10 @@ public class BasicElementIT extends AbstractTB9Test {
         Assertions.assertTrue(buttonElement.getPropertyBoolean("foo"));
     }
 
-    @TestBenchTest
+    @BrowserTest
     public void getSetBooleanProperty() {
-        TestBenchElement buttonElement = $(NativeButtonElement.class).waitForFirst();
+        TestBenchElement buttonElement = $(NativeButtonElement.class)
+                .waitForFirst();
         Assertions.assertNull(buttonElement.getPropertyBoolean("foo"));
         buttonElement.setProperty("foo", true);
         Assertions.assertEquals("true", buttonElement.getPropertyString("foo"));
@@ -45,9 +47,10 @@ public class BasicElementIT extends AbstractTB9Test {
         Assertions.assertTrue(buttonElement.getPropertyBoolean("foo"));
     }
 
-    @TestBenchTest
+    @BrowserTest
     public void getSetFalseBooleanProperty() {
-        TestBenchElement buttonElement = $(NativeButtonElement.class).waitForFirst();
+        TestBenchElement buttonElement = $(NativeButtonElement.class)
+                .waitForFirst();
         Assertions.assertNull(buttonElement.getPropertyBoolean("foo"));
         buttonElement.setProperty("foo", false);
         Assertions.assertEquals("false",
@@ -56,9 +59,10 @@ public class BasicElementIT extends AbstractTB9Test {
         Assertions.assertFalse(buttonElement.getPropertyBoolean("foo"));
     }
 
-    @TestBenchTest
+    @BrowserTest
     public void getSetDoubleProperty() {
-        TestBenchElement buttonElement = $(NativeButtonElement.class).waitForFirst();
+        TestBenchElement buttonElement = $(NativeButtonElement.class)
+                .waitForFirst();
         Assertions.assertNull(buttonElement.getPropertyDouble("foo"));
         buttonElement.setProperty("foo", 12.5);
         Assertions.assertEquals("12.5", buttonElement.getPropertyString("foo"));
@@ -67,9 +71,10 @@ public class BasicElementIT extends AbstractTB9Test {
         Assertions.assertTrue(buttonElement.getPropertyBoolean("foo"));
     }
 
-    @TestBenchTest
+    @BrowserTest
     public void getSetIntegerProperty() {
-        TestBenchElement buttonElement = $(NativeButtonElement.class).waitForFirst();
+        TestBenchElement buttonElement = $(NativeButtonElement.class)
+                .waitForFirst();
         Assertions.assertNull(buttonElement.getPropertyInteger("foo"));
         buttonElement.setProperty("foo", 12);
         Assertions.assertEquals("12", buttonElement.getPropertyString("foo"));
@@ -77,18 +82,20 @@ public class BasicElementIT extends AbstractTB9Test {
         Assertions.assertTrue(buttonElement.getPropertyBoolean("foo"));
     }
 
-    @TestBenchTest
+    @BrowserTest
     public void getSetPropertyChain() {
-        TestBenchElement buttonElement = $(NativeButtonElement.class).waitForFirst();
+        TestBenchElement buttonElement = $(NativeButtonElement.class)
+                .waitForFirst();
         executeScript("arguments[0].foo = {bar: {baz: 123}};", buttonElement);
 
         Assertions.assertEquals(123L, buttonElement
                 .getPropertyDouble("foo", "bar", "baz").longValue());
     }
 
-    @TestBenchTest
+    @BrowserTest
     public void getSetElementProperty() {
-        TestBenchElement buttonElement = $(NativeButtonElement.class).waitForFirst();
+        TestBenchElement buttonElement = $(NativeButtonElement.class)
+                .waitForFirst();
         Assertions.assertEquals(buttonElement, buttonElement
                 .getPropertyElement("parentElement", "firstElementChild"));
         Assertions.assertNull(
@@ -96,9 +103,10 @@ public class BasicElementIT extends AbstractTB9Test {
 
     }
 
-    @TestBenchTest
+    @BrowserTest
     public void getSetElementsProperty() {
-        TestBenchElement buttonElement = $(NativeButtonElement.class).waitForFirst();
+        TestBenchElement buttonElement = $(NativeButtonElement.class)
+                .waitForFirst();
         Assertions.assertEquals(0,
                 buttonElement.getPropertyElements("children").size());
         Assertions.assertEquals(1, buttonElement
@@ -106,15 +114,16 @@ public class BasicElementIT extends AbstractTB9Test {
 
     }
 
-    @TestBenchTest
+    @BrowserTest
     public void getSetPropertyChainMissingValue() {
-        TestBenchElement buttonElement = $(NativeButtonElement.class).waitForFirst();
+        TestBenchElement buttonElement = $(NativeButtonElement.class)
+                .waitForFirst();
         executeScript("arguments[0].foo = {bar: {baz: 123}};", buttonElement);
         Assertions.assertNull(
                 buttonElement.getPropertyDouble("foo", "baz", "baz"));
     }
 
-    @TestBenchTest
+    @BrowserTest
     public void waitForNonExistant() {
         Assertions.assertThrows(TimeoutException.class, () -> {
             $(TemplateViewElement.class).waitForFirst();
@@ -123,7 +132,7 @@ public class BasicElementIT extends AbstractTB9Test {
         });
     }
 
-    @TestBenchTest
+    @BrowserTest
     public void hasAttribute() {
         NativeButtonElement withAttributes = $(NativeButtonElement.class)
                 .get(5);
@@ -139,7 +148,7 @@ public class BasicElementIT extends AbstractTB9Test {
         Assertions.assertFalse(withoutAttributes.hasAttribute("nonexistant"));
     }
 
-    @TestBenchTest
+    @BrowserTest
     public void dispatchEvent() {
         NativeButtonElement withAttributes = $(NativeButtonElement.class)
                 .get(5);
@@ -148,7 +157,7 @@ public class BasicElementIT extends AbstractTB9Test {
                 $("div").id("msg").getText());
     }
 
-    @TestBenchTest
+    @BrowserTest
     public void dispatchEventWithDetails() {
         NativeButtonElement withAttributes = $(NativeButtonElement.class)
                 .get(5);
@@ -158,7 +167,7 @@ public class BasicElementIT extends AbstractTB9Test {
                 $("div").id("msg").getText());
     }
 
-    @TestBenchTest
+    @BrowserTest
     public void nativeButtonDisabled() {
         NativeButtonElement enabled = $(NativeButtonElement.class).get(0);
         NativeButtonElement disabled = $(NativeButtonElement.class).get(2);

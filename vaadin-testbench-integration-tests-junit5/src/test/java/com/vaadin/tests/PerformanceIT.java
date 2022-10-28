@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Disabled;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.testUI.PerformanceView;
-import com.vaadin.testbench.TestBenchTest;
+import com.vaadin.testbench.BrowserTest;
 import com.vaadin.tests.elements.NativeButtonElement;
 
 public class PerformanceIT extends AbstractTB9Test {
@@ -15,7 +15,7 @@ public class PerformanceIT extends AbstractTB9Test {
         return PerformanceView.class;
     }
 
-    @TestBenchTest
+    @BrowserTest
     @Disabled("timeSpentServicingLastRequest test is unstable")
     public void serverTime() {
         openTestURL();
@@ -28,7 +28,7 @@ public class PerformanceIT extends AbstractTB9Test {
                 testBench().totalTimeSpentServicingRequests(), 500.0);
     }
 
-    @TestBenchTest
+    @BrowserTest
     @Disabled("timeSpentServicingLastRequest does not work: https://github.com/vaadin/testbench/issues/1316")
     public void renderingTime() {
         openTestURL();

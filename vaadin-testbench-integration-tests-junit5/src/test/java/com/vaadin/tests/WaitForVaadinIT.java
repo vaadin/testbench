@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Assertions;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.testUI.PageObjectView;
-import com.vaadin.testbench.TestBenchTest;
+import com.vaadin.testbench.BrowserTest;
 
 public class WaitForVaadinIT extends AbstractTB9Test {
 
@@ -25,13 +25,13 @@ public class WaitForVaadinIT extends AbstractTB9Test {
         return PageObjectView.class;
     }
 
-    @TestBenchTest
+    @BrowserTest
     public void waitForVaadin_connectorsInitialised_returnsImmediately() {
         openTestURL();
         assertExecutionNoLonger(() -> getCommandExecutor().waitForVaadin());
     }
 
-    @TestBenchTest
+    @BrowserTest
     public void waitForVaadin_activeConnector_waits() {
         openTestURL();
         getCommandExecutor().executeScript(
@@ -39,7 +39,7 @@ public class WaitForVaadinIT extends AbstractTB9Test {
         assertExecutionBlocked(() -> getCommandExecutor().waitForVaadin());
     }
 
-    @TestBenchTest
+    @BrowserTest
     public void waitForVaadin_noConnectors_returnsImmediately() {
         openTestURL();
         getCommandExecutor()
@@ -47,7 +47,7 @@ public class WaitForVaadinIT extends AbstractTB9Test {
         assertExecutionNoLonger(() -> getCommandExecutor().waitForVaadin());
     }
 
-    @TestBenchTest
+    @BrowserTest
     public void waitForVaadin_noFlow_returnsImmediately() {
         openTestURL();
 
@@ -55,7 +55,7 @@ public class WaitForVaadinIT extends AbstractTB9Test {
         assertExecutionNoLonger(() -> getCommandExecutor().waitForVaadin());
     }
 
-    @TestBenchTest
+    @BrowserTest
     public void waitForVaadin_devModeNotReady_waits() {
         openTestURL();
 

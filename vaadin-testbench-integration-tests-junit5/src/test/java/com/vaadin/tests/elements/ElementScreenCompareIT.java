@@ -6,8 +6,8 @@ import org.junit.jupiter.api.Disabled;
 import org.openqa.selenium.By;
 
 import com.vaadin.testUI.ElementQueryView;
+import com.vaadin.testbench.BrowserTest;
 import com.vaadin.testbench.TestBenchElement;
-import com.vaadin.testbench.TestBenchTest;
 import com.vaadin.tests.AbstractTB9Test;
 
 @Disabled("Viewport resize does not work")
@@ -23,7 +23,7 @@ public class ElementScreenCompareIT extends AbstractTB9Test {
         testBench().resizeViewPortTo(SCREENSHOT_WIDTH, SCREENSHOT_HEIGHT);
     }
 
-    @TestBenchTest
+    @BrowserTest
     public void elementCompareScreen() throws Exception {
         openTestURL();
         TestBenchElement button4 = $(NativeButtonElement.class).get(4);

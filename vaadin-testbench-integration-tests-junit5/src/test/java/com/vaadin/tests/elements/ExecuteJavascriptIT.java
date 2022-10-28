@@ -4,8 +4,8 @@ import org.junit.jupiter.api.Assertions;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.testUI.ElementQueryView;
+import com.vaadin.testbench.BrowserTest;
 import com.vaadin.testbench.TestBenchElement;
-import com.vaadin.testbench.TestBenchTest;
 import com.vaadin.tests.AbstractTB9Test;
 
 public class ExecuteJavascriptIT extends AbstractTB9Test {
@@ -15,7 +15,7 @@ public class ExecuteJavascriptIT extends AbstractTB9Test {
         return ElementQueryView.class;
     }
 
-    @TestBenchTest
+    @BrowserTest
     public void getProperty() {
         openTestURL();
 

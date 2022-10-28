@@ -7,7 +7,7 @@
  *
  * For the full License, see <https://vaadin.com/license/cvdl-4.0>.
  */
-package com.vaadin.testbench.capabilities;
+package com.vaadin.testbench.browser;
 
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ConditionEvaluationResult;
@@ -24,7 +24,7 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.vaadin.testbench.HasCustomDriver;
+import com.vaadin.testbench.DriverSupplier;
 import com.vaadin.testbench.HasDriver;
 import com.vaadin.testbench.Parameters;
 import com.vaadin.testbench.TestBench;
@@ -45,11 +45,11 @@ import com.vaadin.testbench.parallel.setup.SetupDriver;
  * test preparation.
  * </p>
  */
-public class CapabilitiesExtension implements Extension, BeforeEachCallback,
+public class BrowserExtension implements Extension, BeforeEachCallback,
         ExecutionCondition, HasDriver, ParameterResolver {
 
     private static Logger getLogger() {
-        return LoggerFactory.getLogger(CapabilitiesExtension.class);
+        return LoggerFactory.getLogger(BrowserExtension.class);
     }
 
     private final SetupDriver driverConfiguration = new SetupDriver();
@@ -58,7 +58,7 @@ public class CapabilitiesExtension implements Extension, BeforeEachCallback,
 
     protected WebDriver driver;
 
-    public CapabilitiesExtension(Capabilities capabilities) {
+    public BrowserExtension(Capabilities capabilities) {
         desiredCapabilities = new DesiredCapabilities(capabilities);
         if (SauceLabsIntegration.isConfiguredForSauceLabs()) {
             SauceLabsIntegration.setDesiredCapabilities(desiredCapabilities);
@@ -186,8 +186,8 @@ public class CapabilitiesExtension implements Extension, BeforeEachCallback,
         Object testInstance = context.getRequiredTestInstance();
 
         // use WebDriver provided by test instance
-        if (testInstance instanceof HasCustomDriver) {
-            setDriver(((HasCustomDriver) testInstance).getCustomDriver());
+        if (testInstance instanceof DriverSupplier) {
+            setDriver(((DriverSupplier) testInstance).createDriver());
         }
 
         // if no custom WebDriver is provided, setup driver and inject to test

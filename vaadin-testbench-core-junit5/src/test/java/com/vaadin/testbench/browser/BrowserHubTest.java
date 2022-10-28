@@ -7,7 +7,7 @@
  *
  * For the full License, see <https://vaadin.com/license/cvdl-4.0>.
  */
-package com.vaadin.testbench.capabilities;
+package com.vaadin.testbench.browser;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -15,11 +15,11 @@ import org.junit.jupiter.api.Test;
 import com.vaadin.testbench.annotations.RunOnHub;
 
 @RunOnHub("hub-in-annotation")
-public class CapabilitiesHubTest extends CapabilitiesExtension {
+public class BrowserHubTest extends BrowserExtension {
 
     private static final String HUB_HOSTNAME_PROPERTY = "com.vaadin.testbench.Parameters.hubHostname";
 
-    public CapabilitiesHubTest() {
+    public BrowserHubTest() {
         super(null);
     }
 

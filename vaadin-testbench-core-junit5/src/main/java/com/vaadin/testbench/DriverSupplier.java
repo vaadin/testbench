@@ -15,11 +15,11 @@ import org.openqa.selenium.WebDriver;
  * Class implementing this interface can provide own {@link WebDriver} to be
  * used during test execution.
  */
-public interface HasCustomDriver {
+public interface DriverSupplier {
 
     /**
-     * @return custom {@link WebDriver} to be used during test execution.
+     * @return {@link WebDriver} to be used during test execution.
      */
-    WebDriver getCustomDriver();
+    WebDriver createDriver();
 
 }
