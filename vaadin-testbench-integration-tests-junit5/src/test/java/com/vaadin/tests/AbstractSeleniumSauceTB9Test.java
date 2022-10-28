@@ -55,8 +55,4 @@ public abstract class AbstractSeleniumSauceTB9Test extends AbstractTB9Test {
         super.setDriver(driver);
     }
 
-    public static boolean isConfiguredForSauceLabs() {
-        return SauceLabsIntegration.isConfiguredForSauceLabs();
-    }
-
 }

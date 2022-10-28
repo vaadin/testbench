@@ -2,15 +2,14 @@ package com.vaadin.tests;
 
 import java.util.List;
 
-import io.github.bonigarcia.seljup.Browser;
-import io.github.bonigarcia.seljup.EnabledIfBrowserAvailable;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIf;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.testUI.PageObjectView;
 
-@EnabledIfBrowserAvailable(Browser.CHROME)
+@DisabledIf("isConfiguredForSauceLabs")
 public class SeleniumLocalPageObjectIT extends AbstractSeleniumChromeTB9Test {
 
     @Override

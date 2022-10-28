@@ -24,6 +24,7 @@ import java.util.Properties;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.testbench.AbstractBrowserDriverTestBase;
+import com.vaadin.testbench.parallel.SauceLabsIntegration;
 
 /**
  * Base class for TestBench 9+ tests. All TB9+ tests in the project should
@@ -134,4 +135,8 @@ public abstract class AbstractTB9Test extends AbstractBrowserDriverTestBase {
     }
 
     protected abstract Class<? extends Component> getTestView();
+
+    public static boolean isConfiguredForSauceLabs() {
+        return SauceLabsIntegration.isConfiguredForSauceLabs();
+    }
 }
