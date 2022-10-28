@@ -8,7 +8,7 @@ import com.vaadin.testUI.SVGView;
 import com.vaadin.testbench.BrowserTest;
 import com.vaadin.testbench.parallel.BrowserUtil;
 
-public class SVGIT extends AbstractTB9Test {
+public class SVGIT extends AbstractBrowserTB9Test {
 
     @Override
     protected Class<? extends Component> getTestView() {

@@ -15,7 +15,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.testUI.PageObjectView;
 import com.vaadin.testbench.BrowserTest;
 
-public class WaitForVaadinIT extends AbstractTB9Test {
+public class WaitForVaadinIT extends AbstractBrowserTB9Test {
 
     private static final long NON_BLOCKING_EXECUTION_TIMEOUT = 10000;
     private static final long BLOCKING_EXECUTION_TIMEOUT = 40000;

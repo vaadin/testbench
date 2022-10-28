@@ -23,7 +23,7 @@ import java.util.Enumeration;
 import java.util.Properties;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.testbench.BrowserTestBase;
+import com.vaadin.testbench.AbstractBrowserDriverTestBase;
 
 /**
  * Base class for TestBench 9+ tests. All TB9+ tests in the project should
@@ -31,7 +31,7 @@ import com.vaadin.testbench.BrowserTestBase;
  *
  * @author Vaadin Ltd
  */
-public abstract class AbstractTB9Test extends BrowserTestBase {
+public abstract class AbstractTB9Test extends AbstractBrowserDriverTestBase {
 
     /**
      * Height of the screenshots we want to capture

@@ -10,9 +10,9 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.testUI.ElementQueryView;
 import com.vaadin.testbench.BrowserTest;
 import com.vaadin.testbench.TestBenchElement;
-import com.vaadin.tests.AbstractTB9Test;
+import com.vaadin.tests.AbstractBrowserTB9Test;
 
-public class BasicElementIT extends AbstractTB9Test {
+public class BasicElementIT extends AbstractBrowserTB9Test {
 
     @Override
     protected Class<? extends Component> getTestView() {

@@ -8,7 +8,7 @@ import com.vaadin.testUI.PerformanceView;
 import com.vaadin.testbench.BrowserTest;
 import com.vaadin.tests.elements.NativeButtonElement;
 
-public class PerformanceIT extends AbstractTB9Test {
+public class PerformanceIT extends AbstractBrowserTB9Test {
 
     @Override
     protected Class<? extends Component> getTestView() {

@@ -2,13 +2,16 @@ package com.vaadin.tests;
 
 import java.util.List;
 
+import io.github.bonigarcia.seljup.Browser;
+import io.github.bonigarcia.seljup.EnabledIfBrowserAvailable;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.testUI.PageObjectView;
 
-public class SeleniumPageObjectIT extends AbstractSeleniumChromeTB9Test {
+@EnabledIfBrowserAvailable(Browser.CHROME)
+public class SeleniumLocalPageObjectIT extends AbstractSeleniumChromeTB9Test {
 
     @Override
     protected Class<? extends Component> getTestView() {

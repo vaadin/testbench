@@ -8,10 +8,10 @@ import org.openqa.selenium.By;
 import com.vaadin.testUI.ElementQueryView;
 import com.vaadin.testbench.BrowserTest;
 import com.vaadin.testbench.TestBenchElement;
-import com.vaadin.tests.AbstractTB9Test;
+import com.vaadin.tests.AbstractBrowserTB9Test;
 
 @Disabled("Viewport resize does not work")
-public class ElementScreenCompareIT extends AbstractTB9Test {
+public class ElementScreenCompareIT extends AbstractBrowserTB9Test {
 
     @Override
     protected Class<ElementQueryView> getTestView() {

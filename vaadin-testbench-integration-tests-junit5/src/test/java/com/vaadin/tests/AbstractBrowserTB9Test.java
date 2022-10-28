@@ -19,8 +19,13 @@ package com.vaadin.tests;
 import java.util.Arrays;
 import java.util.List;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.openqa.selenium.Capabilities;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
+import com.vaadin.testbench.ScreenshotOnFailureExtension;
 import com.vaadin.testbench.annotations.BrowserConfiguration;
 import com.vaadin.testbench.annotations.BrowserFactory;
 import com.vaadin.testbench.parallel.BrowserUtil;
@@ -43,6 +48,23 @@ import com.vaadin.testbench.parallel.BrowserUtil;
  */
 @BrowserFactory(TB9TestBrowserFactory.class)
 public abstract class AbstractBrowserTB9Test extends AbstractTB9Test {
+
+    @RegisterExtension
+    public ScreenshotOnFailureExtension screenshotOnFailureExtension = new ScreenshotOnFailureExtension(
+            this, true);
+
+    private Capabilities capabilities;
+
+    @BeforeEach
+    public void setWebDriverAndCapabilities(WebDriver driver,
+            Capabilities capabilities) {
+        setDriver(driver);
+        this.capabilities = capabilities;
+    }
+
+    public Capabilities getCapabilities() {
+        return capabilities;
+    }
 
     @BrowserConfiguration
     public List<DesiredCapabilities> getBrowserConfiguration() {
