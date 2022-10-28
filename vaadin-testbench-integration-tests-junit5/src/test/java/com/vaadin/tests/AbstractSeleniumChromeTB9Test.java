@@ -17,9 +17,7 @@
 package com.vaadin.tests;
 
 import io.github.bonigarcia.seljup.DriverCapabilities;
-import io.github.bonigarcia.seljup.SeleniumJupiter;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
@@ -28,8 +26,8 @@ import org.openqa.selenium.chrome.ChromeOptions;
  *
  * @author Vaadin Ltd
  */
-@ExtendWith(SeleniumJupiter.class)
-public abstract class AbstractSeleniumChromeTB9Test extends AbstractTB9Test {
+public abstract class AbstractSeleniumChromeTB9Test
+        extends AbstractSeleniumTB9Test {
 
     @DriverCapabilities
     ChromeOptions options = new ChromeOptions();

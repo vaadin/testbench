@@ -18,12 +18,11 @@ package com.vaadin.tests;
 
 import io.github.bonigarcia.seljup.DriverCapabilities;
 import io.github.bonigarcia.seljup.DriverUrl;
-import io.github.bonigarcia.seljup.SeleniumJupiter;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
+import com.vaadin.testbench.parallel.BrowserUtil;
 import com.vaadin.testbench.parallel.SauceLabsIntegration;
 
 /**
@@ -31,8 +30,8 @@ import com.vaadin.testbench.parallel.SauceLabsIntegration;
  *
  * @author Vaadin Ltd
  */
-@ExtendWith(SeleniumJupiter.class)
-public abstract class AbstractSeleniumSauceTB9Test extends AbstractTB9Test {
+public abstract class AbstractSeleniumSauceTB9Test
+        extends AbstractSeleniumTB9Test {
 
     @DriverUrl
     String url = SauceLabsIntegration.getHubUrl();
@@ -40,14 +39,8 @@ public abstract class AbstractSeleniumSauceTB9Test extends AbstractTB9Test {
     @DriverCapabilities
     DesiredCapabilities capabilities = new DesiredCapabilities();
     {
-        capabilities.setCapability("username",
-                SauceLabsIntegration.getSauceUser());
-        capabilities.setCapability("accessKey",
-                SauceLabsIntegration.getSauceAccessKey());
-        capabilities.setCapability("browserName", "Chrome");
-        capabilities.setCapability("platform", "Windows 10");
-        capabilities.setCapability("version", "59.0");
-        capabilities.setCapability("name", "selenium-jupiter-and-saucelabs");
+        capabilities.merge(BrowserUtil.chrome());
+        SauceLabsIntegration.setDesiredCapabilities(capabilities);
     }
 
     @BeforeEach
