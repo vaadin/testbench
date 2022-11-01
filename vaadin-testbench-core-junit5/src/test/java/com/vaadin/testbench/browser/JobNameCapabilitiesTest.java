@@ -7,7 +7,7 @@
  *
  * For the full License, see <https://vaadin.com/license/cvdl-4.0>.
  */
-package com.vaadin.testbench.capabilities;
+package com.vaadin.testbench.browser;
 
 import java.util.Arrays;
 import java.util.List;
@@ -19,15 +19,15 @@ import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
-import com.vaadin.testbench.HasCustomDriver;
-import com.vaadin.testbench.TestBenchTest;
+import com.vaadin.testbench.BrowserTest;
+import com.vaadin.testbench.DriverSupplier;
 import com.vaadin.testbench.annotations.BrowserConfiguration;
 import com.vaadin.testbench.parallel.Browser;
 import com.vaadin.testbench.parallel.SauceLabsIntegration;
 
-public class JobNameCapabilitiesTest implements HasCustomDriver {
+public class JobNameCapabilitiesTest implements DriverSupplier {
 
-    @TestBenchTest
+    @BrowserTest
     public void tbMethodNameInCapabilities(TestInfo testInfo,
             Capabilities capabilities) {
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities(
@@ -40,7 +40,7 @@ public class JobNameCapabilitiesTest implements HasCustomDriver {
     }
 
     @Override
-    public WebDriver getCustomDriver() {
+    public WebDriver createDriver() {
         return Mockito.mock(WebDriver.class);
     }
 

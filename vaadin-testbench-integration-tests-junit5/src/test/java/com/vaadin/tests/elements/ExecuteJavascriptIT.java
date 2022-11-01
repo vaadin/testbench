@@ -4,18 +4,18 @@ import org.junit.jupiter.api.Assertions;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.testUI.ElementQueryView;
+import com.vaadin.testbench.BrowserTest;
 import com.vaadin.testbench.TestBenchElement;
-import com.vaadin.testbench.TestBenchTest;
-import com.vaadin.tests.AbstractTB9Test;
+import com.vaadin.tests.AbstractBrowserTB9Test;
 
-public class ExecuteJavascriptIT extends AbstractTB9Test {
+public class ExecuteJavascriptIT extends AbstractBrowserTB9Test {
 
     @Override
     protected Class<? extends Component> getTestView() {
         return ElementQueryView.class;
     }
 
-    @TestBenchTest
+    @BrowserTest
     public void getProperty() {
         openTestURL();
 

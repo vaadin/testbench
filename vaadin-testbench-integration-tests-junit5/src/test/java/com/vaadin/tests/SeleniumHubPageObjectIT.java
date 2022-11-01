@@ -3,19 +3,21 @@ package com.vaadin.tests;
 import java.util.List;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.testUI.PageObjectView;
-import com.vaadin.testbench.BrowserTest;
 
-public class PageObjectIT extends AbstractBrowserTB9Test {
+@EnabledIf("isConfiguredForSauceLabs")
+public class SeleniumHubPageObjectIT extends AbstractSeleniumSauceTB9Test {
 
     @Override
     protected Class<? extends Component> getTestView() {
         return PageObjectView.class;
     }
 
-    @BrowserTest
+    @Test
     public void findUsingValueAnnotation() {
         openTestURL();
         List<MyComponentWithIdElement> components = $(
@@ -26,7 +28,7 @@ public class PageObjectIT extends AbstractBrowserTB9Test {
                 components.get(0).getText());
     }
 
-    @BrowserTest
+    @Test
     public void findUsingContainsAnnotation() {
         openTestURL();
         List<MyComponentWithClassesElement> components = $(

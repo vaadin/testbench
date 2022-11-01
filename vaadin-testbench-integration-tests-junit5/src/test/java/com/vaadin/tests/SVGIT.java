@@ -5,19 +5,19 @@ import org.openqa.selenium.By;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.testUI.SVGView;
-import com.vaadin.testbench.TestBenchTest;
+import com.vaadin.testbench.BrowserTest;
 import com.vaadin.testbench.parallel.BrowserUtil;
 
-public class SVGIT extends AbstractTB9Test {
+public class SVGIT extends AbstractBrowserTB9Test {
 
     @Override
     protected Class<? extends Component> getTestView() {
         return SVGView.class;
     }
 
-    @TestBenchTest
+    @BrowserTest
     public void click() {
-        if (BrowserUtil.isSafari(capabilities)) {
+        if (BrowserUtil.isSafari(getCapabilities())) {
             return; // Skip for Safari 11.
         }
         openTestURL();

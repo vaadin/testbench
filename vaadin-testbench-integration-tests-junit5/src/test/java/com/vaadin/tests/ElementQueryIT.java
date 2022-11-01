@@ -6,26 +6,26 @@ import org.junit.jupiter.api.Assertions;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.testUI.TemplateView;
+import com.vaadin.testbench.BrowserTest;
 import com.vaadin.testbench.TestBenchElement;
-import com.vaadin.testbench.TestBenchTest;
 import com.vaadin.tests.elements.NativeButtonElement;
 import com.vaadin.tests.elements.TemplateViewElement;
 
-public class ElementQueryIT extends AbstractTB9Test {
+public class ElementQueryIT extends AbstractBrowserTB9Test {
 
     @Override
     protected Class<? extends Component> getTestView() {
         return TemplateView.class;
     }
 
-    @TestBenchTest
+    @BrowserTest
     public void ensureElementListWrapped() {
         openTestURL();
         List<TemplateViewElement> elements = $(TemplateViewElement.class).all();
         Assertions.assertTrue(elements.get(0) instanceof TemplateViewElement);
     }
 
-    @TestBenchTest
+    @BrowserTest
     public void ensureElementListFromOnPageWrapped() {
         openTestURL();
         TemplateViewElement view = $(TemplateViewElement.class).first();
@@ -34,7 +34,7 @@ public class ElementQueryIT extends AbstractTB9Test {
         Assertions.assertEquals(view, view2);
     }
 
-    @TestBenchTest
+    @BrowserTest
     public void findLightDomElementById() {
         openTestURL();
 
@@ -44,7 +44,7 @@ public class ElementQueryIT extends AbstractTB9Test {
         Assertions.assertEquals("Button 1", button.getText());
     }
 
-    @TestBenchTest
+    @BrowserTest
     public void findShadowDomElementById() {
         openTestURL();
 
@@ -54,7 +54,7 @@ public class ElementQueryIT extends AbstractTB9Test {
         Assertions.assertEquals("Shadow Button 1", button.getText());
     }
 
-    @TestBenchTest
+    @BrowserTest
     public void findAllShadowDomElements() {
         openTestURL();
 
@@ -63,7 +63,7 @@ public class ElementQueryIT extends AbstractTB9Test {
                 view.$(NativeButtonElement.class).all().size());
     }
 
-    @TestBenchTest
+    @BrowserTest
     public void searchShadowDomBeforeLight() {
         openTestURL();
 
@@ -74,7 +74,7 @@ public class ElementQueryIT extends AbstractTB9Test {
                 button.getText());
     }
 
-    @TestBenchTest
+    @BrowserTest
     public void mergeLightAndShadowDomResults() {
         openTestURL();
 
@@ -84,7 +84,7 @@ public class ElementQueryIT extends AbstractTB9Test {
         Assertions.assertEquals(10, buttons.size());
     }
 
-    @TestBenchTest
+    @BrowserTest
     public void findTestBenchElementUsingTag() {
         openTestURL();
 
@@ -94,7 +94,7 @@ public class ElementQueryIT extends AbstractTB9Test {
 
     }
 
-    @TestBenchTest
+    @BrowserTest
     public void findTestBenchElement() {
         openTestURL();
 
@@ -103,7 +103,7 @@ public class ElementQueryIT extends AbstractTB9Test {
         Assertions.assertNotNull(button);
     }
 
-    @TestBenchTest
+    @BrowserTest
     public void findTestBenchElementChild() {
         openTestURL();
 
@@ -113,7 +113,7 @@ public class ElementQueryIT extends AbstractTB9Test {
         Assertions.assertEquals("Shadow Button 1", button.getText());
     }
 
-    @TestBenchTest
+    @BrowserTest
     public void specialCharactersInId() {
         openTestURL();
         NativeButtonElement button = $(TemplateViewElement.class).waitForFirst()
@@ -121,7 +121,7 @@ public class ElementQueryIT extends AbstractTB9Test {
         Assertions.assertEquals("Button with special id", button.getText());
     }
 
-    @TestBenchTest
+    @BrowserTest
     public void attributeContains() {
         openTestURL();
         TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
@@ -133,7 +133,7 @@ public class ElementQueryIT extends AbstractTB9Test {
         Assertions.assertEquals(10, allButtons.size());
     }
 
-    @TestBenchTest
+    @BrowserTest
     public void getSetElementsProperty() {
         openTestURL();
         TemplateViewElement template = $(TemplateViewElement.class).first();

@@ -7,7 +7,7 @@
  *
  * For the full License, see <https://vaadin.com/license/cvdl-4.0>.
  */
-package com.vaadin.testbench.capabilities;
+package com.vaadin.testbench.browser;
 
 import java.util.Arrays;
 import java.util.List;
@@ -20,13 +20,13 @@ import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
-import com.vaadin.testbench.HasCustomDriver;
+import com.vaadin.testbench.BrowserTest;
+import com.vaadin.testbench.DriverSupplier;
 import com.vaadin.testbench.Parameters;
-import com.vaadin.testbench.TestBenchTest;
 import com.vaadin.testbench.annotations.BrowserConfiguration;
 import com.vaadin.testbench.parallel.Browser;
 
-public class ExtensionWithBrowserConfigurationTest implements HasCustomDriver {
+public class ExtensionWithBrowserConfigurationTest implements DriverSupplier {
 
     private static String oldBrowsers;
 
@@ -37,7 +37,7 @@ public class ExtensionWithBrowserConfigurationTest implements HasCustomDriver {
     }
 
     @Override
-    public WebDriver getCustomDriver() {
+    public WebDriver createDriver() {
         return Mockito.mock(WebDriver.class);
     }
 
@@ -46,7 +46,7 @@ public class ExtensionWithBrowserConfigurationTest implements HasCustomDriver {
         Parameters.setGridBrowsers(oldBrowsers);
     }
 
-    @TestBenchTest
+    @BrowserTest
     public void withBrowserConfigurationInClass(Capabilities capabilities) {
         DesiredCapabilities caps = Browser.FIREFOX.getDesiredCapabilities();
         Assertions.assertEquals(caps.getBrowserName(),

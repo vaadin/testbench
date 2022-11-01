@@ -7,7 +7,7 @@
  *
  * For the full License, see <https://vaadin.com/license/cvdl-4.0>.
  */
-package com.vaadin.testbench.capabilities;
+package com.vaadin.testbench.browser;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
@@ -17,12 +17,12 @@ import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
-import com.vaadin.testbench.HasCustomDriver;
+import com.vaadin.testbench.BrowserTest;
+import com.vaadin.testbench.DriverSupplier;
 import com.vaadin.testbench.Parameters;
-import com.vaadin.testbench.TestBenchTest;
 
 public class ExtensionWithoutBrowserConfigurationTest
-        implements HasCustomDriver {
+        implements DriverSupplier {
 
     private static String oldBrowsers;
 
@@ -33,7 +33,7 @@ public class ExtensionWithoutBrowserConfigurationTest
     }
 
     @Override
-    public WebDriver getCustomDriver() {
+    public WebDriver createDriver() {
         return Mockito.mock(WebDriver.class);
     }
 
@@ -42,7 +42,7 @@ public class ExtensionWithoutBrowserConfigurationTest
         Parameters.setGridBrowsers(oldBrowsers);
     }
 
-    @TestBenchTest
+    @BrowserTest
     public void withoutBrowsersConfiguration(Capabilities capabilities) {
         DesiredCapabilities caps = CapabilitiesUtil.getDefaultCapabilities()
                 .get(0);

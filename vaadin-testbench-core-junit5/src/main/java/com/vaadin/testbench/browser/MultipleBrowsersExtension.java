@@ -7,7 +7,7 @@
  *
  * For the full License, see <https://vaadin.com/license/cvdl-4.0>.
  */
-package com.vaadin.testbench.capabilities;
+package com.vaadin.testbench.browser;
 
 import java.util.Collections;
 import java.util.List;
@@ -22,18 +22,23 @@ import org.junit.jupiter.api.extension.TestTemplateInvocationContextProvider;
 import org.junit.platform.commons.util.AnnotationUtils;
 import org.openqa.selenium.Capabilities;
 
+import com.vaadin.testbench.BrowserTest;
+import com.vaadin.testbench.BrowserTestClass;
 import com.vaadin.testbench.parallel.BrowserUtil;
 import com.vaadin.testbench.parallel.TestNameSuffix;
 
 /**
- * Provides support for running test against multiple browser capabilities.
+ * Provides support for running test methods using multiple browsers.
  */
-public class CapabilitiesInvocationContextProvider
+public class MultipleBrowsersExtension
         implements TestTemplateInvocationContextProvider, BeforeAllCallback {
 
     @Override
     public boolean supportsTestTemplate(ExtensionContext context) {
-        return true;
+        return AnnotationUtils.isAnnotated(context.getRequiredTestClass(),
+                BrowserTestClass.class)
+                || AnnotationUtils.isAnnotated(context.getRequiredTestMethod(),
+                        BrowserTest.class);
     }
 
     @Override
@@ -74,7 +79,7 @@ public class CapabilitiesInvocationContextProvider
         @Override
         public List<Extension> getAdditionalExtensions() {
             return Collections
-                    .singletonList(new CapabilitiesExtension(capabilities));
+                    .singletonList(new BrowserExtension(capabilities));
         }
 
         private String getTestNameSuffix(ExtensionContext context) {

@@ -17,7 +17,7 @@ import java.lang.annotation.Target;
 import org.junit.jupiter.api.TestTemplate;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import com.vaadin.testbench.capabilities.CapabilitiesInvocationContextProvider;
+import com.vaadin.testbench.browser.MultipleBrowsersExtension;
 
 /**
  * Shorthand annotation for marking test methods in test class.
@@ -28,7 +28,7 @@ import com.vaadin.testbench.capabilities.CapabilitiesInvocationContextProvider;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @TestTemplate
-@ExtendWith(CapabilitiesInvocationContextProvider.class)
-public @interface TestBenchTest {
+@ExtendWith(MultipleBrowsersExtension.class)
+public @interface BrowserTest {
 
 }

@@ -12,9 +12,6 @@ package com.vaadin.testbench;
 import java.time.Duration;
 import java.util.List;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.extension.RegisterExtension;
-import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NotFoundException;
 import org.openqa.selenium.SearchContext;
@@ -32,36 +29,17 @@ import com.vaadin.testbench.commands.TestBenchCommands;
  * A superclass with helper methods to aid TestBench developers create a JUnit 5
  * based tests.
  */
-public abstract class TestBenchTestBase
+public abstract class AbstractBrowserTestBase
         implements HasDriver, HasTestBenchCommandExecutor, HasElementQuery {
 
-    @RegisterExtension
-    public ScreenshotOnFailureExtension screenshotOnFailureExtension = new ScreenshotOnFailureExtension(
-            this, true);
-
-    protected WebDriver driver;
-
-    protected Capabilities capabilities;
-
-    @BeforeEach
-    public void initializeWebDriveAndCapabilities(WebDriver driver,
-            Capabilities capabilities) {
-        this.driver = driver;
-        this.capabilities = capabilities;
-    }
-
     /**
-     * Returns the {@link WebDriver} instance previously specified within
-     * {@link #initializeWebDriveAndCapabilities(WebDriver, Capabilities)}, or
-     * (if the previously provided WebDriver instance was not already a
-     * {@link TestBenchDriverProxy} instance) a {@link TestBenchDriverProxy}
-     * that wraps that driver.
+     * Returns the {@link WebDriver} instance or (if the previously provided
+     * WebDriver instance was not already a {@link TestBenchDriverProxy}
+     * instance) a {@link TestBenchDriverProxy} that wraps that driver.
      *
      * @return the active WebDriver instance
      */
-    public WebDriver getDriver() {
-        return driver;
-    }
+    public abstract WebDriver getDriver();
 
     public WebElement findElement(org.openqa.selenium.By by) {
         return getContext().findElement(by);
@@ -142,8 +120,8 @@ public abstract class TestBenchTestBase
      */
     public <T> T waitUntil(ExpectedCondition<T> condition,
             long timeoutInSeconds) {
-        return new WebDriverWait(driver, Duration.ofSeconds(timeoutInSeconds))
-                .until(condition);
+        return new WebDriverWait(getDriver(),
+                Duration.ofSeconds(timeoutInSeconds)).until(condition);
     }
 
     /**
@@ -175,12 +153,12 @@ public abstract class TestBenchTestBase
 
     @Override
     public SearchContext getContext() {
-        return driver;
+        return getDriver();
     }
 
     @Override
     public TestBenchCommandExecutor getCommandExecutor() {
-        return ((HasTestBenchCommandExecutor) driver).getCommandExecutor();
+        return ((HasTestBenchCommandExecutor) getDriver()).getCommandExecutor();
     }
 
     /**
@@ -190,7 +168,7 @@ public abstract class TestBenchTestBase
      * @return The driver cast to a TestBenchCommands instance.
      */
     public TestBenchCommands testBench() {
-        return ((TestBenchDriverProxy) driver).getCommandExecutor();
+        return ((TestBenchDriverProxy) getDriver()).getCommandExecutor();
     }
 
     /**

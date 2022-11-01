@@ -19,37 +19,20 @@ package com.vaadin.tests;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Enumeration;
-import java.util.List;
 import java.util.Properties;
 
-import org.openqa.selenium.remote.DesiredCapabilities;
-
 import com.vaadin.flow.component.Component;
-import com.vaadin.testbench.TestBenchTestBase;
-import com.vaadin.testbench.annotations.BrowserConfiguration;
-import com.vaadin.testbench.annotations.BrowserFactory;
-import com.vaadin.testbench.parallel.BrowserUtil;
+import com.vaadin.testbench.AbstractBrowserDriverTestBase;
+import com.vaadin.testbench.parallel.SauceLabsIntegration;
 
 /**
  * Base class for TestBench 9+ tests. All TB9+ tests in the project should
  * extend this class.
- * <p>
- * Sub classes can, but typically should not, restrict the browsers used by
- * overriding the {@link #getBrowserConfiguration()} method:
- *
- * <pre>
- * &#064;Override
- * &#064;BrowserConfiguration
- * public List&lt;DesiredCapabilities&gt; getBrowserConfiguration() {
- * }
- * </pre>
  *
  * @author Vaadin Ltd
  */
-@BrowserFactory(TB9TestBrowserFactory.class)
-public abstract class AbstractTB9Test extends TestBenchTestBase {
+public abstract class AbstractTB9Test extends AbstractBrowserDriverTestBase {
 
     /**
      * Height of the screenshots we want to capture
@@ -79,12 +62,6 @@ public abstract class AbstractTB9Test extends TestBenchTestBase {
         }
     }
 
-    @BrowserConfiguration
-    public List<DesiredCapabilities> getBrowserConfiguration() {
-        return Arrays.asList(BrowserUtil.firefox(), BrowserUtil.chrome(),
-                BrowserUtil.safari(), BrowserUtil.edge());
-    }
-
     /**
      * Opens the given test (defined by {@link #getTestUrl()}.
      */
@@ -103,7 +80,7 @@ public abstract class AbstractTB9Test extends TestBenchTestBase {
         } else {
             url = url + "?" + extraParameters;
         }
-        driver.get(url);
+        getDriver().get(url);
     }
 
     /**
@@ -158,4 +135,8 @@ public abstract class AbstractTB9Test extends TestBenchTestBase {
     }
 
     protected abstract Class<? extends Component> getTestView();
+
+    public static boolean isConfiguredForSauceLabs() {
+        return SauceLabsIntegration.isConfiguredForSauceLabs();
+    }
 }
