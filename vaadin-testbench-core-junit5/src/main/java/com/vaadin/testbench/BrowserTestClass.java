@@ -20,7 +20,7 @@ import com.vaadin.testbench.browser.MultipleBrowsersExtension;
 
 /**
  * Shorthand annotation for enabling
- * {@code @ExtendWith(CapabilitiesInvocationContextProvider.class)} on test
+ * {@code @ExtendWith(MultipleBrowsersExtension.class)} on test
  * class.
  */
 @Target(ElementType.TYPE)
