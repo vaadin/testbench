@@ -28,7 +28,6 @@ import com.vaadin.flow.component.grid.HeaderRow
 import com.vaadin.flow.component.grid.ItemClickEvent
 import com.vaadin.flow.component.grid.ItemDoubleClickEvent
 import com.vaadin.flow.component.grid.editor.Editor
-import com.vaadin.flow.component.ironlist.IronList
 import com.vaadin.flow.component.listbox.ListBoxBase
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup
 import com.vaadin.flow.component.select.Select
@@ -758,7 +757,6 @@ public fun <T> TreeGrid<T>._expandAll(depth: Int = 100) {
 public val Component.dataProvider: DataProvider<*, *>? get() = when (this) {
     // until https://github.com/vaadin/flow/issues/6296 is resolved
     is Grid<*> -> this.dataProvider
-    is IronList<*> -> this.dataProvider
     is Select<*> -> this.dataProvider
     is ListBoxBase<*, *, *> -> this.getDataProvider()
     is RadioButtonGroup<*> -> this.dataProvider
