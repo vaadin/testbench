@@ -102,10 +102,8 @@ public class TextFieldTesterTest extends UIUnitTest {
         tf_.setValue("1234");
 
         Assertions.assertEquals("1234", tf.getValue());
-
-        Assertions.assertThrows(IllegalArgumentException.class,
-                () -> tf_.setValue("hello"),
-                "Value should have been validated against pattern");
+        tf_.setValue("hello");
+        Assertions.assertFalse(tf_.getComponent().isInvalid());
     }
 
     @Test
@@ -114,10 +112,8 @@ public class TextFieldTesterTest extends UIUnitTest {
         tf.setMinLength(5);
 
         final TextFieldTester<TextField, String> tf_ = test(tf);
-
-        Assertions.assertThrows(IllegalArgumentException.class,
-                () -> tf_.setValue("1234"),
-                "Value should have been validated against minLength");
+        tf_.setValue("1234");
+        Assertions.assertTrue(tf_.getComponent().isInvalid());
     }
 
     @Test
@@ -126,10 +122,8 @@ public class TextFieldTesterTest extends UIUnitTest {
         tf.setMaxLength(3);
 
         final TextFieldTester<TextField, String> tf_ = test(tf);
-
-        Assertions.assertThrows(IllegalArgumentException.class,
-                () -> tf_.setValue("1234"),
-                "Value should have been validated against maxLength");
+        tf_.setValue("1234");
+        Assertions.assertTrue(tf_.getComponent().isInvalid());
     }
 
     @Test
@@ -138,10 +132,9 @@ public class TextFieldTesterTest extends UIUnitTest {
         tf.setRequired(true);
 
         final TextFieldTester<TextField, String> tf_ = test(tf);
-
-        Assertions.assertThrows(IllegalArgumentException.class,
-                () -> tf_.setValue(""),
-                "Required field should not accept empty");
+        tf_.setValue("value1"); // must be value changed to trigger required validation
+        tf_.setValue("");
+        Assertions.assertTrue(tf_.getComponent().isInvalid());
     }
 
     @Test

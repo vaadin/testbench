@@ -11,8 +11,6 @@ package com.vaadin.flow.component.textfield;
 
 import java.util.function.Consumer;
 
-import org.slf4j.LoggerFactory;
-
 import com.vaadin.testbench.unit.ComponentTester;
 import com.vaadin.testbench.unit.Tests;
 
@@ -36,26 +34,12 @@ public class TextAreaTester<T extends TextArea> extends ComponentTester<T> {
 
     /**
      * Set the value to the component if it is usable.
-     * <p>
-     * For a non interactable component an IllegalStateException will be thrown
-     * as the end user would not be able to set a value.
      *
      * @param value
      *            value to set
      */
     public void setValue(String value) {
         ensureComponentIsUsable();
-
-        if (value != null && hasValidation()
-                && getValidationSupport().isInvalid(value)) {
-            if (getComponent().isInvalidBoolean()) {
-                throw new IllegalArgumentException(
-                        "Given value doesn't pass field value validation. Check validation settings for field.");
-            }
-            LoggerFactory.getLogger(TextAreaTester.class).warn(
-                    "Gave invalid input, but value set as invalid input is not prevented.");
-        }
-
         getComponent().setValue(value);
     }
 
