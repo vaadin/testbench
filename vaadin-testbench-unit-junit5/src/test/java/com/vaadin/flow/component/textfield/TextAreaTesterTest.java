@@ -94,9 +94,8 @@ class TextAreaWrapTest extends UIUnitTest {
     @Test
     public void textAreaWithPattern_patternIsValidated() {
         TextArea tf = view.textArea;
-        tf.setPreventInvalidInput(true);
         // Only accept numbers
-        tf.setPattern("\\d*");
+        tf.setAllowedCharPattern("\\d*");
 
         final TextAreaTester<TextArea> ta_ = test(tf);
         ta_.setValue("1234");
@@ -111,7 +110,6 @@ class TextAreaWrapTest extends UIUnitTest {
     @Test
     public void textAreaWithMinLength_lengthIsChecked() {
         TextArea tf = view.textArea;
-        tf.setPreventInvalidInput(true);
         tf.setMinLength(5);
 
         final TextAreaTester<TextArea> ta_ = test(tf);
@@ -124,7 +122,6 @@ class TextAreaWrapTest extends UIUnitTest {
     @Test
     public void textAreaWithMaxLength_lengthIsChecked() {
         TextArea tf = view.textArea;
-        tf.setPreventInvalidInput(true);
         tf.setMaxLength(3);
 
         final TextAreaTester<TextArea> ta_ = test(tf);
@@ -137,7 +134,6 @@ class TextAreaWrapTest extends UIUnitTest {
     @Test
     public void textAreaWithRequired_valueIsChecked() {
         TextArea tf = view.textArea;
-        tf.setPreventInvalidInput(true);
         tf.setRequired(true);
 
         final TextAreaTester<TextArea> ta_ = test(tf);

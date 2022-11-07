@@ -95,9 +95,8 @@ public class TextFieldTesterTest extends UIUnitTest {
     @Test
     public void textFieldWithPattern_patternIsValidated() {
         TextField tf = view.textField;
-        tf.setPreventInvalidInput(true);
         // Only accept numbers
-        tf.setPattern("\\d*");
+        tf.setAllowedCharPattern("\\d*");
 
         final TextFieldTester<TextField, String> tf_ = test(tf);
         tf_.setValue("1234");
@@ -112,7 +111,6 @@ public class TextFieldTesterTest extends UIUnitTest {
     @Test
     public void textFieldWithMinLength_lengthIsChecked() {
         TextField tf = view.textField;
-        tf.setPreventInvalidInput(true);
         tf.setMinLength(5);
 
         final TextFieldTester<TextField, String> tf_ = test(tf);
@@ -125,7 +123,6 @@ public class TextFieldTesterTest extends UIUnitTest {
     @Test
     public void textFieldWithMaxLength_lengthIsChecked() {
         TextField tf = view.textField;
-        tf.setPreventInvalidInput(true);
         tf.setMaxLength(3);
 
         final TextFieldTester<TextField, String> tf_ = test(tf);
@@ -138,7 +135,6 @@ public class TextFieldTesterTest extends UIUnitTest {
     @Test
     public void textFieldWithRequired_valueIsChecked() {
         TextField tf = view.textField;
-        tf.setPreventInvalidInput(true);
         tf.setRequired(true);
 
         final TextFieldTester<TextField, String> tf_ = test(tf);
