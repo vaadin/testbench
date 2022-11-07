@@ -34,7 +34,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <Implementation-Version>${project.version}</Implementation-Version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <selenium.version>4.5.3</selenium.version>
+        <selenium.version>4.6.0</selenium.version>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <license.checker.version>1.10.1</license.checker.version>
