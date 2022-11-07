@@ -48,7 +48,7 @@ public class TextAreaTester<T extends TextArea> extends ComponentTester<T> {
 
         if (value != null && hasValidation()
                 && getValidationSupport().isInvalid(value)) {
-            if (getComponent().isPreventInvalidInputBoolean()) {
+            if (getComponent().isInvalidBoolean()) {
                 throw new IllegalArgumentException(
                         "Given value doesn't pass field value validation. Check validation settings for field.");
             }

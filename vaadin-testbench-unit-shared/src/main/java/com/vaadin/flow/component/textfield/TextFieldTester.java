@@ -59,7 +59,7 @@ public class TextFieldTester<T extends GeneratedVaadinTextField<T, V>, V>
 
         if (hasValidation() && value != null
                 && getValidationSupport().isInvalid(value.toString())) {
-            if (getComponent().isPreventInvalidInputBoolean()) {
+            if (getComponent().isInvalidBoolean()) {
                 throw new IllegalArgumentException(
                         "Given value doesn't pass field value validation. Check validation settings for field.");
             }
