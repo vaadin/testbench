@@ -11,8 +11,6 @@ package com.vaadin.flow.component.textfield;
 
 import java.util.function.Consumer;
 
-import org.slf4j.LoggerFactory;
-
 import com.vaadin.flow.component.shared.HasClearButton;
 import com.vaadin.testbench.unit.ComponentTester;
 import com.vaadin.testbench.unit.Tests;
@@ -42,9 +40,6 @@ public class TextFieldTester<T extends GeneratedVaadinTextField<T, V>, V>
 
     /**
      * Set the value to the component if it is usable.
-     * <p>
-     * For a non interactable component an IllegalStateException will be thrown
-     * as the end user would not be able to set a value.
      *
      * @param value
      *            value to set
@@ -55,16 +50,6 @@ public class TextFieldTester<T extends GeneratedVaadinTextField<T, V>, V>
         if (value == null && getComponent().getEmptyValue() != null) {
             throw new IllegalArgumentException(
                     "Field doesn't allow null values");
-        }
-
-        if (hasValidation() && value != null
-                && getValidationSupport().isInvalid(value.toString())) {
-            if (getComponent().isPreventInvalidInputBoolean()) {
-                throw new IllegalArgumentException(
-                        "Given value doesn't pass field value validation. Check validation settings for field.");
-            }
-            LoggerFactory.getLogger(TextFieldTester.class).warn(
-                    "Gave invalid input, but value set as invalid input is not prevented.");
         }
 
         getComponent().setValue(value);

@@ -82,7 +82,7 @@ class TextAreaWrapTest extends UIUnitTest {
     @Test
     void textAreaWithValidation_doNotPreventInvalid_doNotThrow() {
         // Only accept numbers
-        view.textArea.setPattern("\\d*");
+        view.textArea.setAllowedCharPattern("\\d*");
 
         final TextAreaTester<TextArea> ta_ = test(view.textArea);
         final String faultyValue = "Invalid value, but doesn't throw";
@@ -94,7 +94,6 @@ class TextAreaWrapTest extends UIUnitTest {
     @Test
     public void textAreaWithPattern_patternIsValidated() {
         TextArea tf = view.textArea;
-        tf.setPreventInvalidInput(true);
         // Only accept numbers
         tf.setPattern("\\d*");
 
@@ -102,49 +101,38 @@ class TextAreaWrapTest extends UIUnitTest {
         ta_.setValue("1234");
 
         Assertions.assertEquals("1234", tf.getValue());
-
-        Assertions.assertThrows(IllegalArgumentException.class,
-                () -> ta_.setValue("hello"),
-                "Value should have been validated against pattern");
+        Assertions.assertFalse(ta_.getComponent().isInvalid());
     }
 
     @Test
     public void textAreaWithMinLength_lengthIsChecked() {
         TextArea tf = view.textArea;
-        tf.setPreventInvalidInput(true);
         tf.setMinLength(5);
 
         final TextAreaTester<TextArea> ta_ = test(tf);
-
-        Assertions.assertThrows(IllegalArgumentException.class,
-                () -> ta_.setValue("1234"),
-                "Value should have been validated against minLength");
+        ta_.setValue("1234");
+        Assertions.assertTrue(ta_.getComponent().isInvalid());
     }
 
     @Test
     public void textAreaWithMaxLength_lengthIsChecked() {
         TextArea tf = view.textArea;
-        tf.setPreventInvalidInput(true);
         tf.setMaxLength(3);
 
         final TextAreaTester<TextArea> ta_ = test(tf);
-
-        Assertions.assertThrows(IllegalArgumentException.class,
-                () -> ta_.setValue("1234"),
-                "Value should have been validated against maxLength");
+        ta_.setValue("1234");
+        Assertions.assertTrue(ta_.getComponent().isInvalid());
     }
 
     @Test
     public void textAreaWithRequired_valueIsChecked() {
         TextArea tf = view.textArea;
-        tf.setPreventInvalidInput(true);
         tf.setRequired(true);
 
         final TextAreaTester<TextArea> ta_ = test(tf);
-
-        Assertions.assertThrows(IllegalArgumentException.class,
-                () -> ta_.setValue(""),
-                "Required field should not accept empty");
+        ta_.setValue("value1"); // must be value changed to trigger required validation
+        ta_.setValue("");
+        Assertions.assertTrue(ta_.getComponent().isInvalid());
     }
 
 }
