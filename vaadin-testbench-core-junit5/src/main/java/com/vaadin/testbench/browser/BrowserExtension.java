@@ -153,7 +153,7 @@ public class BrowserExtension implements Extension, BeforeEachCallback,
         }
 
         RunOnHub runOnHub = getRunOnHub(testClass);
-        return runOnHub.value();
+        return runOnHub == null ? null : runOnHub.value();
     }
 
     /**

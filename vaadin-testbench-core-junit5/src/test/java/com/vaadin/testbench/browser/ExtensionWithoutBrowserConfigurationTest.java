@@ -13,7 +13,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.mockito.Mockito;
-import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
@@ -43,15 +42,15 @@ public class ExtensionWithoutBrowserConfigurationTest
     }
 
     @BrowserTest
-    public void withoutBrowsersConfiguration(Capabilities capabilities) {
+    public void withoutBrowsersConfiguration(BrowserTestInfo browserTestInfo) {
         DesiredCapabilities caps = CapabilitiesUtil.getDefaultCapabilities()
                 .get(0);
         Assertions.assertEquals(caps.getBrowserName(),
-                capabilities.getBrowserName());
+                browserTestInfo.capabilities().getBrowserName());
         Assertions.assertEquals(caps.getBrowserVersion(),
-                capabilities.getBrowserVersion());
+                browserTestInfo.capabilities().getBrowserVersion());
         Assertions.assertEquals(caps.getPlatformName(),
-                capabilities.getPlatformName());
+                browserTestInfo.capabilities().getPlatformName());
     }
 
 }
