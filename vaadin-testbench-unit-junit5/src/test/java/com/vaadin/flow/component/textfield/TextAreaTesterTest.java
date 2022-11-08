@@ -130,7 +130,8 @@ class TextAreaWrapTest extends UIUnitTest {
         tf.setRequired(true);
 
         final TextAreaTester<TextArea> ta_ = test(tf);
-        ta_.setValue("value1"); // must be value changed to trigger required validation
+        ta_.setValue("value1"); // must be value changed to trigger required
+                                // validation
         ta_.setValue("");
         Assertions.assertTrue(ta_.getComponent().isInvalid());
     }

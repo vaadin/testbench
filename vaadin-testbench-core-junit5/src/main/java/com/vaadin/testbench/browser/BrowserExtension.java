@@ -269,19 +269,18 @@ public class BrowserExtension implements Extension, BeforeEachCallback,
     public boolean supportsParameter(ParameterContext parameterContext,
             ExtensionContext extensionContext)
             throws ParameterResolutionException {
-        Class parameterType = parameterContext.getParameter().getType();
-        return parameterType == WebDriver.class
-                || parameterType == Capabilities.class;
+        return parameterContext.getParameter()
+                .getType() == BrowserTestInfo.class;
     }
 
     @Override
     public Object resolveParameter(ParameterContext parameterContext,
             ExtensionContext extensionContext)
             throws ParameterResolutionException {
-        if (parameterContext.getParameter().getType() == WebDriver.class) {
-            return driver;
-        } else {
-            return new ImmutableCapabilities(desiredCapabilities);
-        }
+        Class testClass = extensionContext.getRequiredTestClass();
+        return new BrowserTestInfo(driver,
+                new ImmutableCapabilities(desiredCapabilities),
+                getHubHostname(testClass), getRunLocallyBrowser(testClass),
+                getRunLocallyBrowserVersion(testClass));
     }
 }
