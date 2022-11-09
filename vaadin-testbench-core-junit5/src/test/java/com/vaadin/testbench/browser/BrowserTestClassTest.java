@@ -17,7 +17,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.TestTemplate;
 import org.mockito.Mockito;
-import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
@@ -33,18 +32,18 @@ public class BrowserTestClassTest implements DriverSupplier {
 
     @TestTemplate // run by extension, standard JUnit annotation
     public void testTemplate_hasCapabilitiesInjected(TestInfo testInfo,
-            Capabilities capabilities) {
+            BrowserTestInfo browserTestInfo) {
         Assertions.assertTrue(
                 testInfo.getDisplayName().contains("[ANY_Chrome_]"));
-        assertCapabilities(testInfo, capabilities);
+        assertCapabilities(testInfo, browserTestInfo);
     }
 
     @BrowserTest // run by extension, using wrapper additionally
     public void browserTest_hasCapabilitiesInjected(TestInfo testInfo,
-            Capabilities capabilities) {
+            BrowserTestInfo browserTestInfo) {
         Assertions.assertTrue(
                 testInfo.getDisplayName().contains("[ANY_Chrome_]"));
-        assertCapabilities(testInfo, capabilities);
+        assertCapabilities(testInfo, browserTestInfo);
     }
 
     @Test // not run by extension
@@ -54,9 +53,9 @@ public class BrowserTestClassTest implements DriverSupplier {
     }
 
     private void assertCapabilities(TestInfo testInfo,
-            Capabilities capabilities) {
+            BrowserTestInfo browserTestInfo) {
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities(
-                capabilities);
+                browserTestInfo.capabilities());
         Assertions.assertEquals("bar", SauceLabsIntegration
                 .getSauceLabsOption(desiredCapabilities, "foo"));
         Assertions.assertEquals(testInfo.getDisplayName(),

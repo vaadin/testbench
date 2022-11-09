@@ -22,12 +22,12 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openqa.selenium.Capabilities;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import com.vaadin.testbench.ScreenshotOnFailureExtension;
 import com.vaadin.testbench.annotations.BrowserConfiguration;
 import com.vaadin.testbench.annotations.BrowserFactory;
+import com.vaadin.testbench.browser.BrowserTestInfo;
 import com.vaadin.testbench.parallel.BrowserUtil;
 
 /**
@@ -56,10 +56,9 @@ public abstract class AbstractBrowserTB9Test extends AbstractTB9Test {
     private Capabilities capabilities;
 
     @BeforeEach
-    public void setWebDriverAndCapabilities(WebDriver driver,
-            Capabilities capabilities) {
-        setDriver(driver);
-        this.capabilities = capabilities;
+    public void setWebDriverAndCapabilities(BrowserTestInfo browserTestInfo) {
+        setDriver(browserTestInfo.driver());
+        this.capabilities = browserTestInfo.capabilities();
     }
 
     public Capabilities getCapabilities() {

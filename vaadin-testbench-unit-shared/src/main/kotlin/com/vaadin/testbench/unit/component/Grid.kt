@@ -401,7 +401,7 @@ private fun <T> Grid<T>.getSortIndicator(column: Grid.Column<T>): String {
 }
 
 /**
- * Dumps given range of [rows] of the Grid, formatting the values using the [_getFormatted] function. The output example:
+ * Dumps given range of [rows] of the Grid, formatting the values using the [_getFormatted] function. Does not consider header groups. The output example:
  * ```
  * --[Name]--[Age]--[Occupation]--
  * 0: John, 25, Service Worker
@@ -412,7 +412,7 @@ private fun <T> Grid<T>.getSortIndicator(column: Grid.Column<T>): String {
 @JvmOverloads
 public fun <T : Any> Grid<T>._dump(rows: IntRange = 0..9): String = buildString {
     val visibleColumns: List<Grid.Column<T>> = columns.filter { it.isVisible }
-    visibleColumns.map { "[${it.header2}]${getSortIndicator(it)}" }.joinTo(this, prefix = "--", separator = "-", postfix = "--\n")
+    visibleColumns.map { "[${it.headerText}]${getSortIndicator(it)}" }.joinTo(this, prefix = "--", separator = "-", postfix = "--\n")
     val dsIndices: IntRange
     val displayIndices: Set<Int>
     if (this@_dump is TreeGrid<T>) {
@@ -816,35 +816,3 @@ public fun <T> Grid<T>._selectAll() {
  */
 public val Grid.Column<*>._internalId: String
     get() = _Column_getInternalId.invoke(this) as String
-
-private val _AbstractColumn_getHeaderRenderer: Method by lazy(LazyThreadSafetyMode.PUBLICATION) {
-    val method: Method = abstractColumnClass.getDeclaredMethod("getHeaderRenderer")
-    method.isAccessible = true
-    method
-}
-
-private fun Any.gridAbstractHeaderGetHeader(): String {
-    // nasty reflection. Added a feature request to have this: https://github.com/vaadin/vaadin-grid-flow/issues/567
-    val e: Renderer<*>? = _AbstractColumn_getHeaderRenderer.invoke(this) as Renderer<*>?
-    return e?.template ?: ""
-}
-
-/**
- * Sets and retrieves the column header as set by [Grid.Column.setHeader] (String).
- * The result value is undefined if a component has been set as the header.
- */
-var <T> Grid.Column<T>.header2: String
-    get() {
-        var result: String = gridAbstractHeaderGetHeader()
-        if (result.isEmpty()) {
-            // in case of grouped cells, the header is stored in a parent ColumnGroup.
-            val parent: Component? = parent.orElse(null)
-            if (parent != null && parent.javaClass.name == "com.vaadin.flow.component.grid.ColumnGroup" && parent.children.count() == 1L) {
-                result = parent.gridAbstractHeaderGetHeader()
-            }
-        }
-        return result
-    }
-    set(value) {
-        setHeader(value)
-    }

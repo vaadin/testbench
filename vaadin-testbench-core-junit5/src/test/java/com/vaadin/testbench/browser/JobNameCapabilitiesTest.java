@@ -15,7 +15,6 @@ import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.TestInfo;
 import org.mockito.Mockito;
-import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
@@ -29,9 +28,9 @@ public class JobNameCapabilitiesTest implements DriverSupplier {
 
     @BrowserTest
     public void tbMethodNameInCapabilities(TestInfo testInfo,
-            Capabilities capabilities) {
+            BrowserTestInfo browserTestInfo) {
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities(
-                capabilities);
+                browserTestInfo.capabilities());
         Assertions.assertEquals("bar", SauceLabsIntegration
                 .getSauceLabsOption(desiredCapabilities, "foo"));
         Assertions.assertEquals(testInfo.getDisplayName(),

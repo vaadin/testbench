@@ -12,31 +12,42 @@ package com.vaadin.testbench;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openqa.selenium.Capabilities;
-import org.openqa.selenium.HasCapabilities;
-import org.openqa.selenium.WebDriver;
+
+import com.vaadin.testbench.browser.BrowserTestInfo;
+import com.vaadin.testbench.parallel.Browser;
 
 /**
  * A superclass with helper methods to aid TestBench developers create a JUnit 5
  * based tests.
  */
-public abstract class BrowserTestBase extends AbstractBrowserDriverTestBase
-        implements HasCapabilities {
+public abstract class BrowserTestBase extends AbstractBrowserDriverTestBase {
 
     @RegisterExtension
     public ScreenshotOnFailureExtension screenshotOnFailureExtension = new ScreenshotOnFailureExtension(
             this, true);
 
-    private Capabilities capabilities;
+    private BrowserTestInfo browserTestInfo;
 
     @BeforeEach
-    public void setWebDriverAndCapabilities(WebDriver driver,
-            Capabilities capabilities) {
-        setDriver(driver);
-        this.capabilities = capabilities;
+    public void setBrowserTestInfo(BrowserTestInfo browserTestInfo) {
+        setDriver(browserTestInfo.driver());
+        this.browserTestInfo = browserTestInfo;
     }
 
-    @Override
-    public Capabilities getCapabilities() {
-        return capabilities;
+    protected Capabilities getCapabilities() {
+        return browserTestInfo.capabilities();
     }
+
+    protected String getHubHostname() {
+        return browserTestInfo.hubHostname();
+    }
+
+    protected Browser getRunLocallyBrowser() {
+        return browserTestInfo.runLocallyBrowser();
+    }
+
+    protected String getRunLocallyBrowserVersion() {
+        return browserTestInfo.runLocallyBrowserVersion();
+    }
+
 }

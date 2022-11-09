@@ -132,7 +132,8 @@ public class TextFieldTesterTest extends UIUnitTest {
         tf.setRequired(true);
 
         final TextFieldTester<TextField, String> tf_ = test(tf);
-        tf_.setValue("value1"); // must be value changed to trigger required validation
+        tf_.setValue("value1"); // must be value changed to trigger required
+                                // validation
         tf_.setValue("");
         Assertions.assertTrue(tf_.getComponent().isInvalid());
     }
