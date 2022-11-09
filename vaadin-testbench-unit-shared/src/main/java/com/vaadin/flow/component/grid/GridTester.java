@@ -321,7 +321,11 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
      * @return header contents
      * @throws IllegalStateException
      *             if component is not visible
+     *
+     * @deprecated Use {@link Grid.Column#getHeaderText()} or
+     *             {@link Grid.Column#getHeaderComponent()}
      */
+    @Deprecated
     public String getHeaderCell(int column) {
         ensureVisible();
         final Grid.Column<Y> targetColumn = getColumns().get(column);
@@ -358,20 +362,20 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
     }
 
     /**
-     * Get content in footer for given column. TODO: How to get the value for
-     * footer. Is it possible?
+     * Get content in footer for given column.
      *
      * @param column
      *            column to get footer for
      * @return footer contents
      * @throws IllegalStateException
      *             if component is not visible
+     * @deprecated Use {@link Grid.Column#getFooterText()} or
+     *             {@link Grid.Column#getFooterComponent()} directly
      */
+    @Deprecated
     public ValueProvider<?, ?> getFooterCell(int column) {
         ensureVisible();
-        final Grid.Column<Y> targetColumn = getColumns().get(column);
-        return targetColumn.getFooterRenderer().getValueProviders()
-                .get(getColumnInternalId(targetColumn));
+        return x -> getColumns().get(column).getFooterText();
     }
 
     /**
