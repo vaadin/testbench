@@ -328,8 +328,7 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
     @Deprecated
     public String getHeaderCell(int column) {
         ensureVisible();
-        final Grid.Column<Y> targetColumn = getColumns().get(column);
-        return GridKt.getHeader2(targetColumn);
+        return getColumns().get(column).getHeaderText();
     }
 
     private List<Grid.Column<Y>> getColumns() {
@@ -373,9 +372,9 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
      *             {@link Grid.Column#getFooterComponent()} directly
      */
     @Deprecated
-    public ValueProvider<?, ?> getFooterCell(int column) {
+    public String getFooterCell(int column) {
         ensureVisible();
-        return x -> getColumns().get(column).getFooterText();
+        return getColumns().get(column).getFooterText();
     }
 
     /**
