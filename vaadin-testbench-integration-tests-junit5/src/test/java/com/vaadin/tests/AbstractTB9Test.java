@@ -22,6 +22,9 @@ import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Properties;
 
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
+
 import com.vaadin.flow.component.Component;
 import com.vaadin.testbench.AbstractBrowserDriverTestBase;
 import com.vaadin.testbench.parallel.SauceLabsIntegration;
@@ -32,6 +35,7 @@ import com.vaadin.testbench.parallel.SauceLabsIntegration;
  *
  * @author Vaadin Ltd
  */
+@Execution(ExecutionMode.CONCURRENT)
 public abstract class AbstractTB9Test extends AbstractBrowserDriverTestBase {
 
     /**

@@ -33,9 +33,11 @@ public class JobNameCapabilitiesTest {
             DesiredCapabilities cap = ((TBMethod) testMethod).getCapabilities();
             Assert.assertEquals("bar",
                     SauceLabsIntegration.getSauceLabsOption(cap, "foo"));
-            Assert.assertEquals(testMethod.getName(),
-                    SauceLabsIntegration.getSauceLabsOption(cap,
-                            SauceLabsIntegration.CapabilityType.NAME));
+            if (SauceLabsIntegration.isConfiguredForSauceLabs()) {
+                Assert.assertEquals(testMethod.getName(),
+                        SauceLabsIntegration.getSauceLabsOption(cap,
+                                SauceLabsIntegration.CapabilityType.NAME));
+            }
         }
     }
 

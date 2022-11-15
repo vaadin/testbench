@@ -132,11 +132,17 @@ public class ScreenshotOnFailureExtension implements TestWatcher {
             throw new RuntimeException(
                     "There was a problem grabbing and writing a screen shot of a test failure.",
                     e1);
+        } finally {
+            quitDriverOnFinish();
         }
     }
 
     @Override
     public void testSuccessful(ExtensionContext context) {
+        quitDriverOnFinish();
+    }
+
+    private void quitDriverOnFinish() {
         if (quitDriverOnFinish && driverHolder != null
                 && driverHolder.getDriver() != null) {
             driverHolder.getDriver().quit();
