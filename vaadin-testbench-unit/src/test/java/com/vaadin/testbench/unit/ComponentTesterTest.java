@@ -134,7 +134,7 @@ public class ComponentTesterTest extends UIUnit4Test {
     }
 
     @Test
-    void findByQuery_matchingComponent_getsComponent() {
+    public void findByQuery_matchingComponent_getsComponent() {
         Span one = new Span("One");
         Span two = new Span("Two");
         Div container = new Div(new Div(new Div(one)), new Div(two), new Div());
@@ -153,7 +153,7 @@ public class ComponentTesterTest extends UIUnit4Test {
     }
 
     @Test
-    void findByQuery_notMatchingComponent_empty() {
+    public void findByQuery_notMatchingComponent_empty() {
         Span one = new Span("One");
         Span two = new Span("Two");
         Div container = new Div(new Div(new Div(one)), new Div(two), new Div());
@@ -166,7 +166,7 @@ public class ComponentTesterTest extends UIUnit4Test {
     }
 
     @Test
-    void findByQuery_multipleMatchingComponents_throws() {
+    public void findByQuery_multipleMatchingComponents_throws() {
         Span one = new Span("Span One");
         Span two = new Span("Span Two");
         Div container = new Div(new Div(new Div(one)), new Div(two), new Div());
@@ -179,7 +179,7 @@ public class ComponentTesterTest extends UIUnit4Test {
     }
 
     @Test
-    void findAllByQuery_matchingComponent_getsComponents() {
+    public void findAllByQuery_matchingComponent_getsComponents() {
         Span one = new Span("Span One");
         Span two = new Span("Span Two");
         Span three = new Span("Span Two bis");
@@ -202,7 +202,7 @@ public class ComponentTesterTest extends UIUnit4Test {
     }
 
     @Test
-    void findAllByQuery_notMatchingComponent_empty() {
+    public void findAllByQuery_notMatchingComponent_empty() {
         Span one = new Span("Span One");
         Span two = new Span("Span Two");
         Span three = new Span("Span Two bis");

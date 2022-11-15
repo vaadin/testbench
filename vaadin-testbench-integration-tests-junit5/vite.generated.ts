@@ -461,7 +461,6 @@ let spaMiddlewareForceRemoved = false;
 
 const allowedFrontendFolders = [
   frontendFolder,
-  jarResourcesFolder,
   path.resolve(generatedFlowImportsFolder), // Contains only generated-flow-imports
   path.resolve(__dirname, 'node_modules')
 ];
@@ -501,6 +500,7 @@ export const vaadinConfig: UserConfigFn = (env) => {
     base: '',
     resolve: {
       alias: {
+        '@vaadin/flow-frontend': jarResourcesFolder,
         Frontend: frontendFolder
       },
       preserveSymlinks: true
@@ -564,14 +564,14 @@ export const vaadinConfig: UserConfigFn = (env) => {
         ]
       }),
       {
-        name: 'vaadin:force-remove-spa-middleware',
+        name: 'vaadin:force-remove-html-middleware',
         transformIndexHtml: {
           enforce: 'pre',
           transform(_html, { server }) {
             if (server && !spaMiddlewareForceRemoved) {
               server.middlewares.stack = server.middlewares.stack.filter((mw) => {
                 const handleName = '' + mw.handle;
-                return !handleName.includes('viteSpaFallbackMiddleware');
+                return !handleName.includes('viteHtmlFallbackMiddleware');
               });
               spaMiddlewareForceRemoved = true;
             }

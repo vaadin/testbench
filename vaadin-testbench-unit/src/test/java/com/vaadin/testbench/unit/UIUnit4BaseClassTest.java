@@ -10,22 +10,18 @@
 package com.vaadin.testbench.unit;
 
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.example.SingleParam;
 import com.example.TemplatedParam;
-import com.example.base.ParametrizedView;
 import com.example.base.WelcomeView;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
-import org.junit.function.ThrowingRunnable;
 import org.junit.runner.RunWith;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.di.InstantiatorFactory;
 import com.vaadin.flow.di.Lookup;
@@ -110,49 +106,6 @@ public class UIUnit4BaseClassTest {
                                     .getSimpleName()
                             + " but was " + service.getClass().getSimpleName(),
                     service instanceof TestCustomInstantiatorFactory);
-        }
-    }
-
-    public static class WrongBaseClassTest extends UIUnit4Test {
-
-        @Test
-        public void navigate_fails() {
-            assertExecutionFails(() -> navigate(WelcomeView.class));
-            assertExecutionFails(() -> navigate("welcome", WelcomeView.class));
-            assertExecutionFails(() -> navigate(ParametrizedView.class, 12));
-            assertExecutionFails(
-                    () -> navigate(ParametrizedView.class, Map.of()));
-        }
-
-        @Test
-        public void getCurrentView_fails() {
-            assertExecutionFails(this::getCurrentView);
-        }
-
-        @Test
-        public void fireShortcut_fails() {
-            assertExecutionFails(() -> fireShortcut(Key.ENTER));
-        }
-
-        @Test
-        public void wrap_fails() {
-            assertExecutionFails(() -> test(new ComponentTesterTest.Span()));
-            assertExecutionFails(() -> test(ComponentTester.class,
-                    new ComponentTesterTest.Span()));
-        }
-
-        @Test
-        public void query_fails() {
-            assertExecutionFails(() -> $(Component.class));
-            assertExecutionFails(
-                    () -> $(Component.class, new ComponentTesterTest.Span()));
-            assertExecutionFails(() -> $view(Component.class));
-        }
-
-        private void assertExecutionFails(ThrowingRunnable executable) {
-            UIUnitTestSetupException exception = Assert
-                    .assertThrows(UIUnitTestSetupException.class, executable);
-            assertTrue(exception.getMessage().contains("JUnit 5"));
         }
     }
 
