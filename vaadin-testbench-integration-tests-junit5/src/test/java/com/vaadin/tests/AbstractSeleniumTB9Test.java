@@ -19,6 +19,8 @@ package com.vaadin.tests;
 import io.github.bonigarcia.seljup.SeleniumJupiter;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import com.vaadin.testbench.Parameters;
 import com.vaadin.testbench.screenshot.ImageFileUtil;
@@ -28,6 +30,7 @@ import com.vaadin.testbench.screenshot.ImageFileUtil;
  *
  * @author Vaadin Ltd
  */
+@Execution(ExecutionMode.SAME_THREAD)
 public abstract class AbstractSeleniumTB9Test extends AbstractTB9Test {
 
     @RegisterExtension

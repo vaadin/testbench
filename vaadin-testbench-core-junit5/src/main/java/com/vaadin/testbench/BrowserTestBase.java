@@ -11,6 +11,8 @@ package com.vaadin.testbench;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.openqa.selenium.Capabilities;
 
 import com.vaadin.testbench.browser.BrowserTestInfo;
@@ -20,6 +22,7 @@ import com.vaadin.testbench.parallel.Browser;
  * A superclass with helper methods to aid TestBench developers create a JUnit 5
  * based tests.
  */
+@Execution(ExecutionMode.CONCURRENT)
 public abstract class BrowserTestBase extends AbstractBrowserDriverTestBase {
 
     @RegisterExtension
