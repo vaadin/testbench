@@ -44,24 +44,4 @@ public class ParallelHubTest extends ParallelTest {
         }
     }
 
-    @Test
-    public void sauceURLFromSystemProperty() {
-        String oldUser = System.getProperty(SAUCE_USER_PROPERTY);
-        String oldAccess = System.getProperty(SAUCE_ACCESS_KEY_PROPERTY);
-        try {
-            System.setProperty(SAUCE_USER_PROPERTY, "user1234");
-            System.setProperty(SAUCE_ACCESS_KEY_PROPERTY, "access1234");
-
-            Assert.assertEquals(
-                    "http://user1234:access1234@localhost:4445/wd/hub",
-                    getHubURL());
-        } finally {
-            if (oldUser != null) {
-                System.setProperty(SAUCE_USER_PROPERTY, oldUser);
-            }
-            if (oldAccess != null) {
-                System.setProperty(SAUCE_ACCESS_KEY_PROPERTY, oldAccess);
-            }
-        }
-    }
 }
