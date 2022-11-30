@@ -314,6 +314,12 @@
         </dependency>
 
         <dependency>
+            <groupId>com.vaadin</groupId>
+            <artifactId>flow-polymer-template</artifactId>
+            <version>${vaadin.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.github.mvysny.dynatest</groupId>
             <artifactId>dynatest</artifactId>
             <version>0.24</version>
