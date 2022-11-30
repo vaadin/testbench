@@ -24,9 +24,8 @@
     </issueManagement>
     <licenses>
         <license>
-            <name>Commercial Vaadin Developer License version 4.0</name>
-            <url>https://vaadin.com/license/cvdl-4.0</url>
-            <distribution>manual</distribution>
+            <name>Vaadin Commercial License and Service Terms</name>
+            <url>https://vaadin.com/commercial-license-and-service-terms</url>
         </license>
     </licenses>
     <properties>
@@ -43,6 +42,7 @@
         <slf4j.version>2.0.3</slf4j.version>
         <failsafe.version>3.0.0-M7</failsafe.version>
         <surefire.version>3.0.0-M7</surefire.version>
+        <currentYear>2022</currentYear>
     </properties>
     <modules>
         <module>vaadin-testbench-bom</module>
@@ -77,7 +77,7 @@
             <id>spring milestones</id>
             <url>https://repo.spring.io/milestone</url>
         </repository>
-       
+
     </repositories>
     <pluginRepositories>
         <pluginRepository>
@@ -119,5 +119,33 @@
                 </configuration>
             </plugin>
         </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>com.mycila</groupId>
+                    <artifactId>license-maven-plugin</artifactId>
+                    <version>2.6</version>
+                    <configuration>
+                        <header>src/license/vclst/header.txt</header>
+                        <quiet>false</quiet>
+                        <failIfMissing>true</failIfMissing>
+                        <aggregate>false</aggregate>
+                        <useDefaultExcludes>true</useDefaultExcludes>
+                        <useDefaultMapping>true</useDefaultMapping>
+                        <encoding>UTF-8</encoding>
+                        <properties>
+                            <year>${currentYear}</year>
+                        </properties>
+                        <excludes>
+                            <exclude>target/**</exclude>
+                            <exclude>**/*.xml</exclude>
+                            <exclude>**/*.properties</exclude>
+                            <exclude>src/license/**/*</exclude>
+                            <exclude>**/*.txt</exclude>
+                        </excludes>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
 </project>
