@@ -24,9 +24,8 @@
 
     <licenses>
         <license>
-            <name>Commercial Vaadin Developer License version 4.0</name>
-            <url>https://vaadin.com/license/cvdl-4.0</url>
-            <distribution>manual</distribution>
+            <name>Vaadin Commercial License and Service Terms</name>
+            <url>https://vaadin.com/commercial-license-and-service-terms</url>
         </license>
     </licenses>
 
@@ -246,37 +245,7 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>com.mycila</groupId>
-                <artifactId>license-maven-plugin</artifactId>
-                <version>2.6</version>
-                <configuration>
-                    <basedir>${basedir}</basedir>
-                    <header>${basedir}/src/license/cvdl4/header.txt</header>
-                    <quiet>false</quiet>
-                    <failIfMissing>true</failIfMissing>
-                    <aggregate>false</aggregate>
-                    <useDefaultExcludes>true</useDefaultExcludes>
-                    <useDefaultMapping>true</useDefaultMapping>
-                    <encoding>UTF-8</encoding>
-                    <properties>
-                        <year>${project.inceptionYear}</year>
-                    </properties>
-                    <excludes>
-                        <exclude>target/**</exclude>
-                        <exclude>**/*.xml</exclude>
-                        <exclude>src/license/**/*</exclude>
-                        <exclude>**/*.txt</exclude>
-                    </excludes>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>format</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+
         </plugins>
     </build>
     <dependencyManagement>

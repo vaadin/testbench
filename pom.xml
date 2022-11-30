@@ -24,9 +24,8 @@
     </issueManagement>
     <licenses>
         <license>
-            <name>Commercial Vaadin Developer License version 4.0</name>
-            <url>https://vaadin.com/license/cvdl-4.0</url>
-            <distribution>manual</distribution>
+            <name>Vaadin Commercial License and Service Terms</name>
+            <url>https://vaadin.com/commercial-license-and-service-terms</url>
         </license>
     </licenses>
     <properties>
