@@ -55,7 +55,9 @@ class CheckboxTesterTest extends UIUnitTest {
     @Test
     void click_usable_checkedChangeFired() {
         AtomicBoolean checkedChange = new AtomicBoolean();
-        view.checkbox.addCheckedChangeListener(ev -> checkedChange.set(true));
+        view.checkbox.getElement().addPropertyChangeListener("checked",
+                ev -> checkedChange.set(true));
+
         Assertions.assertFalse(view.checkbox.getValue(),
                 "Expecting checkbox not to be checked, but was");
 
