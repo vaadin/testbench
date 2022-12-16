@@ -11,6 +11,7 @@ package com.vaadin.testbench;
 import java.time.Duration;
 import java.util.List;
 
+import com.vaadin.flow.internal.UsageStatistics;
 import org.junit.Rule;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NotFoundException;
@@ -32,6 +33,10 @@ import com.vaadin.testbench.commands.TestBenchCommands;
  */
 public abstract class TestBenchTestCase
         implements HasDriver, HasTestBenchCommandExecutor, HasElementQuery {
+
+    static {
+        UsageStatistics.markAsUsed("testbench/TestBenchTestCase", null);
+    }
 
     /**
      * Specifies retry count, which is used to run same test several times. Can

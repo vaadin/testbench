@@ -10,6 +10,7 @@ package com.vaadin.testbench.unit;
 
 import java.util.Set;
 
+import com.vaadin.flow.internal.UsageStatistics;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -55,6 +56,10 @@ import com.vaadin.testbench.unit.mocks.SpringSecurityRequestCustomizer;
 @RunWith(SpringRunner.class)
 @TestExecutionListeners(listeners = UITestSpringLookupInitializer.class, mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 public abstract class SpringUIUnit4Test extends UIUnit4Test {
+
+    static {
+        UsageStatistics.markAsUsed("testbench/SpringUIUnit4Test", null);
+    }
 
     @Autowired
     private ApplicationContext applicationContext;

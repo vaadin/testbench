@@ -8,6 +8,7 @@
  */
 package com.vaadin.testbench.unit;
 
+import com.vaadin.flow.internal.UsageStatistics;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
@@ -72,6 +73,10 @@ import org.junit.jupiter.api.BeforeEach;
  */
 public abstract class UIUnitTest extends BaseUIUnitTest
         implements TesterWrappers {
+
+    static {
+        UsageStatistics.markAsUsed("testbench/UIUnitTest", null);
+    }
 
     @BeforeEach
     protected void initVaadinEnvironment() {

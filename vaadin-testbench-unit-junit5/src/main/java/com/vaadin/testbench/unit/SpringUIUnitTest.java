@@ -10,6 +10,7 @@ package com.vaadin.testbench.unit;
 
 import java.util.Set;
 
+import com.vaadin.flow.internal.UsageStatistics;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +57,10 @@ import com.vaadin.testbench.unit.mocks.SpringSecurityRequestCustomizer;
 @ExtendWith({ SpringExtension.class })
 @TestExecutionListeners(listeners = UITestSpringLookupInitializer.class, mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 public abstract class SpringUIUnitTest extends UIUnitTest {
+
+    static {
+        UsageStatistics.markAsUsed("testbench/SpringUIUnitTest", null);
+    }
 
     @Autowired
     private ApplicationContext applicationContext;

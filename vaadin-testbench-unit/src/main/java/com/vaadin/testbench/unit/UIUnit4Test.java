@@ -8,6 +8,7 @@
  */
 package com.vaadin.testbench.unit;
 
+import com.vaadin.flow.internal.UsageStatistics;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.TestRule;
@@ -69,6 +70,10 @@ import com.vaadin.testbench.unit.internal.PrettyPrintTree;
  */
 public abstract class UIUnit4Test extends BaseUIUnitTest
         implements TesterWrappers {
+
+    static {
+        UsageStatistics.markAsUsed("testbench/UIUnit4Test", null);
+    }
 
     /**
      * Override to return true to get component tree output into log on test

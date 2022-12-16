@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.googlecode.gentyref.GenericTypeReflector;
+import com.vaadin.flow.internal.UsageStatistics;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfoList;
 import io.github.classgraph.ScanResult;
@@ -59,6 +60,10 @@ import com.vaadin.testbench.unit.mocks.MockedUI;
  * @see ViewPackages
  */
 abstract class BaseUIUnitTest {
+
+    static {
+        UsageStatistics.markAsUsed("testbench/BaseUIUnitTest", null);
+    }
 
     private static final ConcurrentHashMap<String, Routes> routesCache = new ConcurrentHashMap<>();
 
