@@ -104,7 +104,8 @@ public class RadioButtonGroupTester<T extends RadioButtonGroup<V>, V>
         boolean usable = new RadioButtonTester<>(radioButton).isUsable();
         if (!usable && throwIfNotUsable) {
             throw new IllegalStateException(
-                    "Item " + radioButton.getValueString() + " is not usable");
+                    "Item " + radioButton.getElement().getProperty("value")
+                            + " is not usable");
         }
         return usable;
     }

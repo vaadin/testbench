@@ -19,7 +19,7 @@ import com.vaadin.testbench.unit.UIUnitTest;
 import com.vaadin.testbench.unit.ViewPackages;
 
 @ViewPackages
-class RadioButtonWrapTest extends UIUnitTest {
+class RadioButtonTesterTest extends UIUnitTest {
 
     RadioButtonView view;
     RadioButtonTester<RadioButton<String>, String> radioButton_;
@@ -45,8 +45,8 @@ class RadioButtonWrapTest extends UIUnitTest {
     @Test
     void click_usable_checkedChangeFired() {
         AtomicBoolean checkedChange = new AtomicBoolean();
-        view.radioButton
-                .addCheckedChangeListener(ev -> checkedChange.set(true));
+        view.radioButton.getElement().addPropertyChangeListener("checked",
+                (ev -> checkedChange.set(true)));
         Assertions.assertFalse(view.radioButton.isCheckedBoolean(),
                 "Expecting radioButton not to be checked, but was");
 

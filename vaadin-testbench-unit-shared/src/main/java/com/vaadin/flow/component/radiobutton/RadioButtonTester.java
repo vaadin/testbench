@@ -38,13 +38,13 @@ public class RadioButtonTester<T extends RadioButton<V>, V>
 
     @Override
     public boolean isUsable() {
-        return super.isUsable() && !getComponent().isDisabledBoolean();
+        return super.isUsable() && !isDisabled();
     }
 
     @Override
     protected void notUsableReasons(Consumer<String> collector) {
         super.notUsableReasons(collector);
-        if (getComponent().isDisabledBoolean()) {
+        if (isDisabled()) {
             collector.accept("disabled");
         }
     }
@@ -61,5 +61,9 @@ public class RadioButtonTester<T extends RadioButton<V>, V>
         ComponentUtil.fireEvent(radioButton, new ClickEvent<>(radioButton, true,
                 0, 0, 0, 0, 0, 0, false, false, false, false));
         radioButton.setChecked(true);
+    }
+
+    protected boolean isDisabled() {
+        return getComponent().getElement().getProperty("disabled", false);
     }
 }
