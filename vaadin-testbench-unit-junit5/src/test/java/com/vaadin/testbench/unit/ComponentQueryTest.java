@@ -24,8 +24,8 @@ import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.textfield.GeneratedVaadinTextField;
 import com.vaadin.flow.component.textfield.IntegerField;
+import com.vaadin.flow.component.textfield.InternalFieldBase;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.testbench.unit.ComponentTesterTest.Span;
@@ -493,7 +493,7 @@ class ComponentQueryTest extends UIUnitTest {
         rootElement.appendChild(otherField.getElement());
 
         Assertions.assertIterableEquals(List.of(targetField, otherField),
-                $(GeneratedVaadinTextField.class).withValue(null).all());
+                $(InternalFieldBase.class).withValue(null).all());
     }
 
     @Test
