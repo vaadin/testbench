@@ -9,6 +9,7 @@
 package com.vaadin.testbench.unit;
 
 import com.vaadin.flow.internal.UsageStatistics;
+import com.vaadin.testbench.TestBenchVersion;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.TestRule;
@@ -72,7 +73,7 @@ public abstract class UIUnit4Test extends BaseUIUnitTest
         implements TesterWrappers {
 
     static {
-        UsageStatistics.markAsUsed("testbench/UIUnit4Test", null);
+        UsageStatistics.markAsUsed("testbench/UIUnit4Test", TestBenchVersion.testbenchVersion);
     }
 
     /**

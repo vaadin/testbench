@@ -11,6 +11,7 @@ package com.vaadin.testbench.unit;
 import java.util.Set;
 
 import com.vaadin.flow.internal.UsageStatistics;
+import com.vaadin.testbench.TestBenchVersion;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,7 +60,7 @@ import com.vaadin.testbench.unit.mocks.SpringSecurityRequestCustomizer;
 public abstract class SpringUIUnitTest extends UIUnitTest {
 
     static {
-        UsageStatistics.markAsUsed("testbench/SpringUIUnitTest", null);
+        UsageStatistics.markAsUsed("testbench/SpringUIUnitTest", TestBenchVersion.testbenchVersion);
     }
 
     @Autowired

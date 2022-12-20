@@ -35,7 +35,7 @@ public abstract class TestBenchTestCase
         implements HasDriver, HasTestBenchCommandExecutor, HasElementQuery {
 
     static {
-        UsageStatistics.markAsUsed("testbench/TestBenchTestCase", null);
+        UsageStatistics.markAsUsed("testbench/TestBenchTestCase", TestBenchVersion.testbenchVersion);
     }
 
     /**
