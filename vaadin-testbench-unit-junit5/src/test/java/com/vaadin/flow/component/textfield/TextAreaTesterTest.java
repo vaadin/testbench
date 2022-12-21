@@ -126,7 +126,7 @@ class TextAreaWrapTest extends UIUnitTest {
     @Test
     public void textAreaWithRequired_valueIsChecked() {
         TextArea tf = view.textArea;
-        tf.setRequired(true);
+        tf.setRequiredIndicatorVisible(true);
 
         final TextAreaTester<TextArea> ta_ = test(tf);
         ta_.setValue("value1"); // must be value changed to trigger required

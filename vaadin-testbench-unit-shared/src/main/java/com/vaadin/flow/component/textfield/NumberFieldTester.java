@@ -56,7 +56,7 @@ public class NumberFieldTester<T extends AbstractNumberField<T, V>, V extends Nu
     }
 
     private boolean isValid(V value) {
-        final boolean isRequiredButEmpty = getComponent().isRequiredBoolean()
+        final boolean isRequiredButEmpty = getComponent().isRequired()
                 && Objects.equals(getComponent().getEmptyValue(), value);
         final boolean isGreaterThanMax = value != null
                 && value.doubleValue() > getComponent().getMaxDouble();
