@@ -24,7 +24,7 @@ import com.vaadin.testbench.unit.Tests;
  */
 @Tests({ TextField.class, PasswordField.class, EmailField.class,
         BigDecimalField.class })
-public class TextFieldTester<T extends GeneratedVaadinTextField<T, V>, V>
+public class TextFieldTester<T extends InternalFieldBase<T, V>, V>
         extends ComponentTester<T> {
 
     /**
@@ -39,6 +39,9 @@ public class TextFieldTester<T extends GeneratedVaadinTextField<T, V>, V>
 
     /**
      * Set the value to the component if it is usable.
+     *
+     * For a non interactable component an IllegalStateException will be thrown
+     * as the end user would not be able to set a value.
      *
      * @param value
      *            value to set

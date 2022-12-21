@@ -34,6 +34,9 @@ public class TextAreaTester<T extends TextArea> extends ComponentTester<T> {
     /**
      * Set the value to the component if it is usable.
      *
+     * For a non interactable component an IllegalStateException will be thrown
+     * as the end user would not be able to set a value.
+     *
      * @param value
      *            value to set
      */
