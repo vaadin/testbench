@@ -59,7 +59,8 @@ import com.vaadin.testbench.unit.mocks.SpringSecurityRequestCustomizer;
 public abstract class SpringUIUnit4Test extends UIUnit4Test {
 
     static {
-        UsageStatistics.markAsUsed("testbench/SpringUIUnit4Test", TestBenchVersion.testbenchVersion);
+        UsageStatistics.markAsUsed("testbench/SpringUIUnit4Test",
+                BaseUIUnitTest.testbenchVersion);
     }
 
     @Autowired

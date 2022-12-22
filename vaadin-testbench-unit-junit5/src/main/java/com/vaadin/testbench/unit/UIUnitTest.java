@@ -76,7 +76,8 @@ public abstract class UIUnitTest extends BaseUIUnitTest
         implements TesterWrappers {
 
     static {
-        UsageStatistics.markAsUsed("testbench/UIUnitTest", TestBenchVersion.testbenchVersion);
+        UsageStatistics.markAsUsed("testbench/UIUnitTest",
+                BaseUIUnitTest.testbenchVersion);
     }
 
     @BeforeEach

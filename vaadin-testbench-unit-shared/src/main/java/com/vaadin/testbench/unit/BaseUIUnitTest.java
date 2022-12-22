@@ -25,8 +25,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.googlecode.gentyref.GenericTypeReflector;
-import com.vaadin.flow.internal.UsageStatistics;
-import com.vaadin.testbench.TestBenchVersion;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfoList;
 import io.github.classgraph.ScanResult;
@@ -37,6 +35,7 @@ import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.KeyModifier;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.internal.UsageStatistics;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.RouteParameters;
 import com.vaadin.pro.licensechecker.LicenseChecker;
@@ -62,14 +61,11 @@ import com.vaadin.testbench.unit.mocks.MockedUI;
  */
 abstract class BaseUIUnitTest {
 
-    static {
-        UsageStatistics.markAsUsed("testbench/BaseUIUnitTest", TestBenchVersion.testbenchVersion);
-    }
-
     private static final ConcurrentHashMap<String, Routes> routesCache = new ConcurrentHashMap<>();
-
     protected static final Map<Class<?>, Class<? extends ComponentTester>> testers = new HashMap<>();
     protected static final Set<String> scanned = new HashSet<>();
+
+    static final String testbenchVersion;
 
     static {
         testers.putAll(scanForTesters("com.vaadin.flow.component"));
@@ -83,8 +79,11 @@ abstract class BaseUIUnitTest {
             throw new ExceptionInInitializerError(e);
         }
 
+        testbenchVersion = properties.getProperty("testbench.version");
+        UsageStatistics.markAsUsed("testbench/BaseUIUnitTest",
+                testbenchVersion);
         LicenseChecker.checkLicenseFromStaticBlock("vaadin-testbench",
-                properties.getProperty("testbench.version"), null);
+                testbenchVersion, null);
     }
 
     private static Map<Class<?>, Class<? extends ComponentTester>> scanForTesters(
