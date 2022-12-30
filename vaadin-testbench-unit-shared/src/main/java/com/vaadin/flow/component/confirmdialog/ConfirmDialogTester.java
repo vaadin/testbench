@@ -54,8 +54,8 @@ public class ConfirmDialogTester extends ComponentTester<ConfirmDialog> {
      */
     public void cancel() {
         ensureComponentIsUsable();
-        if (!Boolean.parseBoolean(
-                getComponent().getElement().getProperty("cancel"))) {
+        if (!Boolean.parseBoolean(getComponent().getElement()
+                .getProperty("cancelButtonVisible"))) {
             throw new IllegalStateException("Cancel button is not available.");
         }
         ComponentUtil.fireEvent(getComponent(),
@@ -71,8 +71,8 @@ public class ConfirmDialogTester extends ComponentTester<ConfirmDialog> {
      */
     public void reject() {
         ensureComponentIsUsable();
-        if (!Boolean.parseBoolean(
-                getComponent().getElement().getProperty("reject"))) {
+        if (!Boolean.parseBoolean(getComponent().getElement()
+                .getProperty("rejectButtonVisible"))) {
             throw new IllegalStateException("Reject button is not available.");
         }
         ComponentUtil.fireEvent(getComponent(),
