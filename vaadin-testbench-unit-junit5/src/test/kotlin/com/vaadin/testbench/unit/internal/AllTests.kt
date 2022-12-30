@@ -13,6 +13,7 @@ import com.github.mvysny.dynatest.DynaTest
 import java.net.URL
 import java.util.*
 import kotlin.test.expect
+import com.vaadin.flow.component.button.Button
 
 class AllTests : DynaTest({
 
@@ -68,6 +69,10 @@ class AllTests : DynaTest({
     }
     group("shortcuts") {
         shortcutsTestBatch()
+    }
+
+    test("Component.isTemplate does not fail without polymer templates dependency") {
+        expect(false) { Button("foo").isTemplate }
     }
 
 

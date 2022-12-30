@@ -14,11 +14,9 @@ package com.vaadin.testbench.unit.internal
 import java.util.function.Predicate
 import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.HasStyle
-import com.vaadin.flow.component.HasTheme
 import com.vaadin.flow.component.HasValue
 import com.vaadin.flow.component.UI
 import com.vaadin.flow.component.dialog.Dialog
-import com.vaadin.flow.component.polymertemplate.PolymerTemplate
 import com.vaadin.flow.router.InternalServerError
 
 /**
@@ -190,7 +188,7 @@ fun <T: Component> Component._find(clazz: Class<T>, block: SearchSpec<T>.()->Uni
         // if there's a PolymerTemplate, warn that UI Unit Testing can't really locate components in there:
         // https://github.com/mvysny/karibu-testing/tree/master/karibu-testing-v10#polymer-templates
         // fixes https://github.com/mvysny/karibu-testing/issues/35
-        val hasPolymerTemplates: Boolean = _walkAll().any { it is PolymerTemplate<*> }
+        val hasPolymerTemplates: Boolean = hasPolymerTemplates() && _walkAll().any { isPolymerTemplate(it) }
         if (hasPolymerTemplates) {
             message = "$message\nWarning: UI Unit Testing is not able to look up components from inside of PolymerTemplate. Please see https://github.com/mvysny/karibu-testing/tree/master/karibu-testing-v10#polymer-templates for more details."
         }
