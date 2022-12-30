@@ -390,3 +390,8 @@ internal fun HasElement.setChildComponentToSlot(slotName: String, component: Com
         element.appendChild(component.element)
     }
 }
+
+internal fun isPolymerTemplate(component: Component): Boolean {
+    return polymerTemplateClass != null
+            && polymerTemplateClass.isAssignableFrom(component.javaClass);
+}

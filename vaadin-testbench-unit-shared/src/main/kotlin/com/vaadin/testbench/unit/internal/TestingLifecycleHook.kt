@@ -9,14 +9,14 @@
  */
 package com.vaadin.testbench.unit.internal
 
+import java.lang.reflect.Method
 import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.UI
 import com.vaadin.flow.component.contextmenu.MenuItemBase
 import com.vaadin.flow.component.dialog.Dialog
 import com.vaadin.flow.component.grid.Grid
+import com.vaadin.flow.component.littemplate.LitTemplate
 import com.vaadin.flow.component.menubar.MenuBar
-import com.vaadin.flow.component.polymertemplate.PolymerTemplate
-import java.lang.reflect.Method
 
 /**
  * If you need to hook into the testing lifecycle (e.g. you need to wait for any async operations to finish),
@@ -80,11 +80,13 @@ interface TestingLifecycleHook {
             // also include component.children: https://github.com/mvysny/karibu-testing/issues/76
             (component.children.toList() + component.subMenu.items).distinct()
         }
+
         component is MenuBar -> {
             // don't include virtual children since that would make the MenuItems appear two times.
             component.children.toList()
         }
-        component is PolymerTemplate<*> -> {
+
+        component.isTemplate -> {
             // don't include virtual children since those will include nested components.
             // however, those components are only they are only "shallow shells" of components constructed
             // server-side - almost none of their properties are transferred to the server-side.
@@ -93,11 +95,13 @@ interface TestingLifecycleHook {
             // See https://github.com/mvysny/karibu-testing/tree/master/karibu-testing-v10#polymer-templates--lit-templates
             component.children.toList()
         }
+
         component.javaClass.name == "com.vaadin.flow.component.grid.ColumnGroup" -> {
             // don't include virtual children since that would include the header/footer components
             // which would clash with Grid.Column later on
             component.children.toList()
         }
+
         component is Grid.Column<*> -> {
             // don't include virtual children since that would include the header/footer components
             // which would clash with Grid.Column later on
@@ -108,13 +112,18 @@ interface TestingLifecycleHook {
         else -> (component.children.toList() + component._getVirtualChildren()).distinct()
     }
 
+
     companion object {
         /**
          * A default lifecycle hook that simply runs default implementations of the hook functions.
          */
-        val default: TestingLifecycleHook get() = object : TestingLifecycleHook {}
+        val default: TestingLifecycleHook
+            get() = object : TestingLifecycleHook {}
     }
 }
+
+val Component.isTemplate: Boolean
+    get() = this is LitTemplate || isPolymerTemplate(this)
 
 /**
  * If you need to hook into the testing lifecycle (e.g. you need to wait for any async operations to finish),
@@ -125,9 +134,11 @@ var testingLifecycleHook: TestingLifecycleHook = TestingLifecycleHook.default
 
 private val _ConfirmDialog_Class: Class<*>? = try {
     Class.forName("com.vaadin.flow.component.confirmdialog.ConfirmDialog")
-} catch (e: ClassNotFoundException) { null }
+} catch (e: ClassNotFoundException) {
+    null
+}
 private val _ConfirmDialog_isOpened: Method? =
-        _ConfirmDialog_Class?.getMethod("isOpened")
+    _ConfirmDialog_Class?.getMethod("isOpened")
 
 /**
  * Checks whether given [component] is a dialog and needs to be removed from the UI.
@@ -138,7 +149,10 @@ private fun isDialogAndNeedsRemoval(component: Component): Boolean {
         return true
     }
     // also support ConfirmDialog. But be careful - this is a Pro component and may not be on classpath.
-    if (_ConfirmDialog_Class != null && _ConfirmDialog_isOpened != null && _ConfirmDialog_Class.isInstance(component) && !(_ConfirmDialog_isOpened.invoke(component) as Boolean)) {
+    if (_ConfirmDialog_Class != null && _ConfirmDialog_isOpened != null && _ConfirmDialog_Class.isInstance(
+            component
+        ) && !(_ConfirmDialog_isOpened.invoke(component) as Boolean)
+    ) {
         return true
     }
     return false
@@ -154,6 +168,6 @@ fun cleanupDialogs() {
     // modal dialog within the UI. This is probably related to the "server-side
     // modality curtain" feature. Also see https://github.com/mvysny/karibu-testing/issues/102
     UI.getCurrent().walk()
-            .filter { isDialogAndNeedsRemoval(it) }
-            .forEach { it.element.removeFromParent() }
+        .filter { isDialogAndNeedsRemoval(it) }
+        .forEach { it.element.removeFromParent() }
 }
