@@ -174,3 +174,13 @@ val Servlet.isInitialized: Boolean get() = servletConfig != null
 
 internal fun Class<*>.hasCustomToString(): Boolean =
     getMethod("toString").declaringClass != java.lang.Object::class.java
+
+internal val polymerTemplateClass =
+    try {
+        Class.forName("com.vaadin.flow.component.polymertemplate.PolymerTemplate")
+    } catch (ex: ClassNotFoundException) {
+        null
+    }
+
+internal fun hasPolymerTemplates() : Boolean = polymerTemplateClass != null
+
