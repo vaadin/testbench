@@ -4,7 +4,6 @@ import com.vaadin.flow.component.Component
 import com.vaadin.flow.data.renderer.BasicRenderer
 import com.vaadin.flow.data.renderer.ComponentRenderer
 import com.vaadin.flow.data.renderer.Renderer
-import com.vaadin.flow.data.renderer.TemplateRenderer
 import com.vaadin.flow.data.renderer.TextRenderer
 import com.vaadin.flow.function.ValueProvider
 import org.jsoup.Jsoup
@@ -23,10 +22,6 @@ private val _BasicRenderer_getFormattedValue: Method by lazy(LazyThreadSafetyMod
  * to the client-side output.
  */
 fun <T> Renderer<T>._getPresentationValue(rowObject: T): String? = when {
-    this is TemplateRenderer<T> -> {
-        val renderedTemplateHtml: String = this.renderTemplate(rowObject)
-        Jsoup.parse(renderedTemplateHtml).textRecursively
-    }
     this is BasicRenderer<T, *> -> {
         val value: Any? = this.valueProvider.apply(rowObject)
         _BasicRenderer_getFormattedValue.invoke(this, value) as String?
@@ -52,19 +47,6 @@ fun <T> Renderer<T>._getPresentationValue(rowObject: T): String? = when {
         Jsoup.parse(renderedLitTemplateHtml).textRecursively
     }
     else -> null
-}
-
-/**
- * Renders the template for given [item]
- */
-fun <T> TemplateRenderer<T>.renderTemplate(item: T): String {
-    var template: String = this.template
-    this.valueProviders.forEach { (k: String, v: ValueProvider<T, *>) ->
-        if (template.contains("[[item.$k]]")) {
-            template = template.replace("[[item.$k]]", v.apply(item).toString())
-        }
-    }
-    return template
 }
 
 fun <T> renderLitTemplate(template: String, valueProviders: Map<String, ValueProvider<T, *>>, item: T): String {
