@@ -8,6 +8,7 @@
  */
 package com.vaadin.flow.component.grid;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -555,23 +556,21 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
 
     private String getValueProviderString(int row, Grid.Column targetColumn)
             throws IllegalArgumentException {
-        final String columnId = getColumnInternalId(targetColumn);
-
-        final ValueProvider columnValueProvider = (ValueProvider) targetColumn
-                .getRenderer().getValueProviders().get(columnId);
-
-        return columnValueProvider.apply(getRow(row)).toString();
-    }
-
-    private String getColumnInternalId(Grid.Column targetColumn) {
         try {
-            final Method getInternalId = getMethod(Grid.Column.class,
-                    "getInternalId");
-            final String columnId = (String) getInternalId.invoke(targetColumn);
-            return columnId;
-        } catch (InvocationTargetException | IllegalAccessException e) {
-            throw new RuntimeException("Failed to get internal id for column",
-                    e);
+            ColumnPathRenderer renderer = (ColumnPathRenderer) targetColumn
+                    .getRenderer();
+
+            Field f = ColumnPathRenderer.class
+                    .getDeclaredField("valueProvider");
+            f.setAccessible(true);
+
+            final ValueProvider columnValueProvider = (ValueProvider) f
+                    .get(renderer);
+
+            return columnValueProvider.apply(getRow(row)).toString();
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new RuntimeException(
+                    "Failed to get value provider for column", e);
         }
     }
 

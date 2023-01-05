@@ -57,6 +57,7 @@ import com.vaadin.testbench.unit.internal.size
 import com.vaadin.testbench.unit.internal.template
 import com.vaadin.testbench.unit.internal.toPrettyString
 import java.lang.reflect.Method
+import java.lang.reflect.Field
 import java.util.stream.Stream
 import kotlin.reflect.KProperty1
 import kotlin.streams.toList
@@ -382,8 +383,7 @@ public fun <T : Any> Grid<T>._getFormattedRowOrNull(rowIndex: Int): List<String>
 public fun <T : Any> Grid.Column<T>.getPresentationValue(rowObject: T): Any? {
     val renderer: Renderer<T> = this.renderer
     if (renderer is ColumnPathRenderer) {
-        val valueProviders: MutableMap<String, ValueProvider<T, *>> = renderer.valueProviders
-        val valueProvider: ValueProvider<T, *> = valueProviders[_internalId]
+        val valueProvider: ValueProvider<T, *> = renderer.provider
                 ?: return null
         val value: Any? = valueProvider.apply(rowObject)
         return value.toString()
@@ -488,6 +488,15 @@ private val _AbstractCell_getColumn: Method by lazy(LazyThreadSafetyMode.PUBLICA
     val m: Method = abstractCellClass.getDeclaredMethod("getColumn")
     m.isAccessible = true
     m
+}
+
+internal val <T> ColumnPathRenderer<T>.provider: ValueProvider<T, *>
+    get() = _ColumnPathRenderer_provider.get(this) as (ValueProvider<T,*>)
+
+private val _ColumnPathRenderer_provider: Field by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    val f: Field = Class.forName("com.vaadin.flow.component.grid.ColumnPathRenderer").getDeclaredField("provider")
+    f.isAccessible = true
+    f
 }
 
 /**
