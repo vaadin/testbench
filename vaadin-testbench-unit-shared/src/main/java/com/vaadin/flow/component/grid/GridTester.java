@@ -561,7 +561,7 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
                     .getRenderer();
 
             Field f = ColumnPathRenderer.class
-                    .getDeclaredField("valueProvider");
+                    .getDeclaredField("provider");
             f.setAccessible(true);
 
             final ValueProvider columnValueProvider = (ValueProvider) f
