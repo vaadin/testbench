@@ -50,7 +50,7 @@ public class NotificationTester<T extends Notification>
      */
     public String getText() {
         ensureComponentIsUsable();
-        return getComponent().getElement().getChild(0).getProperty("innerHTML");
+        return getComponent().getElement().getProperty("text");
     }
 
     /**
