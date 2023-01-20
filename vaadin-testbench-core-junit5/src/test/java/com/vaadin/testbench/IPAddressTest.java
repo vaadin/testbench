@@ -19,9 +19,10 @@ public class IPAddressTest {
         // address...
         try {
             String address = IPAddress.findSiteLocalAddress();
-            Assertions.assertTrue(
-                    address.startsWith("10.") || address.startsWith("172.16.")
-                            || address.startsWith("192.168."));
+            Assertions.assertTrue(address.startsWith("10.")
+                    // 172.16.0.0/12 IP addresses: 172.16.0.0 – 172.31.255.255
+                    || address.matches("172\\.(1[6-9]|2[0-9]|3[0-1])\\..*")
+                    || address.startsWith("192.168."));
         } catch (RuntimeException e) {
             Assertions.assertEquals(
                     "No compatible (10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16) IP address found.",
