@@ -27,7 +27,7 @@ public class SVGView extends Div {
                         + "  <circle id='ball' cx=\"50\" cy=\"50\" r=\"40\" stroke=\"black\" stroke-width=\"3\" fill=\"red\" />\n"
                         + "  Sorry, your browser does not support inline SVG."
                         + "</svg>");
-        attachEvent.getUI().getPage().executeJavaScript(
+        attachEvent.getUI().getPage().executeJs(
                 "document.getElementById('ball').addEventListener('click', function() {document.body.innerText='clicked';})");
     }
 }
