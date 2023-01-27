@@ -59,6 +59,7 @@ import com.vaadin.testbench.unit.internal.toPrettyString
 import java.lang.reflect.Method
 import java.lang.reflect.Field
 import java.util.stream.Stream
+import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
 import kotlin.streams.toList
 
@@ -767,9 +768,9 @@ public val Component.dataProvider: DataProvider<*, *>? get() = when (this) {
     // until https://github.com/vaadin/flow/issues/6296 is resolved
     is Grid<*> -> this.dataProvider
     is Select<*> -> this.dataProvider
-    is ListBoxBase<*, *, *> -> this.getDataProvider()
-    is RadioButtonGroup<*> -> this.dataProvider
-    is CheckboxGroup<*> -> this.dataProvider
+    is ListBoxBase<*, *, *> -> _Grid_getDataProvider.invoke(this) as DataProvider<*, *>
+    is RadioButtonGroup<*> -> _RadioButtonGroup_getDataProvider.invoke(this) as DataProvider<*, *>
+    is CheckboxGroup<*> -> _CheckboxGroup_getDataProvider.invoke(this) as DataProvider<*, *>
     is ComboBox<*> -> this.dataProvider
     else -> null
 }
@@ -825,3 +826,11 @@ public fun <T> Grid<T>._selectAll() {
  */
 public val Grid.Column<*>._internalId: String
     get() = _Column_getInternalId.invoke(this) as String
+
+
+private val _Grid_getDataProvider: Method =
+    Grid::class.java.getDeclaredMethod("getDataProvider").apply { isAccessible = true }
+private val _CheckboxGroup_getDataProvider: Method =
+    CheckboxGroup::class.java.getDeclaredMethod("getDataProvider").apply { isAccessible = true }
+private val _RadioButtonGroup_getDataProvider: Method =
+    RadioButtonGroup::class.java.getDeclaredMethod("getDataProvider").apply { isAccessible = true }
