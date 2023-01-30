@@ -41,6 +41,7 @@ import com.vaadin.flow.data.provider.DataProvider
 import com.vaadin.flow.dom.DomEventListener
 import com.vaadin.flow.dom.DomListenerRegistration
 import com.vaadin.flow.router.Location
+import com.vaadin.testbench.unit.component.dataProvider
 
 /**
  * Fires given event on the component.
@@ -151,9 +152,9 @@ val Component.dataProvider: DataProvider<*, *>? get() = when (this) {
     is HasDataProvider<*> -> this.dataProvider
     is Grid<*> -> this.dataProvider
     is Select<*> -> this.dataProvider
-    is ListBoxBase<*, *, *> -> this.getDataProvider()
-    is RadioButtonGroup<*> -> this.dataProvider
-    is CheckboxGroup<*> -> this.dataProvider
+    is ListBoxBase<*, *, *> -> _Grid_getDataProvider.invoke(this) as DataProvider<*, *>
+    is RadioButtonGroup<*> -> _RadioButtonGroup_getDataProvider.invoke(this) as DataProvider<*, *>
+    is CheckboxGroup<*> -> _CheckboxGroup_getDataProvider.invoke(this) as DataProvider<*, *>
     is ComboBox<*> -> this.dataProvider
     else -> null
 }
@@ -395,3 +396,10 @@ internal fun isPolymerTemplate(component: Component): Boolean {
     return polymerTemplateClass != null
             && polymerTemplateClass.isAssignableFrom(component.javaClass);
 }
+
+private val _Grid_getDataProvider: Method =
+    Grid::class.java.getDeclaredMethod("getDataProvider").apply { isAccessible = true }
+private val _CheckboxGroup_getDataProvider: Method =
+    CheckboxGroup::class.java.getDeclaredMethod("getDataProvider").apply { isAccessible = true }
+private val _RadioButtonGroup_getDataProvider: Method =
+    RadioButtonGroup::class.java.getDeclaredMethod("getDataProvider").apply { isAccessible = true }
