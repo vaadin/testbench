@@ -24,7 +24,7 @@ import com.vaadin.testbench.unit.Tests;
  */
 @Tests({ TextField.class, PasswordField.class, EmailField.class,
         BigDecimalField.class })
-public class TextFieldTester<T extends InternalFieldBase<T, V>, V>
+public class TextFieldTester<T extends TextFieldBase<T, V>, V>
         extends ComponentTester<T> {
 
     /**
