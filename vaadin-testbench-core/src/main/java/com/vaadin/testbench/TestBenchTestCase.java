@@ -33,6 +33,10 @@ import com.vaadin.testbench.commands.TestBenchCommands;
 public abstract class TestBenchTestCase
         implements HasDriver, HasTestBenchCommandExecutor, HasElementQuery {
 
+    static {
+        TestBench.ensureLoaded();
+    }
+
     /**
      * Specifies retry count, which is used to run same test several times. Can
      * be changed by setting "com.vaadin.testbench.Parameters.maxAttempts"

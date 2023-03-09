@@ -47,6 +47,10 @@ import com.vaadin.testbench.parallel.setup.SetupDriver;
 public class BrowserExtension implements Extension, BeforeEachCallback,
         ExecutionCondition, HasDriver, ParameterResolver {
 
+    static {
+        TestBench.ensureLoaded();
+    }
+
     private static Logger getLogger() {
         return LoggerFactory.getLogger(BrowserExtension.class);
     }
