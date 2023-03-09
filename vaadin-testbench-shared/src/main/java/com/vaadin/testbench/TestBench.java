@@ -86,6 +86,8 @@ public class TestBench {
     static {
         LicenseChecker.checkLicenseFromStaticBlock("vaadin-testbench",
                 TestBenchVersion.testbenchVersion, null);
+        // Enable the Java 11+ HTTP client
+        System.setProperty("webdriver.http.factory", "jdk-http-client");
     }
 
     public static TestBenchDriverProxy createDriver(WebDriver driver) {
