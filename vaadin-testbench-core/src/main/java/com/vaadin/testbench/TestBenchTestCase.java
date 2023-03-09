@@ -38,6 +38,8 @@ public abstract class TestBenchTestCase
 
     public static final String testbenchVersion;
     static {
+        TestBench.ensureLoaded();
+
         Properties properties = new Properties();
         try {
             properties.load(TestBenchTestCase.class
