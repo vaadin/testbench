@@ -30,6 +30,13 @@ import com.vaadin.testbench.screenshot.ReferenceNameGenerator;
  */
 public class TestBench {
 
+    static {
+        LicenseChecker.checkLicenseFromStaticBlock("vaadin-testbench",
+                TestBenchVersion.testbenchVersion, null);
+        // Enable the Java 11+ HTTP client
+        System.setProperty("webdriver.http.factory", "jdk-http-client");
+    }
+
     private static final Map<Class<?>, MethodFilter> methodFilters = new ConcurrentHashMap<>();
 
     private static final class ElementMethodFilter implements MethodFilter {
@@ -83,11 +90,9 @@ public class TestBench {
 
     }
 
-    static {
-        LicenseChecker.checkLicenseFromStaticBlock("vaadin-testbench",
-                TestBenchVersion.testbenchVersion, null);
-        // Enable the Java 11+ HTTP client
-        System.setProperty("webdriver.http.factory", "jdk-http-client");
+    public static void ensureLoaded() {
+        // This just ensures that the static initializers have been run so we
+        // can set global properties there for all tests
     }
 
     public static TestBenchDriverProxy createDriver(WebDriver driver) {
