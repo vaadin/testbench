@@ -74,7 +74,7 @@ public class LocalDriver {
             // --ignore-certifcate-errors".
             // #14319
             ChromeOptions options = new ChromeOptions();
-            options.addArguments("--test-type ");
+            options.addArguments("--test-type ", "--remote-allow-origins=*");
             options.setHeadless(Parameters.isHeadless());
             driver = new ChromeDriver(options);
         } else if (BrowserUtil.isSafari(desiredCapabilities)) {
