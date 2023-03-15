@@ -45,13 +45,9 @@ private class MockFilterJsonObject(val key: Key, val modifiers: Set<Key>) : JreJ
         InstantiationException::class,
         IllegalAccessException::class
     )
-    public fun getHashableKey(keyModifier: Key): Any? {
-        val nestedClass = Class.forName(
-            "com.vaadin.flow.component.ShortcutRegistration\$HashableKey"
-        )
-        val ctor = nestedClass.declaredConstructors[0]
-        ctor.isAccessible = true
-        return ctor.newInstance(keyModifier)
+
+    private fun getHashableKey(keyModifier: Key): Any? {
+        return chashableKey.newInstance(keyModifier)
     }
 
     override fun hasKey(key: String): Boolean {
@@ -85,9 +81,13 @@ private class MockFilterJsonObject(val key: Key, val modifiers: Set<Key>) : JreJ
     companion object {
         private val mgenerateEventKeyFilter = ShortcutRegistration::class.java.getDeclaredMethod("generateEventKeyFilter", Key::class.java)
         private val mgenerateEventModifierFilter = ShortcutRegistration::class.java.getDeclaredMethod("generateEventModifierFilter", Collection::class.java)
+        private val chashableKey =  Class.forName(
+            "com.vaadin.flow.component.ShortcutRegistration\$HashableKey"
+        ).declaredConstructors[0]
         init {
             mgenerateEventKeyFilter.isAccessible = true
             mgenerateEventModifierFilter.isAccessible = true
+            chashableKey.isAccessible = true
         }
     }
 }
