@@ -6,6 +6,7 @@ import com.vaadin.flow.component.KeyModifier
 import com.vaadin.flow.component.ShortcutRegistration
 import elemental.json.impl.JreJsonFactory
 import elemental.json.impl.JreJsonObject
+import java.lang.reflect.InvocationTargetException
 
 /**
  * Take a look at `DomEventListenerWrapper.matchesFilter()` to see why this is necessary.
@@ -62,6 +63,34 @@ private class MockFilterJsonObject(val key: Key, val modifiers: Set<KeyModifier>
 }
 
 /**
+ * This method is used to get the HashableKey object from the
+ * ShortcutRegistration class. This is needed because the HashableKey class
+ * is private, and we need to create an instance of it to test the
+ * generateEventModifierFilter method.
+ *
+ * @param keyModifier
+ * @return
+ * @throws ClassNotFoundException
+ * @throws InvocationTargetException
+ * @throws InstantiationException
+ * @throws IllegalAccessException
+ */
+@Throws(
+    ClassNotFoundException::class,
+    InvocationTargetException::class,
+    InstantiationException::class,
+    IllegalAccessException::class
+)
+public fun getHashableKey(keyModifier: Key): Any? {
+    val nestedClass = Class.forName(
+        "com.vaadin.flow.component.ShortcutRegistration\$HashableKey"
+    )
+    val ctor = nestedClass.declaredConstructors[0]
+    ctor.isAccessible = true
+    return ctor.newInstance(keyModifier)
+}
+
+/**
  * Fires a shortcut event with given [key] and [modifiers] in the current UI.
  * This will in turn notify all components currently attached to the current UI
  * which subscribed for this exact key combination.
@@ -86,8 +115,13 @@ public fun Component._fireShortcut(key: Key, vararg modifiers: Key) {
     // contains a boolean value with key 'filter'. We need to fake the json object
     // as if it contained all filters (otherwise `matchesFilter()` would NPE on missing key)
     // and respond true only to the matching filter.
+
+    // we need to use hashableKeys not simple keys, as this is the implementation used in ShortcutRegistration
+    // class.
+    val hashableKeys = modifiers.map { getHashableKey(it) }
+
     @Suppress("UNCHECKED_CAST")
-    val data = MockFilterJsonObject(key, modifiers.toSet() as Set<KeyModifier>)
+    val data = MockFilterJsonObject(key, hashableKeys.toSet() as Set<KeyModifier>)
 
     // the shortcut registration is only updated in [UI.beforeClientResponse]; run the registration code now.
     MockVaadin.clientRoundtrip()
