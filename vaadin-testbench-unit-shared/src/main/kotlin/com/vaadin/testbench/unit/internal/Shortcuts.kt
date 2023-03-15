@@ -5,7 +5,6 @@ import com.vaadin.flow.component.Key
 import com.vaadin.flow.component.ShortcutRegistration
 import elemental.json.impl.JreJsonFactory
 import elemental.json.impl.JreJsonObject
-import java.lang.reflect.InvocationTargetException
 
 /**
  * Take a look at `DomEventListenerWrapper.matchesFilter()` to see why this is necessary.
@@ -27,25 +26,11 @@ private class MockFilterJsonObject(val key: Key, val modifiers: Set<Key>) : JreJ
     }
 
     /**
-     * This method is used to get the HashableKey object from the
-     * ShortcutRegistration class. This is needed because the HashableKey class
-     * is private, and we need to create an instance of it to test the
-     * generateEventModifierFilter method.
+     * Returns a HashableKey instance for the given key modifier.
+     * @param keyModifier the key modifier
+     * @return the HashableKey instance
      *
-     * @param keyModifier
-     * @return
-     * @throws ClassNotFoundException
-     * @throws InvocationTargetException
-     * @throws InstantiationException
-     * @throws IllegalAccessException
-     */
-    @Throws(
-        ClassNotFoundException::class,
-        InvocationTargetException::class,
-        InstantiationException::class,
-        IllegalAccessException::class
-    )
-
+      */
     private fun getHashableKey(keyModifier: Key): Any? {
         return chashableKey.newInstance(keyModifier)
     }
