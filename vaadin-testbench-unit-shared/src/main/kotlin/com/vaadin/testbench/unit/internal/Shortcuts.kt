@@ -2,7 +2,6 @@ package com.vaadin.testbench.unit.internal
 
 import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.Key
-import com.vaadin.flow.component.KeyModifier
 import com.vaadin.flow.component.ShortcutRegistration
 import elemental.json.impl.JreJsonFactory
 import elemental.json.impl.JreJsonObject
@@ -25,6 +24,34 @@ private class MockFilterJsonObject(val key: Key, val modifiers: Set<Key>) : JreJ
 
         // populate the json object so that KeyDownEvent can be created from it
         put("event.key", key.keys.first())
+    }
+
+    /**
+     * This method is used to get the HashableKey object from the
+     * ShortcutRegistration class. This is needed because the HashableKey class
+     * is private, and we need to create an instance of it to test the
+     * generateEventModifierFilter method.
+     *
+     * @param keyModifier
+     * @return
+     * @throws ClassNotFoundException
+     * @throws InvocationTargetException
+     * @throws InstantiationException
+     * @throws IllegalAccessException
+     */
+    @Throws(
+        ClassNotFoundException::class,
+        InvocationTargetException::class,
+        InstantiationException::class,
+        IllegalAccessException::class
+    )
+    public fun getHashableKey(keyModifier: Key): Any? {
+        val nestedClass = Class.forName(
+            "com.vaadin.flow.component.ShortcutRegistration\$HashableKey"
+        )
+        val ctor = nestedClass.declaredConstructors[0]
+        ctor.isAccessible = true
+        return ctor.newInstance(keyModifier)
     }
 
     override fun hasKey(key: String): Boolean {
@@ -63,34 +90,6 @@ private class MockFilterJsonObject(val key: Key, val modifiers: Set<Key>) : JreJ
             mgenerateEventModifierFilter.isAccessible = true
         }
     }
-}
-
-/**
- * This method is used to get the HashableKey object from the
- * ShortcutRegistration class. This is needed because the HashableKey class
- * is private, and we need to create an instance of it to test the
- * generateEventModifierFilter method.
- *
- * @param keyModifier
- * @return
- * @throws ClassNotFoundException
- * @throws InvocationTargetException
- * @throws InstantiationException
- * @throws IllegalAccessException
- */
-@Throws(
-    ClassNotFoundException::class,
-    InvocationTargetException::class,
-    InstantiationException::class,
-    IllegalAccessException::class
-)
-public fun getHashableKey(keyModifier: Key): Any? {
-    val nestedClass = Class.forName(
-        "com.vaadin.flow.component.ShortcutRegistration\$HashableKey"
-    )
-    val ctor = nestedClass.declaredConstructors[0]
-    ctor.isAccessible = true
-    return ctor.newInstance(keyModifier)
 }
 
 /**
