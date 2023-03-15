@@ -13,12 +13,15 @@ import java.lang.reflect.InvocationTargetException
  * If this stuff stops working, place a breakpoint into the [getBoolean]/[hasKey] function,
  * to see what kind of keys you're receiving and whether it matches [filter].
  */
-private class MockFilterJsonObject(val key: Key, val modifiers: Set<KeyModifier>) : JreJsonObject(JreJsonFactory()) {
+private class MockFilterJsonObject(val key: Key, val modifiers: Set<Key>) : JreJsonObject(JreJsonFactory()) {
     val filter: String
     init {
+
         // compute the filter
         filter = mgenerateEventKeyFilter.invoke(null, key).toString() + " && " +
-                mgenerateEventModifierFilter.invoke(null, modifiers).toString()
+                // we call the private method with Hashable keys implementations as the ShortcutRegistration class is
+                // called by these objects/classes in regular cases.
+                mgenerateEventModifierFilter.invoke(null, modifiers.map { getHashableKey(it)}).toString()
 
         // populate the json object so that KeyDownEvent can be created from it
         put("event.key", key.keys.first())
@@ -115,13 +118,7 @@ public fun Component._fireShortcut(key: Key, vararg modifiers: Key) {
     // contains a boolean value with key 'filter'. We need to fake the json object
     // as if it contained all filters (otherwise `matchesFilter()` would NPE on missing key)
     // and respond true only to the matching filter.
-
-    // we need to use hashableKeys not simple keys, as this is the implementation used in ShortcutRegistration
-    // class.
-    val hashableKeys = modifiers.map { getHashableKey(it) }
-
-    @Suppress("UNCHECKED_CAST")
-    val data = MockFilterJsonObject(key, hashableKeys.toSet() as Set<KeyModifier>)
+    val data = MockFilterJsonObject(key, modifiers.toSet())
 
     // the shortcut registration is only updated in [UI.beforeClientResponse]; run the registration code now.
     MockVaadin.clientRoundtrip()
