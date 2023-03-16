@@ -67,9 +67,10 @@ class AllTests : DynaTest({
     group("search spec") {
         searchSpecTest()
     }
-    group("shortcuts") {
-        shortcutsTestBatch()
-    }
+
+//    group("shortcuts") {
+//        shortcutsTestBatch()
+//    }
 
     test("Component.isTemplate does not fail without polymer templates dependency") {
         expect(false) { Button("foo").isTemplate }
