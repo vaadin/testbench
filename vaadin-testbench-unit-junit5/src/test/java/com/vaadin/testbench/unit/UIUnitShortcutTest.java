@@ -11,7 +11,6 @@ package com.vaadin.testbench.unit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -28,7 +27,6 @@ import com.vaadin.flow.component.UI;
 @ExtendWith(TreeOnFailureExtension.class)
 class UIUnitShortcutTest extends UIUnitTest {
 
-    @Disabled
     @Test
     void fireShortcut_UIListener_invokedForExactMatch() {
         AtomicInteger eventsCounter = new AtomicInteger();
@@ -52,7 +50,6 @@ class UIUnitShortcutTest extends UIUnitTest {
         Assertions.assertEquals(2, eventsCounter.get());
     }
 
-    @Disabled
     @Test
     void fireShortcut_nestedComponents_listenersInvoked() {
         AtomicInteger buttonEvents = new AtomicInteger();
