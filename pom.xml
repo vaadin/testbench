@@ -42,7 +42,7 @@
         <slf4j.version>2.0.3</slf4j.version>
         <failsafe.version>3.0.0-M7</failsafe.version>
         <surefire.version>3.0.0-M7</surefire.version>
-        <currentYear>2022</currentYear>
+        <currentYear>2023</currentYear>
     </properties>
     <modules>
         <module>vaadin-testbench-bom</module>
