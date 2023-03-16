@@ -2,7 +2,6 @@ package com.vaadin.testbench.unit.internal
 
 import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.Key
-import com.vaadin.flow.component.KeyModifier
 import com.vaadin.flow.component.ShortcutRegistration
 import elemental.json.impl.JreJsonFactory
 import elemental.json.impl.JreJsonObject
@@ -12,15 +11,28 @@ import elemental.json.impl.JreJsonObject
  * If this stuff stops working, place a breakpoint into the [getBoolean]/[hasKey] function,
  * to see what kind of keys you're receiving and whether it matches [filter].
  */
-private class MockFilterJsonObject(val key: Key, val modifiers: Set<KeyModifier>) : JreJsonObject(JreJsonFactory()) {
+private class MockFilterJsonObject(val key: Key, val modifiers: Set<Key>) : JreJsonObject(JreJsonFactory()) {
     val filter: String
     init {
+
         // compute the filter
         filter = mgenerateEventKeyFilter.invoke(null, key).toString() + " && " +
-                mgenerateEventModifierFilter.invoke(null, modifiers).toString()
+                // we call the private method with Hashable keys implementations as the ShortcutRegistration class is
+                // called by these objects/classes in regular cases.
+                mgenerateEventModifierFilter.invoke(null, modifiers.map { getHashableKey(it)}).toString()
 
         // populate the json object so that KeyDownEvent can be created from it
         put("event.key", key.keys.first())
+    }
+
+    /**
+     * Returns a HashableKey instance for the given key modifier.
+     * @param keyModifier the key modifier
+     * @return the HashableKey instance
+     *
+      */
+    private fun getHashableKey(keyModifier: Key): Any? {
+        return chashableKey.newInstance(keyModifier)
     }
 
     override fun hasKey(key: String): Boolean {
@@ -54,9 +66,14 @@ private class MockFilterJsonObject(val key: Key, val modifiers: Set<KeyModifier>
     companion object {
         private val mgenerateEventKeyFilter = ShortcutRegistration::class.java.getDeclaredMethod("generateEventKeyFilter", Key::class.java)
         private val mgenerateEventModifierFilter = ShortcutRegistration::class.java.getDeclaredMethod("generateEventModifierFilter", Collection::class.java)
+        private val chashableKey = ShortcutRegistration::class.java
+            .classLoader
+            .loadClass("com.vaadin.flow.component.ShortcutRegistration\$HashableKey")
+            .declaredConstructors[0]
         init {
             mgenerateEventKeyFilter.isAccessible = true
             mgenerateEventModifierFilter.isAccessible = true
+            chashableKey.isAccessible = true
         }
     }
 }
@@ -86,8 +103,7 @@ public fun Component._fireShortcut(key: Key, vararg modifiers: Key) {
     // contains a boolean value with key 'filter'. We need to fake the json object
     // as if it contained all filters (otherwise `matchesFilter()` would NPE on missing key)
     // and respond true only to the matching filter.
-    @Suppress("UNCHECKED_CAST")
-    val data = MockFilterJsonObject(key, modifiers.toSet() as Set<KeyModifier>)
+    val data = MockFilterJsonObject(key, modifiers.toSet())
 
     // the shortcut registration is only updated in [UI.beforeClientResponse]; run the registration code now.
     MockVaadin.clientRoundtrip()
