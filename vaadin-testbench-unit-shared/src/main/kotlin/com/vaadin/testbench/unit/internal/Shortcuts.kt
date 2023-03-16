@@ -66,9 +66,10 @@ private class MockFilterJsonObject(val key: Key, val modifiers: Set<Key>) : JreJ
     companion object {
         private val mgenerateEventKeyFilter = ShortcutRegistration::class.java.getDeclaredMethod("generateEventKeyFilter", Key::class.java)
         private val mgenerateEventModifierFilter = ShortcutRegistration::class.java.getDeclaredMethod("generateEventModifierFilter", Collection::class.java)
-        private val chashableKey =  Class.forName(
-            "com.vaadin.flow.component.ShortcutRegistration\$HashableKey"
-        ).declaredConstructors[0]
+        private val chashableKey = ShortcutRegistration::class.java
+            .classLoader
+            .loadClass("com.vaadin.flow.component.ShortcutRegistration\$HashableKey")
+            .declaredConstructors[0]
         init {
             mgenerateEventKeyFilter.isAccessible = true
             mgenerateEventModifierFilter.isAccessible = true
