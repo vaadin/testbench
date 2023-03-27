@@ -75,7 +75,6 @@
         <dependency>
             <groupId>com.vaadin</groupId>
             <artifactId>license-checker</artifactId>
-            <version>${license.checker.version}</version>
         </dependency>
         <dependency>
             <groupId>com.vaadin</groupId>
