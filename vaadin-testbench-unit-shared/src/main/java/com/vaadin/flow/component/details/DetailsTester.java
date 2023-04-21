@@ -85,8 +85,6 @@ public class DetailsTester<T extends Details> extends ComponentTester<T> {
                     "Details are already " + (opened ? "open" : "close"));
         }
         component.setOpened(opened);
-        ComponentUtil.fireEvent(component,
-                new Details.OpenedChangeEvent(component, false));
     }
 
 }
