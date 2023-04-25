@@ -11,6 +11,7 @@ package com.vaadin.tests;
 import io.github.bonigarcia.seljup.DriverCapabilities;
 import io.github.bonigarcia.seljup.DriverUrl;
 import org.junit.jupiter.api.BeforeEach;
+import org.openqa.selenium.Platform;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
@@ -32,6 +33,7 @@ public abstract class AbstractSeleniumSauceTB9Test
     DesiredCapabilities capabilities = new DesiredCapabilities();
     {
         capabilities.merge(BrowserUtil.chrome());
+        capabilities.setPlatform(Platform.WIN10);
         SauceLabsIntegration.setDesiredCapabilities(capabilities);
     }
 
