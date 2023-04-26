@@ -386,7 +386,6 @@ public class ElementQuery<T extends TestBenchElement> {
                     + "}" //
                     + "var light = arguments[0].querySelectorAll(arguments[1]+arguments[2]);" //
                     + "result = result.concat(Array.prototype.slice.call(light));" //
-                    + CyclicObjectWorkaround.get("result") //
                     + "return result" //
             );
             elementContext = (TestBenchElement) getContext();
@@ -396,7 +395,6 @@ public class ElementQuery<T extends TestBenchElement> {
             script.append("var result = [];" //
                     + "const queryResult = document.querySelectorAll(arguments[1]+arguments[2]);"
                     + "result = result.concat(Array.prototype.slice.call(queryResult));"
-                    + CyclicObjectWorkaround.get("result") //
                     + "return result");
             elementContext = null;
             executor = (JavascriptExecutor) getContext();
