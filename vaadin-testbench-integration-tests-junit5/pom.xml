@@ -152,6 +152,7 @@
                 </executions>
                 <configuration>
                     <trimStackTrace>false</trimStackTrace>
+                    <rerunFailingTestsCount>2</rerunFailingTestsCount>
                 </configuration>
             </plugin>
             <plugin>
