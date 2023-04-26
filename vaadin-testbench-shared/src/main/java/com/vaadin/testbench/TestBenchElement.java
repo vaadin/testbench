@@ -645,7 +645,7 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
             }
         }
         return executeScript(
-                script + CyclicObjectWorkaround.get("value") + "return value;",
+                script + "return value;",
                 jsParameters);
     }
 
