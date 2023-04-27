@@ -18,7 +18,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.testUI.PageObjectView;
 
 @EnabledIf("isConfiguredForSauceLabs")
-public class ASeleniumHubPageObjectIT extends AbstractSeleniumSauceTB9Test {
+public class SeleniumHubPageObjectIT extends AbstractSeleniumSauceTB9Test {
 
     @Override
     protected Class<? extends Component> getTestView() {
