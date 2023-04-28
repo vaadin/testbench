@@ -14,8 +14,13 @@ import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Properties;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.testbench.AbstractBrowserDriverTestBase;
@@ -134,5 +139,26 @@ public abstract class AbstractTB9Test extends AbstractBrowserDriverTestBase {
 
     public static boolean isConfiguredForSauceLabs() {
         return SauceLabsIntegration.isConfiguredForSauceLabs();
+    }
+
+    @BeforeEach
+    public void before(TestInfo testInfo) {
+        Logger logger = LoggerFactory.getLogger(AbstractTB9Test.class);
+
+        String name = testInfo.getTestClass().get() + " / "
+                + testInfo.getTestMethod().get();
+
+        logger.info("Starting test " + name);
+    }
+
+    @AfterEach
+    public void after(TestInfo testInfo) {
+        Logger logger = LoggerFactory.getLogger(AbstractTB9Test.class);
+
+        String name = testInfo.getTestClass().get() + " / "
+                + testInfo.getTestMethod().get();
+
+        logger.info("Ending test " + name);
+
     }
 }
