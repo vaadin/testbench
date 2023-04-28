@@ -219,9 +219,13 @@
                         <configuration>
                             <systemPropertyVariables>
                                 <browsers.include>chrome</browsers.include>
-                                <junit.jupiter.execution.parallel.config.strategy>fixed</junit.jupiter.execution.parallel.config.strategy>
-                                <junit.jupiter.execution.parallel.config.fixed.parallelism>2</junit.jupiter.execution.parallel.config.fixed.parallelism>
                             </systemPropertyVariables>
+                            <properties>
+                                <configurationParameters>
+                                    junit.jupiter.execution.parallel.config.strategy = fixed
+                                    junit.jupiter.execution.parallel.config.fixed.parallelism = 2
+                                </configurationParameters>
+                            </properties>
                         </configuration>
                     </plugin>
                 </plugins>
