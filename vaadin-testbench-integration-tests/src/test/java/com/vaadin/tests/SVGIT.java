@@ -24,6 +24,7 @@ public class SVGIT extends AbstractTB6Test {
     }
 
     @Test
+    @Ignore("This breaks with 'no session id' on the findElement command since 2023-05-11 because of what seems to be a Saucelabs issue")
     public void click() {
         if (BrowserUtil.isSafari(this.getDesiredCapabilities())) {
             return; // Skip for Safari 11.
