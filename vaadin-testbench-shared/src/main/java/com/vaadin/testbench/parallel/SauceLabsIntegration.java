@@ -32,7 +32,8 @@ public class SauceLabsIntegration {
     private static final String SAUCE_ACCESS_KEY_ENV = "SAUCE_ACCESS_KEY";
     private static final String SAUCE_ACCESS_KEY_PROP = "sauce.sauceAccessKey";
     private static final String SAUCE_TUNNELID_PROP = "sauce.tunnelId";
-    private static final String SAUCE_TUNNELID_ENV = "SAUCE_TUNNEL_ID";
+    private static final String SAUCE_TUNNELID_ENV = "SAUCE_TUNNEL_IDENTIFIER";
+    private static final String SAUCE_TUNNELID_ENV_OLD = "SAUCE_TUNNEL_ID";
     private static final String SAUCE_HUB_URL_PROP = "sauce.hubUrl";
     private static final String SAUCE_HUB_URL_ENV = "SAUCE_HUB_URL";
 
@@ -147,6 +148,9 @@ public class SauceLabsIntegration {
     public static String getSauceTunnelIdentifier() {
         String tunnelId = getSystemPropertyOrEnv(SAUCE_TUNNELID_PROP,
                 SAUCE_TUNNELID_ENV);
+        if (tunnelId == null) {
+            tunnelId = System.getenv(SAUCE_TUNNELID_ENV_OLD);
+        }
         if (tunnelId == null) {
             // For backwards compatibility only
             String sauceOptions = System.getProperty("sauce.options");
