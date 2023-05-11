@@ -10,6 +10,7 @@ package com.vaadin.tests;
 
 import com.vaadin.testbench.parallel.BrowserUtil;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.By;
 
