@@ -33,7 +33,7 @@ public class BrowserTestClassTest implements DriverSupplier {
     public void testTemplate_hasCapabilitiesInjected(TestInfo testInfo,
             BrowserTestInfo browserTestInfo) {
         Assertions.assertTrue(
-                testInfo.getDisplayName().contains("[ANY_Chrome_]"));
+                testInfo.getDisplayName().contains("[any_Chrome_]"));
         assertCapabilities(testInfo, browserTestInfo);
     }
 
@@ -41,14 +41,14 @@ public class BrowserTestClassTest implements DriverSupplier {
     public void browserTest_hasCapabilitiesInjected(TestInfo testInfo,
             BrowserTestInfo browserTestInfo) {
         Assertions.assertTrue(
-                testInfo.getDisplayName().contains("[ANY_Chrome_]"));
+                testInfo.getDisplayName().contains("[any_Chrome_]"));
         assertCapabilities(testInfo, browserTestInfo);
     }
 
     @Test // not run by extension
     public void test_capabilitiesNotInjected(TestInfo testInfo) {
         Assertions.assertFalse(
-                testInfo.getDisplayName().contains("[ANY_Chrome_]"));
+                testInfo.getDisplayName().contains("[any_Chrome_]"));
     }
 
     private void assertCapabilities(TestInfo testInfo,
