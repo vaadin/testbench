@@ -8,7 +8,13 @@
  */
 package com.vaadin.tests;
 
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -27,13 +33,27 @@ public class SeleniumHubPageObjectIT extends AbstractSeleniumSauceTB9Test {
 
     @Test
     public void findUsingValueAnnotation() {
-        openTestURL();
-        List<MyComponentWithIdElement> components = $(
-                MyComponentWithIdElement.class).all();
+        Logger logger = Logger.getLogger("");
+        logger.setLevel(Level.FINE);
+        Map<Handler, Level> oldLevels = new HashMap<>();
+        for (Handler h : logger.getHandlers()) {
+            oldLevels.put(h, h.getLevel());
+            h.setLevel(Level.FINE);
+        }
+        try {
 
-        Assertions.assertEquals(1, components.size());
-        Assertions.assertEquals("MyComponentWithId",
-                components.get(0).getText());
+            openTestURL();
+            List<MyComponentWithIdElement> components = $(
+                    MyComponentWithIdElement.class).all();
+
+            Assertions.assertEquals(1, components.size());
+            Assertions.assertEquals("MyComponentWithId",
+                    components.get(0).getText());
+        } finally {
+            for (Handler h : logger.getHandlers()) {
+                h.setLevel(oldLevels.get(h));
+            }
+        }
     }
 
     @Test
