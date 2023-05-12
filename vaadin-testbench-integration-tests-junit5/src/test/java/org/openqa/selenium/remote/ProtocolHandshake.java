@@ -129,11 +129,14 @@ public class ProtocolHandshake {
         // we're not following the
         // W3C spec properly. Oh well.
         Map<?, ?> blob;
+        String stringResponse = string(response);
+
+        LOG.info("ProtocolHandshake response: " + stringResponse);
         try {
-            blob = new Json().toType(string(response), Map.class);
+            blob = new Json().toType(stringResponse, Map.class);
         } catch (JsonException e) {
             return Either.left(new SessionNotCreatedException(
-                    "Unable to parse remote response: " + string(response), e));
+                    "Unable to parse remote response: " + stringResponse, e));
         }
 
         InitialHandshakeResponse initialResponse = new InitialHandshakeResponse(
