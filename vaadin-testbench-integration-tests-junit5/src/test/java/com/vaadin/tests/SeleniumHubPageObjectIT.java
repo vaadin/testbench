@@ -25,6 +25,17 @@ import com.vaadin.testUI.PageObjectView;
 
 @EnabledIf("isConfiguredForSauceLabs")
 public class SeleniumHubPageObjectIT extends AbstractSeleniumSauceTB9Test {
+    static {
+        System.err.println("Logging for SeleniumHubPageObjectIT started");
+        Logger logger = Logger.getLogger("");
+        logger.setLevel(Level.FINE);
+        Map<Handler, Level> oldLevels = new HashMap<>();
+        for (Handler h : logger.getHandlers()) {
+            oldLevels.put(h, h.getLevel());
+            h.setLevel(Level.FINE);
+        }
+
+    }
 
     @Override
     protected Class<? extends Component> getTestView() {
@@ -33,13 +44,6 @@ public class SeleniumHubPageObjectIT extends AbstractSeleniumSauceTB9Test {
 
     @Test
     public void findUsingValueAnnotation() {
-        Logger logger = Logger.getLogger("");
-        logger.setLevel(Level.FINE);
-        Map<Handler, Level> oldLevels = new HashMap<>();
-        for (Handler h : logger.getHandlers()) {
-            oldLevels.put(h, h.getLevel());
-            h.setLevel(Level.FINE);
-        }
         try {
 
             openTestURL();
@@ -50,9 +54,9 @@ public class SeleniumHubPageObjectIT extends AbstractSeleniumSauceTB9Test {
             Assertions.assertEquals("MyComponentWithId",
                     components.get(0).getText());
         } finally {
-            for (Handler h : logger.getHandlers()) {
-                h.setLevel(oldLevels.get(h));
-            }
+            // for (Handler h : logger.getHandlers()) {
+            // h.setLevel(oldLevels.get(h));
+            // }
         }
     }
 
