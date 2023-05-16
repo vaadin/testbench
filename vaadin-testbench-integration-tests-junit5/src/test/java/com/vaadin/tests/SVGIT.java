@@ -9,7 +9,6 @@
 package com.vaadin.tests;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.openqa.selenium.By;
 
 import com.vaadin.flow.component.Component;
@@ -25,7 +24,6 @@ public class SVGIT extends AbstractBrowserTB9Test {
     }
 
     @BrowserTest
-    @Disabled
     public void click() {
         if (BrowserUtil.isSafari(getCapabilities())) {
             return; // Skip for Safari 11.
