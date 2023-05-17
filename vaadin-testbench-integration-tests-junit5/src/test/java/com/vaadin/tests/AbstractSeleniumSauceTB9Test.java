@@ -24,7 +24,7 @@ import com.vaadin.testbench.parallel.SauceLabsIntegration;
  * @author Vaadin Ltd
  */
 public abstract class AbstractSeleniumSauceTB9Test
-        extends AbstractSeleniumTB9Test {
+        extends AbstractTB9Test {
 
     @DriverUrl
     String url = SauceLabsIntegration.getHubUrl();
