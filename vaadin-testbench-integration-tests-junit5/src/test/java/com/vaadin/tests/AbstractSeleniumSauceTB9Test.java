@@ -37,9 +37,9 @@ public abstract class AbstractSeleniumSauceTB9Test
         SauceLabsIntegration.setDesiredCapabilities(capabilities);
     }
 
-    @BeforeEach
-    public void setDriver(RemoteWebDriver driver) {
-        super.setDriver(driver);
-    }
+    // @BeforeEach
+    // public void setDriver(RemoteWebDriver driver) {
+    //     super.setDriver(driver);
+    // }
 
 }
