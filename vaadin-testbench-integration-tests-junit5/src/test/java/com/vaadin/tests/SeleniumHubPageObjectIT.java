@@ -8,7 +8,6 @@
  */
 package com.vaadin.tests;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,22 +18,57 @@ import java.util.logging.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
+import org.openqa.selenium.WebDriver;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.testUI.PageObjectView;
+import com.vaadin.testbench.DriverSupplier;
+import com.vaadin.testbench.parallel.SauceLabsIntegration;
+import com.vaadin.testbench.parallel.setup.SetupDriver;
 
 @EnabledIf("isConfiguredForSauceLabs")
-public class SeleniumHubPageObjectIT extends AbstractSeleniumSauceTB9Test {
-    static {
+public class SeleniumHubPageObjectIT extends AbstractSeleniumSauceTB9Test
+        implements DriverSupplier {
+
+    private static Level loggerLevel;
+    private final SetupDriver driverConfiguration = new SetupDriver();
+    private static final Map<Handler, Level> oldLevels = new HashMap<>();
+
+    @Override
+    public WebDriver createDriver() {
+        startLog();
+        WebDriver driver = null;
+        try {
+            driver = driverConfiguration
+                    .setupRemoteDriver(SauceLabsIntegration.getHubUrl());
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } finally {
+            endLog();
+        }
+        return driver;
+
+    }
+
+    private static void startLog() {
         System.err.println("Logging for SeleniumHubPageObjectIT started");
         Logger logger = Logger.getLogger("");
+        loggerLevel = logger.getLevel();
         logger.setLevel(Level.FINE);
-        Map<Handler, Level> oldLevels = new HashMap<>();
         for (Handler h : logger.getHandlers()) {
             oldLevels.put(h, h.getLevel());
             h.setLevel(Level.FINE);
         }
+    }
 
+    private static void endLog() {
+        System.err.println("Logging for SeleniumHubPageObjectIT ended");
+        Logger logger = Logger.getLogger("");
+        logger.setLevel(loggerLevel);
+        for (Handler h : logger.getHandlers()) {
+            h.setLevel(oldLevels.get(h));
+        }
     }
 
     @Override
