@@ -47,7 +47,8 @@ public class SeleniumHubPageObjectIT extends AbstractSeleniumSauceTB9Test
         } finally {
             endLog();
         }
-        return driver;
+setDriver(driver);
+        return getDriver();
 
     }
 
