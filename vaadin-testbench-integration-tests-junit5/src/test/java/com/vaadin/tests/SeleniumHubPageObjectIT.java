@@ -22,6 +22,7 @@ import org.openqa.selenium.WebDriver;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.testUI.PageObjectView;
+import com.vaadin.testbench.BrowserTest;
 import com.vaadin.testbench.DriverSupplier;
 import com.vaadin.testbench.parallel.SauceLabsIntegration;
 import com.vaadin.testbench.parallel.setup.SetupDriver;
@@ -77,7 +78,7 @@ setDriver(driver);
         return PageObjectView.class;
     }
 
-    @Test
+    @BrowserTest
     public void findUsingValueAnnotation() {
         try {
 
@@ -95,7 +96,7 @@ setDriver(driver);
         }
     }
 
-    @Test
+    @BrowserTest
     public void findUsingContainsAnnotation() {
         openTestURL();
         List<MyComponentWithClassesElement> components = $(
