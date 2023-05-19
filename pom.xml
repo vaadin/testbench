@@ -33,7 +33,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <Implementation-Version>${project.version}</Implementation-Version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <selenium.version>4.8.3</selenium.version>
+        <selenium.version>4.8.3-test-c01a5f7526</selenium.version>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <spring.version>6.0.0-M6</spring.version>
@@ -57,6 +57,10 @@
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
+        </repository>
+        <repository>
+            <id>test</id>
+            <url>file://m2repo</url>
         </repository>
         <repository>
             <id>vaadin-prereleases</id>
