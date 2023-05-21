@@ -47,6 +47,10 @@ import com.vaadin.testbench.commands.TestBenchCommands;
 public abstract class AbstractBrowserTestBase
         implements HasDriver, HasTestBenchCommandExecutor, HasElementQuery {
 
+    static {
+        TestBench.ensureLoaded();
+    }
+
     /**
      * When an error occurs during establishing a WebSocket connection, a severe
      * error is added to the console by the browser. We can't prevent it, so we
