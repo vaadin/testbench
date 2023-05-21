@@ -33,7 +33,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <Implementation-Version>${project.version}</Implementation-Version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <selenium.version>4.8.3</selenium.version>
+        <selenium.version>4.8.3-test-d7057100a6</selenium.version>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <spring.version>6.0.0-M6</spring.version>
@@ -48,11 +48,7 @@
         <module>vaadin-testbench-shared</module>
         <module>vaadin-testbench-core</module>
         <module>vaadin-testbench-core-junit5</module>
-        <module>vaadin-testbench-integration-tests</module>
         <module>vaadin-testbench-integration-tests-junit5</module>
-        <module>vaadin-testbench-unit-shared</module>
-        <module>vaadin-testbench-unit</module>
-        <module>vaadin-testbench-unit-junit5</module>
     </modules>
     <repositories>
         <repository>
@@ -61,6 +57,10 @@
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
+        </repository>
+        <repository>
+            <id>test</id>
+            <url>file://m2repo</url>
         </repository>
         <repository>
             <id>vaadin-prereleases</id>
