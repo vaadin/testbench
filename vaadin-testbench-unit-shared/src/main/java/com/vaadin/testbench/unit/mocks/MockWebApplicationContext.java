@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
@@ -304,5 +305,13 @@ public class MockWebApplicationContext implements WebApplicationContext {
     @Override
     public ClassLoader getClassLoader() {
         return appCtx.getClassLoader();
+    }
+
+    @Override
+    public <A extends Annotation> Set<A> findAllAnnotationsOnBean(
+            String beanName, Class<A> annotationType,
+            boolean allowFactoryBeanInit) throws NoSuchBeanDefinitionException {
+        return appCtx.findAllAnnotationsOnBean(beanName, annotationType,
+                allowFactoryBeanInit);
     }
 }

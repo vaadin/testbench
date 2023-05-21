@@ -36,11 +36,11 @@
         <selenium.version>4.8.3</selenium.version>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
-        <spring.version>6.0.0-M6</spring.version>
-        <spring.security.version>6.0.0-M7</spring.security.version>
-        <slf4j.version>2.0.3</slf4j.version>
-        <failsafe.version>3.0.0-M7</failsafe.version>
-        <surefire.version>3.0.0-M7</surefire.version>
+        <spring.version>6.0.9</spring.version>
+        <spring.security.version>6.1.0</spring.security.version>
+        <slf4j.version>2.0.7</slf4j.version>
+        <failsafe.version>3.1.0</failsafe.version>
+        <surefire.version>3.1.0</surefire.version>
         <currentYear>2023</currentYear>
     </properties>
     <modules>
@@ -72,11 +72,6 @@
                 <enabled>true</enabled>
             </snapshots>
         </repository>
-        <repository>
-            <id>spring milestones</id>
-            <url>https://repo.spring.io/milestone</url>
-        </repository>
-
     </repositories>
     <pluginRepositories>
         <pluginRepository>
