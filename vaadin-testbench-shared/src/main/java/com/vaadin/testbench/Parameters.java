@@ -35,6 +35,7 @@ public class Parameters {
     private static String testbenchGridBrowsers;
     private static boolean headless;
     private static int readTimeout;
+    private static int hubPort;
     static {
         isDebug = getSystemPropertyBoolean("debug", false);
 
@@ -64,6 +65,7 @@ public class Parameters {
         headless = getSystemPropertyBoolean("headless", false);
         readTimeout = getSystemPropertyInt("readTimeout",
                 (int) ClientConfig.defaultConfig().readTimeout().toSeconds());
+        hubPort = getSystemPropertyInt("hubPort", 4444);
     }
 
     /**
@@ -317,6 +319,28 @@ public class Parameters {
      */
     public static String getHubHostname() {
         return getSystemPropertyString("hubHostname", null);
+    }
+
+    /**
+     * Gets the port of the hub to run tests on.
+     * <p />
+     * Allows to get a variable port for the selenium hub at runtime and can be modified
+     * from either via {@link #setHubPort(int)} or by setting the environment
+     * variable {@code com.vaadin.testbench.Parameters.hubPort}
+     *
+     * @return the port of the hub, defaults to 4444 if nothing is set
+     */
+    public static int getHubPort() {
+        return hubPort;
+    }
+
+    /**
+     * Changes the port on which the selenium hub is reachable.
+     *
+     * @param port  The new port to use
+     */
+    public static void setHubPort(int port) {
+        hubPort = port;
     }
 
     /**
