@@ -325,8 +325,8 @@ public class Parameters {
      * Gets the port of the hub to run tests on.
      * <p />
      * Allows to get a variable port for the selenium hub at runtime and can be modified
-     * from either via {@link #setHubPort(int)} or by setting the environment
-     * variable {@code com.vaadin.testbench.Parameters.hubPort}
+     * from either via {@link #setHubPort(int)} or by setting the system property
+     * {@code com.vaadin.testbench.Parameters.hubPort}.
      *
      * @return the port of the hub, defaults to 4444 if nothing is set
      */
