@@ -63,7 +63,7 @@ public class BrowserHubTest extends BrowserExtension {
     }
 
     private String getExpectedHubUrl(int port) {
-        return "http://hub-in-annotation:" + port + "/wd/hub";
+        return "http://" + getHubHostname(getClass()) + ":" + port + "/wd/hub";
     }
 
 }
