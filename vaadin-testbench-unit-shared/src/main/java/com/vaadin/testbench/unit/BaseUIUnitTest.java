@@ -58,7 +58,7 @@ import com.vaadin.testbench.unit.mocks.MockedUI;
  *
  * @see ViewPackages
  */
-abstract class BaseUIUnitTest {
+public abstract class BaseUIUnitTest {
 
     private static final ConcurrentHashMap<String, Routes> routesCache = new ConcurrentHashMap<>();
 
@@ -127,7 +127,8 @@ abstract class BaseUIUnitTest {
         return discoverRoutes(scanPackages());
     }
 
-    static synchronized Routes discoverRoutes(Set<String> packageNames) {
+    protected static synchronized Routes discoverRoutes(
+            Set<String> packageNames) {
         packageNames = packageNames == null || packageNames.isEmpty()
                 ? Set.of("")
                 : packageNames;
@@ -143,7 +144,7 @@ abstract class BaseUIUnitTest {
         MockVaadin.setup(discoverRoutes(), MockedUI::new, lookupServices());
     }
 
-    void scanTesters() {
+    protected void scanTesters() {
         if (getClass().isAnnotationPresent(ComponentTesterPackages.class)) {
             final List<String> packages = Arrays.asList(getClass()
                     .getAnnotation(ComponentTesterPackages.class).value());
