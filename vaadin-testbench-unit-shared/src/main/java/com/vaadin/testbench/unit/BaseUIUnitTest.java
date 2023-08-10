@@ -127,6 +127,12 @@ public abstract class BaseUIUnitTest {
         return discoverRoutes(scanPackages());
     }
 
+    /**
+     * Discover and return Routes for mocked Vaadin core system.
+     *
+     * @see initVadinEnvironment()
+     * @return Routes
+     */
     protected static synchronized Routes discoverRoutes(
             Set<String> packageNames) {
         packageNames = packageNames == null || packageNames.isEmpty()
@@ -139,11 +145,21 @@ public abstract class BaseUIUnitTest {
                 .reduce(new Routes(), Routes::merge);
     }
 
+    /**
+     * Create mocked Vaadin core obects, such as session, servlet populated with
+     * Routes, UI etc. for testing and find testers for the components.
+     */
     protected void initVaadinEnvironment() {
         scanTesters();
         MockVaadin.setup(discoverRoutes(), MockedUI::new, lookupServices());
     }
 
+    /**
+     * Scan testers and populate testers map with them. The test method can find
+     * appropriate test based on testers map.
+     *
+     * @see test(Component)
+     */
     protected void scanTesters() {
         if (getClass().isAnnotationPresent(ComponentTesterPackages.class)) {
             final List<String> packages = Arrays.asList(getClass()
@@ -175,6 +191,9 @@ public abstract class BaseUIUnitTest {
         return packagesToScan;
     }
 
+    /**
+     * Tears down mocked Vaadin.
+     */
     protected void cleanVaadinEnvironment() {
         MockVaadin.tearDown();
     }
