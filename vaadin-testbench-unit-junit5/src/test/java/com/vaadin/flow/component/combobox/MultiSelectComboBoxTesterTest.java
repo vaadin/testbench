@@ -12,9 +12,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-import org.junit.Before;
-import org.junit.Test;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,7 +26,7 @@ public class MultiSelectComboBoxTesterTest extends UIUnitTest {
 
     MultiSelectComboBoxView view;
 
-    @Before
+    @BeforeEach
     void init() {
         RouteConfiguration.forApplicationScope()
                 .setAnnotatedRoute(MultiSelectComboBoxView.class);
