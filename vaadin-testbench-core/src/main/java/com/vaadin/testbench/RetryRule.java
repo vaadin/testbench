@@ -8,10 +8,16 @@
  */
 package com.vaadin.testbench;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.junit.internal.AssumptionViolatedException;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A retry rule is used to re-run a test several times in case of a random
@@ -61,7 +67,7 @@ public class RetryRule implements TestRule {
         return new Statement() {
             @Override
             public void evaluate() throws Throwable {
-                Throwable caughtThrowable = null;
+                List<Throwable> caughtThrowables = new ArrayList<>();
                 for (int i = 0; i < maxAttempts; i++) {
                     try {
                         base.evaluate();
@@ -69,12 +75,25 @@ public class RetryRule implements TestRule {
                     } catch (AssumptionViolatedException t) {
                         throw t;
                     } catch (Throwable t) {
-                        caughtThrowable = t;
+                        caughtThrowables.add(t);
                     }
                 }
+                String testDisplayName = description.getDisplayName();
+                Logger logger = LoggerFactory.getLogger(RetryRule.class);
+                if (logger.isDebugEnabled() && caughtThrowables.size() > 1) {
+                    logger.debug("Caught {} exceptions for {} test",
+                            caughtThrowables.size(), testDisplayName);
+                    AtomicInteger attempt = new AtomicInteger();
+                    caughtThrowables
+                            .forEach(t -> logger.debug("\t{} [attempt {}]: {}",
+                                    testDisplayName, attempt.incrementAndGet(),
+                                    t.getMessage(), t));
+                }
+                Throwable lastCaught = caughtThrowables
+                        .get(caughtThrowables.size() - 1);
                 String errorMessage = String.format("%s: run failed %s times",
-                        description.getDisplayName(), maxAttempts);
-                throw new RuntimeException(errorMessage, caughtThrowable);
+                        testDisplayName, maxAttempts);
+                throw new RuntimeException(errorMessage, lastCaught);
             }
         };
     }
