@@ -24,13 +24,11 @@
                 <groupId>com.vaadin</groupId>
                 <artifactId>vaadin-testbench-core</artifactId>
                 <version>${project.version}</version>
-                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>com.vaadin</groupId>
                 <artifactId>vaadin-testbench-core-junit5</artifactId>
                 <version>${project.version}</version>
-                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>com.vaadin</groupId>
