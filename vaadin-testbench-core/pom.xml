@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.vaadin</groupId>
         <artifactId>vaadin-testbench-parent</artifactId>
-        <version>9.0-SNAPSHOT</version>
+        <version>9.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>vaadin-testbench-core</artifactId>
@@ -56,18 +56,18 @@
                                 <index>true</index>
                                 <manifest>
                                     <addClasspath>true</addClasspath>
-                                    <!-- Implementation-Title and Implementation-Version 
+                                    <!-- Implementation-Title and Implementation-Version
                                         come from the POM by default -->
                                     <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                                 </manifest>
                                 <manifestEntries>
-                                    <!-- Package format version - do not 
+                                    <!-- Package format version - do not
                                         change -->
                                     <Vaadin-Package-Version>1</Vaadin-Package-Version>
                                 </manifestEntries>
                             </archive>
                             <excludes>
-                                <!-- Remove resources included due to gwt 
+                                <!-- Remove resources included due to gwt
                                     compilation -->
                                 <exclude>**/demoandtestapp/*</exclude>
                             </excludes>
