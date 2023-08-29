@@ -22,6 +22,8 @@ import com.vaadin.flow.component.checkbox.CheckboxGroupTester;
 import com.vaadin.flow.component.checkbox.CheckboxTester;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.combobox.ComboBoxTester;
+import com.vaadin.flow.component.combobox.MultiSelectComboBox;
+import com.vaadin.flow.component.combobox.MultiSelectComboBoxTester;
 import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.confirmdialog.ConfirmDialogTester;
 import com.vaadin.flow.component.contextmenu.ContextMenu;
@@ -53,6 +55,7 @@ import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.html.ListItem;
 import com.vaadin.flow.component.html.NativeButton;
 import com.vaadin.flow.component.html.NativeDetails;
+import com.vaadin.flow.component.html.NativeLabel;
 import com.vaadin.flow.component.html.OrderedList;
 import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.html.Pre;
@@ -75,6 +78,7 @@ import com.vaadin.flow.component.html.testbench.LabelTester;
 import com.vaadin.flow.component.html.testbench.ListItemTester;
 import com.vaadin.flow.component.html.testbench.NativeButtonTester;
 import com.vaadin.flow.component.html.testbench.NativeDetailsTester;
+import com.vaadin.flow.component.html.testbench.NativeLabelTester;
 import com.vaadin.flow.component.html.testbench.OrderedListTester;
 import com.vaadin.flow.component.html.testbench.ParagraphTester;
 import com.vaadin.flow.component.html.testbench.PreTester;
@@ -149,6 +153,18 @@ public interface TesterWrappers {
     default <V> ComboBoxTester<ComboBox<V>, V> test(ComboBox comboBox,
             Class<V> valueType) {
         return BaseUIUnitTest.internalWrap(ComboBoxTester.class, comboBox);
+    }
+
+    default <V> MultiSelectComboBoxTester<MultiSelectComboBox<V>, V> test(
+            MultiSelectComboBox<V> comboBox) {
+        return BaseUIUnitTest.internalWrap(MultiSelectComboBoxTester.class,
+                comboBox);
+    }
+
+    default <V> MultiSelectComboBoxTester<MultiSelectComboBox<V>, V> test(
+            MultiSelectComboBox comboBox, Class<V> valueType) {
+        return BaseUIUnitTest.internalWrap(MultiSelectComboBoxTester.class,
+                comboBox);
     }
 
     default ConfirmDialogTester test(ConfirmDialog confirmDialog) {
@@ -354,6 +370,10 @@ public interface TesterWrappers {
 
     default LabelTester test(Label label) {
         return BaseUIUnitTest.internalWrap(LabelTester.class, label);
+    }
+
+    default NativeLabelTester test(NativeLabel label) {
+        return BaseUIUnitTest.internalWrap(NativeLabelTester.class, label);
     }
 
     default ListItemTester test(ListItem listItem) {
