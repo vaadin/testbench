@@ -78,6 +78,7 @@ import com.vaadin.flow.component.html.testbench.LabelTester;
 import com.vaadin.flow.component.html.testbench.ListItemTester;
 import com.vaadin.flow.component.html.testbench.NativeButtonTester;
 import com.vaadin.flow.component.html.testbench.NativeDetailsTester;
+import com.vaadin.flow.component.html.testbench.NativeLabelTester;
 import com.vaadin.flow.component.html.testbench.OrderedListTester;
 import com.vaadin.flow.component.html.testbench.ParagraphTester;
 import com.vaadin.flow.component.html.testbench.PreTester;
