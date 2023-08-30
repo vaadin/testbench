@@ -113,6 +113,11 @@
                     </exclusion>
                 </exclusions>
             </dependency>
+            <dependency>
+                <groupId>org.seleniumhq.selenium</groupId>
+                <artifactId>selenium-devtools-v115</artifactId>
+                <version>4.11.0</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 </project>
