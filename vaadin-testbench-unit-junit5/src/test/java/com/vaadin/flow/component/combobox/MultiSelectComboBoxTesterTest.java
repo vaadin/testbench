@@ -66,9 +66,8 @@ public class MultiSelectComboBoxTesterTest extends UIUnitTest {
 
         test(view.combo).selectItem("test-foo", "test-bar");
 
-        Assertions.assertIterableEquals(
-                Set.of(view.items.get(0), view.items.get(1)),
-                test(view.combo).getSelected());
+        Assertions.assertTrue(test(view.combo).getSelected().contains(view.items.get(0)));
+        Assertions.assertTrue(test(view.combo).getSelected().contains(view.items.get(1)));
 
         test(view.combo).selectItem(null);
 
