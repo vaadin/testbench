@@ -125,7 +125,8 @@ public class BrowserExtension implements Extension, BeforeEachCallback,
         if (SauceLabsIntegration.isConfiguredForSauceLabs()) {
             return SauceLabsIntegration.getHubUrl();
         } else {
-            return "http://" + getHubHostname(testClass) + ":4444/wd/hub";
+            return "http://" + getHubHostname(testClass) + ":"
+                    + Parameters.getHubPort() + "/wd/hub";
         }
     }
 
