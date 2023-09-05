@@ -11,8 +11,11 @@ package com.vaadin.testbench.browser;
 import com.vaadin.testbench.Parameters;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 import com.vaadin.testbench.annotations.RunOnHub;
+import com.vaadin.testbench.parallel.SauceLabsIntegration;
 
 @RunOnHub("hub-in-annotation")
 public class BrowserHubTest extends BrowserExtension {
@@ -47,13 +50,12 @@ public class BrowserHubTest extends BrowserExtension {
 
     @Test
     public void hubPortFromDefaultValueOrParametersSetter() {
-        String oldPortProperty = System.getProperty(HUB_PORT_PROPERTY);
-        String oldHostnameProperty = System.getProperty(HUB_HOSTNAME_PROPERTY);
+        int oldPortProperty = Parameters.getHubPort();
 
-        try {
-            // Reset the hub hostname property (removes the saucelab url in CI)
-            System.clearProperty(HUB_HOSTNAME_PROPERTY);
-
+        try (MockedStatic<SauceLabsIntegration> sauceLabsMock =
+                     Mockito.mockStatic(SauceLabsIntegration.class)) {
+            sauceLabsMock.when(SauceLabsIntegration::isConfiguredForSauceLabs)
+                    .thenReturn(false);
             // Default must be the "official" 4444 port for backwards
             // compatibility
             Assertions.assertEquals(getExpectedHubUrl(4444),
@@ -64,13 +66,7 @@ public class BrowserHubTest extends BrowserExtension {
             Assertions.assertEquals(getExpectedHubUrl(4445),
                     getHubURL(getClass()));
         } finally {
-            if (oldPortProperty != null) {
-                System.setProperty(HUB_PORT_PROPERTY, oldPortProperty);
-            }
-
-            if (oldHostnameProperty != null) {
-                System.setProperty(HUB_HOSTNAME_PROPERTY, oldHostnameProperty);
-            }
+            Parameters.setHubPort(oldPortProperty);
         }
     }
 
