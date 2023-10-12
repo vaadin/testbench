@@ -162,10 +162,6 @@
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-http</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-http-jdk-client</artifactId>
-        </dependency>
 
         <dependency>
             <groupId>org.slf4j</groupId>
