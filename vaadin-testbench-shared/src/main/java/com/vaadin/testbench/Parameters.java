@@ -36,6 +36,7 @@ public class Parameters {
     private static boolean headless;
     private static int readTimeout;
     private static int hubPort;
+    private static String[] chromeOptions;
     static {
         isDebug = getSystemPropertyBoolean("debug", false);
 
@@ -66,6 +67,7 @@ public class Parameters {
         readTimeout = getSystemPropertyInt("readTimeout",
                 (int) ClientConfig.defaultConfig().readTimeout().toSeconds());
         hubPort = getSystemPropertyInt("hubPort", 4444);
+        setChromeOptions(getSystemPropertyString("chromeOptions", null));
     }
 
     /**
@@ -529,6 +531,28 @@ public class Parameters {
      */
     public static void setReadTimeout(int readTimeout) {
         Parameters.readTimeout = readTimeout;
+    }
+
+
+    /**
+     * Set extra options passed to the Chrome driver.
+     *
+     * @param options
+     *            a list of options separated with comma or spaces
+     */
+    public static void setChromeOptions(String options) {
+        chromeOptions = options == null || options.isBlank() ? new String[0] : options.trim().split("[ ,]+");
+    }
+
+    /**
+     * Get extra options passed to the Chrome driver.
+     * Options can be passed as a list separated by spaces or comma in the
+     * System property <code>com.vaadin.testbench.Parameters.chromeOptions</code>
+     *
+     * @return an array of options
+     */
+    public static String[] getChromeOptions() {
+        return chromeOptions;
     }
 
     /**
