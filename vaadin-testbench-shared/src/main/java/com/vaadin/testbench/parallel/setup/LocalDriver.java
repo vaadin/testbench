@@ -66,7 +66,9 @@ public class LocalDriver {
                 FirefoxProfile profile = new FirefoxProfile(profileDir);
                 options.setProfile(profile);
             }
-            options.setHeadless(Parameters.isHeadless());
+            if (Parameters.isHeadless()) {
+                options.addArguments("-headless");
+            }
             driver = new FirefoxDriver(options);
         } else if (BrowserUtil.isChrome(desiredCapabilities)) {
             // Tells chrome not to show warning
@@ -75,7 +77,10 @@ public class LocalDriver {
             // #14319
             ChromeOptions options = new ChromeOptions();
             options.addArguments("--test-type ");
-            options.setHeadless(Parameters.isHeadless());
+
+            if (Parameters.isHeadless()) {
+                options.addArguments("--headless=new");
+            }
             driver = new ChromeDriver(options);
         } else if (BrowserUtil.isSafari(desiredCapabilities)) {
             driver = new SafariDriver();
