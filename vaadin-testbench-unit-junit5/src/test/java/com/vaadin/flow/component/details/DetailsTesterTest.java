@@ -21,7 +21,7 @@ import com.vaadin.testbench.unit.UIUnitTest;
 import com.vaadin.testbench.unit.ViewPackages;
 
 @ViewPackages
-class DetailsWrapTest extends UIUnitTest {
+class DetailsTesterTest extends UIUnitTest {
 
     DetailsView view;
 

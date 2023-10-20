@@ -17,7 +17,7 @@ import com.vaadin.testbench.unit.UIUnitTest;
 import com.vaadin.testbench.unit.ViewPackages;
 
 @ViewPackages
-class AccordionWrapTest extends UIUnitTest {
+class AccordionTesterTest extends UIUnitTest {
 
     AccordionView view;
 

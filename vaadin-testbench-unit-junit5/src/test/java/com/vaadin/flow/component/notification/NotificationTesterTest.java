@@ -17,7 +17,7 @@ import com.vaadin.testbench.unit.UIUnitTest;
 import com.vaadin.testbench.unit.ViewPackages;
 
 @ViewPackages
-class NotificationWrapTest extends UIUnitTest {
+class NotificationTesterTest extends UIUnitTest {
 
     @BeforeEach
     public void registerView() {

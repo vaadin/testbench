@@ -19,7 +19,7 @@ import com.vaadin.testbench.unit.ViewPackages;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
 @ViewPackages
-class MultiSelectListBoxWrapTest extends UIUnitTest {
+class MultiSelectListBoxTesterTest extends UIUnitTest {
     ListBoxView view;
 
     @BeforeEach

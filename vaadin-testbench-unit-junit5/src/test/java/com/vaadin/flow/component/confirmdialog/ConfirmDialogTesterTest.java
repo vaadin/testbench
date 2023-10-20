@@ -23,7 +23,7 @@ import com.vaadin.testbench.unit.ViewPackages;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ViewPackages
-class ConfirmDialogWrapTest extends UIUnitTest {
+class ConfirmDialogTesterTest extends UIUnitTest {
 
     ConfirmDialogView view;
     ConfirmDialogTester wrap;

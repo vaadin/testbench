@@ -31,7 +31,7 @@ import com.vaadin.testbench.unit.UIUnitTest;
 import com.vaadin.testbench.unit.ViewPackages;
 
 @ViewPackages
-class UploadWrapTest extends UIUnitTest {
+class UploadTesterTest extends UIUnitTest {
 
     private static final String FIRST_FILE_CONTENTS = "First file";
     private static final String SECOND_FILE_CONTENTS = "Second file";
