@@ -19,7 +19,7 @@ import com.vaadin.testbench.unit.UIUnitTest;
 import com.vaadin.testbench.unit.ViewPackages;
 
 @ViewPackages
-class DialogWrapTest extends UIUnitTest {
+class DialogTesterTest extends UIUnitTest {
 
     DialogView view;
     DialogTester dialog_;

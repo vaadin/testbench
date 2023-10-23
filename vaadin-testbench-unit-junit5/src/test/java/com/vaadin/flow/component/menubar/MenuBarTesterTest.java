@@ -19,7 +19,7 @@ import com.vaadin.testbench.unit.UIUnitTest;
 import com.vaadin.testbench.unit.ViewPackages;
 
 @ViewPackages
-class MenuBarWrapTest extends UIUnitTest {
+class MenuBarTesterTest extends UIUnitTest {
 
     MenuBarView view;
     MenuBarTester<MenuBar> menu_;

@@ -21,7 +21,7 @@ import com.vaadin.testbench.unit.UIUnitTest;
 import com.vaadin.testbench.unit.ViewPackages;
 
 @ViewPackages
-class TextAreaWrapTest extends UIUnitTest {
+class TextAreaTesterTest extends UIUnitTest {
 
     private TextAreaView view;
 

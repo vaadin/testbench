@@ -23,7 +23,7 @@ import com.vaadin.testbench.unit.ViewPackages;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ViewPackages
-class NumberFieldWrapTest extends UIUnitTest {
+class NumberFieldTesterTest extends UIUnitTest {
 
     private NumberFieldView view;
 

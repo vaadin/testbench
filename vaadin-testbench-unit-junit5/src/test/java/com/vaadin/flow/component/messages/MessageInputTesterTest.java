@@ -19,7 +19,7 @@ import com.vaadin.testbench.unit.UIUnitTest;
 import com.vaadin.testbench.unit.ViewPackages;
 
 @ViewPackages
-class MessageInputWrapTest extends UIUnitTest {
+class MessageInputTesterTest extends UIUnitTest {
 
     MessagesView view;
 

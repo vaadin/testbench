@@ -24,7 +24,7 @@ import com.vaadin.testbench.unit.ViewPackages;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ViewPackages
-class TimePickerWrapTest extends UIUnitTest {
+class TimePickerTesterTest extends UIUnitTest {
 
     TimePickerView view;
     TimePickerTester<TimePicker> pick_;
