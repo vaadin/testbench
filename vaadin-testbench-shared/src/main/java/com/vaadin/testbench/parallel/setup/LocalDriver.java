@@ -81,6 +81,7 @@ public class LocalDriver {
             if (Parameters.isHeadless()) {
                 options.addArguments("--headless=new");
             }
+            options.addArguments(Parameters.getChromeOptions());
             driver = new ChromeDriver(options);
         } else if (BrowserUtil.isSafari(desiredCapabilities)) {
             driver = new SafariDriver();
