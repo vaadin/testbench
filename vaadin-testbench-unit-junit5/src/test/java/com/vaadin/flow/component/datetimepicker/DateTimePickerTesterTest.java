@@ -26,7 +26,7 @@ import com.vaadin.testbench.unit.ViewPackages;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ViewPackages
-class DateTimePickerWrapTest extends UIUnitTest {
+class DateTimePickerTesterTest extends UIUnitTest {
 
     DateTimePickerView view;
 
