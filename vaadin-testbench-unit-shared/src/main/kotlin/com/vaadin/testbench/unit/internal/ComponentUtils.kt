@@ -33,6 +33,8 @@ import com.vaadin.flow.component.html.Input
 import com.vaadin.flow.component.listbox.ListBoxBase
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup
 import com.vaadin.flow.component.select.Select
+import com.vaadin.flow.component.sidenav.SideNav
+import com.vaadin.flow.component.sidenav.SideNavItem
 import com.vaadin.flow.component.textfield.PasswordField
 import com.vaadin.flow.component.textfield.TextArea
 import com.vaadin.flow.component.textfield.TextField
@@ -335,6 +337,8 @@ var Component.label: String
         _HasLabel != null && _HasLabel.isInstance(this) -> _HasLabel_getLabel!!.invoke(this) as String? ?: ""
         this is Checkbox -> label ?: ""
         this is FormLayout.FormItem -> this.label
+        this is SideNav -> label ?: ""
+        this is SideNavItem -> label ?: ""
         else -> element.getProperty("label") ?: ""
     }
     set(value) {
@@ -342,6 +346,8 @@ var Component.label: String
             _HasLabel != null && _HasLabel.isInstance(this) -> _HasLabel_setLabel!!.invoke(this, value)
             this is Checkbox -> label = value
             this is FormLayout.FormItem -> throw IllegalArgumentException("Setting the caption of FormItem is currently unsupported")
+            this is SideNav -> label = value
+            this is SideNavItem -> label = value
             else -> element.setProperty("label", value.ifBlank { null })
         }
     }

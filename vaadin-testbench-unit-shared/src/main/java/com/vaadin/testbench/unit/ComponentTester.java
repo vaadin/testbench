@@ -77,13 +77,28 @@ public class ComponentTester<T extends Component> {
      * @see #ensureComponentIsUsable()
      */
     public boolean isUsable() {
-        Component component = getComponent();
+        return isUsable(getComponent());
+    }
+
+    /**
+     * Validate that the given component can be interacted with and should be
+     * visible in the UI.
+     *
+     * Subclasses overriding this method should also override
+     * {@link #notUsableReasons(Consumer)} to provide additional details to the
+     * potential exception thrown by {@link #ensureComponentIsUsable()}.
+     *
+     * @return {@code true} if component can be interacted with by the user
+     * @see #notUsableReasons(Consumer)
+     * @see #ensureComponentIsUsable()
+     */
+    protected static boolean isUsable(Component component) {
         return component.getElement().isEnabled() && component.isAttached()
                 && isEffectivelyVisible(component)
                 && !component.getElement().getNode().isInert();
     }
 
-    private boolean isEffectivelyVisible(Component component) {
+    private static boolean isEffectivelyVisible(Component component) {
         return component.isVisible() && (!component.getParent().isPresent()
                 || isEffectivelyVisible(component.getParent().get()));
     }
@@ -123,12 +138,21 @@ public class ComponentTester<T extends Component> {
      * component.
      */
     protected final void ensureComponentIsUsable() {
-        if (!isUsable()) {
+        ensureComponentIsUsable(component);
+    }
+
+    /**
+     * Checks that given component is usable, otherwise throws an
+     * {@link IllegalStateException} with details on the current state of the
+     * component.
+     */
+    protected static void ensureComponentIsUsable(Component component) {
+        if (!isUsable(component)) {
             StringBuilder message = new StringBuilder(
                     PrettyPrintTreeKt.toPrettyString(component)
                             + " is not usable");
             Stream.Builder<String> reasons = Stream.builder();
-            notUsableReasons(reasons::add);
+            notUsableReasons(component, reasons::add);
             message.append(reasons.build()
                     .collect(Collectors.joining(", ", " because it is ", ".")));
             throw new IllegalStateException(message.toString());
@@ -146,6 +170,22 @@ public class ComponentTester<T extends Component> {
      * @see #ensureComponentIsUsable()
      */
     protected void notUsableReasons(Consumer<String> collector) {
+        notUsableReasons(component, collector);
+    }
+
+    /**
+     * Provides messages explaining why the given component is actually not
+     * usable.
+     *
+     * Subclasses overriding {@link #isUsable()} should also override this
+     * method to provide additional details to the potential exception throw by
+     * {@link #ensureComponentIsUsable()}.
+     *
+     * @see #isUsable()
+     * @see #ensureComponentIsUsable()
+     */
+    protected static void notUsableReasons(Component component,
+            Consumer<String> collector) {
         if (!component.getElement().isEnabled()) {
             collector.accept("not enabled");
         }
@@ -167,7 +207,15 @@ public class ComponentTester<T extends Component> {
      * {@link IllegalStateException}
      */
     protected void ensureVisible() {
-        if (!getComponent().isVisible() || !getComponent().isAttached()) {
+        ensureVisible(getComponent());
+    }
+
+    /**
+     * Check that the given component is visible for the user. Else throw an
+     * {@link IllegalStateException}
+     */
+    protected static void ensureVisible(Component component) {
+        if (!component.isVisible() || !component.isAttached()) {
             throw new IllegalStateException(
                     PrettyPrintTreeKt.toPrettyString(component)
                             + " is not visible!");
