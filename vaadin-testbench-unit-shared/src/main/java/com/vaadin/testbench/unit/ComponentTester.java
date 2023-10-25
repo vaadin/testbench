@@ -13,6 +13,7 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -138,16 +139,21 @@ public class ComponentTester<T extends Component> {
      * component.
      */
     protected final void ensureComponentIsUsable() {
-        ensureComponentIsUsable(component);
+        ensureComponentIsUsable(component, unused -> isUsable());
     }
 
     /**
-     * Checks that given component is usable, otherwise throws an
-     * {@link IllegalStateException} with details on the current state of the
-     * component.
+     * Throws an {@link IllegalStateException} with details on the current state
+     * of the component if it is not usable according to the provided test.
+     *
+     * @param component
+     *            the component to check
+     * @param usableTest
+     *            function that tests if the component is usable or not.
      */
-    protected static void ensureComponentIsUsable(Component component) {
-        if (!isUsable(component)) {
+    protected static void ensureComponentIsUsable(Component component,
+            Predicate<Component> usableTest) {
+        if (!usableTest.test(component)) {
             StringBuilder message = new StringBuilder(
                     PrettyPrintTreeKt.toPrettyString(component)
                             + " is not usable");

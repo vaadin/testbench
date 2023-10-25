@@ -268,7 +268,7 @@ public class SideNavTester<T extends SideNav> extends ComponentTester<T> {
                     + (fullPath != null ? " on path " + fullPath : ""));
         }
         SideNavItem navItem = navItems.get(0);
-        ensureComponentIsUsable(navItem);
+        ensureComponentIsUsable(navItem, ComponentTester::isUsable);
         return navItem;
     }
 
