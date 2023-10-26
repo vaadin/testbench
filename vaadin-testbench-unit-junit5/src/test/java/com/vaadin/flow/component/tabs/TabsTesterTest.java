@@ -98,6 +98,23 @@ class TabsTesterTest extends UIUnitTest {
     }
 
     @Test
+    void select_byIndex_indexRefersToVisibleTabs() {
+        view.details.setVisible(false);
+        AtomicReference<Tab> selectedTab = new AtomicReference<>();
+        view.tabs.addSelectedChangeListener(
+                ev -> selectedTab.set(ev.getSelectedTab()));
+
+        // Payment now is the first visible tab
+        tabs_.select(0);
+        Assertions.assertEquals(view.payment, selectedTab.get());
+
+        view.payment.setVisible(false);
+        // Shipping is now is the only visible tab
+        tabs_.select(0);
+        Assertions.assertEquals(view.shipping, selectedTab.get());
+    }
+
+    @Test
     void getTab_getsCorrectTab() {
         Assertions.assertSame(view.details, tabs_.getTab("Details"));
         Assertions.assertSame(view.payment, tabs_.getTab("Payment"));
@@ -106,6 +123,19 @@ class TabsTesterTest extends UIUnitTest {
         Assertions.assertSame(view.details, tabs_.getTab(0));
         Assertions.assertSame(view.payment, tabs_.getTab(1));
         Assertions.assertSame(view.shipping, tabs_.getTab(2));
+
+        view.details.setVisible(false);
+        // Payment now is the first visible tab
+        Assertions.assertSame(view.payment, tabs_.getTab(0));
+
+        view.payment.setVisible(false);
+        // Shipping is now is the only visible tab
+        Assertions.assertSame(view.shipping, tabs_.getTab(0));
+
+        // Now Details and Shipping
+        view.details.setVisible(true);
+        Assertions.assertSame(view.details, tabs_.getTab(0));
+        Assertions.assertSame(view.shipping, tabs_.getTab(1));
 
     }
 
@@ -116,6 +146,8 @@ class TabsTesterTest extends UIUnitTest {
 
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> tabs_.getTab(4));
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> tabs_.getTab(-1));
     }
 
     @Test
@@ -123,8 +155,6 @@ class TabsTesterTest extends UIUnitTest {
         view.payment.setVisible(false);
         Assertions.assertThrows(IllegalStateException.class,
                 () -> tabs_.getTab("Payment"));
-        Assertions.assertThrows(IllegalStateException.class,
-                () -> tabs_.getTab(1));
     }
 
     @Test
@@ -147,12 +177,33 @@ class TabsTesterTest extends UIUnitTest {
     }
 
     @Test
+    void isSelected_byIndex_invisibleTabsIgnored() {
+        view.payment.setVisible(false);
+        view.tabs.setSelectedTab(view.shipping);
+
+        Assertions.assertFalse(tabs_.isSelected(0),
+                "Details tab at index 0 should be not selected, but got true");
+        Assertions.assertTrue(tabs_.isSelected(1),
+                "Shipping tab at index 1 (payment hidden) should be selected, but got false");
+
+        view.payment.setVisible(true);
+        view.details.setVisible(false);
+        view.tabs.setSelectedTab(view.payment);
+        Assertions.assertTrue(tabs_.isSelected(0),
+                "Payment tab at index 0 (details hidden) should be selected, but got false");
+        Assertions.assertFalse(tabs_.isSelected(1),
+                "Shipping tab at index 1 (details hidden) should be not selected, but got true");
+    }
+
+    @Test
     void isSelected_notExistingTab_throws() {
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> tabs_.isSelected("Summary"));
 
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> tabs_.isSelected(4));
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> tabs_.isSelected(-1));
     }
 
 }

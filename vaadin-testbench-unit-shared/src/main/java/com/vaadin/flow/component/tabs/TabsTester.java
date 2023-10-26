@@ -10,6 +10,7 @@ package com.vaadin.flow.component.tabs;
 
 import java.util.Objects;
 
+import com.vaadin.flow.component.Component;
 import com.vaadin.testbench.unit.ComponentTester;
 import com.vaadin.testbench.unit.Tests;
 
@@ -54,8 +55,12 @@ public class TabsTester<T extends Tabs> extends ComponentTester<T> {
      */
     public void select(int index) {
         ensureComponentIsUsable();
-        doSelectTab(findTab(index), "Tab at index " + index
-                + " cannot be selected because it is not usable");
+        if (index >= 0) {
+            doSelectTab(findTab(index), "Tab at index " + index
+                    + " cannot be selected because it is not usable");
+        } else {
+            getComponent().setSelectedTab(null);
+        }
     }
 
     /**
@@ -130,14 +135,16 @@ public class TabsTester<T extends Tabs> extends ComponentTester<T> {
     }
 
     private Tab findTab(int index) {
-        if (index > getComponent().getComponentCount()) {
-            throw new IllegalArgumentException("Invalid tab index " + index);
+        if (index < 0) {
+            throw new IllegalArgumentException(
+                    "The 'index' argument should be greater than or equal to 0. It was: "
+                            + index);
         }
-        Tab tab = null;
-        if (index >= 0) {
-            tab = (Tab) getComponent().getComponentAt(index);
-        }
-        return tab;
+        return (Tab) getComponent().getChildren().sequential()
+                .filter(Component::isVisible).skip(index).findFirst()
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "The 'index' argument should not be greater than or equals to the number of children tabs. It was: "
+                                + index));
     }
 
     private void doSelectTab(Tab tab, String errorMessage) {
