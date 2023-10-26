@@ -9,10 +9,14 @@
 package com.vaadin.testbench.parallel.setup;
 
 import java.net.URL;
+import java.time.Duration;
+import java.util.HashMap;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.HttpCommandExecutor;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.remote.http.HttpClient;
 
 import com.vaadin.testbench.TestBench;
 
@@ -32,8 +36,11 @@ public class RemoteDriver {
             DesiredCapabilities capabilities) throws Exception {
         for (int i = 1; i <= BROWSER_INIT_ATTEMPTS; i++) {
             try {
+                HttpClient.Factory httpClientFactory = new HttpClientFactoryDefaultWrapper();
+                HttpCommandExecutor executor = new HttpCommandExecutor(
+                        new HashMap<>(), new URL(hubURL), httpClientFactory);
                 WebDriver dr = TestBench.createDriver(
-                        new RemoteWebDriver(new URL(hubURL), capabilities));
+                        new RemoteWebDriver(executor, capabilities));
                 return dr;
             } catch (Exception e) {
                 System.err.println("Browser startup for " + capabilities
@@ -46,5 +53,25 @@ public class RemoteDriver {
 
         // should never happen
         return null;
+    }
+
+    // Override the default builder to set timeouts as in newer selenium version
+    // readTimeout to 3 minutes instead of 3 hours
+    // connectionTimeout to 10 seconds instead of 2 minutes
+    private static class HttpClientFactoryDefaultWrapper
+            implements HttpClient.Factory {
+        private final HttpClient.Factory delegate = HttpClient.Factory
+                .createDefault();
+
+        @Override
+        public HttpClient.Builder builder() {
+            return delegate.builder().connectionTimeout(Duration.ofSeconds(10))
+                    .readTimeout(Duration.ofMinutes(3));
+        }
+
+        @Override
+        public void cleanupIdleClients() {
+            delegate.cleanupIdleClients();
+        }
     }
 }
