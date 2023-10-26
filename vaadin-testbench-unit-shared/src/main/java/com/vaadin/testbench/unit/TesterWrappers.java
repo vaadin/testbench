@@ -104,6 +104,8 @@ import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.select.SelectTester;
 import com.vaadin.flow.component.sidenav.SideNav;
 import com.vaadin.flow.component.sidenav.SideNavTester;
+import com.vaadin.flow.component.tabs.TabSheet;
+import com.vaadin.flow.component.tabs.TabSheetTester;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.component.tabs.TabsTester;
 import com.vaadin.flow.component.textfield.BigDecimalField;
@@ -270,6 +272,10 @@ public interface TesterWrappers {
 
     default TabsTester<Tabs> test(Tabs tabs) {
         return BaseUIUnitTest.internalWrap(TabsTester.class, tabs);
+    }
+
+    default TabSheetTester<TabSheet> test(TabSheet tabSheet) {
+        return BaseUIUnitTest.internalWrap(TabSheetTester.class, tabSheet);
     }
 
     default NumberFieldTester<IntegerField, Integer> test(
