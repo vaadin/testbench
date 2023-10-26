@@ -102,6 +102,8 @@ import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroupTester;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.select.SelectTester;
+import com.vaadin.flow.component.sidenav.SideNav;
+import com.vaadin.flow.component.sidenav.SideNavTester;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.component.tabs.TabsTester;
 import com.vaadin.flow.component.textfield.BigDecimalField;
@@ -414,5 +416,9 @@ public interface TesterWrappers {
 
     default ChartTester<Chart> test(Chart chart) {
         return BaseUIUnitTest.internalWrap(ChartTester.class, chart);
+    }
+
+    default SideNavTester<SideNav> test(SideNav sideNav) {
+        return BaseUIUnitTest.internalWrap(SideNavTester.class, sideNav);
     }
 }
