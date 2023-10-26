@@ -68,13 +68,13 @@ class TabsTesterTest extends UIUnitTest {
                 ev -> selectedTab.set(ev.getSelectedTab()));
 
         tabs_.select("Payment");
-        Assertions.assertEquals(selectedTab.get(), view.payment);
+        Assertions.assertEquals(view.payment, selectedTab.get());
 
         tabs_.select("Details");
-        Assertions.assertEquals(selectedTab.get(), view.details);
+        Assertions.assertEquals(view.details, selectedTab.get());
 
         tabs_.select("Shipping");
-        Assertions.assertEquals(selectedTab.get(), view.shipping);
+        Assertions.assertEquals(view.shipping, selectedTab.get());
     }
 
     @Test
@@ -84,16 +84,16 @@ class TabsTesterTest extends UIUnitTest {
                 ev -> selectedTab.set(ev.getSelectedTab()));
 
         tabs_.select(1);
-        Assertions.assertEquals(selectedTab.get(), view.payment);
+        Assertions.assertEquals(view.payment, selectedTab.get());
 
         tabs_.select(0);
-        Assertions.assertEquals(selectedTab.get(), view.details);
+        Assertions.assertEquals(view.details, selectedTab.get());
 
         tabs_.select(2);
-        Assertions.assertEquals(selectedTab.get(), view.shipping);
+        Assertions.assertEquals(view.shipping, selectedTab.get());
 
         tabs_.select(-1);
-        Assertions.assertEquals(selectedTab.get(), null);
+        Assertions.assertNull(selectedTab.get());
 
     }
 
