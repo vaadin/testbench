@@ -10,6 +10,7 @@ package com.vaadin.flow.component.tabs;
 
 import java.util.Objects;
 
+import com.vaadin.flow.component.Component;
 import com.vaadin.testbench.unit.ComponentTester;
 import com.vaadin.testbench.unit.Tests;
 
@@ -46,16 +47,31 @@ public class TabsTester<T extends Tabs> extends ComponentTester<T> {
     }
 
     /**
-     * Selects a tab based on its zero-based index.
+     * Selects a visible tab based on its zero-based index.
+     * <p>
+     * The {@code index} refers to the zero-base position of the currently
+     * visible tabs. For example, if there are three tabs
+     * {@literal A (position 0), B (position 1) and C (position 2)}, but tab 'B'
+     * is hidden, then to select tab 'C', the call must be {@code select(1)} and
+     * not {@code select(2)}.
      *
      * @param index
      *            the zero-based index of the selected tab, negative value to
      *            unselect
+     * @throws IllegalStateException
+     *             if tab at given index is not visible in the browser
+     * @throws IllegalArgumentException
+     *             if the {@code index} is less than zero or greater than the
+     *             number of visible tabs.
      */
     public void select(int index) {
         ensureComponentIsUsable();
-        doSelectTab(findTab(index), "Tab at index " + index
-                + " cannot be selected because it is not usable");
+        if (index >= 0) {
+            doSelectTab(findTab(index), "Tab at index " + index
+                    + " cannot be selected because it is not usable");
+        } else {
+            getComponent().setSelectedTab(null);
+        }
     }
 
     /**
@@ -72,12 +88,23 @@ public class TabsTester<T extends Tabs> extends ComponentTester<T> {
     }
 
     /**
-     * Checks if the tab at the given index is currently selected.
+     * Checks if the visible tab at the given index is currently selected.
+     * <p>
+     * The {@code index} refers to the zero-base position of the currently
+     * visible tabs. For example, if there are three tabs
+     * {@literal A (position 0), B (position 1) and C (position 2)}, but tab 'B'
+     * is hidden, then to check if tab 'C' is selected, the call must be
+     * {@code isSelected(1)} and not {@code isSelected(2)}.
      *
      * @param index
      *            the zero-based index of the tab
      * @return {@literal true} if the tab is selected, {@literal false}
      *         otherwise.
+     * @throws IllegalStateException
+     *             if tab at given index is not visible in the browser
+     * @throws IllegalArgumentException
+     *             if the {@code index} is less than zero or greater than the
+     *             number of visible tabs.
      */
     public boolean isSelected(int index) {
         ensureComponentIsUsable();
@@ -105,12 +132,21 @@ public class TabsTester<T extends Tabs> extends ComponentTester<T> {
 
     /**
      * Gets the visible tab at given index.
+     * <p>
+     * The {@code index} refers to the zero-base position of the currently
+     * visible tabs. For example, if there are three tabs
+     * {@literal A (position 0), B (position 1) and C (position 2)}, but tab 'B'
+     * is hidden, then to get tab 'C', the call must be {@code getTab(1)} and
+     * not {@code getTab(2)}.
      *
      * @param index
      *            the zero-based index of the selected tab, negative value to
      *            unselect
      * @throws IllegalStateException
-     *             if tab is not visible
+     *             if tab at given index is not visible in the browser
+     * @throws IllegalArgumentException
+     *             if the {@code index} is less than zero or greater than the
+     *             number of visible tabs.
      */
     public Tab getTab(int index) {
         ensureComponentIsUsable();
@@ -130,14 +166,16 @@ public class TabsTester<T extends Tabs> extends ComponentTester<T> {
     }
 
     private Tab findTab(int index) {
-        if (index > getComponent().getComponentCount()) {
-            throw new IllegalArgumentException("Invalid tab index " + index);
+        if (index < 0) {
+            throw new IllegalArgumentException(
+                    "The 'index' argument should be greater than or equal to 0. It was: "
+                            + index);
         }
-        Tab tab = null;
-        if (index >= 0) {
-            tab = (Tab) getComponent().getComponentAt(index);
-        }
-        return tab;
+        return (Tab) getComponent().getChildren().sequential()
+                .filter(Component::isVisible).skip(index).findFirst()
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "The 'index' argument should not be greater than or equals to the number of visible children tabs. It was: "
+                                + index));
     }
 
     private void doSelectTab(Tab tab, String errorMessage) {
