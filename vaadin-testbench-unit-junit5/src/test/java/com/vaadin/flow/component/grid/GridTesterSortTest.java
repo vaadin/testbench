@@ -241,4 +241,23 @@ class GridTesterSortTest extends UIUnitTest {
                 List.of(grid_.getRow(0), grid_.getRow(1), grid_.getRow(2)));
 
     }
+
+    @Test
+    void sortByColumn_multisort_append_gridIsSorted() {
+        view.grid.setMultiSort(true, Grid.MultiSortPriority.APPEND);
+        view.first.setFirstName("G");
+        view.first.setAge(20);
+        view.second.setFirstName("G");
+        view.second.setAge(25);
+        view.third.setFirstName("A");
+        view.third.setAge(25);
+        view.grid.setMultiSort(true);
+
+        grid_.sortByColumn(0);
+        grid_.sortByColumn(1);
+        Assertions.assertIterableEquals(
+                List.of(view.third, view.first, view.second),
+                List.of(grid_.getRow(0), grid_.getRow(1), grid_.getRow(2)));
+
+    }
 }
