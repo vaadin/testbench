@@ -59,6 +59,7 @@ import com.vaadin.flow.component.html.NativeLabel;
 import com.vaadin.flow.component.html.OrderedList;
 import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.html.Pre;
+import com.vaadin.flow.component.html.RangeInput;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.html.UnorderedList;
 import com.vaadin.flow.component.html.testbench.AnchorTester;
@@ -82,6 +83,7 @@ import com.vaadin.flow.component.html.testbench.NativeLabelTester;
 import com.vaadin.flow.component.html.testbench.OrderedListTester;
 import com.vaadin.flow.component.html.testbench.ParagraphTester;
 import com.vaadin.flow.component.html.testbench.PreTester;
+import com.vaadin.flow.component.html.testbench.RangeInputTester;
 import com.vaadin.flow.component.html.testbench.SpanTester;
 import com.vaadin.flow.component.html.testbench.UnorderedListTester;
 import com.vaadin.flow.component.listbox.ListBox;
@@ -374,6 +376,10 @@ public interface TesterWrappers {
 
     default InputTester test(Input input) {
         return BaseUIUnitTest.internalWrap(InputTester.class, input);
+    }
+
+    default RangeInputTester test(RangeInput input) {
+        return BaseUIUnitTest.internalWrap(RangeInputTester.class, input);
     }
 
     default LabelTester test(Label label) {
