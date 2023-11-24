@@ -538,6 +538,13 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
         }
     }
 
+    private Grid.MultiSortPriority getMultiSortPriority() {
+        return "append".equals(
+                getComponent().getElement().getAttribute("multi-sort-priority"))
+                        ? Grid.MultiSortPriority.APPEND
+                        : Grid.MultiSortPriority.PREPEND;
+    }
+
     private void doSort(SortDirection currentDirection, Grid.Column<Y> col) {
         List<GridSortOrder<Y>> sortOrders = new ArrayList<>(
                 getComponent().getSortOrder());
@@ -546,10 +553,14 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
         } else {
             sortOrders.clear();
         }
+        final Grid.MultiSortPriority multiSortPriority = getMultiSortPriority();
+        final int insertIndex = multiSortPriority == Grid.MultiSortPriority.PREPEND
+                ? 0
+                : sortOrders.size();
         if (currentDirection == null) {
-            sortOrders.add(0, GridSortOrder.asc(col).build().get(0));
+            sortOrders.add(insertIndex, GridSortOrder.asc(col).build().get(0));
         } else if (currentDirection == SortDirection.ASCENDING) {
-            sortOrders.add(0, GridSortOrder.desc(col).build().get(0));
+            sortOrders.add(insertIndex, GridSortOrder.desc(col).build().get(0));
         }
         getComponent().sort(sortOrders);
     }

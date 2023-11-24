@@ -33,7 +33,6 @@
     <properties>
         <kotlin.version>1.6.21</kotlin.version>
         <dokka.version>1.6.21</dokka.version>
-        <vaadin.version>24.2-SNAPSHOT</vaadin.version>
     </properties>
 
     <profiles>
