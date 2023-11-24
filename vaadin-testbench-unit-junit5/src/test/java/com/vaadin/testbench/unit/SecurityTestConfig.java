@@ -23,45 +23,70 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.flow.server.VaadinServiceInitListener;
+import com.vaadin.flow.server.auth.NavigationAccessControl;
 import com.vaadin.flow.server.auth.ViewAccessChecker;
 
 // Empty configuration class used only to be able to bootstrap spring
 // ApplicationContext
-@Configuration
 class SecurityTestConfig {
 
-    // Registers test views and view access checker for testing purpose
-    @Bean
-    VaadinServiceInitListener setupViewSecurityScenario() {
-        return event -> {
-            RouteConfiguration routeConfiguration = RouteConfiguration
-                    .forApplicationScope();
-            routeConfiguration.setAnnotatedRoute(LoginView.class);
-            routeConfiguration.setAnnotatedRoute(ProtectedView.class);
-            event.getSource().addUIInitListener(uiEvent -> {
-                ViewAccessChecker viewAccessChecker = new ViewAccessChecker();
-                viewAccessChecker.setLoginView(LoginView.class);
-                uiEvent.getUI().addBeforeEnterListener(viewAccessChecker);
-            });
-        };
+    @Configuration
+    public static class ViewAccessCheckerConfig extends Commons {
+        // Registers test views and view access checker for testing purpose
+        @Bean
+        VaadinServiceInitListener setupViewSecurityScenario() {
+            return event -> {
+                RouteConfiguration routeConfiguration = RouteConfiguration
+                        .forApplicationScope();
+                routeConfiguration.setAnnotatedRoute(LoginView.class);
+                routeConfiguration.setAnnotatedRoute(ProtectedView.class);
+                event.getSource().addUIInitListener(uiEvent -> {
+                    ViewAccessChecker viewAccessChecker = new ViewAccessChecker();
+                    viewAccessChecker.setLoginView(LoginView.class);
+                    uiEvent.getUI().addBeforeEnterListener(viewAccessChecker);
+                });
+            };
+        }
     }
 
-    @Bean
-    UserDetailsService mockUserDetailsService() {
+    @Configuration
+    public static class NavigationAccessControlConfig extends Commons {
+        // Registers test views and view access checker for testing purpose
+        @Bean
+        VaadinServiceInitListener setupViewSecurityScenario() {
+            return event -> {
+                RouteConfiguration routeConfiguration = RouteConfiguration
+                        .forApplicationScope();
+                routeConfiguration.setAnnotatedRoute(LoginView.class);
+                routeConfiguration.setAnnotatedRoute(ProtectedView.class);
+                event.getSource().addUIInitListener(uiEvent -> {
+                    NavigationAccessControl accessControl = new NavigationAccessControl();
+                    accessControl.setLoginView(LoginView.class);
+                    uiEvent.getUI().addBeforeEnterListener(accessControl);
+                });
+            };
+        }
+    }
 
-        return new UserDetailsService() {
-            @Override
-            public UserDetails loadUserByUsername(String username)
-                    throws UsernameNotFoundException {
-                if ("user".equals(username)) {
-                    return new User(username, UUID.randomUUID().toString(),
-                            List.of(new SimpleGrantedAuthority(
-                                    "ROLE_SUPERUSER"),
-                                    new SimpleGrantedAuthority("ROLE_DEV")));
+    private static class Commons {
+        @Bean
+        UserDetailsService mockUserDetailsService() {
+
+            return new UserDetailsService() {
+                @Override
+                public UserDetails loadUserByUsername(String username)
+                        throws UsernameNotFoundException {
+                    if ("user".equals(username)) {
+                        return new User(username, UUID.randomUUID().toString(),
+                                List.of(new SimpleGrantedAuthority(
+                                        "ROLE_SUPERUSER"),
+                                        new SimpleGrantedAuthority(
+                                                "ROLE_DEV")));
+                    }
+                    throw new UsernameNotFoundException(
+                            "User " + username + " not exists");
                 }
-                throw new UsernameNotFoundException(
-                        "User " + username + " not exists");
-            }
-        };
+            };
+        }
     }
 }

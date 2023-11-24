@@ -21,9 +21,9 @@ import org.springframework.test.context.ContextConfiguration;
 
 import com.vaadin.flow.server.VaadinRequest;
 
-@ContextConfiguration(classes = SecurityTestConfig.NavigationAccessControlConfig.class)
+@ContextConfiguration(classes = SecurityTestConfig.ViewAccessCheckerConfig.class)
 @ViewPackages(packages = "com.testapp.security")
-class SpringUnitSecurityTest extends SpringUIUnitTest {
+class SpringUnitSecurityViewAccessCheckerTest extends SpringUIUnitTest {
 
     @Test
     @WithMockUser(username = "john", roles = { "DEV", "PO" })
