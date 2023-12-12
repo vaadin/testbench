@@ -64,6 +64,9 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
             + "}";
     // @formatter:on
 
+    // A hook for testing purposes
+    private Runnable waitForVaadinLoopHook;
+
     public TestBenchCommandExecutor(ImageComparison imageComparison,
             ReferenceNameGenerator referenceNameGenerator) {
         this.imageComparison = imageComparison;
@@ -113,6 +116,9 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
         long timeoutTime = System.currentTimeMillis() + 40000;
         Boolean finished = false;
         while (System.currentTimeMillis() < timeoutTime && !finished) {
+            if (waitForVaadinLoopHook != null) {
+                waitForVaadinLoopHook.run();
+            }
             // Must use the wrapped driver here to avoid calling waitForVaadin
             // again
             finished = (Boolean) ((JavascriptExecutor) getDriver()
