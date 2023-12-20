@@ -158,14 +158,11 @@
                 <artifactId>jetty-maven-plugin</artifactId>
                 <version>${jetty.version}</version>
                 <configuration>
-                    <scanIntervalSeconds>-1</scanIntervalSeconds>
+                    <scan>-1</scan>
                     <stopKey>foo</stopKey>
                     <stopPort>9999</stopPort>
                     <systemProperties>
-                        <systemProperty>
-                            <name>vaadin.requestTiming</name>
-                            <value>true</value>
-                        </systemProperty>
+                        <vaadin.requestTiming>true</vaadin.requestTiming>
                     </systemProperties>
                 </configuration>
                 <executions>
