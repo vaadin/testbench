@@ -153,18 +153,18 @@
                     <trimStackTrace>false</trimStackTrace>
                 </configuration>
             </plugin>
-<plugin>
-    <groupId>org.eclipse.jetty</groupId>
-    <artifactId>jetty-maven-plugin</artifactId>
-    <version>${jetty.version}</version>
-    <configuration>
-        <scan>-1</scan>
-        <stopKey>foo</stopKey>
-        <stopPort>9999</stopPort>
-        <systemProperties>
-            <vaadin.requestTiming>true</vaadin.requestTiming>
-        </systemProperties>
-    </configuration>
+            <plugin>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-maven-plugin</artifactId>
+                <version>${jetty.version}</version>
+                <configuration>
+                    <scan>-1</scan>
+                    <stopKey>foo</stopKey>
+                    <stopPort>9999</stopPort>
+                    <systemProperties>
+                        <vaadin.requestTiming>true</vaadin.requestTiming>
+                    </systemProperties>
+                </configuration>
                 <executions>
                     <!-- start and stop jetty (running our app) when running
                         integration tests -->
