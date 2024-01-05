@@ -16,7 +16,7 @@
 
     <url>http://maven.apache.org</url>
     <properties>
-        <jetty.version>11.0.12</jetty.version>
+        <jetty.version>11.0.15</jetty.version>
         <flow.version>24.2-SNAPSHOT</flow.version>
     </properties>
     <repositories>
