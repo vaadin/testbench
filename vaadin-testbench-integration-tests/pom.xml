@@ -106,14 +106,10 @@
                 <groupId>com.vaadin</groupId>
                 <artifactId>flow-maven-plugin</artifactId>
                 <version>${flow.version}</version>
-                <configuration>
-                    <bowerMode>true</bowerMode>
-                </configuration>
                 <executions>
                     <execution>
                         <goals>
-                            <goal>copy-production-files</goal>
-                            <goal>package-for-production</goal>
+                            <goal>prepare-frontend</goal>
                         </goals>
                     </execution>
                 </executions>
@@ -156,7 +152,7 @@
                     </systemProperties>
                 </configuration>
                 <executions>
-                    <!-- start and stop jetty (running our app) when running 
+                    <!-- start and stop jetty (running our app) when running
                         integration tests -->
                     <execution>
                         <id>start-jetty</id>
