@@ -16,8 +16,7 @@
 
     <url>http://maven.apache.org</url>
     <properties>
-        <jetty.version>9.4.43.v20210629</jetty.version>
-        <flow.version>9.0-SNAPSHOT</flow.version>
+        <jetty.version>10.0.13</jetty.version>
     </properties>
     <repositories>
         <repository>
@@ -109,9 +108,6 @@
                 <groupId>com.vaadin</groupId>
                 <artifactId>flow-maven-plugin</artifactId>
                 <version>${flow.version}</version>
-                <configuration>
-                    <bowerMode>true</bowerMode>
-                </configuration>
                 <executions>
                     <execution>
                         <goals>
