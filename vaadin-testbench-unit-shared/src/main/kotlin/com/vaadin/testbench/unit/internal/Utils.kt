@@ -13,8 +13,7 @@ import java.io.ByteArrayOutputStream
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 import java.io.Serializable
-import jakarta.servlet.Servlet
-import jakarta.servlet.ServletContext
+import kotlin.jvm.Throws
 import com.vaadin.flow.component.UI
 import com.vaadin.flow.internal.ReflectTools
 import com.vaadin.flow.router.HasErrorParameter
@@ -35,11 +34,19 @@ import elemental.json.Json
 import elemental.json.JsonArray
 import elemental.json.JsonValue
 import elemental.json.impl.JreJsonValue
+import jakarta.servlet.Servlet
+import jakarta.servlet.ServletContext
 
 
-fun Serializable.serializeToBytes(): ByteArray = ByteArrayOutputStream().use { ObjectOutputStream(it).writeObject(this); it }.toByteArray()
-inline fun <reified T: Serializable> ByteArray.deserialize(): T = ObjectInputStream(inputStream()).readObject() as T
-inline fun <reified T: Serializable> T.serializeDeserialize(): T = serializeToBytes().deserialize<T>()
+fun Serializable.serializeToBytes(): ByteArray =
+    ByteArrayOutputStream().use { ObjectOutputStream(it).writeObject(this); it }
+        .toByteArray()
+
+inline fun <reified T : Serializable> ByteArray.deserialize(): T =
+    ObjectInputStream(inputStream()).readObject() as T
+
+inline fun <reified T : Serializable> T.serializeDeserialize(): T =
+    serializeToBytes().deserialize<T>()
 
 val IntRange.size: Int get() = (endInclusive + 1 - start).coerceAtLeast(0)
 
@@ -88,7 +95,7 @@ fun List<JsonValue>.unwrap(): List<Any?> =
 /**
  * Unwraps this value into corresponding Java type. Unwraps arrays recursively.
  */
-fun JsonValue.unwrap(): Any? = when(this) {
+fun JsonValue.unwrap(): Any? = when (this) {
     is JsonArray -> this.toList().unwrap()
     else -> (this as JreJsonValue).`object`
 }
@@ -109,9 +116,14 @@ internal fun String.parseJvmVersion(): Int {
 }
 
 private val regexWhitespace = Regex("\\s+")
-internal fun String.splitByWhitespaces(): List<String> = split(regexWhitespace).filterNot { it.isBlank() }
+internal fun String.splitByWhitespaces(): List<String> =
+    split(regexWhitespace).filterNot { it.isBlank() }
+
 internal fun String.containsWhitespace(): Boolean = any { it.isWhitespace() }
-internal fun String.ellipsize(maxLength: Int, ellipsize: String = "..."): String {
+internal fun String.ellipsize(
+    maxLength: Int,
+    ellipsize: String = "..."
+): String {
     require(maxLength >= ellipsize.length) { "maxLength must be at least the size of ellipsize $ellipsize but it was $maxLength" }
     return when {
         (length <= maxLength) || (length <= ellipsize.length) -> this
@@ -125,24 +137,24 @@ internal fun String.ellipsize(maxLength: Int, ellipsize: String = "..."): String
  * [HasErrorParameter] interface.
  */
 internal fun Class<*>.getErrorParameterType(): Class<*>? =
-        ReflectTools.getGenericInterfaceType(this, HasErrorParameter::class.java)
+    ReflectTools.getGenericInterfaceType(this, HasErrorParameter::class.java)
 
 internal val Class<*>.isRouteNotFound: Boolean
     get() = getErrorParameterType() == NotFoundException::class.java
 
 val currentRequest: VaadinRequest
     get() = VaadinService.getCurrentRequest()
-            ?: throw IllegalStateException("No current request. Have you called MockVaadin.setup()?")
+        ?: throw IllegalStateException("No current request. Have you called MockVaadin.setup()?")
 val currentResponse: VaadinResponse
     get() = VaadinService.getCurrentResponse()
-            ?: throw IllegalStateException("No current response. Have you called MockVaadin.setup()?")
+        ?: throw IllegalStateException("No current response. Have you called MockVaadin.setup()?")
 
 /**
  * Returns the [UI.getCurrent]; fails with informative error message if the UI.getCurrent() is null.
  */
 val currentUI: UI
     get() = UI.getCurrent()
-            ?: throw IllegalStateException("UI.getCurrent() is null. Have you called MockVaadin.setup()?")
+        ?: throw IllegalStateException("UI.getCurrent() is null. Have you called MockVaadin.setup()?")
 
 /**
  * Retrieves the mock request which backs up [VaadinRequest].
@@ -175,12 +187,33 @@ val Servlet.isInitialized: Boolean get() = servletConfig != null
 internal fun Class<*>.hasCustomToString(): Boolean =
     getMethod("toString").declaringClass != java.lang.Object::class.java
 
-internal val polymerTemplateClass =
+internal val polymerTemplateClass = findClass(
+    "com.vaadin.flow.component.polymertemplate.PolymerTemplate"
+)
+
+internal fun hasPolymerTemplates(): Boolean = polymerTemplateClass != null
+
+internal fun findClass(className: String): Class<*>? {
     try {
-        Class.forName("com.vaadin.flow.component.polymertemplate.PolymerTemplate")
+        return Class.forName(className)
     } catch (ex: ClassNotFoundException) {
-        null
+        try {
+            return Class.forName(
+                className,
+                true,
+                Thread.currentThread().contextClassLoader
+            )
+        } catch (ex: ClassNotFoundException) {
+            return null
+        }
     }
+}
 
-internal fun hasPolymerTemplates() : Boolean = polymerTemplateClass != null
-
+@Throws(ClassNotFoundException::class)
+internal fun findClassOrThrow(className: String): Class<*>{
+    val clazz = findClass(className)
+    if (clazz == null) {
+        throw ClassNotFoundException(className)
+    }
+    return clazz
+}

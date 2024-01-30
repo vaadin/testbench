@@ -132,11 +132,8 @@ val Component.isTemplate: Boolean
  */
 var testingLifecycleHook: TestingLifecycleHook = TestingLifecycleHook.default
 
-private val _ConfirmDialog_Class: Class<*>? = try {
-    Class.forName("com.vaadin.flow.component.confirmdialog.ConfirmDialog")
-} catch (e: ClassNotFoundException) {
-    null
-}
+private val _ConfirmDialog_Class: Class<*>? = findClass("com.vaadin.flow.component.confirmdialog.ConfirmDialog")
+
 private val _ConfirmDialog_isOpened: Method? =
     _ConfirmDialog_Class?.getMethod("isOpened")
 

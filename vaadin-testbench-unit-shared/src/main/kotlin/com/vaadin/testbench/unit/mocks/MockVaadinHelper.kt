@@ -17,6 +17,8 @@ import com.vaadin.flow.server.VaadinContext
 import com.vaadin.flow.server.VaadinServlet
 import com.vaadin.flow.server.VaadinServletContext
 import com.vaadin.flow.server.startup.LookupServletContainerInitializer
+import com.vaadin.testbench.unit.internal.findClass
+import com.vaadin.testbench.unit.internal.findClassOrThrow
 import elemental.json.Json
 import elemental.json.JsonObject
 
@@ -56,9 +58,9 @@ object MockVaadinHelper {
         // the same flow-build-info.json that Vaadin reads.
 
         val ctx: VaadinContext = MockVaadinHelper.createMockVaadinContext()
-        val acf = lookup(ctx, Class.forName("com.vaadin.flow.server.startup.ApplicationConfigurationFactory"))
+        val acf = lookup(ctx, findClassOrThrow("com.vaadin.flow.server.startup.ApplicationConfigurationFactory"))
         checkNotNull(acf) { "ApplicationConfigurationFactory is null" }
-        val dacfClass = Class.forName("com.vaadin.flow.server.startup.DefaultApplicationConfigurationFactory")
+        val dacfClass = findClassOrThrow("com.vaadin.flow.server.startup.DefaultApplicationConfigurationFactory")
         if (dacfClass.isInstance(acf)) {
             val m = dacfClass.getDeclaredMethod("getTokenFileFromClassloader", VaadinContext::class.java)
             m.isAccessible = true
@@ -97,16 +99,13 @@ object MockVaadinHelper {
         val loaders = mutableSetOf<Class<*>>(
                 *lookupServices.toTypedArray(),
                 LookupInitializer::class.java,
-                Class.forName("com.vaadin.flow.di.LookupInitializer${'$'}ResourceProviderImpl")
+                findClassOrThrow("com.vaadin.flow.di.LookupInitializer${'$'}ResourceProviderImpl")
         )
 
-        fun tryLoad(clazz: String) {
-            try {
-                loaders.add(Class.forName(clazz))
-            } catch (ex: ClassNotFoundException) {
-                // sometimes customers don't include entire vaadin-core and exclude stuff like fusion on purpose.
-                // load the class only if it exists.
-            }
+        fun tryLoad(className: String) {
+            // sometimes customers don't include entire vaadin-core and exclude stuff like fusion on purpose.
+            // load the class only if it exists.
+            findClass(className)?.let { clazz -> loaders.add(clazz) }
         }
 
         tryLoad("com.vaadin.flow.component.polymertemplate.rpc.PolymerPublishedEventRpcHandler")
