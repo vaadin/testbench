@@ -20,3 +20,15 @@ phantomjsdriver.log
 error-screenshots/
 test/temp/
 
+types.d.ts
+tsconfig.json
+webpack.*
+node_modules
+.driver
+package*json
+pnpm*
+.npmrc
+
+**/frontend/generated
+**/frontend/index.html
+
