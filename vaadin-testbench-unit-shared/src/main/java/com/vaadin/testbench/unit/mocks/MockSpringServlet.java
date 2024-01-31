@@ -30,6 +30,7 @@ import com.vaadin.flow.server.VaadinServletRequest;
 import com.vaadin.flow.server.VaadinServletService;
 import com.vaadin.flow.spring.SpringServlet;
 import com.vaadin.testbench.unit.internal.Routes;
+import com.vaadin.testbench.unit.internal.UtilsKt;
 
 /**
  * Makes sure that the {@link #routes} are properly registered, and that
@@ -142,19 +143,13 @@ public class MockSpringServlet extends SpringServlet {
         }
 
         private static boolean hasSpringSecurity() {
-            try {
-                Class.forName(
-                        "org.springframework.security.core.context.SecurityContextHolder");
-                return true;
-            } catch (ClassNotFoundException e) {
-                // Ignore error
-            }
-            return false;
+            return UtilsKt.findClass(
+                    "org.springframework.security.core.context.SecurityContextHolder") != null;
         }
 
         private static UnaryOperator<HttpServletRequest> springSecurityRequestWrapper() {
             try {
-                Constructor<?> constructor = Class.forName(
+                Constructor<?> constructor = UtilsKt.findClassOrThrow(
                         "org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestWrapper")
                         .getConstructor(HttpServletRequest.class, String.class);
                 return req -> {

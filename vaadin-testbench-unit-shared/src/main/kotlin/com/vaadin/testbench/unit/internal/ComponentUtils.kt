@@ -305,11 +305,7 @@ val FormLayout.FormItem.label: String get() {
  * The `HasLabel` interface has been introduced in Vaadin 21 but is missing in Vaadin 14.
  * Use reflection.
  */
-private val _HasLabel: Class<*>? = try {
-    Class.forName("com.vaadin.flow.component.HasLabel")
-} catch (ex: ClassNotFoundException) {
-    null
-}
+private val _HasLabel: Class<*>? = findClass("com.vaadin.flow.component.HasLabel")
 private val _HasLabel_getLabel: Method? = _HasLabel?.getDeclaredMethod("getLabel")
 private val _HasLabel_setLabel: Method? = _HasLabel?.getDeclaredMethod("setLabel", String::class.java)
 

@@ -79,10 +79,10 @@ data class Routes(
                 .acceptPackages(*(packageNames.map { it ?: "" }.toTypedArray()))
         classGraph.scan().use { scanResult: ScanResult ->
             scanResult.getClassesWithAnnotation(Route::class.java.name).mapTo(routes) { info: ClassInfo ->
-                Class.forName(info.name).asSubclass(Component::class.java)
+                findClassOrThrow(info.name).asSubclass(Component::class.java)
             }
             scanResult.getClassesImplementing(HasErrorParameter::class.java.name).mapTo(errorRoutes) { info: ClassInfo ->
-                Class.forName(info.name).asSubclass(HasErrorParameter::class.java)
+                findClassOrThrow(info.name).asSubclass(HasErrorParameter::class.java)
             }
         }
 
