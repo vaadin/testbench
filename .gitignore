@@ -24,6 +24,7 @@ driver
 types.d.ts
 tsconfig.json
 webpack.*
+vite.*.ts
 node_modules
 .driver
 package*json
