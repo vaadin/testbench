@@ -11,6 +11,8 @@ package com.vaadin.testbench.unit.quarkus;
 
 import jakarta.enterprise.inject.spi.CDI;
 
+import java.util.Set;
+
 import org.junit.jupiter.api.BeforeEach;
 
 import com.vaadin.testbench.unit.UIUnitTest;
@@ -69,5 +71,10 @@ public abstract class QuarkusUIUnitTest extends UIUnitTest {
         MockQuarkusServlet servlet = new MockQuarkusServlet(discoverRoutes(),
                 CDI.current().getBeanManager(), MockedUI::new);
         MockVaadin.setup(MockedUI::new, servlet, lookupServices());
+    }
+
+    @Override
+    protected Set<Class<?>> lookupServices() {
+        return Set.of(QuarkusTestLookupInitializer.class);
     }
 }
