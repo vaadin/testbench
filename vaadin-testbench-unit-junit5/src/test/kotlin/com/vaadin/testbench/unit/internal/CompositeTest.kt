@@ -22,10 +22,10 @@ internal fun DynaNodeGroup.compositeTests() {
     afterEach { MockVaadin.tearDown() }
 
     test("Composite<*> causes virtual children to be fetched twice") {
-        class MyDialog : Composite<VirtualChildComponent>() {
+        class MyComposite : Composite<VirtualChildComponent>() {
         }
 
-        val dlg = MyDialog()
+        val dlg = MyComposite()
         dlg._expectOne<Span> { text = "virtual child" }
     }
 }
