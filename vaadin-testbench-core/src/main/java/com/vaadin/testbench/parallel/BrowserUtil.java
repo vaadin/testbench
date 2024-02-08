@@ -187,7 +187,7 @@ public class BrowserUtil {
         if (capabilities == null) {
             return false;
         }
-        return BrowserType.CHROME.equals(capabilities.getBrowserName());
+        return capabilities.getBrowserName().startsWith(BrowserType.CHROME);
     }
 
     /**
