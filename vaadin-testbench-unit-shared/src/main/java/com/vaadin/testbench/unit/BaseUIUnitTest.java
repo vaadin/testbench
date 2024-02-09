@@ -124,7 +124,7 @@ public abstract class BaseUIUnitTest {
         }
     }
 
-    synchronized Routes discoverRoutes() {
+    protected synchronized Routes discoverRoutes() {
         return discoverRoutes(scanPackages());
     }
 
