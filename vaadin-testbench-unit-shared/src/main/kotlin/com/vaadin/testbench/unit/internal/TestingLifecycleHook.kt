@@ -11,6 +11,7 @@ package com.vaadin.testbench.unit.internal
 
 import java.lang.reflect.Method
 import com.vaadin.flow.component.Component
+import com.vaadin.flow.component.Composite
 import com.vaadin.flow.component.UI
 import com.vaadin.flow.component.contextmenu.MenuItemBase
 import com.vaadin.flow.component.dialog.Dialog
@@ -105,6 +106,13 @@ interface TestingLifecycleHook {
         component is Grid.Column<*> -> {
             // don't include virtual children since that would include the header/footer components
             // which would clash with Grid.Column later on
+            component.children.toList()
+        }
+        component is Composite<*> -> {
+            // The Composite class overrides getChildren() to return a stream with the wrapped component,
+            // but also getElement() returning the Element of the wrapped component.
+            // The latter causes the virtual child to be fetched as Composite direct child,
+            // thus duplicating any virtual children the child component might have.
             component.children.toList()
         }
         // Also include virtual children.
