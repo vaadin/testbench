@@ -19,6 +19,7 @@ import com.vaadin.flow.component.ComponentUtil
 import com.vaadin.flow.component.HasComponents
 import com.vaadin.flow.component.HasElement
 import com.vaadin.flow.component.HasOrderedComponents
+import com.vaadin.flow.component.HasPlaceholder
 import com.vaadin.flow.component.HasStyle
 import com.vaadin.flow.component.HasText
 import com.vaadin.flow.component.UI
@@ -276,7 +277,7 @@ var Component.placeholder: String?
         is PasswordField -> placeholder
         is ComboBox<*> -> this.placeholder  // https://youtrack.jetbrains.com/issue/KT-24275
         is DatePicker -> placeholder
-        is Input -> placeholder.orElse(null)
+        is HasPlaceholder -> placeholder
         else -> null
     }
     set(value) {
@@ -286,7 +287,7 @@ var Component.placeholder: String?
             is PasswordField -> placeholder = value
             is ComboBox<*> -> this.placeholder = value
             is DatePicker -> placeholder = value
-            is Input -> setPlaceholder(value)
+            is HasPlaceholder -> placeholder = value
             else -> throw IllegalStateException("${javaClass.simpleName} doesn't support setting placeholder")
         }
     }
@@ -304,11 +305,7 @@ val FormLayout.FormItem.label: String get() {
  * The `HasLabel` interface has been introduced in Vaadin 21 but is missing in Vaadin 14.
  * Use reflection.
  */
-private val _HasLabel: Class<*>? = try {
-    Class.forName("com.vaadin.flow.component.HasLabel")
-} catch (ex: ClassNotFoundException) {
-    null
-}
+private val _HasLabel: Class<*>? = findClass("com.vaadin.flow.component.HasLabel")
 private val _HasLabel_getLabel: Method? = _HasLabel?.getDeclaredMethod("getLabel")
 private val _HasLabel_setLabel: Method? = _HasLabel?.getDeclaredMethod("setLabel", String::class.java)
 

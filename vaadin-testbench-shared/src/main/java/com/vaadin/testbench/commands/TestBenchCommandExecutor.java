@@ -49,7 +49,9 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
     private boolean autoScrollIntoView = true;
     // @formatter:off
     String WAIT_FOR_VAADIN_SCRIPT =
-            "if (window.Vaadin && window.Vaadin.Flow && window.Vaadin.Flow.clients) {"
+            "if (window.Vaadin && window.Vaadin.Flow && window.Vaadin.Flow.devServerIsNotLoaded) {"
+            + "  return false;"
+            + "} else if (window.Vaadin && window.Vaadin.Flow && window.Vaadin.Flow.clients) {"
             + "  var clients = window.Vaadin.Flow.clients;"
             + "  for (var client in clients) {"
             + "    if (clients[client].isActive()) {"
@@ -57,12 +59,13 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
             + "    }"
             + "  }"
             + "  return true;"
-            + "} else if (window.Vaadin && window.Vaadin.Flow && window.Vaadin.Flow.devServerIsNotLoaded) {"
-            + "  return false;"
             + "} else {"
             + "  return true;"
             + "}";
     // @formatter:on
+
+    // A hook for testing purposes
+    private Runnable waitForVaadinLoopHook;
 
     public TestBenchCommandExecutor(ImageComparison imageComparison,
             ReferenceNameGenerator referenceNameGenerator) {
@@ -113,6 +116,9 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
         long timeoutTime = System.currentTimeMillis() + 40000;
         Boolean finished = false;
         while (System.currentTimeMillis() < timeoutTime && !finished) {
+            if (waitForVaadinLoopHook != null) {
+                waitForVaadinLoopHook.run();
+            }
             // Must use the wrapped driver here to avoid calling waitForVaadin
             // again
             finished = (Boolean) ((JavascriptExecutor) getDriver()
@@ -197,7 +203,9 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
                     + "  throw 'Performance data is only available when using Vaadin Flow';"
                     + "}" //
                     + "for (client in window.Vaadin.Flow.clients) {\n" //
-                    + "  window.Vaadin.Flow.clients[client].poll();\n" + "}");
+                    + "  if (typeof window.Vaadin.Flow.clients[client].poll === typeof Function) {\n"
+                    + "    window.Vaadin.Flow.clients[client].poll();\n"
+                    + "  }\n" + "}");
         }
 
         return (List<Long>) executeScript("" //
@@ -205,16 +213,18 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
                 + "  throw 'Performance data is only available when using Vaadin Flow';"
                 + "}" //
                 + "var pd = [0,0,0,0];\n" //
+                + "var pdFound = false;\n" //
                 + "for (client in window.Vaadin.Flow.clients) {\n"
-                + "  if (!window.Vaadin.Flow.clients[client].getProfilingData) {"
-                + "    throw 'Performance data is not available in production mode';"
-                + "  }" //
-                + "  var p = window.Vaadin.Flow.clients[client].getProfilingData();\n"
-                + "  pd[0] += p[0];\n" //
-                + "  pd[1] += p[1];\n"//
-                + "  pd[2] += p[2];\n" //
-                + "  pd[3] += p[3];\n" //
-                + "}\n" + "return pd;\n");
+                + "  if (typeof window.Vaadin.Flow.clients[client].getProfilingData === typeof Function) {\n"
+                + "    var p = window.Vaadin.Flow.clients[client].getProfilingData();\n"
+                + "    pd[0] += p[0];\n" //
+                + "    pd[1] += p[1];\n"//
+                + "    pd[2] += p[2];\n" //
+                + "    pd[3] += p[3];\n" //
+                + "    pdFound = true;\n" + "  }\n" + "}\n" + "if (pdFound) {\n"
+                + "  return pd;\n" + "} else {\n"
+                + "  throw 'Performance data is not available in production mode';\n"
+                + "}");
     }
 
     @Override

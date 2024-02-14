@@ -42,6 +42,7 @@ import com.vaadin.testbench.unit.internal.MockInternalSeverError;
 import com.vaadin.testbench.unit.internal.MockVaadin;
 import com.vaadin.testbench.unit.internal.Routes;
 import com.vaadin.testbench.unit.internal.ShortcutsKt;
+import com.vaadin.testbench.unit.internal.UtilsKt;
 import com.vaadin.testbench.unit.mocks.MockedUI;
 
 /**
@@ -93,8 +94,8 @@ public abstract class BaseUIUnitTest {
                             .extendsSuperclass(ComponentTester.class))
                     .forEach(classInfo -> {
                         try {
-                            final Class<?> tester = Class
-                                    .forName(classInfo.getName());
+                            final Class<?> tester = UtilsKt
+                                    .findClassOrThrow(classInfo.getName());
                             final Class<? extends Component>[] annotation = tester
                                     .getAnnotation(Tests.class).value();
                             for (Class<? extends Component> component : annotation) {
@@ -108,7 +109,7 @@ public abstract class BaseUIUnitTest {
 
                             Arrays.stream(classes).map(clazz -> {
                                 try {
-                                    return Class.forName(clazz);
+                                    return UtilsKt.findClassOrThrow(clazz);
                                 } catch (ClassNotFoundException e) {
                                     throw new RuntimeException(e);
                                 }
@@ -123,7 +124,7 @@ public abstract class BaseUIUnitTest {
         }
     }
 
-    synchronized Routes discoverRoutes() {
+    protected synchronized Routes discoverRoutes() {
         return discoverRoutes(scanPackages());
     }
 

@@ -33,11 +33,13 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <Implementation-Version>${project.version}</Implementation-Version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <selenium.version>4.15.0</selenium.version>
+        <selenium.version>4.17.0</selenium.version>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <spring.version>6.0.9</spring.version>
         <spring.security.version>6.1.0</spring.security.version>
+        <vaadin.version>24.3-SNAPSHOT</vaadin.version>
+        <flow.version>${vaadin.version}</flow.version>
         <slf4j.version>2.0.7</slf4j.version>
         <failsafe.version>3.1.0</failsafe.version>
         <surefire.version>3.1.0</surefire.version>
@@ -53,6 +55,7 @@
         <module>vaadin-testbench-unit-shared</module>
         <module>vaadin-testbench-unit</module>
         <module>vaadin-testbench-unit-junit5</module>
+        <module>vaadin-testbench-unit-quarkus</module>
     </modules>
     <repositories>
         <repository>
@@ -97,7 +100,7 @@
             <dependency>
                 <groupId>com.vaadin</groupId>
                 <artifactId>license-checker</artifactId>
-                <version>1.12.3</version>
+                <version>1.12.7</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

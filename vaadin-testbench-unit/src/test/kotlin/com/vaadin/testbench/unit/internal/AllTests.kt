@@ -63,6 +63,10 @@ class AllTests : DynaTest({
         }
     }
 
+    group("Composite") {
+        compositeTests()
+    }
+
     group("search spec") {
         searchSpecTest()
     }

@@ -11,6 +11,7 @@ package com.vaadin.testbench.unit.internal
 
 import java.lang.reflect.Method
 import com.vaadin.flow.component.Component
+import com.vaadin.flow.component.Composite
 import com.vaadin.flow.component.UI
 import com.vaadin.flow.component.contextmenu.MenuItemBase
 import com.vaadin.flow.component.dialog.Dialog
@@ -107,6 +108,13 @@ interface TestingLifecycleHook {
             // which would clash with Grid.Column later on
             component.children.toList()
         }
+        component is Composite<*> -> {
+            // The Composite class overrides getChildren() to return a stream with the wrapped component,
+            // but also getElement() returning the Element of the wrapped component.
+            // The latter causes the virtual child to be fetched as Composite direct child,
+            // thus duplicating any virtual children the child component might have.
+            component.children.toList()
+        }
         // Also include virtual children.
         // Issue: https://github.com/mvysny/karibu-testing/issues/85
         else -> (component.children.toList() + component._getVirtualChildren()).distinct()
@@ -132,11 +140,8 @@ val Component.isTemplate: Boolean
  */
 var testingLifecycleHook: TestingLifecycleHook = TestingLifecycleHook.default
 
-private val _ConfirmDialog_Class: Class<*>? = try {
-    Class.forName("com.vaadin.flow.component.confirmdialog.ConfirmDialog")
-} catch (e: ClassNotFoundException) {
-    null
-}
+private val _ConfirmDialog_Class: Class<*>? = findClass("com.vaadin.flow.component.confirmdialog.ConfirmDialog")
+
 private val _ConfirmDialog_isOpened: Method? =
     _ConfirmDialog_Class?.getMethod("isOpened")
 

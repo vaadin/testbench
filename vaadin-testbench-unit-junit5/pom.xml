@@ -32,7 +32,6 @@
     <properties>
         <kotlin.version>1.6.21</kotlin.version>
         <dokka.version>1.6.21</dokka.version>
-        <vaadin.version>24.2-SNAPSHOT</vaadin.version>
         <junit5.version>5.9.1</junit5.version>
     </properties>
 

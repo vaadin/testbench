@@ -16,8 +16,7 @@
 
     <url>http://maven.apache.org</url>
     <properties>
-        <jetty.version>11.0.12</jetty.version>
-        <flow.version>24.2-SNAPSHOT</flow.version>
+        <jetty.version>12.0.3</jetty.version>
     </properties>
     <repositories>
         <repository>
@@ -148,8 +147,8 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-maven-plugin</artifactId>
+                <groupId>org.eclipse.jetty.ee10</groupId>
+                <artifactId>jetty-ee10-maven-plugin</artifactId>
                 <version>${jetty.version}</version>
                 <configuration>
                     <scanIntervalSeconds>-1</scanIntervalSeconds>

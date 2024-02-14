@@ -24,36 +24,35 @@ public class PerformanceIT extends AbstractBrowserTB9Test {
     }
 
     @BrowserTest
-    @Disabled("timeSpentServicingLastRequest test is unstable")
     public void serverTime() {
         openTestURL();
-        $(NativeButtonElement.class).first().click();
 
-        Assertions.assertEquals(1250.0,
-                testBench().timeSpentServicingLastRequest(), 250.0);
         $(NativeButtonElement.class).first().click();
-        Assertions.assertEquals(2500,
-                testBench().totalTimeSpentServicingRequests(), 500.0);
+        Assertions.assertEquals(1500.0,
+                testBench().timeSpentServicingLastRequest(), 500.0);
+
+        $(NativeButtonElement.class).first().click();
+        Assertions.assertEquals(3000.0,
+                testBench().totalTimeSpentServicingRequests(), 1000.0);
     }
 
     @BrowserTest
-    @Disabled("timeSpentServicingLastRequest does not work: https://github.com/vaadin/testbench/issues/1316")
     public void renderingTime() {
         openTestURL();
         long initialRendering = testBench().timeSpentRenderingLastRequest();
-        // Assuming initial rendering is done in 1-299ms
-        Assertions.assertEquals(150, initialRendering, 149);
-        Assertions.assertEquals(initialRendering,
-                testBench().totalTimeSpentRendering());
+        // Assert initial processing is takes 1-250 ms
+        Assertions.assertTrue(initialRendering > 0 && initialRendering <= 250);
+        // Assert total processing time is larger than initial processing time
+        long totalRendering = testBench().totalTimeSpentRendering();
+        Assertions.assertTrue(totalRendering > initialRendering,
+                "totalTimeSpentRendering() > initialRendering");
+
         $(NativeButtonElement.class).first().click();
         $(NativeButtonElement.class).first().click();
         $(NativeButtonElement.class).first().click();
 
         // Assuming rendering three poll responses is done in 50ms
-        Assertions.assertTrue(
-                testBench().totalTimeSpentRendering() > initialRendering,
-                "totalTimeSpentRendering() > initialRendering");
-        Assertions.assertEquals(initialRendering,
+        Assertions.assertEquals(totalRendering,
                 testBench().totalTimeSpentRendering(), 50);
     }
 

@@ -62,6 +62,7 @@ import java.util.stream.Stream
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
 import kotlin.streams.toList
+import com.vaadin.testbench.unit.internal.findClassOrThrow
 
 /**
  * Returns the item on given row. Fails if the row index is invalid. The data provider is
@@ -483,8 +484,8 @@ public fun Grid<*>.expectRow(rowIndex: Int, vararg row: String) {
 internal val HeaderRow.HeaderCell.column: Any
     get() = _AbstractCell_getColumn.invoke(this)
 
-private val abstractCellClass: Class<*> = Class.forName("com.vaadin.flow.component.grid.AbstractRow\$AbstractCell")
-private val abstractColumnClass: Class<*> = Class.forName("com.vaadin.flow.component.grid.AbstractColumn")
+private val abstractCellClass: Class<*> = findClassOrThrow("com.vaadin.flow.component.grid.AbstractRow\$AbstractCell")
+private val abstractColumnClass: Class<*> = findClassOrThrow("com.vaadin.flow.component.grid.AbstractColumn")
 private val _AbstractCell_getColumn: Method by lazy(LazyThreadSafetyMode.PUBLICATION) {
     val m: Method = abstractCellClass.getDeclaredMethod("getColumn")
     m.isAccessible = true
@@ -495,7 +496,7 @@ internal val <T> ColumnPathRenderer<T>.provider: ValueProvider<T, *>
     get() = _ColumnPathRenderer_provider.get(this) as (ValueProvider<T,*>)
 
 private val _ColumnPathRenderer_provider: Field by lazy(LazyThreadSafetyMode.PUBLICATION) {
-    val f: Field = Class.forName("com.vaadin.flow.component.grid.ColumnPathRenderer").getDeclaredField("provider")
+    val f: Field = findClassOrThrow("com.vaadin.flow.component.grid.ColumnPathRenderer").getDeclaredField("provider")
     f.isAccessible = true
     f
 }
