@@ -55,6 +55,7 @@
         <module>vaadin-testbench-unit-shared</module>
         <module>vaadin-testbench-unit</module>
         <module>vaadin-testbench-unit-junit5</module>
+        <module>vaadin-testbench-unit-quarkus</module>
     </modules>
     <repositories>
         <repository>
@@ -99,7 +100,7 @@
             <dependency>
                 <groupId>com.vaadin</groupId>
                 <artifactId>license-checker</artifactId>
-                <version>1.12.4</version>
+                <version>1.12.7</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
