@@ -17,8 +17,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import com.vaadin.pro.licensechecker.LicenseChecker;
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
-import com.vaadin.testbench.tools.LicenseChecker;
 
 import javassist.util.proxy.MethodFilter;
 import javassist.util.proxy.MethodHandler;
@@ -78,7 +78,8 @@ public class TestBench {
     }
 
     static {
-        LicenseChecker.nag();
+        LicenseChecker.checkLicenseFromStaticBlock("vaadin-testbench",
+        "5.2", null);
         methodFilters = new ConcurrentHashMap<Class<?>, MethodFilter>();
     }
 

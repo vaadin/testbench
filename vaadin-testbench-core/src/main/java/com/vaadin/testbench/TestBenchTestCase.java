@@ -29,7 +29,7 @@ import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.commands.TestBenchCommands;
 import com.vaadin.testbench.commands.TestBenchElementCommands;
 import com.vaadin.testbench.elementsbase.AbstractElement;
-import com.vaadin.testbench.tools.LicenseChecker;
+import com.vaadin.pro.licensechecker.LicenseChecker;
 
 /**
  * A superclass with some helpers to aid TestBench developers. This superclass
@@ -41,7 +41,8 @@ public abstract class TestBenchTestCase
     static {
         // Check the license here, before any driver has been initialized
         // (#15102)
-        LicenseChecker.nag();
+        LicenseChecker.checkLicenseFromStaticBlock("vaadin-testbench",
+                "5.2", null);
     }
 
     static {
