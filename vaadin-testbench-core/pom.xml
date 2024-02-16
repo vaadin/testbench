@@ -23,8 +23,8 @@
 
     <licenses>
         <license>
-            <name>Commercial Vaadin Add-On License version 3.0</name>
-            <url>http://vaadin.com/license/cval-3</url>
+            <name>Vaadin Commercial License</name>
+            <url>https://vaadin.com/commercial-license-and-service-terms</url>
             <distribution>manual</distribution>
         </license>
     </licenses>
