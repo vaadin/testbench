@@ -32,7 +32,7 @@ class QuarkusUnitSecurityViewAccessCheckerTest extends QuarkusUIUnitTest {
         VaadinRequest request = VaadinRequest.getCurrent();
         Principal principal = request.getUserPrincipal();
         Assertions.assertNotNull(principal,
-                "Principal should be provided by Spring Security, but was not found");
+                "Principal should be provided by Quarkus Security, but was not found");
         Assertions.assertEquals("john", principal.getName());
 
         Assertions.assertTrue(request.isUserInRole("DEV"),

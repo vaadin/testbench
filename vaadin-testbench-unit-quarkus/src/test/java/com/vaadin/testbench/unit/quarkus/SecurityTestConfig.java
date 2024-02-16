@@ -23,9 +23,6 @@ import com.vaadin.flow.server.auth.NavigationAccessControl;
 import com.vaadin.flow.server.auth.ViewAccessChecker;
 import com.vaadin.testbench.unit.quarkus.mocks.MockQuarkusServletService;
 
-// Empty configuration class used only to be able to bootstrap spring
-// ApplicationContext
-//
 // Since Quarkus 3.6 it should be possible to define beans in the profile
 // class. For previous version the workaround is to set a custom configuration
 // profile and use @IfBuildProfile annotation to isolate bean definitions
