@@ -113,7 +113,7 @@ public class BasicElementIT extends AbstractTB6Test {
     }
 
     @Test(expected = TimeoutException.class)
-    public void waitForNonExistant() {
+    public void waitForNonExistent() {
         $(TemplateViewElement.class).waitForFirst();
         Assert.fail("Should not have found an element which does not exist");
     }
@@ -127,11 +127,11 @@ public class BasicElementIT extends AbstractTB6Test {
 
         Assert.assertTrue(withAttributes.hasAttribute("string"));
         Assert.assertTrue(withAttributes.hasAttribute("boolean"));
-        Assert.assertFalse(withAttributes.hasAttribute("nonexistant"));
+        Assert.assertFalse(withAttributes.hasAttribute("nonexistent"));
 
         Assert.assertFalse(withoutAttributes.hasAttribute("string"));
         Assert.assertFalse(withoutAttributes.hasAttribute("boolean"));
-        Assert.assertFalse(withoutAttributes.hasAttribute("nonexistant"));
+        Assert.assertFalse(withoutAttributes.hasAttribute("nonexistent"));
     }
 
     @Test
