@@ -51,7 +51,7 @@ class ElementQueryTest {
     }
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         mockDriver = TestBench
                 .createDriver(Mockito.mock(WebDriverWithJS.class));
         exampleElement = TestBenchElement.wrapElement(
@@ -234,12 +234,48 @@ class ElementQueryTest {
     }
 
     @Test
+    void findInElement_byWithAttributeContaining() {
+        findFirstInElement(query -> query
+                        .withAttributeContaining("foo", "bar")
+                        .first(),
+                "[foo~='bar']",
+                "Search should fail as no element containing the attribute value exists in element");
+    }
+
+    @Test
+    void findInDocument_byWithAttributeContaining() {
+        findFirstInDocument(query -> query
+                        .withAttributeContaining("foo", "bar")
+                        .first(),
+                "[foo~='bar']",
+                "Search should fail as no element containing the attribute value exists in document");
+    }
+
+    @Test
+    void findInElement_byWithoutHasAttribute() {
+        findFirstInElement(query -> query
+                        .withoutAttribute("nonexistent")
+                        .first(),
+                ":not([nonexistent])",
+                null);
+    }
+
+    @Test
+    void findInDocument_byWithoutHasAttribute() {
+        findFirstInDocument(query -> query
+                        .withoutAttribute("nonexistent")
+                        .first(),
+                ":not([nonexistent])",
+                null);
+    }
+
+    @Test
     void findInElement_byWithoutAttribute() {
         findFirstInElement(query -> query
                         .withoutAttribute("foo", "bar")
                         .first(),
                 ":not([foo='bar'])",
-                "Search should fail as no element with the attribute exists in element");
+                null);
     }
 
     @Test
@@ -248,19 +284,39 @@ class ElementQueryTest {
                         .withoutAttribute("foo", "bar")
                         .first(),
                 ":not([foo='bar'])",
-                "Search should fail as no element with the attribute exists in document");
+                null);
+    }
+
+    @Test
+    void findInElement_byWithoutAttributeContaining() {
+        findFirstInElement(query -> query
+                        .withoutAttributeContaining("foo", "bar")
+                        .first(),
+                ":not([foo~='bar'])",
+                null);
+    }
+
+    @Test
+    void findInDocument_byWithoutAttributeContaining() {
+        findFirstInDocument(query -> query
+                        .withoutAttributeContaining("foo", "bar")
+                        .first(),
+                ":not([foo~='bar'])",
+                null);
     }
 
     @Test
     void findInElement_byId() {
-        findSingleInElement(query -> query.id("the_id"),
+        findSingleInElement(query -> query
+                        .id("the_id"),
                 "[id='the_id']",
                 "Search should fail as no element with the id exists in element");
     }
 
     @Test
     void findInDocument_byId() {
-        findSingleInDocument(query -> query.id("the_id"),
+        findSingleInDocument(query -> query
+                        .id("the_id"),
                 "[id='the_id']",
                 "Search should fail as no element with the id exists in document");
     }
@@ -359,6 +415,98 @@ class ElementQueryTest {
                         .first(),
                 ":not([class~='pretty'])",
                 null);
+    }
+
+    @Test
+    void findInElement_byWithoutClassNames() {
+        findFirstInElement(query -> query
+                        .withoutClassName("pretty")
+                        .withoutClassName("ugly")
+                        .first(),
+                ":not([class~='pretty']):not([class~='ugly'])",
+                null);
+    }
+
+    @Test
+    void findInDocument_byWithoutClassNames() {
+        findFirstInDocument(query -> query
+                        .withoutClassName("pretty")
+                        .withoutClassName("ugly")
+                        .first(),
+                ":not([class~='pretty']):not([class~='ugly'])",
+                null);
+    }
+
+    @Test
+    void findInElement_byWithTheme() {
+        findFirstInElement(query -> query
+                        .withTheme("compact")
+                        .first(),
+                "[theme='compact']",
+                "Search should fail as no element with the theme exists in element");
+    }
+
+    @Test
+    void findInDocument_byWithTheme() {
+        findFirstInDocument(query -> query
+                        .withTheme("compact")
+                        .first(),
+                "[theme='compact']",
+                "Search should fail as no element with the theme exists in document");
+    }
+
+    @Test
+    void findInElement_byWithoutTheme() {
+        findFirstInElement(query -> query
+                        .withoutTheme("compact")
+                        .first(),
+                ":not([theme='compact'])",
+                null);
+    }
+
+    @Test
+    void findInDocument_byWithoutTheme() {
+        findFirstInDocument(query -> query
+                        .withoutTheme("compact")
+                        .first(),
+                ":not([theme='compact'])",
+                null);
+    }
+
+    @Test
+    void findInElement_byWithCaption() {
+        findFirstInElement(query -> query
+                        .withCaption("Name")
+                        .first(),
+                "[label='Name']",
+                "Search should fail as no element with the caption exists in element");
+    }
+
+    @Test
+    void findInDocument_byWithCaption() {
+        findFirstInDocument(query -> query
+                        .withCaption("Name")
+                        .first(),
+                "[label='Name']",
+                "Search should fail as no element with the caption exists in document");
+    }
+
+    @Test
+    void findInElement_byWithCaptionContaining() {
+        findFirstInElement(query -> query
+                        .withCaptionContaining("Text")
+                        .first(),
+                "[label~='Text']",
+                "Search should fail as no element containing the text exists in element");
+    }
+
+    @Test
+    void findInDocument_byWithCaptionContaining() {
+        findFirstInDocument(query -> query
+                        .withCaptionContaining("Text")
+                        .first(),
+                "[label~='Text']",
+                "Search should fail as no element containing the text exists in document");
     }
 
     @Test

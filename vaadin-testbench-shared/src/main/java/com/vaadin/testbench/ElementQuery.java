@@ -144,21 +144,10 @@ public class ElementQuery<T extends TestBenchElement> {
     }
 
     /**
-     * Executes a search for element with the given id.
-     *
-     * @param id
-     *            the id to look up
-     * @return the element with the given id
-     *
-     * @throws NoSuchElementException
-     *             if no element is found
-     */
-    public T id(String id) {
-        return withId(id).single();
-    }
-
-    /**
-     * Requires the given attribute to be set.
+     * Selects on elements having the given attribute.
+     * <p>
+     *     Note, this attribute need not have a value.
+     * </p>
      *
      * @param name
      *            the attribute name
@@ -172,10 +161,11 @@ public class ElementQuery<T extends TestBenchElement> {
     }
 
     /**
-     * Requires the given attribute to match the given value.
+     * Selects on elements with the given attribute having the given value.
      * <p>
-     * For matching a token in the attribute, see
-     * {@link #attributeContains(String, String)}.
+     * For matching a token within the attribute, see
+     * {@link #withAttributeContaining(String, String)}.
+     * </p>
      *
      * @param name
      *            the attribute name
@@ -191,14 +181,14 @@ public class ElementQuery<T extends TestBenchElement> {
     }
 
     /**
-     * Requires the given attribute to contain the given value.
+     * Selects on elements with the given attribute containing the given token.
      * <p>
      * Compares with space separated tokens so that e.g.
-     * <code>attributeContains('class','myclass');</code> matches
+     * <code>attributeContains("class", "myclass");</code> matches
      * <code>class='someclass myclass'</code>.
      * <p>
      * For matching the full attribute value, see
-     * {@link #attribute(String, String)}.
+     * {@link #withAttribute(String, String)}.
      *
      * @param name
      *            the attribute name
@@ -213,13 +203,11 @@ public class ElementQuery<T extends TestBenchElement> {
         return withAttributeContaining(name, token);
     }
 
-//    public ElementQuery<T> withCondition(Predicate<T> condition) {
-//        // TODO implement
-//        return this;
-//    }
-
     /**
-     * Requires the given attribute to be set.
+     * Selects on elements having the given attribute.
+     * <p>
+     *     Note, this attribute need not have a value.
+     * </p>
      *
      * @param attribute
      *            the attribute name
@@ -231,10 +219,11 @@ public class ElementQuery<T extends TestBenchElement> {
     }
 
     /**
-     * Requires the given attribute to match the given value.
+     * Selects on elements with the given attribute having the given value.
      * <p>
-     * For matching a token in the attribute, see
-     * {@link #attributeContains(String, String)}.
+     * For matching a token within the attribute, see
+     * {@link #withAttributeContaining(String, String)}.
+     * </p>
      *
      * @param attribute
      *            the attribute name
@@ -248,19 +237,19 @@ public class ElementQuery<T extends TestBenchElement> {
     }
 
     /**
-     * Requires the given attribute to contain the given value.
+     * Selects on elements with the given attribute containing the given token.
      * <p>
      * Compares with space separated tokens so that e.g.
-     * <code>attributeContains('class','myclass');</code> matches
+     * <code>withAttributeContaining("class", "myclass");</code> matches
      * <code>class='someclass myclass'</code>.
      * <p>
      * For matching the full attribute value, see
-     * {@link #attribute(String, String)}.
+     * {@link #withAttribute(String, String)}.
      *
      * @param attribute
      *            the attribute name
      * @param value
-     *            the value to look for
+     *            the token to look for
      * @return this element query instance for chaining
      */
     public ElementQuery<T> withAttributeContaining(String attribute, String value) {
@@ -268,49 +257,147 @@ public class ElementQuery<T extends TestBenchElement> {
         return this;
     }
 
+    /**
+     * Selects on elements not having the given attribute.
+     * <p>
+     *     Note, attributes both with and without values are skipped.
+     * </p>
+     *
+     * @param attribute
+     *            the attribute name
+     * @return this element query instance for chaining
+     */
     public ElementQuery<T> withoutAttribute(String attribute) {
-        attributes.add(new AttributeMatch(attribute, "!"));
+        attributes.add(new AttributeMatch(attribute, "!", null));
         return this;
     }
 
+    /**
+     * Selects on elements not having the given attribute with the given value.
+     * <p>
+     * For skipping elements having a token within the attribute, see
+     * {@link #withoutAttributeContaining(String, String)}.
+     * </p>
+     *
+     * @param attribute
+     *            the attribute name
+     * @param value
+     *            the attribute value
+     * @return this element query instance for chaining
+     */
     public ElementQuery<T> withoutAttribute(String attribute, String value) {
         attributes.add(new AttributeMatch(attribute, "!=", value));
         return this;
     }
 
+    /**
+     * Selects on elements not having the given attribute containing the given token.
+     * <p>
+     * Compares with space separated tokens so that e.g.
+     * <code>withoutAttributeContaining("class", "myclass");</code> skips
+     * <code>class='someclass myclass'</code>.
+     * <p>
+     * For matching the full attribute value, see
+     * {@link #withoutAttribute(String, String)}.
+     *
+     * @param attribute
+     *            the attribute name
+     * @param value
+     *            the token to look for
+     * @return this element query instance for chaining
+     */
     public ElementQuery<T> withoutAttributeContaining(String attribute, String value) {
         attributes.add(new AttributeMatch(attribute, "!~=", value));
         return this;
     }
 
+    /**
+     * Selects on elements having the given id.
+     * <p>
+     *     This selector does not require the id to be unique.
+     *     To obtain the unique id, chain with <code>{@link #single()}</code>
+     *     or use <code>{@link #id(String)}</code> instead of this selector.
+     *     If you legitimately have duplicate ids and just want the first one,
+     *     chain with <code>{@link #first()}</code>.
+     * </p>
+     *
+     * @param id
+     *            the id to look up
+     * @return the element with the given id
+     *
+     * @throws NoSuchElementException
+     *             if no element is found
+     */
     public ElementQuery<T> withId(String id) {
         return withAttribute("id", id);
     }
 
+    /**
+     * Selects on elements having the given class names.
+     *
+     * @param classNames
+     *            the class names
+     * @return this element query instance for chaining
+     */
     public ElementQuery<T> withClassName(String... classNames) {
         Arrays.stream(classNames)
                 .forEach(className -> withAttributeContaining("class", className));
         return this;
     }
 
+    /**
+     * Selects on elements not having the given class names.
+     *
+     * @param classNames
+     *            the class names
+     * @return this element query instance for chaining
+     */
     public ElementQuery<T> withoutClassName(String... classNames) {
         Arrays.stream(classNames)
                 .forEach(className -> withoutAttributeContaining("class", className));
         return this;
     }
 
+    /**
+     * Selects on elements having the given theme.
+     *
+     * @param theme
+     *            the theme
+     * @return this element query instance for chaining
+     */
     public ElementQuery<T> withTheme(String theme) {
         return withAttribute("theme", theme);
     }
 
+    /**
+     * Selects on elements not having the given theme.
+     *
+     * @param theme
+     *            the theme
+     * @return this element query instance for chaining
+     */
     public ElementQuery<T> withoutTheme(String theme) {
         return withoutAttribute("theme", theme);
     }
 
+    /**
+     * Selects on elements having the given caption.
+     *
+     * @param caption
+     *            the caption
+     * @return this element query instance for chaining
+     */
     public ElementQuery<T> withCaption(String caption) {
         return withAttribute("label", caption);
     }
 
+    /**
+     * Selects on elements having a caption containing the given text.
+     *
+     * @param text
+     *            the text
+     * @return this element query instance for chaining
+     */
     public ElementQuery<T> withCaptionContaining(String text) {
         return withAttributeContaining("label", text);
     }
@@ -326,6 +413,11 @@ public class ElementQuery<T extends TestBenchElement> {
 //    }
 //
 //    public <V> ElementQuery<T> withValue(V value) {
+//        // TODO implement
+//        return this;
+//    }
+//
+//    public ElementQuery<T> withCondition(Predicate<T> condition) {
 //        // TODO implement
 //        return this;
 //    }
@@ -360,6 +452,27 @@ public class ElementQuery<T extends TestBenchElement> {
      */
     protected SearchContext getContext() {
         return searchContext;
+    }
+
+    /**
+     * Executes the search and returns an element having the given unique id.
+     * <p>
+     *     This selector expects the id to be unique.
+     *     If there are duplicate ids, this selector will
+     *     throw an exception. If you legitimately have duplicate ids,
+     *     use <code>{@link #withId(String)}.{@link #first()}</code> instead.
+     *     (Note, this alternate usage is the former behavior of this selector.)
+     * </p>
+     *
+     * @param id
+     *            the id to look up
+     * @return the element with the given id
+     *
+     * @throws NoSuchElementException
+     *             if no element is found
+     */
+    public T id(String id) {
+        return withId(id).single();
     }
 
     /**
@@ -432,15 +545,6 @@ public class ElementQuery<T extends TestBenchElement> {
 
     }
 
-    private WebDriver getDriver() {
-        var context = getContext();
-        if (context instanceof WebDriver webDriver) {
-            return webDriver;
-        } else {
-            return ((TestBenchElement) context).getDriver();
-        }
-    }
-
     /**
      * Executes the search and returns the last result.
      *
@@ -501,6 +605,15 @@ public class ElementQuery<T extends TestBenchElement> {
      */
     public List<T> all() {
         return executeSearch(null);
+    }
+
+    private WebDriver getDriver() {
+        var context = getContext();
+        if (context instanceof WebDriver webDriver) {
+            return webDriver;
+        } else {
+            return ((TestBenchElement) context).getDriver();
+        }
     }
 
     /**
@@ -575,7 +688,6 @@ public class ElementQuery<T extends TestBenchElement> {
 
         Set<AttributeMatch> classAttributes = new HashSet<>();
         for (Attribute attr : attrs) {
-            String toMatch;
             if (!Attribute.DEFAULT_VALUE.equals(attr.value())) {
                 if (!Attribute.DEFAULT_VALUE.equals(attr.contains())) {
                     throw new RuntimeException(
