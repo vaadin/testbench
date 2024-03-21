@@ -204,11 +204,11 @@
                                 <!--
                                 <systemProperty>
                                     <key>test.waitForDevBundle.attempts</key>
-                                    <value>5</value>
+                                    <value>60</value>
                                 </systemProperty>
                                 <systemProperty>
                                     <key>test.waitForDevBundle.sleepMillis</key>
-                                    <value>500</value>
+                                    <value>1000</value>
                                 </systemProperty>
                                 -->
                             </systemProperties>
