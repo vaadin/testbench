@@ -14,9 +14,11 @@ import com.vaadin.testbench.BrowserTest;
 import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.tests.elements.NativeButtonElement;
 import com.vaadin.tests.elements.TemplateViewElement;
-import org.junit.jupiter.api.Assertions;
 
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ElementQueryIT extends AbstractBrowserTB9Test {
 
@@ -26,89 +28,87 @@ public class ElementQueryIT extends AbstractBrowserTB9Test {
     }
 
     @BrowserTest
-    public void ensureElementListWrapped() {
+    void ensureElementListWrapped() {
         openTestURL();
         List<TemplateViewElement> elements = $(TemplateViewElement.class).all();
-        Assertions.assertNotNull(elements.get(0));
+        assertNotNull(elements.get(0));
     }
 
     @BrowserTest
-    public void ensureElementListFromOnPageWrapped() {
+    void ensureElementListFromOnPageWrapped() {
         openTestURL();
         TemplateViewElement view = $(TemplateViewElement.class).first();
         TemplateViewElement view2 = view.$(TemplateViewElement.class).onPage()
                 .first();
-        Assertions.assertEquals(view, view2);
+        assertEquals(view, view2);
     }
 
     @BrowserTest
-    public void findLightDomElementById() {
+    void findLightDomElementById() {
         openTestURL();
 
         TemplateViewElement view = $(TemplateViewElement.class).first();
         NativeButtonElement button = view.$(NativeButtonElement.class)
                 .id("light-button-1");
-        Assertions.assertEquals("Button 1", button.getText());
+        assertEquals("Button 1", button.getText());
     }
 
     @BrowserTest
-    public void findShadowDomElementById() {
+    void findShadowDomElementById() {
         openTestURL();
 
         TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
         NativeButtonElement button = view.$(NativeButtonElement.class)
                 .id("shadow-button-1");
-        Assertions.assertEquals("Shadow Button 1", button.getText());
+        assertEquals("Shadow Button 1", button.getText());
     }
 
     @BrowserTest
-    public void findAllShadowDomElements() {
+    void findAllShadowDomElements() {
         openTestURL();
 
         TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
-        Assertions.assertEquals(10,
-                view.$(NativeButtonElement.class).all().size());
+        assertEquals(10, view.$(NativeButtonElement.class).all().size());
     }
 
     @BrowserTest
-    public void searchShadowDomBeforeLight() {
+    void searchShadowDomBeforeLight() {
         openTestURL();
 
         TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
         NativeButtonElement button = view.$(NativeButtonElement.class)
                 .withId("special-button")
                 .first();
-        Assertions.assertEquals("Special Button (in Shadow DOM)",
-                button.getText());
+        assertEquals("Special Button (in Shadow DOM)", button.getText());
     }
 
     @BrowserTest
-    public void mergeLightAndShadowDomResults() {
+    void mergeLightAndShadowDomResults() {
         openTestURL();
 
         TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
         List<NativeButtonElement> buttons = view.$(NativeButtonElement.class)
                 .all();
-        Assertions.assertEquals(10, buttons.size());
+        assertEquals(10, buttons.size());
     }
 
     @BrowserTest
-    public void findTestBenchElementUsingTag() {
+    void findTestBenchElementUsingTag() {
         openTestURL();
 
         TestBenchElement button = $(TemplateViewElement.class).waitForFirst()
                 .$("button").id("shadow-button-2");
-        Assertions.assertEquals("Shadow Button 2", button.getText());
+        assertEquals("Shadow Button 2", button.getText());
 
     }
 
     @BrowserTest
-    public void findTestBenchElement() {
+    void findTestBenchElement() {
         openTestURL();
 
         TestBenchElement button = $(TemplateViewElement.class).waitForFirst()
                 .$(TestBenchElement.class).id("shadow-button-2");
-        Assertions.assertNotNull(button);
+        assertNotNull(button);
     }
 
     @BrowserTest
@@ -118,7 +118,7 @@ public class ElementQueryIT extends AbstractBrowserTB9Test {
         TestBenchElement button = $(TemplateViewElement.class).waitForFirst()
                 .$(TestBenchElement.class).first().$(TestBenchElement.class)
                 .first();
-        Assertions.assertEquals("Shadow Button 1", button.getText());
+        assertEquals("Shadow Button 1", button.getText());
     }
 
     @BrowserTest
@@ -126,7 +126,29 @@ public class ElementQueryIT extends AbstractBrowserTB9Test {
         openTestURL();
         NativeButtonElement button = $(TemplateViewElement.class).waitForFirst()
                 .$(NativeButtonElement.class).id("foo'*+bar'");
-        Assertions.assertEquals("Button with special id", button.getText());
+        assertEquals("Button with special id", button.getText());
+    }
+
+    @BrowserTest
+    void hasAttribute() {
+        openTestURL();
+        TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
+
+        List<NativeButtonElement> slottedButtons = view.$(NativeButtonElement.class)
+                .withAttribute("slot")
+                .all();
+        assertEquals(1, slottedButtons.size());
+    }
+
+    @BrowserTest
+    void withAttribute() {
+        openTestURL();
+        TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
+
+        List<NativeButtonElement> specialSlottedButtons = view.$(NativeButtonElement.class)
+                .withAttribute("slot", "special-slot")
+                .all();
+        assertEquals(1, specialSlottedButtons.size());
     }
 
     @BrowserTest
@@ -135,10 +157,21 @@ public class ElementQueryIT extends AbstractBrowserTB9Test {
         TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
         List<NativeButtonElement> button1s = view.$(NativeButtonElement.class)
                 .withAttributeContaining("class", "button-1").all();
-        Assertions.assertEquals(1, button1s.size());
+        assertEquals(1, button1s.size());
         List<NativeButtonElement> allButtons = view.$(NativeButtonElement.class)
                 .withAttributeContaining("class", "button").all();
-        Assertions.assertEquals(10, allButtons.size());
+        assertEquals(10, allButtons.size());
+    }
+
+    @BrowserTest
+    void withoutHasAttribute() {
+        openTestURL();
+        TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
+
+        List<NativeButtonElement> nonSlottedButtons = view.$(NativeButtonElement.class)
+                .withoutAttribute("slot")
+                .all();
+        assertEquals(9, nonSlottedButtons.size());
     }
 
     @BrowserTest
@@ -149,11 +182,21 @@ public class ElementQueryIT extends AbstractBrowserTB9Test {
         List<NativeButtonElement> nonSlottedButtons = view.$(NativeButtonElement.class)
                 .withoutAttribute("slot", "special-slot")
                 .all();
-        Assertions.assertEquals(9, nonSlottedButtons.size());
+        assertEquals(9, nonSlottedButtons.size());
 
         List<NativeButtonElement> allButtons = view.$(NativeButtonElement.class)
                 .withoutAttribute("class", "nonexistent").all();
-        Assertions.assertEquals(10, allButtons.size());
+        assertEquals(10, allButtons.size());
+    }
+
+    @BrowserTest
+    void withoutAttributeContaining() {
+        openTestURL();
+        TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
+
+        List<NativeButtonElement> allButtons = view.$(NativeButtonElement.class)
+                .withoutAttributeContaining("class", "button-special-slot").all();
+        assertEquals(9, allButtons.size());
     }
 
     @BrowserTest
@@ -164,7 +207,7 @@ public class ElementQueryIT extends AbstractBrowserTB9Test {
                 .$(TestBenchElement.class)
                 .withId("shadow-button-2")
                 .single();
-        Assertions.assertNotNull(button);
+        assertNotNull(button);
     }
 
     @BrowserTest
@@ -174,7 +217,7 @@ public class ElementQueryIT extends AbstractBrowserTB9Test {
         List<NativeButtonElement> allButtons = view.$(NativeButtonElement.class)
                 .withClassName("button")
                 .all();
-        Assertions.assertEquals(10, allButtons.size());
+        assertEquals(10, allButtons.size());
     }
 
     @BrowserTest
@@ -184,7 +227,7 @@ public class ElementQueryIT extends AbstractBrowserTB9Test {
         NativeButtonElement button1 = view.$(NativeButtonElement.class)
                 .withClassName("button-1")
                 .first();
-        Assertions.assertNotNull(button1);
+        assertNotNull(button1);
     }
 
     @BrowserTest
@@ -195,7 +238,7 @@ public class ElementQueryIT extends AbstractBrowserTB9Test {
                 .withClassName("button")
                 .withClassName("button-1")
                 .first();
-        Assertions.assertNotNull(buttonButton1);
+        assertNotNull(buttonButton1);
     }
 
     @BrowserTest
@@ -205,7 +248,7 @@ public class ElementQueryIT extends AbstractBrowserTB9Test {
         List<NativeButtonElement> noButtons = view.$(NativeButtonElement.class)
                 .withoutClassName("button")
                 .all();
-        Assertions.assertEquals(0, noButtons.size());
+        assertEquals(0, noButtons.size());
     }
 
     @BrowserTest
@@ -215,7 +258,7 @@ public class ElementQueryIT extends AbstractBrowserTB9Test {
         List<NativeButtonElement> notButton1s = view.$(NativeButtonElement.class)
                 .withoutClassName("button-1")
                 .all();
-        Assertions.assertEquals(9, notButton1s.size());
+        assertEquals(9, notButton1s.size());
     }
 
     @BrowserTest
@@ -226,7 +269,7 @@ public class ElementQueryIT extends AbstractBrowserTB9Test {
                 .withoutClassName("button-1")
                 .withoutClassName("button-2")
                 .all();
-        Assertions.assertEquals(8, notButton1or2s.size());
+        assertEquals(8, notButton1or2s.size());
     }
 
     @BrowserTest
@@ -234,8 +277,27 @@ public class ElementQueryIT extends AbstractBrowserTB9Test {
         openTestURL();
         TemplateViewElement template = $(TemplateViewElement.class).first();
 
-        Assertions.assertEquals(6,
-                template.getPropertyElements("children").size());
+        assertEquals(6, template.getPropertyElements("children").size());
+    }
+
+    @BrowserTest
+    void allWithLightTheme() {
+        openTestURL();
+        TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
+        List<NativeButtonElement> allButtons = view.$(NativeButtonElement.class)
+                .withTheme("light-theme")
+                .all();
+        assertEquals(6, allButtons.size());
+    }
+
+    @BrowserTest
+    void allWithoutLightTheme() {
+        openTestURL();
+        TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
+        List<NativeButtonElement> allButtons = view.$(NativeButtonElement.class)
+                .withoutTheme("light-theme")
+                .all();
+        assertEquals(4, allButtons.size());
     }
 
 }

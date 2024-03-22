@@ -381,48 +381,6 @@ public class ElementQuery<T extends TestBenchElement> {
     }
 
     /**
-     * Selects on elements having the given caption.
-     *
-     * @param caption
-     *            the caption
-     * @return this element query instance for chaining
-     */
-    public ElementQuery<T> withCaption(String caption) {
-        return withAttribute("label", caption);
-    }
-
-    /**
-     * Selects on elements having a caption containing the given text.
-     *
-     * @param text
-     *            the text
-     * @return this element query instance for chaining
-     */
-    public ElementQuery<T> withCaptionContaining(String text) {
-        return withAttributeContaining("label", text);
-    }
-
-//    public ElementQuery<T> withText(String text) {
-//        // TODO implement
-//        return this;
-//    }
-//
-//    public ElementQuery<T> withTextContaining(String text) {
-//        // TODO implement
-//        return this;
-//    }
-//
-//    public <V> ElementQuery<T> withValue(V value) {
-//        // TODO implement
-//        return this;
-//    }
-//
-//    public ElementQuery<T> withCondition(Predicate<T> condition) {
-//        // TODO implement
-//        return this;
-//    }
-
-    /**
      * Sets the context to search inside.
      *
      * @param searchContext

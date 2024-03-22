@@ -11,7 +11,6 @@ package com.vaadin.testbench;
 import com.vaadin.testbench.ElementQuery.AttributeMatch;
 import com.vaadin.testbench.annotations.Attribute;
 import com.vaadin.testbench.elementsbase.Element;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -23,6 +22,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import static org.junit.Assert.*;
 
 public class ElementQueryTest {
     private static final String DOCUMENT_QUERY_FRAGMENT = "document.querySelectorAll(arguments[1]+arguments[2])";
@@ -111,19 +112,19 @@ public class ElementQueryTest {
         try {
             action.apply(query);
             if (message != null) {
-                Assert.fail(message);
+                fail(message);
             }
         } catch (NoSuchElementException ignored) {
         }
-        Assert.assertTrue("last query script should contain " +
+        assertTrue("last query script should contain " +
                         (ELEMENT_QUERY_FRAGMENT.equals(queryFragment) ? "ELEMENT_QUERY_FRAGMENT" : "DOCUMENT_QUERY_FRAGMENT"),
                 query.lastScript.contains(queryFragment));
-        Assert.assertTrue(
+        assertTrue(
                 "last query script should end with \"" + resultQuerySuffix + "\"",
                 query.lastScript.endsWith(resultQuerySuffix));
-        Assert.assertEquals(expectedAttributePairs, query.lastAttributePairs);
-        Assert.assertEquals(ExampleElement.TAG, query.lastTagName);
-        Assert.assertSame(lastContext, query.lastContext);
+        assertEquals(expectedAttributePairs, query.lastAttributePairs);
+        assertEquals(ExampleElement.TAG, query.lastTagName);
+        assertSame(lastContext, query.lastContext);
     }
 
     private void findInElement(TestElementQuery<ExampleElement> query,
@@ -474,42 +475,6 @@ public class ElementQueryTest {
     }
 
     @Test
-    public void findInElement_byWithCaption() {
-        findFirstInElement(query -> query
-                        .withCaption("Name")
-                        .first(),
-                "[label='Name']",
-                "Search should fail as no element with the caption exists in element");
-    }
-
-    @Test
-    public void findInDocument_byWithCaption() {
-        findFirstInDocument(query -> query
-                        .withCaption("Name")
-                        .first(),
-                "[label='Name']",
-                "Search should fail as no element with the caption exists in document");
-    }
-
-    @Test
-    public void findInElement_byWithCaptionContaining() {
-        findFirstInElement(query -> query
-                        .withCaptionContaining("Text")
-                        .first(),
-                "[label~='Text']",
-                "Search should fail as no element containing the text exists in element");
-    }
-
-    @Test
-    public void findInDocument_byWithCaptionContaining() {
-        findFirstInDocument(query -> query
-                        .withCaptionContaining("Text")
-                        .first(),
-                "[label~='Text']",
-                "Search should fail as no element containing the text exists in document");
-    }
-
-    @Test
     public void findInElement_onPage() {
         findInDocument(createExampleElementQuery(),
                 query -> query
@@ -555,7 +520,7 @@ public class ElementQueryTest {
     public void attributesConventionValue() {
         Set<AttributeMatch> attributes = ElementQuery
                 .getAttributes(MyFancyViewElement.class);
-        Assert.assertEquals(set(new AttributeMatch("id", "my-fancy-view")),
+        assertEquals(set(new AttributeMatch("id", "my-fancy-view")),
                 attributes);
     }
 
@@ -563,7 +528,7 @@ public class ElementQueryTest {
     public void attributesConventionContains() {
         Set<AttributeMatch> attributes = ElementQuery
                 .getAttributes(MyFancyViewContainsElement.class);
-        Assert.assertEquals(set(
+        assertEquals(set(
                         new AttributeMatch("class", "~=", "my-fancy-view-contains")),
                 attributes);
     }
@@ -572,7 +537,7 @@ public class ElementQueryTest {
     public void attributesInherited() {
         Set<AttributeMatch> attributes = ElementQuery
                 .getAttributes(MyExtendedFancyViewElement.class);
-        Assert.assertEquals(
+        assertEquals(
                 set(new AttributeMatch("id", "my-extended-fancy-view")),
                 attributes);
     }
@@ -581,7 +546,7 @@ public class ElementQueryTest {
     public void attributesCanBeOverridden() {
         Set<AttributeMatch> attributes = ElementQuery
                 .getAttributes(MyExtendedAndOverriddenFancyViewElement.class);
-        Assert.assertEquals(set(new AttributeMatch("id", "overruled")),
+        assertEquals(set(new AttributeMatch("id", "overruled")),
                 attributes);
     }
 
@@ -589,7 +554,7 @@ public class ElementQueryTest {
     public void multipleAttributeAnnotations() {
         Set<AttributeMatch> attributes = ElementQuery
                 .getAttributes(MultipleAnnotationElement.class);
-        Assert.assertEquals(set(new AttributeMatch("class", "~=", "foo"),
+        assertEquals(set(new AttributeMatch("class", "~=", "foo"),
                 new AttributeMatch("class", "~=", "bar")), attributes);
     }
 
