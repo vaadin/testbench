@@ -8,12 +8,6 @@
  */
 package com.vaadin.flow.component.grid;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.*;
-import java.util.stream.Collectors;
-
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.data.provider.SortDirection;
 import com.vaadin.flow.data.provider.SortOrder;
@@ -29,6 +23,9 @@ import com.vaadin.testbench.unit.component.GridKt;
 import elemental.json.Json;
 import elemental.json.JsonArray;
 import jakarta.validation.UnexpectedTypeException;
+
+import java.lang.reflect.Field;
+import java.util.*;
 
 /**
  * Tester for Grid components.
@@ -93,7 +90,7 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
      *            row to click
      * @param button
      *            MouseButton that was clicked
-     * @see {@link com.vaadin.flow.component.ClickEvent#getButton()}
+     * @see com.vaadin.flow.component.ClickEvent#getButton()
      */
     public void clickRow(int row, MouseButton button) {
         clickRow(row, button, new MetaKeys());
@@ -124,7 +121,7 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
      *            MouseButton that was clicked
      * @param metaKeys
      *            meta key statuses for click
-     * @see {@link com.vaadin.flow.component.ClickEvent#getButton()}
+     * @see com.vaadin.flow.component.ClickEvent#getButton()
      */
     public void clickRow(int row, MouseButton button, MetaKeys metaKeys) {
         ensureComponentIsUsable();
@@ -134,7 +131,7 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
     }
 
     /**
-     * Double click on grid row.
+     * Double-click on grid row.
      * <p/>
      * The index is 0 based.
      *
@@ -146,7 +143,7 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
     }
 
     /**
-     * Double click on grid row with given button.
+     * Double-click on grid row with given button.
      * <p/>
      * The index is 0 based.
      *
@@ -154,14 +151,14 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
      *            row to click
      * @param button
      *            MouseButton that was clicked
-     * @see {@link com.vaadin.flow.component.ClickEvent#getButton()}
+     * @see com.vaadin.flow.component.ClickEvent#getButton()
      */
     public void doubleClickRow(int row, MouseButton button) {
         doubleClickRow(row, button, new MetaKeys());
     }
 
     /**
-     * Double click on grid row with given meta keys pressed.
+     * Double-click on grid row with given meta keys pressed.
      * <p/>
      * The index is 0 based.
      *
@@ -175,7 +172,7 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
     }
 
     /**
-     * Double click on grid row with given button and meta keys pressed.
+     * Double-click on grid row with given button and meta keys pressed.
      * <p/>
      * The index is 0 based.
      *
@@ -185,7 +182,7 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
      *            MouseButton that was clicked
      * @param metaKeys
      *            meta key statuses for click
-     * @see {@link com.vaadin.flow.component.ClickEvent#getButton()}
+     * @see com.vaadin.flow.component.ClickEvent#getButton()
      */
     public void doubleClickRow(int row, MouseButton button, MetaKeys metaKeys) {
         ensureComponentIsUsable();
@@ -238,7 +235,7 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
      * For a ComponentRenderer the result is the rendered component as
      * prettyString.
      * <p/>
-     * TODO: to be added as we find other renderers that need handling.
+     * More to be added as we find other renderers that need handling.
      *
      * @param row
      *            row of cell
@@ -250,7 +247,7 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
      */
     public String getCellText(int row, int column) {
         ensureVisible();
-        final Grid.Column targetColumn = getColumns().get(column);
+        final Grid.Column<Y> targetColumn = getColumns().get(column);
         if (targetColumn.getRenderer() instanceof ComponentRenderer) {
             Component component = getCellComponent(row, column);
             if (component == null) {
@@ -383,7 +380,7 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
      * @deprecated Use {@link Grid.Column#getHeaderText()} or
      *             {@link Grid.Column#getHeaderComponent()}
      */
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public String getHeaderCell(int column) {
         ensureVisible();
         return getColumns().get(column).getHeaderText();
@@ -391,7 +388,7 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
 
     private List<Grid.Column<Y>> getColumns() {
         return getComponent().getColumns().stream()
-                .filter(col -> col.isVisible()).collect(Collectors.toList());
+                .filter(Component::isVisible).toList();
     }
 
     /**
@@ -429,7 +426,7 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
      * @deprecated Use {@link Grid.Column#getFooterText()} or
      *             {@link Grid.Column#getFooterComponent()} directly
      */
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public String getFooterCell(int column) {
         ensureVisible();
         return getColumns().get(column).getFooterText();
@@ -483,7 +480,7 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
     /**
      * Gets the current sort direction for column at the given index.
      *
-     * Throws an exception if the column does not exists or is not sortable.
+     * Throws an exception if the column does not exist or is not sortable.
      *
      * @param column
      *            column index to get sort direction
@@ -623,17 +620,18 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
         getComponent().sort(sortOrders);
     }
 
-    private String getValueProviderString(int row, Grid.Column targetColumn)
+    private String getValueProviderString(int row, Grid.Column<Y> targetColumn)
             throws IllegalArgumentException {
         try {
-            ColumnPathRenderer renderer = (ColumnPathRenderer) targetColumn
+            ColumnPathRenderer<Y> renderer = (ColumnPathRenderer<Y>) targetColumn
                     .getRenderer();
 
             Field f = ColumnPathRenderer.class
                     .getDeclaredField("provider");
             f.setAccessible(true);
 
-            final ValueProvider columnValueProvider = (ValueProvider) f
+            @SuppressWarnings("unchecked")
+            final ValueProvider<Y, T> columnValueProvider = (ValueProvider<Y, T>) f
                     .get(renderer);
 
             return columnValueProvider.apply(getRow(row)).toString();
