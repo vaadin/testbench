@@ -11,22 +11,24 @@ package com.vaadin.flow.component.grid;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.data.provider.SortDirection;
 import com.vaadin.flow.data.provider.SortOrder;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
+import com.vaadin.flow.data.renderer.LitRenderer;
+import com.vaadin.flow.function.SerializableBiConsumer;
 import com.vaadin.flow.function.ValueProvider;
 import com.vaadin.testbench.unit.ComponentTester;
 import com.vaadin.testbench.unit.MetaKeys;
 import com.vaadin.testbench.unit.MouseButton;
 import com.vaadin.testbench.unit.Tests;
 import com.vaadin.testbench.unit.component.GridKt;
+import elemental.json.Json;
+import elemental.json.JsonArray;
+import jakarta.validation.UnexpectedTypeException;
 
 /**
  * Tester for Grid components.
@@ -311,6 +313,62 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
         }
         throw new IllegalArgumentException(
                 "Target column doesn't have a ComponentRenderer.");
+    }
+
+    public <V> V getLitRendererPropertyValue(int row, String columnKey, String propertyName, Class<V> propertyClass) {
+        var column = getColumn(columnKey);
+        if (column.getRenderer() instanceof LitRenderer<Y> litRenderer) {
+            var valueProvider = findLitRendererProperty(litRenderer, propertyName);
+            var untypedValue = valueProvider.apply(getRow(row));
+            if (propertyClass.isInstance(untypedValue)) {
+                return propertyClass.cast(untypedValue);
+            } else {
+                throw new UnexpectedTypeException("Target column property value is the wrong type - expected %s, found %s."
+                        .formatted(propertyClass.getCanonicalName(), untypedValue.getClass().getCanonicalName()));
+            }
+        } else {
+            throw new IllegalArgumentException("Target column doesn't have a LitRenderer.");
+        }
+    }
+
+    public void invokeLitRendererFunction(int row, String columnKey, String functionName) {
+        var column = getColumn(columnKey);
+        if (column.getRenderer() instanceof LitRenderer<Y> litRenderer) {
+            var callable = findLitRendererFunction(litRenderer, functionName);
+            callable.accept(getRow(row), Json.createArray());
+        } else {
+            throw new IllegalArgumentException("Target column doesn't have a LitRenderer.");
+        }
+    }
+
+    private <V> ValueProvider<Y, V> findLitRendererProperty(LitRenderer<Y> renderer, String propertyName) {
+        var valueProvidersField = getField(LitRenderer.class, "valueProviders");
+        try {
+            @SuppressWarnings("unchecked")
+            var valueProviders = (Map<String, ValueProvider<Y, V>>) valueProvidersField.get(renderer);
+            var valueProvider = valueProviders.get(propertyName);
+            if (valueProvider == null) {
+                throw new IllegalArgumentException("Property " + propertyName + " is not registered in LitRenderer.");
+            }
+            return valueProvider;
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private SerializableBiConsumer<Y, JsonArray> findLitRendererFunction(LitRenderer<Y> renderer, String functionName) {
+        var clientCallablesField = getField(LitRenderer.class, "clientCallables");
+        try {
+            @SuppressWarnings("unchecked")
+            var clientCallables = (Map<String, SerializableBiConsumer<Y, JsonArray>>) clientCallablesField.get(renderer);
+            var callable = clientCallables.get(functionName);
+            if (callable == null) {
+                throw new IllegalArgumentException("Function " + functionName + " is not registered in LitRenderer.");
+            }
+            return callable;
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
