@@ -34,7 +34,6 @@ public class RendererGridView extends Component implements HasComponents {
         grid.addColumn(new ComponentRenderer<>(p -> null))
                 .setKey("nullRendered");
         grid.addColumn(new ComponentRenderer<>(p -> new Icon("USER")));
-
         add(grid);
     }
 

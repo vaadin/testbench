@@ -8,22 +8,21 @@
  */
 package com.vaadin.flow.component.grid;
 
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.router.RouteConfiguration;
+import com.vaadin.testbench.unit.UIUnitTest;
+import com.vaadin.testbench.unit.ViewPackages;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.router.RouteConfiguration;
-import com.vaadin.testbench.unit.UIUnitTest;
-import com.vaadin.testbench.unit.ViewPackages;
-
 @ViewPackages
-public class BasicGridTesterTest extends UIUnitTest {
+class BasicGridTesterTest extends UIUnitTest {
 
     BasicGridView view;
 
@@ -41,44 +40,40 @@ public class BasicGridTesterTest extends UIUnitTest {
 
         Assertions.assertTrue(test(view.basicGrid).getSelected().isEmpty());
 
-        Assertions.assertEquals("Jorma",
-                test(view.basicGrid).getCellText(0, 0));
+        Assertions.assertEquals("Jorma", test(view.basicGrid).getCellText(0, 0));
+        // second column is hidden
         Assertions.assertEquals("46", test(view.basicGrid).getCellText(0, 1));
+
         Assertions.assertEquals("Maya", test(view.basicGrid).getCellText(1, 0));
+        // second column is hidden
         Assertions.assertEquals("18", test(view.basicGrid).getCellText(1, 1));
     }
 
     @Test
     void basicGrid_selectionOnClick() {
-
         Assertions.assertTrue(test(view.basicGrid).getSelected().isEmpty());
 
         test(view.basicGrid).clickRow(0);
-
         Assertions.assertEquals(1, test(view.basicGrid).getSelected().size());
-        Assertions.assertSame(view.first,
+        Assertions.assertSame(view.person1,
                 test(view.basicGrid).getSelected().iterator().next());
 
         test(view.basicGrid).clickRow(1);
-
         Assertions.assertEquals(1, test(view.basicGrid).getSelected().size());
-        Assertions.assertSame(view.second,
+        Assertions.assertSame(view.person2,
                 test(view.basicGrid).getSelected().iterator().next());
     }
 
     @Test
     void basicGrid_deselectSelectedOnClick() {
-
         Assertions.assertTrue(test(view.basicGrid).getSelected().isEmpty());
 
         test(view.basicGrid).clickRow(0);
-
         Assertions.assertEquals(1, test(view.basicGrid).getSelected().size());
-        Assertions.assertSame(view.first,
+        Assertions.assertSame(view.person1,
                 test(view.basicGrid).getSelected().iterator().next());
 
         test(view.basicGrid).clickRow(0);
-
         Assertions.assertTrue(test(view.basicGrid).getSelected().isEmpty(),
                 "Clicking selected row should deselect");
     }
@@ -86,56 +81,57 @@ public class BasicGridTesterTest extends UIUnitTest {
     @Test
     void basicGrid_selectWillChangeSelection() {
         test(view.basicGrid).select(1);
-
         Assertions.assertEquals(1, test(view.basicGrid).getSelected().size());
-        Assertions.assertSame(view.second,
+        Assertions.assertSame(view.person2,
                 test(view.basicGrid).getSelected().iterator().next());
 
         test(view.basicGrid).select(0);
         Assertions.assertEquals(1, test(view.basicGrid).getSelected().size(),
                 "Single select should only change selection.");
-        Assertions.assertSame(view.first,
+        Assertions.assertSame(view.person1,
                 test(view.basicGrid).getSelected().iterator().next());
     }
 
     @Test
     void basicGrid_headerContent() {
-        Assertions.assertEquals(view.firstHeader,
-                test(view.basicGrid).getHeaderCell(0));
-        Assertions.assertEquals(view.secondHeader,
-                test(view.basicGrid).getHeaderCell(1));
+        Assertions.assertEquals("First Name",
+                test(view.basicGrid).getColumn(BasicGridView.FIRST_NAME_KEY).getHeaderText());
+        Assertions.assertEquals("Age",
+                test(view.basicGrid).getColumn(BasicGridView.AGE_KEY).getHeaderText());
+        Assertions.assertEquals("Subscriber",
+                test(view.basicGrid).getColumn(BasicGridView.SUBSCRIBER_KEY).getHeaderText());
+        Assertions.assertEquals("Deceased",
+                test(view.basicGrid).getColumn(BasicGridView.DECEASED_KEY).getHeaderText());
     }
 
     @Test
     void basicGrid_multiselect() {
-        // This is not right for a test, but we are testing features.
+        // This is not normally appropriate for a test, but we are testing features.
         view.basicGrid.setSelectionMode(Grid.SelectionMode.MULTI);
 
         test(view.basicGrid).clickRow(0);
-
         Assertions.assertTrue(test(view.basicGrid).getSelected().isEmpty(),
                 "Multiselect doesn't select for row click!");
 
         test(view.basicGrid).select(0);
         test(view.basicGrid).select(1);
-
         Assertions.assertSame(2, test(view.basicGrid).getSelected().size());
     }
 
     @Test
     void basicGrid_multiselectAll() {
-        // This is not right for a test, but we are testing features.
+        // This is not normally appropriate for a test, but we are testing features.
         view.basicGrid.setSelectionMode(Grid.SelectionMode.MULTI);
 
         test(view.basicGrid).selectAll();
-
         Assertions.assertSame(2, test(view.basicGrid).getSelected().size());
     }
 
     @Test
     void basicGrid_singleSelectThrowsForSelectAll() {
+        GridTester<Grid<Person>, Person> grid_ = test(view.basicGrid);
         Assertions.assertThrows(IllegalStateException.class,
-                () -> test(view.basicGrid).selectAll(),
+                grid_::selectAll,
                 "Select all should throw for single select");
     }
 
@@ -143,11 +139,13 @@ public class BasicGridTesterTest extends UIUnitTest {
     void basicGrid_Hidden_getTextThrows() {
         view.basicGrid.setVisible(false);
 
+        GridTester<Grid<Person>, Person> grid_ = test(view.basicGrid);
+
         Assertions.assertThrows(IllegalStateException.class,
-                () -> test(view.basicGrid).getHeaderCell(0),
+                () -> grid_.getHeaderCell(0),
                 "Header cell shouldn't be available for hidden grid");
         Assertions.assertThrows(IllegalStateException.class,
-                () -> test(view.basicGrid).getCellText(0, 0),
+                () -> grid_.getCellText(0, 0),
                 "Cell content shouldn't be available for hidden grid");
     }
 
@@ -158,12 +156,10 @@ public class BasicGridTesterTest extends UIUnitTest {
                 event -> doubleClicks.incrementAndGet());
 
         test(view.basicGrid).clickRow(0);
-
         Assertions.assertEquals(0, doubleClicks.get(),
                 "Click should not generate a double click event");
 
         test(view.basicGrid).doubleClickRow(0);
-
         Assertions.assertEquals(1, doubleClicks.get(),
                 "Double click event should have fired");
 
@@ -172,29 +168,33 @@ public class BasicGridTesterTest extends UIUnitTest {
     @Test
     void getCellComponent_columnByKey_returnsInstantiatedComponent() {
         final Component cellComponent = test(view.basicGrid).getCellComponent(1,
-                view.subscriber);
-        Assertions.assertTrue(cellComponent instanceof CheckBox);
+                BasicGridView.SUBSCRIBER_KEY);
+        Assertions.assertInstanceOf(CheckBox.class, cellComponent);
         Assertions.assertFalse(((CheckBox) cellComponent).isChecked());
     }
 
     @Test
     void getCellComponentByFaultyKey_throwsException() {
+        GridTester<Grid<Person>, Person> grid_ = test(view.basicGrid);
+
         Assertions.assertThrows(IllegalArgumentException.class,
-                () -> test(view.basicGrid).getCellComponent(1, "property"));
+                () -> grid_.getCellComponent(1, "property"));
     }
 
     @Test
     void getCellComponent_columnByPosition_returnsInstantiatedComponent() {
         final Component cellComponent = test(view.basicGrid).getCellComponent(1,
                 2);
-        Assertions.assertTrue(cellComponent instanceof CheckBox);
+        Assertions.assertInstanceOf(CheckBox.class, cellComponent);
         Assertions.assertFalse(((CheckBox) cellComponent).isChecked());
     }
 
     @Test
     void getCellComponent_columnByPosition_stringColumnThrows() {
+        GridTester<Grid<Person>, Person> grid_ = test(view.basicGrid);
+
         Assertions.assertThrows(IllegalArgumentException.class,
-                () -> test(view.basicGrid).getCellComponent(1, 1));
+                () -> grid_.getCellComponent(1, 1));
     }
 
     @Test
@@ -204,11 +204,27 @@ public class BasicGridTesterTest extends UIUnitTest {
         Collections.reverse(columns);
         view.basicGrid.setColumnOrder(columns);
 
+        // person 1
         Assertions.assertEquals("Jorma",
-                test(view.basicGrid).getCellText(0, 2));
-        Assertions.assertEquals("46", test(view.basicGrid).getCellText(0, 1));
-        Assertions.assertEquals("Maya", test(view.basicGrid).getCellText(1, 2));
-        Assertions.assertEquals("18", test(view.basicGrid).getCellText(1, 1));
+                test(view.basicGrid).getCellText(0, 3));
+        Assertions.assertEquals("46", test(view.basicGrid).getCellText(0, 2));
+
+        // person 2
+        Assertions.assertEquals("Maya", test(view.basicGrid).getCellText(1, 3));
+        Assertions.assertEquals("18", test(view.basicGrid).getCellText(1, 2));
+    }
+
+    @Test
+    void basicGrid_toggleLitRenderedColumn() {
+        boolean deceased = test(view.basicGrid).getRow(0).getDeceased();
+
+        Assertions.assertEquals(deceased,
+                test(view.basicGrid).getLitRendererPropertyValue(0, BasicGridView.DECEASED_KEY, "deceased", Boolean.class));
+
+        test(view.basicGrid).invokeLitRendererFunction(0, BasicGridView.DECEASED_KEY, "onClick");
+
+        Assertions.assertEquals(!deceased,
+                test(view.basicGrid).getLitRendererPropertyValue(0, BasicGridView.DECEASED_KEY, "deceased", Boolean.class));
     }
 
 }
