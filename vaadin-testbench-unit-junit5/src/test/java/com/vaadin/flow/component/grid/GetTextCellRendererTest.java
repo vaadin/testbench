@@ -49,4 +49,17 @@ class GetTextCellRendererTest extends UIUnitTest {
         Assertions.assertTrue(grid_.getCellText(0, 2).isEmpty());
     }
 
+    @Test
+    void litRendering() {
+        boolean subscriber = grid_.getRow(0).isSubscriber();
+
+        Assertions.assertEquals(subscriber ? "Unsubscribe" : "Subscribe",
+                grid_.getLitRendererPropertyValue(0, "Subscription", "subscription", String.class));
+
+        grid_.invokeLitRendererFunction(0, "Subscription", "onClick");
+
+        Assertions.assertEquals((!subscriber) ? "Unsubscribe" : "Subscribe",
+                grid_.getLitRendererPropertyValue(0, "Subscription", "subscription", String.class));
+    }
+
 }

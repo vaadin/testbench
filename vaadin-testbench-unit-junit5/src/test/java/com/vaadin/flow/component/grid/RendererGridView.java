@@ -13,6 +13,7 @@ import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.HasText;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
+import com.vaadin.flow.data.renderer.LitRenderer;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.router.Route;
 
@@ -34,6 +35,13 @@ public class RendererGridView extends Component implements HasComponents {
         grid.addColumn(new ComponentRenderer<>(p -> null))
                 .setKey("nullRendered");
         grid.addColumn(new ComponentRenderer<>(p -> new Icon("USER")));
+        grid.addColumn(LitRenderer.<Person>of("<button @click=${onClick}>${item.subscription}</button>")
+                .withProperty("subscription", person -> person.isSubscriber() ? "Unsubscribe" : "Subscribe")
+                .withFunction("onClick", person -> {
+                    person.setSubscriber(!person.isSubscriber());
+                    grid.getListDataView().refreshItem(person);
+                }))
+                .setKey("Subscription");
 
         add(grid);
     }
