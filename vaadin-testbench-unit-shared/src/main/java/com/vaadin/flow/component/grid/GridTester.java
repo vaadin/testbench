@@ -270,7 +270,7 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
      *            column to get
      * @return initialized component for the targeted cell
      * @throws IllegalArgumentException
-     *             when the target colum of the cell is not a component renderer
+     *             when the target column of the cell is not a component renderer
      */
     public Component getCellComponent(int row, int column) {
         ensureVisible();
@@ -287,7 +287,7 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
      *            key/property of column
      * @return initialized component for the target cell
      * @throws IllegalArgumentException
-     *             when column for property doesn't exist or the target colum of
+     *             when column for property doesn't exist or the target column of
      *             the cell is not a component renderer
      */
     public Component getCellComponent(int row, String columnName) {
@@ -312,8 +312,57 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
                 "Target column doesn't have a ComponentRenderer.");
     }
 
-    public <V> V getLitRendererPropertyValue(int row, String columnKey, String propertyName, Class<V> propertyClass) {
-        var column = getColumn(columnKey);
+    /**
+     * Get property value for item's LitRenderer in column.
+     *
+     * @param row
+     *            item row
+     * @param columnName
+     *            key/property of column
+     * @param propertyName
+     *            the name of the LitRenderer property
+     * @param propertyClass
+     *            the class of the value of the LitRenderer property
+     * @param <V>
+     *            the type of the LitRenderer property
+     * @return value of renderer's property for the target cell
+     * @throws UnexpectedTypeException
+     *             when the type of the property does not match the
+     * @throws IllegalArgumentException
+     *             when column for property doesn't exist or the target column of
+     *             the cell is not a LitRenderer
+     */
+    public <V> V getLitRendererPropertyValue(int row, String columnName, String propertyName, Class<V> propertyClass) {
+        return getLitRendererPropertyValue(row, getColumn(columnName), propertyName, propertyClass);
+    }
+
+    /**
+     * Get property value for item's LitRenderer in column.
+     *
+     * @param row
+     *            item row
+     * @param column
+     *            column to get
+     * @param propertyName
+     *            the name of the LitRenderer property
+     * @param propertyClass
+     *            the class of the value of the LitRenderer property
+     * @param <V>
+     *            the type of the LitRenderer property
+     * @return value of renderer's property for the target cell
+     * @throws UnexpectedTypeException
+     *             when the type of the property does not match the
+     * @throws IllegalArgumentException
+     *             when column for property doesn't exist or the target column of
+     *             the cell is not a LitRenderer
+     */
+    public <V> V getLitRendererPropertyValue(int row, int column, String propertyName, Class<V> propertyClass) {
+        return getLitRendererPropertyValue(row, getColumns().get(column), propertyName, propertyClass);
+    }
+
+    private <V> V getLitRendererPropertyValue(int row, Grid.Column<Y> column,
+                                              String propertyName, Class<V> propertyClass) {
+        ensureVisible();
         if (column.getRenderer() instanceof LitRenderer<Y> litRenderer) {
             var valueProvider = findLitRendererProperty(litRenderer, propertyName);
             var untypedValue = valueProvider.apply(getRow(row));
@@ -328,8 +377,36 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
         }
     }
 
-    public void invokeLitRendererFunction(int row, String columnKey, String functionName) {
-        var column = getColumn(columnKey);
+    /**
+     * Invoke named function for item's LitRenderer in column.
+     *
+     * @param row
+     *            item row
+     * @param columnName
+     *            key/property of column
+     * @param functionName
+     *            the name of the LitRenderer function to invoke
+     */
+    public void invokeLitRendererFunction(int row, String columnName, String functionName) {
+        invokeLitRendererFunction(row, getColumn(columnName), functionName);
+    }
+
+    /**
+     * Invoke named function for item's LitRenderer in column.
+     *
+     * @param row
+     *            item row
+     * @param column
+     *            column to get
+     * @param functionName
+     *            the name of the LitRenderer function to invoke
+     */
+    public void invokeLitRendererFunction(int row, int column, String functionName) {
+        invokeLitRendererFunction(row, getColumns().get(column), functionName);
+    }
+
+    private void invokeLitRendererFunction(int row, Grid.Column<Y> column, String functionName) {
+        ensureVisible();
         if (column.getRenderer() instanceof LitRenderer<Y> litRenderer) {
             var callable = findLitRendererFunction(litRenderer, functionName);
             callable.accept(getRow(row), Json.createArray());
@@ -380,7 +457,7 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
      * @deprecated Use {@link Grid.Column#getHeaderText()} or
      *             {@link Grid.Column#getHeaderComponent()}
      */
-    @Deprecated(forRemoval = true)
+    @Deprecated
     public String getHeaderCell(int column) {
         ensureVisible();
         return getColumns().get(column).getHeaderText();
@@ -631,7 +708,7 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
             f.setAccessible(true);
 
             @SuppressWarnings("unchecked")
-            final ValueProvider<Y, T> columnValueProvider = (ValueProvider<Y, T>) f
+            final ValueProvider<Y, ?> columnValueProvider = (ValueProvider<Y, ?>) f
                     .get(renderer);
 
             return columnValueProvider.apply(getRow(row)).toString();

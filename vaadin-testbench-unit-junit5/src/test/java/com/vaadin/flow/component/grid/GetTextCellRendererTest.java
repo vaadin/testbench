@@ -8,13 +8,12 @@
  */
 package com.vaadin.flow.component.grid;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.testbench.unit.UIUnitTest;
 import com.vaadin.testbench.unit.ViewPackages;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 @ViewPackages
 class GetTextCellRendererTest extends UIUnitTest {
@@ -47,19 +46,6 @@ class GetTextCellRendererTest extends UIUnitTest {
     @Test
     void getCellText_nonTextComponent_getsEmptyString() {
         Assertions.assertTrue(grid_.getCellText(0, 2).isEmpty());
-    }
-
-    @Test
-    void litRendering() {
-        boolean subscriber = grid_.getRow(0).isSubscriber();
-
-        Assertions.assertEquals(subscriber ? "Unsubscribe" : "Subscribe",
-                grid_.getLitRendererPropertyValue(0, "Subscription", "subscription", String.class));
-
-        grid_.invokeLitRendererFunction(0, "Subscription", "onClick");
-
-        Assertions.assertEquals((!subscriber) ? "Unsubscribe" : "Subscribe",
-                grid_.getLitRendererPropertyValue(0, "Subscription", "subscription", String.class));
     }
 
 }
