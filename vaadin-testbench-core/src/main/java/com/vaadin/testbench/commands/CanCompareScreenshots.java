@@ -1,5 +1,7 @@
 /*
- * Copyright (C) 2000-2024 Vaadin Ltd
+ * Vaadin TestBench Addon
+ *
+ * Copyright (C) 2012-2024 Vaadin Ltd
  *
  * This program is available under Vaadin Commercial License and Service Terms.
  *
