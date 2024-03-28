@@ -142,37 +142,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>com.mycila</groupId>
-                <artifactId>license-maven-plugin</artifactId>
-                <version>2.6</version>
-                <configuration>
-                    <basedir>${basedir}</basedir>
-                    <header>${basedir}/src/license/cval3/header.txt</header>
-                    <quiet>false</quiet>
-                    <failIfMissing>true</failIfMissing>
-                    <aggregate>false</aggregate>
-                    <useDefaultExcludes>true</useDefaultExcludes>
-                    <useDefaultMapping>true</useDefaultMapping>
-                    <encoding>UTF-8</encoding>
-                    <properties>
-                        <year>${project.inceptionYear}</year>
-                    </properties>
-                    <excludes>
-                        <exclude>target/**</exclude>
-                        <exclude>**/*.xml</exclude>
-                        <exclude>src/license/**/*</exclude>
-                        <exclude>**/*.txt</exclude>
-                    </excludes>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>format</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
 
@@ -219,7 +188,7 @@
         <dependency>
             <groupId>org.javassist</groupId>
             <artifactId>javassist</artifactId>
-            <version>3.18.1-GA</version>
+            <version>3.30.2-GA</version>
         </dependency>
         <dependency>
             <groupId>com.google.gwt</groupId>
@@ -231,6 +200,13 @@
                     <artifactId>gwt-user</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <!-- License-checker uses SLF4J logging -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.7.36</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

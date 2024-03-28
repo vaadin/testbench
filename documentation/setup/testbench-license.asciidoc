@@ -11,12 +11,12 @@ layout: page
 == Installing License Key
 
 Before running tests, you need to install a license key.
-You can purchase Vaadin TestBench or obtain a free trial key from the
-link:https://vaadin.com/directory#addon/vaadin-testbench[Vaadin TestBench
-download page] in Vaadin Directory.
-You need to register in Vaadin Directory to obtain the key.
+You can acquire a subscription through
+link:https://vaadin.com/testbench[Vaadin TestBench page].
 
-To install the license key on a development workstation, you can copy and paste it verbatim to a [filename]#.vaadin.testbench.developer.license# file in your home directory.
+To install the license key on a development workstation,
+you can copy and paste it verbatim to a [filename]#.vaadin.testbench.developer.license# file in your home directory. The license keys for your subscription can be found in the
+link:https://vaadin.com/myaccount/licenses#classic[Licenses page].
 
 For example, in Linux and OS X:
 [subs="normal"]
@@ -94,8 +94,7 @@ As described above, Maven passes the parameter as is to JUnit, but Ant does not 
 
 
 ifdef::web[]
-See link:https://vaadin.com/directory/help/installing-cval-license[the CVAL
-license key installation instructions] for more details.
+See link:https://vaadin.com/docs/v8/framework/addons/addons-cval[the license key installation instructions] for more details.
 endif::web[]
 
 [[testbench.license.proxies]]
