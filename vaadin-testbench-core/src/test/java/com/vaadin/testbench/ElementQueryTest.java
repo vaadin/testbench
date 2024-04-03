@@ -8,24 +8,18 @@
  */
 package com.vaadin.testbench;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import com.vaadin.testbench.ElementQuery.AttributeMatch;
 import com.vaadin.testbench.annotations.Attribute;
 import com.vaadin.testbench.elementsbase.Element;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.SearchContext;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Stream;
 
 public class ElementQueryTest {
 
@@ -81,9 +75,9 @@ public class ElementQueryTest {
         }
 
         @Override
-        protected List<T> executeSearchScript(String script, Object context,
-                String tagName, String attributePairs,
-                JavascriptExecutor executor) {
+        protected Stream<T> executeSearchScript(String script, Object context,
+                                                String tagName, String attributePairs,
+                                                JavascriptExecutor executor) {
             if (executed) {
                 throw new IllegalStateException(
                         "Query was already executed once");
@@ -93,7 +87,7 @@ public class ElementQueryTest {
             lastContext = context;
             lastTagName = tagName;
             lastAttributePairs = attributePairs;
-            return new ArrayList<>();
+            return Stream.of();
         }
     }
 

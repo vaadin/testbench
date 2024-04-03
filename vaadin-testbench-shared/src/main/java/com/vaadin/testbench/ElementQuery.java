@@ -8,24 +8,19 @@
  */
 package com.vaadin.testbench;
 
-import java.time.Duration;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.SearchContext;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.WebDriverWait;
-
 import com.vaadin.testbench.annotations.Attribute;
 import com.vaadin.testbench.elementsbase.Element;
 import com.vaadin.testbench.internal.SharedUtil;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.*;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.time.Duration;
+import java.util.*;
+import java.util.function.BiPredicate;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Query class used for finding a given element inside a given search context.
@@ -105,13 +100,11 @@ public class ElementQuery<T extends TestBenchElement> {
 
     }
 
-    /**
-     * Linked to ensure that elements are always returned in the same order.
-     */
-    private Set<AttributeMatch> attributes = new LinkedHashSet<>();
-    private SearchContext searchContext;
     private final Class<T> elementClass;
     private final String tagName;
+    private final Set<AttributeMatch> attributes;
+    private final List<Predicate<T>> conditions;
+    private SearchContext searchContext;
 
     /**
      * Instantiate a new ElementQuery to look for the given type of element.
@@ -134,7 +127,9 @@ public class ElementQuery<T extends TestBenchElement> {
     public ElementQuery(Class<T> elementClass, String tagName) {
         this.elementClass = elementClass;
         this.tagName = tagName;
-        attributes.addAll(getAttributes(elementClass));
+        // Linked to ensure that elements are always returned in the same order.
+        this.attributes = new LinkedHashSet<>(getAttributes(elementClass));
+        this.conditions = new ArrayList<>();
     }
 
     /**
@@ -199,6 +194,265 @@ public class ElementQuery<T extends TestBenchElement> {
     public ElementQuery<T> attributeContains(String name, String token) {
         attributes.add(new AttributeMatch(name, "~=", token));
         return this;
+    }
+
+    /**
+     * Requires the element to satisfy the given condition.
+     * <p>
+     * Note that conditions are evaluated in order
+     * after the element is selected by its attributes.
+     *
+     * @param condition
+     *            the condition for the element to satisfy
+     * @return this element query instance for chaining
+     */
+    public ElementQuery<T> withCondition(Predicate<T> condition) {
+        conditions.add(condition);
+        return this;
+    }
+
+    /**
+     * Requires the element's label to satisfy the given comparison
+     * with the supplied text.
+     * <p>
+     * For matching a label exactly, see {@link #withLabel(String)},
+     * and for matching a label partially, see {@link #withLabelContaining(String)}.
+     * <p>
+     * This method can be used for other label matching needs,
+     * such as performing a case-insensitive match:
+     * {@code withLabel("name", String::equalsIgnoreCase)}
+     * <br> a label-ending match:
+     * {@code withLabel(" Name", String::endsWith)}
+     * <br> or a regular expression match:
+     * {@code withLabel("(First|Last) Name", String::matches)}
+     *
+     * @param text
+     *          the text to compare with the label
+     * @param comparison
+     *          the comparison to use when comparing the text with the label
+     * @return this element query instance for chaining
+     */
+    public ElementQuery<T> withLabel(String text, BiPredicate<String, String> comparison) {
+        return withCondition(element -> {
+            if (element instanceof HasLabel hasLabel) {
+                return Optional.ofNullable(hasLabel.getLabel())
+                        .filter(label -> comparison.test(label, text))
+                        .isPresent();
+            }
+            throw new UnsupportedOperationException("Element <%s> does not support labels.".formatted(element.getTagName()));
+        });
+    }
+
+    /**
+     * Requires the element's label to exactly match the given label value.
+     * <p>
+     * For partially matching text within the label, see
+     * {@link #withLabelContaining(String)}.
+     *
+     * @param label
+     *            the label to match
+     * @return this element query instance for chaining
+     */
+    public ElementQuery<T> withLabel(String label) {
+        return withLabel(label, String::equals);
+    }
+
+    /**
+     * Requires the element's label to partially match the given text value.
+     * <p>
+     * For exactly matching the label, see
+     * {@link #withLabel(String)}.
+     *
+     * @param text
+     *          the text to match
+     * @return this element query instance for chaining
+     */
+    public ElementQuery<T> withLabelContaining(String text) {
+        return withLabel(text, String::contains);
+    }
+
+    /**
+     * Requires the element's placeholder to satisfy the given comparison
+     * with the supplied text.
+     * <p>
+     * For matching a placeholder exactly, see {@link #withPlaceholder(String)},
+     * and for matching a placeholder partially, see {@link #withPlaceholderContaining(String)}.
+     * <p>
+     * This method can be used for other placeholder matching needs,
+     * such as performing a case-insensitive match:
+     * {@code withPlaceholder("name", String::equalsIgnoreCase)}
+     * <br> a placeholder-ending match:
+     * {@code withPlaceholder(" Name", String::endsWith)}
+     * <br> or a regular expression match:
+     * {@code withPlaceholder("(First|Last) Name", String::matches)}
+     *
+     * @param text
+     *          the text to compare with the placeholder
+     * @param comparison
+     *          the comparison to use when comparing the text with the placeholder
+     * @return this element query instance for chaining
+     */
+    public ElementQuery<T> withPlaceholder(String text, BiPredicate<String, String> comparison) {
+        return withCondition(element -> {
+            if (element instanceof HasPlaceholder hasPlaceholder) {
+                return Optional.ofNullable(hasPlaceholder.getPlaceholder())
+                        .filter(placeholder -> comparison.test(placeholder, text))
+                        .isPresent();
+            }
+            throw new UnsupportedOperationException("Element <%s> does not support placeholders.".formatted(element.getTagName()));
+        });
+    }
+
+    /**
+     * Requires the element's placeholder to exactly match the given placeholder value.
+     * <p>
+     * For partially matching text within the placeholder, see
+     * {@link #withPlaceholderContaining(String)}.
+     *
+     * @param placeholder
+     *            the placeholder to match
+     * @return this element query instance for chaining
+     */
+    public ElementQuery<T> withPlaceholder(String placeholder) {
+        return withPlaceholder(placeholder, String::equals);
+    }
+
+    /**
+     * Requires the element's placeholder to partially match the given text value.
+     * <p>
+     * For exactly matching the placeholder, see
+     * {@link #withPlaceholder(String)}.
+     *
+     * @param text
+     *          the text to match
+     * @return this element query instance for chaining
+     */
+    public ElementQuery<T> withPlaceholderContaining(String text) {
+        return withPlaceholder(text, String::contains);
+    }
+
+    /**
+     * Requires the element's caption (label or placeholder)
+     * to satisfy the given comparison with the supplied text.
+     * <p>
+     * For matching a caption exactly, see {@link #withCaption(String)},
+     * and for matching a caption partially, see {@link #withCaptionContaining(String)}.
+     * <p>
+     * This method can be used for other caption matching needs,
+     * such as performing a case-insensitive match:
+     * {@code withCaption("name", String::equalsIgnoreCase)}
+     * <br> a caption-ending match:
+     * {@code withCaption(" Name", String::endsWith)}
+     * <br> or a regular expression match:
+     * {@code withCaption("(First|Last) Name", String::matches)}
+     *
+     * @param text
+     *          the text to compare with the caption
+     * @param comparison
+     *          the comparison to use when comparing the text with the caption
+     * @return this element query instance for chaining
+     */
+    public ElementQuery<T> withCaption(String text, BiPredicate<String, String> comparison) {
+        return withCondition(element -> {
+            if (element instanceof HasLabel hasLabel) {
+                return Optional.ofNullable(hasLabel.getLabel())
+                        .filter(label -> comparison.test(label, text))
+                        .isPresent();
+            }
+            if (element instanceof HasPlaceholder hasPlaceholder) {
+                return Optional.ofNullable(hasPlaceholder.getPlaceholder())
+                        .filter(placeholder -> comparison.test(placeholder, text))
+                        .isPresent();
+            }
+            throw new UnsupportedOperationException("Element <%s> does not support captions.".formatted(element.getTagName()));
+        });
+    }
+
+    /**
+     * Requires the element's caption (label or placeholder)
+     * to exactly match the given caption value.
+     * <p>
+     * For partially matching text within the caption, see
+     * {@link #withCaptionContaining(String)}.
+     *
+     * @param caption
+     *            the caption to match
+     * @return this element query instance for chaining
+     */
+    public ElementQuery<T> withCaption(String caption) {
+        return withCaption(caption, String::equals);
+    }
+
+    /**
+     * Requires the element's caption (label or placeholder)
+     * to partially match the given text value.
+     * <p>
+     * For exactly matching the caption, see
+     * {@link #withCaption(String)}.
+     *
+     * @param text
+     *          the text to match
+     * @return this element query instance for chaining
+     */
+    public ElementQuery<T> withCaptionContaining(String text) {
+        return withCaption(text, String::contains);
+    }
+
+    /**
+     * Requires the element's text
+     * to satisfy the given comparison with the supplied text.
+     * <p>
+     * For matching the element's text exactly, see {@link #withText(String)},
+     * and for matching the element's text partially, see {@link #withTextContaining(String)}.
+     * <p>
+     * This method can be used for other text matching needs,
+     * such as performing a case-insensitive match:
+     * {@code withText("name", String::equalsIgnoreCase)}
+     * <br> a text-ending match:
+     * {@code withText(" Name", String::endsWith)}
+     * <br> or a regular expression match:
+     * {@code withText("(First|Last) Name", String::matches)}
+     *
+     * @param text
+     *          the text to compare with the element's text
+     * @param comparison
+     *          the comparison to use when comparing the text with the element's text
+     * @return this element query instance for chaining
+     */
+    public ElementQuery<T> withText(String text, BiPredicate<String, String> comparison) {
+        return withCondition(element -> Optional.ofNullable(element.getText())
+                .filter(et -> comparison.test(et, text))
+                .isPresent());
+    }
+
+    /**
+     * Requires the element's text
+     * to exactly match the given text value.
+     * <p>
+     * For partially matching text within the element's text, see
+     * {@link #withTextContaining(String)}.
+     *
+     * @param text
+     *            the text to match
+     * @return this element query instance for chaining
+     */
+    public ElementQuery<T> withText(String text) {
+        return withText(text, String::equals);
+    }
+
+    /**
+     * Requires the element's text
+     * to partially match the given text value.
+     * <p>
+     * For exactly matching the text, see
+     * {@link #withText(String)}.
+     *
+     * @param text
+     *          the text to match
+     * @return this element query instance for chaining
+     */
+    public ElementQuery<T> withTextContaining(String text) {
+        return withText(text, String::contains);
     }
 
     /**
@@ -360,12 +614,12 @@ public class ElementQuery<T extends TestBenchElement> {
 
     /**
      * Executes the search operation with the given conditions and returns a
-     * list of matchin elements.
+     * list of matching elements.
      *
      * @param index
      *            the index of the element to return or <code>null</code> to
      *            return all matching elements
-     * @return a list of macthing elements or an empty list if no matches were
+     * @return a list of matching elements or an empty list if no matches were
      *         found
      */
     private List<T> executeSearch(Integer index) {
@@ -411,7 +665,16 @@ public class ElementQuery<T extends TestBenchElement> {
         }
 
         return executeSearchScript(script.toString(), elementContext, tagName,
-                getAttributePairs(), executor);
+                getAttributePairs(), executor)
+                .filter(this::satisfiesAllConditions)
+                .toList();
+    }
+
+    private boolean satisfiesAllConditions(T t) {
+        System.out.println("Element: " + t.getTagName());
+        conditions.forEach(condition -> System.out.printf("  condition: %b%n", condition.test(t)));
+
+        return conditions.stream().allMatch(condition -> condition.test(t));
     }
 
     private static String getTagName(Class<?> elementClass) {
@@ -494,26 +757,23 @@ public class ElementQuery<T extends TestBenchElement> {
      *            the tag name to look for
      * @param attributePairs
      *            the attribute pairs to match
-     * @return a list of matching elements of the type defined in the
+     * @return a stream of matching elements of the type defined in the
      *         constructor
      */
-    List<T> executeSearchScript(String script, Object context, String tagName,
-            String attributePairs, JavascriptExecutor executor) {
-        Object result = executor.executeScript(script, context, tagName,
-                attributePairs);
-        if (result == null) {
-            return Collections.emptyList();
-        } else if (result instanceof TestBenchElement) {
-            return Collections.singletonList(
-                    TestBench.wrap((TestBenchElement) result, elementClass));
+    Stream<T> executeSearchScript(String script, Object context, String tagName,
+                                  String attributePairs, JavascriptExecutor executor) {
+        var result = executor.executeScript(script, context, tagName, attributePairs);
+
+        // Wrap as the correct type
+        if (result instanceof TestBenchElement testBenchElement) {
+            return Stream.of(TestBench.wrap(testBenchElement, elementClass));
+        } else if (result instanceof List<?> elements) {
+            return elements.stream()
+                    .filter(TestBenchElement.class::isInstance)
+                    .map(TestBenchElement.class::cast)
+                    .map(testBenchElement -> TestBench.wrap(testBenchElement, elementClass));
         } else {
-            List<TestBenchElement> elements = (List<TestBenchElement>) result;
-            // Wrap as the correct type
-            for (int i = 0; i < elements.size(); i++) {
-                T wrapped = TestBench.wrap(elements.get(i), elementClass);
-                elements.set(i, wrapped);
-            }
-            return (List) elements;
+            return Stream.of();
         }
     }
 
