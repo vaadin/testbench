@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import com.vaadin.testbench.DriverSupplier;
 import com.vaadin.testbench.HasDriver;
+import com.vaadin.testbench.ParameterizedBrowserTest;
 import com.vaadin.testbench.Parameters;
 import com.vaadin.testbench.TestBench;
 import com.vaadin.testbench.TestBenchDriverProxy;
@@ -68,6 +69,10 @@ public class BrowserExtension implements Extension, BeforeEachCallback,
         }
 
         driverConfiguration.setDesiredCapabilities(desiredCapabilities);
+    }
+
+    public BrowserExtension() {
+        this(new DesiredCapabilities());
     }
 
     /**
@@ -125,7 +130,8 @@ public class BrowserExtension implements Extension, BeforeEachCallback,
         if (SauceLabsIntegration.isConfiguredForSauceLabs()) {
             return SauceLabsIntegration.getHubUrl();
         } else {
-            return String.format("http://%s:%d/wd/hub", getHubHostname(testClass), Parameters.getHubPort());
+            return String.format("http://%s:%d/wd/hub",
+                    getHubHostname(testClass), Parameters.getHubPort());
         }
     }
 
@@ -181,54 +187,60 @@ public class BrowserExtension implements Extension, BeforeEachCallback,
      */
     @Override
     public void beforeEach(ExtensionContext context) throws Exception {
+        if (isParameterizedTest(context)) {
+            // For parameterized test a new driver should be created for every
+            // test when resolving parameters
+            return;
+        }
 
         SauceLabsIntegration.setSauceLabsOption(desiredCapabilities,
                 SauceLabsIntegration.CapabilityType.NAME,
                 context.getDisplayName());
 
-        Object testInstance = context.getRequiredTestInstance();
+        setupDriver(context);
+    }
 
-        // use WebDriver provided by test instance
-        if (testInstance instanceof DriverSupplier) {
-            setDriver(((DriverSupplier) testInstance).createDriver());
-        }
-
-        // if no custom WebDriver is provided, setup driver and inject to test
-        // instance
-        if (driver == null) {
-            setupDriver(context);
-        }
-
+    static boolean isParameterizedTest(ExtensionContext context) {
+        return context.getTestMethod().filter(
+                m -> m.isAnnotationPresent(ParameterizedBrowserTest.class))
+                .isPresent();
     }
 
     private void setupDriver(ExtensionContext context) throws Exception {
-        Class testClass = context.getRequiredTestClass();
+        setDriver(createDriver(context, driverConfiguration));
+    }
+
+    private WebDriver createDriver(ExtensionContext context,
+            SetupDriver driverConfig) throws Exception {
+
+        Object testInstance = context.getRequiredTestInstance();
+
+        // use WebDriver provided by test instance
+        if (testInstance instanceof DriverSupplier supplier) {
+            return supplier.createDriver();
+        }
+
+        WebDriver webDriver;
+
+        Class<?> testClass = context.getRequiredTestClass();
         // Always give priority to @RunLocally annotation
         if ((getRunLocallyBrowser(testClass) != null)) {
-            WebDriver driver = driverConfiguration.setupLocalDriver(
+            webDriver = driverConfig.setupLocalDriver(
                     getRunLocallyBrowser(testClass),
                     getRunLocallyBrowserVersion(testClass));
-            setDriver(driver);
         } else if (Parameters.isLocalWebDriverUsed()) {
-            WebDriver driver = driverConfiguration.setupLocalDriver();
-            setDriver(driver);
+            webDriver = driverConfig.setupLocalDriver();
         } else if (SauceLabsIntegration.isConfiguredForSauceLabs()) {
-            WebDriver driver = driverConfiguration
-                    .setupRemoteDriver(getHubURL(testClass));
-            setDriver(driver);
-
+            webDriver = driverConfig.setupRemoteDriver(getHubURL(testClass));
         } else if (getRunOnHub(testClass) != null
                 || Parameters.getHubHostname() != null) {
-            WebDriver driver = driverConfiguration
-                    .setupRemoteDriver(getHubURL(testClass));
-            setDriver(driver);
+            webDriver = driverConfig.setupRemoteDriver(getHubURL(testClass));
         } else {
             getLogger().info(
                     "Did not find a configuration to run locally, on Sauce Labs or on other test grid. Falling back to running locally on Chrome.");
-            WebDriver driver = driverConfiguration
-                    .setupLocalDriver(Browser.CHROME);
-            setDriver(driver);
+            webDriver = driverConfig.setupLocalDriver(Browser.CHROME);
         }
+        return webDriver;
     }
 
     /**
@@ -280,10 +292,53 @@ public class BrowserExtension implements Extension, BeforeEachCallback,
     public Object resolveParameter(ParameterContext parameterContext,
             ExtensionContext extensionContext)
             throws ParameterResolutionException {
-        Class testClass = extensionContext.getRequiredTestClass();
+        if (isParameterizedTest(extensionContext)) {
+            // For parameterized tests create a new driver for each test
+            // execution
+            return getStore(extensionContext).getOrComputeIfAbsent(
+                    BrowserTestInfo.class,
+                    k -> createTestInfoForParameterizedTest(extensionContext));
+        }
+        Class<?> testClass = extensionContext.getRequiredTestClass();
         return new BrowserTestInfo(driver,
                 new ImmutableCapabilities(desiredCapabilities),
                 getHubHostname(testClass), getRunLocallyBrowser(testClass),
                 getRunLocallyBrowserVersion(testClass));
     }
+
+    private BrowserTestInfo createTestInfoForParameterizedTest(
+            ExtensionContext context) {
+        DesiredCapabilities capabilities = CapabilitiesUtil
+                .getDesiredCapabilities(context).stream().findFirst()
+                .orElseThrow(() -> new ParameterResolutionException(
+                        "Cannot get capabilities"));
+        if (SauceLabsIntegration.isConfiguredForSauceLabs()) {
+            SauceLabsIntegration.setDesiredCapabilities(capabilities);
+        }
+        SauceLabsIntegration.setSauceLabsOption(capabilities,
+                SauceLabsIntegration.CapabilityType.NAME,
+                context.getDisplayName());
+
+        WebDriver webDriver;
+        try {
+            SetupDriver driverConfig = new SetupDriver();
+            driverConfig.setDesiredCapabilities(capabilities);
+            webDriver = createDriver(context, driverConfig);
+        } catch (Exception e) {
+            throw new ParameterResolutionException("Cannot create WebDriver",
+                    e);
+        }
+
+        Class<?> testClass = context.getRequiredTestClass();
+        return new BrowserTestInfo(webDriver,
+                new ImmutableCapabilities(capabilities),
+                getHubHostname(testClass), getRunLocallyBrowser(testClass),
+                getRunLocallyBrowserVersion(testClass));
+    }
+
+    private ExtensionContext.Store getStore(ExtensionContext context) {
+        return context.getStore(ExtensionContext.Namespace
+                .create(BrowserExtension.class, context.getUniqueId()));
+    }
+
 }
