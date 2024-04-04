@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <project
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-    xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+        xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -181,6 +181,38 @@
                         <goals>
                             <goal>stop</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.2.0</version>
+                <executions>
+                    <execution>
+                        <id>wait-for-dev-bundle</id>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <phase>pre-integration-test</phase>
+                        <configuration>
+                            <mainClass>com.vaadin.tests.WaitForDevBundle</mainClass>
+                            <classpathScope>test</classpathScope>
+                            <systemProperties>
+                                <projectProperties/>
+                                <!-- Tune dev bundle creation waiter parameter if needed -->
+                                <!--
+                                <systemProperty>
+                                    <key>test.waitForDevBundle.attempts</key>
+                                    <value>60</value>
+                                </systemProperty>
+                                <systemProperty>
+                                    <key>test.waitForDevBundle.sleepMillis</key>
+                                    <value>1000</value>
+                                </systemProperty>
+                                -->
+                            </systemProperties>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
