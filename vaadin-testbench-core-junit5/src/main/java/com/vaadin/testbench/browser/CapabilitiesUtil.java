@@ -78,7 +78,7 @@ public class CapabilitiesUtil {
                     .disabled("Desired capabilities not present.");
         }
         if (BrowserExtension.isParameterizedTest(context)
-                && desiredCapabilities.size() != 1) {
+                && desiredCapabilities.size() > 1) {
             return ConditionEvaluationResult.disabled(
                     "@ParameterizedBrowserTest does not support multiple capabilities.");
         }

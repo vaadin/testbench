@@ -25,8 +25,6 @@ class ParameterizedBrowserTestSingleBrowserFromBrowserConfigurationTest
 
     @BrowserConfiguration
     public List<DesiredCapabilities> getBrowserConfiguration() {
-        // Using an immutable list causes random NPE during capabilities
-        // merge operation
         ArrayList<DesiredCapabilities> capabilities = new ArrayList<>();
         capabilities.add(BrowserUtil.chrome());
         return capabilities;
