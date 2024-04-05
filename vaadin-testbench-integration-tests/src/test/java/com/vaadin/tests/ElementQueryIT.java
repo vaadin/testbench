@@ -8,17 +8,16 @@
  */
 package com.vaadin.tests;
 
-import java.util.List;
-
 import com.vaadin.flow.component.Component;
 import com.vaadin.testUI.TemplateView;
 import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.tests.elements.CaptionElement;
 import com.vaadin.tests.elements.NativeButtonElement;
 import com.vaadin.tests.elements.TemplateViewElement;
-
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.util.List;
 
 public class ElementQueryIT extends AbstractTB6Test {
 
@@ -177,7 +176,7 @@ public class ElementQueryIT extends AbstractTB6Test {
         captionElements = view.$(CaptionElement.class)
                 .withLabelContaining("o")
                 .all();
-        Assert.assertEquals(6, captionElements.size());
+        Assert.assertEquals(4, captionElements.size());
     }
 
     @Test
@@ -209,7 +208,7 @@ public class ElementQueryIT extends AbstractTB6Test {
         captionElements = view.$(CaptionElement.class)
                 .withPlaceholderContaining("o")
                 .all();
-        Assert.assertEquals(6, captionElements.size());
+        Assert.assertEquals(4, captionElements.size());
     }
 
     @Test
@@ -287,7 +286,7 @@ public class ElementQueryIT extends AbstractTB6Test {
         captionElements = view.$(CaptionElement.class)
                 .withCaptionContaining("o")
                 .all();
-        Assert.assertEquals(2, captionElements.size());
+        Assert.assertEquals(6, captionElements.size());
     }
 
 }

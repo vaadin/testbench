@@ -8,16 +8,16 @@
  */
 package com.vaadin.tests;
 
-import java.util.List;
-
-import org.junit.jupiter.api.Assertions;
-
 import com.vaadin.flow.component.Component;
 import com.vaadin.testUI.TemplateView;
 import com.vaadin.testbench.BrowserTest;
 import com.vaadin.testbench.TestBenchElement;
+import com.vaadin.tests.elements.CaptionElement;
 import com.vaadin.tests.elements.NativeButtonElement;
 import com.vaadin.tests.elements.TemplateViewElement;
+import org.junit.jupiter.api.Assertions;
+
+import java.util.List;
 
 public class ElementQueryIT extends AbstractBrowserTB9Test {
 
@@ -148,6 +148,148 @@ public class ElementQueryIT extends AbstractBrowserTB9Test {
 
         Assertions.assertEquals(6,
                 template.getPropertyElements("children").size());
+    }
+
+    @BrowserTest
+    public void labelMatches() {
+        openTestURL();
+        TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
+
+        List<CaptionElement> captionElements = view.$(CaptionElement.class)
+                .withLabel("one")
+                .all();
+        Assertions.assertEquals(2, captionElements.size());
+
+        captionElements = view.$(CaptionElement.class)
+                .withLabel("two")
+                .all();
+        Assertions.assertEquals(2, captionElements.size());
+    }
+
+    @BrowserTest
+    public void labelContains() {
+        openTestURL();
+        TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
+
+        List<CaptionElement> captionElements = view.$(CaptionElement.class)
+                .withLabelContaining("n")
+                .all();
+        Assertions.assertEquals(2, captionElements.size());
+
+        captionElements = view.$(CaptionElement.class)
+                .withLabelContaining("o")
+                .all();
+        Assertions.assertEquals(4, captionElements.size());
+    }
+
+    @BrowserTest
+    public void placeholderMatches() {
+        openTestURL();
+        TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
+
+        List<CaptionElement> captionElements = view.$(CaptionElement.class)
+                .withPlaceholder("one")
+                .all();
+        Assertions.assertEquals(2, captionElements.size());
+
+        captionElements = view.$(CaptionElement.class)
+                .withPlaceholder("two")
+                .all();
+        Assertions.assertEquals(2, captionElements.size());
+    }
+
+    @BrowserTest
+    public void placeholderContains() {
+        openTestURL();
+        TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
+
+        List<CaptionElement> captionElements = view.$(CaptionElement.class)
+                .withPlaceholderContaining("w")
+                .all();
+        Assertions.assertEquals(2, captionElements.size());
+
+        captionElements = view.$(CaptionElement.class)
+                .withPlaceholderContaining("o")
+                .all();
+        Assertions.assertEquals(4, captionElements.size());
+    }
+
+    @BrowserTest
+    public void labelAndPlaceholderMatches() {
+        openTestURL();
+        TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
+
+        List<CaptionElement> captionElements = view.$(CaptionElement.class)
+                .withLabel("one")
+                .withPlaceholder("two")
+                .all();
+        Assertions.assertEquals(1, captionElements.size());
+
+        captionElements = view.$(CaptionElement.class)
+                .withLabel("two")
+                .withPlaceholder("one")
+                .all();
+        Assertions.assertEquals(1, captionElements.size());
+    }
+
+    @BrowserTest
+    public void labelAndPlaceholderContains() {
+        openTestURL();
+        TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
+
+        List<CaptionElement> captionElements = view.$(CaptionElement.class)
+                .withLabelContaining("n")
+                .withPlaceholderContaining("w")
+                .all();
+        Assertions.assertEquals(1, captionElements.size());
+
+        captionElements = view.$(CaptionElement.class)
+                .withLabelContaining("o")
+                .withPlaceholderContaining("o")
+                .all();
+        Assertions.assertEquals(2, captionElements.size());
+    }
+
+    @BrowserTest
+    public void captionElementsExist() {
+        openTestURL();
+        TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
+
+        List<CaptionElement> captionElements = view.$(CaptionElement.class)
+                .all();
+        Assertions.assertEquals(7, captionElements.size());
+    }
+
+    @BrowserTest
+    public void captionMatches() {
+        openTestURL();
+        TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
+
+        List<CaptionElement> captionElements = view.$(CaptionElement.class)
+                .withCaption("one")
+                .all();
+        Assertions.assertEquals(4, captionElements.size());
+
+        captionElements = view.$(CaptionElement.class)
+                .withCaption("two")
+                .all();
+        Assertions.assertEquals(4, captionElements.size());
+    }
+
+    @BrowserTest
+    public void captionContains() {
+        openTestURL();
+        TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
+
+        List<CaptionElement> captionElements = view.$(CaptionElement.class)
+                .withCaptionContaining("n")
+                .all();
+        Assertions.assertEquals(4, captionElements.size());
+
+        captionElements = view.$(CaptionElement.class)
+                .withCaptionContaining("o")
+                .all();
+        Assertions.assertEquals(6, captionElements.size());
     }
 
 }

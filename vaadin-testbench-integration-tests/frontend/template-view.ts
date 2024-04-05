@@ -19,15 +19,15 @@ export class TemplateView extends LitElement {
             </div>
             <button class="button" id="foo'*+bar'">Button with special id</button>
 
-            <caption-element></caption-element>
+            <caption-component></caption-component>
 
-            <caption-element label="one"></caption-element>
-            <caption-element placeholder="two"></caption-element>
-            <caption-element label="one" placeholder="two"></caption-element>
+            <caption-component label="one"></caption-component>
+            <caption-component placeholder="two"></caption-component>
+            <caption-component label="one" placeholder="two"></caption-component>
 
-            <caption-element label="two"></caption-element>
-            <caption-element placeholder="one"></caption-element>
-            <caption-element label="two" placeholder="one"></caption-element>
-`;
+            <caption-component label="two"></caption-component>
+            <caption-component placeholder="one"></caption-component>
+            <caption-component label="two" placeholder="one"></caption-component>
+        `;
     }
 }

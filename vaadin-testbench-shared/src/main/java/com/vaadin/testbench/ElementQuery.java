@@ -11,16 +11,24 @@ package com.vaadin.testbench;
 import com.vaadin.testbench.annotations.Attribute;
 import com.vaadin.testbench.elementsbase.Element;
 import com.vaadin.testbench.internal.SharedUtil;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.*;
+import org.openqa.selenium.SearchContext;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Query class used for finding a given element inside a given search context.
@@ -233,14 +241,10 @@ public class ElementQuery<T extends TestBenchElement> {
      * @return this element query instance for chaining
      */
     public ElementQuery<T> withLabel(String text, BiPredicate<String, String> comparison) {
-        return withCondition(element -> {
-            if (element instanceof HasLabel hasLabel) {
-                return Optional.ofNullable(hasLabel.getLabel())
+        return withCondition(element -> (element instanceof HasLabel hasLabel) &&
+                Optional.ofNullable(hasLabel.getLabel())
                         .filter(label -> comparison.test(label, text))
-                        .isPresent();
-            }
-            throw new UnsupportedOperationException("Element <%s> does not support labels.".formatted(element.getTagName()));
-        });
+                        .isPresent());
     }
 
     /**
@@ -293,14 +297,10 @@ public class ElementQuery<T extends TestBenchElement> {
      * @return this element query instance for chaining
      */
     public ElementQuery<T> withPlaceholder(String text, BiPredicate<String, String> comparison) {
-        return withCondition(element -> {
-            if (element instanceof HasPlaceholder hasPlaceholder) {
-                return Optional.ofNullable(hasPlaceholder.getPlaceholder())
+        return withCondition(element -> (element instanceof HasPlaceholder hasPlaceholder) &&
+                Optional.ofNullable(hasPlaceholder.getPlaceholder())
                         .filter(placeholder -> comparison.test(placeholder, text))
-                        .isPresent();
-            }
-            throw new UnsupportedOperationException("Element <%s> does not support placeholders.".formatted(element.getTagName()));
-        });
+                        .isPresent());
     }
 
     /**
@@ -332,7 +332,7 @@ public class ElementQuery<T extends TestBenchElement> {
     }
 
     /**
-     * Requires the element's caption (label or placeholder)
+     * Requires the element's caption (either label or placeholder)
      * to satisfy the given comparison with the supplied text.
      * <p>
      * For matching a caption exactly, see {@link #withCaption(String)},
@@ -353,19 +353,15 @@ public class ElementQuery<T extends TestBenchElement> {
      * @return this element query instance for chaining
      */
     public ElementQuery<T> withCaption(String text, BiPredicate<String, String> comparison) {
-        return withCondition(element -> {
-            if (element instanceof HasLabel hasLabel) {
-                return Optional.ofNullable(hasLabel.getLabel())
-                        .filter(label -> comparison.test(label, text))
-                        .isPresent();
-            }
-            if (element instanceof HasPlaceholder hasPlaceholder) {
-                return Optional.ofNullable(hasPlaceholder.getPlaceholder())
-                        .filter(placeholder -> comparison.test(placeholder, text))
-                        .isPresent();
-            }
-            throw new UnsupportedOperationException("Element <%s> does not support captions.".formatted(element.getTagName()));
-        });
+        return withCondition(element ->
+                ((element instanceof HasLabel hasLabel) &&
+                        (Optional.ofNullable(hasLabel.getLabel())
+                                .filter(label -> comparison.test(label, text))
+                                .isPresent())) ||
+                ((element instanceof HasPlaceholder hasPlaceholder) &&
+                        (Optional.ofNullable(hasPlaceholder.getPlaceholder())
+                                .filter(placeholder -> comparison.test(placeholder, text))
+                                .isPresent())));
     }
 
     /**
@@ -665,16 +661,13 @@ public class ElementQuery<T extends TestBenchElement> {
         }
 
         return executeSearchScript(script.toString(), elementContext, tagName,
-                getAttributePairs(), executor)
+                getAttributePairs(), executor).stream()
                 .filter(this::satisfiesAllConditions)
                 .toList();
     }
 
-    private boolean satisfiesAllConditions(T t) {
-        System.out.println("Element: " + t.getTagName());
-        conditions.forEach(condition -> System.out.printf("  condition: %b%n", condition.test(t)));
-
-        return conditions.stream().allMatch(condition -> condition.test(t));
+    private boolean satisfiesAllConditions(T element) {
+        return conditions.stream().allMatch(condition -> condition.test(element));
     }
 
     private static String getTagName(Class<?> elementClass) {
@@ -757,23 +750,24 @@ public class ElementQuery<T extends TestBenchElement> {
      *            the tag name to look for
      * @param attributePairs
      *            the attribute pairs to match
-     * @return a stream of matching elements of the type defined in the
+     * @return a list of matching elements of the type defined in the
      *         constructor
      */
-    Stream<T> executeSearchScript(String script, Object context, String tagName,
+    List<T> executeSearchScript(String script, Object context, String tagName,
                                   String attributePairs, JavascriptExecutor executor) {
         var result = executor.executeScript(script, context, tagName, attributePairs);
 
         // Wrap as the correct type
         if (result instanceof TestBenchElement testBenchElement) {
-            return Stream.of(TestBench.wrap(testBenchElement, elementClass));
+            return List.of(TestBench.wrap(testBenchElement, elementClass));
         } else if (result instanceof List<?> elements) {
             return elements.stream()
                     .filter(TestBenchElement.class::isInstance)
                     .map(TestBenchElement.class::cast)
-                    .map(testBenchElement -> TestBench.wrap(testBenchElement, elementClass));
+                    .map(testBenchElement -> TestBench.wrap(testBenchElement, elementClass))
+                    .toList();
         } else {
-            return Stream.of();
+            return List.of();
         }
     }
 
