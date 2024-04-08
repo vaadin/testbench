@@ -4,7 +4,9 @@
 .settings
 .idea
 *.iml
+/target/
 */target/
+vaadin-testbench-core/error-screenshots
 vaadin-testbench-standalone/dependency-reduced-pom.xml
 vaadin-testbench-recorder/selenium-extensions/core/user-extensions.js
 vaadin-testbench-recorder/chrome/content/selenium/scripts/selenium-api.js
