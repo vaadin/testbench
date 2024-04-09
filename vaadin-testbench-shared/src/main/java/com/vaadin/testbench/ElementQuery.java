@@ -24,9 +24,11 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiPredicate;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -217,6 +219,22 @@ public class ElementQuery<T extends TestBenchElement> {
     public ElementQuery<T> withCondition(Predicate<T> condition) {
         conditions.add(condition);
         return this;
+    }
+
+    /**
+     * Requires the element to have the given property getter return the supplied value.
+     *
+     * @param getter
+     *            the function to get the value of the property of the element,
+     *            not null
+     * @param propertyValue
+     *            value to be compared with the one obtained from the
+     *            getter function of the element
+     * @return this element query instance for chaining
+     */
+    public <V> ElementQuery<T> withPropertyValue(Function<T, V> getter, V propertyValue) {
+        Objects.requireNonNull(getter, "getter function must not be null");
+        return withCondition(element -> Objects.equals(getter.apply(element), propertyValue));
     }
 
     /**

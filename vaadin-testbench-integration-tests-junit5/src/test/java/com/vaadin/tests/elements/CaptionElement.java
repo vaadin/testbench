@@ -8,12 +8,13 @@
  */
 package com.vaadin.tests.elements;
 
+import com.vaadin.testUI.CaptionComponent;
 import com.vaadin.testbench.HasLabel;
 import com.vaadin.testbench.HasPlaceholder;
 import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.testbench.elementsbase.Element;
 
-@Element("caption-component")
+@Element(CaptionComponent.TAG)
 public class CaptionElement extends TestBenchElement
         implements HasLabel, HasPlaceholder {
 

@@ -337,7 +337,7 @@ public class ElementQueryTest {
         query.withCondition(HasLabel.class::isInstance);
         try {
             query.first();
-            Assert.fail("Search should fail as no element with the condition exists");
+            Assert.fail("Search should fail as no element with the condition exists.");
         } catch (NoSuchElementException ignored) {
         }
         Assert.assertTrue("last query script contains ELEMENT_QUERY_FRAGMENT",
@@ -359,8 +359,52 @@ public class ElementQueryTest {
         query.withCondition(HasLabel.class::isInstance);
         try {
             query.first();
-            Assert.fail("Search should fail as no element with the condition exists");
+            Assert.fail("Search should fail as no element with the condition exists.");
         } catch (NoSuchElementException ignored) {
+        }
+        Assert.assertTrue("last query script contains DOCUMENT_QUERY_FRAGMENT",
+                query.lastScript.contains(DOCUMENT_QUERY_FRAGMENT));
+        Assert.assertTrue(
+                "last query script end with SINGLE_RESULT_QUERY_SUFFIX",
+                query.lastScript.endsWith(SINGLE_RESULT_QUERY_SUFFIX));
+        Assert.assertEquals("", query.lastAttributePairs);
+        Assert.assertEquals(ExampleElement.TAG, query.lastTagName);
+        Assert.assertSame(null, query.lastContext);
+        Assert.assertEquals(1, query.lastConditions.size());
+        assertPredicatesEqualFor(HasLabel.class::isInstance, query.lastConditions.get(0),
+                new ExampleElement());
+    }
+
+    @Test
+    public void findInElement_byPropertyValue() {
+        TestElementQuery<ExampleElement> query = createExampleElementQuery();
+        query.withPropertyValue(ExampleElement::getTagName, ExampleElement.TAG);
+        try {
+            query.first();
+        } catch (NoSuchElementException e) {
+            Assert.fail("Search shouldn't fail as elements with the property value exist.");
+        }
+        Assert.assertTrue("last query script contains ELEMENT_QUERY_FRAGMENT",
+                query.lastScript.contains(ELEMENT_QUERY_FRAGMENT));
+        Assert.assertTrue(
+                "last query script end with SINGLE_RESULT_QUERY_SUFFIX",
+                query.lastScript.endsWith(SINGLE_RESULT_QUERY_SUFFIX));
+        Assert.assertEquals("", query.lastAttributePairs);
+        Assert.assertEquals(ExampleElement.TAG, query.lastTagName);
+        Assert.assertSame(exampleElement, query.lastContext);
+        Assert.assertEquals(1, query.lastConditions.size());
+        assertPredicatesEqualFor(HasLabel.class::isInstance, query.lastConditions.get(0),
+                new ExampleElement());
+    }
+
+    @Test
+    public void findInDocument_byPropertyValue() {
+        TestElementQuery<ExampleElement> query = createExampleDocumentQuery();
+        query.withPropertyValue(ExampleElement::getTagName, ExampleElement.TAG);
+        try {
+            query.first();
+        } catch (NoSuchElementException e) {
+            Assert.fail("Search shouldn't fail as elements with the property value exist.");
         }
         Assert.assertTrue("last query script contains DOCUMENT_QUERY_FRAGMENT",
                 query.lastScript.contains(DOCUMENT_QUERY_FRAGMENT));
@@ -389,8 +433,7 @@ public class ElementQueryTest {
         Assert.assertTrue(
                 "last query script end with SINGLE_RESULT_QUERY_SUFFIX",
                 query.lastScript.endsWith(SINGLE_RESULT_QUERY_SUFFIX));
-        Assert.assertEquals("",
-                query.lastAttributePairs);
+        Assert.assertEquals("", query.lastAttributePairs);
         Assert.assertEquals(ExampleElement.TAG, query.lastTagName);
         Assert.assertSame(exampleElement, query.lastContext);
         Assert.assertEquals(1, query.lastConditions.size());
@@ -414,8 +457,7 @@ public class ElementQueryTest {
         Assert.assertTrue(
                 "last query script end with SINGLE_RESULT_QUERY_SUFFIX",
                 query.lastScript.endsWith(SINGLE_RESULT_QUERY_SUFFIX));
-        Assert.assertEquals("[foo='bar'][das='boot']",
-                query.lastAttributePairs);
+        Assert.assertEquals("", query.lastAttributePairs);
         Assert.assertEquals(ExampleElement.TAG, query.lastTagName);
         Assert.assertSame(null, query.lastContext);
         Assert.assertEquals(1, query.lastConditions.size());
@@ -439,8 +481,7 @@ public class ElementQueryTest {
         Assert.assertTrue(
                 "last query script end with SINGLE_RESULT_QUERY_SUFFIX",
                 query.lastScript.endsWith(SINGLE_RESULT_QUERY_SUFFIX));
-        Assert.assertEquals("",
-                query.lastAttributePairs);
+        Assert.assertEquals("", query.lastAttributePairs);
         Assert.assertEquals(ExampleElement.TAG, query.lastTagName);
         Assert.assertSame(exampleElement, query.lastContext);
         Assert.assertEquals(1, query.lastConditions.size());
@@ -464,8 +505,7 @@ public class ElementQueryTest {
         Assert.assertTrue(
                 "last query script end with SINGLE_RESULT_QUERY_SUFFIX",
                 query.lastScript.endsWith(SINGLE_RESULT_QUERY_SUFFIX));
-        Assert.assertEquals("[foo='bar'][das='boot']",
-                query.lastAttributePairs);
+        Assert.assertEquals("", query.lastAttributePairs);
         Assert.assertEquals(ExampleElement.TAG, query.lastTagName);
         Assert.assertSame(null, query.lastContext);
         Assert.assertEquals(1, query.lastConditions.size());
