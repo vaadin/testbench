@@ -8,17 +8,16 @@
  */
 package com.vaadin.tests.elements;
 
-import java.util.Collections;
-
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.openqa.selenium.TimeoutException;
-
 import com.vaadin.flow.component.Component;
 import com.vaadin.testUI.ElementQueryView;
 import com.vaadin.testbench.BrowserTest;
 import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.tests.AbstractBrowserTB9Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.openqa.selenium.TimeoutException;
+
+import java.util.Collections;
 
 public class BasicElementIT extends AbstractBrowserTB9Test {
 
@@ -132,9 +131,10 @@ public class BasicElementIT extends AbstractBrowserTB9Test {
     }
 
     @BrowserTest
-    public void waitForNonExistant() {
+    public void waitForNonExistent() {
+        var templateViewElementElementQuery = $(TemplateViewElement.class);
         Assertions.assertThrows(TimeoutException.class, () -> {
-            $(TemplateViewElement.class).waitForFirst();
+            templateViewElementElementQuery.waitForFirst();
             Assertions.fail(
                     "Should not have found an element which does not exist");
         });
@@ -149,11 +149,11 @@ public class BasicElementIT extends AbstractBrowserTB9Test {
 
         Assertions.assertTrue(withAttributes.hasAttribute("string"));
         Assertions.assertTrue(withAttributes.hasAttribute("boolean"));
-        Assertions.assertFalse(withAttributes.hasAttribute("nonexistant"));
+        Assertions.assertFalse(withAttributes.hasAttribute("nonexistent"));
 
         Assertions.assertFalse(withoutAttributes.hasAttribute("string"));
         Assertions.assertFalse(withoutAttributes.hasAttribute("boolean"));
-        Assertions.assertFalse(withoutAttributes.hasAttribute("nonexistant"));
+        Assertions.assertFalse(withoutAttributes.hasAttribute("nonexistent"));
     }
 
     @BrowserTest

@@ -337,7 +337,7 @@ public abstract class AbstractBrowserTestBase
      *            the actual element
      */
     protected static void assertEquals(WebElement expectedElement,
-            WebElement actualElement) {
+                                       WebElement actualElement) {
         WebElement unwrappedExpected = expectedElement;
         WebElement unwrappedActual = actualElement;
         while (unwrappedExpected instanceof WrapsElement) {

@@ -8,6 +8,8 @@
  */
 package com.vaadin.testbench;
 
+import java.util.Objects;
+
 /**
  * Implement by elements which support a label, i.e. text shown typically inside
  * (when field is empty) or above the field (when the field has a value).
@@ -19,13 +21,9 @@ public interface HasHelper extends HasPropertySettersGetters, HasElementQuery {
      *
      * @return the label or an empty string if there is no helper text
      */
-    default public String getHelperText() {
+    default String getHelperText() {
         String ret = getPropertyString("helperText");
-        if (ret == null) {
-            return "";
-        } else {
-            return ret;
-        }
+        return Objects.requireNonNullElse(ret, "");
     }
 
     /**
@@ -33,9 +31,9 @@ public interface HasHelper extends HasPropertySettersGetters, HasElementQuery {
      *
      * @return the slotted component or {@code null} if there is no component
      */
-    default public TestBenchElement getHelperComponent() {
+    default TestBenchElement getHelperComponent() {
         final ElementQuery<TestBenchElement> query = $(TestBenchElement.class)
-                .attribute("slot", "helper");
+                .withAttribute("slot", "helper");
         if (query.exists()) {
             TestBenchElement last = query.last();
             // To avoid getting the "slot" element, for components with slotted
