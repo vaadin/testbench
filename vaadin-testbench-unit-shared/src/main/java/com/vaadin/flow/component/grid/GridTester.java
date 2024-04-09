@@ -22,17 +22,13 @@ import com.vaadin.testbench.unit.Tests;
 import com.vaadin.testbench.unit.component.GridKt;
 import elemental.json.Json;
 import elemental.json.JsonArray;
-import jakarta.validation.UnexpectedTypeException;
-
-import java.lang.reflect.Field;
-import java.util.*;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * Tester for Grid components.
@@ -333,11 +329,10 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
      * @param <V>
      *            the type of the LitRenderer property
      * @return value of renderer's property for the target cell
-     * @throws UnexpectedTypeException
-     *             when the type of the property does not match the
      * @throws IllegalArgumentException
-     *             when column for property doesn't exist or the target column of
-     *             the cell is not a LitRenderer
+     *             when column for property doesn't exist or
+     *             the target column of the cell is not a LitRenderer or
+     *             when the given type of the property does not match the actual property type
      */
     public <V> V getLitRendererPropertyValue(int row, String columnName, String propertyName, Class<V> propertyClass) {
         return getLitRendererPropertyValue(row, getColumn(columnName), propertyName, propertyClass);
@@ -357,11 +352,10 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
      * @param <V>
      *            the type of the LitRenderer property
      * @return value of renderer's property for the target cell
-     * @throws UnexpectedTypeException
-     *             when the type of the property does not match the
      * @throws IllegalArgumentException
-     *             when column for property doesn't exist or the target column of
-     *             the cell is not a LitRenderer
+     *             when column for property doesn't exist or
+     *             the target column of the cell is not a LitRenderer or
+     *             when the given type of the property does not match the actual property type
      */
     public <V> V getLitRendererPropertyValue(int row, int column, String propertyName, Class<V> propertyClass) {
         return getLitRendererPropertyValue(row, getColumns().get(column), propertyName, propertyClass);
@@ -376,7 +370,7 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
             if (propertyClass.isInstance(untypedValue)) {
                 return propertyClass.cast(untypedValue);
             } else {
-                throw new UnexpectedTypeException("Target column property value is the wrong type - expected %s, found %s."
+                throw new IllegalArgumentException("Type of target column property value does not match propertyClass - expected %s, found %s."
                         .formatted(propertyClass.getCanonicalName(), untypedValue.getClass().getCanonicalName()));
             }
         } else {
@@ -395,7 +389,23 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
      *            the name of the LitRenderer function to invoke
      */
     public void invokeLitRendererFunction(int row, String columnName, String functionName) {
-        invokeLitRendererFunction(row, getColumn(columnName), functionName);
+        invokeLitRendererFunction(row, columnName, functionName, Json.createArray());
+    }
+
+    /**
+     * Invoke named function for item's LitRenderer in column using the supplied JSON arguments.
+     *
+     * @param row
+     *            item row
+     * @param columnName
+     *            key/property of column
+     * @param functionName
+     *            the name of the LitRenderer function to invoke
+     * @param jsonArray
+     *            the arguments to pass to the function
+     */
+    public void invokeLitRendererFunction(int row, String columnName, String functionName, JsonArray jsonArray) {
+        invokeLitRendererFunction(row, getColumn(columnName), functionName, jsonArray);
     }
 
     /**
@@ -409,14 +419,30 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
      *            the name of the LitRenderer function to invoke
      */
     public void invokeLitRendererFunction(int row, int column, String functionName) {
-        invokeLitRendererFunction(row, getColumns().get(column), functionName);
+        invokeLitRendererFunction(row, column, functionName, Json.createArray());
     }
 
-    private void invokeLitRendererFunction(int row, Grid.Column<Y> column, String functionName) {
+    /**
+     * Invoke named function for item's LitRenderer in column using the supplied JSON arguments.
+     *
+     * @param row
+     *            item row
+     * @param column
+     *            column to get
+     * @param functionName
+     *            the name of the LitRenderer function to invoke
+     * @param jsonArray
+     *            the arguments to pass to the function
+     */
+    public void invokeLitRendererFunction(int row, int column, String functionName, JsonArray jsonArray) {
+        invokeLitRendererFunction(row, getColumns().get(column), functionName, jsonArray);
+    }
+
+    private void invokeLitRendererFunction(int row, Grid.Column<Y> column, String functionName, JsonArray jsonArray) {
         ensureVisible();
         if (column.getRenderer() instanceof LitRenderer<Y> litRenderer) {
             var callable = findLitRendererFunction(litRenderer, functionName);
-            callable.accept(getRow(row), Json.createArray());
+            callable.accept(getRow(row), jsonArray);
         } else {
             throw new IllegalArgumentException("Target column doesn't have a LitRenderer.");
         }
