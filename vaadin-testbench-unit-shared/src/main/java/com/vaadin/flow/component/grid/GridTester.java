@@ -12,19 +12,23 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.data.provider.SortDirection;
 import com.vaadin.flow.data.provider.SortOrder;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
+import com.vaadin.flow.data.renderer.LitRenderer;
+import com.vaadin.flow.function.SerializableBiConsumer;
 import com.vaadin.flow.function.ValueProvider;
 import com.vaadin.testbench.unit.ComponentTester;
 import com.vaadin.testbench.unit.MetaKeys;
 import com.vaadin.testbench.unit.MouseButton;
 import com.vaadin.testbench.unit.Tests;
 import com.vaadin.testbench.unit.component.GridKt;
+import elemental.json.Json;
+import elemental.json.JsonArray;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * Tester for Grid components.
@@ -89,7 +93,7 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
      *            row to click
      * @param button
      *            MouseButton that was clicked
-     * @see {@link com.vaadin.flow.component.ClickEvent#getButton()}
+     * @see com.vaadin.flow.component.ClickEvent#getButton()
      */
     public void clickRow(int row, MouseButton button) {
         clickRow(row, button, new MetaKeys());
@@ -120,7 +124,7 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
      *            MouseButton that was clicked
      * @param metaKeys
      *            meta key statuses for click
-     * @see {@link com.vaadin.flow.component.ClickEvent#getButton()}
+     * @see com.vaadin.flow.component.ClickEvent#getButton()
      */
     public void clickRow(int row, MouseButton button, MetaKeys metaKeys) {
         ensureComponentIsUsable();
@@ -130,7 +134,7 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
     }
 
     /**
-     * Double click on grid row.
+     * Double-click on grid row.
      * <p/>
      * The index is 0 based.
      *
@@ -142,7 +146,7 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
     }
 
     /**
-     * Double click on grid row with given button.
+     * Double-click on grid row with given button.
      * <p/>
      * The index is 0 based.
      *
@@ -150,14 +154,14 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
      *            row to click
      * @param button
      *            MouseButton that was clicked
-     * @see {@link com.vaadin.flow.component.ClickEvent#getButton()}
+     * @see com.vaadin.flow.component.ClickEvent#getButton()
      */
     public void doubleClickRow(int row, MouseButton button) {
         doubleClickRow(row, button, new MetaKeys());
     }
 
     /**
-     * Double click on grid row with given meta keys pressed.
+     * Double-click on grid row with given meta keys pressed.
      * <p/>
      * The index is 0 based.
      *
@@ -171,7 +175,7 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
     }
 
     /**
-     * Double click on grid row with given button and meta keys pressed.
+     * Double-click on grid row with given button and meta keys pressed.
      * <p/>
      * The index is 0 based.
      *
@@ -181,7 +185,7 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
      *            MouseButton that was clicked
      * @param metaKeys
      *            meta key statuses for click
-     * @see {@link com.vaadin.flow.component.ClickEvent#getButton()}
+     * @see com.vaadin.flow.component.ClickEvent#getButton()
      */
     public void doubleClickRow(int row, MouseButton button, MetaKeys metaKeys) {
         ensureComponentIsUsable();
@@ -234,7 +238,7 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
      * For a ComponentRenderer the result is the rendered component as
      * prettyString.
      * <p/>
-     * TODO: to be added as we find other renderers that need handling.
+     * More to be added as we find other renderers that need handling.
      *
      * @param row
      *            row of cell
@@ -246,7 +250,7 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
      */
     public String getCellText(int row, int column) {
         ensureVisible();
-        final Grid.Column targetColumn = getColumns().get(column);
+        final Grid.Column<Y> targetColumn = getColumns().get(column);
         if (targetColumn.getRenderer() instanceof ComponentRenderer) {
             Component component = getCellComponent(row, column);
             if (component == null) {
@@ -269,7 +273,7 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
      *            column to get
      * @return initialized component for the targeted cell
      * @throws IllegalArgumentException
-     *             when the target colum of the cell is not a component renderer
+     *             when the target column of the cell is not a component renderer
      */
     public Component getCellComponent(int row, int column) {
         ensureVisible();
@@ -286,7 +290,7 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
      *            key/property of column
      * @return initialized component for the target cell
      * @throws IllegalArgumentException
-     *             when column for property doesn't exist or the target colum of
+     *             when column for property doesn't exist or the target column of
      *             the cell is not a component renderer
      */
     public Component getCellComponent(int row, String columnName) {
@@ -312,6 +316,169 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
     }
 
     /**
+     * Get property value for item's LitRenderer in column.
+     *
+     * @param row
+     *            item row
+     * @param columnName
+     *            key/property of column
+     * @param propertyName
+     *            the name of the LitRenderer property
+     * @param propertyClass
+     *            the class of the value of the LitRenderer property
+     * @param <V>
+     *            the type of the LitRenderer property
+     * @return value of renderer's property for the target cell
+     * @throws IllegalArgumentException
+     *             when column for property doesn't exist or
+     *             the target column of the cell is not a LitRenderer or
+     *             when the given type of the property does not match the actual property type
+     */
+    public <V> V getLitRendererPropertyValue(int row, String columnName, String propertyName, Class<V> propertyClass) {
+        return getLitRendererPropertyValue(row, getColumn(columnName), propertyName, propertyClass);
+    }
+
+    /**
+     * Get property value for item's LitRenderer in column.
+     *
+     * @param row
+     *            item row
+     * @param column
+     *            column to get
+     * @param propertyName
+     *            the name of the LitRenderer property
+     * @param propertyClass
+     *            the class of the value of the LitRenderer property
+     * @param <V>
+     *            the type of the LitRenderer property
+     * @return value of renderer's property for the target cell
+     * @throws IllegalArgumentException
+     *             when column for property doesn't exist or
+     *             the target column of the cell is not a LitRenderer or
+     *             when the given type of the property does not match the actual property type
+     */
+    public <V> V getLitRendererPropertyValue(int row, int column, String propertyName, Class<V> propertyClass) {
+        return getLitRendererPropertyValue(row, getColumns().get(column), propertyName, propertyClass);
+    }
+
+    private <V> V getLitRendererPropertyValue(int row, Grid.Column<Y> column,
+                                              String propertyName, Class<V> propertyClass) {
+        ensureVisible();
+        if (column.getRenderer() instanceof LitRenderer<Y> litRenderer) {
+            var valueProvider = findLitRendererProperty(litRenderer, propertyName);
+            var untypedValue = valueProvider.apply(getRow(row));
+            if (propertyClass.isInstance(untypedValue)) {
+                return propertyClass.cast(untypedValue);
+            } else {
+                throw new IllegalArgumentException("Type of target column property value does not match propertyClass - expected %s, found %s."
+                        .formatted(propertyClass.getCanonicalName(), untypedValue.getClass().getCanonicalName()));
+            }
+        } else {
+            throw new IllegalArgumentException("Target column doesn't have a LitRenderer.");
+        }
+    }
+
+    /**
+     * Invoke named function for item's LitRenderer in column.
+     *
+     * @param row
+     *            item row
+     * @param columnName
+     *            key/property of column
+     * @param functionName
+     *            the name of the LitRenderer function to invoke
+     */
+    public void invokeLitRendererFunction(int row, String columnName, String functionName) {
+        invokeLitRendererFunction(row, columnName, functionName, Json.createArray());
+    }
+
+    /**
+     * Invoke named function for item's LitRenderer in column using the supplied JSON arguments.
+     *
+     * @param row
+     *            item row
+     * @param columnName
+     *            key/property of column
+     * @param functionName
+     *            the name of the LitRenderer function to invoke
+     * @param jsonArray
+     *            the arguments to pass to the function
+     */
+    public void invokeLitRendererFunction(int row, String columnName, String functionName, JsonArray jsonArray) {
+        invokeLitRendererFunction(row, getColumn(columnName), functionName, jsonArray);
+    }
+
+    /**
+     * Invoke named function for item's LitRenderer in column.
+     *
+     * @param row
+     *            item row
+     * @param column
+     *            column to get
+     * @param functionName
+     *            the name of the LitRenderer function to invoke
+     */
+    public void invokeLitRendererFunction(int row, int column, String functionName) {
+        invokeLitRendererFunction(row, column, functionName, Json.createArray());
+    }
+
+    /**
+     * Invoke named function for item's LitRenderer in column using the supplied JSON arguments.
+     *
+     * @param row
+     *            item row
+     * @param column
+     *            column to get
+     * @param functionName
+     *            the name of the LitRenderer function to invoke
+     * @param jsonArray
+     *            the arguments to pass to the function
+     */
+    public void invokeLitRendererFunction(int row, int column, String functionName, JsonArray jsonArray) {
+        invokeLitRendererFunction(row, getColumns().get(column), functionName, jsonArray);
+    }
+
+    private void invokeLitRendererFunction(int row, Grid.Column<Y> column, String functionName, JsonArray jsonArray) {
+        ensureVisible();
+        if (column.getRenderer() instanceof LitRenderer<Y> litRenderer) {
+            var callable = findLitRendererFunction(litRenderer, functionName);
+            callable.accept(getRow(row), jsonArray);
+        } else {
+            throw new IllegalArgumentException("Target column doesn't have a LitRenderer.");
+        }
+    }
+
+    private <V> ValueProvider<Y, V> findLitRendererProperty(LitRenderer<Y> renderer, String propertyName) {
+        var valueProvidersField = getField(LitRenderer.class, "valueProviders");
+        try {
+            @SuppressWarnings("unchecked")
+            var valueProviders = (Map<String, ValueProvider<Y, V>>) valueProvidersField.get(renderer);
+            var valueProvider = valueProviders.get(propertyName);
+            if (valueProvider == null) {
+                throw new IllegalArgumentException("Property " + propertyName + " is not registered in LitRenderer.");
+            }
+            return valueProvider;
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private SerializableBiConsumer<Y, JsonArray> findLitRendererFunction(LitRenderer<Y> renderer, String functionName) {
+        var clientCallablesField = getField(LitRenderer.class, "clientCallables");
+        try {
+            @SuppressWarnings("unchecked")
+            var clientCallables = (Map<String, SerializableBiConsumer<Y, JsonArray>>) clientCallablesField.get(renderer);
+            var callable = clientCallables.get(functionName);
+            if (callable == null) {
+                throw new IllegalArgumentException("Function " + functionName + " is not registered in LitRenderer.");
+            }
+            return callable;
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
      * Get content in header for given column.
      *
      * @param column
@@ -331,7 +498,7 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
 
     private List<Grid.Column<Y>> getColumns() {
         return getComponent().getColumns().stream()
-                .filter(col -> col.isVisible()).collect(Collectors.toList());
+                .filter(Component::isVisible).toList();
     }
 
     /**
@@ -369,7 +536,7 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
      * @deprecated Use {@link Grid.Column#getFooterText()} or
      *             {@link Grid.Column#getFooterComponent()} directly
      */
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public String getFooterCell(int column) {
         ensureVisible();
         return getColumns().get(column).getFooterText();
@@ -423,7 +590,7 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
     /**
      * Gets the current sort direction for column at the given index.
      *
-     * Throws an exception if the column does not exists or is not sortable.
+     * Throws an exception if the column does not exist or is not sortable.
      *
      * @param column
      *            column index to get sort direction
@@ -563,17 +730,18 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
         getComponent().sort(sortOrders);
     }
 
-    private String getValueProviderString(int row, Grid.Column targetColumn)
+    private String getValueProviderString(int row, Grid.Column<Y> targetColumn)
             throws IllegalArgumentException {
         try {
-            ColumnPathRenderer renderer = (ColumnPathRenderer) targetColumn
+            ColumnPathRenderer<Y> renderer = (ColumnPathRenderer<Y>) targetColumn
                     .getRenderer();
 
             Field f = ColumnPathRenderer.class
                     .getDeclaredField("provider");
             f.setAccessible(true);
 
-            final ValueProvider columnValueProvider = (ValueProvider) f
+            @SuppressWarnings("unchecked")
+            final ValueProvider<Y, ?> columnValueProvider = (ValueProvider<Y, ?>) f
                     .get(renderer);
 
             return columnValueProvider.apply(getRow(row)).toString();

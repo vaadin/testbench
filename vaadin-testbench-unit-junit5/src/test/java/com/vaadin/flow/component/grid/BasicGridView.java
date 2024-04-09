@@ -12,33 +12,60 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
+import com.vaadin.flow.data.renderer.LitRenderer;
 import com.vaadin.flow.router.Route;
 
 @Tag("div")
 @Route(value = "basic-grid", registerAtStartup = false)
 public class BasicGridView extends Component implements HasComponents {
 
-    Grid<Person> basicGrid = new Grid<>();
-    Person first = Person.createTestPerson1();
-    Person second = Person.createTestPerson2();
+    static final String FIRST_NAME_KEY = "First Name";
+    static final String LAST_NAME_KEY = "Last Name";
+    static final String AGE_KEY = "Age";
+    static final String SUBSCRIBER_KEY = "Subscriber";
+    static final String DECEASED_KEY = "Deceased";
 
-    final String firstHeader = "Name";
-    final String secondHeader = "Age";
-    final String subscriber = "Subscriber";
+    final Grid<Person> basicGrid;
+    final Person person1;
+    final Person person2;
 
     public BasicGridView() {
+        basicGrid = new Grid<>();
 
-        basicGrid.setItems(first, second);
-
-        basicGrid.addColumn(Person::getFirstName).setHeader(firstHeader);
-        basicGrid.addColumn(Person::getLastName).setHeader(firstHeader)
+        basicGrid.addColumn(Person::getFirstName)
+                .setKey(FIRST_NAME_KEY)
+                .setHeader("First Name");
+        basicGrid.addColumn(Person::getLastName)
+                .setKey(LAST_NAME_KEY)
+                .setHeader("Last Name")
                 .setVisible(false);
-        basicGrid.addColumn(Person::getAge).setHeader(secondHeader);
-        basicGrid
-                .addColumn(new ComponentRenderer<>(
-                        person -> new CheckBox(person.isSubscriber())))
-                .setHeader(subscriber).setKey(subscriber);
+        basicGrid.addColumn(Person::getAge)
+                .setKey(AGE_KEY)
+                .setHeader("Age");
+        basicGrid.addColumn(new ComponentRenderer<>(person -> new CheckBox(person.isSubscriber())))
+                .setKey(SUBSCRIBER_KEY)
+                .setHeader("Subscriber");
+        basicGrid.addColumn(deceasedRenderer())
+                .setKey(DECEASED_KEY)
+                .setHeader("Deceased");
+
         add(basicGrid);
+
+        person1 = Person.createTestPerson1();
+        person1.setDeceased(true);
+        person2 = Person.createTestPerson2();
+
+        basicGrid.setItems(person1, person2);
+    }
+
+    private LitRenderer<Person> deceasedRenderer() {
+        return LitRenderer.<Person>of(
+                        "<button @click=${onClick}>${item.deceased ? 'Yes' : 'No'}</button>")
+                .withProperty("deceased", Person::getDeceased)
+                .withFunction("onClick", person -> {
+                    person.setDeceased(!person.getDeceased());
+                    basicGrid.getListDataView().refreshItem(person);
+                });
     }
 
 }
