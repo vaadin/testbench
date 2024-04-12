@@ -417,12 +417,37 @@ public class ElementQuery<T extends TestBenchElement> {
      * @return this element query instance for chaining
      */
     public ElementQuery<T> withCondition(Predicate<T> condition) {
+        Objects.requireNonNull(condition, "condition must not be null");
         conditions.add(condition);
         return this;
     }
 
     /**
-     * Requires the element to have the given property getter return the supplied value.
+     * Requires the element's given property getter return value
+     * to satisfy the given comparison with the supplied value.
+     *
+     * @param getter
+     *            the function to get the value of the property of the element,
+     *            not null
+     * @param propertyValue
+     *            value to be compared with the one obtained from the
+     *            getter function of the element
+     * @param comparison
+     *          the comparison to use when comparing the property value with the supplied value
+     * @return this element query instance for chaining
+     *
+     * @see #withPropertyValue(Function, Object)
+     */
+    public <V> ElementQuery<T> withPropertyValue(Function<T, V> getter, V propertyValue,
+                                                 BiPredicate<V, V> comparison) {
+        Objects.requireNonNull(getter, "getter function must not be null");
+        Objects.requireNonNull(comparison, "comparison must not be null");
+        return withCondition(element -> comparison.test(getter.apply(element), propertyValue));
+    }
+
+    /**
+     * Requires the element's given property getter return value
+     * to equal the supplied value.
      *
      * @param getter
      *            the function to get the value of the property of the element,
@@ -431,10 +456,11 @@ public class ElementQuery<T extends TestBenchElement> {
      *            value to be compared with the one obtained from the
      *            getter function of the element
      * @return this element query instance for chaining
+     *
+     * @see #withPropertyValue(Function, Object, BiPredicate)
      */
     public <V> ElementQuery<T> withPropertyValue(Function<T, V> getter, V propertyValue) {
-        Objects.requireNonNull(getter, "getter function must not be null");
-        return withCondition(element -> Objects.equals(getter.apply(element), propertyValue));
+        return withPropertyValue(getter, propertyValue, Objects::equals);
     }
 
     /**
@@ -457,8 +483,12 @@ public class ElementQuery<T extends TestBenchElement> {
      * @param comparison
      *          the comparison to use when comparing the text with the label
      * @return this element query instance for chaining
+     *
+     * @see #withLabel(String)
+     * @see #withLabelContaining(String)
      */
     public ElementQuery<T> withLabel(String text, BiPredicate<String, String> comparison) {
+        Objects.requireNonNull(comparison, "comparison must not be null");
         return withCondition(element -> (element instanceof HasLabel hasLabel) &&
                 Optional.ofNullable(hasLabel.getLabel())
                         .filter(label -> comparison.test(label, text))
@@ -468,12 +498,15 @@ public class ElementQuery<T extends TestBenchElement> {
     /**
      * Requires the element's label to exactly match the given label value.
      * <p>
-     * For partially matching text within the label, see
-     * {@link #withLabelContaining(String)}.
+     * For partially matching text within the label,
+     * see {@link #withLabelContaining(String)}.
      *
      * @param label
      *            the label to match
      * @return this element query instance for chaining
+     *
+     * @see #withLabelContaining(String)
+     * @see #withLabel(String, BiPredicate)
      */
     public ElementQuery<T> withLabel(String label) {
         return withLabel(label, String::equals);
@@ -482,12 +515,15 @@ public class ElementQuery<T extends TestBenchElement> {
     /**
      * Requires the element's label to partially match the given text value.
      * <p>
-     * For exactly matching the label, see
-     * {@link #withLabel(String)}.
+     * For exactly matching the label,
+     * see {@link #withLabel(String)}.
      *
      * @param text
      *          the text to match
      * @return this element query instance for chaining
+     *
+     * @see #withLabel(String)
+     * @see #withLabel(String, BiPredicate)
      */
     public ElementQuery<T> withLabelContaining(String text) {
         return withLabel(text, String::contains);
@@ -513,8 +549,12 @@ public class ElementQuery<T extends TestBenchElement> {
      * @param comparison
      *          the comparison to use when comparing the text with the placeholder
      * @return this element query instance for chaining
+     *
+     * @see #withPlaceholder(String)
+     * @see #withPlaceholderContaining(String)
      */
     public ElementQuery<T> withPlaceholder(String text, BiPredicate<String, String> comparison) {
+        Objects.requireNonNull(comparison, "comparison must not be null");
         return withCondition(element -> (element instanceof HasPlaceholder hasPlaceholder) &&
                 Optional.ofNullable(hasPlaceholder.getPlaceholder())
                         .filter(placeholder -> comparison.test(placeholder, text))
@@ -530,6 +570,9 @@ public class ElementQuery<T extends TestBenchElement> {
      * @param placeholder
      *            the placeholder to match
      * @return this element query instance for chaining
+     *
+     * @see #withPlaceholderContaining(String)
+     * @see #withPlaceholder(String, BiPredicate)
      */
     public ElementQuery<T> withPlaceholder(String placeholder) {
         return withPlaceholder(placeholder, String::equals);
@@ -544,14 +587,24 @@ public class ElementQuery<T extends TestBenchElement> {
      * @param text
      *          the text to match
      * @return this element query instance for chaining
+     *
+     * @see #withPlaceholder(String)
+     * @see #withPlaceholder(String, BiPredicate)
      */
     public ElementQuery<T> withPlaceholderContaining(String text) {
         return withPlaceholder(text, String::contains);
     }
 
     /**
-     * Requires the element's caption (either label or placeholder)
+     * Requires the element's caption (i.e., label, placeholder, or text label)
      * to satisfy the given comparison with the supplied text.
+     * <p>
+     * If the element has a label, the label value is used.
+     * If the element can have a label, but its value is empty and it has a placeholder,
+     * the placeholder value is used.
+     * If the element does not support labels nor placeholders
+     * but does support labels via its text (such as a button),
+     * the text is used.
      * <p>
      * For matching a caption exactly, see {@link #withCaption(String)},
      * and for matching a caption partially, see {@link #withCaptionContaining(String)}.
@@ -569,21 +622,37 @@ public class ElementQuery<T extends TestBenchElement> {
      * @param comparison
      *          the comparison to use when comparing the text with the caption
      * @return this element query instance for chaining
+     *
+     * @see #withCaption(String)
+     * @see #withCaptionContaining(String)
      */
     public ElementQuery<T> withCaption(String text, BiPredicate<String, String> comparison) {
-        return withCondition(element ->
-                ((element instanceof HasLabel hasLabel) &&
-                        (Optional.ofNullable(hasLabel.getLabel())
-                                .filter(label -> comparison.test(label, text))
-                                .isPresent())) ||
-                        ((element instanceof HasPlaceholder hasPlaceholder) &&
-                                (Optional.ofNullable(hasPlaceholder.getPlaceholder())
-                                        .filter(placeholder -> comparison.test(placeholder, text))
-                                        .isPresent())));
+        Objects.requireNonNull(comparison, "comparison must not be null");
+        return withCondition(element -> {
+            if (element instanceof HasLabel hasLabel) {
+                var label = hasLabel.getLabel();
+                if (!label.isEmpty()) {
+                    return comparison.test(label, text);
+                }
+            }
+            if (element instanceof HasPlaceholder hasPlaceholder) {
+                var placeholder = hasPlaceholder.getPlaceholder();
+                if (!placeholder.isEmpty()) {
+                    return comparison.test(placeholder, text);
+                }
+            }
+            if (element instanceof HasLabelAsText labelAsText) {
+                var label = labelAsText.getText();
+                if (!label.isEmpty()) {
+                    return comparison.test(label, text);
+                }
+            }
+            return false;
+        });
     }
 
     /**
-     * Requires the element's caption (label or placeholder)
+     * Requires the element's caption (i.e., label, placeholder, or text label)
      * to exactly match the given caption value.
      * <p>
      * For partially matching text within the caption, see
@@ -592,13 +661,16 @@ public class ElementQuery<T extends TestBenchElement> {
      * @param caption
      *            the caption to match
      * @return this element query instance for chaining
+     *
+     * @see #withCaptionContaining(String)
+     * @see #withCaption(String, BiPredicate)
      */
     public ElementQuery<T> withCaption(String caption) {
         return withCaption(caption, String::equals);
     }
 
     /**
-     * Requires the element's caption (label or placeholder)
+     * Requires the element's caption (i.e., label, placeholder, or text label)
      * to partially match the given text value.
      * <p>
      * For exactly matching the caption, see
@@ -607,6 +679,9 @@ public class ElementQuery<T extends TestBenchElement> {
      * @param text
      *          the text to match
      * @return this element query instance for chaining
+     *
+     * @see #withCaption(String)
+     * @see #withCaption(String, BiPredicate)
      */
     public ElementQuery<T> withCaptionContaining(String text) {
         return withCaption(text, String::contains);
@@ -632,8 +707,12 @@ public class ElementQuery<T extends TestBenchElement> {
      * @param comparison
      *          the comparison to use when comparing the text with the element's text
      * @return this element query instance for chaining
+     *
+     * @see #withText(String)
+     * @see #withTextContaining(String)
      */
     public ElementQuery<T> withText(String text, BiPredicate<String, String> comparison) {
+        Objects.requireNonNull(comparison, "comparison must not be null");
         return withCondition(element -> Optional.ofNullable(element.getText())
                 .filter(et -> comparison.test(et, text))
                 .isPresent());
@@ -649,6 +728,9 @@ public class ElementQuery<T extends TestBenchElement> {
      * @param text
      *            the text to match
      * @return this element query instance for chaining
+     *
+     * @see #withTextContaining(String)
+     * @see #withText(String, BiPredicate)
      */
     public ElementQuery<T> withText(String text) {
         return withText(text, String::equals);
@@ -664,6 +746,9 @@ public class ElementQuery<T extends TestBenchElement> {
      * @param text
      *          the text to match
      * @return this element query instance for chaining
+     *
+     * @see #withText(String)
+     * @see #withText(String, BiPredicate)
      */
     public ElementQuery<T> withTextContaining(String text) {
         return withText(text, String::contains);
@@ -826,6 +911,7 @@ public class ElementQuery<T extends TestBenchElement> {
      *             if no element is found
      */
     public T get(int index) {
+        Objects.checkIndex(index, Integer.MAX_VALUE);
         List<T> elements = executeSearch(index);
         if (elements.isEmpty()) {
             throw new NoSuchElementException(getNoSuchElementMessage(index));

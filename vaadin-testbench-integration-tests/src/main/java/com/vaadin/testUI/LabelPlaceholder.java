@@ -6,13 +6,14 @@ import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.littemplate.LitTemplate;
 
-@Tag(CaptionComponent.TAG)
-@JsModule("./caption-component.ts")
-public class CaptionComponent extends LitTemplate
+@Tag(LabelPlaceholder.TAG)
+@JsModule(LabelPlaceholder.JS_MODULE)
+public class LabelPlaceholder extends LitTemplate
         implements HasLabel, HasPlaceholder {
-    public static final String TAG = "caption-component";
+    public static final String TAG = "label-placeholder";
+    public static final String JS_MODULE = "./" + TAG + ".ts";
 
-    public CaptionComponent() {
+    public LabelPlaceholder() {
         //
     }
 }

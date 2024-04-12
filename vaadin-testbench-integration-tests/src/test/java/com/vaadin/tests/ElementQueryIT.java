@@ -11,10 +11,9 @@ package com.vaadin.tests;
 import com.vaadin.flow.component.Component;
 import com.vaadin.testUI.TemplateView;
 import com.vaadin.testbench.TestBenchElement;
-import com.vaadin.tests.elements.CaptionElement;
+import com.vaadin.tests.elements.LabelPlaceholderElement;
 import com.vaadin.tests.elements.NativeButtonElement;
 import com.vaadin.tests.elements.TemplateViewElement;
-import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.List;
@@ -312,15 +311,15 @@ public class ElementQueryIT extends AbstractTB6Test {
         openTestURL();
         TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
 
-        List<CaptionElement> captionElements = view.$(CaptionElement.class)
+        List<LabelPlaceholderElement> labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
                 .withLabel("one")
                 .all();
-        Assert.assertEquals(2, captionElements.size());
+        assertEquals(2, labelPlaceholderElements.size());
 
-        captionElements = view.$(CaptionElement.class)
+        labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
                 .withLabel("two")
                 .all();
-        Assert.assertEquals(2, captionElements.size());
+        assertEquals(2, labelPlaceholderElements.size());
     }
 
     @Test
@@ -328,15 +327,15 @@ public class ElementQueryIT extends AbstractTB6Test {
         openTestURL();
         TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
 
-        List<CaptionElement> captionElements = view.$(CaptionElement.class)
+        List<LabelPlaceholderElement> labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
                 .withLabelContaining("n")
                 .all();
-        Assert.assertEquals(2, captionElements.size());
+        assertEquals(3, labelPlaceholderElements.size());
 
-        captionElements = view.$(CaptionElement.class)
+        labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
                 .withLabelContaining("o")
                 .all();
-        Assert.assertEquals(4, captionElements.size());
+        assertEquals(4, labelPlaceholderElements.size());
     }
 
     @Test
@@ -344,15 +343,15 @@ public class ElementQueryIT extends AbstractTB6Test {
         openTestURL();
         TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
 
-        List<CaptionElement> captionElements = view.$(CaptionElement.class)
+        List<LabelPlaceholderElement> labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
                 .withPlaceholder("one")
                 .all();
-        Assert.assertEquals(2, captionElements.size());
+        assertEquals(2, labelPlaceholderElements.size());
 
-        captionElements = view.$(CaptionElement.class)
+        labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
                 .withPlaceholder("two")
                 .all();
-        Assert.assertEquals(2, captionElements.size());
+        assertEquals(2, labelPlaceholderElements.size());
     }
 
     @Test
@@ -360,15 +359,15 @@ public class ElementQueryIT extends AbstractTB6Test {
         openTestURL();
         TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
 
-        List<CaptionElement> captionElements = view.$(CaptionElement.class)
+        List<LabelPlaceholderElement> labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
                 .withPlaceholderContaining("w")
                 .all();
-        Assert.assertEquals(2, captionElements.size());
+        assertEquals(2, labelPlaceholderElements.size());
 
-        captionElements = view.$(CaptionElement.class)
+        labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
                 .withPlaceholderContaining("o")
                 .all();
-        Assert.assertEquals(4, captionElements.size());
+        assertEquals(4, labelPlaceholderElements.size());
     }
 
     @Test
@@ -376,17 +375,17 @@ public class ElementQueryIT extends AbstractTB6Test {
         openTestURL();
         TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
 
-        List<CaptionElement> captionElements = view.$(CaptionElement.class)
+        List<LabelPlaceholderElement> labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
                 .withLabel("one")
                 .withPlaceholder("two")
                 .all();
-        Assert.assertEquals(1, captionElements.size());
+        assertEquals(1, labelPlaceholderElements.size());
 
-        captionElements = view.$(CaptionElement.class)
+        labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
                 .withLabel("two")
                 .withPlaceholder("one")
                 .all();
-        Assert.assertEquals(1, captionElements.size());
+        assertEquals(1, labelPlaceholderElements.size());
     }
 
     @Test
@@ -394,27 +393,17 @@ public class ElementQueryIT extends AbstractTB6Test {
         openTestURL();
         TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
 
-        List<CaptionElement> captionElements = view.$(CaptionElement.class)
+        List<LabelPlaceholderElement> labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
                 .withLabelContaining("n")
                 .withPlaceholderContaining("w")
                 .all();
-        Assert.assertEquals(1, captionElements.size());
+        assertEquals(1, labelPlaceholderElements.size());
 
-        captionElements = view.$(CaptionElement.class)
+        labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
                 .withLabelContaining("o")
                 .withPlaceholderContaining("o")
                 .all();
-        Assert.assertEquals(2, captionElements.size());
-    }
-
-    @Test
-    public void captionElementsExist() {
-        openTestURL();
-        TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
-
-        List<CaptionElement> captionElements = view.$(CaptionElement.class)
-                .all();
-        Assert.assertEquals(7, captionElements.size());
+        assertEquals(2, labelPlaceholderElements.size());
     }
 
     @Test
@@ -422,15 +411,20 @@ public class ElementQueryIT extends AbstractTB6Test {
         openTestURL();
         TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
 
-        List<CaptionElement> captionElements = view.$(CaptionElement.class)
+        List<LabelPlaceholderElement> labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
                 .withCaption("one")
                 .all();
-        Assert.assertEquals(4, captionElements.size());
+        assertEquals(3, labelPlaceholderElements.size());
 
-        captionElements = view.$(CaptionElement.class)
+        labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
                 .withCaption("two")
                 .all();
-        Assert.assertEquals(4, captionElements.size());
+        assertEquals(3, labelPlaceholderElements.size());
+
+        List<NativeButtonElement> nativeButtonElements = view.$(NativeButtonElement.class)
+                .withCaption("Button with special id")
+                .all();
+        assertEquals(1, nativeButtonElements.size());
     }
 
     @Test
@@ -438,15 +432,15 @@ public class ElementQueryIT extends AbstractTB6Test {
         openTestURL();
         TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
 
-        List<CaptionElement> captionElements = view.$(CaptionElement.class)
-                .withCaptionContaining("n")
+        List<LabelPlaceholderElement> labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
+                .withCaptionContaining("Special")
                 .all();
-        Assert.assertEquals(4, captionElements.size());
+        assertEquals(2, labelPlaceholderElements.size());
 
-        captionElements = view.$(CaptionElement.class)
-                .withCaptionContaining("o")
+        List<NativeButtonElement> nativeButtonElements = view.$(NativeButtonElement.class)
+                .withCaptionContaining("Special")
                 .all();
-        Assert.assertEquals(6, captionElements.size());
+        assertEquals(2, nativeButtonElements.size());
     }
 
 }

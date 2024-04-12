@@ -8,14 +8,14 @@
  */
 package com.vaadin.tests.elements;
 
-import com.vaadin.testUI.CaptionComponent;
+import com.vaadin.testUI.LabelPlaceholder;
 import com.vaadin.testbench.HasLabel;
 import com.vaadin.testbench.HasPlaceholder;
 import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.testbench.elementsbase.Element;
 
-@Element(CaptionComponent.TAG)
-public class CaptionElement extends TestBenchElement
+@Element(LabelPlaceholder.TAG)
+public class LabelPlaceholderElement extends TestBenchElement
         implements HasLabel, HasPlaceholder {
 
 }

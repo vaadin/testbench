@@ -1,8 +1,8 @@
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
-@customElement('caption-component')
-class CaptionComponent extends LitElement {
+@customElement('label-placeholder')
+class LabelPlaceholder extends LitElement {
     @property({ type: String })
     label!: string;
 
@@ -18,5 +18,3 @@ class CaptionComponent extends LitElement {
         `;
     }
 }
-
-// customElements.define('caption-component', CaptionComponent);
