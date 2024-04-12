@@ -443,4 +443,26 @@ public class ElementQueryIT extends AbstractTB6Test {
         assertEquals(2, nativeButtonElements.size());
     }
 
+    @Test
+    public void textMatches() {
+        openTestURL();
+        TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
+
+        List<NativeButtonElement> nativeButtonElements = view.$(NativeButtonElement.class)
+                .withText("Button with special id")
+                .all();
+        assertEquals(1, nativeButtonElements.size());
+    }
+
+    @Test
+    public void textContains() {
+        openTestURL();
+        TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
+
+        List<NativeButtonElement> nativeButtonElements = view.$(NativeButtonElement.class)
+                .withTextContaining("Special")
+                .all();
+        assertEquals(2, nativeButtonElements.size());
+    }
+
 }

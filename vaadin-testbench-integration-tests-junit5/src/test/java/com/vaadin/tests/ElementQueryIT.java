@@ -16,6 +16,7 @@ import com.vaadin.tests.elements.LabelPlaceholderElement;
 import com.vaadin.tests.elements.NativeButtonElement;
 import com.vaadin.tests.elements.TemplateViewElement;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
@@ -439,6 +440,28 @@ public class ElementQueryIT extends AbstractBrowserTB9Test {
 
         List<NativeButtonElement> nativeButtonElements = view.$(NativeButtonElement.class)
                 .withCaptionContaining("Special")
+                .all();
+        Assertions.assertEquals(2, nativeButtonElements.size());
+    }
+
+    @BrowserTest
+    public void textMatches() {
+        openTestURL();
+        TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
+
+        List<NativeButtonElement> nativeButtonElements = view.$(NativeButtonElement.class)
+                .withText("Button with special id")
+                .all();
+        Assertions.assertEquals(1, nativeButtonElements.size());
+    }
+
+    @BrowserTest
+    public void textContains() {
+        openTestURL();
+        TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
+
+        List<NativeButtonElement> nativeButtonElements = view.$(NativeButtonElement.class)
+                .withTextContaining("Special")
                 .all();
         Assertions.assertEquals(2, nativeButtonElements.size());
     }
