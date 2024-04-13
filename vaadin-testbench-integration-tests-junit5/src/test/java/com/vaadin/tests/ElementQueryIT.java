@@ -532,4 +532,32 @@ public class ElementQueryIT extends AbstractBrowserTB9Test {
         Assertions.assertEquals(0, labelPlaceholderElements.size());
     }
 
+    @BrowserTest
+    void propertyValueMatches() {
+        openTestURL();
+        TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
+
+        List<LabelPlaceholderElement> labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
+                .withPropertyValue(LabelPlaceholderElement::getLabel, "")
+                .all();
+        Assertions.assertEquals(4, labelPlaceholderElements.size());
+
+        labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
+                .withPropertyValue(LabelPlaceholderElement::getLabel, "one")
+                .all();
+        Assertions.assertEquals(3, labelPlaceholderElements.size());
+
+        labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
+                .withPropertyValue(LabelPlaceholderElement::getLabel, "one")
+                .withPropertyValue(LabelPlaceholderElement::getPlaceholder, "two")
+                .all();
+        Assertions.assertEquals(2, labelPlaceholderElements.size());
+
+        labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
+                .withPropertyValue(labelPlaceholderElement ->
+                        labelPlaceholderElement.getSize().getHeight(), 0)
+                .all();
+        Assertions.assertEquals(0, labelPlaceholderElements.size());
+    }
+
 }

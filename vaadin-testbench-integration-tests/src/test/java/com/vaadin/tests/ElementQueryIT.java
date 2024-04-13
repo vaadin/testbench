@@ -532,4 +532,32 @@ public class ElementQueryIT extends AbstractTB6Test {
         assertEquals(0, labelPlaceholderElements.size());
     }
 
+    @Test
+    public void propertyValueMatches() {
+        openTestURL();
+        TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
+
+        List<LabelPlaceholderElement> labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
+                .withPropertyValue(LabelPlaceholderElement::getLabel, "")
+                .all();
+        assertEquals(4, labelPlaceholderElements.size());
+
+        labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
+                .withPropertyValue(LabelPlaceholderElement::getLabel, "one")
+                .all();
+        assertEquals(3, labelPlaceholderElements.size());
+
+        labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
+                .withPropertyValue(LabelPlaceholderElement::getLabel, "one")
+                .withPropertyValue(LabelPlaceholderElement::getPlaceholder, "two")
+                .all();
+        assertEquals(2, labelPlaceholderElements.size());
+
+        labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
+                .withPropertyValue(labelPlaceholderElement ->
+                        labelPlaceholderElement.getSize().getHeight(), 0)
+                .all();
+        assertEquals(0, labelPlaceholderElements.size());
+    }
+
 }
