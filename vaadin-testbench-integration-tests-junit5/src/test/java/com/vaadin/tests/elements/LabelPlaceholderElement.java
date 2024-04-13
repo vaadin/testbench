@@ -18,4 +18,8 @@ import com.vaadin.testbench.elementsbase.Element;
 public class LabelPlaceholderElement extends TestBenchElement
         implements HasLabel, HasPlaceholder {
 
+    @Override
+    public String getText() {
+        return getPropertyString("textContent");
+    }
 }

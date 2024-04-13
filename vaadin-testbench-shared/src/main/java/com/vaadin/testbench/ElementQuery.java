@@ -26,7 +26,6 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
@@ -409,6 +408,14 @@ public class ElementQuery<T extends TestBenchElement> {
     /**
      * Requires the element to satisfy the given condition.
      * <p>
+     * For example, to select only enabled elements, you could use
+     * <br>
+     * {@code withCondition(TestBenchElement::isEnabled)}
+     * <br>
+     * or to select only those having a non-zero height, you could use
+     * <br>
+     * {@code withCondition(element -> element.getSize().getHeight() != 0)}
+     * <p>
      * Note that conditions are evaluated in order
      * after the element is selected by its attributes.
      *
@@ -425,6 +432,13 @@ public class ElementQuery<T extends TestBenchElement> {
     /**
      * Requires the element's given property getter return value
      * to satisfy the given comparison with the supplied value.
+     * <p>
+     * For example, to select {@code TextFieldElement}s having helper text
+     * containing the word "person",
+     * you could use
+     * <pre>
+     * {@code withPropertyValue(TextFieldElement::getHelperText, "person", String::contains)}
+     * </pre>
      *
      * @param getter
      *            the function to get the value of the property of the element,
@@ -433,7 +447,11 @@ public class ElementQuery<T extends TestBenchElement> {
      *            value to be compared with the one obtained from the
      *            getter function of the element
      * @param comparison
-     *          the comparison to use when comparing the property value with the supplied value
+     *            the comparison to use when comparing the getter's property value
+     *            against the supplied property value
+     *            (i.e., {@code comparison.test(elementPropertyValue, propertyValue)}
+     * @param <V>
+     *            the type of the property values
      * @return this element query instance for chaining
      *
      * @see #withPropertyValue(Function, Object)
@@ -455,6 +473,8 @@ public class ElementQuery<T extends TestBenchElement> {
      * @param propertyValue
      *            value to be compared with the one obtained from the
      *            getter function of the element
+     * @param <V>
+     *            the type of the property values
      * @return this element query instance for chaining
      *
      * @see #withPropertyValue(Function, Object, BiPredicate)
@@ -481,7 +501,9 @@ public class ElementQuery<T extends TestBenchElement> {
      * @param text
      *          the text to compare with the label
      * @param comparison
-     *          the comparison to use when comparing the text with the label
+     *          the comparison to use when comparing element's label
+     *          against the supplied text
+     *          (i.e., {@code comparison.test(elementLabel, text)}
      * @return this element query instance for chaining
      *
      * @see #withLabel(String)
@@ -490,9 +512,7 @@ public class ElementQuery<T extends TestBenchElement> {
     public ElementQuery<T> withLabel(String text, BiPredicate<String, String> comparison) {
         Objects.requireNonNull(comparison, "comparison must not be null");
         return withCondition(element -> (element instanceof HasLabel hasLabel) &&
-                Optional.ofNullable(hasLabel.getLabel())
-                        .filter(label -> comparison.test(label, text))
-                        .isPresent());
+                comparison.test(hasLabel.getLabel(), text));
     }
 
     /**
@@ -547,7 +567,9 @@ public class ElementQuery<T extends TestBenchElement> {
      * @param text
      *          the text to compare with the placeholder
      * @param comparison
-     *          the comparison to use when comparing the text with the placeholder
+     *          the comparison to use when comparing the placeholder
+     *          against the supplied text
+     *          (i.e., {@code comparison.test(elementPlaceholder, text)}
      * @return this element query instance for chaining
      *
      * @see #withPlaceholder(String)
@@ -556,9 +578,7 @@ public class ElementQuery<T extends TestBenchElement> {
     public ElementQuery<T> withPlaceholder(String text, BiPredicate<String, String> comparison) {
         Objects.requireNonNull(comparison, "comparison must not be null");
         return withCondition(element -> (element instanceof HasPlaceholder hasPlaceholder) &&
-                Optional.ofNullable(hasPlaceholder.getPlaceholder())
-                        .filter(placeholder -> comparison.test(placeholder, text))
-                        .isPresent());
+                comparison.test(hasPlaceholder.getPlaceholder(), text));
     }
 
     /**
@@ -620,7 +640,9 @@ public class ElementQuery<T extends TestBenchElement> {
      * @param text
      *          the text to compare with the caption
      * @param comparison
-     *          the comparison to use when comparing the text with the caption
+     *          the comparison to use when comparing the caption
+     *          against the supplied text
+     *          (i.e., {@code comparison.test(elementCaption, text)}
      * @return this element query instance for chaining
      *
      * @see #withCaption(String)
@@ -642,7 +664,7 @@ public class ElementQuery<T extends TestBenchElement> {
                 }
             }
             if (element instanceof HasLabelAsText labelAsText) {
-                var label = labelAsText.getText();
+                var label = Objects.requireNonNullElse(labelAsText.getText(), "");
                 if (!label.isEmpty()) {
                     return comparison.test(label, text);
                 }
@@ -705,7 +727,9 @@ public class ElementQuery<T extends TestBenchElement> {
      * @param text
      *          the text to compare with the element's text
      * @param comparison
-     *          the comparison to use when comparing the text with the element's text
+     *          the comparison to use when comparing the element's text
+     *          against the supplied text
+     *          (i.e., {@code comparison.test(elementText, text)}
      * @return this element query instance for chaining
      *
      * @see #withText(String)
@@ -713,9 +737,7 @@ public class ElementQuery<T extends TestBenchElement> {
      */
     public ElementQuery<T> withText(String text, BiPredicate<String, String> comparison) {
         Objects.requireNonNull(comparison, "comparison must not be null");
-        return withCondition(element -> Optional.ofNullable(element.getText())
-                .filter(et -> comparison.test(et, text))
-                .isPresent());
+        return withCondition(element -> comparison.test(Objects.requireNonNullElse(element.getText(), ""), text));
     }
 
     /**

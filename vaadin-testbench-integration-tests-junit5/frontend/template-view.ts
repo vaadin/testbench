@@ -29,9 +29,9 @@ export class TemplateView extends LitElement {
             <label-placeholder placeholder="one"></label-placeholder>
             <label-placeholder label="two" placeholder="one"></label-placeholder>
 
-            <label-placeholder label="Special"></label-placeholder>
-            <label-placeholder label="Ordinary" placeholder="Special"></label-placeholder>
-            <label-placeholder placeholder="Special"></label-placeholder>
+            <label-placeholder label="Special">Something Special</label-placeholder>
+            <label-placeholder label="Ordinary" placeholder="Special">Something Else</label-placeholder>
+            <label-placeholder placeholder="Special">Something Ordinary</label-placeholder>
         `;
     }
 }

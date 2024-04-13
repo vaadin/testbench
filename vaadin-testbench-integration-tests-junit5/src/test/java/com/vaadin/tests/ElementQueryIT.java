@@ -16,7 +16,6 @@ import com.vaadin.tests.elements.LabelPlaceholderElement;
 import com.vaadin.tests.elements.NativeButtonElement;
 import com.vaadin.tests.elements.TemplateViewElement;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
@@ -42,7 +41,7 @@ public class ElementQueryIT extends AbstractBrowserTB9Test {
         TemplateViewElement view = $(TemplateViewElement.class).first();
         TemplateViewElement view2 = view.$(TemplateViewElement.class).onPage()
                 .first();
-        assertEquals(view, view2);
+        Assertions.assertEquals(view, view2);
     }
 
     @BrowserTest
@@ -284,7 +283,7 @@ public class ElementQueryIT extends AbstractBrowserTB9Test {
         openTestURL();
         TemplateViewElement template = $(TemplateViewElement.class).first();
 
-        Assertions.assertEquals(6, template.getPropertyElements("children").size());
+        Assertions.assertEquals(8, template.getPropertyElements("children").size());
     }
 
     @BrowserTest
@@ -308,39 +307,54 @@ public class ElementQueryIT extends AbstractBrowserTB9Test {
     }
 
     @BrowserTest
-    public void labelMatches() {
+    void labelMatches() {
         openTestURL();
         TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
 
         List<LabelPlaceholderElement> labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
                 .withLabel("one")
-                .all();
-        Assertions.assertEquals(2, labelPlaceholderElements.size());
-
-        labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
-                .withLabel("two")
-                .all();
-        Assertions.assertEquals(2, labelPlaceholderElements.size());
-    }
-
-    @BrowserTest
-    public void labelContains() {
-        openTestURL();
-        TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
-
-        List<LabelPlaceholderElement> labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
-                .withLabelContaining("n")
                 .all();
         Assertions.assertEquals(3, labelPlaceholderElements.size());
 
         labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
-                .withLabelContaining("o")
+                .withLabel("two")
                 .all();
-        Assertions.assertEquals(4, labelPlaceholderElements.size());
+        Assertions.assertEquals(2, labelPlaceholderElements.size());
+
+        labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
+                .withLabel("Flow")
+                .all();
+        Assertions.assertEquals(1, labelPlaceholderElements.size());
+
+        labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
+                .withLabel("nonexistent")
+                .all();
+        Assertions.assertEquals(0, labelPlaceholderElements.size());
     }
 
     @BrowserTest
-    public void placeholderMatches() {
+    void labelContains() {
+        openTestURL();
+        TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
+
+        List<LabelPlaceholderElement> labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
+                .withLabelContaining("n")
+                .all();
+        Assertions.assertEquals(4, labelPlaceholderElements.size());
+
+        labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
+                .withLabelContaining("o")
+                .all();
+        Assertions.assertEquals(6, labelPlaceholderElements.size());
+
+        labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
+                .withLabelContaining("nonexistent")
+                .all();
+        Assertions.assertEquals(0, labelPlaceholderElements.size());
+    }
+
+    @BrowserTest
+    void placeholderMatches() {
         openTestURL();
         TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
 
@@ -352,27 +366,42 @@ public class ElementQueryIT extends AbstractBrowserTB9Test {
         labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
                 .withPlaceholder("two")
                 .all();
-        Assertions.assertEquals(2, labelPlaceholderElements.size());
+        Assertions.assertEquals(3, labelPlaceholderElements.size());
+
+        labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
+                .withPlaceholder("flow component")
+                .all();
+        Assertions.assertEquals(1, labelPlaceholderElements.size());
+
+        labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
+                .withPlaceholder("nonexistent")
+                .all();
+        Assertions.assertEquals(0, labelPlaceholderElements.size());
     }
 
     @BrowserTest
-    public void placeholderContains() {
+    void placeholderContains() {
         openTestURL();
         TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
 
         List<LabelPlaceholderElement> labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
                 .withPlaceholderContaining("w")
                 .all();
-        Assertions.assertEquals(2, labelPlaceholderElements.size());
+        Assertions.assertEquals(4, labelPlaceholderElements.size());
 
         labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
                 .withPlaceholderContaining("o")
                 .all();
-        Assertions.assertEquals(4, labelPlaceholderElements.size());
+        Assertions.assertEquals(6, labelPlaceholderElements.size());
+
+        labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
+                .withPlaceholderContaining("nonexistent")
+                .all();
+        Assertions.assertEquals(0, labelPlaceholderElements.size());
     }
 
     @BrowserTest
-    public void labelAndPlaceholderMatches() {
+    void labelAndPlaceholderMatches() {
         openTestURL();
         TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
 
@@ -380,17 +409,23 @@ public class ElementQueryIT extends AbstractBrowserTB9Test {
                 .withLabel("one")
                 .withPlaceholder("two")
                 .all();
-        Assertions.assertEquals(1, labelPlaceholderElements.size());
+        Assertions.assertEquals(2, labelPlaceholderElements.size());
 
         labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
                 .withLabel("two")
                 .withPlaceholder("one")
                 .all();
         Assertions.assertEquals(1, labelPlaceholderElements.size());
+
+        labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
+                .withLabel("one")
+                .withPlaceholder("one")
+                .all();
+        Assertions.assertEquals(0, labelPlaceholderElements.size());
     }
 
     @BrowserTest
-    public void labelAndPlaceholderContains() {
+    void labelAndPlaceholderContains() {
         openTestURL();
         TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
 
@@ -398,24 +433,30 @@ public class ElementQueryIT extends AbstractBrowserTB9Test {
                 .withLabelContaining("n")
                 .withPlaceholderContaining("w")
                 .all();
-        Assertions.assertEquals(1, labelPlaceholderElements.size());
+        Assertions.assertEquals(2, labelPlaceholderElements.size());
 
         labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
                 .withLabelContaining("o")
                 .withPlaceholderContaining("o")
                 .all();
-        Assertions.assertEquals(2, labelPlaceholderElements.size());
+        Assertions.assertEquals(4, labelPlaceholderElements.size());
+
+        labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
+                .withLabelContaining("Flow")
+                .withPlaceholderContaining("two")
+                .all();
+        Assertions.assertEquals(0, labelPlaceholderElements.size());
     }
 
     @BrowserTest
-    public void captionMatches() {
+    void captionMatches() {
         openTestURL();
         TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
 
         List<LabelPlaceholderElement> labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
                 .withCaption("one")
                 .all();
-        Assertions.assertEquals(3, labelPlaceholderElements.size());
+        Assertions.assertEquals(4, labelPlaceholderElements.size());
 
         labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
                 .withCaption("two")
@@ -426,10 +467,15 @@ public class ElementQueryIT extends AbstractBrowserTB9Test {
                 .withCaption("Button with special id")
                 .all();
         Assertions.assertEquals(1, nativeButtonElements.size());
+
+        labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
+                .withCaption("nonexistent")
+                .all();
+        Assertions.assertEquals(0, labelPlaceholderElements.size());
     }
 
     @BrowserTest
-    public void captionContains() {
+    void captionContains() {
         openTestURL();
         TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
 
@@ -442,21 +488,36 @@ public class ElementQueryIT extends AbstractBrowserTB9Test {
                 .withCaptionContaining("Special")
                 .all();
         Assertions.assertEquals(2, nativeButtonElements.size());
+
+        labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
+                .withCaptionContaining("nonexistent")
+                .all();
+        Assertions.assertEquals(0, labelPlaceholderElements.size());
     }
 
     @BrowserTest
-    public void textMatches() {
+    void textMatches() {
         openTestURL();
         TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
+
+        List<LabelPlaceholderElement> labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
+                .withText("")
+                .all();
+        Assertions.assertEquals(9, labelPlaceholderElements.size());
 
         List<NativeButtonElement> nativeButtonElements = view.$(NativeButtonElement.class)
                 .withText("Button with special id")
                 .all();
         Assertions.assertEquals(1, nativeButtonElements.size());
+
+        labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
+                .withText("nonexistent")
+                .all();
+        Assertions.assertEquals(0, labelPlaceholderElements.size());
     }
 
     @BrowserTest
-    public void textContains() {
+    void textContains() {
         openTestURL();
         TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
 
@@ -464,6 +525,11 @@ public class ElementQueryIT extends AbstractBrowserTB9Test {
                 .withTextContaining("Special")
                 .all();
         Assertions.assertEquals(2, nativeButtonElements.size());
+
+        List<LabelPlaceholderElement> labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
+                .withText("nonexistent")
+                .all();
+        Assertions.assertEquals(0, labelPlaceholderElements.size());
     }
 
 }

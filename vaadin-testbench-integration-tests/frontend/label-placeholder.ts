@@ -1,5 +1,5 @@
-import { html, LitElement } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import {html, LitElement} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
 
 @customElement('label-placeholder')
 class LabelPlaceholder extends LitElement {
@@ -14,6 +14,7 @@ class LabelPlaceholder extends LitElement {
             <div>
                 <div id="label">${this.label}</div>
                 <div id="placeholder">${this.placeholder}</div>
+                <slot></slot>
             </div>
         `;
     }

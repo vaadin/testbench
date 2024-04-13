@@ -14,6 +14,7 @@ class LabelPlaceholder extends LitElement {
             <div>
                 <div id="label">${this.label}</div>
                 <div id="placeholder">${this.placeholder}</div>
+                <slot></slot>
             </div>
         `;
     }
