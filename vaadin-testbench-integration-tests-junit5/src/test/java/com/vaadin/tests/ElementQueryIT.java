@@ -469,6 +469,11 @@ public class ElementQueryIT extends AbstractBrowserTB9Test {
         Assertions.assertEquals(1, nativeButtonElements.size());
 
         labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
+                .withCaption("")
+                .all();
+        Assertions.assertEquals(1, labelPlaceholderElements.size());
+
+        labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
                 .withCaption("nonexistent")
                 .all();
         Assertions.assertEquals(0, labelPlaceholderElements.size());
