@@ -327,6 +327,11 @@ public class ElementQueryIT extends AbstractTB6Test {
         assertEquals(1, labelPlaceholderElements.size());
 
         labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
+                .withLabel("")
+                .all();
+        assertEquals(4, labelPlaceholderElements.size());
+
+        labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
                 .withLabel("nonexistent")
                 .all();
         assertEquals(0, labelPlaceholderElements.size());
@@ -372,6 +377,12 @@ public class ElementQueryIT extends AbstractTB6Test {
                 .withPlaceholder("flow component")
                 .all();
         assertEquals(1, labelPlaceholderElements.size());
+
+        labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
+                .withPlaceholder("")
+                .all();
+        assertEquals(4, labelPlaceholderElements.size());
+
 
         labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
                 .withPlaceholder("nonexistent")
@@ -472,6 +483,11 @@ public class ElementQueryIT extends AbstractTB6Test {
                 .withCaption("")
                 .all();
         assertEquals(1, labelPlaceholderElements.size());
+
+        nativeButtonElements = view.$(NativeButtonElement.class)
+                .withCaption("")
+                .all();
+        assertEquals(0, nativeButtonElements.size());
 
         labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
                 .withCaption("nonexistent")
