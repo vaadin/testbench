@@ -654,10 +654,13 @@ public class ElementQuery<T extends TestBenchElement> {
      * @see #withCaption(String)
      * @see #withCaptionContaining(String)
      */
+    @SuppressWarnings("java:S3776")  // cognitive complexity > 15
     public ElementQuery<T> withCaption(String text, BiPredicate<String, String> comparison) {
         Objects.requireNonNull(text, NULL_TEXT_MSG);
         Objects.requireNonNull(comparison, NULL_COMPARISON_MSG);
         return withCondition(element -> {
+            // special case when text is empty,
+            // so if they both exist, both label and placeholder must be empty
             if (text.isEmpty() &&
                     element instanceof HasLabel hasLabel &&
                     element instanceof HasPlaceholder hasPlaceholder) {
@@ -665,18 +668,21 @@ public class ElementQuery<T extends TestBenchElement> {
                 var placeholder = hasPlaceholder.getPlaceholder();
                 return label.isEmpty() && placeholder.isEmpty();
             }
+            // compare with label
             if (element instanceof HasLabel hasLabel) {
                 var label = hasLabel.getLabel();
                 if (!label.isEmpty()) {
                     return comparison.test(label, text);
                 }
             }
+            // compare with placeholder
             if (element instanceof HasPlaceholder hasPlaceholder) {
                 var placeholder = hasPlaceholder.getPlaceholder();
                 if (!placeholder.isEmpty()) {
                     return comparison.test(placeholder, text);
                 }
             }
+            // compare with text
             if (element instanceof HasLabelAsText labelAsText) {
                 var label = Objects.requireNonNullElse(labelAsText.getText(), "");
                 if (!label.isEmpty()) {
