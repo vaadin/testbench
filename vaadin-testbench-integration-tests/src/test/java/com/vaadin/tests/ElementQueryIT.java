@@ -1,5 +1,5 @@
-/**
- * Copyright (C) 2000-2022 Vaadin Ltd
+/*
+ * Copyright (C) 2000-2024 Vaadin Ltd
  *
  * This program is available under Vaadin Commercial License and Service Terms.
  *
@@ -17,6 +17,9 @@ import org.junit.Test;
 
 import java.util.List;
 
+import static com.vaadin.testbench.ElementQuery.AttributeMatch.Operator.BEGINS_WITH;
+import static com.vaadin.testbench.ElementQuery.AttributeMatch.Operator.ENDS_WITH;
+import static com.vaadin.testbench.ElementQuery.AttributeMatch.Operator.NOT_CONTAINS_PREFIX;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -157,14 +160,47 @@ public class ElementQueryIT extends AbstractTB6Test {
     }
 
     @Test
+    public void withAttributeOperator() {
+        openTestURL();
+        TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
+
+        List<NativeButtonElement> nativeButtonElements = view.$(NativeButtonElement.class)
+                .withAttribute("id", "shadow", BEGINS_WITH)
+                .all();
+        assertEquals(2, nativeButtonElements.size());
+
+        nativeButtonElements = view.$(NativeButtonElement.class)
+                .withAttribute("class", "1", ENDS_WITH)
+                .all();
+        assertEquals(2, nativeButtonElements.size());
+
+        nativeButtonElements = view.$(NativeButtonElement.class)
+                .withAttribute("id", "shadow-button", NOT_CONTAINS_PREFIX)
+                .all();
+        assertEquals(8, nativeButtonElements.size());
+    }
+
+    @Test
     public void withAttributeContaining() {
         openTestURL();
         TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
         List<NativeButtonElement> button1s = view.$(NativeButtonElement.class)
-                .withAttributeContaining("class", "button-1").all();
+                .withAttributeContaining("id", "light-button-").all();
+        assertEquals(5, button1s.size());
+        List<NativeButtonElement> allButtons = view.$(NativeButtonElement.class)
+                .withAttributeContaining("class", "button-shadow-").all();
+        assertEquals(3, allButtons.size());
+    }
+
+    @Test
+    public void withAttributeContainingToken() {
+        openTestURL();
+        TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
+        List<NativeButtonElement> button1s = view.$(NativeButtonElement.class)
+                .withAttributeContainingToken("class", "button-1").all();
         assertEquals(1, button1s.size());
         List<NativeButtonElement> allButtons = view.$(NativeButtonElement.class)
-                .withAttributeContaining("class", "button").all();
+                .withAttributeContainingToken("class", "button").all();
         assertEquals(10, allButtons.size());
     }
 
@@ -200,7 +236,17 @@ public class ElementQueryIT extends AbstractTB6Test {
         TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
 
         List<NativeButtonElement> allButtons = view.$(NativeButtonElement.class)
-                .withoutAttributeContaining("class", "button-special-slot").all();
+                .withoutAttributeContaining("class", "button-").all();
+        assertEquals(1, allButtons.size());
+    }
+
+    @Test
+    public void withoutAttributeContainingToken() {
+        openTestURL();
+        TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
+
+        List<NativeButtonElement> allButtons = view.$(NativeButtonElement.class)
+                .withoutAttributeContainingToken("class", "button-special-slot").all();
         assertEquals(9, allButtons.size());
     }
 
