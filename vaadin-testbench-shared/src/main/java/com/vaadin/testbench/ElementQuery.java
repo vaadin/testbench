@@ -625,12 +625,40 @@ public class ElementQuery<T extends TestBenchElement> {
      * Requires the element's caption (i.e., label, placeholder, or text label)
      * to satisfy the given comparison with the supplied text.
      * <p>
-     * If the element has a label, the label value is used.
-     * If the element can have a label, but its value is empty and it has a placeholder,
-     * the placeholder value is used.
-     * If the element supports neither labels nor placeholders
-     * but does support a caption via its text (such as a button),
-     * the text is used.
+     * This is a convenience selector method to select an element
+     * by its label, placeholder, or text label, as supported by the element.
+     * These values are generically considered "captions"
+     * as they are used to identify the element to the user.
+     *<p>
+     * The comparison against the values of the element follows this priority:
+     * <ol>
+     *     <li>
+     *         Label - If the element supports a label and its label is not empty,
+     *         the element's label value is used in the comparison.
+     *         If the comparison with the given text is not satisfied
+     *         by the element's label value,
+     *         the comparison does not fall through
+     *         to compare against the placeholder.
+     *     </li>
+     *     <li>
+     *         Placeholder - Even if an element supports a label,
+     *         its label value may be empty. In that situation,
+     *         the element may be using a placeholder in lieu of a label.
+     *         So in that situation, the comparison falls through
+     *         to compare against the placeholder
+     *         if the element supports a placeholder and its placeholder is not empty,
+     *         the element's placeholder value is used in the comparison.
+     *     </li>
+     *     <li>
+     *         Text - If the element supports neither labels nor placeholders
+     *         but does support a caption via its text (such as a button does),
+     *         the comparison is made against the element's text.
+     *     </li>
+     * </ol>
+     *
+     * Note that if the given text is empty, then any element supported
+     * label, placeholder, and element text must all be empty.
+     *
      * <p>
      * For matching a caption exactly, see {@link #withCaption(String)},
      * and for matching a caption partially, see {@link #withCaptionContaining(String)}.
