@@ -656,8 +656,9 @@ public class ElementQuery<T extends TestBenchElement> {
      *     </li>
      * </ol>
      *
-     * Note that if the given text is empty, then any element supported
-     * label, placeholder, and element text must all be empty.
+     * Note that if the given text is empty,
+     * then if the element supports both a label and a placeholder,
+     * they must both be empty to be selected.
      *
      * <p>
      * For matching a caption exactly, see {@link #withCaption(String)},
