@@ -8,6 +8,7 @@
  */
 package com.vaadin.testUI;
 
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.html.Div;
@@ -27,7 +28,7 @@ public class TemplateView extends LitTemplate {
             button.getElement().setAttribute("theme", "light-theme");
             button.addClassName("button");
             button.addClassName("button-" + i);
-            getElement().appendChild(new Div(button).getElement());
+            add(new Div(button));
         }
 
         NativeButton slottedButton = new NativeButton(
@@ -37,6 +38,20 @@ public class TemplateView extends LitTemplate {
         slottedButton.getElement().setAttribute("theme", "light-theme");
         slottedButton.addClassName("button");
         slottedButton.addClassName("button-special-slot");
-        getElement().appendChild(slottedButton.getElement());
+        add(slottedButton);
+
+        LabelPlaceholder oneLabelPlaceholder = new LabelPlaceholder();
+        oneLabelPlaceholder.setLabel("one");
+        oneLabelPlaceholder.setPlaceholder("two");
+        add(oneLabelPlaceholder);
+
+        LabelPlaceholder flowLabelPlaceholder = new LabelPlaceholder();
+        flowLabelPlaceholder.setLabel("Flow");
+        flowLabelPlaceholder.setPlaceholder("flow component");
+        add(flowLabelPlaceholder);
+    }
+
+    private void add(Component component) {
+        getElement().appendChild(component.getElement());
     }
 }

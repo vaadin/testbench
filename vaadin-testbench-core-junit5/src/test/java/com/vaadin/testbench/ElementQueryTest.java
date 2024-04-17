@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2000-2022 Vaadin Ltd
+ * Copyright (C) 2000-2024 Vaadin Ltd
  *
  * This program is available under Vaadin Commercial License and Service Terms.
  *
@@ -24,11 +24,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 class ElementQueryTest {
     private static final String DOCUMENT_QUERY_FRAGMENT = "document.querySelectorAll(arguments[1]+arguments[2])";
@@ -38,18 +40,12 @@ class ElementQueryTest {
 
     private TestBenchDriverProxy mockDriver;
     private TestBenchElement exampleElement;
+    private ExampleElement mockElement;
 
     @Element(ExampleElement.TAG)
-    public static class ExampleElement extends TestBenchElement {
+    public static class ExampleElement extends TestBenchElement
+            implements HasLabel, HasPlaceholder {
         public static final String TAG = "example-element";
-    }
-
-    @Element("other-element")
-    public static class OtherElement extends TestBenchElement {
-    }
-
-    @Element("third-element")
-    public static class ThirdElement extends TestBenchElement {
     }
 
     public abstract static class WebDriverWithJS
@@ -63,6 +59,12 @@ class ElementQueryTest {
         exampleElement = TestBenchElement.wrapElement(
                 Mockito.mock(WebElement.class),
                 mockDriver.getCommandExecutor());
+
+        mockElement = Mockito.mock(ExampleElement.class);
+        Mockito.when(mockElement.getTagName()).thenReturn(ExampleElement.TAG);
+        Mockito.when(mockElement.getLabel()).thenReturn("Example element label");
+        Mockito.when(mockElement.getPlaceholder()).thenReturn("Example element placeholder");
+        Mockito.when(mockElement.getText()).thenReturn("Example element text");
     }
 
     public static class TestElementQuery<T extends TestBenchElement>
@@ -71,10 +73,12 @@ class ElementQueryTest {
         private Object lastContext;
         private String lastTagName;
         private Object lastAttributePairs;
+        private final List<Predicate<T>> lastConditions;
         private boolean executed;
 
         public TestElementQuery(Class<T> elementClass) {
             super(elementClass);
+            lastConditions = new ArrayList<>();
         }
 
         @Override
@@ -95,7 +99,13 @@ class ElementQueryTest {
             lastContext = context;
             lastTagName = tagName;
             lastAttributePairs = attributePairs;
-            return new ArrayList<>();
+            return List.of();
+        }
+
+        @Override
+        public ElementQuery<T> withCondition(Predicate<T> condition) {
+            lastConditions.add(condition);
+            return super.withCondition(condition);
         }
     }
 
@@ -126,67 +136,108 @@ class ElementQueryTest {
      * @param unexpectedlyFoundMessage
      *          a message to display if a matching element is unexpectedly found
      *          - pass {@code null} if elements are expected
+     * @param expectedPredicate
+     *          a predicate that should evaluate to the same result as the query's conditions
      */
     private void findIn(String queryFragment,
                         TestElementQuery<ExampleElement> query,
                         Function<TestElementQuery<ExampleElement>, ?> action,
                         String expectedAttributePairs, String expectedResultQuerySuffix,
                         TestBenchElement expectedLastContext,
-                        String unexpectedlyFoundMessage) {
+                        String unexpectedlyFoundMessage,
+                        Predicate<ExampleElement> expectedPredicate) {
         try {
+            // apply query selectors
             action.apply(query);
-            if (unexpectedlyFoundMessage != null) {
-                fail(unexpectedlyFoundMessage);
-            }
+
+            // fail test if an exception was expected
+            assertNull(unexpectedlyFoundMessage, unexpectedlyFoundMessage);
         } catch (NoSuchElementException ignored) {
         }
+
+        // ensure query script contains expected fragment
         assertTrue(query.lastScript.contains(queryFragment),
-                "last query script should contain " +
-                        (ELEMENT_QUERY_FRAGMENT.equals(queryFragment) ? "ELEMENT_QUERY_FRAGMENT" : "DOCUMENT_QUERY_FRAGMENT"));
+                "query script should contain " +
+                        (ELEMENT_QUERY_FRAGMENT.equals(queryFragment)
+                                ? "ELEMENT_QUERY_FRAGMENT"
+                                : "DOCUMENT_QUERY_FRAGMENT"));
+
+        // ensure query script has correct indexing suffix
         assertTrue(
                 query.lastScript.endsWith(expectedResultQuerySuffix),
-                "last query script should end with \"" + expectedResultQuerySuffix + "\"");
+                "query script should end with \"" + expectedResultQuerySuffix + "\"");
+
+        // ensure the attribute pairs of the query match
         assertEquals(expectedAttributePairs, query.lastAttributePairs);
+
+        // ensure the tag name of the query is correct
         assertEquals(ExampleElement.TAG, query.lastTagName);
+
+        // ensure the context of the query is correct
         assertSame(expectedLastContext, query.lastContext);
+
+        if (expectedPredicate != null) {
+            // ensure query has conditions
+            assertNotEquals(0, query.lastConditions.size());
+
+            // ensure the query conditions evaluate to the same result as the expected predicate
+            assertEquals(expectedPredicate.test(mockElement),
+                    query.lastConditions.stream().allMatch(condition -> condition.test(mockElement)));
+        }
     }
 
     private void findInElement(TestElementQuery<ExampleElement> query,
                                Function<TestElementQuery<ExampleElement>, ?> action,
                                String expectedAttributePairs, String expectedResultQuerySuffix,
-                               String unexpectedlyFoundMessage) {
-        findIn(ELEMENT_QUERY_FRAGMENT, query, action, expectedAttributePairs, expectedResultQuerySuffix, exampleElement, unexpectedlyFoundMessage);
+                               String unexpectedlyFoundMessage,
+                               Predicate<ExampleElement> expectedPredicate) {
+        findIn(ELEMENT_QUERY_FRAGMENT, query, action, expectedAttributePairs, expectedResultQuerySuffix, exampleElement,
+                unexpectedlyFoundMessage, expectedPredicate);
     }
 
     private void findSingleInElement(Function<TestElementQuery<ExampleElement>, ?> action,
                                      String expectedAttributePairs, String unexpectedlyFoundMessage) {
         findInElement(createExampleElementQuery(), action,
-                expectedAttributePairs, SINGLE_RESULT_QUERY_SUFFIX, unexpectedlyFoundMessage);
+                expectedAttributePairs, SINGLE_RESULT_QUERY_SUFFIX, unexpectedlyFoundMessage, null);
     }
 
     private void findFirstInElement(Function<TestElementQuery<ExampleElement>, ?> action,
                                     String expectedAttributePairs, String unexpectedlyFoundMessage) {
         findInElement(createExampleElementQuery(), action,
-                expectedAttributePairs, FIRST_RESULT_QUERY_SUFFIX, unexpectedlyFoundMessage);
+                expectedAttributePairs, FIRST_RESULT_QUERY_SUFFIX, unexpectedlyFoundMessage, null);
+    }
+
+    private void findFirstConditionInElement(Function<TestElementQuery<ExampleElement>, ?> action,
+                                             Predicate<ExampleElement> expectedPredicate) {
+        findInElement(createExampleElementQuery(), action,
+                "", FIRST_RESULT_QUERY_SUFFIX, null, expectedPredicate);
     }
 
     private void findInDocument(TestElementQuery<ExampleElement> query,
                                 Function<TestElementQuery<ExampleElement>, ?> action,
                                 String expectedAttributePairs, String expectedResultQuerySuffix,
-                                String unexpectedlyFoundMessage) {
-        findIn(DOCUMENT_QUERY_FRAGMENT, query, action, expectedAttributePairs, expectedResultQuerySuffix, null, unexpectedlyFoundMessage);
+                                String unexpectedlyFoundMessage,
+                                Predicate<ExampleElement> expectedPredicate) {
+        findIn(DOCUMENT_QUERY_FRAGMENT, query, action, expectedAttributePairs, expectedResultQuerySuffix, null,
+                unexpectedlyFoundMessage, expectedPredicate);
     }
 
     private void findSingleInDocument(Function<TestElementQuery<ExampleElement>, ?> action,
                                       String expectedAttributePairs, String unexpectedlyFoundMessage) {
         findInDocument(createExampleDocumentQuery(), action,
-                expectedAttributePairs, SINGLE_RESULT_QUERY_SUFFIX, unexpectedlyFoundMessage);
+                expectedAttributePairs, SINGLE_RESULT_QUERY_SUFFIX, unexpectedlyFoundMessage, null);
     }
 
     private void findFirstInDocument(Function<TestElementQuery<ExampleElement>, ?> action,
                                      String expectedAttributePairs, String unexpectedlyFoundMessage) {
         findInDocument(createExampleDocumentQuery(), action,
-                expectedAttributePairs, FIRST_RESULT_QUERY_SUFFIX, unexpectedlyFoundMessage);
+                expectedAttributePairs, FIRST_RESULT_QUERY_SUFFIX, unexpectedlyFoundMessage, null);
+    }
+
+    private void findFirstConditionInDocument(Function<TestElementQuery<ExampleElement>, ?> action,
+                                              Predicate<ExampleElement> expectedPredicate) {
+        findInDocument(createExampleDocumentQuery(), action,
+                "", FIRST_RESULT_QUERY_SUFFIX, null, expectedPredicate);
     }
 
     @Test
@@ -507,7 +558,8 @@ class ElementQueryTest {
                         .id("theid"),
                 "[id='theid']",
                 SINGLE_RESULT_QUERY_SUFFIX,
-                "Search should fail as no element with the id exists in element on page");
+                "Search should fail as no element with the id exists in element on page",
+                null);
     }
 
     @Test
@@ -517,6 +569,166 @@ class ElementQueryTest {
                         .id("theid"),
                 "[id='theid']",
                 "Search should fail as no element with the id exists in document on page");
+    }
+
+    @Test
+    void findInElement_byCondition() {
+        findFirstConditionInDocument(query -> query
+                        .withCondition(element -> element.getTagName().equals(ExampleElement.TAG))
+                        .first(),
+                element -> element.getTagName().equals(ExampleElement.TAG));
+    }
+
+    @Test
+    void findInDocument_byCondition() {
+        findFirstConditionInElement(query -> query
+                        .withCondition(element -> element.getTagName().equals(ExampleElement.TAG))
+                        .first(),
+                element -> element.getTagName().equals(ExampleElement.TAG));
+    }
+
+    @Test
+    void findInElement_byPropertyValue() {
+        findFirstConditionInElement(query -> query
+                        .withPropertyValue(ExampleElement::getTagName, ExampleElement.TAG)
+                        .first(),
+                element -> element.getTagName().equals(ExampleElement.TAG));
+    }
+
+    @Test
+    void findInDocument_byPropertyValue() {
+        findFirstConditionInDocument(query -> query
+                        .withPropertyValue(ExampleElement::getTagName, ExampleElement.TAG)
+                        .first(),
+                element -> element.getTagName().equals(ExampleElement.TAG));
+    }
+
+    @Test
+    void findInElement_byLabel() {
+        findFirstConditionInElement(query -> query
+                        .withLabel("Example element label")
+                        .first(),
+                element -> element.getLabel().equals("Example element label"));
+    }
+
+    @Test
+    void findInDocument_byLabel() {
+        findFirstConditionInDocument(query -> query
+                        .withLabel("Example element label")
+                        .first(),
+                element -> element.getLabel().equals("Example element label"));
+    }
+
+    @Test
+    void findInElement_byContainsLabel() {
+        findFirstConditionInElement(query -> query
+                        .withLabelContaining("element")
+                        .first(),
+                element -> element.getLabel().contains("element"));
+    }
+
+    @Test
+    void findInDocument_byContainsLabel() {
+        findFirstConditionInDocument(query -> query
+                        .withLabelContaining("element")
+                        .first(),
+                element -> element.getLabel().contains("element"));
+    }
+
+    @Test
+    void findInElement_byPlaceholder() {
+        findFirstConditionInElement(query -> query
+                        .withPlaceholder("Example element placeholder")
+                        .first(),
+                element -> element.getPlaceholder().equals("Example element placeholder"));
+    }
+
+    @Test
+    void findInDocument_byPlaceholder() {
+        findFirstConditionInDocument(query -> query
+                        .withPlaceholder("Example element placeholder")
+                        .first(),
+                element -> element.getPlaceholder().equals("Example element placeholder"));
+    }
+
+    @Test
+    void findInElement_byContainsPlaceholder() {
+        findFirstConditionInElement(query -> query
+                        .withPlaceholderContaining("element")
+                        .first(),
+                element -> element.getPlaceholder().contains("element"));
+    }
+
+    @Test
+    void findInDocument_byContainsPlaceholder() {
+        findFirstConditionInDocument(query -> query
+                        .withPlaceholderContaining("element")
+                        .first(),
+                element -> element.getPlaceholder().contains("element"));
+    }
+
+    @Test
+    void findInElement_byCaption() {
+        findFirstConditionInElement(query -> query
+                        .withCaption("Example element caption")
+                        .first(),
+                element -> element.getLabel().equals("Example element caption"));
+    }
+
+    @Test
+    void findInDocument_byCaption() {
+        findFirstConditionInDocument(query -> query
+                        .withCaption("Example element caption")
+                        .first(),
+                element -> element.getLabel().equals("Example element caption"));
+    }
+
+    @Test
+    void findInElement_byContainsCaption() {
+        findFirstConditionInElement(query -> query
+                        .withCaptionContaining("element")
+                        .first(),
+                element -> element.getLabel().contains("element"));
+    }
+
+    @Test
+    void findInDocument_byContainsCaption() {
+        findFirstConditionInDocument(query -> query
+                        .withCaptionContaining("element")
+                        .first(),
+                element -> element.getLabel().contains("element"));
+    }
+
+    @Test
+    void findInElement_byText() {
+        findFirstConditionInElement(query -> query
+                        .withText("Example element text")
+                        .first(),
+                element -> element.getText().equals("Example element text"));
+    }
+
+    @Test
+    void findInDocument_byText() {
+        findFirstConditionInDocument(query -> query
+                        .withText("Example element text")
+                        .first(),
+                element -> element.getText().equals("Example element text"));
+    }
+
+    @Test
+    void findInElement_byContainsText() {
+        findFirstConditionInElement(query -> query
+                        .withTextContaining("element")
+                        .first(),
+                element -> element.getText().contains("element"));
+    }
+
+    @Test
+    void findInDocument_byContainsText() {
+        findFirstConditionInDocument(query -> query
+                        .withTextContaining("element")
+                        .first(),
+                element -> element.getText().contains("element"));
     }
 
     @Attribute(name = "id", value = Attribute.SIMPLE_CLASS_NAME)
@@ -538,7 +750,6 @@ class ElementQueryTest {
     @Attribute(name = "id", value = "overruled")
     public static class MyExtendedAndOverriddenFancyViewElement
             extends MyFancyViewElement {
-
     }
 
     @Test
