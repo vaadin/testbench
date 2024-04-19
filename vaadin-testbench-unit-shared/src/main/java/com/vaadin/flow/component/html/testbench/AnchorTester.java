@@ -21,6 +21,7 @@ import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.flow.server.AbstractStreamResource;
 import com.vaadin.flow.server.StreamResource;
+import com.vaadin.flow.server.StreamResourceRegistry;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.testbench.unit.Tests;
 
@@ -86,9 +87,9 @@ public class AnchorTester extends HtmlContainerTester<Anchor> {
     public void download(OutputStream outputStream) {
         ensureComponentIsUsable();
 
-        var anchor = getComponent();
-        var session = VaadinSession.getCurrent();
-        var registry = session.getResourceRegistry();
+        Anchor anchor = getComponent();
+        VaadinSession session = VaadinSession.getCurrent();
+        StreamResourceRegistry registry = session.getResourceRegistry();
 
         Optional<AbstractStreamResource> maybeResource = Optional.empty();
         try {
