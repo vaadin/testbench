@@ -27,14 +27,14 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.vaadin.testbench.ElementQuery.AttributeMatch.Operator.CONTAINS;
-import static com.vaadin.testbench.ElementQuery.AttributeMatch.Operator.CONTAINS_TOKEN;
-import static com.vaadin.testbench.ElementQuery.AttributeMatch.Operator.EXISTS;
-import static com.vaadin.testbench.ElementQuery.AttributeMatch.Operator.MATCHES_EXACTLY;
-import static com.vaadin.testbench.ElementQuery.AttributeMatch.Operator.NOT_CONTAINS;
-import static com.vaadin.testbench.ElementQuery.AttributeMatch.Operator.NOT_CONTAINS_TOKEN;
-import static com.vaadin.testbench.ElementQuery.AttributeMatch.Operator.NOT_EXISTS;
-import static com.vaadin.testbench.ElementQuery.AttributeMatch.Operator.NOT_MATCHES_EXACTLY;
+import static com.vaadin.testbench.ElementQuery.AttributeMatch.Comparison.CONTAINS;
+import static com.vaadin.testbench.ElementQuery.AttributeMatch.Comparison.CONTAINS_WORD;
+import static com.vaadin.testbench.ElementQuery.AttributeMatch.Comparison.EXISTS;
+import static com.vaadin.testbench.ElementQuery.AttributeMatch.Comparison.MATCHES_EXACTLY;
+import static com.vaadin.testbench.ElementQuery.AttributeMatch.Comparison.NOT_CONTAINS;
+import static com.vaadin.testbench.ElementQuery.AttributeMatch.Comparison.NOT_CONTAINS_WORD;
+import static com.vaadin.testbench.ElementQuery.AttributeMatch.Comparison.NOT_EXISTS;
+import static com.vaadin.testbench.ElementQuery.AttributeMatch.Comparison.NOT_MATCHES_EXACTLY;
 
 /**
  * Query class used for finding a given element inside a given search context.
@@ -56,9 +56,16 @@ public class ElementQuery<T extends TestBenchElement> {
 
     private static final int DEFAULT_WAIT_TIME_OUT_IN_SECONDS = 10;
 
+    /**
+     * Class for holding name, comparison, and value for matching attributes.
+     */
     public static class AttributeMatch {
 
-        public enum Operator {
+        /**
+         * Attribute matching comparisons.
+         * This is a combination of a CSS selection operator and a negation flag.
+         */
+        public enum Comparison {
             /**
              * Attribute exists (with or without a value).
              */
@@ -72,10 +79,10 @@ public class ElementQuery<T extends TestBenchElement> {
              */
             CONTAINS("*="),
             /**
-             * Attribute value contains a space-separated token
+             * Attribute value contains a space-separated word
              * that matches the given value.
              */
-            CONTAINS_TOKEN("~="),
+            CONTAINS_WORD("~="),
             /**
              * Attribute value begins with a space/hyphen-separated prefix
              * that matches the given value.
@@ -94,93 +101,132 @@ public class ElementQuery<T extends TestBenchElement> {
             /**
              * Attribute does not exist (with or without a value).
              */
-            NOT_EXISTS(EXISTS.op, true),
+            NOT_EXISTS(EXISTS.operator, true),
             /**
              * Attribute value and given value do not match exactly.
              */
-            NOT_MATCHES_EXACTLY(MATCHES_EXACTLY.op, true),
+            NOT_MATCHES_EXACTLY(MATCHES_EXACTLY.operator, true),
             /**
              * Attribute value does not contain the given value.
              */
-            NOT_CONTAINS(CONTAINS.op, true),
+            NOT_CONTAINS(CONTAINS.operator, true),
             /**
-             * Attribute value must not contain a space-separated token
+             * Attribute value must not contain a space-separated word
              * that is prefixed with the given value.
-             * @see #CONTAINS_TOKEN
+             * @see #CONTAINS_WORD
              */
-            NOT_CONTAINS_TOKEN(CONTAINS_TOKEN.op, true),
+            NOT_CONTAINS_WORD(CONTAINS_WORD.operator, true),
             /**
              * Attribute value does not begin with a space/hyphen-separated prefix
              * that matches the given value.
              */
-            NOT_CONTAINS_PREFIX(CONTAINS_PREFIX.op, true),
+            NOT_CONTAINS_PREFIX(CONTAINS_PREFIX.operator, true),
             /**
              * Attribute value does not begin with the given value.
              */
-            NOT_BEGINS_WITH(BEGINS_WITH.op, true),
+            NOT_BEGINS_WITH(BEGINS_WITH.operator, true),
             /**
              * Attribute value does not end with the given value.
              */
-            NOT_ENDS_WITH(ENDS_WITH.op, true);
+            NOT_ENDS_WITH(ENDS_WITH.operator, true);
 
-            private final String op;
-            private final boolean neg;
+            private final String operator;
+            private final boolean negated;
 
-            Operator(String op, boolean neg) {
-                this.op = op;
-                this.neg = neg;
+            Comparison(String operator, boolean negated) {
+                this.operator = operator;
+                this.negated = negated;
             }
 
-            Operator(String op) {
-                this(op, false);
+            Comparison(String operator) {
+                this(operator, false);
             }
 
-            public String getOp() {
-                return op;
+            /**
+             * Return the CSS selector operator for this comparison
+             *
+             * @return CSS selector operator
+             */
+            public String getOperator() {
+                return operator;
             }
 
-            public boolean isNeg() {
-                return neg;
+            /**
+             * Return the if the operator is to be negated.
+             *
+             * @return true if this comparison's operator is to be negated, false otherwise
+             */
+            public boolean isNegated() {
+                return negated;
+            }
+
+            /**
+             * Builds the correct CSS matching expression
+             * for the given attribute name and value
+             * for this comparison.
+             *
+             * @param name the name of the attribute
+             * @param value the value to match against the named attribute
+             * @return the CSS matching expression
+             */
+            public String expressionFor(String name, String value) {
+                var expression = name;
+
+                if (value != null) {
+                    expression += getOperator() + "'" + escapeAttributeValue(value) + "'";
+                }
+
+                expression = "[" + expression + "]";
+
+                if (isNegated()) {
+                    expression = ":not(" + expression + ")";
+                }
+
+                return expression;
+            }
+
+            private static String escapeAttributeValue(String value) {
+                return value.replace("'", "\\'");
             }
         }
 
         private final String name;
-        private final Operator operator;
+        private final Comparison comparison;
         private final String value;
 
         /**
          * Instantiates an attribute matching expression
-         * having the supplied attribute name, comparison operator, and
+         * having the supplied attribute name, comparison, and
          * value to compare with the attribute's value.
          *
          * @param name the name of the attribute
-         * @param operator the comparison operator to use in the comparison
+         * @param comparison the comparison to use for matching
          * @param value the value to compare with the attribute's value
          */
-        public AttributeMatch(String name, Operator operator, String value) {
+        public AttributeMatch(String name, Comparison comparison, String value) {
             this.name = name;
-            this.operator = operator;
+            this.comparison = comparison;
             this.value = value;
         }
 
         /**
          * Instantiates an attribute matching expression
-         * having the supplied attribute name, comparison operator, and
+         * having the supplied attribute name, comparison, and
          * value to compare with the attribute's value.
          *
          * @param name the name of the attribute
-         * @param operator the comparison operator to use in the comparison
+         * @param operator the operator to use for matching
          * @param value the value to compare with the attribute's value
          *
-         * @deprecated use {@link #AttributeMatch(String, Operator, String)}
+         * @deprecated use {@link #AttributeMatch(String, Comparison, String)}
          */
-        @Deprecated(since = "9.3")
+        @Deprecated(forRemoval = true, since = "9.3")
         public AttributeMatch(String name, String operator, String value) {
             this(name,
-                    Arrays.stream(Operator.values())
-                            .filter(op -> op.getOp().equals(operator))
+                    Arrays.stream(Comparison.values())
+                            .filter(comp -> comp.getOperator().equals(operator))
                             .findFirst()
-                            .orElse(EXISTS),
+                            .orElseThrow(),
                     value);
         }
 
@@ -212,23 +258,7 @@ public class ElementQuery<T extends TestBenchElement> {
         }
 
         public String getExpression() {
-            String expression = name;
-
-            if (value != null) {
-                expression += operator.getOp() + "'" + escapeAttributeValue(value) + "'";
-            }
-
-            expression = "[" + expression + "]";
-
-            if (operator.isNeg()) {
-                expression = ":not(" + expression + ")";
-            }
-
-            return expression;
-        }
-
-        private static String escapeAttributeValue(String value) {
-            return value.replace("'", "\\'");
+            return comparison.expressionFor(name, value);
         }
 
         @Override
@@ -301,8 +331,8 @@ public class ElementQuery<T extends TestBenchElement> {
      * <p>
      * For matching a substring of the attribute value, see
      * {@link #withAttributeContaining(String, String)}.
-     * For matching a token within the attribute, see
-     * {@link #withAttributeContainingToken(String, String)}.
+     * For matching a word within the attribute, see
+     * {@link #withAttributeContainingWord(String, String)}.
      *
      * @param name
      *            the attribute name
@@ -312,7 +342,7 @@ public class ElementQuery<T extends TestBenchElement> {
      *
      * @see #withAttribute(String, String)
      * @see #withAttributeContaining(String, String)
-     * @see #withAttributeContainingToken(String, String)
+     * @see #withAttributeContainingWord(String, String)
      *
      * @deprecated use {@link #withAttribute(String, String)}
      */
@@ -322,9 +352,9 @@ public class ElementQuery<T extends TestBenchElement> {
     }
 
     /**
-     * Selects on elements with the given attribute containing the given token.
+     * Selects on elements with the given attribute containing the given word.
      * <p>
-     * Compares with space separated tokens so that e.g.
+     * Compares with space separated words so that e.g.
      * <code>attributeContains("class", "myclass");</code> matches
      * <code>class='someclass myclass'</code>.
      * <p>
@@ -335,19 +365,19 @@ public class ElementQuery<T extends TestBenchElement> {
      *
      * @param name
      *            the attribute name
-     * @param token
-     *            the token to look for
+     * @param word
+     *            the word to look for
      * @return this element query instance for chaining
      *
      * @see #withAttribute(String, String)
      * @see #withAttributeContaining(String, String)
-     * @see #withAttributeContainingToken(String, String)
+     * @see #withAttributeContainingWord(String, String)
      *
-     * @deprecated use {@link #withAttributeContainingToken(String, String)}
+     * @deprecated use {@link #withAttributeContainingWord(String, String)}
      */
     @Deprecated(since = "9.3")
-    public ElementQuery<T> attributeContains(String name, String token) {
-        return withAttributeContainingToken(name, token);
+    public ElementQuery<T> attributeContains(String name, String word) {
+        return withAttributeContainingWord(name, word);
     }
 
     /**
@@ -365,21 +395,21 @@ public class ElementQuery<T extends TestBenchElement> {
     }
 
     /**
-     * Selects on elements with the given attribute using the given operator and value.
+     * Selects on elements with the given attribute using the given comparison and value.
      * <p>
-     * The given value must match the attribute value according to the operator.
+     * The given value must match the attribute value according to the comparison.
      *
      * @param attribute
      *            the attribute name
      * @param value
      *            the attribute value
-     * @param operator
-     *            the comparison operator to use
+     * @param comparison
+     *            the comparison to use
      * @return this element query instance for chaining
      */
     public ElementQuery<T> withAttribute(String attribute, String value,
-                                         AttributeMatch.Operator operator) {
-        attributes.add(new AttributeMatch(attribute, operator, value));
+                                         AttributeMatch.Comparison comparison) {
+        attributes.add(new AttributeMatch(attribute, comparison, value));
         return this;
     }
 
@@ -390,8 +420,8 @@ public class ElementQuery<T extends TestBenchElement> {
      * <p>
      * For matching a substring of the attribute, see
      * {@link #withAttributeContaining(String, String)}.
-     * For matching a token within the attribute, see
-     * {@link #withAttributeContainingToken(String, String)}.
+     * For matching a word within the attribute, see
+     * {@link #withAttributeContainingWord(String, String)}.
      *
      * @param attribute
      *            the attribute name
@@ -400,7 +430,7 @@ public class ElementQuery<T extends TestBenchElement> {
      * @return this element query instance for chaining
      *
      * @see #withAttributeContaining(String, String)
-     * @see #withAttributeContainingToken(String, String)
+     * @see #withAttributeContainingWord(String, String)
      */
     public ElementQuery<T> withAttribute(String attribute, String value) {
         return withAttribute(attribute, value, MATCHES_EXACTLY);
@@ -413,8 +443,8 @@ public class ElementQuery<T extends TestBenchElement> {
      * <p>
      * For matching the full attribute value, see
      * {@link #withAttribute(String, String)}.
-     * For matching a token within the attribute, see
-     * {@link #withAttributeContainingToken(String, String)}.
+     * For matching a word within the attribute, see
+     * {@link #withAttributeContainingWord(String, String)}.
      *
      * @param attribute
      *            the attribute name
@@ -423,17 +453,17 @@ public class ElementQuery<T extends TestBenchElement> {
      * @return this element query instance for chaining
      *
      * @see #withAttribute(String, String)
-     * @see #withAttributeContainingToken(String, String)
+     * @see #withAttributeContainingWord(String, String)
      */
     public ElementQuery<T> withAttributeContaining(String attribute, String text) {
         return withAttribute(attribute, text, CONTAINS);
     }
 
     /**
-     * Selects on elements with the given attribute containing the given token.
+     * Selects on elements with the given attribute containing the given word.
      * <p>
-     * Compares with space separated tokens so that e.g.
-     * <code>withAttributeContaining("class", "myclass");</code> matches
+     * Compares with space separated words so that e.g.
+     * <code>withAttributeContainingWord("class", "myclass");</code> matches
      * <code>class='someclass myclass'</code>.
      * <p>
      * For matching the full attribute value, see
@@ -443,15 +473,15 @@ public class ElementQuery<T extends TestBenchElement> {
      *
      * @param attribute
      *            the attribute name
-     * @param token
-     *            the token to look for
+     * @param word
+     *            the word to look for
      * @return this element query instance for chaining
      *
      * @see #withAttribute(String, String)
      * @see #withAttributeContaining(String, String)
      */
-    public ElementQuery<T> withAttributeContainingToken(String attribute, String token) {
-        return withAttribute(attribute, token, CONTAINS_TOKEN);
+    public ElementQuery<T> withAttributeContainingWord(String attribute, String word) {
+        return withAttribute(attribute, word, CONTAINS_WORD);
     }
 
     /**
@@ -474,8 +504,8 @@ public class ElementQuery<T extends TestBenchElement> {
      * <p>
      * For matching the full attribute value, see
      * {@link #withoutAttributeContaining(String, String)}.
-     * For skipping elements having a token within the attribute, see
-     * {@link #withoutAttributeContainingToken(String, String)}.
+     * For skipping elements having a word within the attribute, see
+     * {@link #withoutAttributeContainingWord(String, String)}.
      *
      * @param attribute
      *            the attribute name
@@ -484,22 +514,22 @@ public class ElementQuery<T extends TestBenchElement> {
      * @return this element query instance for chaining
      *
      * @see #withoutAttributeContaining(String, String)
-     * @see #withoutAttributeContainingToken(String, String)
+     * @see #withoutAttributeContainingWord(String, String)
      */
     public ElementQuery<T> withoutAttribute(String attribute, String value) {
         return withAttribute(attribute, value, NOT_MATCHES_EXACTLY);
     }
 
     /**
-     * Selects on elements not having the given attribute containing the given token.
+     * Selects on elements not having the given attribute containing the given text.
      * <p>
      * The given value must match any substring of the attribute value
      * in order to be skipped.
      * <p>
      * For matching the full attribute value, see
      * {@link #withoutAttribute(String, String)}.
-     * For skipping elements having a token within the attribute, see
-     * {@link #withoutAttributeContainingToken(String, String)}.
+     * For skipping elements having a word within the attribute, see
+     * {@link #withoutAttributeContainingWord(String, String)}.
      *
      * @param attribute
      *            the attribute name
@@ -508,17 +538,17 @@ public class ElementQuery<T extends TestBenchElement> {
      * @return this element query instance for chaining
      *
      * @see #withoutAttribute(String, String)
-     * @see #withoutAttributeContainingToken(String, String)
+     * @see #withoutAttributeContainingWord(String, String)
      */
     public ElementQuery<T> withoutAttributeContaining(String attribute, String text) {
         return withAttribute(attribute, text, NOT_CONTAINS);
     }
 
     /**
-     * Selects on elements not having the given attribute containing the given token.
+     * Selects on elements not having the given attribute containing the given word.
      * <p>
-     * Compares with space separated tokens so that e.g.
-     * <code>withoutAttributeContaining("class", "myclass");</code> skips
+     * Compares with space separated words so that e.g.
+     * <code>withoutAttributeContainingWord("class", "myclass");</code> skips
      * <code>class='someclass myclass'</code>.
      * <p>
      * For matching the full attribute value, see
@@ -528,15 +558,15 @@ public class ElementQuery<T extends TestBenchElement> {
      *
      * @param attribute
      *            the attribute name
-     * @param token
-     *            the token to look for
+     * @param word
+     *            the word to look for
      * @return this element query instance for chaining
      *
      * @see #withoutAttribute(String, String)
      * @see #withoutAttributeContaining(String, String)
      */
-    public ElementQuery<T> withoutAttributeContainingToken(String attribute, String token) {
-        return withAttribute(attribute, token, NOT_CONTAINS_TOKEN);
+    public ElementQuery<T> withoutAttributeContainingWord(String attribute, String word) {
+        return withAttribute(attribute, word, NOT_CONTAINS_WORD);
     }
 
     /**
@@ -569,7 +599,7 @@ public class ElementQuery<T extends TestBenchElement> {
      */
     public ElementQuery<T> withClassName(String... classNames) {
         Arrays.stream(classNames)
-                .forEach(className -> withAttributeContainingToken("class", className));
+                .forEach(className -> withAttributeContainingWord("class", className));
         return this;
     }
 
@@ -582,7 +612,7 @@ public class ElementQuery<T extends TestBenchElement> {
      */
     public ElementQuery<T> withoutClassName(String... classNames) {
         Arrays.stream(classNames)
-                .forEach(className -> withoutAttributeContainingToken("class", className));
+                .forEach(className -> withoutAttributeContainingWord("class", className));
         return this;
     }
 
@@ -907,7 +937,7 @@ public class ElementQuery<T extends TestBenchElement> {
                         ? getClassConventionValue(elementClass)
                         : attr.contains();
                 classAttributes
-                        .add(new AttributeMatch(attr.name(), CONTAINS_TOKEN, value));
+                        .add(new AttributeMatch(attr.name(), CONTAINS_WORD, value));
             } else {
                 // [disabled]
                 classAttributes.add(new AttributeMatch(attr.name()));

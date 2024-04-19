@@ -17,9 +17,9 @@ import org.junit.Test;
 
 import java.util.List;
 
-import static com.vaadin.testbench.ElementQuery.AttributeMatch.Operator.BEGINS_WITH;
-import static com.vaadin.testbench.ElementQuery.AttributeMatch.Operator.ENDS_WITH;
-import static com.vaadin.testbench.ElementQuery.AttributeMatch.Operator.NOT_CONTAINS_PREFIX;
+import static com.vaadin.testbench.ElementQuery.AttributeMatch.Comparison.BEGINS_WITH;
+import static com.vaadin.testbench.ElementQuery.AttributeMatch.Comparison.ENDS_WITH;
+import static com.vaadin.testbench.ElementQuery.AttributeMatch.Comparison.NOT_CONTAINS_PREFIX;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -193,14 +193,14 @@ public class ElementQueryIT extends AbstractTB6Test {
     }
 
     @Test
-    public void withAttributeContainingToken() {
+    public void withAttributeContainingWord() {
         openTestURL();
         TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
         List<NativeButtonElement> button1s = view.$(NativeButtonElement.class)
-                .withAttributeContainingToken("class", "button-1").all();
+                .withAttributeContainingWord("class", "button-1").all();
         assertEquals(1, button1s.size());
         List<NativeButtonElement> allButtons = view.$(NativeButtonElement.class)
-                .withAttributeContainingToken("class", "button").all();
+                .withAttributeContainingWord("class", "button").all();
         assertEquals(10, allButtons.size());
     }
 
@@ -241,12 +241,12 @@ public class ElementQueryIT extends AbstractTB6Test {
     }
 
     @Test
-    public void withoutAttributeContainingToken() {
+    public void withoutAttributeContainingWord() {
         openTestURL();
         TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
 
         List<NativeButtonElement> allButtons = view.$(NativeButtonElement.class)
-                .withoutAttributeContainingToken("class", "button-special-slot").all();
+                .withoutAttributeContainingWord("class", "button-special-slot").all();
         assertEquals(9, allButtons.size());
     }
 

@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 
-import static com.vaadin.testbench.ElementQuery.AttributeMatch.Operator.CONTAINS_TOKEN;
+import static com.vaadin.testbench.ElementQuery.AttributeMatch.Comparison.CONTAINS_WORD;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
@@ -279,21 +279,21 @@ public class ElementQueryTest {
     }
 
     @Test
-    public void findInElement_byWithAttributeContainingToken() {
+    public void findInElement_byWithAttributeContainingWord() {
         findFirstInElement(query -> query
-                        .withAttributeContainingToken("foo", "bar")
+                        .withAttributeContainingWord("foo", "bar")
                         .first(),
                 "[foo~='bar']",
-                "Search should fail as no element containing the attribute token exists in element");
+                "Search should fail as no element containing the attribute word exists in element");
     }
 
     @Test
-    public void findInDocument_byWithAttributeContainingToken() {
+    public void findInDocument_byWithAttributeContainingWord() {
         findFirstInDocument(query -> query
-                        .withAttributeContainingToken("foo", "bar")
+                        .withAttributeContainingWord("foo", "bar")
                         .first(),
                 "[foo~='bar']",
-                "Search should fail as no element containing the attribute token exists in document");
+                "Search should fail as no element containing the attribute word exists in document");
     }
 
     @Test
@@ -351,18 +351,18 @@ public class ElementQueryTest {
     }
 
     @Test
-    public void findInElement_byWithoutAttributeContainingToken() {
+    public void findInElement_byWithoutAttributeContainingWord() {
         findFirstInElement(query -> query
-                        .withoutAttributeContainingToken("foo", "bar")
+                        .withoutAttributeContainingWord("foo", "bar")
                         .first(),
                 ":not([foo~='bar'])",
                 null);
     }
 
     @Test
-    public void findInDocument_byWithoutAttributeContainingToken() {
+    public void findInDocument_byWithoutAttributeContainingWord() {
         findFirstInDocument(query -> query
-                        .withoutAttributeContainingToken("foo", "bar")
+                        .withoutAttributeContainingWord("foo", "bar")
                         .first(),
                 ":not([foo~='bar'])",
                 null);
@@ -587,11 +587,11 @@ public class ElementQueryTest {
     }
 
     @Test
-    public void attributesConventionContainsToken() {
+    public void attributesConventionContainsWord() {
         Set<AttributeMatch> attributes = ElementQuery
                 .getAttributes(MyFancyViewContainsElement.class);
         assertEquals(set(
-                        new AttributeMatch("class", CONTAINS_TOKEN, "my-fancy-view-contains")),
+                        new AttributeMatch("class", CONTAINS_WORD, "my-fancy-view-contains")),
                 attributes);
     }
 
@@ -613,11 +613,11 @@ public class ElementQueryTest {
     }
 
     @Test
-    public void multipleAttributeAnnotationTokens() {
+    public void multipleAttributeAnnotationWords() {
         Set<AttributeMatch> attributes = ElementQuery
                 .getAttributes(MultipleAnnotationElement.class);
-        assertEquals(set(new AttributeMatch("class", CONTAINS_TOKEN, "foo"),
-                new AttributeMatch("class", CONTAINS_TOKEN, "bar")), attributes);
+        assertEquals(set(new AttributeMatch("class", CONTAINS_WORD, "foo"),
+                new AttributeMatch("class", CONTAINS_WORD, "bar")), attributes);
     }
 
     @SafeVarargs
