@@ -91,7 +91,8 @@ class AnchorTesterTest extends UIUnitTest {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         test(anchor).download(outputStream);
 
-        Assertions.assertEquals("Hello world", outputStream.toString());
+        Assertions.assertEquals("Hello world",
+                outputStream.toString(StandardCharsets.UTF_8));
     }
 
     @Test
