@@ -8,8 +8,6 @@
  */
 package com.vaadin.testbench.unit;
 
-import java.math.BigDecimal;
-
 import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.accordion.AccordionTester;
 import com.vaadin.flow.component.button.Button;
@@ -124,6 +122,10 @@ import com.vaadin.flow.component.timepicker.TimePicker;
 import com.vaadin.flow.component.timepicker.TimePickerTester;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.UploadTester;
+import com.vaadin.flow.component.virtuallist.VirtualList;
+import com.vaadin.flow.component.virtuallist.VirtualListTester;
+
+import java.math.BigDecimal;
 
 @SuppressWarnings("unchecked")
 public interface TesterWrappers {
@@ -432,5 +434,9 @@ public interface TesterWrappers {
 
     default SideNavTester<SideNav> test(SideNav sideNav) {
         return BaseUIUnitTest.internalWrap(SideNavTester.class, sideNav);
+    }
+
+    default <V> VirtualListTester<VirtualList<V>, V> test(VirtualList<V> virtualList) {
+        return BaseUIUnitTest.internalWrap(VirtualListTester.class, virtualList);
     }
 }
