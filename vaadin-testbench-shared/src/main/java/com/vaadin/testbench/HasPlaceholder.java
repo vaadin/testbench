@@ -8,6 +8,8 @@
  */
 package com.vaadin.testbench;
 
+import java.util.Objects;
+
 /**
  * Implement by elements which support a placeholder, i.e. text shown when the
  * field is empty.
@@ -19,12 +21,7 @@ public interface HasPlaceholder extends HasPropertySettersGetters {
      *
      * @return the placeholder or an empty string if there is no placeholder
      */
-    default public String getPlaceholder() {
-        String ret = getPropertyString("placeholder");
-        if (ret == null) {
-            return "";
-        } else {
-            return ret;
-        }
+    default String getPlaceholder() {
+        return Objects.requireNonNullElse(getPropertyString("placeholder"), "");
     }
 }

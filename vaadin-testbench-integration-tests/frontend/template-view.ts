@@ -18,6 +18,20 @@ export class TemplateView extends LitElement {
                 <button class="button button-shadow-special" id="special-button">Special Button (in Shadow DOM)</button>
             </div>
             <button class="button" id="foo'*+bar'">Button with special id</button>
+
+            <label-placeholder></label-placeholder>
+
+            <label-placeholder label="one"></label-placeholder>
+            <label-placeholder placeholder="two"></label-placeholder>
+            <label-placeholder label="one" placeholder="two"></label-placeholder>
+
+            <label-placeholder label="two"></label-placeholder>
+            <label-placeholder placeholder="one"></label-placeholder>
+            <label-placeholder label="two" placeholder="one"></label-placeholder>
+
+            <label-placeholder label="Special">Something Special</label-placeholder>
+            <label-placeholder label="Ordinary" placeholder="Special">Something Else</label-placeholder>
+            <label-placeholder placeholder="Special">Something Ordinary</label-placeholder>
         `;
     }
 }

@@ -8,6 +8,8 @@
  */
 package com.vaadin.testbench;
 
+import java.util.Objects;
+
 /**
  * Implement by elements which support a label, i.e. text shown typically inside
  * (when field is empty) or above the field (when the field has a value).
@@ -19,12 +21,7 @@ public interface HasLabel extends HasPropertySettersGetters {
      *
      * @return the label or an empty string if there is no label
      */
-    default public String getLabel() {
-        String ret = getPropertyString("label");
-        if (ret == null) {
-            return "";
-        } else {
-            return ret;
-        }
+    default String getLabel() {
+        return Objects.requireNonNullElse(getPropertyString("label"), "");
     }
 }
