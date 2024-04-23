@@ -234,7 +234,9 @@ public class ElementQuery<T extends TestBenchElement> {
                     Arrays.stream(Comparison.values())
                             .filter(comp -> comp.getOperator().equals(operator))
                             .findFirst()
-                            .orElseThrow(),
+                            .orElseThrow(() -> new java.util.NoSuchElementException(
+                                    "Invalid operator \"" + operator + "\" supplied. As this constructor is unsafe and deprecated, please use AttributeMatch(String, Comparison, String) instead."
+                            )),
                     value);
         }
 
@@ -1183,12 +1185,12 @@ public class ElementQuery<T extends TestBenchElement> {
     public T waitForFirst(long timeOutInSeconds) {
         T result = new WebDriverWait(getDriver(),
                 Duration.ofSeconds(timeOutInSeconds)).until(driver -> {
-                    try {
-                        return first();
-                    } catch (NoSuchElementException e) {
-                        return null;
-                    }
-                });
+            try {
+                return first();
+            } catch (NoSuchElementException e) {
+                return null;
+            }
+        });
         if (result == null) {
             throw new NoSuchElementException(getNoSuchElementMessage(null));
         } else {
@@ -1413,7 +1415,7 @@ public class ElementQuery<T extends TestBenchElement> {
      */
     @SuppressWarnings("unchecked")
     List<T> executeSearchScript(String script, Object context, String tagName,
-            String attributePairs, JavascriptExecutor executor) {
+                                String attributePairs, JavascriptExecutor executor) {
         Object result = executor.executeScript(script, context, tagName,
                 attributePairs);
         if (result == null) {
