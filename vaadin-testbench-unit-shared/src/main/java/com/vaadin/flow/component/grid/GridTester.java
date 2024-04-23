@@ -1,5 +1,5 @@
-/**
- * Copyright (C) 2000-2022 Vaadin Ltd
+/*
+ * Copyright (C) 2000-2024 Vaadin Ltd
  *
  * This program is available under Vaadin Commercial License and Service Terms.
  *
@@ -13,6 +13,7 @@ import com.vaadin.flow.component.HasLitRenderer;
 import com.vaadin.flow.data.provider.SortDirection;
 import com.vaadin.flow.data.provider.SortOrder;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
+import com.vaadin.flow.data.renderer.LitRenderer;
 import com.vaadin.flow.function.ValueProvider;
 import com.vaadin.testbench.unit.ComponentTester;
 import com.vaadin.testbench.unit.MetaKeys;
@@ -318,8 +319,13 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T>
                                               String propertyName, Class<V> propertyClass) {
         ensureVisible();
 
-        return getLitRendererPropertyValue(row, propertyName, propertyClass,
-                this::getField, column.getRenderer(), this::getRow, "Grid column");
+        if (column.getRenderer() instanceof LitRenderer<Y> litRenderer) {
+            return getLitRendererPropertyValue(row, propertyName, propertyClass,
+                    this::getField, litRenderer, this::getRow);
+        } else {
+            throw new IllegalArgumentException(
+                    "Target column doesn't have a LitRenderer.");
+        }
     }
 
     /**
@@ -371,8 +377,13 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T>
     private void invokeLitRendererFunction(int row, Grid.Column<Y> column, String functionName, JsonArray jsonArray) {
         ensureVisible();
 
-        invokeLitRendererFunction(row, functionName, jsonArray,
-                this::getField, column.getRenderer(), this::getRow, "Grid column");
+        if (column.getRenderer() instanceof LitRenderer<Y> litRenderer) {
+            invokeLitRendererFunction(row, functionName, jsonArray,
+                    this::getField, litRenderer, this::getRow);
+        } else {
+            throw new IllegalArgumentException(
+                    "Target column doesn't have a LitRenderer.");
+        }
     }
 
     /**

@@ -1,5 +1,5 @@
-/**
- * Copyright (C) 2000-2022 Vaadin Ltd
+/*
+ * Copyright (C) 2000-2024 Vaadin Ltd
  *
  * This program is available under Vaadin Commercial License and Service Terms.
  *
@@ -437,6 +437,10 @@ public interface TesterWrappers {
     }
 
     default <V> VirtualListTester<VirtualList<V>, V> test(VirtualList<V> virtualList) {
+        return BaseUIUnitTest.internalWrap(VirtualListTester.class, virtualList);
+    }
+
+    default <V> VirtualListTester<VirtualList<V>, V> test(VirtualList virtualList, Class<V> itemType) {
         return BaseUIUnitTest.internalWrap(VirtualListTester.class, virtualList);
     }
 }

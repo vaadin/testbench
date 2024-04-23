@@ -1,5 +1,5 @@
-/**
- * Copyright (C) 2000-2022 Vaadin Ltd
+/*
+ * Copyright (C) 2000-2024 Vaadin Ltd
  *
  * This program is available under Vaadin Commercial License and Service Terms.
  *
@@ -12,6 +12,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasLitRenderer;
 import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
+import com.vaadin.flow.data.renderer.LitRenderer;
 import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.testbench.unit.ComponentTester;
 import com.vaadin.testbench.unit.Tests;
@@ -32,8 +33,9 @@ import java.util.Collections;
 public class VirtualListTester<T extends VirtualList<Y>, Y> extends ComponentTester<T>
         implements HasLitRenderer<Y> {
 
-    // don't use a value too large otherwise
-    // Vaadin 19+ will calculate a negative limit and will pass it to SizeVerifier
+    // don't use a value too large
+    // otherwise Vaadin 19+ will calculate a negative limit
+    // and will pass it to SizeVerifier
     private static final int SANE_FETCH_LIMIT = Integer.MAX_VALUE / 1000;
 
     /**
@@ -74,6 +76,7 @@ public class VirtualListTester<T extends VirtualList<Y>, Y> extends ComponentTes
     public String getItemText(int index) {
         ensureVisible();
 
+        // use element text of Component if renderer is ComponentRenderer
         var itemRenderer = getItemRenderer();
         if (itemRenderer instanceof ComponentRenderer) {
             var component = getItemComponent(index);
@@ -83,12 +86,20 @@ public class VirtualListTester<T extends VirtualList<Y>, Y> extends ComponentTes
             return component.getElement().getTextRecursively();
         }
 
-        // else default to the element at index having the text
-        return getComponent().getChildren()
-                .skip(index)
-                .findFirst()
-                .map(thing -> thing.getElement().getTextRecursively())
-                .orElse(null);
+        // use LitRenderer label if renderer is ValueProvider (i.e., has a single property "label")
+        if (itemRenderer instanceof LitRenderer<Y> litRenderer) {
+            if ((getLitRendererProperties(litRenderer, this::getField).stream()
+                    .allMatch(propertyName -> propertyName.equals("label"))) &&
+                    (getLitRendererFunctionNames(litRenderer, this::getField).isEmpty())) {
+                return getLitRendererPropertyValue(index, "label", String.class);
+            } else {
+                throw new UnsupportedOperationException(
+                        "VirtualListTester is unable to get item text when VirtualList uses a LitRenderer.");
+            }
+        }
+
+        throw new UnsupportedOperationException(
+                "VirtualListTester is unable to get item text for this VirtualList's renderer.");
     }
 
     public Component getItemComponent(int index) {
@@ -131,8 +142,13 @@ public class VirtualListTester<T extends VirtualList<Y>, Y> extends ComponentTes
                                              String propertyName, Class<V> propertyClass) {
         ensureVisible();
 
-        return getLitRendererPropertyValue(index, propertyName, propertyClass,
-                this::getField, getItemRenderer(), this::getItem, "VirtualList");
+        if (getItemRenderer() instanceof LitRenderer<Y> litRenderer) {
+            return getLitRendererPropertyValue(index, propertyName, propertyClass,
+                    this::getField, litRenderer, this::getItem);
+        } else {
+            throw new IllegalArgumentException(
+                    "This VirtualList doesn't use a LitRenderer.");
+        }
     }
 
     /**
@@ -150,8 +166,13 @@ public class VirtualListTester<T extends VirtualList<Y>, Y> extends ComponentTes
     public void invokeLitRendererFunction(int index, String functionName, JsonArray jsonArray) {
         ensureVisible();
 
-        invokeLitRendererFunction(index, functionName, jsonArray,
-                this::getField, getItemRenderer(), this::getItem, "VirtualList");
+        if (getItemRenderer() instanceof LitRenderer<Y> litRenderer) {
+            invokeLitRendererFunction(index, functionName, jsonArray,
+                    this::getField, litRenderer, this::getItem);
+        } else {
+            throw new IllegalArgumentException(
+                    "This VirtualList doesn't use a LitRenderer.");
+        }
     }
 
     /**
