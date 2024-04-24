@@ -8,12 +8,21 @@
  */
 package com.vaadin.flow.component.html.testbench;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.lang.reflect.Field;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Optional;
 
 import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.router.RouteConfiguration;
+import com.vaadin.flow.server.AbstractStreamResource;
+import com.vaadin.flow.server.StreamResource;
+import com.vaadin.flow.server.StreamResourceRegistry;
+import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.testbench.unit.Tests;
 
 @Tests(Anchor.class)
@@ -67,4 +76,38 @@ public class AnchorTester extends HtmlContainerTester<Anchor> {
         throw new IllegalStateException("Anchor target seems to be a resource");
     }
 
+    /**
+     * Download the stream resource linked by the anchor.
+     *
+     * @param outputStream
+     *            output stream to write the stream resource to
+     * @throws IllegalStateException
+     *             if the anchor does not link to a stream resource
+     */
+    public void download(OutputStream outputStream) {
+        ensureComponentIsUsable();
+
+        Anchor anchor = getComponent();
+        VaadinSession session = VaadinSession.getCurrent();
+        StreamResourceRegistry registry = session.getResourceRegistry();
+
+        Optional<AbstractStreamResource> maybeResource = Optional.empty();
+        try {
+            maybeResource = registry.getResource(new URI(anchor.getHref()));
+        } catch (URISyntaxException e) {
+            // Ignore, throws below if resource is empty
+        }
+
+        if (maybeResource.isEmpty() || !(maybeResource
+                .get() instanceof StreamResource streamResource)) {
+            throw new IllegalStateException(
+                    "Anchor target does not seem to be a resource");
+        }
+
+        try {
+            streamResource.getWriter().accept(outputStream, session);
+        } catch (IOException e) {
+            throw new RuntimeException("Download failed", e);
+        }
+    }
 }

@@ -1,5 +1,5 @@
-/**
- * Copyright (C) 2000-2022 Vaadin Ltd
+/*
+ * Copyright (C) 2000-2024 Vaadin Ltd
  *
  * This program is available under Vaadin Commercial License and Service Terms.
  *
@@ -11,12 +11,16 @@ package com.vaadin.tests;
 import com.vaadin.flow.component.Component;
 import com.vaadin.testUI.TemplateView;
 import com.vaadin.testbench.TestBenchElement;
+import com.vaadin.tests.elements.LabelPlaceholderElement;
 import com.vaadin.tests.elements.NativeButtonElement;
 import com.vaadin.tests.elements.TemplateViewElement;
 import org.junit.Test;
 
 import java.util.List;
 
+import static com.vaadin.testbench.ElementQuery.AttributeMatch.Comparison.BEGINS_WITH;
+import static com.vaadin.testbench.ElementQuery.AttributeMatch.Comparison.ENDS_WITH;
+import static com.vaadin.testbench.ElementQuery.AttributeMatch.Comparison.NOT_CONTAINS_PREFIX;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -157,14 +161,47 @@ public class ElementQueryIT extends AbstractTB6Test {
     }
 
     @Test
+    public void withAttributeOperator() {
+        openTestURL();
+        TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
+
+        List<NativeButtonElement> nativeButtonElements = view.$(NativeButtonElement.class)
+                .withAttribute("id", "shadow", BEGINS_WITH)
+                .all();
+        assertEquals(2, nativeButtonElements.size());
+
+        nativeButtonElements = view.$(NativeButtonElement.class)
+                .withAttribute("class", "1", ENDS_WITH)
+                .all();
+        assertEquals(2, nativeButtonElements.size());
+
+        nativeButtonElements = view.$(NativeButtonElement.class)
+                .withAttribute("id", "shadow-button", NOT_CONTAINS_PREFIX)
+                .all();
+        assertEquals(8, nativeButtonElements.size());
+    }
+
+    @Test
     public void withAttributeContaining() {
         openTestURL();
         TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
         List<NativeButtonElement> button1s = view.$(NativeButtonElement.class)
-                .withAttributeContaining("class", "button-1").all();
+                .withAttributeContaining("id", "light-button-").all();
+        assertEquals(5, button1s.size());
+        List<NativeButtonElement> allButtons = view.$(NativeButtonElement.class)
+                .withAttributeContaining("class", "button-shadow-").all();
+        assertEquals(3, allButtons.size());
+    }
+
+    @Test
+    public void withAttributeContainingWord() {
+        openTestURL();
+        TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
+        List<NativeButtonElement> button1s = view.$(NativeButtonElement.class)
+                .withAttributeContainingWord("class", "button-1").all();
         assertEquals(1, button1s.size());
         List<NativeButtonElement> allButtons = view.$(NativeButtonElement.class)
-                .withAttributeContaining("class", "button").all();
+                .withAttributeContainingWord("class", "button").all();
         assertEquals(10, allButtons.size());
     }
 
@@ -200,7 +237,17 @@ public class ElementQueryIT extends AbstractTB6Test {
         TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
 
         List<NativeButtonElement> allButtons = view.$(NativeButtonElement.class)
-                .withoutAttributeContaining("class", "button-special-slot").all();
+                .withoutAttributeContaining("class", "button-").all();
+        assertEquals(1, allButtons.size());
+    }
+
+    @Test
+    public void withoutAttributeContainingWord() {
+        openTestURL();
+        TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
+
+        List<NativeButtonElement> allButtons = view.$(NativeButtonElement.class)
+                .withoutAttributeContainingWord("class", "button-special-slot").all();
         assertEquals(9, allButtons.size());
     }
 
@@ -282,7 +329,7 @@ public class ElementQueryIT extends AbstractTB6Test {
         openTestURL();
         TemplateViewElement template = $(TemplateViewElement.class).first();
 
-        assertEquals(6, template.getPropertyElements("children").size());
+        assertEquals(8, template.getPropertyElements("children").size());
     }
 
     @Test
@@ -303,6 +350,286 @@ public class ElementQueryIT extends AbstractTB6Test {
                 .withoutTheme("light-theme")
                 .all();
         assertEquals(4, allButtons.size());
+    }
+
+    @Test
+    public void labelMatches() {
+        openTestURL();
+        TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
+
+        List<LabelPlaceholderElement> labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
+                .withLabel("one")
+                .all();
+        assertEquals(3, labelPlaceholderElements.size());
+
+        labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
+                .withLabel("two")
+                .all();
+        assertEquals(2, labelPlaceholderElements.size());
+
+        labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
+                .withLabel("Flow")
+                .all();
+        assertEquals(1, labelPlaceholderElements.size());
+
+        labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
+                .withLabel("")
+                .all();
+        assertEquals(4, labelPlaceholderElements.size());
+
+        labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
+                .withLabel("nonexistent")
+                .all();
+        assertEquals(0, labelPlaceholderElements.size());
+    }
+
+    @Test
+    public void labelContains() {
+        openTestURL();
+        TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
+
+        List<LabelPlaceholderElement> labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
+                .withLabelContaining("n")
+                .all();
+        assertEquals(4, labelPlaceholderElements.size());
+
+        labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
+                .withLabelContaining("o")
+                .all();
+        assertEquals(6, labelPlaceholderElements.size());
+
+        labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
+                .withLabelContaining("nonexistent")
+                .all();
+        assertEquals(0, labelPlaceholderElements.size());
+    }
+
+    @Test
+    public void placeholderMatches() {
+        openTestURL();
+        TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
+
+        List<LabelPlaceholderElement> labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
+                .withPlaceholder("one")
+                .all();
+        assertEquals(2, labelPlaceholderElements.size());
+
+        labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
+                .withPlaceholder("two")
+                .all();
+        assertEquals(3, labelPlaceholderElements.size());
+
+        labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
+                .withPlaceholder("flow component")
+                .all();
+        assertEquals(1, labelPlaceholderElements.size());
+
+        labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
+                .withPlaceholder("")
+                .all();
+        assertEquals(4, labelPlaceholderElements.size());
+
+
+        labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
+                .withPlaceholder("nonexistent")
+                .all();
+        assertEquals(0, labelPlaceholderElements.size());
+    }
+
+    @Test
+    public void placeholderContains() {
+        openTestURL();
+        TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
+
+        List<LabelPlaceholderElement> labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
+                .withPlaceholderContaining("w")
+                .all();
+        assertEquals(4, labelPlaceholderElements.size());
+
+        labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
+                .withPlaceholderContaining("o")
+                .all();
+        assertEquals(6, labelPlaceholderElements.size());
+
+        labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
+                .withPlaceholderContaining("nonexistent")
+                .all();
+        assertEquals(0, labelPlaceholderElements.size());
+    }
+
+    @Test
+    public void labelAndPlaceholderMatches() {
+        openTestURL();
+        TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
+
+        List<LabelPlaceholderElement> labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
+                .withLabel("one")
+                .withPlaceholder("two")
+                .all();
+        assertEquals(2, labelPlaceholderElements.size());
+
+        labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
+                .withLabel("two")
+                .withPlaceholder("one")
+                .all();
+        assertEquals(1, labelPlaceholderElements.size());
+
+        labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
+                .withLabel("one")
+                .withPlaceholder("one")
+                .all();
+        assertEquals(0, labelPlaceholderElements.size());
+    }
+
+    @Test
+    public void labelAndPlaceholderContains() {
+        openTestURL();
+        TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
+
+        List<LabelPlaceholderElement> labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
+                .withLabelContaining("n")
+                .withPlaceholderContaining("w")
+                .all();
+        assertEquals(2, labelPlaceholderElements.size());
+
+        labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
+                .withLabelContaining("o")
+                .withPlaceholderContaining("o")
+                .all();
+        assertEquals(4, labelPlaceholderElements.size());
+
+        labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
+                .withLabelContaining("Flow")
+                .withPlaceholderContaining("two")
+                .all();
+        assertEquals(0, labelPlaceholderElements.size());
+    }
+
+    @Test
+    public void captionMatches() {
+        openTestURL();
+        TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
+
+        List<LabelPlaceholderElement> labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
+                .withCaption("one")
+                .all();
+        assertEquals(4, labelPlaceholderElements.size());
+
+        labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
+                .withCaption("two")
+                .all();
+        assertEquals(3, labelPlaceholderElements.size());
+
+        List<NativeButtonElement> nativeButtonElements = view.$(NativeButtonElement.class)
+                .withCaption("Button with special id")
+                .all();
+        assertEquals(1, nativeButtonElements.size());
+
+        labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
+                .withCaption("")
+                .all();
+        assertEquals(1, labelPlaceholderElements.size());
+
+        nativeButtonElements = view.$(NativeButtonElement.class)
+                .withCaption("")
+                .all();
+        assertEquals(0, nativeButtonElements.size());
+
+        labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
+                .withCaption("nonexistent")
+                .all();
+        assertEquals(0, labelPlaceholderElements.size());
+    }
+
+    @Test
+    public void captionContains() {
+        openTestURL();
+        TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
+
+        List<LabelPlaceholderElement> labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
+                .withCaptionContaining("Special")
+                .all();
+        assertEquals(2, labelPlaceholderElements.size());
+
+        List<NativeButtonElement> nativeButtonElements = view.$(NativeButtonElement.class)
+                .withCaptionContaining("Special")
+                .all();
+        assertEquals(2, nativeButtonElements.size());
+
+        labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
+                .withCaptionContaining("nonexistent")
+                .all();
+        assertEquals(0, labelPlaceholderElements.size());
+    }
+
+    @Test
+    public void textMatches() {
+        openTestURL();
+        TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
+
+        List<LabelPlaceholderElement> labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
+                .withText("")
+                .all();
+        assertEquals(9, labelPlaceholderElements.size());
+
+        List<NativeButtonElement> nativeButtonElements = view.$(NativeButtonElement.class)
+                .withText("Button with special id")
+                .all();
+        assertEquals(1, nativeButtonElements.size());
+
+        nativeButtonElements = view.$(NativeButtonElement.class)
+                .withText("")
+                .all();
+        assertEquals(0, nativeButtonElements.size());
+
+        labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
+                .withText("nonexistent")
+                .all();
+        assertEquals(0, labelPlaceholderElements.size());
+    }
+
+    @Test
+    public void textContains() {
+        openTestURL();
+        TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
+
+        List<NativeButtonElement> nativeButtonElements = view.$(NativeButtonElement.class)
+                .withTextContaining("Special")
+                .all();
+        assertEquals(2, nativeButtonElements.size());
+
+        List<LabelPlaceholderElement> labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
+                .withText("nonexistent")
+                .all();
+        assertEquals(0, labelPlaceholderElements.size());
+    }
+
+    @Test
+    public void propertyValueMatches() {
+        openTestURL();
+        TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
+
+        List<LabelPlaceholderElement> labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
+                .withPropertyValue(LabelPlaceholderElement::getLabel, "")
+                .all();
+        assertEquals(4, labelPlaceholderElements.size());
+
+        labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
+                .withPropertyValue(LabelPlaceholderElement::getLabel, "one")
+                .all();
+        assertEquals(3, labelPlaceholderElements.size());
+
+        labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
+                .withPropertyValue(LabelPlaceholderElement::getLabel, "one")
+                .withPropertyValue(LabelPlaceholderElement::getPlaceholder, "two")
+                .all();
+        assertEquals(2, labelPlaceholderElements.size());
+
+        labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
+                .withPropertyValue(labelPlaceholderElement ->
+                        labelPlaceholderElement.getSize().getHeight(), 0)
+                .all();
+        assertEquals(0, labelPlaceholderElements.size());
     }
 
 }

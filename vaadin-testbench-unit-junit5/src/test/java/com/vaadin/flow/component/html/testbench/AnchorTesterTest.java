@@ -9,6 +9,7 @@
 package com.vaadin.flow.component.html.testbench;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
 
 import org.junit.jupiter.api.Assertions;
@@ -43,6 +44,15 @@ class AnchorTesterTest extends UIUnitTest {
     }
 
     @Test
+    void anchorClick_disabled_throws() {
+        Anchor anchor = new Anchor("anchor", "Home");
+        anchor.setEnabled(false);
+        UI.getCurrent().add(anchor);
+
+        assertThrows(IllegalStateException.class, () -> test(anchor).click());
+    }
+
+    @Test
     void anchorClick_notARegisteredRoute_throws() {
         Anchor anchor = new Anchor("error", "Home");
         UI.getCurrent().add(anchor);
@@ -69,4 +79,48 @@ class AnchorTesterTest extends UIUnitTest {
                 exception.getMessage());
     }
 
+    @Test
+    void anchorDownload_writesResourceToOutputStream() {
+        StreamResource resource = new StreamResource("filename",
+                () -> new ByteArrayInputStream(
+                        "Hello world".getBytes(StandardCharsets.UTF_8)));
+
+        Anchor anchor = new Anchor(resource, "Download");
+        UI.getCurrent().add(anchor);
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        test(anchor).download(outputStream);
+
+        Assertions.assertEquals("Hello world",
+                outputStream.toString(StandardCharsets.UTF_8));
+    }
+
+    @Test
+    void anchorDownload_disabled_throws() {
+        StreamResource resource = new StreamResource("filename",
+                () -> new ByteArrayInputStream(
+                        "Hello world".getBytes(StandardCharsets.UTF_8)));
+
+        Anchor anchor = new Anchor(resource, "Download");
+        anchor.setEnabled(false);
+        UI.getCurrent().add(anchor);
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        assertThrows(IllegalStateException.class,
+                () -> test(anchor).download(outputStream));
+    }
+
+    @Test
+    void anchorDownload_noStreamRegistration_throws() {
+        Anchor anchor = new Anchor("anchor", "Download");
+        UI.getCurrent().add(anchor);
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        final IllegalStateException exception = assertThrows(
+                IllegalStateException.class,
+                () -> test(anchor).download(outputStream));
+
+        Assertions.assertEquals("Anchor target does not seem to be a resource",
+                exception.getMessage());
+    }
 }

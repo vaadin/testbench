@@ -215,12 +215,15 @@ public class BrowserExtension implements Extension, BeforeEachCallback,
 
         Object testInstance = context.getRequiredTestInstance();
 
+        WebDriver webDriver;
+
         // use WebDriver provided by test instance
         if (testInstance instanceof DriverSupplier supplier) {
-            return supplier.createDriver();
+            webDriver = supplier.createDriver();
+            if (webDriver != null) {
+                return webDriver;
+            }
         }
-
-        WebDriver webDriver;
 
         Class<?> testClass = context.getRequiredTestClass();
         // Always give priority to @RunLocally annotation
