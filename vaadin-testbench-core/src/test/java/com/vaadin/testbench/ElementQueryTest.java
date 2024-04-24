@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2000-2024 Vaadin Ltd
  *
  * This program is available under Vaadin Commercial License and Service Terms.
@@ -26,6 +26,7 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import static com.vaadin.testbench.ElementQuery.AttributeMatch.Comparison.CONTAINS_WORD;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNull;
@@ -315,8 +316,8 @@ public class ElementQueryTest {
         findFirstInElement(query -> query
                         .withAttributeContaining("foo", "bar")
                         .first(),
-                "[foo~='bar']",
-                "Search should fail as no element containing the attribute value exists in element");
+                "[foo*='bar']",
+                "Search should fail as no element containing the attribute substring exists in element");
     }
 
     @Test
@@ -324,8 +325,26 @@ public class ElementQueryTest {
         findFirstInDocument(query -> query
                         .withAttributeContaining("foo", "bar")
                         .first(),
+                "[foo*='bar']",
+                "Search should fail as no element containing the attribute substring exists in document");
+    }
+
+    @Test
+    public void findInElement_byWithAttributeContainingWord() {
+        findFirstInElement(query -> query
+                        .withAttributeContainingWord("foo", "bar")
+                        .first(),
                 "[foo~='bar']",
-                "Search should fail as no element containing the attribute value exists in document");
+                "Search should fail as no element containing the attribute word exists in element");
+    }
+
+    @Test
+    public void findInDocument_byWithAttributeContainingWord() {
+        findFirstInDocument(query -> query
+                        .withAttributeContainingWord("foo", "bar")
+                        .first(),
+                "[foo~='bar']",
+                "Search should fail as no element containing the attribute word exists in document");
     }
 
     @Test
@@ -369,7 +388,7 @@ public class ElementQueryTest {
         findFirstInElement(query -> query
                         .withoutAttributeContaining("foo", "bar")
                         .first(),
-                ":not([foo~='bar'])",
+                ":not([foo*='bar'])",
                 null);
     }
 
@@ -377,6 +396,24 @@ public class ElementQueryTest {
     public void findInDocument_byWithoutAttributeContaining() {
         findFirstInDocument(query -> query
                         .withoutAttributeContaining("foo", "bar")
+                        .first(),
+                ":not([foo*='bar'])",
+                null);
+    }
+
+    @Test
+    public void findInElement_byWithoutAttributeContainingWord() {
+        findFirstInElement(query -> query
+                        .withoutAttributeContainingWord("foo", "bar")
+                        .first(),
+                ":not([foo~='bar'])",
+                null);
+    }
+
+    @Test
+    public void findInDocument_byWithoutAttributeContainingWord() {
+        findFirstInDocument(query -> query
+                        .withoutAttributeContainingWord("foo", "bar")
                         .first(),
                 ":not([foo~='bar'])",
                 null);
@@ -762,11 +799,11 @@ public class ElementQueryTest {
     }
 
     @Test
-    public void attributesConventionContains() {
+    public void attributesConventionContainsWord() {
         Set<AttributeMatch> attributes = ElementQuery
                 .getAttributes(MyFancyViewContainsElement.class);
         assertEquals(set(
-                        new AttributeMatch("class", "~=", "my-fancy-view-contains")),
+                        new AttributeMatch("class", CONTAINS_WORD, "my-fancy-view-contains")),
                 attributes);
     }
 
@@ -788,11 +825,11 @@ public class ElementQueryTest {
     }
 
     @Test
-    public void multipleAttributeAnnotations() {
+    public void multipleAttributeAnnotationWords() {
         Set<AttributeMatch> attributes = ElementQuery
                 .getAttributes(MultipleAnnotationElement.class);
-        assertEquals(set(new AttributeMatch("class", "~=", "foo"),
-                new AttributeMatch("class", "~=", "bar")), attributes);
+        assertEquals(set(new AttributeMatch("class", CONTAINS_WORD, "foo"),
+                new AttributeMatch("class", CONTAINS_WORD, "bar")), attributes);
     }
 
     @SafeVarargs
