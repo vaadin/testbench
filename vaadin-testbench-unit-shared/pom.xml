@@ -31,8 +31,8 @@
 
 
     <properties>
-        <kotlin.version>1.6.21</kotlin.version>
-        <dokka.version>1.6.21</dokka.version>
+        <kotlin.version>1.9.20</kotlin.version>
+        <dokka.version>1.9.20</dokka.version>
     </properties>
 
     <profiles>

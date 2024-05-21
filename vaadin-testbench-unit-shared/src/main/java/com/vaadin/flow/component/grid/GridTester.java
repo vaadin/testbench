@@ -1,5 +1,5 @@
-/**
- * Copyright (C) 2000-2022 Vaadin Ltd
+/*
+ * Copyright (C) 2000-2024 Vaadin Ltd
  *
  * This program is available under Vaadin Commercial License and Service Terms.
  *
@@ -13,9 +13,9 @@ import com.vaadin.flow.data.provider.SortDirection;
 import com.vaadin.flow.data.provider.SortOrder;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.LitRenderer;
-import com.vaadin.flow.function.SerializableBiConsumer;
 import com.vaadin.flow.function.ValueProvider;
 import com.vaadin.testbench.unit.ComponentTester;
+import com.vaadin.testbench.unit.LitRendererTestUtil;
 import com.vaadin.testbench.unit.MetaKeys;
 import com.vaadin.testbench.unit.MouseButton;
 import com.vaadin.testbench.unit.Tests;
@@ -27,7 +27,6 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -315,6 +314,19 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
                 "Target column doesn't have a ComponentRenderer.");
     }
 
+    private <V> V getLitRendererPropertyValue(int row, Grid.Column<Y> column,
+                                              String propertyName, Class<V> propertyClass) {
+        ensureVisible();
+
+        if (column.getRenderer() instanceof LitRenderer<Y> litRenderer) {
+            return LitRendererTestUtil.getPropertyValue(litRenderer, this::getField, this::getRow, row, propertyName, propertyClass
+            );
+        } else {
+            throw new IllegalArgumentException(
+                    "Target column doesn't have a LitRenderer.");
+        }
+    }
+
     /**
      * Get property value for item's LitRenderer in column.
      *
@@ -361,35 +373,16 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
         return getLitRendererPropertyValue(row, getColumns().get(column), propertyName, propertyClass);
     }
 
-    private <V> V getLitRendererPropertyValue(int row, Grid.Column<Y> column,
-                                              String propertyName, Class<V> propertyClass) {
+    private void invokeLitRendererFunction(int row, Grid.Column<Y> column, String functionName, JsonArray jsonArray) {
         ensureVisible();
-        if (column.getRenderer() instanceof LitRenderer<Y> litRenderer) {
-            var valueProvider = findLitRendererProperty(litRenderer, propertyName);
-            var untypedValue = valueProvider.apply(getRow(row));
-            if (propertyClass.isInstance(untypedValue)) {
-                return propertyClass.cast(untypedValue);
-            } else {
-                throw new IllegalArgumentException("Type of target column property value does not match propertyClass - expected %s, found %s."
-                        .formatted(propertyClass.getCanonicalName(), untypedValue.getClass().getCanonicalName()));
-            }
-        } else {
-            throw new IllegalArgumentException("Target column doesn't have a LitRenderer.");
-        }
-    }
 
-    /**
-     * Invoke named function for item's LitRenderer in column.
-     *
-     * @param row
-     *            item row
-     * @param columnName
-     *            key/property of column
-     * @param functionName
-     *            the name of the LitRenderer function to invoke
-     */
-    public void invokeLitRendererFunction(int row, String columnName, String functionName) {
-        invokeLitRendererFunction(row, columnName, functionName, Json.createArray());
+        if (column.getRenderer() instanceof LitRenderer<Y> litRenderer) {
+            LitRendererTestUtil.invokeFunction(litRenderer, this::getField, this::getRow, row, functionName, jsonArray
+            );
+        } else {
+            throw new IllegalArgumentException(
+                    "Target column doesn't have a LitRenderer.");
+        }
     }
 
     /**
@@ -413,13 +406,13 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
      *
      * @param row
      *            item row
-     * @param column
-     *            column to get
+     * @param columnName
+     *            key/property of column
      * @param functionName
      *            the name of the LitRenderer function to invoke
      */
-    public void invokeLitRendererFunction(int row, int column, String functionName) {
-        invokeLitRendererFunction(row, column, functionName, Json.createArray());
+    public void invokeLitRendererFunction(int row, String columnName, String functionName) {
+        invokeLitRendererFunction(row, columnName, functionName, Json.createArray());
     }
 
     /**
@@ -438,44 +431,18 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
         invokeLitRendererFunction(row, getColumns().get(column), functionName, jsonArray);
     }
 
-    private void invokeLitRendererFunction(int row, Grid.Column<Y> column, String functionName, JsonArray jsonArray) {
-        ensureVisible();
-        if (column.getRenderer() instanceof LitRenderer<Y> litRenderer) {
-            var callable = findLitRendererFunction(litRenderer, functionName);
-            callable.accept(getRow(row), jsonArray);
-        } else {
-            throw new IllegalArgumentException("Target column doesn't have a LitRenderer.");
-        }
-    }
-
-    private <V> ValueProvider<Y, V> findLitRendererProperty(LitRenderer<Y> renderer, String propertyName) {
-        var valueProvidersField = getField(LitRenderer.class, "valueProviders");
-        try {
-            @SuppressWarnings("unchecked")
-            var valueProviders = (Map<String, ValueProvider<Y, V>>) valueProvidersField.get(renderer);
-            var valueProvider = valueProviders.get(propertyName);
-            if (valueProvider == null) {
-                throw new IllegalArgumentException("Property " + propertyName + " is not registered in LitRenderer.");
-            }
-            return valueProvider;
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private SerializableBiConsumer<Y, JsonArray> findLitRendererFunction(LitRenderer<Y> renderer, String functionName) {
-        var clientCallablesField = getField(LitRenderer.class, "clientCallables");
-        try {
-            @SuppressWarnings("unchecked")
-            var clientCallables = (Map<String, SerializableBiConsumer<Y, JsonArray>>) clientCallablesField.get(renderer);
-            var callable = clientCallables.get(functionName);
-            if (callable == null) {
-                throw new IllegalArgumentException("Function " + functionName + " is not registered in LitRenderer.");
-            }
-            return callable;
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
+    /**
+     * Invoke named function for item's LitRenderer in column.
+     *
+     * @param row
+     *            item row
+     * @param column
+     *            column to get
+     * @param functionName
+     *            the name of the LitRenderer function to invoke
+     */
+    public void invokeLitRendererFunction(int row, int column, String functionName) {
+        invokeLitRendererFunction(row, column, functionName, Json.createArray());
     }
 
     /**
