@@ -30,7 +30,8 @@ import java.util.Collections;
  *            value type
  */
 @Tests(VirtualList.class)
-public class VirtualListTester<T extends VirtualList<Y>, Y> extends ComponentTester<T> {
+public class VirtualListTester<T extends VirtualList<Y>, Y>
+        extends ComponentTester<T> {
 
     // don't use a value too large
     // otherwise Vaadin 19+ will calculate a negative limit
@@ -56,9 +57,10 @@ public class VirtualListTester<T extends VirtualList<Y>, Y> extends ComponentTes
         ensureVisible();
 
         var dataCommunicator = getComponent().getDataCommunicator();
-        return dataCommunicator.isDefinedSize() ?
-                dataCommunicator.getDataProviderSize() :
-                dataCommunicator.getDataProvider().fetch(saneQuery()).toList().size();
+        return dataCommunicator.isDefinedSize()
+                ? dataCommunicator.getDataProviderSize()
+                : dataCommunicator.getDataProvider().fetch(saneQuery()).toList()
+                        .size();
     }
 
     /**
@@ -104,12 +106,17 @@ public class VirtualListTester<T extends VirtualList<Y>, Y> extends ComponentTes
             return component.getElement().getTextRecursively();
         }
 
-        // use LitRenderer label if renderer is ValueProvider (i.e., has a single property "label")
+        // use LitRenderer label if renderer is ValueProvider (i.e., has a
+        // single property "label")
         if (itemRenderer instanceof LitRenderer<Y> litRenderer) {
-            if ((LitRendererTestUtil.getProperties(litRenderer, this::getField).stream()
-                    .allMatch(propertyName -> propertyName.equals("label"))) &&
-                    (LitRendererTestUtil.getFunctionNames(litRenderer, this::getField).isEmpty())) {
-                return getLitRendererPropertyValue(index, "label", String.class);
+            if ((LitRendererTestUtil.getProperties(litRenderer, this::getField)
+                    .stream()
+                    .allMatch(propertyName -> propertyName.equals("label")))
+                    && (LitRendererTestUtil
+                            .getFunctionNames(litRenderer, this::getField)
+                            .isEmpty())) {
+                return getLitRendererPropertyValue(index, "label",
+                        String.class);
             } else {
                 throw new UnsupportedOperationException(
                         "VirtualListTester is unable to get item text when VirtualList uses a LitRenderer.");
@@ -128,6 +135,8 @@ public class VirtualListTester<T extends VirtualList<Y>, Y> extends ComponentTes
      * @param index
      *            the zero-based index of the item
      * @return initialized component for the target item
+     * @throws IllegalArgumentException
+     *             when the VirtualList is not using a ComponentRenderer
      */
     public Component getItemComponent(int index) {
         ensureVisible();
@@ -163,16 +172,18 @@ public class VirtualListTester<T extends VirtualList<Y>, Y> extends ComponentTes
      *            the type of the LitRenderer property
      * @return value of the LitRenderer property
      * @throws IllegalArgumentException
-     *             when the VirtualList is not using a LitRenderer or
-     *             when the given type of the property does not match the actual property type
+     *             when the VirtualList is not using a LitRenderer or when the
+     *             given type of the property does not match the actual property
+     *             type
      */
-    public <V> V getLitRendererPropertyValue(int index,
-                                             String propertyName, Class<V> propertyClass) {
+    public <V> V getLitRendererPropertyValue(int index, String propertyName,
+            Class<V> propertyClass) {
         ensureVisible();
 
         if (getItemRenderer() instanceof LitRenderer<Y> litRenderer) {
-            return LitRendererTestUtil.getPropertyValue(litRenderer, this::getField, this::getItem, index, propertyName, propertyClass
-            );
+            return LitRendererTestUtil.getPropertyValue(litRenderer,
+                    this::getField, this::getItem, index, propertyName,
+                    propertyClass);
         } else {
             throw new IllegalArgumentException(
                     "This VirtualList doesn't use a LitRenderer.");
@@ -180,7 +191,8 @@ public class VirtualListTester<T extends VirtualList<Y>, Y> extends ComponentTes
     }
 
     /**
-     * Invoke named function for item's LitRenderer using the supplied JSON arguments.
+     * Invoke named function for item's LitRenderer using the supplied JSON
+     * arguments.
      *
      * @param index
      *            the zero-based index of the item
@@ -190,13 +202,16 @@ public class VirtualListTester<T extends VirtualList<Y>, Y> extends ComponentTes
      *            the arguments to pass to the function
      *
      * @see #invokeLitRendererFunction(int, String)
+     * @throws IllegalArgumentException
+     *             when the VirtualList is not using a LitRenderer
      */
-    public void invokeLitRendererFunction(int index, String functionName, JsonArray jsonArray) {
+    public void invokeLitRendererFunction(int index, String functionName,
+            JsonArray jsonArray) {
         ensureVisible();
 
         if (getItemRenderer() instanceof LitRenderer<Y> litRenderer) {
-            LitRendererTestUtil.invokeFunction(litRenderer, this::getField, this::getItem, index, functionName, jsonArray
-            );
+            LitRendererTestUtil.invokeFunction(litRenderer, this::getField,
+                    this::getItem, index, functionName, jsonArray);
         } else {
             throw new IllegalArgumentException(
                     "This VirtualList doesn't use a LitRenderer.");
@@ -212,17 +227,15 @@ public class VirtualListTester<T extends VirtualList<Y>, Y> extends ComponentTes
      *            the name of the LitRenderer function to invoke
      *
      * @see #invokeLitRendererFunction(int, String, JsonArray)
+     * @throws IllegalArgumentException
+     *             when the VirtualList is not using a LitRenderer
      */
     public void invokeLitRendererFunction(int index, String functionName) {
         invokeLitRendererFunction(index, functionName, Json.createArray());
     }
 
     private <F> Query<Y, F> saneQuery() {
-        return new Query<>(
-                0,
-                SANE_FETCH_LIMIT,
-                Collections.emptyList(),
-                null,
+        return new Query<>(0, SANE_FETCH_LIMIT, Collections.emptyList(), null,
                 null);
     }
 

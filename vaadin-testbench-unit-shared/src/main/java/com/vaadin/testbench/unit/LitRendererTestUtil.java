@@ -25,39 +25,50 @@ import java.util.function.IntFunction;
 public class LitRendererTestUtil {
 
     private LitRendererTestUtil() throws InstantiationException {
-        throw new InstantiationException(LitRendererTestUtil.class.getName() + " should not be instantiated");
+        throw new InstantiationException(LitRendererTestUtil.class.getName()
+                + " should not be instantiated");
     }
 
     /**
-     * Gets the property names for the supplied {@link LitRenderer} using the given field getter.
+     * Gets the property names for the supplied {@link LitRenderer} using the
+     * given field getter.
      *
-     * @param litRenderer the LitRenderer with properties to get
-     * @param fieldGetter the field getter of the ComponentTester
+     * @param litRenderer
+     *            the LitRenderer with properties to get
+     * @param fieldGetter
+     *            the field getter of the ComponentTester
      * @return the set of property names of the LitRenderer
-     * @param <Y> the type being renderer by the LitRenderer
+     * @param <Y>
+     *            the type being renderer by the LitRenderer
      */
     public static <Y> Set<String> getProperties(LitRenderer<Y> litRenderer,
-                                                BiFunction<Class<?>, String, Field> fieldGetter) {
-        var valueProvidersField = fieldGetter.apply(LitRenderer.class, "valueProviders");
+            BiFunction<Class<?>, String, Field> fieldGetter) {
+        var valueProvidersField = fieldGetter.apply(LitRenderer.class,
+                "valueProviders");
         try {
             @SuppressWarnings("unchecked")
-            var valueProviders = (Map<String, ValueProvider<Y, ?>>) valueProvidersField.get(litRenderer);
+            var valueProviders = (Map<String, ValueProvider<Y, ?>>) valueProvidersField
+                    .get(litRenderer);
             return valueProviders.keySet();
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private static <Y> ValueProvider<Y, ?> findProperty(LitRenderer<Y> litRenderer,
-                                                        BiFunction<Class<?>, String, Field> fieldGetter,
-                                                        String propertyName) {
-        var valueProvidersField = fieldGetter.apply(LitRenderer.class, "valueProviders");
+    private static <Y> ValueProvider<Y, ?> findProperty(
+            LitRenderer<Y> litRenderer,
+            BiFunction<Class<?>, String, Field> fieldGetter,
+            String propertyName) {
+        var valueProvidersField = fieldGetter.apply(LitRenderer.class,
+                "valueProviders");
         try {
             @SuppressWarnings("unchecked")
-            var valueProviders = (Map<String, ValueProvider<Y, ?>>) valueProvidersField.get(litRenderer);
+            var valueProviders = (Map<String, ValueProvider<Y, ?>>) valueProvidersField
+                    .get(litRenderer);
             var valueProvider = valueProviders.get(propertyName);
             if (valueProvider == null) {
-                throw new IllegalArgumentException("Property " + propertyName + " is not registered in LitRenderer.");
+                throw new IllegalArgumentException("Property " + propertyName
+                        + " is not registered in LitRenderer.");
             }
             return valueProvider;
         } catch (IllegalAccessException e) {
@@ -68,58 +79,84 @@ public class LitRendererTestUtil {
     /**
      * Gets the property value for the supplied {@link LitRenderer}.
      *
-     * @param litRenderer   the LitRenderer with properties to get
-     * @param fieldGetter   the field getter of the ComponentTester
-     * @param itemGetter    the getter for the item rendered by the LitRenderer
-     * @param index         the index of the item rendered by the LitRenderer
-     * @param propertyName  the name of the property of the LitRenderer
-     * @param propertyClass the type of the property value
+     * @param litRenderer
+     *            the LitRenderer with properties to get
+     * @param fieldGetter
+     *            the field getter of the ComponentTester
+     * @param itemGetter
+     *            the getter for the item rendered by the LitRenderer
+     * @param index
+     *            the index of the item rendered by the LitRenderer
+     * @param propertyName
+     *            the name of the property of the LitRenderer
+     * @param propertyClass
+     *            the type of the property value
      * @return the property value
-     * @param <Y>           the type being renderer by the LitRenderer
-     * @param <V>           the type of the property value
+     * @param <Y>
+     *            the type being renderer by the LitRenderer
+     * @param <V>
+     *            the type of the property value
+     * @throws IllegalArgumentException
+     *             when the type of property value does not match propertyClass
      */
-    public static <Y, V> V getPropertyValue(LitRenderer<Y> litRenderer, BiFunction<Class<?>, String, Field> fieldGetter, IntFunction<Y> itemGetter, int index,
-                                            String propertyName, Class<V> propertyClass) {
-        var valueProvider = findProperty(litRenderer, fieldGetter, propertyName);
+    public static <Y, V> V getPropertyValue(LitRenderer<Y> litRenderer,
+            BiFunction<Class<?>, String, Field> fieldGetter,
+            IntFunction<Y> itemGetter, int index, String propertyName,
+            Class<V> propertyClass) {
+        var valueProvider = findProperty(litRenderer, fieldGetter,
+                propertyName);
         var untypedValue = valueProvider.apply(itemGetter.apply(index));
         if (propertyClass.isInstance(untypedValue)) {
             return propertyClass.cast(untypedValue);
         } else {
-            throw new IllegalArgumentException("Type of property value does not match propertyClass - expected %s, found %s."
-                    .formatted(propertyClass.getCanonicalName(), untypedValue.getClass().getCanonicalName()));
+            throw new IllegalArgumentException(
+                    "Type of property value does not match propertyClass - expected %s, found %s."
+                            .formatted(propertyClass.getCanonicalName(),
+                                    untypedValue.getClass()
+                                            .getCanonicalName()));
         }
     }
 
     /**
-     * Gets the function names for the supplied {@link LitRenderer} using the given field getter.
+     * Gets the function names for the supplied {@link LitRenderer} using the
+     * given field getter.
      *
-     * @param litRenderer the LitRenderer with properties to get
-     * @param fieldGetter the field getter of the ComponentTester
+     * @param litRenderer
+     *            the LitRenderer with properties to get
+     * @param fieldGetter
+     *            the field getter of the ComponentTester
      * @return the set of function names of the LitRenderer
-     * @param <Y> the type being renderer by the LitRenderer
+     * @param <Y>
+     *            the type being renderer by the LitRenderer
      */
     public static <Y> Set<String> getFunctionNames(LitRenderer<Y> litRenderer,
-                                                   BiFunction<Class<?>, String, Field> fieldGetter) {
-        var clientCallablesField = fieldGetter.apply(LitRenderer.class, "clientCallables");
+            BiFunction<Class<?>, String, Field> fieldGetter) {
+        var clientCallablesField = fieldGetter.apply(LitRenderer.class,
+                "clientCallables");
         try {
             @SuppressWarnings("unchecked")
-            var clientCallables = (Map<String, SerializableBiConsumer<Y, JsonArray>>) clientCallablesField.get(litRenderer);
+            var clientCallables = (Map<String, SerializableBiConsumer<Y, JsonArray>>) clientCallablesField
+                    .get(litRenderer);
             return clientCallables.keySet();
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private static <Y> SerializableBiConsumer<Y, JsonArray> findFunction(LitRenderer<Y> litRenderer,
-                                                                         BiFunction<Class<?>, String, Field> fieldGetter,
-                                                                         String functionName) {
-        var clientCallablesField = fieldGetter.apply(LitRenderer.class, "clientCallables");
+    private static <Y> SerializableBiConsumer<Y, JsonArray> findFunction(
+            LitRenderer<Y> litRenderer,
+            BiFunction<Class<?>, String, Field> fieldGetter,
+            String functionName) {
+        var clientCallablesField = fieldGetter.apply(LitRenderer.class,
+                "clientCallables");
         try {
             @SuppressWarnings("unchecked")
-            var clientCallables = (Map<String, SerializableBiConsumer<Y, JsonArray>>) clientCallablesField.get(litRenderer);
+            var clientCallables = (Map<String, SerializableBiConsumer<Y, JsonArray>>) clientCallablesField
+                    .get(litRenderer);
             var callable = clientCallables.get(functionName);
             if (callable == null) {
-                throw new IllegalArgumentException("Function " + functionName + " is not registered in LitRenderer.");
+                throw new IllegalArgumentException("Function " + functionName
+                        + " is not registered in LitRenderer.");
             }
             return callable;
         } catch (IllegalAccessException e) {
@@ -128,17 +165,30 @@ public class LitRendererTestUtil {
     }
 
     /**
-     * Invokes the function by name for the supplied {@link LitRenderer} using the given field getter.
+     * Invokes the function by name for the supplied {@link LitRenderer} using
+     * the given field getter.
      *
-     * @param litRenderer  the LitRenderer with properties to get
-     * @param fieldGetter  the field getter of the ComponentTester
-     * @param itemGetter   the getter for the item rendered by the LitRenderer
-     * @param index        the index of the item rendered by the LitRenderer
-     * @param functionName the name of the function of the LitRenderer
-     * @param jsonArray    additional parameters to pass to the function
-     * @param <Y>          the type being renderer by the LitRenderer
+     * @param litRenderer
+     *            the LitRenderer with properties to get
+     * @param fieldGetter
+     *            the field getter of the ComponentTester
+     * @param itemGetter
+     *            the getter for the item rendered by the LitRenderer
+     * @param index
+     *            the index of the item rendered by the LitRenderer
+     * @param functionName
+     *            the name of the function of the LitRenderer
+     * @param jsonArray
+     *            additional parameters to pass to the function
+     * @param <Y>
+     *            the type being renderer by the LitRenderer
+     * @throws IllegalArgumentException
+     *             when the function is not registered in LitRenderer
      */
-    public static <Y> void invokeFunction(LitRenderer<Y> litRenderer, BiFunction<Class<?>, String, Field> fieldGetter, IntFunction<Y> itemGetter, int index, String functionName, JsonArray jsonArray) {
+    public static <Y> void invokeFunction(LitRenderer<Y> litRenderer,
+            BiFunction<Class<?>, String, Field> fieldGetter,
+            IntFunction<Y> itemGetter, int index, String functionName,
+            JsonArray jsonArray) {
         var callable = findFunction(litRenderer, fieldGetter, functionName);
         callable.accept(itemGetter.apply(index), jsonArray);
     }
