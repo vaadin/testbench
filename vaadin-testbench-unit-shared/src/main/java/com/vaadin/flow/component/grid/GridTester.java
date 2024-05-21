@@ -9,13 +9,13 @@
 package com.vaadin.flow.component.grid;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.HasLitRenderer;
 import com.vaadin.flow.data.provider.SortDirection;
 import com.vaadin.flow.data.provider.SortOrder;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.LitRenderer;
 import com.vaadin.flow.function.ValueProvider;
 import com.vaadin.testbench.unit.ComponentTester;
+import com.vaadin.testbench.unit.LitRendererTestUtil;
 import com.vaadin.testbench.unit.MetaKeys;
 import com.vaadin.testbench.unit.MouseButton;
 import com.vaadin.testbench.unit.Tests;
@@ -38,8 +38,7 @@ import java.util.Objects;
  *            item type
  */
 @Tests(fqn = { "com.vaadin.flow.component.grid.Grid" })
-public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T>
-        implements HasLitRenderer<Y> {
+public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
     /**
      * Wrap grid for testing.
      *
@@ -320,7 +319,7 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T>
         ensureVisible();
 
         if (column.getRenderer() instanceof LitRenderer<Y> litRenderer) {
-            return getLitRendererPropertyValue(row, propertyName, propertyClass,
+            return LitRendererTestUtil.getPropertyValue(row, propertyName, propertyClass,
                     this::getField, litRenderer, this::getRow);
         } else {
             throw new IllegalArgumentException(
@@ -378,7 +377,7 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T>
         ensureVisible();
 
         if (column.getRenderer() instanceof LitRenderer<Y> litRenderer) {
-            invokeLitRendererFunction(row, functionName, jsonArray,
+            LitRendererTestUtil.invokeFunction(row, functionName, jsonArray,
                     this::getField, litRenderer, this::getRow);
         } else {
             throw new IllegalArgumentException(

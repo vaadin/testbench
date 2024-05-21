@@ -9,12 +9,12 @@
 package com.vaadin.flow.component.virtuallist;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.HasLitRenderer;
 import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.LitRenderer;
 import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.testbench.unit.ComponentTester;
+import com.vaadin.testbench.unit.LitRendererTestUtil;
 import com.vaadin.testbench.unit.Tests;
 import elemental.json.Json;
 import elemental.json.JsonArray;
@@ -30,8 +30,7 @@ import java.util.Collections;
  *            value type
  */
 @Tests(VirtualList.class)
-public class VirtualListTester<T extends VirtualList<Y>, Y> extends ComponentTester<T>
-        implements HasLitRenderer<Y> {
+public class VirtualListTester<T extends VirtualList<Y>, Y> extends ComponentTester<T> {
 
     // don't use a value too large
     // otherwise Vaadin 19+ will calculate a negative limit
@@ -107,9 +106,9 @@ public class VirtualListTester<T extends VirtualList<Y>, Y> extends ComponentTes
 
         // use LitRenderer label if renderer is ValueProvider (i.e., has a single property "label")
         if (itemRenderer instanceof LitRenderer<Y> litRenderer) {
-            if ((getLitRendererProperties(litRenderer, this::getField).stream()
+            if ((LitRendererTestUtil.getProperties(litRenderer, this::getField).stream()
                     .allMatch(propertyName -> propertyName.equals("label"))) &&
-                    (getLitRendererFunctionNames(litRenderer, this::getField).isEmpty())) {
+                    (LitRendererTestUtil.getFunctionNames(litRenderer, this::getField).isEmpty())) {
                 return getLitRendererPropertyValue(index, "label", String.class);
             } else {
                 throw new UnsupportedOperationException(
@@ -172,7 +171,7 @@ public class VirtualListTester<T extends VirtualList<Y>, Y> extends ComponentTes
         ensureVisible();
 
         if (getItemRenderer() instanceof LitRenderer<Y> litRenderer) {
-            return getLitRendererPropertyValue(index, propertyName, propertyClass,
+            return LitRendererTestUtil.getPropertyValue(index, propertyName, propertyClass,
                     this::getField, litRenderer, this::getItem);
         } else {
             throw new IllegalArgumentException(
@@ -196,7 +195,7 @@ public class VirtualListTester<T extends VirtualList<Y>, Y> extends ComponentTes
         ensureVisible();
 
         if (getItemRenderer() instanceof LitRenderer<Y> litRenderer) {
-            invokeLitRendererFunction(index, functionName, jsonArray,
+            LitRendererTestUtil.invokeFunction(index, functionName, jsonArray,
                     this::getField, litRenderer, this::getItem);
         } else {
             throw new IllegalArgumentException(
