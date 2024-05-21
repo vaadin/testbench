@@ -1,6 +1,7 @@
 package com.vaadin.flow.component.virtuallist;
 
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.LongStream;
 
 public final class UserData {
@@ -37,16 +38,24 @@ public final class UserData {
     return getInstance().users;
   }
 
-  public static User first() {
-    return get(0);
-  }
-
   public static User get(int index) {
     return all().get(index);
   }
 
+  public static User first() {
+    return get(0);
+  }
+
   public static User last() {
     return get(all().size() - 1);
+  }
+
+  public static User any() {
+    return get(getAnyValidIndex());
+  }
+
+  public static int getAnyValidIndex() {
+    return ThreadLocalRandom.current().nextInt(0, all().size());
   }
 
 }

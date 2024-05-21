@@ -35,94 +35,88 @@ class ComponentRendererVirtualListTesterTest extends UIUnitTest {
     }
 
     @Test
-    void virtualList_verifyComponent() {
+    void virtualList_initTester() {
         Assertions.assertNotNull($virtualList,
                 "Tester for component renderer VirtualList not initialized.");
     }
 
     @Test
-    void virtualList_verifyFirstItemText() {
+    void getItemText_existsAndEquals() {
         var firstUser = UserData.first();
         Assertions.assertEquals(expectedRendererText(firstUser),
                 $virtualList.getItemText(0));
-    }
 
-    @Test
-    void virtualList_verifyLastItemText() {
+        var index = UserData.getAnyValidIndex();
+        var anyUser = UserData.get(index);
+        Assertions.assertEquals(expectedRendererText(anyUser),
+                $virtualList.getItemText(index));
+
         var lastUser = UserData.last();
         Assertions.assertEquals(expectedRendererText(lastUser),
                 $virtualList.getItemText(UserData.USER_COUNT - 1));
     }
 
     @Test
-    void virtualList_verifyItemComponent() {
-        var $itemComponent = test((Div) $virtualList.getItemComponent(0));
+    void getItemComponent_exists() {
+        var $itemComponent = test((Div) $virtualList.getItemComponent(UserData.getAnyValidIndex()));
         Assertions.assertNotNull($itemComponent, "Item component should not be null");
     }
 
     @Test
-    void virtualList_verifyItemComponent_firstNameSpan() {
-        var firstUser = UserData.first();
+    void getItemComponent_hasExpectedChildrenAndValues() {
+        var index = UserData.getAnyValidIndex();
+        var user = UserData.get(index);
 
-        var $itemComponent = test((Div) $virtualList.getItemComponent(0));
+        var $itemComponent = test((Div) $virtualList.getItemComponent(index));
 
         var $firstNameSpan = test($itemComponent.find(Span.class)
                 .withId("first-name")
                 .single());
-        // use of SpanTester will fail due to component being a copy and thus not attached
-//        Assertions.assertEquals(firstUser.getFirstName(), $firstNameSpan.getText());
         Assertions.assertThrows(IllegalStateException.class,
                 $firstNameSpan::getText,
                 "Component is a copy and not usable via a ComponentTester");
         var firstNameSpan = $firstNameSpan.getComponent();
-        Assertions.assertEquals(firstUser.getFirstName(), firstNameSpan.getText());
-    }
-
-    @Test
-    void virtualList_verifyItemComponent_lastNameSpan() {
-        var firstUser = UserData.first();
-
-        var $itemComponent = test((Div) $virtualList.getItemComponent(0));
+        Assertions.assertEquals(user.getFirstName(), firstNameSpan.getText());
 
         var $lastNameSpan = test($itemComponent.find(Span.class)
                 .withId("last-name")
                 .single());
-        // use of SpanTester will fail due to component being a copy and thus not attached
-//        Assertions.assertEquals(firstUser.getLastName(), $lastNameSpan.getText());
         Assertions.assertThrows(IllegalStateException.class,
                 $lastNameSpan::getText,
                 "Component is a copy and not usable via a ComponentTester");
         var lastNameSpan = $lastNameSpan.getComponent();
-        Assertions.assertEquals(firstUser.getLastName(), lastNameSpan.getText());
+        Assertions.assertEquals(user.getLastName(), lastNameSpan.getText());
+
+        var $activeSpan = test($itemComponent.find(Span.class)
+                .withId("active")
+                .single());
+        Assertions.assertThrows(IllegalStateException.class,
+                $activeSpan::getText,
+                "Component is a copy and not usable via a ComponentTester");
+        var activeSpan = $activeSpan.getComponent();
+        Assertions.assertEquals(user.isActive() ? "Yes" : "No", activeSpan.getText());
     }
 
     // this is a more complicated test
     // because it tests that the button toggles the state of the active indicator
     @Test
-    void virtualList_verifyItemComponent_activeSpanAndToggleButton() {
-        var firstUser = UserData.first();
+    void getItemComponent_buttonActionsFire() {
+        var index = UserData.getAnyValidIndex();
+        var user = UserData.get(index);
 
         // BEFORE
-        var $beforeItemComponent = test((Div) $virtualList.getItemComponent(0));
+        var $beforeItemComponent = test((Div) $virtualList.getItemComponent(index));
 
-        var beforeActive = firstUser.isActive();
-        var $beforeActiveSpan = test($beforeItemComponent.find(Span.class)
+        var beforeActive = user.isActive();
+        var beforeActiveSpan = $beforeItemComponent.find(Span.class)
                 .withId("active")
-                .single());
-        // use of SpanTester will fail due to component being a copy and thus not attached
-//        Assertions.assertEquals(beforeActive ? "Yes" : "No", $beforeActiveSpan.getText());
-        Assertions.assertThrows(IllegalStateException.class,
-                $beforeActiveSpan::getText,
-                "Component is a copy and not usable via a ComponentTester");
-        var beforeActiveSpan = $beforeActiveSpan.getComponent();
+                .single();
         Assertions.assertEquals(beforeActive ? "Yes" : "No", beforeActiveSpan.getText());
 
         // TOGGLE
         var $toggleButton = test($beforeItemComponent.find(NativeButton.class)
                 .withText("Toggle")
                 .single());
-        // use of NativeButtonTester will fail due to component being a copy and thus not attached
-//        $toggleButton.click();
         Assertions.assertThrows(IllegalStateException.class,
                 $toggleButton::click,
                 "Component is a copy and not usable via a ComponentTester");
@@ -135,40 +129,35 @@ class ComponentRendererVirtualListTesterTest extends UIUnitTest {
 
         // AFTER
         // re-obtain the item component as the item has changed
-        var $afterItemComponent = test((Div) $virtualList.getItemComponent(0));
+        var $afterItemComponent = test((Div) $virtualList.getItemComponent(index));
 
-        var afterActive = firstUser.isActive();
-        var $afterActiveSpan = test($afterItemComponent.find(Span.class)
+        var afterActive = user.isActive();
+        var afterActiveSpan = $afterItemComponent.find(Span.class)
                 .withId("active")
-                .single());
-        // use of SpanTester will fail due to component being a copy and thus not attached
-//        Assertions.assertEquals(afterActive ? "Yes" : "No", $afterActiveSpan.getText());
-        var afterActiveSpan = $afterActiveSpan.getComponent();
+                .single();
         Assertions.assertEquals(afterActive ? "Yes" : "No", afterActiveSpan.getText());
         Assertions.assertEquals(!beforeActive, afterActive);
     }
 
     @Test
-    void virtualList_verifyItemComponent_underIndexFails() {
+    void getItemComponent_outOfBoundsIndexFails() {
         Assertions.assertThrows(IndexOutOfBoundsException.class,
-                () -> $virtualList.getItemComponent(-1),
+                () -> $virtualList.getItemComponent( -1),
                 "VirtualList index out of bounds (low)");
-    }
 
-    @Test
-    void virtualList_verifyItemComponent_overIndexFails() {
         Assertions.assertThrows(IndexOutOfBoundsException.class,
                 () -> $virtualList.getItemComponent(UserData.USER_COUNT),
                 "VirtualList index out of bounds (high)");
     }
 
     @Test
-    void virtualList_verifyHiddenFails() {
+    void getItemComponent_hiddenFails() {
         $virtualList.getComponent().setVisible(false);
 
+        var index = UserData.getAnyValidIndex();
         Assertions.assertThrows(IllegalStateException.class,
-                () -> $virtualList.getItemComponent(0),
-                "Item component should not be accessible for hidden virtual list");
+                () -> $virtualList.getItemComponent(index),
+                "Tester should not be accessible for hidden virtual list");
     }
 
     private static String expectedRendererText(User user) {

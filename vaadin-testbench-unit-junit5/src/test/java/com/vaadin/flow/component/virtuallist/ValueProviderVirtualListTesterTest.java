@@ -30,69 +30,101 @@ class ValueProviderVirtualListTesterTest extends UIUnitTest {
     }
 
     @Test
-    void virtualList_verifyComponent() {
+    void virtualList_initTester() {
         Assertions.assertNotNull($virtualList,
                 "Tester for value provider VirtualList not initialized.");
     }
 
     @Test
-    void virtualList_verifySize() {
+    void size_equalsItemCount() {
         Assertions.assertEquals(UserData.USER_COUNT, $virtualList.size());
     }
 
     @Test
-    void virtualList_verifyFirstItemIndex() {
-        var firstUser = UserData.first();
-        Assertions.assertEquals(firstUser, $virtualList.getItem(0));
+    void size_hiddenFails() {
+        $virtualList.getComponent().setVisible(false);
+
+        Assertions.assertThrows(IllegalStateException.class,
+                () -> $virtualList.size(),
+                "Tester should not be accessible for hidden virtual list");
     }
 
     @Test
-    void virtualList_verifyLastItemIndex() {
+    void getItem_existsAndEquals() {
+        var firstUser = UserData.first();
+        Assertions.assertEquals(firstUser, $virtualList.getItem(0));
+
+        var index = UserData.getAnyValidIndex();
+        var anyUser = UserData.get(index);
+        Assertions.assertEquals(anyUser, $virtualList.getItem(index));
+
         var lastUser = UserData.last();
         Assertions.assertEquals(lastUser, $virtualList.getItem(UserData.USER_COUNT - 1));
     }
 
     @Test
-    void virtualList_verifyUnderItemIndexFails() {
+    void getItem_outOfBoundsIndexFails() {
         Assertions.assertThrows(IndexOutOfBoundsException.class,
-                () -> $virtualList.getItem(-1),
+                () -> $virtualList.getItem( -1),
                 "VirtualList index out of bounds (low)");
-    }
 
-    @Test
-    void virtualList_verifyOverItemIndexFails() {
         Assertions.assertThrows(IndexOutOfBoundsException.class,
                 () -> $virtualList.getItem(UserData.USER_COUNT),
                 "VirtualList index out of bounds (high)");
     }
 
     @Test
-    void virtualList_verifyHiddenFails() {
+    void getItem_hiddenFails() {
         $virtualList.getComponent().setVisible(false);
 
+        var index = UserData.getAnyValidIndex();
         Assertions.assertThrows(IllegalStateException.class,
-                () -> $virtualList.getItem(0),
+                () -> $virtualList.getItem(index),
                 "Tester should not be accessible for hidden virtual list");
     }
 
     @Test
-    void virtualList_verifyFirstItemText() {
+    void getItemText_existsAndEquals() {
         var firstUser = UserData.first();
         Assertions.assertEquals(expectedValueProviderText(firstUser),
                 $virtualList.getItemText(0));
-    }
 
-    @Test
-    void virtualList_verifyLastItemText() {
+        var index = UserData.getAnyValidIndex();
+        var anyUser = UserData.get(index);
+        Assertions.assertEquals(expectedValueProviderText(anyUser),
+                $virtualList.getItemText(index));
+
         var lastUser = UserData.last();
         Assertions.assertEquals(expectedValueProviderText(lastUser),
                 $virtualList.getItemText(UserData.USER_COUNT - 1));
     }
 
     @Test
-    void virtualList_verifyNotComponentRenderer() {
+    void getItemText_outOfBoundsIndexFails() {
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> $virtualList.getItemText( -1),
+                "VirtualList index out of bounds (low)");
+
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> $virtualList.getItemText(UserData.USER_COUNT),
+                "VirtualList index out of bounds (high)");
+    }
+
+    @Test
+    void getItemText_hiddenFails() {
+        $virtualList.getComponent().setVisible(false);
+
+        var index = UserData.getAnyValidIndex();
+        Assertions.assertThrows(IllegalStateException.class,
+                () -> $virtualList.getItemText(index),
+                "Tester should not be accessible for hidden virtual list");
+    }
+
+    @Test
+    void getItemComponent_verifyNotComponentRenderer() {
+        var index = UserData.getAnyValidIndex();
         Assertions.assertThrows(IllegalArgumentException.class,
-                () -> $virtualList.getItemComponent(0),
+                () -> $virtualList.getItemComponent(index),
                 "valueProviderVirtualList should not have a ComponentRenderer");
     }
 

@@ -15,6 +15,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 @ViewPackages
 class CallbackLitRendererVirtualListTesterTest extends UIUnitTest {
 
@@ -30,91 +32,113 @@ class CallbackLitRendererVirtualListTesterTest extends UIUnitTest {
     }
 
     @Test
-    void virtualList_verifyComponent() {
+    void virtualList_initTester() {
         Assertions.assertNotNull($virtualList,
                 "Tester for callback lit renderer VirtualList not initialized.");
     }
 
     @Test
-    void virtualList_verifyFirstItemText() {
-        var firstUser = UserData.first();
-        Assertions.assertEquals(firstUser, $virtualList.getItem(0));
+    void getLitRendererPropertyValue_propertyValuesEqual() {
+        var index = UserData.getAnyValidIndex();
+        var user = UserData.get(index);
+
+        var firstName = $virtualList.getLitRendererPropertyValue(index,
+                "firstName", String.class);
+        Assertions.assertEquals(user.getFirstName(), firstName);
+
+        var lastName = $virtualList.getLitRendererPropertyValue(index,
+                "lastName", String.class);
+        Assertions.assertEquals(user.getLastName(), lastName);
+
+        var active = $virtualList.getLitRendererPropertyValue(index,
+                "active", Boolean.class);
+        Assertions.assertEquals(user.isActive(), active);
     }
 
     @Test
-    void virtualList_verifyLastItemText() {
-        var lastUser = UserData.last();
-        Assertions.assertEquals(lastUser, $virtualList.getItem(UserData.USER_COUNT - 1));
-    }
-
-    @Test
-    void virtualList_verifyUnderItemTextFails() {
-        Assertions.assertThrows(IndexOutOfBoundsException.class,
-                () -> $virtualList.getItem( -1),
-                "VirtualList index out of bounds (low)");
-    }
-
-    @Test
-    void virtualList_verifyOverItemTextFails() {
-        Assertions.assertThrows(IndexOutOfBoundsException.class,
-                () -> $virtualList.getItem(UserData.USER_COUNT),
-                "VirtualList index out of bounds (high)");
-    }
-
-    @Test
-    void virtualList_verifyHiddenItemTextFails() {
-        $virtualList.getComponent().setVisible(false);
-
-        Assertions.assertThrows(IllegalStateException.class,
-                () -> $virtualList.getItem(UserData.USER_COUNT),
-                "Tester should not be accessible for hidden virtual list");
-    }
-
-    @Test
-    void virtualList_verifyFirstNameProperty() {
-        var firstUser = UserData.first();
-
-        var firstName = $virtualList.getLitRendererPropertyValue(0, "firstName", String.class);
-        Assertions.assertEquals(firstUser.getFirstName(), firstName);
-    }
-
-    @Test
-    void virtualList_verifyLastNameProperty() {
-        var firstUser = UserData.first();
-
-        var lastName = $virtualList.getLitRendererPropertyValue(0, "lastName", String.class);
-        Assertions.assertEquals(firstUser.getLastName(), lastName);
-    }
-
-    @Test
-    void virtualList_verifyNonexistentPropertyFails() {
+    void getLitRendererPropertyValue_nonexistentPropertyFails() {
+        var index = UserData.getAnyValidIndex();
         Assertions.assertThrows(IllegalArgumentException.class,
-                () -> $virtualList.getLitRendererPropertyValue(0, "nonexistent", String.class),
+                () -> $virtualList.getLitRendererPropertyValue(index,
+                        "nonexistent", String.class),
                 "Nonexistent property request should throw an exception");
     }
 
     @Test
-    void virtualList_verifyActivePropertyAndToggleButton() {
-        var firstUser = UserData.first();
+    void getLitRendererPropertyValue_outOfBoundsIndexFails() {
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> $virtualList.getLitRendererPropertyValue( -1,
+                        "firstName", String.class),
+                "VirtualList index out of bounds (low)");
 
-        var originalActive = firstUser.isActive();
-
-        var beforeActive = $virtualList.getLitRendererPropertyValue(0, "active", Boolean.class);
-        Assertions.assertEquals(firstUser.isActive(), beforeActive);
-
-        $virtualList.invokeLitRendererFunction(0, "onActiveToggleClick");
-
-        var afterActive = $virtualList.getLitRendererPropertyValue(0, "active", Boolean.class);
-        Assertions.assertEquals(firstUser.isActive(), afterActive);
-
-        Assertions.assertEquals(!originalActive, firstUser.isActive());
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> $virtualList.getLitRendererPropertyValue(UserData.USER_COUNT,
+                        "firstName", String.class),
+                "VirtualList index out of bounds (high)");
     }
 
     @Test
-    void virtualList_verifyNonexistentFunctionFails() {
+    void getLitRendererPropertyValue_hiddenFails() {
+        $virtualList.getComponent().setVisible(false);
+
+        var index = UserData.getAnyValidIndex();
+        Assertions.assertThrows(IllegalStateException.class,
+                () -> $virtualList.getLitRendererPropertyValue(index,
+                        "firstName", String.class),
+                "Tester should not be accessible for hidden virtual list");
+    }
+
+    @Test
+    void invokeLitRendererFunction_actionSucceeds() {
+        var index = UserData.getAnyValidIndex();
+        var user = UserData.get(index);
+
+        var originalActive = user.isActive();
+
+        var beforeActive = $virtualList.getLitRendererPropertyValue(index,
+                "active", Boolean.class);
+        Assertions.assertEquals(user.isActive(), beforeActive);
+
+        $virtualList.invokeLitRendererFunction(index, "onActiveToggleClick");
+
+        var afterActive = $virtualList.getLitRendererPropertyValue(index,
+                "active", Boolean.class);
+        Assertions.assertEquals(user.isActive(), afterActive);
+
+        Assertions.assertEquals(!originalActive, user.isActive());
+    }
+
+    @Test
+    void invokeLitRendererFunction_nonexistentFunctionFails() {
+        var index = UserData.getAnyValidIndex();
         Assertions.assertThrows(IllegalArgumentException.class,
-                () -> $virtualList.invokeLitRendererFunction(0, "nonexistent"),
+                () -> $virtualList.invokeLitRendererFunction(index,
+                        "nonexistent"),
                 "Nonexistent function invocation should throw an exception");
+    }
+
+    @Test
+    void invokeLitRendererFunction_outOfBoundsIndexFails() {
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> $virtualList.invokeLitRendererFunction( -1,
+                        "onActiveToggleClick"),
+                "VirtualList index out of bounds (low)");
+
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> $virtualList.invokeLitRendererFunction(UserData.USER_COUNT,
+                        "onActiveToggleClick"),
+                "VirtualList index out of bounds (high)");
+    }
+
+    @Test
+    void invokeLitRendererFunction_hiddenFails() {
+        $virtualList.getComponent().setVisible(false);
+
+        var index = UserData.getAnyValidIndex();
+        Assertions.assertThrows(IllegalStateException.class,
+                () -> $virtualList.invokeLitRendererFunction(index,
+                        "firstName"),
+                "Tester should not be accessible for hidden virtual list");
     }
 
 }

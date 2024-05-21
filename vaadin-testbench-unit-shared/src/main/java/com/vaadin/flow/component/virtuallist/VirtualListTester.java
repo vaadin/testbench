@@ -171,8 +171,8 @@ public class VirtualListTester<T extends VirtualList<Y>, Y> extends ComponentTes
         ensureVisible();
 
         if (getItemRenderer() instanceof LitRenderer<Y> litRenderer) {
-            return LitRendererTestUtil.getPropertyValue(index, propertyName, propertyClass,
-                    this::getField, litRenderer, this::getItem);
+            return LitRendererTestUtil.getPropertyValue(litRenderer, this::getField, this::getItem, index, propertyName, propertyClass
+            );
         } else {
             throw new IllegalArgumentException(
                     "This VirtualList doesn't use a LitRenderer.");
@@ -195,8 +195,8 @@ public class VirtualListTester<T extends VirtualList<Y>, Y> extends ComponentTes
         ensureVisible();
 
         if (getItemRenderer() instanceof LitRenderer<Y> litRenderer) {
-            LitRendererTestUtil.invokeFunction(index, functionName, jsonArray,
-                    this::getField, litRenderer, this::getItem);
+            LitRendererTestUtil.invokeFunction(litRenderer, this::getField, this::getItem, index, functionName, jsonArray
+            );
         } else {
             throw new IllegalArgumentException(
                     "This VirtualList doesn't use a LitRenderer.");

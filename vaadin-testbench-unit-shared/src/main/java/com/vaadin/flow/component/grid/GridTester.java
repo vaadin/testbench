@@ -319,8 +319,8 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
         ensureVisible();
 
         if (column.getRenderer() instanceof LitRenderer<Y> litRenderer) {
-            return LitRendererTestUtil.getPropertyValue(row, propertyName, propertyClass,
-                    this::getField, litRenderer, this::getRow);
+            return LitRendererTestUtil.getPropertyValue(litRenderer, this::getField, this::getRow, row, propertyName, propertyClass
+            );
         } else {
             throw new IllegalArgumentException(
                     "Target column doesn't have a LitRenderer.");
@@ -377,8 +377,8 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
         ensureVisible();
 
         if (column.getRenderer() instanceof LitRenderer<Y> litRenderer) {
-            LitRendererTestUtil.invokeFunction(row, functionName, jsonArray,
-                    this::getField, litRenderer, this::getRow);
+            LitRendererTestUtil.invokeFunction(litRenderer, this::getField, this::getRow, row, functionName, jsonArray
+            );
         } else {
             throw new IllegalArgumentException(
                     "Target column doesn't have a LitRenderer.");

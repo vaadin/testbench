@@ -48,8 +48,9 @@ public class LitRendererTestUtil {
         }
     }
 
-    private static <Y> ValueProvider<Y, ?> findProperty(LitRenderer<Y> litRenderer, String propertyName,
-                                                        BiFunction<Class<?>, String, Field> fieldGetter) {
+    private static <Y> ValueProvider<Y, ?> findProperty(LitRenderer<Y> litRenderer,
+                                                        BiFunction<Class<?>, String, Field> fieldGetter,
+                                                        String propertyName) {
         var valueProvidersField = fieldGetter.apply(LitRenderer.class, "valueProviders");
         try {
             @SuppressWarnings("unchecked")
@@ -67,22 +68,19 @@ public class LitRendererTestUtil {
     /**
      * Gets the property value for the supplied {@link LitRenderer}.
      *
-     * @param index the index of the item rendered by the LitRenderer
-     * @param propertyName the name of the property of the LitRenderer
+     * @param litRenderer   the LitRenderer with properties to get
+     * @param fieldGetter   the field getter of the ComponentTester
+     * @param itemGetter    the getter for the item rendered by the LitRenderer
+     * @param index         the index of the item rendered by the LitRenderer
+     * @param propertyName  the name of the property of the LitRenderer
      * @param propertyClass the type of the property value
-     * @param fieldGetter the field getter of the ComponentTester
-     * @param litRenderer the LitRenderer with properties to get
-     * @param itemGetter the getter for the item rendered by the LitRenderer
      * @return the property value
-     * @param <Y> the type being renderer by the LitRenderer
-     * @param <V> the type of the property value
+     * @param <Y>           the type being renderer by the LitRenderer
+     * @param <V>           the type of the property value
      */
-    public static <Y, V> V getPropertyValue(int index,
-                                            String propertyName, Class<V> propertyClass,
-                                            BiFunction<Class<?>, String, Field> fieldGetter,
-                                            LitRenderer<Y> litRenderer,
-                                            IntFunction<Y> itemGetter) {
-        var valueProvider = findProperty(litRenderer, propertyName, fieldGetter);
+    public static <Y, V> V getPropertyValue(LitRenderer<Y> litRenderer, BiFunction<Class<?>, String, Field> fieldGetter, IntFunction<Y> itemGetter, int index,
+                                            String propertyName, Class<V> propertyClass) {
+        var valueProvider = findProperty(litRenderer, fieldGetter, propertyName);
         var untypedValue = valueProvider.apply(itemGetter.apply(index));
         if (propertyClass.isInstance(untypedValue)) {
             return propertyClass.cast(untypedValue);
@@ -91,7 +89,6 @@ public class LitRendererTestUtil {
                     .formatted(propertyClass.getCanonicalName(), untypedValue.getClass().getCanonicalName()));
         }
     }
-
 
     /**
      * Gets the function names for the supplied {@link LitRenderer} using the given field getter.
@@ -113,8 +110,9 @@ public class LitRendererTestUtil {
         }
     }
 
-    private static <Y> SerializableBiConsumer<Y, JsonArray> findFunction(LitRenderer<Y> litRenderer, String functionName,
-                                                                         BiFunction<Class<?>, String, Field> fieldGetter) {
+    private static <Y> SerializableBiConsumer<Y, JsonArray> findFunction(LitRenderer<Y> litRenderer,
+                                                                         BiFunction<Class<?>, String, Field> fieldGetter,
+                                                                         String functionName) {
         var clientCallablesField = fieldGetter.apply(LitRenderer.class, "clientCallables");
         try {
             @SuppressWarnings("unchecked")
@@ -132,19 +130,16 @@ public class LitRendererTestUtil {
     /**
      * Invokes the function by name for the supplied {@link LitRenderer} using the given field getter.
      *
-     * @param index the index of the item rendered by the LitRenderer
+     * @param litRenderer  the LitRenderer with properties to get
+     * @param fieldGetter  the field getter of the ComponentTester
+     * @param itemGetter   the getter for the item rendered by the LitRenderer
+     * @param index        the index of the item rendered by the LitRenderer
      * @param functionName the name of the function of the LitRenderer
-     * @param jsonArray additional parameters to pass to the function
-     * @param fieldGetter the field getter of the ComponentTester
-     * @param litRenderer the LitRenderer with properties to get
-     * @param itemGetter the getter for the item rendered by the LitRenderer
-     * @param <Y> the type being renderer by the LitRenderer
+     * @param jsonArray    additional parameters to pass to the function
+     * @param <Y>          the type being renderer by the LitRenderer
      */
-    public static <Y> void invokeFunction(int index, String functionName, JsonArray jsonArray,
-                                           BiFunction<Class<?>, String, Field> fieldGetter,
-                                           LitRenderer<Y> litRenderer,
-                                           IntFunction<Y> itemGetter) {
-        var callable = findFunction(litRenderer, functionName, fieldGetter);
+    public static <Y> void invokeFunction(LitRenderer<Y> litRenderer, BiFunction<Class<?>, String, Field> fieldGetter, IntFunction<Y> itemGetter, int index, String functionName, JsonArray jsonArray) {
+        var callable = findFunction(litRenderer, fieldGetter, functionName);
         callable.accept(itemGetter.apply(index), jsonArray);
     }
 
