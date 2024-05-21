@@ -54,6 +54,8 @@ public class VirtualListTester<T extends VirtualList<Y>, Y> extends ComponentTes
      * @return number of items in the virtual list
      */
     public int size() {
+        ensureVisible();
+
         var dataCommunicator = getComponent().getDataCommunicator();
         return dataCommunicator.isDefinedSize() ?
                 dataCommunicator.getDataProviderSize() :
@@ -73,6 +75,23 @@ public class VirtualListTester<T extends VirtualList<Y>, Y> extends ComponentTes
         return getComponent().getDataCommunicator().getItem(index);
     }
 
+    /**
+     * Get the text that is shown on the client for the item at index.
+     * <p/>
+     * The index is zero-based.
+     * <p/>
+     * For the default renderer ColumnPathRenderer the result is the sent text
+     * for defined object path.
+     * <p/>
+     * For a ComponentRenderer the result is the rendered component as
+     * prettyString.
+     * <p/>
+     * More to be added as we find other renderers that need handling.
+     *
+     * @param index
+     *            the zero-based index of the item
+     * @return item content that is sent to the client
+     */
     public String getItemText(int index) {
         ensureVisible();
 
@@ -102,11 +121,21 @@ public class VirtualListTester<T extends VirtualList<Y>, Y> extends ComponentTes
                 "VirtualListTester is unable to get item text for this VirtualList's renderer.");
     }
 
+    /**
+     * Get an initialized copy of the component for the item.
+     * <p>
+     * Note, this is not the actual component.
+     *
+     * @param index
+     *            the zero-based index of the item
+     * @return initialized component for the target item
+     */
     public Component getItemComponent(int index) {
         ensureVisible();
 
         if (getItemRenderer() instanceof ComponentRenderer<?, Y> componentRenderer) {
-            return componentRenderer.createComponent(getItem(index));
+            var item = getItem(index);
+            return componentRenderer.createComponent(item);
         }
         throw new IllegalArgumentException(
                 "VirtualList doesn't use a ComponentRenderer.");
@@ -126,7 +155,7 @@ public class VirtualListTester<T extends VirtualList<Y>, Y> extends ComponentTes
      * Get property value for item's LitRenderer.
      *
      * @param index
-     *            the zero-based index of the item to get
+     *            the zero-based index of the item
      * @param propertyName
      *            the name of the LitRenderer property
      * @param propertyClass
@@ -155,7 +184,7 @@ public class VirtualListTester<T extends VirtualList<Y>, Y> extends ComponentTes
      * Invoke named function for item's LitRenderer using the supplied JSON arguments.
      *
      * @param index
-     *            the zero-based index of the item to get
+     *            the zero-based index of the item
      * @param functionName
      *            the name of the LitRenderer function to invoke
      * @param jsonArray
@@ -179,7 +208,7 @@ public class VirtualListTester<T extends VirtualList<Y>, Y> extends ComponentTes
      * Invoke named function for item's LitRenderer.
      *
      * @param index
-     *            the zero-based index of the item to get
+     *            the zero-based index of the item
      * @param functionName
      *            the name of the LitRenderer function to invoke
      *

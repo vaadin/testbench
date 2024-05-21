@@ -20,10 +20,6 @@
             <id>vaadin-prereleases</id>
             <url>https://maven.vaadin.com/vaadin-prereleases/</url>
         </repository>
-        <repository>
-            <id/>
-            <url>https://repo.maven.apache.org/maven2/</url>
-        </repository>
     </repositories>
 
     <licenses>
@@ -37,7 +33,6 @@
         <kotlin.version>1.6.21</kotlin.version>
         <dokka.version>1.6.21</dokka.version>
         <junit5.version>5.9.1</junit5.version>
-        <instancio.version>4.5.1</instancio.version>
     </properties>
 
     <profiles>
@@ -300,13 +295,6 @@
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
             <version>${junit5.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.instancio</groupId>
-            <artifactId>instancio-junit</artifactId>
-            <version>${instancio.version}</version>
-            <scope>test</scope>
         </dependency>
 
         <dependency>

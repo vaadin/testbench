@@ -8,9 +8,10 @@
  */
 package com.vaadin.flow.component.virtuallist;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class User {
+public class User implements Serializable {
     private Long key;
     private String firstName;
     private String lastName;
