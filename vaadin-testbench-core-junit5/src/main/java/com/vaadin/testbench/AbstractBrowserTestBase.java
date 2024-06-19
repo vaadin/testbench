@@ -10,6 +10,7 @@ package com.vaadin.testbench;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.List;
@@ -530,7 +531,7 @@ public abstract class AbstractBrowserTestBase
             try {
                 return IOUtils.readLines(stream, StandardCharsets.UTF_8)
                         .stream().collect(Collectors.joining("\n"));
-            } catch (IOException e) {
+            } catch (UncheckedIOException e) {
                 throw new RuntimeException(e);
             }
         }
