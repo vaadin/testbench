@@ -528,12 +528,8 @@ public abstract class AbstractBrowserTestBase
         private static String loadDndScript(String scriptLocation) {
             InputStream stream = AbstractBrowserTestBase.class
                     .getResourceAsStream(scriptLocation);
-            try {
-                return IOUtils.readLines(stream, StandardCharsets.UTF_8)
+            return IOUtils.readLines(stream, StandardCharsets.UTF_8)
                         .stream().collect(Collectors.joining("\n"));
-            } catch (UncheckedIOException e) {
-                throw new RuntimeException(e);
-            }
         }
     }
 
