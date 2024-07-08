@@ -100,6 +100,7 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationTester;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroupTester;
+import com.vaadin.flow.component.routerlink.RouterLinkTester;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.select.SelectTester;
 import com.vaadin.flow.component.sidenav.SideNav;
@@ -124,6 +125,7 @@ import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.UploadTester;
 import com.vaadin.flow.component.virtuallist.VirtualList;
 import com.vaadin.flow.component.virtuallist.VirtualListTester;
+import com.vaadin.flow.router.RouterLink;
 
 import java.math.BigDecimal;
 
@@ -136,6 +138,10 @@ public interface TesterWrappers {
 
     default ButtonTester<Button> test(Button button) {
         return BaseUIUnitTest.internalWrap(ButtonTester.class, button);
+    }
+
+    default ChartTester<Chart> test(Chart chart) {
+        return BaseUIUnitTest.internalWrap(ChartTester.class, chart);
     }
 
     default CheckboxTester<Checkbox> test(Checkbox checkbox) {
@@ -265,6 +271,10 @@ public interface TesterWrappers {
 
     // RadioButton is package protected so no autowrap.
 
+    default RouterLinkTester<RouterLink> test(RouterLink routerLink) {
+        return BaseUIUnitTest.internalWrap(RouterLinkTester.class, routerLink);
+    }
+
     default <V> SelectTester<Select<V>, V> test(Select<V> select) {
         return BaseUIUnitTest.internalWrap(SelectTester.class, select);
     }
@@ -272,6 +282,10 @@ public interface TesterWrappers {
     default <V> SelectTester<Select<V>, V> test(Select select,
             Class<V> valueType) {
         return BaseUIUnitTest.internalWrap(SelectTester.class, select);
+    }
+
+    default SideNavTester<SideNav> test(SideNav sideNav) {
+        return BaseUIUnitTest.internalWrap(SideNavTester.class, sideNav);
     }
 
     default TabsTester<Tabs> test(Tabs tabs) {
@@ -326,7 +340,16 @@ public interface TesterWrappers {
         return BaseUIUnitTest.internalWrap(UploadTester.class, upload);
     }
 
+    default <V> VirtualListTester<VirtualList<V>, V> test(VirtualList<V> virtualList) {
+        return BaseUIUnitTest.internalWrap(VirtualListTester.class, virtualList);
+    }
+
+    default <V> VirtualListTester<VirtualList<V>, V> test(VirtualList virtualList, Class<V> itemType) {
+        return BaseUIUnitTest.internalWrap(VirtualListTester.class, virtualList);
+    }
+
     /* HTML components */
+
     default AnchorTester test(Anchor anchor) {
         return BaseUIUnitTest.internalWrap(AnchorTester.class, anchor);
     }
@@ -426,21 +449,5 @@ public interface TesterWrappers {
     default UnorderedListTester test(UnorderedList unorderedList) {
         return BaseUIUnitTest.internalWrap(UnorderedListTester.class,
                 unorderedList);
-    }
-
-    default ChartTester<Chart> test(Chart chart) {
-        return BaseUIUnitTest.internalWrap(ChartTester.class, chart);
-    }
-
-    default SideNavTester<SideNav> test(SideNav sideNav) {
-        return BaseUIUnitTest.internalWrap(SideNavTester.class, sideNav);
-    }
-
-    default <V> VirtualListTester<VirtualList<V>, V> test(VirtualList<V> virtualList) {
-        return BaseUIUnitTest.internalWrap(VirtualListTester.class, virtualList);
-    }
-
-    default <V> VirtualListTester<VirtualList<V>, V> test(VirtualList virtualList, Class<V> itemType) {
-        return BaseUIUnitTest.internalWrap(VirtualListTester.class, virtualList);
     }
 }
