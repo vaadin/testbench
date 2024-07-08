@@ -1,5 +1,5 @@
-/**
- * Copyright (C) 2000-2022 Vaadin Ltd
+/*
+ * Copyright (C) 2000-2024 Vaadin Ltd
  *
  * This program is available under Vaadin Commercial License and Service Terms.
  *
@@ -39,7 +39,19 @@ class AnchorTesterTest extends UIUnitTest {
         UI.getCurrent().add(anchor);
 
         Assertions.assertEquals("anchor", test(anchor).getHref());
-        Assertions.assertTrue(test(anchor).click() instanceof AnchorView,
+        Assertions.assertInstanceOf(AnchorView.class, test(anchor).click(),
+                "Click anchor did not navigate to AnchorView");
+    }
+
+    @Test
+    void anchorClick_navigatesCorrectlyWithParameters() {
+        Anchor anchor = new Anchor("anchor?name=value", "Home");
+        UI.getCurrent().add(anchor);
+
+        Assertions.assertEquals("anchor?name=value", test(anchor).getHref());
+        Assertions.assertEquals("anchor", test(anchor).getPath());
+        Assertions.assertEquals("name=value", test(anchor).getQueryParameters().getQueryString());
+        Assertions.assertInstanceOf(AnchorView.class, test(anchor).click(),
                 "Click anchor did not navigate to AnchorView");
     }
 
