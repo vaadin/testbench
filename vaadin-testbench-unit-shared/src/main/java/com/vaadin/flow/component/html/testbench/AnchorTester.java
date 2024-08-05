@@ -1,5 +1,5 @@
-/**
- * Copyright (C) 2000-2022 Vaadin Ltd
+/*
+ * Copyright (C) 2000-2024 Vaadin Ltd
  *
  * This program is available under Vaadin Commercial License and Service Terms.
  *
@@ -18,6 +18,7 @@ import java.util.Optional;
 import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.Anchor;
+import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.flow.server.AbstractStreamResource;
 import com.vaadin.flow.server.StreamResource;
@@ -48,6 +49,25 @@ public class AnchorTester extends HtmlContainerTester<Anchor> {
     }
 
     /**
+     * Gets the path for the router-link.
+     * Returns an empty {@link String} if there is no corresponding navigation target.
+     *
+     * @return a {@link String} containing the navigation target path or empty if not present
+     */
+    public String getPath() {
+        return URI.create(getHref()).getPath();
+    }
+
+    /**
+     * Gets the query parameters for the router-link.
+     *
+     * @return a {@link QueryParameters} containing the navigation target's query parameters
+     */
+    public QueryParameters getQueryParameters() {
+        return QueryParameters.fromString(URI.create(getHref()).getQuery());
+    }
+
+    /**
      * Click the anchor for navigation if target is a registered route in the
      * application.
      *
@@ -60,9 +80,8 @@ public class AnchorTester extends HtmlContainerTester<Anchor> {
         final Field href = getField(Anchor.class, "href");
         try {
             if (href.get(getComponent()) instanceof String) {
-                if (RouteConfiguration.forSessionScope()
-                        .getRoute(getComponent().getHref()).isPresent()) {
-                    UI.getCurrent().navigate(getComponent().getHref());
+                if (RouteConfiguration.forSessionScope().getRoute(getPath()).isPresent()) {
+                    UI.getCurrent().navigate(getPath(), getQueryParameters());
                     return UI.getCurrent().getInternals()
                             .getActiveRouterTargetsChain().get(0);
                 } else {
