@@ -69,6 +69,7 @@ public class LocalDriver {
             // #14319
             ChromeOptions options = new ChromeOptions();
             options.addArguments("--test-type ");
+            options.addArguments("--disable-search-engine-choice-screen");
             driver = new ChromeDriver(options);
         } else if (BrowserUtil.isSafari(desiredCapabilities)) {
             driver = new SafariDriver();
