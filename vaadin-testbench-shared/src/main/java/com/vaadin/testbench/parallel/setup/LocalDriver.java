@@ -71,12 +71,14 @@ public class LocalDriver {
             }
             driver = new FirefoxDriver(options);
         } else if (BrowserUtil.isChrome(desiredCapabilities)) {
+            ChromeOptions options = new ChromeOptions();
             // Tells chrome not to show warning
             // "You are using an unsupported command-line flag:
             // --ignore-certifcate-errors".
             // #14319
-            ChromeOptions options = new ChromeOptions();
             options.addArguments("--test-type ");
+            // Disable search engine choice screen
+            options.addArguments("--disable-search-engine-choice-screen");
 
             if (Parameters.isHeadless()) {
                 options.addArguments("--headless=new");
