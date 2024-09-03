@@ -20,4 +20,4 @@ Please report bugs and submit feature requests as [GitHub issues](https://github
 
 ## License
 
-This add-on is distributed under [VCL](https://vaadin.com/commercial-license-and-service-terms).
+This add-on is distributed under [Vaadin Commercial License and Service Terms](https://vaadin.com/commercial-license-and-service-terms).
