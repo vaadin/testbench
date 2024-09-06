@@ -10,7 +10,8 @@
  */
 package com.vaadin.tests.elements;
 
-import org.junit.Assert;
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 
 import com.vaadin.testUI.ElementQueryUI;
@@ -21,7 +22,9 @@ public class ExecuteJavascriptIT extends MultiBrowserTest {
 
     @Override
     protected String getDeploymentPath() {
-        return "/" + ElementQueryUI.class.getSimpleName();
+        // intentionally overriding this method instead of getUIClass() in order
+        // to test different ways of determining the deployment path
+        return "/run/" + ElementQueryUI.class.getCanonicalName();
     }
 
     @Test
@@ -33,6 +36,6 @@ public class ExecuteJavascriptIT extends MultiBrowserTest {
 
         Long offsetTop = (Long) executeScript("return arguments[0].offsetTop",
                 button);
-        Assert.assertEquals(Long.valueOf(0), offsetTop);
+        assertEquals(Long.valueOf(0), offsetTop);
     }
 }
