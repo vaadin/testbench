@@ -10,7 +10,8 @@
  */
 package com.vaadin.tests.elements;
 
-import org.junit.Assert;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
 
 import com.vaadin.testUI.ElementQueryUI;
@@ -20,8 +21,10 @@ import com.vaadin.testbench.TestBenchElement;
 public class ElementScreenCompareIT extends MultiBrowserTest {
 
     @Override
-    protected String getDeploymentPath() {
-        return "/" + ElementQueryUI.class.getSimpleName();
+    protected Class<?> getUIClass() {
+        // intentionally overriding this method instead of getDeploymentPath()
+        // in order to test different ways of determining the deployment path
+        return ElementQueryUI.class;
     }
 
     @Test
@@ -30,10 +33,10 @@ public class ElementScreenCompareIT extends MultiBrowserTest {
         TestBenchElement button4 = (TestBenchElement) findElements(
                 By.className("v-button")).get(4);
 
-        Assert.assertTrue(button4.compareScreen("button4"));
+        assertTrue(button4.compareScreen("button4"));
         TestBenchElement layout = (TestBenchElement) button4
                 .findElement(By.xpath("../.."));
-        Assert.assertTrue(layout.compareScreen("layout"));
+        assertTrue(layout.compareScreen("layout"));
     }
 
 }

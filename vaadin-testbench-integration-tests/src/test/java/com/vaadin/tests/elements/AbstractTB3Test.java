@@ -31,6 +31,7 @@ import org.openqa.selenium.interactions.Keyboard;
 import org.openqa.selenium.interactions.Mouse;
 import org.openqa.selenium.interactions.internal.Coordinates;
 import org.openqa.selenium.internal.Locatable;
+import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.HttpCommandExecutor;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedCondition;
@@ -41,13 +42,15 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import com.vaadin.server.LegacyApplication;
 import com.vaadin.server.UIProvider;
+import com.vaadin.testbench.Parameters;
 import com.vaadin.testbench.TestBenchDriverProxy;
 import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.testbench.parallel.Browser;
 import com.vaadin.testbench.parallel.BrowserUtil;
 import com.vaadin.testbench.parallel.ParallelTest;
-import com.vaadin.testbench.parallel.setup.SetupDriver;
 import com.vaadin.ui.UI;
+
+import io.github.bonigarcia.wdm.WebDriverManager;
 
 /**
  * Base class for TestBench 3+ tests. All TB3+ tests in the project should
@@ -101,16 +104,18 @@ public abstract class AbstractTB3Test extends ParallelTest {
     @Override
     @Before
     public void setup() throws Exception {
-        // override local driver behaviour, so we can easily specify local
-        // PhantomJS
-        // with a system property
-        if (getBooleanProperty("localPhantom")) {
-            WebDriver driver = new SetupDriver()
-                    .setupLocalDriver(Browser.PHANTOMJS);
-            setDriver(driver);
-        } else {
-            super.setup();
+        if (getRunLocallyBrowser() != null) {
+            setupWithWebDriverManager(getRunLocallyBrowser());
+        } else if (Parameters.isLocalWebDriverUsed()) {
+            DesiredCapabilities desiredCapabilities = getDesiredCapabilities();
+            String browserName = desiredCapabilities.getBrowserName()
+                    .toUpperCase();
+            if ("MICROSOFTEDGE".equals(browserName)) {
+                browserName = "EDGE";
+            }
+            setupWithWebDriverManager(Browser.valueOf(browserName));
         }
+        super.setup();
 
         int w = SCREENSHOT_WIDTH;
         int h = SCREENSHOT_HEIGHT;
@@ -126,6 +131,22 @@ public abstract class AbstractTB3Test extends ParallelTest {
             // Opera does not support this...
         }
     }
+
+    private void setupWithWebDriverManager(Browser runLocallyBrowser) {
+        switch (runLocallyBrowser) {
+        case CHROME:
+            WebDriverManager.chromedriver().setup();
+            break;
+        case FIREFOX:
+            WebDriverManager.firefoxdriver().setup();
+            break;
+        case EDGE:
+            WebDriverManager.edgedriver().setup();
+            break;
+        default:
+            break;
+        }
+    };
 
     protected boolean getBooleanProperty(String key) {
         return Boolean.parseBoolean(System.getProperty(key));
@@ -567,12 +588,12 @@ public abstract class AbstractTB3Test extends ParallelTest {
      * @return The path to the given UI class
      */
     private String getDeploymentPath(Class<?> uiClass) {
-        String runPath = "";
+        String runPath = "/run";
         if (UI.class.isAssignableFrom(uiClass)) {
-            return runPath + "/" + uiClass.getSimpleName()
+            return runPath + "/" + uiClass.getCanonicalName()
                     + (isDebug() ? "?debug" : "");
         } else if (LegacyApplication.class.isAssignableFrom(uiClass)) {
-            return runPath + "/" + uiClass.getSimpleName()
+            return runPath + "/" + uiClass.getCanonicalName()
                     + "?restartApplication" + (isDebug() ? "&debug" : "");
         } else {
             throw new IllegalArgumentException(
