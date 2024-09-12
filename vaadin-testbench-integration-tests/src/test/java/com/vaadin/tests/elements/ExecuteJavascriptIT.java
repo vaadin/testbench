@@ -28,7 +28,7 @@ public class ExecuteJavascriptIT extends MultiBrowserTest {
     }
 
     @Test
-    public void elementCompareScreen() throws Exception {
+    public void executeScriptComparison() throws Exception {
         openTestURL();
 
         TestBenchElement button = (TestBenchElement) findElements(
