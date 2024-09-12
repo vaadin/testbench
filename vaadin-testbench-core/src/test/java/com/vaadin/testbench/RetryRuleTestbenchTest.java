@@ -10,11 +10,9 @@
  */
 package com.vaadin.testbench;
 
-import org.junit.Assert;
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
-
-import com.vaadin.testbench.TestBenchTestCase;
-
 
 public class RetryRuleTestbenchTest extends TestBenchTestCase {
 
@@ -23,7 +21,7 @@ public class RetryRuleTestbenchTest extends TestBenchTestCase {
     @Test(expected = AssertionError.class)
     public void defaultExecution_noRetryRule_testcaseRunOnce() {
         count++;
-        Assert.assertEquals(2, count);
+        assertEquals(2, count);
     }
 
 }

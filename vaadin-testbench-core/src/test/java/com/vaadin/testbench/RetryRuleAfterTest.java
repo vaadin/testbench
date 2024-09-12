@@ -10,11 +10,11 @@
  */
 package com.vaadin.testbench;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
-
 
 public class RetryRuleAfterTest {
     private int afterExecutedCount = 0;
@@ -29,7 +29,7 @@ public class RetryRuleAfterTest {
 
     @Test
     public void afterAnnotation_executedSeveralTimes_whenUsingRetryRule() {
-        Assert.assertEquals(2, afterExecutedCount);
+        assertEquals(2, afterExecutedCount);
     }
 
 }
