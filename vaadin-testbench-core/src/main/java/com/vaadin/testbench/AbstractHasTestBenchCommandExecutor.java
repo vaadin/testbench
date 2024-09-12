@@ -26,7 +26,11 @@ public abstract class AbstractHasTestBenchCommandExecutor implements
      * the sought-after object. If this function gets called through an element,
      * it uses the element as its search context. Otherwise the search context
      * is the driver.
-     * 
+     *
+     * @param <T>
+     *            the type of the class
+     * @param clazz
+     *            AbstractElement subclass representing a Vaadin component
      * @return an appropriate {@link ElementQuery} instance
      */
     public <T extends AbstractElement> ElementQuery<T> $(Class<T> clazz) {
@@ -43,7 +47,11 @@ public abstract class AbstractHasTestBenchCommandExecutor implements
      * This search is not recursive and can find the given hierarchy only if it
      * can be found as direct children of given context. The same can be done
      * with {@code $(Foo.class).recursive(false) }
-     * 
+     *
+     * @param <T>
+     *            the type of the class
+     * @param clazz
+     *            AbstractElement subclass representing a Vaadin component
      * @return an appropriate {@link ElementQuery} instance
      */
     public <T extends AbstractElement> ElementQuery<T> $$(Class<T> clazz) {

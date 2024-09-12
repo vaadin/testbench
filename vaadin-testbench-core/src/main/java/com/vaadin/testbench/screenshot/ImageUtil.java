@@ -70,7 +70,8 @@ public class ImageUtil {
      * Get luminance value for the given rgb value.
      * 
      * @param rgb
-     * @return
+     *            rgb value
+     * @return luminance value
      */
     public static double getLuminance(int rgb) {
         int r = ((rgb >> 16) & 0xFF);
@@ -85,9 +86,14 @@ public class ImageUtil {
     }
 
     /**
-     * Check canvas sizes and resize images to same size
-     * 
-     * @return true/false
+     * Check whether canvas sizes match.
+     *
+     * @param image1
+     *            an image
+     * @param image2
+     *            an image
+     * @return {@code true} if the images have the same height and width,
+     *         {@code false} otherwise
      */
     public static boolean imagesSameSize(BufferedImage image1,
             BufferedImage image2) {
@@ -139,8 +145,8 @@ public class ImageUtil {
 
     /**
      * Create a 16x16 sample buffer with space for 4 color bands
-     * 
-     * @return
+     *
+     * @return sample buffer array
      */
     public static final int[] createSampleBuffer() {
         return new int[16 * 16 * 4];

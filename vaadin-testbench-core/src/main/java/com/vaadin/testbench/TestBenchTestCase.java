@@ -192,6 +192,8 @@ public abstract class TestBenchTestCase
      *     assertEquals("Foo", table.getHeaderCell(1).getText());
      * </code>
      *
+     * @param <T>
+     *            The wrapper element type.
      * @param elementType
      *            The type (class) containing the API to decorate with. Must
      *            extend
@@ -241,7 +243,9 @@ public abstract class TestBenchTestCase
      * <p>
      * Use e.g. as
      * <code>waitUntil(ExpectedConditions.presenceOfElementLocated(by), 10);</code>
-     * 
+     *
+     * @param <T>
+     *            The condition return type.
      * @param condition
      *            Models a condition that might reasonably be expected to
      *            eventually evaluate to something that is neither null nor
@@ -269,7 +273,9 @@ public abstract class TestBenchTestCase
      * <p>
      * Use e.g. as
      * <code>waitUntil(ExpectedConditions.presenceOfElementLocated(by));</code>
-     * 
+     *
+     * @param <T>
+     *            The condition return type.
      * @param condition
      *            Models a condition that might reasonably be expected to
      *            eventually evaluate to something that is neither null nor

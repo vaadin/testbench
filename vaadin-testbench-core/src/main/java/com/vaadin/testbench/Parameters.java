@@ -54,6 +54,7 @@ public class Parameters {
      * Turns debugging info on/off
      *
      * @param isDebug
+     *            {@code true} to turn on, {@code false} to turn off
      */
     public static void setDebug(boolean isDebug) {
         Parameters.isDebug = isDebug;
@@ -137,6 +138,7 @@ public class Parameters {
      * cursor.
      *
      * @param isScreenshotComparisonCursorDetection
+     *            {@code true} to turn on, {@code false} to turn off
      *
      */
     public static void setScreenshotComparisonCursorDetection(
@@ -158,6 +160,7 @@ public class Parameters {
      * Sets the directory to search for reference images.
      *
      * @param screenshotReferenceDirectory
+     *            directory path
      */
     public static void setScreenshotReferenceDirectory(
             String screenshotReferenceDirectory) {
@@ -175,6 +178,7 @@ public class Parameters {
      * Sets the directory where error screen shots are stored.
      *
      * @param screenshotErrorDirectory
+     *            directory path
      */
     public static void setScreenshotErrorDirectory(
             String screenshotErrorDirectory) {
@@ -209,10 +213,13 @@ public class Parameters {
     }
 
     /**
-     * Sets whether to capture a screen shot when a test fails or not.
+     * Previously used to set whether to capture a screen shot when a test fails
+     * or not.
      *
      * @param isCaptureScreenshotOnFailure
+     *            {@code true} to turn on, {@code false} to turn off
      * @throws UnsupportedOperationException
+     *             always
      * @deprecated This does nothing, use {@link ScreenshotOnFailureRule}
      */
     @Deprecated
@@ -223,8 +230,10 @@ public class Parameters {
     }
 
     /**
-     * @return whether to capture a screen shot when a test fails or not.
+     * @return whether to capture a screen shot when a test fails or not
+     *         (previously)
      * @throws UnsupportedOperationException
+     *             always
      * @deprecated This does nothing, use {@link ScreenshotOnFailureRule}
      */
     @Deprecated
@@ -239,6 +248,7 @@ public class Parameters {
      * the elements to settle into place.
      *
      * @param maxRetries
+     *            retry amount maximum
      */
     public static void setMaxScreenshotRetries(int maxRetries) {
         maxScreenshotRetries = maxRetries;
@@ -427,7 +437,8 @@ public class Parameters {
      }
 
     /**
-     * Sets the maximum number of times to run the test in case of a random failure
+     * Sets the maximum number of times to run the test in case of a random
+     * failure.
      *
      * @param maxAttempts
      *            maximum attempts the test can be run.

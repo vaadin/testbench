@@ -144,6 +144,7 @@ public class SetupDriver {
      * version)
      *
      * @param desiredCapabilities
+     *            the requested browser capabilities
      */
     public void setDesiredCapabilities(DesiredCapabilities desiredCapabilities) {
         this.desiredCapabilities = desiredCapabilities;

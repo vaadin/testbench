@@ -23,8 +23,8 @@ public interface HasTestBenchCommandExecutor extends HasSearchContext {
     /**
      * Return a reference to the related {@link TestBenchCommandExecutor}
      * instance.
-     * 
-     * @return
+     *
+     * @return executor
      */
     public TestBenchCommandExecutor getCommandExecutor();
 
