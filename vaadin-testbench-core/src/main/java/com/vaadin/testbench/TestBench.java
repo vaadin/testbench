@@ -120,7 +120,7 @@ public class TestBench {
      * dangerous.
      *
      * @param <T>
-     *            the type of the class
+     *            The return type, must extend TestBenchElement
      * @param clazz
      *            Class of wanted Element
      * @param webElement

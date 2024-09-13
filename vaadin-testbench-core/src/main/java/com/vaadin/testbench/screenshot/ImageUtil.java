@@ -67,10 +67,14 @@ public class ImageUtil {
     }
 
     /**
-     * Get luminance value for the given rgb value.
-     * 
+     * Get luminance value for the given RGB value. The RGB value is assumed to
+     * be taking up the low 24 bits of the integer sample, with red shifted by
+     * 16 bits, green by 8 bits, and blue by 0 bits, all added together. This is
+     * the only channel order supported by this method, attempting to use any
+     * other channel orders will result in incorrect luminance values.
+     *
      * @param rgb
-     *            rgb value
+     *            RGB value
      * @return luminance value
      */
     public static double getLuminance(int rgb) {

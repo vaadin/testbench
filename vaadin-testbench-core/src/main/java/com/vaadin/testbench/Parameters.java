@@ -231,7 +231,7 @@ public class Parameters {
 
     /**
      * @return whether to capture a screen shot when a test fails or not
-     *         (previously)
+     *         (previously, see deprecation notice)
      * @throws UnsupportedOperationException
      *             always
      * @deprecated This does nothing, use {@link ScreenshotOnFailureRule}
