@@ -127,8 +127,9 @@ public class ScreenshotComparator {
      *            the full screen image
      * @param isIE8
      *            true if the browser is IE8
-     * @return
+     * @return the cropped image
      * @throws IOException
+     *             when the element is completely outside the screenshot
      */
     public static BufferedImage cropToElement(WebElement element,
             BufferedImage fullScreen, boolean isIE8) throws IOException {

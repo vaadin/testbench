@@ -25,10 +25,16 @@ public class RemoteDriver {
     /**
      * Creates a {@link WebDriver} instance used for running the test remotely.
      *
-     * @since
+     * @since 4.0.0
+     * @param hubURL
+     *            address of the test hub
      * @param capabilities
      *            the type of browser needed
+     * @return created driver
      * @throws Exception
+     *             when browser startup has failed for any reason on every
+     *             initialization attempt (default amount of attempts: 5, final
+     *             attempt throws)
      */
     public WebDriver createDriver(String hubURL,
             DesiredCapabilities capabilities) throws Exception {

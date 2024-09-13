@@ -37,6 +37,7 @@ public class TestBenchDriverProxy extends TestBenchCommandExecutor implements
      * actual driving.
      *
      * @param webDriver
+     *            driver instance
      */
     protected TestBenchDriverProxy(WebDriver webDriver) {
         super(webDriver, new ImageComparison(), new ReferenceNameGenerator());

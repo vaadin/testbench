@@ -126,6 +126,7 @@ public class BrowserUtil {
      * Checks if the given capabilities refer to Internet Explorer 8
      *
      * @param capabilities
+     *            the capabilities to check
      * @return true if the capabilities refer to IE8, false otherwise
      */
     public static boolean isIE8(Capabilities capabilities) {
@@ -229,6 +230,7 @@ public class BrowserUtil {
      * naming and screenshots
      *
      * @param capabilities
+     *            the capabilities to check
      * @return a human readable string describing the capabilities
      */
     public static String getBrowserIdentifier(Capabilities capabilities) {
@@ -256,6 +258,7 @@ public class BrowserUtil {
      * given capabilities. Used mainly for screenshots
      *
      * @param capabilities
+     *            the capabilities to check
      * @return a human readable string describing the platform
      */
     public static String getPlatform(Capabilities capabilities) {

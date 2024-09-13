@@ -67,10 +67,15 @@ public class ImageUtil {
     }
 
     /**
-     * Get luminance value for the given rgb value.
-     * 
+     * Get luminance value for the given RGB value. The RGB value is assumed to
+     * be taking up the low 24 bits of the integer sample, with red shifted by
+     * 16 bits, green by 8 bits, and blue by 0 bits, all added together. This is
+     * the only channel order supported by this method, attempting to use any
+     * other channel orders will result in incorrect luminance values.
+     *
      * @param rgb
-     * @return
+     *            RGB value
+     * @return luminance value
      */
     public static double getLuminance(int rgb) {
         int r = ((rgb >> 16) & 0xFF);
@@ -85,9 +90,14 @@ public class ImageUtil {
     }
 
     /**
-     * Check canvas sizes and resize images to same size
-     * 
-     * @return true/false
+     * Check whether canvas sizes match.
+     *
+     * @param image1
+     *            an image
+     * @param image2
+     *            an image
+     * @return {@code true} if the images have the same height and width,
+     *         {@code false} otherwise
      */
     public static boolean imagesSameSize(BufferedImage image1,
             BufferedImage image2) {
@@ -139,8 +149,8 @@ public class ImageUtil {
 
     /**
      * Create a 16x16 sample buffer with space for 4 color bands
-     * 
-     * @return
+     *
+     * @return sample buffer array
      */
     public static final int[] createSampleBuffer() {
         return new int[16 * 16 * 4];

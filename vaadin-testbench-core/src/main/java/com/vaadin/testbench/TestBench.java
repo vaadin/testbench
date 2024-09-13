@@ -119,6 +119,8 @@ public class TestBench {
      * TestBenchCommandExecutor. This feature is advanced and potentially
      * dangerous.
      *
+     * @param <T>
+     *            The return type, must extend TestBenchElement
      * @param clazz
      *            Class of wanted Element
      * @param webElement

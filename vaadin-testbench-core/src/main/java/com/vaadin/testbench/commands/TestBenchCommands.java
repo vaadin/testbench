@@ -118,17 +118,18 @@ public interface TestBenchCommands
 
     /**
      * Whether or not the elements should be scrolled into the visible area of
-     * the browser window before interacting with them
-     * 
+     * the browser window before interacting with them.
+     *
      * @return true if elements should be scrolled, otherwise false
      */
     boolean isAutoScrollIntoView();
 
     /**
      * Sets if the elements should be scrolled into the visible area of the
-     * browser window before interacting with them
-     * 
+     * browser window before interacting with them.
+     *
      * @param autoScrollIntoView
+     *            {@code true} to turn on, {@code false} to turn off
      */
     void setAutoScrollIntoView(boolean autoScrollIntoView);
 
