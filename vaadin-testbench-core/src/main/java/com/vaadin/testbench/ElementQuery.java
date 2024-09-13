@@ -64,6 +64,10 @@ import com.vaadin.testbench.elementsbase.ServerClass;
  * To find your own component, extend AbstractElement class and use ServerClass
  * annotation to define it's full class name e.g. com.vaadin.example.MyWidget
  * </p>
+ *
+ * @param <T>
+ *            the type of the AbstractElement subclass representing a Vaadin
+ *            component
  */
 public class ElementQuery<T extends AbstractElement> {
 
@@ -106,7 +110,11 @@ public class ElementQuery<T extends AbstractElement> {
      * the sought-after object. If this function gets called through an element,
      * it uses the element as its search context. Otherwise the search context
      * is the driver.
-     * 
+     *
+     * @param <E>
+     *            the type of the element class
+     * @param cls
+     *            AbstractElement subclass
      * @return an appropriate {@link ElementQuery} instance
      */
     public <E extends AbstractElement> ElementQuery<E> $(Class<E> cls) {
@@ -126,7 +134,11 @@ public class ElementQuery<T extends AbstractElement> {
      * This search is not recursive and can find the given hierarchy only if it
      * can be found as direct children of given context. The same can be done
      * with {@code $(Foo.class).recursive(false) }
-     * 
+     *
+     * @param <E>
+     *            the type of the element class
+     * @param cls
+     *            AbstractElement subclass
      * @return an appropriate {@link ElementQuery} instance
      */
     public <E extends AbstractElement> ElementQuery<E> $$(Class<E> cls) {
@@ -140,7 +152,9 @@ public class ElementQuery<T extends AbstractElement> {
     /**
      * Adds another query to the search hierarchy of this ElementQuery. This
      * search is recursive.
-     * 
+     *
+     * @param <E>
+     *            the type of the element class
      * @param query
      *            ElementQuery instance to be used as part of search hierarchy.
      * @return a reference to self
@@ -153,7 +167,9 @@ public class ElementQuery<T extends AbstractElement> {
     /**
      * Adds another query to the search hierarchy of this ElementQuery. This
      * search is non-recursive. Only direct children are found.
-     * 
+     *
+     * @param <E>
+     *            the type of the element class
      * @param query
      *            ElementQuery instance to be used as part of search hierarchy.
      * @return a reference to self
@@ -279,6 +295,8 @@ public class ElementQuery<T extends AbstractElement> {
     /**
      * Return the {@link SearchContext} previously set with the {@link #in}
      * call.
+     *
+     * @return context
      */
     protected SearchContext getContext() {
         return searchContext;
@@ -335,8 +353,8 @@ public class ElementQuery<T extends AbstractElement> {
     /**
      * Checks if this ElementQuery describes existing elements. Same as
      * .all().isEmpty().
-     * 
-     * @return true if elements exists. false if not
+     *
+     * @return true if elements exists, false if not
      */
     public boolean exists() {
         try {

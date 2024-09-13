@@ -30,7 +30,6 @@ public class ImageFileUtil {
      * Returns the directory used for screenshot references.
      * 
      * @return The screenshot reference directory, ending in a slash.
-     * @return
      */
     public static String getScreenshotReferenceDirectory() {
         return impl.getScreenshotReferenceDirectory();
@@ -58,18 +57,39 @@ public class ImageFileUtil {
      * Reads the given reference image into a BufferedImage
      * 
      * @param referenceImageFileName
-     * @return
+     *            image pathname
+     * @return buffered image
      * @throws IOException
+     *             if an error occurs during reading the image
      */
     public static BufferedImage readReferenceImage(String referenceImageFileName)
             throws IOException {
         return impl.readReferenceImage(referenceImageFileName);
     }
 
+    /**
+     * Returns an error screenshot {@link File} instance with the given file
+     * name within the error screenshot directory. The file doesn't necessarily
+     * exist yet in the file system after this method has been called.
+     *
+     * @param errorImageFileName
+     *            name of the error screenshot
+     * @return error screenshot file
+     */
     public static File getErrorScreenshotFile(String errorImageFileName) {
         return impl.getErrorScreenshotFile(errorImageFileName);
     }
 
+    /**
+     * Returns a reference screenshot {@link File} instance with the given file
+     * name within the reference screenshot directory. The file doesn't
+     * necessarily exist yet in the file system after this method has been
+     * called.
+     *
+     * @param referenceImageFileName
+     *            name of the reference screenshot
+     * @return reference screenshot file
+     */
     public static File getReferenceScreenshotFile(String referenceImageFileName) {
         return impl.getReferenceScreenshotFile(referenceImageFileName);
     }
@@ -80,7 +100,9 @@ public class ImageFileUtil {
      * {@link #getReferenceScreenshotFile(String)}.
      * 
      * @param referenceImageFileName
+     *            name of the reference screenshot
      * @param capabilities
+     *            browser capabilities
      * @return file names of reference images
      */
     public static List<String> getReferenceImageFileNames(
@@ -94,7 +116,6 @@ public class ImageFileUtil {
          * Returns the directory used for screenshot references.
          * 
          * @return The screenshot reference directory, ending in a slash.
-         * @return
          */
         public String getScreenshotReferenceDirectory() {
             return Parameters.getScreenshotReferenceDirectory();
@@ -145,8 +166,10 @@ public class ImageFileUtil {
          * Reads the given reference image into a BufferedImage
          * 
          * @param referenceImageFileName
-         * @return
+         *            file name
+         * @return image instance
          * @throws IOException
+         *             if reading the file failed
          */
         public BufferedImage readReferenceImage(String referenceImageFileName)
                 throws IOException {
@@ -154,10 +177,30 @@ public class ImageFileUtil {
                     .read(getReferenceScreenshotFile(referenceImageFileName));
         }
 
+        /**
+         * Returns an error screenshot {@link File} instance with the given file
+         * name within the error screenshot directory. The file doesn't
+         * necessarily exist yet in the file system after this method has been
+         * called.
+         *
+         * @param errorImageFileName
+         *            name of the error screenshot
+         * @return error screenshot file
+         */
         public File getErrorScreenshotFile(String errorImageFileName) {
             return new File(getScreenshotErrorDirectory(), errorImageFileName);
         }
 
+        /**
+         * Returns a reference screenshot {@link File} instance with the given
+         * file name within the reference screenshot directory. The file doesn't
+         * necessarily exist yet in the file system after this method has been
+         * called.
+         *
+         * @param referenceImageFileName
+         *            name of the reference screenshot
+         * @return reference screenshot file
+         */
         public File getReferenceScreenshotFile(String referenceImageFileName) {
             return new File(getScreenshotReferenceDirectory(),
                     referenceImageFileName);
@@ -169,7 +212,9 @@ public class ImageFileUtil {
          * {@link #getReferenceScreenshotFile(String)}.
          * 
          * @param referenceImageFileName
+         *            name of the reference screenshot
          * @param capabilities
+         *            browser capabilities
          * @return file names of reference images
          */
         public List<String> getReferenceImageFileNames(
@@ -202,17 +247,21 @@ public class ImageFileUtil {
         }
 
         /**
-         * Checks for reference screenshots for older versions of Google Chrome
-         * and use that instead of the generated file name if so.
-         * 
+         * Checks for reference screenshots for older versions of the given
+         * browser and uses that instead of the generated file name if so.
+         *
          * @param browserName
-         *            the browser identifier (name + version, e.g. "Chrome_17")
+         *            the browser name, e.g. chrome
          * @param browserVersion
+         *            the browser version number, e.g. 128
          * @param fileName
-         *            the file name generated from the test name and browser
-         *            name + version.
+         *            the file name generated from the image reference (e.g.
+         *            test name or some other unique identifier), platform, and
+         *            browser name + version, e.g.
+         *            button4_windows_chrome_128.png
          * @return the generated file name or the file name of a reference image
-         *         that actually exists (for an older version of Chrome).
+         *         that actually exists (for an older version of the same
+         *         browser)
          */
         String findOldReferenceScreenshot(String browserName,
                 int browserVersion, String fileName) {

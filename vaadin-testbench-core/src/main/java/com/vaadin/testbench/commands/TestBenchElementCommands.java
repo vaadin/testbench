@@ -67,6 +67,8 @@ public interface TestBenchElementCommands {
      *     assertEquals("Foo", table.getHeaderCell(1).getText());
      * </code>
      *
+     * @param <T>
+     *            The wrapper element type.
      * @param elementType
      *            The type (class) containing the API to decorate with. Must
      *            extend
