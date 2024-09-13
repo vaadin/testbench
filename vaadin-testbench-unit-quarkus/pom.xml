@@ -164,6 +164,20 @@
             <version>${junit5.version}</version>
         </dependency>
 
+        <!-- Pin JNA version to prevent clashes between Vaadin License Checker and Quarkus BOM -->
+        <dependency>
+            <groupId>net.java.dev.jna</groupId>
+            <artifactId>jna</artifactId>
+            <version>5.14.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.java.dev.jna</groupId>
+            <artifactId>jna-platform</artifactId>
+            <version>5.14.0</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
 </project>
