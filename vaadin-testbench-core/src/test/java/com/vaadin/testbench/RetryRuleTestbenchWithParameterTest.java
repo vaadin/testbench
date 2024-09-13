@@ -10,10 +10,10 @@
  */
 package com.vaadin.testbench;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
+import org.junit.After;
+import org.junit.Test;
 
 public class RetryRuleTestbenchWithParameterTest extends TestBenchTestCase {
 
@@ -25,7 +25,7 @@ public class RetryRuleTestbenchWithParameterTest extends TestBenchTestCase {
 
     @Test
     public void defaultExecution_ParameterSpecified_testPasses() {
-        Assert.assertEquals(2, maxAttempts.getMaxAttempts());
+        assertEquals(2, maxAttempts.getMaxAttempts());
     }
 
     @After

@@ -10,7 +10,8 @@
  */
 package com.vaadin.testbench.parallel;
 
-import org.junit.Assert;
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 
 import com.vaadin.testbench.annotations.RunOnHub;
@@ -31,11 +32,11 @@ public class ParallelHubTest extends ParallelTest {
         try {
             System.clearProperty(HUB_HOSTNAME_PROPERTY);
 
-            Assert.assertEquals("hub-in-annotation", getHubHostname());
+            assertEquals("hub-in-annotation", getHubHostname());
             System.setProperty(HUB_HOSTNAME_PROPERTY, "hub-system-property");
-            Assert.assertEquals("hub-system-property", getHubHostname());
+            assertEquals("hub-system-property", getHubHostname());
             System.clearProperty(HUB_HOSTNAME_PROPERTY);
-            Assert.assertEquals("hub-in-annotation", getHubHostname());
+            assertEquals("hub-in-annotation", getHubHostname());
         } finally {
             if (oldProperty != null) {
                 System.setProperty(HUB_HOSTNAME_PROPERTY, oldProperty);

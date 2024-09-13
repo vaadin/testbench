@@ -10,7 +10,8 @@
  */
 package com.vaadin.testbench.parallel;
 
-import org.junit.Assert;
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 
 import com.vaadin.testbench.annotations.RunLocally;
@@ -25,27 +26,27 @@ public class ParallelRunLocallyTest extends ParallelTest {
 
     @Test
     public void runLocallyFromAnnotationOrSystemProperty() {
-        Assert.assertEquals(Browser.CHROME, getRunLocallyBrowser());
-        Assert.assertEquals("34", getRunLocallyBrowserVersion());
+        assertEquals(Browser.CHROME, getRunLocallyBrowser());
+        assertEquals("34", getRunLocallyBrowserVersion());
 
         System.setProperty("com.vaadin.testbench.Parameters.runLocally",
                 "phantomjs");
-        Assert.assertEquals(Browser.PHANTOMJS, getRunLocallyBrowser());
-        Assert.assertEquals("", getRunLocallyBrowserVersion());
+        assertEquals(Browser.PHANTOMJS, getRunLocallyBrowser());
+        assertEquals("", getRunLocallyBrowserVersion());
 
         System.setProperty("com.vaadin.testbench.Parameters.runLocally",
                 "ie11");
-        Assert.assertEquals(Browser.IE11, getRunLocallyBrowser());
-        Assert.assertEquals("", getRunLocallyBrowserVersion());
+        assertEquals(Browser.IE11, getRunLocallyBrowser());
+        assertEquals("", getRunLocallyBrowserVersion());
 
         System.setProperty("com.vaadin.testbench.Parameters.runLocally",
                 "edge-14");
-        Assert.assertEquals(Browser.EDGE, getRunLocallyBrowser());
-        Assert.assertEquals("14", getRunLocallyBrowserVersion());
+        assertEquals(Browser.EDGE, getRunLocallyBrowser());
+        assertEquals("14", getRunLocallyBrowserVersion());
 
         System.clearProperty("com.vaadin.testbench.Parameters.runLocally");
-        Assert.assertEquals(Browser.CHROME, getRunLocallyBrowser());
-        Assert.assertEquals("34", getRunLocallyBrowserVersion());
+        assertEquals(Browser.CHROME, getRunLocallyBrowser());
+        assertEquals("34", getRunLocallyBrowserVersion());
     }
 
 }

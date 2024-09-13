@@ -14,14 +14,15 @@ import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebElement;
@@ -103,43 +104,37 @@ public class TestBenchElementTest {
         HashSet<WebElement> elements = new HashSet<WebElement>();
         elements.add(webElement);
         elements.add(element);
-        Assert.assertEquals(1, elements.size());
+        assertEquals(1, elements.size());
 
     }
 
     @Test
     public void hasClassName() throws Exception {
-        Assert.assertFalse(createElementWithClass("foo").hasClassName(""));
-        Assert.assertTrue(createElementWithClass("foo").hasClassName("foo"));
-        Assert.assertFalse(createElementWithClass("foo").hasClassName("fo"));
-        Assert.assertFalse(createElementWithClass("v-foo").hasClassName("foo"));
+        assertFalse(createElementWithClass("foo").hasClassName(""));
+        assertTrue(createElementWithClass("foo").hasClassName("foo"));
+        assertFalse(createElementWithClass("foo").hasClassName("fo"));
+        assertFalse(createElementWithClass("v-foo").hasClassName("foo"));
 
-        Assert.assertTrue(
-                createElementWithClass("foo bar baz").hasClassName("foo"));
-        Assert.assertTrue(
-                createElementWithClass("foo bar baz").hasClassName("bar"));
-        Assert.assertTrue(
-                createElementWithClass("foo bar baz").hasClassName("baz"));
-        Assert.assertFalse(
-                createElementWithClass("foo bar baz").hasClassName("ba"));
+        assertTrue(createElementWithClass("foo bar baz").hasClassName("foo"));
+        assertTrue(createElementWithClass("foo bar baz").hasClassName("bar"));
+        assertTrue(createElementWithClass("foo bar baz").hasClassName("baz"));
+        assertFalse(createElementWithClass("foo bar baz").hasClassName("ba"));
     }
 
     @Test
     public void getClassName() throws Exception {
-        Assert.assertEquals(set("foo"),
-                createElementWithClass("foo").getClassNames());
-        Assert.assertEquals(set("foo", "bar"),
+        assertEquals(set("foo"), createElementWithClass("foo").getClassNames());
+        assertEquals(set("foo", "bar"),
                 createElementWithClass("foo bar").getClassNames());
-        Assert.assertEquals(set("foo", "bar"),
+        assertEquals(set("foo", "bar"),
                 createElementWithClass("foo bar").getClassNames());
-        Assert.assertEquals(set("foo", "bar"),
+        assertEquals(set("foo", "bar"),
                 createElementWithClass("foo bar foo").getClassNames());
-        Assert.assertEquals(set("foo"),
+        assertEquals(set("foo"),
                 createElementWithClass("foo ").getClassNames());
-        Assert.assertEquals(set("foo"),
+        assertEquals(set("foo"),
                 createElementWithClass(" foo").getClassNames());
-        Assert.assertEquals(set(),
-                createElementWithClass("").getClassNames());
+        assertEquals(set(), createElementWithClass("").getClassNames());
 
     }
 
@@ -157,6 +152,6 @@ public class TestBenchElementTest {
 
     @Test
     public void wrapNullElement() {
-        Assert.assertNull(TestBenchElement.wrapElement(null, null));
+        assertNull(TestBenchElement.wrapElement(null, null));
     }
 }
