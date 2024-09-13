@@ -31,7 +31,7 @@
 
     <properties>
         <!-- Using the same version as in vaadin-quarkus extension -->
-        <quarkus.version>3.0.1.Final</quarkus.version>
+        <quarkus.version>3.2.12.Final</quarkus.version>
         <junit5.version>5.9.1</junit5.version>
     </properties>
 
@@ -162,6 +162,20 @@
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
             <version>${junit5.version}</version>
+        </dependency>
+
+        <!-- Pin JNA version to prevent clashes between Vaadin License Checker and Quarkus BOM -->
+        <dependency>
+            <groupId>net.java.dev.jna</groupId>
+            <artifactId>jna</artifactId>
+            <version>5.14.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.java.dev.jna</groupId>
+            <artifactId>jna-platform</artifactId>
+            <version>5.14.0</version>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>
