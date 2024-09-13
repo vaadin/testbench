@@ -31,7 +31,7 @@
 
     <properties>
         <!-- Using the same version as in vaadin-quarkus extension -->
-        <quarkus.version>3.0.1.Final</quarkus.version>
+        <quarkus.version>3.2.12.Final</quarkus.version>
         <junit5.version>5.9.1</junit5.version>
     </properties>
 
