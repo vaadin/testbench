@@ -24,6 +24,11 @@
             <name>Vaadin Pre-releases</name>
             <url>https://maven.vaadin.com/vaadin-prereleases</url>
         </repository>
+        <repository>
+            <id>maven_central</id>
+            <name>Maven Central</name>
+            <url>https://repo.maven.apache.org/maven2/</url>
+        </repository>
     </repositories>
     <pluginRepositories>
         <pluginRepository>
@@ -88,7 +93,7 @@
         <dependency>
             <groupId>io.github.bonigarcia</groupId>
             <artifactId>selenium-jupiter</artifactId>
-            <version>4.3.1</version>
+            <version>5.0.1</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
