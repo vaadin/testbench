@@ -251,7 +251,7 @@
                             <systemPropertyVariables>
                                 <browsers.include>chrome</browsers.include>
                             </systemPropertyVariables>
-                            <forkCount>2</forkCount>
+                            <forkCount>5</forkCount>
                             <reuseForks>false</reuseForks>
                         </configuration>
                     </plugin>
