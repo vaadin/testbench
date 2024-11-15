@@ -16,8 +16,8 @@
 
     <url>http://maven.apache.org</url>
     <properties>
-        <jetty.version>9.4.11.v20180605</jetty.version>
-        <flow.version>2.7.23</flow.version>
+        <jetty.version>9.4.56.v20240826</jetty.version>
+        <flow.version>2.11.2</flow.version>
 
         <!-- Frontend -->
         <node.version>v8.1.2</node.version>
@@ -73,7 +73,7 @@
         <dependency>
             <groupId>org.webjars.bowergithub.polymer</groupId>
             <artifactId>polymer</artifactId>
-            <version>2.5.0</version>
+            <version>2.7.0</version>
         </dependency>
         <!--PIN webcomponentsjs as workaround for https://github.com/webjars/webjars/issues/1763-->
         <dependency>
@@ -105,9 +105,6 @@
                 <groupId>com.vaadin</groupId>
                 <artifactId>flow-maven-plugin</artifactId>
                 <version>${flow.version}</version>
-                <configuration>
-                    <bowerMode>true</bowerMode>
-                </configuration>
                 <executions>
                     <execution>
                         <goals>
@@ -116,6 +113,14 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.3.2</version>
+                <configuration>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
