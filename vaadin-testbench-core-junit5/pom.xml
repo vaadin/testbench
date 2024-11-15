@@ -30,7 +30,7 @@
     </repositories>
 
     <properties>
-        <junit5.version>5.9.1</junit5.version>
+        <junit5.version>5.11.3</junit5.version>
         <mockito.version>4.8.1</mockito.version>
     </properties>
 

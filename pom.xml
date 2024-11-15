@@ -41,8 +41,8 @@
         <vaadin.version>24.4-SNAPSHOT</vaadin.version>
         <flow.version>${vaadin.version}</flow.version>
         <slf4j.version>2.0.7</slf4j.version>
-        <failsafe.version>3.1.0</failsafe.version>
-        <surefire.version>3.1.0</surefire.version>
+        <failsafe.version>3.5.2</failsafe.version>
+        <surefire.version>3.5.2</surefire.version>
         <javassist.version>3.30.2-GA</javassist.version>
         <currentYear>2023</currentYear>
     </properties>

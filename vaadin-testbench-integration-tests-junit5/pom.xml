@@ -88,7 +88,7 @@
         <dependency>
             <groupId>io.github.bonigarcia</groupId>
             <artifactId>selenium-jupiter</artifactId>
-            <version>4.3.1</version>
+            <version>5.1.1</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -251,6 +251,8 @@
                             <systemPropertyVariables>
                                 <browsers.include>chrome</browsers.include>
                             </systemPropertyVariables>
+                            <forkCount>2</forkCount>
+                            <reuseForks>false</reuseForks>
                         </configuration>
                     </plugin>
                 </plugins>
