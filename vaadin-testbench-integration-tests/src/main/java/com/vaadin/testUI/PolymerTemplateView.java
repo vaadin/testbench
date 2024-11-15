@@ -1,7 +1,6 @@
 package com.vaadin.testUI;
 
 import com.vaadin.flow.component.Tag;
-import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.NativeButton;
 import com.vaadin.flow.component.polymertemplate.PolymerTemplate;
@@ -10,7 +9,6 @@ import com.vaadin.flow.templatemodel.TemplateModel;
 
 @Route("PolymerTemplateView")
 @Tag("polymer-template-view")
-@HtmlImport("polymer-template-view.html")
 public class PolymerTemplateView extends PolymerTemplate<TemplateModel> {
 
     public PolymerTemplateView() {
