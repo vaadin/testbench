@@ -29,3 +29,11 @@ local.properties
 /build-tools/lib/
 /build-tools/node/
 /build-tools/node_modules/
+
+/node_modules
+/package.json
+/package-lock.json
+/tsconfig.json
+/types.d.ts
+/webpack.config.js
+/webpack.generated.js
