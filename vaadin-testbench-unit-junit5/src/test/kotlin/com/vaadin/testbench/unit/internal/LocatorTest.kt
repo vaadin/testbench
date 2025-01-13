@@ -39,12 +39,18 @@ internal fun DynaNodeGroup.locatorTest2() {
         _expectNoDialogs() // should succeed on no dialogs
         val dlg = Dialog()
         dlg.open()
-        expectThrows(AssertionError::class,
-            """Too many visible Dialogs (1) in MockedUI[] matching Dialog and count=0..0: [Dialog[opened='true', virtualChildNodeIds='[]']]. Component tree:
-└── MockedUI[]
-    └── Dialog[opened='true', virtualChildNodeIds='[]']
-""") {
+        val exception = expectThrows(AssertionError::class,
+            "Too many visible Dialogs (1) in MockedUI[] matching Dialog and count=0..0:") {
             _expectNoDialogs()
+        }
+        expect(true) {
+            val msg = exception.message!!
+            println(msg)
+            msg.matches(""".*Too many visible Dialogs \(1\) in MockedUI\[] matching Dialog and count=0\.\.0: \[Dialog\[.*]]\. Component tree:
+└── MockedUI\[]
+\s+└── Dialog\[.*].*
+""".toRegex(RegexOption.MULTILINE)
+            )
         }
         dlg.close()
         _expectNoDialogs()

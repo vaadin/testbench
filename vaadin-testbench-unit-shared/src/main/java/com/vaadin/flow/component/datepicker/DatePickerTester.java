@@ -47,17 +47,30 @@ public class DatePickerTester<T extends DatePicker> extends ComponentTester<T> {
     public void setValue(LocalDate date) {
         ensureComponentIsUsable();
 
-        final Method isInvalid = getMethod("isInvalid", LocalDate.class);
         try {
-            if ((boolean) isInvalid.invoke(getComponent(), date)) {
+            if (isInvalid(date)) {
                 throw new IllegalArgumentException(
                         "Given date is not a valid value");
             }
-
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
 
         getComponent().setValue(date);
+    }
+
+    private boolean isInvalid(LocalDate date)
+            throws InvocationTargetException, IllegalAccessException {
+        try {
+            // Vaadin 24.4
+            final Method isInvalid = getMethod("isInvalid", LocalDate.class);
+            return (boolean) isInvalid.invoke(getComponent(), date);
+        } catch (RuntimeException ex) {
+            if (!(ex.getCause() instanceof NoSuchMethodException)) {
+                throw ex;
+            }
+        }
+        // Vaadin 24.5+
+        return getComponent().getDefaultValidator().apply(date, null).isError();
     }
 }

@@ -10,6 +10,7 @@ package com.vaadin.flow.component.timepicker;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.time.LocalDate;
 import java.time.LocalTime;
 
 import com.vaadin.testbench.unit.ComponentTester;
@@ -46,9 +47,8 @@ public class TimePickerTester<T extends TimePicker> extends ComponentTester<T> {
     public void setValue(LocalTime time) {
         ensureComponentIsUsable();
 
-        final Method isInvalid = getMethod("isInvalid", LocalTime.class);
         try {
-            if ((boolean) isInvalid.invoke(getComponent(), time)) {
+            if (isInvalid(time)) {
                 throw new IllegalArgumentException(
                         "Given time is not a valid value");
             }
@@ -57,6 +57,21 @@ public class TimePickerTester<T extends TimePicker> extends ComponentTester<T> {
         }
 
         getComponent().setValue(time);
+    }
+
+    private boolean isInvalid(LocalTime date)
+            throws InvocationTargetException, IllegalAccessException {
+        try {
+            // Vaadin 24.4
+            final Method isInvalid = getMethod("isInvalid", LocalDate.class);
+            return (boolean) isInvalid.invoke(getComponent(), date);
+        } catch (RuntimeException ex) {
+            if (!(ex.getCause() instanceof NoSuchMethodException)) {
+                throw ex;
+            }
+        }
+        // Vaadin 24.5+
+        return getComponent().getDefaultValidator().apply(date, null).isError();
     }
 
 }
