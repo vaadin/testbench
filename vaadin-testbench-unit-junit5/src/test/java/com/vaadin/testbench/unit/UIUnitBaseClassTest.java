@@ -28,6 +28,7 @@ import com.vaadin.flow.server.VaadinRequest;
 import com.vaadin.flow.server.VaadinResponse;
 import com.vaadin.flow.server.VaadinService;
 import com.vaadin.flow.server.VaadinSession;
+import com.vaadin.flow.server.auth.MenuAccessControl;
 
 class UIUnitBaseClassTest {
 
@@ -98,6 +99,19 @@ class UIUnitBaseClassTest {
                             + TestCustomInstantiatorFactory.class
                                     .getSimpleName()
                             + " but was " + service.getClass().getSimpleName());
+        }
+    }
+
+    @Nested
+    class MenuAccessControlTest extends UIUnitTest {
+
+        @Test
+        void menuAccessControl_instanceAvailable() {
+            MenuAccessControl menuAccessControl = VaadinService.getCurrent()
+                    .getInstantiator().getMenuAccessControl();
+            Assertions.assertNotNull(menuAccessControl,
+                    "Expecting MenuAccessControl to be available");
+
         }
     }
 

@@ -13,6 +13,7 @@ import java.security.Principal;
 import com.testapp.security.LoginView;
 import com.testapp.security.ProtectedView;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -20,6 +21,8 @@ import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.ContextConfiguration;
 
 import com.vaadin.flow.server.VaadinRequest;
+import com.vaadin.flow.server.VaadinService;
+import com.vaadin.flow.server.auth.MenuAccessControl;
 
 @ContextConfiguration(classes = SecurityTestConfig.NavigationAccessControlConfig.class)
 @ViewPackages(packages = "com.testapp.security")
@@ -99,6 +102,23 @@ class SpringUnitSecurityTest extends SpringUIUnitTest {
     void withAnonymousUser_redirectToLogin() {
         Assertions.assertInstanceOf(LoginView.class, getCurrentView(),
                 "Anonymous user should be redirect to login view");
+    }
+
+    @Test
+    void extendingBaseClass_runTest_menuAccessControlAvailable() {
+        Class<? extends MenuAccessControl> menuAccessControlClass = SecurityTestConfig
+                .springMenuAccessControlClass();
+        Assumptions.assumeTrue(menuAccessControlClass != null,
+                "SpringMenuAccessControl class not available");
+        MenuAccessControl menuAccessControl = VaadinService.getCurrent()
+                .getInstantiator().getMenuAccessControl();
+        Assertions.assertNotNull(menuAccessControl,
+                "Expecting MenuAccessControl to be available");
+        Assertions.assertInstanceOf(menuAccessControlClass, menuAccessControl,
+                "Expecting menu access control to be "
+                        + menuAccessControlClass.getName() + " but was "
+                        + menuAccessControl.getClass().getName());
+
     }
 
 }

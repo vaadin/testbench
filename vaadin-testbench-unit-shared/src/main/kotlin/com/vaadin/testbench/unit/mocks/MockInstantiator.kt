@@ -11,6 +11,7 @@ package com.vaadin.testbench.unit.mocks
 
 import com.vaadin.flow.di.Instantiator
 import com.vaadin.flow.i18n.I18NProvider
+import com.vaadin.flow.server.auth.MenuAccessControl
 import net.bytebuddy.ByteBuddy
 import net.bytebuddy.implementation.MethodCall
 import net.bytebuddy.matcher.ElementMatchers
@@ -30,6 +31,8 @@ open class MockInstantiator(val delegate: Instantiator) : Instantiator by delega
          */
         else -> delegate.getOrCreate(type)
     }
+
+    override fun getMenuAccessControl(): MenuAccessControl = delegate.menuAccessControl
 
     override fun getI18NProvider(): I18NProvider? = delegate.i18NProvider
 
