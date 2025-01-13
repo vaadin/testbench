@@ -38,7 +38,7 @@
         <maven.compiler.target>17</maven.compiler.target>
         <spring.version>6.0.9</spring.version>
         <spring.security.version>6.1.0</spring.security.version>
-        <vaadin.version>24.4-SNAPSHOT</vaadin.version>
+        <vaadin.version>24.5-SNAPSHOT</vaadin.version>
         <flow.version>${vaadin.version}</flow.version>
         <slf4j.version>2.0.7</slf4j.version>
         <failsafe.version>3.5.2</failsafe.version>
