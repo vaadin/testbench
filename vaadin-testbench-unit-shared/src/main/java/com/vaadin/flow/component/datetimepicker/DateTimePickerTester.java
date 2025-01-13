@@ -10,6 +10,7 @@ package com.vaadin.flow.component.datetimepicker;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import com.vaadin.testbench.unit.ComponentTester;
@@ -47,9 +48,8 @@ public class DateTimePickerTester<T extends DateTimePicker>
     public void setValue(LocalDateTime dateTime) {
         ensureComponentIsUsable();
 
-        final Method isInvalid = getMethod("isInvalid", LocalDateTime.class);
         try {
-            if ((boolean) isInvalid.invoke(getComponent(), dateTime)) {
+            if (isInvalid(dateTime)) {
                 throw new IllegalArgumentException(
                         "Given date is not a valid value");
             }
@@ -58,6 +58,21 @@ public class DateTimePickerTester<T extends DateTimePicker>
         }
 
         getComponent().setValue(dateTime);
+    }
+
+    private boolean isInvalid(LocalDateTime date)
+            throws InvocationTargetException, IllegalAccessException {
+        try {
+            // Vaadin 24.4
+            final Method isInvalid = getMethod("isInvalid", LocalDate.class);
+            return (boolean) isInvalid.invoke(getComponent(), date);
+        } catch (RuntimeException ex) {
+            if (!(ex.getCause() instanceof NoSuchMethodException)) {
+                throw ex;
+            }
+        }
+        // Vaadin 24.5+
+        return getComponent().getDefaultValidator().apply(date, null).isError();
     }
 
 }
