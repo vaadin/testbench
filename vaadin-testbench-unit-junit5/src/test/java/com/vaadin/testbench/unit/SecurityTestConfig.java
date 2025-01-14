@@ -93,8 +93,9 @@ class SecurityTestConfig {
 
         @Bean
         MenuAccessControl menuAccessControl() {
-            // Workaround to support both Vaadin 24.4 that does not have
-            // SpringMenuAccessControl
+            // SpringMenuAccessControl has been introduced in Vaadin 24.5
+            // but the Testbench codebase currently supports also 24.4
+            // Using reflection to prevent runtime issues.
             Class<? extends MenuAccessControl> clazz = springMenuAccessControlClass();
             if (clazz != null) {
                 try {
