@@ -11,7 +11,9 @@ package com.vaadin.testbench.unit.internal
 
 
 import java.util.*
+import kotlin.reflect.KCallable
 import kotlin.reflect.jvm.isAccessible
+import kotlin.reflect.jvm.kotlinFunction
 import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.HasValidation
 import com.vaadin.flow.component.HasValue
@@ -135,15 +137,21 @@ fun Component.toPrettyString(): String {
         }
     }
     // Any component with href should output it not only Anchor
-    if (this.javaClass.kotlin.members.any { it.name == "href"}) {
-        val f = this.javaClass.kotlin.members.find { it.name == "href" }
-        val href = f?.let {
-            it.isAccessible = true
-            it.call(this)
-        }
-        if (href != null) {
-            list.add("href='$href'")
-        }
+    val hrefCallable = try {
+        val functionOrProperty = this.javaClass.kotlin.members.find { it.name == "href" }
+        functionOrProperty?.isAccessible = true
+        functionOrProperty
+    } catch (t: TypeNotPresentException) {
+        // Some components have methods referencing Spring classes that may not
+        // be present for all project. Kotlin member introspection seems to
+        // immediately scan for all metadata (parameters, generics, ...) making
+        // this method fail. As a fallback we inspect with Java reflection API
+        // that seems to be more lazy
+        val method = this.javaClass.methods.find { it.name == "href" }
+        method?.kotlinFunction
+    }
+    hrefCallable?.call(this)?.let {
+        list.add("href='$it'")
     }
     if (this is Button && icon is Icon) {
         list.add("icon='${(icon as Icon).element.getAttribute("icon")}'")
