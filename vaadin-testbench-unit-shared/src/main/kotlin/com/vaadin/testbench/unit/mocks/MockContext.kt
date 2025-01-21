@@ -31,11 +31,6 @@ import jakarta.servlet.descriptor.JspConfigDescriptor
 import org.slf4j.LoggerFactory
 
 open class MockContext : ServletContext, Serializable {
-    override fun getServlet(name: String): Servlet? {
-        // this method is deprecated since servlet spec 2.1 and should always return null.
-        // see javadoc for more details.
-        return null
-    }
 
     override fun <T : Servlet?> createServlet(clazz: Class<T>?): T {
         throw UnsupportedOperationException("not implemented")
@@ -111,10 +106,6 @@ open class MockContext : ServletContext, Serializable {
         log.error(msg)
     }
 
-    override fun log(exception: Exception, msg: String) {
-        log.error(msg, exception)
-    }
-
     override fun log(message: String, throwable: Throwable) {
         log.error(message, throwable)
     }
@@ -138,8 +129,6 @@ open class MockContext : ServletContext, Serializable {
     override fun getFilterRegistrations(): MutableMap<String, out FilterRegistration> {
         throw UnsupportedOperationException("not implemented")
     }
-
-    override fun getServletNames(): Enumeration<String> = Collections.emptyEnumeration()
 
     override fun getDefaultSessionTrackingModes(): Set<SessionTrackingMode> = setOf(SessionTrackingMode.COOKIE, SessionTrackingMode.URL)
 
@@ -267,8 +256,6 @@ open class MockContext : ServletContext, Serializable {
     override fun addJspFile(servletName: String, jspFile: String): ServletRegistration.Dynamic {
         throw UnsupportedOperationException("not implemented")
     }
-
-    override fun getServlets(): Enumeration<Servlet> = Collections.emptyEnumeration()
 
     override fun getEffectiveMinorVersion(): Int = 0
 
