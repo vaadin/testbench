@@ -36,8 +36,7 @@
         <selenium.version>4.28.0</selenium.version>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
-        <spring.version>6.0.9</spring.version>
-        <spring.security.version>6.1.0</spring.security.version>
+        <spring.boot.version>3.4.1</spring.boot.version>
         <vaadin.version>24.7-SNAPSHOT</vaadin.version>
         <flow.version>${vaadin.version}</flow.version>
         <slf4j.version>2.0.7</slf4j.version>
