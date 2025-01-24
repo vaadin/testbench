@@ -9,15 +9,10 @@
  */
 package com.vaadin.testbench.unit.mocks
 
-import java.io.BufferedReader
-import java.security.Principal
-import java.util.Collections
-import java.util.Enumeration
-import java.util.Locale
-import java.util.concurrent.ConcurrentHashMap
 import jakarta.servlet.AsyncContext
 import jakarta.servlet.DispatcherType
 import jakarta.servlet.RequestDispatcher
+import jakarta.servlet.ServletConnection
 import jakarta.servlet.ServletContext
 import jakarta.servlet.ServletInputStream
 import jakarta.servlet.ServletRequest
@@ -28,6 +23,12 @@ import jakarta.servlet.http.HttpServletResponse
 import jakarta.servlet.http.HttpSession
 import jakarta.servlet.http.HttpUpgradeHandler
 import jakarta.servlet.http.Part
+import java.io.BufferedReader
+import java.security.Principal
+import java.util.Collections
+import java.util.Enumeration
+import java.util.Locale
+import java.util.concurrent.ConcurrentHashMap
 
 open class MockRequest(private var session: HttpSession) : HttpServletRequest {
 
@@ -60,10 +61,6 @@ open class MockRequest(private var session: HttpSession) : HttpServletRequest {
     override fun isAsyncStarted(): Boolean = false
 
     override fun getContentLengthLong(): Long = -1
-
-    override fun getRealPath(path: String?): String {
-        throw UnsupportedOperationException("not implemented")
-    }
 
     override fun login(username: String?, password: String?) {
         throw UnsupportedOperationException("not implemented")
@@ -116,13 +113,22 @@ open class MockRequest(private var session: HttpSession) : HttpServletRequest {
      */
     override fun getLocalPort(): Int = MockHttpEnvironment.localPort
 
-    override fun isRequestedSessionIdFromUrl(): Boolean = false
-
     override fun getServletContext(): ServletContext = session.servletContext
 
     override fun getQueryString(): String? = null
 
     override fun getDispatcherType(): DispatcherType = DispatcherType.REQUEST
+    override fun getRequestId(): String {
+        throw UnsupportedOperationException("not implemented")
+    }
+
+    override fun getProtocolRequestId(): String {
+        throw UnsupportedOperationException("not implemented")
+    }
+
+    override fun getServletConnection(): ServletConnection {
+        throw UnsupportedOperationException("not implemented")
+    }
 
     override fun getParts(): MutableCollection<Part> {
         return partsInt

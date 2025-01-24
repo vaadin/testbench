@@ -21,8 +21,6 @@ import jakarta.servlet.http.HttpServletResponse
 open class MockResponse : HttpServletResponse {
     override fun encodeURL(url: String): String = url
 
-    override fun encodeUrl(url: String): String = encodeURL(url)
-
     val headers: ConcurrentHashMap<String, Array<String>> = ConcurrentHashMap<String, Array<String>>()
 
     override fun addIntHeader(name: String, value: Int) {
@@ -40,8 +38,6 @@ open class MockResponse : HttpServletResponse {
     }
 
     fun findCookie(name: String): Cookie? = cookies.firstOrNull { it.name == name }
-
-    override fun encodeRedirectUrl(url: String): String = encodeRedirectURL(url)
 
     override fun flushBuffer() {
         // not needed at the moment
@@ -125,10 +121,6 @@ open class MockResponse : HttpServletResponse {
     }
 
     override fun setStatus(sc: Int) {
-        _status = sc
-    }
-
-    override fun setStatus(sc: Int, sm: String?) {
         _status = sc
     }
 
