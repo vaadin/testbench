@@ -19,7 +19,6 @@ import java.util.concurrent.atomic.AtomicInteger
 
 import jakarta.servlet.ServletContext
 import jakarta.servlet.http.HttpSession
-import jakarta.servlet.http.HttpSessionContext
 
 /**
  * A standalone implementation of the [HttpSession] interface.
@@ -63,38 +62,24 @@ open class MockHttpSession(
 
     override fun getMaxInactiveInterval(): Int = maxInactiveInterval
 
-    override fun getSessionContext(): HttpSessionContext? = null
-
     override fun getAttribute(name: String): Any? {
         checkValid()
         return attributes[name]
     }
-
-    override fun getValue(name: String): Any? = getAttribute(name)
 
     override fun getAttributeNames(): Enumeration<String> {
         checkValid()
         return attributes.keys()
     }
 
-    override fun getValueNames(): Array<String> = attributeNames.toList().toTypedArray()
-
     override fun setAttribute(name: String, value: Any?) {
         checkValid()
         attributes.putOrRemove(name, value)
     }
 
-    override fun putValue(name: String, value: Any?) {
-        setAttribute(name, value)
-    }
-
     override fun removeAttribute(name: String) {
         checkValid()
         attributes.remove(name)
-    }
-
-    override fun removeValue(name: String) {
-        removeAttribute(name)
     }
 
     fun copyAttributes(httpSession: HttpSession): MockHttpSession {

@@ -90,11 +90,5 @@ class MockHttpSessionTest : DynaTest({
                 session.attributeNames
             }
         }
-        test("getValueNames() fails on invalidated session") {
-            session.invalidate()
-            expectThrows(IllegalStateException::class) {
-                session.valueNames
-            }
-        }
     }
 })
