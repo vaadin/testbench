@@ -49,7 +49,10 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
     private boolean autoScrollIntoView = true;
     // @formatter:off
     String WAIT_FOR_VAADIN_SCRIPT =
-            "if (window.Vaadin && window.Vaadin.Flow && window.Vaadin.Flow.devServerIsNotLoaded) {"
+            "if (document.readyState != 'complete') {"
+            + "  return false;"
+            + "}"
+            + "if (window.Vaadin && window.Vaadin.Flow && window.Vaadin.Flow.devServerIsNotLoaded) {"
             + "  return false;"
             + "} else if (window.Vaadin && window.Vaadin.Flow && window.Vaadin.Flow.clients) {"
             + "  var clients = window.Vaadin.Flow.clients;"
