@@ -55,7 +55,7 @@
         <snapshot.repository.url>https://oss.sonatype.org/content/repositories/vaadin-snapshots/
         </snapshot.repository.url>
         <Implementation-Version>${project.version}</Implementation-Version>
-        <currentYear>2024</currentYear>
+        <currentYear>2025</currentYear>
     </properties>
     <modules>
         <module>vaadin-testbench</module>
