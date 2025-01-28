@@ -96,16 +96,25 @@ public class TestBenchCommandExecutor
         }
 
         // @formatter:off
-        String isVaadinFinished = "if (window.vaadin == null) {"
-                + "  return true;" + "}"
-                + "var clients = window.vaadin.clients;" + "if (clients) {"
+        String isVaadinFinished = "if (document.readyState != 'complete') {"
+                + "  return false;"
+                + "}"
+                + "if (window.vaadin == null) {"
+                + "  return true;"
+                + "}"
+                + "var clients = window.vaadin.clients;"
+                + "if (clients) {"
                 + "  for (var client in clients) {"
                 + "    if (clients[client].isActive()) {"
-                + "      return false;" + "    }" + "  }" + "  return true;"
-                + "} else {" +
+                + "      return false;"
+                + "    }"
+                + "  }"
+                + "  return true;"
+                + "} else {"
                 // A Vaadin connector was found so this is most likely a Vaadin
                 // application. Keep waiting.
-                "  return false;" + "}";
+                + "  return false;"
+                + "}";
         // @formatter:on
         JavascriptExecutor js = (JavascriptExecutor) actualDriver;
         long timeoutTime = System.currentTimeMillis() + 20000;
