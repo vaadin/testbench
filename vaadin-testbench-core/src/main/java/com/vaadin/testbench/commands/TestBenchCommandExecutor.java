@@ -96,16 +96,25 @@ public class TestBenchCommandExecutor
         }
 
         // @formatter:off
-        String isVaadinFinished = "if (window.vaadin == null) {"
-                + "  return true;" + "}"
-                + "var clients = window.vaadin.clients;" + "if (clients) {"
+        String isVaadinFinished = "if (document.readyState != 'complete') {"
+                + "  return false;"
+                + "}"
+                + "if (window.vaadin == null) {"
+                + "  return true;"
+                + "}"
+                + "var clients = window.vaadin.clients;"
+                + "if (clients) {"
                 + "  for (var client in clients) {"
                 + "    if (clients[client].isActive()) {"
-                + "      return false;" + "    }" + "  }" + "  return true;"
-                + "} else {" +
+                + "      return false;"
+                + "    }"
+                + "  }"
+                + "  return true;"
+                + "} else {"
                 // A Vaadin connector was found so this is most likely a Vaadin
                 // application. Keep waiting.
-                "  return false;" + "}";
+                + "  return false;"
+                + "}";
         // @formatter:on
         JavascriptExecutor js = (JavascriptExecutor) actualDriver;
         long timeoutTime = System.currentTimeMillis() + 20000;
@@ -190,8 +199,11 @@ public class TestBenchCommandExecutor
         String getProfilingData = "var pd = [0,0,0,0];\n"
                 + "for (client in window.vaadin.clients) {\n"
                 + "  var p = window.vaadin.clients[client].getProfilingData();\n"
-                + "  pd[0] += p[0];\n" + "  pd[1] += p[1];\n"
-                + "  pd[2] += p[2];\n" + "  pd[3] += p[3];\n" + "}\n"
+                + "  pd[0] += p[0];\n"
+                + "  pd[1] += p[1];\n"
+                + "  pd[2] += p[2];\n"
+                + "  pd[3] += p[3];\n"
+                + "}\n"
                 + "return pd;\n";
         // @formatter:on
         if (actualDriver instanceof JavascriptExecutor) {
