@@ -199,8 +199,11 @@ public class TestBenchCommandExecutor
         String getProfilingData = "var pd = [0,0,0,0];\n"
                 + "for (client in window.vaadin.clients) {\n"
                 + "  var p = window.vaadin.clients[client].getProfilingData();\n"
-                + "  pd[0] += p[0];\n" + "  pd[1] += p[1];\n"
-                + "  pd[2] += p[2];\n" + "  pd[3] += p[3];\n" + "}\n"
+                + "  pd[0] += p[0];\n"
+                + "  pd[1] += p[1];\n"
+                + "  pd[2] += p[2];\n"
+                + "  pd[3] += p[3];\n"
+                + "}\n"
                 + "return pd;\n";
         // @formatter:on
         if (actualDriver instanceof JavascriptExecutor) {
