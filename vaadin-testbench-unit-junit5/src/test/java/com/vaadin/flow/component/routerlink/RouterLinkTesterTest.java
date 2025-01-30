@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2000-2024 Vaadin Ltd
+ * Copyright (C) 2000-2025 Vaadin Ltd
  *
  * This program is available under Vaadin Commercial License and Service Terms.
  *
@@ -8,20 +8,19 @@
  */
 package com.vaadin.flow.component.routerlink;
 
-import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.router.RouteConfiguration;
-import com.vaadin.flow.router.RouterLink;
-import com.vaadin.testbench.unit.ComponentTester;
-import com.vaadin.testbench.unit.UIUnitTest;
-import com.vaadin.testbench.unit.ViewPackages;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.vaadin.flow.router.RouteConfiguration;
+import com.vaadin.flow.router.RouterLink;
+import com.vaadin.testbench.unit.UIUnitTest;
+import com.vaadin.testbench.unit.ViewPackages;
+
 @ViewPackages
 class RouterLinkTesterTest extends UIUnitTest {
 
-    private ComponentTester<RouterLinkView> $routerLinkView;
+    private RouterLinkView routerLinkView;
 
     @BeforeEach
     void init() {
@@ -36,35 +35,28 @@ class RouterLinkTesterTest extends UIUnitTest {
         RouteConfiguration.forApplicationScope()
                 .setAnnotatedRoute(RouterLinkRouteParameterTargetView.class);
 
-        var routerLinkView = navigate(RouterLinkView.class);
-        $routerLinkView = test(routerLinkView);
+        routerLinkView = navigate(RouterLinkView.class);
     }
 
     @Test
     void routerLink_targetless() {
         // get router link
-        var targetlessRouterLink = $routerLinkView.find(RouterLink.class)
-                .withText("No Target")
-                .single();
-        var $targetlessRouterLink = test(targetlessRouterLink);
+        var $targetlessRouterLink = test(routerLinkView.targetlessRouterLink);
         Assertions.assertNotNull($targetlessRouterLink,
                 "Tester for targetless RouterLink not initialized.");
 
         // verify its href
-        Assertions.assertEquals("",
-                $targetlessRouterLink.getHref());
+        Assertions.assertEquals("", $targetlessRouterLink.getHref());
 
         // verify its click action fails due to no navigation target
-        Assertions.assertThrows(IllegalStateException.class, $targetlessRouterLink::click);
+        Assertions.assertThrows(IllegalStateException.class,
+                $targetlessRouterLink::click);
     }
 
     @Test
     void routerLink_static() {
         // get router link
-        var staticRouterLink = $routerLinkView.find(RouterLink.class)
-                .withText("Static Target")
-                .single();
-        var $staticRouterLink = test(staticRouterLink);
+        var $staticRouterLink = test(routerLinkView.staticRouterLink);
         Assertions.assertNotNull($staticRouterLink,
                 "Tester for static RouterLink not initialized.");
 
@@ -72,23 +64,14 @@ class RouterLinkTesterTest extends UIUnitTest {
         Assertions.assertEquals(RouterLinkStaticTargetView.ROUTE,
                 $staticRouterLink.getHref());
 
-        // verify its click action returns correct target
-        var targetView = $staticRouterLink.click();
-        Assertions.assertInstanceOf(RouterLinkStaticTargetView.class, targetView);
-
-        // verify navigation target is correct
-        var $targetView = test(targetView);
-        Assertions.assertDoesNotThrow(() -> $targetView.find(Span.class)
-                .withText("Static Target View")
-                .single());
+        assertNavigationSucceeded($staticRouterLink,
+                RouterLinkStaticTargetView.class, "Static Target View");
     }
 
     @Test
     void routerLink_emptyUrlParameter() {
-        var emptyUrlParameterRouterLink = $routerLinkView.find(RouterLink.class)
-                .withText("Empty URL Parameter Target")
-                .single();
-        var $emptyUrlParameterRouterLink = test(emptyUrlParameterRouterLink);
+        var $emptyUrlParameterRouterLink = test(
+                routerLinkView.emptyUrlParameterRouterLink);
         Assertions.assertNotNull($emptyUrlParameterRouterLink,
                 "Tester for empty URL parameter RouterLink not initialized.");
 
@@ -96,88 +79,72 @@ class RouterLinkTesterTest extends UIUnitTest {
         Assertions.assertEquals(RouterLinkUrlParameterTargetView.ROUTE,
                 $emptyUrlParameterRouterLink.getHref());
 
-        // verify its click action returns correct target
-        var targetView = $emptyUrlParameterRouterLink.click();
-        Assertions.assertInstanceOf(RouterLinkUrlParameterTargetView.class, targetView);
-
-        // verify navigation target is correct
-        var $targetView = test(targetView);
-        Assertions.assertDoesNotThrow(() -> $targetView.find(Span.class)
-                .withText("URL Parameter Target View: {  }")
-                .single());
+        assertNavigationSucceeded($emptyUrlParameterRouterLink,
+                RouterLinkUrlParameterTargetView.class,
+                "URL Parameter Target View: {  }");
     }
 
     @Test
     void routerLink_urlParameter() {
-        var urlParameterRouterLink = $routerLinkView.find(RouterLink.class)
-                .withText("URL Parameter Target")
-                .single();
-        var $urlParameterRouterLink = test(urlParameterRouterLink);
+        var $urlParameterRouterLink = test(
+                routerLinkView.urlParameterRouterLink);
         Assertions.assertNotNull($urlParameterRouterLink,
                 "Tester for URL parameter RouterLink not initialized.");
 
         // verify its href
-        Assertions.assertEquals(RouterLinkUrlParameterTargetView.ROUTE + "/parameter-value",
+        Assertions.assertEquals(
+                RouterLinkUrlParameterTargetView.ROUTE + "/parameter-value",
                 $urlParameterRouterLink.getHref());
 
-        // verify its click action returns correct target
-        var targetView = $urlParameterRouterLink.click();
-        Assertions.assertInstanceOf(RouterLinkUrlParameterTargetView.class, targetView);
-
-        // verify navigation target is correct
-        var $targetView = test(targetView);
-        Assertions.assertDoesNotThrow(() -> $targetView.find(Span.class)
-                .withText("URL Parameter Target View: { parameter-value }")
-                .single());
+        assertNavigationSucceeded($urlParameterRouterLink,
+                RouterLinkUrlParameterTargetView.class,
+                "URL Parameter Target View: { parameter-value }");
     }
 
     @Test
     void routerLink_queryParameter() {
-        var queryParameterRouterLink = $routerLinkView.find(RouterLink.class)
-                .withText("Query Parameter Target")
-                .single();
-        var $queryParameterRouterLink = test(queryParameterRouterLink);
+        var $queryParameterRouterLink = test(
+                routerLinkView.queryParameterRouterLink);
         Assertions.assertNotNull($queryParameterRouterLink,
                 "Tester for QueryParameter RouterLink not initialized.");
 
         // verify its href
-        Assertions.assertEquals(RouterLinkQueryParameterTargetView.ROUTE +
-                        "?parameter2=parameter2-value1&parameter2=parameter2-value2&parameter1=parameter1-value",
+        Assertions.assertEquals(RouterLinkQueryParameterTargetView.ROUTE
+                + "?parameter2=parameter2-value1&parameter2=parameter2-value2&parameter1=parameter1-value",
                 $queryParameterRouterLink.getHref());
 
-        // verify its click action returns correct target
-        var targetView = $queryParameterRouterLink.click();
-        Assertions.assertInstanceOf(RouterLinkQueryParameterTargetView.class, targetView);
-
-        // verify navigation target is correct
-        var $targetView = test(targetView);
-        Assertions.assertDoesNotThrow(() -> $targetView.find(Span.class)
-                .withText("Query Parameter Target View: { parameter1 = [parameter1-value]; parameter2 = [parameter2-value1, parameter2-value2] }")
-                .single());
+        assertNavigationSucceeded($queryParameterRouterLink,
+                RouterLinkQueryParameterTargetView.class,
+                "Query Parameter Target View: { parameter1 = [parameter1-value]; parameter2 = [parameter2-value1, parameter2-value2] }");
     }
 
     @Test
     void routerLink_routeParameter() {
-        var routeParameterRouterLink = $routerLinkView.find(RouterLink.class)
-                .withText("Route Parameter Target")
-                .single();
-        var $routeParameterRouterLink = test(routeParameterRouterLink);
+        var $routeParameterRouterLink = test(
+                routerLinkView.routeParameterRouterLink);
         Assertions.assertNotNull($routeParameterRouterLink,
                 "Tester for RouteParameter RouterLink not initialized.");
 
         // verify its href
-        Assertions.assertEquals(RouterLinkRouteParameterTargetView.ROUTE +
-                        "/static/segment2-value/segment3-value1/segment3-value2",
+        Assertions.assertEquals(RouterLinkRouteParameterTargetView.ROUTE
+                + "/static/segment2-value/segment3-value1/segment3-value2",
                 $routeParameterRouterLink.getHref());
 
+        assertNavigationSucceeded($routeParameterRouterLink,
+                RouterLinkRouteParameterTargetView.class,
+                "Route Parameter Target View: { segment2 = segment2-value; segment3 = segment3-value1/segment3-value2 }");
+    }
+
+    private void assertNavigationSucceeded(RouterLinkTester<RouterLink> tester,
+            Class<? extends AbstractTargetView> expectedTarget,
+            String expectedMessage) {
         // verify its click action returns correct target
-        var targetView = $routeParameterRouterLink.click();
-        Assertions.assertInstanceOf(RouterLinkRouteParameterTargetView.class, targetView);
+        var targetView = tester.click();
+        Assertions.assertInstanceOf(expectedTarget, targetView);
+        Assertions.assertSame(targetView, getCurrentView());
 
         // verify navigation target is correct
-        var $targetView = test(targetView);
-        Assertions.assertDoesNotThrow(() -> $targetView.find(Span.class)
-                .withText("Route Parameter Target View: { segment2 = segment2-value; segment3 = segment3-value1/segment3-value2 }")
-                .single());
+        Assertions.assertEquals(expectedMessage,
+                expectedTarget.cast(targetView).message.getText());
     }
 }

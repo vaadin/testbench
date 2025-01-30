@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2000-2024 Vaadin Ltd
+ * Copyright (C) 2000-2025 Vaadin Ltd
  *
  * This program is available under Vaadin Commercial License and Service Terms.
  *
@@ -8,16 +8,17 @@
  */
 package com.vaadin.flow.component.routerlink;
 
+import java.net.URI;
+import java.util.Optional;
+
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.flow.router.RouterLink;
 import com.vaadin.testbench.unit.ComponentTester;
 import com.vaadin.testbench.unit.Tests;
-
-import java.net.URI;
-import java.util.Optional;
 
 /**
  *
@@ -32,7 +33,8 @@ public class RouterLinkTester<T extends RouterLink> extends ComponentTester<T> {
     /**
      * Wrap given component for testing.
      *
-     * @param component target component
+     * @param component
+     *            target component
      */
     public RouterLinkTester(T component) {
         super(component);
@@ -50,10 +52,11 @@ public class RouterLinkTester<T extends RouterLink> extends ComponentTester<T> {
     }
 
     /**
-     * Gets the path for the router-link.
-     * Returns an empty {@link String} if there is no corresponding navigation target.
+     * Gets the path for the router-link. Returns an empty {@link String} if
+     * there is no corresponding navigation target.
      *
-     * @return a {@link String} containing the navigation target path or empty if not present
+     * @return a {@link String} containing the navigation target path or empty
+     *         if not present
      */
     public String getPath() {
         return URI.create(getHref()).getPath();
@@ -62,17 +65,19 @@ public class RouterLinkTester<T extends RouterLink> extends ComponentTester<T> {
     /**
      * Gets the query parameters for the router-link.
      *
-     * @return a {@link QueryParameters} containing the navigation target's query parameters
+     * @return a {@link QueryParameters} containing the navigation target's
+     *         query parameters
      */
     public QueryParameters getQueryParameters() {
         return QueryParameters.fromString(URI.create(getHref()).getQuery());
     }
 
     /**
-     * Gets the registered route class for the router-link.
-     * Returns an empty optional if there is no corresponding navigation target.
+     * Gets the registered route class for the router-link. Returns an empty
+     * optional if there is no corresponding navigation target.
      *
-     * @return an {@link Optional} containing the navigation target class or empty if not found
+     * @return an {@link Optional} containing the navigation target class or
+     *         empty if not found
      */
     public Optional<Class<? extends Component>> getRoute() {
         return RouteConfiguration.forSessionScope().getRoute(getPath());
@@ -83,13 +88,16 @@ public class RouterLinkTester<T extends RouterLink> extends ComponentTester<T> {
      *
      * @return navigated view
      */
-    public Component click() {
+    public HasElement click() {
+        ensureComponentIsUsable();
+        String path = getPath();
         if (getRoute().isEmpty()) {
-            throw new IllegalStateException();
+            throw new IllegalStateException(
+                    "Application route not found for path " + path);
         }
 
-        UI.getCurrent().navigate(getPath(), getQueryParameters());
-        return (Component) UI.getCurrent().getInternals()
-                .getActiveRouterTargetsChain().get(0);
+        UI.getCurrent().navigate(path, getQueryParameters());
+        return UI.getCurrent().getInternals().getActiveRouterTargetsChain()
+                .get(0);
     }
 }
