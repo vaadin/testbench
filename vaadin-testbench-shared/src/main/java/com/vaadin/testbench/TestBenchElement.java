@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import org.jspecify.annotations.Nullable;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.Dimension;
@@ -215,10 +216,32 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
         return wrappedElement.getTagName();
     }
 
+    /**
+     * @param name
+     *            The name of the attribute.
+     * @return The attribute/ property's current value or null if the value is
+     *         not set.
+     *
+     * @deprecated This method is deprecated. Use getDomProperty(String) or
+     *             getDomAttribute(String) for more precise attribute retrieval.
+     */
     @Override
+    @Deprecated
     public String getAttribute(String name) {
         waitForVaadin();
         return wrappedElement.getAttribute(name);
+    }
+
+    @Override
+    public @Nullable String getDomAttribute(String name) {
+        waitForVaadin();
+        return wrappedElement.getDomAttribute(name);
+    }
+
+    @Override
+    public @Nullable String getDomProperty(String name) {
+        waitForVaadin();
+        return wrappedElement.getDomProperty(name);
     }
 
     /**
@@ -397,7 +420,7 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
      * @return a set of class names
      */
     public Set<String> getClassNames() {
-        String classAttribute = getAttribute("class");
+        String classAttribute = getDomAttribute("class");
         Set<String> classes = new HashSet<>();
         if (classAttribute == null) {
             return classes;
@@ -644,9 +667,7 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
                 return Double.parseDouble(str);
             }
         }
-        return executeScript(
-                script + "return value;",
-                jsParameters);
+        return executeScript(script + "return value;", jsParameters);
     }
 
     private static String createPropertyChain(String[] propertyNames) {

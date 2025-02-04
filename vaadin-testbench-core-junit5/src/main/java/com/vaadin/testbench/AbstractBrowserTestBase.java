@@ -320,7 +320,7 @@ public abstract class AbstractBrowserTestBase
      * @return <code>true</code> if matches, <code>false</code> if not
      */
     protected boolean hasCssClass(WebElement element, String className) {
-        String classes = element.getAttribute("class");
+        String classes = element.getDomAttribute("class");
         if (classes == null || classes.isEmpty()) {
             return className == null || className.isEmpty();
         }
@@ -338,7 +338,7 @@ public abstract class AbstractBrowserTestBase
      *            the actual element
      */
     protected static void assertEquals(WebElement expectedElement,
-                                       WebElement actualElement) {
+            WebElement actualElement) {
         WebElement unwrappedExpected = expectedElement;
         WebElement unwrappedActual = actualElement;
         while (unwrappedExpected instanceof WrapsElement) {
@@ -528,8 +528,8 @@ public abstract class AbstractBrowserTestBase
         private static String loadDndScript(String scriptLocation) {
             InputStream stream = AbstractBrowserTestBase.class
                     .getResourceAsStream(scriptLocation);
-            return IOUtils.readLines(stream, StandardCharsets.UTF_8)
-                        .stream().collect(Collectors.joining("\n"));
+            return IOUtils.readLines(stream, StandardCharsets.UTF_8).stream()
+                    .collect(Collectors.joining("\n"));
         }
     }
 
