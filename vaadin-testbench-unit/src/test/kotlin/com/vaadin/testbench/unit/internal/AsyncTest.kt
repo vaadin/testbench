@@ -74,9 +74,10 @@ internal fun DynaNodeGroup.asyncTestbatch() {
             UI.getCurrent().access {
                 expect(true) { VaadinSession.getCurrent() != null }
                 expect(true) { VaadinService.getCurrent() != null }
-                expect(true) { VaadinRequest.getCurrent() != null }
                 expect(true) { UI.getCurrent() != null }
-                expect(true) { VaadinResponse.getCurrent() != null }
+                // Request and response are never available in access() commands
+                expect(true, "VREQ") { VaadinRequest.getCurrent() == null }
+                expect(true, "VRESP") { VaadinResponse.getCurrent() == null }
             }
             MockVaadin.clientRoundtrip()
         }
@@ -135,10 +136,10 @@ internal fun DynaNodeGroup.asyncTestbatch() {
                 ui.access {
                     expect(true) { VaadinSession.getCurrent() != null }
                     expect(true) { VaadinService.getCurrent() != null }
-                    expect(true) { VaadinRequest.getCurrent() != null }
                     expect(true) { UI.getCurrent() != null }
-                    expect(true) { VaadinResponse.getCurrent() != null }
-                }
+                    // Request and response are never available in access() commands
+                    expect(true) { VaadinRequest.getCurrent() == null }
+                    expect(true) { VaadinResponse.getCurrent() == null }                }
             }
             MockVaadin.clientRoundtrip()
         }
