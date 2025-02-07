@@ -33,7 +33,7 @@ public class TestBenchElementTest {
     public void testIsEnabled_VaadinComponentDisabled_returnsFalse()
             throws Exception {
         WebElement webElement = Mockito.mock(WebElement.class);
-        Mockito.when(webElement.getAttribute("class"))
+        Mockito.when(webElement.getDomAttribute("class"))
                 .thenReturn("v-button v-disabled");
 
         TestBenchElement element = TestBenchElement.wrapElement(webElement,
@@ -115,7 +115,7 @@ public class TestBenchElementTest {
 
     private TestBenchElement createElementWithClass(String className) {
         WebElement webElement = Mockito.mock(WebElement.class);
-        Mockito.when(webElement.getAttribute("class")).thenReturn(className);
+        Mockito.when(webElement.getDomAttribute("class")).thenReturn(className);
 
         return TestBenchElement.wrapElement(webElement, null);
     }
