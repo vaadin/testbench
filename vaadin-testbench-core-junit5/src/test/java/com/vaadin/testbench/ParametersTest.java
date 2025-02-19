@@ -8,6 +8,7 @@
  */
 package com.vaadin.testbench;
 
+import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.remote.http.ClientConfig;
@@ -49,6 +50,38 @@ public class ParametersTest {
                 Parameters.parseRunLocally("foo1-1"));
         Assertions.assertArrayEquals(new String[] { "foo1", "1-1" },
                 Parameters.parseRunLocally("foo1-1-1"));
+    }
+
+    @Test
+    public void setChromeOptionsSystemProperty() {
+            try {
+                    Parameters.setChromeOptions("--foo");
+                    Assertions.assertArrayEquals(new String[] { "--foo", },
+                                    Parameters.getChromeOptions());
+                    Parameters.setChromeOptions("--foo --bar --x");
+                                    Assertions.assertArrayEquals(new String[] { "--foo", "--bar", "--x" },
+                                    Parameters.getChromeOptions());
+                    Parameters.setChromeOptions("--foo,--bar, --x");
+                                    Assertions.assertArrayEquals(new String[] { "--foo", "--bar", "--x" },
+                                    Parameters.getChromeOptions());
+                    Parameters.setChromeOptions("--window-size=\"nnn,nnn\"");
+                    Assertions.assertArrayEquals(new String[] { "--window-size=\"nnn,nnn\"", },
+                                    Parameters.getChromeOptions());
+                    Parameters.setChromeOptions("--window-size=nnn,nnn,--bar,--x");
+                    Assertions.assertArrayEquals(
+                                    new String[] { "--window-size=nnn,nnn", "--bar", "--x" },
+                                                    Parameters.getChromeOptions());
+                    Parameters.setChromeOptions(
+                                    "--foo, --bar, --window-size=400,100 --user-agent=\"Mozilla,5.0\" --proxy='1.1.1.1,8080'");
+                    Assertions.assertArrayEquals(
+                                    new String[] { "--foo", "--bar", "--window-size=400,100",
+                                                    "--user-agent=\"Mozilla,5.0\"", "--proxy='1.1.1.1,8080'" },
+                                    Parameters.getChromeOptions());
+                    Parameters.setChromeOptions("");
+                    Assertions.assertArrayEquals(new String[] {}, Parameters.getChromeOptions());
+            } finally {
+                    Parameters.setChromeOptions(null);
+            }
     }
 
 }

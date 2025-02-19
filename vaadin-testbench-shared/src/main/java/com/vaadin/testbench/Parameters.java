@@ -541,7 +541,7 @@ public class Parameters {
      *            a list of options separated with comma or spaces
      */
     public static void setChromeOptions(String options) {
-        chromeOptions = options == null || options.isBlank() ? new String[0] : options.trim().split(" +");
+        chromeOptions = options == null || options.isBlank()? new String[0] : options.trim().split("[, ]+(?=--)");
     }
 
     /**
