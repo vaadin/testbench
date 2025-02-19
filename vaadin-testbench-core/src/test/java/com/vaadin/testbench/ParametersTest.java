@@ -71,7 +71,7 @@ public class ParametersTest {
                                     new String[] { "--window-size=nnn,nnn", "--bar", "--x" },
                                                     Parameters.getChromeOptions());
                     Parameters.setChromeOptions(
-                                    "--foo, --bar, --window-size=400,100 --user-agent=\"Mozilla,5.0\" --proxy='1.1.1.1,8080'");
+                                    "--foo, --bar, --window-size=400,100\n--user-agent=\"Mozilla,5.0\"\t--proxy='1.1.1.1,8080'");
                     Assert.assertArrayEquals(
                                     new String[] { "--foo", "--bar", "--window-size=400,100",
                                                     "--user-agent=\"Mozilla,5.0\"", "--proxy='1.1.1.1,8080'" },
