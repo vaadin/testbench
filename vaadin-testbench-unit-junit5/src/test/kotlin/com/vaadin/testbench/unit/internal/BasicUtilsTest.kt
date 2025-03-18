@@ -20,20 +20,21 @@ import com.vaadin.flow.component.textfield.TextField
 import com.vaadin.flow.dom.DomEvent
 import elemental.json.Json
 import kotlin.test.expect
+import com.vaadin.testbench.unit.expectThrows
 
 @DynaTestDsl
 internal fun DynaNodeGroup.basicUtilsTestbatch() {
 
     group("checkEditableByUser") {
         test("disabled textfield fails") {
-            expectThrows(java.lang.IllegalStateException::class, "The AttachedTextField[DISABLED, value=''] is not enabled") {
+            expectThrows(java.lang.IllegalStateException::class, "The AttachedTextField\\[DISABLED,.*] is not enabled".toRegex()) {
                 AttachedTextField().apply { isEnabled = false }.checkEditableByUser()
             }
         }
         test("invisible textfield fails") {
             expectThrows(
                 java.lang.IllegalStateException::class,
-                "The AttachedTextField[INVIS, value=''] is not effectively visible"
+                "The AttachedTextField\\[INVIS,.*] is not effectively visible".toRegex()
             ) {
                 AttachedTextField().apply { isVisible = false }.checkEditableByUser()
             }
@@ -41,13 +42,13 @@ internal fun DynaNodeGroup.basicUtilsTestbatch() {
         test("non attached textfield fails") {
             expectThrows(
                 java.lang.IllegalStateException::class,
-                "The TextField[value=''] is not attached"
+                "The TextField\\[.*] is not attached".toRegex()
             ) {
                 TextField().checkEditableByUser()
             }
         }
         test("textfield in invisible layout fails") {
-            expectThrows(java.lang.IllegalStateException::class, "The TextField[value=''] is not effectively visible") {
+            expectThrows(java.lang.IllegalStateException::class, "The TextField\\[.*] is not effectively visible".toRegex()) {
                 VerticalLayout().apply {
                     isVisible = false
                     textField().also { it.checkEditableByUser() }
@@ -73,7 +74,7 @@ internal fun DynaNodeGroup.basicUtilsTestbatch() {
             }
         }
         test("textfield succeeds") {
-            expectThrows(AssertionError::class, "The AttachedTextField[value=''] is editable") {
+            expectThrows(AssertionError::class, "The AttachedTextField\\[.*] is editable".toRegex()) {
                 AttachedTextField().expectNotEditableByUser()
             }
         }

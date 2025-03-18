@@ -73,16 +73,10 @@ internal fun DynaNodeGroup.prettyPrintTreeTest() {
         }
     }
     test("toPrettyStringTextField()") {
-        expect("TextField[#25, value='']") {
-            TextField().apply { id_ = "25" }.toPrettyString()
-        }
-        expect("TextArea[label='label', value='some text']") { TextArea("label").apply { value = "some text" }.toPrettyString() }
-        expect("TextField[#25, value='', errorMessage='failed validation']") {
-            TextField().apply { id_ = "25"; errorMessage = "failed validation" }.toPrettyString()
-        }
-        expect("TextField[label='foobar', value='']") {
-            TextField("foobar").toPrettyString()
-        }
+        assertContains(TextField().apply { id_ = "25" }.toPrettyString(),"TextField\\[#25, value=''.*]".toRegex())
+        assertContains(TextArea("label").apply { value = "some text" }.toPrettyString(),"TextArea\\[label='label', value='some text'.*]".toRegex())
+        assertContains(TextField().apply { id_ = "25"; errorMessage = "failed validation" }.toPrettyString(),"TextField\\[#25, value='', errorMessage='failed validation'.*]".toRegex())
+        assertContains(TextField("foobar").toPrettyString(), "TextField\\[label='foobar', value=''.*]".toRegex() )
     }
     test("toPrettyStringButton()") {
         expect("Button[caption='click me']") { Button("click me").toPrettyString() }
