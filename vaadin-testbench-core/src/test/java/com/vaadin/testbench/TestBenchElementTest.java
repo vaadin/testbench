@@ -8,6 +8,7 @@
  */
 package com.vaadin.testbench;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -39,6 +40,18 @@ public class TestBenchElementTest {
         TestBenchElement element = TestBenchElement.wrapElement(webElement,
                 null);
         assertFalse(element.isEnabled());
+    }
+
+    @Test
+    public void test_getId_VaadinComponentWithId_returnsId()
+            throws Exception {
+        WebElement webElement = Mockito.mock(WebElement.class);
+        Mockito.when(webElement.getDomAttribute("id"))
+                .thenReturn("identification");
+
+        TestBenchElement element = TestBenchElement.wrapElement(webElement,
+                null);
+        assertEquals("identification", element.getId());
     }
 
     @Test
