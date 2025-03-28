@@ -17,6 +17,7 @@ import com.vaadin.flow.router.Route;
 public class ElementQueryView extends Div {
 
     public ElementQueryView() {
+        setId("element-query-view");
         getElement().getStyle().set("line-height", "12px");
         for (int i = 0; i < 10; i++) {
             NativeButton button = new NativeButton("Button " + i);
