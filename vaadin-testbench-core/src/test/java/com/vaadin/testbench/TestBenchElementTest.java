@@ -45,6 +45,45 @@ public class TestBenchElementTest {
     }
 
     @Test
+    public void testIsReadOnly_VaadinComponentNotReadOnly_returnsFalse()
+            throws Exception {
+        WebElement webElement = createMock(WebElement.class);
+        expect(webElement.getAttribute("readonly")).andStubReturn(null);
+        replay(webElement);
+
+        TestBenchElement element = TestBenchElement.wrapElement(webElement,
+                null);
+        assertFalse(element.isReadOnly());
+
+        verify(webElement);
+    }
+
+    @Test
+    public void testIsReadOnly_VaadinComponentReadOnly_returnsTrue()
+            throws Exception {
+        WebElement webElement = createMock(WebElement.class);
+        expect(webElement.getAttribute("readonly")).andStubReturn("true");
+        replay(webElement);
+
+        TestBenchElement element = TestBenchElement.wrapElement(webElement,
+                null);
+        assertTrue(element.isReadOnly());
+
+        verify(webElement);
+    }
+
+    @Test
+    public void test_getId_VaadinComponentWithId_returnsId() throws Exception {
+        WebElement webElement = createMock(WebElement.class);
+        expect(webElement.getAttribute("id")).andStubReturn("identification");
+        replay(webElement);
+
+        TestBenchElement element = TestBenchElement.wrapElement(webElement,
+                null);
+        assertEquals("identification", element.getId());
+    }
+
+    @Test
     public void testIsEnabled_VaadinComponentEnabled_inputDisabled_returnsFalse()
             throws Exception {
         // This would probably never happen, but just make sure it works

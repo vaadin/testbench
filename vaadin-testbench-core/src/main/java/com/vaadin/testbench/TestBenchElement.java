@@ -174,6 +174,15 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
     }
 
     /**
+     * Returns the id value set for this element.
+     *
+     * @return String value, can be null
+     */
+    public String getId() {
+        return getAttribute("id");
+    }
+
+    /**
      * Sets the number of pixels that an element's content is scrolled from the
      * top.
      *
@@ -241,6 +250,18 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
         return actualElement.getAttribute(name);
     }
 
+    /**
+     * Checks if the given attribute is present on the element.
+     *
+     * @param attribute
+     *            the name of the attribute
+     * @return <code>true</code> if the attribute is present, <code>false</code>
+     *         otherwise
+     */
+    public boolean hasAttribute(String attribute) {
+        return getAttribute(attribute) != null;
+    }
+
     @Override
     public boolean isSelected() {
         autoScrollIntoView();
@@ -258,6 +279,18 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
     public boolean isEnabled() {
         waitForVaadin();
         return !hasClassName("v-disabled") && actualElement.isEnabled();
+    }
+
+    /**
+     * Returns whether the Vaadin component represented by this element has been
+     * set read-only.
+     *
+     * @return {@code true} if the element has the {@code readonly} attribute,
+     *         {@code false} otherwise.
+     */
+    public boolean isReadOnly() {
+        waitForVaadin();
+        return hasAttribute("readonly");
     }
 
     @Override
@@ -464,7 +497,6 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
 
         return getClassNames().contains(className);
     }
-
     @Override
     public boolean equals(Object obj) {
         if (actualElement == null) {
