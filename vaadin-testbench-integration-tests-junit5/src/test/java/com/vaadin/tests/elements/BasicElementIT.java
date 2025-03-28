@@ -38,7 +38,7 @@ public class BasicElementIT extends AbstractBrowserTB9Test {
         TestBenchElement firstChild = element.getChildren().get(0);
         Assertions.assertEquals("div", firstChild.getTagName());
         TestBenchElement grandChild = firstChild.getChildren().get(0);
-        Assertions.assertEquals("button", firstChild.getTagName());
+        Assertions.assertEquals("button", grandChild.getTagName());
     }
 
     @BrowserTest
