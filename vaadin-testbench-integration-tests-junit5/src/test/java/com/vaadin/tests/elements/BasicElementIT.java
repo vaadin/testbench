@@ -36,9 +36,9 @@ public class BasicElementIT extends AbstractBrowserTB9Test {
         TestBenchElement element = $(TestBenchElement.class).id("element-query-view");
         Assertions.assertEquals(10, element.getChildren().size());
         TestBenchElement firstChild = element.getChildren().get(0);
-        Assertions("div", firstChild.getTagName());
+        Assertions.assertEquals("div", firstChild.getTagName());
         TestBenchElement grandChild = firstChild.getChildren().get(0);
-        Assertions("button", firstChild.getTagName());
+        Assertions.assertEquals("button", firstChild.getTagName());
     }
 
     @BrowserTest
