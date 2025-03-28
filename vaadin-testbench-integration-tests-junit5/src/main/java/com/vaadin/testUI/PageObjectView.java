@@ -15,6 +15,7 @@ import com.vaadin.flow.router.Route;
 public class PageObjectView extends Div {
 
     public PageObjectView() {
+        setId("page-object-view");
         Div someDiv = new Div();
         someDiv.setText("Some div");
 
