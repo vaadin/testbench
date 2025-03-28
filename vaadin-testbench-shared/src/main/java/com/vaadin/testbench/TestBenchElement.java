@@ -771,6 +771,6 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
      * @return The parent as TestBenchElement, can be null.
      */
     public TestBenchElement getParent() {
-        return element.getPropertyElement("parent");
+        return getPropertyElement("parent");
     }
 }
