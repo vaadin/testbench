@@ -23,7 +23,7 @@ public interface HasValidation
      * @return {@code true} if the "invalid" attribute exists otherwise
      *         {@code false}
      */
-    default boolean isInValid() {
+    default boolean isInvalid() {
         return (boolean) callFunction("hasAttribute", "invalid");
     }
 
