@@ -8,8 +8,6 @@
  */
 package com.vaadin.testbench;
 
-import com.vaadin.flow.component.html.testbench.DivElement;
-
 /**
  * The {@code HasClearButton} interface provides methods to interact with an element
  * that may have a clear button. It includes functionality to check the visibility
@@ -42,6 +40,6 @@ public interface HasClearButton extends HasElementQuery, HasCallFunction {
         if (!isClearButtonVisible()) {
             throw new IllegalStateException("Clear button is not visible");
         }
-        this.$(DivElement.class).id("clearButton").click();
+        this.$(TestBenchElement.class).id("clearButton").click();
     }
 }
