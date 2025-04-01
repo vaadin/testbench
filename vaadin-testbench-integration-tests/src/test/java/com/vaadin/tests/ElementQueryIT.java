@@ -50,6 +50,7 @@ public class ElementQueryIT extends AbstractTB6Test {
         NativeButtonElement button = view.$(NativeButtonElement.class)
                 .id("light-button-1");
         Assert.assertEquals("Button 1", button.getText());
+        Assert.assertEquals("light-button-1", button.getId());
     }
 
     @Test
@@ -60,6 +61,7 @@ public class ElementQueryIT extends AbstractTB6Test {
         NativeButtonElement button = view.$(NativeButtonElement.class)
                 .id("shadow-button-1");
         Assert.assertEquals("Shadow Button 1", button.getText());
+        Assert.assertEquals("shadow-button-1", button.getId());
     }
 
     @Test

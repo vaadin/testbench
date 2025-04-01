@@ -150,6 +150,15 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
     }
 
     /**
+     * Gets the id set for this element.
+     *
+     * @return String value, can be null
+     */
+    public String getId() {
+        return getAttribute("id");
+    }
+
+    /**
      * Sets the number of pixels that an element's content is scrolled from the
      * top.
      *
