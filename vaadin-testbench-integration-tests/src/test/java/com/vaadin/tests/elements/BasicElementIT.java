@@ -36,6 +36,16 @@ public class BasicElementIT extends AbstractTB6Test {
     }
 
     @Test
+    public void getChildrenTest() {
+        TestBenchElement element = $(TestBenchElement.class).id("element-query-view");
+        Assert.assertEquals(10, element.getChildren().size());
+        TestBenchElement firstChild = element.getChildren().get(0);
+        Assert.assertEquals("div", firstChild.getTagName());
+        TestBenchElement grandChild = firstChild.getChildren().get(0);
+        Assert.assertEquals("button", grandChild.getTagName());
+    }
+
+    @Test
     public void getSetStringProperty() {
         Assert.assertNull(buttonElement.getPropertyString("foo"));
         buttonElement.setProperty("foo", "12");
