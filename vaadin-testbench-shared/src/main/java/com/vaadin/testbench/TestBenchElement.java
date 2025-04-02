@@ -806,7 +806,7 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
     @Override
     @Deprecated
     public SearchContext getShadowRoot() {
-        return super.getShadowRoot();
+        throw new UnsupportedOperationException("getShadowRoot");
     }
 
 }
