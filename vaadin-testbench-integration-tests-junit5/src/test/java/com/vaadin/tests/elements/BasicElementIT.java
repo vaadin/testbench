@@ -32,6 +32,12 @@ public class BasicElementIT extends AbstractBrowserTB9Test {
     }
 
     @BrowserTest
+    public void clickingButtonWillFocusIt() {
+        buttonElement.click();
+        Assertions.assertTrue(buttonElement.isFocused());
+    }
+
+    @BrowserTest
     public void getSetStringProperty() {
         TestBenchElement buttonElement = $(NativeButtonElement.class)
                 .waitForFirst();
