@@ -212,6 +212,17 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
                 actualElement);
     }
 
+    /**
+     * Checks whether the current element is the focused element on the page.
+     *
+     * @return {@code true} if this element is the currently focused element,
+     *         {@code false} otherwise.
+     */
+    public boolean isFocused() {
+        return getWrappedElement()
+                .equals(getDriver().switchTo().activeElement());
+    }
+
     @Override
     public void click() {
         autoScrollIntoView();

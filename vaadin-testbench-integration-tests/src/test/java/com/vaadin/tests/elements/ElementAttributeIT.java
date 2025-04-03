@@ -48,12 +48,31 @@ public class ElementAttributeIT extends MultiBrowserTest {
                 By.id("regularField"));
         TestBenchElement readOnlyField = (TestBenchElement) findElement(
                 By.id("readOnlyField"));
-        System.out
-                .println("readonly: " + readOnlyField.getAttribute("readonly"));
 
         assertFalse("Unexpected state, regular field should not be read-only",
                 regularField.isReadOnly());
         assertTrue("Unexpected state, read-only field was not read-only",
                 readOnlyField.isReadOnly());
+    }
+
+    @Test
+    public void testClickFocus() {
+        // test a couple of different components to rule out component-specific
+        // click behavior
+        TestBenchElement regularField = (TestBenchElement) findElement(
+                By.id("regularField"));
+        assertFalse("TextField should not be focused before it's clicked.",
+                regularField.isFocused());
+        regularField.click();
+        assertTrue("TextField should be focused after it's clicked.",
+                regularField.isFocused());
+
+        TestBenchElement button = (TestBenchElement) findElement(
+                By.id("button"));
+        assertFalse("Button should not be focused before it's clicked.",
+                button.isFocused());
+        button.click();
+        assertTrue("Button should be focused after it's clicked.",
+                button.isFocused());
     }
 }
