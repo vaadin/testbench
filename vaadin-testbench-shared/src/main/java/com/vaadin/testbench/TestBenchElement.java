@@ -181,8 +181,21 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
         setProperty("scrollLeft", scrollLeft);
     }
 
+    /**
+     * Checks if the current element is the focused element on the page.
+     *
+     * @return {@code true} if this element is the currently focused element,
+     *         {@code false} otherwise.
+     */
+    public boolean isFocused() {
+        return this.getWrappedElement()
+                .equals(getDriver().switchTo().activeElement());
+    }
+
     @Override
     public void click() {
+        // JS call to click does to focus element, hence ensure focus
+        focus();
         try {
             // Avoid strange "element not clickable at point" problems
             callFunction("click");
