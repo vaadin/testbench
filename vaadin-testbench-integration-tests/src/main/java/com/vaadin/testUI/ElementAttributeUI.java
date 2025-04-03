@@ -11,6 +11,7 @@
 package com.vaadin.testUI;
 
 import com.vaadin.server.VaadinRequest;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -32,6 +33,10 @@ public class ElementAttributeUI extends UI {
         readOnlyField.setId("readOnlyField");
         readOnlyField.setReadOnly(true);
         vl.addComponent(readOnlyField);
+
+        Button button = new Button("Dummy button");
+        button.setId("button");
+        vl.addComponent(button);
 
         vl.setSizeUndefined();
     }
