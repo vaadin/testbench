@@ -36,6 +36,12 @@ public class BasicElementIT extends AbstractTB6Test {
     }
 
     @Test
+    public void clickingButtonWillFocusIt() {
+        buttonElement.click();
+        Assert.assertTrue(buttonElement.isFocused());
+    }
+
+    @Test
     public void getSetStringProperty() {
         Assert.assertNull(buttonElement.getPropertyString("foo"));
         buttonElement.setProperty("foo", "12");
