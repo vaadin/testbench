@@ -7,13 +7,6 @@
 /target/
 */target/
 vaadin-testbench-core/error-screenshots
-vaadin-testbench-recorder/selenium-extensions/core/user-extensions.js
-vaadin-testbench-recorder/chrome/content/selenium/scripts/selenium-api.js
-vaadin-testbench-recorder/chrome/content/selenium/scripts/selenium-browserbot.js
-vaadin-testbench-recorder/chrome/testbench-recorder.jar
-vaadin-testbench-recorder/extension/
-vaadin-testbench-recorder/install.rdf
-vaadin-testbench-playground
 vaadin-testbench-integration-tests/error-screenshots/
 vaadin-testbench-integration-tests/config/testbench.properties
 chromedriver.log
