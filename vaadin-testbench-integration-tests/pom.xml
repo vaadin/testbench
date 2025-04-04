@@ -14,17 +14,13 @@
 
   <url>http://maven.apache.org</url>
     <properties>
-        <snapshot.repository.url>https://oss.sonatype.org/content/repositories/vaadin-snapshots/
+        <snapshot.repository.url>https://maven.vaadin.com/vaadin-prereleases
         </snapshot.repository.url>
         <vaadin.testbench.api.version>8.0-SNAPSHOT</vaadin.testbench.api.version>
         <jetty.version>9.4.53.v20231009</jetty.version>
         <slf4j.version>1.7.36</slf4j.version>
     </properties>
     <repositories>
-        <repository>
-            <id>vaadin-snapshots</id>
-            <url>https://oss.sonatype.org/content/repositories/vaadin-snapshots/</url>
-        </repository>
         <repository>
             <id>vaadin-addons</id>
             <url>https://maven.vaadin.com/vaadin-addons</url>

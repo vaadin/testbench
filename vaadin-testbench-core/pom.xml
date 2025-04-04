@@ -18,7 +18,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- Selenium 4.13.0 is the last one that supports Java 8 -->
         <selenium.version>4.13.0</selenium.version>
-        <snapshot.repository.url>https://oss.sonatype.org/content/repositories/vaadin-snapshots/
+        <snapshot.repository.url>https://maven.vaadin.com/vaadin-prereleases/
         </snapshot.repository.url>
     </properties>
 
@@ -35,14 +35,14 @@
             <id>release</id>
             <distributionManagement>
                 <snapshotRepository>
-                    <id>vaadin-snapshots</id>
-                    <name>Vaadin snapshot repository</name>
+                    <id>vaadin-prereleases</id>
+                    <name>Vaadin prereleases repository</name>
                     <url>${snapshot.repository.url}</url>
                 </snapshotRepository>
                 <repository>
                     <id>vaadin-addons</id>
                     <name>Vaadin add-ons repository</name>
-                    <url>https://tools.vaadin.com/nexus/content/repositories/vaadin-addons</url>
+                    <url>https://maven.vaadin.com/vaadin-addons</url>
                 </repository>
             </distributionManagement>
             <build>
