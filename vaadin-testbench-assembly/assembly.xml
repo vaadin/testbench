@@ -31,13 +31,6 @@
             </includes>
         </fileSet>
         <fileSet>
-            <directory>../vaadin-testbench-standalone/target</directory>
-            <outputDirectory>./</outputDirectory>
-            <includes>
-                <include>vaadin-testbench-standalone*.jar</include>
-            </includes>
-        </fileSet>
-        <fileSet>
             <directory>../doc</directory>
             <outputDirectory>documentation</outputDirectory>
             <includes>
