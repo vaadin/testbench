@@ -35,8 +35,7 @@ import com.vaadin.testbench.commands.TestBenchElementCommands;
 import com.vaadin.testbench.elementsbase.AbstractElement;
 
 /**
- * A superclass with some helpers to aid TestBench developers. This superclass
- * is also used by tests created by the Recorder.
+ * A superclass with some helpers to aid TestBench developers.
  */
 public abstract class TestBenchTestCase
         extends AbstractHasTestBenchCommandExecutor implements HasDriver {
