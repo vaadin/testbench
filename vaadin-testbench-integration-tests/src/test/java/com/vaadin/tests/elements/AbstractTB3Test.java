@@ -26,11 +26,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.HasInputDevices;
-import org.openqa.selenium.interactions.Keyboard;
-import org.openqa.selenium.interactions.Mouse;
-import org.openqa.selenium.interactions.internal.Coordinates;
-import org.openqa.selenium.internal.Locatable;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.HttpCommandExecutor;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -44,7 +39,6 @@ import com.vaadin.server.LegacyApplication;
 import com.vaadin.server.UIProvider;
 import com.vaadin.testbench.Parameters;
 import com.vaadin.testbench.TestBenchDriverProxy;
-import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.testbench.parallel.Browser;
 import com.vaadin.testbench.parallel.BrowserUtil;
 import com.vaadin.testbench.parallel.ParallelTest;
@@ -155,10 +149,6 @@ public abstract class AbstractTB3Test extends ParallelTest {
     protected WebElement getTooltipElement() {
         return getDriver().findElement(
                 com.vaadin.testbench.By.className("v-tooltip-text"));
-    }
-
-    protected Coordinates getCoordinates(TestBenchElement element) {
-        return ((Locatable) element.getWrappedElement()).getCoordinates();
     }
 
     private boolean hasDebugMessage(String message) {
@@ -649,24 +639,6 @@ public abstract class AbstractTB3Test extends ParallelTest {
             // Do something to keep the connection alive
             getDriver().getTitle();
         }
-    }
-
-    /**
-     * Returns the mouse object for doing mouse commands
-     *
-     * @return Returns the mouse
-     */
-    public Mouse getMouse() {
-        return ((HasInputDevices) getDriver()).getMouse();
-    }
-
-    /**
-     * Returns the keyboard object for controlling keyboard events
-     *
-     * @return Return the keyboard
-     */
-    public Keyboard getKeyboard() {
-        return ((HasInputDevices) getDriver()).getKeyboard();
     }
 
     protected void openDebugLogTab() {

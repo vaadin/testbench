@@ -66,7 +66,8 @@ public abstract class PrivateTB3Configuration extends AbstractTB3Test {
             System.setProperty("useLocalWebDriver", "true");
             DesiredCapabilities localBrowser = getRunLocallyCapabilities();
             System.setProperty("browsers.include",
-                    localBrowser.getBrowserName() + localBrowser.getVersion());
+                    localBrowser.getBrowserName()
+                            + localBrowser.getBrowserVersion());
         }
     }
 

@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.openqa.selenium.Platform;
-import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import com.vaadin.testbench.parallel.Browser;
@@ -69,9 +68,6 @@ public class VaadinBrowserFactory extends DefaultBrowserFactory {
 
         if ("".equals(version) && defaultBrowserVersion.containsKey(browser)) {
             desiredCapabilities.setVersion(defaultBrowserVersion.get(browser));
-        }
-        if(browser.equals(Browser.FIREFOX)) {
-            desiredCapabilities.setCapability(FirefoxDriver.MARIONETTE, false);
         }
         return desiredCapabilities;
     }
