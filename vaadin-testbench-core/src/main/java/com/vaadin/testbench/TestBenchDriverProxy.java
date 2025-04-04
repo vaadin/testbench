@@ -20,7 +20,7 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.internal.WrapsDriver;
+import org.openqa.selenium.WrapsDriver;
 
 import com.vaadin.testbench.By.ByVaadin;
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;

@@ -16,7 +16,8 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <selenium.version>3.12.0</selenium.version>
+        <!-- Selenium 4.13.0 is the last one that supports Java 8 -->
+        <selenium.version>4.13.0</selenium.version>
         <snapshot.repository.url>https://oss.sonatype.org/content/repositories/vaadin-snapshots/
         </snapshot.repository.url>
     </properties>
@@ -154,6 +155,11 @@
             <groupId>com.vaadin</groupId>
             <artifactId>license-checker</artifactId>
             <version>1.13.3</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.18.0</version>
         </dependency>
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>

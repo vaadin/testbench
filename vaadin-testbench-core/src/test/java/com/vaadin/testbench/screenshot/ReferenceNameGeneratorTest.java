@@ -39,9 +39,9 @@ public class ReferenceNameGeneratorTest {
     @Test
     public void testGenerateName_shotFirefox11inCapabilities_returnsGeneratedName() {
         Capabilities ffcaps = createNiceMock(Capabilities.class);
-        expect(ffcaps.getPlatform()).andReturn(Platform.XP);
+        expect(ffcaps.getPlatformName()).andReturn(Platform.XP);
         expect(ffcaps.getBrowserName()).andReturn("Firefox");
-        expect(ffcaps.getVersion()).andReturn("13.0.1");
+        expect(ffcaps.getBrowserVersion()).andReturn("13.0.1");
         replay(ffcaps);
         String name = rng.generateName("shot", ffcaps);
         assertEquals("shot_xp_Firefox_13", name);
@@ -52,7 +52,7 @@ public class ReferenceNameGeneratorTest {
     public void testGenerateName_shotNoPlatformInCapabilities_returnsGeneratedName() {
         Capabilities someBrowser = createNiceMock(Capabilities.class);
         expect(someBrowser.getBrowserName()).andReturn("SomeBrowser");
-        expect(someBrowser.getVersion()).andReturn("12.3");
+        expect(someBrowser.getBrowserVersion()).andReturn("12.3");
         replay(someBrowser);
         String name = rng.generateName("shot", someBrowser);
         assertEquals("shot_unknown_SomeBrowser_12", name);
@@ -62,9 +62,9 @@ public class ReferenceNameGeneratorTest {
     @Test
     public void testGenerateName_fooSafari5inCapabilities_returnsGeneratedName() {
         Capabilities safari = createNiceMock(Capabilities.class);
-        expect(safari.getPlatform()).andReturn(Platform.MAC);
+        expect(safari.getPlatformName()).andReturn(Platform.MAC);
         expect(safari.getBrowserName()).andReturn("Safari");
-        expect(safari.getVersion()).andReturn("5");
+        expect(safari.getBrowserVersion()).andReturn("5");
         replay(safari);
         String name = rng.generateName("foo", safari);
         assertEquals("foo_mac_Safari_5", name);
@@ -74,9 +74,9 @@ public class ReferenceNameGeneratorTest {
     @Test
     public void testGenerateName_barPhantomJSinCapabilities_returnsGeneratedName() {
         Capabilities phantom = createNiceMock(Capabilities.class);
-        expect(phantom.getPlatform()).andReturn(Platform.MAC);
+        expect(phantom.getPlatformName()).andReturn(Platform.MAC);
         expect(phantom.getBrowserName()).andReturn("phantomjs");
-        expect(phantom.getVersion())
+        expect(phantom.getBrowserVersion())
                 .andReturn("phantomjs-1.8.1+ghostdriver-1.0.2");
         replay(phantom);
         String name = rng.generateName("bar", phantom);
@@ -87,9 +87,9 @@ public class ReferenceNameGeneratorTest {
     @Test
     public void testGenerateName_shotEdgeinCapabilities_returnsGeneratedName() {
         Capabilities chrome = createNiceMock(Capabilities.class);
-        expect(chrome.getPlatform()).andReturn(Platform.XP);
+        expect(chrome.getPlatformName()).andReturn(Platform.XP);
         expect(chrome.getBrowserName()).andReturn("MicrosoftEdge");
-        expect(chrome.getVersion()).andReturn("");
+        expect(chrome.getBrowserVersion()).andReturn("");
         expect(chrome.getCapability("browserVersion")).andReturn("25");
         replay(chrome);
         String name = rng.generateName("shot", chrome);

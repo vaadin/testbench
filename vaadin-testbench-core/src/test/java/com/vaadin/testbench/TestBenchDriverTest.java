@@ -36,8 +36,8 @@ import org.openqa.selenium.WebDriver.Navigation;
 import org.openqa.selenium.WebDriver.Options;
 import org.openqa.selenium.WebDriver.TargetLocator;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.WrapsDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.internal.WrapsDriver;
 
 import com.vaadin.testbench.commands.TestBenchElementCommands;
 

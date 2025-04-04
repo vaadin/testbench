@@ -12,7 +12,7 @@ package com.vaadin.testbench.parallel;
 
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.Platform;
-import org.openqa.selenium.remote.BrowserType;
+import org.openqa.selenium.remote.Browser;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
@@ -30,7 +30,8 @@ public class BrowserUtil {
      *         on Safari
      */
     public static DesiredCapabilities safari() {
-        DesiredCapabilities c = browserFactory.create(Browser.SAFARI);
+        DesiredCapabilities c = browserFactory
+                .create(com.vaadin.testbench.parallel.Browser.SAFARI);
         return c;
     }
 
@@ -41,7 +42,8 @@ public class BrowserUtil {
      *         on Chrome
      */
     public static DesiredCapabilities chrome() {
-        DesiredCapabilities c = browserFactory.create(Browser.CHROME);
+        DesiredCapabilities c = browserFactory
+                .create(com.vaadin.testbench.parallel.Browser.CHROME);
         return c;
     }
 
@@ -52,7 +54,8 @@ public class BrowserUtil {
      *         on Firefox
      */
     public static DesiredCapabilities firefox() {
-        DesiredCapabilities c = browserFactory.create(Browser.FIREFOX);
+        DesiredCapabilities c = browserFactory
+                .create(com.vaadin.testbench.parallel.Browser.FIREFOX);
         return c;
     }
 
@@ -63,7 +66,8 @@ public class BrowserUtil {
      *         on Internet Explorer 8
      */
     public static DesiredCapabilities ie8() {
-        DesiredCapabilities c = browserFactory.create(Browser.IE8);
+        DesiredCapabilities c = browserFactory
+                .create(com.vaadin.testbench.parallel.Browser.IE8);
         return c;
     }
 
@@ -74,7 +78,8 @@ public class BrowserUtil {
      *         on Internet Explorer 9
      */
     public static DesiredCapabilities ie9() {
-        DesiredCapabilities c = browserFactory.create(Browser.IE9);
+        DesiredCapabilities c = browserFactory
+                .create(com.vaadin.testbench.parallel.Browser.IE9);
         return c;
     }
 
@@ -85,7 +90,8 @@ public class BrowserUtil {
      *         on Internet Explorer 10
      */
     public static DesiredCapabilities ie10() {
-        DesiredCapabilities c = browserFactory.create(Browser.IE10);
+        DesiredCapabilities c = browserFactory
+                .create(com.vaadin.testbench.parallel.Browser.IE10);
         return c;
     }
 
@@ -96,7 +102,8 @@ public class BrowserUtil {
      *         on Internet Explorer 11
      */
     public static DesiredCapabilities ie11() {
-        DesiredCapabilities c = browserFactory.create(Browser.IE11);
+        DesiredCapabilities c = browserFactory
+                .create(com.vaadin.testbench.parallel.Browser.IE11);
         return c;
     }
 
@@ -107,7 +114,8 @@ public class BrowserUtil {
      *         on Edge
      */
     public static DesiredCapabilities edge() {
-        DesiredCapabilities c = browserFactory.create(Browser.EDGE);
+        DesiredCapabilities c = browserFactory
+                .create(com.vaadin.testbench.parallel.Browser.EDGE);
         return c;
     }
 
@@ -118,7 +126,8 @@ public class BrowserUtil {
      *         on PhantomJS
      */
     public static DesiredCapabilities phantomJS() {
-        DesiredCapabilities c = browserFactory.create(Browser.PHANTOMJS);
+        DesiredCapabilities c = browserFactory
+                .create(com.vaadin.testbench.parallel.Browser.PHANTOMJS);
         return c;
     }
 
@@ -146,7 +155,7 @@ public class BrowserUtil {
         if (capabilities == null) {
             return false;
         }
-        return BrowserType.IE.equals(capabilities.getBrowserName());
+        return Browser.IE.browserName().equals(capabilities.getBrowserName());
     }
 
     /**
@@ -162,7 +171,7 @@ public class BrowserUtil {
             return false;
         }
         return isIE(capabilities)
-                && ("" + version).equals(capabilities.getVersion());
+                && ("" + version).equals(capabilities.getBrowserVersion());
     }
 
     /**
@@ -174,7 +183,7 @@ public class BrowserUtil {
         if (capabilities == null) {
             return false;
         }
-        return BrowserType.EDGE.equals(capabilities.getBrowserName());
+        return Browser.EDGE.browserName().equals(capabilities.getBrowserName());
     }
 
     /**
@@ -186,7 +195,8 @@ public class BrowserUtil {
         if (capabilities == null) {
             return false;
         }
-        return capabilities.getBrowserName().startsWith(BrowserType.CHROME);
+        return capabilities.getBrowserName()
+                .startsWith(Browser.CHROME.browserName());
     }
 
     /**
@@ -198,7 +208,8 @@ public class BrowserUtil {
         if (capabilities == null) {
             return false;
         }
-        return BrowserType.SAFARI.equals(capabilities.getBrowserName());
+        return Browser.SAFARI.browserName()
+                .equals(capabilities.getBrowserName());
     }
 
     /**
@@ -210,7 +221,8 @@ public class BrowserUtil {
         if (capabilities == null) {
             return false;
         }
-        return BrowserType.FIREFOX.equals(capabilities.getBrowserName());
+        return Browser.FIREFOX.browserName()
+                .equals(capabilities.getBrowserName());
     }
 
     /**
@@ -222,7 +234,7 @@ public class BrowserUtil {
         if (capabilities == null) {
             return false;
         }
-        return BrowserType.PHANTOMJS.equals(capabilities.getBrowserName());
+        return "phantomjs".equals(capabilities.getBrowserName());
     }
 
     /**
@@ -266,20 +278,22 @@ public class BrowserUtil {
             return "Unknown";
         }
         try {
-            Platform p = capabilities.getPlatform();
-            if (p == Platform.WIN8 || p == Platform.WINDOWS
-                    || p == Platform.VISTA || p == Platform.XP) {
+            Platform p = capabilities.getPlatformName();
+            Platform family = p != null ? p.family() : null;
+            if (family == Platform.WINDOWS || p == Platform.WINDOWS) {
                 return "Windows";
-            } else if (p == Platform.MAC) {
+            } else if (family == Platform.MAC || p == Platform.MAC) {
                 return "Mac";
             }
 
         } catch (Exception e) {
         }
         Object rawPlatform = capabilities
-                .getCapability(CapabilityType.PLATFORM);
+                .getCapability(CapabilityType.PLATFORM_NAME);
         if (rawPlatform == null) {
             return "Unknown";
+        } else if (rawPlatform instanceof Platform) {
+            return ((Platform) rawPlatform).name();
         }
         return rawPlatform.toString();
     }

@@ -13,6 +13,7 @@ package com.vaadin.testbench;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -35,8 +36,8 @@ import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.WrapsElement;
 import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.internal.WrapsElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -597,7 +598,8 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
      */
     protected <T> T waitUntil(ExpectedCondition<T> condition,
             long timeoutInSeconds) {
-        return new WebDriverWait(getDriver(), timeoutInSeconds)
+        return new WebDriverWait(getDriver(),
+                Duration.ofSeconds(timeoutInSeconds))
                 .until(condition);
     }
 

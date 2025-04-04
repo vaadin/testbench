@@ -23,8 +23,8 @@ public class BrowserUtilTest {
     @Test
     public void platformFromEnum() {
         DesiredCapabilities dc = new DesiredCapabilities();
-        dc.setPlatform(Platform.WIN8_1);
-        assertEquals(Platform.WIN8_1.name(), BrowserUtil.getPlatform(dc));
+        dc.setPlatform(Platform.LINUX);
+        assertEquals(Platform.LINUX.name(), BrowserUtil.getPlatform(dc));
     }
 
     @Test
@@ -48,7 +48,7 @@ public class BrowserUtilTest {
     @Test
     public void platformWithoutEnum() {
         DesiredCapabilities dc = new DesiredCapabilities();
-        dc.setCapability("platform", "foobar");
+        dc.setCapability("platformName", "foobar");
         assertEquals("foobar", BrowserUtil.getPlatform(dc));
     }
 }

@@ -10,28 +10,29 @@
  */
 package com.vaadin.testbench;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.junit.Rule;
+import org.openqa.selenium.BuildInfo;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NotFoundException;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.internal.BuildInfo;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import com.vaadin.pro.licensechecker.LicenseChecker;
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.commands.TestBenchCommands;
 import com.vaadin.testbench.commands.TestBenchElementCommands;
 import com.vaadin.testbench.elementsbase.AbstractElement;
-import com.vaadin.pro.licensechecker.LicenseChecker;
 
 /**
  * A superclass with some helpers to aid TestBench developers. This superclass
@@ -263,7 +264,8 @@ public abstract class TestBenchTestCase
      */
     protected <T> T waitUntil(ExpectedCondition<T> condition,
             long timeoutInSeconds) {
-        return new WebDriverWait(getDriver(), timeoutInSeconds)
+        return new WebDriverWait(getDriver(),
+                Duration.ofSeconds(timeoutInSeconds))
                 .until(condition);
     }
 
