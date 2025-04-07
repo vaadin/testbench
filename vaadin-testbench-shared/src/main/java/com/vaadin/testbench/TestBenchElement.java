@@ -151,6 +151,15 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
     }
 
     /**
+     * Gets the id set for this element.
+     *
+     * @return String value, can be null
+     */
+    public String getId() {
+        return getAttribute("id");
+    }
+
+    /**
      * Sets the number of pixels that an element's content is scrolled from the
      * top.
      *
@@ -274,6 +283,17 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
         waitForVaadin();
         return !hasClassName("v-disabled") && !hasAttribute("disabled")
                 && wrappedElement.isEnabled();
+    }
+
+    /**
+     * Returns whether the Vaadin component, that this element represents, is
+     * having readonly attribute set or not.
+     *
+     * @return true if the component has readonly attribute set.
+     */
+    public boolean isReadOnly() {
+        waitForVaadin();
+        return hasAttribute("readonly");
     }
 
     @Override
