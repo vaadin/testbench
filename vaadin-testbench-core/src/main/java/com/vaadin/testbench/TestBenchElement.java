@@ -759,6 +759,15 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
     }
 
     /**
+     * Gets the parent element of this element.
+     *
+     * @return The parent as TestBenchElement, can be null.
+     */
+    public TestBenchElement getParent() {
+        return getPropertyElement("parentElement");
+    }
+ 
+    /**
      * Not implemented. This method is not supported for the
      * {@link TestBenchElement}. Use {@code $} instead to find elements in the
      * shadow root.
