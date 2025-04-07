@@ -194,7 +194,7 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
 
     @Override
     public void click() {
-        // JS call to click does to focus element, hence ensure focus
+        // JS call to click does not focus element, hence ensure focus
         focus();
         try {
             // Avoid strange "element not clickable at point" problems
