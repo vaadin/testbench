@@ -799,6 +799,30 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
     }
 
     /**
+     * Not implemented. This method is not supported for the
+     * {@link TestBenchElement}. Use {@code $} instead to find elements in the
+     * shadow root.
+     * 
+     * Example usage:
+     * 
+     * <pre>
+     * {@code
+     * TestBenchElement element = ...;
+     * TestBenchElement child = element.$(TestBenchElement.class).id("elementid");
+     * }
+     * </pre>
+     * 
+     * @return the {@link SearchContext} representing the shadow root.
+     * @deprecated This method is deprecated. Use {@code $} instead to find
+     *             elements in the shadow root.
+     */
+    @Override
+    @Deprecated
+    public SearchContext getShadowRoot() {
+        throw new UnsupportedOperationException("getShadowRoot");
+    }
+
+    /**
      * Get list of immediate children of this element.
      *
      * @return List of TestBenchElements
