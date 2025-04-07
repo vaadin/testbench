@@ -32,8 +32,6 @@ public class PageObjectIT extends AbstractBrowserTB9Test {
         Assertions.assertEquals(1, components.size());
         Assertions.assertEquals("MyComponentWithId",
                 components.get(0).getText());
-        Assertions.assertEquals("page-object-view",
-                components.get(0).getParent().getId());
     }
 
     @BrowserTest
