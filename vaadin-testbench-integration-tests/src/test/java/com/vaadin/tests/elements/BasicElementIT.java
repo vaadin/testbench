@@ -36,13 +36,15 @@ public class BasicElementIT extends AbstractTB6Test {
     }
 
     @Test
-    public void getChildrenTest() {
+    public void getChildrenGetParentsTest() {
         TestBenchElement element = $(TestBenchElement.class).id("element-query-view");
         Assert.assertEquals(10, element.getChildren().size());
         TestBenchElement firstChild = element.getChildren().get(0);
         Assert.assertEquals("div", firstChild.getTagName());
+        Assert.assertEquals(element, firstChild.getParent()));
         TestBenchElement grandChild = firstChild.getChildren().get(0);
         Assert.assertEquals("button", grandChild.getTagName());
+        Assert.assertEquals(firstChild, grandChild.getParent()));
     }
 
     @Test
