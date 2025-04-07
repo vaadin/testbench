@@ -42,6 +42,16 @@ public class BasicElementIT extends AbstractBrowserTB9Test {
     }
 
     @BrowserTest
+    public void getParentsTest() {
+        TestBenchElement element = $(TestBenchElement.class).id("element-query-view");
+        Assertions.assertEquals(10, element.getChildren().size());
+        TestBenchElement firstChild = element.getChildren().get(0);
+        Assertions.assertEquals(element, firstChild.getParent());
+        TestBenchElement grandChild = firstChild.getChildren().get(0);
+        Assertions.assertEquals(firstChild, grandChild.getParent());
+    }
+
+    @BrowserTest
     public void getSetStringProperty() {
         TestBenchElement buttonElement = $(NativeButtonElement.class)
                 .waitForFirst();
