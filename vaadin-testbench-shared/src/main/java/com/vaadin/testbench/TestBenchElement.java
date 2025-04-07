@@ -809,4 +809,12 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
         throw new UnsupportedOperationException("getShadowRoot");
     }
 
+    /**
+     * Get list of immediate children of this element.
+     *
+     * @return List of TestBenchElements
+     */
+    public List<TestBenchElement> getChildren() {
+        return getPropertyElements("children");
+    }
 }
