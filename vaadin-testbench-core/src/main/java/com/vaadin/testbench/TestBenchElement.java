@@ -757,4 +757,13 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
                 "arguments[0].dispatchEvent(new CustomEvent(arguments[1], arguments[2]));",
                 this, eventType, customEventInit);
     }
+
+    /**
+     * Get list of immediate children of this element.
+     *
+     * @return List of TestBenchElements
+     */
+    public List<TestBenchElement> getChildren() {
+        return getPropertyElements("children");
+    }
 }
