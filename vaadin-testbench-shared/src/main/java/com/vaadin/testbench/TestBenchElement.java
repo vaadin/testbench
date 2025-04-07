@@ -285,6 +285,17 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
                 && wrappedElement.isEnabled();
     }
 
+    /**
+     * Returns whether the Vaadin component, that this element represents, is
+     * having readonly attribute set or not.
+     *
+     * @return true if the component has readonly attribute set.
+     */
+    public boolean isReadOnly() {
+        waitForVaadin();
+        return hasAttribute("readonly");
+    }
+
     @Override
     public String getText() {
         autoScrollIntoView();
@@ -781,5 +792,14 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
      */
     public TestBenchElement getParent() {
         return getPropertyElement("parentElement");
+    }
+
+    /**
+     * Get list of immediate children of this element.
+     *
+     * @return List of TestBenchElements
+     */
+    public List<TestBenchElement> getChildren() {
+        return getPropertyElements("children");
     }
 }
