@@ -47,8 +47,8 @@ import com.vaadin.ui.UI;
 import io.github.bonigarcia.wdm.WebDriverManager;
 
 /**
- * Base class for TestBench 3+ tests. All TB3+ tests in the project should
- * extend this class.
+ * Base class for TestBench 5 tests. All TB5 tests in the project should extend
+ * this class.
  *
  * Provides:
  * <ul>
@@ -56,13 +56,14 @@ import io.github.bonigarcia.wdm.WebDriverManager;
  * <li>Hub connection setup and teardown</li>
  * <li>Automatic generation of URL for a given test on the development server
  * using {@link #getUIClass()} or by automatically finding an enclosing UI class
- * and based on requested features, e.g. {@link #isDebug()}, {@link #isPush()}</li>
- * <li>Generic helpers for creating TB3+ tests</li>
+ * and based on requested features, e.g. {@link #isDebug()},
+ * {@link #isPush()}</li>
+ * <li>Generic helpers for creating TB5 tests</li>
  * </ul>
  *
  * @author Vaadin Ltd
  */
-public abstract class AbstractTB3Test extends ParallelTest {
+public abstract class AbstractTB5Test extends ParallelTest {
     /**
      * Height of the screenshots we want to capture
      */

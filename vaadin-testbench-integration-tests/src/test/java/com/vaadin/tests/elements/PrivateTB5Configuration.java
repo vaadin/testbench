@@ -36,8 +36,8 @@ import com.vaadin.testbench.parallel.Browser;
  */
 
 @BrowserFactory(VaadinBrowserFactory.class)
-@RunOnHub("tb3-hub.intra.itmill.com")
-public abstract class PrivateTB3Configuration extends AbstractTB3Test {
+@RunOnHub("tb5-hub.intra.itmill.com")
+public abstract class PrivateTB5Configuration extends AbstractTB5Test {
     private static final String HOSTNAME_PROPERTY = "deployment.hostname";
     private static final String RUN_LOCALLY_PROPERTY = "com.vaadin.testbench.runLocally";
     private static final String ALLOW_RUN_LOCALLY_PROPERTY = "com.vaadin.testbench.allowRunLocally";
@@ -52,7 +52,7 @@ public abstract class PrivateTB3Configuration extends AbstractTB3Test {
         if (propertiesFile.exists()) {
             try {
                 properties.load(new FileInputStream(propertiesFile));
-                Enumeration e = properties.propertyNames();
+                Enumeration<?> e = properties.propertyNames();
                 while (e.hasMoreElements()) {
                     String key = (String) e.nextElement();
                     System.setProperty(key, properties.getProperty(key));

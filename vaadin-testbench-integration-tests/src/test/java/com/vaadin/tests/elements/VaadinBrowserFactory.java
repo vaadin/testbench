@@ -20,7 +20,7 @@ import com.vaadin.testbench.parallel.Browser;
 import com.vaadin.testbench.parallel.DefaultBrowserFactory;
 
 /**
- * Specifies default browser configuration for {@link PrivateTB3Configuration}
+ * Specifies default browser configuration for {@link PrivateTB5Configuration}
  * tests.
  */
 public class VaadinBrowserFactory extends DefaultBrowserFactory {
