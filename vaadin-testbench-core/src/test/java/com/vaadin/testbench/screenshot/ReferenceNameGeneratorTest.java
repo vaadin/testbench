@@ -72,19 +72,6 @@ public class ReferenceNameGeneratorTest {
     }
 
     @Test
-    public void testGenerateName_barPhantomJSinCapabilities_returnsGeneratedName() {
-        Capabilities phantom = createNiceMock(Capabilities.class);
-        expect(phantom.getPlatformName()).andReturn(Platform.MAC);
-        expect(phantom.getBrowserName()).andReturn("phantomjs");
-        expect(phantom.getBrowserVersion())
-                .andReturn("phantomjs-1.8.1+ghostdriver-1.0.2");
-        replay(phantom);
-        String name = rng.generateName("bar", phantom);
-        assertEquals("bar_mac_phantomjs_1", name);
-        verify(phantom);
-    }
-
-    @Test
     public void testGenerateName_shotEdgeinCapabilities_returnsGeneratedName() {
         Capabilities chrome = createNiceMock(Capabilities.class);
         expect(chrome.getPlatformName()).andReturn(Platform.XP);

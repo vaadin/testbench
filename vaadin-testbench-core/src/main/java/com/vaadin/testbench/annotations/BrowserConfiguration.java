@@ -40,7 +40,6 @@ import org.openqa.selenium.remote.DesiredCapabilities;
  *     List&lt;DesiredCapabilities&gt; list = new ArrayList&lt;DesiredCapabilities&gt;();
  *     list.add(Browser.FIREFOX.getDesiredCapabilities());
  *     list.add(Browser.CHROME.getDesiredCapabilities());
- *     list.add(Browser.PHANTOMJS.getDesiredCapabilities());
  *     return list;
  * }
  * </pre>

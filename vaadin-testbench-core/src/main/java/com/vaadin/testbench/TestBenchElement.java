@@ -93,16 +93,6 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
     }
 
     /**
-     * Checks if the current test is running on PhantomJS.
-     *
-     * @return <code>true</code> if the test is running on PhantomJS,
-     *         <code>false</code> otherwise
-     */
-    protected boolean isPhantomJS() {
-        return BrowserUtil.isPhantomJS(getCapabilities());
-    }
-
-    /**
      * Checks if the current test is running on Chrome.
      *
      * @return <code>true</code> if the test is running on Chrome,
@@ -391,16 +381,12 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
         autoScrollIntoView();
         waitForVaadin();
         new Actions(getDriver()).doubleClick(actualElement).build().perform();
-        // Wait till vaadin component will process the event. Without it may
-        // cause problems with phantomjs
     }
 
     public void contextClick() {
         autoScrollIntoView();
         waitForVaadin();
         new Actions(getDriver()).contextClick(actualElement).build().perform();
-        // Wait till vaadin component will process the event. Without it may
-        // cause problems with phantomjs
     }
 
     @Override

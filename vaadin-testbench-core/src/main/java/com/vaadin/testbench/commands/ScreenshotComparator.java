@@ -80,25 +80,19 @@ public class ScreenshotComparator {
         boolean elementScreenshot = (screenshotContext instanceof WebElement);
 
         if (elementScreenshot && supportsElementScreenshots == null) {
-            if (BrowserUtil.isPhantomJS(capabilities)) {
-                // PhantomJS will die if you try to detect this...
+            // Detect if the driver supports element screenshots or not
+            try {
+                byte[] screenshotBytes = screenshotContext
+                        .getScreenshotAs(OutputType.BYTES);
+                supportsElementScreenshots = true;
+                return ImageIO.read(new ByteArrayInputStream(screenshotBytes));
+            } catch (UnsupportedCommandException e) {
                 supportsElementScreenshots = false;
-            } else {
-                // Detect if the driver supports element screenshots or not
-                try {
-                    byte[] screenshotBytes = screenshotContext
-                            .getScreenshotAs(OutputType.BYTES);
-                    supportsElementScreenshots = true;
-                    return ImageIO
-                            .read(new ByteArrayInputStream(screenshotBytes));
-                } catch (UnsupportedCommandException e) {
+            } catch (WebDriverException e) {
+                if (e.getCause() instanceof UnsupportedCommandException) {
                     supportsElementScreenshots = false;
-                } catch (WebDriverException e) {
-                    if (e.getCause() instanceof UnsupportedCommandException) {
-                        supportsElementScreenshots = false;
-                    } else {
-                        throw e;
-                    }
+                } else {
+                    throw e;
                 }
             }
         }

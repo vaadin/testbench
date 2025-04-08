@@ -120,18 +120,6 @@ public class BrowserUtil {
     }
 
     /**
-     * Gets the capabilities for PhantomJS
-     *
-     * @return an object describing the capabilities required for running a test
-     *         on PhantomJS
-     */
-    public static DesiredCapabilities phantomJS() {
-        DesiredCapabilities c = browserFactory
-                .create(com.vaadin.testbench.parallel.Browser.PHANTOMJS);
-        return c;
-    }
-
-    /**
      * Checks if the given capabilities refer to Internet Explorer 8
      *
      * @param capabilities
@@ -226,18 +214,6 @@ public class BrowserUtil {
     }
 
     /**
-     * @param capabilities
-     *            The capabilities to check
-     * @return true if the capabilities refer to PhantomJS, false otherwise
-     */
-    public static boolean isPhantomJS(Capabilities capabilities) {
-        if (capabilities == null) {
-            return false;
-        }
-        return "phantomjs".equals(capabilities.getBrowserName());
-    }
-
-    /**
      * Returns a human readable identifier of the given browser. Used for test
      * naming and screenshots
      *
@@ -254,8 +230,6 @@ public class BrowserUtil {
             return "Chrome";
         } else if (isSafari(capabilities)) {
             return "Safari";
-        } else if (isPhantomJS(capabilities)) {
-            return "PhantomJS";
         } else if (isEdge(capabilities)) {
             return "Edge";
         } else if (capabilities == null) {
