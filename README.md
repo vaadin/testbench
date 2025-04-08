@@ -12,7 +12,7 @@ Official releases of this add-on are available at http://vaadin.com/addon/vaadin
     cd testbench
     mvn clean install
     
-    Activate profiles : start-jetty-for-it OR run DevelopmentServerLauncher
+    Activate profiles : start-jetty-for-it and validate OR run DevelopmentServerLauncher
 
 ## Issue tracking & Contributions
 
