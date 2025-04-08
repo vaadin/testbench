@@ -39,6 +39,10 @@ public class BasicElementIT extends AbstractTB6Test {
     public void clickingButtonWillFocusIt() {
         buttonElement.click();
         Assert.assertTrue(buttonElement.isFocused());
+    }
+
+    @Test
+    public void getChildrenTest() {
         TestBenchElement element = $(TestBenchElement.class).id("element-query-view");
         Assert.assertEquals(10, element.getChildren().size());
         TestBenchElement firstChild = element.getChildren().get(0);
