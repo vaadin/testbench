@@ -27,7 +27,7 @@ public class VaadinBrowserFactory extends DefaultBrowserFactory {
 
     private static Map<Browser, String> defaultBrowserVersion = new HashMap<Browser, String>();
     static {
-        defaultBrowserVersion.put(Browser.CHROME, "135");
+        defaultBrowserVersion.put(Browser.CHROME, "117");
         defaultBrowserVersion.put(Browser.SAFARI, "7");
         defaultBrowserVersion.put(Browser.IE11, "11");
         defaultBrowserVersion.put(Browser.FIREFOX, "45");
