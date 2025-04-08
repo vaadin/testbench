@@ -10,7 +10,6 @@ vaadin-testbench-core/error-screenshots
 vaadin-testbench-integration-tests/error-screenshots/
 vaadin-testbench-integration-tests/config/testbench.properties
 chromedriver.log
-phantomjsdriver.log
 
 test/temp/
 

@@ -49,10 +49,6 @@ public class DefaultBrowserFactory implements TestBenchBrowserFactory {
         case CHROME:
             desiredCapabilities = new ChromeOptions();
             break;
-        case PHANTOMJS:
-            desiredCapabilities = new DesiredCapabilities("phantomjs", "",
-                    Platform.ANY);
-            break;
         case SAFARI:
             desiredCapabilities = new SafariOptions();
             break;
