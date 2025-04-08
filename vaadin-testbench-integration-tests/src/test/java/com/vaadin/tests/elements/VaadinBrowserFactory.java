@@ -35,7 +35,7 @@ public class VaadinBrowserFactory extends DefaultBrowserFactory {
 
     private static Map<Browser, Platform> defaultBrowserPlatform = new HashMap<Browser, Platform>();
     static {
-        defaultBrowserPlatform.put(Browser.CHROME, Platform.WIN10);
+        defaultBrowserPlatform.put(Browser.CHROME, Platform.LINUX);
         defaultBrowserPlatform.put(Browser.SAFARI, Platform.MAC);
         defaultBrowserPlatform.put(Browser.IE11, Platform.WINDOWS);
         defaultBrowserPlatform.put(Browser.FIREFOX, Platform.WINDOWS);
