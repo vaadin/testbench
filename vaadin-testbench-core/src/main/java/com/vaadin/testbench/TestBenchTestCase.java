@@ -237,9 +237,42 @@ public abstract class TestBenchTestCase
     }
 
     /**
+     * Waits the given duration for the given condition to become neither null
+     * nor false. {@link NotFoundException}s are ignored by default.
+     * <p>
+     * Use e.g. as
+     * <code>waitUntil(ExpectedConditions.presenceOfElementLocated(by), Duration.ofSeconds(10));</code>
+     *
+     * @param <T>
+     *            The condition return type.
+     * @param condition
+     *            Models a condition that might reasonably be expected to
+     *            eventually evaluate to something that is neither null nor
+     *            false.
+     * @param duration
+     *            The timeout duration for the wait.
+     * @return The condition's return value if it returned something different
+     *         from null or false before the timeout expired.
+     *
+     * @throws TimeoutException
+     *             If the timeout expires.
+     *
+     * @see FluentWait#until
+     * @see ExpectedCondition
+     */
+    protected <T> T waitUntil(ExpectedCondition<T> condition,
+            Duration duration) {
+        return new WebDriverWait(getDriver(), duration).until(condition);
+    }
+
+    /**
      * Waits the given number of seconds for the given condition to become
      * neither null nor false. {@link NotFoundException}s are ignored by
      * default.
+     * <p>
+     * This is a compatibility method that converts the timeouts given as
+     * seconds (Selenium 3 style) into timeouts given as Durations (Selenium 4
+     * style).
      * <p>
      * Use e.g. as
      * <code>waitUntil(ExpectedConditions.presenceOfElementLocated(by), 10);</code>
@@ -254,18 +287,18 @@ public abstract class TestBenchTestCase
      *            The timeout in seconds for the wait.
      * @return The condition's return value if it returned something different
      *         from null or false before the timeout expired.
-     * 
+     *
      * @throws TimeoutException
      *             If the timeout expires.
-     * 
+     *
      * @see FluentWait#until
      * @see ExpectedCondition
+     * @deprecated Use {@link #waitUntil(ExpectedCondition, Duration)} instead
      */
+    @Deprecated
     protected <T> T waitUntil(ExpectedCondition<T> condition,
             long timeoutInSeconds) {
-        return new WebDriverWait(getDriver(),
-                Duration.ofSeconds(timeoutInSeconds))
-                .until(condition);
+        return waitUntil(condition, Duration.ofSeconds(timeoutInSeconds));
     }
 
     /**
@@ -283,15 +316,15 @@ public abstract class TestBenchTestCase
      *            false.
      * @return The condition's return value if it returned something different
      *         from null or false before the timeout expired.
-     * 
+     *
      * @throws TimeoutException
      *             If 10 seconds passed.
-     * 
+     *
      * @see FluentWait#until
      * @see ExpectedCondition
      */
     protected <T> T waitUntil(ExpectedCondition<T> condition) {
-        return waitUntil(condition, 10);
+        return waitUntil(condition, Duration.ofSeconds(10));
     }
 
 }

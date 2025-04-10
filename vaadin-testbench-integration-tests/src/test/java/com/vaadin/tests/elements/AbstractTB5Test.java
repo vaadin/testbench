@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.lang.reflect.Field;
 import java.net.URL;
+import java.time.Duration;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpHost;
@@ -163,10 +164,11 @@ public abstract class AbstractTB5Test extends ParallelTest {
     }
 
     protected void waitForDebugMessage(final String expectedMessage) {
-        waitForDebugMessage(expectedMessage, 30);
+        waitForDebugMessage(expectedMessage, Duration.ofSeconds(30));
     }
 
-    protected void waitForDebugMessage(final String expectedMessage, int timeout) {
+    protected void waitForDebugMessage(final String expectedMessage,
+            Duration timeout) {
         waitUntil(new ExpectedCondition<Boolean>() {
 
             @Override
@@ -645,7 +647,8 @@ public abstract class AbstractTB5Test extends ParallelTest {
     protected void openDebugLogTab() {
         WebElement debugLogButton = waitUntil(
                 ExpectedConditions.presenceOfElementLocated(
-                By.xpath("//button[@title='Debug message log']")), 15);
+                        By.xpath("//button[@title='Debug message log']")),
+                Duration.ofSeconds(15));
         debugLogButton.click();
     }
 
