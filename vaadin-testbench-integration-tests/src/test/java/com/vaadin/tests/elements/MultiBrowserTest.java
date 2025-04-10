@@ -36,7 +36,7 @@ import com.vaadin.testbench.parallel.BrowserUtil;
  * @author Vaadin Ltd
  */
 
-public abstract class MultiBrowserTest extends PrivateTB3Configuration {
+public abstract class MultiBrowserTest extends PrivateTB5Configuration {
 
     protected List<DesiredCapabilities> getBrowsersExcludingIE() {
         List<DesiredCapabilities> browsers = new ArrayList<DesiredCapabilities>(
