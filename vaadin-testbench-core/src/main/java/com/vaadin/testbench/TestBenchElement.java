@@ -247,6 +247,12 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
     }
 
     @Override
+    public String getDomAttribute(String name) {
+        waitForVaadin();
+        return actualElement.getDomAttribute(name);
+    }
+
+    @Override
     public String getAttribute(String name) {
         waitForVaadin();
         return actualElement.getAttribute(name);
@@ -262,6 +268,18 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
      */
     public boolean hasAttribute(String attribute) {
         return getAttribute(attribute) != null;
+    }
+
+    @Override
+    public String getAriaRole() {
+        waitForVaadin();
+        return actualElement.getAriaRole();
+    }
+
+    @Override
+    public String getAccessibleName() {
+        waitForVaadin();
+        return actualElement.getAccessibleName();
     }
 
     @Override
@@ -322,6 +340,12 @@ public class TestBenchElement extends AbstractHasTestBenchCommandExecutor
             return wrapElement(by.findElement(this), getCommandExecutor());
         }
         return wrapElement(actualElement.findElement(by), getCommandExecutor());
+    }
+
+    @Override
+    public SearchContext getShadowRoot() {
+        waitForVaadin();
+        return actualElement.getShadowRoot();
     }
 
     /**
