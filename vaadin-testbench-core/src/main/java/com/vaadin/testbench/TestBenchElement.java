@@ -812,4 +812,14 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
     public List<TestBenchElement> getChildren() {
         return getPropertyElements("children");
     }
+
+    /**
+     * Hover mouse pointer on this element.
+     *
+     * Note: This works well only if this element is atomic.
+     */
+    public void hover() {
+        Actions action = new Actions(getDriver());
+        action.moveToElement(this).perform();
+    }
 }
