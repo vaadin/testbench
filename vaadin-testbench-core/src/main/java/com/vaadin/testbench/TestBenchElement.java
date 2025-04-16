@@ -150,6 +150,15 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
     }
 
     /**
+     * Gets the id set for this element.
+     *
+     * @return String value, can be null
+     */
+    public String getId() {
+        return getAttribute("id");
+    }
+
+    /**
      * Sets the number of pixels that an element's content is scrolled from the
      * top.
      *
@@ -171,8 +180,21 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
         setProperty("scrollLeft", scrollLeft);
     }
 
+    /**
+     * Checks if the current element is the focused element on the page.
+     *
+     * @return {@code true} if this element is the currently focused element,
+     *         {@code false} otherwise.
+     */
+    public boolean isFocused() {
+        return this.getWrappedElement()
+                .equals(getDriver().switchTo().activeElement());
+    }
+
     @Override
     public void click() {
+        // JS call to click does not focus element, hence ensure focus
+        focus();
         try {
             // Avoid strange "element not clickable at point" problems
             callFunction("click");
@@ -245,6 +267,17 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
         waitForVaadin();
         return !hasClassName("v-disabled") && !hasAttribute("disabled")
                 && wrappedElement.isEnabled();
+    }
+
+    /**
+     * Returns whether the Vaadin component, that this element represents, is
+     * having readonly attribute set or not.
+     *
+     * @return true if the component has readonly attribute set.
+     */
+    public boolean isReadOnly() {
+        waitForVaadin();
+        return hasAttribute("readonly");
     }
 
     @Override
@@ -736,5 +769,57 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
         executeScript(
                 "arguments[0].dispatchEvent(new CustomEvent(arguments[1], arguments[2]));",
                 this, eventType, customEventInit);
+    }
+
+    /**
+     * Gets the parent element of this element.
+     *
+     * @return The parent as TestBenchElement, can be null.
+     */
+    public TestBenchElement getParent() {
+        return getPropertyElement("parentElement");
+    }
+ 
+    /**
+     * Not implemented. This method is not supported for the
+     * {@link TestBenchElement}. Use {@code $} instead to find elements in the
+     * shadow root.
+     * 
+     * Example usage:
+     * 
+     * <pre>
+     * {@code
+     * TestBenchElement element = ...;
+     * TestBenchElement child = element.$(TestBenchElement.class).id("elementid");
+     * }
+     * </pre>
+     * 
+     * @return the {@link SearchContext} representing the shadow root.
+     * @deprecated This method is deprecated. Use {@code $} instead to find
+     *             elements in the shadow root.
+     */
+    @Override
+    @Deprecated
+    public SearchContext getShadowRoot() {
+        throw new UnsupportedOperationException("getShadowRoot");
+    }
+
+    /**
+     * Get list of immediate children of this element.
+     *
+     * @return List of TestBenchElements
+     */
+    public List<TestBenchElement> getChildren() {
+        return getPropertyElements("children");
+    }
+
+    /**
+     * Hover mouse pointer on this element.
+     *
+     * Note: This works well only if this element is atomic.
+     */
+    public void hover() {
+        Actions action = new Actions(getDriver());
+        action.moveToElement(this).perform();
     }
 }
