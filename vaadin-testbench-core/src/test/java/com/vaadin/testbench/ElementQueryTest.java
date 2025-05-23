@@ -27,6 +27,8 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import static com.vaadin.testbench.ElementQuery.AttributeMatch.Comparison.CONTAINS_WORD;
+import static com.vaadin.testbench.ElementQuery.AttributeMatch.Comparison.EXISTS;
+import static com.vaadin.testbench.ElementQuery.AttributeMatch.Comparison.NOT_EXISTS;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNull;
@@ -790,6 +792,19 @@ public class ElementQueryTest {
 
     }
 
+    @Attribute(name = "hierarchical")
+    public static class CustomTreeGridElement extends TestBenchElement {
+    }
+
+    @Attribute(name = "hierarchical", exists = true)
+    public static class ExistsTrueCustomTreeGridElement
+            extends TestBenchElement {
+    }
+
+    @Attribute(name = "hierarchical", exists = false)
+    public static class CustomGridElement extends TestBenchElement {
+    }
+
     @Test
     public void attributesConventionValue() {
         Set<AttributeMatch> attributes = ElementQuery
@@ -828,8 +843,34 @@ public class ElementQueryTest {
     public void multipleAttributeAnnotationWords() {
         Set<AttributeMatch> attributes = ElementQuery
                 .getAttributes(MultipleAnnotationElement.class);
-        assertEquals(set(new AttributeMatch("class", CONTAINS_WORD, "foo"),
-                new AttributeMatch("class", CONTAINS_WORD, "bar")), attributes);
+        assertEquals(
+                set(new AttributeMatch("class", CONTAINS_WORD, "foo"),
+                        new AttributeMatch("class", CONTAINS_WORD, "bar")),
+                attributes);
+    }
+
+    @Test
+    public void attributeExistsDefaultAttributeAnnotationWords() {
+        Set<AttributeMatch> attributes = ElementQuery
+                .getAttributes(CustomTreeGridElement.class);
+        assertEquals(set(new AttributeMatch("hierarchical", EXISTS, null)),
+                attributes);
+    }
+
+    @Test
+    public void attributeExistsAttributeAnnotationWords() {
+        Set<AttributeMatch> attributes = ElementQuery
+                .getAttributes(ExistsTrueCustomTreeGridElement.class);
+        assertEquals(set(new AttributeMatch("hierarchical", EXISTS, null)),
+                attributes);
+    }
+
+    @Test
+    public void attributeNotExistAttributeAnnotationWords() {
+        Set<AttributeMatch> attributes = ElementQuery
+                .getAttributes(CustomGridElement.class);
+        assertEquals(set(new AttributeMatch("hierarchical", NOT_EXISTS, null)),
+                attributes);
     }
 
     @SafeVarargs

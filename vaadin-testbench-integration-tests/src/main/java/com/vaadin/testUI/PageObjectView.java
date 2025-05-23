@@ -25,5 +25,9 @@ public class PageObjectView extends Div {
         anotherDiv.setText("Some div");
 
         add(someDiv, idView, classesView, anotherDiv);
+
+        CustomGrid customGrid = new CustomGrid();
+        CustomTreeGrid customTreeGrid = new CustomTreeGrid();
+        add(customGrid, customTreeGrid);
     }
 }

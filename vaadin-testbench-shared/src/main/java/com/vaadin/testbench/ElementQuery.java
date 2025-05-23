@@ -259,7 +259,22 @@ public class ElementQuery<T extends TestBenchElement> {
          * @param name the name of the attribute
          */
         public AttributeMatch(String name) {
-            this(name, EXISTS, null);
+            this(name, true);
+        }
+
+        /**
+         * Instantiates an attribute exists expression having the supplied
+         * attribute name with an option to require the attribute to not
+         * present on the element.
+         *
+         * @param name
+         *            the name of the attribute
+         * @param exists
+         *            a boolean indicating whether the attribute exists (true)
+         *            or does not exist (false)
+         */
+        public AttributeMatch(String name, boolean exists) {
+            this(name, exists ? EXISTS : NOT_EXISTS, null);
         }
 
         @Override
@@ -1354,25 +1369,25 @@ public class ElementQuery<T extends TestBenchElement> {
 
         Set<AttributeMatch> classAttributes = new HashSet<>();
         for (Attribute attr : attrs) {
+            validateAttributeValues(attr);
             if (!Attribute.DEFAULT_VALUE.equals(attr.value())) {
-                if (!Attribute.DEFAULT_VALUE.equals(attr.contains())) {
-                    throw new RuntimeException(
-                            "You can only define either 'contains' or 'value' for an @"
-                                    + Attribute.class.getSimpleName());
-                }
                 String value = attr.value().equals(Attribute.SIMPLE_CLASS_NAME)
                         ? getClassConventionValue(elementClass)
                         : attr.value();
                 // [label='my-text']
-                classAttributes
-                        .add(new AttributeMatch(attr.name(), MATCHES_EXACTLY, value));
+                classAttributes.add(new AttributeMatch(attr.name(),
+                        MATCHES_EXACTLY, value));
             } else if (!Attribute.DEFAULT_VALUE.equals(attr.contains())) {
                 // [class~='js-card-name']
-                String value = attr.contains().equals(Attribute.SIMPLE_CLASS_NAME)
-                        ? getClassConventionValue(elementClass)
-                        : attr.contains();
-                classAttributes
-                        .add(new AttributeMatch(attr.name(), CONTAINS_WORD, value));
+                String value = attr.contains()
+                        .equals(Attribute.SIMPLE_CLASS_NAME)
+                                ? getClassConventionValue(elementClass)
+                                : attr.contains();
+                classAttributes.add(
+                        new AttributeMatch(attr.name(), CONTAINS_WORD, value));
+            } else if (!attr.exists()) {
+                // no attribute with name
+                classAttributes.add(new AttributeMatch(attr.name(), false));
             } else {
                 // [disabled]
                 classAttributes.add(new AttributeMatch(attr.name()));
@@ -1427,6 +1442,28 @@ public class ElementQuery<T extends TestBenchElement> {
             // Wrap as the correct type
             elements.replaceAll(element -> TestBench.wrap(element, elementClass));
             return (List<T>) elements;
+        }
+    }
+
+    private static void validateAttributeValues(Attribute attribute) {
+        String annotationName = Attribute.class.getSimpleName();
+        if (!Attribute.DEFAULT_VALUE.equals(attribute.value())) {
+            if (!Attribute.DEFAULT_VALUE.equals(attribute.contains())) {
+                throw new RuntimeException(
+                        "You can only define either 'contains' or 'value' for an @"
+                                + annotationName);
+            }
+            if (!attribute.exists()) {
+                throw new RuntimeException(
+                        "You can only define 'value' with 'exists=true' for an @"
+                                + annotationName);
+            }
+        } else if (!Attribute.DEFAULT_VALUE.equals(attribute.contains())) {
+            if (!attribute.exists()) {
+                throw new RuntimeException(
+                        "You can only define 'contains' with 'exists=true' for an @"
+                                + annotationName);
+            }
         }
     }
 
