@@ -72,6 +72,13 @@ public @interface Attribute {
     String value() default DEFAULT_VALUE;
 
     /**
+     * Specifies whether the attribute must exist on an element.
+     *
+     * @return true if the attribute must exist, false otherwise
+     */
+    boolean exists() default true;
+
+    /**
      * The value to find within the attribute value.
      * <p>
      * This will match if the given string is one matches one of the space

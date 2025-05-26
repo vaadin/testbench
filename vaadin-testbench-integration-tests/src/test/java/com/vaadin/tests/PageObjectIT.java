@@ -44,4 +44,23 @@ public class PageObjectIT extends AbstractTB6Test {
                 components.get(0).getText());
     }
 
+    @Test
+    public void findUsingExistsFalseAnnotation() {
+        openTestURL();
+        List<CustomGridElement> components = $(CustomGridElement.class).all();
+
+        Assert.assertEquals(1, components.size());
+        Assert.assertEquals("CustomGrid", components.get(0).getText());
+    }
+
+    @Test
+    public void findUsingExistsTrueAnnotation() {
+        openTestURL();
+        List<CustomTreeGridElement> components = $(CustomTreeGridElement.class)
+                .all();
+
+        Assert.assertEquals(1, components.size());
+        Assert.assertEquals("CustomTreeGrid", components.get(0).getText());
+    }
+
 }
