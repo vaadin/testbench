@@ -44,7 +44,6 @@
         <module>vaadin-testbench-bom</module>
         <module>vaadin-testbench-unit</module>
         <module>vaadin-testbench-core</module>
-        <module>vaadin-testbench-integration-tests</module>
     </modules>
     <repositories>
         <repository>
@@ -134,4 +133,17 @@
             </plugins>
         </pluginManagement>
     </build>
+    <profiles>
+        <profile>
+            <id>default</id>
+            <activation>
+                <property>
+                    <name>!release</name>
+                </property>
+            </activation>
+            <modules>
+                <module>vaadin-testbench-integration-tests</module>
+            </modules>
+        </profile>
+    </profiles>
 </project>
