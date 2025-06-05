@@ -50,8 +50,6 @@
         <module>vaadin-testbench-shared</module>
         <module>vaadin-testbench-core</module>
         <module>vaadin-testbench-core-junit5</module>
-        <module>vaadin-testbench-integration-tests</module>
-        <module>vaadin-testbench-integration-tests-junit5</module>
         <module>vaadin-testbench-unit-shared</module>
         <module>vaadin-testbench-unit</module>
         <module>vaadin-testbench-unit-junit5</module>
@@ -154,4 +152,19 @@
             </plugins>
         </pluginManagement>
     </build>
+
+    <profiles>
+        <profile>
+            <id>default</id>
+            <activation>
+                <property>
+                    <name>!release</name>
+                </property>
+            </activation>
+            <modules>
+                <module>vaadin-testbench-integration-tests</module>
+                <module>vaadin-testbench-integration-tests-junit5</module>
+            </modules>
+        </profile>
+    </profiles>
 </project>
