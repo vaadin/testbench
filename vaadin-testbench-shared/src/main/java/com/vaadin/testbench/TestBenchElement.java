@@ -243,12 +243,8 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
      *            The name of the attribute.
      * @return The attribute/ property's current value or null if the value is
      *         not set.
-     *
-     * @deprecated This method is deprecated. Use getDomProperty(String) or
-     *             getDomAttribute(String) for more precise attribute retrieval.
      */
     @Override
-    @Deprecated
     public String getAttribute(String name) {
         waitForVaadin();
         return wrappedElement.getAttribute(name);
@@ -806,21 +802,21 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
     public TestBenchElement getParent() {
         return getPropertyElement("parentElement");
     }
- 
+
     /**
      * Not implemented. This method is not supported for the
      * {@link TestBenchElement}. Use {@code $} instead to find elements in the
      * shadow root.
-     * 
+     *
      * Example usage:
-     * 
+     *
      * <pre>
      * {@code
      * TestBenchElement element = ...;
      * TestBenchElement child = element.$(TestBenchElement.class).id("elementid");
      * }
      * </pre>
-     * 
+     *
      * @return the {@link SearchContext} representing the shadow root.
      * @deprecated This method is deprecated. Use {@code $} instead to find
      *             elements in the shadow root.
