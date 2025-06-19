@@ -59,7 +59,9 @@ public class MultiSelectListBoxTester<T extends MultiSelectListBox<V>, V>
 
         ensureComponentIsUsable();
 
-        getComponent().select(getItemsForSelection(selection));
+        var items = getItemsForSelection(selection);
+        items.addAll(getSelected());
+        setValueAsUser(items);
     }
 
     /**
@@ -75,14 +77,17 @@ public class MultiSelectListBoxTester<T extends MultiSelectListBox<V>, V>
 
         ensureComponentIsUsable();
 
-        getComponent().deselect(getItemsForSelection(selection));
+        var items = getItemsForSelection(selection);
+        var value = getSelected().stream().filter(item -> !items.contains(item))
+                .collect(Collectors.toSet());
+        setValueAsUser(value);
     }
 
-    private List<V> getItemsForSelection(String[] selection) {
+    private Set<V> getItemsForSelection(String[] selection) {
         List<String> items = Arrays.asList(selection);
-        final List<V> filtered = getSuggestionItems().stream()
+        final Set<V> filtered = getSuggestionItems().stream()
                 .filter(item -> items.contains(getItemLabel(item)))
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
         if (filtered.size() != items.size()) {
             throw new IllegalArgumentException(
                     "Selection contained items that didn't have a selection");

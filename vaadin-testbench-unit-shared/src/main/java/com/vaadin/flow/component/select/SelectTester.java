@@ -46,7 +46,7 @@ public class SelectTester<T extends Select<Y>, Y> extends ComponentTester<T> {
     public void selectItem(String selection) {
         ensureComponentIsUsable();
         if (selection == null) {
-            getComponent().setValue(null);
+            setValueAsUser(null);
             return;
         }
         final List<Y> filtered = getSuggestionItems().stream()
@@ -56,7 +56,7 @@ public class SelectTester<T extends Select<Y>, Y> extends ComponentTester<T> {
             throw new IllegalArgumentException(
                     "No item found for '" + selection + "'");
         }
-        getComponent().setValue(filtered.get(0));
+        setValueAsUser(filtered.get(0));
     }
 
     /**

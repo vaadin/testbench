@@ -56,7 +56,7 @@ public class DatePickerTester<T extends DatePicker> extends ComponentTester<T> {
             throw new RuntimeException(e);
         }
 
-        getComponent().setValue(date);
+        setValueAsUser(date);
     }
 
     private boolean isInvalid(LocalDate date)

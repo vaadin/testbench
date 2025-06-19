@@ -58,7 +58,9 @@ class DatePickerTesterTest extends UIUnitTest {
 
         view.picker.addValueChangeListener(
                 (HasValue.ValueChangeListener<AbstractField.ComponentValueChangeEvent<DatePicker, LocalDate>>) event -> {
-                    value.compareAndSet(null, event.getValue());
+                    if (event.isFromClient()) {
+                        value.compareAndSet(null, event.getValue());
+                    }
                 });
 
         final LocalDate newValue = LocalDate.of(1995, 1, 5);

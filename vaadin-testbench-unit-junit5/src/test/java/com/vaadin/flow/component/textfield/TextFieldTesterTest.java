@@ -58,7 +58,9 @@ public class TextFieldTesterTest extends UIUnitTest {
 
         view.textField.addValueChangeListener(
                 (ValueChangeListener<ComponentValueChangeEvent<TextField, String>>) event -> {
-                    value.compareAndSet(null, event.getValue());
+                    if (event.isFromClient()) {
+                        value.compareAndSet(null, event.getValue());
+                    }
                 });
 
         final TextFieldTester<TextField, String> tf_ = test(view.textField);

@@ -42,7 +42,7 @@ public class TextAreaTester<T extends TextArea> extends ComponentTester<T> {
      */
     public void setValue(String value) {
         ensureComponentIsUsable();
-        getComponent().setValue(value);
+        setValueAsUser(value);
     }
 
     private boolean hasValidation() {

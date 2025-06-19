@@ -57,7 +57,7 @@ public class DateTimePickerTester<T extends DateTimePicker>
             throw new RuntimeException(e);
         }
 
-        getComponent().setValue(dateTime);
+        setValueAsUser(dateTime);
     }
 
     private boolean isInvalid(LocalDateTime date)

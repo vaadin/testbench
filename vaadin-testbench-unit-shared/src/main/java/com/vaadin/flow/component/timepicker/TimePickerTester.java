@@ -56,7 +56,7 @@ public class TimePickerTester<T extends TimePicker> extends ComponentTester<T> {
             throw new RuntimeException(e);
         }
 
-        getComponent().setValue(time);
+        setValueAsUser(time);
     }
 
     private boolean isInvalid(LocalTime date)

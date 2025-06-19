@@ -96,10 +96,8 @@ public class CheckboxGroupTester<T extends CheckboxGroup<V>, V>
      */
     public void selectAll() {
         ensureComponentIsUsable();
-        getComponent()
-                .setValue(getCheckboxes(child -> isUsableCheckbox(child, false))
-                        .map(this::getCheckboxValue)
-                        .collect(Collectors.toSet()));
+        setValueAsUser(getCheckboxes(child -> isUsableCheckbox(child, false))
+                .map(this::getCheckboxValue).collect(Collectors.toSet()));
     }
 
     /**
