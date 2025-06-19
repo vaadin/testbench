@@ -41,7 +41,7 @@ public class InputTester extends ComponentTester<Input> {
                     "Field doesn't allow null values");
         }
 
-        getComponent().setValue(value);
+        setValueAsUser(value);
     }
 
     /**
