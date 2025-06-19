@@ -85,7 +85,7 @@ public class RangeInputTester extends ComponentTester<RangeInput> {
                             + getComponent().getStep());
 
         }
-        getComponent().setValue(value);
+        setValueAsUser(value);
     }
 
     /**
