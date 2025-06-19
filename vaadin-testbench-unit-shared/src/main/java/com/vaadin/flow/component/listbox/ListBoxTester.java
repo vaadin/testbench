@@ -53,7 +53,7 @@ public class ListBoxTester<T extends ListBox<V>, V> extends ComponentTester<T> {
     public void selectItem(String selection) {
         ensureComponentIsUsable();
         if (selection == null) {
-            getComponent().setValue(null);
+            setValueAsUser(null);
             return;
         }
         final List<V> filtered = getSuggestionItems().stream()
@@ -63,7 +63,7 @@ public class ListBoxTester<T extends ListBox<V>, V> extends ComponentTester<T> {
             throw new IllegalArgumentException(
                     "No item found for '" + selection + "'");
         }
-        getComponent().setValue(filtered.get(0));
+        setValueAsUser(filtered.get(0));
     }
 
     /**
