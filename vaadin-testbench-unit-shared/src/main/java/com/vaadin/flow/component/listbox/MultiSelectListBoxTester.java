@@ -78,7 +78,9 @@ public class MultiSelectListBoxTester<T extends MultiSelectListBox<V>, V>
         ensureComponentIsUsable();
 
         var items = getItemsForSelection(selection);
-        setValueAsUser(getSelected().removeAll(items));
+        var value = getSelected().stream().filter(item -> !items.contains(item))
+                .collect(Collectors.toSet());
+        setValueAsUser(value);
     }
 
     private Set<V> getItemsForSelection(String[] selection) {
