@@ -23,6 +23,7 @@ import com.vaadin.flow.server.ServiceException;
 import com.vaadin.flow.server.VaadinServletService;
 import com.vaadin.quarkus.QuarkusVaadinServlet;
 import com.vaadin.testbench.unit.internal.Routes;
+import com.vaadin.testbench.unit.internal.UIFactory;
 import com.vaadin.testbench.unit.mocks.MockVaadinHelper;
 
 /**
@@ -39,7 +40,7 @@ public class MockQuarkusServlet extends QuarkusVaadinServlet {
     /**
      * Factory used to build Flow UIs.
      */
-    protected final transient Function0<UI> uiFactory;
+    protected final transient UIFactory uiFactory;
     /**
      * The CDI bean manager.
      */
@@ -56,7 +57,7 @@ public class MockQuarkusServlet extends QuarkusVaadinServlet {
      *            the factory used to build Flow UIs.
      */
     public MockQuarkusServlet(Routes routes, BeanManager beanManager,
-            @NotNull Function0<UI> uiFactory) {
+            @NotNull UIFactory uiFactory) {
         this.routes = routes;
         this.uiFactory = uiFactory;
         this.beanManager = beanManager;

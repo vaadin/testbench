@@ -9,14 +9,14 @@
  */
 package com.vaadin.testbench.unit.internal
 
-import com.github.mvysny.dynatest.DynaNodeGroup
-import com.github.mvysny.dynatest.expectList
+import kotlin.test.expect
 import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.button.Button
-import com.vaadin.flow.component.html.Label
+import com.vaadin.flow.component.html.Span
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
-import kotlin.test.expect
+import com.github.mvysny.dynatest.DynaNodeGroup
+import com.github.mvysny.dynatest.expectList
 
 fun DynaNodeGroup.depthFirstTreeIteratorTests() {
     test("DepthFirstTreeIterator") {
@@ -31,7 +31,7 @@ fun DynaNodeGroup.depthFirstTreeIteratorTests() {
             add(Button("Foo").apply { expected.add(this) })
             add(HorizontalLayout().apply {
                 expected.add(this)
-                add(Label().apply { expected.add(this) })
+                add(Span().apply { expected.add(this) })
             })
             add(VerticalLayout().apply { expected.add(this) })
         }

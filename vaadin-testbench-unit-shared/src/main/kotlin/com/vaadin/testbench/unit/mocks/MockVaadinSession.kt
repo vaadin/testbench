@@ -9,10 +9,10 @@
  */
 package com.vaadin.testbench.unit.mocks
 
-import com.vaadin.flow.component.UI
 import com.vaadin.flow.server.VaadinService
 import com.vaadin.flow.server.VaadinSession
 import com.vaadin.testbench.unit.internal.MockVaadin
+import com.vaadin.testbench.unit.internal.UIFactory
 
 /**
  * A Vaadin Session with one important difference:
@@ -23,7 +23,7 @@ import com.vaadin.testbench.unit.internal.MockVaadin
  *   [MockVaadin.afterSessionClose].
  */
 open class MockVaadinSession(service: VaadinService,
-                                    public val uiFactory: () -> UI
+                             val uiFactory: UIFactory
 ) : VaadinSession(service) {
     override fun close() {
         super.close()

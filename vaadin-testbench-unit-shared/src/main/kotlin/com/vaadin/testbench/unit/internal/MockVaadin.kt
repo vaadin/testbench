@@ -9,6 +9,7 @@
  */
 package com.vaadin.testbench.unit.internal
 
+import java.io.Serializable
 import java.lang.reflect.Field
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.locks.ReentrantLock
@@ -83,7 +84,7 @@ object MockVaadin {
     @JvmStatic
     @JvmOverloads
     fun setup(routes: Routes = Routes(),
-              uiFactory: () -> UI = { MockedUI() },
+              uiFactory: () -> UI = UIFactory { MockedUI() },
               lookupServices: Set<Class<*>> = emptySet()) {
         // init servlet
         val servlet = MockVaadinServlet(routes)
@@ -259,7 +260,7 @@ object MockVaadin {
         }
         ui.internals.session = session
         UI.setCurrent(ui)
-        ui.doInit(request, 1)
+        ui.doInit(request, 1, "ROOT")
         strongRefUI.set(ui)
 
         session.addUI(ui)
@@ -432,7 +433,7 @@ private fun VaadinService.fireServiceDestroyListeners(event: ServiceDestroyEvent
     }
 }
 
-private class MockPage(ui: UI, private val uiFactory: () -> UI, private val session: VaadinSession) : Page(ui) {
+private class MockPage(ui: UI, private val uiFactory: UIFactory, private val session: VaadinSession) : Page(ui) {
     override fun reload() {
         // recreate the UI on reload(), to simulate browser's F5
         super.reload()
@@ -444,3 +445,5 @@ private class MockPage(ui: UI, private val uiFactory: () -> UI, private val sess
 fun interface MockRequestCustomizer {
     fun apply(request: MockRequest)
 }
+
+fun interface UIFactory : () -> UI, Serializable
