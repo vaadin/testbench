@@ -20,7 +20,6 @@ import io.quarkus.test.junit.QuarkusTestProfile;
 import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.flow.server.ServiceInitEvent;
 import com.vaadin.flow.server.auth.NavigationAccessControl;
-import com.vaadin.flow.server.auth.ViewAccessChecker;
 import com.vaadin.testbench.unit.quarkus.mocks.MockQuarkusServletService;
 
 // Since Quarkus 3.6 it should be possible to define beans in the profile
@@ -37,14 +36,6 @@ public class SecurityTestConfig {
         }
     }
 
-    public static class ViewAccessCheckerConfig implements QuarkusTestProfile {
-        @Override
-        public String getConfigProfile() {
-            return "test-security-vac";
-        }
-
-    }
-
     @IfBuildProfile("test-security-nac")
     public static class NavigationAccessControlInitializer {
 
@@ -57,23 +48,6 @@ public class SecurityTestConfig {
                     NavigationAccessControl accessControl = new NavigationAccessControl();
                     accessControl.setLoginView(LoginView.class);
                     uiEvent.getUI().addBeforeEnterListener(accessControl);
-                });
-            }
-        }
-    }
-
-    @IfBuildProfile("test-security-vac")
-    public static class ViewAccessCheckerInitializer {
-
-        public void serviceInit(@Observes ServiceInitEvent event) {
-            // Currently, @QuarkusTest starts the whole application, so we check
-            // the VaadinService type to register routes only for UI Unit tests
-            if (event.getSource() instanceof MockQuarkusServletService) {
-                registerRoutes();
-                event.getSource().addUIInitListener(uiEvent -> {
-                    ViewAccessChecker viewAccessChecker = new ViewAccessChecker();
-                    viewAccessChecker.setLoginView(LoginView.class);
-                    uiEvent.getUI().addBeforeEnterListener(viewAccessChecker);
                 });
             }
         }

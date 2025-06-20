@@ -11,12 +11,12 @@ package com.vaadin.testbench.unit.mocks
 
 import java.lang.reflect.Constructor
 import java.lang.reflect.Method
-import jakarta.servlet.http.HttpServletRequest
-import jakarta.servlet.http.HttpServletResponse
-import com.vaadin.flow.component.UI
 import com.vaadin.flow.function.DeploymentConfiguration
 import com.vaadin.flow.server.*
 import com.vaadin.testbench.unit.internal.Routes
+import com.vaadin.testbench.unit.internal.UIFactory
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 
 /**
  * Makes sure that [routes] are properly registered, and that [MockService]
@@ -26,7 +26,7 @@ import com.vaadin.testbench.unit.internal.Routes
  */
 open class MockVaadinServlet @JvmOverloads constructor(
         val routes: Routes = Routes(),
-        val uiFactory: () -> UI = { MockedUI() }
+        val uiFactory: UIFactory = UIFactory{ MockedUI() }
 ) : VaadinServlet() {
 
     override fun createDeploymentConfiguration(): DeploymentConfiguration {

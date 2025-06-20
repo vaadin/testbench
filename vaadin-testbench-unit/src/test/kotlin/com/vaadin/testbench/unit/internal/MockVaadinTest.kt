@@ -83,7 +83,7 @@ internal fun DynaNodeGroup.mockVaadinTest() {
             expect(true) { UI.getCurrent().reconnectDialogConfiguration != null }
             expect(true) { UI.getCurrent().internals != null }
             expect(true) { UI.getCurrent().page != null }
-            expect(true) { UI.getCurrent().router != null }
+            expect(true) { UI.getCurrent().internals.router != null }
         }
 
         test("serializable") {
@@ -230,7 +230,7 @@ internal fun DynaNodeGroup.mockVaadinTest() {
          */
 
         test("UI.getUrl() to view works in mocked env") {
-            val routeConfig = RouteConfiguration.forRegistry(UI.getCurrent().router.registry)
+            val routeConfig = RouteConfiguration.forRegistry(UI.getCurrent().internals.router.registry)
             expect("helloworld") { routeConfig.getUrl(HelloWorldView::class.java) }
             expect("params/1") { routeConfig.getUrl(ParametrizedView::class.java, 1) }
             expect("parent/child") { routeConfig.getUrl(ChildView::class.java) }

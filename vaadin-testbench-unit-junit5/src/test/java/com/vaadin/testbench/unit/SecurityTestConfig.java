@@ -26,30 +26,10 @@ import com.vaadin.flow.server.VaadinServiceInitListener;
 import com.vaadin.flow.server.auth.DefaultMenuAccessControl;
 import com.vaadin.flow.server.auth.MenuAccessControl;
 import com.vaadin.flow.server.auth.NavigationAccessControl;
-import com.vaadin.flow.server.auth.ViewAccessChecker;
 
 // Empty configuration class used only to be able to bootstrap spring
 // ApplicationContext
 class SecurityTestConfig {
-
-    @Configuration
-    public static class ViewAccessCheckerConfig extends Commons {
-        // Registers test views and view access checker for testing purpose
-        @Bean
-        VaadinServiceInitListener setupViewSecurityScenario() {
-            return event -> {
-                RouteConfiguration routeConfiguration = RouteConfiguration
-                        .forApplicationScope();
-                routeConfiguration.setAnnotatedRoute(LoginView.class);
-                routeConfiguration.setAnnotatedRoute(ProtectedView.class);
-                event.getSource().addUIInitListener(uiEvent -> {
-                    ViewAccessChecker viewAccessChecker = new ViewAccessChecker();
-                    viewAccessChecker.setLoginView(LoginView.class);
-                    uiEvent.getUI().addBeforeEnterListener(viewAccessChecker);
-                });
-            };
-        }
-    }
 
     @Configuration
     public static class NavigationAccessControlConfig extends Commons {

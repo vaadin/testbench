@@ -131,7 +131,7 @@ public abstract class BaseUIUnitTest {
     /**
      * Discover and return Routes for mocked Vaadin core system.
      *
-     * @see initVadinEnvironment()
+     * @see #initVaadinEnvironment()
      * @return Routes
      */
     protected static synchronized Routes discoverRoutes(
@@ -159,7 +159,7 @@ public abstract class BaseUIUnitTest {
      * Scan testers and populate testers map with them. The test method can find
      * appropriate test based on testers map.
      *
-     * @see test(Component)
+     * @see #test(Component)
      */
     protected void scanTesters() {
         if (getClass().isAnnotationPresent(ComponentTesterPackages.class)) {

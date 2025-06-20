@@ -9,6 +9,19 @@
  */
 package com.vaadin.testbench.unit.internal
 
+import java.util.function.Predicate
+import kotlin.streams.asSequence
+import kotlin.test.expect
+import com.vaadin.flow.component.Text
+import com.vaadin.flow.component.UI
+import com.vaadin.flow.component.button.Button
+import com.vaadin.flow.component.combobox.ComboBox
+import com.vaadin.flow.component.dialog.Dialog
+import com.vaadin.flow.component.html.Span
+import com.vaadin.flow.component.orderedlayout.VerticalLayout
+import com.vaadin.flow.component.textfield.PasswordField
+import com.vaadin.flow.component.textfield.TextField
+import com.vaadin.testbench.unit.expectList
 import com.github.mvysny.dynatest.DynaNodeGroup
 import com.github.mvysny.dynatest.DynaTestDsl
 import com.github.mvysny.dynatest.expectThrows
@@ -16,19 +29,6 @@ import com.github.mvysny.karibudsl.v10.button
 import com.github.mvysny.karibudsl.v10.text
 import com.github.mvysny.karibudsl.v10.textField
 import com.github.mvysny.karibudsl.v10.verticalLayout
-import com.vaadin.flow.component.Text
-import com.vaadin.flow.component.UI
-import com.vaadin.flow.component.button.Button
-import com.vaadin.flow.component.combobox.ComboBox
-import com.vaadin.flow.component.dialog.Dialog
-import com.vaadin.flow.component.html.Label
-import com.vaadin.flow.component.orderedlayout.VerticalLayout
-import com.vaadin.flow.component.textfield.PasswordField
-import com.vaadin.flow.component.textfield.TextField
-import com.vaadin.testbench.unit.expectList
-import java.util.function.Predicate
-import kotlin.streams.asSequence
-import kotlin.test.expect
 
 @DynaTestDsl
 internal fun DynaNodeGroup.locatorTest2() {
@@ -309,7 +309,7 @@ internal fun DynaNodeGroup.locatorTest() {
 
         test("FailsOnNoComponents") {
             expectThrows(AssertionError::class) {
-                Button()._expectOne(Label::class.java)
+                Button()._expectOne(Span::class.java)
             }
             expectAfterLookupCalled()
         }
@@ -346,19 +346,19 @@ internal fun DynaNodeGroup.locatorTest() {
 
     group("_expect") {
         test("FailsOnNoComponents UI") {
-            expectThrows(AssertionError::class) { _expect<Label>() }
+            expectThrows(AssertionError::class) { _expect<Span>() }
             expectAfterLookupCalled()
         }
 
         test("FailsOnNoComponents") {
-            expectThrows(AssertionError::class) { Button()._expect<Label>() }
+            expectThrows(AssertionError::class) { Button()._expect<Span>() }
             expectAfterLookupCalled()
         }
 
         test("matching 0 components works") {
-            _expect<Label>(0)
+            _expect<Span>(0)
             expectAfterLookupCalled()
-            Button()._expect<Label>(0)
+            Button()._expect<Span>(0)
         }
 
         test("fails when the count is wrong") {

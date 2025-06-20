@@ -8,6 +8,8 @@
  */
 package com.vaadin.testbench.unit;
 
+import java.math.BigDecimal;
+
 import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.accordion.AccordionTester;
 import com.vaadin.flow.component.button.Button;
@@ -49,7 +51,6 @@ import com.vaadin.flow.component.html.H6;
 import com.vaadin.flow.component.html.Hr;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Input;
-import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.html.ListItem;
 import com.vaadin.flow.component.html.NativeButton;
 import com.vaadin.flow.component.html.NativeDetails;
@@ -73,7 +74,6 @@ import com.vaadin.flow.component.html.testbench.H6Tester;
 import com.vaadin.flow.component.html.testbench.HrTester;
 import com.vaadin.flow.component.html.testbench.ImageTester;
 import com.vaadin.flow.component.html.testbench.InputTester;
-import com.vaadin.flow.component.html.testbench.LabelTester;
 import com.vaadin.flow.component.html.testbench.ListItemTester;
 import com.vaadin.flow.component.html.testbench.NativeButtonTester;
 import com.vaadin.flow.component.html.testbench.NativeDetailsTester;
@@ -126,8 +126,6 @@ import com.vaadin.flow.component.upload.UploadTester;
 import com.vaadin.flow.component.virtuallist.VirtualList;
 import com.vaadin.flow.component.virtuallist.VirtualListTester;
 import com.vaadin.flow.router.RouterLink;
-
-import java.math.BigDecimal;
 
 @SuppressWarnings("unchecked")
 public interface TesterWrappers {
@@ -340,12 +338,16 @@ public interface TesterWrappers {
         return BaseUIUnitTest.internalWrap(UploadTester.class, upload);
     }
 
-    default <V> VirtualListTester<VirtualList<V>, V> test(VirtualList<V> virtualList) {
-        return BaseUIUnitTest.internalWrap(VirtualListTester.class, virtualList);
+    default <V> VirtualListTester<VirtualList<V>, V> test(
+            VirtualList<V> virtualList) {
+        return BaseUIUnitTest.internalWrap(VirtualListTester.class,
+                virtualList);
     }
 
-    default <V> VirtualListTester<VirtualList<V>, V> test(VirtualList virtualList, Class<V> itemType) {
-        return BaseUIUnitTest.internalWrap(VirtualListTester.class, virtualList);
+    default <V> VirtualListTester<VirtualList<V>, V> test(
+            VirtualList virtualList, Class<V> itemType) {
+        return BaseUIUnitTest.internalWrap(VirtualListTester.class,
+                virtualList);
     }
 
     /* HTML components */
@@ -405,10 +407,6 @@ public interface TesterWrappers {
 
     default RangeInputTester test(RangeInput input) {
         return BaseUIUnitTest.internalWrap(RangeInputTester.class, input);
-    }
-
-    default LabelTester test(Label label) {
-        return BaseUIUnitTest.internalWrap(LabelTester.class, label);
     }
 
     default NativeLabelTester test(NativeLabel label) {

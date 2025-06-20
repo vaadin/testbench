@@ -9,6 +9,7 @@
  */
 package com.vaadin.testbench.unit.mocks
 
+import java.io.Serializable
 import com.vaadin.flow.component.UI
 import com.vaadin.flow.di.Instantiator
 import com.vaadin.flow.function.DeploymentConfiguration

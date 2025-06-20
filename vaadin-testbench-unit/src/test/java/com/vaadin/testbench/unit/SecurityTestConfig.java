@@ -23,7 +23,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.flow.server.VaadinServiceInitListener;
-import com.vaadin.flow.server.auth.ViewAccessChecker;
+import com.vaadin.flow.server.auth.NavigationAccessControl;
 
 // Empty configuration class used only to be able to bootstrap spring
 // ApplicationContext
@@ -39,9 +39,9 @@ class SecurityTestConfig {
             routeConfiguration.setAnnotatedRoute(LoginView.class);
             routeConfiguration.setAnnotatedRoute(ProtectedView.class);
             event.getSource().addUIInitListener(uiEvent -> {
-                ViewAccessChecker viewAccessChecker = new ViewAccessChecker();
-                viewAccessChecker.setLoginView(LoginView.class);
-                uiEvent.getUI().addBeforeEnterListener(viewAccessChecker);
+                NavigationAccessControl accessControl = new NavigationAccessControl();
+                accessControl.setLoginView(LoginView.class);
+                uiEvent.getUI().addBeforeEnterListener(accessControl);
             });
         };
     }

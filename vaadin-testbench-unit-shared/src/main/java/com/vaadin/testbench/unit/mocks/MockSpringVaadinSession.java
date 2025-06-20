@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.server.VaadinService;
-import com.vaadin.flow.spring.SpringVaadinSession;
+import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.testbench.unit.internal.MockVaadin;
 
 /**
@@ -29,7 +29,7 @@ import com.vaadin.testbench.unit.internal.MockVaadin;
  *
  * @author mavi
  */
-public class MockSpringVaadinSession extends SpringVaadinSession {
+public class MockSpringVaadinSession extends VaadinSession {
     @NotNull
     private final Function0<UI> uiFactory;
 

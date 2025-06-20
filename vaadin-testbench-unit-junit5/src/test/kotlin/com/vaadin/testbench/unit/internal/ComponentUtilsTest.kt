@@ -18,7 +18,6 @@ import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.checkbox.Checkbox
 import com.vaadin.flow.component.formlayout.FormLayout
 import com.vaadin.flow.component.html.Div
-import com.vaadin.flow.component.html.Label
 import com.vaadin.flow.component.html.Span
 import com.vaadin.flow.component.orderedlayout.FlexLayout
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
@@ -37,7 +36,7 @@ fun DynaNodeGroup.componentUtilsTests() {
             expect(null) { t.parent.orElse(null) }
         }
         test("nested component") {
-            val fl = FlexLayout().apply { add(Label("foo")) }
+            val fl = FlexLayout().apply { add(Span("foo")) }
             val label = fl.getComponentAt(0)
             expect(fl) { label.parent.get() }
             label.removeFromParent()
@@ -45,7 +44,7 @@ fun DynaNodeGroup.componentUtilsTests() {
             expect(0) { fl.componentCount }
         }
         test("reattach") {
-            val fl = FlexLayout().apply { add(Label("foo")) }
+            val fl = FlexLayout().apply { add(Span("foo")) }
             val label = fl.getComponentAt(0)
             label.removeFromParent()
             fl.add(label)

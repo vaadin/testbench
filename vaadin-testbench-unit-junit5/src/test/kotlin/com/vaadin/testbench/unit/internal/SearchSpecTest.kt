@@ -9,9 +9,8 @@
  */
 package com.vaadin.testbench.unit.internal
 
-import com.github.mvysny.dynatest.DynaNodeGroup
-import com.github.mvysny.dynatest.DynaTestDsl
-import com.github.mvysny.karibudsl.v10.DateRangePopup
+import java.util.function.Predicate
+import kotlin.test.expect
 import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.Text
 import com.vaadin.flow.component.button.Button
@@ -20,15 +19,16 @@ import com.vaadin.flow.component.checkbox.CheckboxGroup
 import com.vaadin.flow.component.combobox.ComboBox
 import com.vaadin.flow.component.datepicker.DatePicker
 import com.vaadin.flow.component.html.Input
-import com.vaadin.flow.component.html.Label
+import com.vaadin.flow.component.html.Span
 import com.vaadin.flow.component.listbox.ListBox
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup
 import com.vaadin.flow.component.select.Select
 import com.vaadin.flow.component.textfield.TextArea
 import com.vaadin.flow.component.textfield.TextField
 import com.vaadin.flow.component.timepicker.TimePicker
-import java.util.function.Predicate
-import kotlin.test.expect
+import com.github.mvysny.dynatest.DynaNodeGroup
+import com.github.mvysny.dynatest.DynaTestDsl
+import com.github.mvysny.karibudsl.v10.DateRangePopup
 
 @DynaTestDsl
 internal fun DynaNodeGroup.searchSpecTest() {
@@ -37,8 +37,8 @@ internal fun DynaNodeGroup.searchSpecTest() {
 
     test("clazz") {
         val spec = SearchSpec(Button::class.java)
-        expect(true) { spec.toPredicate()(Button())}
-        expect(false) { spec.toPredicate()(Label())}
+        expect(true) { spec.toPredicate()(Button()) }
+        expect(false) { spec.toPredicate()(Span()) }
     }
 
     test("id") {
@@ -56,21 +56,61 @@ internal fun DynaNodeGroup.searchSpecTest() {
         expect(true) { spec.toPredicate()(Checkbox("foo")) }
         expect(false) { spec.toPredicate()(Checkbox("bar")) }
         expect(false) { spec.toPredicate()(Checkbox()) }
-        expect(true) { spec.toPredicate()(CheckboxGroup<Int>().apply { label = "foo" }) }
-        expect(false) { spec.toPredicate()(CheckboxGroup<Int>().apply { label = "bar" }) }
+        expect(true) {
+            spec.toPredicate()(CheckboxGroup<Int>().apply {
+                label = "foo"
+            })
+        }
+        expect(false) {
+            spec.toPredicate()(CheckboxGroup<Int>().apply {
+                label = "bar"
+            })
+        }
         expect(false) { spec.toPredicate()(CheckboxGroup<Int>()) }
-        expect(true) { spec.toPredicate()(Select<Int>().apply { label = "foo" }) }
-        expect(false) { spec.toPredicate()(Select<Int>().apply { label = "bar" }) }
+        expect(true) {
+            spec.toPredicate()(Select<Int>().apply {
+                label = "foo"
+            })
+        }
+        expect(false) {
+            spec.toPredicate()(Select<Int>().apply {
+                label = "bar"
+            })
+        }
         expect(false) { spec.toPredicate()(Select<Int>()) }
-        expect(true) { spec.toPredicate()(ListBox<Int>().apply { label = "foo" }) }
-        expect(false) { spec.toPredicate()(ListBox<Int>().apply { label = "bar" }) }
+        expect(true) {
+            spec.toPredicate()(ListBox<Int>().apply {
+                label = "foo"
+            })
+        }
+        expect(false) {
+            spec.toPredicate()(ListBox<Int>().apply {
+                label = "bar"
+            })
+        }
         expect(false) { spec.toPredicate()(ListBox<Int>()) }
-        expect(true) { spec.toPredicate()(RadioButtonGroup<Int>().apply { label = "foo" }) }
-        expect(false) { spec.toPredicate()(RadioButtonGroup<Int>().apply { label = "bar" }) }
+        expect(true) {
+            spec.toPredicate()(RadioButtonGroup<Int>().apply {
+                label = "foo"
+            })
+        }
+        expect(false) {
+            spec.toPredicate()(RadioButtonGroup<Int>().apply {
+                label = "bar"
+            })
+        }
         expect(false) { spec.toPredicate()(RadioButtonGroup<Int>()) }
         // tests CustomField
-        expect(true) { spec.toPredicate()(DateRangePopup().apply { label = "foo" }) }
-        expect(false) { spec.toPredicate()(DateRangePopup().apply { label = "bar" }) }
+        expect(true) {
+            spec.toPredicate()(DateRangePopup().apply {
+                label = "foo"
+            })
+        }
+        expect(false) {
+            spec.toPredicate()(DateRangePopup().apply {
+                label = "bar"
+            })
+        }
         expect(false) { spec.toPredicate()(DateRangePopup()) }
 
         expect(true) { spec.toPredicate()(Input().apply { label = "foo" }) }
@@ -108,6 +148,6 @@ internal fun DynaNodeGroup.searchSpecTest() {
             predicates.add(Predicate { it is Button })
         }
         expect(true) { spec.toPredicate()(Button()) }
-        expect(false) { spec.toPredicate()(Label()) }
+        expect(false) { spec.toPredicate()(Span()) }
     }
 }
