@@ -71,7 +71,7 @@ public class RadioButtonGroupTester<T extends RadioButtonGroup<V>, V>
      */
     public void deselectItem() {
         ensureComponentIsUsable();
-        getComponent().setValue(getComponent().getEmptyValue());
+        setValueAsUser(getComponent().getEmptyValue());
     }
 
     /**
@@ -127,7 +127,7 @@ public class RadioButtonGroupTester<T extends RadioButtonGroup<V>, V>
             throw new IllegalArgumentException(
                     "Invalid Item string representation: " + selection);
         }
-        getComponent().setValue(selectedItems.get(selection));
+        setValueAsUser(selectedItems.get(selection));
     }
 
 }

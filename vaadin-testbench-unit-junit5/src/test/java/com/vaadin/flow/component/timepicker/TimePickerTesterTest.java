@@ -60,7 +60,9 @@ class TimePickerTesterTest extends UIUnitTest {
 
         view.picker.addValueChangeListener(
                 (HasValue.ValueChangeListener<AbstractField.ComponentValueChangeEvent<TimePicker, LocalTime>>) event -> {
-                    value.compareAndSet(null, event.getValue());
+                    if (event.isFromClient()) {
+                        value.compareAndSet(null, event.getValue());
+                    }
                 });
 
         final LocalTime newValue = LocalTime.NOON;
