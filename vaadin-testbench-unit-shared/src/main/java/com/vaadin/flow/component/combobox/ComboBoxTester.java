@@ -70,7 +70,7 @@ public class ComboBoxTester<T extends ComboBox<Y>, Y>
      */
     public void selectItem(String selection) {
         if (selection == null) {
-            getComponent().setValue(null);
+            setValueAsUser(null);
             return;
         }
         final List<Y> suggestionItems = getSuggestionItems();
@@ -83,7 +83,7 @@ public class ComboBoxTester<T extends ComboBox<Y>, Y>
             throw new IllegalArgumentException(
                     "No item found for '" + selection + "'");
         }
-        getComponent().setValue(filtered.get(0));
+        setValueAsUser(filtered.get(0));
     }
 
     /**

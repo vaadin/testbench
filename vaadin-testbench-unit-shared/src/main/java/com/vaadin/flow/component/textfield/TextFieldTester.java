@@ -54,7 +54,7 @@ public class TextFieldTester<T extends TextFieldBase<T, V>, V>
                     "Field doesn't allow null values");
         }
 
-        getComponent().setValue(value);
+        setValueAsUser(value);
     }
 
     /**

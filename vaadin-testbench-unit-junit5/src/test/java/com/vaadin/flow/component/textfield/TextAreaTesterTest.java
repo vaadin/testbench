@@ -57,7 +57,9 @@ class TextAreaTesterTest extends UIUnitTest {
 
         view.textArea.addValueChangeListener(
                 (HasValue.ValueChangeListener<AbstractField.ComponentValueChangeEvent<TextArea, String>>) event -> {
-                    value.compareAndSet(null, event.getValue());
+                    if (event.isFromClient()) {
+                        value.compareAndSet(null, event.getValue());
+                    }
                 });
 
         final TextAreaTester<TextArea> ta_ = test(view.textArea);
