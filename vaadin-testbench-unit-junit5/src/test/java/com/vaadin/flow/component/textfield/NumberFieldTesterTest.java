@@ -60,7 +60,9 @@ class NumberFieldTesterTest extends UIUnitTest {
 
         view.numberField.addValueChangeListener(
                 (HasValue.ValueChangeListener<AbstractField.ComponentValueChangeEvent<NumberField, Double>>) event -> {
-                    value.compareAndSet(null, event.getValue());
+                    if (event.isFromClient()) {
+                        value.compareAndSet(null, event.getValue());
+                    }
                 });
 
         final NumberFieldTester<NumberField, Double> nf_ = test(
