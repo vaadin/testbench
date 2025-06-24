@@ -10,15 +10,13 @@ package com.vaadin.testbench.unit.quarkus.mocks;
 
 import jakarta.enterprise.inject.spi.BeanManager;
 
-import kotlin.jvm.functions.Function0;
-
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.di.Instantiator;
 import com.vaadin.flow.function.DeploymentConfiguration;
 import com.vaadin.flow.server.VaadinRequest;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.quarkus.QuarkusVaadinServlet;
 import com.vaadin.quarkus.QuarkusVaadinServletService;
+import com.vaadin.testbench.unit.internal.UIFactory;
 import com.vaadin.testbench.unit.mocks.MockInstantiator;
 import com.vaadin.testbench.unit.mocks.MockVaadinSession;
 
@@ -36,7 +34,7 @@ import com.vaadin.testbench.unit.mocks.MockVaadinSession;
  */
 public class MockQuarkusServletService extends QuarkusVaadinServletService {
 
-    private final transient Function0<UI> uiFactory;
+    private final transient UIFactory uiFactory;
 
     /**
      * Creates a new QuarkusVaadinServletService for testing.
@@ -52,7 +50,7 @@ public class MockQuarkusServletService extends QuarkusVaadinServletService {
      */
     public MockQuarkusServletService(QuarkusVaadinServlet servlet,
             DeploymentConfiguration configuration, BeanManager beanManager,
-            Function0<UI> uiFactory) {
+            UIFactory uiFactory) {
         super(servlet, configuration, beanManager);
         this.uiFactory = uiFactory;
     }

@@ -26,9 +26,8 @@ public class ParametersTest {
                 Parameters.getScreenshotErrorDirectory());
         Assert.assertEquals("reference-screenshots",
                 Parameters.getScreenshotReferenceDirectory());
-        Assert.assertEquals(false, Parameters.isDebug());
-        Assert.assertEquals(false,
-                Parameters.isScreenshotComparisonCursorDetection());
+        Assert.assertFalse(Parameters.isDebug());
+        Assert.assertFalse(Parameters.isScreenshotComparisonCursorDetection());
         Assert.assertFalse(Parameters.isHeadless());
         Assert.assertEquals(
                 ClientConfig.defaultConfig().readTimeout().toSeconds(),
@@ -53,34 +52,37 @@ public class ParametersTest {
 
     @Test
     public void setChromeOptionsSystemProperty() {
-            try {
-                    Parameters.setChromeOptions("--foo");
-                    Assert.assertArrayEquals(new String[] { "--foo", },
-                                    Parameters.getChromeOptions());
-                    Parameters.setChromeOptions("--foo --bar --x");
-                                    Assert.assertArrayEquals(new String[] { "--foo", "--bar", "--x" },
-                                    Parameters.getChromeOptions());
-                    Parameters.setChromeOptions("--foo,--bar, --x");
-                                    Assert.assertArrayEquals(new String[] { "--foo", "--bar", "--x" },
-                                    Parameters.getChromeOptions());
-                    Parameters.setChromeOptions("--window-size=\"nnn,nnn\"");
-                    Assert.assertArrayEquals(new String[] { "--window-size=\"nnn,nnn\"", },
-                                    Parameters.getChromeOptions());
-                    Parameters.setChromeOptions("--window-size=nnn,nnn,--bar,--x");
-                    Assert.assertArrayEquals(
-                                    new String[] { "--window-size=nnn,nnn", "--bar", "--x" },
-                                                    Parameters.getChromeOptions());
-                    Parameters.setChromeOptions(
-                                    "--foo, --bar, --window-size=400,100\n--user-agent=\"Mozilla,5.0\"\t--proxy='1.1.1.1,8080'");
-                    Assert.assertArrayEquals(
-                                    new String[] { "--foo", "--bar", "--window-size=400,100",
-                                                    "--user-agent=\"Mozilla,5.0\"", "--proxy='1.1.1.1,8080'" },
-                                    Parameters.getChromeOptions());
-                    Parameters.setChromeOptions("");
-                    Assert.assertArrayEquals(new String[] {}, Parameters.getChromeOptions());
-            } finally {
-                    Parameters.setChromeOptions(null);
-            }
+        try {
+            Parameters.setChromeOptions("--foo");
+            Assert.assertArrayEquals(new String[] { "--foo", },
+                    Parameters.getChromeOptions());
+            Parameters.setChromeOptions("--foo --bar --x");
+            Assert.assertArrayEquals(new String[] { "--foo", "--bar", "--x" },
+                    Parameters.getChromeOptions());
+            Parameters.setChromeOptions("--foo,--bar, --x");
+            Assert.assertArrayEquals(new String[] { "--foo", "--bar", "--x" },
+                    Parameters.getChromeOptions());
+            Parameters.setChromeOptions("--window-size=\"nnn,nnn\"");
+            Assert.assertArrayEquals(
+                    new String[] { "--window-size=\"nnn,nnn\"", },
+                    Parameters.getChromeOptions());
+            Parameters.setChromeOptions("--window-size=nnn,nnn,--bar,--x");
+            Assert.assertArrayEquals(
+                    new String[] { "--window-size=nnn,nnn", "--bar", "--x" },
+                    Parameters.getChromeOptions());
+            Parameters.setChromeOptions(
+                    "--foo, --bar, --window-size=400,100\n--user-agent=\"Mozilla,5.0\"\t--proxy='1.1.1.1,8080'");
+            Assert.assertArrayEquals(
+                    new String[] { "--foo", "--bar", "--window-size=400,100",
+                            "--user-agent=\"Mozilla,5.0\"",
+                            "--proxy='1.1.1.1,8080'" },
+                    Parameters.getChromeOptions());
+            Parameters.setChromeOptions("");
+            Assert.assertArrayEquals(new String[] {},
+                    Parameters.getChromeOptions());
+        } finally {
+            Parameters.setChromeOptions(null);
+        }
     }
 
 }

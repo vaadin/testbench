@@ -49,6 +49,10 @@ open class MockResponse : HttpServletResponse {
         throw UnsupportedOperationException("not implemented")
     }
 
+    override fun sendRedirect(location: String?, sc: Int, clearBuffer: Boolean) {
+        throw UnsupportedOperationException("not implemented")
+    }
+
     var _bufferSize: Int = 4096
 
     override fun setBufferSize(size: Int) {

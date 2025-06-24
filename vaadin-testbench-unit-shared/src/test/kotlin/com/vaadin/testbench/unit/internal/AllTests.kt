@@ -42,7 +42,7 @@ internal class MyTemplateParser : TemplateParser {
         tag: String?,
         service: VaadinService?
     ): TemplateParser.TemplateData {
-        return TemplateParser.TemplateData("", Element(tag))
+        return TemplateParser.TemplateData("", Element(tag!!))
     }
 
 }

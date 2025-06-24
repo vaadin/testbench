@@ -9,9 +9,8 @@
  */
 package com.vaadin.testbench.unit.internal
 
-import com.github.mvysny.dynatest.DynaNodeGroup
-import com.github.mvysny.dynatest.DynaTestDsl
-import com.github.mvysny.karibudsl.v10.DateRangePopup
+import java.util.function.Predicate
+import kotlin.test.expect
 import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.Text
 import com.vaadin.flow.component.button.Button
@@ -20,15 +19,16 @@ import com.vaadin.flow.component.checkbox.CheckboxGroup
 import com.vaadin.flow.component.combobox.ComboBox
 import com.vaadin.flow.component.datepicker.DatePicker
 import com.vaadin.flow.component.html.Input
-import com.vaadin.flow.component.html.Label
+import com.vaadin.flow.component.html.Span
 import com.vaadin.flow.component.listbox.ListBox
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup
 import com.vaadin.flow.component.select.Select
 import com.vaadin.flow.component.textfield.TextArea
 import com.vaadin.flow.component.textfield.TextField
 import com.vaadin.flow.component.timepicker.TimePicker
-import java.util.function.Predicate
-import kotlin.test.expect
+import com.github.mvysny.dynatest.DynaNodeGroup
+import com.github.mvysny.dynatest.DynaTestDsl
+import com.github.mvysny.karibudsl.v10.DateRangePopup
 
 @DynaTestDsl
 internal fun DynaNodeGroup.searchSpecTest() {
@@ -38,7 +38,7 @@ internal fun DynaNodeGroup.searchSpecTest() {
     test("clazz") {
         val spec = SearchSpec(Button::class.java)
         expect(true) { spec.toPredicate()(Button())}
-        expect(false) { spec.toPredicate()(Label())}
+        expect(false) { spec.toPredicate()(Span())}
     }
 
     test("id") {
@@ -108,6 +108,6 @@ internal fun DynaNodeGroup.searchSpecTest() {
             predicates.add(Predicate { it is Button })
         }
         expect(true) { spec.toPredicate()(Button()) }
-        expect(false) { spec.toPredicate()(Label()) }
+        expect(false) { spec.toPredicate()(Span()) }
     }
 }
