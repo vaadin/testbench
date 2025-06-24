@@ -52,7 +52,7 @@ public class NumberFieldTester<T extends AbstractNumberField<T, V>, V extends Nu
             throw new IllegalArgumentException(
                     "Given value '" + value + "' is not valid");
         }
-        getComponent().setValue(value);
+        setValueAsUser(value);
     }
 
     private boolean isValid(V value) {

@@ -9,6 +9,7 @@
 package com.vaadin.testbench.unit;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Optional;
@@ -19,8 +20,11 @@ import java.util.stream.Stream;
 
 import org.slf4j.LoggerFactory;
 
+import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.internal.AbstractFieldSupport;
 import com.vaadin.flow.dom.DomEvent;
 import com.vaadin.flow.internal.nodefeature.ElementListenerMap;
 import com.vaadin.testbench.unit.internal.PrettyPrintTreeKt;
@@ -403,4 +407,42 @@ public class ComponentTester<T extends Component> {
         return query.all();
     }
 
+    private <V> AbstractFieldSupport<?, V> getFieldSupport() {
+        try {
+            final Field javaField = AbstractField.class
+                    .getDeclaredField("fieldSupport");
+            javaField.setAccessible(true);
+            return (AbstractFieldSupport<?, V>) javaField.get(component);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Sets the value to given component. Supports pretending that the value
+     * came from the browser. Will throw an exception if the component is not
+     * instance of AbstractField. This method is purposed for internal use and
+     * when creating custom testers extending ComponentTesters.
+     *
+     * @param value
+     *            the new value, may be null.
+     */
+    protected <V> void setValueAsUser(V value) {
+        if (component instanceof AbstractField) {
+            final AbstractFieldSupport<?, V> fs = getFieldSupport();
+            try {
+                final Method m = AbstractFieldSupport.class.getDeclaredMethod(
+                        "setValue", Object.class, boolean.class, boolean.class);
+                m.setAccessible(true);
+                m.invoke(fs, value, false, true);
+            } catch (NoSuchMethodException | IllegalAccessException
+                    | InvocationTargetException e) {
+                throw new RuntimeException(e);
+            }
+            return;
+        }
+        throw new IllegalArgumentException("Parameter component: invalid value "
+                + component + ": unsupported type of HasValue: "
+                + component.getClass());
+    }
 }
