@@ -26,6 +26,7 @@ import com.vaadin.testbench.annotations.BrowserFactory;
 import com.vaadin.testbench.annotations.RunLocally;
 import com.vaadin.testbench.annotations.RunOnHub;
 import com.vaadin.testbench.parallel.Browser;
+import com.vaadin.testbench.parallel.DefaultBrowserFactory;
 
 /**
  * Provides values for parameters which depend on where the test is run.
@@ -35,7 +36,7 @@ import com.vaadin.testbench.parallel.Browser;
  * @author Vaadin Ltd
  */
 
-@BrowserFactory(VaadinBrowserFactory.class)
+@BrowserFactory(DefaultBrowserFactory.class)
 @RunOnHub("tb5-hub.intra.itmill.com")
 public abstract class PrivateTB5Configuration extends AbstractTB5Test {
     private static final String HOSTNAME_PROPERTY = "deployment.hostname";
@@ -72,7 +73,7 @@ public abstract class PrivateTB5Configuration extends AbstractTB5Test {
     }
 
     protected static DesiredCapabilities getRunLocallyCapabilities() {
-        VaadinBrowserFactory factory = new VaadinBrowserFactory();
+        DefaultBrowserFactory factory = new DefaultBrowserFactory();
 
         try {
             if (properties.containsKey(RUN_LOCALLY_PROPERTY)) {
