@@ -213,6 +213,126 @@ public class ComponentTesterTest extends UIUnitTest {
         Assertions.assertTrue(result.isEmpty());
     }
 
+    @Test
+    void componentTester_click_firesClickEvent() {
+        // Create a simple component to test clicking
+        Span span = new Span("Click me");
+        boolean[] clicked = {false};
+        
+        // Add a click listener to the component
+        span.addClickListener(event -> {
+            clicked[0] = true;
+            Assertions.assertTrue(event.isFromClient(),
+                    "Click event should be marked as from client");
+        });
+        
+        // Add to view so it's usable
+        home.add(span);
+        
+        ComponentTester<Span> spanTester = test(span);
+        
+        // Verify the component is usable
+        Assertions.assertTrue(spanTester.isUsable(),
+                "Span should be usable when attached");
+        
+        // Test the click functionality
+        spanTester.click();
+        
+        // Verify the click event was fired
+        Assertions.assertTrue(clicked[0], "Click event should have been fired");
+    }
+
+    @Test
+    void componentTester_clickWithMetaKeys_firesClickEventWithMetaKeys() {
+        // Create a simple component to test clicking with meta keys
+        Span span = new Span("Click me with meta keys");
+        boolean[] clickedWithCtrl = {false};
+        
+        // Add a click listener to check meta keys
+        span.addClickListener(event -> {
+            clickedWithCtrl[0] = event.isCtrlKey();
+        });
+        
+        // Add to view so it's usable
+        home.add(span);
+        
+        ComponentTester<Span> spanTester = test(span);
+        
+        // Test the click functionality with meta keys
+        MetaKeys metaKeys = new MetaKeys().ctrl();
+        spanTester.click(metaKeys);
+        
+        // Verify the click event was fired with ctrl key
+        Assertions.assertTrue(clickedWithCtrl[0], 
+                "Click event should have been fired with ctrl key pressed");
+    }
+
+    @Test
+    void componentTester_middleClick_firesMiddleClickEvent() {
+        // Create a simple component to test middle clicking
+        Span span = new Span("Middle click me");
+        int[] buttonPressed = {-1};
+        
+        // Add a click listener to check button
+        span.addClickListener(event -> {
+            buttonPressed[0] = event.getButton();
+        });
+        
+        // Add to view so it's usable
+        home.add(span);
+        
+        ComponentTester<Span> spanTester = test(span);
+        
+        // Test the middle click functionality
+        spanTester.middleClick();
+        
+        // Verify the middle click event was fired (button 1)
+        Assertions.assertEquals(1, buttonPressed[0], 
+                "Middle click should use button 1");
+    }
+
+    @Test
+    void componentTester_rightClick_firesRightClickEvent() {
+        // Create a simple component to test right clicking
+        Span span = new Span("Right click me");
+        int[] buttonPressed = {-1};
+        
+        // Add a click listener to check button
+        span.addClickListener(event -> {
+            buttonPressed[0] = event.getButton();
+        });
+        
+        // Add to view so it's usable
+        home.add(span);
+        
+        ComponentTester<Span> spanTester = test(span);
+        
+        // Test the right click functionality
+        spanTester.rightClick();
+        
+        // Verify the right click event was fired (button 2)
+        Assertions.assertEquals(2, buttonPressed[0], 
+                "Right click should use button 2");
+    }
+
+    @Test
+    void componentTester_clickNotUsableComponent_throwsException() {
+        // Create a component that is not usable
+        Span span = new Span("Not usable");
+        // Don't add to view, so it's not attached/usable
+        
+        ComponentTester<Span> spanTester = test(span);
+        
+        // Verify the component is not usable
+        Assertions.assertFalse(spanTester.isUsable(),
+                "Span should not be usable when not attached");
+        
+        // Test that clicking throws an exception
+        Assertions.assertThrows(IllegalStateException.class, () -> {
+            spanTester.click();
+        }, "Clicking non-usable component should throw IllegalStateException");
+    }
+
     private WelcomeView getHome() {
         final HasElement view = getCurrentView();
         Assertions.assertTrue(view instanceof WelcomeView,
