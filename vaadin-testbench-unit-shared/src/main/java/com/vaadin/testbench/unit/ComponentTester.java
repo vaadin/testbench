@@ -23,11 +23,14 @@ import org.slf4j.LoggerFactory;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasValue;
+import com.vaadin.flow.component.Key;
+import com.vaadin.flow.component.KeyModifier;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.internal.AbstractFieldSupport;
 import com.vaadin.flow.dom.DomEvent;
 import com.vaadin.flow.internal.nodefeature.ElementListenerMap;
 import com.vaadin.testbench.unit.internal.PrettyPrintTreeKt;
+import com.vaadin.testbench.unit.internal.ShortcutsKt;
 
 import elemental.json.Json;
 import elemental.json.JsonObject;
@@ -237,6 +240,27 @@ public class ComponentTester<T extends Component> {
      */
     protected void roundTrip() {
         BaseUIUnitTest.roundTrip();
+    }
+
+    /**
+     * Simulates a keyboard shortcut performed on the wrapped component.
+     * <p>
+     * This method is designed to work with shortcuts attached to the component
+     * through the KeyNotifier interface methods, such as addKeyDownListener.
+     * For UI-level shortcuts created with the Shortcuts API, use
+     * {@link BaseUIUnitTest#fireShortcut(Key, KeyModifier...)} instead.
+     *
+     * @param key
+     *            Primary key of the shortcut. This must not be a
+     *            {@link KeyModifier}.
+     * @param modifiers
+     *            Key modifiers. Can be empty.
+     * @throws IllegalStateException
+     *             if the component is not usable
+     */
+    public void fireShortcut(Key key, KeyModifier... modifiers) {
+        ensureComponentIsUsable();
+        ShortcutsKt._fireShortcut(getComponent(), key, modifiers);
     }
 
     /**
