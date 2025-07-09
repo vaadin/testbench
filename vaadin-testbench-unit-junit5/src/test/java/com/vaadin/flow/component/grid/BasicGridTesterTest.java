@@ -9,6 +9,8 @@
 package com.vaadin.flow.component.grid;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.testbench.unit.UIUnitTest;
 import com.vaadin.testbench.unit.ViewPackages;
@@ -163,6 +165,17 @@ class BasicGridTesterTest extends UIUnitTest {
         Assertions.assertEquals(1, doubleClicks.get(),
                 "Double click event should have fired");
 
+    }
+
+    @Test
+    void getCellComponent_columnByKey_canClickAButton() {
+        final Component cellComponent = test(view.basicGrid).getCellComponent(1,
+                BasicGridView.BUTTON_KEY);
+        Assertions.assertInstanceOf(Button.class, cellComponent);
+        var button = (Button) cellComponent;
+        test(button).click();
+        notification = $(Notification.class).last();
+        Assertions.assertEquals("Clicked!", test(notification).getText());       
     }
 
     @Test
