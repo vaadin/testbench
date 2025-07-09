@@ -8,6 +8,7 @@
  */
 package com.vaadin.flow.component.grid;
 
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.Tag;
@@ -24,6 +25,7 @@ public class BasicGridView extends Component implements HasComponents {
     static final String AGE_KEY = "Age";
     static final String SUBSCRIBER_KEY = "Subscriber";
     static final String DECEASED_KEY = "Deceased";
+    static final String DECEASED_KEY = "Button";
 
     final Grid<Person> basicGrid;
     final Person person1;
@@ -48,6 +50,9 @@ public class BasicGridView extends Component implements HasComponents {
         basicGrid.addColumn(deceasedRenderer())
                 .setKey(DECEASED_KEY)
                 .setHeader("Deceased");
+        basicGrid.addComponentColumn(person -> new Button("Click", e -> Notification.show("Clicked!")))
+                .setKey(BUTTON_KEY)
+                .setHeader("Button");
 
         add(basicGrid);
 
