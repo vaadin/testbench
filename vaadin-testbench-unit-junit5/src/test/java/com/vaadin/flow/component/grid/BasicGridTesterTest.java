@@ -219,12 +219,12 @@ class BasicGridTesterTest extends UIUnitTest {
 
         // person 1
         Assertions.assertEquals("Jorma",
-                test(view.basicGrid).getCellText(0, 3));
-        Assertions.assertEquals("46", test(view.basicGrid).getCellText(0, 2));
+                test(view.basicGrid).getCellText(0, 4));
+        Assertions.assertEquals("46", test(view.basicGrid).getCellText(0, 3));
 
         // person 2
-        Assertions.assertEquals("Maya", test(view.basicGrid).getCellText(1, 3));
-        Assertions.assertEquals("18", test(view.basicGrid).getCellText(1, 2));
+        Assertions.assertEquals("Maya", test(view.basicGrid).getCellText(1, 4));
+        Assertions.assertEquals("18", test(view.basicGrid).getCellText(1, 3));
     }
 
     @Test
