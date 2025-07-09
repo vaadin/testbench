@@ -309,7 +309,9 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
             final Y item = getRow(row);
             var component = ((ComponentRenderer<?, Y>) yColumn.getRenderer())
                     .createComponent(item);
-            getComponent().getElement().appendChild(component.getElement());
+            if (component != null) {
+                getComponent().getElement().appendChild(component.getElement());
+            }
             return component;
         }
         throw new IllegalArgumentException(
