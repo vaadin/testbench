@@ -26,7 +26,7 @@ public class BasicGridView extends Component implements HasComponents {
     static final String AGE_KEY = "Age";
     static final String SUBSCRIBER_KEY = "Subscriber";
     static final String DECEASED_KEY = "Deceased";
-    static final String DECEASED_KEY = "Button";
+    static final String BUTTON_KEY = "Button";
 
     final Grid<Person> basicGrid;
     final Person person1;
