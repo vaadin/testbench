@@ -307,8 +307,12 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
     private Component getRendererItem(int row, Grid.Column<Y> yColumn) {
         if (yColumn.getRenderer() instanceof ComponentRenderer) {
             final Y item = getRow(row);
-            return ((ComponentRenderer<?, Y>) yColumn.getRenderer())
+            var component = ((ComponentRenderer<?, Y>) yColumn.getRenderer())
                     .createComponent(item);
+            if (component != null) {
+                getComponent().getElement().appendChild(component.getElement());
+            }
+            return component;
         }
         throw new IllegalArgumentException(
                 "Target column doesn't have a ComponentRenderer.");
