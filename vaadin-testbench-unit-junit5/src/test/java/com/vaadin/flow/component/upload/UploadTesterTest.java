@@ -97,8 +97,6 @@ class UploadTesterTest extends UIUnitTest {
         listener.assertNotFailed();
         Assertions.assertTrue(allFinished.get(),
                 "All Finished listener was not notified");
-        Assertions.assertTrue(allFinished.get(),
-                "Upload handler callback was not notified");
 
         UploadedData uploadedData = listener.assertFileReceived();
         Assertions.assertNotNull(uploadedData);
