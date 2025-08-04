@@ -140,6 +140,14 @@ public interface TesterWrappers {
         return BaseUIUnitTest.internalWrap(ButtonTester.class, button);
     }
 
+    /**
+     * @deprecated testers for commercial components have been moved to a
+     *             separated class to avoid class loading issues when using only
+     *             Vaadin free tier. Make the test class implement
+     *             {@link CommercialTestWrappers} and use
+     *             {@link CommercialTestWrappers#test(Chart)} instead.
+     */
+    @Deprecated(since = "9.4", forRemoval = true)
     default ChartTester<Chart> test(Chart chart) {
         return BaseUIUnitTest.internalWrap(ChartTester.class, chart);
     }
