@@ -65,7 +65,6 @@ public class ContextMenuTester<T extends ContextMenu>
     public void close() {
         ensureComponentIsUsable();
         getComponent().getElement().setProperty("opened", false);
-        fireDomEvent("closed");
     }
 
     /**

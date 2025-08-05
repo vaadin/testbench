@@ -43,6 +43,17 @@ class NotificationTesterTest extends UIUnitTest {
     }
 
     @Test
+    void programmaticallyClose_notificationIsDetached() {
+        Notification notification = Notification.show("Some text");
+        roundTrip();
+
+        notification.close();
+
+        Assertions.assertFalse(notification.isAttached(),
+                "Notification should not be attached after close");
+    }
+
+    @Test
     void notOpenedNotification_isNotUsable() {
         Notification notification = new Notification("Not Opened");
 

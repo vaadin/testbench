@@ -92,6 +92,16 @@ class ConfirmDialogTesterTest extends UIUnitTest {
     }
 
     @Test
+    void programmaticallyClose_dialogIsDetached() {
+        wrap.open();
+
+        view.dialog.close();
+
+        Assertions.assertFalse(view.dialog.isAttached(),
+                "Confirm dialog should be detached");
+    }
+
+    @Test
     void headerText_getHeaderReturnsCorrect() {
         String header = "Test String";
         view.dialog.setHeader(header);

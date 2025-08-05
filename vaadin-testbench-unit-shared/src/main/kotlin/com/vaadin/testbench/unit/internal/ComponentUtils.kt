@@ -27,11 +27,15 @@ import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.checkbox.Checkbox
 import com.vaadin.flow.component.checkbox.CheckboxGroup
 import com.vaadin.flow.component.combobox.ComboBox
+import com.vaadin.flow.component.confirmdialog.ConfirmDialog
+import com.vaadin.flow.component.contextmenu.ContextMenu
 import com.vaadin.flow.component.datepicker.DatePicker
+import com.vaadin.flow.component.dialog.Dialog
 import com.vaadin.flow.component.formlayout.FormLayout
 import com.vaadin.flow.component.grid.Grid
-import com.vaadin.flow.component.html.Input
 import com.vaadin.flow.component.listbox.ListBoxBase
+import com.vaadin.flow.component.login.LoginOverlay
+import com.vaadin.flow.component.notification.Notification
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup
 import com.vaadin.flow.component.select.Select
 import com.vaadin.flow.component.sidenav.SideNav
@@ -371,6 +375,29 @@ var Component.caption: String
             else -> label = value
         }
     }
+
+/**
+ * Sets up an event listener for overlay components that fires a `closed` DOM
+ * event when the component is closed. This simulates the event being fired
+ * from the browser after the closing animation has finished.
+ */
+fun Component.setupClosedEventMock() {
+    if (this !is Dialog && this !is ConfirmDialog && this !is LoginOverlay && this !is ContextMenu && this !is Notification) {
+        return
+    }
+
+    if (ComponentUtil.getData(this, "hasClosedEventMock") != null) {
+        return
+    }
+
+    ComponentUtil.setData(this, "hasClosedEventMock", true)
+
+    element.addPropertyChangeListener("opened") { event ->
+        if (event.value == false) {
+            _fireDomEvent("closed")
+        }
+    }
+}
 
 /**
  * The Button's caption. Alias for [Button.getText].

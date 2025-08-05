@@ -70,8 +70,6 @@ public class NotificationTester<T extends Notification>
             throw new IllegalStateException("Auto-close is not enabled");
         }
         getComponent().close();
-        fireDomEvent("closed");
-        roundTrip();
     }
 
     @Override

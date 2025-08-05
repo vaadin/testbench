@@ -46,6 +46,16 @@ class DialogTesterTest extends UIUnitTest {
     }
 
     @Test
+    void programmaticallyClose_dialogIsDetached() {
+        dialog_.open();
+
+        view.dialog.close();
+
+        Assertions.assertFalse(view.dialog.isAttached(),
+                "Dialog should be detached on close");
+    }
+
+    @Test
     void modalDialog_blocksUIComponents() {
         dialog_.open();
         ButtonTester<Button> button_ = test(view.button);
