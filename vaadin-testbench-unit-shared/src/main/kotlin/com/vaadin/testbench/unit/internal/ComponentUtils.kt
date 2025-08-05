@@ -10,7 +10,6 @@
 package com.vaadin.testbench.unit.internal
 
 import java.lang.reflect.Method
-import kotlin.streams.toList
 import com.vaadin.flow.component.ClickEvent
 import com.vaadin.flow.component.ClickNotifier
 import com.vaadin.flow.component.Component
@@ -381,20 +380,18 @@ var Component.caption: String
  * event when the component is closed. This simulates the event being fired
  * from the browser after the closing animation has finished.
  */
-fun Component.setupClosedEventMock() {
-    if (this !is Dialog && this !is ConfirmDialog && this !is LoginOverlay && this !is ContextMenu && this !is Notification) {
+fun Component.simulateClosedEvent() {
+    if (ComponentUtil.getData(this, "hasSimulatedClosedEvent") != null) {
         return
     }
-
-    if (ComponentUtil.getData(this, "hasClosedEventMock") != null) {
-        return
-    }
-
-    ComponentUtil.setData(this, "hasClosedEventMock", true)
-
-    element.addPropertyChangeListener("opened") { event ->
-        if (event.value == false) {
-            _fireDomEvent("closed")
+    when (this) {
+        is Dialog, is ConfirmDialog, is LoginOverlay, is ContextMenu, is Notification -> {
+            ComponentUtil.setData(this, "hasSimulatedClosedEvent", true)
+            element.addPropertyChangeListener("opened") { event ->
+                if (event.value == false) {
+                    _fireDomEvent("closed")
+                }
+            }
         }
     }
 }
