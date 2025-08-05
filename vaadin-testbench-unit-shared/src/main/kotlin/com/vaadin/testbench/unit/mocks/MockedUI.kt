@@ -9,7 +9,6 @@
  */
 package com.vaadin.testbench.unit.mocks
 
-import java.lang.reflect.Method
 import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.ComponentEventListener
 import com.vaadin.flow.component.UI
@@ -18,6 +17,7 @@ import java.util.concurrent.atomic.AtomicReference
 import com.vaadin.flow.router.NavigationTrigger
 import com.vaadin.flow.router.QueryParameters
 import com.vaadin.flow.router.Location
+import com.vaadin.testbench.unit.internal.simulateClosedEvent
 
 
 /**
@@ -36,6 +36,11 @@ open class MockedUI : UI() {
             }))
         }
         roundTrip();
+    }
+
+    override fun addToModalComponent(component: Component?) {
+        super.addToModalComponent(component)
+        component?.simulateClosedEvent()
     }
 
     override fun navigate(locationString: String, queryParameters: QueryParameters) {

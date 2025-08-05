@@ -36,6 +36,5 @@ public class DialogTester extends ComponentTester<Dialog> {
      */
     public void close() {
         getComponent().close();
-        roundTrip();
     }
 }

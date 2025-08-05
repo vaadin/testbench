@@ -58,6 +58,8 @@ class ConfirmDialogTesterTest extends UIUnitTest {
 
         Assertions.assertEquals(1, close.get());
         Assertions.assertFalse(view.dialog.isOpened());
+        Assertions.assertFalse(view.dialog.isAttached(),
+                "Confirm dialog should be detached");
     }
 
     @Test
@@ -71,6 +73,8 @@ class ConfirmDialogTesterTest extends UIUnitTest {
 
         Assertions.assertEquals(1, rejects.get());
         Assertions.assertFalse(view.dialog.isOpened());
+        Assertions.assertFalse(view.dialog.isAttached(),
+                "Confirm dialog should be detached");
     }
 
     @Test
@@ -83,6 +87,18 @@ class ConfirmDialogTesterTest extends UIUnitTest {
 
         Assertions.assertEquals(1, confirm.get());
         Assertions.assertFalse(view.dialog.isOpened());
+        Assertions.assertFalse(view.dialog.isAttached(),
+                "Confirm dialog should be detached");
+    }
+
+    @Test
+    void programmaticallyClose_dialogIsDetached() {
+        wrap.open();
+
+        view.dialog.close();
+
+        Assertions.assertFalse(view.dialog.isAttached(),
+                "Confirm dialog should be detached");
     }
 
     @Test

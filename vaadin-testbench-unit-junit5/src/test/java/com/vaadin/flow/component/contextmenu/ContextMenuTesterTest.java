@@ -44,6 +44,16 @@ class ContextMenuTesterTest extends UIUnitTest {
     }
 
     @Test
+    void programmaticallyClose_menuIsDetached() {
+        test(view.menu).open();
+
+        view.menu.close();
+
+        Assertions.assertFalse(view.menu.isAttached(),
+                "context menu should be detached from the UI, but was not");
+    }
+
+    @Test
     void openMenu_alreadyOpen_throws() {
         ContextMenuTester<ContextMenu> menu_ = test(view.menu);
         menu_.open();

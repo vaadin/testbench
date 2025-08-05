@@ -10,7 +10,6 @@
 package com.vaadin.testbench.unit.internal
 
 import java.lang.reflect.Method
-import kotlin.streams.toList
 import com.vaadin.flow.component.ClickEvent
 import com.vaadin.flow.component.ClickNotifier
 import com.vaadin.flow.component.Component
@@ -27,11 +26,15 @@ import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.checkbox.Checkbox
 import com.vaadin.flow.component.checkbox.CheckboxGroup
 import com.vaadin.flow.component.combobox.ComboBox
+import com.vaadin.flow.component.confirmdialog.ConfirmDialog
+import com.vaadin.flow.component.contextmenu.ContextMenu
 import com.vaadin.flow.component.datepicker.DatePicker
+import com.vaadin.flow.component.dialog.Dialog
 import com.vaadin.flow.component.formlayout.FormLayout
 import com.vaadin.flow.component.grid.Grid
-import com.vaadin.flow.component.html.Input
 import com.vaadin.flow.component.listbox.ListBoxBase
+import com.vaadin.flow.component.login.LoginOverlay
+import com.vaadin.flow.component.notification.Notification
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup
 import com.vaadin.flow.component.select.Select
 import com.vaadin.flow.component.sidenav.SideNav
@@ -371,6 +374,27 @@ var Component.caption: String
             else -> label = value
         }
     }
+
+/**
+ * Sets up an event listener for overlay components that fires a `closed` DOM
+ * event when the component is closed. This simulates the event being fired
+ * from the browser after the closing animation has finished.
+ */
+fun Component.simulateClosedEvent() {
+    if (ComponentUtil.getData(this, "hasSimulatedClosedEvent") != null) {
+        return
+    }
+    when (this) {
+        is Dialog, is ConfirmDialog, is LoginOverlay, is ContextMenu, is Notification -> {
+            ComponentUtil.setData(this, "hasSimulatedClosedEvent", true)
+            element.addPropertyChangeListener("opened") { event ->
+                if (event.value == false) {
+                    _fireDomEvent("closed")
+                }
+            }
+        }
+    }
+}
 
 /**
  * The Button's caption. Alias for [Button.getText].
