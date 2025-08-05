@@ -33,10 +33,16 @@ class DialogTesterTest extends UIUnitTest {
     }
 
     @Test
-    void dialogOpen_dialogIsUsable() {
+    void openAndClose_dialogIsAttachedAndDetached() {
         dialog_.open();
         Assertions.assertTrue(dialog_.isUsable(),
                 "Dialog should be attached on open");
+
+        dialog_.close();
+        Assertions.assertFalse(dialog_.isUsable(),
+                "Dialog should not be usable after close");
+        Assertions.assertFalse(view.dialog.isAttached(),
+                "Dialog should be detached on close");
     }
 
     @Test

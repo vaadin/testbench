@@ -56,7 +56,6 @@ public class ContextMenuTester<T extends ContextMenu>
         attachMenuToUI();
         roundTrip();
         getComponent().getElement().setProperty("opened", true);
-        fireDomEvent("opened-changed");
         ensureComponentIsUsable();
     }
 
@@ -66,7 +65,7 @@ public class ContextMenuTester<T extends ContextMenu>
     public void close() {
         ensureComponentIsUsable();
         getComponent().getElement().setProperty("opened", false);
-        fireDomEvent("opened-changed");
+        fireDomEvent("closed");
     }
 
     /**

@@ -44,6 +44,7 @@ public class ConfirmDialogTester extends ComponentTester<ConfirmDialog> {
         ComponentUtil.fireEvent(getComponent(),
                 new ConfirmDialog.ConfirmEvent(getComponent(), true));
         getComponent().close();
+        fireDomEvent("closed");
     }
 
     /**
@@ -61,6 +62,7 @@ public class ConfirmDialogTester extends ComponentTester<ConfirmDialog> {
         ComponentUtil.fireEvent(getComponent(),
                 new ConfirmDialog.CancelEvent(getComponent(), true));
         getComponent().close();
+        fireDomEvent("closed");
     }
 
     /**
@@ -78,6 +80,7 @@ public class ConfirmDialogTester extends ComponentTester<ConfirmDialog> {
         ComponentUtil.fireEvent(getComponent(),
                 new ConfirmDialog.RejectEvent(getComponent(), true));
         getComponent().close();
+        fireDomEvent("closed");
     }
 
     /**

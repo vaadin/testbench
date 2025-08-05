@@ -70,7 +70,7 @@ public class NotificationTester<T extends Notification>
             throw new IllegalStateException("Auto-close is not enabled");
         }
         getComponent().close();
-        fireOpenChangedDomEvent();
+        fireDomEvent("closed");
         roundTrip();
     }
 
@@ -93,12 +93,5 @@ public class NotificationTester<T extends Notification>
         if (component.isOpened()) {
             collector.accept("not opened");
         }
-    }
-
-    // Simulate browser event fired when notification is closed
-    private void fireOpenChangedDomEvent() {
-        Element element = getComponent().getElement();
-        element.getNode().getFeature(ElementListenerMap.class).fireEvent(
-                new DomEvent(element, "open-changed", Json.createObject()));
     }
 }

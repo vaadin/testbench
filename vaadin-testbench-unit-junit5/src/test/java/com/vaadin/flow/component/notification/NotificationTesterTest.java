@@ -27,6 +27,22 @@ class NotificationTesterTest extends UIUnitTest {
     }
 
     @Test
+    void showAndAutoClose_attachedAndDetached() {
+        Notification notification = Notification.show("Some text");
+        roundTrip();
+
+        Assertions.assertTrue(notification.isAttached(),
+                "Notification should be attached after show");
+
+        NotificationTester<?> notification_ = test(NotificationTester.class,
+                notification);
+        notification_.autoClose();
+
+        Assertions.assertFalse(notification.isAttached(),
+                "Notification should not be attached after auto-close");
+    }
+
+    @Test
     void notOpenedNotification_isNotUsable() {
         Notification notification = new Notification("Not Opened");
 
