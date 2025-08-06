@@ -9,6 +9,8 @@
 package com.vaadin.flow.component.grid;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.testbench.unit.UIUnitTest;
 import com.vaadin.testbench.unit.ViewPackages;
@@ -166,6 +168,17 @@ class BasicGridTesterTest extends UIUnitTest {
     }
 
     @Test
+    void getCellComponent_columnByKey_canClickAButton() {
+        final Component cellComponent = test(view.basicGrid).getCellComponent(1,
+                BasicGridView.BUTTON_KEY);
+        Assertions.assertInstanceOf(Button.class, cellComponent);
+        var button = (Button) cellComponent;
+        test(button).click();
+        var notification = $(Notification.class).last();
+        Assertions.assertEquals("Clicked!", test(notification).getText());       
+    }
+
+    @Test
     void getCellComponent_columnByKey_returnsInstantiatedComponent() {
         final Component cellComponent = test(view.basicGrid).getCellComponent(1,
                 BasicGridView.SUBSCRIBER_KEY);
@@ -206,12 +219,12 @@ class BasicGridTesterTest extends UIUnitTest {
 
         // person 1
         Assertions.assertEquals("Jorma",
-                test(view.basicGrid).getCellText(0, 3));
-        Assertions.assertEquals("46", test(view.basicGrid).getCellText(0, 2));
+                test(view.basicGrid).getCellText(0, 4));
+        Assertions.assertEquals("46", test(view.basicGrid).getCellText(0, 3));
 
         // person 2
-        Assertions.assertEquals("Maya", test(view.basicGrid).getCellText(1, 3));
-        Assertions.assertEquals("18", test(view.basicGrid).getCellText(1, 2));
+        Assertions.assertEquals("Maya", test(view.basicGrid).getCellText(1, 4));
+        Assertions.assertEquals("18", test(view.basicGrid).getCellText(1, 3));
     }
 
     @Test
