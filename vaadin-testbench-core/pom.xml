@@ -137,7 +137,6 @@
                     <charset>UTF-8</charset>
                 </configuration>
             </plugin>
-
         </plugins>
     </build>
     <dependencyManagement>
