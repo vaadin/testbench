@@ -14,6 +14,8 @@ import org.openqa.selenium.BuildInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.vaadin.pro.licensechecker.Capabilities;
+import com.vaadin.pro.licensechecker.Capability;
 import com.vaadin.pro.licensechecker.LicenseChecker;
 
 public class TestBenchVersion {
@@ -42,7 +44,7 @@ public class TestBenchVersion {
         }
 
         LicenseChecker.checkLicenseFromStaticBlock("vaadin-testbench",
-                testbenchVersion, null);
+                testbenchVersion, null, Capabilities.of(Capability.PRE_TRIAL));
     }
 
     private static Logger getLogger() {
