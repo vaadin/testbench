@@ -21,10 +21,13 @@ import java.util.stream.Stream;
 import org.slf4j.LoggerFactory;
 
 import com.vaadin.flow.component.AbstractField;
+import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.ComponentUtil;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.internal.AbstractFieldSupport;
+import com.vaadin.flow.component.html.testbench.ClickHandler;
 import com.vaadin.flow.dom.DomEvent;
 import com.vaadin.flow.internal.nodefeature.ElementListenerMap;
 import com.vaadin.testbench.unit.internal.PrettyPrintTreeKt;
@@ -41,7 +44,7 @@ import elemental.json.JsonObject;
  * @param <T>
  *            component type
  */
-public class ComponentTester<T extends Component> {
+public class ComponentTester<T extends Component> implements ClickHandler {
 
     private final T component;
 
@@ -444,5 +447,23 @@ public class ComponentTester<T extends Component> {
         throw new IllegalArgumentException("Parameter component: invalid value "
                 + component + ": unsupported type of HasValue: "
                 + component.getClass());
+    }
+
+    /**
+     * Implements the ClickHandler interface to provide generic click
+     * functionality for all components.
+     *
+     * @param button
+     *            the mouse button (0=left, 1=middle, 2=right)
+     * @param metaKeys
+     *            meta keys pressed during the click
+     */
+    @Override
+    public void click(int button, MetaKeys metaKeys) {
+        ensureComponentIsUsable();
+        ComponentUtil.fireEvent(getComponent(),
+                new ClickEvent(getComponent(), true, 0, 0, 0, 0, 0, button,
+                        metaKeys.isCtrl(), metaKeys.isShift(), metaKeys.isAlt(),
+                        metaKeys.isMeta()));
     }
 }
