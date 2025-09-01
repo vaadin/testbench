@@ -21,6 +21,8 @@ import javassist.util.proxy.ProxyFactory;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import com.vaadin.pro.licensechecker.Capabilities;
+import com.vaadin.pro.licensechecker.Capability;
 import com.vaadin.pro.licensechecker.LicenseChecker;
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.screenshot.ImageComparison;
@@ -32,7 +34,8 @@ public class TestBench {
 
     static {
         LicenseChecker.checkLicenseFromStaticBlock("vaadin-testbench",
-                TestBenchVersion.testbenchVersion, null);
+                TestBenchVersion.testbenchVersion, null,
+                Capabilities.of(Capability.PRE_TRIAL));
         // Enable the Java 11+ HTTP client
         System.setProperty("webdriver.http.factory", "jdk-http-client");
     }
