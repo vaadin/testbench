@@ -18,19 +18,17 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.slf4j.LoggerFactory;
 
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.internal.AbstractFieldSupport;
 import com.vaadin.flow.dom.DomEvent;
+import com.vaadin.flow.internal.JacksonUtils;
 import com.vaadin.flow.internal.nodefeature.ElementListenerMap;
 import com.vaadin.testbench.unit.internal.PrettyPrintTreeKt;
-
-import elemental.json.Json;
-import elemental.json.JsonObject;
 
 /**
  * Test wrapper for components with helpful methods for testing a component.
@@ -316,7 +314,7 @@ public class ComponentTester<T extends Component> {
      *            the type of the event, not null.
      */
     protected void fireDomEvent(String eventType) {
-        fireDomEvent(eventType, Json.createObject());
+        fireDomEvent(eventType, JacksonUtils.createObjectNode());
     }
 
     /**
@@ -328,7 +326,7 @@ public class ComponentTester<T extends Component> {
      * @param eventData
      *            additional data related to the event, not null
      */
-    protected void fireDomEvent(String eventType, JsonObject eventData) {
+    protected void fireDomEvent(String eventType, ObjectNode eventData) {
         DomEvent event = new DomEvent(getComponent().getElement(), eventType,
                 eventData);
         fireDomEvent(event);
@@ -373,7 +371,7 @@ public class ComponentTester<T extends Component> {
         } else if (result.size() > 1) {
             StringBuilder message = new StringBuilder(
                     "Expecting the query to produce at most one result, but got ")
-                            .append(result.size()).append(": ");
+                    .append(result.size()).append(": ");
             message.append(
                     result.stream().map(PrettyPrintTreeKt::toPrettyString)
                             .collect(Collectors.joining(", ")));

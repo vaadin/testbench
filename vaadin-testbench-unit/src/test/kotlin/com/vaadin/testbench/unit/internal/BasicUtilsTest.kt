@@ -11,14 +11,13 @@ package com.vaadin.testbench.unit.internal
 
 import com.github.mvysny.dynatest.DynaNodeGroup
 import com.github.mvysny.dynatest.DynaTestDsl
-import com.github.mvysny.dynatest.expectThrows
 import com.github.mvysny.karibudsl.v10.textField
 import com.vaadin.flow.component.ClickEvent
 import com.vaadin.flow.component.html.Div
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.component.textfield.TextField
 import com.vaadin.flow.dom.DomEvent
-import elemental.json.Json
+import com.vaadin.flow.internal.JacksonUtils
 import kotlin.test.expect
 import com.vaadin.testbench.unit.expectThrows
 
@@ -95,7 +94,7 @@ internal fun DynaNodeGroup.basicUtilsTestbatch() {
             val div = Div()
             lateinit var event: ClickEvent<Div>
             div.addClickListener { e -> event = e }
-            div._fireDomEvent("click", Json.createObject().apply { put("event.screenX", 20.0) })
+            div._fireDomEvent("click", JacksonUtils.createObjectNode().apply { put("event.screenX", 20.0) })
             expect(20) { event.screenX }
         }
     }

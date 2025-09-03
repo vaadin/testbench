@@ -11,6 +11,7 @@
 
 package com.vaadin.testbench.unit.internal
 
+import com.fasterxml.jackson.databind.node.ObjectNode
 import com.vaadin.flow.component.BlurNotifier
 import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.ComponentEvent
@@ -23,10 +24,9 @@ import com.vaadin.flow.component.HasValue
 import com.vaadin.flow.component.Text
 import com.vaadin.flow.component.UI
 import com.vaadin.flow.dom.DomEvent
+import com.vaadin.flow.internal.JacksonUtils
 import com.vaadin.flow.router.InternalServerError
 import com.vaadin.flow.server.VaadinSession
-import elemental.json.Json
-import elemental.json.JsonObject
 
 /**
  * Allows us to fire any Vaadin event on any Vaadin component.
@@ -43,7 +43,7 @@ fun Component._fireEvent(event: ComponentEvent<*>) {
  * @param eventData optional event data, defaults to an empty object.
  */
 @JvmOverloads
-fun Component._fireDomEvent(eventType: String, eventData: JsonObject = Json.createObject()) {
+fun Component._fireDomEvent(eventType: String, eventData: ObjectNode = JacksonUtils.createObjectNode()) {
     element._fireDomEvent(DomEvent(element, eventType, eventData))
 }
 

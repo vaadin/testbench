@@ -11,13 +11,14 @@ package com.vaadin.testbench.unit;
 import com.vaadin.flow.data.renderer.LitRenderer;
 import com.vaadin.flow.function.SerializableBiConsumer;
 import com.vaadin.flow.function.ValueProvider;
-import elemental.json.JsonArray;
 
 import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.IntFunction;
+
+import com.fasterxml.jackson.databind.node.ArrayNode;
 
 /**
  * Utility methods for unit testing properties and functions of LitRenderers.
@@ -135,7 +136,7 @@ public class LitRendererTestUtil {
                 "clientCallables");
         try {
             @SuppressWarnings("unchecked")
-            var clientCallables = (Map<String, SerializableBiConsumer<Y, JsonArray>>) clientCallablesField
+            var clientCallables = (Map<String, SerializableBiConsumer<Y, ArrayNode>>) clientCallablesField
                     .get(litRenderer);
             return clientCallables.keySet();
         } catch (IllegalAccessException e) {
@@ -143,7 +144,7 @@ public class LitRendererTestUtil {
         }
     }
 
-    private static <Y> SerializableBiConsumer<Y, JsonArray> findFunction(
+    private static <Y> SerializableBiConsumer<Y, ArrayNode> findFunction(
             LitRenderer<Y> litRenderer,
             BiFunction<Class<?>, String, Field> fieldGetter,
             String functionName) {
@@ -151,7 +152,7 @@ public class LitRendererTestUtil {
                 "clientCallables");
         try {
             @SuppressWarnings("unchecked")
-            var clientCallables = (Map<String, SerializableBiConsumer<Y, JsonArray>>) clientCallablesField
+            var clientCallables = (Map<String, SerializableBiConsumer<Y, ArrayNode>>) clientCallablesField
                     .get(litRenderer);
             var callable = clientCallables.get(functionName);
             if (callable == null) {
@@ -188,7 +189,7 @@ public class LitRendererTestUtil {
     public static <Y> void invokeFunction(LitRenderer<Y> litRenderer,
             BiFunction<Class<?>, String, Field> fieldGetter,
             IntFunction<Y> itemGetter, int index, String functionName,
-            JsonArray jsonArray) {
+            ArrayNode jsonArray) {
         var callable = findFunction(litRenderer, fieldGetter, functionName);
         callable.accept(itemGetter.apply(index), jsonArray);
     }
