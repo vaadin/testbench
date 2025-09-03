@@ -1,18 +1,23 @@
 package com.vaadin.testbench.unit.internal
 
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.node.ObjectNode
 import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.Key
 import com.vaadin.flow.component.ShortcutRegistration
-import elemental.json.impl.JreJsonFactory
-import elemental.json.impl.JreJsonObject
+import com.vaadin.flow.internal.JacksonUtils
 
 /**
  * Take a look at `DomEventListenerWrapper.matchesFilter()` to see why this is necessary.
  * If this stuff stops working, place a breakpoint into the [getBoolean]/[hasKey] function,
  * to see what kind of keys you're receiving and whether it matches [filter].
  */
-private class MockFilterJsonObject(val key: Key, val modifiers: Set<Key>) : JreJsonObject(JreJsonFactory()) {
+private class MockFilterJsonObject(val key: Key, val modifiers: Set<Key>) : ObjectNode(
+    ObjectMapper().nodeFactory
+) {
     val filter: String
+    var filterString: String = ""
     init {
 
         // compute the filter
@@ -35,12 +40,12 @@ private class MockFilterJsonObject(val key: Key, val modifiers: Set<Key>) : JreJ
         return chashableKey.newInstance(keyModifier)
     }
 
-    override fun hasKey(key: String): Boolean {
+    override fun has(key: String): Boolean {
         // the "key" is a JavaScript expression which matches the key pressed.
         // we need to match it against the 'filter'
         if (!key.startsWith("([")) {
             // not a filter
-            return super.hasKey(key)
+            return super.get(key) != null
         }
         return matchesFilter(key)
     }
@@ -53,14 +58,25 @@ private class MockFilterJsonObject(val key: Key, val modifiers: Set<Key>) : JreJ
         return probeFilter.startsWith(filter)
     }
 
-    override fun getBoolean(key: String): Boolean {
+    override fun get(keyString: String): JsonNode? {
+        filterString = keyString
+        if (keyString.startsWith("([")) {
+            // For filter key we return this so we get the correct matches
+            // for booleanValue as get returns null
+            return this
+        }
+        return super.get(keyString)
+    }
+
+
+    override fun booleanValue(): Boolean {
         // the "key" is a JavaScript expression which matches the key pressed.
         // we need to match it against the 'filter'
-        if (!key.startsWith("([")) {
+        if (!filterString.startsWith("([")) {
             // not a filter
-            return super.getBoolean(key)
+            return super.booleanValue()
         }
-        return matchesFilter(key)
+        return matchesFilter(filterString)
     }
 
     companion object {

@@ -17,11 +17,10 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentUtil;
 import com.vaadin.flow.dom.DomEvent;
 import com.vaadin.flow.dom.Element;
+import com.vaadin.flow.internal.JacksonUtils;
 import com.vaadin.testbench.unit.ComponentTester;
 import com.vaadin.testbench.unit.Tests;
 import com.vaadin.testbench.unit.internal.PrettyPrintTreeKt;
-
-import elemental.json.Json;
 
 /**
  * Tester for ContextMenu components.
@@ -78,15 +77,18 @@ public class ContextMenuTester<T extends ContextMenu>
      * <pre>
      * {@code
      *
-     * menu.addItem("Preview", event -> {});
+     * menu.addItem("Preview", event -> {
+     * });
      * var subMenu = menu.addItem("Share").getSubMenu();
-     * subMenu.addItem("Copy link", event -> {});
-     * subMenu.addItem("Email", event -> {});
+     * subMenu.addItem("Copy link", event -> {
+     * });
+     * subMenu.addItem("Email", event -> {
+     * });
      *
      * // clicks top level menu item with text Preview
      * tester.clickItem("Preview");
      *
-     * // clicks nested  menu item with text Email
+     * // clicks nested menu item with text Email
      * tester.clickItem("Share", "Email");
      * }
      * </pre>
@@ -119,10 +121,13 @@ public class ContextMenuTester<T extends ContextMenu>
      * <pre>
      * {@code
      *
-     * menu.addItem("Preview", event -> {});
+     * menu.addItem("Preview", event -> {
+     * });
      * var subMenu = menu.addItem("Share").getSubMenu();
-     * subMenu.addItem("Copy link", event -> {});
-     * subMenu.addItem("Email", event -> {});
+     * subMenu.addItem("Copy link", event -> {
+     * });
+     * subMenu.addItem("Email", event -> {
+     * });
      *
      * // clicks top level "Preview" menu item at position 0
      * tester.clickItem(0);
@@ -162,10 +167,13 @@ public class ContextMenuTester<T extends ContextMenu>
      * <pre>
      * {@code
      *
-     * menu.addItem("Preview", event -> {}).setCheckable(true);
+     * menu.addItem("Preview", event -> {
+     * }).setCheckable(true);
      * var subMenu = menu.addItem("Share").getSubMenu();
-     * subMenu.addItem("Copy link", event -> {}).setCheckable(true);
-     * subMenu.addItem("Email", event -> {}).setCheckable(true);
+     * subMenu.addItem("Copy link", event -> {
+     * }).setCheckable(true);
+     * subMenu.addItem("Email", event -> {
+     * }).setCheckable(true);
      *
      * tester.isItemChecked("Preview");
      *
@@ -212,15 +220,18 @@ public class ContextMenuTester<T extends ContextMenu>
      * <pre>
      * {@code
      *
-     * menu.addItem("Preview", event -> {}).setCheckable(true);
+     * menu.addItem("Preview", event -> {
+     * }).setCheckable(true);
      * var subMenu = menu.addItem("Share").getSubMenu();
-     * subMenu.addItem("Copy link", event -> {}).setCheckable(true);
-     * subMenu.addItem("Email", event -> {}).setCheckable(true);
+     * subMenu.addItem("Copy link", event -> {
+     * }).setCheckable(true);
+     * subMenu.addItem("Email", event -> {
+     * }).setCheckable(true);
      *
      * // checks top level "Preview" menu item at position 0
      * tester.isItemChecked(0);
      *
-     * // checks  nested menu item at position 1 "Email" through the
+     * // checks nested menu item at position 1 "Email" through the
      * // item "Share" at position 1
      * tester.isItemChecked(1, 1);
      * }
@@ -352,7 +363,8 @@ public class ContextMenuTester<T extends ContextMenu>
     private void attachMenuToUI() {
         Element target = getComponent().getTarget().getElement();
         DomEvent beforeOpen = new DomEvent(target,
-                "vaadin-context-menu-before-open", Json.createObject());
+                "vaadin-context-menu-before-open",
+                JacksonUtils.createObjectNode());
         fireDomEvent(beforeOpen);
     }
 }

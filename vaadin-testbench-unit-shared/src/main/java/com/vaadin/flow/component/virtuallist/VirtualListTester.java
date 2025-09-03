@@ -13,13 +13,14 @@ import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.LitRenderer;
 import com.vaadin.flow.data.renderer.Renderer;
+import com.vaadin.flow.internal.JacksonUtils;
 import com.vaadin.testbench.unit.ComponentTester;
 import com.vaadin.testbench.unit.LitRendererTestUtil;
 import com.vaadin.testbench.unit.Tests;
-import elemental.json.Json;
-import elemental.json.JsonArray;
 
 import java.util.Collections;
+
+import com.fasterxml.jackson.databind.node.ArrayNode;
 
 /**
  * Tester for VirtualList components.
@@ -206,7 +207,7 @@ public class VirtualListTester<T extends VirtualList<Y>, Y>
      *             when the VirtualList is not using a LitRenderer
      */
     public void invokeLitRendererFunction(int index, String functionName,
-            JsonArray jsonArray) {
+            ArrayNode jsonArray) {
         ensureVisible();
 
         if (getItemRenderer() instanceof LitRenderer<Y> litRenderer) {
@@ -226,12 +227,13 @@ public class VirtualListTester<T extends VirtualList<Y>, Y>
      * @param functionName
      *            the name of the LitRenderer function to invoke
      *
-     * @see #invokeLitRendererFunction(int, String, JsonArray)
+     * @see #invokeLitRendererFunction(int, String, ArrayNode)
      * @throws IllegalArgumentException
      *             when the VirtualList is not using a LitRenderer
      */
     public void invokeLitRendererFunction(int index, String functionName) {
-        invokeLitRendererFunction(index, functionName, Json.createArray());
+        invokeLitRendererFunction(index, functionName,
+                JacksonUtils.createArrayNode());
     }
 
     private <F> Query<Y, F> saneQuery() {

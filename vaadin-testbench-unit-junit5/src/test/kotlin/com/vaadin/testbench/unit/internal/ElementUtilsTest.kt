@@ -19,8 +19,8 @@ import com.vaadin.flow.component.html.Span
 import com.vaadin.flow.component.textfield.TextField
 import com.vaadin.flow.dom.DomEvent
 import com.vaadin.flow.dom.Element
+import com.vaadin.flow.internal.JacksonUtils
 import com.vaadin.testbench.unit.expectList
-import elemental.json.Json
 import kotlin.test.expect
 
 fun DynaNodeGroup.elementUtilsTests() {
@@ -105,7 +105,7 @@ fun DynaNodeGroup.elementUtilsTests() {
 
     test("fireDomEvent() smoke") {
         val element = Div().element
-        element._fireDomEvent(DomEvent(element, "click", Json.createObject()))
+        element._fireDomEvent(DomEvent(element, "click", JacksonUtils.createObjectNode()))
     }
 
 }

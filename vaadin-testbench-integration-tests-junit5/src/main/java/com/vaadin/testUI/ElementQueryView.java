@@ -31,8 +31,8 @@ public class ElementQueryView extends Div {
                         div.setId("msg");
                         e.getType();
                         div.setText("Event on " + button.getText()
-                                + " bubbles: "
-                                + e.getEventData().getBoolean("event.bubbles"));
+                                + " bubbles: " + e.getEventData()
+                                        .get("event.bubbles").booleanValue());
                         add(div);
                     });
             reg.addEventData("event.bubbles");
