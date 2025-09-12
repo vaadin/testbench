@@ -21,6 +21,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.ElementNotInteractableException;
+import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import com.vaadin.testbench.By;
@@ -79,7 +80,7 @@ public class ScrollIntoViewIT extends MultiBrowserTest {
     }
 
     @Override
-    public List<DesiredCapabilities> getBrowserConfiguration() {
+    public List<MutableCapabilities> getBrowserConfiguration() {
         /**
          * IEDriver returns true in initial isDisplayed check and
          * hiddenButton.click() doesn't throw ElementNotVisibleException

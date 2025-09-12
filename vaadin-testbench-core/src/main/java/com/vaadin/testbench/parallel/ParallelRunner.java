@@ -30,6 +30,7 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 import org.openqa.selenium.Capabilities;
+import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import com.vaadin.testbench.Parameters;
@@ -81,7 +82,7 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
 
         BrowserUtil.setBrowserFactory(getBrowserFactory());
         try {
-            Collection<DesiredCapabilities> desiredCapabilities = getDesiredCapabilities();
+            Collection<MutableCapabilities> desiredCapabilities = getDesiredCapabilities();
 
             TestNameSuffix testNameSuffixProperty = findAnnotation(
                     getTestClass().getJavaClass(), TestNameSuffix.class);
@@ -94,7 +95,7 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
                         || categoryIsExcludedOrNotExcplicitlyIncluded()) {
                     tests.add(new IgnoredTestMethod(m.getMethod()));
                 } else {
-                    for (DesiredCapabilities capabilities : desiredCapabilities) {
+                    for (MutableCapabilities capabilities : desiredCapabilities) {
                         TBMethod method = new TBMethod(m.getMethod(),
                                 capabilities);
                         if (testNameSuffixProperty != null) {
@@ -177,9 +178,9 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
      * {@code @RunLocally} annotation or com.vaadin.testbench.runLocally
      * property to override all capabilities.
      */
-    private Collection<DesiredCapabilities> getDesiredCapabilities() {
+    private Collection<MutableCapabilities> getDesiredCapabilities() {
         if (testRunsLocally()) {
-            Collection<DesiredCapabilities> desiredCapabilities = new ArrayList<>();
+            Collection<MutableCapabilities> desiredCapabilities = new ArrayList<>();
             Class<?> javaTestClass = getTestClass().getJavaClass();
             desiredCapabilities.add(BrowserUtil.getBrowserFactory().create(
                     getRunLocallyBrowserName(javaTestClass),
@@ -252,16 +253,16 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
      * returns a list of browser capabilities filtered browsers.include and
      * browsers.exclude system properties. (if present)
      */
-    private Collection<DesiredCapabilities> getFilteredCapabilities() {
+    private Collection<MutableCapabilities> getFilteredCapabilities() {
 
-        Collection<DesiredCapabilities> desiredCapabilites = getBrowsersConfiguration();
+        Collection<MutableCapabilities> desiredCapabilites = getBrowsersConfiguration();
 
-        ArrayList<DesiredCapabilities> filteredCapabilities = new ArrayList<>();
+        ArrayList<MutableCapabilities> filteredCapabilities = new ArrayList<>();
 
         String include = System.getProperty("browsers.include");
         String exclude = System.getProperty("browsers.exclude");
 
-        for (DesiredCapabilities d : desiredCapabilites) {
+        for (MutableCapabilities d : desiredCapabilites) {
             String browserName = (d.getBrowserName() + d.getBrowserVersion())
                     .toLowerCase();
             if (include != null && include.trim().length() > 0) {
@@ -282,7 +283,7 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
         return filteredCapabilities;
     }
 
-    private Collection<DesiredCapabilities> getBrowsersConfiguration() {
+    private Collection<MutableCapabilities> getBrowsersConfiguration() {
 
         Class<?> klass = getTestClass().getJavaClass();
 
@@ -306,7 +307,7 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
                     }
 
                     try {
-                        return (Collection<DesiredCapabilities>) method
+                        return (Collection<MutableCapabilities>) method
                                 .invoke(getTestClassInstance());
                     } catch (Exception e) {
                         // Handle possible exceptions.
@@ -460,15 +461,15 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
     }
 
     public static class TBMethod extends FrameworkMethod {
-        private final DesiredCapabilities capabilities;
+        private final MutableCapabilities capabilities;
         private String testNameSuffix = "";
 
-        public TBMethod(Method method, DesiredCapabilities capabilities) {
+        public TBMethod(Method method, MutableCapabilities capabilities) {
             super(method);
             this.capabilities = capabilities;
         }
 
-        public DesiredCapabilities getCapabilities() {
+        public MutableCapabilities getCapabilities() {
             return capabilities;
         }
 

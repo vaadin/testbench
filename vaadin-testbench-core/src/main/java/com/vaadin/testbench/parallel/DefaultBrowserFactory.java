@@ -31,17 +31,17 @@ import com.vaadin.testbench.annotations.BrowserFactory;
 public class DefaultBrowserFactory implements TestBenchBrowserFactory {
 
     @Override
-    public DesiredCapabilities create(Browser browser) {
+    public MutableCapabilities create(Browser browser) {
         return create(browser, "", Platform.ANY);
     }
 
     @Override
-    public DesiredCapabilities create(Browser browser, String version) {
+    public MutableCapabilities create(Browser browser, String version) {
         return create(browser, version, Platform.ANY);
     }
 
     @Override
-    public DesiredCapabilities create(Browser browser, String version,
+    public MutableCapabilities create(Browser browser, String version,
             Platform platform) {
         MutableCapabilities desiredCapabilities;
 
@@ -88,6 +88,6 @@ public class DefaultBrowserFactory implements TestBenchBrowserFactory {
                     platform);
         }
 
-        return new DesiredCapabilities(desiredCapabilities);
+        return desiredCapabilities;
     }
 }

@@ -12,6 +12,7 @@ package com.vaadin.testbench.parallel.setup;
 
 import java.io.File;
 
+import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -52,7 +53,7 @@ public class LocalDriver {
      *            the capabilities for driver setup
      * @return created driver instance
      */
-    static public WebDriver createDriver(DesiredCapabilities desiredCapabilities) {
+    static public WebDriver createDriver(MutableCapabilities desiredCapabilities) {
         WebDriver driver;
         if (BrowserUtil.isFirefox(desiredCapabilities)) {
             String firefoxPath = System.getProperty("firefox.path");

@@ -10,6 +10,7 @@
  */
 package com.vaadin.testbench.parallel;
 
+import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
@@ -34,7 +35,7 @@ public interface TestBenchBrowserFactory {
      * @return {@link DesiredCapabilities} with given browser, and default
      *         version and platform
      */
-    DesiredCapabilities create(Browser browser);
+    MutableCapabilities create(Browser browser);
 
     /**
      * @param browser
@@ -44,7 +45,7 @@ public interface TestBenchBrowserFactory {
      * @return {@link DesiredCapabilities} with given browser and version, and
      *         default platform
      */
-    DesiredCapabilities create(Browser browser, String version);
+    MutableCapabilities create(Browser browser, String version);
 
     /**
      * @param browser
@@ -56,6 +57,6 @@ public interface TestBenchBrowserFactory {
      * @return {@link DesiredCapabilities} with given browser, version and
      *         platform
      */
-    DesiredCapabilities create(Browser browser, String version,
+    MutableCapabilities create(Browser browser, String version,
             Platform platform);
 }

@@ -10,6 +10,7 @@
  */
 package com.vaadin.testbench.parallel.setup;
 
+import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
@@ -48,7 +49,7 @@ public class SetupDriver {
      */
     public WebDriver setupRemoteDriver(RemoteDriver remoteDriver, String hubURL)
             throws Exception {
-        DesiredCapabilities capabilities = getDesiredCapabilities();
+        MutableCapabilities capabilities = getDesiredCapabilities();
         setDesiredCapabilities(capabilities);
 
         WebDriver driver = remoteDriver.createDriver(hubURL, capabilities);
@@ -103,7 +104,7 @@ public class SetupDriver {
      */
     public WebDriver setupLocalDriver(Browser runLocallyBrowser, String version) {
         assert (runLocallyBrowser != null);
-        DesiredCapabilities capabilities = BrowserUtil.getBrowserFactory()
+        MutableCapabilities capabilities = BrowserUtil.getBrowserFactory()
                 .create(runLocallyBrowser, version);
         setDesiredCapabilities(capabilities);
         return LocalDriver.createDriver(capabilities);
@@ -124,7 +125,7 @@ public class SetupDriver {
         return setupLocalDriver(runLocallyBrowser, "");
     }
 
-    private DesiredCapabilities desiredCapabilities = Browser.FIREFOX
+    private MutableCapabilities desiredCapabilities = Browser.FIREFOX
             .getDesiredCapabilities();
 
     /**
@@ -135,7 +136,7 @@ public class SetupDriver {
      *
      * @return the requested browser capabilities
      */
-    public DesiredCapabilities getDesiredCapabilities() {
+    public MutableCapabilities getDesiredCapabilities() {
         return desiredCapabilities;
     }
 
@@ -146,7 +147,7 @@ public class SetupDriver {
      * @param desiredCapabilities
      *            the requested browser capabilities
      */
-    public void setDesiredCapabilities(DesiredCapabilities desiredCapabilities) {
+    public void setDesiredCapabilities(MutableCapabilities desiredCapabilities) {
         this.desiredCapabilities = desiredCapabilities;
     }
 }

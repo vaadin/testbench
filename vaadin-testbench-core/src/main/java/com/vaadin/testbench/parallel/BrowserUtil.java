@@ -11,6 +11,7 @@
 package com.vaadin.testbench.parallel;
 
 import org.openqa.selenium.Capabilities;
+import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.remote.Browser;
 import org.openqa.selenium.remote.CapabilityType;
@@ -29,8 +30,8 @@ public class BrowserUtil {
      * @return an object describing the capabilities required for running a test
      *         on Safari
      */
-    public static DesiredCapabilities safari() {
-        DesiredCapabilities c = browserFactory
+    public static MutableCapabilities safari() {
+        MutableCapabilities c = browserFactory
                 .create(com.vaadin.testbench.parallel.Browser.SAFARI);
         return c;
     }
@@ -41,8 +42,8 @@ public class BrowserUtil {
      * @return an object describing the capabilities required for running a test
      *         on Chrome
      */
-    public static DesiredCapabilities chrome() {
-        DesiredCapabilities c = browserFactory
+    public static MutableCapabilities chrome() {
+        MutableCapabilities c = browserFactory
                 .create(com.vaadin.testbench.parallel.Browser.CHROME);
         return c;
     }
@@ -53,8 +54,8 @@ public class BrowserUtil {
      * @return an object describing the capabilities required for running a test
      *         on Firefox
      */
-    public static DesiredCapabilities firefox() {
-        DesiredCapabilities c = browserFactory
+    public static MutableCapabilities  firefox() {
+        MutableCapabilities c = browserFactory
                 .create(com.vaadin.testbench.parallel.Browser.FIREFOX);
         return c;
     }
@@ -65,8 +66,8 @@ public class BrowserUtil {
      * @return an object describing the capabilities required for running a test
      *         on Internet Explorer 8
      */
-    public static DesiredCapabilities ie8() {
-        DesiredCapabilities c = browserFactory
+    public static MutableCapabilities ie8() {
+        MutableCapabilities c = browserFactory
                 .create(com.vaadin.testbench.parallel.Browser.IE8);
         return c;
     }
@@ -77,8 +78,8 @@ public class BrowserUtil {
      * @return an object describing the capabilities required for running a test
      *         on Internet Explorer 9
      */
-    public static DesiredCapabilities ie9() {
-        DesiredCapabilities c = browserFactory
+    public static MutableCapabilities ie9() {
+        MutableCapabilities c = browserFactory
                 .create(com.vaadin.testbench.parallel.Browser.IE9);
         return c;
     }
@@ -89,8 +90,8 @@ public class BrowserUtil {
      * @return an object describing the capabilities required for running a test
      *         on Internet Explorer 10
      */
-    public static DesiredCapabilities ie10() {
-        DesiredCapabilities c = browserFactory
+    public static MutableCapabilities ie10() {
+        MutableCapabilities c = browserFactory
                 .create(com.vaadin.testbench.parallel.Browser.IE10);
         return c;
     }
@@ -101,8 +102,8 @@ public class BrowserUtil {
      * @return an object describing the capabilities required for running a test
      *         on Internet Explorer 11
      */
-    public static DesiredCapabilities ie11() {
-        DesiredCapabilities c = browserFactory
+    public static MutableCapabilities ie11() {
+        MutableCapabilities c = browserFactory
                 .create(com.vaadin.testbench.parallel.Browser.IE11);
         return c;
     }
@@ -113,8 +114,8 @@ public class BrowserUtil {
      * @return an object describing the capabilities required for running a test
      *         on Edge
      */
-    public static DesiredCapabilities edge() {
-        DesiredCapabilities c = browserFactory
+    public static MutableCapabilities edge() {
+        MutableCapabilities c = browserFactory
                 .create(com.vaadin.testbench.parallel.Browser.EDGE);
         return c;
     }

@@ -23,10 +23,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicHttpEntityEnclosingRequest;
 import org.junit.Before;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.HttpCommandExecutor;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -103,7 +100,7 @@ public abstract class AbstractTB5Test extends ParallelTest {
         if (getRunLocallyBrowser() != null) {
             setupWithWebDriverManager(getRunLocallyBrowser());
         } else {
-            DesiredCapabilities desiredCapabilities = getDesiredCapabilities();
+            MutableCapabilities desiredCapabilities = getDesiredCapabilities();
             String browserName = desiredCapabilities.getBrowserName()
                     .toUpperCase();
             if ("MICROSOFTEDGE".equals(browserName)) {

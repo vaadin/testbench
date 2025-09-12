@@ -16,6 +16,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.runner.RunWith;
+import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
@@ -164,7 +165,7 @@ public class ParallelTest extends TestBenchTestCase {
      * @return default capabilities, used if no {@link BrowserConfiguration}
      *         method was found
      */
-    public static List<DesiredCapabilities> getDefaultCapabilities() {
+    public static List<MutableCapabilities> getDefaultCapabilities() {
         return Collections.singletonList(BrowserUtil.firefox());
     }
 
@@ -176,7 +177,7 @@ public class ParallelTest extends TestBenchTestCase {
      *            the capabilities for the driver setup
      */
     public void setDesiredCapabilities(
-            DesiredCapabilities desiredCapabilities) {
+            MutableCapabilities desiredCapabilities) {
         driverConfiguration.setDesiredCapabilities(desiredCapabilities);
     }
 
@@ -185,7 +186,7 @@ public class ParallelTest extends TestBenchTestCase {
      *
      * @return the capabilities of the driver setup
      */
-    protected DesiredCapabilities getDesiredCapabilities() {
+    protected MutableCapabilities getDesiredCapabilities() {
         return driverConfiguration.getDesiredCapabilities();
     }
 }

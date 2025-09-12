@@ -12,6 +12,7 @@ package com.vaadin.testbench.parallel.setup;
 
 import java.net.URL;
 
+import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -37,7 +38,7 @@ public class RemoteDriver {
      *             attempt throws)
      */
     public WebDriver createDriver(String hubURL,
-            DesiredCapabilities capabilities) throws Exception {
+                                  MutableCapabilities capabilities) throws Exception {
         for (int i = 1; i <= BROWSER_INIT_ATTEMPTS; i++) {
             try {
                 WebDriver dr = TestBench

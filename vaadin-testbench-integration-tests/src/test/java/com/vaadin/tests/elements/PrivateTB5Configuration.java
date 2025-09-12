@@ -20,6 +20,7 @@ import java.util.Enumeration;
 import java.util.Locale;
 import java.util.Properties;
 
+import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import com.vaadin.testbench.annotations.BrowserFactory;
@@ -65,14 +66,14 @@ public abstract class PrivateTB5Configuration extends AbstractTB5Test {
 
         if (properties.containsKey(RUN_LOCALLY_PROPERTY)) {
             System.setProperty("useLocalWebDriver", "true");
-            DesiredCapabilities localBrowser = getRunLocallyCapabilities();
+            MutableCapabilities localBrowser = getRunLocallyCapabilities();
             System.setProperty("browsers.include",
                     localBrowser.getBrowserName()
                             + localBrowser.getBrowserVersion());
         }
     }
 
-    protected static DesiredCapabilities getRunLocallyCapabilities() {
+    protected static MutableCapabilities getRunLocallyCapabilities() {
         DefaultBrowserFactory factory = new DefaultBrowserFactory();
 
         try {

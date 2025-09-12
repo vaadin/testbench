@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import com.vaadin.testbench.annotations.BrowserConfiguration;
@@ -38,21 +39,21 @@ import com.vaadin.testbench.parallel.BrowserUtil;
 
 public abstract class MultiBrowserTest extends PrivateTB5Configuration {
 
-    protected List<DesiredCapabilities> getBrowsersExcludingIE() {
-        List<DesiredCapabilities> browsers = new ArrayList<DesiredCapabilities>(
+    protected List<MutableCapabilities> getBrowsersExcludingIE() {
+        List<MutableCapabilities> browsers = new ArrayList<MutableCapabilities>(
                 getAllBrowsers());
         browsers.remove(BrowserUtil.ie11());
         return browsers;
     }
 
-    protected List<DesiredCapabilities> allBrowsers = null;
+    protected List<MutableCapabilities> allBrowsers = null;
 
     /**
      * @return all supported browsers which are actively tested
      */
-    public List<DesiredCapabilities> getAllBrowsers() {
+    public List<MutableCapabilities> getAllBrowsers() {
         if (allBrowsers == null) {
-            allBrowsers = new ArrayList<DesiredCapabilities>();
+            allBrowsers = new ArrayList<MutableCapabilities>();
             allBrowsers.add(BrowserUtil.ie11());
             allBrowsers.add(BrowserUtil.firefox());
             allBrowsers.add(BrowserUtil.chrome());
@@ -61,7 +62,7 @@ public abstract class MultiBrowserTest extends PrivateTB5Configuration {
     }
 
     @BrowserConfiguration
-    public List<DesiredCapabilities> getBrowserConfiguration() {
+    public List<MutableCapabilities> getBrowserConfiguration() {
         return getAllBrowsers();
     }
 
