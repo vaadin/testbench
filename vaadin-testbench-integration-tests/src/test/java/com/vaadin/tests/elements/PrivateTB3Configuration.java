@@ -20,6 +20,7 @@ import java.util.Enumeration;
 import java.util.Locale;
 import java.util.Properties;
 
+import com.vaadin.testbench.parallel.DefaultBrowserFactory;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import com.vaadin.testbench.annotations.BrowserFactory;
@@ -35,7 +36,7 @@ import com.vaadin.testbench.parallel.Browser;
  * @author Vaadin Ltd
  */
 
-@BrowserFactory(VaadinBrowserFactory.class)
+@BrowserFactory(DefaultBrowserFactory.class)
 @RunOnHub("tb3-hub.intra.itmill.com")
 public abstract class PrivateTB3Configuration extends AbstractTB3Test {
     private static final String HOSTNAME_PROPERTY = "deployment.hostname";
@@ -71,7 +72,7 @@ public abstract class PrivateTB3Configuration extends AbstractTB3Test {
     }
 
     protected static DesiredCapabilities getRunLocallyCapabilities() {
-        VaadinBrowserFactory factory = new VaadinBrowserFactory();
+        DefaultBrowserFactory factory = new DefaultBrowserFactory();
 
         try {
             if (properties.containsKey(RUN_LOCALLY_PROPERTY)) {
