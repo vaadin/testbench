@@ -102,7 +102,7 @@ public abstract class AbstractTB5Test extends ParallelTest {
     public void setup() throws Exception {
         if (getRunLocallyBrowser() != null) {
             setupWithWebDriverManager(getRunLocallyBrowser());
-        } else if (Parameters.isLocalWebDriverUsed()) {
+        } else {
             DesiredCapabilities desiredCapabilities = getDesiredCapabilities();
             String browserName = desiredCapabilities.getBrowserName()
                     .toUpperCase();
