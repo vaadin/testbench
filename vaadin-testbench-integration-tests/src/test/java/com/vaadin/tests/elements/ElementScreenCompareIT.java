@@ -12,11 +12,14 @@ package com.vaadin.tests.elements;
 
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
+
 import org.junit.Test;
 
 import com.vaadin.testUI.ElementQueryUI;
 import com.vaadin.testbench.By;
 import com.vaadin.testbench.TestBenchElement;
+import com.vaadin.testbench.screenshot.ReferenceNameGenerator;
 
 public class ElementScreenCompareIT extends MultiBrowserTest {
 
@@ -33,10 +36,27 @@ public class ElementScreenCompareIT extends MultiBrowserTest {
         TestBenchElement button4 = (TestBenchElement) findElements(
                 By.className("v-button")).get(4);
 
-        assertTrue(button4.compareScreen("button4"));
+        compareScreen(button4, "button4");
         TestBenchElement layout = (TestBenchElement) button4
                 .findElement(By.xpath("../.."));
-        assertTrue(layout.compareScreen("layout"));
+        compareScreen(layout, "layout");
+    }
+
+    private void compareScreen(TestBenchElement element, String referenceId)
+            throws IOException {
+        assertTrue(errorMessage(element, referenceId),
+                element.compareScreen(referenceId));
+    }
+
+    private String errorMessage(TestBenchElement element,
+            String referenceId) {
+        ReferenceNameGenerator referenceNameGenerator = element
+                .getCommandExecutor().getReferenceNameGenerator();
+        return String.format(
+                "Screenshot comparison failed. Comparison file: "
+                        + "%s.png (platform and number may vary)",
+                referenceNameGenerator.generateName(referenceId,
+                        getDesiredCapabilities()));
     }
 
 }
