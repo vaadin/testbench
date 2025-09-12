@@ -18,7 +18,7 @@ import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.IntFunction;
 
-import com.fasterxml.jackson.databind.node.ArrayNode;
+import tools.jackson.databind.node.ArrayNode;
 
 /**
  * Utility methods for unit testing properties and functions of LitRenderers.

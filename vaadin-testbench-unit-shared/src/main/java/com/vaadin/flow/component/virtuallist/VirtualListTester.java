@@ -20,7 +20,7 @@ import com.vaadin.testbench.unit.Tests;
 
 import java.util.Collections;
 
-import com.fasterxml.jackson.databind.node.ArrayNode;
+import tools.jackson.databind.node.ArrayNode;
 
 /**
  * Tester for VirtualList components.

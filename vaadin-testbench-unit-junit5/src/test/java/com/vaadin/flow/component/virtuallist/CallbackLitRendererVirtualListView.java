@@ -16,6 +16,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.data.renderer.LitRenderer;
+import com.vaadin.flow.function.SerializableConsumer;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 
@@ -75,7 +76,7 @@ public class CallbackLitRendererVirtualListView extends Composite<HorizontalLayo
                 .withProperty("lastName", User::getLastName)
                 .withProperty("active", User::isActive)
                 .withFunction("onActiveToggleClick",
-                        user -> toggleActive(callbackLitRendererVirtualList, user));
+                        (SerializableConsumer<User>)  user -> toggleActive(callbackLitRendererVirtualList, user));
     }
 
     private void toggleActive(VirtualList<User> virtualList, User user) {

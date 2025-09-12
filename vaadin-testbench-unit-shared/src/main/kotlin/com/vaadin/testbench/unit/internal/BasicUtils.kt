@@ -11,7 +11,7 @@
 
 package com.vaadin.testbench.unit.internal
 
-import com.fasterxml.jackson.databind.node.ObjectNode
+import tools.jackson.databind.node.ObjectNode
 import com.vaadin.flow.component.BlurNotifier
 import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.ComponentEvent
