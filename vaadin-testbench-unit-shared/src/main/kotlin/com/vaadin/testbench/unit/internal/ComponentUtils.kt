@@ -424,6 +424,8 @@ internal fun isPolymerTemplate(component: Component): Boolean {
             && polymerTemplateClass.isAssignableFrom(component.javaClass);
 }
 
+private val _ListBoxBase_getDataProvider: Method =
+    ListBoxBase::class.java.getDeclaredMethod("getDataProvider").apply { isAccessible = true }
 private val _Grid_getDataProvider: Method =
     Grid::class.java.getDeclaredMethod("getDataProvider").apply { isAccessible = true }
 private val _CheckboxGroup_getDataProvider: Method =
