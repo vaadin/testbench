@@ -158,7 +158,7 @@ val Component.dataProvider: DataProvider<*, *>? get() = when (this) {
     is HasDataProvider<*> -> this.dataProvider
     is Grid<*> -> this.dataProvider
     is Select<*> -> this.dataProvider
-    is ListBoxBase<*, *, *> -> _Grid_getDataProvider.invoke(this) as DataProvider<*, *>
+    is ListBoxBase<*, *, *> -> _ListBoxBase_getDataProvider.invoke(this) as DataProvider<*, *>
     is RadioButtonGroup<*> -> _RadioButtonGroup_getDataProvider.invoke(this) as DataProvider<*, *>
     is CheckboxGroup<*> -> _CheckboxGroup_getDataProvider.invoke(this) as DataProvider<*, *>
     is ComboBox<*> -> this.dataProvider
