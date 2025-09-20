@@ -76,17 +76,28 @@ public class MultiSelectComboBoxTester<T extends MultiSelectComboBox<Y>, Y>
             return;
         }
         List<String> toBeSelected = Arrays.asList(selection);
-        final List<Y> suggestionItems = getSuggestionItems();
-        final ItemLabelGenerator<Y> itemLabelGenerator = getComponent()
-                .getItemLabelGenerator();
-        final List<Y> filtered = suggestionItems.stream().filter(
-                item -> toBeSelected.contains(itemLabelGenerator.apply(item)))
-                .collect(Collectors.toList());
-        if (filtered.size() < 1) {
+
+        // Apply filter for each selection to respect native filtering behavior
+        // We need to collect all matching items from potentially different
+        // filter results
+        List<Y> allMatchingItems = toBeSelected.stream().flatMap(sel -> {
+            setFilter(sel);
+            final List<Y> suggestionItems = getSuggestionItems();
+            final ItemLabelGenerator<Y> itemLabelGenerator = getComponent()
+                    .getItemLabelGenerator();
+            return suggestionItems.stream()
+                    .filter(item -> sel.equals(itemLabelGenerator.apply(item)));
+        }).distinct().collect(Collectors.toList());
+
+        if (allMatchingItems.size() < 1) {
             throw new IllegalArgumentException(
-                    "No item found for '" + selection + "'");
+                    "No item found for '" + Arrays.toString(selection) + "'");
         }
-        getComponent().setValue(filtered);
+
+        // Clear the filter after selection
+        setFilter("");
+
+        getComponent().setValue(allMatchingItems);
     }
 
     /**
