@@ -140,8 +140,7 @@ public class CheckboxGroupTester<T extends CheckboxGroup<V>, V>
         ensureComponentIsUsable();
         Set<V> usableItems = getCheckboxes(
                 child -> isUsableCheckbox(child, false))
-                        .map(this::getCheckboxValue)
-                        .collect(Collectors.toSet());
+                .map(this::getCheckboxValue).collect(Collectors.toSet());
         Set<V> selectedItems = new HashSet<>(getComponent().getValue());
         selectedItems.removeAll(usableItems);
         getComponent().setValue(selectedItems);
@@ -185,9 +184,9 @@ public class CheckboxGroupTester<T extends CheckboxGroup<V>, V>
         Set<String> uniqueItems = new HashSet<>(selection);
         Map<String, V> selectedItems = getCheckboxes(
                 child -> uniqueItems.contains(child.getLabel()))
-                        .filter(child -> isUsableCheckbox(child, true))
-                        .collect(Collectors.toMap(Checkbox::getLabel,
-                                this::getCheckboxValue));
+                .filter(child -> isUsableCheckbox(child, true))
+                .collect(Collectors.toMap(Checkbox::getLabel,
+                        this::getCheckboxValue));
         // Check all selected items exist
         uniqueItems.removeAll(selectedItems.keySet());
         if (!uniqueItems.isEmpty()) {

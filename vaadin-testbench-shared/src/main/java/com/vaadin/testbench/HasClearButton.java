@@ -9,9 +9,9 @@
 package com.vaadin.testbench;
 
 /**
- * The {@code HasClearButton} interface provides methods to interact with an element
- * that may have a clear button. It includes functionality to check the visibility
- * of the clear button and to click it if it is visible.
+ * The {@code HasClearButton} interface provides methods to interact with an
+ * element that may have a clear button. It includes functionality to check the
+ * visibility of the clear button and to click it if it is visible.
  */
 public interface HasClearButton extends HasElementQuery, HasCallFunction {
 

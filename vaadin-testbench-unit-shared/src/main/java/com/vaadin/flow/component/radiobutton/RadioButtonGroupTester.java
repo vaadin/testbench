@@ -115,13 +115,12 @@ public class RadioButtonGroupTester<T extends RadioButtonGroup<V>, V>
                 .getItemLabelGenerator();
         Map<String, V> selectedItems = getRadioButtons(
                 child -> selection.equals(itemLabelGenerator
-                        .apply((V) getRadioButtonValue(child)))).filter(
-                                child -> isUsableRadioButton(child, true))
-                                .collect(Collectors.toMap(
-                                        button -> itemLabelGenerator
-                                                .apply((V) getRadioButtonValue(
-                                                        button)),
-                                        this::getRadioButtonValue));
+                        .apply((V) getRadioButtonValue(child))))
+                .filter(child -> isUsableRadioButton(child, true))
+                .collect(Collectors.toMap(
+                        button -> itemLabelGenerator
+                                .apply((V) getRadioButtonValue(button)),
+                        this::getRadioButtonValue));
 
         if (selectedItems.isEmpty()) {
             throw new IllegalArgumentException(

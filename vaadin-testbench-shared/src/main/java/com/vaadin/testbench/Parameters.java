@@ -533,7 +533,6 @@ public class Parameters {
         Parameters.readTimeout = readTimeout;
     }
 
-
     /**
      * Set extra options passed to the Chrome driver.
      *
@@ -541,13 +540,14 @@ public class Parameters {
      *            a list of options separated with comma or spaces
      */
     public static void setChromeOptions(String options) {
-        chromeOptions = options == null || options.isBlank()? new String[0] : options.trim().split("[,\\s]+(?=--)");
+        chromeOptions = options == null || options.isBlank() ? new String[0]
+                : options.trim().split("[,\\s]+(?=--)");
     }
 
     /**
-     * Get extra options passed to the Chrome driver.
-     * Options can be passed as a list separated by spaces or comma in the
-     * System property <code>com.vaadin.testbench.Parameters.chromeOptions</code>
+     * Get extra options passed to the Chrome driver. Options can be passed as a
+     * list separated by spaces or comma in the System property
+     * <code>com.vaadin.testbench.Parameters.chromeOptions</code>
      *
      * @return an array of options
      */

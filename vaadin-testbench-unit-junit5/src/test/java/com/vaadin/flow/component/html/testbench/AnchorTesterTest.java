@@ -50,7 +50,8 @@ class AnchorTesterTest extends UIUnitTest {
 
         Assertions.assertEquals("anchor?name=value", test(anchor).getHref());
         Assertions.assertEquals("anchor", test(anchor).getPath());
-        Assertions.assertEquals("name=value", test(anchor).getQueryParameters().getQueryString());
+        Assertions.assertEquals("name=value",
+                test(anchor).getQueryParameters().getQueryString());
         Assertions.assertInstanceOf(AnchorView.class, test(anchor).click(),
                 "Click anchor did not navigate to AnchorView");
     }

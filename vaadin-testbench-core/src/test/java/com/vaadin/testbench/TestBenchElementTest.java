@@ -43,8 +43,7 @@ public class TestBenchElementTest {
     }
 
     @Test
-    public void test_getId_VaadinComponentWithId_returnsId()
-            throws Exception {
+    public void test_getId_VaadinComponentWithId_returnsId() throws Exception {
         WebElement webElement = Mockito.mock(WebElement.class);
         Mockito.when(webElement.getAttribute("id"))
                 .thenReturn("identification");

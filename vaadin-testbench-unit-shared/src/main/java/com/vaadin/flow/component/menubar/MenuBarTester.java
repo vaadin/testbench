@@ -49,15 +49,18 @@ public class MenuBarTester<T extends MenuBar> extends ComponentTester<T> {
      * <pre>
      * {@code
      *
-     * menu.addItem("Preview", event -> {});
+     * menu.addItem("Preview", event -> {
+     * });
      * var subMenu = menu.addItem("Share").getSubMenu();
-     * subMenu.addItem("Copy link", event -> {});
-     * subMenu.addItem("Email", event -> {});
+     * subMenu.addItem("Copy link", event -> {
+     * });
+     * subMenu.addItem("Email", event -> {
+     * });
      *
      * // clicks top level menu item with text Preview
      * wrapper.clickItem("Preview");
      *
-     * // clicks nested  menu item with text Email
+     * // clicks nested menu item with text Email
      * wrapper.clickItem("Share", "Email");
      * }
      * </pre>
@@ -90,10 +93,13 @@ public class MenuBarTester<T extends MenuBar> extends ComponentTester<T> {
      * <pre>
      * {@code
      *
-     * menu.addItem("Preview", event -> {});
+     * menu.addItem("Preview", event -> {
+     * });
      * var subMenu = menu.addItem("Share").getSubMenu();
-     * subMenu.addItem("Copy link", event -> {});
-     * subMenu.addItem("Email", event -> {});
+     * subMenu.addItem("Copy link", event -> {
+     * });
+     * subMenu.addItem("Email", event -> {
+     * });
      *
      * // clicks top level "Preview" menu item at position 0
      * wrapper.clickItem(0);
@@ -133,10 +139,13 @@ public class MenuBarTester<T extends MenuBar> extends ComponentTester<T> {
      * <pre>
      * {@code
      *
-     * menu.addItem("Preview", event -> {}).setCheckable(true);
+     * menu.addItem("Preview", event -> {
+     * }).setCheckable(true);
      * var subMenu = menu.addItem("Share").getSubMenu();
-     * subMenu.addItem("Copy link", event -> {}).setCheckable(true);
-     * subMenu.addItem("Email", event -> {}).setCheckable(true);
+     * subMenu.addItem("Copy link", event -> {
+     * }).setCheckable(true);
+     * subMenu.addItem("Email", event -> {
+     * }).setCheckable(true);
      *
      * wrapper.isItemChecked("Preview");
      *
@@ -183,15 +192,18 @@ public class MenuBarTester<T extends MenuBar> extends ComponentTester<T> {
      * <pre>
      * {@code
      *
-     * menu.addItem("Preview", event -> {}).setCheckable(true);
+     * menu.addItem("Preview", event -> {
+     * }).setCheckable(true);
      * var subMenu = menu.addItem("Share").getSubMenu();
-     * subMenu.addItem("Copy link", event -> {}).setCheckable(true);
-     * subMenu.addItem("Email", event -> {}).setCheckable(true);
+     * subMenu.addItem("Copy link", event -> {
+     * }).setCheckable(true);
+     * subMenu.addItem("Email", event -> {
+     * }).setCheckable(true);
      *
      * // checks top level "Preview" menu item at position 0
      * wrapper.isItemChecked(0);
      *
-     * // checks  nested menu item at position 1 "Email" through the
+     * // checks nested menu item at position 1 "Email" through the
      * // item "Share" at position 1
      * wrapper.isItemChecked(1, 1);
      * }

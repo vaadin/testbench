@@ -52,8 +52,8 @@ public class BrowserHubTest extends BrowserExtension {
     public void hubPortFromDefaultValueOrParametersSetter() {
         int oldPortProperty = Parameters.getHubPort();
 
-        try (MockedStatic<SauceLabsIntegration> sauceLabsMock =
-                     Mockito.mockStatic(SauceLabsIntegration.class)) {
+        try (MockedStatic<SauceLabsIntegration> sauceLabsMock = Mockito
+                .mockStatic(SauceLabsIntegration.class)) {
             sauceLabsMock.when(SauceLabsIntegration::isConfiguredForSauceLabs)
                     .thenReturn(false);
             // Default must be the "official" 4444 port for backwards

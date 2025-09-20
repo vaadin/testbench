@@ -319,7 +319,7 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
         // needed earlier)
         int height = ((Number) executeScript(
                 "function f() { if(typeof window.innerHeight != 'undefined') { return window.innerHeight; } if(document.documentElement && document.documentElement.offsetHeight) { return document.documentElement.offsetHeight; } w = document.body.clientHeight; if(navigator.userAgent.indexOf('Trident/5') != -1 && document.documentMode < 9) { w += 4; } return w;} return f();"))
-                        .intValue();
+                .intValue();
         return height;
     }
 
@@ -329,7 +329,7 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
         // needed earlier)
         int width = ((Number) executeScript(
                 "function f() { if(typeof window.innerWidth != 'undefined') { return window.innerWidth; } if(document.documentElement && document.documentElement.offsetWidth) { return document.documentElement.offsetWidth; } w = document.body.clientWidth; if(navigator.userAgent.indexOf('Trident/5') != -1 && document.documentMode < 9) { w += 4; } return w;} return f();"))
-                        .intValue();
+                .intValue();
         return width;
     }
 
