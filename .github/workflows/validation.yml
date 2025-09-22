@@ -60,9 +60,9 @@ jobs:
           echo "SAUCE_TUNNEL_ID=${SAUCE_TUNNEL_ID}" >> $GITHUB_ENV
 
           # Download and start Sauce Connect 5.x
-          SC_VERSION=5.2.0
-          wget -q https://saucelabs.com/downloads/sauce-connect/sauce-connect-${SC_VERSION}_linux.x86_64.tar.gz -O - | tar -xzf -
-          ./sauce-connect-${SC_VERSION}/sc \
+          SC_VERSION=5.2.3
+          wget -q https://saucelabs.com/downloads/sauce-connect/${SC_VERSION}/sauce-connect-${SC_VERSION}_linux.x86_64.tar.gz -O - | tar -xzf -
+          ./sauce-connect/sc \
             --username $SAUCE_USERNAME \
             --access-key $SAUCE_ACCESS_KEY \
             --tunnel-name ${SAUCE_TUNNEL_ID} \
