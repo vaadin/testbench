@@ -82,7 +82,7 @@ jobs:
         run: |
           mvn javadoc:javadoc verify \
             -P verify-only-phantom,validation \
-            -Dvaadin.testbench.developer.license=${{ secrets.TESTBENCH_LICENSE }} \
+            -Dvaadin.testbench.developer.license=${{ secrets.TB_LICENSE }} \
             -Dtestbench.javadocs \
             -Dsystem.com.vaadin.testbench.Parameters.testsInParallel=5 \
             -Dsystem.com.vaadin.testbench.Parameters.maxAttempts=2 \
