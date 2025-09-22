@@ -13,6 +13,24 @@ env:
   JAVA_VERSION: 17
 
 jobs:
+  format-check:
+    name: Format Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: "temurin"
+
+      - name: Run formatter validation
+        run: mvn formatter:validate --batch-mode --no-transfer-progress
+
   build-and-test:
     name: Build and Test
     runs-on: ubuntu-latest
