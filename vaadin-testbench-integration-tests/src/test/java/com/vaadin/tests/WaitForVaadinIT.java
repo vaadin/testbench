@@ -133,7 +133,7 @@ public class WaitForVaadinIT extends AbstractTB6Test {
                     - systemCurrentTimeMillis > timeout) {
                 ((JavascriptExecutor) getCommandExecutor().getDriver()
                         .getWrappedDriver())
-                                .executeScript(scriptToRunAfterTimeout);
+                        .executeScript(scriptToRunAfterTimeout);
                 setWaitForVaadinLoopHook(null);
             }
         });
