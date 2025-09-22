@@ -1,0 +1,133 @@
+name: TestBench Validation
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+
+env:
+  JAVA_VERSION: 17
+
+jobs:
+  build-and-test:
+    name: Build and Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: "temurin"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Cache Maven dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Clean Maven cache (if needed)
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          echo "---> Clean maven cache"
+          rm -rf ~/.m2/repository ~/.npm* ~/.pnpm*
+
+      - name: Set up Sauce Labs tunnel
+        if: env.SAUCE_USERNAME != '' && env.SAUCE_ACCESS_KEY != ''
+        env:
+          SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
+          SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
+        run: |
+          echo "Setting up Sauce Connect tunnel..."
+          SAUCE_TUNNEL_ID="${{ github.run_id }}-${{ github.run_number }}"
+          echo "SAUCE_TUNNEL_ID=${SAUCE_TUNNEL_ID}" >> $GITHUB_ENV
+
+          # Download and start Sauce Connect
+          SC_VERSION=4.9.2
+          wget -q https://saucelabs.com/downloads/sc-${SC_VERSION}-linux.tar.gz -O - | tar -xzf -
+          ./sc-${SC_VERSION}-linux/bin/sc \
+            -u $SAUCE_USERNAME \
+            -k $SAUCE_ACCESS_KEY \
+            -i ${SAUCE_TUNNEL_ID} \
+            --no-remove-colliding-tunnels &
+
+          # Wait for tunnel to be ready
+          sleep 30
+
+      - name: Build with Maven
+        run: |
+          mvn clean install -DskipTests -B
+
+      - name: Run Tests and Generate Javadoc
+        env:
+          SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
+          SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
+        run: |
+          mvn javadoc:javadoc verify \
+            -P verify-only-phantom,validation \
+            -Dvaadin.testbench.developer.license=${{ secrets.TESTBENCH_LICENSE }} \
+            -Dtestbench.javadocs \
+            -Dsystem.com.vaadin.testbench.Parameters.testsInParallel=5 \
+            -Dsystem.com.vaadin.testbench.Parameters.maxAttempts=2 \
+            -Dcom.vaadin.testbench.Parameters.hubHostname=localhost \
+            -Dsauce.tunnelId=${SAUCE_TUNNEL_ID:-} \
+            -Dfailsafe.forkCount=5 \
+            -Dsystem.sauce.user=${SAUCE_USERNAME:-} \
+            -Dsystem.sauce.sauceAccessKey=${SAUCE_ACCESS_KEY:-} \
+            -B
+
+      - name: Stop Sauce Labs tunnel
+        if: always() && env.SAUCE_USERNAME != '' && env.SAUCE_ACCESS_KEY != ''
+        run: |
+          echo "Stopping Sauce Connect tunnel..."
+          pkill -f sc || true
+
+      - name: Upload test artifacts on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-artifacts-${{ github.run_id }}
+          path: |
+            vaadin-testbench-integration-tests/error-screenshots/
+            testbench-integration-tests/error-screenshots/
+            vaadin-testbench-integration-tests-junit5/error-screenshots/
+            **/target/surefire-reports/
+            **/target/failsafe-reports/
+          retention-days: 7
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ github.run_id }}
+          path: |
+            **/target/surefire-reports/*.xml
+            **/target/failsafe-reports/*.xml
+          retention-days: 7
+
+      - name: Publish test results
+        if: always()
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        with:
+          files: |
+            **/target/surefire-reports/*.xml
+            **/target/failsafe-reports/*.xml
+          check_name: Test Results
+          comment_mode: failures
