@@ -78,12 +78,17 @@ public class User implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof User user)) return false;
+        if (this == o)
+            return true;
+        if (!(o instanceof User user))
+            return false;
 
-        if (!Objects.equals(key, user.key)) return false;
-        if (!Objects.equals(firstName, user.firstName)) return false;
-        if (!Objects.equals(lastName, user.lastName)) return false;
+        if (!Objects.equals(key, user.key))
+            return false;
+        if (!Objects.equals(firstName, user.firstName))
+            return false;
+        if (!Objects.equals(lastName, user.lastName))
+            return false;
         return (active == user.active);
     }
 

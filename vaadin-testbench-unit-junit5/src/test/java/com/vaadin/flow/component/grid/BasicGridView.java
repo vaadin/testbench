@@ -35,25 +35,21 @@ public class BasicGridView extends Component implements HasComponents {
     public BasicGridView() {
         basicGrid = new Grid<>();
 
-        basicGrid.addColumn(Person::getFirstName)
-                .setKey(FIRST_NAME_KEY)
+        basicGrid.addColumn(Person::getFirstName).setKey(FIRST_NAME_KEY)
                 .setHeader("First Name");
-        basicGrid.addColumn(Person::getLastName)
-                .setKey(LAST_NAME_KEY)
-                .setHeader("Last Name")
-                .setVisible(false);
-        basicGrid.addColumn(Person::getAge)
-                .setKey(AGE_KEY)
-                .setHeader("Age");
-        basicGrid.addColumn(new ComponentRenderer<>(person -> new CheckBox(person.isSubscriber())))
-                .setKey(SUBSCRIBER_KEY)
-                .setHeader("Subscriber");
-        basicGrid.addColumn(deceasedRenderer())
-                .setKey(DECEASED_KEY)
+        basicGrid.addColumn(Person::getLastName).setKey(LAST_NAME_KEY)
+                .setHeader("Last Name").setVisible(false);
+        basicGrid.addColumn(Person::getAge).setKey(AGE_KEY).setHeader("Age");
+        basicGrid
+                .addColumn(new ComponentRenderer<>(
+                        person -> new CheckBox(person.isSubscriber())))
+                .setKey(SUBSCRIBER_KEY).setHeader("Subscriber");
+        basicGrid.addColumn(deceasedRenderer()).setKey(DECEASED_KEY)
                 .setHeader("Deceased");
-        basicGrid.addComponentColumn(person -> new Button("Click", e -> Notification.show("Clicked!")))
-                .setKey(BUTTON_KEY)
-                .setHeader("Button");
+        basicGrid
+                .addComponentColumn(person -> new Button("Click",
+                        e -> Notification.show("Clicked!")))
+                .setKey(BUTTON_KEY).setHeader("Button");
 
         add(basicGrid);
 
@@ -65,8 +61,8 @@ public class BasicGridView extends Component implements HasComponents {
     }
 
     private LitRenderer<Person> deceasedRenderer() {
-        return LitRenderer.<Person>of(
-                        "<button @click=${onClick}>${item.deceased ? 'Yes' : 'No'}</button>")
+        return LitRenderer.<Person> of(
+                "<button @click=${onClick}>${item.deceased ? 'Yes' : 'No'}</button>")
                 .withProperty("deceased", Person::getDeceased)
                 .withFunction("onClick", person -> {
                     person.setDeceased(!person.getDeceased());

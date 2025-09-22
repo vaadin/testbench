@@ -132,7 +132,7 @@ public class ComboBoxTester<T extends ComboBox<Y>, Y>
                     "fetchFromProvider", int.class, int.class);
             List<Y> result = ((Stream<Y>) fetchFromProvider.invoke(
                     dataCommunicator, 0, BasicUtilsKt.get_saneFetchLimit()))
-                            .collect(Collectors.toList());
+                    .collect(Collectors.toList());
             return result;
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e);
