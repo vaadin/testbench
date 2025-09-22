@@ -59,13 +59,13 @@ jobs:
           SAUCE_TUNNEL_ID="${{ github.run_id }}-${{ github.run_number }}"
           echo "SAUCE_TUNNEL_ID=${SAUCE_TUNNEL_ID}" >> $GITHUB_ENV
 
-          # Download and start Sauce Connect
-          SC_VERSION=4.9.2
-          wget -q https://saucelabs.com/downloads/sc-${SC_VERSION}-linux.tar.gz -O - | tar -xzf -
-          ./sc-${SC_VERSION}-linux/bin/sc \
-            -u $SAUCE_USERNAME \
-            -k $SAUCE_ACCESS_KEY \
-            -i ${SAUCE_TUNNEL_ID} \
+          # Download and start Sauce Connect 5.x
+          SC_VERSION=5.2.0
+          wget -q https://saucelabs.com/downloads/sauce-connect/sauce-connect-${SC_VERSION}_linux.x86_64.tar.gz -O - | tar -xzf -
+          ./sauce-connect-${SC_VERSION}/sc \
+            --username $SAUCE_USERNAME \
+            --access-key $SAUCE_ACCESS_KEY \
+            --tunnel-name ${SAUCE_TUNNEL_ID} \
             --no-remove-colliding-tunnels &
 
           # Wait for tunnel to be ready
@@ -79,10 +79,10 @@ jobs:
         env:
           SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
           SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
+          PRO_KEY: ${{ secrets.TB_LICENSE }}
         run: |
           mvn javadoc:javadoc verify \
             -P verify-only-phantom,validation \
-            -Dvaadin.testbench.developer.license=${{ secrets.TB_LICENSE }} \
             -Dtestbench.javadocs \
             -Dsystem.com.vaadin.testbench.Parameters.testsInParallel=5 \
             -Dsystem.com.vaadin.testbench.Parameters.maxAttempts=2 \
