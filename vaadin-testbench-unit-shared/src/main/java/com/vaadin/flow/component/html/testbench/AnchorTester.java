@@ -49,10 +49,11 @@ public class AnchorTester extends HtmlContainerTester<Anchor> {
     }
 
     /**
-     * Gets the path for the router-link.
-     * Returns an empty {@link String} if there is no corresponding navigation target.
+     * Gets the path for the router-link. Returns an empty {@link String} if
+     * there is no corresponding navigation target.
      *
-     * @return a {@link String} containing the navigation target path or empty if not present
+     * @return a {@link String} containing the navigation target path or empty
+     *         if not present
      */
     public String getPath() {
         return URI.create(getHref()).getPath();
@@ -61,7 +62,8 @@ public class AnchorTester extends HtmlContainerTester<Anchor> {
     /**
      * Gets the query parameters for the router-link.
      *
-     * @return a {@link QueryParameters} containing the navigation target's query parameters
+     * @return a {@link QueryParameters} containing the navigation target's
+     *         query parameters
      */
     public QueryParameters getQueryParameters() {
         return QueryParameters.fromString(URI.create(getHref()).getQuery());
@@ -80,7 +82,8 @@ public class AnchorTester extends HtmlContainerTester<Anchor> {
         final Field href = getField(Anchor.class, "href");
         try {
             if (href.get(getComponent()) instanceof String) {
-                if (RouteConfiguration.forSessionScope().getRoute(getPath()).isPresent()) {
+                if (RouteConfiguration.forSessionScope().getRoute(getPath())
+                        .isPresent()) {
                     UI.getCurrent().navigate(getPath(), getQueryParameters());
                     return UI.getCurrent().getInternals()
                             .getActiveRouterTargetsChain().get(0);
