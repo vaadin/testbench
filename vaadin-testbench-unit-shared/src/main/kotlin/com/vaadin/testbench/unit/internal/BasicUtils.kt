@@ -11,7 +11,6 @@
 
 package com.vaadin.testbench.unit.internal
 
-import tools.jackson.databind.node.ObjectNode
 import com.vaadin.flow.component.BlurNotifier
 import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.ComponentEvent
@@ -27,6 +26,7 @@ import com.vaadin.flow.dom.DomEvent
 import com.vaadin.flow.internal.JacksonUtils
 import com.vaadin.flow.router.InternalServerError
 import com.vaadin.flow.server.VaadinSession
+import tools.jackson.databind.node.ObjectNode
 
 /**
  * Allows us to fire any Vaadin event on any Vaadin component.

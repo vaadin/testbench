@@ -131,7 +131,7 @@ public class WaitForVaadinIT extends AbstractBrowserTB9Test {
                     - systemCurrentTimeMillis > timeout) {
                 ((JavascriptExecutor) getCommandExecutor().getDriver()
                         .getWrappedDriver())
-                                .executeScript(scriptToRunAfterTimeout);
+                        .executeScript(scriptToRunAfterTimeout);
                 setWaitForVaadinLoopHook(null);
             }
         });
