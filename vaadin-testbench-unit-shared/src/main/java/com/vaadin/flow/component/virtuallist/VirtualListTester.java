@@ -17,10 +17,9 @@ import com.vaadin.flow.internal.JacksonUtils;
 import com.vaadin.testbench.unit.ComponentTester;
 import com.vaadin.testbench.unit.LitRendererTestUtil;
 import com.vaadin.testbench.unit.Tests;
+import tools.jackson.databind.node.ArrayNode;
 
 import java.util.Collections;
-
-import com.fasterxml.jackson.databind.node.ArrayNode;
 
 /**
  * Tester for VirtualList components.

@@ -1,12 +1,11 @@
 package com.vaadin.testbench.unit.internal
 
-import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.node.ObjectNode
 import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.Key
 import com.vaadin.flow.component.ShortcutRegistration
 import com.vaadin.flow.internal.JacksonUtils
+import tools.jackson.databind.JsonNode
+import tools.jackson.databind.node.ObjectNode
 
 /**
  * Take a look at `DomEventListenerWrapper.matchesFilter()` to see why this is necessary.
@@ -14,7 +13,7 @@ import com.vaadin.flow.internal.JacksonUtils
  * to see what kind of keys you're receiving and whether it matches [filter].
  */
 private class MockFilterJsonObject(val key: Key, val modifiers: Set<Key>) : ObjectNode(
-    ObjectMapper().nodeFactory
+    JacksonUtils.getMapper().nodeFactory
 ) {
     val filter: String
     var filterString: String = ""
