@@ -11,14 +11,13 @@ package com.vaadin.testbench.unit;
 import com.vaadin.flow.data.renderer.LitRenderer;
 import com.vaadin.flow.function.SerializableBiConsumer;
 import com.vaadin.flow.function.ValueProvider;
+import tools.jackson.databind.node.ArrayNode;
 
 import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.IntFunction;
-
-import com.fasterxml.jackson.databind.node.ArrayNode;
 
 /**
  * Utility methods for unit testing properties and functions of LitRenderers.
