@@ -13,6 +13,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
+import com.vaadin.testbench.unit.CommercialTesterWrappers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,7 +25,7 @@ import com.vaadin.testbench.unit.UIUnitTest;
 import com.vaadin.testbench.unit.ViewPackages;
 
 @ViewPackages
-class ChartTesterTest extends UIUnitTest {
+class ChartTesterTest extends UIUnitTest implements CommercialTesterWrappers {
 
     ColumnChartView view;
 

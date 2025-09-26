@@ -28,6 +28,7 @@ import com.googlecode.gentyref.GenericTypeReflector;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfoList;
 import io.github.classgraph.ScanResult;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.vaadin.flow.component.Component;
@@ -63,6 +64,8 @@ import com.vaadin.testbench.unit.mocks.MockedUI;
  */
 public abstract class BaseUIUnitTest {
 
+    private static final Logger LOGGER = LoggerFactory
+            .getLogger(BaseUIUnitTest.class.getPackageName());
     private static final ConcurrentHashMap<String, Routes> routesCache = new ConcurrentHashMap<>();
 
     protected static final Map<Class<?>, Class<? extends ComponentTester>> testers = new HashMap<>();
@@ -85,7 +88,8 @@ public abstract class BaseUIUnitTest {
                 Capabilities.of(Capability.PRE_TRIAL));
     }
 
-    private static Map<Class<?>, Class<? extends ComponentTester>> scanForTesters(
+    // Visible for test
+    static Map<Class<?>, Class<? extends ComponentTester>> scanForTesters(
             String... packages) {
         try (ScanResult scan = new ClassGraph().enableClassInfo()
                 .enableAnnotationInfo().acceptPackages(packages).scan(2)) {
@@ -114,16 +118,36 @@ public abstract class BaseUIUnitTest {
                                 try {
                                     return UtilsKt.findClassOrThrow(clazz);
                                 } catch (ClassNotFoundException e) {
-                                    throw new RuntimeException(e);
+                                    logTypeLoadingIssue(e,
+                                            "Tester '{}' cannot be loaded because of missing component class '{}' on classpath",
+                                            classInfo.getName(), clazz);
                                 }
-                            }).forEach(clazz -> testerMap.put(clazz,
-                                    (Class<? extends ComponentTester>) tester));
+                                return null;
+                            }).filter(Objects::nonNull)
+                                    .forEach(clazz -> testerMap.put(clazz,
+                                            (Class<? extends ComponentTester>) tester));
 
-                        } catch (ClassNotFoundException e) {
-                            throw new RuntimeException(e);
+                        } catch (TypeNotPresentException e) {
+                            logTypeLoadingIssue(e,
+                                    "Tester '{}' cannot be loaded because of missing class '{}' on classpath",
+                                    classInfo.getName(), e.typeName());
+                        } catch (ClassNotFoundException
+                                | NoClassDefFoundError e) {
+                            logTypeLoadingIssue(e,
+                                    "Tester '{}' cannot be loaded because of missing class on classpath",
+                                    classInfo.getName());
                         }
                     });
             return Collections.unmodifiableMap(testerMap);
+        }
+    }
+
+    private static void logTypeLoadingIssue(Throwable ex, String message,
+            Object... args) {
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug(message, args, ex);
+        } else {
+            LOGGER.warn(message, args);
         }
     }
 
