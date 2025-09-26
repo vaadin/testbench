@@ -134,8 +134,8 @@ public abstract class BaseUIUnitTest {
                         } catch (ClassNotFoundException
                                 | NoClassDefFoundError e) {
                             logTypeLoadingIssue(e,
-                                    "Tester '{}' cannot be loaded because of missing class on classpath",
-                                    classInfo.getName());
+                                    "Tester '{}' cannot be loaded because of missing class on classpath: {}",
+                                    classInfo.getName(), e.getMessage());
                         }
                     });
             return Collections.unmodifiableMap(testerMap);
