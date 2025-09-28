@@ -88,7 +88,7 @@ jobs:
 
           # Download and start Sauce Connect 5.x
           SC_VERSION=5.2.3
-          wget -q https://saucelabs.com/downloads/sauce-connect/${SC_VERSION}/sauce-connect-${SC_VERSION}_linux.x86_64.tar.gz -O - | tar -xzf -
+          wget -q https://saucelabs.com/downloads/sauce-connect/5.2.3/sauce-connect-5.2.3_linux.x86_64.tar.gz -O - | tar -xzf -
           ./sc-5.2.3-linux/bin/sc \
             --username $SAUCE_USERNAME \
             --access-key $SAUCE_ACCESS_KEY \
