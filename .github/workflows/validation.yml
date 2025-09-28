@@ -78,7 +78,7 @@ jobs:
 
       - name: Set up Sauce Labs tunnel
         if: env.SAUCE_USERNAME != '' && env.SAUCE_ACCESS_KEY != ''
-        uses: saucelabs/sauce-connect-action@v3
+        uses: saucelabs/sauce-connect-action@v3.0.0
         with:
           username: ${{ secrets.SAUCE_USERNAME }}
           accessKey: ${{ secrets.SAUCE_ACCESS_KEY }}
