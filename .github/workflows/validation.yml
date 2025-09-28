@@ -89,14 +89,38 @@ jobs:
           # Download and start Sauce Connect 5.x
           SC_VERSION=5.2.3
           wget -q https://saucelabs.com/downloads/sauce-connect/${SC_VERSION}/sauce-connect-${SC_VERSION}_linux.x86_64.tar.gz -O - | tar -xzf -
-          ./sc-${SC_VERSION}-linux/bin/sc \
+          ./sc-5.2.3-linux/bin/sc \
             --username $SAUCE_USERNAME \
             --access-key $SAUCE_ACCESS_KEY \
             --tunnel-name ${SAUCE_TUNNEL_ID} \
-            --no-remove-colliding-tunnels &
+            --no-remove-colliding-tunnels > sc.log 2>&1 &
+          
+          # Save PID for cleanup
+          SC_PID=$!
+          echo "SC_PID=${SC_PID}" >> $GITHUB_ENV
 
-          # Wait for tunnel to be ready
-          sleep 30
+          # Wait for tunnel to be ready (look for the ready message)
+          echo "Waiting for Sauce Connect to be ready..."
+          for i in {1..60}; do
+            if grep -q "Sauce Connect is up, you may start your tests" sc.log 2>/dev/null; then
+              echo "Sauce Connect tunnel is ready!"
+              break
+            fi
+            if ! kill -0 $SC_PID 2>/dev/null; then
+              echo "Sauce Connect process died unexpectedly"
+              cat sc.log
+              exit 1
+            fi
+            echo "Waiting for Sauce Connect... ($i/60)"
+            sleep 2
+          done
+          
+          # Check if tunnel is actually ready
+          if ! grep -q "Sauce Connect is up, you may start your tests" sc.log; then
+            echo "Sauce Connect failed to start within 2 minutes"
+            cat sc.log
+            exit 1
+          fi
 
       - name: Set TB License
         run: |
@@ -129,7 +153,18 @@ jobs:
         if: always() && env.SAUCE_USERNAME != '' && env.SAUCE_ACCESS_KEY != ''
         run: |
           echo "Stopping Sauce Connect tunnel..."
-          pkill -f sc || true
+          if [ -n "${SC_PID}" ]; then
+            kill ${SC_PID} || true
+            wait ${SC_PID} 2>/dev/null || true
+          fi
+          # Also try pkill as fallback
+          pkill -f "sc.*--tunnel-name" || true
+          
+          # Show final logs for debugging
+          if [ -f sc.log ]; then
+            echo "=== Sauce Connect final logs ==="
+            tail -20 sc.log
+          fi
 
       - name: Upload test artifacts on failure
         if: failure()
@@ -142,6 +177,7 @@ jobs:
             vaadin-testbench-integration-tests-junit5/error-screenshots/
             **/target/surefire-reports/
             **/target/failsafe-reports/
+            sc.log
           retention-days: 7
 
       - name: Upload test results
