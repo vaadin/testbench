@@ -138,8 +138,8 @@ class RouterLinkTesterTest extends UIUnitTest {
     private void assertNavigationSucceeded(RouterLinkTester<RouterLink> tester,
             Class<? extends AbstractTargetView> expectedTarget,
             String expectedMessage) {
-        // verify its click action returns correct target
-        var targetView = tester.click();
+        // verify its navigate action returns correct target
+        var targetView = tester.navigate();
         Assertions.assertInstanceOf(expectedTarget, targetView);
         Assertions.assertSame(targetView, getCurrentView());
 

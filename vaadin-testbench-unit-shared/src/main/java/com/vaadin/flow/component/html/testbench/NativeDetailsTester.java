@@ -8,16 +8,13 @@
  */
 package com.vaadin.flow.component.html.testbench;
 
-import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentUtil;
 import com.vaadin.flow.component.html.NativeDetails;
-import com.vaadin.testbench.unit.MetaKeys;
 import com.vaadin.testbench.unit.Tests;
 
 @Tests(NativeDetails.class)
-public class NativeDetailsTester extends HtmlComponentTester<NativeDetails>
-        implements ClickHandler {
+public class NativeDetailsTester extends HtmlComponentTester<NativeDetails> {
     /**
      * Wrap given component for testing.
      *
@@ -26,15 +23,6 @@ public class NativeDetailsTester extends HtmlComponentTester<NativeDetails>
      */
     public NativeDetailsTester(NativeDetails component) {
         super(component);
-    }
-
-    @Override
-    public void click(int button, MetaKeys metaKeys) {
-        ensureComponentIsUsable();
-        ComponentUtil.fireEvent(getComponent(),
-                new ClickEvent(getComponent(), true, 0, 0, 0, 0, 0, button,
-                        metaKeys.isCtrl(), metaKeys.isShift(), metaKeys.isAlt(),
-                        metaKeys.isMeta()));
     }
 
     /**
