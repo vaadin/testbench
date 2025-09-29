@@ -113,15 +113,21 @@ jobs:
             -Dsystem.sauce.sauceAccessKey=${SAUCE_ACCESS_KEY} \
             -B
 
-      - name: Upload test artifacts on failure
+      - name: Upload error screenshots
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: test-artifacts-${{ github.run_id }}
+          name: error-screenshots-${{ github.run_id }}
           path: |
-            vaadin-testbench-integration-tests/error-screenshots/
-            testbench-integration-tests/error-screenshots/
-            vaadin-testbench-integration-tests-junit5/error-screenshots/
+            **/error-screenshots/**
+          retention-days: 7
+      
+      - name: Upload test reports on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports-${{ github.run_id }}
+          path: |
             **/target/surefire-reports/
             **/target/failsafe-reports/
           retention-days: 7
