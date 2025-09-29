@@ -84,6 +84,7 @@ jobs:
           tunnelName: ${{ github.run_id }}-${{ github.run_number }}
           region: us-west-1
           retryTimeout: 300
+          scArgs: --proxy-localhost
 
       - name: Set TB License
         run: |
