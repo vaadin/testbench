@@ -4,13 +4,12 @@ on:
   push:
     branches:
       - main
-      - master
   pull_request:
     types: [opened, synchronize, reopened]
   workflow_dispatch:
 
 env:
-  JAVA_VERSION: 17
+  JAVA_VERSION: 21
 
 jobs:
   format-check:
