@@ -11,6 +11,7 @@ package com.vaadin.testbench.unit.mocks
 
 import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.ComponentEventListener
+import com.vaadin.flow.component.ModalityMode
 import com.vaadin.flow.component.UI
 import com.vaadin.flow.shared.Registration
 import java.util.concurrent.atomic.AtomicReference
@@ -26,9 +27,9 @@ import com.vaadin.testbench.unit.internal.simulateClosedEvent
  */
 open class MockedUI : UI() {
 
-    override fun setChildComponentModal(childComponent: Component?, modal: Boolean) {
-        super.setChildComponentModal(childComponent, modal)
-        if (modal) {
+    override fun setChildComponentModal(childComponent: Component?, mode: ModalityMode) {
+        super.setChildComponentModal(childComponent, mode)
+        if (mode != ModalityMode.MODELESS) {
             val registrationCombination: AtomicReference<Registration?> = AtomicReference<Registration?>()
             registrationCombination.set(childComponent?.addDetachListener(ComponentEventListener {
                 roundTrip()
