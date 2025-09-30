@@ -16,7 +16,7 @@ import com.vaadin.flow.component.charts.ChartTester;
  * Provides factory method to create testers for commercial components.
  */
 @SuppressWarnings("unchecked")
-public interface CommercialTestWrappers {
+public interface CommercialTesterWrappers {
 
     /**
      * Create a tester for the given Chart instance.
