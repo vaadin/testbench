@@ -14,8 +14,6 @@ import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.accordion.AccordionTester;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonTester;
-import com.vaadin.flow.component.charts.Chart;
-import com.vaadin.flow.component.charts.ChartTester;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.checkbox.CheckboxGroup;
 import com.vaadin.flow.component.checkbox.CheckboxGroupTester;
@@ -136,18 +134,6 @@ public interface TesterWrappers {
 
     default ButtonTester<Button> test(Button button) {
         return BaseUIUnitTest.internalWrap(ButtonTester.class, button);
-    }
-
-    /**
-     * @deprecated testers for commercial components have been moved to a
-     *             separated class to avoid class loading issues when using only
-     *             Vaadin free tier. Make the test class implement
-     *             {@link CommercialTestWrappers} and use
-     *             {@link CommercialTestWrappers#test(Chart)} instead.
-     */
-    @Deprecated(since = "9.4", forRemoval = true)
-    default ChartTester<Chart> test(Chart chart) {
-        return BaseUIUnitTest.internalWrap(ChartTester.class, chart);
     }
 
     default CheckboxTester<Checkbox> test(Checkbox checkbox) {
