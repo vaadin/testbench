@@ -34,8 +34,9 @@
         <Implementation-Version>${project.version}</Implementation-Version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <selenium.version>4.35.0</selenium.version>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.release>21</maven.compiler.release>
+        <maven.compiler.source>${maven.compiler.release}</maven.compiler.source>
+        <maven.compiler.target>${maven.compiler.release}</maven.compiler.target>
         <spring.boot.version>4.0.0-M3</spring.boot.version>
         <vaadin.version>25.0-SNAPSHOT</vaadin.version>
         <flow.version>25.0-SNAPSHOT</flow.version>
