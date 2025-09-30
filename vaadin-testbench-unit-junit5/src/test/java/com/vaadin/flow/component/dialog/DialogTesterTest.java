@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.vaadin.flow.component.ModalityMode;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonTester;
 import com.vaadin.flow.router.RouteConfiguration;
@@ -56,7 +57,17 @@ class DialogTesterTest extends UIUnitTest {
     }
 
     @Test
-    void modalDialog_blocksUIComponents() {
+    void modalDialog_visual_doNotBlockUIComponents() {
+        view.dialog.setModality(ModalityMode.VISUAL);
+        dialog_.open();
+        ButtonTester<Button> button_ = test(view.button);
+        Assertions.assertTrue(button_.isUsable(),
+                "Default VISUAL modal dialog should not block button");
+    }
+
+    @Test
+    void modalDialog_strict_blocksUIComponents() {
+        view.dialog.setModality(ModalityMode.STRICT);
         dialog_.open();
         ButtonTester<Button> button_ = test(view.button);
         Assertions.assertFalse(button_.isUsable(),
@@ -70,7 +81,7 @@ class DialogTesterTest extends UIUnitTest {
 
     @Test
     void nonModalDialog_UIComponentsUsable() {
-        view.dialog.setModal(false);
+        view.dialog.setModality(ModalityMode.MODELESS);
         dialog_.open();
         ButtonTester<Button> button_ = test(view.button);
         Assertions.assertTrue(button_.isUsable(),
