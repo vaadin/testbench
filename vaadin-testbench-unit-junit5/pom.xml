@@ -324,6 +324,17 @@
             <scope>provided</scope>
             <optional>true</optional>
         </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.vaadin</groupId>
+            <artifactId>uiunit-component-testers</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
 
     </dependencies>
 

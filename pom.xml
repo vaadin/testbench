@@ -54,6 +54,8 @@
         <module>vaadin-testbench-unit</module>
         <module>vaadin-testbench-unit-junit5</module>
         <module>vaadin-testbench-unit-quarkus</module>
+        <module>testing-support/uiunit-test-components</module>
+        <module>testing-support/uiunit-component-testers</module>
     </modules>
     <repositories>
         <repository>
