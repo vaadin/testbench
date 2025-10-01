@@ -40,7 +40,7 @@ class AnchorTesterTest extends UIUnitTest {
         UI.getCurrent().add(anchor);
 
         Assertions.assertEquals("anchor", test(anchor).getHref());
-        Assertions.assertInstanceOf(AnchorView.class, test(anchor).click(),
+        Assertions.assertInstanceOf(AnchorView.class, test(anchor).navigate(),
                 "Click anchor did not navigate to AnchorView");
     }
 
@@ -53,7 +53,7 @@ class AnchorTesterTest extends UIUnitTest {
         Assertions.assertEquals("anchor", test(anchor).getPath());
         Assertions.assertEquals("name=value",
                 test(anchor).getQueryParameters().getQueryString());
-        Assertions.assertInstanceOf(AnchorView.class, test(anchor).click(),
+        Assertions.assertInstanceOf(AnchorView.class, test(anchor).navigate(),
                 "Click anchor did not navigate to AnchorView");
     }
 

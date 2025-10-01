@@ -75,14 +75,14 @@ public class AnchorTester extends HtmlContainerTester<Anchor> {
     }
 
     /**
-     * Click the anchor for navigation if target is a registered route in the
+     * Navigate to the anchor target if it's a registered route in the
      * application.
      *
      * @return navigated view
      * @throws IllegalStateException
      *             if anchor href is not a String or not a route
      */
-    public HasElement click() {
+    public HasElement navigate() {
         ensureComponentIsUsable();
         final Field href = getField(Anchor.class, "href");
         try {
@@ -96,11 +96,28 @@ public class AnchorTester extends HtmlContainerTester<Anchor> {
                     throw new IllegalStateException(
                             "Anchor is not for an application route");
                 }
+            } else {
+                throw new IllegalStateException(
+                        "Anchor target seems to be a resource");
             }
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
-        throw new IllegalStateException("Anchor target seems to be a resource");
+    }
+
+    /**
+     * Click the anchor for navigation if target is a registered route in the
+     * application. This is equivalent to calling {@link #navigate()}.
+     *
+     * For cases where you need to access the navigated view, use
+     * {@link #navigate()} instead as it returns the target view.
+     *
+     * @throws IllegalStateException
+     *             if anchor href is not a String or not a route
+     */
+    @Override
+    public void click() {
+        navigate();
     }
 
     /**
