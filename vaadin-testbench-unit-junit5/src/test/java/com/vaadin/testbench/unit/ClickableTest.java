@@ -152,10 +152,10 @@ public class ClickableTest extends UIUnitTest {
             int clickCount = 0;
 
             public CustomComponent() {
-                ComponentUtil.addListener(this, ClickEvent.class, 
-                    (ComponentEventListener) e -> {
-                        clickCount++;
-                    });
+                ComponentUtil.addListener(this, ClickEvent.class,
+                        (ComponentEventListener) e -> {
+                            clickCount++;
+                        });
             }
         }
 
