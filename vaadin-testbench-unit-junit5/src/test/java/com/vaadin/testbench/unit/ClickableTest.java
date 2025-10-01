@@ -152,10 +152,10 @@ public class ClickableTest extends UIUnitTest {
 
             @SuppressWarnings("unchecked")
             public CustomComponent() {
-                getEventBus().addListener(ClickEvent.class, 
-                    (ComponentEventListener) e -> {
-                        clickCount++;
-                    });
+                getEventBus().addListener(ClickEvent.class,
+                        (ComponentEventListener) e -> {
+                            clickCount++;
+                        });
             }
         }
 
