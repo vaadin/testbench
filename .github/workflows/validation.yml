@@ -3,13 +3,13 @@ name: TestBench Validation
 on:
   push:
     branches:
-      - main
+      - "8.3"
   pull_request:
     types: [opened, synchronize, reopened]
   workflow_dispatch:
 
 env:
-  JAVA_VERSION: 21
+  JAVA_VERSION: 11
 
 jobs:
   format-check:
