@@ -33,3 +33,5 @@ error-screenshots
 
 **/frontend/generated
 **/frontend/index.html
+
+**/vite.generated.ts
