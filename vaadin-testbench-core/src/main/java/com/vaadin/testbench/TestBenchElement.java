@@ -779,21 +779,21 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
     public TestBenchElement getParent() {
         return getPropertyElement("parentElement");
     }
- 
+
     /**
      * Not implemented. This method is not supported for the
      * {@link TestBenchElement}. Use {@code $} instead to find elements in the
      * shadow root.
-     * 
+     *
      * Example usage:
-     * 
+     *
      * <pre>
      * {@code
      * TestBenchElement element = ...;
      * TestBenchElement child = element.$(TestBenchElement.class).id("elementid");
      * }
      * </pre>
-     * 
+     *
      * @return the {@link SearchContext} representing the shadow root.
      * @deprecated This method is deprecated. Use {@code $} instead to find
      *             elements in the shadow root.
