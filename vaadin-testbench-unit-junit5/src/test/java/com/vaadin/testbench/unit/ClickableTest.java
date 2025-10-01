@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test;
 
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
@@ -149,10 +150,12 @@ public class ClickableTest extends UIUnitTest {
         class CustomComponent extends Component {
             int clickCount = 0;
 
+            @SuppressWarnings("unchecked")
             public CustomComponent() {
-                getEventBus().addListener(ClickEvent.class, e -> {
-                    clickCount++;
-                });
+                getEventBus().addListener(ClickEvent.class, 
+                    (ComponentEventListener) e -> {
+                        clickCount++;
+                    });
             }
         }
 
