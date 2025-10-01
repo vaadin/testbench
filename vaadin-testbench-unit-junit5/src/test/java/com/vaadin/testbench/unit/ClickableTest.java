@@ -17,7 +17,6 @@ import org.junit.jupiter.api.Test;
 
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
@@ -144,19 +143,27 @@ public class ClickableTest extends UIUnitTest {
 
     @Test
     public void testClick_customComponent() {
-        // Using Button as a custom component example since it properly handles
-        // click events
-        Button customButton = new Button("Custom");
-        container.add(customButton);
+        // Custom component that doesn't implement ClickNotifier but handles
+        // click events directly
+        @Tag("custom-element")
+        class CustomComponent extends Component {
+            int clickCount = 0;
 
-        AtomicInteger clickCount = new AtomicInteger(0);
-        customButton.addClickListener(e -> clickCount.incrementAndGet());
+            public CustomComponent() {
+                getEventBus().addListener(ClickEvent.class, e -> {
+                    clickCount++;
+                });
+            }
+        }
 
-        ComponentTester<Button> customTester = test(customButton);
+        CustomComponent custom = new CustomComponent();
+        container.add(custom);
+
+        ComponentTester<CustomComponent> customTester = test(custom);
         customTester.click();
 
-        Assertions.assertEquals(1, clickCount.get(),
-                "Click should work on components via ComponentTester");
+        Assertions.assertEquals(1, custom.clickCount,
+                "Click should work on custom components that handle click events");
     }
 
     @Test
