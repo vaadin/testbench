@@ -20,6 +20,7 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.flow.server.StreamResource;
+import com.vaadin.flow.server.streams.DownloadHandler;
 import com.vaadin.testbench.unit.UIUnitTest;
 import com.vaadin.testbench.unit.ViewPackages;
 
@@ -110,9 +111,8 @@ class AnchorTesterTest extends UIUnitTest {
 
     @Test
     void anchorDownload_disabled_throws() {
-        StreamResource resource = new StreamResource("filename",
-                () -> new ByteArrayInputStream(
-                        "Hello world".getBytes(StandardCharsets.UTF_8)));
+        DownloadHandler resource = event -> event.getOutputStream()
+                .write("Hello world".getBytes(StandardCharsets.UTF_8));
 
         Anchor anchor = new Anchor(resource, "Download");
         anchor.setEnabled(false);
@@ -121,6 +121,34 @@ class AnchorTesterTest extends UIUnitTest {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         assertThrows(IllegalStateException.class,
                 () -> test(anchor).download(outputStream));
+    }
+
+    @Test
+    void anchorClick_downloadHandler_throws() {
+        DownloadHandler resource = event -> event.getOutputStream()
+                .write("Hello world".getBytes(StandardCharsets.UTF_8));
+        Anchor anchor = new Anchor(resource, "Home");
+        UI.getCurrent().add(anchor);
+
+        final IllegalStateException exception = assertThrows(
+                IllegalStateException.class, () -> test(anchor).click());
+
+        Assertions.assertEquals("Anchor target seems to be a resource",
+                exception.getMessage());
+    }
+
+    @Test
+    void anchorDownload_downloadHandler_writesResourceToOutputStream() {
+        DownloadHandler resource = event -> event.getOutputStream()
+                .write("Hello world".getBytes(StandardCharsets.UTF_8));
+        Anchor anchor = new Anchor(resource, "Download");
+        UI.getCurrent().add(anchor);
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        test(anchor).download(outputStream);
+
+        Assertions.assertEquals("Hello world",
+                outputStream.toString(StandardCharsets.UTF_8));
     }
 
     @Test
