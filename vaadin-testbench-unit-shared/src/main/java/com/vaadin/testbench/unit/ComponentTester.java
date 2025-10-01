@@ -39,7 +39,7 @@ import tools.jackson.databind.node.ObjectNode;
  * @param <T>
  *            component type
  */
-public class ComponentTester<T extends Component> {
+public class ComponentTester<T extends Component> implements Clickable<T> {
 
     private final T component;
 
@@ -140,7 +140,7 @@ public class ComponentTester<T extends Component> {
      * {@link IllegalStateException} with details on the current state of the
      * component.
      */
-    protected final void ensureComponentIsUsable() {
+    public final void ensureComponentIsUsable() {
         ensureComponentIsUsable(component, unused -> isUsable());
     }
 

@@ -84,11 +84,11 @@ public class RouterLinkTester<T extends RouterLink> extends ComponentTester<T> {
     }
 
     /**
-     * Click the router-link for navigation.
+     * Navigate to the router-link target.
      *
      * @return navigated view
      */
-    public HasElement click() {
+    public HasElement navigate() {
         ensureComponentIsUsable();
         String path = getPath();
         if (getRoute().isEmpty()) {
@@ -99,5 +99,17 @@ public class RouterLinkTester<T extends RouterLink> extends ComponentTester<T> {
         UI.getCurrent().navigate(path, getQueryParameters());
         return UI.getCurrent().getInternals().getActiveRouterTargetsChain()
                 .get(0);
+    }
+
+    /**
+     * Click the router-link for navigation. This is equivalent to calling
+     * {@link #navigate()}.
+     *
+     * For cases where you need to access the navigated view, use
+     * {@link #navigate()} instead as it returns the target view.
+     */
+    @Override
+    public void click() {
+        navigate();
     }
 }
