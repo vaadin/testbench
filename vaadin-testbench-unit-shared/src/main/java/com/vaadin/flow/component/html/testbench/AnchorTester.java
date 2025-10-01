@@ -10,6 +10,7 @@ package com.vaadin.flow.component.html.testbench;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.lang.reflect.Field;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -23,7 +24,11 @@ import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.flow.server.AbstractStreamResource;
 import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.server.StreamResourceRegistry;
+import com.vaadin.flow.server.VaadinRequest;
+import com.vaadin.flow.server.VaadinResponse;
 import com.vaadin.flow.server.VaadinSession;
+import com.vaadin.flow.server.streams.DownloadEvent;
+import com.vaadin.flow.server.streams.DownloadHandler;
 import com.vaadin.testbench.unit.Tests;
 
 @Tests(Anchor.class)
@@ -117,16 +122,53 @@ public class AnchorTester extends HtmlContainerTester<Anchor> {
             // Ignore, throws below if resource is empty
         }
 
-        if (maybeResource.isEmpty() || !(maybeResource
-                .get() instanceof StreamResource streamResource)) {
-            throw new IllegalStateException(
-                    "Anchor target does not seem to be a resource");
-        }
+        AbstractStreamResource resource = maybeResource
+                .filter(res -> res instanceof StreamResource
+                        || (res instanceof StreamResourceRegistry.ElementStreamResource el
+                                && el.getElementRequestHandler() instanceof DownloadHandler))
+                .orElseThrow(() -> new IllegalStateException(
+                        "Anchor target does not seem to be a resource"));
+        if (resource instanceof StreamResource cast) {
+            try {
+                cast.getWriter().accept(outputStream, session);
+            } catch (IOException e) {
+                throw new RuntimeException("Download failed", e);
+            }
+        } else {
+            StreamResourceRegistry.ElementStreamResource elementResource = (StreamResourceRegistry.ElementStreamResource) resource;
+            DownloadHandler handler = (DownloadHandler) elementResource
+                    .getElementRequestHandler();
+            var event = new DownloadEvent(VaadinRequest.getCurrent(),
+                    VaadinResponse.getCurrent(), session,
+                    elementResource.getOwner()) {
+                private boolean outputStreamCalled;
+                private boolean writerCalled;
 
-        try {
-            streamResource.getWriter().accept(outputStream, session);
-        } catch (IOException e) {
-            throw new RuntimeException("Download failed", e);
+                @Override
+                public OutputStream getOutputStream() {
+                    if (writerCalled) {
+                        throw new IllegalStateException(
+                                "Cannot execute getOutputStream() after getWriter() has been called");
+                    }
+                    outputStreamCalled = true;
+                    return outputStream;
+                }
+
+                @Override
+                public PrintWriter getWriter() {
+                    if (outputStreamCalled) {
+                        throw new IllegalStateException(
+                                "Cannot execute getWriter() after getOutputStream() has been called");
+                    }
+                    writerCalled = true;
+                    return new PrintWriter(outputStream);
+                }
+            };
+            try {
+                handler.handleDownloadRequest(event);
+            } catch (IOException e) {
+                throw new RuntimeException("Download failed", e);
+            }
         }
     }
 }
