@@ -70,8 +70,8 @@ public class ElementQuery<T extends TestBenchElement> {
     public static class AttributeMatch {
 
         /**
-         * Attribute matching comparisons.
-         * This is a combination of a CSS selection operator and a negation flag.
+         * Attribute matching comparisons. This is a combination of a CSS
+         * selection operator and a negation flag.
          */
         public enum Comparison {
             /**
@@ -87,15 +87,15 @@ public class ElementQuery<T extends TestBenchElement> {
              */
             CONTAINS("*="),
             /**
-             * Attribute value contains a space-separated word
-             * that matches the given value.
+             * Attribute value contains a space-separated word that matches the
+             * given value.
              */
             CONTAINS_WORD("~="),
             /**
-             * Attribute value begins with a space/hyphen-separated prefix
-             * that matches the given value.
-             * The prefix must be either the entire attribute value or
-             * the leading hyphen-separated segments of the attribute value.
+             * Attribute value begins with a space/hyphen-separated prefix that
+             * matches the given value. The prefix must be either the entire
+             * attribute value or the leading hyphen-separated segments of the
+             * attribute value.
              */
             CONTAINS_PREFIX("|="),
             /**
@@ -119,14 +119,15 @@ public class ElementQuery<T extends TestBenchElement> {
              */
             NOT_CONTAINS(CONTAINS.operator, true),
             /**
-             * Attribute value must not contain a space-separated word
-             * that is prefixed with the given value.
+             * Attribute value must not contain a space-separated word that is
+             * prefixed with the given value.
+             *
              * @see #CONTAINS_WORD
              */
             NOT_CONTAINS_WORD(CONTAINS_WORD.operator, true),
             /**
-             * Attribute value does not begin with a space/hyphen-separated prefix
-             * that matches the given value.
+             * Attribute value does not begin with a space/hyphen-separated
+             * prefix that matches the given value.
              */
             NOT_CONTAINS_PREFIX(CONTAINS_PREFIX.operator, true),
             /**
@@ -162,26 +163,29 @@ public class ElementQuery<T extends TestBenchElement> {
             /**
              * Return the if the operator is to be negated.
              *
-             * @return true if this comparison's operator is to be negated, false otherwise
+             * @return true if this comparison's operator is to be negated,
+             *         false otherwise
              */
             public boolean isNegated() {
                 return negated;
             }
 
             /**
-             * Builds the correct CSS matching expression
-             * for the given attribute name and value
-             * for this comparison.
+             * Builds the correct CSS matching expression for the given
+             * attribute name and value for this comparison.
              *
-             * @param name the name of the attribute
-             * @param value the value to match against the named attribute
+             * @param name
+             *            the name of the attribute
+             * @param value
+             *            the value to match against the named attribute
              * @return the CSS matching expression
              */
             public String expressionFor(String name, String value) {
                 var expression = name;
 
                 if (value != null) {
-                    expression += getOperator() + "'" + escapeAttributeValue(value) + "'";
+                    expression += getOperator() + "'"
+                            + escapeAttributeValue(value) + "'";
                 }
 
                 expression = "[" + expression + "]";
@@ -203,60 +207,70 @@ public class ElementQuery<T extends TestBenchElement> {
         private final String value;
 
         /**
-         * Instantiates an attribute matching expression
-         * having the supplied attribute name, comparison, and
-         * value to compare with the attribute's value.
+         * Instantiates an attribute matching expression having the supplied
+         * attribute name, comparison, and value to compare with the attribute's
+         * value.
          *
-         * @param name the name of the attribute
-         * @param comparison the comparison to use for matching
-         * @param value the value to compare with the attribute's value
+         * @param name
+         *            the name of the attribute
+         * @param comparison
+         *            the comparison to use for matching
+         * @param value
+         *            the value to compare with the attribute's value
          */
-        public AttributeMatch(String name, Comparison comparison, String value) {
+        public AttributeMatch(String name, Comparison comparison,
+                String value) {
             this.name = name;
             this.comparison = comparison;
             this.value = value;
         }
 
         /**
-         * Instantiates an attribute matching expression
-         * having the supplied attribute name, comparison, and
-         * value to compare with the attribute's value.
+         * Instantiates an attribute matching expression having the supplied
+         * attribute name, comparison, and value to compare with the attribute's
+         * value.
          *
-         * @param name the name of the attribute
-         * @param operator the operator to use for matching
-         * @param value the value to compare with the attribute's value
+         * @param name
+         *            the name of the attribute
+         * @param operator
+         *            the operator to use for matching
+         * @param value
+         *            the value to compare with the attribute's value
          *
          * @deprecated use {@link #AttributeMatch(String, Comparison, String)}
          */
         @Deprecated(forRemoval = true, since = "9.3")
         public AttributeMatch(String name, String operator, String value) {
-            this(name,
-                    Arrays.stream(Comparison.values())
-                            .filter(comp -> comp.getOperator().equals(operator))
-                            .findFirst()
-                            .orElseThrow(() -> new java.util.NoSuchElementException(
-                                    "Invalid operator \"" + operator + "\" supplied. As this constructor is unsafe and deprecated, please use AttributeMatch(String, Comparison, String) instead."
-                            )),
+            this(name, Arrays.stream(Comparison.values())
+                    .filter(comp -> comp.getOperator().equals(operator))
+                    .findFirst()
+                    .orElseThrow(() -> new java.util.NoSuchElementException(
+                            "Invalid operator \"" + operator
+                                    + "\" supplied. As this constructor is unsafe and deprecated, please use AttributeMatch(String, Comparison, String) instead.")),
                     value);
         }
 
         /**
-         * Instantiates an attribute exact matching expression
-         * having the supplied attribute name and
-         * value to compare with the attribute's value.
+         * Instantiates an attribute exact matching expression having the
+         * supplied attribute name and value to compare with the attribute's
+         * value.
          *
-         * @param name the name of the attribute
-         * @param value the value to exactly match against with the attribute's value
+         * @param name
+         *            the name of the attribute
+         * @param value
+         *            the value to exactly match against with the attribute's
+         *            value
          */
         public AttributeMatch(String name, String value) {
             this(name, MATCHES_EXACTLY, value);
         }
 
         /**
-         * Instantiates an attribute exists expression
-         * having the supplied attribute name.
+         * Instantiates an attribute exists expression having the supplied
+         * attribute name.
          *
-         * @param name the name of the attribute
+         * @param name
+         *            the name of the attribute
          */
         public AttributeMatch(String name) {
             this(name, true);
@@ -264,8 +278,8 @@ public class ElementQuery<T extends TestBenchElement> {
 
         /**
          * Instantiates an attribute exists expression having the supplied
-         * attribute name with an option to require the attribute to not
-         * present on the element.
+         * attribute name with an option to require the attribute to not present
+         * on the element.
          *
          * @param name
          *            the name of the attribute
@@ -355,8 +369,8 @@ public class ElementQuery<T extends TestBenchElement> {
      * Selects on elements with the given attribute having the given value.
      * <p>
      * For matching a substring of the attribute value, see
-     * {@link #withAttributeContaining(String, String)}.
-     * For matching a word within the attribute, see
+     * {@link #withAttributeContaining(String, String)}. For matching a word
+     * within the attribute, see
      * {@link #withAttributeContainingWord(String, String)}.
      *
      * @param name
@@ -384,9 +398,8 @@ public class ElementQuery<T extends TestBenchElement> {
      * <code>class='someclass myclass'</code>.
      * <p>
      * For matching the full attribute value, see
-     * {@link #withAttribute(String, String)}.
-     * For matching a substring of the attribute value, see
-     * {@link #withAttributeContaining(String, String)}.
+     * {@link #withAttribute(String, String)}. For matching a substring of the
+     * attribute value, see {@link #withAttributeContaining(String, String)}.
      *
      * @param name
      *            the attribute name
@@ -420,9 +433,11 @@ public class ElementQuery<T extends TestBenchElement> {
     }
 
     /**
-     * Selects on elements with the given attribute using the given comparison and value.
+     * Selects on elements with the given attribute using the given comparison
+     * and value.
      * <p>
-     * The given value must match the attribute value according to the comparison.
+     * The given value must match the attribute value according to the
+     * comparison.
      *
      * @param attribute
      *            the attribute name
@@ -433,7 +448,7 @@ public class ElementQuery<T extends TestBenchElement> {
      * @return this element query instance for chaining
      */
     public ElementQuery<T> withAttribute(String attribute, String value,
-                                         AttributeMatch.Comparison comparison) {
+            AttributeMatch.Comparison comparison) {
         attributes.add(new AttributeMatch(attribute, comparison, value));
         return this;
     }
@@ -444,8 +459,8 @@ public class ElementQuery<T extends TestBenchElement> {
      * The given value must match the attribute value exactly.
      * <p>
      * For matching a substring of the attribute, see
-     * {@link #withAttributeContaining(String, String)}.
-     * For matching a word within the attribute, see
+     * {@link #withAttributeContaining(String, String)}. For matching a word
+     * within the attribute, see
      * {@link #withAttributeContainingWord(String, String)}.
      *
      * @param attribute
@@ -467,9 +482,8 @@ public class ElementQuery<T extends TestBenchElement> {
      * The given text must match a substring of the attribute value.
      * <p>
      * For matching the full attribute value, see
-     * {@link #withAttribute(String, String)}.
-     * For matching a word within the attribute, see
-     * {@link #withAttributeContainingWord(String, String)}.
+     * {@link #withAttribute(String, String)}. For matching a word within the
+     * attribute, see {@link #withAttributeContainingWord(String, String)}.
      *
      * @param attribute
      *            the attribute name
@@ -480,7 +494,8 @@ public class ElementQuery<T extends TestBenchElement> {
      * @see #withAttribute(String, String)
      * @see #withAttributeContainingWord(String, String)
      */
-    public ElementQuery<T> withAttributeContaining(String attribute, String text) {
+    public ElementQuery<T> withAttributeContaining(String attribute,
+            String text) {
         return withAttribute(attribute, text, CONTAINS);
     }
 
@@ -492,9 +507,8 @@ public class ElementQuery<T extends TestBenchElement> {
      * <code>class='someclass myclass'</code>.
      * <p>
      * For matching the full attribute value, see
-     * {@link #withAttribute(String, String)}.
-     * For matching a substring of the attribute value, see
-     * {@link #withAttributeContaining(String, String)}.
+     * {@link #withAttribute(String, String)}. For matching a substring of the
+     * attribute value, see {@link #withAttributeContaining(String, String)}.
      *
      * @param attribute
      *            the attribute name
@@ -505,7 +519,8 @@ public class ElementQuery<T extends TestBenchElement> {
      * @see #withAttribute(String, String)
      * @see #withAttributeContaining(String, String)
      */
-    public ElementQuery<T> withAttributeContainingWord(String attribute, String word) {
+    public ElementQuery<T> withAttributeContainingWord(String attribute,
+            String word) {
         return withAttribute(attribute, word, CONTAINS_WORD);
     }
 
@@ -525,11 +540,12 @@ public class ElementQuery<T extends TestBenchElement> {
     /**
      * Selects on elements not having the given attribute with the given value.
      * <p>
-     * The given value must match the attribute value exactly in order to be skipped.
+     * The given value must match the attribute value exactly in order to be
+     * skipped.
      * <p>
      * For matching the full attribute value, see
-     * {@link #withoutAttributeContaining(String, String)}.
-     * For skipping elements having a word within the attribute, see
+     * {@link #withoutAttributeContaining(String, String)}. For skipping
+     * elements having a word within the attribute, see
      * {@link #withoutAttributeContainingWord(String, String)}.
      *
      * @param attribute
@@ -546,14 +562,15 @@ public class ElementQuery<T extends TestBenchElement> {
     }
 
     /**
-     * Selects on elements not having the given attribute containing the given text.
+     * Selects on elements not having the given attribute containing the given
+     * text.
      * <p>
-     * The given value must match any substring of the attribute value
-     * in order to be skipped.
+     * The given value must match any substring of the attribute value in order
+     * to be skipped.
      * <p>
      * For matching the full attribute value, see
-     * {@link #withoutAttribute(String, String)}.
-     * For skipping elements having a word within the attribute, see
+     * {@link #withoutAttribute(String, String)}. For skipping elements having a
+     * word within the attribute, see
      * {@link #withoutAttributeContainingWord(String, String)}.
      *
      * @param attribute
@@ -565,20 +582,22 @@ public class ElementQuery<T extends TestBenchElement> {
      * @see #withoutAttribute(String, String)
      * @see #withoutAttributeContainingWord(String, String)
      */
-    public ElementQuery<T> withoutAttributeContaining(String attribute, String text) {
+    public ElementQuery<T> withoutAttributeContaining(String attribute,
+            String text) {
         return withAttribute(attribute, text, NOT_CONTAINS);
     }
 
     /**
-     * Selects on elements not having the given attribute containing the given word.
+     * Selects on elements not having the given attribute containing the given
+     * word.
      * <p>
      * Compares with space separated words so that e.g.
      * <code>withoutAttributeContainingWord("class", "myclass");</code> skips
      * <code>class='someclass myclass'</code>.
      * <p>
      * For matching the full attribute value, see
-     * {@link #withoutAttribute(String, String)}.
-     * For skipping elements containing a substring of the attribute, see
+     * {@link #withoutAttribute(String, String)}. For skipping elements
+     * containing a substring of the attribute, see
      * {@link #withoutAttributeContaining(String, String)}.
      *
      * @param attribute
@@ -590,18 +609,19 @@ public class ElementQuery<T extends TestBenchElement> {
      * @see #withoutAttribute(String, String)
      * @see #withoutAttributeContaining(String, String)
      */
-    public ElementQuery<T> withoutAttributeContainingWord(String attribute, String word) {
+    public ElementQuery<T> withoutAttributeContainingWord(String attribute,
+            String word) {
         return withAttribute(attribute, word, NOT_CONTAINS_WORD);
     }
 
     /**
      * Selects on elements having the given id.
      * <p>
-     * This selector does not require the id to be unique.
-     * To obtain the unique id, chain with <code>{@link #single()}</code>
-     * or use <code>{@link #id(String)}</code> instead of this selector.
-     * If you legitimately have duplicate ids and just want the first one,
-     * chain with <code>{@link #first()}</code>.
+     * This selector does not require the id to be unique. To obtain the unique
+     * id, chain with <code>{@link #single()}</code> or use
+     * <code>{@link #id(String)}</code> instead of this selector. If you
+     * legitimately have duplicate ids and just want the first one, chain with
+     * <code>{@link #first()}</code>.
      *
      * @param id
      *            the id to look up
@@ -623,8 +643,8 @@ public class ElementQuery<T extends TestBenchElement> {
      * @return this element query instance for chaining
      */
     public ElementQuery<T> withClassName(String... classNames) {
-        Arrays.stream(classNames)
-                .forEach(className -> withAttributeContainingWord("class", className));
+        Arrays.stream(classNames).forEach(
+                className -> withAttributeContainingWord("class", className));
         return this;
     }
 
@@ -637,7 +657,8 @@ public class ElementQuery<T extends TestBenchElement> {
      */
     public ElementQuery<T> withoutClassName(String... classNames) {
         Arrays.stream(classNames)
-                .forEach(className -> withoutAttributeContainingWord("class", className));
+                .forEach(className -> withoutAttributeContainingWord("class",
+                        className));
         return this;
     }
 
@@ -666,16 +687,13 @@ public class ElementQuery<T extends TestBenchElement> {
     /**
      * Requires the element to satisfy the given condition.
      * <p>
-     * For example, to select only enabled elements, you could use
-     * <br>
-     * {@code withCondition(TestBenchElement::isEnabled)}
-     * <br>
-     * or to select only those having a non-zero height, you could use
-     * <br>
+     * For example, to select only enabled elements, you could use <br>
+     * {@code withCondition(TestBenchElement::isEnabled)} <br>
+     * or to select only those having a non-zero height, you could use <br>
      * {@code withCondition(element -> element.getSize().getHeight() != 0)}
      * <p>
-     * Note that conditions are evaluated in order
-     * after the element is selected by its attributes.
+     * Note that conditions are evaluated in order after the element is selected
+     * by its attributes.
      *
      * @param condition
      *            the condition for the element to satisfy; not null
@@ -688,12 +706,12 @@ public class ElementQuery<T extends TestBenchElement> {
     }
 
     /**
-     * Requires the element's given property getter return value
-     * to satisfy the given comparison with the supplied value.
+     * Requires the element's given property getter return value to satisfy the
+     * given comparison with the supplied value.
      * <p>
      * For example, to select {@code TextFieldElement}s having helper text
-     * containing the word "person",
-     * you could use
+     * containing the word "person", you could use
+     *
      * <pre>
      * {@code withPropertyValue(TextFieldElement::getHelperText, "person", String::contains)}
      * </pre>
@@ -702,12 +720,12 @@ public class ElementQuery<T extends TestBenchElement> {
      *            the function to get the value of the property of the element;
      *            not null
      * @param propertyValue
-     *            value to be compared with the one obtained from the
-     *            getter function of the element
+     *            value to be compared with the one obtained from the getter
+     *            function of the element
      * @param comparison
-     *            the comparison to use when comparing the getter's property value
-     *            against the supplied property value
-     *            (i.e., {@code comparison.test(elementPropertyValue, propertyValue)};
+     *            the comparison to use when comparing the getter's property
+     *            value against the supplied property value (i.e.,
+     *            {@code comparison.test(elementPropertyValue, propertyValue)};
      *            not null
      * @param <V>
      *            the type of the property values
@@ -715,71 +733,73 @@ public class ElementQuery<T extends TestBenchElement> {
      *
      * @see #withPropertyValue(Function, Object)
      */
-    public <V> ElementQuery<T> withPropertyValue(Function<T, V> getter, V propertyValue,
-                                                 BiPredicate<V, V> comparison) {
+    public <V> ElementQuery<T> withPropertyValue(Function<T, V> getter,
+            V propertyValue, BiPredicate<V, V> comparison) {
         Objects.requireNonNull(getter, NULL_GETTER_MSG);
         Objects.requireNonNull(comparison, NULL_COMPARISON_MSG);
-        return withCondition(element -> comparison.test(getter.apply(element), propertyValue));
+        return withCondition(element -> comparison.test(getter.apply(element),
+                propertyValue));
     }
 
     /**
-     * Requires the element's given property getter return value
-     * to equal the supplied value.
+     * Requires the element's given property getter return value to equal the
+     * supplied value.
      *
      * @param getter
      *            the function to get the value of the property of the element,
      *            not null
      * @param propertyValue
-     *            value to be compared with the one obtained from the
-     *            getter function of the element
+     *            value to be compared with the one obtained from the getter
+     *            function of the element
      * @param <V>
      *            the type of the property values
      * @return this element query instance for chaining
      *
      * @see #withPropertyValue(Function, Object, BiPredicate)
      */
-    public <V> ElementQuery<T> withPropertyValue(Function<T, V> getter, V propertyValue) {
+    public <V> ElementQuery<T> withPropertyValue(Function<T, V> getter,
+            V propertyValue) {
         return withPropertyValue(getter, propertyValue, Objects::equals);
     }
 
     /**
-     * Requires the element's label to satisfy the given comparison
-     * with the supplied text.
+     * Requires the element's label to satisfy the given comparison with the
+     * supplied text.
      * <p>
-     * For matching a label exactly, see {@link #withLabel(String)},
-     * and for matching a label partially, see {@link #withLabelContaining(String)}.
+     * For matching a label exactly, see {@link #withLabel(String)}, and for
+     * matching a label partially, see {@link #withLabelContaining(String)}.
      * <p>
-     * This method can be used for other label matching needs,
-     * such as performing a case-insensitive match:
-     * {@code withLabel("name", String::equalsIgnoreCase)}
-     * <br> a label-ending match:
-     * {@code withLabel(" Name", String::endsWith)}
-     * <br> or a regular expression match:
+     * This method can be used for other label matching needs, such as
+     * performing a case-insensitive match:
+     * {@code withLabel("name", String::equalsIgnoreCase)} <br>
+     * a label-ending match: {@code withLabel(" Name", String::endsWith)} <br>
+     * or a regular expression match:
      * {@code withLabel("(First|Last) Name", String::matches)}
      *
      * @param text
-     *          the text to compare with the label; not null
+     *            the text to compare with the label; not null
      * @param comparison
-     *          the comparison to use when comparing element's label
-     *          against the supplied text
-     *          (i.e., {@code comparison.test(elementLabel, text)}; not null
+     *            the comparison to use when comparing element's label against
+     *            the supplied text (i.e.,
+     *            {@code comparison.test(elementLabel, text)}; not null
      * @return this element query instance for chaining
      *
      * @see #withLabel(String)
      * @see #withLabelContaining(String)
      */
-    public ElementQuery<T> withLabel(String text, BiPredicate<String, String> comparison) {
+    public ElementQuery<T> withLabel(String text,
+            BiPredicate<String, String> comparison) {
         Objects.requireNonNull(text, NULL_TEXT_MSG);
         Objects.requireNonNull(comparison, NULL_COMPARISON_MSG);
-        return withCondition(element -> (element instanceof HasLabel hasLabel) &&
-                comparison.test(hasLabel.getLabel(), text));
+        return withCondition(element -> (element instanceof HasLabel hasLabel)
+                && comparison.test(hasLabel.getLabel(), text));
     }
 
     /**
      * Requires the element's label to exactly match the given label value.
      * <p>
-     * For partially matching text within the label,
-     * see {@link #withLabelContaining(String)}.
+     * For partially matching text within the label, see
+     * {@link #withLabelContaining(String)}.
      *
      * @param label
      *            the label to match
@@ -795,11 +815,10 @@ public class ElementQuery<T extends TestBenchElement> {
     /**
      * Requires the element's label to partially match the given text value.
      * <p>
-     * For exactly matching the label,
-     * see {@link #withLabel(String)}.
+     * For exactly matching the label, see {@link #withLabel(String)}.
      *
      * @param text
-     *          the text to match
+     *            the text to match
      * @return this element query instance for chaining
      *
      * @see #withLabel(String)
@@ -810,40 +829,45 @@ public class ElementQuery<T extends TestBenchElement> {
     }
 
     /**
-     * Requires the element's placeholder to satisfy the given comparison
-     * with the supplied text.
+     * Requires the element's placeholder to satisfy the given comparison with
+     * the supplied text.
      * <p>
      * For matching a placeholder exactly, see {@link #withPlaceholder(String)},
-     * and for matching a placeholder partially, see {@link #withPlaceholderContaining(String)}.
+     * and for matching a placeholder partially, see
+     * {@link #withPlaceholderContaining(String)}.
      * <p>
-     * This method can be used for other placeholder matching needs,
-     * such as performing a case-insensitive match:
-     * {@code withPlaceholder("name", String::equalsIgnoreCase)}
-     * <br> a placeholder-ending match:
-     * {@code withPlaceholder(" Name", String::endsWith)}
-     * <br> or a regular expression match:
+     * This method can be used for other placeholder matching needs, such as
+     * performing a case-insensitive match:
+     * {@code withPlaceholder("name", String::equalsIgnoreCase)} <br>
+     * a placeholder-ending match:
+     * {@code withPlaceholder(" Name", String::endsWith)} <br>
+     * or a regular expression match:
      * {@code withPlaceholder("(First|Last) Name", String::matches)}
      *
      * @param text
-     *          the text to compare with the placeholder; not null
+     *            the text to compare with the placeholder; not null
      * @param comparison
-     *          the comparison to use when comparing the placeholder
-     *          against the supplied text
-     *          (i.e., {@code comparison.test(elementPlaceholder, text)}; not null
+     *            the comparison to use when comparing the placeholder against
+     *            the supplied text (i.e.,
+     *            {@code comparison.test(elementPlaceholder, text)}; not null
      * @return this element query instance for chaining
      *
      * @see #withPlaceholder(String)
      * @see #withPlaceholderContaining(String)
      */
-    public ElementQuery<T> withPlaceholder(String text, BiPredicate<String, String> comparison) {
+    public ElementQuery<T> withPlaceholder(String text,
+            BiPredicate<String, String> comparison) {
         Objects.requireNonNull(text, NULL_TEXT_MSG);
         Objects.requireNonNull(comparison, NULL_COMPARISON_MSG);
-        return withCondition(element -> (element instanceof HasPlaceholder hasPlaceholder) &&
-                comparison.test(hasPlaceholder.getPlaceholder(), text));
+        return withCondition(
+                element -> (element instanceof HasPlaceholder hasPlaceholder)
+                        && comparison.test(hasPlaceholder.getPlaceholder(),
+                                text));
     }
 
     /**
-     * Requires the element's placeholder to exactly match the given placeholder value.
+     * Requires the element's placeholder to exactly match the given placeholder
+     * value.
      * <p>
      * For partially matching text within the placeholder, see
      * {@link #withPlaceholderContaining(String)}.
@@ -860,13 +884,14 @@ public class ElementQuery<T extends TestBenchElement> {
     }
 
     /**
-     * Requires the element's placeholder to partially match the given text value.
+     * Requires the element's placeholder to partially match the given text
+     * value.
      * <p>
      * For exactly matching the placeholder, see
      * {@link #withPlaceholder(String)}.
      *
      * @param text
-     *          the text to match
+     *            the text to match
      * @return this element query instance for chaining
      *
      * @see #withPlaceholder(String)
@@ -880,74 +905,64 @@ public class ElementQuery<T extends TestBenchElement> {
      * Requires the element's caption (i.e., label, placeholder, or text label)
      * to satisfy the given comparison with the supplied text.
      * <p>
-     * This is a convenience selector method to select an element
-     * by its label, placeholder, or text label, as supported by the element.
-     * These values are generically considered "captions"
-     * as they are used to identify the element to the user.
-     *<p>
+     * This is a convenience selector method to select an element by its label,
+     * placeholder, or text label, as supported by the element. These values are
+     * generically considered "captions" as they are used to identify the
+     * element to the user.
+     * <p>
      * The comparison against the values of the element follows this priority:
      * <ol>
-     *     <li>
-     *         Label - If the element supports a label and its label is not empty,
-     *         the element's label value is used in the comparison.
-     *         If the comparison with the given text is not satisfied
-     *         by the element's label value,
-     *         the comparison does not fall through
-     *         to compare against the placeholder.
-     *     </li>
-     *     <li>
-     *         Placeholder - Even if an element supports a label,
-     *         its label value may be empty. In that situation,
-     *         the element may be using a placeholder in lieu of a label.
-     *         So in that situation, the comparison falls through
-     *         to compare against the placeholder
-     *         if the element supports a placeholder and its placeholder is not empty,
-     *         the element's placeholder value is used in the comparison.
-     *     </li>
-     *     <li>
-     *         Text - If the element supports neither labels nor placeholders
-     *         but does support a caption via its text (such as a button does),
-     *         the comparison is made against the element's text.
-     *     </li>
+     * <li>Label - If the element supports a label and its label is not empty,
+     * the element's label value is used in the comparison. If the comparison
+     * with the given text is not satisfied by the element's label value, the
+     * comparison does not fall through to compare against the placeholder.</li>
+     * <li>Placeholder - Even if an element supports a label, its label value
+     * may be empty. In that situation, the element may be using a placeholder
+     * in lieu of a label. So in that situation, the comparison falls through to
+     * compare against the placeholder if the element supports a placeholder and
+     * its placeholder is not empty, the element's placeholder value is used in
+     * the comparison.</li>
+     * <li>Text - If the element supports neither labels nor placeholders but
+     * does support a caption via its text (such as a button does), the
+     * comparison is made against the element's text.</li>
      * </ol>
      *
-     * Note that if the given text is empty,
-     * then if the element supports both a label and a placeholder,
-     * they must both be empty to be selected.
+     * Note that if the given text is empty, then if the element supports both a
+     * label and a placeholder, they must both be empty to be selected.
      *
      * <p>
-     * For matching a caption exactly, see {@link #withCaption(String)},
-     * and for matching a caption partially, see {@link #withCaptionContaining(String)}.
+     * For matching a caption exactly, see {@link #withCaption(String)}, and for
+     * matching a caption partially, see {@link #withCaptionContaining(String)}.
      * <p>
-     * This method can be used for other caption matching needs,
-     * such as performing a case-insensitive match:
-     * {@code withCaption("name", String::equalsIgnoreCase)}
-     * <br> a caption-ending match:
-     * {@code withCaption(" Name", String::endsWith)}
-     * <br> or a regular expression match:
+     * This method can be used for other caption matching needs, such as
+     * performing a case-insensitive match:
+     * {@code withCaption("name", String::equalsIgnoreCase)} <br>
+     * a caption-ending match: {@code withCaption(" Name", String::endsWith)}
+     * <br>
+     * or a regular expression match:
      * {@code withCaption("(First|Last) Name", String::matches)}
      *
      * @param text
-     *          the text to compare with the caption; not null
+     *            the text to compare with the caption; not null
      * @param comparison
-     *          the comparison to use when comparing the caption
-     *          against the supplied text
-     *          (i.e., {@code comparison.test(elementCaption, text)}; not null
+     *            the comparison to use when comparing the caption against the
+     *            supplied text (i.e.,
+     *            {@code comparison.test(elementCaption, text)}; not null
      * @return this element query instance for chaining
      *
      * @see #withCaption(String)
      * @see #withCaptionContaining(String)
      */
-    @SuppressWarnings("java:S3776")  // cognitive complexity > 15
-    public ElementQuery<T> withCaption(String text, BiPredicate<String, String> comparison) {
+    @SuppressWarnings("java:S3776") // cognitive complexity > 15
+    public ElementQuery<T> withCaption(String text,
+            BiPredicate<String, String> comparison) {
         Objects.requireNonNull(text, NULL_TEXT_MSG);
         Objects.requireNonNull(comparison, NULL_COMPARISON_MSG);
         return withCondition(element -> {
             // special case when text is empty,
             // so if they both exist, both label and placeholder must be empty
-            if (text.isEmpty() &&
-                    element instanceof HasLabel hasLabel &&
-                    element instanceof HasPlaceholder hasPlaceholder) {
+            if (text.isEmpty() && element instanceof HasLabel hasLabel
+                    && element instanceof HasPlaceholder hasPlaceholder) {
                 var label = hasLabel.getLabel();
                 var placeholder = hasPlaceholder.getPlaceholder();
                 return label.isEmpty() && placeholder.isEmpty();
@@ -968,7 +983,8 @@ public class ElementQuery<T extends TestBenchElement> {
             }
             // compare with text
             if (element instanceof HasLabelAsText labelAsText) {
-                var label = Objects.requireNonNullElse(labelAsText.getText(), "");
+                var label = Objects.requireNonNullElse(labelAsText.getText(),
+                        "");
                 if (!label.isEmpty()) {
                     return comparison.test(label, text);
                 }
@@ -999,11 +1015,10 @@ public class ElementQuery<T extends TestBenchElement> {
      * Requires the element's caption (i.e., label, placeholder, or text label)
      * to partially match the given text value.
      * <p>
-     * For exactly matching the caption, see
-     * {@link #withCaption(String)}.
+     * For exactly matching the caption, see {@link #withCaption(String)}.
      *
      * @param text
-     *          the text to match
+     *            the text to match
      * @return this element query instance for chaining
      *
      * @see #withCaption(String)
@@ -1014,40 +1029,41 @@ public class ElementQuery<T extends TestBenchElement> {
     }
 
     /**
-     * Requires the element's text
-     * to satisfy the given comparison with the supplied text.
+     * Requires the element's text to satisfy the given comparison with the
+     * supplied text.
      * <p>
      * For matching the element's text exactly, see {@link #withText(String)},
-     * and for matching the element's text partially, see {@link #withTextContaining(String)}.
+     * and for matching the element's text partially, see
+     * {@link #withTextContaining(String)}.
      * <p>
-     * This method can be used for other text matching needs,
-     * such as performing a case-insensitive match:
-     * {@code withText("name", String::equalsIgnoreCase)}
-     * <br> a text-ending match:
-     * {@code withText(" Name", String::endsWith)}
-     * <br> or a regular expression match:
+     * This method can be used for other text matching needs, such as performing
+     * a case-insensitive match:
+     * {@code withText("name", String::equalsIgnoreCase)} <br>
+     * a text-ending match: {@code withText(" Name", String::endsWith)} <br>
+     * or a regular expression match:
      * {@code withText("(First|Last) Name", String::matches)}
      *
      * @param text
-     *          the text to compare with the element's text; not null
+     *            the text to compare with the element's text; not null
      * @param comparison
-     *          the comparison to use when comparing the element's text
-     *          against the supplied text
-     *          (i.e., {@code comparison.test(elementText, text)}; not null
+     *            the comparison to use when comparing the element's text
+     *            against the supplied text (i.e.,
+     *            {@code comparison.test(elementText, text)}; not null
      * @return this element query instance for chaining
      *
      * @see #withText(String)
      * @see #withTextContaining(String)
      */
-    public ElementQuery<T> withText(String text, BiPredicate<String, String> comparison) {
+    public ElementQuery<T> withText(String text,
+            BiPredicate<String, String> comparison) {
         Objects.requireNonNull(text, NULL_TEXT_MSG);
         Objects.requireNonNull(comparison, NULL_COMPARISON_MSG);
-        return withCondition(element -> comparison.test(Objects.requireNonNullElse(element.getText(), ""), text));
+        return withCondition(element -> comparison
+                .test(Objects.requireNonNullElse(element.getText(), ""), text));
     }
 
     /**
-     * Requires the element's text
-     * to exactly match the given text value.
+     * Requires the element's text to exactly match the given text value.
      * <p>
      * For partially matching text within the element's text, see
      * {@link #withTextContaining(String)}.
@@ -1064,14 +1080,12 @@ public class ElementQuery<T extends TestBenchElement> {
     }
 
     /**
-     * Requires the element's text
-     * to partially match the given text value.
+     * Requires the element's text to partially match the given text value.
      * <p>
-     * For exactly matching the text, see
-     * {@link #withText(String)}.
+     * For exactly matching the text, see {@link #withText(String)}.
      *
      * @param text
-     *          the text to match
+     *            the text to match
      * @return this element query instance for chaining
      *
      * @see #withText(String)
@@ -1116,10 +1130,9 @@ public class ElementQuery<T extends TestBenchElement> {
     /**
      * Executes the search and returns an element having the given unique id.
      * <p>
-     * This selector expects the id to be unique.
-     * If there are duplicate ids, this selector will
-     * throw an exception. If you legitimately have duplicate ids,
-     * use <code>{@link #withId(String)}.{@link #first()}</code> instead.
+     * This selector expects the id to be unique. If there are duplicate ids,
+     * this selector will throw an exception. If you legitimately have duplicate
+     * ids, use <code>{@link #withId(String)}.{@link #first()}</code> instead.
      * (Note, this alternate usage is the former behavior of this selector.)
      *
      * @param id
@@ -1146,7 +1159,8 @@ public class ElementQuery<T extends TestBenchElement> {
     public T single() {
         List<T> all = all();
         if (all.size() != 1) {
-            throw new NoSuchElementException(getNoSuchElementMessage(null, all.size()));
+            throw new NoSuchElementException(
+                    getNoSuchElementMessage(null, all.size()));
         }
         return all.get(0);
     }
@@ -1200,12 +1214,12 @@ public class ElementQuery<T extends TestBenchElement> {
     public T waitForFirst(long timeOutInSeconds) {
         T result = new WebDriverWait(getDriver(),
                 Duration.ofSeconds(timeOutInSeconds)).until(driver -> {
-            try {
-                return first();
-            } catch (NoSuchElementException e) {
-                return null;
-            }
-        });
+                    try {
+                        return first();
+                    } catch (NoSuchElementException e) {
+                        return null;
+                    }
+                });
         if (result == null) {
             throw new NoSuchElementException(getNoSuchElementMessage(null));
         } else {
@@ -1246,8 +1260,9 @@ public class ElementQuery<T extends TestBenchElement> {
     }
 
     private String getNoSuchElementMessage(Integer index, int foundCount) {
-        String msg = (foundCount == 0 ? "No element" : "Multiple elements (" + foundCount + ")") +
-                " with tag <" + tagName + "> found";
+        String msg = (foundCount == 0 ? "No element"
+                : "Multiple elements (" + foundCount + ")") + " with tag <"
+                + tagName + "> found";
         String attrPairs = getAttributePairs();
         if (!attrPairs.isEmpty()) {
             msg += " with the attributes " + attrPairs;
@@ -1342,12 +1357,12 @@ public class ElementQuery<T extends TestBenchElement> {
 
         return executeSearchScript(script.toString(), elementContext, tagName,
                 getAttributePairs(), executor).stream()
-                .filter(this::satisfiesAllConditions)
-                .toList();
+                        .filter(this::satisfiesAllConditions).toList();
     }
 
     private boolean satisfiesAllConditions(T element) {
-        return conditions.stream().allMatch(condition -> condition.test(element));
+        return conditions.stream()
+                .allMatch(condition -> condition.test(element));
     }
 
     private static String getTagName(Class<?> elementClass) {
@@ -1406,8 +1421,7 @@ public class ElementQuery<T extends TestBenchElement> {
 
     private String getAttributePairs() {
         // [id='username'][label='Email'][special='foo\\'bar']
-        return attributes.stream()
-                .map(AttributeMatch::getExpression)
+        return attributes.stream().map(AttributeMatch::getExpression)
                 .collect(Collectors.joining());
     }
 
@@ -1430,17 +1444,19 @@ public class ElementQuery<T extends TestBenchElement> {
      */
     @SuppressWarnings("unchecked")
     List<T> executeSearchScript(String script, Object context, String tagName,
-                                String attributePairs, JavascriptExecutor executor) {
+            String attributePairs, JavascriptExecutor executor) {
         Object result = executor.executeScript(script, context, tagName,
                 attributePairs);
         if (result == null) {
             return Collections.emptyList();
         } else if (result instanceof TestBenchElement testBenchElement) {
-            return Collections.singletonList(TestBench.wrap(testBenchElement, elementClass));
+            return Collections.singletonList(
+                    TestBench.wrap(testBenchElement, elementClass));
         } else {
             List<TestBenchElement> elements = (List<TestBenchElement>) result;
             // Wrap as the correct type
-            elements.replaceAll(element -> TestBench.wrap(element, elementClass));
+            elements.replaceAll(
+                    element -> TestBench.wrap(element, elementClass));
             return (List<T>) elements;
         }
     }

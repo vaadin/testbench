@@ -348,12 +348,16 @@ public interface TesterWrappers {
         return BaseUIUnitTest.internalWrap(UploadTester.class, upload);
     }
 
-    default <V> VirtualListTester<VirtualList<V>, V> test(VirtualList<V> virtualList) {
-        return BaseUIUnitTest.internalWrap(VirtualListTester.class, virtualList);
+    default <V> VirtualListTester<VirtualList<V>, V> test(
+            VirtualList<V> virtualList) {
+        return BaseUIUnitTest.internalWrap(VirtualListTester.class,
+                virtualList);
     }
 
-    default <V> VirtualListTester<VirtualList<V>, V> test(VirtualList virtualList, Class<V> itemType) {
-        return BaseUIUnitTest.internalWrap(VirtualListTester.class, virtualList);
+    default <V> VirtualListTester<VirtualList<V>, V> test(
+            VirtualList virtualList, Class<V> itemType) {
+        return BaseUIUnitTest.internalWrap(VirtualListTester.class,
+                virtualList);
     }
 
     /* HTML components */

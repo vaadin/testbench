@@ -83,8 +83,7 @@ public class ElementQueryIT extends AbstractTB6Test {
 
         TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
         NativeButtonElement button = view.$(NativeButtonElement.class)
-                .withId("special-button")
-                .first();
+                .withId("special-button").first();
         assertEquals("Special Button (in Shadow DOM)", button.getText());
     }
 
@@ -140,9 +139,8 @@ public class ElementQueryIT extends AbstractTB6Test {
         openTestURL();
         TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
 
-        List<NativeButtonElement> slottedButtons = view.$(NativeButtonElement.class)
-                .withAttribute("slot")
-                .all();
+        List<NativeButtonElement> slottedButtons = view
+                .$(NativeButtonElement.class).withAttribute("slot").all();
         assertEquals(1, slottedButtons.size());
     }
 
@@ -151,14 +149,14 @@ public class ElementQueryIT extends AbstractTB6Test {
         openTestURL();
         TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
 
-        List<NativeButtonElement> specialSlottedButtons = view.$(NativeButtonElement.class)
-                .withAttribute("slot", "special-slot")
-                .all();
+        List<NativeButtonElement> specialSlottedButtons = view
+                .$(NativeButtonElement.class)
+                .withAttribute("slot", "special-slot").all();
         assertEquals(1, specialSlottedButtons.size());
 
-        List<NativeButtonElement> noSlottedButtons = view.$(NativeButtonElement.class)
-                .withAttribute("slot", "nonexistent")
-                .all();
+        List<NativeButtonElement> noSlottedButtons = view
+                .$(NativeButtonElement.class)
+                .withAttribute("slot", "nonexistent").all();
         assertEquals(0, noSlottedButtons.size());
     }
 
@@ -167,14 +165,13 @@ public class ElementQueryIT extends AbstractTB6Test {
         openTestURL();
         TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
 
-        List<NativeButtonElement> nativeButtonElements = view.$(NativeButtonElement.class)
-                .withAttribute("id", "shadow", BEGINS_WITH)
-                .all();
+        List<NativeButtonElement> nativeButtonElements = view
+                .$(NativeButtonElement.class)
+                .withAttribute("id", "shadow", BEGINS_WITH).all();
         assertEquals(2, nativeButtonElements.size());
 
         nativeButtonElements = view.$(NativeButtonElement.class)
-                .withAttribute("class", "1", ENDS_WITH)
-                .all();
+                .withAttribute("class", "1", ENDS_WITH).all();
         assertEquals(2, nativeButtonElements.size());
 
         nativeButtonElements = view.$(NativeButtonElement.class)
@@ -212,9 +209,8 @@ public class ElementQueryIT extends AbstractTB6Test {
         openTestURL();
         TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
 
-        List<NativeButtonElement> nonSlottedButtons = view.$(NativeButtonElement.class)
-                .withoutAttribute("slot")
-                .all();
+        List<NativeButtonElement> nonSlottedButtons = view
+                .$(NativeButtonElement.class).withoutAttribute("slot").all();
         assertEquals(9, nonSlottedButtons.size());
     }
 
@@ -223,9 +219,9 @@ public class ElementQueryIT extends AbstractTB6Test {
         openTestURL();
         TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
 
-        List<NativeButtonElement> nonSlottedButtons = view.$(NativeButtonElement.class)
-                .withoutAttribute("slot", "special-slot")
-                .all();
+        List<NativeButtonElement> nonSlottedButtons = view
+                .$(NativeButtonElement.class)
+                .withoutAttribute("slot", "special-slot").all();
         assertEquals(9, nonSlottedButtons.size());
 
         List<NativeButtonElement> allButtons = view.$(NativeButtonElement.class)
@@ -249,7 +245,8 @@ public class ElementQueryIT extends AbstractTB6Test {
         TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
 
         List<NativeButtonElement> allButtons = view.$(NativeButtonElement.class)
-                .withoutAttributeContainingWord("class", "button-special-slot").all();
+                .withoutAttributeContainingWord("class", "button-special-slot")
+                .all();
         assertEquals(9, allButtons.size());
     }
 
@@ -257,10 +254,8 @@ public class ElementQueryIT extends AbstractTB6Test {
     public void singleWithId() {
         openTestURL();
         TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
-        TestBenchElement button = view
-                .$(TestBenchElement.class)
-                .withId("shadow-button-2")
-                .single();
+        TestBenchElement button = view.$(TestBenchElement.class)
+                .withId("shadow-button-2").single();
         assertNotNull(button);
     }
 
@@ -269,8 +264,7 @@ public class ElementQueryIT extends AbstractTB6Test {
         openTestURL();
         TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
         List<NativeButtonElement> allButtons = view.$(NativeButtonElement.class)
-                .withClassName("button")
-                .all();
+                .withClassName("button").all();
         assertEquals(10, allButtons.size());
     }
 
@@ -279,8 +273,7 @@ public class ElementQueryIT extends AbstractTB6Test {
         openTestURL();
         TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
         NativeButtonElement button1 = view.$(NativeButtonElement.class)
-                .withClassName("button-1")
-                .first();
+                .withClassName("button-1").first();
         assertNotNull(button1);
     }
 
@@ -289,9 +282,7 @@ public class ElementQueryIT extends AbstractTB6Test {
         openTestURL();
         TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
         NativeButtonElement buttonButton1 = view.$(NativeButtonElement.class)
-                .withClassName("button")
-                .withClassName("button-1")
-                .first();
+                .withClassName("button").withClassName("button-1").first();
         assertNotNull(buttonButton1);
     }
 
@@ -300,8 +291,7 @@ public class ElementQueryIT extends AbstractTB6Test {
         openTestURL();
         TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
         List<NativeButtonElement> noButtons = view.$(NativeButtonElement.class)
-                .withoutClassName("button")
-                .all();
+                .withoutClassName("button").all();
         assertEquals(0, noButtons.size());
     }
 
@@ -309,8 +299,8 @@ public class ElementQueryIT extends AbstractTB6Test {
     public void allWithoutClassName() {
         openTestURL();
         TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
-        List<NativeButtonElement> notButton1s = view.$(NativeButtonElement.class)
-                .withoutClassName("button-1")
+        List<NativeButtonElement> notButton1s = view
+                .$(NativeButtonElement.class).withoutClassName("button-1")
                 .all();
         assertEquals(9, notButton1s.size());
     }
@@ -319,10 +309,9 @@ public class ElementQueryIT extends AbstractTB6Test {
     public void allWithoutClassNames() {
         openTestURL();
         TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
-        List<NativeButtonElement> notButton1or2s = view.$(NativeButtonElement.class)
-                .withoutClassName("button-1")
-                .withoutClassName("button-2")
-                .all();
+        List<NativeButtonElement> notButton1or2s = view
+                .$(NativeButtonElement.class).withoutClassName("button-1")
+                .withoutClassName("button-2").all();
         assertEquals(8, notButton1or2s.size());
     }
 
@@ -339,8 +328,7 @@ public class ElementQueryIT extends AbstractTB6Test {
         openTestURL();
         TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
         List<NativeButtonElement> allButtons = view.$(NativeButtonElement.class)
-                .withTheme("light-theme")
-                .all();
+                .withTheme("light-theme").all();
         assertEquals(6, allButtons.size());
     }
 
@@ -349,8 +337,7 @@ public class ElementQueryIT extends AbstractTB6Test {
         openTestURL();
         TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
         List<NativeButtonElement> allButtons = view.$(NativeButtonElement.class)
-                .withoutTheme("light-theme")
-                .all();
+                .withoutTheme("light-theme").all();
         assertEquals(4, allButtons.size());
     }
 
@@ -359,29 +346,24 @@ public class ElementQueryIT extends AbstractTB6Test {
         openTestURL();
         TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
 
-        List<LabelPlaceholderElement> labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
-                .withLabel("one")
-                .all();
+        List<LabelPlaceholderElement> labelPlaceholderElements = view
+                .$(LabelPlaceholderElement.class).withLabel("one").all();
         assertEquals(3, labelPlaceholderElements.size());
 
         labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
-                .withLabel("two")
-                .all();
+                .withLabel("two").all();
         assertEquals(2, labelPlaceholderElements.size());
 
         labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
-                .withLabel("Flow")
-                .all();
+                .withLabel("Flow").all();
         assertEquals(1, labelPlaceholderElements.size());
 
         labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
-                .withLabel("")
-                .all();
+                .withLabel("").all();
         assertEquals(4, labelPlaceholderElements.size());
 
         labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
-                .withLabel("nonexistent")
-                .all();
+                .withLabel("nonexistent").all();
         assertEquals(0, labelPlaceholderElements.size());
     }
 
@@ -390,19 +372,17 @@ public class ElementQueryIT extends AbstractTB6Test {
         openTestURL();
         TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
 
-        List<LabelPlaceholderElement> labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
-                .withLabelContaining("n")
+        List<LabelPlaceholderElement> labelPlaceholderElements = view
+                .$(LabelPlaceholderElement.class).withLabelContaining("n")
                 .all();
         assertEquals(4, labelPlaceholderElements.size());
 
         labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
-                .withLabelContaining("o")
-                .all();
+                .withLabelContaining("o").all();
         assertEquals(6, labelPlaceholderElements.size());
 
         labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
-                .withLabelContaining("nonexistent")
-                .all();
+                .withLabelContaining("nonexistent").all();
         assertEquals(0, labelPlaceholderElements.size());
     }
 
@@ -411,30 +391,24 @@ public class ElementQueryIT extends AbstractTB6Test {
         openTestURL();
         TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
 
-        List<LabelPlaceholderElement> labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
-                .withPlaceholder("one")
-                .all();
+        List<LabelPlaceholderElement> labelPlaceholderElements = view
+                .$(LabelPlaceholderElement.class).withPlaceholder("one").all();
         assertEquals(2, labelPlaceholderElements.size());
 
         labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
-                .withPlaceholder("two")
-                .all();
+                .withPlaceholder("two").all();
         assertEquals(3, labelPlaceholderElements.size());
 
         labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
-                .withPlaceholder("flow component")
-                .all();
+                .withPlaceholder("flow component").all();
         assertEquals(1, labelPlaceholderElements.size());
 
         labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
-                .withPlaceholder("")
-                .all();
+                .withPlaceholder("").all();
         assertEquals(4, labelPlaceholderElements.size());
 
-
         labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
-                .withPlaceholder("nonexistent")
-                .all();
+                .withPlaceholder("nonexistent").all();
         assertEquals(0, labelPlaceholderElements.size());
     }
 
@@ -443,19 +417,17 @@ public class ElementQueryIT extends AbstractTB6Test {
         openTestURL();
         TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
 
-        List<LabelPlaceholderElement> labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
-                .withPlaceholderContaining("w")
+        List<LabelPlaceholderElement> labelPlaceholderElements = view
+                .$(LabelPlaceholderElement.class).withPlaceholderContaining("w")
                 .all();
         assertEquals(4, labelPlaceholderElements.size());
 
         labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
-                .withPlaceholderContaining("o")
-                .all();
+                .withPlaceholderContaining("o").all();
         assertEquals(6, labelPlaceholderElements.size());
 
         labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
-                .withPlaceholderContaining("nonexistent")
-                .all();
+                .withPlaceholderContaining("nonexistent").all();
         assertEquals(0, labelPlaceholderElements.size());
     }
 
@@ -464,22 +436,17 @@ public class ElementQueryIT extends AbstractTB6Test {
         openTestURL();
         TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
 
-        List<LabelPlaceholderElement> labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
-                .withLabel("one")
-                .withPlaceholder("two")
-                .all();
+        List<LabelPlaceholderElement> labelPlaceholderElements = view
+                .$(LabelPlaceholderElement.class).withLabel("one")
+                .withPlaceholder("two").all();
         assertEquals(2, labelPlaceholderElements.size());
 
         labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
-                .withLabel("two")
-                .withPlaceholder("one")
-                .all();
+                .withLabel("two").withPlaceholder("one").all();
         assertEquals(1, labelPlaceholderElements.size());
 
         labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
-                .withLabel("one")
-                .withPlaceholder("one")
-                .all();
+                .withLabel("one").withPlaceholder("one").all();
         assertEquals(0, labelPlaceholderElements.size());
     }
 
@@ -488,21 +455,17 @@ public class ElementQueryIT extends AbstractTB6Test {
         openTestURL();
         TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
 
-        List<LabelPlaceholderElement> labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
-                .withLabelContaining("n")
-                .withPlaceholderContaining("w")
-                .all();
+        List<LabelPlaceholderElement> labelPlaceholderElements = view
+                .$(LabelPlaceholderElement.class).withLabelContaining("n")
+                .withPlaceholderContaining("w").all();
         assertEquals(2, labelPlaceholderElements.size());
 
         labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
-                .withLabelContaining("o")
-                .withPlaceholderContaining("o")
-                .all();
+                .withLabelContaining("o").withPlaceholderContaining("o").all();
         assertEquals(4, labelPlaceholderElements.size());
 
         labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
-                .withLabelContaining("Flow")
-                .withPlaceholderContaining("two")
+                .withLabelContaining("Flow").withPlaceholderContaining("two")
                 .all();
         assertEquals(0, labelPlaceholderElements.size());
     }
@@ -512,34 +475,29 @@ public class ElementQueryIT extends AbstractTB6Test {
         openTestURL();
         TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
 
-        List<LabelPlaceholderElement> labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
-                .withCaption("one")
-                .all();
+        List<LabelPlaceholderElement> labelPlaceholderElements = view
+                .$(LabelPlaceholderElement.class).withCaption("one").all();
         assertEquals(4, labelPlaceholderElements.size());
 
         labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
-                .withCaption("two")
-                .all();
+                .withCaption("two").all();
         assertEquals(3, labelPlaceholderElements.size());
 
-        List<NativeButtonElement> nativeButtonElements = view.$(NativeButtonElement.class)
-                .withCaption("Button with special id")
-                .all();
+        List<NativeButtonElement> nativeButtonElements = view
+                .$(NativeButtonElement.class)
+                .withCaption("Button with special id").all();
         assertEquals(1, nativeButtonElements.size());
 
         labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
-                .withCaption("")
-                .all();
+                .withCaption("").all();
         assertEquals(1, labelPlaceholderElements.size());
 
-        nativeButtonElements = view.$(NativeButtonElement.class)
-                .withCaption("")
+        nativeButtonElements = view.$(NativeButtonElement.class).withCaption("")
                 .all();
         assertEquals(0, nativeButtonElements.size());
 
         labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
-                .withCaption("nonexistent")
-                .all();
+                .withCaption("nonexistent").all();
         assertEquals(0, labelPlaceholderElements.size());
     }
 
@@ -548,19 +506,18 @@ public class ElementQueryIT extends AbstractTB6Test {
         openTestURL();
         TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
 
-        List<LabelPlaceholderElement> labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
-                .withCaptionContaining("Special")
-                .all();
+        List<LabelPlaceholderElement> labelPlaceholderElements = view
+                .$(LabelPlaceholderElement.class)
+                .withCaptionContaining("Special").all();
         assertEquals(2, labelPlaceholderElements.size());
 
-        List<NativeButtonElement> nativeButtonElements = view.$(NativeButtonElement.class)
-                .withCaptionContaining("Special")
+        List<NativeButtonElement> nativeButtonElements = view
+                .$(NativeButtonElement.class).withCaptionContaining("Special")
                 .all();
         assertEquals(2, nativeButtonElements.size());
 
         labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
-                .withCaptionContaining("nonexistent")
-                .all();
+                .withCaptionContaining("nonexistent").all();
         assertEquals(0, labelPlaceholderElements.size());
     }
 
@@ -569,24 +526,21 @@ public class ElementQueryIT extends AbstractTB6Test {
         openTestURL();
         TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
 
-        List<LabelPlaceholderElement> labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
-                .withText("")
-                .all();
+        List<LabelPlaceholderElement> labelPlaceholderElements = view
+                .$(LabelPlaceholderElement.class).withText("").all();
         assertEquals(9, labelPlaceholderElements.size());
 
-        List<NativeButtonElement> nativeButtonElements = view.$(NativeButtonElement.class)
-                .withText("Button with special id")
+        List<NativeButtonElement> nativeButtonElements = view
+                .$(NativeButtonElement.class).withText("Button with special id")
                 .all();
         assertEquals(1, nativeButtonElements.size());
 
-        nativeButtonElements = view.$(NativeButtonElement.class)
-                .withText("")
+        nativeButtonElements = view.$(NativeButtonElement.class).withText("")
                 .all();
         assertEquals(0, nativeButtonElements.size());
 
         labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
-                .withText("nonexistent")
-                .all();
+                .withText("nonexistent").all();
         assertEquals(0, labelPlaceholderElements.size());
     }
 
@@ -595,14 +549,13 @@ public class ElementQueryIT extends AbstractTB6Test {
         openTestURL();
         TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
 
-        List<NativeButtonElement> nativeButtonElements = view.$(NativeButtonElement.class)
-                .withTextContaining("Special")
+        List<NativeButtonElement> nativeButtonElements = view
+                .$(NativeButtonElement.class).withTextContaining("Special")
                 .all();
         assertEquals(2, nativeButtonElements.size());
 
-        List<LabelPlaceholderElement> labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
-                .withText("nonexistent")
-                .all();
+        List<LabelPlaceholderElement> labelPlaceholderElements = view
+                .$(LabelPlaceholderElement.class).withText("nonexistent").all();
         assertEquals(0, labelPlaceholderElements.size());
     }
 
@@ -611,9 +564,9 @@ public class ElementQueryIT extends AbstractTB6Test {
         openTestURL();
         TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
 
-        List<LabelPlaceholderElement> labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
-                .withPropertyValue(LabelPlaceholderElement::getLabel, "")
-                .all();
+        List<LabelPlaceholderElement> labelPlaceholderElements = view
+                .$(LabelPlaceholderElement.class)
+                .withPropertyValue(LabelPlaceholderElement::getLabel, "").all();
         assertEquals(4, labelPlaceholderElements.size());
 
         labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
@@ -623,13 +576,16 @@ public class ElementQueryIT extends AbstractTB6Test {
 
         labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
                 .withPropertyValue(LabelPlaceholderElement::getLabel, "one")
-                .withPropertyValue(LabelPlaceholderElement::getPlaceholder, "two")
+                .withPropertyValue(LabelPlaceholderElement::getPlaceholder,
+                        "two")
                 .all();
         assertEquals(2, labelPlaceholderElements.size());
 
         labelPlaceholderElements = view.$(LabelPlaceholderElement.class)
-                .withPropertyValue(labelPlaceholderElement ->
-                        labelPlaceholderElement.getSize().getHeight(), 0)
+                .withPropertyValue(
+                        labelPlaceholderElement -> labelPlaceholderElement
+                                .getSize().getHeight(),
+                        0)
                 .all();
         assertEquals(0, labelPlaceholderElements.size());
     }
