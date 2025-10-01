@@ -48,8 +48,8 @@ class CallbackLitRendererVirtualListTesterTest extends UIUnitTest {
                 "lastName", String.class);
         Assertions.assertEquals(user.getLastName(), lastName);
 
-        var active = $virtualList.getLitRendererPropertyValue(index,
-                "active", Boolean.class);
+        var active = $virtualList.getLitRendererPropertyValue(index, "active",
+                Boolean.class);
         Assertions.assertEquals(user.isActive(), active);
     }
 
@@ -64,14 +64,15 @@ class CallbackLitRendererVirtualListTesterTest extends UIUnitTest {
 
     @Test
     void getLitRendererPropertyValue_outOfBoundsIndexFails() {
-        Assertions.assertThrows(IndexOutOfBoundsException.class,
-                () -> $virtualList.getLitRendererPropertyValue( -1,
-                        "firstName", String.class),
-                "VirtualList index out of bounds (low)");
+        Assertions
+                .assertThrows(IndexOutOfBoundsException.class,
+                        () -> $virtualList.getLitRendererPropertyValue(-1,
+                                "firstName", String.class),
+                        "VirtualList index out of bounds (low)");
 
         Assertions.assertThrows(IndexOutOfBoundsException.class,
-                () -> $virtualList.getLitRendererPropertyValue(UserData.USER_COUNT,
-                        "firstName", String.class),
+                () -> $virtualList.getLitRendererPropertyValue(
+                        UserData.USER_COUNT, "firstName", String.class),
                 "VirtualList index out of bounds (high)");
     }
 
@@ -118,13 +119,13 @@ class CallbackLitRendererVirtualListTesterTest extends UIUnitTest {
     @Test
     void invokeLitRendererFunction_outOfBoundsIndexFails() {
         Assertions.assertThrows(IndexOutOfBoundsException.class,
-                () -> $virtualList.invokeLitRendererFunction( -1,
+                () -> $virtualList.invokeLitRendererFunction(-1,
                         "onActiveToggleClick"),
                 "VirtualList index out of bounds (low)");
 
         Assertions.assertThrows(IndexOutOfBoundsException.class,
-                () -> $virtualList.invokeLitRendererFunction(UserData.USER_COUNT,
-                        "onActiveToggleClick"),
+                () -> $virtualList.invokeLitRendererFunction(
+                        UserData.USER_COUNT, "onActiveToggleClick"),
                 "VirtualList index out of bounds (high)");
     }
 

@@ -59,13 +59,14 @@ class ValueProviderVirtualListTesterTest extends UIUnitTest {
         Assertions.assertEquals(anyUser, $virtualList.getItem(index));
 
         var lastUser = UserData.last();
-        Assertions.assertEquals(lastUser, $virtualList.getItem(UserData.USER_COUNT - 1));
+        Assertions.assertEquals(lastUser,
+                $virtualList.getItem(UserData.USER_COUNT - 1));
     }
 
     @Test
     void getItem_outOfBoundsIndexFails() {
         Assertions.assertThrows(IndexOutOfBoundsException.class,
-                () -> $virtualList.getItem( -1),
+                () -> $virtualList.getItem(-1),
                 "VirtualList index out of bounds (low)");
 
         Assertions.assertThrows(IndexOutOfBoundsException.class,
@@ -102,7 +103,7 @@ class ValueProviderVirtualListTesterTest extends UIUnitTest {
     @Test
     void getItemText_outOfBoundsIndexFails() {
         Assertions.assertThrows(IndexOutOfBoundsException.class,
-                () -> $virtualList.getItemText( -1),
+                () -> $virtualList.getItemText(-1),
                 "VirtualList index out of bounds (low)");
 
         Assertions.assertThrows(IndexOutOfBoundsException.class,
@@ -129,10 +130,9 @@ class ValueProviderVirtualListTesterTest extends UIUnitTest {
     }
 
     private static String expectedValueProviderText(User user) {
-        return String.join(" ",
-                "Name:", user.getFirstName(), user.getLastName(),
-                ";",
-                "Active:", user.isActive() ? "Yes" : "No");
+        return String.join(" ", "Name:", user.getFirstName(),
+                user.getLastName(), ";", "Active:",
+                user.isActive() ? "Yes" : "No");
     }
 
 }
