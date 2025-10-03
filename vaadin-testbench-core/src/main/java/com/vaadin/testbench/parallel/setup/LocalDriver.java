@@ -77,7 +77,7 @@ public class LocalDriver {
             // #14319
             ChromeOptions options = new ChromeOptions();
             options.addArguments("--test-type ");
-             if (Parameters.isHeadless()) {
+            if (Parameters.isHeadless()) {
                 options.addArguments("--headless=new");
             }
             driver = new ChromeDriver(options);
