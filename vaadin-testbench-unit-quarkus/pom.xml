@@ -129,12 +129,6 @@
             <groupId>com.vaadin</groupId>
             <artifactId>vaadin</artifactId>
             <version>${vaadin.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.vaadin</groupId>
-                    <artifactId>collaboration-engine</artifactId>
-                </exclusion>
-            </exclusions>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -142,12 +136,6 @@
             <artifactId>vaadin-quarkus-extension</artifactId>
             <version>${vaadin.version}</version>
             <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.vaadin</groupId>
-                    <artifactId>vaadin-core-jandex</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.vaadin</groupId>
