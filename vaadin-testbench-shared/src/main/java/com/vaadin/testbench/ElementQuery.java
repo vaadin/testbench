@@ -1255,11 +1255,22 @@ public class ElementQuery<T extends TestBenchElement> {
      */
     public T get(int index) {
         Objects.checkIndex(index, Integer.MAX_VALUE);
-        List<T> elements = executeSearch(index);
-        if (elements.isEmpty()) {
-            throw new NoSuchElementException(getNoSuchElementMessage(index));
+
+        if (conditions.isEmpty()) {
+            // Fast path: use JavaScript to extract element at index directly
+            List<T> elements = executeSearch(index);
+            if (elements.isEmpty()) {
+                throw new NoSuchElementException(getNoSuchElementMessage(index));
+            }
+            return elements.get(0);
+        } else {
+            // When conditions exist, get all elements and apply index after filtering
+            List<T> elements = executeSearch(null);
+            if (index >= elements.size()) {
+                throw new NoSuchElementException(getNoSuchElementMessage(index));
+            }
+            return elements.get(index);
         }
-        return elements.get(0);
     }
 
     private String getNoSuchElementMessage(Integer index, int foundCount) {
