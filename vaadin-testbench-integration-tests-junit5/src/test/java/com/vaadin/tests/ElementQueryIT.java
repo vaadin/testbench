@@ -591,4 +591,32 @@ public class ElementQueryIT extends AbstractBrowserTB9Test {
         Assertions.assertEquals(0, labelPlaceholderElements.size());
     }
 
+    @BrowserTest
+    void propertyValueWithFirst() {
+        openTestURL();
+        TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
+
+        // Test that first() works with withPropertyValue - issue #2033
+        NativeButtonElement button = view.$(NativeButtonElement.class)
+                .withPropertyValue(elem -> elem.getProperty("testProperty"), "XYZ")
+                .first();
+        Assertions.assertNotNull(button);
+        Assertions.assertEquals("property-button-2", button.getId());
+        Assertions.assertEquals("Property Button 2", button.getText());
+    }
+
+    @BrowserTest
+    void propertyValueWithGet() {
+        openTestURL();
+        TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
+
+        // Test that get(0) works with withPropertyValue - issue #2033
+        NativeButtonElement button = view.$(NativeButtonElement.class)
+                .withPropertyValue(elem -> elem.getProperty("testProperty"), "XYZ")
+                .get(0);
+        Assertions.assertNotNull(button);
+        Assertions.assertEquals("property-button-2", button.getId());
+        Assertions.assertEquals("Property Button 2", button.getText());
+    }
+
 }
