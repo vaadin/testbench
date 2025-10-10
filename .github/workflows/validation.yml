@@ -3,44 +3,17 @@ name: TestBench Validation
 on:
   push:
     branches:
-      - main
+      - '5.4'
   pull_request:
     types: [opened, synchronize, reopened]
   workflow_dispatch:
 
 env:
-  JAVA_VERSION: 21
+  JAVA_VERSION: 8
 
 jobs:
-  format-check:
-    name: Format Check
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up JDK ${{ env.JAVA_VERSION }}
-        uses: actions/setup-java@v4
-        with:
-          java-version: ${{ env.JAVA_VERSION }}
-          distribution: "temurin"
-
-      - name: Cache Maven dependencies
-        uses: actions/cache@v4
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
-
-      - name: Run formatter validation
-        run: mvn formatter:validate --batch-mode --no-transfer-progress
-
   build-and-test:
     name: Build and Test
-    needs: format-check
     runs-on: ubuntu-latest
     timeout-minutes: 45
 
@@ -56,11 +29,6 @@ jobs:
           java-version: ${{ env.JAVA_VERSION }}
           distribution: "temurin"
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-
       - name: Cache Maven dependencies
         uses: actions/cache@v4
         with:
@@ -75,42 +43,20 @@ jobs:
           echo "---> Clean maven cache"
           rm -rf ~/.m2/repository ~/.npm* ~/.pnpm*
 
-      - name: Set up Sauce Labs tunnel
-        uses: saucelabs/sauce-connect-action@v3.0.0
-        with:
-          username: ${{ secrets.SAUCE_USERNAME }}
-          accessKey: ${{ secrets.SAUCE_ACCESS_KEY }}
-          tunnelName: ${{ github.run_id }}-${{ github.run_number }}
-          region: us-west-1
-          retryTimeout: 300
-          proxyLocalhost: allow
-
-      - name: Set TB License
-        run: |
-          TB_LICENSE=${{secrets.TB_LICENSE}}
-          mkdir -p ~/.vaadin/
-          echo '{"username":"'`echo $TB_LICENSE | cut -d / -f1`'","proKey":"'`echo $TB_LICENSE | cut -d / -f2`'"}' > ~/.vaadin/proKey
-
       - name: Build with Maven
         run: |
           mvn clean install -DskipTests -B
 
       - name: Run Tests and Generate Javadoc
-        env:
-          SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
-          SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
-          SAUCE_TUNNEL_ID: ${{ github.run_id }}-${{ github.run_number }}
         run: |
           mvn javadoc:javadoc verify \
-            -P validation \
+            -P verify-only-phantom,validation \
+            -Dvaadin.testbench.developer.license=${{ secrets.TB8_LICENSE }} \
             -Dtestbench.javadocs \
             -Dsystem.com.vaadin.testbench.Parameters.testsInParallel=5 \
             -Dsystem.com.vaadin.testbench.Parameters.maxAttempts=2 \
             -Dcom.vaadin.testbench.Parameters.hubHostname=localhost \
-            -Dsauce.tunnelId=${SAUCE_TUNNEL_ID} \
             -Dfailsafe.forkCount=5 \
-            -Dsystem.sauce.user=${SAUCE_USERNAME} \
-            -Dsystem.sauce.sauceAccessKey=${SAUCE_ACCESS_KEY} \
             -B
 
       - name: Upload error screenshots
