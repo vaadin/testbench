@@ -56,7 +56,7 @@ jobs:
       - name: Run Tests and Generate Javadoc
         run: |
           mvn javadoc:javadoc verify \
-            -P validation \
+            -P verify-only-phantom,validation \
             -Dvaadin.testbench.developer.license=${{ secrets.TB8_LICENSE }} \
             -Dtestbench.javadocs \
             -Dsystem.com.vaadin.testbench.Parameters.testsInParallel=5 \
