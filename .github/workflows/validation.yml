@@ -1,0 +1,105 @@
+name: TestBench Validation
+
+on:
+  push:
+    branches:
+      - '5.4'
+  pull_request:
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+
+env:
+  JAVA_VERSION: 8
+
+jobs:
+  build-and-test:
+    name: Build and Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: "temurin"
+
+      - name: Cache Maven dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Clean Maven cache (if needed)
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          echo "---> Clean maven cache"
+          rm -rf ~/.m2/repository ~/.npm* ~/.pnpm*
+
+      - name: Set PRO License
+        run: |
+          TB_LICENSE=${{secrets.TB_LICENSE}}
+          mkdir -p ~/.vaadin/
+          echo '{"username":"'`echo $TB_LICENSE | cut -d / -f1`'","proKey":"'`echo $TB_LICENSE | cut -d / -f2`'"}' > ~/.vaadin/proKey
+
+      - name: Build with Maven
+        run: |
+          mvn clean install -DskipTests -B
+
+      - name: Run Tests and Generate Javadoc
+        run: |
+          mvn javadoc:javadoc verify \
+            -P validation \
+            -Dvaadin.testbench.developer.license=${{ secrets.TB8_LICENSE }} \
+            -Dtestbench.javadocs \
+            -Dsystem.com.vaadin.testbench.Parameters.testsInParallel=5 \
+            -Dsystem.com.vaadin.testbench.Parameters.maxAttempts=2 \
+            -Dcom.vaadin.testbench.Parameters.hubHostname=localhost \
+            -Dfailsafe.forkCount=5 \
+            -B
+
+      - name: Upload error screenshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: error-screenshots-${{ github.run_id }}
+          path: |
+            **/error-screenshots/**
+          retention-days: 7
+      
+      - name: Upload test reports on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports-${{ github.run_id }}
+          path: |
+            **/target/surefire-reports/
+            **/target/failsafe-reports/
+          retention-days: 7
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ github.run_id }}
+          path: |
+            **/target/surefire-reports/TEST-*.xml
+            **/target/failsafe-reports/TEST-*.xml
+          retention-days: 7
+
+      - name: Publish test results
+        if: always()
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        with:
+          files: |
+            **/target/surefire-reports/TEST-*.xml
+            **/target/failsafe-reports/TEST-*.xml
+          check_name: Test Results
+          comment_mode: failures
