@@ -21,7 +21,6 @@
 
     <artifactId>uiunit-test-components</artifactId>
     <packaging>jar</packaging>
-    <name>Vaadin Testbench UIUnit Test Components</name>
 
     <properties>
         <maven.deploy.skip>true</maven.deploy.skip>
@@ -48,53 +47,4 @@
             </plugin>
         </plugins>
     </build>
-
-    <profiles>
-        <profile>
-            <id>release</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>3.3.1</version>
-                        <executions>
-                            <execution>
-                                <id>attach-javadocs</id>
-                                <goals>
-                                    <goal>jar</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-jar-plugin</artifactId>
-                        <version>3.2.2</version>
-                        <configuration>
-                            <archive>
-                                <index>true</index>
-                                <manifest>
-                                    <addClasspath>true</addClasspath>
-                                    <!-- Implementation-Title and Implementation-Version
-                                        come from the POM by default -->
-                                    <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                                </manifest>
-                                <manifestEntries>
-                                    <!-- Package format version - do not
-                                        change -->
-                                    <Vaadin-Package-Version>1</Vaadin-Package-Version>
-                                </manifestEntries>
-                            </archive>
-                            <excludes>
-                                <!-- Remove resources included due to gwt
-                                    compilation -->
-                                <exclude>**/demoandtestapp/*</exclude>
-                            </excludes>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 </project>
