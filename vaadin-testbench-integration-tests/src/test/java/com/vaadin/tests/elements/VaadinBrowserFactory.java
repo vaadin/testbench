@@ -10,9 +10,6 @@
  */
 package com.vaadin.tests.elements;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
@@ -25,37 +22,17 @@ import com.vaadin.testbench.parallel.DefaultBrowserFactory;
  */
 public class VaadinBrowserFactory extends DefaultBrowserFactory {
 
-    private static Map<Browser, String> defaultBrowserVersion = new HashMap<Browser, String>();
-    static {
-        defaultBrowserVersion.put(Browser.CHROME, "135");
-        defaultBrowserVersion.put(Browser.SAFARI, "7");
-        defaultBrowserVersion.put(Browser.IE11, "11");
-        defaultBrowserVersion.put(Browser.FIREFOX, "45");
-    }
-
-    private static Map<Browser, Platform> defaultBrowserPlatform = new HashMap<Browser, Platform>();
-    static {
-        defaultBrowserPlatform.put(Browser.CHROME, Platform.WINDOWS);
-        defaultBrowserPlatform.put(Browser.SAFARI, Platform.MAC);
-        defaultBrowserPlatform.put(Browser.IE11, Platform.WINDOWS);
-        defaultBrowserPlatform.put(Browser.FIREFOX, Platform.WINDOWS);
-    }
-
     @Override
     public DesiredCapabilities create(Browser browser, String version,
             Platform platform) {
         DesiredCapabilities desiredCapabilities = super.create(browser,
                 version, platform);
 
-        if (platform == Platform.ANY
-                && defaultBrowserPlatform.containsKey(browser)) {
+        if (platform == Platform.ANY) {
             desiredCapabilities
-                    .setPlatform(defaultBrowserPlatform.get(browser));
+                    .setPlatform(Platform.LINUX);
         }
 
-        if ("".equals(version) && defaultBrowserVersion.containsKey(browser)) {
-            desiredCapabilities.setVersion(defaultBrowserVersion.get(browser));
-        }
         return desiredCapabilities;
     }
 }
