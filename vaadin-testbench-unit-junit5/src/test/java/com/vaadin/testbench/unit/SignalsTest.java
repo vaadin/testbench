@@ -52,26 +52,26 @@ public class SignalsTest extends UIUnitTest {
     @Test
     void detachedComponent_triggerEffect_effectEvaluatedAsynchronously() {
         var view = navigate(SignalsView.class);
-        var counterTester = test(view.counter);
+        var counterTester = test(view.asyncCounter);
         Assertions.assertEquals("Counter: 0", counterTester.getText());
         UI ui = UI.getCurrent();
         UI.setCurrent(null);
 
         ComponentEffect.effect(ui,
-                () -> view.counter.setText("Counter: async"));
+                () -> view.asyncCounter.setText("Counter: async"));
         runPendingSignalsTasks();
 
         UI.setCurrent(ui);
-        Assertions.assertEquals("Counter: async", view.counter.getText());
+        Assertions.assertEquals("Counter: async", view.asyncCounter.getText());
     }
 
     @Test
     void attachedComponent_triggerSignalFromNonUIThread_effectEvaluatedAsynchronously() {
         var view = navigate(SignalsView.class);
-        var counterTester = test(view.counter);
+        var counterTester = test(view.asyncCounter);
         Assertions.assertEquals("Counter: 0", counterTester.getText());
         CompletableFuture.runAsync(() -> {
-            view.numberSignal.incrementBy(10.0);
+            view.asyncNumberSignal.incrementBy(10.0);
         });
         runPendingSignalsTasks();
         Assertions.assertEquals("Counter: 10", counterTester.getText());
@@ -80,7 +80,7 @@ public class SignalsTest extends UIUnitTest {
     @Test
     void attachedComponent_triggerSignalFromNonUIThreadThroughComponentEffect_effectEvaluatedAsynchronously() {
         var view = navigate(SignalsView.class);
-        var counterTester = test(view.counter);
+        var counterTester = test(view.asyncCounter);
         Assertions.assertEquals("Counter: 0", counterTester.getText());
         test(view.quickBackgroundTaskButton).click();
         runPendingSignalsTasks(300, TimeUnit.MILLISECONDS);
@@ -90,7 +90,7 @@ public class SignalsTest extends UIUnitTest {
     @Test
     void attachedComponent_slowEffect_effectEvaluatedAsynchronously() {
         var view = navigate(SignalsView.class);
-        var counterTester = test(view.counter);
+        var counterTester = test(view.asyncWithDelayCounter);
         Assertions.assertEquals("Counter: 0", counterTester.getText());
         test(view.slowBackgroundTaskButton).click();
         Assertions.assertTrue(
