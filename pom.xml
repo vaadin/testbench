@@ -33,7 +33,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <Implementation-Version>${project.version}</Implementation-Version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <selenium.version>4.36.0</selenium.version>
+        <selenium.version>4.37.0</selenium.version>
         <maven.compiler.release>21</maven.compiler.release>
         <maven.compiler.source>${maven.compiler.release}</maven.compiler.source>
         <maven.compiler.target>${maven.compiler.release}</maven.compiler.target>
@@ -55,8 +55,6 @@
         <module>vaadin-testbench-unit</module>
         <module>vaadin-testbench-unit-junit5</module>
         <module>vaadin-testbench-unit-quarkus</module>
-        <module>testing-support/uiunit-test-components</module>
-        <module>testing-support/uiunit-component-testers</module>
     </modules>
     <repositories>
         <repository>
@@ -167,6 +165,8 @@
             <modules>
                 <module>vaadin-testbench-integration-tests</module>
                 <module>vaadin-testbench-integration-tests-junit5</module>
+                <module>testing-support/uiunit-test-components</module>
+                <module>testing-support/uiunit-component-testers</module>
             </modules>
         </profile>
     </profiles>
