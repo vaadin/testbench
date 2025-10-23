@@ -53,7 +53,8 @@ public class SignalsView extends Div {
         Signal<String> asyncWithDelayComputedSignal = asyncWithDelayNumberSignal
                 .mapIntValue(counter -> "Counter: " + counter);
         asyncWithDelayCounter = new Span("Counter: -");
-        ComponentEffect.bind(asyncWithDelayCounter, asyncWithDelayComputedSignal, Span::setText);
+        ComponentEffect.bind(asyncWithDelayCounter,
+                asyncWithDelayComputedSignal, Span::setText);
 
         quickBackgroundTaskButton = new NativeButton("Quick background task",
                 event -> {
@@ -79,6 +80,7 @@ public class SignalsView extends Div {
                 }));
 
         add(incrementButton, quickBackgroundTaskButton,
-                slowBackgroundTaskButton, counter, asyncCounter, asyncWithDelayCounter);
+                slowBackgroundTaskButton, counter, asyncCounter,
+                asyncWithDelayCounter);
     }
 }
