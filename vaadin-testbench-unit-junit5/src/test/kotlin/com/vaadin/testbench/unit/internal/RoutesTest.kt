@@ -15,6 +15,7 @@ import com.example.base.ParametrizedView
 import com.example.base.WelcomeView
 import com.example.base.child.ChildView
 import com.example.base.navigation.NavigationPostponeView
+import com.example.base.signals.SignalsView
 import com.github.mvysny.dynatest.DynaNodeGroup
 import com.github.mvysny.dynatest.DynaTestDsl
 import com.github.mvysny.dynatest.expectThrows
@@ -35,7 +36,7 @@ import kotlin.test.expect
 val allViews: Set<Class<out Component>> = setOf<Class<out Component>>(
         HelloWorldView::class.java, WelcomeView::class.java,
         ParametrizedView::class.java, ChildView::class.java, NavigationPostponeView::class.java,
-        ViewPackagesTestView::class.java)
+        ViewPackagesTestView::class.java, SignalsView::class.java)
 val allErrorRoutes: Set<Class<out HasErrorParameter<*>>> = setOf(ErrorView::class.java, MockRouteNotFoundError::class.java, MockInternalSeverError::class.java)
 
 @DynaTestDsl
@@ -105,7 +106,7 @@ fun DynaNodeGroup.routesTestBatch() {
 
     test("merge routes") {
         val routes1 = Routes(mutableSetOf(HelloWorldView::class.java, WelcomeView::class.java,
-                ViewPackagesTestView::class.java),
+                ViewPackagesTestView::class.java, SignalsView::class.java),
                 mutableSetOf(ErrorView::class.java))
         val routes2 = Routes(mutableSetOf(ParametrizedView::class.java, ChildView::class.java, NavigationPostponeView::class.java),
                 mutableSetOf(MockRouteNotFoundError::class.java, MockInternalSeverError::class.java))
