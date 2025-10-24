@@ -50,11 +50,7 @@ public class SignalsView extends Div {
         ComponentEffect.bind(asyncCounter, asyncComputedSignal, Span::setText);
 
         asyncWithDelayNumberSignal = new NumberSignal();
-        Signal<String> asyncWithDelayComputedSignal = asyncWithDelayNumberSignal
-                .mapIntValue(counter -> "Counter: " + counter);
         asyncWithDelayCounter = new Span("Counter: -");
-        ComponentEffect.bind(asyncWithDelayCounter,
-                asyncWithDelayComputedSignal, Span::setText);
 
         quickBackgroundTaskButton = new NativeButton("Quick background task",
                 event -> {
@@ -65,16 +61,14 @@ public class SignalsView extends Div {
                 });
 
         ComponentEffect.effect(asyncWithDelayCounter, () -> {
-            // read to trigger the signal effect
-            asyncWithDelayNumberSignal.value();
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 throw new RuntimeException(e);
             }
-            asyncWithDelayCounter
-                    .setText(asyncWithDelayCounter.getText() + " (delayed)");
+            asyncWithDelayCounter.setText("Counter: "
+                    + asyncWithDelayNumberSignal.valueAsInt() + " (delayed)");
         });
         slowBackgroundTaskButton = new NativeButton("Quick background task",
                 event -> CompletableFuture.runAsync(() -> {
