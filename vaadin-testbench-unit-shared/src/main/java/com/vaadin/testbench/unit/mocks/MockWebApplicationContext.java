@@ -23,6 +23,7 @@ import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSourceResolvable;
 import org.springframework.context.NoSuchMessageException;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.ResolvableType;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
@@ -116,6 +117,12 @@ public class MockWebApplicationContext implements WebApplicationContext {
     public <T> ObjectProvider<T> getBeanProvider(ResolvableType requiredType,
             boolean allowEagerInit) {
         return appCtx.getBeanProvider(requiredType, allowEagerInit);
+    }
+
+    @Override
+    public <T> ObjectProvider<T> getBeanProvider(
+            ParameterizedTypeReference<T> reference) {
+        return appCtx.getBeanProvider(reference);
     }
 
     @Override
