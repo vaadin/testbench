@@ -91,12 +91,14 @@ public class SignalsTest extends UIUnitTest {
     void attachedComponent_slowEffect_effectEvaluatedAsynchronously() {
         var view = navigate(SignalsView.class);
         var counterTester = test(view.asyncWithDelayCounter);
-        Assertions.assertEquals("Counter: 0", counterTester.getText());
+        Assertions.assertEquals("Counter: 0 (delayed)",
+                counterTester.getText());
         test(view.slowBackgroundTaskButton).click();
         Assertions.assertTrue(
                 runPendingSignalsTasks(300, TimeUnit.MILLISECONDS),
                 "Expected pending signals tasks to be run");
-        Assertions.assertEquals("Counter: 10", counterTester.getText());
+        Assertions.assertEquals("Counter: 10 (delayed)",
+                counterTester.getText());
     }
 
 }

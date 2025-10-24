@@ -73,6 +73,8 @@ public class SignalsView extends Div {
                 Thread.currentThread().interrupt();
                 throw new RuntimeException(e);
             }
+            asyncWithDelayCounter
+                    .setText(asyncWithDelayCounter.getText() + " (delayed)");
         });
         slowBackgroundTaskButton = new NativeButton("Quick background task",
                 event -> CompletableFuture.runAsync(() -> {
