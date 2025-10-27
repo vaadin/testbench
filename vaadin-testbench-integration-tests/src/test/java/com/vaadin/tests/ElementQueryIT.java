@@ -590,4 +590,32 @@ public class ElementQueryIT extends AbstractTB6Test {
         assertEquals(0, labelPlaceholderElements.size());
     }
 
+    @Test
+    public void propertyValueWithFirst() {
+        openTestURL();
+        TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
+
+        // Test that first() works with withPropertyValue - issue #2033
+        NativeButtonElement button = view.$(NativeButtonElement.class)
+                .withPropertyValue(elem -> elem.getProperty("testProperty"), "XYZ")
+                .first();
+        assertNotNull(button);
+        assertEquals("property-button-2", button.getId());
+        assertEquals("Property Button 2", button.getText());
+    }
+
+    @Test
+    public void propertyValueWithGet() {
+        openTestURL();
+        TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
+
+        // Test that get(0) works with withPropertyValue - issue #2033
+        NativeButtonElement button = view.$(NativeButtonElement.class)
+                .withPropertyValue(elem -> elem.getProperty("testProperty"), "XYZ")
+                .get(0);
+        assertNotNull(button);
+        assertEquals("property-button-2", button.getId());
+        assertEquals("Property Button 2", button.getText());
+    }
+
 }
