@@ -18,6 +18,7 @@ import com.vaadin.flow.component.ComponentUtil;
 import com.vaadin.flow.dom.DomEvent;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.internal.JacksonUtils;
+import com.vaadin.testbench.unit.ComponentQuery;
 import com.vaadin.testbench.unit.ComponentTester;
 import com.vaadin.testbench.unit.Tests;
 import com.vaadin.testbench.unit.internal.PrettyPrintTreeKt;
@@ -44,9 +45,21 @@ public class ContextMenuTester<T extends ContextMenu>
 
     /**
      * Opens the context menu, as if the action is done in the browser.
-     *
-     * It simulates for example a right click on a UI component with an assigned
+     * <p>
+     * It simulates, for example, a right click on a UI component with an assigned
      * {@link ContextMenu}.
+     * <p>
+     * It does not render any client-side overlay. In other words, it only
+     * simulates the server-side state changes that would occur when a user
+     * opens the menu in the browser.
+     * <p>
+     * Calling {@link #open()} is not required before using
+     * {@code clickItem(...)} or {@code find(Class)} methods. Those methods operate on the server
+     * component state and can be used regardless of the menu {@code opened}
+     * state. Use {@link #open()} only if you want to explicitly simulate the
+     * act of opening.
+     *
+     * @throws IllegalStateException if the menu is already opened.
      */
     public void open() {
         if (getComponent().isOpened()) {
@@ -69,10 +82,15 @@ public class ContextMenuTester<T extends ContextMenu>
     /**
      * Simulates a click on the item that matches the given text.
      *
-     * For nested menu item provide the text of each menu item in the hierarchy.
+     * For a nested menu item, provide the text of each menu item in the
+     * hierarchy.
      *
      * The path to the menu item must reflect what is seen in the browser,
-     * meaning that hidden items are ignored.
+     * meaning that hidden items are ignored. If there are multiple visible
+     * items at the same level with the same text, an
+     * {@link IllegalStateException} is thrown because the target is ambiguous.
+     * Disabled or invisible items cannot be clicked and will also cause an
+     * {@link IllegalStateException}.
      *
      * <pre>
      * {@code
@@ -93,6 +111,9 @@ public class ContextMenuTester<T extends ContextMenu>
      * }
      * </pre>
      *
+     * Note: Opening the menu via {@link #open()} is not required before
+     * invoking this method; the lookup operates on server-side state.
+     *
      * @param topLevelText
      *            the text content of the top level menu item, not
      *            {@literal null}.
@@ -101,7 +122,8 @@ public class ContextMenuTester<T extends ContextMenu>
      * @throws IllegalArgumentException
      *             if the provided text does not identify a menu item.
      * @throws IllegalStateException
-     *             if the item at given path is not usable.
+     *             if there are multiple matching items at any level, or if the
+     *             item at the given path is disabled or not visible.
      */
     public void clickItem(String topLevelText, String... nestedItemsText) {
         ensureComponentIsUsable();
@@ -112,11 +134,13 @@ public class ContextMenuTester<T extends ContextMenu>
     /**
      * Simulates a click on the item at the given position in the menu.
      *
-     * For nested menu item provide the position of each sub menu that should be
-     * navigated to reach the request item.
+     * For a nested menu item, provide the position of each sub menu that should
+     * be navigated to reach the requested item.
      *
-     * The position reflects what is seen in the browser, so hidden items are
-     * ignored.
+     * Positions are zero-based and refer only to items that are visible at each
+     * menu level, i.e. hidden items are ignored (the same way as in the
+     * browser). Disabled or invisible items cannot be clicked and will cause an
+     * {@link IllegalStateException}.
      *
      * <pre>
      * {@code
@@ -138,6 +162,9 @@ public class ContextMenuTester<T extends ContextMenu>
      * }
      * </pre>
      *
+     * Note: Opening the menu via {@link #open()} is not required before
+     * invoking this method; the lookup operates on server-side state.
+     *
      * @param topLevelPosition
      *            the zero-based position of the item in the menu, as it will be
      *            seen in the browser.
@@ -147,7 +174,7 @@ public class ContextMenuTester<T extends ContextMenu>
      * @throws IllegalArgumentException
      *             if the provided position does not identify a menu item.
      * @throws IllegalStateException
-     *             if the item at given position is not usable.
+     *             if the item at the given position is disabled or not visible.
      */
     public void clickItem(int topLevelPosition, int... nestedItemsPositions) {
         ensureComponentIsUsable();
@@ -266,8 +293,34 @@ public class ContextMenuTester<T extends ContextMenu>
         return menuItem.isChecked();
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Can be used to find components in the context menu. Example usage:
+     * <pre>
+     *     // view:
+     *     ContextMenu menu = new ContextMenu();
+     *     menu.addItem(new VerticalLayout(new Div("Component Item")),
+     *         click -> clickedItems.add("Component Item"));
+     *
+     *     // test:
+     *     ContextMenuTester<ContextMenu> menuTester = test(view.menu);
+     *     menuTester.open();
+     *     Div div = menuTester.find(Div.class).withText("Component Item").single();
+     *     Assertions.assertTrue(div.isAttached());
+     *
+     *     menuTester.close();
+     *     div = menuTester.find(Div.class).withText("Component Item").single();
+     *     Assertions.assertFalse(div.isAttached());
+     * </pre>
+     */
+    @Override
+    public <R extends Component> ComponentQuery<R> find(Class<R> componentType) {
+        return super.find(componentType);
+    }
+
     private MenuItem findMenuItemByPath(String topLevelText,
-            String... nestedItemsText) {
+                                        String... nestedItemsText) {
         MenuItem menuItem = findMenuItem(getComponent().getMenuManager(),
                 topLevelText, null);
         if (nestedItemsText.length > 0) {
