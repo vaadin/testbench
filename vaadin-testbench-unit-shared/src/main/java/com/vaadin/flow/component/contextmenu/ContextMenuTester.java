@@ -46,20 +46,21 @@ public class ContextMenuTester<T extends ContextMenu>
     /**
      * Opens the context menu, as if the action is done in the browser.
      * <p>
-     * It simulates, for example, a right click on a UI component with an assigned
-     * {@link ContextMenu}.
+     * It simulates, for example, a right click on a UI component with an
+     * assigned {@link ContextMenu}.
      * <p>
      * It does not render any client-side overlay. In other words, it only
      * simulates the server-side state changes that would occur when a user
      * opens the menu in the browser.
      * <p>
      * Calling {@link #open()} is not required before using
-     * {@code clickItem(...)} or {@code find(Class)} methods. Those methods operate on the server
-     * component state and can be used regardless of the menu {@code opened}
-     * state. Use {@link #open()} only if you want to explicitly simulate the
-     * act of opening.
+     * {@code clickItem(...)} or {@code find(Class)} methods. Those methods
+     * operate on the server component state and can be used regardless of the
+     * menu {@code opened} state. Use {@link #open()} only if you want to
+     * explicitly simulate the act of opening.
      *
-     * @throws IllegalStateException if the menu is already opened.
+     * @throws IllegalStateException
+     *             if the menu is already opened.
      */
     public void open() {
         if (getComponent().isOpened()) {
@@ -297,30 +298,32 @@ public class ContextMenuTester<T extends ContextMenu>
      * {@inheritDoc}
      * <p>
      * Can be used to find components in the context menu. Example usage:
+     *
      * <pre>
-     *     // view:
-     *     ContextMenu menu = new ContextMenu();
-     *     menu.addItem(new VerticalLayout(new Div("Component Item")),
+     * // view:
+     * ContextMenu menu = new ContextMenu();
+     * menu.addItem(new VerticalLayout(new Div("Component Item")),
      *         click -> clickedItems.add("Component Item"));
      *
-     *     // test:
-     *     ContextMenuTester<ContextMenu> menuTester = test(view.menu);
-     *     menuTester.open();
-     *     Div div = menuTester.find(Div.class).withText("Component Item").single();
-     *     Assertions.assertTrue(div.isAttached());
+     * // test:
+     * ContextMenuTester<ContextMenu> menuTester = test(view.menu);
+     * menuTester.open();
+     * Div div = menuTester.find(Div.class).withText("Component Item").single();
+     * Assertions.assertTrue(div.isAttached());
      *
-     *     menuTester.close();
-     *     div = menuTester.find(Div.class).withText("Component Item").single();
-     *     Assertions.assertFalse(div.isAttached());
+     * menuTester.close();
+     * div = menuTester.find(Div.class).withText("Component Item").single();
+     * Assertions.assertFalse(div.isAttached());
      * </pre>
      */
     @Override
-    public <R extends Component> ComponentQuery<R> find(Class<R> componentType) {
+    public <R extends Component> ComponentQuery<R> find(
+            Class<R> componentType) {
         return super.find(componentType);
     }
 
     private MenuItem findMenuItemByPath(String topLevelText,
-                                        String... nestedItemsText) {
+            String... nestedItemsText) {
         MenuItem menuItem = findMenuItem(getComponent().getMenuManager(),
                 topLevelText, null);
         if (nestedItemsText.length > 0) {
