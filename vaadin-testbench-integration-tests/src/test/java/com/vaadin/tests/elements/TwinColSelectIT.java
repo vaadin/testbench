@@ -17,6 +17,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 
 import org.junit.Test;
+import org.openqa.selenium.NoSuchShadowRootException;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
@@ -47,11 +48,16 @@ public class TwinColSelectIT extends MultiBrowserTest {
         assertEquals("listbox", select.getAriaRole());
         assertEquals("", select.getAccessibleName());
 
-        SearchContext shadowRoot = select.getShadowRoot();
-        assertNotNull(shadowRoot);
-        assertEquals("Unexpected shadow root content,", 0,
-                shadowRoot.findElements(By.className("foo"))
-                        .size());
+        try {
+            SearchContext shadowRoot = select.getShadowRoot();
+            assertNotNull(shadowRoot);
+            assertEquals("Unexpected shadow root content,", 0,
+                    shadowRoot.findElements(By.className("foo")).size());
+        } catch (NoSuchShadowRootException e) {
+            // Chrome finds an empty shadow root and Firefox
+            // doesn't find a shadow root at all, both are fine
+            // as long as the operation itself is supported
+        }
 
         // finally test that the TwinColSelect has expected contents
         assertTrue(new Select(select).getOptions().size() >= 1);
