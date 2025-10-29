@@ -297,7 +297,9 @@ public class ContextMenuTester<T extends ContextMenu>
     /**
      * {@inheritDoc}
      * <p>
-     * Can be used to find components in the context menu. Example usage:
+     * Can be used to find components in the context menu. Returned components
+     * are in a detached state unless {@link #open()} has been called
+     * previously. Example usage:
      *
      * <pre>
      * // view:
