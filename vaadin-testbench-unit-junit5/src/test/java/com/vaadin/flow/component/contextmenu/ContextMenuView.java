@@ -13,6 +13,8 @@ import java.util.List;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasComponents;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.router.Route;
 
@@ -34,6 +36,8 @@ public class ContextMenuView extends Component implements HasComponents {
         menu.addItem("Text", ev -> clickedItems.add("Text"));
         menu.addItem("Duplicated", ev -> clickedItems.add("Duplicated 1"));
         menu.addItem("Duplicated", ev -> clickedItems.add("Duplicated 2"));
+        menu.addItem(new VerticalLayout(new Div("Component Item")),
+                click -> clickedItems.add("Component Item"));
         checkableItem = menu.addItem("Checkable",
                 ev -> clickedItems.add("Checkable"));
         checkableItem.setCheckable(true);

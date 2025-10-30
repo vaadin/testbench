@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.testbench.unit.UIUnitTest;
 import com.vaadin.testbench.unit.ViewPackages;
@@ -227,11 +228,11 @@ class ContextMenuTesterTest extends UIUnitTest {
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> menu_.clickItem(1, 2));
         Assertions.assertThrows(IllegalArgumentException.class,
-                () -> menu_.clickItem(7, 5));
+                () -> menu_.clickItem(8, 5));
         Assertions.assertThrows(IllegalArgumentException.class,
-                () -> menu_.clickItem(7, 1, 5));
+                () -> menu_.clickItem(8, 1, 5));
         Assertions.assertThrows(IllegalArgumentException.class,
-                () -> menu_.clickItem(7, 1, 0, 4));
+                () -> menu_.clickItem(8, 1, 0, 4));
     }
 
     @Test
@@ -251,12 +252,12 @@ class ContextMenuTesterTest extends UIUnitTest {
         ContextMenuTester<ContextMenu> menu_ = test(view.menu);
         menu_.open();
 
-        menu_.clickItem(7, 0);
+        menu_.clickItem(8, 0);
         Assertions.assertIterableEquals(List.of("Hierarchical / Level2"),
                 view.clickedItems);
 
         view.clickedItems.clear();
-        menu_.clickItem(7, 1, 0);
+        menu_.clickItem(8, 1, 0);
         Assertions.assertIterableEquals(
                 List.of("Hierarchical / NestedSubMenu / Level3"),
                 view.clickedItems);
@@ -285,15 +286,15 @@ class ContextMenuTesterTest extends UIUnitTest {
         ContextMenuTester<ContextMenu> menu_ = test(view.menu);
         menu_.open();
 
-        Assertions.assertFalse(menu_.isItemChecked(5),
+        Assertions.assertFalse(menu_.isItemChecked(6),
                 "Checkable item should not be checked by default, but result is true");
 
         view.checkableItem.setChecked(true);
-        Assertions.assertTrue(menu_.isItemChecked(5),
+        Assertions.assertTrue(menu_.isItemChecked(6),
                 "Checkable item is checked, but result is false");
 
         view.checkableItem.setChecked(false);
-        Assertions.assertFalse(menu_.isItemChecked(5),
+        Assertions.assertFalse(menu_.isItemChecked(6),
                 "Checkable item is not checked, but result is true");
     }
 
@@ -322,15 +323,15 @@ class ContextMenuTesterTest extends UIUnitTest {
         ContextMenuTester<ContextMenu> menu_ = test(view.menu);
         menu_.open();
 
-        Assertions.assertTrue(menu_.isItemChecked(7, 2),
+        Assertions.assertTrue(menu_.isItemChecked(8, 2),
                 "Checkable item should be checked by default, but result is false");
 
         view.nestedCheckableItem.setChecked(false);
-        Assertions.assertFalse(menu_.isItemChecked(7, 2),
+        Assertions.assertFalse(menu_.isItemChecked(8, 2),
                 "Checkable item is not checked, but result is true");
 
         view.nestedCheckableItem.setChecked(true);
-        Assertions.assertTrue(menu_.isItemChecked(7, 2),
+        Assertions.assertTrue(menu_.isItemChecked(8, 2),
                 "Checkable item is checked, but result is false");
     }
 
@@ -346,7 +347,7 @@ class ContextMenuTesterTest extends UIUnitTest {
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> menu_.isItemChecked(0));
         Assertions.assertThrows(IllegalArgumentException.class,
-                () -> menu_.isItemChecked(7, 1));
+                () -> menu_.isItemChecked(8, 1));
     }
 
     @Test
@@ -366,6 +367,19 @@ class ContextMenuTesterTest extends UIUnitTest {
                 () -> menu_.isItemChecked("XYZ"));
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> menu_.isItemChecked(22));
+    }
+
+    @Test
+    void openAndFind_ContextMenuItemsCanBeAccessed() {
+        var menuTester = test(view.menu);
+        menuTester.open();
+        var div = menuTester.find(Div.class).withText("Component Item")
+                .single();
+        Assertions.assertTrue(div.isAttached());
+
+        menuTester.close();
+        div = menuTester.find(Div.class).withText("Component Item").single();
+        Assertions.assertFalse(div.isAttached());
     }
 
 }
