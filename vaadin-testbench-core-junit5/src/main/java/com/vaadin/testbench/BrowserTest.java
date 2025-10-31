@@ -21,7 +21,7 @@ import com.vaadin.testbench.browser.MultipleBrowsersExtension;
 /**
  * Shorthand annotation for marking test methods in test class.
  * <p>
- * Combines JUnit 5 {@code @TestTemplate} together with
+ * Combines JUnit 5+ {@code @TestTemplate} together with
  * {@code @ExtendWith(CapabilitiesInvocationContextProvider.class)}.
  */
 @Target(ElementType.METHOD)

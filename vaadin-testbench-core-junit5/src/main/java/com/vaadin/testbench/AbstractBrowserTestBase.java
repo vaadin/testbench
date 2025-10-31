@@ -42,8 +42,8 @@ import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.commands.TestBenchCommands;
 
 /**
- * A superclass with helper methods to aid TestBench developers create a JUnit 5
- * based tests.
+ * A superclass with helper methods to aid TestBench developers create a JUnit
+ * 5+ based tests.
  */
 public abstract class AbstractBrowserTestBase
         implements HasDriver, HasTestBenchCommandExecutor, HasElementQuery {
