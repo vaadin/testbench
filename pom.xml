@@ -50,7 +50,7 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <vaadin.version>8.14.3</vaadin.version>
+        <vaadin.version>8.29-SNAPSHOT</vaadin.version>
         <vaadin.testbench.api.version>${vaadin.version}</vaadin.testbench.api.version>
         <snapshot.repository.url>https://maven.vaadin.com/vaadin-prereleases/
         </snapshot.repository.url>
@@ -98,6 +98,29 @@
                         <goals>
                             <goal>format</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <inherited>true</inherited>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>3.3.0</version>
+                <executions>
+                    <execution>
+                        <id>enforce-maven-version</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireMavenVersion>
+                                    <version>3.6.2</version>
+                                </requireMavenVersion>    
+                                <dependencyConvergence/>
+                            </rules>
+                            <fail>false</fail>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
