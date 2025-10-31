@@ -15,7 +15,7 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.testbench.unit.internal.PrettyPrintTree;
 
 /**
- * JUnit5 extension that will collect and output the component tree for the
+ * JUnit5+ extension that will collect and output the component tree for the
  * failing test UI.
  * <p>
  * This can help with identifying a problem that has happened in the test where
