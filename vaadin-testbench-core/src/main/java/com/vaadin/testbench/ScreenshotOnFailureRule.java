@@ -132,7 +132,8 @@ public class ScreenshotOnFailureRule extends TestWatcher {
                     + errorScreenshotFile.getAbsolutePath());
         } catch (Exception e) {
             getLogger().warn(
-                    "Unable to capture failure screenshot: " + e.getMessage(), e);
+                    "Unable to capture failure screenshot: " + e.getMessage(),
+                    e);
         }
     }
 
