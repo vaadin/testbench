@@ -8,13 +8,13 @@
  */
 package com.vaadin.tests;
 
-import com.vaadin.testbench.parallel.BrowserUtil;
 import org.junit.Assert;
 import org.junit.Test;
 import org.openqa.selenium.By;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.testUI.SVGView;
+import com.vaadin.testbench.parallel.BrowserUtil;
 
 public class SVGIT extends AbstractTB6Test {
 

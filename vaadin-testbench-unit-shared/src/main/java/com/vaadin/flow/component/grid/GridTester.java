@@ -8,6 +8,14 @@
  */
 package com.vaadin.flow.component.grid;
 
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+
+import tools.jackson.databind.node.ArrayNode;
+
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.data.provider.SortDirection;
 import com.vaadin.flow.data.provider.SortOrder;
@@ -21,13 +29,6 @@ import com.vaadin.testbench.unit.MetaKeys;
 import com.vaadin.testbench.unit.MouseButton;
 import com.vaadin.testbench.unit.Tests;
 import com.vaadin.testbench.unit.component.GridKt;
-import tools.jackson.databind.node.ArrayNode;
-
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
 
 /**
  * Tester for Grid components.

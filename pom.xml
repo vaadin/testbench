@@ -123,10 +123,14 @@
                 <configuration>
                     <java>
                         <eclipse>
-                            <file>https://raw.githubusercontent.com/vaadin/flow/master/eclipse/VaadinJavaConventions.xml</file>
+                            <file>${maven.multiModuleProjectDirectory}/eclipse/VaadinJavaConventions.xml</file>
                         </eclipse>
                         <endWithNewline/>
                         <removeUnusedImports/>
+                        <importOrder>
+                            <file>${maven.multiModuleProjectDirectory}/eclipse/flow.importorder</file>
+                        </importOrder>
+                        <forbidWildcardImports/>
                         <licenseHeader>
                             <file>${maven.multiModuleProjectDirectory}/src/license/vclst/header.txt</file>
                         </licenseHeader>

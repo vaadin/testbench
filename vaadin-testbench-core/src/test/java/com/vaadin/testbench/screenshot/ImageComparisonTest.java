@@ -8,10 +8,6 @@
  */
 package com.vaadin.testbench.screenshot;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
@@ -24,6 +20,10 @@ import org.junit.rules.TestName;
 
 import com.vaadin.testbench.Parameters;
 import com.vaadin.testbench.testutils.ImageLoader;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class ImageComparisonTest {
 

@@ -8,6 +8,10 @@
  */
 package com.vaadin.flow.component.virtuallist;
 
+import java.util.Collections;
+
+import tools.jackson.databind.node.ArrayNode;
+
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
@@ -17,9 +21,6 @@ import com.vaadin.flow.internal.JacksonUtils;
 import com.vaadin.testbench.unit.ComponentTester;
 import com.vaadin.testbench.unit.LitRendererTestUtil;
 import com.vaadin.testbench.unit.Tests;
-import tools.jackson.databind.node.ArrayNode;
-
-import java.util.Collections;
 
 /**
  * Tester for VirtualList components.
