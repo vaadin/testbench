@@ -130,10 +130,9 @@ public class ScreenshotOnFailureRule extends TestWatcher {
             ImageIO.write(screenshotImage, "png", errorScreenshotFile);
             getLogger().info("Error screenshot written to: "
                     + errorScreenshotFile.getAbsolutePath());
-        } catch (IOException e1) {
-            throw new RuntimeException(
-                    "There was a problem grabbing and writing a screen shot of a test failure.",
-                    e1);
+        } catch (Exception e) {
+            getLogger().warn(
+                    "Unable to capture failure screenshot: " + e.getMessage(), e);
         }
     }
 
