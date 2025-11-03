@@ -247,7 +247,7 @@
                         <artifactId>maven-failsafe-plugin</artifactId>
                         <configuration>
                             <systemPropertyVariables>
-                                <browsers.include>chrome,firefox</browsers.include>
+                                <browsers.include>chrome</browsers.include>
                             </systemPropertyVariables>
                         </configuration>
                     </plugin>

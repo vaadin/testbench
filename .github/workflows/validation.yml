@@ -16,7 +16,14 @@ jobs:
     name: Build and Test
     runs-on: ubuntu-latest
     timeout-minutes: 45
-
+    services:
+      selenium:
+        image: selenium/standalone-chromium:141.0
+        env:
+          SCREEN_WIDTH: 1650
+          SCREEN_HEIGHT: 1250
+        ports: ['4444:4444', '7900:7900']
+        options: --shm-size=2g
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
