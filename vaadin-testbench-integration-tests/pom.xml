@@ -239,7 +239,7 @@
     </dependencies>
     <profiles>
         <profile>
-            <id>chrome</id>
+            <id>validation</id>
             <build>
                 <plugins>
                     <plugin>
@@ -247,23 +247,7 @@
                         <artifactId>maven-failsafe-plugin</artifactId>
                         <configuration>
                             <systemPropertyVariables>
-                                <browsers.include>chrome</browsers.include>
-                            </systemPropertyVariables>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>firefox</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-failsafe-plugin</artifactId>
-                        <configuration>
-                            <systemPropertyVariables>
-                                <browsers.include>firefox</browsers.include>
+                                <browsers.include>chrome,firefox</browsers.include>
                             </systemPropertyVariables>
                         </configuration>
                     </plugin>
