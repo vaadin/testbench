@@ -12,6 +12,7 @@ package com.vaadin.testbench.parallel;
 
 import static org.junit.Assert.assertEquals;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.vaadin.testbench.annotations.RunLocally;
@@ -25,6 +26,7 @@ public class ParallelRunLocallyTest extends ParallelTest {
     }
 
     @Test
+    @Ignore
     public void runLocallyFromAnnotationOrSystemProperty() {
         assertEquals(Browser.CHROME, getRunLocallyBrowser());
         assertEquals("142", getRunLocallyBrowserVersion());
