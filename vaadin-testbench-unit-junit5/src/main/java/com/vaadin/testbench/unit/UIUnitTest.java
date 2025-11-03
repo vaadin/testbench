@@ -12,7 +12,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
 /**
- * Base JUnit 5 class for UI unit tests.
+ * Base JUnit 5+ class for UI unit tests.
  *
  * The class automatically scans classpath for routes and error views.
  * Subclasses should typically restrict classpath scanning to a specific
@@ -86,6 +86,6 @@ public abstract class UIUnitTest extends BaseUIUnitTest
 
     @Override
     protected final String testingEngine() {
-        return "JUnit 5";
+        return "JUnit 5+";
     }
 }

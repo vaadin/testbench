@@ -23,7 +23,7 @@ import com.vaadin.testbench.unit.mocks.MockedUI;
 import com.vaadin.testbench.unit.mocks.SpringSecurityRequestCustomizer;
 
 /**
- * Base JUnit 5 class for UI unit testing applications based on Spring
+ * Base JUnit 5+ class for UI unit testing applications based on Spring
  * Framework.
  *
  * This class provides functionality of the Spring TestContext Framework, in
