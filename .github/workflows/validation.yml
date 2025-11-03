@@ -78,12 +78,14 @@ jobs:
       - name: Set up Sauce Labs tunnel
         uses: saucelabs/sauce-connect-action@v3.0.0
         with:
-          username: ${{ secrets.SAUCE_USERNAME }}
+          username: ${{ env.SAUCE_USERNAME }}
           accessKey: ${{ secrets.SAUCE_ACCESS_KEY }}
           tunnelName: ${{ github.run_id }}-${{ github.run_number }}
           region: us-west-1
           retryTimeout: 300
           proxyLocalhost: allow
+        env:
+          SAUCE_USERNAME: ${{ env.SAUCE_USERNAME }}
 
       - name: Set TB License
         run: |
@@ -97,7 +99,7 @@ jobs:
 
       - name: Run Tests and Generate Javadoc
         env:
-          SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
+          SAUCE_USERNAME: ${{ env.SAUCE_USERNAME }}
           SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
           SAUCE_TUNNEL_ID: ${{ github.run_id }}-${{ github.run_number }}
         run: |
