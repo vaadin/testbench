@@ -26,8 +26,15 @@ public class ParallelRunLocallyTest extends ParallelTest {
 
     @Test
     public void runLocallyFromAnnotationOrSystemProperty() {
+        if (System.getProperty("com.vaadin.testbench.Parameters.runLocally") == null) {
+            assertEquals(Browser.CHROME, getRunLocallyBrowser());
+            assertEquals("34", getRunLocallyBrowserVersion());
+        }
+
+        System.setProperty("com.vaadin.testbench.Parameters.runLocally",
+                "chrome");
         assertEquals(Browser.CHROME, getRunLocallyBrowser());
-        assertEquals("34", getRunLocallyBrowserVersion());
+        assertEquals("", getRunLocallyBrowserVersion());
 
         System.setProperty("com.vaadin.testbench.Parameters.runLocally",
                 "firefox");
