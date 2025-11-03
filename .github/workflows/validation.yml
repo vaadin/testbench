@@ -13,12 +13,17 @@ env:
 
 jobs:
   build-and-test:
-    name: Build and Test
+    name: Build and Test (${{ matrix.browser }})
     runs-on: ubuntu-latest
     timeout-minutes: 45
+
+    strategy:
+      matrix:
+        browser: [ chrome, firefox ]
+
     services:
       selenium:
-        image: selenium/standalone-chromium:141.0
+        image: selenium/standalone-${{ matrix.browser }}:latest
         env:
           SCREEN_WIDTH: 1650
           SCREEN_HEIGHT: 1250
@@ -61,9 +66,11 @@ jobs:
           mvn clean install -DskipTests -B
 
       - name: Run Tests and Generate Javadoc
+        env:
+          BROWSER: ${{ matrix.browser }}
         run: |
           mvn javadoc:javadoc verify \
-            -P validation \
+            -P ${{ matrix.browser }} \
             -Dvaadin.testbench.developer.license=${{ secrets.TB8_LICENSE }} \
             -Dtestbench.javadocs \
             -Dsystem.com.vaadin.testbench.Parameters.testsInParallel=5 \
