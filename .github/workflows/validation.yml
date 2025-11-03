@@ -76,7 +76,8 @@ jobs:
             -Dsystem.com.vaadin.testbench.Parameters.maxAttempts=2 \
             -Dcom.vaadin.testbench.Parameters.hubHostname=localhost \
             -Dfailsafe.forkCount=5 \
-            -B
+            -B \
+            -fae
 
       - name: Upload error screenshots
         if: failure()
