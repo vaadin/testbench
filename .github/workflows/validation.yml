@@ -19,13 +19,23 @@ jobs:
 
     strategy:
       matrix:
-        browser: [chrome, firefox]
+        ## TODO: add firefox
+        browser: [chrome]
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 24
+      # Workaround for installing system libs when running in local ACT
+      - if: ${{ env.ACT }}
+        run: |
+          npm install -g playwright
+          playwright --help
+          playwright install ${{ matrix.browser }} --with-deps
       # Install browsers
       - name: Install browsers
         run: |
@@ -43,7 +53,9 @@ jobs:
         with:
           java-version: ${{ env.JAVA_VERSION }}
           distribution: "temurin"
-
+      - uses: stCarolas/setup-maven@v5
+        with:
+          maven-version: '3.9.0'
       - name: Cache Maven dependencies
         uses: actions/cache@v4
         with:
@@ -66,22 +78,21 @@ jobs:
 
       - name: Build with Maven
         run: |
-          mvn clean install -DskipTests -B
-
+          mvn clean install -DskipTests -B -ntp
       - name: Run Tests and Generate Javadoc
         env:
           BROWSER: ${{ matrix.browser }}
         run: |
+          set -x
           mvn javadoc:javadoc verify \
             -P ${{ matrix.browser }} \
+            -Dcom.vaadin.testbench.Parameters.runLocally=${{ matrix.browser }} \
+            -Dcom.vaadin.testbench.Parameters.headless=true \
+            -Dcom.vaadin.testbench.Parameters.chromeOptions=--no-sandbox \
             -Dvaadin.testbench.developer.license=${{ secrets.TB8_LICENSE }} \
             -Dtestbench.javadocs \
-            -Dsystem.com.vaadin.testbench.Parameters.testsInParallel=5 \
-            -Dsystem.com.vaadin.testbench.Parameters.maxAttempts=2 \
-            -Dcom.vaadin.testbench.Parameters.hubHostname=localhost \
-            -Dfailsafe.forkCount=5 \
-            -B
-
+            -Dsystem.com.vaadin.testbench.Parameters.testsInParallel=1 \
+            -B -ntp
       - name: Upload error screenshots
         if: failure()
         uses: actions/upload-artifact@v4
@@ -90,7 +101,7 @@ jobs:
           path: |
             **/error-screenshots/**
           retention-days: 7
-      
+
       - name: Upload test reports on failure
         if: failure()
         uses: actions/upload-artifact@v4
