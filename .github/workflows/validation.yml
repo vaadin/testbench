@@ -75,6 +75,9 @@ jobs:
           echo "---> Clean maven cache"
           rm -rf ~/.m2/repository ~/.npm* ~/.pnpm*
 
+      - name: wip
+        run: set && echo ">>>> ${{ env.SAUCE_USERNAME }} ${{ env.SAUCE_USERNAME }}"
+
       - name: Set up Sauce Labs tunnel
         uses: saucelabs/sauce-connect-action@v3.0.0
         with:
