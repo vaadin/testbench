@@ -84,11 +84,10 @@ jobs:
           BROWSER: ${{ matrix.browser }}
         run: |
           set -x
-          mvn javadoc:javadoc verify \
+          sudo apt-get update && sudo apt-get install -y xvfb
+          xvfb-run --auto-servernum --server-args='-screen 0 1920x1080x24' mvn javadoc:javadoc verify \
             -P ${{ matrix.browser }} \
             -Dcom.vaadin.testbench.Parameters.runLocally=${{ matrix.browser }} \
-            -Dcom.vaadin.testbench.Parameters.headless=true \
-            -Dcom.vaadin.testbench.Parameters.chromeOptions=--no-sandbox \
             -Dvaadin.testbench.developer.license=${{ secrets.TB8_LICENSE }} \
             -Dtestbench.javadocs \
             -Dsystem.com.vaadin.testbench.Parameters.testsInParallel=1 \
