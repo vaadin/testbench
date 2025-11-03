@@ -17,6 +17,7 @@ import java.lang.reflect.Field;
 import java.net.URL;
 import java.time.Duration;
 
+import com.vaadin.testbench.annotations.RunLocally;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
@@ -64,6 +65,7 @@ import io.github.bonigarcia.wdm.WebDriverManager;
  *
  * @author Vaadin Ltd
  */
+@RunLocally
 public abstract class AbstractTB5Test extends ParallelTest {
     /**
      * Height of the screenshots we want to capture
