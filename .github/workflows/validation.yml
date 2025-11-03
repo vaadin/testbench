@@ -66,8 +66,6 @@ jobs:
           mvn clean install -DskipTests -B
 
       - name: Run Tests and Generate Javadoc
-        env:
-          BROWSER: ${{ matrix.browser }}
         run: |
           mvn javadoc:javadoc verify \
             -P ${{ matrix.browser }} \
@@ -83,7 +81,7 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: error-screenshots-${{ github.run_id }}
+          name: error-screenshots-${{ github.run_id }}-${{ matrix.browser }}
           path: |
             **/error-screenshots/**
           retention-days: 7
@@ -92,7 +90,7 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: test-reports-${{ github.run_id }}
+          name: test-reports-${{ github.run_id }}-${{ matrix.browser }}
           path: |
             **/target/surefire-reports/
             **/target/failsafe-reports/
@@ -102,7 +100,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-results-${{ github.run_id }}
+          name: test-results-${{ github.run_id }}-${{ matrix.browser }}
           path: |
             **/target/surefire-reports/TEST-*.xml
             **/target/failsafe-reports/TEST-*.xml
