@@ -17,11 +17,26 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 45
 
+    strategy:
+      matrix:
+        browser: [chrome, firefox]
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      # Install browsers
+      - name: Install browsers
+        run: |
+          sudo apt-get update
+          if [ "${{ matrix.browser }}" = "chrome" ]; then
+            sudo apt-get install -y google-chrome-stable || \
+              (wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
+               sudo apt install -y ./google-chrome-stable_current_amd64.deb)
+          else
+            sudo apt-get install -y firefox
+          fi
 
       - name: Set up JDK ${{ env.JAVA_VERSION }}
         uses: actions/setup-java@v4
@@ -54,6 +69,8 @@ jobs:
           mvn clean install -DskipTests -B
 
       - name: Run Tests and Generate Javadoc
+        env:
+          BROWSER: ${{ matrix.browser }}
         run: |
           mvn javadoc:javadoc verify \
             -P validation \
