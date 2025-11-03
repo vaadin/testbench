@@ -17,7 +17,6 @@ import java.lang.reflect.Field;
 import java.net.URL;
 import java.time.Duration;
 
-import com.vaadin.testbench.annotations.RunLocally;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
@@ -39,6 +38,7 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import com.vaadin.server.LegacyApplication;
 import com.vaadin.server.UIProvider;
+import com.vaadin.testbench.annotations.RunLocally;
 import com.vaadin.testbench.Parameters;
 import com.vaadin.testbench.TestBenchDriverProxy;
 import com.vaadin.testbench.parallel.Browser;

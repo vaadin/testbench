@@ -16,7 +16,7 @@ import org.junit.Test;
 
 import com.vaadin.testbench.annotations.RunLocally;
 
-@RunLocally(value = Browser.CHROME, version = "34")
+@RunLocally(value = Browser.CHROME, version = "142")
 public class ParallelRunLocallyTest extends ParallelTest {
 
     @Override
@@ -27,7 +27,7 @@ public class ParallelRunLocallyTest extends ParallelTest {
     @Test
     public void runLocallyFromAnnotationOrSystemProperty() {
         assertEquals(Browser.CHROME, getRunLocallyBrowser());
-        assertEquals("34", getRunLocallyBrowserVersion());
+        assertEquals("142", getRunLocallyBrowserVersion());
 
         System.setProperty("com.vaadin.testbench.Parameters.runLocally",
                 "firefox");
@@ -46,7 +46,7 @@ public class ParallelRunLocallyTest extends ParallelTest {
 
         System.clearProperty("com.vaadin.testbench.Parameters.runLocally");
         assertEquals(Browser.CHROME, getRunLocallyBrowser());
-        assertEquals("34", getRunLocallyBrowserVersion());
+        assertEquals("142", getRunLocallyBrowserVersion());
     }
 
 }
