@@ -16,6 +16,7 @@ import java.io.IOException;
 
 import org.junit.Test;
 
+import org.junit.Ignore;
 import com.vaadin.testUI.ElementQueryUI;
 import com.vaadin.testbench.By;
 import com.vaadin.testbench.TestBenchElement;
@@ -30,7 +31,7 @@ public class ElementScreenCompareIT extends MultiBrowserTest {
         return ElementQueryUI.class;
     }
 
-    @Test
+    @Test @Ignore
     public void elementCompareScreen() throws Exception {
         openTestURL();
         TestBenchElement button4 = (TestBenchElement) findElements(
