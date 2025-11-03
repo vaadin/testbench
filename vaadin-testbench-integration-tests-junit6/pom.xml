@@ -10,11 +10,15 @@
         <version>10.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>vaadin-testbench-integration-tests</artifactId>
-    <name>vaadin-testbench-integration-tests</name>
+    <artifactId>vaadin-testbench-integration-tests-junit6</artifactId>
+    <name>vaadin-testbench-integration-tests-junit6</name>
     <packaging>war</packaging>
 
     <url>http://maven.apache.org</url>
+    <properties>
+        <!-- Ensure JUnit 6 line is used when needed -->
+        <junit.version>6.0.0</junit.version>
+    </properties>
     <repositories>
         <repository>
             <id>vaadin-prereleases</id>
@@ -29,6 +33,7 @@
             <url>https://maven.vaadin.com/vaadin-prereleases</url>
         </pluginRepository>
     </pluginRepositories>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -45,8 +50,16 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>${junit.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
+
     <dependencies>
         <dependency>
             <groupId>com.vaadin</groupId>
@@ -74,12 +87,32 @@
         </dependency>
         <dependency>
             <groupId>com.vaadin</groupId>
-            <artifactId>vaadin-testbench-core</artifactId>
+            <artifactId>vaadin-testbench-core-junit6</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
             <version>${slf4j.version}</version>
+        </dependency>
+
+        <!-- Make sure JUnit Platform/Jupiter are on the classpath with the 6.x line managed by BOM -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-engine</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.bonigarcia</groupId>
+            <artifactId>selenium-jupiter</artifactId>
+            <version>5.1.1</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -98,14 +131,52 @@
                     <failOnMissingWebXml>false</failOnMissingWebXml>
                 </configuration>
             </plugin>
+
+            <!-- Reuse sources and tests from the JUnit 5 integration-tests module -->
             <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-                <configuration>
-                    <skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>
-                </configuration>
-                <version>1.6.8</version>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.6.1</version>
+                <executions>
+                    <execution>
+                        <id>add-shared-sources</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                            <goal>add-resource</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>../vaadin-testbench-integration-tests-junit5/src/main/java</source>
+                            </sources>
+                            <resources>
+                                <resource>
+                                    <directory>../vaadin-testbench-integration-tests-junit5/src/main/resources</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>add-shared-test-sources</id>
+                        <phase>generate-test-sources</phase>
+                        <goals>
+                            <goal>add-test-source</goal>
+                            <goal>add-test-resource</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>../vaadin-testbench-integration-tests-junit5/src/test/java</source>
+                            </sources>
+                            <resources>
+                                <resource>
+                                    <directory>../vaadin-testbench-integration-tests-junit5/src/test/resources</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
+
             <plugin>
                 <groupId>com.vaadin</groupId>
                 <artifactId>flow-maven-plugin</artifactId>
@@ -122,6 +193,9 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${surefire.version}</version>
+                <configuration>
+                    <rerunFailingTestsCount>3</rerunFailingTestsCount>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -149,15 +223,11 @@
                     <stopKey>foo</stopKey>
                     <stopPort>9999</stopPort>
                     <systemProperties>
-                        <systemProperty>
-                            <name>vaadin.requestTiming</name>
-                            <value>true</value>
-                        </systemProperty>
+                        <vaadin.requestTiming>true</vaadin.requestTiming>
                     </systemProperties>
                 </configuration>
                 <executions>
-                    <!-- start and stop jetty (running our app) when running
-                        integration tests -->
+                    <!-- start and stop jetty (running our app) when running integration tests -->
                     <execution>
                         <id>start-jetty</id>
                         <phase>pre-integration-test</phase>
@@ -177,7 +247,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
-                <version>3.2.0</version>
+                <version>3.5.1</version>
                 <executions>
                     <execution>
                         <id>wait-for-dev-bundle</id>
@@ -190,17 +260,6 @@
                             <classpathScope>test</classpathScope>
                             <systemProperties>
                                 <projectProperties/>
-                                <!-- Tune dev bundle creation waiter parameter if needed -->
-                                <!--
-                                <systemProperty>
-                                    <key>test.waitForDevBundle.attempts</key>
-                                    <value>60</value>
-                                </systemProperty>
-                                <systemProperty>
-                                    <key>test.waitForDevBundle.sleepMillis</key>
-                                    <value>1000</value>
-                                </systemProperty>
-                                -->
                             </systemProperties>
                         </configuration>
                     </execution>
@@ -209,7 +268,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>properties-maven-plugin</artifactId>
-                <version>1.0.0</version>
+                <version>1.2.1</version>
                 <executions>
                     <execution>
                         <id>read-local-properties-if-present</id>
@@ -241,6 +300,8 @@
                             <systemPropertyVariables>
                                 <browsers.include>chrome</browsers.include>
                             </systemPropertyVariables>
+                            <forkCount>2</forkCount>
+                            <reuseForks>false</reuseForks>
                         </configuration>
                     </plugin>
                 </plugins>
