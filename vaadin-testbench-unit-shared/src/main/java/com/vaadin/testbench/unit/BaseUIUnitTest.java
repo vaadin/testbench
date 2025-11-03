@@ -21,6 +21,7 @@ import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -31,6 +32,7 @@ import io.github.classgraph.ScanResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.vaadin.experimental.FeatureFlags;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.Key;
@@ -38,6 +40,8 @@ import com.vaadin.flow.component.KeyModifier;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.RouteParameters;
+import com.vaadin.flow.server.VaadinService;
+import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.pro.licensechecker.Capabilities;
 import com.vaadin.pro.licensechecker.Capability;
 import com.vaadin.pro.licensechecker.LicenseChecker;
@@ -70,6 +74,8 @@ public abstract class BaseUIUnitTest {
 
     protected static final Map<Class<?>, Class<? extends ComponentTester>> testers = new HashMap<>();
     protected static final Set<String> scanned = new HashSet<>();
+
+    private TestSignalEnvironment signalsTestEnvironment;
 
     static {
         testers.putAll(scanForTesters("com.vaadin.flow.component"));
@@ -180,6 +186,19 @@ public abstract class BaseUIUnitTest {
     protected void initVaadinEnvironment() {
         scanTesters();
         MockVaadin.setup(discoverRoutes(), MockedUI::new, lookupServices());
+        initSignalsSupport();
+    }
+
+    protected void initSignalsSupport() {
+        VaadinService service = VaadinService.getCurrent();
+        if (service == null) {
+            throw new IllegalStateException(
+                    "Cannot initialize Signals support because VaadinService is not available");
+        }
+        if (FeatureFlags.get(service.getContext())
+                .isEnabled(FeatureFlags.FLOW_FULLSTACK_SIGNALS.getId())) {
+            signalsTestEnvironment = TestSignalEnvironment.register();
+        }
     }
 
     /**
@@ -223,6 +242,10 @@ public abstract class BaseUIUnitTest {
      * Tears down mocked Vaadin.
      */
     protected void cleanVaadinEnvironment() {
+        if (signalsTestEnvironment != null) {
+            signalsTestEnvironment.unregister();
+            signalsTestEnvironment = null;
+        }
         MockVaadin.tearDown();
     }
 
@@ -510,6 +533,74 @@ public abstract class BaseUIUnitTest {
                 });
         UI.getCurrent().getInternals().getStateTree()
                 .runExecutionsBeforeClientResponse();
+    }
+
+    /**
+     * Processes all pending Signals tasks with a default max wait time of 100
+     * milliseconds. This is a convenience method for tests that need to wait
+     * for asynchronous Signal effects to complete.
+     *
+     * <p>
+     * When Signals are triggered from background threads or non-UI contexts,
+     * their effects are enqueued to simulate asynchronous processing. This
+     * method allows tests to flush and execute all such pending tasks
+     * synchronously, ensuring deterministic behavior in unit tests.
+     *
+     * <p>
+     * If any {@link VaadinSession} lock is held by the current thread, it is
+     * temporarily released during the wait to allow background threads to
+     * acquire the lock and enqueue tasks.
+     *
+     * <p>
+     * If Signals support is not enabled (via the {@code FLOW_FULLSTACK_SIGNALS}
+     * feature flag), this method does nothing.
+     *
+     * @return {@code true} if any pending Signals tasks were processed.
+     * @see #runPendingSignalsTasks(long, TimeUnit)
+     * @see TestSignalEnvironment#runPendingTasks(long, TimeUnit)
+     */
+    protected final boolean runPendingSignalsTasks() {
+        return runPendingSignalsTasks(100, TimeUnit.MILLISECONDS);
+    }
+
+    /**
+     * Processes all pending Signals tasks, waiting up to the specified timeout
+     * for tasks to arrive. This method is essential for testing asynchronous
+     * Signal effects triggered from background threads or non-UI contexts.
+     *
+     * <p>
+     * When Signals are triggered from background threads or non-UI contexts,
+     * their effects are enqueued to simulate asynchronous processing. This
+     * method allows tests to flush and execute all such pending tasks
+     * synchronously, ensuring deterministic behavior in unit tests.
+     *
+     * <p>
+     * The timeout applies only to waiting for the first task to arrive. Once
+     * the first task is found, all remaining tasks in the queue are processed
+     * immediately without additional waiting. If any {@link VaadinSession} lock
+     * is held by the current thread, it is temporarily released during the wait
+     * to allow background threads to acquire the lock and enqueue tasks.
+     *
+     * <p>
+     * If Signals support is not enabled (via the {@code FLOW_FULLSTACK_SIGNALS}
+     * feature flag), this method does nothing.
+     *
+     * @param maxWaitTime
+     *            the maximum time to wait for the first task to arrive in the
+     *            given time unit. If &lt;= 0, returns immediately if no tasks
+     *            are available.
+     * @param unit
+     *            the time unit of the timeout value
+     * @return {@code true} if any pending Signals tasks were processed.
+     * @see TestSignalEnvironment#runPendingTasks(long, TimeUnit)
+     */
+    protected final boolean runPendingSignalsTasks(long maxWaitTime,
+            TimeUnit unit) {
+        if (this.signalsTestEnvironment != null) {
+            return this.signalsTestEnvironment.runPendingTasks(maxWaitTime,
+                    unit);
+        }
+        return false;
     }
 
     /**
