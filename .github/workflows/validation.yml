@@ -73,7 +73,7 @@ jobs:
           BROWSER: ${{ matrix.browser }}
         run: |
           mvn javadoc:javadoc verify \
-            -P validation \
+            -P ${{ matrix.browser }} \
             -Dvaadin.testbench.developer.license=${{ secrets.TB8_LICENSE }} \
             -Dtestbench.javadocs \
             -Dsystem.com.vaadin.testbench.Parameters.testsInParallel=5 \
