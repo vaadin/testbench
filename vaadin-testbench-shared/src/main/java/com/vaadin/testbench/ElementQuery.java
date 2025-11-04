@@ -1263,14 +1263,17 @@ public class ElementQuery<T extends TestBenchElement> {
             // Fast path: use JavaScript to extract element at index directly
             List<T> elements = executeSearch(index);
             if (elements.isEmpty()) {
-                throw new NoSuchElementException(getNoSuchElementMessage(index));
+                throw new NoSuchElementException(
+                        getNoSuchElementMessage(index));
             }
             return elements.get(0);
         } else {
-            // When conditions exist, get all elements and apply index after filtering
+            // When conditions exist, get all elements and apply index after
+            // filtering
             List<T> elements = executeSearch(null);
             if (index >= elements.size()) {
-                throw new NoSuchElementException(getNoSuchElementMessage(index));
+                throw new NoSuchElementException(
+                        getNoSuchElementMessage(index));
             }
             return elements.get(index);
         }

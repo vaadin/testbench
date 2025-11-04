@@ -597,7 +597,8 @@ public class ElementQueryIT extends AbstractTB6Test {
 
         // Test that first() works with withPropertyValue - issue #2033
         NativeButtonElement button = view.$(NativeButtonElement.class)
-                .withPropertyValue(elem -> elem.getProperty("testProperty"), "XYZ")
+                .withPropertyValue(elem -> elem.getProperty("testProperty"),
+                        "XYZ")
                 .first();
         assertNotNull(button);
         assertEquals("property-button-2", button.getId());
@@ -611,7 +612,8 @@ public class ElementQueryIT extends AbstractTB6Test {
 
         // Test that get(0) works with withPropertyValue - issue #2033
         NativeButtonElement button = view.$(NativeButtonElement.class)
-                .withPropertyValue(elem -> elem.getProperty("testProperty"), "XYZ")
+                .withPropertyValue(elem -> elem.getProperty("testProperty"),
+                        "XYZ")
                 .get(0);
         assertNotNull(button);
         assertEquals("property-button-2", button.getId());

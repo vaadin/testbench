@@ -50,7 +50,8 @@ public class TemplateView extends LitTemplate {
         flowLabelPlaceholder.setPlaceholder("flow component");
         add(flowLabelPlaceholder);
 
-        // Add buttons for testing withPropertyValue with first/get - issue #2033
+        // Add buttons for testing withPropertyValue with first/get - issue
+        // #2033
         NativeButton btn1 = new NativeButton("Property Button 1");
         btn1.setId("property-button-1");
         add(btn1);
