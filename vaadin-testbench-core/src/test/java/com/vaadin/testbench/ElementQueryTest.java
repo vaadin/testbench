@@ -228,7 +228,7 @@ public class ElementQueryTest {
             Function<TestElementQuery<ExampleElement>, ?> action,
             Predicate<ExampleElement> expectedPredicate) {
         findInElement(createExampleElementQuery(), action, "",
-                FIRST_RESULT_QUERY_SUFFIX, null, expectedPredicate);
+                SINGLE_RESULT_QUERY_SUFFIX, null, expectedPredicate);
     }
 
     private void findInDocument(TestElementQuery<ExampleElement> query,
@@ -261,7 +261,7 @@ public class ElementQueryTest {
             Function<TestElementQuery<ExampleElement>, ?> action,
             Predicate<ExampleElement> expectedPredicate) {
         findInDocument(createExampleDocumentQuery(), action, "",
-                FIRST_RESULT_QUERY_SUFFIX, null, expectedPredicate);
+                SINGLE_RESULT_QUERY_SUFFIX, null, expectedPredicate);
     }
 
     @Test
