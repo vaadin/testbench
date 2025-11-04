@@ -1241,6 +1241,9 @@ public class ElementQuery<T extends TestBenchElement> {
      */
     public T last() {
         List<T> all = all();
+        if (all.isEmpty()) {
+            throw new NoSuchElementException(getNoSuchElementMessage(null));
+        }
         return all.get(all.size() - 1);
     }
 

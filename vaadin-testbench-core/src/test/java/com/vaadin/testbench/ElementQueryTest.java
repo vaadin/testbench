@@ -810,4 +810,19 @@ public class ElementQueryTest {
     private <T> Set<T> set(T... ts) {
         return Set.of(ts);
     }
+
+    @Test(expected = NoSuchElementException.class)
+    public void first_throwsNoSuchElementException_whenNoElements() {
+        createExampleElementQuery().first();
+    }
+
+    @Test(expected = NoSuchElementException.class)
+    public void last_throwsNoSuchElementException_whenNoElements() {
+        createExampleElementQuery().last();
+    }
+
+    @Test(expected = NoSuchElementException.class)
+    public void get_throwsNoSuchElementException_whenNoElements() {
+        createExampleElementQuery().get(0);
+    }
 }
