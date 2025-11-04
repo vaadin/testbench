@@ -13,10 +13,23 @@ env:
 
 jobs:
   build-and-test:
-    name: Build and Test
+    name: Build and Test (${{ matrix.browser }})
     runs-on: ubuntu-latest
     timeout-minutes: 45
 
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [ chrome, firefox ]
+
+    services:
+      selenium:
+        image: selenium/standalone-${{ matrix.browser }}:latest
+        env:
+          SCREEN_WIDTH: 1650
+          SCREEN_HEIGHT: 1250
+        ports: ['4444:4444', '7900:7900']
+        options: --shm-size=2g
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -57,19 +70,21 @@ jobs:
         run: |
           mvn javadoc:javadoc verify \
             -P validation \
+            -Dbrowsers.include=${{ matrix.browser }} \
             -Dvaadin.testbench.developer.license=${{ secrets.TB8_LICENSE }} \
             -Dtestbench.javadocs \
             -Dsystem.com.vaadin.testbench.Parameters.testsInParallel=5 \
             -Dsystem.com.vaadin.testbench.Parameters.maxAttempts=2 \
             -Dcom.vaadin.testbench.Parameters.hubHostname=localhost \
             -Dfailsafe.forkCount=5 \
-            -B
+            -B \
+            -fae
 
       - name: Upload error screenshots
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: error-screenshots-${{ github.run_id }}
+          name: error-screenshots-${{ github.run_id }}-${{ matrix.browser }}
           path: |
             **/error-screenshots/**
           retention-days: 7
@@ -78,7 +93,7 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: test-reports-${{ github.run_id }}
+          name: test-reports-${{ github.run_id }}-${{ matrix.browser }}
           path: |
             **/target/surefire-reports/
             **/target/failsafe-reports/
@@ -88,7 +103,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-results-${{ github.run_id }}
+          name: test-results-${{ github.run_id }}-${{ matrix.browser }}
           path: |
             **/target/surefire-reports/TEST-*.xml
             **/target/failsafe-reports/TEST-*.xml
