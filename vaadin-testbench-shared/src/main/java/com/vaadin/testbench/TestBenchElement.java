@@ -715,7 +715,7 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
         if (value == null) {
             return NullNode.instance;
         } else if (value instanceof String) {
-            return StringNode.valueOf((String)value);
+            return StringNode.valueOf((String) value);
         } else if (value instanceof Number) {
             return DoubleNode.valueOf(((Number) value).doubleValue());
         } else if (value instanceof Boolean) {

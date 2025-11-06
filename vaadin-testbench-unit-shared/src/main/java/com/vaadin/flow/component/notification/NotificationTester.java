@@ -13,7 +13,6 @@ import java.util.function.Consumer;
 import com.vaadin.testbench.unit.ComponentTester;
 import com.vaadin.testbench.unit.Tests;
 
-
 /**
  * Tester for Notification components.
  *
