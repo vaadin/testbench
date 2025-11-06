@@ -124,7 +124,7 @@ jobs:
       # 🆕 Added: Show skipped test details in the summary
       - name: JUnit skipped test summary-${{ matrix.browser }}
         if: always()
-        uses: mikepenz/action-junit-report@v4
+        uses: mikepenz/action-junit-report@v6
         with:
           report_paths: |
             **/target/surefire-reports/TEST-*.xml
