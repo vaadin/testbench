@@ -77,6 +77,8 @@ jobs:
             -Dsystem.com.vaadin.testbench.Parameters.maxAttempts=2 \
             -Dcom.vaadin.testbench.Parameters.hubHostname=localhost \
             -Dfailsafe.forkCount=5 \
+            -Dsurefire.printSummary=true \
+            -Dsurefire.reportFormat=plain \
             -B \
             -fae
 
@@ -130,3 +132,4 @@ jobs:
           include_skipped: true
           detailed_summary: true
           fail_on_failure: false
+          show_passed: true
