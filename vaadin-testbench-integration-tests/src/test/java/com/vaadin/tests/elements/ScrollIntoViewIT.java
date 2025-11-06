@@ -15,17 +15,18 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeFalse;
 
 import java.util.List;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.ElementNotInteractableException;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import com.vaadin.testbench.By;
 import com.vaadin.testbench.TestBenchElement;
+import com.vaadin.testbench.parallel.BrowserUtil;
 
 public class ScrollIntoViewIT extends MultiBrowserTest {
     private TestBenchElement lastButton;
@@ -68,8 +69,21 @@ public class ScrollIntoViewIT extends MultiBrowserTest {
     }
 
     @Test
-    @Ignore("This seems to fail on Firefox")
     public void click_scrollIntoViewDisabled_ElementIsNotScrolled() {
+        // Firefox has some auto-scrolling logic of its own that is
+        // unrelated to the auto-scrolling logic provided by TestBench.
+        // Disabling the TestBench auto-scrolling doesn't prevent Firefox
+        // auto-scrolling.
+        // Without this check, Firefox auto-scrolling can be observed with
+        // this test both locally (tested on Windows 11) and in the
+        // validation builds. It cannot be prevented by TestBench except by
+        // preventing the click altogether, which could give a misleading
+        // impression on what actually happens when a user clicks an
+        // element.
+        // AssumptionViolatedException marks this test skipped on Firefox.
+        assumeFalse("Firefox does its own auto-scrolling.",
+                BrowserUtil.isFirefox(getDesiredCapabilities()));
+
         assertFalse(lastButton.isDisplayed());
         getCommandExecutor().setAutoScrollIntoView(false);
         try {
