@@ -118,3 +118,15 @@ jobs:
             **/target/failsafe-reports/TEST-*.xml
           check_name: Test Results
           comment_mode: failures
+
+      # 🆕 Added: Show skipped test details in the summary
+      - name: JUnit skipped test summary
+        if: always()
+        uses: mikepenz/action-junit-report@v4
+        with:
+          report_paths: |
+            **/target/surefire-reports/TEST-*.xml
+            **/target/failsafe-reports/TEST-*.xml
+          include_skipped: true
+          detailed_summary: true
+          fail_on_failure: false
