@@ -10,13 +10,9 @@ package com.vaadin.flow.component.notification;
 
 import java.util.function.Consumer;
 
-import com.vaadin.flow.dom.DomEvent;
-import com.vaadin.flow.dom.Element;
-import com.vaadin.flow.internal.nodefeature.ElementListenerMap;
 import com.vaadin.testbench.unit.ComponentTester;
 import com.vaadin.testbench.unit.Tests;
 
-import elemental.json.Json;
 
 /**
  * Tester for Notification components.

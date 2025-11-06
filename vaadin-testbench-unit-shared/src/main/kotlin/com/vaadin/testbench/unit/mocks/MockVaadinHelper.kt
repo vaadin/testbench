@@ -19,12 +19,12 @@ import com.vaadin.flow.server.VaadinServletContext
 import com.vaadin.flow.server.startup.LookupServletContainerInitializer
 import com.vaadin.testbench.unit.internal.findClass
 import com.vaadin.testbench.unit.internal.findClassOrThrow
-import elemental.json.Json
-import elemental.json.JsonObject
+import tools.jackson.databind.ObjectMapper
+import tools.jackson.databind.node.ObjectNode
 
 object MockVaadinHelper {
 
-    private val flowBuildInfo: JsonObject? by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    private val flowBuildInfo: ObjectNode? by lazy(LazyThreadSafetyMode.PUBLICATION) {
         getTokenFileFromClassloader()
     }
 
@@ -52,7 +52,7 @@ object MockVaadinHelper {
     fun createMockVaadinContext(): VaadinContext =
             VaadinServletContext(createMockContext())
 
-    fun getTokenFileFromClassloader(): JsonObject? {
+    fun getTokenFileFromClassloader(): ObjectNode? {
 
         // Use DefaultApplicationConfigurationFactory.getTokenFileFromClassloader() to make sure to read
         // the same flow-build-info.json that Vaadin reads.
@@ -65,7 +65,7 @@ object MockVaadinHelper {
             val m = dacfClass.getDeclaredMethod("getTokenFileFromClassloader", VaadinContext::class.java)
             m.isAccessible = true
             val json = m.invoke(acf, ctx) as String? ?: return null
-            return Json.parse(json)
+            return ObjectMapper().readTree(json) as ObjectNode
         }
         return null
     }

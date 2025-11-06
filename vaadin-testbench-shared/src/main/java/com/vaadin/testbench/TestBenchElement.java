@@ -44,6 +44,11 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.node.BooleanNode;
+import tools.jackson.databind.node.DoubleNode;
+import tools.jackson.databind.node.NullNode;
+import tools.jackson.databind.node.StringNode;
 
 import com.vaadin.testbench.commands.CanCompareScreenshots;
 import com.vaadin.testbench.commands.ScreenshotComparator;
@@ -51,9 +56,6 @@ import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.commands.TestBenchCommands;
 import com.vaadin.testbench.elementsbase.Element;
 import com.vaadin.testbench.parallel.BrowserUtil;
-
-import elemental.json.Json;
-import elemental.json.JsonValue;
 
 /**
  * TestBenchElement is a WebElement wrapper. It provides Vaadin specific helper
@@ -659,7 +661,7 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
         if (value == null) {
             return null;
         }
-        return createJsonValue(value).asNumber();
+        return createJsonValue(value).asDouble();
     }
 
     @Override
@@ -709,15 +711,15 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
         return result;
     }
 
-    private JsonValue createJsonValue(Object value) {
+    private JsonNode createJsonValue(Object value) {
         if (value == null) {
-            return Json.createNull();
+            return NullNode.instance;
         } else if (value instanceof String) {
-            return Json.create((String) value);
+            return StringNode.valueOf((String)value);
         } else if (value instanceof Number) {
-            return Json.create(((Number) value).doubleValue());
+            return DoubleNode.valueOf(((Number) value).doubleValue());
         } else if (value instanceof Boolean) {
-            return Json.create((Boolean) value);
+            return BooleanNode.valueOf((Boolean) value);
         } else {
             throw new IllegalArgumentException(
                     "Type of property is unsupported: "
