@@ -633,7 +633,12 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
         if (value == null) {
             return null;
         }
-        return createJsonValue(value).asString();
+        if (value instanceof String) {
+            return (String) value;
+        }
+
+        throw new IllegalArgumentException("The property is of type "
+                + value.getClass().getName() + ", not String");
     }
 
     @Override
@@ -642,7 +647,11 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
         if (value == null) {
             return null;
         }
-        return createJsonValue(value).asBoolean();
+        if (value instanceof Boolean) {
+            return (Boolean) value;
+        }
+        throw new IllegalArgumentException("The property is of type "
+                + value.getClass().getName() + ", not Boolean");
     }
 
     @Override
@@ -661,7 +670,12 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
         if (value == null) {
             return null;
         }
-        return createJsonValue(value).asDouble();
+        if (value instanceof Number) {
+            return ((Number) value).doubleValue();
+        }
+
+        throw new IllegalArgumentException("The property is of type "
+                + value.getClass().getName() + ", not Number");
     }
 
     @Override
@@ -709,22 +723,6 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
 
         }
         return result;
-    }
-
-    private JsonNode createJsonValue(Object value) {
-        if (value == null) {
-            return NullNode.instance;
-        } else if (value instanceof String) {
-            return StringNode.valueOf((String) value);
-        } else if (value instanceof Number) {
-            return DoubleNode.valueOf(((Number) value).doubleValue());
-        } else if (value instanceof Boolean) {
-            return BooleanNode.valueOf((Boolean) value);
-        } else {
-            throw new IllegalArgumentException(
-                    "Type of property is unsupported: "
-                            + value.getClass().getName());
-        }
     }
 
     /**
