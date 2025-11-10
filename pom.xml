@@ -37,7 +37,7 @@
         <maven.compiler.release>21</maven.compiler.release>
         <maven.compiler.source>${maven.compiler.release}</maven.compiler.source>
         <maven.compiler.target>${maven.compiler.release}</maven.compiler.target>
-        <spring.boot.version>4.0.0-RC1</spring.boot.version>
+        <spring.boot.version>4.0.0-RC2</spring.boot.version>
         <vaadin.version>25.0-SNAPSHOT</vaadin.version>
         <flow.version>25.0-SNAPSHOT</flow.version>
         <slf4j.version>2.0.7</slf4j.version>
