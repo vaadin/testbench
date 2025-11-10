@@ -33,10 +33,10 @@ import com.vaadin.flow.server.StreamVariable;
 import com.vaadin.flow.server.VaadinRequest;
 import com.vaadin.flow.server.VaadinResponse;
 import com.vaadin.flow.server.VaadinSession;
+import com.vaadin.flow.server.communication.TransferUtil;
 import com.vaadin.flow.server.communication.streaming.StreamingEndEventImpl;
 import com.vaadin.flow.server.communication.streaming.StreamingErrorEventImpl;
 import com.vaadin.flow.server.communication.streaming.StreamingStartEventImpl;
-import com.vaadin.flow.server.streams.TransferUtil;
 import com.vaadin.flow.server.streams.UploadEvent;
 import com.vaadin.flow.server.streams.UploadHandler;
 import com.vaadin.testbench.unit.ComponentTester;
@@ -306,7 +306,7 @@ public class UploadTester<T extends Upload> extends ComponentTester<T> {
         UploadEvent event = new UploadEvent(VaadinRequest.getCurrent(),
                 VaadinResponse.getCurrent(), VaadinSession.getCurrent(),
                 item.fileName, contentLength, item.contentType,
-                getComponent().getElement(), null, null) {
+                getComponent().getElement(), null) {
             @Override
             public InputStream getInputStream() {
                 return inputStream;

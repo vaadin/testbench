@@ -142,8 +142,7 @@ class AssertingTransferProgressListener implements TransferProgressListener {
             UploadEvent newEvent = new UploadEvent(event.getRequest(),
                     event.getResponse(), event.getSession(),
                     event.getFileName(), event.getFileSize(),
-                    event.getContentType(), event.getOwningElement(), null,
-                    null) {
+                    event.getContentType(), event.getOwningElement(), null) {
                 @Override
                 public InputStream getInputStream() {
                     return new InputStream() {
