@@ -104,11 +104,11 @@ jobs:
           mvn javadoc:javadoc verify \
             -P validation \
             -Dtestbench.javadocs \
-            -Dsystem.com.vaadin.testbench.Parameters.testsInParallel=5 \
+            -Dsystem.com.vaadin.testbench.Parameters.testsInParallel=2 \
             -Dsystem.com.vaadin.testbench.Parameters.maxAttempts=2 \
             -Dcom.vaadin.testbench.Parameters.hubHostname=localhost \
             -Dsauce.tunnelId=${SAUCE_TUNNEL_ID} \
-            -Dfailsafe.forkCount=5 \
+            -Dfailsafe.forkCount=2 \
             -Dsystem.sauce.user=${SAUCE_USERNAME} \
             -Dsystem.sauce.sauceAccessKey=${SAUCE_ACCESS_KEY} \
             -B
