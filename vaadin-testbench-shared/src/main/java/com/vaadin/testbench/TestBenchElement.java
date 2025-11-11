@@ -44,11 +44,6 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import tools.jackson.databind.JsonNode;
-import tools.jackson.databind.node.BooleanNode;
-import tools.jackson.databind.node.DoubleNode;
-import tools.jackson.databind.node.NullNode;
-import tools.jackson.databind.node.StringNode;
 
 import com.vaadin.testbench.commands.CanCompareScreenshots;
 import com.vaadin.testbench.commands.ScreenshotComparator;
