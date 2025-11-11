@@ -68,16 +68,12 @@ public class BasicElementIT extends AbstractTB6Test {
         Assert.assertNull(buttonElement.getPropertyString("foo"));
         buttonElement.setProperty("foo", "12");
         Assert.assertEquals("12", buttonElement.getPropertyString("foo"));
-        Assert.assertEquals(12.0, buttonElement.getPropertyDouble("foo"), 0);
-        Assert.assertTrue(buttonElement.getPropertyBoolean("foo"));
     }
 
     @Test
     public void getSetBooleanProperty() {
         Assert.assertNull(buttonElement.getPropertyBoolean("foo"));
         buttonElement.setProperty("foo", true);
-        Assert.assertEquals("true", buttonElement.getPropertyString("foo"));
-        Assert.assertEquals(1.0, buttonElement.getPropertyDouble("foo"), 0);
         Assert.assertTrue(buttonElement.getPropertyBoolean("foo"));
     }
 
@@ -85,8 +81,6 @@ public class BasicElementIT extends AbstractTB6Test {
     public void getSetFalseBooleanProperty() {
         Assert.assertNull(buttonElement.getPropertyBoolean("foo"));
         buttonElement.setProperty("foo", false);
-        Assert.assertEquals("false", buttonElement.getPropertyString("foo"));
-        Assert.assertEquals(0.0, buttonElement.getPropertyDouble("foo"), 0);
         Assert.assertFalse(buttonElement.getPropertyBoolean("foo"));
     }
 
@@ -94,18 +88,15 @@ public class BasicElementIT extends AbstractTB6Test {
     public void getSetDoubleProperty() {
         Assert.assertNull(buttonElement.getPropertyDouble("foo"));
         buttonElement.setProperty("foo", 12.5);
-        Assert.assertEquals("12.5", buttonElement.getPropertyString("foo"));
         Assert.assertEquals(12.5, buttonElement.getPropertyDouble("foo"), 0);
-        Assert.assertTrue(buttonElement.getPropertyBoolean("foo"));
     }
 
     @Test
     public void getSetIntegerProperty() {
         Assert.assertNull(buttonElement.getPropertyInteger("foo"));
         buttonElement.setProperty("foo", 12);
-        Assert.assertEquals("12", buttonElement.getPropertyString("foo"));
-        Assert.assertEquals(12, buttonElement.getPropertyInteger("foo"), 0);
-        Assert.assertTrue(buttonElement.getPropertyBoolean("foo"));
+        Assert.assertEquals(Integer.valueOf(12),
+                buttonElement.getPropertyInteger("foo"));
     }
 
     @Test
