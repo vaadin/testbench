@@ -38,11 +38,123 @@ jobs:
       - name: Run formatter validation
         run: mvn formatter:validate --batch-mode --no-transfer-progress
 
-  build-and-test:
-    name: Build and Test
+  build:
+    name: Build Project
     needs: format-check
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: "temurin"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Cache Maven dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}-${{ github.run_id }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Clean Maven cache (if needed)
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          echo "---> Clean maven cache"
+          rm -rf ~/.m2/repository ~/.npm* ~/.pnpm*
+
+      - name: Build with Maven and Generate Javadoc
+        run: |
+          mvn clean install -DskipTests -B
+          mvn javadoc:javadoc -Dtestbench.javadocs -B
+
+  unit-tests:
+    name: Unit Tests
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: "temurin"
+
+      - name: Restore Maven cache
+        uses: actions/cache/restore@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}-${{ github.run_id }}
+
+      - name: Set TB License
+        run: |
+          TB_LICENSE=${{secrets.TB_LICENSE}}
+          mkdir -p ~/.vaadin/
+          echo '{"username":"'`echo $TB_LICENSE | cut -d / -f1`'","proKey":"'`echo $TB_LICENSE | cut -d / -f2`'"}' > ~/.vaadin/proKey
+
+      - name: Run unit tests
+        run: |
+          mvn test -B
+
+      - name: Upload test reports on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-test-reports-${{ github.run_id }}
+          path: |
+            **/target/surefire-reports/
+          retention-days: 7
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-test-results-${{ github.run_id }}
+          path: |
+            **/target/surefire-reports/TEST-*.xml
+          retention-days: 7
+
+      - name: Publish unit test results
+        if: always()
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        with:
+          files: |
+            **/target/surefire-reports/TEST-*.xml
+          check_name: Unit Test Results
+          comment_mode: failures
+
+  integration-tests:
+    name: Integration Tests (${{ matrix.name }})
+    needs: build
+    runs-on: ubuntu-latest
     timeout-minutes: 45
+    concurrency:
+      group: saucelabs-testbench  # Global queue for SauceLabs tests only
+      cancel-in-progress: false
+    strategy:
+      max-parallel: 1  # Only one JUnit version at a time to stay within SauceLabs limit
+      matrix:
+        include:
+          - name: JUnit 4
+            module: vaadin-testbench-integration-tests
+          - name: JUnit 5
+            module: vaadin-testbench-integration-tests-junit5
+          - name: JUnit 6
+            module: vaadin-testbench-integration-tests-junit6
 
     steps:
       - name: Checkout repository
@@ -61,19 +173,11 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Cache Maven dependencies
-        uses: actions/cache@v4
+      - name: Restore Maven cache
+        uses: actions/cache/restore@v4
         with:
           path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
-
-      - name: Clean Maven cache (if needed)
-        if: github.event_name == 'workflow_dispatch'
-        run: |
-          echo "---> Clean maven cache"
-          rm -rf ~/.m2/repository ~/.npm* ~/.pnpm*
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}-${{ github.run_id }}
 
       - name: Set up Sauce Labs tunnel
         uses: saucelabs/sauce-connect-action@v3.0.0
@@ -91,19 +195,16 @@ jobs:
           mkdir -p ~/.vaadin/
           echo '{"username":"'`echo $TB_LICENSE | cut -d / -f1`'","proKey":"'`echo $TB_LICENSE | cut -d / -f2`'"}' > ~/.vaadin/proKey
 
-      - name: Build with Maven
-        run: |
-          mvn clean install -DskipTests -B
-
-      - name: Run Tests and Generate Javadoc
+      - name: Run Integration Tests
         env:
           SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
           SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
           SAUCE_TUNNEL_ID: ${{ github.run_id }}-${{ github.run_number }}
         run: |
-          mvn javadoc:javadoc verify \
+          mvn verify \
+            -pl ${{ matrix.module }} -am \
             -P validation \
-            -Dtestbench.javadocs \
+            -Dsurefire.skip=true \
             -Dsystem.com.vaadin.testbench.Parameters.testsInParallel=5 \
             -Dsystem.com.vaadin.testbench.Parameters.maxAttempts=2 \
             -Dcom.vaadin.testbench.Parameters.hubHostname=localhost \
@@ -117,18 +218,17 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: error-screenshots-${{ github.run_id }}
+          name: error-screenshots-${{ matrix.name }}-${{ github.run_id }}
           path: |
             **/error-screenshots/**
           retention-days: 7
-      
+
       - name: Upload test reports on failure
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: test-reports-${{ github.run_id }}
+          name: integration-test-reports-${{ matrix.name }}-${{ github.run_id }}
           path: |
-            **/target/surefire-reports/
             **/target/failsafe-reports/
           retention-days: 7
 
@@ -136,18 +236,16 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-results-${{ github.run_id }}
+          name: integration-test-results-${{ matrix.name }}-${{ github.run_id }}
           path: |
-            **/target/surefire-reports/TEST-*.xml
             **/target/failsafe-reports/TEST-*.xml
           retention-days: 7
 
-      - name: Publish test results
+      - name: Publish integration test results
         if: always()
         uses: EnricoMi/publish-unit-test-result-action@v2
         with:
           files: |
-            **/target/surefire-reports/TEST-*.xml
             **/target/failsafe-reports/TEST-*.xml
-          check_name: Test Results
+          check_name: Integration Test Results (${{ matrix.name }})
           comment_mode: failures
