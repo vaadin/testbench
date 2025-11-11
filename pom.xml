@@ -50,7 +50,7 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <vaadin.version>8.29-SNAPSHOT</vaadin.version>
+        <vaadin.version>8.29.0</vaadin.version>
         <vaadin.testbench.api.version>${vaadin.version}</vaadin.testbench.api.version>
         <snapshot.repository.url>https://maven.vaadin.com/vaadin-prereleases/
         </snapshot.repository.url>
