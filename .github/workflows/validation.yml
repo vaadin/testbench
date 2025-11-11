@@ -77,6 +77,8 @@ jobs:
             -Dsystem.com.vaadin.testbench.Parameters.maxAttempts=2 \
             -Dcom.vaadin.testbench.Parameters.hubHostname=localhost \
             -Dfailsafe.forkCount=5 \
+            -Dsurefire.printSummary=true \
+            -Dsurefire.reportFormat=plain \
             -B \
             -fae
 
@@ -88,7 +90,7 @@ jobs:
           path: |
             **/error-screenshots/**
           retention-days: 7
-      
+
       - name: Upload test reports on failure
         if: failure()
         uses: actions/upload-artifact@v4
@@ -118,3 +120,20 @@ jobs:
             **/target/failsafe-reports/TEST-*.xml
           check_name: Test Results
           comment_mode: failures
+
+      # 🆕 New step: Append skipped test names to GHA summary
+      - name: Summarize skipped tests (${{ matrix.browser }})
+        if: always()
+        run: |
+          echo "### ⚠️ Skipped Tests (${{ matrix.browser }})" >> $GITHUB_STEP_SUMMARY
+          SKIPPED=$(grep -R "<skipped" **/target/*-reports/TEST-*.xml || true)
+          if [ -z "$SKIPPED" ]; then
+            echo "No skipped tests found." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "$SKIPPED" | \
+              sed -E 's|.*/TEST-(.*)\.xml:.*name="([^"]*)".*|• \1 :: \2|' | \
+              sort -u >> $GITHUB_STEP_SUMMARY
+            COUNT=$(echo "$SKIPPED" | wc -l)
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Total skipped tests:** $COUNT" >> $GITHUB_STEP_SUMMARY
+          fi
