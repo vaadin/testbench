@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import com.vaadin.testbench.Parameters;
 import com.vaadin.testbench.TestBench;
+import com.vaadin.testbench.parallel.SauceLabsIntegration;
 
 public class RemoteDriver {
 
@@ -50,10 +51,17 @@ public class RemoteDriver {
                 WebDriver driver = new RemoteWebDriver(executor, capabilities);
                 return TestBench.createDriver(driver);
             } catch (Exception e) {
-                getLogger().error("Browser startup for " + capabilities
-                        + " failed on attempt " + i, e);
                 if (i == BROWSER_INIT_ATTEMPTS) {
+                    getLogger().error("Browser startup for " + capabilities
+                            + " failed on attempt " + i + " (final attempt)", e);
                     throw e;
+                } else {
+                    String testName = getTestName(capabilities);
+                    String testInfo = testName != null ? " for test " + testName : "";
+                    getLogger().info("Browser startup failed on attempt {}/{}{}, retrying...",
+                            i, BROWSER_INIT_ATTEMPTS, testInfo);
+                    getLogger().debug("Browser startup for " + capabilities
+                            + " failed on attempt " + i, e);
                 }
             }
         }
@@ -64,6 +72,17 @@ public class RemoteDriver {
 
     private Logger getLogger() {
         return LoggerFactory.getLogger(getClass());
+    }
 
+    private String getTestName(DesiredCapabilities capabilities) {
+        // Try to get test name from sauce:options first (SauceLabs)
+        Object testName = SauceLabsIntegration.getSauceLabsOption(capabilities,
+                SauceLabsIntegration.CapabilityType.NAME);
+        if (testName != null) {
+            return testName.toString();
+        }
+        // Fallback to direct capability
+        testName = capabilities.getCapability("name");
+        return testName != null ? testName.toString() : null;
     }
 }
