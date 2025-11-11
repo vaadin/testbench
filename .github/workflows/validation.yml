@@ -38,11 +38,11 @@ jobs:
       - name: Run formatter validation
         run: mvn formatter:validate --batch-mode --no-transfer-progress
 
-  build-and-test:
-    name: Build and Test
+  build:
+    name: Build and Unit Tests
     needs: format-check
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 20
 
     steps:
       - name: Checkout repository
@@ -75,12 +75,87 @@ jobs:
           echo "---> Clean maven cache"
           rm -rf ~/.m2/repository ~/.npm* ~/.pnpm*
 
+      - name: Set TB License
+        run: |
+          TB_LICENSE=${{secrets.TB_LICENSE}}
+          mkdir -p ~/.vaadin/
+          echo '{"username":"'`echo $TB_LICENSE | cut -d / -f1`'","proKey":"'`echo $TB_LICENSE | cut -d / -f2`'"}' > ~/.vaadin/proKey
+
+      - name: Build all modules and run unit tests
+        run: |
+          mvn clean install -B
+
+      - name: Generate Javadoc
+        run: |
+          mvn javadoc:javadoc -Dtestbench.javadocs -B
+
+      - name: Upload built artifacts for IT tests
+        uses: actions/upload-artifact@v4
+        with:
+          name: maven-artifacts
+          path: |
+            ~/.m2/repository/com/vaadin/vaadin-testbench-*
+          retention-days: 1
+
+      - name: Upload surefire test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-test-results
+          path: |
+            **/target/surefire-reports/TEST-*.xml
+          retention-days: 7
+
+  integration-tests:
+    name: Integration Tests (${{ matrix.module }})
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        module:
+          - junit4
+          - junit5
+          - junit6
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: "temurin"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Cache Maven dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Download built artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: maven-artifacts
+          path: ~/.m2/repository
+
       - name: Set up Sauce Labs tunnel
         uses: saucelabs/sauce-connect-action@v3.0.0
         with:
           username: ${{ secrets.SAUCE_USERNAME }}
           accessKey: ${{ secrets.SAUCE_ACCESS_KEY }}
-          tunnelName: ${{ github.run_id }}-${{ github.run_number }}
+          tunnelName: ${{ github.run_id }}-${{ github.run_number }}-${{ matrix.module }}
           region: us-west-1
           retryTimeout: 300
           proxyLocalhost: allow
@@ -91,19 +166,22 @@ jobs:
           mkdir -p ~/.vaadin/
           echo '{"username":"'`echo $TB_LICENSE | cut -d / -f1`'","proKey":"'`echo $TB_LICENSE | cut -d / -f2`'"}' > ~/.vaadin/proKey
 
-      - name: Build with Maven
-        run: |
-          mvn clean install -DskipTests -B
-
-      - name: Run Tests and Generate Javadoc
+      - name: Run Integration Tests
         env:
           SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
           SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
-          SAUCE_TUNNEL_ID: ${{ github.run_id }}-${{ github.run_number }}
+          SAUCE_TUNNEL_ID: ${{ github.run_id }}-${{ github.run_number }}-${{ matrix.module }}
         run: |
-          mvn javadoc:javadoc verify \
+          if [ "${{ matrix.module }}" = "junit4" ]; then
+            MODULE_PATH="vaadin-testbench-integration-tests"
+          else
+            MODULE_PATH="vaadin-testbench-integration-tests-${{ matrix.module }}"
+          fi
+
+          mvn verify \
+            -pl $MODULE_PATH \
+            -am \
             -P validation \
-            -Dtestbench.javadocs \
             -Dsystem.com.vaadin.testbench.Parameters.testsInParallel=5 \
             -Dsystem.com.vaadin.testbench.Parameters.maxAttempts=2 \
             -Dcom.vaadin.testbench.Parameters.hubHostname=localhost \
@@ -117,18 +195,17 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: error-screenshots-${{ github.run_id }}
+          name: error-screenshots-${{ matrix.module }}-${{ github.run_id }}
           path: |
             **/error-screenshots/**
           retention-days: 7
-      
+
       - name: Upload test reports on failure
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: test-reports-${{ github.run_id }}
+          name: test-reports-${{ matrix.module }}-${{ github.run_id }}
           path: |
-            **/target/surefire-reports/
             **/target/failsafe-reports/
           retention-days: 7
 
@@ -136,18 +213,28 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-results-${{ github.run_id }}
+          name: it-test-results-${{ matrix.module }}
           path: |
-            **/target/surefire-reports/TEST-*.xml
             **/target/failsafe-reports/TEST-*.xml
           retention-days: 7
 
+  publish-test-results:
+    name: Publish Test Results
+    needs: [build, integration-tests]
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+      - name: Download all test results
+        uses: actions/download-artifact@v4
+        with:
+          pattern: '*-test-results*'
+          merge-multiple: true
+
       - name: Publish test results
-        if: always()
         uses: EnricoMi/publish-unit-test-result-action@v2
         with:
           files: |
-            **/target/surefire-reports/TEST-*.xml
-            **/target/failsafe-reports/TEST-*.xml
+            **/TEST-*.xml
           check_name: Test Results
           comment_mode: failures
