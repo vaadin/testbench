@@ -53,12 +53,15 @@ public class RemoteDriver {
             } catch (Exception e) {
                 if (i == BROWSER_INIT_ATTEMPTS) {
                     getLogger().error("Browser startup for " + capabilities
-                            + " failed on attempt " + i + " (final attempt)", e);
+                            + " failed on attempt " + i + " (final attempt)",
+                            e);
                     throw e;
                 } else {
                     String testName = getTestName(capabilities);
-                    String testInfo = testName != null ? " for test " + testName : "";
-                    getLogger().info("Browser startup failed on attempt {}/{}{}, retrying...",
+                    String testInfo = testName != null ? " for test " + testName
+                            : "";
+                    getLogger().info(
+                            "Browser startup failed on attempt {}/{}{}, retrying...",
                             i, BROWSER_INIT_ATTEMPTS, testInfo);
                     getLogger().debug("Browser startup for " + capabilities
                             + " failed on attempt " + i, e);
