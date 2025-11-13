@@ -8,14 +8,11 @@
  */
 package com.vaadin.testbench;
 
+import javax.imageio.ImageIO;
+
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
-
-import com.vaadin.testbench.screenshot.ImageFileUtil;
 
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
@@ -26,6 +23,8 @@ import org.openqa.selenium.WrapsDriver;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.vaadin.testbench.screenshot.ImageFileUtil;
 
 /**
  * This JUnit {@link org.junit.Rule} grabs a screenshot when a test fails.

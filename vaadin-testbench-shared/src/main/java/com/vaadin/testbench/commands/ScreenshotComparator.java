@@ -10,6 +10,7 @@ package com.vaadin.testbench.commands;
 
 import javax.imageio.IIOException;
 import javax.imageio.ImageIO;
+
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
