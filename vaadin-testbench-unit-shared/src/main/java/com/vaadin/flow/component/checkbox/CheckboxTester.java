@@ -11,6 +11,7 @@ package com.vaadin.flow.component.checkbox;
 import java.util.function.Consumer;
 
 import com.vaadin.testbench.unit.ComponentTester;
+import com.vaadin.testbench.unit.MetaKeys;
 import com.vaadin.testbench.unit.Tests;
 
 /**
@@ -47,5 +48,11 @@ public class CheckboxTester<T extends Checkbox> extends ComponentTester<T> {
         if (getComponent().isDisabledBoolean()) {
             collector.accept("disabled");
         }
+    }
+
+    @Override
+    public void click(int button, MetaKeys metaKeys) {
+        super(button, metaKeys);
+        checkbox.setValue(!checkbox.getValue());
     }
 }
