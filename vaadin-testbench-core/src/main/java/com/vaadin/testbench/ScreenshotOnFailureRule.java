@@ -141,7 +141,11 @@ public class ScreenshotOnFailureRule extends TestWatcher {
         super.finished(description);
         if (quitDriverOnFinish && driverHolder != null
                 && driverHolder.getDriver() != null) {
-            driverHolder.getDriver().quit();
+            try {
+                driverHolder.getDriver().quit();
+            } catch (Exception e) {
+                getLogger().warn("Unable to quit driver: " + e.getMessage(), e);
+            }
         }
     }
 

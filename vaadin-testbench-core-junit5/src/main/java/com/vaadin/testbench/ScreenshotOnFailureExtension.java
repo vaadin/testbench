@@ -146,7 +146,11 @@ public class ScreenshotOnFailureExtension implements TestWatcher {
     private void quitDriverOnFinish() {
         if (quitDriverOnFinish && driverHolder != null
                 && driverHolder.getDriver() != null) {
-            driverHolder.getDriver().quit();
+            try {
+                driverHolder.getDriver().quit();
+            } catch (Exception e) {
+                getLogger().warn("Unable to quit driver: " + e.getMessage(), e);
+            }
         }
     }
 
