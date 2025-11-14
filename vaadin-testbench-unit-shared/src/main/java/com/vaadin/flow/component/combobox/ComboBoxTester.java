@@ -73,6 +73,9 @@ public class ComboBoxTester<T extends ComboBox<Y>, Y>
             setValueAsUser(null);
             return;
         }
+        // Apply the filter to respect native filtering behavior
+        setFilter(selection);
+
         final List<Y> suggestionItems = getSuggestionItems();
         final ItemLabelGenerator<Y> itemLabelGenerator = getComponent()
                 .getItemLabelGenerator();
@@ -84,6 +87,9 @@ public class ComboBoxTester<T extends ComboBox<Y>, Y>
                     "No item found for '" + selection + "'");
         }
         setValueAsUser(filtered.get(0));
+
+        // Clear the filter after selection
+        setFilter("");
     }
 
     /**
