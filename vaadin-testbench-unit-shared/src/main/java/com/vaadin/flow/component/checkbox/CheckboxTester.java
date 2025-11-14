@@ -53,6 +53,7 @@ public class CheckboxTester<T extends Checkbox> extends ComponentTester<T> {
     @Override
     public void click(int button, MetaKeys metaKeys) {
         super.click(button, metaKeys);
-        getComponent().setValue(!checkbox.getValue());
+        T checkbox = getComponent();
+        checkbox.setValue(!checkbox.getValue());
     }
 }
