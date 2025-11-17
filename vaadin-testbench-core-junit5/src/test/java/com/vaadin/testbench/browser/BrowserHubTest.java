@@ -8,12 +8,12 @@
  */
 package com.vaadin.testbench.browser;
 
-import com.vaadin.testbench.Parameters;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
+import com.vaadin.testbench.Parameters;
 import com.vaadin.testbench.annotations.RunOnHub;
 import com.vaadin.testbench.parallel.SauceLabsIntegration;
 

@@ -18,11 +18,6 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import com.vaadin.testbench.Parameters;
-import com.vaadin.testbench.annotations.BrowserConfiguration;
-import com.vaadin.testbench.annotations.BrowserFactory;
-import com.vaadin.testbench.annotations.RunLocally;
-
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runners.BlockJUnit4ClassRunner;
@@ -34,6 +29,11 @@ import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.vaadin.testbench.Parameters;
+import com.vaadin.testbench.annotations.BrowserConfiguration;
+import com.vaadin.testbench.annotations.BrowserFactory;
+import com.vaadin.testbench.annotations.RunLocally;
 
 /**
  * This runner is loosely based on FactoryTestRunner by Ted Young

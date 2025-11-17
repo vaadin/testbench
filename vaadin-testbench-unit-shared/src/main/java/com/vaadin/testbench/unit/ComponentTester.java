@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.node.ObjectNode;
 
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.Component;
@@ -28,7 +29,6 @@ import com.vaadin.flow.dom.DomEvent;
 import com.vaadin.flow.internal.JacksonUtils;
 import com.vaadin.flow.internal.nodefeature.ElementListenerMap;
 import com.vaadin.testbench.unit.internal.PrettyPrintTreeKt;
-import tools.jackson.databind.node.ObjectNode;
 
 /**
  * Test wrapper for components with helpful methods for testing a component.
