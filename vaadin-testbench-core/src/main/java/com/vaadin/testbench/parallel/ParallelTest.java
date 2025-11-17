@@ -11,14 +11,6 @@ package com.vaadin.testbench.parallel;
 import java.util.Collections;
 import java.util.List;
 
-import com.vaadin.testbench.Parameters;
-import com.vaadin.testbench.ScreenshotOnFailureRule;
-import com.vaadin.testbench.TestBenchTestCase;
-import com.vaadin.testbench.annotations.BrowserConfiguration;
-import com.vaadin.testbench.annotations.RunLocally;
-import com.vaadin.testbench.annotations.RunOnHub;
-import com.vaadin.testbench.parallel.setup.SetupDriver;
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.runner.RunWith;
@@ -26,6 +18,14 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.vaadin.testbench.Parameters;
+import com.vaadin.testbench.ScreenshotOnFailureRule;
+import com.vaadin.testbench.TestBenchTestCase;
+import com.vaadin.testbench.annotations.BrowserConfiguration;
+import com.vaadin.testbench.annotations.RunLocally;
+import com.vaadin.testbench.annotations.RunOnHub;
+import com.vaadin.testbench.parallel.setup.SetupDriver;
 
 /**
  * Unit tests should extend {@link ParallelTest} if they are to be run in

@@ -8,8 +8,7 @@
  */
 package com.vaadin.testbench.testutils;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import javax.imageio.ImageIO;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
@@ -19,9 +18,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
 
-import javax.imageio.ImageIO;
-
 import org.apache.commons.codec.binary.Base64;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class ImageLoader {
 

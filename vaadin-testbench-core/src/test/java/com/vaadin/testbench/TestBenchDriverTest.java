@@ -8,11 +8,6 @@
  */
 package com.vaadin.testbench;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.contains;
-import static org.mockito.ArgumentMatchers.isA;
-
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -30,6 +25,11 @@ import org.openqa.selenium.WebDriver.TargetLocator;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.WrapsDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.contains;
+import static org.mockito.ArgumentMatchers.isA;
 
 public class TestBenchDriverTest {
 
