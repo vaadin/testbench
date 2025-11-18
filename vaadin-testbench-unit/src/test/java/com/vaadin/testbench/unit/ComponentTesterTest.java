@@ -24,6 +24,7 @@ import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.HasText;
 import com.vaadin.flow.component.Tag;
+import com.vaadin.flow.server.VaadinSession;
 
 @ViewPackages(packages = "com.example")
 public class ComponentTesterTest extends UIUnit4Test {
