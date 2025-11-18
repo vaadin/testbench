@@ -23,13 +23,13 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.function.DeploymentConfiguration;
 import com.vaadin.flow.server.ServiceException;
 import com.vaadin.flow.server.VaadinServletRequest;
 import com.vaadin.flow.server.VaadinServletService;
 import com.vaadin.flow.spring.SpringServlet;
 import com.vaadin.testbench.unit.internal.Routes;
+import com.vaadin.testbench.unit.internal.UIFactory;
 import com.vaadin.testbench.unit.internal.UtilsKt;
 
 /**
@@ -46,10 +46,10 @@ public class MockSpringServlet extends SpringServlet {
     @NotNull
     public final ApplicationContext ctx;
     @NotNull
-    public final Function0<UI> uiFactory;
+    public final UIFactory uiFactory;
 
     public MockSpringServlet(@NotNull Routes routes,
-            @NotNull ApplicationContext ctx, @NotNull Function0<UI> uiFactory) {
+            @NotNull ApplicationContext ctx, @NotNull UIFactory uiFactory) {
         super(ctx, false);
         this.ctx = ctx;
         this.routes = routes;
