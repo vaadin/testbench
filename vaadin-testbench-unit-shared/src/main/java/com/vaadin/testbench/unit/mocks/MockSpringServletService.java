@@ -8,7 +8,6 @@
  */
 package com.vaadin.testbench.unit.mocks;
 
-import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.context.ApplicationContext;
 
@@ -18,6 +17,7 @@ import com.vaadin.flow.function.DeploymentConfiguration;
 import com.vaadin.flow.server.VaadinRequest;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.spring.SpringVaadinServletService;
+import com.vaadin.testbench.unit.internal.UIFactory;
 
 /**
  * A mocking service that performs three very important tasks:
@@ -35,7 +35,7 @@ import com.vaadin.flow.spring.SpringVaadinServletService;
  */
 public class MockSpringServletService extends SpringVaadinServletService {
     @NotNull
-    private final Function0<UI> uiFactory;
+    private final UIFactory uiFactory;
 
     public MockSpringServletService(@NotNull MockSpringServlet servlet,
             @NotNull DeploymentConfiguration deploymentConfiguration,
