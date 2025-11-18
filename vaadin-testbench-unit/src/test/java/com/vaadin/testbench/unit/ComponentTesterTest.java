@@ -8,6 +8,9 @@
  */
 package com.vaadin.testbench.unit;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.List;
 import java.util.Optional;
 
@@ -213,6 +216,17 @@ public class ComponentTesterTest extends UIUnit4Test {
         List<Span> result = wrapper_.findAllByQuery(Span.class,
                 query -> query.withTextContaining("Three"));
         Assert.assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void mockVaadinIsSerializable()
+            throws IOException, ClassNotFoundException {
+        var session = VaadinSession.getCurrent();
+        var bs = new ByteArrayOutputStream();
+        var os = new ObjectOutputStream(bs);
+        os.writeObject(session);
+        os.flush();
+        os.close();        
     }
 
     private WelcomeView getHome() {
