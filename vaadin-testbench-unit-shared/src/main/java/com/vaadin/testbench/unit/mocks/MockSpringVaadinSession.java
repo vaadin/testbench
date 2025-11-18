@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import com.vaadin.flow.server.VaadinService;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.testbench.unit.internal.MockVaadin;
-import com.vaadin.testbench.unit.internal.MockVaadin.UIFactory;
+import com.vaadin.testbench.unit.internal.UIFactory;
 
 /**
  * A Vaadin Session with one important difference:
