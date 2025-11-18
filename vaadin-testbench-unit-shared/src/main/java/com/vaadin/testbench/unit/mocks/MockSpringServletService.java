@@ -11,7 +11,6 @@ package com.vaadin.testbench.unit.mocks;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.context.ApplicationContext;
 
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.di.Instantiator;
 import com.vaadin.flow.function.DeploymentConfiguration;
 import com.vaadin.flow.server.VaadinRequest;
