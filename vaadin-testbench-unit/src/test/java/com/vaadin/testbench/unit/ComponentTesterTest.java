@@ -226,7 +226,7 @@ public class ComponentTesterTest extends UIUnit4Test {
         var os = new ObjectOutputStream(bs);
         os.writeObject(session);
         os.flush();
-        os.close();        
+        os.close();
     }
 
     private WelcomeView getHome() {
