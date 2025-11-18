@@ -40,7 +40,8 @@ import com.vaadin.testbench.unit.internal.PrettyPrintTreeKt;
  * @param <T>
  *            component type
  */
-public class ComponentTester<T extends Component> implements Clickable<T>, Serializable {
+public class ComponentTester<T extends Component>
+        implements Clickable<T>, Serializable {
 
     private final T component;
 
