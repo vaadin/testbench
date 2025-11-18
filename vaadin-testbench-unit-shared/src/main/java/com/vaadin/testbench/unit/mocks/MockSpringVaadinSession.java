@@ -15,6 +15,7 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.server.VaadinService;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.testbench.unit.internal.MockVaadin;
+import com.vaadin.testbench.unit.internal.MockVaadin.UIFactory;
 
 /**
  * A Vaadin Session with one important difference:
@@ -31,10 +32,10 @@ import com.vaadin.testbench.unit.internal.MockVaadin;
  */
 public class MockSpringVaadinSession extends VaadinSession {
     @NotNull
-    private final Function0<UI> uiFactory;
+    private final UIFactory uiFactory;
 
     public MockSpringVaadinSession(@NotNull VaadinService service,
-            @NotNull Function0<UI> uiFactory) {
+            @NotNull UIFactory uiFactory) {
         super(service);
         this.uiFactory = uiFactory;
     }
