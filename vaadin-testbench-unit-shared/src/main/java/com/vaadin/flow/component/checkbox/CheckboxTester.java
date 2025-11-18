@@ -10,6 +10,8 @@ package com.vaadin.flow.component.checkbox;
 
 import java.util.function.Consumer;
 
+import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.component.ComponentUtil;
 import com.vaadin.testbench.unit.ComponentTester;
 import com.vaadin.testbench.unit.Tests;
 
