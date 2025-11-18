@@ -39,7 +39,7 @@ public class MockSpringServletService extends SpringVaadinServletService {
 
     public MockSpringServletService(@NotNull MockSpringServlet servlet,
             @NotNull DeploymentConfiguration deploymentConfiguration,
-            @NotNull ApplicationContext ctx, @NotNull Function0<UI> uiFactory) {
+            @NotNull ApplicationContext ctx, @NotNull UIFactory uiFactory) {
         super(servlet, deploymentConfiguration, ctx);
         this.uiFactory = uiFactory;
     }
