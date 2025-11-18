@@ -29,7 +29,7 @@ import com.vaadin.flow.server.VaadinSession
  */
 open class MockService(servlet: VaadinServlet,
                               deploymentConfiguration: DeploymentConfiguration,
-                              val uiFactory: () -> UI = { MockedUI() }
+                              val uiFactory: () -> UI = @JvmSerializableLambda { MockedUI() }
 ) : VaadinServletService(servlet, deploymentConfiguration) {
     // need to have this override. Setting `VaadinService.atmosphereAvailable` to false via
     // reflection after the servlet has been initialized is too late, since Atmo is initialized
