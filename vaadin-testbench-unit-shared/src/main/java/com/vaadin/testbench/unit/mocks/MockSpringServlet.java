@@ -15,7 +15,6 @@ import java.lang.reflect.Constructor;
 import java.security.Principal;
 import java.util.function.UnaryOperator;
 
-import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
