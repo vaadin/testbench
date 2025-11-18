@@ -62,7 +62,6 @@ public class CheckboxTester<T extends Checkbox> extends ComponentTester<T> {
         T checkbox = getComponent();
         ComponentUtil.fireEvent(checkbox, new ClickEvent<>(checkbox, true, 0, 0,
                 0, 0, 0, 0, false, false, false, false));
-        checkbox.setValue(!checkbox.getValue());
         setValueAsUser(!checkbox.getValue());
     }
 }
