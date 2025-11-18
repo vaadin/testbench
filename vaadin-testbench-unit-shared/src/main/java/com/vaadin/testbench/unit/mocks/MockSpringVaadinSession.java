@@ -8,6 +8,7 @@
  */
 package com.vaadin.testbench.unit.mocks;
 
+import com.vaadin.testbench.unit.internal.UIFactory;
 import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 
@@ -31,10 +32,17 @@ import com.vaadin.testbench.unit.internal.MockVaadin;
  */
 public class MockSpringVaadinSession extends VaadinSession {
     @NotNull
-    private final Function0<UI> uiFactory;
+    private final UIFactory uiFactory;
 
+    @Deprecated
     public MockSpringVaadinSession(@NotNull VaadinService service,
             @NotNull Function0<UI> uiFactory) {
+        super(service);
+        this.uiFactory = uiFactory::invoke;
+    }
+
+    public MockSpringVaadinSession(@NotNull VaadinService service,
+            @NotNull UIFactory uiFactory) {
         super(service);
         this.uiFactory = uiFactory;
     }
