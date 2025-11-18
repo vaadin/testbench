@@ -221,7 +221,7 @@ public class ComponentTesterTest extends UIUnit4Test {
     @Test
     public void mockVaadinIsSerializable()
             throws IOException, ClassNotFoundException {
-        System.setProperty("sun.io.serialization.extendedDebugInfo", "true")
+        System.setProperty("sun.io.serialization.extendedDebugInfo", "true");
         var bs = new ByteArrayOutputStream();
         var os = new ObjectOutputStream(bs);
         os.writeObject(home);
