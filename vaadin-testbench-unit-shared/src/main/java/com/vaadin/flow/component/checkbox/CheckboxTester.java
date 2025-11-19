@@ -10,9 +10,8 @@ package com.vaadin.flow.component.checkbox;
 
 import java.util.function.Consumer;
 
-import com.vaadin.flow.component.ClickEvent;
-import com.vaadin.flow.component.ComponentUtil;
 import com.vaadin.testbench.unit.ComponentTester;
+import com.vaadin.testbench.unit.MetaKeys;
 import com.vaadin.testbench.unit.Tests;
 
 /**
@@ -51,17 +50,10 @@ public class CheckboxTester<T extends Checkbox> extends ComponentTester<T> {
         }
     }
 
-    /**
-     * If the component is usable, send click to component as if it was from the
-     * client.
-     *
-     * Checkbox status changes from unchecked to checked or vice versa.
-     */
-    public void click() {
-        ensureComponentIsUsable();
+    @Override
+    public void click(int button, MetaKeys metaKeys) {
+        super.click(button, metaKeys);
         T checkbox = getComponent();
-        ComponentUtil.fireEvent(checkbox, new ClickEvent<>(checkbox, true, 0, 0,
-                0, 0, 0, 0, false, false, false, false));
-        checkbox.setValue(!checkbox.getValue());
+        setValueAsUser(!checkbox.getValue());
     }
 }

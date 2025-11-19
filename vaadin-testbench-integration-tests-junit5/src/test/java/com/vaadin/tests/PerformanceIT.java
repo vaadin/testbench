@@ -9,7 +9,6 @@
 package com.vaadin.tests;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.testUI.PerformanceView;

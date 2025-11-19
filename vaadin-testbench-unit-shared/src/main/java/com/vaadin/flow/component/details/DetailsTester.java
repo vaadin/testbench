@@ -8,7 +8,6 @@
  */
 package com.vaadin.flow.component.details;
 
-import com.vaadin.flow.component.ComponentUtil;
 import com.vaadin.testbench.unit.ComponentTester;
 import com.vaadin.testbench.unit.Tests;
 

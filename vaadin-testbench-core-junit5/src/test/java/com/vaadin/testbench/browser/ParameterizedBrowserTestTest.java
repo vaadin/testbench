@@ -8,8 +8,6 @@
  */
 package com.vaadin.testbench.browser;
 
-import java.util.List;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -20,7 +18,6 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import com.vaadin.testbench.BrowserTestBase;
 import com.vaadin.testbench.DriverSupplier;
 import com.vaadin.testbench.ParameterizedBrowserTest;
-import com.vaadin.testbench.annotations.BrowserConfiguration;
 import com.vaadin.testbench.annotations.RunLocally;
 import com.vaadin.testbench.annotations.RunOnHub;
 import com.vaadin.testbench.parallel.Browser;

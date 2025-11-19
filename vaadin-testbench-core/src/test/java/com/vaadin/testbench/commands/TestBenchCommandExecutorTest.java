@@ -8,10 +8,6 @@
  */
 package com.vaadin.testbench.commands;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -33,6 +29,10 @@ import com.vaadin.testbench.screenshot.ImageComparison;
 import com.vaadin.testbench.screenshot.ImageComparisonTest;
 import com.vaadin.testbench.screenshot.ReferenceNameGenerator;
 import com.vaadin.testbench.testutils.ImageLoader;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class TestBenchCommandExecutorTest {
 

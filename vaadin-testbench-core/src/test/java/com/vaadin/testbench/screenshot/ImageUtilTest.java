@@ -8,9 +8,6 @@
  */
 package com.vaadin.testbench.screenshot;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.List;
@@ -18,6 +15,9 @@ import java.util.List;
 import org.junit.Test;
 
 import com.vaadin.testbench.testutils.ImageLoader;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 public class ImageUtilTest {
 

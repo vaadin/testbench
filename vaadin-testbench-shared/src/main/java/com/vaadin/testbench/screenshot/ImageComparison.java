@@ -9,6 +9,7 @@
 package com.vaadin.testbench.screenshot;
 
 import javax.imageio.ImageIO;
+
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
