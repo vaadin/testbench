@@ -15,6 +15,7 @@ import java.lang.reflect.Constructor;
 import java.security.Principal;
 import java.util.function.UnaryOperator;
 
+import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -22,6 +23,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.function.DeploymentConfiguration;
 import com.vaadin.flow.server.ServiceException;
 import com.vaadin.flow.server.VaadinServletRequest;
@@ -47,7 +49,17 @@ public class MockSpringServlet extends SpringServlet {
     @NotNull
     public final UIFactory uiFactory;
 
+    @Deprecated
     public MockSpringServlet(@NotNull Routes routes,
+            @NotNull ApplicationContext ctx, @NotNull Function0<UI> uiFactory) {
+        super(ctx, false);
+        this.ctx = ctx;
+        this.routes = routes;
+        this.uiFactory = uiFactory::invoke;
+    }
+
+    public MockSpringServlet(@NotNull Routes routes,
+
             @NotNull ApplicationContext ctx, @NotNull UIFactory uiFactory) {
         super(ctx, false);
         this.ctx = ctx;

@@ -84,7 +84,7 @@ object MockVaadin {
     @JvmStatic
     @JvmOverloads
     fun setup(routes: Routes = Routes(),
-              uiFactory: () -> UI = @JvmSerializableLambda { MockedUI() },
+              uiFactory: UIFactory = UIFactory { MockedUI() },
               lookupServices: Set<Class<*>> = emptySet()) {
         // init servlet
         val servlet = MockVaadinServlet(routes)
@@ -109,7 +109,7 @@ object MockVaadin {
      * @param lookupServices service classes to be provided to the lookup initializer
      */
     @JvmStatic
-    fun setup(uiFactory: () -> UI = @JvmSerializableLambda { MockedUI() }, servlet: VaadinServlet,
+    fun setup(uiFactory: UIFactory = UIFactory { MockedUI() }, servlet: VaadinServlet,
               lookupServices: Set<Class<*>> = emptySet()
     ) {
         if (!servlet.isInitialized) {

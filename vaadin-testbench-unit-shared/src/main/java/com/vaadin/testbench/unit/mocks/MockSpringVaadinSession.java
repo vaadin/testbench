@@ -8,8 +8,10 @@
  */
 package com.vaadin.testbench.unit.mocks;
 
+import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.server.VaadinService;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.testbench.unit.internal.MockVaadin;
@@ -31,6 +33,13 @@ import com.vaadin.testbench.unit.internal.UIFactory;
 public class MockSpringVaadinSession extends VaadinSession {
     @NotNull
     private final UIFactory uiFactory;
+
+    @Deprecated
+    public MockSpringVaadinSession(@NotNull VaadinService service,
+            @NotNull Function0<UI> uiFactory) {
+        super(service);
+        this.uiFactory = uiFactory::invoke;
+    }
 
     public MockSpringVaadinSession(@NotNull VaadinService service,
             @NotNull UIFactory uiFactory) {
