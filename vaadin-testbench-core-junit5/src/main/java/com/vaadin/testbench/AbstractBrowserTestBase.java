@@ -19,6 +19,7 @@ import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
 import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -526,7 +527,8 @@ public abstract class AbstractBrowserTestBase
         private static String loadDndScript(String scriptLocation) {
             try (InputStream stream = AbstractBrowserTestBase.class
                     .getResourceAsStream(scriptLocation)) {
-                return new String(stream.readAllBytes(), StandardCharsets.UTF_8);
+                return new String(stream.readAllBytes(),
+                        StandardCharsets.UTF_8);
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
             }
