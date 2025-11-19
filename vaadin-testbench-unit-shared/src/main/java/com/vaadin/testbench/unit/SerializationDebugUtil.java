@@ -8,15 +8,32 @@
  */
 package com.vaadin.testbench.unit;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.NotSerializableException;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.lang.reflect.Field;
-import java.util.*;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.IdentityHashMap;
+import java.util.List;
+import java.util.Set;
 
 public final class SerializationDebugUtil {
 
     private SerializationDebugUtil() {
     }
 
+    /**
+     * Asserts that the given object graph is fully serializable. If not,
+     * throws an AssertionError with a detailed report of non-serializable
+     * fields found.
+     *
+     * @param root the root object to test for serializability
+     */
     public static void assertSerializable(Object root) {
         try {
             serialize(root);
@@ -119,8 +136,7 @@ public final class SerializationDebugUtil {
 
     private static boolean shouldSkip(Field f) {
         int mod = f.getModifiers();
-        return java.lang.reflect.Modifier.isStatic(mod)
-                || java.lang.reflect.Modifier.isTransient(mod);
+        return Modifier.isStatic(mod) || Modifier.isTransient(mod);
     }
 
     private static List<Field> getAllFields(Class<?> cls) {
