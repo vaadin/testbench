@@ -28,11 +28,12 @@ public final class SerializationDebugUtil {
     }
 
     /**
-     * Asserts that the given object graph is fully serializable. If not,
-     * throws an AssertionError with a detailed report of non-serializable
-     * fields found.
+     * Asserts that the given object graph is fully serializable. If not, throws
+     * an AssertionError with a detailed report of non-serializable fields
+     * found.
      *
-     * @param root the root object to test for serializability
+     * @param root
+     *            the root object to test for serializability
      */
     public static void assertSerializable(Object root) {
         try {
