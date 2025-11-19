@@ -215,11 +215,6 @@ public class ComponentTesterTest extends UIUnit4Test {
         Assert.assertTrue(result.isEmpty());
     }
 
-    @Test
-    public void mockVaadinIsSerializable() {
-        SerializationDebugUtil.assertSerializable(home);
-    }
-
     private WelcomeView getHome() {
         final HasElement view = getCurrentView();
         Assert.assertTrue("Home should be navigated to by default",

@@ -8,7 +8,6 @@
  */
 package com.vaadin.testbench.unit;
 
-import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -40,8 +39,7 @@ import com.vaadin.testbench.unit.internal.PrettyPrintTreeKt;
  * @param <T>
  *            component type
  */
-public class ComponentTester<T extends Component>
-        implements Clickable<T>, Serializable {
+public class ComponentTester<T extends Component> implements Clickable<T> {
 
     private final T component;
 
