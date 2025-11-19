@@ -128,7 +128,11 @@ public final class SerializationDebugUtil {
             if (shouldSkip(f)) {
                 continue;
             }
-            f.setAccessible(true);
+            try {
+                f.setAccessible(true);
+            } catch (Exception ignored) {
+                continue;
+            }
             Object value;
             try {
                 value = f.get(obj);
