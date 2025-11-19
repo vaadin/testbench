@@ -8,9 +8,6 @@
  */
 package com.vaadin.testbench.unit;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.util.List;
 import java.util.Optional;
 
@@ -219,14 +216,8 @@ public class ComponentTesterTest extends UIUnit4Test {
     }
 
     @Test
-    public void mockVaadinIsSerializable()
-            throws IOException, ClassNotFoundException {
-        System.setProperty("sun.io.serialization.extendedDebugInfo", "true");
-        var bs = new ByteArrayOutputStream();
-        var os = new ObjectOutputStream(bs);
-        os.writeObject(home);
-        os.flush();
-        os.close();
+    public void mockVaadinIsSerializable() {
+        SerializationDebugUtil.assertSerializable(home);
     }
 
     private WelcomeView getHome() {

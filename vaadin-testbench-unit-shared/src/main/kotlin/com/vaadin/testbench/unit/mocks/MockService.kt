@@ -18,6 +18,8 @@ import com.vaadin.flow.server.VaadinServlet
 import com.vaadin.flow.server.VaadinServletService
 import com.vaadin.flow.server.VaadinSession
 
+import com.vaadin.testbench.unit.internal.UIFactory
+
 /**
  * A mocking service that performs three very important tasks:
  * * Overrides [isAtmosphereAvailable] to tell Vaadin that we don't have Atmosphere (otherwise Vaadin will crash)
@@ -29,7 +31,7 @@ import com.vaadin.flow.server.VaadinSession
  */
 open class MockService(servlet: VaadinServlet,
                               deploymentConfiguration: DeploymentConfiguration,
-                              val uiFactory: () -> UI = @JvmSerializableLambda { MockedUI() }
+                              val uiFactory: UIFactory = UIFactory { MockedUI() }
 ) : VaadinServletService(servlet, deploymentConfiguration) {
     // need to have this override. Setting `VaadinService.atmosphereAvailable` to false via
     // reflection after the servlet has been initialized is too late, since Atmo is initialized
