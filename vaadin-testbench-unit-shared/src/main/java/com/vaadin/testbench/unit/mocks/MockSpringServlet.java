@@ -49,7 +49,7 @@ public class MockSpringServlet extends SpringServlet {
     @NotNull
     public final UIFactory uiFactory;
 
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public MockSpringServlet(@NotNull Routes routes,
             @NotNull ApplicationContext ctx, @NotNull Function0<UI> uiFactory) {
         super(ctx, false);

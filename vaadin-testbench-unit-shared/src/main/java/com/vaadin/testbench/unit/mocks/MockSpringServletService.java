@@ -38,7 +38,7 @@ public class MockSpringServletService extends SpringVaadinServletService {
     @NotNull
     private final UIFactory uiFactory;
 
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public MockSpringServletService(@NotNull MockSpringServlet servlet,
             @NotNull DeploymentConfiguration deploymentConfiguration,
             @NotNull ApplicationContext ctx, @NotNull Function0<UI> uiFactory) {

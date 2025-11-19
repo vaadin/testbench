@@ -34,7 +34,7 @@ public class MockSpringVaadinSession extends VaadinSession {
     @NotNull
     private final UIFactory uiFactory;
 
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public MockSpringVaadinSession(@NotNull VaadinService service,
             @NotNull Function0<UI> uiFactory) {
         super(service);
