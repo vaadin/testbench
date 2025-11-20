@@ -13,7 +13,6 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -147,7 +146,11 @@ public class ScreenshotOnFailureExtension implements TestWatcher {
     private void quitDriverOnFinish() {
         if (quitDriverOnFinish && driverHolder != null
                 && driverHolder.getDriver() != null) {
-            driverHolder.getDriver().quit();
+            try {
+                driverHolder.getDriver().quit();
+            } catch (Exception e) {
+                getLogger().warn("Unable to quit driver: " + e.getMessage(), e);
+            }
         }
     }
 

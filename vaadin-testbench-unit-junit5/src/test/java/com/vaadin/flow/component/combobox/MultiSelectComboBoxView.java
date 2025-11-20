@@ -14,7 +14,6 @@ import java.util.List;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.Tag;
-import com.vaadin.flow.component.combobox.MultiSelectComboBox;
 import com.vaadin.flow.router.Route;
 
 @Tag("div")

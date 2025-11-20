@@ -8,9 +8,12 @@
  */
 package com.vaadin.testbench;
 
-import com.vaadin.testbench.ElementQuery.AttributeMatch;
-import com.vaadin.testbench.annotations.Attribute;
-import com.vaadin.testbench.elementsbase.Element;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Predicate;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -20,11 +23,9 @@ import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.function.Predicate;
+import com.vaadin.testbench.ElementQuery.AttributeMatch;
+import com.vaadin.testbench.annotations.Attribute;
+import com.vaadin.testbench.elementsbase.Element;
 
 import static com.vaadin.testbench.ElementQuery.AttributeMatch.Comparison.CONTAINS_WORD;
 import static org.junit.jupiter.api.Assertions.assertEquals;

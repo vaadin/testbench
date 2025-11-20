@@ -8,6 +8,9 @@
  */
 package com.vaadin.flow.component.virtuallist;
 
+import java.util.List;
+import java.util.stream.Stream;
+
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.html.Div;
@@ -18,9 +21,6 @@ import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.data.renderer.LitRenderer;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.theme.lumo.LumoUtility;
-
-import java.util.List;
-import java.util.stream.Stream;
 
 @Tag("div")
 @Route(value = "callback-lit-renderer-virtual-list", registerAtStartup = false)

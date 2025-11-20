@@ -35,8 +35,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      - name: Run formatter validation
-        run: mvn formatter:validate --batch-mode --no-transfer-progress
+      - name: Run spotless validation
+        run: mvn spotless:check --batch-mode --no-transfer-progress
 
   build:
     name: Build Project

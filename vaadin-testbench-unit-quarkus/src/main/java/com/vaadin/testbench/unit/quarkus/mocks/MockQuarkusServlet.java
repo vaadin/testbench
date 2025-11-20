@@ -13,10 +13,8 @@ import jakarta.servlet.ServletException;
 
 import java.lang.reflect.Field;
 
-import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.function.DeploymentConfiguration;
 import com.vaadin.flow.internal.ReflectTools;
 import com.vaadin.flow.server.ServiceException;
