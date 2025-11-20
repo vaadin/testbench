@@ -9,6 +9,7 @@
  */
 package com.vaadin.testbench.unit.internal
 
+import java.io.Serializable
 import java.lang.reflect.Field
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.locks.ReentrantLock
@@ -83,7 +84,7 @@ object MockVaadin {
     @JvmStatic
     @JvmOverloads
     fun setup(routes: Routes = Routes(),
-              uiFactory: () -> UI = { MockedUI() },
+              uiFactory: UIFactory = UIFactory { MockedUI() },
               lookupServices: Set<Class<*>> = emptySet()) {
         // init servlet
         val servlet = MockVaadinServlet(routes)
@@ -108,7 +109,7 @@ object MockVaadin {
      * @param lookupServices service classes to be provided to the lookup initializer
      */
     @JvmStatic
-    fun setup(uiFactory: () -> UI = { MockedUI() }, servlet: VaadinServlet,
+    fun setup(uiFactory: UIFactory = UIFactory { MockedUI() }, servlet: VaadinServlet,
               lookupServices: Set<Class<*>> = emptySet()
     ) {
         if (!servlet.isInitialized) {
@@ -198,7 +199,7 @@ object MockVaadin {
      */
     var mockRequestFactory: (MockHttpSession) -> MockRequest = { MockRequest(it) }
 
-    private fun createSession(ctx: ServletContext, uiFactory: () -> UI) {
+    private fun createSession(ctx: ServletContext, uiFactory: UIFactory) {
         val service: VaadinServletService = checkNotNull(VaadinService.getCurrent()) as VaadinServletService
         val httpSession: MockHttpSession = MockHttpSession.create(ctx)
 
@@ -223,7 +224,6 @@ object MockVaadin {
         session.refreshTransients(WrappedHttpSession(httpSession), service)
         check(session.lockInstance != null) { "$session created from $service has null lock. See the MockSession class on how to mock locks properly" }
         check((session.lockInstance as ReentrantLock).isLocked) { "$session created from $service: lock must be locked!" }
-        session.configuration = service.deploymentConfiguration
 
         VaadinSession.setCurrent(session)
         strongRefSession.set(session)
@@ -242,7 +242,7 @@ object MockVaadin {
         createUI(uiFactory, session)
     }
 
-    internal fun createUI(uiFactory: () -> UI, session: VaadinSession) {
+    internal fun createUI(uiFactory: UIFactory, session: VaadinSession) {
         val request: VaadinRequest = checkNotNull(VaadinRequest.getCurrent())
         val ui: UI = uiFactory()
         require(ui.session == null) {
@@ -259,7 +259,7 @@ object MockVaadin {
         }
         ui.internals.session = session
         UI.setCurrent(ui)
-        ui.doInit(request, 1)
+        ui.doInit(request, 1, "ROOT")
         strongRefUI.set(ui)
 
         session.addUI(ui)
@@ -373,7 +373,7 @@ object MockVaadin {
      * See [MockVaadinSession] on how to call this properly.
      */
     @JvmStatic
-    public fun afterSessionClose(session: VaadinSession, uiFactory: () -> UI) {
+    public fun afterSessionClose(session: VaadinSession, uiFactory: UIFactory) {
         // We need to simulate the actual browser + servlet container behavior here.
         // Imagine that we want a test scenario where the user logs out, and we want to check that a login prompt appears.
 
@@ -432,7 +432,7 @@ private fun VaadinService.fireServiceDestroyListeners(event: ServiceDestroyEvent
     }
 }
 
-private class MockPage(ui: UI, private val uiFactory: () -> UI, private val session: VaadinSession) : Page(ui) {
+private class MockPage(ui: UI, private val uiFactory: UIFactory, private val session: VaadinSession) : Page(ui) {
     override fun reload() {
         // recreate the UI on reload(), to simulate browser's F5
         super.reload()
@@ -444,3 +444,5 @@ private class MockPage(ui: UI, private val uiFactory: () -> UI, private val sess
 fun interface MockRequestCustomizer {
     fun apply(request: MockRequest)
 }
+
+fun interface UIFactory : () -> UI, Serializable
