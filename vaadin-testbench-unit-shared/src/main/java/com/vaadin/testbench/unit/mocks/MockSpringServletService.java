@@ -18,6 +18,7 @@ import com.vaadin.flow.function.DeploymentConfiguration;
 import com.vaadin.flow.server.VaadinRequest;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.spring.SpringVaadinServletService;
+import com.vaadin.testbench.unit.internal.UIFactory;
 
 /**
  * A mocking service that performs three very important tasks:
@@ -35,11 +36,19 @@ import com.vaadin.flow.spring.SpringVaadinServletService;
  */
 public class MockSpringServletService extends SpringVaadinServletService {
     @NotNull
-    private final Function0<UI> uiFactory;
+    private final UIFactory uiFactory;
 
+    @Deprecated(forRemoval = true)
     public MockSpringServletService(@NotNull MockSpringServlet servlet,
             @NotNull DeploymentConfiguration deploymentConfiguration,
             @NotNull ApplicationContext ctx, @NotNull Function0<UI> uiFactory) {
+        super(servlet, deploymentConfiguration, ctx);
+        this.uiFactory = uiFactory::invoke;
+    }
+
+    public MockSpringServletService(@NotNull MockSpringServlet servlet,
+            @NotNull DeploymentConfiguration deploymentConfiguration,
+            @NotNull ApplicationContext ctx, @NotNull UIFactory uiFactory) {
         super(servlet, deploymentConfiguration, ctx);
         this.uiFactory = uiFactory;
     }

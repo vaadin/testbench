@@ -62,6 +62,11 @@ public class UIUnit4BaseClassTest {
                     getCurrentView() instanceof WelcomeView);
         }
 
+        @Test
+        public void mockVaadinIsSerializable() {
+            SerializationDebugUtil.assertSerializable(UI.getCurrent());
+        }
+
     }
 
     public static class DiscoverAllRoutesTest extends UIUnit4Test {
