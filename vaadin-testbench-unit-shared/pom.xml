@@ -301,7 +301,8 @@
         <dependency>
             <groupId>io.github.classgraph</groupId>
             <artifactId>classgraph</artifactId>
-            <version>4.8.146</version>
+            <!-- should be synced with vaadin-copilot  -->
+            <version>4.8.179</version>
         </dependency>
 
         <dependency>
