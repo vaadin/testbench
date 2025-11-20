@@ -84,7 +84,7 @@ object MockVaadin {
     @JvmStatic
     @JvmOverloads
     fun setup(routes: Routes = Routes(),
-              uiFactory: () -> UI = UIFactory { MockedUI() },
+              uiFactory: UIFactory = UIFactory { MockedUI() },
               lookupServices: Set<Class<*>> = emptySet()) {
         // init servlet
         val servlet = MockVaadinServlet(routes)
@@ -109,7 +109,7 @@ object MockVaadin {
      * @param lookupServices service classes to be provided to the lookup initializer
      */
     @JvmStatic
-    fun setup(uiFactory: () -> UI = { MockedUI() }, servlet: VaadinServlet,
+    fun setup(uiFactory: UIFactory = UIFactory { MockedUI() }, servlet: VaadinServlet,
               lookupServices: Set<Class<*>> = emptySet()
     ) {
         if (!servlet.isInitialized) {
@@ -199,7 +199,7 @@ object MockVaadin {
      */
     var mockRequestFactory: (MockHttpSession) -> MockRequest = { MockRequest(it) }
 
-    private fun createSession(ctx: ServletContext, uiFactory: () -> UI) {
+    private fun createSession(ctx: ServletContext, uiFactory: UIFactory) {
         val service: VaadinServletService = checkNotNull(VaadinService.getCurrent()) as VaadinServletService
         val httpSession: MockHttpSession = MockHttpSession.create(ctx)
 
@@ -242,7 +242,7 @@ object MockVaadin {
         createUI(uiFactory, session)
     }
 
-    internal fun createUI(uiFactory: () -> UI, session: VaadinSession) {
+    internal fun createUI(uiFactory: UIFactory, session: VaadinSession) {
         val request: VaadinRequest = checkNotNull(VaadinRequest.getCurrent())
         val ui: UI = uiFactory()
         require(ui.session == null) {
@@ -373,7 +373,7 @@ object MockVaadin {
      * See [MockVaadinSession] on how to call this properly.
      */
     @JvmStatic
-    public fun afterSessionClose(session: VaadinSession, uiFactory: () -> UI) {
+    public fun afterSessionClose(session: VaadinSession, uiFactory: UIFactory) {
         // We need to simulate the actual browser + servlet container behavior here.
         // Imagine that we want a test scenario where the user logs out, and we want to check that a login prompt appears.
 
