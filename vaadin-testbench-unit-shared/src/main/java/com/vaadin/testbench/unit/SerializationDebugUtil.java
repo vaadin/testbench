@@ -31,11 +31,16 @@ public final class SerializationDebugUtil {
      * Asserts that the given object graph is fully serializable. If not, throws
      * an AssertionError with a detailed report of non-serializable fields
      * found.
+     * <p>
+     * Note: When running tests in an IDE, enable
+     * "sun.io.serialization.extendedDebugInfo" flag for more detailed stack
+     * traces on serialization errors.
      *
      * @param root
      *            the root object to test for serializability
-     * @return report a StringBuilder instance to which the detailed report is
-     *         appended
+     * @param report
+     *            a StringBuilder instance to which the detailed report is
+     *            appended
      */
     public static void assertSerializable(Object root, StringBuilder report) {
         try {
@@ -59,6 +64,10 @@ public final class SerializationDebugUtil {
      * Asserts that the given object graph is fully serializable. If not, throws
      * an AssertionError with a detailed report of non-serializable fields
      * found.
+     * <p>
+     * Note: When running tests in an IDE, enable
+     * "sun.io.serialization.extendedDebugInfo" flag for more detailed stack
+     * traces on serialization errors.
      *
      * @param root
      *            the root object to test for serializability
