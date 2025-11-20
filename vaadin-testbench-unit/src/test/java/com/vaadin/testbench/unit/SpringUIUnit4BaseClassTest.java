@@ -13,6 +13,7 @@ import org.junit.Test;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
 
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.server.VaadinService;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.testbench.unit.mocks.MockSpringServletService;
@@ -38,6 +39,12 @@ public class SpringUIUnit4BaseClassTest extends SpringUIUnit4Test {
                 "Expecting VaadinSession to be "
                         + MockSpringVaadinSession.class,
                 VaadinSession.getCurrent() instanceof MockSpringVaadinSession);
+    }
+
+    @Test
+    public void mockVaadinIsSerializable() {
+        SerializationDebugUtil.assertSerializable(UI.getCurrent());
+        SerializationDebugUtil.assertSerializable(VaadinSession.getCurrent());
     }
 
     // Empty configuration class used only to be able to bootstrap spring
