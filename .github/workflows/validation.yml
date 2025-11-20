@@ -74,9 +74,7 @@ jobs:
           rm -rf ~/.m2/repository ~/.npm* ~/.pnpm*
 
       - name: Build with Maven and Generate Javadoc
-        run: |
-          mvn clean install -DskipTests -B
-          mvn javadoc:javadoc -Dtestbench.javadocs -B
+        run: mvn clean install javadoc:javadoc -DskipTests -Dtestbench.javadocs -B
 
   unit-tests:
     name: Unit Tests
@@ -204,7 +202,6 @@ jobs:
           mvn verify \
             -pl ${{ matrix.module }} -am \
             -P validation \
-            -Dsurefire.skip=true \
             -Dsystem.com.vaadin.testbench.Parameters.testsInParallel=5 \
             -Dsystem.com.vaadin.testbench.Parameters.maxAttempts=2 \
             -Dcom.vaadin.testbench.Parameters.hubHostname=localhost \
