@@ -8,7 +8,9 @@
  */
 package com.vaadin.testbench;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.List;
@@ -18,7 +20,6 @@ import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -524,10 +525,13 @@ public abstract class AbstractBrowserTestBase
                 "/dnd-simulation.js");
 
         private static String loadDndScript(String scriptLocation) {
-            InputStream stream = AbstractBrowserTestBase.class
-                    .getResourceAsStream(scriptLocation);
-            return IOUtils.readLines(stream, StandardCharsets.UTF_8).stream()
-                    .collect(Collectors.joining("\n"));
+            try (InputStream stream = AbstractBrowserTestBase.class
+                    .getResourceAsStream(scriptLocation)) {
+                return new String(stream.readAllBytes(),
+                        StandardCharsets.UTF_8);
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
         }
     }
 
