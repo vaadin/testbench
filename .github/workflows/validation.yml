@@ -235,15 +235,15 @@ jobs:
             **/target/failsafe-reports/TEST-*.xml
           retention-days: 7
 
-  test-results:
-    name: Test Results
+  validation-status:
+    name: Validation Status
     permissions:
       actions: write
       issues: read
       checks: write
       pull-requests: write
     if: always()
-    needs: [unit-tests, integration-tests]
+    needs: [format-check, build, unit-tests, integration-tests]
     runs-on: ubuntu-latest
 
     steps:
@@ -266,31 +266,17 @@ jobs:
           check_name: Test Results
           comment_mode: failures
 
-      - name: Check test job results
-        run: |
-          if [ "${{ needs.unit-tests.result }}" != "success" ] || \
-             [ "${{ needs.integration-tests.result }}" != "success" ]; then
-            echo "🚫 One or more test jobs failed"
-            exit 1
-          fi
-          echo "All tests completed successfully"
-
-  validation-status:
-    name: Validation Status
-    needs: [format-check, build, test-results]
-    runs-on: ubuntu-latest
-    if: always()
-
-    steps:
       - name: Check all jobs status
         run: |
           echo "format-check: ${{ needs.format-check.result }}"
           echo "build: ${{ needs.build.result }}"
-          echo "test-results: ${{ needs.test-results.result }}"
+          echo "unit-tests: ${{ needs.unit-tests.result }}"
+          echo "integration-tests: ${{ needs.integration-tests.result }}"
 
           if [ "${{ needs.format-check.result }}" != "success" ] || \
              [ "${{ needs.build.result }}" != "success" ] || \
-             [ "${{ needs.test-results.result }}" != "success" ]; then
+             [ "${{ needs.unit-tests.result }}" != "success" ] || \
+             [ "${{ needs.integration-tests.result }}" != "success" ]; then
             echo "One or more validation jobs failed"
             exit 1
           fi
