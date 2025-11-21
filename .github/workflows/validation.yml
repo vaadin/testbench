@@ -246,3 +246,26 @@ jobs:
             **/target/failsafe-reports/TEST-*.xml
           check_name: Integration Test Results (${{ matrix.name }})
           comment_mode: failures
+
+  validation-status:
+    name: Validation Status
+    needs: [format-check, build, unit-tests, integration-tests]
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+      - name: Check all jobs status
+        run: |
+          echo "format-check: ${{ needs.format-check.result }}"
+          echo "build: ${{ needs.build.result }}"
+          echo "unit-tests: ${{ needs.unit-tests.result }}"
+          echo "integration-tests: ${{ needs.integration-tests.result }}"
+
+          if [ "${{ needs.format-check.result }}" != "success" ] || \
+             [ "${{ needs.build.result }}" != "success" ] || \
+             [ "${{ needs.unit-tests.result }}" != "success" ] || \
+             [ "${{ needs.integration-tests.result }}" != "success" ]; then
+            echo "One or more validation jobs failed"
+            exit 1
+          fi
+          echo "All validation jobs completed successfully"
