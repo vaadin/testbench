@@ -47,6 +47,7 @@
         <javassist.version>3.30.2-GA</javassist.version>
         <spotless.plugin.version>3.0.0</spotless.plugin.version>
         <currentYear>2025</currentYear>
+        <skipUnitTests>${skipTests}</skipUnitTests>
     </properties>
     <modules>
         <module>vaadin-testbench-bom</module>
@@ -108,6 +109,17 @@
         </dependencies>
     </dependencyManagement>
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <configuration>
+                        <skip>${skipUnitTests}</skip>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
             <plugin>
                 <artifactId>maven-deploy-plugin</artifactId>
