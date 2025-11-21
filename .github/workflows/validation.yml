@@ -130,32 +130,14 @@ jobs:
         run: |
           mvn test -B
 
-      - name: Upload test reports on failure
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: unit-test-reports-${{ github.run_id }}
-          path: |
-            **/target/surefire-reports/
-          retention-days: 7
-
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: unit-test-results-${{ github.run_id }}
+          name: unit-test-results
           path: |
             **/target/surefire-reports/TEST-*.xml
           retention-days: 7
-
-      - name: Publish unit test results
-        if: always()
-        uses: EnricoMi/publish-unit-test-result-action@v2
-        with:
-          files: |
-            **/target/surefire-reports/TEST-*.xml
-          check_name: Unit Test Results
-          comment_mode: failures
 
   integration-tests:
     name: Integration Tests (${{ matrix.name }})
@@ -238,41 +220,65 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: error-screenshots-${{ matrix.name }}-${{ github.run_id }}
+          name: error-screenshots-${{ matrix.name }}
           path: |
             **/error-screenshots/**
-          retention-days: 7
-
-      - name: Upload test reports on failure
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: integration-test-reports-${{ matrix.name }}-${{ github.run_id }}
-          path: |
-            **/target/failsafe-reports/
           retention-days: 7
 
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: integration-test-results-${{ matrix.name }}-${{ github.run_id }}
+          name: integration-test-results-${{ matrix.name }}
           path: |
             **/target/failsafe-reports/TEST-*.xml
           retention-days: 7
 
-      - name: Publish integration test results
-        if: always()
+  test-results:
+    name: Test Results
+    permissions:
+      actions: write
+      issues: read
+      checks: write
+      pull-requests: write
+    if: always()
+    needs: [unit-tests, integration-tests]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Merge test result artifacts
+        uses: actions/upload-artifact/merge@v4
+        with:
+          name: test-results
+          pattern: |
+            unit-test-results
+            integration-test-results-*
+          delete-merged: true
+
+      - name: Download merged test results
+        uses: actions/download-artifact@v4
+        with:
+          name: test-results
+
+      - name: Publish test results
         uses: EnricoMi/publish-unit-test-result-action@v2
         with:
-          files: |
-            **/target/failsafe-reports/TEST-*.xml
-          check_name: Integration Test Results (${{ matrix.name }})
+          files: '**/TEST-*.xml'
+          check_name: Test Results
           comment_mode: failures
+
+      - name: Check test job results
+        run: |
+          if [ "${{ needs.unit-tests.result }}" != "success" ] || \
+             [ "${{ needs.integration-tests.result }}" != "success" ]; then
+            echo "🚫 One or more test jobs failed"
+            exit 1
+          fi
+          echo "All tests completed successfully"
 
   validation-status:
     name: Validation Status
-    needs: [format-check, build, unit-tests, integration-tests]
+    needs: [format-check, build, test-results]
     runs-on: ubuntu-latest
     if: always()
 
@@ -281,13 +287,11 @@ jobs:
         run: |
           echo "format-check: ${{ needs.format-check.result }}"
           echo "build: ${{ needs.build.result }}"
-          echo "unit-tests: ${{ needs.unit-tests.result }}"
-          echo "integration-tests: ${{ needs.integration-tests.result }}"
+          echo "test-results: ${{ needs.test-results.result }}"
 
           if [ "${{ needs.format-check.result }}" != "success" ] || \
              [ "${{ needs.build.result }}" != "success" ] || \
-             [ "${{ needs.unit-tests.result }}" != "success" ] || \
-             [ "${{ needs.integration-tests.result }}" != "success" ]; then
+             [ "${{ needs.test-results.result }}" != "success" ]; then
             echo "One or more validation jobs failed"
             exit 1
           fi
