@@ -11,10 +11,6 @@ on:
 permissions:
   contents: read
 
-concurrency:
-  group: ${{ github.head_ref || github.ref_name }}
-  cancel-in-progress: true
-
 env:
   HEAD_REF: ${{ github.head_ref }}
   REF_NAME: ${{ github.ref_name }}
@@ -32,6 +28,9 @@ jobs:
     needs: check-permissions
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    concurrency:
+      group: ${{ github.head_ref || github.ref_name }}-format-check
+      cancel-in-progress: true
 
     steps:
       - name: Checkout repository
@@ -61,6 +60,9 @@ jobs:
     needs: format-check
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    concurrency:
+      group: ${{ github.head_ref || github.ref_name }}-build
+      cancel-in-progress: true
 
     steps:
       - name: Checkout repository
@@ -101,6 +103,9 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    concurrency:
+      group: ${{ github.head_ref || github.ref_name }}-unit-tests
+      cancel-in-progress: true
 
     steps:
       - name: Checkout repository
@@ -145,8 +150,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     concurrency:
-      group: saucelabs-testbench  # Global queue for SauceLabs tests only
-      cancel-in-progress: false
+      group: saucelabs-testbench  # Global queue for SauceLabs tests - only one across all PRs
+      cancel-in-progress: false   # Don't cancel other PRs, just queue them
     strategy:
       max-parallel: 1  # Only one JUnit version at a time to stay within SauceLabs limit
       matrix:
@@ -165,24 +170,42 @@ jobs:
           ref: ${{ env.HEAD_SHA }}
           fetch-depth: 0
 
+      - name: Check if commit is still latest
+        id: check-commit
+        if: github.event_name == 'pull_request_target'
+        run: |
+          CURRENT_HEAD=$(git rev-parse origin/${{ github.head_ref }})
+          if [ "$CURRENT_HEAD" != "${{ env.HEAD_SHA }}" ]; then
+            echo "This commit (${{ env.HEAD_SHA }}) is no longer the latest on the PR branch."
+            echo "Current HEAD is $CURRENT_HEAD. Skipping integration tests."
+            echo "skip=true" >> $GITHUB_OUTPUT
+          else
+            echo "Commit is still current, proceeding with integration tests."
+            echo "skip=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: Set up JDK ${{ env.JAVA_VERSION }}
+        if: steps.check-commit.conclusion == 'skipped' || steps.check-commit.outputs.skip != 'true'
         uses: actions/setup-java@v4
         with:
           java-version: ${{ env.JAVA_VERSION }}
           distribution: "temurin"
 
       - name: Set up Node.js
+        if: steps.check-commit.conclusion == 'skipped' || steps.check-commit.outputs.skip != 'true'
         uses: actions/setup-node@v4
         with:
           node-version: "20"
 
       - name: Restore Maven cache
+        if: steps.check-commit.conclusion == 'skipped' || steps.check-commit.outputs.skip != 'true'
         uses: actions/cache/restore@v4
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}-${{ github.run_id }}
 
       - name: Set up Sauce Labs tunnel
+        if: steps.check-commit.conclusion == 'skipped' || steps.check-commit.outputs.skip != 'true'
         uses: saucelabs/sauce-connect-action@v3.0.0
         with:
           username: ${{ secrets.SAUCE_USERNAME }}
@@ -193,12 +216,14 @@ jobs:
           proxyLocalhost: allow
 
       - name: Set TB License
+        if: steps.check-commit.conclusion == 'skipped' || steps.check-commit.outputs.skip != 'true'
         run: |
           TB_LICENSE=${{secrets.TB_LICENSE}}
           mkdir -p ~/.vaadin/
           echo '{"username":"'`echo $TB_LICENSE | cut -d / -f1`'","proKey":"'`echo $TB_LICENSE | cut -d / -f2`'"}' > ~/.vaadin/proKey
 
       - name: Run Integration Tests
+        if: steps.check-commit.conclusion == 'skipped' || steps.check-commit.outputs.skip != 'true'
         env:
           SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
           SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
