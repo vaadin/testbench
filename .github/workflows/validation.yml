@@ -207,6 +207,8 @@ jobs:
           mvn verify \
             -pl ${{ matrix.module }} -am \
             -P validation \
+            -DskipTests=true \
+            -DskipITs=false \
             -Dsystem.com.vaadin.testbench.Parameters.testsInParallel=5 \
             -Dsystem.com.vaadin.testbench.Parameters.maxAttempts=2 \
             -Dcom.vaadin.testbench.Parameters.hubHostname=localhost \
