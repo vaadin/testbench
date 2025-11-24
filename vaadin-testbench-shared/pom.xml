@@ -177,6 +177,7 @@
         <dependency>
             <groupId>com.vaadin</groupId>
             <artifactId>license-checker</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>tools.jackson.core</groupId>
