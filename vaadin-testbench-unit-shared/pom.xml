@@ -32,7 +32,7 @@
 
     <properties>
         <kotlin.version>2.2.20</kotlin.version>
-        <dokka.version>2.0.0</dokka.version>
+        <dokka.version>2.1.0</dokka.version>
     </properties>
 
     <profiles>
@@ -275,7 +275,7 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>5.18.0</version>
+            <version>5.20.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -295,7 +295,7 @@
         <dependency>
             <groupId>io.github.classgraph</groupId>
             <artifactId>classgraph</artifactId>
-            <version>4.8.179</version>
+            <version>4.8.184</version>
         </dependency>
 
         <dependency>
@@ -357,6 +357,11 @@
             <artifactId>spring-security-test</artifactId>
             <scope>provided</scope>
             <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>tools.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>3.0.2</version>
         </dependency>
 
     </dependencies>

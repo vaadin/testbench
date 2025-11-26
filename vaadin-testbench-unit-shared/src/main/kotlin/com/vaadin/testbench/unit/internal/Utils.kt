@@ -30,10 +30,6 @@ import com.vaadin.flow.server.WrappedHttpSession
 import com.vaadin.testbench.unit.mocks.MockHttpSession
 import com.vaadin.testbench.unit.mocks.MockRequest
 import com.vaadin.testbench.unit.mocks.MockResponse
-import elemental.json.Json
-import elemental.json.JsonArray
-import elemental.json.JsonValue
-import elemental.json.impl.JreJsonValue
 import jakarta.servlet.Servlet
 import jakarta.servlet.ServletContext
 
@@ -49,56 +45,6 @@ inline fun <reified T : Serializable> T.serializeDeserialize(): T =
     serializeToBytes().deserialize<T>()
 
 val IntRange.size: Int get() = (endInclusive + 1 - start).coerceAtLeast(0)
-
-
-/**
- * Adds a [value] at the end of the array.
- */
-fun JsonArray.add(value: JsonValue) {
-    set(length(), value)
-}
-
-/**
- * Adds a [string] at the end of the array.
- */
-fun JsonArray.add(string: String) {
-    add(Json.create(string))
-}
-
-/**
- * Adds a [bool] at the end of the array.
- */
-fun JsonArray.add(bool: Boolean) {
-    add(Json.create(bool))
-}
-
-/**
- * Adds a [number] at the end of the array.
- */
-fun JsonArray.add(number: Double) {
-    add(Json.create(number))
-}
-
-/**
- * Returns the contents of this array as an immutable [List]. The returned list
- * is a copy and doesn't reflect mutations done in the array.
- */
-fun JsonArray.toList(): List<JsonValue> =
-    (0 until length()).map { get(it) }
-
-/**
- * Unwraps all items in given list.
- */
-fun List<JsonValue>.unwrap(): List<Any?> =
-    map { it.unwrap() }
-
-/**
- * Unwraps this value into corresponding Java type. Unwraps arrays recursively.
- */
-fun JsonValue.unwrap(): Any? = when (this) {
-    is JsonArray -> this.toList().unwrap()
-    else -> (this as JreJsonValue).`object`
-}
 
 /**
  * Returns the major JVM version, e.g. 6 for Java 1.6, 8 for Java 8, 11 for Java 11 etc.

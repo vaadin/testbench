@@ -8,25 +8,25 @@
  */
 package com.vaadin.testbench;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.vaadin.testbench.commands.TestBenchCommandExecutor;
-import com.vaadin.testbench.screenshot.ImageComparison;
-import com.vaadin.testbench.screenshot.ReferenceNameGenerator;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebElement;
+
+import com.vaadin.testbench.commands.TestBenchCommandExecutor;
+import com.vaadin.testbench.screenshot.ImageComparison;
+import com.vaadin.testbench.screenshot.ReferenceNameGenerator;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class TestBenchElementTest {
 

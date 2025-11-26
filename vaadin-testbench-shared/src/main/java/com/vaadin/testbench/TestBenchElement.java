@@ -52,9 +52,6 @@ import com.vaadin.testbench.commands.TestBenchCommands;
 import com.vaadin.testbench.elementsbase.Element;
 import com.vaadin.testbench.parallel.BrowserUtil;
 
-import elemental.json.Json;
-import elemental.json.JsonValue;
-
 /**
  * TestBenchElement is a WebElement wrapper. It provides Vaadin specific helper
  * functionality. TestBenchElements are created when you search for elements
@@ -631,7 +628,12 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
         if (value == null) {
             return null;
         }
-        return createJsonValue(value).asString();
+        if (value instanceof String) {
+            return (String) value;
+        }
+
+        throw new IllegalArgumentException("The property is of type "
+                + value.getClass().getName() + ", not String");
     }
 
     @Override
@@ -640,7 +642,11 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
         if (value == null) {
             return null;
         }
-        return createJsonValue(value).asBoolean();
+        if (value instanceof Boolean) {
+            return (Boolean) value;
+        }
+        throw new IllegalArgumentException("The property is of type "
+                + value.getClass().getName() + ", not Boolean");
     }
 
     @Override
@@ -659,7 +665,12 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
         if (value == null) {
             return null;
         }
-        return createJsonValue(value).asNumber();
+        if (value instanceof Number) {
+            return ((Number) value).doubleValue();
+        }
+
+        throw new IllegalArgumentException("The property is of type "
+                + value.getClass().getName() + ", not Number");
     }
 
     @Override
@@ -707,22 +718,6 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
 
         }
         return result;
-    }
-
-    private JsonValue createJsonValue(Object value) {
-        if (value == null) {
-            return Json.createNull();
-        } else if (value instanceof String) {
-            return Json.create((String) value);
-        } else if (value instanceof Number) {
-            return Json.create(((Number) value).doubleValue());
-        } else if (value instanceof Boolean) {
-            return Json.create((Boolean) value);
-        } else {
-            throw new IllegalArgumentException(
-                    "Type of property is unsupported: "
-                            + value.getClass().getName());
-        }
     }
 
     /**

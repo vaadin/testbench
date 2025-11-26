@@ -8,16 +8,17 @@
  */
 package com.vaadin.tests.elements;
 
+import java.util.Collections;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.openqa.selenium.TimeoutException;
+
 import com.vaadin.flow.component.Component;
 import com.vaadin.testUI.ElementQueryView;
 import com.vaadin.testbench.BrowserTest;
 import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.tests.AbstractBrowserTB9Test;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.openqa.selenium.TimeoutException;
-
-import java.util.Collections;
 
 public class BasicElementIT extends AbstractBrowserTB9Test {
 
@@ -68,9 +69,6 @@ public class BasicElementIT extends AbstractBrowserTB9Test {
         Assertions.assertNull(buttonElement.getPropertyString("foo"));
         buttonElement.setProperty("foo", "12");
         Assertions.assertEquals("12", buttonElement.getPropertyString("foo"));
-        Assertions.assertEquals(12.0, buttonElement.getPropertyDouble("foo"),
-                0);
-        Assertions.assertTrue(buttonElement.getPropertyBoolean("foo"));
     }
 
     @BrowserTest
@@ -79,8 +77,6 @@ public class BasicElementIT extends AbstractBrowserTB9Test {
                 .waitForFirst();
         Assertions.assertNull(buttonElement.getPropertyBoolean("foo"));
         buttonElement.setProperty("foo", true);
-        Assertions.assertEquals("true", buttonElement.getPropertyString("foo"));
-        Assertions.assertEquals(1.0, buttonElement.getPropertyDouble("foo"), 0);
         Assertions.assertTrue(buttonElement.getPropertyBoolean("foo"));
     }
 
@@ -90,9 +86,6 @@ public class BasicElementIT extends AbstractBrowserTB9Test {
                 .waitForFirst();
         Assertions.assertNull(buttonElement.getPropertyBoolean("foo"));
         buttonElement.setProperty("foo", false);
-        Assertions.assertEquals("false",
-                buttonElement.getPropertyString("foo"));
-        Assertions.assertEquals(0.0, buttonElement.getPropertyDouble("foo"), 0);
         Assertions.assertFalse(buttonElement.getPropertyBoolean("foo"));
     }
 
@@ -102,10 +95,8 @@ public class BasicElementIT extends AbstractBrowserTB9Test {
                 .waitForFirst();
         Assertions.assertNull(buttonElement.getPropertyDouble("foo"));
         buttonElement.setProperty("foo", 12.5);
-        Assertions.assertEquals("12.5", buttonElement.getPropertyString("foo"));
         Assertions.assertEquals(12.5, buttonElement.getPropertyDouble("foo"),
                 0);
-        Assertions.assertTrue(buttonElement.getPropertyBoolean("foo"));
     }
 
     @BrowserTest
@@ -114,9 +105,8 @@ public class BasicElementIT extends AbstractBrowserTB9Test {
                 .waitForFirst();
         Assertions.assertNull(buttonElement.getPropertyInteger("foo"));
         buttonElement.setProperty("foo", 12);
-        Assertions.assertEquals("12", buttonElement.getPropertyString("foo"));
-        Assertions.assertEquals(12, buttonElement.getPropertyInteger("foo"), 0);
-        Assertions.assertTrue(buttonElement.getPropertyBoolean("foo"));
+        Assertions.assertEquals(Integer.valueOf(12),
+                buttonElement.getPropertyInteger("foo"));
     }
 
     @BrowserTest

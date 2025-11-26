@@ -30,6 +30,7 @@ import com.vaadin.flow.server.VaadinServletRequest;
 import com.vaadin.flow.server.VaadinServletService;
 import com.vaadin.flow.spring.SpringServlet;
 import com.vaadin.testbench.unit.internal.Routes;
+import com.vaadin.testbench.unit.internal.UIFactory;
 import com.vaadin.testbench.unit.internal.UtilsKt;
 
 /**
@@ -46,10 +47,20 @@ public class MockSpringServlet extends SpringServlet {
     @NotNull
     public final ApplicationContext ctx;
     @NotNull
-    public final Function0<UI> uiFactory;
+    public final UIFactory uiFactory;
 
+    @Deprecated(forRemoval = true)
     public MockSpringServlet(@NotNull Routes routes,
             @NotNull ApplicationContext ctx, @NotNull Function0<UI> uiFactory) {
+        super(ctx, false);
+        this.ctx = ctx;
+        this.routes = routes;
+        this.uiFactory = uiFactory::invoke;
+    }
+
+    public MockSpringServlet(@NotNull Routes routes,
+
+            @NotNull ApplicationContext ctx, @NotNull UIFactory uiFactory) {
         super(ctx, false);
         this.ctx = ctx;
         this.routes = routes;

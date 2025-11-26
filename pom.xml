@@ -33,11 +33,11 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <Implementation-Version>${project.version}</Implementation-Version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <selenium.version>4.37.0</selenium.version>
+        <selenium.version>4.38.0</selenium.version>
         <maven.compiler.release>21</maven.compiler.release>
         <maven.compiler.source>${maven.compiler.release}</maven.compiler.source>
         <maven.compiler.target>${maven.compiler.release}</maven.compiler.target>
-        <spring.boot.version>4.0.0-RC1</spring.boot.version>
+        <spring.boot.version>4.0.0</spring.boot.version>
         <vaadin.version>25.0-SNAPSHOT</vaadin.version>
         <flow.version>25.0-SNAPSHOT</flow.version>
         <slf4j.version>2.0.7</slf4j.version>
@@ -45,7 +45,9 @@
         <failsafe.version>3.5.2</failsafe.version>
         <surefire.version>3.5.2</surefire.version>
         <javassist.version>3.30.2-GA</javassist.version>
+        <spotless.plugin.version>3.0.0</spotless.plugin.version>
         <currentYear>2025</currentYear>
+        <skipUnitTests>${skipTests}</skipUnitTests>
     </properties>
     <modules>
         <module>vaadin-testbench-bom</module>
@@ -102,11 +104,22 @@
             <dependency>
                 <groupId>com.vaadin</groupId>
                 <artifactId>license-checker</artifactId>
-                <version>2.1.1</version>
+                <version>3.0.0-beta1</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <configuration>
+                        <skip>${skipUnitTests}</skip>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
             <plugin>
                 <artifactId>maven-deploy-plugin</artifactId>
@@ -116,45 +129,27 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>net.revelc.code.formatter</groupId>
-                <artifactId>formatter-maven-plugin</artifactId>
-                <version>2.26.0</version>
+                <groupId>com.diffplug.spotless</groupId>
+                <artifactId>spotless-maven-plugin</artifactId>
+                <version>${spotless.plugin.version}</version>
                 <configuration>
-                    <configFile>https://raw.githubusercontent.com/vaadin/flow/master/eclipse/VaadinJavaConventions.xml</configFile>
-                    <!-- Provide a dummy JS config file to avoid errors -->
-                    <configJsFile>https://raw.githubusercontent.com/vaadin/flow/master/eclipse/VaadinJavaConventions.xml</configJsFile>
-                    <lineEnding>LF</lineEnding>
+                    <java>
+                        <eclipse>
+                            <file>${maven.multiModuleProjectDirectory}/eclipse/VaadinJavaConventions.xml</file>
+                        </eclipse>
+                        <endWithNewline/>
+                        <removeUnusedImports/>
+                        <importOrder>
+                            <file>${maven.multiModuleProjectDirectory}/eclipse/flow.importorder</file>
+                        </importOrder>
+                        <forbidWildcardImports/>
+                        <licenseHeader>
+                            <file>${maven.multiModuleProjectDirectory}/src/license/vclst/header.txt</file>
+                        </licenseHeader>
+                    </java>
                 </configuration>
             </plugin>
         </plugins>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>com.mycila</groupId>
-                    <artifactId>license-maven-plugin</artifactId>
-                    <version>2.6</version>
-                    <configuration>
-                        <header>src/license/vclst/header.txt</header>
-                        <quiet>false</quiet>
-                        <failIfMissing>true</failIfMissing>
-                        <aggregate>false</aggregate>
-                        <useDefaultExcludes>true</useDefaultExcludes>
-                        <useDefaultMapping>true</useDefaultMapping>
-                        <encoding>UTF-8</encoding>
-                        <properties>
-                            <year>${currentYear}</year>
-                        </properties>
-                        <excludes>
-                            <exclude>target/**</exclude>
-                            <exclude>**/*.xml</exclude>
-                            <exclude>**/*.properties</exclude>
-                            <exclude>src/license/**/*</exclude>
-                            <exclude>**/*.txt</exclude>
-                        </excludes>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
     </build>
 
     <profiles>

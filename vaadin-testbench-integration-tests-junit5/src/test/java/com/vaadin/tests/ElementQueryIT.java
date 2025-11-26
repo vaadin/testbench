@@ -8,6 +8,10 @@
  */
 package com.vaadin.tests;
 
+import java.util.List;
+
+import org.junit.jupiter.api.Assertions;
+
 import com.vaadin.flow.component.Component;
 import com.vaadin.testUI.TemplateView;
 import com.vaadin.testbench.BrowserTest;
@@ -15,9 +19,6 @@ import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.tests.elements.LabelPlaceholderElement;
 import com.vaadin.tests.elements.NativeButtonElement;
 import com.vaadin.tests.elements.TemplateViewElement;
-import org.junit.jupiter.api.Assertions;
-
-import java.util.List;
 
 import static com.vaadin.testbench.ElementQuery.AttributeMatch.Comparison.BEGINS_WITH;
 import static com.vaadin.testbench.ElementQuery.AttributeMatch.Comparison.ENDS_WITH;

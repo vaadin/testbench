@@ -8,7 +8,6 @@
  */
 package com.testapp.security;
 
-import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
 
 import com.vaadin.flow.component.Component;

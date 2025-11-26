@@ -8,16 +8,6 @@
  */
 package com.vaadin.testbench;
 
-import com.vaadin.testbench.annotations.Attribute;
-import com.vaadin.testbench.elementsbase.Element;
-import com.vaadin.testbench.internal.SharedUtil;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.SearchContext;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.WebDriverWait;
-
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,6 +21,17 @@ import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.SearchContext;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import com.vaadin.testbench.annotations.Attribute;
+import com.vaadin.testbench.elementsbase.Element;
+import com.vaadin.testbench.internal.SharedUtil;
 
 import static com.vaadin.testbench.ElementQuery.AttributeMatch.Comparison.CONTAINS;
 import static com.vaadin.testbench.ElementQuery.AttributeMatch.Comparison.CONTAINS_WORD;
