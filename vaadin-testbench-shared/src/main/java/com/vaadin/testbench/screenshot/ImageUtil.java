@@ -16,9 +16,8 @@ import java.awt.image.Raster;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.List;
-
-import org.apache.commons.codec.binary.Base64;
 
 import static java.awt.image.BufferedImage.TYPE_INT_ARGB;
 import static java.awt.image.BufferedImage.TYPE_INT_RGB;
@@ -50,13 +49,11 @@ public class ImageUtil {
      */
     public static String encodeImageToBase64(BufferedImage image) {
         String encodedImage = "";
-        Base64 encoder = new Base64();
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ImageIO.write(image, "png", baos);
             baos.flush();
-            byte[] encodedBytes = encoder.encode(baos.toByteArray());
-            encodedImage = new String(encodedBytes);
+            encodedImage = Base64.getUrlEncoder().encodeToString(baos.toByteArray());
             baos.close();
         } catch (IOException e) {
             e.printStackTrace();

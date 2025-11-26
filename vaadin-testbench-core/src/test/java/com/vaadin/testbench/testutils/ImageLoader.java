@@ -17,8 +17,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
-
-import org.apache.commons.codec.binary.Base64;
+import java.util.Base64;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -31,7 +30,7 @@ public class ImageLoader {
         final ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 
         ImageIO.write(img, "png", outStream);
-        return new String(Base64.encodeBase64(outStream.toByteArray()));
+        return Base64.getUrlEncoder().encodeToString(outStream.toByteArray());
     }
 
     public static BufferedImage loadImage(String folder, String filename)
