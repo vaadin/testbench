@@ -39,6 +39,7 @@ import com.vaadin.flow.server.communication.streaming.StreamingErrorEventImpl;
 import com.vaadin.flow.server.communication.streaming.StreamingStartEventImpl;
 import com.vaadin.flow.server.streams.UploadEvent;
 import com.vaadin.flow.server.streams.UploadHandler;
+import com.vaadin.flow.server.streams.UploadResult;
 import com.vaadin.testbench.unit.ComponentTester;
 import com.vaadin.testbench.unit.Tests;
 import com.vaadin.testbench.unit.internal.MockVaadin;
@@ -318,18 +319,22 @@ public class UploadTester<T extends Upload> extends ComponentTester<T> {
                     UploadEvent.class);
             method.setAccessible(true);
             method.invoke(null, uploadHandler, event);
-            uploadHandler.responseHandled(true, VaadinResponse.getCurrent());
+            uploadHandler.responseHandled(
+                    new UploadResult(true, VaadinResponse.getCurrent()));
         } catch (NoSuchMethodException | IllegalAccessException e) {
             throw new IllegalStateException("Cannot handle upload request", e);
         } catch (InvocationTargetException e) {
-            uploadHandler.responseHandled(false, VaadinResponse.getCurrent());
+            RuntimeException cause;
             if (e.getCause() instanceof RuntimeException re) {
-                throw re;
+                cause = re;
             } else if (e.getCause() instanceof IOException ioe) {
-                throw new UncheckedIOException(ioe);
+                cause = new UncheckedIOException(ioe);
             } else {
-                throw new UncheckedIOException(new IOException(e));
+                cause = new UncheckedIOException(new IOException(e));
             }
+            uploadHandler.responseHandled(new UploadResult(false,
+                    VaadinResponse.getCurrent(), cause));
+            throw cause;
         }
     }
 
