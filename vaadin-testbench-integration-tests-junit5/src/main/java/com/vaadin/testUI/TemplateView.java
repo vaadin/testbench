@@ -54,10 +54,12 @@ public class TemplateView extends LitTemplate {
         // #2033
         NativeButton btn1 = new NativeButton("Property Button 1");
         btn1.setId("property-button-1");
+        btn1.addClassName("button");
         add(btn1);
 
         NativeButton btn2 = new NativeButton("Property Button 2");
         btn2.setId("property-button-2");
+        btn2.addClassName("button");
         btn2.getElement().setProperty("testProperty", "XYZ");
         add(btn2);
     }

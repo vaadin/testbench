@@ -73,7 +73,7 @@ public class ElementQueryIT extends AbstractBrowserTB9Test {
         openTestURL();
 
         TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
-        Assertions.assertEquals(10,
+        Assertions.assertEquals(12,
                 view.$(NativeButtonElement.class).all().size());
     }
 
@@ -95,7 +95,7 @@ public class ElementQueryIT extends AbstractBrowserTB9Test {
         TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
         List<NativeButtonElement> buttons = view.$(NativeButtonElement.class)
                 .all();
-        Assertions.assertEquals(10, buttons.size());
+        Assertions.assertEquals(12, buttons.size());
     }
 
     @BrowserTest
@@ -178,7 +178,7 @@ public class ElementQueryIT extends AbstractBrowserTB9Test {
         nativeButtonElements = view.$(NativeButtonElement.class)
                 .withAttribute("id", "shadow-button", NOT_CONTAINS_PREFIX)
                 .all();
-        Assertions.assertEquals(8, nativeButtonElements.size());
+        Assertions.assertEquals(10, nativeButtonElements.size());
     }
 
     @BrowserTest
@@ -202,7 +202,7 @@ public class ElementQueryIT extends AbstractBrowserTB9Test {
         Assertions.assertEquals(1, button1s.size());
         List<NativeButtonElement> allButtons = view.$(NativeButtonElement.class)
                 .withAttributeContainingWord("class", "button").all();
-        Assertions.assertEquals(10, allButtons.size());
+        Assertions.assertEquals(12, allButtons.size());
     }
 
     @BrowserTest
@@ -212,7 +212,7 @@ public class ElementQueryIT extends AbstractBrowserTB9Test {
 
         List<NativeButtonElement> nonSlottedButtons = view
                 .$(NativeButtonElement.class).withoutAttribute("slot").all();
-        Assertions.assertEquals(9, nonSlottedButtons.size());
+        Assertions.assertEquals(11, nonSlottedButtons.size());
     }
 
     @BrowserTest
@@ -223,11 +223,11 @@ public class ElementQueryIT extends AbstractBrowserTB9Test {
         List<NativeButtonElement> nonSlottedButtons = view
                 .$(NativeButtonElement.class)
                 .withoutAttribute("slot", "special-slot").all();
-        Assertions.assertEquals(9, nonSlottedButtons.size());
+        Assertions.assertEquals(11, nonSlottedButtons.size());
 
         List<NativeButtonElement> allButtons = view.$(NativeButtonElement.class)
                 .withoutAttribute("class", "nonexistent").all();
-        Assertions.assertEquals(10, allButtons.size());
+        Assertions.assertEquals(12, allButtons.size());
     }
 
     @BrowserTest
@@ -237,7 +237,7 @@ public class ElementQueryIT extends AbstractBrowserTB9Test {
 
         List<NativeButtonElement> allButtons = view.$(NativeButtonElement.class)
                 .withoutAttributeContaining("class", "button-").all();
-        Assertions.assertEquals(1, allButtons.size());
+        Assertions.assertEquals(3, allButtons.size());
     }
 
     @BrowserTest
@@ -248,7 +248,7 @@ public class ElementQueryIT extends AbstractBrowserTB9Test {
         List<NativeButtonElement> allButtons = view.$(NativeButtonElement.class)
                 .withoutAttributeContainingWord("class", "button-special-slot")
                 .all();
-        Assertions.assertEquals(9, allButtons.size());
+        Assertions.assertEquals(11, allButtons.size());
     }
 
     @BrowserTest
@@ -266,7 +266,7 @@ public class ElementQueryIT extends AbstractBrowserTB9Test {
         TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
         List<NativeButtonElement> allButtons = view.$(NativeButtonElement.class)
                 .withClassName("button").all();
-        Assertions.assertEquals(10, allButtons.size());
+        Assertions.assertEquals(12, allButtons.size());
     }
 
     @BrowserTest
@@ -303,7 +303,7 @@ public class ElementQueryIT extends AbstractBrowserTB9Test {
         List<NativeButtonElement> notButton1s = view
                 .$(NativeButtonElement.class).withoutClassName("button-1")
                 .all();
-        Assertions.assertEquals(9, notButton1s.size());
+        Assertions.assertEquals(11, notButton1s.size());
     }
 
     @BrowserTest
@@ -313,7 +313,7 @@ public class ElementQueryIT extends AbstractBrowserTB9Test {
         List<NativeButtonElement> notButton1or2s = view
                 .$(NativeButtonElement.class).withoutClassName("button-1")
                 .withoutClassName("button-2").all();
-        Assertions.assertEquals(8, notButton1or2s.size());
+        Assertions.assertEquals(10, notButton1or2s.size());
     }
 
     @BrowserTest
@@ -321,7 +321,7 @@ public class ElementQueryIT extends AbstractBrowserTB9Test {
         openTestURL();
         TemplateViewElement template = $(TemplateViewElement.class).first();
 
-        Assertions.assertEquals(8,
+        Assertions.assertEquals(10,
                 template.getPropertyElements("children").size());
     }
 
@@ -340,7 +340,7 @@ public class ElementQueryIT extends AbstractBrowserTB9Test {
         TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
         List<NativeButtonElement> allButtons = view.$(NativeButtonElement.class)
                 .withoutTheme("light-theme").all();
-        Assertions.assertEquals(4, allButtons.size());
+        Assertions.assertEquals(6, allButtons.size());
     }
 
     @BrowserTest
