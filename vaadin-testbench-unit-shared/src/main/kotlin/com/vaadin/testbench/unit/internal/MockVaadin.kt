@@ -285,6 +285,9 @@ object MockVaadin {
     private fun setUIToSession(vaadinSession: VaadinSession, ui: UI) {
         UI.setCurrent(ui)
         var clazz: Class<*> = ui.javaClass
+        while (clazz != UI::class.java) {
+            clazz = clazz.superclass
+        }
         try {
             val uiIdField: Field = clazz.getDeclaredField("uiId").apply { isAccessible = true }
             uiIdField.set(ui, mockId.getAndIncrement())
