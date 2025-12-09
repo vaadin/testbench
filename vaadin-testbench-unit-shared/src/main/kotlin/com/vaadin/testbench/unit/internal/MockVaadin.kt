@@ -258,8 +258,9 @@ object MockVaadin {
             set(ui, MockPage(ui, uiFactory, session))
         }
         ui.internals.session = session
-        setUIToSession(session, ui)
+        UI.setCurrent(ui)
         ui.doInit(request, 1, "ROOT")
+        vaadinSession.addUI(ui)
         strongRefUI.set(ui)
 
         session.addUI(ui)
@@ -280,12 +281,6 @@ object MockVaadin {
         ui.pushConfiguration.pushMode = PushMode.AUTOMATIC
     }
 
-    private fun setUIToSession(vaadinSession: VaadinSession, ui: UI) {
-        UI.setCurrent(ui)
-        vaadinSession.addUI(ui)
-    }
-
-    
     /**
      * Since UI Unit Testing runs in the same JVM as the server and there is no browser, the boundaries between the client and
      * the server become unclear. When looking into sources of any test method, it's really hard to tell where exactly the server request ends, and
