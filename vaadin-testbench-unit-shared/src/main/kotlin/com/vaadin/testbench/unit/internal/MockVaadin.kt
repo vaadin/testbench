@@ -11,6 +11,7 @@ package com.vaadin.testbench.unit.internal
 
 import java.io.Serializable
 import java.lang.reflect.Field
+import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.locks.ReentrantLock
 import jakarta.servlet.ServletContext
@@ -57,6 +58,7 @@ object MockVaadin {
     private val strongRefReq = ThreadLocal<VaadinRequest>()
     private val strongRefRes = ThreadLocal<VaadinResponse>()
     private val lastNavigation = ThreadLocal<Location>()
+    private val mockId = AtomicInteger(1)
 
     /**
      * Mocks Vaadin for the current test method:
@@ -258,7 +260,7 @@ object MockVaadin {
             set(ui, MockPage(ui, uiFactory, session))
         }
         ui.internals.session = session
-        UI.setCurrent(ui)
+        setUIToSession(vaadinSession, ui)
         ui.doInit(request, 1, "ROOT")
         strongRefUI.set(ui)
 
@@ -280,6 +282,25 @@ object MockVaadin {
         ui.pushConfiguration.pushMode = PushMode.AUTOMATIC
     }
 
+    private fun setUIToSession(vaadinSession: VaadinSession, ui: UI) {
+        UI.setCurrent(ui)
+        var clazz: Class<*> = ui.javaClass
+        try {
+            val uiIdField: Field = clazz.getDeclaredField("uiId").apply { isAccessible = true }
+            uiIdField.set(ui, mockId.getAndIncrement())
+        } catch (e: NoSuchFieldException) {
+            throw RuntimeException("Failed to set uiId field", e)
+        } catch (e: SecurityException) {
+            throw RuntimeException("Failed to set uiId field", e)
+        } catch (e: IllegalArgumentException) {
+            throw RuntimeException("Failed to set uiId field", e)
+        } catch (e: IllegalAccessException) {
+            throw RuntimeException("Failed to set uiId field", e)
+        }
+        vaadinSession.addUI(ui)
+    }
+
+    
     /**
      * Since UI Unit Testing runs in the same JVM as the server and there is no browser, the boundaries between the client and
      * the server become unclear. When looking into sources of any test method, it's really hard to tell where exactly the server request ends, and
