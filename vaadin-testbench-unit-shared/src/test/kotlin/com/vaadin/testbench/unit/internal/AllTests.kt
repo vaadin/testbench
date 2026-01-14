@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Vaadin Ltd
+ * Copyright (C) 2020-2026 Vaadin Ltd
  *
  * This program is available under Commercial Vaadin Developer License
  * 4.0 (CVDLv4).
