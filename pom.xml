@@ -46,7 +46,7 @@
         <surefire.version>3.5.2</surefire.version>
         <javassist.version>3.30.2-GA</javassist.version>
         <spotless.plugin.version>3.0.0</spotless.plugin.version>
-        <currentYear>2025</currentYear>
+        <currentYear>2026</currentYear>
         <skipUnitTests>${skipTests}</skipUnitTests>
     </properties>
     <modules>
