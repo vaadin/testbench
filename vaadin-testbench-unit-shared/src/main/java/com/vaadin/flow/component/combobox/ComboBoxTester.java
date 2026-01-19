@@ -63,10 +63,36 @@ public class ComboBoxTester<T extends ComboBox<Y>, Y>
     }
 
     /**
-     * Select item by client string representation.
+     * Selects an item by its string representation (label).
+     * <p>
+     * This method searches for the item among the current suggestions, which
+     * are affected by any filter set via {@link #setFilter(String)}. If no
+     * filter is set, all items are available for selection. If a filter is set,
+     * only the filtered items can be selected.
+     * <p>
+     * To select an item when the ComboBox uses custom filtering logic (e.g.,
+     * set via {@code setItems(ItemFilter, Collection)}), first call
+     * {@link #setFilter(String)} to apply the filter, then call this method to
+     * select from the filtered results.
+     * <p>
+     * Example usage with filtering:
+     * 
+     * <pre>
+     * // Apply filter first
+     * comboBoxTester.setFilter("search text");
+     * // Then select from filtered items
+     * comboBoxTester.selectItem("Matching Item Label");
+     * </pre>
      *
      * @param selection
-     *            item representation string
+     *            the item's string representation (label) to select, or
+     *            {@code null} to clear the selection
+     * @throws IllegalArgumentException
+     *             if no item with the given label is found among current
+     *             suggestions
+     * @see #setFilter(String)
+     * @see #getSuggestions()
+     * @see #getSuggestionItems()
      */
     public void selectItem(String selection) {
         if (selection == null) {
