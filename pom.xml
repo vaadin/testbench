@@ -35,7 +35,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <vaadin.version>23.6-SNAPSHOT</vaadin.version>
         <flow.version>${vaadin.version}</flow.version>
-        <selenium.version>4.38.0</selenium.version>
+        <selenium.version>4.40.0</selenium.version>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <license.checker.version>1.12.7</license.checker.version>
