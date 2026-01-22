@@ -88,4 +88,15 @@ class DialogTesterTest extends UIUnitTest {
                 "Non-modal dialog should not block button");
     }
 
+    @Test
+    void headerTitle_getHeaderTitleReturnsCorrect() {
+        String title = "Test Title";
+        view.dialog.setHeaderTitle(title);
+
+        dialog_.open();
+
+        Assertions.assertEquals(title, dialog_.getHeaderTitle(),
+                "Dialog header title should match");
+    }
+
 }
