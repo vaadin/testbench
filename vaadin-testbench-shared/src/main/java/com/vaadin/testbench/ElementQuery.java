@@ -621,8 +621,8 @@ public class ElementQuery<T extends TestBenchElement> {
      * This selector does not require the id to be unique. To obtain the unique
      * id, chain with <code>{@link #single()}</code> or use
      * <code>{@link #id(String)}</code> instead of this selector. If you
-     * legitimately have duplicate ids and just want the first one, chain with
-     * <code>{@link #first()}</code>.
+     * legitimately have duplicate ids and want a specific one, chain with
+     * <code>{@link #get(int)}</code> using an explicit index.
      *
      * @param id
      *            the id to look up
@@ -630,7 +630,7 @@ public class ElementQuery<T extends TestBenchElement> {
      *
      * @see #id(String)
      * @see #single()
-     * @see #first()
+     * @see #get(int)
      */
     public ElementQuery<T> withId(String id) {
         return withAttribute("id", id);
@@ -1136,8 +1136,9 @@ public class ElementQuery<T extends TestBenchElement> {
      * <p>
      * This selector expects the id to be unique. If there are duplicate ids,
      * this selector will throw an exception. If you legitimately have duplicate
-     * ids, use <code>{@link #withId(String)}.{@link #first()}</code> instead.
-     * (Note, this alternate usage is the former behavior of this selector.)
+     * ids, use <code>{@link #withId(String)}.{@link #get(int)}</code> with an
+     * explicit index instead. (Note, using {@code .get(0)} is the former
+     * behavior of this selector.)
      *
      * @param id
      *            the id to look up
@@ -1147,7 +1148,7 @@ public class ElementQuery<T extends TestBenchElement> {
      *             if no unique id element is found
      *
      * @see #withId(String)
-     * @see #first()
+     * @see #get(int)
      */
     public T id(String id) {
         return withId(id).single();
@@ -1171,11 +1172,24 @@ public class ElementQuery<T extends TestBenchElement> {
 
     /**
      * Executes the search and returns the first result.
+     * <p>
+     * <strong>Warning:</strong> This method can lead to flaky tests when
+     * multiple matching elements exist on the page, as it arbitrarily selects
+     * the first one without validation. Consider using {@link #single()}
+     * instead, which asserts that exactly one element matches and fails
+     * immediately if multiple elements are found, making tests more reliable
+     * and failures easier to diagnose.
      *
      * @return The element of the type specified in the constructor
      * @throws NoSuchElementException
      *             if no element is found
+     * @see #single()
+     * @deprecated Use {@link #single()} for more reliable tests that assert
+     *             exactly one matching element, or use {@link #get(int)} with
+     *             an explicit index if selecting from multiple elements is
+     *             intentional.
      */
+    @Deprecated(since = "10.0", forRemoval = true)
     public T first() {
         return get(0);
     }
@@ -1187,13 +1201,22 @@ public class ElementQuery<T extends TestBenchElement> {
      * This method is identical to {@link #first()} if at least one element is
      * present. If no element is found, this method will keep searching until an
      * element is found or if 10 seconds has elapsed.
+     * <p>
+     * <strong>Warning:</strong> This method can lead to flaky tests when
+     * multiple matching elements exist on the page, as it arbitrarily selects
+     * the first one without validation. If you need to wait for an element and
+     * ensure exactly one exists, consider implementing a wait loop that calls
+     * {@link #single()} instead.
      *
      * @return The element of the type specified in the constructor
      * @throws NoSuchElementException
      *             if no element is found
      *
      * @see #first()
+     * @deprecated Use a wait loop with {@link #single()} for more reliable
+     *             tests that assert exactly one matching element exists.
      */
+    @Deprecated(since = "10.0", forRemoval = true)
     public T waitForFirst() {
         return waitForFirst(DEFAULT_WAIT_TIME_OUT_IN_SECONDS);
     }
@@ -1205,6 +1228,12 @@ public class ElementQuery<T extends TestBenchElement> {
      * This method is identical to {@link #first()} if at least one element is
      * present. If no element is found, this method will keep searching until an
      * element is found or {@code timeOutInSeconds} seconds has elapsed.
+     * <p>
+     * <strong>Warning:</strong> This method can lead to flaky tests when
+     * multiple matching elements exist on the page, as it arbitrarily selects
+     * the first one without validation. If you need to wait for an element and
+     * ensure exactly one exists, consider implementing a wait loop that calls
+     * {@link #single()} instead.
      *
      * @param timeOutInSeconds
      *            timeout in seconds before this method throws a
@@ -1214,7 +1243,10 @@ public class ElementQuery<T extends TestBenchElement> {
      *             if no element is found
      *
      * @see #first()
+     * @deprecated Use a wait loop with {@link #single()} for more reliable
+     *             tests that assert exactly one matching element exists.
      */
+    @Deprecated(since = "10.0", forRemoval = true)
     public T waitForFirst(long timeOutInSeconds) {
         T result = new WebDriverWait(getDriver(),
                 Duration.ofSeconds(timeOutInSeconds)).until(driver -> {
