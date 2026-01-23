@@ -17,6 +17,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.github.mvysny.dynatest.DynaNodeGroup
 import com.github.mvysny.dynatest.expectList
+import com.vaadin.flow.component.Text
 
 fun DynaNodeGroup.depthFirstTreeIteratorTests() {
     test("DepthFirstTreeIterator") {
@@ -28,7 +29,13 @@ fun DynaNodeGroup.depthFirstTreeIteratorTests() {
         val expected = mutableListOf<Component>()
         val root = VerticalLayout().apply {
             expected.add(this)
-            add(Button("Foo").apply { expected.add(this) })
+            add(Button("Foo").apply {
+                expected.add(this)
+                // In Vaadin 25.1, Button also has a text node
+                this.children.filter { it is Text }
+                    .findFirst()
+                    .ifPresent { expected.add(it) }
+            })
             add(HorizontalLayout().apply {
                 expected.add(this)
                 add(Span().apply { expected.add(this) })
