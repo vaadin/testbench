@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import com.vaadin.flow.component.html.testbench.NativeButtonElement;
 import com.vaadin.flow.component.html.testbench.SpanElement;
+import com.vaadin.testUI.ButtonView;
 import com.vaadin.tests.AbstractTB6Test;
 
 public class ButtonIT extends AbstractTB6Test {
