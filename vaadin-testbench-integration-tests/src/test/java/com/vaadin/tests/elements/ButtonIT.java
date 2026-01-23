@@ -14,7 +14,7 @@ import com.vaadin.flow.component.html.testbench.NativeButtonElement;
 import com.vaadin.flow.component.html.testbench.SpanElement;
 import com.vaadin.tests.AbstractTB6Test;
 
-public class ButtonIT extends AbstractTB6Test  {
+public class ButtonIT extends AbstractTB6Test {
 
     @Override
     protected Class<? extends Component> getTestView() {
