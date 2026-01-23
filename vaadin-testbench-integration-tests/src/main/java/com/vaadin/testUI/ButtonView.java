@@ -8,13 +8,13 @@
  */
 package com.vaadin.testUI;
 
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.NativeButton;
 import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
 
 @Route("button-view")
-public class ButtonView extends VerticalLayout {
+public class ButtonView extends Div {
 
     public ButtonView() {
         NativeButton button = new NativeButton("Click me");
