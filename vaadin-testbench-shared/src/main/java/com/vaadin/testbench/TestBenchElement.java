@@ -195,7 +195,16 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
         focus();
         try {
             // Avoid strange "element not clickable at point" problems
-            callFunction("click");
+            executeScript("""
+                const clickEvent = new MouseEvent('click', {
+                    view: window,
+                    bubbles: true,
+                    cancelable: true,
+                    button: 0,
+                    detail: 1
+                });
+                arguments[0].dispatchEvent(clickEvent);
+            """, this);
         } catch (Exception e) {
             if (e.getMessage()
                     .contains("Inspected target navigated or closed")) {
