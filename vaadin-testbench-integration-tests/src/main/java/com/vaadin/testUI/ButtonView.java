@@ -20,12 +20,14 @@ public class ButtonView extends VerticalLayout {
         NativeButton button = new NativeButton("Click me");
         button.setId("test-button");
         button.addSingleClickListener(event -> {
-            Span newSpan = new Span("Button single clicked: " + event.getClickCount());
+            Span newSpan = new Span(
+                    "Button single clicked: " + event.getClickCount());
             newSpan.setId("single-click");
             add(newSpan);
         });
         button.addDoubleClickListener(event -> {
-            Span newSpan = new Span("Button double clicked: " + event.getClickCount());
+            Span newSpan = new Span(
+                    "Button double clicked: " + event.getClickCount());
             newSpan.setId("double-click");
             add(newSpan);
         });
