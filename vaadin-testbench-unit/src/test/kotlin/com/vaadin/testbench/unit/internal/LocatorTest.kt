@@ -199,7 +199,10 @@ internal fun DynaNodeGroup.locatorTest() {
         _get<Button> { caption = "Click Me" }.click()
         expectAfterLookupCalled()
 
-        expect("Thanks Baron Vladimir Harkonnen, it works!") { _get<Text>().text }
+        expect("Thanks Baron Vladimir Harkonnen, it works!") { _get<Text>{
+            // Since Vaadin 25.1, Button contains a Text child
+            this.predicates.add { textComponent -> textComponent.parent.filter { (it is Button) }.isEmpty }
+        }.text }
         expectAfterLookupCalled()
         _get<TextField> { value = "Baron Vladimir Harkonnen" }  // test lookup by value
         expectAfterLookupCalled()

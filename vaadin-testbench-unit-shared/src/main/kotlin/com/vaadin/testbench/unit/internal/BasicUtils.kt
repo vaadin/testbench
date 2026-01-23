@@ -140,7 +140,7 @@ fun Component.matches(spec: SearchSpec<Component>.() -> Unit): Boolean =
  */
 fun <T> T._focus() where T : Focusable<*>, T : Component {
     checkEditableByUser()
-    _fireEvent(FocusNotifier.FocusEvent<T>(this, true))
+    _fireEvent(FocusNotifier.FocusEvent<T>(this, true, null))
 }
 
 /**
@@ -148,7 +148,7 @@ fun <T> T._focus() where T : Focusable<*>, T : Component {
  */
 fun <T> T._blur() where T : Focusable<*>, T : Component {
     checkEditableByUser()
-    _fireEvent(BlurNotifier.BlurEvent<T>(this, true))
+    _fireEvent(BlurNotifier.BlurEvent<T>(this, true, null))
 }
 
 /**
