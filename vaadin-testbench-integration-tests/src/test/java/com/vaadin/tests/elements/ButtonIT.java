@@ -10,8 +10,6 @@ package com.vaadin.tests.elements;
 
 import org.junit.Test;
 
-import com.vaadin.flow.component.html.testbench.NativeButtonElement;
-import com.vaadin.flow.component.html.testbench.SpanElement;
 import com.vaadin.testUI.ButtonView;
 import com.vaadin.tests.AbstractTB6Test;
 
@@ -31,18 +29,18 @@ public class ButtonIT extends AbstractTB6Test {
     public void buttonClick_singleClick() {
         $(NativeButtonElement.class).id("test-button").click();
         assertEquals("Button single clicked: 1",
-                $(SpanElement.class).id("single-click").getText());
+                findElement(By.id("single-click")).getText());
         assertEquals("Button focused",
-                $(SpanElement.class).id("focus-event").getText());
+                findElement(By.id("focus-event")).getText());
     }
 
     @Test
     public void buttonClick_doubleClick() {
         $(NativeButtonElement.class).id("test-button").doubleClick();
         assertEquals("Button double clicked: 2",
-                $(SpanElement.class).id("double-click").getText());
+                findElement(By.id("double-click")).getText());
         assertEquals("Button focused",
-                $(SpanElement.class).id("focus-event").getText());
+                findElement(By.id("focus-event")).getText());
     }
 
 }
