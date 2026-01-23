@@ -8,9 +8,11 @@
  */
 package com.vaadin.tests.elements;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 
+import com.vaadin.flow.component.Component;
 import com.vaadin.testUI.ButtonView;
 import com.vaadin.tests.AbstractTB6Test;
 
