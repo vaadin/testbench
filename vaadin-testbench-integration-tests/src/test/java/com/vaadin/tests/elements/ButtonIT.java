@@ -9,6 +9,7 @@
 package com.vaadin.tests.elements;
 
 import org.junit.Test;
+import org.openqa.selenium.By;
 
 import com.vaadin.testUI.ButtonView;
 import com.vaadin.tests.AbstractTB6Test;
