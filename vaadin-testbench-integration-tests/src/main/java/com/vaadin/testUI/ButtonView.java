@@ -13,7 +13,7 @@ import com.vaadin.flow.component.html.NativeButton;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.router.Route;
 
-@Route("button-view")
+@Route("ButtonView")
 public class ButtonView extends Div {
 
     public ButtonView() {
