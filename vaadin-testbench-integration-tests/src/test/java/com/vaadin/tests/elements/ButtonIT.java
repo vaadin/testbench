@@ -8,13 +8,13 @@
  */
 package com.vaadin.tests.elements;
 
-import static org.junit.Assert.assertEquals;
-
 import org.junit.Test;
 import org.openqa.selenium.By;
 
 import com.vaadin.testUI.ButtonView;
 import com.vaadin.tests.AbstractTB6Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class ButtonIT extends AbstractTB6Test {
 
