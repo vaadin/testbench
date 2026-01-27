@@ -191,32 +191,9 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
 
     @Override
     public void click() {
-        // JS call to click does not focus element, hence ensure focus
-        focus();
-        try {
-            // Avoid strange "element not clickable at point" problems
-            executeScript("""
-                        const clickEvent = new MouseEvent('click', {
-                            view: window,
-                            bubbles: true,
-                            cancelable: true,
-                            button: 0,
-                            detail: 1
-                        });
-                        arguments[0].dispatchEvent(clickEvent);
-                    """, this);
-        } catch (Exception e) {
-            if (e.getMessage()
-                    .contains("Inspected target navigated or closed")) {
-                // This happens with chromedriver although e.g. navigation
-                // succeeds
-                return;
-            }
-            // SVG elements and maybe others do not have a 'click' method
-            autoScrollIntoView();
-            waitForVaadin();
-            wrappedElement.click();
-        }
+        autoScrollIntoView();
+        waitForVaadin();
+        new Actions(getDriver()).click(wrappedElement).build().perform();
     }
 
     @Override
@@ -372,12 +349,20 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
         actions.build().perform();
     }
 
+    /**
+     * Performs a double-click action on this element.
+     *
+     * @see click()
+     */
     public void doubleClick() {
         autoScrollIntoView();
         waitForVaadin();
         new Actions(getDriver()).doubleClick(wrappedElement).build().perform();
     }
 
+    /**
+     * Performs a context-click (right click) action on this element.
+     */
     public void contextClick() {
         autoScrollIntoView();
         waitForVaadin();
@@ -544,11 +529,60 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
     private void autoScrollIntoView() {
         try {
             if (getCommandExecutor().isAutoScrollIntoView()) {
-                if (!wrappedElement.isDisplayed()) {
+                if (!isElementInViewport()) {
                     scrollIntoView();
                 }
             }
         } catch (Exception e) {
+        }
+    }
+
+    private boolean isElementInViewport() {
+        try {
+            Boolean result = (Boolean) executeScript(
+                    """
+                            function isVisible(elem) {
+                              // Check if element has zero dimensions (truly hidden)
+                              if (!elem.offsetParent && elem.offsetWidth === 0 && elem.offsetHeight === 0) {
+                                return false;
+                              }
+
+                              var rect = elem.getBoundingClientRect();
+                              if (rect.width === 0 || rect.height === 0) {
+                                return false;
+                              }
+
+                              // Check if element intersects with viewport
+                              var windowHeight = window.innerHeight || document.documentElement.clientHeight;
+                              var windowWidth = window.innerWidth || document.documentElement.clientWidth;
+                              if (rect.bottom < 0 || rect.top > windowHeight || rect.right < 0 || rect.left > windowWidth) {
+                                return false;
+                              }
+
+                              // Check if clipped by any scrollable ancestor
+                              var parent = elem.parentElement;
+                              while (parent && parent !== document.body) {
+                                var style = window.getComputedStyle(parent);
+                                var overflow = style.overflow + style.overflowX + style.overflowY;
+
+                                if (overflow.includes('hidden') || overflow.includes('scroll') || overflow.includes('auto')) {
+                                  var parentRect = parent.getBoundingClientRect();
+                                  // Check if element is outside parent's visible area
+                                  if (rect.bottom < parentRect.top || rect.top > parentRect.bottom ||
+                                      rect.right < parentRect.left || rect.left > parentRect.right) {
+                                    return false;
+                                  }
+                                }
+                                parent = parent.parentElement;
+                              }
+                              return true;
+                            }
+                            return isVisible(arguments[0]);
+                            """,
+                    this);
+            return result != null && result;
+        } catch (Exception e) {
+            return true; // Assume visible on error
         }
     }
 
