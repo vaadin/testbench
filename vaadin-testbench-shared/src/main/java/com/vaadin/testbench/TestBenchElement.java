@@ -518,7 +518,8 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
      * Scrolls the element into the visible area of the browser window
      */
     public void scrollIntoView() {
-        callFunction("scrollIntoView");
+        var params = Map.<String, Object>of("block", "end", "inline", "end");
+        callFunction("scrollIntoView", params);
     }
 
     /**
