@@ -514,12 +514,21 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
                 (TakesScreenshot) this, (HasCapabilities) getDriver());
     }
 
-    /***
+    /**
+     * Scrolls the element into the visible area of the browser window
+     *
+     * @param params
+     *            the parameters for scrolling into view
+     */
+    public void scrollIntoView(Map<String, Object> params) {
+        callFunction("scrollIntoView", params);
+    }
+
+    /**
      * Scrolls the element into the visible area of the browser window
      */
     public void scrollIntoView() {
-        var params = Map.<String, Object> of("block", "end", "inline", "end");
-        callFunction("scrollIntoView", params);
+        callFunction("scrollIntoView");
     }
 
     /**
@@ -529,10 +538,11 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
      */
     private void autoScrollIntoView() {
         try {
-            if (getCommandExecutor().isAutoScrollIntoView()) {
-                if (!isElementInViewport()) {
-                    scrollIntoView();
-                }
+            if (getCommandExecutor().isAutoScrollIntoView()
+                    && !isElementInViewport()) {
+                var params = Map.<String, Object> of("block", "end", "inline",
+                        "end");
+                scrollIntoView(params);
             }
         } catch (Exception e) {
         }
