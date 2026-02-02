@@ -515,13 +515,16 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
     }
 
     /**
-     * Scrolls the element into the visible area of the browser window
+     * Scrolls the element into the visible area of the browser window with the
+     * given options. Check
+     * https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollIntoView
+     * for more information on the options.
      *
-     * @param params
+     * @param options
      *            the parameters for scrolling into view
      */
-    public void scrollIntoView(Map<String, Object> params) {
-        callFunction("scrollIntoView", params);
+    public void scrollIntoView(Map<String, Object> options) {
+        callFunction("scrollIntoView", options);
     }
 
     /**
