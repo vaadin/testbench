@@ -541,9 +541,6 @@ public abstract class BaseUIUnitTest {
      * temporarily released during the wait to allow background threads to
      * acquire the lock and enqueue tasks.
      *
-     * <p>
-     * If Signals support is not enabled, this method does nothing.
-     *
      * @return {@code true} if any pending Signals tasks were processed.
      * @see #runPendingSignalsTasks(long, TimeUnit)
      * @see TestSignalEnvironment#runPendingTasks(long, TimeUnit)
@@ -569,9 +566,6 @@ public abstract class BaseUIUnitTest {
      * immediately without additional waiting. If any {@link VaadinSession} lock
      * is held by the current thread, it is temporarily released during the wait
      * to allow background threads to acquire the lock and enqueue tasks.
-     *
-     * <p>
-     * If Signals support is not enabled, this method does nothing.
      *
      * @param maxWaitTime
      *            the maximum time to wait for the first task to arrive in the
