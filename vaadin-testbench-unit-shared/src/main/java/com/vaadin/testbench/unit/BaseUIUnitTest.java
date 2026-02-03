@@ -32,7 +32,6 @@ import io.github.classgraph.ScanResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.vaadin.experimental.FeatureFlags;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.Key;
@@ -195,10 +194,7 @@ public abstract class BaseUIUnitTest {
             throw new IllegalStateException(
                     "Cannot initialize Signals support because VaadinService is not available");
         }
-        if (FeatureFlags.get(service.getContext())
-                .isEnabled(FeatureFlags.FLOW_FULLSTACK_SIGNALS.getId())) {
-            signalsTestEnvironment = TestSignalEnvironment.register();
-        }
+        signalsTestEnvironment = TestSignalEnvironment.register();
     }
 
     /**
