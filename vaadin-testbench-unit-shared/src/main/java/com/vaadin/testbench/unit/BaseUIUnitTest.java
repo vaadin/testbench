@@ -39,7 +39,6 @@ import com.vaadin.flow.component.KeyModifier;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.RouteParameters;
-import com.vaadin.flow.server.VaadinService;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.pro.licensechecker.Capabilities;
 import com.vaadin.pro.licensechecker.Capability;
@@ -189,11 +188,6 @@ public abstract class BaseUIUnitTest {
     }
 
     protected void initSignalsSupport() {
-        VaadinService service = VaadinService.getCurrent();
-        if (service == null) {
-            throw new IllegalStateException(
-                    "Cannot initialize Signals support because VaadinService is not available");
-        }
         signalsTestEnvironment = TestSignalEnvironment.register();
     }
 
@@ -547,10 +541,6 @@ public abstract class BaseUIUnitTest {
      * temporarily released during the wait to allow background threads to
      * acquire the lock and enqueue tasks.
      *
-     * <p>
-     * If Signals support is not enabled (via the {@code FLOW_FULLSTACK_SIGNALS}
-     * feature flag), this method does nothing.
-     *
      * @return {@code true} if any pending Signals tasks were processed.
      * @see #runPendingSignalsTasks(long, TimeUnit)
      * @see TestSignalEnvironment#runPendingTasks(long, TimeUnit)
@@ -576,10 +566,6 @@ public abstract class BaseUIUnitTest {
      * immediately without additional waiting. If any {@link VaadinSession} lock
      * is held by the current thread, it is temporarily released during the wait
      * to allow background threads to acquire the lock and enqueue tasks.
-     *
-     * <p>
-     * If Signals support is not enabled (via the {@code FLOW_FULLSTACK_SIGNALS}
-     * feature flag), this method does nothing.
      *
      * @param maxWaitTime
      *            the maximum time to wait for the first task to arrive in the
