@@ -15,8 +15,8 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.NativeButton;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.router.Route;
-import com.vaadin.signals.Signal;
-import com.vaadin.signals.shared.SharedNumberSignal;
+import com.vaadin.flow.signals.Signal;
+import com.vaadin.flow.signals.shared.SharedNumberSignal;
 
 @Route(value = "signals")
 public class SignalsView extends Div {
