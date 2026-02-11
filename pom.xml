@@ -10,7 +10,7 @@
     </parent>
     <artifactId>vaadin-testbench-parent</artifactId>
     <packaging>pom</packaging>
-    <version>9.5-SNAPSHOT</version>
+    <version>9.6-SNAPSHOT</version>
     <name>Vaadin TestBench parent</name>
 
     <organization>
@@ -37,8 +37,8 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <spring.boot.version>3.5.0</spring.boot.version>
-        <vaadin.version>24.9-SNAPSHOT</vaadin.version>
-        <flow.version>24.9-SNAPSHOT</flow.version>
+        <vaadin.version>24.10-SNAPSHOT</vaadin.version>
+        <flow.version>24.10-SNAPSHOT</flow.version>
         <slf4j.version>2.0.7</slf4j.version>
         <failsafe.version>3.5.2</failsafe.version>
         <surefire.version>3.5.2</surefire.version>
@@ -98,7 +98,7 @@
             <dependency>
                 <groupId>com.vaadin</groupId>
                 <artifactId>license-checker</artifactId>
-                <version>2.0.0</version>
+                <version>3.0.1</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
