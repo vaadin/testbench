@@ -15,8 +15,8 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.NativeButton;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.router.Route;
-import com.vaadin.signals.NumberSignal;
-import com.vaadin.signals.Signal;
+import com.vaadin.flow.signals.Signal;
+import com.vaadin.flow.signals.shared.SharedNumberSignal;
 
 @Route(value = "signals")
 public class SignalsView extends Div {
@@ -27,12 +27,12 @@ public class SignalsView extends Div {
     public final Span counter;
     public final Span asyncCounter;
     public final Span asyncWithDelayCounter;
-    public final NumberSignal numberSignal;
-    public final NumberSignal asyncNumberSignal;
-    public final NumberSignal asyncWithDelayNumberSignal;
+    public final SharedNumberSignal numberSignal;
+    public final SharedNumberSignal asyncNumberSignal;
+    public final SharedNumberSignal asyncWithDelayNumberSignal;
 
     public SignalsView() {
-        numberSignal = new NumberSignal();
+        numberSignal = new SharedNumberSignal();
 
         Signal<String> computedSignal = numberSignal
                 .mapIntValue(counter -> "Counter: " + counter);
@@ -41,13 +41,13 @@ public class SignalsView extends Div {
         counter = new Span("Counter: -");
         ComponentEffect.bind(counter, computedSignal, Span::setText);
 
-        asyncNumberSignal = new NumberSignal();
+        asyncNumberSignal = new SharedNumberSignal();
         Signal<String> asyncComputedSignal = asyncNumberSignal
                 .mapIntValue(counter -> "Counter: " + counter);
         asyncCounter = new Span("Counter: -");
         ComponentEffect.bind(asyncCounter, asyncComputedSignal, Span::setText);
 
-        asyncWithDelayNumberSignal = new NumberSignal();
+        asyncWithDelayNumberSignal = new SharedNumberSignal();
         asyncWithDelayCounter = new Span("Counter: -");
 
         quickBackgroundTaskButton = new NativeButton("Quick background task",
