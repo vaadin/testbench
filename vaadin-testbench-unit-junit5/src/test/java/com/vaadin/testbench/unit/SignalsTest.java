@@ -16,9 +16,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
-import com.vaadin.flow.component.ComponentEffect;
-import com.vaadin.flow.component.UI;
-
 @ViewPackages(packages = "com.example.base.signals")
 @Timeout(10)
 public class SignalsTest extends UIUnitTest {
@@ -46,22 +43,6 @@ public class SignalsTest extends UIUnitTest {
 
         view.add(view.counter);
         Assertions.assertEquals("Counter: 1", view.counter.getText());
-    }
-
-    @Test
-    void detachedComponent_triggerEffect_effectEvaluatedAsynchronously() {
-        var view = navigate(SignalsView.class);
-        var counterTester = test(view.asyncCounter);
-        Assertions.assertEquals("Counter: 0", counterTester.getText());
-        UI ui = UI.getCurrent();
-        UI.setCurrent(null);
-
-        ComponentEffect.effect(ui,
-                () -> view.asyncCounter.setText("Counter: async"));
-        runPendingSignalsTasks();
-
-        UI.setCurrent(ui);
-        Assertions.assertEquals("Counter: async", view.asyncCounter.getText());
     }
 
     @Test

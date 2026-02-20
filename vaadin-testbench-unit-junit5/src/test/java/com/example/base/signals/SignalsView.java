@@ -10,7 +10,6 @@ package com.example.base.signals;
 
 import java.util.concurrent.CompletableFuture;
 
-import com.vaadin.flow.component.ComponentEffect;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.NativeButton;
 import com.vaadin.flow.component.html.Span;
@@ -39,13 +38,13 @@ public class SignalsView extends Div {
         incrementButton = new NativeButton("Increment",
                 ev -> numberSignal.incrementBy(1.0));
         counter = new Span("Counter: -");
-        ComponentEffect.bind(counter, computedSignal, Span::setText);
+        counter.bindText(computedSignal);
 
         asyncNumberSignal = new SharedNumberSignal();
         Signal<String> asyncComputedSignal = asyncNumberSignal
                 .mapIntValue(counter -> "Counter: " + counter);
         asyncCounter = new Span("Counter: -");
-        ComponentEffect.bind(asyncCounter, asyncComputedSignal, Span::setText);
+        asyncCounter.bindText(asyncComputedSignal);
 
         asyncWithDelayNumberSignal = new SharedNumberSignal();
         asyncWithDelayCounter = new Span("Counter: -");
@@ -58,7 +57,7 @@ public class SignalsView extends Div {
                                     java.util.concurrent.TimeUnit.MILLISECONDS));
                 });
 
-        ComponentEffect.effect(asyncWithDelayCounter, () -> {
+        Signal.effect(asyncWithDelayCounter, () -> {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
