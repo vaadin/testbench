@@ -42,6 +42,23 @@
                 <artifactId>vaadin-testbench-core-junit6</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <!-- OSS browserless test modules -->
+            <dependency>
+                <groupId>com.vaadin</groupId>
+                <artifactId>browserless-test-shared</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.vaadin</groupId>
+                <artifactId>browserless-test-junit6</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.vaadin</groupId>
+                <artifactId>browserless-test-quarkus</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <!-- Legacy adapter modules -->
             <dependency>
                 <groupId>com.vaadin</groupId>
                 <artifactId>vaadin-testbench-unit</artifactId>
