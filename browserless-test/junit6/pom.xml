@@ -12,21 +12,6 @@
     <packaging>jar</packaging>
     <name>Vaadin Browserless Test JUnit6</name>
     <description>Vaadin Browserless UI Test - JUnit 6</description>
-    <inceptionYear>2022</inceptionYear>
-
-    <repositories>
-        <repository>
-            <id>vaadin-prereleases</id>
-            <url>https://maven.vaadin.com/vaadin-prereleases/</url>
-        </repository>
-    </repositories>
-
-    <licenses>
-        <license>
-            <name>Apache License, Version 2.0</name>
-            <url>https://www.apache.org/licenses/LICENSE-2.0</url>
-        </license>
-    </licenses>
 
     <profiles>
         <profile>

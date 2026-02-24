@@ -13,13 +13,6 @@
     <name>Vaadin Browserless Test (Bill of Materials)</name>
     <description>Vaadin Browserless Test (Bill of Materials)</description>
 
-    <licenses>
-        <license>
-            <name>Apache License, Version 2.0</name>
-            <url>https://www.apache.org/licenses/LICENSE-2.0</url>
-        </license>
-    </licenses>
-
     <dependencyManagement>
         <dependencies>
             <dependency>
