@@ -19,9 +19,12 @@ import com.vaadin.testbench.unit.Tests;
  *
  * @param <T>
  *            component type
- 
-  * @deprecated Replace the vaadin-testbench-unit dependency with browserless-test-junit6 and use the corresponding class from the com.vaadin.browserless package instead. This class will be removed in a future version.
-  */
+ * 
+ * @deprecated Replace the vaadin-testbench-unit dependency with
+ *             browserless-test-junit6 and use the corresponding class from the
+ *             com.vaadin.browserless package instead. This class will be
+ *             removed in a future version.
+ */
 @Tests(TabSheet.class)
 @Deprecated(forRemoval = true, since = "10.1")
 public class TabSheetTester<T extends TabSheet> extends ComponentTester<T> {

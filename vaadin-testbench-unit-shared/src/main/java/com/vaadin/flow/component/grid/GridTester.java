@@ -37,9 +37,12 @@ import com.vaadin.testbench.unit.component.GridKt;
  *            component type
  * @param <Y>
  *            item type
- 
-  * @deprecated Replace the vaadin-testbench-unit dependency with browserless-test-junit6 and use the corresponding class from the com.vaadin.browserless package instead. This class will be removed in a future version.
-  */
+ * 
+ * @deprecated Replace the vaadin-testbench-unit dependency with
+ *             browserless-test-junit6 and use the corresponding class from the
+ *             com.vaadin.browserless package instead. This class will be
+ *             removed in a future version.
+ */
 @Tests(fqn = { "com.vaadin.flow.component.grid.Grid" })
 @Deprecated(forRemoval = true, since = "10.1")
 public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
