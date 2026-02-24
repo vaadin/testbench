@@ -76,6 +76,7 @@ data class Routes(
     fun autoDiscoverViews(vararg packageNames: String? = arrayOf()): Routes = apply {
         val classGraph: ClassGraph = ClassGraph().enableClassInfo()
                 .enableAnnotationInfo()
+                .ignoreClassVisibility()
                 .acceptPackages(*(packageNames.map { it ?: "" }.toTypedArray()))
         classGraph.scan().use { scanResult: ScanResult ->
             scanResult.getClassesWithAnnotation(Route::class.java.name).mapTo(routes) { info: ClassInfo ->
