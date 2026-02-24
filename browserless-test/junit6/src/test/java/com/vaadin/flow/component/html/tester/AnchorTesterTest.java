@@ -23,18 +23,18 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.vaadin.browserless.BrowserlessTest;
+import com.vaadin.browserless.ViewPackages;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.server.streams.DownloadHandler;
-import com.vaadin.testbench.unit.UIUnitTest;
-import com.vaadin.testbench.unit.ViewPackages;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ViewPackages
-class AnchorTesterTest extends UIUnitTest {
+class AnchorTesterTest extends BrowserlessTest {
     @BeforeEach
     void init() {
         RouteConfiguration.forApplicationScope()

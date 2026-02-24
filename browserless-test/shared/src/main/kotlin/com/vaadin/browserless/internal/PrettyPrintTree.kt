@@ -7,7 +7,7 @@
  * See <https://vaadin.com/commercial-license-and-service-terms> for the full
  * license.
  */
-package com.vaadin.testbench.unit.internal
+package com.vaadin.browserless.internal
 
 
 import java.util.*
@@ -22,7 +22,7 @@ import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.grid.Grid
 import com.vaadin.flow.component.html.Anchor
 import com.vaadin.flow.component.icon.Icon
-import com.vaadin.testbench.unit.internal.PrettyPrintTree.Companion.ofVaadin
+import com.vaadin.browserless.internal.PrettyPrintTree.Companion.ofVaadin
 
 
 /**

@@ -7,7 +7,7 @@
  * See <https://vaadin.com/commercial-license-and-service-terms> for the full
  * license.
  */
-package com.vaadin.testbench.unit.internal
+package com.vaadin.browserless.internal
 
 import com.github.mvysny.dynatest.DynaNodeGroup
 import com.vaadin.flow.component.Text
@@ -20,7 +20,7 @@ import com.vaadin.flow.component.textfield.TextField
 import com.vaadin.flow.dom.DomEvent
 import com.vaadin.flow.dom.Element
 import com.vaadin.flow.internal.JacksonUtils
-import com.vaadin.testbench.unit.expectList
+import com.vaadin.browserless.expectList
 import kotlin.test.expect
 
 fun DynaNodeGroup.elementUtilsTests() {

@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.vaadin.testbench.dontscan.noclassdeffound;
+package com.vaadin.browserless.dontscan.noclassdeffound;
 
-import com.vaadin.testbench.unit.ComponentTester;
-import com.vaadin.testbench.unit.Tests;
+import com.vaadin.browserless.ComponentTester;
+import com.vaadin.browserless.Tests;
 
 /**
  * Dummy tester referencing a class from a third-party JAR that might not be

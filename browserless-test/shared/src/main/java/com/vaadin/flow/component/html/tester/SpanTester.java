@@ -15,8 +15,8 @@
  */
 package com.vaadin.flow.component.html.tester;
 
+import com.vaadin.browserless.Tests;
 import com.vaadin.flow.component.html.Span;
-import com.vaadin.testbench.unit.Tests;
 
 @Tests(Span.class)
 public class SpanTester extends HtmlClickContainer<Span> {

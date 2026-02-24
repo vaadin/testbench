@@ -7,14 +7,14 @@
  * See <https://vaadin.com/commercial-license-and-service-terms> for the full
  * license.
  */
-package com.vaadin.testbench.unit.mocks
+package com.vaadin.browserless.mocks
 
 import java.lang.reflect.Constructor
 import java.lang.reflect.Method
 import com.vaadin.flow.function.DeploymentConfiguration
 import com.vaadin.flow.server.*
-import com.vaadin.testbench.unit.internal.Routes
-import com.vaadin.testbench.unit.internal.UIFactory
+import com.vaadin.browserless.internal.Routes
+import com.vaadin.browserless.internal.UIFactory
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 

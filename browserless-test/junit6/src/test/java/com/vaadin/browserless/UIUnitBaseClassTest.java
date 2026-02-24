@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.vaadin.testbench.unit;
+package com.vaadin.browserless;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -40,7 +40,7 @@ import com.vaadin.flow.server.auth.MenuAccessControl;
 class UIUnitBaseClassTest {
 
     @Nested
-    class TestMethodExecutionTest extends UIUnitTest {
+    class TestMethodExecutionTest extends BrowserlessTest {
         @Test
         void extendingBaseClass_runTest_vaadinInstancesAvailable() {
             Assertions.assertNotNull(UI.getCurrent(),
@@ -64,7 +64,7 @@ class UIUnitBaseClassTest {
     }
 
     @Nested
-    class DiscoverAllRoutesTest extends UIUnitTest {
+    class DiscoverAllRoutesTest extends BrowserlessTest {
 
         @Test
         void extendingBaseClass_runTest_routesAreDiscovered() {
@@ -82,7 +82,7 @@ class UIUnitBaseClassTest {
     }
 
     @Nested
-    class CustomLookupServicesTest extends UIUnitTest {
+    class CustomLookupServicesTest extends BrowserlessTest {
 
         @Override
         protected Set<Class<?>> lookupServices() {
@@ -110,7 +110,7 @@ class UIUnitBaseClassTest {
     }
 
     @Nested
-    class MenuAccessControlTest extends UIUnitTest {
+    class MenuAccessControlTest extends BrowserlessTest {
 
         @Test
         void menuAccessControl_instanceAvailable() {

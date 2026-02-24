@@ -25,14 +25,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import com.vaadin.browserless.BrowserlessTest;
+import com.vaadin.browserless.TreeOnFailureExtension;
+import com.vaadin.browserless.ViewPackages;
 import com.vaadin.flow.router.RouteConfiguration;
-import com.vaadin.testbench.unit.TreeOnFailureExtension;
-import com.vaadin.testbench.unit.UIUnitTest;
-import com.vaadin.testbench.unit.ViewPackages;
 
 @ViewPackages
 @ExtendWith(TreeOnFailureExtension.class)
-class MessageListTesterTest extends UIUnitTest {
+class MessageListTesterTest extends BrowserlessTest {
 
     MessagesView view;
 

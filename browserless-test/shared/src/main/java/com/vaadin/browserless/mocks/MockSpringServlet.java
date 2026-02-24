@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.vaadin.testbench.unit.mocks;
+package com.vaadin.browserless.mocks;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,15 +30,15 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import com.vaadin.browserless.internal.Routes;
+import com.vaadin.browserless.internal.UIFactory;
+import com.vaadin.browserless.internal.UtilsKt;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.function.DeploymentConfiguration;
 import com.vaadin.flow.server.ServiceException;
 import com.vaadin.flow.server.VaadinServletRequest;
 import com.vaadin.flow.server.VaadinServletService;
 import com.vaadin.flow.spring.SpringServlet;
-import com.vaadin.testbench.unit.internal.Routes;
-import com.vaadin.testbench.unit.internal.UIFactory;
-import com.vaadin.testbench.unit.internal.UtilsKt;
 
 /**
  * Makes sure that the {@link #routes} are properly registered, and that

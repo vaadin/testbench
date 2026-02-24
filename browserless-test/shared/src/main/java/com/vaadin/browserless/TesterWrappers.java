@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.vaadin.testbench.unit;
+package com.vaadin.browserless;
 
 import java.math.BigDecimal;
 
@@ -136,317 +136,325 @@ import com.vaadin.flow.router.RouterLink;
 public interface TesterWrappers {
 
     default AccordionTester<Accordion> test(Accordion accordion) {
-        return BaseUIUnitTest.internalWrap(AccordionTester.class, accordion);
+        return BaseBrowserlessTest.internalWrap(AccordionTester.class,
+                accordion);
     }
 
     default ButtonTester<Button> test(Button button) {
-        return BaseUIUnitTest.internalWrap(ButtonTester.class, button);
+        return BaseBrowserlessTest.internalWrap(ButtonTester.class, button);
     }
 
     default CheckboxTester<Checkbox> test(Checkbox checkbox) {
-        return BaseUIUnitTest.internalWrap(CheckboxTester.class, checkbox);
+        return BaseBrowserlessTest.internalWrap(CheckboxTester.class, checkbox);
     }
 
     default <V> CheckboxGroupTester<CheckboxGroup<V>, V> test(
             CheckboxGroup<V> checkboxGroup) {
-        return BaseUIUnitTest.internalWrap(CheckboxGroupTester.class,
+        return BaseBrowserlessTest.internalWrap(CheckboxGroupTester.class,
                 checkboxGroup);
     }
 
     default <V> CheckboxGroupTester<CheckboxGroup<V>, V> test(
             CheckboxGroup checkboxGroup, Class<V> valueType) {
-        return BaseUIUnitTest.internalWrap(CheckboxGroupTester.class,
+        return BaseBrowserlessTest.internalWrap(CheckboxGroupTester.class,
                 checkboxGroup);
     }
 
     default <V> ComboBoxTester<ComboBox<V>, V> test(ComboBox<V> comboBox) {
-        return BaseUIUnitTest.internalWrap(ComboBoxTester.class, comboBox);
+        return BaseBrowserlessTest.internalWrap(ComboBoxTester.class, comboBox);
     }
 
     default <V> ComboBoxTester<ComboBox<V>, V> test(ComboBox comboBox,
             Class<V> valueType) {
-        return BaseUIUnitTest.internalWrap(ComboBoxTester.class, comboBox);
+        return BaseBrowserlessTest.internalWrap(ComboBoxTester.class, comboBox);
     }
 
     default <V> MultiSelectComboBoxTester<MultiSelectComboBox<V>, V> test(
             MultiSelectComboBox<V> comboBox) {
-        return BaseUIUnitTest.internalWrap(MultiSelectComboBoxTester.class,
+        return BaseBrowserlessTest.internalWrap(MultiSelectComboBoxTester.class,
                 comboBox);
     }
 
     default <V> MultiSelectComboBoxTester<MultiSelectComboBox<V>, V> test(
             MultiSelectComboBox comboBox, Class<V> valueType) {
-        return BaseUIUnitTest.internalWrap(MultiSelectComboBoxTester.class,
+        return BaseBrowserlessTest.internalWrap(MultiSelectComboBoxTester.class,
                 comboBox);
     }
 
     default ConfirmDialogTester test(ConfirmDialog confirmDialog) {
-        return BaseUIUnitTest.internalWrap(ConfirmDialogTester.class,
+        return BaseBrowserlessTest.internalWrap(ConfirmDialogTester.class,
                 confirmDialog);
     }
 
     default ContextMenuTester<ContextMenu> test(ContextMenu contextMenu) {
-        return BaseUIUnitTest.internalWrap(ContextMenuTester.class,
+        return BaseBrowserlessTest.internalWrap(ContextMenuTester.class,
                 contextMenu);
     }
 
     default DatePickerTester<DatePicker> test(DatePicker datePicker) {
-        return BaseUIUnitTest.internalWrap(DatePickerTester.class, datePicker);
+        return BaseBrowserlessTest.internalWrap(DatePickerTester.class,
+                datePicker);
     }
 
     default DateTimePickerTester<DateTimePicker> test(
             DateTimePicker dateTimePicker) {
-        return BaseUIUnitTest.internalWrap(DateTimePickerTester.class,
+        return BaseBrowserlessTest.internalWrap(DateTimePickerTester.class,
                 dateTimePicker);
     }
 
     default DetailsTester<Details> test(Details details) {
-        return BaseUIUnitTest.internalWrap(DetailsTester.class, details);
+        return BaseBrowserlessTest.internalWrap(DetailsTester.class, details);
     }
 
     default DialogTester test(Dialog dialog) {
-        return BaseUIUnitTest.internalWrap(DialogTester.class, dialog);
+        return BaseBrowserlessTest.internalWrap(DialogTester.class, dialog);
     }
 
     default <V> GridTester<Grid<V>, V> test(Grid<V> grid) {
-        return BaseUIUnitTest.internalWrap(GridTester.class, grid);
+        return BaseBrowserlessTest.internalWrap(GridTester.class, grid);
     }
 
     default <V> GridTester<Grid<V>, V> test(Grid grid, Class<V> itemType) {
-        return BaseUIUnitTest.internalWrap(GridTester.class, grid);
+        return BaseBrowserlessTest.internalWrap(GridTester.class, grid);
     }
 
     default <V> ListBoxTester<ListBox<V>, V> test(ListBox<V> listBox) {
-        return BaseUIUnitTest.internalWrap(ListBoxTester.class, listBox);
+        return BaseBrowserlessTest.internalWrap(ListBoxTester.class, listBox);
     }
 
     default <V> MultiSelectListBoxTester<MultiSelectListBox<V>, V> test(
             MultiSelectListBox<V> multiSelectListBox) {
-        return BaseUIUnitTest.internalWrap(MultiSelectListBoxTester.class,
+        return BaseBrowserlessTest.internalWrap(MultiSelectListBoxTester.class,
                 multiSelectListBox);
     }
 
     default <V> MultiSelectListBoxTester<MultiSelectListBox<V>, V> test(
             MultiSelectListBox multiSelectListBox, Class<V> valueType) {
-        return BaseUIUnitTest.internalWrap(MultiSelectListBoxTester.class,
+        return BaseBrowserlessTest.internalWrap(MultiSelectListBoxTester.class,
                 multiSelectListBox);
     }
 
     default LoginFormTester<LoginForm> test(LoginForm loginForm) {
-        return BaseUIUnitTest.internalWrap(LoginFormTester.class, loginForm);
+        return BaseBrowserlessTest.internalWrap(LoginFormTester.class,
+                loginForm);
     }
 
     default LoginOverlayTester<LoginOverlay> test(LoginOverlay loginOverlay) {
-        return BaseUIUnitTest.internalWrap(LoginOverlayTester.class,
+        return BaseBrowserlessTest.internalWrap(LoginOverlayTester.class,
                 loginOverlay);
     }
 
     default MessageInputTester<MessageInput> test(MessageInput messageInput) {
-        return BaseUIUnitTest.internalWrap(MessageInputTester.class,
+        return BaseBrowserlessTest.internalWrap(MessageInputTester.class,
                 messageInput);
     }
 
     default MessageListTester<MessageList> test(MessageList messageList) {
-        return BaseUIUnitTest.internalWrap(MessageListTester.class,
+        return BaseBrowserlessTest.internalWrap(MessageListTester.class,
                 messageList);
     }
 
     default NotificationTester<Notification> test(Notification notification) {
-        return BaseUIUnitTest.internalWrap(NotificationTester.class,
+        return BaseBrowserlessTest.internalWrap(NotificationTester.class,
                 notification);
     }
 
     default <V> RadioButtonGroupTester<RadioButtonGroup<V>, V> test(
             RadioButtonGroup<V> radioButtonGroup) {
-        return BaseUIUnitTest.internalWrap(RadioButtonGroupTester.class,
+        return BaseBrowserlessTest.internalWrap(RadioButtonGroupTester.class,
                 radioButtonGroup);
     }
 
     default <V> RadioButtonGroupTester<RadioButtonGroup<V>, V> test(
             RadioButtonGroup radioButtonGroup, Class<V> valueType) {
-        return BaseUIUnitTest.internalWrap(RadioButtonGroupTester.class,
+        return BaseBrowserlessTest.internalWrap(RadioButtonGroupTester.class,
                 radioButtonGroup);
     }
 
     // RadioButton is package protected so no autowrap.
 
     default RouterLinkTester<RouterLink> test(RouterLink routerLink) {
-        return BaseUIUnitTest.internalWrap(RouterLinkTester.class, routerLink);
+        return BaseBrowserlessTest.internalWrap(RouterLinkTester.class,
+                routerLink);
     }
 
     default <V> SelectTester<Select<V>, V> test(Select<V> select) {
-        return BaseUIUnitTest.internalWrap(SelectTester.class, select);
+        return BaseBrowserlessTest.internalWrap(SelectTester.class, select);
     }
 
     default <V> SelectTester<Select<V>, V> test(Select select,
             Class<V> valueType) {
-        return BaseUIUnitTest.internalWrap(SelectTester.class, select);
+        return BaseBrowserlessTest.internalWrap(SelectTester.class, select);
     }
 
     default SideNavTester<SideNav> test(SideNav sideNav) {
-        return BaseUIUnitTest.internalWrap(SideNavTester.class, sideNav);
+        return BaseBrowserlessTest.internalWrap(SideNavTester.class, sideNav);
     }
 
     default TabsTester<Tabs> test(Tabs tabs) {
-        return BaseUIUnitTest.internalWrap(TabsTester.class, tabs);
+        return BaseBrowserlessTest.internalWrap(TabsTester.class, tabs);
     }
 
     default TabSheetTester<TabSheet> test(TabSheet tabSheet) {
-        return BaseUIUnitTest.internalWrap(TabSheetTester.class, tabSheet);
+        return BaseBrowserlessTest.internalWrap(TabSheetTester.class, tabSheet);
     }
 
     default NumberFieldTester<IntegerField, Integer> test(
             IntegerField integerField) {
-        return BaseUIUnitTest.internalWrap(NumberFieldTester.class,
+        return BaseBrowserlessTest.internalWrap(NumberFieldTester.class,
                 integerField);
     }
 
     default NumberFieldTester<NumberField, Double> test(
             NumberField numberField) {
-        return BaseUIUnitTest.internalWrap(NumberFieldTester.class,
+        return BaseBrowserlessTest.internalWrap(NumberFieldTester.class,
                 numberField);
     }
 
     default TextAreaTester<TextArea> test(TextArea textArea) {
-        return BaseUIUnitTest.internalWrap(TextAreaTester.class, textArea);
+        return BaseBrowserlessTest.internalWrap(TextAreaTester.class, textArea);
     }
 
     default TextFieldTester<TextField, String> test(TextField textField) {
-        return BaseUIUnitTest.internalWrap(TextFieldTester.class, textField);
+        return BaseBrowserlessTest.internalWrap(TextFieldTester.class,
+                textField);
     }
 
     default TextFieldTester<PasswordField, String> test(
             PasswordField passwordField) {
-        return BaseUIUnitTest.internalWrap(TextFieldTester.class,
+        return BaseBrowserlessTest.internalWrap(TextFieldTester.class,
                 passwordField);
     }
 
     default TextFieldTester<EmailField, String> test(EmailField emailField) {
-        return BaseUIUnitTest.internalWrap(TextFieldTester.class, emailField);
+        return BaseBrowserlessTest.internalWrap(TextFieldTester.class,
+                emailField);
     }
 
     default TextFieldTester<BigDecimalField, BigDecimal> test(
             BigDecimalField bigDecimalField) {
-        return BaseUIUnitTest.internalWrap(TextFieldTester.class,
+        return BaseBrowserlessTest.internalWrap(TextFieldTester.class,
                 bigDecimalField);
     }
 
     default TimePickerTester<TimePicker> test(TimePicker timePicker) {
-        return BaseUIUnitTest.internalWrap(TimePickerTester.class, timePicker);
+        return BaseBrowserlessTest.internalWrap(TimePickerTester.class,
+                timePicker);
     }
 
     default UploadTester<Upload> test(Upload upload) {
-        return BaseUIUnitTest.internalWrap(UploadTester.class, upload);
+        return BaseBrowserlessTest.internalWrap(UploadTester.class, upload);
     }
 
     default <V> VirtualListTester<VirtualList<V>, V> test(
             VirtualList<V> virtualList) {
-        return BaseUIUnitTest.internalWrap(VirtualListTester.class,
+        return BaseBrowserlessTest.internalWrap(VirtualListTester.class,
                 virtualList);
     }
 
     default <V> VirtualListTester<VirtualList<V>, V> test(
             VirtualList virtualList, Class<V> itemType) {
-        return BaseUIUnitTest.internalWrap(VirtualListTester.class,
+        return BaseBrowserlessTest.internalWrap(VirtualListTester.class,
                 virtualList);
     }
 
     /* HTML components */
 
     default AnchorTester test(Anchor anchor) {
-        return BaseUIUnitTest.internalWrap(AnchorTester.class, anchor);
+        return BaseBrowserlessTest.internalWrap(AnchorTester.class, anchor);
     }
 
     default DescriptionListTester test(DescriptionList descriptionList) {
-        return BaseUIUnitTest.internalWrap(DescriptionListTester.class,
+        return BaseBrowserlessTest.internalWrap(DescriptionListTester.class,
                 descriptionList);
     }
 
     default DivTester test(Div div) {
-        return BaseUIUnitTest.internalWrap(DivTester.class, div);
+        return BaseBrowserlessTest.internalWrap(DivTester.class, div);
     }
 
     default EmphasisTester test(Emphasis emphasis) {
-        return BaseUIUnitTest.internalWrap(EmphasisTester.class, emphasis);
+        return BaseBrowserlessTest.internalWrap(EmphasisTester.class, emphasis);
     }
 
     default H1Tester test(H1 h1) {
-        return BaseUIUnitTest.internalWrap(H1Tester.class, h1);
+        return BaseBrowserlessTest.internalWrap(H1Tester.class, h1);
     }
 
     default H2Tester test(H2 h2) {
-        return BaseUIUnitTest.internalWrap(H2Tester.class, h2);
+        return BaseBrowserlessTest.internalWrap(H2Tester.class, h2);
     }
 
     default H3Tester test(H3 h3) {
-        return BaseUIUnitTest.internalWrap(H3Tester.class, h3);
+        return BaseBrowserlessTest.internalWrap(H3Tester.class, h3);
     }
 
     default H4Tester test(H4 h4) {
-        return BaseUIUnitTest.internalWrap(H4Tester.class, h4);
+        return BaseBrowserlessTest.internalWrap(H4Tester.class, h4);
     }
 
     default H5Tester test(H5 h5) {
-        return BaseUIUnitTest.internalWrap(H5Tester.class, h5);
+        return BaseBrowserlessTest.internalWrap(H5Tester.class, h5);
     }
 
     default H6Tester test(H6 h6) {
-        return BaseUIUnitTest.internalWrap(H6Tester.class, h6);
+        return BaseBrowserlessTest.internalWrap(H6Tester.class, h6);
     }
 
     default HrTester test(Hr hr) {
-        return BaseUIUnitTest.internalWrap(HrTester.class, hr);
+        return BaseBrowserlessTest.internalWrap(HrTester.class, hr);
     }
 
     default ImageTester test(Image image) {
-        return BaseUIUnitTest.internalWrap(ImageTester.class, image);
+        return BaseBrowserlessTest.internalWrap(ImageTester.class, image);
     }
 
     default InputTester test(Input input) {
-        return BaseUIUnitTest.internalWrap(InputTester.class, input);
+        return BaseBrowserlessTest.internalWrap(InputTester.class, input);
     }
 
     default RangeInputTester test(RangeInput input) {
-        return BaseUIUnitTest.internalWrap(RangeInputTester.class, input);
+        return BaseBrowserlessTest.internalWrap(RangeInputTester.class, input);
     }
 
     default NativeLabelTester test(NativeLabel label) {
-        return BaseUIUnitTest.internalWrap(NativeLabelTester.class, label);
+        return BaseBrowserlessTest.internalWrap(NativeLabelTester.class, label);
     }
 
     default ListItemTester test(ListItem listItem) {
-        return BaseUIUnitTest.internalWrap(ListItemTester.class, listItem);
+        return BaseBrowserlessTest.internalWrap(ListItemTester.class, listItem);
     }
 
     default NativeButtonTester test(NativeButton nativeButton) {
-        return BaseUIUnitTest.internalWrap(NativeButtonTester.class,
+        return BaseBrowserlessTest.internalWrap(NativeButtonTester.class,
                 nativeButton);
     }
 
     default NativeDetailsTester test(NativeDetails nativeDetails) {
-        return BaseUIUnitTest.internalWrap(NativeDetailsTester.class,
+        return BaseBrowserlessTest.internalWrap(NativeDetailsTester.class,
                 nativeDetails);
     }
 
     default OrderedListTester test(OrderedList orderedList) {
-        return BaseUIUnitTest.internalWrap(OrderedListTester.class,
+        return BaseBrowserlessTest.internalWrap(OrderedListTester.class,
                 orderedList);
     }
 
     default ParagraphTester test(Paragraph paragraph) {
-        return BaseUIUnitTest.internalWrap(ParagraphTester.class, paragraph);
+        return BaseBrowserlessTest.internalWrap(ParagraphTester.class,
+                paragraph);
     }
 
     default PreTester test(Pre pre) {
-        return BaseUIUnitTest.internalWrap(PreTester.class, pre);
+        return BaseBrowserlessTest.internalWrap(PreTester.class, pre);
     }
 
     default SpanTester test(Span span) {
-        return BaseUIUnitTest.internalWrap(SpanTester.class, span);
+        return BaseBrowserlessTest.internalWrap(SpanTester.class, span);
     }
 
     default UnorderedListTester test(UnorderedList unorderedList) {
-        return BaseUIUnitTest.internalWrap(UnorderedListTester.class,
+        return BaseBrowserlessTest.internalWrap(UnorderedListTester.class,
                 unorderedList);
     }
 }

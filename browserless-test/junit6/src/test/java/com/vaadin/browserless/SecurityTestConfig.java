@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.vaadin.testbench.unit;
+package com.vaadin.browserless;
 
 import java.util.List;
 import java.util.UUID;
@@ -30,9 +30,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.flow.server.VaadinServiceInitListener;
-import com.vaadin.flow.server.auth.DefaultMenuAccessControl;
 import com.vaadin.flow.server.auth.MenuAccessControl;
 import com.vaadin.flow.server.auth.NavigationAccessControl;
+import com.vaadin.flow.spring.security.SpringMenuAccessControl;
 
 // Empty configuration class used only to be able to bootstrap spring
 // ApplicationContext
@@ -80,30 +80,7 @@ class SecurityTestConfig {
 
         @Bean
         MenuAccessControl menuAccessControl() {
-            // SpringMenuAccessControl has been introduced in Vaadin 24.5
-            // but the Testbench codebase currently supports also 24.4
-            // Using reflection to prevent runtime issues.
-            Class<? extends MenuAccessControl> clazz = springMenuAccessControlClass();
-            if (clazz != null) {
-                try {
-                    return clazz.getConstructor().newInstance();
-                } catch (Exception e) {
-                    throw new AssertionError(
-                            "Cannot instantiate SpringMenuAccessControl");
-                }
-            }
-            return new DefaultMenuAccessControl();
+            return new SpringMenuAccessControl();
         }
-    }
-
-    @SuppressWarnings("unchecked")
-    static Class<? extends MenuAccessControl> springMenuAccessControlClass() {
-        try {
-            return (Class<? extends MenuAccessControl>) Class.forName(
-                    "com.vaadin.flow.spring.security.SpringMenuAccessControl");
-        } catch (ClassNotFoundException e) {
-            // No op
-        }
-        return null;
     }
 }

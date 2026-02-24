@@ -13,14 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.vaadin.testbench.unit;
+package com.vaadin.browserless;
 
 import java.security.Principal;
 
 import com.testapp.security.LoginView;
 import com.testapp.security.ProtectedView;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -30,10 +29,11 @@ import org.springframework.test.context.ContextConfiguration;
 import com.vaadin.flow.server.VaadinRequest;
 import com.vaadin.flow.server.VaadinService;
 import com.vaadin.flow.server.auth.MenuAccessControl;
+import com.vaadin.flow.spring.security.SpringMenuAccessControl;
 
 @ContextConfiguration(classes = SecurityTestConfig.NavigationAccessControlConfig.class)
 @ViewPackages(packages = "com.testapp.security")
-class SpringUnitSecurityTest extends SpringUIUnitTest {
+class SpringUnitSecurityTest extends SpringBrowserlessTest {
 
     @Test
     @WithMockUser(username = "john", roles = { "DEV", "PO" })
@@ -113,17 +113,13 @@ class SpringUnitSecurityTest extends SpringUIUnitTest {
 
     @Test
     void extendingBaseClass_runTest_menuAccessControlAvailable() {
-        Class<? extends MenuAccessControl> menuAccessControlClass = SecurityTestConfig
-                .springMenuAccessControlClass();
-        Assumptions.assumeTrue(menuAccessControlClass != null,
-                "SpringMenuAccessControl class not available");
         MenuAccessControl menuAccessControl = VaadinService.getCurrent()
                 .getInstantiator().getMenuAccessControl();
         Assertions.assertNotNull(menuAccessControl,
                 "Expecting MenuAccessControl to be available");
-        Assertions.assertInstanceOf(menuAccessControlClass, menuAccessControl,
-                "Expecting menu access control to be "
-                        + menuAccessControlClass.getName() + " but was "
+        Assertions.assertInstanceOf(SpringMenuAccessControl.class,
+                menuAccessControl,
+                "Expecting menu access control to be SpringMenuAccessControl but was "
                         + menuAccessControl.getClass().getName());
 
     }

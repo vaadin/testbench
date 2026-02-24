@@ -15,8 +15,8 @@
  */
 package com.vaadin.flow.component.html.tester;
 
+import com.vaadin.browserless.Tests;
 import com.vaadin.flow.component.html.Emphasis;
-import com.vaadin.testbench.unit.Tests;
 
 @Tests(Emphasis.class)
 public class EmphasisTester extends HtmlClickContainer<Emphasis> {

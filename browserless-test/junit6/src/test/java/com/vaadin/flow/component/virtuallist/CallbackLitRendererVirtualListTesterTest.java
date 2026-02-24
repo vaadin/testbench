@@ -19,12 +19,12 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.vaadin.browserless.BrowserlessTest;
+import com.vaadin.browserless.ViewPackages;
 import com.vaadin.flow.router.RouteConfiguration;
-import com.vaadin.testbench.unit.UIUnitTest;
-import com.vaadin.testbench.unit.ViewPackages;
 
 @ViewPackages
-class CallbackLitRendererVirtualListTesterTest extends UIUnitTest {
+class CallbackLitRendererVirtualListTesterTest extends BrowserlessTest {
 
     private VirtualListTester<VirtualList<User>, User> $virtualList;
 

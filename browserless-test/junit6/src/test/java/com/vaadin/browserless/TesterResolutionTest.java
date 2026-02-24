@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.vaadin.testbench.unit;
+package com.vaadin.browserless;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -21,9 +21,9 @@ import org.junit.jupiter.api.Test;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Tag;
 
-@ComponentTesterPackages("com.vaadin.testbench.unit")
+@ComponentTesterPackages("com.vaadin.browserless")
 @ViewPackages(packages = "com.vaadin.browserless")
-public class TesterResolutionTest extends UIUnitTest {
+public class TesterResolutionTest extends BrowserlessTest {
 
     @Test
     public void wrapTest_returnsTestWrap() {

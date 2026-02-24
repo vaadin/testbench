@@ -13,19 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.vaadin.testbench.unit.quarkus.mocks;
+package com.vaadin.browserless.quarkus.mocks;
 
 import jakarta.enterprise.inject.spi.BeanManager;
 
+import com.vaadin.browserless.internal.UIFactory;
+import com.vaadin.browserless.mocks.MockInstantiator;
+import com.vaadin.browserless.mocks.MockVaadinSession;
 import com.vaadin.flow.di.Instantiator;
 import com.vaadin.flow.function.DeploymentConfiguration;
 import com.vaadin.flow.server.VaadinRequest;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.quarkus.QuarkusVaadinServlet;
 import com.vaadin.quarkus.QuarkusVaadinServletService;
-import com.vaadin.testbench.unit.internal.UIFactory;
-import com.vaadin.testbench.unit.mocks.MockInstantiator;
-import com.vaadin.testbench.unit.mocks.MockVaadinSession;
 
 /**
  * A mocking service that performs three very important tasks:

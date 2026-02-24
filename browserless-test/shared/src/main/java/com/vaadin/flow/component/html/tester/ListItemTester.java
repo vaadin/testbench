@@ -15,8 +15,8 @@
  */
 package com.vaadin.flow.component.html.tester;
 
+import com.vaadin.browserless.Tests;
 import com.vaadin.flow.component.html.ListItem;
-import com.vaadin.testbench.unit.Tests;
 
 @Tests(ListItem.class)
 public class ListItemTester extends HtmlClickContainer<ListItem> {

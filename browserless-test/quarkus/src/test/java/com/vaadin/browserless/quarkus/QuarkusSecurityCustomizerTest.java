@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.vaadin.testbench.unit.quarkus;
+package com.vaadin.browserless.quarkus;
 
 import java.util.Set;
 

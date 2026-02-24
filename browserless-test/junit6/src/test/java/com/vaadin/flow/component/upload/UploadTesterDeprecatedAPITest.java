@@ -33,13 +33,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
+import com.vaadin.browserless.BrowserlessTest;
+import com.vaadin.browserless.ViewPackages;
 import com.vaadin.flow.router.RouteConfiguration;
-import com.vaadin.testbench.unit.UIUnitTest;
-import com.vaadin.testbench.unit.ViewPackages;
 
 @ViewPackages
 @Deprecated
-class UploadTesterDeprecatedAPITest extends UIUnitTest {
+class UploadTesterDeprecatedAPITest extends BrowserlessTest {
 
     private static final String FIRST_FILE_CONTENTS = "First file";
     private static final String SECOND_FILE_CONTENTS = "Second file";

@@ -35,6 +35,9 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import com.vaadin.browserless.ComponentTester;
+import com.vaadin.browserless.Tests;
+import com.vaadin.browserless.internal.MockVaadin;
 import com.vaadin.flow.server.StreamResourceRegistry;
 import com.vaadin.flow.server.StreamVariable;
 import com.vaadin.flow.server.VaadinRequest;
@@ -47,9 +50,6 @@ import com.vaadin.flow.server.communication.streaming.StreamingStartEventImpl;
 import com.vaadin.flow.server.streams.UploadEvent;
 import com.vaadin.flow.server.streams.UploadHandler;
 import com.vaadin.flow.server.streams.UploadResult;
-import com.vaadin.testbench.unit.ComponentTester;
-import com.vaadin.testbench.unit.Tests;
-import com.vaadin.testbench.unit.internal.MockVaadin;
 
 /**
  * Tester for Upload components.

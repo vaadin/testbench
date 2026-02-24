@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.vaadin.testbench.unit;
+package com.vaadin.browserless;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -26,8 +26,8 @@ public class TesterScanTest {
     public void scanForTesters_testerForClassNotInClasspath_doNotThrowOnClassNotFoundException() {
         // Loads a dummy tester annotated with @Tests using an FQN to a
         // non-existing component class.
-        Assertions.assertDoesNotThrow(() -> BaseUIUnitTest
-                .scanForTesters("com.vaadin.testbench.dontscan.classnotfound"));
+        Assertions.assertDoesNotThrow(() -> BaseBrowserlessTest.scanForTesters(
+                "com.vaadin.browserless.dontscan.classnotfound"));
     }
 
     @Test
@@ -35,8 +35,8 @@ public class TesterScanTest {
         // Loads a dummy tester annotated with @Tests referencing a class in
         // another module with provided scope so the test itself is not able to
         // load the class.
-        Assertions.assertDoesNotThrow(() -> BaseUIUnitTest.scanForTesters(
-                "com.vaadin.testbench.dontscan.noclassdeffound"));
+        Assertions.assertDoesNotThrow(() -> BaseBrowserlessTest.scanForTesters(
+                "com.vaadin.browserless.dontscan.noclassdeffound"));
     }
 
     @Test
@@ -44,8 +44,8 @@ public class TesterScanTest {
         // Loads a dummy tester annotated with @Tests referencing a class in
         // another module with provided scope so the test itself is not able to
         // load the class.
-        Assertions.assertDoesNotThrow(() -> BaseUIUnitTest.scanForTesters(
-                "com.vaadin.testbench.dontscan.typenotpresent"));
+        Assertions.assertDoesNotThrow(() -> BaseBrowserlessTest.scanForTesters(
+                "com.vaadin.browserless.dontscan.typenotpresent"));
     }
 
 }

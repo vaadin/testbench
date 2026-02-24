@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.vaadin.testbench.unit;
+package com.vaadin.browserless;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
@@ -25,7 +25,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -39,6 +38,12 @@ import io.github.classgraph.ScanResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.vaadin.browserless.internal.MockInternalSeverError;
+import com.vaadin.browserless.internal.MockVaadin;
+import com.vaadin.browserless.internal.Routes;
+import com.vaadin.browserless.internal.ShortcutsKt;
+import com.vaadin.browserless.internal.UtilsKt;
+import com.vaadin.browserless.mocks.MockedUI;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.Key;
@@ -47,15 +52,6 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.RouteParameters;
 import com.vaadin.flow.server.VaadinSession;
-import com.vaadin.pro.licensechecker.Capabilities;
-import com.vaadin.pro.licensechecker.Capability;
-import com.vaadin.pro.licensechecker.LicenseChecker;
-import com.vaadin.testbench.unit.internal.MockInternalSeverError;
-import com.vaadin.testbench.unit.internal.MockVaadin;
-import com.vaadin.testbench.unit.internal.Routes;
-import com.vaadin.testbench.unit.internal.ShortcutsKt;
-import com.vaadin.testbench.unit.internal.UtilsKt;
-import com.vaadin.testbench.unit.mocks.MockedUI;
 
 /**
  * Base class for UI unit tests.
@@ -71,10 +67,10 @@ import com.vaadin.testbench.unit.mocks.MockedUI;
  *
  * @see ViewPackages
  */
-public abstract class BaseUIUnitTest {
+public abstract class BaseBrowserlessTest {
 
     private static final Logger LOGGER = LoggerFactory
-            .getLogger(BaseUIUnitTest.class.getPackageName());
+            .getLogger(BaseBrowserlessTest.class.getPackageName());
     private static final ConcurrentHashMap<String, Routes> routesCache = new ConcurrentHashMap<>();
 
     protected static final Map<Class<?>, Class<? extends ComponentTester>> testers = new HashMap<>();
@@ -84,23 +80,10 @@ public abstract class BaseUIUnitTest {
 
     static {
         testers.putAll(scanForTesters("com.vaadin.flow.component"));
-        Properties properties = new Properties();
-        try {
-            properties.load(BaseUIUnitTest.class
-                    .getResourceAsStream("testbench.properties"));
-        } catch (Exception e) {
-            LoggerFactory.getLogger(BaseUIUnitTest.class)
-                    .warn("Unable to read TestBench properties file", e);
-            throw new ExceptionInInitializerError(e);
-        }
-
-        LicenseChecker.checkLicenseFromStaticBlock("vaadin-testbench",
-                properties.getProperty("testbench.version"), null,
-                Capabilities.of(Capability.PRE_TRIAL));
     }
 
-    // Visible for test
-    static Map<Class<?>, Class<? extends ComponentTester>> scanForTesters(
+    // Protected for access by deprecated adapter subclass (BaseUIUnitTest)
+    protected static Map<Class<?>, Class<? extends ComponentTester>> scanForTesters(
             String... packages) {
         try (ScanResult scan = new ClassGraph().enableClassInfo()
                 .enableAnnotationInfo().acceptPackages(packages).scan(2)) {
@@ -216,7 +199,7 @@ public abstract class BaseUIUnitTest {
         }
     }
 
-    Set<String> scanPackages() {
+    protected Set<String> scanPackages() {
         Set<String> packagesToScan = new HashSet<>();
 
         if (getClass().isAnnotationPresent(ViewPackages.class)) {
@@ -378,20 +361,19 @@ public abstract class BaseUIUnitTest {
                 .get(0);
     }
 
-    // Visible to ComponentWrap
+    // Protected for access by deprecated adapter subclass (BaseUIUnitTest)
     @SuppressWarnings("unchecked")
-    static <T extends ComponentTester<Y>, Y extends Component> T internalWrap(
+    protected static <T extends ComponentTester<Y>, Y extends Component> T internalWrap(
             Y component) {
         return (T) initialize(getTester(component.getClass()), component);
     }
 
-    static <T extends ComponentTester<Y>, Y extends Component> T internalWrap(
+    protected static <T extends ComponentTester<Y>, Y extends Component> T internalWrap(
             Class<T> wrap, Y component) {
         return initialize(wrap, component);
     }
 
-    // Visible to ComponentWrap
-    static <T extends Component> ComponentQuery<T> internalQuery(
+    protected static <T extends Component> ComponentQuery<T> internalQuery(
             Class<T> componentType) {
         return new ComponentQuery<>(componentType);
     }
@@ -661,7 +643,7 @@ public abstract class BaseUIUnitTest {
                     + "This may happen when the test is extending the wrong base class for the testing engine in use. "
                     + "Current test class is expected to run with "
                     + testingEngine() + ".";
-            throw new UIUnitTestSetupException(message);
+            throw new BrowserlessTestSetupException(message);
         }
         return ui;
     }

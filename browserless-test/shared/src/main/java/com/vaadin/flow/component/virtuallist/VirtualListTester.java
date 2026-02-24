@@ -19,15 +19,15 @@ import java.util.Collections;
 
 import tools.jackson.databind.node.ArrayNode;
 
+import com.vaadin.browserless.ComponentTester;
+import com.vaadin.browserless.LitRendererTestUtil;
+import com.vaadin.browserless.Tests;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.LitRenderer;
 import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.internal.JacksonUtils;
-import com.vaadin.testbench.unit.ComponentTester;
-import com.vaadin.testbench.unit.LitRendererTestUtil;
-import com.vaadin.testbench.unit.Tests;
 
 /**
  * Tester for VirtualList components.

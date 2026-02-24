@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.vaadin.testbench.dontscan.noclassdeffound;
+package com.vaadin.browserless.dontscan.noclassdeffound;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Tag;

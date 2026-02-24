@@ -7,7 +7,7 @@
  * See <https://vaadin.com/commercial-license-and-service-terms> for the full
  * license.
  */
-package com.vaadin.testbench.unit.internal
+package com.vaadin.browserless.internal
 
 import java.io.ByteArrayOutputStream
 import java.io.ObjectInputStream
@@ -27,9 +27,9 @@ import com.vaadin.flow.server.VaadinServletRequest
 import com.vaadin.flow.server.VaadinServletResponse
 import com.vaadin.flow.server.VaadinSession
 import com.vaadin.flow.server.WrappedHttpSession
-import com.vaadin.testbench.unit.mocks.MockHttpSession
-import com.vaadin.testbench.unit.mocks.MockRequest
-import com.vaadin.testbench.unit.mocks.MockResponse
+import com.vaadin.browserless.mocks.MockHttpSession
+import com.vaadin.browserless.mocks.MockRequest
+import com.vaadin.browserless.mocks.MockResponse
 import jakarta.servlet.Servlet
 import jakarta.servlet.ServletContext
 

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.vaadin.testbench.unit;
+package com.vaadin.browserless;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -35,7 +35,7 @@ import com.vaadin.flow.component.html.Span;
  * Tests for the Clickable mixin interface functionality.
  */
 @ViewPackages(packages = "com.example")
-public class ClickableTest extends UIUnitTest {
+public class ClickableTest extends BrowserlessTest {
 
     private Div container;
 

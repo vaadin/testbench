@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.vaadin.testbench.unit;
+package com.vaadin.browserless;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
 /**
- * Base JUnit 5+ class for UI unit tests.
+ * Base JUnit 6 class for UI unit tests.
  *
  * The class automatically scans classpath for routes and error views.
  * Subclasses should typically restrict classpath scanning to a specific
@@ -29,18 +29,18 @@ import org.junit.jupiter.api.BeforeEach;
  * <pre>
  * {@code
  * &#64;ViewPackages(classes = {CartView.class, CheckoutView.class})
- * class CartViewTest extends UIUnitTest {
+ * class CartViewTest extends BrowserlessTest {
  * }
  *
  * &#64;ViewPackages(packages = {"com.example.shop.cart", "com.example.security"})
- * class CartViewTest extends UIUnitTest {
+ * class CartViewTest extends BrowserlessTest {
  * }
  *
  * &#64;ViewPackages(
  *    classes = {CartView.class, CheckoutView.class},
  *    packages = {"com.example.security"}
  * )
- * class CartViewTest extends UIUnitTest {
+ * class CartViewTest extends BrowserlessTest {
  * }
  * </pre>
  *
@@ -77,7 +77,7 @@ import org.junit.jupiter.api.BeforeEach;
  *
  * @see ViewPackages
  */
-public abstract class UIUnitTest extends BaseUIUnitTest
+public abstract class BrowserlessTest extends BaseBrowserlessTest
         implements TesterWrappers {
 
     @BeforeEach
@@ -93,6 +93,6 @@ public abstract class UIUnitTest extends BaseUIUnitTest
 
     @Override
     protected final String testingEngine() {
-        return "JUnit 5+";
+        return "JUnit 6";
     }
 }

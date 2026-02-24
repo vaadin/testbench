@@ -15,10 +15,10 @@
  */
 package com.vaadin.flow.component.html.tester;
 
+import com.vaadin.browserless.Tests;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentUtil;
 import com.vaadin.flow.component.html.NativeDetails;
-import com.vaadin.testbench.unit.Tests;
 
 @Tests(NativeDetails.class)
 public class NativeDetailsTester extends HtmlComponentTester<NativeDetails> {

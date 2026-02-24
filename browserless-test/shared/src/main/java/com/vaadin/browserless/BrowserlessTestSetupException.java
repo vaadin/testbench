@@ -13,18 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.vaadin.testbench.unit;
+package com.vaadin.browserless;
 
 /**
- * Exception thrown by {@link BaseUIUnitTest} methods when the mock environment
- * has not been set up correctly.
+ * Exception thrown by {@link BaseBrowserlessTest} methods when the mock
+ * environment has not been set up correctly.
  */
-public class UIUnitTestSetupException extends RuntimeException {
-    public UIUnitTestSetupException(String message) {
+public class BrowserlessTestSetupException extends RuntimeException {
+    public BrowserlessTestSetupException(String message) {
         super(message);
     }
 
-    public UIUnitTestSetupException(String message, Throwable cause) {
+    public BrowserlessTestSetupException(String message, Throwable cause) {
         super(message, cause);
     }
 }
