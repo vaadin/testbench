@@ -6,7 +6,7 @@
  * See <https://vaadin.com/commercial-license-and-service-terms> for the full
  * license.
  */
-package com.vaadin.testbench.unit;
+package com.vaadin.browserless;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
