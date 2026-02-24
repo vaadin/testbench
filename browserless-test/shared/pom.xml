@@ -12,7 +12,6 @@
     <packaging>jar</packaging>
     <name>Vaadin Browserless Test Shared</name>
     <description>Vaadin Browserless UI Test - Shared</description>
-    <url>http://vaadin.com</url>
     <inceptionYear>2022</inceptionYear>
 
     <repositories>
@@ -29,11 +28,6 @@
         </license>
     </licenses>
 
-
-    <properties>
-        <kotlin.version>2.2.20</kotlin.version>
-        <dokka.version>2.1.0</dokka.version>
-    </properties>
 
     <profiles>
         <profile>
@@ -82,7 +76,6 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-jar-plugin</artifactId>
-                        <version>3.4.2</version>
                         <configuration>
                             <archive>
                                 <index>true</index>
@@ -115,7 +108,6 @@
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
-                <version>${kotlin.version}</version>
                 <executions>
                     <execution>
                         <id>compile</id>
@@ -146,7 +138,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.14.0</version>
                 <executions>
                     <!-- Replacing default-compile as it is treated specially by maven -->
                     <execution>
@@ -177,7 +168,6 @@
             <plugin>
                 <groupId>org.jetbrains.dokka</groupId>
                 <artifactId>dokka-maven-plugin</artifactId>
-                <version>${dokka.version}</version>
                 <configuration>
                     <jdkVersion>${maven.compiler.source}</jdkVersion>
                     <sourceDirectories>
@@ -189,7 +179,6 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
-                <version>3.6.1</version>
                 <executions>
                     <execution>
                         <id>add-kotlin-sources-for-source-jar</id>
@@ -208,7 +197,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>3.3.1</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
@@ -222,12 +210,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>${surefire.version}</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <version>${failsafe.version}</version>
                 <executions>
                     <execution>
                         <goals>

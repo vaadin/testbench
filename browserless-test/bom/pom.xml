@@ -12,7 +12,6 @@
     <packaging>pom</packaging>
     <name>Vaadin Browserless Test (Bill of Materials)</name>
     <description>Vaadin Browserless Test (Bill of Materials)</description>
-    <url>http://vaadin.com</url>
 
     <licenses>
         <license>
