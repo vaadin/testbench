@@ -13,32 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.vaadin.flow.component.html.tester;
+package com.vaadin.flow.component.html;
 
-import com.vaadin.flow.component.HtmlContainer;
+import com.vaadin.browserless.Tests;
+import com.vaadin.flow.component.html.Image;
 
-public class HtmlContainerTester<T extends HtmlContainer>
-        extends HtmlComponentTester<T> {
+@Tests(Image.class)
+public class ImageTester extends HtmlClickContainer<Image> {
     /**
      * Wrap given component for testing.
      *
      * @param component
      *            target component
      */
-    public HtmlContainerTester(T component) {
+    public ImageTester(Image component) {
         super(component);
-    }
-
-    /**
-     * Get the text for target html component.
-     *
-     * @return text of component
-     * @throws IllegalStateException
-     *             if component not visible
-     */
-    @Override
-    public String getText() {
-        ensureVisible();
-        return getComponent().getText();
     }
 }

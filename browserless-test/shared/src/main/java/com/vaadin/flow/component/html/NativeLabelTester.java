@@ -13,21 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.vaadin.flow.component.html.tester;
+package com.vaadin.flow.component.html;
 
 import com.vaadin.browserless.Tests;
-import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.html.NativeLabel;
 
-@Tests(H1.class)
-public class H1Tester extends HtmlClickContainer<H1> {
+@Tests(NativeLabel.class)
+public class NativeLabelTester extends HtmlContainerTester<NativeLabel> {
     /**
      * Wrap given component for testing.
      *
      * @param component
      *            target component
      */
-    public H1Tester(H1 component) {
+    public NativeLabelTester(NativeLabel component) {
         super(component);
     }
-
 }

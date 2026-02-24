@@ -13,20 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.vaadin.flow.component.html.tester;
+package com.vaadin.flow.component.html;
 
 import com.vaadin.browserless.Tests;
-import com.vaadin.flow.component.html.H5;
+import com.vaadin.flow.component.html.Paragraph;
 
-@Tests(H5.class)
-public class H5Tester extends HtmlClickContainer<H5> {
+@Tests(Paragraph.class)
+public class ParagraphTester extends HtmlClickContainer<Paragraph> {
     /**
      * Wrap given component for testing.
      *
      * @param component
      *            target component
      */
-    public H5Tester(H5 component) {
+    public ParagraphTester(Paragraph component) {
         super(component);
     }
 }

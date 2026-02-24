@@ -13,20 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.vaadin.flow.component.html.tester;
+package com.vaadin.flow.component.html;
 
-import com.vaadin.browserless.Tests;
-import com.vaadin.flow.component.html.H6;
+import com.vaadin.flow.component.HtmlContainer;
 
-@Tests(H6.class)
-public class H6Tester extends HtmlClickContainer<H6> {
+public class HtmlContainerTester<T extends HtmlContainer>
+        extends HtmlComponentTester<T> {
     /**
      * Wrap given component for testing.
      *
      * @param component
      *            target component
      */
-    public H6Tester(H6 component) {
+    public HtmlContainerTester(T component) {
         super(component);
+    }
+
+    /**
+     * Get the text for target html component.
+     *
+     * @return text of component
+     * @throws IllegalStateException
+     *             if component not visible
+     */
+    @Override
+    public String getText() {
+        ensureVisible();
+        return getComponent().getText();
     }
 }

@@ -13,21 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.vaadin.flow.component.html.tester;
+package com.vaadin.flow.component.html;
 
 import com.vaadin.browserless.Tests;
-import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.html.H6;
 
-@Tests(Span.class)
-public class SpanTester extends HtmlClickContainer<Span> {
+@Tests(H6.class)
+public class H6Tester extends HtmlClickContainer<H6> {
     /**
      * Wrap given component for testing.
      *
      * @param component
      *            target component
      */
-    public SpanTester(Span component) {
+    public H6Tester(H6 component) {
         super(component);
     }
-
 }

@@ -13,20 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.vaadin.flow.component.html.tester;
+package com.vaadin.flow.component.html;
 
-import com.vaadin.browserless.Tests;
-import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.HtmlContainer;
 
-@Tests(H2.class)
-public class H2Tester extends HtmlClickContainer<H2> {
+public abstract class HtmlClickContainer<T extends HtmlContainer>
+        extends HtmlContainerTester<T> {
     /**
      * Wrap given component for testing.
      *
      * @param component
      *            target component
      */
-    public H2Tester(H2 component) {
+    public HtmlClickContainer(T component) {
         super(component);
     }
 }

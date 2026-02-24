@@ -13,20 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.vaadin.flow.component.html.tester;
+package com.vaadin.flow.component.html;
 
 import com.vaadin.browserless.Tests;
-import com.vaadin.flow.component.html.Pre;
+import com.vaadin.flow.component.html.Div;
 
-@Tests(Pre.class)
-public class PreTester extends HtmlClickContainer<Pre> {
+@Tests(Div.class)
+public class DivTester extends HtmlClickContainer<Div> {
     /**
      * Wrap given component for testing.
      *
      * @param component
      *            target component
      */
-    public PreTester(Pre component) {
+    public DivTester(Div component) {
         super(component);
     }
 }

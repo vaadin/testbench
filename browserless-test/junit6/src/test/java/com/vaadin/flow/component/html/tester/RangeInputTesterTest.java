@@ -22,6 +22,7 @@ import org.junit.jupiter.api.Test;
 import com.vaadin.browserless.BrowserlessTest;
 import com.vaadin.browserless.ViewPackages;
 import com.vaadin.flow.component.html.RangeInput;
+import com.vaadin.flow.component.html.RangeInputTester;
 import com.vaadin.flow.router.RouteConfiguration;
 
 @ViewPackages

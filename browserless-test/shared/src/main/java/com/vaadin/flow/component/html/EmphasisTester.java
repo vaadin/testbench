@@ -13,20 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.vaadin.flow.component.html.tester;
+package com.vaadin.flow.component.html;
 
 import com.vaadin.browserless.Tests;
-import com.vaadin.flow.component.html.H4;
+import com.vaadin.flow.component.html.Emphasis;
 
-@Tests(H4.class)
-public class H4Tester extends HtmlClickContainer<H4> {
+@Tests(Emphasis.class)
+public class EmphasisTester extends HtmlClickContainer<Emphasis> {
     /**
      * Wrap given component for testing.
      *
      * @param component
      *            target component
      */
-    public H4Tester(H4 component) {
+    public EmphasisTester(Emphasis component) {
         super(component);
     }
 }
