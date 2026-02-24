@@ -22,7 +22,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Tag;
 
 @ComponentTesterPackages("com.vaadin.browserless")
-@ViewPackages(packages = "com.vaadin.testbench")
+@ViewPackages(packages = "com.vaadin.browserless")
 public class TesterResolutionTest extends BrowserlessTest {
 
     @Test
