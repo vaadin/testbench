@@ -7,11 +7,11 @@
  * See <https://vaadin.com/commercial-license-and-service-terms> for the full
  * license.
  */
-package com.vaadin.testbench.unit
+package com.vaadin.browserless
 
 import kotlin.reflect.KClass
 import kotlin.test.assertFailsWith
-import com.vaadin.testbench.unit.internal.allViews
+import com.vaadin.browserless.internal.allViews
 import kotlin.test.expect
 
 /**

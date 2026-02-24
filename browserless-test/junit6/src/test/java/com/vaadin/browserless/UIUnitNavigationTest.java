@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.vaadin.testbench.unit;
+package com.vaadin.browserless;
 
 import java.util.Collections;
 
@@ -24,10 +24,10 @@ import com.example.base.WelcomeView;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import com.vaadin.testbench.unit.internal.MockRouteNotFoundError;
+import com.vaadin.browserless.internal.MockRouteNotFoundError;
 
 @ViewPackages(packages = "com.example")
-public class UIUnitNavigationTest extends UIUnitTest {
+public class UIUnitNavigationTest extends BrowserlessTest {
 
     @Test
     public void getCurrentView_returnsExpectedView() {

@@ -15,8 +15,8 @@
  */
 package com.vaadin.flow.component.details;
 
-import com.vaadin.testbench.unit.ComponentTester;
-import com.vaadin.testbench.unit.Tests;
+import com.vaadin.browserless.ComponentTester;
+import com.vaadin.browserless.Tests;
 
 /**
  * Tester for Details components.

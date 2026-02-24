@@ -26,7 +26,7 @@ public class TesterScanTest {
     public void scanForTesters_testerForClassNotInClasspath_doNotThrowOnClassNotFoundException() {
         // Loads a dummy tester annotated with @Tests using an FQN to a
         // non-existing component class.
-        Assertions.assertDoesNotThrow(() -> BaseUIUnitTest
+        Assertions.assertDoesNotThrow(() -> BaseBrowserlessTest
                 .scanForTesters("com.vaadin.testbench.dontscan.classnotfound"));
     }
 
@@ -35,7 +35,7 @@ public class TesterScanTest {
         // Loads a dummy tester annotated with @Tests referencing a class in
         // another module with provided scope so the test itself is not able to
         // load the class.
-        Assertions.assertDoesNotThrow(() -> BaseUIUnitTest.scanForTesters(
+        Assertions.assertDoesNotThrow(() -> BaseBrowserlessTest.scanForTesters(
                 "com.vaadin.testbench.dontscan.noclassdeffound"));
     }
 
@@ -44,7 +44,7 @@ public class TesterScanTest {
         // Loads a dummy tester annotated with @Tests referencing a class in
         // another module with provided scope so the test itself is not able to
         // load the class.
-        Assertions.assertDoesNotThrow(() -> BaseUIUnitTest.scanForTesters(
+        Assertions.assertDoesNotThrow(() -> BaseBrowserlessTest.scanForTesters(
                 "com.vaadin.testbench.dontscan.typenotpresent"));
     }
 

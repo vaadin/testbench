@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.vaadin.testbench.unit;
+package com.vaadin.browserless;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Timeout;
 
 @ViewPackages(packages = "com.example.base.signals")
 @Timeout(10)
-public class SignalsTest extends UIUnitTest {
+public class SignalsTest extends BrowserlessTest {
 
     @Test
     void attachedComponent_triggerSignal_effectEvaluatedSynchronously() {

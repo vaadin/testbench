@@ -15,8 +15,8 @@
  */
 package com.vaadin.flow.component.html.testbench;
 
+import com.vaadin.browserless.Tests;
 import com.vaadin.flow.component.html.Image;
-import com.vaadin.testbench.unit.Tests;
 
 @Tests(Image.class)
 public class ImageTester extends HtmlClickContainer<Image> {

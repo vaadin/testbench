@@ -7,7 +7,7 @@
  * See <https://vaadin.com/commercial-license-and-service-terms> for the full
  * license.
  */
-package com.vaadin.testbench.unit.mocks
+package com.vaadin.browserless.mocks
 
 import java.io.File
 import jakarta.servlet.ServletContext
@@ -17,8 +17,8 @@ import com.vaadin.flow.server.VaadinContext
 import com.vaadin.flow.server.VaadinServlet
 import com.vaadin.flow.server.VaadinServletContext
 import com.vaadin.flow.server.startup.LookupServletContainerInitializer
-import com.vaadin.testbench.unit.internal.findClass
-import com.vaadin.testbench.unit.internal.findClassOrThrow
+import com.vaadin.browserless.internal.findClass
+import com.vaadin.browserless.internal.findClassOrThrow
 import tools.jackson.databind.ObjectMapper
 import tools.jackson.databind.node.ObjectNode
 

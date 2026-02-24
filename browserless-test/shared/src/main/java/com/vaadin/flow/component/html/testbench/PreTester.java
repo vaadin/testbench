@@ -15,8 +15,8 @@
  */
 package com.vaadin.flow.component.html.testbench;
 
+import com.vaadin.browserless.Tests;
 import com.vaadin.flow.component.html.Pre;
-import com.vaadin.testbench.unit.Tests;
 
 @Tests(Pre.class)
 public class PreTester extends HtmlClickContainer<Pre> {

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.vaadin.testbench.unit.quarkus;
+package com.vaadin.browserless.quarkus;
 
 import com.example.base.HelloWorldView;
 import com.example.base.WelcomeView;
@@ -21,16 +21,16 @@ import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import com.vaadin.browserless.ViewPackages;
+import com.vaadin.browserless.mocks.MockVaadinSession;
+import com.vaadin.browserless.quarkus.mocks.MockQuarkusServletService;
 import com.vaadin.flow.server.VaadinRequest;
 import com.vaadin.flow.server.VaadinService;
 import com.vaadin.flow.server.VaadinSession;
-import com.vaadin.testbench.unit.ViewPackages;
-import com.vaadin.testbench.unit.mocks.MockVaadinSession;
-import com.vaadin.testbench.unit.quarkus.mocks.MockQuarkusServletService;
 
 @QuarkusTest
 @ViewPackages(packages = "com.example")
-class QuarkusUIUnitBaseClassTest extends QuarkusUIUnitTest {
+class QuarkusUIUnitBaseClassTest extends QuarkusBrowserlessTest {
 
     @Test
     void extendingBaseClass_runTest_vaadinMockingIsSetup() {

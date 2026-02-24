@@ -1,1 +1,1 @@
-com.vaadin.testbench.unit.TestInitListener
+com.vaadin.browserless.TestInitListener

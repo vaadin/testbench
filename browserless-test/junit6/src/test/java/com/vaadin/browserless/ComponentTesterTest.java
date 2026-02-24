@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.vaadin.testbench.unit;
+package com.vaadin.browserless;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,7 +30,7 @@ import com.vaadin.flow.component.HasText;
 import com.vaadin.flow.component.Tag;
 
 @ViewPackages(packages = "com.example")
-public class ComponentTesterTest extends UIUnitTest {
+public class ComponentTesterTest extends BrowserlessTest {
 
     private WelcomeView home;
 

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.vaadin.testbench.unit;
+package com.vaadin.browserless;
 
 import java.util.Collections;
 import java.util.List;
@@ -24,6 +24,8 @@ import java.util.stream.IntStream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import com.vaadin.browserless.ComponentTesterTest.Span;
+import com.vaadin.browserless.ElementConditionsTest.TextComponent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasLabel;
 import com.vaadin.flow.component.Tag;
@@ -35,12 +37,10 @@ import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.textfield.TextFieldBase;
 import com.vaadin.flow.dom.Element;
-import com.vaadin.testbench.unit.ComponentTesterTest.Span;
-import com.vaadin.testbench.unit.ElementConditionsTest.TextComponent;
 
 import static java.util.Arrays.asList;
 
-class ComponentQueryTest extends UIUnitTest {
+class ComponentQueryTest extends BrowserlessTest {
 
     @Test
     void find_invisibleComponents_noResults() {

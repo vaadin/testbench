@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.vaadin.testbench.unit;
+package com.vaadin.browserless;
 
 import java.security.Principal;
 
@@ -33,7 +33,7 @@ import com.vaadin.flow.server.auth.MenuAccessControl;
 
 @ContextConfiguration(classes = SecurityTestConfig.NavigationAccessControlConfig.class)
 @ViewPackages(packages = "com.testapp.security")
-class SpringUnitSecurityTest extends SpringUIUnitTest {
+class SpringUnitSecurityTest extends SpringBrowserlessTest {
 
     @Test
     @WithMockUser(username = "john", roles = { "DEV", "PO" })

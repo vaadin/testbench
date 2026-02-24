@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.vaadin.testbench.unit.quarkus;
+package com.vaadin.browserless.quarkus;
 
 import jakarta.enterprise.inject.spi.CDI;
 
@@ -21,10 +21,10 @@ import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 
-import com.vaadin.testbench.unit.UIUnitTest;
-import com.vaadin.testbench.unit.internal.MockVaadin;
-import com.vaadin.testbench.unit.mocks.MockedUI;
-import com.vaadin.testbench.unit.quarkus.mocks.MockQuarkusServlet;
+import com.vaadin.browserless.BrowserlessTest;
+import com.vaadin.browserless.internal.MockVaadin;
+import com.vaadin.browserless.mocks.MockedUI;
+import com.vaadin.browserless.quarkus.mocks.MockQuarkusServlet;
 
 /**
  * Base JUnit 5+ class for UI unit testing applications based on Quarkus stack.
@@ -35,7 +35,7 @@ import com.vaadin.testbench.unit.quarkus.mocks.MockQuarkusServlet;
  * work.
  *
  * With Quarkus testing framework, setting up the CDI environment can be
- * achieved by annotating the {@link UIUnitTest} class with
+ * achieved by annotating the {@link BrowserlessTest} class with
  * {@code @QuarkusTest}. The annotation registers a JUnit extension that deploys
  * and starts the whole application, including the initialization of the CDI
  * container. The drawback of this approach is that the application also starts
@@ -47,7 +47,7 @@ import com.vaadin.testbench.unit.quarkus.mocks.MockQuarkusServlet;
  * <pre>
  * {
  *     &#64;QuarkusTest
- *     class MainViewTest extends QuarkusUIUnitTest {
+ *     class MainViewTest extends QuarkusBrowserlessTest {
  *
  *         &#64;Test
  *         void accessView() {
@@ -69,7 +69,7 @@ import com.vaadin.testbench.unit.quarkus.mocks.MockQuarkusServlet;
  * currently, using {@code @QuarkusComponentTest} is not recommended.
  */
 
-public abstract class QuarkusUIUnitTest extends UIUnitTest {
+public abstract class QuarkusBrowserlessTest extends BrowserlessTest {
 
     @BeforeEach
     protected void initVaadinEnvironment() {

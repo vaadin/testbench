@@ -13,19 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.vaadin.testbench.unit.mocks;
+package com.vaadin.browserless.mocks;
 
 import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.context.ApplicationContext;
 
+import com.vaadin.browserless.internal.UIFactory;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.di.Instantiator;
 import com.vaadin.flow.function.DeploymentConfiguration;
 import com.vaadin.flow.server.VaadinRequest;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.spring.SpringVaadinServletService;
-import com.vaadin.testbench.unit.internal.UIFactory;
 
 /**
  * A mocking service that performs three very important tasks:

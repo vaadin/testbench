@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.vaadin.testbench.unit.viewscan.byannotatedclass;
+package com.vaadin.browserless.viewscan.byannotatedclass;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -21,14 +21,14 @@ import java.util.stream.Collectors;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import com.vaadin.browserless.BrowserlessTest;
+import com.vaadin.browserless.ViewPackages;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.router.RouteBaseData;
 import com.vaadin.flow.server.VaadinService;
-import com.vaadin.testbench.unit.UIUnitTest;
-import com.vaadin.testbench.unit.ViewPackages;
 
 @ViewPackages
-class DiscoverRoutesInAnnotatedClassPackageTest extends UIUnitTest {
+class DiscoverRoutesInAnnotatedClassPackageTest extends BrowserlessTest {
 
     @Test
     void extendingBaseClass_runTest_routesAreDiscovered() {

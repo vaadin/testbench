@@ -7,7 +7,7 @@
  * See <https://vaadin.com/commercial-license-and-service-terms> for the full
  * license.
  */
-package com.vaadin.testbench.unit.internal
+package com.vaadin.browserless.internal
 
 import java.io.Serializable
 import java.lang.reflect.Field
@@ -36,18 +36,18 @@ import com.vaadin.flow.server.VaadinServletService
 import com.vaadin.flow.server.VaadinSession
 import com.vaadin.flow.server.WrappedHttpSession
 import com.vaadin.flow.shared.communication.PushMode
-import com.vaadin.testbench.unit.mocks.MockHttpSession
-import com.vaadin.testbench.unit.mocks.MockRequest
-import com.vaadin.testbench.unit.mocks.MockResponse
-import com.vaadin.testbench.unit.mocks.MockServletConfig
-import com.vaadin.testbench.unit.mocks.MockVaadinHelper
-import com.vaadin.testbench.unit.mocks.MockVaadinServlet
-import com.vaadin.testbench.unit.mocks.MockedUI
-import com.vaadin.testbench.unit.mocks.WebBrowser
-import com.vaadin.testbench.unit.mocks._createVaadinSession
-import com.vaadin.testbench.unit.mocks.createVaadinServletRequest
-import com.vaadin.testbench.unit.mocks.createVaadinServletResponse
-import com.vaadin.testbench.unit.mocks.serviceSafe
+import com.vaadin.browserless.mocks.MockHttpSession
+import com.vaadin.browserless.mocks.MockRequest
+import com.vaadin.browserless.mocks.MockResponse
+import com.vaadin.browserless.mocks.MockServletConfig
+import com.vaadin.browserless.mocks.MockVaadinHelper
+import com.vaadin.browserless.mocks.MockVaadinServlet
+import com.vaadin.browserless.mocks.MockedUI
+import com.vaadin.browserless.mocks.WebBrowser
+import com.vaadin.browserless.mocks._createVaadinSession
+import com.vaadin.browserless.mocks.createVaadinServletRequest
+import com.vaadin.browserless.mocks.createVaadinServletResponse
+import com.vaadin.browserless.mocks.serviceSafe
 
 object MockVaadin {
     // prevent GC on Vaadin Session and Vaadin UI as they are only soft-referenced from the Vaadin itself.
@@ -104,7 +104,7 @@ object MockVaadin {
      * @param servlet allows you to provide your own implementation of [VaadinServlet].
      * You MUST override [VaadinServlet.createServletService]
      * and construct a custom service which overrides important methods.
-     * Please consult [com.vaadin.testbench.unit.mocks.MockService]
+     * Please consult [com.vaadin.browserless.mocks.MockService]
      * on what methods you must override in your custom service.
      * @param lookupServices service classes to be provided to the lookup initializer
      */

@@ -7,7 +7,7 @@
  * See <https://vaadin.com/commercial-license-and-service-terms> for the full
  * license.
  */
-package com.vaadin.testbench.unit.mocks
+package com.vaadin.browserless.mocks
 
 import java.io.Serializable
 import com.vaadin.flow.component.UI
@@ -18,7 +18,7 @@ import com.vaadin.flow.server.VaadinServlet
 import com.vaadin.flow.server.VaadinServletService
 import com.vaadin.flow.server.VaadinSession
 
-import com.vaadin.testbench.unit.internal.UIFactory
+import com.vaadin.browserless.internal.UIFactory
 
 /**
  * A mocking service that performs three very important tasks:

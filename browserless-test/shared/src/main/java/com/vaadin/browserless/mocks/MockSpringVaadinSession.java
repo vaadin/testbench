@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.vaadin.testbench.unit.mocks;
+package com.vaadin.browserless.mocks;
 
 import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 
+import com.vaadin.browserless.internal.MockVaadin;
+import com.vaadin.browserless.internal.UIFactory;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.server.VaadinService;
 import com.vaadin.flow.server.VaadinSession;
-import com.vaadin.testbench.unit.internal.MockVaadin;
-import com.vaadin.testbench.unit.internal.UIFactory;
 
 /**
  * A Vaadin Session with one important difference:

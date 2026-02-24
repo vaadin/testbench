@@ -9,7 +9,7 @@
  */
 @file:Suppress("FunctionName")
 
-package com.vaadin.testbench.unit.internal
+package com.vaadin.browserless.internal
 
 import com.vaadin.flow.component.BlurNotifier
 import com.vaadin.flow.component.Component

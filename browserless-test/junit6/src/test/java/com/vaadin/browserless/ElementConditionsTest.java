@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.vaadin.testbench.unit;
+package com.vaadin.browserless;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -26,9 +26,9 @@ import com.vaadin.flow.component.HtmlComponent;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.dom.Element;
 
-import static com.vaadin.testbench.unit.ElementConditions.containsText;
-import static com.vaadin.testbench.unit.ElementConditions.hasAttribute;
-import static com.vaadin.testbench.unit.ElementConditions.hasNotAttribute;
+import static com.vaadin.browserless.ElementConditions.containsText;
+import static com.vaadin.browserless.ElementConditions.hasAttribute;
+import static com.vaadin.browserless.ElementConditions.hasNotAttribute;
 
 class ElementConditionsTest {
 

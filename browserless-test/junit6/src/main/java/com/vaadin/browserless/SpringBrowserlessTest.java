@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.vaadin.testbench.unit;
+package com.vaadin.browserless;
 
 import java.util.Set;
 
@@ -24,13 +24,13 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import com.vaadin.testbench.unit.internal.MockVaadin;
-import com.vaadin.testbench.unit.mocks.MockSpringServlet;
-import com.vaadin.testbench.unit.mocks.MockedUI;
-import com.vaadin.testbench.unit.mocks.SpringSecurityRequestCustomizer;
+import com.vaadin.browserless.internal.MockVaadin;
+import com.vaadin.browserless.mocks.MockSpringServlet;
+import com.vaadin.browserless.mocks.MockedUI;
+import com.vaadin.browserless.mocks.SpringSecurityRequestCustomizer;
 
 /**
- * Base JUnit 5+ class for UI unit testing applications based on Spring
+ * Base JUnit 6 class for UI unit testing applications based on Spring
  * Framework.
  *
  * This class provides functionality of the Spring TestContext Framework, in
@@ -47,7 +47,7 @@ import com.vaadin.testbench.unit.mocks.SpringSecurityRequestCustomizer;
  * <pre>
  * {@code
  * &#64;ContextConfiguration(classes = ViewTestConfig.class)
- * class ViewTest extends SpringUIUnitTest {
+ * class ViewTest extends SpringBrowserlessTest {
  *
  * }
  * &#64;Configuration
@@ -61,15 +61,15 @@ import com.vaadin.testbench.unit.mocks.SpringSecurityRequestCustomizer;
  * </pre>
  */
 @ExtendWith({ SpringExtension.class })
-@TestExecutionListeners(listeners = UITestSpringLookupInitializer.class, mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
-public abstract class SpringUIUnitTest extends UIUnitTest {
+@TestExecutionListeners(listeners = BrowserlessTestSpringLookupInitializer.class, mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
+public abstract class SpringBrowserlessTest extends BrowserlessTest {
 
     @Autowired
     private ApplicationContext applicationContext;
 
     @Override
     protected Set<Class<?>> lookupServices() {
-        return Set.of(UITestSpringLookupInitializer.class,
+        return Set.of(BrowserlessTestSpringLookupInitializer.class,
                 SpringSecurityRequestCustomizer.class);
     }
 

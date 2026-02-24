@@ -1,4 +1,4 @@
-package com.vaadin.testbench.unit.internal
+package com.vaadin.browserless.internal
 
 import com.vaadin.flow.component.Component
 import com.vaadin.flow.data.renderer.BasicRenderer

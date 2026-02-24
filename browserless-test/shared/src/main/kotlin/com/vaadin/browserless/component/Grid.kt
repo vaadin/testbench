@@ -10,7 +10,7 @@
 
 @file:Suppress("FunctionName")
 
-package com.vaadin.testbench.unit.component
+package com.vaadin.browserless.component
 
 import com.vaadin.flow.component.ClickNotifier
 import com.vaadin.flow.component.Component
@@ -45,24 +45,24 @@ import com.vaadin.flow.data.renderer.NativeButtonRenderer
 import com.vaadin.flow.data.renderer.Renderer
 import com.vaadin.flow.function.SerializablePredicate
 import com.vaadin.flow.function.ValueProvider
-import com.vaadin.testbench.unit.internal.DepthFirstTreeIterator
-import com.vaadin.testbench.unit.internal.MockVaadin
-import com.vaadin.testbench.unit.internal.PrettyPrintTree
-import com.vaadin.testbench.unit.internal._fireEvent
-import com.vaadin.testbench.unit.internal._getPresentationValue
-import com.vaadin.testbench.unit.internal._saneFetchLimit
-import com.vaadin.testbench.unit.internal.checkEditableByUser
-import com.vaadin.testbench.unit.internal.filterNotBlank
-import com.vaadin.testbench.unit.internal.size
-import com.vaadin.testbench.unit.internal.template
-import com.vaadin.testbench.unit.internal.toPrettyString
+import com.vaadin.browserless.internal.DepthFirstTreeIterator
+import com.vaadin.browserless.internal.MockVaadin
+import com.vaadin.browserless.internal.PrettyPrintTree
+import com.vaadin.browserless.internal._fireEvent
+import com.vaadin.browserless.internal._getPresentationValue
+import com.vaadin.browserless.internal._saneFetchLimit
+import com.vaadin.browserless.internal.checkEditableByUser
+import com.vaadin.browserless.internal.filterNotBlank
+import com.vaadin.browserless.internal.size
+import com.vaadin.browserless.internal.template
+import com.vaadin.browserless.internal.toPrettyString
 import java.lang.reflect.Method
 import java.lang.reflect.Field
 import java.util.stream.Stream
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
 import kotlin.streams.toList
-import com.vaadin.testbench.unit.internal.findClassOrThrow
+import com.vaadin.browserless.internal.findClassOrThrow
 
 /**
  * Returns the item on given row. Fails if the row index is invalid. The data provider is
