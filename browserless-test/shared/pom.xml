@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.vaadin</groupId>
         <artifactId>browserless-test</artifactId>
-        <version>10.1-SNAPSHOT</version>
+        <version>1.0-SNAPSHOT</version>
     </parent>
     <artifactId>browserless-test-shared</artifactId>
     <packaging>jar</packaging>
