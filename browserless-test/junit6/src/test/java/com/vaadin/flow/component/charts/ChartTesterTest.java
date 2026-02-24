@@ -24,15 +24,16 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.vaadin.browserless.BaseBrowserlessTest;
 import com.vaadin.browserless.BrowserlessTest;
+import com.vaadin.browserless.CommercialTesterWrappers;
 import com.vaadin.browserless.ViewPackages;
 import com.vaadin.flow.component.charts.model.ListSeries;
 import com.vaadin.flow.component.charts.model.Series;
 import com.vaadin.flow.router.RouteConfiguration;
 
 @ViewPackages
-class ChartTesterTest extends BrowserlessTest {
+class ChartTesterTest extends BrowserlessTest
+        implements CommercialTesterWrappers {
 
     ColumnChartView view;
 
@@ -41,10 +42,6 @@ class ChartTesterTest extends BrowserlessTest {
         RouteConfiguration.forApplicationScope()
                 .setAnnotatedRoute(ColumnChartView.class);
         view = navigate(ColumnChartView.class);
-    }
-
-    ChartTester<Chart> test(Chart chart) {
-        return BaseBrowserlessTest.internalWrap(ChartTester.class, chart);
     }
 
     @Test
