@@ -18,7 +18,7 @@
             <id>dokka-javadocs</id>
             <activation>
                 <property>
-                    <name>testbench.javadocs</name>
+                    <name>browserless-test.javadocs</name>
                 </property>
             </activation>
             <properties>
