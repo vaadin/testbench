@@ -55,9 +55,7 @@
         <module>vaadin-testbench-core</module>
         <module>vaadin-testbench-core-junit5</module>
         <module>vaadin-testbench-core-junit6</module>
-        <!-- OSS browserless test modules -->
         <module>browserless-test</module>
-        <!-- Legacy adapter modules (depend on OSS modules above) -->
         <module>vaadin-testbench-unit-shared</module>
         <module>vaadin-testbench-unit</module>
         <module>vaadin-testbench-unit-junit5</module>
