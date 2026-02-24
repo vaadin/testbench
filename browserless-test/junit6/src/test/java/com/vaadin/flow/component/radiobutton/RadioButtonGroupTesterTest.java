@@ -19,10 +19,10 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.vaadin.browserless.BrowserlessTest;
 import com.vaadin.flow.router.RouteConfiguration;
-import com.vaadin.testbench.unit.UIUnitTest;
 
-class RadioButtonGroupTesterTest extends UIUnitTest {
+class RadioButtonGroupTesterTest extends BrowserlessTest {
 
     RadioButtonView view;
     RadioButtonGroupTester<RadioButtonGroup<RadioButtonView.Name>, RadioButtonView.Name> buttonGroup_;

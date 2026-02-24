@@ -17,8 +17,8 @@ package com.vaadin.flow.component.notification;
 
 import java.util.function.Consumer;
 
-import com.vaadin.testbench.unit.ComponentTester;
-import com.vaadin.testbench.unit.Tests;
+import com.vaadin.browserless.ComponentTester;
+import com.vaadin.browserless.Tests;
 
 /**
  * Tester for Notification components.

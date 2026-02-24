@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.vaadin.testbench.unit;
+package com.vaadin.browserless;
 
 import org.junit.jupiter.api.extension.AfterTestExecutionCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
+import com.vaadin.browserless.internal.PrettyPrintTree;
 import com.vaadin.flow.component.UI;
-import com.vaadin.testbench.unit.internal.PrettyPrintTree;
 
 /**
- * JUnit5+ extension that will collect and output the component tree for the
+ * JUnit 6 extension that will collect and output the component tree for the
  * failing test UI.
  * <p>
  * This can help with identifying a problem that has happened in the test where

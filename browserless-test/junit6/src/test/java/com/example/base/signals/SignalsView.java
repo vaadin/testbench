@@ -72,7 +72,7 @@ public class SignalsView extends Div {
                 throw new RuntimeException(e);
             }
             asyncWithDelayCounter.setText("Counter: "
-                    + asyncWithDelayNumberSignal.valueAsInt() + " (delayed)");
+                    + asyncWithDelayNumberSignal.getAsInt() + " (delayed)");
         });
         slowBackgroundTaskButton = new NativeButton("Quick background task",
                 event -> CompletableFuture.runAsync(() -> {

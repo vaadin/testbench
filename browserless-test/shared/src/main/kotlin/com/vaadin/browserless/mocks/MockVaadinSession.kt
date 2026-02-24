@@ -7,12 +7,12 @@
  * See <https://vaadin.com/commercial-license-and-service-terms> for the full
  * license.
  */
-package com.vaadin.testbench.unit.mocks
+package com.vaadin.browserless.mocks
 
 import com.vaadin.flow.server.VaadinService
 import com.vaadin.flow.server.VaadinSession
-import com.vaadin.testbench.unit.internal.MockVaadin
-import com.vaadin.testbench.unit.internal.UIFactory
+import com.vaadin.browserless.internal.MockVaadin
+import com.vaadin.browserless.internal.UIFactory
 
 /**
  * A Vaadin Session with one important difference:

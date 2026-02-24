@@ -15,8 +15,8 @@
  */
 package com.vaadin.flow.component.html.testbench;
 
+import com.vaadin.browserless.Tests;
 import com.vaadin.flow.component.html.Hr;
-import com.vaadin.testbench.unit.Tests;
 
 @Tests(Hr.class)
 public class HrTester extends HtmlComponentTester<Hr> {

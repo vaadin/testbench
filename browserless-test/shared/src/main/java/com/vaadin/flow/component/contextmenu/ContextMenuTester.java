@@ -19,16 +19,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import com.vaadin.browserless.ComponentQuery;
+import com.vaadin.browserless.ComponentTester;
+import com.vaadin.browserless.Tests;
+import com.vaadin.browserless.internal.PrettyPrintTreeKt;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentUtil;
 import com.vaadin.flow.dom.DomEvent;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.internal.JacksonUtils;
-import com.vaadin.testbench.unit.ComponentQuery;
-import com.vaadin.testbench.unit.ComponentTester;
-import com.vaadin.testbench.unit.Tests;
-import com.vaadin.testbench.unit.internal.PrettyPrintTreeKt;
 
 /**
  * Tester for ContextMenu components.

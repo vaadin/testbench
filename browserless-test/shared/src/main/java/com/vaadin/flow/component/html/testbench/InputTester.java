@@ -15,9 +15,9 @@
  */
 package com.vaadin.flow.component.html.testbench;
 
+import com.vaadin.browserless.ComponentTester;
+import com.vaadin.browserless.Tests;
 import com.vaadin.flow.component.html.Input;
-import com.vaadin.testbench.unit.ComponentTester;
-import com.vaadin.testbench.unit.Tests;
 
 @Tests(Input.class)
 public class InputTester extends ComponentTester<Input> {

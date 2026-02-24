@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.vaadin.testbench.unit.quarkus;
+package com.vaadin.browserless.quarkus;
 
 import java.security.Principal;
 
@@ -27,14 +27,14 @@ import io.quarkus.test.security.TestSecurity;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import com.vaadin.browserless.ViewPackages;
+import com.vaadin.browserless.internal.MockRouteNotFoundError;
 import com.vaadin.flow.server.VaadinRequest;
-import com.vaadin.testbench.unit.ViewPackages;
-import com.vaadin.testbench.unit.internal.MockRouteNotFoundError;
 
 @ViewPackages(packages = "com.testapp.security")
 @QuarkusTest
 @TestProfile(SecurityTestConfig.NavigationAccessControlConfig.class)
-class QuarkusUnitSecurityTest extends QuarkusUIUnitTest {
+class QuarkusUnitSecurityTest extends QuarkusBrowserlessTest {
 
     @Test
     @TestSecurity(user = "john", roles = { "DEV", "PO" })

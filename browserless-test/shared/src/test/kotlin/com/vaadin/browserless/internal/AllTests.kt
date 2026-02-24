@@ -8,7 +8,7 @@
  * For the full License, see <https://vaadin.com/license/cvdl-4.0>.
  */
 
-package com.vaadin.testbench.unit.internal
+package com.vaadin.browserless.internal
 
 import kotlin.test.expect
 import com.vaadin.flow.component.Tag

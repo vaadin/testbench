@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.vaadin.testbench.unit;
+package com.vaadin.browserless;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -28,6 +28,7 @@ import java.util.stream.Stream;
 import org.slf4j.LoggerFactory;
 import tools.jackson.databind.node.ObjectNode;
 
+import com.vaadin.browserless.internal.PrettyPrintTreeKt;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
@@ -35,7 +36,6 @@ import com.vaadin.flow.component.internal.AbstractFieldSupport;
 import com.vaadin.flow.dom.DomEvent;
 import com.vaadin.flow.internal.JacksonUtils;
 import com.vaadin.flow.internal.nodefeature.ElementListenerMap;
-import com.vaadin.testbench.unit.internal.PrettyPrintTreeKt;
 
 /**
  * Test wrapper for components with helpful methods for testing a component.
@@ -139,7 +139,7 @@ public class ComponentTester<T extends Component> implements Clickable<T> {
      */
     public <R extends Component> ComponentQuery<R> find(
             Class<R> componentType) {
-        return BaseUIUnitTest.internalQuery(componentType).from(component);
+        return BaseBrowserlessTest.internalQuery(componentType).from(component);
     }
 
     /**
@@ -241,7 +241,7 @@ public class ComponentTester<T extends Component> implements Clickable<T> {
      * Simulates a server round-trip, flushing pending component changes.
      */
     protected void roundTrip() {
-        BaseUIUnitTest.roundTrip();
+        BaseBrowserlessTest.roundTrip();
     }
 
     /**
@@ -404,8 +404,8 @@ public class ComponentTester<T extends Component> implements Clickable<T> {
      */
     protected <R extends Component> List<R> findAllByQuery(
             Class<R> componentType, Consumer<ComponentQuery<R>> queryBuilder) {
-        ComponentQuery<R> query = BaseUIUnitTest.internalQuery(componentType)
-                .from(component);
+        ComponentQuery<R> query = BaseBrowserlessTest
+                .internalQuery(componentType).from(component);
         queryBuilder.accept(query);
         // Make sure consumer didn't change the starting component
         query.from(component);

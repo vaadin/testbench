@@ -22,14 +22,14 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.vaadin.browserless.BrowserlessTest;
+import com.vaadin.browserless.MetaKeys;
+import com.vaadin.browserless.ViewPackages;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.router.RouteConfiguration;
-import com.vaadin.testbench.unit.MetaKeys;
-import com.vaadin.testbench.unit.UIUnitTest;
-import com.vaadin.testbench.unit.ViewPackages;
 
 @ViewPackages
-public class ButtonTesterTest extends UIUnitTest {
+public class ButtonTesterTest extends BrowserlessTest {
 
     private ButtonView view;
 

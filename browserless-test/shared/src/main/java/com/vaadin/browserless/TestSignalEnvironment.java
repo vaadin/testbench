@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.vaadin.testbench.unit;
+package com.vaadin.browserless;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -59,12 +59,12 @@ import com.vaadin.flow.signals.SignalEnvironment;
  * <p>
  * For internal use only. May be renamed or removed in a future release.
  */
-class TestSignalEnvironment extends SignalEnvironment {
+public class TestSignalEnvironment extends SignalEnvironment {
 
     private final LinkedBlockingQueue<Runnable> tasks = new LinkedBlockingQueue<>();
     private Runnable cleanup;
 
-    private TestSignalEnvironment() {
+    protected TestSignalEnvironment() {
     }
 
     /**
@@ -77,7 +77,7 @@ class TestSignalEnvironment extends SignalEnvironment {
      *
      * @return a new registered {@link TestSignalEnvironment} instance
      */
-    static TestSignalEnvironment register() {
+    public static TestSignalEnvironment register() {
         TestSignalEnvironment environment = new TestSignalEnvironment();
         environment.cleanup = SignalEnvironment.register(environment);
         return environment;
@@ -92,7 +92,7 @@ class TestSignalEnvironment extends SignalEnvironment {
      * {@link SignalEnvironment#register(SignalEnvironment)}, it will be
      * invoked.
      */
-    void unregister() {
+    public void unregister() {
         if (cleanup != null) {
             cleanup.run();
             cleanup = null;
@@ -144,7 +144,7 @@ class TestSignalEnvironment extends SignalEnvironment {
      *            the time unit of the timeout value
      * @return {@code true} if any pending Signals tasks were processed.
      */
-    boolean runPendingTasks(long maxWaitTime, TimeUnit unit) {
+    public boolean runPendingTasks(long maxWaitTime, TimeUnit unit) {
         long waitMillis = unit.toMillis(maxWaitTime);
         VaadinSession session = VaadinSession.getCurrent();
         boolean hadLock = false;

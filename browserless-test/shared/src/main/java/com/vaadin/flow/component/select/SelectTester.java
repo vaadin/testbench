@@ -18,10 +18,10 @@ package com.vaadin.flow.component.select;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.vaadin.browserless.ComponentTester;
+import com.vaadin.browserless.Tests;
 import com.vaadin.flow.component.ItemLabelGenerator;
 import com.vaadin.flow.data.provider.DataViewUtils;
-import com.vaadin.testbench.unit.ComponentTester;
-import com.vaadin.testbench.unit.Tests;
 
 @Tests(fqn = { "com.vaadin.flow.component.select.Select" })
 public class SelectTester<T extends Select<Y>, Y> extends ComponentTester<T> {

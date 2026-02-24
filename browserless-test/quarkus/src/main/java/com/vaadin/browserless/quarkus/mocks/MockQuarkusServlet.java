@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.vaadin.testbench.unit.quarkus.mocks;
+package com.vaadin.browserless.quarkus.mocks;
 
 import jakarta.enterprise.inject.spi.BeanManager;
 import jakarta.servlet.ServletException;
@@ -22,14 +22,14 @@ import java.lang.reflect.Field;
 
 import org.jetbrains.annotations.NotNull;
 
+import com.vaadin.browserless.internal.Routes;
+import com.vaadin.browserless.internal.UIFactory;
+import com.vaadin.browserless.mocks.MockVaadinHelper;
 import com.vaadin.flow.function.DeploymentConfiguration;
 import com.vaadin.flow.internal.ReflectTools;
 import com.vaadin.flow.server.ServiceException;
 import com.vaadin.flow.server.VaadinServletService;
 import com.vaadin.quarkus.QuarkusVaadinServlet;
-import com.vaadin.testbench.unit.internal.Routes;
-import com.vaadin.testbench.unit.internal.UIFactory;
-import com.vaadin.testbench.unit.mocks.MockVaadinHelper;
 
 /**
  * Makes sure that the {@link #routes} are properly registered, and that

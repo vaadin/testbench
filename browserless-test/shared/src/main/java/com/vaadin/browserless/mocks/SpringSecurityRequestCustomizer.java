@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.vaadin.testbench.unit.mocks;
+package com.vaadin.browserless.mocks;
 
-import com.vaadin.testbench.unit.internal.MockRequestCustomizer;
+import com.vaadin.browserless.internal.MockRequestCustomizer;
 
 /**
  * Configures mock request with authentication details from Spring Security.

@@ -13,21 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.vaadin.testbench.unit;
+package com.vaadin.browserless;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
 
+import com.vaadin.browserless.mocks.MockSpringServletService;
+import com.vaadin.browserless.mocks.MockSpringVaadinSession;
 import com.vaadin.flow.server.VaadinRequest;
 import com.vaadin.flow.server.VaadinService;
 import com.vaadin.flow.server.VaadinSession;
-import com.vaadin.testbench.unit.mocks.MockSpringServletService;
-import com.vaadin.testbench.unit.mocks.MockSpringVaadinSession;
 
 @ContextConfiguration(classes = SpringUIUnitBaseClassTest.TestConfig.class)
-class SpringUIUnitBaseClassTest extends SpringUIUnitTest {
+class SpringUIUnitBaseClassTest extends SpringBrowserlessTest {
 
     @Test
     void extendingBaseClass_runTest_vaadinSpringMockingIsSetup() {

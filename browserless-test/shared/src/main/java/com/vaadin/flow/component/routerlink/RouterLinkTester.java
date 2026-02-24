@@ -18,14 +18,14 @@ package com.vaadin.flow.component.routerlink;
 import java.net.URI;
 import java.util.Optional;
 
+import com.vaadin.browserless.ComponentTester;
+import com.vaadin.browserless.Tests;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.flow.router.RouterLink;
-import com.vaadin.testbench.unit.ComponentTester;
-import com.vaadin.testbench.unit.Tests;
 
 /**
  *

@@ -17,10 +17,10 @@ package com.vaadin.flow.component.confirmdialog;
 
 import java.util.NoSuchElementException;
 
+import com.vaadin.browserless.ComponentTester;
+import com.vaadin.browserless.Tests;
 import com.vaadin.flow.component.ComponentUtil;
 import com.vaadin.flow.dom.Element;
-import com.vaadin.testbench.unit.ComponentTester;
-import com.vaadin.testbench.unit.Tests;
 
 /**
  * Tester for ConfirmDialog.

@@ -7,7 +7,7 @@
  * See <https://vaadin.com/commercial-license-and-service-terms> for the full
  * license.
  */
-package com.vaadin.testbench.unit.internal
+package com.vaadin.browserless.internal
 
 import com.example.base.ErrorView
 import com.example.base.HelloWorldView
@@ -28,8 +28,8 @@ import com.vaadin.flow.router.RouteAccessDeniedError
 import com.vaadin.flow.router.RouteNotFoundError
 import com.vaadin.flow.server.VaadinContext
 import com.vaadin.flow.server.startup.ApplicationRouteRegistry
-import com.vaadin.testbench.unit.mocks.MockVaadinHelper
-import com.vaadin.testbench.unit.viewscan.byannotatedclass.ViewPackagesTestView
+import com.vaadin.browserless.mocks.MockVaadinHelper
+import com.vaadin.browserless.viewscan.byannotatedclass.ViewPackagesTestView
 import kotlin.test.expect
 
 
@@ -44,8 +44,8 @@ fun DynaNodeGroup.routesTestBatch() {
     afterEach { MockVaadin.tearDown() }
 
     // TODO: restrict scan until we have component wrapper test views on this codebase
-    val packagesToScan = arrayOf("com.example.base", "com.vaadin.testbench.unit.viewscan",
-            "com.vaadin.testbench.unit.viewscan4")
+    val packagesToScan = arrayOf("com.example.base", "com.vaadin.browserless.viewscan",
+            "com.vaadin.browserless.viewscan4")
 
     test("All views discovered") {
         val routes: Routes = Routes().autoDiscoverViews(*packagesToScan)

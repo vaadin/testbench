@@ -34,14 +34,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
+import com.vaadin.browserless.BrowserlessTest;
+import com.vaadin.browserless.ViewPackages;
 import com.vaadin.flow.component.upload.AssertingTransferProgressListener.UploadedData;
 import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.flow.server.streams.UploadHandler;
-import com.vaadin.testbench.unit.UIUnitTest;
-import com.vaadin.testbench.unit.ViewPackages;
 
 @ViewPackages
-class UploadTesterTest extends UIUnitTest {
+class UploadTesterTest extends BrowserlessTest {
 
     private static final String FIRST_FILE_CONTENTS = "First file";
     private static final String SECOND_FILE_CONTENTS = "Second file";

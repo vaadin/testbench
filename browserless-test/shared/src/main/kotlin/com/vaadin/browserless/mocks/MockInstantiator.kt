@@ -7,7 +7,7 @@
  * See <https://vaadin.com/commercial-license-and-service-terms> for the full
  * license.
  */
-package com.vaadin.testbench.unit.mocks
+package com.vaadin.browserless.mocks
 
 import com.vaadin.flow.di.Instantiator
 import com.vaadin.flow.i18n.I18NProvider

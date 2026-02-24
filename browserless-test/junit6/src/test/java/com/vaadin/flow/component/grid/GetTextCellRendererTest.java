@@ -19,12 +19,12 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.vaadin.browserless.BrowserlessTest;
+import com.vaadin.browserless.ViewPackages;
 import com.vaadin.flow.router.RouteConfiguration;
-import com.vaadin.testbench.unit.UIUnitTest;
-import com.vaadin.testbench.unit.ViewPackages;
 
 @ViewPackages
-class GetTextCellRendererTest extends UIUnitTest {
+class GetTextCellRendererTest extends BrowserlessTest {
 
     RendererGridView view;
     GridTester<Grid<Person>, Person> grid_;

@@ -9,7 +9,7 @@
  */
 @file:Suppress("OverridingDeprecatedMember", "DEPRECATION")
 
-package com.vaadin.testbench.unit.mocks
+package com.vaadin.browserless.mocks
 
 import java.io.Serializable
 import java.util.Enumeration

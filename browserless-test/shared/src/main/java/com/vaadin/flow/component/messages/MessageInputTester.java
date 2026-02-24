@@ -15,9 +15,9 @@
  */
 package com.vaadin.flow.component.messages;
 
+import com.vaadin.browserless.ComponentTester;
+import com.vaadin.browserless.Tests;
 import com.vaadin.flow.component.ComponentUtil;
-import com.vaadin.testbench.unit.ComponentTester;
-import com.vaadin.testbench.unit.Tests;
 
 /**
  * Tester for MessageInput components.

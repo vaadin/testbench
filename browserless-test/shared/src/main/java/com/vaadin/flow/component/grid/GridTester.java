@@ -23,6 +23,12 @@ import java.util.Objects;
 
 import tools.jackson.databind.node.ArrayNode;
 
+import com.vaadin.browserless.ComponentTester;
+import com.vaadin.browserless.LitRendererTestUtil;
+import com.vaadin.browserless.MetaKeys;
+import com.vaadin.browserless.MouseButton;
+import com.vaadin.browserless.Tests;
+import com.vaadin.browserless.component.GridKt;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.data.provider.SortDirection;
 import com.vaadin.flow.data.provider.SortOrder;
@@ -30,12 +36,6 @@ import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.LitRenderer;
 import com.vaadin.flow.function.ValueProvider;
 import com.vaadin.flow.internal.JacksonUtils;
-import com.vaadin.testbench.unit.ComponentTester;
-import com.vaadin.testbench.unit.LitRendererTestUtil;
-import com.vaadin.testbench.unit.MetaKeys;
-import com.vaadin.testbench.unit.MouseButton;
-import com.vaadin.testbench.unit.Tests;
-import com.vaadin.testbench.unit.component.GridKt;
 
 /**
  * Tester for Grid components.

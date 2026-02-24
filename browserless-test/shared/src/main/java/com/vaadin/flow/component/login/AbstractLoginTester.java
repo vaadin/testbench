@@ -15,8 +15,8 @@
  */
 package com.vaadin.flow.component.login;
 
+import com.vaadin.browserless.ComponentTester;
 import com.vaadin.flow.component.ComponentUtil;
-import com.vaadin.testbench.unit.ComponentTester;
 
 /**
  * Class with common functions for Login components LoginForm and LoginOverlay.

@@ -7,7 +7,7 @@
  * See <https://vaadin.com/commercial-license-and-service-terms> for the full
  * license.
  */
-package com.vaadin.testbench.unit.internal
+package com.vaadin.browserless.internal
 
 import java.lang.reflect.Method
 import com.vaadin.flow.component.ClickEvent
@@ -47,7 +47,7 @@ import com.vaadin.flow.data.provider.DataProvider
 import com.vaadin.flow.dom.DomEventListener
 import com.vaadin.flow.dom.DomListenerRegistration
 import com.vaadin.flow.router.Location
-import com.vaadin.testbench.unit.component.dataProvider
+import com.vaadin.browserless.component.dataProvider
 
 /**
  * Fires given event on the component.

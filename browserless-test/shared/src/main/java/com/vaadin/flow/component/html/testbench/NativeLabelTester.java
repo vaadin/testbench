@@ -15,8 +15,8 @@
  */
 package com.vaadin.flow.component.html.testbench;
 
+import com.vaadin.browserless.Tests;
 import com.vaadin.flow.component.html.NativeLabel;
-import com.vaadin.testbench.unit.Tests;
 
 @Tests(NativeLabel.class)
 public class NativeLabelTester extends HtmlContainerTester<NativeLabel> {

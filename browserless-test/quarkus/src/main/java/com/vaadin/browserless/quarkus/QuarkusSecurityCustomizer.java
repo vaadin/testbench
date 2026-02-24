@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.vaadin.testbench.unit.quarkus;
+package com.vaadin.browserless.quarkus;
 
 import io.quarkus.security.identity.CurrentIdentityAssociation;
 import io.quarkus.security.identity.SecurityIdentity;
 
-import com.vaadin.testbench.unit.internal.MockRequestCustomizer;
-import com.vaadin.testbench.unit.mocks.MockRequest;
+import com.vaadin.browserless.internal.MockRequestCustomizer;
+import com.vaadin.browserless.mocks.MockRequest;
 
 /**
  * Configures mock request with authentication details from Quarkus Security.

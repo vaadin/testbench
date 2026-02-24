@@ -15,8 +15,8 @@
  */
 package com.vaadin.flow.component.html.testbench;
 
+import com.vaadin.browserless.Tests;
 import com.vaadin.flow.component.html.H5;
-import com.vaadin.testbench.unit.Tests;
 
 @Tests(H5.class)
 public class H5Tester extends HtmlClickContainer<H5> {

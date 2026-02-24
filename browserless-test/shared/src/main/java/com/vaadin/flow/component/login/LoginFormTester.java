@@ -15,7 +15,7 @@
  */
 package com.vaadin.flow.component.login;
 
-import com.vaadin.testbench.unit.Tests;
+import com.vaadin.browserless.Tests;
 
 /**
  * Tester for LoginForm components.

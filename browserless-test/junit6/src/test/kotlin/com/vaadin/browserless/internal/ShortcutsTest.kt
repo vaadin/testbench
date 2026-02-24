@@ -1,4 +1,4 @@
-package com.vaadin.testbench.unit.internal
+package com.vaadin.browserless.internal
 
 import com.github.mvysny.dynatest.DynaNodeGroup
 import com.github.mvysny.dynatest.DynaTestDsl

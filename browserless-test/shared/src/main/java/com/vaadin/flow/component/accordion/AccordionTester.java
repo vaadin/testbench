@@ -17,8 +17,8 @@ package com.vaadin.flow.component.accordion;
 
 import org.jetbrains.annotations.Nullable;
 
-import com.vaadin.testbench.unit.ComponentTester;
-import com.vaadin.testbench.unit.Tests;
+import com.vaadin.browserless.ComponentTester;
+import com.vaadin.browserless.Tests;
 
 @Tests(Accordion.class)
 public class AccordionTester<T extends Accordion> extends ComponentTester<T> {

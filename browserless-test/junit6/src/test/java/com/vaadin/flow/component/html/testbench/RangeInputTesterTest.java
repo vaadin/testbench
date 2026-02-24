@@ -19,13 +19,13 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.vaadin.browserless.BrowserlessTest;
+import com.vaadin.browserless.ViewPackages;
 import com.vaadin.flow.component.html.RangeInput;
 import com.vaadin.flow.router.RouteConfiguration;
-import com.vaadin.testbench.unit.UIUnitTest;
-import com.vaadin.testbench.unit.ViewPackages;
 
 @ViewPackages
-class RangeInputTesterTest extends UIUnitTest {
+class RangeInputTesterTest extends BrowserlessTest {
 
     RangeInputTester tester;
     RangeInput component;

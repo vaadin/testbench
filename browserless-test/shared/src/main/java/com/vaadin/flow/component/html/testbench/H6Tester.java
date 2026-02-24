@@ -15,8 +15,8 @@
  */
 package com.vaadin.flow.component.html.testbench;
 
+import com.vaadin.browserless.Tests;
 import com.vaadin.flow.component.html.H6;
-import com.vaadin.testbench.unit.Tests;
 
 @Tests(H6.class)
 public class H6Tester extends HtmlClickContainer<H6> {

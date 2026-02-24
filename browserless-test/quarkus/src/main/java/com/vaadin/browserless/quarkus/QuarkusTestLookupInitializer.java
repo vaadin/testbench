@@ -13,17 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.vaadin.testbench.unit.quarkus;
+package com.vaadin.browserless.quarkus;
 
 import jakarta.servlet.ServletException;
 
 import java.util.Collection;
 import java.util.Map;
 
+import com.vaadin.browserless.internal.MockRequestCustomizer;
 import com.vaadin.flow.di.LookupInitializer;
 import com.vaadin.flow.function.VaadinApplicationInitializationBootstrap;
 import com.vaadin.flow.server.VaadinContext;
-import com.vaadin.testbench.unit.internal.MockRequestCustomizer;
 
 /**
  * An extension of {@link LookupInitializer} that provides services for Quarkus

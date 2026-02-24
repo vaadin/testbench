@@ -19,8 +19,8 @@ import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.vaadin.testbench.unit.ComponentTester;
-import com.vaadin.testbench.unit.Tests;
+import com.vaadin.browserless.ComponentTester;
+import com.vaadin.browserless.Tests;
 
 /**
  * Tester for MessageList components.

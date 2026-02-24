@@ -24,12 +24,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.vaadin.browserless.ComponentTester;
+import com.vaadin.browserless.Tests;
+import com.vaadin.browserless.internal.BasicUtilsKt;
 import com.vaadin.flow.component.ItemLabelGenerator;
 import com.vaadin.flow.data.provider.DataCommunicator;
 import com.vaadin.flow.function.SerializableConsumer;
-import com.vaadin.testbench.unit.ComponentTester;
-import com.vaadin.testbench.unit.Tests;
-import com.vaadin.testbench.unit.internal.BasicUtilsKt;
 
 @Tests(fqn = "com.vaadin.flow.component.combobox.MultiSelectComboBox")
 public class MultiSelectComboBoxTester<T extends MultiSelectComboBox<Y>, Y>

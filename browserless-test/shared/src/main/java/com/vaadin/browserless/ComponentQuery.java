@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.vaadin.testbench.unit;
+package com.vaadin.browserless;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -28,10 +28,10 @@ import java.util.stream.Stream;
 import kotlin.Unit;
 import kotlin.ranges.IntRange;
 
+import com.vaadin.browserless.internal.LocatorKt;
+import com.vaadin.browserless.internal.SearchSpec;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.dom.Element;
-import com.vaadin.testbench.unit.internal.LocatorKt;
-import com.vaadin.testbench.unit.internal.SearchSpec;
 
 /**
  * Query class used for finding a component inside a given search context.

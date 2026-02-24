@@ -9,7 +9,7 @@
  */
 @file:Suppress("DEPRECATION")
 
-package com.vaadin.testbench.unit.internal
+package com.vaadin.browserless.internal
 
 import com.example.base.HelloWorldView
 import com.example.base.ParametrizedView
@@ -28,12 +28,12 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.function.DeploymentConfiguration
 import com.vaadin.flow.router.RouteConfiguration
 import com.vaadin.flow.server.*
-import com.vaadin.testbench.unit.TestInitListener
-import com.vaadin.testbench.unit.expectList
-import com.vaadin.testbench.unit.mocks.MockService
-import com.vaadin.testbench.unit.mocks.MockVaadinServlet
-import com.vaadin.testbench.unit.mocks.MockVaadinSession
-import com.vaadin.testbench.unit.mocks.MockedUI
+import com.vaadin.browserless.TestInitListener
+import com.vaadin.browserless.expectList
+import com.vaadin.browserless.mocks.MockService
+import com.vaadin.browserless.mocks.MockVaadinServlet
+import com.vaadin.browserless.mocks.MockVaadinSession
+import com.vaadin.browserless.mocks.MockedUI
 import jakarta.servlet.http.Cookie
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.concurrent.thread

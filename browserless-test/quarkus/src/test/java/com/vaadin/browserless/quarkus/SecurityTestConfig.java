@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.vaadin.testbench.unit.quarkus;
+package com.vaadin.browserless.quarkus;
 
 import jakarta.enterprise.event.Observes;
 
@@ -24,10 +24,10 @@ import com.testapp.security.RoleRestrictedView;
 import io.quarkus.arc.profile.IfBuildProfile;
 import io.quarkus.test.junit.QuarkusTestProfile;
 
+import com.vaadin.browserless.quarkus.mocks.MockQuarkusServletService;
 import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.flow.server.ServiceInitEvent;
 import com.vaadin.flow.server.auth.NavigationAccessControl;
-import com.vaadin.testbench.unit.quarkus.mocks.MockQuarkusServletService;
 
 // Since Quarkus 3.6 it should be possible to define beans in the profile
 // class. For previous version the workaround is to set a custom configuration

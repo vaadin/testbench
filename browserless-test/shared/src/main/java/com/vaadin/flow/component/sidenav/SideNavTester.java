@@ -17,9 +17,9 @@ package com.vaadin.flow.component.sidenav;
 
 import java.util.List;
 
+import com.vaadin.browserless.ComponentTester;
+import com.vaadin.browserless.Tests;
 import com.vaadin.flow.component.UI;
-import com.vaadin.testbench.unit.ComponentTester;
-import com.vaadin.testbench.unit.Tests;
 
 @Tests(SideNav.class)
 public class SideNavTester<T extends SideNav> extends ComponentTester<T> {

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.vaadin.testbench.unit;
+package com.vaadin.browserless;
 
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
@@ -28,12 +28,12 @@ import org.springframework.test.context.TestExecutionListener;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
+import com.vaadin.browserless.internal.UtilsKt;
+import com.vaadin.browserless.mocks.MockWebApplicationContext;
+import com.vaadin.browserless.mocks.SpringSecurityRequestCustomizer;
 import com.vaadin.flow.function.VaadinApplicationInitializationBootstrap;
 import com.vaadin.flow.server.VaadinContext;
 import com.vaadin.flow.spring.SpringLookupInitializer;
-import com.vaadin.testbench.unit.internal.UtilsKt;
-import com.vaadin.testbench.unit.mocks.MockWebApplicationContext;
-import com.vaadin.testbench.unit.mocks.SpringSecurityRequestCustomizer;
 
 /**
  * A SpringLookupInitializer that adapts Spring ApplicationContext to
@@ -42,8 +42,8 @@ import com.vaadin.testbench.unit.mocks.SpringSecurityRequestCustomizer;
  *
  * For internal use only.
  */
-public class UITestSpringLookupInitializer extends SpringLookupInitializer
-        implements TestExecutionListener {
+public class BrowserlessTestSpringLookupInitializer
+        extends SpringLookupInitializer implements TestExecutionListener {
 
     private static final ThreadLocal<ApplicationContext> applicationContext = new ThreadLocal<>();
 
@@ -52,7 +52,7 @@ public class UITestSpringLookupInitializer extends SpringLookupInitializer
         // SpringLookup requires a WebApplicationContext. Store current test
         // ApplicationContext so that it can be adapted later on by this
         // initializer
-        UITestSpringLookupInitializer.applicationContext
+        BrowserlessTestSpringLookupInitializer.applicationContext
                 .set(testContext.getApplicationContext());
         ApplicationContext appCtx = testContext.getApplicationContext();
         // Register a MockRequestCustomizer bean so that request will have
@@ -69,7 +69,7 @@ public class UITestSpringLookupInitializer extends SpringLookupInitializer
 
     @Override
     public void afterTestMethod(TestContext testContext) throws Exception {
-        UITestSpringLookupInitializer.applicationContext.remove();
+        BrowserlessTestSpringLookupInitializer.applicationContext.remove();
     }
 
     @Override
