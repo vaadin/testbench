@@ -11,7 +11,7 @@
     <artifactId>browserless-test-junit6</artifactId>
     <packaging>jar</packaging>
     <name>Vaadin Browserless Test JUnit6</name>
-    <description>Vaadin Browserless UI Testing - JUnit 6</description>
+    <description>Vaadin Browserless UI Test - JUnit 6</description>
     <url>http://vaadin.com</url>
     <inceptionYear>2022</inceptionYear>
 
@@ -327,12 +327,6 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.vaadin</groupId>
-            <artifactId>uiunit-component-testers</artifactId>
-            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
 

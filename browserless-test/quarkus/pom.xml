@@ -11,7 +11,7 @@
     <artifactId>browserless-test-quarkus</artifactId>
     <packaging>jar</packaging>
     <name>Vaadin Browserless Test for Quarkus</name>
-    <description>Vaadin Browserless UI Testing - Quarkus</description>
+    <description>Vaadin Browserless UI Test - Quarkus</description>
     <url>http://vaadin.com</url>
     <inceptionYear>2024</inceptionYear>
 
