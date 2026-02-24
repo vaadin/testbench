@@ -22,8 +22,11 @@ import com.vaadin.testbench.unit.Tests;
  *            component type
  * @param <V>
  *            value type
- */
+ 
+  * @deprecated Replace the vaadin-testbench-unit dependency with browserless-test-junit6 and use the corresponding class from the com.vaadin.browserless package instead. This class will be removed in a future version.
+  */
 @Tests(fqn = { "com.vaadin.flow.component.listbox.ListBox" })
+@Deprecated(forRemoval = true, since = "10.1")
 public class ListBoxTester<T extends ListBox<V>, V> extends ComponentTester<T> {
     /**
      * Wrap given component for testing.

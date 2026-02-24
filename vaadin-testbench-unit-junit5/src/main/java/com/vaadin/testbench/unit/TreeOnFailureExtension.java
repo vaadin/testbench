@@ -20,7 +20,10 @@ import com.vaadin.testbench.unit.internal.PrettyPrintTree;
  * <p>
  * This can help with identifying a problem that has happened in the test where
  * a component is missing or has faulty data.
- */
+ 
+  * @deprecated Replace the vaadin-testbench-unit dependency with browserless-test-junit6 and use the corresponding class from the com.vaadin.browserless package instead. This class will be removed in a future version.
+  */
+@Deprecated(forRemoval = true, since = "10.1")
 public class TreeOnFailureExtension implements AfterTestExecutionCallback {
 
     @Override

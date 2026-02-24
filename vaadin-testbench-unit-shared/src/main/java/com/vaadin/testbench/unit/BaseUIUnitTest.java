@@ -63,7 +63,10 @@ import com.vaadin.testbench.unit.mocks.MockedUI;
  * For internal use only. May be renamed or removed in a future release.
  *
  * @see ViewPackages
- */
+ 
+  * @deprecated Replace the vaadin-testbench-unit dependency with browserless-test-junit6 and use the corresponding class from the com.vaadin.browserless package instead. This class will be removed in a future version.
+  */
+@Deprecated(forRemoval = true, since = "10.1")
 public abstract class BaseUIUnitTest {
 
     private static final Logger LOGGER = LoggerFactory

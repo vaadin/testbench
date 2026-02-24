@@ -22,10 +22,13 @@ import java.lang.annotation.Target;
  *
  * If both {@link #classes()} and {@link #packages()} are empty, the scan is
  * assumed to be limited to the annotated class package.
- */
+ 
+  * @deprecated Replace the vaadin-testbench-unit dependency with browserless-test-junit6 and use the corresponding class from the com.vaadin.browserless package instead. This class will be removed in a future version.
+  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Documented
+@Deprecated(forRemoval = true, since = "10.1")
 public @interface ViewPackages {
 
     /**

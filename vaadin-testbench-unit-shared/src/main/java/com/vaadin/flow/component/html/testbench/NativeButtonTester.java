@@ -12,6 +12,7 @@ import com.vaadin.flow.component.html.NativeButton;
 import com.vaadin.testbench.unit.Tests;
 
 @Tests(NativeButton.class)
+@Deprecated(forRemoval = true, since = "10.1")
 public class NativeButtonTester extends HtmlClickContainer<NativeButton> {
     /**
      * > Wrap given component for testing.

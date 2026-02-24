@@ -24,6 +24,7 @@ import com.vaadin.testbench.unit.Tests;
  */
 @Tests({ TextField.class, PasswordField.class, EmailField.class,
         BigDecimalField.class })
+@Deprecated(forRemoval = true, since = "10.1")
 public class TextFieldTester<T extends TextFieldBase<T, V>, V>
         extends ComponentTester<T> {
 

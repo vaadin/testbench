@@ -30,6 +30,7 @@ import java.util.Enumeration
 import java.util.Locale
 import java.util.concurrent.ConcurrentHashMap
 
+@Deprecated("Replace the vaadin-testbench-unit dependency with browserless-test-junit6 and use the corresponding class from the com.vaadin.browserless package instead. This class will be removed in a future version.")
 open class MockRequest(private var session: HttpSession) : HttpServletRequest {
 
     override fun getInputStream(): ServletInputStream {

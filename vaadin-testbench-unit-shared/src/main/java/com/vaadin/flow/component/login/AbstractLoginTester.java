@@ -16,7 +16,10 @@ import com.vaadin.testbench.unit.ComponentTester;
  *
  * @param <T>
  *            component type
- */
+ 
+  * @deprecated Replace the vaadin-testbench-unit dependency with browserless-test-junit6 and use the corresponding class from the com.vaadin.browserless package instead. This class will be removed in a future version.
+  */
+@Deprecated(forRemoval = true, since = "10.1")
 public class AbstractLoginTester<T extends AbstractLogin>
         extends ComponentTester<T> {
     /**

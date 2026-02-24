@@ -31,7 +31,10 @@ import com.vaadin.testbench.unit.mocks.MockVaadinSession;
  * {@link com.vaadin.flow.server.VaadinSession}.</li>
  * </ul>
  * The class is intentionally opened, to be extensible in user's library.
- */
+ 
+  * @deprecated Replace the vaadin-testbench-unit dependency with browserless-test-junit6 and use the corresponding class from the com.vaadin.browserless package instead. This class will be removed in a future version.
+  */
+@Deprecated(forRemoval = true, since = "10.1")
 public class MockQuarkusServletService extends QuarkusVaadinServletService {
 
     private final transient UIFactory uiFactory;

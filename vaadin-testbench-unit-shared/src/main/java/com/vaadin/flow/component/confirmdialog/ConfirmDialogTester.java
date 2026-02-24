@@ -17,8 +17,11 @@ import com.vaadin.testbench.unit.Tests;
 
 /**
  * Tester for ConfirmDialog.
- */
+ 
+  * @deprecated Replace the vaadin-testbench-unit dependency with browserless-test-junit6 and use the corresponding class from the com.vaadin.browserless package instead. This class will be removed in a future version.
+  */
 @Tests(ConfirmDialog.class)
+@Deprecated(forRemoval = true, since = "10.1")
 public class ConfirmDialogTester extends ComponentTester<ConfirmDialog> {
     /**
      * Wrap given component for testing.

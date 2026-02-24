@@ -20,7 +20,10 @@ import com.vaadin.flow.component.ComponentUtil;
  *
  * @param <T>
  *            the type of component being tested
- */
+ 
+  * @deprecated Replace the vaadin-testbench-unit dependency with browserless-test-junit6 and use the corresponding class from the com.vaadin.browserless package instead. This class will be removed in a future version.
+  */
+@Deprecated(forRemoval = true, since = "10.1")
 public interface Clickable<T extends Component> {
 
     /**

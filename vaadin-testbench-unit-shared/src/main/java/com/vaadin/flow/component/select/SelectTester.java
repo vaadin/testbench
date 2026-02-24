@@ -17,6 +17,7 @@ import com.vaadin.testbench.unit.ComponentTester;
 import com.vaadin.testbench.unit.Tests;
 
 @Tests(fqn = { "com.vaadin.flow.component.select.Select" })
+@Deprecated(forRemoval = true, since = "10.1")
 public class SelectTester<T extends Select<Y>, Y> extends ComponentTester<T> {
     /**
      * Wrap given component for testing.

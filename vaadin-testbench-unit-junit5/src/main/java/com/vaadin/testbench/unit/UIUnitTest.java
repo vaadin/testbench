@@ -69,7 +69,10 @@ import org.junit.jupiter.api.BeforeEach;
  * class.
  *
  * @see ViewPackages
- */
+ 
+  * @deprecated Replace the vaadin-testbench-unit dependency with browserless-test-junit6 and use the corresponding class from the com.vaadin.browserless package instead. This class will be removed in a future version.
+  */
+@Deprecated(forRemoval = true, since = "10.1")
 public abstract class UIUnitTest extends BaseUIUnitTest
         implements TesterWrappers {
 

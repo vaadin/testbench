@@ -16,6 +16,7 @@ import com.vaadin.flow.component.html.UnorderedList;
 import com.vaadin.testbench.unit.Tests;
 
 @Tests(UnorderedList.class)
+@Deprecated(forRemoval = true, since = "10.1")
 public class UnorderedListTester extends HtmlClickContainer<UnorderedList> {
     /**
      * Wrap given component for testing.

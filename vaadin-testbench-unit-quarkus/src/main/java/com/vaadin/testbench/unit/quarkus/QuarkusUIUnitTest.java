@@ -60,8 +60,11 @@ import com.vaadin.testbench.unit.quarkus.mocks.MockQuarkusServlet;
  * may still be removed by the CDI container because considered unused or not
  * found because of missing bean defining annotations. For the above reasons,
  * currently, using {@code @QuarkusComponentTest} is not recommended.
- */
+ 
+  * @deprecated Replace the vaadin-testbench-unit dependency with browserless-test-junit6 and use the corresponding class from the com.vaadin.browserless package instead. This class will be removed in a future version.
+  */
 
+@Deprecated(forRemoval = true, since = "10.1")
 public abstract class QuarkusUIUnitTest extends UIUnitTest {
 
     @BeforeEach

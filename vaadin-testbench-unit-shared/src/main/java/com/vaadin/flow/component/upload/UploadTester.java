@@ -49,8 +49,11 @@ import com.vaadin.testbench.unit.internal.MockVaadin;
  *
  * @param <T>
  *            the component type.
- */
+ 
+  * @deprecated Replace the vaadin-testbench-unit dependency with browserless-test-junit6 and use the corresponding class from the com.vaadin.browserless package instead. This class will be removed in a future version.
+  */
 @Tests(Upload.class)
+@Deprecated(forRemoval = true, since = "10.1")
 public class UploadTester<T extends Upload> extends ComponentTester<T> {
 
     /**

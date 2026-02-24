@@ -22,7 +22,10 @@ import com.vaadin.flow.function.ValueProvider;
 
 /**
  * Utility methods for unit testing properties and functions of LitRenderers.
- */
+ 
+  * @deprecated Replace the vaadin-testbench-unit dependency with browserless-test-junit6 and use the corresponding class from the com.vaadin.browserless package instead. This class will be removed in a future version.
+  */
+@Deprecated(forRemoval = true, since = "10.1")
 public class LitRendererTestUtil {
 
     private LitRendererTestUtil() throws InstantiationException {

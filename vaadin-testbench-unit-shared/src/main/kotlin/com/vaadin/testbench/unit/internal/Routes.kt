@@ -41,6 +41,7 @@ import io.github.classgraph.ScanResult
  * @property skipPwaInit if true, the PWA initialization code is skipped in Vaadin, which dramatically speeds up
  * the [MockVaadin.setup] from 2 seconds to 50ms. Since that's usually what you want to do, this defaults to true.
  */
+@Deprecated("Replace the vaadin-testbench-unit dependency with browserless-test-junit6 and use the corresponding class from the com.vaadin.browserless package instead. This class will be removed in a future version.")
 data class Routes(
         val routes: MutableSet<Class<out Component>> = mutableSetOf(),
         val errorRoutes: MutableSet<Class<out HasErrorParameter<*>>> = mutableSetOf(MockRouteNotFoundError::class.java),
@@ -136,6 +137,7 @@ fun ApplicationRouteRegistry.clearPwaClass() {
  */
 @Tag(Tag.DIV)
 @DefaultErrorHandler
+@Deprecated("Replace the vaadin-testbench-unit dependency with browserless-test-junit6 and use the corresponding class from the com.vaadin.browserless package instead. This class will be removed in a future version.")
 open class MockRouteNotFoundError : RouteNotFoundError() {
 
     var cause: NotFoundException? = null;
@@ -165,6 +167,7 @@ open class MockRouteNotFoundError : RouteNotFoundError() {
 }
 
 @DefaultErrorHandler
+@Deprecated("Replace the vaadin-testbench-unit dependency with browserless-test-junit6 and use the corresponding class from the com.vaadin.browserless package instead. This class will be removed in a future version.")
 open class MockInternalSeverError : InternalServerError() {
 
     override fun setErrorParameter(event: BeforeEnterEvent, parameter: ErrorParameter<Exception>): Int {

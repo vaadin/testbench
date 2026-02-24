@@ -66,7 +66,10 @@ import com.vaadin.testbench.unit.internal.PrettyPrintTree;
  * <p/>
  * To get a graphical ascii representation of the UI tree on failure override
  * the {@link #printTree()} method to return true.
- */
+ 
+  * @deprecated Replace the vaadin-testbench-unit dependency with browserless-test-junit6 and use the corresponding class from the com.vaadin.browserless package instead. This class will be removed in a future version.
+  */
+@Deprecated(forRemoval = true, since = "10.1")
 public abstract class UIUnit4Test extends BaseUIUnitTest
         implements TesterWrappers {
 
