@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.vaadin.browserless.Tests;
-import com.vaadin.flow.component.html.DescriptionList;
 
 @Tests(DescriptionList.class)
 public class DescriptionListTester extends HtmlClickContainer<DescriptionList> {

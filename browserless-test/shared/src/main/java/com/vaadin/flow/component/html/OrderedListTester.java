@@ -19,8 +19,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.vaadin.browserless.Tests;
-import com.vaadin.flow.component.html.ListItem;
-import com.vaadin.flow.component.html.OrderedList;
 
 @Tests(OrderedList.class)
 public class OrderedListTester extends HtmlClickContainer<OrderedList> {

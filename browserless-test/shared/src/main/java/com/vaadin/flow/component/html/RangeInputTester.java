@@ -19,7 +19,6 @@ import java.math.BigDecimal;
 
 import com.vaadin.browserless.ComponentTester;
 import com.vaadin.browserless.Tests;
-import com.vaadin.flow.component.html.RangeInput;
 
 @Tests(RangeInput.class)
 public class RangeInputTester extends ComponentTester<RangeInput> {

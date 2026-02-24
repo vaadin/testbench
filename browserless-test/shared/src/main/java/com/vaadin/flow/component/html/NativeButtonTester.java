@@ -16,7 +16,6 @@
 package com.vaadin.flow.component.html;
 
 import com.vaadin.browserless.Tests;
-import com.vaadin.flow.component.html.NativeButton;
 
 @Tests(NativeButton.class)
 public class NativeButtonTester extends HtmlClickContainer<NativeButton> {

@@ -26,7 +26,6 @@ import java.util.Optional;
 import com.vaadin.browserless.Tests;
 import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.flow.server.AbstractStreamResource;

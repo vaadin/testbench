@@ -16,7 +16,6 @@
 package com.vaadin.flow.component.html;
 
 import com.vaadin.browserless.Tests;
-import com.vaadin.flow.component.html.H4;
 
 @Tests(H4.class)
 public class H4Tester extends HtmlClickContainer<H4> {

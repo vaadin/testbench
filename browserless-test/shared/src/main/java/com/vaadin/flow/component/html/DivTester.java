@@ -16,7 +16,6 @@
 package com.vaadin.flow.component.html;
 
 import com.vaadin.browserless.Tests;
-import com.vaadin.flow.component.html.Div;
 
 @Tests(Div.class)
 public class DivTester extends HtmlClickContainer<Div> {

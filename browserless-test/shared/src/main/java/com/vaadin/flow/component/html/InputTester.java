@@ -17,7 +17,6 @@ package com.vaadin.flow.component.html;
 
 import com.vaadin.browserless.ComponentTester;
 import com.vaadin.browserless.Tests;
-import com.vaadin.flow.component.html.Input;
 
 @Tests(Input.class)
 public class InputTester extends ComponentTester<Input> {
