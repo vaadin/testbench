@@ -32,7 +32,7 @@ import com.vaadin.flow.component.UI;
 
 @ViewPackages(packages = "com.example")
 @ExtendWith(TreeOnFailureExtension.class)
-class UIUnitShortcutTest extends BrowserlessTest {
+class BrowserlessShortcutTest extends BrowserlessTest {
 
     @Test
     void fireShortcut_UIListener_invokedForExactMatch() {

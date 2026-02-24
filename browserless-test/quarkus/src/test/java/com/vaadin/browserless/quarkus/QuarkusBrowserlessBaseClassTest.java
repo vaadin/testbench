@@ -30,7 +30,7 @@ import com.vaadin.flow.server.VaadinSession;
 
 @QuarkusTest
 @ViewPackages(packages = "com.example")
-class QuarkusUIUnitBaseClassTest extends QuarkusBrowserlessTest {
+class QuarkusBrowserlessBaseClassTest extends QuarkusBrowserlessTest {
 
     @Test
     void extendingBaseClass_runTest_vaadinMockingIsSetup() {

@@ -215,7 +215,7 @@ object MockVaadin {
 
         // init Session.
         // Use the underlying Service to create the Vaadin Session; however
-        // you MUST mock certain things in order for UI Unit testing to work.
+        // you MUST mock certain things in order for browserless testing to work.
         // See MockSession for more details. By default the service is a MockService
         // which creates MockSession.
         val session: VaadinSession = service._createVaadinSession(VaadinRequest.getCurrent())
@@ -281,12 +281,12 @@ object MockVaadin {
     }
 
     /**
-     * Since UI Unit Testing runs in the same JVM as the server and there is no browser, the boundaries between the client and
+     * Since Browserless Testing runs in the same JVM as the server and there is no browser, the boundaries between the client and
      * the server become unclear. When looking into sources of any test method, it's really hard to tell where exactly the server request ends, and
      * where another request starts.
      *
      * You can establish an explicit client boundary in your test, by explicitly calling this method. However, since that
-     * would be both laborous and error-prone, the default operation is that UI Unit Testing pretends as if there was a client-server
+     * would be both laborous and error-prone, the default operation is that Browserless Testing pretends as if there was a client-server
      * roundtrip before every component lookup
      * via the [_get]/[_find]/[_expectNone]/[_expectOne] call. See [TestingLifecycleHook] for more details.
      *

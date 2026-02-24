@@ -25,12 +25,12 @@ import com.vaadin.flow.component.menubar.MenuBar
  *
  * ### Mocking server request end
  *
- * Since UI Unit Testing runs in the same JVM as the server and there is no browser, the boundaries between the client and
+ * Since Browserless Testing runs in the same JVM as the server and there is no browser, the boundaries between the client and
  * the server become unclear. When looking into sources of any test method, it's really hard to tell where exactly the server request ends, and
  * where another request starts.
  *
  * You can establish an explicit client boundary in your test, by explicitly calling [MockVaadin.clientRoundtrip]. However, since that
- * would be both laborous and error-prone, the default operation is that UI Unit Testing pretends as if there was a client-server
+ * would be both laborous and error-prone, the default operation is that Browserless Testing pretends as if there was a client-server
  * roundtrip before every component lookup
  * via the [_get]/[_find]/[_expectNone]/[_expectOne] call. Therefore, [MockVaadin.clientRoundtrip] is called from [awaitBeforeLookup] by default.
  */

@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 import com.vaadin.browserless.internal.MockRouteNotFoundError;
 
 @ViewPackages(packages = "com.example")
-public class UIUnitNavigationTest extends BrowserlessTest {
+public class BrowserlessNavigationTest extends BrowserlessTest {
 
     @Test
     public void getCurrentView_returnsExpectedView() {

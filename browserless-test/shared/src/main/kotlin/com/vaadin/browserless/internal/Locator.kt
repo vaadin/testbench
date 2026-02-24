@@ -185,12 +185,12 @@ fun <T: Component> Component._find(clazz: Class<T>, block: SearchSpec<T>.()->Uni
         }
         message = "$message in ${toPrettyString()} matching $spec: [${result.joinToString { it.toPrettyString() }}]. Component tree:\n${toPrettyTree()}"
 
-        // if there's a PolymerTemplate, warn that UI Unit Testing can't really locate components in there:
+        // if there's a PolymerTemplate, warn that Browserless Testing can't really locate components in there:
         // https://github.com/mvysny/karibu-testing/tree/master/karibu-testing-v10#polymer-templates
         // fixes https://github.com/mvysny/karibu-testing/issues/35
         val hasPolymerTemplates: Boolean = hasPolymerTemplates() && _walkAll().any { isPolymerTemplate(it) }
         if (hasPolymerTemplates) {
-            message = "$message\nWarning: UI Unit Testing is not able to look up components from inside of PolymerTemplate. Please see https://github.com/mvysny/karibu-testing/tree/master/karibu-testing-v10#polymer-templates for more details."
+            message = "$message\nWarning: Browserless Testing is not able to look up components from inside of PolymerTemplate. Please see https://github.com/mvysny/karibu-testing/tree/master/karibu-testing-v10#polymer-templates for more details."
         }
 
         // find() used to fail with IllegalArgumentException which makes sense for a general-purpose utility method. However,

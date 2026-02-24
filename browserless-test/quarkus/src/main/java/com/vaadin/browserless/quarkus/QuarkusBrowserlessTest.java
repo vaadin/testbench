@@ -27,7 +27,8 @@ import com.vaadin.browserless.mocks.MockedUI;
 import com.vaadin.browserless.quarkus.mocks.MockQuarkusServlet;
 
 /**
- * Base JUnit 5+ class for UI unit testing applications based on Quarkus stack.
+ * Base JUnit 5+ class for browserless testing of applications based on Quarkus
+ * stack.
  *
  * This class sets up a mock Vaadin Quarkus environment, so that views and
  * components built upon dependency injection and AOP can be correctly be

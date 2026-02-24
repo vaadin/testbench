@@ -37,7 +37,7 @@ import com.vaadin.flow.server.VaadinService;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.server.auth.MenuAccessControl;
 
-class UIUnitBaseClassTest {
+class BrowserlessBaseClassTest {
 
     @Nested
     class TestMethodExecutionTest extends BrowserlessTest {

@@ -48,7 +48,8 @@ public class SecurityTestConfig {
 
         public void serviceInit(@Observes ServiceInitEvent event) {
             // Currently, @QuarkusTest starts the whole application, so we check
-            // the VaadinService type to register routes only for UI Unit tests
+            // the VaadinService type to register routes only for browserless
+            // tests
             if (event.getSource() instanceof MockQuarkusServletService) {
                 registerRoutes();
                 event.getSource().addUIInitListener(uiEvent -> {

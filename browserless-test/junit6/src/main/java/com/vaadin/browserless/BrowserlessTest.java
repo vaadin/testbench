@@ -19,7 +19,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
 /**
- * Base JUnit 6 class for UI unit tests.
+ * Base JUnit 6 class for browserless tests.
  *
  * The class automatically scans classpath for routes and error views.
  * Subclasses should typically restrict classpath scanning to a specific

@@ -54,7 +54,7 @@ import com.vaadin.flow.router.RouteParameters;
 import com.vaadin.flow.server.VaadinSession;
 
 /**
- * Base class for UI unit tests.
+ * Base class for browserless tests.
  *
  * Provides methods to set up and clean a mocked Vaadin environment.
  *
@@ -82,7 +82,7 @@ public abstract class BaseBrowserlessTest {
         testers.putAll(scanForTesters("com.vaadin.flow.component"));
     }
 
-    // Protected for access by deprecated adapter subclass (BaseUIUnitTest)
+    // Protected for access by adapter subclass in legacy module
     protected static Map<Class<?>, Class<? extends ComponentTester>> scanForTesters(
             String... packages) {
         try (ScanResult scan = new ClassGraph().enableClassInfo()
@@ -361,7 +361,7 @@ public abstract class BaseBrowserlessTest {
                 .get(0);
     }
 
-    // Protected for access by deprecated adapter subclass (BaseUIUnitTest)
+    // Protected for access by adapter subclass in legacy module
     @SuppressWarnings("unchecked")
     protected static <T extends ComponentTester<Y>, Y extends Component> T internalWrap(
             Y component) {
@@ -632,8 +632,7 @@ public abstract class BaseBrowserlessTest {
      * exception giving advices on possible causes of the problem.
      *
      * Principal cause for having a null UI is that the test extends the wrong
-     * base class for the current configuration, e.g. using UIUnit4Test with
-     * JUnit 5 or the opposite.
+     * base class for the current configuration.
      *
      */
     private UI verifyAndGetUI() {

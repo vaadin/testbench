@@ -26,8 +26,8 @@ import com.vaadin.flow.server.VaadinRequest;
 import com.vaadin.flow.server.VaadinService;
 import com.vaadin.flow.server.VaadinSession;
 
-@ContextConfiguration(classes = SpringUIUnitBaseClassTest.TestConfig.class)
-class SpringUIUnitBaseClassTest extends SpringBrowserlessTest {
+@ContextConfiguration(classes = SpringBrowserlessBaseClassTest.TestConfig.class)
+class SpringBrowserlessBaseClassTest extends SpringBrowserlessTest {
 
     @Test
     void extendingBaseClass_runTest_vaadinSpringMockingIsSetup() {

@@ -30,7 +30,7 @@ import com.vaadin.browserless.mocks.MockedUI;
 import com.vaadin.browserless.mocks.SpringSecurityRequestCustomizer;
 
 /**
- * Base JUnit 6 class for UI unit testing applications based on Spring
+ * Base JUnit 6 class for browserless testing of applications based on Spring
  * Framework.
  *
  * This class provides functionality of the Spring TestContext Framework, in
