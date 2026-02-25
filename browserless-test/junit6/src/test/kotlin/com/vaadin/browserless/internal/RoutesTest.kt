@@ -33,10 +33,11 @@ import com.vaadin.browserless.viewscan.byannotatedclass.ViewPackagesTestView
 import kotlin.test.expect
 
 
+val packagePrivateViewClass: Class<out Component> = Class.forName("com.example.base.PackagePrivateView").asSubclass(Component::class.java)
 val allViews: Set<Class<out Component>> = setOf<Class<out Component>>(
         HelloWorldView::class.java, WelcomeView::class.java,
         ParametrizedView::class.java, ChildView::class.java, NavigationPostponeView::class.java,
-        ViewPackagesTestView::class.java, SignalsView::class.java)
+        ViewPackagesTestView::class.java, SignalsView::class.java, packagePrivateViewClass)
 val allErrorRoutes: Set<Class<out HasErrorParameter<*>>> = setOf(ErrorView::class.java, MockRouteNotFoundError::class.java, MockInternalSeverError::class.java)
 
 @DynaTestDsl
@@ -51,6 +52,13 @@ fun DynaNodeGroup.routesTestBatch() {
         val routes: Routes = Routes().autoDiscoverViews(*packagesToScan)
         expect(allViews) { routes.routes.toSet() }
         expect(allErrorRoutes) { routes.errorRoutes.toSet() }
+    }
+
+    test("package-private views are discovered") {
+        val routes: Routes = Routes().autoDiscoverViews(*packagesToScan)
+        expect(true, "PackagePrivateView should be discovered") {
+            routes.routes.any { it.name == "com.example.base.PackagePrivateView" }
+        }
     }
 
     test("calling autoDiscoverViews() multiple times won't fail") {
@@ -106,7 +114,7 @@ fun DynaNodeGroup.routesTestBatch() {
 
     test("merge routes") {
         val routes1 = Routes(mutableSetOf(HelloWorldView::class.java, WelcomeView::class.java,
-                ViewPackagesTestView::class.java, SignalsView::class.java),
+                ViewPackagesTestView::class.java, SignalsView::class.java, packagePrivateViewClass),
                 mutableSetOf(ErrorView::class.java))
         val routes2 = Routes(mutableSetOf(ParametrizedView::class.java, ChildView::class.java, NavigationPostponeView::class.java),
                 mutableSetOf(MockRouteNotFoundError::class.java, MockInternalSeverError::class.java))
