@@ -29,6 +29,13 @@
         </license>
     </licenses>
 
+    <distributionManagement>
+        <relocation>
+            <artifactId>browserless-test-quarkus</artifactId>
+            <message>This artifact has been deprecated. Replace with com.vaadin:browserless-test-junit6 and update imports from com.vaadin.testbench.unit to com.vaadin.browserless.</message>
+        </relocation>
+    </distributionManagement>
+
     <properties>
         <!-- Using the same version as in vaadin-quarkus extension -->
         <quarkus.version>3.24.0</quarkus.version>

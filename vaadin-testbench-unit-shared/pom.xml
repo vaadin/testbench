@@ -29,6 +29,12 @@
         </license>
     </licenses>
 
+    <distributionManagement>
+        <relocation>
+            <artifactId>browserless-test-shared</artifactId>
+            <message>This artifact has been deprecated. Replace with com.vaadin:browserless-test-junit6 and update imports from com.vaadin.testbench.unit to com.vaadin.browserless.</message>
+        </relocation>
+    </distributionManagement>
 
     <properties>
         <kotlin.version>2.2.20</kotlin.version>
