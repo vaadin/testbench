@@ -1,0 +1,97 @@
+/**
+ * Copyright (C) 2000-2026 Vaadin Ltd
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.vaadin.flow.component.notification;
+
+import java.util.function.Consumer;
+
+import com.vaadin.browserless.ComponentTester;
+import com.vaadin.browserless.Tests;
+
+/**
+ * Tester for Notification components.
+ *
+ * @param <T>
+ *            component type
+ */
+@Tests(Notification.class)
+public class NotificationTester<T extends Notification>
+        extends ComponentTester<T> {
+
+    /**
+     * Wrap given component for testing.
+     *
+     * @param component
+     *            target component
+     */
+    public NotificationTester(T component) {
+        super(component);
+    }
+
+    /**
+     * Gets the text of the notification.
+     *
+     * If the notification is not displayed an IllegalStateException will be
+     * thrown as the end user would not be able to see the contents.
+     *
+     * @return the text of the notification
+     * @throws IllegalStateException
+     *             is notification is not displayed
+     */
+    public String getText() {
+        ensureComponentIsUsable();
+        return getComponent().getElement().getProperty("text");
+    }
+
+    /**
+     * Simulates auto-close of the notification, because of show duration
+     * timeout.
+     *
+     * If notification is not displayed or auto-close is disabled setting
+     * duration to 0 or negative, an {@link IllegalStateException} is thrown.
+     *
+     * @throws IllegalStateException
+     *             if the notification is not displayed or has auto-close
+     *             disabled.
+     */
+    public void autoClose() {
+        ensureComponentIsUsable();
+        if (getComponent().getDuration() <= 0) {
+            throw new IllegalStateException("Auto-close is not enabled");
+        }
+        getComponent().close();
+    }
+
+    @Override
+    public boolean isUsable() {
+        T component = getComponent();
+        return component.isVisible() && component.isAttached()
+                && component.isOpened();
+    }
+
+    @Override
+    protected void notUsableReasons(Consumer<String> collector) {
+        T component = getComponent();
+        if (!component.isAttached()) {
+            collector.accept("not attached");
+        }
+        if (!component.isVisible()) {
+            collector.accept("not visible");
+        }
+        if (component.isOpened()) {
+            collector.accept("not opened");
+        }
+    }
+}

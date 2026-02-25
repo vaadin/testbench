@@ -1,0 +1,147 @@
+/**
+ * Copyright (C) 2000-2026 Vaadin Ltd
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.vaadin.flow.component.textfield;
+
+import java.util.concurrent.atomic.AtomicReference;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import com.vaadin.browserless.BrowserlessTest;
+import com.vaadin.browserless.ViewPackages;
+import com.vaadin.flow.component.AbstractField;
+import com.vaadin.flow.component.HasValue;
+import com.vaadin.flow.router.RouteConfiguration;
+
+@ViewPackages
+class TextAreaTesterTest extends BrowserlessTest {
+
+    private TextAreaView view;
+
+    @BeforeEach
+    public void registerView() {
+        RouteConfiguration.forApplicationScope()
+                .setAnnotatedRoute(TextAreaView.class);
+        view = navigate(TextAreaView.class);
+    }
+
+    @Test
+    public void readOnlyTextArea_isNotUsable() {
+        view.textArea.setReadOnly(true);
+
+        final TextAreaTester<TextArea> ta_ = test(view.textArea);
+
+        Assertions.assertFalse(ta_.isUsable(),
+                "Read only TextArea shouldn't be usable");
+    }
+
+    @Test
+    public void readOnlyTextArea_automaticWrapper_readOnlyIsCheckedInUsable() {
+        view.textArea.setReadOnly(true);
+
+        Assertions.assertFalse(test(view.textArea).isUsable(),
+                "Read only TextArea shouldn't be usable");
+    }
+
+    @Test
+    public void setTextAreaValue_eventIsFired_valueIsSet() {
+
+        AtomicReference<String> value = new AtomicReference<>(null);
+
+        view.textArea.addValueChangeListener(
+                (HasValue.ValueChangeListener<AbstractField.ComponentValueChangeEvent<TextArea, String>>) event -> {
+                    if (event.isFromClient()) {
+                        value.compareAndSet(null, event.getValue());
+                    }
+                });
+
+        final TextAreaTester<TextArea> ta_ = test(view.textArea);
+        final String newValue = "Test";
+        ta_.setValue(newValue);
+
+        Assertions.assertEquals(newValue, value.get());
+    }
+
+    @Test
+    public void nonInteractableField_throwsOnSetValue() {
+
+        view.textArea.getElement().setEnabled(false);
+        final TextAreaTester<TextArea> ta_ = test(view.textArea);
+
+        Assertions.assertThrows(IllegalStateException.class,
+                () -> ta_.setValue("fail"),
+                "Setting value to a non interactable field should fail");
+    }
+
+    @Test
+    void textAreaWithValidation_doNotPreventInvalid_doNotThrow() {
+        // Only accept numbers
+        view.textArea.setAllowedCharPattern("\\d*");
+
+        final TextAreaTester<TextArea> ta_ = test(view.textArea);
+        final String faultyValue = "Invalid value, but doesn't throw";
+        ta_.setValue(faultyValue);
+        Assertions.assertEquals(faultyValue, view.textArea.getValue(),
+                "Value should have been set.");
+    }
+
+    @Test
+    public void textAreaWithPattern_patternIsValidated() {
+        TextArea tf = view.textArea;
+        // Only accept numbers
+        tf.setPattern("\\d*");
+
+        final TextAreaTester<TextArea> ta_ = test(tf);
+        ta_.setValue("1234");
+
+        Assertions.assertEquals("1234", tf.getValue());
+        Assertions.assertFalse(ta_.getComponent().isInvalid());
+    }
+
+    @Test
+    public void textAreaWithMinLength_lengthIsChecked() {
+        TextArea tf = view.textArea;
+        tf.setMinLength(5);
+
+        final TextAreaTester<TextArea> ta_ = test(tf);
+        ta_.setValue("1234");
+        Assertions.assertTrue(ta_.getComponent().isInvalid());
+    }
+
+    @Test
+    public void textAreaWithMaxLength_lengthIsChecked() {
+        TextArea tf = view.textArea;
+        tf.setMaxLength(3);
+
+        final TextAreaTester<TextArea> ta_ = test(tf);
+        ta_.setValue("1234");
+        Assertions.assertTrue(ta_.getComponent().isInvalid());
+    }
+
+    @Test
+    public void textAreaWithRequired_valueIsChecked() {
+        TextArea tf = view.textArea;
+        tf.setRequiredIndicatorVisible(true);
+
+        final TextAreaTester<TextArea> ta_ = test(tf);
+        ta_.setValue("value1"); // must be value changed to trigger required
+                                // validation
+        ta_.setValue("");
+        Assertions.assertTrue(ta_.getComponent().isInvalid());
+    }
+
+}
