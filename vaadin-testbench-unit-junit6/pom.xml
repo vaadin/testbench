@@ -22,13 +22,6 @@
         </license>
     </licenses>
 
-    <distributionManagement>
-        <relocation>
-            <artifactId>browserless-test-junit6</artifactId>
-            <message>This artifact has been deprecated. Replace with com.vaadin:browserless-test-junit6 and update imports from com.vaadin.testbench.unit to com.vaadin.browserless.</message>
-        </relocation>
-    </distributionManagement>
-
     <properties>
         <!-- Override junit.version for the JUnit 6 artifact line -->
         <junit.version>6.0.0</junit.version>
