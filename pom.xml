@@ -55,7 +55,6 @@
         <module>vaadin-testbench-core</module>
         <module>vaadin-testbench-core-junit5</module>
         <module>vaadin-testbench-core-junit6</module>
-        <module>browserless-test</module>
         <module>vaadin-testbench-unit-shared</module>
         <module>vaadin-testbench-unit</module>
         <module>vaadin-testbench-unit-junit5</module>
