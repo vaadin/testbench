@@ -32,6 +32,7 @@ import com.vaadin.flow.server.streams.DownloadHandler;
 import com.vaadin.testbench.unit.Tests;
 
 @Tests(Anchor.class)
+@Deprecated(forRemoval = true, since = "10.1")
 public class AnchorTester extends HtmlContainerTester<Anchor> {
     /**
      * Wrap given component for testing.

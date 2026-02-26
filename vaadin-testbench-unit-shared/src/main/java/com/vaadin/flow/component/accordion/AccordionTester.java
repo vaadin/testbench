@@ -14,6 +14,7 @@ import com.vaadin.testbench.unit.ComponentTester;
 import com.vaadin.testbench.unit.Tests;
 
 @Tests(Accordion.class)
+@Deprecated(forRemoval = true, since = "10.1")
 public class AccordionTester<T extends Accordion> extends ComponentTester<T> {
     /**
      * Wrap given component for testing.

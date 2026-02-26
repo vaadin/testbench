@@ -25,6 +25,7 @@ import com.vaadin.testbench.unit.Tests;
 import com.vaadin.testbench.unit.internal.BasicUtilsKt;
 
 @Tests(fqn = "com.vaadin.flow.component.combobox.MultiSelectComboBox")
+@Deprecated(forRemoval = true, since = "10.1")
 public class MultiSelectComboBoxTester<T extends MultiSelectComboBox<Y>, Y>
         extends ComponentTester<T> {
     /**

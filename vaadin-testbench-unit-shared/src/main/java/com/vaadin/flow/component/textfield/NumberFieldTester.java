@@ -24,6 +24,7 @@ import com.vaadin.testbench.unit.Tests;
  */
 @Tests(fqn = { "com.vaadin.flow.component.textfield.IntegerField",
         "com.vaadin.flow.component.textfield.NumberField" })
+@Deprecated(forRemoval = true, since = "10.1")
 public class NumberFieldTester<T extends AbstractNumberField<T, V>, V extends Number>
         extends ComponentTester<T> {
     /**

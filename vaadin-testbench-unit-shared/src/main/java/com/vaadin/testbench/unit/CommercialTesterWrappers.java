@@ -13,8 +13,14 @@ import com.vaadin.flow.component.charts.ChartTester;
 
 /**
  * Provides factory method to create testers for commercial components.
+ * 
+ * @deprecated Replace the vaadin-testbench-unit dependency with
+ *             browserless-test-junit6 and use the corresponding class from the
+ *             com.vaadin.browserless package instead. This class will be
+ *             removed in a future version.
  */
 @SuppressWarnings("unchecked")
+@Deprecated(forRemoval = true, since = "10.1")
 public interface CommercialTesterWrappers {
 
     /**

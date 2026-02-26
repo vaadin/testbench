@@ -12,6 +12,7 @@ import com.vaadin.testbench.unit.ComponentTester;
 import com.vaadin.testbench.unit.Tests;
 
 @Tests(Dialog.class)
+@Deprecated(forRemoval = true, since = "10.1")
 public class DialogTester extends ComponentTester<Dialog> {
     /**
      * Wrap given component for testing.

@@ -21,7 +21,13 @@ package com.vaadin.testbench.unit;
  * <dt>4: The second additional button, typically the forward button</dt>
  * <dt>5+: More additional buttons without any typical meanings</dt>
  * </dl>
+ * 
+ * @deprecated Replace the vaadin-testbench-unit dependency with
+ *             browserless-test-junit6 and use the corresponding class from the
+ *             com.vaadin.browserless package instead. This class will be
+ *             removed in a future version.
  */
+@Deprecated(forRemoval = true, since = "10.1")
 public enum MouseButton {
 
     NO_BUTTON(-1), LEFT(0), MIDDLE(1), RIGHT(2), BACK(3), FORWARD(4);

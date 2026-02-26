@@ -16,6 +16,7 @@ import com.vaadin.flow.component.html.OrderedList;
 import com.vaadin.testbench.unit.Tests;
 
 @Tests(OrderedList.class)
+@Deprecated(forRemoval = true, since = "10.1")
 public class OrderedListTester extends HtmlClickContainer<OrderedList> {
     /**
      * Wrap given component for testing.

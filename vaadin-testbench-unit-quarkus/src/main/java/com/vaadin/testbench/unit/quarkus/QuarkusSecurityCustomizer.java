@@ -18,7 +18,13 @@ import com.vaadin.testbench.unit.mocks.MockRequest;
  * Configures mock request with authentication details from Quarkus Security.
  *
  * For internal use only.
+ * 
+ * @deprecated Replace the vaadin-testbench-unit dependency with
+ *             browserless-test-junit6 and use the corresponding class from the
+ *             com.vaadin.browserless package instead. This class will be
+ *             removed in a future version.
  */
+@Deprecated(forRemoval = true, since = "10.1")
 public class QuarkusSecurityCustomizer implements MockRequestCustomizer {
 
     @Override

@@ -29,8 +29,14 @@ import com.vaadin.testbench.unit.Tests;
  *            component type
  * @param <Y>
  *            value type
+ * 
+ * @deprecated Replace the vaadin-testbench-unit dependency with
+ *             browserless-test-junit6 and use the corresponding class from the
+ *             com.vaadin.browserless package instead. This class will be
+ *             removed in a future version.
  */
 @Tests(VirtualList.class)
+@Deprecated(forRemoval = true, since = "10.1")
 public class VirtualListTester<T extends VirtualList<Y>, Y>
         extends ComponentTester<T> {
 

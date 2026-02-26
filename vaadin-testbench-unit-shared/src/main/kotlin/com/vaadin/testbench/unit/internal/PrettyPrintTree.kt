@@ -36,6 +36,7 @@ var prettyPrintUseAscii: Boolean = false
  *
  * To create a pretty tree dump of a Vaadin component, just use [ofVaadin].
  */
+@Deprecated("Replace the vaadin-testbench-unit dependency with browserless-test-junit6 and use the corresponding class from the com.vaadin.browserless package instead. This class will be removed in a future version.")
 class PrettyPrintTree(val name: String, val children: MutableList<PrettyPrintTree>) {
 
     private val pipe = if (!prettyPrintUseAscii) '│' else '|'
