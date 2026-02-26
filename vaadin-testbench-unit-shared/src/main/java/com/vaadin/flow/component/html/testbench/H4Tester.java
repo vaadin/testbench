@@ -12,6 +12,7 @@ import com.vaadin.flow.component.html.H4;
 import com.vaadin.testbench.unit.Tests;
 
 @Tests(H4.class)
+@Deprecated(forRemoval = true, since = "10.1")
 public class H4Tester extends HtmlClickContainer<H4> {
     /**
      * Wrap given component for testing.

@@ -15,6 +15,7 @@ import jakarta.servlet.ServletConfig
 import jakarta.servlet.ServletContext
 
 
+@Deprecated("Replace the vaadin-testbench-unit dependency with browserless-test-junit6 and use the corresponding class from the com.vaadin.browserless package instead. This class will be removed in a future version.")
 open class MockServletConfig(val context: ServletContext) : ServletConfig {
 
     /**
@@ -35,6 +36,7 @@ internal fun <K, V> MutableMap<K, V>.putOrRemove(key: K, value: V?) {
     if (value == null) remove(key) else set(key, value)
 }
 
+@Deprecated("Replace the vaadin-testbench-unit dependency with browserless-test-junit6 and use the corresponding class from the com.vaadin.browserless package instead. This class will be removed in a future version.")
 object MockHttpEnvironment {
     /**
      * [MockRequest.getLocalPort]

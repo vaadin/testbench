@@ -12,6 +12,7 @@ import com.vaadin.flow.component.html.Pre;
 import com.vaadin.testbench.unit.Tests;
 
 @Tests(Pre.class)
+@Deprecated(forRemoval = true, since = "10.1")
 public class PreTester extends HtmlClickContainer<Pre> {
     /**
      * Wrap given component for testing.

@@ -12,6 +12,7 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.testbench.unit.Tests;
 
 @Tests(Div.class)
+@Deprecated(forRemoval = true, since = "10.1")
 public class DivTester extends HtmlClickContainer<Div> {
     /**
      * Wrap given component for testing.

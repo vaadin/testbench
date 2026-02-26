@@ -22,6 +22,7 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Set;
 
+@Deprecated(forRemoval = true, since = "10.1")
 public final class SerializationDebugUtil {
 
     private SerializationDebugUtil() {

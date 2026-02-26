@@ -10,7 +10,13 @@ package com.vaadin.testbench.unit;
 
 /**
  * Class for setting any down meta keys for events supporting meta keys.
+ * 
+ * @deprecated Replace the vaadin-testbench-unit dependency with
+ *             browserless-test-junit6 and use the corresponding class from the
+ *             com.vaadin.browserless package instead. This class will be
+ *             removed in a future version.
  */
+@Deprecated(forRemoval = true, since = "10.1")
 public class MetaKeys {
     private boolean ctrl = false;
     private boolean shift = false;
