@@ -89,7 +89,7 @@ public class NotificationTester<T extends Notification>
         if (!component.isVisible()) {
             collector.accept("not visible");
         }
-        if (component.isOpened()) {
+        if (!component.isOpened()) {
             collector.accept("not opened");
         }
     }
