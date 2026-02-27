@@ -528,18 +528,71 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
     }
 
     /**
+     * Scrolls the element into the visible area of the browser window with the
+     * given options.
+     *
+     * @param options
+     *            the scroll options, e.g.
+     *            {@code Map.of("block", "end", "inline", "end")}
+     * @see <a href=
+     *      "https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollIntoView">Element.scrollIntoView()</a>
+     */
+    public void scrollIntoView(Map<String, Object> options) {
+        callFunction("scrollIntoView", options);
+    }
+
+    /**
      * Scrolls the element into the visible area of the browser window if
      * {@link TestBenchCommands#isAutoScrollIntoView()} is enabled and the
-     * element is not displayed
+     * element is not in the viewport.
      */
     private void autoScrollIntoView() {
         try {
             if (getCommandExecutor().isAutoScrollIntoView()) {
-                if (!wrappedElement.isDisplayed()) {
-                    scrollIntoView();
+                if (!isElementInViewport()) {
+                    scrollIntoView(
+                            Map.of("block", "nearest", "inline", "nearest"));
                 }
             }
         } catch (Exception e) {
+        }
+    }
+
+    /**
+     * Checks whether the element is visible within the browser viewport and not
+     * clipped by any scrollable ancestor container.
+     *
+     * @return {@code true} if the element is in the viewport, {@code true} on
+     *         error as a safe fallback
+     */
+    private boolean isElementInViewport() {
+        try {
+            return (boolean) executeScript(
+                    """
+                            try {
+                              var elem = arguments[0];
+                              var rect = elem.getBoundingClientRect();
+                              if (rect.width === 0 && rect.height === 0) return false;
+                              var vw = window.innerWidth || document.documentElement.clientWidth;
+                              var vh = window.innerHeight || document.documentElement.clientHeight;
+                              if (rect.bottom < 0 || rect.top > vh || rect.right < 0 || rect.left > vw) return false;
+                              var parent = elem.parentElement;
+                              while (parent) {
+                                var style = getComputedStyle(parent);
+                                var overflow = style.overflow + style.overflowX + style.overflowY;
+                                if (/auto|scroll|hidden/.test(overflow)) {
+                                  var parentRect = parent.getBoundingClientRect();
+                                  if (rect.bottom <= parentRect.top || rect.top >= parentRect.bottom
+                                      || rect.right <= parentRect.left || rect.left >= parentRect.right) return false;
+                                }
+                                parent = parent.parentElement;
+                              }
+                              return true;
+                            } catch(e) { return true; }
+                            """,
+                    this);
+        } catch (Exception e) {
+            return true;
         }
     }
 
