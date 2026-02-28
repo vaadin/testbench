@@ -191,16 +191,39 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
 
     @Override
     public void click() {
-        // JS call to click does not focus element, hence ensure focus
+        if (Parameters.isUseJavascriptClick()) {
+            javascriptClick();
+        } else {
+            autoScrollIntoView();
+            waitForVaadin();
+            new Actions(getDriver()).click(wrappedElement).build().perform();
+        }
+    }
+
+    /**
+     * Clicks the element using JavaScript rather than Selenium Actions.
+     * <p>
+     * This avoids "element not clickable at point" issues that can occur when
+     * the element is behind an overlay or otherwise not directly reachable by
+     * Selenium, but it does not correctly simulate a real user interaction in
+     * the browser (e.g., browser event properties such as click count may be
+     * missing or incorrect).
+     * <p>
+     * Prefer {@link #click()} for normal use. Use this method only when you
+     * need to click an element that Selenium cannot reach directly.
+     * <p>
+     * To use this method globally as the default for {@link #click()}, set the
+     * system property
+     * {@code com.vaadin.testbench.Parameters.useJavascriptClick=true} or call
+     * {@link Parameters#setUseJavascriptClick(boolean)}.
+     */
+    public void javascriptClick() {
         focus();
         try {
-            // Avoid strange "element not clickable at point" problems
             callFunction("click");
         } catch (Exception e) {
-            if (e.getMessage()
+            if (e.getMessage() != null && e.getMessage()
                     .contains("Inspected target navigated or closed")) {
-                // This happens with chromedriver although e.g. navigation
-                // succeeds
                 return;
             }
             // SVG elements and maybe others do not have a 'click' method
