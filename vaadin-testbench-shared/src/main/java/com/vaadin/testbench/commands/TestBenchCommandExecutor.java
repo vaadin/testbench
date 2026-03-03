@@ -101,13 +101,9 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
     /**
      * Block until Vaadin reports it has finished processing server messages.
      * <p>
-     * Uses a two-phase approach:
-     * <ol>
-     * <li>Phase 1: Java-side polling until {@code whenReady} is a function.
-     * This survives page reloads during dev server startup.</li>
-     * <li>Phase 2: Single async call to {@code whenReady} which handles all
-     * remaining readiness checks.</li>
-     * </ol>
+     * First waits for the dev server to start (if needed), then makes a single
+     * async call to {@code Flow.whenReady} which handles all remaining
+     * readiness checks.
      */
     public void waitForVaadin() {
         if (!enableWaitForVaadin) {
@@ -119,31 +115,11 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
         WebDriver wrappedDriver = getDriver().getWrappedDriver();
         long deadline = System.currentTimeMillis() + WAIT_FOR_VAADIN_TIMEOUT_MS;
 
-        // Phase 1: Poll until whenReady is a function
-        // (handles dev server startup and page reloads)
-        while (System.currentTimeMillis() < deadline) {
-            try {
-                Boolean ready = (Boolean) ((JavascriptExecutor) wrappedDriver)
-                        .executeScript(WHEN_READY_CHECK_SCRIPT);
-                if (Boolean.TRUE.equals(ready)) {
-                    break;
-                }
-            } catch (Exception e) {
-                // Page may be reloading, continue polling
-            }
-            long remaining = deadline - System.currentTimeMillis();
-            if (remaining <= 0) {
-                return;
-            }
-            try {
-                Thread.sleep(Math.min(500, remaining));
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                return;
-            }
+        if (!waitForDevServer(wrappedDriver, deadline)) {
+            return;
         }
 
-        // Phase 2: Single async call — whenReady handles all readiness checks
+        // Single async call — whenReady handles all readiness checks
         Duration originalTimeout = wrappedDriver.manage().timeouts()
                 .getScriptTimeout();
         try {
@@ -160,6 +136,39 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
         } finally {
             wrappedDriver.manage().timeouts().scriptTimeout(originalTimeout);
         }
+    }
+
+    /**
+     * Polls until {@code Vaadin.Flow.whenReady} is a function, indicating the
+     * dev server has started and Flow is loaded. Uses Java-side polling so it
+     * survives page reloads during dev server startup.
+     *
+     * @return {@code true} if whenReady became available, {@code false} if the
+     *         deadline was reached
+     */
+    private boolean waitForDevServer(WebDriver wrappedDriver, long deadline) {
+        while (System.currentTimeMillis() < deadline) {
+            try {
+                Boolean ready = (Boolean) ((JavascriptExecutor) wrappedDriver)
+                        .executeScript(WHEN_READY_CHECK_SCRIPT);
+                if (Boolean.TRUE.equals(ready)) {
+                    return true;
+                }
+            } catch (Exception e) {
+                // Page may be reloading, continue polling
+            }
+            long remaining = deadline - System.currentTimeMillis();
+            if (remaining <= 0) {
+                return false;
+            }
+            try {
+                Thread.sleep(Math.min(500, remaining));
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                return false;
+            }
+        }
+        return false;
     }
 
     @Override
