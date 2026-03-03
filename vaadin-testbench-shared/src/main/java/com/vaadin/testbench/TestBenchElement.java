@@ -204,7 +204,7 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
                 return;
             }
             // SVG elements and maybe others do not have a 'click' method
-            autoScrollIntoView();
+            ensureVisible();
             waitForVaadin();
             wrappedElement.click();
         }
@@ -217,14 +217,16 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
 
     @Override
     public void sendKeys(CharSequence... keysToSend) {
-        autoScrollIntoView();
+        // Viewport check: some drivers need the element in viewport for
+        // reliable text entry.
+        ensureInteractable();
         waitForVaadin();
         wrappedElement.sendKeys(keysToSend);
     }
 
     @Override
     public void clear() {
-        autoScrollIntoView();
+        ensureVisible();
         waitForVaadin();
         wrappedElement.clear();
     }
@@ -273,7 +275,7 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
 
     @Override
     public boolean isSelected() {
-        autoScrollIntoView();
+        ensureVisible();
         waitForVaadin();
         return wrappedElement.isSelected();
     }
@@ -304,7 +306,7 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
 
     @Override
     public String getText() {
-        autoScrollIntoView();
+        ensureVisible();
         waitForVaadin();
         return wrappedElement.getText();
     }
@@ -347,7 +349,7 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
     }
 
     public void click(int x, int y, Keys... modifiers) {
-        autoScrollIntoView();
+        ensureInteractable();
         waitForVaadin();
         Actions actions = new Actions(getDriver());
         actions.moveToElement(wrappedElement, x, y);
@@ -364,13 +366,13 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
     }
 
     public void doubleClick() {
-        autoScrollIntoView();
+        ensureInteractable();
         waitForVaadin();
         new Actions(getDriver()).doubleClick(wrappedElement).build().perform();
     }
 
     public void contextClick() {
-        autoScrollIntoView();
+        ensureInteractable();
         waitForVaadin();
         new Actions(getDriver()).contextClick(wrappedElement).build().perform();
     }
@@ -542,16 +544,43 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
     }
 
     /**
-     * Scrolls the element into the visible area of the browser window if
-     * {@link TestBenchCommands#isAutoScrollIntoView()} is enabled and the
-     * element is not in the viewport.
+     * Ensures the element is interactable by scrolling it into the browser
+     * viewport if {@link TestBenchCommands#isAutoScrollIntoView()} is enabled
+     * and the element is outside the viewport or clipped by a scrollable
+     * ancestor.
+     * <p>
+     * Uses a full viewport and ancestor visibility check and scrolls with
+     * {@code nearest} alignment to minimize displacement. Intended for methods
+     * that use the Selenium Actions API ({@code moveToElement},
+     * {@code doubleClick}, {@code contextClick}), which require the element to
+     * be physically within the viewport.
      */
-    private void autoScrollIntoView() {
+    private void ensureInteractable() {
         try {
             if (getCommandExecutor().isAutoScrollIntoView()) {
-                if (!isElementInViewport()) {
+                if (!isElementVisibleInViewport()) {
                     scrollIntoView(
                             Map.of("block", "nearest", "inline", "nearest"));
+                }
+            }
+        } catch (Exception e) {
+        }
+    }
+
+    /**
+     * Ensures the element is visible by scrolling it into view if
+     * {@link TestBenchCommands#isAutoScrollIntoView()} is enabled and the
+     * element is not displayed (e.g. {@code display:none} or detached).
+     * <p>
+     * Intended for methods that use the WebElement API ({@code clear},
+     * {@code getText}, etc.), where WebDriver handles its own scrolling
+     * internally and only needs the element to be rendered.
+     */
+    private void ensureVisible() {
+        try {
+            if (getCommandExecutor().isAutoScrollIntoView()) {
+                if (!wrappedElement.isDisplayed()) {
+                    scrollIntoView();
                 }
             }
         } catch (Exception e) {
@@ -565,7 +594,7 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
      * @return {@code true} if the element is in the viewport, {@code true} on
      *         error as a safe fallback
      */
-    private boolean isElementInViewport() {
+    private boolean isElementVisibleInViewport() {
         try {
             return (boolean) executeScript(
                     """
@@ -890,6 +919,8 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
      * Note: This works well only if this element is atomic.
      */
     public void hover() {
+        ensureInteractable();
+        waitForVaadin();
         Actions action = new Actions(getDriver());
         action.moveToElement(this).perform();
     }
