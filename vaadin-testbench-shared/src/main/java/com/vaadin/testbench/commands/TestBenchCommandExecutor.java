@@ -13,12 +13,14 @@ import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.time.Duration;
 import java.util.List;
 
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.HasCapabilities;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Point;
+import org.openqa.selenium.ScriptTimeoutException;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.HttpCommandExecutor;
@@ -48,27 +50,16 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
     private boolean enableWaitForVaadin = true;
     private boolean autoScrollIntoView = true;
     // @formatter:off
-    String WAIT_FOR_VAADIN_SCRIPT =
-            "if (document.readyState != 'complete') {"
-            + "  return false;"
-            + "}"
-            + "if (window.Vaadin && window.Vaadin.Flow && window.Vaadin.Flow.devServerIsNotLoaded) {"
-            + "  return false;"
-            + "} else if (window.Vaadin && window.Vaadin.Flow && window.Vaadin.Flow.clients) {"
-            + "  var clients = window.Vaadin.Flow.clients;"
-            + "  for (var client in clients) {"
-            + "    if (clients[client].isActive()) {"
-            + "      return false;"
-            + "    }"
-            + "  }"
-            + "  return true;"
-            + "} else {"
-            + "  return true;"
-            + "}";
-    // @formatter:on
+    private static final String WHEN_READY_CHECK_SCRIPT =
+            "return typeof window.Vaadin !== 'undefined'"
+            + " && typeof window.Vaadin.Flow !== 'undefined'"
+            + " && typeof window.Vaadin.Flow.whenReady === 'function'";
 
-    // A hook for testing purposes
-    private Runnable waitForVaadinLoopHook;
+    private static final String WAIT_FOR_VAADIN_ASYNC_SCRIPT =
+            "var callback = arguments[arguments.length - 1];"
+            + "window.Vaadin.Flow.whenReady(callback);";
+    // @formatter:on
+    private static final long WAIT_FOR_VAADIN_TIMEOUT_MS = 40000;
 
     public TestBenchCommandExecutor(ImageComparison imageComparison,
             ReferenceNameGenerator referenceNameGenerator) {
@@ -109,30 +100,65 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
 
     /**
      * Block until Vaadin reports it has finished processing server messages.
+     * <p>
+     * Uses a two-phase approach:
+     * <ol>
+     * <li>Phase 1: Java-side polling until {@code whenReady} is a function.
+     * This survives page reloads during dev server startup.</li>
+     * <li>Phase 2: Single async call to {@code whenReady} which handles all
+     * remaining readiness checks.</li>
+     * </ol>
      */
     public void waitForVaadin() {
         if (!enableWaitForVaadin) {
-            // wait for vaadin is disabled, just return.
             return;
         }
 
-        long timeoutTime = System.currentTimeMillis() + 40000;
-        Boolean finished = false;
-        while (System.currentTimeMillis() < timeoutTime && !finished) {
-            if (waitForVaadinLoopHook != null) {
-                waitForVaadinLoopHook.run();
+        // Must use the wrapped driver here to avoid calling waitForVaadin
+        // again
+        WebDriver wrappedDriver = getDriver().getWrappedDriver();
+        long deadline = System.currentTimeMillis() + WAIT_FOR_VAADIN_TIMEOUT_MS;
+
+        // Phase 1: Poll until whenReady is a function
+        // (handles dev server startup and page reloads)
+        while (System.currentTimeMillis() < deadline) {
+            try {
+                Boolean ready = (Boolean) ((JavascriptExecutor) wrappedDriver)
+                        .executeScript(WHEN_READY_CHECK_SCRIPT);
+                if (Boolean.TRUE.equals(ready)) {
+                    break;
+                }
+            } catch (Exception e) {
+                // Page may be reloading, continue polling
             }
-            // Must use the wrapped driver here to avoid calling waitForVaadin
-            // again
-            finished = (Boolean) ((JavascriptExecutor) getDriver()
-                    .getWrappedDriver()).executeScript(WAIT_FOR_VAADIN_SCRIPT);
-            if (finished == null) {
-                // This should never happen but according to
-                // https://dev.vaadin.com/ticket/19703, it happens
-                getLogger().debug(
-                        "waitForVaadin returned null, this should never happen");
-                finished = false;
+            long remaining = deadline - System.currentTimeMillis();
+            if (remaining <= 0) {
+                return;
             }
+            try {
+                Thread.sleep(Math.min(500, remaining));
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                return;
+            }
+        }
+
+        // Phase 2: Single async call — whenReady handles all readiness checks
+        Duration originalTimeout = wrappedDriver.manage().timeouts()
+                .getScriptTimeout();
+        try {
+            long remaining = deadline - System.currentTimeMillis();
+            if (remaining <= 0) {
+                return;
+            }
+            wrappedDriver.manage().timeouts()
+                    .scriptTimeout(Duration.ofMillis(remaining));
+            ((JavascriptExecutor) wrappedDriver)
+                    .executeAsyncScript(WAIT_FOR_VAADIN_ASYNC_SCRIPT);
+        } catch (ScriptTimeoutException e) {
+            // Silent timeout
+        } finally {
+            wrappedDriver.manage().timeouts().scriptTimeout(originalTimeout);
         }
     }
 
