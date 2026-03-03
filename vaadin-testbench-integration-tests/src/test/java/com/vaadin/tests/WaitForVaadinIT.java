@@ -61,8 +61,8 @@ public class WaitForVaadinIT extends AbstractTB6Test {
     @Test
     public void waitForVaadin_devModeNotReady_waits() {
         openTestURL();
-        getCommandExecutor().executeScript(
-                "window.Vaadin.Flow.whenReady = false;");
+        getCommandExecutor()
+                .executeScript("window.Vaadin.Flow.whenReady = false;");
         assertExecutionBlocked(() -> getCommandExecutor().waitForVaadin());
     }
 
