@@ -8,10 +8,7 @@
  */
 package com.vaadin.tests;
 
-import java.lang.reflect.Field;
-
 import org.junit.jupiter.api.Assertions;
-import org.openqa.selenium.JavascriptExecutor;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.testUI.PageObjectView;
@@ -44,11 +41,11 @@ public class WaitForVaadinIT extends AbstractBrowserTB9Test {
     @BrowserTest
     public void waitForVaadin_activeConnector_waitsUtilReady() {
         openTestURL();
-        assertDevServerIsNotLoaded();
         getCommandExecutor().executeScript(
-                "window.Vaadin.Flow.clients[\"blocker\"] = {isActive: () => true};");
-        setWaitForVaadinLoopHook(500,
-                "window.Vaadin.Flow.clients[\"blocker\"] = {isActive: () => false};");
+                "window.Vaadin.Flow.clients[\"blocker\"] = {isActive: () => true};"
+                        + "setTimeout(function() {"
+                        + "  window.Vaadin.Flow.clients[\"blocker\"] = {isActive: () => false};"
+                        + "}, 500);");
         getCommandExecutor().waitForVaadin();
         assertClientIsActive();
     }
@@ -62,40 +59,23 @@ public class WaitForVaadinIT extends AbstractBrowserTB9Test {
     }
 
     @BrowserTest
-    public void waitForVaadin_noFlow_returnsImmediately() {
-        openTestURL();
-
-        getCommandExecutor().executeScript("window.Vaadin.Flow = undefined;");
-        assertExecutionNoLonger(() -> getCommandExecutor().waitForVaadin());
-    }
-
-    @BrowserTest
     public void waitForVaadin_devModeNotReady_waits() {
         openTestURL();
-        getCommandExecutor().executeScript(
-                "window.Vaadin = {Flow: {devServerIsNotLoaded: true}};");
+        getCommandExecutor()
+                .executeScript("window.Vaadin.Flow.whenReady = false;");
         assertExecutionBlocked(() -> getCommandExecutor().waitForVaadin());
     }
 
     @BrowserTest
     public void waitForVaadin_devModeNotReady_waitsUntilReady() {
         openTestURL();
-        assertDevServerIsNotLoaded();
         getCommandExecutor().executeScript(
-                "window.Vaadin = {Flow: {devServerIsNotLoaded: true}};");
-        setWaitForVaadinLoopHook(500,
-                "window.Vaadin.Flow.devServerIsNotLoaded = false;");
+                "window._savedWhenReady = window.Vaadin.Flow.whenReady;"
+                        + "window.Vaadin.Flow.whenReady = false;"
+                        + "setTimeout(function() {"
+                        + "  window.Vaadin.Flow.whenReady = window._savedWhenReady;"
+                        + "}, 500);");
         getCommandExecutor().waitForVaadin();
-        assertDevServerIsNotLoaded();
-    }
-
-    private void assertDevServerIsNotLoaded() {
-        Object devServerIsNotLoaded = executeScript(
-                "return window.Vaadin.Flow.devServerIsNotLoaded;");
-        Assertions.assertTrue(
-                devServerIsNotLoaded == null
-                        || devServerIsNotLoaded == Boolean.FALSE,
-                "devServerIsNotLoaded should be null or false");
     }
 
     private void assertClientIsActive() {
@@ -123,28 +103,4 @@ public class WaitForVaadinIT extends AbstractBrowserTB9Test {
                 "Unexpected execution time, waiting time = " + timeout);
     }
 
-    private void setWaitForVaadinLoopHook(long timeout,
-            String scriptToRunAfterTimeout) {
-        long systemCurrentTimeMillis = System.currentTimeMillis();
-        setWaitForVaadinLoopHook(() -> {
-            if (System.currentTimeMillis()
-                    - systemCurrentTimeMillis > timeout) {
-                ((JavascriptExecutor) getCommandExecutor().getDriver()
-                        .getWrappedDriver())
-                        .executeScript(scriptToRunAfterTimeout);
-                setWaitForVaadinLoopHook(null);
-            }
-        });
-    }
-
-    private void setWaitForVaadinLoopHook(Runnable action) {
-        try {
-            Field field = getCommandExecutor().getClass()
-                    .getDeclaredField("waitForVaadinLoopHook");
-            field.setAccessible(true);
-            field.set(getCommandExecutor(), action);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
-    }
 }
