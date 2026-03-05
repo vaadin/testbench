@@ -41,7 +41,6 @@ import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.WrapsElement;
 import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.interactions.Locatable;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -550,11 +549,6 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
      * and the element is outside the viewport or clipped by a scrollable
      * ancestor.
      * <p>
-     * Prefers the native Selenium {@link Locatable} API, which scrolls the
-     * element into view without JavaScript. Falls back to a JS-based viewport
-     * check with {@code scrollIntoView({nearest})} for elements that do not
-     * implement {@code Locatable}.
-     * <p>
      * Intended for methods that use the Selenium Actions API
      * ({@code moveToElement}, {@code doubleClick}, {@code contextClick}), which
      * require the element to be physically within the viewport.
@@ -562,9 +556,7 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
     private void ensureInteractable() {
         try {
             if (getCommandExecutor().isAutoScrollIntoView()) {
-                if (wrappedElement instanceof Locatable locatable) {
-                    locatable.getCoordinates().inViewPort();
-                } else if (!isElementVisibleInViewport()) {
+                if (!isElementVisibleInViewport()) {
                     scrollIntoView(
                             Map.of("block", "nearest", "inline", "nearest"));
                 }
