@@ -10,6 +10,7 @@ package com.vaadin.testbench.unit;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 import com.example.base.WelcomeView;
 import org.junit.Assert;
@@ -213,6 +214,47 @@ public class ComponentTesterTest extends UIUnit4Test {
         List<Span> result = wrapper_.findAllByQuery(Span.class,
                 query -> query.withTextContaining("Three"));
         Assert.assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void ensureComponentIsUsable_subclassOverride_includesCustomReason() {
+        Span span = new Span();
+        home.add(span);
+
+        CustomTester<Span> tester = new CustomTester<>(span);
+        tester.markNotUsable();
+
+        IllegalStateException ex = Assert.assertThrows(
+                IllegalStateException.class, tester::ensureComponentIsUsable);
+        Assert.assertTrue(
+                "Error message should contain subclass reason: "
+                        + ex.getMessage(),
+                ex.getMessage().contains("custom reason"));
+    }
+
+    static class CustomTester<T extends Component> extends ComponentTester<T> {
+        private boolean usable = true;
+
+        public CustomTester(T component) {
+            super(component);
+        }
+
+        void markNotUsable() {
+            usable = false;
+        }
+
+        @Override
+        public boolean isUsable() {
+            return usable && super.isUsable();
+        }
+
+        @Override
+        protected void notUsableReasons(Consumer<String> collector) {
+            super.notUsableReasons(collector);
+            if (!usable) {
+                collector.accept("custom reason");
+            }
+        }
     }
 
     private WelcomeView getHome() {
