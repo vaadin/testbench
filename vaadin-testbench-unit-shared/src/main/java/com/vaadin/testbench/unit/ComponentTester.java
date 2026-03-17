@@ -147,7 +147,8 @@ public class ComponentTester<T extends Component> implements Clickable<T> {
      * component.
      */
     public final void ensureComponentIsUsable() {
-        ensureComponentIsUsable(component, unused -> isUsable());
+        throwIfNotUsable(component, unused -> isUsable(),
+                this::notUsableReasons);
     }
 
     /**
@@ -161,12 +162,19 @@ public class ComponentTester<T extends Component> implements Clickable<T> {
      */
     protected static void ensureComponentIsUsable(Component component,
             Predicate<Component> usableTest) {
+        throwIfNotUsable(component, usableTest,
+                collector -> notUsableReasons(component, collector));
+    }
+
+    private static void throwIfNotUsable(Component component,
+            Predicate<Component> usableTest,
+            Consumer<Consumer<String>> reasonsProvider) {
         if (!usableTest.test(component)) {
             StringBuilder message = new StringBuilder(
                     PrettyPrintTreeKt.toPrettyString(component)
                             + " is not usable");
             Stream.Builder<String> reasons = Stream.builder();
-            notUsableReasons(component, reasons::add);
+            reasonsProvider.accept(reasons::add);
             message.append(reasons.build()
                     .collect(Collectors.joining(", ", " because it is ", ".")));
             throw new IllegalStateException(message.toString());
