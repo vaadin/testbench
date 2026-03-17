@@ -31,7 +31,7 @@ public class ImageLoader {
         final ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 
         ImageIO.write(img, "png", outStream);
-        return Base64.getUrlEncoder().encodeToString(outStream.toByteArray());
+        return Base64.getEncoder().encodeToString(outStream.toByteArray());
     }
 
     public static BufferedImage loadImage(String folder, String filename)

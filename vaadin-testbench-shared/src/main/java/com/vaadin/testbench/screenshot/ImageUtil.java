@@ -53,7 +53,7 @@ public class ImageUtil {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ImageIO.write(image, "png", baos);
             baos.flush();
-            encodedImage = Base64.getUrlEncoder()
+            encodedImage = Base64.getEncoder()
                     .encodeToString(baos.toByteArray());
             baos.close();
         } catch (IOException e) {
