@@ -297,12 +297,11 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
 
                 int diffW = desiredWidth - actualWidth;
                 int diffH = desiredHeight - actualHeight;
-                Dimension currentSize = getDriver().manage().window()
-                        .getSize();
+                Dimension currentSize = getDriver().manage().window().getSize();
                 getLogger().debug(
                         "resizeViewPortTo: attempt {}, desired={}x{}, actual={}x{}, adjusting by {}x{}",
-                        attempt + 1, desiredWidth, desiredHeight,
-                        actualWidth, actualHeight, diffW, diffH);
+                        attempt + 1, desiredWidth, desiredHeight, actualWidth,
+                        actualHeight, diffW, diffH);
                 getDriver().manage().window()
                         .setSize(new Dimension(currentSize.getWidth() + diffW,
                                 currentSize.getHeight() + diffH));
@@ -311,13 +310,11 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
             // Final check after all attempts
             int actualWidth = detectViewportWidth();
             int actualHeight = detectViewportHeight();
-            if (actualWidth != desiredWidth
-                    || actualHeight != desiredHeight) {
+            if (actualWidth != desiredWidth || actualHeight != desiredHeight) {
                 throw new UnsupportedOperationException(
                         "Viewport size couldn't be set to the desired '"
-                                + desiredWidth + "," + desiredHeight
-                                + "' got '" + actualWidth + ","
-                                + actualHeight + "' after "
+                                + desiredWidth + "," + desiredHeight + "' got '"
+                                + actualWidth + "," + actualHeight + "' after "
                                 + MAX_RESIZE_ATTEMPTS + " attempts.");
             }
         } catch (UnsupportedOperationException e) {
