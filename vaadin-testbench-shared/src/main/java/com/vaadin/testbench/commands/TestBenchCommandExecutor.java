@@ -278,35 +278,50 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
     @Override
     public void resizeViewPortTo(final int desiredWidth,
             final int desiredHeight) throws UnsupportedOperationException {
+        final int MAX_RESIZE_ATTEMPTS = 5;
         try {
             getDriver().manage().window().setPosition(new Point(0, 0));
+            // Start with the desired dimensions; the loop will adjust for
+            // browser chrome (title bar, borders, etc.)
+            getDriver().manage().window()
+                    .setSize(new Dimension(desiredWidth, desiredHeight));
 
-            // first try with mac FF, these will change from plat to plat and
-            // browser setup to another
-            int extrah = 106;
-            int extraw = 0;
-            getDriver().manage().window().setSize(new Dimension(
-                    desiredWidth + extraw, desiredHeight + extrah));
+            for (int attempt = 0; attempt < MAX_RESIZE_ATTEMPTS; attempt++) {
+                int actualWidth = detectViewportWidth();
+                int actualHeight = detectViewportHeight();
 
+                if (actualWidth == desiredWidth
+                        && actualHeight == desiredHeight) {
+                    return;
+                }
+
+                int diffW = desiredWidth - actualWidth;
+                int diffH = desiredHeight - actualHeight;
+                Dimension currentSize = getDriver().manage().window()
+                        .getSize();
+                getLogger().debug(
+                        "resizeViewPortTo: attempt {}, desired={}x{}, actual={}x{}, adjusting by {}x{}",
+                        attempt + 1, desiredWidth, desiredHeight,
+                        actualWidth, actualHeight, diffW, diffH);
+                getDriver().manage().window()
+                        .setSize(new Dimension(currentSize.getWidth() + diffW,
+                                currentSize.getHeight() + diffH));
+            }
+
+            // Final check after all attempts
             int actualWidth = detectViewportWidth();
             int actualHeight = detectViewportHeight();
-
-            int diffW = desiredWidth - actualWidth;
-            int diffH = desiredHeight - actualHeight;
-
-            if (diffH != 0 || diffW != 0) {
-                driver.manage().window()
-                        .setSize(new Dimension(desiredWidth + extraw + diffW,
-                                desiredHeight + extrah + diffH));
-            }
-            actualWidth = detectViewportWidth();
-            actualHeight = detectViewportHeight();
-            if (desiredWidth != actualWidth || desiredHeight != actualHeight) {
-                throw new Exception(
+            if (actualWidth != desiredWidth
+                    || actualHeight != desiredHeight) {
+                throw new UnsupportedOperationException(
                         "Viewport size couldn't be set to the desired '"
-                                + desiredWidth + "," + desiredHeight + "' got '"
-                                + actualWidth + "," + actualHeight + "'.");
+                                + desiredWidth + "," + desiredHeight
+                                + "' got '" + actualWidth + ","
+                                + actualHeight + "' after "
+                                + MAX_RESIZE_ATTEMPTS + " attempts.");
             }
+        } catch (UnsupportedOperationException e) {
+            throw e;
         } catch (Exception e) {
             throw new UnsupportedOperationException(
                     "Viewport couldn't be adjusted.", e);
