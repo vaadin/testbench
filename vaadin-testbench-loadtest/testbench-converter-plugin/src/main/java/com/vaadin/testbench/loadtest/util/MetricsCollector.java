@@ -125,6 +125,7 @@ public class MetricsCollector implements Runnable {
     /**
      * Prints a formatted report of collected metrics to stdout.
      * Uses System.out directly for clean table formatting.
+     * Splits output into a system metrics table and a view counts table.
      */
     public void printReport() {
         if (snapshots.isEmpty()) {
@@ -132,14 +133,9 @@ public class MetricsCollector implements Runnable {
             return;
         }
 
-        System.out.println();
-        System.out.println("Server Metrics Over Time (via Spring Boot Actuator):");
-
-        // Check if we have Vaadin metrics and collect unique view names
         boolean hasVaadinMetrics = snapshots.stream()
                 .anyMatch(s -> s.metrics().vaadinActiveUis() != null);
 
-        // Collect all unique view names (sorted for consistent column order)
         List<String> viewNames = snapshots.stream()
                 .filter(s -> s.metrics().viewCounts() != null)
                 .flatMap(s -> s.metrics().viewCounts().keySet().stream())
@@ -147,111 +143,113 @@ public class MetricsCollector implements Runnable {
                 .sorted()
                 .toList();
 
-        boolean hasViewMetrics = !viewNames.isEmpty();
-
-        // Build dynamic table
-        printTableHeader(hasVaadinMetrics, hasViewMetrics, viewNames);
-
         MetricsSummary first = snapshots.get(0).metrics();
-        MetricsSummary last = null;
+        MetricsSummary last = snapshots.get(snapshots.size() - 1).metrics();
 
-        for (TimestampedMetrics snapshot : snapshots) {
-            MetricsSummary m = snapshot.metrics();
-            last = m;
-            printTableRow(m, snapshot.elapsed(), hasVaadinMetrics, hasViewMetrics, viewNames);
+        // Table 1: System metrics
+        System.out.println();
+        System.out.println("Server Metrics (via Spring Boot Actuator):");
+        printSystemMetricsTable(hasVaadinMetrics);
+
+        // Table 2: View counts (if available)
+        if (!viewNames.isEmpty()) {
+            System.out.println();
+            System.out.println("View Counts:");
+            printViewCountsTable(viewNames);
         }
 
-        printTableFooter(hasVaadinMetrics, hasViewMetrics, viewNames);
-
-        // Print summary with deltas
-        if (last != null && snapshots.size() > 1) {
+        // Summary
+        if (snapshots.size() > 1) {
             printSummary(first, last, viewNames);
         }
     }
 
     /**
-     * Prints the table header.
+     * Prints the system metrics table (CPU, memory, sessions, UIs).
      */
-    private void printTableHeader(boolean hasVaadinMetrics, boolean hasViewMetrics, List<String> viewNames) {
-        StringBuilder topBorder = new StringBuilder("+----------+----------+------------+------------+-----------+----------");
-        StringBuilder header = new StringBuilder("| Time     | CPU (%)  | Heap Used  | Heap Max   | Non-Heap  | Sessions ");
-        StringBuilder separator = new StringBuilder("+----------+----------+------------+------------+-----------+----------");
+    private void printSystemMetricsTable(boolean hasVaadinMetrics) {
+        String border = hasVaadinMetrics
+                ? "+--------+--------+------------+------------+-----------+----------+--------+"
+                : "+--------+--------+------------+------------+-----------+----------+";
+        String header = hasVaadinMetrics
+                ? "| Time   | CPU %  | Heap Used  | Heap Max   | Non-Heap  | Sessions |    UIs |"
+                : "| Time   | CPU %  | Heap Used  | Heap Max   | Non-Heap  | Sessions |";
 
-        if (hasVaadinMetrics) {
-            topBorder.append("+----------");
-            header.append("| UIs      ");
-            separator.append("+----------");
-        }
-
-        if (hasViewMetrics) {
-            for (String viewName : viewNames) {
-                // Truncate view name to fit column (max 10 chars)
-                String truncated = viewName.length() > 10 ? viewName.substring(0, 10) : viewName;
-                topBorder.append("+----------");
-                header.append(String.format("| %-8s ", truncated));
-                separator.append("+----------");
-            }
-        }
-
-        topBorder.append("+");
-        header.append("|");
-        separator.append("+");
-
-        System.out.println(topBorder);
+        System.out.println(border);
         System.out.println(header);
-        System.out.println(separator);
-    }
+        System.out.println(border);
 
-    /**
-     * Prints a single table row.
-     */
-    private void printTableRow(MetricsSummary m, Duration elapsed, boolean hasVaadinMetrics,
-                               boolean hasViewMetrics, List<String> viewNames) {
-        String time = formatDuration(elapsed);
-        String cpu = m.processCpuPercent() != null ? String.format(Locale.US, "%5.1f%%", m.processCpuPercent()) : "   N/A";
-        String heapUsed = padLeft(m.formatBytes(m.heapUsedBytes()), 10);
-        String heapMax = padLeft(m.formatBytes(m.heapMaxBytes()), 10);
-        String nonHeap = padLeft(m.formatBytes(m.nonHeapUsedBytes()), 9);
-        String sessions = m.activeSessions() != null ? String.format("%8d", m.activeSessions()) : "     N/A";
+        for (TimestampedMetrics snapshot : snapshots) {
+            MetricsSummary m = snapshot.metrics();
+            String time = formatDuration(snapshot.elapsed());
+            String cpu = m.processCpuPercent() != null ? String.format(Locale.US, "%5.1f%%", m.processCpuPercent()) : "   N/A";
+            String heapUsed = padLeft(m.formatBytes(m.heapUsedBytes()), 10);
+            String heapMax = padLeft(m.formatBytes(m.heapMaxBytes()), 10);
+            String nonHeap = padLeft(m.formatBytes(m.nonHeapUsedBytes()), 9);
+            String sessions = m.activeSessions() != null ? String.format("%8d", m.activeSessions()) : "     N/A";
 
-        StringBuilder row = new StringBuilder();
-        row.append(String.format("| %-8s | %7s  | %s | %s | %s | %s ", time, cpu, heapUsed, heapMax, nonHeap, sessions));
+            StringBuilder row = new StringBuilder();
+            row.append(String.format("| %-6s | %6s | %s | %s | %s | %s |", time, cpu, heapUsed, heapMax, nonHeap, sessions));
 
-        if (hasVaadinMetrics) {
-            String vaadinUis = m.vaadinActiveUis() != null ? String.format("%8d", m.vaadinActiveUis()) : "     N/A";
-            row.append(String.format("| %s ", vaadinUis));
-        }
-
-        if (hasViewMetrics) {
-            for (String viewName : viewNames) {
-                Long count = m.viewCounts() != null ? m.viewCounts().get(viewName) : null;
-                String viewCount = count != null ? String.format("%8d", count) : "     N/A";
-                row.append(String.format("| %s ", viewCount));
+            if (hasVaadinMetrics) {
+                String uis = m.vaadinActiveUis() != null ? String.format("%6d", m.vaadinActiveUis()) : "   N/A";
+                row.append(String.format(" %s |", uis));
             }
+
+            System.out.println(row);
         }
 
-        row.append("|");
-        System.out.println(row);
+        System.out.println(border);
     }
 
     /**
-     * Prints the table footer.
+     * Prints the view counts table with dynamically sized columns.
      */
-    private void printTableFooter(boolean hasVaadinMetrics, boolean hasViewMetrics, List<String> viewNames) {
-        StringBuilder bottomBorder = new StringBuilder("+----------+----------+------------+------------+-----------+----------");
-
-        if (hasVaadinMetrics) {
-            bottomBorder.append("+----------");
+    private void printViewCountsTable(List<String> viewNames) {
+        // Calculate column widths: max of header length and formatted value length, min 6
+        List<Integer> colWidths = new ArrayList<>();
+        for (String viewName : viewNames) {
+            int headerLen = viewName.length();
+            int maxValueLen = 0;
+            for (TimestampedMetrics snapshot : snapshots) {
+                Long count = snapshot.metrics().viewCounts() != null
+                        ? snapshot.metrics().viewCounts().get(viewName) : null;
+                if (count != null) {
+                    maxValueLen = Math.max(maxValueLen, String.format("%,d", count).length());
+                }
+            }
+            colWidths.add(Math.max(Math.max(headerLen, maxValueLen), 6));
         }
 
-        if (hasViewMetrics) {
+        // Build border, header, and rows using calculated widths
+        StringBuilder border = new StringBuilder("+--------");
+        StringBuilder header = new StringBuilder(String.format("| %-6s ", "Time"));
+        for (int i = 0; i < viewNames.size(); i++) {
+            int w = colWidths.get(i);
+            border.append("+-").append("-".repeat(w)).append("-");
+            header.append(String.format("| %-" + w + "s ", viewNames.get(i)));
+        }
+        border.append("+");
+        header.append("|");
+
+        System.out.println(border);
+        System.out.println(header);
+        System.out.println(border);
+
+        for (TimestampedMetrics snapshot : snapshots) {
+            MetricsSummary m = snapshot.metrics();
+            StringBuilder row = new StringBuilder(String.format("| %-6s ", formatDuration(snapshot.elapsed())));
             for (int i = 0; i < viewNames.size(); i++) {
-                bottomBorder.append("+----------");
+                int w = colWidths.get(i);
+                Long count = m.viewCounts() != null ? m.viewCounts().get(viewNames.get(i)) : null;
+                String value = count != null ? String.format("%" + w + "d", count) : padLeft("N/A", w);
+                row.append(String.format("| %s ", value));
             }
+            row.append("|");
+            System.out.println(row);
         }
 
-        bottomBorder.append("+");
-        System.out.println(bottomBorder);
+        System.out.println(border);
     }
 
     /**
