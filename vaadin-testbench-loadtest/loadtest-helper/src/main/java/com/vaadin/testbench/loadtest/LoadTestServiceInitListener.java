@@ -15,11 +15,13 @@ import org.slf4j.LoggerFactory;
  * load test checks.
  * <p>
  * Auto-registered via {@code META-INF/services/com.vaadin.flow.server.VaadinServiceInitListener}.
- * Just add {@code k6-loadtest-error-handler} as a dependency — no code changes needed.
+ * Just add {@code loadtest-helper} as a dependency — no code changes needed.
  */
 public class LoadTestServiceInitListener implements VaadinServiceInitListener {
 
     private static final Logger log = LoggerFactory.getLogger(LoadTestServiceInitListener.class);
+
+    private final LoadTestMetrics metrics = new LoadTestMetrics();
 
     @Override
     public void serviceInit(ServiceInitEvent event) {
@@ -27,5 +29,7 @@ public class LoadTestServiceInitListener implements VaadinServiceInitListener {
             sessionEvent.getSession().setErrorHandler(new LoadTestErrorHandler());
             log.debug("LoadTestErrorHandler registered for session");
         });
+
+        event.getSource().addUIInitListener(uiEvent -> metrics.trackUI(uiEvent.getUI()));
     }
 }

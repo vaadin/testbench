@@ -10,13 +10,13 @@
         <version>10.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>loadtest-error-handler</artifactId>
-    <name>Load Test Error Handler</name>
+    <artifactId>loadtest-helper</artifactId>
+    <name>Load Test Helper</name>
     <description>
-        Drop-in Vaadin error handler for load testing. Replaces the default
-        error handler so that server-side exceptions are returned as error
-        responses instead of being silently swallowed, making them visible
-        to k6 load test checks.
+        Drop-in helper for Vaadin load testing. Provides error handling that
+        propagates server-side exceptions as error responses (visible to k6
+        checks), and Vaadin metrics (active UIs, view counts) exposed via
+        Micrometer/Spring Boot Actuator.
 
         Add as a dependency to any Vaadin application being load tested.
         Auto-registers via ServiceLoader — no code changes required.
@@ -38,6 +38,13 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>2.0.16</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-core</artifactId>
+            <version>1.14.5</version>
+            <optional>true</optional>
             <scope>provided</scope>
         </dependency>
     </dependencies>

@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
  * that k6 checks can detect and fail on.
  * <p>
  * Auto-registered via {@link LoadTestServiceInitListener}. Just add
- * {@code k6-loadtest-error-handler} as a dependency — no code changes needed.
+ * {@code loadtest-helper} as a dependency — no code changes needed.
  *
  * @see LoadTestServiceInitListener
  */

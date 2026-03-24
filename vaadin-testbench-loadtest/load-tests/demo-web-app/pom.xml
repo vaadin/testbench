@@ -46,7 +46,7 @@
         </dependency>
         <dependency>
             <groupId>com.vaadin</groupId>
-            <artifactId>loadtest-error-handler</artifactId>
+            <artifactId>loadtest-helper</artifactId>
             <version>${project.version}</version>
         </dependency>
 
