@@ -112,88 +112,24 @@
             </activation>
             <build>
                 <plugins>
-                    <!-- Orchestrate local server lifecycle -->
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>exec-maven-plugin</artifactId>
-                        <version>3.1.1</version>
-                        <executions>
-                            <!-- Start the demo app -->
-                            <execution>
-                                <id>start-demo-app</id>
-                                <phase>pre-integration-test</phase>
-                                <goals>
-                                    <goal>exec</goal>
-                                </goals>
-                                <configuration>
-                                    <executable>java</executable>
-                                    <arguments>
-                                        <argument>-jar</argument>
-                                        <argument>${project.build.directory}/demo-web-app.jar</argument>
-                                        <argument>--server.port=${app.port}</argument>
-                                        <argument>--management.server.port=${management.port}</argument>
-                                    </arguments>
-                                    <async>true</async>
-                                    <asyncDestroyOnShutdown>true</asyncDestroyOnShutdown>
-                                </configuration>
-                            </execution>
-
-                            <!-- Stop demo app -->
-                            <execution>
-                                <id>stop-demo-app</id>
-                                <phase>post-integration-test</phase>
-                                <goals>
-                                    <goal>exec</goal>
-                                </goals>
-                                <configuration>
-                                    <executable>bash</executable>
-                                    <arguments>
-                                        <argument>-c</argument>
-                                        <argument>
-                                            echo "Stopping demo app..."
-                                            pkill -f "demo-web-app.jar.*--server.port=${app.port}" || true
-                                        </argument>
-                                    </arguments>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-
-
-                    <!-- Wait for app to be fully ready before running tests -->
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-antrun-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>wait-for-app</id>
-                                <phase>pre-integration-test</phase>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                                <configuration>
-                                    <target>
-                                        <echo>Waiting for health endpoint on port ${management.port}...</echo>
-                                        <waitfor maxwait="2" maxwaitunit="minute" checkevery="2" checkeveryunit="second">
-                                            <http url="http://localhost:${management.port}/actuator/health" errorsBeginAt="500"/>
-                                        </waitfor>
-                                        <echo>Health endpoint ready. Waiting for app on port ${app.port}...</echo>
-                                        <waitfor maxwait="2" maxwaitunit="minute" checkevery="2" checkeveryunit="second">
-                                            <http url="http://localhost:${app.port}/" errorsBeginAt="500"/>
-                                        </waitfor>
-                                        <echo>App is ready on port ${app.port}!</echo>
-                                    </target>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-
-                    <!-- K6 TestBench Converter Plugin -->
                     <plugin>
                         <groupId>com.vaadin</groupId>
                         <artifactId>testbench-converter-plugin</artifactId>
                         <version>${project.version}</version>
                         <executions>
+                            <!-- Start and wait for the demo app -->
+                            <execution>
+                                <id>start-demo-app</id>
+                                <goals>
+                                    <goal>start-server</goal>
+                                </goals>
+                                <configuration>
+                                    <serverJar>${project.build.directory}/demo-web-app.jar</serverJar>
+                                    <serverPort>${app.port}</serverPort>
+                                    <managementPort>${management.port}</managementPort>
+                                </configuration>
+                            </execution>
+
                             <!-- Record TestBench scenarios -->
                             <execution>
                                 <id>record-scenarios</id>
@@ -233,6 +169,14 @@
                                     <scenarioWeights>${k6.scenarioWeights}</scenarioWeights>
                                     <collectVaadinMetrics>${k6.collectVaadinMetrics}</collectVaadinMetrics>
                                 </configuration>
+                            </execution>
+
+                            <!-- Stop the demo app -->
+                            <execution>
+                                <id>stop-demo-app</id>
+                                <goals>
+                                    <goal>stop-server</goal>
+                                </goals>
                             </execution>
                         </executions>
                     </plugin>
