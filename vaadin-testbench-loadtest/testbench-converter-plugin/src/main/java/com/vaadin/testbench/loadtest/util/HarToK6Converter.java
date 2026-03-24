@@ -46,6 +46,7 @@ public class HarToK6Converter {
             export const options = {
               thresholds: {
                 checks: [{ threshold: 'rate==1', abortOnFail: true, delayAbortEval: '5s' }],
+                http_req_duration: ['p(95)<2000', 'p(99)<5000'],
               },
             }
 
@@ -383,6 +384,7 @@ public class HarToK6Converter {
         code.append("  if (!check(response, {\n");
         code.append("    'UIDL request succeeded': (r) => r.status === 200,\n");
         code.append("    'no server error': (r) => !r.body.includes('\"appError\"'),\n");
+        code.append("    'no exception': (r) => !r.body.includes('Exception'),\n");
         code.append("    'session is valid': (r) => !r.body.includes('Your session needs to be refreshed'),\n");
         code.append("    'security key valid': (r) => !r.body.includes('Invalid security key'),\n");
         code.append("    'valid UIDL response': () => syncIdMatch !== null,\n");

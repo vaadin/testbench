@@ -54,6 +54,7 @@ public class K6ScenarioCombiner {
         sb.append("export const options = {\n");
         sb.append("  thresholds: {\n");
         sb.append("    checks: [{ threshold: 'rate==1', abortOnFail: true, delayAbortEval: '5s' }],\n");
+        sb.append("    http_req_duration: ['p(95)<2000', 'p(99)<5000'],\n");
         sb.append("  },\n");
         sb.append("  scenarios: {\n");
 
