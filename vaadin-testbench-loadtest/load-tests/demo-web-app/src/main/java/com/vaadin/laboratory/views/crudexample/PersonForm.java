@@ -62,10 +62,17 @@ class PersonForm extends Div {
     }
 
     private void clickDeleteButton(ClickEvent<Button> buttonClickEvent) {
-        this.samplePersonService.delete(this.samplePerson.getId());
-        Notification.show("Data deleted");
-        clearForm();
-        refreshGridRunnable.run();
+        try {
+            this.samplePersonService.delete(this.samplePerson.getId());
+            Notification.show("Data deleted");
+            clearForm();
+            refreshGridRunnable.run();
+        } catch (ObjectOptimisticLockingFailureException exception) {
+            Notification n = Notification.show(
+                    "Error deleting the data. Somebody else has updated the record while you were making changes.");
+            n.setPosition(Notification.Position.MIDDLE);
+            n.addThemeVariants(NotificationVariant.LUMO_ERROR);
+        }
     }
 
     private void clickCancelButton(ClickEvent<Button> buttonClickEvent) {
