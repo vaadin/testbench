@@ -241,7 +241,7 @@ public class K6RunMojo extends AbstractK6Mojo {
         Path combinedFile = testFiles.get(0).getParent().resolve("combined-scenarios.js");
         try {
             K6ScenarioCombiner combiner = new K6ScenarioCombiner();
-            combiner.combine(scenarios, combinedFile, virtualUsers, duration);
+            combiner.combine(scenarios, combinedFile, virtualUsers, duration, buildThresholdConfig());
             getLog().info("Generated combined test: " + combinedFile);
         } catch (IOException e) {
             throw new MojoExecutionException("Failed to generate combined test file", e);

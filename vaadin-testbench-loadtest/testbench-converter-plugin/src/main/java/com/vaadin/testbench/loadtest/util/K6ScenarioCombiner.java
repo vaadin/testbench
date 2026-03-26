@@ -23,16 +23,32 @@ public class K6ScenarioCombiner {
     public record ScenarioConfig(String name, Path testFile, int weight) {}
 
     /**
-     * Combines multiple k6 test files into a single test with weighted scenarios.
+     * Combines multiple k6 test files into a single test with weighted scenarios
+     * using default thresholds.
      *
-     * @param scenarios list of scenario configurations with weights
+     * @param scenarios  list of scenario configurations with weights
      * @param outputFile path for the combined output file
-     * @param totalVus total number of virtual users to distribute
-     * @param duration test duration (e.g., "30s", "1m")
+     * @param totalVus   total number of virtual users to distribute
+     * @param duration   test duration (e.g., "30s", "1m")
      * @throws IOException if file operations fail
      */
     public void combine(List<ScenarioConfig> scenarios, Path outputFile, int totalVus, String duration)
             throws IOException {
+        combine(scenarios, outputFile, totalVus, duration, ThresholdConfig.DEFAULT);
+    }
+
+    /**
+     * Combines multiple k6 test files into a single test with weighted scenarios.
+     *
+     * @param scenarios       list of scenario configurations with weights
+     * @param outputFile      path for the combined output file
+     * @param totalVus        total number of virtual users to distribute
+     * @param duration        test duration (e.g., "30s", "1m")
+     * @param thresholdConfig threshold configuration for the combined script
+     * @throws IOException if file operations fail
+     */
+    public void combine(List<ScenarioConfig> scenarios, Path outputFile, int totalVus, String duration,
+                         ThresholdConfig thresholdConfig) throws IOException {
 
         StringBuilder sb = new StringBuilder();
 
@@ -77,12 +93,9 @@ public class K6ScenarioCombiner {
         // Calculate VUs for each scenario based on weights
         int totalWeight = scenarios.stream().mapToInt(ScenarioConfig::weight).sum();
 
-        // Generate options with scenarios and abort-on-fail threshold
+        // Generate options with scenarios and configurable thresholds
         sb.append("export const options = {\n");
-        sb.append("  thresholds: {\n");
-        sb.append("    checks: [{ threshold: 'rate==1', abortOnFail: true, delayAbortEval: '5s' }],\n");
-        sb.append("    http_req_duration: ['p(95)<2000', 'p(99)<5000'],\n");
-        sb.append("  },\n");
+        sb.append(thresholdConfig.toK6ThresholdsBlock());
         sb.append("  scenarios: {\n");
 
         for (int i = 0; i < scenarios.size(); i++) {

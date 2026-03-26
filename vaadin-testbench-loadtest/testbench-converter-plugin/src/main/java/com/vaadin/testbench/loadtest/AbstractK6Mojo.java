@@ -2,6 +2,7 @@ package com.vaadin.testbench.loadtest;
 
 import com.vaadin.testbench.loadtest.util.NodeRunner;
 import com.vaadin.testbench.loadtest.util.ResourceExtractor;
+import com.vaadin.testbench.loadtest.util.ThresholdConfig;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -38,6 +39,30 @@ public abstract class AbstractK6Mojo extends AbstractMojo {
      */
     @Parameter(property = "k6.skip", defaultValue = "false")
     protected boolean skip;
+
+    /**
+     * 95th percentile HTTP request duration threshold in milliseconds.
+     * The k6 test will fail if p(95) response time exceeds this value.
+     * Set to 0 to disable this threshold.
+     */
+    @Parameter(property = "k6.threshold.httpReqDurationP95", defaultValue = "2000")
+    protected int httpReqDurationP95;
+
+    /**
+     * 99th percentile HTTP request duration threshold in milliseconds.
+     * The k6 test will fail if p(99) response time exceeds this value.
+     * Set to 0 to disable this threshold.
+     */
+    @Parameter(property = "k6.threshold.httpReqDurationP99", defaultValue = "5000")
+    protected int httpReqDurationP99;
+
+    /**
+     * Whether to abort the k6 test immediately when a check fails.
+     * When true, a single failed check causes the test to stop.
+     * When false, failures are still recorded but the test continues.
+     */
+    @Parameter(property = "k6.threshold.checksAbortOnFail", defaultValue = "true")
+    protected boolean checksAbortOnFail;
 
     protected ResourceExtractor resourceExtractor;
     protected NodeRunner nodeRunner;
@@ -102,6 +127,13 @@ public abstract class AbstractK6Mojo extends AbstractMojo {
         } catch (IOException e) {
             throw new MojoExecutionException("Failed to copy Vaadin helpers", e);
         }
+    }
+
+    /**
+     * Builds a {@link ThresholdConfig} from the Maven parameters.
+     */
+    protected ThresholdConfig buildThresholdConfig() {
+        return new ThresholdConfig(httpReqDurationP95, httpReqDurationP99, checksAbortOnFail);
     }
 
     /**
