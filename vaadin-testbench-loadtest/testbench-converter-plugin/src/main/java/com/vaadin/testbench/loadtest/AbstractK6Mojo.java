@@ -1,5 +1,8 @@
 package com.vaadin.testbench.loadtest;
 
+import com.vaadin.pro.licensechecker.Capabilities;
+import com.vaadin.pro.licensechecker.Capability;
+import com.vaadin.pro.licensechecker.LicenseChecker;
 import com.vaadin.testbench.loadtest.util.NodeRunner;
 import com.vaadin.testbench.loadtest.util.ResourceExtractor;
 import com.vaadin.testbench.loadtest.util.ThresholdConfig;
@@ -11,6 +14,7 @@ import org.apache.maven.project.MavenProject;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Properties;
 
 /**
  * Base class for k6-related Maven goals.
@@ -75,6 +79,8 @@ public abstract class AbstractK6Mojo extends AbstractMojo {
      * @throws MojoExecutionException if initialization fails
      */
     protected void initialize() throws MojoExecutionException {
+        checkLicense();
+
         extractionPath = Path.of(utilsDir);
 
         // Extract bundled utilities (only vaadin-k6-helpers.js is needed for k6 runtime)
@@ -88,6 +94,21 @@ public abstract class AbstractK6Mojo extends AbstractMojo {
 
         // Initialize runner (now uses Java implementations internally)
         nodeRunner = new NodeRunner(extractionPath);
+    }
+
+    // Visible for testing
+    void checkLicense() throws MojoExecutionException {
+        Properties properties = new Properties();
+        try {
+            properties.load(AbstractK6Mojo.class
+                    .getResourceAsStream("testbench.properties"));
+        } catch (Exception e) {
+            throw new MojoExecutionException(
+                    "Unable to read TestBench properties file", e);
+        }
+        LicenseChecker.checkLicenseFromStaticBlock("vaadin-testbench",
+                properties.getProperty("testbench.version"), null,
+                Capabilities.of(Capability.PRE_TRIAL));
     }
 
     /**
