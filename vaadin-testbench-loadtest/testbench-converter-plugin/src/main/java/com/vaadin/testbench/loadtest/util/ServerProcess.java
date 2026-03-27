@@ -152,6 +152,8 @@ public class ServerProcess {
 
     /**
      * Returns whether the server process is still running.
+     *
+     * @return {@code true} if the process is running
      */
     public boolean isAlive() {
         return process != null && process.isAlive();

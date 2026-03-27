@@ -132,6 +132,8 @@ public class MetricsCollector implements Runnable {
 
     /**
      * Returns the collected snapshots.
+     *
+     * @return a copy of the collected snapshots list
      */
     public List<TimestampedMetrics> getSnapshots() {
         return new ArrayList<>(snapshots);

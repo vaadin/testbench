@@ -75,6 +75,12 @@ public class SourceHasher {
 
     /**
      * Finds a test class source file by searching common locations.
+     *
+     * @param projectDir
+     *            the project directory to search in
+     * @param className
+     *            the test class name to find
+     * @return the path to the source file, or {@code null} if not found
      */
     private Path findTestFile(Path projectDir, String className) {
         // Common test source locations

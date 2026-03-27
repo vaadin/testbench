@@ -158,6 +158,10 @@ public class ActuatorMetrics {
 
     /**
      * Fetches a single metric value.
+     *
+     * @param metricName
+     *            the actuator metric name
+     * @return the metric value, or {@code null} if unavailable
      */
     private Double fetchMetricValue(String metricName) {
         try {
@@ -184,6 +188,10 @@ public class ActuatorMetrics {
 
     /**
      * Fetches a metric value as Long without tag filter.
+     *
+     * @param metricName
+     *            the actuator metric name
+     * @return the metric value as a Long, or {@code null} if unavailable
      */
     private Long fetchMetricValueAsLong(String metricName) {
         Double value = fetchMetricValue(metricName);
@@ -192,6 +200,14 @@ public class ActuatorMetrics {
 
     /**
      * Fetches a metric value with a specific tag filter.
+     *
+     * @param metricName
+     *            the actuator metric name
+     * @param tagName
+     *            the tag name to filter by
+     * @param tagValue
+     *            the tag value to filter by
+     * @return the metric value as a Long, or {@code null} if unavailable
      */
     private Long fetchMetricValueAsLong(String metricName, String tagName,
             String tagValue) {
@@ -221,6 +237,8 @@ public class ActuatorMetrics {
     /**
      * Fetches view counts for all available views. Returns a map of view name
      * (simple class name) to count.
+     *
+     * @return map of view name to count
      */
     private Map<String, Long> fetchViewCounts() {
         Map<String, Long> viewCounts = new LinkedHashMap<>();

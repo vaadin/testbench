@@ -133,6 +133,10 @@ public class HarFilter {
      * Check if a request is a Vaadin session unload (sent when the browser tab
      * closes). These contain {@code "UNLOAD":true} in the POST body and should
      * not be replayed.
+     *
+     * @param entry
+     *            the HAR entry to check
+     * @return {@code true} if the entry is a session unload request
      */
     private boolean isUnloadRequest(HarEntry entry) {
         if (entry.request().postData() != null
@@ -145,6 +149,10 @@ public class HarFilter {
 
     /**
      * Check if a URL belongs to an external domain that should be filtered.
+     *
+     * @param url
+     *            the URL to check
+     * @return {@code true} if the URL belongs to a known external domain
      */
     private boolean isExternalDomain(String url) {
         try {

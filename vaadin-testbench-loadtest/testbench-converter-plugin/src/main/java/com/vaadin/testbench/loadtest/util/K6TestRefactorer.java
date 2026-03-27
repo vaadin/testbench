@@ -266,6 +266,10 @@ public class K6TestRefactorer {
      * read delay (user reading the loaded page) - After v-r=uidl blocks:
      * interaction delay (user thinking before next action) 4. Skips adding
      * delay if HAR already has a large gap (existing user delay in TestBench)
+     *
+     * @param content
+     *            the k6 script content
+     * @return the modified content with think time delays inserted
      */
     private String insertThinkTimes(String content) {
         if (!thinkTimeConfig.enabled()) {
@@ -398,6 +402,10 @@ public class K6TestRefactorer {
     /**
      * Parses request information including HAR timing from the generated
      * script.
+     *
+     * @param lines
+     *            the script lines to parse
+     * @return list of parsed request info objects
      */
     private List<RequestInfo> parseRequestsWithTiming(List<String> lines) {
         List<RequestInfo> requests = new ArrayList<>();
@@ -495,6 +503,14 @@ public class K6TestRefactorer {
 
     /**
      * Generates JavaScript code for a sleep delay with randomness.
+     *
+     * @param comment
+     *            the comment describing the delay type
+     * @param baseDelay
+     *            the base delay in seconds
+     * @param randomRange
+     *            the random range added to the base delay
+     * @return the generated JavaScript sleep code
      */
     private String generateDelayCode(String comment, double baseDelay,
             double randomRange) {
@@ -509,6 +525,10 @@ public class K6TestRefactorer {
 
     /**
      * Detects server host and port in the script.
+     *
+     * @param content
+     *            the k6 script content
+     * @return the detected server info, or {@code null} if not found
      */
     private ServerInfo detectServerIp(String content) {
         Matcher matcher = SERVER_PATTERN.matcher(content);
@@ -521,6 +541,10 @@ public class K6TestRefactorer {
     /**
      * Converts POST body strings from single quotes to template literals when
      * they contain ${.
+     *
+     * @param content
+     *            the k6 script content
+     * @return the modified content with template literals
      */
     private String convertPostBodiesToTemplateLiterals(String content) {
         // Match: http.post(..., '{...${csrfToken}...}', ...)
@@ -541,6 +565,10 @@ public class K6TestRefactorer {
 
     /**
      * Inserts JSESSIONID extraction after first GET to the app.
+     *
+     * @param content
+     *            the k6 script content
+     * @return the modified content with JSESSIONID extraction
      */
     private String insertJsessionExtraction(String content) {
         List<String> lines = new ArrayList<>(List.of(content.split("\n")));
@@ -585,6 +613,10 @@ public class K6TestRefactorer {
 
     /**
      * Inserts Vaadin token extraction after v-r=init request.
+     *
+     * @param content
+     *            the k6 script content
+     * @return the modified content with Vaadin token extraction
      */
     private String insertVaadinExtraction(String content) {
         List<String> lines = new ArrayList<>(List.of(content.split("\n")));

@@ -173,6 +173,8 @@ public abstract class AbstractK6Mojo extends AbstractMojo {
 
     /**
      * Builds a {@link ThresholdConfig} from the Maven parameters.
+     *
+     * @return the threshold configuration
      */
     protected ThresholdConfig buildThresholdConfig() {
         return new ThresholdConfig(httpReqDurationP95, httpReqDurationP99,

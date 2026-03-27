@@ -38,6 +38,8 @@ public record ThresholdConfig(int httpReqDurationP95, int httpReqDurationP99,
      *     http_req_duration: ['p(95)&lt;2000', 'p(99)&lt;5000'],
      *   },
      * </pre>
+     *
+     * @return the k6 thresholds block as a string
      */
     public String toK6ThresholdsBlock() {
         StringBuilder sb = new StringBuilder();

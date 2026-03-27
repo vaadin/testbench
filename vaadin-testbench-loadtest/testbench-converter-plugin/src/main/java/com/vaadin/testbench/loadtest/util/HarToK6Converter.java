@@ -202,6 +202,7 @@ public class HarToK6Converter {
      *            first request
      * @param session
      *            detected Vaadin session info, or null if not a Vaadin app
+     * @return the generated k6 request code
      */
     private String generateRequestCode(HarEntry entry, int index, long deltaMs,
             VaadinSessionInfo session) {
@@ -377,6 +378,8 @@ public class HarToK6Converter {
      * recorded JSESSIONID, csrfToken, and uiId. Supports login flows where a
      * second init request occurs after authentication.
      *
+     * @param entries
+     *            the HAR entries to scan
      * @return session info if a Vaadin init request is found, null otherwise
      */
     private VaadinSessionInfo detectVaadinSession(List<HarEntry> entries) {
@@ -454,6 +457,7 @@ public class HarToK6Converter {
      * @param requestLabel
      *            human-readable label for error messages (e.g., "Request 6 (GET
      *            ...)")
+     * @return the generated extraction code
      */
     private String generateSessionExtractionCode(String requestLabel) {
         StringBuilder code = new StringBuilder();
@@ -486,6 +490,8 @@ public class HarToK6Converter {
      * Generates k6 code to re-extract Vaadin session values after a subsequent
      * init request (e.g., after login when the security key changes). Uses
      * reassignment instead of let declarations since variables already exist.
+     *
+     * @return the generated re-extraction code
      */
     private String generateSessionReExtractionCode() {
         StringBuilder code = new StringBuilder();
@@ -513,6 +519,7 @@ public class HarToK6Converter {
      * @param requestLabel
      *            human-readable label for error messages (e.g., "Request 10
      *            (POST ...)")
+     * @return the generated extraction code
      */
     private String generateUidlResponseExtractionCode(String requestLabel) {
         StringBuilder code = new StringBuilder();
@@ -551,6 +558,10 @@ public class HarToK6Converter {
 
     /**
      * Checks if a HAR entry is a Vaadin UIDL request.
+     *
+     * @param entry
+     *            the HAR entry to check
+     * @return {@code true} if the entry is a UIDL POST request
      */
     private boolean isUidlRequest(HarEntry entry) {
         return "POST".equalsIgnoreCase(entry.request().method())
@@ -599,6 +610,10 @@ public class HarToK6Converter {
 
     /**
      * Truncates URL for display in comments.
+     *
+     * @param url
+     *            the URL to truncate
+     * @return the truncated URL (max 80 characters)
      */
     private String truncateUrl(String url) {
         if (url.length() > 80) {
@@ -609,6 +624,10 @@ public class HarToK6Converter {
 
     /**
      * Escapes a string for use in a JavaScript single-quoted string.
+     *
+     * @param str
+     *            the string to escape
+     * @return the escaped string
      */
     private String escapeJs(String str) {
         if (str == null) {
@@ -622,6 +641,10 @@ public class HarToK6Converter {
      * Escapes a string for use in a JavaScript template literal (backtick
      * string). Does NOT escape ${} — the caller is responsible for inserting
      * template expressions after calling this method.
+     *
+     * @param str
+     *            the string to escape
+     * @return the escaped string
      */
     private String escapeJsTemplate(String str) {
         if (str == null) {
@@ -638,6 +661,12 @@ public class HarToK6Converter {
      * Injects SharedArray import and CSV loading code into the generated
      * script. The CSV file contains recorded input values that can be expanded
      * by the user to provide different data for each virtual user.
+     *
+     * @param scriptContent
+     *            the generated k6 script content
+     * @param outputFile
+     *            the output file path (used to derive the CSV file name)
+     * @return the modified script content with CSV loading injected
      */
     private String addCsvDataLoading(String scriptContent, Path outputFile) {
         String csvFileName = deriveCsvPath(outputFile).getFileName().toString();
@@ -674,6 +703,10 @@ public class HarToK6Converter {
      * Derives the CSV data file path from the k6 output file path. Strips
      * "-generated" suffix if present so both generated and refactored scripts
      * reference the same CSV file.
+     *
+     * @param outputFile
+     *            the k6 output file path
+     * @return the derived CSV file path
      */
     private Path deriveCsvPath(Path outputFile) {
         String fileName = outputFile.getFileName().toString();
@@ -692,6 +725,11 @@ public class HarToK6Converter {
      * values recorded during the TestBench test. Users can add more rows to
      * provide different data for each virtual user; if only the recorded row is
      * present it will be used for all VUs.
+     *
+     * @param csvFile
+     *            the CSV file path to write
+     * @throws IOException
+     *             if writing fails
      */
     private void writeCsvFile(Path csvFile) throws IOException {
         StringBuilder csv = new StringBuilder();
@@ -715,6 +753,10 @@ public class HarToK6Converter {
     /**
      * Escapes a value for CSV output (RFC 4180). Wraps in double quotes if the
      * value contains commas, quotes, or newlines.
+     *
+     * @param value
+     *            the value to escape
+     * @return the escaped CSV value
      */
     private static String escapeCsvValue(String value) {
         if (value.contains(",") || value.contains("\"") || value.contains("\n")

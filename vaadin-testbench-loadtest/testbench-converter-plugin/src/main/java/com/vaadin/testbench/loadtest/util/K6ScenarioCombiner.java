@@ -27,6 +27,12 @@ import java.util.regex.Pattern;
 public class K6ScenarioCombiner {
 
     /**
+     * Creates a new K6ScenarioCombiner instance.
+     */
+    public K6ScenarioCombiner() {
+    }
+
+    /**
      * Represents a scenario with its source file and weight.
      */
     public record ScenarioConfig(String name, Path testFile, int weight) {
@@ -174,6 +180,9 @@ public class K6ScenarioCombiner {
      * @param hasCsvData
      *            if true, renames inputData references to
      *            {scenarioName}InputData
+     * @return the extracted and renamed function as a string
+     * @throws IOException
+     *             if reading the test file fails
      */
     private String extractScenarioFunction(Path testFile, String scenarioName,
             boolean hasCsvData) throws IOException {
@@ -230,6 +239,10 @@ public class K6ScenarioCombiner {
     /**
      * Extracts a SharedArray block from a k6 script, if present. Returns the
      * full block including any preceding comment line, or null if not found.
+     *
+     * @param content
+     *            the k6 script content
+     * @return the SharedArray block, or {@code null} if not found
      */
     private String extractSharedArrayBlock(String content) {
         String marker = "const inputData = new SharedArray(";
@@ -267,6 +280,10 @@ public class K6ScenarioCombiner {
 
     /**
      * Creates scenario configurations from test files with equal weights.
+     *
+     * @param testFiles
+     *            the test files to create scenarios for
+     * @return list of scenario configurations with evenly distributed weights
      */
     public static List<ScenarioConfig> equalWeights(List<Path> testFiles) {
         int weight = 100 / testFiles.size();
@@ -281,6 +298,10 @@ public class K6ScenarioCombiner {
     /**
      * Converts a file name to a valid JavaScript function name. E.g.,
      * "hello-world.js" -> "helloWorld"
+     *
+     * @param file
+     *            the test file path
+     * @return the camelCase scenario name
      */
     private static String fileToScenarioName(Path file) {
         String name = file.getFileName().toString().replaceAll("\\.js$", "")
