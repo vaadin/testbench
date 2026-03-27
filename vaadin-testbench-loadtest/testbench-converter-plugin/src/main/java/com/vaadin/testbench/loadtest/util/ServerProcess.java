@@ -40,7 +40,7 @@ public class ServerProcess {
                     new InputStreamReader(process.getInputStream()))) {
                 String line;
                 while ((line = reader.readLine()) != null) {
-                    log.fine("[server] " + line);
+                    log.info("[server] " + line);
                 }
             } catch (Exception e) {
                 // Process ended or stream closed
