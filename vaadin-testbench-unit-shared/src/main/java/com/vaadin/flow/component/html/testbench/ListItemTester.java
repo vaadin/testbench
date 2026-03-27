@@ -12,6 +12,7 @@ import com.vaadin.flow.component.html.ListItem;
 import com.vaadin.testbench.unit.Tests;
 
 @Tests(ListItem.class)
+@Deprecated(forRemoval = true, since = "10.1")
 public class ListItemTester extends HtmlClickContainer<ListItem> {
     /**
      * Wrap given component for testing.

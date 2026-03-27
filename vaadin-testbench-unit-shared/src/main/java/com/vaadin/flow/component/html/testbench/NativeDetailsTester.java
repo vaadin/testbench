@@ -14,6 +14,7 @@ import com.vaadin.flow.component.html.NativeDetails;
 import com.vaadin.testbench.unit.Tests;
 
 @Tests(NativeDetails.class)
+@Deprecated(forRemoval = true, since = "10.1")
 public class NativeDetailsTester extends HtmlComponentTester<NativeDetails> {
     /**
      * Wrap given component for testing.

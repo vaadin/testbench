@@ -38,7 +38,13 @@ import com.vaadin.testbench.unit.internal.PrettyPrintTreeKt;
  *
  * @param <T>
  *            component type
+ * 
+ * @deprecated Replace the vaadin-testbench-unit dependency with
+ *             browserless-test-junit6 and use the corresponding class from the
+ *             com.vaadin.browserless package instead. This class will be
+ *             removed in a future version.
  */
+@Deprecated(forRemoval = true, since = "10.1")
 public class ComponentTester<T extends Component> implements Clickable<T> {
 
     private final T component;
@@ -141,7 +147,8 @@ public class ComponentTester<T extends Component> implements Clickable<T> {
      * component.
      */
     public final void ensureComponentIsUsable() {
-        ensureComponentIsUsable(component, unused -> isUsable());
+        throwIfNotUsable(component, unused -> isUsable(),
+                this::notUsableReasons);
     }
 
     /**
@@ -155,12 +162,19 @@ public class ComponentTester<T extends Component> implements Clickable<T> {
      */
     protected static void ensureComponentIsUsable(Component component,
             Predicate<Component> usableTest) {
+        throwIfNotUsable(component, usableTest,
+                collector -> notUsableReasons(component, collector));
+    }
+
+    private static void throwIfNotUsable(Component component,
+            Predicate<Component> usableTest,
+            Consumer<Consumer<String>> reasonsProvider) {
         if (!usableTest.test(component)) {
             StringBuilder message = new StringBuilder(
                     PrettyPrintTreeKt.toPrettyString(component)
                             + " is not usable");
             Stream.Builder<String> reasons = Stream.builder();
-            notUsableReasons(component, reasons::add);
+            reasonsProvider.accept(reasons::add);
             message.append(reasons.build()
                     .collect(Collectors.joining(", ", " because it is ", ".")));
             throw new IllegalStateException(message.toString());

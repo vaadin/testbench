@@ -15,6 +15,7 @@ import com.vaadin.flow.component.html.DescriptionList;
 import com.vaadin.testbench.unit.Tests;
 
 @Tests(DescriptionList.class)
+@Deprecated(forRemoval = true, since = "10.1")
 public class DescriptionListTester extends HtmlClickContainer<DescriptionList> {
     /**
      * Wrap given component for testing.

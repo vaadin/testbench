@@ -37,7 +37,13 @@ import com.vaadin.testbench.unit.internal.SearchSpec;
  * @param <T>
  *            the type of the component(s) to search for
  * @see ComponentTester
+ * 
+ * @deprecated Replace the vaadin-testbench-unit dependency with
+ *             browserless-test-junit6 and use the corresponding class from the
+ *             com.vaadin.browserless package instead. This class will be
+ *             removed in a future version.
  */
+@Deprecated(forRemoval = true, since = "10.1")
 public class ComponentQuery<T extends Component> {
 
     private final Class<T> componentType;
@@ -470,11 +476,24 @@ public class ComponentQuery<T extends Component> {
 
     /**
      * Executes the search against current context and returns the first result.
+     * <p>
+     * <strong>Warning:</strong> This method can lead to flaky tests when
+     * multiple matching components exist, as it arbitrarily selects the first
+     * one without validation. Consider using {@link #single()} instead, which
+     * asserts that exactly one component matches and fails immediately if
+     * multiple components are found, making tests more reliable and failures
+     * easier to diagnose.
      *
      * @return a component of the type specified in the constructor.
      * @throws java.util.NoSuchElementException
      *             if no component is found
+     * @see #single()
+     * @deprecated Use {@link #single()} for more reliable tests that assert
+     *             exactly one matching component, or use {@link #atIndex(int)}
+     *             with an explicit index if selecting from multiple components
+     *             is intentional.
      */
+    @Deprecated(since = "10.0", forRemoval = true)
     public T first() {
         return all().stream().findFirst()
                 .orElseThrow(() -> new NoSuchElementException(

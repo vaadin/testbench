@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.LoggerFactory;
 
 import com.vaadin.flow.server.VaadinSession;
-import com.vaadin.signals.SignalEnvironment;
+import com.vaadin.flow.signals.SignalEnvironment;
 
 /**
  * Test-only {@link SignalEnvironment} that records submitted tasks instead of

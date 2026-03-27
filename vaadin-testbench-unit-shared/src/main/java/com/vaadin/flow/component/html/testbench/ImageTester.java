@@ -12,6 +12,7 @@ import com.vaadin.flow.component.html.Image;
 import com.vaadin.testbench.unit.Tests;
 
 @Tests(Image.class)
+@Deprecated(forRemoval = true, since = "10.1")
 public class ImageTester extends HtmlClickContainer<Image> {
     /**
      * Wrap given component for testing.

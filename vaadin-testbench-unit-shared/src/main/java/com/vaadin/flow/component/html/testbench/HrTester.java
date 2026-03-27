@@ -12,6 +12,7 @@ import com.vaadin.flow.component.html.Hr;
 import com.vaadin.testbench.unit.Tests;
 
 @Tests(Hr.class)
+@Deprecated(forRemoval = true, since = "10.1")
 public class HrTester extends HtmlComponentTester<Hr> {
     /**
      * Wrap given component for testing.

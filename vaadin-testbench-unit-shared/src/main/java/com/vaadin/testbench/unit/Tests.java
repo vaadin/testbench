@@ -21,9 +21,15 @@ import com.vaadin.flow.component.Component;
  * <p/>
  * This is used for automatically selecting a wrapper implementation for a given
  * component.
+ * 
+ * @deprecated Replace the vaadin-testbench-unit dependency with
+ *             browserless-test-junit6 and use the corresponding class from the
+ *             com.vaadin.browserless package instead. This class will be
+ *             removed in a future version.
  */
 @Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
+@Deprecated(forRemoval = true, since = "10.1")
 public @interface Tests {
 
     /**

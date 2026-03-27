@@ -126,6 +126,7 @@ import com.vaadin.flow.component.virtuallist.VirtualListTester;
 import com.vaadin.flow.router.RouterLink;
 
 @SuppressWarnings("unchecked")
+@Deprecated(forRemoval = true, since = "10.1")
 public interface TesterWrappers {
 
     default AccordionTester<Accordion> test(Accordion accordion) {

@@ -25,6 +25,7 @@ import com.vaadin.testbench.unit.internal.simulateClosedEvent
  * A simple no-op UI used by default by [com.vaadin.testbench.unit.MockVaadin.setup].
  * The class is open, in order to be extensible in user's library
  */
+@Deprecated("Replace the vaadin-testbench-unit dependency with browserless-test-junit6 and use the corresponding class from the com.vaadin.browserless package instead. This class will be removed in a future version.")
 open class MockedUI : UI() {
 
     override fun setChildComponentModal(childComponent: Component?, mode: ModalityMode) {

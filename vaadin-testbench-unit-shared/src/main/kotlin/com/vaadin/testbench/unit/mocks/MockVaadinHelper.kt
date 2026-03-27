@@ -22,6 +22,7 @@ import com.vaadin.testbench.unit.internal.findClassOrThrow
 import tools.jackson.databind.ObjectMapper
 import tools.jackson.databind.node.ObjectNode
 
+@Deprecated("Replace the vaadin-testbench-unit dependency with browserless-test-junit6 and use the corresponding class from the com.vaadin.browserless package instead. This class will be removed in a future version.")
 object MockVaadinHelper {
 
     private val flowBuildInfo: ObjectNode? by lazy(LazyThreadSafetyMode.PUBLICATION) {

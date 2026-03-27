@@ -33,7 +33,13 @@ import com.vaadin.testbench.unit.internal.UIFactory;
  * The class is intentionally opened, to be extensible in user's library.
  *
  * @author mavi
+ * 
+ * @deprecated Replace the vaadin-testbench-unit dependency with
+ *             browserless-test-junit6 and use the corresponding class from the
+ *             com.vaadin.browserless package instead. This class will be
+ *             removed in a future version.
  */
+@Deprecated(forRemoval = true, since = "10.1")
 public class MockSpringServletService extends SpringVaadinServletService {
     @NotNull
     private final UIFactory uiFactory;

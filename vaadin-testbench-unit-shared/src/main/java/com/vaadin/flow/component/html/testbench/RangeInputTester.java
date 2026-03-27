@@ -15,6 +15,7 @@ import com.vaadin.testbench.unit.ComponentTester;
 import com.vaadin.testbench.unit.Tests;
 
 @Tests(RangeInput.class)
+@Deprecated(forRemoval = true, since = "10.1")
 public class RangeInputTester extends ComponentTester<RangeInput> {
 
     /**

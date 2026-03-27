@@ -9,6 +9,7 @@
 package com.vaadin.testbench.unit;
 
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
@@ -19,9 +20,16 @@ import java.lang.annotation.Target;
  * <p/>
  * This makes adding custom component wrappers simpler as they can then use
  * package protected fields and methods.
+ * 
+ * @deprecated Replace the vaadin-testbench-unit dependency with
+ *             browserless-test-junit6 and use the corresponding class from the
+ *             com.vaadin.browserless package instead. This class will be
+ *             removed in a future version.
  */
 @Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
+@Inherited
+@Deprecated(forRemoval = true, since = "10.1")
 public @interface ComponentTesterPackages {
 
     /**

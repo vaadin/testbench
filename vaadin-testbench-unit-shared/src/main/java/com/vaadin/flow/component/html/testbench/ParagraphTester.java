@@ -12,6 +12,7 @@ import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.testbench.unit.Tests;
 
 @Tests(Paragraph.class)
+@Deprecated(forRemoval = true, since = "10.1")
 public class ParagraphTester extends HtmlClickContainer<Paragraph> {
     /**
      * Wrap given component for testing.

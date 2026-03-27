@@ -10,13 +10,12 @@ package com.example.base.signals;
 
 import java.util.concurrent.CompletableFuture;
 
-import com.vaadin.flow.component.ComponentEffect;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.NativeButton;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.router.Route;
-import com.vaadin.signals.NumberSignal;
-import com.vaadin.signals.Signal;
+import com.vaadin.flow.signals.Signal;
+import com.vaadin.flow.signals.shared.SharedNumberSignal;
 
 @Route(value = "signals")
 public class SignalsView extends Div {
@@ -27,27 +26,27 @@ public class SignalsView extends Div {
     public final Span counter;
     public final Span asyncCounter;
     public final Span asyncWithDelayCounter;
-    public final NumberSignal numberSignal;
-    public final NumberSignal asyncNumberSignal;
-    public final NumberSignal asyncWithDelayNumberSignal;
+    public final SharedNumberSignal numberSignal;
+    public final SharedNumberSignal asyncNumberSignal;
+    public final SharedNumberSignal asyncWithDelayNumberSignal;
 
     public SignalsView() {
-        numberSignal = new NumberSignal();
+        numberSignal = new SharedNumberSignal();
 
         Signal<String> computedSignal = numberSignal
                 .mapIntValue(counter -> "Counter: " + counter);
         incrementButton = new NativeButton("Increment",
                 ev -> numberSignal.incrementBy(1.0));
         counter = new Span("Counter: -");
-        ComponentEffect.bind(counter, computedSignal, Span::setText);
+        counter.bindText(computedSignal);
 
-        asyncNumberSignal = new NumberSignal();
+        asyncNumberSignal = new SharedNumberSignal();
         Signal<String> asyncComputedSignal = asyncNumberSignal
                 .mapIntValue(counter -> "Counter: " + counter);
         asyncCounter = new Span("Counter: -");
-        ComponentEffect.bind(asyncCounter, asyncComputedSignal, Span::setText);
+        asyncCounter.bindText(asyncComputedSignal);
 
-        asyncWithDelayNumberSignal = new NumberSignal();
+        asyncWithDelayNumberSignal = new SharedNumberSignal();
         asyncWithDelayCounter = new Span("Counter: -");
 
         quickBackgroundTaskButton = new NativeButton("Quick background task",
@@ -58,7 +57,7 @@ public class SignalsView extends Div {
                                     java.util.concurrent.TimeUnit.MILLISECONDS));
                 });
 
-        ComponentEffect.effect(asyncWithDelayCounter, () -> {
+        Signal.effect(asyncWithDelayCounter, () -> {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
@@ -66,7 +65,7 @@ public class SignalsView extends Div {
                 throw new RuntimeException(e);
             }
             asyncWithDelayCounter.setText("Counter: "
-                    + asyncWithDelayNumberSignal.valueAsInt() + " (delayed)");
+                    + asyncWithDelayNumberSignal.getAsInt() + " (delayed)");
         });
         slowBackgroundTaskButton = new NativeButton("Quick background task",
                 event -> CompletableFuture.runAsync(() -> {

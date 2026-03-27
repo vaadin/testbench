@@ -38,6 +38,7 @@ import com.vaadin.flow.router.InternalServerError
  * @property themes if not null, the component must have all theme names defined. Space-separated
  * @property withoutThemes if not null, the component must NOT have any of the theme names defined. Space-separated
  */
+@Deprecated("Replace the vaadin-testbench-unit dependency with browserless-test-junit6 and use the corresponding class from the com.vaadin.browserless package instead. This class will be removed in a future version.")
 class SearchSpec<T : Component>(
         val clazz: Class<T>,
         var id: String? = null,

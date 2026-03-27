@@ -12,6 +12,7 @@ import com.vaadin.flow.component.html.Emphasis;
 import com.vaadin.testbench.unit.Tests;
 
 @Tests(Emphasis.class)
+@Deprecated(forRemoval = true, since = "10.1")
 public class EmphasisTester extends HtmlClickContainer<Emphasis> {
     /**
      * Wrap given component for testing.

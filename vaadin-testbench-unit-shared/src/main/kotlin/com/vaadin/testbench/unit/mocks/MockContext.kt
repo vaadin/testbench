@@ -30,6 +30,7 @@ import jakarta.servlet.SessionTrackingMode
 import jakarta.servlet.descriptor.JspConfigDescriptor
 import org.slf4j.LoggerFactory
 
+@Deprecated("Replace the vaadin-testbench-unit dependency with browserless-test-junit6 and use the corresponding class from the com.vaadin.browserless package instead. This class will be removed in a future version.")
 open class MockContext : ServletContext, Serializable {
 
     override fun <T : Servlet?> createServlet(clazz: Class<T>?): T {

@@ -24,6 +24,7 @@ import jakarta.servlet.http.HttpServletResponse
  *
  * To use a custom servlet instead of this one, just pass it to [MockVaadin.setup].
  */
+@Deprecated("Replace the vaadin-testbench-unit dependency with browserless-test-junit6 and use the corresponding class from the com.vaadin.browserless package instead. This class will be removed in a future version.")
 open class MockVaadinServlet @JvmOverloads constructor(
         val routes: Routes = Routes(),
         val uiFactory: UIFactory = UIFactory{ MockedUI() }

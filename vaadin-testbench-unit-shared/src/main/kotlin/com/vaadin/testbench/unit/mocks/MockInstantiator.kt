@@ -19,6 +19,7 @@ import net.bytebuddy.matcher.ElementMatchers
 /**
  * Makes sure to load [MockNpmTemplateParser].
  */
+@Deprecated("Replace the vaadin-testbench-unit dependency with browserless-test-junit6 and use the corresponding class from the com.vaadin.browserless package instead. This class will be removed in a future version.")
 open class MockInstantiator(val delegate: Instantiator) : Instantiator by delegate {
 
     @Suppress("UNCHECKED_CAST")

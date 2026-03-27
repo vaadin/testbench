@@ -39,7 +39,13 @@ import com.vaadin.testbench.unit.internal.UtilsKt;
  * {@link com.vaadin.flow.spring.SpringVaadinServletService}.
  *
  * @author mavi
+ * 
+ * @deprecated Replace the vaadin-testbench-unit dependency with
+ *             browserless-test-junit6 and use the corresponding class from the
+ *             com.vaadin.browserless package instead. This class will be
+ *             removed in a future version.
  */
+@Deprecated(forRemoval = true, since = "10.1")
 public class MockSpringServlet extends SpringServlet {
 
     @NotNull

@@ -15,6 +15,7 @@ import com.vaadin.testbench.unit.ComponentTester;
 import com.vaadin.testbench.unit.Tests;
 
 @Tests(SideNav.class)
+@Deprecated(forRemoval = true, since = "10.1")
 public class SideNavTester<T extends SideNav> extends ComponentTester<T> {
 
     /**

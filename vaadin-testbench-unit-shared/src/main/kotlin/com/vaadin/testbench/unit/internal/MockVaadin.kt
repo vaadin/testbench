@@ -49,6 +49,7 @@ import com.vaadin.testbench.unit.mocks.createVaadinServletRequest
 import com.vaadin.testbench.unit.mocks.createVaadinServletResponse
 import com.vaadin.testbench.unit.mocks.serviceSafe
 
+@Deprecated("Replace the vaadin-testbench-unit dependency with browserless-test-junit6 and use the corresponding class from the com.vaadin.browserless package instead. This class will be removed in a future version.")
 object MockVaadin {
     // prevent GC on Vaadin Session and Vaadin UI as they are only soft-referenced from the Vaadin itself.
     // use ThreadLocals so that multiple threads may initialize fresh Vaadin instances at the same time.
@@ -441,8 +442,10 @@ private class MockPage(ui: UI, private val uiFactory: UIFactory, private val ses
     }
 }
 
+@Deprecated("Replace the vaadin-testbench-unit dependency with browserless-test-junit6 and use the corresponding class from the com.vaadin.browserless package instead. This class will be removed in a future version.")
 fun interface MockRequestCustomizer {
     fun apply(request: MockRequest)
 }
 
+@Deprecated("Replace the vaadin-testbench-unit dependency with browserless-test-junit6 and use the corresponding class from the com.vaadin.browserless package instead. This class will be removed in a future version.")
 fun interface UIFactory : () -> UI, Serializable

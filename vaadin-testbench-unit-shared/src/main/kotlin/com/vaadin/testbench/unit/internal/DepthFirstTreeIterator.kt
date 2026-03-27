@@ -20,6 +20,7 @@ import com.vaadin.flow.component.Component
  * @param root start here.
  * @param children fetches children of given node.
  */
+@Deprecated("Replace the vaadin-testbench-unit dependency with browserless-test-junit6 and use the corresponding class from the com.vaadin.browserless package instead. This class will be removed in a future version.")
 class DepthFirstTreeIterator<out T>(root: T, private val children: (T) -> List<T>) : Iterator<T> {
     private val queue: Deque<T> = LinkedList(listOf(root))
     override fun hasNext(): Boolean = !queue.isEmpty()

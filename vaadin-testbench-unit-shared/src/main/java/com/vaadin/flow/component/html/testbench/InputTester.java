@@ -13,6 +13,7 @@ import com.vaadin.testbench.unit.ComponentTester;
 import com.vaadin.testbench.unit.Tests;
 
 @Tests(Input.class)
+@Deprecated(forRemoval = true, since = "10.1")
 public class InputTester extends ComponentTester<Input> {
     /**
      * Wrap given component for testing.

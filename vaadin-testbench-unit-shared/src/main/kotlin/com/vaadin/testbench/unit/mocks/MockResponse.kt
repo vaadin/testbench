@@ -18,6 +18,7 @@ import jakarta.servlet.ServletOutputStream
 import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletResponse
 
+@Deprecated("Replace the vaadin-testbench-unit dependency with browserless-test-junit6 and use the corresponding class from the com.vaadin.browserless package instead. This class will be removed in a future version.")
 open class MockResponse : HttpServletResponse {
     override fun encodeURL(url: String): String = url
 

@@ -10,6 +10,7 @@ package com.vaadin.flow.component.html.testbench;
 
 import com.vaadin.flow.component.HtmlContainer;
 
+@Deprecated(forRemoval = true, since = "10.1")
 public abstract class HtmlClickContainer<T extends HtmlContainer>
         extends HtmlContainerTester<T> {
     /**

@@ -25,8 +25,14 @@ import com.vaadin.testbench.unit.Tests;
  *            component type
  * @param <V>
  *            value type
+ * 
+ * @deprecated Replace the vaadin-testbench-unit dependency with
+ *             browserless-test-junit6 and use the corresponding class from the
+ *             com.vaadin.browserless package instead. This class will be
+ *             removed in a future version.
  */
 @Tests(fqn = { "com.vaadin.flow.component.listbox.MultiSelectListBox" })
+@Deprecated(forRemoval = true, since = "10.1")
 public class MultiSelectListBoxTester<T extends MultiSelectListBox<V>, V>
         extends ComponentTester<T> {
     /**

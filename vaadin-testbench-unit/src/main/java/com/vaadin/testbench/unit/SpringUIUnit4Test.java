@@ -51,9 +51,15 @@ import com.vaadin.testbench.unit.mocks.SpringSecurityRequestCustomizer;
  * }
  * }
  * </pre>
+ * 
+ * @deprecated Replace the vaadin-testbench-unit dependency with
+ *             browserless-test-junit6 and use the corresponding class from the
+ *             com.vaadin.browserless package instead. This class will be
+ *             removed in a future version.
  */
 @RunWith(SpringRunner.class)
 @TestExecutionListeners(listeners = UITestSpringLookupInitializer.class, mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
+@Deprecated(forRemoval = true, since = "10.1")
 public abstract class SpringUIUnit4Test extends UIUnit4Test {
 
     @Autowired

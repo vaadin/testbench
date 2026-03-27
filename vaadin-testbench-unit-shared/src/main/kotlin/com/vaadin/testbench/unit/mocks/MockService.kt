@@ -29,6 +29,7 @@ import com.vaadin.testbench.unit.internal.UIFactory
  *
  * To register your custom `MockService` instance, override [MockVaadinServlet.createServletService].
  */
+@Deprecated("Replace the vaadin-testbench-unit dependency with browserless-test-junit6 and use the corresponding class from the com.vaadin.browserless package instead. This class will be removed in a future version.")
 open class MockService(servlet: VaadinServlet,
                               deploymentConfiguration: DeploymentConfiguration,
                               val uiFactory: UIFactory = UIFactory { MockedUI() }

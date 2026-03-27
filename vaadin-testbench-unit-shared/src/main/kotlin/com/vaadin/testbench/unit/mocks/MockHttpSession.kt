@@ -23,6 +23,7 @@ import jakarta.servlet.http.HttpSession
 /**
  * A standalone implementation of the [HttpSession] interface.
  */
+@Deprecated("Replace the vaadin-testbench-unit dependency with browserless-test-junit6 and use the corresponding class from the com.vaadin.browserless package instead. This class will be removed in a future version.")
 open class MockHttpSession(
         private val sessionId: String,
         private val servletContext: ServletContext,
