@@ -18,10 +18,11 @@ import java.util.logging.Logger;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.StreamReadConstraints;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import tools.jackson.core.StreamReadConstraints;
+import tools.jackson.core.json.JsonFactory;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * Filters out requests to external domains from a HAR file. This removes
@@ -52,8 +53,8 @@ public class HarFilter {
                 .streamReadConstraints(StreamReadConstraints.builder()
                         .maxStringLength(Integer.MAX_VALUE).build())
                 .build();
-        this.objectMapper = new ObjectMapper(jsonFactory)
-                .enable(SerializationFeature.INDENT_OUTPUT);
+        this.objectMapper = JsonMapper.builder(jsonFactory)
+                .enable(SerializationFeature.INDENT_OUTPUT).build();
     }
 
     /**

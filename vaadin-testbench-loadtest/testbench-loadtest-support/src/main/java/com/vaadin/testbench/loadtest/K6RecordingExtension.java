@@ -14,7 +14,7 @@ import org.junit.jupiter.api.extension.ExecutionCondition;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.openqa.selenium.WebDriver;
 
-import com.vaadin.testbench.BrowserTestBase;
+import com.vaadin.testbench.HasDriver;
 
 /**
  * JUnit 5 extension for k6 recording support.
@@ -67,11 +67,11 @@ public class K6RecordingExtension
     @Override
     public void afterEach(ExtensionContext context) throws Exception {
         Object testInstance = context.getRequiredTestInstance();
-        if (!(testInstance instanceof BrowserTestBase)) {
+        if (!(testInstance instanceof HasDriver)) {
             return;
         }
 
-        BrowserTestBase testBase = (BrowserTestBase) testInstance;
+        HasDriver testBase = (HasDriver) testInstance;
         WebDriver driver = testBase.getDriver();
         if (driver != null) {
             try {

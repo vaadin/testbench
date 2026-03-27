@@ -52,9 +52,14 @@
 
         <!-- JSON processing for HAR files (Jackson 2.x for BrowserMob Proxy compatibility) -->
         <dependency>
+            <groupId>tools.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>3.1.0</version>
+        </dependency>
+        <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.18.3</version>
+            <version>2.21.2</version>
         </dependency>
 
         <!-- Vaadin License Checker -->

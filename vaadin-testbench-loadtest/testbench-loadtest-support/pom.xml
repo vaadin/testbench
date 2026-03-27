@@ -25,10 +25,9 @@
     </properties>
 
     <dependencies>
-        <!-- Vaadin TestBench (junit6 includes BrowserTestBase) -->
         <dependency>
             <groupId>com.vaadin</groupId>
-            <artifactId>vaadin-testbench-junit6</artifactId>
+            <artifactId>vaadin-testbench-shared</artifactId>
             <scope>provided</scope>
         </dependency>
 

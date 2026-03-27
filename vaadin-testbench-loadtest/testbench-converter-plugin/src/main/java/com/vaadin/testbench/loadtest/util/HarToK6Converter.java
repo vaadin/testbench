@@ -19,9 +19,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.StreamReadConstraints;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.StreamReadConstraints;
+import tools.jackson.core.json.JsonFactory;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * Converts HAR files to k6 test scripts. This replaces the npm har-to-k6
@@ -83,7 +83,7 @@ public class HarToK6Converter {
                 .streamReadConstraints(StreamReadConstraints.builder()
                         .maxStringLength(Integer.MAX_VALUE).build())
                 .build();
-        this.objectMapper = new ObjectMapper(jsonFactory);
+        this.objectMapper = JsonMapper.builder(jsonFactory).build();
     }
 
     /**
