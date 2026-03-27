@@ -23,7 +23,8 @@ public record ThresholdConfig(int httpReqDurationP95, int httpReqDurationP99,
         boolean checksAbortOnFail) {
 
     /**
-     * Default thresholds: p95 &lt; 2000ms, p99 &lt; 5000ms, abort on check failure.
+     * Default thresholds: p95 &lt; 2000ms, p99 &lt; 5000ms, abort on check
+     * failure.
      */
     public static final ThresholdConfig DEFAULT = new ThresholdConfig(2000,
             5000, true);
