@@ -31,6 +31,12 @@ public class NodeRunner {
     private final Path workingDirectory;
     private ProxyRecorder proxyRecorder;
 
+    /**
+     * Creates a new node runner for the given working directory.
+     *
+     * @param workingDirectory
+     *            the directory to run node/k6 commands in
+     */
     public NodeRunner(Path workingDirectory) {
         this.workingDirectory = workingDirectory;
     }

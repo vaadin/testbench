@@ -79,6 +79,9 @@ public class HarToK6Converter {
 
     private final ObjectMapper objectMapper;
 
+    /**
+     * Creates a new HAR to k6 converter with a configured Jackson ObjectMapper.
+     */
     public HarToK6Converter() {
         JsonFactory jsonFactory = JsonFactory.builder()
                 .streamReadConstraints(StreamReadConstraints.builder()

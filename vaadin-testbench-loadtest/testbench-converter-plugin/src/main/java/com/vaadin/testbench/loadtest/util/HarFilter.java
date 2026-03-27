@@ -48,6 +48,9 @@ public class HarFilter {
             .getLogger(HarFilter.class.getName());
     private final ObjectMapper objectMapper;
 
+    /**
+     * Creates a new HAR filter with a configured Jackson ObjectMapper.
+     */
     public HarFilter() {
         JsonFactory jsonFactory = JsonFactory.builder()
                 .streamReadConstraints(StreamReadConstraints.builder()

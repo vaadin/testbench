@@ -28,6 +28,12 @@ public class ResourceExtractor {
 
     private final Path extractionDir;
 
+    /**
+     * Creates a new resource extractor that writes to the given directory.
+     *
+     * @param extractionDir
+     *            the directory to extract bundled k6 utilities into
+     */
     public ResourceExtractor(Path extractionDir) {
         this.extractionDir = extractionDir;
     }

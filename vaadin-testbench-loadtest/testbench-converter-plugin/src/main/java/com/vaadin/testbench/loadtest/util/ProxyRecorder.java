@@ -29,6 +29,9 @@ public class ProxyRecorder {
     private BrowserMobProxy proxy;
     private Path harOutputPath;
 
+    /**
+     * Creates a new proxy recorder instance.
+     */
     public ProxyRecorder() {
     }
 

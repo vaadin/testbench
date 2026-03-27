@@ -27,6 +27,9 @@ public class SourceHasher {
     private static final Logger log = Logger
             .getLogger(SourceHasher.class.getName());
 
+    /**
+     * Creates a new source hasher instance.
+     */
     public SourceHasher() {
     }
 
