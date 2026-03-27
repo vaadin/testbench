@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.vaadin</groupId>
         <artifactId>load-tests</artifactId>
-        <version>10.1-SNAPSHOT</version>
+        <version>10.2-SNAPSHOT</version>
     </parent>
 
     <artifactId>demo-web-app</artifactId>

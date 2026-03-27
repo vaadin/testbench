@@ -94,7 +94,7 @@ Add the plugin to your project:
 <plugin>
     <groupId>com.vaadin</groupId>
     <artifactId>testbench-converter-plugin</artifactId>
-    <version>10.1-SNAPSHOT</version>
+    <version>10.2-SNAPSHOT</version>
     <executions>
         <execution>
             <id>record-scenario</id>
