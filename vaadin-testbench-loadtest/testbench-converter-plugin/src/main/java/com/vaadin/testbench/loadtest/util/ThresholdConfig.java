@@ -1,25 +1,37 @@
+/**
+ * Copyright (C) 2000-2026 Vaadin Ltd
+ *
+ * This program is available under Vaadin Commercial License and Service Terms.
+ *
+ * See <https://vaadin.com/commercial-license-and-service-terms> for the full
+ * license.
+ */
 package com.vaadin.testbench.loadtest.util;
 
 /**
- * Configuration for k6 test thresholds.
- * Controls when the load test is considered failed based on response times
- * and check pass rates.
+ * Configuration for k6 test thresholds. Controls when the load test is
+ * considered failed based on response times and check pass rates.
  *
- * @param httpReqDurationP95 95th percentile response time threshold in ms (0 to disable)
- * @param httpReqDurationP99 99th percentile response time threshold in ms (0 to disable)
- * @param checksAbortOnFail  if true, abort the test immediately when a check fails
+ * @param httpReqDurationP95
+ *            95th percentile response time threshold in ms (0 to disable)
+ * @param httpReqDurationP99
+ *            99th percentile response time threshold in ms (0 to disable)
+ * @param checksAbortOnFail
+ *            if true, abort the test immediately when a check fails
  */
-public record ThresholdConfig(
-        int httpReqDurationP95,
-        int httpReqDurationP99,
-        boolean checksAbortOnFail
-) {
-    /** Default thresholds: p95 < 2000ms, p99 < 5000ms, abort on check failure. */
-    public static final ThresholdConfig DEFAULT = new ThresholdConfig(2000, 5000, true);
+public record ThresholdConfig(int httpReqDurationP95, int httpReqDurationP99,
+        boolean checksAbortOnFail) {
 
     /**
-     * Generates the k6 thresholds block for use inside {@code export const options}.
-     * Example output:
+     * Default thresholds: p95 < 2000ms, p99 < 5000ms, abort on check failure.
+     */
+    public static final ThresholdConfig DEFAULT = new ThresholdConfig(2000,
+            5000, true);
+
+    /**
+     * Generates the k6 thresholds block for use inside
+     * {@code export const options}. Example output:
+     * 
      * <pre>
      *   thresholds: {
      *     checks: [{ threshold: 'rate==1', abortOnFail: true, delayAbortEval: '5s' }],
@@ -31,7 +43,8 @@ public record ThresholdConfig(
         StringBuilder sb = new StringBuilder();
         sb.append("  thresholds: {\n");
         if (checksAbortOnFail) {
-            sb.append("    checks: [{ threshold: 'rate==1', abortOnFail: true, delayAbortEval: '5s' }],\n");
+            sb.append(
+                    "    checks: [{ threshold: 'rate==1', abortOnFail: true, delayAbortEval: '5s' }],\n");
         } else {
             sb.append("    checks: ['rate==1'],\n");
         }
@@ -42,7 +55,8 @@ public record ThresholdConfig(
             first = false;
         }
         if (httpReqDurationP99 > 0) {
-            if (!first) sb.append(", ");
+            if (!first)
+                sb.append(", ");
             sb.append("'p(99)<").append(httpReqDurationP99).append("'");
         }
         sb.append("],\n");

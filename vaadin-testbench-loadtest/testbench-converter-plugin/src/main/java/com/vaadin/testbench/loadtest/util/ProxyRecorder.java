@@ -1,22 +1,31 @@
+/**
+ * Copyright (C) 2000-2026 Vaadin Ltd
+ *
+ * This program is available under Vaadin Commercial License and Service Terms.
+ *
+ * See <https://vaadin.com/commercial-license-and-service-terms> for the full
+ * license.
+ */
 package com.vaadin.testbench.loadtest.util;
-
-import net.lightbody.bmp.BrowserMobProxy;
-import net.lightbody.bmp.BrowserMobProxyServer;
-import net.lightbody.bmp.core.har.Har;
-import net.lightbody.bmp.proxy.CaptureType;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.EnumSet;
 import java.util.logging.Logger;
 
+import net.lightbody.bmp.BrowserMobProxy;
+import net.lightbody.bmp.BrowserMobProxyServer;
+import net.lightbody.bmp.core.har.Har;
+import net.lightbody.bmp.proxy.CaptureType;
+
 /**
- * HTTP Proxy Recorder for k6 tests using BrowserMob Proxy.
- * Records HTTP traffic and exports it as HAR format.
+ * HTTP Proxy Recorder for k6 tests using BrowserMob Proxy. Records HTTP traffic
+ * and exports it as HAR format.
  */
 public class ProxyRecorder {
 
-    private static final Logger log = Logger.getLogger(ProxyRecorder.class.getName());
+    private static final Logger log = Logger
+            .getLogger(ProxyRecorder.class.getName());
     private BrowserMobProxy proxy;
     private Path harOutputPath;
 
@@ -26,8 +35,10 @@ public class ProxyRecorder {
     /**
      * Starts the proxy recorder on the specified port.
      *
-     * @param port          the port to listen on
-     * @param harOutputPath the path to write the HAR file
+     * @param port
+     *            the port to listen on
+     * @param harOutputPath
+     *            the path to write the HAR file
      */
     public void start(int port, Path harOutputPath) {
         this.harOutputPath = harOutputPath;
@@ -40,7 +51,8 @@ public class ProxyRecorder {
         // Disable request/response size limits
         proxy.setTrustAllServers(true);
 
-        // Strip Accept-Encoding from requests so the server returns uncompressed
+        // Strip Accept-Encoding from requests so the server returns
+        // uncompressed
         // responses. This ensures HAR bodies are readable for Vaadin session
         // value extraction (syncId, csrfToken, etc.)
         proxy.addRequestFilter((request, contents, messageInfo) -> {
@@ -62,7 +74,8 @@ public class ProxyRecorder {
     /**
      * Stops the proxy recorder and saves the HAR file.
      *
-     * @throws IOException if writing the HAR file fails
+     * @throws IOException
+     *             if writing the HAR file fails
      */
     public void stop() throws IOException {
         if (proxy != null && proxy.isStarted()) {
@@ -74,7 +87,8 @@ public class ProxyRecorder {
             // Save HAR to file
             if (har != null && harOutputPath != null) {
                 log.info("Writing HAR file: " + harOutputPath);
-                log.info("Recorded requests: " + har.getLog().getEntries().size());
+                log.info("Recorded requests: "
+                        + har.getLog().getEntries().size());
                 har.writeTo(harOutputPath.toFile());
             }
 

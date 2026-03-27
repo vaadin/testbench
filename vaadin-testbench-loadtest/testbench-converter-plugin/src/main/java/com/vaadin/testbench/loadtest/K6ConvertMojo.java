@@ -1,25 +1,34 @@
+/**
+ * Copyright (C) 2000-2026 Vaadin Ltd
+ *
+ * This program is available under Vaadin Commercial License and Service Terms.
+ *
+ * See <https://vaadin.com/commercial-license-and-service-terms> for the full
+ * license.
+ */
 package com.vaadin.testbench.loadtest;
+
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
-import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
-
 /**
  * Converts a HAR file to a k6 load test script.
  * <p>
  * This goal performs three steps:
  * <ol>
- *   <li>Filter external domains from the HAR file (optional)</li>
- *   <li>Convert HAR to k6 using har-to-k6</li>
- *   <li>Refactor the generated script for Vaadin compatibility</li>
+ * <li>Filter external domains from the HAR file (optional)</li>
+ * <li>Convert HAR to k6 using har-to-k6</li>
+ * <li>Refactor the generated script for Vaadin compatibility</li>
  * </ol>
  * <p>
  * Example usage:
+ * 
  * <pre>
  * mvn k6:convert -Dk6.harFile=recording.har
  * </pre>
@@ -34,15 +43,15 @@ public class K6ConvertMojo extends AbstractK6Mojo {
     private File harFile;
 
     /**
-     * Output directory for generated k6 tests.
-     * Defaults to k6/tests within the target directory.
+     * Output directory for generated k6 tests. Defaults to k6/tests within the
+     * target directory.
      */
     @Parameter(property = "k6.outputDir", defaultValue = "${project.build.directory}/k6/tests")
     private File outputDir;
 
     /**
-     * Output file name for the generated test.
-     * If not specified, derives from HAR file name.
+     * Output file name for the generated test. If not specified, derives from
+     * HAR file name.
      */
     @Parameter(property = "k6.outputName")
     private String outputName;
@@ -85,8 +94,7 @@ public class K6ConvertMojo extends AbstractK6Mojo {
         String baseName = outputName;
         if (baseName == null || baseName.isEmpty()) {
             String harFileName = harFile.getName();
-            baseName = harFileName
-                    .replaceAll("-recording\\.har$", "")
+            baseName = harFileName.replaceAll("-recording\\.har$", "")
                     .replaceAll("\\.har$", "");
         }
 
@@ -119,7 +127,9 @@ public class K6ConvertMojo extends AbstractK6Mojo {
                 getLog().info("  k6 run " + refactoredFile);
                 getLog().info("");
                 getLog().info("Or with custom server:");
-                getLog().info("  k6 run -e APP_IP=192.168.1.100 -e APP_PORT=8080 " + refactoredFile);
+                getLog().info(
+                        "  k6 run -e APP_IP=192.168.1.100 -e APP_PORT=8080 "
+                                + refactoredFile);
             } else {
                 getLog().info("Skipping Vaadin refactoring");
                 getLog().info("");

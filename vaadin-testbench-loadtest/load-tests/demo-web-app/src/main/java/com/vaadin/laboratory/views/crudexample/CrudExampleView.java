@@ -1,17 +1,29 @@
+/**
+ * Copyright (C) 2000-2026 Vaadin Ltd
+ *
+ * This program is available under Vaadin Commercial License and Service Terms.
+ *
+ * See <https://vaadin.com/commercial-license-and-service-terms> for the full
+ * license.
+ */
 package com.vaadin.laboratory.views.crudexample;
 
-import com.vaadin.laboratory.data.SamplePerson;
-import com.vaadin.laboratory.services.SamplePersonService;
+import java.util.Optional;
+
+import org.vaadin.lineawesome.LineAwesomeIconUrl;
+
 import com.vaadin.flow.component.dependency.Uses;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
-import com.vaadin.flow.router.*;
-import org.vaadin.lineawesome.LineAwesomeIconUrl;
-
-import java.util.Optional;
-
+import com.vaadin.flow.router.BeforeEnterEvent;
+import com.vaadin.flow.router.BeforeEnterObserver;
+import com.vaadin.flow.router.Menu;
+import com.vaadin.flow.router.PageTitle;
+import com.vaadin.flow.router.Route;
+import com.vaadin.laboratory.data.SamplePerson;
+import com.vaadin.laboratory.services.SamplePersonService;
 
 @PageTitle("Crud Example")
 @Route(value = "crud-example/:samplePersonID?/:action?(edit)")
@@ -51,14 +63,17 @@ public class CrudExampleView extends Div implements BeforeEnterObserver {
 
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
-        Optional<Long> samplePersonId = event.getRouteParameters().get(SAMPLEPERSON_ID).map(Long::parseLong);
+        Optional<Long> samplePersonId = event.getRouteParameters()
+                .get(SAMPLEPERSON_ID).map(Long::parseLong);
         if (samplePersonId.isPresent()) {
-            Optional<SamplePerson> samplePersonFromBackend = samplePersonService.get(samplePersonId.get());
+            Optional<SamplePerson> samplePersonFromBackend = samplePersonService
+                    .get(samplePersonId.get());
             if (samplePersonFromBackend.isPresent()) {
                 form.populateForm(samplePersonFromBackend.get());
             } else {
-                Notification.show(
-                        String.format("The requested samplePerson was not found, ID = %s", samplePersonId.get()), 3000,
+                Notification.show(String.format(
+                        "The requested samplePerson was not found, ID = %s",
+                        samplePersonId.get()), 3000,
                         Notification.Position.BOTTOM_START);
                 // when a row is selected but the data is no longer available,
                 // refresh grid

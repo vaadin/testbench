@@ -8,11 +8,12 @@
  */
 package com.vaadin.testbench.loadtest;
 
-import com.vaadin.testbench.TestBench;
 import org.openqa.selenium.Proxy;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+
+import com.vaadin.testbench.TestBench;
 
 /**
  * Static helper for load test integration tests.
@@ -20,8 +21,8 @@ import org.openqa.selenium.chrome.ChromeOptions;
  * Provides proxy configuration for k6 recording and deployment URL helpers.
  * When the system property {@code k6.proxy.host} is set (e.g.,
  * {@code k6.proxy.host=localhost:6000}), the browser is configured to route
- * traffic through a recording proxy, enabling automatic conversion of
- * TestBench tests to k6 load tests.
+ * traffic through a recording proxy, enabling automatic conversion of TestBench
+ * tests to k6 load tests.
  */
 public final class LoadTestItHelper {
 
@@ -36,13 +37,17 @@ public final class LoadTestItHelper {
      * driver. Otherwise navigates the existing driver to the given URL.
      * <p>
      * Typical usage in a {@code @BeforeEach} method:
+     * 
      * <pre>
      * setDriver(LoadTestItHelper.openWithProxy(getDriver(), viewUrl));
      * </pre>
      *
-     * @param currentDriver the current WebDriver instance
-     * @param viewUrl       the full URL to navigate to
-     * @return the driver to use (either the original or a new proxy-configured one)
+     * @param currentDriver
+     *            the current WebDriver instance
+     * @param viewUrl
+     *            the full URL to navigate to
+     * @return the driver to use (either the original or a new proxy-configured
+     *         one)
      */
     public static WebDriver openWithProxy(WebDriver currentDriver,
             String viewUrl) {

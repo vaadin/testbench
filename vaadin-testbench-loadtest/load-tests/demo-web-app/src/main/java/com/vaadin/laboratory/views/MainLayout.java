@@ -1,6 +1,16 @@
+/**
+ * Copyright (C) 2000-2026 Vaadin Ltd
+ *
+ * This program is available under Vaadin Commercial License and Service Terms.
+ *
+ * See <https://vaadin.com/commercial-license-and-service-terms> for the full
+ * license.
+ */
 package com.vaadin.laboratory.views;
 
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +31,6 @@ import com.vaadin.flow.server.auth.AnonymousAllowed;
 import com.vaadin.flow.server.menu.MenuConfiguration;
 import com.vaadin.flow.server.menu.MenuEntry;
 import com.vaadin.flow.theme.lumo.LumoUtility;
-import java.util.List;
 
 /**
  * The main view is a top-level placeholder for other views.
@@ -30,7 +39,8 @@ import java.util.List;
 @AnonymousAllowed
 public class MainLayout extends AppLayout implements AfterNavigationObserver {
 
-    private static final Logger logger = LoggerFactory.getLogger(MainLayout.class);
+    private static final Logger logger = LoggerFactory
+            .getLogger(MainLayout.class);
     private static final AtomicInteger sessionCounter = new AtomicInteger(0);
 
     private H1 viewTitle;
@@ -49,14 +59,16 @@ public class MainLayout extends AppLayout implements AfterNavigationObserver {
         toggle.setAriaLabel("Menu toggle");
 
         viewTitle = new H1();
-        viewTitle.addClassNames(LumoUtility.FontSize.LARGE, LumoUtility.Margin.NONE);
+        viewTitle.addClassNames(LumoUtility.FontSize.LARGE,
+                LumoUtility.Margin.NONE);
 
         addToNavbar(true, toggle, viewTitle);
     }
 
     private void addDrawerContent() {
         Span appName = new Span("My App");
-        appName.addClassNames(LumoUtility.FontWeight.SEMIBOLD, LumoUtility.FontSize.LARGE);
+        appName.addClassNames(LumoUtility.FontWeight.SEMIBOLD,
+                LumoUtility.FontSize.LARGE);
         Header header = new Header(appName);
 
         Scroller scroller = new Scroller(createNavigation());
@@ -70,7 +82,8 @@ public class MainLayout extends AppLayout implements AfterNavigationObserver {
         List<MenuEntry> menuEntries = MenuConfiguration.getMenuEntries();
         menuEntries.forEach(entry -> {
             if (entry.icon() != null) {
-                nav.addItem(new SideNavItem(entry.title(), entry.path(), new SvgIcon(entry.icon())));
+                nav.addItem(new SideNavItem(entry.title(), entry.path(),
+                        new SvgIcon(entry.icon())));
             } else {
                 nav.addItem(new SideNavItem(entry.title(), entry.path()));
             }

@@ -1,3 +1,11 @@
+/**
+ * Copyright (C) 2000-2026 Vaadin Ltd
+ *
+ * This program is available under Vaadin Commercial License and Service Terms.
+ *
+ * See <https://vaadin.com/commercial-license-and-service-terms> for the full
+ * license.
+ */
 package com.vaadin.testbench.loadtest.util;
 
 import java.io.BufferedReader;
@@ -12,20 +20,24 @@ import java.util.logging.Logger;
 
 /**
  * Manages a server process lifecycle: start, health-check polling, and stop.
- * Uses {@link java.lang.Process} for cross-platform process management
- * (no shell commands like {@code pkill} required).
+ * Uses {@link java.lang.Process} for cross-platform process management (no
+ * shell commands like {@code pkill} required).
  */
 public class ServerProcess {
 
-    private static final Logger log = Logger.getLogger(ServerProcess.class.getName());
+    private static final Logger log = Logger
+            .getLogger(ServerProcess.class.getName());
     private Process process;
     private Thread outputThread;
 
     /**
      * Starts the server process asynchronously.
      *
-     * @param command the command to execute (e.g., ["java", "-jar", "app.jar", ...])
-     * @throws Exception if the process cannot be started
+     * @param command
+     *            the command to execute (e.g., ["java", "-jar", "app.jar",
+     *            ...])
+     * @throws Exception
+     *             if the process cannot be started
      */
     public void start(List<String> command) throws Exception {
         log.info("Starting server: " + String.join(" ", command));
@@ -51,18 +63,22 @@ public class ServerProcess {
     }
 
     /**
-     * Polls health URLs until all return HTTP status &lt; 500, or timeout is reached.
+     * Polls health URLs until all return HTTP status &lt; 500, or timeout is
+     * reached.
      *
-     * @param healthUrls   URLs to poll (each must become healthy in sequence)
-     * @param timeout      maximum time to wait
-     * @param pollInterval time between poll attempts
-     * @throws Exception if timeout is reached or the process dies during startup
+     * @param healthUrls
+     *            URLs to poll (each must become healthy in sequence)
+     * @param timeout
+     *            maximum time to wait
+     * @param pollInterval
+     *            time between poll attempts
+     * @throws Exception
+     *             if timeout is reached or the process dies during startup
      */
-    public void waitForReady(List<String> healthUrls, Duration timeout, Duration pollInterval)
-            throws Exception {
+    public void waitForReady(List<String> healthUrls, Duration timeout,
+            Duration pollInterval) throws Exception {
         HttpClient client = HttpClient.newBuilder()
-                .connectTimeout(Duration.ofSeconds(3))
-                .build();
+                .connectTimeout(Duration.ofSeconds(3)).build();
 
         for (String url : healthUrls) {
             log.info("Waiting for " + url + " ...");
@@ -70,19 +86,19 @@ public class ServerProcess {
 
             while (System.currentTimeMillis() < deadline) {
                 if (!isAlive()) {
-                    throw new Exception("Server process died during startup (exit code: "
-                            + process.exitValue() + ")");
+                    throw new Exception(
+                            "Server process died during startup (exit code: "
+                                    + process.exitValue() + ")");
                 }
                 try {
                     HttpRequest request = HttpRequest.newBuilder()
-                            .uri(URI.create(url))
-                            .timeout(Duration.ofSeconds(3))
-                            .GET()
-                            .build();
+                            .uri(URI.create(url)).timeout(Duration.ofSeconds(3))
+                            .GET().build();
                     HttpResponse<String> response = client.send(request,
                             HttpResponse.BodyHandlers.ofString());
                     if (response.statusCode() < 500) {
-                        log.info(url + " is ready (status " + response.statusCode() + ")");
+                        log.info(url + " is ready (status "
+                                + response.statusCode() + ")");
                         break;
                     }
                 } catch (Exception e) {
@@ -91,8 +107,8 @@ public class ServerProcess {
                 }
 
                 if (System.currentTimeMillis() >= deadline) {
-                    throw new Exception("Timeout waiting for " + url
-                            + " after " + timeout.getSeconds() + "s");
+                    throw new Exception("Timeout waiting for " + url + " after "
+                            + timeout.getSeconds() + "s");
                 }
                 Thread.sleep(pollInterval.toMillis());
             }
@@ -100,10 +116,11 @@ public class ServerProcess {
     }
 
     /**
-     * Stops the server process. Sends a graceful shutdown signal first,
-     * then force-kills if the process does not exit within the grace period.
+     * Stops the server process. Sends a graceful shutdown signal first, then
+     * force-kills if the process does not exit within the grace period.
      *
-     * @param gracePeriod time to wait for graceful shutdown before force-killing
+     * @param gracePeriod
+     *            time to wait for graceful shutdown before force-killing
      */
     public void stop(Duration gracePeriod) {
         if (process == null || !process.isAlive()) {
@@ -118,8 +135,8 @@ public class ServerProcess {
             boolean exited = process.waitFor(gracePeriod.toMillis(),
                     java.util.concurrent.TimeUnit.MILLISECONDS);
             if (!exited) {
-                log.warning("Server did not stop within " + gracePeriod.getSeconds()
-                        + "s, force-killing");
+                log.warning("Server did not stop within "
+                        + gracePeriod.getSeconds() + "s, force-killing");
                 process.destroyForcibly();
                 process.waitFor(5, java.util.concurrent.TimeUnit.MILLISECONDS);
             }

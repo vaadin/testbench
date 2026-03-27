@@ -1,12 +1,22 @@
+/**
+ * Copyright (C) 2000-2026 Vaadin Ltd
+ *
+ * This program is available under Vaadin Commercial License and Service Terms.
+ *
+ * See <https://vaadin.com/commercial-license-and-service-terms> for the full
+ * license.
+ */
 package com.vaadin.laboratory.services;
 
-import com.vaadin.laboratory.data.SamplePerson;
-import com.vaadin.laboratory.data.SamplePersonRepository;
 import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+
+import com.vaadin.laboratory.data.SamplePerson;
+import com.vaadin.laboratory.data.SamplePersonRepository;
 
 @Service
 public class SamplePersonService {
@@ -33,7 +43,8 @@ public class SamplePersonService {
         return repository.findAll(pageable);
     }
 
-    public Page<SamplePerson> list(Pageable pageable, Specification<SamplePerson> filter) {
+    public Page<SamplePerson> list(Pageable pageable,
+            Specification<SamplePerson> filter) {
         return repository.findAll(filter, pageable);
     }
 

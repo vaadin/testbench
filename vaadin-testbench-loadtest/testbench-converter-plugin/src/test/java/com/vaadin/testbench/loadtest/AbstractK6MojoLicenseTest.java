@@ -1,12 +1,20 @@
+/**
+ * Copyright (C) 2000-2026 Vaadin Ltd
+ *
+ * This program is available under Vaadin Commercial License and Service Terms.
+ *
+ * See <https://vaadin.com/commercial-license-and-service-terms> for the full
+ * license.
+ */
 package com.vaadin.testbench.loadtest;
 
-import com.vaadin.pro.licensechecker.Capabilities;
-import com.vaadin.pro.licensechecker.Capability;
-import com.vaadin.pro.licensechecker.LicenseChecker;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
+
+import com.vaadin.pro.licensechecker.Capabilities;
+import com.vaadin.pro.licensechecker.LicenseChecker;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -33,9 +41,8 @@ class AbstractK6MojoLicenseTest {
 
             licenseChecker.verify(() -> {
                 LicenseChecker.checkLicenseFromStaticBlock(
-                        Mockito.eq("vaadin-testbench"),
-                        Mockito.anyString(), Mockito.isNull(),
-                        Mockito.any(Capabilities.class));
+                        Mockito.eq("vaadin-testbench"), Mockito.anyString(),
+                        Mockito.isNull(), Mockito.any(Capabilities.class));
             });
         }
     }

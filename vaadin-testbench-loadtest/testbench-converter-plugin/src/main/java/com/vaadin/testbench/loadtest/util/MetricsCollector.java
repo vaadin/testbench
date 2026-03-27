@@ -1,6 +1,12 @@
+/**
+ * Copyright (C) 2000-2026 Vaadin Ltd
+ *
+ * This program is available under Vaadin Commercial License and Service Terms.
+ *
+ * See <https://vaadin.com/commercial-license-and-service-terms> for the full
+ * license.
+ */
 package com.vaadin.testbench.loadtest.util;
-
-import com.vaadin.testbench.loadtest.util.ActuatorMetrics.MetricsSummary;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -10,15 +16,18 @@ import java.util.List;
 import java.util.Locale;
 import java.util.logging.Logger;
 
+import com.vaadin.testbench.loadtest.util.ActuatorMetrics.MetricsSummary;
+
 /**
  * Collects server metrics periodically during a load test.
  * <p>
  * This collector runs in a background thread, fetching metrics from Spring Boot
- * Actuator at regular intervals. After the test completes, the collected snapshots
- * can be displayed as a time-series table showing how server metrics changed
- * under load.
+ * Actuator at regular intervals. After the test completes, the collected
+ * snapshots can be displayed as a time-series table showing how server metrics
+ * changed under load.
  * <p>
  * Usage:
+ * 
  * <pre>
  * MetricsCollector collector = new MetricsCollector(log, actuator, 10);
  * collector.start();
@@ -29,10 +38,12 @@ import java.util.logging.Logger;
  */
 public class MetricsCollector implements Runnable {
 
-    private static final Logger log = Logger.getLogger(MetricsCollector.class.getName());
+    private static final Logger log = Logger
+            .getLogger(MetricsCollector.class.getName());
     private final ActuatorMetrics actuator;
     private final int intervalSeconds;
-    private final List<TimestampedMetrics> snapshots = Collections.synchronizedList(new ArrayList<>());
+    private final List<TimestampedMetrics> snapshots = Collections
+            .synchronizedList(new ArrayList<>());
     private final Instant startTime;
     private volatile boolean running = true;
     private Thread collectorThread;
@@ -40,8 +51,10 @@ public class MetricsCollector implements Runnable {
     /**
      * Creates a new metrics collector.
      *
-     * @param actuator        actuator metrics client
-     * @param intervalSeconds interval between metric snapshots in seconds
+     * @param actuator
+     *            actuator metrics client
+     * @param intervalSeconds
+     *            interval between metric snapshots in seconds
      */
     public MetricsCollector(ActuatorMetrics actuator, int intervalSeconds) {
         this.actuator = actuator;
@@ -50,8 +63,8 @@ public class MetricsCollector implements Runnable {
     }
 
     /**
-     * Collects a baseline snapshot synchronously before load test starts.
-     * Call this before starting k6 to capture pre-test server state.
+     * Collects a baseline snapshot synchronously before load test starts. Call
+     * this before starting k6 to capture pre-test server state.
      */
     public void collectBaseline() {
         collectSnapshot();
@@ -65,7 +78,8 @@ public class MetricsCollector implements Runnable {
         collectorThread = new Thread(this, "metrics-collector");
         collectorThread.setDaemon(true);
         collectorThread.start();
-        log.fine("Metrics collector started (interval: " + intervalSeconds + "s)");
+        log.fine("Metrics collector started (interval: " + intervalSeconds
+                + "s)");
     }
 
     /**
@@ -81,7 +95,8 @@ public class MetricsCollector implements Runnable {
                 Thread.currentThread().interrupt();
             }
         }
-        log.fine("Metrics collector stopped (" + snapshots.size() + " snapshots collected)");
+        log.fine("Metrics collector stopped (" + snapshots.size()
+                + " snapshots collected)");
     }
 
     @Override
@@ -123,13 +138,14 @@ public class MetricsCollector implements Runnable {
     }
 
     /**
-     * Prints a formatted report of collected metrics to stdout.
-     * Uses System.out directly for clean table formatting.
-     * Splits output into a system metrics table and a view counts table.
+     * Prints a formatted report of collected metrics to stdout. Uses System.out
+     * directly for clean table formatting. Splits output into a system metrics
+     * table and a view counts table.
      */
     public void printReport() {
         if (snapshots.isEmpty()) {
-            System.out.println("No metrics collected (actuator may not be available)");
+            System.out.println(
+                    "No metrics collected (actuator may not be available)");
             return;
         }
 
@@ -139,9 +155,7 @@ public class MetricsCollector implements Runnable {
         List<String> viewNames = snapshots.stream()
                 .filter(s -> s.metrics().viewCounts() != null)
                 .flatMap(s -> s.metrics().viewCounts().keySet().stream())
-                .distinct()
-                .sorted()
-                .toList();
+                .distinct().sorted().toList();
 
         MetricsSummary first = snapshots.get(0).metrics();
         MetricsSummary last = snapshots.get(snapshots.size() - 1).metrics();
@@ -182,17 +196,24 @@ public class MetricsCollector implements Runnable {
         for (TimestampedMetrics snapshot : snapshots) {
             MetricsSummary m = snapshot.metrics();
             String time = formatDuration(snapshot.elapsed());
-            String cpu = m.processCpuPercent() != null ? String.format(Locale.US, "%5.1f%%", m.processCpuPercent()) : "   N/A";
+            String cpu = m.processCpuPercent() != null
+                    ? String.format(Locale.US, "%5.1f%%", m.processCpuPercent())
+                    : "   N/A";
             String heapUsed = padLeft(m.formatBytes(m.heapUsedBytes()), 10);
             String heapMax = padLeft(m.formatBytes(m.heapMaxBytes()), 10);
             String nonHeap = padLeft(m.formatBytes(m.nonHeapUsedBytes()), 9);
-            String sessions = m.activeSessions() != null ? String.format("%8d", m.activeSessions()) : "     N/A";
+            String sessions = m.activeSessions() != null
+                    ? String.format("%8d", m.activeSessions())
+                    : "     N/A";
 
             StringBuilder row = new StringBuilder();
-            row.append(String.format("| %-6s | %6s | %s | %s | %s | %s |", time, cpu, heapUsed, heapMax, nonHeap, sessions));
+            row.append(String.format("| %-6s | %6s | %s | %s | %s | %s |", time,
+                    cpu, heapUsed, heapMax, nonHeap, sessions));
 
             if (hasVaadinMetrics) {
-                String uis = m.vaadinActiveUis() != null ? String.format("%6d", m.vaadinActiveUis()) : "   N/A";
+                String uis = m.vaadinActiveUis() != null
+                        ? String.format("%6d", m.vaadinActiveUis())
+                        : "   N/A";
                 row.append(String.format(" %s |", uis));
             }
 
@@ -206,16 +227,19 @@ public class MetricsCollector implements Runnable {
      * Prints the view counts table with dynamically sized columns.
      */
     private void printViewCountsTable(List<String> viewNames) {
-        // Calculate column widths: max of header length and formatted value length, min 6
+        // Calculate column widths: max of header length and formatted value
+        // length, min 6
         List<Integer> colWidths = new ArrayList<>();
         for (String viewName : viewNames) {
             int headerLen = viewName.length();
             int maxValueLen = 0;
             for (TimestampedMetrics snapshot : snapshots) {
                 Long count = snapshot.metrics().viewCounts() != null
-                        ? snapshot.metrics().viewCounts().get(viewName) : null;
+                        ? snapshot.metrics().viewCounts().get(viewName)
+                        : null;
                 if (count != null) {
-                    maxValueLen = Math.max(maxValueLen, String.format("%,d", count).length());
+                    maxValueLen = Math.max(maxValueLen,
+                            String.format("%,d", count).length());
                 }
             }
             colWidths.add(Math.max(Math.max(headerLen, maxValueLen), 6));
@@ -223,7 +247,8 @@ public class MetricsCollector implements Runnable {
 
         // Build border, header, and rows using calculated widths
         StringBuilder border = new StringBuilder("+--------");
-        StringBuilder header = new StringBuilder(String.format("| %-6s ", "Time"));
+        StringBuilder header = new StringBuilder(
+                String.format("| %-6s ", "Time"));
         for (int i = 0; i < viewNames.size(); i++) {
             int w = colWidths.get(i);
             border.append("+-").append("-".repeat(w)).append("-");
@@ -238,11 +263,16 @@ public class MetricsCollector implements Runnable {
 
         for (TimestampedMetrics snapshot : snapshots) {
             MetricsSummary m = snapshot.metrics();
-            StringBuilder row = new StringBuilder(String.format("| %-6s ", formatDuration(snapshot.elapsed())));
+            StringBuilder row = new StringBuilder(String.format("| %-6s ",
+                    formatDuration(snapshot.elapsed())));
             for (int i = 0; i < viewNames.size(); i++) {
                 int w = colWidths.get(i);
-                Long count = m.viewCounts() != null ? m.viewCounts().get(viewNames.get(i)) : null;
-                String value = count != null ? String.format("%" + w + "d", count) : padLeft("N/A", w);
+                Long count = m.viewCounts() != null
+                        ? m.viewCounts().get(viewNames.get(i))
+                        : null;
+                String value = count != null
+                        ? String.format("%" + w + "d", count)
+                        : padLeft("N/A", w);
                 row.append(String.format("| %s ", value));
             }
             row.append("|");
@@ -255,7 +285,8 @@ public class MetricsCollector implements Runnable {
     /**
      * Prints a summary comparing first and last snapshots.
      */
-    private void printSummary(MetricsSummary first, MetricsSummary last, List<String> viewNames) {
+    private void printSummary(MetricsSummary first, MetricsSummary last,
+            List<String> viewNames) {
         StringBuilder summary = new StringBuilder("Summary: ");
         List<String> changes = new ArrayList<>();
 
@@ -283,8 +314,7 @@ public class MetricsCollector implements Runnable {
         // Average CPU
         double avgCpu = snapshots.stream()
                 .filter(s -> s.metrics().processCpuPercent() != null)
-                .mapToDouble(s -> s.metrics().processCpuPercent())
-                .average()
+                .mapToDouble(s -> s.metrics().processCpuPercent()).average()
                 .orElse(0);
         if (avgCpu > 0) {
             changes.add(String.format(Locale.US, "Avg CPU %.1f%%", avgCpu));
@@ -293,8 +323,7 @@ public class MetricsCollector implements Runnable {
         // Peak CPU
         double peakCpu = snapshots.stream()
                 .filter(s -> s.metrics().processCpuPercent() != null)
-                .mapToDouble(s -> s.metrics().processCpuPercent())
-                .max()
+                .mapToDouble(s -> s.metrics().processCpuPercent()).max()
                 .orElse(0);
         if (peakCpu > 0) {
             changes.add(String.format(Locale.US, "Peak CPU %.1f%%", peakCpu));
@@ -318,15 +347,19 @@ public class MetricsCollector implements Runnable {
      * Pads a string to the left to reach the specified width.
      */
     private String padLeft(String s, int width) {
-        if (s.length() >= width) return s;
+        if (s.length() >= width)
+            return s;
         return " ".repeat(width - s.length()) + s;
     }
 
     /**
      * A metrics snapshot with timestamp.
      *
-     * @param elapsed time elapsed since collection started
-     * @param metrics the metrics values at this point
+     * @param elapsed
+     *            time elapsed since collection started
+     * @param metrics
+     *            the metrics values at this point
      */
-    public record TimestampedMetrics(Duration elapsed, MetricsSummary metrics) {}
+    public record TimestampedMetrics(Duration elapsed, MetricsSummary metrics) {
+    }
 }

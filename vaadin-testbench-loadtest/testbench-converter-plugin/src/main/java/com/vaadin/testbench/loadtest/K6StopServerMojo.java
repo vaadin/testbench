@@ -1,18 +1,28 @@
+/**
+ * Copyright (C) 2000-2026 Vaadin Ltd
+ *
+ * This program is available under Vaadin Commercial License and Service Terms.
+ *
+ * See <https://vaadin.com/commercial-license-and-service-terms> for the full
+ * license.
+ */
 package com.vaadin.testbench.loadtest;
 
-import com.vaadin.testbench.loadtest.util.ServerProcess;
+import java.time.Duration;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
-import java.time.Duration;
+import com.vaadin.testbench.loadtest.util.ServerProcess;
 
 /**
- * Stops a server previously started by {@code k6:start-server}.
- * Retrieves the process handle from the Maven project context.
+ * Stops a server previously started by {@code k6:start-server}. Retrieves the
+ * process handle from the Maven project context.
  * <p>
  * Usage in pom.xml:
+ * 
  * <pre>
  * &lt;execution&gt;
  *     &lt;phase&gt;post-integration-test&lt;/phase&gt;
@@ -38,7 +48,8 @@ public class K6StopServerMojo extends AbstractK6Mojo {
 
         Object stored = project.getContextValue(K6StartServerMojo.CONTEXT_KEY);
         if (!(stored instanceof ServerProcess serverProcess)) {
-            getLog().info("No server process found (was start-server executed?)");
+            getLog().info(
+                    "No server process found (was start-server executed?)");
             return;
         }
 

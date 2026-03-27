@@ -1,3 +1,11 @@
+/**
+ * Copyright (C) 2000-2026 Vaadin Ltd
+ *
+ * This program is available under Vaadin Commercial License and Service Terms.
+ *
+ * See <https://vaadin.com/commercial-license-and-service-terms> for the full
+ * license.
+ */
 package com.vaadin.testbench.loadtest.util;
 
 import java.io.IOException;
@@ -12,48 +20,66 @@ import java.util.regex.Pattern;
 
 /**
  * Combines multiple k6 test files into a single test with weighted scenarios.
- * Uses k6's built-in scenario feature to run different user workflows in parallel
- * with configurable weights (percentage of VUs assigned to each scenario).
+ * Uses k6's built-in scenario feature to run different user workflows in
+ * parallel with configurable weights (percentage of VUs assigned to each
+ * scenario).
  */
 public class K6ScenarioCombiner {
 
     /**
      * Represents a scenario with its source file and weight.
      */
-    public record ScenarioConfig(String name, Path testFile, int weight) {}
-
-    /**
-     * Combines multiple k6 test files into a single test with weighted scenarios
-     * using default thresholds.
-     *
-     * @param scenarios  list of scenario configurations with weights
-     * @param outputFile path for the combined output file
-     * @param totalVus   total number of virtual users to distribute
-     * @param duration   test duration (e.g., "30s", "1m")
-     * @throws IOException if file operations fail
-     */
-    public void combine(List<ScenarioConfig> scenarios, Path outputFile, int totalVus, String duration)
-            throws IOException {
-        combine(scenarios, outputFile, totalVus, duration, ThresholdConfig.DEFAULT);
+    public record ScenarioConfig(String name, Path testFile, int weight) {
     }
 
     /**
-     * Combines multiple k6 test files into a single test with weighted scenarios.
+     * Combines multiple k6 test files into a single test with weighted
+     * scenarios using default thresholds.
      *
-     * @param scenarios       list of scenario configurations with weights
-     * @param outputFile      path for the combined output file
-     * @param totalVus        total number of virtual users to distribute
-     * @param duration        test duration (e.g., "30s", "1m")
-     * @param thresholdConfig threshold configuration for the combined script
-     * @throws IOException if file operations fail
+     * @param scenarios
+     *            list of scenario configurations with weights
+     * @param outputFile
+     *            path for the combined output file
+     * @param totalVus
+     *            total number of virtual users to distribute
+     * @param duration
+     *            test duration (e.g., "30s", "1m")
+     * @throws IOException
+     *             if file operations fail
      */
-    public void combine(List<ScenarioConfig> scenarios, Path outputFile, int totalVus, String duration,
-                         ThresholdConfig thresholdConfig) throws IOException {
+    public void combine(List<ScenarioConfig> scenarios, Path outputFile,
+            int totalVus, String duration) throws IOException {
+        combine(scenarios, outputFile, totalVus, duration,
+                ThresholdConfig.DEFAULT);
+    }
+
+    /**
+     * Combines multiple k6 test files into a single test with weighted
+     * scenarios.
+     *
+     * @param scenarios
+     *            list of scenario configurations with weights
+     * @param outputFile
+     *            path for the combined output file
+     * @param totalVus
+     *            total number of virtual users to distribute
+     * @param duration
+     *            test duration (e.g., "30s", "1m")
+     * @param thresholdConfig
+     *            threshold configuration for the combined script
+     * @throws IOException
+     *             if file operations fail
+     */
+    public void combine(List<ScenarioConfig> scenarios, Path outputFile,
+            int totalVus, String duration, ThresholdConfig thresholdConfig)
+            throws IOException {
 
         StringBuilder sb = new StringBuilder();
 
-        // Pre-pass: extract SharedArray blocks from scenarios that use CSV input data.
-        // Each scenario gets a uniquely-named variable (e.g. crudExampleInputData)
+        // Pre-pass: extract SharedArray blocks from scenarios that use CSV
+        // input data.
+        // Each scenario gets a uniquely-named variable (e.g.
+        // crudExampleInputData)
         // so multiple scenarios with CSV data don't collide.
         Map<String, String> sharedArrayBlocks = new LinkedHashMap<>();
         for (ScenarioConfig config : scenarios) {
@@ -63,7 +89,8 @@ public class K6ScenarioCombiner {
                 // Rename inputData → {name}InputData and SharedArray label
                 String renamed = block
                         .replace("inputData", config.name() + "InputData")
-                        .replace("'input data'", "'" + config.name() + " input data'");
+                        .replace("'input data'",
+                                "'" + config.name() + " input data'");
                 sharedArrayBlocks.put(config.name(), renamed);
             }
         }
@@ -77,21 +104,25 @@ public class K6ScenarioCombiner {
         if (needsSharedArray) {
             sb.append("import { SharedArray } from 'k6/data'\n");
         }
-        sb.append("import {extractJSessionId, getVaadinPushId, getVaadinSecurityKey, getVaadinUiId} from '../utils/vaadin-k6-helpers.js'\n\n");
+        sb.append(
+                "import {extractJSessionId, getVaadinPushId, getVaadinSecurityKey, getVaadinUiId} from '../utils/vaadin-k6-helpers.js'\n\n");
 
         // Configuration variables
-        sb.append("// Server configuration - can be overridden with: k6 run -e APP_IP=192.168.1.100 -e APP_PORT=8081 script.js\n");
+        sb.append(
+                "// Server configuration - can be overridden with: k6 run -e APP_IP=192.168.1.100 -e APP_PORT=8081 script.js\n");
         sb.append("const APP_IP = __ENV.APP_IP || 'localhost';\n");
         sb.append("const APP_PORT = __ENV.APP_PORT || '8080';\n");
         sb.append("const BASE_URL = `http://${APP_IP}:${APP_PORT}`;\n\n");
 
-        // Add SharedArray blocks at module scope (must be in init context for k6)
+        // Add SharedArray blocks at module scope (must be in init context for
+        // k6)
         for (Map.Entry<String, String> entry : sharedArrayBlocks.entrySet()) {
             sb.append(entry.getValue()).append("\n\n");
         }
 
         // Calculate VUs for each scenario based on weights
-        int totalWeight = scenarios.stream().mapToInt(ScenarioConfig::weight).sum();
+        int totalWeight = scenarios.stream().mapToInt(ScenarioConfig::weight)
+                .sum();
 
         // Generate options with scenarios and configurable thresholds
         sb.append("export const options = {\n");
@@ -100,13 +131,15 @@ public class K6ScenarioCombiner {
 
         for (int i = 0; i < scenarios.size(); i++) {
             ScenarioConfig config = scenarios.get(i);
-            int vusForScenario = Math.max(1, (config.weight() * totalVus) / totalWeight);
+            int vusForScenario = Math.max(1,
+                    (config.weight() * totalVus) / totalWeight);
 
             sb.append("    ").append(config.name()).append(": {\n");
             sb.append("      executor: 'constant-vus',\n");
             sb.append("      vus: ").append(vusForScenario).append(",\n");
             sb.append("      duration: '").append(duration).append("',\n");
-            sb.append("      exec: '").append(config.name()).append("Scenario',\n");
+            sb.append("      exec: '").append(config.name())
+                    .append("Scenario',\n");
             sb.append("    }");
             if (i < scenarios.size() - 1) {
                 sb.append(",");
@@ -119,7 +152,8 @@ public class K6ScenarioCombiner {
 
         // Extract and add each scenario function
         for (ScenarioConfig config : scenarios) {
-            String scenarioCode = extractScenarioFunction(config.testFile, config.name(),
+            String scenarioCode = extractScenarioFunction(config.testFile,
+                    config.name(),
                     sharedArrayBlocks.containsKey(config.name()));
             sb.append(scenarioCode).append("\n\n");
         }
@@ -130,25 +164,30 @@ public class K6ScenarioCombiner {
     }
 
     /**
-     * Extracts the default function body from a k6 test and wraps it as a named function.
+     * Extracts the default function body from a k6 test and wraps it as a named
+     * function.
      *
-     * @param testFile     the scenario test file
-     * @param scenarioName the scenario name (used for the exported function name)
-     * @param hasCsvData   if true, renames inputData references to {scenarioName}InputData
+     * @param testFile
+     *            the scenario test file
+     * @param scenarioName
+     *            the scenario name (used for the exported function name)
+     * @param hasCsvData
+     *            if true, renames inputData references to
+     *            {scenarioName}InputData
      */
-    private String extractScenarioFunction(Path testFile, String scenarioName, boolean hasCsvData)
-            throws IOException {
+    private String extractScenarioFunction(Path testFile, String scenarioName,
+            boolean hasCsvData) throws IOException {
         String content = Files.readString(testFile);
 
         // Find the default function body
         Pattern pattern = Pattern.compile(
-            "export\\s+default\\s+function\\s*\\([^)]*\\)\\s*\\{",
-            Pattern.MULTILINE
-        );
+                "export\\s+default\\s+function\\s*\\([^)]*\\)\\s*\\{",
+                Pattern.MULTILINE);
 
         Matcher matcher = pattern.matcher(content);
         if (!matcher.find()) {
-            throw new IOException("Could not find 'export default function' in " + testFile);
+            throw new IOException(
+                    "Could not find 'export default function' in " + testFile);
         }
 
         int functionStart = matcher.end();
@@ -156,25 +195,32 @@ public class K6ScenarioCombiner {
         int functionEnd = functionStart;
 
         // Find matching closing brace
-        for (int i = functionStart; i < content.length() && braceCount > 0; i++) {
+        for (int i = functionStart; i < content.length()
+                && braceCount > 0; i++) {
             char c = content.charAt(i);
-            if (c == '{') braceCount++;
-            else if (c == '}') braceCount--;
+            if (c == '{')
+                braceCount++;
+            else if (c == '}')
+                braceCount--;
             functionEnd = i;
         }
 
         String functionBody = content.substring(functionStart, functionEnd);
 
-        // Rename inputData references to scenario-specific name for combined scripts
+        // Rename inputData references to scenario-specific name for combined
+        // scripts
         if (hasCsvData) {
-            functionBody = functionBody.replace("inputData", scenarioName + "InputData");
+            functionBody = functionBody.replace("inputData",
+                    scenarioName + "InputData");
         }
 
         // Create named export function
         StringBuilder sb = new StringBuilder();
         sb.append("// Scenario: ").append(scenarioName).append("\n");
-        sb.append("// Weight-based VU distribution - runs in parallel with other scenarios\n");
-        sb.append("export function ").append(scenarioName).append("Scenario() {");
+        sb.append(
+                "// Weight-based VU distribution - runs in parallel with other scenarios\n");
+        sb.append("export function ").append(scenarioName)
+                .append("Scenario() {");
         sb.append(functionBody);
         sb.append("}");
 
@@ -182,8 +228,8 @@ public class K6ScenarioCombiner {
     }
 
     /**
-     * Extracts a SharedArray block from a k6 script, if present.
-     * Returns the full block including any preceding comment line, or null if not found.
+     * Extracts a SharedArray block from a k6 script, if present. Returns the
+     * full block including any preceding comment line, or null if not found.
      */
     private String extractSharedArrayBlock(String content) {
         String marker = "const inputData = new SharedArray(";
@@ -192,10 +238,12 @@ public class K6ScenarioCombiner {
             return null;
         }
 
-        // Include the preceding comment line (e.g., "// Input test data from CSV ...")
+        // Include the preceding comment line (e.g., "// Input test data from
+        // CSV ...")
         int lineStart = content.lastIndexOf('\n', blockStart - 1);
         if (lineStart >= 0) {
-            String precedingLine = content.substring(lineStart + 1, blockStart).trim();
+            String precedingLine = content.substring(lineStart + 1, blockStart)
+                    .trim();
             if (precedingLine.startsWith("//")) {
                 blockStart = lineStart + 1;
             }
@@ -207,8 +255,10 @@ public class K6ScenarioCombiner {
         int parenCount = 1;
         while (i < content.length() && parenCount > 0) {
             char c = content.charAt(i);
-            if (c == '(') parenCount++;
-            else if (c == ')') parenCount--;
+            if (c == '(')
+                parenCount++;
+            else if (c == ')')
+                parenCount--;
             i++;
         }
 
@@ -229,12 +279,11 @@ public class K6ScenarioCombiner {
     }
 
     /**
-     * Converts a file name to a valid JavaScript function name.
-     * E.g., "hello-world.js" -> "helloWorld"
+     * Converts a file name to a valid JavaScript function name. E.g.,
+     * "hello-world.js" -> "helloWorld"
      */
     private static String fileToScenarioName(Path file) {
-        String name = file.getFileName().toString()
-                .replaceAll("\\.js$", "")
+        String name = file.getFileName().toString().replaceAll("\\.js$", "")
                 .replaceAll("-generated$", "");
 
         // Convert kebab-case to camelCase

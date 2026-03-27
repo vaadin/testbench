@@ -1,15 +1,12 @@
+/**
+ * Copyright (C) 2000-2026 Vaadin Ltd
+ *
+ * This program is available under Vaadin Commercial License and Service Terms.
+ *
+ * See <https://vaadin.com/commercial-license-and-service-terms> for the full
+ * license.
+ */
 package com.vaadin.testbench.loadtest;
-
-import com.vaadin.testbench.loadtest.util.ActuatorMetrics;
-import com.vaadin.testbench.loadtest.util.ActuatorMetrics.MetricsSummary;
-import com.vaadin.testbench.loadtest.util.K6ScenarioCombiner;
-import com.vaadin.testbench.loadtest.util.K6ScenarioCombiner.ScenarioConfig;
-import com.vaadin.testbench.loadtest.util.MetricsCollector;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.LifecyclePhase;
-import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,6 +19,18 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+
+import com.vaadin.testbench.loadtest.util.ActuatorMetrics;
+import com.vaadin.testbench.loadtest.util.ActuatorMetrics.MetricsSummary;
+import com.vaadin.testbench.loadtest.util.K6ScenarioCombiner;
+import com.vaadin.testbench.loadtest.util.K6ScenarioCombiner.ScenarioConfig;
+import com.vaadin.testbench.loadtest.util.MetricsCollector;
+
 /**
  * Runs k6 load tests.
  * <p>
@@ -32,6 +41,7 @@ import java.util.stream.Stream;
  * run all scenarios in parallel with weighted VU distribution.
  * <p>
  * Example usage:
+ * 
  * <pre>
  * // Run tests sequentially
  * mvn k6:run -Dk6.testDir=k6/tests -Dk6.vus=50 -Dk6.duration=1m
@@ -60,7 +70,8 @@ public class K6RunMojo extends AbstractK6Mojo {
     private List<File> testFiles;
 
     /**
-     * Directory containing k6 test files. All .js files (excluding helpers) will be run.
+     * Directory containing k6 test files. All .js files (excluding helpers)
+     * will be run.
      */
     @Parameter(property = "k6.testDir")
     private File testDir;
@@ -90,10 +101,10 @@ public class K6RunMojo extends AbstractK6Mojo {
     private int appPort;
 
     /**
-     * Spring Boot Actuator management port.
-     * If the target application has Spring Boot Actuator enabled, metrics
-     * (CPU usage, heap memory) will be fetched and reported after the load test.
-     * Set to -1 to disable metrics collection.
+     * Spring Boot Actuator management port. If the target application has
+     * Spring Boot Actuator enabled, metrics (CPU usage, heap memory) will be
+     * fetched and reported after the load test. Set to -1 to disable metrics
+     * collection.
      *
      * @see ActuatorMetrics
      */
@@ -101,9 +112,10 @@ public class K6RunMojo extends AbstractK6Mojo {
     private int managementPort;
 
     /**
-     * Enable collection of Vaadin-specific metrics from custom VaadinActuator endpoints.
-     * This requires the target application to implement VaadinActuator or equivalent
-     * that exposes Vaadin view metrics via Spring Boot Actuator.
+     * Enable collection of Vaadin-specific metrics from custom VaadinActuator
+     * endpoints. This requires the target application to implement
+     * VaadinActuator or equivalent that exposes Vaadin view metrics via Spring
+     * Boot Actuator.
      *
      * @see ActuatorMetrics
      */
@@ -113,7 +125,8 @@ public class K6RunMojo extends AbstractK6Mojo {
     /**
      * Interval in seconds for collecting server metrics during the load test.
      * Metrics are collected periodically and displayed as a time-series table
-     * after the test completes. Set to 0 to collect only a single snapshot at the end.
+     * after the test completes. Set to 0 to collect only a single snapshot at
+     * the end.
      */
     @Parameter(property = "k6.metricsInterval", defaultValue = "10")
     private int metricsInterval;
@@ -125,18 +138,18 @@ public class K6RunMojo extends AbstractK6Mojo {
     private boolean failOnThreshold;
 
     /**
-     * When true, combines all test files into a single k6 test with parallel scenarios.
-     * Each scenario runs with its own VU pool based on the configured weights.
-     * When false (default), tests are run sequentially.
+     * When true, combines all test files into a single k6 test with parallel
+     * scenarios. Each scenario runs with its own VU pool based on the
+     * configured weights. When false (default), tests are run sequentially.
      */
     @Parameter(property = "k6.combineScenarios", defaultValue = "false")
     private boolean combineScenarios;
 
     /**
-     * Scenario weights for combined execution. Format: "scenarioName:weight,scenarioName:weight"
-     * Scenario names are derived from file names (hello-world.js -> helloWorld).
-     * If not specified, scenarios are weighted equally.
-     * Example: "helloWorld:70,crudExample:30"
+     * Scenario weights for combined execution. Format:
+     * "scenarioName:weight,scenarioName:weight" Scenario names are derived from
+     * file names (hello-world.js -> helloWorld). If not specified, scenarios
+     * are weighted equally. Example: "helloWorld:70,crudExample:30"
      */
     @Parameter(property = "k6.scenarioWeights")
     private String scenarioWeights;
@@ -151,7 +164,8 @@ public class K6RunMojo extends AbstractK6Mojo {
         // Build list of test files to run
         List<Path> filesToRun = getTestFilesToRun();
         if (filesToRun.isEmpty()) {
-            throw new MojoExecutionException("No test files specified. Use testFile, testFiles, or testDir parameter.");
+            throw new MojoExecutionException(
+                    "No test files specified. Use testFile, testFiles, or testDir parameter.");
         }
 
         // Initialize (extract utilities)
@@ -166,9 +180,11 @@ public class K6RunMojo extends AbstractK6Mojo {
         // Start metrics collection if enabled
         MetricsCollector metricsCollector = null;
         if (managementPort >= 0 && metricsInterval > 0) {
-            ActuatorMetrics actuator = new ActuatorMetrics(appIp, managementPort, collectVaadinMetrics);
+            ActuatorMetrics actuator = new ActuatorMetrics(appIp,
+                    managementPort, collectVaadinMetrics);
             metricsCollector = new MetricsCollector(actuator, metricsInterval);
-            // Collect baseline before k6 starts to capture pre-test server state
+            // Collect baseline before k6 starts to capture pre-test server
+            // state
             metricsCollector.collectBaseline();
             metricsCollector.start();
         }
@@ -185,23 +201,26 @@ public class K6RunMojo extends AbstractK6Mojo {
                 metricsCollector.stop();
                 metricsCollector.printReport();
             } else {
-                // Fall back to single snapshot if periodic collection is disabled
+                // Fall back to single snapshot if periodic collection is
+                // disabled
                 reportActuatorMetrics();
             }
         }
     }
 
     /**
-     * Fetches and reports server metrics from Spring Boot Actuator.
-     * Silently skips if actuator is not available or disabled.
+     * Fetches and reports server metrics from Spring Boot Actuator. Silently
+     * skips if actuator is not available or disabled.
      */
     private void reportActuatorMetrics() {
         if (managementPort < 0) {
-            getLog().debug("Actuator metrics collection disabled (managementPort < 0)");
+            getLog().debug(
+                    "Actuator metrics collection disabled (managementPort < 0)");
             return;
         }
 
-        ActuatorMetrics actuator = new ActuatorMetrics(appIp, managementPort, collectVaadinMetrics);
+        ActuatorMetrics actuator = new ActuatorMetrics(appIp, managementPort,
+                collectVaadinMetrics);
         Optional<MetricsSummary> metrics = actuator.fetchMetrics();
 
         if (metrics.isPresent()) {
@@ -210,15 +229,18 @@ public class K6RunMojo extends AbstractK6Mojo {
             getLog().info(metrics.get().toString());
             getLog().info("========================================");
         } else {
-            getLog().debug("Actuator metrics not available at " + appIp + ":" + managementPort);
+            getLog().debug("Actuator metrics not available at " + appIp + ":"
+                    + managementPort);
         }
     }
 
     /**
      * Runs all scenarios in parallel using k6's scenario feature.
      */
-    private void runCombinedScenarios(List<Path> testFiles) throws MojoExecutionException {
-        getLog().info("Running " + testFiles.size() + " scenarios in parallel (combined mode)");
+    private void runCombinedScenarios(List<Path> testFiles)
+            throws MojoExecutionException {
+        getLog().info("Running " + testFiles.size()
+                + " scenarios in parallel (combined mode)");
         getLog().info("========================================");
         getLog().info("  Total virtual users: " + virtualUsers);
         getLog().info("  Duration: " + duration);
@@ -230,26 +252,33 @@ public class K6RunMojo extends AbstractK6Mojo {
 
         for (Path testFile : testFiles) {
             String scenarioName = fileToScenarioName(testFile);
-            int weight = weights.getOrDefault(scenarioName, 100 / testFiles.size());
+            int weight = weights.getOrDefault(scenarioName,
+                    100 / testFiles.size());
             scenarios.add(new ScenarioConfig(scenarioName, testFile, weight));
-            getLog().info("  Scenario: " + scenarioName + " (weight: " + weight + "%)");
+            getLog().info("  Scenario: " + scenarioName + " (weight: " + weight
+                    + "%)");
         }
         getLog().info("========================================");
         getLog().info("");
 
         // Generate combined test file
-        Path combinedFile = testFiles.get(0).getParent().resolve("combined-scenarios.js");
+        Path combinedFile = testFiles.get(0).getParent()
+                .resolve("combined-scenarios.js");
         try {
             K6ScenarioCombiner combiner = new K6ScenarioCombiner();
-            combiner.combine(scenarios, combinedFile, virtualUsers, duration, buildThresholdConfig());
+            combiner.combine(scenarios, combinedFile, virtualUsers, duration,
+                    buildThresholdConfig());
             getLog().info("Generated combined test: " + combinedFile);
         } catch (IOException e) {
-            throw new MojoExecutionException("Failed to generate combined test file", e);
+            throw new MojoExecutionException(
+                    "Failed to generate combined test file", e);
         }
 
-        // Run the combined test (VUs and duration are embedded in the file, don't override)
+        // Run the combined test (VUs and duration are embedded in the file,
+        // don't override)
         try {
-            nodeRunner.runK6Test(combinedFile, virtualUsers, duration, appIp, appPort, true);
+            nodeRunner.runK6Test(combinedFile, virtualUsers, duration, appIp,
+                    appPort, true);
             getLog().info("");
             getLog().info("========================================");
             getLog().info("Combined scenario test completed successfully");
@@ -258,7 +287,8 @@ public class K6RunMojo extends AbstractK6Mojo {
             if (failOnThreshold) {
                 throw e;
             } else {
-                getLog().warn("Combined test failed but failOnThreshold is false");
+                getLog().warn(
+                        "Combined test failed but failOnThreshold is false");
             }
         }
     }
@@ -266,8 +296,10 @@ public class K6RunMojo extends AbstractK6Mojo {
     /**
      * Runs tests sequentially (original behavior).
      */
-    private void runSequentialTests(List<Path> filesToRun) throws MojoExecutionException {
-        getLog().info("Running " + filesToRun.size() + " k6 load test(s) sequentially");
+    private void runSequentialTests(List<Path> filesToRun)
+            throws MojoExecutionException {
+        getLog().info("Running " + filesToRun.size()
+                + " k6 load test(s) sequentially");
         getLog().info("========================================");
         getLog().info("  Virtual users: " + virtualUsers);
         getLog().info("  Duration: " + duration);
@@ -289,7 +321,8 @@ public class K6RunMojo extends AbstractK6Mojo {
             getLog().info("----------------------------------------");
 
             try {
-                nodeRunner.runK6Test(testPath, virtualUsers, duration, appIp, appPort);
+                nodeRunner.runK6Test(testPath, virtualUsers, duration, appIp,
+                        appPort);
                 passed++;
                 getLog().info("Test passed: " + testPath.getFileName());
             } catch (MojoExecutionException e) {
@@ -298,20 +331,22 @@ public class K6RunMojo extends AbstractK6Mojo {
                     getLog().error("Test failed: " + testPath.getFileName());
                     throw e;
                 } else {
-                    getLog().warn("Test failed but failOnThreshold is false: " + testPath.getFileName());
+                    getLog().warn("Test failed but failOnThreshold is false: "
+                            + testPath.getFileName());
                 }
             }
         }
 
         getLog().info("");
         getLog().info("========================================");
-        getLog().info("k6 load test summary: " + passed + " passed, " + failed + " failed");
+        getLog().info("k6 load test summary: " + passed + " passed, " + failed
+                + " failed");
         getLog().info("========================================");
     }
 
     /**
-     * Parses scenario weights from the scenarioWeights parameter.
-     * Format: "scenarioName:weight,scenarioName:weight"
+     * Parses scenario weights from the scenarioWeights parameter. Format:
+     * "scenarioName:weight,scenarioName:weight"
      */
     private Map<String, Integer> parseScenarioWeights() {
         Map<String, Integer> weights = new HashMap<>();
@@ -319,7 +354,8 @@ public class K6RunMojo extends AbstractK6Mojo {
             for (String entry : scenarioWeights.split(",")) {
                 String[] parts = entry.trim().split(":");
                 if (parts.length == 2) {
-                    weights.put(parts[0].trim(), Integer.parseInt(parts[1].trim()));
+                    weights.put(parts[0].trim(),
+                            Integer.parseInt(parts[1].trim()));
                 }
             }
         }
@@ -327,12 +363,11 @@ public class K6RunMojo extends AbstractK6Mojo {
     }
 
     /**
-     * Converts a file name to a valid JavaScript function name.
-     * E.g., "hello-world.js" -> "helloWorld"
+     * Converts a file name to a valid JavaScript function name. E.g.,
+     * "hello-world.js" -> "helloWorld"
      */
     private String fileToScenarioName(Path file) {
-        String name = file.getFileName().toString()
-                .replaceAll("\\.js$", "")
+        String name = file.getFileName().toString().replaceAll("\\.js$", "")
                 .replaceAll("-generated$", "");
 
         // Convert kebab-case to camelCase
@@ -362,7 +397,8 @@ public class K6RunMojo extends AbstractK6Mojo {
             for (File f : testFiles) {
                 Path path = f.toPath().toAbsolutePath();
                 if (!Files.exists(path)) {
-                    throw new MojoExecutionException("Test file not found: " + path);
+                    throw new MojoExecutionException(
+                            "Test file not found: " + path);
                 }
                 result.add(path);
             }
@@ -372,28 +408,32 @@ public class K6RunMojo extends AbstractK6Mojo {
         if (testFile != null) {
             Path path = testFile.toPath().toAbsolutePath();
             if (!Files.exists(path)) {
-                throw new MojoExecutionException("Test file not found: " + path);
+                throw new MojoExecutionException(
+                        "Test file not found: " + path);
             }
             if (!result.contains(path)) {
                 result.add(path);
             }
         }
 
-        // Add all .js files from testDir (excluding helpers, generated, and combined)
+        // Add all .js files from testDir (excluding helpers, generated, and
+        // combined)
         if (testDir != null && testDir.exists() && testDir.isDirectory()) {
             try (Stream<Path> files = Files.list(testDir.toPath())) {
-                files.filter(p -> p.toString().endsWith(".js"))
-                     .filter(p -> !p.getFileName().toString().contains("helper"))
-                     .filter(p -> !p.getFileName().toString().contains("-generated"))
-                     .filter(p -> !p.getFileName().toString().equals("combined-scenarios.js"))
-                     .sorted()
-                     .forEach(p -> {
-                         if (!result.contains(p.toAbsolutePath())) {
-                             result.add(p.toAbsolutePath());
-                         }
-                     });
+                files.filter(p -> p.toString().endsWith(".js")).filter(
+                        p -> !p.getFileName().toString().contains("helper"))
+                        .filter(p -> !p.getFileName().toString()
+                                .contains("-generated"))
+                        .filter(p -> !p.getFileName().toString()
+                                .equals("combined-scenarios.js"))
+                        .sorted().forEach(p -> {
+                            if (!result.contains(p.toAbsolutePath())) {
+                                result.add(p.toAbsolutePath());
+                            }
+                        });
             } catch (IOException e) {
-                throw new MojoExecutionException("Failed to list test directory: " + testDir, e);
+                throw new MojoExecutionException(
+                        "Failed to list test directory: " + testDir, e);
             }
         }
 

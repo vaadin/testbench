@@ -1,3 +1,11 @@
+/**
+ * Copyright (C) 2000-2026 Vaadin Ltd
+ *
+ * This program is available under Vaadin Commercial License and Service Terms.
+ *
+ * See <https://vaadin.com/commercial-license-and-service-terms> for the full
+ * license.
+ */
 package com.vaadin.testbench.loadtest.util;
 
 import java.io.IOException;
@@ -11,12 +19,13 @@ import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 /**
- * Calculates hashes of source files to detect changes and enable caching.
- * Used to skip re-recording TestBench tests when sources haven't changed.
+ * Calculates hashes of source files to detect changes and enable caching. Used
+ * to skip re-recording TestBench tests when sources haven't changed.
  */
 public class SourceHasher {
 
-    private static final Logger log = Logger.getLogger(SourceHasher.class.getName());
+    private static final Logger log = Logger
+            .getLogger(SourceHasher.class.getName());
 
     public SourceHasher() {
     }
@@ -24,8 +33,10 @@ public class SourceHasher {
     /**
      * Calculates a combined hash of the test class source file and pom.xml.
      *
-     * @param testWorkDir the project directory containing the test
-     * @param testClass   the test class name (e.g., "HelloWorldIT")
+     * @param testWorkDir
+     *            the project directory containing the test
+     * @param testClass
+     *            the test class name (e.g., "HelloWorldIT")
      * @return hex string of the combined hash, or null if files not found
      */
     public String calculateSourceHash(Path testWorkDir, String testClass) {
@@ -64,24 +75,22 @@ public class SourceHasher {
      */
     private Path findTestFile(Path projectDir, String className) {
         // Common test source locations
-        List<String> searchPaths = List.of(
-                "src/test/java",
-                "src/it/java"
-        );
+        List<String> searchPaths = List.of("src/test/java", "src/it/java");
 
         for (String searchPath : searchPaths) {
             Path searchDir = projectDir.resolve(searchPath);
             if (Files.exists(searchDir)) {
                 try (Stream<Path> files = Files.walk(searchDir)) {
                     Path found = files
-                            .filter(p -> p.getFileName().toString().equals(className + ".java"))
-                            .findFirst()
-                            .orElse(null);
+                            .filter(p -> p.getFileName().toString()
+                                    .equals(className + ".java"))
+                            .findFirst().orElse(null);
                     if (found != null) {
                         return found;
                     }
                 } catch (IOException e) {
-                    log.fine("Error searching " + searchDir + ": " + e.getMessage());
+                    log.fine("Error searching " + searchDir + ": "
+                            + e.getMessage());
                 }
             }
         }
@@ -91,7 +100,8 @@ public class SourceHasher {
     /**
      * Reads a stored hash from a file.
      *
-     * @param hashFile path to the hash file
+     * @param hashFile
+     *            path to the hash file
      * @return the stored hash, or null if file doesn't exist
      */
     public String readStoredHash(Path hashFile) {
@@ -108,8 +118,10 @@ public class SourceHasher {
     /**
      * Stores a hash to a file.
      *
-     * @param hashFile path to the hash file
-     * @param hash     the hash to store
+     * @param hashFile
+     *            path to the hash file
+     * @param hash
+     *            the hash to store
      */
     public void storeHash(Path hashFile, String hash) {
         try {

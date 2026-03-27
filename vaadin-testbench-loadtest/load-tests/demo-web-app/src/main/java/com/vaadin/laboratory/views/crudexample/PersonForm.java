@@ -1,7 +1,15 @@
+/**
+ * Copyright (C) 2000-2026 Vaadin Ltd
+ *
+ * This program is available under Vaadin Commercial License and Service Terms.
+ *
+ * See <https://vaadin.com/commercial-license-and-service-terms> for the full
+ * license.
+ */
 package com.vaadin.laboratory.views.crudexample;
 
-import com.vaadin.laboratory.data.SamplePerson;
-import com.vaadin.laboratory.services.SamplePersonService;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
+
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
@@ -18,7 +26,8 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.function.SerializableRunnable;
-import org.springframework.orm.ObjectOptimisticLockingFailureException;
+import com.vaadin.laboratory.data.SamplePerson;
+import com.vaadin.laboratory.services.SamplePersonService;
 
 class PersonForm extends Div {
 
@@ -40,7 +49,8 @@ class PersonForm extends Div {
     private final BeanValidationBinder<SamplePerson> binder;
     private SamplePerson samplePerson;
 
-    PersonForm(SamplePersonService samplePersonService, SerializableRunnable refreshGridRunnable) {
+    PersonForm(SamplePersonService samplePersonService,
+            SerializableRunnable refreshGridRunnable) {
         this.samplePersonService = samplePersonService;
         this.refreshGridRunnable = refreshGridRunnable;
         setClassName("editor-layout");
@@ -97,7 +107,8 @@ class PersonForm extends Div {
             n.setPosition(Notification.Position.MIDDLE);
             n.addThemeVariants(NotificationVariant.LUMO_ERROR);
         } catch (ValidationException validationException) {
-            Notification.show("Failed to update the data. Check again that all values are valid");
+            Notification.show(
+                    "Failed to update the data. Check again that all values are valid");
         }
     }
 
@@ -107,10 +118,8 @@ class PersonForm extends Div {
         lastName.setId("lastname-field");
 
         Div editorDiv = new Div();
-        editorDiv.add(
-                new FormLayout(
-                        firstName, lastName, email, phone, dateOfBirth,
-                        occupation, role, important));
+        editorDiv.add(new FormLayout(firstName, lastName, email, phone,
+                dateOfBirth, occupation, role, important));
 
         editorDiv.setClassName("editor");
 
@@ -120,7 +129,8 @@ class PersonForm extends Div {
     private HorizontalLayout createButtonLayout() {
         HorizontalLayout buttonLayout = new HorizontalLayout();
         buttonLayout.setClassName("button-layout");
-        delete.addThemeVariants(ButtonVariant.LUMO_ERROR, ButtonVariant.LUMO_TERTIARY);
+        delete.addThemeVariants(ButtonVariant.LUMO_ERROR,
+                ButtonVariant.LUMO_TERTIARY);
         cancel.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
         save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
 

@@ -1,8 +1,17 @@
+/**
+ * Copyright (C) 2000-2026 Vaadin Ltd
+ *
+ * This program is available under Vaadin Commercial License and Service Terms.
+ *
+ * See <https://vaadin.com/commercial-license-and-service-terms> for the full
+ * license.
+ */
 package com.vaadin.laboratory.views.crudexample;
 
-import com.vaadin.laboratory.services.SamplePersonService;
-import com.vaadin.flow.function.SerializableRunnable;
 import org.springframework.stereotype.Component;
+
+import com.vaadin.flow.function.SerializableRunnable;
+import com.vaadin.laboratory.services.SamplePersonService;
 
 @Component
 class CrudExampleFactory {

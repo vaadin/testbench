@@ -1,12 +1,12 @@
+/**
+ * Copyright (C) 2000-2026 Vaadin Ltd
+ *
+ * This program is available under Vaadin Commercial License and Service Terms.
+ *
+ * See <https://vaadin.com/commercial-license-and-service-terms> for the full
+ * license.
+ */
 package com.vaadin.testbench.loadtest;
-
-import com.vaadin.testbench.loadtest.util.K6TestRefactorer.ThinkTimeConfig;
-import com.vaadin.testbench.loadtest.util.SourceHasher;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.LifecyclePhase;
-import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -18,18 +18,28 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+
+import com.vaadin.testbench.loadtest.util.K6TestRefactorer.ThinkTimeConfig;
+import com.vaadin.testbench.loadtest.util.SourceHasher;
+
 /**
  * Records TestBench tests through a proxy and converts them to k6 load tests.
  * <p>
  * This goal supports recording multiple test classes. For each test class it:
  * <ol>
- *   <li>Starts a recording proxy on the specified port</li>
- *   <li>Runs the TestBench test class with proxy configuration</li>
- *   <li>Stops the proxy and saves the HAR file</li>
- *   <li>Converts the HAR to a k6 test (filters, converts, refactors)</li>
+ * <li>Starts a recording proxy on the specified port</li>
+ * <li>Runs the TestBench test class with proxy configuration</li>
+ * <li>Stops the proxy and saves the HAR file</li>
+ * <li>Converts the HAR to a k6 test (filters, converts, refactors)</li>
  * </ol>
  * <p>
  * Example usage:
+ * 
  * <pre>
  * mvn k6:record -Dk6.testClasses=HelloWorldIT,CrudExampleIT
  * </pre>
@@ -38,16 +48,15 @@ import java.util.concurrent.TimeUnit;
 public class K6RecordMojo extends AbstractK6Mojo {
 
     /**
-     * The TestBench test class to record.
-     * Can be a simple class name or fully qualified name.
-     * For multiple classes, use testClasses instead.
+     * The TestBench test class to record. Can be a simple class name or fully
+     * qualified name. For multiple classes, use testClasses instead.
      */
     @Parameter(property = "k6.testClass")
     private String testClass;
 
     /**
-     * List of TestBench test classes to record.
-     * Each class will be recorded separately and generate its own k6 test file.
+     * List of TestBench test classes to record. Each class will be recorded
+     * separately and generate its own k6 test file.
      */
     @Parameter(property = "k6.testClasses")
     private List<String> testClasses;
@@ -65,8 +74,8 @@ public class K6RecordMojo extends AbstractK6Mojo {
     private int appPort;
 
     /**
-     * Working directory for running the TestBench test.
-     * Defaults to the project base directory.
+     * Working directory for running the TestBench test. Defaults to the project
+     * base directory.
      */
     @Parameter(property = "k6.testWorkDir", defaultValue = "${project.basedir}")
     private File testWorkDir;
@@ -96,36 +105,36 @@ public class K6RecordMojo extends AbstractK6Mojo {
     private String mavenArgs;
 
     /**
-     * Force re-recording even if sources haven't changed.
-     * By default, recording is skipped if the test source files and pom.xml
-     * haven't changed since the last recording.
+     * Force re-recording even if sources haven't changed. By default, recording
+     * is skipped if the test source files and pom.xml haven't changed since the
+     * last recording.
      */
     @Parameter(property = "k6.forceRecord", defaultValue = "false")
     private boolean forceRecord;
 
     /**
-     * Enable realistic think time delays between user actions.
-     * When enabled, the generated k6 scripts will include sleep() calls
-     * to simulate real user behavior (reading pages, thinking before actions).
-     * Set to false for maximum throughput testing.
+     * Enable realistic think time delays between user actions. When enabled,
+     * the generated k6 scripts will include sleep() calls to simulate real user
+     * behavior (reading pages, thinking before actions). Set to false for
+     * maximum throughput testing.
      */
     @Parameter(property = "k6.thinkTime.enabled", defaultValue = "true")
     private boolean thinkTimeEnabled;
 
     /**
-     * Base delay in seconds after page load (v-r=init response).
-     * Simulates time for a user to read and understand the page.
-     * Actual delay will be: baseDelay + random(0, baseDelay * 1.5)
-     * Set to 0 to disable page read delays while keeping interaction delays.
+     * Base delay in seconds after page load (v-r=init response). Simulates time
+     * for a user to read and understand the page. Actual delay will be:
+     * baseDelay + random(0, baseDelay * 1.5) Set to 0 to disable page read
+     * delays while keeping interaction delays.
      */
     @Parameter(property = "k6.thinkTime.pageReadDelay", defaultValue = "2.0")
     private double pageReadDelay;
 
     /**
      * Base delay in seconds after user interaction (v-r=uidl response).
-     * Simulates thinking time between user actions.
-     * Actual delay will be: baseDelay + random(0, baseDelay * 3)
-     * Set to 0 to disable interaction delays while keeping page read delays.
+     * Simulates thinking time between user actions. Actual delay will be:
+     * baseDelay + random(0, baseDelay * 3) Set to 0 to disable interaction
+     * delays while keeping page read delays.
      */
     @Parameter(property = "k6.thinkTime.interactionDelay", defaultValue = "0.5")
     private double interactionDelay;
@@ -142,10 +151,12 @@ public class K6RecordMojo extends AbstractK6Mojo {
         // Build list of test classes to record
         List<String> classesToRecord = getTestClassesToRecord();
         if (classesToRecord.isEmpty()) {
-            throw new MojoExecutionException("No test classes specified. Use testClass or testClasses parameter.");
+            throw new MojoExecutionException(
+                    "No test classes specified. Use testClass or testClasses parameter.");
         }
 
-        getLog().info("Recording " + classesToRecord.size() + " TestBench test(s)");
+        getLog().info(
+                "Recording " + classesToRecord.size() + " TestBench test(s)");
         getLog().info("  Proxy port: " + proxyPort);
         getLog().info("  App port: " + appPort);
 
@@ -162,15 +173,18 @@ public class K6RecordMojo extends AbstractK6Mojo {
         // Record each test class
         for (String currentTestClass : classesToRecord) {
             try {
-                RecordResult result = recordSingleTest(currentTestClass, outputPath);
+                RecordResult result = recordSingleTest(currentTestClass,
+                        outputPath);
                 if (result.wasCached()) {
                     cachedTests.add(result.testFile());
                 } else {
                     generatedTests.add(result.testFile());
                 }
             } catch (Exception e) {
-                getLog().error("Failed to record test class: " + currentTestClass, e);
-                throw new MojoExecutionException("Failed to record test class: " + currentTestClass, e);
+                getLog().error(
+                        "Failed to record test class: " + currentTestClass, e);
+                throw new MojoExecutionException(
+                        "Failed to record test class: " + currentTestClass, e);
             }
         }
 
@@ -185,7 +199,8 @@ public class K6RecordMojo extends AbstractK6Mojo {
             }
         }
         if (!cachedTests.isEmpty()) {
-            getLog().info("Skipped " + cachedTests.size() + " unchanged test(s):");
+            getLog().info(
+                    "Skipped " + cachedTests.size() + " unchanged test(s):");
             for (Path test : cachedTests) {
                 getLog().info("  - " + test.getFileName() + " (cached)");
             }
@@ -203,7 +218,8 @@ public class K6RecordMojo extends AbstractK6Mojo {
     /**
      * Result of recording a single test.
      */
-    private record RecordResult(Path testFile, boolean wasCached) {}
+    private record RecordResult(Path testFile, boolean wasCached) {
+    }
 
     /**
      * Builds the list of test classes to record from configuration.
@@ -237,22 +253,26 @@ public class K6RecordMojo extends AbstractK6Mojo {
     }
 
     /**
-     * Records a single test class and returns the path to the generated k6 test.
-     * Uses hash-based caching to skip recording if sources haven't changed.
+     * Records a single test class and returns the path to the generated k6
+     * test. Uses hash-based caching to skip recording if sources haven't
+     * changed.
      */
-    private RecordResult recordSingleTest(String currentTestClass, Path outputPath)
-            throws MojoExecutionException, InterruptedException, java.io.IOException {
+    private RecordResult recordSingleTest(String currentTestClass,
+            Path outputPath) throws MojoExecutionException,
+            InterruptedException, java.io.IOException {
 
         // Prepare paths
         String outputName = scenarioToFileName(currentTestClass);
-        Path harPath = harDir.toPath().resolve(outputName + "-recording.har").toAbsolutePath();
+        Path harPath = harDir.toPath().resolve(outputName + "-recording.har")
+                .toAbsolutePath();
         Path generatedFile = outputPath.resolve(outputName + "-generated.js");
         Path refactoredFile = outputPath.resolve(outputName + ".js");
         Path hashFile = outputPath.resolve(outputName + ".hash");
 
         // Check if we can use cached version
         if (!forceRecord && Files.exists(refactoredFile)) {
-            String currentHash = sourceHasher.calculateSourceHash(testWorkDir.toPath(), currentTestClass);
+            String currentHash = sourceHasher.calculateSourceHash(
+                    testWorkDir.toPath(), currentTestClass);
             String storedHash = sourceHasher.readStoredHash(hashFile);
 
             if (currentHash != null && currentHash.equals(storedHash)) {
@@ -291,10 +311,12 @@ public class K6RecordMojo extends AbstractK6Mojo {
             if (recordedEntries == 0) {
                 nodeRunner.stopProxyRecorder();
                 throw new MojoExecutionException(
-                        "Proxy recorded 0 requests for test '" + currentTestClass + "'. "
-                        + "The test likely did not route traffic through the proxy on port " + proxyPort + ". "
-                        + "Verify that the K6RecordingExtension is on the classpath and "
-                        + "junit.jupiter.extensions.autodetection.enabled=true is set.");
+                        "Proxy recorded 0 requests for test '"
+                                + currentTestClass + "'. "
+                                + "The test likely did not route traffic through the proxy on port "
+                                + proxyPort + ". "
+                                + "Verify that the K6RecordingExtension is on the classpath and "
+                                + "junit.jupiter.extensions.autodetection.enabled=true is set.");
             }
             getLog().info("Proxy captured " + recordedEntries + " requests");
 
@@ -306,13 +328,16 @@ public class K6RecordMojo extends AbstractK6Mojo {
 
             // Check HAR file
             if (!Files.exists(harPath)) {
-                throw new MojoExecutionException("HAR file was not created: " + harPath);
+                throw new MojoExecutionException(
+                        "HAR file was not created: " + harPath);
             }
 
-            getLog().info("HAR file created: " + harPath + " (" + Files.size(harPath) + " bytes)");
+            getLog().info("HAR file created: " + harPath + " ("
+                    + Files.size(harPath) + " bytes)");
 
             if (!testSuccess) {
-                getLog().warn("TestBench test may have failed, but HAR was recorded. Continuing with conversion...");
+                getLog().warn(
+                        "TestBench test may have failed, but HAR was recorded. Continuing with conversion...");
             }
 
             // Step 4: Filter external domains
@@ -324,10 +349,12 @@ public class K6RecordMojo extends AbstractK6Mojo {
             // Step 6: Refactor for Vaadin (with think time configuration)
             ThinkTimeConfig thinkTimeConfig = new ThinkTimeConfig(
                     thinkTimeEnabled, pageReadDelay, interactionDelay);
-            nodeRunner.refactorK6Test(generatedFile, refactoredFile, thinkTimeConfig);
+            nodeRunner.refactorK6Test(generatedFile, refactoredFile,
+                    thinkTimeConfig);
 
             // Step 7: Store hash for future cache checks
-            String currentHash = sourceHasher.calculateSourceHash(testWorkDir.toPath(), currentTestClass);
+            String currentHash = sourceHasher.calculateSourceHash(
+                    testWorkDir.toPath(), currentTestClass);
             if (currentHash != null) {
                 sourceHasher.storeHash(hashFile, currentHash);
             }
@@ -343,16 +370,20 @@ public class K6RecordMojo extends AbstractK6Mojo {
     /**
      * Runs the TestBench test using Maven failsafe plugin.
      *
-     * @param currentTestClass the test class to run
+     * @param currentTestClass
+     *            the test class to run
      * @return true if the test completed successfully
-     * @throws MojoExecutionException if test execution fails critically
+     * @throws MojoExecutionException
+     *             if test execution fails critically
      */
-    private boolean runTestBenchTest(String currentTestClass) throws MojoExecutionException {
+    private boolean runTestBenchTest(String currentTestClass)
+            throws MojoExecutionException {
         getLog().info("Running TestBench test: " + currentTestClass);
 
         try {
             List<String> command = new ArrayList<>();
-            boolean isWindows = System.getProperty("os.name", "").toLowerCase().contains("win");
+            boolean isWindows = System.getProperty("os.name", "").toLowerCase()
+                    .contains("win");
             if (isWindows) {
                 command.add("cmd.exe");
                 command.add("/c");
@@ -364,7 +395,8 @@ public class K6RecordMojo extends AbstractK6Mojo {
             command.add("-Dserver.port=" + appPort);
             command.add("-DfailIfNoTests=false");
             // Enable JUnit 5 auto-detection for K6RecordingExtension
-            command.add("-Djunit.jupiter.extensions.autodetection.enabled=true");
+            command.add(
+                    "-Djunit.jupiter.extensions.autodetection.enabled=true");
 
             // Add any extra Maven arguments
             if (mavenArgs != null && !mavenArgs.isEmpty()) {
@@ -393,7 +425,8 @@ public class K6RecordMojo extends AbstractK6Mojo {
             boolean finished = process.waitFor(testTimeout, TimeUnit.SECONDS);
             if (!finished) {
                 process.destroyForcibly();
-                getLog().warn("TestBench test timed out after " + testTimeout + " seconds");
+                getLog().warn("TestBench test timed out after " + testTimeout
+                        + " seconds");
                 return false;
             }
 
