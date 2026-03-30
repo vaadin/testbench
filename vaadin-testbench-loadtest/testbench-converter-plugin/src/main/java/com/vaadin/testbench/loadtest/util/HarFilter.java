@@ -14,6 +14,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -43,6 +44,13 @@ public class HarFilter {
             "apple.com", "icloud.com",
             // Common CDNs and analytics (usually not part of app testing)
             "cloudflare.com", "akamai.net", "fastly.net");
+
+    /**
+     * HTTP methods supported by k6's http module. Entries with other methods
+     * (e.g., CONNECT for HTTPS tunneling) are filtered out.
+     */
+    private static final Set<String> K6_SUPPORTED_METHODS = Set.of("GET",
+            "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS");
 
     private static final Logger log = Logger
             .getLogger(HarFilter.class.getName());
@@ -109,6 +117,19 @@ public class HarFilter {
                     log.fine("  Filtered UNLOAD request: " + url);
                     continue;
                 }
+                // Filter unsupported HTTP methods (CONNECT for HTTPS
+                // tunneling, TRACE, etc.)
+                if (entry.request().method() != null && !K6_SUPPORTED_METHODS
+                        .contains(entry.request().method().toUpperCase())) {
+                    log.fine("  Filtered unsupported method "
+                            + entry.request().method() + ": " + url);
+                    continue;
+                }
+                // Filter WebSocket upgrade requests (not replayable as HTTP)
+                if (isWebSocketUpgrade(entry)) {
+                    log.fine("  Filtered WebSocket upgrade: " + url);
+                    continue;
+                }
             }
             filteredEntries.add(entry);
         }
@@ -143,6 +164,26 @@ public class HarFilter {
                 && entry.request().postData().text() != null) {
             return entry.request().postData().text()
                     .contains("\"UNLOAD\":true");
+        }
+        return false;
+    }
+
+    /**
+     * Check if a request is a WebSocket upgrade (GET with {@code Upgrade:
+     * websocket} header). These cannot be replayed as regular HTTP requests.
+     *
+     * @param entry
+     *            the HAR entry to check
+     * @return {@code true} if the entry is a WebSocket upgrade request
+     */
+    private boolean isWebSocketUpgrade(HarEntry entry) {
+        if (entry.request().headers() != null) {
+            for (HarHeader header : entry.request().headers()) {
+                if ("upgrade".equalsIgnoreCase(header.name())
+                        && "websocket".equalsIgnoreCase(header.value())) {
+                    return true;
+                }
+            }
         }
         return false;
     }
