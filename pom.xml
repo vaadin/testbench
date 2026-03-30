@@ -60,6 +60,7 @@
         <module>vaadin-testbench-unit-junit5</module>
         <module>vaadin-testbench-unit-junit6</module>
         <module>vaadin-testbench-unit-quarkus</module>
+        <module>vaadin-testbench-loadtest</module>
     </modules>
     <repositories>
         <repository>
