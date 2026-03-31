@@ -10,7 +10,7 @@
     </parent>
     <artifactId>vaadin-testbench-parent</artifactId>
     <packaging>pom</packaging>
-    <version>10.1-SNAPSHOT</version>
+    <version>10.2-SNAPSHOT</version>
     <name>Vaadin TestBench parent</name>
 
     <organization>
@@ -60,6 +60,7 @@
         <module>vaadin-testbench-unit-junit5</module>
         <module>vaadin-testbench-unit-junit6</module>
         <module>vaadin-testbench-unit-quarkus</module>
+        <module>vaadin-testbench-loadtest</module>
     </modules>
     <repositories>
         <repository>

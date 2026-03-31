@@ -9,12 +9,15 @@
 package com.vaadin.testbench.unit;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import com.example.base.signals.SignalsView;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
+
+import com.vaadin.flow.signals.SignalEnvironment;
 
 @ViewPackages(packages = "com.example.base.signals")
 @Timeout(10)
@@ -65,6 +68,30 @@ public class SignalsTest extends UIUnitTest {
         test(view.quickBackgroundTaskButton).click();
         runPendingSignalsTasks(300, TimeUnit.MILLISECONDS);
         Assertions.assertEquals("Counter: 10", counterTester.getText());
+    }
+
+    @Test
+    void effectDispatcher_routesToTestQueue_notServiceThreadPool()
+            throws InterruptedException {
+        // On the test thread, both VaadinServiceEnvironment (from
+        // MockVaadin) and TestSignalEnvironment are active. The default
+        // effect dispatcher must resolve to TestSignalEnvironment's queue
+        // (via registerFirst) so that runPendingSignalsTasks() can drive
+        // effect execution deterministically. Without registerFirst,
+        // VaadinServiceEnvironment's thread pool would be used instead,
+        // making effects run asynchronously outside the test's control.
+        navigate(SignalsView.class);
+
+        var latch = new CountDownLatch(1);
+        SignalEnvironment.getDefaultEffectDispatcher()
+                .execute(latch::countDown);
+
+        Assertions.assertFalse(latch.await(50, TimeUnit.MILLISECONDS),
+                "Task should be queued, not executed immediately on a "
+                        + "thread pool");
+        runPendingSignalsTasks();
+        Assertions.assertTrue(latch.await(0, TimeUnit.MILLISECONDS),
+                "Task should have executed after draining the test queue");
     }
 
     @Test
