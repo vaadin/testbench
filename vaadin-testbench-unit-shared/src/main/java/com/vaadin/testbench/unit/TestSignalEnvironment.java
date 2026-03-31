@@ -25,8 +25,10 @@ import com.vaadin.flow.signals.SignalEnvironment;
  * <p>
  * How it works:
  * <ul>
- * <li>{@link #getResultNotifier()} and {@link #getEffectDispatcher()} return
- * executors that enqueue tasks into an internal queue.</li>
+ * <li>{@link #getEffectDispatcher()} returns an executor that enqueues tasks
+ * into an internal queue. {@link #getResultNotifier()} returns {@code null} so
+ * that result notifications fall through to the next environment or run
+ * immediately.</li>
  * <li>Tests call {@link #runPendingTasks(long, TimeUnit)} to dequeue and run
  * all pending tasks on the calling thread.</li>
  * <li>If the current thread holds a {@link VaadinSession} lock, the lock is
@@ -72,7 +74,7 @@ class TestSignalEnvironment extends SignalEnvironment {
      */
     static TestSignalEnvironment register() {
         TestSignalEnvironment environment = new TestSignalEnvironment();
-        environment.cleanup = SignalEnvironment.register(environment);
+        environment.cleanup = SignalEnvironment.registerFirst(environment);
         return environment;
     }
 
@@ -102,35 +104,35 @@ class TestSignalEnvironment extends SignalEnvironment {
 
     @Override
     protected Executor getResultNotifier() {
-        return createTaskEnqueueExecutor();
+        // Return null so result notifications fall through to the next
+        // environment (e.g. VaadinServiceEnvironment) or to the immediate
+        // executor. This keeps result processing synchronous on the calling
+        // thread, which is important for deterministic test behavior when
+        // signal operations are triggered on the test thread.
+        return null;
     }
 
     @Override
     protected Executor getEffectDispatcher() {
-        return createTaskEnqueueExecutor();
-    }
-
-    private Executor createTaskEnqueueExecutor() {
         return tasks::offer;
     }
 
     /**
-     * Executes all pending tasks from the queue, waiting for the first task to
-     * arrive if necessary. Once the first task is processed, all remaining
-     * tasks are processed immediately without additional waiting.
+     * Executes pending tasks from the queue, continuously polling for new tasks
+     * until the timeout expires with no new task arriving.
      *
      * <p>
      * If a {@link VaadinSession} lock is held by the current thread, it is
-     * temporarily released during the wait for the first task, allowing
-     * background threads to acquire the lock and enqueue tasks. The lock is
-     * automatically reacquired before this method returns.
+     * temporarily released while polling for tasks, allowing background threads
+     * to acquire the lock and enqueue tasks. The lock is reacquired before
+     * running each task and released again before the next poll.
      *
      * <p>
      * If the current thread is interrupted while waiting for tasks, the method
      * restores the interrupt status and fails with an {@link AssertionError}.
      *
      * @param maxWaitTime
-     *            the maximum time to wait for the first task to arrive in the
+     *            the maximum time to wait for the next task to arrive in the
      *            given time unit. If &lt;= 0, returns immediately if no tasks
      *            are available.
      * @param unit
@@ -138,7 +140,8 @@ class TestSignalEnvironment extends SignalEnvironment {
      * @return {@code true} if any pending Signals tasks were processed.
      */
     boolean runPendingTasks(long maxWaitTime, TimeUnit unit) {
-        long waitMillis = unit.toMillis(maxWaitTime);
+        long deadlineMillis = System.currentTimeMillis()
+                + unit.toMillis(maxWaitTime);
         VaadinSession session = VaadinSession.getCurrent();
         boolean hadLock = false;
         if (session != null && session.hasLock()) {
@@ -146,35 +149,51 @@ class TestSignalEnvironment extends SignalEnvironment {
             session.unlock();
         }
         try {
-            // Wait for the first task with the specified timeout
-            Runnable task;
-            try {
-                task = waitMillis > 0
-                        ? tasks.poll(waitMillis, TimeUnit.MILLISECONDS)
-                        : tasks.poll();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                throw new AssertionError(
-                        "Thread interrupted while waiting for pending Signals tasks");
+            boolean processedAny = false;
+            while (true) {
+                long remainingMillis = deadlineMillis
+                        - System.currentTimeMillis();
+                Runnable task;
+                try {
+                    task = remainingMillis > 0
+                            ? tasks.poll(remainingMillis,
+                                    TimeUnit.MILLISECONDS)
+                            : tasks.poll();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    throw new AssertionError(
+                            "Thread interrupted while waiting for pending Signals tasks");
+                }
+                if (task == null) {
+                    if (!processedAny) {
+                        LoggerFactory.getLogger(TestSignalEnvironment.class)
+                                .debug("No pending Signals tasks found after waiting for {} {}",
+                                        maxWaitTime, unit);
+                    }
+                    break;
+                }
+                // Re-acquire the session lock before running the task so
+                // that DOM operations (which assert the lock is held) work
+                // correctly when the effect runs directly on the test
+                // thread instead of going through ui.access().
+                if (hadLock) {
+                    session.lock();
+                }
+                try {
+                    task.run();
+                } finally {
+                    if (hadLock) {
+                        session.unlock();
+                    }
+                }
+                processedAny = true;
             }
-            if (task == null) {
-                LoggerFactory.getLogger(TestSignalEnvironment.class).debug(
-                        "No pending Signals tasks found after waiting for {} {}",
-                        maxWaitTime, unit);
-                return false;
-            }
-            while (task != null) {
-                task.run();
-                // Process remaining tasks immediately, do not wait for
-                // additional tasks to be enqueued
-                task = tasks.poll();
-            }
+            return processedAny;
         } finally {
             if (hadLock) {
                 session.lock();
             }
         }
-        return true;
     }
 
 }
