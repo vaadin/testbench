@@ -49,8 +49,8 @@ public class HarFilter {
      * HTTP methods supported by k6's http module. Entries with other methods
      * (e.g., CONNECT for HTTPS tunneling) are filtered out.
      */
-    private static final Set<String> K6_SUPPORTED_METHODS = Set.of("GET",
-            "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS");
+    static final Set<String> K6_SUPPORTED_METHODS = Set.of("GET", "POST", "PUT",
+            "PATCH", "DELETE", "HEAD", "OPTIONS");
 
     private static final Logger log = Logger
             .getLogger(HarFilter.class.getName());

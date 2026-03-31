@@ -14,7 +14,6 @@ import java.nio.file.Path;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -30,13 +29,6 @@ import tools.jackson.databind.json.JsonMapper;
  * package with a pure Java implementation.
  */
 public class HarToK6Converter {
-
-    /**
-     * HTTP methods supported by k6's http module. Entries with other methods
-     * (e.g., CONNECT for HTTPS tunneling) are skipped during conversion.
-     */
-    private static final Set<String> K6_SUPPORTED_METHODS = Set.of("GET",
-            "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS");
 
     private static final Logger log = Logger
             .getLogger(HarToK6Converter.class.getName());
@@ -150,7 +142,7 @@ public class HarToK6Converter {
             // Skip unsupported HTTP methods (safety net for unfiltered HAR
             // files)
             String method = entry.request().method().toUpperCase();
-            if (!K6_SUPPORTED_METHODS.contains(method)) {
+            if (!HarFilter.K6_SUPPORTED_METHODS.contains(method)) {
                 log.warning("  Skipping unsupported HTTP method: " + method
                         + " " + truncateUrl(entry.request().url()));
                 continue;
