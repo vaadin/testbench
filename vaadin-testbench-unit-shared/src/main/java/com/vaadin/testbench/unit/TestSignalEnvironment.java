@@ -156,8 +156,7 @@ class TestSignalEnvironment extends SignalEnvironment {
                 Runnable task;
                 try {
                     task = remainingMillis > 0
-                            ? tasks.poll(remainingMillis,
-                                    TimeUnit.MILLISECONDS)
+                            ? tasks.poll(remainingMillis, TimeUnit.MILLISECONDS)
                             : tasks.poll();
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
