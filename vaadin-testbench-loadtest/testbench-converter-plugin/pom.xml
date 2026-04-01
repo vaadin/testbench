@@ -123,7 +123,7 @@
                 <artifactId>maven-plugin-plugin</artifactId>
                 <version>${maven-plugin-annotations.version}</version>
                 <configuration>
-                    <goalPrefix>k6</goalPrefix>
+                    <goalPrefix>loadtest</goalPrefix>
                 </configuration>
                 <executions>
                     <execution>

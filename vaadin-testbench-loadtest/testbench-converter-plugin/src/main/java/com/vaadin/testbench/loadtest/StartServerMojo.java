@@ -149,8 +149,13 @@ public class StartServerMojo extends AbstractK6Mojo {
                 + managementPort + ")");
     }
 
-    private String resolveJavaExecutable() {
+    private String resolveJavaExecutable() throws MojoExecutionException {
         if (javaExecutable != null && !javaExecutable.isBlank()) {
+            if (!Files.isExecutable(Paths.get(javaExecutable))) {
+                throw new MojoExecutionException(
+                        String.format("Java executable '%s' does not exist.",
+                                javaExecutable));
+            }
             return javaExecutable;
         }
         String javaHome = System.getenv("JAVA_HOME");
