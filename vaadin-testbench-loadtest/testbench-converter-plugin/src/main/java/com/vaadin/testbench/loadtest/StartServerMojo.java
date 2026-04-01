@@ -152,9 +152,9 @@ public class StartServerMojo extends AbstractK6Mojo {
     private String resolveJavaExecutable() throws MojoExecutionException {
         if (javaExecutable != null && !javaExecutable.isBlank()) {
             if (!Files.isExecutable(Paths.get(javaExecutable))) {
-                throw new MojoExecutionException(
-                        String.format("Java executable '%s' does not exist.",
-                                javaExecutable));
+                throw new MojoExecutionException(String.format(
+                        "Java executable '%s' does not exist or is not executable.",
+                        javaExecutable));
             }
             return javaExecutable;
         }
