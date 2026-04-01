@@ -280,5 +280,16 @@
                 <k6.skipRun>true</k6.skipRun>
             </properties>
         </profile>
+
+        <!--
+            VALIDATION PROFILE: Skip tests in CI snapshot builds
+            Usage: mvn verify -Pvalidation
+        -->
+        <profile>
+            <id>validation</id>
+            <properties>
+                <maven.test.skip>true</maven.test.skip>
+            </properties>
+        </profile>
     </profiles>
 </project>
