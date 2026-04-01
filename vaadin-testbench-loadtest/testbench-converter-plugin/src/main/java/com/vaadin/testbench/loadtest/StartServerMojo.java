@@ -8,6 +8,9 @@
  */
 package com.vaadin.testbench.loadtest;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,10 +25,10 @@ import com.vaadin.testbench.loadtest.util.ServerProcess;
 /**
  * Starts a Spring Boot application server and waits for it to be ready. The
  * process handle is stored in the Maven project context so that
- * {@code k6:stop-server} can shut it down later.
+ * {@code loadtest:stop-server} can shut it down later.
  * <p>
  * Usage in pom.xml:
- * 
+ *
  * <pre>
  * &lt;execution&gt;
  *     &lt;goals&gt;&lt;goal&gt;start-server&lt;/goal&gt;&lt;/goals&gt;
@@ -38,51 +41,59 @@ import com.vaadin.testbench.loadtest.util.ServerProcess;
  * </pre>
  */
 @Mojo(name = "start-server", defaultPhase = LifecyclePhase.PRE_INTEGRATION_TEST)
-public class K6StartServerMojo extends AbstractK6Mojo {
+public class StartServerMojo extends AbstractK6Mojo {
 
-    static final String CONTEXT_KEY = "k6.serverProcess";
+    static final String CONTEXT_KEY = "loadtest.serverProcess";
 
     /**
      * Path to the executable JAR file to start.
      */
-    @Parameter(property = "k6.serverJar", required = true)
+    @Parameter(property = "loadtest.serverJar", required = true)
     private String serverJar;
 
     /**
      * Application server port (passed as --server.port).
      */
-    @Parameter(property = "k6.serverPort", defaultValue = "8080")
+    @Parameter(property = "loadtest.serverPort", defaultValue = "8080")
     private int serverPort;
 
     /**
      * Spring Boot Actuator management port (passed as
      * --management.server.port).
      */
-    @Parameter(property = "k6.managementPort", defaultValue = "8082")
+    @Parameter(property = "loadtest.managementPort", defaultValue = "8082")
     private int managementPort;
+
+    /**
+     * Path to the Java executable. When not set, defaults to
+     * {@code $JAVA_HOME/bin/java} if {@code JAVA_HOME} is defined, otherwise
+     * falls back to {@code java} (resolved via {@code PATH}).
+     */
+    @Parameter(property = "loadtest.javaExecutable")
+    private String javaExecutable;
 
     /**
      * Extra JVM arguments (e.g., -Xmx512m).
      */
-    @Parameter(property = "k6.jvmArgs")
+    @Parameter(property = "loadtest.jvmArgs")
     private List<String> jvmArgs;
 
     /**
      * Extra application arguments (appended after the Spring Boot arguments).
      */
-    @Parameter(property = "k6.appArgs")
+    @Parameter(property = "loadtest.appArgs")
     private List<String> appArgs;
 
     /**
      * Maximum time in seconds to wait for the server to become ready.
      */
-    @Parameter(property = "k6.startupTimeout", defaultValue = "120")
+    @Parameter(property = "loadtest.startupTimeout", defaultValue = "120")
     private int startupTimeout;
 
     /**
      * Seconds between health check polls.
      */
-    @Parameter(property = "k6.healthPollInterval", defaultValue = "2")
+    @Parameter(property = "loadtest.healthPollInterval", defaultValue = "2")
     private int healthPollInterval;
 
     @Override
@@ -94,7 +105,7 @@ public class K6StartServerMojo extends AbstractK6Mojo {
 
         // Build command
         List<String> command = new ArrayList<>();
-        command.add("java");
+        command.add(resolveJavaExecutable());
         if (jvmArgs != null) {
             command.addAll(jvmArgs);
         }
@@ -132,9 +143,33 @@ public class K6StartServerMojo extends AbstractK6Mojo {
             if (serverProcess.isAlive()) {
                 serverProcess.stop(Duration.ofSeconds(5));
             }
-        }, "k6-server-shutdown-hook"));
+        }, "loadtest-server-shutdown-hook"));
 
         getLog().info("Server started on port " + serverPort + " (management: "
                 + managementPort + ")");
+    }
+
+    private String resolveJavaExecutable() throws MojoExecutionException {
+        if (javaExecutable != null && !javaExecutable.isBlank()) {
+            if (!Files.isExecutable(Paths.get(javaExecutable))) {
+                throw new MojoExecutionException(String.format(
+                        "Java executable '%s' does not exist or is not executable.",
+                        javaExecutable));
+            }
+            return javaExecutable;
+        }
+        String javaHome = System.getenv("JAVA_HOME");
+        if (javaHome != null && !javaHome.isBlank()) {
+            Path java = Paths.get(javaHome, "bin", "java");
+            if (Files.isExecutable(java)) {
+                return java.toString();
+            }
+            // On Windows, try java.exe
+            Path javaExe = Paths.get(javaHome, "bin", "java.exe");
+            if (Files.exists(javaExe)) {
+                return javaExe.toString();
+            }
+        }
+        return "java";
     }
 }

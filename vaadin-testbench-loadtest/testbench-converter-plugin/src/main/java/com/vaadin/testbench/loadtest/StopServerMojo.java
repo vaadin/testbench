@@ -18,11 +18,11 @@ import org.apache.maven.plugins.annotations.Parameter;
 import com.vaadin.testbench.loadtest.util.ServerProcess;
 
 /**
- * Stops a server previously started by {@code k6:start-server}. Retrieves the
- * process handle from the Maven project context.
+ * Stops a server previously started by {@code loadtest:start-server}. Retrieves
+ * the process handle from the Maven project context.
  * <p>
  * Usage in pom.xml:
- * 
+ *
  * <pre>
  * &lt;execution&gt;
  *     &lt;phase&gt;post-integration-test&lt;/phase&gt;
@@ -31,12 +31,12 @@ import com.vaadin.testbench.loadtest.util.ServerProcess;
  * </pre>
  */
 @Mojo(name = "stop-server", defaultPhase = LifecyclePhase.POST_INTEGRATION_TEST)
-public class K6StopServerMojo extends AbstractK6Mojo {
+public class StopServerMojo extends AbstractK6Mojo {
 
     /**
      * Seconds to wait for graceful shutdown before force-killing the process.
      */
-    @Parameter(property = "k6.stopGracePeriod", defaultValue = "10")
+    @Parameter(property = "loadtest.stopGracePeriod", defaultValue = "10")
     private int gracePeriod;
 
     @Override
@@ -46,7 +46,7 @@ public class K6StopServerMojo extends AbstractK6Mojo {
             return;
         }
 
-        Object stored = project.getContextValue(K6StartServerMojo.CONTEXT_KEY);
+        Object stored = project.getContextValue(StartServerMojo.CONTEXT_KEY);
         if (!(stored instanceof ServerProcess serverProcess)) {
             getLog().info(
                     "No server process found (was start-server executed?)");
@@ -59,6 +59,6 @@ public class K6StopServerMojo extends AbstractK6Mojo {
             serverProcess.stop(Duration.ofSeconds(gracePeriod));
         }
 
-        project.setContextValue(K6StartServerMojo.CONTEXT_KEY, null);
+        project.setContextValue(StartServerMojo.CONTEXT_KEY, null);
     }
 }
