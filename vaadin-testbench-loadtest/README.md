@@ -31,6 +31,13 @@ mvn install
 
 Builds both the tooling and a simple demo web app with two Vaadin TestBench E2E tests.
 
+> **Note:** The `demo-web-app` and `demo-web-app-loadtest` modules are **not** included
+> in the default build. To include them, pass `-DrunLoadTests`:
+>
+> ```bash
+> mvn install -DrunLoadTests
+> ```
+
 ### Run the Demo (Local)
 
 *Note, you should not do this for anything else but to test the setup without external server*
@@ -38,7 +45,7 @@ Builds both the tooling and a simple demo web app with two Vaadin TestBench E2E 
 ```bash
 
 # Run the complete workflow (start app, record, run load test)
-mvn verify -pl demo-web-app-loadtest
+mvn verify -pl demo-web-app-loadtest -DrunLoadTests
 ```
 
 ### Option 3: Remote Load Testing
@@ -49,7 +56,7 @@ First deploy the test app to a remote server. The next snippet assumes the remot
 
 ```bash
 # Test against a staging server
-mvn verify -pl demo-web-app-loadtest -Premote \
+mvn verify -pl demo-web-app-loadtest -DrunLoadTests -Premote \
     -Dk6.appHost=staging.example.com \
     -Dk6.appPort=8080 \
     -Dk6.vus=100 \

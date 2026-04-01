@@ -28,12 +28,12 @@
 
     <profiles>
         <profile>
-        <id>it-test-modules</id>
-        <activation>
-            <property>
-            <name>!skipTests</name>
-            </property>
-        </activation>
+            <id>load-tests</id>
+            <activation>
+                <property>
+                    <name>runLoadTests</name>
+                </property>
+            </activation>
             <modules>
                 <module>demo-web-app</module>
                 <module>demo-web-app-loadtest</module>
