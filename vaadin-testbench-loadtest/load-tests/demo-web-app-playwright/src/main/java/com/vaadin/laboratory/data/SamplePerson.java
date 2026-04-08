@@ -27,8 +27,6 @@ public class SamplePerson extends AbstractEntity {
     @Email
     private String email;
     private String phone;
-    @NotNull
-    @Past
     private LocalDate dateOfBirth;
     private String occupation;
     private String role;

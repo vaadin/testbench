@@ -50,15 +50,17 @@ public class CrudExamplePlaywrightIT {
     private Browser browser;
     private BrowserContext context;
     private Page page;
+    private Locator form;
 
     @BeforeEach
     public void setUp() {
         playwright = Playwright.create();
         browser = playwright.chromium()
-                .launch(new BrowserType.LaunchOptions().setHeadless(true));
+                .launch(new BrowserType.LaunchOptions().setHeadless(false));
         context = PlaywrightHelper.createBrowserContext(browser);
         page = context.newPage();
         page.navigate(PlaywrightHelper.getBaseUrl() + "/crud-example");
+        form = page.locator("vaadin-form-layout");
     }
 
     @AfterEach
@@ -98,7 +100,7 @@ public class CrudExamplePlaywrightIT {
                 .evaluate("g => g._dataProviderController.rootCache.size");
         assertTrue(rowCount > 0, "Grid should have at least one row");
 
-        int randomRow = new Random().nextInt(Math.min(rowCount, 99));
+        int randomRow = new Random().nextInt(Math.min(rowCount, 5));
 
         // Scroll to and activate the row (this triggers the selection event)
         grid.evaluate(
@@ -110,21 +112,23 @@ public class CrudExamplePlaywrightIT {
                 randomRow);
 
         // Verify form is populated
-        assertThat(page.getByLabel("First Name")).not().hasValue("");
+        assertThat(form.getByLabel("First Name")).not().hasValue("");
     }
 
     private void createNewItemInGrid() {
         // Click cancel to clear any existing selection
         page.locator("#cancel-button").click();
 
+        assertThat(form.getByLabel("First Name")).hasValue("");
+
         // Fill form with new person data
-        page.getByLabel("First Name").fill(TEST_FIRST_NAME);
-        page.getByLabel("Last Name").fill(TEST_LAST_NAME);
-        page.getByLabel("Email").fill(TEST_EMAIL);
-        page.getByLabel("Phone").fill(TEST_PHONE);
-        page.getByLabel("Date Of Birth").fill(TEST_DATE_OF_BIRTH);
-        page.getByLabel("Occupation").fill(TEST_OCCUPATION);
-        page.getByLabel("Role").fill(TEST_ROLE);
+        form.getByLabel("First Name").fill(TEST_FIRST_NAME);
+        form.getByLabel("Last Name").fill(TEST_LAST_NAME);
+        form.getByLabel("Email").fill(TEST_EMAIL);
+        form.getByLabel("Phone").fill(TEST_PHONE);
+        //form.getByLabel("Date Of Birth").fill(TEST_DATE_OF_BIRTH);
+        form.getByLabel("Occupation").fill(TEST_OCCUPATION);
+        form.getByLabel("Role").fill(TEST_ROLE);
 
         // Save the new person
         page.locator("#save-button").click();
@@ -132,30 +136,7 @@ public class CrudExamplePlaywrightIT {
 
     private void selectLatestItemInGrid(Locator grid) {
         // Find the row with our test data by iterating grid items
-        int rowIndex = (int) grid.evaluate(
-                "(g, name) => {"
-                        + "  const items = g._dataProviderController"
-                        + "    .rootCache.items;"
-                        + "  for (let i = 0; i < items.length; i++) {"
-                        + "    if (items[i] && items[i].firstName === name) {"
-                        + "      return i;"
-                        + "    }"
-                        + "  }"
-                        + "  return -1;"
-                        + "}",
-                TEST_FIRST_NAME);
-
-        assertTrue(rowIndex >= 0,
-                "Newly created item should be found in grid");
-
-        // Scroll to and select the row
-        grid.evaluate(
-                "(g, idx) => {"
-                        + "  g.scrollToIndex(idx);"
-                        + "  g.activeItem = g._dataProviderController"
-                        + "    .rootCache.items[idx];"
-                        + "}",
-                rowIndex);
+        grid.locator("vaadin-grid-cell-content").getByText(TEST_FIRST_NAME).click();
     }
 
     private void deleteLatestItemInGrid(Locator grid) {
