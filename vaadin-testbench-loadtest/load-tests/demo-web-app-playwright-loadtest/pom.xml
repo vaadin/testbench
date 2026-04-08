@@ -82,7 +82,7 @@
                                 <artifactItem>
                                     <groupId>com.vaadin</groupId>
                                     <artifactId>demo-web-app-playwright</artifactId>
-                                    <version>${project.version}</version>
+                                    <version>0.0.1-SNAPSHOT</version>
                                     <type>jar</type>
                                     <destFileName>demo-web-app-playwright.jar</destFileName>
                                 </artifactItem>
