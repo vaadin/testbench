@@ -34,6 +34,8 @@ import com.vaadin.testbench.loadtest.util.ThresholdConfig;
  */
 public abstract class AbstractK6Mojo extends AbstractMojo {
 
+    static final String CONTENT_BREAK = "========================================";
+
     /**
      * The Maven project.
      */

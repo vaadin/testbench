@@ -10,11 +10,11 @@
         <version>10.2-SNAPSHOT</version>
     </parent>
 
-    <artifactId>demo-web-app</artifactId>
-    <name>Demo Web Application</name>
+    <artifactId>demo-web-app-playwright</artifactId>
+    <name>Demo Web Application (Playwright)</name>
     <packaging>jar</packaging>
 
-    <description>Demo Vaadin application with TestBench tests for k6 recording</description>
+    <description>Demo Vaadin application with Playwright tests for k6 recording</description>
 
     <!-- Spring Boot parent for dependency management -->
     <dependencyManagement>
@@ -86,53 +86,10 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.vaadin</groupId>
-            <artifactId>vaadin-testbench-core-junit6</artifactId>
-            <version>${project.version}</version>
+            <groupId>com.microsoft.playwright</groupId>
+            <artifactId>playwright</artifactId>
+            <version>1.50.0</version>
             <scope>test</scope>
-            <!-- Test-scoped dependencies are always considered "optional", but
-            their transitive dependencies may conflict with those from regular
-            optional dependencies if not explicitly marked as optional here. -->
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>com.vaadin</groupId>
-            <artifactId>vaadin-notification-testbench</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.vaadin</groupId>
-            <artifactId>vaadin-text-field-testbench</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.vaadin</groupId>
-            <artifactId>vaadin-button-testbench</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.vaadin</groupId>
-            <artifactId>vaadin-grid-testbench</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.vaadin</groupId>
-            <artifactId>vaadin-date-picker-testbench</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <!--
-            TEMPORARY: This dependency provides transparent k6 proxy configuration
-            for TestBench tests via a JUnit 5 extension. In the future, this functionality
-            should be integrated directly into Vaadin TestBench itself, eliminating
-            the need for this separate dependency. See testbench-loadtest-support/README.md
-            for more details on the planned migration path.
-        -->
-        <dependency>
-            <groupId>com.vaadin</groupId>
-            <artifactId>testbench-loadtest-support</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-            <optional>true</optional>
         </dependency>
     </dependencies>
 
