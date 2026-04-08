@@ -45,10 +45,10 @@ A master-detail view with a grid of sample persons and an editing form. Demonstr
 
 ## Integration Tests
 
-The `scenario` package contains Playwright-based end-to-end tests that simulate real user interactions. These tests extend `AbstractPlaywrightHelper` from the `loadtest-helper` module, which provides:
+The `scenario` package contains Playwright-based end-to-end tests that simulate real user interactions. These tests use `PlaywrightHelper` from the `loadtest-helper` module, which provides:
 
-- Managed Playwright lifecycle (browser, context, page)
-- Automatic HAR recording when run via the `loadtest:record-playwright` Maven goal
+- Browser context creation with automatic HAR recording when run via the `loadtest:record-playwright` Maven goal
+- Base URL resolution from environment variables and system properties
 
 ### Running Tests
 
