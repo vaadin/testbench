@@ -10,10 +10,17 @@ package com.vaadin.laboratory.views.scenario;
 
 import java.util.Random;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.microsoft.playwright.Browser;
+import com.microsoft.playwright.BrowserContext;
+import com.microsoft.playwright.BrowserType;
 import com.microsoft.playwright.Locator;
-import com.vaadin.testbench.loadtest.AbstractPlaywrightHelper;
+import com.microsoft.playwright.Page;
+import com.microsoft.playwright.Playwright;
+import com.vaadin.testbench.loadtest.PlaywrightHelper;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -29,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * <li>Delete the item</li>
  * </ol>
  */
-public class CrudExamplePlaywrightIT extends AbstractPlaywrightHelper {
+public class CrudExamplePlaywrightIT {
 
     private static final String TEST_FIRST_NAME = "TestFirstName";
     private static final String TEST_LAST_NAME = "TestLastName";
@@ -38,6 +45,34 @@ public class CrudExamplePlaywrightIT extends AbstractPlaywrightHelper {
     private static final String TEST_DATE_OF_BIRTH = "1/1/1934";
     private static final String TEST_OCCUPATION = "Vaadin Expert";
     private static final String TEST_ROLE = "Model";
+
+    private Playwright playwright;
+    private Browser browser;
+    private BrowserContext context;
+    private Page page;
+
+    @BeforeEach
+    public void setUp() {
+        playwright = Playwright.create();
+        browser = playwright.chromium()
+                .launch(new BrowserType.LaunchOptions().setHeadless(true));
+        context = PlaywrightHelper.createBrowserContext(browser);
+        page = context.newPage();
+        page.navigate(PlaywrightHelper.getBaseUrl() + "/crud-example");
+    }
+
+    @AfterEach
+    public void tearDown() {
+        if (context != null) {
+            context.close();
+        }
+        if (browser != null) {
+            browser.close();
+        }
+        if (playwright != null) {
+            playwright.close();
+        }
+    }
 
     @Test
     public void crudWorkflow() {
@@ -143,10 +178,5 @@ public class CrudExamplePlaywrightIT extends AbstractPlaywrightHelper {
 
         assertTrue(rowIndex < 0,
                 "Deleted item should no longer exist in grid");
-    }
-
-    @Override
-    public String getViewName() {
-        return "crud-example";
     }
 }
