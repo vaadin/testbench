@@ -76,6 +76,27 @@ public abstract class AbstractK6Mojo extends AbstractMojo {
     @Parameter(property = "k6.threshold.checksAbortOnFail", defaultValue = "true")
     protected boolean checksAbortOnFail;
 
+    /**
+     * Custom thresholds for any k6 metric, in addition to the default
+     * http_req_duration and checks thresholds. Format:
+     * {@code metric:expression,metric:expression,...}
+     * <p>
+     * Examples:
+     * <ul>
+     * <li>{@code http_req_failed:rate<0.01} - less than 1% failed
+     * requests</li>
+     * <li>{@code http_req_waiting:p(95)<500} - 95th percentile waiting time
+     * under 500ms</li>
+     * <li>{@code http_reqs:count>100} - at least 100 requests completed</li>
+     * <li>{@code http_req_duration:p(50)<1000} - adds a median threshold
+     * alongside the default p95/p99</li>
+     * </ul>
+     * Multiple expressions can be separated by commas. Multiple expressions for
+     * the same metric are supported.
+     */
+    @Parameter(property = "k6.threshold.custom")
+    protected String customThresholds;
+
     protected ResourceExtractor resourceExtractor;
     protected NodeRunner nodeRunner;
     protected Path extractionPath;
@@ -177,8 +198,12 @@ public abstract class AbstractK6Mojo extends AbstractMojo {
      * @return the threshold configuration
      */
     protected ThresholdConfig buildThresholdConfig() {
-        return new ThresholdConfig(httpReqDurationP95, httpReqDurationP99,
-                checksAbortOnFail);
+        ThresholdConfig config = new ThresholdConfig(httpReqDurationP95,
+                httpReqDurationP99, checksAbortOnFail);
+        if (customThresholds != null && !customThresholds.isBlank()) {
+            config = config.withCustomThresholds(customThresholds);
+        }
+        return config;
     }
 
     /**
