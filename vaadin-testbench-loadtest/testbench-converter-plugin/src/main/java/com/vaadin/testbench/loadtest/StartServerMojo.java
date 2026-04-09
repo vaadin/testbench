@@ -77,8 +77,8 @@ public class StartServerMojo extends AbstractK6Mojo {
 
     /**
      * Spring Boot Actuator management port. When set,
-     * {@code --management.server.port} is appended and
-     * {@code /actuator/health} is polled in addition to the application root.
+     * {@code --management.server.port} is appended and {@code /actuator/health}
+     * is polled in addition to the application root.
      */
     @Parameter(property = "loadtest.managementPort")
     private Integer managementPort;
@@ -160,8 +160,8 @@ public class StartServerMojo extends AbstractK6Mojo {
         // Health URLs to poll
         List<String> healthUrls = new ArrayList<>();
         if (managementPort != null) {
-            healthUrls.add("http://localhost:" + managementPort
-                    + "/actuator/health");
+            healthUrls.add(
+                    "http://localhost:" + managementPort + "/actuator/health");
         }
         healthUrls.add("http://localhost:" + appPort + "/");
 
