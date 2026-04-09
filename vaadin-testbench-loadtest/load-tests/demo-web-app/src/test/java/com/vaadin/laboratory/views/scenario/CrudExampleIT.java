@@ -43,7 +43,9 @@ public class CrudExampleIT extends AbstractIT {
 
     @BrowserTest
     public void crudWorkflow() {
-        GridElement grid = $(GridElement.class).waitForFirst();
+        waitUntilNot(driver ->  $(GridElement.class).all().isEmpty());
+
+        GridElement grid = $(GridElement.class).single();
 
         // 1. Select random item in grid
         selectRandomItemInGrid(grid);
@@ -52,7 +54,7 @@ public class CrudExampleIT extends AbstractIT {
         createNewItemInGrid();
 
         // 3. Select the latest new item in grid
-        grid = $(GridElement.class).first();
+        grid = $(GridElement.class).single();
         selectLatestItemInGrid(grid);
 
         // 4. Delete the latest item in grid
