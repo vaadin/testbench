@@ -37,7 +37,7 @@ public final class LoadTestItHelper {
      * driver. Otherwise navigates the existing driver to the given URL.
      * <p>
      * Typical usage in a {@code @BeforeEach} method:
-     * 
+     *
      * <pre>
      * setDriver(LoadTestItHelper.openWithProxy(getDriver(), viewUrl));
      * </pre>

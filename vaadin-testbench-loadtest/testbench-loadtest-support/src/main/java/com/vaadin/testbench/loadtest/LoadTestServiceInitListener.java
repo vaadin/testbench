@@ -24,7 +24,8 @@ import com.vaadin.flow.server.VaadinServiceInitListener;
  * <p>
  * Auto-registered via
  * {@code META-INF/services/com.vaadin.flow.server.VaadinServiceInitListener}.
- * Just add {@code loadtest-helper} as a dependency — no code changes needed.
+ * Just add {@code testbench-loadtest-support} as a dependency — no code changes
+ * needed.
  */
 public class LoadTestServiceInitListener implements VaadinServiceInitListener {
 
