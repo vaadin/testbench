@@ -118,6 +118,28 @@ public class HarToK6Converter {
      */
     public void convert(Path harFile, Path outputFile,
             ThresholdConfig thresholdConfig) throws IOException {
+        convert(harFile, outputFile, thresholdConfig,
+                ResponseCheckConfig.EMPTY);
+    }
+
+    /**
+     * Converts a HAR file to a k6 test script with configurable thresholds and
+     * custom response checks.
+     *
+     * @param harFile
+     *            the input HAR file
+     * @param outputFile
+     *            the output k6 test script
+     * @param thresholdConfig
+     *            threshold configuration for the generated script
+     * @param responseCheckConfig
+     *            custom response validation checks to inject
+     * @throws IOException
+     *             if reading or writing fails
+     */
+    public void convert(Path harFile, Path outputFile,
+            ThresholdConfig thresholdConfig,
+            ResponseCheckConfig responseCheckConfig) throws IOException {
         log.info("Converting HAR to k6 test...");
         collectedInputValues.clear();
 
@@ -166,7 +188,8 @@ public class HarToK6Converter {
             // After first init request, inject code to declare and extract
             // Vaadin session values
             if (session != null && i == session.initRequestIndex()) {
-                script.append(generateSessionExtractionCode(requestLabel));
+                script.append(generateSessionExtractionCode(requestLabel,
+                        responseCheckConfig));
             }
 
             // After subsequent init requests (e.g., post-login), re-extract
@@ -178,7 +201,8 @@ public class HarToK6Converter {
             // After each UIDL POST, extract syncId from response and increment
             // clientId
             if (session != null && isUidlRequest(entry)) {
-                script.append(generateUidlResponseExtractionCode(requestLabel));
+                script.append(generateUidlResponseExtractionCode(requestLabel,
+                        responseCheckConfig));
             }
         }
 
@@ -470,9 +494,12 @@ public class HarToK6Converter {
      * @param requestLabel
      *            human-readable label for error messages (e.g., "Request 6 (GET
      *            ...)")
+     * @param responseCheckConfig
+     *            custom response checks to inject
      * @return the generated extraction code
      */
-    private String generateSessionExtractionCode(String requestLabel) {
+    private String generateSessionExtractionCode(String requestLabel,
+            ResponseCheckConfig responseCheckConfig) {
         StringBuilder code = new StringBuilder();
         code.append(
                 "  // Abort iteration and trigger test abort if init response is invalid\n");
@@ -482,6 +509,8 @@ public class HarToK6Converter {
                 "    'session is valid': (r) => !r.body.includes('Your session needs to be refreshed'),\n");
         code.append(
                 "    'valid init response': (r) => r.body.includes('\"v-uiId\"') && r.body.includes('\"Vaadin-Security-Key\"'),\n");
+        code.append(responseCheckConfig
+                .toK6CheckLines(ResponseCheckConfig.Scope.INIT));
         code.append("  })) {\n");
         code.append("    fail(`").append(escapeJsTemplate(requestLabel)).append(
                 ": init failed (status ${response.status}): ${response.body.substring(0, 200)}`)\n");
@@ -532,9 +561,12 @@ public class HarToK6Converter {
      * @param requestLabel
      *            human-readable label for error messages (e.g., "Request 10
      *            (POST ...)")
+     * @param responseCheckConfig
+     *            custom response checks to inject
      * @return the generated extraction code
      */
-    private String generateUidlResponseExtractionCode(String requestLabel) {
+    private String generateUidlResponseExtractionCode(String requestLabel,
+            ResponseCheckConfig responseCheckConfig) {
         StringBuilder code = new StringBuilder();
         code.append(
                 "  // Abort iteration and trigger test abort if UIDL response is invalid\n");
@@ -551,6 +583,8 @@ public class HarToK6Converter {
         code.append(
                 "    'security key valid': (r) => !r.body.includes('Invalid security key'),\n");
         code.append("    'valid UIDL response': () => syncIdMatch !== null,\n");
+        code.append(responseCheckConfig
+                .toK6CheckLines(ResponseCheckConfig.Scope.UIDL));
         code.append("  })) {\n");
         code.append("    fail(`").append(escapeJsTemplate(requestLabel)).append(
                 ": UIDL failed (status ${response.status}): ${response.body.substring(0, 200)}`)\n");

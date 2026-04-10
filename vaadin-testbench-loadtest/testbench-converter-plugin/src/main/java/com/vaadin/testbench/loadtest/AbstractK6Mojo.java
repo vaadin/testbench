@@ -23,6 +23,7 @@ import com.vaadin.pro.licensechecker.Capability;
 import com.vaadin.pro.licensechecker.LicenseChecker;
 import com.vaadin.testbench.loadtest.util.NodeRunner;
 import com.vaadin.testbench.loadtest.util.ResourceExtractor;
+import com.vaadin.testbench.loadtest.util.ResponseCheckConfig;
 import com.vaadin.testbench.loadtest.util.ThresholdConfig;
 
 /**
@@ -75,6 +76,27 @@ public abstract class AbstractK6Mojo extends AbstractMojo {
      */
     @Parameter(property = "k6.threshold.checksAbortOnFail", defaultValue = "true")
     protected boolean checksAbortOnFail;
+
+    /**
+     * Custom response validation checks to inject into the generated k6
+     * scripts, in addition to the built-in Vaadin checks. Format:
+     * {@code scope|name|expression;scope|name|expression;...}
+     * <p>
+     * The scope is optional and defaults to {@code ALL}. Valid scopes:
+     * {@code INIT} (init requests only), {@code UIDL} (UIDL requests only),
+     * {@code ALL} (both).
+     * <p>
+     * Examples:
+     * <ul>
+     * <li>{@code "has title|(r) => r.body.includes('<title>')"} — checks all
+     * responses</li>
+     * <li>{@code "INIT|has title|(r) => r.body.includes('<title>')"} — init
+     * only</li>
+     * <li>{@code "UIDL|no warning|(r) => !r.body.includes('warning');ALL|fast|(r) => r.timings.duration < 3000"}</li>
+     * </ul>
+     */
+    @Parameter(property = "k6.checks.custom")
+    protected String customChecks;
 
     protected ResourceExtractor resourceExtractor;
     protected NodeRunner nodeRunner;
@@ -179,6 +201,19 @@ public abstract class AbstractK6Mojo extends AbstractMojo {
     protected ThresholdConfig buildThresholdConfig() {
         return new ThresholdConfig(httpReqDurationP95, httpReqDurationP99,
                 checksAbortOnFail);
+    }
+
+    /**
+     * Builds a {@link ResponseCheckConfig} from the Maven parameters.
+     *
+     * @return the response check configuration
+     */
+    protected ResponseCheckConfig buildResponseCheckConfig() {
+        ResponseCheckConfig config = ResponseCheckConfig.EMPTY;
+        if (customChecks != null && !customChecks.isBlank()) {
+            config = config.withChecks(customChecks);
+        }
+        return config;
     }
 
     /**
