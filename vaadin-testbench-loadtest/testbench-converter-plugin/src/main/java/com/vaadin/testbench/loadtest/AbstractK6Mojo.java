@@ -21,6 +21,7 @@ import org.apache.maven.project.MavenProject;
 import com.vaadin.pro.licensechecker.Capabilities;
 import com.vaadin.pro.licensechecker.Capability;
 import com.vaadin.pro.licensechecker.LicenseChecker;
+import com.vaadin.testbench.loadtest.util.ExperimentalWarning;
 import com.vaadin.testbench.loadtest.util.NodeRunner;
 import com.vaadin.testbench.loadtest.util.ResourceExtractor;
 import com.vaadin.testbench.loadtest.util.ThresholdConfig;
@@ -89,6 +90,8 @@ public abstract class AbstractK6Mojo extends AbstractMojo {
      */
     protected void initialize() throws MojoExecutionException {
         checkLicense();
+
+        ExperimentalWarning.log();
 
         extractionPath = Path.of(utilsDir);
 
