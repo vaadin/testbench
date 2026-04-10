@@ -28,11 +28,11 @@ import java.util.List;
  * <pre>
  * ResponseCheckConfig checks = ResponseCheckConfig.EMPTY
  *         .withCheck(Scope.INIT, "has page title",
- *                 "(r) => r.body.includes('<title>')")
+ *                 "(r) =&gt; r.body.includes('&lt;title&gt;')")
  *         .withCheck(Scope.UIDL, "no warning",
- *                 "(r) => !r.body.includes('warning')")
+ *                 "(r) =&gt; !r.body.includes('warning')")
  *         .withCheck(Scope.ALL, "fast response",
- *                 "(r) => r.timings.duration < 3000");
+ *                 "(r) =&gt; r.timings.duration &lt; 3000");
  * </pre>
  *
  * @param checks
@@ -107,9 +107,9 @@ public record ResponseCheckConfig(List<ResponseCheck> checks) {
      * <p>
      * Examples:
      * <ul>
-     * <li>{@code "has title|(r) => r.body.includes('<title>')"} — ALL
+     * <li>{@code "has title|(r) => r.body.includes('myElement')"} — ALL
      * scope</li>
-     * <li>{@code "INIT|has title|(r) => r.body.includes('<title>')"}</li>
+     * <li>{@code "INIT|has title|(r) => r.body.includes('myElement')"}</li>
      * <li>{@code "UIDL|no warning|(r) => !r.body.includes('warning');ALL|fast|(r) => r.timings.duration < 3000"}</li>
      * </ul>
      *

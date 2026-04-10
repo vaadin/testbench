@@ -88,9 +88,9 @@ public abstract class AbstractK6Mojo extends AbstractMojo {
      * <p>
      * Examples:
      * <ul>
-     * <li>{@code "has title|(r) => r.body.includes('<title>')"} — checks all
+     * <li>{@code "has title|(r) => r.body.includes('myElement')"} — checks all
      * responses</li>
-     * <li>{@code "INIT|has title|(r) => r.body.includes('<title>')"} — init
+     * <li>{@code "INIT|has title|(r) => r.body.includes('myElement')"} — init
      * only</li>
      * <li>{@code "UIDL|no warning|(r) => !r.body.includes('warning');ALL|fast|(r) => r.timings.duration < 3000"}</li>
      * </ul>
