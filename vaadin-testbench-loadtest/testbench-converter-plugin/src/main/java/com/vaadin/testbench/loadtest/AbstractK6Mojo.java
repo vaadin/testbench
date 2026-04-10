@@ -83,8 +83,7 @@ public abstract class AbstractK6Mojo extends AbstractMojo {
      * <p>
      * Examples:
      * <ul>
-     * <li>{@code http_req_failed:rate<0.01} - less than 1% failed
-     * requests</li>
+     * <li>{@code http_req_failed:rate<0.01} - less than 1% failed requests</li>
      * <li>{@code http_req_waiting:p(95)<500} - 95th percentile waiting time
      * under 500ms</li>
      * <li>{@code http_reqs:count>100} - at least 100 requests completed</li>

@@ -18,9 +18,9 @@ import java.util.Map;
  * considered failed based on response times and check pass rates.
  * <p>
  * Default thresholds include {@code http_req_duration} p95/p99 and
- * {@code checks rate==1}. Additional thresholds for any k6 metric can be
- * added via {@link #withCustomThreshold(String, String)}, and the defaults
- * can be edited via the constructor parameters or disabled by passing 0.
+ * {@code checks rate==1}. Additional thresholds for any k6 metric can be added
+ * via {@link #withCustomThreshold(String, String)}, and the defaults can be
+ * edited via the constructor parameters or disabled by passing 0.
  *
  * @param httpReqDurationP95
  *            95th percentile response time threshold in ms (0 to disable)
@@ -29,17 +29,15 @@ import java.util.Map;
  * @param checksAbortOnFail
  *            if true, abort the test immediately when a check fails
  * @param customThresholds
- *            additional thresholds keyed by k6 metric name, each with a
- *            list of threshold expressions (e.g. {@code "p(95)<500"} or
+ *            additional thresholds keyed by k6 metric name, each with a list of
+ *            threshold expressions (e.g. {@code "p(95)<500"} or
  *            {@code "rate<0.01"})
  */
 public record ThresholdConfig(int httpReqDurationP95, int httpReqDurationP99,
-        boolean checksAbortOnFail,
-        Map<String, List<String>> customThresholds) {
+        boolean checksAbortOnFail, Map<String, List<String>> customThresholds) {
 
     /**
-     * Canonical constructor that makes a defensive copy of custom
-     * thresholds.
+     * Canonical constructor that makes a defensive copy of custom thresholds.
      */
     public ThresholdConfig {
         customThresholds = customThresholds != null
@@ -51,11 +49,9 @@ public record ThresholdConfig(int httpReqDurationP95, int httpReqDurationP99,
      * Backwards-compatible constructor without custom thresholds.
      *
      * @param httpReqDurationP95
-     *            95th percentile response time threshold in ms (0 to
-     *            disable)
+     *            95th percentile response time threshold in ms (0 to disable)
      * @param httpReqDurationP99
-     *            99th percentile response time threshold in ms (0 to
-     *            disable)
+     *            99th percentile response time threshold in ms (0 to disable)
      * @param checksAbortOnFail
      *            if true, abort the test immediately when a check fails
      */
@@ -73,21 +69,22 @@ public record ThresholdConfig(int httpReqDurationP95, int httpReqDurationP99,
             5000, true);
 
     /**
-     * Returns a new {@link ThresholdConfig} with an additional custom
-     * threshold expression for the given k6 metric. Multiple expressions
-     * can be added for the same metric by calling this method repeatedly.
+     * Returns a new {@link ThresholdConfig} with an additional custom threshold
+     * expression for the given k6 metric. Multiple expressions can be added for
+     * the same metric by calling this method repeatedly.
      * <p>
      * Example usage:
+     * 
      * <pre>
      * ThresholdConfig config = ThresholdConfig.DEFAULT
-     *     .withCustomThreshold("http_req_waiting", "p(95)&lt;500")
-     *     .withCustomThreshold("http_req_failed", "rate&lt;0.01")
-     *     .withCustomThreshold("http_req_duration", "p(50)&lt;1000");
+     *         .withCustomThreshold("http_req_waiting", "p(95)&lt;500")
+     *         .withCustomThreshold("http_req_failed", "rate&lt;0.01")
+     *         .withCustomThreshold("http_req_duration", "p(50)&lt;1000");
      * </pre>
      * <p>
      * Custom thresholds for {@code http_req_duration} are merged with the
-     * default p95/p99 thresholds (unless those are disabled by setting
-     * them to 0).
+     * default p95/p99 thresholds (unless those are disabled by setting them to
+     * 0).
      *
      * @param metric
      *            the k6 metric name (e.g. {@code "http_req_waiting"},
@@ -107,8 +104,8 @@ public record ThresholdConfig(int httpReqDurationP95, int httpReqDurationP99,
     }
 
     /**
-     * Parses a custom thresholds string and applies each entry to this
-     * config. Format: {@code metric:expression,metric:expression,...}
+     * Parses a custom thresholds string and applies each entry to this config.
+     * Format: {@code metric:expression,metric:expression,...}
      *
      * @param thresholds
      *            the custom thresholds string to parse

@@ -62,8 +62,8 @@ class ThresholdConfigTest {
                 .withCustomThreshold("http_req_waiting", "p(95)<500")
                 .withCustomThreshold("http_req_waiting", "p(99)<1000");
         String block = config.toK6ThresholdsBlock();
-        assertTrue(
-                block.contains("http_req_waiting: ['p(95)<500', 'p(99)<1000']"));
+        assertTrue(block
+                .contains("http_req_waiting: ['p(95)<500', 'p(99)<1000']"));
     }
 
     @Test
@@ -101,20 +101,17 @@ class ThresholdConfigTest {
     @Test
     void withCustomThresholdIsImmutable() {
         ThresholdConfig original = ThresholdConfig.DEFAULT;
-        ThresholdConfig modified = original.withCustomThreshold(
-                "http_req_failed", "rate<0.01");
+        ThresholdConfig modified = original
+                .withCustomThreshold("http_req_failed", "rate<0.01");
         // Original should not be affected
-        assertFalse(
-                original.toK6ThresholdsBlock().contains("http_req_failed"));
-        assertTrue(
-                modified.toK6ThresholdsBlock().contains("http_req_failed"));
+        assertFalse(original.toK6ThresholdsBlock().contains("http_req_failed"));
+        assertTrue(modified.toK6ThresholdsBlock().contains("http_req_failed"));
     }
 
     @Test
     void parseCustomThresholdsFromString() {
-        ThresholdConfig config = ThresholdConfig.DEFAULT
-                .withCustomThresholds(
-                        "http_req_failed:rate<0.01,http_req_waiting:p(95)<500");
+        ThresholdConfig config = ThresholdConfig.DEFAULT.withCustomThresholds(
+                "http_req_failed:rate<0.01,http_req_waiting:p(95)<500");
         String block = config.toK6ThresholdsBlock();
         assertTrue(block.contains("http_req_failed: ['rate<0.01']"));
         assertTrue(block.contains("http_req_waiting: ['p(95)<500']"));
@@ -125,9 +122,8 @@ class ThresholdConfigTest {
 
     @Test
     void parseCustomThresholdsIgnoresEmptyEntries() {
-        ThresholdConfig config = ThresholdConfig.DEFAULT
-                .withCustomThresholds(
-                        "http_req_failed:rate<0.01,,  ,http_reqs:count>100");
+        ThresholdConfig config = ThresholdConfig.DEFAULT.withCustomThresholds(
+                "http_req_failed:rate<0.01,,  ,http_reqs:count>100");
         String block = config.toK6ThresholdsBlock();
         assertTrue(block.contains("http_req_failed: ['rate<0.01']"));
         assertTrue(block.contains("http_reqs: ['count>100']"));
