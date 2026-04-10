@@ -215,7 +215,7 @@ public class NodeRunner {
     }
 
     /**
-     * Runs a k6 load test.
+     * Runs a k6 load test with constant load (no ramping).
      *
      * @param testFile
      *            the k6 test file to run
@@ -233,6 +233,83 @@ public class NodeRunner {
     public void runK6Test(Path testFile, int virtualUsers, String duration,
             String appIp, int appPort) throws MojoExecutionException {
         runK6Test(testFile, virtualUsers, duration, appIp, appPort, false);
+    }
+
+    /**
+     * Runs a k6 load test with a configurable load profile. For ramping
+     * profiles, uses k6's {@code --stage} CLI flags. For constant profiles,
+     * uses {@code --vus} and {@code --duration}.
+     *
+     * @param testFile
+     *            the k6 test file to run
+     * @param virtualUsers
+     *            number of virtual users
+     * @param duration
+     *            test duration (e.g., "30s", "1m")
+     * @param appIp
+     *            application IP address
+     * @param appPort
+     *            application port
+     * @param loadProfile
+     *            load profile controlling ramping behavior
+     * @throws MojoExecutionException
+     *             if the test fails
+     */
+    public void runK6Test(Path testFile, int virtualUsers, String duration,
+            String appIp, int appPort, LoadProfile loadProfile)
+            throws MojoExecutionException {
+        log.info("Running k6 load test: " + testFile.getFileName());
+        log.info("  Load pattern: " + loadProfile);
+        log.info("  Target: " + appIp + ":" + appPort);
+
+        try {
+            List<String> command = new ArrayList<>();
+            command.add("k6");
+            command.add("run");
+
+            if (loadProfile.isRamping()) {
+                // Use --stage flags for ramping-vus
+                List<LoadProfile.Stage> stages = loadProfile
+                        .toStages(virtualUsers, duration);
+                for (LoadProfile.Stage stage : stages) {
+                    command.add("--stage");
+                    command.add(stage.duration() + ":" + stage.target());
+                }
+                log.info("  Stages: ");
+                for (LoadProfile.Stage stage : stages) {
+                    log.info("    " + stage.duration() + " → " + stage.target()
+                            + " VUs");
+                }
+            } else {
+                // Constant load
+                command.add("--vus");
+                command.add(String.valueOf(virtualUsers));
+                command.add("--duration");
+                command.add(duration);
+                log.info("  Virtual Users: " + virtualUsers);
+                log.info("  Duration: " + duration);
+            }
+
+            command.add("-e");
+            command.add("APP_IP=" + appIp);
+            command.add("-e");
+            command.add("APP_PORT=" + String.valueOf(appPort));
+            command.add(testFile.toAbsolutePath().toString());
+
+            ProcessBuilder pb = new ProcessBuilder(command);
+            pb.inheritIO();
+
+            Process process = pb.start();
+
+            int exitCode = process.waitFor();
+            if (exitCode != 0) {
+                throw new MojoExecutionException(
+                        "k6 test failed with exit code: " + exitCode);
+            }
+            log.info("k6 test completed successfully");
+        } catch (IOException | InterruptedException e) {
+            throw new MojoExecutionException("Failed to run k6 test", e);
+        }
     }
 
     /**

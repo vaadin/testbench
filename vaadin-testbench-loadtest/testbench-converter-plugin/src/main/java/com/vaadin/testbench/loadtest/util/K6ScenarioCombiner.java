@@ -40,7 +40,7 @@ public class K6ScenarioCombiner {
 
     /**
      * Combines multiple k6 test files into a single test with weighted
-     * scenarios using default thresholds.
+     * scenarios using default thresholds and constant load.
      *
      * @param scenarios
      *            list of scenario configurations with weights
@@ -56,12 +56,12 @@ public class K6ScenarioCombiner {
     public void combine(List<ScenarioConfig> scenarios, Path outputFile,
             int totalVus, String duration) throws IOException {
         combine(scenarios, outputFile, totalVus, duration,
-                ThresholdConfig.DEFAULT);
+                ThresholdConfig.DEFAULT, LoadProfile.CONSTANT);
     }
 
     /**
      * Combines multiple k6 test files into a single test with weighted
-     * scenarios.
+     * scenarios using constant load.
      *
      * @param scenarios
      *            list of scenario configurations with weights
@@ -79,6 +79,32 @@ public class K6ScenarioCombiner {
     public void combine(List<ScenarioConfig> scenarios, Path outputFile,
             int totalVus, String duration, ThresholdConfig thresholdConfig)
             throws IOException {
+        combine(scenarios, outputFile, totalVus, duration, thresholdConfig,
+                LoadProfile.CONSTANT);
+    }
+
+    /**
+     * Combines multiple k6 test files into a single test with weighted
+     * scenarios using a load profile for ramping configuration.
+     *
+     * @param scenarios
+     *            list of scenario configurations with weights
+     * @param outputFile
+     *            path for the combined output file
+     * @param totalVus
+     *            total number of virtual users to distribute
+     * @param duration
+     *            test duration (e.g., "30s", "1m")
+     * @param thresholdConfig
+     *            threshold configuration for the combined script
+     * @param loadProfile
+     *            load profile controlling ramping behavior
+     * @throws IOException
+     *             if file operations fail
+     */
+    public void combine(List<ScenarioConfig> scenarios, Path outputFile,
+            int totalVus, String duration, ThresholdConfig thresholdConfig,
+            LoadProfile loadProfile) throws IOException {
 
         StringBuilder sb = new StringBuilder();
 
@@ -141,9 +167,15 @@ public class K6ScenarioCombiner {
                     (config.weight() * totalVus) / totalWeight);
 
             sb.append("    ").append(config.name()).append(": {\n");
-            sb.append("      executor: 'constant-vus',\n");
-            sb.append("      vus: ").append(vusForScenario).append(",\n");
-            sb.append("      duration: '").append(duration).append("',\n");
+            if (loadProfile.isRamping()) {
+                sb.append("      executor: 'ramping-vus',\n");
+                sb.append(loadProfile.toK6StagesBlock(vusForScenario, duration,
+                        "      "));
+            } else {
+                sb.append("      executor: 'constant-vus',\n");
+                sb.append("      vus: ").append(vusForScenario).append(",\n");
+                sb.append("      duration: '").append(duration).append("',\n");
+            }
             sb.append("      exec: '").append(config.name())
                     .append("Scenario',\n");
             sb.append("    }");
