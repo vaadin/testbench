@@ -691,23 +691,39 @@ public class HarToK6Converter {
         // Add RFC 4180 CSV parser and data loading
         String csvLoadBlock = "\n"
                 + "// Input test data from CSV — add rows to " + csvFileName
-                + " for per-VU variation\n" + "function parseCsvLine(line) {\n"
-                + "  const fields = []\n" + "  let cur = '', inQ = false\n"
-                + "  for (let i = 0; i < line.length; i++) {\n"
-                + "    const c = line[i]\n" + "    if (inQ) {\n"
-                + "      if (c === '\"' && line[i + 1] === '\"') { cur += '\"'; i++ }\n"
-                + "      else if (c === '\"') { inQ = false }\n"
-                + "      else { cur += c }\n" + "    } else {\n"
-                + "      if (c === '\"') { inQ = true }\n"
-                + "      else if (c === ',') { fields.push(cur); cur = '' }\n"
-                + "      else { cur += c }\n" + "    }\n" + "  }\n"
-                + "  fields.push(cur)\n" + "  return fields\n" + "}\n\n"
+                + " for per-VU variation\n"
+                + "function parseCsvRecords(text) {\n"
+                + "  const records = [], n = text.length\n"
+                + "  let i = 0\n"
+                + "  function parseField() {\n"
+                + "    if (i < n && text[i] === '\"') {\n"
+                + "      i++ // opening quote\n"
+                + "      let f = ''\n"
+                + "      while (i < n) {\n"
+                + "        if (text[i] === '\"' && text[i + 1] === '\"') { f += '\"'; i += 2 }\n"
+                + "        else if (text[i] === '\"') { i++; return f }\n"
+                + "        else { f += text[i]; i++ }\n"
+                + "      }\n"
+                + "      return f\n"
+                + "    }\n"
+                + "    let f = ''\n"
+                + "    while (i < n && text[i] !== ',' && text[i] !== '\\r' && text[i] !== '\\n') { f += text[i]; i++ }\n"
+                + "    return f\n"
+                + "  }\n"
+                + "  while (i < n) {\n"
+                + "    const row = []\n"
+                + "    row.push(parseField())\n"
+                + "    while (i < n && text[i] === ',') { i++; row.push(parseField()) }\n"
+                + "    if (text[i] === '\\r') i++\n"
+                + "    if (text[i] === '\\n') i++\n"
+                + "    if (row.length > 1 || row[0] !== '') records.push(row)\n"
+                + "  }\n"
+                + "  return records\n"
+                + "}\n\n"
                 + "const inputData = new SharedArray('input data', function () {\n"
-                + "  const lines = open('./" + csvFileName
-                + "').split('\\n').filter(l => l.trim())\n"
-                + "  const headers = parseCsvLine(lines[0])\n"
-                + "  return lines.slice(1).filter(l => l.trim()).map(line => {\n"
-                + "    const values = parseCsvLine(line)\n"
+                + "  const records = parseCsvRecords(open('./" + csvFileName + "'))\n"
+                + "  const headers = records[0]\n"
+                + "  return records.slice(1).map(values => {\n"
                 + "    const obj = {}\n"
                 + "    headers.forEach((h, i) => obj[h.trim()] = (values[i] || '').trim())\n"
                 + "    return obj\n" + "  })\n" + "})\n";
@@ -781,7 +797,7 @@ public class HarToK6Converter {
      *            the value to escape
      * @return the escaped CSV value
      */
-    private static String escapeCsvValue(String value) {
+    static String escapeCsvValue(String value) {
         if (value.contains(",") || value.contains("\"") || value.contains("\n")
                 || value.contains("\r")) {
             return "\"" + value.replace("\"", "\"\"") + "\"";

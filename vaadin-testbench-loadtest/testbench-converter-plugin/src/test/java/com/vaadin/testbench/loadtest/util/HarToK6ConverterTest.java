@@ -11,10 +11,13 @@ package com.vaadin.testbench.loadtest.util;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -61,66 +64,169 @@ class HarToK6ConverterTest {
 
     @Test
     void msyncValueWithCommaIsPreservedInCsv() throws IOException {
-        // Init request establishes a Vaadin session so mSync detection
-        // activates
-        String initEntry = entry("GET", "http://localhost:8080/?v-r=init");
-        // POST with mSync value containing a comma
-        String msyncBody = "{\"csrfToken\":\"abc-123\","
-                + "\"rpc\":[{\"type\":\"mSync\",\"node\":42,\"feature\":1,"
-                + "\"property\":\"value\","
-                + "\"value\":\"Cronan's Guide to Nanomixology, 2nd ed.\"}],"
-                + "\"syncId\":1,\"clientId\":1}";
-        String postEntry = entryWithBody("POST",
-                "http://localhost:8080/?v-r=uidl&v-uiId=0", msyncBody);
+        String value = "Cronan's Guide to Nanomixology, 2nd ed.";
+        Path csvFile = convertMsyncValue(value, "msync-comma");
 
-        Path harFile = tempDir.resolve("msync-comma.har");
-        Path outputFile = tempDir.resolve("msync-comma.js");
-        Files.writeString(harFile, createHar(initEntry, postEntry));
-
-        new HarToK6Converter().convert(harFile, outputFile);
-
-        // CSV should contain the full value (with comma) properly quoted
-        Path csvFile = tempDir.resolve("msync-comma-data.csv");
-        assertTrue(Files.exists(csvFile), "CSV data file should be created");
         String csv = Files.readString(csvFile);
-        assertTrue(csv.contains("input_1"), "CSV should have header");
-        // Value contains a comma, so it must be RFC 4180 quoted
-        assertTrue(csv.contains("\"Cronan's Guide to Nanomixology, 2nd ed.\""),
-                "CSV should contain properly quoted value with comma");
-
-        // The generated script should use parseCsvLine (not naive split)
-        String script = Files.readString(outputFile);
-        assertTrue(script.contains("parseCsvLine"),
-                "Generated script should use RFC 4180 CSV parser");
-        assertTrue(script.contains("${inputRow.input_1}"),
-                "Generated script should reference CSV input");
+        List<List<String>> records = parseCsvRecords(csv);
+        assertEquals(2, records.size(), "CSV should have header + 1 data row");
+        assertEquals("input_1", records.get(0).get(0));
+        assertEquals(value, records.get(1).get(0),
+                "Round-trip should preserve value with comma");
     }
 
     @Test
     void msyncValueWithJsonEscapedQuotesIsCaptured() throws IOException {
+        // In the JSON body the value appears as: \"Quoted Title\"
+        // The regex captures the raw JSON content including the backslash
+        // escapes, so the captured string is: \"Quoted Title\"
+        String jsonEscapedValue = "\\\"Quoted Title\\\"";
+        Path csvFile = convertMsyncValue(jsonEscapedValue, "msync-quotes");
+
+        String csv = Files.readString(csvFile);
+        List<List<String>> records = parseCsvRecords(csv);
+        assertEquals(2, records.size(), "CSV should have header + 1 data row");
+        assertEquals(jsonEscapedValue, records.get(1).get(0),
+                "Round-trip should preserve value with escaped quotes");
+    }
+
+    @Test
+    void msyncValueWithNewlineIsPreservedInCsv() throws IOException {
+        // In JSON the value is: line1\nline2 (escaped newline)
+        String value = "line1\\nline2";
+        Path csvFile = convertMsyncValue(value, "msync-newline");
+
+        String csv = Files.readString(csvFile);
+        List<List<String>> records = parseCsvRecords(csv);
+        assertEquals(2, records.size(), "CSV should have header + 1 data row");
+        assertEquals(value, records.get(1).get(0),
+                "Round-trip should preserve value with newline escape");
+    }
+
+    @Test
+    void csvRoundTripPreservesMultipleSpecialValues() throws IOException {
+        // Two mSync fields in one request: one with comma, one with quotes
         String initEntry = entry("GET", "http://localhost:8080/?v-r=init");
-        // POST with mSync value containing JSON-escaped quotes
         String msyncBody = "{\"csrfToken\":\"abc-123\","
-                + "\"rpc\":[{\"type\":\"mSync\",\"node\":42,\"feature\":1,"
+                + "\"rpc\":["
+                + "{\"type\":\"mSync\",\"node\":42,\"feature\":1,"
                 + "\"property\":\"value\","
-                + "\"value\":\"\\\"Quoted Title\\\"\"}],"
+                + "\"value\":\"hello, world\"},"
+                + "{\"type\":\"mSync\",\"node\":43,\"feature\":1,"
+                + "\"property\":\"value\","
+                + "\"value\":\"say \\\"hi\\\"\"}],"
                 + "\"syncId\":1,\"clientId\":1}";
         String postEntry = entryWithBody("POST",
                 "http://localhost:8080/?v-r=uidl&v-uiId=0", msyncBody);
 
-        Path harFile = tempDir.resolve("msync-quotes.har");
-        Path outputFile = tempDir.resolve("msync-quotes.js");
+        Path harFile = tempDir.resolve("msync-multi.har");
+        Path outputFile = tempDir.resolve("msync-multi.js");
         Files.writeString(harFile, createHar(initEntry, postEntry));
-
         new HarToK6Converter().convert(harFile, outputFile);
 
-        Path csvFile = tempDir.resolve("msync-quotes-data.csv");
-        assertTrue(Files.exists(csvFile), "CSV data file should be created");
+        Path csvFile = tempDir.resolve("msync-multi-data.csv");
         String csv = Files.readString(csvFile);
-        assertTrue(csv.contains("input_1"), "CSV should have header");
-        // The captured value includes JSON escape sequences; CSV must
-        // double-quote them per RFC 4180
-        assertTrue(csv.contains("\"\""), "CSV should contain escaped quotes");
+        List<List<String>> records = parseCsvRecords(csv);
+        assertEquals(2, records.size());
+        assertEquals(List.of("input_1", "input_2"), records.get(0));
+        assertEquals("hello, world", records.get(1).get(0),
+                "First field round-trip should preserve comma");
+        assertEquals("say \\\"hi\\\"", records.get(1).get(1),
+                "Second field round-trip should preserve escaped quotes");
+    }
+
+    /**
+     * Helper: converts a single mSync value through the full HAR→k6 pipeline
+     * and returns the generated CSV file path.
+     */
+    private Path convertMsyncValue(String value, String name)
+            throws IOException {
+        String initEntry = entry("GET", "http://localhost:8080/?v-r=init");
+        String msyncBody = "{\"csrfToken\":\"abc-123\","
+                + "\"rpc\":[{\"type\":\"mSync\",\"node\":42,\"feature\":1,"
+                + "\"property\":\"value\","
+                + "\"value\":\"" + value + "\"}],"
+                + "\"syncId\":1,\"clientId\":1}";
+        String postEntry = entryWithBody("POST",
+                "http://localhost:8080/?v-r=uidl&v-uiId=0", msyncBody);
+
+        Path harFile = tempDir.resolve(name + ".har");
+        Path outputFile = tempDir.resolve(name + ".js");
+        Files.writeString(harFile, createHar(initEntry, postEntry));
+        new HarToK6Converter().convert(harFile, outputFile);
+
+        Path csvFile = tempDir.resolve(name + "-data.csv");
+        assertTrue(Files.exists(csvFile), "CSV data file should be created");
+
+        // Verify the generated script uses the RFC 4180 parser
+        String script = Files.readString(outputFile);
+        assertTrue(script.contains("parseCsvRecords"),
+                "Generated script should use RFC 4180 CSV parser");
+        return csvFile;
+    }
+
+    /**
+     * RFC 4180 CSV parser (Java mirror of the generated k6 parseCsvRecords
+     * function). Used to verify that escapeCsvValue output round-trips
+     * correctly.
+     */
+    static List<List<String>> parseCsvRecords(String text) {
+        List<List<String>> records = new ArrayList<>();
+        int i = 0;
+        int n = text.length();
+        while (i < n) {
+            List<String> row = new ArrayList<>();
+            // parse first field
+            int[] ref = { i };
+            row.add(parseField(text, ref, n));
+            i = ref[0];
+            while (i < n && text.charAt(i) == ',') {
+                i++;
+                ref[0] = i;
+                row.add(parseField(text, ref, n));
+                i = ref[0];
+            }
+            if (i < n && text.charAt(i) == '\r')
+                i++;
+            if (i < n && text.charAt(i) == '\n')
+                i++;
+            if (row.size() > 1 || !row.get(0).isEmpty()) {
+                records.add(row);
+            }
+        }
+        return records;
+    }
+
+    private static String parseField(String text, int[] pos, int n) {
+        int i = pos[0];
+        if (i < n && text.charAt(i) == '"') {
+            i++; // opening quote
+            StringBuilder f = new StringBuilder();
+            while (i < n) {
+                if (text.charAt(i) == '"' && i + 1 < n
+                        && text.charAt(i + 1) == '"') {
+                    f.append('"');
+                    i += 2;
+                } else if (text.charAt(i) == '"') {
+                    i++;
+                    pos[0] = i;
+                    return f.toString();
+                } else {
+                    f.append(text.charAt(i));
+                    i++;
+                }
+            }
+            pos[0] = i;
+            return f.toString();
+        }
+        StringBuilder f = new StringBuilder();
+        while (i < n && text.charAt(i) != ',' && text.charAt(i) != '\r'
+                && text.charAt(i) != '\n') {
+            f.append(text.charAt(i));
+            i++;
+        }
+        pos[0] = i;
+        return f.toString();
     }
 
     // --- Helper methods to build HAR JSON ---
