@@ -61,7 +61,8 @@ class HarToK6ConverterTest {
 
     @Test
     void msyncValueWithCommaIsPreservedInCsv() throws IOException {
-        // Init request establishes a Vaadin session so mSync detection activates
+        // Init request establishes a Vaadin session so mSync detection
+        // activates
         String initEntry = entry("GET", "http://localhost:8080/?v-r=init");
         // POST with mSync value containing a comma
         String msyncBody = "{\"csrfToken\":\"abc-123\","
@@ -84,9 +85,7 @@ class HarToK6ConverterTest {
         String csv = Files.readString(csvFile);
         assertTrue(csv.contains("input_1"), "CSV should have header");
         // Value contains a comma, so it must be RFC 4180 quoted
-        assertTrue(
-                csv.contains(
-                        "\"Cronan's Guide to Nanomixology, 2nd ed.\""),
+        assertTrue(csv.contains("\"Cronan's Guide to Nanomixology, 2nd ed.\""),
                 "CSV should contain properly quoted value with comma");
 
         // The generated script should use parseCsvLine (not naive split)
@@ -121,8 +120,7 @@ class HarToK6ConverterTest {
         assertTrue(csv.contains("input_1"), "CSV should have header");
         // The captured value includes JSON escape sequences; CSV must
         // double-quote them per RFC 4180
-        assertTrue(csv.contains("\"\""),
-                "CSV should contain escaped quotes");
+        assertTrue(csv.contains("\"\""), "CSV should contain escaped quotes");
     }
 
     // --- Helper methods to build HAR JSON ---
