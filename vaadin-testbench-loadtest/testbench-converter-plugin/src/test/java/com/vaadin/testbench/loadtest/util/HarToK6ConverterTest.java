@@ -107,14 +107,11 @@ class HarToK6ConverterTest {
     void csvRoundTripPreservesMultipleSpecialValues() throws IOException {
         // Two mSync fields in one request: one with comma, one with quotes
         String initEntry = entry("GET", "http://localhost:8080/?v-r=init");
-        String msyncBody = "{\"csrfToken\":\"abc-123\","
-                + "\"rpc\":["
+        String msyncBody = "{\"csrfToken\":\"abc-123\"," + "\"rpc\":["
                 + "{\"type\":\"mSync\",\"node\":42,\"feature\":1,"
-                + "\"property\":\"value\","
-                + "\"value\":\"hello, world\"},"
+                + "\"property\":\"value\"," + "\"value\":\"hello, world\"},"
                 + "{\"type\":\"mSync\",\"node\":43,\"feature\":1,"
-                + "\"property\":\"value\","
-                + "\"value\":\"say \\\"hi\\\"\"}],"
+                + "\"property\":\"value\"," + "\"value\":\"say \\\"hi\\\"\"}],"
                 + "\"syncId\":1,\"clientId\":1}";
         String postEntry = entryWithBody("POST",
                 "http://localhost:8080/?v-r=uidl&v-uiId=0", msyncBody);
@@ -144,8 +141,7 @@ class HarToK6ConverterTest {
         String initEntry = entry("GET", "http://localhost:8080/?v-r=init");
         String msyncBody = "{\"csrfToken\":\"abc-123\","
                 + "\"rpc\":[{\"type\":\"mSync\",\"node\":42,\"feature\":1,"
-                + "\"property\":\"value\","
-                + "\"value\":\"" + value + "\"}],"
+                + "\"property\":\"value\"," + "\"value\":\"" + value + "\"}],"
                 + "\"syncId\":1,\"clientId\":1}";
         String postEntry = entryWithBody("POST",
                 "http://localhost:8080/?v-r=uidl&v-uiId=0", msyncBody);
