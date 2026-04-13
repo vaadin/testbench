@@ -59,6 +59,72 @@ class HarToK6ConverterTest {
                 "Generated script should not contain http.delete()");
     }
 
+    @Test
+    void msyncValueWithCommaIsPreservedInCsv() throws IOException {
+        // Init request establishes a Vaadin session so mSync detection activates
+        String initEntry = entry("GET", "http://localhost:8080/?v-r=init");
+        // POST with mSync value containing a comma
+        String msyncBody = "{\"csrfToken\":\"abc-123\","
+                + "\"rpc\":[{\"type\":\"mSync\",\"node\":42,\"feature\":1,"
+                + "\"property\":\"value\","
+                + "\"value\":\"Cronan's Guide to Nanomixology, 2nd ed.\"}],"
+                + "\"syncId\":1,\"clientId\":1}";
+        String postEntry = entryWithBody("POST",
+                "http://localhost:8080/?v-r=uidl&v-uiId=0", msyncBody);
+
+        Path harFile = tempDir.resolve("msync-comma.har");
+        Path outputFile = tempDir.resolve("msync-comma.js");
+        Files.writeString(harFile, createHar(initEntry, postEntry));
+
+        new HarToK6Converter().convert(harFile, outputFile);
+
+        // CSV should contain the full value (with comma) properly quoted
+        Path csvFile = tempDir.resolve("msync-comma-data.csv");
+        assertTrue(Files.exists(csvFile), "CSV data file should be created");
+        String csv = Files.readString(csvFile);
+        assertTrue(csv.contains("input_1"), "CSV should have header");
+        // Value contains a comma, so it must be RFC 4180 quoted
+        assertTrue(
+                csv.contains(
+                        "\"Cronan's Guide to Nanomixology, 2nd ed.\""),
+                "CSV should contain properly quoted value with comma");
+
+        // The generated script should use parseCsvLine (not naive split)
+        String script = Files.readString(outputFile);
+        assertTrue(script.contains("parseCsvLine"),
+                "Generated script should use RFC 4180 CSV parser");
+        assertTrue(script.contains("${inputRow.input_1}"),
+                "Generated script should reference CSV input");
+    }
+
+    @Test
+    void msyncValueWithJsonEscapedQuotesIsCaptured() throws IOException {
+        String initEntry = entry("GET", "http://localhost:8080/?v-r=init");
+        // POST with mSync value containing JSON-escaped quotes
+        String msyncBody = "{\"csrfToken\":\"abc-123\","
+                + "\"rpc\":[{\"type\":\"mSync\",\"node\":42,\"feature\":1,"
+                + "\"property\":\"value\","
+                + "\"value\":\"\\\"Quoted Title\\\"\"}],"
+                + "\"syncId\":1,\"clientId\":1}";
+        String postEntry = entryWithBody("POST",
+                "http://localhost:8080/?v-r=uidl&v-uiId=0", msyncBody);
+
+        Path harFile = tempDir.resolve("msync-quotes.har");
+        Path outputFile = tempDir.resolve("msync-quotes.js");
+        Files.writeString(harFile, createHar(initEntry, postEntry));
+
+        new HarToK6Converter().convert(harFile, outputFile);
+
+        Path csvFile = tempDir.resolve("msync-quotes-data.csv");
+        assertTrue(Files.exists(csvFile), "CSV data file should be created");
+        String csv = Files.readString(csvFile);
+        assertTrue(csv.contains("input_1"), "CSV should have header");
+        // The captured value includes JSON escape sequences; CSV must
+        // double-quote them per RFC 4180
+        assertTrue(csv.contains("\"\""),
+                "CSV should contain escaped quotes");
+    }
+
     // --- Helper methods to build HAR JSON ---
 
     private String entry(String method, String url) {
@@ -72,6 +138,22 @@ class HarToK6ConverterTest {
                 "redirectURL":"","headersSize":-1,"bodySize":-1},\
                 "cache":{},"timings":{"blocked":0,"dns":0,"connect":0,"send":0,"wait":0,"receive":0}}"""
                 .formatted(method, url);
+    }
+
+    private String entryWithBody(String method, String url, String body) {
+        // Escape the body for embedding in HAR JSON
+        String escapedBody = body.replace("\\", "\\\\").replace("\"", "\\\"");
+        return """
+                {"startedDateTime":"2026-01-01T00:00:00.000Z","time":0,\
+                "request":{"method":"%s","url":"%s","httpVersion":"HTTP/1.1",\
+                "headers":[],"queryString":[],"cookies":[],"headersSize":-1,\
+                "bodySize":-1,\
+                "postData":{"mimeType":"application/json","text":"%s"}},\
+                "response":{"status":200,"statusText":"OK","httpVersion":"HTTP/1.1",\
+                "headers":[],"cookies":[],"content":{"size":0,"mimeType":"text/html"},\
+                "redirectURL":"","headersSize":-1,"bodySize":-1},\
+                "cache":{},"timings":{"blocked":0,"dns":0,"connect":0,"send":0,"wait":0,"receive":0}}"""
+                .formatted(method, url, escapedBody);
     }
 
     private String createHar(String... entries) {
