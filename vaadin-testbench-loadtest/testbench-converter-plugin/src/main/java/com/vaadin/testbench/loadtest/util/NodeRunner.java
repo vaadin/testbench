@@ -38,6 +38,7 @@ public class NodeRunner {
      *            the directory to run node/k6 commands in
      */
     public NodeRunner(Path workingDirectory) {
+        ExperimentalWarning.log();
         this.workingDirectory = workingDirectory;
     }
 
