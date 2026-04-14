@@ -48,6 +48,7 @@
             <groupId>com.vaadin</groupId>
             <artifactId>loadtest-helper</artifactId>
             <version>${project.version}</version>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
