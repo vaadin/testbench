@@ -67,7 +67,19 @@ class ThresholdConfigTest {
     }
 
     @Test
-    void customDurationMergedWithDefaults() {
+    void customDurationOverridesMatchingDefaults() {
+        ThresholdConfig config = ThresholdConfig.DEFAULT
+                .withCustomThreshold("http_req_duration", "p(95)<500");
+        String block = config.toK6ThresholdsBlock();
+        // Custom p(95) overrides default p(95)
+        assertTrue(block.contains("'p(95)<500'"));
+        assertFalse(block.contains("'p(95)<2000'"));
+        // Default p(99) is kept
+        assertTrue(block.contains("'p(99)<5000'"));
+    }
+
+    @Test
+    void customDurationKeepsDefaultsWhenNoOverlap() {
         ThresholdConfig config = ThresholdConfig.DEFAULT
                 .withCustomThreshold("http_req_duration", "p(50)<1000");
         String block = config.toK6ThresholdsBlock();
@@ -87,6 +99,32 @@ class ThresholdConfigTest {
         assertTrue(block.contains("http_req_duration: ['p(90)<3000']"));
         assertFalse(block.contains("p(95)"));
         assertFalse(block.contains("p(99)"));
+    }
+
+    @Test
+    void customDurationOverridingDefaultsNoDuplicates() {
+        ThresholdConfig config = ThresholdConfig.DEFAULT
+                .withCustomThreshold("http_req_duration", "p(95)<500")
+                .withCustomThreshold("http_req_duration", "p(99)<1500");
+        String block = config.toK6ThresholdsBlock();
+        assertTrue(block.contains("'p(95)<500'"));
+        assertTrue(block.contains("'p(99)<1500'"));
+        // No default values duplicated
+        assertFalse(block.contains("'p(95)<2000'"));
+        assertFalse(block.contains("'p(99)<5000'"));
+        // Each percentile appears exactly once
+        assertEquals(1, countOccurrences(block, "p(95)"));
+        assertEquals(1, countOccurrences(block, "p(99)"));
+    }
+
+    private int countOccurrences(String text, String substring) {
+        int count = 0;
+        int idx = 0;
+        while ((idx = text.indexOf(substring, idx)) != -1) {
+            count++;
+            idx += substring.length();
+        }
+        return count;
     }
 
     @Test

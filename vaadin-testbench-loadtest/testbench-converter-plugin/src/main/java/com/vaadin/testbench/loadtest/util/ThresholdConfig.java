@@ -82,9 +82,9 @@ public record ThresholdConfig(int httpReqDurationP95, int httpReqDurationP99,
      *         .withCustomThreshold("http_req_duration", "p(50)&lt;1000");
      * </pre>
      * <p>
-     * Custom thresholds for {@code http_req_duration} are merged with the
-     * default p95/p99 thresholds (unless those are disabled by setting them to
-     * 0).
+     * Custom thresholds for {@code http_req_duration} override matching default
+     * thresholds (e.g. a custom {@code p(95)} replaces the default p95, while
+     * the default p99 is kept unless also overridden).
      *
      * @param metric
      *            the k6 metric name (e.g. {@code "http_req_waiting"},
@@ -159,18 +159,21 @@ public record ThresholdConfig(int httpReqDurationP95, int httpReqDurationP99,
             sb.append("    checks: ['rate==1'],\n");
         }
 
-        // http_req_duration: merge defaults with any custom expressions
+        // http_req_duration: custom expressions override matching defaults
         List<String> durationExpressions = new ArrayList<>();
-        if (httpReqDurationP95 > 0) {
+        List<String> customDuration = customThresholds
+                .getOrDefault("http_req_duration", List.of());
+        boolean customHasP95 = customDuration.stream()
+                .anyMatch(e -> e.startsWith("p(95)"));
+        boolean customHasP99 = customDuration.stream()
+                .anyMatch(e -> e.startsWith("p(99)"));
+        if (httpReqDurationP95 > 0 && !customHasP95) {
             durationExpressions.add("p(95)<" + httpReqDurationP95);
         }
-        if (httpReqDurationP99 > 0) {
+        if (httpReqDurationP99 > 0 && !customHasP99) {
             durationExpressions.add("p(99)<" + httpReqDurationP99);
         }
-        if (customThresholds.containsKey("http_req_duration")) {
-            durationExpressions
-                    .addAll(customThresholds.get("http_req_duration"));
-        }
+        durationExpressions.addAll(customDuration);
         if (!durationExpressions.isEmpty()) {
             sb.append("    http_req_duration: [");
             for (int i = 0; i < durationExpressions.size(); i++) {
