@@ -27,7 +27,7 @@ import com.vaadin.flow.server.ErrorHandler;
  * that k6 checks can detect and fail on.
  * <p>
  * Auto-registered via {@link LoadTestServiceInitListener}. Just add
- * {@code loadtest-helper} as a dependency — no code changes needed.
+ * {@code testbench-loadtest-support} as a dependency — no code changes needed.
  *
  * @see LoadTestServiceInitListener
  */

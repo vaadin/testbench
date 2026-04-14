@@ -20,7 +20,6 @@
     <modules>
         <module>testbench-loadtest-support</module>
         <module>testbench-converter-plugin</module>
-        <module>loadtest-helper</module>
         <module>load-tests</module>
     </modules>
 
