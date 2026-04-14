@@ -225,7 +225,149 @@ class HarToK6ConverterTest {
         return f.toString();
     }
 
+    @Test
+    void customInitCheckAppearsInInitBlock() throws IOException {
+        // Build a HAR with a Vaadin init request so the init check block is
+        // generated
+        String har = createHar(
+                vaadinInitEntry("http://localhost:8080/?v-r=init&location="));
+
+        Path harFile = tempDir.resolve("test.har");
+        Path outputFile = tempDir.resolve("test.js");
+        Files.writeString(harFile, har);
+
+        ResponseCheckConfig checks = ResponseCheckConfig.EMPTY.withCheck(
+                ResponseCheckConfig.Scope.INIT, "has page title",
+                "(r) => r.body.includes('<title>')");
+
+        new HarToK6Converter().convert(harFile, outputFile,
+                ThresholdConfig.DEFAULT, checks);
+
+        String script = Files.readString(outputFile);
+        assertTrue(
+                script.contains(
+                        "'has page title': (r) => r.body.includes('<title>'),"),
+                "Generated script should contain the custom init check");
+        // Built-in checks should still be present
+        assertTrue(script.contains("'init request succeeded'"),
+                "Built-in init checks should still be present");
+    }
+
+    @Test
+    void customUidlCheckAppearsInUidlBlock() throws IOException {
+        // Build a HAR with init + UIDL request
+        String har = createHar(
+                vaadinInitEntry("http://localhost:8080/?v-r=init&location="),
+                vaadinUidlEntry("http://localhost:8080/?v-r=uidl&v-uiId=0"));
+
+        Path harFile = tempDir.resolve("test.har");
+        Path outputFile = tempDir.resolve("test.js");
+        Files.writeString(harFile, har);
+
+        ResponseCheckConfig checks = ResponseCheckConfig.EMPTY.withCheck(
+                ResponseCheckConfig.Scope.UIDL, "no timeout",
+                "(r) => !r.body.includes('timeout')");
+
+        new HarToK6Converter().convert(harFile, outputFile,
+                ThresholdConfig.DEFAULT, checks);
+
+        String script = Files.readString(outputFile);
+        assertTrue(
+                script.contains(
+                        "'no timeout': (r) => !r.body.includes('timeout'),"),
+                "Generated script should contain the custom UIDL check");
+        // Built-in checks should still be present
+        assertTrue(script.contains("'UIDL request succeeded'"),
+                "Built-in UIDL checks should still be present");
+    }
+
+    @Test
+    void allScopeCheckAppearsInBothBlocks() throws IOException {
+        String har = createHar(
+                vaadinInitEntry("http://localhost:8080/?v-r=init&location="),
+                vaadinUidlEntry("http://localhost:8080/?v-r=uidl&v-uiId=0"));
+
+        Path harFile = tempDir.resolve("test.har");
+        Path outputFile = tempDir.resolve("test.js");
+        Files.writeString(harFile, har);
+
+        ResponseCheckConfig checks = ResponseCheckConfig.EMPTY.withCheck(
+                ResponseCheckConfig.Scope.ALL, "fast response",
+                "(r) => r.timings.duration < 3000");
+
+        new HarToK6Converter().convert(harFile, outputFile,
+                ThresholdConfig.DEFAULT, checks);
+
+        String script = Files.readString(outputFile);
+        // Count occurrences — should appear in both init and UIDL blocks
+        int count = countOccurrences(script, "'fast response':");
+        assertTrue(count >= 2,
+                "ALL-scoped check should appear in both init and UIDL blocks, found "
+                        + count);
+    }
+
+    @Test
+    void emptyResponseCheckConfigProducesStandardOutput() throws IOException {
+        String har = createHar(
+                vaadinInitEntry("http://localhost:8080/?v-r=init&location="));
+
+        Path harFile = tempDir.resolve("test.har");
+        Path outputFile = tempDir.resolve("test.js");
+        Files.writeString(harFile, har);
+
+        // With EMPTY config
+        new HarToK6Converter().convert(harFile, outputFile,
+                ThresholdConfig.DEFAULT, ResponseCheckConfig.EMPTY);
+        String withEmpty = Files.readString(outputFile);
+
+        // Without ResponseCheckConfig (backwards-compatible overload)
+        Path outputFile2 = tempDir.resolve("test2.js");
+        new HarToK6Converter().convert(harFile, outputFile2,
+                ThresholdConfig.DEFAULT);
+        String withoutConfig = Files.readString(outputFile2);
+
+        assertEquals(withoutConfig, withEmpty,
+                "EMPTY config should produce identical output to no config");
+    }
+
     // --- Helper methods to build HAR JSON ---
+
+    private String vaadinInitEntry(String url) {
+        return """
+                {"startedDateTime":"2026-01-01T00:00:00.000Z","time":0,\
+                "request":{"method":"GET","url":"%s","httpVersion":"HTTP/1.1",\
+                "headers":[],"queryString":[],"cookies":[],"headersSize":-1,\
+                "bodySize":-1},\
+                "response":{"status":200,"statusText":"OK","httpVersion":"HTTP/1.1",\
+                "headers":[],"cookies":[],"content":{"size":0,"mimeType":"text/html"},\
+                "redirectURL":"","headersSize":-1,"bodySize":-1},\
+                "cache":{},"timings":{"blocked":0,"dns":0,"connect":0,"send":0,"wait":0,"receive":0}}"""
+                .formatted(url);
+    }
+
+    private String vaadinUidlEntry(String url) {
+        return """
+                {"startedDateTime":"2026-01-01T00:00:01.000Z","time":0,\
+                "request":{"method":"POST","url":"%s","httpVersion":"HTTP/1.1",\
+                "headers":[],"queryString":[],"cookies":[],\
+                "postData":{"mimeType":"application/json","text":"{\\"csrfToken\\":\\"abcd1234-abcd-abcd-abcd-abcd12345678\\",\\"syncId\\":0,\\"clientId\\":0}"},\
+                "headersSize":-1,"bodySize":-1},\
+                "response":{"status":200,"statusText":"OK","httpVersion":"HTTP/1.1",\
+                "headers":[],"cookies":[],"content":{"size":0,"mimeType":"application/json"},\
+                "redirectURL":"","headersSize":-1,"bodySize":-1},\
+                "cache":{},"timings":{"blocked":0,"dns":0,"connect":0,"send":0,"wait":0,"receive":0}}"""
+                .formatted(url);
+    }
+
+    private int countOccurrences(String text, String search) {
+        int count = 0;
+        int idx = 0;
+        while ((idx = text.indexOf(search, idx)) != -1) {
+            count++;
+            idx += search.length();
+        }
+        return count;
+    }
 
     private String entry(String method, String url) {
         return """

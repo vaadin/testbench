@@ -29,7 +29,7 @@ import com.vaadin.laboratory.services.SamplePersonService;
 @Route(value = "crud-example/:samplePersonID?/:action?(edit)")
 @Menu(order = 1, icon = LineAwesomeIconUrl.COLUMNS_SOLID)
 @Uses(Icon.class)
-public class CrudExampleView extends Div implements BeforeEnterObserver {
+public class CrudExampleView extends SplitLayout implements BeforeEnterObserver {
 
     static final String SAMPLEPERSON_ID = "samplePersonID";
     static final String SAMPLEPERSON_EDIT_ROUTE_TEMPLATE = "crud-example/%s/edit";
@@ -43,14 +43,14 @@ public class CrudExampleView extends Div implements BeforeEnterObserver {
 
         samplePersonService = crudExampleFactory.createService();
         grid = crudExampleFactory.createGrid(this::clearForm);
+        grid.setSizeFull();
         form = crudExampleFactory.createForm(this::refreshGrid);
 
         // Create UI
-        SplitLayout splitLayout = new SplitLayout();
-        splitLayout.addToPrimary(grid);
-        splitLayout.addToSecondary(form);
-
-        add(splitLayout);
+        setSplitterPosition(50);
+        addToPrimary(grid);
+        addToSecondary(form);
+        setSizeFull();
     }
 
     private void refreshGrid() {

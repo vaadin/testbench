@@ -38,6 +38,7 @@ public class NodeRunner {
      *            the directory to run node/k6 commands in
      */
     public NodeRunner(Path workingDirectory) {
+        ExperimentalWarning.log();
         this.workingDirectory = workingDirectory;
     }
 
@@ -163,10 +164,34 @@ public class NodeRunner {
      */
     public void harToK6(Path harFile, Path outputFile,
             ThresholdConfig thresholdConfig) throws MojoExecutionException {
+        harToK6(harFile, outputFile, thresholdConfig,
+                ResponseCheckConfig.EMPTY);
+    }
+
+    /**
+     * Converts a HAR file to a k6 test with configurable thresholds and custom
+     * response checks.
+     *
+     * @param harFile
+     *            the input HAR file
+     * @param outputFile
+     *            the output k6 test file
+     * @param thresholdConfig
+     *            threshold configuration for the generated script
+     * @param responseCheckConfig
+     *            custom response validation checks to inject
+     * @throws MojoExecutionException
+     *             if conversion fails
+     */
+    public void harToK6(Path harFile, Path outputFile,
+            ThresholdConfig thresholdConfig,
+            ResponseCheckConfig responseCheckConfig)
+            throws MojoExecutionException {
         log.info("Converting HAR to k6 test...");
         try {
             HarToK6Converter converter = new HarToK6Converter();
-            converter.convert(harFile, outputFile, thresholdConfig);
+            converter.convert(harFile, outputFile, thresholdConfig,
+                    responseCheckConfig);
         } catch (IOException e) {
             throw new MojoExecutionException("Failed to convert HAR to k6", e);
         }
