@@ -23,21 +23,38 @@ import org.apache.maven.plugins.annotations.Parameter;
 import com.vaadin.testbench.loadtest.util.ServerProcess;
 
 /**
- * Starts a Spring Boot application server and waits for it to be ready. The
- * process handle is stored in the Maven project context so that
- * {@code loadtest:stop-server} can shut it down later.
+ * Starts an application server and waits for it to be ready. The process handle
+ * is stored in the Maven project context so that {@code loadtest:stop-server}
+ * can shut it down later.
  * <p>
- * Usage in pom.xml:
+ * Supports both Spring Boot and plain Jetty applications:
+ * <ul>
+ * <li><b>Spring Boot</b> — set {@code serverPort} (and optionally
+ * {@code managementPort}). These are passed as {@code --server.port} and
+ * {@code --management.server.port}, and {@code /actuator/health} is polled when
+ * a management port is configured.</li>
+ * <li><b>Plain Jetty</b> — set {@code httpPort}. This is passed as
+ * {@code -Djetty.http.port} and only the application root is polled for
+ * readiness.</li>
+ * </ul>
+ * <p>
+ * Spring Boot example:
  *
  * <pre>
- * &lt;execution&gt;
- *     &lt;goals&gt;&lt;goal&gt;start-server&lt;/goal&gt;&lt;/goals&gt;
- *     &lt;configuration&gt;
- *         &lt;serverJar&gt;${project.build.directory}/${project.build.finalName}.jar&lt;/serverJar&gt;
- *         &lt;serverPort&gt;8081&lt;/serverPort&gt;
- *         &lt;managementPort&gt;8082&lt;/managementPort&gt;
- *     &lt;/configuration&gt;
- * &lt;/execution&gt;
+ * &lt;configuration&gt;
+ *     &lt;serverJar&gt;${project.build.directory}/${project.build.finalName}.jar&lt;/serverJar&gt;
+ *     &lt;serverPort&gt;8080&lt;/serverPort&gt;
+ *     &lt;managementPort&gt;8082&lt;/managementPort&gt;
+ * &lt;/configuration&gt;
+ * </pre>
+ *
+ * Plain Jetty example:
+ *
+ * <pre>
+ * &lt;configuration&gt;
+ *     &lt;serverJar&gt;${project.build.directory}/${project.build.finalName}.jar&lt;/serverJar&gt;
+ *     &lt;httpPort&gt;8080&lt;/httpPort&gt;
+ * &lt;/configuration&gt;
  * </pre>
  */
 @Mojo(name = "start-server", defaultPhase = LifecyclePhase.PRE_INTEGRATION_TEST)
@@ -52,17 +69,26 @@ public class StartServerMojo extends AbstractK6Mojo {
     private String serverJar;
 
     /**
-     * Application server port (passed as --server.port).
+     * Spring Boot application server port. When set, {@code --server.port} is
+     * appended to the command and the application root is polled for readiness.
      */
-    @Parameter(property = "loadtest.serverPort", defaultValue = "8080")
-    private int serverPort;
+    @Parameter(property = "loadtest.serverPort")
+    private Integer serverPort;
 
     /**
-     * Spring Boot Actuator management port (passed as
-     * --management.server.port).
+     * Spring Boot Actuator management port. When set,
+     * {@code --management.server.port} is appended and {@code /actuator/health}
+     * is polled in addition to the application root.
      */
-    @Parameter(property = "loadtest.managementPort", defaultValue = "8082")
-    private int managementPort;
+    @Parameter(property = "loadtest.managementPort")
+    private Integer managementPort;
+
+    /**
+     * Jetty HTTP port. When set, {@code -Djetty.http.port} is added as a JVM
+     * argument and the application root is polled for readiness.
+     */
+    @Parameter(property = "loadtest.httpPort")
+    private Integer httpPort;
 
     /**
      * Path to the Java executable. When not set, defaults to
@@ -79,7 +105,7 @@ public class StartServerMojo extends AbstractK6Mojo {
     private List<String> jvmArgs;
 
     /**
-     * Extra application arguments (appended after the Spring Boot arguments).
+     * Extra application arguments appended to the command.
      */
     @Parameter(property = "loadtest.appArgs")
     private List<String> appArgs;
@@ -103,24 +129,41 @@ public class StartServerMojo extends AbstractK6Mojo {
             return;
         }
 
+        if (serverPort == null && httpPort == null) {
+            throw new MojoExecutionException(
+                    "Either serverPort (Spring Boot) or httpPort (Jetty) must be set.");
+        }
+
+        int appPort = serverPort != null ? serverPort : httpPort;
+
         // Build command
         List<String> command = new ArrayList<>();
         command.add(resolveJavaExecutable());
+        if (httpPort != null) {
+            command.add("-Djetty.http.port=" + httpPort);
+        }
         if (jvmArgs != null) {
             command.addAll(jvmArgs);
         }
         command.add("-jar");
         command.add(serverJar);
-        command.add("--server.port=" + serverPort);
-        command.add("--management.server.port=" + managementPort);
+        if (serverPort != null) {
+            command.add("--server.port=" + serverPort);
+        }
+        if (managementPort != null) {
+            command.add("--management.server.port=" + managementPort);
+        }
         if (appArgs != null) {
             command.addAll(appArgs);
         }
 
         // Health URLs to poll
-        List<String> healthUrls = List.of(
-                "http://localhost:" + managementPort + "/actuator/health",
-                "http://localhost:" + serverPort + "/");
+        List<String> healthUrls = new ArrayList<>();
+        if (managementPort != null) {
+            healthUrls.add(
+                    "http://localhost:" + managementPort + "/actuator/health");
+        }
+        healthUrls.add("http://localhost:" + appPort + "/");
 
         ServerProcess serverProcess = new ServerProcess();
         try {
@@ -145,8 +188,7 @@ public class StartServerMojo extends AbstractK6Mojo {
             }
         }, "loadtest-server-shutdown-hook"));
 
-        getLog().info("Server started on port " + serverPort + " (management: "
-                + managementPort + ")");
+        getLog().info("Server started on port " + appPort);
     }
 
     private String resolveJavaExecutable() throws MojoExecutionException {

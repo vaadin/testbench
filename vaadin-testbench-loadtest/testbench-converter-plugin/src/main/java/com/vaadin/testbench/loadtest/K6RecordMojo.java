@@ -336,15 +336,17 @@ public class K6RecordMojo extends AbstractK6Mojo {
                     + Files.size(harPath) + " bytes)");
 
             if (!testSuccess) {
-                getLog().warn(
-                        "TestBench test may have failed, but HAR was recorded. Continuing with conversion...");
+                throw new MojoExecutionException(
+                        "TestBench test '" + currentTestClass
+                                + "' failed. Fix the test before recording.");
             }
 
             // Step 4: Filter external domains
             nodeRunner.filterHar(harPath);
 
             // Step 5: Convert HAR to k6 (with configurable thresholds)
-            nodeRunner.harToK6(harPath, generatedFile, buildThresholdConfig());
+            nodeRunner.harToK6(harPath, generatedFile, buildThresholdConfig(),
+                    buildResponseCheckConfig());
 
             // Step 6: Refactor for Vaadin (with think time configuration)
             ThinkTimeConfig thinkTimeConfig = new ThinkTimeConfig(
@@ -413,12 +415,17 @@ public class K6RecordMojo extends AbstractK6Mojo {
 
             Process process = pb.start();
 
-            // Stream output
+            // Stream output and detect test failures/errors
+            boolean hasTestFailures = false;
             try (BufferedReader reader = new BufferedReader(
                     new InputStreamReader(process.getInputStream()))) {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     getLog().info("[test] " + line);
+                    if (line.contains("[ERROR] Failures:")
+                            || line.contains("[ERROR] Errors:")) {
+                        hasTestFailures = true;
+                    }
                 }
             }
 
@@ -433,6 +440,10 @@ public class K6RecordMojo extends AbstractK6Mojo {
             int exitCode = process.exitValue();
             if (exitCode != 0) {
                 getLog().warn("TestBench test exited with code: " + exitCode);
+                return false;
+            }
+
+            if (hasTestFailures) {
                 return false;
             }
 
