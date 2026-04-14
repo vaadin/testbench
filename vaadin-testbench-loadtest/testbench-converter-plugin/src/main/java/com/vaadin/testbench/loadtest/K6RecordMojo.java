@@ -344,7 +344,8 @@ public class K6RecordMojo extends AbstractK6Mojo {
             nodeRunner.filterHar(harPath);
 
             // Step 5: Convert HAR to k6 (with configurable thresholds)
-            nodeRunner.harToK6(harPath, generatedFile, buildThresholdConfig());
+            nodeRunner.harToK6(harPath, generatedFile, buildThresholdConfig(),
+                    buildResponseCheckConfig());
 
             // Step 6: Refactor for Vaadin (with think time configuration)
             ThinkTimeConfig thinkTimeConfig = new ThinkTimeConfig(
