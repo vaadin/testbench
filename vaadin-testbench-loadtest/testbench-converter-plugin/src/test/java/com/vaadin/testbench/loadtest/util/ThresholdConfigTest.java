@@ -159,6 +159,19 @@ class ThresholdConfigTest {
     }
 
     @Test
+    void defaultWithCustomWaitingThresholds() {
+        ThresholdConfig config = ThresholdConfig.DEFAULT.withCustomThresholds(
+                "http_req_waiting:p(95)<1000,http_req_waiting:p(99)<2000");
+        String block = config.toK6ThresholdsBlock();
+        assertTrue(block
+                .contains("http_req_waiting: ['p(95)<1000', 'p(99)<2000']"));
+        // Defaults still present
+        assertTrue(block.contains("'p(95)<2000'"));
+        assertTrue(block.contains("'p(99)<5000'"));
+        assertTrue(block.contains("abortOnFail: true"));
+    }
+
+    @Test
     void backwardsCompatibleConstructor() {
         ThresholdConfig config = new ThresholdConfig(2000, 5000, true);
         assertEquals(ThresholdConfig.DEFAULT.toK6ThresholdsBlock(),
