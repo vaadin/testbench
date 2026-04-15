@@ -46,7 +46,7 @@
         </dependency>
         <dependency>
             <groupId>com.vaadin</groupId>
-            <artifactId>loadtest-helper</artifactId>
+            <artifactId>testbench-loadtest-support</artifactId>
             <version>10.2-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
