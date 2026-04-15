@@ -16,38 +16,55 @@ import java.util.regex.Pattern;
 
 /**
  * Configures the load pattern for k6 test execution. Supports predefined
- * patterns (constant, ramp, stress, soak) and fully custom stage definitions.
+ * patterns (constant, ramp, stress, soak), explicit k6 executor selection with
+ * full parameter control, and fully custom scenario definitions.
  *
  * <p>
- * When a ramping pattern is used, k6's {@code ramping-vus} executor generates
- * stages that control how virtual users are added and removed over time. The
- * {@code constant} pattern uses k6's {@code constant-vus} executor with no
- * ramping.
+ * Three modes of configuration:
+ * <ol>
+ * <li><strong>Predefined patterns</strong> — convenient presets that map to
+ * {@code constant-vus} or {@code ramping-vus} executors</li>
+ * <li><strong>Explicit executor</strong> — direct selection of any k6 executor
+ * (e.g., {@code constant-arrival-rate}, {@code shared-iterations}) with full
+ * parameter control</li>
+ * <li><strong>Custom scenario</strong> — raw k6 scenario definition for maximum
+ * flexibility</li>
+ * </ol>
  *
  * <p>
  * Example Maven usage:
  *
  * <pre>
- * // Default: ramp pattern with 10s ramp-up and 10s ramp-down
+ * // Predefined: ramp pattern with 10s ramp-up and 10s ramp-down (default)
  * mvn k6:run -Dk6.vus=50 -Dk6.duration=2m
  *
- * // Constant load (no ramping)
+ * // Predefined: constant load (no ramping)
  * mvn k6:run -Dk6.vus=50 -Dk6.duration=2m -Dk6.loadPattern=constant
  *
- * // Custom ramp durations
+ * // Predefined: custom ramp durations
  * mvn k6:run -Dk6.vus=50 -Dk6.duration=5m -Dk6.rampUp=30s -Dk6.rampDown=15s
  *
- * // Stress test pattern
+ * // Predefined: stress test pattern
  * mvn k6:run -Dk6.vus=50 -Dk6.duration=5m -Dk6.loadPattern=stress
  *
- * // Fully custom stages
+ * // Predefined: fully custom stages
  * mvn k6:run -Dk6.stages="30s:20,1m:50,30s:50,15s:80,1m:80,30s:0"
+ *
+ * // Explicit executor: constant arrival rate
+ * mvn k6:run -Dk6.executor=constant-arrival-rate -Dk6.rate=100 \
+ *     -Dk6.duration=2m -Dk6.preAllocatedVUs=50 -Dk6.maxVUs=100
+ *
+ * // Explicit executor: shared iterations
+ * mvn k6:run -Dk6.executor=shared-iterations -Dk6.vus=50 -Dk6.iterations=1000
+ *
+ * // Fully custom scenario (raw k6 JavaScript)
+ * mvn k6:run -Dk6.customScenario="executor: 'ramping-arrival-rate', ..."
  * </pre>
  */
 public class LoadProfile {
 
     /**
-     * Predefined load patterns.
+     * Predefined load patterns that map to standard k6 executor configurations.
      */
     public enum LoadPattern {
         /**
@@ -86,12 +103,107 @@ public class LoadProfile {
     }
 
     /**
-     * A single stage in a k6 ramping-vus configuration.
+     * All k6 executor types. Each executor implements a different workload
+     * model for generating load.
+     *
+     * @see <a href=
+     *      "https://grafana.com/docs/k6/latest/using-k6/scenarios/executors/">k6
+     *      Executors</a>
+     */
+    public enum K6Executor {
+        /**
+         * A fixed number of VUs execute iterations for a specified duration.
+         */
+        CONSTANT_VUS("constant-vus"),
+
+        /**
+         * A variable number of VUs execute iterations, ramping up and down
+         * according to configured stages.
+         */
+        RAMPING_VUS("ramping-vus"),
+
+        /**
+         * Each VU executes a fixed number of iterations. Test ends when all VUs
+         * complete their iterations or {@code maxDuration} is reached.
+         */
+        PER_VU_ITERATIONS("per-vu-iterations"),
+
+        /**
+         * A fixed total number of iterations is shared among all VUs. Test ends
+         * when all iterations complete or {@code maxDuration} is reached.
+         */
+        SHARED_ITERATIONS("shared-iterations"),
+
+        /**
+         * A fixed number of iterations are started per time unit. VUs are
+         * pre-allocated and recycled as needed.
+         */
+        CONSTANT_ARRIVAL_RATE("constant-arrival-rate"),
+
+        /**
+         * A variable number of iterations per time unit, following configured
+         * stages. Useful for ramping request rates independently of VU count.
+         */
+        RAMPING_ARRIVAL_RATE("ramping-arrival-rate"),
+
+        /**
+         * VU count is controlled externally via k6's REST API. Useful for
+         * manual or programmatic load control.
+         */
+        EXTERNALLY_CONTROLLED("externally-controlled");
+
+        private final String k6Name;
+
+        K6Executor(String k6Name) {
+            this.k6Name = k6Name;
+        }
+
+        /**
+         * Returns the k6 executor name as used in k6 scenario definitions
+         * (e.g., {@code "constant-arrival-rate"}).
+         *
+         * @return the k6 executor name
+         */
+        public String getK6Name() {
+            return k6Name;
+        }
+
+        /**
+         * Parses an executor name from its k6 name (e.g.,
+         * {@code "constant-arrival-rate"}), Java enum name (e.g.,
+         * {@code "CONSTANT_ARRIVAL_RATE"}), or hyphenated form.
+         *
+         * @param name
+         *            the executor name to parse
+         * @return the matching K6Executor
+         * @throws IllegalArgumentException
+         *             if no match is found
+         */
+        public static K6Executor fromString(String name) {
+            for (K6Executor e : values()) {
+                if (e.k6Name.equals(name) || e.name().equalsIgnoreCase(name)
+                        || e.name().replace("_", "-").equalsIgnoreCase(name)) {
+                    return e;
+                }
+            }
+            throw new IllegalArgumentException("Unknown k6 executor: '" + name
+                    + "'. Valid values: constant-vus, ramping-vus, "
+                    + "per-vu-iterations, shared-iterations, "
+                    + "constant-arrival-rate, ramping-arrival-rate, "
+                    + "externally-controlled");
+        }
+    }
+
+    /**
+     * A single stage in a k6 ramping configuration. For {@code ramping-vus},
+     * the target represents VU count. For {@code ramping-arrival-rate}, the
+     * target represents iteration rate per time unit.
      *
      * @param duration
      *            stage duration (e.g., "30s", "1m", "2m30s")
      * @param target
-     *            target number of VUs at the end of this stage
+     *            target number of VUs or iteration rate at the end of this
+     *            stage
      */
     public record Stage(String duration, int target) {
     }
@@ -111,13 +223,26 @@ public class LoadProfile {
     public static final LoadProfile CONSTANT = new LoadProfile(
             LoadPattern.CONSTANT, "0s", "0s", List.of());
 
+    // Predefined pattern fields
     private final LoadPattern pattern;
     private final String rampUp;
     private final String rampDown;
     private final List<Stage> customStages;
 
+    // Explicit executor fields
+    private final K6Executor executor;
+    private final Integer rate;
+    private final String timeUnit;
+    private final Integer preAllocatedVUs;
+    private final Integer maxVUs;
+    private final Integer iterations;
+    private final Integer startRate;
+
+    // Fully custom scenario content (raw k6 JavaScript)
+    private final String customScenarioContent;
+
     /**
-     * Creates a new load profile.
+     * Creates a load profile from a predefined pattern.
      *
      * @param pattern
      *            the load pattern to use
@@ -131,12 +256,91 @@ public class LoadProfile {
      */
     public LoadProfile(LoadPattern pattern, String rampUp, String rampDown,
             List<Stage> customStages) {
+        this(pattern, null, rampUp, rampDown, customStages, null, null, null,
+                null, null, null, null);
+    }
+
+    /**
+     * Creates a load profile with an explicit k6 executor and its parameters.
+     *
+     * @param executor
+     *            the k6 executor to use
+     * @param stages
+     *            stages for ramping executors ({@code ramping-vus},
+     *            {@code ramping-arrival-rate}), or empty for non-ramping
+     *            executors
+     * @param rate
+     *            iteration rate for arrival-rate executors (iterations per
+     *            timeUnit)
+     * @param timeUnit
+     *            time unit for arrival-rate executors (e.g., "1s", "1m")
+     * @param preAllocatedVUs
+     *            pre-allocated VUs for arrival-rate executors
+     * @param maxVUs
+     *            maximum VUs for arrival-rate and externally-controlled
+     *            executors
+     * @param iterations
+     *            iteration count for iteration-based executors
+     * @param startRate
+     *            starting iteration rate for ramping-arrival-rate executor
+     */
+    public LoadProfile(K6Executor executor, List<Stage> stages, Integer rate,
+            String timeUnit, Integer preAllocatedVUs, Integer maxVUs,
+            Integer iterations, Integer startRate) {
+        this(null, executor, "0s", "0s", stages != null ? stages : List.of(),
+                rate, timeUnit, preAllocatedVUs, maxVUs, iterations, startRate,
+                null);
+    }
+
+    /**
+     * Creates a load profile from raw k6 scenario content. The content is
+     * inserted directly into the k6 scenario definition block, giving full
+     * control over all scenario properties.
+     *
+     * <p>
+     * Example content:
+     *
+     * <pre>
+     * executor: 'ramping-arrival-rate',
+     * startRate: 0,
+     * timeUnit: '1s',
+     * preAllocatedVUs: 50,
+     * maxVUs: 100,
+     * stages: [
+     *   { duration: '1m', target: 100 },
+     *   { duration: '2m', target: 100 },
+     *   { duration: '1m', target: 0 },
+     * ],
+     * </pre>
+     *
+     * @param scenarioContent
+     *            raw k6 JavaScript scenario properties
+     * @return a LoadProfile that inserts the content directly
+     */
+    public static LoadProfile customScenario(String scenarioContent) {
+        return new LoadProfile(null, null, "0s", "0s", List.of(), null, null,
+                null, null, null, null, scenarioContent);
+    }
+
+    private LoadProfile(LoadPattern pattern, K6Executor executor, String rampUp,
+            String rampDown, List<Stage> customStages, Integer rate,
+            String timeUnit, Integer preAllocatedVUs, Integer maxVUs,
+            Integer iterations, Integer startRate,
+            String customScenarioContent) {
         this.pattern = pattern;
+        this.executor = executor;
         this.rampUp = rampUp;
         this.rampDown = rampDown;
         this.customStages = customStages != null
                 ? Collections.unmodifiableList(new ArrayList<>(customStages))
                 : List.of();
+        this.rate = rate;
+        this.timeUnit = timeUnit;
+        this.preAllocatedVUs = preAllocatedVUs;
+        this.maxVUs = maxVUs;
+        this.iterations = iterations;
+        this.startRate = startRate;
+        this.customScenarioContent = customScenarioContent;
     }
 
     public LoadPattern getPattern() {
@@ -155,6 +359,60 @@ public class LoadProfile {
         return customStages;
     }
 
+    public K6Executor getExecutor() {
+        return executor;
+    }
+
+    public Integer getRate() {
+        return rate;
+    }
+
+    public String getTimeUnit() {
+        return timeUnit;
+    }
+
+    public Integer getPreAllocatedVUs() {
+        return preAllocatedVUs;
+    }
+
+    public Integer getMaxVUs() {
+        return maxVUs;
+    }
+
+    public Integer getIterations() {
+        return iterations;
+    }
+
+    public Integer getStartRate() {
+        return startRate;
+    }
+
+    public String getCustomScenarioContent() {
+        return customScenarioContent;
+    }
+
+    /**
+     * Returns the k6 executor type this profile resolves to. For predefined
+     * patterns, this maps {@code CONSTANT} to {@code constant-vus} and all
+     * others to {@code ramping-vus}. For explicit executors, returns the
+     * configured executor. Returns {@code null} for fully custom scenarios.
+     *
+     * @return the resolved k6 executor, or {@code null} for custom scenario
+     *         content
+     */
+    public K6Executor resolveExecutor() {
+        if (customScenarioContent != null) {
+            return null;
+        }
+        if (executor != null) {
+            return executor;
+        }
+        if (pattern == LoadPattern.CONSTANT) {
+            return K6Executor.CONSTANT_VUS;
+        }
+        return K6Executor.RAMPING_VUS;
+    }
+
     /**
      * Returns whether this profile uses k6's {@code ramping-vus} executor
      * (i.e., has stages rather than constant VUs).
@@ -162,7 +420,31 @@ public class LoadProfile {
      * @return {@code true} if ramping, {@code false} for constant load
      */
     public boolean isRamping() {
-        return pattern != LoadPattern.CONSTANT;
+        if (executor != null) {
+            return executor == K6Executor.RAMPING_VUS
+                    || executor == K6Executor.RAMPING_ARRIVAL_RATE;
+        }
+        return pattern != null && pattern != LoadPattern.CONSTANT;
+    }
+
+    /**
+     * Returns whether this profile requires configuration embedded in the k6
+     * script (cannot be fully configured via k6 CLI flags alone). Only
+     * {@code constant-vus} and {@code ramping-vus} support full CLI
+     * configuration; all other executors and custom scenarios require embedded
+     * config.
+     *
+     * @return {@code true} if embedded script configuration is required
+     */
+    public boolean requiresEmbeddedConfig() {
+        if (customScenarioContent != null) {
+            return true;
+        }
+        if (executor != null) {
+            return executor != K6Executor.CONSTANT_VUS
+                    && executor != K6Executor.RAMPING_VUS;
+        }
+        return false;
     }
 
     /**
@@ -287,6 +569,150 @@ public class LoadProfile {
     }
 
     /**
+     * Generates k6 scenario properties for use inside a scenario definition
+     * block. Includes the executor type and all executor-specific properties
+     * but does <em>not</em> include the scenario name wrapper or the
+     * {@code exec} property (those are added by the caller).
+     *
+     * <p>
+     * Example output for {@code constant-arrival-rate}:
+     *
+     * <pre>
+     *       executor: 'constant-arrival-rate',
+     *       rate: 100,
+     *       timeUnit: '1s',
+     *       duration: '2m',
+     *       preAllocatedVUs: 50,
+     *       maxVUs: 100,
+     * </pre>
+     *
+     * @param vus
+     *            virtual user count (used for VU-based executors; used as
+     *            {@code preAllocatedVUs} default for arrival-rate executors)
+     * @param duration
+     *            test duration (e.g., "30s", "2m", "5m")
+     * @param indent
+     *            indentation prefix for each line
+     * @return the k6 scenario properties as a string
+     */
+    public String toK6ScenarioProperties(int vus, String duration,
+            String indent) {
+        if (customScenarioContent != null) {
+            return formatCustomContent(indent);
+        }
+
+        K6Executor resolved = resolveExecutor();
+        StringBuilder sb = new StringBuilder();
+
+        switch (resolved) {
+        case CONSTANT_VUS:
+            sb.append(indent).append("executor: 'constant-vus',\n");
+            sb.append(indent).append("vus: ").append(vus).append(",\n");
+            sb.append(indent).append("duration: '").append(duration)
+                    .append("',\n");
+            break;
+
+        case RAMPING_VUS:
+            sb.append(indent).append("executor: 'ramping-vus',\n");
+            sb.append(toK6StagesBlock(vus, duration, indent));
+            break;
+
+        case PER_VU_ITERATIONS:
+            sb.append(indent).append("executor: 'per-vu-iterations',\n");
+            sb.append(indent).append("vus: ").append(vus).append(",\n");
+            if (iterations != null) {
+                sb.append(indent).append("iterations: ").append(iterations)
+                        .append(",\n");
+            }
+            sb.append(indent).append("maxDuration: '").append(duration)
+                    .append("',\n");
+            break;
+
+        case SHARED_ITERATIONS:
+            sb.append(indent).append("executor: 'shared-iterations',\n");
+            sb.append(indent).append("vus: ").append(vus).append(",\n");
+            if (iterations != null) {
+                sb.append(indent).append("iterations: ").append(iterations)
+                        .append(",\n");
+            }
+            sb.append(indent).append("maxDuration: '").append(duration)
+                    .append("',\n");
+            break;
+
+        case CONSTANT_ARRIVAL_RATE:
+            sb.append(indent).append("executor: 'constant-arrival-rate',\n");
+            if (rate != null) {
+                sb.append(indent).append("rate: ").append(rate).append(",\n");
+            }
+            sb.append(indent).append("timeUnit: '")
+                    .append(timeUnit != null ? timeUnit : "1s").append("',\n");
+            sb.append(indent).append("duration: '").append(duration)
+                    .append("',\n");
+            sb.append(indent).append("preAllocatedVUs: ")
+                    .append(preAllocatedVUs != null ? preAllocatedVUs : vus)
+                    .append(",\n");
+            if (maxVUs != null) {
+                sb.append(indent).append("maxVUs: ").append(maxVUs)
+                        .append(",\n");
+            }
+            break;
+
+        case RAMPING_ARRIVAL_RATE:
+            sb.append(indent).append("executor: 'ramping-arrival-rate',\n");
+            if (startRate != null) {
+                sb.append(indent).append("startRate: ").append(startRate)
+                        .append(",\n");
+            }
+            sb.append(indent).append("timeUnit: '")
+                    .append(timeUnit != null ? timeUnit : "1s").append("',\n");
+            sb.append(indent).append("preAllocatedVUs: ")
+                    .append(preAllocatedVUs != null ? preAllocatedVUs : vus)
+                    .append(",\n");
+            if (maxVUs != null) {
+                sb.append(indent).append("maxVUs: ").append(maxVUs)
+                        .append(",\n");
+            }
+            if (!customStages.isEmpty()) {
+                sb.append(indent).append("stages: [\n");
+                for (Stage stage : customStages) {
+                    sb.append(indent).append("  { duration: '")
+                            .append(stage.duration()).append("', target: ")
+                            .append(stage.target()).append(" },\n");
+                }
+                sb.append(indent).append("],\n");
+            }
+            break;
+
+        case EXTERNALLY_CONTROLLED:
+            sb.append(indent).append("executor: 'externally-controlled',\n");
+            sb.append(indent).append("vus: ").append(vus).append(",\n");
+            if (maxVUs != null) {
+                sb.append(indent).append("maxVUs: ").append(maxVUs)
+                        .append(",\n");
+            }
+            sb.append(indent).append("duration: '").append(duration)
+                    .append("',\n");
+            break;
+        }
+
+        return sb.toString();
+    }
+
+    /**
+     * Formats raw custom scenario content with proper indentation.
+     */
+    private String formatCustomContent(String indent) {
+        StringBuilder sb = new StringBuilder();
+        for (String line : customScenarioContent.strip().split("\n")) {
+            String trimmed = line.strip();
+            if (!trimmed.isEmpty()) {
+                sb.append(indent).append(trimmed).append("\n");
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
      * Parses a k6 duration string (e.g., "30s", "2m", "1h30m", "2m30s") to
      * milliseconds.
      *
@@ -379,6 +805,12 @@ public class LoadProfile {
 
     @Override
     public String toString() {
+        if (customScenarioContent != null) {
+            return "custom scenario (raw k6 definition)";
+        }
+        if (executor != null) {
+            return executor.getK6Name() + " executor";
+        }
         return switch (pattern) {
         case CONSTANT -> "constant (no ramping)";
         case RAMP -> "ramp (up: " + rampUp + ", down: " + rampDown + ")";

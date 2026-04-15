@@ -176,15 +176,8 @@ public class K6ScenarioCombiner {
                     (config.weight() * totalVus) / totalWeight);
 
             sb.append("    ").append(config.name()).append(": {\n");
-            if (loadProfile.isRamping()) {
-                sb.append("      executor: 'ramping-vus',\n");
-                sb.append(loadProfile.toK6StagesBlock(vusForScenario, duration,
-                        "      "));
-            } else {
-                sb.append("      executor: 'constant-vus',\n");
-                sb.append("      vus: ").append(vusForScenario).append(",\n");
-                sb.append("      duration: '").append(duration).append("',\n");
-            }
+            sb.append(loadProfile.toK6ScenarioProperties(vusForScenario,
+                    duration, "      "));
             sb.append("      exec: '").append(config.name())
                     .append("Scenario',\n");
             sb.append("    }");

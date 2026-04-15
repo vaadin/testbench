@@ -30,6 +30,7 @@ import com.vaadin.testbench.loadtest.util.ActuatorMetrics.MetricsSummary;
 import com.vaadin.testbench.loadtest.util.K6ScenarioCombiner;
 import com.vaadin.testbench.loadtest.util.K6ScenarioCombiner.ScenarioConfig;
 import com.vaadin.testbench.loadtest.util.LoadProfile;
+import com.vaadin.testbench.loadtest.util.LoadProfile.K6Executor;
 import com.vaadin.testbench.loadtest.util.LoadProfile.LoadPattern;
 import com.vaadin.testbench.loadtest.util.MetricsCollector;
 
@@ -204,6 +205,91 @@ public class K6RunMojo extends AbstractK6Mojo {
      */
     @Parameter(property = "k6.stages")
     private String stages;
+
+    /**
+     * Explicit k6 executor type, overriding the load pattern. Allows direct
+     * selection of any k6 executor with full parameter control. Valid values:
+     * {@code constant-vus}, {@code ramping-vus}, {@code per-vu-iterations},
+     * {@code shared-iterations}, {@code constant-arrival-rate},
+     * {@code ramping-arrival-rate}, {@code externally-controlled}.
+     * <p>
+     * When set, this takes precedence over {@code k6.loadPattern}.
+     *
+     * @see LoadProfile.K6Executor
+     */
+    @Parameter(property = "k6.executor")
+    private String executor;
+
+    /**
+     * Iteration rate for arrival-rate executors ({@code constant-arrival-rate},
+     * {@code ramping-arrival-rate}). Specifies how many iterations to start per
+     * {@code timeUnit}.
+     */
+    @Parameter(property = "k6.rate")
+    private Integer rate;
+
+    /**
+     * Time unit for arrival-rate executors (e.g., "1s", "1m"). Defaults to
+     * "1s".
+     */
+    @Parameter(property = "k6.timeUnit", defaultValue = "1s")
+    private String timeUnit;
+
+    /**
+     * Pre-allocated VUs for arrival-rate executors. k6 will pre-initialize this
+     * many VUs at test start to avoid cold-start latency. Defaults to the
+     * {@code vus} value if not specified.
+     */
+    @Parameter(property = "k6.preAllocatedVUs")
+    private Integer preAllocatedVUs;
+
+    /**
+     * Maximum VUs for arrival-rate and externally-controlled executors. k6 will
+     * not create more VUs than this, even if the arrival rate demands it.
+     */
+    @Parameter(property = "k6.maxVUs")
+    private Integer maxVUs;
+
+    /**
+     * Number of iterations for iteration-based executors
+     * ({@code per-vu-iterations}, {@code shared-iterations}).
+     */
+    @Parameter(property = "k6.iterations")
+    private Integer iterations;
+
+    /**
+     * Starting iteration rate for the {@code ramping-arrival-rate} executor.
+     * The rate will ramp from this value according to the configured stages.
+     * Defaults to 0 if not specified.
+     */
+    @Parameter(property = "k6.startRate")
+    private Integer startRate;
+
+    /**
+     * Fully custom k6 scenario definition as raw JavaScript. The content is
+     * inserted directly into the k6 scenario definition block, giving full
+     * control over all scenario properties.
+     * <p>
+     * When set, this takes precedence over all other load configuration
+     * parameters ({@code loadPattern}, {@code executor}, etc.).
+     * <p>
+     * Example:
+     *
+     * <pre>
+     * executor: 'ramping-arrival-rate',
+     * startRate: 0,
+     * timeUnit: '1s',
+     * preAllocatedVUs: 50,
+     * maxVUs: 100,
+     * stages: [
+     *   { duration: '1m', target: 100 },
+     *   { duration: '2m', target: 100 },
+     *   { duration: '1m', target: 0 },
+     * ],
+     * </pre>
+     */
+    @Parameter(property = "k6.customScenario")
+    private String customScenario;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -400,14 +486,39 @@ public class K6RunMojo extends AbstractK6Mojo {
     }
 
     /**
-     * Builds a {@link LoadProfile} from the Maven parameters. If custom stages
-     * are specified, the pattern is automatically set to CUSTOM.
+     * Builds a {@link LoadProfile} from the Maven parameters. Priority order:
+     * <ol>
+     * <li>{@code customScenario} — fully custom k6 scenario definition</li>
+     * <li>{@code executor} — explicit k6 executor with parameters</li>
+     * <li>{@code stages} — custom stages (sets pattern to CUSTOM)</li>
+     * <li>{@code loadPattern} — predefined pattern (default: ramp)</li>
+     * </ol>
      *
      * @return the load profile configuration
      * @throws MojoExecutionException
      *             if the configuration is invalid
      */
     private LoadProfile buildLoadProfile() throws MojoExecutionException {
+        // Fully custom scenario takes highest priority
+        if (customScenario != null && !customScenario.isBlank()) {
+            return LoadProfile.customScenario(customScenario);
+        }
+
+        // Explicit executor selection
+        if (executor != null && !executor.isBlank()) {
+            try {
+                K6Executor k6Executor = K6Executor.fromString(executor);
+                var stageList = (stages != null && !stages.isBlank())
+                        ? LoadProfile.parseStages(stages)
+                        : List.<LoadProfile.Stage> of();
+                return new LoadProfile(k6Executor, stageList, rate, timeUnit,
+                        preAllocatedVUs, maxVUs, iterations, startRate);
+            } catch (IllegalArgumentException e) {
+                throw new MojoExecutionException(
+                        "Invalid executor configuration: " + e.getMessage(), e);
+            }
+        }
+
         // Custom stages override the load pattern
         if (stages != null && !stages.isBlank()) {
             try {
@@ -420,6 +531,7 @@ public class K6RunMojo extends AbstractK6Mojo {
             }
         }
 
+        // Predefined load pattern
         LoadPattern pattern;
         try {
             pattern = LoadPattern.valueOf(loadPattern.toUpperCase());

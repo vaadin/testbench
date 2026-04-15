@@ -11,6 +11,7 @@ package com.vaadin.testbench.loadtest.util;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -287,6 +288,14 @@ public class NodeRunner {
         log.info("  Load pattern: " + loadProfile);
         log.info("  Target: " + appIp + ":" + appPort);
 
+        // For executors that cannot be configured via CLI flags, generate a
+        // wrapper script with embedded scenario configuration
+        if (loadProfile.requiresEmbeddedConfig()) {
+            runWithEmbeddedConfig(testFile, virtualUsers, duration, appIp,
+                    appPort, loadProfile);
+            return;
+        }
+
         try {
             List<String> command = new ArrayList<>();
             command.add("k6");
@@ -334,6 +343,60 @@ public class NodeRunner {
             log.info("k6 test completed successfully");
         } catch (IOException | InterruptedException e) {
             throw new MojoExecutionException("Failed to run k6 test", e);
+        }
+    }
+
+    /**
+     * Runs a k6 test using a generated wrapper script with embedded scenario
+     * configuration. Used for executors that cannot be fully configured via k6
+     * CLI flags (e.g., arrival-rate, iteration-based, externally-controlled).
+     *
+     * <p>
+     * The wrapper imports the original test's default function and defines
+     * {@code export const options} with the scenario configuration from the
+     * load profile.
+     */
+    private void runWithEmbeddedConfig(Path testFile, int virtualUsers,
+            String duration, String appIp, int appPort, LoadProfile loadProfile)
+            throws MojoExecutionException {
+        Path wrapperFile = testFile.getParent()
+                .resolve("wrapper-" + testFile.getFileName());
+        try {
+            String relativePath = "./" + testFile.getFileName().toString();
+            StringBuilder sb = new StringBuilder();
+            sb.append(
+                    "// Auto-generated wrapper for embedded executor config\n");
+            sb.append("import originalTest from '").append(relativePath)
+                    .append("';\n\n");
+            sb.append("export const options = {\n");
+            sb.append("  scenarios: {\n");
+            sb.append("    default: {\n");
+            sb.append(loadProfile.toK6ScenarioProperties(virtualUsers, duration,
+                    "      "));
+            sb.append("      exec: 'runTest',\n");
+            sb.append("    },\n");
+            sb.append("  },\n");
+            sb.append("};\n\n");
+            sb.append("export function runTest() {\n");
+            sb.append("  originalTest();\n");
+            sb.append("}\n");
+
+            Files.writeString(wrapperFile, sb.toString());
+            log.info("  Generated wrapper: " + wrapperFile.getFileName());
+
+            // Run the wrapper with embedded config
+            runK6Test(wrapperFile, virtualUsers, duration, appIp, appPort,
+                    true);
+        } catch (IOException e) {
+            throw new MojoExecutionException(
+                    "Failed to generate wrapper script", e);
+        } finally {
+            // Clean up wrapper file
+            try {
+                Files.deleteIfExists(wrapperFile);
+            } catch (IOException e) {
+                log.warning("Could not delete wrapper file: " + wrapperFile);
+            }
         }
     }
 
