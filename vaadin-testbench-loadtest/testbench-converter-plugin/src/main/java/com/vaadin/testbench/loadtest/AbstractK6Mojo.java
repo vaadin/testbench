@@ -21,8 +21,10 @@ import org.apache.maven.project.MavenProject;
 import com.vaadin.pro.licensechecker.Capabilities;
 import com.vaadin.pro.licensechecker.Capability;
 import com.vaadin.pro.licensechecker.LicenseChecker;
+import com.vaadin.testbench.loadtest.util.ExperimentalWarning;
 import com.vaadin.testbench.loadtest.util.NodeRunner;
 import com.vaadin.testbench.loadtest.util.ResourceExtractor;
+import com.vaadin.testbench.loadtest.util.ResponseCheckConfig;
 import com.vaadin.testbench.loadtest.util.ThresholdConfig;
 
 /**
@@ -76,6 +78,47 @@ public abstract class AbstractK6Mojo extends AbstractMojo {
     @Parameter(property = "k6.threshold.checksAbortOnFail", defaultValue = "true")
     protected boolean checksAbortOnFail;
 
+    /**
+     * Custom thresholds for any k6 metric, in addition to the default
+     * http_req_duration and checks thresholds. Format:
+     * {@code metric:expression,metric:expression,...}
+     * <p>
+     * Examples:
+     * <ul>
+     * <li>{@code http_req_failed:rate<0.01} - less than 1% failed requests</li>
+     * <li>{@code http_req_waiting:p(95)<500} - 95th percentile waiting time
+     * under 500ms</li>
+     * <li>{@code http_reqs:count>100} - at least 100 requests completed</li>
+     * <li>{@code http_req_duration:p(50)<1000} - adds a median threshold
+     * alongside the default p95/p99</li>
+     * </ul>
+     * Multiple expressions can be separated by commas. Multiple expressions for
+     * the same metric are supported.
+     */
+    @Parameter(property = "k6.threshold.custom")
+    protected String customThresholds;
+
+    /**
+     * Custom response validation checks to inject into the generated k6
+     * scripts, in addition to the built-in Vaadin checks. Format:
+     * {@code scope|name|expression;scope|name|expression;...}
+     * <p>
+     * The scope is optional and defaults to {@code ALL}. Valid scopes:
+     * {@code INIT} (init requests only), {@code UIDL} (UIDL requests only),
+     * {@code ALL} (both).
+     * <p>
+     * Examples:
+     * <ul>
+     * <li>{@code "has title|(r) => r.body.includes('myElement')"} — checks all
+     * responses</li>
+     * <li>{@code "INIT|has title|(r) => r.body.includes('myElement')"} — init
+     * only</li>
+     * <li>{@code "UIDL|no warning|(r) => !r.body.includes('warning');ALL|fast|(r) => r.timings.duration < 3000"}</li>
+     * </ul>
+     */
+    @Parameter(property = "k6.checks.custom")
+    protected String customChecks;
+
     protected ResourceExtractor resourceExtractor;
     protected NodeRunner nodeRunner;
     protected Path extractionPath;
@@ -89,6 +132,8 @@ public abstract class AbstractK6Mojo extends AbstractMojo {
      */
     protected void initialize() throws MojoExecutionException {
         checkLicense();
+
+        ExperimentalWarning.log();
 
         extractionPath = Path.of(utilsDir);
 
@@ -177,8 +222,25 @@ public abstract class AbstractK6Mojo extends AbstractMojo {
      * @return the threshold configuration
      */
     protected ThresholdConfig buildThresholdConfig() {
-        return new ThresholdConfig(httpReqDurationP95, httpReqDurationP99,
-                checksAbortOnFail);
+        ThresholdConfig config = new ThresholdConfig(httpReqDurationP95,
+                httpReqDurationP99, checksAbortOnFail);
+        if (customThresholds != null && !customThresholds.isBlank()) {
+            config = config.withCustomThresholds(customThresholds);
+        }
+        return config;
+    }
+
+    /**
+     * Builds a {@link ResponseCheckConfig} from the Maven parameters.
+     *
+     * @return the response check configuration
+     */
+    protected ResponseCheckConfig buildResponseCheckConfig() {
+        ResponseCheckConfig config = ResponseCheckConfig.EMPTY;
+        if (customChecks != null && !customChecks.isBlank()) {
+            config = config.withChecks(customChecks);
+        }
+        return config;
     }
 
     /**

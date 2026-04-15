@@ -114,6 +114,7 @@ public class K6ScenarioCombiner {
         // crudExampleInputData)
         // so multiple scenarios with CSV data don't collide.
         Map<String, String> sharedArrayBlocks = new LinkedHashMap<>();
+        String csvParserFunction = null;
         for (ScenarioConfig config : scenarios) {
             String content = Files.readString(config.testFile());
             String block = extractSharedArrayBlock(content);
@@ -124,6 +125,11 @@ public class K6ScenarioCombiner {
                         .replace("'input data'",
                                 "'" + config.name() + " input data'");
                 sharedArrayBlocks.put(config.name(), renamed);
+                // Extract the parseCsvRecords function once (it is identical
+                // across all generated scripts)
+                if (csvParserFunction == null) {
+                    csvParserFunction = extractCsvParserFunction(content);
+                }
             }
         }
         boolean needsSharedArray = !sharedArrayBlocks.isEmpty();
@@ -146,8 +152,11 @@ public class K6ScenarioCombiner {
         sb.append("const APP_PORT = __ENV.APP_PORT || '8080';\n");
         sb.append("const BASE_URL = `http://${APP_IP}:${APP_PORT}`;\n\n");
 
-        // Add SharedArray blocks at module scope (must be in init context for
-        // k6)
+        // Add parseCsvRecords function and SharedArray blocks at module scope
+        // (must be in init context for k6)
+        if (csvParserFunction != null) {
+            sb.append(csvParserFunction).append("\n\n");
+        }
         for (Map.Entry<String, String> entry : sharedArrayBlocks.entrySet()) {
             sb.append(entry.getValue()).append("\n\n");
         }
@@ -266,6 +275,47 @@ public class K6ScenarioCombiner {
         sb.append("}");
 
         return sb.toString();
+    }
+
+    /**
+     * Extracts the parseCsvRecords function from a k6 script, if present.
+     *
+     * @param content
+     *            the k6 script content
+     * @return the parseCsvRecords function definition, or {@code null} if not
+     *         found
+     */
+    private String extractCsvParserFunction(String content) {
+        String funcMarker = "function parseCsvRecords(text) {";
+        int funcStart = content.indexOf(funcMarker);
+        if (funcStart < 0) {
+            return null;
+        }
+
+        // Include the preceding comment line
+        int lineStart = content.lastIndexOf('\n', funcStart - 1);
+        if (lineStart >= 0) {
+            String precedingLine = content.substring(lineStart + 1, funcStart)
+                    .trim();
+            if (precedingLine.startsWith("//")) {
+                funcStart = lineStart + 1;
+            }
+        }
+
+        // Find the matching closing brace of the function
+        int braceStart = content.indexOf('{', funcStart);
+        int i = braceStart + 1;
+        int braceCount = 1;
+        while (i < content.length() && braceCount > 0) {
+            char c = content.charAt(i);
+            if (c == '{')
+                braceCount++;
+            else if (c == '}')
+                braceCount--;
+            i++;
+        }
+
+        return content.substring(funcStart, i);
     }
 
     /**
