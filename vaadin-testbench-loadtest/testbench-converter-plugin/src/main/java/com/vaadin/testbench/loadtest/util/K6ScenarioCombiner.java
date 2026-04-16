@@ -40,7 +40,7 @@ public class K6ScenarioCombiner {
 
     /**
      * Combines multiple k6 test files into a single test with weighted
-     * scenarios using default thresholds and constant load.
+     * scenarios using default thresholds and ramping load.
      *
      * @param scenarios
      *            list of scenario configurations with weights
@@ -56,12 +56,12 @@ public class K6ScenarioCombiner {
     public void combine(List<ScenarioConfig> scenarios, Path outputFile,
             int totalVus, String duration) throws IOException {
         combine(scenarios, outputFile, totalVus, duration,
-                ThresholdConfig.DEFAULT, LoadProfile.CONSTANT);
+                ThresholdConfig.DEFAULT, LoadProfile.ramp("10s", "10s"));
     }
 
     /**
      * Combines multiple k6 test files into a single test with weighted
-     * scenarios using constant load.
+     * scenarios using ramping load.
      *
      * @param scenarios
      *            list of scenario configurations with weights
@@ -80,7 +80,7 @@ public class K6ScenarioCombiner {
             int totalVus, String duration, ThresholdConfig thresholdConfig)
             throws IOException {
         combine(scenarios, outputFile, totalVus, duration, thresholdConfig,
-                LoadProfile.CONSTANT);
+                LoadProfile.ramp("10s", "10s"));
     }
 
     /**

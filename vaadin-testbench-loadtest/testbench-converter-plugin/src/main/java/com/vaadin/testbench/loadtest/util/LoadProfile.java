@@ -212,84 +212,130 @@ public class LoadProfile {
             .compile("(?:(\\d+)h)?(?:(\\d+)m)?(?:(\\d+)s)?");
 
     /**
-     * Default load profile: ramp pattern with 10s ramp-up and 10s ramp-down.
-     */
-    public static final LoadProfile DEFAULT = new LoadProfile(LoadPattern.RAMP,
-            "10s", "10s", List.of());
-
-    /**
      * Constant load profile with no ramping.
      */
-    public static final LoadProfile CONSTANT = new LoadProfile(
-            LoadPattern.CONSTANT, "0s", "0s", List.of());
+    public static final LoadProfile CONSTANT = LoadProfile.constant();
 
-    // Predefined pattern fields
-    private final LoadPattern pattern;
-    private final String rampUp;
-    private final String rampDown;
-    private final List<Stage> customStages;
+    private LoadPattern pattern;
+    private K6Executor executor;
+    private String rampUp = "0s";
+    private String rampDown = "0s";
+    private List<Stage> customStages = List.of();
+    private Integer rate;
+    private String timeUnit;
+    private Integer preAllocatedVUs;
+    private Integer maxVUs;
+    private Integer iterations;
+    private Integer startRate;
+    private String customScenarioContent;
 
-    // Explicit executor fields
-    private final K6Executor executor;
-    private final Integer rate;
-    private final String timeUnit;
-    private final Integer preAllocatedVUs;
-    private final Integer maxVUs;
-    private final Integer iterations;
-    private final Integer startRate;
-
-    // Fully custom scenario content (raw k6 JavaScript)
-    private final String customScenarioContent;
-
-    /**
-     * Creates a load profile from a predefined pattern.
-     *
-     * @param pattern
-     *            the load pattern to use
-     * @param rampUp
-     *            ramp-up duration for RAMP pattern (e.g., "10s", "30s")
-     * @param rampDown
-     *            ramp-down duration for RAMP pattern (e.g., "10s", "30s")
-     * @param customStages
-     *            explicit stages for CUSTOM pattern (ignored for other
-     *            patterns)
-     */
-    public LoadProfile(LoadPattern pattern, String rampUp, String rampDown,
-            List<Stage> customStages) {
-        this(pattern, null, rampUp, rampDown, customStages, null, null, null,
-                null, null, null, null);
+    private LoadProfile() {
     }
 
-    /**
-     * Creates a load profile with an explicit k6 executor and its parameters.
-     *
-     * @param executor
-     *            the k6 executor to use
-     * @param stages
-     *            stages for ramping executors ({@code ramping-vus},
-     *            {@code ramping-arrival-rate}), or empty for non-ramping
-     *            executors
-     * @param rate
-     *            iteration rate for arrival-rate executors (iterations per
-     *            timeUnit)
-     * @param timeUnit
-     *            time unit for arrival-rate executors (e.g., "1s", "1m")
-     * @param preAllocatedVUs
-     *            pre-allocated VUs for arrival-rate executors
-     * @param maxVUs
-     *            maximum VUs for arrival-rate and externally-controlled
-     *            executors
-     * @param iterations
-     *            iteration count for iteration-based executors
-     * @param startRate
-     *            starting iteration rate for ramping-arrival-rate executor
-     */
-    public LoadProfile(K6Executor executor, List<Stage> stages, Integer rate,
-            String timeUnit, Integer preAllocatedVUs, Integer maxVUs,
-            Integer iterations, Integer startRate) {
-        this(null, executor, "0s", "0s", stages != null ? stages : List.of(),
-                rate, timeUnit, preAllocatedVUs, maxVUs, iterations, startRate,
-                null);
+    // === Pattern factory methods ===
+
+    /** Constant load: all VUs start immediately, no ramping. */
+    public static LoadProfile constant() {
+        LoadProfile lp = new LoadProfile();
+        lp.pattern = LoadPattern.CONSTANT;
+        return lp;
+    }
+
+    /** Ramping load: ramp up to target VUs, sustain, then ramp down. */
+    public static LoadProfile ramp(String rampUp, String rampDown) {
+        LoadProfile lp = new LoadProfile();
+        lp.pattern = LoadPattern.RAMP;
+        lp.rampUp = rampUp;
+        lp.rampDown = rampDown;
+        return lp;
+    }
+
+    /** Stress test: gradual increase with a spike phase. */
+    public static LoadProfile stress() {
+        LoadProfile lp = new LoadProfile();
+        lp.pattern = LoadPattern.STRESS;
+        return lp;
+    }
+
+    /** Soak test: quick ramp-up, extended sustain, quick ramp-down. */
+    public static LoadProfile soak() {
+        LoadProfile lp = new LoadProfile();
+        lp.pattern = LoadPattern.SOAK;
+        return lp;
+    }
+
+    /** Custom stages: user provides explicit stage definitions. */
+    public static LoadProfile customStages(List<Stage> stages) {
+        LoadProfile lp = new LoadProfile();
+        lp.pattern = LoadPattern.CUSTOM;
+        lp.customStages = copyStages(stages);
+        return lp;
+    }
+
+    // === Executor factory methods ===
+
+    /** Fixed number of VUs for a specified duration. */
+    public static LoadProfile constantVus() {
+        LoadProfile lp = new LoadProfile();
+        lp.executor = K6Executor.CONSTANT_VUS;
+        return lp;
+    }
+
+    /** Variable VU count ramping according to configured stages. */
+    public static LoadProfile rampingVus(List<Stage> stages) {
+        LoadProfile lp = new LoadProfile();
+        lp.executor = K6Executor.RAMPING_VUS;
+        lp.customStages = copyStages(stages);
+        return lp;
+    }
+
+    /** Each VU executes a fixed number of iterations. */
+    public static LoadProfile perVuIterations(int iterations) {
+        LoadProfile lp = new LoadProfile();
+        lp.executor = K6Executor.PER_VU_ITERATIONS;
+        lp.iterations = iterations;
+        return lp;
+    }
+
+    /** Fixed total iterations shared among all VUs. */
+    public static LoadProfile sharedIterations(int iterations) {
+        LoadProfile lp = new LoadProfile();
+        lp.executor = K6Executor.SHARED_ITERATIONS;
+        lp.iterations = iterations;
+        return lp;
+    }
+
+    /** Fixed iteration rate per time unit with pre-allocated VUs. */
+    public static LoadProfile constantArrivalRate(int rate, String timeUnit) {
+        LoadProfile lp = new LoadProfile();
+        lp.executor = K6Executor.CONSTANT_ARRIVAL_RATE;
+        lp.rate = rate;
+        lp.timeUnit = timeUnit;
+        return lp;
+    }
+
+    /** Variable iteration rate per time unit, following configured stages. */
+    public static LoadProfile rampingArrivalRate(String timeUnit,
+            List<Stage> stages) {
+        LoadProfile lp = new LoadProfile();
+        lp.executor = K6Executor.RAMPING_ARRIVAL_RATE;
+        lp.timeUnit = timeUnit;
+        lp.customStages = copyStages(stages);
+        return lp;
+    }
+
+    /** VU count controlled externally via k6's REST API. */
+    public static LoadProfile externallyControlled() {
+        LoadProfile lp = new LoadProfile();
+        lp.executor = K6Executor.EXTERNALLY_CONTROLLED;
+        return lp;
+    }
+
+    /** Generic executor factory for dynamic executor selection. */
+    public static LoadProfile executor(K6Executor executor) {
+        LoadProfile lp = new LoadProfile();
+        lp.executor = executor;
+        return lp;
     }
 
     /**
@@ -297,50 +343,67 @@ public class LoadProfile {
      * inserted directly into the k6 scenario definition block, giving full
      * control over all scenario properties.
      *
-     * <p>
-     * Example content:
-     *
-     * <pre>
-     * executor: 'ramping-arrival-rate',
-     * startRate: 0,
-     * timeUnit: '1s',
-     * preAllocatedVUs: 50,
-     * maxVUs: 100,
-     * stages: [
-     *   { duration: '1m', target: 100 },
-     *   { duration: '2m', target: 100 },
-     *   { duration: '1m', target: 0 },
-     * ],
-     * </pre>
-     *
      * @param scenarioContent
      *            raw k6 JavaScript scenario properties
      * @return a LoadProfile that inserts the content directly
      */
     public static LoadProfile customScenario(String scenarioContent) {
-        return new LoadProfile(null, null, "0s", "0s", List.of(), null, null,
-                null, null, null, null, scenarioContent);
+        LoadProfile lp = new LoadProfile();
+        lp.customScenarioContent = scenarioContent;
+        return lp;
     }
 
-    private LoadProfile(LoadPattern pattern, K6Executor executor, String rampUp,
-            String rampDown, List<Stage> customStages, Integer rate,
-            String timeUnit, Integer preAllocatedVUs, Integer maxVUs,
-            Integer iterations, Integer startRate,
-            String customScenarioContent) {
-        this.pattern = pattern;
-        this.executor = executor;
-        this.rampUp = rampUp;
-        this.rampDown = rampDown;
-        this.customStages = customStages != null
-                ? Collections.unmodifiableList(new ArrayList<>(customStages))
-                : List.of();
+    // === Builder-style setters ===
+
+    public LoadProfile stages(List<Stage> stages) {
+        this.customStages = copyStages(stages);
+        return this;
+    }
+
+    public LoadProfile rate(Integer rate) {
         this.rate = rate;
+        return this;
+    }
+
+    public LoadProfile timeUnit(String timeUnit) {
         this.timeUnit = timeUnit;
+        return this;
+    }
+
+    public LoadProfile preAllocatedVUs(Integer preAllocatedVUs) {
         this.preAllocatedVUs = preAllocatedVUs;
+        return this;
+    }
+
+    public LoadProfile maxVUs(Integer maxVUs) {
         this.maxVUs = maxVUs;
+        return this;
+    }
+
+    public LoadProfile iterations(Integer iterations) {
         this.iterations = iterations;
+        return this;
+    }
+
+    public LoadProfile startRate(Integer startRate) {
         this.startRate = startRate;
-        this.customScenarioContent = customScenarioContent;
+        return this;
+    }
+
+    public LoadProfile rampUp(String rampUp) {
+        this.rampUp = rampUp;
+        return this;
+    }
+
+    public LoadProfile rampDown(String rampDown) {
+        this.rampDown = rampDown;
+        return this;
+    }
+
+    private static List<Stage> copyStages(List<Stage> stages) {
+        return stages != null
+                ? Collections.unmodifiableList(new ArrayList<>(stages))
+                : List.of();
     }
 
     public LoadPattern getPattern() {

@@ -13,7 +13,6 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import com.vaadin.testbench.loadtest.util.LoadProfile.K6Executor;
-import com.vaadin.testbench.loadtest.util.LoadProfile.LoadPattern;
 import com.vaadin.testbench.loadtest.util.LoadProfile.Stage;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -33,7 +32,7 @@ class LoadProfileTest {
 
     @Test
     void defaultPatternIsRamping() {
-        assertTrue(LoadProfile.DEFAULT.isRamping());
+        assertTrue(LoadProfile.ramp("10s", "10s").isRamping());
     }
 
     @Test
@@ -46,8 +45,7 @@ class LoadProfileTest {
 
     @Test
     void rampProducesThreeStages() {
-        LoadProfile profile = new LoadProfile(LoadPattern.RAMP, "10s", "10s",
-                List.of());
+        LoadProfile profile = LoadProfile.ramp("10s", "10s");
         List<Stage> stages = profile.toStages(50, "2m");
 
         assertEquals(3, stages.size());
@@ -65,8 +63,7 @@ class LoadProfileTest {
     @Test
     void rampScalesDownWhenRampExceedsDuration() {
         // rampUp(20s) + rampDown(20s) = 40s > 30s duration
-        LoadProfile profile = new LoadProfile(LoadPattern.RAMP, "20s", "20s",
-                List.of());
+        LoadProfile profile = LoadProfile.ramp("20s", "20s");
         List<Stage> stages = profile.toStages(50, "30s");
 
         // Should scale proportionally: 15s up + 15s down
@@ -80,8 +77,7 @@ class LoadProfileTest {
 
     @Test
     void stressProducesFiveStages() {
-        LoadProfile profile = new LoadProfile(LoadPattern.STRESS, "0s", "0s",
-                List.of());
+        LoadProfile profile = LoadProfile.stress();
         List<Stage> stages = profile.toStages(100, "5m");
 
         assertEquals(5, stages.size());
@@ -99,8 +95,7 @@ class LoadProfileTest {
 
     @Test
     void soakProducesThreeStages() {
-        LoadProfile profile = new LoadProfile(LoadPattern.SOAK, "0s", "0s",
-                List.of());
+        LoadProfile profile = LoadProfile.soak();
         List<Stage> stages = profile.toStages(50, "10m");
 
         assertEquals(3, stages.size());
@@ -123,8 +118,7 @@ class LoadProfileTest {
     void customStagesAreUsedDirectly() {
         List<Stage> custom = List.of(new Stage("15s", 20), new Stage("1m", 50),
                 new Stage("15s", 0));
-        LoadProfile profile = new LoadProfile(LoadPattern.CUSTOM, "0s", "0s",
-                custom);
+        LoadProfile profile = LoadProfile.customStages(custom);
 
         List<Stage> stages = profile.toStages(50, "1m30s");
         assertEquals(custom, stages);
@@ -132,8 +126,7 @@ class LoadProfileTest {
 
     @Test
     void customWithNoStagesThrows() {
-        LoadProfile profile = new LoadProfile(LoadPattern.CUSTOM, "0s", "0s",
-                List.of());
+        LoadProfile profile = LoadProfile.customStages(List.of());
         assertThrows(IllegalArgumentException.class,
                 () -> profile.toStages(50, "1m"));
     }
@@ -219,8 +212,7 @@ class LoadProfileTest {
 
     @Test
     void toK6StagesBlockFormat() {
-        LoadProfile profile = new LoadProfile(LoadPattern.RAMP, "10s", "10s",
-                List.of());
+        LoadProfile profile = LoadProfile.ramp("10s", "10s");
         String block = profile.toK6StagesBlock(50, "1m20s", "      ");
 
         assertTrue(block.contains("stages: ["));
@@ -279,13 +271,13 @@ class LoadProfileTest {
     @Test
     void resolveExecutorForPredefinedRamp() {
         assertEquals(K6Executor.RAMPING_VUS,
-                LoadProfile.DEFAULT.resolveExecutor());
+                LoadProfile.ramp("10s", "10s").resolveExecutor());
     }
 
     @Test
     void resolveExecutorForExplicitExecutor() {
-        LoadProfile profile = new LoadProfile(K6Executor.CONSTANT_ARRIVAL_RATE,
-                List.of(), 100, "1s", 50, 200, null, null);
+        LoadProfile profile = LoadProfile.constantArrivalRate(100, "1s")
+                .preAllocatedVUs(50).maxVUs(200);
         assertEquals(K6Executor.CONSTANT_ARRIVAL_RATE,
                 profile.resolveExecutor());
     }
@@ -301,25 +293,23 @@ class LoadProfileTest {
     @Test
     void constantOrRampingVusDoNotRequireEmbeddedConfig() {
         assertFalse(LoadProfile.CONSTANT.requiresEmbeddedConfig());
-        assertFalse(LoadProfile.DEFAULT.requiresEmbeddedConfig());
+        assertFalse(LoadProfile.ramp("10s", "10s").requiresEmbeddedConfig());
 
         // explicit ramping vus
-        LoadProfile profile = new LoadProfile(K6Executor.RAMPING_VUS,
-                List.of(new Stage("10s", 50)), null, null, null, null, null,
-                null);
+        LoadProfile profile = LoadProfile
+                .rampingVus(List.of(new Stage("10s", 50)));
         assertFalse(profile.requiresEmbeddedConfig());
     }
 
     @Test
     void executorsRequiringEmbeddedConfig() {
         // arrivalRate
-        LoadProfile profile = new LoadProfile(K6Executor.CONSTANT_ARRIVAL_RATE,
-                List.of(), 100, "1s", 50, 200, null, null);
+        LoadProfile profile = LoadProfile.constantArrivalRate(100, "1s")
+                .preAllocatedVUs(50).maxVUs(200);
         assertTrue(profile.requiresEmbeddedConfig());
 
         // shared iterations
-        profile = new LoadProfile(K6Executor.SHARED_ITERATIONS, List.of(), null,
-                null, null, null, 1000, null);
+        profile = LoadProfile.sharedIterations(1000);
         assertTrue(profile.requiresEmbeddedConfig());
 
         // custom scenario
@@ -331,26 +321,24 @@ class LoadProfileTest {
 
     @Test
     void explicitRampingIsRamping() {
-        LoadProfile profile = new LoadProfile(K6Executor.RAMPING_VUS,
-                List.of(new Stage("10s", 50)), null, null, null, null, null,
-                null);
+        LoadProfile profile = LoadProfile
+                .rampingVus(List.of(new Stage("10s", 50)));
         assertTrue(profile.isRamping());
 
         // explicit ramping arrival rate
-        profile = new LoadProfile(K6Executor.RAMPING_ARRIVAL_RATE,
-                List.of(new Stage("1m", 100)), null, "1s", 50, 200, null, 0);
+        profile = LoadProfile
+                .rampingArrivalRate("1s", List.of(new Stage("1m", 100)))
+                .preAllocatedVUs(50).maxVUs(200).startRate(0);
         assertTrue(profile.isRamping());
     }
 
     @Test
     void explicitVusIsNotRamping() {
         // Constant Vus
-        LoadProfile profile = new LoadProfile(K6Executor.CONSTANT_VUS,
-                List.of(), null, null, null, null, null, null);
+        LoadProfile profile = LoadProfile.constantVus();
         assertFalse(profile.isRamping());
         // Shared Iterations
-        profile = new LoadProfile(K6Executor.SHARED_ITERATIONS, List.of(), null,
-                null, null, null, 500, null);
+        profile = LoadProfile.sharedIterations(500);
         assertFalse(profile.isRamping());
     }
 
@@ -358,8 +346,7 @@ class LoadProfileTest {
 
     @Test
     void scenarioPropertiesConstantVus() {
-        LoadProfile profile = new LoadProfile(LoadPattern.CONSTANT, "0s", "0s",
-                List.of());
+        LoadProfile profile = LoadProfile.constant();
         String props = profile.toK6ScenarioProperties(50, "2m", "  ");
 
         assertTrue(props.contains("executor: 'constant-vus',"));
@@ -369,8 +356,7 @@ class LoadProfileTest {
 
     @Test
     void scenarioPropertiesRampingVus() {
-        LoadProfile profile = new LoadProfile(LoadPattern.RAMP, "10s", "10s",
-                List.of());
+        LoadProfile profile = LoadProfile.ramp("10s", "10s");
         String props = profile.toK6ScenarioProperties(50, "2m", "  ");
 
         assertTrue(props.contains("executor: 'ramping-vus',"));
@@ -380,8 +366,7 @@ class LoadProfileTest {
 
     @Test
     void scenarioPropertiesPerVuIterations() {
-        LoadProfile profile = new LoadProfile(K6Executor.PER_VU_ITERATIONS,
-                List.of(), null, null, null, null, 20, null);
+        LoadProfile profile = LoadProfile.perVuIterations(20);
         String props = profile.toK6ScenarioProperties(10, "5m", "  ");
 
         assertTrue(props.contains("executor: 'per-vu-iterations',"));
@@ -392,8 +377,7 @@ class LoadProfileTest {
 
     @Test
     void scenarioPropertiesSharedIterations() {
-        LoadProfile profile = new LoadProfile(K6Executor.SHARED_ITERATIONS,
-                List.of(), null, null, null, null, 1000, null);
+        LoadProfile profile = LoadProfile.sharedIterations(1000);
         String props = profile.toK6ScenarioProperties(50, "5m", "  ");
 
         assertTrue(props.contains("executor: 'shared-iterations',"));
@@ -404,8 +388,8 @@ class LoadProfileTest {
 
     @Test
     void scenarioPropertiesConstantArrivalRate() {
-        LoadProfile profile = new LoadProfile(K6Executor.CONSTANT_ARRIVAL_RATE,
-                List.of(), 100, "1s", 50, 200, null, null);
+        LoadProfile profile = LoadProfile.constantArrivalRate(100, "1s")
+                .preAllocatedVUs(50).maxVUs(200);
         String props = profile.toK6ScenarioProperties(50, "2m", "  ");
 
         assertTrue(props.contains("executor: 'constant-arrival-rate',"));
@@ -418,8 +402,7 @@ class LoadProfileTest {
 
     @Test
     void scenarioPropertiesConstantArrivalRateDefaultsPreAllocatedToVus() {
-        LoadProfile profile = new LoadProfile(K6Executor.CONSTANT_ARRIVAL_RATE,
-                List.of(), 100, "1s", null, null, null, null);
+        LoadProfile profile = LoadProfile.constantArrivalRate(100, "1s");
         String props = profile.toK6ScenarioProperties(30, "2m", "  ");
 
         assertTrue(props.contains("preAllocatedVUs: 30,"));
@@ -430,8 +413,8 @@ class LoadProfileTest {
     void scenarioPropertiesRampingArrivalRate() {
         List<Stage> stages = List.of(new Stage("1m", 100), new Stage("2m", 100),
                 new Stage("1m", 0));
-        LoadProfile profile = new LoadProfile(K6Executor.RAMPING_ARRIVAL_RATE,
-                stages, null, "1s", 50, 200, null, 0);
+        LoadProfile profile = LoadProfile.rampingArrivalRate("1s", stages)
+                .preAllocatedVUs(50).maxVUs(200).startRate(0);
         String props = profile.toK6ScenarioProperties(50, "4m", "  ");
 
         assertTrue(props.contains("executor: 'ramping-arrival-rate',"));
@@ -447,8 +430,7 @@ class LoadProfileTest {
 
     @Test
     void scenarioPropertiesExternallyControlled() {
-        LoadProfile profile = new LoadProfile(K6Executor.EXTERNALLY_CONTROLLED,
-                List.of(), null, null, null, 200, null, null);
+        LoadProfile profile = LoadProfile.externallyControlled().maxVUs(200);
         String props = profile.toK6ScenarioProperties(50, "10m", "  ");
 
         assertTrue(props.contains("executor: 'externally-controlled',"));

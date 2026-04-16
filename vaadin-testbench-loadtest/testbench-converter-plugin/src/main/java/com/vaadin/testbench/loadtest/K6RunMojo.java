@@ -511,8 +511,10 @@ public class K6RunMojo extends AbstractK6Mojo {
                 var stageList = (stages != null && !stages.isBlank())
                         ? LoadProfile.parseStages(stages)
                         : List.<LoadProfile.Stage> of();
-                return new LoadProfile(k6Executor, stageList, rate, timeUnit,
-                        preAllocatedVUs, maxVUs, iterations, startRate);
+                return LoadProfile.executor(k6Executor).stages(stageList)
+                        .rate(rate).timeUnit(timeUnit)
+                        .preAllocatedVUs(preAllocatedVUs).maxVUs(maxVUs)
+                        .iterations(iterations).startRate(startRate);
             } catch (IllegalArgumentException e) {
                 throw new MojoExecutionException(
                         "Invalid executor configuration: " + e.getMessage(), e);
@@ -522,9 +524,8 @@ public class K6RunMojo extends AbstractK6Mojo {
         // Custom stages override the load pattern
         if (stages != null && !stages.isBlank()) {
             try {
-                var customStages = LoadProfile.parseStages(stages);
-                return new LoadProfile(LoadPattern.CUSTOM, rampUp, rampDown,
-                        customStages);
+                return LoadProfile
+                        .customStages(LoadProfile.parseStages(stages));
             } catch (IllegalArgumentException e) {
                 throw new MojoExecutionException(
                         "Invalid k6.stages format: " + e.getMessage(), e);
@@ -540,7 +541,13 @@ public class K6RunMojo extends AbstractK6Mojo {
                     + loadPattern
                     + "'. Valid values: constant, ramp, stress, soak, custom");
         }
-        return new LoadProfile(pattern, rampUp, rampDown, List.of());
+        return switch (pattern) {
+        case CONSTANT -> LoadProfile.constant();
+        case RAMP -> LoadProfile.ramp(rampUp, rampDown);
+        case STRESS -> LoadProfile.stress();
+        case SOAK -> LoadProfile.soak();
+        case CUSTOM -> LoadProfile.customStages(List.of());
+        };
     }
 
     /**
