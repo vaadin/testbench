@@ -39,6 +39,18 @@
                 <module>demo-web-app-loadtest</module>
             </modules>
         </profile>
+        <profile>
+            <id>playwright-load-tests</id>
+            <activation>
+                <property>
+                    <name>runPlaywrightLoadTests</name>
+                </property>
+            </activation>
+            <modules>
+                <module>demo-web-app-playwright</module>
+                <module>demo-web-app-playwright-loadtest</module>
+            </modules>
+        </profile>
     </profiles>
 
 </project>
