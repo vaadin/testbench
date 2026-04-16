@@ -321,7 +321,8 @@ class HarToK6ConverterTest {
         String withEmpty = Files.readString(outputFile);
 
         // Without ResponseCheckConfig (backwards-compatible overload)
-        Path outputFile2 = tempDir.resolve("test2.js");
+        // Use same file name so scenario name prefix in tags matches
+        Path outputFile2 = tempDir.resolve("test.js");
         new HarToK6Converter().convert(harFile, outputFile2,
                 ThresholdConfig.DEFAULT);
         String withoutConfig = Files.readString(outputFile2);

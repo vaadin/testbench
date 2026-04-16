@@ -308,6 +308,10 @@ public class K6RunMojo extends AbstractK6Mojo {
         // Initialize (extract utilities)
         initialize();
 
+        // Configure summary stats to match threshold percentiles
+        nodeRunner.setSummaryTrendStats(
+                buildThresholdConfig().toSummaryTrendStats());
+
         // Validate k6 is available
         if (!nodeRunner.isK6Available()) {
             throw new MojoExecutionException(
