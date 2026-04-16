@@ -11,6 +11,7 @@ package com.vaadin.testbench.loadtest.util;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -240,7 +241,7 @@ public class NodeRunner {
     }
 
     /**
-     * Runs a k6 load test.
+     * Runs a k6 load test with constant load (no ramping).
      *
      * @param testFile
      *            the k6 test file to run
@@ -258,6 +259,145 @@ public class NodeRunner {
     public void runK6Test(Path testFile, int virtualUsers, String duration,
             String appIp, int appPort) throws MojoExecutionException {
         runK6Test(testFile, virtualUsers, duration, appIp, appPort, false);
+    }
+
+    /**
+     * Runs a k6 load test with a configurable load profile. For ramping
+     * profiles, uses k6's {@code --stage} CLI flags. For constant profiles,
+     * uses {@code --vus} and {@code --duration}.
+     *
+     * @param testFile
+     *            the k6 test file to run
+     * @param virtualUsers
+     *            number of virtual users
+     * @param duration
+     *            test duration (e.g., "30s", "1m")
+     * @param appIp
+     *            application IP address
+     * @param appPort
+     *            application port
+     * @param loadProfile
+     *            load profile controlling ramping behavior
+     * @throws MojoExecutionException
+     *             if the test fails
+     */
+    public void runK6Test(Path testFile, int virtualUsers, String duration,
+            String appIp, int appPort, LoadProfile loadProfile)
+            throws MojoExecutionException {
+        log.info("Running k6 load test: " + testFile.getFileName());
+        log.info("  Load pattern: " + loadProfile);
+        log.info("  Target: " + appIp + ":" + appPort);
+
+        // For executors that cannot be configured via CLI flags, generate a
+        // wrapper script with embedded scenario configuration
+        if (loadProfile.requiresEmbeddedConfig()) {
+            runWithEmbeddedConfig(testFile, virtualUsers, duration, appIp,
+                    appPort, loadProfile);
+            return;
+        }
+
+        try {
+            List<String> command = new ArrayList<>();
+            command.add("k6");
+            command.add("run");
+
+            if (loadProfile.isRamping()) {
+                // Use --stage flags for ramping-vus
+                List<LoadProfile.Stage> stages = loadProfile
+                        .toStages(virtualUsers, duration);
+                for (LoadProfile.Stage stage : stages) {
+                    command.add("--stage");
+                    command.add(stage.duration() + ":" + stage.target());
+                }
+                log.info("  Stages: ");
+                for (LoadProfile.Stage stage : stages) {
+                    log.info("    " + stage.duration() + " → " + stage.target()
+                            + " VUs");
+                }
+            } else {
+                // Constant load
+                command.add("--vus");
+                command.add(String.valueOf(virtualUsers));
+                command.add("--duration");
+                command.add(duration);
+                log.info("  Virtual Users: " + virtualUsers);
+                log.info("  Duration: " + duration);
+            }
+
+            command.add("-e");
+            command.add("APP_IP=" + appIp);
+            command.add("-e");
+            command.add("APP_PORT=" + String.valueOf(appPort));
+            command.add(testFile.toAbsolutePath().toString());
+
+            ProcessBuilder pb = new ProcessBuilder(command);
+            pb.inheritIO();
+
+            Process process = pb.start();
+
+            int exitCode = process.waitFor();
+            if (exitCode != 0) {
+                throw new MojoExecutionException(
+                        "k6 test failed with exit code: " + exitCode);
+            }
+            log.info("k6 test completed successfully");
+        } catch (IOException | InterruptedException e) {
+            throw new MojoExecutionException("Failed to run k6 test", e);
+        }
+    }
+
+    /**
+     * Runs a k6 test using a generated wrapper script with embedded scenario
+     * configuration. Used for executors that cannot be fully configured via k6
+     * CLI flags (e.g., arrival-rate, iteration-based, externally-controlled).
+     *
+     * <p>
+     * The wrapper imports the original test's default function and defines
+     * {@code export const options} with the scenario configuration from the
+     * load profile.
+     */
+    private void runWithEmbeddedConfig(Path testFile, int virtualUsers,
+            String duration, String appIp, int appPort, LoadProfile loadProfile)
+            throws MojoExecutionException {
+        Path wrapperFile = testFile.getParent()
+                .resolve("wrapper-" + testFile.getFileName());
+        try {
+            String relativePath = "./" + testFile.getFileName().toString();
+            StringBuilder sb = new StringBuilder();
+            sb.append(
+                    "// Auto-generated wrapper for embedded executor config\n");
+            sb.append("import originalTest from '").append(relativePath)
+                    .append("';\n\n");
+            sb.append("export const options = {\n");
+            sb.append("  scenarios: {\n");
+            sb.append("    default: {\n");
+            sb.append(loadProfile.toK6ScenarioProperties(virtualUsers, duration,
+                    "      "));
+            sb.append("      exec: 'runTest',\n");
+            sb.append("    },\n");
+            sb.append("  },\n");
+            sb.append("};\n\n");
+            sb.append("export function runTest() {\n");
+            sb.append("  originalTest();\n");
+            sb.append("}\n");
+
+            Files.writeString(wrapperFile, sb.toString());
+            log.info("  Generated wrapper: " + wrapperFile.getFileName());
+
+            // Run the wrapper with embedded config
+            runK6Test(wrapperFile, virtualUsers, duration, appIp, appPort,
+                    true);
+        } catch (IOException e) {
+            throw new MojoExecutionException(
+                    "Failed to generate wrapper script", e);
+        } finally {
+            // Clean up wrapper file
+            try {
+                Files.deleteIfExists(wrapperFile);
+            } catch (IOException e) {
+                log.warning("Could not delete wrapper file: " + wrapperFile);
+            }
+        }
     }
 
     /**
