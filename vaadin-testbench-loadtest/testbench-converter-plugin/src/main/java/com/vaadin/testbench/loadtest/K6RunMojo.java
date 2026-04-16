@@ -29,6 +29,9 @@ import com.vaadin.testbench.loadtest.util.ActuatorMetrics;
 import com.vaadin.testbench.loadtest.util.ActuatorMetrics.MetricsSummary;
 import com.vaadin.testbench.loadtest.util.K6ScenarioCombiner;
 import com.vaadin.testbench.loadtest.util.K6ScenarioCombiner.ScenarioConfig;
+import com.vaadin.testbench.loadtest.util.LoadProfile;
+import com.vaadin.testbench.loadtest.util.LoadProfile.K6Executor;
+import com.vaadin.testbench.loadtest.util.LoadProfile.LoadPattern;
 import com.vaadin.testbench.loadtest.util.MetricsCollector;
 
 /**
@@ -154,6 +157,140 @@ public class K6RunMojo extends AbstractK6Mojo {
     @Parameter(property = "k6.scenarioWeights")
     private String scenarioWeights;
 
+    /**
+     * Load pattern controlling how virtual users are ramped up and down. Valid
+     * values:
+     * <ul>
+     * <li>{@code constant} - all VUs start immediately, no ramping (k6
+     * constant-vus executor)</li>
+     * <li>{@code ramp} (default) - ramp up → sustain → ramp down (k6
+     * ramping-vus executor)</li>
+     * <li>{@code stress} - gradual increase with a 150% spike phase</li>
+     * <li>{@code soak} - quick ramp, extended sustain for long-duration
+     * tests</li>
+     * <li>{@code custom} - user-defined stages via {@code k6.stages}</li>
+     * </ul>
+     *
+     * @see LoadProfile.LoadPattern
+     */
+    @Parameter(property = "k6.loadPattern", defaultValue = "ramp")
+    private String loadPattern;
+
+    /**
+     * Ramp-up duration for the {@code ramp} load pattern. During this period,
+     * virtual users increase linearly from 0 to the target VU count. Ignored
+     * for other load patterns.
+     */
+    @Parameter(property = "k6.rampUp", defaultValue = "10s")
+    private String rampUp;
+
+    /**
+     * Ramp-down duration for the {@code ramp} load pattern. During this period,
+     * virtual users decrease linearly from the target VU count to 0. Ignored
+     * for other load patterns.
+     */
+    @Parameter(property = "k6.rampDown", defaultValue = "10s")
+    private String rampDown;
+
+    /**
+     * Custom stage definitions for the {@code custom} load pattern. Format:
+     * "duration:target,duration:target,..." where duration is a k6 time string
+     * and target is the VU count at the end of that stage.
+     * <p>
+     * Example: "10s:20,1m:50,30s:50,15s:80,1m:80,30s:0"
+     * <p>
+     * When this parameter is set, the load pattern is automatically set to
+     * {@code custom} and the {@code vus} and {@code duration} parameters are
+     * ignored.
+     */
+    @Parameter(property = "k6.stages")
+    private String stages;
+
+    /**
+     * Explicit k6 executor type, overriding the load pattern. Allows direct
+     * selection of any k6 executor with full parameter control. Valid values:
+     * {@code constant-vus}, {@code ramping-vus}, {@code per-vu-iterations},
+     * {@code shared-iterations}, {@code constant-arrival-rate},
+     * {@code ramping-arrival-rate}, {@code externally-controlled}.
+     * <p>
+     * When set, this takes precedence over {@code k6.loadPattern}.
+     *
+     * @see LoadProfile.K6Executor
+     */
+    @Parameter(property = "k6.executor")
+    private String executor;
+
+    /**
+     * Iteration rate for arrival-rate executors ({@code constant-arrival-rate},
+     * {@code ramping-arrival-rate}). Specifies how many iterations to start per
+     * {@code timeUnit}.
+     */
+    @Parameter(property = "k6.rate")
+    private Integer rate;
+
+    /**
+     * Time unit for arrival-rate executors (e.g., "1s", "1m"). Defaults to
+     * "1s".
+     */
+    @Parameter(property = "k6.timeUnit", defaultValue = "1s")
+    private String timeUnit;
+
+    /**
+     * Pre-allocated VUs for arrival-rate executors. k6 will pre-initialize this
+     * many VUs at test start to avoid cold-start latency. Defaults to the
+     * {@code vus} value if not specified.
+     */
+    @Parameter(property = "k6.preAllocatedVUs")
+    private Integer preAllocatedVUs;
+
+    /**
+     * Maximum VUs for arrival-rate and externally-controlled executors. k6 will
+     * not create more VUs than this, even if the arrival rate demands it.
+     */
+    @Parameter(property = "k6.maxVUs")
+    private Integer maxVUs;
+
+    /**
+     * Number of iterations for iteration-based executors
+     * ({@code per-vu-iterations}, {@code shared-iterations}).
+     */
+    @Parameter(property = "k6.iterations")
+    private Integer iterations;
+
+    /**
+     * Starting iteration rate for the {@code ramping-arrival-rate} executor.
+     * The rate will ramp from this value according to the configured stages.
+     * Defaults to 0 if not specified.
+     */
+    @Parameter(property = "k6.startRate")
+    private Integer startRate;
+
+    /**
+     * Fully custom k6 scenario definition as raw JavaScript. The content is
+     * inserted directly into the k6 scenario definition block, giving full
+     * control over all scenario properties.
+     * <p>
+     * When set, this takes precedence over all other load configuration
+     * parameters ({@code loadPattern}, {@code executor}, etc.).
+     * <p>
+     * Example:
+     *
+     * <pre>
+     * executor: 'ramping-arrival-rate',
+     * startRate: 0,
+     * timeUnit: '1s',
+     * preAllocatedVUs: 50,
+     * maxVUs: 100,
+     * stages: [
+     *   { duration: '1m', target: 100 },
+     *   { duration: '2m', target: 100 },
+     *   { duration: '1m', target: 0 },
+     * ],
+     * </pre>
+     */
+    @Parameter(property = "k6.customScenario")
+    private String customScenario;
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         if (skip) {
@@ -189,11 +326,13 @@ public class K6RunMojo extends AbstractK6Mojo {
             metricsCollector.start();
         }
 
+        LoadProfile loadProfile = buildLoadProfile();
+
         try {
             if (combineScenarios && filesToRun.size() > 1) {
-                runCombinedScenarios(filesToRun);
+                runCombinedScenarios(filesToRun, loadProfile);
             } else {
-                runSequentialTests(filesToRun);
+                runSequentialTests(filesToRun, loadProfile);
             }
         } finally {
             // Stop metrics collection and report
@@ -237,13 +376,14 @@ public class K6RunMojo extends AbstractK6Mojo {
     /**
      * Runs all scenarios in parallel using k6's scenario feature.
      */
-    private void runCombinedScenarios(List<Path> testFiles)
-            throws MojoExecutionException {
+    private void runCombinedScenarios(List<Path> testFiles,
+            LoadProfile loadProfile) throws MojoExecutionException {
         getLog().info("Running " + testFiles.size()
                 + " scenarios in parallel (combined mode)");
         getLog().info(CONTENT_BREAK);
         getLog().info("  Total virtual users: " + virtualUsers);
         getLog().info("  Duration: " + duration);
+        getLog().info("  Load pattern: " + loadProfile);
         getLog().info("  Target: http://" + appIp + ":" + appPort);
 
         // Parse weights
@@ -267,7 +407,7 @@ public class K6RunMojo extends AbstractK6Mojo {
         try {
             K6ScenarioCombiner combiner = new K6ScenarioCombiner();
             combiner.combine(scenarios, combinedFile, virtualUsers, duration,
-                    buildThresholdConfig());
+                    buildThresholdConfig(), loadProfile);
             getLog().info("Generated combined test: " + combinedFile);
         } catch (IOException e) {
             throw new MojoExecutionException(
@@ -296,13 +436,14 @@ public class K6RunMojo extends AbstractK6Mojo {
     /**
      * Runs tests sequentially (original behavior).
      */
-    private void runSequentialTests(List<Path> filesToRun)
-            throws MojoExecutionException {
+    private void runSequentialTests(List<Path> filesToRun,
+            LoadProfile loadProfile) throws MojoExecutionException {
         getLog().info("Running " + filesToRun.size()
                 + " k6 load test(s) sequentially");
         getLog().info(CONTENT_BREAK);
         getLog().info("  Virtual users: " + virtualUsers);
         getLog().info("  Duration: " + duration);
+        getLog().info("  Load pattern: " + loadProfile);
         getLog().info("  Target: http://" + appIp + ":" + appPort);
         getLog().info("  Tests: ");
         for (Path test : filesToRun) {
@@ -322,7 +463,7 @@ public class K6RunMojo extends AbstractK6Mojo {
 
             try {
                 nodeRunner.runK6Test(testPath, virtualUsers, duration, appIp,
-                        appPort);
+                        appPort, loadProfile);
                 passed++;
                 getLog().info("Test passed: " + testPath.getFileName());
             } catch (MojoExecutionException e) {
@@ -342,6 +483,71 @@ public class K6RunMojo extends AbstractK6Mojo {
         getLog().info("k6 load test summary: " + passed + " passed, " + failed
                 + " failed");
         getLog().info(CONTENT_BREAK);
+    }
+
+    /**
+     * Builds a {@link LoadProfile} from the Maven parameters. Priority order:
+     * <ol>
+     * <li>{@code customScenario} — fully custom k6 scenario definition</li>
+     * <li>{@code executor} — explicit k6 executor with parameters</li>
+     * <li>{@code stages} — custom stages (sets pattern to CUSTOM)</li>
+     * <li>{@code loadPattern} — predefined pattern (default: ramp)</li>
+     * </ol>
+     *
+     * @return the load profile configuration
+     * @throws MojoExecutionException
+     *             if the configuration is invalid
+     */
+    private LoadProfile buildLoadProfile() throws MojoExecutionException {
+        // Fully custom scenario takes highest priority
+        if (customScenario != null && !customScenario.isBlank()) {
+            return LoadProfile.customScenario(customScenario);
+        }
+
+        // Explicit executor selection
+        if (executor != null && !executor.isBlank()) {
+            try {
+                K6Executor k6Executor = K6Executor.fromString(executor);
+                var stageList = (stages != null && !stages.isBlank())
+                        ? LoadProfile.parseStages(stages)
+                        : List.<LoadProfile.Stage> of();
+                return LoadProfile.executor(k6Executor).stages(stageList)
+                        .rate(rate).timeUnit(timeUnit)
+                        .preAllocatedVUs(preAllocatedVUs).maxVUs(maxVUs)
+                        .iterations(iterations).startRate(startRate);
+            } catch (IllegalArgumentException e) {
+                throw new MojoExecutionException(
+                        "Invalid executor configuration: " + e.getMessage(), e);
+            }
+        }
+
+        // Custom stages override the load pattern
+        if (stages != null && !stages.isBlank()) {
+            try {
+                return LoadProfile
+                        .customStages(LoadProfile.parseStages(stages));
+            } catch (IllegalArgumentException e) {
+                throw new MojoExecutionException(
+                        "Invalid k6.stages format: " + e.getMessage(), e);
+            }
+        }
+
+        // Predefined load pattern
+        LoadPattern pattern;
+        try {
+            pattern = LoadPattern.valueOf(loadPattern.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new MojoExecutionException("Invalid k6.loadPattern: '"
+                    + loadPattern
+                    + "'. Valid values: constant, ramp, stress, soak, custom");
+        }
+        return switch (pattern) {
+        case CONSTANT -> LoadProfile.constant();
+        case RAMP -> LoadProfile.ramp(rampUp, rampDown);
+        case STRESS -> LoadProfile.stress();
+        case SOAK -> LoadProfile.soak();
+        case CUSTOM -> LoadProfile.customStages(List.of());
+        };
     }
 
     /**
