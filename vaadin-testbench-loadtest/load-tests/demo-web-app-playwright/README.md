@@ -1,6 +1,6 @@
-# Demo Web Application
+# Demo Web Application (Playwright)
 
-A sample Vaadin application with Spring Boot, demonstrating common patterns like CRUD operations and form handling.
+A sample Vaadin application with Spring Boot, demonstrating common patterns like CRUD operations and form handling. Uses Playwright for integration tests instead of TestBench.
 
 ## Running the Application
 
@@ -31,11 +31,9 @@ src/main/java/com/vaadin/laboratory/
         ├── PersonForm.java       # Form component for person editing
         └── PersonGrid.java       # Grid component with lazy loading
 
-src/test/java/com/vaadin/laboratory/views/
-├── AbstractIT.java               # Base class for integration tests (proxy-aware)
-└── scenario/
-    ├── HelloWorldIT.java         # E2E test for HelloWorld view
-    └── CrudExampleIT.java        # E2E test for CRUD view
+src/test/java/com/vaadin/laboratory/views/scenario/
+├── HelloWorldPlaywrightIT.java   # E2E test for HelloWorld view
+└── CrudExamplePlaywrightIT.java  # E2E test for CRUD view
 ```
 
 ## Views
@@ -51,8 +49,7 @@ A master-detail view with a grid of sample persons and an editing form. Demonstr
 
 ## Integration Tests
 
-The `scenario` package contains TestBench-based end-to-end tests that simulate real user interactions. These tests:
+The `scenario` package contains Playwright-based end-to-end tests that simulate real user interactions. These tests use `PlaywrightHelper` from the `loadtest-helper` module, which provides:
 
-- Verify the application works correctly from a user's perspective
-- Can be run as standard integration tests
-- Are used by the `demo-web-app-loadtest` module to record user workflows for k6 load testing
+- Browser context creation with automatic HAR recording when run via the `loadtest:record-playwright` Maven goal
+- Base URL resolution from environment variables and system properties

@@ -1,13 +1,13 @@
-# Demo Web Application Load Tests
+# Demo Web Application Playwright Load Tests
 
-This module provides k6 load testing capabilities for the demo application in the `demo-web-app` module. It creates k6 scripts based on Vaadin TestBench integration tests and executes load tests against the server. It supports two main workflows through Maven profiles:
+This module provides k6 load testing capabilities for the Playwright-based demo application in the `demo-web-app-playwright` module. It creates k6 scripts from Playwright integration tests using HAR recording (no proxy needed) and executes load tests against the server. It supports two main workflows through Maven profiles:
 
 1. **Local Development** (default in this demo, but not recommended for real projects) - Creates test scripts, starts the web server, and runs tests on the same machine
 2. **Remote Load Testing** - Runs tests against a server running elsewhere. This is the recommended approach for real-world use: run load tests on representative hardware and generate traffic from a separate machine
 
 ## Quick Start
 
-> **Note:** This module is only included in the build when `-DrunLoadTests` is passed.
+> **Note:** This module is only included in the build when `-DrunPlaywrightLoadTests` is passed.
 > It is excluded by default to avoid failures in CI snapshot builds.
 
 ### Local Development Workflow
@@ -16,7 +16,7 @@ Record scenarios and run quick load tests locally:
 
 ```bash
 # Build and run the full workflow (start server, record, run test)
-mvn verify -DrunLoadTests
+mvn verify -DrunPlaywrightLoadTests
 ```
 
 ### Remote Load Testing
@@ -25,10 +25,10 @@ Run pre-recorded tests against a remote server:
 
 ```bash
 # Test against a staging server
-mvn verify -DrunLoadTests -Premote -Dk6.appHost=staging.example.com -Dk6.appPort=8080
+mvn verify -DrunPlaywrightLoadTests -Premote -Dk6.appHost=staging.example.com -Dk6.appPort=8080
 
 # High-load test against production
-mvn verify -DrunLoadTests -Premote -Dk6.appHost=10.0.1.50 -Dk6.vus=100 -Dk6.duration=5m
+mvn verify -DrunPlaywrightLoadTests -Premote -Dk6.appHost=10.0.1.50 -Dk6.vus=100 -Dk6.duration=5m
 ```
 
 ## Maven Profiles
@@ -37,15 +37,15 @@ mvn verify -DrunLoadTests -Premote -Dk6.appHost=10.0.1.50 -Dk6.vus=100 -Dk6.dura
 
 The default profile for development and CI. It:
 
-1. Starts the demo-web-app locally
-2. Records TestBench scenarios through a proxy
+1. Starts the demo-web-app-playwright locally
+2. Records Playwright scenarios via HAR recording (no proxy needed)
 3. Runs a quick load test to verify the recording
 4. Stops the application
 
 ```bash
-mvn verify -DrunLoadTests                              # Full workflow
-mvn verify -DrunLoadTests -Dk6.skipRun=true            # Only record, don't run load test
-mvn verify -DrunLoadTests -Dk6.skipRecord=true         # Only run test, don't re-record
+mvn verify -DrunPlaywrightLoadTests                              # Full workflow
+mvn verify -DrunPlaywrightLoadTests -Dk6.skipRun=true            # Only record, don't run load test
+mvn verify -DrunPlaywrightLoadTests -Dk6.skipRecord=true         # Only run test, don't re-record
 ```
 
 ### `remote`
@@ -59,10 +59,10 @@ For production load testing against a server running on another machine. This pr
 
 ```bash
 # Basic usage
-mvn verify -DrunLoadTests -Premote -Dk6.appHost=staging.example.com
+mvn verify -DrunPlaywrightLoadTests -Premote -Dk6.appHost=staging.example.com
 
 # Full configuration
-mvn verify -DrunLoadTests -Premote \
+mvn verify -DrunPlaywrightLoadTests -Premote \
     -Dk6.appHost=192.168.1.100 \
     -Dk6.appPort=8080 \
     -Dk6.vus=50 \
@@ -74,17 +74,30 @@ mvn verify -DrunLoadTests -Premote \
 Records scenarios without running load tests. Useful for preparing tests that will be executed later on dedicated infrastructure.
 
 ```bash
-mvn verify -DrunLoadTests -Precord-only
+mvn verify -DrunPlaywrightLoadTests -Precord-only
 ```
 
 ## Included Scenarios
 
-This demo records and runs two TestBench integration tests as k6 load tests:
+This demo records and runs two Playwright integration tests as k6 load tests:
 
 | Scenario | Description | Generated Test |
 |----------|-------------|----------------|
-| `HelloWorldIT` | Simple form interaction: enter name, click button | `hello-world.js` |
-| `CrudExampleIT` | Full CRUD workflow: browse grid, create, edit, delete | `crud-example.js` |
+| `HelloWorldPlaywrightIT` | Simple form interaction: enter name, click button | `hello-world-playwright.js` |
+| `CrudExamplePlaywrightIT` | Full CRUD workflow: browse grid, create, edit, delete | `crud-example-playwright.js` |
+
+By default, scenarios are combined into a single `combined-scenarios.js` with weighted VU distribution (70% HelloWorld, 30% CrudExample).
+
+## Differences from TestBench Load Tests
+
+This module is the Playwright-based alternative to `demo-web-app-loadtest`. The key differences are:
+
+| Aspect | TestBench (`demo-web-app-loadtest`) | Playwright (this module) |
+|--------|--------------------------------------|--------------------------|
+| Recording method | HTTP proxy (port 6000) | Playwright HAR recording (no proxy) |
+| Test framework | TestBench `@BrowserTest` | Playwright Java API |
+| Browser control | WebDriver-based | Playwright API |
+| Plugin goal | `record` | `record-playwright` |
 
 ## Configuration Properties
 
@@ -94,7 +107,6 @@ This demo records and runs two TestBench integration tests as k6 load tests:
 | `k6.appPort` | `8080` | Target server port (remote profile) |
 | `app.port` | `8081` | Local server port (local profile) |
 | `management.port` | `8082` | Local management/actuator port (local profile) |
-| `proxy.port` | `6000` | Recording proxy port |
 | `k6.vus` | `100` | Number of virtual users |
 | `k6.duration` | `30s` | Test duration (e.g., "30s", "1m", "5m") |
 | `k6.testDir` | `target/k6/tests` | Directory containing k6 test files |
@@ -113,11 +125,11 @@ For accurate performance metrics, follow these guidelines:
 Run the load generator on a different machine than the application server:
 
 ```
-┌─────────────────┐         ┌─────────────────┐
-│  Load Generator │  ───►   │  App Server     │
-│  (this module)  │  HTTP   │  (demo-web-app) │
-│  mvn -Premote   │         │  java -jar ...  │
-└─────────────────┘         └─────────────────┘
+┌─────────────────────────┐         ┌──────────────────────────┐
+│  Load Generator         │  ────>  │  App Server              │
+│  (this module)          │  HTTP   │  (demo-web-app-playwright)│
+│  mvn -Premote           │         │  java -jar ...           │
+└─────────────────────────┘         └──────────────────────────┘
 ```
 
 ### 2. Network Considerations
@@ -132,12 +144,12 @@ Record tests locally, then distribute the k6 scripts:
 
 ```bash
 # On development machine: record the test
-mvn verify -Precord-only
+mvn verify -DrunPlaywrightLoadTests -Precord-only
 
 # Copy k6/tests/*.js to load generation machine
 
 # On load generation machine: run the test
-mvn verify -Premote -Dk6.appHost=app-server.example.com
+mvn verify -DrunPlaywrightLoadTests -Premote -Dk6.appHost=app-server.example.com
 ```
 
 ### 4. Scaling Up
@@ -146,46 +158,13 @@ Increase load gradually to find breaking points:
 
 ```bash
 # Start small
-mvn verify -Premote -Dk6.appHost=prod -Dk6.vus=10 -Dk6.duration=1m
+mvn verify -DrunPlaywrightLoadTests -Premote -Dk6.appHost=prod -Dk6.vus=10 -Dk6.duration=1m
 
 # Increase load
-mvn verify -Premote -Dk6.appHost=prod -Dk6.vus=50 -Dk6.duration=5m
+mvn verify -DrunPlaywrightLoadTests -Premote -Dk6.appHost=prod -Dk6.vus=50 -Dk6.duration=5m
 
 # Stress test
-mvn verify -Premote -Dk6.appHost=prod -Dk6.vus=200 -Dk6.duration=10m
-```
-
-## Example: CI/CD Integration
-
-### GitHub Actions (Remote Testing)
-
-```yaml
-jobs:
-  load-test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          java-version: '21'
-          distribution: 'temurin'
-
-      - name: Install k6
-        run: |
-          sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C5AD17C747E3415A3642D57D77C6C491D6AC1D69
-          echo "deb https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
-          sudo apt-get update
-          sudo apt-get install k6
-
-      - name: Run Load Test
-        run: |
-          mvn verify -pl demo-web-app-loadtest -Premote \
-            -Dk6.appHost=${{ secrets.STAGING_HOST }} \
-            -Dk6.appPort=8080 \
-            -Dk6.vus=50 \
-            -Dk6.duration=2m
+mvn verify -DrunPlaywrightLoadTests -Premote -Dk6.appHost=prod -Dk6.vus=200 -Dk6.duration=10m
 ```
 
 ## Troubleshooting
@@ -214,6 +193,6 @@ Install k6:
 
 ### Recording fails
 
-- Check the proxy port (6000) is not in use
 - Verify the application is running and accessible
-- Ensure Chrome browser is installed (required for TestBench)
+- Ensure Playwright browsers are installed (`mvn exec:java -e -D exec.mainClass=com.microsoft.playwright.CLI -Dexec.args="install"`)
+- Check that the app port (8081) is not in use

@@ -8,8 +8,13 @@ This is a PoC of a tool that utilizes Vaadin TestBench E2E tests as "user storie
 ```
 k6-testbench-recorder/
 ├── testbench-converter-plugin/     # Maven plugin for k6 recording and conversion
-├── demo-web-app/               # Sample Vaadin application with TestBench tests
-└── demo-web-app-loadtest/      # Integration test module demonstrating the workflow
+├── testbench-loadtest-support/     # A JUnit 5 extension
+├── loadtest-helper/                # Drop-in helper for Vaadin load testing
+└───── load-tests/                  # Test module
+   ├── demo-web-app/                # Sample Vaadin application with TestBench tests
+   └── demo-web-app-loadtest/       # Integration test module demonstrating the workflow
+   ├── demo-web-app-playwright/                # Sample Vaadin application with Playwright tests
+   └── demo-web-app-playwright-loadtest/       # Integration test module demonstrating the workflow for playwright
 ```
 
 ## Prerequisites

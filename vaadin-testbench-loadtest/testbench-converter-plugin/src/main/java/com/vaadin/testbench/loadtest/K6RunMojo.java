@@ -47,13 +47,13 @@ import com.vaadin.testbench.loadtest.util.MetricsCollector;
  * 
  * <pre>
  * // Run tests sequentially
- * mvn k6:run -Dk6.testDir=k6/tests -Dk6.vus=50 -Dk6.duration=1m
+ * mvn loadtest:run -Dk6.testDir=k6/tests -Dk6.vus=50 -Dk6.duration=1m
  *
  * // Run tests in parallel with equal weights
- * mvn k6:run -Dk6.testDir=k6/tests -Dk6.combineScenarios=true -Dk6.vus=50
+ * mvn loadtest:run -Dk6.testDir=k6/tests -Dk6.combineScenarios=true -Dk6.vus=50
  *
  * // Run tests in parallel with custom weights (70% hello-world, 30% crud-example)
- * mvn k6:run -Dk6.testDir=k6/tests -Dk6.combineScenarios=true \
+ * mvn loadtest:run -Dk6.testDir=k6/tests -Dk6.combineScenarios=true \
  *     -Dk6.scenarioWeights="helloWorld:70,crudExample:30"
  * </pre>
  */
@@ -364,9 +364,9 @@ public class K6RunMojo extends AbstractK6Mojo {
 
         if (metrics.isPresent()) {
             getLog().info("");
-            getLog().info("========================================");
+            getLog().info(CONTENT_BREAK);
             getLog().info(metrics.get().toString());
-            getLog().info("========================================");
+            getLog().info(CONTENT_BREAK);
         } else {
             getLog().debug("Actuator metrics not available at " + appIp + ":"
                     + managementPort);
@@ -380,7 +380,7 @@ public class K6RunMojo extends AbstractK6Mojo {
             LoadProfile loadProfile) throws MojoExecutionException {
         getLog().info("Running " + testFiles.size()
                 + " scenarios in parallel (combined mode)");
-        getLog().info("========================================");
+        getLog().info(CONTENT_BREAK);
         getLog().info("  Total virtual users: " + virtualUsers);
         getLog().info("  Duration: " + duration);
         getLog().info("  Load pattern: " + loadProfile);
@@ -398,7 +398,7 @@ public class K6RunMojo extends AbstractK6Mojo {
             getLog().info("  Scenario: " + scenarioName + " (weight: " + weight
                     + "%)");
         }
-        getLog().info("========================================");
+        getLog().info(CONTENT_BREAK);
         getLog().info("");
 
         // Generate combined test file
@@ -420,9 +420,9 @@ public class K6RunMojo extends AbstractK6Mojo {
             nodeRunner.runK6Test(combinedFile, virtualUsers, duration, appIp,
                     appPort, true);
             getLog().info("");
-            getLog().info("========================================");
+            getLog().info(CONTENT_BREAK);
             getLog().info("Combined scenario test completed successfully");
-            getLog().info("========================================");
+            getLog().info(CONTENT_BREAK);
         } catch (MojoExecutionException e) {
             if (failOnThreshold) {
                 throw e;
@@ -440,7 +440,7 @@ public class K6RunMojo extends AbstractK6Mojo {
             LoadProfile loadProfile) throws MojoExecutionException {
         getLog().info("Running " + filesToRun.size()
                 + " k6 load test(s) sequentially");
-        getLog().info("========================================");
+        getLog().info(CONTENT_BREAK);
         getLog().info("  Virtual users: " + virtualUsers);
         getLog().info("  Duration: " + duration);
         getLog().info("  Load pattern: " + loadProfile);
@@ -449,7 +449,7 @@ public class K6RunMojo extends AbstractK6Mojo {
         for (Path test : filesToRun) {
             getLog().info("    - " + test.getFileName());
         }
-        getLog().info("========================================");
+        getLog().info(CONTENT_BREAK);
         getLog().info("");
 
         int passed = 0;
@@ -479,10 +479,10 @@ public class K6RunMojo extends AbstractK6Mojo {
         }
 
         getLog().info("");
-        getLog().info("========================================");
+        getLog().info(CONTENT_BREAK);
         getLog().info("k6 load test summary: " + passed + " passed, " + failed
                 + " failed");
-        getLog().info("========================================");
+        getLog().info(CONTENT_BREAK);
     }
 
     /**
