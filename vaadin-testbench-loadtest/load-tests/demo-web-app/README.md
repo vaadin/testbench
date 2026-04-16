@@ -16,6 +16,7 @@ The application starts at http://localhost:8080
 src/main/java/com/vaadin/laboratory/
 ├── Application.java              # Spring Boot entry point
 ├── data/                         # JPA entities and repositories
+│   ├── AbstractEntity.java       # Base entity with ID and version
 │   ├── SamplePerson.java
 │   └── SamplePersonRepository.java
 ├── services/                     # Business logic
@@ -25,10 +26,13 @@ src/main/java/com/vaadin/laboratory/
     ├── helloworld/
     │   └── HelloWorldView.java   # Simple hello world demo
     └── crudexample/
-        └── CrudExampleView.java  # CRUD grid with form editing
+        ├── CrudExampleView.java  # Master-detail split layout view
+        ├── CrudExampleFactory.java # Factory for CRUD components
+        ├── PersonForm.java       # Form component for person editing
+        └── PersonGrid.java       # Grid component with lazy loading
 
 src/test/java/com/vaadin/laboratory/views/
-├── AbstractIT.java               # Base class for integration tests
+├── AbstractIT.java               # Base class for integration tests (proxy-aware)
 └── scenario/
     ├── HelloWorldIT.java         # E2E test for HelloWorld view
     └── CrudExampleIT.java        # E2E test for CRUD view
@@ -51,24 +55,4 @@ The `scenario` package contains TestBench-based end-to-end tests that simulate r
 
 - Verify the application works correctly from a user's perspective
 - Can be run as standard integration tests
-- Are also used by the `demo-web-app-loadtest` module to record user workflows for load testing
-
-### Running Tests
-
-```bash
-# Run all integration tests
-mvn verify
-
-# Run a specific test
-mvn failsafe:integration-test -Dit.test=HelloWorldIT
-```
-
-## Building
-
-```bash
-# Development build
-mvn package
-
-# Production build with optimized frontend
-mvn package -Pproduction
-```
+- Are used by the `demo-web-app-loadtest` module to record user workflows for k6 load testing

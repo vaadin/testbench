@@ -93,10 +93,14 @@ This demo records and runs two TestBench integration tests as k6 load tests:
 | `k6.appHost` | `localhost` | Target server hostname/IP (remote profile) |
 | `k6.appPort` | `8080` | Target server port (remote profile) |
 | `app.port` | `8081` | Local server port (local profile) |
+| `management.port` | `8082` | Local management/actuator port (local profile) |
 | `proxy.port` | `6000` | Recording proxy port |
-| `k6.vus` | `10` | Number of virtual users |
+| `k6.vus` | `100` | Number of virtual users |
 | `k6.duration` | `30s` | Test duration (e.g., "30s", "1m", "5m") |
 | `k6.testDir` | `target/k6/tests` | Directory containing k6 test files |
+| `k6.combineScenarios` | `true` | Combine all scenarios into a single weighted test |
+| `k6.scenarioWeights` | `helloWorld:70,crudExample:30` | VU distribution across scenarios |
+| `k6.collectVaadinMetrics` | `true` | Collect Vaadin-specific metrics via actuator |
 | `k6.skipRecord` | `false` | Skip recording phase |
 | `k6.skipRun` | `false` | Skip load test phase |
 

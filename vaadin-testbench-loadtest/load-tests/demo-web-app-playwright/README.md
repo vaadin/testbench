@@ -16,6 +16,7 @@ The application starts at http://localhost:8080
 src/main/java/com/vaadin/laboratory/
 ├── Application.java              # Spring Boot entry point
 ├── data/                         # JPA entities and repositories
+│   ├── AbstractEntity.java       # Base entity with ID and version
 │   ├── SamplePerson.java
 │   └── SamplePersonRepository.java
 ├── services/                     # Business logic
@@ -25,7 +26,10 @@ src/main/java/com/vaadin/laboratory/
     ├── helloworld/
     │   └── HelloWorldView.java   # Simple hello world demo
     └── crudexample/
-        └── CrudExampleView.java  # CRUD grid with form editing
+        ├── CrudExampleView.java  # Master-detail split layout view
+        ├── CrudExampleFactory.java # Factory for CRUD components
+        ├── PersonForm.java       # Form component for person editing
+        └── PersonGrid.java       # Grid component with lazy loading
 
 src/test/java/com/vaadin/laboratory/views/scenario/
 ├── HelloWorldPlaywrightIT.java   # E2E test for HelloWorld view
@@ -49,23 +53,3 @@ The `scenario` package contains Playwright-based end-to-end tests that simulate 
 
 - Browser context creation with automatic HAR recording when run via the `loadtest:record-playwright` Maven goal
 - Base URL resolution from environment variables and system properties
-
-### Running Tests
-
-```bash
-# Run all integration tests (requires the app to be running)
-mvn failsafe:integration-test -Dit.test=HelloWorldPlaywrightIT
-
-# Run with the it profile (starts/stops the app automatically)
-mvn verify -Pit
-```
-
-## Building
-
-```bash
-# Development build
-mvn package
-
-# Production build with optimized frontend
-mvn package -Pproduction
-```
