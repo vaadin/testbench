@@ -3,7 +3,7 @@ name: TestBench Validation
 on:
   pull_request:
     branches:
-      - 10.0
+      - 10.1
     types: [opened, synchronize, reopened, edited]
   workflow_dispatch:
 
