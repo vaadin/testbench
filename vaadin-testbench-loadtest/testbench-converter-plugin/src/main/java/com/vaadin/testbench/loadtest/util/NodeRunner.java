@@ -35,6 +35,7 @@ public class NodeRunner {
     private final Path workingDirectory;
     private ProxyRecorder proxyRecorder;
     private String summaryTrendStats = "avg,min,med,max,p(95),p(99)";
+    private Path reportDir;
 
     /**
      * Creates a new node runner for the given working directory.
@@ -58,6 +59,16 @@ public class NodeRunner {
         this.summaryTrendStats = summaryTrendStats;
     }
 
+    /**
+     * Sets the directory where report files (JSON summary, HTML report) are
+     * written. Created automatically if it does not exist.
+     *
+     * @param reportDir
+     *            the report output directory
+     */
+    public void setReportDir(Path reportDir) {
+        this.reportDir = reportDir;
+    }
 
     /**
      * Checks if k6 is available on the system.
@@ -342,12 +353,9 @@ public class NodeRunner {
 
             // Summary trend stats and file path via env var (handleSummary
             // in the script writes the JSON)
-            Path summaryFile = testFile.getParent()
-                    .resolve(testFile.getFileName().toString()
-                            .replaceAll("\\.js$", "-summary.json"));
-            Path csvFile = testFile.getParent()
-                    .resolve(testFile.getFileName().toString()
-                            .replaceAll("\\.js$", "-metrics.csv"));
+            Path summaryFile = resolveSummaryFile(testFile);
+            Path csvFile = testFile.getParent().resolve(testFile.getFileName()
+                    .toString().replaceAll("\\.js$", "-metrics.csv"));
             command.add("--summary-trend-stats");
             command.add(summaryTrendStats);
             command.add("-e");
@@ -486,12 +494,9 @@ public class NodeRunner {
 
             // Summary trend stats and file path via env var (handleSummary
             // in the script writes the JSON)
-            Path summaryFile = testFile.getParent()
-                    .resolve(testFile.getFileName().toString()
-                            .replaceAll("\\.js$", "-summary.json"));
-            Path csvFile = testFile.getParent()
-                    .resolve(testFile.getFileName().toString()
-                            .replaceAll("\\.js$", "-metrics.csv"));
+            Path summaryFile = resolveSummaryFile(testFile);
+            Path csvFile = testFile.getParent().resolve(testFile.getFileName()
+                    .toString().replaceAll("\\.js$", "-metrics.csv"));
             command.add("--summary-trend-stats");
             command.add(summaryTrendStats);
             command.add("-e");
@@ -529,13 +534,31 @@ public class NodeRunner {
     }
 
     /**
-     * Extracts VU timeline data from the k6 CSV output and injects it into
-     * the summary JSON as a {@code vu_timeline} array. Each entry has
+     * Resolves the summary JSON path. Uses reportDir if set, otherwise places
+     * the file next to the test file.
+     */
+    private Path resolveSummaryFile(Path testFile) {
+        String baseName = testFile.getFileName().toString().replaceAll("\\.js$",
+                "-summary.json");
+        if (reportDir != null) {
+            try {
+                Files.createDirectories(reportDir);
+            } catch (IOException e) {
+                log.warning("Could not create report dir: " + reportDir);
+            }
+            return reportDir.resolve(baseName);
+        }
+        return testFile.getParent().resolve(baseName);
+    }
+
+    /**
+     * Extracts VU timeline data from the k6 CSV output and injects it into the
+     * summary JSON as a {@code vu_timeline} array. Each entry has
      * {@code timestamp} (epoch seconds) and {@code vus} (active VU count).
      *
      * <p>
-     * The k6 CSV format has columns: metric_name, timestamp, metric_value,
-     * ... We filter for rows where metric_name is {@code vus}.
+     * The k6 CSV format has columns: metric_name, timestamp, metric_value, ...
+     * We filter for rows where metric_name is {@code vus}.
      *
      * @param csvFile
      *            the k6 CSV metrics output file
@@ -553,8 +576,7 @@ public class NodeRunner {
             StringBuilder vuJson = new StringBuilder("[");
             boolean first = true;
             long firstTimestamp = -1;
-            try (BufferedReader reader = Files
-                    .newBufferedReader(csvFile)) {
+            try (BufferedReader reader = Files.newBufferedReader(csvFile)) {
                 String line;
                 int metricCol = -1, tsCol = -1, valueCol = -1;
                 while ((line = reader.readLine()) != null) {
@@ -585,8 +607,7 @@ public class NodeRunner {
                         if (!first)
                             vuJson.append(",");
                         vuJson.append("{\"elapsed\":").append(elapsed)
-                                .append(",\"vus\":").append(vus)
-                                .append("}");
+                                .append(",\"vus\":").append(vus).append("}");
                         first = false;
                     }
                 }
@@ -605,14 +626,16 @@ public class NodeRunner {
                 String injected = json.substring(0, lastBrace)
                         + ",\n  \"vu_timeline\": " + vuJson + "\n}";
                 Files.writeString(summaryFile, injected);
-                log.info("VU timeline injected into summary ("
-                        + (first ? 0 : vuJson.toString().split(",\\{").length)
-                        + " data points)");
+                log.info(
+                        "VU timeline injected into summary ("
+                                + (first ? 0
+                                        : vuJson.toString()
+                                                .split(",\\{").length)
+                                + " data points)");
             }
         } catch (IOException | NumberFormatException e) {
-            log.warning(
-                    "Failed to extract VU timeline from CSV: "
-                            + e.getMessage());
+            log.warning("Failed to extract VU timeline from CSV: "
+                    + e.getMessage());
         }
     }
 

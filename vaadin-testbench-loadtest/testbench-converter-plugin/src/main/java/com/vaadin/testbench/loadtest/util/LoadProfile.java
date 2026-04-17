@@ -210,9 +210,8 @@ public class LoadProfile {
 
     /**
      * Returns the load stages as a compact string for passing as a k6
-     * environment variable. Format:
-     * {@code duration:target,duration:target,...} (e.g.,
-     * {@code 10s:50,30s:50,10s:0}). Avoids JSON quotes/brackets that can
+     * environment variable. Format: {@code duration:target,duration:target,...}
+     * (e.g., {@code 10s:50,30s:50,10s:0}). Avoids JSON quotes/brackets that can
      * cause issues with process argument passing.
      *
      * @param vus
