@@ -10,8 +10,12 @@ package com.vaadin.testbench.loadtest.util;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Configuration for k6 test thresholds. Controls when the load test is
@@ -148,6 +152,21 @@ public record ThresholdConfig(int httpReqDurationP95, int httpReqDurationP99,
      * @return the k6 thresholds block as a string
      */
     public String toK6ThresholdsBlock() {
+        return toK6ThresholdsBlock(List.of());
+    }
+
+    /**
+     * Generates the k6 thresholds block including per-request sub-metric
+     * thresholds. Adding a threshold for a tagged sub-metric forces k6 to
+     * include it in {@code handleSummary(data)}, enabling per-request
+     * statistics in the JSON export.
+     *
+     * @param requestTags
+     *            list of request tag names (e.g., "1 GET init"); a no-op
+     *            {@code max>=0} threshold is added for each to enable tracking
+     * @return the k6 thresholds block as a string
+     */
+    public String toK6ThresholdsBlock(List<String> requestTags) {
         StringBuilder sb = new StringBuilder();
         sb.append("  thresholds: {\n");
 
@@ -201,7 +220,50 @@ public record ThresholdConfig(int httpReqDurationP95, int httpReqDurationP99,
             sb.append("],\n");
         }
 
+        // Per-request sub-metric thresholds: a no-op threshold (max>=0)
+        // forces k6 to include tagged sub-metrics in handleSummary(data)
+        if (requestTags != null) {
+            for (String tag : requestTags) {
+                String escaped = tag.replace("'", "\\'");
+                sb.append("    'http_req_duration{name:").append(escaped)
+                        .append("}': ['max>=0'],\n");
+            }
+        }
+
         sb.append("  },\n");
+        return sb.toString();
+    }
+
+    /**
+     * Generates a k6 {@code --summary-trend-stats} value that includes all
+     * percentiles referenced by the configured thresholds. Always includes
+     * {@code avg, min, med, max} plus any {@code p(N)} found in the default
+     * p95/p99 settings and custom threshold expressions.
+     *
+     * @return comma-separated stats string for the k6 CLI flag
+     */
+    public String toSummaryTrendStats() {
+        Set<String> percentiles = new LinkedHashSet<>();
+        if (httpReqDurationP95 > 0) {
+            percentiles.add("p(95)");
+        }
+        if (httpReqDurationP99 > 0) {
+            percentiles.add("p(99)");
+        }
+        // Extract p(N) references from custom threshold expressions
+        Pattern pPattern = Pattern.compile("p\\(\\d+(?:\\.\\d+)?\\)");
+        for (List<String> expressions : customThresholds.values()) {
+            for (String expr : expressions) {
+                Matcher m = pPattern.matcher(expr);
+                while (m.find()) {
+                    percentiles.add(m.group());
+                }
+            }
+        }
+        StringBuilder sb = new StringBuilder("avg,min,med,max");
+        for (String p : percentiles) {
+            sb.append(",").append(p);
+        }
         return sb.toString();
     }
 }

@@ -108,13 +108,16 @@ public class K6ScenarioCombiner {
 
         StringBuilder sb = new StringBuilder();
 
-        // Pre-pass: extract SharedArray blocks from scenarios that use CSV
-        // input data.
+        // Pre-pass: extract SharedArray blocks and request tags from
+        // scenarios.
         // Each scenario gets a uniquely-named variable (e.g.
         // crudExampleInputData)
         // so multiple scenarios with CSV data don't collide.
         Map<String, String> sharedArrayBlocks = new LinkedHashMap<>();
+        List<String> allRequestTags = new ArrayList<>();
         String csvParserFunction = null;
+        Pattern tagPattern = Pattern
+                .compile("tags:\\s*\\{\\s*name:\\s*'([^']+)'");
         for (ScenarioConfig config : scenarios) {
             String content = Files.readString(config.testFile());
             String block = extractSharedArrayBlock(content);
@@ -131,6 +134,11 @@ public class K6ScenarioCombiner {
                     csvParserFunction = extractCsvParserFunction(content);
                 }
             }
+            // Extract request tag names for per-request sub-metrics
+            Matcher tagMatcher = tagPattern.matcher(content);
+            while (tagMatcher.find()) {
+                allRequestTags.add(tagMatcher.group(1));
+            }
         }
         boolean needsSharedArray = !sharedArrayBlocks.isEmpty();
 
@@ -143,7 +151,9 @@ public class K6ScenarioCombiner {
             sb.append("import { SharedArray } from 'k6/data'\n");
         }
         sb.append(
-                "import {extractJSessionId, getVaadinPushId, getVaadinSecurityKey, getVaadinUiId} from '../utils/vaadin-k6-helpers.js'\n\n");
+                "import {extractJSessionId, getVaadinPushId, getVaadinSecurityKey, getVaadinUiId} from '../utils/vaadin-k6-helpers.js'\n");
+        sb.append(
+                "import { textSummary } from 'https://jslib.k6.io/k6-summary/0.0.1/index.js'\n\n");
 
         // Configuration variables
         sb.append(
@@ -167,7 +177,7 @@ public class K6ScenarioCombiner {
 
         // Generate options with scenarios and configurable thresholds
         sb.append("export const options = {\n");
-        sb.append(thresholdConfig.toK6ThresholdsBlock());
+        sb.append(thresholdConfig.toK6ThresholdsBlock(allRequestTags));
         sb.append("  scenarios: {\n");
 
         for (int i = 0; i < scenarios.size(); i++) {
@@ -197,6 +207,9 @@ public class K6ScenarioCombiner {
                     sharedArrayBlocks.containsKey(config.name()));
             sb.append(scenarioCode).append("\n\n");
         }
+
+        // Summary handler for per-request metrics in JSON export
+        sb.append(HarToK6Converter.HANDLE_SUMMARY_FUNCTION);
 
         // Write combined file
         Files.createDirectories(outputFile.getParent());
