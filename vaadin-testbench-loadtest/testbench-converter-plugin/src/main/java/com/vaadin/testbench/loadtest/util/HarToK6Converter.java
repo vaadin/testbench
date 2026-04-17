@@ -60,6 +60,7 @@ public class HarToK6Converter {
             import http from 'k6/http'
             import { check, fail } from 'k6'
             import { sleep } from 'k6'
+            import { textSummary } from 'https://jslib.k6.io/k6-summary/0.0.1/index.js'
 
             """;
 
@@ -72,10 +73,41 @@ public class HarToK6Converter {
             """;
 
     /**
+     * Shared handleSummary function injected into all generated scripts. Writes
+     * the full summary (including per-request sub-metrics) as JSON and
+     * preserves the console text summary.
+     */
+    static final String HANDLE_SUMMARY_FUNCTION = """
+
+            export function handleSummary(data) {
+              // Console summary without per-request sub-metrics
+              const consoleData = Object.assign({}, data, {
+                metrics: Object.fromEntries(
+                  Object.entries(data.metrics).filter(([key]) => !key.includes('{name:'))
+                )
+              })
+              const result = {
+                'stdout': textSummary(consoleData, { indent: ' ', enableColors: true }),
+              }
+              // Full JSON with per-request sub-metrics
+              if (__ENV.SUMMARY_FILE) {
+                result[__ENV.SUMMARY_FILE] = JSON.stringify(data, null, 2)
+              }
+              return result
+            }
+            """;
+
+    /**
      * Collected mSync input values across all requests during a single
      * conversion.
      */
     private final List<String> collectedInputValues = new ArrayList<>();
+
+    /**
+     * Scenario name prefix for request tags, derived from the output file name.
+     * E.g., "hello-world" from "hello-world-generated.js".
+     */
+    private String scenarioName;
 
     private final ObjectMapper objectMapper;
 
@@ -143,6 +175,12 @@ public class HarToK6Converter {
         log.info("Converting HAR to k6 test...");
         collectedInputValues.clear();
 
+        // Derive scenario name from output file (e.g., "hello-world" from
+        // "hello-world-generated.js")
+        String fileName = outputFile.getFileName().toString();
+        scenarioName = fileName.replaceAll("-generated\\.js$", "")
+                .replaceAll("\\.js$", "");
+
         HarFile har = objectMapper.readValue(harFile.toFile(), HarFile.class);
 
         List<HarEntry> entries = har.log().entries();
@@ -151,10 +189,20 @@ public class HarToK6Converter {
         // Detect Vaadin session values to make them dynamic per VU
         VaadinSessionInfo session = detectVaadinSession(entries);
 
+        // Pre-compute request tags for per-request sub-metrics in summary
+        List<String> requestTags = new ArrayList<>();
+        for (int i = 0; i < entries.size(); i++) {
+            HarEntry entry = entries.get(i);
+            String method = entry.request().method().toUpperCase();
+            if (HarFilter.K6_SUPPORTED_METHODS.contains(method)) {
+                requestTags.add(requestTag(i, method, entry.request().url()));
+            }
+        }
+
         StringBuilder script = new StringBuilder();
         script.append(K6_SCRIPT_IMPORTS);
         script.append("export const options = {\n");
-        script.append(thresholdConfig.toK6ThresholdsBlock());
+        script.append(thresholdConfig.toK6ThresholdsBlock(requestTags));
         script.append("}\n\n");
         script.append(K6_SCRIPT_FUNCTION_START);
 
@@ -207,6 +255,7 @@ public class HarToK6Converter {
         }
 
         script.append(K6_SCRIPT_FOOTER);
+        script.append(HANDLE_SUMMARY_FUNCTION);
 
         String scriptContent = script.toString();
 
@@ -290,6 +339,9 @@ public class HarToK6Converter {
         // Note: cookies are NOT added as headers — k6 cookie jar manages
         // JSESSIONID automatically
 
+        // Tag for per-request metrics in k6 summary
+        String requestTag = requestTag(index, method, url);
+
         // Generate the request (use 'let' only for first request)
         String responseDecl = index == 0 ? "let response" : "response";
 
@@ -306,7 +358,9 @@ public class HarToK6Converter {
                 code.append("    '").append(escapeJs(url)).append("',\n");
             }
             code.append("    {\n");
-            code.append("      headers: ").append(headers).append("\n");
+            code.append("      headers: ").append(headers).append(",\n");
+            code.append("      tags: { name: '").append(escapeJs(requestTag))
+                    .append("' }\n");
             code.append("    }\n");
             code.append("  )\n\n");
         } else {
@@ -402,12 +456,50 @@ public class HarToK6Converter {
             }
 
             code.append("    {\n");
-            code.append("      headers: ").append(headers).append("\n");
+            code.append("      headers: ").append(headers).append(",\n");
+            code.append("      tags: { name: '").append(escapeJs(requestTag))
+                    .append("' }\n");
             code.append("    }\n");
             code.append("  )\n\n");
         }
 
         return code.toString();
+    }
+
+    /**
+     * Generates a short tag name for a request, used by k6 to create
+     * per-request sub-metrics in the summary. Includes the scenario name so
+     * that tags remain unique when multiple scenarios are combined.
+     *
+     * @param index
+     *            0-based request index
+     * @param method
+     *            HTTP method
+     * @param url
+     *            the request URL
+     * @return a descriptive tag (e.g., "hello-world: 1 GET init")
+     */
+    private String requestTag(int index, String method, String url) {
+        String type;
+        if (url.contains("v-r=init")) {
+            type = "init";
+        } else if (url.contains("v-r=uidl")) {
+            type = "uidl";
+        } else {
+            try {
+                java.net.URI uri = java.net.URI.create(url);
+                type = uri.getPath();
+                if (type == null || type.isEmpty() || type.equals("/")) {
+                    type = "/";
+                }
+                if (type.length() > 30) {
+                    type = type.substring(0, 27) + "...";
+                }
+            } catch (Exception e) {
+                type = "/";
+            }
+        }
+        return scenarioName + ": " + (index + 1) + " " + method + " " + type;
     }
 
     /**

@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>k6 Load Test Report</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+         background: #f5f5f5; color: #333; padding: 24px; line-height: 1.5; }
+  h1 { font-size: 22px; margin-bottom: 16px; }
+  h2 { font-size: 16px; margin: 24px 0 10px; color: #555; text-transform: uppercase;
+       letter-spacing: 0.5px; }
+  .cards { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 8px; }
+  .card { background: #fff; border-radius: 8px; padding: 16px 20px;
+          box-shadow: 0 1px 3px rgba(0,0,0,0.08); min-width: 160px; }
+  .card .label { font-size: 11px; color: #888; text-transform: uppercase;
+                 letter-spacing: 0.5px; margin-bottom: 4px; }
+  .card .value { font-size: 24px; font-weight: 600; }
+  .card .unit { font-size: 12px; color: #888; }
+  table { width: 100%; border-collapse: collapse; background: #fff;
+          border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+          margin-bottom: 16px; }
+  th { background: #fafafa; font-size: 11px; text-transform: uppercase;
+       letter-spacing: 0.5px; color: #888; padding: 10px 12px; text-align: left;
+       border-bottom: 2px solid #eee; cursor: pointer; user-select: none;
+       white-space: nowrap; }
+  th:hover { color: #333; }
+  th.sorted-asc::after { content: ' \25B2'; font-size: 9px; }
+  th.sorted-desc::after { content: ' \25BC'; font-size: 9px; }
+  td { padding: 8px 12px; border-bottom: 1px solid #f0f0f0; font-size: 13px;
+       font-variant-numeric: tabular-nums; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #fafafa; }
+  td.num { text-align: right; font-family: 'SF Mono', Monaco, Consolas, monospace; }
+  .pass { color: #2e7d32; } .fail { color: #c62828; }
+  .threshold-ok { background: #e8f5e9; color: #2e7d32; padding: 2px 8px;
+                  border-radius: 4px; font-size: 12px; font-weight: 600; }
+  .threshold-fail { background: #ffebee; color: #c62828; padding: 2px 8px;
+                    border-radius: 4px; font-size: 12px; font-weight: 600; }
+  .scenario-header { font-size: 13px; font-weight: 600; color: #1565c0;
+                     padding: 10px 12px 4px; background: #e3f2fd;
+                     border-bottom: 1px solid #bbdefb; }
+  .muted { color: #aaa; }
+  .vu-chart { background: #fff; border-radius: 8px; padding: 20px;
+              box-shadow: 0 1px 3px rgba(0,0,0,0.08); margin-bottom: 16px;
+              position: relative; }
+  .vu-chart svg { display: block; }
+  .chart-tooltip { position: fixed; background: rgba(30,30,30,0.92); color: #fff;
+                   padding: 8px 12px; border-radius: 6px; font-size: 12px;
+                   line-height: 1.6; pointer-events: none; z-index: 1000;
+                   white-space: nowrap; display: none; }
+  .chart-tooltip b { color: #90caf9; }
+  .chart-tooltip .pass-dot { color: #66bb6a; }
+  .chart-tooltip .fail-dot { color: #ef5350; }
+</style>
+</head>
+<body>
+<div class="chart-tooltip" id="tooltip"></div>
+<script>
+const data = __K6_SUMMARY_DATA__;
+const tooltip = document.getElementById('tooltip');
+function showTip(evt, html) {
+  tooltip.innerHTML = html;
+  tooltip.style.display = 'block';
+  tooltip.style.left = (evt.clientX + 14) + 'px';
+  tooltip.style.top = (evt.clientY - 10) + 'px';
+}
+function hideTip() { tooltip.style.display = 'none'; }
+
+const fmt = (ms) => {
+  if (ms == null) return '-';
+  if (ms < 1) return ms.toFixed(2) + ' ms';
+  if (ms < 1000) return ms.toFixed(1) + ' ms';
+  return (ms / 1000).toFixed(2) + ' s';
+};
+const fmtRate = (v) => v != null ? (v * 100).toFixed(2) + '%' : '-';
+const fmtCount = (v) => v != null ? v.toLocaleString() : '-';
+
+const m = data.metrics || {};
+const state = data.state || {};
+const rootGroup = data.root_group || {};
+
+// Overview cards
+const dur = state.testRunDurationMs;
+const vusMax = m.vus_max ? m.vus_max.values.max : '-';
+const iters = m.iterations ? m.iterations.values.count : '-';
+const reqs = m.http_reqs ? m.http_reqs.values.count : '-';
+const reqRate = m.http_reqs ? m.http_reqs.values.rate.toFixed(1) : '-';
+const failRate = m.http_req_failed ? fmtRate(m.http_req_failed.values.rate) : '-';
+const checksRate = m.checks ? fmtRate(m.checks.values.rate) : '-';
+
+document.write('<h1>k6 Load Test Report</h1>');
+document.write('<div class="cards">');
+document.write(`<div class="card"><div class="label">Duration</div><div class="value">${dur ? (dur/1000).toFixed(1) : '-'}<span class="unit"> s</span></div></div>`);
+document.write(`<div class="card"><div class="label">Max VUs</div><div class="value">${vusMax}</div></div>`);
+document.write(`<div class="card"><div class="label">Iterations</div><div class="value">${fmtCount(iters)}</div></div>`);
+document.write(`<div class="card"><div class="label">HTTP Requests</div><div class="value">${fmtCount(reqs)}<span class="unit"> (${reqRate}/s)</span></div></div>`);
+document.write(`<div class="card"><div class="label">Failure Rate</div><div class="value ${failRate === '0.00%' ? 'pass' : 'fail'}">${failRate}</div></div>`);
+document.write(`<div class="card"><div class="label">Checks Passed</div><div class="value ${checksRate === '100.00%' ? 'pass' : 'fail'}">${checksRate}</div></div>`);
+document.write('</div>');
+
+// VU Timeline chart from actual runtime data
+const vuTimeline = data.vu_timeline;
+if (vuTimeline && vuTimeline.length > 0) {
+  const points = vuTimeline.map(p => ({t: p.elapsed * 1000, vu: p.vus}));
+  const maxT = points[points.length - 1].t;
+  const maxVU = Math.max(...points.map(p => p.vu), 1);
+
+  const W = 700, H = 180, padL = 50, padR = 20, padT = 10, padB = 30;
+  const cW = W - padL - padR, cH = H - padT - padB;
+  const x = (t) => padL + (t / maxT) * cW;
+  const y = (v) => padT + cH - (v / maxVU) * cH;
+
+  let path = `M ${x(points[0].t)} ${y(points[0].vu)}`;
+  for (let i = 1; i < points.length; i++) {
+    path += ` L ${x(points[i].t)} ${y(points[i].vu)}`;
+  }
+  let area = path + ` L ${x(maxT)} ${y(0)} L ${x(0)} ${y(0)} Z`;
+
+  let yLabels = '';
+  const ySteps = [0, Math.round(maxVU / 2), maxVU];
+  for (const v of ySteps) {
+    yLabels += `<text x="${padL - 8}" y="${y(v) + 4}" text-anchor="end" fill="#888" font-size="11">${v}</text>`;
+    yLabels += `<line x1="${padL}" y1="${y(v)}" x2="${W - padR}" y2="${y(v)}" stroke="#eee" stroke-width="1"/>`;
+  }
+
+  let xLabels = '';
+  const xSteps = 5;
+  for (let i = 0; i <= xSteps; i++) {
+    const tVal = (maxT / xSteps) * i;
+    const sec = Math.round(tVal / 1000);
+    const label = sec >= 60 ? Math.floor(sec/60) + 'm' + (sec%60 > 0 ? sec%60 + 's' : '') : sec + 's';
+    xLabels += `<text x="${x(tVal)}" y="${H - 5}" text-anchor="middle" fill="#888" font-size="11">${label}</text>`;
+  }
+
+  document.write('<h2>Virtual Users Timeline</h2>');
+  document.write('<div class="vu-chart" id="vuChart">');
+  document.write(`<svg width="${W}" height="${H}" xmlns="http://www.w3.org/2000/svg">`);
+  document.write(yLabels);
+  document.write(xLabels);
+  document.write(`<path d="${area}" fill="rgba(21,101,192,0.1)" />`);
+  document.write(`<path d="${path}" fill="none" stroke="#1565c0" stroke-width="2" />`);
+  for (const p of points) {
+    const sec = Math.round(p.t / 1000);
+    const tLabel = sec >= 60 ? Math.floor(sec/60) + 'm' + (sec%60 > 0 ? sec%60 + 's' : '') : sec + 's';
+    document.write(`<circle cx="${x(p.t)}" cy="${y(p.vu)}" r="3" fill="#1565c0" />`);
+    document.write(`<circle cx="${x(p.t)}" cy="${y(p.vu)}" r="10" fill="transparent" data-tip="<b>${tLabel}</b><br>${p.vu} VUs" />`);
+  }
+  document.write('</svg></div>');
+}
+
+// Response time over time chart with pass/fail request counts
+const reqTimeline = data.request_timeline;
+if (reqTimeline && reqTimeline.length > 0) {
+  const maxT = reqTimeline[reqTimeline.length - 1].elapsed * 1000;
+  const maxAvg = Math.max(...reqTimeline.map(r => r.avg), 1);
+  const maxMax = Math.max(...reqTimeline.map(r => r.max), 1);
+  const maxCount = Math.max(...reqTimeline.map(r => r.count), 1);
+
+  const W = 700, H = 250, padL = 60, padR = 60, padT = 10, padB = 30;
+  const cW = W - padL - padR, cH = H - padT - padB;
+  const x = (t) => padL + (t / maxT) * cW;
+  const yDur = (v) => padT + cH - (v / maxMax) * cH;
+  const yCount = (v) => padT + cH - (v / maxCount) * cH;
+
+  // Build bar chart for request counts (pass=green, fail=red stacked)
+  const barW = Math.max(1, Math.min(6, cW / reqTimeline.length - 1));
+  let bars = '';
+  for (const r of reqTimeline) {
+    const bx = x(r.elapsed * 1000) - barW / 2;
+    const passed = r.count - r.failed;
+    const passH = (passed / maxCount) * cH;
+    const failH = (r.failed / maxCount) * cH;
+    if (passed > 0) bars += `<rect x="${bx}" y="${padT + cH - passH - failH}" width="${barW}" height="${passH}" fill="rgba(46,125,50,0.3)" />`;
+    if (r.failed > 0) bars += `<rect x="${bx}" y="${padT + cH - failH}" width="${barW}" height="${failH}" fill="rgba(198,40,40,0.5)" />`;
+  }
+
+  // Build line for avg response time
+  let avgPath = '';
+  for (let i = 0; i < reqTimeline.length; i++) {
+    const r = reqTimeline[i];
+    const px = x(r.elapsed * 1000), py = yDur(r.avg);
+    avgPath += (i === 0 ? 'M ' : ' L ') + px + ' ' + py;
+  }
+
+  // Build line for max response time
+  let maxPath = '';
+  for (let i = 0; i < reqTimeline.length; i++) {
+    const r = reqTimeline[i];
+    const px = x(r.elapsed * 1000), py = yDur(r.max);
+    maxPath += (i === 0 ? 'M ' : ' L ') + px + ' ' + py;
+  }
+
+  // Y-axis left: response time
+  let yLabelsL = '';
+  const durSteps = [0, Math.round(maxMax / 2), Math.round(maxMax)];
+  for (const v of durSteps) {
+    yLabelsL += `<text x="${padL - 8}" y="${yDur(v) + 4}" text-anchor="end" fill="#888" font-size="11">${fmt(v)}</text>`;
+    yLabelsL += `<line x1="${padL}" y1="${yDur(v)}" x2="${W - padR}" y2="${yDur(v)}" stroke="#eee" stroke-width="1"/>`;
+  }
+
+  // Y-axis right: request count
+  let yLabelsR = '';
+  const cntSteps = [0, Math.round(maxCount / 2), maxCount];
+  for (const v of cntSteps) {
+    yLabelsR += `<text x="${W - padR + 8}" y="${yCount(v) + 4}" text-anchor="start" fill="#888" font-size="11">${v}</text>`;
+  }
+
+  // X-axis
+  let xLabels = '';
+  const xSteps2 = 5;
+  for (let i = 0; i <= xSteps2; i++) {
+    const tVal = (maxT / xSteps2) * i;
+    const sec = Math.round(tVal / 1000);
+    const label = sec >= 60 ? Math.floor(sec/60) + 'm' + (sec%60 > 0 ? sec%60 + 's' : '') : sec + 's';
+    xLabels += `<text x="${x(tVal)}" y="${H - 5}" text-anchor="middle" fill="#888" font-size="11">${label}</text>`;
+  }
+
+  document.write('<h2>Response Times Over Time</h2>');
+  document.write('<div class="vu-chart" id="rtChart">');
+  document.write(`<svg width="${W}" height="${H}" xmlns="http://www.w3.org/2000/svg">`);
+  document.write(yLabelsL);
+  document.write(yLabelsR);
+  document.write(xLabels);
+  document.write(bars);
+  document.write(`<path d="${maxPath}" fill="none" stroke="#ef9a9a" stroke-width="1.5" stroke-dasharray="4,3" />`);
+  document.write(`<path d="${avgPath}" fill="none" stroke="#1565c0" stroke-width="2" />`);
+  // Hover regions for each data point
+  const hoverW = Math.max(barW + 2, cW / reqTimeline.length);
+  for (const r of reqTimeline) {
+    const sec = r.elapsed;
+    const tLabel = sec >= 60 ? Math.floor(sec/60) + 'm' + (sec%60 > 0 ? sec%60 + 's' : '') : sec + 's';
+    const passed = r.count - r.failed;
+    const tip = `<b>${tLabel}</b><br>Avg: ${fmt(r.avg)} &middot; Max: ${fmt(r.max)}<br>`
+      + `<span class="pass-dot">\u25CF</span> ${passed} passed`
+      + (r.failed > 0 ? ` &middot; <span class="fail-dot">\u25CF</span> ${r.failed} failed` : '');
+    document.write(`<rect x="${x(r.elapsed * 1000) - hoverW/2}" y="${padT}" width="${hoverW}" height="${cH}" fill="transparent" data-tip="${tip.replace(/"/g, '&quot;')}" />`);
+  }
+  // Legend
+  const lx = padL + 10, ly = padT + 14;
+  document.write(`<line x1="${lx}" y1="${ly}" x2="${lx+16}" y2="${ly}" stroke="#1565c0" stroke-width="2" />`);
+  document.write(`<text x="${lx+20}" y="${ly+4}" fill="#555" font-size="11">Avg response time</text>`);
+  document.write(`<line x1="${lx+150}" y1="${ly}" x2="${lx+166}" y2="${ly}" stroke="#ef9a9a" stroke-width="1.5" stroke-dasharray="4,3" />`);
+  document.write(`<text x="${lx+170}" y="${ly+4}" fill="#555" font-size="11">Max response time</text>`);
+  document.write(`<rect x="${lx+310}" y="${ly-5}" width="10" height="10" fill="rgba(46,125,50,0.3)" />`);
+  document.write(`<text x="${lx+324}" y="${ly+4}" fill="#555" font-size="11">Passed</text>`);
+  document.write(`<rect x="${lx+380}" y="${ly-5}" width="10" height="10" fill="rgba(198,40,40,0.5)" />`);
+  document.write(`<text x="${lx+394}" y="${ly+4}" fill="#555" font-size="11">Failed</text>`);
+  // Axis labels
+  document.write(`<text x="${8}" y="${padT + cH/2}" fill="#888" font-size="10" transform="rotate(-90,8,${padT + cH/2})" text-anchor="middle">Response Time</text>`);
+  document.write(`<text x="${W - 8}" y="${padT + cH/2}" fill="#888" font-size="10" transform="rotate(90,${W-8},${padT + cH/2})" text-anchor="middle">Requests/s</text>`);
+  document.write('</svg></div>');
+}
+
+// Thresholds
+const thresholdMetrics = Object.entries(m).filter(([,v]) => v.thresholds && !v.thresholds['max>=0']);
+if (thresholdMetrics.length > 0) {
+  document.write('<h2>Thresholds</h2><table><tr><th>Metric</th><th>Threshold</th><th>Result</th></tr>');
+  for (const [name, metric] of thresholdMetrics) {
+    for (const [expr, result] of Object.entries(metric.thresholds)) {
+      const cls = result.ok ? 'threshold-ok' : 'threshold-fail';
+      const txt = result.ok ? 'PASS' : 'FAIL';
+      document.write(`<tr><td>${name}</td><td>${expr}</td><td><span class="${cls}">${txt}</span></td></tr>`);
+    }
+  }
+  document.write('</table>');
+}
+
+// Aggregate response times
+const aggMetric = m.http_req_duration;
+if (aggMetric) {
+  const v = aggMetric.values;
+  document.write('<h2>Response Times (all requests)</h2>');
+  document.write('<div class="cards">');
+  for (const [label, val] of [['Avg', v.avg], ['Min', v.min], ['Median', v.med], ['Max', v.max], ['p(95)', v['p(95)']], ['p(99)', v['p(99)']]]) {
+    if (val != null) document.write(`<div class="card"><div class="label">${label}</div><div class="value">${fmt(val)}</div></div>`);
+  }
+  document.write('</div>');
+}
+
+// Per-request breakdown grouped by scenario
+const perReq = Object.entries(m)
+  .filter(([k]) => k.startsWith('http_req_duration{name:'))
+  .map(([k, v]) => {
+    const tag = k.match(/\{name:(.+)\}/)[1];
+    const parts = tag.match(/^(.+?):\s*(\d+)\s+(.+)$/);
+    const scenario = parts ? parts[1] : '';
+    const idx = parts ? parseInt(parts[2]) : 0;
+    const desc = parts ? parts[3] : tag;
+    return { scenario, idx, desc, tag, values: v.values };
+  })
+  .sort((a, b) => a.scenario.localeCompare(b.scenario) || a.idx - b.idx);
+
+if (perReq.length > 0) {
+  document.write('<h2>Per-Request Response Times</h2>');
+  const scenarios = [...new Set(perReq.map(r => r.scenario))];
+
+  let tableId = 'reqTable';
+  document.write(`<table id="${tableId}"><thead>`);
+  document.write('<tr><th data-col="0">#</th><th data-col="1">Request</th>');
+  document.write('<th data-col="2">Avg</th><th data-col="3">Min</th><th data-col="4">Median</th>');
+  document.write('<th data-col="5">Max</th><th data-col="6">p(95)</th><th data-col="7">p(99)</th></tr>');
+  document.write('</thead><tbody>');
+
+  for (const sc of scenarios) {
+    const rows = perReq.filter(r => r.scenario === sc);
+    if (scenarios.length > 1) {
+      document.write(`<tr><td colspan="8" class="scenario-header">${sc}</td></tr>`);
+    }
+    for (const r of rows) {
+      const v = r.values;
+      document.write(`<tr data-scenario="${r.scenario}" data-idx="${r.idx}">`);
+      document.write(`<td class="num">${r.idx}</td><td>${r.desc}</td>`);
+      document.write(`<td class="num">${fmt(v.avg)}</td><td class="num">${fmt(v.min)}</td>`);
+      document.write(`<td class="num">${fmt(v.med)}</td><td class="num">${fmt(v.max)}</td>`);
+      document.write(`<td class="num">${fmt(v['p(95)'])}</td><td class="num">${fmt(v['p(99)'])}</td>`);
+      document.write('</tr>');
+    }
+  }
+  document.write('</tbody></table>');
+
+  // Sorting
+  document.querySelectorAll(`#${tableId} th[data-col]`).forEach(th => {
+    th.addEventListener('click', () => {
+      const col = parseInt(th.dataset.col);
+      const tbody = document.querySelector(`#${tableId} tbody`);
+      const rows = [...tbody.querySelectorAll('tr:not([class])')];
+      const asc = !th.classList.contains('sorted-asc');
+      document.querySelectorAll(`#${tableId} th`).forEach(h => h.classList.remove('sorted-asc', 'sorted-desc'));
+      th.classList.add(asc ? 'sorted-asc' : 'sorted-desc');
+      rows.sort((a, b) => {
+        const av = col <= 1 ? (col === 0 ? +a.dataset.idx : a.cells[1].textContent) : parseFloat(a.cells[col].textContent);
+        const bv = col <= 1 ? (col === 0 ? +b.dataset.idx : b.cells[1].textContent) : parseFloat(b.cells[col].textContent);
+        if (typeof av === 'string') return asc ? av.localeCompare(bv) : bv.localeCompare(av);
+        return asc ? av - bv : bv - av;
+      });
+      tbody.innerHTML = '';
+      const scenarios = [...new Set(rows.map(r => r.dataset.scenario))];
+      for (const sc of scenarios) {
+        const scRows = rows.filter(r => r.dataset.scenario === sc);
+        if (scenarios.length > 1) {
+          const hdr = document.createElement('tr');
+          hdr.innerHTML = `<td colspan="8" class="scenario-header">${sc}</td>`;
+          tbody.appendChild(hdr);
+        }
+        scRows.forEach(r => tbody.appendChild(r));
+      }
+    });
+  });
+}
+
+// Checks
+const checks = (rootGroup.checks || []).filter(c => c.passes + c.fails > 0);
+if (checks.length > 0) {
+  document.write('<h2>Checks</h2><table><tr><th>Check</th><th>Passes</th><th>Fails</th></tr>');
+  for (const c of checks) {
+    const cls = c.fails > 0 ? 'fail' : 'pass';
+    document.write(`<tr><td>${c.name}</td><td class="num pass">${fmtCount(c.passes)}</td>`);
+    document.write(`<td class="num ${cls}">${fmtCount(c.fails)}</td></tr>`);
+  }
+  document.write('</table>');
+}
+
+// Attach chart tooltips after all document.write calls complete
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('#vuChart circle[data-tip], #rtChart rect[data-tip]').forEach(el => {
+    el.style.cursor = 'crosshair';
+    el.addEventListener('mousemove', e => showTip(e, el.dataset.tip));
+    el.addEventListener('mouseleave', hideTip);
+  });
+});
+</script>
+</body>
+</html>

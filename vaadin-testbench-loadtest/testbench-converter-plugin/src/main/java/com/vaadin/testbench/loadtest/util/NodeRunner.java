@@ -20,6 +20,8 @@ import java.util.logging.Logger;
 
 import org.apache.maven.plugin.MojoExecutionException;
 
+import com.vaadin.testbench.loadtest.report.SummaryHtmlReport;
+
 /**
  * Manages process execution for the plugin. Now uses Java implementations for
  * HAR filtering, k6 conversion, and proxy recording. Only k6 execution still
@@ -29,8 +31,11 @@ public class NodeRunner {
 
     private static final Logger log = Logger
             .getLogger(NodeRunner.class.getName());
+
     private final Path workingDirectory;
     private ProxyRecorder proxyRecorder;
+    private String summaryTrendStats = "avg,min,med,max,p(95),p(99)";
+    private Path reportDir;
 
     /**
      * Creates a new node runner for the given working directory.
@@ -41,6 +46,28 @@ public class NodeRunner {
     public NodeRunner(Path workingDirectory) {
         ExperimentalWarning.log();
         this.workingDirectory = workingDirectory;
+    }
+
+    /**
+     * Sets the summary trend stats for k6's {@code --summary-trend-stats} flag.
+     * Derived from {@link ThresholdConfig#toSummaryTrendStats()}.
+     *
+     * @param summaryTrendStats
+     *            comma-separated stats (e.g. "avg,min,med,max,p(95),p(99)")
+     */
+    public void setSummaryTrendStats(String summaryTrendStats) {
+        this.summaryTrendStats = summaryTrendStats;
+    }
+
+    /**
+     * Sets the directory where report files (JSON summary, HTML report) are
+     * written. Created automatically if it does not exist.
+     *
+     * @param reportDir
+     *            the report output directory
+     */
+    public void setReportDir(Path reportDir) {
+        this.reportDir = reportDir;
     }
 
     /**
@@ -324,6 +351,18 @@ public class NodeRunner {
                 log.info("  Duration: " + duration);
             }
 
+            // Summary trend stats and file path via env var (handleSummary
+            // in the script writes the JSON)
+            Path summaryFile = resolveSummaryFile(testFile);
+            Path csvFile = testFile.getParent().resolve(testFile.getFileName()
+                    .toString().replaceAll("\\.js$", "-metrics.csv"));
+            command.add("--summary-trend-stats");
+            command.add(summaryTrendStats);
+            command.add("-e");
+            command.add("SUMMARY_FILE=" + summaryFile.toAbsolutePath());
+            command.add("--out");
+            command.add("csv=" + csvFile.toAbsolutePath());
+
             command.add("-e");
             command.add("APP_IP=" + appIp);
             command.add("-e");
@@ -336,6 +375,12 @@ public class NodeRunner {
             Process process = pb.start();
 
             int exitCode = process.waitFor();
+            if (Files.exists(summaryFile)) {
+                log.info("Summary exported to: " + summaryFile);
+                injectCsvMetrics(csvFile, summaryFile);
+                SummaryHtmlReport.generate(summaryFile);
+            }
+            cleanUpTempFile(csvFile);
             if (exitCode != 0) {
                 throw new MojoExecutionException(
                         "k6 test failed with exit code: " + exitCode);
@@ -367,7 +412,9 @@ public class NodeRunner {
             sb.append(
                     "// Auto-generated wrapper for embedded executor config\n");
             sb.append("import originalTest from '").append(relativePath)
-                    .append("';\n\n");
+                    .append("';\n");
+            sb.append(
+                    "import { textSummary } from 'https://jslib.k6.io/k6-summary/0.0.1/index.js';\n\n");
             sb.append("export const options = {\n");
             sb.append("  scenarios: {\n");
             sb.append("    default: {\n");
@@ -380,6 +427,7 @@ public class NodeRunner {
             sb.append("export function runTest() {\n");
             sb.append("  originalTest();\n");
             sb.append("}\n");
+            sb.append(HarToK6Converter.HANDLE_SUMMARY_FUNCTION);
 
             Files.writeString(wrapperFile, sb.toString());
             log.info("  Generated wrapper: " + wrapperFile.getFileName());
@@ -444,6 +492,18 @@ public class NodeRunner {
                 command.add(duration);
             }
 
+            // Summary trend stats and file path via env var (handleSummary
+            // in the script writes the JSON)
+            Path summaryFile = resolveSummaryFile(testFile);
+            Path csvFile = testFile.getParent().resolve(testFile.getFileName()
+                    .toString().replaceAll("\\.js$", "-metrics.csv"));
+            command.add("--summary-trend-stats");
+            command.add(summaryTrendStats);
+            command.add("-e");
+            command.add("SUMMARY_FILE=" + summaryFile.toAbsolutePath());
+            command.add("--out");
+            command.add("csv=" + csvFile.toAbsolutePath());
+
             // Always pass environment variables for target server
             command.add("-e");
             command.add("APP_IP=" + appIp);
@@ -457,6 +517,12 @@ public class NodeRunner {
             Process process = pb.start();
 
             int exitCode = process.waitFor();
+            if (Files.exists(summaryFile)) {
+                log.info("Summary exported to: " + summaryFile);
+                injectCsvMetrics(csvFile, summaryFile);
+                SummaryHtmlReport.generate(summaryFile);
+            }
+            cleanUpTempFile(csvFile);
             if (exitCode != 0) {
                 throw new MojoExecutionException(
                         "k6 test failed with exit code: " + exitCode);
@@ -464,6 +530,163 @@ public class NodeRunner {
             log.info("k6 test completed successfully");
         } catch (IOException | InterruptedException e) {
             throw new MojoExecutionException("Failed to run k6 test", e);
+        }
+    }
+
+    /**
+     * Resolves the summary JSON path. Uses reportDir if set, otherwise places
+     * the file next to the test file.
+     */
+    private Path resolveSummaryFile(Path testFile) {
+        String baseName = testFile.getFileName().toString().replaceAll("\\.js$",
+                "-summary.json");
+        if (reportDir != null) {
+            try {
+                Files.createDirectories(reportDir);
+            } catch (IOException e) {
+                log.warning("Could not create report dir: " + reportDir);
+            }
+            return reportDir.resolve(baseName);
+        }
+        return testFile.getParent().resolve(baseName);
+    }
+
+    /**
+     * Extracts runtime metrics from the k6 CSV output and injects them into the
+     * summary JSON:
+     * <ul>
+     * <li>{@code vu_timeline} — VU count per second</li>
+     * <li>{@code request_timeline} — per-second buckets with request count,
+     * pass/fail counts, and avg/max response time</li>
+     * </ul>
+     *
+     * @param csvFile
+     *            the k6 CSV metrics output file
+     * @param summaryFile
+     *            the summary JSON file to inject the data into
+     */
+    private void injectCsvMetrics(Path csvFile, Path summaryFile) {
+        if (!Files.exists(csvFile)) {
+            log.fine("No CSV metrics file found: " + csvFile);
+            return;
+        }
+        try {
+            // k6 CSV header: metric_name,timestamp,metric_value,...
+            StringBuilder vuJson = new StringBuilder("[");
+            boolean hasVu = false;
+            long firstTimestamp = -1;
+
+            // Per-second request buckets: elapsed -> {count, failed,
+            // sumDuration, maxDuration}
+            var buckets = new java.util.TreeMap<Long, long[]>();
+
+            try (BufferedReader reader = Files.newBufferedReader(csvFile)) {
+                String line;
+                int metricCol = -1, tsCol = -1, valueCol = -1;
+                while ((line = reader.readLine()) != null) {
+                    String[] cols = line.split(",");
+                    if (metricCol < 0) {
+                        for (int i = 0; i < cols.length; i++) {
+                            switch (cols[i].trim()) {
+                            case "metric_name" -> metricCol = i;
+                            case "timestamp" -> tsCol = i;
+                            case "metric_value" -> valueCol = i;
+                            }
+                        }
+                        continue;
+                    }
+                    if (metricCol >= cols.length || tsCol >= cols.length
+                            || valueCol >= cols.length) {
+                        continue;
+                    }
+                    String metric = cols[metricCol].trim();
+                    long ts = Long.parseLong(cols[tsCol].trim());
+                    double value = Double.parseDouble(cols[valueCol].trim());
+                    if (firstTimestamp < 0) {
+                        firstTimestamp = ts;
+                    }
+                    long elapsed = ts - firstTimestamp;
+
+                    if ("vus".equals(metric)) {
+                        if (hasVu)
+                            vuJson.append(",");
+                        vuJson.append("{\"elapsed\":").append(elapsed)
+                                .append(",\"vus\":").append((int) value)
+                                .append("}");
+                        hasVu = true;
+                    } else if ("http_req_duration".equals(metric)) {
+                        // [count, failed, sumDuration(x100 for precision),
+                        // maxDuration(x100)]
+                        long[] b = buckets.computeIfAbsent(elapsed,
+                                k -> new long[4]);
+                        b[0]++;
+                        b[2] += (long) (value * 100);
+                        b[3] = Math.max(b[3], (long) (value * 100));
+                    } else if ("http_req_failed".equals(metric) && value > 0) {
+                        long[] b = buckets.computeIfAbsent(elapsed,
+                                k -> new long[4]);
+                        b[1]++;
+                    }
+                }
+            }
+            vuJson.append("]");
+
+            // Build request timeline JSON
+            StringBuilder reqJson = new StringBuilder("[");
+            boolean firstBucket = true;
+            for (var entry : buckets.entrySet()) {
+                long[] b = entry.getValue();
+                if (b[0] == 0)
+                    continue;
+                if (!firstBucket)
+                    reqJson.append(",");
+                double avg = (b[2] / 100.0) / b[0];
+                double max = b[3] / 100.0;
+                reqJson.append("{\"elapsed\":").append(entry.getKey())
+                        .append(",\"count\":").append(b[0])
+                        .append(",\"failed\":").append(b[1]).append(",\"avg\":")
+                        .append(String.format(java.util.Locale.US, "%.1f", avg))
+                        .append(",\"max\":")
+                        .append(String.format(java.util.Locale.US, "%.1f", max))
+                        .append("}");
+                firstBucket = false;
+            }
+            reqJson.append("]");
+
+            if (!hasVu && firstBucket) {
+                log.fine("No runtime data points found in CSV");
+                return;
+            }
+
+            // Inject into summary JSON before the closing brace
+            String json = Files.readString(summaryFile);
+            int lastBrace = json.lastIndexOf('}');
+            if (lastBrace > 0) {
+                StringBuilder extra = new StringBuilder();
+                if (hasVu) {
+                    extra.append(",\n  \"vu_timeline\": ").append(vuJson);
+                }
+                if (!firstBucket) {
+                    extra.append(",\n  \"request_timeline\": ").append(reqJson);
+                }
+                String injected = json.substring(0, lastBrace) + extra + "\n}";
+                Files.writeString(summaryFile, injected);
+                log.info("Runtime metrics injected into summary");
+            }
+        } catch (IOException | NumberFormatException e) {
+            log.warning("Failed to extract runtime metrics from CSV: "
+                    + e.getMessage());
+        }
+    }
+
+    /**
+     * Deletes a temporary file, logging a warning on failure.
+     */
+    private void cleanUpTempFile(Path file) {
+        try {
+            Files.deleteIfExists(file);
+        } catch (IOException e) {
+            log.warning("Could not delete temp file: " + file);
         }
     }
 
