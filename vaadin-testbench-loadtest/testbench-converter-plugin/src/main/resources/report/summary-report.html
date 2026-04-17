@@ -130,6 +130,98 @@ if (vuTimeline && vuTimeline.length > 0) {
   document.write('</svg></div>');
 }
 
+// Response time over time chart with pass/fail request counts
+const reqTimeline = data.request_timeline;
+if (reqTimeline && reqTimeline.length > 0) {
+  const maxT = reqTimeline[reqTimeline.length - 1].elapsed * 1000;
+  const maxAvg = Math.max(...reqTimeline.map(r => r.avg), 1);
+  const maxMax = Math.max(...reqTimeline.map(r => r.max), 1);
+  const maxCount = Math.max(...reqTimeline.map(r => r.count), 1);
+
+  const W = 700, H = 250, padL = 60, padR = 60, padT = 10, padB = 30;
+  const cW = W - padL - padR, cH = H - padT - padB;
+  const x = (t) => padL + (t / maxT) * cW;
+  const yDur = (v) => padT + cH - (v / maxMax) * cH;
+  const yCount = (v) => padT + cH - (v / maxCount) * cH;
+
+  // Build bar chart for request counts (pass=green, fail=red stacked)
+  const barW = Math.max(1, Math.min(6, cW / reqTimeline.length - 1));
+  let bars = '';
+  for (const r of reqTimeline) {
+    const bx = x(r.elapsed * 1000) - barW / 2;
+    const passed = r.count - r.failed;
+    const passH = (passed / maxCount) * cH;
+    const failH = (r.failed / maxCount) * cH;
+    if (passed > 0) bars += `<rect x="${bx}" y="${padT + cH - passH - failH}" width="${barW}" height="${passH}" fill="rgba(46,125,50,0.3)" />`;
+    if (r.failed > 0) bars += `<rect x="${bx}" y="${padT + cH - failH}" width="${barW}" height="${failH}" fill="rgba(198,40,40,0.5)" />`;
+  }
+
+  // Build line for avg response time
+  let avgPath = '';
+  for (let i = 0; i < reqTimeline.length; i++) {
+    const r = reqTimeline[i];
+    const px = x(r.elapsed * 1000), py = yDur(r.avg);
+    avgPath += (i === 0 ? 'M ' : ' L ') + px + ' ' + py;
+  }
+
+  // Build line for max response time
+  let maxPath = '';
+  for (let i = 0; i < reqTimeline.length; i++) {
+    const r = reqTimeline[i];
+    const px = x(r.elapsed * 1000), py = yDur(r.max);
+    maxPath += (i === 0 ? 'M ' : ' L ') + px + ' ' + py;
+  }
+
+  // Y-axis left: response time
+  let yLabelsL = '';
+  const durSteps = [0, Math.round(maxMax / 2), Math.round(maxMax)];
+  for (const v of durSteps) {
+    yLabelsL += `<text x="${padL - 8}" y="${yDur(v) + 4}" text-anchor="end" fill="#888" font-size="11">${fmt(v)}</text>`;
+    yLabelsL += `<line x1="${padL}" y1="${yDur(v)}" x2="${W - padR}" y2="${yDur(v)}" stroke="#eee" stroke-width="1"/>`;
+  }
+
+  // Y-axis right: request count
+  let yLabelsR = '';
+  const cntSteps = [0, Math.round(maxCount / 2), maxCount];
+  for (const v of cntSteps) {
+    yLabelsR += `<text x="${W - padR + 8}" y="${yCount(v) + 4}" text-anchor="start" fill="#888" font-size="11">${v}</text>`;
+  }
+
+  // X-axis
+  let xLabels = '';
+  const xSteps2 = 5;
+  for (let i = 0; i <= xSteps2; i++) {
+    const tVal = (maxT / xSteps2) * i;
+    const sec = Math.round(tVal / 1000);
+    const label = sec >= 60 ? Math.floor(sec/60) + 'm' + (sec%60 > 0 ? sec%60 + 's' : '') : sec + 's';
+    xLabels += `<text x="${x(tVal)}" y="${H - 5}" text-anchor="middle" fill="#888" font-size="11">${label}</text>`;
+  }
+
+  document.write('<h2>Response Times Over Time</h2>');
+  document.write('<div class="vu-chart">');
+  document.write(`<svg width="${W}" height="${H}" xmlns="http://www.w3.org/2000/svg">`);
+  document.write(yLabelsL);
+  document.write(yLabelsR);
+  document.write(xLabels);
+  document.write(bars);
+  document.write(`<path d="${maxPath}" fill="none" stroke="#ef9a9a" stroke-width="1.5" stroke-dasharray="4,3" />`);
+  document.write(`<path d="${avgPath}" fill="none" stroke="#1565c0" stroke-width="2" />`);
+  // Legend
+  const lx = padL + 10, ly = padT + 14;
+  document.write(`<line x1="${lx}" y1="${ly}" x2="${lx+16}" y2="${ly}" stroke="#1565c0" stroke-width="2" />`);
+  document.write(`<text x="${lx+20}" y="${ly+4}" fill="#555" font-size="11">Avg response time</text>`);
+  document.write(`<line x1="${lx+150}" y1="${ly}" x2="${lx+166}" y2="${ly}" stroke="#ef9a9a" stroke-width="1.5" stroke-dasharray="4,3" />`);
+  document.write(`<text x="${lx+170}" y="${ly+4}" fill="#555" font-size="11">Max response time</text>`);
+  document.write(`<rect x="${lx+310}" y="${ly-5}" width="10" height="10" fill="rgba(46,125,50,0.3)" />`);
+  document.write(`<text x="${lx+324}" y="${ly+4}" fill="#555" font-size="11">Passed</text>`);
+  document.write(`<rect x="${lx+380}" y="${ly-5}" width="10" height="10" fill="rgba(198,40,40,0.5)" />`);
+  document.write(`<text x="${lx+394}" y="${ly+4}" fill="#555" font-size="11">Failed</text>`);
+  // Axis labels
+  document.write(`<text x="${8}" y="${padT + cH/2}" fill="#888" font-size="10" transform="rotate(-90,8,${padT + cH/2})" text-anchor="middle">Response Time</text>`);
+  document.write(`<text x="${W - 8}" y="${padT + cH/2}" fill="#888" font-size="10" transform="rotate(90,${W-8},${padT + cH/2})" text-anchor="middle">Requests/s</text>`);
+  document.write('</svg></div>');
+}
+
 // Thresholds
 const thresholdMetrics = Object.entries(m).filter(([,v]) => v.thresholds && !v.thresholds['max>=0']);
 if (thresholdMetrics.length > 0) {
