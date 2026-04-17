@@ -58,6 +58,7 @@ public class NodeRunner {
         this.summaryTrendStats = summaryTrendStats;
     }
 
+
     /**
      * Checks if k6 is available on the system.
      *
@@ -344,10 +345,15 @@ public class NodeRunner {
             Path summaryFile = testFile.getParent()
                     .resolve(testFile.getFileName().toString()
                             .replaceAll("\\.js$", "-summary.json"));
+            Path csvFile = testFile.getParent()
+                    .resolve(testFile.getFileName().toString()
+                            .replaceAll("\\.js$", "-metrics.csv"));
             command.add("--summary-trend-stats");
             command.add(summaryTrendStats);
             command.add("-e");
             command.add("SUMMARY_FILE=" + summaryFile.toAbsolutePath());
+            command.add("--out");
+            command.add("csv=" + csvFile.toAbsolutePath());
 
             command.add("-e");
             command.add("APP_IP=" + appIp);
@@ -363,8 +369,10 @@ public class NodeRunner {
             int exitCode = process.waitFor();
             if (Files.exists(summaryFile)) {
                 log.info("Summary exported to: " + summaryFile);
+                injectVuTimeline(csvFile, summaryFile);
                 SummaryHtmlReport.generate(summaryFile);
             }
+            cleanUpTempFile(csvFile);
             if (exitCode != 0) {
                 throw new MojoExecutionException(
                         "k6 test failed with exit code: " + exitCode);
@@ -481,10 +489,15 @@ public class NodeRunner {
             Path summaryFile = testFile.getParent()
                     .resolve(testFile.getFileName().toString()
                             .replaceAll("\\.js$", "-summary.json"));
+            Path csvFile = testFile.getParent()
+                    .resolve(testFile.getFileName().toString()
+                            .replaceAll("\\.js$", "-metrics.csv"));
             command.add("--summary-trend-stats");
             command.add(summaryTrendStats);
             command.add("-e");
             command.add("SUMMARY_FILE=" + summaryFile.toAbsolutePath());
+            command.add("--out");
+            command.add("csv=" + csvFile.toAbsolutePath());
 
             // Always pass environment variables for target server
             command.add("-e");
@@ -501,8 +514,10 @@ public class NodeRunner {
             int exitCode = process.waitFor();
             if (Files.exists(summaryFile)) {
                 log.info("Summary exported to: " + summaryFile);
+                injectVuTimeline(csvFile, summaryFile);
                 SummaryHtmlReport.generate(summaryFile);
             }
+            cleanUpTempFile(csvFile);
             if (exitCode != 0) {
                 throw new MojoExecutionException(
                         "k6 test failed with exit code: " + exitCode);
@@ -510,6 +525,105 @@ public class NodeRunner {
             log.info("k6 test completed successfully");
         } catch (IOException | InterruptedException e) {
             throw new MojoExecutionException("Failed to run k6 test", e);
+        }
+    }
+
+    /**
+     * Extracts VU timeline data from the k6 CSV output and injects it into
+     * the summary JSON as a {@code vu_timeline} array. Each entry has
+     * {@code timestamp} (epoch seconds) and {@code vus} (active VU count).
+     *
+     * <p>
+     * The k6 CSV format has columns: metric_name, timestamp, metric_value,
+     * ... We filter for rows where metric_name is {@code vus}.
+     *
+     * @param csvFile
+     *            the k6 CSV metrics output file
+     * @param summaryFile
+     *            the summary JSON file to inject the timeline into
+     */
+    private void injectVuTimeline(Path csvFile, Path summaryFile) {
+        if (!Files.exists(csvFile)) {
+            log.fine("No CSV metrics file found: " + csvFile);
+            return;
+        }
+        try {
+            // Parse VU data points from CSV
+            // k6 CSV header: metric_name,timestamp,metric_value,...
+            StringBuilder vuJson = new StringBuilder("[");
+            boolean first = true;
+            long firstTimestamp = -1;
+            try (BufferedReader reader = Files
+                    .newBufferedReader(csvFile)) {
+                String line;
+                int metricCol = -1, tsCol = -1, valueCol = -1;
+                while ((line = reader.readLine()) != null) {
+                    String[] cols = line.split(",");
+                    if (metricCol < 0) {
+                        // Parse header
+                        for (int i = 0; i < cols.length; i++) {
+                            switch (cols[i].trim()) {
+                            case "metric_name" -> metricCol = i;
+                            case "timestamp" -> tsCol = i;
+                            case "metric_value" -> valueCol = i;
+                            }
+                        }
+                        continue;
+                    }
+                    if (metricCol >= cols.length || tsCol >= cols.length
+                            || valueCol >= cols.length) {
+                        continue;
+                    }
+                    if ("vus".equals(cols[metricCol].trim())) {
+                        long ts = Long.parseLong(cols[tsCol].trim());
+                        int vus = (int) Double
+                                .parseDouble(cols[valueCol].trim());
+                        if (firstTimestamp < 0) {
+                            firstTimestamp = ts;
+                        }
+                        long elapsed = ts - firstTimestamp;
+                        if (!first)
+                            vuJson.append(",");
+                        vuJson.append("{\"elapsed\":").append(elapsed)
+                                .append(",\"vus\":").append(vus)
+                                .append("}");
+                        first = false;
+                    }
+                }
+            }
+            vuJson.append("]");
+
+            if (first) {
+                log.fine("No VU data points found in CSV");
+                return;
+            }
+
+            // Inject into summary JSON before the closing brace
+            String json = Files.readString(summaryFile);
+            int lastBrace = json.lastIndexOf('}');
+            if (lastBrace > 0) {
+                String injected = json.substring(0, lastBrace)
+                        + ",\n  \"vu_timeline\": " + vuJson + "\n}";
+                Files.writeString(summaryFile, injected);
+                log.info("VU timeline injected into summary ("
+                        + (first ? 0 : vuJson.toString().split(",\\{").length)
+                        + " data points)");
+            }
+        } catch (IOException | NumberFormatException e) {
+            log.warning(
+                    "Failed to extract VU timeline from CSV: "
+                            + e.getMessage());
+        }
+    }
+
+    /**
+     * Deletes a temporary file, logging a warning on failure.
+     */
+    private void cleanUpTempFile(Path file) {
+        try {
+            Files.deleteIfExists(file);
+        } catch (IOException e) {
+            log.warning("Could not delete temp file: " + file);
         }
     }
 
