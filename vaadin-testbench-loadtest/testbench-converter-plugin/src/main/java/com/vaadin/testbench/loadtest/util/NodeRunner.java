@@ -20,6 +20,8 @@ import java.util.logging.Logger;
 
 import org.apache.maven.plugin.MojoExecutionException;
 
+import com.vaadin.testbench.loadtest.report.SummaryHtmlReport;
+
 /**
  * Manages process execution for the plugin. Now uses Java implementations for
  * HAR filtering, k6 conversion, and proxy recording. Only k6 execution still
@@ -361,6 +363,7 @@ public class NodeRunner {
             int exitCode = process.waitFor();
             if (Files.exists(summaryFile)) {
                 log.info("Summary exported to: " + summaryFile);
+                SummaryHtmlReport.generate(summaryFile);
             }
             if (exitCode != 0) {
                 throw new MojoExecutionException(
@@ -498,6 +501,7 @@ public class NodeRunner {
             int exitCode = process.waitFor();
             if (Files.exists(summaryFile)) {
                 log.info("Summary exported to: " + summaryFile);
+                SummaryHtmlReport.generate(summaryFile);
             }
             if (exitCode != 0) {
                 throw new MojoExecutionException(
