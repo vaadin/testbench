@@ -43,13 +43,30 @@
                      border-bottom: 1px solid #bbdefb; }
   .muted { color: #aaa; }
   .vu-chart { background: #fff; border-radius: 8px; padding: 20px;
-              box-shadow: 0 1px 3px rgba(0,0,0,0.08); margin-bottom: 16px; }
+              box-shadow: 0 1px 3px rgba(0,0,0,0.08); margin-bottom: 16px;
+              position: relative; }
   .vu-chart svg { display: block; }
+  .chart-tooltip { position: fixed; background: rgba(30,30,30,0.92); color: #fff;
+                   padding: 8px 12px; border-radius: 6px; font-size: 12px;
+                   line-height: 1.6; pointer-events: none; z-index: 1000;
+                   white-space: nowrap; display: none; }
+  .chart-tooltip b { color: #90caf9; }
+  .chart-tooltip .pass-dot { color: #66bb6a; }
+  .chart-tooltip .fail-dot { color: #ef5350; }
 </style>
 </head>
 <body>
+<div class="chart-tooltip" id="tooltip"></div>
 <script>
 const data = __K6_SUMMARY_DATA__;
+const tooltip = document.getElementById('tooltip');
+function showTip(evt, html) {
+  tooltip.innerHTML = html;
+  tooltip.style.display = 'block';
+  tooltip.style.left = (evt.clientX + 14) + 'px';
+  tooltip.style.top = (evt.clientY - 10) + 'px';
+}
+function hideTip() { tooltip.style.display = 'none'; }
 
 const fmt = (ms) => {
   if (ms == null) return '-';
@@ -118,14 +135,17 @@ if (vuTimeline && vuTimeline.length > 0) {
   }
 
   document.write('<h2>Virtual Users Timeline</h2>');
-  document.write('<div class="vu-chart">');
+  document.write('<div class="vu-chart" id="vuChart">');
   document.write(`<svg width="${W}" height="${H}" xmlns="http://www.w3.org/2000/svg">`);
   document.write(yLabels);
   document.write(xLabels);
   document.write(`<path d="${area}" fill="rgba(21,101,192,0.1)" />`);
   document.write(`<path d="${path}" fill="none" stroke="#1565c0" stroke-width="2" />`);
   for (const p of points) {
+    const sec = Math.round(p.t / 1000);
+    const tLabel = sec >= 60 ? Math.floor(sec/60) + 'm' + (sec%60 > 0 ? sec%60 + 's' : '') : sec + 's';
     document.write(`<circle cx="${x(p.t)}" cy="${y(p.vu)}" r="3" fill="#1565c0" />`);
+    document.write(`<circle cx="${x(p.t)}" cy="${y(p.vu)}" r="10" fill="transparent" data-tip="<b>${tLabel}</b><br>${p.vu} VUs" />`);
   }
   document.write('</svg></div>');
 }
@@ -198,7 +218,7 @@ if (reqTimeline && reqTimeline.length > 0) {
   }
 
   document.write('<h2>Response Times Over Time</h2>');
-  document.write('<div class="vu-chart">');
+  document.write('<div class="vu-chart" id="rtChart">');
   document.write(`<svg width="${W}" height="${H}" xmlns="http://www.w3.org/2000/svg">`);
   document.write(yLabelsL);
   document.write(yLabelsR);
@@ -206,6 +226,17 @@ if (reqTimeline && reqTimeline.length > 0) {
   document.write(bars);
   document.write(`<path d="${maxPath}" fill="none" stroke="#ef9a9a" stroke-width="1.5" stroke-dasharray="4,3" />`);
   document.write(`<path d="${avgPath}" fill="none" stroke="#1565c0" stroke-width="2" />`);
+  // Hover regions for each data point
+  const hoverW = Math.max(barW + 2, cW / reqTimeline.length);
+  for (const r of reqTimeline) {
+    const sec = r.elapsed;
+    const tLabel = sec >= 60 ? Math.floor(sec/60) + 'm' + (sec%60 > 0 ? sec%60 + 's' : '') : sec + 's';
+    const passed = r.count - r.failed;
+    const tip = `<b>${tLabel}</b><br>Avg: ${fmt(r.avg)} &middot; Max: ${fmt(r.max)}<br>`
+      + `<span class="pass-dot">\u25CF</span> ${passed} passed`
+      + (r.failed > 0 ? ` &middot; <span class="fail-dot">\u25CF</span> ${r.failed} failed` : '');
+    document.write(`<rect x="${x(r.elapsed * 1000) - hoverW/2}" y="${padT}" width="${hoverW}" height="${cH}" fill="transparent" data-tip="${tip.replace(/"/g, '&quot;')}" />`);
+  }
   // Legend
   const lx = padL + 10, ly = padT + 14;
   document.write(`<line x1="${lx}" y1="${ly}" x2="${lx+16}" y2="${ly}" stroke="#1565c0" stroke-width="2" />`);
@@ -330,6 +361,15 @@ if (checks.length > 0) {
   }
   document.write('</table>');
 }
+
+// Attach chart tooltips after all document.write calls complete
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('#vuChart circle[data-tip], #rtChart rect[data-tip]').forEach(el => {
+    el.style.cursor = 'crosshair';
+    el.addEventListener('mousemove', e => showTip(e, el.dataset.tip));
+    el.addEventListener('mouseleave', hideTip);
+  });
+});
 </script>
 </body>
 </html>
