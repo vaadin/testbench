@@ -29,8 +29,8 @@ public class SummaryHtmlReport {
 
     /**
      * Generates an HTML report from a k6 summary JSON file. The output file is
-     * placed next to the JSON file with the same base name and an
-     * {@code .html} extension.
+     * placed next to the JSON file with the same base name and an {@code .html}
+     * extension.
      *
      * @param summaryJsonFile
      *            path to the k6 summary JSON file
@@ -39,9 +39,8 @@ public class SummaryHtmlReport {
      */
     public static void generate(Path summaryJsonFile) throws IOException {
         String json = Files.readString(summaryJsonFile);
-        Path htmlFile = summaryJsonFile.resolveSibling(
-                summaryJsonFile.getFileName().toString()
-                        .replace(".json", ".html"));
+        Path htmlFile = summaryJsonFile.resolveSibling(summaryJsonFile
+                .getFileName().toString().replace(".json", ".html"));
 
         String template;
         try (InputStream is = SummaryHtmlReport.class
