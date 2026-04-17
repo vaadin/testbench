@@ -83,22 +83,10 @@ document.write(`<div class="card"><div class="label">Failure Rate</div><div clas
 document.write(`<div class="card"><div class="label">Checks Passed</div><div class="value ${checksRate === '100.00%' ? 'pass' : 'fail'}">${checksRate}</div></div>`);
 document.write('</div>');
 
-// VU Timeline chart from load_stages
-const stages = data.load_stages;
-if (stages && stages.length > 0) {
-  const parseDur = (s) => {
-    let ms = 0;
-    const h = s.match(/(\d+)h/); if (h) ms += parseInt(h[1]) * 3600000;
-    const mn = s.match(/(\d+)m(?!s)/); if (mn) ms += parseInt(mn[1]) * 60000;
-    const sc = s.match(/(\d+)s/); if (sc) ms += parseInt(sc[1]) * 1000;
-    return ms;
-  };
-  const points = [{t: 0, vu: 0}];
-  let t = 0;
-  for (const s of stages) {
-    t += parseDur(s.duration);
-    points.push({t, vu: s.target});
-  }
+// VU Timeline chart from actual runtime data
+const vuTimeline = data.vu_timeline;
+if (vuTimeline && vuTimeline.length > 0) {
+  const points = vuTimeline.map(p => ({t: p.elapsed * 1000, vu: p.vus}));
   const maxT = points[points.length - 1].t;
   const maxVU = Math.max(...points.map(p => p.vu), 1);
 
