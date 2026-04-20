@@ -17,14 +17,15 @@ import java.util.List;
 
 /**
  * Extracts bundled JavaScript utilities from plugin resources to a temporary
- * directory. Only vaadin-k6-helpers.js is needed now since HAR processing is
- * done in Java.
+ * directory. Bundles vaadin-k6-helpers.js plus k6-summary.js (a local copy of
+ * https://jslib.k6.io/k6-summary/0.0.1/index.js) so generated tests run without
+ * external downloads.
  */
 public class ResourceExtractor {
 
     private static final String RESOURCE_PREFIX = "k6-utils/";
     private static final List<String> RESOURCE_FILES = List
-            .of("vaadin-k6-helpers.js");
+            .of("vaadin-k6-helpers.js", "k6-summary.js");
 
     private final Path extractionDir;
 
@@ -80,6 +81,13 @@ public class ResourceExtractor {
      */
     public Path getVaadinHelpersScript() {
         return extractionDir.resolve("vaadin-k6-helpers.js");
+    }
+
+    /**
+     * @return the path to the bundled k6-summary.js file
+     */
+    public Path getK6SummaryScript() {
+        return extractionDir.resolve("k6-summary.js");
     }
 
     /**
