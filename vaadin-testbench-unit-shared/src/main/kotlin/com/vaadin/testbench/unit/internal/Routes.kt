@@ -78,12 +78,13 @@ data class Routes(
         val classGraph: ClassGraph = ClassGraph().enableClassInfo()
                 .enableAnnotationInfo()
                 .acceptPackages(*(packageNames.map { it ?: "" }.toTypedArray()))
+
         classGraph.scan().use { scanResult: ScanResult ->
             scanResult.getClassesWithAnnotation(Route::class.java.name).mapTo(routes) { info: ClassInfo ->
-                findClassOrThrow(info.name).asSubclass(Component::class.java)
+                scanResult.loadClass(info.name, Component::class.java, false)
             }
             scanResult.getClassesImplementing(HasErrorParameter::class.java.name).mapTo(errorRoutes) { info: ClassInfo ->
-                findClassOrThrow(info.name).asSubclass(HasErrorParameter::class.java)
+                scanResult.loadClass(info.name, HasErrorParameter::class.java, false)
             }
         }
 
