@@ -202,19 +202,23 @@ public abstract class AbstractK6Mojo extends AbstractMojo {
             Path utilsOutputDir = outputDir.resolve("../utils");
             Files.createDirectories(utilsOutputDir);
 
-            Path source = resourceExtractor.getVaadinHelpersScript();
-            Path target = utilsOutputDir.resolve("vaadin-k6-helpers.js");
-
-            if (!Files.exists(target) || Files.getLastModifiedTime(source)
-                    .compareTo(Files.getLastModifiedTime(target)) > 0) {
-                Files.copy(source, target,
-                        java.nio.file.StandardCopyOption.REPLACE_EXISTING);
-                getLog().info(
-                        "Copied vaadin-k6-helpers.js to " + utilsOutputDir);
-            }
+            copyIfNewer(resourceExtractor.getVaadinHelpersScript(),
+                    utilsOutputDir.resolve("vaadin-k6-helpers.js"));
+            copyIfNewer(resourceExtractor.getK6SummaryScript(),
+                    utilsOutputDir.resolve("k6-summary.js"));
         } catch (IOException e) {
             throw new MojoExecutionException("Failed to copy Vaadin helpers",
                     e);
+        }
+    }
+
+    private void copyIfNewer(Path source, Path target) throws IOException {
+        if (!Files.exists(target) || Files.getLastModifiedTime(source)
+                .compareTo(Files.getLastModifiedTime(target)) > 0) {
+            Files.copy(source, target,
+                    java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+            getLog().info("Copied " + source.getFileName() + " to "
+                    + target.getParent());
         }
     }
 

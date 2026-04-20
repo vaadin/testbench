@@ -29,8 +29,10 @@ public class NodeRunner {
 
     private static final Logger log = Logger
             .getLogger(NodeRunner.class.getName());
+
     private final Path workingDirectory;
     private ProxyRecorder proxyRecorder;
+    private String summaryTrendStats = "avg,min,med,max,p(95),p(99)";
 
     /**
      * Creates a new node runner for the given working directory.
@@ -41,6 +43,17 @@ public class NodeRunner {
     public NodeRunner(Path workingDirectory) {
         ExperimentalWarning.log();
         this.workingDirectory = workingDirectory;
+    }
+
+    /**
+     * Sets the summary trend stats for k6's {@code --summary-trend-stats} flag.
+     * Derived from {@link ThresholdConfig#toSummaryTrendStats()}.
+     *
+     * @param summaryTrendStats
+     *            comma-separated stats (e.g. "avg,min,med,max,p(95),p(99)")
+     */
+    public void setSummaryTrendStats(String summaryTrendStats) {
+        this.summaryTrendStats = summaryTrendStats;
     }
 
     /**
@@ -324,6 +337,16 @@ public class NodeRunner {
                 log.info("  Duration: " + duration);
             }
 
+            // Summary trend stats and file path via env var (handleSummary
+            // in the script writes the JSON)
+            Path summaryFile = testFile.getParent()
+                    .resolve(testFile.getFileName().toString()
+                            .replaceAll("\\.js$", "-summary.json"));
+            command.add("--summary-trend-stats");
+            command.add(summaryTrendStats);
+            command.add("-e");
+            command.add("SUMMARY_FILE=" + summaryFile.toAbsolutePath());
+
             command.add("-e");
             command.add("APP_IP=" + appIp);
             command.add("-e");
@@ -336,6 +359,9 @@ public class NodeRunner {
             Process process = pb.start();
 
             int exitCode = process.waitFor();
+            if (Files.exists(summaryFile)) {
+                log.info("Summary exported to: " + summaryFile);
+            }
             if (exitCode != 0) {
                 throw new MojoExecutionException(
                         "k6 test failed with exit code: " + exitCode);
@@ -367,7 +393,9 @@ public class NodeRunner {
             sb.append(
                     "// Auto-generated wrapper for embedded executor config\n");
             sb.append("import originalTest from '").append(relativePath)
-                    .append("';\n\n");
+                    .append("';\n");
+            sb.append(
+                    "import { textSummary } from 'https://jslib.k6.io/k6-summary/0.0.1/index.js';\n\n");
             sb.append("export const options = {\n");
             sb.append("  scenarios: {\n");
             sb.append("    default: {\n");
@@ -380,6 +408,7 @@ public class NodeRunner {
             sb.append("export function runTest() {\n");
             sb.append("  originalTest();\n");
             sb.append("}\n");
+            sb.append(HarToK6Converter.HANDLE_SUMMARY_FUNCTION);
 
             Files.writeString(wrapperFile, sb.toString());
             log.info("  Generated wrapper: " + wrapperFile.getFileName());
@@ -444,6 +473,16 @@ public class NodeRunner {
                 command.add(duration);
             }
 
+            // Summary trend stats and file path via env var (handleSummary
+            // in the script writes the JSON)
+            Path summaryFile = testFile.getParent()
+                    .resolve(testFile.getFileName().toString()
+                            .replaceAll("\\.js$", "-summary.json"));
+            command.add("--summary-trend-stats");
+            command.add(summaryTrendStats);
+            command.add("-e");
+            command.add("SUMMARY_FILE=" + summaryFile.toAbsolutePath());
+
             // Always pass environment variables for target server
             command.add("-e");
             command.add("APP_IP=" + appIp);
@@ -457,6 +496,9 @@ public class NodeRunner {
             Process process = pb.start();
 
             int exitCode = process.waitFor();
+            if (Files.exists(summaryFile)) {
+                log.info("Summary exported to: " + summaryFile);
+            }
             if (exitCode != 0) {
                 throw new MojoExecutionException(
                         "k6 test failed with exit code: " + exitCode);
