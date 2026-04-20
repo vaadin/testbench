@@ -40,7 +40,7 @@ public class K6ScenarioCombiner {
 
     /**
      * Combines multiple k6 test files into a single test with weighted
-     * scenarios using default thresholds.
+     * scenarios using default thresholds and ramping load.
      *
      * @param scenarios
      *            list of scenario configurations with weights
@@ -56,12 +56,12 @@ public class K6ScenarioCombiner {
     public void combine(List<ScenarioConfig> scenarios, Path outputFile,
             int totalVus, String duration) throws IOException {
         combine(scenarios, outputFile, totalVus, duration,
-                ThresholdConfig.DEFAULT);
+                ThresholdConfig.DEFAULT, LoadProfile.ramp("10s", "10s"));
     }
 
     /**
      * Combines multiple k6 test files into a single test with weighted
-     * scenarios.
+     * scenarios using ramping load.
      *
      * @param scenarios
      *            list of scenario configurations with weights
@@ -79,15 +79,45 @@ public class K6ScenarioCombiner {
     public void combine(List<ScenarioConfig> scenarios, Path outputFile,
             int totalVus, String duration, ThresholdConfig thresholdConfig)
             throws IOException {
+        combine(scenarios, outputFile, totalVus, duration, thresholdConfig,
+                LoadProfile.ramp("10s", "10s"));
+    }
+
+    /**
+     * Combines multiple k6 test files into a single test with weighted
+     * scenarios using a load profile for ramping configuration.
+     *
+     * @param scenarios
+     *            list of scenario configurations with weights
+     * @param outputFile
+     *            path for the combined output file
+     * @param totalVus
+     *            total number of virtual users to distribute
+     * @param duration
+     *            test duration (e.g., "30s", "1m")
+     * @param thresholdConfig
+     *            threshold configuration for the combined script
+     * @param loadProfile
+     *            load profile controlling ramping behavior
+     * @throws IOException
+     *             if file operations fail
+     */
+    public void combine(List<ScenarioConfig> scenarios, Path outputFile,
+            int totalVus, String duration, ThresholdConfig thresholdConfig,
+            LoadProfile loadProfile) throws IOException {
 
         StringBuilder sb = new StringBuilder();
 
-        // Pre-pass: extract SharedArray blocks from scenarios that use CSV
-        // input data.
+        // Pre-pass: extract SharedArray blocks and request tags from
+        // scenarios.
         // Each scenario gets a uniquely-named variable (e.g.
         // crudExampleInputData)
         // so multiple scenarios with CSV data don't collide.
         Map<String, String> sharedArrayBlocks = new LinkedHashMap<>();
+        List<String> allRequestTags = new ArrayList<>();
+        String csvParserFunction = null;
+        Pattern tagPattern = Pattern
+                .compile("tags:\\s*\\{\\s*name:\\s*'([^']+)'");
         for (ScenarioConfig config : scenarios) {
             String content = Files.readString(config.testFile());
             String block = extractSharedArrayBlock(content);
@@ -98,6 +128,16 @@ public class K6ScenarioCombiner {
                         .replace("'input data'",
                                 "'" + config.name() + " input data'");
                 sharedArrayBlocks.put(config.name(), renamed);
+                // Extract the parseCsvRecords function once (it is identical
+                // across all generated scripts)
+                if (csvParserFunction == null) {
+                    csvParserFunction = extractCsvParserFunction(content);
+                }
+            }
+            // Extract request tag names for per-request sub-metrics
+            Matcher tagMatcher = tagPattern.matcher(content);
+            while (tagMatcher.find()) {
+                allRequestTags.add(tagMatcher.group(1));
             }
         }
         boolean needsSharedArray = !sharedArrayBlocks.isEmpty();
@@ -111,7 +151,9 @@ public class K6ScenarioCombiner {
             sb.append("import { SharedArray } from 'k6/data'\n");
         }
         sb.append(
-                "import {extractJSessionId, getVaadinPushId, getVaadinSecurityKey, getVaadinUiId} from '../utils/vaadin-k6-helpers.js'\n\n");
+                "import {extractJSessionId, getVaadinPushId, getVaadinSecurityKey, getVaadinUiId} from '../utils/vaadin-k6-helpers.js'\n");
+        sb.append(
+                "import { textSummary } from 'https://jslib.k6.io/k6-summary/0.0.1/index.js'\n\n");
 
         // Configuration variables
         sb.append(
@@ -120,8 +162,11 @@ public class K6ScenarioCombiner {
         sb.append("const APP_PORT = __ENV.APP_PORT || '8080';\n");
         sb.append("const BASE_URL = `http://${APP_IP}:${APP_PORT}`;\n\n");
 
-        // Add SharedArray blocks at module scope (must be in init context for
-        // k6)
+        // Add parseCsvRecords function and SharedArray blocks at module scope
+        // (must be in init context for k6)
+        if (csvParserFunction != null) {
+            sb.append(csvParserFunction).append("\n\n");
+        }
         for (Map.Entry<String, String> entry : sharedArrayBlocks.entrySet()) {
             sb.append(entry.getValue()).append("\n\n");
         }
@@ -132,7 +177,7 @@ public class K6ScenarioCombiner {
 
         // Generate options with scenarios and configurable thresholds
         sb.append("export const options = {\n");
-        sb.append(thresholdConfig.toK6ThresholdsBlock());
+        sb.append(thresholdConfig.toK6ThresholdsBlock(allRequestTags));
         sb.append("  scenarios: {\n");
 
         for (int i = 0; i < scenarios.size(); i++) {
@@ -141,9 +186,8 @@ public class K6ScenarioCombiner {
                     (config.weight() * totalVus) / totalWeight);
 
             sb.append("    ").append(config.name()).append(": {\n");
-            sb.append("      executor: 'constant-vus',\n");
-            sb.append("      vus: ").append(vusForScenario).append(",\n");
-            sb.append("      duration: '").append(duration).append("',\n");
+            sb.append(loadProfile.toK6ScenarioProperties(vusForScenario,
+                    duration, "      "));
             sb.append("      exec: '").append(config.name())
                     .append("Scenario',\n");
             sb.append("    }");
@@ -163,6 +207,9 @@ public class K6ScenarioCombiner {
                     sharedArrayBlocks.containsKey(config.name()));
             sb.append(scenarioCode).append("\n\n");
         }
+
+        // Summary handler for per-request metrics in JSON export
+        sb.append(HarToK6Converter.HANDLE_SUMMARY_FUNCTION);
 
         // Write combined file
         Files.createDirectories(outputFile.getParent());
@@ -234,6 +281,47 @@ public class K6ScenarioCombiner {
         sb.append("}");
 
         return sb.toString();
+    }
+
+    /**
+     * Extracts the parseCsvRecords function from a k6 script, if present.
+     *
+     * @param content
+     *            the k6 script content
+     * @return the parseCsvRecords function definition, or {@code null} if not
+     *         found
+     */
+    private String extractCsvParserFunction(String content) {
+        String funcMarker = "function parseCsvRecords(text) {";
+        int funcStart = content.indexOf(funcMarker);
+        if (funcStart < 0) {
+            return null;
+        }
+
+        // Include the preceding comment line
+        int lineStart = content.lastIndexOf('\n', funcStart - 1);
+        if (lineStart >= 0) {
+            String precedingLine = content.substring(lineStart + 1, funcStart)
+                    .trim();
+            if (precedingLine.startsWith("//")) {
+                funcStart = lineStart + 1;
+            }
+        }
+
+        // Find the matching closing brace of the function
+        int braceStart = content.indexOf('{', funcStart);
+        int i = braceStart + 1;
+        int braceCount = 1;
+        while (i < content.length() && braceCount > 0) {
+            char c = content.charAt(i);
+            if (c == '{')
+                braceCount++;
+            else if (c == '}')
+                braceCount--;
+            i++;
+        }
+
+        return content.substring(funcStart, i);
     }
 
     /**

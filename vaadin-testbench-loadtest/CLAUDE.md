@@ -84,6 +84,7 @@ When creating a new feature:
 
 ## Testing
 
+- The `demo-web-app` and `demo-web-app-loadtest` modules are only included when `-DrunLoadTests` is passed (e.g., `mvn verify -DrunLoadTests`). They are excluded by default to avoid failures in CI snapshot builds.
 - k6 tests are located in `src/test/k6`
 - k6 tests can be run with `k6 run src/test/k6/...`
 - https://github.com/johannest/k6-demo/blob/main/book-store.js is a good example of a k6 test

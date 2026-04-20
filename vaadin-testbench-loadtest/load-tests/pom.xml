@@ -19,7 +19,7 @@
             <dependency>
                 <groupId>com.vaadin</groupId>
                 <artifactId>vaadin-bom</artifactId>
-                <version>25.1.0</version>
+                <version>${vaadin.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -28,15 +28,27 @@
 
     <profiles>
         <profile>
-        <id>it-test-modules</id>
-        <activation>
-            <property>
-            <name>!skipTests</name>
-            </property>
-        </activation>
+            <id>load-tests</id>
+            <activation>
+                <property>
+                    <name>runLoadTests</name>
+                </property>
+            </activation>
             <modules>
                 <module>demo-web-app</module>
                 <module>demo-web-app-loadtest</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>playwright-load-tests</id>
+            <activation>
+                <property>
+                    <name>runPlaywrightLoadTests</name>
+                </property>
+            </activation>
+            <modules>
+                <module>demo-web-app-playwright</module>
+                <module>demo-web-app-playwright-loadtest</module>
             </modules>
         </profile>
     </profiles>

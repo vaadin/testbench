@@ -11,6 +11,7 @@ package com.vaadin.testbench.loadtest.util;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,8 +29,10 @@ public class NodeRunner {
 
     private static final Logger log = Logger
             .getLogger(NodeRunner.class.getName());
+
     private final Path workingDirectory;
     private ProxyRecorder proxyRecorder;
+    private String summaryTrendStats = "avg,min,med,max,p(95),p(99)";
 
     /**
      * Creates a new node runner for the given working directory.
@@ -38,7 +41,19 @@ public class NodeRunner {
      *            the directory to run node/k6 commands in
      */
     public NodeRunner(Path workingDirectory) {
+        ExperimentalWarning.log();
         this.workingDirectory = workingDirectory;
+    }
+
+    /**
+     * Sets the summary trend stats for k6's {@code --summary-trend-stats} flag.
+     * Derived from {@link ThresholdConfig#toSummaryTrendStats()}.
+     *
+     * @param summaryTrendStats
+     *            comma-separated stats (e.g. "avg,min,med,max,p(95),p(99)")
+     */
+    public void setSummaryTrendStats(String summaryTrendStats) {
+        this.summaryTrendStats = summaryTrendStats;
     }
 
     /**
@@ -163,10 +178,34 @@ public class NodeRunner {
      */
     public void harToK6(Path harFile, Path outputFile,
             ThresholdConfig thresholdConfig) throws MojoExecutionException {
+        harToK6(harFile, outputFile, thresholdConfig,
+                ResponseCheckConfig.EMPTY);
+    }
+
+    /**
+     * Converts a HAR file to a k6 test with configurable thresholds and custom
+     * response checks.
+     *
+     * @param harFile
+     *            the input HAR file
+     * @param outputFile
+     *            the output k6 test file
+     * @param thresholdConfig
+     *            threshold configuration for the generated script
+     * @param responseCheckConfig
+     *            custom response validation checks to inject
+     * @throws MojoExecutionException
+     *             if conversion fails
+     */
+    public void harToK6(Path harFile, Path outputFile,
+            ThresholdConfig thresholdConfig,
+            ResponseCheckConfig responseCheckConfig)
+            throws MojoExecutionException {
         log.info("Converting HAR to k6 test...");
         try {
             HarToK6Converter converter = new HarToK6Converter();
-            converter.convert(harFile, outputFile, thresholdConfig);
+            converter.convert(harFile, outputFile, thresholdConfig,
+                    responseCheckConfig);
         } catch (IOException e) {
             throw new MojoExecutionException("Failed to convert HAR to k6", e);
         }
@@ -215,7 +254,7 @@ public class NodeRunner {
     }
 
     /**
-     * Runs a k6 load test.
+     * Runs a k6 load test with constant load (no ramping).
      *
      * @param testFile
      *            the k6 test file to run
@@ -233,6 +272,161 @@ public class NodeRunner {
     public void runK6Test(Path testFile, int virtualUsers, String duration,
             String appIp, int appPort) throws MojoExecutionException {
         runK6Test(testFile, virtualUsers, duration, appIp, appPort, false);
+    }
+
+    /**
+     * Runs a k6 load test with a configurable load profile. For ramping
+     * profiles, uses k6's {@code --stage} CLI flags. For constant profiles,
+     * uses {@code --vus} and {@code --duration}.
+     *
+     * @param testFile
+     *            the k6 test file to run
+     * @param virtualUsers
+     *            number of virtual users
+     * @param duration
+     *            test duration (e.g., "30s", "1m")
+     * @param appIp
+     *            application IP address
+     * @param appPort
+     *            application port
+     * @param loadProfile
+     *            load profile controlling ramping behavior
+     * @throws MojoExecutionException
+     *             if the test fails
+     */
+    public void runK6Test(Path testFile, int virtualUsers, String duration,
+            String appIp, int appPort, LoadProfile loadProfile)
+            throws MojoExecutionException {
+        log.info("Running k6 load test: " + testFile.getFileName());
+        log.info("  Load pattern: " + loadProfile);
+        log.info("  Target: " + appIp + ":" + appPort);
+
+        // For executors that cannot be configured via CLI flags, generate a
+        // wrapper script with embedded scenario configuration
+        if (loadProfile.requiresEmbeddedConfig()) {
+            runWithEmbeddedConfig(testFile, virtualUsers, duration, appIp,
+                    appPort, loadProfile);
+            return;
+        }
+
+        try {
+            List<String> command = new ArrayList<>();
+            command.add("k6");
+            command.add("run");
+
+            if (loadProfile.isRamping()) {
+                // Use --stage flags for ramping-vus
+                List<LoadProfile.Stage> stages = loadProfile
+                        .toStages(virtualUsers, duration);
+                for (LoadProfile.Stage stage : stages) {
+                    command.add("--stage");
+                    command.add(stage.duration() + ":" + stage.target());
+                }
+                log.info("  Stages: ");
+                for (LoadProfile.Stage stage : stages) {
+                    log.info("    " + stage.duration() + " → " + stage.target()
+                            + " VUs");
+                }
+            } else {
+                // Constant load
+                command.add("--vus");
+                command.add(String.valueOf(virtualUsers));
+                command.add("--duration");
+                command.add(duration);
+                log.info("  Virtual Users: " + virtualUsers);
+                log.info("  Duration: " + duration);
+            }
+
+            // Summary trend stats and file path via env var (handleSummary
+            // in the script writes the JSON)
+            Path summaryFile = testFile.getParent()
+                    .resolve(testFile.getFileName().toString()
+                            .replaceAll("\\.js$", "-summary.json"));
+            command.add("--summary-trend-stats");
+            command.add(summaryTrendStats);
+            command.add("-e");
+            command.add("SUMMARY_FILE=" + summaryFile.toAbsolutePath());
+
+            command.add("-e");
+            command.add("APP_IP=" + appIp);
+            command.add("-e");
+            command.add("APP_PORT=" + String.valueOf(appPort));
+            command.add(testFile.toAbsolutePath().toString());
+
+            ProcessBuilder pb = new ProcessBuilder(command);
+            pb.inheritIO();
+
+            Process process = pb.start();
+
+            int exitCode = process.waitFor();
+            if (Files.exists(summaryFile)) {
+                log.info("Summary exported to: " + summaryFile);
+            }
+            if (exitCode != 0) {
+                throw new MojoExecutionException(
+                        "k6 test failed with exit code: " + exitCode);
+            }
+            log.info("k6 test completed successfully");
+        } catch (IOException | InterruptedException e) {
+            throw new MojoExecutionException("Failed to run k6 test", e);
+        }
+    }
+
+    /**
+     * Runs a k6 test using a generated wrapper script with embedded scenario
+     * configuration. Used for executors that cannot be fully configured via k6
+     * CLI flags (e.g., arrival-rate, iteration-based, externally-controlled).
+     *
+     * <p>
+     * The wrapper imports the original test's default function and defines
+     * {@code export const options} with the scenario configuration from the
+     * load profile.
+     */
+    private void runWithEmbeddedConfig(Path testFile, int virtualUsers,
+            String duration, String appIp, int appPort, LoadProfile loadProfile)
+            throws MojoExecutionException {
+        Path wrapperFile = testFile.getParent()
+                .resolve("wrapper-" + testFile.getFileName());
+        try {
+            String relativePath = "./" + testFile.getFileName().toString();
+            StringBuilder sb = new StringBuilder();
+            sb.append(
+                    "// Auto-generated wrapper for embedded executor config\n");
+            sb.append("import originalTest from '").append(relativePath)
+                    .append("';\n");
+            sb.append(
+                    "import { textSummary } from 'https://jslib.k6.io/k6-summary/0.0.1/index.js';\n\n");
+            sb.append("export const options = {\n");
+            sb.append("  scenarios: {\n");
+            sb.append("    default: {\n");
+            sb.append(loadProfile.toK6ScenarioProperties(virtualUsers, duration,
+                    "      "));
+            sb.append("      exec: 'runTest',\n");
+            sb.append("    },\n");
+            sb.append("  },\n");
+            sb.append("};\n\n");
+            sb.append("export function runTest() {\n");
+            sb.append("  originalTest();\n");
+            sb.append("}\n");
+            sb.append(HarToK6Converter.HANDLE_SUMMARY_FUNCTION);
+
+            Files.writeString(wrapperFile, sb.toString());
+            log.info("  Generated wrapper: " + wrapperFile.getFileName());
+
+            // Run the wrapper with embedded config
+            runK6Test(wrapperFile, virtualUsers, duration, appIp, appPort,
+                    true);
+        } catch (IOException e) {
+            throw new MojoExecutionException(
+                    "Failed to generate wrapper script", e);
+        } finally {
+            // Clean up wrapper file
+            try {
+                Files.deleteIfExists(wrapperFile);
+            } catch (IOException e) {
+                log.warning("Could not delete wrapper file: " + wrapperFile);
+            }
+        }
     }
 
     /**
@@ -279,6 +473,16 @@ public class NodeRunner {
                 command.add(duration);
             }
 
+            // Summary trend stats and file path via env var (handleSummary
+            // in the script writes the JSON)
+            Path summaryFile = testFile.getParent()
+                    .resolve(testFile.getFileName().toString()
+                            .replaceAll("\\.js$", "-summary.json"));
+            command.add("--summary-trend-stats");
+            command.add(summaryTrendStats);
+            command.add("-e");
+            command.add("SUMMARY_FILE=" + summaryFile.toAbsolutePath());
+
             // Always pass environment variables for target server
             command.add("-e");
             command.add("APP_IP=" + appIp);
@@ -292,6 +496,9 @@ public class NodeRunner {
             Process process = pb.start();
 
             int exitCode = process.waitFor();
+            if (Files.exists(summaryFile)) {
+                log.info("Summary exported to: " + summaryFile);
+            }
             if (exitCode != 0) {
                 throw new MojoExecutionException(
                         "k6 test failed with exit code: " + exitCode);

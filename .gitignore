@@ -35,3 +35,4 @@ error-screenshots
 **/frontend/index.html
 
 **/vite.generated.ts
+**/bundles/*

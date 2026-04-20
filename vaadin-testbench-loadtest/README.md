@@ -8,8 +8,13 @@ This is a PoC of a tool that utilizes Vaadin TestBench E2E tests as "user storie
 ```
 k6-testbench-recorder/
 ├── testbench-converter-plugin/     # Maven plugin for k6 recording and conversion
-├── demo-web-app/               # Sample Vaadin application with TestBench tests
-└── demo-web-app-loadtest/      # Integration test module demonstrating the workflow
+├── testbench-loadtest-support/     # A JUnit 5 extension
+├── loadtest-helper/                # Drop-in helper for Vaadin load testing
+└───── load-tests/                  # Test module
+   ├── demo-web-app/                # Sample Vaadin application with TestBench tests
+   └── demo-web-app-loadtest/       # Integration test module demonstrating the workflow
+   ├── demo-web-app-playwright/                # Sample Vaadin application with Playwright tests
+   └── demo-web-app-playwright-loadtest/       # Integration test module demonstrating the workflow for playwright
 ```
 
 ## Prerequisites
@@ -31,6 +36,13 @@ mvn install
 
 Builds both the tooling and a simple demo web app with two Vaadin TestBench E2E tests.
 
+> **Note:** The `demo-web-app` and `demo-web-app-loadtest` modules are **not** included
+> in the default build. To include them, pass `-DrunLoadTests`:
+>
+> ```bash
+> mvn install -DrunLoadTests
+> ```
+
 ### Run the Demo (Local)
 
 *Note, you should not do this for anything else but to test the setup without external server*
@@ -38,7 +50,7 @@ Builds both the tooling and a simple demo web app with two Vaadin TestBench E2E 
 ```bash
 
 # Run the complete workflow (start app, record, run load test)
-mvn verify -pl demo-web-app-loadtest
+mvn verify -pl demo-web-app-loadtest -DrunLoadTests
 ```
 
 ### Option 3: Remote Load Testing
@@ -49,7 +61,7 @@ First deploy the test app to a remote server. The next snippet assumes the remot
 
 ```bash
 # Test against a staging server
-mvn verify -pl demo-web-app-loadtest -Premote \
+mvn verify -pl demo-web-app-loadtest -DrunLoadTests -Premote \
     -Dk6.appHost=staging.example.com \
     -Dk6.appPort=8080 \
     -Dk6.vus=100 \

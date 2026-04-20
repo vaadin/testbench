@@ -45,12 +45,6 @@
             <version>2.1.0</version>
         </dependency>
         <dependency>
-            <groupId>com.vaadin</groupId>
-            <artifactId>loadtest-helper</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <scope>runtime</scope>
@@ -119,18 +113,10 @@
             <artifactId>vaadin-date-picker-testbench</artifactId>
             <scope>test</scope>
         </dependency>
-        <!--
-            TEMPORARY: This dependency provides transparent k6 proxy configuration
-            for TestBench tests via a JUnit 5 extension. In the future, this functionality
-            should be integrated directly into Vaadin TestBench itself, eliminating
-            the need for this separate dependency. See testbench-loadtest-support/README.md
-            for more details on the planned migration path.
-        -->
         <dependency>
             <groupId>com.vaadin</groupId>
             <artifactId>testbench-loadtest-support</artifactId>
             <version>${project.version}</version>
-            <scope>test</scope>
             <optional>true</optional>
         </dependency>
     </dependencies>
@@ -207,39 +193,6 @@
                         <configuration>
                             <trimStackTrace>false</trimStackTrace>
                             <enableAssertions>true</enableAssertions>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <profile>
-            <!-- Production mode is activated using -Pproduction -->
-            <id>production</id>
-            <dependencies>
-                <!-- Exclude development only dependencies -->
-                <dependency>
-                    <groupId>com.vaadin</groupId>
-                    <artifactId>vaadin-dev</artifactId>
-                    <scope>provided</scope>
-                </dependency>
-            </dependencies>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>com.vaadin</groupId>
-                        <artifactId>flow-maven-plugin</artifactId>
-                        <version>${flow.version}</version>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>build-frontend</goal>
-                                </goals>
-                                <phase>compile</phase>
-                            </execution>
-                        </executions>
-                        <configuration>
-                            <productionMode>true</productionMode>
                         </configuration>
                     </plugin>
                 </plugins>

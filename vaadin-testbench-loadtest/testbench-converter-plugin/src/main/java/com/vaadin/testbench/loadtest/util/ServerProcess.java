@@ -52,7 +52,13 @@ public class ServerProcess {
                     new InputStreamReader(process.getInputStream()))) {
                 String line;
                 while ((line = reader.readLine()) != null) {
-                    log.info("[server] " + line);
+                    if (isStackTraceLine(line)) {
+                        // Print continuation lines (stack traces) without
+                        // logger formatting so they remain readable
+                        System.out.println("[server] " + line);
+                    } else {
+                        log.info("[server] " + line);
+                    }
                 }
             } catch (Exception e) {
                 // Process ended or stream closed
@@ -157,5 +163,17 @@ public class ServerProcess {
      */
     public boolean isAlive() {
         return process != null && process.isAlive();
+    }
+
+    /**
+     * Returns {@code true} for stack-trace continuation lines that should be
+     * printed without logger formatting (timestamp, class name, etc.) so that
+     * multi-line stack traces remain readable.
+     */
+    private static boolean isStackTraceLine(String line) {
+        String trimmed = line.stripLeading();
+        return trimmed.startsWith("at ") || trimmed.startsWith("Caused by: ")
+                || trimmed.startsWith("Suppressed: ")
+                || trimmed.startsWith("... ");
     }
 }

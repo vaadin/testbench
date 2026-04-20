@@ -7,13 +7,16 @@ This module provides k6 load testing capabilities for the demo application in th
 
 ## Quick Start
 
+> **Note:** This module is only included in the build when `-DrunLoadTests` is passed.
+> It is excluded by default to avoid failures in CI snapshot builds.
+
 ### Local Development Workflow
 
 Record scenarios and run quick load tests locally:
 
 ```bash
 # Build and run the full workflow (start server, record, run test)
-mvn verify
+mvn verify -DrunLoadTests
 ```
 
 ### Remote Load Testing
@@ -22,10 +25,10 @@ Run pre-recorded tests against a remote server:
 
 ```bash
 # Test against a staging server
-mvn verify -Premote -Dk6.appHost=staging.example.com -Dk6.appPort=8080
+mvn verify -DrunLoadTests -Premote -Dk6.appHost=staging.example.com -Dk6.appPort=8080
 
 # High-load test against production
-mvn verify -Premote -Dk6.appHost=10.0.1.50 -Dk6.vus=100 -Dk6.duration=5m
+mvn verify -DrunLoadTests -Premote -Dk6.appHost=10.0.1.50 -Dk6.vus=100 -Dk6.duration=5m
 ```
 
 ## Maven Profiles
@@ -40,9 +43,9 @@ The default profile for development and CI. It:
 4. Stops the application
 
 ```bash
-mvn verify                              # Full workflow
-mvn verify -Dk6.skipRun=true            # Only record, don't run load test
-mvn verify -Dk6.skipRecord=true         # Only run test, don't re-record
+mvn verify -DrunLoadTests                              # Full workflow
+mvn verify -DrunLoadTests -Dk6.skipRun=true            # Only record, don't run load test
+mvn verify -DrunLoadTests -Dk6.skipRecord=true         # Only run test, don't re-record
 ```
 
 ### `remote`
@@ -56,10 +59,10 @@ For production load testing against a server running on another machine. This pr
 
 ```bash
 # Basic usage
-mvn verify -Premote -Dk6.appHost=staging.example.com
+mvn verify -DrunLoadTests -Premote -Dk6.appHost=staging.example.com
 
 # Full configuration
-mvn verify -Premote \
+mvn verify -DrunLoadTests -Premote \
     -Dk6.appHost=192.168.1.100 \
     -Dk6.appPort=8080 \
     -Dk6.vus=50 \
@@ -71,7 +74,7 @@ mvn verify -Premote \
 Records scenarios without running load tests. Useful for preparing tests that will be executed later on dedicated infrastructure.
 
 ```bash
-mvn verify -Precord-only
+mvn verify -DrunLoadTests -Precord-only
 ```
 
 ## Included Scenarios
@@ -90,10 +93,14 @@ This demo records and runs two TestBench integration tests as k6 load tests:
 | `k6.appHost` | `localhost` | Target server hostname/IP (remote profile) |
 | `k6.appPort` | `8080` | Target server port (remote profile) |
 | `app.port` | `8081` | Local server port (local profile) |
+| `management.port` | `8082` | Local management/actuator port (local profile) |
 | `proxy.port` | `6000` | Recording proxy port |
-| `k6.vus` | `10` | Number of virtual users |
+| `k6.vus` | `100` | Number of virtual users |
 | `k6.duration` | `30s` | Test duration (e.g., "30s", "1m", "5m") |
 | `k6.testDir` | `target/k6/tests` | Directory containing k6 test files |
+| `k6.combineScenarios` | `true` | Combine all scenarios into a single weighted test |
+| `k6.scenarioWeights` | `helloWorld:70,crudExample:30` | VU distribution across scenarios |
+| `k6.collectVaadinMetrics` | `true` | Collect Vaadin-specific metrics via actuator |
 | `k6.skipRecord` | `false` | Skip recording phase |
 | `k6.skipRun` | `false` | Skip load test phase |
 

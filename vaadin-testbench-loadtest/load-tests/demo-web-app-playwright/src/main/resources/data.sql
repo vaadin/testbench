@@ -1,0 +1,5 @@
+insert into sample_person(version, id,first_name,last_name,email,phone,date_of_birth,occupation,role,important) values (1, 1,'Eula','Lane','eula.lane@jigrormo.ye','(762) 526-5961','1956-06-05','Insurance Clerk','Worker',false)
+insert into sample_person(version, id,first_name,last_name,email,phone,date_of_birth,occupation,role,important) values (1, 2,'Barry','Rodriquez','barry.rodriquez@zun.mm','(267) 955-5124','2015-06-06','Mortarman','Manager',false)
+insert into sample_person(version, id,first_name,last_name,email,phone,date_of_birth,occupation,role,important) values (1, 3,'Eugenia','Selvi','eugenia.selvi@capfad.vn','(680) 368-2192','1975-05-22','Beer Coil Cleaner','External',false)
+insert into sample_person(version, id,first_name,last_name,email,phone,date_of_birth,occupation,role,important) values (1, 4,'Alejandro','Miles','alejandro.miles@dec.bn','(281) 301-2039','2015-07-09','Scale Attendant','Worker',false)
+insert into sample_person(version, id,first_name,last_name,email,phone,date_of_birth,occupation,role,important) values (1, 5,'Cora','Tesi','cora.tesi@bivo.yt','(600) 616-7955','1973-09-05','Clinical Audiologist','Supervisor',false)
