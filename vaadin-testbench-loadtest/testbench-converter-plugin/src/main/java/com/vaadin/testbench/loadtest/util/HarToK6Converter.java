@@ -80,16 +80,21 @@ public class HarToK6Converter {
     static final String HANDLE_SUMMARY_FUNCTION = """
 
             export function handleSummary(data) {
-              // Console summary without per-request sub-metrics
+              // Compact console summary — keep only the headline metrics.
+              // Full metric set (including per-request sub-metrics) still
+              // goes to the JSON file when SUMMARY_FILE is set.
+              const keepMetrics = new Set([
+                'checks', 'http_req_duration', 'http_req_failed',
+                'http_reqs', 'iterations',
+              ])
               const consoleData = Object.assign({}, data, {
                 metrics: Object.fromEntries(
-                  Object.entries(data.metrics).filter(([key]) => !key.includes('{name:'))
+                  Object.entries(data.metrics).filter(([key]) => keepMetrics.has(key))
                 )
               })
               const result = {
                 'stdout': textSummary(consoleData, { indent: ' ', enableColors: true }),
               }
-              // Full JSON with per-request sub-metrics
               if (__ENV.SUMMARY_FILE) {
                 result[__ENV.SUMMARY_FILE] = JSON.stringify(data, null, 2)
               }
