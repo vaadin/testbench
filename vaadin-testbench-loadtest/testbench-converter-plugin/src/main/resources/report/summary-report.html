@@ -325,7 +325,7 @@ if (perReq.length > 0) {
     th.addEventListener('click', () => {
       const col = parseInt(th.dataset.col);
       const tbody = document.querySelector(`#${tableId} tbody`);
-      const rows = [...tbody.querySelectorAll('tr:not([class])')];
+      const rows = [...tbody.querySelectorAll('tr[data-scenario]')];
       const asc = !th.classList.contains('sorted-asc');
       document.querySelectorAll(`#${tableId} th`).forEach(h => h.classList.remove('sorted-asc', 'sorted-desc'));
       th.classList.add(asc ? 'sorted-asc' : 'sorted-desc');
