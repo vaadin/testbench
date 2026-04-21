@@ -312,6 +312,10 @@ public class K6RunMojo extends AbstractK6Mojo {
         nodeRunner.setSummaryTrendStats(
                 buildThresholdConfig().toSummaryTrendStats());
 
+        // Write reports (JSON, HTML) to {testDir}/report
+        nodeRunner
+                .setReportDir(filesToRun.get(0).getParent().resolve("report"));
+
         // Validate k6 is available
         if (!nodeRunner.isK6Available()) {
             throw new MojoExecutionException(

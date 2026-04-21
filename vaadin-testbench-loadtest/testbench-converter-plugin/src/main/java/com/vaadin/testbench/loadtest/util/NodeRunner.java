@@ -20,6 +20,9 @@ import java.util.logging.Logger;
 
 import org.apache.maven.plugin.MojoExecutionException;
 
+import com.vaadin.testbench.loadtest.report.ResultHandler;
+import com.vaadin.testbench.loadtest.report.SummaryHtmlReport;
+
 /**
  * Manages process execution for the plugin. Now uses Java implementations for
  * HAR filtering, k6 conversion, and proxy recording. Only k6 execution still
@@ -33,6 +36,7 @@ public class NodeRunner {
     private final Path workingDirectory;
     private ProxyRecorder proxyRecorder;
     private String summaryTrendStats = "avg,min,med,max,p(95),p(99)";
+    private Path reportDir;
 
     /**
      * Creates a new node runner for the given working directory.
@@ -54,6 +58,17 @@ public class NodeRunner {
      */
     public void setSummaryTrendStats(String summaryTrendStats) {
         this.summaryTrendStats = summaryTrendStats;
+    }
+
+    /**
+     * Sets the directory where report files (JSON summary, HTML report) are
+     * written. Created automatically if it does not exist.
+     *
+     * @param reportDir
+     *            the report output directory
+     */
+    public void setReportDir(Path reportDir) {
+        this.reportDir = reportDir;
     }
 
     /**
@@ -339,13 +354,15 @@ public class NodeRunner {
 
             // Summary trend stats and file path via env var (handleSummary
             // in the script writes the JSON)
-            Path summaryFile = testFile.getParent()
-                    .resolve(testFile.getFileName().toString()
-                            .replaceAll("\\.js$", "-summary.json"));
+            Path summaryFile = resolveSummaryFile(testFile);
+            Path csvFile = testFile.getParent().resolve(testFile.getFileName()
+                    .toString().replaceAll("\\.js$", "-metrics.csv"));
             command.add("--summary-trend-stats");
             command.add(summaryTrendStats);
             command.add("-e");
             command.add("SUMMARY_FILE=" + summaryFile.toAbsolutePath());
+            command.add("--out");
+            command.add("csv=" + csvFile.toAbsolutePath());
 
             command.add("-e");
             command.add("APP_IP=" + appIp);
@@ -361,7 +378,10 @@ public class NodeRunner {
             int exitCode = process.waitFor();
             if (Files.exists(summaryFile)) {
                 log.info("Summary exported to: " + summaryFile);
+                ResultHandler.injectCsvMetrics(csvFile, summaryFile);
+                SummaryHtmlReport.generate(summaryFile);
             }
+            cleanUpTempFile(csvFile);
             if (exitCode != 0) {
                 throw new MojoExecutionException(
                         "k6 test failed with exit code: " + exitCode);
@@ -475,13 +495,15 @@ public class NodeRunner {
 
             // Summary trend stats and file path via env var (handleSummary
             // in the script writes the JSON)
-            Path summaryFile = testFile.getParent()
-                    .resolve(testFile.getFileName().toString()
-                            .replaceAll("\\.js$", "-summary.json"));
+            Path summaryFile = resolveSummaryFile(testFile);
+            Path csvFile = testFile.getParent().resolve(testFile.getFileName()
+                    .toString().replaceAll("\\.js$", "-metrics.csv"));
             command.add("--summary-trend-stats");
             command.add(summaryTrendStats);
             command.add("-e");
             command.add("SUMMARY_FILE=" + summaryFile.toAbsolutePath());
+            command.add("--out");
+            command.add("csv=" + csvFile.toAbsolutePath());
 
             // Always pass environment variables for target server
             command.add("-e");
@@ -498,7 +520,10 @@ public class NodeRunner {
             int exitCode = process.waitFor();
             if (Files.exists(summaryFile)) {
                 log.info("Summary exported to: " + summaryFile);
+                ResultHandler.injectCsvMetrics(csvFile, summaryFile);
+                SummaryHtmlReport.generate(summaryFile);
             }
+            cleanUpTempFile(csvFile);
             if (exitCode != 0) {
                 throw new MojoExecutionException(
                         "k6 test failed with exit code: " + exitCode);
@@ -506,6 +531,35 @@ public class NodeRunner {
             log.info("k6 test completed successfully");
         } catch (IOException | InterruptedException e) {
             throw new MojoExecutionException("Failed to run k6 test", e);
+        }
+    }
+
+    /**
+     * Resolves the summary JSON path. Uses reportDir if set, otherwise places
+     * the file next to the test file.
+     */
+    private Path resolveSummaryFile(Path testFile) {
+        String baseName = testFile.getFileName().toString().replaceAll("\\.js$",
+                "-summary.json");
+        if (reportDir != null) {
+            try {
+                Files.createDirectories(reportDir);
+            } catch (IOException e) {
+                log.warning("Could not create report dir: " + reportDir);
+            }
+            return reportDir.resolve(baseName);
+        }
+        return testFile.getParent().resolve(baseName);
+    }
+
+    /**
+     * Deletes a temporary file, logging a warning on failure.
+     */
+    private void cleanUpTempFile(Path file) {
+        try {
+            Files.deleteIfExists(file);
+        } catch (IOException e) {
+            log.warning("Could not delete temp file: " + file);
         }
     }
 
