@@ -44,9 +44,9 @@ public class ResultHandler {
      * <ul>
      * <li>{@code metric_name} — the k6 metric identifier, e.g. {@code vus},
      * {@code http_req_duration}, {@code http_req_failed}</li>
-     * <li>{@code timestamp} — Unix epoch seconds at which the sample was
-     * taken; the first seen timestamp is treated as t=0 and all subsequent
-     * samples are bucketed by elapsed seconds from that point</li>
+     * <li>{@code timestamp} — Unix epoch seconds at which the sample was taken;
+     * the first seen timestamp is treated as t=0 and all subsequent samples are
+     * bucketed by elapsed seconds from that point</li>
      * <li>{@code metric_value} — the numeric sample value (VU count, request
      * duration in milliseconds, or {@code 0}/{@code 1} for the failed
      * flag)</li>
@@ -59,10 +59,10 @@ public class ResultHandler {
      * Only three metrics are read: {@code vus} drives the VU timeline;
      * {@code http_req_duration} samples are aggregated per elapsed second into
      * count/sum/max for the request timeline; {@code http_req_failed} samples
-     * with a non-zero value increment the failed count for the same bucket.
-     * The file may be absent (k6 CSV output was not requested or the run
-     * aborted early) — in that case the method logs and returns without
-     * touching the summary.
+     * with a non-zero value increment the failed count for the same bucket. The
+     * file may be absent (k6 CSV output was not requested or the run aborted
+     * early) — in that case the method logs and returns without touching the
+     * summary.
      *
      * @param csvFile
      *            the k6 CSV metrics output file
