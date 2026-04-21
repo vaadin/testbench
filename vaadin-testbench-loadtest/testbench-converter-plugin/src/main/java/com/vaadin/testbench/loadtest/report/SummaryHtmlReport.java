@@ -25,7 +25,7 @@ public class SummaryHtmlReport {
     private static final Logger log = Logger
             .getLogger(SummaryHtmlReport.class.getName());
 
-    private static final String TEMPLATE_RESOURCE = "/report/summary-report.html";
+    private static final String TEMPLATE_RESOURCE = "/report/summary-report-generated.html";
 
     /**
      * Generates an HTML report from a k6 summary JSON file. The output file is
