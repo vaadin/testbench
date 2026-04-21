@@ -497,8 +497,13 @@ public class HarToK6Converter {
                 if (type == null || type.isEmpty() || type.equals("/")) {
                     type = "/";
                 }
-                if (type.length() > 30) {
-                    type = type.substring(0, 27) + "...";
+                // Collapse long hex hashes (e.g. Vite/Rollup chunk content
+                // hashes) so tags stay readable:
+                // /VAADIN/build/chunk-<64-hex>-DUiDBZUT.js
+                //   -> /VAADIN/build/chunk-...-DUiDBZUT.js
+                type = type.replaceAll("[a-f0-9]{16,}", "...");
+                if (type.length() > 120) {
+                    type = type.substring(0, 117) + "...";
                 }
             } catch (Exception e) {
                 type = "/";
