@@ -197,18 +197,24 @@ jobs:
           SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
           SAUCE_TUNNEL_ID: ${{ github.run_id }}-${{ github.run_number }}
         run: |
+          # sauce-connect-action returns once the local process is up, but the tunnel
+          # can still be propagating on the Sauce side — poll the REST API until it
+          # actually shows as running before launching 25 parallel sessions.
+          URL="https://api.us-west-1.saucelabs.com/rest/v1/${SAUCE_USERNAME}/tunnels?filter=running"
           echo "Probing Sauce Labs for tunnel ${SAUCE_TUNNEL_ID}..."
           for i in $(seq 1 30); do
-            STATUS=$(curl -s -u "${SAUCE_USERNAME}:${SAUCE_ACCESS_KEY}" \
-              "https://api.us-west-1.saucelabs.com/rest/v1/${SAUCE_USERNAME}/tunnels?filter=running" \
-              | grep -o "\"tunnel_identifier\":\"${SAUCE_TUNNEL_ID}\"" || true)
-            if [ -n "$STATUS" ]; then
-              echo "Tunnel ${SAUCE_TUNNEL_ID} is running (attempt $i)."
-              # Grace period to let the tunnel fully stabilize before 25 parallel sessions hit it
-              sleep 10
-              exit 0
+            if RESPONSE=$(curl -sSf -u "${SAUCE_USERNAME}:${SAUCE_ACCESS_KEY}" "$URL"); then
+              if echo "$RESPONSE" | jq -e --arg id "$SAUCE_TUNNEL_ID" \
+                  'any(.[]; .tunnel_identifier == $id)' > /dev/null; then
+                echo "Tunnel ${SAUCE_TUNNEL_ID} is running (attempt $i)."
+                # Grace period to let the tunnel fully stabilize before 25 parallel sessions hit it
+                sleep 10
+                exit 0
+              fi
+              echo "Tunnel not listed yet (attempt $i/30), sleeping 5s..."
+            else
+              echo "Sauce API request failed (attempt $i/30), sleeping 5s..." >&2
             fi
-            echo "Tunnel not ready yet (attempt $i/30), sleeping 5s..."
             sleep 5
           done
           echo "Tunnel ${SAUCE_TUNNEL_ID} did not become ready in time" >&2
