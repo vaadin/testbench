@@ -151,7 +151,7 @@ public class K6ScenarioCombiner {
             sb.append("import { SharedArray } from 'k6/data'\n");
         }
         sb.append(
-                "import {extractJSessionId, getVaadinPushId, getVaadinSecurityKey, getVaadinUiId} from '../utils/vaadin-k6-helpers.js'\n");
+                "import {extractJSessionId, getHillaCsrfToken, getVaadinPushId, getVaadinSecurityKey, getVaadinUiId} from '../utils/vaadin-k6-helpers.js'\n");
         sb.append(
                 "import { textSummary } from 'https://jslib.k6.io/k6-summary/0.0.1/index.js'\n\n");
 
