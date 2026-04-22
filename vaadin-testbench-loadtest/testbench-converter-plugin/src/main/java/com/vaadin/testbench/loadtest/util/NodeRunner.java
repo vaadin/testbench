@@ -357,12 +357,24 @@ public class NodeRunner {
             Path summaryFile = resolveSummaryFile(testFile);
             Path csvFile = testFile.getParent().resolve(testFile.getFileName()
                     .toString().replaceAll("\\.js$", "-metrics.csv"));
+            Path errorsFile = resolveErrorsFile(testFile);
             command.add("--summary-trend-stats");
             command.add(summaryTrendStats);
             command.add("-e");
             command.add("SUMMARY_FILE=" + summaryFile.toAbsolutePath());
             command.add("--out");
             command.add("csv=" + csvFile.toAbsolutePath());
+            // Capture k6 logs (incl. console.error from per-request status
+            // checks) to a file so failures survive for post-run review.
+            // k6 opens the log file in append mode, so delete any stale file
+            // first.
+            try {
+                Files.deleteIfExists(errorsFile);
+            } catch (IOException e) {
+                log.warning("Could not delete old errors file: " + errorsFile);
+            }
+            command.add("--log-output");
+            command.add("file=" + errorsFile.toAbsolutePath() + ",level=error");
 
             command.add("-e");
             command.add("APP_IP=" + appIp);
@@ -380,6 +392,18 @@ public class NodeRunner {
                 log.info("Summary exported to: " + summaryFile);
                 ResultHandler.injectCsvMetrics(csvFile, summaryFile);
                 SummaryHtmlReport.generate(summaryFile);
+            }
+            if (Files.exists(errorsFile) && Files.size(errorsFile) > 0) {
+                log.info("Failure log written to: " + errorsFile);
+            } else {
+                // k6 creates the file even with no errors — remove it so the
+                // report folder only contains logs when failures occurred.
+                try {
+                    Files.deleteIfExists(errorsFile);
+                } catch (IOException e) {
+                    log.warning("Could not delete empty errors file: "
+                            + errorsFile);
+                }
             }
             cleanUpTempFile(csvFile);
             if (exitCode != 0) {
@@ -498,12 +522,24 @@ public class NodeRunner {
             Path summaryFile = resolveSummaryFile(testFile);
             Path csvFile = testFile.getParent().resolve(testFile.getFileName()
                     .toString().replaceAll("\\.js$", "-metrics.csv"));
+            Path errorsFile = resolveErrorsFile(testFile);
             command.add("--summary-trend-stats");
             command.add(summaryTrendStats);
             command.add("-e");
             command.add("SUMMARY_FILE=" + summaryFile.toAbsolutePath());
             command.add("--out");
             command.add("csv=" + csvFile.toAbsolutePath());
+            // Capture k6 logs (incl. console.error from per-request status
+            // checks) to a file so failures survive for post-run review.
+            // k6 opens the log file in append mode, so delete any stale file
+            // first.
+            try {
+                Files.deleteIfExists(errorsFile);
+            } catch (IOException e) {
+                log.warning("Could not delete old errors file: " + errorsFile);
+            }
+            command.add("--log-output");
+            command.add("file=" + errorsFile.toAbsolutePath() + ",level=error");
 
             // Always pass environment variables for target server
             command.add("-e");
@@ -523,6 +559,18 @@ public class NodeRunner {
                 ResultHandler.injectCsvMetrics(csvFile, summaryFile);
                 SummaryHtmlReport.generate(summaryFile);
             }
+            if (Files.exists(errorsFile) && Files.size(errorsFile) > 0) {
+                log.info("Failure log written to: " + errorsFile);
+            } else {
+                // k6 creates the file even with no errors — remove it so the
+                // report folder only contains logs when failures occurred.
+                try {
+                    Files.deleteIfExists(errorsFile);
+                } catch (IOException e) {
+                    log.warning("Could not delete empty errors file: "
+                            + errorsFile);
+                }
+            }
             cleanUpTempFile(csvFile);
             if (exitCode != 0) {
                 throw new MojoExecutionException(
@@ -541,6 +589,24 @@ public class NodeRunner {
     private Path resolveSummaryFile(Path testFile) {
         String baseName = testFile.getFileName().toString().replaceAll("\\.js$",
                 "-summary.json");
+        if (reportDir != null) {
+            try {
+                Files.createDirectories(reportDir);
+            } catch (IOException e) {
+                log.warning("Could not create report dir: " + reportDir);
+            }
+            return reportDir.resolve(baseName);
+        }
+        return testFile.getParent().resolve(baseName);
+    }
+
+    /**
+     * Resolves the errors log path. Uses reportDir if set, otherwise places the
+     * file next to the test file.
+     */
+    private Path resolveErrorsFile(Path testFile) {
+        String baseName = testFile.getFileName().toString().replaceAll("\\.js$",
+                "-errors.log");
         if (reportDir != null) {
             try {
                 Files.createDirectories(reportDir);

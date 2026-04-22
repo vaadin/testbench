@@ -468,6 +468,17 @@ public class HarToK6Converter {
             code.append("  )\n\n");
         }
 
+        // Universal status check so `checks rate==1` has data and failures
+        // are attributable to a specific request in the summary. Logs the
+        // status, URL, and a body snippet on failure so users can diagnose
+        // what went wrong without rerunning with extra tracing.
+        code.append(
+                "  if (!check(response, { 'status < 400': (r) => r.status < 400 }, { name: '")
+                .append(escapeJs(requestTag)).append("' })) {\n");
+        code.append("    console.error(`").append(escapeJsTemplate(requestTag))
+                .append(": HTTP ${response.status} ${response.url} - ${String(response.body).substring(0, 200)}`)\n");
+        code.append("  }\n\n");
+
         return code.toString();
     }
 
