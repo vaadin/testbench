@@ -75,6 +75,28 @@ class HarFilterTest {
     }
 
     @Test
+    void browserNoisePathsAreFiltered() throws IOException {
+        String har = createHarWithEntries(
+                entry("GET", "http://localhost:8080/favicon.ico", null),
+                entry("GET", "http://localhost:8080/apple-touch-icon.png",
+                        null),
+                entry("GET",
+                        "http://localhost:8080/apple-touch-icon-precomposed.png",
+                        null),
+                entry("GET", "http://localhost:8080/", null));
+
+        Path harFile = tempDir.resolve("test.har");
+        Files.writeString(harFile, har);
+
+        HarFilter filter = new HarFilter();
+        HarFilter.FilterResult result = filter.filter(harFile);
+
+        assertEquals(4, result.originalCount());
+        assertEquals(3, result.filteredCount());
+        assertEquals(1, result.remainingCount());
+    }
+
+    @Test
     void supportedMethodsAreKept() throws IOException {
         String har = createHarWithEntries(
                 entry("GET", "http://localhost:8080/", null),
