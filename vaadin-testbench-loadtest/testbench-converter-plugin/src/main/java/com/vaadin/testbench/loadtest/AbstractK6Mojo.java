@@ -101,6 +101,18 @@ public abstract class AbstractK6Mojo extends AbstractMojo {
     protected String customThresholds;
 
     /**
+     * When {@code true} (the default), generated k6 scripts resolve Vaadin node
+     * IDs at runtime via a stable-key → node-ID map built from each UIDL
+     * response. Setting it to {@code false} emits the legacy behaviour where
+     * {@code "node":N} literals from the recording are baked into the script
+     * and thus break whenever the recorded UI is reordered, re-rendered
+     * conditionally, or a Flow framework bump shifts the ID allocation order.
+     * Keep it enabled unless you are A/B-diagnosing a regression.
+     */
+    @Parameter(property = "loadtest.resolveNodeIds", defaultValue = "true")
+    protected boolean resolveNodeIds;
+
+    /**
      * Custom response validation checks to inject into the generated k6
      * scripts, in addition to the built-in Vaadin checks. Format:
      * {@code scope|name|expression;scope|name|expression;...}

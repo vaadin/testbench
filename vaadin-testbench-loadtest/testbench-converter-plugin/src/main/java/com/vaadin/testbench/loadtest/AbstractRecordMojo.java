@@ -310,7 +310,8 @@ public abstract class AbstractRecordMojo extends AbstractK6Mojo {
 
         // Post-processing (shared)
         nodeRunner.filterHar(harPath);
-        nodeRunner.harToK6(harPath, generatedFile, buildThresholdConfig());
+        nodeRunner.harToK6(harPath, generatedFile, buildThresholdConfig(),
+                buildResponseCheckConfig(), resolveNodeIds);
 
         ThinkTimeConfig thinkTimeConfig = new ThinkTimeConfig(thinkTimeEnabled,
                 pageReadDelay, interactionDelay);

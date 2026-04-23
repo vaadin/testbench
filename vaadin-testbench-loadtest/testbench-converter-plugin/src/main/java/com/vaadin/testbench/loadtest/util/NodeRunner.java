@@ -216,9 +216,35 @@ public class NodeRunner {
             ThresholdConfig thresholdConfig,
             ResponseCheckConfig responseCheckConfig)
             throws MojoExecutionException {
+        harToK6(harFile, outputFile, thresholdConfig, responseCheckConfig,
+                true);
+    }
+
+    /**
+     * Converts a HAR file to a k6 test with configurable thresholds, custom
+     * response checks, and explicit control over runtime node-ID resolution.
+     *
+     * @param harFile
+     *            the input HAR file
+     * @param outputFile
+     *            the output k6 test file
+     * @param thresholdConfig
+     *            threshold configuration for the generated script
+     * @param responseCheckConfig
+     *            custom response validation checks to inject
+     * @param resolveNodeIds
+     *            {@code true} to emit runtime node-ID resolution scaffolding;
+     *            {@code false} to keep the legacy literal-number behaviour
+     * @throws MojoExecutionException
+     *             if conversion fails
+     */
+    public void harToK6(Path harFile, Path outputFile,
+            ThresholdConfig thresholdConfig,
+            ResponseCheckConfig responseCheckConfig, boolean resolveNodeIds)
+            throws MojoExecutionException {
         log.info("Converting HAR to k6 test...");
         try {
-            HarToK6Converter converter = new HarToK6Converter();
+            HarToK6Converter converter = new HarToK6Converter(resolveNodeIds);
             converter.convert(harFile, outputFile, thresholdConfig,
                     responseCheckConfig);
         } catch (IOException e) {

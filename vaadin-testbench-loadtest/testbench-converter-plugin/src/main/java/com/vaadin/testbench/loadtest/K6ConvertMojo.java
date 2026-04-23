@@ -110,7 +110,8 @@ public class K6ConvertMojo extends AbstractK6Mojo {
             }
 
             // Step 2: Convert HAR to k6
-            nodeRunner.harToK6(harPath, generatedFile);
+            nodeRunner.harToK6(harPath, generatedFile, buildThresholdConfig(),
+                    buildResponseCheckConfig(), resolveNodeIds);
 
             // Step 3: Refactor for Vaadin (optional)
             if (!skipRefactor) {
