@@ -44,6 +44,27 @@ public final class PlaywrightHelper {
     }
 
     /**
+     * Creates a BrowserContext. When the k6 Maven plugin runs a test for
+     * recording, it sets a system property that enables HAR capture
+     * automatically — the test itself does not need to know about this.
+     * 
+     * @param browser
+     *            playwrigth browser to use
+     * @param contextOptions
+     *            user defined browser context options
+     */
+    public static BrowserContext createBrowserContext(Browser browser,
+            Browser.NewContextOptions contextOptions) {
+        String harOutputPath = System.getProperty("k6.harOutputPath");
+        if (harOutputPath != null && !harOutputPath.isEmpty()) {
+            contextOptions.setRecordHarPath(Paths.get(harOutputPath))
+                    .setRecordHarMode(
+                            com.microsoft.playwright.options.HarMode.FULL);
+        }
+        return browser.newContext(contextOptions);
+    }
+
+    /**
      * Returns the base URL for the deployment under test, resolved from
      * environment variables and system properties.
      */
