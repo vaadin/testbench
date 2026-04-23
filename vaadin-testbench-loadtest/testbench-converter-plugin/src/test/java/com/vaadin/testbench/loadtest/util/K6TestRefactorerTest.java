@@ -8,12 +8,143 @@
  */
 package com.vaadin.testbench.loadtest.util;
 
-import org.junit.jupiter.api.Test;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
+import com.vaadin.testbench.loadtest.util.K6TestRefactorer.ThinkTimeConfig;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class K6TestRefactorerTest {
+
+    @TempDir
+    Path tempDir;
+
+    private static final String MINIMAL_SCRIPT = """
+            import http from 'k6/http'
+            import { sleep } from 'k6'
+            export default function() {
+              http.get('http://localhost:8080/')
+            }
+            """;
+
+    @Test
+    void refactorContent_addsVaadinHelperImport() {
+        K6TestRefactorer refactorer = new K6TestRefactorer(
+                ThinkTimeConfig.DISABLED);
+
+        String refactored = refactorer.refactorContent(MINIMAL_SCRIPT);
+
+        assertTrue(refactored.contains("vaadin-k6-helpers.js"),
+                "Expected helper import in refactored output:\n" + refactored);
+        assertTrue(refactored.contains("getVaadinSecurityKey"));
+    }
+
+    @Test
+    void refactorContent_addsBaseUrlConstants() {
+        K6TestRefactorer refactorer = new K6TestRefactorer(
+                ThinkTimeConfig.DISABLED);
+
+        String refactored = refactorer.refactorContent(MINIMAL_SCRIPT);
+
+        assertTrue(refactored.contains("const APP_IP"));
+        assertTrue(refactored.contains("const APP_PORT"));
+        assertTrue(refactored.contains("const BASE_URL"));
+    }
+
+    @Test
+    void refactorContent_replacesHardcodedUrlWithBaseUrl() {
+        K6TestRefactorer refactorer = new K6TestRefactorer(
+                ThinkTimeConfig.DISABLED);
+
+        String refactored = refactorer.refactorContent(MINIMAL_SCRIPT);
+
+        assertTrue(refactored.contains("`${BASE_URL}"),
+                "Expected BASE_URL template literal:\n" + refactored);
+        assertFalse(refactored.contains("'http://localhost:8080/'"),
+                "Hardcoded URL should have been replaced:\n" + refactored);
+    }
+
+    @Test
+    void refactorContent_noServerDetected_returnsInputUnchanged() {
+        K6TestRefactorer refactorer = new K6TestRefactorer(
+                ThinkTimeConfig.DISABLED);
+        String scriptWithoutServer = """
+                import http from 'k6/http'
+                export default function() { /* no URLs */ }
+                """;
+
+        String refactored = refactorer.refactorContent(scriptWithoutServer);
+
+        assertEquals(scriptWithoutServer, refactored);
+    }
+
+    @Test
+    void refactorContent_thinkTimesDisabled_noThinkTimeComments() {
+        K6TestRefactorer refactorer = new K6TestRefactorer(
+                ThinkTimeConfig.DISABLED);
+
+        String refactored = refactorer.refactorContent(MINIMAL_SCRIPT);
+
+        assertFalse(refactored.contains("// Think time:"),
+                "Think times should not appear when disabled:\n" + refactored);
+    }
+
+    @Test
+    void refactorContent_thinkTimesEnabled_injectsDelaysAtBlockBoundary() {
+        K6TestRefactorer refactorer = new K6TestRefactorer(
+                ThinkTimeConfig.DEFAULT);
+
+        // Script with v-r=init and two uidl blocks separated by a large gap so
+        // the block boundary is triggered by actionBlockThresholdMs (100ms).
+        String scriptWithUidl = """
+                import http from 'k6/http'
+                import { sleep } from 'k6'
+                export default function() {
+                  // HAR_DELTA_MS: 0
+                  // v-r=init request
+                  http.post('http://localhost:8080/?v-r=init', 'body')
+                  // HAR_DELTA_MS: 50
+                  // v-r=uidl request with click event
+                  http.post('http://localhost:8080/?v-r=uidl', '{"event":"click"}')
+                  // HAR_DELTA_MS: 50
+                  // Another uidl request
+                  http.post('http://localhost:8080/?v-r=uidl', '{}')
+                }
+                """;
+
+        String refactored = refactorer.refactorContent(scriptWithUidl);
+
+        assertTrue(refactored.contains("// Think time:"),
+                "Expected think time comment when enabled with uidl blocks:\n"
+                        + refactored);
+    }
+
+    @Test
+    void refactor_readsInputAndWritesOutputFile() throws IOException {
+        Path input = tempDir.resolve("in.js");
+        Path output = tempDir.resolve("out.js");
+        Files.writeString(input, MINIMAL_SCRIPT);
+
+        new K6TestRefactorer(ThinkTimeConfig.DISABLED).refactor(input, output);
+
+        assertTrue(Files.exists(output));
+        String content = Files.readString(output);
+        assertTrue(content.contains("vaadin-k6-helpers.js"));
+    }
+
+    @Test
+    void thinkTimeConfigRecord_simpleConstructorUsesDefaultThresholds() {
+        ThinkTimeConfig config = new ThinkTimeConfig(true, 2.0, 0.5);
+        assertEquals(100L, config.actionBlockThresholdMs());
+        assertEquals(500L, config.existingDelayThresholdMs());
+    }
 
     @Test
     void hillaCsrfHeaderIsRewrittenToCookieJarLookup() {

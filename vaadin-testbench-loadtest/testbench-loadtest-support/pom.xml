@@ -21,7 +21,7 @@
     </description>
 
     <properties>
-        <junit.version>5.10.2</junit.version>
+        <junit.version>5.11.4</junit.version>
     </properties>
 
     <dependencies>
@@ -70,6 +70,26 @@
             <artifactId>junit-jupiter-api</artifactId>
             <version>${junit.version}</version>
             <scope>provided</scope>
+        </dependency>
+
+        <!-- Test dependencies -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>5.15.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>5.15.2</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
