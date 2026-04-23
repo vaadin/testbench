@@ -200,12 +200,17 @@ jobs:
           # sauce-connect-action returns once the local process is up, but the tunnel
           # can still be propagating on the Sauce side — poll the REST API until it
           # actually shows as running before launching 25 parallel sessions.
-          URL="https://api.us-west-1.saucelabs.com/rest/v1/${SAUCE_USERNAME}/tunnels?filter=running"
+          # ?full=1 returns tunnel objects (not just IDs). sauce-connect-action@v3 uses
+          # Sauce Connect 5 which stores the name in `tunnel_name`; fall back to
+          # `tunnel_identifier` for SC4-era responses just in case.
+          URL="https://api.us-west-1.saucelabs.com/rest/v1/${SAUCE_USERNAME}/tunnels?full=1&filter=running"
           echo "Probing Sauce Labs for tunnel ${SAUCE_TUNNEL_ID}..."
+          LAST_RESPONSE=""
           for i in $(seq 1 30); do
             if RESPONSE=$(curl -sSf -u "${SAUCE_USERNAME}:${SAUCE_ACCESS_KEY}" "$URL"); then
+              LAST_RESPONSE="$RESPONSE"
               if echo "$RESPONSE" | jq -e --arg id "$SAUCE_TUNNEL_ID" \
-                  'any(.[]; .tunnel_identifier == $id)' > /dev/null; then
+                  'any(.[]; (.tunnel_name // .tunnel_identifier) == $id and (.status // "running") == "running")' > /dev/null; then
                 echo "Tunnel ${SAUCE_TUNNEL_ID} is running (attempt $i)."
                 # Grace period to let the tunnel fully stabilize before 25 parallel sessions hit it
                 sleep 10
@@ -218,6 +223,8 @@ jobs:
             sleep 5
           done
           echo "Tunnel ${SAUCE_TUNNEL_ID} did not become ready in time" >&2
+          echo "Last response from Sauce API:" >&2
+          echo "$LAST_RESPONSE" | jq '.' >&2 || echo "$LAST_RESPONSE" >&2
           exit 1
 
       - name: Set TB License
