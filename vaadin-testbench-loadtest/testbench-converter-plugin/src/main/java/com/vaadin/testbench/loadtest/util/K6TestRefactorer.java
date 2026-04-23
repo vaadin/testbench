@@ -28,7 +28,7 @@ import java.util.regex.Pattern;
  */
 public class K6TestRefactorer {
 
-    private static final String HELPER_IMPORT = "import {extractJSessionId, getVaadinPushId, getVaadinSecurityKey, getVaadinUiId} from '../utils/vaadin-k6-helpers.js'";
+    private static final String HELPER_IMPORT = "import {extractJSessionId, getHillaCsrfToken, getVaadinPushId, getVaadinSecurityKey, getVaadinUiId} from '../utils/vaadin-k6-helpers.js'";
 
     private static final String CONFIG_VARS = """
 
@@ -42,7 +42,9 @@ public class K6TestRefactorer {
 
 
             // Extract JSESSIONID from Set-Cookie header
-            const jsessionId = extractJSessionId(response);""";
+            const jsessionId = extractJSessionId(response);
+            // Extract Hilla/Spring CSRF token from <meta name="_csrf"> in the HTML
+            const hillaCsrfToken = getHillaCsrfToken(response.body);""";
 
     private static final String VAADIN_EXTRACT = """
 
@@ -54,12 +56,24 @@ public class K6TestRefactorer {
             const pushId = getVaadinPushId(response.body);""";
 
     // Patterns for detection
+    /**
+     * Matches the application's {@code http://host:port} prefix. Accepts any
+     * DNS-style hostname (including short single-label names like
+     * {@code flyfast}) and IPv4 addresses, not just {@code localhost}.
+     */
     private static final Pattern SERVER_PATTERN = Pattern.compile(
-            "http://(localhost|\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}):(\\d+)");
+            "http://([A-Za-z0-9](?:[A-Za-z0-9\\-]*[A-Za-z0-9])?(?:\\.[A-Za-z0-9](?:[A-Za-z0-9\\-]*[A-Za-z0-9])?)*):(\\d+)");
     private static final Pattern JSESSION_PATTERN = Pattern
             .compile("'[Cc]ookie': 'JSESSIONID=([A-F0-9]+)'");
     private static final Pattern CSRF_PATTERN = Pattern
             .compile("\"csrfToken\":\"([a-f0-9-]{36})\"");
+    /**
+     * Matches a hardcoded Hilla/Spring CSRF header. Spring's
+     * CookieCsrfTokenRepository produces a URL-safe base64 token (>= 20 chars)
+     * — distinct from the Vaadin-Security-Key UUID placed in UIDL bodies.
+     */
+    private static final Pattern HILLA_CSRF_HEADER_PATTERN = Pattern.compile(
+            "('[Xx]-[CcXx][Ss][Rr][Ff]-[Tt][Oo][Kk][Ee][Nn]')\\s*:\\s*'([A-Za-z0-9_\\-]{20,})'");
 
     private static final Logger log = Logger
             .getLogger(K6TestRefactorer.class.getName());
@@ -247,10 +261,43 @@ public class K6TestRefactorer {
             content = insertVaadinExtraction(content);
         }
 
-        // 14. Insert realistic think times between user actions
+        // 14. Rewrite hardcoded Hilla/Spring CSRF headers to read from the
+        // cookie jar. The recorded value is tied to the original session;
+        // each k6 VU gets its own XSRF-TOKEN cookie that must be echoed back.
+        content = rewriteHillaCsrfHeaders(content);
+
+        // 15. Insert realistic think times between user actions
         content = insertThinkTimes(content);
 
         return content;
+    }
+
+    /**
+     * Replaces any hardcoded {@code X-CSRF-TOKEN} / {@code X-XSRF-TOKEN} header
+     * value with a call to {@code getHillaCsrfToken(BASE_URL)} so each VU sends
+     * the CSRF token matching its own session's XSRF-TOKEN cookie.
+     *
+     * @param content
+     *            the k6 script content
+     * @return the content with dynamic CSRF header lookups
+     */
+    private String rewriteHillaCsrfHeaders(String content) {
+        Matcher matcher = HILLA_CSRF_HEADER_PATTERN.matcher(content);
+        if (!matcher.find()) {
+            return content;
+        }
+        matcher.reset();
+        StringBuilder sb = new StringBuilder();
+        int count = 0;
+        while (matcher.find()) {
+            String headerName = matcher.group(1);
+            matcher.appendReplacement(sb,
+                    Matcher.quoteReplacement(headerName + ": hillaCsrfToken"));
+            count++;
+        }
+        matcher.appendTail(sb);
+        log.info("  Hilla CSRF headers rewritten: " + count);
+        return sb.toString();
     }
 
     // Pattern to extract HAR timing delta from comments

@@ -81,6 +81,24 @@ export function getVaadinUiId(html) {
 }
 
 /**
+ * Extracts the Spring Security CSRF token from the HTML response.
+ *
+ * Hilla endpoints (/connect/*) are secured by Spring Security and expect the
+ * session's current CSRF token echoed back in the X-CSRF-TOKEN header. The
+ * token is rendered into every HTML page as {@code <meta name="_csrf"
+ * content="...">} — this works for both {@code HttpSessionCsrfTokenRepository}
+ * (session-stored, no cookie) and {@code CookieCsrfTokenRepository}. The
+ * recorded value is tied to the original session and won't match a fresh VU.
+ * @param {string} html - The HTML response body
+ * @returns {string} The current CSRF token, or an empty string if not found
+ */
+export function getHillaCsrfToken(html) {
+    if (!html) return "";
+    const match = html.match(/<meta\s+name=["']_csrf["']\s+content=["']([^"']+)["']/);
+    return match ? match[1] : "";
+}
+
+/**
  * Initializes the Vaadin application by loading the page and extracting session info.
  * Performs two requests:
  * 1. GET / - Load the initial HTML page
