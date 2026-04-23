@@ -52,6 +52,16 @@ public class HarFilter {
     static final Set<String> K6_SUPPORTED_METHODS = Set.of("GET", "POST", "PUT",
             "PATCH", "DELETE", "HEAD", "OPTIONS");
 
+    /**
+     * URL paths that browsers request automatically and that are not part of
+     * meaningful application load. Filtered out regardless of response status —
+     * even when the server serves them they are per-page constant traffic that
+     * adds no useful signal, and 404s from them pollute error reports.
+     */
+    private static final Set<String> BROWSER_NOISE_PATHS = Set.of(
+            "/favicon.ico", "/apple-touch-icon.png",
+            "/apple-touch-icon-precomposed.png");
+
     private static final Logger log = Logger
             .getLogger(HarFilter.class.getName());
     private final ObjectMapper objectMapper;
@@ -130,6 +140,11 @@ public class HarFilter {
                     log.fine("  Filtered WebSocket upgrade: " + url);
                     continue;
                 }
+                // Filter browser noise (favicon.ico etc.)
+                if (isBrowserNoise(url)) {
+                    log.fine("  Filtered browser noise: " + url);
+                    continue;
+                }
             }
             filteredEntries.add(entry);
         }
@@ -186,6 +201,22 @@ public class HarFilter {
             }
         }
         return false;
+    }
+
+    /**
+     * Check if a URL path is a known browser noise request.
+     *
+     * @param url
+     *            the URL to check
+     * @return {@code true} if the URL path matches a known noise path
+     */
+    private boolean isBrowserNoise(String url) {
+        try {
+            String path = new URI(url).getPath();
+            return path != null && BROWSER_NOISE_PATHS.contains(path);
+        } catch (URISyntaxException e) {
+            return false;
+        }
     }
 
     /**
