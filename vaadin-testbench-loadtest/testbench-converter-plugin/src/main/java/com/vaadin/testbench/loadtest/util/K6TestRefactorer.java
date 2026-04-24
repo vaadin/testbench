@@ -461,8 +461,8 @@ public class K6TestRefactorer {
         boolean isUidl = false;
         boolean isInit = false;
         boolean isUserAction = false;
-        int braceCount = 0;
-        int requestStartLine = -1;
+        int parenCount = 0;
+        boolean seenOpenParen = false;
 
         for (int i = 0; i < lines.size(); i++) {
             String line = lines.get(i);
@@ -479,28 +479,32 @@ public class K6TestRefactorer {
                 isInit = true;
                 isUidl = false;
                 isUserAction = false;
-                braceCount = 0;
-                requestStartLine = i;
+                parenCount = 0;
+                seenOpenParen = false;
             } else if (line.contains("v-r=uidl") && !inRequest) {
                 inRequest = true;
                 isUidl = true;
                 isInit = false;
                 isUserAction = false;
-                braceCount = 0;
-                requestStartLine = i;
+                parenCount = 0;
+                seenOpenParen = false;
             } else if ((line.contains("http.get(")
                     || line.contains("http.post(")) && !inRequest) {
                 inRequest = true;
                 isInit = false;
                 isUidl = false;
                 isUserAction = false;
-                braceCount = 0;
-                requestStartLine = i;
+                parenCount = 0;
+                seenOpenParen = false;
             }
 
             if (inRequest) {
-                braceCount += countOccurrences(line, '{');
-                braceCount -= countOccurrences(line, '}');
+                int opens = countOccurrences(line, '(');
+                parenCount += opens;
+                parenCount -= countOccurrences(line, ')');
+                if (opens > 0) {
+                    seenOpenParen = true;
+                }
 
                 // Check for user action patterns in UIDL requests
                 if (isUidl) {
@@ -514,9 +518,11 @@ public class K6TestRefactorer {
                     }
                 }
 
-                // End of request — the http.XXX(...) call always closes on
-                // a line that's just " )".
-                if (braceCount == 0 && line.trim().equals(")")) {
+                // End of request — the http.XXX(...) call's parens are
+                // balanced back to zero. Handles both single-line
+                // `http.post(url, body)` and multi-line forms where the
+                // closing `)` sits on its own line.
+                if (seenOpenParen && parenCount == 0) {
                     requests.add(new RequestInfo(i, currentHarDelta, isInit,
                             isUidl, isUserAction));
                     inRequest = false;
