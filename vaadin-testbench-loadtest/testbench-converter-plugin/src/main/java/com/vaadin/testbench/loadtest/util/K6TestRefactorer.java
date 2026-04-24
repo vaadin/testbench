@@ -514,8 +514,9 @@ public class K6TestRefactorer {
                     }
                 }
 
-                // End of request
-                if (braceCount == 0 && line.contains(")")) {
+                // End of request — the http.XXX(...) call always closes on
+                // a line that's just " )".
+                if (braceCount == 0 && line.trim().equals(")")) {
                     requests.add(new RequestInfo(i, currentHarDelta, isInit,
                             isUidl, isUserAction));
                     inRequest = false;

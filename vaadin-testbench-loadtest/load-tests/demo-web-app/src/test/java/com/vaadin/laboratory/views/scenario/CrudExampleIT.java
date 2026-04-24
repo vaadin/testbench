@@ -43,7 +43,7 @@ public class CrudExampleIT extends AbstractIT {
 
     @BrowserTest
     public void crudWorkflow() {
-        waitUntilNot(driver ->  $(GridElement.class).all().isEmpty());
+        waitUntilNot(driver -> $(GridElement.class).all().isEmpty());
 
         GridElement grid = $(GridElement.class).single();
 

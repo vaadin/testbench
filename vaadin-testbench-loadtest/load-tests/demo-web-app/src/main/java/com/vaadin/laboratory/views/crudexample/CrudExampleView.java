@@ -13,7 +13,6 @@ import java.util.Optional;
 import org.vaadin.lineawesome.LineAwesomeIconUrl;
 
 import com.vaadin.flow.component.dependency.Uses;
-import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
@@ -29,7 +28,8 @@ import com.vaadin.laboratory.services.SamplePersonService;
 @Route(value = "crud-example/:samplePersonID?/:action?(edit)")
 @Menu(order = 1, icon = LineAwesomeIconUrl.COLUMNS_SOLID)
 @Uses(Icon.class)
-public class CrudExampleView extends SplitLayout implements BeforeEnterObserver {
+public class CrudExampleView extends SplitLayout
+        implements BeforeEnterObserver {
 
     static final String SAMPLEPERSON_ID = "samplePersonID";
     static final String SAMPLEPERSON_EDIT_ROUTE_TEMPLATE = "crud-example/%s/edit";
