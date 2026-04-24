@@ -55,11 +55,29 @@ class K6ScenarioCombinerTest {
 
         String content = Files.readString(output);
 
-        // Each scenario gets floor(50 * 10 / 100) = 5 VUs.
-        assertTrue(content.contains("alpha: {"));
-        assertTrue(content.contains("beta: {"));
-        assertTrue(content.contains("exec: 'alphaScenario'"));
-        assertTrue(content.contains("exec: 'betaScenario'"));
+        // Each scenario gets floor(50 * 10 / 100) = 5 VUs and uses the default
+        // ramping-vus executor with 10s ramp-up / 10s sustain / 10s ramp-down.
+        String alphaBlock = extractScenarioBlock(content, "alpha");
+        String betaBlock = extractScenarioBlock(content, "beta");
+
+        assertTrue(alphaBlock.contains("executor: 'ramping-vus'"),
+                "alpha should use ramping-vus executor:\n" + alphaBlock);
+        assertTrue(betaBlock.contains("executor: 'ramping-vus'"),
+                "beta should use ramping-vus executor:\n" + betaBlock);
+
+        String expectedStages = """
+                stages: [
+                        { duration: '10s', target: 5 },
+                        { duration: '10s', target: 5 },
+                        { duration: '10s', target: 0 },
+                      ],""";
+        assertTrue(alphaBlock.contains(expectedStages),
+                "alpha stages should target 5 VUs:\n" + alphaBlock);
+        assertTrue(betaBlock.contains(expectedStages),
+                "beta stages should target 5 VUs:\n" + betaBlock);
+
+        assertTrue(alphaBlock.contains("exec: 'alphaScenario'"));
+        assertTrue(betaBlock.contains("exec: 'betaScenario'"));
         assertTrue(content.contains("export function alphaScenario()"));
         assertTrue(content.contains("export function betaScenario()"));
     }
@@ -77,14 +95,50 @@ class K6ScenarioCombinerTest {
                 new ScenarioConfig("big", big, 3)), output, 100, "30s");
 
         String content = Files.readString(output);
-        // small gets ~25 VUs (1/4 * 100), big gets ~75 (3/4 * 100).
-        assertTrue(content.contains("small: {"));
-        assertTrue(content.contains("big: {"));
-        // The scenario named "big" must not collide with "small".
-        int smallExec = content.indexOf("exec: 'smallScenario'");
-        int bigExec = content.indexOf("exec: 'bigScenario'");
-        assertTrue(smallExec >= 0);
-        assertTrue(bigExec >= 0);
+
+        // small gets 1/4 * 100 = 25 VUs, big gets 3/4 * 100 = 75 VUs — each
+        // under its own scenario key with an independent stages block.
+        String smallBlock = extractScenarioBlock(content, "small");
+        String bigBlock = extractScenarioBlock(content, "big");
+
+        assertTrue(smallBlock.contains("target: 25"),
+                "small should target 25 VUs:\n" + smallBlock);
+        assertFalse(smallBlock.contains("target: 75"),
+                "small block must not leak big's VU target:\n" + smallBlock);
+        assertTrue(bigBlock.contains("target: 75"),
+                "big should target 75 VUs:\n" + bigBlock);
+        assertFalse(bigBlock.contains("target: 25"),
+                "big block must not leak small's VU target:\n" + bigBlock);
+
+        assertTrue(smallBlock.contains("exec: 'smallScenario'"),
+                "small scenario exec missing:\n" + smallBlock);
+        assertTrue(bigBlock.contains("exec: 'bigScenario'"),
+                "big scenario exec missing:\n" + bigBlock);
+    }
+
+    /**
+     * Extracts the body of a named scenario object from the generated
+     * {@code scenarios: { ... }} block so individual scenarios can be asserted
+     * on independently.
+     */
+    private static String extractScenarioBlock(String content, String name) {
+        String marker = name + ": {";
+        int start = content.indexOf(marker);
+        assertTrue(start >= 0,
+                "Scenario '" + name + "' missing in:\n" + content);
+        int braceStart = content.indexOf('{', start);
+        int depth = 1;
+        int i = braceStart + 1;
+        while (i < content.length() && depth > 0) {
+            char c = content.charAt(i);
+            if (c == '{') {
+                depth++;
+            } else if (c == '}') {
+                depth--;
+            }
+            i++;
+        }
+        return content.substring(start, i);
     }
 
     @Test

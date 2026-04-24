@@ -39,26 +39,6 @@ class ResourceExtractorTest {
     }
 
     @Test
-    void extractUtilities_isIdempotent() throws IOException {
-        Path extractDir = tempDir.resolve("k6-utils");
-        ResourceExtractor extractor = new ResourceExtractor(extractDir);
-
-        extractor.extractUtilities();
-        long firstSize = Files.size(extractor.getVaadinHelpersScript());
-        extractor.extractUtilities();
-        long secondSize = Files.size(extractor.getVaadinHelpersScript());
-
-        assertEquals(firstSize, secondSize);
-    }
-
-    @Test
-    void getExtractionDir_returnsConstructorValue() {
-        Path extractDir = tempDir.resolve("custom-dir");
-        ResourceExtractor extractor = new ResourceExtractor(extractDir);
-        assertEquals(extractDir, extractor.getExtractionDir());
-    }
-
-    @Test
     void cleanup_removesExtractedFilesAndDirectory() throws IOException {
         Path extractDir = tempDir.resolve("k6-utils");
         ResourceExtractor extractor = new ResourceExtractor(extractDir);

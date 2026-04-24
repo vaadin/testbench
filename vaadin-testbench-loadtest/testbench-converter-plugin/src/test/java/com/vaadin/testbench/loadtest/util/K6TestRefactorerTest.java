@@ -41,8 +41,9 @@ class K6TestRefactorerTest {
 
         String refactored = refactorer.refactorContent(MINIMAL_SCRIPT);
 
-        assertTrue(refactored.contains("vaadin-k6-helpers.js"),
-                "Expected helper import in refactored output:\n" + refactored);
+        assertTrue(refactored.contains("from '../utils/vaadin-k6-helpers.js'"),
+                "Expected helper import statement in refactored output:\n"
+                        + refactored);
         assertTrue(refactored.contains("getVaadinSecurityKey"));
     }
 
@@ -53,9 +54,20 @@ class K6TestRefactorerTest {
 
         String refactored = refactorer.refactorContent(MINIMAL_SCRIPT);
 
-        assertTrue(refactored.contains("const APP_IP"));
-        assertTrue(refactored.contains("const APP_PORT"));
-        assertTrue(refactored.contains("const BASE_URL"));
+        // Full declarations — the refactorer hardcodes these, so assert the
+        // exact values rather than matching only the identifier prefix.
+        assertTrue(
+                refactored.contains(
+                        "const APP_IP = __ENV.APP_IP || 'localhost';"),
+                "Expected APP_IP declaration:\n" + refactored);
+        assertTrue(
+                refactored
+                        .contains("const APP_PORT = __ENV.APP_PORT || '8080';"),
+                "Expected APP_PORT declaration:\n" + refactored);
+        assertTrue(
+                refactored.contains(
+                        "const BASE_URL = `http://${APP_IP}:${APP_PORT}`;"),
+                "Expected BASE_URL declaration:\n" + refactored);
     }
 
     @Test
@@ -123,6 +135,12 @@ class K6TestRefactorerTest {
 
         assertTrue(refactored.contains("// Think time:"),
                 "Expected think time comment when enabled with uidl blocks:\n"
+                        + refactored);
+        // Ensure an actual sleep() call is emitted so generated scripts really
+        // pause between user actions.
+        assertTrue(refactored.matches(
+                "(?s).*sleep\\(\\d+\\.\\d+\\s*\\+\\s*Math\\.random\\(\\)\\s*\\*\\s*\\d+\\.\\d+\\);.*"),
+                "Expected randomized sleep(...) call in refactored output:\n"
                         + refactored);
     }
 

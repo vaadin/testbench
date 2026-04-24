@@ -21,22 +21,14 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class LoadTestMetricsTest {
 
     @Test
-    void newInstance_activeUiCountIsZero() {
-        LoadTestMetrics metrics = new LoadTestMetrics();
-        assertEquals(0, metrics.getActiveUiCount());
-    }
-
-    @Test
-    void newInstance_doesNotThrow() {
-        // Covers both branches: with and without Micrometer on the classpath.
-        LoadTestMetrics metrics = new LoadTestMetrics();
-        assertNotNull(metrics);
-    }
-
-    @Test
     void trackUI_registersAfterNavigationAndDetachListeners() {
         LoadTestMetrics metrics = new LoadTestMetrics();
         UI ui = Mockito.mock(UI.class);
+
+        // No UIs have been tracked yet. The listeners below are registered
+        // on a Mockito mock so they never fire, which means this pre-tracking
+        // count is the only value the test can observe.
+        assertEquals(0, metrics.getActiveUiCount());
 
         metrics.trackUI(ui);
 

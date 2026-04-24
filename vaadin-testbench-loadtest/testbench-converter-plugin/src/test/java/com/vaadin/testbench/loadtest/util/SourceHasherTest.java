@@ -107,7 +107,6 @@ class SourceHasherTest {
         Path dir = workDir.resolve("src/it/java/com/example");
         Files.createDirectories(dir);
         Files.writeString(dir.resolve("ItOnly.java"), "class ItOnly {}");
-        writePom("<project/>");
 
         SourceHasher hasher = new SourceHasher();
         String a = hasher.calculateSourceHash(workDir, "ItOnly");

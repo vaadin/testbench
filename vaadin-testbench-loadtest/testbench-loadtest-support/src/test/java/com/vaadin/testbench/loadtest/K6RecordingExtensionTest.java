@@ -118,7 +118,7 @@ class K6RecordingExtensionTest {
     }
 
     @Test
-    void afterEach_instanceNotHasDriver_noop() throws Exception {
+    void noDriver_noExceptionForAfterEach() throws Exception {
         ExtensionContext context = Mockito.mock(ExtensionContext.class);
         Mockito.when(context.getRequiredTestInstance())
                 .thenReturn("notADriver");
@@ -128,7 +128,7 @@ class K6RecordingExtensionTest {
     }
 
     @Test
-    void afterEach_hasDriverWithNullDriver_noop() throws Exception {
+    void nullDriver_noExceptionForAfterEach() throws Exception {
         HasDriverFake fake = new HasDriverFake(null);
         ExtensionContext context = Mockito.mock(ExtensionContext.class);
         Mockito.when(context.getRequiredTestInstance()).thenReturn(fake);
@@ -138,7 +138,7 @@ class K6RecordingExtensionTest {
     }
 
     @Test
-    void afterEach_hasDriver_quitsDriver() throws Exception {
+    void driverQuitCalled_whenAfterEachCompletes() throws Exception {
         WebDriver driver = Mockito.mock(WebDriver.class);
         HasDriverFake fake = new HasDriverFake(driver);
         ExtensionContext context = Mockito.mock(ExtensionContext.class);
@@ -151,7 +151,7 @@ class K6RecordingExtensionTest {
     }
 
     @Test
-    void afterEach_quitThrows_swallowed() throws Exception {
+    void driverQuitThrows_noExceptionFromAfterEach() throws Exception {
         WebDriver driver = Mockito.mock(WebDriver.class);
         Mockito.doThrow(new RuntimeException("already closed")).when(driver)
                 .quit();
