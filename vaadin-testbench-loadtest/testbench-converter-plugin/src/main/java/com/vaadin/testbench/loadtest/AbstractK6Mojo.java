@@ -23,6 +23,7 @@ import com.vaadin.pro.licensechecker.Capability;
 import com.vaadin.pro.licensechecker.LicenseChecker;
 import com.vaadin.testbench.loadtest.util.ExperimentalWarning;
 import com.vaadin.testbench.loadtest.util.NodeRunner;
+import com.vaadin.testbench.loadtest.util.RecorderOptions;
 import com.vaadin.testbench.loadtest.util.ResourceExtractor;
 import com.vaadin.testbench.loadtest.util.ResponseCheckConfig;
 import com.vaadin.testbench.loadtest.util.ThresholdConfig;
@@ -247,6 +248,18 @@ public abstract class AbstractK6Mojo extends AbstractMojo {
             config = config.withChecks(customChecks);
         }
         return config;
+    }
+
+    /**
+     * Builds a {@link RecorderOptions} bundle from the Maven parameters. Used
+     * by the HAR-to-k6 conversion step so that new conversion knobs can be
+     * threaded through without churning method signatures.
+     *
+     * @return the recorder options
+     */
+    protected RecorderOptions buildRecorderOptions() {
+        return new RecorderOptions(buildThresholdConfig(),
+                buildResponseCheckConfig());
     }
 
     /**

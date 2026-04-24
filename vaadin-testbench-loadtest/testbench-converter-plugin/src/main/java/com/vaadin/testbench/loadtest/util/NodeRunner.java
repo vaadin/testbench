@@ -165,7 +165,7 @@ public class NodeRunner {
     }
 
     /**
-     * Converts a HAR file to a k6 test with default thresholds.
+     * Converts a HAR file to a k6 test using default recorder options.
      *
      * @param harFile
      *            the input HAR file
@@ -176,51 +176,27 @@ public class NodeRunner {
      */
     public void harToK6(Path harFile, Path outputFile)
             throws MojoExecutionException {
-        harToK6(harFile, outputFile, ThresholdConfig.DEFAULT);
+        harToK6(harFile, outputFile, RecorderOptions.DEFAULT);
     }
 
     /**
-     * Converts a HAR file to a k6 test with configurable thresholds.
+     * Converts a HAR file to a k6 test.
      *
      * @param harFile
      *            the input HAR file
      * @param outputFile
      *            the output k6 test file
-     * @param thresholdConfig
-     *            threshold configuration for the generated script
+     * @param options
+     *            conversion options (thresholds, response checks)
      * @throws MojoExecutionException
      *             if conversion fails
      */
-    public void harToK6(Path harFile, Path outputFile,
-            ThresholdConfig thresholdConfig) throws MojoExecutionException {
-        harToK6(harFile, outputFile, thresholdConfig,
-                ResponseCheckConfig.EMPTY);
-    }
-
-    /**
-     * Converts a HAR file to a k6 test with configurable thresholds and custom
-     * response checks.
-     *
-     * @param harFile
-     *            the input HAR file
-     * @param outputFile
-     *            the output k6 test file
-     * @param thresholdConfig
-     *            threshold configuration for the generated script
-     * @param responseCheckConfig
-     *            custom response validation checks to inject
-     * @throws MojoExecutionException
-     *             if conversion fails
-     */
-    public void harToK6(Path harFile, Path outputFile,
-            ThresholdConfig thresholdConfig,
-            ResponseCheckConfig responseCheckConfig)
+    public void harToK6(Path harFile, Path outputFile, RecorderOptions options)
             throws MojoExecutionException {
         log.info("Converting HAR to k6 test...");
         try {
             HarToK6Converter converter = new HarToK6Converter();
-            converter.convert(harFile, outputFile, thresholdConfig,
-                    responseCheckConfig);
+            converter.convert(harFile, outputFile, options);
         } catch (IOException e) {
             throw new MojoExecutionException("Failed to convert HAR to k6", e);
         }

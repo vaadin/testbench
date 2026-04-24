@@ -195,6 +195,108 @@ export function vaadinRequest(baseUrl, vaadinInfo, rpcPayload, idCounter, route)
 }
 
 /**
+ * Refreshes the runtime node-ID map from a Vaadin UIDL response body.
+ *
+ * Vaadin allocates server-side node IDs sequentially per session, so the
+ * numbers recorded during HAR capture drift as soon as the UI is reordered,
+ * conditionally rendered, or the Flow framework bumps its allocation order.
+ * The converter rewrites RPC payloads to reference `nodeMap['stable-key']`
+ * instead of literal numbers; this function keeps that map in sync with the
+ * live server by walking each response's `changes` array and deriving the
+ * same stable key the converter picked:
+ *
+ *   1. The element's `id` attribute when present (e.g. `'login-button'`).
+ *   2. Otherwise `tag#ordinal` — the Nth node of that tag to attach in the
+ *      session (e.g. `'vaadin-button#3'`). Per-tag ordinals persist across
+ *      responses via a non-enumerable-ish `__ordinals` sub-object.
+ *
+ * The function mutates and returns `nodeMap` so callers can chain
+ * `nodeMap = updateNodeMap(nodeMap, response.body)` without re-allocating.
+ * Malformed JSON, missing `changes`, and unexpected shapes are tolerated
+ * silently — this is hot-path code inside every VU iteration.
+ *
+ * @param {object} nodeMap - The current map, mutated in place. Pass `{}` to
+ *     start fresh.
+ * @param {string} responseBody - The raw response body, with or without the
+ *     `for(;;);` prefix Vaadin adds for script-tag-injection defence.
+ * @returns {object} The same `nodeMap` reference, for chaining.
+ */
+export function updateNodeMap(nodeMap, responseBody) {
+    if (!nodeMap || !responseBody || typeof responseBody !== "string") {
+        return nodeMap || {};
+    }
+    let body = responseBody;
+    if (body.startsWith("for(;;);")) {
+        body = body.substring(8);
+    }
+    let parsed;
+    try {
+        parsed = JSON.parse(body);
+    } catch (e) {
+        return nodeMap;
+    }
+    const ordinals = nodeMap.__ordinals || (nodeMap.__ordinals = {});
+    const entries = Array.isArray(parsed) ? parsed : [parsed];
+    for (const entry of entries) {
+        if (!entry || typeof entry !== "object") continue;
+        // Init responses occasionally wrap the payload in a top-level
+        // `uidl` string — descend into it if present.
+        if (typeof entry.uidl === "string") {
+            updateNodeMap(nodeMap, entry.uidl);
+        }
+        const changes = entry.changes;
+        if (!Array.isArray(changes)) continue;
+        for (const change of changes) {
+            if (!change || typeof change !== "object") continue;
+            const nodeId = change.node;
+            if (typeof nodeId !== "number" || nodeId <= 0) continue;
+            if (change.key === "id" && typeof change.value === "string") {
+                // id attributes take priority over any tag#N fallback.
+                nodeMap[change.value] = nodeId;
+                continue;
+            }
+            let tag = null;
+            if (change.key === "tag" && typeof change.value === "string") {
+                tag = change.value;
+            } else if (typeof change.tag === "string") {
+                tag = change.tag;
+            }
+            if (tag) {
+                ordinals[tag] = (ordinals[tag] || 0) + 1;
+                const fallbackKey = tag + "#" + ordinals[tag];
+                // Don't clobber an id-based mapping for the same node.
+                if (nodeMap[fallbackKey] === undefined) {
+                    nodeMap[fallbackKey] = nodeId;
+                }
+            }
+        }
+    }
+    return nodeMap;
+}
+
+/**
+ * Returns the live node ID for a stable key or throws.
+ *
+ * Intentionally loud: a silent `undefined` would be substituted into the RPC
+ * payload as the literal string `"undefined"`, causing the server to reject
+ * the request with a confusing error downstream. Failing fast at the
+ * call site makes the broken recording obvious.
+ *
+ * @param {object} nodeMap - The runtime map populated by `updateNodeMap`.
+ * @param {string} key - The stable key the converter recorded (id attribute
+ *     or `tag#ordinal` fallback).
+ * @returns {number} The current server-assigned node ID.
+ * @throws {Error} If the key is not present in the map.
+ */
+export function resolveNode(nodeMap, key) {
+    const id = nodeMap && nodeMap[key];
+    if (id === undefined) {
+        throw new Error("unresolved node: " + key);
+    }
+    return id;
+}
+
+/**
  * Sends a Vaadin session unload request when user leaves the page.
  * This properly terminates the server-side session.
  * @param {string} baseUrl - The base URL of the application
