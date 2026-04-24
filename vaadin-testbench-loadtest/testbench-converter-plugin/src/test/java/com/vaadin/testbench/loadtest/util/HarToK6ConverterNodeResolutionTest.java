@@ -15,7 +15,6 @@ import java.nio.file.Path;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -158,54 +157,6 @@ class HarToK6ConverterNodeResolutionTest {
                 "Unresolved IDs must not reach the resolver");
         assertTrue(script.contains("/* unresolved node 99 */"),
                 "An unresolved node ID should surface a diagnostic comment");
-    }
-
-    @Test
-    void optOutFlagProducesLegacyByteIdenticalOutput() throws IOException {
-        String initUrl = "http://localhost:8080/?v-r=init&location=";
-        String uidlUrl = "http://localhost:8080/?v-r=uidl&v-uiId=0";
-
-        // Even with a fully-populated changes stream, opting out must suppress
-        // every node-resolution side-effect (imports, nodeMap, substitutions,
-        // diagnostic comments).
-        String initResponse = forEvery(
-                "{\"changes\":[{\"node\":42,\"type\":\"put\",\"key\":\"id\",\"value\":\"login-button\"}]}");
-        String uidlBody = uidlBodyWithNode(42);
-
-        Path harFile = tempDir.resolve("opt-out.har");
-        Files.writeString(harFile,
-                createHar(vaadinInitEntryWithResponse(initUrl, initResponse),
-                        vaadinUidlEntry(uidlUrl, uidlBody)));
-
-        // Baseline: legacy literal-number emitter (resolveNodeIds=false).
-        Path baselineFile = tempDir.resolve("baseline.js");
-        new HarToK6Converter(false).convert(harFile, baselineFile);
-
-        // Second legacy run must match the first byte-for-byte.
-        Path legacyFile = tempDir.resolve("legacy.js");
-        new HarToK6Converter(false).convert(harFile, legacyFile);
-
-        String baselineScript = Files.readString(baselineFile);
-        String legacyScript = Files.readString(legacyFile);
-        // Rename-away scenario tag differences so we're comparing generator
-        // output shape, not file-name-derived tag prefixes.
-        String normalisedBaseline = baselineScript.replace("baseline", "X");
-        String normalisedLegacy = legacyScript.replace("legacy", "X");
-        assertEquals(normalisedLegacy, normalisedBaseline,
-                "Legacy opt-out mode must be deterministic");
-
-        assertTrue(baselineScript.contains("\"node\":42"),
-                "Legacy mode should emit the recorded literal node ID");
-        assertFalse(baselineScript.contains("resolveNode(nodeMap"),
-                "Legacy mode must not emit the resolver call");
-        assertFalse(baselineScript.contains("let nodeMap"),
-                "Legacy mode must not declare nodeMap");
-        assertFalse(baselineScript.contains("updateNodeMap"),
-                "Legacy mode must not emit updateNodeMap invocations");
-        assertFalse(
-                baselineScript
-                        .contains("import { updateNodeMap, resolveNode }"),
-                "Legacy mode must not import the runtime resolver helpers");
     }
 
     // --- Fixture builders (inline HAR JSON, matching HarToK6ConverterTest) ---

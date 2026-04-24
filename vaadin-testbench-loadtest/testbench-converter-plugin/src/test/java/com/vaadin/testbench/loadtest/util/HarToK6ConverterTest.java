@@ -241,7 +241,7 @@ class HarToK6ConverterTest {
                 "(r) => r.body.includes('<title>')");
 
         new HarToK6Converter().convert(harFile, outputFile,
-                ThresholdConfig.DEFAULT, checks);
+                new RecorderOptions(ThresholdConfig.DEFAULT, checks));
 
         String script = Files.readString(outputFile);
         assertTrue(
@@ -269,7 +269,7 @@ class HarToK6ConverterTest {
                 "(r) => !r.body.includes('timeout')");
 
         new HarToK6Converter().convert(harFile, outputFile,
-                ThresholdConfig.DEFAULT, checks);
+                new RecorderOptions(ThresholdConfig.DEFAULT, checks));
 
         String script = Files.readString(outputFile);
         assertTrue(
@@ -296,7 +296,7 @@ class HarToK6ConverterTest {
                 "(r) => r.timings.duration < 3000");
 
         new HarToK6Converter().convert(harFile, outputFile,
-                ThresholdConfig.DEFAULT, checks);
+                new RecorderOptions(ThresholdConfig.DEFAULT, checks));
 
         String script = Files.readString(outputFile);
         // Count occurrences — should appear in both init and UIDL blocks
@@ -315,20 +315,18 @@ class HarToK6ConverterTest {
         Path outputFile = tempDir.resolve("test.js");
         Files.writeString(harFile, har);
 
-        // With EMPTY config
+        // Explicit DEFAULT options
         new HarToK6Converter().convert(harFile, outputFile,
-                ThresholdConfig.DEFAULT, ResponseCheckConfig.EMPTY);
-        String withEmpty = Files.readString(outputFile);
+                RecorderOptions.DEFAULT);
+        String withExplicit = Files.readString(outputFile);
 
-        // Without ResponseCheckConfig (backwards-compatible overload)
-        // Use same file name so scenario name prefix in tags matches
+        // Two-argument convenience overload should produce identical output
         Path outputFile2 = tempDir.resolve("test.js");
-        new HarToK6Converter().convert(harFile, outputFile2,
-                ThresholdConfig.DEFAULT);
+        new HarToK6Converter().convert(harFile, outputFile2);
         String withoutConfig = Files.readString(outputFile2);
 
-        assertEquals(withoutConfig, withEmpty,
-                "EMPTY config should produce identical output to no config");
+        assertEquals(withoutConfig, withExplicit,
+                "Explicit DEFAULT options should match the no-args overload");
     }
 
     // --- Helper methods to build HAR JSON ---

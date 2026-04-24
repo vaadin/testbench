@@ -23,6 +23,7 @@ import com.vaadin.pro.licensechecker.Capability;
 import com.vaadin.pro.licensechecker.LicenseChecker;
 import com.vaadin.testbench.loadtest.util.ExperimentalWarning;
 import com.vaadin.testbench.loadtest.util.NodeRunner;
+import com.vaadin.testbench.loadtest.util.RecorderOptions;
 import com.vaadin.testbench.loadtest.util.ResourceExtractor;
 import com.vaadin.testbench.loadtest.util.ResponseCheckConfig;
 import com.vaadin.testbench.loadtest.util.ThresholdConfig;
@@ -99,18 +100,6 @@ public abstract class AbstractK6Mojo extends AbstractMojo {
      */
     @Parameter(property = "k6.threshold.custom")
     protected String customThresholds;
-
-    /**
-     * When {@code true} (the default), generated k6 scripts resolve Vaadin node
-     * IDs at runtime via a stable-key → node-ID map built from each UIDL
-     * response. Setting it to {@code false} emits the legacy behaviour where
-     * {@code "node":N} literals from the recording are baked into the script
-     * and thus break whenever the recorded UI is reordered, re-rendered
-     * conditionally, or a Flow framework bump shifts the ID allocation order.
-     * Keep it enabled unless you are A/B-diagnosing a regression.
-     */
-    @Parameter(property = "loadtest.resolveNodeIds", defaultValue = "true")
-    protected boolean resolveNodeIds;
 
     /**
      * Custom response validation checks to inject into the generated k6
@@ -259,6 +248,18 @@ public abstract class AbstractK6Mojo extends AbstractMojo {
             config = config.withChecks(customChecks);
         }
         return config;
+    }
+
+    /**
+     * Builds a {@link RecorderOptions} bundle from the Maven parameters. Used
+     * by the HAR-to-k6 conversion step so that new conversion knobs can be
+     * threaded through without churning method signatures.
+     *
+     * @return the recorder options
+     */
+    protected RecorderOptions buildRecorderOptions() {
+        return new RecorderOptions(buildThresholdConfig(),
+                buildResponseCheckConfig());
     }
 
     /**

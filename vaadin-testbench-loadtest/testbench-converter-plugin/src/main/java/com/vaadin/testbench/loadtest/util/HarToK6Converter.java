@@ -76,15 +76,10 @@ public class HarToK6Converter {
             import http from 'k6/http'
             import { check, fail } from 'k6'
             import { sleep } from 'k6'
+            import { updateNodeMap, resolveNode } from '../utils/vaadin-k6-helpers.js'
             import { textSummary } from '../utils/k6-summary.js'
 
             """;
-
-    /**
-     * Extra imports pulled from {@code vaadin-k6-helpers.js} when runtime
-     * node-ID resolution is enabled.
-     */
-    private static final String NODE_RESOLVER_IMPORT = "import { updateNodeMap, resolveNode } from '../utils/vaadin-k6-helpers.js'\n";
 
     private static final String K6_SCRIPT_FUNCTION_START = """
             export default function () {
@@ -153,40 +148,18 @@ public class HarToK6Converter {
     private final ObjectMapper objectMapper;
 
     /**
-     * When {@code true}, emits runtime node-ID resolution scaffolding and
-     * rewrites positive {@code "node":N} UIDL payload references as
-     * {@code ${resolveNode(nodeMap, 'stable-key')}}. When {@code false}, the
-     * converter emits the legacy literal-number behaviour — useful as an escape
-     * hatch for unanticipated UIDL shapes.
-     */
-    private final boolean resolveNodeIds;
-
-    /**
-     * Creates a new HAR to k6 converter with runtime node-ID resolution
-     * enabled.
+     * Creates a new HAR to k6 converter.
      */
     public HarToK6Converter() {
-        this(true);
-    }
-
-    /**
-     * Creates a new HAR to k6 converter.
-     *
-     * @param resolveNodeIds
-     *            {@code true} to emit runtime node-ID resolution scaffolding;
-     *            {@code false} to keep the literal-number behaviour
-     */
-    public HarToK6Converter(boolean resolveNodeIds) {
         JsonFactory jsonFactory = JsonFactory.builder()
                 .streamReadConstraints(StreamReadConstraints.builder()
                         .maxStringLength(Integer.MAX_VALUE).build())
                 .build();
         this.objectMapper = JsonMapper.builder(jsonFactory).build();
-        this.resolveNodeIds = resolveNodeIds;
     }
 
     /**
-     * Converts a HAR file to a k6 test script with default thresholds.
+     * Converts a HAR file to a k6 test script using default options.
      *
      * @param harFile
      *            the input HAR file
@@ -196,45 +169,25 @@ public class HarToK6Converter {
      *             if reading or writing fails
      */
     public void convert(Path harFile, Path outputFile) throws IOException {
-        convert(harFile, outputFile, ThresholdConfig.DEFAULT);
+        convert(harFile, outputFile, RecorderOptions.DEFAULT);
     }
 
     /**
-     * Converts a HAR file to a k6 test script with configurable thresholds.
+     * Converts a HAR file to a k6 test script.
      *
      * @param harFile
      *            the input HAR file
      * @param outputFile
      *            the output k6 test script
-     * @param thresholdConfig
-     *            threshold configuration for the generated script
+     * @param options
+     *            bundle of conversion options (thresholds, response checks)
      * @throws IOException
      *             if reading or writing fails
      */
-    public void convert(Path harFile, Path outputFile,
-            ThresholdConfig thresholdConfig) throws IOException {
-        convert(harFile, outputFile, thresholdConfig,
-                ResponseCheckConfig.EMPTY);
-    }
-
-    /**
-     * Converts a HAR file to a k6 test script with configurable thresholds and
-     * custom response checks.
-     *
-     * @param harFile
-     *            the input HAR file
-     * @param outputFile
-     *            the output k6 test script
-     * @param thresholdConfig
-     *            threshold configuration for the generated script
-     * @param responseCheckConfig
-     *            custom response validation checks to inject
-     * @throws IOException
-     *             if reading or writing fails
-     */
-    public void convert(Path harFile, Path outputFile,
-            ThresholdConfig thresholdConfig,
-            ResponseCheckConfig responseCheckConfig) throws IOException {
+    public void convert(Path harFile, Path outputFile, RecorderOptions options)
+            throws IOException {
+        ThresholdConfig thresholdConfig = options.thresholdConfig();
+        ResponseCheckConfig responseCheckConfig = options.responseCheckConfig();
         log.info("Converting HAR to k6 test...");
         collectedInputValues.clear();
         nodeIdToStableKey.clear();
@@ -266,9 +219,6 @@ public class HarToK6Converter {
 
         StringBuilder script = new StringBuilder();
         script.append(K6_SCRIPT_IMPORTS);
-        if (resolveNodeIds && session != null) {
-            script.append(NODE_RESOLVER_IMPORT).append('\n');
-        }
         script.append("export const options = {\n");
         script.append(thresholdConfig.toK6ThresholdsBlock(requestTags));
         script.append("}\n\n");
@@ -324,7 +274,7 @@ public class HarToK6Converter {
             // Populate the conversion-time node-ID map from recorded Vaadin
             // UIDL responses so that subsequent request bodies referencing
             // these nodes can be rewritten with stable keys.
-            if (resolveNodeIds && isVaadinResponseEntry(entry)) {
+            if (isVaadinResponseEntry(entry)) {
                 registerChangesFromResponse(responseBodyText(entry));
             }
         }
@@ -466,7 +416,7 @@ public class HarToK6Converter {
             // nodes and never match POSITIVE_NODE_ID_PATTERN.
             boolean hasResolvableNodeIds = false;
             Set<Integer> unresolvedNodeIds = new LinkedHashSet<>();
-            if (resolveNodeIds && pastInit) {
+            if (pastInit) {
                 Matcher nm = POSITIVE_NODE_ID_PATTERN.matcher(body);
                 while (nm.find()) {
                     int id = Integer.parseInt(nm.group(1));
@@ -740,15 +690,12 @@ public class HarToK6Converter {
         code.append("  let clientId = 0\n");
         code.append("  let gridKeys = []\n");
         code.append("  let selectedKey = '0'\n");
-        if (resolveNodeIds) {
-            // Runtime map from stable keys (id attributes or tag#ordinal) to
-            // server-assigned node IDs. Populated from UIDL responses by
-            // updateNodeMap() so RPC payloads can resolve node references
-            // even when the server allocates different IDs than were
-            // recorded.
-            code.append("  let nodeMap = {}\n");
-            code.append("  nodeMap = updateNodeMap(nodeMap, response.body)\n");
-        }
+        // Runtime map from stable keys (id attributes or tag#ordinal) to
+        // server-assigned node IDs. Populated from UIDL responses by
+        // updateNodeMap() so RPC payloads can resolve node references even
+        // when the server allocates different IDs than were recorded.
+        code.append("  let nodeMap = {}\n");
+        code.append("  nodeMap = updateNodeMap(nodeMap, response.body)\n");
         code.append("\n");
         return code.toString();
     }
@@ -774,12 +721,9 @@ public class HarToK6Converter {
         code.append("    if (newCsrf) csrfToken = newCsrf[1]\n");
         code.append("    syncId = 0\n");
         code.append("    clientId = 0\n");
-        if (resolveNodeIds) {
-            // Session restart (e.g. post-login) — the server wipes the node
-            // state, so the old mappings are invalid. Rebuild from this
-            // response's changes.
-            code.append("    nodeMap = updateNodeMap({}, response.body)\n");
-        }
+        // Session restart (e.g. post-login) — the server wipes the node state,
+        // so the old mappings are invalid. Rebuild from this response.
+        code.append("    nodeMap = updateNodeMap({}, response.body)\n");
         code.append("  }\n");
         code.append("\n");
         return code.toString();
@@ -830,11 +774,9 @@ public class HarToK6Converter {
                 "  var found = response.body.match(/\"key\":\"[^\"]+\"/g)\n");
         code.append(
                 "  if (found) gridKeys = found.map(s => s.split('\"')[3])\n");
-        if (resolveNodeIds) {
-            // Refresh stable-key → node-ID bindings from the response's
-            // changes stream so the next RPC payload can resolve them.
-            code.append("  nodeMap = updateNodeMap(nodeMap, response.body)\n");
-        }
+        // Refresh stable-key → node-ID bindings from the response's changes
+        // stream so the next RPC payload can resolve them.
+        code.append("  nodeMap = updateNodeMap(nodeMap, response.body)\n");
         code.append("\n");
         return code.toString();
     }
