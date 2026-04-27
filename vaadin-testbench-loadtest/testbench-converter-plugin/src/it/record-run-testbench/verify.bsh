@@ -1,0 +1,187 @@
+import java.nio.file.*;
+import com.vaadin.testbench.loadtest.it.IntegrationTestHelper;
+
+Path basePath = basedir.toPath();
+Path k6Tests = basePath.resolve("target/k6/tests");
+Path k6Utils = basePath.resolve("target/k6/utils");
+
+// HAR captured by the recording proxy
+Path har = basePath.resolve("target/hello-world-recording.har");
+IntegrationTestHelper.assertFileExists(har);
+if (Files.size(har) < 100) {
+    throw new RuntimeException("HAR file unexpectedly small: " + Files.size(har));
+}
+// HAR must contain the recorded HelloWorld interaction
+IntegrationTestHelper.assertFileContains(har, "v-r=init");
+IntegrationTestHelper.assertFileContains(har, "v-r=uidl");
+IntegrationTestHelper.assertFileContains(har, "Vaadin User");
+
+// Raw har-to-k6 output (pre-refactor)
+Path rawScript = k6Tests.resolve("hello-world-generated.js");
+IntegrationTestHelper.assertFileExists(rawScript);
+
+// Refactored k6 script (Vaadin-aware final output)
+Path k6Script = k6Tests.resolve("hello-world.js");
+IntegrationTestHelper.assertFileExists(k6Script);
+
+// --- Imports / structure ------------------------------------------------
+IntegrationTestHelper.assertFileContains(k6Script,
+    "import http from 'k6/http'");
+IntegrationTestHelper.assertFileContains(k6Script,
+    "import { check, fail } from 'k6'");
+IntegrationTestHelper.assertFileContains(k6Script,
+    "import { SharedArray } from 'k6/data'");
+IntegrationTestHelper.assertFileContains(k6Script,
+    "../utils/vaadin-k6-helpers.js");
+IntegrationTestHelper.assertFileContains(k6Script,
+    "import { textSummary } from '../utils/k6-summary.js'");
+IntegrationTestHelper.assertFileContains(k6Script,
+    "updateNodeMap, resolveNode");
+IntegrationTestHelper.assertFileContains(k6Script, "export default function");
+IntegrationTestHelper.assertFileContains(k6Script,
+    "export function handleSummary");
+
+// --- Server config injected by refactor --------------------------------
+IntegrationTestHelper.assertFileContains(k6Script,
+    "const APP_IP = __ENV.APP_IP || 'localhost'");
+IntegrationTestHelper.assertFileContains(k6Script,
+    "const APP_PORT = __ENV.APP_PORT || '8080'");
+IntegrationTestHelper.assertFileContains(k6Script,
+    "const BASE_URL = `http://${APP_IP}:${APP_PORT}`");
+
+// Recorded port (18280) must have been replaced by ${BASE_URL} in all
+// quoted URLs (the literal still appears in `// Request N:` comments).
+IntegrationTestHelper.assertFileDoesNotContain(k6Script, "'http://localhost:18280");
+IntegrationTestHelper.assertFileDoesNotContain(k6Script, "`http://localhost:18280");
+
+// --- Thresholds ---------------------------------------------------------
+IntegrationTestHelper.assertFileContains(k6Script, "thresholds: {");
+// Global checks threshold with abortOnFail
+IntegrationTestHelper.assertFileContains(k6Script,
+    "checks: [{ threshold: 'rate==1', abortOnFail: true, delayAbortEval: '5s' }]");
+// Global request-duration thresholds
+IntegrationTestHelper.assertFileContains(k6Script,
+    "http_req_duration: ['p(95)<2000', 'p(99)<5000']");
+// Per-request tagged thresholds for each captured step
+IntegrationTestHelper.assertFileContains(k6Script,
+    "'http_req_duration{name:hello-world: 1 GET /}': ['max>=0']");
+IntegrationTestHelper.assertFileContains(k6Script,
+    "'http_req_duration{name:hello-world: 5 GET init}': ['max>=0']");
+IntegrationTestHelper.assertFileContains(k6Script,
+    "'http_req_duration{name:hello-world: 9 POST uidl}': ['max>=0']");
+
+// --- Input data CSV -----------------------------------------------------
+Path csv = k6Tests.resolve("hello-world-data.csv");
+IntegrationTestHelper.assertFileExists(csv);
+String csvContent = IntegrationTestHelper.readFile(csv);
+String csvNormalized = csvContent.replace("\r\n", "\n").trim();
+// Header (input_1 — derived from the single text-field on HelloWorldView)
+// followed by the recorded value (TEST_NAME from HelloWorldIT)
+if (!csvNormalized.startsWith("input_1\n")) {
+    throw new RuntimeException(
+        "hello-world-data.csv should start with header 'input_1', got: " + csvContent);
+}
+if (!csvNormalized.contains("\nVaadin User")) {
+    throw new RuntimeException(
+        "hello-world-data.csv should contain row 'Vaadin User', got: " + csvContent);
+}
+// Script must consume the CSV
+IntegrationTestHelper.assertFileContains(k6Script,
+    "open('./hello-world-data.csv')");
+IntegrationTestHelper.assertFileContains(k6Script,
+    "new SharedArray('input data'");
+IntegrationTestHelper.assertFileContains(k6Script,
+    "inputData[Math.floor(Math.random() * inputData.length)]");
+// The text-field value substitutes the CSV column rather than the literal
+IntegrationTestHelper.assertFileContains(k6Script, "${inputRow.input_1}");
+IntegrationTestHelper.assertFileDoesNotContain(k6Script, "\"value\":\"Vaadin User\"");
+
+// --- Recorded request flow ---------------------------------------------
+// 12 requests captured: 4 static GETs, init, 3 more static GETs, 4 UIDLs
+IntegrationTestHelper.assertFileContains(k6Script, "// Request 1: GET");
+IntegrationTestHelper.assertFileContains(k6Script, "// Request 12: POST");
+IntegrationTestHelper.assertFileContains(k6Script, "?v-r=init");
+IntegrationTestHelper.assertFileContains(k6Script, "?v-r=uidl&v-uiId=${uiId}");
+IntegrationTestHelper.assertFileContains(k6Script,
+    "tags: { name: 'hello-world: 5 GET init' }");
+IntegrationTestHelper.assertFileContains(k6Script,
+    "tags: { name: 'hello-world: 9 POST uidl' }");
+
+// Recorded user actions: text-field mSync + change, button click, notification close
+IntegrationTestHelper.assertFileContains(k6Script,
+    "resolveNode(nodeMap, 'vaadin-text-field#1')");
+IntegrationTestHelper.assertFileContains(k6Script,
+    "resolveNode(nodeMap, 'vaadin-button#1')");
+IntegrationTestHelper.assertFileContains(k6Script,
+    "resolveNode(nodeMap, 'vaadin-notification#1')");
+IntegrationTestHelper.assertFileContains(k6Script,
+    "\"property\":\"value\",\"value\":\"${inputRow.input_1}\"");
+IntegrationTestHelper.assertFileContains(k6Script, "\"event\":\"click\"");
+IntegrationTestHelper.assertFileContains(k6Script, "\"event\":\"opened-changed\"");
+
+// --- Vaadin session bootstrapping --------------------------------------
+IntegrationTestHelper.assertFileContains(k6Script,
+    "let uiId = response.body.match(/\"v-uiId\"");
+IntegrationTestHelper.assertFileContains(k6Script,
+    "let csrfToken = response.body.match(/\"Vaadin-Security-Key\"");
+IntegrationTestHelper.assertFileContains(k6Script,
+    "nodeMap = updateNodeMap(nodeMap, response.body)");
+// Init / UIDL response validation checks
+IntegrationTestHelper.assertFileContains(k6Script,
+    "'init request succeeded': (r) => r.status === 200");
+IntegrationTestHelper.assertFileContains(k6Script,
+    "'valid init response':");
+IntegrationTestHelper.assertFileContains(k6Script,
+    "'UIDL request succeeded': (r) => r.status === 200");
+IntegrationTestHelper.assertFileContains(k6Script, "'no server error':");
+IntegrationTestHelper.assertFileContains(k6Script, "'security key valid':");
+// Sync counters tracked from UIDL responses
+IntegrationTestHelper.assertFileContains(k6Script,
+    "syncId = Math.max(0, parseInt(syncIdMatch[1]))");
+IntegrationTestHelper.assertFileContains(k6Script, "clientId++");
+
+// --- Think times: pom sets thinkTimeEnabled=false ----------------------
+IntegrationTestHelper.assertFileDoesNotContain(k6Script, "// Think time:");
+IntegrationTestHelper.assertFileDoesNotContain(k6Script, "sleep(");
+IntegrationTestHelper.assertLogContains(basePath, "Think times: disabled");
+
+// --- handleSummary configures stdout + optional JSON file --------------
+IntegrationTestHelper.assertFileContains(k6Script,
+    "textSummary(consoleData, { indent: ' ', enableColors: true })");
+IntegrationTestHelper.assertFileContains(k6Script, "__ENV.SUMMARY_FILE");
+
+// --- Vaadin helpers + summary lib copied next to the tests -------------
+IntegrationTestHelper.assertFileExists(k6Utils.resolve("vaadin-k6-helpers.js"));
+IntegrationTestHelper.assertFileExists(k6Utils.resolve("k6-summary.js"));
+
+// --- Source-hash cache so subsequent runs short-circuit ----------------
+Path hashFile = k6Tests.resolve("hello-world.hash");
+IntegrationTestHelper.assertFileExists(hashFile);
+String hash = IntegrationTestHelper.readFile(hashFile).trim();
+if (!hash.matches("[a-f0-9]{64}")) {
+    throw new RuntimeException(
+        "hello-world.hash should contain a 64-char SHA-256 hex digest, got: " + hash);
+}
+
+// --- Build log proves the proxy + refactor pipeline ran ----------------
+IntegrationTestHelper.assertLogContains(basePath, "Proxy captured");
+IntegrationTestHelper.assertLogContains(basePath, "HAR converted to k6 test");
+IntegrationTestHelper.assertLogContains(basePath, "Refactored k6 test written to");
+IntegrationTestHelper.assertLogContains(basePath, "Detected Vaadin session");
+
+// --- k6 run produced JSON + HTML reports -------------------------------
+Path reportDir = k6Tests.resolve("report");
+Path summaryJson = reportDir.resolve("hello-world-summary.json");
+Path summaryHtml = reportDir.resolve("hello-world-summary.html");
+IntegrationTestHelper.assertDirectoryExists(reportDir);
+IntegrationTestHelper.assertFileExists(summaryJson);
+IntegrationTestHelper.assertFileExists(summaryHtml);
+IntegrationTestHelper.assertFileContains(summaryJson, "http_req_duration");
+IntegrationTestHelper.assertFileContains(summaryJson, "http_reqs");
+IntegrationTestHelper.assertFileContains(summaryJson, "\"checks\"");
+IntegrationTestHelper.assertFileContains(summaryJson, "iterations");
+// HTML report renders the k6 result template
+IntegrationTestHelper.assertFileContains(summaryHtml, "k6 Load Test Report");
+
+// Build log proves k6 actually executed the recorded script
+IntegrationTestHelper.assertLogContains(basePath, "k6 test completed successfully");

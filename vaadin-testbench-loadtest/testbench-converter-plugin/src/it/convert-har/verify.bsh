@@ -1,0 +1,18 @@
+import java.nio.file.*;
+import com.vaadin.testbench.loadtest.it.IntegrationTestHelper;
+
+Path basePath = basedir.toPath();
+Path k6Script = basePath.resolve("target/k6/tests/recorded.js");
+Path k6Helpers = basePath.resolve("target/k6/utils/vaadin-k6-helpers.js");
+
+IntegrationTestHelper.assertFileExists(k6Script);
+IntegrationTestHelper.assertFileExists(k6Helpers);
+
+// Refactor step injects the Vaadin helper import
+IntegrationTestHelper.assertFileContains(k6Script, "vaadin-k6-helpers.js");
+
+// Default filtering removes external (google-analytics) requests
+IntegrationTestHelper.assertFileDoesNotContain(k6Script, "google-analytics.com");
+
+// k6 entry function is generated
+IntegrationTestHelper.assertFileContains(k6Script, "export default function");

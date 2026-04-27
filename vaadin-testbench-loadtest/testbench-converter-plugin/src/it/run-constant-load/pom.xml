@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.vaadin.test.loadtest</groupId>
+    <artifactId>run-constant-load</artifactId>
+    <version>1.0</version>
+    <packaging>pom</packaging>
+
+    <description>
+        End-to-end run of the loadtest:run goal: starts the demo-server fixture,
+        executes a tiny k6 script for 5s with vus=1, and verifies that the
+        JSON/HTML reports were produced. The k6 binary is supplied via
+        -Dk6.binary from the parent pom's invoker config (downloaded by the
+        000-install-k6 bootstrap IT), so PATH need not contain k6 and this pom
+        carries no platform-specific configuration.
+    </description>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <testbench.loadtest.version>@project.version@</testbench.loadtest.version>
+        <demo.server.jar>${project.basedir}/../demo-server/target/demo-server.jar</demo.server.jar>
+        <loadtest.serverPort>18180</loadtest.serverPort>
+        <loadtest.managementPort>18182</loadtest.managementPort>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.vaadin</groupId>
+                <artifactId>testbench-converter-plugin</artifactId>
+                <version>${testbench.loadtest.version}</version>
+                <executions>
+                    <execution>
+                        <id>start-server</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>start-server</goal>
+                        </goals>
+                        <configuration>
+                            <serverJar>${demo.server.jar}</serverJar>
+                            <serverPort>${loadtest.serverPort}</serverPort>
+                            <managementPort>${loadtest.managementPort}</managementPort>
+                            <startupTimeout>120</startupTimeout>
+                            <healthPollInterval>2</healthPollInterval>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>run</id>
+                        <phase>integration-test</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <testFile>${project.basedir}/src/test/k6/test.js</testFile>
+                            <virtualUsers>1</virtualUsers>
+                            <duration>5s</duration>
+                            <loadPattern>constant</loadPattern>
+                            <appIp>localhost</appIp>
+                            <appPort>${loadtest.serverPort}</appPort>
+                            <managementPort>${loadtest.managementPort}</managementPort>
+                            <metricsInterval>0</metricsInterval>
+                            <failOnThreshold>false</failOnThreshold>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>stop-server</id>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <goal>stop-server</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

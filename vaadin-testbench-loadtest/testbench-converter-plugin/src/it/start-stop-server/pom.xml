@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.vaadin.test.loadtest</groupId>
+    <artifactId>start-stop-server</artifactId>
+    <version>1.0</version>
+    <packaging>pom</packaging>
+
+    <description>
+        Verifies start-server / stop-server lifecycle goals. The bootstrap
+        demo-server IT (ordinal=100) builds the JAR fixture; this IT starts it
+        on a free port, polls /actuator/health, then stops it after the
+        integration-test phase.
+    </description>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <testbench.loadtest.version>@project.version@</testbench.loadtest.version>
+        <demo.server.jar>${project.basedir}/../demo-server/target/demo-server.jar</demo.server.jar>
+        <loadtest.serverPort>18080</loadtest.serverPort>
+        <loadtest.managementPort>18082</loadtest.managementPort>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.vaadin</groupId>
+                <artifactId>testbench-converter-plugin</artifactId>
+                <version>${testbench.loadtest.version}</version>
+                <executions>
+                    <execution>
+                        <id>start-server</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>start-server</goal>
+                        </goals>
+                        <configuration>
+                            <serverJar>${demo.server.jar}</serverJar>
+                            <serverPort>${loadtest.serverPort}</serverPort>
+                            <managementPort>${loadtest.managementPort}</managementPort>
+                            <startupTimeout>120</startupTimeout>
+                            <healthPollInterval>2</healthPollInterval>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>stop-server</id>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <goal>stop-server</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

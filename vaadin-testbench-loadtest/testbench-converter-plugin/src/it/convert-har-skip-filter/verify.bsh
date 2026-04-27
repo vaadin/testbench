@@ -1,0 +1,17 @@
+import java.nio.file.*;
+import com.vaadin.testbench.loadtest.it.IntegrationTestHelper;
+
+Path basePath = basedir.toPath();
+// With skipRefactor=true the only output is the unrefactored *-generated.js
+Path generated = basePath.resolve("target/k6/tests/recorded-generated.js");
+Path refactored = basePath.resolve("target/k6/tests/recorded.js");
+
+IntegrationTestHelper.assertFileExists(generated);
+IntegrationTestHelper.assertFileDoesNotExist(refactored);
+
+// Filter step skipped → external domain is preserved in the generated script
+IntegrationTestHelper.assertFileContains(generated, "google-analytics.com");
+
+// Refactor step skipped → the BASE_URL config block injected by the
+// refactorer is absent
+IntegrationTestHelper.assertFileDoesNotContain(generated, "const BASE_URL");

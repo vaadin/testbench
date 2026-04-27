@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.vaadin.test.loadtest</groupId>
+    <artifactId>install-k6</artifactId>
+    <version>1.0</version>
+    <packaging>pom</packaging>
+
+    <name>install-k6</name>
+    <description>
+        Bootstrap IT that downloads and unpacks the k6 binary for the host
+        OS/arch into the converter plugin's target/k6-bin directory, then
+        writes the resolved absolute binary path to
+        target/k6-bin/k6.properties.
+
+        The parent pom's properties-maven-plugin reads that file in the
+        pre-integration-test phase, and the second maven-invoker-plugin
+        execution broadcasts -Dk6.binary=&lt;path&gt; to every other IT.
+
+        All OS detection lives in this pom; the parent only knows the
+        OS-agnostic install directory and the pinned k6 version.
+    </description>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- Filtered from parent at maven-invoker-plugin install time. -->
+        <k6.version>@k6.version@</k6.version>
+        <k6.install.dir>@k6.install.dir@</k6.install.dir>
+        <!-- Populated by the OS profiles below. -->
+        <k6.os>UNDEFINED</k6.os>
+        <k6.arch>UNDEFINED</k6.arch>
+        <k6.archive.extension>UNDEFINED</k6.archive.extension>
+        <k6.binary.name>UNDEFINED</k6.binary.name>
+        <is.windows>false</is.windows>
+        <!-- Derived. -->
+        <k6.archive.url>https://github.com/grafana/k6/releases/download/v${k6.version}/k6-v${k6.version}-${k6.os}-${k6.arch}.${k6.archive.extension}</k6.archive.url>
+        <k6.binary>${k6.install.dir}/k6-v${k6.version}-${k6.os}-${k6.arch}/${k6.binary.name}</k6.binary>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.googlecode.maven-download-plugin</groupId>
+                <artifactId>download-maven-plugin</artifactId>
+                <version>1.13.0</version>
+                <executions>
+                    <execution>
+                        <id>install-k6</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>wget</goal>
+                        </goals>
+                        <configuration>
+                            <url>${k6.archive.url}</url>
+                            <unpack>true</unpack>
+                            <outputDirectory>${k6.install.dir}</outputDirectory>
+                            <skipCache>false</skipCache>
+                            <checkSignature>false</checkSignature>
+                            <retries>3</retries>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- Zip archives drop the executable bit on macOS; tar.gz
+                 preserves it on Linux. chmod is a no-op on Windows. -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.5.0</version>
+                <executions>
+                    <execution>
+                        <id>chmod-k6</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>chmod</executable>
+                            <arguments>
+                                <argument>+x</argument>
+                                <argument>${k6.binary}</argument>
+                            </arguments>
+                            <skip>${is.windows}</skip>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- Bridge file: parent's properties-maven-plugin reads this in
+                 pre-integration-test to resolve ${k6.binary} for the second
+                 invoker execution's broadcast. Ant's <propertyfile> uses
+                 java.util.Properties#store(), so backslashes in Windows
+                 paths get escaped correctly. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>write-k6-properties</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <propertyfile file="${k6.install.dir}/k6.properties">
+                                    <entry key="k6.binary" value="${k6.binary}"/>
+                                </propertyfile>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <!--
+        Maven's <os> matcher reads os.name /
+        os.arch directly from the JVM and works pre-extensions.
+    -->
+    <profiles>
+        <profile>
+            <id>k6-linux-amd64</id>
+            <activation>
+                <os>
+                    <family>unix</family>
+                    <name>linux</name>
+                    <arch>amd64</arch>
+                </os>
+            </activation>
+            <properties>
+                <k6.os>linux</k6.os>
+                <k6.arch>amd64</k6.arch>
+                <k6.archive.extension>tar.gz</k6.archive.extension>
+                <k6.binary.name>k6</k6.binary.name>
+            </properties>
+        </profile>
+        <profile>
+            <id>k6-linux-x86_64</id>
+            <activation>
+                <os>
+                    <family>unix</family>
+                    <name>linux</name>
+                    <arch>x86_64</arch>
+                </os>
+            </activation>
+            <properties>
+                <k6.os>linux</k6.os>
+                <k6.arch>amd64</k6.arch>
+                <k6.archive.extension>tar.gz</k6.archive.extension>
+                <k6.binary.name>k6</k6.binary.name>
+            </properties>
+        </profile>
+        <profile>
+            <id>k6-linux-arm64</id>
+            <activation>
+                <os>
+                    <family>unix</family>
+                    <name>linux</name>
+                    <arch>aarch64</arch>
+                </os>
+            </activation>
+            <properties>
+                <k6.os>linux</k6.os>
+                <k6.arch>arm64</k6.arch>
+                <k6.archive.extension>tar.gz</k6.archive.extension>
+                <k6.binary.name>k6</k6.binary.name>
+            </properties>
+        </profile>
+        <profile>
+            <id>k6-mac-amd64</id>
+            <activation>
+                <os>
+                    <family>mac</family>
+                    <arch>x86_64</arch>
+                </os>
+            </activation>
+            <properties>
+                <k6.os>macos</k6.os>
+                <k6.arch>amd64</k6.arch>
+                <k6.archive.extension>zip</k6.archive.extension>
+                <k6.binary.name>k6</k6.binary.name>
+            </properties>
+        </profile>
+        <profile>
+            <id>k6-mac-arm64</id>
+            <activation>
+                <os>
+                    <family>mac</family>
+                    <arch>aarch64</arch>
+                </os>
+            </activation>
+            <properties>
+                <k6.os>macos</k6.os>
+                <k6.arch>arm64</k6.arch>
+                <k6.archive.extension>zip</k6.archive.extension>
+                <k6.binary.name>k6</k6.binary.name>
+            </properties>
+        </profile>
+        <profile>
+            <id>k6-windows-amd64</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                </os>
+            </activation>
+            <properties>
+                <k6.os>windows</k6.os>
+                <k6.arch>amd64</k6.arch>
+                <k6.archive.extension>zip</k6.archive.extension>
+                <k6.binary.name>k6.exe</k6.binary.name>
+                <is.windows>true</is.windows>
+            </properties>
+        </profile>
+    </profiles>
+
+</project>

@@ -37,16 +37,43 @@ public class NodeRunner {
     private ProxyRecorder proxyRecorder;
     private String summaryTrendStats = "avg,min,med,max,p(95),p(99)";
     private Path reportDir;
+    private String k6Binary;
 
     /**
-     * Creates a new node runner for the given working directory.
+     * Creates a new node runner for the given working directory. The k6 binary
+     * is resolved from {@code PATH}.
      *
      * @param workingDirectory
      *            the directory to run node/k6 commands in
      */
     public NodeRunner(Path workingDirectory) {
+        this(workingDirectory, null);
+    }
+
+    /**
+     * Creates a new node runner for the given working directory using an
+     * explicit k6 binary path.
+     *
+     * @param workingDirectory
+     *            the directory to run node/k6 commands in
+     * @param k6Binary
+     *            absolute path to the k6 executable, or {@code null} / blank to
+     *            resolve {@code k6} from {@code PATH}
+     */
+    public NodeRunner(Path workingDirectory, String k6Binary) {
         ExperimentalWarning.log();
         this.workingDirectory = workingDirectory;
+        this.k6Binary = (k6Binary == null || k6Binary.isBlank()) ? null
+                : k6Binary;
+    }
+
+    /**
+     * Returns the k6 command to invoke. Either the explicit absolute path
+     * configured at construction time, or the literal {@code "k6"} so it is
+     * resolved from {@code PATH}.
+     */
+    private String k6Command() {
+        return k6Binary != null ? k6Binary : "k6";
     }
 
     /**
@@ -78,7 +105,7 @@ public class NodeRunner {
      */
     public boolean isK6Available() {
         try {
-            ProcessBuilder pb = new ProcessBuilder("k6", "version");
+            ProcessBuilder pb = new ProcessBuilder(k6Command(), "version");
             Process process = pb.start();
             boolean finished = process.waitFor(10, TimeUnit.SECONDS);
             if (finished && process.exitValue() == 0) {
@@ -302,7 +329,7 @@ public class NodeRunner {
 
         try {
             List<String> command = new ArrayList<>();
-            command.add("k6");
+            command.add(k6Command());
             command.add("run");
 
             if (loadProfile.isRamping()) {
@@ -482,7 +509,7 @@ public class NodeRunner {
 
         try {
             List<String> command = new ArrayList<>();
-            command.add("k6");
+            command.add(k6Command());
             command.add("run");
 
             // Only add VUs and duration if not using embedded config

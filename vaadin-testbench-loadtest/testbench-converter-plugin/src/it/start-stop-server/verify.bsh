@@ -1,0 +1,28 @@
+import java.net.*;
+import java.nio.file.*;
+import com.vaadin.testbench.loadtest.it.IntegrationTestHelper;
+
+Path basePath = basedir.toPath();
+
+// start-server logs this on success — confirms the JAR launched and the
+// health endpoint was reached
+IntegrationTestHelper.assertLogContains(basePath, "Server started on port 18080");
+
+// After post-integration-test the server process should be gone — the
+// loadtest port must accept no further connections
+int port = 18080;
+boolean stillListening = false;
+Socket socket = new Socket();
+try {
+    socket.connect(new InetSocketAddress("localhost", port), 500);
+    stillListening = true;
+} catch (Exception expected) {
+    // Connection refused = server stopped — desired outcome
+} finally {
+    try { socket.close(); } catch (Exception ignored) {}
+}
+if (stillListening) {
+    throw new RuntimeException(
+        "Server process is still listening on port " + port
+        + " after stop-server ran");
+}
