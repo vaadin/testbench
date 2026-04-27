@@ -167,7 +167,7 @@ class K6ScenarioCombinerTest {
         combiner.combine(
                 List.of(new ScenarioConfig("alpha", a, 50),
                         new ScenarioConfig("beta", b, 50)),
-                output, 10, "30s", ThresholdConfig.DEFAULT,
+                output, 10, "30s", new ThresholdConfig(),
                 LoadProfile.ramp("5s", "5s"));
 
         String content = Files.readString(output);

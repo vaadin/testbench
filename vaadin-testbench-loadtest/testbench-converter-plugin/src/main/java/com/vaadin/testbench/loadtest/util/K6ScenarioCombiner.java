@@ -56,7 +56,7 @@ public class K6ScenarioCombiner {
     public void combine(List<ScenarioConfig> scenarios, Path outputFile,
             int totalVus, String duration) throws IOException {
         combine(scenarios, outputFile, totalVus, duration,
-                ThresholdConfig.DEFAULT, LoadProfile.ramp("10s", "10s"));
+                new ThresholdConfig(), LoadProfile.ramp("10s", "10s"));
     }
 
     /**
