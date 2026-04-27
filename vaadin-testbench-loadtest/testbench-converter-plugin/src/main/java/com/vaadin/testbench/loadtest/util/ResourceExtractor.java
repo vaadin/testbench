@@ -18,7 +18,7 @@ import java.util.List;
 /**
  * Extracts bundled JavaScript utilities from plugin resources to a temporary
  * directory. Bundles vaadin-k6-helpers.js plus k6-summary.js (a local copy of
- * https://jslib.k6.io/k6-summary/0.0.1/index.js) so generated tests run without
+ * https://jslib.k6.io/k6-summary/0.0.4/index.js) so generated tests run without
  * external downloads.
  */
 public class ResourceExtractor {

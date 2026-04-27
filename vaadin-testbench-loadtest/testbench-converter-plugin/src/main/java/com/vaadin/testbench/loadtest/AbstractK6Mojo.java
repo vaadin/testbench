@@ -74,12 +74,20 @@ public abstract class AbstractK6Mojo extends AbstractMojo {
     protected int httpReqDurationP99;
 
     /**
-     * Whether to abort the k6 test immediately when a check fails. When true, a
-     * single failed check causes the test to stop. When false, failures are
-     * still recorded but the test continues.
+     * Whether to abort the k6 test immediately when the checks threshold is
+     * breached. When true, exceeding the allowed failure rate causes the test
+     * to stop. When false, failures are still recorded but the test continues.
      */
     @Parameter(property = "k6.threshold.checksAbortOnFail", defaultValue = "true")
     protected boolean checksAbortOnFail;
+
+    /**
+     * Fraction of check failures tolerated before the test is considered failed
+     * (e.g. {@code 0.01} = up to 1% of checks may fail). Must be in
+     * {@code [0, 1)}. Set to {@code 0} to require all checks to pass.
+     */
+    @Parameter(property = "k6.threshold.checksAllowedFailureRate", defaultValue = "0.01")
+    protected double checksAllowedFailureRate;
 
     /**
      * Custom thresholds for any k6 metric, in addition to the default
@@ -229,8 +237,11 @@ public abstract class AbstractK6Mojo extends AbstractMojo {
      * @return the threshold configuration
      */
     protected ThresholdConfig buildThresholdConfig() {
-        ThresholdConfig config = new ThresholdConfig(httpReqDurationP95,
-                httpReqDurationP99, checksAbortOnFail);
+        ThresholdConfig config = new ThresholdConfig()
+                .withHttpReqDurationP95(httpReqDurationP95)
+                .withHttpReqDurationP99(httpReqDurationP99)
+                .withChecksAbortOnFail(checksAbortOnFail)
+                .withChecksAllowedFailureRate(checksAllowedFailureRate);
         if (customThresholds != null && !customThresholds.isBlank()) {
             config = config.withCustomThresholds(customThresholds);
         }

@@ -241,7 +241,7 @@ class HarToK6ConverterTest {
                 "(r) => r.body.includes('<title>')");
 
         new HarToK6Converter().convert(harFile, outputFile,
-                new RecorderOptions(ThresholdConfig.DEFAULT, checks));
+                new RecorderOptions(new ThresholdConfig(), checks));
 
         String script = Files.readString(outputFile);
         assertTrue(
@@ -269,7 +269,7 @@ class HarToK6ConverterTest {
                 "(r) => !r.body.includes('timeout')");
 
         new HarToK6Converter().convert(harFile, outputFile,
-                new RecorderOptions(ThresholdConfig.DEFAULT, checks));
+                new RecorderOptions(new ThresholdConfig(), checks));
 
         String script = Files.readString(outputFile);
         assertTrue(
@@ -296,7 +296,7 @@ class HarToK6ConverterTest {
                 "(r) => r.timings.duration < 3000");
 
         new HarToK6Converter().convert(harFile, outputFile,
-                new RecorderOptions(ThresholdConfig.DEFAULT, checks));
+                new RecorderOptions(new ThresholdConfig(), checks));
 
         String script = Files.readString(outputFile);
         // Count occurrences — should appear in both init and UIDL blocks
