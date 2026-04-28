@@ -58,7 +58,7 @@ IntegrationTestHelper.assertFileDoesNotContain(k6Script, "`http://localhost:1828
 IntegrationTestHelper.assertFileContains(k6Script, "thresholds: {");
 // Global checks threshold with abortOnFail
 IntegrationTestHelper.assertFileContains(k6Script,
-    "checks: [{ threshold: 'rate==1', abortOnFail: true, delayAbortEval: '5s' }]");
+    "checks: [{ threshold: 'rate>=0.99', abortOnFail: true, delayAbortEval: '5s' }]");
 // Global request-duration thresholds
 IntegrationTestHelper.assertFileContains(k6Script,
     "http_req_duration: ['p(95)<2000', 'p(99)<5000']");
