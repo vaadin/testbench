@@ -70,6 +70,16 @@
                             <!-- Skip think-time so a single iteration completes
                                  quickly enough for the IT's short duration. -->
                             <thinkTimeEnabled>false</thinkTimeEnabled>
+                            <!-- Force headless Chrome for the spawned failsafe
+                                 run. no-sandbox and disable-dev-shm-usage
+                                 are required on CI runners where Chrome cannot
+                                 use the kernel sandbox or /dev/shm. Override
+                                 locally with -Dk6.mavenArgs="..." (see
+                                 AbstractRecordMojo#mavenArgs). -->
+                            <mavenArgs>
+                                -Dcom.vaadin.testbench.Parameters.headless=true
+                                -Dcom.vaadin.testbench.Parameters.chromeOptions=--no-sandbox,--disable-dev-shm-usage
+                            </mavenArgs>
                         </configuration>
                     </execution>
                     <execution>
