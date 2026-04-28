@@ -69,7 +69,7 @@ public class HelloWorldPlaywrightIT {
         page.getByLabel("Your name").fill(TEST_NAME);
         page.getByRole(AriaRole.BUTTON,
                 new Page.GetByRoleOptions().setName("Say hello")).click();
-        assertThat(page.locator("vaadin-notification-card"))
+        assertThat(page.locator("#greeting"))
                 .containsText("Hello " + TEST_NAME);
     }
 }

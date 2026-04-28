@@ -8,22 +8,32 @@
  */
 package com.vaadin.test.loadtest;
 
-import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.notification.Notification;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Input;
+import com.vaadin.flow.component.html.NativeButton;
+import com.vaadin.flow.component.html.NativeLabel;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
 @PageTitle("Hello World")
 @Route("")
-public class HelloWorldView extends HorizontalLayout {
+public class HelloWorldView extends Div {
 
     public HelloWorldView() {
-        TextField name = new TextField("Your name");
-        Button sayHello = new Button("Say hello");
-        sayHello.addClickListener(e -> Notification.show("Hello " + name.getValue()));
-        setMargin(true);
-        add(name, sayHello);
+        Input name = new Input();
+        name.setId("name");
+        NativeLabel nameLabel = new NativeLabel("Your name");
+        nameLabel.setFor(name);
+
+        Span greeting = new Span();
+        greeting.setId("greeting");
+
+        NativeButton sayHello = new NativeButton("Say hello",
+                e -> greeting.setText("Hello " + name.getValue()));
+        sayHello.setId("say-hello");
+
+        getStyle().set("padding", "1em");
+        add(nameLabel, name, sayHello, greeting);
     }
 }

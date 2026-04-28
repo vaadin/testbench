@@ -12,15 +12,16 @@
     <name>demo-server</name>
     <description>
         Minimal Vaadin Flow + Spring Boot application used as a fixture by the
-        testbench-converter-plugin integration tests.
-        Built first via invoker.ordinal so other ITs can reference the
-        repackaged JAR by relative path.
+        testbench-converter-plugin integration tests. Built first via
+        invoker.ordinal so other ITs can reference the repackaged JAR by
+        relative path. Depends only on Flow (open source) and TestBench — no
+        Vaadin platform / flow-components artifacts — so the IT can resolve
+        every dependency from the Flow snapshot repository alone.
     </description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>21</maven.compiler.release>
-        <vaadin.version>@vaadin.version@</vaadin.version>
         <flow.version>@flow.version@</flow.version>
         <spring.boot.version>@spring.boot.version@</spring.boot.version>
         <testbench.version>@project.version@</testbench.version>
@@ -37,8 +38,8 @@
             </dependency>
             <dependency>
                 <groupId>com.vaadin</groupId>
-                <artifactId>vaadin-bom</artifactId>
-                <version>${vaadin.version}</version>
+                <artifactId>flow-bom</artifactId>
+                <version>${flow.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -46,9 +47,20 @@
     </dependencyManagement>
 
     <dependencies>
+        <!-- Vaadin Flow Spring integration: pulls in flow-server +
+             SpringServlet auto-configuration. Avoids vaadin-spring-boot-starter
+             which would drag in the full platform / flow-components stack. -->
         <dependency>
             <groupId>com.vaadin</groupId>
-            <artifactId>vaadin-spring-boot-starter</artifactId>
+            <artifactId>vaadin-spring</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.vaadin</groupId>
+            <artifactId>flow-html-components</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -65,17 +77,7 @@
         </dependency>
         <dependency>
             <groupId>com.vaadin</groupId>
-            <artifactId>vaadin-button-testbench</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.vaadin</groupId>
-            <artifactId>vaadin-text-field-testbench</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.vaadin</groupId>
-            <artifactId>vaadin-notification-testbench</artifactId>
+            <artifactId>flow-html-components-testbench</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

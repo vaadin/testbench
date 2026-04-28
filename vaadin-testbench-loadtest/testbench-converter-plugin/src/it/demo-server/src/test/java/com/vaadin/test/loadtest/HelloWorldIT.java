@@ -10,9 +10,9 @@ package com.vaadin.test.loadtest;
 
 import org.junit.jupiter.api.Assertions;
 
-import com.vaadin.flow.component.button.testbench.ButtonElement;
-import com.vaadin.flow.component.notification.testbench.NotificationElement;
-import com.vaadin.flow.component.textfield.testbench.TextFieldElement;
+import com.vaadin.flow.component.html.testbench.InputTextElement;
+import com.vaadin.flow.component.html.testbench.NativeButtonElement;
+import com.vaadin.flow.component.html.testbench.SpanElement;
 import com.vaadin.testbench.BrowserTest;
 
 /**
@@ -25,20 +25,18 @@ public class HelloWorldIT extends AbstractIT {
 
     @BrowserTest
     public void helloWorldWorkflow() {
-        TextFieldElement nameField = $(TextFieldElement.class)
-                .withCaption("Your name").waitForFirst();
+        InputTextElement nameField = $(InputTextElement.class).id("name");
         nameField.setValue(TEST_NAME);
 
-        ButtonElement sayHelloButton = $(ButtonElement.class)
-                .withCaption("Say hello").waitForFirst();
+        NativeButtonElement sayHelloButton = $(NativeButtonElement.class)
+                .id("say-hello");
         sayHelloButton.click();
 
-        NotificationElement notification = $(NotificationElement.class)
-                .waitForFirst();
+        SpanElement greeting = $(SpanElement.class).id("greeting");
         Assertions.assertTrue(
-                notification.getText().contains("Hello " + TEST_NAME),
-                "Notification should greet the entered name, got: "
-                        + notification.getText());
+                greeting.getText().contains("Hello " + TEST_NAME),
+                "Greeting should mention the entered name, got: "
+                        + greeting.getText());
     }
 
     @Override

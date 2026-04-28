@@ -66,9 +66,9 @@ IntegrationTestHelper.assertFileContains(k6Script,
 IntegrationTestHelper.assertFileContains(k6Script,
     "'http_req_duration{name:hello-world: 1 GET /}': ['max>=0']");
 IntegrationTestHelper.assertFileContains(k6Script,
-    "'http_req_duration{name:hello-world: 5 GET init}': ['max>=0']");
+    "'http_req_duration{name:hello-world: 4 GET init}': ['max>=0']");
 IntegrationTestHelper.assertFileContains(k6Script,
-    "'http_req_duration{name:hello-world: 9 POST uidl}': ['max>=0']");
+    "'http_req_duration{name:hello-world: 8 POST uidl}': ['max>=0']");
 
 // --- Input data CSV -----------------------------------------------------
 Path csv = k6Tests.resolve("hello-world-data.csv");
@@ -97,27 +97,27 @@ IntegrationTestHelper.assertFileContains(k6Script, "${inputRow.input_1}");
 IntegrationTestHelper.assertFileDoesNotContain(k6Script, "\"value\":\"Vaadin User\"");
 
 // --- Recorded request flow ---------------------------------------------
-// 12 requests captured: 4 static GETs, init, 3 more static GETs, 4 UIDLs
+// 10 requests captured: page GET, 2 static GETs, init, 3 more static GETs,
+// 3 UIDLs (input mSync+change, button click, post-click follow-up).
 IntegrationTestHelper.assertFileContains(k6Script, "// Request 1: GET");
-IntegrationTestHelper.assertFileContains(k6Script, "// Request 12: POST");
+IntegrationTestHelper.assertFileContains(k6Script, "// Request 10: POST");
 IntegrationTestHelper.assertFileContains(k6Script, "?v-r=init");
 IntegrationTestHelper.assertFileContains(k6Script, "?v-r=uidl&v-uiId=${uiId}");
 IntegrationTestHelper.assertFileContains(k6Script,
-    "tags: { name: 'hello-world: 5 GET init' }");
+    "tags: { name: 'hello-world: 4 GET init' }");
 IntegrationTestHelper.assertFileContains(k6Script,
-    "tags: { name: 'hello-world: 9 POST uidl' }");
+    "tags: { name: 'hello-world: 8 POST uidl' }");
 
-// Recorded user actions: text-field mSync + change, button click, notification close
+// Recorded user actions: input value sync, button click. The view uses
+// Flow's native HTML components (Input, NativeButton, Span) with explicit
+// element IDs, so resolveNode() looks them up by id rather than tag#index.
 IntegrationTestHelper.assertFileContains(k6Script,
-    "resolveNode(nodeMap, 'vaadin-text-field#1')");
+    "resolveNode(nodeMap, 'name')");
 IntegrationTestHelper.assertFileContains(k6Script,
-    "resolveNode(nodeMap, 'vaadin-button#1')");
-IntegrationTestHelper.assertFileContains(k6Script,
-    "resolveNode(nodeMap, 'vaadin-notification#1')");
+    "resolveNode(nodeMap, 'say-hello')");
 IntegrationTestHelper.assertFileContains(k6Script,
     "\"property\":\"value\",\"value\":\"${inputRow.input_1}\"");
 IntegrationTestHelper.assertFileContains(k6Script, "\"event\":\"click\"");
-IntegrationTestHelper.assertFileContains(k6Script, "\"event\":\"opened-changed\"");
 
 // --- Vaadin session bootstrapping --------------------------------------
 IntegrationTestHelper.assertFileContains(k6Script,
