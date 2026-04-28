@@ -270,6 +270,58 @@ jobs:
             **/target/failsafe-reports/TEST-*.xml
           retention-days: 7
 
+  loadtest-converter-tests:
+    name: Load Test Converter Plugin ITs
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.HEAD_SHA }}
+
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: "temurin"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Restore Maven cache
+        uses: actions/cache/restore@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}-${{ github.run_id }}
+
+      - name: Set TB License
+        run: |
+          TB_LICENSE=${{secrets.TB_LICENSE}}
+          mkdir -p ~/.vaadin/
+          echo '{"username":"'`echo $TB_LICENSE | cut -d / -f1`'","proKey":"'`echo $TB_LICENSE | cut -d / -f2`'"}' > ~/.vaadin/proKey
+
+      - name: Run Maven Invoker Tests
+        run: |
+          mvn verify \
+            -pl vaadin-testbench-loadtest/testbench-converter-plugin -am \
+            -DskipUnitTests \
+            -B
+
+      - name: Upload invoker logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: loadtest-converter-invoker-logs
+          path: |
+            vaadin-testbench-loadtest/testbench-converter-plugin/target/its/**/build.log
+            vaadin-testbench-loadtest/testbench-converter-plugin/target/invoker-reports/**
+          retention-days: 7
+
   validation-status:
     name: Validation Status
     permissions:
@@ -278,7 +330,7 @@ jobs:
       checks: write
       pull-requests: write
     if: always()
-    needs: [format-check, build, unit-tests, integration-tests]
+    needs: [format-check, build, unit-tests, integration-tests, loadtest-converter-tests]
     runs-on: ubuntu-latest
 
     steps:
@@ -307,11 +359,13 @@ jobs:
           echo "build: ${{ needs.build.result }}"
           echo "unit-tests: ${{ needs.unit-tests.result }}"
           echo "integration-tests: ${{ needs.integration-tests.result }}"
+          echo "loadtest-converter-tests: ${{ needs.loadtest-converter-tests.result }}"
 
           if [ "${{ needs.format-check.result }}" != "success" ] || \
              [ "${{ needs.build.result }}" != "success" ] || \
              [ "${{ needs.unit-tests.result }}" != "success" ] || \
-             [ "${{ needs.integration-tests.result }}" != "success" ]; then
+             [ "${{ needs.integration-tests.result }}" != "success" ] || \
+             [ "${{ needs.loadtest-converter-tests.result }}" != "success" ]; then
             echo "One or more validation jobs failed"
             exit 1
           fi
