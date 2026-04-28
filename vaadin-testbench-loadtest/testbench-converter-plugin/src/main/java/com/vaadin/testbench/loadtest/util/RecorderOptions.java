@@ -22,11 +22,11 @@ public record RecorderOptions(ThresholdConfig thresholdConfig,
         ResponseCheckConfig responseCheckConfig) {
 
     public static final RecorderOptions DEFAULT = new RecorderOptions(
-            ThresholdConfig.DEFAULT, ResponseCheckConfig.EMPTY);
+            new ThresholdConfig(), ResponseCheckConfig.EMPTY);
 
     public RecorderOptions {
         if (thresholdConfig == null) {
-            thresholdConfig = ThresholdConfig.DEFAULT;
+            thresholdConfig = new ThresholdConfig();
         }
         if (responseCheckConfig == null) {
             responseCheckConfig = ResponseCheckConfig.EMPTY;
