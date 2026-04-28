@@ -199,6 +199,7 @@
                     <addTestClassPath>true</addTestClassPath>
                     <extraArtifacts>
                         <artifact>com.vaadin:testbench-loadtest-support:${project.version}</artifact>
+                        <artifact>com.vaadin:flow-html-components-testbench:${flow.version}</artifact>
                     </extraArtifacts>
                 </configuration>
                 <executions>
