@@ -13,6 +13,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
+import com.vaadin.testbench.Parameters;
 import com.vaadin.testbench.TestBench;
 
 /**
@@ -79,6 +80,17 @@ public final class LoadTestItHelper {
         // Force localhost traffic through proxy (don't bypass loopback)
         options.addArguments("--proxy-bypass-list=<-loopback>");
         options.setAcceptInsecureCerts(true);
+
+        // Honor TestBench's local-driver flags so headless / --no-sandbox /
+        // --disable-dev-shm-usage propagate to the proxy driver too. Without
+        // this, CI runners blow up here with "session not created: Chrome
+        // instance exited" because TestBench's BrowserExtension already
+        // started a headless driver, then openWithProxy() quit it and we
+        // build a fresh one with the proxy flags only.
+        if (Parameters.isHeadless()) {
+            options.addArguments("--headless=new");
+        }
+        options.addArguments(Parameters.getChromeOptions());
 
         return TestBench.createDriver(new ChromeDriver(options));
     }
