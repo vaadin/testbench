@@ -22,9 +22,10 @@ import org.apache.maven.plugins.annotations.Mojo;
  * <p>
  * Unlike the TestBench {@code record} goal, this does NOT use a recording
  * proxy. Instead, it relies on Playwright's native HAR recording capability.
- * The test class must extend {@code AbstractPlaywrightIT} (or otherwise
- * configure {@code BrowserContext} with {@code setRecordHarPath}) to produce
- * HAR output when the {@code k6.harOutputPath} system property is set.
+ * The test class must create its {@code BrowserContext} via
+ * com.vaadin.testbench.loadtest.PlaywrightHelper#createBrowserContext (or
+ * otherwise configure {@code BrowserContext} with {@code setRecordHarPath}) to
+ * produce HAR output when the {@code k6.harOutputPath} system property is set.
  * <p>
  * For each test class, this goal:
  * <ol>
@@ -69,9 +70,10 @@ public class PlaywrightRecordMojo extends AbstractRecordMojo {
         if (!Files.exists(harPath)) {
             throw new MojoExecutionException("HAR file was not created: "
                     + harPath
-                    + ". Ensure the test class extends AbstractPlaywrightIT or "
+                    + ". Ensure the test class creates its BrowserContext via "
+                    + "PlaywrightHelper.createBrowserContext(...) or otherwise "
                     + "configures BrowserContext with setRecordHarPath when "
-                    + "k6.harOutputPath system property is set.");
+                    + "the k6.harOutputPath system property is set.");
         }
 
         long harSize = Files.size(harPath);
