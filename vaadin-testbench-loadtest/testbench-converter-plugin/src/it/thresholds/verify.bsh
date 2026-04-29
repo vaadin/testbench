@@ -1,0 +1,85 @@
+import java.nio.file.*;
+import com.vaadin.testbench.loadtest.it.IntegrationTestHelper;
+
+Path basePath = basedir.toPath();
+Path k6Dir = basePath.resolve("src/test/k6");
+Path combined = k6Dir.resolve("combined-scenarios.js");
+// K6RunMojo writes reports under <testDir>/report and names the summary
+// after the script that ran (combined-scenarios-summary.json).
+Path reportDir = k6Dir.resolve("report");
+Path summaryJson = reportDir.resolve("combined-scenarios-summary.json");
+
+// 1. The combined script must exist — proves K6ScenarioCombiner ran and that
+// the threshold block was rendered into the generated test.
+IntegrationTestHelper.assertFileExists(combined);
+
+// 2. Threshold block from ThresholdConfig.toK6ThresholdsBlock is present.
+IntegrationTestHelper.assertFileContains(combined, "thresholds: {");
+
+// 3. Documented httpReqDurationP95 / httpReqDurationP99 overrides flowed
+// through to the generated http_req_duration thresholds.
+IntegrationTestHelper.assertSectionContains(combined,
+    "http_req_duration: [", "],",
+    new String[] { "p(95)<10000", "p(99)<20000" });
+
+// 4. checksAbortOnFail=false collapses the checks threshold to a plain
+// string list (no abortOnFail wrapper).
+IntegrationTestHelper.assertFileMatches(combined,
+    "checks:\\s*\\['rate>=[0-9.]+'\\]");
+IntegrationTestHelper.assertFileDoesNotContain(combined, "abortOnFail");
+
+// 5. Every customThresholds entry from the POM appears verbatim in the
+// generated thresholds block. Covers all documented k6 metric categories:
+// trend (http_req_waiting/connecting/sending/receiving), rate
+// (http_req_failed) and counter (http_reqs).
+String[] customThresholdLines = new String[] {
+    "http_req_waiting: ['p(95)<10000']",
+    "http_req_connecting: ['p(95)<5000']",
+    "http_req_sending: ['p(95)<5000']",
+    "http_req_receiving: ['p(95)<5000']",
+    "http_req_failed: ['rate<0.5']",
+    "http_reqs: ['count>0']",
+};
+for (int i = 0; i < customThresholdLines.length; i++) {
+    IntegrationTestHelper.assertFileContains(combined,
+        customThresholdLines[i]);
+}
+
+// 6. k6 ran the combined script and produced a summary. Each configured
+// threshold expression must appear in the JSON with a passing status.
+IntegrationTestHelper.assertFileExists(summaryJson);
+// JSON.stringify(data, null, 2) emits each threshold as
+//   "<expression>": {
+//     "ok": true,
+//     ...
+//   }
+// Matching "<expression>": { ... "ok": true with a non-greedy gap that
+// disallows another opening brace keeps the assertion scoped to the same
+// threshold object regardless of key ordering.
+String[] thresholdExpressions = new String[] {
+    "p(95)<10000",       // http_req_duration default override
+    "p(99)<20000",       // http_req_duration default override
+    "p(95)<5000",        // http_req_connecting / sending / receiving
+    "rate<0.5",          // http_req_failed (rate metric)
+    "count>0",           // http_reqs (counter metric)
+};
+for (int i = 0; i < thresholdExpressions.length; i++) {
+    String expr = thresholdExpressions[i];
+    String escaped = java.util.regex.Pattern.quote(expr);
+    IntegrationTestHelper.assertFileMatches(summaryJson,
+        "\"" + escaped + "\"\\s*:\\s*\\{[^\\{]*?\"ok\"\\s*:\\s*true");
+}
+// The checks threshold expression depends on checksAllowedFailureRate; just
+// confirm a "rate>=..." threshold is reported as passing.
+IntegrationTestHelper.assertFileMatches(summaryJson,
+    "\"rate>=[0-9.]+\"\\s*:\\s*\\{[^\\{]*?\"ok\"\\s*:\\s*true");
+
+// 7. Sanity check: no configured threshold was reported as breached.
+String summary = IntegrationTestHelper.readFile(summaryJson);
+if (java.util.regex.Pattern
+        .compile("\"ok\"\\s*:\\s*false")
+        .matcher(summary).find()) {
+    throw new RuntimeException(
+        "Summary reports a breached threshold (\"ok\": false) in: "
+            + summaryJson);
+}

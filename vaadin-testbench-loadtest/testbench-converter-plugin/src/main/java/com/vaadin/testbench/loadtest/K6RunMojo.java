@@ -422,6 +422,12 @@ public class K6RunMojo extends AbstractK6Mojo {
                     "Failed to generate combined test file", e);
         }
 
+        // K6ScenarioCombiner unconditionally imports the Vaadin k6 helpers
+        // via a `../utils/...` relative path; copy them next to the
+        // generated script so k6 can resolve the import even when the input
+        // tests do not need them.
+        copyVaadinHelpers(combinedFile.getParent());
+
         // Run the combined test (VUs and duration are embedded in the file,
         // don't override)
         try {
