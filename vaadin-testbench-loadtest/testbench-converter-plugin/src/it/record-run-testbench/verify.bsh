@@ -1,12 +1,20 @@
 import java.nio.file.*;
+import java.util.regex.*;
 import com.vaadin.testbench.loadtest.it.IntegrationTestHelper;
 
-// Recorded flow: page GET, 2 static GETs, init, 3 more static GETs, then
-// 3 UIDL POSTs:
-//   8  = ui-navigate (initial page-load sync)
-//   9  = input value mSync+change
-//   10 = button click (last request — uses handleSummary as the section
-//        end marker since there is no "// Request 11:")
+// Recorded flow:
+//   1               = page GET
+//   <initIndex>     = init (between page GET and first UIDL)
+//   <inputUidl>     = input value mSync+change (resolveNode 'name')
+//   <clickUidl>     = button click ("event":"click", resolveNode 'say-hello';
+//                     last request — uses handleSummary as the section
+//                     end marker since there is no "// Request <N+1>:")
+//
+// The exact request indices vary across platforms because BrowserMob Proxy
+// captures every request Chrome routes through it, and Linux Chrome may
+// emit a slightly different set of background/static requests than Windows
+// Chrome. Indices are resolved dynamically below from the generated script
+// instead of being hard-coded.
 
 // ----- Paths -------------------------------------------------------------
 Path basePath    = basedir.toPath();
@@ -56,13 +64,15 @@ IntegrationTestHelper.assertFileContainsInOrder(k6Script, new String[] {
 IntegrationTestHelper.assertFileDoesNotContain(k6Script, "'http://localhost:18280");
 IntegrationTestHelper.assertFileDoesNotContain(k6Script, "`http://localhost:18280");
 
-// ----- Threshold rules live inside the thresholds block, not somewhere else
+// ----- Threshold rules live inside the thresholds block, not somewhere
+// else. Match by tag suffix (no index) so the assertion holds regardless
+// of how many static resources the browser fetched before init/uidl.
 IntegrationTestHelper.assertSectionContains(k6Script, "thresholds: {", "},", new String[] {
     "checks: [{ threshold: 'rate>=0.99', abortOnFail: true, delayAbortEval: '5s' }]",
     "http_req_duration: ['p(95)<2000', 'p(99)<5000']",
-    "'http_req_duration{name:hello-world: 1 GET /}': ['max>=0']",
-    "'http_req_duration{name:hello-world: 4 GET init}': ['max>=0']",
-    "'http_req_duration{name:hello-world: 9 POST uidl}': ['max>=0']"
+    " GET /}': ['max>=0']",
+    " GET init}': ['max>=0']",
+    " POST uidl}': ['max>=0']"
 });
 
 // ----- Input data CSV ---------------------------------------------------
@@ -86,39 +96,95 @@ IntegrationTestHelper.assertFileContains(k6Script,
 IntegrationTestHelper.assertFileContains(k6Script, "${inputRow.input_1}");
 IntegrationTestHelper.assertFileDoesNotContain(k6Script, "\"value\":\"Vaadin User\"");
 
+// ----- Resolve dynamic request indices ----------------------------------
+// All four key requests (page, init, input change, click) live in their
+// own "// Request <N>: ..." block. Indices depend on what auxiliary
+// requests the browser/proxy emit, so we walk the blocks and identify
+// each by its unique content rather than hard-coding 1/4/9/10.
+String scriptText = IntegrationTestHelper.readFile(k6Script);
+String[] requestBlocks = scriptText.split("(?=// Request \\d+:)");
+Pattern blockHeaderPattern = Pattern.compile("// Request (\\d+):");
+int pageIndex = -1;
+int initIndex = -1;
+int inputUidlIndex = -1;
+int clickUidlIndex = -1;
+for (int i = 0; i < requestBlocks.length; i++) {
+    String block = requestBlocks[i];
+    Matcher hm = blockHeaderPattern.matcher(block);
+    if (!hm.find()) continue;
+    int idx = Integer.parseInt(hm.group(1));
+    // Page navigation: GET with tag suffix " GET /' }" (only the root
+    // path renders as just "/", so this match is unique).
+    if (pageIndex < 0 && block.contains(" GET /' }")) {
+        pageIndex = idx;
+    }
+    // Init request: the init URL plus the init-typed tag.
+    if (block.contains("?v-r=init")
+            && block.contains(" GET init' }")) {
+        initIndex = idx;
+    }
+    // Input mSync+change: resolveNode 'name' AND templated input value.
+    if (block.contains("resolveNode(nodeMap, 'name')")
+            && block.contains("${inputRow.input_1}")) {
+        inputUidlIndex = idx;
+    }
+    // Button click: resolveNode 'say-hello' AND click event payload.
+    if (block.contains("resolveNode(nodeMap, 'say-hello')")
+            && block.contains("\"event\":\"click\"")) {
+        clickUidlIndex = idx;
+    }
+}
+if (pageIndex < 0) {
+    throw new RuntimeException("No 'GET /' page request block found in k6 script");
+}
+if (initIndex < 0) {
+    throw new RuntimeException("No 'GET init' request block found in k6 script");
+}
+if (inputUidlIndex < 0) {
+    throw new RuntimeException(
+        "No input mSync+change UIDL block found (resolveNode 'name' + ${inputRow.input_1})");
+}
+if (clickUidlIndex < 0) {
+    throw new RuntimeException(
+        "No button click UIDL block found (resolveNode 'say-hello' + click event)");
+}
+
 // ----- Recorded request flow --------------------------------------------
 // The ordered check enforces that the key requests appear in temporal order
 // in the script (page → init → input sync → button click).
 IntegrationTestHelper.assertFileContainsInOrder(k6Script, new String[] {
-    "// Request 1: GET",
-    "// Request 4:",
-    "// Request 9:",
-    "// Request 10:"
+    "// Request " + pageIndex + ": GET",
+    "// Request " + initIndex + ":",
+    "// Request " + inputUidlIndex + ":",
+    "// Request " + clickUidlIndex + ":"
 });
-IntegrationTestHelper.assertFileContains(k6Script, "// Request 10: POST");
+IntegrationTestHelper.assertFileContains(k6Script, "// Request " + clickUidlIndex + ": POST");
 
 // ----- Recorded request bodies live in the right request block ----------
 // HelloWorldView uses Flow's native HTML components (Input, NativeButton,
 // Span) with explicit element IDs, so resolveNode() looks them up by id.
 
-// Request 4 (GET init): URL and tag.
+// Init request (GET init): URL and tag.
 IntegrationTestHelper.assertSectionContains(k6Script,
-    "// Request 4:", "// Request 5:", new String[] {
+    "// Request " + initIndex + ":", "// Request " + (initIndex + 1) + ":", new String[] {
         "?v-r=init",
-        "tags: { name: 'hello-world: 4 GET init' }"
+        "tags: { name: 'hello-world: " + initIndex + " GET init' }"
     });
-// Request 9 (input mSync+change): URL, tag, resolveNode by id, and the
-// templated input value substituted from the CSV row.
+// Input mSync+change UIDL: URL, tag, resolveNode by id, and the templated
+// input value substituted from the CSV row.
 IntegrationTestHelper.assertSectionContains(k6Script,
-    "// Request 9:", "// Request 10:", new String[] {
+    "// Request " + inputUidlIndex + ":", "// Request " + clickUidlIndex + ":", new String[] {
         "?v-r=uidl&v-uiId=${uiId}",
-        "tags: { name: 'hello-world: 9 POST uidl' }",
+        "tags: { name: 'hello-world: " + inputUidlIndex + " POST uidl' }",
         "resolveNode(nodeMap, 'name')",
         "\"property\":\"value\",\"value\":\"${inputRow.input_1}\""
     });
-// Request 10 (button click): resolveNode by id and the click event payload.
+// Button click UIDL (last request): resolveNode by id and click payload.
+// handleSummary is the post-default-function boundary since there is no
+// next "// Request <N>:" comment after the click.
 IntegrationTestHelper.assertSectionContains(k6Script,
-    "// Request 10:", "export function handleSummary", new String[] {
+    "// Request " + clickUidlIndex + ":", "export function handleSummary", new String[] {
+        "tags: { name: 'hello-world: " + clickUidlIndex + " POST uidl' }",
         "resolveNode(nodeMap, 'say-hello')",
         "\"event\":\"click\""
     });
