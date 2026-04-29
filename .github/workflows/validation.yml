@@ -309,11 +309,12 @@ jobs:
         run: |
           mvn verify \
             -pl vaadin-testbench-loadtest/testbench-converter-plugin -am \
+            -P maven-invoker-it \
             -DskipUnitTests \
             -B
 
       - name: Upload invoker logs
-        if: failure()
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: loadtest-converter-invoker-logs
