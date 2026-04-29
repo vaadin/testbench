@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.vaadin.test.loadtest</groupId>
+    <artifactId>response-checks-fails</artifactId>
+    <version>1.0</version>
+    <packaging>pom</packaging>
+
+    <description>
+        Negative-path counterpart to response-checks: verifies that a custom
+        check whose expression evaluates to false is reported as a failure
+        in the k6 summary for every scope (INIT, UIDL, ALL).
+
+        Records HelloWorldIT against the demo-server fixture so the captured
+        HAR contains both init and UIDL requests. customChecks below
+        configures one always-false check per scope. checksAbortOnFail=false
+        and checksAllowedFailureRate=0.99 keep k6 from cutting the test
+        short, and failOnThreshold=false on the run lets the build complete
+        even though the checks-rate threshold is breached — without those,
+        k6 would exit non-zero and verify.bsh would never run.
+    </description>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <testbench.loadtest.version>@project.version@</testbench.loadtest.version>
+        <demo.server.dir>${project.basedir}/../demo-server</demo.server.dir>
+        <demo.server.jar>${demo.server.dir}/target/demo-server.jar</demo.server.jar>
+        <loadtest.serverPort>18385</loadtest.serverPort>
+        <loadtest.managementPort>18387</loadtest.managementPort>
+        <loadtest.proxyPort>16105</loadtest.proxyPort>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.vaadin</groupId>
+                <artifactId>testbench-converter-plugin</artifactId>
+                <version>${testbench.loadtest.version}</version>
+                <executions>
+                    <execution>
+                        <id>start-server</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>start-server</goal>
+                        </goals>
+                        <configuration>
+                            <serverJar>${demo.server.jar}</serverJar>
+                            <serverPort>${loadtest.serverPort}</serverPort>
+                            <managementPort>${loadtest.managementPort}</managementPort>
+                            <startupTimeout>120</startupTimeout>
+                            <healthPollInterval>2</healthPollInterval>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>record</id>
+                        <phase>integration-test</phase>
+                        <goals>
+                            <goal>record</goal>
+                        </goals>
+                        <configuration>
+                            <testClasses>
+                                <testClass>HelloWorldIT</testClass>
+                            </testClasses>
+                            <proxyPort>${loadtest.proxyPort}</proxyPort>
+                            <appPort>${loadtest.serverPort}</appPort>
+                            <testWorkDir>${demo.server.dir}</testWorkDir>
+                            <harDir>${project.build.directory}</harDir>
+                            <outputDir>${project.build.directory}/k6/tests</outputDir>
+                            <forceRecord>true</forceRecord>
+                            <thinkTimeEnabled>false</thinkTimeEnabled>
+                            <mavenArgs>
+                                -Dcom.vaadin.testbench.Parameters.headless=true
+                                -Dcom.vaadin.testbench.Parameters.chromeOptions=--no-sandbox,--disable-dev-shm-usage
+                            </mavenArgs>
+                            <!--
+                                One always-false check per documented scope.
+                                Names are kept distinct so verify.bsh can
+                                grep them out of the summary entries
+                                without ambiguity.
+                            -->
+                            <customChecks>INIT|init never passes|(r) =&gt; false;UIDL|uidl never passes|(r) =&gt; false;ALL|never passes|(r) =&gt; false</customChecks>
+                            <!--
+                                Disable abort-on-fail and raise the allowed
+                                failure rate so k6 keeps running even when
+                                the always-false checks blow past the
+                                checks-rate threshold. Without this k6
+                                would stop after the 5s delayAbortEval
+                                window and many failure samples would be
+                                lost.
+                            -->
+                            <checksAbortOnFail>false</checksAbortOnFail>
+                            <checksAllowedFailureRate>0.99</checksAllowedFailureRate>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>run-recorded-scenario</id>
+                        <phase>integration-test</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <testDir>${project.build.directory}/k6/tests</testDir>
+                            <virtualUsers>1</virtualUsers>
+                            <duration>5s</duration>
+                            <loadPattern>constant</loadPattern>
+                            <appIp>localhost</appIp>
+                            <appPort>${loadtest.serverPort}</appPort>
+                            <managementPort>${loadtest.managementPort}</managementPort>
+                            <metricsInterval>0</metricsInterval>
+                            <!--
+                                Always-false checks make the checks-rate
+                                threshold breach; without this the build
+                                would fail before verify.bsh has a chance
+                                to inspect the summary.
+                            -->
+                            <failOnThreshold>false</failOnThreshold>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>stop-server</id>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <goal>stop-server</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
