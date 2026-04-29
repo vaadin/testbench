@@ -1,0 +1,19 @@
+import java.nio.file.*;
+import com.vaadin.testbench.loadtest.it.IntegrationTestHelper;
+
+Path basePath = basedir.toPath();
+// K6RunMojo writes reports next to the test file under <testDir>/report
+Path reportDir = basePath.resolve("src/test/k6/report");
+Path summaryJson = reportDir.resolve("test-summary.json");
+Path summaryHtml = reportDir.resolve("test-summary.html");
+
+IntegrationTestHelper.assertDirectoryExists(reportDir);
+IntegrationTestHelper.assertFileExists(summaryJson);
+IntegrationTestHelper.assertFileExists(summaryHtml);
+
+// Sanity-check the JSON summary contains the headline metrics
+IntegrationTestHelper.assertFileContains(summaryJson, "http_req_duration");
+IntegrationTestHelper.assertFileContains(summaryJson, "http_reqs");
+
+// k6 actually ran (build log lists the script under "Tests:")
+IntegrationTestHelper.assertLogContains(basePath, "test.js");

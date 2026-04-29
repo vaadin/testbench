@@ -1,0 +1,113 @@
+import java.nio.file.*;
+import com.vaadin.testbench.loadtest.it.IntegrationTestHelper;
+
+Path basePath  = basedir.toPath();
+Path reportDir = basePath.resolve("src/test/k6/report");
+
+// 1. Each run wrote its summary to a per-profile filename. Existence
+// proves k6 reached the end of the run for that profile. The
+// shared-iterations executor goes through K6RunMojo.runWithEmbedded
+// Config, which runs a generated "wrapper-<test>.js" instead of the
+// original — the summary follows the wrapper's basename.
+String[] summaryFiles = new String[] {
+    "constant-summary.json",
+    "ramp-summary.json",
+    "stress-summary.json",
+    "soak-summary.json",
+    "custom-summary.json",
+    "wrapper-executor-summary.json",
+    "wrapper-custom-scenario-summary.json",
+};
+for (int i = 0; i < summaryFiles.length; i++) {
+    IntegrationTestHelper.assertFileExists(
+        reportDir.resolve(summaryFiles[i]));
+}
+
+// 2. K6RunMojo logs the resolved load profile per execution; check the
+// build.log for each profile's signature so the configuration can be
+// shown to have flowed through. Strings come from LoadProfile.toString.
+IntegrationTestHelper.assertLogContains(basePath,
+    "Load pattern: constant (no ramping)");
+IntegrationTestHelper.assertLogContains(basePath,
+    "Load pattern: ramp (up: 1s, down: 1s)");
+IntegrationTestHelper.assertLogContains(basePath,
+    "Load pattern: stress (gradual increase with spike)");
+IntegrationTestHelper.assertLogContains(basePath,
+    "Load pattern: soak (quick ramp, long sustain)");
+IntegrationTestHelper.assertLogContains(basePath,
+    "Load pattern: custom (3 stages)");
+IntegrationTestHelper.assertLogContains(basePath,
+    "Load pattern: shared-iterations executor");
+IntegrationTestHelper.assertLogContains(basePath,
+    "Load pattern: custom scenario (raw k6 definition)");
+
+// 3. Every ramping pattern triggers NodeRunner to log the resolved
+// stages. The stage line is "    <duration> → <target> VUs" but the
+// arrow is non-ASCII and may be re-encoded in the captured build.log,
+// so the assertion matches by duration + target only.
+Path log = basePath.resolve("build.log");
+// Ramp: 1s → 2 VUs / 3s → 2 VUs / 1s → 0 VUs.
+IntegrationTestHelper.assertFileMatches(log, "1s.*2 VUs");
+IntegrationTestHelper.assertFileMatches(log, "3s.*2 VUs");
+IntegrationTestHelper.assertFileMatches(log, "1s.*0 VUs");
+// Stress includes a spike phase to ceil(vus * 1.5) = 3 VUs that no
+// other profile produces; matching it confirms the stress stages were
+// generated.
+IntegrationTestHelper.assertFileMatches(log, "2s.*3 VUs");
+// Soak's long sustain stage is 8s at the target VU count — unique to
+// soak with this configuration.
+IntegrationTestHelper.assertFileMatches(log, "8s.*2 VUs");
+
+// 4. Explicit executors take the embedded-config wrapper path. The log
+// entry from NodeRunner.runK6Test confirms the wrapper was used.
+IntegrationTestHelper.assertLogContains(basePath,
+    "Using embedded scenario configuration");
+IntegrationTestHelper.assertLogContains(basePath, "Generated wrapper:");
+
+// 5. Per-profile sanity checks against the summary JSON: confirms the
+// profile actually shaped the run, not just the log line.
+//
+// constant: vus_max equals the configured 2.
+String constantSummary = IntegrationTestHelper.readFile(
+    reportDir.resolve("constant-summary.json"));
+if (!java.util.regex.Pattern
+        .compile("\"vus_max\"[^\\}]*?\"max\"\\s*:\\s*2\\b",
+            java.util.regex.Pattern.DOTALL)
+        .matcher(constantSummary).find()) {
+    throw new RuntimeException(
+        "constant profile: expected vus_max.max == 2 in summary");
+}
+// stress: spike phase pushed VUs to 3, so vus_max must reflect that.
+String stressSummary = IntegrationTestHelper.readFile(
+    reportDir.resolve("stress-summary.json"));
+if (!java.util.regex.Pattern
+        .compile("\"vus_max\"[^\\}]*?\"max\"\\s*:\\s*3\\b",
+            java.util.regex.Pattern.DOTALL)
+        .matcher(stressSummary).find()) {
+    throw new RuntimeException(
+        "stress profile: expected vus_max.max == 3 (spike phase) in summary");
+}
+// shared-iterations executor: the configured iteration count must be
+// honoured exactly.
+String executorSummary = IntegrationTestHelper.readFile(
+    reportDir.resolve("wrapper-executor-summary.json"));
+if (!java.util.regex.Pattern
+        .compile("\"iterations\"\\s*:\\s*\\{[^\\}]*?\"count\"\\s*:\\s*10\\b",
+            java.util.regex.Pattern.DOTALL)
+        .matcher(executorSummary).find()) {
+    throw new RuntimeException(
+        "shared-iterations executor: expected iterations.count == 10 in summary");
+}
+// customScenario: the raw block selects per-vu-iterations with vus=4
+// and iterations=5 (per VU), so 20 total iterations must be reported.
+// Distinct from the shared-iterations executor's 10, so any fallback
+// to a built-in profile would be caught.
+String customScenarioSummary = IntegrationTestHelper.readFile(
+    reportDir.resolve("wrapper-custom-scenario-summary.json"));
+if (!java.util.regex.Pattern
+        .compile("\"iterations\"\\s*:\\s*\\{[^\\}]*?\"count\"\\s*:\\s*20\\b",
+            java.util.regex.Pattern.DOTALL)
+        .matcher(customScenarioSummary).find()) {
+    throw new RuntimeException(
+        "customScenario: expected iterations.count == 20 (vus=4 * iterations=5) in summary");
+}

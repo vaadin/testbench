@@ -21,6 +21,17 @@
         <maven.version>3.9.6</maven.version>
         <maven-plugin-api.version>3.9.6</maven-plugin-api.version>
         <maven-plugin-annotations.version>3.11.0</maven-plugin-annotations.version>
+        <!-- Pinned k6 version for the auto-install integration test (000-install-k6).
+             Bumping this updates every IT that consumes the downloaded binary. -->
+        <k6.version>0.54.0</k6.version>
+        <!--
+            OS-agnostic install location for the k6 binary. The 000-install-k6
+            IT does the actual download and writes the resolved absolute path
+            to ${k6.install.dir}/k6.properties; properties-maven-plugin loads
+            that file in the maven-invoker-it profile, and the second invoker
+            execution broadcasts the value as -Dk6.binary to every other IT.
+        -->
+        <k6.install.dir>${project.build.directory}/k6-bin</k6.install.dir>
     </properties>
 
     <dependencies>
@@ -154,5 +165,125 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <!--
+             Opt-in profile that wires up the maven-invoker IT pipeline.
+             Activate with `-Pmaven-invoker-it`.
+         -->
+        <profile>
+            <id>maven-invoker-it</id>
+            <build>
+                <plugins>
+                    <!--
+                         IT pipeline:
+
+                         1) install-k6 (pre-integration-test): installs
+                            the plugin under test into target/local-repo
+                            and runs the 000-install-k6 IT, which
+                            downloads the k6 binary for the host OS/arch
+                            and writes target/k6-bin/k6.properties with
+                            the resolved absolute path.
+
+                         2) load-k6-binary (pre-integration-test,
+                            declared after the invoker plugin so it
+                            runs second): reads k6.properties into the
+                            parent project's properties so ${k6.binary}
+                            resolves to the path the bootstrap IT just
+                            produced.
+
+                         3) run-tests (integration-test): runs every
+                            other IT, broadcasting -Dk6.binary=${k6.binary}
+                            so each spawned Maven sees the resolved
+                            path. The plugin under test reads it via
+                            AbstractK6Mojo.@Parameter(property="k6.binary").
+                     -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-invoker-plugin</artifactId>
+                        <version>3.9.1</version>
+                        <configuration>
+                            <skipInstallation>${skipTests}</skipInstallation>
+                            <skipInvocation>${skipTests}</skipInvocation>
+                            <localRepositoryPath>target/local-repo</localRepositoryPath>
+                            <settingsFile>src/it/settings.xml</settingsFile>
+                            <postBuildHookScript>verify</postBuildHookScript>
+                            <streamLogsOnFailures>true</streamLogsOnFailures>
+                            <addTestClassPath>true</addTestClassPath>
+                            <extraArtifacts>
+                                <artifact>com.vaadin:testbench-loadtest-support:${project.version}</artifact>
+                                <artifact>com.vaadin:flow-html-components-testbench:${flow.version}</artifact>
+                            </extraArtifacts>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>install-k6</id>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>install</goal>
+                                    <goal>integration-test</goal>
+                                </goals>
+                                <configuration>
+                                    <pomIncludes>
+                                        <pomInclude>000-install-k6/pom.xml</pomInclude>
+                                    </pomIncludes>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>run-tests</id>
+                                <phase>integration-test</phase>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                                <configuration>
+                                    <pomExcludes>
+                                        <pomExclude>000-install-k6/pom.xml</pomExclude>
+                                    </pomExcludes>
+                                    <!--
+                                        Broadcast as -Dk6.binary=... to
+                                        every spawned IT. ${k6.binary}
+                                        resolves at execution time,
+                                        after properties-maven-plugin
+                                        loaded the value written by
+                                        000-install-k6.
+                                    -->
+                                    <properties>
+                                        <k6.binary>${k6.binary}</k6.binary>
+                                    </properties>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>properties-maven-plugin</artifactId>
+                        <version>1.2.1</version>
+                        <executions>
+                            <execution>
+                                <id>load-k6-binary</id>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>read-project-properties</goal>
+                                </goals>
+                                <configuration>
+                                    <files>
+                                        <file>${k6.install.dir}/k6.properties</file>
+                                    </files>
+                                    <!-- Allow downstream ITs to run in
+                                         isolation when 000-install-k6
+                                         has not been executed yet;
+                                         k6.binary stays empty and
+                                         NodeRunner falls back to "k6"
+                                         on PATH. -->
+                                    <quiet>true</quiet>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>

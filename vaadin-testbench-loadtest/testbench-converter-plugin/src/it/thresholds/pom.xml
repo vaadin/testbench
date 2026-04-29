@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.vaadin.test.loadtest</groupId>
+    <artifactId>thresholds</artifactId>
+    <version>1.0</version>
+    <packaging>pom</packaging>
+
+    <description>
+        Verifies that the threshold configuration is
+        wired through the testbench-converter-plugin POM into the generated k6
+        script and produces matching results in the k6 summary.
+
+        Uses combineScenarios=true with two trivial scenarios so K6RunMojo
+        invokes K6ScenarioCombiner, which embeds ThresholdConfig.toK6Thresholds
+        Block in the generated combined-scenarios.js. Default
+        http_req_duration p95/p99 are overridden,
+        the checks abort-on-fail flag is flipped, and customThresholds covers
+        several supported metric category (trend / rate / counter):
+        http_req_waiting, http_req_connecting, http_req_sending,
+        http_req_receiving (trend); http_req_failed (rate); http_reqs
+        (counter). Threshold values are deliberately permissive so all
+        thresholds pass against the demo-server fixture.
+    </description>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <testbench.loadtest.version>@project.version@</testbench.loadtest.version>
+        <demo.server.jar>${project.basedir}/../demo-server/target/demo-server.jar</demo.server.jar>
+        <loadtest.serverPort>18185</loadtest.serverPort>
+        <loadtest.managementPort>18187</loadtest.managementPort>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.vaadin</groupId>
+                <artifactId>testbench-converter-plugin</artifactId>
+                <version>${testbench.loadtest.version}</version>
+                <executions>
+                    <execution>
+                        <id>start-server</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>start-server</goal>
+                        </goals>
+                        <configuration>
+                            <serverJar>${demo.server.jar}</serverJar>
+                            <serverPort>${loadtest.serverPort}</serverPort>
+                            <managementPort>${loadtest.managementPort}</managementPort>
+                            <startupTimeout>120</startupTimeout>
+                            <healthPollInterval>2</healthPollInterval>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>run</id>
+                        <phase>integration-test</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <testDir>${project.basedir}/src/test/k6</testDir>
+                            <virtualUsers>2</virtualUsers>
+                            <duration>5s</duration>
+                            <loadPattern>constant</loadPattern>
+                            <appIp>localhost</appIp>
+                            <appPort>${loadtest.serverPort}</appPort>
+                            <managementPort>${loadtest.managementPort}</managementPort>
+                            <metricsInterval>0</metricsInterval>
+                            <!--
+                                combineScenarios=true is required for the
+                                threshold block to be embedded in the generated
+                                k6 script. K6RunMojo only forwards
+                                ThresholdConfig to K6ScenarioCombiner when
+                                combining; sequential runs leave the script's
+                                thresholds untouched.
+                            -->
+                            <combineScenarios>true</combineScenarios>
+                            <!--
+                                Permissive override of the documented default
+                                http_req_duration thresholds (p95<2000,
+                                p99<5000). Wide enough to pass on the
+                                demo-server fixture; the assertions only verify
+                                that the values flow through to the script.
+                            -->
+                            <httpReqDurationP95>10000</httpReqDurationP95>
+                            <httpReqDurationP99>20000</httpReqDurationP99>
+                            <!--
+                                Flip the abort-on-fail default so
+                                the generated script omits the abortOnFail
+                                wrapper around the checks threshold.
+                            -->
+                            <checksAbortOnFail>false</checksAbortOnFail>
+                            <!--
+                                Custom thresholds covering several supported
+                                metric category:
+                                trend (http_req_waiting / http_req_connecting /
+                                http_req_sending / http_req_receiving),
+                                rate (http_req_failed) and
+                                counter (http_reqs). All values are slack
+                                enough to pass against the demo-server.
+                            -->
+                            <customThresholds>http_req_waiting:p(95)&lt;10000,http_req_connecting:p(95)&lt;5000,http_req_sending:p(95)&lt;5000,http_req_receiving:p(95)&lt;5000,http_req_failed:rate&lt;0.5,http_reqs:count&gt;0</customThresholds>
+                            <!--
+                                Fail the build if any of the configured
+                                thresholds breach. The IT relies on this so a
+                                misconfigured threshold (e.g. units swap) is
+                                caught instead of silently passing.
+                            -->
+                            <failOnThreshold>true</failOnThreshold>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>stop-server</id>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <goal>stop-server</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

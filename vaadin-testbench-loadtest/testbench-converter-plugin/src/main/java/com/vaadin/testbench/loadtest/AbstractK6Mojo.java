@@ -58,6 +58,17 @@ public abstract class AbstractK6Mojo extends AbstractMojo {
     protected boolean skip;
 
     /**
+     * Absolute path to the k6 executable. When unset (the default), the plugin
+     * resolves {@code k6} from {@code PATH}. Set this when k6 is installed in a
+     * non-standard location (common on Windows and hardened CI images) or when
+     * an automated installer (such as the {@code 000-install-k6}
+     * integration-test fixture) downloads a version-pinned binary outside
+     * {@code PATH}.
+     */
+    @Parameter(property = "k6.binary")
+    protected String k6Binary;
+
+    /**
      * 95th percentile HTTP request duration threshold in milliseconds. The k6
      * test will fail if p(95) response time exceeds this value. Set to 0 to
      * disable this threshold.
@@ -160,7 +171,7 @@ public abstract class AbstractK6Mojo extends AbstractMojo {
         }
 
         // Initialize runner (now uses Java implementations internally)
-        nodeRunner = new NodeRunner(extractionPath);
+        nodeRunner = new NodeRunner(extractionPath, k6Binary);
     }
 
     // Visible for testing

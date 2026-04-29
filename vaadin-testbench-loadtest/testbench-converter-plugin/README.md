@@ -142,3 +142,24 @@ The refactored k6 tests include:
 - **Dynamic session handling** - Extracts session IDs from responses
 - **Configurable target** - Use `-e APP_IP=host -e APP_PORT=port` to test different servers
 - **Vaadin helper imports** - Uses shared utility functions for Vaadin protocol handling (`vaadin-k6-helpers.js`)
+
+## Integration Tests
+
+Self-contained Maven Invoker projects under `src/it/` exercise each Mojo end-to-end against a real Vaadin Flow fixture. They are gated behind the `maven-invoker-it` profile so a default `mvn verify` only runs unit tests.
+
+**Prerequisites:** Java 21+, Maven, and Chrome installed (used by the recording ITs).
+
+Run the full suite:
+
+```bash
+mvn verify -Pmaven-invoker-it
+```
+
+Run a single IT (or a comma-separated list):
+
+```bash
+mvn invoker:run -Pmaven-invoker-it -Dinvoker.test=convert-har
+mvn invoker:run -Pmaven-invoker-it -Dinvoker.test=demo-server,record-testbench
+```
+
+The ITs install the plugin to `target/local-repo` and clone each project under `target/its/`. Build logs are at `target/its/<name>/build.log`.

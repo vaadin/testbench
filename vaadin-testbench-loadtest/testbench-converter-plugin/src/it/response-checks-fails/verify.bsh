@@ -1,0 +1,127 @@
+import java.nio.file.*;
+import com.vaadin.testbench.loadtest.it.IntegrationTestHelper;
+
+Path basePath    = basedir.toPath();
+Path k6Tests     = basePath.resolve("target/k6/tests");
+Path k6Script    = k6Tests.resolve("hello-world.js");
+Path summaryJson = k6Tests.resolve("report/hello-world-summary.json");
+
+// 1. Generated script must exist before any assertions can run.
+IntegrationTestHelper.assertFileExists(k6Script);
+
+// 2. Each always-false custom check made it into the script. Same
+// per-scope placement assertions as the happy-path response-checks IT,
+// but with the failing-check names. The point is to confirm that the
+// checks are wired in (so they will execute) before inspecting the
+// summary for the failure outcomes.
+String[] customCheckNames = new String[] {
+    "init never passes",
+    "uidl never passes",
+    "never passes",
+};
+for (int i = 0; i < customCheckNames.length; i++) {
+    IntegrationTestHelper.assertFileContains(k6Script,
+        "'" + customCheckNames[i] + "':");
+}
+
+String initSectionStart =
+    "// Abort iteration and trigger test abort if init response is invalid";
+String initSectionEnd =
+    "// Extract Vaadin session values from init response";
+IntegrationTestHelper.assertSectionContains(k6Script,
+    initSectionStart, initSectionEnd, new String[] {
+        "'init never passes':",
+        "'never passes':",
+    });
+IntegrationTestHelper.assertSectionDoesNotContain(k6Script,
+    initSectionStart, initSectionEnd, "'uidl never passes':");
+
+String uidlSectionStart =
+    "// Abort iteration and trigger test abort if UIDL response is invalid";
+String uidlSectionEnd =
+    "// Update Vaadin sync counters from response";
+String script = IntegrationTestHelper.readFile(k6Script);
+int cursor = 0;
+int uidlBlockCount = 0;
+while (true) {
+    int start = script.indexOf(uidlSectionStart, cursor);
+    if (start < 0) {
+        break;
+    }
+    int end = script.indexOf(uidlSectionEnd, start);
+    if (end < 0) {
+        throw new RuntimeException(
+            "UIDL block at offset " + start + " is missing its end marker");
+    }
+    String block = script.substring(start, end);
+    if (!block.contains("'uidl never passes':")) {
+        throw new RuntimeException(
+            "UIDL block at offset " + start + " missing UIDL custom check");
+    }
+    if (!block.contains("'never passes':")) {
+        throw new RuntimeException(
+            "UIDL block at offset " + start + " missing ALL custom check");
+    }
+    if (block.contains("'init never passes':")) {
+        throw new RuntimeException(
+            "UIDL block at offset " + start
+                + " unexpectedly contains INIT custom check");
+    }
+    uidlBlockCount++;
+    cursor = end;
+}
+if (uidlBlockCount == 0) {
+    throw new RuntimeException(
+        "Generated script has no UIDL response handling block — recording "
+            + "did not capture a UIDL request");
+}
+
+// 3. The k6 run produced a summary that records the failures for the
+// custom checks that actually executed. Field order inside an entry is
+// not stable, so the assertion locates the entry via its unique
+// "path": "::<name>" anchor and inspects the enclosing object braces.
+//
+// Note on UIDL: HarToK6Converter wraps each response-handling block in
+//   if (!check(response, {...})) { fail(...) }
+// so an always-false INIT or ALL check aborts the iteration before any
+// UIDL request runs. The UIDL custom check is correctly wired into
+// every UIDL block (verified above) but never gets exercised here, so
+// k6 omits it from the summary entirely. Only the init-block failures
+// are summary-asserted.
+String[] executedFailingChecks = new String[] {
+    "init never passes",
+    "never passes",
+};
+IntegrationTestHelper.assertFileExists(summaryJson);
+String summary = IntegrationTestHelper.readFile(summaryJson);
+for (int i = 0; i < executedFailingChecks.length; i++) {
+    String name = executedFailingChecks[i];
+    String anchor = "\"path\": \"::" + name + "\"";
+    int anchorIdx = summary.indexOf(anchor);
+    if (anchorIdx < 0) {
+        throw new RuntimeException(
+            "Summary missing custom check entry for: " + name);
+    }
+    int objectStart = summary.lastIndexOf('{', anchorIdx);
+    int objectEnd = summary.indexOf('}', anchorIdx);
+    if (objectStart < 0 || objectEnd < 0) {
+        throw new RuntimeException(
+            "Summary check entry for '" + name + "' is malformed");
+    }
+    String entry = summary.substring(objectStart, objectEnd + 1);
+    // Always-false expression: every invocation must be a fail; passes
+    // must stay at 0 since k6 records each check call as either pass or
+    // fail, never both.
+    if (!entry.matches("(?s).*\"fails\":\\s*[1-9][0-9]*.*")) {
+        throw new RuntimeException(
+            "Custom check '" + name + "' never failed (fails == 0): "
+                + entry);
+    }
+    if (!entry.matches("(?s).*\"passes\":\\s*0[^0-9].*")
+            && !entry.matches("(?s).*\"passes\":\\s*0\\s*[},].*")) {
+        throw new RuntimeException(
+            "Custom check '" + name
+                + "' unexpectedly passed at least once: " + entry);
+    }
+}
+

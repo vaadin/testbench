@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.vaadin.test.loadtest</groupId>
+    <artifactId>convert-har</artifactId>
+    <version>1.0</version>
+    <packaging>pom</packaging>
+
+    <description>
+        Verifies that loadtest:convert turns a small fixture HAR into a Vaadin-aware
+        k6 script. External domains are filtered and the Vaadin helper import is
+        injected by the refactoring step.
+    </description>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <testbench.loadtest.version>@project.version@</testbench.loadtest.version>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.vaadin</groupId>
+                <artifactId>testbench-converter-plugin</artifactId>
+                <version>${testbench.loadtest.version}</version>
+                <executions>
+                    <execution>
+                        <id>convert</id>
+                        <phase>generate-test-resources</phase>
+                        <goals>
+                            <goal>convert</goal>
+                        </goals>
+                        <configuration>
+                            <harFile>${project.basedir}/src/test/resources/recorded.har</harFile>
+                            <outputDir>${project.build.directory}/k6/tests</outputDir>
+                            <outputName>recorded</outputName>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

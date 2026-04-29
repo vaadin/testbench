@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.vaadin.test.loadtest</groupId>
+    <artifactId>convert-har-skip-filter</artifactId>
+    <version>1.0</version>
+    <packaging>pom</packaging>
+
+    <description>
+        Verifies skipFilter and skipRefactor flags on loadtest:convert. With both
+        flags set, external requests are kept and the Vaadin helper import is
+        not injected.
+    </description>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <testbench.loadtest.version>@project.version@</testbench.loadtest.version>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.vaadin</groupId>
+                <artifactId>testbench-converter-plugin</artifactId>
+                <version>${testbench.loadtest.version}</version>
+                <executions>
+                    <execution>
+                        <id>convert-no-filter</id>
+                        <phase>generate-test-resources</phase>
+                        <goals>
+                            <goal>convert</goal>
+                        </goals>
+                        <configuration>
+                            <harFile>${project.basedir}/src/test/resources/recorded.har</harFile>
+                            <outputDir>${project.build.directory}/k6/tests</outputDir>
+                            <outputName>recorded</outputName>
+                            <skipFilter>true</skipFilter>
+                            <skipRefactor>true</skipRefactor>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

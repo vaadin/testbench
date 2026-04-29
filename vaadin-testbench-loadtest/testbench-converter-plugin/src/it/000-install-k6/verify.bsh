@@ -1,0 +1,39 @@
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+// IT basedir is <plugin>/target/its/000-install-k6/ when maven-invoker-plugin
+// clones the project. Two levels up reaches <plugin>/target/, where the
+// install-k6 step wrote k6-bin/ alongside local-repo/.
+File k6Dir = new File(basedir, "../../k6-bin");
+if (!k6Dir.isDirectory()) {
+    throw new RuntimeException(
+            "k6 install dir not created: " + k6Dir.getAbsolutePath());
+}
+
+// Walk the directory iteratively (Files.walk + Path.normalize trip BeanShell
+// reflection on Java 21+).
+List queue = new ArrayList();
+queue.add(k6Dir);
+boolean found = false;
+while (!queue.isEmpty()) {
+    File f = (File) queue.remove(0);
+    if (f.isDirectory()) {
+        File[] children = f.listFiles();
+        if (children != null) {
+            for (int i = 0; i < children.length; i++) {
+                queue.add(children[i]);
+            }
+        }
+    } else {
+        String name = f.getName();
+        if (name.equals("k6") || name.equals("k6.exe")) {
+            found = true;
+            break;
+        }
+    }
+}
+if (!found) {
+    throw new RuntimeException(
+            "k6 binary not found under " + k6Dir.getAbsolutePath());
+}
