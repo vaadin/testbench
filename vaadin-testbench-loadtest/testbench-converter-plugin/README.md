@@ -145,9 +145,9 @@ The refactored k6 tests include:
 
 ## Integration Tests
 
-Self-contained Maven Invoker projects under `src/it/` exercise each Mojo end-to-end against a real Vaadin Flow fixture. They are gated behind the `maven-invoker-it` profile so a default `mvn verify` only runs unit tests.
+Self-contained Maven Invoker projects under `src/it/` exercise each Mojo end-to-end against a real Vaadin Flow fixture. `mvn verify` runs them. Skip with `-DskipTests`.
 
-**Prerequisites:** Java 21+, Maven, [k6](https://grafana.com/docs/k6/latest/get-started/installation/) on `PATH`, and Chrome installed (used by the recording ITs).
+**Prerequisites:** Java 21+, Maven, and Chrome installed (used by the recording ITs).
 
 Run the full suite:
 
