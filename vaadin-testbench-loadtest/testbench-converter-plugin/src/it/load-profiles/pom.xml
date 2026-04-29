@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.vaadin.test.loadtest</groupId>
+    <artifactId>load-profiles</artifactId>
+    <version>1.0</version>
+    <packaging>pom</packaging>
+
+    <description>
+        Verifies that every load profile configurable on the
+        testbench-converter-plugin run goal is honoured against the existing
+        demo-server fixture. Six independent run executions cover all four
+        built-in patterns (constant, ramp, stress, soak), the custom-stages
+        pattern driven by the stages parameter, and one explicit k6
+        executor (shared-iterations) — exercising both the CLI-flag path
+        used by constant/ramping-vus and the embedded-config wrapper path
+        used by every other executor. Each execution targets its own k6
+        test file so the summaries land in distinct paths and verify.bsh
+        can inspect per-profile evidence.
+    </description>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <testbench.loadtest.version>@project.version@</testbench.loadtest.version>
+        <demo.server.jar>${project.basedir}/../demo-server/target/demo-server.jar</demo.server.jar>
+        <loadtest.serverPort>18480</loadtest.serverPort>
+        <loadtest.managementPort>18482</loadtest.managementPort>
+        <k6.dir>${project.basedir}/src/test/k6</k6.dir>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.vaadin</groupId>
+                <artifactId>testbench-converter-plugin</artifactId>
+                <version>${testbench.loadtest.version}</version>
+                <executions>
+                    <execution>
+                        <id>start-server</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>start-server</goal>
+                        </goals>
+                        <configuration>
+                            <serverJar>${demo.server.jar}</serverJar>
+                            <serverPort>${loadtest.serverPort}</serverPort>
+                            <managementPort>${loadtest.managementPort}</managementPort>
+                            <startupTimeout>120</startupTimeout>
+                            <healthPollInterval>2</healthPollInterval>
+                        </configuration>
+                    </execution>
+
+                    <!--
+                        Built-in profile #1 — constant. All VUs start
+                        immediately, no ramp phases. Maps to k6's
+                        constant-vus executor; configured via CLI flags
+                        (no embedded wrapper).
+                    -->
+                    <execution>
+                        <id>run-constant</id>
+                        <phase>integration-test</phase>
+                        <goals><goal>run</goal></goals>
+                        <configuration>
+                            <testFile>${k6.dir}/constant.js</testFile>
+                            <virtualUsers>2</virtualUsers>
+                            <duration>3s</duration>
+                            <loadPattern>constant</loadPattern>
+                            <appIp>localhost</appIp>
+                            <appPort>${loadtest.serverPort}</appPort>
+                            <managementPort>-1</managementPort>
+                            <metricsInterval>0</metricsInterval>
+                            <failOnThreshold>false</failOnThreshold>
+                        </configuration>
+                    </execution>
+
+                    <!--
+                        Built-in profile #2 — ramp. Ramp up → sustain →
+                        ramp down using k6's ramping-vus executor with
+                        custom rampUp / rampDown durations.
+                    -->
+                    <execution>
+                        <id>run-ramp</id>
+                        <phase>integration-test</phase>
+                        <goals><goal>run</goal></goals>
+                        <configuration>
+                            <testFile>${k6.dir}/ramp.js</testFile>
+                            <virtualUsers>2</virtualUsers>
+                            <duration>5s</duration>
+                            <loadPattern>ramp</loadPattern>
+                            <rampUp>1s</rampUp>
+                            <rampDown>1s</rampDown>
+                            <appIp>localhost</appIp>
+                            <appPort>${loadtest.serverPort}</appPort>
+                            <managementPort>-1</managementPort>
+                            <metricsInterval>0</metricsInterval>
+                            <failOnThreshold>false</failOnThreshold>
+                        </configuration>
+                    </execution>
+
+                    <!--
+                        Built-in profile #3 — stress. Five-stage pattern
+                        with a 150 % spike phase. The 10s duration is the
+                        smallest that keeps every stage > 0s after the
+                        ms→s rounding inside LoadProfile.formatDuration
+                        (the spike target rounds vus*1.5 up, so vus=2
+                        produces a 3-VU spike).
+                    -->
+                    <execution>
+                        <id>run-stress</id>
+                        <phase>integration-test</phase>
+                        <goals><goal>run</goal></goals>
+                        <configuration>
+                            <testFile>${k6.dir}/stress.js</testFile>
+                            <virtualUsers>2</virtualUsers>
+                            <duration>10s</duration>
+                            <loadPattern>stress</loadPattern>
+                            <appIp>localhost</appIp>
+                            <appPort>${loadtest.serverPort}</appPort>
+                            <managementPort>-1</managementPort>
+                            <metricsInterval>0</metricsInterval>
+                            <failOnThreshold>false</failOnThreshold>
+                        </configuration>
+                    </execution>
+
+                    <!--
+                        Built-in profile #4 — soak. Quick ramp-up, long
+                        sustain, quick ramp-down. The 10s duration leaves
+                        room for the 5 % ramp phases to round to ≥ 1s.
+                    -->
+                    <execution>
+                        <id>run-soak</id>
+                        <phase>integration-test</phase>
+                        <goals><goal>run</goal></goals>
+                        <configuration>
+                            <testFile>${k6.dir}/soak.js</testFile>
+                            <virtualUsers>2</virtualUsers>
+                            <duration>10s</duration>
+                            <loadPattern>soak</loadPattern>
+                            <appIp>localhost</appIp>
+                            <appPort>${loadtest.serverPort}</appPort>
+                            <managementPort>-1</managementPort>
+                            <metricsInterval>0</metricsInterval>
+                            <failOnThreshold>false</failOnThreshold>
+                        </configuration>
+                    </execution>
+
+                    <!--
+                        Custom-stages profile. Setting the stages
+                        parameter switches the profile to CUSTOM and
+                        ignores virtualUsers / duration / rampUp /
+                        rampDown. Three stages: ramp 0→2 in 1s, hold at
+                        2 for 2s, ramp down to 0 in 1s.
+                    -->
+                    <execution>
+                        <id>run-custom</id>
+                        <phase>integration-test</phase>
+                        <goals><goal>run</goal></goals>
+                        <configuration>
+                            <testFile>${k6.dir}/custom.js</testFile>
+                            <stages>1s:2,2s:2,1s:0</stages>
+                            <appIp>localhost</appIp>
+                            <appPort>${loadtest.serverPort}</appPort>
+                            <managementPort>-1</managementPort>
+                            <metricsInterval>0</metricsInterval>
+                            <failOnThreshold>false</failOnThreshold>
+                        </configuration>
+                    </execution>
+
+                    <!--
+                        Explicit executor: shared-iterations. This
+                        executor cannot be configured via CLI flags so
+                        K6RunMojo writes a wrapper script with embedded
+                        scenario options, runs it, then deletes the
+                        wrapper. The summary still records the resulting
+                        iteration count, which verify.bsh asserts.
+                    -->
+                    <execution>
+                        <id>run-executor</id>
+                        <phase>integration-test</phase>
+                        <goals><goal>run</goal></goals>
+                        <configuration>
+                            <testFile>${k6.dir}/executor.js</testFile>
+                            <executor>shared-iterations</executor>
+                            <virtualUsers>2</virtualUsers>
+                            <iterations>10</iterations>
+                            <duration>10s</duration>
+                            <appIp>localhost</appIp>
+                            <appPort>${loadtest.serverPort}</appPort>
+                            <managementPort>-1</managementPort>
+                            <metricsInterval>0</metricsInterval>
+                            <failOnThreshold>false</failOnThreshold>
+                        </configuration>
+                    </execution>
+
+                    <!--
+                        Fully custom scenario: customScenario takes
+                        precedence over loadPattern, executor and stages
+                        and is inserted verbatim into the wrapper
+                        script's scenario block. Picks per-vu-iterations
+                        with a distinct iteration count (4 VUs * 5
+                        iters = 20 total) so verify.bsh can confirm the
+                        raw content shaped the run, not a fallback
+                        profile.
+                    -->
+                    <execution>
+                        <id>run-custom-scenario</id>
+                        <phase>integration-test</phase>
+                        <goals><goal>run</goal></goals>
+                        <configuration>
+                            <testFile>${k6.dir}/custom-scenario.js</testFile>
+                            <virtualUsers>4</virtualUsers>
+                            <duration>10s</duration>
+                            <customScenario>executor: 'per-vu-iterations', vus: 4, iterations: 5, maxDuration: '10s',</customScenario>
+                            <appIp>localhost</appIp>
+                            <appPort>${loadtest.serverPort}</appPort>
+                            <managementPort>-1</managementPort>
+                            <metricsInterval>0</metricsInterval>
+                            <failOnThreshold>false</failOnThreshold>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>stop-server</id>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <goal>stop-server</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
