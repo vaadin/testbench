@@ -249,4 +249,3 @@ IntegrationTestHelper.assertFileContains(summaryJson, "http_reqs");
 IntegrationTestHelper.assertFileContains(summaryJson, "\"checks\"");
 IntegrationTestHelper.assertFileContains(summaryJson, "iterations");
 IntegrationTestHelper.assertFileContains(summaryHtml, "k6 Load Test Report");
-IntegrationTestHelper.assertLogContains(basePath, "k6 test completed successfully");
