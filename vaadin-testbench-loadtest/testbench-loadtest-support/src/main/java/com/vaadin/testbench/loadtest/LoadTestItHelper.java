@@ -52,14 +52,7 @@ public final class LoadTestItHelper {
      */
     public static WebDriver openWithProxy(WebDriver currentDriver,
             String viewUrl) {
-        String proxyHost = System.getProperty(PROXY_HOST_PROPERTY);
-        WebDriver driver = currentDriver;
-        if (proxyHost != null && !proxyHost.isEmpty()) {
-            if (currentDriver != null) {
-                currentDriver.quit();
-            }
-            driver = createProxyDriver(proxyHost);
-        }
+        WebDriver driver = setupProxy(currentDriver);
         driver.get(viewUrl);
         return driver;
     }
