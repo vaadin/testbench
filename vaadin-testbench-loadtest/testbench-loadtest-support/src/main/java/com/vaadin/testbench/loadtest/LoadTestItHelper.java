@@ -65,6 +65,34 @@ public final class LoadTestItHelper {
     }
 
     /**
+     * If proxy recording is enabled via the {@code k6.proxy.host} system
+     * property, quits the given driver and returns a new proxy-configured
+     * driver.
+     * <p>
+     * Typical usage in a {@code @BeforeEach} method:
+     *
+     * <pre>
+     * setDriver(LoadTestItHelper.setupProxy(getDriver()));
+     * </pre>
+     *
+     * @param currentDriver
+     *            the current WebDriver instance
+     * @return the driver to use (either the original or a new proxy-configured
+     *         one)
+     */
+    public static WebDriver setupProxy(WebDriver currentDriver) {
+        String proxyHost = System.getProperty(PROXY_HOST_PROPERTY);
+        WebDriver driver = currentDriver;
+        if (proxyHost != null && !proxyHost.isEmpty()) {
+            if (currentDriver != null) {
+                currentDriver.quit();
+            }
+            driver = createProxyDriver(proxyHost);
+        }
+        return driver;
+    }
+
+    /**
      * Creates a ChromeDriver configured with proxy settings for k6 recording.
      */
     private static WebDriver createProxyDriver(String proxyHost) {
