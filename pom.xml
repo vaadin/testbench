@@ -39,7 +39,7 @@
         <maven.compiler.target>${maven.compiler.release}</maven.compiler.target>
         <spring.boot.version>4.0.4</spring.boot.version>
         <vaadin.version>25.2-SNAPSHOT</vaadin.version>
-        <flow.version>25.2-SNAPSHOT</flow.version>
+        <flow.version>25.2.when-ready-SNAPSHOT</flow.version>
         <slf4j.version>2.0.7</slf4j.version>
         <jetty.version>12.1.3</jetty.version>
         <failsafe.version>3.5.2</failsafe.version>
