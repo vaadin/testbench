@@ -11,6 +11,7 @@ package com.vaadin.testbench.commands;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.time.Duration;
 import java.util.Arrays;
 
 import org.junit.jupiter.api.Assertions;
@@ -213,9 +214,7 @@ public class TestBenchCommandExecutorTest {
                 "cursor-bottom-edge-off.png");
         Mockito.when(driver.getScreenshotAs(OutputType.BYTES))
                 .thenReturn(screenshotBytes);
-        Mockito.when(
-                driver.executeScript(Mockito.contains("window.Vaadin.Flow")))
-                .thenReturn(Boolean.TRUE);
+        mockWaitForVaadin(driver);
         if (expectGetCapabilities) {
             Capabilities mockedCapabilities = Mockito.mock(Capabilities.class);
             Mockito.when(mockedCapabilities.getBrowserName())
@@ -283,11 +282,29 @@ public class TestBenchCommandExecutorTest {
 
     private FirefoxDriver mockJSExecutor(boolean forcesSync) {
         FirefoxDriver jse = Mockito.mock(FirefoxDriver.class);
+        mockWaitForVaadin(jse);
         Mockito.when(jse
                 .executeScript(Mockito.contains("window.Vaadin.Flow.client")))
                 .thenReturn(Boolean.TRUE);
         Mockito.when(jse.executeScript(Mockito.contains("getProfilingData()")))
                 .thenReturn(Arrays.asList(1000L, 2000L, 3000L));
         return jse;
+    }
+
+    private void mockWaitForVaadin(RemoteWebDriver driver) {
+        WebDriver.Options options = Mockito.mock(WebDriver.Options.class);
+        WebDriver.Timeouts timeouts = Mockito.mock(WebDriver.Timeouts.class);
+        Mockito.when(driver.manage()).thenReturn(options);
+        Mockito.when(options.timeouts()).thenReturn(timeouts);
+        Mockito.when(timeouts.getScriptTimeout())
+                .thenReturn(Duration.ofSeconds(30));
+        Mockito.when(timeouts.scriptTimeout(Mockito.any(Duration.class)))
+                .thenReturn(timeouts);
+        // Phase 1: sync check for Flow.ready returns true immediately
+        Mockito.when(driver.executeScript(
+                Mockito.contains("typeof window.Vaadin.Flow.ready")))
+                .thenReturn(Boolean.TRUE);
+        Mockito.when(driver.executeAsyncScript(Mockito.contains("Flow.ready"),
+                Mockito.anyLong())).thenReturn(null);
     }
 }
