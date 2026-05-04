@@ -145,6 +145,50 @@ public class CrudExampleIT extends AbstractIT {
         }
     }
 
+    @BrowserTest
+    public void filterAndSelectRows() {
+        waitUntilNot(driver -> $(GridElement.class).all().isEmpty());
+
+        GridElement grid = $(GridElement.class).single();
+
+        // Get the first name from the first row to use as filter
+        grid.scrollToRow(0);
+        String firstRowFirstName = grid.getCell(0, 0).getText();
+
+        // Select second row in unfiltered results
+        grid.getRow(1).select();
+
+        // Apply filter by first name
+        TextFieldElement filterField = $(TextFieldElement.class)
+                .withId("first-name-filter").single();
+        filterField.setValue(firstRowFirstName);
+
+        // Wait for grid to update
+        waitUntil(driver -> grid.getRowCount() > 1);
+
+        // Select first row in filtered results
+        grid.getRow(0).select();
+
+        // Verify form is populated
+        TextFieldElement firstNameField = $(TextFieldElement.class)
+                .withCaption("First Name").single();
+        Assertions.assertFalse(firstNameField.getValue().isEmpty(),
+                "First name field should be populated after selecting first filtered row");
+
+        // Select another row if available, otherwise deselect and reselect
+        if (grid.getRowCount() > 1) {
+            grid.getRow(1).select();
+            Assertions.assertFalse(firstNameField.getValue().isEmpty(),
+                    "First name field should be populated after selecting second filtered row");
+        } else {
+            // Deselect current row and reselect it
+            grid.getRow(0).deselect();
+            grid.getRow(0).select();
+            Assertions.assertFalse(firstNameField.getValue().isEmpty(),
+                    "First name field should be populated after reselecting row");
+        }
+    }
+
     @Override
     public String getViewName() {
         return "crud-example";

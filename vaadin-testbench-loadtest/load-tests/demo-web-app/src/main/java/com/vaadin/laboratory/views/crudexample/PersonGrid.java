@@ -9,12 +9,16 @@
 package com.vaadin.laboratory.views.crudexample;
 
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.renderer.LitRenderer;
+import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.function.SerializableRunnable;
 import com.vaadin.flow.spring.data.VaadinSpringDataHelpers;
 import com.vaadin.laboratory.data.SamplePerson;
@@ -24,11 +28,28 @@ class PersonGrid extends Div {
 
     private final Grid<SamplePerson> grid = new Grid<>(SamplePerson.class,
             false);
+    private final TextField filterField = new TextField();
+    private String firstNameFilter = "";
 
     PersonGrid(SamplePersonService samplePersonService,
             SerializableRunnable formClean) {
         setClassName("grid-wrapper");
-        add(grid);
+
+        filterField.setId("first-name-filter");
+        filterField.setPlaceholder("Filter by first name...");
+        filterField.setClearButtonVisible(true);
+        filterField.setValueChangeMode(ValueChangeMode.LAZY);
+        filterField.addValueChangeListener(e -> {
+            firstNameFilter = e.getValue();
+            grid.getDataProvider().refreshAll();
+        });
+
+        VerticalLayout layout = new VerticalLayout(filterField, grid);
+        layout.setSizeFull();
+        layout.setPadding(false);
+        layout.setSpacing(false);
+        layout.setFlexGrow(1, grid);
+        add(layout);
 
         grid.addColumn("firstName").setAutoWidth(true);
         grid.addColumn("lastName").setAutoWidth(true);
@@ -53,14 +74,20 @@ class PersonGrid extends Div {
 
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
 
-        // Configure Grid
-        grid.setItems(
-                query -> samplePersonService
-                        .list(PageRequest
-                                .of(query.getPage(), query.getPageSize(),
-                                        VaadinSpringDataHelpers
-                                                .toSpringDataSort(query)))
-                        .stream());
+        // Configure Grid with filtering support
+        grid.setItems(query -> {
+            Specification<SamplePerson> spec = Specification.unrestricted();
+            if (firstNameFilter != null && !firstNameFilter.isEmpty()) {
+                spec = spec.and((root, criteriaQuery,
+                        criteriaBuilder) -> criteriaBuilder.like(
+                                criteriaBuilder.lower(root.get("firstName")),
+                                "%" + firstNameFilter.toLowerCase() + "%"));
+            }
+            return samplePersonService.list(
+                    PageRequest.of(query.getPage(), query.getPageSize(),
+                            VaadinSpringDataHelpers.toSpringDataSort(query)),
+                    spec).stream();
+        });
 
         // when a row is selected or deselected, populate form
         grid.asSingleSelect().addValueChangeListener(event -> {
