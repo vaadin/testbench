@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.maven.plugin.MojoExecutionException;
 
@@ -38,6 +40,7 @@ public class NodeRunner {
     private String summaryTrendStats = "avg,min,med,max,p(95),p(99)";
     private Path reportDir;
     private String k6Binary;
+    private boolean warmup;
 
     /**
      * Creates a new node runner for the given working directory. The k6 binary
@@ -96,6 +99,20 @@ public class NodeRunner {
      */
     public void setReportDir(Path reportDir) {
         this.reportDir = reportDir;
+    }
+
+    /**
+     * Enables or disables a 1-VU / 1-iteration warmup pass that runs before
+     * each load test. The warmup primes caches, JIT, and class loaders on the
+     * target application so the first measured iterations are not skewed by
+     * cold-start cost. Warmup runs with {@code --no-summary
+     * --no-thresholds} so it never appears in reports or fails the build.
+     *
+     * @param warmup
+     *            {@code true} to run a warmup pass before each test
+     */
+    public void setWarmup(boolean warmup) {
+        this.warmup = warmup;
     }
 
     /**
@@ -319,6 +336,12 @@ public class NodeRunner {
         log.info("  Load pattern: " + loadProfile);
         log.info("  Target: " + appIp + ":" + appPort);
 
+        // Warm up against the original test file. For embedded-config
+        // tests, the original (HAR-converted) script has no scenarios
+        // block, so direct CLI --vus/--iterations work — no need to wait
+        // for the wrapper to be generated below.
+        runWarmup(testFile, appIp, appPort);
+
         // For executors that cannot be configured via CLI flags, generate a
         // wrapper script with embedded scenario configuration
         if (loadProfile.requiresEmbeddedConfig()) {
@@ -420,6 +443,136 @@ public class NodeRunner {
     }
 
     /**
+     * Runs a single 1-VU / 1-iteration warmup pass against the given test file.
+     * Output is suppressed via {@code --no-summary --no-thresholds} so the
+     * warmup never appears in reports or fails the build on threshold
+     * violations.
+     *
+     * <p>
+     * For scripts that declare an {@code options.scenarios} block (combined
+     * scenarios, embedded-config wrappers), k6 ignores the {@code --vus} and
+     * {@code --iterations} CLI flags. For those, a temporary wrapper script is
+     * generated that imports the named exec functions and invokes each once
+     * from a default function — then run with {@code --vus 1 --iterations 1}.
+     */
+    private void runWarmup(Path testFile, String appIp, int appPort)
+            throws MojoExecutionException {
+        if (!warmup) {
+            return;
+        }
+
+        Path wrapperToDelete = null;
+        Path scriptToRun = testFile;
+        try {
+            if (hasScenariosBlock(testFile)) {
+                wrapperToDelete = generateWarmupWrapper(testFile);
+                scriptToRun = wrapperToDelete;
+            }
+
+            log.info("Running warmup (1 VU, 1 iteration): "
+                    + scriptToRun.getFileName());
+            List<String> command = new ArrayList<>();
+            command.add(k6Command());
+            command.add("run");
+            command.add("--vus");
+            command.add("1");
+            command.add("--iterations");
+            command.add("1");
+            command.add("--no-summary");
+            command.add("--no-thresholds");
+            command.add("-e");
+            command.add("APP_IP=" + appIp);
+            command.add("-e");
+            command.add("APP_PORT=" + String.valueOf(appPort));
+            command.add(scriptToRun.toAbsolutePath().toString());
+
+            ProcessBuilder pb = new ProcessBuilder(command);
+            pb.inheritIO();
+            Process process = pb.start();
+            int exitCode = process.waitFor();
+            if (exitCode != 0) {
+                throw new MojoExecutionException(
+                        "k6 warmup failed with exit code: " + exitCode);
+            }
+            log.info("Warmup completed");
+        } catch (IOException | InterruptedException e) {
+            throw new MojoExecutionException("Failed to run k6 warmup", e);
+        } finally {
+            if (wrapperToDelete != null) {
+                try {
+                    Files.deleteIfExists(wrapperToDelete);
+                } catch (IOException e) {
+                    log.warning("Could not delete warmup wrapper: "
+                            + wrapperToDelete);
+                }
+            }
+        }
+    }
+
+    /**
+     * Detects whether a k6 script declares an {@code options.scenarios} block.
+     * k6 ignores {@code --vus}/{@code --iterations} CLI flags when a scenarios
+     * block is present, so warmup needs a wrapper for these.
+     */
+    private boolean hasScenariosBlock(Path testFile) {
+        try {
+            return Files.readString(testFile).contains("scenarios:");
+        } catch (IOException e) {
+            log.warning("Could not read test file for warmup detection: "
+                    + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Writes a temporary warmup wrapper next to {@code testFile}. The wrapper
+     * imports every {@code export function} from the target script and invokes
+     * each once from a default function, so a single-iteration k6 run exercises
+     * every scenario / exec target.
+     */
+    private Path generateWarmupWrapper(Path testFile)
+            throws MojoExecutionException {
+        try {
+            String content = Files.readString(testFile);
+            Pattern fnPattern = Pattern.compile(
+                    "export\\s+function\\s+(\\w+)\\s*\\(", Pattern.MULTILINE);
+            Matcher matcher = fnPattern.matcher(content);
+            List<String> fns = new ArrayList<>();
+            while (matcher.find()) {
+                String name = matcher.group(1);
+                // handleSummary is k6's reporting hook, not an exec target
+                if (!"handleSummary".equals(name)) {
+                    fns.add(name);
+                }
+            }
+            if (fns.isEmpty()) {
+                throw new MojoExecutionException(
+                        "Cannot generate warmup wrapper: no exec functions found in "
+                                + testFile);
+            }
+
+            StringBuilder sb = new StringBuilder();
+            sb.append("// Auto-generated warmup wrapper (1 VU, 1 iteration)\n");
+            sb.append("import { ").append(String.join(", ", fns))
+                    .append(" } from './").append(testFile.getFileName())
+                    .append("';\n\n");
+            sb.append("export default function () {\n");
+            for (String fn : fns) {
+                sb.append("  ").append(fn).append("();\n");
+            }
+            sb.append("}\n");
+
+            Path wrapper = testFile.getParent()
+                    .resolve("warmup-" + testFile.getFileName());
+            Files.writeString(wrapper, sb.toString());
+            return wrapper;
+        } catch (IOException e) {
+            throw new MojoExecutionException(
+                    "Failed to generate warmup wrapper", e);
+        }
+    }
+
+    /**
      * Runs a k6 test using a generated wrapper script with embedded scenario
      * configuration. Used for executors that cannot be fully configured via k6
      * CLI flags (e.g., arrival-rate, iteration-based, externally-controlled).
@@ -460,8 +613,10 @@ public class NodeRunner {
             Files.writeString(wrapperFile, sb.toString());
             log.info("  Generated wrapper: " + wrapperFile.getFileName());
 
-            // Run the wrapper with embedded config
-            runK6Test(wrapperFile, virtualUsers, duration, appIp, appPort,
+            // Run the wrapper with embedded config. Skip warmup here —
+            // the public entry already warmed up against the original
+            // test file before this wrapper was generated.
+            runK6Process(wrapperFile, virtualUsers, duration, appIp, appPort,
                     true);
         } catch (IOException e) {
             throw new MojoExecutionException(
@@ -496,6 +651,20 @@ public class NodeRunner {
      *             if the test fails
      */
     public void runK6Test(Path testFile, int virtualUsers, String duration,
+            String appIp, int appPort, boolean useEmbeddedConfig)
+            throws MojoExecutionException {
+        runWarmup(testFile, appIp, appPort);
+        runK6Process(testFile, virtualUsers, duration, appIp, appPort,
+                useEmbeddedConfig);
+    }
+
+    /**
+     * Executes the actual {@code k6 run} process. Separated from the public
+     * {@link #runK6Test(Path, int, String, String, int, boolean)} entry so that
+     * {@link #runWithEmbeddedConfig} can invoke the wrapper without triggering
+     * a second warmup pass.
+     */
+    private void runK6Process(Path testFile, int virtualUsers, String duration,
             String appIp, int appPort, boolean useEmbeddedConfig)
             throws MojoExecutionException {
         log.info("Running k6 load test: " + testFile.getFileName());
