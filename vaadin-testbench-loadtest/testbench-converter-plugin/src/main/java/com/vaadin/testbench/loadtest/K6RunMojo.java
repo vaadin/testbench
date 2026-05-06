@@ -141,6 +141,16 @@ public class K6RunMojo extends AbstractK6Mojo {
     private boolean failOnThreshold;
 
     /**
+     * When true, runs a single 1-VU / 1-iteration warmup pass before each load
+     * test to prime caches, JIT, and class loaders on the target application.
+     * The warmup runs the recorded scenario(s) once with
+     * {@code --no-summary --no-thresholds} so its metrics never appear in
+     * reports and threshold violations during warmup never fail the build.
+     */
+    @Parameter(property = "k6.warmup", defaultValue = "false")
+    private boolean warmup;
+
+    /**
      * When true, combines all test files into a single k6 test with parallel
      * scenarios. Each scenario runs with its own VU pool based on the
      * configured weights. When false (default), tests are run sequentially.
@@ -311,6 +321,9 @@ public class K6RunMojo extends AbstractK6Mojo {
         // Configure summary stats to match threshold percentiles
         nodeRunner.setSummaryTrendStats(
                 buildThresholdConfig().toSummaryTrendStats());
+
+        // Enable optional warmup pass (1 VU, 1 iteration) before each test
+        nodeRunner.setWarmup(warmup);
 
         // Write reports (JSON, HTML) to {testDir}/report
         nodeRunner
