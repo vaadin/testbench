@@ -17,3 +17,6 @@ IntegrationTestHelper.assertFileContains(summaryJson, "http_reqs");
 
 // k6 actually ran (build log lists the script under "Tests:")
 IntegrationTestHelper.assertLogContains(basePath, "test.js");
+
+// Warmup pass executed before the main run (k6.warmup=true in pom)
+IntegrationTestHelper.assertLogContains(basePath, "Warmup completed");

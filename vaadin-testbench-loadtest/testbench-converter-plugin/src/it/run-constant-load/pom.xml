@@ -58,6 +58,7 @@
                             <virtualUsers>1</virtualUsers>
                             <duration>5s</duration>
                             <loadPattern>constant</loadPattern>
+                            <warmup>true</warmup>
                             <appIp>localhost</appIp>
                             <appPort>${loadtest.serverPort}</appPort>
                             <managementPort>${loadtest.managementPort}</managementPort>
