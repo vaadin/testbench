@@ -144,8 +144,9 @@ public class K6RunMojo extends AbstractK6Mojo {
      * When true, runs a single 1-VU / 1-iteration warmup pass before each load
      * test to prime caches, JIT, and class loaders on the target application.
      * The warmup runs the recorded scenario(s) once with
-     * {@code --no-summary --no-thresholds} so its metrics never appear in
-     * reports and threshold violations during warmup never fail the build.
+     * {@code --summary-mode=disabled --no-thresholds} so its metrics never
+     * appear in reports and threshold violations during warmup never fail the
+     * build.
      */
     @Parameter(property = "k6.warmup", defaultValue = "false")
     private boolean warmup;
