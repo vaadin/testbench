@@ -23,7 +23,7 @@
         <maven-plugin-annotations.version>3.11.0</maven-plugin-annotations.version>
         <!-- Pinned k6 version for the auto-install integration test (000-install-k6).
              Bumping this updates every IT that consumes the downloaded binary. -->
-        <k6.version>0.54.0</k6.version>
+        <k6.version>1.6.1</k6.version>
         <!--
             OS-agnostic install location for the k6 binary. The 000-install-k6
             IT does the actual download and writes the resolved absolute path
