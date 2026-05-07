@@ -181,14 +181,18 @@ export function vaadinRequest(baseUrl, vaadinInfo, rpcPayload, idCounter, route)
         createBaseParams(baseUrl, route),
     );
 
+    // Guard r.body / resp.body with (... || '') — if the server returns an
+    // error response, k6 may surface body as undefined/null, and the raw
+    // .includes()/.substring() calls would throw a TypeError before the
+    // status check can fail-fast on the actual problem.
     if (!check(resp, {
         'UIDL request succeeded': (r) => r.status === 200,
-        'no server error': (r) => !r.body.includes('"appError"'),
-        'session is valid': (r) => !r.body.includes('Your session needs to be refreshed'),
-        'security key valid': (r) => !r.body.includes('Invalid security key'),
-        'valid UIDL response': (r) => r.body.includes('"syncId"'),
+        'no server error': (r) => !(r.body || '').includes('"appError"'),
+        'session is valid': (r) => !(r.body || '').includes('Your session needs to be refreshed'),
+        'security key valid': (r) => !(r.body || '').includes('Invalid security key'),
+        'valid UIDL response': (r) => (r.body || '').includes('"syncId"'),
     })) {
-        fail(`UIDL request failed (status ${resp.status}): ${resp.body.substring(0, 200)}`);
+        fail(`UIDL request failed (status ${resp.status}): ${(resp.body || '').substring(0, 200)}`);
     }
 
     return resp;

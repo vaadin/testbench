@@ -707,25 +707,28 @@ public class HarToK6Converter {
     private String generateSessionExtractionCode(String requestLabel,
             ResponseCheckConfig responseCheckConfig) {
         StringBuilder code = new StringBuilder();
+        // Coerce body to '' when the server returned an error response with a
+        // null/undefined body.
+        code.append("  var body = response.body || ''\n");
         code.append(
                 "  // Abort iteration and trigger test abort if init response is invalid\n");
         code.append("  if (!check(response, {\n");
         code.append("    'init request succeeded': (r) => r.status === 200,\n");
         code.append(
-                "    'session is valid': (r) => !r.body.includes('Your session needs to be refreshed'),\n");
+                "    'session is valid': (r) => !(r.body || '').includes('Your session needs to be refreshed'),\n");
         code.append(
-                "    'valid init response': (r) => r.body.includes('\"v-uiId\"') && r.body.includes('\"Vaadin-Security-Key\"'),\n");
+                "    'valid init response': (r) => (r.body || '').includes('\"v-uiId\"') && (r.body || '').includes('\"Vaadin-Security-Key\"'),\n");
         code.append(responseCheckConfig
                 .toK6CheckLines(ResponseCheckConfig.Scope.INIT));
         code.append("  })) {\n");
         code.append("    fail(`").append(escapeJsTemplate(requestLabel)).append(
-                ": init failed (status ${response.status}): ${response.body.substring(0, 200)}`)\n");
+                ": init failed (status ${response.status}): ${body.substring(0, 200)}`)\n");
         code.append("  }\n\n");
         code.append("  // Extract Vaadin session values from init response\n");
         code.append(
-                "  let uiId = response.body.match(/\"v-uiId\"\\s*:\\s*(\\d+)/)[1]\n");
+                "  let uiId = body.match(/\"v-uiId\"\\s*:\\s*(\\d+)/)[1]\n");
         code.append(
-                "  let csrfToken = response.body.match(/\"Vaadin-Security-Key\"\\s*:\\s*\"([^\"]+)\"/)[1]\n");
+                "  let csrfToken = body.match(/\"Vaadin-Security-Key\"\\s*:\\s*\"([^\"]+)\"/)[1]\n");
         code.append("  let syncId = 0\n");
         code.append("  let clientId = 0\n");
         code.append("  let gridKeys = []\n");
@@ -751,8 +754,10 @@ public class HarToK6Converter {
         StringBuilder code = new StringBuilder();
         code.append(
                 "  // Re-extract Vaadin session values after login/navigation\n");
+        // Same body-null guard as elsewhere — a 200 response with no body
+        // shouldn't crash the script with a TypeError.
         code.append(
-                "  if (response.status === 200 && response.body.includes('\"Vaadin-Security-Key\"')) {\n");
+                "  if (response.status === 200 && (response.body || '').includes('\"Vaadin-Security-Key\"')) {\n");
         code.append(
                 "    var newUiId = response.body.match(/\"v-uiId\"\\s*:\\s*(\\d+)/)\n");
         code.append(
@@ -785,24 +790,27 @@ public class HarToK6Converter {
         StringBuilder code = new StringBuilder();
         code.append(
                 "  // Abort iteration and trigger test abort if UIDL response is invalid\n");
+        // Coerce body to '' when the server returned an error response with a
+        // null/undefined body.
+        code.append("  var body = response.body || ''\n");
         code.append(
-                "  var syncIdMatch = response.body.match(/\"syncId\"\\s*:\\s*(-?\\d+)/)\n");
+                "  var syncIdMatch = body.match(/\"syncId\"\\s*:\\s*(-?\\d+)/)\n");
         code.append("  if (!check(response, {\n");
         code.append("    'UIDL request succeeded': (r) => r.status === 200,\n");
         code.append(
-                "    'no server error': (r) => !r.body.includes('\"appError\"'),\n");
+                "    'no server error': (r) => !(r.body || '').includes('\"appError\"'),\n");
         code.append(
-                "    'no exception': (r) => !r.body.includes('Exception'),\n");
+                "    'no exception': (r) => !(r.body || '').includes('Exception'),\n");
         code.append(
-                "    'session is valid': (r) => !r.body.includes('Your session needs to be refreshed'),\n");
+                "    'session is valid': (r) => !(r.body || '').includes('Your session needs to be refreshed'),\n");
         code.append(
-                "    'security key valid': (r) => !r.body.includes('Invalid security key'),\n");
+                "    'security key valid': (r) => !(r.body || '').includes('Invalid security key'),\n");
         code.append("    'valid UIDL response': () => syncIdMatch !== null,\n");
         code.append(responseCheckConfig
                 .toK6CheckLines(ResponseCheckConfig.Scope.UIDL));
         code.append("  })) {\n");
         code.append("    fail(`").append(escapeJsTemplate(requestLabel)).append(
-                ": UIDL failed (status ${response.status}): ${response.body.substring(0, 200)}`)\n");
+                ": UIDL failed (status ${response.status}): ${body.substring(0, 200)}`)\n");
         code.append("  }\n\n");
         code.append(
                 "  // Update Vaadin sync counters from response (-1 means UNDEFINED_SYNC_ID, treat as 0)\n");
@@ -810,8 +818,7 @@ public class HarToK6Converter {
         code.append("  clientId++\n");
         code.append(
                 "  // Extract grid item keys from response (used for select/edit operations)\n");
-        code.append(
-                "  var found = response.body.match(/\"key\":\"[^\"]+\"/g)\n");
+        code.append("  var found = body.match(/\"key\":\"[^\"]+\"/g)\n");
         code.append(
                 "  if (found) gridKeys = found.map(s => s.split('\"')[3])\n");
         // Refresh stable-key → node-ID bindings from the response's changes
