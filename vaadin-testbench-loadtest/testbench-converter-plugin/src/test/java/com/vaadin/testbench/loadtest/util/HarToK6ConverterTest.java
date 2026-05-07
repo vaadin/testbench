@@ -469,6 +469,31 @@ class HarToK6ConverterTest {
                         + script);
     }
 
+    @Test
+    void reExtractionGuardCoercesResponseBody() throws IOException {
+        // Two init entries trigger the re-extraction code path. The
+        // status===200
+        // gate alone is not enough — a 200 with an empty body would still throw
+        // TypeError on response.body.includes(...) without the (... || '')
+        // guard.
+        String har = createHar(
+                vaadinInitEntry("http://localhost:8080/?v-r=init&location="),
+                vaadinInitEntry(
+                        "http://localhost:8080/?v-r=init&location=login"));
+
+        Path harFile = tempDir.resolve("test.har");
+        Path outputFile = tempDir.resolve("test.js");
+        Files.writeString(harFile, har);
+
+        new HarToK6Converter().convert(harFile, outputFile);
+
+        String script = Files.readString(outputFile);
+        assertTrue(script.contains(
+                "if (response.status === 200 && (response.body || '').includes('\"Vaadin-Security-Key\"'))"),
+                "Re-extraction guard must coerce response.body to ''. Got:\n"
+                        + script);
+    }
+
     // --- Helper methods to build HAR JSON ---
 
     private String vaadinInitEntry(String url) {
