@@ -74,7 +74,7 @@ public class K6RunMojo extends AbstractK6Mojo {
 
     /**
      * Directory containing k6 test files. All .js files (excluding helpers)
-     * will be run.
+     * will be run. If not set, defaults to {@code k6.outputDir}.
      */
     @Parameter(property = "k6.testDir")
     private File testDir;
@@ -621,12 +621,14 @@ public class K6RunMojo extends AbstractK6Mojo {
     }
 
     /**
-     * Builds the list of test files to run from configuration.
+     * Builds the list of test files to run from configuration. Resolution
+     * order: {@code testFiles} takes precedence; otherwise {@code testFile};
+     * otherwise the test directory ({@code testDir}, falling back to the
+     * shared {@code outputDir}).
      */
     private List<Path> getTestFilesToRun() throws MojoExecutionException {
         List<Path> result = new ArrayList<>();
 
-        // Add from testFiles list
         if (testFiles != null && !testFiles.isEmpty()) {
             for (File f : testFiles) {
                 Path path = f.toPath().toAbsolutePath();
@@ -636,38 +638,36 @@ public class K6RunMojo extends AbstractK6Mojo {
                 }
                 result.add(path);
             }
+            return result;
         }
 
-        // Add single testFile if specified
         if (testFile != null) {
             Path path = testFile.toPath().toAbsolutePath();
             if (!Files.exists(path)) {
                 throw new MojoExecutionException(
                         "Test file not found: " + path);
             }
-            if (!result.contains(path)) {
-                result.add(path);
-            }
+            result.add(path);
+            return result;
         }
 
-        // Add all .js files from testDir (excluding helpers, generated, and
-        // combined)
-        if (testDir != null && testDir.exists() && testDir.isDirectory()) {
-            try (Stream<Path> files = Files.list(testDir.toPath())) {
-                files.filter(p -> p.toString().endsWith(".js")).filter(
-                        p -> !p.getFileName().toString().contains("helper"))
+        File effectiveTestDir = testDir != null ? testDir : outputDir;
+        if (effectiveTestDir != null && effectiveTestDir.exists()
+                && effectiveTestDir.isDirectory()) {
+            try (Stream<Path> files = Files.list(effectiveTestDir.toPath())) {
+                files.filter(p -> p.toString().endsWith(".js"))
+                        .filter(p -> !p.getFileName().toString()
+                                .contains("helper"))
                         .filter(p -> !p.getFileName().toString()
                                 .contains("-generated"))
                         .filter(p -> !p.getFileName().toString()
                                 .equals("combined-scenarios.js"))
-                        .sorted().forEach(p -> {
-                            if (!result.contains(p.toAbsolutePath())) {
-                                result.add(p.toAbsolutePath());
-                            }
-                        });
+                        .sorted()
+                        .forEach(p -> result.add(p.toAbsolutePath()));
             } catch (IOException e) {
                 throw new MojoExecutionException(
-                        "Failed to list test directory: " + testDir, e);
+                        "Failed to list test directory: " + effectiveTestDir,
+                        e);
             }
         }
 
