@@ -171,6 +171,13 @@
             <groupId>com.vaadin</groupId>
             <artifactId>vaadin-push</artifactId>
             <version>${vaadin.version}</version>
+            <exclusions>
+                <!-- Dependency convergence exclusions: -->
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.vaadin</groupId>
@@ -198,6 +205,13 @@
             <groupId>com.vaadin</groupId>
             <artifactId>vaadin-compatibility-server</artifactId>
             <version>${vaadin.version}</version>
+            <exclusions>
+                <!-- Dependency convergence exclusions: -->
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.vaadin</groupId>
