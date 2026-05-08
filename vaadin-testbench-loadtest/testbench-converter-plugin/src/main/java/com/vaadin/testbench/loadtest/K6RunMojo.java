@@ -623,8 +623,8 @@ public class K6RunMojo extends AbstractK6Mojo {
     /**
      * Builds the list of test files to run from configuration. Resolution
      * order: {@code testFiles} takes precedence; otherwise {@code testFile};
-     * otherwise the test directory ({@code testDir}, falling back to the
-     * shared {@code outputDir}).
+     * otherwise the test directory ({@code testDir}, falling back to the shared
+     * {@code outputDir}).
      */
     private List<Path> getTestFilesToRun() throws MojoExecutionException {
         List<Path> result = new ArrayList<>();
@@ -655,15 +655,13 @@ public class K6RunMojo extends AbstractK6Mojo {
         if (effectiveTestDir != null && effectiveTestDir.exists()
                 && effectiveTestDir.isDirectory()) {
             try (Stream<Path> files = Files.list(effectiveTestDir.toPath())) {
-                files.filter(p -> p.toString().endsWith(".js"))
-                        .filter(p -> !p.getFileName().toString()
-                                .contains("helper"))
+                files.filter(p -> p.toString().endsWith(".js")).filter(
+                        p -> !p.getFileName().toString().contains("helper"))
                         .filter(p -> !p.getFileName().toString()
                                 .contains("-generated"))
                         .filter(p -> !p.getFileName().toString()
                                 .equals("combined-scenarios.js"))
-                        .sorted()
-                        .forEach(p -> result.add(p.toAbsolutePath()));
+                        .sorted().forEach(p -> result.add(p.toAbsolutePath()));
             } catch (IOException e) {
                 throw new MojoExecutionException(
                         "Failed to list test directory: " + effectiveTestDir,
