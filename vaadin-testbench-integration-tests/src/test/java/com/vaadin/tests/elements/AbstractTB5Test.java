@@ -27,6 +27,9 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.edge.EdgeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.HttpCommandExecutor;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -44,8 +47,6 @@ import com.vaadin.testbench.parallel.Browser;
 import com.vaadin.testbench.parallel.BrowserUtil;
 import com.vaadin.testbench.parallel.ParallelTest;
 import com.vaadin.ui.UI;
-
-import io.github.bonigarcia.wdm.WebDriverManager;
 
 /**
  * Base class for TestBench 5 tests. All TB5 tests in the project should extend
@@ -131,13 +132,13 @@ public abstract class AbstractTB5Test extends ParallelTest {
     private void setupWithWebDriverManager(Browser runLocallyBrowser) {
         switch (runLocallyBrowser) {
         case CHROME:
-            WebDriverManager.chromedriver().setup();
+            setDriver(new ChromeDriver());
             break;
         case FIREFOX:
-            WebDriverManager.firefoxdriver().setup();
+            setDriver(new FirefoxDriver());
             break;
         case EDGE:
-            WebDriverManager.edgedriver().setup();
+            setDriver(new EdgeDriver());
             break;
         default:
             break;
