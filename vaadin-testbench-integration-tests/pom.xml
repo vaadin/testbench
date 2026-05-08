@@ -18,7 +18,7 @@
         </snapshot.repository.url>
         <vaadin.testbench.api.version>8.0-SNAPSHOT</vaadin.testbench.api.version>
         <jetty.version>9.4.53.v20231009</jetty.version>
-        <slf4j.version>1.7.36</slf4j.version>
+        <slf4j.version>2.0.17</slf4j.version>
     </properties>
     <repositories>
         <repository>
@@ -36,7 +36,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.5</version>
+                <version>3.14.0</version>
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
@@ -221,7 +221,7 @@
         <dependency>
             <groupId>io.github.bonigarcia</groupId>
             <artifactId>webdrivermanager</artifactId>
-            <version>5.7.0</version>
+            <version>6.3.4</version>
             <scope>test</scope>
         </dependency>
 

@@ -13,3 +13,4 @@ chromedriver.log
 
 test/temp/
 
+.vscode/*
