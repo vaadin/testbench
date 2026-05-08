@@ -206,6 +206,46 @@ class K6ScenarioCombinerTest {
     }
 
     @Test
+    void combine_scenarioWithUnbalancedBracesInRegexAndCommentsClosesCleanly()
+            throws IOException {
+        // The brace walker must skip braces inside regex literals, comments,
+        // and strings. Each line of the body below contains a shape that
+        // broke the previous naive counter (regex `\{`, isolated `{` in a
+        // comment, isolated `{` and `}` in string literals); without
+        // lexer-aware skipping, the walker overshoots and slurps the
+        // trailing handleSummary export.
+        Path scenario = writeScenario("alpha", """
+                  // anchor on `{` to skip change-record keys
+                  let body = 'a { is hard to count'
+                  let body2 = 'and so is a } on its own'
+                  var found = body.match(/\\{"key":"[^"]+"/g)
+                  if (found) gridKeys = found.map(s => s.split('"')[3])
+                """);
+        String existing = Files.readString(scenario);
+        Files.writeString(scenario, existing
+                + "\nexport function handleSummary(data) {\n  return {}\n}\n");
+
+        K6ScenarioCombiner combiner = new K6ScenarioCombiner();
+        Path output = tempDir.resolve("combined.js");
+        combiner.combine(List.of(new ScenarioConfig("alpha", scenario, 100)),
+                output, 5, "10s");
+
+        String content = Files.readString(output);
+        int handleSummaryCount = 0;
+        int idx = 0;
+        while ((idx = content.indexOf("function handleSummary", idx)) != -1) {
+            handleSummaryCount++;
+            idx += "function handleSummary".length();
+        }
+        assertEquals(1, handleSummaryCount,
+                "Combined script must export exactly one handleSummary. Got:\n"
+                        + content);
+        assertTrue(content.contains("export function alphaScenario()"),
+                "Scenario function should still be wrapped properly:\n"
+                        + content);
+    }
+
+    @Test
     void combine_noSharedArrayWhenAbsent() throws IOException {
         Path a = writeScenario("alpha", "  http.get(`${BASE_URL}/a`);");
 

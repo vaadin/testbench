@@ -817,8 +817,12 @@ public class HarToK6Converter {
         code.append("  syncId = Math.max(0, parseInt(syncIdMatch[1]))\n");
         code.append("  clientId++\n");
         code.append(
-                "  // Extract grid item keys from response (used for select/edit operations)\n");
-        code.append("  var found = body.match(/\"key\":\"[^\"]+\"/g)\n");
+                "  // Extract grid item keys from response (used for select/edit operations).\n");
+        code.append(
+                "  // Anchor on object-start so only the first key in a row matches; change-record\n");
+        code.append(
+                "  // keys (e.g. type+key+value triples) are preceded by other fields and skipped.\n");
+        code.append("  var found = body.match(/\\x7B\"key\":\"[^\"]+\"/g)\n");
         code.append(
                 "  if (found) gridKeys = found.map(s => s.split('\"')[3])\n");
         // Refresh stable-key → node-ID bindings from the response's changes
