@@ -68,12 +68,6 @@ public abstract class AbstractRecordMojo extends AbstractK6Mojo {
     protected File harDir;
 
     /**
-     * Output directory for generated k6 tests.
-     */
-    @Parameter(property = "k6.outputDir", defaultValue = "${project.build.directory}/k6/tests")
-    protected File outputDir;
-
-    /**
      * Timeout for test execution in seconds.
      */
     @Parameter(property = "k6.testTimeout", defaultValue = "300")
