@@ -470,6 +470,29 @@ class HarToK6ConverterTest {
     }
 
     @Test
+    void gridKeysRegexIsAnchoredOnObjectStart() throws IOException {
+        // The regex must match grid item rows ({"key":"1","col0":...}) but
+        // not change-record keys ({"node":N,"type":"put","key":"highlight"}).
+        // Anchoring on the object-start `{` (encoded as `\x7B`) excludes the
+        // change-record case, where `key` is preceded by other fields.
+        String har = createHar(
+                vaadinInitEntry("http://localhost:8080/?v-r=init&location="),
+                vaadinUidlEntry("http://localhost:8080/?v-r=uidl&v-uiId=0"));
+
+        Path harFile = tempDir.resolve("test.har");
+        Path outputFile = tempDir.resolve("test.js");
+        Files.writeString(harFile, har);
+
+        new HarToK6Converter().convert(harFile, outputFile);
+
+        String script = Files.readString(outputFile);
+        assertTrue(script.contains("body.match(/\\x7B\"key\":\"[^\"]+\"/g)"),
+                "gridKeys regex must anchor on object-start. Got:\n" + script);
+        assertFalse(script.contains("body.match(/\"key\":\"[^\"]+\"/g)"),
+                "Old un-anchored regex should be gone. Got:\n" + script);
+    }
+
+    @Test
     void reExtractionGuardCoercesResponseBody() throws IOException {
         // Two init entries trigger the re-extraction code path. The
         // status===200

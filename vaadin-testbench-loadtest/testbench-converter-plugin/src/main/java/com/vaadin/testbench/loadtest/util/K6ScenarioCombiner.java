@@ -247,21 +247,12 @@ public class K6ScenarioCombiner {
         }
 
         int functionStart = matcher.end();
-        int braceCount = 1;
-        int functionEnd = functionStart;
-
-        // Find matching closing brace
-        for (int i = functionStart; i < content.length()
-                && braceCount > 0; i++) {
-            char c = content.charAt(i);
-            if (c == '{')
-                braceCount++;
-            else if (c == '}')
-                braceCount--;
-            functionEnd = i;
-        }
-
-        String functionBody = content.substring(functionStart, functionEnd);
+        // matcher.end() points one past the opening `{`. Step back to it so
+        // the helper can use a uniform "index of opening brace" contract.
+        int functionEnd = findMatchingClosingBrace(content, functionStart - 1);
+        // functionEnd points one past the closing `}` — drop it so the wrapper
+        // below can re-add a single `}` of its own.
+        String functionBody = content.substring(functionStart, functionEnd - 1);
 
         // Rename inputData references to scenario-specific name for combined
         // scripts
@@ -310,18 +301,94 @@ public class K6ScenarioCombiner {
 
         // Find the matching closing brace of the function
         int braceStart = content.indexOf('{', funcStart);
-        int i = braceStart + 1;
-        int braceCount = 1;
-        while (i < content.length() && braceCount > 0) {
+        int afterClose = findMatchingClosingBrace(content, braceStart);
+        return content.substring(funcStart, afterClose);
+    }
+
+    /**
+     * Returns the index one past the closing `}` that matches the opening `{`
+     * at {@code openBraceIndex}. Skips over single-line comments
+     * ({@code // ...}), block comments ({@code /* ... *}{@code /}), and string
+     * literals ({@code "..."}, {@code '...'}, {@code `...`}) so braces inside
+     * them do not affect the depth count. A backslash escape outside a string
+     * ({@code \{} or {@code \}} inside a regex literal) also consumes the
+     * following character without counting it.
+     *
+     * <p>
+     * This is a pragmatic shim — not a full JS tokenizer. It handles the shapes
+     * that arise in generated k6 scripts and is robust to braces appearing in
+     * comments, regex literals, and template strings.
+     *
+     * @param content
+     *            the JS source to walk
+     * @param openBraceIndex
+     *            index of the opening {@code &#123;} whose match is sought
+     * @return one past the matching closing brace, or {@code content.length()}
+     *         if no match is found before end-of-input
+     */
+    private static int findMatchingClosingBrace(String content,
+            int openBraceIndex) {
+        int n = content.length();
+        int i = openBraceIndex + 1;
+        int depth = 1;
+        while (i < n && depth > 0) {
             char c = content.charAt(i);
-            if (c == '{')
-                braceCount++;
-            else if (c == '}')
-                braceCount--;
+            // Single-line comment — skip to end of line so braces inside
+            // human-written comments are ignored.
+            if (c == '/' && i + 1 < n && content.charAt(i + 1) == '/') {
+                int eol = content.indexOf('\n', i + 2);
+                i = (eol < 0) ? n : eol;
+                continue;
+            }
+            // Block comment.
+            if (c == '/' && i + 1 < n && content.charAt(i + 1) == '*') {
+                int end = content.indexOf("*/", i + 2);
+                i = (end < 0) ? n : end + 2;
+                continue;
+            }
+            // String literals (single, double, backtick). Backtick template
+            // strings are treated as opaque — `${...}` interpolation has
+            // matched braces, so the depth net-zero across the literal.
+            if (c == '\'' || c == '"' || c == '`') {
+                char quote = c;
+                i++;
+                while (i < n) {
+                    char d = content.charAt(i);
+                    if (d == '\\' && i + 1 < n) {
+                        i += 2;
+                        continue;
+                    }
+                    if (d == quote) {
+                        i++;
+                        break;
+                    }
+                    // ' and " strings cannot span lines unescaped — bail out
+                    // on a stray newline rather than consuming the rest of
+                    // the file.
+                    if (d == '\n' && quote != '`') {
+                        break;
+                    }
+                    i++;
+                }
+                continue;
+            }
+            // Backslash escape outside a string (e.g. `\{` in a regex
+            // literal). Consume the following character without counting it.
+            if (c == '\\' && i + 1 < n) {
+                i += 2;
+                continue;
+            }
+            if (c == '{') {
+                depth++;
+            } else if (c == '}') {
+                depth--;
+                if (depth == 0) {
+                    return i + 1;
+                }
+            }
             i++;
         }
-
-        return content.substring(funcStart, i);
+        return i;
     }
 
     /**
