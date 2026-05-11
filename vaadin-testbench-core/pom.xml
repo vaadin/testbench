@@ -18,6 +18,18 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- Selenium 4.13.0 is the last one that supports Java 8 -->
         <selenium.version>4.13.0</selenium.version>
+        
+        <!-- Overridden Selenium dependency versions: -->
+        <!-- Upgraded from 2.12.3 because of CVEs as of 2026-05-08 -->
+        <asynchttpclient.version>2.14.5</asynchttpclient.version>
+        <!-- Original transitive dependency was 2.0.4,
+             it had no CVEs as of 2026-05-08 but 2.0.17
+             is what async-http-client 2.14.5 uses -->
+        <com.typesafe.netty.version>2.0.17</com.typesafe.netty.version>
+        <!-- Use latest 4.1.x version,
+             4.2.x is not completely backwards compatible -->
+        <io.netty.version>4.1.133.Final</io.netty.version>
+
         <snapshot.repository.url>https://maven.vaadin.com/vaadin-prereleases/
         </snapshot.repository.url>
     </properties>
@@ -151,17 +163,137 @@
             <groupId>com.vaadin</groupId>
             <artifactId>license-checker</artifactId>
             <version>1.13.5</version>
+            <exclusions>
+                <!-- Dependency convergence exclusions: -->
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
             <version>1.18.0</version>
         </dependency>
+
+        <!-- Selenium has a lot of dependency convergence issues.
+             They are dealt with here, so that they don't need to be
+             dealt with in projects that use TestBench. -->
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
             <version>${selenium.version}</version>
+            <exclusions>
+                <!-- CVE exclusions: -->
+                <exclusion>
+                    <groupId>org.asynchttpclient</groupId>
+                    <artifactId>async-http-client</artifactId>
+                </exclusion>
+                <!-- Dependency convergence exclusions: -->
+                <exclusion>
+                    <groupId>net.bytebuddy</groupId>
+                    <artifactId>byte-buddy</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.netty</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
+        <!-- Selenium-related dependency convergence inclusions: -->
+        <dependency>
+            <groupId>org.asynchttpclient</groupId>
+            <artifactId>async-http-client</artifactId>
+            <version>${asynchttpclient.version}</version>
+            <exclusions>
+                <!-- Dependency convergence exclusions: -->
+                <exclusion>
+                    <groupId>com.typesafe.netty</groupId>
+                    <artifactId>netty-reactive-streams</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.netty</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.typesafe.netty</groupId>
+            <artifactId>netty-reactive-streams</artifactId>
+            <!-- Original transitive dependency was 2.0.4,
+                 it had no CVEs as of 2026-05-08 but 2.0.17
+                 is what async-http-client 2.14.5 uses -->
+            <version>${com.typesafe.netty.version}</version>
+            <exclusions>
+                <!-- Dependency convergence exclusions: -->
+                <exclusion>
+                    <groupId>io.netty</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-buffer</artifactId>
+            <version>${io.netty.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-codec</artifactId>
+            <version>${io.netty.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-codec-http</artifactId>
+            <version>${io.netty.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-common</artifactId>
+            <version>${io.netty.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-handler</artifactId>
+            <version>${io.netty.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-transport</artifactId>
+            <version>${io.netty.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-transport-classes-epoll</artifactId>
+            <version>${io.netty.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-transport-classes-kqueue</artifactId>
+            <version>${io.netty.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-transport-native-epoll</artifactId>
+            <version>${io.netty.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-transport-native-kqueue</artifactId>
+            <version>${io.netty.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-transport-native-unix-common</artifactId>
+            <version>${io.netty.version}</version>
+        </dependency>
+        <!-- End of Selenium-related dependency convergence inclusions. -->
+
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

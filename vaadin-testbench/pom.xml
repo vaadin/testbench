@@ -90,6 +90,17 @@
             <groupId>com.vaadin</groupId>
             <artifactId>vaadin-testbench-api</artifactId>
             <version>${vaadin.testbench.api.version}</version>
+            <exclusions>
+				<!-- Dependency convergence exclusions: -->
+                <exclusion>
+                    <groupId>com.vaadin</groupId>
+                    <artifactId>vaadin-testbench-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.javassist</groupId>
+                    <artifactId>javassist</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 </project>
