@@ -212,8 +212,15 @@ class K6ScenarioCombinerTest {
         // and strings. Each line of the body below contains a shape that
         // broke the previous naive counter (regex `\{`, isolated `{` in a
         // comment, isolated `{` and `}` in string literals); without
-        // lexer-aware skipping, the walker overshoots and slurps the
-        // trailing handleSummary export.
+        // lexer-aware skipping, the walker either truncates the body at a
+        // `}` inside a string or overshoots and slurps the trailing
+        // handleSummary export.
+        List<String> bodyLines = List.of(
+                "// anchor on `{` to skip change-record keys",
+                "let body = 'a { is hard to count'",
+                "let body2 = 'and so is a } on its own'",
+                "var found = body.match(/\\{\"key\":\"[^\"]+\"/g)",
+                "if (found) gridKeys = found.map(s => s.split('\"')[3])");
         Path scenario = writeScenario("alpha", """
                   // anchor on `{` to skip change-record keys
                   let body = 'a { is hard to count'
@@ -231,6 +238,10 @@ class K6ScenarioCombinerTest {
                 output, 5, "10s");
 
         String content = Files.readString(output);
+
+        // Overshoot guard: only the combiner's own handleSummary should
+        // survive. A second one means the walker absorbed the scenario
+        // file's trailing handleSummary into the wrapped body.
         int handleSummaryCount = 0;
         int idx = 0;
         while ((idx = content.indexOf("function handleSummary", idx)) != -1) {
@@ -240,9 +251,23 @@ class K6ScenarioCombinerTest {
         assertEquals(1, handleSummaryCount,
                 "Combined script must export exactly one handleSummary. Got:\n"
                         + content);
-        assertTrue(content.contains("export function alphaScenario()"),
-                "Scenario function should still be wrapped properly:\n"
-                        + content);
+
+        // Undershoot guard: every body line must appear between the wrapper
+        // opening and the combiner-appended handleSummary. A `}` inside a
+        // string literal misread as a real closing brace would truncate the
+        // body, dropping the lines after it from the output entirely.
+        int wrapperStart = content.indexOf("export function alphaScenario() {");
+        assertTrue(wrapperStart >= 0,
+                "Scenario function should be wrapped:\n" + content);
+        int handleSummaryStart = content.indexOf("function handleSummary",
+                wrapperStart);
+        String wrappedRegion = content.substring(wrapperStart,
+                handleSummaryStart);
+        for (String line : bodyLines) {
+            assertTrue(wrappedRegion.contains(line),
+                    "Wrapped scenario should contain body line: " + line
+                            + "\nWrapped region was:\n" + wrappedRegion);
+        }
     }
 
     @Test
