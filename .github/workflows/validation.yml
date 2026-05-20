@@ -1,7 +1,7 @@
 name: TestBench Validation
 
 on:
-  pull_request_target:
+  pull_request:
     branches:
       - main
     types: [opened, synchronize, reopened, edited]
@@ -23,12 +23,8 @@ env:
   JAVA_VERSION: 21
 
 jobs:
-  check-permissions:
-    uses: ./.github/workflows/check-permissions.yml
-
   format-check:
     name: Format Check
-    needs: check-permissions
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -98,6 +94,7 @@ jobs:
   unit-tests:
     name: Unit Tests
     needs: build
+    if: ${{ !github.event.pull_request.head.repo.fork }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
@@ -141,6 +138,7 @@ jobs:
   integration-tests:
     name: Integration Tests (${{ matrix.name }})
     needs: build
+    if: ${{ !github.event.pull_request.head.repo.fork }}
     runs-on: ubuntu-latest
     timeout-minutes: 45
     concurrency:
@@ -273,6 +271,7 @@ jobs:
   loadtest-converter-tests:
     name: Load Test Converter Plugin ITs
     needs: build
+    if: ${{ !github.event.pull_request.head.repo.fork }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
@@ -330,7 +329,7 @@ jobs:
       issues: read
       checks: write
       pull-requests: write
-    if: always()
+    if: ${{ always() && !github.event.pull_request.head.repo.fork }}
     needs: [format-check, build, unit-tests, integration-tests, loadtest-converter-tests]
     runs-on: ubuntu-latest
 
