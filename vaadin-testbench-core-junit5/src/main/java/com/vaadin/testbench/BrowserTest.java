@@ -23,6 +23,7 @@ import com.vaadin.testbench.browser.MultipleBrowsersExtension;
  * <p>
  * Combines JUnit 5+ {@code @TestTemplate} together with
  * {@code @ExtendWith(CapabilitiesInvocationContextProvider.class)}.
+ * Dummy change to test external contribution
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
