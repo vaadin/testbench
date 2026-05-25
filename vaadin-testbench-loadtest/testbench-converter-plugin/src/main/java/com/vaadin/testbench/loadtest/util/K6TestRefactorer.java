@@ -499,9 +499,9 @@ public class K6TestRefactorer {
             }
 
             if (inRequest) {
-                int opens = countOccurrences(line, '(');
+                int opens = countUnquotedOccurrences(line, '(');
                 parenCount += opens;
-                parenCount -= countOccurrences(line, ')');
+                parenCount -= countUnquotedOccurrences(line, ')');
                 if (opens > 0) {
                     seenOpenParen = true;
                 }
@@ -647,8 +647,8 @@ public class K6TestRefactorer {
             }
 
             if (inFirstAppRequest) {
-                braceCount += countOccurrences(line, '{');
-                braceCount -= countOccurrences(line, '}');
+                braceCount += countUnquotedOccurrences(line, '{');
+                braceCount -= countUnquotedOccurrences(line, '}');
 
                 if (braceCount == 0 && line.contains(")")) {
                     insertLineIndex = i;
@@ -687,8 +687,8 @@ public class K6TestRefactorer {
             }
 
             if (inInitRequest) {
-                braceCount += countOccurrences(line, '{');
-                braceCount -= countOccurrences(line, '}');
+                braceCount += countUnquotedOccurrences(line, '{');
+                braceCount -= countUnquotedOccurrences(line, '}');
 
                 if (braceCount == 0 && line.contains(")")) {
                     insertLineIndex = i;
@@ -705,10 +705,35 @@ public class K6TestRefactorer {
         return content;
     }
 
-    private int countOccurrences(String str, char c) {
+    /**
+     * Counts occurrences of {@code target} in {@code str}, ignoring any
+     * occurrences that fall inside a JavaScript string literal delimited by
+     * {@code '}, {@code "}, or {@code `}. Backslash escapes inside strings are
+     * honored. This is what keeps a {@code )} inside a header value like
+     * {@code 'sec-ch-ua': '"Not/A)Brand";v="99"'} from being mistaken for the
+     * closing paren of an {@code http.get(...)} call.
+     * <p>
+     * The scan is per-line: {@link HarToK6Converter} escapes
+     * {@code \n}/{@code \r}/ {@code \t} in URLs, headers, and bodies, so
+     * generated string literals never span multiple lines. Template-literal
+     * interpolations ({@code ${...}}) are treated as opaque string content —
+     * the converter only emits interpolations of bare identifiers, none of
+     * which contain {@code (}, {@code )}, {@code {}, or {@code }}.
+     */
+    private int countUnquotedOccurrences(String str, char target) {
         int count = 0;
+        char stringDelim = 0;
         for (int i = 0; i < str.length(); i++) {
-            if (str.charAt(i) == c) {
+            char c = str.charAt(i);
+            if (stringDelim != 0) {
+                if (c == '\\' && i + 1 < str.length()) {
+                    i++;
+                } else if (c == stringDelim) {
+                    stringDelim = 0;
+                }
+            } else if (c == '\'' || c == '"' || c == '`') {
+                stringDelim = c;
+            } else if (c == target) {
                 count++;
             }
         }
