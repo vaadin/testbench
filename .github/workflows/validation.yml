@@ -1,6 +1,9 @@
 name: TestBench Validation
 
 on:
+  push:
+    branches:
+      - 10.0
   pull_request:
     branches:
       - 10.0
