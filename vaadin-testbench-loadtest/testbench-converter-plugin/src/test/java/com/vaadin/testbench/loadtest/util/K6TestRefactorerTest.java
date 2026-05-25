@@ -145,6 +145,102 @@ class K6TestRefactorerTest {
     }
 
     @Test
+    void refactorContent_thinkTimesEnabled_headerValueContainsCloseParen_sleepStaysAtStatementScope() {
+        K6TestRefactorer refactorer = new K6TestRefactorer(
+                ThinkTimeConfig.DEFAULT);
+
+        // Reproduces the combineScenarios=true breakage: the Chrome sec-ch-ua
+        // header value contains a literal `)` inside a single-quoted JS
+        // string. A non-string-aware paren counter dropped to zero mid-headers
+        // and the sleep() got injected inside the headers object, producing
+        // "Unexpected number" parse errors in k6.
+        String script = """
+                import http from 'k6/http'
+                import { sleep } from 'k6'
+                export default function() {
+                  // HAR_DELTA_MS: 0
+                  // Request 1: GET http://localhost:8080/?v-r=init
+                  let response = http.get(
+                    'http://localhost:8080/?v-r=init',
+                    {
+                      headers: {
+                        'sec-ch-ua': '"Chromium";v="148", "Not/A)Brand";v="99"',
+                        'User-Agent': 'Mozilla/5.0'
+                      },
+                      tags: { name: 'init' }
+                    }
+                  )
+                  // HAR_DELTA_MS: 200
+                  // Request 2: POST http://localhost:8080/?v-r=uidl
+                  response = http.post('http://localhost:8080/?v-r=uidl', '{"event":"click"}')
+                }
+                """;
+
+        String refactored = refactorer.refactorContent(script);
+
+        // Walk the function body and check that every `sleep(` lands at
+        // statement scope — paren-balance 0 and brace-balance 1 (the open
+        // brace of `export default function() { ... }` itself). The walker
+        // is string- and line-comment-aware so it isn't fooled by `)` inside
+        // header values or `(` inside `// Request N:` comments.
+        int functionBodyOpen = refactored
+                .indexOf("export default function() {");
+        assertTrue(functionBodyOpen >= 0,
+                "Function body not found in refactored output:\n" + refactored);
+        int scanFrom = functionBodyOpen
+                + "export default function() {".length();
+
+        int parenBalance = 0;
+        int braceBalance = 1;
+        char stringDelim = 0;
+        int sleepCount = 0;
+
+        for (int i = scanFrom; i < refactored.length(); i++) {
+            char c = refactored.charAt(i);
+            if (stringDelim != 0) {
+                if (c == '\\' && i + 1 < refactored.length()) {
+                    i++;
+                } else if (c == stringDelim) {
+                    stringDelim = 0;
+                }
+                continue;
+            }
+            if (c == '/' && i + 1 < refactored.length()
+                    && refactored.charAt(i + 1) == '/') {
+                int eol = refactored.indexOf('\n', i);
+                i = (eol == -1) ? refactored.length() - 1 : eol;
+                continue;
+            }
+            if (c == '\'' || c == '"' || c == '`') {
+                stringDelim = c;
+            } else if (c == '(') {
+                parenBalance++;
+            } else if (c == ')') {
+                parenBalance--;
+            } else if (c == '{') {
+                braceBalance++;
+            } else if (c == '}') {
+                braceBalance--;
+            } else if (c == 's' && refactored.startsWith("sleep(", i)) {
+                sleepCount++;
+                assertEquals(0, parenBalance, "sleep(...) at offset " + i
+                        + " is nested inside open parens (depth " + parenBalance
+                        + ") — likely injected inside an http.get/post(...) call. Output:\n"
+                        + refactored);
+                assertEquals(1, braceBalance, "sleep(...) at offset " + i
+                        + " is nested inside unbalanced braces (depth "
+                        + braceBalance
+                        + ") — likely injected inside a `headers` or options object. Output:\n"
+                        + refactored);
+            }
+        }
+
+        assertTrue(sleepCount > 0,
+                "Expected at least one sleep(...) call in refactored output (page-read delay after init block):\n"
+                        + refactored);
+    }
+
+    @Test
     void refactor_readsInputAndWritesOutputFile() throws IOException {
         Path input = tempDir.resolve("in.js");
         Path output = tempDir.resolve("out.js");
