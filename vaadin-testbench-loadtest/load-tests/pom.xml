@@ -14,6 +14,7 @@
     <name>Vaadin TestBench Load Tests</name>
     <packaging>pom</packaging>
     <description>Aggregator for Vaadin TestBench k6 load-test demo and integration test modules.</description>
+    <url>http://vaadin.com/</url>
 
     <dependencyManagement>
         <dependencies>
