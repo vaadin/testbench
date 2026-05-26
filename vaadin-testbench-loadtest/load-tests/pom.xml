@@ -14,21 +14,6 @@
     <name>Vaadin TestBench Load Tests</name>
     <packaging>pom</packaging>
     <description>Aggregator for Vaadin TestBench k6 load-test demo and integration test modules.</description>
-    <url>https://vaadin.com</url>
-
-    <scm>
-        <connection>scm:git:git://github.com/vaadin/testbench.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com/vaadin/testbench.git</developerConnection>
-        <url>https://github.com/vaadin/testbench</url>
-    </scm>
-
-    <developers>
-        <developer>
-            <name>Vaadin Ltd</name>
-            <organization>Vaadin Ltd</organization>
-            <organizationUrl>https://vaadin.com</organizationUrl>
-        </developer>
-    </developers>
 
     <dependencyManagement>
         <dependencies>
