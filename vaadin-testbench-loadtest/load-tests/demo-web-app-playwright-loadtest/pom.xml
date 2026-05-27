@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.vaadin</groupId>
         <artifactId>load-tests</artifactId>
-        <version>10.2-SNAPSHOT</version>
+        <version>25.2-SNAPSHOT</version>
     </parent>
 
     <artifactId>demo-web-app-playwright-loadtest</artifactId>
