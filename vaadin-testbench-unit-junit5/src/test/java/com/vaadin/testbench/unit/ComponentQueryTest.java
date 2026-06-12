@@ -43,7 +43,7 @@ class ComponentQueryTest extends UIUnitTest {
         rootElement.getChildren().filter(el -> !el.isTextNode())
                 .forEach(el -> el.setVisible(false));
 
-        Assertions.assertTrue($(Div.class).all().isEmpty());
+        Assertions.assertTrue(find(Div.class).all().isEmpty());
     }
 
     @Test
@@ -55,11 +55,11 @@ class ComponentQueryTest extends UIUnitTest {
         Button button = new Button();
         root.appendChild(button.getElement());
 
-        ComponentQuery<TextField> textFieldQuery = $(TextField.class);
+        ComponentQuery<TextField> textFieldQuery = find(TextField.class);
         Assertions.assertSame(textField, textFieldQuery.first(),
                 "Expecting query to find TextField component, but got different instance");
 
-        ComponentQuery<Button> buttonQuery = $(Button.class);
+        ComponentQuery<Button> buttonQuery = find(Button.class);
         Assertions.assertSame(button, buttonQuery.first(),
                 "Expecting query to find Button component, but got different instance");
 
@@ -73,14 +73,14 @@ class ComponentQueryTest extends UIUnitTest {
                 new TextField().getElement(), new TextField().getElement(),
                 new TextField().getElement());
 
-        ComponentQuery<TextField> query = $(TextField.class);
+        ComponentQuery<TextField> query = find(TextField.class);
         Assertions.assertSame(first, query.first(),
                 "Expecting query to find TextField component, but got different instance");
     }
 
     @Test
     void first_noMatching_throws() {
-        ComponentQuery<TextField> query = $(TextField.class);
+        ComponentQuery<TextField> query = find(TextField.class);
         Assertions.assertThrows(NoSuchElementException.class, query::first);
     }
 
@@ -93,11 +93,11 @@ class ComponentQueryTest extends UIUnitTest {
         Button button = new Button();
         root.appendChild(button.getElement());
 
-        ComponentQuery<TextField> textFieldQuery = $(TextField.class);
+        ComponentQuery<TextField> textFieldQuery = find(TextField.class);
         Assertions.assertSame(textField, textFieldQuery.last(),
                 "Expecting query to find TextField component, but got different instance");
 
-        ComponentQuery<Button> buttonQuery = $(Button.class);
+        ComponentQuery<Button> buttonQuery = find(Button.class);
         Assertions.assertSame(button, buttonQuery.last(),
                 "Expecting query to find Button component, but got different instance");
 
@@ -111,14 +111,14 @@ class ComponentQueryTest extends UIUnitTest {
                 new TextField().getElement(), new TextField().getElement(),
                 last.getElement());
 
-        ComponentQuery<TextField> query = $(TextField.class);
+        ComponentQuery<TextField> query = find(TextField.class);
         Assertions.assertSame(last, query.last(),
                 "Expecting query to find TextField component, but got different instance");
     }
 
     @Test
     void last_noMatching_throws() {
-        ComponentQuery<TextField> query = $(TextField.class);
+        ComponentQuery<TextField> query = find(TextField.class);
         Assertions.assertThrows(NoSuchElementException.class, query::last);
     }
 
@@ -131,11 +131,11 @@ class ComponentQueryTest extends UIUnitTest {
         Button button = new Button();
         root.appendChild(button.getElement());
 
-        ComponentQuery<TextField> textFieldQuery = $(TextField.class);
+        ComponentQuery<TextField> textFieldQuery = find(TextField.class);
         Assertions.assertSame(textField, textFieldQuery.atIndex(1),
                 "Expecting query to find TextField component, but got different instance");
 
-        ComponentQuery<Button> buttonQuery = $(Button.class);
+        ComponentQuery<Button> buttonQuery = find(Button.class);
         Assertions.assertSame(button, buttonQuery.atIndex(1),
                 "Expecting query to find Button component, but got different instance");
 
@@ -149,14 +149,14 @@ class ComponentQueryTest extends UIUnitTest {
                 new TextField().getElement(), new TextField().getElement(),
                 last.getElement());
 
-        ComponentQuery<TextField> query = $(TextField.class);
+        ComponentQuery<TextField> query = find(TextField.class);
         Assertions.assertSame(last, query.atIndex(4),
                 "Expecting query to find TextField component, but got different instance");
     }
 
     @Test
     void atIndex_negativeOrZeroIndex_throws() {
-        ComponentQuery<TextField> query = $(TextField.class);
+        ComponentQuery<TextField> query = find(TextField.class);
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> query.atIndex(-10));
         Assertions.assertThrows(IllegalArgumentException.class,
@@ -168,7 +168,7 @@ class ComponentQueryTest extends UIUnitTest {
         Element rootElement = getCurrentView().getElement();
         rootElement.appendChild(new TextField().getElement(),
                 new TextField().getElement(), new TextField().getElement());
-        ComponentQuery<TextField> query = $(TextField.class);
+        ComponentQuery<TextField> query = find(TextField.class);
         Assertions.assertThrows(IndexOutOfBoundsException.class,
                 () -> query.atIndex(4));
         Assertions.assertThrows(IndexOutOfBoundsException.class,
@@ -177,14 +177,14 @@ class ComponentQueryTest extends UIUnitTest {
 
     @Test
     void atIndex_noMatching_throws() {
-        ComponentQuery<TextField> query = $(TextField.class);
+        ComponentQuery<TextField> query = find(TextField.class);
         Assertions.assertThrows(NoSuchElementException.class,
                 () -> query.atIndex(1));
     }
 
     @Test
     void all_noMatching_getsEmptyList() {
-        ComponentQuery<TextField> query = $(TextField.class);
+        ComponentQuery<TextField> query = find(TextField.class);
         List<TextField> result = query.all();
         Assertions.assertNotNull(result);
         Assertions.assertTrue(result.isEmpty(),
@@ -200,7 +200,7 @@ class ComponentQueryTest extends UIUnitTest {
         expectedComponents
                 .forEach(text -> rootElement.appendChild(text.getElement()));
 
-        ComponentQuery<TextField> query = $(TextField.class);
+        ComponentQuery<TextField> query = find(TextField.class);
         List<TextField> result = query.all();
         Assertions.assertNotNull(result);
         Assertions.assertIterableEquals(expectedComponents, result);
@@ -208,13 +208,13 @@ class ComponentQueryTest extends UIUnitTest {
         Assertions.assertIterableEquals(
                 Collections
                         .singleton(getCurrentView().getElement().getChild(0)),
-                $(Text.class).all().stream().map(Component::getElement)
+                find(Text.class).all().stream().map(Component::getElement)
                         .collect(Collectors.toList()));
     }
 
     @Test
     void allComponents_noMatching_getsEmptyList() {
-        ComponentQuery<TextField> query = $(TextField.class);
+        ComponentQuery<TextField> query = find(TextField.class);
         List<TextField> result = query.all();
         Assertions.assertNotNull(result);
         Assertions.assertEquals(0, result.size(),
@@ -230,14 +230,14 @@ class ComponentQueryTest extends UIUnitTest {
         expectedComponents
                 .forEach(text -> rootElement.appendChild(text.getElement()));
 
-        ComponentQuery<TextField> query = $(TextField.class);
+        ComponentQuery<TextField> query = find(TextField.class);
         List<TextField> result = query.all();
         Assertions.assertIterableEquals(expectedComponents, result);
 
         Assertions.assertIterableEquals(
                 Collections
                         .singleton(getCurrentView().getElement().getChild(0)),
-                $(Text.class).all().stream().map(Component::getElement)
+                find(Text.class).all().stream().map(Component::getElement)
                         .collect(Collectors.toList()));
     }
 
@@ -256,11 +256,11 @@ class ComponentQueryTest extends UIUnitTest {
                 new Div(context, textField3).getElement(),
                 textField4.getElement());
 
-        List<TextField> result = $(TextField.class).from(context).all();
+        List<TextField> result = find(TextField.class).from(context).all();
         Assertions.assertIterableEquals(List.of(textField1, textField2),
                 result);
 
-        result = $view(TextField.class).all();
+        result = findInView(TextField.class).all();
         Assertions.assertIterableEquals(List.of(textField5, textField1,
                 textField2, textField3, textField4), result);
 
@@ -274,11 +274,11 @@ class ComponentQueryTest extends UIUnitTest {
                 new Div(context, new TextField()).getElement(),
                 new TextField().getElement());
 
-        List<TextField> result = $(TextField.class).from(context).all();
+        List<TextField> result = find(TextField.class).from(context).all();
         Assertions.assertTrue(result.isEmpty());
 
         // shorthand for from
-        result = $(TextField.class, context).all();
+        result = find(TextField.class, context).all();
         Assertions.assertTrue(result.isEmpty());
 
     }
@@ -291,11 +291,11 @@ class ComponentQueryTest extends UIUnitTest {
         rootElement.appendChild(new Div(context, new TextField()).getElement(),
                 new TextField().getElement());
 
-        List<TextField> result = $(TextField.class).from(context).all();
+        List<TextField> result = find(TextField.class).from(context).all();
         Assertions.assertTrue(result.isEmpty());
 
         // shorthand for from
-        result = $(TextField.class, context).all();
+        result = find(TextField.class, context).all();
         Assertions.assertTrue(result.isEmpty());
     }
 
@@ -312,19 +312,20 @@ class ComponentQueryTest extends UIUnitTest {
         Element rootElement = getCurrentView().getElement();
         rootElement.appendChild(context.getElement());
 
-        List<TextField> result = $(TextField.class).from(context).all();
+        List<TextField> result = find(TextField.class).from(context).all();
         Assertions.assertIterableEquals(Collections.singleton(inViewTextField),
                 result);
 
-        TextField foundTextField = $(TextField.class).from(context).id("myId");
+        TextField foundTextField = find(TextField.class).from(context)
+                .id("myId");
         Assertions.assertSame(inViewTextField, foundTextField);
 
         // shorthand for from
-        result = $(TextField.class, context).all();
+        result = find(TextField.class, context).all();
         Assertions.assertIterableEquals(Collections.singleton(inViewTextField),
                 result);
 
-        foundTextField = $(TextField.class, context).id("myId");
+        foundTextField = find(TextField.class, context).id("myId");
         Assertions.assertSame(inViewTextField, foundTextField);
     }
 
@@ -339,7 +340,7 @@ class ComponentQueryTest extends UIUnitTest {
                 }).peek(field -> rootElement.appendChild(field.getElement()))
                 .collect(Collectors.toList());
 
-        ComponentQuery<TextField> query = $view(TextField.class);
+        ComponentQuery<TextField> query = findInView(TextField.class);
 
         textFields.forEach(field -> Assertions.assertSame(field,
                 query.id(field.getId().orElse(""))));
@@ -353,7 +354,7 @@ class ComponentQueryTest extends UIUnitTest {
         textField.setId("myId");
         rootElement.appendChild(textField.getElement());
 
-        ComponentQuery<TextField> query = $view(TextField.class);
+        ComponentQuery<TextField> query = findInView(TextField.class);
         Assertions.assertThrows(NoSuchElementException.class,
                 () -> query.id("test"));
     }
@@ -366,7 +367,7 @@ class ComponentQueryTest extends UIUnitTest {
         button.setId("myId");
         rootElement.appendChild(button.getElement());
 
-        ComponentQuery<TextField> query = $view(TextField.class);
+        ComponentQuery<TextField> query = findInView(TextField.class);
         Assertions.assertThrows(NoSuchElementException.class,
                 () -> query.id("myId"));
     }
@@ -382,7 +383,7 @@ class ComponentQueryTest extends UIUnitTest {
                 }).peek(field -> rootElement.appendChild(field.getElement()))
                 .collect(Collectors.toList());
 
-        ComponentQuery<TextField> query = $view(TextField.class);
+        ComponentQuery<TextField> query = findInView(TextField.class);
 
         for (TextField expected : textFields) {
             List<TextField> result = query.withId(expected.getId().orElse(""))
@@ -400,7 +401,7 @@ class ComponentQueryTest extends UIUnitTest {
         textField.setId("myId");
         rootElement.appendChild(textField.getElement());
 
-        ComponentQuery<TextField> query = $view(TextField.class);
+        ComponentQuery<TextField> query = findInView(TextField.class);
         Assertions.assertTrue(query.withId("wrongId").all().isEmpty());
     }
 
@@ -412,7 +413,7 @@ class ComponentQueryTest extends UIUnitTest {
         button.setId("myId");
         rootElement.appendChild(button.getElement());
 
-        ComponentQuery<TextField> query = $view(TextField.class);
+        ComponentQuery<TextField> query = findInView(TextField.class);
         Assertions.assertTrue(query.withId("myId").all().isEmpty());
     }
 
@@ -428,7 +429,7 @@ class ComponentQueryTest extends UIUnitTest {
         rootElement.appendChild(textField2.getElement());
         rootElement.appendChild(new TextField().getElement());
 
-        Assertions.assertSame(textField, $(TextField.class)
+        Assertions.assertSame(textField, find(TextField.class)
                 .withPropertyValue(TextField::getLabel, label).first());
     }
 
@@ -441,7 +442,7 @@ class ComponentQueryTest extends UIUnitTest {
         textField2.setLabel("Another label");
         rootElement.appendChild(textField2.getElement());
 
-        Assertions.assertSame(textField, $(TextField.class)
+        Assertions.assertSame(textField, find(TextField.class)
                 .withPropertyValue(TextField::getLabel, null).first());
     }
 
@@ -454,7 +455,7 @@ class ComponentQueryTest extends UIUnitTest {
         textField2.setLabel("Another label");
         rootElement.appendChild(textField2.getElement());
 
-        Assertions.assertTrue($(TextField.class)
+        Assertions.assertTrue(find(TextField.class)
                 .withPropertyValue(TextField::getLabel, "The label").all()
                 .isEmpty());
     }
@@ -477,9 +478,9 @@ class ComponentQueryTest extends UIUnitTest {
         rootElement.appendChild(new TextField().getElement());
 
         Assertions.assertSame(targetField,
-                $(Component.class).withValue(targetValue).first());
+                find(Component.class).withValue(targetValue).first());
         Assertions.assertSame(numericField,
-                $(Component.class).withValue(targetNumericValue).first());
+                find(Component.class).withValue(targetNumericValue).first());
 
     }
 
@@ -493,7 +494,7 @@ class ComponentQueryTest extends UIUnitTest {
         rootElement.appendChild(otherField.getElement());
 
         Assertions.assertIterableEquals(List.of(targetField, otherField),
-                $(TextFieldBase.class).withValue(null).all());
+                find(TextFieldBase.class).withValue(null).all());
     }
 
     @Test
@@ -506,9 +507,10 @@ class ComponentQueryTest extends UIUnitTest {
         rootElement.appendChild(textField2.getElement());
 
         Assertions.assertTrue(
-                $(TextField.class).withValue("The value").all().isEmpty());
+                find(TextField.class).withValue("The value").all().isEmpty());
 
-        Assertions.assertTrue($(TextField.class).withValue(35).all().isEmpty());
+        Assertions.assertTrue(
+                find(TextField.class).withValue(35).all().isEmpty());
     }
 
     @Test
@@ -522,12 +524,12 @@ class ComponentQueryTest extends UIUnitTest {
         UI.getCurrent().getElement().appendChild(div1.getElement(),
                 div2.getElement(), div3.getElement());
 
-        List<Div> result = $(Div.class)
+        List<Div> result = find(Div.class)
                 .withCondition(div -> div.getChildren().findAny().isPresent())
                 .all();
         Assertions.assertIterableEquals(Collections.singleton(div2), result);
 
-        result = $(Div.class).withCondition(div -> {
+        result = find(Div.class).withCondition(div -> {
             double value = div.getElement().getProperty("numeric-prop", 0.0);
             return value > 1 && value < 3;
         }).all();
@@ -548,12 +550,12 @@ class ComponentQueryTest extends UIUnitTest {
                 propertyCmp.getElement(), noLabel.getElement());
 
         Assertions.assertSame(hasLabelCmp,
-                $(TestComponent.class).withCaption("has-label").single());
-        Assertions.assertSame(propertyCmp,
-                $(TestComponent.class).withCaption("property-label").single());
+                find(TestComponent.class).withCaption("has-label").single());
+        Assertions.assertSame(propertyCmp, find(TestComponent.class)
+                .withCaption("property-label").single());
 
         Assertions.assertTrue(
-                $(TestComponent.class).withCaption("label").all().isEmpty());
+                find(TestComponent.class).withCaption("label").all().isEmpty());
     }
 
     @Test
@@ -571,7 +573,7 @@ class ComponentQueryTest extends UIUnitTest {
 
         Assertions.assertIterableEquals(
                 List.of(hasLabelCmp, propertyCmp, noLabel),
-                $(TestComponent.class).withCaption(null).all());
+                find(TestComponent.class).withCaption(null).all());
     }
 
     @Test
@@ -588,21 +590,22 @@ class ComponentQueryTest extends UIUnitTest {
                 propertyCmp.getElement(), noLabel.getElement());
 
         Assertions.assertIterableEquals(List.of(hasLabelCmp, propertyCmp),
-                $(TestComponent.class).withCaptionContaining("-lab").all());
+                find(TestComponent.class).withCaptionContaining("-lab").all());
         Assertions.assertIterableEquals(List.of(hasLabelCmp, propertyCmp),
-                $(TestComponent.class).withCaptionContaining("-label").all());
+                find(TestComponent.class).withCaptionContaining("-label")
+                        .all());
         Assertions.assertIterableEquals(List.of(hasLabelCmp, propertyCmp),
-                $(TestComponent.class).withCaptionContaining("cmp-").all());
+                find(TestComponent.class).withCaptionContaining("cmp-").all());
         Assertions.assertIterableEquals(
                 List.of(hasLabelCmp, propertyCmp, noLabel),
-                $(TestComponent.class).withCaptionContaining("").all());
-        Assertions.assertTrue($(TestComponent.class)
+                find(TestComponent.class).withCaptionContaining("").all());
+        Assertions.assertTrue(find(TestComponent.class)
                 .withCaptionContaining("sometext").all().isEmpty());
     }
 
     @Test
     void withCaptionContaining_null_throws() {
-        ComponentQuery<TestComponent> query = $(TestComponent.class);
+        ComponentQuery<TestComponent> query = find(TestComponent.class);
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> query.withCaptionContaining(null));
     }
@@ -617,16 +620,16 @@ class ComponentQueryTest extends UIUnitTest {
                 span2.getElement(), span3.getElement());
 
         Assertions.assertSame(span1,
-                $(TextComponent.class).withText("sample text").single());
+                find(TextComponent.class).withText("sample text").single());
         Assertions.assertSame(span2,
-                $(TextComponent.class).withText("other text").single());
+                find(TextComponent.class).withText("other text").single());
 
         Assertions.assertTrue(
-                $(TextComponent.class).withText("text").all().isEmpty());
-        Assertions.assertTrue(
-                $(TextComponent.class).withText("SAMPLE TEXT").all().isEmpty());
-        Assertions.assertTrue(
-                $(TextComponent.class).withText("other TEXT").all().isEmpty());
+                find(TextComponent.class).withText("text").all().isEmpty());
+        Assertions.assertTrue(find(TextComponent.class).withText("SAMPLE TEXT")
+                .all().isEmpty());
+        Assertions.assertTrue(find(TextComponent.class).withText("other TEXT")
+                .all().isEmpty());
     }
 
     @Test
@@ -641,20 +644,20 @@ class ComponentQueryTest extends UIUnitTest {
                 span2.getElement(), span3.getElement());
 
         Assertions.assertIterableEquals(List.of(span1, span2),
-                $(TextComponent.class).withTextContaining("text").all());
+                find(TextComponent.class).withTextContaining("text").all());
         Assertions.assertIterableEquals(List.of(span1, span2),
-                $(TextComponent.class).withTextContaining("span").all());
+                find(TextComponent.class).withTextContaining("span").all());
         Assertions.assertIterableEquals(List.of(span1, span2),
-                $(TextComponent.class).withTextContaining("this").all());
+                find(TextComponent.class).withTextContaining("this").all());
         Assertions.assertIterableEquals(List.of(span1, span2, span3),
-                $(TextComponent.class).withTextContaining("").all());
-        Assertions.assertTrue($(TextComponent.class)
+                find(TextComponent.class).withTextContaining("").all());
+        Assertions.assertTrue(find(TextComponent.class)
                 .withTextContaining("textual").all().isEmpty());
     }
 
     @Test
     void withTextContaining_null_throws() {
-        ComponentQuery<Span> query = $(Span.class);
+        ComponentQuery<Span> query = find(Span.class);
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> query.withTextContaining(null));
     }
@@ -669,7 +672,7 @@ class ComponentQueryTest extends UIUnitTest {
                 div2.getElement(), div3.getElement(), div4.getElement());
 
         Assertions.assertTrue(
-                $(TestComponent.class).withResultsSize(0).all().isEmpty());
+                find(TestComponent.class).withResultsSize(0).all().isEmpty());
     }
 
     @Test
@@ -681,7 +684,7 @@ class ComponentQueryTest extends UIUnitTest {
         UI.getCurrent().getElement().appendChild(div1.getElement(),
                 div2.getElement(), div3.getElement(), div4.getElement());
 
-        List<Div> result = $(Div.class).withResultsSize(4).all();
+        List<Div> result = find(Div.class).withResultsSize(4).all();
         Assertions.assertIterableEquals(List.of(div1, div2, div3, div4),
                 result);
     }
@@ -696,14 +699,14 @@ class ComponentQueryTest extends UIUnitTest {
                 div2.getElement(), div3.getElement(), div4.getElement());
 
         IntStream.rangeClosed(0, 10).filter(i -> i != 4).forEach(i -> {
-            ComponentQuery<Div> query = $(Div.class).withResultsSize(i);
+            ComponentQuery<Div> query = find(Div.class).withResultsSize(i);
             Assertions.assertThrows(AssertionError.class, query::all);
         });
     }
 
     @Test
     void withResultsSize_negative_throws() {
-        ComponentQuery<Div> query = $(Div.class);
+        ComponentQuery<Div> query = find(Div.class);
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> query.withResultsSize(-1));
     }
@@ -717,7 +720,7 @@ class ComponentQueryTest extends UIUnitTest {
         UI.getCurrent().getElement().appendChild(div1.getElement(),
                 div2.getElement(), div3.getElement(), div4.getElement());
 
-        List<Div> result = $(Div.class).withMaxResults(2).withResultsSize(4)
+        List<Div> result = find(Div.class).withMaxResults(2).withResultsSize(4)
                 .all();
         Assertions.assertIterableEquals(List.of(div1, div2, div3, div4),
                 result);
@@ -732,7 +735,7 @@ class ComponentQueryTest extends UIUnitTest {
         UI.getCurrent().getElement().appendChild(div1.getElement(),
                 div2.getElement(), div3.getElement(), div4.getElement());
 
-        List<Div> result = $(Div.class).withMinResults(10).withResultsSize(4)
+        List<Div> result = find(Div.class).withMinResults(10).withResultsSize(4)
                 .all();
         Assertions.assertIterableEquals(List.of(div1, div2, div3, div4),
                 result);
@@ -747,8 +750,8 @@ class ComponentQueryTest extends UIUnitTest {
         UI.getCurrent().getElement().appendChild(div1.getElement(),
                 div2.getElement(), div3.getElement(), div4.getElement());
 
-        List<Div> result = $(Div.class).withResultsSize(2, 3).withResultsSize(4)
-                .all();
+        List<Div> result = find(Div.class).withResultsSize(2, 3)
+                .withResultsSize(4).all();
         Assertions.assertIterableEquals(List.of(div1, div2, div3, div4),
                 result);
     }
@@ -762,10 +765,10 @@ class ComponentQueryTest extends UIUnitTest {
         UI.getCurrent().getElement().appendChild(div1.getElement(),
                 div2.getElement(), div3.getElement(), div4.getElement());
 
-        List<Div> result = $(Div.class).withMaxResults(10).all();
+        List<Div> result = find(Div.class).withMaxResults(10).all();
         Assertions.assertIterableEquals(List.of(div1, div2, div3, div4),
                 result);
-        result = $(Div.class).withMaxResults(4).all();
+        result = find(Div.class).withMaxResults(4).all();
         Assertions.assertIterableEquals(List.of(div1, div2, div3, div4),
                 result);
     }
@@ -780,21 +783,21 @@ class ComponentQueryTest extends UIUnitTest {
                 div2.getElement(), div3.getElement(), div4.getElement());
 
         IntStream.rangeClosed(1, 3).forEach(count -> {
-            ComponentQuery<Div> query = $(Div.class).withMaxResults(count);
+            ComponentQuery<Div> query = find(Div.class).withMaxResults(count);
             Assertions.assertThrows(AssertionError.class, query::all);
         });
     }
 
     @Test
     void withMaxResults_negative_throws() {
-        ComponentQuery<Div> query = $(Div.class);
+        ComponentQuery<Div> query = find(Div.class);
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> query.withMaxResults(-1));
     }
 
     @Test
     void withMaxResults_lowerThanMin_throws() {
-        ComponentQuery<Div> query = $(Div.class).withMinResults(4);
+        ComponentQuery<Div> query = find(Div.class).withMinResults(4);
         query.withMaxResults(4); // same as min is OK, must not throw
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> query.withMaxResults(2));
@@ -808,7 +811,7 @@ class ComponentQueryTest extends UIUnitTest {
         Div div4 = new Div();
         UI.getCurrent().getElement().appendChild(div1.getElement(),
                 div2.getElement(), div3.getElement(), div4.getElement());
-        List<Div> result = $(Div.class).withResultsSize(1).withMaxResults(4)
+        List<Div> result = find(Div.class).withResultsSize(1).withMaxResults(4)
                 .all();
         Assertions.assertIterableEquals(List.of(div1, div2, div3, div4),
                 result);
@@ -824,7 +827,7 @@ class ComponentQueryTest extends UIUnitTest {
                 div2.getElement(), div3.getElement(), div4.getElement());
 
         IntStream.rangeClosed(0, 4).forEach(count -> {
-            List<Div> result = $(Div.class).withMinResults(count).all();
+            List<Div> result = find(Div.class).withMinResults(count).all();
             Assertions.assertIterableEquals(List.of(div1, div2, div3, div4),
                     result);
         });
@@ -838,21 +841,21 @@ class ComponentQueryTest extends UIUnitTest {
                 div2.getElement());
 
         IntStream.rangeClosed(3, 10).forEach(count -> {
-            ComponentQuery<Div> query = $(Div.class).withMinResults(count);
+            ComponentQuery<Div> query = find(Div.class).withMinResults(count);
             Assertions.assertThrows(AssertionError.class, query::all);
         });
     }
 
     @Test
     void withMinResults_negative_throws() {
-        ComponentQuery<Div> query = $(Div.class);
+        ComponentQuery<Div> query = find(Div.class);
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> query.withMinResults(-1));
     }
 
     @Test
     void withMinResults_greaterThanMax_throws() {
-        ComponentQuery<Div> query = $(Div.class).withMaxResults(2);
+        ComponentQuery<Div> query = find(Div.class).withMaxResults(2);
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> query.withMinResults(10));
     }
@@ -865,7 +868,7 @@ class ComponentQueryTest extends UIUnitTest {
         UI.getCurrent().getElement().appendChild(div1.getElement(),
                 div2.getElement(), div3.getElement());
 
-        List<Div> result = $(Div.class).withResultsSize(4).withMinResults(1)
+        List<Div> result = find(Div.class).withResultsSize(4).withMinResults(1)
                 .all();
         Assertions.assertIterableEquals(List.of(div1, div2, div3), result);
     }
@@ -879,31 +882,31 @@ class ComponentQueryTest extends UIUnitTest {
         UI.getCurrent().getElement().appendChild(div1.getElement(),
                 div2.getElement(), div3.getElement(), div4.getElement());
 
-        ComponentQuery<Div> query = $(Div.class).withResultsSize(5, 10);
+        ComponentQuery<Div> query = find(Div.class).withResultsSize(5, 10);
         Assertions.assertThrows(AssertionError.class, query::all);
 
-        query = $(Div.class).withResultsSize(1, 3);
+        query = find(Div.class).withResultsSize(1, 3);
         Assertions.assertThrows(AssertionError.class, query::all);
 
     }
 
     @Test
     void withResultsSize_minNegative_throws() {
-        ComponentQuery<Div> query = $(Div.class);
+        ComponentQuery<Div> query = find(Div.class);
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> query.withResultsSize(-1, 10));
     }
 
     @Test
     void withResultsSize_maxNegative_throws() {
-        ComponentQuery<Div> query = $(Div.class);
+        ComponentQuery<Div> query = find(Div.class);
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> query.withResultsSize(2, -1));
     }
 
     @Test
     void withResultsSize_maxLowerThanMin_throws() {
-        ComponentQuery<Div> query = $(Div.class);
+        ComponentQuery<Div> query = find(Div.class);
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> query.withResultsSize(5, 2));
     }
@@ -916,8 +919,8 @@ class ComponentQueryTest extends UIUnitTest {
         Div div4 = new Div();
         UI.getCurrent().getElement().appendChild(div1.getElement(),
                 div2.getElement(), div3.getElement(), div4.getElement());
-        List<Div> result = $(Div.class).withResultsSize(5).withResultsSize(2, 5)
-                .all();
+        List<Div> result = find(Div.class).withResultsSize(5)
+                .withResultsSize(2, 5).all();
         Assertions.assertIterableEquals(List.of(div1, div2, div3, div4),
                 result);
     }
@@ -934,12 +937,12 @@ class ComponentQueryTest extends UIUnitTest {
         UI.getCurrent().getElement().appendChild(
                 new Div(firstMatch).getElement(), new TextField().getElement());
 
-        List<TextField> result = $(Div.class).withId("myId")
+        List<TextField> result = find(Div.class).withId("myId")
                 .thenOnFirst(TextField.class).all();
         Assertions.assertIterableEquals(List.of(deepNested, nested1, nested2),
                 result);
 
-        result = $(Div.class).withId("myId").thenOnFirst(Div.class)
+        result = find(Div.class).withId("myId").thenOnFirst(Div.class)
                 .withId("nestedDiv").thenOnFirst(TextField.class).all();
         Assertions.assertIterableEquals(List.of(deepNested), result);
     }
@@ -950,7 +953,7 @@ class ComponentQueryTest extends UIUnitTest {
         div.setVisible(false);
         UI.getCurrent().getElement().appendChild(div.getElement());
 
-        ComponentQuery<Div> query = $(Div.class);
+        ComponentQuery<Div> query = find(Div.class);
         Assertions.assertThrows(NoSuchElementException.class,
                 () -> query.thenOnFirst(TextField.class));
     }
@@ -965,7 +968,8 @@ class ComponentQueryTest extends UIUnitTest {
                 new Div(new TextField()).getElement(),
                 new Div(new TextField()).getElement());
 
-        List<TextField> result = $(Div.class).thenOn(3, TextField.class).all();
+        List<TextField> result = find(Div.class).thenOn(3, TextField.class)
+                .all();
         Assertions.assertIterableEquals(List.of(nested), result);
     }
 
@@ -977,7 +981,7 @@ class ComponentQueryTest extends UIUnitTest {
                 target.getElement(), new Span().getElement());
 
         Assertions.assertEquals(target,
-                $(Span.class).withTheme("my-theme").single());
+                find(Span.class).withTheme("my-theme").single());
     }
 
     @Test
@@ -994,7 +998,7 @@ class ComponentQueryTest extends UIUnitTest {
         UI.getCurrent().getElement().appendChild(first.getElement(),
                 target.getElement(), last.getElement());
 
-        Assertions.assertEquals(target, $(Span.class).withTheme("my-theme")
+        Assertions.assertEquals(target, find(Span.class).withTheme("my-theme")
                 .withTheme("custom-theme").single());
     }
 
@@ -1012,7 +1016,7 @@ class ComponentQueryTest extends UIUnitTest {
                 target.getElement(), last.getElement());
 
         Assertions.assertEquals(target,
-                $(Span.class).withoutTheme("custom-theme").single());
+                find(Span.class).withoutTheme("custom-theme").single());
     }
 
     @Test
@@ -1030,8 +1034,9 @@ class ComponentQueryTest extends UIUnitTest {
         UI.getCurrent().getElement().appendChild(first.getElement(),
                 target.getElement(), last.getElement());
 
-        Assertions.assertEquals(target, $(Span.class).withoutTheme("my-theme")
-                .withoutTheme("custom-theme").single());
+        Assertions.assertEquals(target,
+                find(Span.class).withoutTheme("my-theme")
+                        .withoutTheme("custom-theme").single());
     }
 
     @Test
@@ -1049,13 +1054,13 @@ class ComponentQueryTest extends UIUnitTest {
                 new Div().getElement(), div2.getElement(), div3.getElement(),
                 div4.getElement());
 
-        List<Div> result = $(Div.class).withClassName("test-class").all();
+        List<Div> result = find(Div.class).withClassName("test-class").all();
         Assertions.assertIterableEquals(List.of(div1, div2), result);
 
-        result = $(Div.class).withClassName("other-class").all();
+        result = find(Div.class).withClassName("other-class").all();
         Assertions.assertIterableEquals(List.of(div2, div3), result);
 
-        result = $(Div.class).withClassName("different-class").all();
+        result = find(Div.class).withClassName("different-class").all();
         Assertions.assertIterableEquals(List.of(div4), result);
     }
 
@@ -1074,11 +1079,11 @@ class ComponentQueryTest extends UIUnitTest {
                 new Div().getElement(), div2.getElement(), div3.getElement(),
                 div4.getElement());
 
-        List<Div> result = $(Div.class)
+        List<Div> result = find(Div.class)
                 .withClassName("test-class", "other-class").all();
         Assertions.assertIterableEquals(List.of(div2), result);
 
-        result = $(Div.class).withClassName("test-class")
+        result = find(Div.class).withClassName("test-class")
                 .withClassName("other-class").all();
         Assertions.assertIterableEquals(List.of(div2), result);
     }
@@ -1098,11 +1103,11 @@ class ComponentQueryTest extends UIUnitTest {
                 new Div().getElement(), div2.getElement(), div3.getElement(),
                 div4.getElement());
 
-        List<Div> result = $(Div.class).withClassName("test-class other-class")
-                .all();
+        List<Div> result = find(Div.class)
+                .withClassName("test-class other-class").all();
         Assertions.assertIterableEquals(List.of(div2), result);
         // order doesn't matter
-        result = $(Div.class).withClassName("other-class test-class").all();
+        result = find(Div.class).withClassName("other-class test-class").all();
         Assertions.assertIterableEquals(List.of(div2), result);
     }
 
@@ -1121,14 +1126,14 @@ class ComponentQueryTest extends UIUnitTest {
                 new Div().getElement(), div2.getElement(), div3.getElement(),
                 div4.getElement());
 
-        List<Div> result = $(Div.class)
+        List<Div> result = find(Div.class)
                 .withClassName("test-class", "different-class").all();
         Assertions.assertTrue(result.isEmpty());
     }
 
     @Test
     void withClass_nullClassNames_throws() {
-        ComponentQuery<Div> query = $(Div.class);
+        ComponentQuery<Div> query = find(Div.class);
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> query.withClassName(null));
         Assertions.assertThrows(IllegalArgumentException.class,
@@ -1153,15 +1158,15 @@ class ComponentQueryTest extends UIUnitTest {
                 divWithotClasses.getElement(), div2.getElement(),
                 div3.getElement(), div4.getElement());
 
-        List<Div> result = $(Div.class).withoutClassName("test-class").all();
+        List<Div> result = find(Div.class).withoutClassName("test-class").all();
         Assertions.assertIterableEquals(List.of(divWithotClasses, div3, div4),
                 result);
 
-        result = $(Div.class).withoutClassName("other-class").all();
+        result = find(Div.class).withoutClassName("other-class").all();
         Assertions.assertIterableEquals(List.of(div1, divWithotClasses, div4),
                 result);
 
-        result = $(Div.class).withoutClassName("different-class").all();
+        result = find(Div.class).withoutClassName("different-class").all();
         Assertions.assertIterableEquals(
                 List.of(div1, divWithotClasses, div2, div3), result);
     }
@@ -1182,12 +1187,12 @@ class ComponentQueryTest extends UIUnitTest {
                 divWithoutClasses.getElement(), div2.getElement(),
                 div3.getElement(), div4.getElement());
 
-        List<Div> result = $(Div.class)
+        List<Div> result = find(Div.class)
                 .withoutClassName("test-class", "other-class").all();
         Assertions.assertIterableEquals(List.of(divWithoutClasses, div4),
                 result);
 
-        result = $(Div.class).withoutClassName("test-class")
+        result = find(Div.class).withoutClassName("test-class")
                 .withoutClassName("other-class").all();
         Assertions.assertIterableEquals(List.of(divWithoutClasses, div4),
                 result);
@@ -1209,11 +1214,12 @@ class ComponentQueryTest extends UIUnitTest {
                 divWithoutClasses.getElement(), div2.getElement(),
                 div3.getElement(), div4.getElement());
 
-        List<Div> result = $(Div.class)
+        List<Div> result = find(Div.class)
                 .withoutClassName("test-class other-class").all();
         Assertions.assertIterableEquals(List.of(divWithoutClasses, div4),
                 result);
-        result = $(Div.class).withoutClassName("other-class test-class").all();
+        result = find(Div.class).withoutClassName("other-class test-class")
+                .all();
         Assertions.assertIterableEquals(List.of(divWithoutClasses, div4),
                 result);
 
@@ -1233,14 +1239,14 @@ class ComponentQueryTest extends UIUnitTest {
         UI.getCurrent().getElement().appendChild(div1.getElement(),
                 div2.getElement(), div3.getElement(), div4.getElement());
 
-        List<Div> result = $(Div.class).withoutClassName("test-class",
+        List<Div> result = find(Div.class).withoutClassName("test-class",
                 "other-class", "different-class").all();
         Assertions.assertTrue(result.isEmpty());
     }
 
     @Test
     void withoutClass_nullClassNames_throws() {
-        ComponentQuery<Div> query = $(Div.class);
+        ComponentQuery<Div> query = find(Div.class);
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> query.withoutClassName(null));
         Assertions.assertThrows(IllegalArgumentException.class,
@@ -1260,11 +1266,11 @@ class ComponentQueryTest extends UIUnitTest {
                 other.getElement());
 
         Assertions.assertSame(target,
-                $(Span.class).withAttribute("my-attr").single());
+                find(Span.class).withAttribute("my-attr").single());
         Assertions.assertSame(other,
-                $(Span.class).withAttribute("other-attr").single());
+                find(Span.class).withAttribute("other-attr").single());
         Assertions.assertTrue(
-                $(Span.class).withAttribute("nope").all().isEmpty());
+                find(Span.class).withAttribute("nope").all().isEmpty());
 
     }
 
@@ -1279,11 +1285,11 @@ class ComponentQueryTest extends UIUnitTest {
                 other.getElement());
 
         Assertions.assertSame(target,
-                $(Span.class).withAttribute("my-attr", "value").single());
-        Assertions.assertSame(other, $(Span.class)
+                find(Span.class).withAttribute("my-attr", "value").single());
+        Assertions.assertSame(other, find(Span.class)
                 .withAttribute("my-attr", "something else").single());
-        Assertions.assertTrue(
-                $(Span.class).withAttribute("my-attr", "nope").all().isEmpty());
+        Assertions.assertTrue(find(Span.class).withAttribute("my-attr", "nope")
+                .all().isEmpty());
     }
 
     @Test
@@ -1299,8 +1305,9 @@ class ComponentQueryTest extends UIUnitTest {
                 target.getElement(), new Span().getElement(),
                 other.getElement());
 
-        Assertions.assertSame(target, $(Span.class).withAttribute("aria-label")
-                .withAttribute("role", "tooltip").single());
+        Assertions.assertSame(target,
+                find(Span.class).withAttribute("aria-label")
+                        .withAttribute("role", "tooltip").single());
     }
 
     @Test
@@ -1314,12 +1321,12 @@ class ComponentQueryTest extends UIUnitTest {
                 noAttributes.getElement(), other.getElement());
 
         Assertions.assertIterableEquals(List.of(noAttributes, other),
-                $(Span.class).withoutAttribute("my-attr").all());
+                find(Span.class).withoutAttribute("my-attr").all());
         Assertions.assertIterableEquals(List.of(target, noAttributes),
-                $(Span.class).withoutAttribute("other-attr").all());
+                find(Span.class).withoutAttribute("other-attr").all());
 
         Assertions.assertIterableEquals(List.of(target, noAttributes, other),
-                $(Span.class).withoutAttribute("role").all());
+                find(Span.class).withoutAttribute("role").all());
     }
 
     @Test
@@ -1333,12 +1340,12 @@ class ComponentQueryTest extends UIUnitTest {
                 noAttributes.getElement(), other.getElement());
 
         Assertions.assertIterableEquals(List.of(noAttributes, other),
-                $(Span.class).withoutAttribute("my-attr", "value").all());
+                find(Span.class).withoutAttribute("my-attr", "value").all());
         Assertions.assertIterableEquals(List.of(target, noAttributes),
-                $(Span.class).withoutAttribute("my-attr", "something else")
+                find(Span.class).withoutAttribute("my-attr", "something else")
                         .all());
         Assertions.assertIterableEquals(List.of(target, noAttributes, other),
-                $(Span.class).withoutAttribute("my-attr", "nope").all());
+                find(Span.class).withoutAttribute("my-attr", "nope").all());
     }
 
     @Test
@@ -1355,7 +1362,7 @@ class ComponentQueryTest extends UIUnitTest {
                 target.getElement(), span2.getElement());
 
         Assertions.assertSame(target,
-                $(Span.class).withoutAttribute("aria-label")
+                find(Span.class).withoutAttribute("aria-label")
                         .withoutAttribute("role", "tooltip").single());
     }
 
@@ -1369,16 +1376,16 @@ class ComponentQueryTest extends UIUnitTest {
         root.appendChild(new TextField().getElement());
         root.appendChild(new Button().getElement());
 
-        Assertions.assertTrue($(TextField.class).exists(),
+        Assertions.assertTrue(find(TextField.class).exists(),
                 "Expecting components to be found, but exists is false");
 
-        Assertions.assertTrue($(Button.class).exists(),
+        Assertions.assertTrue(find(Button.class).exists(),
                 "Expecting components to be found, but exists is false");
     }
 
     @Test
     void exists_noMatching_false() {
-        ComponentQuery<TextField> query = $(TextField.class);
+        ComponentQuery<TextField> query = find(TextField.class);
         Assertions.assertFalse(query.exists(),
                 "Expecting no components to be found, but exists is true");
     }
@@ -1395,9 +1402,9 @@ class ComponentQueryTest extends UIUnitTest {
                 target.getElement(), span.getElement(), div3.getElement(),
                 div4.getElement());
 
-        Assertions.assertSame(span, $(Span.class).single());
+        Assertions.assertSame(span, find(Span.class).single());
         Assertions.assertSame(target,
-                $(Div.class).withClassName("my-test").single());
+                find(Div.class).withClassName("my-test").single());
     }
 
     @Test
@@ -1409,11 +1416,11 @@ class ComponentQueryTest extends UIUnitTest {
         UI.getCurrent().getElement().appendChild(div1.getElement(),
                 div2.getElement(), div3.getElement(), div4.getElement());
 
-        ComponentQuery<Span> queryNonExistent = $(Span.class);
+        ComponentQuery<Span> queryNonExistent = find(Span.class);
         Assertions.assertThrows(NoSuchElementException.class,
                 queryNonExistent::single);
 
-        ComponentQuery<Div> query = $(Div.class).withClassName("my-test");
+        ComponentQuery<Div> query = find(Div.class).withClassName("my-test");
         Assertions.assertThrows(NoSuchElementException.class, query::single);
     }
 
@@ -1426,8 +1433,50 @@ class ComponentQueryTest extends UIUnitTest {
         UI.getCurrent().getElement().appendChild(div1.getElement(),
                 div2.getElement(), div3.getElement(), div4.getElement());
 
-        ComponentQuery<Div> query = $(Div.class);
+        ComponentQuery<Div> query = find(Div.class);
         Assertions.assertThrows(NoSuchElementException.class, query::single);
+    }
+
+    @Test
+    @SuppressWarnings("deprecation")
+    void deprecatedDollar_delegatesToFind() {
+        TextField textField = new TextField();
+        Button button = new Button();
+        getCurrentView().getElement().appendChild(textField.getElement(),
+                button.getElement());
+
+        Assertions.assertSame(textField, $(TextField.class).single(),
+                "Deprecated $ is expected to delegate to find");
+        Assertions.assertSame(button, $(Button.class).single(),
+                "Deprecated $ is expected to delegate to find");
+    }
+
+    @Test
+    @SuppressWarnings("deprecation")
+    void deprecatedDollarWithContext_delegatesToFind() {
+        TextField inContext = new TextField();
+        Div context = new Div(inContext);
+        Element rootElement = getCurrentView().getElement();
+        rootElement.appendChild(context.getElement(),
+                new TextField().getElement());
+
+        Assertions.assertIterableEquals(Collections.singleton(inContext),
+                $(TextField.class, context).all(),
+                "Deprecated $(type, context) is expected to delegate to find(type, context)");
+    }
+
+    @Test
+    @SuppressWarnings("deprecation")
+    void deprecatedDollarView_delegatesToFindInView() {
+        TextField notInView = new TextField();
+        UI.getCurrent().getElement().appendChild(notInView.getElement());
+
+        TextField inView = new TextField();
+        getCurrentView().getElement().appendChild(inView.getElement());
+
+        Assertions.assertIterableEquals(Collections.singleton(inView),
+                $view(TextField.class).all(),
+                "Deprecated $view is expected to delegate to findInView");
     }
 
     @Tag("span")
