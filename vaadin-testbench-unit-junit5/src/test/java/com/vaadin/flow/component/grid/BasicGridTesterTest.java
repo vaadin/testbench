@@ -177,7 +177,7 @@ class BasicGridTesterTest extends UIUnitTest {
         Assertions.assertInstanceOf(Button.class, cellComponent);
         var button = (Button) cellComponent;
         test(button).click();
-        var notification = $(Notification.class).last();
+        var notification = find(Notification.class).last();
         Assertions.assertEquals("Clicked!", test(notification).getText());
     }
 

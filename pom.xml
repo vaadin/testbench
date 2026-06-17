@@ -10,7 +10,7 @@
     </parent>
     <artifactId>vaadin-testbench-parent</artifactId>
     <packaging>pom</packaging>
-    <version>10.2-SNAPSHOT</version>
+    <version>25.2-SNAPSHOT</version>
     <name>Vaadin TestBench parent</name>
 
     <organization>
@@ -33,7 +33,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <Implementation-Version>${project.version}</Implementation-Version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <selenium.version>4.44.0</selenium.version>
+        <selenium.version>4.45.0</selenium.version>
         <maven.compiler.release>21</maven.compiler.release>
         <maven.compiler.source>${maven.compiler.release}</maven.compiler.source>
         <maven.compiler.target>${maven.compiler.release}</maven.compiler.target>
