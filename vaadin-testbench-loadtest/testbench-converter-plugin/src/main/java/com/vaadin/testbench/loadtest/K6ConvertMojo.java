@@ -43,13 +43,6 @@ public class K6ConvertMojo extends AbstractK6Mojo {
     private File harFile;
 
     /**
-     * Output directory for generated k6 tests. Defaults to k6/tests within the
-     * target directory.
-     */
-    @Parameter(property = "k6.outputDir", defaultValue = "${project.build.directory}/k6/tests")
-    private File outputDir;
-
-    /**
      * Output file name for the generated test. If not specified, derives from
      * HAR file name.
      */

@@ -1,13 +1,12 @@
 import java.nio.file.*;
 import com.vaadin.testbench.loadtest.it.IntegrationTestHelper;
 
-// Recorded flow: page GET, 2 static GETs, init, 3 more static GETs, then
-// 2 UIDL POSTs:
-//   8 = ui-navigate (initial page-load sync)
-//   9 = batched input mSync+change AND button click (last request — uses
-//       handleSummary as the section end marker since there is no
-//       "// Request 10:"). Playwright batches both user actions into a
-//       single POST, so input sync and click share request 9.
+// Recorded flow: a page GET, an init GET, a ui-navigate UIDL POST, and a
+// batched (input mSync+change AND button click) UIDL POST, interleaved
+// with static asset GETs. We match these requests by content (URL/tag
+// fragments and request-body markers) rather than by their numeric index
+// in the recording, so the test stays stable when a newer Chromium emits
+// a different number of prefetch requests.
 
 // ----- Paths -------------------------------------------------------------
 Path basePath    = basedir.toPath();
@@ -57,13 +56,16 @@ IntegrationTestHelper.assertFileContainsInOrder(k6Script, new String[] {
 IntegrationTestHelper.assertFileDoesNotContain(k6Script, "'http://localhost:18380");
 IntegrationTestHelper.assertFileDoesNotContain(k6Script, "`http://localhost:18380");
 
-// ----- Threshold rules live inside the thresholds block, not somewhere else
+// ----- Threshold rules live inside the thresholds block, not somewhere else.
+// The per-request thresholds are matched by the trailing fragment of the tag
+// (e.g. " GET /}", " GET init}", " POST uidl}") so the assertion does not
+// depend on which numeric position Chromium happened to record the request at.
 IntegrationTestHelper.assertSectionContains(k6Script, "thresholds: {", "},", new String[] {
     "checks: [{ threshold: 'rate>=0.99', abortOnFail: true, delayAbortEval: '5s' }]",
     "http_req_duration: ['p(95)<2000', 'p(99)<5000']",
-    "'http_req_duration{name:hello-world-playwright: 1 GET /}': ['max>=0']",
-    "'http_req_duration{name:hello-world-playwright: 4 GET init}': ['max>=0']",
-    "'http_req_duration{name:hello-world-playwright: 9 POST uidl}': ['max>=0']"
+    " GET /}': ['max>=0']",
+    " GET init}': ['max>=0']",
+    " POST uidl}': ['max>=0']"
 });
 
 // ----- Input data CSV ---------------------------------------------------
@@ -89,44 +91,41 @@ IntegrationTestHelper.assertFileContains(k6Script, "${inputRow.input_1}");
 IntegrationTestHelper.assertFileDoesNotContain(k6Script, "\"value\":\"Vaadin User\"");
 
 // ----- Recorded request flow --------------------------------------------
-// The ordered check enforces that the key requests appear in temporal order
-// in the script (page → init → batched input/click).
+// Page GET → init GET → batched user-action POST must appear in this order.
+// Use the tag fragments (which only one request per scenario produces) and a
+// body marker unique to the batched POST.
 IntegrationTestHelper.assertFileContainsInOrder(k6Script, new String[] {
-    "// Request 1: GET",
-    "// Request 4:",
-    "// Request 9:"
+    " GET /' }",                          // page request tag
+    " GET init' }",                       // init request tag
+    "resolveNode(nodeMap, 'say-hello')"   // batched POST body — only request
+                                          // that resolves the button node
 });
-IntegrationTestHelper.assertFileContains(k6Script, "// Request 9: POST");
 
-// ----- Recorded request bodies live in the right request block ----------
+// ----- Init request -----------------------------------------------------
+// Init is identified by its query string and tag; both substrings only
+// appear in the init request block, so no section bound is needed.
+IntegrationTestHelper.assertFileContains(k6Script, "?v-r=init");
+IntegrationTestHelper.assertFileContains(k6Script, " GET init' }");
+
+// ----- Batched user-action UIDL POST ------------------------------------
 // HelloWorldView uses Flow's native HTML components (Input, NativeButton,
 // Span) with explicit element IDs, so resolveNode() looks them up by id.
-
-// Request 4 (GET init): URL and tag.
-IntegrationTestHelper.assertSectionContains(k6Script,
-    "// Request 4:", "// Request 5:", new String[] {
-        "?v-r=init",
-        "tags: { name: 'hello-world-playwright: 4 GET init' }"
-    });
-// Request 9 (batched input mSync+change AND button click): URL, tag,
-// resolveNode by id for both elements, the input value substituted from
-// the CSV row, and the click event payload. Playwright batches both user
-// actions into this single POST.
-IntegrationTestHelper.assertSectionContains(k6Script,
-    "// Request 9:", "export function handleSummary", new String[] {
-        "?v-r=uidl&v-uiId=${uiId}",
-        "tags: { name: 'hello-world-playwright: 9 POST uidl' }",
-        "resolveNode(nodeMap, 'name')",
-        "\"property\":\"value\",\"value\":\"${inputRow.input_1}\"",
-        "resolveNode(nodeMap, 'say-hello')",
-        "\"event\":\"click\""
-    });
+// Playwright batches the input mSync + change event + button click into a
+// single POST, and the body markers below are unique to that block — no
+// other request resolves the 'name' / 'say-hello' nodes or emits a click.
+IntegrationTestHelper.assertFileContains(k6Script, "?v-r=uidl&v-uiId=${uiId}");
+IntegrationTestHelper.assertFileContains(k6Script, " POST uidl' }");
+IntegrationTestHelper.assertFileContains(k6Script, "resolveNode(nodeMap, 'name')");
+IntegrationTestHelper.assertFileContains(k6Script,
+    "\"property\":\"value\",\"value\":\"${inputRow.input_1}\"");
+IntegrationTestHelper.assertFileContains(k6Script, "resolveNode(nodeMap, 'say-hello')");
+IntegrationTestHelper.assertFileContains(k6Script, "\"event\":\"click\"");
 
 // ----- Vaadin session bootstrapping + response checks --------------------
 IntegrationTestHelper.assertFileContains(k6Script,
-    "let uiId = response.body.match(/\"v-uiId\"");
+    "let uiId = body.match(/\"v-uiId\"");
 IntegrationTestHelper.assertFileContains(k6Script,
-    "let csrfToken = response.body.match(/\"Vaadin-Security-Key\"");
+    "let csrfToken = body.match(/\"Vaadin-Security-Key\"");
 IntegrationTestHelper.assertFileContains(k6Script,
     "nodeMap = updateNodeMap(nodeMap, response.body)");
 IntegrationTestHelper.assertFileContains(k6Script,
@@ -135,10 +134,10 @@ IntegrationTestHelper.assertFileContains(k6Script, "'valid init response':");
 IntegrationTestHelper.assertSectionContains(k6Script,
         "// Abort iteration and trigger test abort if UIDL response is invalid", "}))", new String[] {
     "'UIDL request succeeded': (r) => r.status === 200",
-    "'no server error': (r) => !r.body.includes('\"appError\"')",
-    "'no exception': (r) => !r.body.includes('Exception')",
-    "'session is valid': (r) => !r.body.includes('Your session needs to be refreshed')",
-    "'security key valid': (r) => !r.body.includes('Invalid security key')",
+    "'no server error': (r) => !(r.body || '').includes('\"appError\"')",
+    "'no exception': (r) => !(r.body || '').includes('Exception')",
+    "'session is valid': (r) => !(r.body || '').includes('Your session needs to be refreshed')",
+    "'security key valid': (r) => !(r.body || '').includes('Invalid security key')",
     "'valid UIDL response': () => syncIdMatch !== null"
 });
 IntegrationTestHelper.assertFileContains(k6Script,

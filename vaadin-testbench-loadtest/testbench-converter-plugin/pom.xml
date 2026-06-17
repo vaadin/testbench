@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.vaadin</groupId>
         <artifactId>vaadin-testbench-loadtest</artifactId>
-        <version>10.2-SNAPSHOT</version>
+        <version>25.2-SNAPSHOT</version>
     </parent>
 
     <artifactId>testbench-converter-plugin</artifactId>
@@ -23,7 +23,7 @@
         <maven-plugin-annotations.version>3.11.0</maven-plugin-annotations.version>
         <!-- Pinned k6 version for the auto-install integration test (000-install-k6).
              Bumping this updates every IT that consumes the downloaded binary. -->
-        <k6.version>0.54.0</k6.version>
+        <k6.version>1.6.1</k6.version>
         <!--
             OS-agnostic install location for the k6 binary. The 000-install-k6
             IT does the actual download and writes the resolved absolute path
@@ -163,10 +163,51 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.3.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.11.2</version>
+                <configuration>
+                    <charset>UTF-8</charset>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
     <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>3.11.2</version>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
         <!--
              Opt-in profile that wires up the maven-invoker IT pipeline.
              Activate with `-Pmaven-invoker-it`.

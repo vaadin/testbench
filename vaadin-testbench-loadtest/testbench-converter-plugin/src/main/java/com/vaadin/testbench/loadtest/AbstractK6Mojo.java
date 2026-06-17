@@ -8,6 +8,7 @@
  */
 package com.vaadin.testbench.loadtest;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -50,6 +51,14 @@ public abstract class AbstractK6Mojo extends AbstractMojo {
      */
     @Parameter(property = "k6.utilsDir", defaultValue = "${project.build.directory}/k6-utils")
     protected String utilsDir;
+
+    /**
+     * Directory for generated k6 tests. Used as the destination by the record
+     * and convert goals, and as the default test directory by the run goal when
+     * {@code k6.testDir} is not set.
+     */
+    @Parameter(property = "k6.outputDir", defaultValue = "${project.build.directory}/k6/tests")
+    protected File outputDir;
 
     /**
      * Skip execution of this goal.

@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.vaadin</groupId>
         <artifactId>vaadin-testbench-parent</artifactId>
-        <version>10.2-SNAPSHOT</version>
+        <version>25.2-SNAPSHOT</version>
     </parent>
 
     <groupId>com.vaadin</groupId>
@@ -20,7 +20,6 @@
     <modules>
         <module>testbench-loadtest-support</module>
         <module>testbench-converter-plugin</module>
-        <module>load-tests</module>
     </modules>
 
     <properties>
@@ -49,4 +48,17 @@
         </pluginManagement>
     </build>
 
+    <profiles>
+        <profile>
+            <id>default</id>
+            <activation>
+                <property>
+                    <name>!release</name>
+                </property>
+            </activation>
+            <modules>
+                <module>load-tests</module>
+            </modules>
+        </profile>
+    </profiles>
 </project>

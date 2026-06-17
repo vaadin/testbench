@@ -105,7 +105,7 @@ public class NodeRunner {
      * Enables or disables a 1-VU / 1-iteration warmup pass that runs before
      * each load test. The warmup primes caches, JIT, and class loaders on the
      * target application so the first measured iterations are not skewed by
-     * cold-start cost. Warmup runs with {@code --no-summary
+     * cold-start cost. Warmup runs with {@code --summary-mode=disabled
      * --no-thresholds} so it never appears in reports or fails the build.
      *
      * @param warmup
@@ -444,8 +444,8 @@ public class NodeRunner {
 
     /**
      * Runs a single 1-VU / 1-iteration warmup pass against the given test file.
-     * Output is suppressed via {@code --no-summary --no-thresholds} so the
-     * warmup never appears in reports or fails the build on threshold
+     * Output is suppressed via {@code --summary-mode=disabled --no-thresholds}
+     * so the warmup never appears in reports or fails the build on threshold
      * violations.
      *
      * <p>
@@ -478,7 +478,7 @@ public class NodeRunner {
             command.add("1");
             command.add("--iterations");
             command.add("1");
-            command.add("--no-summary");
+            command.add("--summary-mode=disabled");
             command.add("--no-thresholds");
             command.add("-e");
             command.add("APP_IP=" + appIp);

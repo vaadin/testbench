@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -68,12 +69,6 @@ public abstract class AbstractRecordMojo extends AbstractK6Mojo {
     protected File harDir;
 
     /**
-     * Output directory for generated k6 tests.
-     */
-    @Parameter(property = "k6.outputDir", defaultValue = "${project.build.directory}/k6/tests")
-    protected File outputDir;
-
-    /**
      * Timeout for test execution in seconds.
      */
     @Parameter(property = "k6.testTimeout", defaultValue = "300")
@@ -119,6 +114,16 @@ public abstract class AbstractRecordMojo extends AbstractK6Mojo {
      */
     @Parameter(property = "k6.thinkTime.interactionDelay", defaultValue = "0.5")
     protected double interactionDelay;
+
+    /**
+     * Current Maven session. Used to propagate the active local repository and
+     * user settings file to the forked Maven that runs the recorded test, so
+     * the fork resolves project SNAPSHOTs from the same repository the outer
+     * build is using (e.g. the maven-invoker-plugin's isolated
+     * {@code target/local-repo}).
+     */
+    @Parameter(defaultValue = "${session}", readonly = true, required = true)
+    protected MavenSession session;
 
     protected SourceHasher sourceHasher;
 
@@ -349,6 +354,27 @@ public abstract class AbstractRecordMojo extends AbstractK6Mojo {
         command.add("-Dit.test=" + currentTestClass);
         command.add("-Dserver.port=" + appPort);
         command.add("-DfailIfNoTests=false");
+
+        // Propagate the outer build's local repository and settings to the
+        // fork. The maven-invoker-plugin runs ITs against an isolated
+        // target/local-repo containing freshly built SNAPSHOTs that the
+        // user's ~/.m2 does not have; without this, the fork resolves
+        // against ~/.m2 alone and fails to find e.g. vaadin-testbench-*:
+        // 10.2-SNAPSHOT.
+        if (session != null) {
+            if (session.getLocalRepository() != null
+                    && session.getLocalRepository().getBasedir() != null) {
+                command.add("-Dmaven.repo.local="
+                        + session.getLocalRepository().getBasedir());
+            }
+            File userSettings = session.getRequest() != null
+                    ? session.getRequest().getUserSettingsFile()
+                    : null;
+            if (userSettings != null && userSettings.isFile()) {
+                command.add("-s");
+                command.add(userSettings.getAbsolutePath());
+            }
+        }
 
         if (mavenArgs != null && !mavenArgs.isEmpty()) {
             for (String arg : mavenArgs.split("\\s+")) {

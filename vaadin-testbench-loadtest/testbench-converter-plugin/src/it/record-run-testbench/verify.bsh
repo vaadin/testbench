@@ -191,9 +191,9 @@ IntegrationTestHelper.assertSectionContains(k6Script,
 
 // ----- Vaadin session bootstrapping + response checks --------------------
 IntegrationTestHelper.assertFileContains(k6Script,
-    "let uiId = response.body.match(/\"v-uiId\"");
+    "let uiId = body.match(/\"v-uiId\"");
 IntegrationTestHelper.assertFileContains(k6Script,
-    "let csrfToken = response.body.match(/\"Vaadin-Security-Key\"");
+    "let csrfToken = body.match(/\"Vaadin-Security-Key\"");
 IntegrationTestHelper.assertFileContains(k6Script,
     "nodeMap = updateNodeMap(nodeMap, response.body)");
 IntegrationTestHelper.assertFileContains(k6Script,
@@ -202,10 +202,10 @@ IntegrationTestHelper.assertFileContains(k6Script, "'valid init response':");
 IntegrationTestHelper.assertSectionContains(k6Script,
         "// Abort iteration and trigger test abort if UIDL response is invalid", "}))", new String[] {
     "'UIDL request succeeded': (r) => r.status === 200",
-    "'no server error': (r) => !r.body.includes('\"appError\"')",
-    "'no exception': (r) => !r.body.includes('Exception')",
-    "'session is valid': (r) => !r.body.includes('Your session needs to be refreshed')",
-    "'security key valid': (r) => !r.body.includes('Invalid security key')",
+    "'no server error': (r) => !(r.body || '').includes('\"appError\"')",
+    "'no exception': (r) => !(r.body || '').includes('Exception')",
+    "'session is valid': (r) => !(r.body || '').includes('Your session needs to be refreshed')",
+    "'security key valid': (r) => !(r.body || '').includes('Invalid security key')",
     "'valid UIDL response': () => syncIdMatch !== null"
 });
 IntegrationTestHelper.assertFileContains(k6Script,
