@@ -37,6 +37,7 @@ public class Parameters {
     private static int readTimeout;
     private static int hubPort;
     private static String[] chromeOptions;
+    private static boolean useJavascriptClick;
     static {
         isDebug = getSystemPropertyBoolean("debug", false);
 
@@ -68,6 +69,8 @@ public class Parameters {
                 (int) ClientConfig.defaultConfig().readTimeout().toSeconds());
         hubPort = getSystemPropertyInt("hubPort", 4444);
         setChromeOptions(getSystemPropertyString("chromeOptions", null));
+        useJavascriptClick = getSystemPropertyBoolean("useJavascriptClick",
+                false);
     }
 
     /**
@@ -563,5 +566,36 @@ public class Parameters {
      */
     public static int getReadTimeout() {
         return readTimeout;
+    }
+
+    /**
+     * Returns whether {@link TestBenchElement#click()} should use JavaScript
+     * instead of Selenium Actions.
+     * <p>
+     * JavaScript click avoids "element not clickable at point" issues but does
+     * not correctly simulate a real user interaction in the browser (e.g.,
+     * browser event properties such as click count may be missing or
+     * incorrect).
+     *
+     * @return {@code true} if JavaScript click is used by default,
+     *         {@code false} otherwise
+     */
+    public static boolean isUseJavascriptClick() {
+        return useJavascriptClick;
+    }
+
+    /**
+     * Sets whether {@link TestBenchElement#click()} should use JavaScript
+     * instead of Selenium Actions.
+     * <p>
+     * Can also be set with the system property
+     * {@code com.vaadin.testbench.Parameters.useJavascriptClick=true}.
+     *
+     * @param useJavascriptClick
+     *            {@code true} to use JavaScript click, {@code false} to use
+     *            Selenium Actions
+     */
+    public static void setUseJavascriptClick(boolean useJavascriptClick) {
+        Parameters.useJavascriptClick = useJavascriptClick;
     }
 }
