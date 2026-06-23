@@ -15,7 +15,6 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openqa.selenium.Capabilities;
-import org.openqa.selenium.Platform;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
@@ -62,15 +61,11 @@ public abstract class AbstractBrowserTB9Test extends AbstractTB9Test {
 
     @BrowserConfiguration
     public List<DesiredCapabilities> getBrowserConfiguration() {
-        List<DesiredCapabilities> caps;
         if (getDriver() instanceof RemoteWebDriver) {
-            caps = Arrays.asList(BrowserUtil.firefox(), BrowserUtil.chrome(),
-                    BrowserUtil.safari(), BrowserUtil.edge());
-        } else {
-            caps = Collections.singletonList(BrowserUtil.chrome());
+            return Arrays.asList(BrowserUtil.firefox(), BrowserUtil.chrome(),
+                    BrowserUtil.edge());
         }
-        caps.forEach(des -> des.setPlatform(Platform.WIN10));
-        return caps;
+        return Collections.singletonList(BrowserUtil.chrome());
     }
 
 }
