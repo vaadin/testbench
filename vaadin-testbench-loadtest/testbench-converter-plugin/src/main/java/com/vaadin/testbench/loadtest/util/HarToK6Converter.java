@@ -57,9 +57,14 @@ public class HarToK6Converter {
     private static final Pattern ENTITY_KEY_ARG_PATTERN = Pattern.compile(
             "\"templateEventMethodName\":\"(select|setDetailsVisible)\",\"templateEventMethodArgs\":\\[\"(\\d+)\"\\]");
 
-    /** Matches mSync input values (user-entered form data) in UIDL bodies. */
+    /**
+     * Matches mSync input values (user-entered form data) in UIDL bodies. The
+     * value group uses a possessive quantifier and atomic alternation
+     * ({@code ++}/{@code *+}) so the JSON string content is consumed in a
+     * single pass.
+     */
     private static final Pattern MSYNC_INPUT_VALUE_PATTERN = Pattern.compile(
-            "\"type\":\"mSync\",\"node\":\\d+,\"feature\":\\d+,\"property\":\"value\",\"value\":\"((?:[^\"\\\\]|\\\\.)*)\"");
+            "\"type\":\"mSync\",\"node\":\\d+,\"feature\":\\d+,\"property\":\"value\",\"value\":\"((?:[^\"\\\\]++|\\\\.)*+)\"");
 
     /**
      * Matches positive {@code "node":N} occurrences in UIDL request bodies.
