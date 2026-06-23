@@ -13,12 +13,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class HarToK6ConverterTest {
@@ -130,6 +132,64 @@ class HarToK6ConverterTest {
                 "First field round-trip should preserve comma");
         assertEquals("say \\\"hi\\\"", records.get(1).get(1),
                 "Second field round-trip should preserve escaped quotes");
+    }
+
+    @Test
+    void largeMsyncValueDoesNotOverflowStack() throws IOException {
+        // Reproduces issue #2266: MSYNC_INPUT_VALUE_PATTERN used a quantified
+        // alternation ((?:[^"\\]|\\.)*) which, on OpenJDK, recurses once per
+        // repetition. A large mSync value therefore blows the call stack with
+        // a StackOverflowError before this is fixed.
+        //
+        // Run the matcher on its own thread with a small stack so the test
+        // fails fast and deterministically across platforms, rather than
+        // depending on the (large, JVM-default) main-thread stack size.
+        String value = "x".repeat(200_000);
+        String initEntry = entry("GET", "http://localhost:8080/?v-r=init");
+        String msyncBody = "{\"csrfToken\":\"abc-123\","
+                + "\"rpc\":[{\"type\":\"mSync\",\"node\":42,\"feature\":1,"
+                + "\"property\":\"value\"," + "\"value\":\"" + value + "\"}],"
+                + "\"syncId\":1,\"clientId\":1}";
+        String postEntry = entryWithBody("POST",
+                "http://localhost:8080/?v-r=uidl&v-uiId=0", msyncBody);
+
+        Path harFile = tempDir.resolve("msync-large.har");
+        Path outputFile = tempDir.resolve("msync-large.js");
+        Files.writeString(harFile, createHar(initEntry, postEntry));
+
+        AtomicReference<Throwable> failure = new AtomicReference<>();
+        Thread worker = new Thread(null, () -> {
+            try {
+                new HarToK6Converter().convert(harFile, outputFile);
+            } catch (Throwable t) {
+                failure.set(t);
+            }
+        }, "converter", 256 * 1024);
+        worker.start();
+        try {
+            worker.join();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new AssertionError("Interrupted while waiting for converter",
+                    e);
+        }
+
+        Throwable thrown = failure.get();
+        if (thrown instanceof StackOverflowError) {
+            throw new AssertionError(
+                    "Converting a large mSync value overflowed the stack (issue #2266)",
+                    thrown);
+        }
+        assertNull(thrown,
+                "Conversion should complete without error, but threw: "
+                        + thrown);
+
+        // The value is captured into the CSV, confirming the matcher ran.
+        Path csvFile = tempDir.resolve("msync-large-data.csv");
+        assertTrue(Files.exists(csvFile), "CSV data file should be created");
+        List<List<String>> records = parseCsvRecords(Files.readString(csvFile));
+        assertEquals(value, records.get(1).get(0),
+                "Large mSync value should round-trip into the CSV");
     }
 
     /**
