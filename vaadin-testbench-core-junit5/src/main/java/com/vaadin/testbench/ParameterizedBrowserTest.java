@@ -37,6 +37,7 @@ import com.vaadin.testbench.browser.BrowserExtension;
  *
  * @see ParameterizedTest
  * @see BrowserExtension
+ * @since 9.2.6
  */
 @Target({ ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)

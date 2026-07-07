@@ -11,6 +11,9 @@ package com.vaadin.flow.component.dialog;
 import com.vaadin.testbench.unit.ComponentTester;
 import com.vaadin.testbench.unit.Tests;
 
+/**
+ * @since 8.1
+ */
 @Tests(Dialog.class)
 @Deprecated(forRemoval = true, since = "10.1")
 public class DialogTester extends ComponentTester<Dialog> {

@@ -331,6 +331,7 @@ public class Parameters {
      * system property {@code com.vaadin.testbench.Parameters.hubPort}.
      *
      * @return the port of the hub, defaults to 4444 if nothing is set
+     * @since 9.1
      */
     public static int getHubPort() {
         return hubPort;
@@ -341,6 +342,7 @@ public class Parameters {
      *
      * @param port
      *            The new port to use
+     * @since 9.1
      */
     public static void setHubPort(int port) {
         hubPort = port;
@@ -497,6 +499,7 @@ public class Parameters {
      *
      * @return <code>true</code>, if requested to run in headless mode,
      *         <code>false</code> otherwise
+     * @since 6.3
      */
     public static boolean isHeadless() {
         return headless;
@@ -509,6 +512,7 @@ public class Parameters {
      * @param headless
      *            <code>true</code>, to run in headless mode, <code>false</code>
      *            otherwise
+     * @since 6.3
      */
     public static void setHeadless(boolean headless) {
         Parameters.headless = headless;
@@ -528,6 +532,7 @@ public class Parameters {
      *
      * @param readTimeout
      *            the timeout in seconds
+     * @since 8.1
      */
     public static void setReadTimeout(int readTimeout) {
         Parameters.readTimeout = readTimeout;
@@ -538,6 +543,7 @@ public class Parameters {
      *
      * @param options
      *            a list of options separated with comma or spaces
+     * @since 9.2
      */
     public static void setChromeOptions(String options) {
         chromeOptions = options == null || options.isBlank() ? new String[0]
@@ -550,6 +556,7 @@ public class Parameters {
      * <code>com.vaadin.testbench.Parameters.chromeOptions</code>
      *
      * @return an array of options
+     * @since 9.2
      */
     public static String[] getChromeOptions() {
         return chromeOptions;
@@ -560,6 +567,7 @@ public class Parameters {
      * driver.
      *
      * @return the timeout in seconds
+     * @since 8.1
      */
     public static int getReadTimeout() {
         return readTimeout;

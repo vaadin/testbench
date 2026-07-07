@@ -11,6 +11,9 @@ package com.vaadin.flow.component.html.testbench;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.testbench.unit.Tests;
 
+/**
+ * @since 8.1
+ */
 @Tests(H3.class)
 @Deprecated(forRemoval = true, since = "10.1")
 public class H3Tester extends HtmlClickContainer<H3> {

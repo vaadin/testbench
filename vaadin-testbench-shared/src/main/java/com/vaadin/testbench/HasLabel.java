@@ -13,6 +13,8 @@ import java.util.Objects;
 /**
  * Implement by elements which support a label, i.e. text shown typically inside
  * (when field is empty) or above the field (when the field has a value).
+ *
+ * @since 6.1
  */
 public interface HasLabel extends HasPropertySettersGetters {
 

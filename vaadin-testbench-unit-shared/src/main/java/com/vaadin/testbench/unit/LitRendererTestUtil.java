@@ -27,6 +27,7 @@ import com.vaadin.flow.function.ValueProvider;
  *             browserless-test-junit6 and use the corresponding class from the
  *             com.vaadin.browserless package instead. This class will be
  *             removed in a future version.
+ * @since 9.3
  */
 @Deprecated(forRemoval = true, since = "10.1")
 public class LitRendererTestUtil {
@@ -191,6 +192,7 @@ public class LitRendererTestUtil {
      *            the type being renderer by the LitRenderer
      * @throws IllegalArgumentException
      *             when the function is not registered in LitRenderer
+     * @since 10.0
      */
     public static <Y> void invokeFunction(LitRenderer<Y> litRenderer,
             BiFunction<Class<?>, String, Field> fieldGetter,

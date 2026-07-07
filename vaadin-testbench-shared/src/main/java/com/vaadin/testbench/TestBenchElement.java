@@ -151,6 +151,7 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
      * Gets the id set for this element.
      *
      * @return String value, can be null
+     * @since 9.4
      */
     public String getId() {
         return getAttribute("id");
@@ -183,6 +184,7 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
      *
      * @return {@code true} if this element is the currently focused element,
      *         {@code false} otherwise.
+     * @since 9.4
      */
     public boolean isFocused() {
         return this.getWrappedElement()
@@ -298,6 +300,7 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
      * having readonly attribute set or not.
      *
      * @return true if the component has readonly attribute set.
+     * @since 9.4
      */
     public boolean isReadOnly() {
         waitForVaadin();
@@ -538,6 +541,7 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
      *            {@code Map.of("block", "end", "inline", "end")}
      * @see <a href=
      *      "https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollIntoView">Element.scrollIntoView()</a>
+     * @since 10.1
      */
     public void scrollIntoView(Map<String, Object> options) {
         callFunction("scrollIntoView", options);
@@ -861,6 +865,7 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
      * @param customEventInit
      *            map with properties and values that will be used to initialize
      *            the event
+     * @since 6.1
      */
     public void dispatchEvent(String eventType,
             Map<String, Object> customEventInit) {
@@ -873,6 +878,7 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
      * Gets the parent element of this element.
      *
      * @return The parent as TestBenchElement, can be null.
+     * @since 9.4
      */
     public TestBenchElement getParent() {
         return getPropertyElement("parentElement");
@@ -895,6 +901,7 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
      * @return the {@link SearchContext} representing the shadow root.
      * @deprecated This method is deprecated. Use {@code $} instead to find
      *             elements in the shadow root.
+     * @since 9.4
      */
     @Override
     @Deprecated
@@ -906,6 +913,7 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
      * Get list of immediate children of this element.
      *
      * @return List of TestBenchElements
+     * @since 9.4
      */
     public List<TestBenchElement> getChildren() {
         return getPropertyElements("children");
@@ -915,6 +923,8 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
      * Hover mouse pointer on this element.
      *
      * Note: This works well only if this element is atomic.
+     *
+     * @since 9.4
      */
     public void hover() {
         ensureInteractable();

@@ -21,6 +21,7 @@ import com.vaadin.testbench.unit.Tests;
  *            component type
  * @param <V>
  *            value type
+ * @since 8.1
  */
 @Tests({ TextField.class, PasswordField.class, EmailField.class,
         BigDecimalField.class })

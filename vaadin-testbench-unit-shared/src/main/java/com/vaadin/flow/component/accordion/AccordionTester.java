@@ -13,6 +13,9 @@ import org.jetbrains.annotations.Nullable;
 import com.vaadin.testbench.unit.ComponentTester;
 import com.vaadin.testbench.unit.Tests;
 
+/**
+ * @since 8.1
+ */
 @Tests(Accordion.class)
 @Deprecated(forRemoval = true, since = "10.1")
 public class AccordionTester<T extends Accordion> extends ComponentTester<T> {

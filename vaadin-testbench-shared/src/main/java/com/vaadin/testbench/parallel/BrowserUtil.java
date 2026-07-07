@@ -181,6 +181,7 @@ public class BrowserUtil {
      * @param browserFactory
      *            BrowserFactory instance to use to generate default
      *            DesiredCapabilities
+     * @since 9.0
      */
     public static void setBrowserFactory(
             TestBenchBrowserFactory browserFactory) {

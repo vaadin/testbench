@@ -40,6 +40,7 @@ import org.springframework.web.context.WebApplicationContext;
  *             browserless-test-junit6 and use the corresponding class from the
  *             com.vaadin.browserless package instead. This class will be
  *             removed in a future version.
+ * @since 8.1
  */
 @Deprecated(forRemoval = true, since = "10.1")
 public class MockWebApplicationContext implements WebApplicationContext {

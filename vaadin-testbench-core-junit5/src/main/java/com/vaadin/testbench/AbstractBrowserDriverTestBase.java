@@ -13,6 +13,8 @@ import org.openqa.selenium.WebDriver;
 /**
  * Base class for tests using {@link WebDriver}. Provides wrapping for
  * {@link TestBenchDriverProxy}.
+ *
+ * @since 9.0
  */
 public abstract class AbstractBrowserDriverTestBase
         extends AbstractBrowserTestBase {

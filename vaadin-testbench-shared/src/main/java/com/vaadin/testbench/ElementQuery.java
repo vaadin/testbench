@@ -73,6 +73,8 @@ public class ElementQuery<T extends TestBenchElement> {
         /**
          * Attribute matching comparisons. This is a combination of a CSS
          * selection operator and a negation flag.
+         *
+         * @since 9.3
          */
         public enum Comparison {
             /**
@@ -218,6 +220,7 @@ public class ElementQuery<T extends TestBenchElement> {
          *            the comparison to use for matching
          * @param value
          *            the value to compare with the attribute's value
+         * @since 9.3
          */
         public AttributeMatch(String name, Comparison comparison,
                 String value) {
@@ -287,6 +290,7 @@ public class ElementQuery<T extends TestBenchElement> {
          * @param exists
          *            a boolean indicating whether the attribute exists (true)
          *            or does not exist (false)
+         * @since 9.4
          */
         public AttributeMatch(String name, boolean exists) {
             this(name, exists ? EXISTS : NOT_EXISTS, null);
@@ -360,6 +364,7 @@ public class ElementQuery<T extends TestBenchElement> {
      * @return this element query instance for chaining
      *
      * @deprecated use {@link #withAttribute(String)}
+     * @since 6.1
      */
     @Deprecated(since = "9.3")
     public ElementQuery<T> hasAttribute(String name) {
@@ -427,6 +432,7 @@ public class ElementQuery<T extends TestBenchElement> {
      * @param attribute
      *            the attribute name
      * @return this element query instance for chaining
+     * @since 9.3
      */
     public ElementQuery<T> withAttribute(String attribute) {
         attributes.add(new AttributeMatch(attribute));
@@ -447,6 +453,7 @@ public class ElementQuery<T extends TestBenchElement> {
      * @param comparison
      *            the comparison to use
      * @return this element query instance for chaining
+     * @since 9.3
      */
     public ElementQuery<T> withAttribute(String attribute, String value,
             AttributeMatch.Comparison comparison) {
@@ -472,6 +479,7 @@ public class ElementQuery<T extends TestBenchElement> {
      *
      * @see #withAttributeContaining(String, String)
      * @see #withAttributeContainingWord(String, String)
+     * @since 9.3
      */
     public ElementQuery<T> withAttribute(String attribute, String value) {
         return withAttribute(attribute, value, MATCHES_EXACTLY);
@@ -494,6 +502,7 @@ public class ElementQuery<T extends TestBenchElement> {
      *
      * @see #withAttribute(String, String)
      * @see #withAttributeContainingWord(String, String)
+     * @since 9.3
      */
     public ElementQuery<T> withAttributeContaining(String attribute,
             String text) {
@@ -519,6 +528,7 @@ public class ElementQuery<T extends TestBenchElement> {
      *
      * @see #withAttribute(String, String)
      * @see #withAttributeContaining(String, String)
+     * @since 9.3
      */
     public ElementQuery<T> withAttributeContainingWord(String attribute,
             String word) {
@@ -533,6 +543,7 @@ public class ElementQuery<T extends TestBenchElement> {
      * @param attribute
      *            the attribute name
      * @return this element query instance for chaining
+     * @since 9.3
      */
     public ElementQuery<T> withoutAttribute(String attribute) {
         return withAttribute(attribute, null, NOT_EXISTS);
@@ -557,6 +568,7 @@ public class ElementQuery<T extends TestBenchElement> {
      *
      * @see #withoutAttributeContaining(String, String)
      * @see #withoutAttributeContainingWord(String, String)
+     * @since 9.3
      */
     public ElementQuery<T> withoutAttribute(String attribute, String value) {
         return withAttribute(attribute, value, NOT_MATCHES_EXACTLY);
@@ -582,6 +594,7 @@ public class ElementQuery<T extends TestBenchElement> {
      *
      * @see #withoutAttribute(String, String)
      * @see #withoutAttributeContainingWord(String, String)
+     * @since 9.3
      */
     public ElementQuery<T> withoutAttributeContaining(String attribute,
             String text) {
@@ -609,6 +622,7 @@ public class ElementQuery<T extends TestBenchElement> {
      *
      * @see #withoutAttribute(String, String)
      * @see #withoutAttributeContaining(String, String)
+     * @since 9.3
      */
     public ElementQuery<T> withoutAttributeContainingWord(String attribute,
             String word) {
@@ -631,6 +645,7 @@ public class ElementQuery<T extends TestBenchElement> {
      * @see #id(String)
      * @see #single()
      * @see #get(int)
+     * @since 9.3
      */
     public ElementQuery<T> withId(String id) {
         return withAttribute("id", id);
@@ -642,6 +657,7 @@ public class ElementQuery<T extends TestBenchElement> {
      * @param classNames
      *            the class names
      * @return this element query instance for chaining
+     * @since 9.3
      */
     public ElementQuery<T> withClassName(String... classNames) {
         Arrays.stream(classNames).forEach(
@@ -655,6 +671,7 @@ public class ElementQuery<T extends TestBenchElement> {
      * @param classNames
      *            the class names
      * @return this element query instance for chaining
+     * @since 9.3
      */
     public ElementQuery<T> withoutClassName(String... classNames) {
         Arrays.stream(classNames)
@@ -669,6 +686,7 @@ public class ElementQuery<T extends TestBenchElement> {
      * @param theme
      *            the theme
      * @return this element query instance for chaining
+     * @since 9.3
      */
     public ElementQuery<T> withTheme(String theme) {
         return withAttribute("theme", theme);
@@ -680,6 +698,7 @@ public class ElementQuery<T extends TestBenchElement> {
      * @param theme
      *            the theme
      * @return this element query instance for chaining
+     * @since 9.3
      */
     public ElementQuery<T> withoutTheme(String theme) {
         return withoutAttribute("theme", theme);
@@ -699,6 +718,7 @@ public class ElementQuery<T extends TestBenchElement> {
      * @param condition
      *            the condition for the element to satisfy; not null
      * @return this element query instance for chaining
+     * @since 9.3
      */
     public ElementQuery<T> withCondition(Predicate<T> condition) {
         Objects.requireNonNull(condition, NULL_CONDITION_MSG);
@@ -736,6 +756,7 @@ public class ElementQuery<T extends TestBenchElement> {
      * @return this element query instance for chaining
      *
      * @see #withPropertyValue(Function, Object)
+     * @since 9.3
      */
     public <V> ElementQuery<T> withPropertyValue(Function<T, V> getter,
             V propertyValue, BiPredicate<V, V> comparison) {
@@ -760,6 +781,7 @@ public class ElementQuery<T extends TestBenchElement> {
      * @return this element query instance for chaining
      *
      * @see #withPropertyValue(Function, Object, BiPredicate)
+     * @since 9.3
      */
     public <V> ElementQuery<T> withPropertyValue(Function<T, V> getter,
             V propertyValue) {
@@ -790,6 +812,7 @@ public class ElementQuery<T extends TestBenchElement> {
      *
      * @see #withLabel(String)
      * @see #withLabelContaining(String)
+     * @since 9.3
      */
     public ElementQuery<T> withLabel(String text,
             BiPredicate<String, String> comparison) {
@@ -811,6 +834,7 @@ public class ElementQuery<T extends TestBenchElement> {
      *
      * @see #withLabelContaining(String)
      * @see #withLabel(String, BiPredicate)
+     * @since 9.3
      */
     public ElementQuery<T> withLabel(String label) {
         return withLabel(label, String::equals);
@@ -827,6 +851,7 @@ public class ElementQuery<T extends TestBenchElement> {
      *
      * @see #withLabel(String)
      * @see #withLabel(String, BiPredicate)
+     * @since 9.3
      */
     public ElementQuery<T> withLabelContaining(String text) {
         return withLabel(text, String::contains);
@@ -858,6 +883,7 @@ public class ElementQuery<T extends TestBenchElement> {
      *
      * @see #withPlaceholder(String)
      * @see #withPlaceholderContaining(String)
+     * @since 9.3
      */
     public ElementQuery<T> withPlaceholder(String text,
             BiPredicate<String, String> comparison) {
@@ -882,6 +908,7 @@ public class ElementQuery<T extends TestBenchElement> {
      *
      * @see #withPlaceholderContaining(String)
      * @see #withPlaceholder(String, BiPredicate)
+     * @since 9.3
      */
     public ElementQuery<T> withPlaceholder(String placeholder) {
         return withPlaceholder(placeholder, String::equals);
@@ -900,6 +927,7 @@ public class ElementQuery<T extends TestBenchElement> {
      *
      * @see #withPlaceholder(String)
      * @see #withPlaceholder(String, BiPredicate)
+     * @since 9.3
      */
     public ElementQuery<T> withPlaceholderContaining(String text) {
         return withPlaceholder(text, String::contains);
@@ -956,6 +984,7 @@ public class ElementQuery<T extends TestBenchElement> {
      *
      * @see #withCaption(String)
      * @see #withCaptionContaining(String)
+     * @since 9.3
      */
     @SuppressWarnings("java:S3776") // cognitive complexity > 15
     public ElementQuery<T> withCaption(String text,
@@ -1010,6 +1039,7 @@ public class ElementQuery<T extends TestBenchElement> {
      *
      * @see #withCaptionContaining(String)
      * @see #withCaption(String, BiPredicate)
+     * @since 9.3
      */
     public ElementQuery<T> withCaption(String caption) {
         return withCaption(caption, String::equals);
@@ -1027,6 +1057,7 @@ public class ElementQuery<T extends TestBenchElement> {
      *
      * @see #withCaption(String)
      * @see #withCaption(String, BiPredicate)
+     * @since 9.3
      */
     public ElementQuery<T> withCaptionContaining(String text) {
         return withCaption(text, String::contains);
@@ -1057,6 +1088,7 @@ public class ElementQuery<T extends TestBenchElement> {
      *
      * @see #withText(String)
      * @see #withTextContaining(String)
+     * @since 9.3
      */
     public ElementQuery<T> withText(String text,
             BiPredicate<String, String> comparison) {
@@ -1078,6 +1110,7 @@ public class ElementQuery<T extends TestBenchElement> {
      *
      * @see #withTextContaining(String)
      * @see #withText(String, BiPredicate)
+     * @since 9.3
      */
     public ElementQuery<T> withText(String text) {
         return withText(text, String::equals);
@@ -1094,6 +1127,7 @@ public class ElementQuery<T extends TestBenchElement> {
      *
      * @see #withText(String)
      * @see #withText(String, BiPredicate)
+     * @since 9.3
      */
     public ElementQuery<T> withTextContaining(String text) {
         return withText(text, String::contains);
@@ -1160,6 +1194,7 @@ public class ElementQuery<T extends TestBenchElement> {
      * @return The element of the type specified in the constructor
      * @throws NoSuchElementException
      *             if no unique element is found
+     * @since 9.3
      */
     public T single() {
         List<T> all = all();
@@ -1245,6 +1280,7 @@ public class ElementQuery<T extends TestBenchElement> {
      * @see #first()
      * @deprecated Use a wait loop with {@link #single()} for more reliable
      *             tests that assert exactly one matching element exists.
+     * @since 6.3
      */
     @Deprecated(since = "10.0", forRemoval = true)
     public T waitForFirst(long timeOutInSeconds) {

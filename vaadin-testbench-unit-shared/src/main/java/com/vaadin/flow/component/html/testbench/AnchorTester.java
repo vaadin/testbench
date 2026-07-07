@@ -31,6 +31,9 @@ import com.vaadin.flow.server.streams.DownloadEvent;
 import com.vaadin.flow.server.streams.DownloadHandler;
 import com.vaadin.testbench.unit.Tests;
 
+/**
+ * @since 8.1
+ */
 @Tests(Anchor.class)
 @Deprecated(forRemoval = true, since = "10.1")
 public class AnchorTester extends HtmlContainerTester<Anchor> {
@@ -60,6 +63,7 @@ public class AnchorTester extends HtmlContainerTester<Anchor> {
      *
      * @return a {@link String} containing the navigation target path or empty
      *         if not present
+     * @since 9.3.4
      */
     public String getPath() {
         return URI.create(getHref()).getPath();
@@ -70,6 +74,7 @@ public class AnchorTester extends HtmlContainerTester<Anchor> {
      *
      * @return a {@link QueryParameters} containing the navigation target's
      *         query parameters
+     * @since 9.3.4
      */
     public QueryParameters getQueryParameters() {
         return QueryParameters.fromString(URI.create(getHref()).getQuery());
@@ -82,6 +87,7 @@ public class AnchorTester extends HtmlContainerTester<Anchor> {
      * @return navigated view
      * @throws IllegalStateException
      *             if anchor href is not a String or not a route
+     * @since 10.0
      */
     public HasElement navigate() {
         ensureComponentIsUsable();
@@ -128,6 +134,7 @@ public class AnchorTester extends HtmlContainerTester<Anchor> {
      *            output stream to write the stream resource to
      * @throws IllegalStateException
      *             if the anchor does not link to a stream resource
+     * @since 9.3
      */
     public void download(OutputStream outputStream) {
         ensureComponentIsUsable();

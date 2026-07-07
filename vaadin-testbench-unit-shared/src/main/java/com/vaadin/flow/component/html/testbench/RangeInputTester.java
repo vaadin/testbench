@@ -14,6 +14,9 @@ import com.vaadin.flow.component.html.RangeInput;
 import com.vaadin.testbench.unit.ComponentTester;
 import com.vaadin.testbench.unit.Tests;
 
+/**
+ * @since 9.2
+ */
 @Tests(RangeInput.class)
 @Deprecated(forRemoval = true, since = "10.1")
 public class RangeInputTester extends ComponentTester<RangeInput> {

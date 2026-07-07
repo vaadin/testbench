@@ -43,6 +43,7 @@ import com.vaadin.testbench.unit.internal.PrettyPrintTreeKt;
  *             browserless-test-junit6 and use the corresponding class from the
  *             com.vaadin.browserless package instead. This class will be
  *             removed in a future version.
+ * @since 8.1
  */
 @Deprecated(forRemoval = true, since = "10.1")
 public class ComponentTester<T extends Component> implements Clickable<T> {
@@ -100,6 +101,7 @@ public class ComponentTester<T extends Component> implements Clickable<T> {
      * @return {@code true} if component can be interacted with by the user
      * @see #notUsableReasons(Consumer)
      * @see #ensureComponentIsUsable()
+     * @since 9.2
      */
     protected static boolean isUsable(Component component) {
         return component.getElement().isEnabled() && component.isAttached()
@@ -159,6 +161,7 @@ public class ComponentTester<T extends Component> implements Clickable<T> {
      *            the component to check
      * @param usableTest
      *            function that tests if the component is usable or not.
+     * @since 9.2
      */
     protected static void ensureComponentIsUsable(Component component,
             Predicate<Component> usableTest) {
@@ -205,6 +208,7 @@ public class ComponentTester<T extends Component> implements Clickable<T> {
      *
      * @see #isUsable()
      * @see #ensureComponentIsUsable()
+     * @since 9.2
      */
     protected static void notUsableReasons(Component component,
             Consumer<String> collector) {
@@ -235,6 +239,8 @@ public class ComponentTester<T extends Component> implements Clickable<T> {
     /**
      * Check that the given component is visible for the user. Else throw an
      * {@link IllegalStateException}
+     *
+     * @since 9.2
      */
     protected static void ensureVisible(Component component) {
         if (!component.isVisible() || !component.isAttached()) {
@@ -339,6 +345,7 @@ public class ComponentTester<T extends Component> implements Clickable<T> {
      *            the type of the event, not null.
      * @param eventData
      *            additional data related to the event, not null
+     * @since 10.0
      */
     protected void fireDomEvent(String eventType, ObjectNode eventData) {
         DomEvent event = new DomEvent(getComponent().getElement(), eventType,
@@ -438,6 +445,7 @@ public class ComponentTester<T extends Component> implements Clickable<T> {
      *
      * @param value
      *            the new value, may be null.
+     * @since 9.4.1
      */
     protected <V> void setValueAsUser(V value) {
         if (component instanceof AbstractField) {

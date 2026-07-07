@@ -68,6 +68,7 @@ import com.vaadin.testbench.unit.mocks.MockedUI;
  *             browserless-test-junit6 and use the corresponding class from the
  *             com.vaadin.browserless package instead. This class will be
  *             removed in a future version.
+ * @since 9.0.7
  */
 @Deprecated(forRemoval = true, since = "10.1")
 public abstract class BaseUIUnitTest {
@@ -451,6 +452,7 @@ public abstract class BaseUIUnitTest {
      * @param <T>
      *            the type of the component(s) to search for
      * @return a query object for finding components
+     * @since 25.2
      */
     public <T extends Component> ComponentQuery<T> find(
             Class<T> componentType) {
@@ -469,6 +471,7 @@ public abstract class BaseUIUnitTest {
      * @param <T>
      *            the type of the component(s) to search for
      * @return a query object for finding components
+     * @since 25.2
      */
     public <T extends Component> ComponentQuery<T> find(Class<T> componentType,
             Component fromThis) {
@@ -484,6 +487,7 @@ public abstract class BaseUIUnitTest {
      * @param <T>
      *            the type of the component(s) to search for
      * @return a query object for finding components
+     * @since 25.2
      */
     public <T extends Component> ComponentQuery<T> findInView(
             Class<T> componentType) {
@@ -603,6 +607,7 @@ public abstract class BaseUIUnitTest {
      * @return {@code true} if any pending Signals tasks were processed.
      * @see #runPendingSignalsTasks(long, TimeUnit)
      * @see TestSignalEnvironment#runPendingTasks(long, TimeUnit)
+     * @since 10.0
      */
     protected final boolean runPendingSignalsTasks() {
         return runPendingSignalsTasks(100, TimeUnit.MILLISECONDS);
@@ -634,6 +639,7 @@ public abstract class BaseUIUnitTest {
      *            the time unit of the timeout value
      * @return {@code true} if any pending Signals tasks were processed.
      * @see TestSignalEnvironment#runPendingTasks(long, TimeUnit)
+     * @since 10.0
      */
     protected final boolean runPendingSignalsTasks(long maxWaitTime,
             TimeUnit unit) {
