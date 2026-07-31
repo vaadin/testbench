@@ -34,6 +34,7 @@ import com.vaadin.testbench.unit.Tests;
  *             browserless-test-junit6 and use the corresponding class from the
  *             com.vaadin.browserless package instead. This class will be
  *             removed in a future version.
+ * @since 9.3
  */
 @Tests(VirtualList.class)
 @Deprecated(forRemoval = true, since = "10.1")
@@ -211,6 +212,7 @@ public class VirtualListTester<T extends VirtualList<Y>, Y>
      * @see #invokeLitRendererFunction(int, String)
      * @throws IllegalArgumentException
      *             when the VirtualList is not using a LitRenderer
+     * @since 10.0
      */
     public void invokeLitRendererFunction(int index, String functionName,
             ArrayNode jsonArray) {

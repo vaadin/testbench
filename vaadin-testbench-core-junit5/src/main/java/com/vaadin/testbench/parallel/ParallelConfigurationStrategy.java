@@ -17,6 +17,8 @@ import com.vaadin.testbench.Parameters;
 /**
  * Custom configuration strategy using TestBench
  * {@link Parameters#getTestsInParallel()}.
+ *
+ * @since 9.0
  */
 public class ParallelConfigurationStrategy implements
         ParallelExecutionConfiguration, ParallelExecutionConfigurationStrategy {

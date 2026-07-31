@@ -20,6 +20,8 @@ import com.vaadin.testbench.browser.MultipleBrowsersExtension;
 /**
  * Shorthand annotation for enabling
  * {@code @ExtendWith(MultipleBrowsersExtension.class)} on test class.
+ *
+ * @since 9.0
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)

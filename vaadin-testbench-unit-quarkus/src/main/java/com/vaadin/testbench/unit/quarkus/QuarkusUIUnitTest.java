@@ -67,6 +67,9 @@ import com.vaadin.testbench.unit.quarkus.mocks.MockQuarkusServlet;
  *             removed in a future version.
  */
 
+/**
+ * @since 9.2.3
+ */
 @Deprecated(forRemoval = true, since = "10.1")
 public abstract class QuarkusUIUnitTest extends UIUnitTest {
 

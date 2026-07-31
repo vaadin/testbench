@@ -16,6 +16,9 @@ import com.vaadin.flow.data.provider.DataViewUtils;
 import com.vaadin.testbench.unit.ComponentTester;
 import com.vaadin.testbench.unit.Tests;
 
+/**
+ * @since 8.1
+ */
 @Tests(fqn = { "com.vaadin.flow.component.select.Select" })
 @Deprecated(forRemoval = true, since = "10.1")
 public class SelectTester<T extends Select<Y>, Y> extends ComponentTester<T> {

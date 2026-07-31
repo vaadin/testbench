@@ -12,6 +12,9 @@ import com.vaadin.flow.component.html.Input;
 import com.vaadin.testbench.unit.ComponentTester;
 import com.vaadin.testbench.unit.Tests;
 
+/**
+ * @since 8.1
+ */
 @Tests(Input.class)
 @Deprecated(forRemoval = true, since = "10.1")
 public class InputTester extends ComponentTester<Input> {

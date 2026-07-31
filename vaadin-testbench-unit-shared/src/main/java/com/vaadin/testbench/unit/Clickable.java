@@ -25,6 +25,7 @@ import com.vaadin.flow.component.ComponentUtil;
  *             browserless-test-junit6 and use the corresponding class from the
  *             com.vaadin.browserless package instead. This class will be
  *             removed in a future version.
+ * @since 10.0
  */
 @Deprecated(forRemoval = true, since = "10.1")
 public interface Clickable<T extends Component> {

@@ -11,6 +11,9 @@ package com.vaadin.flow.component.html.testbench;
 import com.vaadin.flow.component.html.NativeLabel;
 import com.vaadin.testbench.unit.Tests;
 
+/**
+ * @since 9.1
+ */
 @Tests(NativeLabel.class)
 @Deprecated(forRemoval = true, since = "10.1")
 public class NativeLabelTester extends HtmlContainerTester<NativeLabel> {

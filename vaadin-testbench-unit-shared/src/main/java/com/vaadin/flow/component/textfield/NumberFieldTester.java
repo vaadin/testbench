@@ -21,6 +21,7 @@ import com.vaadin.testbench.unit.Tests;
  *            component type
  * @param <V>
  *            value type
+ * @since 8.1
  */
 @Tests(fqn = { "com.vaadin.flow.component.textfield.IntegerField",
         "com.vaadin.flow.component.textfield.NumberField" })

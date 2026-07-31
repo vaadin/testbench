@@ -42,6 +42,7 @@ import com.vaadin.testbench.unit.component.GridKt;
  *             browserless-test-junit6 and use the corresponding class from the
  *             com.vaadin.browserless package instead. This class will be
  *             removed in a future version.
+ * @since 8.1
  */
 @Tests(fqn = { "com.vaadin.flow.component.grid.Grid" })
 @Deprecated(forRemoval = true, since = "10.1")
@@ -358,6 +359,7 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
      *             when column for property doesn't exist or the target column
      *             of the cell is not a LitRenderer or when the given type of
      *             the property does not match the actual property type
+     * @since 9.3
      */
     public <V> V getLitRendererPropertyValue(int row, String columnName,
             String propertyName, Class<V> propertyClass) {
@@ -383,6 +385,7 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
      *             when column for property doesn't exist or the target column
      *             of the cell is not a LitRenderer or when the given type of
      *             the property does not match the actual property type
+     * @since 9.3
      */
     public <V> V getLitRendererPropertyValue(int row, int column,
             String propertyName, Class<V> propertyClass) {
@@ -415,6 +418,7 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
      *            the name of the LitRenderer function to invoke
      * @param jsonArray
      *            the arguments to pass to the function
+     * @since 10.0
      */
     public void invokeLitRendererFunction(int row, String columnName,
             String functionName, ArrayNode jsonArray) {
@@ -431,6 +435,7 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
      *            key/property of column
      * @param functionName
      *            the name of the LitRenderer function to invoke
+     * @since 9.3
      */
     public void invokeLitRendererFunction(int row, String columnName,
             String functionName) {
@@ -450,6 +455,7 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
      *            the name of the LitRenderer function to invoke
      * @param jsonArray
      *            the arguments to pass to the function
+     * @since 10.0
      */
     public void invokeLitRendererFunction(int row, int column,
             String functionName, ArrayNode jsonArray) {
@@ -466,6 +472,7 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
      *            column to get
      * @param functionName
      *            the name of the LitRenderer function to invoke
+     * @since 9.3
      */
     public void invokeLitRendererFunction(int row, int column,
             String functionName) {

@@ -11,6 +11,9 @@ package com.vaadin.flow.component.html.testbench;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.testbench.unit.Tests;
 
+/**
+ * @since 8.1
+ */
 @Tests(Span.class)
 @Deprecated(forRemoval = true, since = "10.1")
 public class SpanTester extends HtmlClickContainer<Span> {

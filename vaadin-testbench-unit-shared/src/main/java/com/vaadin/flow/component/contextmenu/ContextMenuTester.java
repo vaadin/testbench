@@ -33,6 +33,7 @@ import com.vaadin.testbench.unit.internal.PrettyPrintTreeKt;
  *             browserless-test-junit6 and use the corresponding class from the
  *             com.vaadin.browserless package instead. This class will be
  *             removed in a future version.
+ * @since 8.1
  */
 @Tests(ContextMenu.class)
 @Deprecated(forRemoval = true, since = "10.1")
@@ -323,6 +324,8 @@ public class ContextMenuTester<T extends ContextMenu>
      * div = menuTester.find(Div.class).withText("Component Item").single();
      * Assertions.assertFalse(div.isAttached());
      * </pre>
+     *
+     * @since 10.0
      */
     @Override
     public <R extends Component> ComponentQuery<R> find(

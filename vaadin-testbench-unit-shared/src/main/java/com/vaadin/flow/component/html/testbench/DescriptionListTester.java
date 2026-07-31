@@ -14,6 +14,9 @@ import java.util.stream.Collectors;
 import com.vaadin.flow.component.html.DescriptionList;
 import com.vaadin.testbench.unit.Tests;
 
+/**
+ * @since 8.1
+ */
 @Tests(DescriptionList.class)
 @Deprecated(forRemoval = true, since = "10.1")
 public class DescriptionListTester extends HtmlClickContainer<DescriptionList> {

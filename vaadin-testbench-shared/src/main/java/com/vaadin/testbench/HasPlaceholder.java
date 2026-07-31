@@ -13,6 +13,8 @@ import java.util.Objects;
 /**
  * Implement by elements which support a placeholder, i.e. text shown when the
  * field is empty.
+ *
+ * @since 6.1
  */
 public interface HasPlaceholder extends HasPropertySettersGetters {
 
