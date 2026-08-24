@@ -414,15 +414,20 @@ object MockVaadin {
  */
 private val _VaadinService_getEventBus: Method? by lazy(LazyThreadSafetyMode.PUBLICATION) {
     try {
-        VaadinService::class.java.getMethod("getEventBus")
+        VaadinService::class.java.getMethod("getEventBus").apply { isAccessible = true }
     } catch (e: NoSuchMethodException) {
         null
     }
 }
 
 private val _VaadinServiceEventBus_fireEvent: Method? by lazy(LazyThreadSafetyMode.PUBLICATION) {
-    _VaadinService_getEventBus?.returnType?.getMethod("fireEvent", EventObject::class.java,
-            SerializableBiConsumer::class.java)
+    try {
+        _VaadinService_getEventBus?.returnType?.getMethod("fireEvent", EventObject::class.java,
+                SerializableBiConsumer::class.java)?.apply { isAccessible = true }
+    } catch (e: NoSuchMethodException) {
+        // a bus that does not take an error handler: fall back to the fields, if there are any
+        null
+    }
 }
 
 /**
