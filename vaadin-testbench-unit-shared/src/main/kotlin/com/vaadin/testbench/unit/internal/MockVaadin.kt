@@ -11,6 +11,9 @@ package com.vaadin.testbench.unit.internal
 
 import java.io.Serializable
 import java.lang.reflect.Field
+import java.lang.reflect.InvocationTargetException
+import java.lang.reflect.Method
+import java.util.EventObject
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.locks.ReentrantLock
 import jakarta.servlet.ServletContext
@@ -18,6 +21,7 @@ import com.vaadin.flow.component.ComponentUtil
 import com.vaadin.flow.component.UI
 import com.vaadin.flow.component.page.Page
 import com.vaadin.flow.di.Lookup
+import com.vaadin.flow.function.SerializableBiConsumer
 import com.vaadin.flow.internal.CurrentInstance
 import com.vaadin.flow.internal.StateTree
 import com.vaadin.flow.router.Location
@@ -28,6 +32,7 @@ import com.vaadin.flow.server.ServiceDestroyEvent
 import com.vaadin.flow.server.ServiceDestroyListener
 import com.vaadin.flow.server.SessionInitEvent
 import com.vaadin.flow.server.SessionInitListener
+import com.vaadin.flow.server.UIInitEvent
 import com.vaadin.flow.server.VaadinRequest
 import com.vaadin.flow.server.VaadinResponse
 import com.vaadin.flow.server.VaadinService
@@ -264,7 +269,7 @@ object MockVaadin {
         strongRefUI.set(ui)
 
         session.addUI(ui)
-        session.service.fireUIInitListeners(ui)
+        session.service.fireUIInit(ui)
 
         // navigate to the initial page
         if (lastNavigation.get() != null) {
@@ -403,6 +408,46 @@ object MockVaadin {
     }
 }
 
+/**
+ * `VaadinService.getEventBus()`, or null when running against a Flow version older than 25.3,
+ * which has no event bus and still keeps the listeners in private fields of the service.
+ */
+private val _VaadinService_getEventBus: Method? by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    try {
+        VaadinService::class.java.getMethod("getEventBus")
+    } catch (e: NoSuchMethodException) {
+        null
+    }
+}
+
+private val _VaadinServiceEventBus_fireEvent: Method? by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    _VaadinService_getEventBus?.returnType?.getMethod("fireEvent", EventObject::class.java,
+            SerializableBiConsumer::class.java)
+}
+
+/**
+ * Hands a listener failure back to the caller instead of logging it, which is what the event bus
+ * does by default. A listener that throws during a test should fail that test rather than only
+ * leave a line in the log, which is how the listeners behaved before the event bus as well.
+ */
+private val rethrowListenerFailure =
+        SerializableBiConsumer<EventObject, Exception> { _, error -> throw error }
+
+/**
+ * Fires the event through the event bus of this service, and returns false without firing
+ * anything if this Flow version has no event bus yet.
+ */
+private fun VaadinService.fireThroughEventBus(event: EventObject): Boolean {
+    val fireEvent: Method = _VaadinServiceEventBus_fireEvent ?: return false
+    try {
+        fireEvent.invoke(_VaadinService_getEventBus!!.invoke(this), event, rethrowListenerFailure)
+    } catch (e: InvocationTargetException) {
+        // unwrap, so that a listener failure reaches the test as it was thrown
+        throw e.targetException
+    }
+    return true
+}
+
 private val _VaadinService_sessionInitListeners: Field by lazy(LazyThreadSafetyMode.PUBLICATION) {
     val field: Field = VaadinService::class.java.getDeclaredField("sessionInitListeners")
     field.isAccessible = true
@@ -410,6 +455,9 @@ private val _VaadinService_sessionInitListeners: Field by lazy(LazyThreadSafetyM
 }
 
 private fun VaadinService.fireSessionInitListeners(event: SessionInitEvent) {
+    if (fireThroughEventBus(event)) {
+        return
+    }
     @Suppress("UNCHECKED_CAST")
     val sessionInitListeners: Collection<SessionInitListener> =
             _VaadinService_sessionInitListeners.get(this) as Collection<SessionInitListener>
@@ -425,12 +473,26 @@ private val _VaadinService_sessionDestroyListeners: Field by lazy(LazyThreadSafe
 }
 
 private fun VaadinService.fireServiceDestroyListeners(event: ServiceDestroyEvent) {
+    if (fireThroughEventBus(event)) {
+        return
+    }
     @Suppress("UNCHECKED_CAST")
     val listeners: Collection<ServiceDestroyListener> =
             _VaadinService_sessionDestroyListeners.get(this) as Collection<ServiceDestroyListener>
     for (listener in listeners) {
         listener.serviceDestroy(event)
     }
+}
+
+/**
+ * Fires the UI init event, preferring the event bus, as [VaadinService.fireUIInitListeners] is
+ * deprecated for removal since Flow 25.3.
+ */
+private fun VaadinService.fireUIInit(ui: UI) {
+    if (fireThroughEventBus(UIInitEvent(ui, this))) {
+        return
+    }
+    fireUIInitListeners(ui)
 }
 
 private class MockPage(ui: UI, private val uiFactory: UIFactory, private val session: VaadinSession) : Page(ui) {
