@@ -552,5 +552,37 @@ internal fun DynaNodeGroup.mockVaadinTest() {
             expect(1) { sessionDestroyListenerInvocationCount }
             expect(1) { serviceDestroyListenerInvocationCount }
         }
+        test("a failing VaadinService listener fails the test") {
+            MockVaadin.tearDown()
+            expectThrows(RuntimeException::class, "simulated session init failure") {
+                MockVaadin.setup(servlet = object : MockVaadinServlet(routes) {
+                    override fun createServletService(deploymentConfiguration: DeploymentConfiguration): VaadinServletService {
+                        val service = MockService(this, deploymentConfiguration)
+                        service.init()
+                        service.addSessionInitListener { throw RuntimeException("simulated session init failure") }
+                        return service
+                    }
+                })
+            }
+            // setup() failed halfway through, so drop what it did manage to create
+            UI.setCurrent(null)
+            VaadinSession.setCurrent(null)
+            VaadinService.setCurrent(null)
+
+            MockVaadin.setup(servlet = object : MockVaadinServlet(routes) {
+                override fun createServletService(deploymentConfiguration: DeploymentConfiguration): VaadinServletService {
+                    val service = MockService(this, deploymentConfiguration)
+                    service.init()
+                    service.addServiceDestroyListener { throw RuntimeException("simulated service destroy failure") }
+                    return service
+                }
+            })
+            expectThrows(RuntimeException::class, "simulated service destroy failure") {
+                MockVaadin.tearDown()
+            }
+            // tearDown() threw before clearing the service, whose listener would throw again
+            VaadinService.setCurrent(null)
+            MockVaadin.setup(routes)
+        }
     }
 }
