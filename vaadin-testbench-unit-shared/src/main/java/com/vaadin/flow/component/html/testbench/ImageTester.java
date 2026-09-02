@@ -16,7 +16,7 @@ import com.vaadin.testbench.unit.Tests;
  */
 @Tests(Image.class)
 @Deprecated(forRemoval = true, since = "10.1")
-public class ImageTester extends HtmlClickContainer<Image> {
+public class ImageTester extends HtmlComponentTester<Image> {
     /**
      * Wrap given component for testing.
      *
