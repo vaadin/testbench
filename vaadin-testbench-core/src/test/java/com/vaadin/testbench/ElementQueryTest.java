@@ -34,6 +34,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 public class ElementQueryTest {
@@ -810,6 +811,79 @@ public class ElementQueryTest {
     @SafeVarargs
     private <T> Set<T> set(T... ts) {
         return Set.of(ts);
+    }
+
+    /**
+     * Element query returning a predefined result for each search execution, to
+     * allow testing queries that retry the search. The last result is repeated
+     * for any further executions.
+     */
+    private static class ScriptedElementQuery<T extends TestBenchElement>
+            extends ElementQuery<T> {
+        private final List<List<T>> results;
+        private int executionCount;
+
+        public ScriptedElementQuery(Class<T> elementClass,
+                List<List<T>> results) {
+            super(elementClass);
+            this.results = results;
+        }
+
+        @Override
+        protected List<T> executeSearchScript(String script, Object context,
+                String tagName, String attributePairs,
+                JavascriptExecutor executor) {
+            return results.get(Math.min(executionCount++, results.size() - 1));
+        }
+    }
+
+    private ScriptedElementQuery<ExampleElement> createScriptedQuery(
+            List<List<ExampleElement>> results) {
+        var query = new ScriptedElementQuery<>(ExampleElement.class, results);
+        query.context(mockDriver);
+        return query;
+    }
+
+    @Test
+    public void waitForSingle_singleElementFound_returnsElementWithoutRetrying() {
+        var query = createScriptedQuery(List.of(List.of(mockElement)));
+        assertSame(mockElement, query.waitForSingle());
+        assertEquals(1, query.executionCount);
+    }
+
+    @Test
+    public void waitForSingle_elementAppearsLater_returnsElement() {
+        var query = createScriptedQuery(
+                List.of(List.of(), List.of(mockElement)));
+        assertSame(mockElement, query.waitForSingle());
+    }
+
+    @Test
+    public void waitForSingle_multipleElementsUntilOneRemains_returnsElement() {
+        var query = createScriptedQuery(List.of(
+                List.of(mockElement, Mockito.mock(ExampleElement.class)),
+                List.of(mockElement)));
+        assertSame(mockElement, query.waitForSingle());
+    }
+
+    @Test
+    public void waitForSingle_noElementFound_throwsNoSuchElementException() {
+        var query = createScriptedQuery(List.of(List.of()));
+        var exception = assertThrows(NoSuchElementException.class,
+                () -> query.waitForSingle(1));
+        assertTrue(exception.getMessage().contains(
+                "No element with tag <" + ExampleElement.TAG + "> found."));
+        assertTrue(exception.getMessage().contains("Timed out after 1s."));
+    }
+
+    @Test
+    public void waitForSingle_multipleElementsFound_throwsNoSuchElementException() {
+        var query = createScriptedQuery(List
+                .of(List.of(mockElement, Mockito.mock(ExampleElement.class))));
+        var exception = assertThrows(NoSuchElementException.class,
+                () -> query.waitForSingle(1));
+        assertTrue(exception.getMessage().contains("Multiple elements (2)"));
+        assertTrue(exception.getMessage().contains("Timed out after 1s."));
     }
 
     @Test(expected = NoSuchElementException.class)

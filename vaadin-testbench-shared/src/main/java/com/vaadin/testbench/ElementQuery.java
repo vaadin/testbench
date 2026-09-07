@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.SearchContext;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -1206,6 +1207,64 @@ public class ElementQuery<T extends TestBenchElement> {
     }
 
     /**
+     * Executes the search and returns the sole result once exactly one matching
+     * element is available.
+     * <p>
+     * This method is identical to {@link #single()} if exactly one matching
+     * element is present. If no element or more than one element is found, the
+     * search is retried until exactly one element matches or 10 seconds have
+     * elapsed.
+     *
+     * @return The element of the type specified in the constructor
+     * @throws NoSuchElementException
+     *             if no unique element is found before the timeout expires
+     *
+     * @see #single()
+     * @see #waitForSingle(long)
+     * @since 25.3
+     */
+    public T waitForSingle() {
+        return waitForSingle(DEFAULT_WAIT_TIME_OUT_IN_SECONDS);
+    }
+
+    /**
+     * Executes the search and returns the sole result once exactly one matching
+     * element is available.
+     * <p>
+     * This method is identical to {@link #single()} if exactly one matching
+     * element is present. If no element or more than one element is found, the
+     * search is retried until exactly one element matches or
+     * {@code timeoutInSeconds} seconds have elapsed.
+     *
+     * @param timeoutInSeconds
+     *            timeout in seconds before this method throws a
+     *            {@link NoSuchElementException}
+     * @return The element of the type specified in the constructor
+     * @throws NoSuchElementException
+     *             if no unique element is found before the timeout expires
+     *
+     * @see #single()
+     * @since 25.3
+     */
+    public T waitForSingle(long timeoutInSeconds) {
+        try {
+            return new WebDriverWait(getDriver(),
+                    Duration.ofSeconds(timeoutInSeconds))
+                    .until(driver -> single());
+        } catch (TimeoutException timeout) {
+            // The NoSuchElementException thrown by single() is ignored while
+            // waiting and reported as the cause of the timeout. Rethrow it as
+            // a NoSuchElementException so that both the exception type and the
+            // reason for the failure match single().
+            if (timeout.getCause() instanceof NoSuchElementException cause) {
+                throw new NoSuchElementException(cause.getRawMessage()
+                        + " Timed out after " + timeoutInSeconds + "s.", cause);
+            }
+            throw timeout;
+        }
+    }
+
+    /**
      * Executes the search and returns the first result.
      * <p>
      * <strong>Warning:</strong> This method can lead to flaky tests when
@@ -1239,17 +1298,17 @@ public class ElementQuery<T extends TestBenchElement> {
      * <p>
      * <strong>Warning:</strong> This method can lead to flaky tests when
      * multiple matching elements exist on the page, as it arbitrarily selects
-     * the first one without validation. If you need to wait for an element and
-     * ensure exactly one exists, consider implementing a wait loop that calls
-     * {@link #single()} instead.
+     * the first one without validation. Use {@link #waitForSingle()} instead,
+     * which waits for exactly one matching element.
      *
      * @return The element of the type specified in the constructor
      * @throws NoSuchElementException
      *             if no element is found
      *
      * @see #first()
-     * @deprecated Use a wait loop with {@link #single()} for more reliable
-     *             tests that assert exactly one matching element exists.
+     * @see #waitForSingle()
+     * @deprecated Use {@link #waitForSingle()} for more reliable tests that
+     *             assert exactly one matching element exists.
      */
     @Deprecated(since = "10.0", forRemoval = true)
     public T waitForFirst() {
@@ -1266,9 +1325,8 @@ public class ElementQuery<T extends TestBenchElement> {
      * <p>
      * <strong>Warning:</strong> This method can lead to flaky tests when
      * multiple matching elements exist on the page, as it arbitrarily selects
-     * the first one without validation. If you need to wait for an element and
-     * ensure exactly one exists, consider implementing a wait loop that calls
-     * {@link #single()} instead.
+     * the first one without validation. Use {@link #waitForSingle(long)}
+     * instead, which waits for exactly one matching element.
      *
      * @param timeOutInSeconds
      *            timeout in seconds before this method throws a
@@ -1278,8 +1336,9 @@ public class ElementQuery<T extends TestBenchElement> {
      *             if no element is found
      *
      * @see #first()
-     * @deprecated Use a wait loop with {@link #single()} for more reliable
-     *             tests that assert exactly one matching element exists.
+     * @see #waitForSingle(long)
+     * @deprecated Use {@link #waitForSingle(long)} for more reliable tests that
+     *             assert exactly one matching element exists.
      * @since 6.3
      */
     @Deprecated(since = "10.0", forRemoval = true)
