@@ -11,6 +11,7 @@ package com.vaadin.testbench.unit.internal
 
 import java.lang.reflect.Method
 import com.vaadin.flow.component.Component
+import com.vaadin.flow.component.ComponentUtil
 import com.vaadin.flow.component.Composite
 import com.vaadin.flow.component.UI
 import com.vaadin.flow.component.contextmenu.MenuItemBase
@@ -116,9 +117,17 @@ interface TestingLifecycleHook {
             // thus duplicating any virtual children the child component might have.
             component.children.toList()
         }
-        // Also include virtual children.
-        // Issue: https://github.com/mvysny/karibu-testing/issues/85
-        else -> (component.children.toList() + component._getVirtualChildren()).distinct()
+        // Union the component's own reported children with Flow's element-tree
+        // traversal. Neither source alone is complete: getChildren() may hide
+        // element children (Dialog and Card exclude slotted content) while
+        // ComponentUtil.getAllChildren, which walks the element hierarchy
+        // (regular and virtual children, descending through non-component
+        // wrapper elements), misses children that are not part of the element
+        // tree (ContextMenu keeps its items in a server-side MenuManager list
+        // that getChildren() delegates to). getAllChildren also keeps virtual
+        // children, see https://github.com/mvysny/karibu-testing/issues/85.
+        else -> (component.children.toList()
+                + ComponentUtil.getAllChildren(component).toList()).distinct()
     }
 
 
