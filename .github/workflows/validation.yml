@@ -2,11 +2,8 @@ name: TestBench Validation
 
 on:
   push:
-    branches:
-      - main
+    branches: [main,'25.2']
   pull_request:
-    branches:
-      - main
     types: [opened, synchronize, reopened, edited]
   workflow_dispatch:
 
