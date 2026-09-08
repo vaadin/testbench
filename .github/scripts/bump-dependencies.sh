@@ -351,6 +351,20 @@ reset_branch_to_base() {
     git_r checkout --quiet -b "$branch" "origin/$base"
 }
 
+# Labels are applied one at a time, after the PR exists, rather than passed to
+# `gh pr create`. That flag is all-or-nothing: `automated` does not exist in
+# this repo, so handing both to `pr create` failed the call outright and the
+# retry-without-labels path then cost the PR its `dependencies` label too --
+# which is exactly how #2298 came out with no labels at all.
+apply_labels() {
+    local pr_number="$1" label
+    for label in "${LABELS[@]}"; do
+        if ! gh pr edit "$pr_number" -R "$REPO_SLUG" --add-label "$label" >/dev/null 2>&1; then
+            warn "could not add the '$label' label to #$pr_number; it may not exist in $REPO_SLUG"
+        fi
+    done
+}
+
 request_reviewers() {
     local pr_number="$1" reviewers="$2"
     if [[ -z $reviewers ]]; then return 0; fi
@@ -822,19 +836,10 @@ main() {
     else
         git_r push --quiet -u origin "$bot_branch"
 
-        local -a create=(pr create -R "$REPO_SLUG" --base "$branch" --head "$bot_branch"
-            --title "$title" --body "$body")
-        local label
-        for label in "${LABELS[@]}"; do create+=(--label "$label"); done
-
         local out=""
-        if ! out=$(gh "${create[@]}" 2>&1); then
-            # A label that does not exist in this repo is a repo-config
-            # problem, not a reason to lose the bump.
-            warn "gh pr create with labels [${LABELS[*]}] failed, retrying without labels: ${out%%$'\n'*}"
-            out=$(gh pr create -R "$REPO_SLUG" --base "$branch" --head "$bot_branch" \
-                --title "$title" --body "$body")
-        fi
+        out=$(gh pr create -R "$REPO_SLUG" --base "$branch" --head "$bot_branch" \
+            --title "$title" --body "$body" 2>&1) ||
+            die "gh pr create failed: ${out%%$'\n'*}"
 
         local url
         url=$(printf '%s\n' "$out" | grep -o 'https://[^[:space:]]*/pull/[0-9][0-9]*' | tail -1) ||
@@ -842,6 +847,7 @@ main() {
         [[ -n $url ]] || die "could not parse a PR URL out of the gh output: ${out%%$'\n'*}"
         RESULT_PR_URL="$url"
         RESULT_PR_NUMBER="${url##*/}"
+        apply_labels "$RESULT_PR_NUMBER"
         request_reviewers "$RESULT_PR_NUMBER" "$reviewers"
         RESULT_STATUS="created"
         log "  created $RESULT_PR_URL"

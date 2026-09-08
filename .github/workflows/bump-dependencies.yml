@@ -130,8 +130,9 @@ jobs:
           # Full history: the script fetches and branches off origin/<branch>.
           fetch-depth: 0
           # Persisted so the script's `git push` reuses this token. GHTK when
-          # available, because a PR opened with GITHUB_TOKEN does not trigger
-          # validation.yml.
+          # available: a PR authored by github-actions[bot] has its
+          # validation.yml run parked as `action_required` until a maintainer
+          # approves it by hand. See the warning step below.
           token: ${{ secrets.GHTK || secrets.GITHUB_TOKEN }}
           persist-credentials: true
 
@@ -140,9 +141,19 @@ jobs:
         run: |
           {
             echo "> [!WARNING]"
-            echo "> \`secrets.GHTK\` is not set, so this run used \`GITHUB_TOKEN\`."
-            echo "> Pull requests opened that way do **not** trigger \`validation.yml\`;"
-            echo "> someone has to push to the branch, or close and reopen the PR, to get CI."
+            echo "> \`secrets.GHTK\` is not set, so this run used \`GITHUB_TOKEN\` and the"
+            echo "> pull request is authored by \`github-actions[bot]\`."
+            echo ">"
+            echo "> **\`validation.yml\` will not start on its own.** This repo requires"
+            echo "> approval for runs from contributors it treats as external, and the bot"
+            echo "> is one, so the validation run is created and then parked with"
+            echo "> conclusion \`action_required\` until a maintainer approves it on the"
+            echo "> PR's Checks tab. Closing and reopening the PR does not help -- the"
+            echo "> reopen is also attributed to the bot."
+            echo ">"
+            echo "> Fix it once by making the PAT available as \`secrets.GHTK\` (share the"
+            echo "> org secret with this repo). No change to this workflow is needed: it"
+            echo "> already prefers \`GHTK\` over \`GITHUB_TOKEN\`."
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Bump ${{ matrix.branch }}

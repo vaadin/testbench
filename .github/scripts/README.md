@@ -88,7 +88,18 @@ the target branch in `target/`).
 
 ### Tokens
 
-The workflow prefers `secrets.GHTK` and falls back to `GITHUB_TOKEN`. The
-fallback works, but a pull request opened with `GITHUB_TOKEN` does **not**
-trigger `validation.yml`; someone then has to push to the branch, or close and
-reopen the PR, to get CI. The run says so in its job summary when it happens.
+The workflow prefers `secrets.GHTK` and falls back to `GITHUB_TOKEN`.
+
+The fallback opens working pull requests, but they are authored by
+`github-actions[bot]`, and this repo requires approval for workflow runs from
+contributors it treats as external. `validation.yml` is therefore created and
+immediately parked with conclusion `action_required` until a maintainer
+approves it on the PR's Checks tab -- observed on #2298, whose first attempt
+concluded `action_required` and only ran once approved by hand. Closing and
+reopening the PR does not help, because the reopen is attributed to the bot as
+well.
+
+Making the PAT available as `secrets.GHTK` (sharing the org secret with this
+repo) fixes it permanently and needs no change here: the PR is then authored by
+a collaborator, so nothing holds the run. The job summary says so on any run
+that had to fall back.
