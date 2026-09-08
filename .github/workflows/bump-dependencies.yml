@@ -1,0 +1,279 @@
+name: Bump Dependencies
+
+# Keeps `selenium.version` and `spring.boot.version` in the root pom.xml up to
+# date across the maintained branches, opening one rolling PR per branch.
+#
+# The two properties get different policies, because the two projects release
+# differently -- selenium may cross a minor, Spring Boot is patch-only. See
+# .github/scripts/README.md for the full rules and the reasoning.
+#
+# IMPORTANT: GitHub Actions only honors `schedule` on the default branch, and a
+# workflow_dispatch always reads THIS file from `main`. Both this YAML and
+# .github/scripts/bump-dependencies.sh must therefore be merged to `main`
+# before anything can run -- the release branches need no copy of either, which
+# is deliberate: one code path, edited in one place.
+
+on:
+  schedule:
+    # 03:17 UTC daily. Off the hour on purpose: scheduled runs bunched on the
+    # hour queue behind everyone else's cron jobs.
+    - cron: '17 3 * * *'
+  workflow_dispatch:
+    inputs:
+      branches:
+        description: 'Comma-separated branches to bump'
+        required: false
+        default: 'main,25.2,10.1,9.6,9.5,8.3'
+        type: string
+      reviewers:
+        description: 'Comma-separated reviewers to request'
+        required: false
+        default: 'ZheSun88'
+        type: string
+      dry_run:
+        description: 'Resolve versions and report only -- no branches, no PRs'
+        required: false
+        default: false
+        type: boolean
+
+# Read-only by default; only the bump job needs to write, and only on the
+# GITHUB_TOKEN fallback path -- with secrets.GHTK set, the pushes and PRs go
+# through that token instead.
+permissions:
+  contents: read
+
+env:
+  DEFAULT_BRANCHES: 'main,25.2,10.1,9.6,9.5,8.3'
+  DEFAULT_REVIEWERS: 'ZheSun88'
+
+jobs:
+  # A broken version comparator would force-push a wrong bump to six branches
+  # at once, so the assertions run before any branch is touched and gate the
+  # whole matrix.
+  self-test:
+    name: Self test
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v5
+
+      - name: Run script assertions
+        run: bash .github/scripts/bump-dependencies.sh --self-test
+
+  resolve-matrix:
+    name: Resolve matrix
+    needs: self-test
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      branches: ${{ steps.set.outputs.branches }}
+    steps:
+      # `inputs.branches` is empty on a scheduled run, so the default lives in
+      # env and is applied here rather than being duplicated per job.
+      - id: set
+        env:
+          INPUT_BRANCHES: ${{ inputs.branches || '' }}
+        run: |
+          list="${INPUT_BRANCHES:-$DEFAULT_BRANCHES}"
+          # `[[:space:]]` rather than `\s`: a backslash in a jq program nested
+          # inside a YAML block scalar inside a shell string is one escaping
+          # layer too many to be sure of. Branch names contain no spaces, so
+          # stripping all whitespace is equivalent to trimming here.
+          branches=$(jq -cn --arg csv "$list" \
+            '$csv | split(",") | map(gsub("[[:space:]]"; "")) | map(select(length > 0))')
+          if [[ "$branches" == "[]" ]]; then
+            echo "::error::No branches to bump"
+            exit 1
+          fi
+          echo "Branches: $branches"
+          echo "branches=$branches" >> "$GITHUB_OUTPUT"
+
+  bump:
+    name: ${{ matrix.branch }}
+    needs: resolve-matrix
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      # One branch failing must not cancel the others: each has an independent
+      # rolling PR, and a transient Maven Central blip on 9.5 is no reason to
+      # skip main.
+      fail-fast: false
+      matrix:
+        branch: ${{ fromJson(needs.resolve-matrix.outputs.branches) }}
+    permissions:
+      contents: write
+      pull-requests: write
+    # `secrets` is not one of the contexts available to a step-level `if`, so
+    # the availability of GHTK is reduced to a boolean here, where it is.
+    env:
+      HAS_GHTK: ${{ secrets.GHTK != '' }}
+    concurrency:
+      # Serialize runs targeting the same branch so a dispatch and the nightly
+      # cron cannot race to force-push the same rolling PR. Different branches
+      # still run in parallel.
+      group: bump-dependencies-${{ matrix.branch }}
+      cancel-in-progress: false
+    steps:
+      # Two checkouts on purpose. The script is only on `main`, and it does not
+      # exist on branches like 8.3 -- checking the target branch out over the
+      # script would delete the file bash is still reading. The script refuses
+      # to run that way, so the target gets its own directory.
+      - name: Checkout main (for the script)
+        uses: actions/checkout@v5
+
+      - name: Checkout ${{ matrix.branch }} (the target)
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ matrix.branch }}
+          path: target
+          # Full history: the script fetches and branches off origin/<branch>.
+          fetch-depth: 0
+          # Persisted so the script's `git push` reuses this token. GHTK when
+          # available, because a PR opened with GITHUB_TOKEN does not trigger
+          # validation.yml.
+          token: ${{ secrets.GHTK || secrets.GITHUB_TOKEN }}
+          persist-credentials: true
+
+      - name: Warn when GHTK is unavailable
+        if: env.HAS_GHTK != 'true'
+        run: |
+          {
+            echo "> [!WARNING]"
+            echo "> \`secrets.GHTK\` is not set, so this run used \`GITHUB_TOKEN\`."
+            echo "> Pull requests opened that way do **not** trigger \`validation.yml\`;"
+            echo "> someone has to push to the branch, or close and reopen the PR, to get CI."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Bump ${{ matrix.branch }}
+        env:
+          GH_TOKEN: ${{ secrets.GHTK || secrets.GITHUB_TOKEN }}
+          INPUT_REVIEWERS: ${{ inputs.reviewers || '' }}
+        run: |
+          bash .github/scripts/bump-dependencies.sh \
+            --branch '${{ matrix.branch }}' \
+            --repo '${{ github.repository }}' \
+            --repo-dir "$GITHUB_WORKSPACE/target" \
+            --reviewers "${INPUT_REVIEWERS:-$DEFAULT_REVIEWERS}" \
+            --result-file "$GITHUB_WORKSPACE/result.json" \
+            --verbose \
+            ${{ inputs.dry_run && '--dry-run' || '' }}
+
+      - name: Ensure a result exists
+        # The script writes result.json from an EXIT trap, so a missing file
+        # means it died before even parsing its arguments. Synthesize a row so
+        # the branch shows up in the report as an error rather than as a gap.
+        if: always()
+        env:
+          BRANCH: ${{ matrix.branch }}
+        run: |
+          if [[ ! -f result.json ]]; then
+            jq -n --arg branch "$BRANCH" '{
+              branch: $branch,
+              status: "error",
+              selenium: { from: null, to: null },
+              springBoot: { from: null, to: null },
+              pr: null,
+              error: "the bump step produced no result"
+            }' > result.json
+          fi
+          cat result.json
+
+      - name: Upload result
+        # `always()` so a failed bump still contributes its error row to the
+        # aggregated report instead of disappearing from it.
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: result-${{ matrix.branch }}
+          path: result.json
+          retention-days: 30
+          # A missing file means the script died before its EXIT trap could
+          # write one, which is worth a red step rather than a silent gap.
+          if-no-files-found: error
+
+  # Matrix jobs cannot share outputs, so the per-branch results round-trip
+  # through artifacts into one consolidated summary.
+  report:
+    name: Report
+    needs: bump
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Download results
+        uses: actions/download-artifact@v5
+        with:
+          pattern: result-*
+          path: results
+        continue-on-error: true
+
+      - name: Render summary
+        run: |
+          node -e '
+            const fs = require("node:fs");
+            const path = require("node:path");
+
+            const root = "results";
+            const files = fs.existsSync(root)
+              ? fs.readdirSync(root, { recursive: true })
+                  .map((f) => path.join(root, f))
+                  .filter((f) => f.endsWith("result.json") && fs.statSync(f).isFile())
+              : [];
+
+            const results = files.map((f) => JSON.parse(fs.readFileSync(f, "utf8")));
+
+            // Newest line first, so main leads and 8.3 trails. Compared
+            // numerically, not lexicographically: as strings, "9.5" sorts
+            // above "25.2", which reads as a scrambled table.
+            const line = (b) => {
+              const m = /^(\d+)\.(\d+)$/.exec(String(b));
+              return m ? [Number(m[1]), Number(m[2])] : null;
+            };
+            results.sort((a, b) => {
+              const la = line(a.branch);
+              const lb = line(b.branch);
+              if (la === null && lb === null) return String(a.branch).localeCompare(String(b.branch));
+              if (la === null) return -1;
+              if (lb === null) return 1;
+              return lb[0] - la[0] || lb[1] - la[1];
+            });
+
+            const move = (d) => !d || !d.from ? "--" : d.to ? `${d.from} -> **${d.to}**` : d.from;
+            const out = ["## Dependency bump", ""];
+
+            if (results.length === 0) {
+              out.push("No results were produced.");
+            } else {
+              const prs = results.filter((r) => r.pr);
+              const created = prs.filter((r) => r.status === "created").length;
+              const updated = prs.filter((r) => r.status === "updated").length;
+              const errors = results.filter((r) => r.status === "error");
+              const current = results.filter((r) => r.status === "up-to-date").length;
+
+              out.push(`| branch | selenium | Spring Boot | status | pull request |`);
+              out.push(`| --- | --- | --- | --- | --- |`);
+              for (const r of results) {
+                const pr = r.pr ? `[#${r.pr.number}](${r.pr.url})` : "--";
+                out.push(`| \`${r.branch}\` | ${move(r.selenium)} | ${move(r.springBoot)} | ${r.status} | ${pr} |`);
+              }
+              out.push("", `${created} created, ${updated} updated, ${current} already up to date.`, "");
+
+              if (errors.length > 0) {
+                out.push(`### Failures (${errors.length})`, "");
+                for (const r of errors) {
+                  // Collapsed to one line: a raw multi-line git/gh error would
+                  // break out of the bullet list. The full text stays in the
+                  // job log for that branch and in its result artifact.
+                  // (No apostrophes in here -- this whole script is a single
+                  // quoted shell string.)
+                  out.push(`- \`${r.branch}\`: ${(r.error ?? "unknown error").replace(/\s+/g, " ").trim()}`);
+                }
+                out.push("");
+              }
+            }
+
+            const text = out.join("\n") + "\n";
+            fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, text);
+            console.log(text);
+          '
