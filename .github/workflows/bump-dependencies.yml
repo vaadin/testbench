@@ -257,7 +257,17 @@ jobs:
                 const pr = r.pr ? `[#${r.pr.number}](${r.pr.url})` : "--";
                 out.push(`| \`${r.branch}\` | ${move(r.selenium)} | ${move(r.springBoot)} | ${r.status} | ${pr} |`);
               }
-              out.push("", `${created} created, ${updated} updated, ${current} already up to date.`, "");
+              // Only the non-zero counts, so a dry run does not report
+              // "0 created, 0 updated, 0 already up to date" as its summary.
+              const dry = results.filter((r) => r.status === "dry-run").length;
+              const tally = [
+                created > 0 ? `${created} created` : null,
+                updated > 0 ? `${updated} updated` : null,
+                dry > 0 ? `${dry} resolved but not opened (dry run)` : null,
+                current > 0 ? `${current} already up to date` : null,
+                errors.length > 0 ? `${errors.length} failed` : null,
+              ].filter(Boolean);
+              out.push("", `${tally.join(", ") || "nothing to report"}.`, "");
 
               if (errors.length > 0) {
                 out.push(`### Failures (${errors.length})`, "");
