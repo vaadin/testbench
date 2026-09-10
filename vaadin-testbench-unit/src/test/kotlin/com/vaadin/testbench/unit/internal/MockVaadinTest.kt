@@ -47,7 +47,7 @@ internal fun DynaNodeGroup.mockVaadinTest() {
         MockVaadin.setup(routes)
         expect("""
 └── MockedUI[]
-    └── WelcomeView[@theme='padding spacing']
+    └── WelcomeView[@theme='spacing padding']
         └── Text[text='Welcome!']
 """.trim()) { UI.getCurrent().toPrettyTree().trim() }
     }
@@ -291,7 +291,7 @@ internal fun DynaNodeGroup.mockVaadinTest() {
             expect(
                     """
 └── MockedUI[]
-    └── WelcomeView[@theme='padding spacing']
+    └── WelcomeView[@theme='spacing padding']
         └── Text[text='Welcome!']
 """.trim()
             ) { UI.getCurrent().toPrettyTree().trim() }
