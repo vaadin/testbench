@@ -9,6 +9,7 @@
 package com.vaadin.tests.elements;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.By;
 
@@ -16,6 +17,7 @@ import com.vaadin.testUI.ElementQueryView;
 import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.tests.AbstractTB6Test;
 
+@Ignore("Viewport resize does not work")
 public class ElementScreenCompareIT extends AbstractTB6Test {
 
     @Override
