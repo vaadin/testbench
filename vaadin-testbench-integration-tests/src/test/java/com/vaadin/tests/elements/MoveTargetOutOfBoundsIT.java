@@ -83,15 +83,20 @@ public class MoveTargetOutOfBoundsIT extends AbstractTB6Test {
         TestBenchElement target = $(TestBenchElement.class)
                 .id("target-element");
         target.scrollIntoView(Map.of("block", "nearest", "inline", "nearest"));
-        Long left = (Long) executeScript(
-                "return Math.round(arguments[0].getBoundingClientRect().left)",
-                target);
-        Long viewportWidth = (Long) executeScript("return window.innerWidth");
-        Assert.assertTrue(
-                "Target element left (" + left
-                        + ") should be within viewport width (" + viewportWidth
-                        + ") after scrollIntoView",
-                left >= 0 && left < viewportWidth);
+        // The grid-like container compensates for the scroll by applying a
+        // transform to the sticky tbody on the next animation frame (mimicking
+        // vaadin-grid's virtualizer), so the target only reaches its final
+        // position one frame after scrollIntoView returns. Poll until it
+        // settles rather than reading synchronously, which would otherwise race
+        // the rAF callback on fast (local) drivers.
+        waitUntil(driver -> {
+            Long left = (Long) executeScript(
+                    "return Math.round(arguments[0].getBoundingClientRect().left)",
+                    target);
+            Long viewportWidth = (Long) executeScript(
+                    "return window.innerWidth");
+            return left >= 0 && left < viewportWidth;
+        });
     }
 
     @Test

@@ -43,6 +43,19 @@ jobs:
     needs: format-check
     runs-on: ubuntu-latest
     timeout-minutes: 45
+    services:
+      selenium:
+        image: selenium/standalone-chrome:latest
+        ports:
+          - 4444:4444
+        options: >-
+          --shm-size=2g
+          --add-host=host.docker.internal:host-gateway
+          --health-cmd "curl -fsS http://localhost:4444/wd/hub/status"
+          --health-interval=5s
+          --health-timeout=10s
+          --health-retries=30
+          --health-start-period=10s
 
     steps:
       - name: Checkout repository
@@ -75,16 +88,6 @@ jobs:
           echo "---> Clean maven cache"
           rm -rf ~/.m2/repository ~/.npm* ~/.pnpm*
 
-      - name: Set up Sauce Labs tunnel
-        uses: saucelabs/sauce-connect-action@v3.0.0
-        with:
-          username: ${{ secrets.SAUCE_USERNAME }}
-          accessKey: ${{ secrets.SAUCE_ACCESS_KEY }}
-          tunnelName: ${{ github.run_id }}-${{ github.run_number }}
-          region: us-west-1
-          retryTimeout: 300
-          proxyLocalhost: allow
-
       - name: Set TB License
         run: |
           TB_LICENSE=${{secrets.TB_LICENSE}}
@@ -96,10 +99,6 @@ jobs:
           mvn clean install -DskipTests -B
 
       - name: Run Tests and Generate Javadoc
-        env:
-          SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
-          SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
-          SAUCE_TUNNEL_ID: ${{ github.run_id }}-${{ github.run_number }}
         run: |
           mvn javadoc:javadoc verify \
             -P validation \
@@ -107,10 +106,8 @@ jobs:
             -Dsystem.com.vaadin.testbench.Parameters.testsInParallel=5 \
             -Dsystem.com.vaadin.testbench.Parameters.maxAttempts=2 \
             -Dcom.vaadin.testbench.Parameters.hubHostname=localhost \
-            -Dsauce.tunnelId=${SAUCE_TUNNEL_ID} \
+            -Ddeployment.hostname=host.docker.internal \
             -Dfailsafe.forkCount=5 \
-            -Dsystem.sauce.user=${SAUCE_USERNAME} \
-            -Dsystem.sauce.sauceAccessKey=${SAUCE_ACCESS_KEY} \
             -B
 
       - name: Upload error screenshots
