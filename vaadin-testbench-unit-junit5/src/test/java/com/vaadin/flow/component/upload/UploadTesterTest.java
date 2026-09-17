@@ -109,6 +109,24 @@ class UploadTesterTest extends UIUnitTest {
     }
 
     @Test
+    void upload_uploadSubclass_succeeds() {
+        AtomicBoolean allFinished = new AtomicBoolean();
+
+        AssertingTransferProgressListener listener = new AssertingTransferProgressListener();
+        view.uploadSubclass.setUploadHandler(
+                UploadHandler.inMemory(listener::fileUploaded, listener));
+        view.uploadSubclass.addAllFinishedListener(ev -> allFinished.set(true));
+
+        UploadTester<Upload> subclass_ = test(view.uploadSubclass);
+        subclass_.upload(file1);
+
+        Assertions.assertTrue(allFinished.get(),
+                "All Finished listener was not notified");
+        Assertions.assertEquals(FIRST_FILE_CONTENTS,
+                uploadedDataToString(listener.assertFileReceived()));
+    }
+
+    @Test
     void upload_singleFile_failure() {
 
         AtomicBoolean allFinished = new AtomicBoolean();
