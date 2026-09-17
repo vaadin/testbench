@@ -332,6 +332,7 @@ public class ComponentTester<T extends Component> implements Clickable<T> {
      */
     protected Method getMethod(Class target, String methodName,
             Class<?>... parameterTypes) {
+        NoSuchMethodException failure = null;
         for (Class<?> clazz = target; clazz != null; clazz = clazz
                 .getSuperclass()) {
             try {
@@ -340,15 +341,15 @@ public class ComponentTester<T extends Component> implements Clickable<T> {
                 method.setAccessible(true);
                 return method;
             } catch (NoSuchMethodException e) {
-                // declared further up the hierarchy, if at all
+                // declared further up the hierarchy, if at all; the failure on
+                // the target class is the one worth reporting, as its message
+                // already names the looked up signature
+                if (failure == null) {
+                    failure = e;
+                }
             }
         }
-        // the signature is part of the message, as a lookup usually fails on
-        // the parameter types rather than on the name
-        throw new RuntimeException(
-                new NoSuchMethodException(target.getName() + "." + methodName
-                        + Stream.of(parameterTypes).map(Class::getTypeName)
-                                .collect(Collectors.joining(",", "(", ")"))));
+        throw new RuntimeException(failure);
     }
 
     /**
