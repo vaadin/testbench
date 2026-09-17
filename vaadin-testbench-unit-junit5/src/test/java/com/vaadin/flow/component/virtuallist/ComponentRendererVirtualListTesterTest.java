@@ -24,6 +24,7 @@ import com.vaadin.testbench.unit.ViewPackages;
 @ViewPackages
 class ComponentRendererVirtualListTesterTest extends UIUnitTest {
 
+    private ComponentRendererVirtualListView view;
     private VirtualListTester<VirtualList<User>, User> $virtualList;
 
     @BeforeEach
@@ -31,7 +32,7 @@ class ComponentRendererVirtualListTesterTest extends UIUnitTest {
         RouteConfiguration.forApplicationScope()
                 .setAnnotatedRoute(ComponentRendererVirtualListView.class);
 
-        var view = navigate(ComponentRendererVirtualListView.class);
+        view = navigate(ComponentRendererVirtualListView.class);
         $virtualList = test(view.componentRendererVirtualList);
     }
 
@@ -158,6 +159,16 @@ class ComponentRendererVirtualListTesterTest extends UIUnitTest {
         Assertions.assertThrows(IllegalStateException.class,
                 () -> $virtualList.getItemComponent(index),
                 "Tester should not be accessible for hidden virtual list");
+    }
+
+    @Test
+    void getItemText_virtualListSubclass_readsRenderer() {
+        VirtualListTester<VirtualList<User>, User> $subclassed = test(
+                view.subclassedVirtualList);
+
+        var index = UserData.getAnyValidIndex();
+        Assertions.assertEquals(expectedRendererText(UserData.get(index)),
+                $subclassed.getItemText(index));
     }
 
     private static String expectedRendererText(User user) {
