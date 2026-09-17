@@ -360,6 +360,23 @@ class ComponentQueryTest extends UIUnitTest {
     }
 
     @Test
+    void id_anonymousComponentInTree_throwsNoSuchElement() {
+        Element rootElement = getCurrentView().getElement();
+        rootElement.appendChild(new TextField() {
+        }.getElement());
+
+        ComponentQuery<TextField> query = findInView(TextField.class);
+        // the failure dumps the component tree, which has to cope with an
+        // anonymous component subclass as well
+        NoSuchElementException exception = Assertions.assertThrows(
+                NoSuchElementException.class, () -> query.id("no-such-id"));
+        Assertions.assertTrue(
+                exception.getMessage().contains(getClass().getName() + "$"),
+                "Expecting the anonymous component to be dumped in the failure message, but got "
+                        + exception.getMessage());
+    }
+
+    @Test
     void id_matchingDifferentComponentType_throws() {
         Element rootElement = getCurrentView().getElement();
         rootElement.appendChild(new TextField().getElement());
