@@ -19,6 +19,7 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.testbench.AbstractBrowserDriverTestBase;
+import com.vaadin.testbench.Parameters;
 import com.vaadin.testbench.parallel.SauceLabsIntegration;
 
 /**
@@ -134,5 +135,19 @@ public abstract class AbstractTB9Test extends AbstractBrowserDriverTestBase {
 
     public static boolean isConfiguredForSauceLabs() {
         return SauceLabsIntegration.isConfiguredForSauceLabs();
+    }
+
+    /**
+     * Whether the tests are configured to run against a remote grid/hub, either
+     * a Selenium hub (e.g. the {@code selenium/standalone-chrome} container in
+     * CI, selected via the {@code hubHostname} parameter) or Sauce Labs.
+     * <p>
+     * Used to gate the SeleniumJupiter example tests: the local-driver variant
+     * only makes sense when no remote grid is configured, while the hub variant
+     * requires one.
+     */
+    public static boolean isConfiguredForHub() {
+        return Parameters.getHubHostname() != null
+                || SauceLabsIntegration.isConfiguredForSauceLabs();
     }
 }
