@@ -19,12 +19,18 @@ public class UploadView extends Component implements HasComponents {
 
     final Upload uploadSingle;
     final Upload uploadMulti;
+    // an application's own subclass of Upload
+    final Upload uploadSubclass;
 
     public UploadView() {
         uploadSingle = new Upload();
         uploadMulti = new Upload();
+        uploadSubclass = new AttachmentUpload();
 
-        add(uploadSingle, uploadMulti);
+        add(uploadSingle, uploadMulti, uploadSubclass);
+    }
+
+    public static class AttachmentUpload extends Upload {
     }
 
 }
