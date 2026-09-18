@@ -13,11 +13,11 @@ import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.time.Duration;
 import java.util.List;
 
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.HasCapabilities;
+import org.openqa.selenium.JavascriptException;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.ScriptTimeoutException;
@@ -49,20 +49,66 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
 
     private boolean enableWaitForVaadin = true;
     private boolean autoScrollIntoView = true;
-    // @formatter:off
-    private static final String READY_CHECK_SCRIPT =
-            "return typeof window.Vaadin !== 'undefined'"
-            + " && typeof window.Vaadin.Flow !== 'undefined'"
-            + " && typeof window.Vaadin.Flow.ready === 'function'";
 
-    private static final String WAIT_FOR_VAADIN_ASYNC_SCRIPT =
+    /**
+     * Returned by {@link #WAIT_FOR_VAADIN_SCRIPT} when Vaadin is not idle but
+     * the page exposes {@code window.Vaadin.Flow.ready()}, so that the waiting
+     * itself can be delegated to the browser.
+     */
+    private static final String AWAIT_FLOW_READY = "await-flow-ready";
+
+    /**
+     * Synchronous probe for the current readiness state. Returns {@code true}
+     * when Vaadin is idle, {@link #AWAIT_FLOW_READY} when Flow can be asked to
+     * report readiness asynchronously, and {@code false} when the state has to
+     * be probed again later.
+     * <p>
+     * The {@code document.readyState} and {@code devServerIsNotLoaded} checks
+     * are kept here on purpose. This probe also runs on pages that have no Flow
+     * at all, and while the dev server is still starting there is no
+     * {@code window.Vaadin.Flow.ready()} to defer to yet.
+     */
+    // @formatter:off
+    private static final String WAIT_FOR_VAADIN_SCRIPT =
+            "if (document.readyState != 'complete') {"
+            + "  return false;"
+            + "}"
+            + "if (window.Vaadin && window.Vaadin.Flow && window.Vaadin.Flow.devServerIsNotLoaded) {"
+            + "  return false;"
+            + "} else if (window.Vaadin && window.Vaadin.Flow && window.Vaadin.Flow.clients) {"
+            + "  var clients = window.Vaadin.Flow.clients;"
+            + "  for (var client in clients) {"
+            + "    if (clients[client].isActive && clients[client].isActive()) {"
+            + "      return typeof window.Vaadin.Flow.ready === 'function'"
+            + "        ? '" + AWAIT_FLOW_READY + "' : false;"
+            + "    }"
+            + "  }"
+            + "  return true;"
+            + "} else {"
+            + "  return true;"
+            + "}";
+
+    private static final String AWAIT_FLOW_READY_SCRIPT =
             "var callback = arguments[arguments.length - 1];"
-            + "var timeout = arguments[0];"
-            + "window.Vaadin.Flow.ready({ timeout: timeout })"
-            + "  .then(function() { callback(); })"
-            + "  .catch(function() { callback(); });";
+            + "window.Vaadin.Flow.ready({ timeout: arguments[0] })"
+            + "  .then(function() { callback(null); })"
+            + "  .catch(function(error) {"
+            + "    callback(error && error.message ? error.message : 'rejected');"
+            + "  });";
     // @formatter:on
+
     private static final long WAIT_FOR_VAADIN_TIMEOUT_MS = 40000;
+
+    /**
+     * How long a single browser-side wait may last. Kept below the WebDriver
+     * default script timeout of 30s so the promise can settle and invoke the
+     * callback before the driver aborts the script, and short enough that a
+     * page load cancelling the pending script only costs one chunk before the
+     * state is probed again.
+     */
+    private static final long AWAIT_FLOW_READY_CHUNK_MS = 10000;
+
+    private static final long POLL_INTERVAL_MS = 100;
 
     public TestBenchCommandExecutor(ImageComparison imageComparison,
             ReferenceNameGenerator referenceNameGenerator) {
@@ -104,76 +150,105 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
     /**
      * Block until Vaadin reports it has finished processing server messages.
      * <p>
-     * First waits for the dev server to start (if needed), then makes a single
-     * async call to {@code Flow.ready} which handles all remaining readiness
-     * checks.
+     * A single synchronous probe decides whether there is anything to wait for.
+     * When there is, and the page exposes {@code window.Vaadin.Flow.ready()},
+     * the waiting is delegated to the browser in one blocking call instead of
+     * being polled from the test JVM.
      */
     public void waitForVaadin() {
         if (!enableWaitForVaadin) {
+            // wait for vaadin is disabled, just return.
             return;
         }
 
         // Must use the wrapped driver here to avoid calling waitForVaadin
         // again
-        WebDriver wrappedDriver = getDriver().getWrappedDriver();
+        JavascriptExecutor executor = (JavascriptExecutor) getDriver()
+                .getWrappedDriver();
         long deadline = System.currentTimeMillis() + WAIT_FOR_VAADIN_TIMEOUT_MS;
 
-        if (!waitForDevServer(wrappedDriver, deadline)) {
-            return;
-        }
-
-        // Single async call — Flow.ready handles all readiness checks
-        Duration originalTimeout = wrappedDriver.manage().timeouts()
-                .getScriptTimeout();
-        try {
-            long remaining = deadline - System.currentTimeMillis();
-            if (remaining <= 0) {
+        while (System.currentTimeMillis() < deadline) {
+            Object state = executor.executeScript(WAIT_FOR_VAADIN_SCRIPT);
+            if (Boolean.TRUE.equals(state)) {
                 return;
             }
-            // Allow a small grace period over the JS-side timeout so the
-            // promise can reject and call back before WebDriver bails
-            wrappedDriver.manage().timeouts()
-                    .scriptTimeout(Duration.ofMillis(remaining + 1000));
-            ((JavascriptExecutor) wrappedDriver).executeAsyncScript(
-                    WAIT_FOR_VAADIN_ASYNC_SCRIPT, remaining);
-        } catch (ScriptTimeoutException e) {
-            // Silent timeout
-        } finally {
-            wrappedDriver.manage().timeouts().scriptTimeout(originalTimeout);
+            if (AWAIT_FLOW_READY.equals(state)
+                    && awaitFlowReady(executor, deadline)) {
+                return;
+            }
+            if (state == null) {
+                // This should never happen but according to
+                // https://dev.vaadin.com/ticket/19703, it happens
+                getLogger().debug(
+                        "waitForVaadin returned null, this should never happen");
+            }
+            if (!pauseBeforeNextProbe(deadline)) {
+                return;
+            }
         }
+        getLogger().debug("Vaadin was still not idle after {}ms, continuing",
+                WAIT_FOR_VAADIN_TIMEOUT_MS);
     }
 
     /**
-     * Polls until {@code Vaadin.Flow.ready} is a function, indicating the dev
-     * server has started and Flow is loaded. Uses Java-side polling so it
-     * survives page reloads during dev server startup.
+     * Lets Flow report readiness by awaiting {@code window.Vaadin.Flow.ready()}
+     * in the browser, so that waiting costs a single WebDriver call instead of
+     * one call per poll.
      *
-     * @return {@code true} if ready became available, {@code false} if the
-     *         deadline was reached
+     * @param executor
+     *            the executor to run the script with
+     * @param deadline
+     *            the time after which waiting must stop
+     * @return {@code true} if Flow reported it is idle, {@code false} if the
+     *         state has to be probed again
      */
-    private boolean waitForDevServer(WebDriver wrappedDriver, long deadline) {
-        while (System.currentTimeMillis() < deadline) {
-            try {
-                Boolean ready = (Boolean) ((JavascriptExecutor) wrappedDriver)
-                        .executeScript(READY_CHECK_SCRIPT);
-                if (Boolean.TRUE.equals(ready)) {
-                    return true;
-                }
-            } catch (Exception e) {
-                // Page may be reloading, continue polling
+    private boolean awaitFlowReady(JavascriptExecutor executor, long deadline) {
+        long chunk = Math.min(AWAIT_FLOW_READY_CHUNK_MS,
+                deadline - System.currentTimeMillis());
+        if (chunk <= 0) {
+            return false;
+        }
+        try {
+            Object rejection = executor
+                    .executeAsyncScript(AWAIT_FLOW_READY_SCRIPT, chunk);
+            if (rejection == null) {
+                return true;
             }
-            long remaining = deadline - System.currentTimeMillis();
-            if (remaining <= 0) {
-                return false;
-            }
-            try {
-                Thread.sleep(Math.min(500, remaining));
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                return false;
-            }
+            getLogger().debug("window.Vaadin.Flow.ready() was rejected: {}",
+                    rejection);
+        } catch (ScriptTimeoutException e) {
+            // The pending script was aborted, e.g. by a page load or by a
+            // session script timeout shorter than the chunk
+            getLogger().debug(
+                    "Awaiting window.Vaadin.Flow.ready() was interrupted", e);
+        } catch (JavascriptException e) {
+            // e.g. navigated to a page without Flow while the call was being
+            // set up
+            getLogger().debug("Could not call window.Vaadin.Flow.ready()", e);
         }
         return false;
+    }
+
+    /**
+     * Waits for the poll interval without overrunning the deadline.
+     *
+     * @param deadline
+     *            the time after which waiting must stop
+     * @return {@code false} if waiting should stop
+     */
+    private boolean pauseBeforeNextProbe(long deadline) {
+        long remaining = Math.min(POLL_INTERVAL_MS,
+                deadline - System.currentTimeMillis());
+        if (remaining <= 0) {
+            return false;
+        }
+        try {
+            Thread.sleep(remaining);
+            return true;
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return false;
+        }
     }
 
     @Override

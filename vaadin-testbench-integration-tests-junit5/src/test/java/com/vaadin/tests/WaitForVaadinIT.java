@@ -17,7 +17,7 @@ import com.vaadin.testbench.BrowserTest;
 public class WaitForVaadinIT extends AbstractBrowserTB9Test {
 
     private static final long NON_BLOCKING_EXECUTION_TIMEOUT = 10000;
-    private static final long BLOCKING_EXECUTION_TIMEOUT = 40000;
+    private static final long BLOCKING_EXECUTION_TIMEOUT = 20000;
 
     @Override
     protected Class<? extends Component> getTestView() {
@@ -59,22 +59,41 @@ public class WaitForVaadinIT extends AbstractBrowserTB9Test {
     }
 
     @BrowserTest
+    public void waitForVaadin_noFlow_returnsImmediately() {
+        openTestURL();
+
+        getCommandExecutor().executeScript("window.Vaadin.Flow = undefined;");
+        assertExecutionNoLonger(() -> getCommandExecutor().waitForVaadin());
+    }
+
+    @BrowserTest
     public void waitForVaadin_devModeNotReady_waits() {
         openTestURL();
-        getCommandExecutor().executeScript("window.Vaadin.Flow.ready = false;");
+        getCommandExecutor().executeScript(
+                "window.Vaadin = {Flow: {devServerIsNotLoaded: true}};");
         assertExecutionBlocked(() -> getCommandExecutor().waitForVaadin());
     }
 
     @BrowserTest
     public void waitForVaadin_devModeNotReady_waitsUntilReady() {
         openTestURL();
-        getCommandExecutor()
-                .executeScript("window._savedReady = window.Vaadin.Flow.ready;"
-                        + "window.Vaadin.Flow.ready = false;"
+        assertDevServerIsNotLoaded();
+        getCommandExecutor().executeScript(
+                "window.Vaadin = {Flow: {devServerIsNotLoaded: true}};"
                         + "setTimeout(function() {"
-                        + "  window.Vaadin.Flow.ready = window._savedReady;"
+                        + "  window.Vaadin.Flow.devServerIsNotLoaded = false;"
                         + "}, 500);");
         getCommandExecutor().waitForVaadin();
+        assertDevServerIsNotLoaded();
+    }
+
+    private void assertDevServerIsNotLoaded() {
+        Object devServerIsNotLoaded = executeScript(
+                "return window.Vaadin.Flow.devServerIsNotLoaded;");
+        Assertions.assertTrue(
+                devServerIsNotLoaded == null
+                        || devServerIsNotLoaded == Boolean.FALSE,
+                "devServerIsNotLoaded should be null or false");
     }
 
     private void assertClientIsActive() {

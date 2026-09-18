@@ -59,22 +59,40 @@ public class WaitForVaadinIT extends AbstractTB6Test {
     }
 
     @Test
+    public void waitForVaadin_noFlow_returnsImmediately() {
+        openTestURL();
+
+        getCommandExecutor().executeScript("window.Vaadin.Flow = undefined;");
+        assertExecutionNoLonger(() -> getCommandExecutor().waitForVaadin());
+    }
+
+    @Test
     public void waitForVaadin_devModeNotReady_waits() {
         openTestURL();
-        getCommandExecutor().executeScript("window.Vaadin.Flow.ready = false;");
+        getCommandExecutor().executeScript(
+                "window.Vaadin = {Flow: {devServerIsNotLoaded: true}};");
         assertExecutionBlocked(() -> getCommandExecutor().waitForVaadin());
     }
 
     @Test
     public void waitForVaadin_devModeNotReady_waitsUntilReady() {
         openTestURL();
-        getCommandExecutor()
-                .executeScript("window._savedReady = window.Vaadin.Flow.ready;"
-                        + "window.Vaadin.Flow.ready = false;"
+        assertDevServerIsNotLoaded();
+        getCommandExecutor().executeScript(
+                "window.Vaadin = {Flow: {devServerIsNotLoaded: true}};"
                         + "setTimeout(function() {"
-                        + "  window.Vaadin.Flow.ready = window._savedReady;"
+                        + "  window.Vaadin.Flow.devServerIsNotLoaded = false;"
                         + "}, 500);");
         getCommandExecutor().waitForVaadin();
+        assertDevServerIsNotLoaded();
+    }
+
+    private void assertDevServerIsNotLoaded() {
+        Object devServerIsNotLoaded = executeScript(
+                "return window.Vaadin.Flow.devServerIsNotLoaded;");
+        Assert.assertTrue("devServerIsNotLoaded should be null or false",
+                devServerIsNotLoaded == null
+                        || devServerIsNotLoaded == Boolean.FALSE);
     }
 
     private void assertClientIsActive() {
