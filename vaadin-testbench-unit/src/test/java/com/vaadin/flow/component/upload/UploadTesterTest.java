@@ -146,6 +146,21 @@ class UploadWrapTest extends UIUnitTest {
     }
 
     @Test
+    void upload_uploadSubclass_succeeds() {
+        AtomicBoolean allFinished = new AtomicBoolean();
+
+        view.uploadSubclass.addAllFinishedListener(ev -> allFinished.set(true));
+
+        UploadTester<Upload> subclass_ = test(view.uploadSubclass);
+        subclass_.upload(file1);
+
+        Assertions.assertTrue(allFinished.get(),
+                "All Finished listener was not notified");
+        Assertions.assertEquals(FIRST_FILE_CONTENTS,
+                inputStreamToString(view.subclassReceiver.getInputStream()));
+    }
+
+    @Test
     void upload_singleFile_failure() {
 
         AtomicBoolean started = new AtomicBoolean();
