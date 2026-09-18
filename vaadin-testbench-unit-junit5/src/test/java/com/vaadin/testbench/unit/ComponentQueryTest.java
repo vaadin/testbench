@@ -359,6 +359,27 @@ class ComponentQueryTest extends UIUnitTest {
     }
 
     @Test
+    void id_anonymousComponentInTree_throwsNoSuchElement() {
+        Element rootElement = getCurrentView().getElement();
+        TextField anonymous = new TextField() {
+        };
+        rootElement.appendChild(anonymous.getElement());
+
+        ComponentQuery<TextField> query = $view(TextField.class);
+        // the failure dumps the component tree, which has to cope with an
+        // anonymous component subclass as well: it has no simple name, so it is
+        // dumped by its fully qualified one
+        NoSuchElementException exception = Assertions.assertThrows(
+                NoSuchElementException.class, () -> query.id("no-such-id"));
+        Assertions.assertTrue(
+                exception.getMessage().contains(anonymous.getClass().getName()),
+                "Expecting the anonymous component to be dumped as "
+                        + anonymous.getClass().getName()
+                        + " in the failure message, but got "
+                        + exception.getMessage());
+    }
+
+    @Test
     void id_matchingDifferentComponentType_throws() {
         Element rootElement = getCurrentView().getElement();
         rootElement.appendChild(new TextField().getElement());
