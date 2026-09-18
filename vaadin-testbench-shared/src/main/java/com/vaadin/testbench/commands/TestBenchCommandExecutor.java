@@ -168,13 +168,16 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
         long deadline = System.currentTimeMillis() + WAIT_FOR_VAADIN_TIMEOUT_MS;
 
         while (System.currentTimeMillis() < deadline) {
-            Object state = executor.executeScript(WAIT_FOR_VAADIN_SCRIPT);
+            Object state = probe(executor);
             if (Boolean.TRUE.equals(state)) {
                 return;
             }
             if (AWAIT_FLOW_READY.equals(state)
                     && awaitFlowReady(executor, deadline)) {
-                return;
+                // Flow reported it is idle. Probe again instead of returning
+                // here, so that the probe stays the single authority on what
+                // counts as idle and Flow.ready() is only an efficient sleep.
+                continue;
             }
             if (state == null) {
                 // This should never happen but according to
@@ -188,6 +191,28 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
         }
         getLogger().debug("Vaadin was still not idle after {}ms, continuing",
                 WAIT_FOR_VAADIN_TIMEOUT_MS);
+    }
+
+    /**
+     * Runs {@link #WAIT_FOR_VAADIN_SCRIPT} to determine the current readiness
+     * state.
+     *
+     * @param executor
+     *            the executor to run the script with
+     * @return the state reported by the script, or {@code false} if the script
+     *         could not be run because a page load was in progress
+     */
+    private Object probe(JavascriptExecutor executor) {
+        try {
+            return executor.executeScript(WAIT_FOR_VAADIN_SCRIPT);
+        } catch (JavascriptException e) {
+            // The page is most likely being replaced, which is expected while
+            // the dev server starts. Note that this deliberately does not
+            // catch WebDriverException: a broken session must still surface
+            // instead of being retried until the deadline.
+            getLogger().debug("Could not determine whether Vaadin is idle", e);
+            return false;
+        }
     }
 
     /**

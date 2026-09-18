@@ -18,7 +18,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.openqa.selenium.Capabilities;
+import org.openqa.selenium.JavascriptException;
 import org.openqa.selenium.OutputType;
+import org.openqa.selenium.ScriptTimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -35,6 +37,13 @@ public class TestBenchCommandExecutorTest {
 
     private static final String IMG_FOLDER = ImageComparisonTest.class
             .getPackage().getName().replace('.', '/');
+
+    /**
+     * The value the readiness probe returns when Vaadin is not idle but the
+     * page exposes {@code window.Vaadin.Flow.ready()}. Mirrors the sentinel in
+     * {@link TestBenchCommandExecutor}.
+     */
+    private static final String AWAIT_FLOW_READY = "await-flow-ready";
 
     @BeforeEach
     public void setUp() {
@@ -279,6 +288,81 @@ public class TestBenchCommandExecutorTest {
         long milliseconds = tbce.totalTimeSpentServicingRequests();
         Assertions.assertEquals(3000, milliseconds);
 
+    }
+
+    @Test
+    public void waitForVaadin_flowReadyAvailable_delegatesWaitToBrowser() {
+        FirefoxDriver driver = mockWaitForVaadinDriver(AWAIT_FLOW_READY,
+                Boolean.TRUE);
+        Mockito.when(driver.executeAsyncScript(
+                Mockito.contains("window.Vaadin.Flow.ready"),
+                Mockito.anyLong())).thenReturn(null);
+
+        newCommandExecutor(driver).waitForVaadin();
+
+        Mockito.verify(driver).executeAsyncScript(
+                Mockito.contains("window.Vaadin.Flow.ready"),
+                Mockito.anyLong());
+        // Flow resolving is not enough on its own: the synchronous probe has
+        // the final say on whether Vaadin is idle
+        Mockito.verify(driver, Mockito.times(2))
+                .executeScript(Mockito.contains("window.Vaadin.Flow.clients"));
+    }
+
+    @Test
+    public void waitForVaadin_awaitingFlowReadyDoesNotSucceed_keepsProbing() {
+        FirefoxDriver driver = mockWaitForVaadinDriver(AWAIT_FLOW_READY,
+                AWAIT_FLOW_READY, AWAIT_FLOW_READY, Boolean.TRUE);
+        // A rejected promise, a page load cancelling the pending script and
+        // navigating away from Flow must all be retried, and none of them may
+        // escape to the caller
+        Mockito.when(driver.executeAsyncScript(Mockito.anyString(),
+                Mockito.anyLong()))
+                .thenReturn("Vaadin.Flow.ready timed out after 10000ms")
+                .thenThrow(new ScriptTimeoutException("script timeout"),
+                        new JavascriptException(
+                                "window.Vaadin.Flow is undefined"));
+
+        newCommandExecutor(driver).waitForVaadin();
+
+        Mockito.verify(driver, Mockito.times(3))
+                .executeAsyncScript(Mockito.anyString(), Mockito.anyLong());
+        Mockito.verify(driver, Mockito.times(4))
+                .executeScript(Mockito.contains("window.Vaadin.Flow.clients"));
+    }
+
+    @Test
+    public void waitForVaadin_probeFailsWhilePageLoads_keepsProbing() {
+        FirefoxDriver driver = Mockito.mock(FirefoxDriver.class);
+        Mockito.when(driver
+                .executeScript(Mockito.contains("window.Vaadin.Flow.clients")))
+                .thenThrow(new JavascriptException("document is not defined"))
+                .thenReturn(Boolean.TRUE);
+
+        newCommandExecutor(driver).waitForVaadin();
+
+        Mockito.verify(driver, Mockito.times(2))
+                .executeScript(Mockito.contains("window.Vaadin.Flow.clients"));
+    }
+
+    private TestBenchCommandExecutor newCommandExecutor(FirefoxDriver driver) {
+        TestBenchCommandExecutor tbce = new TestBenchCommandExecutor(null,
+                null);
+        tbce.setDriver(TestBench.createDriver(driver, tbce));
+        return tbce;
+    }
+
+    /**
+     * Mocks a driver whose readiness probe returns the given states in order,
+     * repeating the last one once they run out.
+     */
+    private FirefoxDriver mockWaitForVaadinDriver(Object... probeStates) {
+        FirefoxDriver driver = Mockito.mock(FirefoxDriver.class);
+        Mockito.when(driver
+                .executeScript(Mockito.contains("window.Vaadin.Flow.clients")))
+                .thenReturn(probeStates[0],
+                        Arrays.copyOfRange(probeStates, 1, probeStates.length));
+        return driver;
     }
 
     private FirefoxDriver mockJSExecutor(boolean forcesSync) {
