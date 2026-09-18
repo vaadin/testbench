@@ -21,13 +21,23 @@ public class UploadView extends Component implements HasComponents {
 
     MemoryBuffer receiver = new MemoryBuffer();
     MultiFileMemoryBuffer multiReceiver = new MultiFileMemoryBuffer();
+    MemoryBuffer subclassReceiver = new MemoryBuffer();
     Upload uploadSingle;
     Upload uploadMulti;
+    // an application's own subclass of Upload
+    Upload uploadSubclass;
 
     public UploadView() {
         uploadSingle = new Upload(receiver);
         uploadMulti = new Upload(multiReceiver);
+        uploadSubclass = new AttachmentUpload(subclassReceiver);
 
-        add(uploadSingle, uploadMulti);
+        add(uploadSingle, uploadMulti, uploadSubclass);
+    }
+
+    public static class AttachmentUpload extends Upload {
+        public AttachmentUpload(MemoryBuffer receiver) {
+            super(receiver);
+        }
     }
 }

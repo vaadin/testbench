@@ -8,7 +8,9 @@
  */
 package com.vaadin.testbench.unit;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 import com.example.base.WelcomeView;
@@ -234,6 +236,91 @@ public class ComponentTesterTest extends UIUnitTest {
     public static class Div extends Component implements HasComponents {
         public Div(Component... components) {
             add(components);
+        }
+    }
+
+    @Test
+    public void getField_declaredOnSuperclass_isFound() {
+        final ReflectingTester<InheritingDiv> div_ = new ReflectingTester<>(
+                new InheritingDiv());
+
+        Assertions.assertEquals("internal", div_.readState());
+    }
+
+    @Test
+    public void getField_declaredOnConcreteClass_shadowsSuperclassField() {
+        final ReflectingTester<ShadowingDiv> div_ = new ReflectingTester<>(
+                new ShadowingDiv());
+
+        Assertions.assertEquals("shadowing", div_.readState());
+    }
+
+    @Test
+    public void getMethod_declaredOnSuperclass_isFound() {
+        final ReflectingTester<InheritingDiv> div_ = new ReflectingTester<>(
+                new InheritingDiv());
+
+        Assertions.assertEquals("INTERNAL", div_.callStateGetter());
+    }
+
+    @Test
+    public void getFieldAndGetMethod_memberNotInHierarchy_throwWithDetails() {
+        final ReflectingTester<InheritingDiv> div_ = new ReflectingTester<>(
+                new InheritingDiv());
+
+        IllegalArgumentException fieldFailure = Assertions.assertThrows(
+                IllegalArgumentException.class, () -> div_.getField("missing"));
+        Assertions.assertInstanceOf(NoSuchFieldException.class,
+                fieldFailure.getCause());
+
+        RuntimeException methodFailure = Assertions.assertThrows(
+                RuntimeException.class,
+                () -> div_.getMethod("missing", String.class));
+        Throwable cause = methodFailure.getCause();
+        Assertions.assertInstanceOf(NoSuchMethodException.class, cause);
+        Assertions.assertTrue(cause.getMessage().contains("(java.lang.String)"),
+                "Message should report the looked up signature: "
+                        + cause.getMessage());
+    }
+
+    @Tag("div")
+    public static class DivWithInternals extends Component {
+        private final String state = "internal";
+
+        private String getStateUpperCase() {
+            return state.toUpperCase(Locale.ROOT);
+        }
+    }
+
+    public static class InheritingDiv extends DivWithInternals {
+    }
+
+    public static class ShadowingDiv extends DivWithInternals {
+        private final String state = "shadowing";
+    }
+
+    static class ReflectingTester<T extends Component>
+            extends ComponentTester<T> {
+
+        public ReflectingTester(T component) {
+            super(component);
+        }
+
+        String readState() {
+            try {
+                return (String) getField("state").get(getComponent());
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        String callStateGetter() {
+            try {
+                return (String) getMethod("getStateUpperCase")
+                        .invoke(getComponent());
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
