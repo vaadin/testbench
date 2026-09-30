@@ -114,13 +114,6 @@ fun Component.removeFromParent() {
 }
 
 /**
- * Finds component's parent, parent's parent (etc) which satisfies given [predicate].
- * Returns null if there is no such parent.
- */
-fun Component.findAncestor(predicate: (Component) -> Boolean): Component? =
-        findAncestorOrSelf { it != this && predicate(it) }
-
-/**
  * Finds component, component's parent, parent's parent (etc) which satisfies given [predicate].
  * Returns null if no component on the ancestor-or-self axis satisfies.
  */
@@ -136,7 +129,7 @@ tailrec fun Component.findAncestorOrSelf(predicate: (Component) -> Boolean): Com
  * Checks if this component is nested in [potentialAncestor].
  */
 fun Component.isNestedIn(potentialAncestor: Component): Boolean =
-        findAncestor { it == potentialAncestor } != null
+        findAncestor { it == potentialAncestor }.isPresent
 
 /**
  * Checks whether this component is currently attached to a [UI].
