@@ -435,6 +435,34 @@ class ElementQueryTest {
     }
 
     @Test
+    void findInElement_byTestId() {
+        findSingleInElement(query -> query.testId("the_id"),
+                "[data-testid='the_id']",
+                "Search should fail as no element with the test id exists in element");
+    }
+
+    @Test
+    void findInDocument_byTestId() {
+        findSingleInDocument(query -> query.testId("the_id"),
+                "[data-testid='the_id']",
+                "Search should fail as no element with the test id exists in document");
+    }
+
+    @Test
+    void findInElement_byWithTestId() {
+        findSingleInElement(query -> query.withTestId("the_id").single(),
+                "[data-testid='the_id']",
+                "Search should fail as no element with the test id exists in element");
+    }
+
+    @Test
+    void findInDocument_byWithTestId() {
+        findSingleInDocument(query -> query.withTestId("the_id").single(),
+                "[data-testid='the_id']",
+                "Search should fail as no element with the test id exists in document");
+    }
+
+    @Test
     void findInElement_byWithAttributesAndId() {
         findSingleInElement(
                 query -> query.withAttribute("foo", "bar")
