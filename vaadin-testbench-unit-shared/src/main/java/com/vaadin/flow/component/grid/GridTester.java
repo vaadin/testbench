@@ -272,7 +272,8 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
      *            column to get
      * @return initialized component for the targeted cell
      * @throws IllegalArgumentException
-     *             when the target column of the cell is not a component renderer
+     *             when the target column of the cell is not a component
+     *             renderer
      */
     public Component getCellComponent(int row, int column) {
         ensureVisible();
@@ -289,8 +290,8 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
      *            key/property of column
      * @return initialized component for the target cell
      * @throws IllegalArgumentException
-     *             when column for property doesn't exist or the target column of
-     *             the cell is not a component renderer
+     *             when column for property doesn't exist or the target column
+     *             of the cell is not a component renderer
      */
     public Component getCellComponent(int row, String columnName) {
         ensureVisible();
@@ -315,12 +316,13 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
     }
 
     private <V> V getLitRendererPropertyValue(int row, Grid.Column<Y> column,
-                                              String propertyName, Class<V> propertyClass) {
+            String propertyName, Class<V> propertyClass) {
         ensureVisible();
 
         if (column.getRenderer() instanceof LitRenderer<Y> litRenderer) {
-            return LitRendererTestUtil.getPropertyValue(litRenderer, this::getField, this::getRow, row, propertyName, propertyClass
-            );
+            return LitRendererTestUtil.getPropertyValue(litRenderer,
+                    this::getField, this::getRow, row, propertyName,
+                    propertyClass);
         } else {
             throw new IllegalArgumentException(
                     "Target column doesn't have a LitRenderer.");
@@ -342,12 +344,14 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
      *            the type of the LitRenderer property
      * @return value of renderer's property for the target cell
      * @throws IllegalArgumentException
-     *             when column for property doesn't exist or
-     *             the target column of the cell is not a LitRenderer or
-     *             when the given type of the property does not match the actual property type
+     *             when column for property doesn't exist or the target column
+     *             of the cell is not a LitRenderer or when the given type of
+     *             the property does not match the actual property type
      */
-    public <V> V getLitRendererPropertyValue(int row, String columnName, String propertyName, Class<V> propertyClass) {
-        return getLitRendererPropertyValue(row, getColumn(columnName), propertyName, propertyClass);
+    public <V> V getLitRendererPropertyValue(int row, String columnName,
+            String propertyName, Class<V> propertyClass) {
+        return getLitRendererPropertyValue(row, getColumn(columnName),
+                propertyName, propertyClass);
     }
 
     /**
@@ -365,20 +369,23 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
      *            the type of the LitRenderer property
      * @return value of renderer's property for the target cell
      * @throws IllegalArgumentException
-     *             when column for property doesn't exist or
-     *             the target column of the cell is not a LitRenderer or
-     *             when the given type of the property does not match the actual property type
+     *             when column for property doesn't exist or the target column
+     *             of the cell is not a LitRenderer or when the given type of
+     *             the property does not match the actual property type
      */
-    public <V> V getLitRendererPropertyValue(int row, int column, String propertyName, Class<V> propertyClass) {
-        return getLitRendererPropertyValue(row, getColumns().get(column), propertyName, propertyClass);
+    public <V> V getLitRendererPropertyValue(int row, int column,
+            String propertyName, Class<V> propertyClass) {
+        return getLitRendererPropertyValue(row, getColumns().get(column),
+                propertyName, propertyClass);
     }
 
-    private void invokeLitRendererFunction(int row, Grid.Column<Y> column, String functionName, JsonArray jsonArray) {
+    private void invokeLitRendererFunction(int row, Grid.Column<Y> column,
+            String functionName, JsonArray jsonArray) {
         ensureVisible();
 
         if (column.getRenderer() instanceof LitRenderer<Y> litRenderer) {
-            LitRendererTestUtil.invokeFunction(litRenderer, this::getField, this::getRow, row, functionName, jsonArray
-            );
+            LitRendererTestUtil.invokeFunction(litRenderer, this::getField,
+                    this::getRow, row, functionName, jsonArray);
         } else {
             throw new IllegalArgumentException(
                     "Target column doesn't have a LitRenderer.");
@@ -386,7 +393,8 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
     }
 
     /**
-     * Invoke named function for item's LitRenderer in column using the supplied JSON arguments.
+     * Invoke named function for item's LitRenderer in column using the supplied
+     * JSON arguments.
      *
      * @param row
      *            item row
@@ -397,8 +405,10 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
      * @param jsonArray
      *            the arguments to pass to the function
      */
-    public void invokeLitRendererFunction(int row, String columnName, String functionName, JsonArray jsonArray) {
-        invokeLitRendererFunction(row, getColumn(columnName), functionName, jsonArray);
+    public void invokeLitRendererFunction(int row, String columnName,
+            String functionName, JsonArray jsonArray) {
+        invokeLitRendererFunction(row, getColumn(columnName), functionName,
+                jsonArray);
     }
 
     /**
@@ -411,12 +421,15 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
      * @param functionName
      *            the name of the LitRenderer function to invoke
      */
-    public void invokeLitRendererFunction(int row, String columnName, String functionName) {
-        invokeLitRendererFunction(row, columnName, functionName, Json.createArray());
+    public void invokeLitRendererFunction(int row, String columnName,
+            String functionName) {
+        invokeLitRendererFunction(row, columnName, functionName,
+                Json.createArray());
     }
 
     /**
-     * Invoke named function for item's LitRenderer in column using the supplied JSON arguments.
+     * Invoke named function for item's LitRenderer in column using the supplied
+     * JSON arguments.
      *
      * @param row
      *            item row
@@ -427,8 +440,10 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
      * @param jsonArray
      *            the arguments to pass to the function
      */
-    public void invokeLitRendererFunction(int row, int column, String functionName, JsonArray jsonArray) {
-        invokeLitRendererFunction(row, getColumns().get(column), functionName, jsonArray);
+    public void invokeLitRendererFunction(int row, int column,
+            String functionName, JsonArray jsonArray) {
+        invokeLitRendererFunction(row, getColumns().get(column), functionName,
+                jsonArray);
     }
 
     /**
@@ -441,8 +456,10 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
      * @param functionName
      *            the name of the LitRenderer function to invoke
      */
-    public void invokeLitRendererFunction(int row, int column, String functionName) {
-        invokeLitRendererFunction(row, column, functionName, Json.createArray());
+    public void invokeLitRendererFunction(int row, int column,
+            String functionName) {
+        invokeLitRendererFunction(row, column, functionName,
+                Json.createArray());
     }
 
     /**
@@ -464,8 +481,8 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
     }
 
     private List<Grid.Column<Y>> getColumns() {
-        return getComponent().getColumns().stream()
-                .filter(Component::isVisible).toList();
+        return getComponent().getColumns().stream().filter(Component::isVisible)
+                .toList();
     }
 
     /**
@@ -703,8 +720,7 @@ public class GridTester<T extends Grid<Y>, Y> extends ComponentTester<T> {
             ColumnPathRenderer<Y> renderer = (ColumnPathRenderer<Y>) targetColumn
                     .getRenderer();
 
-            Field f = ColumnPathRenderer.class
-                    .getDeclaredField("provider");
+            Field f = ColumnPathRenderer.class.getDeclaredField("provider");
             f.setAccessible(true);
 
             @SuppressWarnings("unchecked")

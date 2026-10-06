@@ -40,7 +40,8 @@ class BasicGridTesterTest extends UIUnitTest {
 
         Assertions.assertTrue(test(view.basicGrid).getSelected().isEmpty());
 
-        Assertions.assertEquals("Jorma", test(view.basicGrid).getCellText(0, 0));
+        Assertions.assertEquals("Jorma",
+                test(view.basicGrid).getCellText(0, 0));
         // second column is hidden
         Assertions.assertEquals("46", test(view.basicGrid).getCellText(0, 1));
 
@@ -94,19 +95,20 @@ class BasicGridTesterTest extends UIUnitTest {
 
     @Test
     void basicGrid_headerContent() {
-        Assertions.assertEquals("First Name",
-                test(view.basicGrid).getColumn(BasicGridView.FIRST_NAME_KEY).getHeaderText());
-        Assertions.assertEquals("Age",
-                test(view.basicGrid).getColumn(BasicGridView.AGE_KEY).getHeaderText());
-        Assertions.assertEquals("Subscriber",
-                test(view.basicGrid).getColumn(BasicGridView.SUBSCRIBER_KEY).getHeaderText());
-        Assertions.assertEquals("Deceased",
-                test(view.basicGrid).getColumn(BasicGridView.DECEASED_KEY).getHeaderText());
+        Assertions.assertEquals("First Name", test(view.basicGrid)
+                .getColumn(BasicGridView.FIRST_NAME_KEY).getHeaderText());
+        Assertions.assertEquals("Age", test(view.basicGrid)
+                .getColumn(BasicGridView.AGE_KEY).getHeaderText());
+        Assertions.assertEquals("Subscriber", test(view.basicGrid)
+                .getColumn(BasicGridView.SUBSCRIBER_KEY).getHeaderText());
+        Assertions.assertEquals("Deceased", test(view.basicGrid)
+                .getColumn(BasicGridView.DECEASED_KEY).getHeaderText());
     }
 
     @Test
     void basicGrid_multiselect() {
-        // This is not normally appropriate for a test, but we are testing features.
+        // This is not normally appropriate for a test, but we are testing
+        // features.
         view.basicGrid.setSelectionMode(Grid.SelectionMode.MULTI);
 
         test(view.basicGrid).clickRow(0);
@@ -120,7 +122,8 @@ class BasicGridTesterTest extends UIUnitTest {
 
     @Test
     void basicGrid_multiselectAll() {
-        // This is not normally appropriate for a test, but we are testing features.
+        // This is not normally appropriate for a test, but we are testing
+        // features.
         view.basicGrid.setSelectionMode(Grid.SelectionMode.MULTI);
 
         test(view.basicGrid).selectAll();
@@ -130,8 +133,7 @@ class BasicGridTesterTest extends UIUnitTest {
     @Test
     void basicGrid_singleSelectThrowsForSelectAll() {
         GridTester<Grid<Person>, Person> grid_ = test(view.basicGrid);
-        Assertions.assertThrows(IllegalStateException.class,
-                grid_::selectAll,
+        Assertions.assertThrows(IllegalStateException.class, grid_::selectAll,
                 "Select all should throw for single select");
     }
 
@@ -219,12 +221,15 @@ class BasicGridTesterTest extends UIUnitTest {
         boolean deceased = test(view.basicGrid).getRow(0).getDeceased();
 
         Assertions.assertEquals(deceased,
-                test(view.basicGrid).getLitRendererPropertyValue(0, BasicGridView.DECEASED_KEY, "deceased", Boolean.class));
+                test(view.basicGrid).getLitRendererPropertyValue(0,
+                        BasicGridView.DECEASED_KEY, "deceased", Boolean.class));
 
-        test(view.basicGrid).invokeLitRendererFunction(0, BasicGridView.DECEASED_KEY, "onClick");
+        test(view.basicGrid).invokeLitRendererFunction(0,
+                BasicGridView.DECEASED_KEY, "onClick");
 
         Assertions.assertEquals(!deceased,
-                test(view.basicGrid).getLitRendererPropertyValue(0, BasicGridView.DECEASED_KEY, "deceased", Boolean.class));
+                test(view.basicGrid).getLitRendererPropertyValue(0,
+                        BasicGridView.DECEASED_KEY, "deceased", Boolean.class));
     }
 
 }

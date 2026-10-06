@@ -58,8 +58,10 @@ class ComponentRendererVirtualListTesterTest extends UIUnitTest {
 
     @Test
     void getItemComponent_exists() {
-        var $itemComponent = test((Div) $virtualList.getItemComponent(UserData.getAnyValidIndex()));
-        Assertions.assertNotNull($itemComponent, "Item component should not be null");
+        var $itemComponent = test((Div) $virtualList
+                .getItemComponent(UserData.getAnyValidIndex()));
+        Assertions.assertNotNull($itemComponent,
+                "Item component should not be null");
     }
 
     @Test
@@ -69,80 +71,77 @@ class ComponentRendererVirtualListTesterTest extends UIUnitTest {
 
         var $itemComponent = test((Div) $virtualList.getItemComponent(index));
 
-        var $firstNameSpan = test($itemComponent.find(Span.class)
-                .withId("first-name")
-                .single());
+        var $firstNameSpan = test(
+                $itemComponent.find(Span.class).withId("first-name").single());
         Assertions.assertThrows(IllegalStateException.class,
                 $firstNameSpan::getText,
                 "Component is a copy and not usable via a ComponentTester");
         var firstNameSpan = $firstNameSpan.getComponent();
         Assertions.assertEquals(user.getFirstName(), firstNameSpan.getText());
 
-        var $lastNameSpan = test($itemComponent.find(Span.class)
-                .withId("last-name")
-                .single());
+        var $lastNameSpan = test(
+                $itemComponent.find(Span.class).withId("last-name").single());
         Assertions.assertThrows(IllegalStateException.class,
                 $lastNameSpan::getText,
                 "Component is a copy and not usable via a ComponentTester");
         var lastNameSpan = $lastNameSpan.getComponent();
         Assertions.assertEquals(user.getLastName(), lastNameSpan.getText());
 
-        var $activeSpan = test($itemComponent.find(Span.class)
-                .withId("active")
-                .single());
+        var $activeSpan = test(
+                $itemComponent.find(Span.class).withId("active").single());
         Assertions.assertThrows(IllegalStateException.class,
                 $activeSpan::getText,
                 "Component is a copy and not usable via a ComponentTester");
         var activeSpan = $activeSpan.getComponent();
-        Assertions.assertEquals(user.isActive() ? "Yes" : "No", activeSpan.getText());
+        Assertions.assertEquals(user.isActive() ? "Yes" : "No",
+                activeSpan.getText());
     }
 
     // this is a more complicated test
-    // because it tests that the button toggles the state of the active indicator
+    // because it tests that the button toggles the state of the active
+    // indicator
     @Test
     void getItemComponent_buttonActionsFire() {
         var index = UserData.getAnyValidIndex();
         var user = UserData.get(index);
 
         // BEFORE
-        var $beforeItemComponent = test((Div) $virtualList.getItemComponent(index));
+        var $beforeItemComponent = test(
+                (Div) $virtualList.getItemComponent(index));
 
         var beforeActive = user.isActive();
         var beforeActiveSpan = $beforeItemComponent.find(Span.class)
-                .withId("active")
-                .single();
-        Assertions.assertEquals(beforeActive ? "Yes" : "No", beforeActiveSpan.getText());
+                .withId("active").single();
+        Assertions.assertEquals(beforeActive ? "Yes" : "No",
+                beforeActiveSpan.getText());
 
         // TOGGLE
         var $toggleButton = test($beforeItemComponent.find(NativeButton.class)
-                .withText("Toggle")
-                .single());
+                .withText("Toggle").single());
         Assertions.assertThrows(IllegalStateException.class,
                 $toggleButton::click,
                 "Component is a copy and not usable via a ComponentTester");
         var toggleButton = $toggleButton.getComponent();
-        ComponentUtil.fireEvent(toggleButton,
-                new ClickEvent<>(toggleButton, true,
-                        0, 0, 0, 0,
-                        0, 0,
-                        false, false, false, false));
+        ComponentUtil.fireEvent(toggleButton, new ClickEvent<>(toggleButton,
+                true, 0, 0, 0, 0, 0, 0, false, false, false, false));
 
         // AFTER
         // re-obtain the item component as the item has changed
-        var $afterItemComponent = test((Div) $virtualList.getItemComponent(index));
+        var $afterItemComponent = test(
+                (Div) $virtualList.getItemComponent(index));
 
         var afterActive = user.isActive();
         var afterActiveSpan = $afterItemComponent.find(Span.class)
-                .withId("active")
-                .single();
-        Assertions.assertEquals(afterActive ? "Yes" : "No", afterActiveSpan.getText());
+                .withId("active").single();
+        Assertions.assertEquals(afterActive ? "Yes" : "No",
+                afterActiveSpan.getText());
         Assertions.assertEquals(!beforeActive, afterActive);
     }
 
     @Test
     void getItemComponent_outOfBoundsIndexFails() {
         Assertions.assertThrows(IndexOutOfBoundsException.class,
-                () -> $virtualList.getItemComponent( -1),
+                () -> $virtualList.getItemComponent(-1),
                 "VirtualList index out of bounds (low)");
 
         Assertions.assertThrows(IndexOutOfBoundsException.class,
@@ -161,11 +160,8 @@ class ComponentRendererVirtualListTesterTest extends UIUnitTest {
     }
 
     private static String expectedRendererText(User user) {
-        return String.join("",
-                "Name:", user.getFirstName(), user.getLastName(),
-                ";",
-                "Active:", user.isActive() ? "Yes" : "No",
-                "Toggle");
+        return String.join("", "Name:", user.getFirstName(), user.getLastName(),
+                ";", "Active:", user.isActive() ? "Yes" : "No", "Toggle");
     }
 
 }

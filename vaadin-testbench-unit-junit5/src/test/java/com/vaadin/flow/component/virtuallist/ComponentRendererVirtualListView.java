@@ -22,23 +22,27 @@ import com.vaadin.flow.theme.lumo.LumoUtility;
 
 @Tag("div")
 @Route(value = "component-renderer-virtual-list", registerAtStartup = false)
-public class ComponentRendererVirtualListView extends Composite<HorizontalLayout> {
+public class ComponentRendererVirtualListView
+        extends Composite<HorizontalLayout> {
 
     final VirtualList<User> componentRendererVirtualList;
 
     public ComponentRendererVirtualListView() {
         // virtual list using component renderer
         componentRendererVirtualList = new VirtualList<>();
-        componentRendererVirtualList.setRenderer(new ComponentRenderer<>(this::userComponent));
+        componentRendererVirtualList
+                .setRenderer(new ComponentRenderer<>(this::userComponent));
 
         var title = new Div("Component Renderer Virtual List");
-        title.addClassNames(LumoUtility.FontSize.LARGE, LumoUtility.FontWeight.BOLD);
+        title.addClassNames(LumoUtility.FontSize.LARGE,
+                LumoUtility.FontWeight.BOLD);
 
         componentRendererVirtualList.addClassNames(LumoUtility.Border.ALL);
 
         var block = new VerticalLayout();
         block.setSizeFull();
-        block.addClassNames(LumoUtility.Background.CONTRAST_5, LumoUtility.BorderRadius.LARGE);
+        block.addClassNames(LumoUtility.Background.CONTRAST_5,
+                LumoUtility.BorderRadius.LARGE);
         block.add(title);
         block.add(componentRendererVirtualList);
 
@@ -58,7 +62,8 @@ public class ComponentRendererVirtualListView extends Composite<HorizontalLayout
         lastNameSpan.setId("last-name");
 
         var nameSpan = new Span();
-        nameSpan.addClassNames(LumoUtility.Display.INLINE_FLEX, LumoUtility.Gap.XSMALL);
+        nameSpan.addClassNames(LumoUtility.Display.INLINE_FLEX,
+                LumoUtility.Gap.XSMALL);
         nameSpan.add("Name:");
         nameSpan.add(firstNameSpan);
         nameSpan.add(lastNameSpan);
@@ -70,13 +75,15 @@ public class ComponentRendererVirtualListView extends Composite<HorizontalLayout
                 event -> toggleActive(componentRendererVirtualList, user));
 
         var activeToggleSpan = new Span();
-        activeToggleSpan.addClassNames(LumoUtility.Display.INLINE_FLEX, LumoUtility.Gap.XSMALL);
+        activeToggleSpan.addClassNames(LumoUtility.Display.INLINE_FLEX,
+                LumoUtility.Gap.XSMALL);
         activeToggleSpan.add("Active:");
         activeToggleSpan.add(activeSpan);
         activeToggleSpan.add(activeToggleButton);
 
         var userDiv = new Div();
-        userDiv.addClassNames(LumoUtility.Display.INLINE_FLEX, LumoUtility.Gap.XSMALL);
+        userDiv.addClassNames(LumoUtility.Display.INLINE_FLEX,
+                LumoUtility.Gap.XSMALL);
         userDiv.add(nameSpan);
         userDiv.add(";");
         userDiv.add(activeToggleSpan);
