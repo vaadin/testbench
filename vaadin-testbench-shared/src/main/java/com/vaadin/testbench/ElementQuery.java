@@ -653,6 +653,27 @@ public class ElementQuery<T extends TestBenchElement> {
     }
 
     /**
+     * Selects on elements having the given test id, i.e. the given
+     * {@code data-testid} attribute as set by {@code Component.setTestId} on
+     * the server side.
+     * <p>
+     * This selector does not require the test id to be unique. To obtain the
+     * unique test id, chain with <code>{@link #single()}</code> or use
+     * <code>{@link #testId(String)}</code> instead of this selector.
+     *
+     * @param testId
+     *            the test id to look up
+     * @return this element query instance for chaining
+     *
+     * @see #testId(String)
+     * @see #single()
+     * @since 25.4
+     */
+    public ElementQuery<T> withTestId(String testId) {
+        return withAttribute("data-testid", testId);
+    }
+
+    /**
      * Selects on elements having the given class names.
      *
      * @param classNames
@@ -1187,6 +1208,32 @@ public class ElementQuery<T extends TestBenchElement> {
      */
     public T id(String id) {
         return withId(id).single();
+    }
+
+    /**
+     * Executes the search and returns an element having the given unique test
+     * id, i.e. the given {@code data-testid} attribute as set by
+     * {@code Component.setTestId} on the server side.
+     * <p>
+     * This selector expects the test id to be unique. If there are duplicate
+     * test ids, this selector will throw an exception. If you legitimately have
+     * duplicate test ids, use
+     * <code>{@link #withTestId(String)}.{@link #get(int)}</code> with an
+     * explicit index instead.
+     *
+     * @param testId
+     *            the test id to look up
+     * @return the element with the given test id
+     *
+     * @throws NoSuchElementException
+     *             if no unique test id element is found
+     *
+     * @see #withTestId(String)
+     * @see #get(int)
+     * @since 25.4
+     */
+    public T testId(String testId) {
+        return withTestId(testId).single();
     }
 
     /**
