@@ -17,7 +17,7 @@ import org.junit.jupiter.api.condition.EnabledIf;
 import com.vaadin.flow.component.Component;
 import com.vaadin.testUI.PageObjectView;
 
-@EnabledIf("isConfiguredForSauceLabs")
+@EnabledIf("isConfiguredForHub")
 public class SeleniumHubPageObjectIT extends AbstractSeleniumSauceTB9Test {
 
     @Override

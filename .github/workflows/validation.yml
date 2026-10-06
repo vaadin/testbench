@@ -1,0 +1,150 @@
+name: TestBench Validation
+
+on:
+  push:
+    branches:
+      - "9.3"
+  pull_request:
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+
+env:
+  JAVA_VERSION: 17
+
+jobs:
+  format-check:
+    name: Format Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: "temurin"
+
+      - name: Cache Maven dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Run formatter validation
+        run: mvn formatter:validate --batch-mode --no-transfer-progress
+
+  build-and-test:
+    name: Build and Test
+    needs: format-check
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    services:
+      selenium:
+        image: selenium/standalone-chrome:latest
+        ports:
+          - 4444:4444
+        options: >-
+          --shm-size=2g
+          --add-host=host.docker.internal:host-gateway
+          --health-cmd "curl -fsS http://localhost:4444/wd/hub/status"
+          --health-interval=5s
+          --health-timeout=10s
+          --health-retries=30
+          --health-start-period=10s
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: "temurin"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Cache Maven dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Clean Maven cache (if needed)
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          echo "---> Clean maven cache"
+          rm -rf ~/.m2/repository ~/.npm* ~/.pnpm*
+
+      - name: Set TB License
+        run: |
+          TB_LICENSE=${{secrets.TB_LICENSE}}
+          mkdir -p ~/.vaadin/
+          echo '{"username":"'`echo $TB_LICENSE | cut -d / -f1`'","proKey":"'`echo $TB_LICENSE | cut -d / -f2`'"}' > ~/.vaadin/proKey
+
+      - name: Build with Maven
+        run: |
+          mvn clean install -DskipTests -B
+
+      - name: Run Tests and Generate Javadoc
+        run: |
+          mvn javadoc:javadoc verify \
+            -P validation \
+            -Dtestbench.javadocs \
+            -Dsystem.com.vaadin.testbench.Parameters.testsInParallel=5 \
+            -Dsystem.com.vaadin.testbench.Parameters.maxAttempts=2 \
+            -Dcom.vaadin.testbench.Parameters.hubHostname=localhost \
+            -Ddeployment.hostname=host.docker.internal \
+            -Dfailsafe.forkCount=5 \
+            -B
+
+      - name: Upload error screenshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: error-screenshots-${{ github.run_id }}
+          path: |
+            **/error-screenshots/**
+          retention-days: 7
+      
+      - name: Upload test reports on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports-${{ github.run_id }}
+          path: |
+            **/target/surefire-reports/
+            **/target/failsafe-reports/
+          retention-days: 7
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ github.run_id }}
+          path: |
+            **/target/surefire-reports/TEST-*.xml
+            **/target/failsafe-reports/TEST-*.xml
+          retention-days: 7
+
+      - name: Publish test results
+        if: always()
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        with:
+          files: |
+            **/target/surefire-reports/TEST-*.xml
+            **/target/failsafe-reports/TEST-*.xml
+          check_name: Test Results
+          comment_mode: failures
