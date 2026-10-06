@@ -19,7 +19,8 @@ import com.vaadin.flow.router.Route;
 
 @Tag("div")
 @Route(value = "multicombo", registerAtStartup = false)
-public class MultiSelectComboBoxView extends Component implements HasComponents {
+public class MultiSelectComboBoxView extends Component
+        implements HasComponents {
 
     MultiSelectComboBox<Name> combo;
     List<Name> items = Arrays.asList(new Name("foo"), new Name("bar"));

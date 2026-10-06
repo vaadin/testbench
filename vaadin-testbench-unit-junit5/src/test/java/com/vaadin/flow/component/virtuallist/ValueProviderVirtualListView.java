@@ -25,16 +25,19 @@ public class ValueProviderVirtualListView extends Composite<HorizontalLayout> {
     public ValueProviderVirtualListView() {
         // virtual list using value provider
         valueProviderVirtualList = new VirtualList<>();
-        valueProviderVirtualList.setRenderer(ValueProviderVirtualListView::userValueProvider);
+        valueProviderVirtualList
+                .setRenderer(ValueProviderVirtualListView::userValueProvider);
 
         var title = new Div("Value Provider Virtual List");
-        title.addClassNames(LumoUtility.FontSize.LARGE, LumoUtility.FontWeight.BOLD);
+        title.addClassNames(LumoUtility.FontSize.LARGE,
+                LumoUtility.FontWeight.BOLD);
 
         valueProviderVirtualList.addClassNames(LumoUtility.Border.ALL);
 
         var block = new VerticalLayout();
         block.setSizeFull();
-        block.addClassNames(LumoUtility.Background.CONTRAST_5, LumoUtility.BorderRadius.LARGE);
+        block.addClassNames(LumoUtility.Background.CONTRAST_5,
+                LumoUtility.BorderRadius.LARGE);
         block.add(title);
         block.add(valueProviderVirtualList);
 
@@ -47,9 +50,9 @@ public class ValueProviderVirtualListView extends Composite<HorizontalLayout> {
     }
 
     private static String userValueProvider(User user) {
-        return String.join(" ",
-                "Name:", user.getFirstName(), user.getLastName(),
-                ";", "Active:", user.isActive() ? "Yes" : "No");
+        return String.join(" ", "Name:", user.getFirstName(),
+                user.getLastName(), ";", "Active:",
+                user.isActive() ? "Yes" : "No");
     }
 
 }
