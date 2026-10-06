@@ -23,7 +23,7 @@ on:
       branches:
         description: 'Comma-separated branches to bump'
         required: false
-        default: 'main,25.2,10.1,9.6,9.5,8.3'
+        default: 'main,25.2,10.1,9.6,9.5,9.3,8.3'
         type: string
       reviewers:
         description: 'Comma-separated reviewers to request'
