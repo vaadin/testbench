@@ -11,6 +11,9 @@ package com.vaadin.flow.component.html.testbench;
 import com.vaadin.flow.component.html.H6;
 import com.vaadin.testbench.unit.Tests;
 
+/**
+ * @since 8.1
+ */
 @Tests(H6.class)
 @Deprecated(forRemoval = true, since = "10.1")
 public class H6Tester extends HtmlClickContainer<H6> {

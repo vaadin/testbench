@@ -11,6 +11,8 @@ package com.vaadin.testbench;
 /**
  * Implemented by elements which support selecting an option by matching the
  * text shown to the user.
+ *
+ * @since 6.1
  */
 public interface HasSelectByText {
     /**

@@ -49,7 +49,7 @@ internal fun DynaNodeGroup.mockVaadinTest() {
 └── MockedUI[]
     └── WelcomeView[@theme='padding spacing']
         └── Text[text='Welcome!']
-""".trim()) { UI.getCurrent().toPrettyTree().trim() }
+""".trim()) { UI.getCurrent().toPrettyTree().trim().withSortedThemeNames() }
     }
     afterEach { MockVaadin.tearDown() }
 
@@ -294,7 +294,7 @@ internal fun DynaNodeGroup.mockVaadinTest() {
     └── WelcomeView[@theme='padding spacing']
         └── Text[text='Welcome!']
 """.trim()
-            ) { UI.getCurrent().toPrettyTree().trim() }
+            ) { UI.getCurrent().toPrettyTree().trim().withSortedThemeNames() }
         }
     }
 
@@ -552,5 +552,50 @@ internal fun DynaNodeGroup.mockVaadinTest() {
             expect(1) { sessionDestroyListenerInvocationCount }
             expect(1) { serviceDestroyListenerInvocationCount }
         }
+        test("a failing VaadinService listener fails the test") {
+            MockVaadin.tearDown()
+            expectThrows(RuntimeException::class, "simulated session init failure") {
+                MockVaadin.setup(servlet = object : MockVaadinServlet(routes) {
+                    override fun createServletService(deploymentConfiguration: DeploymentConfiguration): VaadinServletService {
+                        val service = MockService(this, deploymentConfiguration)
+                        service.init()
+                        service.addSessionInitListener { throw RuntimeException("simulated session init failure") }
+                        return service
+                    }
+                })
+            }
+            // setup() failed halfway through, so drop what it did manage to create
+            UI.setCurrent(null)
+            VaadinSession.setCurrent(null)
+            VaadinService.setCurrent(null)
+
+            MockVaadin.setup(servlet = object : MockVaadinServlet(routes) {
+                override fun createServletService(deploymentConfiguration: DeploymentConfiguration): VaadinServletService {
+                    val service = MockService(this, deploymentConfiguration)
+                    service.init()
+                    service.addServiceDestroyListener { throw RuntimeException("simulated service destroy failure") }
+                    return service
+                }
+            })
+            expectThrows(RuntimeException::class, "simulated service destroy failure") {
+                MockVaadin.tearDown()
+            }
+            // tearDown() threw before clearing the service, whose listener would throw again
+            VaadinService.setCurrent(null)
+            MockVaadin.setup(routes)
+        }
     }
 }
+
+/**
+ * Sorts the names within every `@theme='...'` of a pretty printed component
+ * tree.
+ *
+ * A component's theme names are a set, so the order they are printed in is
+ * whatever order the component happened to add them in — nothing a test should
+ * assert on. Sorting both sides keeps a tree assertion about the tree.
+ */
+private fun String.withSortedThemeNames(): String =
+        Regex("@theme='([^']*)'").replace(this) { match ->
+            "@theme='" + match.groupValues[1].split(' ').sorted().joinToString(" ") + "'"
+        }

@@ -26,6 +26,7 @@ import com.vaadin.flow.component.Component;
  *             browserless-test-junit6 and use the corresponding class from the
  *             com.vaadin.browserless package instead. This class will be
  *             removed in a future version.
+ * @since 8.1
  */
 @Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)

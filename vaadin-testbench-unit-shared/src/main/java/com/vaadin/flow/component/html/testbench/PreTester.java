@@ -11,6 +11,9 @@ package com.vaadin.flow.component.html.testbench;
 import com.vaadin.flow.component.html.Pre;
 import com.vaadin.testbench.unit.Tests;
 
+/**
+ * @since 8.1
+ */
 @Tests(Pre.class)
 @Deprecated(forRemoval = true, since = "10.1")
 public class PreTester extends HtmlClickContainer<Pre> {

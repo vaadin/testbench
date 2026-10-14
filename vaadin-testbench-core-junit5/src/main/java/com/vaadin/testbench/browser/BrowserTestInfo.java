@@ -27,6 +27,7 @@ import com.vaadin.testbench.parallel.Browser;
  *            {@link Browser} used for local execution
  * @param runLocallyBrowserVersion
  *            version of {@link Browser} used for local execution
+ * @since 9.0
  */
 public record BrowserTestInfo(WebDriver driver, Capabilities capabilities,
         String hubHostname, Browser runLocallyBrowser,

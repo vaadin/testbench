@@ -80,6 +80,21 @@ class DialogTesterTest extends UIUnitTest {
     }
 
     @Test
+    void openedDialog_headerAndFooterComponentsAreFoundByQuery() {
+        dialog_.open();
+
+        Assertions.assertEquals(view.contentButton,
+                $(Button.class).withText("Content").single(),
+                "Dialog content component should be found by query");
+        Assertions.assertEquals(view.headerButton,
+                $(Button.class).withText("Header").single(),
+                "Dialog header component should be found by query");
+        Assertions.assertEquals(view.footerButton,
+                $(Button.class).withText("Save").single(),
+                "Dialog footer component should be found by query");
+    }
+
+    @Test
     void nonModalDialog_UIComponentsUsable() {
         view.dialog.setModality(ModalityMode.MODELESS);
         dialog_.open();

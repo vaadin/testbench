@@ -11,6 +11,9 @@ package com.vaadin.flow.component.html.testbench;
 import com.vaadin.flow.component.HtmlComponent;
 import com.vaadin.testbench.unit.ComponentTester;
 
+/**
+ * @since 8.1
+ */
 @Deprecated(forRemoval = true, since = "10.1")
 public class HtmlComponentTester<T extends HtmlComponent>
         extends ComponentTester<T> {

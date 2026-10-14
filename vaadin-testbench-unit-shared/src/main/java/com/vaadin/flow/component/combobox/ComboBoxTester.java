@@ -22,6 +22,9 @@ import com.vaadin.testbench.unit.ComponentTester;
 import com.vaadin.testbench.unit.Tests;
 import com.vaadin.testbench.unit.internal.BasicUtilsKt;
 
+/**
+ * @since 8.1
+ */
 @Tests(fqn = "com.vaadin.flow.component.combobox.ComboBox")
 @Deprecated(forRemoval = true, since = "10.1")
 public class ComboBoxTester<T extends ComboBox<Y>, Y>

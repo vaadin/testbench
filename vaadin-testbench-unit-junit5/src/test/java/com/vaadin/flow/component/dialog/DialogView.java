@@ -20,9 +20,18 @@ public class DialogView extends Component implements HasComponents {
 
     Dialog dialog;
     Button button;
+    Button headerButton;
+    Button contentButton;
+    Button footerButton;
 
     public DialogView() {
         dialog = new Dialog();
+        headerButton = new Button("Header");
+        dialog.getHeader().add(headerButton);
+        contentButton = new Button("Content");
+        dialog.add(contentButton);
+        footerButton = new Button("Save");
+        dialog.getFooter().add(footerButton);
         button = new Button();
         add(button);
     }

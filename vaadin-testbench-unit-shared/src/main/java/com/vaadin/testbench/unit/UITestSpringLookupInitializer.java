@@ -39,6 +39,7 @@ import com.vaadin.testbench.unit.mocks.SpringSecurityRequestCustomizer;
  *             browserless-test-junit6 and use the corresponding class from the
  *             com.vaadin.browserless package instead. This class will be
  *             removed in a future version.
+ * @since 8.1
  */
 @Deprecated(forRemoval = true, since = "10.1")
 public class UITestSpringLookupInitializer extends SpringLookupInitializer

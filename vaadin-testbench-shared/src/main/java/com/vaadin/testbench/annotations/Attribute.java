@@ -75,6 +75,7 @@ public @interface Attribute {
      * Specifies whether the attribute must exist on an element.
      *
      * @return true if the attribute must exist, false otherwise
+     * @since 9.4
      */
     boolean exists() default true;
 

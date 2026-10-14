@@ -26,6 +26,7 @@ import com.vaadin.testbench.unit.Tests;
  *             browserless-test-junit6 and use the corresponding class from the
  *             com.vaadin.browserless package instead. This class will be
  *             removed in a future version.
+ * @since 8.1
  */
 @Tests(TimePicker.class)
 @Deprecated(forRemoval = true, since = "10.1")

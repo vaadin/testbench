@@ -145,6 +145,64 @@ class K6TestRefactorerTest {
     }
 
     @Test
+    void refactorContent_thinkTimesEnabled_headerValueContainsCloseParen_sleepIsNotInjectedInsideHeaders() {
+        K6TestRefactorer refactorer = new K6TestRefactorer(
+                ThinkTimeConfig.DEFAULT);
+
+        // Reproduces the combineScenarios=true breakage: the Chrome sec-ch-ua
+        // header value contains a literal `)` inside a single-quoted JS
+        // string. A non-string-aware paren counter dropped to zero mid-headers
+        // and the sleep() got injected inside the headers object, producing
+        // "Unexpected number" parse errors in k6.
+        String script = """
+                import http from 'k6/http'
+                import { sleep } from 'k6'
+                export default function() {
+                  // HAR_DELTA_MS: 0
+                  // Request 1: GET http://localhost:8080/?v-r=init
+                  let response = http.get(
+                    'http://localhost:8080/?v-r=init',
+                    {
+                      headers: {
+                        'sec-ch-ua': '"Chromium";v="148", "Not/A)Brand";v="99"',
+                        'User-Agent': 'Mozilla/5.0'
+                      },
+                      tags: { name: 'init' }
+                    }
+                  )
+                  // HAR_DELTA_MS: 200
+                  // Request 2: POST http://localhost:8080/?v-r=uidl
+                  response = http.post('http://localhost:8080/?v-r=uidl', '{"event":"click"}')
+                }
+                """;
+
+        String refactored = refactorer.refactorContent(script);
+
+        // A sleep() call should be emitted (page-read delay at the init
+        // block boundary).
+        assertTrue(refactored.contains("sleep("),
+                "Expected at least one sleep() call in refactored output:\n"
+                        + refactored);
+
+        // The `Not/A)Brand` sec-ch-ua line is the bug trigger. After
+        // refactoring it must still be immediately followed by the next
+        // header property — not by a // Think time comment or a sleep()
+        // call, which would mean the sleep was injected inside the
+        // headers object.
+        String triggerLine = "'sec-ch-ua': '\"Chromium\";v=\"148\", \"Not/A)Brand\";v=\"99\"',";
+        int triggerIdx = refactored.indexOf(triggerLine);
+        assertTrue(triggerIdx >= 0,
+                "Expected sec-ch-ua header line to survive refactoring intact:\n"
+                        + refactored);
+        String afterTrigger = refactored
+                .substring(triggerIdx + triggerLine.length()).stripLeading();
+        assertTrue(afterTrigger.startsWith("'User-Agent'"),
+                "sec-ch-ua header was not followed by the User-Agent header — "
+                        + "a sleep() was likely injected inside the headers object:\n"
+                        + refactored);
+    }
+
+    @Test
     void refactor_readsInputAndWritesOutputFile() throws IOException {
         Path input = tempDir.resolve("in.js");
         Path output = tempDir.resolve("out.js");

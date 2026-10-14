@@ -32,6 +32,9 @@ import com.vaadin.testbench.parallel.DefaultBrowserFactory;
 import com.vaadin.testbench.parallel.TestBenchBrowserFactory;
 import com.vaadin.testbench.parallel.TestCategory;
 
+/**
+ * @since 9.0
+ */
 public class CapabilitiesUtil {
 
     private static Logger getLogger() {

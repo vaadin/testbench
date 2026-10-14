@@ -13,6 +13,8 @@ import java.util.Objects;
 /**
  * Implement by elements which support a error message, required indicator and
  * invalid state.
+ *
+ * @since 9.4
  */
 public interface HasValidation
         extends HasPropertySettersGetters, HasElementQuery, HasCallFunction {

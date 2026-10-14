@@ -10,7 +10,7 @@
 package com.vaadin.testbench.unit.internal
 
 import java.io.Serializable
-import java.lang.reflect.Field
+import java.util.EventObject
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.locks.ReentrantLock
 import jakarta.servlet.ServletContext
@@ -18,6 +18,7 @@ import com.vaadin.flow.component.ComponentUtil
 import com.vaadin.flow.component.UI
 import com.vaadin.flow.component.page.Page
 import com.vaadin.flow.di.Lookup
+import com.vaadin.flow.function.SerializableBiConsumer
 import com.vaadin.flow.internal.CurrentInstance
 import com.vaadin.flow.internal.StateTree
 import com.vaadin.flow.router.Location
@@ -25,12 +26,12 @@ import com.vaadin.flow.router.NavigationTrigger
 import com.vaadin.flow.server.DefaultErrorHandler
 import com.vaadin.flow.server.ErrorHandler
 import com.vaadin.flow.server.ServiceDestroyEvent
-import com.vaadin.flow.server.ServiceDestroyListener
 import com.vaadin.flow.server.SessionInitEvent
-import com.vaadin.flow.server.SessionInitListener
+import com.vaadin.flow.server.UIInitEvent
 import com.vaadin.flow.server.VaadinRequest
 import com.vaadin.flow.server.VaadinResponse
 import com.vaadin.flow.server.VaadinService
+import com.vaadin.flow.server.VaadinServiceEventBus
 import com.vaadin.flow.server.VaadinServlet
 import com.vaadin.flow.server.VaadinServletService
 import com.vaadin.flow.server.VaadinSession
@@ -264,7 +265,7 @@ object MockVaadin {
         strongRefUI.set(ui)
 
         session.addUI(ui)
-        session.service.fireUIInitListeners(ui)
+        session.service.fireUIInit(ui)
 
         // navigate to the initial page
         if (lastNavigation.get() != null) {
@@ -403,34 +404,28 @@ object MockVaadin {
     }
 }
 
-private val _VaadinService_sessionInitListeners: Field by lazy(LazyThreadSafetyMode.PUBLICATION) {
-    val field: Field = VaadinService::class.java.getDeclaredField("sessionInitListeners")
-    field.isAccessible = true
-    field
-}
+/**
+ * Hands a listener failure back to the caller instead of logging it, which is what
+ * [VaadinServiceEventBus.fireEvent] does by default. A listener that throws during a test should
+ * fail that test rather than only leave a line in the log.
+ */
+private val rethrowListenerFailure =
+        SerializableBiConsumer<EventObject, Exception> { _, error -> throw error }
 
 private fun VaadinService.fireSessionInitListeners(event: SessionInitEvent) {
-    @Suppress("UNCHECKED_CAST")
-    val sessionInitListeners: Collection<SessionInitListener> =
-            _VaadinService_sessionInitListeners.get(this) as Collection<SessionInitListener>
-    for (sessionInitListener in sessionInitListeners) {
-        sessionInitListener.sessionInit(event)
-    }
-}
-
-private val _VaadinService_sessionDestroyListeners: Field by lazy(LazyThreadSafetyMode.PUBLICATION) {
-    val field: Field = VaadinService::class.java.getDeclaredField("serviceDestroyListeners")
-    field.isAccessible = true
-    field
+    eventBus.fireEvent(event, rethrowListenerFailure)
 }
 
 private fun VaadinService.fireServiceDestroyListeners(event: ServiceDestroyEvent) {
-    @Suppress("UNCHECKED_CAST")
-    val listeners: Collection<ServiceDestroyListener> =
-            _VaadinService_sessionDestroyListeners.get(this) as Collection<ServiceDestroyListener>
-    for (listener in listeners) {
-        listener.serviceDestroy(event)
-    }
+    eventBus.fireEvent(event, rethrowListenerFailure)
+}
+
+/**
+ * Fires the UI init event through the event bus, as [VaadinService.fireUIInitListeners] is
+ * deprecated for removal.
+ */
+private fun VaadinService.fireUIInit(ui: UI) {
+    eventBus.fireEvent(UIInitEvent(ui, this), rethrowListenerFailure)
 }
 
 private class MockPage(ui: UI, private val uiFactory: UIFactory, private val session: VaadinSession) : Page(ui) {

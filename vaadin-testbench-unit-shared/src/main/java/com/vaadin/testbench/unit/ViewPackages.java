@@ -27,6 +27,7 @@ import java.lang.annotation.Target;
  *             browserless-test-junit6 and use the corresponding class from the
  *             com.vaadin.browserless package instead. This class will be
  *             removed in a future version.
+ * @since 8.1
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

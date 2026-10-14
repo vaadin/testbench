@@ -43,6 +43,8 @@ import com.vaadin.testbench.commands.TestBenchCommands;
 /**
  * A superclass with helper methods to aid TestBench developers create a JUnit
  * 5+ based tests.
+ *
+ * @since 9.0
  */
 public abstract class AbstractBrowserTestBase
         implements HasDriver, HasTestBenchCommandExecutor, HasElementQuery {
@@ -329,13 +331,24 @@ public abstract class AbstractBrowserTestBase
     /**
      * Assert that the two elements are equal.
      * <p>
-     * Can be removed if https://dev.vaadin.com/ticket/18484 is fixed.
+     * This is a workaround from a time when {@link TestBenchElement} did not
+     * implement {@link Object#equals(Object)} and wrapped elements therefore
+     * had to be unwrapped before they could be compared.
      *
      * @param expectedElement
      *            the expected element
      * @param actualElement
      *            the actual element
+     * @deprecated since 25.3, for removal; use
+     *             {@link Assertions#assertEquals(Object, Object)} instead.
+     *             {@link TestBenchElement} implements
+     *             {@link Object#equals(Object)}, so wrapped and unwrapped
+     *             elements are compared correctly without unwrapping them
+     *             first. This method also hides a statically imported
+     *             {@code assertEquals} in subclasses, which is another reason
+     *             to use {@link Assertions} directly.
      */
+    @Deprecated(since = "25.3", forRemoval = true)
     protected static void assertEquals(WebElement expectedElement,
             WebElement actualElement) {
         WebElement unwrappedExpected = expectedElement;

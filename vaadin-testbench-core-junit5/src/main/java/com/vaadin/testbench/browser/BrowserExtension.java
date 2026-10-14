@@ -44,6 +44,8 @@ import com.vaadin.testbench.parallel.setup.SetupDriver;
  * See {@link #beforeEach(ExtensionContext)} for more detailed information about
  * test preparation.
  * </p>
+ *
+ * @since 9.0
  */
 public class BrowserExtension implements Extension, BeforeEachCallback,
         ExecutionCondition, HasDriver, ParameterResolver {

@@ -31,6 +31,7 @@ import com.vaadin.testbench.unit.Tests;
  *             browserless-test-junit6 and use the corresponding class from the
  *             com.vaadin.browserless package instead. This class will be
  *             removed in a future version.
+ * @since 9.3.9
  */
 @Tests(RouterLink.class)
 @Deprecated(forRemoval = true, since = "10.1")
@@ -93,6 +94,7 @@ public class RouterLinkTester<T extends RouterLink> extends ComponentTester<T> {
      * Navigate to the router-link target.
      *
      * @return navigated view
+     * @since 10.0
      */
     public HasElement navigate() {
         ensureComponentIsUsable();

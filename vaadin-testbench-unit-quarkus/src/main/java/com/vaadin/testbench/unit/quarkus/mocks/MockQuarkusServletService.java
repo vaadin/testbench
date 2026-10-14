@@ -36,6 +36,7 @@ import com.vaadin.testbench.unit.mocks.MockVaadinSession;
  *             browserless-test-junit6 and use the corresponding class from the
  *             com.vaadin.browserless package instead. This class will be
  *             removed in a future version.
+ * @since 9.2.3
  */
 @Deprecated(forRemoval = true, since = "10.1")
 public class MockQuarkusServletService extends QuarkusVaadinServletService {
@@ -53,6 +54,7 @@ public class MockQuarkusServletService extends QuarkusVaadinServletService {
      *            the CDI bean manager.
      * @param uiFactory
      *            the factory used to build Flow UIs.
+     * @since 10.0
      */
     public MockQuarkusServletService(QuarkusVaadinServlet servlet,
             DeploymentConfiguration configuration, BeanManager beanManager,

@@ -48,6 +48,7 @@ public class SauceLabsIntegration {
      *
      * @param desiredCapabilities
      *            the capabilities object to populate, not null
+     * @since 8.1
      */
     public static void setDesiredCapabilities(
             DesiredCapabilities desiredCapabilities) {
@@ -89,6 +90,7 @@ public class SauceLabsIntegration {
      *            the option key
      * @param value
      *            the option value
+     * @since 8.1
      */
     public static void setSauceLabsOption(
             DesiredCapabilities desiredCapabilities, String key, Object value) {
@@ -123,6 +125,7 @@ public class SauceLabsIntegration {
      * @param key
      *            the option key
      * @return the option value that was set or null
+     * @since 8.1
      */
     public static Object getSauceLabsOption(
             DesiredCapabilities desiredCapabilities, String key) {
@@ -144,6 +147,7 @@ public class SauceLabsIntegration {
      * property is used.
      *
      * @return the configured Saucelabs tunnel identifier or null
+     * @since 8.1
      */
     public static String getSauceTunnelIdentifier() {
         String tunnelId = getSystemPropertyOrEnv(SAUCE_TUNNELID_PROP,
@@ -184,6 +188,7 @@ public class SauceLabsIntegration {
      * https://docs.saucelabs.com/basics/data-center-endpoints/#data-center-endpoints.
      *
      * @return url String to be used in Sauce Labs test run
+     * @since 8.1
      */
     public static String getHubUrl() {
         String hubUrl = getSystemPropertyOrEnv(SAUCE_HUB_URL_PROP,
@@ -198,6 +203,7 @@ public class SauceLabsIntegration {
      * Checks if parameters needed to run in Saucelabs have been set.
      *
      * @return true if the Saucelabs configuration was found
+     * @since 8.1
      */
     public static boolean isConfiguredForSauceLabs() {
         String user = getSauceUser();
@@ -216,6 +222,7 @@ public class SauceLabsIntegration {
      * property is used.
      *
      * @return the configured Saucelabs user name or null
+     * @since 8.1
      */
     public static String getSauceUser() {
         return getSystemPropertyOrEnv(SAUCE_USERNAME_PROP, SAUCE_USERNAME_ENV);
@@ -231,6 +238,7 @@ public class SauceLabsIntegration {
      * property is used.
      *
      * @return the configured Saucelabs access key or null
+     * @since 8.1
      */
     public static String getSauceAccessKey() {
         return getSystemPropertyOrEnv(SAUCE_ACCESS_KEY_PROP,

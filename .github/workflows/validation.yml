@@ -1,9 +1,9 @@
 name: TestBench Validation
 
 on:
-  pull_request_target:
-    branches:
-      - main
+  push:
+    branches: [main,'25.2']
+  pull_request:
     types: [opened, synchronize, reopened, edited]
   workflow_dispatch:
 
@@ -15,6 +15,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
   HEAD_REF: ${{ github.head_ref }}
   REF_NAME: ${{ github.ref_name }}
   BASE_REF: ${{ github.event.pull_request.base.ref }}
@@ -23,29 +24,25 @@ env:
   JAVA_VERSION: 21
 
 jobs:
-  check-permissions:
-    uses: ./.github/workflows/check-permissions.yml
-
   format-check:
     name: Format Check
-    needs: check-permissions
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: ${{ env.HEAD_SHA }}
 
       - name: Set up JDK ${{ env.JAVA_VERSION }}
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: ${{ env.JAVA_VERSION }}
           distribution: "temurin"
 
       - name: Cache Maven dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
@@ -63,23 +60,23 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: ${{ env.HEAD_SHA }}
 
       - name: Set up JDK ${{ env.JAVA_VERSION }}
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: ${{ env.JAVA_VERSION }}
           distribution: "temurin"
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: "20"
 
       - name: Cache Maven dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}-${{ github.run_id }}
@@ -98,23 +95,24 @@ jobs:
   unit-tests:
     name: Unit Tests
     needs: build
+    if: ${{ !github.event.pull_request.head.repo.fork }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: ${{ env.HEAD_SHA }}
 
       - name: Set up JDK ${{ env.JAVA_VERSION }}
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: ${{ env.JAVA_VERSION }}
           distribution: "temurin"
 
       - name: Restore Maven cache
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}-${{ github.run_id }}
@@ -131,7 +129,7 @@ jobs:
 
       - name: Upload test results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: unit-test-results
           path: |
@@ -141,13 +139,24 @@ jobs:
   integration-tests:
     name: Integration Tests (${{ matrix.name }})
     needs: build
+    if: ${{ !github.event.pull_request.head.repo.fork }}
     runs-on: ubuntu-latest
     timeout-minutes: 45
-    concurrency:
-      group: saucelabs-testbench  # Global queue for SauceLabs tests only
-      cancel-in-progress: false
+    services:
+      selenium:
+        image: selenium/standalone-chrome:latest
+        ports:
+          - 4444:4444
+        options: >-
+          --shm-size=2g
+          --add-host=host.docker.internal:host-gateway
+          --health-cmd "curl -fsS http://localhost:4444/wd/hub/status"
+          --health-interval=5s
+          --health-timeout=10s
+          --health-retries=30
+          --health-start-period=10s
     strategy:
-      max-parallel: 1  # Only one JUnit version at a time to stay within SauceLabs limit
+      fail-fast: false
       matrix:
         include:
           - name: JUnit 4
@@ -159,73 +168,27 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: ${{ env.HEAD_SHA }}
           fetch-depth: 0
 
       - name: Set up JDK ${{ env.JAVA_VERSION }}
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: ${{ env.JAVA_VERSION }}
           distribution: "temurin"
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: "20"
 
       - name: Restore Maven cache
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}-${{ github.run_id }}
-
-      - name: Set up Sauce Labs tunnel
-        uses: saucelabs/sauce-connect-action@v3.0.0
-        with:
-          username: ${{ secrets.SAUCE_USERNAME }}
-          accessKey: ${{ secrets.SAUCE_ACCESS_KEY }}
-          tunnelName: ${{ github.run_id }}-${{ github.run_number }}
-          region: us-west-1
-          retryTimeout: 300
-          proxyLocalhost: allow
-
-      - name: Wait for Sauce Labs tunnel to be ready
-        env:
-          SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
-          SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
-          SAUCE_TUNNEL_ID: ${{ github.run_id }}-${{ github.run_number }}
-        run: |
-          # sauce-connect-action returns once the local process is up, but the tunnel
-          # can still be propagating on the Sauce side — poll the REST API until it
-          # actually shows as running before launching 25 parallel sessions.
-          # ?full=1 returns tunnel objects (not just IDs). sauce-connect-action@v3 uses
-          # Sauce Connect 5 which stores the name in `tunnel_name`; fall back to
-          # `tunnel_identifier` for SC4-era responses just in case.
-          URL="https://api.us-west-1.saucelabs.com/rest/v1/${SAUCE_USERNAME}/tunnels?full=1&filter=running"
-          echo "Probing Sauce Labs for tunnel ${SAUCE_TUNNEL_ID}..."
-          LAST_RESPONSE=""
-          for i in $(seq 1 30); do
-            if RESPONSE=$(curl -sSf -u "${SAUCE_USERNAME}:${SAUCE_ACCESS_KEY}" "$URL"); then
-              LAST_RESPONSE="$RESPONSE"
-              if echo "$RESPONSE" | jq -e --arg id "$SAUCE_TUNNEL_ID" \
-                  'any(.[]; (.tunnel_name // .tunnel_identifier) == $id and (.status // "running") == "running")' > /dev/null; then
-                echo "Tunnel ${SAUCE_TUNNEL_ID} is running (attempt $i)."
-                # Grace period to let the tunnel fully stabilize before 25 parallel sessions hit it
-                sleep 10
-                exit 0
-              fi
-              echo "Tunnel not listed yet (attempt $i/30), sleeping 5s..."
-            else
-              echo "Sauce API request failed (attempt $i/30), sleeping 5s..." >&2
-            fi
-            sleep 5
-          done
-          echo "Tunnel ${SAUCE_TUNNEL_ID} did not become ready in time" >&2
-          echo "Last response from Sauce API:" >&2
-          echo "$LAST_RESPONSE" | jq '.' >&2 || echo "$LAST_RESPONSE" >&2
-          exit 1
 
       - name: Set TB License
         run: |
@@ -234,10 +197,6 @@ jobs:
           echo '{"username":"'`echo $TB_LICENSE | cut -d / -f1`'","proKey":"'`echo $TB_LICENSE | cut -d / -f2`'"}' > ~/.vaadin/proKey
 
       - name: Run Integration Tests
-        env:
-          SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
-          SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
-          SAUCE_TUNNEL_ID: ${{ github.run_id }}-${{ github.run_number }}
         run: |
           mvn verify \
             -pl ${{ matrix.module }} -am \
@@ -246,15 +205,13 @@ jobs:
             -Dsystem.com.vaadin.testbench.Parameters.testsInParallel=5 \
             -Dsystem.com.vaadin.testbench.Parameters.maxAttempts=2 \
             -Dcom.vaadin.testbench.Parameters.hubHostname=localhost \
-            -Dsauce.tunnelId=${SAUCE_TUNNEL_ID} \
+            -Ddeployment.hostname=host.docker.internal \
             -Dfailsafe.forkCount=5 \
-            -Dsystem.sauce.user=${SAUCE_USERNAME} \
-            -Dsystem.sauce.sauceAccessKey=${SAUCE_ACCESS_KEY} \
             -B
 
       - name: Upload error screenshots
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: error-screenshots-${{ matrix.name }}
           path: |
@@ -263,7 +220,7 @@ jobs:
 
       - name: Upload test results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: integration-test-results-${{ matrix.name }}
           path: |
@@ -273,28 +230,29 @@ jobs:
   loadtest-converter-tests:
     name: Load Test Converter Plugin ITs
     needs: build
+    if: ${{ !github.event.pull_request.head.repo.fork }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: ${{ env.HEAD_SHA }}
 
       - name: Set up JDK ${{ env.JAVA_VERSION }}
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: ${{ env.JAVA_VERSION }}
           distribution: "temurin"
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: "20"
 
       - name: Restore Maven cache
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}-${{ github.run_id }}
@@ -315,7 +273,7 @@ jobs:
 
       - name: Upload invoker logs
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: loadtest-converter-invoker-logs
           path: |
@@ -330,20 +288,20 @@ jobs:
       issues: read
       checks: write
       pull-requests: write
-    if: always()
+    if: ${{ always() && !github.event.pull_request.head.repo.fork }}
     needs: [format-check, build, unit-tests, integration-tests, loadtest-converter-tests]
     runs-on: ubuntu-latest
 
     steps:
       - name: Merge test result artifacts
-        uses: actions/upload-artifact/merge@v4
+        uses: actions/upload-artifact/merge@v5
         with:
           name: test-results
           pattern: '{unit-test-results,integration-test-results-*}'
           delete-merged: true
 
       - name: Download merged test results
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: test-results
 

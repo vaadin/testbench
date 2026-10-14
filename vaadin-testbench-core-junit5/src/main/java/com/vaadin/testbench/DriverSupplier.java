@@ -13,6 +13,8 @@ import org.openqa.selenium.WebDriver;
 /**
  * Class implementing this interface can provide own {@link WebDriver} to be
  * used during test execution.
+ *
+ * @since 9.0
  */
 public interface DriverSupplier {
 

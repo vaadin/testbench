@@ -68,6 +68,7 @@ import com.vaadin.testbench.unit.mocks.MockedUI;
  *             browserless-test-junit6 and use the corresponding class from the
  *             com.vaadin.browserless package instead. This class will be
  *             removed in a future version.
+ * @since 9.0.7
  */
 @Deprecated(forRemoval = true, since = "10.1")
 public abstract class BaseUIUnitTest {
@@ -451,8 +452,10 @@ public abstract class BaseUIUnitTest {
      * @param <T>
      *            the type of the component(s) to search for
      * @return a query object for finding components
+     * @since 25.2
      */
-    public <T extends Component> ComponentQuery<T> $(Class<T> componentType) {
+    public <T extends Component> ComponentQuery<T> find(
+            Class<T> componentType) {
         verifyAndGetUI();
         return internalQuery(componentType);
     }
@@ -468,8 +471,9 @@ public abstract class BaseUIUnitTest {
      * @param <T>
      *            the type of the component(s) to search for
      * @return a query object for finding components
+     * @since 25.2
      */
-    public <T extends Component> ComponentQuery<T> $(Class<T> componentType,
+    public <T extends Component> ComponentQuery<T> find(Class<T> componentType,
             Component fromThis) {
         verifyAndGetUI();
         return new ComponentQuery<>(componentType).from(fromThis);
@@ -483,13 +487,66 @@ public abstract class BaseUIUnitTest {
      * @param <T>
      *            the type of the component(s) to search for
      * @return a query object for finding components
+     * @since 25.2
      */
-    public <T extends Component> ComponentQuery<T> $view(
+    public <T extends Component> ComponentQuery<T> findInView(
             Class<T> componentType) {
         Component viewComponent = getCurrentView().getElement().getComponent()
                 .orElseThrow(() -> new AssertionError(
                         "Cannot get Component instance for current view"));
         return new ComponentQuery<>(componentType).from(viewComponent);
+    }
+
+    /**
+     * Gets a query object for finding a component inside the UI.
+     *
+     * @param componentType
+     *            the type of the component(s) to search for
+     * @param <T>
+     *            the type of the component(s) to search for
+     * @return a query object for finding components
+     * @deprecated since 25.2, for removal; use {@link #find(Class)} instead.
+     */
+    @Deprecated(since = "25.2", forRemoval = true)
+    public <T extends Component> ComponentQuery<T> $(Class<T> componentType) {
+        return find(componentType);
+    }
+
+    /**
+     * Gets a query object for finding a component nested inside the given
+     * component.
+     *
+     * @param componentType
+     *            the type of the component(s) to search for
+     * @param fromThis
+     *            component used as starting element for search.
+     * @param <T>
+     *            the type of the component(s) to search for
+     * @return a query object for finding components
+     * @deprecated since 25.2, for removal; use {@link #find(Class, Component)}
+     *             instead.
+     */
+    @Deprecated(since = "25.2", forRemoval = true)
+    public <T extends Component> ComponentQuery<T> $(Class<T> componentType,
+            Component fromThis) {
+        return find(componentType, fromThis);
+    }
+
+    /**
+     * Gets a query object for finding a component inside the current view.
+     *
+     * @param componentType
+     *            the type of the component(s) to search for
+     * @param <T>
+     *            the type of the component(s) to search for
+     * @return a query object for finding components
+     * @deprecated since 25.2, for removal; use {@link #findInView(Class)}
+     *             instead.
+     */
+    @Deprecated(since = "25.2", forRemoval = true)
+    public <T extends Component> ComponentQuery<T> $view(
+            Class<T> componentType) {
+        return findInView(componentType);
     }
 
     /**
@@ -550,6 +607,7 @@ public abstract class BaseUIUnitTest {
      * @return {@code true} if any pending Signals tasks were processed.
      * @see #runPendingSignalsTasks(long, TimeUnit)
      * @see TestSignalEnvironment#runPendingTasks(long, TimeUnit)
+     * @since 10.0
      */
     protected final boolean runPendingSignalsTasks() {
         return runPendingSignalsTasks(100, TimeUnit.MILLISECONDS);
@@ -581,6 +639,7 @@ public abstract class BaseUIUnitTest {
      *            the time unit of the timeout value
      * @return {@code true} if any pending Signals tasks were processed.
      * @see TestSignalEnvironment#runPendingTasks(long, TimeUnit)
+     * @since 10.0
      */
     protected final boolean runPendingSignalsTasks(long maxWaitTime,
             TimeUnit unit) {

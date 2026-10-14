@@ -28,6 +28,8 @@ import com.vaadin.testbench.parallel.TestNameSuffix;
 
 /**
  * Provides support for running test methods using multiple browsers.
+ *
+ * @since 9.0
  */
 public class MultipleBrowsersExtension
         implements TestTemplateInvocationContextProvider, BeforeAllCallback {

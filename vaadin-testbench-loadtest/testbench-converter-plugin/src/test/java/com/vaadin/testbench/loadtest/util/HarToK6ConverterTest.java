@@ -13,12 +13,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class HarToK6ConverterTest {
@@ -130,6 +132,64 @@ class HarToK6ConverterTest {
                 "First field round-trip should preserve comma");
         assertEquals("say \\\"hi\\\"", records.get(1).get(1),
                 "Second field round-trip should preserve escaped quotes");
+    }
+
+    @Test
+    void largeMsyncValueDoesNotOverflowStack() throws IOException {
+        // Reproduces issue #2266: MSYNC_INPUT_VALUE_PATTERN used a quantified
+        // alternation ((?:[^"\\]|\\.)*) which, on OpenJDK, recurses once per
+        // repetition. A large mSync value therefore blows the call stack with
+        // a StackOverflowError before this is fixed.
+        //
+        // Run the matcher on its own thread with a small stack so the test
+        // fails fast and deterministically across platforms, rather than
+        // depending on the (large, JVM-default) main-thread stack size.
+        String value = "x".repeat(200_000);
+        String initEntry = entry("GET", "http://localhost:8080/?v-r=init");
+        String msyncBody = "{\"csrfToken\":\"abc-123\","
+                + "\"rpc\":[{\"type\":\"mSync\",\"node\":42,\"feature\":1,"
+                + "\"property\":\"value\"," + "\"value\":\"" + value + "\"}],"
+                + "\"syncId\":1,\"clientId\":1}";
+        String postEntry = entryWithBody("POST",
+                "http://localhost:8080/?v-r=uidl&v-uiId=0", msyncBody);
+
+        Path harFile = tempDir.resolve("msync-large.har");
+        Path outputFile = tempDir.resolve("msync-large.js");
+        Files.writeString(harFile, createHar(initEntry, postEntry));
+
+        AtomicReference<Throwable> failure = new AtomicReference<>();
+        Thread worker = new Thread(null, () -> {
+            try {
+                new HarToK6Converter().convert(harFile, outputFile);
+            } catch (Throwable t) {
+                failure.set(t);
+            }
+        }, "converter", 256 * 1024);
+        worker.start();
+        try {
+            worker.join();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new AssertionError("Interrupted while waiting for converter",
+                    e);
+        }
+
+        Throwable thrown = failure.get();
+        if (thrown instanceof StackOverflowError) {
+            throw new AssertionError(
+                    "Converting a large mSync value overflowed the stack (issue #2266)",
+                    thrown);
+        }
+        assertNull(thrown,
+                "Conversion should complete without error, but threw: "
+                        + thrown);
+
+        // The value is captured into the CSV, confirming the matcher ran.
+        Path csvFile = tempDir.resolve("msync-large-data.csv");
+        assertTrue(Files.exists(csvFile), "CSV data file should be created");
+        List<List<String>> records = parseCsvRecords(Files.readString(csvFile));
+        assertEquals(value, records.get(1).get(0),
+                "Large mSync value should round-trip into the CSV");
     }
 
     /**
@@ -329,6 +389,194 @@ class HarToK6ConverterTest {
                 "Explicit DEFAULT options should match the no-args overload");
     }
 
+    @Test
+    void formEncodedPostBodyIsRebuiltFromParamsWhenTextIsNull()
+            throws IOException {
+        // Reproduces the BrowserMob behaviour described in issue #2227: the
+        // recorded HAR carries postData.text=null and the form fields in
+        // postData.params. The converter must reconstruct a URL-encoded body
+        // so the request actually authenticates instead of POSTing an empty
+        // string.
+        String loginEntry = formLoginEntryWithParams(
+                "http://localhost:8081/login",
+                "_csrf=NwhHbrWHhCCjCu328-eiLRpD9O2I3dq_evx", "username=user",
+                "password=password");
+
+        Path harFile = tempDir.resolve("login.har");
+        Path outputFile = tempDir.resolve("login.js");
+        Files.writeString(harFile,
+                createHar(entry("GET", "http://localhost:8081/"), loginEntry));
+
+        new HarToK6Converter().convert(harFile, outputFile);
+
+        String script = Files.readString(outputFile);
+        assertFalse(script.contains("'http://localhost:8081/login',\n    '',"),
+                "Form-encoded POST should not ship an empty body. Got:\n"
+                        + script);
+        assertTrue(script.contains("username=user"),
+                "Reconstructed body should contain URL-encoded username field. Got:\n"
+                        + script);
+        assertTrue(script.contains("password=password"),
+                "Reconstructed body should contain URL-encoded password field. Got:\n"
+                        + script);
+    }
+
+    @Test
+    void formEncodedCsrfFieldIsTemplatedToHillaToken() throws IOException {
+        String loginEntry = formLoginEntryWithParams(
+                "http://localhost:8081/login",
+                "_csrf=NwhHbrWHhCCjCu328-eiLRpD9O2I3dq_evx", "username=user",
+                "password=password");
+
+        Path harFile = tempDir.resolve("login.har");
+        Path outputFile = tempDir.resolve("login.js");
+        Files.writeString(harFile,
+                createHar(entry("GET", "http://localhost:8081/"), loginEntry));
+
+        new HarToK6Converter().convert(harFile, outputFile);
+
+        String script = Files.readString(outputFile);
+        assertTrue(script.contains("_csrf=${hillaCsrfToken}"),
+                "Recorded _csrf value should be substituted with the dynamic Hilla CSRF token. Got:\n"
+                        + script);
+        assertFalse(script.contains("NwhHbrWHhCCjCu328-eiLRpD9O2I3dq_evx"),
+                "Recorded _csrf literal should be gone. Got:\n" + script);
+    }
+
+    @Test
+    void formEncodedBodyTextTakesPrecedenceOverParams() throws IOException {
+        // Some HAR producers populate both fields. The recorded text should
+        // win so the byte-for-byte recording is preserved when available.
+        String body = "username=alice&password=secret";
+        String loginEntry = """
+                {"startedDateTime":"2026-01-01T00:00:00.000Z","time":0,\
+                "request":{"method":"POST","url":"http://localhost:8081/login","httpVersion":"HTTP/1.1",\
+                "headers":[],"queryString":[],"cookies":[],"headersSize":-1,\
+                "bodySize":-1,\
+                "postData":{"mimeType":"application/x-www-form-urlencoded","text":"%s",\
+                "params":[{"name":"username","value":"OTHER"},{"name":"password","value":"OTHER"}]}},\
+                "response":{"status":200,"statusText":"OK","httpVersion":"HTTP/1.1",\
+                "headers":[],"cookies":[],"content":{"size":0,"mimeType":"text/html"},\
+                "redirectURL":"","headersSize":-1,"bodySize":-1},\
+                "cache":{},"timings":{"blocked":0,"dns":0,"connect":0,"send":0,"wait":0,"receive":0}}"""
+                .formatted(body);
+
+        Path harFile = tempDir.resolve("login.har");
+        Path outputFile = tempDir.resolve("login.js");
+        Files.writeString(harFile,
+                createHar(entry("GET", "http://localhost:8081/"), loginEntry));
+
+        new HarToK6Converter().convert(harFile, outputFile);
+
+        String script = Files.readString(outputFile);
+        assertTrue(script.contains("username=alice&password=secret"),
+                "Recorded text body should win when both text and params are present. Got:\n"
+                        + script);
+        assertFalse(script.contains("OTHER"),
+                "Params should not be used when text is non-empty. Got:\n"
+                        + script);
+    }
+
+    @Test
+    void formEncodedSpecialCharactersAreUrlEncoded() throws IOException {
+        // Spaces, ampersands and unicode in form values must be encoded so
+        // the reconstructed body parses back to the same fields server-side.
+        String loginEntry = formLoginEntryWithParams(
+                "http://localhost:8081/login", "username=John Doe",
+                "password=p@ss&word");
+
+        Path harFile = tempDir.resolve("login.har");
+        Path outputFile = tempDir.resolve("login.js");
+        Files.writeString(harFile,
+                createHar(entry("GET", "http://localhost:8081/"), loginEntry));
+
+        new HarToK6Converter().convert(harFile, outputFile);
+
+        String script = Files.readString(outputFile);
+        assertTrue(script.contains("username=John+Doe"),
+                "Spaces should be URL-encoded as +. Got:\n" + script);
+        assertTrue(script.contains("password=p%40ss%26word"),
+                "@ and & in values should be percent-encoded. Got:\n" + script);
+    }
+
+    @Test
+    void nonFormEncodedPostBodyIsNotRebuiltFromParams() throws IOException {
+        // A JSON POST with empty text and (theoretically) populated params
+        // should NOT be reconstructed — only form-encoded recordings are
+        // affected by the BrowserMob.
+        String jsonEntry = """
+                {"startedDateTime":"2026-01-01T00:00:00.000Z","time":0,\
+                "request":{"method":"POST","url":"http://localhost:8081/api","httpVersion":"HTTP/1.1",\
+                "headers":[],"queryString":[],"cookies":[],"headersSize":-1,\
+                "bodySize":-1,\
+                "postData":{"mimeType":"application/json","text":null,\
+                "params":[{"name":"x","value":"1"}]}},\
+                "response":{"status":200,"statusText":"OK","httpVersion":"HTTP/1.1",\
+                "headers":[],"cookies":[],"content":{"size":0,"mimeType":"text/html"},\
+                "redirectURL":"","headersSize":-1,"bodySize":-1},\
+                "cache":{},"timings":{"blocked":0,"dns":0,"connect":0,"send":0,"wait":0,"receive":0}}""";
+
+        Path harFile = tempDir.resolve("api.har");
+        Path outputFile = tempDir.resolve("api.js");
+        Files.writeString(harFile,
+                createHar(entry("GET", "http://localhost:8081/"), jsonEntry));
+
+        new HarToK6Converter().convert(harFile, outputFile);
+
+        String script = Files.readString(outputFile);
+        assertFalse(script.contains("x=1"),
+                "JSON POSTs should not have their body reconstructed from params. Got:\n"
+                        + script);
+    }
+
+    @Test
+    void gridKeysRegexIsAnchoredOnObjectStart() throws IOException {
+        // The regex must match grid item rows ({"key":"1","col0":...}) but
+        // not change-record keys ({"node":N,"type":"put","key":"highlight"}).
+        // Anchoring on the object-start `{` (encoded as `\x7B`) excludes the
+        // change-record case, where `key` is preceded by other fields.
+        String har = createHar(
+                vaadinInitEntry("http://localhost:8080/?v-r=init&location="),
+                vaadinUidlEntry("http://localhost:8080/?v-r=uidl&v-uiId=0"));
+
+        Path harFile = tempDir.resolve("test.har");
+        Path outputFile = tempDir.resolve("test.js");
+        Files.writeString(harFile, har);
+
+        new HarToK6Converter().convert(harFile, outputFile);
+
+        String script = Files.readString(outputFile);
+        assertTrue(script.contains("body.match(/\\x7B\"key\":\"[^\"]+\"/g)"),
+                "gridKeys regex must anchor on object-start. Got:\n" + script);
+        assertFalse(script.contains("body.match(/\"key\":\"[^\"]+\"/g)"),
+                "Old un-anchored regex should be gone. Got:\n" + script);
+    }
+
+    @Test
+    void reExtractionGuardCoercesResponseBody() throws IOException {
+        // Two init entries trigger the re-extraction code path. The
+        // status===200
+        // gate alone is not enough — a 200 with an empty body would still throw
+        // TypeError on response.body.includes(...) without the (... || '')
+        // guard.
+        String har = createHar(
+                vaadinInitEntry("http://localhost:8080/?v-r=init&location="),
+                vaadinInitEntry(
+                        "http://localhost:8080/?v-r=init&location=login"));
+
+        Path harFile = tempDir.resolve("test.har");
+        Path outputFile = tempDir.resolve("test.js");
+        Files.writeString(harFile, har);
+
+        new HarToK6Converter().convert(harFile, outputFile);
+
+        String script = Files.readString(outputFile);
+        assertTrue(script.contains(
+                "if (response.status === 200 && (response.body || '').includes('\"Vaadin-Security-Key\"'))"),
+                "Re-extraction guard must coerce response.body to ''. Got:\n"
+                        + script);
+    }
+
     // --- Helper methods to build HAR JSON ---
 
     private String vaadinInitEntry(String url) {
@@ -395,6 +643,41 @@ class HarToK6ConverterTest {
                 "redirectURL":"","headersSize":-1,"bodySize":-1},\
                 "cache":{},"timings":{"blocked":0,"dns":0,"connect":0,"send":0,"wait":0,"receive":0}}"""
                 .formatted(method, url, escapedBody);
+    }
+
+    /**
+     * Builds a HAR entry that mimics the BrowserMob output for a form login
+     * (text=null, mimeType=application/x-www-form-urlencoded, params
+     * populated). Each param string is "name=value" — the {@code =} is
+     * interpreted as the separator, so the value can be a raw (unencoded)
+     * recorded token.
+     */
+    private String formLoginEntryWithParams(String url,
+            String... nameEqualsValue) {
+        StringBuilder paramsJson = new StringBuilder();
+        for (int i = 0; i < nameEqualsValue.length; i++) {
+            if (i > 0) {
+                paramsJson.append(',');
+            }
+            String[] kv = nameEqualsValue[i].split("=", 2);
+            String escapedValue = kv[1].replace("\\", "\\\\").replace("\"",
+                    "\\\"");
+            paramsJson.append("{\"name\":\"").append(kv[0])
+                    .append("\",\"value\":\"").append(escapedValue)
+                    .append("\"}");
+        }
+        return """
+                {"startedDateTime":"2026-01-01T00:00:00.000Z","time":0,\
+                "request":{"method":"POST","url":"%s","httpVersion":"HTTP/1.1",\
+                "headers":[],"queryString":[],"cookies":[],"headersSize":-1,\
+                "bodySize":-1,\
+                "postData":{"mimeType":"application/x-www-form-urlencoded","text":null,\
+                "params":[%s]}},\
+                "response":{"status":200,"statusText":"OK","httpVersion":"HTTP/1.1",\
+                "headers":[],"cookies":[],"content":{"size":0,"mimeType":"text/html"},\
+                "redirectURL":"","headersSize":-1,"bodySize":-1},\
+                "cache":{},"timings":{"blocked":0,"dns":0,"connect":0,"send":0,"wait":0,"receive":0}}"""
+                .formatted(url, paramsJson.toString());
     }
 
     private String createHar(String... entries) {

@@ -18,6 +18,9 @@ import com.vaadin.pro.licensechecker.Capabilities;
 import com.vaadin.pro.licensechecker.Capability;
 import com.vaadin.pro.licensechecker.LicenseChecker;
 
+/**
+ * @since 9.0
+ */
 public class TestBenchVersion {
 
     public static final String testbenchVersion;

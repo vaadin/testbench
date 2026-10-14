@@ -125,6 +125,9 @@ import com.vaadin.flow.component.virtuallist.VirtualList;
 import com.vaadin.flow.component.virtuallist.VirtualListTester;
 import com.vaadin.flow.router.RouterLink;
 
+/**
+ * @since 8.1
+ */
 @SuppressWarnings("unchecked")
 @Deprecated(forRemoval = true, since = "10.1")
 public interface TesterWrappers {

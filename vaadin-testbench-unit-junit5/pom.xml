@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.vaadin</groupId>
         <artifactId>vaadin-testbench-parent</artifactId>
-        <version>10.2-SNAPSHOT</version>
+        <version>25.4-SNAPSHOT</version>
     </parent>
     <artifactId>vaadin-testbench-unit-junit5</artifactId>
     <packaging>jar</packaging>
@@ -297,11 +297,6 @@
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib-jdk8</artifactId>
-            <version>${kotlin.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-reflect</artifactId>
             <version>${kotlin.version}</version>
         </dependency>
 

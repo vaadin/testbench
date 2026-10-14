@@ -20,6 +20,8 @@ import com.vaadin.testbench.parallel.Browser;
 /**
  * A superclass with helper methods to aid TestBench developers create a JUnit
  * 5+ based tests.
+ *
+ * @since 9.0
  */
 @Execution(ExecutionMode.CONCURRENT)
 public abstract class BrowserTestBase extends AbstractBrowserDriverTestBase {

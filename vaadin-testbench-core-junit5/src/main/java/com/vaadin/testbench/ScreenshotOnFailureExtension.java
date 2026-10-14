@@ -50,6 +50,8 @@ import com.vaadin.testbench.screenshot.ImageFileUtil;
  * before this extension is run and if the driver is closed it is no longer
  * possible to grab a screen shot of the situation.
  * </p>
+ *
+ * @since 9.0
  */
 public class ScreenshotOnFailureExtension implements TestWatcher {
 

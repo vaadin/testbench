@@ -206,6 +206,71 @@ class K6ScenarioCombinerTest {
     }
 
     @Test
+    void combine_scenarioWithUnbalancedBracesInRegexAndCommentsClosesCleanly()
+            throws IOException {
+        // The brace walker must skip braces inside regex literals, comments,
+        // and strings. Each line of the body below contains a shape that
+        // broke the previous naive counter (regex `\{`, isolated `{` in a
+        // comment, isolated `{` and `}` in string literals); without
+        // lexer-aware skipping, the walker either truncates the body at a
+        // `}` inside a string or overshoots and slurps the trailing
+        // handleSummary export.
+        List<String> bodyLines = List.of(
+                "// anchor on `{` to skip change-record keys",
+                "let body = 'a { is hard to count'",
+                "let body2 = 'and so is a } on its own'",
+                "var found = body.match(/\\{\"key\":\"[^\"]+\"/g)",
+                "if (found) gridKeys = found.map(s => s.split('\"')[3])");
+        Path scenario = writeScenario("alpha", """
+                  // anchor on `{` to skip change-record keys
+                  let body = 'a { is hard to count'
+                  let body2 = 'and so is a } on its own'
+                  var found = body.match(/\\{"key":"[^"]+"/g)
+                  if (found) gridKeys = found.map(s => s.split('"')[3])
+                """);
+        String existing = Files.readString(scenario);
+        Files.writeString(scenario, existing
+                + "\nexport function handleSummary(data) {\n  return {}\n}\n");
+
+        K6ScenarioCombiner combiner = new K6ScenarioCombiner();
+        Path output = tempDir.resolve("combined.js");
+        combiner.combine(List.of(new ScenarioConfig("alpha", scenario, 100)),
+                output, 5, "10s");
+
+        String content = Files.readString(output);
+
+        // Overshoot guard: only the combiner's own handleSummary should
+        // survive. A second one means the walker absorbed the scenario
+        // file's trailing handleSummary into the wrapped body.
+        int handleSummaryCount = 0;
+        int idx = 0;
+        while ((idx = content.indexOf("function handleSummary", idx)) != -1) {
+            handleSummaryCount++;
+            idx += "function handleSummary".length();
+        }
+        assertEquals(1, handleSummaryCount,
+                "Combined script must export exactly one handleSummary. Got:\n"
+                        + content);
+
+        // Undershoot guard: every body line must appear between the wrapper
+        // opening and the combiner-appended handleSummary. A `}` inside a
+        // string literal misread as a real closing brace would truncate the
+        // body, dropping the lines after it from the output entirely.
+        int wrapperStart = content.indexOf("export function alphaScenario() {");
+        assertTrue(wrapperStart >= 0,
+                "Scenario function should be wrapped:\n" + content);
+        int handleSummaryStart = content.indexOf("function handleSummary",
+                wrapperStart);
+        String wrappedRegion = content.substring(wrapperStart,
+                handleSummaryStart);
+        for (String line : bodyLines) {
+            assertTrue(wrappedRegion.contains(line),
+                    "Wrapped scenario should contain body line: " + line
+                            + "\nWrapped region was:\n" + wrappedRegion);
+        }
+    }
+
+    @Test
     void combine_noSharedArrayWhenAbsent() throws IOException {
         Path a = writeScenario("alpha", "  http.get(`${BASE_URL}/a`);");
 

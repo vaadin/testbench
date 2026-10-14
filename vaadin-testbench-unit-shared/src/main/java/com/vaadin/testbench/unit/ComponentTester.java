@@ -43,6 +43,7 @@ import com.vaadin.testbench.unit.internal.PrettyPrintTreeKt;
  *             browserless-test-junit6 and use the corresponding class from the
  *             com.vaadin.browserless package instead. This class will be
  *             removed in a future version.
+ * @since 8.1
  */
 @Deprecated(forRemoval = true, since = "10.1")
 public class ComponentTester<T extends Component> implements Clickable<T> {
@@ -100,6 +101,7 @@ public class ComponentTester<T extends Component> implements Clickable<T> {
      * @return {@code true} if component can be interacted with by the user
      * @see #notUsableReasons(Consumer)
      * @see #ensureComponentIsUsable()
+     * @since 9.2
      */
     protected static boolean isUsable(Component component) {
         return component.getElement().isEnabled() && component.isAttached()
@@ -159,6 +161,7 @@ public class ComponentTester<T extends Component> implements Clickable<T> {
      *            the component to check
      * @param usableTest
      *            function that tests if the component is usable or not.
+     * @since 9.2
      */
     protected static void ensureComponentIsUsable(Component component,
             Predicate<Component> usableTest) {
@@ -205,6 +208,7 @@ public class ComponentTester<T extends Component> implements Clickable<T> {
      *
      * @see #isUsable()
      * @see #ensureComponentIsUsable()
+     * @since 9.2
      */
     protected static void notUsableReasons(Component component,
             Consumer<String> collector) {
@@ -235,6 +239,8 @@ public class ComponentTester<T extends Component> implements Clickable<T> {
     /**
      * Check that the given component is visible for the user. Else throw an
      * {@link IllegalStateException}
+     *
+     * @since 9.2
      */
     protected static void ensureVisible(Component component) {
         if (!component.isVisible() || !component.isAttached()) {
@@ -253,6 +259,10 @@ public class ComponentTester<T extends Component> implements Clickable<T> {
 
     /**
      * Get field with given name in the wrapped component.
+     * <p>
+     * The wrapped component is often an application's own subclass of the
+     * component the tester targets, so the field is looked up on the whole
+     * class hierarchy, not only on the component's concrete class.
      *
      * @param fieldName
      *            field name
@@ -265,7 +275,8 @@ public class ComponentTester<T extends Component> implements Clickable<T> {
     }
 
     /**
-     * Get field with given name in the given class.
+     * Get field with given name in the given class or in one of its
+     * superclasses.
      *
      * @param target
      *            class to get field from
@@ -276,17 +287,26 @@ public class ComponentTester<T extends Component> implements Clickable<T> {
      *             if field doesn't exist
      */
     protected Field getField(Class target, String fieldName) {
-        try {
-            final Field field = target.getDeclaredField(fieldName);
-            field.setAccessible(true);
-            return field;
-        } catch (NoSuchFieldException e) {
-            throw new IllegalArgumentException(e);
+        for (Class<?> clazz = target; clazz != null; clazz = clazz
+                .getSuperclass()) {
+            try {
+                final Field field = clazz.getDeclaredField(fieldName);
+                field.setAccessible(true);
+                return field;
+            } catch (NoSuchFieldException e) {
+                // declared further up the hierarchy, if at all
+            }
         }
+        throw new IllegalArgumentException(
+                new NoSuchFieldException(target.getName() + "." + fieldName));
     }
 
     /**
      * Get method with given name and parameters in the wrapped component.
+     * <p>
+     * The wrapped component is often an application's own subclass of the
+     * component the tester targets, so the method is looked up on the whole
+     * class hierarchy, not only on the component's concrete class.
      *
      * @param methodName
      *            method name
@@ -299,7 +319,8 @@ public class ComponentTester<T extends Component> implements Clickable<T> {
     }
 
     /**
-     * Get method with given name and parameters in the given class.
+     * Get method with given name and parameters in the given class or in one of
+     * its superclasses.
      *
      * @param target
      *            class to get method from
@@ -311,14 +332,24 @@ public class ComponentTester<T extends Component> implements Clickable<T> {
      */
     protected Method getMethod(Class target, String methodName,
             Class<?>... parameterTypes) {
-        try {
-            final Method method = target.getDeclaredMethod(methodName,
-                    parameterTypes);
-            method.setAccessible(true);
-            return method;
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException(e);
+        NoSuchMethodException failure = null;
+        for (Class<?> clazz = target; clazz != null; clazz = clazz
+                .getSuperclass()) {
+            try {
+                final Method method = clazz.getDeclaredMethod(methodName,
+                        parameterTypes);
+                method.setAccessible(true);
+                return method;
+            } catch (NoSuchMethodException e) {
+                // declared further up the hierarchy, if at all; the failure on
+                // the target class is the one worth reporting, as its message
+                // already names the looked up signature
+                if (failure == null) {
+                    failure = e;
+                }
+            }
         }
+        throw new RuntimeException(failure);
     }
 
     /**
@@ -339,6 +370,7 @@ public class ComponentTester<T extends Component> implements Clickable<T> {
      *            the type of the event, not null.
      * @param eventData
      *            additional data related to the event, not null
+     * @since 10.0
      */
     protected void fireDomEvent(String eventType, ObjectNode eventData) {
         DomEvent event = new DomEvent(getComponent().getElement(), eventType,
@@ -438,6 +470,7 @@ public class ComponentTester<T extends Component> implements Clickable<T> {
      *
      * @param value
      *            the new value, may be null.
+     * @since 9.4.1
      */
     protected <V> void setValueAsUser(V value) {
         if (component instanceof AbstractField) {
