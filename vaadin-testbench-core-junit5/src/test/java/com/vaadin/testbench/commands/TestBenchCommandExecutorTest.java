@@ -292,7 +292,10 @@ public class TestBenchCommandExecutorTest {
         newCommandExecutor(driver).waitForVaadin();
 
         Mockito.verify(driver).executeAsyncScript(
-                Mockito.contains("flow.ready("), Mockito.eq(10000L));
+                Mockito.contains("flow.ready("),
+                // Flow's own timeout must end the call before the default
+                // WebDriver script timeout of 30s does
+                Mockito.longThat(timeout -> timeout > 0 && timeout < 30000));
     }
 
     @Test
@@ -309,6 +312,24 @@ public class TestBenchCommandExecutorTest {
 
         Mockito.verify(driver, Mockito.times(4))
                 .executeAsyncScript(Mockito.anyString(), Mockito.any());
+    }
+
+    @Test
+    public void waitForVaadin_scriptError_isNotRetried() {
+        FirefoxDriver driver = Mockito.mock(FirefoxDriver.class);
+        JavascriptException error = new JavascriptException(
+                "TypeError: clients[client].isActive is not a function");
+        Mockito.when(
+                driver.executeAsyncScript(Mockito.anyString(), Mockito.any()))
+                .thenThrow(error);
+        TestBenchCommandExecutor tbce = newCommandExecutor(driver);
+
+        JavascriptException thrown = Assertions
+                .assertThrows(JavascriptException.class, tbce::waitForVaadin);
+
+        Assertions.assertSame(error, thrown);
+        Mockito.verify(driver).executeAsyncScript(Mockito.anyString(),
+                Mockito.any());
     }
 
     private TestBenchCommandExecutor newCommandExecutor(FirefoxDriver driver) {

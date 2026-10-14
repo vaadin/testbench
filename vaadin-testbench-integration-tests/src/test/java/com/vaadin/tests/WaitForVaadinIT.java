@@ -41,6 +41,7 @@ public class WaitForVaadinIT extends AbstractTB6Test {
     @Test
     public void waitForVaadin_activeConnector_waitsUtilReady() {
         openTestURL();
+        assertDevServerIsNotLoaded();
         getCommandExecutor().executeScript(
                 "window.Vaadin.Flow.clients[\"blocker\"] = {isActive: () => true};"
                         + "setTimeout(function() {"
@@ -69,6 +70,7 @@ public class WaitForVaadinIT extends AbstractTB6Test {
     @Test
     public void waitForVaadin_devModeNotReady_waits() {
         openTestURL();
+
         getCommandExecutor().executeScript(
                 "window.Vaadin = {Flow: {devServerIsNotLoaded: true}};");
         assertExecutionBlocked(() -> getCommandExecutor().waitForVaadin());

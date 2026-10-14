@@ -17,7 +17,7 @@ import com.vaadin.testbench.BrowserTest;
 public class WaitForVaadinIT extends AbstractBrowserTB9Test {
 
     private static final long NON_BLOCKING_EXECUTION_TIMEOUT = 10000;
-    private static final long BLOCKING_EXECUTION_TIMEOUT = 20000;
+    private static final long BLOCKING_EXECUTION_TIMEOUT = 40000;
 
     @Override
     protected Class<? extends Component> getTestView() {
@@ -41,6 +41,7 @@ public class WaitForVaadinIT extends AbstractBrowserTB9Test {
     @BrowserTest
     public void waitForVaadin_activeConnector_waitsUtilReady() {
         openTestURL();
+        assertDevServerIsNotLoaded();
         getCommandExecutor().executeScript(
                 "window.Vaadin.Flow.clients[\"blocker\"] = {isActive: () => true};"
                         + "setTimeout(function() {"

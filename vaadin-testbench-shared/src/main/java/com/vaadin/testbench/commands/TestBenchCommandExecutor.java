@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.List;
+import java.util.Locale;
 
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.HasCapabilities;
@@ -167,8 +168,14 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
         Object finished;
         try {
             finished = executor.executeAsyncScript(WAIT_FOR_VAADIN_SCRIPT,
-                    Math.max(flowReadyTimeout, 0));
-        } catch (ScriptTimeoutException | JavascriptException e) {
+                    flowReadyTimeout);
+        } catch (ScriptTimeoutException e) {
+            getLogger().debug("Waiting for Vaadin was interrupted", e);
+            return false;
+        } catch (JavascriptException e) {
+            if (!isPageUnloaded(e)) {
+                throw e;
+            }
             // The page was replaced while waiting, e.g. by a navigation or by
             // the dev server finishing its startup
             getLogger().debug("Waiting for Vaadin was interrupted", e);
@@ -181,6 +188,14 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
                     "waitForVaadin returned null, this should never happen");
         }
         return Boolean.TRUE.equals(finished);
+    }
+
+    private static boolean isPageUnloaded(JavascriptException e) {
+        // e.g. "document unloaded while waiting for result" (Chrome) or
+        // "Document was unloaded" (Firefox)
+        String message = e.getRawMessage();
+        return message != null
+                && message.toLowerCase(Locale.ROOT).contains("unloaded");
     }
 
     @Override
