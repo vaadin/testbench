@@ -143,6 +143,13 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <!-- compile-time only, not passed on to consumers to avoid version conflicts -->
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>26.1.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-junit5</artifactId>
             <scope>test</scope>
