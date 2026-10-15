@@ -122,7 +122,7 @@ public class ActuatorMetrics {
             Long vaadinActiveUis = null;
             Map<String, Long> viewCounts = new LinkedHashMap<>();
             if (collectVaadinMetrics) {
-                vaadinActiveUis = fetchMetricValueAsLong("vaadin.view.count");
+                vaadinActiveUis = fetchMetricValueAsLong("vaadin.ui.count");
                 viewCounts = fetchViewCounts();
             }
 
