@@ -13,7 +13,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +38,7 @@ class LoadTestMetrics {
 
     private final Set<UI> activeUis = Collections
             .synchronizedSet(new HashSet<>());
-    private final Map<Class<? extends Component>, AtomicInteger> viewCounters = new ConcurrentHashMap<>();
+    private final Map<Class<? extends Component>, Set<Component>> activeViews = new ConcurrentHashMap<>();
     private final boolean micrometerAvailable;
 
     LoadTestMetrics() {
@@ -64,17 +63,23 @@ class LoadTestMetrics {
             Component currentView = ui.getCurrentView();
             Class<? extends Component> viewClass = currentView.getClass();
 
-            AtomicInteger counter = viewCounters.computeIfAbsent(viewClass,
-                    k -> {
-                        AtomicInteger c = new AtomicInteger(0);
-                        if (micrometerAvailable) {
-                            registerViewGauge(k, c);
-                        }
-                        return c;
-                    });
-            counter.incrementAndGet();
+            Set<Component> views = activeViews.computeIfAbsent(viewClass, k -> {
+                Set<Component> v = ConcurrentHashMap.newKeySet();
+                if (micrometerAvailable) {
+                    registerViewGauge(k, v);
+                }
+                return v;
+            });
 
-            currentView.addDetachListener(event -> counter.decrementAndGet());
+            // A reused view instance (e.g. only a route parameter changed)
+            // is already tracked, so it is neither counted again nor given
+            // another detach listener.
+            if (views.add(currentView)) {
+                currentView.addDetachListener(event -> {
+                    views.remove(currentView);
+                    event.unregisterListener();
+                });
+            }
         });
 
         ui.addDetachListener(event -> activeUis.remove(ui));
@@ -82,6 +87,11 @@ class LoadTestMetrics {
 
     int getActiveUiCount() {
         return activeUis.size();
+    }
+
+    int getActiveViewCount(Class<? extends Component> viewClass) {
+        Set<Component> views = activeViews.get(viewClass);
+        return views == null ? 0 : views.size();
     }
 
     private static boolean isMicrometerAvailable() {
@@ -96,7 +106,7 @@ class LoadTestMetrics {
     private void registerTotalGauge() {
         try {
             io.micrometer.core.instrument.Gauge
-                    .builder("vaadin.view.count", activeUis::size)
+                    .builder("vaadin.ui.count", activeUis::size)
                     .description("Number of active Vaadin UI instances")
                     .register(
                             io.micrometer.core.instrument.Metrics.globalRegistry);
@@ -106,10 +116,10 @@ class LoadTestMetrics {
     }
 
     private void registerViewGauge(Class<? extends Component> viewClass,
-            AtomicInteger counter) {
+            Set<Component> views) {
         try {
             io.micrometer.core.instrument.Gauge
-                    .builder("vaadin.view.count", counter::get)
+                    .builder("vaadin.view.count", views::size)
                     .tag("view", viewClass.getSimpleName())
                     .description("Number of active " + viewClass.getSimpleName()
                             + " view instances")
