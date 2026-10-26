@@ -147,14 +147,21 @@ class ActuatorMetricsTest {
     @Test
     void fetchMetrics_withVaadinMetricsFlag_fetchesVaadinCount() {
         stub("/actuator/health", "{\"status\":\"UP\"}");
+        stub("/actuator/metrics/vaadin.ui.count",
+                "{\"name\":\"vaadin.ui.count\",\"measurements\":[{\"statistic\":\"VALUE\",\"value\":3}],\"availableTags\":[]}");
+        // Per-view gauges must not be mistaken for the UI count
         stub("/actuator/metrics/vaadin.view.count",
-                "{\"name\":\"vaadin.view.count\",\"measurements\":[{\"statistic\":\"VALUE\",\"value\":3}],\"availableTags\":[]}");
+                "{\"name\":\"vaadin.view.count\",\"measurements\":[{\"statistic\":\"VALUE\",\"value\":7}],\"availableTags\":[{\"tag\":\"view\",\"values\":[\"MainView\"]}]}");
+        stub("/actuator/metrics/vaadin.view.count?tag=view:MainView",
+                measurement(7.0));
 
         ActuatorMetrics actuator = newActuator(true);
         Optional<MetricsSummary> result = actuator.fetchMetrics();
 
         assertTrue(result.isPresent());
         assertEquals(3L, result.get().vaadinActiveUis());
+        assertEquals(java.util.Map.of("MainView", 7L),
+                result.get().viewCounts());
     }
 
     @Test
