@@ -11,6 +11,7 @@ package com.vaadin.testbench.unit;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -25,7 +26,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.googlecode.gentyref.GenericTypeReflector;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfoList;
 import io.github.classgraph.ScanResult;
@@ -671,8 +671,19 @@ public abstract class BaseUIUnitTest {
             extractTypeArguments(typeMap, clazz);
             clazz = clazz.getSuperclass();
         }
-        return GenericTypeReflector.erase(
-                typeMap.get(ComponentTester.class.getTypeParameters()[0]));
+        return erase(typeMap.get(ComponentTester.class.getTypeParameters()[0]));
+    }
+
+    private static Class<?> erase(Type type) {
+        if (type instanceof Class<?> clazz) {
+            return clazz;
+        } else if (type instanceof ParameterizedType parameterizedType) {
+            return (Class<?>) parameterizedType.getRawType();
+        } else if (type instanceof TypeVariable<?> typeVariable) {
+            return erase(typeVariable.getBounds()[0]);
+        }
+        throw new IllegalStateException(
+                "Unable to detect the component type from " + type);
     }
 
     /**
