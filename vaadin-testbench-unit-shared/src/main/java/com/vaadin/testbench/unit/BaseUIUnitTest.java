@@ -25,7 +25,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.googlecode.gentyref.GenericTypeReflector;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfoList;
 import io.github.classgraph.ScanResult;
@@ -37,6 +36,7 @@ import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.KeyModifier;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.internal.ReflectTools;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.RouteParameters;
 import com.vaadin.flow.server.VaadinSession;
@@ -671,7 +671,7 @@ public abstract class BaseUIUnitTest {
             extractTypeArguments(typeMap, clazz);
             clazz = clazz.getSuperclass();
         }
-        return GenericTypeReflector.erase(
+        return ReflectTools.erase(
                 typeMap.get(ComponentTester.class.getTypeParameters()[0]));
     }
 
