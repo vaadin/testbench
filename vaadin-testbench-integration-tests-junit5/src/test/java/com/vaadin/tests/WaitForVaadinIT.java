@@ -8,10 +8,7 @@
  */
 package com.vaadin.tests;
 
-import java.lang.reflect.Field;
-
 import org.junit.jupiter.api.Assertions;
-import org.openqa.selenium.JavascriptExecutor;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.testUI.PageObjectView;
@@ -46,9 +43,10 @@ public class WaitForVaadinIT extends AbstractBrowserTB9Test {
         openTestURL();
         assertDevServerIsNotLoaded();
         getCommandExecutor().executeScript(
-                "window.Vaadin.Flow.clients[\"blocker\"] = {isActive: () => true};");
-        setWaitForVaadinLoopHook(500,
-                "window.Vaadin.Flow.clients[\"blocker\"] = {isActive: () => false};");
+                "window.Vaadin.Flow.clients[\"blocker\"] = {isActive: () => true};"
+                        + "setTimeout(function() {"
+                        + "  window.Vaadin.Flow.clients[\"blocker\"] = {isActive: () => false};"
+                        + "}, 500);");
         getCommandExecutor().waitForVaadin();
         assertClientIsActive();
     }
@@ -82,9 +80,10 @@ public class WaitForVaadinIT extends AbstractBrowserTB9Test {
         openTestURL();
         assertDevServerIsNotLoaded();
         getCommandExecutor().executeScript(
-                "window.Vaadin = {Flow: {devServerIsNotLoaded: true}};");
-        setWaitForVaadinLoopHook(500,
-                "window.Vaadin.Flow.devServerIsNotLoaded = false;");
+                "window.Vaadin = {Flow: {devServerIsNotLoaded: true}};"
+                        + "setTimeout(function() {"
+                        + "  window.Vaadin.Flow.devServerIsNotLoaded = false;"
+                        + "}, 500);");
         getCommandExecutor().waitForVaadin();
         assertDevServerIsNotLoaded();
     }
@@ -123,28 +122,4 @@ public class WaitForVaadinIT extends AbstractBrowserTB9Test {
                 "Unexpected execution time, waiting time = " + timeout);
     }
 
-    private void setWaitForVaadinLoopHook(long timeout,
-            String scriptToRunAfterTimeout) {
-        long systemCurrentTimeMillis = System.currentTimeMillis();
-        setWaitForVaadinLoopHook(() -> {
-            if (System.currentTimeMillis()
-                    - systemCurrentTimeMillis > timeout) {
-                ((JavascriptExecutor) getCommandExecutor().getDriver()
-                        .getWrappedDriver())
-                        .executeScript(scriptToRunAfterTimeout);
-                setWaitForVaadinLoopHook(null);
-            }
-        });
-    }
-
-    private void setWaitForVaadinLoopHook(Runnable action) {
-        try {
-            Field field = getCommandExecutor().getClass()
-                    .getDeclaredField("waitForVaadinLoopHook");
-            field.setAccessible(true);
-            field.set(getCommandExecutor(), action);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
-    }
 }
