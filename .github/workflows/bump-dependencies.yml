@@ -43,7 +43,7 @@ permissions:
   contents: read
 
 env:
-  DEFAULT_BRANCHES: 'main,25.2,10.1,9.6,9.5,8.3'
+  DEFAULT_BRANCHES: 'main,25.3,25.2,10.1,9.6,9.5,9.3,8.3'
   DEFAULT_REVIEWERS: 'ZheSun88'
 
 jobs:
