@@ -76,13 +76,13 @@ The `testbench-converter-plugin` plugin provides three goals, these are used in 
 
 ```bash
 # Convert an existing HAR file to k6
-mvn k6:convert -Dk6.harFile=recording.har
+mvn loadtest:convert -Dk6.harFile=recording.har
 
 # Record a TestBench test and convert to k6
-mvn k6:record -Dk6.testClass=HelloWorldIT
+mvn loadtest:record -Dk6.testClass=HelloWorldIT
 
 # Run a k6 load test
-mvn k6:run -Dk6.testFile=k6/tests/hello-world.js -Dk6.vus=50 -Dk6.duration=1m
+mvn loadtest:run -Dk6.testFile=k6/tests/hello-world.js -Dk6.vus=50 -Dk6.duration=1m
 ```
 
 ### JBang App (Alternative to Maven Plugin)
@@ -102,7 +102,7 @@ your test pattern, your load tests are automatically updated 🥳
 In practice you probably want to select certain case from your apps E2E test battery, or craft a special case(s) re-using some page-object classes of your E2E
 tests.
 
-The k6:record goal runs these through a proxy to capture HTTP traffic for load testing. This is automated in the demo-web-app-loadtest module.
+The `loadtest:record` goal runs these through a proxy to capture HTTP traffic for load testing. This is automated in the demo-web-app-loadtest module.
 
 *In the current PoC, we need a slight hacks to the superclass, but final version of the project should require no special things in your app (we'll find a workaround or add support to TestBench superclass).*
 
@@ -246,10 +246,10 @@ Or via command line:
 
 ```bash
 # Disable think times for maximum throughput testing
-mvn k6:record -Dk6.thinkTime.enabled=false
+mvn loadtest:record -Dk6.thinkTime.enabled=false
 
 # Custom delays
-mvn k6:record -Dk6.thinkTime.pageReadDelay=3.0 -Dk6.thinkTime.interactionDelay=1.0
+mvn loadtest:record -Dk6.thinkTime.pageReadDelay=3.0 -Dk6.thinkTime.interactionDelay=1.0
 ```
 
 ### When to Disable Think Times

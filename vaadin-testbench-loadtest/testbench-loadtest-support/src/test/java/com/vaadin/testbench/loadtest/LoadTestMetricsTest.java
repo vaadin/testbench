@@ -12,6 +12,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.router.AfterNavigationListener;
 
@@ -39,5 +41,41 @@ class LoadTestMetricsTest {
 
         // Detach listener registered on the UI itself.
         Mockito.verify(ui).addDetachListener(Mockito.any());
+    }
+
+    @Test
+    void trackUI_reusedViewInstance_countedOnceUntilDetached() {
+        LoadTestMetrics metrics = new LoadTestMetrics();
+        UI ui = Mockito.mock(UI.class);
+        metrics.trackUI(ui);
+        ArgumentCaptor<AfterNavigationListener> navCaptor = ArgumentCaptor
+                .forClass(AfterNavigationListener.class);
+        Mockito.verify(ui).addAfterNavigationListener(navCaptor.capture());
+
+        UI hostUi = new UI();
+        TestView view = new TestView();
+        hostUi.add(view);
+        Mockito.when(ui.getCurrentView()).thenReturn(view);
+
+        // Navigating within the same view (e.g. a changed route parameter)
+        // reuses the instance, which must only be counted once.
+        navCaptor.getValue().afterNavigation(null);
+        navCaptor.getValue().afterNavigation(null);
+        navCaptor.getValue().afterNavigation(null);
+        assertEquals(1, metrics.getActiveViewCount(TestView.class));
+
+        hostUi.remove(view);
+        assertEquals(0, metrics.getActiveViewCount(TestView.class));
+
+        // A re-attached instance is tracked again, with a single listener.
+        hostUi.add(view);
+        navCaptor.getValue().afterNavigation(null);
+        assertEquals(1, metrics.getActiveViewCount(TestView.class));
+        hostUi.remove(view);
+        assertEquals(0, metrics.getActiveViewCount(TestView.class));
+    }
+
+    @Tag("div")
+    private static class TestView extends Component {
     }
 }

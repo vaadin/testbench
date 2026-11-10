@@ -5,6 +5,7 @@ import com.vaadin.flow.component.Key
 import com.vaadin.flow.component.ShortcutRegistration
 import com.vaadin.flow.internal.JacksonUtils
 import tools.jackson.databind.JsonNode
+import tools.jackson.databind.node.BooleanNode
 import tools.jackson.databind.node.ObjectNode
 
 /**
@@ -16,7 +17,6 @@ private class MockFilterJsonObject(val key: Key, val modifiers: Set<Key>) : Obje
     JacksonUtils.getMapper().nodeFactory
 ) {
     val filter: String
-    var filterString: String = ""
     init {
 
         // compute the filter
@@ -58,24 +58,12 @@ private class MockFilterJsonObject(val key: Key, val modifiers: Set<Key>) : Obje
     }
 
     override fun get(keyString: String): JsonNode? {
-        filterString = keyString
         if (keyString.startsWith("([")) {
-            // For filter key we return this so we get the correct matches
-            // for booleanValue as get returns null
-            return this
+            // Flow reads the value the client sent for the filter and checks
+            // whether it is truthy, so return the result of the match itself
+            return BooleanNode.valueOf(matchesFilter(keyString))
         }
         return super.get(keyString)
-    }
-
-
-    override fun booleanValue(): Boolean {
-        // the "key" is a JavaScript expression which matches the key pressed.
-        // we need to match it against the 'filter'
-        if (!filterString.startsWith("([")) {
-            // not a filter
-            return super.booleanValue()
-        }
-        return matchesFilter(filterString)
     }
 
     companion object {
