@@ -49,7 +49,7 @@ public class TestBenchElementTest {
 
         Assertions.assertTrue(webElement.equals(webElement));
         Assertions.assertTrue(element.equals(element));
-        Assertions.assertTrue(webElement.equals(element));
+        Assertions.assertTrue(webElement.equals(element.getContext()));
         Assertions.assertTrue(element.equals(webElement));
 
         Assertions.assertTrue(element.equals(element2));

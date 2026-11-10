@@ -141,7 +141,8 @@ public abstract class TestBenchTestCase
      */
     public <T extends TestBenchElement> T wrap(Class<T> elementType,
             WebElement element) {
-        return ((TestBenchElement) element).wrap(elementType);
+        return TestBench.createElement(elementType, element,
+                getCommandExecutor());
     }
 
     /**

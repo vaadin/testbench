@@ -1,0 +1,123 @@
+/*
+ * Copyright 2000-2026 Vaadin Ltd.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package com.vaadin.flow.component.menubar.testbench;
+
+import java.util.List;
+
+import com.vaadin.testbench.TestBenchElement;
+import com.vaadin.testbench.elementsbase.Element;
+
+/**
+ * A TestBench element representing a {@code <vaadin-menu-bar>} element.
+ */
+@Element("vaadin-menu-bar")
+public class MenuBarElement extends TestBenchElement {
+
+    /**
+     * Gets the button elements wrapping the root level items. This does not
+     * include the overflowing items which are rendered in a sub menu, nor the
+     * overflow button which opens the sub menu.
+     *
+     * @return the button elements in the menu bar
+     */
+    public List<MenuBarButtonElement> getButtons() {
+        return $(MenuBarButtonElement.class).all().stream().filter(
+                element -> !isOverflowButton(element) && isVisible(element))
+                .toList();
+    }
+
+    /**
+     * Gets the button which opens the sub menu of overflowing items, or
+     * {@code null} if the overflow button is not visible.
+     *
+     * @return the button which opens the sub menu of overflowing items
+     */
+    public MenuBarButtonElement getOverflowButton() {
+        MenuBarButtonElement overflowButton = $(MenuBarButtonElement.class)
+                .withAttribute("slot", "overflow").first();
+        if (overflowButton == null || overflowButton.hasAttribute("hidden")) {
+            return null;
+        }
+        return overflowButton;
+    }
+
+    private boolean isOverflowButton(TestBenchElement element) {
+        return "overflow".equals(element.getAttribute("slot"));
+    }
+
+    private boolean isVisible(TestBenchElement element) {
+        return (boolean) executeScript(
+                "return arguments[0].style.visibility !== 'hidden'", element);
+    }
+
+    /**
+     * Get TestBenchElements representing sub menu items under the first sub
+     * menu.
+     *
+     * @return List of MenuBarItemElement representing sub menu items.
+     * @deprecated use {@link MenuBarButtonElement#openSubMenu()} to open a
+     *             submenu and then use
+     *             {@link MenuBarSubMenuElement#getMenuItems()} to retrieve the
+     *             items.
+     */
+    @Deprecated(since = "25.0", forRemoval = true)
+    public List<MenuBarItemElement> getSubMenuItems() {
+        return getSubMenuItems(getSubMenu());
+    }
+
+    /**
+     * Get TestBenchElements representing sub menu items under specific sub
+     * menu.
+     *
+     * @param subMenu
+     *            The sub menu from which items are being collected.
+     * @return List of MenuBarItemElement representing sub menu items.
+     * @deprecated use {@link MenuBarButtonElement#openSubMenu()} or
+     *             {@link MenuBarItemElement#openSubMenu()} to open a submenu
+     *             and then use {@link MenuBarSubMenuElement#getMenuItems()} to
+     *             retrieve the items.
+     */
+    @Deprecated(since = "25.0", forRemoval = true)
+    public List<MenuBarItemElement> getSubMenuItems(TestBenchElement subMenu) {
+        return subMenu.getPropertyElement("_listBox")
+                .$(MenuBarItemElement.class).all();
+    }
+
+    /**
+     * Get the sub menu element.
+     *
+     * @return TestBenchElement for the first sub menu in this menu bar
+     * @deprecated use {@link MenuBarButtonElement#openSubMenu()} to open a
+     *             submenu
+     */
+    @Deprecated(since = "25.0", forRemoval = true)
+    public MenuBarSubMenuElement getSubMenu() {
+        return getPropertyElement("_subMenu").wrap(MenuBarSubMenuElement.class);
+    }
+
+    /**
+     * Get all the opened sub menu elements.
+     *
+     * @return List of TestBenchElements representing all opened sub menus.
+     * @deprecated use {@link MenuBarButtonElement#openSubMenu()} or
+     *             {@link MenuBarItemElement#openSubMenu()} to access submenus
+     *             for specific buttons or items
+     */
+    @Deprecated(since = "25.0", forRemoval = true)
+    public List<TestBenchElement> getAllSubMenus() {
+        return $("vaadin-menu-bar-submenu").withAttribute("opened").all();
+    }
+}

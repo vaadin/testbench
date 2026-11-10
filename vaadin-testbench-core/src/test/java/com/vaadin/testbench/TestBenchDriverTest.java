@@ -73,9 +73,9 @@ public class TestBenchDriverTest {
         WebDriver driver = TestBench.createDriver(mockDriver);
         driver.close();
         By mockBy = Mockito.mock(By.class);
-        assertTrue(driver.findElement(mockBy) instanceof TestBenchElement);
+        assertTrue(driver.findElement(mockBy) instanceof WebElementAdapter);
         assertTrue(
-                driver.findElements(mockBy).get(0) instanceof TestBenchElement);
+                driver.findElements(mockBy).get(0) instanceof WebElementAdapter);
         driver.get("foo");
         assertEquals("foo", driver.getCurrentUrl());
         assertEquals("<html></html>", driver.getPageSource());

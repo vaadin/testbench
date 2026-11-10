@@ -34,7 +34,6 @@ import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.Rectangle;
 import org.openqa.selenium.SearchContext;
-import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
@@ -66,6 +65,7 @@ public class TestBenchElement implements WrapsElement, HasDriver,
 
     private ElementBackend elementBackend = null;
     private TestBenchCommandExecutor commandExecutor = null;
+    private WebElementAdapter webElementAdapter;
 
     protected TestBenchElement() {
 
@@ -88,12 +88,24 @@ public class TestBenchElement implements WrapsElement, HasDriver,
      */
     protected void init(WebElement element,
             TestBenchCommandExecutor commandExecutor) {
+        // Only a Selenium backend hands out WebElements
+        SeleniumBackend backend = commandExecutor == null ? null
+                : (SeleniumBackend) commandExecutor.getBackend();
+        init(new SeleniumElementBackend(backend, element), commandExecutor);
+    }
+
+    /**
+     * Initializes an element built by its no-argument constructor. A subclass
+     * that needs initialization code overrides {@link #init()}, not this.
+     *
+     * @param element
+     *            the DOM node this element stands for
+     */
+    protected void init(ElementBackend element,
+            TestBenchCommandExecutor commandExecutor) {
         if (this.commandExecutor == null) {
             this.commandExecutor = commandExecutor;
-            // Only a Selenium backend hands out WebElements
-            SeleniumBackend backend = commandExecutor == null ? null
-                    : (SeleniumBackend) commandExecutor.getBackend();
-            elementBackend = new SeleniumElementBackend(backend, element);
+            elementBackend = element;
             init();
         }
     }
@@ -151,6 +163,14 @@ public class TestBenchElement implements WrapsElement, HasDriver,
      */
     public ElementBackend getElementBackend() {
         return elementBackend;
+    }
+
+    /** This element, where a Selenium signature demands a WebElement. */
+    WebElement asWebElement() {
+        if (webElementAdapter == null) {
+            webElementAdapter = new WebElementAdapter(this);
+        }
+        return webElementAdapter;
     }
 
     protected void waitForVaadin() {
@@ -316,8 +336,8 @@ public class TestBenchElement implements WrapsElement, HasDriver,
         return elementBackend.getText();
     }
 
-    public List<WebElement> findElements(By by) {
-        return (List) TestBenchElement.wrapElements(
+    public List<TestBenchElement> findElements(By by) {
+        return TestBenchElement.wrapElements(
                 getWrappedElement().findElements(by), getCommandExecutor());
     }
 
@@ -382,14 +402,13 @@ public class TestBenchElement implements WrapsElement, HasDriver,
     }
 
     /**
-     * Returns this TestBenchElement cast to a SearchContext. Method provided
-     * for compatibility and consistency.
+     * This element as a Selenium {@link SearchContext}, for
+     * {@code $(...).context(...)}: an {@link ElementQuery} given it searches
+     * inside this element.
      */
     @Override
     public SearchContext getContext() {
-        // BRIDGE: the proxy adds SearchContext. Not the wrapped element:
-        // ElementQuery recognizes an element context by instanceof.
-        return (SearchContext) this;
+        return asWebElement();
     }
 
     /**
@@ -414,11 +433,10 @@ public class TestBenchElement implements WrapsElement, HasDriver,
 
     protected static TestBenchElement wrapElement(WebElement element,
             TestBenchCommandExecutor commandExecutor) {
-        if (element instanceof TestBenchElement) {
-            return (TestBenchElement) element;
-        } else {
-            return TestBench.createElement(element, commandExecutor);
+        if (element instanceof WebElementAdapter adapter) {
+            return adapter.getElement();
         }
+        return TestBench.createElement(element, commandExecutor);
     }
 
     public <X> X getScreenshotAs(OutputType<X> target)
@@ -478,6 +496,9 @@ public class TestBenchElement implements WrapsElement, HasDriver,
         if (elementBackend == null) {
             return false;
         }
+        if (obj instanceof WebElementAdapter adapter) {
+            obj = adapter.getElement();
+        }
         if (obj instanceof TestBenchElement other) {
             return elementBackend.equals(other.elementBackend);
         }
@@ -497,18 +518,14 @@ public class TestBenchElement implements WrapsElement, HasDriver,
     public boolean compareScreen(String referenceId) throws IOException {
         return ScreenshotComparator.compareScreen(referenceId,
                 getCommandExecutor().getReferenceNameGenerator(),
-                // BRIDGE: the proxy adds TakesScreenshot; through it,
-                // getScreenshotAs waits for Vaadin
-                getCommandExecutor().getImageComparison(),
-                (TakesScreenshot) this, (HasCapabilities) getDriver());
+                getCommandExecutor().getImageComparison(), asWebElement(),
+                (HasCapabilities) getDriver());
     }
 
     @Override
     public boolean compareScreen(File reference) throws IOException {
         return ScreenshotComparator.compareScreen(reference,
-                getCommandExecutor().getImageComparison(),
-                (TakesScreenshot) this, // BRIDGE: the proxy adds
-                                        // TakesScreenshot
+                getCommandExecutor().getImageComparison(), asWebElement(),
                 (HasCapabilities) getDriver());
 
     }
@@ -517,9 +534,7 @@ public class TestBenchElement implements WrapsElement, HasDriver,
     public boolean compareScreen(BufferedImage reference, String referenceName)
             throws IOException {
         return ScreenshotComparator.compareScreen(reference, referenceName,
-                getCommandExecutor().getImageComparison(),
-                (TakesScreenshot) this, // BRIDGE: the proxy adds
-                                        // TakesScreenshot
+                getCommandExecutor().getImageComparison(), asWebElement(),
                 (HasCapabilities) getDriver());
     }
 

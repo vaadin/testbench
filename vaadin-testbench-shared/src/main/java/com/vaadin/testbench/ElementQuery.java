@@ -328,6 +328,7 @@ public class ElementQuery<T extends TestBenchElement> {
     private final Set<AttributeMatch> attributes;
     private final List<Predicate<T>> conditions;
     private SearchContext searchContext;
+    private TestBenchElement elementContext;
 
     /**
      * Instantiate a new ElementQuery to look for the given type of element.
@@ -1164,7 +1165,11 @@ public class ElementQuery<T extends TestBenchElement> {
      * @return this element query instance for chaining
      */
     public ElementQuery<T> context(SearchContext searchContext) {
+        if (searchContext instanceof WebElementAdapter adapter) {
+            return context(adapter.getElement());
+        }
         this.searchContext = searchContext;
+        elementContext = null;
         return this;
     }
 
@@ -1172,8 +1177,9 @@ public class ElementQuery<T extends TestBenchElement> {
      * Sets the element to search inside.
      */
     public ElementQuery<T> context(TestBenchElement element) {
-        // BRIDGE: the proxy adds SearchContext
-        return context((SearchContext) element);
+        searchContext = element == null ? null : element.getContext();
+        elementContext = element;
+        return this;
     }
 
     /**
@@ -1501,12 +1507,10 @@ public class ElementQuery<T extends TestBenchElement> {
     }
 
     private WebDriver getDriver() {
-        var context = getContext();
-        if (context instanceof WebDriver webDriver) {
-            return webDriver;
-        } else {
-            return ((TestBenchElement) context).getDriver();
+        if (elementContext != null) {
+            return elementContext.getDriver();
         }
+        return (WebDriver) getContext();
     }
 
     /**
@@ -1521,11 +1525,10 @@ public class ElementQuery<T extends TestBenchElement> {
      */
     private List<T> executeSearch(Integer index) {
         StringBuilder script = new StringBuilder();
-        TestBenchElement elementContext;
         TestBenchCommandExecutor executor;
 
         var context = getContext();
-        if (context instanceof TestBenchElement testBenchElement) {
+        if (elementContext != null) {
             script.append("var result = [];" //
                     + "if (arguments[0].shadowRoot) {" //
                     + "  var shadow = arguments[0].shadowRoot.querySelectorAll(arguments[1]+arguments[2]);" //
@@ -1535,7 +1538,6 @@ public class ElementQuery<T extends TestBenchElement> {
                     + "result = result.concat(Array.prototype.slice.call(light));" //
                     + "return result" //
             );
-            elementContext = testBenchElement;
             executor = elementContext.getCommandExecutor();
         } else if (context instanceof WebDriver webDriver) {
             // Search the whole document
@@ -1543,7 +1545,6 @@ public class ElementQuery<T extends TestBenchElement> {
                     + "const queryResult = document.querySelectorAll(arguments[1]+arguments[2]);"
                     + "result = result.concat(Array.prototype.slice.call(queryResult));"
                     + "return result");
-            elementContext = null;
             executor = ((HasTestBenchCommandExecutor) webDriver)
                     .getCommandExecutor();
         } else {

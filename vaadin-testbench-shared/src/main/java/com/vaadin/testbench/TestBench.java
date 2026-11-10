@@ -8,15 +8,8 @@
  */
 package com.vaadin.testbench;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import javassist.util.proxy.MethodFilter;
-import javassist.util.proxy.MethodHandler;
-import javassist.util.proxy.ProxyFactory;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -24,7 +17,6 @@ import org.openqa.selenium.WebElement;
 import com.vaadin.pro.licensechecker.Capabilities;
 import com.vaadin.pro.licensechecker.Capability;
 import com.vaadin.pro.licensechecker.LicenseChecker;
-import com.vaadin.testbench.backend.selenium.SeleniumBackend;
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.screenshot.ImageComparison;
 import com.vaadin.testbench.screenshot.ReferenceNameGenerator;
@@ -42,59 +34,6 @@ public class TestBench {
         System.setProperty("webdriver.http.factory", "jdk-http-client");
     }
 
-    private static final Map<Class<?>, MethodFilter> methodFilters = new ConcurrentHashMap<>();
-
-    private static final class ElementMethodFilter implements MethodFilter {
-
-        private Class<?> proxyClass;
-        private Map<Method, Boolean> invocationNeeded;
-
-        public ElementMethodFilter(Class<?> clazz) {
-            proxyClass = clazz;
-            invocationNeeded = new ConcurrentHashMap<>();
-        }
-
-        @Override
-        public boolean isHandled(Method method) {
-            if (!invocationNeeded.containsKey(method)) {
-                try {
-                    proxyClass.getMethod(method.getName(),
-                            method.getParameterTypes());
-                    invocationNeeded.put(method, false);
-                } catch (Exception e) {
-                    invocationNeeded.put(method, true);
-                }
-            }
-
-            return invocationNeeded.get(method);
-        }
-    }
-
-    private static final class ElementInvocationHandler
-            implements MethodHandler {
-
-        private Object actualElement;
-
-        public ElementInvocationHandler(Object actualElement) {
-            this.actualElement = actualElement;
-        }
-
-        @Override
-        public Object invoke(Object self, Method thisMethod, Method proceed,
-                Object[] args) throws Throwable {
-            if (null != proceed) {
-                // This is a protected method
-                try {
-                    return proceed.invoke(self, args);
-                } catch (InvocationTargetException e) {
-                    throw e.getCause();
-                }
-            }
-            return thisMethod.invoke(actualElement, args);
-        }
-
-    }
-
     public static void ensureLoaded() {
         // This just ensures that the static initializers have been run so we
         // can set global properties there for all tests
@@ -108,35 +47,15 @@ public class TestBench {
 
     public static TestBenchDriverProxy createDriver(WebDriver driver,
             TestBenchCommandExecutor commandExecutor) {
-        Set<Class<?>> allInterfaces = extractInterfaces(driver);
-        Class<TestBenchDriverProxy> driverClass = TestBenchDriverProxy.class;
-        allInterfaces.addAll(extractInterfaces(driverClass));
-        final Class<?>[] allInterfacesArray = allInterfaces
-                .toArray(new Class<?>[allInterfaces.size()]);
-
-        ProxyFactory pFactory = new ProxyFactory();
-        pFactory.setInterfaces(allInterfacesArray);
-        pFactory.setSuperclass(driverClass);
-
-        TestBenchDriverProxy proxy;
-        try {
-            proxy = (TestBenchDriverProxy) pFactory.create(
-                    new Class[] { WebDriver.class,
-                            TestBenchCommandExecutor.class },
-                    new Object[] { driver, commandExecutor },
-                    new DriverInvocationHandler(driver));
-        } catch (Exception e) {
-            throw new IllegalStateException("Unable to create proxy for driver",
-                    e);
-        }
-
+        TestBenchDriverProxy proxy = new TestBenchDriverProxy(driver,
+                commandExecutor);
         commandExecutor.setDriver(proxy);
         return proxy;
     }
 
     public static <T extends TestBenchElement> T wrap(TestBenchElement element,
             Class<T> elementType) {
-        return createElement(elementType, element.getWrappedElement(),
+        return createElement(elementType, element.getElementBackend(),
                 element.getCommandExecutor());
     }
 
@@ -147,51 +66,21 @@ public class TestBench {
     }
 
     /**
-     * Create new Element of given type. Initialize it with WebElement and
-     * TestBenchCommandExecutor. This feature is advanced and potentially
-     * dangerous.
+     * Creates an element of the given type around a Selenium element.
      *
-     * @param <T>
-     *            the type of the {@link TestBenchElement} to return
-     * @param clazz
-     *            Class of wanted Element
-     * @param webElement
-     *            Selenium WebElement to be wrapped into given Class
-     * @param tbCommandExecutor
-     *            TestBenchCommandExecutor instance
-     * @return an element of the given class wrapping given the given
-     *         WebElement, or <code>null</code> if the element is null
+     * @return {@code null} if {@code webElement} is {@code null}
      */
     public static <T extends TestBenchElement> T createElement(Class<T> clazz,
             WebElement webElement, TestBenchCommandExecutor tbCommandExecutor) {
         if (webElement == null) {
             return null;
         }
-        Set<Class<?>> allInterfaces = extractInterfaces(webElement);
-
-        final Class<?>[] allInterfacesArray = allInterfaces
-                .toArray(new Class<?>[allInterfaces.size()]);
-
-        ProxyFactory pFactory = new ProxyFactory();
-        pFactory.setSuperclass(clazz);
-        pFactory.setInterfaces(allInterfacesArray);
-        pFactory.setFilter(getMethodFilter(clazz));
-
-        Object proxyObject;
-        try {
-            proxyObject = pFactory.create(new Class[0], new Object[0],
-                    new ElementInvocationHandler(webElement));
-        } catch (Exception e) {
-            throw new IllegalStateException(
-                    "Unable to create an element of type " + clazz.getName()
-                            + " wrapping " + webElement,
-                    e);
+        if (webElement instanceof WebElementAdapter adapter) {
+            return wrap(adapter.getElement(), clazz);
         }
-
-        @SuppressWarnings("unchecked")
-        T proxy = (T) proxyObject;
-        proxy.init(webElement, tbCommandExecutor);
-        return proxy;
+        T element = instantiate(clazz);
+        element.init(webElement, tbCommandExecutor);
+        return element;
     }
 
     /**
@@ -201,46 +90,41 @@ public class TestBench {
      */
     public static <T extends TestBenchElement> T createElement(Class<T> clazz,
             ElementBackend element, TestBenchCommandExecutor tbCommandExecutor) {
-        // BRIDGE: the proxy is built around the Selenium element, whose
-        // interfaces it adds
-        return createElement(clazz, SeleniumBackend.webElementOf(element),
-                tbCommandExecutor);
-    }
-
-    private static MethodFilter getMethodFilter(
-            Class<? extends TestBenchElement> clazz) {
-        if (!methodFilters.containsKey(clazz)) {
-            methodFilters.put(clazz, new ElementMethodFilter(clazz));
+        if (element == null) {
+            return null;
         }
-        return methodFilters.get(clazz);
+        T testBenchElement = instantiate(clazz);
+        testBenchElement.init(element, tbCommandExecutor);
+        return testBenchElement;
     }
 
-    private static Set<Class<?>> extractInterfaces(final Object object) {
-        return extractInterfaces(object.getClass());
-    }
-
-    private static Set<Class<?>> extractInterfaces(final Class<?> clazz) {
-        final Set<Class<?>> allInterfaces = new HashSet<>();
-        extractInterfaces(allInterfaces, clazz);
-
-        return allInterfaces;
-    }
-
-    private static void extractInterfaces(final Set<Class<?>> addTo,
-            final Class<?> clazz) {
-        if (clazz == null || Object.class.equals(clazz)) {
-            return; // Done
-        }
-
-        final Class<?>[] classes = clazz.getInterfaces();
-        for (final Class<?> interfaceClass : classes) {
-            addTo.add(interfaceClass);
-            for (final Class<?> superInterface : interfaceClass
-                    .getInterfaces()) {
-                addTo.add(superInterface);
-                extractInterfaces(addTo, superInterface);
+    private static final ClassValue<Constructor<?>> constructors = new ClassValue<>() {
+        @Override
+        protected Constructor<?> computeValue(Class<?> clazz) {
+            try {
+                Constructor<?> constructor = clazz.getDeclaredConstructor();
+                constructor.setAccessible(true);
+                return constructor;
+            } catch (NoSuchMethodException e) {
+                throw new IllegalStateException(clazz.getName()
+                        + " needs a constructor without arguments", e);
             }
         }
-        extractInterfaces(addTo, clazz.getSuperclass());
+    };
+
+    // The one reflective step in building an element: the class is only
+    // known from $(X.class) or wrap(X.class).
+    private static <T extends TestBenchElement> T instantiate(Class<T> clazz) {
+        try {
+            return clazz.cast(constructors.get(clazz).newInstance());
+        } catch (InvocationTargetException e) {
+            throw new IllegalStateException(
+                    "Unable to create an element of type " + clazz.getName(),
+                    e.getCause());
+        } catch (ReflectiveOperationException e) {
+            throw new IllegalStateException(
+                    "Unable to create an element of type " + clazz.getName(),
+                    e);
+        }
     }
 }

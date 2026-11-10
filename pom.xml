@@ -44,7 +44,6 @@
         <jetty.version>12.1.3</jetty.version>
         <failsafe.version>3.5.2</failsafe.version>
         <surefire.version>3.5.2</surefire.version>
-        <javassist.version>3.30.2-GA</javassist.version>
         <spotless.plugin.version>3.10.4</spotless.plugin.version>
         <currentYear>2026</currentYear>
         <skipUnitTests>${skipTests}</skipUnitTests>
@@ -55,6 +54,7 @@
         <module>vaadin-testbench-core</module>
         <module>vaadin-testbench-core-junit5</module>
         <module>vaadin-testbench-core-junit6</module>
+        <module>vaadin-testbench-flow-elements</module>
         <module>vaadin-testbench-unit-shared</module>
         <module>vaadin-testbench-unit</module>
         <module>vaadin-testbench-unit-junit5</module>

@@ -9,6 +9,7 @@
 package com.vaadin.testbench;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -22,12 +23,22 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.WrapsDriver;
+import org.openqa.selenium.interactions.Interactive;
+import org.openqa.selenium.interactions.Sequence;
 
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 
-public class TestBenchDriverProxy
-        implements WebDriver, WrapsDriver, HasTestBenchCommandExecutor,
-        HasCapabilities, TakesScreenshot, JavascriptExecutor {
+/**
+ * TestBench's view of a Selenium {@link WebDriver}: it waits for Vaadin before
+ * each call, except navigation, window management and closing, and turns found
+ * elements into {@link TestBenchElement}s.
+ * <p>
+ * Only the interfaces it implements are there: a cast to anything else the
+ * real driver implements needs {@link #getWrappedDriver()}.
+ */
+public class TestBenchDriverProxy implements WebDriver, WrapsDriver,
+        HasTestBenchCommandExecutor, HasCapabilities, TakesScreenshot,
+        JavascriptExecutor, Interactive {
 
     private final WebDriver wrappedDriver;
     private final TestBenchCommandExecutor commandExecutor;
@@ -38,53 +49,67 @@ public class TestBenchDriverProxy
         this.commandExecutor = commandExecutor;
     }
 
-    // ----------------- WebDriver methods for convenience.
+    private void waitForVaadin() {
+        commandExecutor.waitForVaadin();
+    }
 
     @Override
     public void close() {
         getWrappedDriver().close();
     }
 
+    /**
+     * @return a {@link WebElement} view of a {@link TestBenchElement}, whose
+     *         calls wait for Vaadin as the element's do
+     */
     @Override
-    public WebElement findElement(By arg0) {
-        // BRIDGE: the proxy adds WebElement
-        return (WebElement) TestBenchElement.wrapElement(
-                wrappedDriver.findElement(arg0), getCommandExecutor());
+    public WebElement findElement(By by) {
+        waitForVaadin();
+        return TestBenchElement.wrapElement(wrappedDriver.findElement(by),
+                getCommandExecutor()).asWebElement();
     }
 
     @Override
-    public List<WebElement> findElements(By arg0) {
-        return (List) TestBenchElement.wrapElements(
-                wrappedDriver.findElements(arg0), getCommandExecutor());
+    public List<WebElement> findElements(By by) {
+        waitForVaadin();
+        return TestBenchElement
+                .wrapElements(wrappedDriver.findElements(by),
+                        getCommandExecutor())
+                .stream().map(TestBenchElement::asWebElement).toList();
     }
 
     @Override
-    public void get(String arg0) {
-        wrappedDriver.get(arg0);
+    public void get(String url) {
+        wrappedDriver.get(url);
     }
 
     @Override
     public String getCurrentUrl() {
+        waitForVaadin();
         return wrappedDriver.getCurrentUrl();
     }
 
     @Override
     public String getPageSource() {
+        waitForVaadin();
         return wrappedDriver.getPageSource();
     }
 
     @Override
     public String getTitle() {
+        waitForVaadin();
         return wrappedDriver.getTitle();
     }
 
     @Override
     public String getWindowHandle() {
+        waitForVaadin();
         return wrappedDriver.getWindowHandle();
     }
 
     @Override
     public Set<String> getWindowHandles() {
+        waitForVaadin();
         return wrappedDriver.getWindowHandles();
     }
 
@@ -115,6 +140,7 @@ public class TestBenchDriverProxy
 
     @Override
     public Capabilities getCapabilities() {
+        waitForVaadin();
         if (wrappedDriver instanceof HasCapabilities) {
             return ((HasCapabilities) wrappedDriver).getCapabilities();
         }
@@ -162,14 +188,8 @@ public class TestBenchDriverProxy
                 newList.add(wrapElementOrElements(value, tbCommandExecutor));
             }
             return newList;
-        } else if (elementElementsOrValues instanceof WebElement) {
-            if (elementElementsOrValues instanceof TestBenchElement) {
-                return elementElementsOrValues;
-            } else {
-                return TestBench.createElement(
-                        (WebElement) elementElementsOrValues,
-                        tbCommandExecutor);
-            }
+        } else if (elementElementsOrValues instanceof WebElement element) {
+            return TestBenchElement.wrapElement(element, tbCommandExecutor);
         } else {
             return elementElementsOrValues;
         }
@@ -181,7 +201,7 @@ public class TestBenchDriverProxy
             throw new RuntimeException(
                     "The driver is not a JavascriptExecutor");
         }
-
+        waitForVaadin();
         return wrapElementOrElements(((JavascriptExecutor) getWrappedDriver())
                 .executeScript(script, args), getCommandExecutor());
     }
@@ -192,7 +212,7 @@ public class TestBenchDriverProxy
             throw new RuntimeException(
                     "The driver is not a JavascriptExecutor");
         }
-
+        waitForVaadin();
         return wrapElementOrElements(((JavascriptExecutor) getWrappedDriver())
                 .executeAsyncScript(script, args), getCommandExecutor());
     }
@@ -200,7 +220,20 @@ public class TestBenchDriverProxy
     @Override
     public <X> X getScreenshotAs(OutputType<X> target)
             throws WebDriverException {
+        waitForVaadin();
         return ((TakesScreenshot) getWrappedDriver()).getScreenshotAs(target);
+    }
+
+    @Override
+    public void perform(Collection<Sequence> actions) {
+        waitForVaadin();
+        ((Interactive) getWrappedDriver()).perform(actions);
+    }
+
+    @Override
+    public void resetInputState() {
+        waitForVaadin();
+        ((Interactive) getWrappedDriver()).resetInputState();
     }
 
 }
