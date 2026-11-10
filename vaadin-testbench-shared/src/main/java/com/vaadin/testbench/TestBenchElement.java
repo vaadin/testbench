@@ -58,7 +58,7 @@ import com.vaadin.testbench.parallel.BrowserUtil;
  * from TestBenchTestCase or a context relative search from TestBenchElement.
  */
 @Element("*")
-public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
+public class TestBenchElement implements WrapsElement, HasDriver,
         CanCompareScreenshots, HasTestBenchCommandExecutor, HasElementQuery,
         HasPropertySettersGetters, HasCallFunction {
 
@@ -191,7 +191,6 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
                 .equals(getDriver().switchTo().activeElement());
     }
 
-    @Override
     public void click() {
         // JS call to click does not focus element, hence ensure focus
         focus();
@@ -212,12 +211,10 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
         }
     }
 
-    @Override
     public void submit() {
         click();
     }
 
-    @Override
     public void sendKeys(CharSequence... keysToSend) {
         // Viewport check: some drivers need the element in viewport for
         // reliable text entry.
@@ -226,14 +223,12 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
         wrappedElement.sendKeys(keysToSend);
     }
 
-    @Override
     public void clear() {
         ensureVisible();
         waitForVaadin();
         wrappedElement.clear();
     }
 
-    @Override
     public String getTagName() {
         waitForVaadin();
         return wrappedElement.getTagName();
@@ -245,19 +240,16 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
      * @return The attribute/ property's current value or null if the value is
      *         not set.
      */
-    @Override
     public String getAttribute(String name) {
         waitForVaadin();
         return wrappedElement.getAttribute(name);
     }
 
-    @Override
     public @Nullable String getDomAttribute(String name) {
         waitForVaadin();
         return wrappedElement.getDomAttribute(name);
     }
 
-    @Override
     public @Nullable String getDomProperty(String name) {
         waitForVaadin();
         return wrappedElement.getDomProperty(name);
@@ -275,7 +267,6 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
         return (boolean) callFunction("hasAttribute", attribute);
     }
 
-    @Override
     public boolean isSelected() {
         ensureVisible();
         waitForVaadin();
@@ -288,7 +279,6 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
      *
      * @return true if the component is enabled.
      */
-    @Override
     public boolean isEnabled() {
         waitForVaadin();
         return !hasClassName("v-disabled") && !hasAttribute("disabled")
@@ -307,45 +297,38 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
         return hasAttribute("readonly");
     }
 
-    @Override
     public String getText() {
         ensureVisible();
         waitForVaadin();
         return wrappedElement.getText();
     }
 
-    @Override
     public List<WebElement> findElements(By by) {
         return (List) TestBenchElement.wrapElements(
                 wrappedElement.findElements(by), getCommandExecutor());
     }
 
-    @Override
     public TestBenchElement findElement(By by) {
         waitForVaadin();
         return wrapElement(wrappedElement.findElement(by),
                 getCommandExecutor());
     }
 
-    @Override
     public boolean isDisplayed() {
         waitForVaadin();
         return wrappedElement.isDisplayed();
     }
 
-    @Override
     public Point getLocation() {
         waitForVaadin();
         return wrappedElement.getLocation();
     }
 
-    @Override
     public Dimension getSize() {
         waitForVaadin();
         return wrappedElement.getSize();
     }
 
-    @Override
     public String getCssValue(String propertyName) {
         waitForVaadin();
         return wrappedElement.getCssValue(propertyName);
@@ -400,7 +383,9 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
      */
     @Override
     public SearchContext getContext() {
-        return this;
+        // BRIDGE: the proxy adds SearchContext. Not the wrapped element:
+        // ElementQuery recognizes an element context by instanceof.
+        return (SearchContext) this;
     }
 
     /**
@@ -432,14 +417,12 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
         }
     }
 
-    @Override
     public <X> X getScreenshotAs(OutputType<X> target)
             throws WebDriverException {
         waitForVaadin();
         return wrappedElement.getScreenshotAs(target);
     }
 
-    @Override
     public Rectangle getRect() {
         waitForVaadin();
         return wrappedElement.getRect();
@@ -505,15 +488,19 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
     public boolean compareScreen(String referenceId) throws IOException {
         return ScreenshotComparator.compareScreen(referenceId,
                 getCommandExecutor().getReferenceNameGenerator(),
-                getCommandExecutor().getImageComparison(), this,
-                (HasCapabilities) getDriver());
+                // BRIDGE: the proxy adds TakesScreenshot; through it,
+                // getScreenshotAs waits for Vaadin
+                getCommandExecutor().getImageComparison(),
+                (TakesScreenshot) this, (HasCapabilities) getDriver());
     }
 
     @Override
     public boolean compareScreen(File reference) throws IOException {
         return ScreenshotComparator.compareScreen(reference,
                 getCommandExecutor().getImageComparison(),
-                (TakesScreenshot) this, (HasCapabilities) getDriver());
+                (TakesScreenshot) this, // BRIDGE: the proxy adds
+                                        // TakesScreenshot
+                (HasCapabilities) getDriver());
 
     }
 
@@ -522,7 +509,9 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
             throws IOException {
         return ScreenshotComparator.compareScreen(reference, referenceName,
                 getCommandExecutor().getImageComparison(),
-                (TakesScreenshot) this, (HasCapabilities) getDriver());
+                (TakesScreenshot) this, // BRIDGE: the proxy adds
+                                        // TakesScreenshot
+                (HasCapabilities) getDriver());
     }
 
     /***
@@ -903,7 +892,6 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
      *             elements in the shadow root.
      * @since 9.4
      */
-    @Override
     @Deprecated
     public SearchContext getShadowRoot() {
         throw new UnsupportedOperationException("getShadowRoot");
@@ -930,6 +918,6 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
         ensureInteractable();
         waitForVaadin();
         Actions action = new Actions(getDriver());
-        action.moveToElement(this).perform();
+        action.moveToElement(wrappedElement).perform();
     }
 }

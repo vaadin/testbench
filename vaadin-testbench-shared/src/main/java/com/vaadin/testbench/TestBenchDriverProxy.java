@@ -47,8 +47,9 @@ public class TestBenchDriverProxy
 
     @Override
     public WebElement findElement(By arg0) {
-        return TestBenchElement.wrapElement(wrappedDriver.findElement(arg0),
-                getCommandExecutor());
+        // BRIDGE: the proxy adds WebElement
+        return (WebElement) TestBenchElement.wrapElement(
+                wrappedDriver.findElement(arg0), getCommandExecutor());
     }
 
     @Override

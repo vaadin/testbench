@@ -94,6 +94,11 @@ public class ElementQueryTest {
         }
 
         @Override
+        public TestElementQuery<T> context(TestBenchElement element) {
+            return (TestElementQuery<T>) super.context(element);
+        }
+
+        @Override
         protected List<T> executeSearchScript(String script, Object context,
                 String tagName, String attributePairs,
                 JavascriptExecutor executor) {

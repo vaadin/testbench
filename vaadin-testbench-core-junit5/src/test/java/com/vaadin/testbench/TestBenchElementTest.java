@@ -64,7 +64,7 @@ public class TestBenchElementTest {
         TestBenchElement element = TestBenchElement.wrapElement(webElement,
                 null);
 
-        HashSet<WebElement> elements = new HashSet<>();
+        HashSet<Object> elements = new HashSet<>();
         elements.add(webElement);
         elements.add(element);
         Assertions.assertEquals(1, elements.size());

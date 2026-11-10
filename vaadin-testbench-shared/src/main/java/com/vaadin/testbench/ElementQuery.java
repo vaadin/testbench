@@ -1169,6 +1169,14 @@ public class ElementQuery<T extends TestBenchElement> {
     }
 
     /**
+     * Sets the element to search inside.
+     */
+    public ElementQuery<T> context(TestBenchElement element) {
+        // BRIDGE: the proxy adds SearchContext
+        return context((SearchContext) element);
+    }
+
+    /**
      * Defines that the query should start the search from the root of the page,
      * in practice from the {@code <body>} tag.
      *
