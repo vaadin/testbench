@@ -52,7 +52,7 @@ jobs:
   # whole matrix.
   self-test:
     name: Self test
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 5
     steps:
       - name: Checkout main
@@ -64,7 +64,7 @@ jobs:
   resolve-matrix:
     name: Resolve matrix
     needs: self-test
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 5
     outputs:
       branches: ${{ steps.set.outputs.branches }}
@@ -92,7 +92,7 @@ jobs:
   bump:
     name: ${{ matrix.branch }}
     needs: resolve-matrix
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 15
     strategy:
       # One branch failing must not cancel the others: each has an independent
@@ -198,7 +198,7 @@ jobs:
     name: Report
     needs: bump
     if: always()
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 5
     steps:
       - name: Download results

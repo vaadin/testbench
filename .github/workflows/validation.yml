@@ -26,7 +26,7 @@ env:
 jobs:
   format-check:
     name: Format Check
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 10
 
     steps:
@@ -55,7 +55,7 @@ jobs:
   build:
     name: Build Project
     needs: format-check
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 15
 
     steps:
@@ -96,7 +96,7 @@ jobs:
     name: Unit Tests
     needs: build
     if: ${{ !github.event.pull_request.head.repo.fork }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 15
 
     steps:
@@ -140,7 +140,7 @@ jobs:
     name: Integration Tests (${{ matrix.name }})
     needs: build
     if: ${{ !github.event.pull_request.head.repo.fork }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 45
     services:
       selenium:
@@ -231,7 +231,7 @@ jobs:
     name: Load Test Converter Plugin ITs
     needs: build
     if: ${{ !github.event.pull_request.head.repo.fork }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 30
 
     steps:
@@ -290,7 +290,7 @@ jobs:
       pull-requests: write
     if: ${{ always() && !github.event.pull_request.head.repo.fork }}
     needs: [format-check, build, unit-tests, integration-tests, loadtest-converter-tests]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
 
     steps:
       - name: Merge test result artifacts
