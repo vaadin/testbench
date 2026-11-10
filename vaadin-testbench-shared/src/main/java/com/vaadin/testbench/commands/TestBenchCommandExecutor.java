@@ -13,11 +13,14 @@ import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.HasCapabilities;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
@@ -27,10 +30,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.vaadin.testbench.HasDriver;
+import com.vaadin.testbench.TestBench;
 import com.vaadin.testbench.TestBenchDriverProxy;
 import com.vaadin.testbench.TestBenchElement;
+import com.vaadin.testbench.backend.selenium.SeleniumBackend;
 import com.vaadin.testbench.screenshot.ImageComparison;
 import com.vaadin.testbench.screenshot.ReferenceNameGenerator;
+import com.vaadin.testbench.spi.Backend;
+import com.vaadin.testbench.spi.ElementBackend;
 
 /**
  * Provides actual implementation of TestBenchCommands
@@ -42,6 +49,7 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
     }
 
     private TestBenchDriverProxy driver;
+    private Backend backend;
     private final ImageComparison imageComparison;
     private final ReferenceNameGenerator referenceNameGenerator;
 
@@ -78,6 +86,18 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
 
     public void setDriver(TestBenchDriverProxy driver) {
         this.driver = driver;
+        backend = null;
+    }
+
+    /**
+     * The browser this executor drives, below TestBench: nothing called on it
+     * waits for Vaadin.
+     */
+    public Backend getBackend() {
+        if (backend == null) {
+            backend = new SeleniumBackend(driver.getWrappedDriver());
+        }
+        return backend;
     }
 
     @Override
@@ -122,10 +142,8 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
             if (waitForVaadinLoopHook != null) {
                 waitForVaadinLoopHook.run();
             }
-            // Must use the wrapped driver here to avoid calling waitForVaadin
-            // again
-            finished = (Boolean) ((JavascriptExecutor) getDriver()
-                    .getWrappedDriver()).executeScript(WAIT_FOR_VAADIN_SCRIPT);
+            finished = (Boolean) getBackend()
+                    .executeScript(WAIT_FOR_VAADIN_SCRIPT);
             if (finished == null) {
                 // This should never happen but according to
                 // https://dev.vaadin.com/ticket/19703, it happens
@@ -256,8 +274,56 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
         this.autoScrollIntoView = autoScrollIntoView;
     }
 
+    /**
+     * Waits for Vaadin, then runs {@code script} as the body of a function.
+     *
+     * @param args
+     *            available as {@code arguments[0]...arguments[N]}; may hold
+     *            {@link TestBenchElement}s, also inside lists and maps
+     * @return the script's result, DOM nodes wrapped as
+     *         {@link TestBenchElement}s, also inside lists
+     */
     public Object executeScript(String script, Object... args) {
-        return getDriver().executeScript(script, args);
+        waitForVaadin();
+        Object[] backendArgs = new Object[args.length];
+        for (int i = 0; i < args.length; i++) {
+            backendArgs[i] = toBackend(args[i]);
+        }
+        return fromBackend(getBackend().executeScript(script, backendArgs));
+    }
+
+    private static Object toBackend(Object value) {
+        if (value instanceof TestBenchElement element) {
+            return element.getElementBackend();
+        }
+        if (value instanceof Collection<?> collection) {
+            List<Object> list = new ArrayList<>(collection.size());
+            for (Object item : collection) {
+                list.add(toBackend(item));
+            }
+            return list;
+        }
+        if (value instanceof Map<?, ?> map) {
+            Map<Object, Object> copy = new LinkedHashMap<>();
+            map.forEach((key, item) -> copy.put(key, toBackend(item)));
+            return copy;
+        }
+        return value;
+    }
+
+    private Object fromBackend(Object value) {
+        if (value instanceof ElementBackend element) {
+            return TestBench.createElement(TestBenchElement.class, element,
+                    this);
+        }
+        if (value instanceof List<?> list) {
+            List<Object> converted = new ArrayList<>(list.size());
+            for (Object item : list) {
+                converted.add(fromBackend(item));
+            }
+            return converted;
+        }
+        return value;
     }
 
     protected Object executeAsyncScript(String script, Object... args) {

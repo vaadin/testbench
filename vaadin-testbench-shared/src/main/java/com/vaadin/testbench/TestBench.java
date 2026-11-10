@@ -24,9 +24,11 @@ import org.openqa.selenium.WebElement;
 import com.vaadin.pro.licensechecker.Capabilities;
 import com.vaadin.pro.licensechecker.Capability;
 import com.vaadin.pro.licensechecker.LicenseChecker;
+import com.vaadin.testbench.backend.selenium.SeleniumBackend;
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.screenshot.ImageComparison;
 import com.vaadin.testbench.screenshot.ReferenceNameGenerator;
+import com.vaadin.testbench.spi.ElementBackend;
 
 /**
  */
@@ -190,6 +192,19 @@ public class TestBench {
         T proxy = (T) proxyObject;
         proxy.init(webElement, tbCommandExecutor);
         return proxy;
+    }
+
+    /**
+     * Creates an element of the given type for a node a backend has found.
+     *
+     * @return {@code null} if {@code element} is {@code null}
+     */
+    public static <T extends TestBenchElement> T createElement(Class<T> clazz,
+            ElementBackend element, TestBenchCommandExecutor tbCommandExecutor) {
+        // BRIDGE: the proxy is built around the Selenium element, whose
+        // interfaces it adds
+        return createElement(clazz, SeleniumBackend.webElementOf(element),
+                tbCommandExecutor);
     }
 
     private static MethodFilter getMethodFilter(

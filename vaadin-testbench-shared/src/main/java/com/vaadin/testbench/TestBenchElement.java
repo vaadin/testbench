@@ -40,17 +40,19 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.WrapsElement;
-import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import com.vaadin.testbench.backend.selenium.SeleniumBackend;
+import com.vaadin.testbench.backend.selenium.SeleniumElementBackend;
 import com.vaadin.testbench.commands.CanCompareScreenshots;
 import com.vaadin.testbench.commands.ScreenshotComparator;
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.commands.TestBenchCommands;
 import com.vaadin.testbench.elementsbase.Element;
 import com.vaadin.testbench.parallel.BrowserUtil;
+import com.vaadin.testbench.spi.ElementBackend;
 
 /**
  * TestBenchElement is a WebElement wrapper. It provides Vaadin specific helper
@@ -62,7 +64,7 @@ public class TestBenchElement implements WrapsElement, HasDriver,
         CanCompareScreenshots, HasTestBenchCommandExecutor, HasElementQuery,
         HasPropertySettersGetters, HasCallFunction {
 
-    private WebElement wrappedElement = null;
+    private ElementBackend elementBackend = null;
     private TestBenchCommandExecutor commandExecutor = null;
 
     protected TestBenchElement() {
@@ -88,7 +90,10 @@ public class TestBenchElement implements WrapsElement, HasDriver,
             TestBenchCommandExecutor commandExecutor) {
         if (this.commandExecutor == null) {
             this.commandExecutor = commandExecutor;
-            wrappedElement = element;
+            // Only a Selenium backend hands out WebElements
+            SeleniumBackend backend = commandExecutor == null ? null
+                    : (SeleniumBackend) commandExecutor.getBackend();
+            elementBackend = new SeleniumElementBackend(backend, element);
             init();
         }
     }
@@ -138,7 +143,14 @@ public class TestBenchElement implements WrapsElement, HasDriver,
 
     @Override
     public WebElement getWrappedElement() {
-        return wrappedElement;
+        return SeleniumBackend.webElementOf(elementBackend);
+    }
+
+    /**
+     * The DOM node this element stands for, as the browser backend holds it.
+     */
+    public ElementBackend getElementBackend() {
+        return elementBackend;
     }
 
     protected void waitForVaadin() {
@@ -187,8 +199,9 @@ public class TestBenchElement implements WrapsElement, HasDriver,
      * @since 9.4
      */
     public boolean isFocused() {
-        return this.getWrappedElement()
-                .equals(getDriver().switchTo().activeElement());
+        return (boolean) getCommandExecutor().getBackend().executeScript(
+                "return arguments[0] === document.activeElement",
+                elementBackend);
     }
 
     public void click() {
@@ -207,7 +220,7 @@ public class TestBenchElement implements WrapsElement, HasDriver,
             // SVG elements and maybe others do not have a 'click' method
             ensureVisible();
             waitForVaadin();
-            wrappedElement.click();
+            elementBackend.click();
         }
     }
 
@@ -220,18 +233,18 @@ public class TestBenchElement implements WrapsElement, HasDriver,
         // reliable text entry.
         ensureInteractable();
         waitForVaadin();
-        wrappedElement.sendKeys(keysToSend);
+        elementBackend.sendKeys(keysToSend);
     }
 
     public void clear() {
         ensureVisible();
         waitForVaadin();
-        wrappedElement.clear();
+        elementBackend.clear();
     }
 
     public String getTagName() {
         waitForVaadin();
-        return wrappedElement.getTagName();
+        return elementBackend.getTagName();
     }
 
     /**
@@ -242,17 +255,17 @@ public class TestBenchElement implements WrapsElement, HasDriver,
      */
     public String getAttribute(String name) {
         waitForVaadin();
-        return wrappedElement.getAttribute(name);
+        return elementBackend.getAttribute(name);
     }
 
     public @Nullable String getDomAttribute(String name) {
         waitForVaadin();
-        return wrappedElement.getDomAttribute(name);
+        return elementBackend.getDomAttribute(name);
     }
 
     public @Nullable String getDomProperty(String name) {
         waitForVaadin();
-        return wrappedElement.getDomProperty(name);
+        return elementBackend.getDomProperty(name);
     }
 
     /**
@@ -270,7 +283,7 @@ public class TestBenchElement implements WrapsElement, HasDriver,
     public boolean isSelected() {
         ensureVisible();
         waitForVaadin();
-        return wrappedElement.isSelected();
+        return elementBackend.isSelected();
     }
 
     /**
@@ -282,7 +295,7 @@ public class TestBenchElement implements WrapsElement, HasDriver,
     public boolean isEnabled() {
         waitForVaadin();
         return !hasClassName("v-disabled") && !hasAttribute("disabled")
-                && wrappedElement.isEnabled();
+                && elementBackend.isEnabled();
     }
 
     /**
@@ -300,67 +313,58 @@ public class TestBenchElement implements WrapsElement, HasDriver,
     public String getText() {
         ensureVisible();
         waitForVaadin();
-        return wrappedElement.getText();
+        return elementBackend.getText();
     }
 
     public List<WebElement> findElements(By by) {
         return (List) TestBenchElement.wrapElements(
-                wrappedElement.findElements(by), getCommandExecutor());
+                getWrappedElement().findElements(by), getCommandExecutor());
     }
 
     public TestBenchElement findElement(By by) {
         waitForVaadin();
-        return wrapElement(wrappedElement.findElement(by),
+        return wrapElement(getWrappedElement().findElement(by),
                 getCommandExecutor());
     }
 
     public boolean isDisplayed() {
         waitForVaadin();
-        return wrappedElement.isDisplayed();
+        return elementBackend.isDisplayed();
     }
 
     public Point getLocation() {
         waitForVaadin();
-        return wrappedElement.getLocation();
+        ElementBackend.Rect rect = elementBackend.getRect();
+        return new Point(rect.x(), rect.y());
     }
 
     public Dimension getSize() {
         waitForVaadin();
-        return wrappedElement.getSize();
+        ElementBackend.Rect rect = elementBackend.getRect();
+        return new Dimension(rect.width(), rect.height());
     }
 
     public String getCssValue(String propertyName) {
         waitForVaadin();
-        return wrappedElement.getCssValue(propertyName);
+        return elementBackend.getCssValue(propertyName);
     }
 
     public void click(int x, int y, Keys... modifiers) {
         ensureInteractable();
         waitForVaadin();
-        Actions actions = new Actions(getDriver());
-        actions.moveToElement(wrappedElement, x, y);
-        // Press any modifier keys
-        for (Keys modifier : modifiers) {
-            actions.keyDown(modifier);
-        }
-        actions.click();
-        // Release any modifier keys
-        for (Keys modifier : modifiers) {
-            actions.keyUp(modifier);
-        }
-        actions.build().perform();
+        elementBackend.click(x, y, modifiers);
     }
 
     public void doubleClick() {
         ensureInteractable();
         waitForVaadin();
-        new Actions(getDriver()).doubleClick(wrappedElement).build().perform();
+        elementBackend.doubleClick();
     }
 
     public void contextClick() {
         ensureInteractable();
         waitForVaadin();
-        new Actions(getDriver()).contextClick(wrappedElement).build().perform();
+        elementBackend.contextClick();
     }
 
     public <T extends TestBenchElement> T wrap(Class<T> elementType) {
@@ -420,12 +424,14 @@ public class TestBenchElement implements WrapsElement, HasDriver,
     public <X> X getScreenshotAs(OutputType<X> target)
             throws WebDriverException {
         waitForVaadin();
-        return wrappedElement.getScreenshotAs(target);
+        return target.convertFromPngBytes(elementBackend.getScreenshot());
     }
 
     public Rectangle getRect() {
         waitForVaadin();
-        return wrappedElement.getRect();
+        ElementBackend.Rect rect = elementBackend.getRect();
+        return new Rectangle(new Point(rect.x(), rect.y()),
+                new Dimension(rect.width(), rect.height()));
     }
 
     /**
@@ -469,19 +475,22 @@ public class TestBenchElement implements WrapsElement, HasDriver,
 
     @Override
     public boolean equals(Object obj) {
-        if (wrappedElement == null) {
+        if (elementBackend == null) {
             return false;
         }
-        return wrappedElement.equals(obj);
+        if (obj instanceof TestBenchElement other) {
+            return elementBackend.equals(other.elementBackend);
+        }
+        return elementBackend.equals(obj);
     }
 
     @Override
     public int hashCode() {
-        if (wrappedElement == null) {
+        if (elementBackend == null) {
             return 32;
         }
 
-        return wrappedElement.hashCode();
+        return elementBackend.hashCode();
     }
 
     @Override
@@ -570,7 +579,7 @@ public class TestBenchElement implements WrapsElement, HasDriver,
     private void ensureVisible() {
         try {
             if (getCommandExecutor().isAutoScrollIntoView()) {
-                if (!wrappedElement.isDisplayed()) {
+                if (!elementBackend.isDisplayed()) {
                     scrollIntoView();
                 }
             }
@@ -917,7 +926,6 @@ public class TestBenchElement implements WrapsElement, HasDriver,
     public void hover() {
         ensureInteractable();
         waitForVaadin();
-        Actions action = new Actions(getDriver());
-        action.moveToElement(wrappedElement).perform();
+        elementBackend.hover();
     }
 }

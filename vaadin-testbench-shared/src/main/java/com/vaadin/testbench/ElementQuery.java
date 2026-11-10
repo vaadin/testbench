@@ -22,7 +22,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.TimeoutException;
@@ -31,6 +30,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.vaadin.testbench.annotations.Attribute;
+import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.elementsbase.Element;
 import com.vaadin.testbench.internal.SharedUtil;
 
@@ -1522,7 +1522,7 @@ public class ElementQuery<T extends TestBenchElement> {
     private List<T> executeSearch(Integer index) {
         StringBuilder script = new StringBuilder();
         TestBenchElement elementContext;
-        JavascriptExecutor executor;
+        TestBenchCommandExecutor executor;
 
         var context = getContext();
         if (context instanceof TestBenchElement testBenchElement) {
@@ -1536,7 +1536,7 @@ public class ElementQuery<T extends TestBenchElement> {
                     + "return result" //
             );
             elementContext = testBenchElement;
-            executor = elementContext.getCommandExecutor().getDriver();
+            executor = elementContext.getCommandExecutor();
         } else if (context instanceof WebDriver webDriver) {
             // Search the whole document
             script.append("var result = [];" //
@@ -1544,7 +1544,8 @@ public class ElementQuery<T extends TestBenchElement> {
                     + "result = result.concat(Array.prototype.slice.call(queryResult));"
                     + "return result");
             elementContext = null;
-            executor = (JavascriptExecutor) webDriver;
+            executor = ((HasTestBenchCommandExecutor) webDriver)
+                    .getCommandExecutor();
         } else {
             if (context == null) {
                 throw new IllegalStateException("Context cannot be null");
@@ -1647,7 +1648,7 @@ public class ElementQuery<T extends TestBenchElement> {
      */
     @SuppressWarnings("unchecked")
     List<T> executeSearchScript(String script, Object context, String tagName,
-            String attributePairs, JavascriptExecutor executor) {
+            String attributePairs, TestBenchCommandExecutor executor) {
         Object result = executor.executeScript(script, context, tagName,
                 attributePairs);
         if (result == null) {

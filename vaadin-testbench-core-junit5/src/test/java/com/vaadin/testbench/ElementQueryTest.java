@@ -25,6 +25,7 @@ import org.openqa.selenium.WebElement;
 
 import com.vaadin.testbench.ElementQuery.AttributeMatch;
 import com.vaadin.testbench.annotations.Attribute;
+import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.elementsbase.Element;
 
 import static com.vaadin.testbench.ElementQuery.AttributeMatch.Comparison.CONTAINS_WORD;
@@ -99,7 +100,7 @@ class ElementQueryTest {
         @Override
         protected List<T> executeSearchScript(String script, Object context,
                 String tagName, String attributePairs,
-                JavascriptExecutor executor) {
+                TestBenchCommandExecutor executor) {
             if (executed) {
                 throw new IllegalStateException(
                         "Query was already executed once");
@@ -818,7 +819,7 @@ class ElementQueryTest {
         @Override
         protected List<T> executeSearchScript(String script, Object context,
                 String tagName, String attributePairs,
-                JavascriptExecutor executor) {
+                TestBenchCommandExecutor executor) {
             return results.get(Math.min(executionCount++, results.size() - 1));
         }
     }
