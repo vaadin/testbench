@@ -11,6 +11,7 @@ package com.vaadin.tests;
 import java.util.List;
 
 import org.junit.Test;
+import org.openqa.selenium.WebDriverException;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.testUI.TemplateView;
@@ -24,6 +25,7 @@ import static com.vaadin.testbench.ElementQuery.AttributeMatch.Comparison.ENDS_W
 import static com.vaadin.testbench.ElementQuery.AttributeMatch.Comparison.NOT_CONTAINS_PREFIX;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 
 public class ElementQueryIT extends AbstractTB6Test {
 
@@ -106,6 +108,27 @@ public class ElementQueryIT extends AbstractTB6Test {
                 .$("button").id("shadow-button-2");
         assertEquals("Shadow Button 2", button.getText());
 
+    }
+
+    @Test
+    public void selectorListWithId_filterAppliesToWholeList() {
+        openTestURL();
+
+        List<TestBenchElement> elements = $(TemplateViewElement.class)
+                .waitForFirst().$("div, button").withId("shadow-button-2")
+                .all();
+        assertEquals(1, elements.size());
+        assertEquals("Shadow Button 2", elements.get(0).getText());
+    }
+
+    @Test
+    public void invalidSelectorWithId_throws() {
+        openTestURL();
+
+        TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
+        assertThrows(WebDriverException.class,
+                () -> view.$("button:no-such-pseudo-class")
+                        .withId("shadow-button-2").all());
     }
 
     @Test

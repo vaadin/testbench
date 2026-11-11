@@ -38,8 +38,8 @@ import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 public class ElementQueryTest {
-    private static final String DOCUMENT_QUERY_FRAGMENT = "document.querySelectorAll(arguments[1]+arguments[2])";
-    private static final String ELEMENT_QUERY_FRAGMENT = "arguments[0].shadowRoot.querySelectorAll(arguments[1]+arguments[2])";
+    private static final String DOCUMENT_QUERY_FRAGMENT = "document.querySelectorAll(selector)";
+    private static final String ELEMENT_QUERY_FRAGMENT = "arguments[0].shadowRoot.querySelectorAll(selector)";
     private static final String SINGLE_RESULT_QUERY_SUFFIX = ";return result";
     private static final String FIRST_RESULT_QUERY_SUFFIX = ";return result[0]";
 
@@ -900,7 +900,7 @@ public class ElementQueryTest {
         var exception = assertThrows(NoSuchElementException.class,
                 () -> query.waitForSingle(1));
         assertTrue(exception.getMessage().contains(
-                "No element with tag <" + ExampleElement.TAG + "> found."));
+                "No element matching <" + ExampleElement.TAG + "> found."));
         assertTrue(exception.getMessage().contains("Timed out after 1s."));
     }
 
