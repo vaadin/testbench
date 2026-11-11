@@ -8,6 +8,8 @@
  */
 package com.vaadin.testbench.spi;
 
+import java.util.List;
+
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -28,8 +30,7 @@ import org.jspecify.annotations.Nullable;
  * Nothing here waits for Vaadin or scrolls; the caller does.
  * <p>
  * Keys are W3C WebDriver key codes: a character, or one of the code points
- * U+E000 to U+E05D for a special key, as Selenium's {@code Keys} constants
- * are.
+ * U+E000 to U+E05D for a special key, as Selenium's {@code Keys} constants are.
  * <p>
  * {@code equals} and {@code hashCode} compare the DOM node.
  */
@@ -57,6 +58,15 @@ public interface ElementBackend {
     void sendKeys(CharSequence... keys);
 
     void clear();
+
+    /**
+     * The descendants matching {@code cssSelector}, in document order, as
+     * {@code querySelectorAll} on this node finds them: the light DOM only,
+     * never inside a shadow root.
+     *
+     * @return empty when nothing matches
+     */
+    List<ElementBackend> findElements(String cssSelector);
 
     String getTagName();
 

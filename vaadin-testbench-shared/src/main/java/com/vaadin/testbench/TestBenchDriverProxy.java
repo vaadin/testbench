@@ -33,12 +33,12 @@ import com.vaadin.testbench.commands.TestBenchCommandExecutor;
  * each call, except navigation, window management and closing, and turns found
  * elements into {@link TestBenchElement}s.
  * <p>
- * Only the interfaces it implements are there: a cast to anything else the
- * real driver implements needs {@link #getWrappedDriver()}.
+ * Only the interfaces it implements are there: a cast to anything else the real
+ * driver implements needs {@link #getWrappedDriver()}.
  */
-public class TestBenchDriverProxy implements WebDriver, WrapsDriver,
-        HasTestBenchCommandExecutor, HasCapabilities, TakesScreenshot,
-        JavascriptExecutor, Interactive {
+public class TestBenchDriverProxy
+        implements WebDriver, WrapsDriver, HasTestBenchCommandExecutor,
+        HasCapabilities, TakesScreenshot, JavascriptExecutor, Interactive {
 
     private final WebDriver wrappedDriver;
     private final TestBenchCommandExecutor commandExecutor;

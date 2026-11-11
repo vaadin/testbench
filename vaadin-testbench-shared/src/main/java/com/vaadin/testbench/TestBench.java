@@ -89,7 +89,8 @@ public class TestBench {
      * @return {@code null} if {@code element} is {@code null}
      */
     public static <T extends TestBenchElement> T createElement(Class<T> clazz,
-            ElementBackend element, TestBenchCommandExecutor tbCommandExecutor) {
+            ElementBackend element,
+            TestBenchCommandExecutor tbCommandExecutor) {
         if (element == null) {
             return null;
         }

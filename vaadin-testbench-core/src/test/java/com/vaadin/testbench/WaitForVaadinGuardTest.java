@@ -43,9 +43,9 @@ import com.vaadin.testbench.spi.ElementBackend;
  * {@code waitForVaadin()} itself, and this is what notices a forgotten one.
  * <p>
  * It calls every method against a fake browser that records each call, and
- * checks that a wait comes before the method's last browser call, the one
- * doing its work. Calls before that may skip the wait, as the visibility
- * probes in {@code getText()} and {@code clear()} always have.
+ * checks that a wait comes before the method's last browser call, the one doing
+ * its work. Calls before that may skip the wait, as the visibility probes in
+ * {@code getText()} and {@code clear()} always have.
  */
 public class WaitForVaadinGuardTest {
 
@@ -75,13 +75,28 @@ public class WaitForVaadinGuardTest {
 
     @Before
     public void setUp() {
-        Backend backend = (script, args) -> {
-            if (script.contains("isActive()")) {
-                calls.add("wait");
-                return true;
+        Backend backend = new Backend() {
+            @Override
+            public Object executeScript(String script, Object... args) {
+                if (script.contains("isActive()")) {
+                    calls.add("wait");
+                    return true;
+                }
+                calls.add("script");
+                return null;
             }
-            calls.add("script");
-            return null;
+
+            @Override
+            public Object executeAsyncScript(String script, Object... args) {
+                calls.add("asyncScript");
+                return null;
+            }
+
+            @Override
+            public String getBrowserName() {
+                // known without asking the browser, so not a browser call
+                return "chrome";
+            }
         };
         executor = new TestBenchCommandExecutor(null, null) {
             @Override
@@ -98,11 +113,10 @@ public class WaitForVaadinGuardTest {
 
     @Test
     public void everyElementMethodWaitsBeforeItsBrowserCall() {
-        ElementBackend node = Mockito.mock(ElementBackend.class,
-                invocation -> {
-                    calls.add("node:" + invocation.getMethod().getName());
-                    return Answers.RETURNS_DEFAULTS.answer(invocation);
-                });
+        ElementBackend node = Mockito.mock(ElementBackend.class, invocation -> {
+            calls.add("node:" + invocation.getMethod().getName());
+            return Answers.RETURNS_DEFAULTS.answer(invocation);
+        });
         AllMixinsElement element = TestBench
                 .createElement(AllMixinsElement.class, node, executor);
 

@@ -15,10 +15,15 @@ import java.util.List;
 import java.util.Map;
 
 import org.jspecify.annotations.Nullable;
+import org.openqa.selenium.HasCapabilities;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 
+import com.vaadin.testbench.NoSuchElementException;
+import com.vaadin.testbench.StaleElementReferenceException;
+import com.vaadin.testbench.TimeoutException;
 import com.vaadin.testbench.spi.Backend;
 import com.vaadin.testbench.spi.ElementBackend;
 
@@ -66,13 +71,52 @@ public class SeleniumBackend implements Backend {
     @Override
     public @Nullable Object executeScript(String script,
             @Nullable Object... args) {
+        return fromSelenium(((JavascriptExecutor) driver).executeScript(script,
+                toSelenium(args)));
+    }
+
+    @Override
+    public @Nullable Object executeAsyncScript(String script,
+            @Nullable Object... args) {
+        try {
+            return fromSelenium(((JavascriptExecutor) driver)
+                    .executeAsyncScript(script, toSelenium(args)));
+        } catch (WebDriverException e) {
+            throw translate(e);
+        }
+    }
+
+    @Override
+    public @Nullable String getBrowserName() {
+        if (driver instanceof HasCapabilities hasCapabilities) {
+            return hasCapabilities.getCapabilities().getBrowserName();
+        }
+        return null;
+    }
+
+    /**
+     * TestBench's own exception for Selenium's stale element, not found and
+     * timeout ones; any other comes back as it is.
+     */
+    static RuntimeException translate(WebDriverException e) {
+        if (e instanceof org.openqa.selenium.StaleElementReferenceException) {
+            return new StaleElementReferenceException(e.getRawMessage(), e);
+        }
+        if (e instanceof org.openqa.selenium.NoSuchElementException) {
+            return new NoSuchElementException(e.getRawMessage(), e);
+        }
+        if (e instanceof org.openqa.selenium.TimeoutException) {
+            return new TimeoutException(e.getRawMessage(), e);
+        }
+        return e;
+    }
+
+    private static Object[] toSelenium(@Nullable Object[] args) {
         Object[] seleniumArgs = new Object[args.length];
         for (int i = 0; i < args.length; i++) {
             seleniumArgs[i] = toSelenium(args[i]);
         }
-        return fromSelenium(
-                ((JavascriptExecutor) driver).executeScript(script,
-                        seleniumArgs));
+        return seleniumArgs;
     }
 
     private static @Nullable Object toSelenium(@Nullable Object value) {

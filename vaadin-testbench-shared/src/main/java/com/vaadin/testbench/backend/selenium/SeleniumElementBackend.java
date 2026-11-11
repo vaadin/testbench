@@ -8,11 +8,14 @@
  */
 package com.vaadin.testbench.backend.selenium;
 
+import java.util.List;
 import java.util.Objects;
 
 import org.jspecify.annotations.Nullable;
+import org.openqa.selenium.By;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Rectangle;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 
@@ -42,8 +45,9 @@ public class SeleniumElementBackend implements ElementBackend {
     }
 
     private Actions actions() {
-        return new Actions(Objects.requireNonNull(backend,
-                "No browser for this element").getDriver());
+        return new Actions(
+                Objects.requireNonNull(backend, "No browser for this element")
+                        .getDriver());
     }
 
     @Override
@@ -89,6 +93,18 @@ public class SeleniumElementBackend implements ElementBackend {
     @Override
     public void clear() {
         element.clear();
+    }
+
+    @Override
+    public List<ElementBackend> findElements(String cssSelector) {
+        try {
+            return element.findElements(By.cssSelector(cssSelector)).stream()
+                    .<ElementBackend> map(
+                            found -> new SeleniumElementBackend(backend, found))
+                    .toList();
+        } catch (WebDriverException e) {
+            throw SeleniumBackend.translate(e);
+        }
     }
 
     @Override
