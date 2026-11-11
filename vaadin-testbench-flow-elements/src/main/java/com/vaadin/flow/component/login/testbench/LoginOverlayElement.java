@@ -34,7 +34,7 @@ public class LoginOverlayElement extends TestBenchElement implements Login {
      * Returns the container of the branding and form area
      */
     public TestBenchElement getLoginOverlayWrapper() {
-        return $("vaadin-login-overlay-wrapper").first();
+        return $("vaadin-login-overlay-wrapper").get(0);
     }
 
     public boolean isOpened() {
@@ -57,23 +57,23 @@ public class LoginOverlayElement extends TestBenchElement implements Login {
 
     @Override
     public ButtonElement getSubmitButton() {
-        return $(ButtonElement.class).withAttribute("slot", "submit").first();
+        return $(ButtonElement.class).withAttribute("slot", "submit").get(0);
     }
 
     @Override
     public ButtonElement getForgotPasswordButton() {
         return $(ButtonElement.class).withAttribute("slot", "forgot-password")
-                .first();
+                .get(0);
     }
 
     private TestBenchElement getFormWrapper() {
-        return $("vaadin-login-form-wrapper").first();
+        return $("vaadin-login-form-wrapper").get(0);
     }
 
     @Override
     public TestBenchElement getErrorComponent() {
         return getFormWrapper().$(TestBenchElement.class)
-                .withAttribute("part", "error-message").first();
+                .withAttribute("part", "error-message").get(0);
     }
 
     @Override
@@ -98,7 +98,7 @@ public class LoginOverlayElement extends TestBenchElement implements Login {
      */
     public String getDescription() {
         return getLoginOverlayWrapper().$(TestBenchElement.class)
-                .withAttribute("part", "description").first().getText();
+                .withAttribute("part", "description").get(0).getText();
     }
 
     /**
@@ -113,26 +113,26 @@ public class LoginOverlayElement extends TestBenchElement implements Login {
     @Override
     public String getFormTitle() {
         return $(TestBenchElement.class).withAttribute("part", "form-title")
-                .first().getText();
+                .get(0).getText();
     }
 
     @Override
     public String getErrorMessageTitle() {
         return getErrorComponent().$(TestBenchElement.class)
-                .withAttribute("part", "error-message-title").first().getText();
+                .withAttribute("part", "error-message-title").get(0).getText();
     }
 
     @Override
     public String getErrorMessage() {
         return getErrorComponent().$(TestBenchElement.class)
-                .withAttribute("part", "error-message-description").first()
+                .withAttribute("part", "error-message-description").get(0)
                 .getText();
     }
 
     @Override
     public String getAdditionalInformation() {
         return getFormWrapper().$(TestBenchElement.class)
-                .withAttribute("part", "footer").first().$("div").first()
+                .withAttribute("part", "footer").get(0).$("div").get(0)
                 .getText();
     }
 

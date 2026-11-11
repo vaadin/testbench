@@ -49,7 +49,7 @@ public class BigDecimalFieldElement extends TestBenchElement
      */
     @Override
     public void setValue(String string) {
-        TestBenchElement input = $("input").first();
+        TestBenchElement input = $("input").get(0);
         TextFieldElementHelper.setValue(input, string);
     }
 

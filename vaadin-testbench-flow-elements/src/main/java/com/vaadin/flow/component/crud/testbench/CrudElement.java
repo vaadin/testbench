@@ -35,7 +35,7 @@ public class CrudElement extends TestBenchElement {
      * @return the crud grid
      */
     public GridElement getGrid() {
-        return this.$(GridElement.class).first();
+        return this.$(GridElement.class).get(0);
     }
 
     /**
@@ -189,7 +189,7 @@ public class CrudElement extends TestBenchElement {
      */
     public ConfirmDialogElement getConfirmCancelDialog() {
         return $(ConfirmDialogElement.class)
-                .withAttribute("slot", "confirm-cancel").first();
+                .withAttribute("slot", "confirm-cancel").get(0);
     }
 
     /**
@@ -199,6 +199,6 @@ public class CrudElement extends TestBenchElement {
      */
     public ConfirmDialogElement getConfirmDeleteDialog() {
         return $(ConfirmDialogElement.class)
-                .withAttribute("slot", "confirm-delete").first();
+                .withAttribute("slot", "confirm-delete").get(0);
     }
 }

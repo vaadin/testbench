@@ -25,7 +25,7 @@ public class DetailsElement extends TestBenchElement {
      * Returns summary element
      */
     public TestBenchElement getSummary() {
-        return getSummaryWrapper().$("*").first();
+        return getSummaryWrapper().$("*").get(0);
     }
 
     /**
@@ -40,7 +40,7 @@ public class DetailsElement extends TestBenchElement {
      */
     public TestBenchElement getContent() {
         TestBenchElement contentSlot = $("slot").withoutAttribute("name")
-                .first();
+                .get(0);
 
         return (TestBenchElement) executeScript(
                 "return arguments[0].assignedNodes()[0];", contentSlot);
@@ -59,7 +59,7 @@ public class DetailsElement extends TestBenchElement {
      */
     public TestBenchElement getSummaryWrapper() {
         return $(TestBenchElement.class).withAttribute("slot", "summary")
-                .first();
+                .get(0);
     }
 
     /**

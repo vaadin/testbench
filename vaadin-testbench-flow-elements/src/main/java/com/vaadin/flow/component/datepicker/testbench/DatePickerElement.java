@@ -57,7 +57,7 @@ public class DatePickerElement extends TestBenchElement
          */
         public ButtonElement getTodayButton() {
             return this.$(ButtonElement.class)
-                    .withAttribute("slot", "today-button").first();
+                    .withAttribute("slot", "today-button").get(0);
         }
 
         /**
@@ -67,7 +67,7 @@ public class DatePickerElement extends TestBenchElement
          */
         public ButtonElement getCancelButton() {
             return this.$(ButtonElement.class)
-                    .withAttribute("slot", "cancel-button").first();
+                    .withAttribute("slot", "cancel-button").get(0);
         }
     }
 
@@ -79,7 +79,7 @@ public class DatePickerElement extends TestBenchElement
          */
         public String getHeaderText() {
             return this.$(TestBenchElement.class)
-                    .withAttribute("part", "month-header").first().getText();
+                    .withAttribute("part", "month-header").get(0).getText();
         }
 
         /**
@@ -209,7 +209,7 @@ public class DatePickerElement extends TestBenchElement
      * @return the input value
      */
     public String getInputValue() {
-        TestBenchElement input = $("input").first();
+        TestBenchElement input = $("input").get(0);
         return input.getPropertyString("value");
     }
 
@@ -244,7 +244,7 @@ public class DatePickerElement extends TestBenchElement
      * @return the overlay content element
      */
     public OverlayContentElement getOverlayContent() {
-        return $(OverlayContentElement.class).first();
+        return $(OverlayContentElement.class).get(0);
     }
 
     @Override

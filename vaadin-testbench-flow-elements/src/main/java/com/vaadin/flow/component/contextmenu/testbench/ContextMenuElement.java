@@ -15,13 +15,16 @@
  */
 package com.vaadin.flow.component.contextmenu.testbench;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 
 import com.vaadin.testbench.By;
+import com.vaadin.testbench.ElementQuery;
 import com.vaadin.testbench.NoSuchElementException;
 import com.vaadin.testbench.StaleElementReferenceException;
 import com.vaadin.testbench.TimeoutException;
+import com.vaadin.testbench.Wait;
 
 import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.testbench.elementsbase.Element;
@@ -49,8 +52,12 @@ public class ContextMenuElement extends TestBenchElement {
      */
     public static ContextMenuElement openByRightClick(TestBenchElement target) {
         target.contextClick();
-        return target.$(ContextMenuElement.class).onPage()
-                .withAttribute("opened").waitForFirst();
+        ElementQuery<ContextMenuElement> opened = target
+                .$(ContextMenuElement.class).onPage().withAttribute("opened");
+        // waitForFirst(), which the modern mode rejects: the first of the open
+        // menus, where waitForSingle() would fail on several
+        return Wait.until(() -> opened.all().stream().findFirst().orElse(null),
+                Duration.ofSeconds(10));
     }
 
     /**

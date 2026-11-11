@@ -31,7 +31,7 @@ public class RadioButtonElement extends TestBenchElement {
      * @return the text of the radio button
      */
     public String getItem() {
-        return $("label").first().getPropertyString("textContent");
+        return $("label").get(0).getPropertyString("textContent");
     }
 
     /**

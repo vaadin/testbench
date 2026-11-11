@@ -18,12 +18,12 @@ public class RichTextEditorElement extends TestBenchElement {
 
     public TestBenchElement getEditor() {
         return $("div").withAttributeContainingWord("class", "ql-editor")
-                .first();
+                .get(0);
     }
 
     public List getTitles() {
         TestBenchElement toolbar = $("div")
-                .withAttributeContainingWord("part", "toolbar").first();
+                .withAttributeContainingWord("part", "toolbar").get(0);
         // A sibling combinator has no $ form; the toolbar has no shadow root,
         // so its light DOM is all $ searched
         List<TestBenchElement> buttonTooltips = (List<TestBenchElement>) executeScript(

@@ -100,7 +100,7 @@ abstract class NumberRangeSliderElement<TNumber extends Number>
      * @return the start input element
      */
     public TestBenchElement getStartInputElement() {
-        return $("input").first();
+        return $("input").get(0);
     }
 
     /**

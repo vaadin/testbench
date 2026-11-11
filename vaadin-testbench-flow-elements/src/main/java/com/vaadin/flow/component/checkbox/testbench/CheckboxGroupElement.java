@@ -140,6 +140,6 @@ public class CheckboxGroupElement extends TestBenchElement
      * @return the slotted component or {@code null} if there is no component
      */
     public TestBenchElement getErrorMessageComponent() {
-        return $("div").withAttribute("slot", "error-message").first();
+        return $("div").withAttribute("slot", "error-message").get(0);
     }
 }

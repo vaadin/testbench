@@ -259,7 +259,7 @@ public class DateTimePickerElement extends TestBenchElement
      * @return DatePickerElement
      */
     public DatePickerElement getDatePicker() {
-        return this.$(DatePickerElement.class).first();
+        return this.$(DatePickerElement.class).get(0);
     }
 
     /**
@@ -268,7 +268,7 @@ public class DateTimePickerElement extends TestBenchElement
      * @return TimePickerElement
      */
     public TimePickerElement getTimePicker() {
-        return this.$(TimePickerElement.class).first();
+        return this.$(TimePickerElement.class).get(0);
     }
 
     /**

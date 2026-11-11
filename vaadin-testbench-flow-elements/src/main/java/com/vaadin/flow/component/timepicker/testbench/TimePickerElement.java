@@ -44,7 +44,7 @@ public class TimePickerElement extends TestBenchElement
      * @return the input element
      */
     public TestBenchElement getTimePickerInputElement() {
-        return $("input").first();
+        return $("input").get(0);
     }
 
     @Override

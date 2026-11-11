@@ -49,7 +49,7 @@ public class TextAreaElement extends TestBenchElement
      */
     @Override
     public void setValue(String string) {
-        TestBenchElement textarea = $("textarea").first();
+        TestBenchElement textarea = $("textarea").get(0);
         TextFieldElementHelper.setValue(textarea, string);
     }
 

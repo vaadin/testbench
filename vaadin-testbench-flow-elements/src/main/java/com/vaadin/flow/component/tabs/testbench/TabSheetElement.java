@@ -100,7 +100,7 @@ public class TabSheetElement extends TestBenchElement {
      * @return the tabs element
      */
     public TabsElement getTabs() {
-        return $(TabsElement.class).first();
+        return $(TabsElement.class).get(0);
     }
 
     /**

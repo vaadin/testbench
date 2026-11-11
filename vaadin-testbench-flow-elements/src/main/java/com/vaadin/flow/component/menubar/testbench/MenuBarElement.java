@@ -47,7 +47,7 @@ public class MenuBarElement extends TestBenchElement {
      */
     public MenuBarButtonElement getOverflowButton() {
         MenuBarButtonElement overflowButton = $(MenuBarButtonElement.class)
-                .withAttribute("slot", "overflow").first();
+                .withAttribute("slot", "overflow").get(0);
         if (overflowButton == null || overflowButton.hasAttribute("hidden")) {
             return null;
         }

@@ -68,6 +68,6 @@ public class AccordionElement extends TestBenchElement {
                 AccordionPanelElement.class).withAttribute(OPENED_PROPERTY);
 
         return !openedPanels.exists() ? Optional.empty()
-                : Optional.of(openedPanels.first());
+                : Optional.of(openedPanels.get(0));
     }
 }

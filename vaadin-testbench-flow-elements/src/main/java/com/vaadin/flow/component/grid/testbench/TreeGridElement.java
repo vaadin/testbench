@@ -310,7 +310,7 @@ public class TreeGridElement extends GridElement {
     public TestBenchElement getExpandToggleElement(int rowFlatIndex,
             int hierarchyColumnIndex) {
         GridTHTDElement cell = getCell(rowFlatIndex, hierarchyColumnIndex);
-        return cell == null ? null : cell.$("vaadin-grid-tree-toggle").first();
+        return cell == null ? null : cell.$("vaadin-grid-tree-toggle").get(0);
     }
 
     /**

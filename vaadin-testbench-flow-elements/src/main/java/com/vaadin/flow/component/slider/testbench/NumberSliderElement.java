@@ -55,6 +55,6 @@ abstract class NumberSliderElement<TNumber extends Number>
      * @return the input element
      */
     public TestBenchElement getInputElement() {
-        return $("input").first();
+        return $("input").get(0);
     }
 }

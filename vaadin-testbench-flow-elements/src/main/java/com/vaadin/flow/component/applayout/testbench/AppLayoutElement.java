@@ -23,7 +23,7 @@ public class AppLayoutElement extends TestBenchElement {
 
     public TestBenchElement getContent() {
         TestBenchElement contentSlot = $("slot").withoutAttribute("name")
-                .first();
+                .get(0);
 
         return (TestBenchElement) executeScript(
                 "return arguments[0].assignedNodes()[0];", contentSlot);
@@ -50,7 +50,7 @@ public class AppLayoutElement extends TestBenchElement {
     }
 
     public DrawerToggleElement getDrawerToggle() {
-        return $(DrawerToggleElement.class).first();
+        return $(DrawerToggleElement.class).get(0);
     }
 
 }

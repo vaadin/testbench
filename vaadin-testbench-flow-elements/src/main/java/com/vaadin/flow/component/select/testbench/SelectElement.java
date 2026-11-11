@@ -109,7 +109,7 @@ public class SelectElement extends TestBenchElement implements HasSelectByText,
      * @return the selected item, or {@code null} if nothing is selected
      */
     public ItemElement getSelectedItem() {
-        TestBenchElement valueElement = $("vaadin-select-value-button").first();
+        TestBenchElement valueElement = $("vaadin-select-value-button").get(0);
         return valueElement.$(ItemElement.class).all().stream().findFirst()
                 .orElse(null);
     }
