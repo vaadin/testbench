@@ -45,6 +45,13 @@
             <version>${playwright.version}</version>
         </dependency>
 
+        <!-- testbench.properties, which TestBench reads on start, is in the core modules -->
+        <dependency>
+            <groupId>com.vaadin</groupId>
+            <artifactId>vaadin-testbench-core-junit5</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>

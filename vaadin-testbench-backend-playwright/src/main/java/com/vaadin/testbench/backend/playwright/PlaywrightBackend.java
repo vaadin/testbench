@@ -168,19 +168,52 @@ public class PlaywrightBackend implements Backend {
             """;
 
     private @Nullable Object run(String source, @Nullable Object[] args) {
-        Map<?, ?> result;
-        List<ElementHandle> nodes;
         try {
-            result = (Map<?, ?>) page.evaluate(source, toPlaywright(args));
-            if (Boolean.TRUE.equals(result.get("stale"))) {
-                throw new StaleElementReferenceException(
-                        "The element is no longer attached to the DOM");
+            return runOnce(source, args);
+        } catch (PlaywrightException e) {
+            // A navigation a script started: Selenium waits for it before its
+            // next command, Playwright does not. A script given no node can run
+            // again in the new page
+            if (!isNavigation(e) || hasNodes(Arrays.asList(args))) {
+                throw translate(e);
             }
-            int nodeCount = ((Number) result.get("nodeCount")).intValue();
-            nodes = nodeCount == 0 ? List.of() : fetchNodes(nodeCount);
+        }
+        try {
+            page.waitForLoadState();
+            return runOnce(source, args);
         } catch (PlaywrightException e) {
             throw translate(e);
         }
+    }
+
+    private static boolean isNavigation(PlaywrightException e) {
+        String message = String.valueOf(e.getMessage());
+        return message.contains("Execution context was destroyed")
+                || message.contains("Cannot find context with specified id");
+    }
+
+    private static boolean hasNodes(Collection<?> values) {
+        for (Object value : values) {
+            if (value instanceof ElementBackend || value instanceof JSHandle
+                    || value instanceof Collection<?> c && hasNodes(c)
+                    || value instanceof Object[] a && hasNodes(Arrays.asList(a))
+                    || value instanceof Map<?, ?> m && hasNodes(m.values())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private @Nullable Object runOnce(String source, @Nullable Object[] args) {
+        Map<?, ?> result = (Map<?, ?>) page.evaluate(source,
+                toPlaywright(args));
+        if (Boolean.TRUE.equals(result.get("stale"))) {
+            throw new StaleElementReferenceException(
+                    "The element is no longer attached to the DOM");
+        }
+        int nodeCount = ((Number) result.get("nodeCount")).intValue();
+        List<ElementHandle> nodes = nodeCount == 0 ? List.of()
+                : fetchNodes(nodeCount);
         return fromPlaywright(result.get("value"), nodes, false);
     }
 

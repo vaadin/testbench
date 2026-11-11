@@ -14,16 +14,24 @@ import java.util.function.Supplier;
 
 import org.jspecify.annotations.Nullable;
 import org.openqa.selenium.By;
+import org.openqa.selenium.ElementNotInteractableException;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Rectangle;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.interactions.MoveTargetOutOfBoundsException;
+import org.slf4j.LoggerFactory;
 
+import com.vaadin.testbench.Parameters;
 import com.vaadin.testbench.spi.ElementBackend;
 
 /**
- * The {@link ElementBackend} on a Selenium {@link WebElement}.
+ * The {@link ElementBackend} on a Selenium {@link WebElement}. An action
+ * (click, hover, typing, clear) waits until its element can take it: Selenium
+ * saying the element is not interactable, the click would land on another
+ * element, or the target is out of view, is retried until
+ * {@link Parameters#getActionTimeout()}, then thrown.
  */
 public class SeleniumElementBackend implements ElementBackend {
 
@@ -53,13 +61,13 @@ public class SeleniumElementBackend implements ElementBackend {
 
     @Override
     public void click() {
-        run(element::click);
+        act(element::click);
     }
 
     @Override
     public void click(int xOffsetFromCenter, int yOffsetFromCenter,
             CharSequence... modifiers) {
-        run(() -> {
+        act(() -> {
             Actions actions = actions().moveToElement(element,
                     xOffsetFromCenter, yOffsetFromCenter);
             for (CharSequence modifier : modifiers) {
@@ -75,27 +83,27 @@ public class SeleniumElementBackend implements ElementBackend {
 
     @Override
     public void doubleClick() {
-        run(() -> actions().doubleClick(element).build().perform());
+        act(() -> actions().doubleClick(element).build().perform());
     }
 
     @Override
     public void contextClick() {
-        run(() -> actions().contextClick(element).build().perform());
+        act(() -> actions().contextClick(element).build().perform());
     }
 
     @Override
     public void hover() {
-        run(() -> actions().moveToElement(element).perform());
+        act(() -> actions().moveToElement(element).perform());
     }
 
     @Override
     public void sendKeys(CharSequence... keys) {
-        run(() -> element.sendKeys(keys));
+        act(() -> element.sendKeys(keys));
     }
 
     @Override
     public void clear() {
-        run(element::clear);
+        act(element::clear);
     }
 
     @Override
@@ -172,12 +180,38 @@ public class SeleniumElementBackend implements ElementBackend {
         }
     }
 
-    private static void run(Runnable seleniumCall) {
-        call(() -> {
-            seleniumCall.run();
-            return null;
-        });
+    private static void act(Runnable seleniumCall) {
+        long start = System.nanoTime();
+        long timeout = Parameters.getActionTimeout().toNanos();
+        int tries = 0;
+        while (true) {
+            tries++;
+            try {
+                seleniumCall.run();
+                if (tries > 1) {
+                    LoggerFactory.getLogger(SeleniumElementBackend.class).debug(
+                            "An action waited {} ms for its element",
+                            (System.nanoTime() - start) / 1_000_000);
+                }
+                return;
+            } catch (ElementNotInteractableException
+                    | MoveTargetOutOfBoundsException notReady) {
+                if (System.nanoTime() - start >= timeout) {
+                    throw notReady;
+                }
+                try {
+                    Thread.sleep(ACTION_POLL_MS);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    throw notReady;
+                }
+            } catch (WebDriverException e) {
+                throw SeleniumBackend.translate(e);
+            }
+        }
     }
+
+    private static final long ACTION_POLL_MS = 100;
 
     /**
      * Also equal to the {@link WebElement} itself, or anything wrapping it,

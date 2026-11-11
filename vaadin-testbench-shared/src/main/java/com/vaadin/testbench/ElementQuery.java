@@ -1512,6 +1512,76 @@ public class ElementQuery<T extends TestBenchElement> {
     }
 
     /**
+     * Asserts that nothing matches, searching again until nothing does or
+     * {@link Parameters#getActionTimeout()} is over: the retrying partner of
+     * {@link #single()}, for an element that goes away.
+     *
+     * <pre>{@code
+     * $(ConfirmDialogElement.class).assertNone();
+     * }</pre>
+     *
+     * @throws AssertionError
+     *             if something still matches when the time is over
+     */
+    public void assertNone() {
+        assertCount(0);
+    }
+
+    /**
+     * Asserts that exactly {@code count} elements match, searching again until
+     * they do or {@link Parameters#getActionTimeout()} is over:
+     *
+     * <pre>{@code
+     * List<TestBenchElement> rows = grid.$("tr").assertCount(3);
+     * }</pre>
+     *
+     * @return the elements it counted
+     * @throws AssertionError
+     *             if another number matches when the time is over
+     */
+    public List<T> assertCount(int count) {
+        if (count < 0) {
+            throw new IllegalArgumentException("A count of " + count);
+        }
+        Duration timeout = Parameters.getActionTimeout();
+        long end = System.nanoTime() + timeout.toNanos();
+        while (true) {
+            List<T> found = all();
+            if (found.size() == count) {
+                return found;
+            }
+            if (System.nanoTime() - end > 0) {
+                throw new AssertionError("Expected "
+                        + (count == 0 ? "no" : String.valueOf(count))
+                        + " elements " + describeSearch() + ", found "
+                        + found.size() + " after " + timeout.toMillis()
+                        + " ms");
+            }
+            try {
+                Thread.sleep(ASSERT_POLL_MS);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new IllegalStateException(
+                        "Interrupted while counting elements", e);
+            }
+        }
+    }
+
+    private static final long ASSERT_POLL_MS = 100;
+
+    private String describeSearch() {
+        String description = "with tag <" + tagName + ">";
+        String attrPairs = getAttributePairs();
+        if (!attrPairs.isEmpty()) {
+            description += " and the attributes " + attrPairs;
+        }
+        if (!conditions.isEmpty()) {
+            description += " and " + conditions.size() + " more conditions";
+        }
+        return description;
+    }
+
+    /**
      * Search the open Vaadin application for a list of matching components
      * relative to given context.
      *
@@ -1562,9 +1632,24 @@ public class ElementQuery<T extends TestBenchElement> {
             script.append("[").append(index).append("]");
         }
 
-        return executeSearchScript(script.toString(), elementContext, tagName,
-                getAttributePairs(), executor).stream()
-                .filter(this::satisfiesAllConditions).toList();
+        TestBenchElement context = elementContext;
+        List<T> found = Refind
+                .onStale(
+                        () -> executeSearchScript(script.toString(), context,
+                                tagName, getAttributePairs(), executor),
+                        context)
+                .stream().filter(this::satisfiesAllConditions).toList();
+        for (int i = 0; i < found.size(); i++) {
+            // get(index) without conditions searched for that index alone
+            int position = index != null && conditions.isEmpty() ? index : i;
+            found.get(i).setRefind(() -> {
+                List<T> again = all();
+                return position < again.size()
+                        ? again.get(position).getElementBackend()
+                        : null;
+            });
+        }
+        return found;
     }
 
     // A tag, as HTML, custom elements and SVG (foreignObject) name them. No

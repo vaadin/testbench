@@ -156,6 +156,14 @@
 
     <profiles>
         <profile>
+            <!-- Active only inside Eclipse / jdtls (m2e sets m2e.version); the command-line
+                 build never sees it. Keeps the IDE's classes out of Maven's target/classes.
+                 Branch-only, like the version. -->
+            <id>ide-output</id>
+            <activation><property><name>m2e.version</name></property></activation>
+            <build><directory>${project.basedir}/target/ide</directory></build>
+        </profile>
+        <profile>
             <id>default</id>
             <activation>
                 <property>

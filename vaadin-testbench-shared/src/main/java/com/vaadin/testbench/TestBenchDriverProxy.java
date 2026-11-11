@@ -297,7 +297,10 @@ public class TestBenchDriverProxy
     @Override
     public Object executeScript(String script, Object... args) {
         if (!onSelenium()) {
-            return commandExecutor.executeScript(script, fromSelenium(args));
+            Object[] elements = fromSelenium(args);
+            return Refind.onStale(
+                    () -> commandExecutor.executeScript(script, elements),
+                    elements);
         }
         if (!(getWrappedDriver() instanceof JavascriptExecutor)) {
             throw new RuntimeException(

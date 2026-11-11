@@ -38,9 +38,12 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
+import com.vaadin.testbench.ElementQuery;
 import com.vaadin.testbench.Keys;
 import com.vaadin.testbench.StaleElementReferenceException;
+import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.testbench.backend.selenium.SeleniumBackend;
+import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.spi.Backend;
 import com.vaadin.testbench.spi.ElementBackend;
 
@@ -436,6 +439,38 @@ class BackendParityTest {
             }
             assertThrows(StaleElementReferenceException.class, keys::getTagName,
                     b.getClass().getSimpleName() + " after a reload");
+        }
+    }
+
+    /** D_element_resolution, through TestBench's own element and query. */
+    @Test
+    void aReplacedNodeIsFoundAgain() {
+        for (Backend b : List.of(selenium, pw)) {
+            TestBenchCommandExecutor executor = new TestBenchCommandExecutor(
+                    null, null);
+            executor.setBackend(b);
+            TestBenchElement gone = new ElementQuery<>(TestBenchElement.class,
+                    "div").onPage(executor).id("gone");
+            b.executeScript("var old = document.getElementById('gone');"
+                    + " var fresh = document.createElement('div');"
+                    + " fresh.id = 'gone'; fresh.textContent = 'again';"
+                    + " old.replaceWith(fresh);");
+            assertEquals("again", gone.getText(), b.getClass().getSimpleName());
+            assertEquals("again", gone.getPropertyString("textContent"),
+                    b.getClass().getSimpleName());
+            b.executeScript("document.getElementById('gone').remove()");
+            assertThrows(StaleElementReferenceException.class, gone::getText,
+                    b.getClass().getSimpleName());
+        }
+    }
+
+    /** R_selenium_chrome_answers: Selenium waits for it, so must we. */
+    @Test
+    void aScriptRightAfterANavigationRunsInTheNewPage() {
+        for (int i = 0; i < 5; i++) {
+            pw.executeScript("location.reload()");
+            assertEquals(1L, pw.executeScript(
+                    "return document.querySelectorAll('#keys').length"));
         }
     }
 

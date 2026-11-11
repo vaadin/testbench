@@ -216,16 +216,17 @@ public class Parameters {
 
     /**
      * How long an action (a click, typing, hover) waits for its element to take
-     * it before it fails: the {@code actionTimeout} system property, in
-     * milliseconds, {@value #DEFAULT_ACTION_TIMEOUT_MS} when unset. The same on
-     * every backend.
+     * it before it fails, and how long the query's {@code assertNone()} and
+     * {@code assertCount(n)} search: the {@code actionTimeout} system property,
+     * in milliseconds, {@value #DEFAULT_ACTION_TIMEOUT_MS} when unset, as long
+     * as {@code waitForSingle()} waits. The same on every backend.
      */
     public static Duration getActionTimeout() {
         return Duration.ofMillis(getSystemPropertyInt("actionTimeout",
                 DEFAULT_ACTION_TIMEOUT_MS));
     }
 
-    private static final int DEFAULT_ACTION_TIMEOUT_MS = 5000;
+    private static final int DEFAULT_ACTION_TIMEOUT_MS = 10000;
 
     /**
      * @return {@code true} if debugging info should be shown, {@code false}
