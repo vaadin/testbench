@@ -287,11 +287,11 @@ public class TestBenchElement
     /**
      * The element's text. In {@link Mode#COMPAT} it is Selenium's: only what a
      * user can see, with shadow DOM text included, a hidden element giving
-     * {@code ""}. In {@link Mode#MODERN} it is the browser's
-     * <a href="https://developer.mozilla.org/docs/Web/API/HTMLElement/innerText">{@code innerText}</a>,
+     * {@code ""}. In {@link Mode#MODERN} it is the browser's <a href=
+     * "https://developer.mozilla.org/docs/Web/API/HTMLElement/innerText">{@code innerText}</a>,
      * nothing added: a hidden element keeps its text, shadow DOM text is left
-     * out (read it from the shadow element, {@code $("abbr").single().getText()}),
-     * and a no-break space stays one.
+     * out (read it from the shadow element,
+     * {@code $("abbr").single().getText()}), and a no-break space stays one.
      *
      * @throws UnsupportedOperationException
      *             in {@link Mode#MODERN}, on an element without
@@ -303,10 +303,11 @@ public class TestBenchElement
         if (Parameters.getMode() == Mode.COMPAT) {
             return elementBackend.getText();
         }
-        Object text = getCommandExecutor().getBackend().executeScript(
-                "return arguments[0] instanceof HTMLElement"
-                        + " ? arguments[0].innerText : null",
-                elementBackend);
+        Object text = getCommandExecutor().getBackend()
+                .executeScript(
+                        "return arguments[0] instanceof HTMLElement"
+                                + " ? arguments[0].innerText : null",
+                        elementBackend);
         if (text == null) {
             throw new UnsupportedOperationException("<" + getTagName()
                     + "> has no innerText, so no getText() in the modern"
@@ -521,8 +522,12 @@ public class TestBenchElement
 
     // Screenshot comparison is Selenium-only until v2
     private HasCapabilities seleniumCapabilities() {
-        return (HasCapabilities) ((SeleniumBackend) getCommandExecutor()
-                .getBackend()).getDriver();
+        if (getCommandExecutor()
+                .getBackend() instanceof SeleniumBackend selenium) {
+            return (HasCapabilities) selenium.getDriver();
+        }
+        throw NotYetImplementedException
+                .notYetImplemented("compareScreen off Selenium");
     }
 
     /***

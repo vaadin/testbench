@@ -30,6 +30,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.vaadin.testbench.NotYetImplementedException;
 import com.vaadin.testbench.TestBench;
 import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.testbench.backend.selenium.SeleniumBackend;
@@ -108,7 +109,11 @@ public class TestBenchCommandExecutor implements TestBenchCommands {
     // Screenshots, window size and the remote control's name are
     // Selenium-only until v2
     private WebDriver seleniumDriver() {
-        return ((SeleniumBackend) getBackend()).getDriver();
+        if (getBackend() instanceof SeleniumBackend selenium) {
+            return selenium.getDriver();
+        }
+        throw NotYetImplementedException.notYetImplemented(
+                "Screenshots, window size and the remote control off Selenium");
     }
 
     @Override

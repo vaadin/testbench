@@ -17,6 +17,7 @@ import org.openqa.selenium.WebElement;
 import com.vaadin.pro.licensechecker.Capabilities;
 import com.vaadin.pro.licensechecker.Capability;
 import com.vaadin.pro.licensechecker.LicenseChecker;
+import com.vaadin.testbench.backend.HasBackend;
 import com.vaadin.testbench.backend.selenium.SeleniumBackend;
 import com.vaadin.testbench.backend.selenium.SeleniumElementBackend;
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
@@ -52,7 +53,9 @@ public class TestBench {
         TestBenchDriverProxy proxy = new TestBenchDriverProxy(driver,
                 commandExecutor);
         // The real driver: the proxy would wait for Vaadin before every script
-        commandExecutor.setBackend(new SeleniumBackend(driver));
+        commandExecutor.setBackend(driver instanceof HasBackend hasBackend
+                ? hasBackend.getBackend()
+                : new SeleniumBackend(driver));
         return proxy;
     }
 

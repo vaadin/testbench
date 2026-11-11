@@ -42,7 +42,9 @@ public class ModeTest {
         Parameters.setMode(null);
     }
 
-    /** Vaadin is never busy; the innerText script answers {@link #innerText}. */
+    /**
+     * Vaadin is never busy; the innerText script answers {@link #innerText}.
+     */
     private TestBenchElement element() {
         Backend backend = new Backend() {
             @Override
@@ -92,7 +94,8 @@ public class ModeTest {
             Parameters.getMode();
             Assert.fail("A misspelled mode must not run as compat");
         } catch (IllegalArgumentException e) {
-            Assert.assertTrue(e.getMessage(), e.getMessage().contains("'moden'"));
+            Assert.assertTrue(e.getMessage(),
+                    e.getMessage().contains("'moden'"));
         }
     }
 
@@ -100,7 +103,8 @@ public class ModeTest {
     public void compatGetTextIsTheBackendsText() {
         Mockito.when(node.getText()).thenReturn("visible text");
         Assert.assertEquals("visible text", element().getText());
-        Assert.assertTrue(scripts.stream().noneMatch(s -> s.contains("innerText")));
+        Assert.assertTrue(
+                scripts.stream().noneMatch(s -> s.contains("innerText")));
     }
 
     @Test
@@ -129,9 +133,10 @@ public class ModeTest {
         TestBenchElement element = element();
         assertRejected(() -> element.$("div").first(), "first()");
         assertRejected(() -> element.$("div").waitForFirst(), "waitForFirst()");
-        assertRejected(() -> element.$("div").waitForFirst(1), "waitForFirst()");
-        Assert.assertTrue("Rejected before searching",
-                scripts.stream().noneMatch(s -> s.contains("querySelectorAll")));
+        assertRejected(() -> element.$("div").waitForFirst(1),
+                "waitForFirst()");
+        Assert.assertTrue("Rejected before searching", scripts.stream()
+                .noneMatch(s -> s.contains("querySelectorAll")));
     }
 
     @Test

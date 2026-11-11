@@ -25,6 +25,7 @@ import com.vaadin.testbench.TestBenchTestCase;
 import com.vaadin.testbench.annotations.BrowserConfiguration;
 import com.vaadin.testbench.annotations.RunLocally;
 import com.vaadin.testbench.annotations.RunOnHub;
+import com.vaadin.testbench.backend.BackendChoice;
 import com.vaadin.testbench.parallel.setup.SetupDriver;
 
 /**
@@ -128,6 +129,11 @@ public class ParallelTest extends TestBenchTestCase {
      */
     @Before
     public void setup() throws Exception {
+        WebDriver launched = BackendChoice.launchBrowser(null);
+        if (launched != null) {
+            setDriver(launched);
+            return;
+        }
         // Always give priority to @RunLocally annotation
         if ((getRunLocallyBrowser() != null)) {
             WebDriver driver = driverConfiguration.setupLocalDriver(

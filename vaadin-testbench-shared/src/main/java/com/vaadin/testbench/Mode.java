@@ -21,7 +21,10 @@ package com.vaadin.testbench;
  */
 public enum Mode {
 
-    /** The default: behaves as TestBench always has, which mostly means as Selenium does. */
+    /**
+     * The default: behaves as TestBench always has, which mostly means as
+     * Selenium does.
+     */
     COMPAT,
 
     /**

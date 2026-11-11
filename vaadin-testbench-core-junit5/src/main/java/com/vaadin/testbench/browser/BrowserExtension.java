@@ -31,6 +31,7 @@ import com.vaadin.testbench.TestBench;
 import com.vaadin.testbench.TestBenchDriverProxy;
 import com.vaadin.testbench.annotations.RunLocally;
 import com.vaadin.testbench.annotations.RunOnHub;
+import com.vaadin.testbench.backend.BackendChoice;
 import com.vaadin.testbench.parallel.Browser;
 import com.vaadin.testbench.parallel.SauceLabsIntegration;
 import com.vaadin.testbench.parallel.setup.SetupDriver;
@@ -217,7 +218,11 @@ public class BrowserExtension implements Extension, BeforeEachCallback,
 
         Object testInstance = context.getRequiredTestInstance();
 
-        WebDriver webDriver;
+        WebDriver webDriver = BackendChoice.launchBrowser(
+                testInstance instanceof DriverSupplier ? testInstance : null);
+        if (webDriver != null) {
+            return webDriver;
+        }
 
         // use WebDriver provided by test instance
         if (testInstance instanceof DriverSupplier supplier) {

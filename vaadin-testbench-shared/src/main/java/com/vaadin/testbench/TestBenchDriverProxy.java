@@ -20,6 +20,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.HasCapabilities;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
@@ -29,12 +30,19 @@ import org.openqa.selenium.WrapsDriver;
 import org.openqa.selenium.interactions.Interactive;
 import org.openqa.selenium.interactions.Sequence;
 
+import com.vaadin.testbench.backend.selenium.SeleniumBackend;
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 
 /**
  * TestBench's view of a Selenium {@link WebDriver}: it waits for Vaadin before
  * each call, except navigation, window management and closing, and turns found
  * elements into {@link TestBenchElement}s.
+ * <p>
+ * Around a browser on another backend (a driver that is a
+ * {@link com.vaadin.testbench.backend.HasBackend}), scripts and finds go
+ * through that backend; {@code findElement} takes the {@code By}s Selenium
+ * sends as CSS, not {@code xpath} or the link texts, and {@code Actions} do not
+ * work.
  * <p>
  * Only the interfaces it implements are there: a cast to anything else the real
  * driver implements needs {@link #getWrappedDriver()}.
@@ -67,6 +75,14 @@ public class TestBenchDriverProxy
      */
     @Override
     public WebElement findElement(By by) {
+        if (!onSelenium()) {
+            List<WebElement> found = findElements(by);
+            if (found.isEmpty()) {
+                throw new NoSuchElementException(
+                        "Unable to locate an element with " + by);
+            }
+            return found.get(0);
+        }
         waitForVaadin();
         return TestBench.createElement(wrappedDriver.findElement(by),
                 getCommandExecutor()).asWebElement();
@@ -74,6 +90,14 @@ public class TestBenchDriverProxy
 
     @Override
     public List<WebElement> findElements(By by) {
+        if (!onSelenium()) {
+            @SuppressWarnings("unchecked")
+            List<TestBenchElement> found = (List<TestBenchElement>) commandExecutor
+                    .executeScript(
+                            "return Array.from(document.querySelectorAll(arguments[0]))",
+                            toCssSelector(by));
+            return found.stream().map(TestBenchElement::asWebElement).toList();
+        }
         waitForVaadin();
         return wrappedDriver.findElements(by).stream()
                 .map(found -> TestBench
@@ -199,6 +223,51 @@ public class TestBenchDriverProxy
         }
     }
 
+    // Off Selenium the browser is reached through the backend, whose scripts
+    // and finds are TestBench's own
+    private boolean onSelenium() {
+        return commandExecutor.getBackend() instanceof SeleniumBackend;
+    }
+
+    // Selenium's By.id, className, name, tagName and cssSelector all reach the
+    // driver as CSS; xpath and the link texts do not
+    private static String toCssSelector(By by) {
+        if (by instanceof By.Remotable remotable) {
+            By.Remotable.Parameters parameters = remotable
+                    .getRemoteParameters();
+            if ("css selector".equals(parameters.using())) {
+                return String.valueOf(parameters.value());
+            }
+        }
+        throw NotYetImplementedException
+                .notYetImplemented("findElement(" + by + ") off Selenium");
+    }
+
+    // A WebElementAdapter, at any depth, back to its element
+    private static Object[] fromSelenium(Object[] args) {
+        return Arrays.stream(args).map(TestBenchDriverProxy::fromSelenium)
+                .toArray();
+    }
+
+    private static Object fromSelenium(Object value) {
+        if (value instanceof WebElementAdapter adapter) {
+            return adapter.getElement();
+        }
+        if (value instanceof Collection<?> collection) {
+            return collection.stream().map(TestBenchDriverProxy::fromSelenium)
+                    .toList();
+        }
+        if (value instanceof Object[] array) {
+            return fromSelenium(Arrays.asList(array));
+        }
+        if (value instanceof Map<?, ?> map) {
+            Map<Object, Object> copy = new LinkedHashMap<>();
+            map.forEach((key, item) -> copy.put(key, fromSelenium(item)));
+            return copy;
+        }
+        return value;
+    }
+
     private static Object[] toSelenium(Object[] args) {
         return Arrays.stream(args).map(TestBenchDriverProxy::toSelenium)
                 .toArray();
@@ -227,6 +296,9 @@ public class TestBenchDriverProxy
 
     @Override
     public Object executeScript(String script, Object... args) {
+        if (!onSelenium()) {
+            return commandExecutor.executeScript(script, fromSelenium(args));
+        }
         if (!(getWrappedDriver() instanceof JavascriptExecutor)) {
             throw new RuntimeException(
                     "The driver is not a JavascriptExecutor");
@@ -238,6 +310,10 @@ public class TestBenchDriverProxy
 
     @Override
     public Object executeAsyncScript(String script, Object... args) {
+        if (!onSelenium()) {
+            return commandExecutor.executeAsyncScript(script,
+                    fromSelenium(args));
+        }
         if (!(getWrappedDriver() instanceof JavascriptExecutor)) {
             throw new RuntimeException(
                     "The driver is not a JavascriptExecutor");
@@ -257,12 +333,20 @@ public class TestBenchDriverProxy
 
     @Override
     public void perform(Collection<Sequence> actions) {
+        if (!onSelenium()) {
+            throw NotYetImplementedException
+                    .notYetImplemented("Selenium's Actions off Selenium");
+        }
         waitForVaadin();
         ((Interactive) getWrappedDriver()).perform(actions);
     }
 
     @Override
     public void resetInputState() {
+        if (!onSelenium()) {
+            throw NotYetImplementedException
+                    .notYetImplemented("Selenium's Actions off Selenium");
+        }
         waitForVaadin();
         ((Interactive) getWrappedDriver()).resetInputState();
     }

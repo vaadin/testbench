@@ -131,9 +131,31 @@ public class WaitForVaadinGuardTest {
                 + "waiting for Vaadin", Set.of(), notWaiting);
     }
 
+    /** Off Selenium: scripts and finds go through the backend. */
     @Test
     public void everyDriverMethodWaitsBeforeItsBrowserCall() {
-        TestBenchDriverProxy driver = driverProxy;
+        assertDriverWaits(driverProxy);
+    }
+
+    /** On Selenium: scripts and finds go to the driver itself. */
+    @Test
+    public void everyDriverMethodWaitsBeforeItsBrowserCallOnSelenium() {
+        FullDriver driver = Mockito.mock(FullDriver.class, invocation -> {
+            if (invocation.getMethod().getName().equals("executeScript")
+                    && String.valueOf(invocation.getArgument(0))
+                            .contains("isActive()")) {
+                calls.add("wait");
+                return true;
+            }
+            calls.add("driver:" + invocation.getMethod().getName());
+            return Answers.RETURNS_DEFAULTS.answer(invocation);
+        });
+        TestBenchCommandExecutor selenium = new TestBenchCommandExecutor(null,
+                null);
+        assertDriverWaits(TestBench.createDriver(driver, selenium));
+    }
+
+    private void assertDriverWaits(TestBenchDriverProxy driver) {
         Set<String> notWaiting = new TreeSet<>();
         for (Method method : TestBenchDriverProxy.class.getMethods()) {
             if (method.getDeclaringClass() != Object.class

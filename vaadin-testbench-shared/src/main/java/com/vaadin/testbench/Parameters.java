@@ -8,6 +8,7 @@
  */
 package com.vaadin.testbench;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -157,8 +158,8 @@ public class Parameters {
      * unset.
      *
      * @throws IllegalArgumentException
-     *             if the property names no mode: a typo must not silently run
-     *             a migrated suite in {@code compat}
+     *             if the property names no mode: a typo must not silently run a
+     *             migrated suite in {@code compat}
      */
     public static Mode getMode() {
         Mode current = mode;
@@ -183,6 +184,48 @@ public class Parameters {
     public static void setMode(Mode mode) {
         Parameters.mode = mode;
     }
+
+    /** The backends {@link #getBackend()} knows. */
+    public static final String PLAYWRIGHT = "playwright", SELENIUM = "selenium";
+
+    /**
+     * The backend the JUnit integration starts its browser on: the
+     * {@code backend} system property, {@code playwright} or {@code selenium}
+     * (any case). A test that hands TestBench a Selenium driver itself runs on
+     * Selenium whatever this says.
+     *
+     * @return {@code null} when unset, which means Playwright if
+     *         {@code vaadin-testbench-backend-playwright} is on the classpath,
+     *         Selenium otherwise
+     * @throws IllegalArgumentException
+     *             if the property names no backend
+     */
+    public static String getBackend() {
+        String value = getSystemPropertyString("backend", null);
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+        String backend = value.trim().toLowerCase(Locale.ROOT);
+        if (!backend.equals(PLAYWRIGHT) && !backend.equals(SELENIUM)) {
+            throw new IllegalArgumentException("'" + value + "' is not a "
+                    + getQualifiedParameter("backend")
+                    + ": use playwright or selenium");
+        }
+        return backend;
+    }
+
+    /**
+     * How long an action (a click, typing, hover) waits for its element to take
+     * it before it fails: the {@code actionTimeout} system property, in
+     * milliseconds, {@value #DEFAULT_ACTION_TIMEOUT_MS} when unset. The same on
+     * every backend.
+     */
+    public static Duration getActionTimeout() {
+        return Duration.ofMillis(getSystemPropertyInt("actionTimeout",
+                DEFAULT_ACTION_TIMEOUT_MS));
+    }
+
+    private static final int DEFAULT_ACTION_TIMEOUT_MS = 5000;
 
     /**
      * @return {@code true} if debugging info should be shown, {@code false}
