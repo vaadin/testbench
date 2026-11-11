@@ -16,6 +16,7 @@ import org.openqa.selenium.JavascriptExecutor;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.testUI.PageObjectView;
+import com.vaadin.testbench.backend.selenium.SeleniumBackend;
 
 public class WaitForVaadinIT extends AbstractTB6Test {
 
@@ -131,8 +132,8 @@ public class WaitForVaadinIT extends AbstractTB6Test {
         setWaitForVaadinLoopHook(() -> {
             if (System.currentTimeMillis()
                     - systemCurrentTimeMillis > timeout) {
-                ((JavascriptExecutor) getCommandExecutor().getDriver()
-                        .getWrappedDriver())
+                ((JavascriptExecutor) ((SeleniumBackend) getCommandExecutor()
+                        .getBackend()).getDriver())
                         .executeScript(scriptToRunAfterTimeout);
                 setWaitForVaadinLoopHook(null);
             }

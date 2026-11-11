@@ -70,6 +70,7 @@ public class WaitForVaadinGuardTest {
 
     private final List<String> calls = new ArrayList<>();
     private TestBenchCommandExecutor executor;
+    private TestBenchDriverProxy driverProxy;
 
     @Before
     public void setUp() {
@@ -106,7 +107,7 @@ public class WaitForVaadinGuardTest {
             calls.add("driver:" + invocation.getMethod().getName());
             return Answers.RETURNS_DEFAULTS.answer(invocation);
         });
-        TestBench.createDriver(driver, executor);
+        driverProxy = TestBench.createDriver(driver, executor);
     }
 
     @Test
@@ -132,7 +133,7 @@ public class WaitForVaadinGuardTest {
 
     @Test
     public void everyDriverMethodWaitsBeforeItsBrowserCall() {
-        TestBenchDriverProxy driver = executor.getDriver();
+        TestBenchDriverProxy driver = driverProxy;
         Set<String> notWaiting = new TreeSet<>();
         for (Method method : TestBenchDriverProxy.class.getMethods()) {
             if (method.getDeclaringClass() != Object.class

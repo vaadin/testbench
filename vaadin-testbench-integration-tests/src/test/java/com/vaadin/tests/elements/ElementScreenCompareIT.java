@@ -11,7 +11,6 @@ package com.vaadin.tests.elements;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.openqa.selenium.By;
 
 import com.vaadin.testUI.ElementQueryView;
 import com.vaadin.testbench.TestBenchElement;
@@ -37,7 +36,7 @@ public class ElementScreenCompareIT extends AbstractTB6Test {
         TestBenchElement button4 = $(NativeButtonElement.class).get(4);
 
         Assert.assertTrue(button4.compareScreen("button4"));
-        TestBenchElement layout = button4.findElement(By.xpath("../.."));
+        TestBenchElement layout = button4.getParent().getParent();
         Assert.assertTrue(layout.compareScreen("layout"));
     }
 

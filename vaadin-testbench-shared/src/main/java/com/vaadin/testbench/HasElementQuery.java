@@ -8,14 +8,13 @@
  */
 package com.vaadin.testbench;
 
-public interface HasElementQuery extends HasSearchContext {
+public interface HasElementQuery {
 
     /**
      * Prepare a {@link ElementQuery} instance to use for locating components on
      * the client. The returned object can be manipulated to uniquely identify
-     * the sought-after object. If this function gets called through an element,
-     * it uses the element as its search context. Otherwise the search context
-     * is the driver.
+     * the sought-after object. Called on an element, it searches inside the
+     * element; called on a test, it searches the page.
      *
      * @param <T>
      *            the type of the queried {@link TestBenchElement}
@@ -24,17 +23,13 @@ public interface HasElementQuery extends HasSearchContext {
      *            <code>@Element</code> on the class
      * @return an appropriate {@link ElementQuery} instance
      */
-    public default <T extends TestBenchElement> ElementQuery<T> $(
-            Class<T> clazz) {
-        return new ElementQuery<>(clazz).context(getContext());
-    }
+    <T extends TestBenchElement> ElementQuery<T> $(Class<T> clazz);
 
     /**
      * Prepare a {@link ElementQuery} instance to use for locating components on
      * the client. The returned object can be manipulated to uniquely identify
-     * the sought-after object. If this function gets called through an element,
-     * it uses the element as its search context. Otherwise the search context
-     * is the driver.
+     * the sought-after object. Called on an element, it searches inside the
+     * element; called on a test, it searches the page.
      *
      * @param tagName
      *            the tag name of the element to find, such as
@@ -42,9 +37,6 @@ public interface HasElementQuery extends HasSearchContext {
      *            selector, which throws on any backend but Selenium
      * @return an appropriate {@link ElementQuery} instance
      */
-    public default ElementQuery<TestBenchElement> $(String tagName) {
-        return new ElementQuery<>(TestBenchElement.class, tagName)
-                .context(getContext());
-    }
+    ElementQuery<TestBenchElement> $(String tagName);
 
 }

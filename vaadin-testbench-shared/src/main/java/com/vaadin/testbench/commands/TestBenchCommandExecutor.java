@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -29,9 +30,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.vaadin.testbench.HasDriver;
 import com.vaadin.testbench.TestBench;
-import com.vaadin.testbench.TestBenchDriverProxy;
 import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.testbench.backend.selenium.SeleniumBackend;
 import com.vaadin.testbench.screenshot.ImageComparison;
@@ -42,13 +41,12 @@ import com.vaadin.testbench.spi.ElementBackend;
 /**
  * Provides actual implementation of TestBenchCommands
  */
-public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
+public class TestBenchCommandExecutor implements TestBenchCommands {
 
     private static Logger getLogger() {
         return LoggerFactory.getLogger(TestBenchCommandExecutor.class);
     }
 
-    private TestBenchDriverProxy driver;
     private Backend backend;
     private final ImageComparison imageComparison;
     private final ReferenceNameGenerator referenceNameGenerator;
@@ -84,27 +82,40 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
         this.referenceNameGenerator = referenceNameGenerator;
     }
 
-    public void setDriver(TestBenchDriverProxy driver) {
-        this.driver = driver;
-        backend = null;
+    /**
+     * @param backend
+     *            the browser to drive, as {@code TestBench.createDriver} sets
+     *            it for a Selenium driver
+     */
+    public void setBackend(Backend backend) {
+        this.backend = backend;
     }
 
     /**
      * The browser this executor drives, below TestBench: nothing called on it
-     * waits for Vaadin.
+     * waits for Vaadin. Cast it to reach the browser library itself, as an
+     * escape hatch:
+     *
+     * <pre>{@code
+     * WebDriver driver = ((SeleniumBackend) getCommandExecutor().getBackend())
+     *         .getDriver();
+     * }</pre>
      */
     public Backend getBackend() {
-        if (backend == null) {
-            backend = new SeleniumBackend(driver.getWrappedDriver());
-        }
         return backend;
+    }
+
+    // Screenshots, window size and the remote control's name are
+    // Selenium-only until v2
+    private WebDriver seleniumDriver() {
+        return ((SeleniumBackend) getBackend()).getDriver();
     }
 
     @Override
     public String getRemoteControlName() {
         InetAddress ia = null;
         try {
-            WebDriver realDriver = driver.getWrappedDriver();
+            WebDriver realDriver = seleniumDriver();
             if (realDriver instanceof RemoteWebDriver) {
                 RemoteWebDriver rwd = (RemoteWebDriver) realDriver;
                 if (rwd.getCommandExecutor() instanceof HttpCommandExecutor) {
@@ -156,13 +167,17 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
 
     @Override
     public boolean compareScreen(String referenceId) throws IOException {
+        waitForVaadin();
+        WebDriver driver = seleniumDriver();
         return ScreenshotComparator.compareScreen(referenceId,
-                referenceNameGenerator, imageComparison, driver, getDriver());
+                referenceNameGenerator, imageComparison,
+                (TakesScreenshot) driver, (HasCapabilities) driver);
     }
 
     @Override
     public boolean compareScreen(File reference) throws IOException {
-        WebDriver driver = getDriver();
+        waitForVaadin();
+        WebDriver driver = seleniumDriver();
         return ScreenshotComparator.compareScreen(reference, imageComparison,
                 (TakesScreenshot) driver, (HasCapabilities) driver);
 
@@ -171,7 +186,8 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
     @Override
     public boolean compareScreen(BufferedImage reference, String referenceName)
             throws IOException {
-        WebDriver driver = getDriver();
+        waitForVaadin();
+        WebDriver driver = seleniumDriver();
         return ScreenshotComparator.compareScreen(reference, referenceName,
                 imageComparison, (TakesScreenshot) driver,
                 (HasCapabilities) driver);
@@ -285,7 +301,8 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
      */
     public Object executeScript(String script, Object... args) {
         waitForVaadin();
-        return fromBackend(getBackend().executeScript(script, toBackendArgs(args)));
+        return fromBackend(
+                getBackend().executeScript(script, toBackendArgs(args)));
     }
 
     /**
@@ -293,8 +310,10 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
      * style:
      *
      * <pre>{@code
-     * executeAsyncScript("var done = arguments[arguments.length - 1];"
-     *         + "setTimeout(() => done(arguments[0].value), 100);", field);
+     * executeAsyncScript(
+     *         "var done = arguments[arguments.length - 1];"
+     *                 + "setTimeout(() => done(arguments[0].value), 100);",
+     *         field);
      * }</pre>
      *
      * @return what the callback is called with, converted as
@@ -325,6 +344,11 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
             }
             return list;
         }
+        // An array of elements, as GridTRElement.getCells passes; a script
+        // sees a list as the same array
+        if (value instanceof Object[] array) {
+            return toBackend(Arrays.asList(array));
+        }
         if (value instanceof Map<?, ?> map) {
             Map<Object, Object> copy = new LinkedHashMap<>();
             map.forEach((key, item) -> copy.put(key, toBackend(item)));
@@ -348,26 +372,15 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
         return value;
     }
 
-    /**
-     * Return a reference to the {@link WebDriver} instance associated with this
-     * {@link TestBenchCommandExecutor}
-     *
-     * @return a WebDriver instance
-     */
-    @Override
-    public TestBenchDriverProxy getDriver() {
-        return driver;
-    }
-
     @Override
     public void resizeViewPortTo(final int desiredWidth,
             final int desiredHeight) throws UnsupportedOperationException {
         final int MAX_RESIZE_ATTEMPTS = 5;
         try {
-            getDriver().manage().window().setPosition(new Point(0, 0));
+            seleniumDriver().manage().window().setPosition(new Point(0, 0));
             // Start with the desired dimensions; the loop will adjust for
             // browser chrome (title bar, borders, etc.)
-            getDriver().manage().window()
+            seleniumDriver().manage().window()
                     .setSize(new Dimension(desiredWidth, desiredHeight));
 
             for (int attempt = 0; attempt < MAX_RESIZE_ATTEMPTS; attempt++) {
@@ -381,12 +394,13 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
 
                 int diffW = desiredWidth - actualWidth;
                 int diffH = desiredHeight - actualHeight;
-                Dimension currentSize = getDriver().manage().window().getSize();
+                Dimension currentSize = seleniumDriver().manage().window()
+                        .getSize();
                 getLogger().debug(
                         "resizeViewPortTo: attempt {}, desired={}x{}, actual={}x{}, adjusting by {}x{}",
                         attempt + 1, desiredWidth, desiredHeight, actualWidth,
                         actualHeight, diffW, diffH);
-                getDriver().manage().window()
+                seleniumDriver().manage().window()
                         .setSize(new Dimension(currentSize.getWidth() + diffW,
                                 currentSize.getHeight() + diffH));
             }

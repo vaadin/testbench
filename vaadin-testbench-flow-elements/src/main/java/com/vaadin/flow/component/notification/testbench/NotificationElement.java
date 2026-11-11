@@ -16,7 +16,6 @@
 package com.vaadin.flow.component.notification.testbench;
 
 import com.vaadin.testbench.By;
-import org.openqa.selenium.SearchContext;
 import com.vaadin.testbench.StaleElementReferenceException;
 import com.vaadin.testbench.TimeoutException;
 
@@ -52,8 +51,8 @@ public class NotificationElement extends TestBenchElement {
     }
 
     @Override
-    public SearchContext getContext() {
-        return getCard().getContext();
+    public TestBenchElement getContext() {
+        return getCard();
     }
 
     /**

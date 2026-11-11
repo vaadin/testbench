@@ -30,8 +30,8 @@ import com.vaadin.testbench.commands.TestBenchCommands;
 /**
  * A superclass with some helpers to aid TestBench developers.
  */
-public abstract class TestBenchTestCase
-        implements HasDriver, HasTestBenchCommandExecutor, HasElementQuery {
+public abstract class TestBenchTestCase implements HasDriver,
+        HasTestBenchCommandExecutor, HasElementQuery, HasSearchContext {
 
     static {
         TestBench.ensureLoaded();
@@ -111,6 +111,19 @@ public abstract class TestBenchTestCase
     @Override
     public SearchContext getContext() {
         return getDriver();
+    }
+
+    /** Searches the page. */
+    @Override
+    public <T extends TestBenchElement> ElementQuery<T> $(Class<T> clazz) {
+        return new ElementQuery<>(clazz).onPage(getCommandExecutor());
+    }
+
+    /** Searches the page. */
+    @Override
+    public ElementQuery<TestBenchElement> $(String tagName) {
+        return new ElementQuery<>(TestBenchElement.class, tagName)
+                .onPage(getCommandExecutor());
     }
 
     @Override

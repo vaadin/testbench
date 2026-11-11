@@ -24,9 +24,6 @@ import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import org.openqa.selenium.SearchContext;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.slf4j.LoggerFactory;
 
 import com.vaadin.testbench.annotations.Attribute;
@@ -47,15 +44,15 @@ import static com.vaadin.testbench.ElementQuery.AttributeMatch.Comparison.NOT_MA
 /**
  * Query class used for finding a given element inside a given search context.
  * <p>
- * The search context is either a {@link WebDriver} instance which searches
- * starting from the root of the current document, or a {@link WebElement}
- * instance, which searches both in the light DOM and inside the shadow root of
- * the given element.
+ * The search context is either the page, searched from the root of the current
+ * document ({@link #onPage()}), or a {@link TestBenchElement}, searched both in
+ * its light DOM and inside its shadow root
+ * ({@link #context(TestBenchElement)}).
  * <p>
- * When the search context is a {@link WebElement}, the shadow root is searched
- * first. E.g. when searching by ID and the same ID is used by a light DOM child
- * of the element and also inside its shadow root, the element from the shadow
- * root is returned.
+ * When the search context is an element, the shadow root is searched first.
+ * E.g. when searching by ID and the same ID is used by a light DOM child of the
+ * element and also inside its shadow root, the element from the shadow root is
+ * returned.
  * <p>
  * The element class specified in the constructor defines the tag name which is
  * searched for and also the type of element returned.
@@ -328,8 +325,8 @@ public class ElementQuery<T extends TestBenchElement> {
     private final String tagName;
     private final Set<AttributeMatch> attributes;
     private final List<Predicate<T>> conditions;
-    private SearchContext searchContext;
     private TestBenchElement elementContext;
+    private TestBenchCommandExecutor pageContext;
 
     /**
      * Instantiate a new ElementQuery to look for the given type of element.
@@ -1160,28 +1157,11 @@ public class ElementQuery<T extends TestBenchElement> {
     }
 
     /**
-     * Sets the context to search inside.
-     *
-     * @param searchContext
-     *            a {@link SearchContext}; either a {@link TestBenchElement} or
-     *            {@link WebDriver} (to search from the root) instance
-     * @return this element query instance for chaining
-     */
-    public ElementQuery<T> context(SearchContext searchContext) {
-        if (searchContext instanceof WebElementAdapter adapter) {
-            return context(adapter.getElement());
-        }
-        this.searchContext = searchContext;
-        elementContext = null;
-        return this;
-    }
-
-    /**
-     * Sets the element to search inside.
+     * Sets the element to search inside: its shadow root, then its light DOM.
      */
     public ElementQuery<T> context(TestBenchElement element) {
-        searchContext = element == null ? null : element.getContext();
         elementContext = element;
+        pageContext = null;
         return this;
     }
 
@@ -1190,18 +1170,35 @@ public class ElementQuery<T extends TestBenchElement> {
      * in practice from the {@code <body>} tag.
      *
      * @return this element query instance for chaining
+     * @throws IllegalStateException
+     *             if the query has no element or page to search yet; a test
+     *             base uses {@link #onPage(TestBenchCommandExecutor)}
      */
     public ElementQuery<T> onPage() {
-        return context(getDriver());
+        if (pageContext != null) {
+            return this;
+        }
+        if (elementContext == null) {
+            throw new IllegalStateException(
+                    "No browser to search the page of; use onPage(TestBenchCommandExecutor)");
+        }
+        return onPage(elementContext.getCommandExecutor());
     }
 
     /**
-     * Returns the context (element or driver) to search inside.
+     * Searches the page of the given browser, from the root of the document:
      *
-     * @return a {@link SearchContext} instance
+     * <pre>{@code
+     * new ElementQuery<>(ButtonElement.class).onPage(getCommandExecutor())
+     *         .id("save");
+     * }</pre>
+     *
+     * @return this element query instance for chaining
      */
-    protected SearchContext getContext() {
-        return searchContext;
+    public ElementQuery<T> onPage(TestBenchCommandExecutor browser) {
+        pageContext = Objects.requireNonNull(browser);
+        elementContext = null;
+        return this;
     }
 
     /**
@@ -1507,13 +1504,6 @@ public class ElementQuery<T extends TestBenchElement> {
         return executeSearch(null);
     }
 
-    private WebDriver getDriver() {
-        if (elementContext != null) {
-            return elementContext.getDriver();
-        }
-        return (WebDriver) getContext();
-    }
-
     /**
      * Executes the search operation with the given conditions and returns a
      * list of matching elements.
@@ -1528,7 +1518,6 @@ public class ElementQuery<T extends TestBenchElement> {
         StringBuilder script = new StringBuilder();
         TestBenchCommandExecutor executor;
 
-        var context = getContext();
         if (elementContext != null) {
             script.append("var result = [];" //
                     + "if (arguments[0].shadowRoot) {" //
@@ -1540,21 +1529,15 @@ public class ElementQuery<T extends TestBenchElement> {
                     + "return result" //
             );
             executor = elementContext.getCommandExecutor();
-        } else if (context instanceof WebDriver webDriver) {
+        } else if (pageContext != null) {
             // Search the whole document
             script.append("var result = [];" //
                     + "const queryResult = document.querySelectorAll(arguments[1]+arguments[2]);"
                     + "result = result.concat(Array.prototype.slice.call(queryResult));"
                     + "return result");
-            executor = ((HasTestBenchCommandExecutor) webDriver)
-                    .getCommandExecutor();
+            executor = pageContext;
         } else {
-            if (context == null) {
-                throw new IllegalStateException("Context cannot be null");
-            } else {
-                throw new IllegalStateException("Unknown context type: "
-                        + context.getClass().getName());
-            }
+            throw new IllegalStateException("Context cannot be null");
         }
 
         checkTagName(executor);
@@ -1575,10 +1558,10 @@ public class ElementQuery<T extends TestBenchElement> {
             .newKeySet();
 
     /**
-     * The search script pastes the tag name before the attribute filters, so
-     * a CSS selector happens to work, and a filter then applies to its last
-     * part only (vaadin/testbench#2394). The Selenium backend keeps allowing
-     * it, with a warning, until that issue is decided.
+     * The search script pastes the tag name before the attribute filters, so a
+     * CSS selector happens to work, and a filter then applies to its last part
+     * only (vaadin/testbench#2394). The Selenium backend keeps allowing it,
+     * with a warning, until that issue is decided.
      */
     private void checkTagName(TestBenchCommandExecutor executor) {
         if (TAG_NAME.matcher(tagName).matches()) {
@@ -1590,8 +1573,8 @@ public class ElementQuery<T extends TestBenchElement> {
         // Temporary: remove when vaadin/testbench#2394 is decided
         if (executor.getBackend() instanceof SeleniumBackend) {
             if (WARNED_TAG_NAMES.add(tagName)) {
-                LoggerFactory.getLogger(ElementQuery.class).warn(message
-                        + "; it works on the Selenium backend only");
+                LoggerFactory.getLogger(ElementQuery.class).warn(
+                        message + "; it works on the Selenium backend only");
             }
             return;
         }

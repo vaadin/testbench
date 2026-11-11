@@ -46,8 +46,8 @@ import com.vaadin.testbench.commands.TestBenchCommands;
  *
  * @since 9.0
  */
-public abstract class AbstractBrowserTestBase
-        implements HasDriver, HasTestBenchCommandExecutor, HasElementQuery {
+public abstract class AbstractBrowserTestBase implements HasDriver,
+        HasTestBenchCommandExecutor, HasElementQuery, HasSearchContext {
 
     static {
         TestBench.ensureLoaded();
@@ -187,6 +187,19 @@ public abstract class AbstractBrowserTestBase
     @Override
     public SearchContext getContext() {
         return getDriver();
+    }
+
+    /** Searches the page. */
+    @Override
+    public <T extends TestBenchElement> ElementQuery<T> $(Class<T> clazz) {
+        return new ElementQuery<>(clazz).onPage(getCommandExecutor());
+    }
+
+    /** Searches the page. */
+    @Override
+    public ElementQuery<TestBenchElement> $(String tagName) {
+        return new ElementQuery<>(TestBenchElement.class, tagName)
+                .onPage(getCommandExecutor());
     }
 
     @Override

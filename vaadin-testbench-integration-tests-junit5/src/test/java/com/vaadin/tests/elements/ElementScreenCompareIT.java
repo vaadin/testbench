@@ -11,7 +11,6 @@ package com.vaadin.tests.elements;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
-import org.openqa.selenium.By;
 
 import com.vaadin.testUI.ElementQueryView;
 import com.vaadin.testbench.BrowserTest;
@@ -37,7 +36,7 @@ public class ElementScreenCompareIT extends AbstractBrowserTB9Test {
         TestBenchElement button4 = $(NativeButtonElement.class).get(4);
 
         Assertions.assertTrue(button4.compareScreen("button4"));
-        TestBenchElement layout = button4.findElement(By.xpath("../.."));
+        TestBenchElement layout = button4.getParent().getParent();
         Assertions.assertTrue(layout.compareScreen("layout"));
     }
 

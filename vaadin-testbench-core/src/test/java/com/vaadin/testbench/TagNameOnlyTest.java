@@ -47,8 +47,7 @@ public class TagNameOnlyTest {
                 return backend;
             }
         };
-        return TestBench.createElement(TestBenchElement.class, node,
-                executor);
+        return TestBench.createElement(TestBenchElement.class, node, executor);
     }
 
     private static TestBenchElement elementOnOtherBackend() {
@@ -84,9 +83,8 @@ public class TagNameOnlyTest {
         TestBenchElement element = elementOnOtherBackend();
         for (String selector : List.of(".highcharts-point", "a, b",
                 "div > span", "button + vaadin-tooltip", "[part~='x']",
-                ":not([hidden])", "div.v-system-error", "my-element.v2",
-                "#id", "a b",
-                "1div", "")) {
+                ":not([hidden])", "div.v-system-error", "my-element.v2", "#id",
+                "a b", "1div", "")) {
             try {
                 element.$(selector).all();
                 Assert.fail("Expected '" + selector + "' to be rejected");
@@ -100,9 +98,8 @@ public class TagNameOnlyTest {
     @Test
     public void cssSelectorsStillSearchOnSelenium() {
         JavascriptDriver driver = Mockito.mock(JavascriptDriver.class,
-                invocation -> invocation.getMethod().getName()
-                        .equals("executeScript")
-                                ? answer(invocation.getArgument(0))
+                invocation -> invocation.getMethod().getName().equals(
+                        "executeScript") ? answer(invocation.getArgument(0))
                                 : null);
         SeleniumBackend backend = new SeleniumBackend(driver);
         TestBenchElement element = elementOn(backend,

@@ -9,8 +9,11 @@
 package com.vaadin.testbench;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.openqa.selenium.By;
@@ -65,17 +68,18 @@ public class TestBenchDriverProxy
     @Override
     public WebElement findElement(By by) {
         waitForVaadin();
-        return TestBenchElement.wrapElement(wrappedDriver.findElement(by),
+        return TestBench.createElement(wrappedDriver.findElement(by),
                 getCommandExecutor()).asWebElement();
     }
 
     @Override
     public List<WebElement> findElements(By by) {
         waitForVaadin();
-        return TestBenchElement
-                .wrapElements(wrappedDriver.findElements(by),
-                        getCommandExecutor())
-                .stream().map(TestBenchElement::asWebElement).toList();
+        return wrappedDriver.findElements(by).stream()
+                .map(found -> TestBench
+                        .createElement(found, getCommandExecutor())
+                        .asWebElement())
+                .toList();
     }
 
     @Override
@@ -189,10 +193,36 @@ public class TestBenchDriverProxy
             }
             return newList;
         } else if (elementElementsOrValues instanceof WebElement element) {
-            return TestBenchElement.wrapElement(element, tbCommandExecutor);
+            return TestBench.createElement(element, tbCommandExecutor);
         } else {
             return elementElementsOrValues;
         }
+    }
+
+    private static Object[] toSelenium(Object[] args) {
+        return Arrays.stream(args).map(TestBenchDriverProxy::toSelenium)
+                .toArray();
+    }
+
+    // A TestBenchElement is no WebElement, so Selenium cannot send it as a
+    // script argument; its WebElement view, at any depth, it can
+    private static Object toSelenium(Object value) {
+        if (value instanceof TestBenchElement element) {
+            return element.asWebElement();
+        }
+        if (value instanceof Collection<?> collection) {
+            return collection.stream().map(TestBenchDriverProxy::toSelenium)
+                    .toList();
+        }
+        if (value instanceof Object[] array) {
+            return toSelenium(Arrays.asList(array));
+        }
+        if (value instanceof Map<?, ?> map) {
+            Map<Object, Object> copy = new LinkedHashMap<>();
+            map.forEach((key, item) -> copy.put(key, toSelenium(item)));
+            return copy;
+        }
+        return value;
     }
 
     @Override
@@ -203,7 +233,7 @@ public class TestBenchDriverProxy
         }
         waitForVaadin();
         return wrapElementOrElements(((JavascriptExecutor) getWrappedDriver())
-                .executeScript(script, args), getCommandExecutor());
+                .executeScript(script, toSelenium(args)), getCommandExecutor());
     }
 
     @Override
@@ -214,7 +244,8 @@ public class TestBenchDriverProxy
         }
         waitForVaadin();
         return wrapElementOrElements(((JavascriptExecutor) getWrappedDriver())
-                .executeAsyncScript(script, args), getCommandExecutor());
+                .executeAsyncScript(script, toSelenium(args)),
+                getCommandExecutor());
     }
 
     @Override

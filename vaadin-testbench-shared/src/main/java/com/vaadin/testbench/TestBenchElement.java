@@ -12,7 +12,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -25,18 +24,10 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import org.jspecify.annotations.Nullable;
-import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.HasCapabilities;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.SearchContext;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.WrapsElement;
 
 import com.vaadin.testbench.backend.selenium.SeleniumBackend;
-import com.vaadin.testbench.backend.selenium.SeleniumElementBackend;
 import com.vaadin.testbench.commands.CanCompareScreenshots;
 import com.vaadin.testbench.commands.ScreenshotComparator;
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
@@ -45,14 +36,15 @@ import com.vaadin.testbench.elementsbase.Element;
 import com.vaadin.testbench.spi.ElementBackend;
 
 /**
- * TestBenchElement is a WebElement wrapper. It provides Vaadin specific helper
- * functionality. TestBenchElements are created when you search for elements
- * from TestBenchTestCase or a context relative search from TestBenchElement.
+ * One DOM node of the page, with Vaadin specific helper functionality.
+ * TestBenchElements are created when you search for elements from
+ * TestBenchTestCase or a context relative search from TestBenchElement. The
+ * browser underneath is reached through {@link #getElementBackend()}.
  */
 @Element("*")
-public class TestBenchElement implements WrapsElement, HasDriver,
-        CanCompareScreenshots, HasTestBenchCommandExecutor, HasElementQuery,
-        HasPropertySettersGetters, HasCallFunction {
+public class TestBenchElement
+        implements CanCompareScreenshots, HasTestBenchCommandExecutor,
+        HasElementQuery, HasPropertySettersGetters, HasCallFunction {
 
     private ElementBackend elementBackend = null;
     private TestBenchCommandExecutor commandExecutor = null;
@@ -60,29 +52,6 @@ public class TestBenchElement implements WrapsElement, HasDriver,
 
     protected TestBenchElement() {
 
-    }
-
-    protected TestBenchElement(WebElement webElement,
-            TestBenchCommandExecutor commandExecutor) {
-        init(webElement, commandExecutor);
-    }
-
-    /**
-     * TestBenchElement initialization function. If a subclass of
-     * TestBenchElement needs to run some initialization code, it should
-     * override {@link #init()}, not this function.
-     *
-     * @param element
-     *            WebElement to wrap
-     * @param commandExecutor
-     *            TestBenchCommandExecutor instance
-     */
-    protected void init(WebElement element,
-            TestBenchCommandExecutor commandExecutor) {
-        // Only a Selenium backend hands out WebElements
-        SeleniumBackend backend = commandExecutor == null ? null
-                : (SeleniumBackend) commandExecutor.getBackend();
-        init(new SeleniumElementBackend(backend, element), commandExecutor);
     }
 
     /**
@@ -129,21 +98,6 @@ public class TestBenchElement implements WrapsElement, HasDriver,
     }
 
     /**
-     * Returns information about current browser used
-     *
-     * @see Capabilities
-     * @return information about current browser used
-     */
-    protected Capabilities getCapabilities() {
-        WebDriver driver = getDriver();
-        if (driver instanceof HasCapabilities) {
-            return ((HasCapabilities) driver).getCapabilities();
-        } else {
-            return null;
-        }
-    }
-
-    /**
      * This is run after initializing a TestBenchElement. This can be overridden
      * in subclasses of TestBenchElement to run some initialization code.
      */
@@ -151,13 +105,15 @@ public class TestBenchElement implements WrapsElement, HasDriver,
 
     }
 
-    @Override
-    public WebElement getWrappedElement() {
-        return SeleniumBackend.webElementOf(elementBackend);
-    }
-
     /**
      * The DOM node this element stands for, as the browser backend holds it.
+     * Cast it to reach the browser library itself, as an escape hatch whose
+     * calls do not wait for Vaadin:
+     *
+     * <pre>{@code
+     * WebElement webElement = ((SeleniumElementBackend) element
+     *         .getElementBackend()).getWebElement();
+     * }</pre>
      */
     public ElementBackend getElementBackend() {
         return elementBackend;
@@ -334,17 +290,6 @@ public class TestBenchElement implements WrapsElement, HasDriver,
         return elementBackend.getText();
     }
 
-    public List<TestBenchElement> findElements(org.openqa.selenium.By by) {
-        return TestBenchElement.wrapElements(
-                getWrappedElement().findElements(by), getCommandExecutor());
-    }
-
-    public TestBenchElement findElement(org.openqa.selenium.By by) {
-        waitForVaadin();
-        return wrapElement(getWrappedElement().findElement(by),
-                getCommandExecutor());
-    }
-
     /**
      * The descendants {@code by} matches, in the light DOM only: unlike
      * {@code $}, this never looks inside a shadow root.
@@ -430,19 +375,23 @@ public class TestBenchElement implements WrapsElement, HasDriver,
         return commandExecutor;
     }
 
-    @Override
-    public WebDriver getDriver() {
-        return getCommandExecutor().getDriver();
+    /**
+     * The element {@code $} searches inside: this one, unless a component keeps
+     * its content in another element, as a notification does in its card.
+     */
+    public TestBenchElement getContext() {
+        return this;
     }
 
-    /**
-     * This element as a Selenium {@link SearchContext}, for
-     * {@code $(...).context(...)}: an {@link ElementQuery} given it searches
-     * inside this element.
-     */
     @Override
-    public SearchContext getContext() {
-        return asWebElement();
+    public <T extends TestBenchElement> ElementQuery<T> $(Class<T> clazz) {
+        return new ElementQuery<>(clazz).context(getContext());
+    }
+
+    @Override
+    public ElementQuery<TestBenchElement> $(String tagName) {
+        return new ElementQuery<>(TestBenchElement.class, tagName)
+                .context(getContext());
     }
 
     /**
@@ -451,32 +400,6 @@ public class TestBenchElement implements WrapsElement, HasDriver,
     public void focus() {
         waitForVaadin();
         getCommandExecutor().focusElement(this);
-    }
-
-    protected static List<TestBenchElement> wrapElements(
-            List<WebElement> elements,
-            TestBenchCommandExecutor commandExecutor) {
-        List<TestBenchElement> wrappedList = new ArrayList<>();
-
-        for (WebElement e : elements) {
-            wrappedList.add(wrapElement(e, commandExecutor));
-        }
-
-        return wrappedList;
-    }
-
-    protected static TestBenchElement wrapElement(WebElement element,
-            TestBenchCommandExecutor commandExecutor) {
-        if (element instanceof WebElementAdapter adapter) {
-            return adapter.getElement();
-        }
-        return TestBench.createElement(element, commandExecutor);
-    }
-
-    public <X> X getScreenshotAs(OutputType<X> target)
-            throws WebDriverException {
-        waitForVaadin();
-        return target.convertFromPngBytes(elementBackend.getScreenshot());
     }
 
     public Rectangle getRect() {
@@ -552,14 +475,14 @@ public class TestBenchElement implements WrapsElement, HasDriver,
         return ScreenshotComparator.compareScreen(referenceId,
                 getCommandExecutor().getReferenceNameGenerator(),
                 getCommandExecutor().getImageComparison(), asWebElement(),
-                (HasCapabilities) getDriver());
+                seleniumCapabilities());
     }
 
     @Override
     public boolean compareScreen(File reference) throws IOException {
         return ScreenshotComparator.compareScreen(reference,
                 getCommandExecutor().getImageComparison(), asWebElement(),
-                (HasCapabilities) getDriver());
+                seleniumCapabilities());
 
     }
 
@@ -568,7 +491,13 @@ public class TestBenchElement implements WrapsElement, HasDriver,
             throws IOException {
         return ScreenshotComparator.compareScreen(reference, referenceName,
                 getCommandExecutor().getImageComparison(), asWebElement(),
-                (HasCapabilities) getDriver());
+                seleniumCapabilities());
+    }
+
+    // Screenshot comparison is Selenium-only until v2
+    private HasCapabilities seleniumCapabilities() {
+        return (HasCapabilities) ((SeleniumBackend) getCommandExecutor()
+                .getBackend()).getDriver();
     }
 
     /***
@@ -830,22 +759,15 @@ public class TestBenchElement implements WrapsElement, HasDriver,
      * Executes the given JavaScript in the context of the currently selected
      * frame or window. The script fragment provided will be executed as the
      * body of an anonymous function.
-     * <p>
-     * This method wraps any returned {@link WebElement} as
-     * {@link TestBenchElement}.
      *
      * @param script
      *            the script to execute
      * @param args
      *            the arguments, available in the script as
      *            {@code arguments[0]...arguments[N]}
-     * @return whatever
-     *         {@link JavascriptExecutor#executeScript(String, Object...)}
-     *         returns
-     * @throws UnsupportedOperationException
-     *             if the underlying driver does not support JavaScript
-     *             execution
-     * @see JavascriptExecutor#executeScript(String, Object...)
+     * @return as
+     *         {@link TestBenchCommandExecutor#executeScript(String, Object...)}
+     *         returns it: DOM nodes as {@link TestBenchElement}s
      */
     protected Object executeScript(String script, Object... args) {
         return getCommandExecutor().executeScript(script, args);
@@ -904,30 +826,6 @@ public class TestBenchElement implements WrapsElement, HasDriver,
      */
     public TestBenchElement getParent() {
         return getPropertyElement("parentElement");
-    }
-
-    /**
-     * Not implemented. This method is not supported for the
-     * {@link TestBenchElement}. Use {@code $} instead to find elements in the
-     * shadow root.
-     *
-     * Example usage:
-     *
-     * <pre>
-     * {@code
-     * TestBenchElement element = ...;
-     * TestBenchElement child = element.$(TestBenchElement.class).id("elementid");
-     * }
-     * </pre>
-     *
-     * @return the {@link SearchContext} representing the shadow root.
-     * @deprecated This method is deprecated. Use {@code $} instead to find
-     *             elements in the shadow root.
-     * @since 9.4
-     */
-    @Deprecated
-    public SearchContext getShadowRoot() {
-        throw new UnsupportedOperationException("getShadowRoot");
     }
 
     /**

@@ -18,8 +18,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.openqa.selenium.JavascriptExecutor;
-import com.vaadin.testbench.NoSuchElementException;
-import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
@@ -60,8 +58,7 @@ class ElementQueryTest {
     void setup() {
         mockDriver = TestBench
                 .createDriver(Mockito.mock(WebDriverWithJS.class));
-        exampleElement = TestBenchElement.wrapElement(
-                Mockito.mock(WebElement.class),
+        exampleElement = TestBench.createElement(Mockito.mock(WebElement.class),
                 mockDriver.getCommandExecutor());
 
         mockElement = Mockito.mock(ExampleElement.class);
@@ -88,8 +85,8 @@ class ElementQueryTest {
         }
 
         @Override
-        public TestElementQuery<T> context(SearchContext searchContext) {
-            return (TestElementQuery<T>) super.context(searchContext);
+        public TestElementQuery<T> onPage(TestBenchCommandExecutor browser) {
+            return (TestElementQuery<T>) super.onPage(browser);
         }
 
         @Override
@@ -126,7 +123,8 @@ class ElementQueryTest {
     }
 
     private TestElementQuery<ExampleElement> createExampleDocumentQuery() {
-        return new TestElementQuery<>(ExampleElement.class).context(mockDriver);
+        return new TestElementQuery<>(ExampleElement.class)
+                .onPage(mockDriver.getCommandExecutor());
     }
 
     /**
@@ -827,7 +825,7 @@ class ElementQueryTest {
     private ScriptedElementQuery<ExampleElement> createScriptedQuery(
             List<List<ExampleElement>> results) {
         var query = new ScriptedElementQuery<>(ExampleElement.class, results);
-        query.context(mockDriver);
+        query.onPage(mockDriver.getCommandExecutor());
         return query;
     }
 

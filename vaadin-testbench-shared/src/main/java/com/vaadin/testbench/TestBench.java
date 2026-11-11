@@ -17,6 +17,8 @@ import org.openqa.selenium.WebElement;
 import com.vaadin.pro.licensechecker.Capabilities;
 import com.vaadin.pro.licensechecker.Capability;
 import com.vaadin.pro.licensechecker.LicenseChecker;
+import com.vaadin.testbench.backend.selenium.SeleniumBackend;
+import com.vaadin.testbench.backend.selenium.SeleniumElementBackend;
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.screenshot.ImageComparison;
 import com.vaadin.testbench.screenshot.ReferenceNameGenerator;
@@ -49,7 +51,8 @@ public class TestBench {
             TestBenchCommandExecutor commandExecutor) {
         TestBenchDriverProxy proxy = new TestBenchDriverProxy(driver,
                 commandExecutor);
-        commandExecutor.setDriver(proxy);
+        // The real driver: the proxy would wait for Vaadin before every script
+        commandExecutor.setBackend(new SeleniumBackend(driver));
         return proxy;
     }
 
@@ -78,9 +81,11 @@ public class TestBench {
         if (webElement instanceof WebElementAdapter adapter) {
             return wrap(adapter.getElement(), clazz);
         }
-        T element = instantiate(clazz);
-        element.init(webElement, tbCommandExecutor);
-        return element;
+        SeleniumBackend backend = tbCommandExecutor == null ? null
+                : (SeleniumBackend) tbCommandExecutor.getBackend();
+        return createElement(clazz,
+                new SeleniumElementBackend(backend, webElement),
+                tbCommandExecutor);
     }
 
     /**

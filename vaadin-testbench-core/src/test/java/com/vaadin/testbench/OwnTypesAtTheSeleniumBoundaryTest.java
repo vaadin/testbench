@@ -8,12 +8,16 @@
  */
 package com.vaadin.testbench;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.WrapsElement;
 
 import com.vaadin.testbench.spi.ElementBackend;
 
@@ -41,6 +45,42 @@ public class OwnTypesAtTheSeleniumBoundaryTest {
     @Test(expected = NoSuchElementException.class)
     public void findElementThrowsTestBenchsNotFound() {
         element.findElement(By.id("missing"));
+    }
+
+    public interface JavascriptDriver extends WebDriver, JavascriptExecutor {
+    }
+
+    @Test
+    public void driverScriptsGetElementsAsSeleniumElements() {
+        List<Object[]> scriptArgs = new ArrayList<>();
+        JavascriptDriver driver = Mockito.mock(JavascriptDriver.class,
+                invocation -> {
+                    if (!invocation.getMethod().getName()
+                            .equals("executeScript")) {
+                        return null;
+                    }
+                    String script = invocation.getArgument(0);
+                    if (script.contains("isActive()")) {
+                        return true;
+                    }
+                    Object[] args = invocation.getRawArguments();
+                    scriptArgs.add((Object[]) args[1]);
+                    return null;
+                });
+        TestBenchDriverProxy proxy = TestBench.createDriver(driver);
+        WebElement raw = Mockito.mock(WebElement.class);
+        TestBenchElement element = TestBench.createElement(raw,
+                proxy.getCommandExecutor());
+
+        proxy.executeScript("script", element,
+                new TestBenchElement[] { element }, List.of(element));
+
+        Object[] args = scriptArgs.get(0);
+        Assert.assertSame(raw, ((WrapsElement) args[0]).getWrappedElement());
+        Assert.assertSame(raw, ((WrapsElement) ((List<?>) args[1]).get(0))
+                .getWrappedElement());
+        Assert.assertSame(raw, ((WrapsElement) ((List<?>) args[2]).get(0))
+                .getWrappedElement());
     }
 
     @Test(expected = org.openqa.selenium.StaleElementReferenceException.class)

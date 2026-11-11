@@ -21,6 +21,8 @@ import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.WrapsElement;
 
+import com.vaadin.testbench.backend.selenium.SeleniumBackend;
+
 /**
  * A {@link TestBenchElement} seen as a Selenium {@link WebElement}, where a
  * Selenium signature demands one: the driver's {@code findElement},
@@ -31,9 +33,8 @@ import org.openqa.selenium.WrapsElement;
  * geometry come back as Selenium's, so that Selenium code catching them, such
  * as {@code ExpectedConditions.stalenessOf}, keeps working.
  * <p>
- * {@link ElementQuery#context(SearchContext)} and
  * {@link TestBench#createElement(Class, WebElement, com.vaadin.testbench.commands.TestBenchCommandExecutor)}
- * see through it to the element.
+ * sees through it to the element.
  */
 final class WebElementAdapter implements WebElement, WrapsElement {
 
@@ -49,7 +50,7 @@ final class WebElementAdapter implements WebElement, WrapsElement {
 
     @Override
     public WebElement getWrappedElement() {
-        return selenium(element::getWrappedElement);
+        return SeleniumBackend.webElementOf(element.getElementBackend());
     }
 
     @Override
@@ -109,19 +110,25 @@ final class WebElementAdapter implements WebElement, WrapsElement {
 
     @Override
     public List<WebElement> findElements(By by) {
-        return selenium(() -> element.findElements(by).stream()
-                .map(TestBenchElement::asWebElement).toList());
+        element.waitForVaadin();
+        return getWrappedElement().findElements(by).stream()
+                .map(found -> TestBench
+                        .createElement(found, element.getCommandExecutor())
+                        .asWebElement())
+                .toList();
     }
 
     @Override
     public WebElement findElement(By by) {
-        return selenium(() -> element.findElement(by).asWebElement());
+        element.waitForVaadin();
+        return TestBench.createElement(getWrappedElement().findElement(by),
+                element.getCommandExecutor()).asWebElement();
     }
 
+    /** Not supported, as it never was: {@code $} searches the shadow root. */
     @Override
-    @SuppressWarnings("deprecation")
     public SearchContext getShadowRoot() {
-        return selenium(element::getShadowRoot);
+        throw new UnsupportedOperationException("getShadowRoot");
     }
 
     @Override
@@ -156,7 +163,11 @@ final class WebElementAdapter implements WebElement, WrapsElement {
     @Override
     public <X> X getScreenshotAs(OutputType<X> target)
             throws WebDriverException {
-        return selenium(() -> element.getScreenshotAs(target));
+        return selenium(() -> {
+            element.waitForVaadin();
+            return target.convertFromPngBytes(
+                    element.getElementBackend().getScreenshot());
+        });
     }
 
     private static <T> T selenium(Supplier<T> call) {
@@ -166,8 +177,8 @@ final class WebElementAdapter implements WebElement, WrapsElement {
             throw new org.openqa.selenium.StaleElementReferenceException(
                     e.getMessage(), e);
         } catch (NoSuchElementException e) {
-            throw new org.openqa.selenium.NoSuchElementException(
-                    e.getMessage(), e);
+            throw new org.openqa.selenium.NoSuchElementException(e.getMessage(),
+                    e);
         } catch (TimeoutException e) {
             throw new org.openqa.selenium.TimeoutException(e.getMessage(), e);
         }
